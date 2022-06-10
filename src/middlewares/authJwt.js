@@ -1,4 +1,5 @@
-const jwt = require("jsonwebtoken");
+// const jwt = require("jsonwebtoken");
+import { verify } from "jsonwebtoken";
 const config = require("../config/auth.config.js");
 const db = require("../models");
 const User = db.user;
@@ -11,7 +12,7 @@ const verifyToken = (req, res, next) => {
     return res.status(403).send({ message: "No token provided!" });
   }
 
-  jwt.verify(token, config.secret, (err, decoded) => {
+  verify(token, config.secret, (err, decoded) => {
     if (err) {
       return res.status(401).send({ message: "Unauthorized!" });
     }
