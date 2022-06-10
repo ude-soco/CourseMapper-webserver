@@ -1,5 +1,5 @@
 const ObjectId = require("mongoose").Types.ObjectId;
-const db = require("../models");
+import { db } from "../models/user.model";
 const Course = db.course;
 const Topic = db.topic;
 const Channel = db.channel;
@@ -9,7 +9,7 @@ const Channel = db.channel;
  * Get all courses controller
  *
  */
-exports.getAllCourses = (req, res) => {
+export const getAllCourses = (req, res) => {
   Course.find({})
     .populate("topics", "-__v")
     .exec((err, courses) => {
@@ -27,7 +27,7 @@ exports.getAllCourses = (req, res) => {
  *
  * @param {string} req.params.courseId The id of the course
  */
-exports.getCourse = (req, res) => {
+export const getCourse = (req, res) => {
   Course.findOne({ _id: ObjectId(req.params.courseId) })
     .populate("topics channels", "-__v")
     .exec((err, foundCourse) => {
@@ -48,7 +48,7 @@ exports.getCourse = (req, res) => {
  * @param {string} req.body.description The description of the course, e.g., Teaching students about modern web technologies
  * @param {string} req.userId The owner of the course
  */
-exports.newCourse = (req, res) => {
+export const newCourse = (req, res) => {
   Course.findOne({ name: req.body.name }, (err, foundCourseName) => {
     if (err) {
       res.status(500).send({ error: err });
@@ -88,7 +88,7 @@ exports.newCourse = (req, res) => {
  *
  * @param {string} req.params.courseId The id of the course
  */
-exports.deleteCourse = (req, res) => {
+export const deleteCourse = (req, res) => {
   Course.findByIdAndRemove({ _id: req.params.courseId }, (err, foundCourse) => {
     if (err) {
       res.status(500).send({ error: err });

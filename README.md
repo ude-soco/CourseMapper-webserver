@@ -19,7 +19,7 @@
       - Run the script and starts the application
 
         ```
-        npm run dev
+        npm run watch:dev
         ```
 
     - Stop the server by pressing `cntl + c` inside the command prompt

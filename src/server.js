@@ -1,15 +1,25 @@
-const express = require("express");
+import express from "express";
+import { hashSync } from "bcryptjs";
+import cookieSession from "cookie-session";
+import dotenv from "dotenv";
+import http from "http";
+import cors from "cors";
+import debugLib from "debug";
+import db from "./models/index";
+import {
+  authRoute,
+  channelRoute,
+  topicRoute,
+  courseRoute,
+  materialRoute,
+  userRoute,
+} from "./routes/index";
+
+dotenv.config();
 const app = express();
-const bcrypt = require("bcryptjs");
-const cookieSession = require("cookie-session");
-const cors = require("cors");
-const debug = require("debug")("coursemapper:src/server");
-const db = require("./models");
-const http = require("http");
+const debug = debugLib("coursemapper-webserver:src");
 const Role = db.role;
 const User = db.user;
-
-require("dotenv").config();
 const env = process.env.NODE_ENV || "production";
 
 env !== "production" ? app.use(cors()) : "";
@@ -45,12 +55,12 @@ db.mongoose
   });
 
 // Routes
-require("./routes/auth.routes")(app);
-require("./routes/user.routes")(app);
-require("./routes/course.routes")(app);
-require("./routes/topic.routes")(app);
-require("./routes/channel.routes")(app);
-require("./routes/material.routes")(app);
+authRoute(app);
+channelRoute(app);
+topicRoute(app);
+courseRoute(app);
+materialRoute(app);
+userRoute(app);
 
 // Create HTTP server
 const server = http.createServer(app);
@@ -93,7 +103,7 @@ function initializeDB() {
 
   User.estimatedDocumentCount((err, count) => {
     if (!err && count === 0) {
-      let password = bcrypt.hashSync(process.env.PASS, 10);
+      let password = hashSync(process.env.PASS, 10);
       new User({
         username: "admin",
         email: "admin@soco.com",

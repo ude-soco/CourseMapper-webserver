@@ -1,7 +1,7 @@
 const { authJwt } = require("../middlewares");
 const controller = require("../controllers/topic.controller");
 
-module.exports = function (app) {
+export const topicRoute = (app) => {
   app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Headers", "Origin, Content-Type, Accept");
     next();
