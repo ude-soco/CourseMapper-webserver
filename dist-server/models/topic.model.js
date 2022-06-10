@@ -1,0 +1,30 @@
+"use strict";
+
+var mongoose = require("mongoose");
+
+var Schema = mongoose.Schema;
+var Topic = new Schema({
+  name: {
+    type: String
+  },
+  courseId: {
+    type: Schema.Types.ObjectId,
+    ref: "course"
+  },
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: "user"
+  },
+  channels: [{
+    type: Schema.Types.ObjectId,
+    ref: "channel",
+    "default": []
+  }],
+  createdAt: {
+    type: Date
+  },
+  updatedAt: {
+    type: Date
+  }
+});
+module.exports = mongoose.model("topic", Topic);
