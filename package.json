@@ -1,32 +1,11 @@
 {
-  "name": "coursemapper-webserver",
+  "name": "coursemapper-server",
   "version": "1.0.0",
-  "nodemonConfig": {
-    "exec": "npm run dev",
-    "watch": [
-      "src/*",
-      "public/*"
-    ],
-    "ignore": [
-      "**/__tests__/**",
-      "*.test.js",
-      "*.spec.js"
-    ]
-  },
   "scripts": {
-    "start": "npm run prod",
-    "build": "npm-run-all clean transpile",
-    "server": "node ./dist-server/server.js",
-    "dev": "NODE_ENV=development npm-run-all build server",
-    "prod": "NODE_ENV=production npm-run-all build server",
-    "transpile": "babel ./src --out-dir dist-server",
-    "clean": "rimraf dist-server",
-    "watch:dev": "nodemon"
+    "start": "node src/server",
+    "dev": "NODE_ENV=development nodemon src/server"
   },
   "dependencies": {
-    "@babel/cli": "^7.17.10",
-    "@babel/core": "^7.18.2",
-    "@babel/preset-env": "^7.18.2",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.0",
     "cookie-session": "^2.0.0",
@@ -35,19 +14,12 @@
     "express": "~4.16.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.3.5",
-    "nodemon": "^2.0.16",
-    "npm-run-all": "^4.1.5",
-    "rimraf": "^3.0.2"
+    "nodemon": "^2.0.16"
   },
   "devDependencies": {
     "cors": "^2.8.5"
   },
   "optionalDependencies": {
     "win-node-env": "^0.6.1"
-  },
-  "babel": {
-    "presets": [
-      "@babel/preset-env"
-    ]
   }
 }

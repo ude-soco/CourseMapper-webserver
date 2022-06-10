@@ -1,17 +1,17 @@
-import { verify } from "jsonwebtoken";
-import { config } from "../config/auth.config";
-import { db } from "../models/user.model.js";
+const jwt = require("jsonwebtoken");
+const config = require("../config/auth.config.js");
+const db = require("../models");
 const User = db.user;
 const Role = db.role;
 
-const verifyToken = (req, res, next) => {
+verifyToken = (req, res, next) => {
   let token = req.session.token;
 
   if (!token) {
     return res.status(403).send({ message: "No token provided!" });
   }
 
-  verify(token, config.secret, (err, decoded) => {
+  jwt.verify(token, config.secret, (err, decoded) => {
     if (err) {
       return res.status(401).send({ message: "Unauthorized!" });
     }
@@ -20,7 +20,7 @@ const verifyToken = (req, res, next) => {
   });
 };
 
-const isAdmin = (req, res, next) => {
+isAdmin = (req, res, next) => {
   User.findById(req.userId).exec((err, user) => {
     if (err) {
       res.status(500).send({ message: err });
@@ -51,7 +51,7 @@ const isAdmin = (req, res, next) => {
   });
 };
 
-const isModerator = (req, res, next) => {
+isModerator = (req, res, next) => {
   User.findById(req.userId).exec((err, user) => {
     if (err) {
       res.status(500).send({ message: err });

@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 mongoose.Promise = global.Promise;
 
 const db = {};
@@ -12,4 +12,4 @@ db.channel = require("./channel.model");
 db.material = require("./material.model");
 db.ROLES = ["user", "admin", "moderator"];
 
-export default db;
+module.exports = db;

@@ -1,5 +1,5 @@
 const ObjectId = require("mongoose").Types.ObjectId;
-import { db } from "../models/user.model";
+const db = require("../models");
 const Channel = db.channel;
 const Material = db.material;
 
@@ -14,7 +14,7 @@ const Material = db.material;
  * @param {string} req.body.description The description of the material, e.g., Lecture material of Angular for course Advanced Web Technologies
  * @param {string} req.userId The owner of the material
  */
-export const newMaterial = (req, res) => {
+exports.newMaterial = (req, res) => {
   Channel.findOne(
     { _id: ObjectId(req.params.channelId) },
     (err, foundChannel) => {

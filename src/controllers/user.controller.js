@@ -3,7 +3,7 @@
  * Test public access to all type of user roles
  *
  */
-export const allAccess = (req, res) => {
+exports.allAccess = (req, res) => {
   res.status(200).send("Public content");
 };
 
@@ -12,7 +12,7 @@ export const allAccess = (req, res) => {
  * Test access to role user
  *
  */
-export const userBoard = (req, res) => {
+exports.userBoard = (req, res) => {
   res.status(200).send("User content");
 };
 
@@ -21,7 +21,7 @@ export const userBoard = (req, res) => {
  * Test access to role moderator
  *
  */
-export const moderatorBoard = (req, res) => {
+exports.moderatorBoard = (req, res) => {
   res.status(200).send("Moderator content");
 };
 
@@ -30,6 +30,6 @@ export const moderatorBoard = (req, res) => {
  * Test access to role admin
  *
  */
-export const adminBoard = (req, res) => {
+exports.adminBoard = (req, res) => {
   res.status(200).send("Admin content");
 };

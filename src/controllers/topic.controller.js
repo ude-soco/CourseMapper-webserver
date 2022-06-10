@@ -1,5 +1,5 @@
 const ObjectId = require("mongoose").Types.ObjectId;
-import { db } from "../models/user.model";
+const db = require("../models");
 const Channel = db.channel;
 const Course = db.course;
 const Topic = db.topic;
@@ -13,7 +13,7 @@ const Topic = db.topic;
  * @param {string} req.body.description The description of the course, e.g., Teaching students about modern web technologies
  * @param {string} req.userId The owner of the topic
  */
-export const newTopic = (req, res) => {
+exports.newTopic = (req, res) => {
   Course.findOne({ _id: ObjectId(req.params.courseId) }, (err, foundCourse) => {
     if (err) {
       res.status(500).send({ error: err });
@@ -64,7 +64,7 @@ export const newTopic = (req, res) => {
  *
  * @param {string} req.params.topicId The id of the topic
  */
-export const deleteTopic = (req, res) => {
+exports.deleteTopic = (req, res) => {
   Topic.findByIdAndRemove({ _id: req.params.topicId }, (err, foundTopic) => {
     if (err) {
       res.status(500).send({ error: err });

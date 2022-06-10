@@ -1,9 +1,10 @@
-import { sign } from "jsonwebtoken";
-import { hashSync, compareSync } from "bcryptjs";
-import { config } from "../config/auth.config";
-import { db } from "../models/user.model";
+const config = require("../config/auth.config");
+const db = require("../models");
 const User = db.user;
 const Role = db.role;
+
+let jwt = require("jsonwebtoken");
+let bcrypt = require("bcryptjs");
 
 /**
  * @function signup
@@ -14,11 +15,11 @@ const Role = db.role;
  * @param {string} req.body.password The new password
  * @param {Array} req.body.role The roles e.g., ['user']
  */
-export const signup = (req, res) => {
+exports.signup = (req, res) => {
   const user = new User({
     username: req.body.username,
     email: req.body.email,
-    password: hashSync(req.body.password, 8),
+    password: bcrypt.hashSync(req.body.password, 8),
   });
 
   user.save((err, user) => {
@@ -81,7 +82,7 @@ export const signup = (req, res) => {
  * @param {string} req.body.username The username
  * @param {string} req.body.password The new password
  */
-export const signin = (req, res) => {
+exports.signin = (req, res) => {
   User.findOne({
     username: req.body.username,
   })
@@ -96,13 +97,16 @@ export const signin = (req, res) => {
         return res.status(404).send({ error: "User Not found." });
       }
 
-      let passwordIsValid = compareSync(req.body.password, user.password);
+      let passwordIsValid = bcrypt.compareSync(
+        req.body.password,
+        user.password
+      );
 
       if (!passwordIsValid) {
         return res.status(401).send({ error: "Invalid Password!" });
       }
 
-      let token = sign({ id: user.id }, config.secret, {
+      let token = jwt.sign({ id: user.id }, config.secret, {
         expiresIn: 86400, // 24 hours
       });
 
@@ -128,7 +132,7 @@ export const signin = (req, res) => {
  * User logout controller
  *
  */
-export const signout = async (req, res) => {
+exports.signout = async (req, res) => {
   try {
     req.session = null;
     return res.status(200).send({ success: "You've been signed out!" });

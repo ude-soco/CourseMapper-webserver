@@ -1,7 +1,7 @@
-import { authJwt } from "../middlewares";
-import { newMaterial } from "../controllers/material.controller";
+const { authJwt } = require("../middlewares");
+const controller = require("../controllers/material.controller");
 
-export const materialRoute = (app) => {
+module.exports = function (app) {
   app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Headers", "Origin, Content-Type, Accept");
     next();
@@ -13,6 +13,6 @@ export const materialRoute = (app) => {
   app.post(
     "/new-material/:channelId",
     [authJwt.verifyToken, authJwt.isAdmin],
-    newMaterial
+    controller.newMaterial
   );
 };
