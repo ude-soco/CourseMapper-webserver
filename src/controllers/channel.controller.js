@@ -13,7 +13,7 @@ const Topic = db.topic;
  * @param {string} req.body.name The name of the channel, e.g., React Crash Course
  * @param {string} req.userId The owner of the channel
  */
-exports.newChannel = (req, res) => {
+export const newChannel = (req, res) => {
   Topic.findOne({ _id: ObjectId(req.params.topicId) }, (err, foundTopic) => {
     if (err) {
       res.status(500).send({ error: err });
@@ -84,7 +84,7 @@ exports.newChannel = (req, res) => {
  *
  * @param {string} req.params.channelId The id of the channel
  */
-exports.deleteChannel = (req, res) => {
+export const deleteChannel = (req, res) => {
   Channel.findByIdAndRemove(
     { _id: req.params.channelId },
     (err, foundChannel) => {
