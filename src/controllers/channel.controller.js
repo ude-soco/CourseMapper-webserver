@@ -44,7 +44,7 @@ export const newChannel = (req, res) => {
 
       res.send({
         id: channel._id,
-        success: `New channel ${channel.name} added!`,
+        success: `New channel '${channel.name}' added!`,
       });
 
       let channels = [];

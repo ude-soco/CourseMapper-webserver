@@ -15,4 +15,10 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isAdmin],
     controller.newMaterial
   );
+
+  app.delete(
+    "/material/:materialId",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    controller.deleteMaterial
+  );
 };

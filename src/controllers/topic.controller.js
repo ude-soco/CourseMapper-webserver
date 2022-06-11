@@ -91,13 +91,10 @@ export const deleteTopic = (req, res) => {
         return;
       }
 
-      let topicIndex = foundCourse["topics"].indexOf(
-        ObjectId(req.params.topicId)
+      let filteredTopics = foundCourse.topics.filter(
+        (topic) => topic !== ObjectId(req.params.topicId)
       );
-
-      if (topicIndex >= 0) {
-        foundCourse["topics"].splice(topicIndex, 1);
-      }
+      foundCourse.topics = filteredTopics;
 
       foundCourse.save((err) => {
         if (err) {

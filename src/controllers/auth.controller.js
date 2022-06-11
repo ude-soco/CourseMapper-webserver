@@ -47,7 +47,7 @@ export const signup = (req, res) => {
 
             res
               .status(200)
-              .send({ success: "User was registered successfully!" });
+              .send({ success: "User is successfully registered!" });
           });
         }
       );
@@ -65,9 +65,7 @@ export const signup = (req, res) => {
             return;
           }
 
-          res
-            .status(200)
-            .send({ success: "User was registered successfully!" });
+          res.status(200).send({ success: "User is successfully registered!" });
         });
       });
     }
@@ -93,7 +91,7 @@ export const signin = (req, res) => {
       }
 
       if (!user) {
-        return res.status(404).send({ error: "User Not found." });
+        return res.status(404).send({ error: "User not found." });
       }
 
       let passwordIsValid = compareSync(req.body.password, user.password);

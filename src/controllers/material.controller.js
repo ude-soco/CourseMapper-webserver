@@ -5,7 +5,7 @@ const Material = db.material;
 
 /**
  * @function newMaterial
- * Add a new material to channel controller
+ * Add a new material to a channel controller
  *
  * @param {string} req.params.channelId The id of the channel
  * @param {string} req.body.type The type of the material, e.g., pdf, video
@@ -36,7 +36,8 @@ export const newMaterial = (req, res) => {
         url: req.body.url,
         description: req.body.description,
         courseId: foundChannel.courseId,
-        topicId: foundChannel._id,
+        topicId: foundChannel.topicId,
+        channelId: foundChannel._id,
         userId: req.userId,
         createdAt: Date.now(),
         updatedAt: Date.now(),
@@ -48,29 +49,92 @@ export const newMaterial = (req, res) => {
           return;
         }
 
-        res.send({
-          id: material._id,
-          success: `New material "${material.name}" added!`,
-        });
+        foundChannel.materials.push(material._id);
 
-        let materials = [];
-        materials.push(material._id);
-
-        Channel.findOne({ _id: foundChannel._id }, (err, updateChannel) => {
+        foundChannel.save((err) => {
           if (err) {
             res.status(500).send({ error: err });
             return;
           }
-
-          updateChannel.materials.push(material._id);
-
-          updateChannel.save((err) => {
-            if (err) {
-              res.status(500).send({ error: err });
-              return;
-            }
-          });
         });
+
+        res.send({
+          id: material._id,
+          success: `New material '${material.name}' added!`,
+        });
+      });
+    }
+  );
+};
+
+/**
+ * @function deleteMaterial
+ * Delete a new material controller
+ *
+ * @param {string} req.params.materialId The id of the material
+ */
+export const deleteMaterial = (req, res) => {
+  Material.findByIdAndRemove(
+    { _id: req.params.materialId },
+    (err, foundMaterial) => {
+      if (err) {
+        res.status(500).send({ error: err });
+        return;
+      }
+
+      if (!foundMaterial) {
+        res.status(404).send({
+          error: `Material with id ${req.params.materialId} doesn't exist!`,
+        });
+        return;
+      }
+
+      Channel.findOne({ _id: foundMaterial.channelId }, (err, foundChannel) => {
+        if (err) {
+          res.status(500).send({ error: err });
+          return;
+        }
+
+        let materialIndex = foundChannel["materials"].indexOf(
+          ObjectId(req.params.materialId)
+        );
+
+        if (materialIndex >= 0) {
+          foundChannel["materials"].splice(materialIndex, 1);
+        }
+
+        foundChannel.save((err) => {
+          if (err) {
+            res.status(500).send({ error: err });
+            return;
+          }
+        });
+      });
+
+      // Course.findOne({ _id: foundChannel.courseId }, (err, foundCourse) => {
+      //   if (err) {
+      //     res.status(500).send({ error: err });
+      //     return;
+      //   }
+
+      //   let channelIndex = foundCourse["channels"].indexOf(
+      //     ObjectId(req.params.channelId)
+      //   );
+
+      //   if (channelIndex >= 0) {
+      //     foundCourse["channels"].splice(channelIndex, 1);
+      //   }
+
+      //   foundCourse.save((err) => {
+      //     if (err) {
+      //       res.status(500).send({ error: err });
+      //       return;
+      //     }
+      //   });
+      // });
+
+      res.send({
+        success: `Material '${foundMaterial.name}' successfully deleted!`,
       });
     }
   );
