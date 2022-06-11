@@ -39,6 +39,7 @@ export const newMaterial = (req, res) => {
         topicId: foundChannel.topicId,
         channelId: foundChannel._id,
         userId: req.userId,
+        createdAt: Date.now(),
         updatedAt: Date.now(),
       });
 

@@ -34,7 +34,7 @@ const Material = new Schema({
       default: [],
     },
   ],
-  createdAt: { type: Date, default: Date.now() },
+  createdAt: { type: Date },
   updatedAt: { type: Date },
 });
 

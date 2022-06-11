@@ -114,8 +114,11 @@ export const signin = (req, res) => {
 
       req.session.token = token;
 
+      const userName = `${user.firstname} ${user.lastname}`;
+
       res.status(200).send({
         id: user._id,
+        name: userName,
         username: user.username,
         email: user.email,
         roles: authorities,

@@ -53,6 +53,7 @@ require("./routes/course.routes")(app);
 require("./routes/topic.routes")(app);
 require("./routes/channel.routes")(app);
 require("./routes/material.routes")(app);
+require("./routes/annotation.routes")(app);
 
 // Create HTTP server
 const server = http.createServer(app);
