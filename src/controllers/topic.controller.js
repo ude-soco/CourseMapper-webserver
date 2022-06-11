@@ -92,7 +92,7 @@ export const deleteTopic = (req, res) => {
       }
 
       let filteredTopics = foundCourse.topics.filter(
-        (topic) => topic !== ObjectId(req.params.topicId)
+        (topic) => topic.valueOf() !== req.params.topicId
       );
       foundCourse.topics = filteredTopics;
 

@@ -15,7 +15,7 @@ const User = db.user;
  * @param {string} req.body.tool The annotation tool used
  * @param {string} req.userId The author of the annotation
  */
-export const newAnnotation = async (req, res) => {
+export const newAnnotation = (req, res) => {
   Material.findOne({ _id: req.params.materialId }, (err, foundMaterial) => {
     if (err) {
       res.status(500).send({ error: err });
@@ -75,4 +75,70 @@ export const newAnnotation = async (req, res) => {
       });
     });
   });
+};
+
+/**
+ * @function deleteAnnotation
+ * Delete an annotation from a material controller
+ *
+ * @param {string} req.params.annotationId The id of the annotation
+ * @param {string} req.userId The id of the user
+ */
+export const deleteAnnotation = (req, res) => {
+  const annotationId = req.params.annotationId;
+  Annotation.findOne(
+    { _id: ObjectId(annotationId) },
+    (err, foundAnnotation) => {
+      if (err) {
+        res.status(500).send({ error: err });
+        return;
+      }
+
+      if (!foundAnnotation) {
+        res.status(404).send({
+          error: `Annotation with id ${req.params.annotationId} doesn't exist!`,
+        });
+        return;
+      }
+
+      if (req.userId !== foundAnnotation.author.userId.valueOf()) {
+        res.status(404).send({
+          error: `User is not the author of this annotation!`,
+        });
+        return;
+      }
+
+      foundAnnotation.deleteOne({ _id: annotationId }, (err) => {
+        if (err) {
+          res.status(500).send({ error: err });
+          return;
+        }
+
+        Material.findOne(
+          { _id: foundAnnotation.materialId },
+          (err, foundMaterial) => {
+            if (err) {
+              res.status(500).send({ error: err });
+              return;
+            }
+
+            const newAnnotations = foundMaterial.annotations.filter(
+              (annotation) => annotation.valueOf() !== annotationId
+            );
+
+            foundMaterial.annotations = newAnnotations;
+
+            foundMaterial.save((err) => {
+              if (err) {
+                res.status(500).send({ error: err });
+                return;
+              }
+            });
+          }
+        );
+
+        res.status(200).send({ success: "Annotation successfully deleted" });
+      });
+    }
+  );
 };

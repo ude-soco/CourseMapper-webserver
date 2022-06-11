@@ -15,4 +15,10 @@ module.exports = function (app) {
     [authJwt.verifyToken],
     controller.newAnnotation
   );
+
+  app.delete(
+    "/annotation/:annotationId",
+    [authJwt.verifyToken],
+    controller.deleteAnnotation
+  );
 };
