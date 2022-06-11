@@ -9,6 +9,8 @@ const Role = db.role;
  * @function signup
  * User registration controller
  *
+ * @param {string} req.body.firstname The username
+ * @param {string} req.body.lastname The username
  * @param {string} req.body.username The username
  * @param {string} req.body.email The email
  * @param {string} req.body.password The new password
@@ -16,6 +18,8 @@ const Role = db.role;
  */
 export const signup = (req, res) => {
   const user = new User({
+    firstname: req.body.firstname,
+    lastname: req.body.lastname,
     username: req.body.username,
     email: req.body.email,
     password: hashSync(req.body.password, 8),
@@ -80,9 +84,7 @@ export const signup = (req, res) => {
  * @param {string} req.body.password The new password
  */
 export const signin = (req, res) => {
-  User.findOne({
-    username: req.body.username,
-  })
+  User.findOne({ username: req.body.username })
     .populate("roles", "-__v")
     .exec((err, user) => {
       if (err) {

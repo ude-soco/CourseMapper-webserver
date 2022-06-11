@@ -65,7 +65,6 @@ export const newCourse = (req, res) => {
       shortName: req.body.shortName,
       userId: req.userId,
       updatedAt: Date.now(),
-      createdAt: Date.now(),
       description: req.body.description,
     });
 

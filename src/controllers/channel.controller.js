@@ -32,7 +32,6 @@ export const newChannel = (req, res) => {
       courseId: foundTopic.courseId,
       topicId: req.params.topicId,
       userId: req.userId,
-      createdAt: Date.now(),
       updatedAt: Date.now(),
     });
 

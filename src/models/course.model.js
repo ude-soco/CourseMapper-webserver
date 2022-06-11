@@ -3,15 +3,10 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const Course = new Schema({
-  name: { type: String },
-  shortName: { type: String },
-  userId: {
-    type: Schema.Types.ObjectId,
-    ref: "user",
-  },
-  updatedAt: { type: Date },
-  createdAt: { type: Date },
-  description: { type: String },
+  name: { type: String, required: true },
+  shortName: { type: String, required: true },
+  userId: { type: Schema.Types.ObjectId, ref: "user", required: true },
+  description: { type: String, default: "" },
   topics: [
     {
       type: Schema.Types.ObjectId,
@@ -26,6 +21,8 @@ const Course = new Schema({
       default: [],
     },
   ],
+  createdAt: { type: Date, default: Date.now() },
+  updatedAt: { type: Date },
 });
 
 module.exports = mongoose.model("course", Course);

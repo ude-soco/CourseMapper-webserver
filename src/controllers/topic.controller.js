@@ -31,7 +31,6 @@ export const newTopic = (req, res) => {
       name: req.body.name,
       courseId: req.params.courseId,
       userId: req.userId,
-      createdAt: Date.now(),
       updatedAt: Date.now(),
     });
 

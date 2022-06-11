@@ -3,22 +3,23 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const Channel = new Schema({
-  name: { type: String },
-  description: { type: String },
+  name: { type: String, required: true },
+  description: { type: String, default: "" },
   topicId: {
     type: Schema.Types.ObjectId,
     ref: "topic",
+    required: true,
   },
   courseId: {
     type: Schema.Types.ObjectId,
     ref: "course",
+    required: true,
   },
   userId: {
     type: Schema.Types.ObjectId,
     ref: "user",
+    required: true,
   },
-  createdAt: { type: Date },
-  updatedAt: { type: Date },
   materials: [
     {
       type: Schema.Types.ObjectId,
@@ -26,6 +27,8 @@ const Channel = new Schema({
       default: [],
     },
   ],
+  createdAt: { type: Date, default: Date.now() },
+  updatedAt: { type: Date },
 });
 
 module.exports = mongoose.model("channel", Channel);

@@ -97,6 +97,8 @@ function initializeDB() {
     if (!err && count === 0) {
       let password = hashSync(process.env.PASS, 10);
       new User({
+        firstname: "Admin",
+        lastname: "User",
         username: "admin",
         email: "admin@soco.com",
         password: password,
