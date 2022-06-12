@@ -28,7 +28,8 @@ export const getAllCourses = (req, res) => {
  * @param {string} req.params.courseId The id of the course
  */
 export const getCourse = (req, res) => {
-  Course.findOne({ _id: ObjectId(req.params.courseId) })
+  const courseId = req.params.courseId;
+  Course.findOne({ _id: ObjectId(courseId) })
     .populate("topics channels", "-__v")
     .exec((err, foundCourse) => {
       if (err) {
@@ -44,12 +45,14 @@ export const getCourse = (req, res) => {
  * Create a new course controller
  *
  * @param {string} req.body.name The name of the course, e.g., Advanced Web Technologies
- * @param {string} req.body.shortName The short name of the course, e.g., AWT
  * @param {string} req.body.description The description of the course, e.g., Teaching students about modern web technologies
  * @param {string} req.userId The owner of the course
  */
 export const newCourse = (req, res) => {
-  Course.findOne({ name: req.body.name }, (err, foundCourseName) => {
+  const courseName = req.body.name;
+  const description = req.body.description;
+
+  Course.findOne({ name: courseName }, (err, foundCourseName) => {
     if (err) {
       res.status(500).send({ error: err });
       return;
@@ -60,13 +63,22 @@ export const newCourse = (req, res) => {
       return;
     }
 
+    let shortName = courseName
+      .split(" ")
+      .map((word, index) => {
+        if (index < 3) {
+          return word[0];
+        }
+      })
+      .join("");
+
     const course = new Course({
-      name: req.body.name,
-      shortName: req.body.shortName,
+      name: courseName,
+      shortName: shortName,
       userId: req.userId,
       createdAt: Date.now(),
       updatedAt: Date.now(),
-      description: req.body.description,
+      description: description,
     });
 
     course.save((err, course) => {
@@ -89,7 +101,9 @@ export const newCourse = (req, res) => {
  * @param {string} req.params.courseId The id of the course
  */
 export const deleteCourse = (req, res) => {
-  Course.findByIdAndRemove({ _id: req.params.courseId }, (err, foundCourse) => {
+  const courseId = req.params.courseId;
+
+  Course.findByIdAndRemove({ _id: courseId }, (err, foundCourse) => {
     if (err) {
       res.status(500).send({ error: err });
       return;
@@ -97,7 +111,7 @@ export const deleteCourse = (req, res) => {
 
     if (!foundCourse) {
       res.status(404).send({
-        error: `Course with id ${req.params.courseId} doesn't exist!`,
+        error: `Course with id ${courseId} doesn't exist!`,
       });
       return;
     }
@@ -116,6 +130,57 @@ export const deleteCourse = (req, res) => {
       }
     });
 
-    res.send({ success: `Course "${foundCourse.name}" successfully deleted!` });
+    res.send({ success: `Course '${foundCourse.name}' successfully deleted!` });
+  });
+};
+
+/**
+ * @function editCourse
+ * Delete a course controller
+ *
+ * @param {string} req.params.courseId The id of the course
+ * @param {string} req.body.name The edited name of the course
+ * @param {string} req.body.description The edited description of the course
+ */
+export const editCourse = (req, res) => {
+  const courseId = req.params.courseId;
+  const courseName = req.body.name;
+  const description = req.body.description;
+
+  Course.findById(courseId, (err, foundCourse) => {
+    if (err) {
+      res.status(500).send({ error: err });
+      return;
+    }
+
+    if (!foundCourse) {
+      res.status(404).send({
+        error: `Course with id ${courseId} doesn't exist!`,
+      });
+      return;
+    }
+
+    let shortName = courseName
+      .split(" ")
+      .map((word, index) => {
+        if (index < 3) {
+          return word[0];
+        }
+      })
+      .join("");
+
+    foundCourse.name = courseName;
+    foundCourse.shortName = shortName;
+    foundCourse.description = description;
+    foundCourse.updatedAt = Date.now();
+
+    foundCourse.save((err) => {
+      if (err) {
+        res.status(500).send({ error: err });
+        return;
+      }
+
+      res.status(200).send({ success: `Course has been updated!` });
+    });
   });
 };

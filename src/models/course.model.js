@@ -4,8 +4,8 @@ const Schema = mongoose.Schema;
 
 const Course = new Schema({
   name: { type: String, required: true },
-  shortName: { type: String, required: true },
-  userId: { type: Schema.Types.ObjectId, ref: "user", required: true },
+  shortName: { type: String },
+  userId: { type: Schema.Types.ObjectId, required: true },
   description: { type: String, default: "" },
   topics: [
     {

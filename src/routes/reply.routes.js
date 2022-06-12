@@ -7,9 +7,6 @@ module.exports = function (app) {
     next();
   });
 
-  // TODO:  Later, isAdmin middleware needs to be removed.
-  //        A new middleware will be required to check whether a user is the creator of the course.
-  //        Only authorized creator can update the courses. Maybe update the isModerator middleware
   app.post(
     "/new-reply/:annotationId",
     [authJwt.verifyToken],

@@ -25,4 +25,10 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isAdmin],
     controller.deleteCourse
   );
+
+  app.post(
+    "/edit-course/:courseId",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    controller.editCourse
+  );
 };
