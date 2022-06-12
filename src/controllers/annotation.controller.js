@@ -101,18 +101,24 @@ export const deleteAnnotation = (req, res) => {
         return;
       }
 
-      if (req.userId !== foundAnnotation.author.userId.valueOf()) {
+      if (
+        req.userId !== foundAnnotation.author.userId.valueOf() &&
+        !req.isAdmin
+      ) {
         res.status(404).send({
           error: `User is not the author of this annotation!`,
         });
         return;
       }
 
+      // TODO: Should not delete if there are replies
       foundAnnotation.deleteOne({ _id: annotationId }, (err) => {
         if (err) {
           res.status(500).send({ error: err });
           return;
         }
+
+        // TODO: Delete replies associated to the annotation
 
         Material.findOne(
           { _id: foundAnnotation.materialId },
@@ -201,7 +207,7 @@ export const editAnnotation = (req, res) => {
  * Like and unlike an annotation controller
  *
  * @param {string} req.params.annotationId The id of the annotation
- * @param {string} req.userId The id of the user. Only author of the annotation can edit
+ * @param {string} req.userId The id of the user
  */
 export const likeAnnotation = (req, res) => {
   const annotationId = req.params.annotationId;
@@ -270,7 +276,7 @@ export const likeAnnotation = (req, res) => {
  * Dislike and un-dislike an annotation controller
  *
  * @param {string} req.params.annotationId The id of the annotation
- * @param {string} req.userId The id of the user. Only author of the annotation can edit
+ * @param {string} req.userId The id of the user
  */
 export const dislikeAnnotation = (req, res) => {
   const annotationId = req.params.annotationId;

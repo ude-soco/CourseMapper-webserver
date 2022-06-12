@@ -1,5 +1,5 @@
 const { authJwt, authAdmin } = require("../middlewares");
-const controller = require("../controllers/annotation.controller");
+const controller = require("../controllers/reply.controller");
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -11,32 +11,24 @@ module.exports = function (app) {
   //        A new middleware will be required to check whether a user is the creator of the course.
   //        Only authorized creator can update the courses. Maybe update the isModerator middleware
   app.post(
-    "/new-annotation/:materialId",
+    "/new-reply/:annotationId",
     [authJwt.verifyToken],
-    controller.newAnnotation
+    controller.newReply
   );
 
   app.delete(
-    "/delete-annotation/:annotationId",
+    "/delete-reply/:replyId",
     [authJwt.verifyToken, authAdmin],
-    controller.deleteAnnotation
+    controller.deleteReply
   );
 
-  app.post(
-    "/edit-annotation/:annotationId",
-    [authJwt.verifyToken],
-    controller.editAnnotation
-  );
+  app.post("/edit-reply/:replyId", [authJwt.verifyToken], controller.editReply);
+
+  app.post("/like-reply/:replyId", [authJwt.verifyToken], controller.likeReply);
 
   app.post(
-    "/like-annotation/:annotationId",
+    "/dislike-reply/:replyId",
     [authJwt.verifyToken],
-    controller.likeAnnotation
-  );
-
-  app.post(
-    "/dislike-annotation/:annotationId",
-    [authJwt.verifyToken],
-    controller.dislikeAnnotation
+    controller.dislikeReply
   );
 };

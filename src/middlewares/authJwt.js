@@ -1,4 +1,3 @@
-// const jwt = require("jsonwebtoken");
 import { verify } from "jsonwebtoken";
 const config = require("../config/auth.config.js");
 const db = require("../models");
