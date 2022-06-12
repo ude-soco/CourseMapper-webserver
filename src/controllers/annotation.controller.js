@@ -13,7 +13,7 @@ const User = db.user;
  * @param {string} req.body.content The content of the annotation
  * @param {string} req.body.location The location of the annotation
  * @param {string} req.body.tool The annotation tool used
- * @param {string} req.userId The author of the annotation
+ * @param {string} req.userId The author of the annotation. Anyone can create an annotation
  */
 export const newAnnotation = (req, res) => {
   Material.findOne({ _id: req.params.materialId }, (err, foundMaterial) => {
@@ -82,7 +82,7 @@ export const newAnnotation = (req, res) => {
  * Delete an annotation from a material controller
  *
  * @param {string} req.params.annotationId The id of the annotation
- * @param {string} req.userId The id of the user
+ * @param {string} req.userId The id of the user. Only author of the annotation can delete
  */
 export const deleteAnnotation = (req, res) => {
   const annotationId = req.params.annotationId;
@@ -139,6 +139,198 @@ export const deleteAnnotation = (req, res) => {
 
         res.status(200).send({ success: "Annotation successfully deleted" });
       });
+    }
+  );
+};
+
+/**
+ * @function editAnnotation
+ * Update an annotation controller
+ *
+ * @param {string} req.params.annotationId The id of the annotation
+ * @param {string} req.body.type The type of the annotation
+ * @param {string} req.body.content The content of the annotation
+ * @param {string} req.body.location The location of the annotation
+ * @param {string} req.body.tool The annotation tool used
+ * @param {string} req.userId The id of the user. Only author of the annotation can edit
+ */
+export const editAnnotation = (req, res) => {
+  const annotationId = req.params.annotationId;
+
+  Annotation.findOne(
+    { _id: ObjectId(annotationId) },
+    (err, foundAnnotation) => {
+      if (err) {
+        res.status(500).send({ error: err });
+        return;
+      }
+
+      if (!foundAnnotation) {
+        res.status(404).send({
+          error: `Annotation with id ${req.params.annotationId} doesn't exist!`,
+        });
+        return;
+      }
+
+      if (req.userId !== foundAnnotation.author.userId.valueOf()) {
+        res.status(404).send({
+          error: `Cannot update! User is not the author of this annotation!`,
+        });
+        return;
+      }
+
+      foundAnnotation.type = req.body.type;
+      foundAnnotation.content = req.body.content;
+      foundAnnotation.location = req.body.location;
+      foundAnnotation.tool = req.body.tool;
+      foundAnnotation.updatedAt = Date.now();
+
+      foundAnnotation.save((err) => {
+        if (err) {
+          res.status(500).send({ error: err });
+          return;
+        }
+        res.status(200).send({ success: "Annotation successfully updated" });
+      });
+    }
+  );
+};
+
+/**
+ * @function likeAnnotation
+ * Like and unlike an annotation controller
+ *
+ * @param {string} req.params.annotationId The id of the annotation
+ * @param {string} req.userId The id of the user. Only author of the annotation can edit
+ */
+export const likeAnnotation = (req, res) => {
+  const annotationId = req.params.annotationId;
+
+  Annotation.findOne(
+    { _id: ObjectId(annotationId) },
+    (err, foundAnnotation) => {
+      if (err) {
+        res.status(500).send({ error: err });
+        return;
+      }
+
+      if (!foundAnnotation) {
+        res.status(404).send({
+          error: `Annotation with id ${req.params.annotationId} doesn't exist!`,
+        });
+        return;
+      }
+
+      if (foundAnnotation.likes.includes(ObjectId(req.userId))) {
+        const newLikes = foundAnnotation.likes.filter(
+          (user) => user.valueOf() !== req.userId
+        );
+
+        foundAnnotation.likes = newLikes;
+
+        foundAnnotation.save((err, savedAnnotation) => {
+          if (err) {
+            res.status(500).send({ error: err });
+            return;
+          }
+          const countLikes = savedAnnotation.likes.length;
+
+          res.status(200).send({
+            count: countLikes,
+            success: "Annotation successfully unliked!",
+          });
+        });
+      } else if (foundAnnotation.dislikes.includes(ObjectId(req.userId))) {
+        res
+          .status(404)
+          .send({ error: "Cannot like! Annotation already disliked by user!" });
+      } else {
+        foundAnnotation.likes.push(ObjectId(req.userId));
+
+        foundAnnotation.save((err, savedAnnotation) => {
+          if (err) {
+            res.status(500).send({ error: err });
+            return;
+          }
+
+          const countLikes = savedAnnotation.likes.length;
+
+          res.status(200).send({
+            count: countLikes,
+            success: "Annotation successfully liked!",
+          });
+        });
+      }
+    }
+  );
+};
+
+/**
+ * @function dislikeAnnotation
+ * Dislike and un-dislike an annotation controller
+ *
+ * @param {string} req.params.annotationId The id of the annotation
+ * @param {string} req.userId The id of the user. Only author of the annotation can edit
+ */
+export const dislikeAnnotation = (req, res) => {
+  const annotationId = req.params.annotationId;
+
+  Annotation.findOne(
+    { _id: ObjectId(annotationId) },
+    (err, foundAnnotation) => {
+      if (err) {
+        res.status(500).send({ error: err });
+        return;
+      }
+
+      if (!foundAnnotation) {
+        res.status(404).send({
+          error: `Annotation with id ${req.params.annotationId} doesn't exist!`,
+        });
+        return;
+      }
+
+      if (foundAnnotation.dislikes.includes(ObjectId(req.userId))) {
+        const newDislikes = foundAnnotation.dislikes.filter(
+          (user) => user.valueOf() !== req.userId
+        );
+
+        foundAnnotation.dislikes = newDislikes;
+
+        foundAnnotation.save((err, savedAnnotation) => {
+          if (err) {
+            res.status(500).send({ error: err });
+            return;
+          }
+
+          const countDislikes = savedAnnotation.dislikes.length;
+
+          res.status(200).send({
+            count: countDislikes,
+            success: "Annotation successfully un-disliked!",
+          });
+        });
+      } else if (foundAnnotation.likes.includes(ObjectId(req.userId))) {
+        res
+          .status(404)
+          .send({ error: "Cannot dislike! Annotation already liked by user!" });
+      } else {
+        foundAnnotation.dislikes.push(ObjectId(req.userId));
+
+        foundAnnotation.save((err, savedAnnotation) => {
+          if (err) {
+            res.status(500).send({ error: err });
+            return;
+          }
+
+          const countDislikes = savedAnnotation.dislikes.length;
+
+          res.status(200).send({
+            count: countDislikes,
+            success: "Annotation successfully disliked!",
+          });
+        });
+      }
     }
   );
 };

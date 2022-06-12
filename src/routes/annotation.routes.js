@@ -21,4 +21,22 @@ module.exports = function (app) {
     [authJwt.verifyToken],
     controller.deleteAnnotation
   );
+
+  app.post(
+    "/edit-annotation/:annotationId",
+    [authJwt.verifyToken],
+    controller.editAnnotation
+  );
+
+  app.post(
+    "/like-annotation/:annotationId",
+    [authJwt.verifyToken],
+    controller.likeAnnotation
+  );
+
+  app.post(
+    "/dislike-annotation/:annotationId",
+    [authJwt.verifyToken],
+    controller.dislikeAnnotation
+  );
 };
