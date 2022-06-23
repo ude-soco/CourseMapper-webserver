@@ -7,6 +7,12 @@ module.exports = function (app) {
     next();
   });
 
+  app.get(
+    "/materials/:materialId",
+    [authJwt.verifyToken],
+    controller.getMaterial
+  );
+
   // TODO:  Later, isAdmin middleware needs to be removed.
   //        A new middleware will be required to check whether a user is the creator of the course.
   //        Only authorized creator can update the courses. Maybe update the isModerator middleware

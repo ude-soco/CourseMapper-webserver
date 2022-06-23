@@ -9,7 +9,7 @@ module.exports = function (app) {
 
   app.get("/courses", [authJwt.verifyToken], controller.getAllCourses);
 
-  app.get("/course/:courseId", [authJwt.verifyToken], controller.getCourse);
+  app.get("/courses/:courseId", [authJwt.verifyToken], controller.getCourse);
 
   // TODO:  isAdmin middleware needs to be removed.
   //        A new middleware will be required to check whether a user is the creator of the course.

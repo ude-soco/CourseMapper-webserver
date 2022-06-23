@@ -5,6 +5,25 @@ const Course = db.course;
 const Topic = db.topic;
 
 /**
+ * @function getTopic
+ * Get details of a topic controller
+ *
+ * @param {string} req.params.topicId The id of the topic
+ */
+export const getTopic = (req, res) => {
+  const topicId = req.params.topicId;
+  Topic.findOne({ _id: ObjectId(topicId) })
+    .populate("channels", "-__v")
+    .exec((err, foundTopic) => {
+      if (err) {
+        res.status(500).send({ message: err });
+        return;
+      }
+      res.status(200).send(foundTopic);
+    });
+};
+
+/**
  * @function newTopic
  * Create a new topic controller
  *

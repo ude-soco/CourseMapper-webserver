@@ -6,11 +6,31 @@ const Material = db.material;
 const Topic = db.topic;
 
 /**
+ * @function getChannel
+ * Get details of a channel controller
+ *
+ * @param {string} req.params.channelId The id of the channel
+ */
+export const getChannel = (req, res) => {
+  const channelId = req.params.channelId;
+  Channel.findOne({ _id: ObjectId(channelId) })
+    .populate("materials", "-__v")
+    .exec((err, foundChannel) => {
+      if (err) {
+        res.status(500).send({ message: err });
+        return;
+      }
+      res.status(200).send(foundChannel);
+    });
+};
+
+/**
  * @function newChannel
  * Get a course detail in database controller
  *
  * @param {string} req.params.topicId The id of the topic
  * @param {string} req.body.name The name of the channel, e.g., React Crash Course
+ * @param {string} req.body.description The description of the channel, e.g., Teaching about React
  * @param {string} req.userId The owner of the channel
  */
 export const newChannel = (req, res) => {
@@ -29,6 +49,7 @@ export const newChannel = (req, res) => {
 
     const channel = new Channel({
       name: req.body.name,
+      description: req.body.description,
       courseId: foundTopic.courseId,
       topicId: req.params.topicId,
       userId: req.userId,

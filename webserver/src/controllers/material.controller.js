@@ -4,6 +4,25 @@ const Channel = db.channel;
 const Material = db.material;
 
 /**
+ * @function getMaterial
+ * Get details of a material controller
+ *
+ * @param {string} req.params.materialId The id of the material
+ */
+export const getMaterial = (req, res) => {
+  const materialId = req.params.materialId;
+  Material.findOne({ _id: ObjectId(materialId) })
+    .populate("annotations", "-__v")
+    .exec((err, foundMaterial) => {
+      if (err) {
+        res.status(500).send({ message: err });
+        return;
+      }
+      res.status(200).send(foundMaterial);
+    });
+};
+
+/**
  * @function newMaterial
  * Add a new material to a channel controller
  *
