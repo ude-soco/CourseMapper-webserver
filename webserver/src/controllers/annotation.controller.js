@@ -2,11 +2,13 @@ const ObjectId = require("mongoose").Types.ObjectId;
 const db = require("../models");
 const Annotation = db.annotation;
 const Material = db.material;
+const Tag = db.tag;
 const User = db.user;
 
 /**
  * @function newAnnotation
- * Add a new annotation to a material controller
+ * Add a new annotation to a material controller.
+ * If hashtag(s) exists in the content, it adds to Tag collection
  *
  * @param {string} req.params.materialId The id of the material
  * @param {string} req.body.type The type of the annotation
@@ -16,6 +18,7 @@ const User = db.user;
  * @param {string} req.userId The author of the annotation. Anyone can create an annotation
  */
 export const newAnnotation = (req, res) => {
+  const content = req.body.content;
   Material.findOne({ _id: req.params.materialId }, (err, foundMaterial) => {
     if (err) {
       res.status(500).send({ error: err });
@@ -39,7 +42,7 @@ export const newAnnotation = (req, res) => {
 
       const annotation = new Annotation({
         type: req.body.type,
-        content: req.body.content,
+        content: content,
         author: {
           userId: req.userId,
           name: authorName,
@@ -66,6 +69,33 @@ export const newAnnotation = (req, res) => {
           if (err) {
             res.status(500).send({ error: err });
             return;
+          }
+
+          // Checks for hashtags in content
+          let foundTags = content.split(" ").filter((v) => v.startsWith("#"));
+
+          if (foundTags.length !== 0) {
+            let foundTagsSchema = [];
+            foundTags.forEach((tag) => {
+              let newTag = new Tag({
+                name: tag,
+                courseId: foundMaterial.courseId,
+                topicId: foundMaterial.topicId,
+                channelId: foundMaterial._id,
+                materialId: foundMaterial._id,
+                annotationId: newAnnotation._id,
+                createdAt: Date.now(),
+                updatedAt: Date.now(),
+              });
+              foundTagsSchema.push(newTag);
+            });
+
+            Tag.insertMany(foundTagsSchema, (err) => {
+              if (err) {
+                res.status(500).send({ error: err });
+                return;
+              }
+            });
           }
         });
 
@@ -118,7 +148,8 @@ export const deleteAnnotation = (req, res) => {
           return;
         }
 
-        // TODO: Delete replies associated to the annotation
+        // TODO: Delete associated replies based on annotationId
+        // TODO: Delete associated tags based on annotationId
 
         Material.findOne(
           { _id: foundAnnotation.materialId },
@@ -191,6 +222,7 @@ export const editAnnotation = (req, res) => {
       foundAnnotation.tool = req.body.tool;
       foundAnnotation.updatedAt = Date.now();
 
+      // TODO: Check if the tag has changed and/or new tag(s) is added
       foundAnnotation.save((err) => {
         if (err) {
           res.status(500).send({ error: err });

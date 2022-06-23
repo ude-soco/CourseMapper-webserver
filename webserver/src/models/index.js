@@ -11,6 +11,7 @@ db.topic = require("./topic.model");
 db.channel = require("./channel.model");
 db.material = require("./material.model");
 db.annotation = require("./annotation.model");
+db.tag = require("./tag.model");
 db.reply = require("./reply.model");
 db.ROLES = ["user", "admin", "moderator"];
 
