@@ -32,7 +32,7 @@
 
     - Rename the file `example.env` to `.env`
 
-    - Open command prompt/terminal and follow the steps below:
+    - Open a command prompt/terminal and move to the `webserver` directory. Then type the following command:
 
       - Install node packages
 
