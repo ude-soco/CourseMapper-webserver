@@ -1,0 +1,39 @@
+version: "3"
+
+services:
+  mongoDB:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodbdata:/data/db
+    networks:
+      - webserver
+
+  coursemapper-webserver:
+    image: coursemapper-webserver
+    build:
+      context: ./webserver
+      dockerfile: dev.Dockerfile
+    restart: unless-stopped
+    environment:
+      - PORT=8080
+      - COOKIE_SECRET=secret
+      - JWT_SECRET=secret
+      - PASS=adminpassword
+      - MONGO_DB=mongodb://mongoDB:27017/coursemapper
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./webserver/:/app/
+    depends_on:
+      - mongoDB
+    networks:
+      - webserver
+networks:
+  webserver:
+    driver: bridge
+
+volumes:
+  mongodbdata:
+    driver: local
