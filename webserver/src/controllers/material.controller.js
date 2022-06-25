@@ -11,11 +11,11 @@ const Material = db.material;
  */
 export const getMaterial = (req, res) => {
   const materialId = req.params.materialId;
-  Material.findOne({ _id: ObjectId(materialId) })
+  Material.findOne({_id: ObjectId(materialId)})
     .populate("annotations", "-__v")
     .exec((err, foundMaterial) => {
       if (err) {
-        res.status(500).send({ message: err });
+        res.status(500).send({message: err});
         return;
       }
       res.status(200).send(foundMaterial);
@@ -35,10 +35,10 @@ export const getMaterial = (req, res) => {
  */
 export const newMaterial = (req, res) => {
   Channel.findOne(
-    { _id: ObjectId(req.params.channelId) },
+    {_id: ObjectId(req.params.channelId)},
     (err, foundChannel) => {
       if (err) {
-        res.status(500).send({ error: err });
+        res.status(500).send({error: err});
         return;
       }
 
@@ -64,7 +64,7 @@ export const newMaterial = (req, res) => {
 
       material.save((err, material) => {
         if (err) {
-          res.status(500).send({ error: err });
+          res.status(500).send({error: err});
           return;
         }
 
@@ -72,7 +72,7 @@ export const newMaterial = (req, res) => {
 
         foundChannel.save((err) => {
           if (err) {
-            res.status(500).send({ error: err });
+            res.status(500).send({error: err});
             return;
           }
         });
@@ -94,10 +94,10 @@ export const newMaterial = (req, res) => {
  */
 export const deleteMaterial = (req, res) => {
   Material.findByIdAndRemove(
-    { _id: req.params.materialId },
+    {_id: req.params.materialId},
     (err, foundMaterial) => {
       if (err) {
-        res.status(500).send({ error: err });
+        res.status(500).send({error: err});
         return;
       }
 
@@ -108,9 +108,9 @@ export const deleteMaterial = (req, res) => {
         return;
       }
 
-      Channel.findOne({ _id: foundMaterial.channelId }, (err, foundChannel) => {
+      Channel.findOne({_id: foundMaterial.channelId}, (err, foundChannel) => {
         if (err) {
-          res.status(500).send({ error: err });
+          res.status(500).send({error: err});
           return;
         }
 
@@ -124,7 +124,7 @@ export const deleteMaterial = (req, res) => {
 
         foundChannel.save((err) => {
           if (err) {
-            res.status(500).send({ error: err });
+            res.status(500).send({error: err});
             return;
           }
         });

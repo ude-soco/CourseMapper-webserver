@@ -19,9 +19,9 @@ const User = db.user;
  */
 export const newAnnotation = (req, res) => {
   const content = req.body.content;
-  Material.findOne({ _id: req.params.materialId }, (err, foundMaterial) => {
+  Material.findOne({_id: req.params.materialId}, (err, foundMaterial) => {
     if (err) {
-      res.status(500).send({ error: err });
+      res.status(500).send({error: err});
       return;
     }
 
@@ -32,9 +32,9 @@ export const newAnnotation = (req, res) => {
       return;
     }
 
-    User.findOne({ _id: req.userId }, (err, foundUser) => {
+    User.findOne({_id: req.userId}, (err, foundUser) => {
       if (err) {
-        res.status(500).send({ error: err });
+        res.status(500).send({error: err});
         return;
       }
 
@@ -44,8 +44,7 @@ export const newAnnotation = (req, res) => {
         type: req.body.type,
         content: content,
         author: {
-          userId: req.userId,
-          name: authorName,
+          userId: req.userId, name: authorName,
         },
         location: req.body.location,
         tool: req.body.tool,
@@ -59,7 +58,7 @@ export const newAnnotation = (req, res) => {
 
       annotation.save((err, newAnnotation) => {
         if (err) {
-          res.status(500).send({ error: err });
+          res.status(500).send({error: err});
           return;
         }
 
@@ -67,7 +66,7 @@ export const newAnnotation = (req, res) => {
 
         foundMaterial.save((err) => {
           if (err) {
-            res.status(500).send({ error: err });
+            res.status(500).send({error: err});
             return;
           }
 
@@ -92,7 +91,7 @@ export const newAnnotation = (req, res) => {
 
             Tag.insertMany(foundTagsSchema, (err) => {
               if (err) {
-                res.status(500).send({ error: err });
+                res.status(500).send({error: err});
                 return;
               }
             });
@@ -101,7 +100,7 @@ export const newAnnotation = (req, res) => {
 
         res
           .status(200)
-          .send({ id: newAnnotation._id, success: "Annotation added!" });
+          .send({id: newAnnotation._id, success: "Annotation added!"});
       });
     });
   });
@@ -116,68 +115,57 @@ export const newAnnotation = (req, res) => {
  */
 export const deleteAnnotation = (req, res) => {
   const annotationId = req.params.annotationId;
-  Annotation.findOne(
-    { _id: ObjectId(annotationId) },
-    (err, foundAnnotation) => {
+  Annotation.findOne({_id: ObjectId(annotationId)}, (err, foundAnnotation) => {
+    if (err) {
+      res.status(500).send({error: err});
+      return;
+    }
+
+    if (!foundAnnotation) {
+      res.status(404).send({
+        error: `Annotation with id ${req.params.annotationId} doesn't exist!`,
+      });
+      return;
+    }
+
+    if (req.userId !== foundAnnotation.author.userId.valueOf() && !req.isAdmin) {
+      res.status(404).send({
+        error: `User is not the author of this annotation!`,
+      });
+      return;
+    }
+
+    // TODO: Should not delete if there are replies
+    foundAnnotation.deleteOne({_id: annotationId}, (err) => {
       if (err) {
-        res.status(500).send({ error: err });
+        res.status(500).send({error: err});
         return;
       }
 
-      if (!foundAnnotation) {
-        res.status(404).send({
-          error: `Annotation with id ${req.params.annotationId} doesn't exist!`,
-        });
-        return;
-      }
+      // TODO: Delete associated replies based on annotationId
+      // TODO: Delete associated tags based on annotationId
 
-      if (
-        req.userId !== foundAnnotation.author.userId.valueOf() &&
-        !req.isAdmin
-      ) {
-        res.status(404).send({
-          error: `User is not the author of this annotation!`,
-        });
-        return;
-      }
-
-      // TODO: Should not delete if there are replies
-      foundAnnotation.deleteOne({ _id: annotationId }, (err) => {
+      Material.findOne({_id: foundAnnotation.materialId}, (err, foundMaterial) => {
         if (err) {
-          res.status(500).send({ error: err });
+          res.status(500).send({error: err});
           return;
         }
 
-        // TODO: Delete associated replies based on annotationId
-        // TODO: Delete associated tags based on annotationId
+        const newAnnotations = foundMaterial.annotations.filter((annotation) => annotation.valueOf() !== annotationId);
 
-        Material.findOne(
-          { _id: foundAnnotation.materialId },
-          (err, foundMaterial) => {
-            if (err) {
-              res.status(500).send({ error: err });
-              return;
-            }
+        foundMaterial.annotations = newAnnotations;
 
-            const newAnnotations = foundMaterial.annotations.filter(
-              (annotation) => annotation.valueOf() !== annotationId
-            );
-
-            foundMaterial.annotations = newAnnotations;
-
-            foundMaterial.save((err) => {
-              if (err) {
-                res.status(500).send({ error: err });
-                return;
-              }
-            });
+        foundMaterial.save((err) => {
+          if (err) {
+            res.status(500).send({error: err});
+            return;
           }
-        );
-
-        res.status(200).send({ success: "Annotation successfully deleted" });
+        });
       });
-    }
-  );
+
+      res.status(200).send({success: "Annotation successfully deleted"});
+    });
+  });
 };
 
 /**
@@ -194,44 +182,41 @@ export const deleteAnnotation = (req, res) => {
 export const editAnnotation = (req, res) => {
   const annotationId = req.params.annotationId;
 
-  Annotation.findOne(
-    { _id: ObjectId(annotationId) },
-    (err, foundAnnotation) => {
-      if (err) {
-        res.status(500).send({ error: err });
-        return;
-      }
-
-      if (!foundAnnotation) {
-        res.status(404).send({
-          error: `Annotation with id ${req.params.annotationId} doesn't exist!`,
-        });
-        return;
-      }
-
-      if (req.userId !== foundAnnotation.author.userId.valueOf()) {
-        res.status(404).send({
-          error: `Cannot update! User is not the author of this annotation!`,
-        });
-        return;
-      }
-
-      foundAnnotation.type = req.body.type;
-      foundAnnotation.content = req.body.content;
-      foundAnnotation.location = req.body.location;
-      foundAnnotation.tool = req.body.tool;
-      foundAnnotation.updatedAt = Date.now();
-
-      // TODO: Check if the tag has changed and/or new tag(s) is added
-      foundAnnotation.save((err) => {
-        if (err) {
-          res.status(500).send({ error: err });
-          return;
-        }
-        res.status(200).send({ success: "Annotation successfully updated" });
-      });
+  Annotation.findOne({_id: ObjectId(annotationId)}, (err, foundAnnotation) => {
+    if (err) {
+      res.status(500).send({error: err});
+      return;
     }
-  );
+
+    if (!foundAnnotation) {
+      res.status(404).send({
+        error: `Annotation with id ${req.params.annotationId} doesn't exist!`,
+      });
+      return;
+    }
+
+    if (req.userId !== foundAnnotation.author.userId.valueOf()) {
+      res.status(404).send({
+        error: `Cannot update! User is not the author of this annotation!`,
+      });
+      return;
+    }
+
+    foundAnnotation.type = req.body.type;
+    foundAnnotation.content = req.body.content;
+    foundAnnotation.location = req.body.location;
+    foundAnnotation.tool = req.body.tool;
+    foundAnnotation.updatedAt = Date.now();
+
+    // TODO: Check if the tag has changed and/or new tag(s) is added
+    foundAnnotation.save((err) => {
+      if (err) {
+        res.status(500).send({error: err});
+        return;
+      }
+      res.status(200).send({success: "Annotation successfully updated"});
+    });
+  });
 };
 
 /**
@@ -244,63 +229,56 @@ export const editAnnotation = (req, res) => {
 export const likeAnnotation = (req, res) => {
   const annotationId = req.params.annotationId;
 
-  Annotation.findOne(
-    { _id: ObjectId(annotationId) },
-    (err, foundAnnotation) => {
-      if (err) {
-        res.status(500).send({ error: err });
-        return;
-      }
-
-      if (!foundAnnotation) {
-        res.status(404).send({
-          error: `Annotation with id ${req.params.annotationId} doesn't exist!`,
-        });
-        return;
-      }
-
-      if (foundAnnotation.likes.includes(ObjectId(req.userId))) {
-        const newLikes = foundAnnotation.likes.filter(
-          (user) => user.valueOf() !== req.userId
-        );
-
-        foundAnnotation.likes = newLikes;
-
-        foundAnnotation.save((err, savedAnnotation) => {
-          if (err) {
-            res.status(500).send({ error: err });
-            return;
-          }
-          const countLikes = savedAnnotation.likes.length;
-
-          res.status(200).send({
-            count: countLikes,
-            success: "Annotation successfully unliked!",
-          });
-        });
-      } else if (foundAnnotation.dislikes.includes(ObjectId(req.userId))) {
-        res
-          .status(404)
-          .send({ error: "Cannot like! Annotation already disliked by user!" });
-      } else {
-        foundAnnotation.likes.push(ObjectId(req.userId));
-
-        foundAnnotation.save((err, savedAnnotation) => {
-          if (err) {
-            res.status(500).send({ error: err });
-            return;
-          }
-
-          const countLikes = savedAnnotation.likes.length;
-
-          res.status(200).send({
-            count: countLikes,
-            success: "Annotation successfully liked!",
-          });
-        });
-      }
+  Annotation.findOne({_id: ObjectId(annotationId)}, (err, foundAnnotation) => {
+    if (err) {
+      res.status(500).send({error: err});
+      return;
     }
-  );
+
+    if (!foundAnnotation) {
+      res.status(404).send({
+        error: `Annotation with id ${req.params.annotationId} doesn't exist!`,
+      });
+      return;
+    }
+
+    if (foundAnnotation.likes.includes(ObjectId(req.userId))) {
+      const newLikes = foundAnnotation.likes.filter((user) => user.valueOf() !== req.userId);
+
+      foundAnnotation.likes = newLikes;
+
+      foundAnnotation.save((err, savedAnnotation) => {
+        if (err) {
+          res.status(500).send({error: err});
+          return;
+        }
+        const countLikes = savedAnnotation.likes.length;
+
+        res.status(200).send({
+          count: countLikes, success: "Annotation successfully unliked!",
+        });
+      });
+    } else if (foundAnnotation.dislikes.includes(ObjectId(req.userId))) {
+      res
+        .status(404)
+        .send({error: "Cannot like! Annotation already disliked by user!"});
+    } else {
+      foundAnnotation.likes.push(ObjectId(req.userId));
+
+      foundAnnotation.save((err, savedAnnotation) => {
+        if (err) {
+          res.status(500).send({error: err});
+          return;
+        }
+
+        const countLikes = savedAnnotation.likes.length;
+
+        res.status(200).send({
+          count: countLikes, success: "Annotation successfully liked!",
+        });
+      });
+    }
+  });
 };
 
 /**
@@ -313,62 +291,55 @@ export const likeAnnotation = (req, res) => {
 export const dislikeAnnotation = (req, res) => {
   const annotationId = req.params.annotationId;
 
-  Annotation.findOne(
-    { _id: ObjectId(annotationId) },
-    (err, foundAnnotation) => {
-      if (err) {
-        res.status(500).send({ error: err });
-        return;
-      }
-
-      if (!foundAnnotation) {
-        res.status(404).send({
-          error: `Annotation with id ${req.params.annotationId} doesn't exist!`,
-        });
-        return;
-      }
-
-      if (foundAnnotation.dislikes.includes(ObjectId(req.userId))) {
-        const newDislikes = foundAnnotation.dislikes.filter(
-          (user) => user.valueOf() !== req.userId
-        );
-
-        foundAnnotation.dislikes = newDislikes;
-
-        foundAnnotation.save((err, savedAnnotation) => {
-          if (err) {
-            res.status(500).send({ error: err });
-            return;
-          }
-
-          const countDislikes = savedAnnotation.dislikes.length;
-
-          res.status(200).send({
-            count: countDislikes,
-            success: "Annotation successfully un-disliked!",
-          });
-        });
-      } else if (foundAnnotation.likes.includes(ObjectId(req.userId))) {
-        res
-          .status(404)
-          .send({ error: "Cannot dislike! Annotation already liked by user!" });
-      } else {
-        foundAnnotation.dislikes.push(ObjectId(req.userId));
-
-        foundAnnotation.save((err, savedAnnotation) => {
-          if (err) {
-            res.status(500).send({ error: err });
-            return;
-          }
-
-          const countDislikes = savedAnnotation.dislikes.length;
-
-          res.status(200).send({
-            count: countDislikes,
-            success: "Annotation successfully disliked!",
-          });
-        });
-      }
+  Annotation.findOne({_id: ObjectId(annotationId)}, (err, foundAnnotation) => {
+    if (err) {
+      res.status(500).send({error: err});
+      return;
     }
-  );
+
+    if (!foundAnnotation) {
+      res.status(404).send({
+        error: `Annotation with id ${req.params.annotationId} doesn't exist!`,
+      });
+      return;
+    }
+
+    if (foundAnnotation.dislikes.includes(ObjectId(req.userId))) {
+      const newDislikes = foundAnnotation.dislikes.filter((user) => user.valueOf() !== req.userId);
+
+      foundAnnotation.dislikes = newDislikes;
+
+      foundAnnotation.save((err, savedAnnotation) => {
+        if (err) {
+          res.status(500).send({error: err});
+          return;
+        }
+
+        const countDislikes = savedAnnotation.dislikes.length;
+
+        res.status(200).send({
+          count: countDislikes, success: "Annotation successfully un-disliked!",
+        });
+      });
+    } else if (foundAnnotation.likes.includes(ObjectId(req.userId))) {
+      res
+        .status(404)
+        .send({error: "Cannot dislike! Annotation already liked by user!"});
+    } else {
+      foundAnnotation.dislikes.push(ObjectId(req.userId));
+
+      foundAnnotation.save((err, savedAnnotation) => {
+        if (err) {
+          res.status(500).send({error: err});
+          return;
+        }
+
+        const countDislikes = savedAnnotation.dislikes.length;
+
+        res.status(200).send({
+          count: countDislikes, success: "Annotation successfully disliked!",
+        });
+      });
+    }
+  });
 };

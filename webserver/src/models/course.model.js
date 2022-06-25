@@ -3,10 +3,10 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const Course = new Schema({
-  name: { type: String, required: true },
-  shortName: { type: String },
-  userId: { type: Schema.Types.ObjectId, required: true },
-  description: { type: String, default: "" },
+  name: {type: String, required: true},
+  shortName: {type: String},
+  userId: {type: Schema.Types.ObjectId, required: true},
+  description: {type: String, default: ""},
   topics: [
     {
       type: Schema.Types.ObjectId,
@@ -21,8 +21,8 @@ const Course = new Schema({
       default: [],
     },
   ],
-  createdAt: { type: Date },
-  updatedAt: { type: Date },
+  createdAt: {type: Date},
+  updatedAt: {type: Date},
 });
 
 module.exports = mongoose.model("course", Course);

@@ -12,11 +12,11 @@ const Topic = db.topic;
  */
 export const getTopic = (req, res) => {
   const topicId = req.params.topicId;
-  Topic.findOne({ _id: ObjectId(topicId) })
+  Topic.findOne({_id: ObjectId(topicId)})
     .populate("channels", "-__v")
     .exec((err, foundTopic) => {
       if (err) {
-        res.status(500).send({ message: err });
+        res.status(500).send({message: err});
         return;
       }
       res.status(200).send(foundTopic);
@@ -33,9 +33,9 @@ export const getTopic = (req, res) => {
  * @param {string} req.userId The owner of the topic
  */
 export const newTopic = (req, res) => {
-  Course.findOne({ _id: ObjectId(req.params.courseId) }, (err, foundCourse) => {
+  Course.findOne({_id: ObjectId(req.params.courseId)}, (err, foundCourse) => {
     if (err) {
-      res.status(500).send({ error: err });
+      res.status(500).send({error: err});
       return;
     }
 
@@ -56,11 +56,11 @@ export const newTopic = (req, res) => {
 
     topic.save((err, topic) => {
       if (err) {
-        res.status(500).send({ error: err });
+        res.status(500).send({error: err});
         return;
       }
 
-      res.send({ id: topic._id, success: `New topic '${topic.name}' added!` });
+      res.send({id: topic._id, success: `New topic '${topic.name}' added!`});
 
       let topics = [];
       topics.push(topic._id);
@@ -69,7 +69,7 @@ export const newTopic = (req, res) => {
 
       foundCourse.save((err) => {
         if (err) {
-          res.status(500).send({ error: err });
+          res.status(500).send({error: err});
           return;
         }
       });
@@ -84,9 +84,9 @@ export const newTopic = (req, res) => {
  * @param {string} req.params.topicId The id of the topic
  */
 export const deleteTopic = (req, res) => {
-  Topic.findByIdAndRemove({ _id: req.params.topicId }, (err, foundTopic) => {
+  Topic.findByIdAndRemove({_id: req.params.topicId}, (err, foundTopic) => {
     if (err) {
-      res.status(500).send({ error: err });
+      res.status(500).send({error: err});
       return;
     }
 
@@ -97,16 +97,16 @@ export const deleteTopic = (req, res) => {
       return;
     }
 
-    Channel.deleteMany({ _id: { $in: foundTopic.channels } }, (err) => {
+    Channel.deleteMany({_id: {$in: foundTopic.channels}}, (err) => {
       if (err) {
-        res.status(500).send({ error: err });
+        res.status(500).send({error: err});
         return;
       }
     });
 
-    Course.findOne({ _id: foundTopic.courseId }, (err, foundCourse) => {
+    Course.findOne({_id: foundTopic.courseId}, (err, foundCourse) => {
       if (err) {
-        res.status(500).send({ error: err });
+        res.status(500).send({error: err});
         return;
       }
 
@@ -117,12 +117,12 @@ export const deleteTopic = (req, res) => {
 
       foundCourse.save((err) => {
         if (err) {
-          res.status(500).send({ error: err });
+          res.status(500).send({error: err});
           return;
         }
       });
     });
 
-    res.send({ success: `Topic '${foundTopic.name}' successfully deleted!` });
+    res.send({success: `Topic '${foundTopic.name}' successfully deleted!`});
   });
 };

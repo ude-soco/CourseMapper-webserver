@@ -3,10 +3,10 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const Material = new Schema({
-  type: { type: String, required: true },
-  name: { type: String, required: true },
-  desciption: { type: String, default: "" },
-  url: { type: String, required: true },
+  type: {type: String, required: true},
+  name: {type: String, required: true},
+  desciption: {type: String, default: ""},
+  url: {type: String, required: true},
   topicId: {
     type: Schema.Types.ObjectId,
     ref: "topic",
@@ -34,8 +34,8 @@ const Material = new Schema({
       default: [],
     },
   ],
-  createdAt: { type: Date },
-  updatedAt: { type: Date },
+  createdAt: {type: Date},
+  updatedAt: {type: Date},
 });
 
 module.exports = mongoose.model("material", Material);

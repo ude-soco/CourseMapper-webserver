@@ -1,5 +1,6 @@
-import { sign } from "jsonwebtoken";
-import { hashSync, compareSync } from "bcryptjs";
+import {sign} from "jsonwebtoken";
+import {compareSync, hashSync} from "bcryptjs";
+
 const config = require("../config/auth.config");
 const db = require("../models");
 const User = db.user;
@@ -27,49 +28,49 @@ export const signup = (req, res) => {
 
   user.save((err, user) => {
     if (err) {
-      res.status(500).send({ error: err });
+      res.status(500).send({error: err});
       return;
     }
 
     if (req.body.roles) {
       Role.find(
         {
-          name: { $in: req.body.roles },
+          name: {$in: req.body.roles},
         },
         (err, roles) => {
           if (err) {
-            res.status(500).send({ error: err });
+            res.status(500).send({error: err});
             return;
           }
 
           user.roles = roles.map((role) => role._id);
           user.save((err) => {
             if (err) {
-              res.status(500).send({ error: err });
+              res.status(500).send({error: err});
               return;
             }
 
             res
               .status(200)
-              .send({ success: "User is successfully registered!" });
+              .send({success: "User is successfully registered!"});
           });
         }
       );
     } else {
-      Role.findOne({ name: "user" }, (err, role) => {
+      Role.findOne({name: "user"}, (err, role) => {
         if (err) {
-          res.status(500).send({ error: err });
+          res.status(500).send({error: err});
           return;
         }
 
         user.roles = [role._id];
         user.save((err) => {
           if (err) {
-            res.status(500).send({ error: err });
+            res.status(500).send({error: err});
             return;
           }
 
-          res.status(200).send({ success: "User is successfully registered!" });
+          res.status(200).send({success: "User is successfully registered!"});
         });
       });
     }
@@ -84,25 +85,25 @@ export const signup = (req, res) => {
  * @param {string} req.body.password The new password
  */
 export const signin = (req, res) => {
-  User.findOne({ username: req.body.username })
+  User.findOne({username: req.body.username})
     .populate("roles", "-__v")
     .exec((err, user) => {
       if (err) {
-        res.status(500).send({ error: err });
+        res.status(500).send({error: err});
         return;
       }
 
       if (!user) {
-        return res.status(404).send({ error: "User not found." });
+        return res.status(404).send({error: "User not found."});
       }
 
       let passwordIsValid = compareSync(req.body.password, user.password);
 
       if (!passwordIsValid) {
-        return res.status(401).send({ error: "Invalid Password!" });
+        return res.status(401).send({error: "Invalid Password!"});
       }
 
-      let token = sign({ id: user.id }, config.secret, {
+      let token = sign({id: user.id}, config.secret, {
         expiresIn: 86400, // 24 hours
       });
 
@@ -134,7 +135,7 @@ export const signin = (req, res) => {
 export const signout = async (req, res) => {
   try {
     req.session = null;
-    return res.status(200).send({ success: "You've been signed out!" });
+    return res.status(200).send({success: "You've been signed out!"});
   } catch (err) {
     this.next(err);
   }

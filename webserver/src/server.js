@@ -1,5 +1,5 @@
 import express from "express";
-import { hashSync } from "bcryptjs";
+import {hashSync} from "bcryptjs";
 import cookieSession from "cookie-session";
 import cors from "cors";
 import http from "http";
@@ -18,14 +18,10 @@ env !== "production" ? app.use(cors()) : "";
 
 // Middlewares
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(
-  cookieSession({
-    name: "coursemapper-session",
-    secret: process.env.COOKIE_SECRET,
-    httpOnly: true,
-  })
-);
+app.use(express.urlencoded({extended: true}));
+app.use(cookieSession({
+  name: "coursemapper-session", secret: process.env.COOKIE_SECRET, httpOnly: true,
+}));
 
 // Get port from environment and store in Express
 const port = normalizePort(process.env.PORT || "8090");
@@ -34,8 +30,7 @@ app.set("port", port);
 // Create connection to MongoDB
 db.mongoose
   .connect(process.env.MONGO_DB, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
+    useNewUrlParser: true, useUnifiedTopology: true,
   })
   .then(() => {
     console.log("Successfully connected to MongoDB.");
@@ -99,17 +94,13 @@ function initializeDB() {
     if (!err && count === 0) {
       let password = hashSync(process.env.PASS, 10);
       new User({
-        firstname: "Admin",
-        lastname: "User",
-        username: "admin",
-        email: "admin@soco.com",
-        password: password,
+        firstname: "Admin", lastname: "User", username: "admin", email: "admin@soco.com", password: password,
       }).save((err, user) => {
         if (err) {
           console.log("error", err);
           return;
         }
-        Role.findOne({ name: "admin" }, (err, role) => {
+        Role.findOne({name: "admin"}, (err, role) => {
           if (err) {
             console.log("error", err);
           }
@@ -118,11 +109,7 @@ function initializeDB() {
             if (err) {
               console.log("error", err);
             }
-            console.log(
-              "Admin created successfully! Username: admin" +
-                ", Password: " +
-                process.env.PASS
-            );
+            console.log("Admin created successfully! Username: admin" + ", Password: " + process.env.PASS);
           });
         });
       });

@@ -14,7 +14,7 @@ export const getAllCourses = (req, res) => {
     .populate("topics", "-__v")
     .exec((err, courses) => {
       if (err) {
-        res.status(500).send({ message: err });
+        res.status(500).send({message: err});
         return;
       }
       res.status(200).send(courses);
@@ -29,11 +29,11 @@ export const getAllCourses = (req, res) => {
  */
 export const getCourse = (req, res) => {
   const courseId = req.params.courseId;
-  Course.findOne({ _id: ObjectId(courseId) })
+  Course.findOne({_id: ObjectId(courseId)})
     .populate("topics channels", "-__v")
     .exec((err, foundCourse) => {
       if (err) {
-        res.status(500).send({ message: err });
+        res.status(500).send({message: err});
         return;
       }
       res.status(200).send(foundCourse);
@@ -52,14 +52,14 @@ export const newCourse = (req, res) => {
   const courseName = req.body.name;
   const description = req.body.description;
 
-  Course.findOne({ name: courseName }, (err, foundCourseName) => {
+  Course.findOne({name: courseName}, (err, foundCourseName) => {
     if (err) {
-      res.status(500).send({ error: err });
+      res.status(500).send({error: err});
       return;
     }
 
     if (foundCourseName) {
-      res.status(404).send({ error: "Course name already taken!" });
+      res.status(404).send({error: "Course name already taken!"});
       return;
     }
 
@@ -83,7 +83,7 @@ export const newCourse = (req, res) => {
 
     course.save((err, course) => {
       if (err) {
-        res.status(500).send({ error: err });
+        res.status(500).send({error: err});
         return;
       }
       res.send({
@@ -103,9 +103,9 @@ export const newCourse = (req, res) => {
 export const deleteCourse = (req, res) => {
   const courseId = req.params.courseId;
 
-  Course.findByIdAndRemove({ _id: courseId }, (err, foundCourse) => {
+  Course.findByIdAndRemove({_id: courseId}, (err, foundCourse) => {
     if (err) {
-      res.status(500).send({ error: err });
+      res.status(500).send({error: err});
       return;
     }
 
@@ -116,21 +116,21 @@ export const deleteCourse = (req, res) => {
       return;
     }
 
-    Topic.deleteMany({ _id: { $in: foundCourse.topics } }, (err) => {
+    Topic.deleteMany({_id: {$in: foundCourse.topics}}, (err) => {
       if (err) {
-        res.status(500).send({ error: err });
+        res.status(500).send({error: err});
         return;
       }
     });
 
-    Channel.deleteMany({ _id: { $in: foundCourse.channels } }, (err) => {
+    Channel.deleteMany({_id: {$in: foundCourse.channels}}, (err) => {
       if (err) {
-        res.status(500).send({ error: err });
+        res.status(500).send({error: err});
         return;
       }
     });
 
-    res.send({ success: `Course '${foundCourse.name}' successfully deleted!` });
+    res.send({success: `Course '${foundCourse.name}' successfully deleted!`});
   });
 };
 
@@ -149,7 +149,7 @@ export const editCourse = (req, res) => {
 
   Course.findById(courseId, (err, foundCourse) => {
     if (err) {
-      res.status(500).send({ error: err });
+      res.status(500).send({error: err});
       return;
     }
 
@@ -176,11 +176,11 @@ export const editCourse = (req, res) => {
 
     foundCourse.save((err) => {
       if (err) {
-        res.status(500).send({ error: err });
+        res.status(500).send({error: err});
         return;
       }
 
-      res.status(200).send({ success: `Course has been updated!` });
+      res.status(200).send({success: `Course has been updated!`});
     });
   });
 };

@@ -7,13 +7,13 @@ const authAdmin = (req, res, next) => {
 
   User.findById(req.userId).exec((err, user) => {
     if (err) {
-      res.status(500).send({ message: err });
+      res.status(500).send({message: err});
       return;
     }
 
-    Role.find({ _id: { $in: user.roles } }, (err, roles) => {
+    Role.find({_id: {$in: user.roles}}, (err, roles) => {
       if (err) {
-        res.status(500).send({ message: err });
+        res.status(500).send({message: err});
         return;
       }
 

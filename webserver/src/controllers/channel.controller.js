@@ -13,11 +13,11 @@ const Topic = db.topic;
  */
 export const getChannel = (req, res) => {
   const channelId = req.params.channelId;
-  Channel.findOne({ _id: ObjectId(channelId) })
+  Channel.findOne({_id: ObjectId(channelId)})
     .populate("materials", "-__v")
     .exec((err, foundChannel) => {
       if (err) {
-        res.status(500).send({ message: err });
+        res.status(500).send({message: err});
         return;
       }
       res.status(200).send(foundChannel);
@@ -34,9 +34,9 @@ export const getChannel = (req, res) => {
  * @param {string} req.userId The owner of the channel
  */
 export const newChannel = (req, res) => {
-  Topic.findOne({ _id: ObjectId(req.params.topicId) }, (err, foundTopic) => {
+  Topic.findOne({_id: ObjectId(req.params.topicId)}, (err, foundTopic) => {
     if (err) {
-      res.status(500).send({ error: err });
+      res.status(500).send({error: err});
       return;
     }
 
@@ -59,7 +59,7 @@ export const newChannel = (req, res) => {
 
     channel.save((err, channel) => {
       if (err) {
-        res.status(500).send({ error: err });
+        res.status(500).send({error: err});
         return;
       }
 
@@ -75,13 +75,13 @@ export const newChannel = (req, res) => {
 
       foundTopic.save((err, topic) => {
         if (err) {
-          res.status(500).send({ error: err });
+          res.status(500).send({error: err});
           return;
         }
 
-        Course.findOne({ _id: topic.courseId }, (err, updateCourse) => {
+        Course.findOne({_id: topic.courseId}, (err, updateCourse) => {
           if (err) {
-            res.status(500).send({ error: err });
+            res.status(500).send({error: err});
             return;
           }
 
@@ -89,7 +89,7 @@ export const newChannel = (req, res) => {
 
           updateCourse.save((err) => {
             if (err) {
-              res.status(500).send({ error: err });
+              res.status(500).send({error: err});
               return;
             }
           });
@@ -107,10 +107,10 @@ export const newChannel = (req, res) => {
  */
 export const deleteChannel = (req, res) => {
   Channel.findByIdAndRemove(
-    { _id: req.params.channelId },
+    {_id: req.params.channelId},
     (err, foundChannel) => {
       if (err) {
-        res.status(500).send({ error: err });
+        res.status(500).send({error: err});
         return;
       }
 
@@ -121,16 +121,16 @@ export const deleteChannel = (req, res) => {
         return;
       }
 
-      Material.deleteMany({ _id: { $in: foundChannel.materials } }, (err) => {
+      Material.deleteMany({_id: {$in: foundChannel.materials}}, (err) => {
         if (err) {
-          res.status(500).send({ error: err });
+          res.status(500).send({error: err});
           return;
         }
       });
 
-      Topic.findOne({ _id: foundChannel.topicId }, (err, foundTopic) => {
+      Topic.findOne({_id: foundChannel.topicId}, (err, foundTopic) => {
         if (err) {
-          res.status(500).send({ error: err });
+          res.status(500).send({error: err});
           return;
         }
 
@@ -144,15 +144,15 @@ export const deleteChannel = (req, res) => {
 
         foundTopic.save((err) => {
           if (err) {
-            res.status(500).send({ error: err });
+            res.status(500).send({error: err});
             return;
           }
         });
       });
 
-      Course.findOne({ _id: foundChannel.courseId }, (err, foundCourse) => {
+      Course.findOne({_id: foundChannel.courseId}, (err, foundCourse) => {
         if (err) {
-          res.status(500).send({ error: err });
+          res.status(500).send({error: err});
           return;
         }
 
@@ -166,7 +166,7 @@ export const deleteChannel = (req, res) => {
 
         foundCourse.save((err) => {
           if (err) {
-            res.status(500).send({ error: err });
+            res.status(500).send({error: err});
             return;
           }
         });
