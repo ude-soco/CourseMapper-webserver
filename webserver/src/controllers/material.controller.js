@@ -9,17 +9,18 @@ const Material = db.material;
  *
  * @param {string} req.params.materialId The id of the material
  */
-export const getMaterial = (req, res) => {
+export const getMaterial = async (req, res) => {
   const materialId = req.params.materialId;
-  Material.findOne({_id: ObjectId(materialId)})
-    .populate("annotations", "-__v")
-    .exec((err, foundMaterial) => {
-      if (err) {
-        res.status(500).send({message: err});
-        return;
-      }
-      res.status(200).send(foundMaterial);
-    });
+
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findOne({
+      _id: ObjectId(materialId),
+    }).populate("annotations", "-__v");
+    return res.status(200).send(foundMaterial);
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
 };
 
 /**
@@ -33,57 +34,55 @@ export const getMaterial = (req, res) => {
  * @param {string} req.body.description The description of the material, e.g., Lecture material of Angular for course Advanced Web Technologies
  * @param {string} req.userId The owner of the material
  */
-export const newMaterial = (req, res) => {
-  Channel.findOne(
-    {_id: ObjectId(req.params.channelId)},
-    (err, foundChannel) => {
-      if (err) {
-        res.status(500).send({error: err});
-        return;
-      }
+export const newMaterial = async (req, res) => {
+  let channelId = req.params.channelId;
+  let materialType = req.body.type;
+  let materialName = req.body.name;
+  let materialUrl = req.body.url;
+  let materialDesc = req.body.description;
 
-      if (!foundChannel) {
-        res.status(404).send({
-          error: `Channel with id ${req.params.channelId} doesn't exist!`,
-        });
-        return;
-      }
-
-      const material = new Material({
-        type: req.body.type,
-        name: req.body.name,
-        url: req.body.url,
-        description: req.body.description,
-        courseId: foundChannel.courseId,
-        topicId: foundChannel.topicId,
-        channelId: foundChannel._id,
-        userId: req.userId,
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-      });
-
-      material.save((err, material) => {
-        if (err) {
-          res.status(500).send({error: err});
-          return;
-        }
-
-        foundChannel.materials.push(material._id);
-
-        foundChannel.save((err) => {
-          if (err) {
-            res.status(500).send({error: err});
-            return;
-          }
-        });
-
-        res.send({
-          id: material._id,
-          success: `New material '${material.name}' added!`,
-        });
+  let foundChannel;
+  try {
+    foundChannel = await Channel.findOne({ _id: ObjectId(channelId) });
+    if (!foundChannel) {
+      return res.status(404).send({
+        error: `Channel with id ${channelId} doesn't exist!`,
       });
     }
-  );
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  let material = new Material({
+    type: materialType,
+    name: materialName,
+    url: materialUrl,
+    description: materialDesc,
+    courseId: foundChannel.courseId,
+    topicId: foundChannel.topicId,
+    channelId: channelId,
+    userId: req.userId,
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+  });
+
+  let savedMaterial;
+  try {
+    savedMaterial = await material.save();
+    foundChannel.materials.push(savedMaterial._id);
+  } catch (err) {
+    res.status(500).send({ error: err });
+  }
+
+  try {
+    await foundChannel.save();
+    return res.send({
+      id: savedMaterial._id,
+      success: `New material '${materialName}' added!`,
+    });
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
 };
 
 /**
@@ -92,69 +91,40 @@ export const newMaterial = (req, res) => {
  *
  * @param {string} req.params.materialId The id of the material
  */
-export const deleteMaterial = (req, res) => {
-  Material.findByIdAndRemove(
-    {_id: req.params.materialId},
-    (err, foundMaterial) => {
-      if (err) {
-        res.status(500).send({error: err});
-        return;
-      }
+export const deleteMaterial = async (req, res) => {
+  let materialId = req.params.materialId;
 
-      if (!foundMaterial) {
-        res.status(404).send({
-          error: `Material with id ${req.params.materialId} doesn't exist!`,
-        });
-        return;
-      }
-
-      Channel.findOne({_id: foundMaterial.channelId}, (err, foundChannel) => {
-        if (err) {
-          res.status(500).send({error: err});
-          return;
-        }
-
-        let materialIndex = foundChannel["materials"].indexOf(
-          ObjectId(req.params.materialId)
-        );
-
-        if (materialIndex >= 0) {
-          foundChannel["materials"].splice(materialIndex, 1);
-        }
-
-        foundChannel.save((err) => {
-          if (err) {
-            res.status(500).send({error: err});
-            return;
-          }
-        });
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findByIdAndRemove({ _id: materialId });
+    if (!foundMaterial) {
+      res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
       });
-
-      // Course.findOne({ _id: foundChannel.courseId }, (err, foundCourse) => {
-      //   if (err) {
-      //     res.status(500).send({ error: err });
-      //     return;
-      //   }
-
-      //   let channelIndex = foundCourse["channels"].indexOf(
-      //     ObjectId(req.params.channelId)
-      //   );
-
-      //   if (channelIndex >= 0) {
-      //     foundCourse["channels"].splice(channelIndex, 1);
-      //   }
-
-      //   foundCourse.save((err) => {
-      //     if (err) {
-      //       res.status(500).send({ error: err });
-      //       return;
-      //     }
-      //   });
-      // });
-
-      res.send({
-        success: `Material '${foundMaterial.name}' successfully deleted!`,
-      });
+      return;
     }
-  );
+  } catch (err) {
+    res.status(500).send({ error: err });
+  }
+
+  let foundChannel;
+  try {
+    foundChannel = await Channel.findOne({ _id: foundMaterial.channelId });
+  } catch (err) {
+    res.status(500).send({ error: err });
+  }
+
+  let materialIndex = foundChannel["materials"].indexOf(ObjectId(materialId));
+  if (materialIndex >= 0) {
+    foundChannel["materials"].splice(materialIndex, 1);
+  }
+
+  try {
+    await foundChannel.save();
+    return res.send({
+      success: `Material '${foundMaterial.name}' successfully deleted!`,
+    });
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
 };

@@ -130,28 +130,28 @@ export const deleteCourse = async (req, res) => {
     }
 
     try {
-      await Material.deleteMany({ courseId: { $in: courseId } });
+      await Material.deleteMany({ courseId: courseId });
     } catch (err) {
       res.status(500).send({ error: err });
       return;
     }
 
     try {
-      await Annotation.deleteMany({ courseId: { $in: courseId } });
+      await Annotation.deleteMany({ courseId: courseId });
     } catch (err) {
       res.status(500).send({ error: err });
       return;
     }
 
     try {
-      await Reply.deleteMany({ courseId: { $in: courseId } });
+      await Reply.deleteMany({ courseId: courseId });
     } catch (err) {
       res.status(500).send({ error: err });
       return;
     }
 
     try {
-      await Tag.deleteMany({ courseId: { $in: courseId } });
+      await Tag.deleteMany({ courseId: courseId });
     } catch (err) {
       res.status(500).send({ error: err });
       return;
