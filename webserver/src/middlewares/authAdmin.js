@@ -2,29 +2,27 @@ const db = require("../models");
 const User = db.user;
 const Role = db.role;
 
-const authAdmin = (req, res, next) => {
+const authAdmin = async (req, res, next) => {
   req.isAdmin = false;
 
-  User.findById(req.userId).exec((err, user) => {
-    if (err) {
-      res.status(500).send({message: err});
-      return;
+  let user;
+  try {
+    user = await User.findById(req.userId);
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+  let roles;
+  try {
+    roles = await Role.find({ _id: { $in: user.roles } });
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+  for (let i = 0; i < roles.length; i++) {
+    if (roles[i].name === "admin") {
+      req.isAdmin = true;
     }
-
-    Role.find({_id: {$in: user.roles}}, (err, roles) => {
-      if (err) {
-        res.status(500).send({message: err});
-        return;
-      }
-
-      for (let i = 0; i < roles.length; i++) {
-        if (roles[i].name === "admin") {
-          req.isAdmin = true;
-        }
-      }
-      next();
-    });
-  });
+  }
+  next();
 };
 
 module.exports = authAdmin;

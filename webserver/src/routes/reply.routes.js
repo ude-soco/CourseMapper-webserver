@@ -1,4 +1,4 @@
-const {authJwt, authAdmin} = require("../middlewares");
+const { authJwt, authAdmin } = require("../middlewares");
 const controller = require("../controllers/reply.controller");
 
 module.exports = function (app) {
@@ -7,13 +7,25 @@ module.exports = function (app) {
     next();
   });
 
-  app.post("/new-reply/:annotationId", [authJwt.verifyToken], controller.newReply);
+  app.post(
+    "/new-reply/:annotationId",
+    [authJwt.verifyToken],
+    controller.newReply
+  );
 
-  app.delete("/delete-reply/:replyId", [authJwt.verifyToken, authAdmin], controller.deleteReply);
+  app.delete(
+    "/delete-reply/:replyId",
+    [authJwt.verifyToken, authAdmin],
+    controller.deleteReply
+  );
 
   app.post("/edit-reply/:replyId", [authJwt.verifyToken], controller.editReply);
 
   app.post("/like-reply/:replyId", [authJwt.verifyToken], controller.likeReply);
 
-  app.post("/dislike-reply/:replyId", [authJwt.verifyToken], controller.dislikeReply);
+  app.post(
+    "/dislike-reply/:replyId",
+    [authJwt.verifyToken],
+    controller.dislikeReply
+  );
 };

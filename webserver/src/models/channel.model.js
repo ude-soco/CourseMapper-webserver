@@ -3,8 +3,8 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const Channel = new Schema({
-  name: {type: String, required: true},
-  description: {type: String, default: ""},
+  name: { type: String, required: true },
+  description: { type: String, default: "" },
   topicId: {
     type: Schema.Types.ObjectId,
     ref: "topic",
@@ -27,8 +27,8 @@ const Channel = new Schema({
       default: [],
     },
   ],
-  createdAt: {type: Date},
-  updatedAt: {type: Date},
+  createdAt: { type: Date },
+  updatedAt: { type: Date },
 });
 
 module.exports = mongoose.model("channel", Channel);
