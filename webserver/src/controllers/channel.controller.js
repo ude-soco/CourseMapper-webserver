@@ -13,14 +13,15 @@ const Topic = db.topic;
  */
 export const getChannel = async (req, res) => {
   const channelId = req.params.channelId;
+  let foundChannel;
   try {
-    let foundChannel = await Channel.findOne({
+    foundChannel = await Channel.findOne({
       _id: ObjectId(channelId),
     }).populate("materials", "-__v");
-    return res.status(200).send(foundChannel);
   } catch (err) {
     return res.status(500).send({ message: err });
   }
+  return res.status(200).send(foundChannel);
 };
 
 /**
@@ -63,7 +64,7 @@ export const newChannel = async (req, res) => {
   try {
     savedChannel = await channel.save();
   } catch (err) {
-    res.status(500).send({ error: err });
+    return res.status(500).send({ error: err });
   }
 
   foundTopic.channels.push(savedChannel._id);
@@ -72,28 +73,26 @@ export const newChannel = async (req, res) => {
   try {
     savedTopic = await foundTopic.save();
   } catch (err) {
-    res.status(500).send({ error: err });
+    return res.status(500).send({ error: err });
   }
 
   let updateCourse;
   try {
     updateCourse = await Course.findOne({ _id: savedTopic.courseId });
   } catch (err) {
-    res.status(500).send({ error: err });
+    return res.status(500).send({ error: err });
   }
 
   updateCourse.channels.push(savedChannel._id);
-
   try {
     await updateCourse.save();
-
-    res.send({
-      id: channel._id,
-      success: `New channel '${channel.name}' added!`,
-    });
   } catch (err) {
-    res.status(500).send({ error: err });
+    return res.status(500).send({ error: err });
   }
+  return res.send({
+    id: savedChannel._id,
+    success: `New channel '${savedChannel.name}' added!`,
+  });
 };
 
 /**
@@ -114,20 +113,20 @@ export const deleteChannel = async (req, res) => {
       });
     }
   } catch (err) {
-    res.status(500).send({ error: err });
+    return res.status(500).send({ error: err });
   }
 
   try {
     await Material.deleteMany({ _id: { $in: foundChannel.materials } });
   } catch (err) {
-    res.status(500).send({ error: err });
+    return res.status(500).send({ error: err });
   }
 
   let foundTopic;
   try {
     foundTopic = await Topic.findOne({ _id: foundChannel.topicId });
   } catch (err) {
-    res.status(500).send({ error: err });
+    return res.status(500).send({ error: err });
   }
 
   let topicIndex = foundTopic["channels"].indexOf(ObjectId(channelId));
@@ -137,10 +136,10 @@ export const deleteChannel = async (req, res) => {
 
   try {
     await foundTopic.save();
-    return res.send({
-      success: `Channel '${foundChannel.name}' successfully deleted!`,
-    });
   } catch (err) {
     res.status(500).send({ error: err });
   }
+  return res.send({
+    success: `Channel '${foundChannel.name}' successfully deleted!`,
+  });
 };
