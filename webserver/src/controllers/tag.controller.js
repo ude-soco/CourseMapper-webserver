@@ -7,7 +7,6 @@ const Tag = db.tag;
  * Get all tags of a course controller.
  *
  * @param {string} req.params.courseId The id of the course
- * @param {string} req.userId The author of the annotation. Anyone can create an annotation
  */
 export const courseTags = async (req, res) => {
   const courseId = req.params.courseId;
@@ -44,8 +43,7 @@ export const courseTags = async (req, res) => {
  * @function topicTags
  * Get all tags of a topic controller.
  *
- * @param {string} req.params.topicId The id of the course
- * @param {string} req.userId The author of the annotation. Anyone can create an annotation
+ * @param {string} req.params.topicId The id of the topic
  */
 export const topicTags = async (req, res) => {
   const topicId = req.params.topicId;
@@ -82,8 +80,7 @@ export const topicTags = async (req, res) => {
  * @function channelTags
  * Get all tags of a channel controller.
  *
- * @param {string} req.params.channelId The id of the course
- * @param {string} req.userId The author of the annotation. Anyone can create an annotation
+ * @param {string} req.params.channelId The id of the channel
  */
 export const channelTags = async (req, res) => {
   const channelId = req.params.channelId;
@@ -120,8 +117,7 @@ export const channelTags = async (req, res) => {
  * @function materialTags
  * Get all tags of a material controller.
  *
- * @param {string} req.params.materialId The id of the course
- * @param {string} req.userId The author of the annotation. Anyone can create an annotation
+ * @param {string} req.params.materialId The id of the material
  */
 export const materialTags = async (req, res) => {
   const materialId = req.params.materialId;

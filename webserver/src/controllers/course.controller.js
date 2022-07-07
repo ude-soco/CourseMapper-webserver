@@ -36,10 +36,15 @@ export const getCourse = async (req, res) => {
     foundCourse = await Course.findOne({
       _id: ObjectId(courseId),
     }).populate("topics channels", "-__v");
-    return res.status(200).send(foundCourse);
+    if (!foundCourse) {
+      return res.status(404).send({
+        error: `Course with id ${courseId} doesn't exist!`,
+      });
+    }
   } catch (err) {
     return res.status(500).send({ message: err });
   }
+  return res.status(200).send(foundCourse);
 };
 
 /**

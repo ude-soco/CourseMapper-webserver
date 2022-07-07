@@ -16,6 +16,11 @@ export const getMaterial = async (req, res) => {
     foundMaterial = await Material.findOne({
       _id: ObjectId(materialId),
     }).populate("annotations", "-__v");
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
   } catch (err) {
     return res.status(500).send({ error: err });
   }

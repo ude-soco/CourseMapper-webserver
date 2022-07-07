@@ -1,11 +1,18 @@
 const { authJwt, authAdmin } = require("../middlewares");
 const controller = require("../controllers/reply.controller");
+const {getReplies} = require("../controllers/reply.controller");
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Headers", "Origin, Content-Type, Accept");
     next();
   });
+
+  app.get(
+    "/replies/:annotationId",
+    [authJwt.verifyToken],
+    controller.getReplies
+  );
 
   app.post(
     "/new-reply/:annotationId",

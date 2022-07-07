@@ -139,7 +139,7 @@ export const deleteAnnotation = async (req, res) => {
 
   try {
     // TODO: Should not delete if there are replies
-    await foundAnnotation.deleteOne({ _id: annotationId });
+    await foundAnnotation.deleteOne({ _id: ObjectId(annotationId) });
   } catch (err) {
     return res.status(500).send({ error: err });
   }
@@ -159,6 +159,12 @@ export const deleteAnnotation = async (req, res) => {
     await foundMaterial.save();
   } catch (err) {
     return res.status(500).send({ error: err });
+  }
+
+  try {
+    await Tag.deleteMany({annotationId: annotationId})
+  } catch (err) {
+      return res.status(500).send({error: err});
   }
 
   return res.status(200).send({ success: "Annotation successfully deleted" });

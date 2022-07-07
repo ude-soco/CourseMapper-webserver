@@ -5,6 +5,34 @@ const Reply = db.reply;
 const User = db.user;
 
 /**
+ * @function getReplies
+ * Add all replies to an annotation controller
+ *
+ * @param {string} req.params.annotationId The id of the annotation
+ */
+export const getReplies = async (req, res) => {
+  const annotationId = req.params.annotationId;
+  let foundAnnotation;
+  try {
+    foundAnnotation = await Annotation.findOne({ _id: ObjectId(annotationId) });
+    if (!foundAnnotation) {
+      return res.status(404).send({
+        error: `Annotation with id ${annotationId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+  let foundReplies;
+  try {
+    foundReplies = await Reply.find({ annotationId: ObjectId(annotationId) });
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+  return res.status(200).send({ replies: foundReplies });
+};
+
+/**
  * @function newReply
  * Add a new reply to an annotation controller
  *

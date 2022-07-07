@@ -18,6 +18,11 @@ export const getChannel = async (req, res) => {
     foundChannel = await Channel.findOne({
       _id: ObjectId(channelId),
     }).populate("materials", "-__v");
+    if (!foundChannel) {
+      return res.status(404).send({
+        error: `Channel with id ${channelId} doesn't exist!`,
+      });
+    }
   } catch (err) {
     return res.status(500).send({ message: err });
   }

@@ -18,6 +18,11 @@ export const getTopic = async (req, res) => {
       "channels",
       "-__v"
     );
+    if (!foundTopic) {
+      return res.status(404).send({
+        error: `Topic with id ${topicId} doesn't exist!`,
+      });
+    }
   } catch (err) {
     return res.status(500).send({ message: err });
   }
