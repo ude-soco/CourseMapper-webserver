@@ -78,7 +78,6 @@ export const newReply = async (req, res) => {
  */
 export const deleteReply = async (req, res) => {
   const replyId = req.params.replyId;
-
   let foundReply;
   try {
     foundReply = await Reply.findOne({ _id: ObjectId(replyId) });
@@ -95,13 +94,11 @@ export const deleteReply = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-
   try {
     await foundReply.deleteOne({ _id: replyId });
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-
   let foundAnnotation;
   try {
     foundAnnotation = await Annotation.findOne({
@@ -110,19 +107,14 @@ export const deleteReply = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-
-  const newReplies = foundAnnotation.replies.filter(
+  foundAnnotation.replies = foundAnnotation.replies.filter(
     (reply) => reply.valueOf() !== replyId
   );
-
-  foundAnnotation.replies = newReplies;
-
   try {
     await foundAnnotation.save();
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-
   return res.status(200).send({ success: "Reply successfully deleted" });
 };
 
@@ -140,7 +132,7 @@ export const editReply = async (req, res) => {
 
   let foundReply;
   try {
-    foundReply = Reply.findOne({ _id: ObjectId(replyId) });
+    foundReply = await Reply.findOne({ _id: ObjectId(replyId) });
     if (!foundReply) {
       return res.status(404).send({
         error: `Reply with id ${req.params.replyId} doesn't exist!`,
@@ -209,7 +201,6 @@ export const likeReply = async (req, res) => {
       .send({ error: "Cannot like! Reply already disliked by user!" });
   } else {
     foundReply.likes.push(ObjectId(req.userId));
-
     let savedReply;
     try {
       savedReply = await foundReply.save();
@@ -235,7 +226,6 @@ export const likeReply = async (req, res) => {
  */
 export const dislikeReply = async (req, res) => {
   const replyId = req.params.replyId;
-
   let foundReply;
   try {
     foundReply = await Reply.findOne({ _id: ObjectId(replyId) });
@@ -275,7 +265,6 @@ export const dislikeReply = async (req, res) => {
       return res.status(500).send({ error: err });
     }
     let countDislikes = savedReply.dislikes.length;
-
     return res.status(200).send({
       count: countDislikes,
       success: "Reply successfully disliked!",
