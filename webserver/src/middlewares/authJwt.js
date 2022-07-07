@@ -1,4 +1,4 @@
-import {verify} from "jsonwebtoken";
+import { verify } from "jsonwebtoken";
 
 const config = require("../config/auth.config.js");
 const db = require("../models");
@@ -9,78 +9,58 @@ const verifyToken = (req, res, next) => {
   let token = req.session.token;
 
   if (!token) {
-    return res.status(403).send({message: "No token provided!"});
+    return res.status(403).send({ message: "No token provided!" });
   }
 
   verify(token, config.secret, (err, decoded) => {
     if (err) {
-      return res.status(401).send({message: "Unauthorized!"});
+      return res.status(401).send({ message: "Unauthorized!" });
     }
     req.userId = decoded.id;
     next();
   });
 };
 
-const isAdmin = (req, res, next) => {
-  User.findById(req.userId).exec((err, user) => {
-    if (err) {
-      res.status(500).send({message: err});
-      return;
+const isAdmin = async (req, res, next) => {
+  let user;
+  try {
+    user = await User.findById(req.userId);
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+  let roles;
+  try {
+    roles = await Role.find({ _id: { $in: user.roles } });
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+  for (let i = 0; i < roles.length; i++) {
+    if (roles[i].name === "admin") {
+      return next();
     }
-
-    Role.find(
-      {
-        _id: {$in: user.roles},
-      },
-      (err, roles) => {
-        if (err) {
-          res.status(500).send({message: err});
-          return;
-        }
-
-        for (let i = 0; i < roles.length; i++) {
-          if (roles[i].name === "admin") {
-            next();
-            return;
-          }
-        }
-
-        res.status(403).send({message: "Require Admin Role!"});
-        return;
-      }
-    );
-  });
+  }
+  return res.status(403).send({ message: "Require Admin Role!" });
 };
 
-const isModerator = (req, res, next) => {
-  User.findById(req.userId).exec((err, user) => {
-    if (err) {
-      res.status(500).send({message: err});
-      return;
+const isModerator = async (req, res, next) => {
+  let user;
+  try {
+    user = await User.findById(req.userId);
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+  let roles;
+  try {
+    roles = await Role.find({ _id: { $in: user.roles } });
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+  for (let i = 0; i < roles.length; i++) {
+    if (roles[i].name === "moderator") {
+      return next();
     }
-
-    Role.find(
-      {
-        _id: {$in: user.roles},
-      },
-      (err, roles) => {
-        if (err) {
-          res.status(500).send({message: err});
-          return;
-        }
-
-        for (let i = 0; i < roles.length; i++) {
-          if (roles[i].name === "moderator") {
-            next();
-            return;
-          }
-        }
-
-        res.status(403).send({message: "Require Moderator Role!"});
-        return;
-      }
-    );
-  });
+  }
+  return res.status(403).send({ message: "Require Moderator Role!" });
 };
 
 const authJwt = {
