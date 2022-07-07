@@ -55,6 +55,7 @@ require("./routes/channel.routes")(app);
 require("./routes/material.routes")(app);
 require("./routes/annotation.routes")(app);
 require("./routes/reply.routes")(app);
+require("./routes/tag.routes")(app);
 
 // Create HTTP server
 const server = http.createServer(app);

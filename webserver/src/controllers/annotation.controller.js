@@ -29,7 +29,7 @@ export const newAnnotation = async (req, res) => {
     foundMaterial = await Material.findOne({ _id: materialId });
     if (!foundMaterial) {
       return res.status(404).send({
-        error: `Material with id ${req.params.materialId} doesn't exist!`,
+        error: `Material with id ${materialId} doesn't exist!`,
       });
     }
   } catch (err) {
@@ -56,7 +56,7 @@ export const newAnnotation = async (req, res) => {
     tool: annotationTool,
     courseId: foundMaterial.courseId,
     topicId: foundMaterial.topicId,
-    channelId: foundMaterial._id,
+    channelId: foundMaterial.channelId,
     materialId: materialId,
     createdAt: Date.now(),
     updatedAt: Date.now(),
@@ -87,7 +87,7 @@ export const newAnnotation = async (req, res) => {
         name: tag,
         courseId: foundMaterial.courseId,
         topicId: foundMaterial.topicId,
-        channelId: foundMaterial._id,
+        channelId: foundMaterial.channelId,
         materialId: foundMaterial._id,
         annotationId: newAnnotation._id,
         createdAt: Date.now(),
