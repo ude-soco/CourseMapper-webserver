@@ -14,14 +14,13 @@ const Tag = db.tag;
  *
  */
 export const getAllCourses = async (req, res) => {
+  let courses;
   try {
-    let courses = await Course.find({})
-      .populate("topics", "-__v")
-      .then((res) => res);
-    res.status(200).send(courses);
+    courses = await Course.find({}).populate("topics", "-__v");
   } catch (err) {
-    res.status(500).send({ message: err });
+    return res.status(500).send({ message: err });
   }
+  return res.status(200).send(courses);
 };
 
 /**
@@ -32,14 +31,14 @@ export const getAllCourses = async (req, res) => {
  */
 export const getCourse = async (req, res) => {
   const courseId = req.params.courseId;
-
+  let foundCourse;
   try {
-    let foundCourse = await Course.findOne({
+    foundCourse = await Course.findOne({
       _id: ObjectId(courseId),
     }).populate("topics channels", "-__v");
-    res.status(200).send(foundCourse);
+    return res.status(200).send(foundCourse);
   } catch (err) {
-    res.status(500).send({ message: err });
+    return res.status(500).send({ message: err });
   }
 };
 
@@ -53,17 +52,16 @@ export const getCourse = async (req, res) => {
  */
 export const newCourse = async (req, res) => {
   const courseName = req.body.name;
-  const description = req.body.description;
+  const courseDesc = req.body.description;
 
   let foundCourseName;
   try {
     foundCourseName = await Course.findOne({ name: courseName });
     if (foundCourseName) {
-      res.status(404).send({ error: "Course name already taken!" });
-      return;
+      return res.status(404).send({ error: "Course name already taken!" });
     }
   } catch (err) {
-    res.status(500).send({ error: err });
+    return res.status(500).send({ error: err });
   }
 
   let shortName = courseName
@@ -81,19 +79,19 @@ export const newCourse = async (req, res) => {
     userId: req.userId,
     createdAt: Date.now(),
     updatedAt: Date.now(),
-    description: description,
+    description: courseDesc,
   });
 
   let courseSaved;
   try {
     courseSaved = await course.save();
-    res.send({
-      id: course._id,
-      success: `New course '${courseSaved.name}' added!`,
-    });
   } catch (err) {
     res.status(500).send({ error: err });
   }
+  return res.send({
+    id: course._id,
+    success: `New course '${courseSaved.name}' added!`,
+  });
 };
 
 /**
@@ -107,62 +105,55 @@ export const deleteCourse = async (req, res) => {
 
   let foundCourse;
   try {
-    foundCourse = await Course.findByIdAndRemove({ _id: courseId });
+    foundCourse = await Course.findByIdAndRemove({ _id: ObjectId(courseId) });
     if (!foundCourse) {
-      res.status(404).send({
+      return res.status(404).send({
         error: `Course with id ${courseId} doesn't exist!`,
       });
-      return;
     }
 
     try {
       await Topic.deleteMany({ _id: { $in: foundCourse.topics } });
     } catch (err) {
-      res.status(500).send({ error: err });
-      return;
+      return res.status(500).send({ error: err });
     }
 
     try {
       await Channel.deleteMany({ _id: { $in: foundCourse.channels } });
     } catch (err) {
-      res.status(500).send({ error: err });
-      return;
+      return res.status(500).send({ error: err });
     }
 
     try {
       await Material.deleteMany({ courseId: courseId });
     } catch (err) {
-      res.status(500).send({ error: err });
-      return;
+      return res.status(500).send({ error: err });
     }
 
     try {
       await Annotation.deleteMany({ courseId: courseId });
     } catch (err) {
-      res.status(500).send({ error: err });
-      return;
+      return res.status(500).send({ error: err });
     }
 
     try {
       await Reply.deleteMany({ courseId: courseId });
     } catch (err) {
-      res.status(500).send({ error: err });
-      return;
+      return res.status(500).send({ error: err });
     }
 
     try {
       await Tag.deleteMany({ courseId: courseId });
     } catch (err) {
-      res.status(500).send({ error: err });
-      return;
+      return res.status(500).send({ error: err });
     }
-
-    res.send({
-      success: `Course '${foundCourse.name}' successfully deleted!`,
-    });
   } catch (err) {
-    res.status(500).send({ error: err });
+    return res.status(500).send({ error: err });
   }
+
+  return res.send({
+    success: `Course '${foundCourse.name}' successfully deleted!`,
+  });
 };
 
 /**
@@ -176,20 +167,18 @@ export const deleteCourse = async (req, res) => {
 export const editCourse = async (req, res) => {
   const courseId = req.params.courseId;
   const courseName = req.body.name;
-  const description = req.body.description;
+  const courseDesc = req.body.description;
 
   let foundCourse;
   try {
     foundCourse = await Course.findById(courseId);
     if (!foundCourse) {
-      res.status(404).send({
+      return res.status(404).send({
         error: `Course with id ${courseId} doesn't exist!`,
       });
-      return;
     }
   } catch (err) {
-    res.status(500).send({ error: err });
-    return;
+    return res.status(500).send({ error: err });
   }
 
   let shortName = courseName
@@ -203,13 +192,13 @@ export const editCourse = async (req, res) => {
 
   foundCourse.name = courseName;
   foundCourse.shortName = shortName;
-  foundCourse.description = description;
+  foundCourse.description = courseDesc;
   foundCourse.updatedAt = Date.now();
 
   try {
     await foundCourse.save();
-    res.status(200).send({ success: `Course has been updated!` });
   } catch (err) {
-    res.status(500).send({ error: err });
+    return res.status(500).send({ error: err });
   }
+  return res.status(200).send({ success: `Course has been updated!` });
 };
