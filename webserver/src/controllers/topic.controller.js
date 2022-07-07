@@ -12,15 +12,16 @@ const Topic = db.topic;
  */
 export const getTopic = async (req, res) => {
   const topicId = req.params.topicId;
+  let foundTopic;
   try {
-    let foundTopic = await Topic.findOne({ _id: ObjectId(topicId) }).populate(
+    foundTopic = await Topic.findOne({ _id: ObjectId(topicId) }).populate(
       "channels",
       "-__v"
     );
-    return res.status(200).send(foundTopic);
   } catch (err) {
     return res.status(500).send({ message: err });
   }
+  return res.status(200).send(foundTopic);
 };
 
 /**
@@ -66,13 +67,13 @@ export const newTopic = async (req, res) => {
 
   try {
     await foundCourse.save();
-    return res.send({
-      id: topic._id,
-      success: `New topic '${topicName}' added!`,
-    });
   } catch (err) {
     return res.status(500).send({ error: err });
   }
+  return res.send({
+    id: topic._id,
+    success: `New topic '${topicName}' added!`,
+  });
 };
 
 /**
@@ -115,10 +116,10 @@ export const deleteTopic = async (req, res) => {
 
   try {
     await foundCourse.save();
-    return res.send({
-      success: `Topic '${foundTopic.name}' successfully deleted!`,
-    });
   } catch (err) {
     return res.status(500).send({ error: err });
   }
+  return res.send({
+    success: `Topic '${foundTopic.name}' successfully deleted!`,
+  });
 };
