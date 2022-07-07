@@ -12,61 +12,61 @@ const User = db.user;
  * @param {string} req.body.content The content of the reply
  * @param {string} req.userId The author of the reply. Anyone can create a reply
  */
-export const newReply = (req, res) => {
-  Annotation.findOne({_id: req.params.annotationId}, (err, foundAnnotation) => {
-    if (err) {
-      res.status(500).send({error: err});
-      return;
-    }
+export const newReply = async (req, res) => {
+  const annotationId = req.params.annotationId;
+  const replyContent = req.body.content;
 
+  let foundAnnotation;
+  try {
+    foundAnnotation = await Annotation.findOne({ _id: annotationId });
     if (!foundAnnotation) {
-      res.status(404).send({
-        error: `Annotation with id ${req.params.annotationId} doesn't exist!`,
+      return res.status(404).send({
+        error: `Annotation with id ${annotationId} doesn't exist!`,
       });
-      return;
     }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
 
-    User.findOne({_id: req.userId}, (err, foundUser) => {
-      if (err) {
-        res.status(500).send({error: err});
-        return;
-      }
+  let foundUser;
+  try {
+    foundUser = await User.findOne({ _id: req.userId });
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
 
-      const authorName = `${foundUser.firstname} ${foundUser.lastname}`;
+  let authorName = `${foundUser.firstname} ${foundUser.lastname}`;
 
-      const reply = new Reply({
-        content: req.body.content,
-        author: {
-          userId: req.userId, name: authorName,
-        },
-        courseId: foundAnnotation.courseId,
-        topicId: foundAnnotation.topicId,
-        channelId: foundAnnotation._id,
-        materialId: foundAnnotation._id,
-        annotationId: req.params.annotationId,
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-      });
-
-      reply.save((err, newReply) => {
-        if (err) {
-          res.status(500).send({error: err});
-          return;
-        }
-
-        foundAnnotation.replies.push(newReply._id);
-
-        foundAnnotation.save((err) => {
-          if (err) {
-            res.status(500).send({error: err});
-            return;
-          }
-        });
-
-        res.status(200).send({id: newReply._id, success: `Reply added!`});
-      });
-    });
+  let reply = new Reply({
+    content: replyContent,
+    author: {
+      userId: req.userId,
+      name: authorName,
+    },
+    courseId: foundAnnotation.courseId,
+    topicId: foundAnnotation.topicId,
+    channelId: foundAnnotation._id,
+    materialId: foundAnnotation._id,
+    annotationId: annotationId,
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
   });
+
+  let newReply;
+  try {
+    newReply = await reply.save();
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  foundAnnotation.replies.push(newReply._id);
+
+  try {
+    await foundAnnotation.save();
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+  return res.status(200).send({ id: newReply._id, success: `Reply added!` });
 };
 
 /**
@@ -76,56 +76,54 @@ export const newReply = (req, res) => {
  * @param {string} req.params.replyId The id of the reply
  * @param {string} req.userId The id of the user. Only author/admin can delete
  */
-export const deleteReply = (req, res) => {
+export const deleteReply = async (req, res) => {
   const replyId = req.params.replyId;
 
-  Reply.findOne({_id: ObjectId(replyId)}, (err, foundReply) => {
-    if (err) {
-      res.status(500).send({error: err});
-      return;
-    }
-
+  let foundReply;
+  try {
+    foundReply = await Reply.findOne({ _id: ObjectId(replyId) });
     if (!foundReply) {
-      res.status(404).send({
-        error: `Reply with id ${req.params.replyId} doesn't exist!`,
+      return res.status(404).send({
+        error: `Reply with id ${replyId} doesn't exist!`,
       });
-      return;
     }
-
     if (req.userId !== foundReply.author.userId.valueOf() && !req.isAdmin) {
-      res.status(404).send({
+      return res.status(404).send({
         error: `User is not the author of this reply!`,
       });
-      return;
     }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
 
-    foundReply.deleteOne({_id: replyId}, (err) => {
-      if (err) {
-        res.status(500).send({error: err});
-        return;
-      }
+  try {
+    await foundReply.deleteOne({ _id: replyId });
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
 
-      Annotation.findOne({_id: foundReply.annotationId}, (err, foundAnnotation) => {
-        if (err) {
-          res.status(500).send({error: err});
-          return;
-        }
-
-        const newReplies = foundAnnotation.replies.filter((reply) => reply.valueOf() !== replyId);
-
-        foundAnnotation.replies = newReplies;
-
-        foundAnnotation.save((err) => {
-          if (err) {
-            res.status(500).send({error: err});
-            return;
-          }
-        });
-      });
-
-      res.status(200).send({success: "Reply successfully deleted"});
+  let foundAnnotation;
+  try {
+    foundAnnotation = await Annotation.findOne({
+      _id: foundReply.annotationId,
     });
-  });
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  const newReplies = foundAnnotation.replies.filter(
+    (reply) => reply.valueOf() !== replyId
+  );
+
+  foundAnnotation.replies = newReplies;
+
+  try {
+    await foundAnnotation.save();
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  return res.status(200).send({ success: "Reply successfully deleted" });
 };
 
 /**
@@ -136,40 +134,36 @@ export const deleteReply = (req, res) => {
  * @param {string} req.body.content The content of the reply
  * @param {string} req.userId The id of the user. Only author of the reply can edit
  */
-export const editReply = (req, res) => {
+export const editReply = async (req, res) => {
   const replyId = req.params.replyId;
+  const replyContent = req.params.content;
 
-  Reply.findOne({_id: ObjectId(replyId)}, (err, foundReply) => {
-    if (err) {
-      res.status(500).send({error: err});
-      return;
-    }
-
+  let foundReply;
+  try {
+    foundReply = Reply.findOne({ _id: ObjectId(replyId) });
     if (!foundReply) {
-      res.status(404).send({
+      return res.status(404).send({
         error: `Reply with id ${req.params.replyId} doesn't exist!`,
       });
-      return;
     }
-
     if (req.userId !== foundReply.author.userId.valueOf()) {
-      res.status(404).send({
+      return res.status(404).send({
         error: `Cannot update! User is not the author of this reply!`,
       });
-      return;
     }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
 
-    foundReply.content = req.body.content;
-    foundReply.updatedAt = Date.now();
+  foundReply.content = replyContent;
+  foundReply.updatedAt = Date.now();
 
-    foundReply.save((err) => {
-      if (err) {
-        res.status(500).send({error: err});
-        return;
-      }
-      res.status(200).send({success: "Reply successfully updated"});
-    });
-  });
+  try {
+    await foundReply.save();
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+  return res.status(200).send({ success: "Reply successfully updated" });
 };
 
 /**
@@ -179,59 +173,57 @@ export const editReply = (req, res) => {
  * @param {string} req.params.replyId The id of the reply
  * @param {string} req.userId The id of the user
  */
-export const likeReply = (req, res) => {
+export const likeReply = async (req, res) => {
   const replyId = req.params.replyId;
 
-  Reply.findOne({_id: ObjectId(replyId)}, (err, foundReply) => {
-    if (err) {
-      res.status(500).send({error: err});
-      return;
-    }
-
+  let foundReply;
+  try {
+    foundReply = await Reply.findOne({ _id: ObjectId(replyId) });
     if (!foundReply) {
       res.status(404).send({
         error: `Reply with id ${replyId} doesn't exist!`,
       });
       return;
     }
-
-    if (foundReply.likes.includes(ObjectId(req.userId))) {
-      const newLikes = foundReply.likes.filter((user) => user.valueOf() !== req.userId);
-
-      foundReply.likes = newLikes;
-
-      foundReply.save((err, savedReply) => {
-        if (err) {
-          res.status(500).send({error: err});
-          return;
-        }
-        const countLikes = savedReply.likes.length;
-
-        res.status(200).send({
-          count: countLikes, success: "Reply successfully unliked!",
-        });
-      });
-    } else if (foundReply.dislikes.includes(ObjectId(req.userId))) {
-      res
-        .status(404)
-        .send({error: "Cannot like! Reply already disliked by user!"});
-    } else {
-      foundReply.likes.push(ObjectId(req.userId));
-
-      foundReply.save((err, savedReply) => {
-        if (err) {
-          res.status(500).send({error: err});
-          return;
-        }
-
-        const countLikes = savedReply.likes.length;
-
-        res.status(200).send({
-          count: countLikes, success: "Reply successfully liked!",
-        });
-      });
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+  if (foundReply.likes.includes(ObjectId(req.userId))) {
+    foundReply.likes = foundReply.likes.filter(
+      (user) => user.valueOf() !== req.userId
+    );
+    let savedReply;
+    try {
+      savedReply = await foundReply.save();
+    } catch (err) {
+      return res.status(500).send({ error: err });
     }
-  });
+    let countLikes = savedReply.likes.length;
+    return res.status(200).send({
+      count: countLikes,
+      success: "Reply successfully unliked!",
+    });
+  } else if (foundReply.dislikes.includes(ObjectId(req.userId))) {
+    return res
+      .status(404)
+      .send({ error: "Cannot like! Reply already disliked by user!" });
+  } else {
+    foundReply.likes.push(ObjectId(req.userId));
+
+    let savedReply;
+    try {
+      savedReply = await foundReply.save();
+    } catch (err) {
+      return res.status(500).send({ error: err });
+    }
+
+    let countLikes = savedReply.likes.length;
+
+    return res.status(200).send({
+      count: countLikes,
+      success: "Reply successfully liked!",
+    });
+  }
 };
 
 /**
@@ -241,58 +233,52 @@ export const likeReply = (req, res) => {
  * @param {string} req.params.replyId The id of the annotation
  * @param {string} req.userId The id of the user. Only author of the annotation can edit
  */
-export const dislikeReply = (req, res) => {
+export const dislikeReply = async (req, res) => {
   const replyId = req.params.replyId;
 
-  Reply.findOne({_id: ObjectId(replyId)}, (err, foundReply) => {
-    if (err) {
-      res.status(500).send({error: err});
-      return;
-    }
-
+  let foundReply;
+  try {
+    foundReply = await Reply.findOne({ _id: ObjectId(replyId) });
     if (!foundReply) {
-      res.status(404).send({
+      return res.status(404).send({
         error: `Reply with id ${replyId} doesn't exist!`,
       });
-      return;
     }
-
-    if (foundReply.dislikes.includes(ObjectId(req.userId))) {
-      const newDislikes = foundReply.dislikes.filter((user) => user.valueOf() !== req.userId);
-
-      foundReply.dislikes = newDislikes;
-
-      foundReply.save((err, savedReply) => {
-        if (err) {
-          res.status(500).send({error: err});
-          return;
-        }
-
-        const countDislikes = savedReply.dislikes.length;
-
-        res.status(200).send({
-          count: countDislikes, success: "Reply successfully un-disliked!",
-        });
-      });
-    } else if (foundReply.likes.includes(ObjectId(req.userId))) {
-      res
-        .status(404)
-        .send({error: "Cannot dislike! Reply already liked by user!"});
-    } else {
-      foundReply.dislikes.push(ObjectId(req.userId));
-
-      foundReply.save((err, savedReply) => {
-        if (err) {
-          res.status(500).send({error: err});
-          return;
-        }
-
-        const countDislikes = savedReply.dislikes.length;
-
-        res.status(200).send({
-          count: countDislikes, success: "Reply successfully disliked!",
-        });
-      });
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+  if (foundReply.dislikes.includes(ObjectId(req.userId))) {
+    foundReply.dislikes = foundReply.dislikes.filter(
+      (user) => user.valueOf() !== req.userId
+    );
+    let savedReply;
+    try {
+      savedReply = await foundReply.save();
+    } catch (err) {
+      return res.status(500).send({ error: err });
     }
-  });
+    let countDislikes = savedReply.dislikes.length;
+    return res.status(200).send({
+      count: countDislikes,
+      success: "Reply successfully un-disliked!",
+    });
+  } else if (foundReply.likes.includes(ObjectId(req.userId))) {
+    return res
+      .status(404)
+      .send({ error: "Cannot dislike! Reply already liked by user!" });
+  } else {
+    foundReply.dislikes.push(ObjectId(req.userId));
+    let savedReply;
+    try {
+      savedReply = await foundReply.save();
+    } catch (err) {
+      return res.status(500).send({ error: err });
+    }
+    let countDislikes = savedReply.dislikes.length;
+
+    return res.status(200).send({
+      count: countDislikes,
+      success: "Reply successfully disliked!",
+    });
+  }
 };
