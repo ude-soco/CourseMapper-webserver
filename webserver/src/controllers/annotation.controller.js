@@ -134,21 +134,21 @@ export const deleteAnnotation = async (req, res) => {
       });
     }
   } catch (err) {
-    res.status(500).send({ error: err });
+    return res.status(500).send({ error: err });
   }
 
   try {
     // TODO: Should not delete if there are replies
     await foundAnnotation.deleteOne({ _id: annotationId });
   } catch (err) {
-    res.status(500).send({ error: err });
+    return res.status(500).send({ error: err });
   }
 
   let foundMaterial;
   try {
     foundMaterial = await Material.findOne({ _id: foundAnnotation.materialId });
   } catch (err) {
-    res.status(500).send({ error: err });
+    return res.status(500).send({ error: err });
   }
 
   foundMaterial.annotations = foundMaterial.annotations.filter(
@@ -184,7 +184,7 @@ export const editAnnotation = async (req, res) => {
 
   let foundAnnotation;
   try {
-    foundAnnotation = Annotation.findOne({ _id: ObjectId(annotationId) });
+    foundAnnotation = await Annotation.findOne({ _id: ObjectId(annotationId) });
     if (!foundAnnotation) {
       return res.status(404).send({
         error: `Annotation with id ${annotationId} doesn't exist!`,
@@ -209,7 +209,7 @@ export const editAnnotation = async (req, res) => {
     // TODO: Check if the tag has changed and/or new tag(s) is added
     await foundAnnotation.save();
   } catch (err) {
-    res.status(500).send({ error: err });
+    return res.status(500).send({ error: err });
   }
   return res.status(200).send({ success: "Annotation successfully updated" });
 };
@@ -226,7 +226,7 @@ export const likeAnnotation = async (req, res) => {
 
   let foundAnnotation;
   try {
-    foundAnnotation = Annotation.findOne({ _id: ObjectId(annotationId) });
+    foundAnnotation = await Annotation.findOne({ _id: ObjectId(annotationId) });
     if (!foundAnnotation) {
       return res.status(404).send({
         error: `Annotation with id ${annotationId} doesn't exist!`,
@@ -240,34 +240,34 @@ export const likeAnnotation = async (req, res) => {
     foundAnnotation.likes = foundAnnotation.likes.filter(
       (user) => user.valueOf() !== req.userId
     );
-
+    let savedAnnotation;
     try {
-      let savedAnnotation = await foundAnnotation.save();
-      let countLikes = savedAnnotation.likes.length;
-      return res.status(200).send({
-        count: countLikes,
-        success: "Annotation successfully unliked!",
-      });
+      savedAnnotation = await foundAnnotation.save();
     } catch (err) {
       return res.status(500).send({ error: err });
     }
+    let countLikes = savedAnnotation.likes.length;
+    return res.status(200).send({
+      count: countLikes,
+      success: "Annotation successfully unliked!",
+    });
   } else if (foundAnnotation.dislikes.includes(ObjectId(req.userId))) {
     return res
       .status(404)
       .send({ error: "Cannot like! Annotation already disliked by user!" });
   } else {
     foundAnnotation.likes.push(ObjectId(req.userId));
+    let savedAnnotation;
     try {
-      let savedAnnotation = await foundAnnotation.save();
-      let countLikes = savedAnnotation.likes.length;
-
-      return res.status(200).send({
-        count: countLikes,
-        success: "Annotation successfully liked!",
-      });
+      savedAnnotation = await foundAnnotation.save();
     } catch (err) {
       return res.status(500).send({ error: err });
     }
+    let countLikes = savedAnnotation.likes.length;
+    return res.status(200).send({
+      count: countLikes,
+      success: "Annotation successfully liked!",
+    });
   }
 };
 
@@ -291,40 +291,40 @@ export const dislikeAnnotation = async (req, res) => {
       return;
     }
   } catch (err) {
-    res.status(500).send({ error: err });
+    return res.status(500).send({ error: err });
   }
 
   if (foundAnnotation.dislikes.includes(ObjectId(req.userId))) {
     foundAnnotation.dislikes = foundAnnotation.dislikes.filter(
       (user) => user.valueOf() !== req.userId
     );
-
+    let savedAnnotation;
     try {
-      let savedAnnotation = await foundAnnotation.save();
-      let countDislikes = savedAnnotation.dislikes.length;
-      return res.status(200).send({
-        count: countDislikes,
-        success: "Annotation successfully un-disliked!",
-      });
+      savedAnnotation = await foundAnnotation.save();
     } catch (err) {
       res.status(500).send({ error: err });
     }
+    let countDislikes = savedAnnotation.dislikes.length;
+    return res.status(200).send({
+      count: countDislikes,
+      success: "Annotation successfully un-disliked!",
+    });
   } else if (foundAnnotation.likes.includes(ObjectId(req.userId))) {
     return res
       .status(404)
       .send({ error: "Cannot dislike! Annotation already liked by user!" });
   } else {
     foundAnnotation.dislikes.push(ObjectId(req.userId));
-
+    let savedAnnotation;
     try {
-      let savedAnnotation = await foundAnnotation.save();
-      let countDislikes = savedAnnotation.dislikes.length;
-      return res.status(200).send({
-        count: countDislikes,
-        success: "Annotation successfully disliked!",
-      });
+      savedAnnotation = await foundAnnotation.save();
     } catch (err) {
       return res.status(500).send({ error: err });
     }
+    let countDislikes = savedAnnotation.dislikes.length;
+    return res.status(200).send({
+      count: countDislikes,
+      success: "Annotation successfully disliked!",
+    });
   }
 };
