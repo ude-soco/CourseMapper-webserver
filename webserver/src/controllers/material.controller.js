@@ -11,16 +11,15 @@ const Material = db.material;
  */
 export const getMaterial = async (req, res) => {
   const materialId = req.params.materialId;
-
   let foundMaterial;
   try {
     foundMaterial = await Material.findOne({
       _id: ObjectId(materialId),
     }).populate("annotations", "-__v");
-    return res.status(200).send(foundMaterial);
   } catch (err) {
     return res.status(500).send({ error: err });
   }
+  return res.status(200).send(foundMaterial);
 };
 
 /**
@@ -69,20 +68,20 @@ export const newMaterial = async (req, res) => {
   let savedMaterial;
   try {
     savedMaterial = await material.save();
-    foundChannel.materials.push(savedMaterial._id);
-  } catch (err) {
-    res.status(500).send({ error: err });
-  }
-
-  try {
-    await foundChannel.save();
-    return res.send({
-      id: savedMaterial._id,
-      success: `New material '${materialName}' added!`,
-    });
   } catch (err) {
     return res.status(500).send({ error: err });
   }
+
+  foundChannel.materials.push(savedMaterial._id);
+  try {
+    await foundChannel.save();
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+  return res.send({
+    id: savedMaterial._id,
+    success: `New material '${materialName}' added!`,
+  });
 };
 
 /**
@@ -98,10 +97,9 @@ export const deleteMaterial = async (req, res) => {
   try {
     foundMaterial = await Material.findByIdAndRemove({ _id: materialId });
     if (!foundMaterial) {
-      res.status(404).send({
+      return res.status(404).send({
         error: `Material with id ${materialId} doesn't exist!`,
       });
-      return;
     }
   } catch (err) {
     res.status(500).send({ error: err });
@@ -111,7 +109,7 @@ export const deleteMaterial = async (req, res) => {
   try {
     foundChannel = await Channel.findOne({ _id: foundMaterial.channelId });
   } catch (err) {
-    res.status(500).send({ error: err });
+    return res.status(500).send({ error: err });
   }
 
   let materialIndex = foundChannel["materials"].indexOf(ObjectId(materialId));
@@ -121,10 +119,10 @@ export const deleteMaterial = async (req, res) => {
 
   try {
     await foundChannel.save();
-    return res.send({
-      success: `Material '${foundMaterial.name}' successfully deleted!`,
-    });
   } catch (err) {
     return res.status(500).send({ error: err });
   }
+  return res.send({
+    success: `Material '${foundMaterial.name}' successfully deleted!`,
+  });
 };
