@@ -114,7 +114,7 @@ function initializeDB() {
           if (err) {
             console.log("error", err);
           }
-          user.roles = [role._id];
+          user.role = role._id;
           user.save((err) => {
             if (err) {
               console.log("error", err);

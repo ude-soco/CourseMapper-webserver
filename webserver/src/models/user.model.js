@@ -8,8 +8,12 @@ const User = new Schema({
   username: { type: String, required: true },
   email: { type: String, required: true },
   password: { type: String, required: true },
-  roles: [{ type: Schema.Types.ObjectId, ref: "role" }],
+  role: { type: Schema.Types.ObjectId, ref: "role" },
   createdAt: { type: Date, default: Date.now() },
+  courses: [{
+    courseId: { type: Schema.Types.ObjectId, ref: "course", required: true },
+    role: { type: Schema.Types.ObjectId, ref: "role" },
+  }]
 });
 
 module.exports = mongoose.model("user", User);

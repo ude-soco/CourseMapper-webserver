@@ -11,16 +11,14 @@ const authAdmin = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  let roles;
+  let role;
   try {
-    roles = await Role.find({ _id: { $in: user.roles } });
+    role = await Role.find({ _id: user.role });
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  for (let i = 0; i < roles.length; i++) {
-    if (roles[i].name === "admin") {
-      req.isAdmin = true;
-    }
+  if (role.name === "admin") {
+    req.isAdmin = true;
   }
   next();
 };

@@ -1,6 +1,5 @@
 const { authJwt, authAdmin } = require("../middlewares");
 const controller = require("../controllers/reply.controller");
-const {getReplies} = require("../controllers/reply.controller");
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
