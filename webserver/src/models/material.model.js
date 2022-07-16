@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 const Material = new Schema({
   type: { type: String, required: true },
   name: { type: String, required: true },
-  desciption: { type: String, default: "" },
+  description: { type: String, default: "" },
   url: { type: String, required: true },
   topicId: {
     type: Schema.Types.ObjectId,

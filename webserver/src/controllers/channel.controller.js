@@ -28,7 +28,7 @@ export const getChannel = async (req, res) => {
     }
     if (foundChannel.courseId !== courseId) {
       return res.status(404).send({
-        error: `Course with id ${courseId} doesn't exist!`,
+        error: `Channel doesn't belong to course with id ${courseId}!`,
       });
     }
   } catch (err) {
@@ -212,9 +212,7 @@ export const editChannel = async (req, res) => {
 
   foundChannel.name = channelName;
   foundChannel.updatedAt = Date.now();
-  if (!Boolean(channelDesc)) {
-    foundChannel.description = channelDesc;
-  }
+  foundChannel.description = channelDesc;
 
   try {
     await foundChannel.save();

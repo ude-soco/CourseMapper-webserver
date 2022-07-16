@@ -8,9 +8,11 @@ const Material = db.material;
  * Get details of a material controller
  *
  * @param {string} req.params.materialId The id of the material
+ * @param {string} req.params.courseId The id of the course
  */
 export const getMaterial = async (req, res) => {
   const materialId = req.params.materialId;
+  const courseId = req.params.courseId;
   let foundMaterial;
   try {
     foundMaterial = await Material.findOne({
@@ -19,6 +21,11 @@ export const getMaterial = async (req, res) => {
     if (!foundMaterial) {
       return res.status(404).send({
         error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+    if (foundMaterial.courseId !== courseId) {
+      return res.status(404).send({
+        error: `Material doesn't belong to course with id ${courseId}!`,
       });
     }
   } catch (err) {
@@ -91,23 +98,36 @@ export const newMaterial = async (req, res) => {
 
 /**
  * @function deleteMaterial
- * Delete a new material controller
+ * Delete a material controller
  *
+ * @param {string} req.params.courseId The id of the course
  * @param {string} req.params.materialId The id of the material
  */
 export const deleteMaterial = async (req, res) => {
   let materialId = req.params.materialId;
+  let courseId = req.params.courseId;
 
   let foundMaterial;
   try {
-    foundMaterial = await Material.findByIdAndRemove({ _id: materialId });
+    foundMaterial = await Material.findById({ _id: ObjectId(materialId) });
     if (!foundMaterial) {
       return res.status(404).send({
         error: `Material with id ${materialId} doesn't exist!`,
       });
     }
+    if (foundMaterial.courseId !== courseId) {
+      return res.status(404).send({
+        error: `Material doesn't belong to course with id ${courseId}!`,
+      });
+    }
   } catch (err) {
     res.status(500).send({ error: err });
+  }
+
+  try {
+    await Material.findByIdAndRemove({ _id: materialId });
+  } catch (err) {
+    return res.status(500).send({ error: err });
   }
 
   let foundChannel;
@@ -129,5 +149,68 @@ export const deleteMaterial = async (req, res) => {
   }
   return res.send({
     success: `Material '${foundMaterial.name}' successfully deleted!`,
+  });
+};
+
+/**
+ * @function editMaterial
+ * Edit a material controller
+ *
+ * @param {string} req.params.courseId The id of the course
+ * @param {string} req.params.materialId The id of the material
+ * @param {string} req.body.name The new name of the material
+ * @param {string} req.body.type The type of the material, e.g., pdf, video
+ * @param {string} req.body.description The new description of the material
+ * @param {string} req.body.url The new url of the material
+ */
+export const editMaterial = async (req, res) => {
+  const courseId = req.params.courseId;
+  const materialId = req.params.materialId;
+  const materialName = req.body.name;
+  const materialDesc = req.body.description;
+  const materialUrl = req.body.url;
+  const materialType = req.body.type;
+
+  if (!Boolean(materialName)) {
+    return res.status(404).send({
+      error: `Material requires a name!`,
+    });
+  }
+
+  let foundMaterial;
+  try {
+    foundMaterial = await Channel.findOne({
+      _id: ObjectId(materialId),
+    }).populate("materials", "-__v");
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+    if (foundMaterial.courseId !== courseId) {
+      return res.status(404).send({
+        error: `Material doesn't belong to course with id ${courseId}!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: `Error while searching for channel` });
+  }
+
+  foundMaterial.name = materialName;
+  foundMaterial.url = materialUrl;
+  foundMaterial.type = materialType;
+  foundMaterial.description = materialDesc;
+  foundMaterial.updatedAt = Date.now();
+
+  try {
+    await foundMaterial.save();
+  } catch (err) {
+    return res.status(500).send({ error: `Error saving material!` });
+  }
+
+  return res.status(200).send({
+    id: foundMaterial._id,
+    courseId: courseId,
+    success: `Material '${materialName}' has been updated successfully!`,
   });
 };
