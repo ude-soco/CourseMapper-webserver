@@ -7,20 +7,35 @@ module.exports = function (app) {
     next();
   });
 
-  app.get("/channels/:channelId", [authJwt.verifyToken], controller.getChannel);
+  // Get details of the channel
+  // Only enrolled/admin
+  app.get(
+    "/courses/:courseId/channels/:channelId",
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.getChannel
+  );
 
-  // TODO:  Later, isAdmin middleware needs to be removed.
-  //        A new middleware will be required to check whether a user is the creator of the course.
-  //        Only authorized creator can update the courses. Maybe update the isModerator middleware
+  // Create a new channel
+  // Only moderator/admin
   app.post(
-    "/new-channel/:topicId",
-    [authJwt.verifyToken, authJwt.isAdmin],
+    "/courses/:courseId/channels/:topicId",
+    [authJwt.verifyToken, authJwt.isModerator],
     controller.newChannel
   );
 
+  // Delete a channel
+  // Only moderator/admin
   app.delete(
-    "/channel/:channelId",
-    [authJwt.verifyToken, authJwt.isAdmin],
+    "/courses/:courseId/channels/:channelId",
+    [authJwt.verifyToken, authJwt.isModerator],
     controller.deleteChannel
+  );
+
+  // Edit a channel
+  // Only moderator/admin
+  app.put(
+    "/courses/:courseId/channels/:channelId",
+    [authJwt.verifyToken, authJwt.isModerator],
+    controller.editChannel
   );
 };

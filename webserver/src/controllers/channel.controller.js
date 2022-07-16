@@ -9,10 +9,13 @@ const Topic = db.topic;
  * @function getChannel
  * Get details of a channel controller
  *
+ * @param {string} req.params.courseId The id of the course
  * @param {string} req.params.channelId The id of the channel
  */
 export const getChannel = async (req, res) => {
   const channelId = req.params.channelId;
+  const courseId = req.params.courseId;
+
   let foundChannel;
   try {
     foundChannel = await Channel.findOne({
@@ -21,6 +24,11 @@ export const getChannel = async (req, res) => {
     if (!foundChannel) {
       return res.status(404).send({
         error: `Channel with id ${channelId} doesn't exist!`,
+      });
+    }
+    if (foundChannel.courseId !== courseId) {
+      return res.status(404).send({
+        error: `Course with id ${courseId} doesn't exist!`,
       });
     }
   } catch (err) {
@@ -104,19 +112,32 @@ export const newChannel = async (req, res) => {
  * @function deleteChannel
  * Delete a channel controller
  *
+ * @param {string} req.params.courseId The id of the course
  * @param {string} req.params.channelId The id of the channel
  */
 export const deleteChannel = async (req, res) => {
   const channelId = req.params.channelId;
+  const courseId = req.params.courseId;
 
   let foundChannel;
   try {
-    foundChannel = await Channel.findByIdAndRemove({ _id: channelId });
+    foundChannel = await Channel.findById({ _id: ObjectId(channelId) });
     if (!foundChannel) {
       return res.status(404).send({
         error: `Channel with id ${channelId} doesn't exist!`,
       });
     }
+    if (foundChannel.courseId !== courseId) {
+      return res.status(404).send({
+        error: `Channel doesn't belong to course with id ${courseId}!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  try {
+    await Channel.findByIdAndRemove({ _id: channelId });
   } catch (err) {
     return res.status(500).send({ error: err });
   }
@@ -146,5 +167,64 @@ export const deleteChannel = async (req, res) => {
   }
   return res.send({
     success: `Channel '${foundChannel.name}' successfully deleted!`,
+  });
+};
+
+/**
+ * @function editChannel
+ * Edit a channel controller
+ *
+ * @param {string} req.params.courseId The id of the course
+ * @param {string} req.params.channelId The id of the channel
+ * @param {string} req.body.name The new name of the channel
+ * @param {string} req.body.description The new description of the channel
+ */
+export const editChannel = async (req, res) => {
+  const channelId = req.params.channelId;
+  const courseId = req.params.courseId;
+  const channelName = req.body.name;
+  const channelDesc = req.body.description;
+
+  if (!Boolean(channelName)) {
+    return res.status(404).send({
+      error: `Channel requires a name!`,
+    });
+  }
+
+  let foundChannel;
+  try {
+    foundChannel = await Channel.findOne({
+      _id: ObjectId(channelId),
+    }).populate("materials", "-__v");
+    if (!foundChannel) {
+      return res.status(404).send({
+        error: `Channel with id ${channelId} doesn't exist!`,
+      });
+    }
+    if (foundChannel.courseId !== courseId) {
+      return res.status(404).send({
+        error: `Channel doesn't belong to course with id ${courseId}!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ message: err });
+  }
+
+  foundChannel.name = channelName;
+  foundChannel.updatedAt = Date.now();
+  if (!Boolean(channelDesc)) {
+    foundChannel.description = channelDesc;
+  }
+
+  try {
+    await foundChannel.save();
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  return res.status(200).send({
+    id: foundChannel._id,
+    courseId: courseId,
+    success: `Channel '${channelName}' has been updated successfully!`,
   });
 };

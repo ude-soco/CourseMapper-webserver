@@ -7,20 +7,35 @@ module.exports = function (app) {
     next();
   });
 
-  app.get("/topics/:topicId", [authJwt.verifyToken], controller.getTopic);
+  // Get details of a topic
+  // Only enrolled users can view topic
+  app.get(
+    "/courses/:courseId/topics/:topicId",
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.getTopic
+  );
 
-  // TODO:  Later, isAdmin middleware needs to be removed.
-  //        A new middleware will be required to check whether a user is the creator of the course.
-  //        Only authorized creator can update the courses. Maybe update the isModerator middleware
+  // Create a new topic
+  // Only moderator/admin
   app.post(
-    "/new-topic/:courseId",
-    [authJwt.verifyToken, authJwt.isAdmin],
+    "/courses/:courseId/topic",
+    [authJwt.verifyToken, authJwt.isModerator],
     controller.newTopic
   );
 
+  // Delete a topic
+  // Only moderator/admin
   app.delete(
-    "/topic/:topicId",
-    [authJwt.verifyToken, authJwt.isAdmin],
+    "/courses/:courseId/topics/:topicId",
+    [authJwt.verifyToken, authJwt.isModerator],
     controller.deleteTopic
+  );
+
+  // Edit a topic
+  // Only moderator/admin
+  app.put(
+    "/courses/:courseId/topics/:topicId",
+    [authJwt.verifyToken, authJwt.isModerator],
+    controller.editTopic
   );
 };

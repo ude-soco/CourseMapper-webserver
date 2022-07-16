@@ -1,6 +1,6 @@
-const { authJwt, authAdmin } = require("../middlewares");
+const { authJwt } = require("../middlewares");
 const controller = require("../controllers/course.controller");
-const controller2 = require("../controllers/user.controller");
+// const controller2 = require("../controllers/user.controller");
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -12,11 +12,9 @@ module.exports = function (app) {
   app.get("/courses", [authJwt.verifyToken], controller.getAllCourses);
 
   // Get details about a course
-  app.get("/courses/:courseId", [authJwt.verifyToken], controller.getCourse);
+  // Only enrolled user & admins
+  app.get("/courses/:courseId", [authJwt.verifyToken, authJwt.isEnrolled], controller.getCourse);
 
-  // TODO:  isAdmin middleware needs to be removed.
-  //        A new middleware will be required to check whether a user is the creator of the course.
-  //        Only authorized creator can update the courses. Maybe update the isModerator middleware
   // Create a new course
   app.post(
     "/course",
@@ -32,13 +30,15 @@ module.exports = function (app) {
   )
 
   // Withdraw from a course
+  // Only enrolled user
   app.post(
     "/withdraw/:courseId",
-    [authJwt.verifyToken],
+    [authJwt.verifyToken, authJwt.isEnrolled],
     controller.withdrawCourse
   )
 
   // Delete a course
+  // Only moderator/admin
   app.delete(
     "/courses/:courseId",
     [authJwt.verifyToken, authJwt.isModerator],
@@ -47,9 +47,10 @@ module.exports = function (app) {
   );
 
   // Update a course
+  // Only moderator/admin
   app.put(
     "/courses/:courseId",
-    [authJwt.verifyToken, authJwt.isAdmin],
+    [authJwt.verifyToken, authJwt.isModerator],
     controller.editCourse
   );
 };

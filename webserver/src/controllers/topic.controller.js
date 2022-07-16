@@ -8,10 +8,13 @@ const Topic = db.topic;
  * @function getTopic
  * Get details of a topic controller
  *
+ * @param {string} req.params.courseId The id of the course
  * @param {string} req.params.topicId The id of the topic
  */
 export const getTopic = async (req, res) => {
   const topicId = req.params.topicId;
+  const courseId = req.params.courseId;
+
   let foundTopic;
   try {
     foundTopic = await Topic.findOne({ _id: ObjectId(topicId) }).populate(
@@ -21,6 +24,11 @@ export const getTopic = async (req, res) => {
     if (!foundTopic) {
       return res.status(404).send({
         error: `Topic with id ${topicId} doesn't exist!`,
+      });
+    }
+    if (foundTopic.courseId !== courseId) {
+      return res.status(404).send({
+        error: `Topic doesn't belong to course with id ${courseId}!`,
       });
     }
   } catch (err) {
@@ -77,6 +85,7 @@ export const newTopic = async (req, res) => {
   }
   return res.send({
     id: topic._id,
+    courseId: courseId,
     success: `New topic '${topicName}' added!`,
   });
 };
@@ -86,18 +95,31 @@ export const newTopic = async (req, res) => {
  * Delete a topic controller
  *
  * @param {string} req.params.topicId The id of the topic
+ * @param {string} req.params.courseId The id of the course
  */
 export const deleteTopic = async (req, res) => {
-  let topicId = req.params.topicId;
+  const topicId = req.params.topicId;
+  const courseId = req.params.courseId;
 
   let foundTopic;
   try {
-    foundTopic = await Topic.findByIdAndRemove({ _id: topicId });
+    foundTopic = await Topic.findById({ _id: topicId });
     if (!foundTopic) {
       return res
         .status(404)
         .send({ error: `Topic with id ${topicId} doesn't exist!` });
     }
+    if (foundTopic.courseId !== courseId) {
+      return res.status(404).send({
+        error: `Topic doesn't belong to course with id ${courseId}!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  try {
+    await Topic.findByIdAndRemove({ _id: topicId });
   } catch (err) {
     return res.status(500).send({ error: err });
   }
@@ -126,5 +148,56 @@ export const deleteTopic = async (req, res) => {
   }
   return res.send({
     success: `Topic '${foundTopic.name}' successfully deleted!`,
+  });
+};
+
+/**
+ * @function editTopic
+ * Edit a topic controller
+ *
+ * @param {string} req.params.courseId The id of the course
+ * @param {string} req.params.topicId The id of the topic
+ * @param {string} req.body.name The name of the topic, e.g., React Crash Course
+ */
+export const editTopic = async (req, res) => {
+  const topicId = req.params.topicId;
+  const courseId = req.params.courseId;
+  const topicName = req.body.name;
+
+  if (!Boolean(topicName)) {
+    return res.status(404).send({
+      error: `Topic requires a name!`,
+    });
+  }
+
+  let foundTopic;
+  try {
+    foundTopic = await Topic.findOne({ _id: ObjectId(topicId) });
+    if (!foundTopic) {
+      return res
+        .status(404)
+        .send({ error: `Topic with id ${topicId} doesn't exist!` });
+    }
+    if (foundTopic.courseId !== courseId) {
+      return res.status(404).send({
+        error: `Course with id ${courseId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  foundTopic.name = topicName;
+  foundTopic.updatedAt = Date.now();
+
+  try {
+    await foundTopic.save();
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+  return res.send({
+    id: foundTopic._id,
+    courseId: courseId,
+    success: `Topic '${topicName}' has been updated successfully!`,
   });
 };

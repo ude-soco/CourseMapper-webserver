@@ -22,7 +22,20 @@ export const getAllCourses = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ message: err });
   }
-  return res.status(200).send(courses);
+  let results = []
+  courses.forEach(c => {
+    let course = {
+      _id: c.id,
+      name: c.name,
+      shortName: c.shortName,
+      description: c.description,
+      numberTopics: c.topics.length,
+      numberChannels: c.channels.length,
+      numberUsers: c.users.length
+    };
+    results.push(course);
+  })
+  return res.status(200).send(results);
 };
 
 /**
@@ -75,6 +88,11 @@ export const enrolCourse = async (req, res) => {
   let foundUser;
   try {
     foundUser = await User.findOne({ _id: userId });
+    if (!foundUser) {
+      return res.status(404).send({
+        error: `User not found!`,
+      });
+    }
   } catch (err) {
     return res.status(500).send({ error: err });
   }
@@ -147,43 +165,38 @@ export const withdrawCourse = async (req, res) => {
   let foundUser;
   try {
     foundUser = await User.findOne({ _id: userId });
+    if (!foundUser) {
+      return res.status(404).send({
+        error: `User not found!`,
+      });
+    }
   } catch (err) {
     return res.status(500).send({ error: err });
   }
 
-  let alreadyEnrolled = foundUser.courses.find(
-    (course) => course.courseId.valueOf() === courseId
+  foundUser.courses = foundUser.courses.filter(
+    (course) => course.courseId.valueOf() !== courseId
   );
 
-  if (alreadyEnrolled) {
-    foundUser.courses = foundUser.courses.filter(
-      (course) => course.courseId.valueOf() !== courseId
-    );
-
-    try {
-      await foundUser.save();
-    } catch (err) {
-      return res.status(500).send({ error: err });
-    }
-
-    foundCourse.users = foundCourse.users.filter(
-      (user) => user.userId.valueOf() !== userId
-    );
-
-    try {
-      await foundCourse.save()
-    } catch (err) {
-        return res.status(500).send({error: err});
-    }
-
-    return res
-      .status(200)
-      .send({ success: `User withdrew from course ${foundCourse.name}` });
-  } else {
-    return res
-      .status(404)
-      .send({ error: `User not enrolled in course ${foundCourse.name}` });
+  try {
+    await foundUser.save();
+  } catch (err) {
+    return res.status(500).send({ error: err });
   }
+
+  foundCourse.users = foundCourse.users.filter(
+    (user) => user.userId.valueOf() !== userId
+  );
+
+  try {
+    await foundCourse.save();
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  return res
+    .status(200)
+    .send({ success: `User withdrew from course ${foundCourse.name}` });
 };
 
 /**
@@ -402,5 +415,5 @@ export const editCourse = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  return res.status(200).send({ success: `Course has been updated!` });
+  return res.status(200).send({ success: `Course '${courseName}' has been updated successfully!` });
 };
