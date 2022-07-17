@@ -5,6 +5,8 @@ import cors from "cors";
 import http from "http";
 import dotenv from "dotenv";
 import debugLib from "debug";
+import bodyParser from "body-parser";
+import path from "path";
 
 dotenv.config();
 const env = process.env.NODE_ENV || "production";
@@ -19,6 +21,8 @@ env !== "production" ? app.use(cors()) : "";
 // Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use("/", express.static(path.join(__dirname, "public")));
 app.use(
   cookieSession({
     name: "coursemapper-session",
@@ -56,6 +60,7 @@ require("./routes/material.routes")(app);
 require("./routes/annotation.routes")(app);
 require("./routes/reply.routes")(app);
 require("./routes/tag.routes")(app);
+require("./routes/fileupload.routes")(app);
 
 // Create HTTP server
 const server = http.createServer(app);
