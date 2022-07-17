@@ -26,7 +26,7 @@ export const getChannel = async (req, res) => {
         error: `Channel with id ${channelId} doesn't exist!`,
       });
     }
-    if (foundChannel.courseId !== courseId) {
+    if (foundChannel.courseId.valueOf() !== courseId) {
       return res.status(404).send({
         error: `Channel doesn't belong to course with id ${courseId}!`,
       });
@@ -127,7 +127,7 @@ export const deleteChannel = async (req, res) => {
         error: `Channel with id ${channelId} doesn't exist!`,
       });
     }
-    if (foundChannel.courseId !== courseId) {
+    if (foundChannel.courseId.valueOf() !== courseId) {
       return res.status(404).send({
         error: `Channel doesn't belong to course with id ${courseId}!`,
       });
@@ -201,7 +201,7 @@ export const editChannel = async (req, res) => {
         error: `Channel with id ${channelId} doesn't exist!`,
       });
     }
-    if (foundChannel.courseId !== courseId) {
+    if (foundChannel.courseId.valueOf() !== courseId) {
       return res.status(404).send({
         error: `Channel doesn't belong to course with id ${courseId}!`,
       });

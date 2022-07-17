@@ -26,7 +26,7 @@ export const getTopic = async (req, res) => {
         error: `Topic with id ${topicId} doesn't exist!`,
       });
     }
-    if (foundTopic.courseId !== courseId) {
+    if (foundTopic.courseId.valueOf() !== courseId) {
       return res.status(404).send({
         error: `Topic doesn't belong to course with id ${courseId}!`,
       });
@@ -109,7 +109,7 @@ export const deleteTopic = async (req, res) => {
         .status(404)
         .send({ error: `Topic with id ${topicId} doesn't exist!` });
     }
-    if (foundTopic.courseId !== courseId) {
+    if (foundTopic.courseId.valueOf()  !== courseId) {
       return res.status(404).send({
         error: `Topic doesn't belong to course with id ${courseId}!`,
       });
@@ -178,7 +178,7 @@ export const editTopic = async (req, res) => {
         .status(404)
         .send({ error: `Topic with id ${topicId} doesn't exist!` });
     }
-    if (foundTopic.courseId !== courseId) {
+    if (foundTopic.courseId.valueOf()  !== courseId) {
       return res.status(404).send({
         error: `Course with id ${courseId} doesn't exist!`,
       });

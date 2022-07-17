@@ -1,4 +1,4 @@
-const { authJwt, authAdmin } = require("../middlewares");
+const { authJwt } = require("../middlewares");
 const controller = require("../controllers/annotation.controller");
 
 module.exports = function (app) {
@@ -7,36 +7,45 @@ module.exports = function (app) {
     next();
   });
 
-  // TODO:  Later, isAdmin middleware needs to be removed.
-  //        A new middleware will be required to check whether a user is the creator of the course.
-  //        Only authorized creator can update the courses. Maybe update the isModerator middleware
+  // Add a new annotation
+  // Enrolled users
   app.post(
-    "/new-annotation/:materialId",
-    [authJwt.verifyToken],
+    "/courses/:courseId/materials/:materialId/annotation",
+    [authJwt.verifyToken, authJwt.isEnrolled],
     controller.newAnnotation
   );
 
+  // Delete an annotation
+  // Only enrolled users (authors)/moderator/admin
   app.delete(
-    "/delete-annotation/:annotationId",
-    [authJwt.verifyToken, authAdmin],
+    "/courses/:courseId/annotations/:annotationId",
+    [authJwt.verifyToken, authJwt.isEnrolled],
     controller.deleteAnnotation
   );
 
-  app.post(
-    "/edit-annotation/:annotationId",
-    [authJwt.verifyToken],
+  // Edit an annotation
+  // Only enrolled users (authors)/moderator/admin
+  app.put(
+    "/courses/:courseId/annotations/:annotationId",
+    [authJwt.verifyToken, authJwt.isEnrolled],
     controller.editAnnotation
   );
 
+  // Like an annotation
+  // Only enrolled users/moderator/admin
+  // Note: A user when disliked an annotation, it cannot be liked
   app.post(
-    "/like-annotation/:annotationId",
-    [authJwt.verifyToken],
+    "/courses/:courseId/annotations/:annotationId/like",
+    [authJwt.verifyToken, authJwt.isEnrolled],
     controller.likeAnnotation
   );
 
+  // Dislike an annotation
+  // Only enrolled users/moderator/admin
+  // Note: A user when liked an annotation, it cannot be disliked
   app.post(
-    "/dislike-annotation/:annotationId",
-    [authJwt.verifyToken],
+    "/courses/:courseId/annotations/:annotationId/dislike",
+    [authJwt.verifyToken, authJwt.isEnrolled],
     controller.dislikeAnnotation
   );
 };

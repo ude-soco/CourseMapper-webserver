@@ -1,6 +1,5 @@
 const { authJwt } = require("../middlewares");
 const controller = require("../controllers/material.controller");
-const {editMaterial} = require("../controllers/material.controller");
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -16,27 +15,27 @@ module.exports = function (app) {
     controller.getMaterial
   );
 
-  // Add a new material
+  // Create a new material
   // Only moderator/admin
   app.post(
-    "/courses/:courseId/new-material/:channelId",
+    "/courses/:courseId/channels/:channelId/material",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.newMaterial
   );
 
-  // Delete material
+  // Delete a material
   // Only moderator/admin
   app.delete(
-    "/courses/:courseId/material/:materialId",
-    [authJwt.verifyToken, authJwt.isModerator],
-    controller.editMaterial
-  );
-
-  // Edit material
-  // Only moderator/admin
-  app.put(
-    "/courses/:courseId/material/:materialId",
+    "/courses/:courseId/materials/:materialId",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.deleteMaterial
+  );
+
+  // Edit a material
+  // Only moderator/admin
+  app.put(
+    "/courses/:courseId/materials/:materialId",
+    [authJwt.verifyToken, authJwt.isModerator],
+    controller.editMaterial
   );
 };

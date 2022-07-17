@@ -7,7 +7,7 @@ module.exports = function (app) {
     next();
   });
 
-  // Get details of a topic
+  // Get topic details
   // Only enrolled users can view topic
   app.get(
     "/courses/:courseId/topics/:topicId",

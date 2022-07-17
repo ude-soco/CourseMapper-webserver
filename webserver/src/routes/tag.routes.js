@@ -8,26 +8,26 @@ module.exports = function (app) {
   });
 
   app.get(
-    "/course-tags/:courseId",
-    [authJwt.verifyToken],
+    "/courses/:courseId/tags",
+    [authJwt.verifyToken, authJwt.isEnrolled],
     controller.courseTags
   );
 
   app.get(
-    "/topic-tags/:topicId",
-    [authJwt.verifyToken],
+    "/courses/:courseId/topics/:topicId/tags",
+    [authJwt.verifyToken, authJwt.isEnrolled],
     controller.topicTags
   );
 
   app.get(
-    "/channel-tags/:channelId",
-    [authJwt.verifyToken],
+    "/courses/:courseId/channels/:channelId/tags",
+    [authJwt.verifyToken, authJwt.isEnrolled],
     controller.channelTags
   );
 
   app.get(
-    "/material-tags/:materialId",
-    [authJwt.verifyToken],
+    "/courses/:courseId/materials/:materialId/tags",
+    [authJwt.verifyToken, authJwt.isEnrolled],
     controller.materialTags
   );
 

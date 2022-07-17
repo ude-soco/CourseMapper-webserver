@@ -10,6 +10,7 @@ const User = db.user;
  * Add a new annotation to a material controller.
  * If hashtag(s) exists in the content, it adds to Tag collection
  *
+ * @param {string} req.params.courseId The id of the course
  * @param {string} req.params.materialId The id of the material
  * @param {string} req.body.type The type of the annotation
  * @param {string} req.body.content The content of the annotation
@@ -18,6 +19,7 @@ const User = db.user;
  * @param {string} req.userId The author of the annotation. Anyone can create an annotation
  */
 export const newAnnotation = async (req, res) => {
+  const courseId = req.params.courseId;
   const materialId = req.params.materialId;
   const annotationContent = req.body.content;
   const annotationType = req.body.type;
@@ -26,10 +28,15 @@ export const newAnnotation = async (req, res) => {
 
   let foundMaterial;
   try {
-    foundMaterial = await Material.findOne({ _id: materialId });
+    foundMaterial = await Material.findById({ _id: ObjectId(materialId) });
     if (!foundMaterial) {
       return res.status(404).send({
         error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+    if (foundMaterial.courseId.valueOf() !== courseId) {
+      return res.status(404).send({
+        error: `Material doesn't belong to course with id ${courseId}!`,
       });
     }
   } catch (err) {
@@ -38,7 +45,7 @@ export const newAnnotation = async (req, res) => {
 
   let foundUser;
   try {
-    foundUser = await User.findOne({ _id: req.userId });
+    foundUser = await User.findById({ _id: ObjectId(req.userId) });
   } catch (err) {
     res.status(500).send({ error: err });
   }
@@ -111,23 +118,34 @@ export const newAnnotation = async (req, res) => {
  * @function deleteAnnotation
  * Delete an annotation from a material controller
  *
+ * @param {string} req.params.courseId The id of the course
  * @param {string} req.params.annotationId The id of the annotation
  * @param {string} req.userId The id of the user. Only author of the annotation can delete
  */
 export const deleteAnnotation = async (req, res) => {
+  const courseId = req.params.courseId;
   const annotationId = req.params.annotationId;
 
   let foundAnnotation;
   try {
-    foundAnnotation = await Annotation.findOne({ _id: ObjectId(annotationId) });
+    foundAnnotation = await Annotation.findById({
+      _id: ObjectId(annotationId),
+    });
     if (!foundAnnotation) {
       return res.status(404).send({
         error: `Annotation with id ${annotationId} doesn't exist!`,
       });
     }
+    if (foundAnnotation.courseId.valueOf() !== courseId) {
+      return res.status(404).send({
+        error: `Annotation doesn't belong to course with id ${courseId}!`,
+      });
+    }
+
     if (
       req.userId !== foundAnnotation.author.userId.valueOf() &&
-      !req.isAdmin
+      !req.isAdmin &&
+      !req.isModerator
     ) {
       return res.status(404).send({
         error: `User is not the author of this annotation!`,
@@ -146,7 +164,9 @@ export const deleteAnnotation = async (req, res) => {
 
   let foundMaterial;
   try {
-    foundMaterial = await Material.findOne({ _id: foundAnnotation.materialId });
+    foundMaterial = await Material.findById({
+      _id: foundAnnotation.materialId,
+    });
   } catch (err) {
     return res.status(500).send({ error: err });
   }
@@ -162,9 +182,9 @@ export const deleteAnnotation = async (req, res) => {
   }
 
   try {
-    await Tag.deleteMany({annotationId: annotationId})
+    await Tag.deleteMany({ annotationId: annotationId });
   } catch (err) {
-      return res.status(500).send({error: err});
+    return res.status(500).send({ error: err });
   }
 
   return res.status(200).send({ success: "Annotation successfully deleted" });
@@ -174,6 +194,7 @@ export const deleteAnnotation = async (req, res) => {
  * @function editAnnotation
  * Update an annotation controller
  *
+ * @param {string} req.params.courseId The id of the course
  * @param {string} req.params.annotationId The id of the annotation
  * @param {string} req.body.type The type of the annotation
  * @param {string} req.body.content The content of the annotation
@@ -182,6 +203,7 @@ export const deleteAnnotation = async (req, res) => {
  * @param {string} req.userId The id of the user. Only author of the annotation can edit
  */
 export const editAnnotation = async (req, res) => {
+  const courseId = req.params.courseId;
   const annotationId = req.params.annotationId;
   const annotationType = req.body.type;
   const annotationContent = req.body.content;
@@ -190,10 +212,15 @@ export const editAnnotation = async (req, res) => {
 
   let foundAnnotation;
   try {
-    foundAnnotation = await Annotation.findOne({ _id: ObjectId(annotationId) });
+    foundAnnotation = await Annotation.findById({ _id: ObjectId(annotationId) });
     if (!foundAnnotation) {
       return res.status(404).send({
         error: `Annotation with id ${annotationId} doesn't exist!`,
+      });
+    }
+    if (foundAnnotation.courseId.valueOf() !== courseId) {
+      return res.status(404).send({
+        error: `Annotation doesn't belong to course with id ${courseId}!`,
       });
     }
     if (req.userId !== foundAnnotation.author.userId.valueOf()) {
@@ -224,10 +251,12 @@ export const editAnnotation = async (req, res) => {
  * @function likeAnnotation
  * Like and unlike an annotation controller
  *
+ * @param {string} req.params.courseId The id of the course
  * @param {string} req.params.annotationId The id of the annotation
  * @param {string} req.userId The id of the user
  */
 export const likeAnnotation = async (req, res) => {
+  const courseId = req.params.courseId;
   const annotationId = req.params.annotationId;
 
   let foundAnnotation;
@@ -236,6 +265,11 @@ export const likeAnnotation = async (req, res) => {
     if (!foundAnnotation) {
       return res.status(404).send({
         error: `Annotation with id ${annotationId} doesn't exist!`,
+      });
+    }
+    if (foundAnnotation.courseId.valueOf() !== courseId) {
+      return res.status(404).send({
+        error: `Annotation doesn't belong to course with id ${courseId}!`,
       });
     }
   } catch (err) {
@@ -281,10 +315,12 @@ export const likeAnnotation = async (req, res) => {
  * @function dislikeAnnotation
  * Dislike and un-dislike an annotation controller
  *
+ * @param {string} req.params.courseId The id of the course
  * @param {string} req.params.annotationId The id of the annotation
  * @param {string} req.userId The id of the user
  */
 export const dislikeAnnotation = async (req, res) => {
+  const courseId = req.params.courseId;
   const annotationId = req.params.annotationId;
 
   let foundAnnotation;
@@ -295,6 +331,11 @@ export const dislikeAnnotation = async (req, res) => {
         error: `Annotation with id ${annotationId} doesn't exist!`,
       });
       return;
+    }
+    if (foundAnnotation.courseId.valueOf() !== courseId) {
+      return res.status(404).send({
+        error: `Annotation doesn't belong to course with id ${courseId}!`,
+      });
     }
   } catch (err) {
     return res.status(500).send({ error: err });

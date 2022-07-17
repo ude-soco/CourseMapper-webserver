@@ -7,7 +7,7 @@ module.exports = function (app) {
     next();
   });
 
-  // Get details of the channel
+  // Get channel details
   // Only enrolled/admin
   app.get(
     "/courses/:courseId/channels/:channelId",
@@ -18,7 +18,7 @@ module.exports = function (app) {
   // Create a new channel
   // Only moderator/admin
   app.post(
-    "/courses/:courseId/channels/:topicId",
+    "/courses/:courseId/topics/:topicId/channel",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.newChannel
   );

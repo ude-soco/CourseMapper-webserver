@@ -1,4 +1,4 @@
-const { authJwt, authAdmin } = require("../middlewares");
+const { authJwt } = require("../middlewares");
 const controller = require("../controllers/reply.controller");
 
 module.exports = function (app) {
@@ -7,31 +7,53 @@ module.exports = function (app) {
     next();
   });
 
+  // Get all replies
+  // Enrolled users
   app.get(
-    "/replies/:annotationId",
-    [authJwt.verifyToken],
+    "/courses/:courseId/annotations/:annotationId/replies",
+    [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getReplies
   );
 
+  // Add a new reply
+  // Enrolled users
   app.post(
-    "/new-reply/:annotationId",
-    [authJwt.verifyToken],
+    "/courses/:courseId/annotations/:annotationId/reply",
+    [authJwt.verifyToken, authJwt.isEnrolled],
     controller.newReply
   );
 
+  // Delete a reply
+  // Only enrolled users (authors)/moderator/admin
   app.delete(
-    "/delete-reply/:replyId",
-    [authJwt.verifyToken, authAdmin],
+    "/courses/:courseId/replies/:replyId",
+    [authJwt.verifyToken, authJwt.isEnrolled],
     controller.deleteReply
   );
 
-  app.post("/edit-reply/:replyId", [authJwt.verifyToken], controller.editReply);
+  // Edit a reply
+  // Only enrolled users (authors)/moderator/admin
+  app.put(
+    "/courses/:courseId/replies/:replyId",
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.editReply
+  );
 
-  app.post("/like-reply/:replyId", [authJwt.verifyToken], controller.likeReply);
-
+  // Like a reply
+  // Only enrolled users/moderator/admin
+  // Note: A user when disliked a reply, it cannot be liked
   app.post(
-    "/dislike-reply/:replyId",
-    [authJwt.verifyToken],
+    "/courses/:courseId/replies/:replyId/like",
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.likeReply
+  );
+
+  // Like a reply
+  // Only enrolled users/moderator/admin
+  // Note: A user when liked a reply, it cannot be disliked
+  app.post(
+    "/courses/:courseId/replies/:replyId/dislike",
+    [authJwt.verifyToken, authJwt.isEnrolled],
     controller.dislikeReply
   );
 };

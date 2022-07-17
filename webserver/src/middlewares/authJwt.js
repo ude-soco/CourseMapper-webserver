@@ -28,6 +28,8 @@ const verifyToken = (req, res, next) => {
  * @param {string} req.userId The id of the user
  */
 const isAdmin = async (req, res, next) => {
+  req.isAdmin = false;
+
   let user;
   try {
     user = await User.findById(req.userId);
@@ -41,6 +43,7 @@ const isAdmin = async (req, res, next) => {
     return res.status(500).send({ error: err });
   }
   if (role.name === "admin") {
+    req.isAdmin = true;
     return next();
   }
   return res.status(403).send({ message: "Require Admin Role!" });
@@ -56,6 +59,9 @@ const isAdmin = async (req, res, next) => {
  */
 const isModerator = async (req, res, next) => {
   const courseId = req.params.courseId;
+  req.isAdmin = false;
+  req.isModerator = false;
+
   let user;
   try {
     user = await User.findById(req.userId);
@@ -76,6 +82,7 @@ const isModerator = async (req, res, next) => {
   }
 
   if (role.name === "admin") {
+    req.isAdmin = true;
     // console.log("admin")
     return next();
   } else {
@@ -91,7 +98,8 @@ const isModerator = async (req, res, next) => {
       }
 
       if (role.name === "moderator") {
-        // console.log("moderator")
+        req.isModerator = true;
+        console.log(req.isModerator);
         return next();
       }
       return res.status(403).send({ message: "Require Moderator Role!" });
@@ -110,6 +118,9 @@ const isModerator = async (req, res, next) => {
  */
 const isEnrolled = async (req, res, next) => {
   const courseId = req.params.courseId;
+  req.isAdmin = false;
+  req.isModerator = false;
+
   let user;
   try {
     user = await User.findById(req.userId);
@@ -130,6 +141,7 @@ const isEnrolled = async (req, res, next) => {
   }
 
   if (role.name === "admin") {
+    req.isAdmin = true;
     return next();
   } else {
     let foundCourse = user.courses.find(
@@ -137,6 +149,9 @@ const isEnrolled = async (req, res, next) => {
     );
 
     if (foundCourse) {
+      if (role.name === "moderator") {
+        req.isModerator = true;
+      }
       return next();
     } else {
       return res
@@ -144,7 +159,7 @@ const isEnrolled = async (req, res, next) => {
         .send({ message: "Access denied! User need to be enrolled!" });
     }
   }
-}
+};
 
 const authJwt = {
   verifyToken,

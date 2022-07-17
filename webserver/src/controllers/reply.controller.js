@@ -8,16 +8,25 @@ const User = db.user;
  * @function getReplies
  * Add all replies to an annotation controller
  *
+ * @param {string} req.params.courseId The id of the course
  * @param {string} req.params.annotationId The id of the annotation
  */
 export const getReplies = async (req, res) => {
+  const courseId = req.params.courseId;
   const annotationId = req.params.annotationId;
   let foundAnnotation;
   try {
-    foundAnnotation = await Annotation.findOne({ _id: ObjectId(annotationId) });
+    foundAnnotation = await Annotation.findById({
+      _id: ObjectId(annotationId),
+    });
     if (!foundAnnotation) {
       return res.status(404).send({
         error: `Annotation with id ${annotationId} doesn't exist!`,
+      });
+    }
+    if (foundAnnotation.courseId.valueOf() !== courseId) {
+      return res.status(404).send({
+        error: `Annotation doesn't belong to course with id ${courseId}!`,
       });
     }
   } catch (err) {
@@ -36,11 +45,13 @@ export const getReplies = async (req, res) => {
  * @function newReply
  * Add a new reply to an annotation controller
  *
+ * @param {string} req.params.courseId The id of the course
  * @param {string} req.params.annotationId The id of the annotation
  * @param {string} req.body.content The content of the reply
  * @param {string} req.userId The author of the reply. Anyone can create a reply
  */
 export const newReply = async (req, res) => {
+  const courseId = req.params.courseId;
   const annotationId = req.params.annotationId;
   const replyContent = req.body.content;
 
@@ -50,6 +61,11 @@ export const newReply = async (req, res) => {
     if (!foundAnnotation) {
       return res.status(404).send({
         error: `Annotation with id ${annotationId} doesn't exist!`,
+      });
+    }
+    if (foundAnnotation.courseId.valueOf() !== courseId) {
+      return res.status(404).send({
+        error: `Annotation doesn't belong to course with id ${courseId}!`,
       });
     }
   } catch (err) {
@@ -101,10 +117,12 @@ export const newReply = async (req, res) => {
  * @function deleteReply
  * Delete a reply from an annotation controller
  *
+ * @param {string} req.params.courseId The id of the course
  * @param {string} req.params.replyId The id of the reply
  * @param {string} req.userId The id of the user. Only author/admin can delete
  */
 export const deleteReply = async (req, res) => {
+  const courseId = req.params.courseId;
   const replyId = req.params.replyId;
   let foundReply;
   try {
@@ -114,7 +132,16 @@ export const deleteReply = async (req, res) => {
         error: `Reply with id ${replyId} doesn't exist!`,
       });
     }
-    if (req.userId !== foundReply.author.userId.valueOf() && !req.isAdmin) {
+    if (foundReply.courseId.valueOf() !== courseId) {
+      return res.status(404).send({
+        error: `Reply doesn't belong to course with id ${courseId}!`,
+      });
+    }
+    if (
+      req.userId !== foundReply.author.userId.valueOf() &&
+      !req.isAdmin &&
+      !req.isModerator
+    ) {
       return res.status(404).send({
         error: `User is not the author of this reply!`,
       });
@@ -150,13 +177,15 @@ export const deleteReply = async (req, res) => {
  * @function editReply
  * Update a reply controller
  *
+ * @param {string} req.params.courseId The id of the course
  * @param {string} req.params.replyId The id of the reply
  * @param {string} req.body.content The content of the reply
  * @param {string} req.userId The id of the user. Only author of the reply can edit
  */
 export const editReply = async (req, res) => {
+  const courseId = req.params.courseId;
   const replyId = req.params.replyId;
-  const replyContent = req.params.content;
+  const replyContent = req.body.content;
 
   let foundReply;
   try {
@@ -164,6 +193,11 @@ export const editReply = async (req, res) => {
     if (!foundReply) {
       return res.status(404).send({
         error: `Reply with id ${req.params.replyId} doesn't exist!`,
+      });
+    }
+    if (foundReply.courseId.valueOf() !== courseId) {
+      return res.status(404).send({
+        error: `Reply doesn't belong to course with id ${courseId}!`,
       });
     }
     if (req.userId !== foundReply.author.userId.valueOf()) {
@@ -190,10 +224,12 @@ export const editReply = async (req, res) => {
  * @function likeReply
  * Like and unlike an annotation controller
  *
+ * @param {string} req.params.courseId The id of the course
  * @param {string} req.params.replyId The id of the reply
  * @param {string} req.userId The id of the user
  */
 export const likeReply = async (req, res) => {
+  const courseId = req.params.courseId;
   const replyId = req.params.replyId;
 
   let foundReply;
@@ -204,6 +240,11 @@ export const likeReply = async (req, res) => {
         error: `Reply with id ${replyId} doesn't exist!`,
       });
       return;
+    }
+    if (foundReply.courseId.valueOf() !== courseId) {
+      return res.status(404).send({
+        error: `Reply doesn't belong to course with id ${courseId}!`,
+      });
     }
   } catch (err) {
     return res.status(500).send({ error: err });
@@ -249,10 +290,12 @@ export const likeReply = async (req, res) => {
  * @function dislikeReply
  * Dislike and un-dislike a reply controller
  *
- * @param {string} req.params.replyId The id of the annotation
+ * @param {string} req.params.courseId The id of the course
+ * @param {string} req.params.replyId The id of the reply
  * @param {string} req.userId The id of the user. Only author of the annotation can edit
  */
 export const dislikeReply = async (req, res) => {
+  const courseId = req.params.courseId;
   const replyId = req.params.replyId;
   let foundReply;
   try {
@@ -260,6 +303,11 @@ export const dislikeReply = async (req, res) => {
     if (!foundReply) {
       return res.status(404).send({
         error: `Reply with id ${replyId} doesn't exist!`,
+      });
+    }
+    if (foundReply.courseId.valueOf() !== courseId) {
+      return res.status(404).send({
+        error: `Reply doesn't belong to course with id ${courseId}!`,
       });
     }
   } catch (err) {

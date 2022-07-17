@@ -7,7 +7,7 @@
 	},
 	"item": [
 		{
-			"name": "Authentication",
+			"name": "Management",
 			"item": [
 				{
 					"name": "Signin Admin",
@@ -45,7 +45,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"firstname\": \"Shoeb\",\r\n    \"lastname\": \"Joarder\",\r\n    \"username\": \"jorzallan\",\r\n    \"email\": \"jorzallan@mail.com\",\r\n    \"password\": \"hashedPassword\",\r\n    \"roles\": [\"user\"]\r\n}",
+							"raw": "{\r\n    \"firstname\": \"Shoeb\",\r\n    \"lastname\": \"Joarder\",\r\n    \"username\": \"jorzallan\",\r\n    \"email\": \"jorzallan@mail.com\",\r\n    \"password\": \"hashedPassword\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -74,7 +74,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"firstname\": \"Marzie\",\r\n    \"lastname\": \"Mirhashemi\",\r\n    \"username\": \"mirhashemi\",\r\n    \"email\": \"mirhashemi@mail.com\",\r\n    \"password\": \"passwordHashed\",\r\n    \"roles\": [\"user\"]\r\n}",
+							"raw": "{\r\n    \"firstname\": \"Marzie\",\r\n    \"lastname\": \"Mirhashemi\",\r\n    \"username\": \"mirhashemi\",\r\n    \"email\": \"mirhashemi@mail.com\",\r\n    \"password\": \"passwordHashed\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -173,6 +173,44 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Enrol in a course",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/enrol/62cffd85a60f49eaf13db189",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"enrol",
+								"62cffd85a60f49eaf13db189"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Withdraw from a course",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/withdraw/62c7d9e7fc3faf6539ff29fa",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"withdraw",
+								"62c7d9e7fc3faf6539ff29fa"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -180,13 +218,13 @@
 			"name": "Add new stuff",
 			"item": [
 				{
-					"name": "Add a new course",
+					"name": "Create a new course",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Afvanced Web Technologies\",\r\n    \"description\": \"Teaching students about AWT\"\r\n}",
+							"raw": "{\r\n    \"name\": \"Advanced Web Technologies\",\r\n    \"description\": \"Teaching students about AWT\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -194,26 +232,26 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/new-course",
+							"raw": "localhost:8080/course",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
-								"new-course"
+								"course"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Add new topic to course",
+					"name": "Create a new topic",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Full stack\"\r\n}",
+							"raw": "{\r\n    \"name\": \"Machine Learning\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -221,27 +259,28 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/new-topic/62b4c4fc89b0c5b419f9b55b",
+							"raw": "localhost:8080/courses/62cffd85a60f49eaf13db189/topic",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
-								"new-topic",
-								"62b4c4fc89b0c5b419f9b55b"
+								"courses",
+								"62cffd85a60f49eaf13db189",
+								"topic"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Add new channel to topic",
+					"name": "Create a new channel",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"MERN Stack\",\r\n    \"description\": \"\"\r\n}",
+							"raw": "{\r\n    \"name\": \"Spark\",\r\n    \"description\": \"Teaching about spark\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -249,27 +288,30 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/new-channel/62b4c67089b0c5b419f9b572",
+							"raw": "localhost:8080/courses/62cffd85a60f49eaf13db189/topics/62d2e1a8d346a5c9b87c35aa/channel",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
-								"new-channel",
-								"62b4c67089b0c5b419f9b572"
+								"courses",
+								"62cffd85a60f49eaf13db189",
+								"topics",
+								"62d2e1a8d346a5c9b87c35aa",
+								"channel"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Add new material",
+					"name": "Create a new material",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"type\": \"video\",\r\n    \"url\": \"https://www.youtube.com/watch?v=zJxJerQtUdk\",\r\n    \"name\": \"Angular Tutorial\"\r\n}",
+							"raw": "{\r\n    \"type\": \"video\",\r\n    \"url\": \"https://www.youtube.com/watch?v=zJxJerQtUdk\",\r\n    \"name\": \"Spark Tutorial 2\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -277,27 +319,30 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/new-material/62b4c6bf89b0c5b419f9b57c",
+							"raw": "localhost:8080/courses/62cffd85a60f49eaf13db189/channels/62d3ca46e9c02fb8dbeb251c/material",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
-								"new-material",
-								"62b4c6bf89b0c5b419f9b57c"
+								"courses",
+								"62cffd85a60f49eaf13db189",
+								"channels",
+								"62d3ca46e9c02fb8dbeb251c",
+								"material"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Add a new annotation",
+					"name": "Create a new annotation",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"type\": \"externalResource\",\r\n    \"content\": \"This is the first test annotation.\",\r\n    \"location\": {\r\n        \"type\": \"time\",\r\n        \"startPage\": 2,\r\n        \"lastPage\": 2\r\n    },\r\n    \"tool\": {\r\n        \"id\": \"a21\",\r\n        \"type\": \"drawBox\",\r\n        \"coordinates\": [],\r\n        \"color\": \"RGB(238,170,0, .5)\",\r\n        \"page\": 2,\r\n        \"rect\": {\r\n            \"id\": \"a21\",\r\n            \"type\": \"rectangle\",\r\n            \"isDelete\": false,\r\n            \"pageNumber\": 2,\r\n            \"lineHeight\": 3,\r\n            \"coordinates\": {\r\n                \"height\": 18,\r\n                \"width\": 362,\r\n                \"x1\": 269.40625,\r\n                \"x2\": 631.40625,\r\n                \"y1\": 630.359375,\r\n                \"y2\": 648.359375\r\n            },\r\n            \"rectangleId\": \"rectangle-2\"\r\n        }\r\n    }\r\n}",
+							"raw": "{\r\n    \"type\": \"externalResource\",\r\n    \"content\": \"This is the #bigdata #component annotation.\",\r\n    \"location\": {\r\n        \"type\": \"time\",\r\n        \"startPage\": 2,\r\n        \"lastPage\": 2\r\n    },\r\n    \"tool\": {\r\n        \"id\": \"a21\",\r\n        \"type\": \"drawBox\",\r\n        \"coordinates\": [],\r\n        \"color\": \"RGB(238,170,0, .5)\",\r\n        \"page\": 2,\r\n        \"rect\": {\r\n            \"id\": \"a21\",\r\n            \"type\": \"rectangle\",\r\n            \"isDelete\": false,\r\n            \"pageNumber\": 2,\r\n            \"lineHeight\": 3,\r\n            \"coordinates\": {\r\n                \"height\": 18,\r\n                \"width\": 362,\r\n                \"x1\": 269.40625,\r\n                \"x2\": 631.40625,\r\n                \"y1\": 630.359375,\r\n                \"y2\": 648.359375\r\n            },\r\n            \"rectangleId\": \"rectangle-2\"\r\n        }\r\n    }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -305,52 +350,61 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/new-annotation/62b4c7f8d55f83f1657a46b2",
+							"raw": "localhost:8080/courses/62cffd85a60f49eaf13db189/materials/62d3cea79e2292d78805d85f/annotation",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
-								"new-annotation",
-								"62b4c7f8d55f83f1657a46b2"
+								"courses",
+								"62cffd85a60f49eaf13db189",
+								"materials",
+								"62d3cea79e2292d78805d85f",
+								"annotation"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Like/Unlike annotation",
+					"name": "Like an annotation",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/like-annotation/62a5911572bc5cfe822e6147",
+							"raw": "localhost:8080/courses/62cffd85a60f49eaf13db189/annotations/62d3e2e4f07478a03c94170f/like",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
-								"like-annotation",
-								"62a5911572bc5cfe822e6147"
+								"courses",
+								"62cffd85a60f49eaf13db189",
+								"annotations",
+								"62d3e2e4f07478a03c94170f",
+								"like"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Dislike/Un-dislike annotation",
+					"name": "Dislike an annotation",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/dislike-annotation/62a5911572bc5cfe822e6147",
+							"raw": "localhost:8080/courses/62cffd85a60f49eaf13db189/annotations/62d3e2e4f07478a03c94170f/dislike",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
-								"dislike-annotation",
-								"62a5911572bc5cfe822e6147"
+								"courses",
+								"62cffd85a60f49eaf13db189",
+								"annotations",
+								"62d3e2e4f07478a03c94170f",
+								"dislike"
 							]
 						}
 					},
@@ -363,7 +417,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"content\": \"This is a reply\"\r\n}",
+							"raw": "{\r\n    \"content\": \"This is the first reply\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -371,52 +425,61 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/new-reply/62a5911572bc5cfe822e6147",
+							"raw": "localhost:8080/courses/62cffd85a60f49eaf13db189/annotations/62d3e2e4f07478a03c94170f/reply",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
-								"new-reply",
-								"62a5911572bc5cfe822e6147"
+								"courses",
+								"62cffd85a60f49eaf13db189",
+								"annotations",
+								"62d3e2e4f07478a03c94170f",
+								"reply"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Like/Unlike reply",
+					"name": "Like a reply",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/like-reply/62a5cd4ca93821c427a1de49",
+							"raw": "localhost:8080/courses/62cffd85a60f49eaf13db189/replies/62d3e6da8db0423826dbd093/like",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
-								"like-reply",
-								"62a5cd4ca93821c427a1de49"
+								"courses",
+								"62cffd85a60f49eaf13db189",
+								"replies",
+								"62d3e6da8db0423826dbd093",
+								"like"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Dislike/un-dislike reply",
+					"name": "Dislike a reply",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/dislike-reply/62a5cd4ca93821c427a1de49",
+							"raw": "localhost:8080/courses/62cffd85a60f49eaf13db189/replies/62d3e6da8db0423826dbd093/dislike",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
-								"dislike-reply",
-								"62a5cd4ca93821c427a1de49"
+								"courses",
+								"62cffd85a60f49eaf13db189",
+								"replies",
+								"62d3e6da8db0423826dbd093",
+								"dislike"
 							]
 						}
 					},
@@ -451,14 +514,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/courses/62b4c4fc89b0c5b419f9b55b",
+							"raw": "localhost:8080/courses/62cffd85a60f49eaf13db189",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
 								"courses",
-								"62b4c4fc89b0c5b419f9b55b"
+								"62cffd85a60f49eaf13db189"
 							]
 						}
 					},
@@ -470,14 +533,16 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/topics/62b4c66189b0c5b419f9b566",
+							"raw": "localhost:8080/courses/62cffd85a60f49eaf13db189/topics/62d2e1a8d346a5c9b87c35aa",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
+								"courses",
+								"62cffd85a60f49eaf13db189",
 								"topics",
-								"62b4c66189b0c5b419f9b566"
+								"62d2e1a8d346a5c9b87c35aa"
 							]
 						}
 					},
@@ -489,12 +554,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/channels/62b4c6bf89b0c5b419f9b57c",
+							"raw": "localhost:8080/courses/62cffd85a60f49eaf13db189/channels/62b4c6bf89b0c5b419f9b57c",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
+								"courses",
+								"62cffd85a60f49eaf13db189",
 								"channels",
 								"62b4c6bf89b0c5b419f9b57c"
 							]
@@ -508,14 +575,124 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/materials/62b4c7f8d55f83f1657a46b2",
+							"raw": "localhost:8080/courses/62cffd85a60f49eaf13db189/materials/62d3cea79e2292d78805d85f",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
+								"courses",
+								"62cffd85a60f49eaf13db189",
 								"materials",
-								"62b4c7f8d55f83f1657a46b2"
+								"62d3cea79e2292d78805d85f"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all replies",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/courses/62cffd85a60f49eaf13db189/annotations/62d3e2e4f07478a03c94170f/replies",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"courses",
+								"62cffd85a60f49eaf13db189",
+								"annotations",
+								"62d3e2e4f07478a03c94170f",
+								"replies"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get course tags",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/courses/62cffd85a60f49eaf13db189/tags",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"courses",
+								"62cffd85a60f49eaf13db189",
+								"tags"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get topic tags",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/courses/62cffd85a60f49eaf13db189/topics/62d2e1a8d346a5c9b87c35aa/tags",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"courses",
+								"62cffd85a60f49eaf13db189",
+								"topics",
+								"62d2e1a8d346a5c9b87c35aa",
+								"tags"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get channel tags",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/courses/62cffd85a60f49eaf13db189/channels/62d3ca46e9c02fb8dbeb251c/tags",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"courses",
+								"62cffd85a60f49eaf13db189",
+								"channels",
+								"62d3ca46e9c02fb8dbeb251c",
+								"tags"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get material tags",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/courses/62cffd85a60f49eaf13db189/materials/62d3cea79e2292d78805d85f/tags",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"courses",
+								"62cffd85a60f49eaf13db189",
+								"materials",
+								"62d3cea79e2292d78805d85f",
+								"tags"
 							]
 						}
 					},
@@ -529,11 +706,11 @@
 				{
 					"name": "Edit course",
 					"request": {
-						"method": "POST",
+						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Advanced Web Technologies\",\r\n    \"description\": \"Teaching students about AWT\"\r\n}",
+							"raw": "{\r\n    \"name\": \"Test 2\",\r\n    \"description\": \"Teaching students about Testing\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -541,14 +718,104 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/edit-course/62b4c4fc89b0c5b419f9b55b",
+							"raw": "localhost:8080/courses/62c7015e95cca3e817934531",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
-								"edit-course",
-								"62b4c4fc89b0c5b419f9b55b"
+								"courses",
+								"62c7015e95cca3e817934531"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit a topic",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Artificial Intelligence\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/courses/62cffd85a60f49eaf13db189/topics/62d2e1cfd346a5c9b87c35b8",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"courses",
+								"62cffd85a60f49eaf13db189",
+								"topics",
+								"62d2e1cfd346a5c9b87c35b8"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit a channel",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Apache Spark\",\r\n    \"description\": \"Teaching about apache spark\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/courses/62cffd85a60f49eaf13db189/channels/62d3ca46e9c02fb8dbeb251c",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"courses",
+								"62cffd85a60f49eaf13db189",
+								"channels",
+								"62d3ca46e9c02fb8dbeb251c"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit a material",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"type\": \"video\",\r\n    \"url\": \"https://www.youtube.com/watch?v=zJxJerQtUdk\",\r\n    \"name\": \"Spark Tutorial\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/courses/62cffd85a60f49eaf13db189/materials/62d3cea79e2292d78805d85f",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"courses",
+								"62cffd85a60f49eaf13db189",
+								"materials",
+								"62d3cea79e2292d78805d85f"
 							]
 						}
 					},
@@ -557,7 +824,7 @@
 				{
 					"name": "Edit an annotation",
 					"request": {
-						"method": "POST",
+						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
@@ -569,14 +836,16 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/edit-annotation/62a5911572bc5cfe822e6147",
+							"raw": "localhost:8080/courses/62cffd85a60f49eaf13db189/annotations/62d3e2e4f07478a03c94170f",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
-								"edit-annotation",
-								"62a5911572bc5cfe822e6147"
+								"courses",
+								"62cffd85a60f49eaf13db189",
+								"annotations",
+								"62d3e2e4f07478a03c94170f"
 							]
 						}
 					},
@@ -585,7 +854,7 @@
 				{
 					"name": "Edit reply",
 					"request": {
-						"method": "POST",
+						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
@@ -597,14 +866,16 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/edit-reply/62a5cd4ca93821c427a1de49",
+							"raw": "localhost:8080/courses/62cffd85a60f49eaf13db189/replies/62d3e6da8db0423826dbd093",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
-								"edit-reply",
-								"62a5cd4ca93821c427a1de49"
+								"courses",
+								"62cffd85a60f49eaf13db189",
+								"replies",
+								"62d3e6da8db0423826dbd093"
 							]
 						}
 					},
@@ -621,14 +892,14 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/course/62a5f4077c46791a986b86ec",
+							"raw": "localhost:8080/courses/62c7d8e7fc3faf6539ff29df",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
-								"course",
-								"62a5f4077c46791a986b86ec"
+								"courses",
+								"62c7d8e7fc3faf6539ff29df"
 							]
 						}
 					},
@@ -640,14 +911,16 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/topic/62a3cec7cc87859694e4003e",
+							"raw": "localhost:8080/courses/62d310a7735cee98f57e9c62/topics/62d2e1a8d346a5c9b87c35aa",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
-								"topic",
-								"62a3cec7cc87859694e4003e"
+								"courses",
+								"62d310a7735cee98f57e9c62",
+								"topics",
+								"62d2e1a8d346a5c9b87c35aa"
 							]
 						}
 					},
@@ -659,14 +932,16 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/channel/62b4c6ed89b0c5b419f9b5a4",
+							"raw": "localhost:8080/courses/62cffd85a60f49eaf13db189/channels/62d3c9d7b5f6d778f15e51e6",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
-								"channel",
-								"62b4c6ed89b0c5b419f9b5a4"
+								"courses",
+								"62cffd85a60f49eaf13db189",
+								"channels",
+								"62d3c9d7b5f6d778f15e51e6"
 							]
 						}
 					},
@@ -678,14 +953,16 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/material/62a4f23c50e9243f73b32936",
+							"raw": "localhost:8080/courses/62cffd85a60f49eaf13db189/materials/62d3cb225af0d03f1a329a03",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
-								"material",
-								"62a4f23c50e9243f73b32936"
+								"courses",
+								"62cffd85a60f49eaf13db189",
+								"materials",
+								"62d3cb225af0d03f1a329a03"
 							]
 						}
 					},
@@ -697,14 +974,16 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/delete-annotation/62a5c3271904defd36ba5f62",
+							"raw": "localhost:8080/courses/62cffd85a60f49eaf13db189/annotations/62d3d691504d9993ebd08ce5",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
-								"delete-annotation",
-								"62a5c3271904defd36ba5f62"
+								"courses",
+								"62cffd85a60f49eaf13db189",
+								"annotations",
+								"62d3d691504d9993ebd08ce5"
 							]
 						}
 					},
@@ -725,14 +1004,16 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/delete-reply/62a5cd17a93821c427a1de35",
+							"raw": "localhost:8080/courses/62cffd85a60f49eaf13db189/replies/62d3e6da8db0423826dbd093",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
-								"delete-reply",
-								"62a5cd17a93821c427a1de35"
+								"courses",
+								"62cffd85a60f49eaf13db189",
+								"replies",
+								"62d3e6da8db0423826dbd093"
 							]
 						}
 					},

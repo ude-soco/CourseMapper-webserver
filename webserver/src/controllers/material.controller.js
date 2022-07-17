@@ -13,9 +13,10 @@ const Material = db.material;
 export const getMaterial = async (req, res) => {
   const materialId = req.params.materialId;
   const courseId = req.params.courseId;
+
   let foundMaterial;
   try {
-    foundMaterial = await Material.findOne({
+    foundMaterial = await Material.findById({
       _id: ObjectId(materialId),
     }).populate("annotations", "-__v");
     if (!foundMaterial) {
@@ -23,7 +24,7 @@ export const getMaterial = async (req, res) => {
         error: `Material with id ${materialId} doesn't exist!`,
       });
     }
-    if (foundMaterial.courseId !== courseId) {
+    if (foundMaterial.courseId.valueOf() !== courseId) {
       return res.status(404).send({
         error: `Material doesn't belong to course with id ${courseId}!`,
       });
@@ -39,6 +40,7 @@ export const getMaterial = async (req, res) => {
  * Add a new material to a channel controller
  *
  * @param {string} req.params.channelId The id of the channel
+ * @param {string} req.params.courseId The id of the course
  * @param {string} req.body.type The type of the material, e.g., pdf, video
  * @param {string} req.body.name The name of the material, e.g., Angular lecture
  * @param {string} req.body.url The location/url of the material, e.g., https://www.youtube.com/watch?v=zJxJerQtUdk
@@ -46,18 +48,24 @@ export const getMaterial = async (req, res) => {
  * @param {string} req.userId The owner of the material
  */
 export const newMaterial = async (req, res) => {
-  let channelId = req.params.channelId;
-  let materialType = req.body.type;
-  let materialName = req.body.name;
-  let materialUrl = req.body.url;
-  let materialDesc = req.body.description;
+  const courseId = req.params.courseId;
+  const channelId = req.params.channelId;
+  const materialType = req.body.type;
+  const materialName = req.body.name;
+  const materialUrl = req.body.url;
+  const materialDesc = req.body.description;
 
   let foundChannel;
   try {
-    foundChannel = await Channel.findOne({ _id: ObjectId(channelId) });
+    foundChannel = await Channel.findById({ _id: ObjectId(channelId) });
     if (!foundChannel) {
       return res.status(404).send({
         error: `Channel with id ${channelId} doesn't exist!`,
+      });
+    }
+    if (foundChannel.courseId.valueOf() !== courseId) {
+      return res.status(404).send({
+        error: `Channel doesn't belong to course with id ${courseId}!`,
       });
     }
   } catch (err) {
@@ -115,7 +123,7 @@ export const deleteMaterial = async (req, res) => {
         error: `Material with id ${materialId} doesn't exist!`,
       });
     }
-    if (foundMaterial.courseId !== courseId) {
+    if (foundMaterial.courseId.valueOf() !== courseId) {
       return res.status(404).send({
         error: `Material doesn't belong to course with id ${courseId}!`,
       });
@@ -132,7 +140,7 @@ export const deleteMaterial = async (req, res) => {
 
   let foundChannel;
   try {
-    foundChannel = await Channel.findOne({ _id: foundMaterial.channelId });
+    foundChannel = await Channel.findById({ _id: foundMaterial.channelId });
   } catch (err) {
     return res.status(500).send({ error: err });
   }
@@ -179,21 +187,21 @@ export const editMaterial = async (req, res) => {
 
   let foundMaterial;
   try {
-    foundMaterial = await Channel.findOne({
-      _id: ObjectId(materialId),
-    }).populate("materials", "-__v");
+    foundMaterial = await Material.findById({ _id: ObjectId(materialId) });
     if (!foundMaterial) {
       return res.status(404).send({
         error: `Material with id ${materialId} doesn't exist!`,
       });
     }
-    if (foundMaterial.courseId !== courseId) {
+    if (foundMaterial.courseId.valueOf() !== courseId) {
       return res.status(404).send({
         error: `Material doesn't belong to course with id ${courseId}!`,
       });
     }
   } catch (err) {
-    return res.status(500).send({ error: `Error while searching for channel` });
+    return res
+      .status(500)
+      .send({ error: `Error while searching for material` });
   }
 
   foundMaterial.name = materialName;
