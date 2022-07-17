@@ -2,6 +2,7 @@ const ObjectId = require("mongoose").Types.ObjectId;
 const db = require("../models");
 const Annotation = db.annotation;
 const Reply = db.reply;
+const Tag = db.tag;
 const User = db.user;
 
 /**
@@ -110,6 +111,33 @@ export const newReply = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
+
+  let foundTags = replyContent.split(" ").filter((v) => v.startsWith("#"));
+
+  let foundTagsSchema = [];
+  if (foundTags.length !== 0) {
+    foundTags.forEach((tag) => {
+      let newTag = new Tag({
+        name: tag,
+        courseId: foundAnnotation.courseId,
+        topicId: foundAnnotation.topicId,
+        channelId: foundAnnotation.channelId,
+        materialId: foundAnnotation.materialId,
+        annotationId: foundAnnotation._id,
+        replyId: newReply._id,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      });
+      foundTagsSchema.push(newTag);
+    });
+
+    try {
+      await Tag.insertMany(foundTagsSchema);
+    } catch (err) {
+      return res.status(500).send({error: err});
+    }
+  }
+
   return res.status(200).send({ id: newReply._id, success: `Reply added!` });
 };
 
@@ -217,6 +245,39 @@ export const editReply = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
+
+  try {
+    await Tag.deleteMany({ replyId: replyId });
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  let foundTags = replyContent.split(" ").filter((v) => v.startsWith("#"));
+
+  let foundTagsSchema = [];
+  if (foundTags.length !== 0) {
+    foundTags.forEach((tag) => {
+      let newTag = new Tag({
+        name: tag,
+        courseId: foundReply.courseId,
+        topicId: foundReply.topicId,
+        channelId: foundReply.channelId,
+        materialId: foundReply.materialId,
+        annotationId: foundReply.annotationId,
+        replyId: foundReply._id,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      });
+      foundTagsSchema.push(newTag);
+    });
+
+    try {
+      await Tag.insertMany(foundTagsSchema);
+    } catch (err) {
+      return res.status(500).send({error: err});
+    }
+  }
+
   return res.status(200).send({ success: "Reply successfully updated" });
 };
 

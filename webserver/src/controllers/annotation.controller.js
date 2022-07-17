@@ -2,6 +2,7 @@ const ObjectId = require("mongoose").Types.ObjectId;
 const db = require("../models");
 const Annotation = db.annotation;
 const Material = db.material;
+const Reply = db.reply;
 const Tag = db.tag;
 const User = db.user;
 
@@ -64,7 +65,7 @@ export const newAnnotation = async (req, res) => {
     courseId: foundMaterial.courseId,
     topicId: foundMaterial.topicId,
     channelId: foundMaterial.channelId,
-    materialId: materialId,
+    materialId: foundMaterial._id,
     createdAt: Date.now(),
     updatedAt: Date.now(),
   });
@@ -182,6 +183,12 @@ export const deleteAnnotation = async (req, res) => {
   }
 
   try {
+    await Reply.deleteMany({ annotationId: annotationId });
+  } catch (err) {
+      return res.status(500).send({error: err});
+  }
+
+  try {
     await Tag.deleteMany({ annotationId: annotationId });
   } catch (err) {
     return res.status(500).send({ error: err });
@@ -212,7 +219,9 @@ export const editAnnotation = async (req, res) => {
 
   let foundAnnotation;
   try {
-    foundAnnotation = await Annotation.findById({ _id: ObjectId(annotationId) });
+    foundAnnotation = await Annotation.findById({
+      _id: ObjectId(annotationId),
+    });
     if (!foundAnnotation) {
       return res.status(404).send({
         error: `Annotation with id ${annotationId} doesn't exist!`,
@@ -244,6 +253,39 @@ export const editAnnotation = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
+
+  try {
+    await Tag.deleteMany({ annotationId: annotationId });
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  // Checks for hashtags in content
+  let foundTags = annotationContent.split(" ").filter((v) => v.startsWith("#"));
+
+  let foundTagsSchema = [];
+  if (foundTags.length !== 0) {
+    foundTags.forEach((tag) => {
+      let newTag = new Tag({
+        name: tag,
+        courseId: foundAnnotation.courseId,
+        topicId: foundAnnotation.topicId,
+        channelId: foundAnnotation.channelId,
+        materialId: foundAnnotation.materialId,
+        annotationId: foundAnnotation._id,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      });
+      foundTagsSchema.push(newTag);
+    });
+
+    try {
+      await Tag.insertMany(foundTagsSchema);
+    } catch (err) {
+      return res.status(500).send({ error: err });
+    }
+  }
+
   return res.status(200).send({ success: "Annotation successfully updated" });
 };
 

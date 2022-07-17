@@ -21,6 +21,10 @@ const Tag = new Schema({
     ref: "annotation",
     required: true,
   },
+  replyId: {
+    type: Schema.Types.ObjectId,
+    ref: "reply",
+  },
 });
 
 module.exports = mongoose.model("tag", Tag);
