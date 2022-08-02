@@ -104,3 +104,4 @@ dist
 .tern-port
 webserver/dist-server/*
 webserver/.idea/*
+/.idea/

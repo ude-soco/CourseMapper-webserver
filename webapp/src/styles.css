@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .button-primary {
+    @apply flex items-center ripple-bg-orange-600 px-3 py-2.5 text-sm uppercase text-white font-semibold rounded-md hover:rounded-sm transition-all shadow-lg;
+  }
+  .button-normal {
+    @apply flex items-center opacity-100 px-3 py-2.5 text-sm uppercase text-orange-600 font-semibold rounded-md hover:rounded-sm transition-all shadow-lg;
+  }
+}
