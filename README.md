@@ -1,4 +1,12 @@
-# CourseMapper
+<p align="center">
+<a href="https://www.uni-due.de/soco/research/projects/elas.php" target="_blank" rel="noopener noreferrer">
+<img width=75% src="webapp/src/assets/logo.svg" alt="re-frame logo">
+</a>
+</p>
+
+<p>
+CourseMapper is a collaborative course annotation and analytics platform that fosters collaboration and interaction around pdf/video learning materials, supported by visual learning analytics.
+</p>
 
 ## 🚀 Get Started
 
