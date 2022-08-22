@@ -1,14 +1,28 @@
-<div class="h-screen w-64 m-0 flex flex-col bg-gray-300 shadow-lg">
-  <div
-    class="flex flex-wrap items-center justify-between py-4 px-3 bg-gray-500 text-white"
-  >
-    <p class="text-xl font-semibold">Channel</p>
-    <button
-      class="flex items-center justify-center rounded-3xl h-8 w-8 hover:bg-opacity-20 hover:bg-white transition-all"
+<div class="relative w-72 h-screen bg-gray-300 shadow-lg">
+  <div class="h-max w-72 m-0 flex flex-col bg-gray-300">
+    <div
+      class="flex items-start justify-between py-4 px-3 bg-gray-500 text-white"
     >
-      <i
-        class="bx bx-dots-vertical-rounded bx-sm bx-tada-hover bx-color-white"
-      ></i>
-    </button>
+      <p class="flex w-56 text-xl font-semibold">
+        <!-- Learning Analytics -->
+        Neuroinformatik und Organic Computing Vorlesung WS21/22
+      </p>
+      <app-iconbutton
+        icon="bx-dots-vertical-rounded"
+        (onClick)="showMenu()"
+      ></app-iconbutton>
+    </div>
+
+    <div class="flex flex-col items-center justify-start p-1 m-0 z-10">
+      <div class="m-0 w-full px-2 pb-2 transition duration-300 ease-in-out">
+        <div
+          class="flex flex-row items-center justify-evenly mx-0 text-gray-500 cursor-pointer"
+        >
+          <i
+            class="bx bx-chevron-down text-accent text-opacity-80 my-auto mr-1"
+          ></i>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

@@ -1,1 +1,4 @@
-<p>button works!</p>
+<button class="h-10" [ngClass]="variant" (click)="btnClick()">
+  <i class="bx bx-sm bx-tada-hover bx-color-white" [ngClass]="icon"></i>
+  <span class="ml-2 mr-1.5">{{ label }}</span>
+</button>

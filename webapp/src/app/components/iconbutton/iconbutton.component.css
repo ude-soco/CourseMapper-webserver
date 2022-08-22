@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .icon-default {
+    @apply flex items-center justify-center rounded-3xl h-8 w-8 hover:bg-opacity-20 hover:bg-white transition-all;
+  }
+}

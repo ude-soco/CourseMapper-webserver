@@ -13,7 +13,7 @@
   }
 
   .sidebar-hr {
-    @apply bg-orange-500 border-orange-500 border rounded-full mx-2 my-2;
+    @apply bg-orange-500 border-orange-500 border rounded-full mx-2 my-2 z-[1];
   }
 
   .icon-button {
