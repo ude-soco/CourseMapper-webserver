@@ -1,3 +1,7 @@
 <button class="icon-default" (click)="btnClick()">
-  <i class="bx bx-sm bx-tada-hover" [ngClass]="icon + ' ' + color"></i>
+  <i
+    class="bx bx-sm bx-black bx-tada-hover"
+    [ngStyle]="{ color: 'black' }"
+    [ngClass]="icon + ' ' + color"
+  ></i>
 </button>
