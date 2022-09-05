@@ -3,13 +3,14 @@ import { Component, OnInit } from '@angular/core';
 @Component({
   selector: 'app-channelbar',
   templateUrl: './channelbar.component.html',
-  styleUrls: ['./channelbar.component.css']
+  styleUrls: ['./channelbar.component.css'],
 })
 export class ChannelbarComponent implements OnInit {
+  constructor() {}
 
-  constructor() { }
+  ngOnInit(): void {}
 
-  ngOnInit(): void {
+  showMenu() {
+    console.log('showMenu');
   }
-
 }

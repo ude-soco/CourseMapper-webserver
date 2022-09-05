@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
-import { ButtonModule } from 'primeng/button';
+import { AvatarModule } from 'primeng/avatar';
+import { AvatarGroupModule } from 'primeng/avatargroup';
 
-const PrimeNgComponents = [ButtonModule];
+const PrimeNgComponents = [AvatarModule, AvatarGroupModule];
 
 @NgModule({
   imports: [PrimeNgComponents],

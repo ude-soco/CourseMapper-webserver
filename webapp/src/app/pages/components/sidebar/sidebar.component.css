@@ -4,7 +4,7 @@
 
 @layer components {
   .sidebar-icon {
-    @apply relative flex items-center justify-center h-14 w-14 my-1.5 mx-auto bg-gray-800 text-orange-500 hover:bg-orange-600 hover:text-white rounded-3xl shadow-lg hover:rounded-md transition-all cursor-pointer;
+    @apply relative flex items-center justify-center h-14 w-14 my-1.5 mx-auto bg-sky-700 text-white hover:bg-sky-900 rounded-3xl shadow-lg hover:rounded-md transition-all cursor-pointer;
   }
 
   .sidebar-tooltip {
@@ -13,7 +13,7 @@
   }
 
   .sidebar-hr {
-    @apply bg-orange-500 border-orange-500 border rounded-full mx-2 my-2;
+    @apply bg-sky-700 border-sky-800 border rounded-full mx-2 my-2 z-[1];
   }
 
   .icon-button {

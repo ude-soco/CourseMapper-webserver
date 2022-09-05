@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .avatar {
+    @apply flex items-center justify-center h-10 w-10 uppercase font-semibold rounded-full shadow-lg text-lg;
+  }
+}

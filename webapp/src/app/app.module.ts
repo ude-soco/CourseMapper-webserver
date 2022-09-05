@@ -9,6 +9,8 @@ import { NavbarComponent } from './pages/components/navbar/navbar.component';
 import { ChannelbarComponent } from './pages/components/channelbar/channelbar.component';
 import { CoursesComponent } from './pages/courses/courses.component';
 import { ButtonComponent } from './components/button/button.component';
+import { IconbuttonComponent } from './components/iconbutton/iconbutton.component';
+import { AvatarComponent } from './components/avatar/avatar.component';
 
 @NgModule({
   declarations: [
@@ -18,6 +20,8 @@ import { ButtonComponent } from './components/button/button.component';
     ChannelbarComponent,
     CoursesComponent,
     ButtonComponent,
+    IconbuttonComponent,
+    AvatarComponent,
   ],
   imports: [BrowserModule, AppRoutingModule, PrimengModule],
   providers: [],
