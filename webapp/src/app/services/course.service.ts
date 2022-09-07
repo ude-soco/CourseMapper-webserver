@@ -2,7 +2,7 @@ import { Course } from 'src/app/models/Course';
 import { environment } from './../../environments/environment';
 import { EventEmitter, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { lastValueFrom, map, Observable } from 'rxjs';
+import { lastValueFrom, map, Observable, Subject, tap } from 'rxjs';
 
 
 @Injectable({
@@ -10,6 +10,7 @@ import { lastValueFrom, map, Observable } from 'rxjs';
 })
 export class CourseService {
   courses : Course[] = [];
+  coursesUpdate$ = new Subject<Course[]>();
   selectedCourse: Course = {
     _id: '',
     name: '',
@@ -32,18 +33,24 @@ export class CourseService {
   }
 
   /** GET courses from the server */
-  getCourses(): Observable<Course[]> {
-    return this.http.get<Course[]>(`${this.API_URL}/courses`);
+  fetchCourses():  Observable<Course[]> {
+    return this.http.get<Course[]>(`${this.API_URL}/courses`).pipe(tap(courses => {
+      this.courses = courses;
+    }));
   }
 
-  synchronizeCourses(){
-    this.getCourses().subscribe(courses => {
-      let userCourses = this.courses.map(course =>  course._id);
-      courses.forEach(course => {
-        if (!userCourses.includes(course._id)) this.courses.push(course);
-      });
-    });
+  addCourse(course: Course){
+    	this.courses.push(course);
+      this.coursesUpdate$.next(this.courses);
   }
+  // synchronizeCourses(){
+  //   this.getCourses().subscribe(courses => {
+  //     let userCourses = this.courses.map(course =>  course._id);
+  //     courses.forEach(course => {
+  //       if (!userCourses.includes(course._id)) this.courses.push(course);
+  //     });
+  //   });
+  // }
   
   
   

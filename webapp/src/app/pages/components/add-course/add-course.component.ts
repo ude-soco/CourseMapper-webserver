@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CourseService } from 'src/app/services/course.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Course } from 'src/app/models/Course';
 
 @Component({
   selector: 'app-add-course',
@@ -34,16 +35,17 @@ export class AddCourseComponent implements OnInit {
 
   onSubmit(){ 
     if (this.createCourseForm.valid) {
-      // this.courseService.courses.push({
-      //   _id: "5454455445454545",
-      //   name: this.name,
-      //   shortName: this.shortname,
-      //   description: this.description,
-      //   numberTopics: 0,
-      //   notification: 0,
-      //   numberChannels: 0,
-      //   numberUsers: 0
-      // });
+      let newCourse: Course = {
+        _id: '',
+        name: this.createCourseForm.value.name,
+        shortName: this.createCourseForm.value.shortname,
+        description: this.createCourseForm.value.description,
+        numberTopics: 0,
+        notification: 0,
+        numberChannels: 0,
+        numberUsers: 0
+      }
+      this.courseService.addCourse(newCourse);      
       this.toggleAddCourseDialogue();
     }
   }
@@ -55,16 +57,6 @@ export class AddCourseComponent implements OnInit {
 
   deleteLocalData(){
     this.ngOnInit();
-  }
-
-
-  synchronizeCourses(){
-    this.courseService.getCourses().subscribe(courses => {
-      let userCourses = this.courseService.courses.map(course =>  course._id);
-      courses.forEach(course => {
-        if (!userCourses.includes(course._id)) this.courseService.courses.push(course)
-      });
-    });
   }
 
 }

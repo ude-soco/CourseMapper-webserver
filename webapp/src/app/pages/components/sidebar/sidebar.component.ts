@@ -19,6 +19,8 @@ export class SidebarComponent implements OnInit {
     numberChannels: 0,
     numberUsers: 0
   };
+
+
   displayAddCourseDialogue: boolean = false;
   onShowAddCourseDialogue = new EventEmitter<boolean>();
 
@@ -29,22 +31,18 @@ export class SidebarComponent implements OnInit {
   }
 
   getCourses(){
-    this.courseService.getCourses().subscribe((courses) => {
-      this.courseService.courses = courses;
-      this.courses = this.courseService.courses;
-      console.log(this.courseService.courses);
-      
-      //this.setDefaultselection();
-    });
+    this.courseService.fetchCourses().subscribe((courses) => this.courses = courses);
+    this.courseService.coursesUpdate$.subscribe((courses) => this.courses = courses);
+    //this.setDefaultselection();
   }
 
 
-  setDefaultselection(){
-    if (this.courseService.courses.length > 0) {
-      this.courseService.selectedCourse = this.courseService.courses[0];
-      this.selectedCourse = this.courseService.selectedCourse;
-    }
-  }
+  // setDefaultselection(){
+  //   if (this.courses.length > 0) {
+  //     this.courseService.selectedCourse = this.courses[0];
+  //     this.selectedCourse = this.courseService.selectedCourse;
+  //   }
+  // }
 
   showAddCourseDialogue(){
     this.onShowAddCourseDialogue.emit(!this.displayAddCourseDialogue);
@@ -52,10 +50,9 @@ export class SidebarComponent implements OnInit {
   
   onSelect(selectedCourse: Course){
     if (this.courseService.selectedCourse != selectedCourse) {
-      let course = this.courseService.courses.find((course: Course) => course == selectedCourse)!;
+      let course = this.courses.find((course: Course) => course == selectedCourse)!;
       this.selectedCourse = course;
       this.courseService.selectCourse(course);
-      //this.courseService.selectedCourse = this.courseService.courses.find((course: Course) => course == selectedCourse)!;
     }  
   }
 }
