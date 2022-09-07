@@ -1,9 +1,9 @@
-<div class="relative w-72 h-screen bg-gray-200 shadow-lg">
+<div *ngIf="selectedCourse._id" class="relative w-72 h-screen bg-gray-200 shadow-lg">
   <div class="h-max w-72 m-0 flex flex-col bg-gray-200">
     <div class="flex items-start justify-between py-4 px-3 bg-gray-300">
       <p class="flex w-56 text-xl font-semibold">
         <!-- Learning Analytics -->
-        Neuroinformatik und Organic Computing Vorlesung WS21/22
+        {{selectedCourse.name}}
       </p>
       <app-iconbutton
         icon="bx-dots-vertical-rounded"

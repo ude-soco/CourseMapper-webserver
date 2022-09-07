@@ -1,5 +1,5 @@
 <div class="absolute left-0 z-0 h-screen w-20 bg-white"></div>
-<div class="h-max w-20 m-0 flex flex-col py-4 bg-gray-600 text-white shadow-lg">
+<div class="h-max w-20 m-0 flex flex-col py-2 bg-gray-600 text-white shadow-lg">
   <div class="sidebar-icon group">
     <i class="bx bx-home bx-md bx-tada-hover"></i>
     <span class="sidebar-tooltip group-hover:scale-100"> Home </span>
@@ -7,19 +7,19 @@
 
   <hr class="sidebar-hr" />
 
-  <div *ngFor="let item of array2; let i = index" [attr.data-index]="i">
+  <div *ngFor="let course of courses; let i = index" [attr.data-index]="i">
     <div class="sidebar-icon group">
-      <button class="text-xl">{{ item.name }}</button>
-      <span class="icon-button-badge">{{ item.notification }}</span>
+      <button class="text-xl" (click)="onSelect(course)">{{ course.shortName }}</button>
+      <span class="icon-button-badge">{{ course.notification }}</span>
       <span class="sidebar-tooltip group-hover:scale-100">{{
-        item.description
+        course.description
       }}</span>
     </div>
   </div>
 
   <hr class="sidebar-hr" />
 
-  <div class="sidebar-icon group">
+  <div (click) = "showAddCourseDialogue()" class="sidebar-icon group">
     <i class="bx bx-plus bx-md bx-tada-hover"></i>
     <span class="sidebar-tooltip group-hover:scale-100"> Add new course </span>
   </div>
@@ -31,3 +31,4 @@
     </span>
   </div>
 </div>
+<app-add-course [onShowAddCourseDialogue]="onShowAddCourseDialogue"></app-add-course>

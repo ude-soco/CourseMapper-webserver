@@ -1,29 +1,61 @@
-import { Component, OnInit } from '@angular/core';
-
+import { Course } from 'src/app/models/Course';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { CourseService } from 'src/app/services/course.service';
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css'],
 })
 export class SidebarComponent implements OnInit {
-  array2 = [
-    {
-      name: 'AWT',
-      description: 'Advanced Web Techonologies',
-      notification: 14,
-    },
-    { name: 'LA', description: 'Learning Analytics', notification: 3 },
-    { name: 'IR', description: 'Information Retrieval', notification: 10 },
-    { name: 'IM', description: 'Information Mining', notification: 60 },
-    { name: 'RS', description: 'Recommender Systems', notification: 99 },
-    {
-      name: 'NEO',
-      description: 'Neuroscience and Organic Computing',
-      notification: 20,
-    },
-  ];
+  
+  courses : Course[] = [];
+  selectedCourse: Course = {
+    _id: '',
+    name: '',
+    shortName: '',
+    description: '',
+    numberTopics: 0,
+    notification: 0,
+    numberChannels: 0,
+    numberUsers: 0
+  };
+  displayAddCourseDialogue: boolean = false;
+  onShowAddCourseDialogue = new EventEmitter<boolean>();
 
-  constructor() {}
+  constructor( private courseService: CourseService) { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.getCourses();
+  }
+
+  getCourses(){
+    this.courseService.getCourses().subscribe((courses) => {
+      this.courseService.courses = courses;
+      this.courses = this.courseService.courses;
+      console.log(this.courseService.courses);
+      
+      //this.setDefaultselection();
+    });
+  }
+
+
+  setDefaultselection(){
+    if (this.courseService.courses.length > 0) {
+      this.courseService.selectedCourse = this.courseService.courses[0];
+      this.selectedCourse = this.courseService.selectedCourse;
+    }
+  }
+
+  showAddCourseDialogue(){
+    this.onShowAddCourseDialogue.emit(!this.displayAddCourseDialogue);
+  }
+  
+  onSelect(selectedCourse: Course){
+    if (this.courseService.selectedCourse != selectedCourse) {
+      let course = this.courseService.courses.find((course: Course) => course == selectedCourse)!;
+      this.selectedCourse = course;
+      this.courseService.selectCourse(course);
+      //this.courseService.selectedCourse = this.courseService.courses.find((course: Course) => course == selectedCourse)!;
+    }  
+  }
 }

@@ -11,7 +11,14 @@ import { CoursesComponent } from './pages/courses/courses.component';
 import { ButtonComponent } from './components/button/button.component';
 import { IconbuttonComponent } from './components/iconbutton/iconbutton.component';
 import { AvatarComponent } from './components/avatar/avatar.component';
-
+import { DialogModule } from 'primeng/dialog';
+import { ButtonModule } from 'primeng/button';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FormsModule} from '@angular/forms';
+import { InputTextModule} from 'primeng/inputtext';
+import { HttpClientModule } from '@angular/common/http';
+import { AddCourseComponent } from './pages/components/add-course/add-course.component';
+import { ReactiveFormsModule } from '@angular/forms';
 @NgModule({
   declarations: [
     AppComponent,
@@ -22,8 +29,20 @@ import { AvatarComponent } from './components/avatar/avatar.component';
     ButtonComponent,
     IconbuttonComponent,
     AvatarComponent,
+    AddCourseComponent
   ],
-  imports: [BrowserModule, AppRoutingModule, PrimengModule],
+  imports: [
+    BrowserModule,
+    AppRoutingModule, 
+    PrimengModule, 
+    HttpClientModule, 
+    DialogModule, 
+    ButtonModule, 
+    BrowserAnimationsModule, 
+    FormsModule,
+    InputTextModule,
+    ReactiveFormsModule
+  ],
   providers: [],
   bootstrap: [AppComponent],
 })
