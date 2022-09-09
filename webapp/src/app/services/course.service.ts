@@ -11,6 +11,7 @@ import { lastValueFrom, map, Observable, Subject, tap } from 'rxjs';
 export class CourseService {
   courses : Course[] = [];
   coursesUpdate$ = new Subject<Course[]>();
+  onSelectCourse = new EventEmitter<Course>();
   selectedCourse: Course = {
     _id: '',
     name: '',
@@ -22,7 +23,7 @@ export class CourseService {
     numberUsers: 0
   };
   
-  onSelectCourse = new EventEmitter<Course>();
+  
 
   private API_URL = environment.API_URL;
   constructor( private http: HttpClient) { }

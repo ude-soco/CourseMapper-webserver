@@ -11,7 +11,7 @@ import { Course } from 'src/app/models/Course';
 export class AddCourseComponent implements OnInit {
 
   displayAddCourseDialogue: boolean = false;
-  createCourseForm!: FormGroup;
+  createCourseForm: FormGroup;
 
   /**
     * used to get notified once the user
@@ -26,8 +26,8 @@ export class AddCourseComponent implements OnInit {
     this.onShowAddCourseDialogue.subscribe((val) => this.toggleAddCourseDialogue());
     this.createCourseForm = new FormGroup({
       	name: new FormControl(null, Validators.required),
-        shortname: new FormControl(null, Validators.required),
-        description: new FormControl(null, Validators.required)
+        shortname: new FormControl(null),
+        description: new FormControl(null)
     });
   }
 
