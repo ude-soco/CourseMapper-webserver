@@ -1,3 +1,4 @@
+import { CourseImp } from 'src/app/models/CourseImp';
 import { Course } from 'src/app/models/Course';
 import { environment } from './../../environments/environment';
 import { EventEmitter, Injectable } from '@angular/core';
@@ -10,18 +11,9 @@ import { lastValueFrom, map, Observable, Subject, tap } from 'rxjs';
 })
 export class CourseService {
   courses : Course[] = [];
-  coursesUpdate$ = new Subject<Course[]>();
+  onUpdateCourses$ = new Subject<Course[]>();
   onSelectCourse = new EventEmitter<Course>();
-  selectedCourse: Course = {
-    _id: '',
-    name: '',
-    shortName: '',
-    description: '',
-    numberTopics: 0,
-    notification: 0,
-    numberChannels: 0,
-    numberUsers: 0
-  };
+  selectedCourse: Course = new CourseImp('','');
   
   
 
@@ -42,7 +34,18 @@ export class CourseService {
 
   addCourse(course: Course){
     	this.courses.push(course);
-      this.coursesUpdate$.next(this.courses);
+      this.onUpdateCourses$.next(this.courses);
+  }
+
+  deleteCourse(courseTD: Course){
+    let index = this.courses.findIndex((course) => {
+      return course._id === courseTD._id
+    });
+    if (index !== -1) {
+      this.courses.splice(index, 1);
+      this.onUpdateCourses$.next(this.courses);
+      this.selectCourse(new CourseImp('',''));
+    }
   }
   // synchronizeCourses(){
   //   this.getCourses().subscribe(courses => {

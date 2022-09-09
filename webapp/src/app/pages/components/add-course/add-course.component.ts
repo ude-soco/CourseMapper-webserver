@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CourseService } from 'src/app/services/course.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Course } from 'src/app/models/Course';
+import { CourseImp } from 'src/app/models/CourseImp';
 
 @Component({
   selector: 'app-add-course',
@@ -35,16 +36,10 @@ export class AddCourseComponent implements OnInit {
 
   onSubmit(){ 
     if (this.createCourseForm.valid) {
-      let newCourse: Course = {
-        _id: '',
-        name: this.createCourseForm.value.name,
-        shortName: this.createCourseForm.value.shortname,
-        description: this.createCourseForm.value.description,
-        numberTopics: 0,
-        notification: 0,
-        numberChannels: 0,
-        numberUsers: 0
-      }
+      let newCourse: Course = new CourseImp('3242343252', 
+                                    this.createCourseForm.value.name, 
+                                    this.createCourseForm.value.shortname,
+                                    this.createCourseForm.value.description);   
       this.courseService.addCourse(newCourse);      
       this.toggleAddCourseDialogue();
     }

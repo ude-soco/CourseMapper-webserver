@@ -1,3 +1,4 @@
+import { CourseImp } from 'src/app/models/CourseImp';
 import { Course } from 'src/app/models/Course';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CourseService } from 'src/app/services/course.service';
@@ -9,16 +10,7 @@ import { CourseService } from 'src/app/services/course.service';
 export class SidebarComponent implements OnInit {
   
   courses : Course[] = [];
-  selectedCourse: Course = {
-    _id: '',
-    name: '',
-    shortName: '',
-    description: '',
-    numberTopics: 0,
-    notification: 0,
-    numberChannels: 0,
-    numberUsers: 0
-  };
+  selectedCourse: Course = new CourseImp('', '');
 
 
   displayAddCourseDialogue: boolean = false;
@@ -32,7 +24,7 @@ export class SidebarComponent implements OnInit {
 
   getCourses(){
     this.courseService.fetchCourses().subscribe((courses) => this.courses = courses);
-    this.courseService.coursesUpdate$.subscribe((courses) => this.courses = courses);
+    this.courseService.onUpdateCourses$.subscribe((courses) => this.courses = courses);
     //this.setDefaultselection();
   }
 
