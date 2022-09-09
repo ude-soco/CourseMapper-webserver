@@ -1,0 +1,31 @@
+
+<div>
+    <form [formGroup]="loginForm" > 
+
+    <div class="container">
+        <label for="password">password</label>
+        
+        <input type="text" formControlName="password" required placeholder="password" class="textclass">
+        <div *ngIf="loginForm.controls['password'].invalid && (loginForm.controls['password'].dirty || loginForm.controls['password'].touched)">
+            This is required
+        </div>
+    </div>
+
+
+    <div class="container">
+        <label for="username">username</label>
+        
+        <input type="text" formControlName="username" required placeholder="username" class="textclass">
+        <div *ngIf="loginForm.controls['username'].invalid && (loginForm.controls['username'].dirty || loginForm.controls['username'].touched)">
+            This is required
+        </div>
+    </div>
+    <div class="container">
+    <button type="submit" 
+                (click)="onSubmit()">Login
+              </button></div>
+    </form>
+    <a routerLink="/signup">Signup</a>
+    <div class="container"> <h1 *ngIf="registerSucess"> Login Success</h1>
+</div>
+</div>

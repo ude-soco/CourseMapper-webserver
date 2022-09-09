@@ -1,0 +1,1 @@
+export const backendEndpointURL = "http://localhost:8080";
