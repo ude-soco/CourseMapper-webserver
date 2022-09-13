@@ -2,13 +2,12 @@
   <div class="h-max w-72 m-0 flex flex-col bg-gray-200">
     <div class="flex items-start justify-between py-4 px-3 bg-gray-300">
       <p class="flex w-56 text-xl font-semibold">
-        <!-- Learning Analytics -->
         {{selectedCourse.name}}
       </p>
       <app-iconbutton
         icon="bx-dots-vertical-rounded"
         color="text-black"
-        (onClick)="deleteCourse()"
+        (onClick)="onDeleteCourse()"
       ></app-iconbutton>
     </div>
 
@@ -20,29 +19,33 @@
           <i
             class="bx bx-chevron-down text-accent text-opacity-80 my-auto mr-1"
           ></i>
-          <ul>
+          <ul *ngIf="topics.length > 0">
             <li *ngFor="let topic of topics">
             <div>
-              {{topic.name}}
+              <div (click)="onSelectTopic(topic)">
+                {{topic.name}}
+              </div>
           
-              <label for="cog">options:</label>
-          
-              <select name="cog" id="cog">
-                <option value="delete"><button>Delete</button></option>
-                <option value="rename"><button>Rename</button></option>
-              </select>
-          
+              <label>options:</label>
+                <select #topicSelection [id]="topic._id" (change) = "onSelectTopicOption(topicSelection.value,  topicSelection.id)">
+                  <option value="" disabled selected>Select your option</option>
+                  <option value="Delete" name="Delete"> Delete</option>
+                  <option value="Rename" name="Rename">Rename</option>
+                </select>
             </div>
-            <ul>
+            <ul *ngIf="topic.channels.length > 0">
                 <li *ngFor="let channel of topic.channels">
-                <div>
-                  {{channel.name}}
-                  <label for="cog">options:</label>
-                  <select name="cog" id="cog">
-                    <option value="delete"><button>Delete</button></option>
-                    <option value="rename"><button>Rename</button></option>
-                  </select>
-                </div>
+                  <div>
+                    <div (click)="onSelectChannel(channel)">
+                      {{channel.name}}
+                    </div>
+                    <label>options:</label>
+                    <select #channelSelection [id]="channel._id" (change) = "onSelectChannelOption(channelSelection.value,  channelSelection.id)">
+                      <option value="" disabled selected>Select your option</option>
+                      <option value="Delete" name="Delete"> Delete</option>
+                      <option value="Rename" name="Rename">Rename</option>
+                    </select>
+                  </div>
                 </li>
             </ul>
             </li>

@@ -18,9 +18,16 @@ export class TopicChannelService {
   constructor(private http: HttpClient) {   }
 
   /** GET Topics of a course from the server */
-  fetchTopics(Course_id: string):  Observable<Topic[]> {
-    return this.http.get<Topic[]>(`${this.API_URL}/courses/topics/${Course_id}`).pipe(tap( topics => {      
+  fetchTopics(course_id: string):  Observable<Topic[]> {
+    return this.http.get<Topic[]>(`${this.API_URL}/courses/topics/${course_id}`).pipe(tap( topics => {      
       this.topics = topics         
     }));
+  }
+
+  updateTopics(course_id: string){
+    this.fetchTopics(course_id).subscribe(topics => {
+      this.topics = topics;
+      this.onUpdateTopics$.next(this.topics);
+    });
   }
 }

@@ -4,6 +4,7 @@ import { environment } from './../../environments/environment';
 import { EventEmitter, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subject, tap } from 'rxjs';
+import { TopicChannelService } from './topic-channel.service';
 
 
 @Injectable({
@@ -19,7 +20,7 @@ export class CourseService {
   private selectedCourse: Course = new CourseImp('','');
 
 
-  constructor( private http: HttpClient) { }
+  constructor( private http: HttpClient, private topicChannelService : TopicChannelService) { }
 
   getSelectedCourse(): Course {
     return this.selectedCourse;
@@ -27,6 +28,9 @@ export class CourseService {
 
   
   selectCourse(course: Course){
+    if (this.getSelectedCourse()._id){
+      this.topicChannelService.updateTopics(course._id);
+    }
     this.selectedCourse = course;    
     this.onSelectCourse.emit(course);
   }
