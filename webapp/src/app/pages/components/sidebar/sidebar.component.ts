@@ -41,7 +41,7 @@ export class SidebarComponent implements OnInit {
   }
   
   onSelect(selectedCourse: Course){
-    if (this.courseService.selectedCourse != selectedCourse) {
+    if (this.courseService.getSelectedCourse() != selectedCourse) {
       let course = this.courses.find((course: Course) => course == selectedCourse)!;
       this.selectedCourse = course;
       this.courseService.selectCourse(course);

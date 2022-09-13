@@ -3,7 +3,7 @@
 <div class="flex items-start">
   <app-sidebar></app-sidebar>
 
-  <app-channelbar></app-channelbar>
+  <app-channelbar *ngIf="selectedCourse._id"></app-channelbar>
 
   <div class="flex flex-wrap items-start m-3">
     <p class="text-xl font-semibold">Content</p>

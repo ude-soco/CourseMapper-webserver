@@ -16,6 +16,12 @@ module.exports = function (app) {
   // Only enrolled user & admins
   app.get("/courses/:courseId", [authJwt.verifyToken, authJwt.isEnrolled], controller.getCourse);
 
+  // Get topics of a course
+  // Only enrolled user & admins
+  //app.get("/courses/topics/:courseId", [authJwt.verifyToken, authJwt.isEnrolled], controller.getCoursesTopics);
+  app.get("/courses/topics/:courseId", controller.getCoursesTopics);
+
+
   // Create a new course
   app.post(
     "/course",

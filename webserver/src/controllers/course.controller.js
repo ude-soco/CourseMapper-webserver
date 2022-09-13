@@ -17,6 +17,7 @@ const Tag = db.tag;
  */
 export const getAllCourses = async (req, res) => {
   let courses;
+  console.log('get all courses')
   try {
     courses = await Course.find({}).populate("topics", "-__v");
   } catch (err) {
@@ -60,6 +61,51 @@ export const getCourse = async (req, res) => {
     return res.status(500).send({ message: err });
   }
   return res.status(200).send(foundCourse);
+};
+
+/**
+ * @function getCoursesTopics
+ * Enrol in a new course controller
+ *
+ * @param {string} req.params.courseId The id of the course
+ */
+export const getCoursesTopics = async (req, res) => {
+  const courseId = req.params.courseId;
+  console.log('getCourse')
+  let foundCourse;
+  try {
+    foundCourse = await Course.findOne({
+      _id: ObjectId(courseId),
+    }).populate("topics channels", "-__v");
+    if (!foundCourse) {
+      return res.status(404).send({
+        error: `Course with id ${courseId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ message: err });
+  }
+  let topics = [];
+  foundCourse.topics.forEach(STopic => {
+    let CTopic = {
+      _id: STopic._id,
+      name: STopic.name,
+      course_id: STopic.courseId,
+      channels: []
+    }
+    foundCourse.channels.forEach(channel => {
+      if (channel.topicId.valueOf() === STopic._id.valueOf()) {
+        CTopic.channels.push({
+          _id: channel._id,
+          name: channel.name,
+          topic_id: channel.topicId,
+          course_id: channel.courseId
+        });
+      }
+    });
+    topics.push(CTopic);    
+  });
+  return res.status(200).send(topics);
 };
 
 /**

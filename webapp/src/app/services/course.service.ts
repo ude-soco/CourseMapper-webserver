@@ -2,24 +2,30 @@ import { CourseImp } from 'src/app/models/CourseImp';
 import { Course } from 'src/app/models/Course';
 import { environment } from './../../environments/environment';
 import { EventEmitter, Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { lastValueFrom, map, Observable, Subject, tap } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable, Subject, tap } from 'rxjs';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class CourseService {
-  courses : Course[] = [];
-  onUpdateCourses$ = new Subject<Course[]>();
-  onSelectCourse = new EventEmitter<Course>();
-  selectedCourse: Course = new CourseImp('','');
-  
-  
-
   private API_URL = environment.API_URL;
+  private courses : Course[] = [];
+  // it is not private because it is subscribed in Sidebar component
+  onUpdateCourses$ = new Subject<Course[]>();
+  // it is not private because it is subscribed in chnannelbar component
+  onSelectCourse = new EventEmitter<Course>();
+  private selectedCourse: Course = new CourseImp('','');
+
+
   constructor( private http: HttpClient) { }
 
+  getSelectedCourse(): Course {
+    return this.selectedCourse;
+  }
+
+  
   selectCourse(course: Course){
     this.selectedCourse = course;    
     this.onSelectCourse.emit(course);
@@ -47,16 +53,5 @@ export class CourseService {
       this.selectCourse(new CourseImp('',''));
     }
   }
-  // synchronizeCourses(){
-  //   this.getCourses().subscribe(courses => {
-  //     let userCourses = this.courses.map(course =>  course._id);
-  //     courses.forEach(course => {
-  //       if (!userCourses.includes(course._id)) this.courses.push(course);
-  //     });
-  //   });
-  // }
-  
-  
-  
 
 }

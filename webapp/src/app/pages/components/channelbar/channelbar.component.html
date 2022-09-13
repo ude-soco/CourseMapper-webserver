@@ -8,7 +8,7 @@
       <app-iconbutton
         icon="bx-dots-vertical-rounded"
         color="text-black"
-        (onClick)="showMenu()"
+        (onClick)="deleteCourse()"
       ></app-iconbutton>
     </div>
 
@@ -20,6 +20,33 @@
           <i
             class="bx bx-chevron-down text-accent text-opacity-80 my-auto mr-1"
           ></i>
+          <ul>
+            <li *ngFor="let topic of topics">
+            <div>
+              {{topic.name}}
+          
+              <label for="cog">options:</label>
+          
+              <select name="cog" id="cog">
+                <option value="delete"><button>Delete</button></option>
+                <option value="rename"><button>Rename</button></option>
+              </select>
+          
+            </div>
+            <ul>
+                <li *ngFor="let channel of topic.channels">
+                <div>
+                  {{channel.name}}
+                  <label for="cog">options:</label>
+                  <select name="cog" id="cog">
+                    <option value="delete"><button>Delete</button></option>
+                    <option value="rename"><button>Rename</button></option>
+                  </select>
+                </div>
+                </li>
+            </ul>
+            </li>
+          </ul>
         </div>
       </div>
     </div>
