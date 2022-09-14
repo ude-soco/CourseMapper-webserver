@@ -17,6 +17,8 @@ export class ChannelbarComponent implements OnInit {
   topics: Topic[]= [];
   displayAddTopicDialogue: boolean = false;
   onShowAddTopicDialogue = new EventEmitter<boolean>();
+  displayAddChannelDialogue: boolean = false;
+  onShowAddChannelDialogue = new EventEmitter<boolean>();
 
   ngOnInit(): void {
     this.selectedCourse = this.courseService.getSelectedCourse();        
@@ -64,12 +66,12 @@ export class ChannelbarComponent implements OnInit {
   onRenameChannel(id: string){
     alert(`${id} onRenameChannel`)
   }
-  onAddNewChannel(topic:Topic){
-    alert('onAddNewChannel')
+
+  onAddNewChannelClicked(topic:Topic){
+    this.topicChannelService.selectTopic(topic);
+    this.onShowAddChannelDialogue.emit(!this.displayAddChannelDialogue);
   }
-  onAddTopicDialogueClicked(){
-    console.log('onAddTopicDialogueClicked');
-    
+  onAddTopicDialogueClicked(){    
     this.onShowAddTopicDialogue.emit(!this.displayAddTopicDialogue);
   }
 }

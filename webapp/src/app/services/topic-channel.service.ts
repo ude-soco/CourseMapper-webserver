@@ -1,3 +1,4 @@
+import { TopicImp } from './../models/TopicImp';
 import { environment } from './../../environments/environment';
 import { EventEmitter, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
@@ -11,7 +12,9 @@ import { Course } from '../models/Course';
 })
 export class TopicChannelService {
   private API_URL = environment.API_URL;
-  topics: Topic[] = [];
+  private topics: Topic[] = [];
+  // the selectedTopic is used only to identify the Topic we add a channel to.
+  private selectedTopic: Topic = new TopicImp('','','',[]);
   onUpdateTopics$ = new Subject<Topic[]>();
 
 
@@ -35,5 +38,22 @@ export class TopicChannelService {
     // TODO send user inputs to backend and update the data in the service 
     this.topics.push(topic);
     this.onUpdateTopics$.next(this.topics);
+  }
+
+  selectTopic(topic: Topic){
+    this.selectedTopic = topic;
+  }
+  addChannel(channel: Channel){
+    // TODO send user inputs to backend and update the data in the service 
+    this.topics.forEach(topic => {
+      if (topic._id.toString() === channel.topic_id.toString()) {
+        topic.channels.push(channel);
+      }
+    })
+    this.onUpdateTopics$.next(this.topics);
+  }
+
+  getSelectedTopic(): Topic{
+    return this.selectedTopic;
   }
 }

@@ -43,7 +43,7 @@
                   </div>
                 </li>
             </ul>
-            <button pButton (click)="onAddNewChannel(topic)">Add new Channel</button>
+            <button pButton (click)="onAddNewChannelClicked(topic)">Add new Channel</button>
             </li>
           </ul>
         </div>
@@ -53,4 +53,4 @@
   </div>
 </div>
 <app-add-topic [onShowAddTopicDialogue]="onShowAddTopicDialogue"></app-add-topic>
-<app-add-channel></app-add-channel>
+<app-add-channel [onShowAddChannelDialogue]="onShowAddChannelDialogue"></app-add-channel>
