@@ -43,6 +43,7 @@ export class CourseService {
   }
 
   addCourse(course: Course){
+    // TODO send user inputs to backend and update the data in the service
     	this.courses.push(course);
       this.onUpdateCourses$.next(this.courses);
   }

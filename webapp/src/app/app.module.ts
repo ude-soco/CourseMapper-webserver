@@ -19,6 +19,8 @@ import { InputTextModule} from 'primeng/inputtext';
 import { HttpClientModule } from '@angular/common/http';
 import { AddCourseComponent } from './pages/components/add-course/add-course.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { AddTopicComponent } from './pages/components/add-topic/add-topic.component';
+import { AddChannelComponent } from './pages/components/add-channel/add-channel.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -29,7 +31,9 @@ import { ReactiveFormsModule } from '@angular/forms';
     ButtonComponent,
     IconbuttonComponent,
     AvatarComponent,
-    AddCourseComponent
+    AddCourseComponent,
+    AddTopicComponent,
+    AddChannelComponent
   ],
   imports: [
     BrowserModule,

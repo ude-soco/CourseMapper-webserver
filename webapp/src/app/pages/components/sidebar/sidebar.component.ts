@@ -36,11 +36,11 @@ export class SidebarComponent implements OnInit {
   //   }
   // }
 
-  showAddCourseDialogue(){
+  onAddCourseDialogueClicked(){
     this.onShowAddCourseDialogue.emit(!this.displayAddCourseDialogue);
   }
   
-  onSelect(selectedCourse: Course){
+  onSelectCourse(selectedCourse: Course){
     if (this.courseService.getSelectedCourse() != selectedCourse) {
       let course = this.courses.find((course: Course) => course == selectedCourse)!;
       this.selectedCourse = course;

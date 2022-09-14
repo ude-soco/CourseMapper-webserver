@@ -30,4 +30,10 @@ export class TopicChannelService {
       this.onUpdateTopics$.next(this.topics);
     });
   }
+
+  addTopic(topic: Topic, course: Course){
+    // TODO send user inputs to backend and update the data in the service 
+    this.topics.push(topic);
+    this.onUpdateTopics$.next(this.topics);
+  }
 }

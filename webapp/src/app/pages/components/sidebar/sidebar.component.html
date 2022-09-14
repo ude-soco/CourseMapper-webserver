@@ -9,7 +9,7 @@
 
   <div *ngFor="let course of courses; let i = index" [attr.data-index]="i">
     <div class="sidebar-icon group">
-      <button class="text-xl" (click)="onSelect(course)">{{ course.shortName }}</button>
+      <button class="text-xl" (click)="onSelectCourse(course)">{{ course.shortName }}</button>
       <span class="icon-button-badge">{{ course.notification }}</span>
       <span class="sidebar-tooltip group-hover:scale-100">{{
         course.description
@@ -19,7 +19,7 @@
 
   <hr class="sidebar-hr" />
 
-  <div (click) = "showAddCourseDialogue()" class="sidebar-icon group">
+  <div (click) = "onAddCourseDialogueClicked()" class="sidebar-icon group">
     <i class="bx bx-plus bx-md bx-tada-hover"></i>
     <span class="sidebar-tooltip group-hover:scale-100"> Add new course </span>
   </div>

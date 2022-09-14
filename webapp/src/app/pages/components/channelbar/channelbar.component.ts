@@ -1,7 +1,7 @@
 import { Topic } from './../../../models/Topic';
 import { CourseService } from 'src/app/services/course.service';
 import { TopicChannelService } from 'src/app/services/topic-channel.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit } from '@angular/core';
 import { Course } from 'src/app/models/Course';
 import { CourseImp } from 'src/app/models/CourseImp';
 import { Channel } from 'src/app/models/Channel';
@@ -15,6 +15,8 @@ export class ChannelbarComponent implements OnInit {
   constructor( private courseService: CourseService, private topicChannelService: TopicChannelService) {}
   selectedCourse: Course = new CourseImp('','');
   topics: Topic[]= [];
+  displayAddTopicDialogue: boolean = false;
+  onShowAddTopicDialogue = new EventEmitter<boolean>();
 
   ngOnInit(): void {
     this.selectedCourse = this.courseService.getSelectedCourse();        
@@ -61,5 +63,13 @@ export class ChannelbarComponent implements OnInit {
   }
   onRenameChannel(id: string){
     alert(`${id} onRenameChannel`)
+  }
+  onAddNewChannel(topic:Topic){
+    alert('onAddNewChannel')
+  }
+  onAddTopicDialogueClicked(){
+    console.log('onAddTopicDialogueClicked');
+    
+    this.onShowAddTopicDialogue.emit(!this.displayAddTopicDialogue);
   }
 }
