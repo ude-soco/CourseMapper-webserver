@@ -1,0 +1,47 @@
+<!-- Topics -->
+<div
+  class="flex flex-col items-center justify-start m-0 z-10"
+  *ngFor="let data of courseData; let i = index"
+>
+  <div class="m-0 w-full mx-2 pb-2 transition duration-300 ease-in-out">
+    <div class="flex flex-row items-center justify-between mx-0 my-1.5">
+      <div class="flex flex-row items-center">
+        <app-iconbutton
+          icon="bx-chevron-down"
+          color="text-black"
+        ></app-iconbutton>
+        <p class="text-lg font-semibold">{{ data.topic }}</p>
+      </div>
+      <app-iconbutton
+        icon="bx-dots-vertical-rounded"
+        color="text-black"
+      ></app-iconbutton>
+    </div>
+
+    <div
+      class="pl-7 py-1 hover:bg-white transition-all"
+      *ngFor="let item of data.channels; let i = index"
+      [attr.data-index]="i"
+    >
+      <div class="flex flex-row items-center justify-between">
+        <p class="cursor-pointer w-full">#{{ item.name }}</p>
+        <app-iconbutton
+          icon="bx-dots-vertical-rounded"
+          color="text-black"
+          (onClick)="showMenu()"
+        ></app-iconbutton>
+      </div>
+    </div>
+
+    <div class="pl-5 py-1 hover:bg-white transition-all">
+      <div class="flex flex-row items-center">
+        <app-iconbutton
+          icon="bx-plus"
+          color="text-black"
+          (onClick)="showMenu()"
+        ></app-iconbutton>
+        <p class="cursor-pointer w-full italic font-semibold">Add channel</p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -11,6 +11,7 @@ import { CoursesComponent } from './pages/courses/courses.component';
 import { ButtonComponent } from './components/button/button.component';
 import { IconbuttonComponent } from './components/iconbutton/iconbutton.component';
 import { AvatarComponent } from './components/avatar/avatar.component';
+import { TopicDropdownComponent } from './pages/components/topic-dropdown/topic-dropdown.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { AvatarComponent } from './components/avatar/avatar.component';
     ButtonComponent,
     IconbuttonComponent,
     AvatarComponent,
+    TopicDropdownComponent,
   ],
   imports: [BrowserModule, AppRoutingModule, PrimengModule],
   providers: [],
