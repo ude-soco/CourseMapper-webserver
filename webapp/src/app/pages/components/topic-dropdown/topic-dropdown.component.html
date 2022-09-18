@@ -1,0 +1,54 @@
+<!-- Topics -->
+<div>
+  <div
+  class="flex flex-col items-center justify-start m-0 z-10"
+  *ngFor="let topic of topics; let i = index"
+>
+  <div class="m-0 w-full mx-2 pb-2 transition duration-300 ease-in-out">
+    <div class="flex flex-row items-center justify-between mx-0 my-1.5">
+      <div class="flex flex-row items-center">
+        <app-iconbutton
+          icon="bx-chevron-down"
+          color="text-black"
+          (click) = "onSelectTopic(topic)"
+        ></app-iconbutton>
+        <p class="text-lg font-semibold">{{ topic.name }}</p>
+      </div>
+      <p-menu #menu id="config_menu" [model]="topicOptions" [popup]="true"></p-menu>
+      <app-iconbutton
+        icon="bx-dots-vertical-rounded"
+        color="text-black"
+        (click)="selectedTopic = topic; menu.toggle($event)"
+      ></app-iconbutton>
+    </div>
+
+    <div
+      class="pl-7 py-1 hover:bg-white transition-all"
+      *ngFor="let channel of topic.channels; let i = index"
+      [attr.data-index]="i"
+    >
+      <div  class="flex flex-row items-center justify-between">
+        <p (click)="onSelectChannel(channel)" class="cursor-pointer w-full">#{{ channel.name }}</p>
+        <app-iconbutton
+          icon="bx-dots-vertical-rounded"
+          color="text-black"
+          (click)="selectedChannel = channel; menu.toggle($event)"
+        ></app-iconbutton>
+        <p-menu #menu id="config_menu" [model]="channelsOptions" [popup]="true"></p-menu>
+      </div>
+    </div>
+
+    <div class="pl-5 py-1 hover:bg-white transition-all" (click)="onAddNewChannelClicked(topic)">
+      <div class="flex flex-row items-center">
+        <app-iconbutton
+          icon="bx-plus"
+          color="text-black"
+          (onClick)="showMenu()"
+        ></app-iconbutton>
+        <p class="cursor-pointer w-full italic font-semibold">Add channel</p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<app-add-channel [onShowAddChannelDialogue]="onShowAddChannelDialogue"></app-add-channel>

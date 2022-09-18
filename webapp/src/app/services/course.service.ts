@@ -28,7 +28,8 @@ export class CourseService {
 
   
   selectCourse(course: Course){
-    if (this.getSelectedCourse()._id){
+    // if there is no selected course then no need to update the topics.
+    if (this.getSelectedCourse()._id && course._id){      
       this.topicChannelService.updateTopics(course._id);
     }
     this.selectedCourse = course;    

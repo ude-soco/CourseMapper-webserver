@@ -1,7 +1,7 @@
 import { PrimengModule } from './modules/primeng/primeng.module';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
+import { TopicDropdownComponent } from './pages/components/topic-dropdown/topic-dropdown.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SidebarComponent } from './pages/components/sidebar/sidebar.component';
@@ -21,6 +21,8 @@ import { AddCourseComponent } from './pages/components/add-course/add-course.com
 import { ReactiveFormsModule } from '@angular/forms';
 import { AddTopicComponent } from './pages/components/add-topic/add-topic.component';
 import { AddChannelComponent } from './pages/components/add-channel/add-channel.component';
+import { MenuModule } from 'primeng/menu';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -33,7 +35,8 @@ import { AddChannelComponent } from './pages/components/add-channel/add-channel.
     AvatarComponent,
     AddCourseComponent,
     AddTopicComponent,
-    AddChannelComponent
+    AddChannelComponent,
+    TopicDropdownComponent
   ],
   imports: [
     BrowserModule,
@@ -45,7 +48,8 @@ import { AddChannelComponent } from './pages/components/add-channel/add-channel.
     BrowserAnimationsModule, 
     FormsModule,
     InputTextModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MenuModule
   ],
   providers: [],
   bootstrap: [AppComponent],

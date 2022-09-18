@@ -1,4 +1,42 @@
-<div class="relative w-72 h-screen bg-gray-200 shadow-lg">
+<div class="relative w-72 h-screen bg-gray-100 shadow-lg"  *ngIf="selectedCourse._id">
+  <div class="h-max w-72 m-0 flex flex-col bg-gray-100">
+    <div class="flex items-start justify-between py-4 pl-3 bg-gray-200">
+      <p class="flex w-56 text-xl font-semibold">
+        {{selectedCourse.name}}
+      </p>
+      <p-menu #menu id="config_menu" [model]="options" [popup]="true"></p-menu>
+      <app-iconbutton
+        icon="bx-dots-vertical-rounded"
+        color="text-black"
+        (click)="menu.toggle($event)"
+      ></app-iconbutton>
+    </div>
+
+    <app-topic-dropdown></app-topic-dropdown>
+
+    <div
+      class="flex flex-col items-center justify-start m-0 z-10 hover:bg-white transition-all cursor-pointer"
+      >
+      <div class="m-0 w-full mx-2 transition duration-300 ease-in-out" (click)="onAddTopicDialogueClicked()">
+        <div class="flex flex-row items-center justify-between mx-0 my-1.5">
+          <div class="flex flex-row items-center">
+            <app-iconbutton icon="bx-plus" color="text-black"></app-iconbutton>
+            <p class="text-md italic font-semibold">Add Topic</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<app-add-topic [onShowAddTopicDialogue]="onShowAddTopicDialogue"></app-add-topic>
+
+
+
+<!-- ________________________________________________________ -->
+
+
+
+<!-- <div class="relative w-72 h-screen bg-gray-200 shadow-lg">
   <div class="h-max w-72 m-0 flex flex-col bg-gray-200">
     <div class="flex items-start justify-between py-4 px-3 bg-gray-300">
       <p class="flex w-56 text-xl font-semibold">
@@ -53,4 +91,4 @@
   </div>
 </div>
 <app-add-topic [onShowAddTopicDialogue]="onShowAddTopicDialogue"></app-add-topic>
-<app-add-channel [onShowAddChannelDialogue]="onShowAddChannelDialogue"></app-add-channel>
+<app-add-channel [onShowAddChannelDialogue]="onShowAddChannelDialogue"></app-add-channel> -->
