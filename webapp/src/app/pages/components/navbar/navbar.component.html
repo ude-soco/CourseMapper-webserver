@@ -10,6 +10,34 @@
         size="large"
         [style]="{ backgroundColor: 'var(--orange-600)' }"
       ></p-avatar> -->
+     <!-- <button  [style]="{  color: '#000000' }"> logout</button>-->
+     <ul class="navbar-nav mr-auto" routerLinkActive="active">
+    <!---   <li class="nav-item">
+        <a href="/home" class="nav-link" style="color: #000000" routerLink="Home">Home </a>
+      </li>
+
+
+      <li class="nav-item">
+        <a href="/user" class="nav-link" style="color: #000000" *ngIf="isLoggedIn" routerLink="user">User</a>
+      </li>
+      -->
+    </ul>
+    <ul class="navbar-nav ml-auto" *ngIf="!isLoggedIn">
+      <li class="nav-item">
+        <a href="/signup" class="nav-link" style="color: #000000" routerLink="signup">Sign Up</a>
+      </li>
+      <li class="nav-item">
+        <a href="/signin" class="nav-link" style="color: #000000" routerLink="login">Login</a>
+      </li>
+    </ul>
+    <ul class="navbar-nav ml-auto" *ngIf="isLoggedIn">
+      <li class="nav-item">
+        <a href="/profile" class="nav-link" style="color: #000000" routerLink="profile">{{ username }}</a>
+      </li>
+      <li class="nav-item">
+        <a href class="nav-link" style="color: #000000" (click)="logout()">LogOut</a>
+      </li>
+    </ul>
       <p-avatar
         label="P"
         shape="circle"

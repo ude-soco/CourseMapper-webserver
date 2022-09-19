@@ -23,7 +23,8 @@ import { FormsModule , FormBuilder,ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LoginComponent } from './pages/components/login/login.component';
-
+import { HomeComponent } from './pages/home/home.component';
+import {httpInterceptorProviders, HttpRequestInterceptor } from  './_helpers/http.interceptor' ;
 
 
 registerLocaleData(en);
@@ -40,11 +41,12 @@ registerLocaleData(en);
     AvatarComponent,
     RegistrationComponent,
     LoginComponent,
+    HomeComponent,
 
     
   ],
   imports: [BrowserModule, AppRoutingModule, PrimengModule, FormsModule,ReactiveFormsModule, HttpClientModule],
-  providers: [{ provide: NZ_I18N, useValue: en_US }],
+  providers: [{ provide: NZ_I18N, useValue: en_US }, httpInterceptorProviders],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

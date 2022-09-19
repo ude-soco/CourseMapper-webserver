@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 
 import { FormBuilder, FormControl, FormGroup, Validators, ReactiveFormsModule  } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UserServiceService } from 'src/app/Services/user-service.service';
+import { StorageService } from 'src/app/Services/storage.service';
 
 @Component({
   selector: 'app-login',
@@ -11,52 +12,53 @@ import { UserServiceService } from 'src/app/Services/user-service.service';
 })
 export class LoginComponent implements OnInit {
 
+  form: any = {
+    username: null,
+    password: null
+  };
+  isLoggedIn = false;
+  isLoginFailed = false;
   errorMessage = '';
-  loginForm!: FormGroup;
-  registerSucess:boolean = false;
-  constructor(private userService: UserServiceService,private fb: FormBuilder, private router: Router) { }
+  constructor(private userService: UserServiceService, private storageService: StorageService,private fb: FormBuilder, private router: Router, private route: ActivatedRoute,) { }
 
   ngOnInit(): void {
-
-    
-    this.loginForm = new FormGroup({
-    password: new FormControl('', [
-    Validators.required,
-    Validators.maxLength(20),
-    Validators.minLength(6),
-  ]),
-    
-    username: new FormControl('', [
-      Validators.required,
-      Validators.maxLength(20),
-      Validators.minLength(6),
-    ]),
-    
-  });
-}
-async onSubmit() {
-  for (const i in this.loginForm.controls) {
-    if (this.loginForm.controls.hasOwnProperty(i)) {
-      this.loginForm.controls[i].markAsDirty();
-      this.loginForm.controls[i].updateValueAndValidity();
-      console.log('step1');
+    if (this.storageService.isLoggedIn()) {
+      this.isLoggedIn = true;
+     
     }
+
+
+  }
+  onSubmit(): void {
+    const { username, password } = this.form;
+
+    this.userService.login(username, password).subscribe({
+      // the response from backend
+      next: data => {
+        this.storageService.saveUser(data);
+
+        this.isLoginFailed = false;
+        this.isLoggedIn = true;
+       //this.router.navigate(['/Home'], { relativeTo: this.route });
+       
+        //this.router.navigate(["./Home"]);
+        //location.reload();
+        this.router.navigate(['./home'])
+        .then(() => {
+          window.location.reload();
+        });
+        
+      },
+      error: err => {
+        this.errorMessage = err.error.message;
+        this.isLoginFailed = true;
+      }
+    });
+  }
+  reloadPage(): void {
+    window.location.reload();
+    this.router.navigate(["./home"]);
+
   }
 
- 
-  try {
-    await this.userService.login(this.loginForm.controls['username'].value, this.loginForm.controls['password'].value);
-    this.router.navigate(['/']);
-    this.registerSucess=true;
-  } catch (err: any) {
-    this.errorMessage = err.error.error;
-  }
-}
-reloadPage(): void {
-  window.location.reload();
-}
-
-goToRegister() {
-  this.router.navigate(['signup']);
-}
 }
