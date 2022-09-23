@@ -19,13 +19,15 @@ import { RegistrationComponent } from './pages/components/registration/registrat
 
 import { registerLocaleData } from '@angular/common';
 
-import { FormsModule , FormBuilder,ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LoginComponent } from './pages/components/login/login.component';
 import { HomeComponent } from './pages/home/home.component';
-import {httpInterceptorProviders, HttpRequestInterceptor } from  './_helpers/http.interceptor' ;
-
+import {
+  httpInterceptorProviders,
+  HttpRequestInterceptor,
+} from './_helpers/http.interceptor';
 
 registerLocaleData(en);
 
@@ -42,10 +44,15 @@ registerLocaleData(en);
     RegistrationComponent,
     LoginComponent,
     HomeComponent,
-
-    
   ],
-  imports: [BrowserModule, AppRoutingModule, PrimengModule, FormsModule,ReactiveFormsModule, HttpClientModule],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    PrimengModule,
+    FormsModule,
+    ReactiveFormsModule,
+    HttpClientModule,
+  ],
   providers: [{ provide: NZ_I18N, useValue: en_US }, httpInterceptorProviders],
   bootstrap: [AppComponent],
 })

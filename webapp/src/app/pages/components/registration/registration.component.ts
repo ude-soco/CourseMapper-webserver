@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, ReactiveFormsModule  } from '@angular/forms';
 import { Router } from '@angular/router';
-import { UserServiceService } from 'src/app/Services/user-service.service';
+import { UserServiceService } from 'src/app/services/user-service.service';
 
 @Component({
   selector: 'app-registration',
@@ -16,7 +16,7 @@ export class RegistrationComponent implements OnInit {
 
   ngOnInit(): void {
 
-    
+
       this.validateForm = new FormGroup({
       email: new FormControl('', [
         Validators.required,
@@ -57,7 +57,7 @@ export class RegistrationComponent implements OnInit {
       }
     }
 
-   
+
     try {
       await this.userService.register(this.validateForm.controls['firstname'].value, this.validateForm.controls['lastname'].value,this.validateForm.controls['username'].value, this.validateForm.controls['email'].value, this.validateForm.controls['password'].value);
       this.router.navigate(['login']);

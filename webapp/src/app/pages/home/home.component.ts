@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { StorageService } from 'src/app/Services/storage.service';
+import { StorageService } from 'src/app/services/storage.service';
 
 @Component({
   selector: 'app-home',
@@ -41,7 +41,7 @@ export class HomeComponent implements OnInit {
         this.router.onSameUrlNavigation = 'reload';
         this.router.navigate([currentUrl]);
     }*/
-  
-  
-  
+
+
+
 }

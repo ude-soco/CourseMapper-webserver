@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { PrimeNGConfig } from 'primeng/api';
-import { StorageService } from './Services/storage.service'; 
-import { UserServiceService } from './Services/user-service.service'; 
+import { StorageService } from './services/storage.service';
+import { UserServiceService } from './services/user-service.service';
 
 @Component({
   selector: 'app-root',
@@ -14,7 +14,12 @@ export class AppComponent {
   showModeratorBoard = false;
   username?: string;
 
-  constructor(private primengConfig: PrimeNGConfig, private storageService: StorageService, private userService: UserServiceService) {}
+  constructor(
+    private primengConfig: PrimeNGConfig,
+    private storageService: StorageService,
+    private userService: UserServiceService
+  ) {}
+
   ngOnInit() {
     this.primengConfig.ripple = true;
     this.isLoggedIn = this.storageService.isLoggedIn();
@@ -22,22 +27,22 @@ export class AppComponent {
     if (this.isLoggedIn) {
       const user = this.storageService.getUser();
 
-
       this.username = user.username;
     }
     //window.location.reload();
   }
+
   logout(): void {
     this.userService.logout().subscribe({
-      next: res => {
+      next: (res) => {
         console.log(res);
         this.storageService.clean();
       },
-      error: err => {
+      error: (err) => {
         console.log(err);
-      }
+      },
     });
-    
+
     window.location.reload();
   }
 }

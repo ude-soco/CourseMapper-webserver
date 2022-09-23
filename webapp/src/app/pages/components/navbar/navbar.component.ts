@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { PrimeNGConfig } from 'primeng/api';
-import { StorageService } from 'src/app/Services/storage.service'; 
-import { UserServiceService } from 'src/app/Services/user-service.service'; 
+import { USER_KEY } from 'src/app/config/config';
+import { StorageService } from 'src/app/services/storage.service';
+import { UserServiceService } from 'src/app/services/user-service.service';
 
 @Component({
   selector: 'app-navbar',
@@ -10,38 +12,47 @@ import { UserServiceService } from 'src/app/Services/user-service.service';
   styleUrls: ['./navbar.component.css'],
 })
 export class NavbarComponent implements OnInit {
-  isLoggedIn = false;
+  isLoggedIn: boolean = false;
+
   showAdminBoard = false;
   showModeratorBoard = false;
   username?: string;
-  constructor(private primengConfig: PrimeNGConfig, private storageService: StorageService, private userService: UserServiceService) {}
+  constructor(
+    private primengConfig: PrimeNGConfig,
+    public storageService: StorageService,
+    private userService: UserServiceService,
+    private router: Router
+  ) {
+    this.isLoggedIn = storageService.loggedIn;
+  }
 
   ngOnInit(): void {
-    this.primengConfig.ripple = true;
-    this.isLoggedIn = this.storageService.isLoggedIn();
-
-    if (this.isLoggedIn) {
-      const user = this.storageService.getUser();
-
-
-      this.username = user.username;
-    }
+    // this.primengConfig.ripple = true;
+    // this.isLoggedIn = this.storageService.isLoggedIn();
+    // console.log('changes');
+    // if (this.isLoggedIn) {
+    //   const user = this.storageService.getUser();
+    //   this.username = user.username;
+    // }
   }
 
-  login() {
-    console.log('login');
+  handleLogin() {
+    this.router.navigate(['/login']);
   }
-  logout(): void {
+
+  handleRegistration() {
+    this.router.navigate(['/signup']);
+  }
+
+  handleLogout(): void {
     this.userService.logout().subscribe({
-      next: res => {
-        console.log(res);
+      next: () => {
         this.storageService.clean();
+        this.router.navigate(['/login']);
       },
-      error: err => {
+      error: (err) => {
         console.log(err);
-      }
+      },
     });
-    
-    window.location.reload();
   }
 }

@@ -4,46 +4,49 @@
   >
     <img src="../../../assets/logo.svg" alt="logo" class="w-72" />
     <div class="flex flex-wrap my-1">
-      <!-- <p-avatar
-        label="P"
-        shape="circle"
-        size="large"
-        [style]="{ backgroundColor: 'var(--orange-600)' }"
-      ></p-avatar> -->
-     <!-- <button  [style]="{  color: '#000000' }"> logout</button>-->
-     <ul class="navbar-nav mr-auto" routerLinkActive="active">
-    <!---   <li class="nav-item">
-        <a href="/home" class="nav-link" style="color: #000000" routerLink="Home">Home </a>
-      </li>
+      <span *ngIf="!this.storageService.loggedIn">
+        <button
+          pButton
+          [ngStyle]="{
+            border: '1px solid #EA580C',
+            backgroundColor: 'white',
+            color: '#EA580C',
+            marginRight: '8px'
+          }"
+          type="button"
+          label="Login"
+          (click)="handleLogin()"
+        ></button>
+        <button
+          pButton
+          [ngStyle]="{ backgroundColor: '#EA580C' }"
+          type="button"
+          label="Sign-up"
+          (click)="handleRegistration()"
+        ></button>
+      </span>
 
+      <span *ngIf="this.storageService.loggedIn">
+        <button
+          pButton
+          [ngStyle]="{
+            border: '1px solid #EA580C',
+            backgroundColor: 'white',
+            color: '#EA580C',
+            marginRight: '8px'
+          }"
+          type="button"
+          label="Logout"
+          (click)="handleLogout()"
+        ></button>
 
-      <li class="nav-item">
-        <a href="/user" class="nav-link" style="color: #000000" *ngIf="isLoggedIn" routerLink="user">User</a>
-      </li>
-      -->
-    </ul>
-    <ul class="navbar-nav ml-auto" *ngIf="!isLoggedIn">
-      <li class="nav-item">
-        <a href="/signup" class="nav-link" style="color: #000000" routerLink="signup">Sign Up</a>
-      </li>
-      <li class="nav-item">
-        <a href="/signin" class="nav-link" style="color: #000000" routerLink="login">Login</a>
-      </li>
-    </ul>
-    <ul class="navbar-nav ml-auto" *ngIf="isLoggedIn">
-      <li class="nav-item">
-        <a href="/profile" class="nav-link" style="color: #000000" routerLink="profile">{{ username }}</a>
-      </li>
-      <li class="nav-item">
-        <a href class="nav-link" style="color: #000000" (click)="logout()">LogOut</a>
-      </li>
-    </ul>
-      <p-avatar
-        label="P"
-        shape="circle"
-        size="large"
-        [style]="{ 'background-color': '#EA580C', color: '#ffffff' }"
-      ></p-avatar>
+        <p-avatar
+          label="P"
+          shape="circle"
+          size="large"
+          [style]="{ 'background-color': '#EA580C', color: '#ffffff' }"
+        ></p-avatar>
+      </span>
     </div>
   </div>
 </div>

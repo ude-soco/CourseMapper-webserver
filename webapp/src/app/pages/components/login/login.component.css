@@ -1,15 +1,14 @@
-.textclass{
+.textclass {
+  /* height: 100px;
+  border-style: solid;
 
+  /* padding: 0.1rem; */
+  margin: 0.8rem;
+  border: solid black;
 
-    /* height: 100px; 
-    border-style: solid;
-    
-    /* padding: 0.1rem; */
-    margin: 0.8rem;
-    border: solid black;
-    
 }
-.container{
-    text-align: center;
+
+.container {
+  text-align: center;
 
 }
