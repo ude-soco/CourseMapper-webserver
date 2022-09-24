@@ -6,7 +6,7 @@ import { USER_KEY } from '../config/config';
   providedIn: 'root',
 })
 export class StorageService {
-  loggedIn: boolean = false;
+  loggedIn: boolean = Boolean(localStorage.getItem(USER_KEY));
 
   navBarChange: Subject<boolean> = new Subject<boolean>();
 
