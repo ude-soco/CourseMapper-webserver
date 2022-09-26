@@ -3,11 +3,12 @@ import { CourseService } from 'src/app/services/course.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Course } from 'src/app/models/Course';
 import { CourseImp } from 'src/app/models/CourseImp';
-
+import { MessageService, PrimeNGConfig } from 'primeng/api';
 @Component({
   selector: 'app-add-course',
   templateUrl: './add-course.component.html',
-  styleUrls: ['./add-course.component.css']
+  styleUrls: ['./add-course.component.css'],
+  providers: [MessageService]
 })
 export class AddCourseComponent implements OnInit {
 
@@ -21,9 +22,10 @@ export class AddCourseComponent implements OnInit {
   **/
   @Input() onShowAddCourseDialogue = new EventEmitter<boolean>();
 
-  constructor(private courseService: CourseService) { }
+  constructor(private courseService: CourseService, private messageService: MessageService, private primengConfig: PrimeNGConfig) { }
 
   ngOnInit(): void {
+    this.primengConfig.ripple = true;
     this.onShowAddCourseDialogue.subscribe((val) => this.toggleAddCourseDialogue());
     this.createCourseForm = new FormGroup({
       	name: new FormControl(null, Validators.required),
@@ -36,12 +38,17 @@ export class AddCourseComponent implements OnInit {
 
   onSubmit(){ 
     if (this.createCourseForm.valid) {
-      let newCourse: Course = new CourseImp('3242343252', 
-                                    this.createCourseForm.value.name, 
-                                    this.createCourseForm.value.shortname,
-                                    this.createCourseForm.value.description);   
-      this.courseService.addCourse(newCourse);      
-      this.toggleAddCourseDialogue();
+      let newCourse: Course = new CourseImp
+        ( '', 
+        this.createCourseForm.value.name, 
+        this.createCourseForm.value.shortname,
+        this.createCourseForm.value.description);
+      this.courseService.addCourse(newCourse).subscribe((res: any) => {
+        if ('success' in res) {
+          this.toggleAddCourseDialogue();
+          this.showInfo(res.success);
+        }
+      });
     }
   }
 
@@ -53,5 +60,7 @@ export class AddCourseComponent implements OnInit {
   deleteLocalData(){
     this.ngOnInit();
   }
-
+  showInfo(msg) {
+    this.messageService.add({severity:'info', summary: 'Success', detail: msg});
+  }
 }

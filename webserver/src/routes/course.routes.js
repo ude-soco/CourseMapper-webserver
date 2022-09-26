@@ -12,9 +12,9 @@ module.exports = function (app) {
   app.get("/courses",  controller.getAllCourses);
   //app.get("/courses", [authJwt.verifyToken], controller.getAllCourses);
 
-    // Get all courses the user is enrolled in
-    app.get("/my-courses",  controller.getMyCourses);
-    //app.get("/my-courses", [authJwt.verifyToken], controller.getMyCourses);
+  // Get all courses the user is enrolled in
+  app.get("/my-courses",  controller.getMyCourses);
+  //app.get("/my-courses", [authJwt.verifyToken], controller.getMyCourses);
 
   // Get course details
   // Only enrolled user & admins
@@ -25,7 +25,7 @@ module.exports = function (app) {
   // Create a new course
   app.post(
     "/course",
-    [authJwt.verifyToken],
+    //[authJwt.verifyToken],
     controller.newCourse
   );
 

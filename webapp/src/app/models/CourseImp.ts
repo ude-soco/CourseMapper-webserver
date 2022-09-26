@@ -13,9 +13,9 @@ export class CourseImp implements Course{
 
   constructor( _id: string,
                name: string,
-               role?: string,
                shortName?: string,
                description?: string,
+               role?: string,
                numberTopics?: number,
                notification?: number,
                numberChannels?: number,
@@ -40,7 +40,7 @@ export class CourseImp implements Course{
   }
 
   setRole(role: string){
-    this.role = role;
+    role? this.role = role : this.role ='';
 
   }
   getRole(): string{

@@ -9,7 +9,8 @@ const Annotation = db.annotation;
 const Material = db.material;
 const Reply = db.reply;
 const Tag = db.tag;
-
+// TODO to be deleted once the authentication is merged with this channelbar branch
+const userId = "6331bc5542887c0bdbbcfc54"// '62f9fe647f0a9f66c4dea225';  //  
 /**
  * @function getAllCourses
  * Get all courses controller
@@ -47,7 +48,8 @@ export const getAllCourses = async (req, res) => {
  */
 export const getMyCourses = async (req, res) => {
   let user;
-  let userId =  req.userId;  //'62f9fe647f0a9f66c4dea225';  // 6331bc5542887c0bdbbcfc54  req.userId;
+  // TODO reavtivate the next line once the authentication branch merged with the channelbar branch 
+  //let userId =  req.userId;
   let results = []
   try {
     user = await User
@@ -286,9 +288,12 @@ export const withdrawCourse = async (req, res) => {
  * @param {string} req.userId The owner of the course
  */
 export const newCourse = async (req, res) => {
+  console.log('newCourse');
   const courseName = req.body.name;
   const courseDesc = req.body.description;
-  const userId = req.userId;
+  let shortName = req.body.shortname;
+  // TODO uncomment the next line
+  // const userId = req.userId;
 
   let foundUser;
   try {
@@ -312,7 +317,8 @@ export const newCourse = async (req, res) => {
     return res.status(500).send({ error: err });
   }
 
-  let shortName = courseName
+  if (!shortName) {
+    shortName = courseName
     .split(" ")
     .map((word, index) => {
       if (index < 3) {
@@ -320,6 +326,7 @@ export const newCourse = async (req, res) => {
       }
     })
     .join("");
+  }
 
   let foundRole;
   try {
@@ -364,8 +371,17 @@ export const newCourse = async (req, res) => {
   }
 
   return res.send({
-    id: course._id,
-    success: `New course '${courseSaved.name}' added!`,
+    courseSaved: {
+      _id: courseSaved._id,
+      name: courseSaved.name,
+      shortName: courseSaved.shortName,
+      description: courseSaved.description,
+      numberTopics: courseSaved.topics.length,
+      numberChannels: courseSaved.channels.length,
+      numberUsers: courseSaved.users.length,
+      role: foundRole.name
+    },
+    success: `New course '${courseSaved.name}' added!`
   });
 };
 

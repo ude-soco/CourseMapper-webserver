@@ -43,10 +43,11 @@ export class CourseService {
     }));
   }
 
-  addCourse(course: Course){
-    // TODO send user inputs to backend and update the data in the service
-    	this.courses.push(course);
+  addCourse(course: Course) : any {
+    return this.http.post<any>(`${this.API_URL}/course`, {name: course.name, description: course.description, shortname: course.shortName}).pipe(tap(res => {
+      this.courses.push(res.courseSaved);
       this.onUpdateCourses$.next(this.courses);
+    }));
   }
 
   deleteCourse(courseTD: Course){
