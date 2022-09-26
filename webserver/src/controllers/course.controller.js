@@ -39,44 +39,80 @@ export const getAllCourses = async (req, res) => {
   return res.status(200).send(results);
 };
 
+
+/**
+ * @function getMyCourses
+ * Get all courses the logged in user is enrolled in controller
+ *
+ */
+export const getMyCourses = async (req, res) => {
+  let user;
+  let userId =  req.userId;  //'62f9fe647f0a9f66c4dea225';  // 6331bc5542887c0bdbbcfc54  req.userId;
+  let results = []
+  try {
+    user = await User
+    .findOne({_id: ObjectId(userId)})
+    .populate({path: "courses", populate: { path: "role"}})
+    .populate({path: "courses", populate: { path: "courseId"}});
+  } catch (err) {
+    return res.status(500).send({ message: err });
+  }
+  user.courses.forEach(object => {
+    let course = {
+      _id: object.courseId._id,
+      name: object.courseId.name,
+      shortName: object.courseId.shortName,
+      description: object.courseId.description,
+      numberTopics: object.courseId.topics.length,
+      numberChannels: object.courseId.channels.length,
+      numberUsers: object.courseId.users.length,
+      role: object.role.name
+    };
+    results.push(course);
+  });
+  return res.status(200).send(results);
+}
+
 /**
  * @function getCourse
  * Get details of a course controller
  *
  * @param {string} req.params.courseId The id of the course
  */
-export const getCourse = async (req, res) => {
-  const courseId = req.params.courseId;
-  let foundCourse;
-  try {
-    foundCourse = await Course.findOne({
-      _id: ObjectId(courseId),
-    }).populate("topics channels", "-__v");
-    if (!foundCourse) {
-      return res.status(404).send({
-        error: `Course with id ${courseId} doesn't exist!`,
-      });
-    }
-  } catch (err) {
-    return res.status(500).send({ message: err });
-  }
-  return res.status(200).send(foundCourse);
-};
+// export const getCourse = async (req, res) => {
+//   const courseId = req.params.courseId;
+//   let foundCourse;
+//   try {
+//     foundCourse = await Course.findOne({
+//       _id: ObjectId(courseId),
+//     }).populate("topics channels", "-__v");
+//     if (!foundCourse) {
+//       return res.status(404).send({
+//         error: `Course with id ${courseId} doesn't exist!`,
+//       });
+//     }
+//   } catch (err) {
+//     return res.status(500).send({ message: err });
+//   }
+//   return res.status(200).send(foundCourse);
+// };
 
 /**
- * @function getCoursesTopics
- * Enrol in a new course controller
+ * @function getCourse
+ * Get Topics of a course controller
  *
  * @param {string} req.params.courseId The id of the course
  */
-export const getCoursesTopics = async (req, res) => {
+export const getCourse = async (req, res) => {
   const courseId = req.params.courseId;
+  let results = [];
   console.log('getCourse')
   let foundCourse;
   try {
-    foundCourse = await Course.findOne({
-      _id: ObjectId(courseId),
-    }).populate("topics channels", "-__v");
+    foundCourse = await Course
+    .findOne({ _id: ObjectId(courseId) })
+    .populate("topics", "-__v")
+    .populate({path: 'topics', populate: {path: 'channels'}});
     if (!foundCourse) {
       return res.status(404).send({
         error: `Course with id ${courseId} doesn't exist!`,
@@ -85,27 +121,23 @@ export const getCoursesTopics = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ message: err });
   }
-  let topics = [];
-  foundCourse.topics.forEach(STopic => {
-    let CTopic = {
-      _id: STopic._id,
-      name: STopic.name,
-      course_id: STopic.courseId,
-      channels: []
-    }
-    foundCourse.channels.forEach(channel => {
-      if (channel.topicId.valueOf() === STopic._id.valueOf()) {
-        CTopic.channels.push({
-          _id: channel._id,
-          name: channel.name,
-          topic_id: channel.topicId,
-          course_id: channel.courseId
-        });
+  results = foundCourse.topics.map( topic => { 
+    let channels = topic.channels.map(channel => {
+      return {
+        _id: channel._id,
+        name: channel.name,
+        topic_id: channel.topicId,
+        course_id: channel.courseId
       }
     });
-    topics.push(CTopic);    
-  });
-  return res.status(200).send(topics);
+    return {
+      _id: topic._id,
+      name: topic.name,
+      course_id: topic.courseId,
+      channels: channels
+    }
+  })
+  return res.status(200).send(results);
 };
 
 /**

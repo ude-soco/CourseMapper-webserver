@@ -3,6 +3,7 @@ import {Course} from './Course';
 export class CourseImp implements Course{
   _id: string;
   name: string;
+  role: string;
   shortName?: string;
   description?: string;
   numberTopics?: number;
@@ -12,6 +13,7 @@ export class CourseImp implements Course{
 
   constructor( _id: string,
                name: string,
+               role?: string,
                shortName?: string,
                description?: string,
                numberTopics?: number,
@@ -20,6 +22,7 @@ export class CourseImp implements Course{
                numberUsers?: number){
     this.set_id(_id);
     this.setName(name);
+    this.setRole(role);
     this.setShortName(shortName);
     this.setDescription(description);
     this.setNumberTopics(numberTopics) ;
@@ -34,6 +37,14 @@ export class CourseImp implements Course{
   }
   get_id(): string{
     return this._id;
+  }
+
+  setRole(role: string){
+    this.role = role;
+
+  }
+  getRole(): string{
+    return this.role;
   }
 
   setName(name){

@@ -22,7 +22,7 @@ export class TopicChannelService {
 
   /** GET Topics of a course from the server */
   fetchTopics(course_id: string):  Observable<Topic[]> {
-    return this.http.get<Topic[]>(`${this.API_URL}/courses/topics/${course_id}`).pipe(tap( topics => {      
+    return this.http.get<Topic[]>(`${this.API_URL}/courses/${course_id}`).pipe(tap( topics => {
       this.topics = topics         
     }));
   }
