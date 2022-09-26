@@ -47,6 +47,8 @@ export class AddCourseComponent implements OnInit {
         if ('success' in res) {
           this.toggleAddCourseDialogue();
           this.showInfo(res.success);
+        }else {
+          this.showError(res.errorMsg);
         }
       });
     }
@@ -62,5 +64,8 @@ export class AddCourseComponent implements OnInit {
   }
   showInfo(msg) {
     this.messageService.add({severity:'info', summary: 'Success', detail: msg});
+  }
+  showError(msg) {
+    this.messageService.add({severity:'error', summary: 'Error', detail: msg});
   }
 }

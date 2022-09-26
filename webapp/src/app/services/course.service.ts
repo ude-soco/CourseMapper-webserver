@@ -3,7 +3,7 @@ import { Course } from 'src/app/models/Course';
 import { environment } from './../../environments/environment';
 import { EventEmitter, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, Subject, tap } from 'rxjs';
+import { catchError, Observable, of, Subject, tap } from 'rxjs';
 import { TopicChannelService } from './topic-channel.service';
 
 
@@ -44,9 +44,20 @@ export class CourseService {
   }
 
   addCourse(course: Course) : any {
-    return this.http.post<any>(`${this.API_URL}/course`, {name: course.name, description: course.description, shortname: course.shortName}).pipe(tap(res => {
-      this.courses.push(res.courseSaved);
-      this.onUpdateCourses$.next(this.courses);
+    return this.http.post<any>(`${this.API_URL}/course`, {name: course.name, description: course.description, shortname: course.shortName})
+    .pipe(
+      catchError(( err, sourceObservable) => {
+       if (err.status ===  403) {
+        return of({errorMsg: err.error.error });
+       }else {
+        return of({errorMsg: "Error in connection: Please reload the application" })
+       }
+    }),
+      tap(res => {
+        if ( !('errorMsg' in res) ){
+          this.courses.push(res.courseSaved);
+          this.onUpdateCourses$.next(this.courses);
+        }
     }));
   }
 
