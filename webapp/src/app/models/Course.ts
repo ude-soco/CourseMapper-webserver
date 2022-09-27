@@ -3,6 +3,7 @@ export interface Course{
     name: string,
     shortName?: string,
     description?: string,
+    role?: string,
     numberTopics?: number,
     notification?: number,
     numberChannels?: number,

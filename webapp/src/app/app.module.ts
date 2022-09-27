@@ -22,6 +22,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { AddTopicComponent } from './pages/components/add-topic/add-topic.component';
 import { AddChannelComponent } from './pages/components/add-channel/add-channel.component';
 import { MenuModule } from 'primeng/menu';
+import { ToastModule } from 'primeng/toast';
+import { RippleModule } from 'primeng/ripple';
 
 @NgModule({
   declarations: [
@@ -49,7 +51,9 @@ import { MenuModule } from 'primeng/menu';
     FormsModule,
     InputTextModule,
     ReactiveFormsModule,
-    MenuModule
+    MenuModule,
+    ToastModule,
+    RippleModule
   ],
   providers: [],
   bootstrap: [AppComponent],
