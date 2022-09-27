@@ -1,5 +1,6 @@
 const { authJwt } = require("../middlewares");
 const controller = require("../controllers/course.controller");
+const logger = require('../xAPILogger/course.xAPILogger')
 // const controller2 = require("../controllers/user.controller");
 
 module.exports = function (app) {
@@ -26,7 +27,8 @@ module.exports = function (app) {
   app.post(
     "/course",
     //[authJwt.verifyToken],
-    controller.newCourse
+    controller.newCourse,
+    logger.logCourseCreation
   );
 
   // Enrol in a course

@@ -10,7 +10,7 @@ const Material = db.material;
 const Reply = db.reply;
 const Tag = db.tag;
 // TODO to be deleted once the authentication is merged with this channelbar branch
-const userId = "6331bc5542887c0bdbbcfc54"// '62f9fe647f0a9f66c4dea225';  //  
+const userId = "633356f3ef3e0731fc29a385"// '62f9fe647f0a9f66c4dea225';  //  
 /**
  * @function getAllCourses
  * Get all courses controller
@@ -287,7 +287,7 @@ export const withdrawCourse = async (req, res) => {
  * @param {string} req.body.description The description of the course, e.g., Teaching students about modern web technologies
  * @param {string} req.userId The owner of the course
  */
-export const newCourse = async (req, res) => {
+export const newCourse = async (req, res, next) => {
   console.log('newCourse');
   const courseName = req.body.name;
   const courseDesc = req.body.description;
@@ -369,8 +369,7 @@ export const newCourse = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-
-  return res.send({
+  const response = {
     courseSaved: {
       _id: courseSaved._id,
       name: courseSaved.name,
@@ -382,7 +381,12 @@ export const newCourse = async (req, res) => {
       role: foundRole.name
     },
     success: `New course '${courseSaved.name}' added!`
-  });
+  }
+  req.locals = {
+    user: foundUser,
+    response: response
+  }
+  next();
 };
 
 /**
