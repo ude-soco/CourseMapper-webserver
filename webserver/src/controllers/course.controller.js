@@ -49,7 +49,7 @@ export const getAllCourses = async (req, res) => {
 export const getMyCourses = async (req, res) => {
   let user;
   // TODO reavtivate the next line once the authentication branch merged with the channelbar branch 
-  //let userId =  req.userId;
+  let userId =  req.userId;
   let results = []
   try {
     user = await User
@@ -312,7 +312,7 @@ export const newCourse = async (req, res, next) => {
   const courseDesc = req.body.description;
   let shortName = req.body.shortname;
   // TODO uncomment the next line
-  // const userId = req.userId;
+  const userId = req.userId;
 
   let foundUser;
   try {
