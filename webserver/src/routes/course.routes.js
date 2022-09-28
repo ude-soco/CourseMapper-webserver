@@ -10,17 +10,14 @@ module.exports = function (app) {
   });
 
   // Get all courses
-  app.get("/courses",  controller.getAllCourses);
-  //app.get("/courses", [authJwt.verifyToken], controller.getAllCourses);
+  app.get("/courses", [authJwt.verifyToken], controller.getAllCourses);
 
   // Get all courses the user is enrolled in
-  app.get("/my-courses",  controller.getMyCourses);
-  //app.get("/my-courses", [authJwt.verifyToken], controller.getMyCourses);
+  app.get("/my-courses", [authJwt.verifyToken], controller.getMyCourses);
 
   // Get course details
   // Only enrolled user & admins
   app.get("/courses/:courseId", [authJwt.verifyToken, authJwt.isEnrolled], controller.getCourse, logger.logCourseAccess);
-  // app.get("/courses/:courseId", controller.getCourse);
 
 
   // Create a new course

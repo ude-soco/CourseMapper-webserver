@@ -9,8 +9,6 @@ const Annotation = db.annotation;
 const Material = db.material;
 const Reply = db.reply;
 const Tag = db.tag;
-// TODO to be deleted once the authentication is merged with this channelbar branch
-// const userId = "633356f3ef3e0731fc29a385";
 /**
  * @function getAllCourses
  * Get all courses controller
@@ -48,7 +46,6 @@ export const getAllCourses = async (req, res) => {
  */
 export const getMyCourses = async (req, res) => {
   let user;
-  // TODO reavtivate the next line once the authentication branch merged with the channelbar branch 
   let userId =  req.userId;
   let results = []
   try {
