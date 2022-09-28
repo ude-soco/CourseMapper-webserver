@@ -10,7 +10,7 @@ const Material = db.material;
 const Reply = db.reply;
 const Tag = db.tag;
 // TODO to be deleted once the authentication is merged with this channelbar branch
-const userId = "633356f3ef3e0731fc29a385"// '62f9fe647f0a9f66c4dea225';  //  
+// const userId = "633356f3ef3e0731fc29a385";
 /**
  * @function getAllCourses
  * Get all courses controller
@@ -105,11 +105,25 @@ export const getMyCourses = async (req, res) => {
  *
  * @param {string} req.params.courseId The id of the course
  */
-export const getCourse = async (req, res) => {
+export const getCourse = async (req, res, next) => {
   const courseId = req.params.courseId;
-  let results = [];
+  const userId = req.userId;
   console.log('getCourse')
+  
+  let foundUser;
+  try {
+    foundUser = await User.findOne({ _id: userId });
+    if (!foundUser) {
+      return res.status(404).send({
+        error: `User not found!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
   let foundCourse;
+  let results = [];
   try {
     foundCourse = await Course
     .findOne({ _id: ObjectId(courseId) })
@@ -138,8 +152,13 @@ export const getCourse = async (req, res) => {
       course_id: topic.courseId,
       channels: channels
     }
-  })
-  return res.status(200).send(results);
+  });
+  req.locals = {
+    response: results,
+    course: foundCourse,
+    user: foundUser
+  }
+  return next();
 };
 
 /**
@@ -386,7 +405,7 @@ export const newCourse = async (req, res, next) => {
     user: foundUser,
     response: response
   }
-  next();
+  return next();
 };
 
 /**
@@ -396,7 +415,7 @@ export const newCourse = async (req, res, next) => {
  * @param {string} req.params.courseId The id of the course
  * @param {string} req.userId The owner of the course
  */
-export const deleteCourse = async (req, res) => {
+export const deleteCourse = async (req, res, next) => {
   const courseId = req.params.courseId;
 
   let foundCourse;
@@ -464,9 +483,15 @@ export const deleteCourse = async (req, res) => {
     return res.status(500).send({ error: err });
   }
 
-  return res.send({
-    success: `Course '${foundCourse.name}' successfully deleted!`,
-  });
+  const response = {
+    success: `Course '${foundCourse.name}' successfully deleted!`
+  }
+  req.locals = {
+    response: response,
+    course: foundCourse,
+    user: foundUser
+  }
+  return next();
 };
 
 /**

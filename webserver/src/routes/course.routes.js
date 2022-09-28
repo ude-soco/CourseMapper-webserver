@@ -19,14 +19,14 @@ module.exports = function (app) {
 
   // Get course details
   // Only enrolled user & admins
-  //app.get("/courses/:courseId", [authJwt.verifyToken, authJwt.isEnrolled], controller.getCourse);
-  app.get("/courses/:courseId", controller.getCourse);
+  app.get("/courses/:courseId", [authJwt.verifyToken, authJwt.isEnrolled], controller.getCourse, logger.logCourseAccess);
+  // app.get("/courses/:courseId", controller.getCourse);
 
 
   // Create a new course
   app.post(
     "/course",
-    //[authJwt.verifyToken],
+    [authJwt.verifyToken],
     controller.newCourse,
     logger.logCourseCreation
   );
@@ -51,7 +51,8 @@ module.exports = function (app) {
   app.delete(
     "/courses/:courseId",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.deleteCourse
+    controller.deleteCourse,
+    logger.logCourseDeletion
     // controller2.moderatorBoard
   );
 

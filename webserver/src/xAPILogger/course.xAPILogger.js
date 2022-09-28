@@ -1,29 +1,31 @@
-const {lrs} = require('./LRSConfig');
 const statementFactory = require('./statementsFactory');
+const lrs = require('./lrs')
 
 
 
-
-export const logCourseCreation = (req, res, next) => {
+export const logCourseCreation = (req, res) => {
     const statement = statementFactory
     .getCourseCreationStatement(
-        `${req.locals.user.firstname} ${req.locals.user.lastname}`
-        , req.locals.user.username
+        req.locals.user
         , req.locals.response.courseSaved);
-    saveStatement(statement);
+    lrs.saveStatement(statement);
     res.send(req.locals.response);
 }
 
-function saveStatement( statement ) {
-    lrs.put( `/statements?statementId=${statement.id}`, statement)
-    .then((response) => {
-            if (response.status === 204){
-                console.log(`statement ${statement.id} saved successfully`);
-            }
-        })
-        .catch(function (error) {
-            if (error){
-                console.log(error);
-            }
-        });
+export const logCourseDeletion = (req, res) => {
+    const statement = statementFactory
+    .getCourseDeletionStatement(
+        req.locals.user
+        , req.locals.course);
+    lrs.saveStatement(statement);
+    res.send(req.locals.response);
+}
+
+export const logCourseAccess = (req, res) => {
+    const statement = statementFactory
+    .getCourseAccessStatement(
+        req.locals.user
+        , req.locals.course);
+    lrs.saveStatement(statement);
+    res.status(200).send(req.locals.response);
 }
