@@ -38,7 +38,7 @@ export class CourseService {
 
   /** GET courses from the server */
   fetchCourses():  Observable<Course[]> {
-    return this.http.get<Course[]>(`${this.API_URL}/courses`).pipe(tap(courses => {
+    return this.http.get<Course[]>(`${this.API_URL}/my-courses`).pipe(tap(courses => {
       this.courses = courses;
     }));
   }

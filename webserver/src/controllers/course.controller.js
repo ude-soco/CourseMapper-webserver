@@ -10,7 +10,7 @@ const Material = db.material;
 const Reply = db.reply;
 const Tag = db.tag;
 // TODO to be deleted once the authentication is merged with this channelbar branch
-const userId = "6331bc5542887c0bdbbcfc54"// '62f9fe647f0a9f66c4dea225';  //  
+const userId = "633356e5ef3e0731fc29a37f"// '62f9fe647f0a9f66c4dea225';  //  
 /**
  * @function getAllCourses
  * Get all courses controller
