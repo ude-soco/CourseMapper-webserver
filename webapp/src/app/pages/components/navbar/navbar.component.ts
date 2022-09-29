@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { NotificationServiceService } from 'src/app/services/notification-service.service';
 
 @Component({
   selector: 'app-navbar',
@@ -6,7 +7,11 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./navbar.component.css'],
 })
 export class NavbarComponent implements OnInit {
-  constructor() {}
+  newsAmount!: string;
+  visibleSidebar2!: any;
+  constructor() {
+    this.newsAmount = '6';
+  }
 
   ngOnInit(): void {}
 

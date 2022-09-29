@@ -6,11 +6,24 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./channelbar.component.css'],
 })
 export class ChannelbarComponent implements OnInit {
-  constructor() {}
+  subscribed!: boolean;
+  subscribeLabel!: string;
+  constructor() {
+    this.subscribeLabel = 'Subscribe to course';
+    this.subscribed = false;
+  }
 
   ngOnInit(): void {}
 
   showMenu() {
     console.log('showMenu');
+  }
+
+  subscribeToCourse(event: any) {
+    this.subscribed = !this.subscribed;
+
+    this.subscribeLabel = this.subscribed
+      ? 'Subscribed'
+      : 'Subscribe to course';
   }
 }

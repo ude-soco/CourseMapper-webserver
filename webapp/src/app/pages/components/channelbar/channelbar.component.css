@@ -1,0 +1,28 @@
+.subscribe {
+  margin-top: 1rem;
+  display: flex;
+  margin-left: 5rem;
+  margin-top: 1rem;
+}
+.subscribe-label,
+.subscribed-label {
+  margin-left: 10px;
+}
+.subscribed-label {
+  color: green;
+}
+
+.p-inputswitch .p-inputswitch-slider {
+  width: 40px;
+  height: 18px;
+  margin-top: 0.7rem;
+  margin-left: 0.2rem;
+}
+
+.subscribed {
+  background-color: gray;
+}
+.unsubscribe {
+  background-color: rgba(3, 105, 161, 255);
+  border-color: rgba(3, 105, 161, 255);
+}

@@ -1,0 +1,76 @@
+.headline {
+  justify-content: center;
+  display: flex;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  font-size: x-large;
+}
+
+.badge {
+  position: relative;
+  width: 100px;
+}
+
+.course-updates {
+  position: absolute;
+  top: 25%;
+  z-index: 2;
+  left: 25%;
+}
+
+.comments-mentioned {
+  position: absolute;
+  top: 25%;
+  z-index: 2;
+  left: 55%;
+}
+
+.annotations {
+  position: absolute;
+  top: 25%;
+  z-index: 2;
+  right: 21%;
+}
+.right-control {
+  display: flex;
+  align-items: center;
+}
+
+/* change the size of number of badge */
+/* :host ::ng-deep .p-badge {
+  font-size: 6px;
+} */
+.menu {
+  display: flex;
+}
+
+.panel {
+  padding: 1.5rem;
+}
+
+/* menu focus style */
+:host
+  ::ng-deep
+  .p-tabmenu
+  .p-tabmenu-nav
+  .p-tabmenuitem
+  .p-menuitem-link:not(.p-disabled):focus {
+  box-shadow: none;
+  outline: none;
+  outline-offset: none;
+}
+
+:host
+  ::ng-deep
+  .p-tabmenu
+  .p-tabmenu-nav
+  .p-tabmenuitem.p-highlight
+  .p-menuitem-link {
+  border-color: rgba(3, 105, 161, 255);
+  color: rgba(3, 105, 161, 255);
+}
+
+:host ::ng-deep .p-tabmenu .p-tabmenu-nav .p-tabmenuitem .p-menuitem-link {
+  padding: 0.8rem;
+  font-size: small;
+}

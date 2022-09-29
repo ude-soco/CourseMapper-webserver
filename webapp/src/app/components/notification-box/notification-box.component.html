@@ -1,0 +1,80 @@
+<ng-container>
+  <div
+    class="notification-content"
+    *ngFor="let notificationItem of notificationItems"
+  >
+    <div
+      class="item-container"
+      [hidden]="isStarredClicked && !notificationItem.isStar"
+    >
+      <div class="left-container">
+        <div class="left">
+          <p-avatar
+            [label]="notificationItem.shortName"
+            styleClass="mr-5"
+            [style]="{
+              'background-color': 'rgba(3,105,161,255)
+',
+              color: '#ffffff'
+            }"
+            shape="circle"
+          ></p-avatar>
+          <div class="notification-message-container">
+            <span class="userName">{{ notificationItem.userName }}</span>
+            <span class="action">{{ notificationItem.message.action }}</span>
+            <span class="msg-location">{{
+              notificationItem.message.courseName
+            }}</span>
+            <span class="msg-location">{{
+              notificationItem.message.topicName
+            }}</span>
+            <span class="msg-location">{{
+              notificationItem.message.channelName
+            }}</span>
+          </div>
+        </div>
+        <span class="time">{{ notificationItem.time }}</span>
+      </div>
+      <div [ngClass]="settingClass ? 'middle' : 'right'">
+        <i
+          [ngClass]="
+            settingClass ? 'pi pi-circle-fill' : 'pi pi-circle-fill recent'
+          "
+          *ngIf="!notificationItem.read"
+        ></i>
+        <i
+          class="pi pi-ellipsis-h context-menu"
+          (click)="
+            openContextMenu(
+              $event,
+              op,
+              notificationItem.id,
+              notificationItem.userName
+            )
+          "
+        ></i>
+        <i
+          [ngClass]="notificationItem.isStar ? 'pi pi-star-fill' : 'pi pi-star'"
+          *ngIf="isSettingPanel"
+          (click)="onStar(notificationItem.id)"
+        ></i>
+      </div>
+    </div>
+    <p-divider class="divider"></p-divider>
+  </div>
+</ng-container>
+
+<p-overlayPanel #op class="context" id="op">
+  <ng-template pTemplate>
+    <app-context-menu
+      [activeItemId]="activeItemId"
+      [activeName]="activeUserName"
+      [isSettingPanel]="isSettingPanel"
+      (onClick)="closeMenu(op)"
+      (onMarkRead)="handleMarkAsRead($event)"
+      (onRemove)="handleOnRemove($event)"
+      (isRemoveAll)="handleRemoveAll()"
+      (isMarkAllAsRead)="handleMarkAllAsRead()"
+    ></app-context-menu>
+  </ng-template>
+</p-overlayPanel>

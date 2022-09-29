@@ -1,0 +1,14 @@
+<app-courses [hideContent]="true">
+  <div class="container">
+    <h2 class="h3">Notification</h2>
+
+    <p-divider></p-divider>
+
+    <div class="item-container">
+      <app-notification-box
+        *ngIf="true"
+        [notificationItems]="notificationItems"
+      ></app-notification-box>
+    </div>
+  </div>
+</app-courses>

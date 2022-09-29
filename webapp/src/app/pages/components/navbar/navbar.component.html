@@ -3,6 +3,7 @@
     class="flex flex-wrap justify-between content-center items-center px-4 h-16 bg-white text-white shadow-lg"
   >
     <img src="../../../assets/logo.svg" alt="logo" class="w-72" />
+
     <div class="flex flex-wrap my-1">
       <!-- <p-avatar
         label="P"
@@ -10,6 +11,20 @@
         size="large"
         [style]="{ backgroundColor: 'var(--orange-600)' }"
       ></p-avatar> -->
+      <!-- <p-button
+        type="button"
+        class="mr-2"
+        (click)="visibleSidebar2 = true"
+        icon="pi pi-arrow-left"
+      ></p-button> -->
+
+      <i
+        class="pi pi-bell mr-6 mt-2 p-text-secondary"
+        pBadge
+        style="font-size: 2rem; color: rgba(3, 105, 161, 255)"
+        [value]="newsAmount"
+        (click)="notificationPanel.toggle($event)"
+      ></i>
       <p-avatar
         label="P"
         shape="circle"
@@ -19,3 +34,10 @@
     </div>
   </div>
 </div>
+<p-overlayPanel #notificationPanel [dismissable]="true">
+  <app-notification-dashboard></app-notification-dashboard>
+</p-overlayPanel>
+<!-- <p-sidebar [(visible)]="visibleSidebar2" position="right" [baseZIndex]="10000">
+  <h3>Right Sidebar</h3>
+  <app-notification-dashboard></app-notification-dashboard>
+</p-sidebar> -->

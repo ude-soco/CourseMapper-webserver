@@ -1,0 +1,82 @@
+<p-toolbar styleClass="toolbar">
+  <div class="tab">
+    <span>Course updates</span>
+    <p-inputSwitch
+      [(ngModel)]="couseUpdateChecked"
+      class="toggle-button"
+    ></p-inputSwitch>
+  </div>
+</p-toolbar>
+<div class="noti-container">
+  <app-notification-box
+    [hidden]="
+      filteredType == 'annotations' || filteredType == 'commentsandmentioned'
+    "
+    [settingClass]="true"
+    [notificationItems]="courseUpdateItems"
+    [isSettingPanel]="true"
+  ></app-notification-box>
+  <span
+    class="empty-content"
+    *ngIf="
+      filteredType == 'annotations' ||
+      filteredType == 'commentsandmentioned' ||
+      courseUpdateItems.length == 0
+    "
+    >There is no content in it</span
+  >
+</div>
+<p-toolbar styleClass="toolbar">
+  <div class="tab">
+    <span>Comments & mentioned</span>
+    <p-inputSwitch
+      [(ngModel)]="commentsAndMentionedChecked"
+      class="toggle-button"
+    ></p-inputSwitch>
+  </div>
+</p-toolbar>
+<div class="noti-container">
+  <app-notification-box
+    [hidden]="filteredType == 'annotations' || filteredType == 'courseupdate'"
+    [settingClass]="true"
+    [notificationItems]="commentsMentionedItems"
+    [isSettingPanel]="true"
+  ></app-notification-box>
+  <span
+    class="empty-content"
+    *ngIf="
+      filteredType == 'annotations' ||
+      filteredType == 'courseupdate' ||
+      commentsMentionedItems.length == 0
+    "
+    >There is no content in it</span
+  >
+</div>
+<p-toolbar styleClass="toolbar">
+  <div class="tab">
+    <span>Annotations</span>
+    <p-inputSwitch
+      [(ngModel)]="annotationsChecked"
+      class="toggle-button"
+    ></p-inputSwitch>
+  </div>
+</p-toolbar>
+<div class="noti-container">
+  <app-notification-box
+    [hidden]="
+      filteredType == 'courseupdate' || filteredType == 'commentsandmentioned'
+    "
+    [settingClass]="true"
+    [notificationItems]="annotationsItems"
+    [isSettingPanel]="true"
+  ></app-notification-box>
+  <span
+    class="empty-content"
+    *ngIf="
+      filteredType == 'courseupdate' ||
+      filteredType == 'commentsandmentioned' ||
+      annotationsItems.length == 0
+    "
+    >There is no content in it</span
+  >
+</div>

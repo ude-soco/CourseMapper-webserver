@@ -5,13 +5,23 @@
         <!-- Learning Analytics -->
         Neuroinformatik und Organic Computing Vorlesung WS21/22
       </p>
+
       <app-iconbutton
         icon="bx-dots-vertical-rounded"
         color="text-black"
         (onClick)="showMenu()"
       ></app-iconbutton>
     </div>
-
+    <div class="subscribe">
+      <button
+        pButton
+        formControlName="subscribed"
+        (click)="subscribeToCourse($event)"
+        type="button"
+        [label]="subscribeLabel"
+        [ngClass]="subscribed ? 'subscribed' : 'unsubscribe'"
+      ></button>
+    </div>
     <div class="flex flex-col items-center justify-start p-1 m-0 z-10">
       <div class="m-0 w-full px-2 pb-2 transition duration-300 ease-in-out">
         <div

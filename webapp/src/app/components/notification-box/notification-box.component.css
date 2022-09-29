@@ -1,0 +1,88 @@
+.item-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.time {
+  margin-left: 3.5rem;
+  font-size: 8px;
+  position: relative;
+  top: -1rem;
+}
+
+.left {
+  display: flex;
+}
+
+.left-container {
+  display: block;
+}
+
+.userName {
+  font-weight: bold;
+  margin: 0 1px;
+  margin-right: 2px;
+  font-size: small;
+}
+
+.msg-location {
+  font-weight: bold;
+  margin: 0 1px;
+  font-size: small;
+}
+.action {
+  margin-right: 2px;
+  font-size: small;
+}
+
+::ng-deep .p-divider.p-divider-horizontal {
+  margin: -0.5rem;
+}
+
+::ng-deep .p-overlaypanel .p-overlaypanel-content {
+  padding: 0;
+}
+
+/* setting panel right control */
+
+.right {
+  display: flex;
+  align-items: center;
+  position: relative;
+  top: -10px;
+  left: 5%;
+}
+.middle {
+  display: flex;
+  align-items: center;
+  position: relative;
+  top: -10px;
+  right: 40%;
+}
+
+.pi-circle-fill {
+  font-size: 0.3rem;
+  color: rgba(3, 105, 161, 255);
+  margin-right: 4rem;
+}
+
+.context-menu {
+  position: relative;
+  top: -2px;
+  color: rgba(3, 105, 161, 255);
+  margin-right: 2rem;
+}
+
+.pi-star,
+.pi-star-fill {
+  color: rgba(3, 105, 161, 255);
+  margin-left: 1rem;
+}
+
+/* recent one */
+.recent {
+  font-size: 0.3rem;
+  color: rgba(3, 105, 161, 255);
+  margin-right: 1.5rem;
+}

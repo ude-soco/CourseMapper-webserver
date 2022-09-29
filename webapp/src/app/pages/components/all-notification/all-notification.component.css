@@ -1,0 +1,15 @@
+.container {
+  display: block;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 3rem;
+  width: 50%;
+  border: 1px solid blue;
+  padding: 1rem;
+}
+
+.h3 {
+  font-size: large;
+  /* margin-bottom: 3rem; */
+}

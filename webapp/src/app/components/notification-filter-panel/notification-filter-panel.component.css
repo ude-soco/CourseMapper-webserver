@@ -1,0 +1,51 @@
+.container {
+  margin-top: 2rem;
+  position: relative;
+  display: flex;
+  justify-content: space-around;
+  border: 1px solid grey;
+}
+
+.type-container,
+.filter-container,
+.number-container,
+.star-container {
+  display: flex;
+  align-items: center;
+}
+
+.filter-label {
+  font-size: 2rem;
+}
+
+.input {
+  width: 20%;
+}
+
+.type-panel {
+  color: red;
+}
+
+.filter-label {
+  display: flex;
+  align-items: center;
+}
+.reset-btn {
+  right: 50%;
+  position: relative;
+  margin-top: 75%;
+  margin-bottom: 1rem;
+}
+
+:host ::ng-deep .p-button {
+  font-size: 15px;
+  padding: 0.2rem;
+  background-color: rgba(3, 105, 161, 255);
+  border-color: rgba(3, 105, 161, 255);
+}
+
+:host ::ng-deep .p-dropdown {
+  height: 40px;
+  align-items: center;
+  /* background-color: rgba(3, 105, 161, 255); */
+}

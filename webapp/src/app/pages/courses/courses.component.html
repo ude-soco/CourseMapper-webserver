@@ -1,11 +1,15 @@
 <app-navbar></app-navbar>
 
-<div class="flex items-start">
+<div class="flex">
   <app-sidebar></app-sidebar>
 
   <app-channelbar></app-channelbar>
 
-  <div class="flex flex-wrap items-start m-3">
-    <p class="text-xl font-semibold">Content</p>
+  <div class="flex m-3">
+    <p class="text-xl font-semibold">
+      <span *ngIf="!hideContent">Content</span>
+    </p>
   </div>
+
+  <ng-content></ng-content>
 </div>

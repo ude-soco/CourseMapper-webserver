@@ -1,0 +1,48 @@
+<div class="container">
+  <div class="filter-container">
+    <div class="filter-label">
+      <i
+        class="pi pi-filter-fill"
+        style="color: rgba(3, 105, 161, 255); font-size: 2rem"
+      ></i>
+      <h3 class="filter-label">Filter</h3>
+    </div>
+    <p-button (click)="resetFilter()" class="reset-btn p-button-sm"
+      >reset</p-button
+    >
+  </div>
+
+  <div class="type-container">
+    <p-dropdown
+      class="type-filter"
+      [options]="notificationTypeFilter"
+      [(ngModel)]="selectedType"
+      (onChange)="selectType($event)"
+      optionLabel="name"
+      placeholder="Order by type"
+      styleClass="type-panel"
+      autoWidth="false"
+      [style]="{ width: '100%' }"
+    ></p-dropdown>
+  </div>
+  <div class="number-container">
+    <span class="number-filter"
+      >Show
+      <p-inputNumber
+        [inputStyle]="{ width: '50px' }"
+        style="width: 50px; height: 30px; margin: 0 0.3rem"
+        [(ngModel)]="number"
+        (onInput)="filterByNumber($event)"
+        (onBlur)="onBlur($event)"
+      ></p-inputNumber>
+      items per page</span
+    >
+  </div>
+  <div class="star-container">
+    <i
+      [ngClass]="starred ? 'pi pi-star' : 'pi pi-star-fill'"
+      style="color: rgba(3, 105, 161, 255); font-size: 2rem"
+      (click)="viewStar()"
+    ></i>
+  </div>
+</div>

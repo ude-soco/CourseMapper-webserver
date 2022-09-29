@@ -1,0 +1,17 @@
+<app-notification-box
+  *ngIf="!notificationType"
+  [notificationItems]="notificationItems"
+></app-notification-box>
+
+<app-notification-box
+  *ngIf="notificationType == 'courseupdate'"
+  [notificationItems]="courseUpdateItems"
+></app-notification-box>
+<app-notification-box
+  *ngIf="notificationType == 'commentsandmentioned'"
+  [notificationItems]="commentsMentionedItems"
+></app-notification-box>
+<app-notification-box
+  *ngIf="notificationType == 'annotations'"
+  [notificationItems]="annotationsItems"
+></app-notification-box>

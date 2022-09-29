@@ -1,0 +1,41 @@
+<div class="panel">
+  <div class="container">
+    <h1 class="headline">Notification</h1>
+    <p-badge value="2" class="course-updates"></p-badge>
+    <p-badge value="2" class="comments-mentioned"></p-badge>
+    <p-badge value="2" class="annotations"></p-badge>
+    <div class="menu">
+      <p-tabMenu [model]="notificationItems"></p-tabMenu>
+      <div class="right-control">
+        <i
+          class="pi pi-ellipsis-h"
+          style="margin-left: 1rem"
+          (click)="openTopContextMenu($event, op)"
+        ></i>
+        <span style="margin-left: 1rem">
+          <a
+            routerLink="/allNotification"
+            routerLinkActive="active"
+            ariaCurrentWhenActive="page"
+            >See all</a
+          ></span
+        >
+      </div>
+    </div>
+  </div>
+
+  <div class="notification-container">
+    <app-notification-items
+      [notificationType]="notificationType"
+    ></app-notification-items>
+  </div>
+
+  <p-overlayPanel #op class="context" id="op">
+    <!-- <ng-template pTemplate> -->
+    <app-context-menu
+      [topLevel]="true"
+      (onClick)="closeMenu(op)"
+    ></app-context-menu>
+    <!-- </ng-template> -->
+  </p-overlayPanel>
+</div>
