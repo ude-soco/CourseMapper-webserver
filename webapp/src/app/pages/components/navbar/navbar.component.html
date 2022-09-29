@@ -31,6 +31,49 @@
         size="large"
         [style]="{ 'background-color': '#EA580C', color: '#ffffff' }"
       ></p-avatar>
+      <span *ngIf="!this.storageService.loggedIn">
+        <button
+          pButton
+          [ngStyle]="{
+            border: '1px solid #EA580C',
+            backgroundColor: 'white',
+            color: '#EA580C',
+            marginRight: '8px'
+          }"
+          type="button"
+          label="Login"
+          (click)="handleLogin()"
+        ></button>
+        <button
+          pButton
+          [ngStyle]="{ backgroundColor: '#EA580C' }"
+          type="button"
+          label="Sign-up"
+          (click)="handleRegistration()"
+        ></button>
+      </span>
+
+      <span *ngIf="this.storageService.loggedIn">
+        <button
+          pButton
+          [ngStyle]="{
+            border: '1px solid #EA580C',
+            backgroundColor: 'white',
+            color: '#EA580C',
+            marginRight: '8px'
+          }"
+          type="button"
+          label="Logout"
+          (click)="handleLogout()"
+        ></button>
+
+        <p-avatar
+          label="P"
+          shape="circle"
+          size="large"
+          [style]="{ 'background-color': '#EA580C', color: '#ffffff' }"
+        ></p-avatar>
+      </span>
     </div>
   </div>
 </div>

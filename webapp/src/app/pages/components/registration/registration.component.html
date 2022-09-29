@@ -1,0 +1,129 @@
+<div>
+  <form [formGroup]="validateForm">
+    <div class="container">
+      <label for="email">Email</label>
+
+      <input
+        type="text"
+        formControlName="email"
+        required
+        placeholder="Email"
+        class="textclass"
+      />
+      <div
+        *ngIf="
+          validateForm.controls['email'].invalid &&
+          (validateForm.controls['email'].dirty ||
+            validateForm.controls['email'].touched)
+        "
+      >
+        This is required
+      </div>
+    </div>
+    <div class="container">
+      <label for="password">password</label>
+
+      <input
+        type="text"
+        formControlName="password"
+        required
+        placeholder="password"
+        class="textclass"
+      />
+      <div
+        *ngIf="
+          validateForm.controls['password'].invalid &&
+          (validateForm.controls['password'].dirty ||
+            validateForm.controls['password'].touched)
+        "
+      >
+        This is required
+      </div>
+    </div>
+    <div class="container">
+      <label for="checkPassword">checkPassword</label>
+
+      <input
+        type="text"
+        formControlName="checkPassword"
+        required
+        placeholder="checkPassword"
+        class="textclass"
+      />
+      <div
+        *ngIf="
+          validateForm.controls['checkPassword'].invalid &&
+          (validateForm.controls['checkPassword'].dirty ||
+            validateForm.controls['checkPassword'].touched)
+        "
+      >
+        This is required
+      </div>
+    </div>
+    <div class="container">
+      <label for="firstname">firstname</label>
+
+      <input
+        type="text"
+        formControlName="firstname"
+        required
+        placeholder="firstname"
+        class="textclass"
+      />
+      <div
+        *ngIf="
+          validateForm.controls['firstname'].invalid &&
+          (validateForm.controls['firstname'].dirty ||
+            validateForm.controls['firstname'].touched)
+        "
+      >
+        This is required
+      </div>
+    </div>
+    <div class="container">
+      <label for="lastname">lastname</label>
+
+      <input
+        type="text"
+        formControlName="lastname"
+        required
+        placeholder="lastname"
+        class="textclass"
+      />
+      <div
+        *ngIf="
+          validateForm.controls['lastname'].invalid &&
+          (validateForm.controls['lastname'].dirty ||
+            validateForm.controls['lastname'].touched)
+        "
+      >
+        This is required
+      </div>
+    </div>
+    <div class="container">
+      <label for="username">username</label>
+
+      <input
+        type="text"
+        formControlName="username"
+        required
+        placeholder="username"
+        class="textclass"
+      />
+      <div
+        *ngIf="
+          validateForm.controls['username'].invalid &&
+          (validateForm.controls['username'].dirty ||
+            validateForm.controls['username'].touched)
+        "
+      >
+        This is required
+      </div>
+    </div>
+    <div class="container">
+      <button type="submit" (click)="onSubmit()">signup</button>
+    </div>
+  </form>
+  <a routerLink="/login">Login</a>
+  <div class="container"><h1 *ngIf="registerSucess">Register Success</h1></div>
+</div>

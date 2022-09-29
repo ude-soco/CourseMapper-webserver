@@ -73,8 +73,6 @@ export const signin = async (req, res) => {
       expiresIn: 86400, // 24 hours
     });
 
-    let authority = "ROLE_" + user.role.name.toUpperCase();
-
     req.session.token = token;
 
     const userName = `${user.firstname} ${user.lastname}`;
@@ -84,8 +82,6 @@ export const signin = async (req, res) => {
       name: userName,
       username: user.username,
       email: user.email,
-      role: authority,
-      courses: user.courses,
     });
   } catch (err) {
     return res.status(500).send({ error: err });

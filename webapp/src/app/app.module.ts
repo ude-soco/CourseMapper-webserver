@@ -1,8 +1,12 @@
 import { PrimengModule } from './modules/primeng/primeng.module';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
+import { en_US, NZ_I18N } from 'ng-zorro-antd/i18n';
 import { AppRoutingModule } from './app-routing.module';
+import { NzFormModule } from 'ng-zorro-antd/form';
+
+import en from '@angular/common/locales/en';
+
 import { AppComponent } from './app.component';
 import { SidebarComponent } from './pages/components/sidebar/sidebar.component';
 import { NavbarComponent } from './pages/components/navbar/navbar.component';
@@ -17,7 +21,6 @@ import { NotificationDashboardComponent } from './pages/components/notification-
 import { SidebarModule } from 'primeng/sidebar';
 import { ButtonModule } from 'primeng/button';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TabMenuModule } from 'primeng/tabmenu';
 import { MenuModule } from 'primeng/menu';
 import { MegaMenuModule } from 'primeng/megamenu';
@@ -29,15 +32,8 @@ import { AvatarModule } from 'primeng/avatar';
 import { AvatarGroupModule } from 'primeng/avatargroup';
 import { DividerModule } from 'primeng/divider';
 import { ContextMenuComponent } from './components/context-menu/context-menu.component';
-import { NZ_I18N } from 'ng-zorro-antd/i18n';
-import { en_US } from 'ng-zorro-antd/i18n';
-import { registerLocaleData } from '@angular/common';
-import en from '@angular/common/locales/en';
-import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
 import { AddCourseComponent } from './components/add-course/add-course.component';
 import { AntUiModule } from './ant-ui/ant-ui.module';
-import { ReactiveFormsModule } from '@angular/forms';
 import { NotificationSettingComponent } from './pages/components/notification-setting/notification-setting.component';
 import { AllNotificationComponent } from './pages/components/all-notification/all-notification.component';
 import { NotificationFilterPanelComponent } from './components/notification-filter-panel/notification-filter-panel.component';
@@ -47,6 +43,19 @@ import { ToolbarModule } from 'primeng/toolbar';
 import { NotificationSettingItemPanelComponent } from './components/notification-setting-item-panel/notification-setting-item-panel.component';
 import { NotificationBoxComponent } from './components/notification-box/notification-box.component';
 import { NotificationItemsComponent } from './pages/components/notification-items/notification-items.component';
+import { RegistrationComponent } from './pages/components/registration/registration.component';
+
+import { registerLocaleData } from '@angular/common';
+
+import { FormsModule, FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { LoginComponent } from './pages/components/login/login.component';
+import { HomeComponent } from './pages/home/home.component';
+import {
+  httpInterceptorProviders,
+  HttpRequestInterceptor,
+} from './_helpers/http.interceptor';
 
 registerLocaleData(en);
 
@@ -69,6 +78,9 @@ registerLocaleData(en);
     AllNotificationComponent,
     NotificationFilterPanelComponent,
     NotificationSettingItemPanelComponent,
+    RegistrationComponent,
+    LoginComponent,
+    HomeComponent,
   ],
   imports: [
     BrowserModule,
@@ -93,8 +105,12 @@ registerLocaleData(en);
     DropdownModule,
     InputNumberModule,
     ToolbarModule,
+    FormsModule,
+    ReactiveFormsModule,
+    HttpClientModule,
   ],
-  providers: [{ provide: NZ_I18N, useValue: en_US }],
+
+  providers: [{ provide: NZ_I18N, useValue: en_US }, httpInterceptorProviders],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
