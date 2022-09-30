@@ -1,5 +1,5 @@
 const statementFactory = require('../statementFactory/course.StatementsFactory');
-const lrs = require('../lrs/lrs')
+const lrs = require('../lrs/lrs');
 
 
 
@@ -44,6 +44,16 @@ export const logCourseWithdraw = (req, res) => {
     .getCourseWithdrawStatement(
         req.locals.user
         , req.locals.course);
+    lrs.saveStatement(statement);
+    res.status(200).send(req.locals.response);
+}
+
+export const logCourseEdit = (req, res) => {
+    const statement = statementFactory
+    .getCourseEditStatement(
+        req.locals.user
+        , req.locals.newCourse
+        , req.locals.oldCourse);
     lrs.saveStatement(statement);
     res.status(200).send(req.locals.response);
 }

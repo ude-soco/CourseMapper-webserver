@@ -60,6 +60,7 @@ module.exports = function (app) {
   app.put(
     "/courses/:courseId",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.editCourse
+    controller.editCourse,
+    logger.logCourseEdit
   );
 };

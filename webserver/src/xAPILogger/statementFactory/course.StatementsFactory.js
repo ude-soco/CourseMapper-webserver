@@ -233,3 +233,59 @@ export const getCourseWithdrawStatement = (user, course) => {
         }
     }
 }
+
+export const getCourseEditStatement = (user, newCourse, oldCourse) => {
+    const fullname = `${user.firstname} ${user.lastname}`;
+    return {
+        "id": uuidv4(),
+        "timestamp": new Date(),
+        "actor": {
+            "objectType": "Agent",
+            "name": fullname,
+            "account": {
+                "homePage": "http://www.CourseMapper.v2.de",
+                "name": user.username
+            }
+        },
+        "verb": {
+            "id": "http://www.CourseMapper.v2.de/verb/edited",
+            "display": {
+                "en-US": "edited"
+            }
+        },
+        "object": {
+            "objectType": "Activity",
+            "id": `http://www.CourseMapper.v2.de/activity/course/${oldCourse._id}`, 
+            "definition": {
+                "type": "http://www.CourseMapper.v2.de/activityType/course",
+                "name": {
+                    "en-US": oldCourse.name
+                },
+                "description":{
+                    "en-US": oldCourse.description
+                },
+                "extensions":{
+                    "http://www.CourseMapper.v2.de/extensions/course": {
+                        "id": oldCourse._id,
+                        "name": oldCourse.name,
+                        "shortname": oldCourse.shortName,
+                        "description": oldCourse.description
+                    }
+                }
+            }
+        },
+        "result":{
+            "extensions":{
+                "http://www.CourseMapper.v2.de/extensions/course": {
+                    "name": newCourse.name,
+                    "shortname": newCourse.shortName,
+                    "description": newCourse.description
+                }
+            }
+        },
+        "context":{
+            "platform": "CourseMapper",
+            "language": "en-US"
+        }
+    }
+}

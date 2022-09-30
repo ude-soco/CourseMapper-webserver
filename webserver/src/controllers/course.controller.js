@@ -505,10 +505,11 @@ export const deleteCourse = async (req, res, next) => {
  * @param {string} req.body.name The edited name of the course
  * @param {string} req.body.description The edited description of the course
  */
-export const editCourse = async (req, res) => {
+export const editCourse = async (req, res, next) => {
   const courseId = req.params.courseId;
   const courseName = req.body.name;
   const courseDesc = req.body.description;
+  const userId = req.userId;
 
   let foundCourse;
   try {
@@ -520,6 +521,10 @@ export const editCourse = async (req, res) => {
     }
   } catch (err) {
     return res.status(500).send({ error: err });
+  }
+
+  req.locals = {
+    oldCourse: JSON.parse(JSON.stringify(foundCourse))
   }
 
   let shortName = courseName
@@ -536,10 +541,21 @@ export const editCourse = async (req, res) => {
   foundCourse.description = courseDesc;
   foundCourse.updatedAt = Date.now();
 
+  let foundUser;
+  try {
+    foundUser = await User.findOne({ _id: userId });
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
   try {
     await foundCourse.save();
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  return res.status(200).send({ success: `Course '${courseName}' has been updated successfully!` });
+
+  req.locals.response = { success: `Course '${courseName}' has been updated successfully!` }
+  req.locals.user = foundUser;
+  req.locals.newCourse = foundCourse;
+  return next();
 };
