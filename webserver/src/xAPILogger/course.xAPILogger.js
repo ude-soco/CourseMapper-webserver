@@ -29,3 +29,12 @@ export const logCourseAccess = (req, res) => {
     lrs.saveStatement(statement);
     res.status(200).send(req.locals.response);
 }
+
+export const logCourseEnroll = (req, res) => {
+    const statement = statementFactory
+    .getCourseEnrollmentStatement(
+        req.locals.user
+        , req.locals.course);
+    lrs.saveStatement(statement);
+    res.status(200).send(req.locals.response);
+}

@@ -32,7 +32,8 @@ module.exports = function (app) {
   app.post(
     "/enrol/:courseId",
     [authJwt.verifyToken],
-    controller.enrolCourse
+    controller.enrolCourse,
+    logger.logCourseEnroll
   )
 
   // Withdraw from a course
