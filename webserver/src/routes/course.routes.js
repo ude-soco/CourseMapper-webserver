@@ -41,7 +41,8 @@ module.exports = function (app) {
   app.post(
     "/withdraw/:courseId",
     [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.withdrawCourse
+    controller.withdrawCourse,
+    logger.logCourseWithdraw
   )
 
   // Delete a course

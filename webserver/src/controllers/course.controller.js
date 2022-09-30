@@ -245,7 +245,7 @@ export const enrolCourse = async (req, res, next) => {
  * @param {string} req.params.courseId The id of the course
  * @param {string} req.userId The user enrolling in the course
  */
-export const withdrawCourse = async (req, res) => {
+export const withdrawCourse = async (req, res, next) => {
   const courseId = req.params.courseId;
   const userId = req.userId;
 
@@ -293,9 +293,12 @@ export const withdrawCourse = async (req, res) => {
     return res.status(500).send({ error: err });
   }
 
-  return res
-    .status(200)
-    .send({ success: `User withdrew from course ${foundCourse.name}` });
+  req.locals = {
+    response: { success: `User withdrew from course ${foundCourse.name}` },
+    user: foundUser,
+    course: foundCourse
+  }
+  return next();
 };
 
 /**

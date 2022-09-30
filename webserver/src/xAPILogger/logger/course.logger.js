@@ -38,3 +38,12 @@ export const logCourseEnroll = (req, res) => {
     lrs.saveStatement(statement);
     res.status(200).send(req.locals.response);
 }
+
+export const logCourseWithdraw = (req, res) => {
+    const statement = statementFactory
+    .getCourseWithdrawStatement(
+        req.locals.user
+        , req.locals.course);
+    lrs.saveStatement(statement);
+    res.status(200).send(req.locals.response);
+}
