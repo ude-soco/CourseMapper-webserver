@@ -1,6 +1,6 @@
 const { authJwt } = require("../middlewares");
 const controller = require("../controllers/course.controller");
-const logger = require('../xAPILogger/course.xAPILogger')
+const logger = require('../xAPILogger/logger/course.logger')
 // const controller2 = require("../controllers/user.controller");
 
 module.exports = function (app) {

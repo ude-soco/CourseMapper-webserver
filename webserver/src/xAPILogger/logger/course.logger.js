@@ -1,5 +1,5 @@
-const statementFactory = require('./statementsFactory');
-const lrs = require('./lrs')
+const statementFactory = require('../statementFactory/course.StatementsFactory');
+const lrs = require('../lrs/lrs')
 
 
 
