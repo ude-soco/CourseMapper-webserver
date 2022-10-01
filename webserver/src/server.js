@@ -16,10 +16,14 @@ const db = require("./models");
 const Role = db.role;
 const User = db.user;
 
-env !== "production" ? app.use(cors({
-  credentials: true,
-  origin: ["http://localhost:4200"],
-})) : "";
+env !== "production"
+  ? app.use(
+      cors({
+        credentials: true,
+        origin: ["http://localhost:4200"],
+      })
+    )
+  : "";
 
 // Middlewares
 app.use(express.json());
@@ -64,7 +68,7 @@ require("./routes/annotation.routes")(app);
 require("./routes/reply.routes")(app);
 require("./routes/tag.routes")(app);
 require("./routes/fileupload.routes")(app);
-
+require("./routes/notification.routes")(app);
 // Create HTTP server
 const server = http.createServer(app);
 

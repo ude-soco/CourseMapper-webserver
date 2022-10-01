@@ -19,7 +19,7 @@ module.exports = function (app) {
   // Only moderator/admin
   app.post(
     "/courses/:courseId/topics/:topicId/channel",
-    [authJwt.verifyToken, authJwt.isModerator],
+    // [authJwt.verifyToken, authJwt.isModerator],
     controller.newChannel
   );
 

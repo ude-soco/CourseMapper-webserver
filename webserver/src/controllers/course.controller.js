@@ -9,6 +9,7 @@ const Annotation = db.annotation;
 const Material = db.material;
 const Reply = db.reply;
 const Tag = db.tag;
+const Notification = db.notification;
 
 /**
  * @function getAllCourses
@@ -22,8 +23,8 @@ export const getAllCourses = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ message: err });
   }
-  let results = []
-  courses.forEach(c => {
+  let results = [];
+  courses.forEach((c) => {
     let course = {
       _id: c.id,
       name: c.name,
@@ -31,10 +32,10 @@ export const getAllCourses = async (req, res) => {
       description: c.description,
       numberTopics: c.topics.length,
       numberChannels: c.channels.length,
-      numberUsers: c.users.length
+      numberUsers: c.users.length,
     };
     results.push(course);
-  })
+  });
   return res.status(200).send(results);
 };
 
@@ -210,8 +211,9 @@ export const withdrawCourse = async (req, res) => {
 export const newCourse = async (req, res) => {
   const courseName = req.body.name;
   const courseDesc = req.body.description;
-  const userId = req.userId;
-
+  const userId = "6335b03caca5a176a7ce5ce5";
+  // const userId = req.userId;
+  console.log("userId", userId);
   let foundUser;
   try {
     foundUser = await User.findById(userId);
@@ -260,7 +262,7 @@ export const newCourse = async (req, res) => {
   let course = new Course({
     name: courseName,
     shortName: shortName,
-    // userId: req.userId,
+    userId: userId,
     description: courseDesc,
     createdAt: Date.now(),
     updatedAt: Date.now(),
@@ -281,6 +283,25 @@ export const newCourse = async (req, res) => {
 
   try {
     await foundUser.save();
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  let userShortname = (
+    foundUser.firstname.charAt(0) + foundUser.lastname.charAt(0)
+  ).toUpperCase();
+
+  let notification = new Notification({
+    userName: foundUser.username,
+    userShortname: userShortname,
+    type: "courseupdates",
+    action: "has created new",
+    actionObject: "course",
+    name: courseName,
+  });
+  await notification.save();
+  try {
+    notificationSaved = await notification.save();
   } catch (err) {
     return res.status(500).send({ error: err });
   }
@@ -415,5 +436,7 @@ export const editCourse = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  return res.status(200).send({ success: `Course '${courseName}' has been updated successfully!` });
+  return res
+    .status(200)
+    .send({ success: `Course '${courseName}' has been updated successfully!` });
 };

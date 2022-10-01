@@ -3,6 +3,8 @@ const db = require("../models");
 const Channel = db.channel;
 const Course = db.course;
 const Topic = db.topic;
+const Notification = db.notification;
+const User = db.user;
 
 /**
  * @function getTopic
@@ -60,11 +62,12 @@ export const newTopic = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
+  const userId = "6335b03caca5a176a7ce5ce5";
 
   let topic = new Topic({
     name: topicName,
     courseId: courseId,
-    userId: req.userId,
+    userId: userId,
     createdAt: Date.now(),
     updatedAt: Date.now(),
   });
@@ -83,6 +86,39 @@ export const newTopic = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
+
+  let foundUser;
+  try {
+    foundUser = await User.findById(userId);
+    if (!foundUser) {
+      return res.status(404).send({
+        error: `User not found!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  let userShortname = (
+    foundUser.firstname.charAt(0) + foundUser.lastname.charAt(0)
+  ).toUpperCase();
+
+  let notification = new Notification({
+    userName: foundUser.username,
+    userShortname: userShortname,
+    type: "courseupdates",
+    action: "has created new",
+    actionObject: "topic",
+    extraMessage: `in ${foundCourse.name}`,
+    name: topicName,
+  });
+
+  try {
+    notificationSaved = await notification.save();
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
   return res.send({
     id: topic._id,
     courseId: courseId,
@@ -109,7 +145,7 @@ export const deleteTopic = async (req, res) => {
         .status(404)
         .send({ error: `Topic with id ${topicId} doesn't exist!` });
     }
-    if (foundTopic.courseId.valueOf()  !== courseId) {
+    if (foundTopic.courseId.valueOf() !== courseId) {
       return res.status(404).send({
         error: `Topic doesn't belong to course with id ${courseId}!`,
       });
@@ -178,7 +214,7 @@ export const editTopic = async (req, res) => {
         .status(404)
         .send({ error: `Topic with id ${topicId} doesn't exist!` });
     }
-    if (foundTopic.courseId.valueOf()  !== courseId) {
+    if (foundTopic.courseId.valueOf() !== courseId) {
       return res.status(404).send({
         error: `Course with id ${courseId} doesn't exist!`,
       });

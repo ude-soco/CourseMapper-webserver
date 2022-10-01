@@ -9,25 +9,29 @@ module.exports = function (app) {
   });
 
   // Get all courses
-  app.get("/courses", [authJwt.verifyToken], controller.getAllCourses);
+  app.get(
+    "/courses",
+    // [authJwt.verifyToken],
+    controller.getAllCourses
+  );
 
   // Get course details
   // Only enrolled user & admins
-  app.get("/courses/:courseId", [authJwt.verifyToken, authJwt.isEnrolled], controller.getCourse);
+  app.get(
+    "/courses/:courseId",
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.getCourse
+  );
 
   // Create a new course
   app.post(
     "/course",
-    [authJwt.verifyToken],
+    // [authJwt.verifyToken],
     controller.newCourse
   );
 
   // Enrol in a course
-  app.post(
-    "/enrol/:courseId",
-    [authJwt.verifyToken],
-    controller.enrolCourse
-  )
+  app.post("/enrol/:courseId", [authJwt.verifyToken], controller.enrolCourse);
 
   // Withdraw from a course
   // Only enrolled user
@@ -35,7 +39,7 @@ module.exports = function (app) {
     "/withdraw/:courseId",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.withdrawCourse
-  )
+  );
 
   // Delete a course
   // Only moderator/admin

@@ -25,12 +25,7 @@
         [value]="newsAmount"
         (click)="notificationPanel.toggle($event)"
       ></i>
-      <p-avatar
-        label="P"
-        shape="circle"
-        size="large"
-        [style]="{ 'background-color': '#EA580C', color: '#ffffff' }"
-      ></p-avatar>
+
       <span *ngIf="!this.storageService.loggedIn">
         <button
           pButton

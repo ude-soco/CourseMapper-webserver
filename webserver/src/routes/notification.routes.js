@@ -7,12 +7,27 @@ module.exports = function (app) {
     next();
   });
 
-  // Get all the notifcations
-
-  // Create a new notification
-  app.post(
-    "/notifications/notification",
-    [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.newNotification
+  // Get all the notifications
+  app.get(
+    "/notifications",
+    // [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.getAllNotifications
   );
+  // Delete a notification
+  app.delete("/notifications/:notificationId", controller.deleteNotification);
+
+  // Delete all notifications
+  app.delete("/notifications", controller.deleteAllNotifications);
+
+  // Mark single notification as read
+  app.put("/notifications/:notificationId", controller.readNotification);
+
+  // Mark all notification as read
+  app.put("/notifications", controller.readAllNotifications);
+
+  // Mark single notification as starred
+  app.put("/notifications/:notificationId/star", controller.starNotification);
+
+  // Turn off notification from specific type
+  // Turn off notifications from specific user
 };
