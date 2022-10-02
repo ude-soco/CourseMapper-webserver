@@ -2,7 +2,7 @@ export interface Channel{
     _id: string,
     name: string,
     description?:string,
-    topic_id: string,
-    course_id: string,
+    topicId: string,
+    courseId: string,
     notification?: number
 }

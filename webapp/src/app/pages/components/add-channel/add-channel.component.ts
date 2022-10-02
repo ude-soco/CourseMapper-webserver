@@ -37,7 +37,7 @@ export class AddChannelComponent implements OnInit {
   onSubmit(){
     if (this.createChannelForm.valid) {      
       const selectedTopic : Topic = this.topicChannelService.getSelectedTopic();
-      const newChannel: Channel = new ChannelImp(this.createChannelForm.value.name, '', selectedTopic._id, selectedTopic.course_id, this.createChannelForm.value.description);
+      const newChannel: Channel = new ChannelImp(this.createChannelForm.value.name, '', selectedTopic._id, selectedTopic.courseId, this.createChannelForm.value.description);
       this.topicChannelService.addChannel(newChannel);
       this.toggleAddChannelDialogue();
     }

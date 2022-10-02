@@ -4,17 +4,17 @@ export class ChannelImp implements Channel{
     _id: string;
     name: string;
     description?: string;
-    topic_id: string;
-    course_id: string;
+    topicId: string;
+    courseId: string;
     notification?: number;
 
-    constructor(name:string, _id: string, topic_id: string, course_id: string, description?: string, notification?: number) {
+    constructor(name:string, _id: string, topicId: string, courseId: string, description?: string, notification?: number) {
         this.setName(name);
         this.set_id(_id);
         this.setNotification(notification);
-        this.setCourse_id(course_id);
+        this.setCourseId(courseId);
         this.setDescription(description);
-        this.setTopic_id(topic_id);
+        this.setTopicId(topicId);
     }
 
     set_id(_id: string){
@@ -31,18 +31,18 @@ export class ChannelImp implements Channel{
         return this.description;
     }
 
-    setCourse_id(_id: string){
-        this.course_id = _id;
+    setCourseId(_id: string){
+        this.courseId = _id;
     }
-    getCourse_id(): string{
-        return this.course_id;
+    getCourseId(): string{
+        return this.courseId;
     }
 
-    setTopic_id(_id: string){
-        this.topic_id = _id;
+    setTopicId(_id: string){
+        this.topicId = _id;
     }
-    getTopic_id(): string{
-        return this.topic_id;
+    getTopicId(): string{
+        return this.topicId;
     }
 
 

@@ -3,17 +3,17 @@ import { Topic } from './Topic';
 export class TopicImp implements Topic{
     _id: string;
     name: string;
-    course_id: string;
+    courseId: string;
     channels: Channel[];
     notification?: number;
 
 
-    constructor(name:string, _id: string, course_id: string, channels?: Channel[], notification?: number) {
+    constructor(name:string, _id: string, courseId: string, channels?: Channel[], notification?: number) {
         this.setName(name);
         this.set_id(_id);
         this.setNotification(notification);
         this.setChannels(channels);
-        this.setCourse_id(course_id);
+        this.setCourseId(courseId);
     }
 
     set_id(_id: string){
@@ -23,11 +23,11 @@ export class TopicImp implements Topic{
         return this._id;
     }
 
-    setCourse_id(_id: string){
-        this.course_id = _id;
+    setCourseId(_id: string){
+        this.courseId = _id;
     }
-    getCourse_id(): string{
-        return this.course_id;
+    getCourseId(): string{
+        return this.courseId;
     }
 
     setChannels(channels: Channel[]){

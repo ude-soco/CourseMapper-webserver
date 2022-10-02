@@ -21,21 +21,21 @@ export class TopicChannelService {
   constructor(private http: HttpClient) {   }
 
   /** GET Topics of a course from the server */
-  fetchTopics(course_id: string):  Observable<Topic[]> {
-    return this.http.get<Topic[]>(`${this.API_URL}/courses/${course_id}`).pipe(tap( topics => {
-      this.topics = topics         
+  fetchTopics(courseId: string):  Observable<Topic[]> {
+    return this.http.get<Topic[]>(`${this.API_URL}/courses/${courseId}`).pipe(tap( topics => {
+      this.topics = topics;     
     }));
   }
 
-  updateTopics(course_id: string){
-    this.fetchTopics(course_id).subscribe(topics => {
+  updateTopics(courseId: string){
+    this.fetchTopics(courseId).subscribe(topics => {
       this.topics = topics;
       this.onUpdateTopics$.next(this.topics);
     });
   }
 
   addTopic(topic: Topic, course: Course){
-    // TODO send user inputs to backend and update the data in the service     
+    // TODO send user inputs to backend and update the data in the service
     this.topics.push(topic);
     this.onUpdateTopics$.next(this.topics);
   }
@@ -43,10 +43,10 @@ export class TopicChannelService {
   selectTopic(topic: Topic){
     this.selectedTopic = topic;
   }
-  addChannel(channel: Channel){
+  addChannel(channel: Channel){    
     // TODO send user inputs to backend and update the data in the service 
     this.topics.forEach(topic => {
-      if (topic._id.toString() === channel.topic_id.toString()) {
+      if (topic._id.toString() === channel.topicId.toString()) {
         topic.channels.push(channel);
       }
     })

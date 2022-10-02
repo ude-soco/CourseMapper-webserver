@@ -38,8 +38,8 @@ export class AddTopicComponent implements OnInit {
 
   onSubmit(){
     if (this.createTopicForm.valid) {
-      const newTopic: Topic = new TopicImp(this.createTopicForm.value.name, '', '', []);
       const selectedCourse : Course = this.courseService.getSelectedCourse();
+      const newTopic: Topic = new TopicImp(this.createTopicForm.value.name, '', selectedCourse._id, []);
       this.topicChannelService.addTopic(newTopic, selectedCourse)
       this.toggleAddTopicDialogue();
     }

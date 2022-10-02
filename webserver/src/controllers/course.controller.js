@@ -10,7 +10,7 @@ const Material = db.material;
 const Reply = db.reply;
 const Tag = db.tag;
 // TODO to be deleted once the authentication is merged with this channelbar branch
-const userId = "633356e5ef3e0731fc29a37f"// '62f9fe647f0a9f66c4dea225';  //  
+const userId = "63387f529dd66f86548d3537"// '62f9fe647f0a9f66c4dea225';  //  
 /**
  * @function getAllCourses
  * Get all courses controller
@@ -107,7 +107,6 @@ export const getMyCourses = async (req, res) => {
  */
 export const getCourse = async (req, res) => {
   const courseId = req.params.courseId;
-  let results = [];
   console.log('getCourse')
   let foundCourse;
   try {
@@ -123,23 +122,8 @@ export const getCourse = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ message: err });
   }
-  results = foundCourse.topics.map( topic => { 
-    let channels = topic.channels.map(channel => {
-      return {
-        _id: channel._id,
-        name: channel.name,
-        topic_id: channel.topicId,
-        course_id: channel.courseId
-      }
-    });
-    return {
-      _id: topic._id,
-      name: topic.name,
-      course_id: topic.courseId,
-      channels: channels
-    }
-  })
-  return res.status(200).send(results);
+
+  return res.status(200).send(foundCourse.topics);
 };
 
 /**
