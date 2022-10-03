@@ -13,6 +13,7 @@ db.material = require("./material.model");
 db.annotation = require("./annotation.model");
 db.tag = require("./tag.model");
 db.reply = require("./reply.model");
+db.action = require("./action.model");
 db.ROLES = ["user", "admin", "moderator"];
 
 module.exports = db;

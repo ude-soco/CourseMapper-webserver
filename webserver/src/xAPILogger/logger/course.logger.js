@@ -1,6 +1,6 @@
 const statementFactory = require('../statementFactory/course.StatementsFactory');
 const lrs = require('../lrs/lrs');
-
+const controller = require('../controller.xAPILogger');
 
 
 export const logCourseCreation = (req, res) => {
@@ -8,7 +8,8 @@ export const logCourseCreation = (req, res) => {
     .getCourseCreationStatement(
         req.locals.user
         , req.locals.response.courseSaved);
-    lrs.saveStatement(statement);
+    lrs.sendStatementToLrs(statement);
+    controller.saveStatementToMongo(statement);
     res.send(req.locals.response);
 }
 
@@ -17,7 +18,8 @@ export const logCourseDeletion = (req, res) => {
     .getCourseDeletionStatement(
         req.locals.user
         , req.locals.course);
-    lrs.saveStatement(statement);
+    lrs.sendStatementToLrs(statement);
+    controller.saveStatementToMongo(statement);
     res.send(req.locals.response);
 }
 
@@ -26,7 +28,8 @@ export const logCourseAccess = (req, res) => {
     .getCourseAccessStatement(
         req.locals.user
         , req.locals.course);
-    lrs.saveStatement(statement);
+    lrs.sendStatementToLrs(statement);
+    controller.saveStatementToMongo(statement);
     res.status(200).send(req.locals.response);
 }
 
@@ -35,7 +38,8 @@ export const logCourseEnroll = (req, res) => {
     .getCourseEnrollmentStatement(
         req.locals.user
         , req.locals.course);
-    lrs.saveStatement(statement);
+    lrs.sendStatementToLrs(statement);
+    controller.saveStatementToMongo(statement);
     res.status(200).send(req.locals.response);
 }
 
@@ -44,7 +48,8 @@ export const logCourseWithdraw = (req, res) => {
     .getCourseWithdrawStatement(
         req.locals.user
         , req.locals.course);
-    lrs.saveStatement(statement);
+    lrs.sendStatementToLrs(statement);
+    controller.saveStatementToMongo(statement);
     res.status(200).send(req.locals.response);
 }
 
@@ -54,6 +59,7 @@ export const logCourseEdit = (req, res) => {
         req.locals.user
         , req.locals.newCourse
         , req.locals.oldCourse);
-    lrs.saveStatement(statement);
+    lrs.sendStatementToLrs(statement);
+    controller.saveStatementToMongo(statement);
     res.status(200).send(req.locals.response);
 }

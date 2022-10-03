@@ -523,9 +523,8 @@ export const editCourse = async (req, res, next) => {
     return res.status(500).send({ error: err });
   }
 
-  req.locals = {
-    oldCourse: JSON.parse(JSON.stringify(foundCourse))
-  }
+  req.locals = {}
+  req.locals.oldCourse = JSON.parse(JSON.stringify(foundCourse));
 
   let shortName = courseName
     .split(" ")
