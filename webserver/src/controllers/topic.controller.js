@@ -117,9 +117,22 @@ export const newTopic = async (req, res, next) => {
  * @param {string} req.params.topicId The id of the topic
  * @param {string} req.params.courseId The id of the course
  */
-export const deleteTopic = async (req, res) => {
+export const deleteTopic = async (req, res, next) => {
   const topicId = req.params.topicId;
   const courseId = req.params.courseId;
+  const userId = req.userId;
+
+  let user
+  try {
+    user = await User.findOne({_id: userId});
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: err });
+  }
 
   let foundTopic;
   try {
@@ -166,9 +179,15 @@ export const deleteTopic = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  return res.send({
-    success: `Topic '${foundTopic.name}' successfully deleted!`,
-  });
+
+  req.locals = {
+    response: {
+      success: `Topic '${foundTopic.name}' successfully deleted!`,
+    },
+    topic: foundTopic,
+    user: user
+  }
+  return next();
 };
 
 /**

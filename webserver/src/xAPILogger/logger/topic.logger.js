@@ -13,15 +13,15 @@ export const newTopic = (req, res) => {
     res.send(req.locals.response);
 }
 
-// export const deleteTopic = (req, res) => {
-//     const statement = statementFactory
-//     .getCourseDeletionStatement(
-//         req.locals.user
-//         , req.locals.course);
-//     lrs.sendStatementToLrs(statement);
-//     controller.saveStatementToMongo(statement);
-//     res.send(req.locals.response);
-// }
+export const deleteTopic = (req, res) => {
+    const statement = statementFactory
+    .getTopicDeletionStatement(
+        req.locals.user
+        , req.locals.topic);
+    lrs.sendStatementToLrs(statement);
+    controller.saveStatementToMongo(statement);
+    res.send(req.locals.response);
+}
 
 // export const getTopic = (req, res) => {
 //     const statement = statementFactory

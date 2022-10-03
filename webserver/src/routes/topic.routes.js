@@ -30,7 +30,8 @@ module.exports = function (app) {
   app.delete(
     "/courses/:courseId/topics/:topicId",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.deleteTopic
+    controller.deleteTopic,
+    logger.deleteTopic
   );
 
   // Edit a topic
