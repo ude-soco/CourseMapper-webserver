@@ -15,9 +15,9 @@ export const getLoginStatement = (user) => {
             }
         },
         "verb": {
-            "id": "http://www.CourseMapper.v2.de/verb/loggedin",
+            "id": "http://www.CourseMapper.v2.de/verb/sinedin",
             "display": {
-                "en-US": "logged in"
+                "en-US": "signed in"
             }
         },
         "object": {
@@ -51,9 +51,9 @@ export const getLogoutStatement = (user) => {
             }
         },
         "verb": {
-            "id": "http://www.CourseMapper.v2.de/verb/loggedout",
+            "id": "http://www.CourseMapper.v2.de/verb/signedout",
             "display": {
-                "en-US": "logged out"
+                "en-US": "signed out"
             }
         },
         "object": {

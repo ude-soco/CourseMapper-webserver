@@ -2,7 +2,7 @@ const statementFactory = require('../statementsFactory/auth.statementsFactory');
 const lrs = require('../lrs/lrs');
 const controller = require('../controller.xAPILogger');
 
-export const logUserSignup = (req, res) => {
+export const signup = (req, res) => {
     const statement = statementFactory
      .getSignupStatement( req.locals.user );
     lrs.sendStatementToLrs(statement);
@@ -10,7 +10,7 @@ export const logUserSignup = (req, res) => {
     res.status(200).send(req.locals.response);
 }
 
-export const logUserLogin = (req, res) => {
+export const signin = (req, res) => {
     const statement = statementFactory
      .getLoginStatement( req.locals.user );
     lrs.sendStatementToLrs(statement);
@@ -18,7 +18,7 @@ export const logUserLogin = (req, res) => {
     res.status(200).send(req.locals.response);
 }
 
-export const logUserLogout = (req, res) => {
+export const signout = (req, res) => {
     const statement = statementFactory
      .getLogoutStatement( req.locals.user );
     lrs.sendStatementToLrs(statement);

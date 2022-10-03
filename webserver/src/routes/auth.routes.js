@@ -15,10 +15,10 @@ module.exports = function (app) {
       verifySignUp.checkRolesExisted,
     ],
     controller.signup,
-    logger.logUserSignup
+    logger.signup
   );
 
-  app.post("/api/auth/signin", controller.signin, logger.logUserLogin);
+  app.post("/api/auth/signin", controller.signin, logger.signin);
 
-  app.post("/api/auth/signout", [authJwt.verifyToken], controller.signout, logger.logUserLogout);
+  app.post("/api/auth/signout", [authJwt.verifyToken], controller.signout, logger.signout);
 };
