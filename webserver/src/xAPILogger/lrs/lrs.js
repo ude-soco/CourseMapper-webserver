@@ -8,8 +8,6 @@ export const sendStatementToLrs = async ( statement ) => {
             console.log(`statement ${statement.id} saved successfully`);
         }
     } catch (error) {
-        if (error){
-            console.log(error);
-        }
+        console.log(error);
     }
 }

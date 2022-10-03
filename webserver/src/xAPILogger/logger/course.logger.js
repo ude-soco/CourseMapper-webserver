@@ -1,4 +1,4 @@
-const statementFactory = require('../statementFactory/course.StatementsFactory');
+const statementFactory = require('../statementsFactory/course.statementsFactory');
 const lrs = require('../lrs/lrs');
 const controller = require('../controller.xAPILogger');
 

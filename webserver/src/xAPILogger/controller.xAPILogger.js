@@ -10,9 +10,7 @@ export const saveStatementToMongo = async (statement) => {
     let savedStatement;
     try {
         savedStatement = await action.save();
-        return true;
     } catch (err) {
         console.log(err);
-        return false;
     }
 }

@@ -1,5 +1,6 @@
-const { verifySignUp } = require("../middlewares");
+const { verifySignUp, authJwt } = require("../middlewares");
 const controller = require("../controllers/auth.controller");
+const logger = require('../xAPILogger/logger/auth.logger');
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -13,10 +14,11 @@ module.exports = function (app) {
       verifySignUp.checkDuplicateUsernameOrEmail,
       verifySignUp.checkRolesExisted,
     ],
-    controller.signup
+    controller.signup,
+    logger.logUserSignup
   );
 
-  app.post("/api/auth/signin", controller.signin);
+  app.post("/api/auth/signin", controller.signin, logger.logUserLogin);
 
-  app.post("/api/auth/signout", controller.signout);
+  app.post("/api/auth/signout", [authJwt.verifyToken], controller.signout, logger.logUserLogout);
 };
