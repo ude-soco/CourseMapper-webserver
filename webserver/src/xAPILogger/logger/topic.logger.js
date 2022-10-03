@@ -23,15 +23,15 @@ export const deleteTopic = (req, res) => {
     res.send(req.locals.response);
 }
 
-// export const getTopic = (req, res) => {
-//     const statement = statementFactory
-//     .getCourseAccessStatement(
-//         req.locals.user
-//         , req.locals.course);
-//     lrs.sendStatementToLrs(statement);
-//     controller.saveStatementToMongo(statement);
-//     res.status(200).send(req.locals.response);
-// }
+export const getTopic = (req, res) => {
+    const statement = statementFactory
+    .getTopicAccessStatement(
+        req.locals.user
+        , req.locals.topic);
+    lrs.sendStatementToLrs(statement);
+    controller.saveStatementToMongo(statement);
+    res.status(200).send(req.locals.response);
+}
 
 // export const editTopic = (req, res) => {
 //     const statement = statementFactory

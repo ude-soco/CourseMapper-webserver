@@ -13,7 +13,8 @@ module.exports = function (app) {
   app.get(
     "/courses/:courseId/topics/:topicId",
     [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.getTopic
+    controller.getTopic,
+    logger.getTopic
   );
 
   // Create a new topic
