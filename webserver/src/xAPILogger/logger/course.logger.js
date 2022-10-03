@@ -3,7 +3,7 @@ const lrs = require('../lrs/lrs');
 const controller = require('../controller.xAPILogger');
 
 
-export const logCourseCreation = (req, res) => {
+export const newCourse = (req, res) => {
     const statement = statementFactory
     .getCourseCreationStatement(
         req.locals.user
@@ -13,7 +13,7 @@ export const logCourseCreation = (req, res) => {
     res.send(req.locals.response);
 }
 
-export const logCourseDeletion = (req, res) => {
+export const deleteCourse = (req, res) => {
     const statement = statementFactory
     .getCourseDeletionStatement(
         req.locals.user
@@ -23,7 +23,7 @@ export const logCourseDeletion = (req, res) => {
     res.send(req.locals.response);
 }
 
-export const logCourseAccess = (req, res) => {
+export const getCourse = (req, res) => {
     const statement = statementFactory
     .getCourseAccessStatement(
         req.locals.user
@@ -33,7 +33,7 @@ export const logCourseAccess = (req, res) => {
     res.status(200).send(req.locals.response);
 }
 
-export const logCourseEnroll = (req, res) => {
+export const enrolCourse = (req, res) => {
     const statement = statementFactory
     .getCourseEnrollmentStatement(
         req.locals.user
@@ -43,7 +43,7 @@ export const logCourseEnroll = (req, res) => {
     res.status(200).send(req.locals.response);
 }
 
-export const logCourseWithdraw = (req, res) => {
+export const withdrawCourse = (req, res) => {
     const statement = statementFactory
     .getCourseWithdrawStatement(
         req.locals.user
@@ -53,7 +53,7 @@ export const logCourseWithdraw = (req, res) => {
     res.status(200).send(req.locals.response);
 }
 
-export const logCourseEdit = (req, res) => {
+export const editCourse = (req, res) => {
     const statement = statementFactory
     .getCourseEditStatement(
         req.locals.user

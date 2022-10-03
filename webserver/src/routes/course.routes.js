@@ -17,7 +17,7 @@ module.exports = function (app) {
 
   // Get course details
   // Only enrolled user & admins
-  app.get("/courses/:courseId", [authJwt.verifyToken, authJwt.isEnrolled], controller.getCourse, logger.logCourseAccess);
+  app.get("/courses/:courseId", [authJwt.verifyToken, authJwt.isEnrolled], controller.getCourse, logger.getCourse);
 
 
   // Create a new course
@@ -25,7 +25,7 @@ module.exports = function (app) {
     "/course",
     [authJwt.verifyToken],
     controller.newCourse,
-    logger.logCourseCreation
+    logger.newCourse
   );
 
   // Enrol in a course
@@ -33,7 +33,7 @@ module.exports = function (app) {
     "/enrol/:courseId",
     [authJwt.verifyToken],
     controller.enrolCourse,
-    logger.logCourseEnroll
+    logger.enrolCourse
   )
 
   // Withdraw from a course
@@ -42,7 +42,7 @@ module.exports = function (app) {
     "/withdraw/:courseId",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.withdrawCourse,
-    logger.logCourseWithdraw
+    logger.withdrawCourse
   )
 
   // Delete a course
@@ -51,7 +51,7 @@ module.exports = function (app) {
     "/courses/:courseId",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.deleteCourse,
-    logger.logCourseDeletion
+    logger.deleteCourse
     // controller2.moderatorBoard
   );
 
@@ -61,6 +61,6 @@ module.exports = function (app) {
     "/courses/:courseId",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.editCourse,
-    logger.logCourseEdit
+    logger.editCourse
   );
 };
