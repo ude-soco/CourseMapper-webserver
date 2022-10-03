@@ -7,7 +7,7 @@ export const newCourse = (req, res) => {
     const statement = statementFactory
     .getCourseCreationStatement(
         req.locals.user
-        , req.locals.response.courseSaved);
+        , req.locals.course);
     lrs.sendStatementToLrs(statement);
     controller.saveStatementToMongo(statement);
     res.send(req.locals.response);

@@ -405,6 +405,7 @@ export const newCourse = async (req, res, next) => {
     success: `New course '${courseSaved.name}' added!`
   }
   req.locals = {
+    course: courseSaved,
     user: foundUser,
     response: response
   }
