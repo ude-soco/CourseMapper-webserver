@@ -3,6 +3,7 @@ const db = require("../models");
 const Channel = db.channel;
 const Course = db.course;
 const Topic = db.topic;
+const User = db.user;
 
 /**
  * @function getTopic
@@ -45,9 +46,22 @@ export const getTopic = async (req, res) => {
  * @param {string} req.body.name The name of the topic, e.g., React Crash Course
  * @param {string} req.userId The owner of the topic
  */
-export const newTopic = async (req, res) => {
+export const newTopic = async (req, res, next) => {
   let courseId = req.params.courseId;
   let topicName = req.body.name;
+  let userId = req.userId;
+
+  let user
+  try {
+    user = await User.findOne({_id: userId});
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: err });
+  }
 
   let foundCourse;
   try {
@@ -83,11 +97,17 @@ export const newTopic = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  return res.send({
-    id: topic._id,
-    courseId: courseId,
-    success: `New topic '${topicName}' added!`,
-  });
+
+  req.locals = {
+    response: {
+      id: topic._id,
+      courseId: courseId,
+      success: `New topic '${topicName}' added!`,
+    },
+    topic: savedTopic,
+    user: user
+  }
+  return next();
 };
 
 /**

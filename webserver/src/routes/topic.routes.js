@@ -1,5 +1,6 @@
 const { authJwt } = require("../middlewares");
 const controller = require("../controllers/topic.controller");
+const logger = require("../xAPILogger/logger/topic.logger");
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -20,7 +21,8 @@ module.exports = function (app) {
   app.post(
     "/courses/:courseId/topic",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.newTopic
+    controller.newTopic,
+    logger.newTopic
   );
 
   // Delete a topic
