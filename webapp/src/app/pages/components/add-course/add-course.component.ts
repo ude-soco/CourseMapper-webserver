@@ -3,7 +3,7 @@ import { CourseService } from 'src/app/services/course.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Course } from 'src/app/models/Course';
 import { CourseImp } from 'src/app/models/CourseImp';
-import { MessageService, PrimeNGConfig } from 'primeng/api';
+import { MessageService } from 'primeng/api';
 @Component({
   selector: 'app-add-course',
   templateUrl: './add-course.component.html',
@@ -22,10 +22,9 @@ export class AddCourseComponent implements OnInit {
   **/
   @Input() onShowAddCourseDialogue = new EventEmitter<boolean>();
 
-  constructor(private courseService: CourseService, private messageService: MessageService, private primengConfig: PrimeNGConfig) { }
+  constructor(private courseService: CourseService, private messageService: MessageService) { }
 
   ngOnInit(): void {
-    this.primengConfig.ripple = true;
     this.onShowAddCourseDialogue.subscribe((val) => this.toggleAddCourseDialogue());
     this.createCourseForm = new FormGroup({
       	name: new FormControl(null, Validators.required),

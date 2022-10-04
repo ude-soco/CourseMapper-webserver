@@ -5,12 +5,13 @@ import { Topic } from 'src/app/models/Topic';
 import { TopicImp } from 'src/app/models/TopicImp';
 import { CourseService } from 'src/app/services/course.service';
 import { Course } from 'src/app/models/Course';
-import { Channel } from 'src/app/models/Channel';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-add-topic',
   templateUrl: './add-topic.component.html',
-  styleUrls: ['./add-topic.component.css']
+  styleUrls: ['./add-topic.component.css'],
+  providers: [MessageService]
 })
 export class AddTopicComponent implements OnInit {
   displayAddTopicDialogue: boolean = false;
@@ -18,7 +19,7 @@ export class AddTopicComponent implements OnInit {
   @Input() onShowAddTopicDialogue = new EventEmitter<boolean>();
 
 
-  constructor( private topicChannelService: TopicChannelService, private courseService: CourseService) {  }
+  constructor( private topicChannelService: TopicChannelService, private courseService: CourseService, private messageService: MessageService ) {  }
 
   ngOnInit(): void {
     this.onShowAddTopicDialogue.subscribe((val) => this.toggleAddTopicDialogue());
@@ -40,9 +41,22 @@ export class AddTopicComponent implements OnInit {
     if (this.createTopicForm.valid) {
       const selectedCourse : Course = this.courseService.getSelectedCourse();
       const newTopic: Topic = new TopicImp(this.createTopicForm.value.name, '', selectedCourse._id, []);
-      this.topicChannelService.addTopic(newTopic, selectedCourse)
-      this.toggleAddTopicDialogue();
+      this.topicChannelService.addTopic(newTopic, selectedCourse).subscribe(res => {
+        if ('success' in res) {
+          this.toggleAddTopicDialogue();
+          this.showInfo(res.success);
+        }else {
+          this.showError(res.errorMsg);
+        }
+      });
     }
+  }
+
+  showInfo(msg) {
+    this.messageService.add({severity:'info', summary: 'Success', detail: msg});
+  }
+  showError(msg) {
+    this.messageService.add({severity:'error', summary: 'Error', detail: msg});
   }
 
 }

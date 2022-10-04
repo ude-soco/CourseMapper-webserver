@@ -2,7 +2,7 @@ import { TopicImp } from './../models/TopicImp';
 import { environment } from './../../environments/environment';
 import { EventEmitter, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, Subject, tap } from 'rxjs';
+import { catchError, Observable, of, Subject, tap } from 'rxjs';
 import { Topic } from '../models/Topic';
 import { Channel } from '../models/Channel';
 import { Course } from '../models/Course';
@@ -34,10 +34,22 @@ export class TopicChannelService {
     });
   }
 
-  addTopic(topic: Topic, course: Course){
-    // TODO send user inputs to backend and update the data in the service
-    this.topics.push(topic);
-    this.onUpdateTopics$.next(this.topics);
+  addTopic(topic: Topic, course: Course){   
+    return this.http.post<any>(`${this.API_URL}/courses/${course._id}/topic`, {name: topic.name})
+    .pipe(
+      catchError(( errResponse, sourceObservable) => {
+       if (errResponse.status ===  404) {
+        return of({errorMsg: errResponse.error.error });
+       }else {        
+        return of({errorMsg: "Error in connection: Please reload the application" })
+       }
+    }),
+      tap(res => {
+        if ( !('errorMsg' in res) ){
+          this.topics.push(res.savedTopic);
+          this.onUpdateTopics$.next(this.topics);
+        }
+    }));
   }
 
   selectTopic(topic: Topic){
