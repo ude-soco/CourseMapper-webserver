@@ -15,8 +15,9 @@ import { TopicChannelService } from 'src/app/services/topic-channel.service';
 export class AddChannelComponent implements OnInit {
 
   @Input() displayAddChannelDialogue: boolean = false;
-  createChannelForm: FormGroup;
   @Output() onCloseAddChannelDialogue = new EventEmitter<boolean>();
+
+  createChannelForm: FormGroup;
 
   constructor(private topicChannelService: TopicChannelService, private messageService: MessageService) { }
 
