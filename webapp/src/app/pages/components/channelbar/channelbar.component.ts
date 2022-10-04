@@ -16,7 +16,6 @@ export class ChannelbarComponent implements OnInit {
   constructor( private courseService: CourseService, private topicChannelService: TopicChannelService) {}
   selectedCourse: Course = new CourseImp('','');
   displayAddTopicDialogue: boolean = false;
-  onShowAddTopicDialogue = new EventEmitter<boolean>();
 
   options: MenuItem[] = [
     {
@@ -48,6 +47,10 @@ export class ChannelbarComponent implements OnInit {
   }
 
   onAddTopicDialogueClicked(){    
-    this.onShowAddTopicDialogue.emit(!this.displayAddTopicDialogue);
+    this.toggleAddTopicDialogueClicked(true);
+  }
+  
+  toggleAddTopicDialogueClicked(visibilty){    
+    this.displayAddTopicDialogue = visibilty;
   }
 }

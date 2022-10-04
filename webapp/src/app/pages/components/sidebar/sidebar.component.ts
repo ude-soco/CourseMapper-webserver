@@ -11,10 +11,7 @@ export class SidebarComponent implements OnInit {
   
   courses : Course[] = [];
   selectedCourse: Course = new CourseImp('', '');
-
-
   displayAddCourseDialogue: boolean = false;
-  onShowAddCourseDialogue = new EventEmitter<boolean>();
 
   constructor( private courseService: CourseService) { }
 
@@ -37,14 +34,11 @@ export class SidebarComponent implements OnInit {
   // }
 
   onAddCourseDialogueClicked(){
-    this.toggleAddCoursedialogue();
+    this.toggleAddCoursedialogue(true);
   }
 
-  toggleAddCoursedialogue(){
-    console.log(this.displayAddCourseDialogue);
-    
-    this.displayAddCourseDialogue = !this.displayAddCourseDialogue;
-    //this.onShowAddCourseDialogue.emit(!this.displayAddCourseDialogue);
+  toggleAddCoursedialogue(visibility){    
+    this.displayAddCourseDialogue = visibility;
   }
   
   onSelectCourse(selectedCourse: Course){

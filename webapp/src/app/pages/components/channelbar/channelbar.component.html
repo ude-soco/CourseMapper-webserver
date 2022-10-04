@@ -28,7 +28,7 @@
     </div>
   </div>
 </div>
-<app-add-topic [onShowAddTopicDialogue]="onShowAddTopicDialogue"></app-add-topic>
+<app-add-topic [displayAddTopicDialogue]="displayAddTopicDialogue" (onCloseAddTopicDialogue)="toggleAddTopicDialogueClicked($event)"></app-add-topic>
 
 
 

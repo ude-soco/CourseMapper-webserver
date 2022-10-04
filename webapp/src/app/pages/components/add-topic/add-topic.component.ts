@@ -1,5 +1,5 @@
 import { TopicChannelService } from 'src/app/services/topic-channel.service';
-import { Component, EventEmitter, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Topic } from 'src/app/models/Topic';
 import { TopicImp } from 'src/app/models/TopicImp';
@@ -14,23 +14,24 @@ import { MessageService } from 'primeng/api';
   providers: [MessageService]
 })
 export class AddTopicComponent implements OnInit {
-  displayAddTopicDialogue: boolean = false;
+  @Input() displayAddTopicDialogue: boolean = false;
+  @Output() onCloseAddTopicDialogue = new EventEmitter<boolean>();
+
   createTopicForm: FormGroup;
-  @Input() onShowAddTopicDialogue = new EventEmitter<boolean>();
 
 
   constructor( private topicChannelService: TopicChannelService, private courseService: CourseService, private messageService: MessageService ) {  }
 
   ngOnInit(): void {
-    this.onShowAddTopicDialogue.subscribe((val) => this.toggleAddTopicDialogue());
     this.createTopicForm = new FormGroup({
       name: new FormControl(null, Validators.required)
   });
   }
 
   toggleAddTopicDialogue(){
-    this.deleteLocalData();
     this.displayAddTopicDialogue = !this.displayAddTopicDialogue;
+    this.onCloseAddTopicDialogue.emit(this.displayAddTopicDialogue);
+    this.deleteLocalData();
   }
 
   deleteLocalData(){
