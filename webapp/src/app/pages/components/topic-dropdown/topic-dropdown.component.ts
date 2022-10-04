@@ -14,7 +14,6 @@ export class TopicDropdownComponent implements OnInit {
   constructor(private courseService: CourseService, private topicChannelService: TopicChannelService) {}
   topics: Topic[]= [];
   displayAddChannelDialogue: boolean = false;
-  onShowAddChannelDialogue = new EventEmitter<boolean>();
   selectedTopic = null;
   selectedChannel = null;
   topicOptions: MenuItem[] = [
@@ -79,6 +78,10 @@ export class TopicDropdownComponent implements OnInit {
 
   onAddNewChannelClicked(topic:Topic){
     this.topicChannelService.selectTopic(topic);
-    this.onShowAddChannelDialogue.emit(!this.displayAddChannelDialogue);
+    this.toggleAddNewChannelClicked(true);
+  }
+
+  toggleAddNewChannelClicked(visibility){
+    this.displayAddChannelDialogue = visibility;
   }
 }

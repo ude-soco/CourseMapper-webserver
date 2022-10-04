@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { Channel } from 'src/app/models/Channel';
@@ -14,22 +14,22 @@ import { TopicChannelService } from 'src/app/services/topic-channel.service';
 })
 export class AddChannelComponent implements OnInit {
 
-  displayAddChannelDialogue: boolean = false;
+  @Input() displayAddChannelDialogue: boolean = false;
   createChannelForm: FormGroup;
-  @Input() onShowAddChannelDialogue = new EventEmitter<boolean>();
+  @Output() onCloseAddChannelDialogue = new EventEmitter<boolean>();
 
   constructor(private topicChannelService: TopicChannelService, private messageService: MessageService) { }
 
   ngOnInit(): void {
-    this.onShowAddChannelDialogue.subscribe((val) => this.toggleAddChannelDialogue());
     this.createChannelForm = new FormGroup({
       	name: new FormControl(null, Validators.required),
         description: new FormControl(null)
     });
   }
   toggleAddChannelDialogue(){
-    this.deleteLocalData();
     this.displayAddChannelDialogue = !this.displayAddChannelDialogue;
+    this.onCloseAddChannelDialogue.emit(this.displayAddChannelDialogue);
+    this.deleteLocalData();
   }
 
   deleteLocalData(){

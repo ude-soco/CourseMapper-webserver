@@ -51,4 +51,4 @@
   </div>
 </div>
 </div>
-<app-add-channel [onShowAddChannelDialogue]="onShowAddChannelDialogue"></app-add-channel>
+<app-add-channel [displayAddChannelDialogue]="displayAddChannelDialogue" (onCloseAddChannelDialogue)="toggleAddNewChannelClicked($event)"></app-add-channel>
