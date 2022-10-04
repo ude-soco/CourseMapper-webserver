@@ -56,6 +56,7 @@ export class CourseService {
       tap(res => {
         if ( !('errorMsg' in res) ){
           this.courses.push(res.courseSaved);
+          this.sendToOldBackend(res.courseSaved);
           this.onUpdateCourses$.next(this.courses);
         }
     }));
@@ -72,4 +73,11 @@ export class CourseService {
     }
   }
 
+  sendToOldBackend(course){
+    // userId should be taken from the coockies. for the time being it is hard coded
+    this.http.post<any>('http://localhost:8090/new/course', {_id: course._id, course: course.name, description: course.description, shortName: course.shortName, userID: '6297e50d0d7376e32d667717'})
+    .subscribe(res => {
+      console.log(res);
+    });
+  }
 }
