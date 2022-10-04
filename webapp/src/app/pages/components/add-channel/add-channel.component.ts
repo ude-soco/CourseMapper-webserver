@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { MessageService } from 'primeng/api';
 import { Channel } from 'src/app/models/Channel';
 import { ChannelImp } from 'src/app/models/ChannelImp';
 import { Topic } from 'src/app/models/Topic';
@@ -8,7 +9,8 @@ import { TopicChannelService } from 'src/app/services/topic-channel.service';
 @Component({
   selector: 'app-add-channel',
   templateUrl: './add-channel.component.html',
-  styleUrls: ['./add-channel.component.css']
+  styleUrls: ['./add-channel.component.css'],
+  providers: [MessageService]
 })
 export class AddChannelComponent implements OnInit {
 
@@ -16,7 +18,7 @@ export class AddChannelComponent implements OnInit {
   createChannelForm: FormGroup;
   @Input() onShowAddChannelDialogue = new EventEmitter<boolean>();
 
-  constructor(private topicChannelService: TopicChannelService) { }
+  constructor(private topicChannelService: TopicChannelService, private messageService: MessageService) { }
 
   ngOnInit(): void {
     this.onShowAddChannelDialogue.subscribe((val) => this.toggleAddChannelDialogue());
@@ -38,8 +40,23 @@ export class AddChannelComponent implements OnInit {
     if (this.createChannelForm.valid) {      
       const selectedTopic : Topic = this.topicChannelService.getSelectedTopic();
       const newChannel: Channel = new ChannelImp(this.createChannelForm.value.name, '', selectedTopic._id, selectedTopic.courseId, this.createChannelForm.value.description);
-      this.topicChannelService.addChannel(newChannel);
-      this.toggleAddChannelDialogue();
+      this.topicChannelService.addChannel(newChannel, selectedTopic).subscribe(res => {
+        if ('success' in res) {
+          this.toggleAddChannelDialogue();
+          this.showInfo(res.success);
+        }else {
+          this.showError(res.errorMsg);
+        }
+      })
     }
   }
+
+  showInfo(msg) {
+    this.messageService.add({severity:'info', summary: 'Success', detail: msg});
+  }
+
+  showError(msg) {
+    this.messageService.add({severity:'error', summary: 'Error', detail: msg});
+  }
+
 }

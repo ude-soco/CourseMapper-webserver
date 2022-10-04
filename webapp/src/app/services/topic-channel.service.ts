@@ -35,7 +35,7 @@ export class TopicChannelService {
   }
 
   addTopic(topic: Topic, course: Course){   
-    return this.http.post<any>(`${this.API_URL}/courses/${course._id}/topic`, {name: topic.name})
+    return this.http.post<any>(`${this.API_URL}/courses/${course._id}/topic`, topic)
     .pipe(
       catchError(( errResponse, sourceObservable) => {
        if (errResponse.status ===  404) {
@@ -55,14 +55,29 @@ export class TopicChannelService {
   selectTopic(topic: Topic){
     this.selectedTopic = topic;
   }
-  addChannel(channel: Channel){    
+  addChannel(channel: Channel, topic: Topic){    
     // TODO send user inputs to backend and update the data in the service 
-    this.topics.forEach(topic => {
-      if (topic._id.toString() === channel.topicId.toString()) {
-        topic.channels.push(channel);
-      }
-    })
-    this.onUpdateTopics$.next(this.topics);
+    
+
+    return this.http.post<any>(`${this.API_URL}/courses/${topic.courseId}/topics/${topic._id}/channel`, channel)
+    .pipe(
+      catchError(( errResponse, sourceObservable) => {
+       if (errResponse.status ===  404) {
+        return of({errorMsg: errResponse.error.error });
+       }else {        
+        return of({errorMsg: "Error in connection: Please reload the application" })
+       }
+    }),
+      tap(res => {
+        if ( !('errorMsg' in res) ){
+          this.topics.forEach(topic => {
+            if (topic._id.toString() === res.savedChannel.topicId.toString()) {
+              topic.channels.push(res.savedChannel);
+            }
+          })
+          this.onUpdateTopics$.next(this.topics);
+        }
+    }));
   }
 
   getSelectedTopic(): Topic{
