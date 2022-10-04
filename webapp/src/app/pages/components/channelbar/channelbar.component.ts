@@ -1,5 +1,5 @@
-import { TopicChannelService } from './../../../services/topic-channel.service';
-import { CourseService } from './../../../services/course.service';
+import { TopicChannelService } from '../../../services/topic-channel.service';
+import { CourseService } from '../../../services/course.service';
 import { Component, EventEmitter, OnInit } from '@angular/core';
 import { Course } from 'src/app/models/Course';
 import { CourseImp } from 'src/app/models/CourseImp';

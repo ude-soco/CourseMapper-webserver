@@ -1,6 +1,6 @@
 import { CourseImp } from 'src/app/models/CourseImp';
 import { Course } from 'src/app/models/Course';
-import { environment } from './../../environments/environment';
+import { environment } from '../../environments/environment';
 import { EventEmitter, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, Observable, of, Subject, tap } from 'rxjs';
