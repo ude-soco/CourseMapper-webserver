@@ -12,20 +12,15 @@ import { MessageService } from 'primeng/api';
 })
 export class AddCourseComponent implements OnInit {
 
-  displayAddCourseDialogue: boolean = false;
+  @Input() displayAddCourseDialogue: boolean = false;
+  @Output() onCloseAddCourseDialogue = new EventEmitter<boolean>();
+
   createCourseForm: FormGroup;
 
-  /**
-    * used to get notified once the user
-    * click on the add course icon in 
-    * the parent component
-  **/
-  @Input() onShowAddCourseDialogue = new EventEmitter<boolean>();
 
   constructor(private courseService: CourseService, private messageService: MessageService) { }
 
   ngOnInit(): void {
-    this.onShowAddCourseDialogue.subscribe((val) => this.toggleAddCourseDialogue());
     this.createCourseForm = new FormGroup({
       	name: new FormControl(null, Validators.required),
         shortname: new FormControl(null),
@@ -54,8 +49,9 @@ export class AddCourseComponent implements OnInit {
   }
 
   toggleAddCourseDialogue(){
-    this.deleteLocalData();
     this.displayAddCourseDialogue = !this.displayAddCourseDialogue;
+    this.onCloseAddCourseDialogue.emit(this.displayAddCourseDialogue);
+    this.deleteLocalData();
   }
 
   deleteLocalData(){

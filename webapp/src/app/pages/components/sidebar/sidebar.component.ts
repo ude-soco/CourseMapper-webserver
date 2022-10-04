@@ -37,7 +37,14 @@ export class SidebarComponent implements OnInit {
   // }
 
   onAddCourseDialogueClicked(){
-    this.onShowAddCourseDialogue.emit(!this.displayAddCourseDialogue);
+    this.toggleAddCoursedialogue();
+  }
+
+  toggleAddCoursedialogue(){
+    console.log(this.displayAddCourseDialogue);
+    
+    this.displayAddCourseDialogue = !this.displayAddCourseDialogue;
+    //this.onShowAddCourseDialogue.emit(!this.displayAddCourseDialogue);
   }
   
   onSelectCourse(selectedCourse: Course){
