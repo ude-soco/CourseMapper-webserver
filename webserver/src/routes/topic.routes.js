@@ -40,6 +40,7 @@ module.exports = function (app) {
   app.put(
     "/courses/:courseId/topics/:topicId",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.editTopic
+    controller.editTopic,
+    logger.editTopic
   );
 };

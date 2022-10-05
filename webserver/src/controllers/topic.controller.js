@@ -218,10 +218,23 @@ export const deleteTopic = async (req, res, next) => {
  * @param {string} req.params.topicId The id of the topic
  * @param {string} req.body.name The name of the topic, e.g., React Crash Course
  */
-export const editTopic = async (req, res) => {
+export const editTopic = async (req, res, next) => {
   const topicId = req.params.topicId;
   const courseId = req.params.courseId;
   const topicName = req.body.name;
+  const userId = req.userId;
+
+  let user
+  try {
+    user = await User.findOne({_id: userId});
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: err });
+  }
 
   if (!Boolean(topicName)) {
     return res.status(404).send({
@@ -246,6 +259,9 @@ export const editTopic = async (req, res) => {
     return res.status(500).send({ error: err });
   }
 
+  req.locals = {}
+  req.locals.oldTopic = JSON.parse(JSON.stringify(foundTopic));
+
   foundTopic.name = topicName;
   foundTopic.updatedAt = Date.now();
 
@@ -254,9 +270,13 @@ export const editTopic = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  return res.send({
+
+  req.locals.response = {
     id: foundTopic._id,
     courseId: courseId,
     success: `Topic '${topicName}' has been updated successfully!`,
-  });
+  }
+  req.locals.user = user;
+  req.locals.newTopic = foundTopic;
+  return next();
 };

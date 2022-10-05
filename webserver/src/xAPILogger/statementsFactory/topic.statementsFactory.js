@@ -29,7 +29,7 @@ export const getTopicCreationStatement = (user, topic) => {
                 "extensions":{
                     "http://www.CourseMapper.v2.de/extensions/topic": {
                         "id": topic._id,
-                        "courseId": topic.courseId,
+                        "course_id": topic.courseId,
                         "name": topic.name
                     }
                 }
@@ -130,5 +130,50 @@ export const getTopicAccessStatement = (user, topic) => {
 
 export const getTopicEditStatement = (user, newTopic, oldtTopic) => {
     const fullname = `${user.firstname} ${user.lastname}`;
-    return 
+    return {
+        "id": uuidv4(),
+        "timestamp": new Date(),
+        "actor": {
+            "objectType": "Agent",
+            "name": fullname,
+            "account": {
+                "homePage": "http://www.CourseMapper.v2.de",
+                "name": user.username
+            }
+        },
+        "verb": {
+            "id": "http://www.CourseMapper.v2.de/verb/edited",
+            "display": {
+                "en-US": "edited"
+            }
+        },
+        "object": {
+            "objectType": "Activity",
+            "id": `http://www.CourseMapper.v2.de/activity/course/${oldtTopic.courseId}/topic/${oldtTopic._id}`, 
+            "definition": {
+                "type": "http://www.CourseMapper.v2.de/activityType/topic",
+                "name": {
+                    "en-US": oldtTopic.name
+                },
+                "extensions":{
+                    "http://www.CourseMapper.v2.de/extensions/topic": {
+                        "id": oldtTopic._id,
+                        "course_id": oldtTopic.courseId,
+                        "name": oldtTopic.name
+                    }
+                }
+            }
+        },
+        "result":{
+            "extensions":{
+                "http://www.CourseMapper.v2.de/extensions/topic": {
+                    "name": newTopic.name
+                }
+            }
+        },
+        "context":{
+            "platform": "CourseMapper",
+            "language": "en-US"
+        }
+    }
 }

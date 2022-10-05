@@ -33,13 +33,13 @@ export const getTopic = (req, res) => {
     res.status(200).send(req.locals.response);
 }
 
-// export const editTopic = (req, res) => {
-//     const statement = statementFactory
-//     .getCourseEditStatement(
-//         req.locals.user
-//         , req.locals.newCourse
-//         , req.locals.oldCourse);
-//     lrs.sendStatementToLrs(statement);
-//     controller.saveStatementToMongo(statement);
-//     res.status(200).send(req.locals.response);
-// }
+export const editTopic = (req, res) => {
+    const statement = statementFactory
+    .getTopicEditStatement(
+        req.locals.user
+        , req.locals.newTopic
+        , req.locals.oldTopic);
+    lrs.sendStatementToLrs(statement);
+    controller.saveStatementToMongo(statement);
+    res.send(req.locals.response);
+}
