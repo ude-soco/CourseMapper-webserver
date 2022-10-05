@@ -98,7 +98,7 @@ export const newTopic = async (req, res, next) => {
   let topic = new Topic({
     name: topicName,
     courseId: courseId,
-    userId: req.userId,
+    userId: userId,
     createdAt: Date.now(),
     updatedAt: Date.now(),
   });
