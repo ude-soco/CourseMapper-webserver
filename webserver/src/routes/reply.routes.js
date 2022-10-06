@@ -19,7 +19,7 @@ module.exports = function (app) {
   // Enrolled users
   app.post(
     "/courses/:courseId/annotations/:annotationId/reply",
-    [authJwt.verifyToken, authJwt.isEnrolled],
+    // [authJwt.verifyToken, authJwt.isEnrolled],
     controller.newReply
   );
 

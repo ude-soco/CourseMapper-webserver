@@ -10,10 +10,20 @@ const User = new Schema({
   password: { type: String, required: true },
   role: { type: Schema.Types.ObjectId, ref: "role" },
   createdAt: { type: Date, default: Date.now() },
-  courses: [{
-    courseId: { type: Schema.Types.ObjectId, ref: "course", required: true },
-    role: { type: Schema.Types.ObjectId, ref: "role" },
-  }]
+  courses: [
+    {
+      courseId: { type: Schema.Types.ObjectId, ref: "course", required: true },
+      role: { type: Schema.Types.ObjectId, ref: "role" },
+    },
+  ],
+  isCourseTurnOff: { type: Boolean, default: false },
+  isReplyTurnOff: { type: Boolean, default: false },
+  isAnnotationTurnOff: { type: Boolean, default: false },
+  subscribedCourses: [
+    { courseId: { type: Schema.Types.ObjectId, ref: "course" } },
+  ],
+  notificationLists: [],
+  courseTurnOffAt: { type: Date },
 });
 
 module.exports = mongoose.model("user", User);

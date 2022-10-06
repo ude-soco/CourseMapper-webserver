@@ -5,6 +5,8 @@ const Schema = mongoose.Schema;
 const Notification = new Schema({
   userName: { type: String },
   userShortname: { type: String },
+  userId: { type: String },
+  courseId: { type: String },
   type: { type: String },
   action: { type: String },
   actionObject: { type: String },
@@ -13,6 +15,7 @@ const Notification = new Schema({
   createdAt: { type: Date, default: Date.now() },
   read: { type: Boolean, default: false },
   isStar: { type: Boolean, default: false },
+  isCourseTurnOff: { type: Boolean, default: false },
 });
 
 module.exports = mongoose.model("notification", Notification);

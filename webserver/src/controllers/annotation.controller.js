@@ -5,6 +5,7 @@ const Material = db.material;
 const Reply = db.reply;
 const Tag = db.tag;
 const User = db.user;
+const Notification = db.notification;
 
 /**
  * @function newAnnotation
@@ -26,6 +27,7 @@ export const newAnnotation = async (req, res) => {
   const annotationType = req.body.type;
   const annotationLocation = req.body.location;
   const annotationTool = req.body.tool;
+  const userId = "6335b03caca5a176a7ce5ce5";
 
   let foundMaterial;
   try {
@@ -46,7 +48,7 @@ export const newAnnotation = async (req, res) => {
 
   let foundUser;
   try {
-    foundUser = await User.findById({ _id: ObjectId(req.userId) });
+    foundUser = await User.findById({ _id: ObjectId(userId) });
   } catch (err) {
     res.status(500).send({ error: err });
   }
@@ -57,7 +59,7 @@ export const newAnnotation = async (req, res) => {
     type: annotationType,
     content: annotationContent,
     author: {
-      userId: req.userId,
+      userId: userId,
       name: authorName,
     },
     location: annotationLocation,
@@ -110,6 +112,30 @@ export const newAnnotation = async (req, res) => {
       return res.status(500).send({ error: err });
     }
   }
+
+  let userShortname = (
+    foundUser.firstname.charAt(0) + foundUser.lastname.charAt(0)
+  ).toUpperCase();
+
+  if (!foundUser.isAnnotationTurnOff) {
+    let notification = new Notification({
+      userName: foundUser.username,
+      userShortname: userShortname,
+      userId: userId,
+      courseId: foundMaterial.courseId,
+      type: "annotations",
+      action: "has annotated ",
+      actionObject: "",
+      extraMessage: `in ${foundMaterial.name}`,
+    });
+
+    try {
+      notificationSaved = await notification.save();
+    } catch (err) {
+      return res.status(500).send({ error: err });
+    }
+  }
+
   return res
     .status(200)
     .send({ id: newAnnotation._id, success: "Annotation added!" });
@@ -185,7 +211,7 @@ export const deleteAnnotation = async (req, res) => {
   try {
     await Reply.deleteMany({ annotationId: annotationId });
   } catch (err) {
-      return res.status(500).send({error: err});
+    return res.status(500).send({ error: err });
   }
 
   try {

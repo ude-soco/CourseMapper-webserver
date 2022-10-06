@@ -11,7 +11,7 @@ module.exports = function (app) {
   // Enrolled users
   app.post(
     "/courses/:courseId/materials/:materialId/annotation",
-    [authJwt.verifyToken, authJwt.isEnrolled],
+    // [authJwt.verifyToken, authJwt.isEnrolled],
     controller.newAnnotation
   );
 

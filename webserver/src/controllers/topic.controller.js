@@ -102,21 +102,24 @@ export const newTopic = async (req, res) => {
   let userShortname = (
     foundUser.firstname.charAt(0) + foundUser.lastname.charAt(0)
   ).toUpperCase();
+  if (!foundUser.isCourseTurnOff) {
+    let notification = new Notification({
+      userName: foundUser.username,
+      userShortname: userShortname,
+      userId: userId,
+      courseId: courseId,
+      type: "courseupdates",
+      action: "has created new",
+      actionObject: "topic",
+      extraMessage: `in ${foundCourse.name}`,
+      name: topicName,
+    });
 
-  let notification = new Notification({
-    userName: foundUser.username,
-    userShortname: userShortname,
-    type: "courseupdates",
-    action: "has created new",
-    actionObject: "topic",
-    extraMessage: `in ${foundCourse.name}`,
-    name: topicName,
-  });
-
-  try {
-    notificationSaved = await notification.save();
-  } catch (err) {
-    return res.status(500).send({ error: err });
+    try {
+      notificationSaved = await notification.save();
+    } catch (err) {
+      return res.status(500).send({ error: err });
+    }
   }
 
   return res.send({

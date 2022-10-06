@@ -1,5 +1,7 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
+import { environment } from 'src/environments/environment';
 import {
   NotificationItem,
   NotificationMessage,
@@ -101,7 +103,7 @@ export class NotificationServiceService {
     },
   ];
 
-  constructor() {
+  constructor(private http: HttpClient) {
     this.allNotificationItems.next(this.allItems);
     this.getAnnotationsItems();
     this.getCommentsAndMentionedItems();
@@ -109,6 +111,10 @@ export class NotificationServiceService {
   }
 
   getAllNotification() {
+    console.log('', environment.apiUrl + '/notifications');
+    this.http.get(environment.apiUrl + '/notifications').subscribe((data) => {
+      console.log('data', data);
+    });
     return this.allNotificationItems.value;
   }
 

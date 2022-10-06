@@ -2,6 +2,8 @@ const ObjectId = require("mongoose").Types.ObjectId;
 const db = require("../models");
 const Channel = db.channel;
 const Material = db.material;
+const Notification = db.notification;
+const User = db.user;
 
 /**
  * @function getMaterial
@@ -71,6 +73,7 @@ export const newMaterial = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
+  const userId = "6335b03caca5a176a7ce5ce5";
 
   let material = new Material({
     type: materialType,
@@ -80,7 +83,7 @@ export const newMaterial = async (req, res) => {
     courseId: foundChannel.courseId,
     topicId: foundChannel.topicId,
     channelId: channelId,
-    userId: req.userId,
+    userId: userId,
     createdAt: Date.now(),
     updatedAt: Date.now(),
   });
@@ -98,6 +101,43 @@ export const newMaterial = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
+
+  let foundUser;
+  try {
+    foundUser = await User.findById(userId);
+    if (!foundUser) {
+      return res.status(404).send({
+        error: `User not found!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  let userShortname = (
+    foundUser.firstname.charAt(0) + foundUser.lastname.charAt(0)
+  ).toUpperCase();
+
+  if (!foundUser.isCourseTurnOff) {
+    let notification = new Notification({
+      userName: foundUser.username,
+      userShortname: userShortname,
+      userId: userId,
+      courseId: foundChannel.courseId,
+      type: "courseupdates",
+      action: "has uploaded new",
+      actionObject: "material",
+      name: materialName,
+      extraMessage: `in ${foundChannel.name}`,
+    });
+    await notification.save();
+    try {
+      notificationSaved = await notification.save();
+    } catch (err) {
+      return res.status(500).send({ error: err });
+    }
+  }
+
   return res.send({
     id: savedMaterial._id,
     success: `New material '${materialName}' added!`,

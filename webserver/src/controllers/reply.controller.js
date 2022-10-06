@@ -4,6 +4,9 @@ const Annotation = db.annotation;
 const Reply = db.reply;
 const Tag = db.tag;
 const User = db.user;
+const Notification = db.notification;
+const Course = db.course;
+const Topic = db.topic;
 
 /**
  * @function getReplies
@@ -55,6 +58,7 @@ export const newReply = async (req, res) => {
   const courseId = req.params.courseId;
   const annotationId = req.params.annotationId;
   const replyContent = req.body.content;
+  const userId = "6335b03caca5a176a7ce5ce5";
 
   let foundAnnotation;
   try {
@@ -75,7 +79,7 @@ export const newReply = async (req, res) => {
 
   let foundUser;
   try {
-    foundUser = await User.findOne({ _id: req.userId });
+    foundUser = await User.findOne({ _id: userId });
   } catch (err) {
     return res.status(500).send({ error: err });
   }
@@ -85,7 +89,7 @@ export const newReply = async (req, res) => {
   let reply = new Reply({
     content: replyContent,
     author: {
-      userId: req.userId,
+      userId: userId,
       name: authorName,
     },
     courseId: foundAnnotation.courseId,
@@ -134,10 +138,59 @@ export const newReply = async (req, res) => {
     try {
       await Tag.insertMany(foundTagsSchema);
     } catch (err) {
-      return res.status(500).send({error: err});
+      return res.status(500).send({ error: err });
     }
   }
 
+  let foundCourse;
+  try {
+    foundCourse = await Course.findOne({ _id: ObjectId(courseId) });
+    if (!foundCourse) {
+      return res.status(404).send({
+        error: `Course with id ${courseId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  let foundTopic;
+  try {
+    foundTopic = await Topic.findOne({
+      _id: ObjectId(foundAnnotation.topicId),
+    });
+    console.log("foundTopic", foundTopic);
+    if (!foundTopic) {
+      return res.status(404).send({
+        error: `Topic with id ${foundAnnotation.topicId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  let userShortname = (
+    foundUser.firstname.charAt(0) + foundUser.lastname.charAt(0)
+  ).toUpperCase();
+  if (!foundUser.isReplyTurnOff) {
+    let notification = new Notification({
+      userName: foundUser.username,
+      userShortname: userShortname,
+      userId: userId,
+      courseId: foundAnnotation.courseId,
+      type: "mentionedandreplied",
+      action: "has created new",
+      actionObject: "comment",
+      extraMessage: `in ${foundCourse.name} in ${foundTopic.name}`,
+      name: "",
+    });
+
+    try {
+      notificationSaved = await notification.save();
+    } catch (err) {
+      return res.status(500).send({ error: err });
+    }
+  }
   return res.status(200).send({ id: newReply._id, success: `Reply added!` });
 };
 
@@ -274,7 +327,7 @@ export const editReply = async (req, res) => {
     try {
       await Tag.insertMany(foundTagsSchema);
     } catch (err) {
-      return res.status(500).send({error: err});
+      return res.status(500).send({ error: err });
     }
   }
 

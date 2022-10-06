@@ -33,6 +33,7 @@ export class NotificationDashboardComponent implements OnInit {
         command: (event) => this.onTypeSelected(event),
       },
     ];
+    this.notificationService.getAllNotification();
   }
 
   onTypeSelected(event: any) {
