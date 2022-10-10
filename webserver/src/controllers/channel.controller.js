@@ -13,9 +13,22 @@ const User = db.user;
  * @param {string} req.params.courseId The id of the course
  * @param {string} req.params.channelId The id of the channel
  */
-export const getChannel = async (req, res) => {
+export const getChannel = async (req, res, next) => {
   const channelId = req.params.channelId;
   const courseId = req.params.courseId;
+  const userId = req.userId;
+
+  let user
+  try {
+    user = await User.findOne({_id: userId});
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
 
   let foundChannel;
   try {
@@ -35,7 +48,13 @@ export const getChannel = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ message: err });
   }
-  return res.status(200).send(foundChannel);
+
+  req.locals = {
+    response: foundChannel,
+    channel: foundChannel,
+    user: user
+  }
+  return next();
 };
 
 /**

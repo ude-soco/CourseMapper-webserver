@@ -13,7 +13,8 @@ module.exports = function (app) {
   app.get(
     "/courses/:courseId/channels/:channelId",
     [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.getChannel
+    controller.getChannel,
+    logger.getChannel
   );
 
   // Create a new channel
