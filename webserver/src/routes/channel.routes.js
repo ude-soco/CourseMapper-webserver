@@ -40,6 +40,7 @@ module.exports = function (app) {
   app.put(
     "/courses/:courseId/channels/:channelId",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.editChannel
+    controller.editChannel,
+    logger.editChannel
   );
 };
