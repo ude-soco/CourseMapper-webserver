@@ -26,7 +26,7 @@ export const getTopic = async (req, res, next) => {
     }
 
   } catch (error) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: error });
   }
 
   let foundTopic;
@@ -80,7 +80,7 @@ export const newTopic = async (req, res, next) => {
     }
 
   } catch (error) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: error });
   }
 
   let foundCourse;
@@ -98,7 +98,7 @@ export const newTopic = async (req, res, next) => {
   let topic = new Topic({
     name: topicName,
     courseId: courseId,
-    userId: req.userId,
+    userId: userId,
     createdAt: Date.now(),
     updatedAt: Date.now(),
   });
@@ -151,7 +151,7 @@ export const deleteTopic = async (req, res, next) => {
     }
 
   } catch (error) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: error });
   }
 
   let foundTopic;
@@ -233,7 +233,7 @@ export const editTopic = async (req, res, next) => {
     }
 
   } catch (error) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: error });
   }
 
   if (!Boolean(topicName)) {
