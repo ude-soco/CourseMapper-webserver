@@ -30,7 +30,8 @@ module.exports = function (app) {
   app.delete(
     "/courses/:courseId/channels/:channelId",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.deleteChannel
+    controller.deleteChannel,
+    logger.deleteChannel
   );
 
   // Edit a channel

@@ -136,9 +136,22 @@ export const newChannel = async (req, res, next) => {
  * @param {string} req.params.courseId The id of the course
  * @param {string} req.params.channelId The id of the channel
  */
-export const deleteChannel = async (req, res) => {
+export const deleteChannel = async (req, res, next) => {
   const channelId = req.params.channelId;
   const courseId = req.params.courseId;
+  const userId = req.userId;
+
+  let user
+  try {
+    user = await User.findOne({_id: userId});
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
 
   let foundChannel;
   try {
@@ -186,9 +199,16 @@ export const deleteChannel = async (req, res) => {
   } catch (err) {
     res.status(500).send({ error: err });
   }
-  return res.send({
-    success: `Channel '${foundChannel.name}' successfully deleted!`,
-  });
+
+  req.locals = {
+    response : {
+      success: `Channel '${foundChannel.name}' successfully deleted!`,
+    },
+    user: user,
+    channel: foundChannel
+  }
+
+  return next();
 };
 
 /**
