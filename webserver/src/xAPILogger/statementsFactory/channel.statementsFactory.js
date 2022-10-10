@@ -1,0 +1,63 @@
+import { v4 as uuidv4 } from 'uuid';
+export const getChannelCreationStatement = (user, channel) => {
+    const fullname = `${user.firstname} ${user.lastname}`;
+    return {
+        "id": uuidv4(),
+        "timestamp": new Date(),
+        "actor": {
+            "objectType": "Agent",
+            "name": fullname,
+            "account": {
+                "homePage": "http://www.CourseMapper.v2.de",
+                "name": user.username
+            }
+        },
+        "verb": {
+            "id": "http://www.CourseMapper.v2.de/verb/created",
+            "display": {
+                "en-US": "created"
+            }
+        },
+        "object": {
+            "objectType": "Activity",
+            "id": `http://www.CourseMapper.v2.de/activity/course/${channel.courseId}/topic/${channel.topicId}/channel/${channel._id}`, 
+            "definition": {
+                "type": "http://www.CourseMapper.v2.de/activityType/channel",
+                "name": {
+                    "en-US": channel.name
+                },
+                "description": {
+                    "en-US": channel.description
+                },
+                "extensions":{
+                    "http://www.CourseMapper.v2.de/extensions/channel": {
+                        "id": channel._id,
+                        "course_id": channel.courseId,
+                        "topic_id": channel.topicId,
+                        "name": channel.name,
+                        "description": channel.description
+                    }
+                }
+            }
+        },
+        "context":{
+            "platform": "CourseMapper",
+            "language": "en-US"
+        }
+    }
+}
+
+export const getChannelDeletionStatement = (user, channel) => {
+    const fullname = `${user.firstname} ${user.lastname}`;
+    return 
+}
+
+export const getChannelAccessStatement = (user, channel) => {
+    const fullname = `${user.firstname} ${user.lastname}`;
+    return 
+}
+
+export const getChannelEditStatement = (user, newChannel, oldtChannel) => {
+    const fullname = `${user.firstname} ${user.lastname}`;
+    return 
+}

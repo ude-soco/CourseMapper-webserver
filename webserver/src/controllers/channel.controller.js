@@ -4,6 +4,7 @@ const Channel = db.channel;
 const Course = db.course;
 const Material = db.material;
 const Topic = db.topic;
+const User = db.user;
 
 /**
  * @function getChannel
@@ -46,10 +47,23 @@ export const getChannel = async (req, res) => {
  * @param {string} req.body.description The description of the channel, e.g., Teaching about React
  * @param {string} req.userId The owner of the channel
  */
-export const newChannel = async (req, res) => {
+export const newChannel = async (req, res, next) => {
   const topicId = req.params.topicId;
   const channelName = req.body.name;
   const channelDesc = req.body.description;
+  const userId = req.userId;
+
+  let user
+  try {
+    user = await User.findOne({_id: userId});
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
 
   let foundTopic;
   try {
@@ -68,7 +82,7 @@ export const newChannel = async (req, res) => {
     description: channelDesc,
     courseId: foundTopic.courseId,
     topicId: topicId,
-    userId: req.userId,
+    userId: userId,
     createdAt: Date.now(),
     updatedAt: Date.now(),
   });
@@ -102,10 +116,17 @@ export const newChannel = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  return res.send({
-    id: savedChannel._id,
-    success: `New channel '${savedChannel.name}' added!`,
-  });
+
+  req.locals = {
+    response : {
+      id: savedChannel._id,
+      success: `New channel '${savedChannel.name}' added!`,
+    },
+    channel: savedChannel,
+    user: user
+  }
+
+  return next();
 };
 
 /**
