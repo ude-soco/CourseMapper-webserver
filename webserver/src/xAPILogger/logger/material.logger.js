@@ -23,15 +23,15 @@ export const newMaterial = (req, res) => {
 //     res.send(req.locals.response);
 // }
 
-// export const getMaterial = (req, res) => {
-//     const statement = statementFactory
-//     .getTopicAccessStatement(
-//         req.locals.user
-//         , req.locals.material);
-//     lrs.sendStatementToLrs(statement);
-//     controller.saveStatementToMongo(statement);
-//     res.status(200).send(req.locals.response);
-// }
+export const getMaterial = (req, res) => {
+    const statement = statementFactory
+    .getMaterialAccessStatement(
+        req.locals.user
+        , req.locals.material);
+    lrs.sendStatementToLrs(statement);
+    controller.saveStatementToMongo(statement);
+    res.status(200).send(req.locals.response);
+}
 
 // export const editMaterial = (req, res) => {
 //     const statement = statementFactory

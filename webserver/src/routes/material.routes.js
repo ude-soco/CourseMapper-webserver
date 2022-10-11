@@ -13,7 +13,8 @@ module.exports = function (app) {
   app.get(
     "/courses/:courseId/materials/:materialId",
     [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.getMaterial
+    controller.getMaterial,
+    logger.getMaterial
   );
 
   // Create a new material

@@ -12,9 +12,22 @@ const User = db.user;
  * @param {string} req.params.materialId The id of the material
  * @param {string} req.params.courseId The id of the course
  */
-export const getMaterial = async (req, res) => {
+export const getMaterial = async (req, res, next) => {
   const materialId = req.params.materialId;
   const courseId = req.params.courseId;
+  const userId = req.userId;
+
+  let user;
+  try {
+    user = await User.findOne({_id: userId});
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
 
   let foundMaterial;
   try {
@@ -34,7 +47,13 @@ export const getMaterial = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  return res.status(200).send(foundMaterial);
+
+  req.locals = {
+    response: foundMaterial,
+    material: foundMaterial,
+    user: user
+  }
+  return next();
 };
 
 /**
