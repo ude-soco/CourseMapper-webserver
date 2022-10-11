@@ -151,9 +151,22 @@ export const newMaterial = async (req, res, next) => {
  * @param {string} req.params.courseId The id of the course
  * @param {string} req.params.materialId The id of the material
  */
-export const deleteMaterial = async (req, res) => {
+export const deleteMaterial = async (req, res, next) => {
   let materialId = req.params.materialId;
   let courseId = req.params.courseId;
+  const userId = req.userId;
+
+  let user
+  try {
+    user = await User.findOne({_id: userId});
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
 
   let foundMaterial;
   try {
@@ -195,9 +208,15 @@ export const deleteMaterial = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  return res.send({
-    success: `Material '${foundMaterial.name}' successfully deleted!`,
-  });
+
+  req.locals = {
+    response: {
+      success: `Material '${foundMaterial.name}' successfully deleted!`,
+    },
+    material: foundMaterial,
+    user: user
+  }
+  return next();
 };
 
 /**

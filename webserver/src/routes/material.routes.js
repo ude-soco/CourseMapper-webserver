@@ -31,7 +31,8 @@ module.exports = function (app) {
   app.delete(
     "/courses/:courseId/materials/:materialId",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.deleteMaterial
+    controller.deleteMaterial,
+    logger.deleteMaterial
   );
 
   // Edit a material

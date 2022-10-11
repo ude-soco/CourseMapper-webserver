@@ -13,15 +13,15 @@ export const newMaterial = (req, res) => {
     res.send(req.locals.response);
 }
 
-// export const deleteMaterial = (req, res) => {
-//     const statement = statementFactory
-//     .getTopicDeletionStatement(
-//         req.locals.user
-//         , req.locals.material);
-//     lrs.sendStatementToLrs(statement);
-//     controller.saveStatementToMongo(statement);
-//     res.send(req.locals.response);
-// }
+export const deleteMaterial = (req, res) => {
+    const statement = statementFactory
+    .getMaterialDeletionStatement(
+        req.locals.user
+        , req.locals.material);
+    lrs.sendStatementToLrs(statement);
+    controller.saveStatementToMongo(statement);
+    res.send(req.locals.response);
+}
 
 export const getMaterial = (req, res) => {
     const statement = statementFactory
