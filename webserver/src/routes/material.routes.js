@@ -1,5 +1,6 @@
 const { authJwt } = require("../middlewares");
 const controller = require("../controllers/material.controller");
+const logger = require("../xAPILogger/logger/material.logger");
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -20,7 +21,8 @@ module.exports = function (app) {
   app.post(
     "/courses/:courseId/channels/:channelId/material",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.newMaterial
+    controller.newMaterial,
+    logger.newMaterial
   );
 
   // Delete a material

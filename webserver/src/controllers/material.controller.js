@@ -2,6 +2,8 @@ const ObjectId = require("mongoose").Types.ObjectId;
 const db = require("../models");
 const Channel = db.channel;
 const Material = db.material;
+const User = db.user;
+
 
 /**
  * @function getMaterial
@@ -47,13 +49,26 @@ export const getMaterial = async (req, res) => {
  * @param {string} req.body.description The description of the material, e.g., Lecture material of Angular for course Advanced Web Technologies
  * @param {string} req.userId The owner of the material
  */
-export const newMaterial = async (req, res) => {
+export const newMaterial = async (req, res, next) => {
   const courseId = req.params.courseId;
   const channelId = req.params.channelId;
   const materialType = req.body.type;
   const materialName = req.body.name;
   const materialUrl = req.body.url;
   const materialDesc = req.body.description;
+  const userId = req.userId;
+
+  let user
+  try {
+    user = await User.findOne({_id: userId});
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
 
   let foundChannel;
   try {
@@ -98,10 +113,16 @@ export const newMaterial = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  return res.send({
-    id: savedMaterial._id,
-    success: `New material '${materialName}' added!`,
-  });
+
+  req.locals = {
+    response: {
+      id: savedMaterial._id,
+      success: `New material '${materialName}' added!`,
+    },
+    material: savedMaterial,
+    user: user
+  }
+  return next();
 };
 
 /**
