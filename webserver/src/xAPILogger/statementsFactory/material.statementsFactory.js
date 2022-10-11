@@ -152,6 +152,67 @@ export const getMaterialDeletionStatement = (user, material) => {
     }
 }
 
+export const getMaterialEditStatement = (user, newMaterial, oldMaterial) => {
+    const fullname = `${user.firstname} ${user.lastname}`;
+    return {
+        "id": uuidv4(),
+        "timestamp": new Date(),
+        "actor": {
+            "objectType": "Agent",
+            "name": fullname,
+            "account": {
+                "homePage": "http://www.CourseMapper.v2.de",
+                "name": user.username
+            }
+        },
+        "verb": {
+            "id": "http://www.CourseMapper.v2.de/verb/edited",
+            "display": {
+                "en-US": "edited"
+            }
+        },
+        "object": {
+            "objectType": "Activity",
+            "id": `http://www.CourseMapper.v2.de/activity/course/${oldMaterial.courseId}/topic/${oldMaterial.topicId}/channel/${oldMaterial.channelId}/material/${oldMaterial._id}`, 
+            "definition": {
+                "type": `http://www.CourseMapper.v2.de/activityType/material/${oldMaterial.type}`,
+                "name": {
+                    "en-US": oldMaterial.name
+                },
+                "description": {
+                    "en-US": oldMaterial.description
+                },
+                "extensions":{
+                    "http://www.CourseMapper.v2.de/extensions/material": {
+                        "id": oldMaterial._id,
+                        "name": oldMaterial.name,
+                        "description": oldMaterial.description,
+                        "type": oldMaterial.type,
+                        "url": oldMaterial.url,
+                        "channel_id": oldMaterial.channelId,
+                        "topic_id": oldMaterial.topicId,
+                        "course_id": oldMaterial.courseId
+                    }
+                }
+            }
+        },
+        "result":{
+            "extensions":{
+                "http://www.CourseMapper.v2.de/extensions/material": {
+                    "name": newMaterial.name,
+                    "description": newMaterial.description,
+                    "url": newMaterial.url,
+                    "type":newMaterial.type
+                }
+            }
+        },
+        "context":{
+            "platform": "CourseMapper",
+            "language": "en-US"
+        }
+    }
+}
+
 export const getVideoPlayStatement = (user, material) => {
     const fullname = `${user.firstname} ${user.lastname}`;
     return 

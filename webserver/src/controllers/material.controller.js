@@ -230,13 +230,26 @@ export const deleteMaterial = async (req, res, next) => {
  * @param {string} req.body.description The new description of the material
  * @param {string} req.body.url The new url of the material
  */
-export const editMaterial = async (req, res) => {
+export const editMaterial = async (req, res, next) => {
   const courseId = req.params.courseId;
   const materialId = req.params.materialId;
   const materialName = req.body.name;
   const materialDesc = req.body.description;
   const materialUrl = req.body.url;
   const materialType = req.body.type;
+  const userId = req.userId;
+
+  let user
+  try {
+    user = await User.findOne({_id: userId});
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
 
   if (!Boolean(materialName)) {
     return res.status(404).send({
@@ -263,6 +276,9 @@ export const editMaterial = async (req, res) => {
       .send({ error: `Error while searching for material` });
   }
 
+  req.locals = {}
+  req.locals.oldMaterial = JSON.parse(JSON.stringify(foundMaterial));
+
   foundMaterial.name = materialName;
   foundMaterial.url = materialUrl;
   foundMaterial.type = materialType;
@@ -275,9 +291,13 @@ export const editMaterial = async (req, res) => {
     return res.status(500).send({ error: `Error saving material!` });
   }
 
-  return res.status(200).send({
+  req.locals.response = {
     id: foundMaterial._id,
     courseId: courseId,
     success: `Material '${materialName}' has been updated successfully!`,
-  });
+  }
+  req.locals.newMaterial = foundMaterial;
+  req.locals.user = user;
+
+  return next();
 };
