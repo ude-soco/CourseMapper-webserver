@@ -43,4 +43,34 @@ module.exports = function (app) {
     controller.editMaterial,
     logger.editMaterial
   );
+
+  app.get(
+    "/courses/:courseId/materials/:materialId/play",
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.getMaterial,
+    logger.playVideo
+  );
+
+
+  app.get(
+    "/courses/:courseId/materials/:materialId/pause",
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.getMaterial,
+    logger.pauseVideo
+  );
+
+
+  app.get(
+    "/courses/:courseId/materials/:materialId/complete",
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.getMaterial,
+    logger.completeVideo
+  );
+
+  app.get(
+    "/courses/:courseId/materials/:materialId/slide/:slideNr/view",
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.getMaterial,
+    logger.viewSlide
+  );
 };
