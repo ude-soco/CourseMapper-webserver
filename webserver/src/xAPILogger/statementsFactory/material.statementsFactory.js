@@ -13,16 +13,16 @@ export const getMaterialUploadStatement = (user, material) => {
             }
         },
         "verb": {
-            "id": "http://www.CourseMapper.v2.de/verb/uploaded",
+            "id": "http://activitystrea.ms/schema/1.0/share",
             "display": {
-                "en-US": "uploaded"
+                "en-US": "shared"
             }
         },
         "object": {
             "objectType": "Activity",
             "id": `http://www.CourseMapper.v2.de/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`, 
             "definition": {
-                "type": `http://www.CourseMapper.v2.de/activityType/material/${material.type}`,
+                "type": `http://www.CourseMapper.v2.de/activityType/material`,
                 "name": {
                     "en-US": material.name
                 },
@@ -64,7 +64,7 @@ export const getMaterialAccessStatement = (user, material) => {
             }
         },
         "verb": {
-            "id": "http://www.CourseMapper.v2.de/verb/accessed",
+            "id": "http://activitystrea.ms/schema/1.0/access",
             "display": {
                 "en-US": "accessed"
             }
@@ -73,7 +73,7 @@ export const getMaterialAccessStatement = (user, material) => {
             "objectType": "Activity",
             "id": `http://www.CourseMapper.v2.de/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`, 
             "definition": {
-                "type": `http://www.CourseMapper.v2.de/activityType/material/${material.type}`,
+                "type": `http://www.CourseMapper.v2.de/activityType/material`,
                 "name": {
                     "en-US": material.name
                 },
@@ -115,7 +115,7 @@ export const getMaterialDeletionStatement = (user, material) => {
             }
         },
         "verb": {
-            "id": "http://www.CourseMapper.v2.de/verb/deleted",
+            "id": "http://activitystrea.ms/schema/1.0/delete",
             "display": {
                 "en-US": "deleted"
             }
@@ -124,7 +124,7 @@ export const getMaterialDeletionStatement = (user, material) => {
             "objectType": "Activity",
             "id": `http://www.CourseMapper.v2.de/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`, 
             "definition": {
-                "type": `http://www.CourseMapper.v2.de/activityType/material/${material.type}`,
+                "type": `http://www.CourseMapper.v2.de/activityType/material`,
                 "name": {
                     "en-US": material.name
                 },
@@ -166,7 +166,7 @@ export const getMaterialEditStatement = (user, newMaterial, oldMaterial) => {
             }
         },
         "verb": {
-            "id": "http://www.CourseMapper.v2.de/verb/edited",
+            "id": "http://curatr3.com/define/verb/edited",
             "display": {
                 "en-US": "edited"
             }
@@ -175,7 +175,7 @@ export const getMaterialEditStatement = (user, newMaterial, oldMaterial) => {
             "objectType": "Activity",
             "id": `http://www.CourseMapper.v2.de/activity/course/${oldMaterial.courseId}/topic/${oldMaterial.topicId}/channel/${oldMaterial.channelId}/material/${oldMaterial._id}`, 
             "definition": {
-                "type": `http://www.CourseMapper.v2.de/activityType/material/${oldMaterial.type}`,
+                "type": `http://www.CourseMapper.v2.de/activityType/material`,
                 "name": {
                     "en-US": oldMaterial.name
                 },
@@ -236,7 +236,7 @@ export const getVideoPlayStatement = (user, material) => {
             "objectType": "Activity",
             "id": `http://www.CourseMapper.v2.de/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`, 
             "definition": {
-                "type": `http://www.CourseMapper.v2.de/activityType/material/${material.type}`,
+                "type": `http://www.CourseMapper.v2.de/activityType/${material.type}`,
                 "name": {
                     "en-US": material.name
                 },
@@ -278,7 +278,7 @@ export const getVideoPauseStatement = (user, material) => {
             }
         },
         "verb": {
-            "id": "http://id.tincanapi.com/verb/paused",
+            "id": "http://www.CourseMapper.v2.de/verb/paused",
             "display": {
                 "en-US": "paused"
             }
@@ -287,7 +287,7 @@ export const getVideoPauseStatement = (user, material) => {
             "objectType": "Activity",
             "id": `http://www.CourseMapper.v2.de/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`, 
             "definition": {
-                "type": `http://www.CourseMapper.v2.de/activityType/material/${material.type}`,
+                "type": `http://www.CourseMapper.v2.de/activityType/${material.type}`,
                 "name": {
                     "en-US": material.name
                 },
@@ -338,7 +338,7 @@ export const getVideoEndStatement = (user, material) => {
             "objectType": "Activity",
             "id": `http://www.CourseMapper.v2.de/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`, 
             "definition": {
-                "type": `http://www.CourseMapper.v2.de/activityType/material/${material.type}`,
+                "type": `http://www.CourseMapper.v2.de/activityType/${material.type}`,
                 "name": {
                     "en-US": material.name
                 },
@@ -389,7 +389,7 @@ export const getSlideViewStatement = (user, material, slideNr) => {
             "objectType": "Activity",
             "id": `http://www.CourseMapper.v2.de/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slide/${slideNr}`, 
             "definition": {
-                "type": `http://www.CourseMapper.v2.de/activityType/material/${material.type}/slide`, //http://id.tincanapi.com/activitytype/slide
+                "type": `http://www.CourseMapper.v2.de/activityType/slide`,
                 "name": {
                     "en-US": material.name
                 },
