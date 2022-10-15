@@ -13,20 +13,30 @@ import { UserServiceService } from 'src/app/services/user-service.service';
   styleUrls: ['./navbar.component.css'],
 })
 export class NavbarComponent implements OnInit {
-  newsAmount!: string;
+  newsAmount!: any;
   visibleSidebar2!: any;
   isLoggedIn: boolean = false;
 
   showAdminBoard = false;
   showModeratorBoard = false;
   username?: string;
+  temp: any;
   constructor(
     private primengConfig: PrimeNGConfig,
     public storageService: StorageService,
     private userService: UserServiceService,
-    private router: Router
+    private router: Router,
+    private notificationService: NotificationServiceService
   ) {
-    this.newsAmount = '6';
+    // this.notificationService.getAllNotifications().subscribe((data) => {
+    //   this.temp = data;
+    //   this.newsAmount = this.temp.notificationLists.length;
+    // });
+
+    this.notificationService.allNotificationItems$.subscribe((data) => {
+      this.newsAmount = data.length;
+      console.log(data.length);
+    });
 
     this.isLoggedIn = storageService.loggedIn;
   }

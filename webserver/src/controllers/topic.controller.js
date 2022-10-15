@@ -50,6 +50,7 @@ export const getTopic = async (req, res) => {
 export const newTopic = async (req, res) => {
   let courseId = req.params.courseId;
   let topicName = req.body.name;
+  const userId = req.userId;
 
   let foundCourse;
   try {
@@ -62,7 +63,6 @@ export const newTopic = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  const userId = "6335b03caca5a176a7ce5ce5";
 
   let topic = new Topic({
     name: topicName,
@@ -98,27 +98,68 @@ export const newTopic = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
+  // lists of userId that subscribed to this course
+  let subscribedUserLists = [];
+  foundCourse.users.forEach((user) => {
+    subscribedUserLists.push(user.userId.toString());
+  });
+  let foundUserLists = [];
+  let temp;
+
+  for (let i = 0; i < subscribedUserLists.length; i++) {
+    temp = await User.findById(subscribedUserLists[i]);
+    foundUserLists.push(temp);
+  }
 
   let userShortname = (
     foundUser.firstname.charAt(0) + foundUser.lastname.charAt(0)
   ).toUpperCase();
-  if (!foundUser.isCourseTurnOff) {
-    let notification = new Notification({
-      userName: foundUser.username,
-      userShortname: userShortname,
-      userId: userId,
-      courseId: courseId,
-      type: "courseupdates",
-      action: "has created new",
-      actionObject: "topic",
-      extraMessage: `in ${foundCourse.name}`,
-      name: topicName,
-    });
 
-    try {
-      notificationSaved = await notification.save();
-    } catch (err) {
-      return res.status(500).send({ error: err });
+  let notification = new Notification({
+    userName: foundUser.username,
+    userShortname: userShortname,
+    userId: userId,
+    courseId: courseId,
+    type: "courseupdates",
+    action: "has created new",
+    actionObject: "topic",
+    extraMessage: `in ${foundCourse.name}`,
+    name: topicName,
+  });
+
+  let notificationSaved;
+  try {
+    notificationSaved = await notification.save();
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  for (let i = 0; i < foundUserLists.length; i++) {
+    // do not push to the user who made trigger this action
+    if (foundUserLists[i]._id == userId) {
+    } else if (foundUserLists[i].deactivatedUserLists.includes(userId)) {
+    } else if (foundUserLists[i].isCourseTurnOff) {
+    } else {
+      let subscribedUser;
+      try {
+        subscribedUser = await User.findById(foundUserLists[i]._id);
+        if (!subscribedUser) {
+          return res.status(404).send({
+            error: `User not found!`,
+          });
+        }
+      } catch (err) {
+        return res.status(500).send({ error: err });
+      }
+      subscribedUser.notificationLists.push({
+        notificationId: notificationSaved._id,
+      });
+
+      try {
+        await subscribedUser.save();
+      } catch (err) {
+        return res.status(500).send({ error: err });
+      }
     }
   }
 
@@ -126,6 +167,7 @@ export const newTopic = async (req, res) => {
     id: topic._id,
     courseId: courseId,
     success: `New topic '${topicName}' added!`,
+    notification: `new notification is added `,
   });
 };
 
@@ -139,6 +181,7 @@ export const newTopic = async (req, res) => {
 export const deleteTopic = async (req, res) => {
   const topicId = req.params.topicId;
   const courseId = req.params.courseId;
+  const userId = req.userId;
 
   let foundTopic;
   try {
@@ -180,6 +223,82 @@ export const deleteTopic = async (req, res) => {
     (topic) => topic.valueOf() !== topicId
   );
 
+  let foundUser;
+  try {
+    foundUser = await User.findById(userId);
+    if (!foundUser) {
+      return res.status(404).send({
+        error: `User not found!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  // lists of userId that subscribed to this course
+  let subscribedUserLists = [];
+  foundCourse.users.forEach((user) => {
+    subscribedUserLists.push(user.userId.toString());
+  });
+  let foundUserLists = [];
+  let temp;
+
+  for (let i = 0; i < subscribedUserLists.length; i++) {
+    temp = await User.findById(subscribedUserLists[i]);
+    foundUserLists.push(temp);
+  }
+
+  let userShortname = (
+    foundUser.firstname.charAt(0) + foundUser.lastname.charAt(0)
+  ).toUpperCase();
+  let notificationSaved;
+
+  let notification = new Notification({
+    userName: foundUser.username,
+    userShortname: userShortname,
+    userId: userId,
+    courseId: courseId,
+    type: "courseupdates",
+    action: "has deleted",
+    actionObject: "topic",
+    extraMessage: `in ${foundCourse.name}`,
+    name: foundTopic.name,
+  });
+
+  try {
+    notificationSaved = await notification.save();
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+  for (let i = 0; i < foundUserLists.length; i++) {
+    // do not push to the user who made trigger this action
+    if (foundUserLists[i]._id == userId) {
+    } else if (foundUserLists[i].deactivatedUserLists.includes(userId)) {
+    } else if (foundUserLists[i].isCourseTurnOff) {
+    } else {
+      let subscribedUser;
+      try {
+        subscribedUser = await User.findById(foundUserLists[i]._id);
+        if (!subscribedUser) {
+          return res.status(404).send({
+            error: `User not found!`,
+          });
+        }
+      } catch (err) {
+        return res.status(500).send({ error: err });
+      }
+      subscribedUser.notificationLists.push({
+        notificationId: notificationSaved._id,
+      });
+
+      try {
+        await subscribedUser.save();
+      } catch (err) {
+        return res.status(500).send({ error: err });
+      }
+    }
+  }
+
   try {
     await foundCourse.save();
   } catch (err) {
@@ -187,6 +306,7 @@ export const deleteTopic = async (req, res) => {
   }
   return res.send({
     success: `Topic '${foundTopic.name}' successfully deleted!`,
+    notification: `new notification is added ${notification}`,
   });
 };
 
@@ -202,6 +322,7 @@ export const editTopic = async (req, res) => {
   const topicId = req.params.topicId;
   const courseId = req.params.courseId;
   const topicName = req.body.name;
+  const userId = req.userId;
 
   if (!Boolean(topicName)) {
     return res.status(404).send({
@@ -229,14 +350,103 @@ export const editTopic = async (req, res) => {
   foundTopic.name = topicName;
   foundTopic.updatedAt = Date.now();
 
+  let foundCourse;
+  try {
+    foundCourse = await Course.findOne({ _id: ObjectId(courseId) });
+    if (!foundCourse) {
+      return res.status(404).send({
+        error: `Course with id ${courseId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+  let foundUser;
+  try {
+    foundUser = await User.findById(userId);
+    if (!foundUser) {
+      return res.status(404).send({
+        error: `User not found!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+  // lists of userId that subscribed to this course
+  let subscribedUserLists = [];
+  foundCourse.users.forEach((user) => {
+    subscribedUserLists.push(user.userId.toString());
+  });
+  let foundUserLists = [];
+  let temp;
+
+  for (let i = 0; i < subscribedUserLists.length; i++) {
+    temp = await User.findById(subscribedUserLists[i]);
+    foundUserLists.push(temp);
+  }
+  let userShortname = (
+    foundUser.firstname.charAt(0) + foundUser.lastname.charAt(0)
+  ).toUpperCase();
+  console.log("foundUser", foundUser);
+
+  let notification = new Notification({
+    userName: foundUser.username,
+    userShortname: userShortname,
+    userId: userId,
+    courseId: courseId,
+    type: "courseupdates",
+    action: "has edited",
+    actionObject: "topic",
+    extraMessage: `in ${foundCourse.name}`,
+    name: topicName,
+  });
+  let notificationSaved;
+
+  try {
+    notificationSaved = await notification.save();
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  for (let i = 0; i < foundUserLists.length; i++) {
+    // do not push to the user who made trigger this action
+    if (foundUserLists[i]._id == userId) {
+    } else if (foundUserLists[i].deactivatedUserLists.includes(userId)) {
+    } else if (foundUserLists[i].isCourseTurnOff) {
+    } else {
+      let subscribedUser;
+      try {
+        subscribedUser = await User.findById(foundUserLists[i]._id);
+        if (!subscribedUser) {
+          return res.status(404).send({
+            error: `User not found!`,
+          });
+        }
+      } catch (err) {
+        return res.status(500).send({ error: err });
+      }
+      subscribedUser.notificationLists.push({
+        notificationId: notificationSaved._id,
+      });
+
+      try {
+        await subscribedUser.save();
+      } catch (err) {
+        return res.status(500).send({ error: err });
+      }
+    }
+  }
+
   try {
     await foundTopic.save();
   } catch (err) {
     return res.status(500).send({ error: err });
   }
+
   return res.send({
     id: foundTopic._id,
     courseId: courseId,
     success: `Topic '${topicName}' has been updated successfully!`,
+    notification: `new notification is added ${notification}`,
   });
 };

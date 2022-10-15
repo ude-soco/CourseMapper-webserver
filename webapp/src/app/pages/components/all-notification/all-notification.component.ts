@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { NotificationItem } from 'src/app/model/notification-item';
+import {
+  NotificationItem,
+  Notification,
+} from 'src/app/model/notification-item';
 import { NotificationServiceService } from 'src/app/services/notification-service.service';
 
 @Component({
@@ -8,7 +11,7 @@ import { NotificationServiceService } from 'src/app/services/notification-servic
   styleUrls: ['./all-notification.component.css'],
 })
 export class AllNotificationComponent implements OnInit {
-  notificationItems: NotificationItem[] = [];
+  notificationItems: Notification[] = [];
 
   constructor(private notificationService: NotificationServiceService) {
     this.notificationService.allNotificationItems$.subscribe((items) => {

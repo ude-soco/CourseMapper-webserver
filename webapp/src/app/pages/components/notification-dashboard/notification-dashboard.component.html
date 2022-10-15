@@ -1,18 +1,31 @@
 <div class="panel">
   <div class="container">
-    <h1 class="headline">Notification</h1>
-    <p-badge value="2" class="course-updates"></p-badge>
+    <h1 class="headline">Notifications</h1>
+    <!-- <p-badge value="2" class="course-updates"></p-badge>
     <p-badge value="2" class="comments-mentioned"></p-badge>
-    <p-badge value="2" class="annotations"></p-badge>
+    <p-badge value="2" class="annotations"></p-badge> -->
     <div class="menu">
-      <p-tabMenu [model]="notificationItems"></p-tabMenu>
+      <p-tabMenu
+        [model]="notificationItems"
+        [activeItem]="activeItem"
+      ></p-tabMenu>
       <div class="right-control">
-        <i
-          class="pi pi-ellipsis-h"
-          style="margin-left: 1rem"
+        <div
+          class="context-menu-container"
           (click)="openTopContextMenu($event, op)"
-        ></i>
-        <span style="margin-left: 1rem">
+        >
+          <i
+            class="pi pi-ellipsis-h"
+            style="
+              text-align: center;
+              color: rgba(3, 105, 161, 255);
+              position: relative;
+              margin: auto;
+              justify-content: center;
+            "
+          ></i>
+        </div>
+        <span style="margin-left: 1rem; color: rgba(3, 105, 161, 255)">
           <a
             routerLink="/allNotification"
             routerLinkActive="active"
@@ -25,17 +38,17 @@
   </div>
 
   <div class="notification-container">
-    <app-notification-items
-      [notificationType]="notificationType"
-    ></app-notification-items>
+    <app-notification-box
+      [notificationItems]="notificationLists"
+    ></app-notification-box>
   </div>
 
   <p-overlayPanel #op class="context" id="op">
-    <!-- <ng-template pTemplate> -->
-    <app-context-menu
-      [topLevel]="true"
-      (onClick)="closeMenu(op)"
-    ></app-context-menu>
-    <!-- </ng-template> -->
+    <ng-template pTemplate>
+      <app-context-menu
+        [topLevel]="true"
+        (onClick)="closeMenu(op)"
+      ></app-context-menu>
+    </ng-template>
   </p-overlayPanel>
 </div>

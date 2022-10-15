@@ -18,12 +18,33 @@ export interface NotificationMessage {
 }
 
 export enum NotificationType {
-  CourseUpdate = 'courseupdate',
-  CommentsAndMentioned = 'commentsandmentioned',
+  CourseUpdate = 'courseupdates',
+  CommentsAndMentioned = 'mentionedandreplied',
   Annotations = 'annotations',
 }
 
 export interface NotificationTypeFilter {
   name: string;
   type: NotificationType;
+}
+
+export interface NotificationData {
+  isCourseTurnOff: boolean;
+  notificationLists: Notification[];
+}
+
+export interface Notification {
+  _id: string;
+  action: string;
+  actionObject: string;
+  courseId: string;
+  extraMessage: string;
+  isStar: boolean;
+  name: string;
+  read: boolean;
+  type: string;
+  userId: string;
+  userName: string;
+  userShortname: string;
+  createdAt: string;
 }

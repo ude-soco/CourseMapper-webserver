@@ -1,30 +1,34 @@
-<p-toolbar styleClass="toolbar">
-  <div class="tab">
-    <span>Course updates</span>
-    <p-inputSwitch
-      [(ngModel)]="couseUpdateChecked"
-      class="toggle-button"
-    ></p-inputSwitch>
+<div class="container">
+  <p-toolbar styleClass="toolbar">
+    <div class="tab">
+      <span>Course updates</span>
+      <p-inputSwitch
+        [(ngModel)]="courseUpdateChecked"
+        class="toggle-button"
+        (onChange)="toggleCourseUpdate($event, 'courseupdates')"
+      ></p-inputSwitch>
+    </div>
+  </p-toolbar>
+  <div class="noti-container">
+    <app-notification-box
+      [hidden]="
+        filteredType == 'annotations' || filteredType == 'mentionedandreplied'
+      "
+      [settingClass]="true"
+      [notificationItems]="courseUpdateItems"
+      [isSettingPanel]="true"
+    ></app-notification-box>
+    <span
+      class="empty-content"
+      *ngIf="
+        filteredType == 'annotations' ||
+        filteredType == 'mentionedandreplied' ||
+        courseUpdateItems.length == 0
+      "
+      >There is no content in it</span
+    >
   </div>
-</p-toolbar>
-<div class="noti-container">
-  <app-notification-box
-    [hidden]="
-      filteredType == 'annotations' || filteredType == 'commentsandmentioned'
-    "
-    [settingClass]="true"
-    [notificationItems]="courseUpdateItems"
-    [isSettingPanel]="true"
-  ></app-notification-box>
-  <span
-    class="empty-content"
-    *ngIf="
-      filteredType == 'annotations' ||
-      filteredType == 'commentsandmentioned' ||
-      courseUpdateItems.length == 0
-    "
-    >There is no content in it</span
-  >
+  <div class="clear" (click)="clear('courseupdates')"><a>Clear all</a></div>
 </div>
 <p-toolbar styleClass="toolbar">
   <div class="tab">
@@ -32,12 +36,13 @@
     <p-inputSwitch
       [(ngModel)]="commentsAndMentionedChecked"
       class="toggle-button"
+      (onChange)="toggleReplies($event, 'replies')"
     ></p-inputSwitch>
   </div>
 </p-toolbar>
 <div class="noti-container">
   <app-notification-box
-    [hidden]="filteredType == 'annotations' || filteredType == 'courseupdate'"
+    [hidden]="filteredType == 'annotations' || filteredType == 'courseupdates'"
     [settingClass]="true"
     [notificationItems]="commentsMentionedItems"
     [isSettingPanel]="true"
@@ -46,25 +51,28 @@
     class="empty-content"
     *ngIf="
       filteredType == 'annotations' ||
-      filteredType == 'courseupdate' ||
+      filteredType == 'courseupdates' ||
       commentsMentionedItems.length == 0
     "
     >There is no content in it</span
   >
 </div>
+<div class="clear" (click)="clear('replies')"><a>Clear all</a></div>
+
 <p-toolbar styleClass="toolbar">
   <div class="tab">
     <span>Annotations</span>
     <p-inputSwitch
       [(ngModel)]="annotationsChecked"
       class="toggle-button"
+      (onChange)="toggleAnnotations($event, 'annotation')"
     ></p-inputSwitch>
   </div>
 </p-toolbar>
 <div class="noti-container">
   <app-notification-box
     [hidden]="
-      filteredType == 'courseupdate' || filteredType == 'commentsandmentioned'
+      filteredType == 'courseupdates' || filteredType == 'mentionedandreplied'
     "
     [settingClass]="true"
     [notificationItems]="annotationsItems"
@@ -73,10 +81,11 @@
   <span
     class="empty-content"
     *ngIf="
-      filteredType == 'courseupdate' ||
-      filteredType == 'commentsandmentioned' ||
+      filteredType == 'courseupdates' ||
+      filteredType == 'mentionedandreplied' ||
       annotationsItems.length == 0
     "
     >There is no content in it</span
   >
 </div>
+<div class="clear" (click)="clear('annotations')"><a>Clear all</a></div>

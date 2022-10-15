@@ -1,14 +1,18 @@
 <app-courses [hideContent]="true">
   <div class="container">
-    <h2 class="h3">Notification</h2>
+    <h2 class="h3">All notifications</h2>
 
-    <p-divider></p-divider>
+    <p-divider class="divider"></p-divider>
 
     <div class="item-container">
       <app-notification-box
         *ngIf="true"
         [notificationItems]="notificationItems"
       ></app-notification-box>
+    </div>
+
+    <div class="empty-container" *ngIf="notificationItems.length == 0">
+      There is no content in it.
     </div>
   </div>
 </app-courses>

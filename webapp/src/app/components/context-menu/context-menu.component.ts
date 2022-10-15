@@ -1,7 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuItem } from 'primeng/api';
-import { NotificationItem } from 'src/app/model/notification-item';
+import {
+  NotificationItem,
+  Notification,
+} from 'src/app/model/notification-item';
 import { NotificationServiceService } from 'src/app/services/notification-service.service';
 
 @Component({
@@ -15,15 +18,15 @@ export class ContextMenuComponent implements OnInit {
   @Input() activeName!: string;
   @Input() topLevel!: boolean;
   @Input() isSettingPanel!: boolean;
-
+  @Input() activeUserId!: string;
   // to close the menu
   @Output() onClick = new EventEmitter();
   @Output() onMarkRead = new EventEmitter();
   @Output() onRemove = new EventEmitter();
   // top level menu
   @Output() isRemoveAll = new EventEmitter();
-  @Output() isMarkAllAsRead = new EventEmitter();
-
+  temp: any;
+  notificationItems: Notification[] = [];
   label = `Turn off from ${this.activeName} `;
   constructor(
     private router: Router,
@@ -43,7 +46,7 @@ export class ContextMenuComponent implements OnInit {
             label: `turn off from ${this.activeName} `,
             icon: 'pi pi-bell',
             command: (event) =>
-              this.onTurnOffNotification(event, this.activeItemId),
+              this.onTurnOffNotification(event, this.activeUserId),
           },
           {
             label: 'Remove',
@@ -100,34 +103,34 @@ export class ContextMenuComponent implements OnInit {
     this.onClick.emit();
     this.router.navigateByUrl('/notification-settings');
   }
-
+  updateItems() {
+    this.notificationService.getAllNotifications().subscribe((items) => {
+      this.temp = items;
+      this.notificationItems = this.temp.notificationLists;
+    });
+  }
   onMarkAllAsRead() {
     console.log('mark ALl as read test test');
-    let items: NotificationItem[] = [];
-    this.notificationService.allNotificationItems$.subscribe((item) => {
-      console.log('item', item);
-      items = item;
-      items.forEach((element) => {
-        element.read = true;
-      });
-      console.log('items', items);
+
+    this.notificationService.markAllAsRead().subscribe((res) => {
+      console.log('response', res);
+    });
+    this.notificationService.allNotificationItems.value.forEach((element) => {
+      element.read = true;
     });
 
-    this.notificationService.allNotificationItems.next(items);
-
-    this.isMarkAllAsRead.emit();
     this.onClick.emit();
   }
 
   onRemoveAll() {
-    console.log('remove all');
     this.notificationService.allNotificationItems.next([]);
-
+    this.notificationService.removeAll().subscribe();
+    // this.updateItems();
     this.isRemoveAll.emit();
     this.onClick.emit();
   }
 
-  onTurnOffNotification(event: any, activeItemId: string) {
-    console.log('on turn off');
+  onTurnOffNotification(event: any, activeUserId: string) {
+    console.log('on turn off userId', activeUserId);
   }
 }

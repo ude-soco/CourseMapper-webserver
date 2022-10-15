@@ -34,6 +34,7 @@
 .right-control {
   display: flex;
   align-items: center;
+  margin-right: 1rem;
 }
 
 /* change the size of number of badge */
@@ -42,10 +43,12 @@
 } */
 .menu {
   display: flex;
+  justify-content: space-between;
 }
 
 .panel {
   padding: 1.5rem;
+  width: 700px;
 }
 
 /* menu focus style */
@@ -73,4 +76,15 @@
 :host ::ng-deep .p-tabmenu .p-tabmenu-nav .p-tabmenuitem .p-menuitem-link {
   padding: 0.8rem;
   font-size: small;
+}
+
+.context-menu-container:hover {
+  background-color: gray;
+  height: 30px;
+  width: 30px;
+  align-items: center;
+  position: relative;
+  justify-content: center;
+  border-radius: 50%;
+  display: flex;
 }

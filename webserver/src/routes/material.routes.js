@@ -20,6 +20,7 @@ module.exports = function (app) {
   app.post(
     "/courses/:courseId/channels/:channelId/material",
     // [authJwt.verifyToken, authJwt.isModerator],
+    [authJwt.verifyToken],
     controller.newMaterial
   );
 
@@ -27,7 +28,9 @@ module.exports = function (app) {
   // Only moderator/admin
   app.delete(
     "/courses/:courseId/materials/:materialId",
-    [authJwt.verifyToken, authJwt.isModerator],
+    // [authJwt.verifyToken, authJwt.isModerator],
+    [authJwt.verifyToken],
+
     controller.deleteMaterial
   );
 
@@ -35,7 +38,9 @@ module.exports = function (app) {
   // Only moderator/admin
   app.put(
     "/courses/:courseId/materials/:materialId",
-    [authJwt.verifyToken, authJwt.isModerator],
+    // [authJwt.verifyToken, authJwt.isModerator],
+    [authJwt.verifyToken],
+
     controller.editMaterial
   );
 };

@@ -5,8 +5,9 @@
   margin-right: auto;
   margin-top: 3rem;
   width: 70%;
-  border: 1px solid gray;
+  border: 1px solid #c4c4c4;
   padding: 1rem;
+  box-shadow: 5px 10px #c4c4c4;
 }
 
 h1 {

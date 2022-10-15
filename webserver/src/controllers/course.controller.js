@@ -72,7 +72,7 @@ export const getCourse = async (req, res) => {
  */
 export const enrolCourse = async (req, res) => {
   const courseId = req.params.courseId;
-  const userId = "6339d131f992714b8b984587";
+  const userId = req.userId;
 
   let foundCourse;
   try {
@@ -141,9 +141,10 @@ export const enrolCourse = async (req, res) => {
     } catch (err) {
       return res.status(500).send({ error: err });
     }
-    return res
-      .status(200)
-      .send({ success: `User enrolled to course ${foundCourse.name}` });
+    return res.status(200).send({
+      success: `User enrolled to course ${foundCourse.name}`,
+      subscribedCourseLists: foundUser.subscribedCourses,
+    });
   } else {
     return res
       .status(403)
@@ -159,7 +160,7 @@ export const enrolCourse = async (req, res) => {
  */
 export const withdrawCourse = async (req, res) => {
   const courseId = req.params.courseId;
-  const userId = "6339d131f992714b8b984587";
+  const userId = req.userId;
 
   let foundCourse;
   try {
@@ -209,9 +210,10 @@ export const withdrawCourse = async (req, res) => {
     return res.status(500).send({ error: err });
   }
 
-  return res
-    .status(200)
-    .send({ success: `User withdrew from course ${foundCourse.name}` });
+  return res.status(200).send({
+    success: `User withdrew from course ${foundCourse.name}`,
+    subscribedCourseLists: foundUser.subscribedCourses,
+  });
 };
 
 /**
@@ -225,88 +227,85 @@ export const withdrawCourse = async (req, res) => {
 export const newCourse = async (req, res) => {
   const courseName = req.body.name;
   const courseDesc = req.body.description;
-  // const userId = "6335b03caca5a176a7ce5ce5";
   const userId = req.userId;
-  console.log("userId", userId, req.body);
-  // let foundUser;
-  // try {
-  //   foundUser = await User.findById(userId);
-  //   if (!foundUser) {
-  //     return res.status(404).send({
-  //       error: `User not found!`,
-  //     });
-  //   }
-  // } catch (err) {
-  //   return res.status(500).send({ error: err });
-  // }
+  let foundUser;
+  try {
+    foundUser = await User.findById(userId);
+    if (!foundUser) {
+      return res.status(404).send({
+        error: `User not found!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
 
-  // let foundCourse;
-  // try {
-  //   foundCourse = await Course.findOne({ name: courseName });
-  //   if (foundCourse) {
-  //     return res.status(403).send({ error: "Course name already taken!" });
-  //   }
-  // } catch (err) {
-  //   return res.status(500).send({ error: err });
-  // }
+  let foundCourse;
+  try {
+    foundCourse = await Course.findOne({ name: courseName });
+    if (foundCourse) {
+      return res.status(403).send({ error: "Course name already taken!" });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
 
-  // let shortName = courseName
-  //   .split(" ")
-  //   .map((word, index) => {
-  //     if (index < 3) {
-  //       return word[0];
-  //     }
-  //   })
-  //   .join("");
+  let shortName = courseName
+    .split(" ")
+    .map((word, index) => {
+      if (index < 3) {
+        return word[0];
+      }
+    })
+    .join("");
 
-  // let foundRole;
-  // try {
-  //   foundRole = await Role.findOne({ name: "moderator" });
-  // } catch (err) {
-  //   return res.status(500).send({ error: err });
-  // }
+  let foundRole;
+  try {
+    foundRole = await Role.findOne({ name: "moderator" });
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
 
-  // let userList = [];
-  // let newUser = {
-  //   userId: foundUser._id,
-  //   role: foundRole._id,
-  // };
-  // userList.push(newUser);
+  let userList = [];
+  let newUser = {
+    userId: foundUser._id,
+    role: foundRole._id,
+  };
+  userList.push(newUser);
 
-  // let course = new Course({
-  //   name: courseName,
-  //   shortName: shortName,
-  //   userId: userId,
-  //   description: courseDesc,
-  //   createdAt: Date.now(),
-  //   updatedAt: Date.now(),
-  //   users: userList,
-  // });
+  let course = new Course({
+    name: courseName,
+    shortName: shortName,
+    userId: userId,
+    description: courseDesc,
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    users: userList,
+  });
 
-  // let courseSaved;
-  // try {
-  //   courseSaved = await course.save();
-  // } catch (err) {
-  //   return res.status(500).send({ error: err });
-  // }
+  let courseSaved;
+  try {
+    courseSaved = await course.save();
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
 
-  // foundUser.courses.push({
-  //   courseId: courseSaved._id,
-  //   role: foundRole._id,
-  // });
+  foundUser.courses.push({
+    courseId: courseSaved._id,
+    role: foundRole._id,
+  });
 
-  // try {
-  //   await foundUser.save();
-  // } catch (err) {
-  //   return res.status(500).send({ error: err });
-  // }
+  try {
+    await foundUser.save();
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
 
   // let userShortname = (
   //   foundUser.firstname.charAt(0) + foundUser.lastname.charAt(0)
   // ).toUpperCase();
 
-  // //if (!foundUser.isCourseTurnOff) {
-  // //this is pushing the item to global notification collection
+  //this is pushing the item to global notification collection
   // let notification = new Notification({
   //   userName: foundUser.username,
   //   userShortname: userShortname,
@@ -323,13 +322,11 @@ export const newCourse = async (req, res) => {
   // } catch (err) {
   //   return res.status(500).send({ error: err });
   // }
-  //}
-
-  // return res.send({
-  //   id: course._id,
-  //   success: `New course '${courseSaved.name}' added!`,
-  // });
-  return res.send({ success: "successfully added", body: req.body });
+  return res.send({
+    id: course._id,
+    success: `New course '${courseSaved.name}' added!`,
+    // notification: notification,
+  });
 };
 
 /**

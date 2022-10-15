@@ -20,6 +20,7 @@ module.exports = function (app) {
   app.post(
     "/courses/:courseId/topic",
     // [authJwt.verifyToken, authJwt.isModerator],
+    [authJwt.verifyToken],
     controller.newTopic
   );
 
@@ -27,7 +28,8 @@ module.exports = function (app) {
   // Only moderator/admin
   app.delete(
     "/courses/:courseId/topics/:topicId",
-    [authJwt.verifyToken, authJwt.isModerator],
+    // [authJwt.verifyToken, authJwt.isModerator],
+    [authJwt.verifyToken],
     controller.deleteTopic
   );
 
@@ -35,7 +37,8 @@ module.exports = function (app) {
   // Only moderator/admin
   app.put(
     "/courses/:courseId/topics/:topicId",
-    [authJwt.verifyToken, authJwt.isModerator],
+    // [authJwt.verifyToken, authJwt.isModerator],
+    [authJwt.verifyToken],
     controller.editTopic
   );
 };

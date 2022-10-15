@@ -13,6 +13,7 @@
   margin-top: 1.5rem;
   margin-bottom: 1.5rem;
   padding: 0.8rem;
+  background-color: #c4c4c4;
 }
 
 app-notification-box {
@@ -21,12 +22,17 @@ app-notification-box {
   padding-right: 1rem;
 }
 
-.noti-container {
-}
-
 .empty-content {
   padding: 0.8rem;
   height: 200%;
   font-size: xx-large;
   color: #c4c4c4;
+}
+
+.clear {
+  text-align: right;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  margin-top: 1.5rem;
+  color: rgba(3, 105, 161, 255);
 }

@@ -42,7 +42,6 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { ToolbarModule } from 'primeng/toolbar';
 import { NotificationSettingItemPanelComponent } from './components/notification-setting-item-panel/notification-setting-item-panel.component';
 import { NotificationBoxComponent } from './components/notification-box/notification-box.component';
-import { NotificationItemsComponent } from './pages/components/notification-items/notification-items.component';
 import { RegistrationComponent } from './pages/components/registration/registration.component';
 
 import { registerLocaleData } from '@angular/common';
@@ -70,7 +69,6 @@ registerLocaleData(en);
     IconbuttonComponent,
     AvatarComponent,
     NotificationDashboardComponent,
-    NotificationItemsComponent,
     NotificationBoxComponent,
     ContextMenuComponent,
     AddCourseComponent,

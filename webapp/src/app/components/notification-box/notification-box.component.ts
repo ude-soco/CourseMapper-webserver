@@ -1,5 +1,8 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { NotificationItem } from 'src/app/model/notification-item';
+import {
+  NotificationItem,
+  Notification,
+} from 'src/app/model/notification-item';
 import { MenuItem } from 'primeng/api';
 import { OverlayPanel } from 'primeng/overlaypanel';
 import { NotificationServiceService } from 'src/app/services/notification-service.service';
@@ -10,34 +13,50 @@ import { NotificationServiceService } from 'src/app/services/notification-servic
   styleUrls: ['./notification-box.component.css'],
 })
 export class NotificationBoxComponent implements OnInit {
-  @Input() notificationItems!: NotificationItem[];
+  @Input() notificationItems!: Notification[];
   @Input() isSettingPanel!: boolean;
   @Input() settingClass!: boolean;
+  temp: any;
   items!: MenuItem[];
   contextMenuOpened!: boolean;
   activeItemId!: string;
   activeUserName!: string;
   isStarredClicked!: boolean;
+  activeUserId!: string;
   @ViewChild(OverlayPanel) panel!: OverlayPanel;
 
   constructor(private notificationService: NotificationServiceService) {
-    this.notificationService.allNotificationItems$.subscribe((allItems) => {
-      this.notificationItems = allItems;
-    });
+    // this.notificationService.allNotificationItems$.subscribe((allItems) => {
+    //   this.notificationItems = allItems;
+    // });
     this.notificationService.isStarClicked$.subscribe(
       (isStarClicked) => (this.isStarredClicked = isStarClicked)
     );
+  }
+
+  updateItems() {
+    this.notificationService.getAllNotifications().subscribe((items) => {
+      this.temp = items;
+      this.notificationItems = this.temp.notificationLists;
+    });
   }
 
   ngOnInit(): void {
     this.contextMenuOpened = false;
   }
 
-  openContextMenu(event: any, op: any, activeItemId: string, userName: string) {
+  openContextMenu(
+    event: any,
+    op: any,
+    activeItemId: string,
+    userName: string,
+    userId: string
+  ) {
     if (!this.contextMenuOpened) {
       op.show(event);
       this.activeItemId = activeItemId;
       this.activeUserName = userName;
+      this.activeUserId = userId;
       this.contextMenuOpened = true;
     } else {
       op.hide(event);
@@ -46,30 +65,45 @@ export class NotificationBoxComponent implements OnInit {
   }
 
   closeMenu(op: any) {
+    console.log('click closed');
     op.hide();
     this.contextMenuOpened = false;
   }
 
   onStar(id: any) {
     const starIndex = this.notificationItems?.findIndex(
-      (item) => item.id == id
+      (item) => item._id == id
     );
     this.notificationItems[starIndex].isStar =
       !this.notificationItems[starIndex].isStar;
+    this.notificationService.markItemAsStar(id).subscribe();
   }
 
   handleMarkAsRead(id: string) {
-    const starIndex = this.notificationItems?.findIndex(
-      (item) => item.id == id
+    this.notificationService.markItemAsRead(id).subscribe();
+
+    //lists after filtered
+    const foundIndex = this.notificationItems.findIndex(
+      (item) => item._id == id
     );
-    this.notificationItems[starIndex].read = true;
+    this.notificationItems[foundIndex].read = true;
   }
 
   handleOnRemove(id: string) {
-    const index = this.notificationItems?.findIndex((item) => item.id == id);
-    if (index > -1) {
-      this.notificationItems.splice(index, 1);
+    this.notificationService.removeItem(id).subscribe();
+    //lists after filtered
+    const foundIndex = this.notificationItems.findIndex(
+      (item) => item._id == id
+    );
+    if (foundIndex > -1) {
+      this.notificationItems.splice(foundIndex, 1);
     }
+    this.notificationService.getAllNotifications().subscribe((items) => {
+      this.temp = items;
+      this.notificationService.allNotificationItems.next(
+        this.temp.notificationLists
+      );
+    });
   }
 
   handleRemoveAll() {
@@ -77,13 +111,7 @@ export class NotificationBoxComponent implements OnInit {
     console.log('remove all12356');
   }
 
-  handleMarkAllAsRead() {
-    // for (const i of this.notificationItems) {
-    //   i.read = true;
-    // }
-    for (let i = 0; i++; i < this.notificationItems.length) {
-      this.notificationItems[i].read = true;
-    }
-    console.log('mark all as read', this.notificationItems);
+  onHover() {
+    console.log('on hover');
   }
 }

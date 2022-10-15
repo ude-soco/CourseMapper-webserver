@@ -1,7 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {
-  NotificationItem,
   NotificationType,
+  Notification,
   NotificationTypeFilter,
 } from 'src/app/model/notification-item';
 import { NotificationServiceService } from 'src/app/services/notification-service.service';
@@ -16,7 +16,7 @@ export class NotificationFilterPanelComponent implements OnInit {
   number!: number;
   selectedType!: NotificationTypeFilter;
   starred!: boolean;
-  @Input() notificationItems: NotificationItem[] = [];
+  @Input() notificationItems: Notification[] = [];
 
   constructor(private notificationService: NotificationServiceService) {
     this.starred = true;
@@ -34,26 +34,21 @@ export class NotificationFilterPanelComponent implements OnInit {
 
   viewStar() {
     this.starred = !this.starred;
-    console.log(
-      'filter star',
-      this.starred,
-      this.notificationItems.filter((item) => item.isStar == true)
-    );
+
     this.notificationService.isStarClicked.next(!this.starred);
   }
 
   selectType(event: any) {
-    console.log('select type', event.value.type);
     this.notificationService.filteredType.next(event.value.type);
   }
 
   resetFilter() {
-    console.log('reset filter');
     this.notificationService.filteredType.next('');
   }
 
   filterByNumber(e: any) {
-    console.log('filterby number', e);
+    console.log('filterby number', e.value);
+    this.notificationService.showNumber.next(e.value);
   }
   onBlur(e: any) {
     console.log('blur', e.target.value);

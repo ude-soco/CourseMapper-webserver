@@ -23,17 +23,13 @@ module.exports = function (app) {
   app.post("/course", [authJwt.verifyToken], controller.newCourse);
 
   // Enrol in a course
-  app.post(
-    "/enrol/:courseId",
-    // [authJwt.verifyToken],
-    controller.enrolCourse
-  );
+  app.post("/enrol/:courseId", [authJwt.verifyToken], controller.enrolCourse);
 
   // Withdraw from a course
   // Only enrolled user
   app.post(
     "/withdraw/:courseId",
-    // [authJwt.verifyToken, authJwt.isEnrolled],
+    [authJwt.verifyToken, authJwt.isEnrolled],
     controller.withdrawCourse
   );
 

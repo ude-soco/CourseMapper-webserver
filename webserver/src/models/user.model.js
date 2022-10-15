@@ -23,7 +23,7 @@ const User = new Schema({
     { courseId: { type: Schema.Types.ObjectId, ref: "course" } },
   ],
   notificationLists: [],
-  courseTurnOffAt: { type: Date },
+  deactivatedUserLists: [],
 });
 
 module.exports = mongoose.model("user", User);

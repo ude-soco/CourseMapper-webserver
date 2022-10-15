@@ -24,6 +24,7 @@
         style="font-size: 2rem; color: rgba(3, 105, 161, 255)"
         [value]="newsAmount"
         (click)="notificationPanel.toggle($event)"
+        *ngIf="this.storageService.loggedIn"
       ></i>
 
       <span *ngIf="!this.storageService.loggedIn">

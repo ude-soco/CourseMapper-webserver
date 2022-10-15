@@ -25,5 +25,7 @@ export class ChannelbarComponent implements OnInit {
     this.subscribeLabel = this.subscribed
       ? 'Subscribed'
       : 'Subscribe to course';
+
+    console.log(event);
   }
 }

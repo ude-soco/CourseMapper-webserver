@@ -15,7 +15,6 @@ const Notification = new Schema({
   createdAt: { type: Date, default: Date.now() },
   read: { type: Boolean, default: false },
   isStar: { type: Boolean, default: false },
-  isCourseTurnOff: { type: Boolean, default: false },
 });
 
 module.exports = mongoose.model("notification", Notification);

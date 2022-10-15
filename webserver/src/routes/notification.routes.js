@@ -9,61 +9,88 @@ module.exports = function (app) {
 
   // Get all the notifications for user
   app.get(
-    "/notifications/:userId",
-    // [authJwt.verifyToken, authJwt.isEnrolled],
+    "/notifications",
+    [authJwt.verifyToken],
     controller.getAllNotifications
   );
 
-  // Delete a notification
-  app.delete("/notifications/:notificationId", controller.deleteNotification);
+  // Delete a notification - checked
+  app.delete(
+    "/notifications/:notificationId",
+    [authJwt.verifyToken],
+    controller.deleteNotification
+  );
 
-  // Delete all notifications // get notification for this user
-  app.delete("/notifications/all/:userId", controller.deleteAllNotifications);
-
-  // Delete by type // need to test out
+  // Delete all notifications - checked
   app.put(
-    "/notifications/courseupdates/:userId",
+    "/notifications/deleteAll",
+    [authJwt.verifyToken],
+    controller.deleteAllNotifications
+  );
+
+  // Delete by type - checked
+  app.put(
+    "/notifications/courseupdates",
+    [authJwt.verifyToken],
     controller.deleteNotificationsByCourseUpdates
   );
-  // need to test out
+  // checked
   app.put(
-    "/notifications/replies/:userId",
+    "/notifications/replies",
+    [authJwt.verifyToken],
     controller.deleteNotificationsByReplies
   );
-  // need to test out
+  // checked
   app.put(
-    "/notifications/annotations/:userId",
+    "/notifications/annotations",
+    [authJwt.verifyToken],
     controller.deleteNotificationsByAnnotations
   );
 
-  // Mark single notification as read
-  app.put("/notifications/:notificationId", controller.readNotification);
+  // Mark single notification as read  - checked
+  app.put(
+    "/notifications/:notificationId",
+    [authJwt.verifyToken],
+    controller.readNotification
+  );
 
-  // Mark all notification as read // get notification for this user
-  app.put("/notifications/read/:userId", controller.readAllNotifications);
+  // Mark all notification as read - checked
+  app.patch(
+    "/notifications/readAll",
+    [authJwt.verifyToken],
+    controller.readAllNotifications
+  );
 
-  // Mark single notification as starred
-  app.put("/notifications/:notificationId/star", controller.starNotification);
+  // Mark single notification as starred - checked
+  app.put(
+    "/notifications/:notificationId/star",
+    [authJwt.verifyToken],
+    controller.starNotification
+  );
 
   // Turn off notification from specific type
-  // just a condition before inserting data to document isCourseUpdateTurnOff?
-  //isCommentTurnOff,isAnnotaionTurnOff?
+
   app.put(
-    "/notifications/:userId/deactivate/course",
+    "/notifications/deactivate/course",
+    [authJwt.verifyToken],
     controller.toggleActiveCourse
   );
 
   app.put(
-    "/notifications/:userId/deactivate/annotation",
+    "/notifications/deactivate/annotation",
+    [authJwt.verifyToken],
     controller.toggleAnnotation
   );
 
-  app.put("/notifications/:userId/deactivate/reply", controller.toggleReply);
+  app.put(
+    "/notifications/deactivate/reply",
+    [authJwt.verifyToken],
+    controller.toggleReply
+  );
 
-  // Turn off notifications from specific user
-  // condition-> the user under which type
-  // once is has turned off, eg(for type courseupdate
-  // it has the username that this user turn off
-  // check if user is in userList[] then insert
-  // edit,delete notification?
+  app.post(
+    "/notification/deactivate/:userId",
+    [authJwt.verifyToken],
+    controller.deactivateUser
+  );
 };

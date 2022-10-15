@@ -58,7 +58,7 @@ export const newReply = async (req, res) => {
   const courseId = req.params.courseId;
   const annotationId = req.params.annotationId;
   const replyContent = req.body.content;
-  const userId = "6335b03caca5a176a7ce5ce5";
+  const userId = req.userId;
 
   let foundAnnotation;
   try {
@@ -159,7 +159,6 @@ export const newReply = async (req, res) => {
     foundTopic = await Topic.findOne({
       _id: ObjectId(foundAnnotation.topicId),
     });
-    console.log("foundTopic", foundTopic);
     if (!foundTopic) {
       return res.status(404).send({
         error: `Topic with id ${foundAnnotation.topicId} doesn't exist!`,
@@ -168,30 +167,72 @@ export const newReply = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
+  // lists of userId that subscribed to this course
+  let subscribedUserLists = [];
+  foundCourse.users.forEach((user) => {
+    subscribedUserLists.push(user.userId.toString());
+  });
+  let foundUserLists = [];
+  let temp;
 
+  for (let i = 0; i < subscribedUserLists.length; i++) {
+    temp = await User.findById(subscribedUserLists[i]);
+    foundUserLists.push(temp);
+  }
   let userShortname = (
     foundUser.firstname.charAt(0) + foundUser.lastname.charAt(0)
   ).toUpperCase();
-  if (!foundUser.isReplyTurnOff) {
-    let notification = new Notification({
-      userName: foundUser.username,
-      userShortname: userShortname,
-      userId: userId,
-      courseId: foundAnnotation.courseId,
-      type: "mentionedandreplied",
-      action: "has created new",
-      actionObject: "comment",
-      extraMessage: `in ${foundCourse.name} in ${foundTopic.name}`,
-      name: "",
-    });
+  let notification = new Notification({
+    userName: foundUser.username,
+    userShortname: userShortname,
+    userId: userId,
+    courseId: foundAnnotation.courseId,
+    type: "mentionedandreplied",
+    action: "has created new",
+    actionObject: "comment",
+    extraMessage: `in ${foundCourse.name} in ${foundTopic.name}`,
+    name: "",
+  });
+  let notificationSaved;
 
-    try {
-      notificationSaved = await notification.save();
-    } catch (err) {
-      return res.status(500).send({ error: err });
+  try {
+    notificationSaved = await notification.save();
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+  for (let i = 0; i < foundUserLists.length; i++) {
+    // do not push to the user who made trigger this action
+    if (foundUserLists[i]._id == userId) {
+    } else if (foundUserLists[i].deactivatedUserLists.includes(userId)) {
+    } else if (foundUserLists[i].isReplyTurnOff) {
+    } else {
+      let subscribedUser;
+      try {
+        subscribedUser = await User.findById(foundUserLists[i]._id);
+        if (!subscribedUser) {
+          return res.status(404).send({
+            error: `User not found!`,
+          });
+        }
+      } catch (err) {
+        return res.status(500).send({ error: err });
+      }
+      subscribedUser.notificationLists.push({
+        notificationId: notificationSaved._id,
+      });
+
+      try {
+        await subscribedUser.save();
+      } catch (err) {
+        return res.status(500).send({ error: err });
+      }
     }
   }
-  return res.status(200).send({ id: newReply._id, success: `Reply added!` });
+  return res.status(200).send({
+    id: newReply._id,
+    success: `Reply added!`,
+    notification: `new notification ${notification} has been added`,
+  });
 };
 
 /**
@@ -205,6 +246,7 @@ export const newReply = async (req, res) => {
 export const deleteReply = async (req, res) => {
   const courseId = req.params.courseId;
   const replyId = req.params.replyId;
+  const userId = req.userId;
   let foundReply;
   try {
     foundReply = await Reply.findOne({ _id: ObjectId(replyId) });
@@ -251,6 +293,83 @@ export const deleteReply = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
+
+  let foundCourse;
+  try {
+    foundCourse = await Course.findOne({ _id: courseId });
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+  let foundUser;
+  try {
+    foundUser = await User.findOne({ _id: userId });
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  // lists of userId that subscribed to this course
+  let subscribedUserLists = [];
+  foundCourse.users.forEach((user) => {
+    subscribedUserLists.push(user.userId.toString());
+  });
+  let foundUserLists = [];
+  let temp;
+
+  for (let i = 0; i < subscribedUserLists.length; i++) {
+    temp = await User.findById(subscribedUserLists[i]);
+    foundUserLists.push(temp);
+  }
+  let userShortname = (
+    foundUser.firstname.charAt(0) + foundUser.lastname.charAt(0)
+  ).toUpperCase();
+  let notification = new Notification({
+    userName: foundUser.username,
+    userShortname: userShortname,
+    userId: userId,
+    courseId: courseId,
+    type: "mentionedandreplied",
+    action: "has deleted",
+    actionObject: "comment",
+    extraMessage: `in ${foundCourse.name} `,
+    name: "",
+  });
+  let notificationSaved;
+
+  try {
+    notificationSaved = await notification.save();
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  for (let i = 0; i < foundUserLists.length; i++) {
+    // do not push to the user who made trigger this action
+    if (foundUserLists[i]._id == userId) {
+    } else if (foundUserLists[i].deactivatedUserLists.includes(userId)) {
+    } else if (foundUserLists[i].isReplyTurnOff) {
+    } else {
+      let subscribedUser;
+      try {
+        subscribedUser = await User.findById(foundUserLists[i]._id);
+        if (!subscribedUser) {
+          return res.status(404).send({
+            error: `User not found!`,
+          });
+        }
+      } catch (err) {
+        return res.status(500).send({ error: err });
+      }
+      subscribedUser.notificationLists.push({
+        notificationId: notificationSaved._id,
+      });
+
+      try {
+        await subscribedUser.save();
+      } catch (err) {
+        return res.status(500).send({ error: err });
+      }
+    }
+  }
+
   return res.status(200).send({ success: "Reply successfully deleted" });
 };
 
@@ -267,6 +386,7 @@ export const editReply = async (req, res) => {
   const courseId = req.params.courseId;
   const replyId = req.params.replyId;
   const replyContent = req.body.content;
+  const userId = req.userId;
 
   let foundReply;
   try {
@@ -328,6 +448,80 @@ export const editReply = async (req, res) => {
       await Tag.insertMany(foundTagsSchema);
     } catch (err) {
       return res.status(500).send({ error: err });
+    }
+  }
+
+  let foundCourse;
+  try {
+    foundCourse = await Course.findOne({ _id: courseId });
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+  // lists of userId that subscribed to this course
+  let subscribedUserLists = [];
+  foundCourse.users.forEach((user) => {
+    subscribedUserLists.push(user.userId.toString());
+  });
+  let foundUserLists = [];
+  let temp;
+
+  for (let i = 0; i < subscribedUserLists.length; i++) {
+    temp = await User.findById(subscribedUserLists[i]);
+    foundUserLists.push(temp);
+  }
+  let foundUser;
+  try {
+    foundUser = await User.findOne({ _id: userId });
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+  let userShortname = (
+    foundUser.firstname.charAt(0) + foundUser.lastname.charAt(0)
+  ).toUpperCase();
+  let notification = new Notification({
+    userName: foundUser.username,
+    userShortname: userShortname,
+    userId: userId,
+    courseId: courseId,
+    type: "mentionedandreplied",
+    action: "has edited",
+    actionObject: "comment",
+    extraMessage: `in ${foundCourse.name}`,
+    name: replyContent,
+  });
+  let notificationSaved;
+
+  try {
+    notificationSaved = await notification.save();
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+  for (let i = 0; i < foundUserLists.length; i++) {
+    // do not push to the user who made trigger this action
+    if (foundUserLists[i]._id == userId) {
+    } else if (foundUserLists[i].deactivatedUserLists.includes(userId)) {
+    } else if (foundUserLists[i].isReplyTurnOff) {
+    } else {
+      let subscribedUser;
+      try {
+        subscribedUser = await User.findById(foundUserLists[i]._id);
+        if (!subscribedUser) {
+          return res.status(404).send({
+            error: `User not found!`,
+          });
+        }
+      } catch (err) {
+        return res.status(500).send({ error: err });
+      }
+      subscribedUser.notificationLists.push({
+        notificationId: notificationSaved._id,
+      });
+
+      try {
+        await subscribedUser.save();
+      } catch (err) {
+        return res.status(500).send({ error: err });
+      }
     }
   }
 
@@ -393,6 +587,90 @@ export const likeReply = async (req, res) => {
 
     let countLikes = savedReply.likes.length;
 
+    let foundUser;
+    try {
+      foundUser = await User.findOne({ _id: userId });
+    } catch (err) {
+      return res.status(500).send({ error: err });
+    }
+
+    let foundCourse;
+    try {
+      foundCourse = await Course.findOne({
+        _id: ObjectId(foundAnnotation.courseId),
+      });
+      if (!foundCourse) {
+        return res.status(404).send({
+          error: `Course with id ${courseId} doesn't exist!`,
+        });
+      }
+    } catch (err) {
+      return res.status(500).send({ error: err });
+    }
+
+    // lists of userId that subscribed to this course
+    let subscribedUserLists = [];
+    foundCourse.users.forEach((user) => {
+      subscribedUserLists.push(user.userId.toString());
+    });
+    let foundUserLists = [];
+    let temp;
+
+    for (let i = 0; i < subscribedUserLists.length; i++) {
+      temp = await User.findById(subscribedUserLists[i]);
+      foundUserLists.push(temp);
+    }
+
+    let userShortname = (
+      foundUser.firstname.charAt(0) + foundUser.lastname.charAt(0)
+    ).toUpperCase();
+    let notification = new Notification({
+      userName: foundUser.username,
+      userShortname: userShortname,
+      userId: userId,
+      courseId: foundAnnotation.courseId,
+      type: "mentionedandreplied",
+      action: "has liked",
+      actionObject: "comment",
+      extraMessage: `in ${foundCourse.name} in ${foundTopic.name}`,
+      name: "",
+    });
+    let notificationSaved;
+
+    try {
+      notificationSaved = await notification.save();
+    } catch (err) {
+      return res.status(500).send({ error: err });
+    }
+
+    for (let i = 0; i < foundUserLists.length; i++) {
+      // do not push to the user who made trigger this action
+      if (foundUserLists[i]._id == userId) {
+      } else if (foundUserLists[i].deactivatedUserLists.includes(userId)) {
+      } else if (foundUserLists[i].isCourseTurnOff) {
+      } else {
+        let subscribedUser;
+        try {
+          subscribedUser = await User.findById(foundUserLists[i]._id);
+          if (!subscribedUser) {
+            return res.status(404).send({
+              error: `User not found!`,
+            });
+          }
+        } catch (err) {
+          return res.status(500).send({ error: err });
+        }
+        subscribedUser.notificationLists.push({
+          notificationId: notificationSaved._id,
+        });
+
+        try {
+          await subscribedUser.save();
+        } catch (err) {
+          return res.status(500).send({ error: err });
+        }
+      }
+    }
     return res.status(200).send({
       count: countLikes,
       success: "Reply successfully liked!",
@@ -455,6 +733,88 @@ export const dislikeReply = async (req, res) => {
       return res.status(500).send({ error: err });
     }
     let countDislikes = savedReply.dislikes.length;
+
+    let foundUser;
+    try {
+      foundUser = await User.findOne({ _id: userId });
+    } catch (err) {
+      return res.status(500).send({ error: err });
+    }
+    let foundCourse;
+    try {
+      foundCourse = await Course.findOne({
+        _id: ObjectId(foundAnnotation.courseId),
+      });
+      if (!foundCourse) {
+        return res.status(404).send({
+          error: `Course with id ${foundAnnotation.courseId} doesn't exist!`,
+        });
+      }
+    } catch (err) {
+      return res.status(500).send({ error: err });
+    }
+    // lists of userId that subscribed to this course
+    let subscribedUserLists = [];
+    foundCourse.users.forEach((user) => {
+      subscribedUserLists.push(user.userId.toString());
+    });
+    let foundUserLists = [];
+    let temp;
+
+    for (let i = 0; i < subscribedUserLists.length; i++) {
+      temp = await User.findById(subscribedUserLists[i]);
+      foundUserLists.push(temp);
+    }
+    let userShortname = (
+      foundUser.firstname.charAt(0) + foundUser.lastname.charAt(0)
+    ).toUpperCase();
+    let notification = new Notification({
+      userName: foundUser.username,
+      userShortname: userShortname,
+      userId: userId,
+      courseId: foundAnnotation.courseId,
+      type: "mentionedandreplied",
+      action: "has disliked",
+      actionObject: "comment",
+      extraMessage: `in ${foundCourse.name} in ${foundTopic.name}`,
+      name: "",
+    });
+    let notificationSaved;
+
+    try {
+      notificationSaved = await notification.save();
+    } catch (err) {
+      return res.status(500).send({ error: err });
+    }
+
+    for (let i = 0; i < foundUserLists.length; i++) {
+      // do not push to the user who made trigger this action
+      if (foundUserLists[i]._id == userId) {
+      } else if (foundUserLists[i].deactivatedUserLists.includes(userId)) {
+      } else if (foundUserLists[i].isCourseTurnOff) {
+      } else {
+        let subscribedUser;
+        try {
+          subscribedUser = await User.findById(foundUserLists[i]._id);
+          if (!subscribedUser) {
+            return res.status(404).send({
+              error: `User not found!`,
+            });
+          }
+        } catch (err) {
+          return res.status(500).send({ error: err });
+        }
+        subscribedUser.notificationLists.push({
+          notificationId: notificationSaved._id,
+        });
+
+        try {
+          await subscribedUser.save();
+        } catch (err) {
+          return res.status(500).send({ error: err });
+        }
+      }
+    }
     return res.status(200).send({
       count: countDislikes,
       success: "Reply successfully disliked!",

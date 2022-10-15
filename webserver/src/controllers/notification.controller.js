@@ -6,8 +6,7 @@ const User = db.user;
 const Course = db.course;
 
 export const getAllNotifications = async (req, res, next) => {
-  let notifications;
-  const userId = req.params.userId;
+  const userId = req.userId;
 
   let foundUser;
 
@@ -23,134 +22,44 @@ export const getAllNotifications = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  console.log("user subscribed course", foundUser.subscribedCourses);
-  // only publish notification those courses that user has subscribed
-  let subscribedCourseLists = [];
-  for (let i = 0; i < foundUser.subscribedCourses.length; i++) {
-    subscribedCourseLists.push(
-      foundUser.subscribedCourses[i].courseId.toString()
-    );
-  }
 
-  try {
-    notifications = await Notification.find({});
-  } catch (err) {
-    return res.send({ message: err });
-  }
-  // this is all the document from collection notificaitons
-  let results = [];
-  //if (!foundUser.isCourseTurnOff) {
-  notifications.forEach((c) => {
-    let notification = {
-      _id: c.id,
-      userName: c.userName,
-      userShortname: c.userShortname,
-      userId: c.userId,
-      courseId: c.courseId,
-      type: c.type,
-      action: c.action,
-      read: c.read,
-      isStar: c.isStar,
-      actionObject: c.actionObject,
-      extraMessage: c.extraMessage,
-      name: c.name,
-      createdAt: c.createdAt,
-    };
-    results.push(notification);
-  });
-  // }
-  console.log("notifications", notifications);
-  // getting all the courseIds
-  let temp = [];
-  for (let i = 0; i < results.length; i++) {
-    temp.push(results[i].courseId);
-  }
-  // getting all the index
-  let index = [];
-  for (let i = 0; i < subscribedCourseLists.length; i++) {
-    for (let j = 0; j < temp.length; j++) {
-      if (subscribedCourseLists[i] == temp[j]) {
-        index.push(j);
-      }
-    }
-  }
-
-  //list of notification for this specific user
-  let listsOfNotifications = [];
-  index.forEach((i) => {
-    listsOfNotifications.push(results[i]);
+  let notificationIds = [];
+  foundUser.notificationLists.forEach((notification) => {
+    notificationIds.push(notification.notificationId);
   });
 
-  let notCourseUpdateLists = [];
-  console.log("found user isCourseTurnOff", foundUser.isCourseTurnOff);
+  let temp;
+  let userNotificationLists = [];
 
-  let newLists = [];
-  if (foundUser.isCourseTurnOff) {
-    for (let i = 0; i < listsOfNotifications.length; i++) {
-      if (
-        Date.parse(listsOfNotifications[i].createdAt) <
-        new Date(Date.parse(foundUser.courseTurnOffAt.getTime()))
-      ) {
-        console.log(
-          "smaller",
-          listsOfNotifications[i].createdAt,
-          new Date(foundUser.courseTurnOffAt.getTime())
-        );
-        newLists.push(listsOfNotifications[i]);
-        foundUser.notificationLists = [...newLists];
-      } else {
-        newLists = [];
-      }
+  for (let i = 0; i < notificationIds.length; i++) {
+    try {
+      temp = await Notification.find({ _id: notificationIds[i] });
+      userNotificationLists.push(temp);
+    } catch (err) {
+      return res.send({ message: err });
     }
-  } else {
-    console.log("whole list");
-
-    foundUser.notificationLists = [...listsOfNotifications];
   }
-  console.log("new lists", newLists);
+  console.log("lists", userNotificationLists);
 
-  foundUser.save();
-  console.log("foundUser.notificationLists", foundUser.notificationLists);
-  console.log("listsOfNotifications", listsOfNotifications);
-
-  // req.lists = listsOfNotifications;
-  // next();
   return res.status(200).send({
-    "user notification lists": foundUser.notificationLists,
-    isCourseTurnOff: foundUser.isCourseTurnOff,
+    notificationLists: userNotificationLists.flat(),
   });
 };
 
 export const deleteNotification = async (req, res) => {
   const notificationId = req.params.notificationId;
-  let foundNotification;
-  try {
-    foundNotification = await Notification.findById({
-      _id: ObjectId(notificationId),
-    });
-    if (!foundNotification) {
-      return res.status(404).send({
-        error: `notification with id ${notificationId} doesn't exist`,
-      });
-    }
-  } catch (err) {
-    return res.status(500).send({ error: err });
-  }
-
   try {
     await Notification.deleteOne({ _id: ObjectId(notificationId) });
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  foundNotification.save();
   return res.send({
     success: `Notification with id ${notificationId} successfully deleted`,
   });
 };
 
-export const deleteAllNotifications = async (req, res, next) => {
-  // console.log("what is return", req.lists);
-  const userId = req.params.userId;
+export const deleteAllNotifications = async (req, res) => {
+  const userId = req.userId;
   let foundUser;
   try {
     foundUser = await User.findById({
@@ -164,7 +73,6 @@ export const deleteAllNotifications = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  console.log("found", foundUser.notificationLists);
   for (let i = 0; i < foundUser.notificationLists.length; i++) {
     try {
       await Notification.deleteMany({
@@ -174,15 +82,18 @@ export const deleteAllNotifications = async (req, res, next) => {
       return res.status(500).send({ error: err });
     }
   }
+  foundUser.notificationLists = [];
+  foundUser.save();
 
   return res.send({
     success: `All Notifications are successfully deleted`,
+    "notification of user": `${foundUser.notificationLists}`,
   });
 };
 
 export const deleteNotificationsByCourseUpdates = async (req, res) => {
   let type = "courseupdates";
-  const userId = req.params.userId;
+  const userId = req.userId;
   let foundUser;
   try {
     foundUser = await User.findById({
@@ -207,14 +118,12 @@ export const deleteNotificationsByCourseUpdates = async (req, res) => {
     }
   }
 
-  return res.send({
-    success: `All course update type Notifications are successfully deleted`,
-  });
+  return res.send(foundUser.notificationLists);
 };
 
 export const deleteNotificationsByReplies = async (req, res) => {
   let type = "mentionedandreplied";
-  const userId = req.params.userId;
+  const userId = req.userId;
   let foundUser;
   try {
     foundUser = await User.findById({
@@ -241,12 +150,13 @@ export const deleteNotificationsByReplies = async (req, res) => {
   }
   return res.send({
     success: `All replies type Notifications are successfully deleted`,
+    "notification of user": `${foundUser.notificationLists}`,
   });
 };
 
 export const deleteNotificationsByAnnotations = async (req, res) => {
   let type = "annotations";
-  const userId = req.params.userId;
+  const userId = req.userId;
   let foundUser;
   try {
     foundUser = await User.findById({
@@ -272,6 +182,7 @@ export const deleteNotificationsByAnnotations = async (req, res) => {
   }
   return res.send({
     success: `All annotation type Notifications are successfully deleted`,
+    "notification of user": `${foundUser.notificationLists}`,
   });
 };
 
@@ -299,13 +210,14 @@ export const readNotification = async (req, res) => {
   }
 
   return res.status(200).send({
-    success: `Notification '${notificationId}' has been updated successfully!`,
+    success: `Notification '${notificationId}' has been read successfully!`,
+    notification: `${foundNotification}`,
   });
 };
 
 export const readAllNotifications = async (req, res) => {
-  const userId = req.params.userId;
-
+  const userId = req.userId;
+  console.log(req.userId);
   let foundUser;
   try {
     foundUser = await User.findById({
@@ -319,7 +231,7 @@ export const readAllNotifications = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-
+  console.log("user lists", foundUser.notificationLists);
   for (let i = 0; i < foundUser.notificationLists.length; i++) {
     try {
       await Notification.updateMany(
@@ -332,7 +244,8 @@ export const readAllNotifications = async (req, res) => {
   }
 
   return res.status(200).send({
-    success: `Notifications  has been updated successfully!`,
+    success: `Notifications  has been read successfully!`,
+    notification: `${foundUser.notificationLists}`,
   });
 };
 
@@ -352,7 +265,7 @@ export const starNotification = async (req, res) => {
     return res.status(500).send({ error: err });
   }
 
-  foundNotification.isStar = true;
+  foundNotification.isStar = !foundNotification.isStar;
   try {
     await foundNotification.save();
   } catch (err) {
@@ -360,12 +273,13 @@ export const starNotification = async (req, res) => {
   }
 
   return res.status(200).send({
-    success: `Notification '${notificationId}' has been updated successfully!`,
+    success: `Notification '${notificationId}' has been stared successfully!`,
+    notification: `${foundNotification}`,
   });
 };
 
 export const toggleActiveCourse = async (req, res) => {
-  const userId = req.params.userId;
+  const userId = req.userId;
   let foundUser;
 
   try {
@@ -395,7 +309,7 @@ export const toggleActiveCourse = async (req, res) => {
 };
 
 export const toggleAnnotation = async (req, res) => {
-  const userId = req.params.userId;
+  const userId = req.userId;
   let foundUser;
 
   try {
@@ -412,18 +326,21 @@ export const toggleAnnotation = async (req, res) => {
   }
 
   foundUser.isAnnotationTurnOff = !foundUser.isAnnotationTurnOff;
+  foundUser.annotationTurnOffAt = Date.now();
+
   try {
     await foundUser.save();
   } catch (err) {
     return res.status(500).send({ error: err });
   }
   return res.status(200).send({
-    success: `Annotaion update has been deactivate successfully!`,
+    "user isAnnotationTurnOff": foundUser.isAnnotationTurnOff,
+    time: foundUser.isAnnotationTurnOff,
   });
 };
 
 export const toggleReply = async (req, res) => {
-  const userId = req.params.userId;
+  const userId = req.userId;
   let foundUser;
 
   try {
@@ -440,12 +357,49 @@ export const toggleReply = async (req, res) => {
   }
 
   foundUser.isReplyTurnOff = !foundUser.isReplyTurnOff;
+  foundUser.commentTurnOffAt = Date.now();
+
   try {
     await foundUser.save();
   } catch (err) {
     return res.status(500).send({ error: err });
   }
   return res.status(200).send({
-    success: `Annotaion update has been deactivate successfully!`,
+    "user isReplyTurnOff": foundUser.isReplyTurnOff,
+    time: foundUser.isReplyTurnOff,
+  });
+};
+
+export const deactivateUser = async (req, res) => {
+  const targetUserId = req.params.userId;
+  const userId = req.userId;
+
+  let foundUser;
+
+  try {
+    foundUser = await User.findById({
+      _id: ObjectId(userId),
+    });
+    if (!foundUser) {
+      return res.status(404).send({
+        error: `User with id ${userId} doesn't exist`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  if (foundUser.deactivatedUserLists.includes(targetUserId)) {
+  } else {
+    foundUser.deactivatedUserLists.push(targetUserId);
+    try {
+      await foundUser.save();
+    } catch (err) {
+      return res.status(500).send({ error: err });
+    }
+  }
+
+  return res.status(200).send({
+    deactivatedUserLists: foundUser.deactivatedUserLists,
   });
 };

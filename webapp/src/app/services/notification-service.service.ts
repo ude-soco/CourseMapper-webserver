@@ -1,126 +1,55 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, Subject, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import {
-  NotificationItem,
-  NotificationMessage,
-} from '../model/notification-item';
+import { Notification } from '../model/notification-item';
+import { HTTPOptions } from '../config/config';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NotificationServiceService {
-  public opened = new BehaviorSubject<boolean>(false);
-  opened$ = this.opened.asObservable();
-
-  // courseUpdateItems: NotificationItem[] = [];
-  // commentsMentionedItems: NotificationItem[] = [];
-  // annotationsItems: NotificationItem[] = [];
-
   public filteredType = new Subject<string>();
   filteredType$ = this.filteredType.asObservable();
 
   public isStarClicked = new BehaviorSubject<boolean>(false);
   isStarClicked$ = this.isStarClicked.asObservable();
 
-  public allNotificationItems = new BehaviorSubject<NotificationItem[]>([]);
+  public allNotificationItems = new BehaviorSubject<Notification[]>([]);
   allNotificationItems$ = this.allNotificationItems.asObservable();
 
-  public courseUpdateItems = new BehaviorSubject<NotificationItem[]>([]);
+  public courseUpdateItems = new BehaviorSubject<Notification[]>([]);
   courseUpdateItems$ = this.courseUpdateItems.asObservable();
 
-  public commentsMentionedItems = new BehaviorSubject<NotificationItem[]>([]);
+  public commentsMentionedItems = new BehaviorSubject<Notification[]>([]);
   commentsMentionedItems$ = this.commentsMentionedItems.asObservable();
 
-  public annotationsItems = new BehaviorSubject<NotificationItem[]>([]);
+  public annotationsItems = new BehaviorSubject<Notification[]>([]);
   annotationsItems$ = this.annotationsItems.asObservable();
 
-  allItems = [
-    {
-      id: '1',
-      userName: 'Baohui Deng',
-      shortName: 'BA',
-      isStar: true,
-      message: {
-        messageType: 'courseupdate',
-        action: 'has created',
-        courseName: 'AWT',
-        topicName: 'angular',
-        channelName: 'angular part 1',
-        message: 'extra',
-      } as NotificationMessage,
-      time: 'one week ago',
-      read: false,
-    },
-    {
-      id: '2',
-      userName: 'Tannaz vahidi',
-      shortName: 'TA',
-      isStar: false,
-      message: {
-        messageType: 'commentsandmentioned',
-        action: 'has mentioned',
-        courseName: 'AWT',
-        topicName: 'database',
-        channelName: 'mongodb part 1',
-        message: 'extra',
-      } as NotificationMessage,
-      time: 'one month ago',
-      read: false,
-    },
-    {
-      id: '3',
-      userName: 'Yuhong Su',
-      shortName: 'SU',
-      isStar: true,
-      message: {
-        messageType: 'courseupdate',
-        action: 'has uploaded',
-        courseName: 'AWT',
-        topicName: 'backend',
-        channelName: 'java part 2',
-        message: 'extra',
-      } as NotificationMessage,
-      time: 'one month ago',
-      read: false,
-    },
-    {
-      id: '4',
-      userName: 'Yulin Luo',
-      shortName: 'YL',
-      isStar: true,
-      message: {
-        messageType: 'annotations',
-        action: 'has annotated',
-        courseName: 'AWT',
-        topicName: 'database',
-        channelName: 'mongodb part 1',
-        message: 'extra',
-      } as NotificationMessage,
-      time: 'one month ago',
-      read: false,
-    },
-  ];
+  public showNumber = new Subject<number>();
+  showNumber$ = this.showNumber.asObservable();
 
-  constructor(private http: HttpClient) {
-    this.allNotificationItems.next(this.allItems);
-    this.getAnnotationsItems();
-    this.getCommentsAndMentionedItems();
-    this.getCourseUpdatesItems();
+  constructor(private http: HttpClient) {}
+
+  getAllNotifications() {
+    return this.http.get(environment.apiUrl + '/notifications');
   }
 
-  getAllNotification() {
-    console.log('', environment.apiUrl + '/notifications');
-    this.http.get(environment.apiUrl + '/notifications').subscribe((data) => {
-      console.log('data', data);
-    });
+  getNotificationLists() {
     return this.allNotificationItems.value;
+  }
+
+  updateNotificationLists(lists: Notification[]) {
+    this.allNotificationItems.next(lists);
+    this.getCourseUpdatesItems();
+    this.getCommentsAndMentionedItems();
+    this.getAnnotationsItems();
   }
 
   getCourseUpdatesItems() {
     const courseUpdates = this.allNotificationItems.value.filter(
-      (item) => item.message.messageType == 'courseupdate'
+      (item) => item.type == 'courseupdates'
     );
     this.courseUpdateItems.next(courseUpdates);
     // return this.courseUpdateItems;
@@ -128,7 +57,7 @@ export class NotificationServiceService {
 
   getCommentsAndMentionedItems() {
     const commentsUpdates = this.allNotificationItems.value.filter(
-      (item) => item.message.messageType == 'commentsandmentioned'
+      (item) => item.type == 'mentionedandreplied'
     );
     this.commentsMentionedItems.next(commentsUpdates);
     // return this.commentsMentionedItems;
@@ -136,9 +65,86 @@ export class NotificationServiceService {
 
   getAnnotationsItems() {
     const annotationUpdates = this.allNotificationItems.value.filter(
-      (item) => item.message.messageType == 'annotations'
+      (item) => item.type == 'annotations'
     );
     this.annotationsItems.next(annotationUpdates);
     // return this.annotationsItems;
+  }
+
+  removeItem(id: string) {
+    return this.http.delete(
+      environment.apiUrl + '/notifications/' + id,
+      HTTPOptions
+    );
+  }
+
+  markItemAsRead(id: string) {
+    return this.http.put(
+      environment.apiUrl + '/notifications/' + id,
+      HTTPOptions
+    );
+  }
+
+  markItemAsStar(id: string) {
+    return this.http.put(
+      environment.apiUrl + '/notifications/' + id + '/star',
+      HTTPOptions
+    );
+  }
+
+  markAllAsRead() {
+    return this.http.patch(
+      environment.apiUrl + '/notifications/readAll',
+      HTTPOptions
+    );
+  }
+
+  removeAll() {
+    return this.http.put(
+      environment.apiUrl + '/notifications/deleteAll',
+      HTTPOptions
+    );
+  }
+
+  removeByCourseUpdates() {
+    return this.http.put(
+      environment.apiUrl + '/notifications/courseupdates',
+      HTTPOptions
+    );
+  }
+
+  removeByReplies() {
+    return this.http.put(
+      environment.apiUrl + '/notifications/replies',
+      HTTPOptions
+    );
+  }
+
+  removeByAnnotations() {
+    return this.http.put(
+      environment.apiUrl + '/notifications/annotations',
+      HTTPOptions
+    );
+  }
+
+  toggleActiveCourse() {
+    return this.http.put(
+      environment.apiUrl + '/notifications/deactivate/course',
+      HTTPOptions
+    );
+  }
+
+  toggleAnnotation() {
+    return this.http.put(
+      environment.apiUrl + '/notifications/deactivate/annotation',
+      HTTPOptions
+    );
+  }
+
+  toggleReply() {
+    return this.http.put(
+      environment.apiUrl + '/notifications/deactivate/reply',
+      HTTPOptions
+    );
   }
 }
