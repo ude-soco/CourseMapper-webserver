@@ -12,7 +12,10 @@
           color="text-black"
           (click) = "onSelectTopic(topic)"
         ></app-iconbutton>
-        <p class="text-lg font-semibold">{{ topic.name }}</p>
+        <p id="{{topic._id}}" class="text-lg font-semibold" #{{topic._id}}>{{ topic.name }}</p>
+        <div hidden="true" id="{{topic._id}}-button">
+          <button (click)='selectedTopic= topic; onRenameConfirmedTopic(topic._id)' class="confirm-button">confirm</button>
+        </div>
       </div>
       <p-menu #menu id="config_menu" [model]="topicOptions" [popup]="true"></p-menu>
       <app-iconbutton
@@ -28,7 +31,10 @@
       [attr.data-index]="i"
     >
       <div  class="flex flex-row items-center justify-between">
-        <p (click)="onSelectChannel(channel)" class="cursor-pointer w-full">#{{ channel.name }}</p>
+        <p id="{{channel._id}}" (dblclick)="onDblClickRenameChannel(channel._id)" class="cursor-pointer w-full">#{{ channel.name }}</p>
+        <div hidden="true" id="{{channel._id}}-button">
+          <button (click)='selectedChannel = channel; onRenameConfirmedChannel(channel._id)' class="confirm-button">confirm</button>
+        </div>
         <app-iconbutton
           icon="bx-dots-vertical-rounded"
           color="text-black"

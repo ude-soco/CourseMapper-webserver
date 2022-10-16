@@ -27,7 +27,7 @@ module.exports = function (app) {
   // Only moderator/admin
   app.delete(
     "/courses/:courseId/topics/:topicId",
-    [authJwt.verifyToken, authJwt.isModerator],
+    // [authJwt.verifyToken, authJwt.isModerator],
     controller.deleteTopic
   );
 
@@ -35,7 +35,7 @@ module.exports = function (app) {
   // Only moderator/admin
   app.put(
     "/courses/:courseId/topics/:topicId",
-    [authJwt.verifyToken, authJwt.isModerator],
+    // [authJwt.verifyToken, authJwt.isModerator],
     controller.editTopic
   );
 };

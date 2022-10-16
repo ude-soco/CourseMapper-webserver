@@ -6,7 +6,7 @@ import { catchError, Observable, of, Subject, tap } from 'rxjs';
 import { Topic } from '../models/Topic';
 import { Channel } from '../models/Channel';
 import { Course } from '../models/Course';
-
+ 
 @Injectable({
   providedIn: 'root'
 })
@@ -33,7 +33,7 @@ export class TopicChannelService {
       this.onUpdateTopics$.next(this.topics);
     });
   }
-
+ 
   addTopic(topic: Topic, course: Course){   
     return this.http.post<any>(`${this.API_URL}/courses/${course._id}/topic`, topic)
     .pipe(
@@ -47,9 +47,39 @@ export class TopicChannelService {
       tap(res => {
         if ( !('errorMsg' in res) ){
           this.topics.push(res.savedTopic);
+          this.sendTopicToOldBackend(res.savedTopic,course._id)
           this.onUpdateTopics$.next(this.topics);
         }
     }));
+  }
+
+  deleteTopic(topicTD: Topic){
+    let index = this.topics.findIndex((topic) => {
+      return topic._id === topicTD._id
+    });
+    return this.http.delete(`${this.API_URL}/courses/${topicTD.courseId}/topics/${topicTD._id}`,)
+    .pipe(
+      catchError(( err, sourceObservable) => {
+        return of({errorMsg: err.error.error });
+      }),
+      tap(res =>{
+        if(!('errorMsg' in res)){
+          if (index !== -1) {
+            this.topics.splice(index, 1);
+            this.onUpdateTopics$.next(this.topics);
+          }
+        }
+      })
+    )
+  }
+  
+  renameTopic(topicTD: Topic, newName:any){
+    return this.http.put<any>(`${this.API_URL}/courses/${topicTD.courseId}/topics/${topicTD._id}`,newName)
+    .pipe(
+      catchError(( err, sourceObservable) => {
+        return of({errorMsg: err.error.error });
+      }),
+    )
   }
 
   selectTopic(topic: Topic){
@@ -75,12 +105,57 @@ export class TopicChannelService {
               topic.channels.push(res.savedChannel);
             }
           })
+          this.sendChannelToOldBackend(res.savedChannel)
           this.onUpdateTopics$.next(this.topics);
         }
     }));
   }
 
+  deleteChannel(channelTD: Channel){
+    let index=this.topics.map((topic)=>
+      topic.channels.findIndex((channel)=>{
+        return channel._id === channelTD._id
+      })
+    )
+    return this.http.delete(`${this.API_URL}/courses/${channelTD.courseId}/channels/${channelTD._id}`,)
+    .pipe(
+      catchError(( err, sourceObservable) => {
+        return of({errorMsg: err.error.error });
+      }),
+    )
+  }
+  
+  renameChannel(channelTD: Channel, chId:string, newName: any){
+    return this.http.put<any>(`${this.API_URL}/courses/${channelTD.courseId}/channels/${chId}`,newName)
+    .pipe(
+      catchError(( err, sourceObservable) => {
+        return of({errorMsg: err.error.error });
+      }),
+    )
+  }
+
   getSelectedTopic(): Topic{
     return this.selectedTopic;
   }
+
+  sendTopicToOldBackend(topic, courseId){
+    // userId should be taken from the coockies. for the time being it is hard coded
+    this.http.post<any>('http://localhost:8090/new/topic', 
+    {_id: topic._id, topic: topic.name, courseID:courseId, userID: '633d5bc0f15907e2f211b1ea',})
+    .subscribe(
+      
+    );
+  }
+
+  sendChannelToOldBackend(channel){
+    // userId should be taken from the coockies. for the time being it is hard coded
+    this.http.post<any>('http://localhost:8090/new/channel', 
+    {_id: channel._id, courseID: channel.courseId, topicID: channel.topicId, 
+      name: channel.name, description:channel.description, 
+      userID: '633d5bc0f15907e2f211b1ea',})
+    .subscribe(
+      
+    );
+  }
+
 }

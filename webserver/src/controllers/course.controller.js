@@ -10,7 +10,7 @@ const Material = db.material;
 const Reply = db.reply;
 const Tag = db.tag;
 // TODO to be deleted once the authentication is merged with this channelbar branch
-const userId = "63387f529dd66f86548d3537"// '62f9fe647f0a9f66c4dea225';  //  
+const userId = "633d78ea2952b1cd27c522dd"// '62f9fe647f0a9f66c4dea225';  //  
 /**
  * @function getAllCourses
  * Get all courses controller
@@ -429,7 +429,9 @@ export const deleteCourse = async (req, res) => {
 
   let foundUser;
   try {
-    foundUser = await User.findOne({ _id: req.userId });
+    //TODO uncomment following line & remove static assigned userID
+    // foundUser = await User.findOne({ _id: req.userId });
+    foundUser = await User.findOne({ _id: userId });
   } catch (err) {
     return res.status(500).send({ error: err });
   }

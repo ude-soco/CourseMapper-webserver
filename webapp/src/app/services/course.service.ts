@@ -73,9 +73,20 @@ export class CourseService {
     }
   }
 
+  renameCourse(courseTD: Course, newName: any){
+    return this.http.put<any>(`${this.API_URL}/courses/${courseTD._id}`,newName)
+    .pipe(
+      catchError(( err, sourceObservable) => {
+        return of({errorMsg: err.error.error });
+      })
+    )
+  }
+
   sendToOldBackend(course){
     // userId should be taken from the coockies. for the time being it is hard coded
-    this.http.post<any>('http://localhost:8090/new/course', {_id: course._id, course: course.name, description: course.description, shortName: course.shortName, userID: '6297e50d0d7376e32d667717'})
+    this.http.post<any>('http://localhost:8090/new/course', 
+    {_id: course._id, course: course.name, description: course.description, 
+      shortName: course.shortName, userID: '633d5bc0f15907e2f211b1ea',})
     .subscribe(res => {
       console.log(res);
     });

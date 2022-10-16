@@ -4,14 +4,13 @@ import { Channel } from 'src/app/models/Channel';
 import { Topic } from 'src/app/models/Topic';
 import { CourseService } from 'src/app/services/course.service';
 import { TopicChannelService } from 'src/app/services/topic-channel.service';
-
 @Component({
   selector: 'app-topic-dropdown',
   templateUrl: './topic-dropdown.component.html',
   styleUrls: ['./topic-dropdown.component.css'],
 })
 export class TopicDropdownComponent implements OnInit {
-  constructor(private courseService: CourseService, private topicChannelService: TopicChannelService) {}
+  constructor(private courseService: CourseService, private topicChannelService: TopicChannelService,) {}
   topics: Topic[]= [];
   displayAddChannelDialogue: boolean = false;
   selectedTopic = null;
@@ -64,16 +63,70 @@ export class TopicDropdownComponent implements OnInit {
   }
   
   onDeleteTopic(){
-    alert(`${this.selectedTopic._id} onDeleteTopic`);
-  }
+    this.topicChannelService.deleteTopic(this.selectedTopic).subscribe();
+  } 
   onRenameTopic(){
-    alert(`${this.selectedTopic._id} onRenameTopic`);
+    let selectedTopic = (<HTMLInputElement>document.getElementById(`${this.selectedTopic._id}`))
+    selectedTopic.contentEditable='true'
+    this.selectElementContents(selectedTopic)
+    
+    let topicButton =(<HTMLInputElement>document.getElementById(`${this.selectedTopic._id}-button`))
+    topicButton.hidden=false
   }
+  onRenameConfirmedTopic(event){ 
+    let selectedTopic = (<HTMLInputElement>document.getElementById(event))
+    selectedTopic.contentEditable='false'
+    
+    let newTopicName= selectedTopic.innerText
+    const body= {
+      name:newTopicName
+    }
+
+    let topicButton =(<HTMLInputElement>document.getElementById(event+'-button'))
+    topicButton.hidden=true
+
+    this.topicChannelService.renameTopic(this.selectedTopic,body).subscribe()
+  }
+
   onDeleteChannel(){
-    alert(`${this.selectedChannel._id} onDeleteChannel`);
+    this.topicChannelService.deleteChannel(this.selectedChannel)
+    .subscribe(
+      ()=> this.ngOnInit()  
+    );
   }
   onRenameChannel(){
-    alert(`${this.selectedChannel._id} onRenameChannel`);
+    let selectedChnl = (<HTMLInputElement>document.getElementById(`${this.selectedChannel._id}`))
+    selectedChnl.contentEditable='true'
+    this.selectElementContents(selectedChnl)
+    
+    let channelButton =(<HTMLInputElement>document.getElementById(`${this.selectedChannel._id}-button`))
+    channelButton.hidden=false
+  }
+  onDblClickRenameChannel(event){
+    let selectedChnl = (<HTMLInputElement>document.getElementById(event))
+    selectedChnl.contentEditable='true'
+    this.selectElementContents(selectedChnl)
+    
+    let channelButton =(<HTMLInputElement>document.getElementById(`${event}-button`))
+    channelButton.hidden=false
+  }
+  onRenameConfirmedChannel(event){
+    const channelId=event
+    let selectedChnl = (<HTMLInputElement>document.getElementById(channelId))
+    selectedChnl.contentEditable='true'
+    let newChannelName= selectedChnl.innerText
+    if (newChannelName.charAt(0)==='#')
+      {
+        newChannelName=newChannelName.substring(1) // to remove the additional hash
+      } 
+    const body= {
+      name:newChannelName
+    }
+    let channelButton =(<HTMLInputElement>document.getElementById(event+'-button'))
+    channelButton.hidden=true
+    this.topicChannelService.renameChannel(this.selectedChannel, channelId, body)
+    .subscribe(
+    );
   }
 
   onAddNewChannelClicked(topic:Topic){
@@ -84,4 +137,12 @@ export class TopicDropdownComponent implements OnInit {
   toggleAddNewChannelClicked(visibility){
     this.displayAddChannelDialogue = visibility;
   }
+  
+  selectElementContents(el) {// select text on rename
+    var range = document.createRange();
+    range.selectNodeContents(el);
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+}
 }

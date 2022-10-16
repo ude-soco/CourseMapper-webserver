@@ -43,6 +43,7 @@ export class SidebarComponent implements OnInit {
   
   onSelectCourse(selectedCourse: Course){
     if (this.courseService.getSelectedCourse()._id.toString() !== selectedCourse._id.toString()) {
+      this.ngOnInit()
       let course = this.courses.find((course: Course) => course === selectedCourse)!;
       this.selectedCourse = course;
       this.courseService.selectCourse(course);

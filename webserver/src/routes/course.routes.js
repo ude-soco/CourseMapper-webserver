@@ -48,7 +48,7 @@ module.exports = function (app) {
   // Only moderator/admin
   app.delete(
     "/courses/:courseId",
-    [authJwt.verifyToken, authJwt.isModerator],
+    // [authJwt.verifyToken, authJwt.isModerator],
     controller.deleteCourse
     // controller2.moderatorBoard
   );
@@ -57,7 +57,7 @@ module.exports = function (app) {
   // Only moderator/admin
   app.put(
     "/courses/:courseId",
-    [authJwt.verifyToken, authJwt.isModerator],
+    // [authJwt.verifyToken, authJwt.isModerator],
     controller.editCourse
   );
 };

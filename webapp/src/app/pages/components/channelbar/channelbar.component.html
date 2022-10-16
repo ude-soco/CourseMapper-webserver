@@ -1,9 +1,11 @@
 <div class="relative w-72 h-screen bg-gray-100 shadow-lg"  *ngIf="selectedCourse._id">
   <div class="h-max w-72 m-0 flex flex-col bg-gray-100">
     <div class="flex items-start justify-between py-4 pl-3 bg-gray-200">
-      <p class="flex w-56 text-xl font-semibold">
-        {{selectedCourse.name}}
+      <p id="{{selectedCourse._id}}" (dblclick)="onRenameCourse()" class="flex w-56 text-xl font-semibold" #selectedCourse._id>{{selectedCourse.name}}
       </p>
+      <div hidden="true" id="{{selectedCourse._id}}-button">
+        <button (click)='onRenameCourseConfirm(selectedCourse._id)' class="confirm-button">confirm</button>
+      </div>
       <p-menu #menu id="config_menu" [model]="options" [popup]="true"></p-menu>
       <app-iconbutton
         icon="bx-dots-vertical-rounded"
