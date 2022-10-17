@@ -112,17 +112,37 @@ export class TopicChannelService {
   }
 
   deleteChannel(channelTD: Channel){
-    let index=this.topics.map((topic)=>
-      topic.channels.findIndex((channel)=>{
-        return channel._id === channelTD._id
-      })
-    )
-    return this.http.delete(`${this.API_URL}/courses/${channelTD.courseId}/channels/${channelTD._id}`,)
+    return this.http.delete(`${this.API_URL}/courses/${channelTD.courseId}/channels/${channelTD._id}`)
     .pipe(
-      catchError(( err, sourceObservable) => {
-        return of({errorMsg: err.error.error });
+      catchError(( errResponse, sourceObservable) => {
+        if (errResponse.status ===  404) {
+          return of({errorMsg: errResponse.error.error });
+         }else {        
+          return of({errorMsg: "Error in connection: Please reload the application" })
+         }
       }),
-    )
+      tap( res => {
+        if ( !('errorMsg' in res) ){
+          this.removeChannlFromTopic(channelTD);
+        }
+      }));
+  }
+
+  removeChannlFromTopic(channelTD){
+    let cIndex = null;
+    let tIndex = null;
+    this.topics.map((topic, i) => {
+      if (topic._id === channelTD.topicId){
+        tIndex = i;
+        cIndex = topic.channels.findIndex(channel => {
+          return channel._id === channelTD._id;
+        });
+      }
+    });
+    if (cIndex !== -1 && cIndex !== null && tIndex !== null) {
+      this.topics[tIndex].channels.splice(cIndex, 1);
+      this.onUpdateTopics$.next(this.topics);
+    }
   }
   
   renameChannel(channelTD: Channel, chId:string, newName: any){
@@ -131,6 +151,7 @@ export class TopicChannelService {
       catchError(( err, sourceObservable) => {
         return of({errorMsg: err.error.error });
       }),
+      
     )
   }
 

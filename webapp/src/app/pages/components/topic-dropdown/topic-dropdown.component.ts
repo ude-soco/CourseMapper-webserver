@@ -4,13 +4,19 @@ import { Channel } from 'src/app/models/Channel';
 import { Topic } from 'src/app/models/Topic';
 import { CourseService } from 'src/app/services/course.service';
 import { TopicChannelService } from 'src/app/services/topic-channel.service';
+import { MessageService } from 'primeng/api';
+
 @Component({
   selector: 'app-topic-dropdown',
   templateUrl: './topic-dropdown.component.html',
   styleUrls: ['./topic-dropdown.component.css'],
+  providers: [MessageService]
 })
 export class TopicDropdownComponent implements OnInit {
-  constructor(private courseService: CourseService, private topicChannelService: TopicChannelService,) {}
+  constructor(private courseService: CourseService, 
+    private topicChannelService: TopicChannelService, 
+    private messageService: MessageService) {}
+
   topics: Topic[]= [];
   displayAddChannelDialogue: boolean = false;
   selectedTopic = null;
@@ -89,10 +95,13 @@ export class TopicDropdownComponent implements OnInit {
   }
 
   onDeleteChannel(){
-    this.topicChannelService.deleteChannel(this.selectedChannel)
-    .subscribe(
-      ()=> this.ngOnInit()  
-    );
+    this.topicChannelService.deleteChannel(this.selectedChannel).subscribe( res => {            
+      if ('success' in res){
+        this.showInfo(res['success']);
+      }else {
+        this.showError(res['errorMsg']);
+      }
+    });
   }
   onRenameChannel(){
     let selectedChnl = (<HTMLInputElement>document.getElementById(`${this.selectedChannel._id}`))
@@ -144,5 +153,13 @@ export class TopicDropdownComponent implements OnInit {
     var sel = window.getSelection();
     sel.removeAllRanges();
     sel.addRange(range);
-}
+  }
+
+  showInfo(msg) {
+    this.messageService.add({severity:'info', summary: 'Success', detail: msg});
+  }
+
+  showError(msg) {
+    this.messageService.add({severity:'error', summary: 'Error', detail: msg});
+  }
 }
