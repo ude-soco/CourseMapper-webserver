@@ -67,9 +67,20 @@ export class TopicDropdownComponent implements OnInit {
   onSelectChannel(channel: Channel){
     alert(`onChannelSelect ${channel._id}`);
   }
-  
+ 
+  /**
+   * @function onDeleteTopic
+   * Captures topic deletion from ui
+   * 
+   */
   onDeleteTopic(){
-    this.topicChannelService.deleteTopic(this.selectedTopic).subscribe();
+    this.topicChannelService.deleteTopic(this.selectedTopic).subscribe(res => {            
+      if ('success' in res){
+        this.showInfo(res['success']);
+      }else {
+        this.showError(res['errorMsg']);
+      }
+    });
   } 
   onRenameTopic(){
     let selectedTopic = (<HTMLInputElement>document.getElementById(`${this.selectedTopic._id}`))
@@ -94,6 +105,11 @@ export class TopicDropdownComponent implements OnInit {
     this.topicChannelService.renameTopic(this.selectedTopic,body).subscribe()
   }
 
+  /**
+   * @function onDeleteChannel
+   * Captures channel deletion from ui
+   * 
+   */
   onDeleteChannel(){
     this.topicChannelService.deleteChannel(this.selectedChannel).subscribe( res => {            
       if ('success' in res){
@@ -138,11 +154,21 @@ export class TopicDropdownComponent implements OnInit {
     );
   }
 
+  /**
+   * @function onAddNewChannelClicked
+   * Captures the action when user clicks on add new channel
+   * 
+   */
   onAddNewChannelClicked(topic:Topic){
     this.topicChannelService.selectTopic(topic);
     this.toggleAddNewChannelClicked(true);
   }
 
+  /**
+   * @function toggleAddNewChannelClicked
+   * toggle the popup of adding new channel
+   * 
+   */
   toggleAddNewChannelClicked(visibility){
     this.displayAddChannelDialogue = visibility;
   }
@@ -155,10 +181,19 @@ export class TopicDropdownComponent implements OnInit {
     sel.addRange(range);
   }
 
+  /**
+   * @function showInfo
+   * shows the user if his action succeeded
+   * 
+   */
   showInfo(msg) {
     this.messageService.add({severity:'info', summary: 'Success', detail: msg});
   }
-
+  /**
+   * @function showError
+   * shows the user if his action failed
+   * 
+   */
   showError(msg) {
     this.messageService.add({severity:'error', summary: 'Error', detail: msg});
   }

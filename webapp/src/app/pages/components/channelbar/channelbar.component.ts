@@ -39,17 +39,38 @@ export class ChannelbarComponent implements OnInit {
     });    
   }
 
+  /**
+   * @function onDeleteCourse
+   * Captures the action when user deletes a course
+   * 
+   */
   onDeleteCourse() {
     this.courseService.deleteCourse(this.selectedCourse);
   }
+
+  /**
+   * @function onRenameCourse
+   * Captures the action when user renames a course
+   * 
+   */
   onRenameCourse() {
     alert('Rename Course');
   }
 
+  /**
+   * @function onAddTopicDialogueClicked
+   * Captures the action when user clicks on add new topic
+   * 
+   */
   onAddTopicDialogueClicked(){    
     this.toggleAddTopicDialogueClicked(true);
   }
   
+  /**
+   * @function toggleAddTopicDialogueClicked
+   * toggle the popup of adding new topic
+   * 
+   */
   toggleAddTopicDialogueClicked(visibilty){    
     this.displayAddTopicDialogue = visibilty;
   }

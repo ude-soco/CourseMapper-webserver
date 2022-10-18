@@ -26,7 +26,13 @@ export class CourseService {
     return this.selectedCourse;
   }
 
-  
+  /**
+   * @function selectCourse 
+   * set selected course
+   *
+   * @param {Course} course the course to be selected
+   * 
+   */
   selectCourse(course: Course){
     // if there is no selected course then no need to update the topics.
     if (this.getSelectedCourse()._id && course._id){      
@@ -36,13 +42,26 @@ export class CourseService {
     this.onSelectCourse.emit(course);
   }
 
-  /** GET courses from the server */
+  /**
+   * @function fetchCourses 
+   * GET user's courses from the server 
+   *
+   * 
+   */
   fetchCourses():  Observable<Course[]> {
     return this.http.get<Course[]>(`${this.API_URL}/my-courses`).pipe(tap(courses => {
       this.courses = courses;
     }));
   }
 
+  /**
+   * @function addCourse 
+   * Add new course in the backend and if the communication was 
+   * successfull it adds the course in the frontend
+   *
+   * @param {Course} course the course to be added
+   * 
+   */
   addCourse(course: Course) : any {
     return this.http.post<any>(`${this.API_URL}/course`, {name: course.name, description: course.description, shortname: course.shortName})
     .pipe(
@@ -62,7 +81,26 @@ export class CourseService {
     }));
   }
 
+
+  /**
+   * @function deleteCourse
+   * Delete a course in the backend
+   *
+   * @param {Course} courseTD the course to be deleted
+   * 
+   */
   deleteCourse(courseTD: Course){
+    
+  }
+
+  /**
+   * @function removeCourse
+   * Delete a course from the frontend data model
+   *
+   * @param {Course} courseTD the course to be deleted
+   * 
+   */
+  removeCourse(courseTD: Course){
     let index = this.courses.findIndex((course) => {
       return course._id === courseTD._id
     });

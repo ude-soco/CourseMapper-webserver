@@ -19,14 +19,27 @@ export class TopicChannelService {
 
 
   constructor(private http: HttpClient) {   }
-
-  /** GET Topics of a course from the server */
+  
+  /**
+   * @function fetchTopics 
+   * GET Topics of a course from the server
+   *
+   * @param {string} courseId the id of a course, the topics belongs to
+   * 
+   */
   fetchTopics(courseId: string):  Observable<Topic[]> {
     return this.http.get<Topic[]>(`${this.API_URL}/courses/${courseId}`).pipe(tap( topics => {
       this.topics = topics;     
     }));
   }
 
+  /**
+   * @function updateTopics 
+   * Updates the topics data model in the frontend
+   *
+   * @param {string} courseId the id of a course, the topics belongs to
+   * 
+   */
   updateTopics(courseId: string){
     this.fetchTopics(courseId).subscribe(topics => {
       this.topics = topics;
@@ -34,6 +47,15 @@ export class TopicChannelService {
     });
   }
  
+  /**
+   * @function addTopic 
+   * Add new topic to a course in the backend and if the communication was 
+   * successfull it adds the the topic to the data model in the frontend
+   *
+   * @param {Topic} topic the topic to be added
+   * @param {Course} course the course, the topic will be added to
+   * 
+   */
   addTopic(topic: Topic, course: Course){   
     return this.http.post<any>(`${this.API_URL}/courses/${course._id}/topic`, topic)
     .pipe(
@@ -53,24 +75,46 @@ export class TopicChannelService {
     }));
   }
 
+  /**
+   * @function deleteTopic
+   * Delete a topic in the backend
+   *
+   * @param {Topic} topicTD the topic to be deleted
+   * 
+   */
   deleteTopic(topicTD: Topic){
-    let index = this.topics.findIndex((topic) => {
-      return topic._id === topicTD._id
-    });
     return this.http.delete(`${this.API_URL}/courses/${topicTD.courseId}/topics/${topicTD._id}`,)
     .pipe(
-      catchError(( err, sourceObservable) => {
-        return of({errorMsg: err.error.error });
+      catchError(( errResponse, sourceObservable) => {
+        if (errResponse.status ===  404) {
+          return of({errorMsg: errResponse.error.error });
+         }else {        
+          return of({errorMsg: "Error in connection: Please reload the application" })
+         }
       }),
       tap(res =>{
         if(!('errorMsg' in res)){
-          if (index !== -1) {
-            this.topics.splice(index, 1);
-            this.onUpdateTopics$.next(this.topics);
-          }
+          this.removeTopic(topicTD);
         }
       })
     )
+  }
+
+  /**
+   * @function removeTopic
+   * Delete a topic from the frontend data model
+   *
+   * @param {Topic} topicTD the channel to be deleted
+   * 
+   */
+  removeTopic(topicTD: Topic){
+    let index = this.topics.findIndex((topic) => {
+      return topic._id === topicTD._id
+    });
+    if (index !== -1) {
+      this.topics.splice(index, 1);
+      this.onUpdateTopics$.next(this.topics);
+    }
   }
   
   renameTopic(topicTD: Topic, newName:any){
@@ -82,13 +126,27 @@ export class TopicChannelService {
     )
   }
 
+  /**
+   * @function selectTopic 
+   * set selected topic
+   *
+   * @param {Topic} topic the topic to be selected
+   * 
+   */
   selectTopic(topic: Topic){
     this.selectedTopic = topic;
   }
-  addChannel(channel: Channel, topic: Topic){    
-    // TODO send user inputs to backend and update the data in the service 
-    
 
+  /**
+   * @function addChannel 
+   * Add new Channel to a topic in the backend and if the communication was 
+   * successfull it adds the the channel to the same topic in the frontend
+   *
+   * @param {Channel} channel the channel to be added
+   * @param {Topic} topic the topic, the channel will be added to
+   * 
+   */
+  addChannel(channel: Channel, topic: Topic){        
     return this.http.post<any>(`${this.API_URL}/courses/${topic.courseId}/topics/${topic._id}/channel`, channel)
     .pipe(
       catchError(( errResponse, sourceObservable) => {
@@ -111,6 +169,13 @@ export class TopicChannelService {
     }));
   }
 
+  /**
+   * @function deleteChannel
+   * Delete a channel in the backend
+   *
+   * @param {Channel} channelTD the channel to be deleted
+   * 
+   */
   deleteChannel(channelTD: Channel){
     return this.http.delete(`${this.API_URL}/courses/${channelTD.courseId}/channels/${channelTD._id}`)
     .pipe(
@@ -128,6 +193,14 @@ export class TopicChannelService {
       }));
   }
 
+
+  /**
+   * @function removeChannlFromTopic
+   * Delete a channel from the frontend data model
+   *
+   * @param {Channel} channelTD the channel to be deleted
+   * 
+   */
   removeChannlFromTopic(channelTD){
     let cIndex = null;
     let tIndex = null;
