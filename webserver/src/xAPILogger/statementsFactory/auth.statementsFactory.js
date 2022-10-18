@@ -15,9 +15,9 @@ export const getLoginStatement = (user) => {
             }
         },
         "verb": {
-            "id": "http://www.CourseMapper.v2.de/verb/sinedin",
+            "id": "https://brindlewaye.com/xAPITerms/verbs/loggedin/",
             "display": {
-                "en-US": "signed in"
+                "en-US": "logged in"
             }
         },
         "object": {
@@ -51,9 +51,9 @@ export const getLogoutStatement = (user) => {
             }
         },
         "verb": {
-            "id": "http://www.CourseMapper.v2.de/verb/signedout",
+            "id": "https://brindlewaye.com/xAPITerms/verbs/loggedout/",
             "display": {
-                "en-US": "signed out"
+                "en-US": "logged out"
             }
         },
         "object": {
@@ -87,9 +87,9 @@ export const getSignupStatement = (user) => {
             }
         },
         "verb": {
-            "id": "http://www.CourseMapper.v2.de/verb/signedup",
+            "id": "http://adlnet.gov/expapi/verbs/registered",
             "display": {
-                "en-US": "signed up"
+                "en-US": "registered"
             }
         },
         "object": {
