@@ -13,7 +13,7 @@ export const getCourseCreationStatement = (user, course) => {
             }
         },
         "verb": {
-            "id": "http://www.CourseMapper.v2.de/verb/created",
+            "id": "http://activitystrea.ms/schema/1.0/create",
             "display": {
                 "en-US": "created"
             }
@@ -60,7 +60,7 @@ export const getCourseDeletionStatement = (user, course) => {
             }
         },
         "verb": {
-            "id": "http://www.CourseMapper.v2.de/verb/deleted",
+            "id": "http://activitystrea.ms/schema/1.0/delete",
             "display": {
                 "en-US": "deleted"
             }
@@ -107,7 +107,7 @@ export const getCourseAccessStatement = (user, course) => {
             }
         },
         "verb": {
-            "id": "http://www.CourseMapper.v2.de/verb/accessed",
+            "id": "http://activitystrea.ms/schema/1.0/access",
             "display": {
                 "en-US": "accessed"
             }
@@ -154,9 +154,9 @@ export const getCourseEnrollmentStatement = (user, course) => {
             }
         },
         "verb": {
-            "id": "http://www.CourseMapper.v2.de/verb/enrolled",
+            "id": "http://www.tincanapi.co.uk/verbs/enrolled_onto_learning_plan",
             "display": {
-                "en-US": "enrolled in"
+                "en-US": "enrolled"
             }
         },
         "object": {
@@ -201,9 +201,9 @@ export const getCourseWithdrawStatement = (user, course) => {
             }
         },
         "verb": {
-            "id": "http://www.CourseMapper.v2.de/verb/withdrew",
+            "id": "http://activitystrea.ms/schema/1.0/leave",
             "display": {
-                "en-US": "withdrew from"
+                "en-US": "left"
             }
         },
         "object": {
@@ -248,7 +248,7 @@ export const getCourseEditStatement = (user, newCourse, oldCourse) => {
             }
         },
         "verb": {
-            "id": "http://www.CourseMapper.v2.de/verb/edited",
+            "id": "http://curatr3.com/define/verb/edited",
             "display": {
                 "en-US": "edited"
             }
