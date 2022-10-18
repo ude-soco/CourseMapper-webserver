@@ -14,7 +14,7 @@ export const getChannelCreationStatement = (user, channel) => {
             }
         },
         "verb": {
-            "id": "http://www.CourseMapper.v2.de/verb/created",
+            "id": "http://activitystrea.ms/schema/1.0/create",
             "display": {
                 "en-US": "created"
             }
@@ -62,7 +62,7 @@ export const getChannelDeletionStatement = (user, channel) => {
             }
         },
         "verb": {
-            "id": "http://www.CourseMapper.v2.de/verb/deleted",
+            "id": "http://activitystrea.ms/schema/1.0/delete",
             "display": {
                 "en-US": "deleted"
             }
@@ -110,7 +110,7 @@ export const getChannelAccessStatement = (user, channel) => {
             }
         },
         "verb": {
-            "id": "http://www.CourseMapper.v2.de/verb/accessed",
+            "id": "http://activitystrea.ms/schema/1.0/access",
             "display": {
                 "en-US": "accessed"
             }
@@ -158,7 +158,7 @@ export const getChannelEditStatement = (user, newChannel, oldtChannel) => {
             }
         },
         "verb": {
-            "id": "http://www.CourseMapper.v2.de/verb/edited",
+            "id": "http://curatr3.com/define/verb/edited",
             "display": {
                 "en-US": "edited"
             }
