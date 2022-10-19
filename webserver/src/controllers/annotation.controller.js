@@ -129,9 +129,22 @@ export const newAnnotation = async (req, res, next) => {
  * @param {string} req.params.annotationId The id of the annotation
  * @param {string} req.userId The id of the user. Only author of the annotation can delete
  */
-export const deleteAnnotation = async (req, res) => {
+export const deleteAnnotation = async (req, res, next) => {
   const courseId = req.params.courseId;
   const annotationId = req.params.annotationId;
+  const userId = req.userId;
+
+  let user
+  try {
+    user = await User.findOne({_id: userId});
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
 
   let foundAnnotation;
   try {
@@ -200,7 +213,13 @@ export const deleteAnnotation = async (req, res) => {
     return res.status(500).send({ error: err });
   }
 
-  return res.status(200).send({ success: "Annotation successfully deleted" });
+  req.locals = {
+    response: { success: "Annotation successfully deleted" },
+    annotation: foundAnnotation,
+    user: user
+  }
+  
+  return next();
 };
 
 /**

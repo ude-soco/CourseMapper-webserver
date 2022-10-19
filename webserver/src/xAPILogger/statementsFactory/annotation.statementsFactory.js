@@ -27,6 +27,9 @@ export const getAnnotationCreationStatement = (user, annotation, material) => {
                 "name": {
                     "en-US": material.name
                 },
+                "description": {
+                    "en-US": material.description
+                },
                 "extensions": {
                     "http://www.CourseMapper.v2.de/extensions/material": {
                         "id": material._id,
@@ -60,9 +63,56 @@ export const getAnnotationCreationStatement = (user, annotation, material) => {
     }
 }
 
-export const getChannelDeletionStatement = (user, annotation) => {
+export const getAnnotaionDeletionStatement = (user, annotation) => {
     const fullname = `${user.firstname} ${user.lastname}`;
-    return 
+    return {
+        "id": uuidv4(),
+        "timestamp": new Date(),
+        "actor": {
+            "objectType": "Agent",
+            "name": fullname,
+            "account": {
+                "homePage": "http://www.CourseMapper.v2.de",
+                "name": user.username
+            }
+        },
+        "verb": {
+            "id": "http://activitystrea.ms/schema/1.0/delete",
+            "display": {
+                "en-US": "deleted"
+            }
+        },
+        "object": {
+            "objectType": "Activity",
+            "id": `http://www.CourseMapper.v2.de/activity/course/${annotation.courseId}/topic/${annotation.topicId}/channel/${annotation.channelId}/material/${annotation.materialId}/annotation/${annotation._id}`,
+            "definition": {
+                "type": "http://www.CourseMapper.v2.de/activityType/annotation",
+                "name": {
+                    "en-US": annotation.content.slice(0, 70) + ' ...'
+                },
+                "description": {
+                    "en-US": annotation.content
+                },
+                "extensions":{
+                    "http://www.CourseMapper.v2.de/extensions/annotation":{
+                        "id": annotation._id,
+                        "material_id": annotation.materialId,
+                        "channel_id": annotation.channelId,
+                        "topic_id": annotation.topicId,
+                        "course_id": annotation.courseId,
+                        "content": annotation.content,
+                        "type": annotation.type,
+                        "tool": annotation.tool,
+                        "location": annotation.location
+                    } 
+                }
+            }
+        },
+        "context":{
+            "platform": "CourseMapper",
+            "language": "en-US"
+        }
+    }
 }
 
 export const getMaterialLikeStatement = (user, channel) => {

@@ -22,7 +22,8 @@ module.exports = function (app) {
   app.delete(
     "/courses/:courseId/annotations/:annotationId",
     [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.deleteAnnotation
+    controller.deleteAnnotation,
+    logger.deleteAnnotation
   );
 
   // Edit an annotation
