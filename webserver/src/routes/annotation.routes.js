@@ -1,5 +1,6 @@
 const { authJwt } = require("../middlewares");
 const controller = require("../controllers/annotation.controller");
+const logger = require('../xAPILogger/logger/annotation.logger')
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -12,7 +13,8 @@ module.exports = function (app) {
   app.post(
     "/courses/:courseId/materials/:materialId/annotation",
     [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.newAnnotation
+    controller.newAnnotation,
+    logger.newAnnotation
   );
 
   // Delete an annotation

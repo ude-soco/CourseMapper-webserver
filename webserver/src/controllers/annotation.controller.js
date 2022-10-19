@@ -19,7 +19,7 @@ const User = db.user;
  * @param {string} req.body.tool The annotation tool used
  * @param {string} req.userId The author of the annotation. Anyone can create an annotation
  */
-export const newAnnotation = async (req, res) => {
+export const newAnnotation = async (req, res, next) => {
   const courseId = req.params.courseId;
   const materialId = req.params.materialId;
   const annotationContent = req.body.content;
@@ -110,9 +110,15 @@ export const newAnnotation = async (req, res) => {
       return res.status(500).send({ error: err });
     }
   }
-  return res
-    .status(200)
-    .send({ id: newAnnotation._id, success: "Annotation added!" });
+
+  req.locals = {
+    response: { id: newAnnotation._id, success: "Annotation added!" },
+    material: foundMaterial,
+    user: foundUser,
+    annotation: newAnnotation
+  }
+  
+  return next()
 };
 
 /**
