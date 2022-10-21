@@ -12,12 +12,32 @@ import { NotificationServiceService } from 'src/app/services/notification-servic
 })
 export class NotificationSettingComponent implements OnInit {
   notificationItems: Notification[] = [];
-
+  contextMenuOpened!: boolean;
   constructor(private notificationService: NotificationServiceService) {
+    this.contextMenuOpened = false;
     this.notificationService.allNotificationItems$.subscribe((items) => {
       this.notificationItems = items;
+    });
+    this.notificationService.clickedMarkAllAsRead$.subscribe(() => {
+      this.notificationItems.forEach((item) => {
+        item.read = true;
+      });
     });
   }
 
   ngOnInit(): void {}
+  openContextMenu(event: any, op: any) {
+    if (!this.contextMenuOpened) {
+      op.show(event);
+      this.contextMenuOpened = true;
+    } else {
+      op.hide(event);
+      this.contextMenuOpened = false;
+    }
+  }
+
+  closeMenu(op: any) {
+    console.log('top menu');
+    op.hide();
+  }
 }

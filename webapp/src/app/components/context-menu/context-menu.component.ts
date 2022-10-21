@@ -1,10 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuItem } from 'primeng/api';
-import {
-  NotificationItem,
-  Notification,
-} from 'src/app/model/notification-item';
+import { Notification } from 'src/app/model/notification-item';
 import { NotificationServiceService } from 'src/app/services/notification-service.service';
 
 @Component({
@@ -19,6 +16,7 @@ export class ContextMenuComponent implements OnInit {
   @Input() topLevel!: boolean;
   @Input() isSettingPanel!: boolean;
   @Input() activeUserId!: string;
+  @Input() isSetting!: boolean;
   // to close the menu
   @Output() onClick = new EventEmitter();
   @Output() onMarkRead = new EventEmitter();
@@ -27,7 +25,6 @@ export class ContextMenuComponent implements OnInit {
   @Output() isRemoveAll = new EventEmitter();
   temp: any;
   notificationItems: Notification[] = [];
-  label = `Turn off from ${this.activeName} `;
   constructor(
     private router: Router,
     private notificationService: NotificationServiceService
@@ -43,7 +40,7 @@ export class ContextMenuComponent implements OnInit {
             command: (event) => this.onMarkAsRead(event, this.activeItemId),
           },
           {
-            label: `turn off from ${this.activeName} `,
+            label: `Turn off from  ${this.activeName} `,
             icon: 'pi pi-bell',
             command: (event) =>
               this.onTurnOffNotification(event, this.activeUserId),
@@ -68,6 +65,19 @@ export class ContextMenuComponent implements OnInit {
           },
         ];
       }
+    } else if (this.isSetting) {
+      this.items = [
+        {
+          label: 'Mark all as read',
+          icon: 'pi pi-check',
+          command: () => this.onMarkAllAsRead(),
+        },
+        {
+          label: 'Remove all',
+          icon: 'pi  pi-times',
+          command: () => this.onRemoveAll(),
+        },
+      ];
     } else {
       this.items = [
         {
@@ -102,6 +112,7 @@ export class ContextMenuComponent implements OnInit {
   navigateToSettings() {
     this.onClick.emit();
     this.router.navigateByUrl('/notification-settings');
+    this.notificationService.isPanelOpened.next(false);
   }
   updateItems() {
     this.notificationService.getAllNotifications().subscribe((items) => {
@@ -110,13 +121,8 @@ export class ContextMenuComponent implements OnInit {
     });
   }
   onMarkAllAsRead() {
-    console.log('mark ALl as read test test');
-
     this.notificationService.markAllAsRead().subscribe((res) => {
-      console.log('response', res);
-    });
-    this.notificationService.allNotificationItems.value.forEach((element) => {
-      element.read = true;
+      this.notificationService.clickedMarkAllAsRead.next(true);
     });
 
     this.onClick.emit();
@@ -124,13 +130,19 @@ export class ContextMenuComponent implements OnInit {
 
   onRemoveAll() {
     this.notificationService.allNotificationItems.next([]);
+    this.notificationService.courseUpdateItems.next([]);
+    this.notificationService.commentsMentionedItems.next([]);
+    this.notificationService.annotationsItems.next([]);
     this.notificationService.removeAll().subscribe();
-    // this.updateItems();
-    this.isRemoveAll.emit();
+    this.notificationService.clickedRemoveAll.next(true);
     this.onClick.emit();
   }
 
   onTurnOffNotification(event: any, activeUserId: string) {
-    console.log('on turn off userId', activeUserId);
+    this.notificationService
+      .turnOffNotification(activeUserId)
+      .subscribe((data) => {});
+
+    this.onClick.emit();
   }
 }

@@ -18,14 +18,14 @@
 
 app-notification-box {
   display: block;
-  padding-left: 1rem;
+  padding-left: 0.4rem;
   padding-right: 1rem;
 }
 
 .empty-content {
   padding: 0.8rem;
   height: 200%;
-  font-size: xx-large;
+  font-size: medium;
   color: #c4c4c4;
 }
 
@@ -35,4 +35,24 @@ app-notification-box {
   margin-bottom: 1rem;
   margin-top: 1.5rem;
   color: rgba(3, 105, 161, 255);
+}
+
+::ng-deep .p-inputswitch.p-inputswitch-checked .p-inputswitch-slider {
+  background: rgba(3, 105, 161, 255);
+}
+::ng-deep .p-inputswitch.p-inputswitch-checked .p-inputswitch-slider:hover {
+  background: rgba(3, 105, 161, 255);
+}
+::ng-deep.p-inputswitch.p-inputswitch-checked:not(.p-disabled):hover
+  .p-inputswitch-slider {
+  background: rgba(3, 105, 161, 255);
+}
+
+::ng-deep .p-inputswitch.p-inputswitch-checked .p-inputswitch-slider::before {
+  background: rgba(3, 105, 161, 255);
+}
+
+.noti-container {
+  position: relative;
+  top: -1rem;
 }

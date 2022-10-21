@@ -5,25 +5,12 @@
     <img src="../../../assets/logo.svg" alt="logo" class="w-72" />
 
     <div class="flex flex-wrap my-1">
-      <!-- <p-avatar
-        label="P"
-        shape="circle"
-        size="large"
-        [style]="{ backgroundColor: 'var(--orange-600)' }"
-      ></p-avatar> -->
-      <!-- <p-button
-        type="button"
-        class="mr-2"
-        (click)="visibleSidebar2 = true"
-        icon="pi pi-arrow-left"
-      ></p-button> -->
-
       <i
         class="pi pi-bell mr-6 mt-2 p-text-secondary"
         pBadge
         style="font-size: 2rem; color: rgba(3, 105, 161, 255)"
         [value]="newsAmount"
-        (click)="notificationPanel.toggle($event)"
+        (click)="toggleNotificationPanel($event, notificationPanel)"
         *ngIf="this.storageService.loggedIn"
       ></i>
 

@@ -39,10 +39,14 @@
     >
   </div>
   <div class="star-container">
-    <i
-      [ngClass]="starred ? 'pi pi-star' : 'pi pi-star-fill'"
-      style="color: rgba(3, 105, 161, 255); font-size: 2rem"
-      (click)="viewStar()"
-    ></i>
+    <span class="star-icon">
+      <i
+        [ngClass]="starred ? 'pi pi-star' : 'pi pi-star-fill'"
+        style="color: rgba(3, 105, 161, 255); font-size: 2rem"
+        class="star-i"
+        (click)="viewStar()"
+        title="View starred items"
+      ></i>
+    </span>
   </div>
 </div>

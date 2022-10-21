@@ -19,10 +19,26 @@
   margin-left: 0.2rem;
 }
 
-.subscribed {
-  background-color: gray;
-}
 .unsubscribe {
   background-color: rgba(3, 105, 161, 255);
   border-color: rgba(3, 105, 161, 255);
+}
+
+.subscribe-button:hover,
+:focus {
+  background-color: rgba(3, 105, 161, 255);
+}
+
+.subscribe-button:enabled :focus {
+  background-color: rgba(3, 105, 161, 255);
+}
+
+:host::ng-deep .p-button:enabled:focus {
+  outline: 0 none;
+  outline-offset: 0px;
+  box-shadow: none;
+  background-color: rgba(3, 105, 161, 255);
+}
+.subscribed {
+  background-color: gray;
 }

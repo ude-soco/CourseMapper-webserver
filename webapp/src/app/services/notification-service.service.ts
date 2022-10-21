@@ -30,7 +30,31 @@ export class NotificationServiceService {
   public showNumber = new Subject<number>();
   showNumber$ = this.showNumber.asObservable();
 
+  public clickedMarkAllAsRead = new Subject<boolean>();
+  clickedMarkAllAsRead$ = this.clickedMarkAllAsRead.asObservable();
+
+  public isMarkAsRead = new Subject<boolean>();
+  isMarkAsRead$ = this.isMarkAsRead.asObservable();
+
+  public clickedRemoveAll = new Subject<boolean>();
+  clickedRemoveAll$ = this.clickedRemoveAll.asObservable();
+
+  public isPanelOpened = new Subject<boolean>();
+  isPanelOpened$ = this.isPanelOpened.asObservable();
+
+  public selectedTab = new Subject<any>();
+  selectedTab$ = this.selectedTab.asObservable();
+
   constructor(private http: HttpClient) {}
+
+  public isCourseTurnOff = new Subject<boolean>();
+  isCourseTurnOff$ = this.isCourseTurnOff.asObservable();
+
+  public isRepliesTurnOff = new Subject<boolean>();
+  isRepliesTurnOff$ = this.isRepliesTurnOff.asObservable();
+
+  public isAnnotationTurnOff = new Subject<boolean>();
+  isAnnotationTurnOff$ = this.isAnnotationTurnOff.asObservable();
 
   getAllNotifications() {
     return this.http.get(environment.apiUrl + '/notifications');
@@ -60,7 +84,6 @@ export class NotificationServiceService {
       (item) => item.type == 'mentionedandreplied'
     );
     this.commentsMentionedItems.next(commentsUpdates);
-    // return this.commentsMentionedItems;
   }
 
   getAnnotationsItems() {
@@ -68,7 +91,6 @@ export class NotificationServiceService {
       (item) => item.type == 'annotations'
     );
     this.annotationsItems.next(annotationUpdates);
-    // return this.annotationsItems;
   }
 
   removeItem(id: string) {
@@ -146,5 +168,39 @@ export class NotificationServiceService {
       environment.apiUrl + '/notifications/deactivate/reply',
       HTTPOptions
     );
+  }
+
+  turnOffNotification(userId: string) {
+    return this.http.post(
+      environment.apiUrl + '/notification/deactivate/' + userId,
+      HTTPOptions
+    );
+  }
+
+  getUserIsCourseTurnOff() {
+    return this.http
+      .get(environment.apiUrl + '/notification/isCourseTurnOff', HTTPOptions)
+      .subscribe((data: any) => {
+        this.isCourseTurnOff.next(data);
+      });
+  }
+
+  getUserIsRepliesTurnOff() {
+    return this.http
+      .get(environment.apiUrl + '/notification/isRepliesTurnOff', HTTPOptions)
+      .subscribe((data: any) => {
+        this.isRepliesTurnOff.next(data);
+      });
+  }
+
+  getUserIsAnnotationsTurnOff() {
+    return this.http
+      .get(
+        environment.apiUrl + '/notification/isAnnotationTurnOff',
+        HTTPOptions
+      )
+      .subscribe((data: any) => {
+        this.isAnnotationTurnOff.next(data);
+      });
   }
 }

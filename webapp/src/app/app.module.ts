@@ -32,7 +32,6 @@ import { AvatarModule } from 'primeng/avatar';
 import { AvatarGroupModule } from 'primeng/avatargroup';
 import { DividerModule } from 'primeng/divider';
 import { ContextMenuComponent } from './components/context-menu/context-menu.component';
-import { AddCourseComponent } from './components/add-course/add-course.component';
 import { AntUiModule } from './ant-ui/ant-ui.module';
 import { NotificationSettingComponent } from './pages/components/notification-setting/notification-setting.component';
 import { AllNotificationComponent } from './pages/components/all-notification/all-notification.component';
@@ -51,10 +50,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LoginComponent } from './pages/components/login/login.component';
 import { HomeComponent } from './pages/home/home.component';
-import {
-  httpInterceptorProviders,
-  HttpRequestInterceptor,
-} from './_helpers/http.interceptor';
+import { httpInterceptorProviders } from './_helpers/http.interceptor';
+import { CustomDatePipe } from './pipes/date.pipe';
 
 registerLocaleData(en);
 
@@ -71,7 +68,6 @@ registerLocaleData(en);
     NotificationDashboardComponent,
     NotificationBoxComponent,
     ContextMenuComponent,
-    AddCourseComponent,
     NotificationSettingComponent,
     AllNotificationComponent,
     NotificationFilterPanelComponent,
@@ -79,6 +75,7 @@ registerLocaleData(en);
     RegistrationComponent,
     LoginComponent,
     HomeComponent,
+    CustomDatePipe,
   ],
   imports: [
     BrowserModule,

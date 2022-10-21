@@ -39,7 +39,6 @@ export const getAllNotifications = async (req, res, next) => {
       return res.send({ message: err });
     }
   }
-  console.log("lists", userNotificationLists);
 
   return res.status(200).send({
     notificationLists: userNotificationLists.flat(),
@@ -73,10 +72,16 @@ export const deleteAllNotifications = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  for (let i = 0; i < foundUser.notificationLists.length; i++) {
+
+  let notificationIds = [];
+  foundUser.notificationLists.forEach((notification) => {
+    notificationIds.push(notification.notificationId);
+  });
+
+  for (let i = 0; i < notificationIds.length; i++) {
     try {
       await Notification.deleteMany({
-        _id: foundUser.notificationLists[i]._id,
+        _id: notificationIds[i]._id,
       });
     } catch (err) {
       return res.status(500).send({ error: err });
@@ -107,10 +112,16 @@ export const deleteNotificationsByCourseUpdates = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  for (let i = 0; i < foundUser.notificationLists.length; i++) {
+
+  let notificationIds = [];
+  foundUser.notificationLists.forEach((notification) => {
+    notificationIds.push(notification.notificationId);
+  });
+
+  for (let i = 0; i < notificationIds.length; i++) {
     try {
       await Notification.deleteMany({
-        _id: foundUser.notificationLists[i]._id,
+        _id: notificationIds[i]._id,
         type: type,
       });
     } catch (err) {
@@ -138,10 +149,15 @@ export const deleteNotificationsByReplies = async (req, res) => {
     return res.status(500).send({ error: err });
   }
 
-  for (let i = 0; i < foundUser.notificationLists.length; i++) {
+  let notificationIds = [];
+  foundUser.notificationLists.forEach((notification) => {
+    notificationIds.push(notification.notificationId);
+  });
+
+  for (let i = 0; i < notificationIds.length; i++) {
     try {
       await Notification.deleteMany({
-        _id: foundUser.notificationLists[i]._id,
+        _id: notificationIds[i]._id,
         type: type,
       });
     } catch (err) {
@@ -170,10 +186,15 @@ export const deleteNotificationsByAnnotations = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  for (let i = 0; i < foundUser.notificationLists.length; i++) {
+
+  let notificationIds = [];
+  foundUser.notificationLists.forEach((notification) => {
+    notificationIds.push(notification.notificationId);
+  });
+  for (let i = 0; i < notificationIds.length; i++) {
     try {
       await Notification.deleteMany({
-        _id: foundUser.notificationLists[i]._id,
+        _id: notificationIds[i]._id,
         type: type,
       });
     } catch (err) {
@@ -217,7 +238,6 @@ export const readNotification = async (req, res) => {
 
 export const readAllNotifications = async (req, res) => {
   const userId = req.userId;
-  console.log(req.userId);
   let foundUser;
   try {
     foundUser = await User.findById({
@@ -231,11 +251,16 @@ export const readAllNotifications = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  console.log("user lists", foundUser.notificationLists);
-  for (let i = 0; i < foundUser.notificationLists.length; i++) {
+
+  let notificationIds = [];
+  foundUser.notificationLists.forEach((notification) => {
+    notificationIds.push(notification.notificationId);
+  });
+
+  for (let i = 0; i < notificationIds.length; i++) {
     try {
       await Notification.updateMany(
-        { _id: foundUser.notificationLists[i]._id, read: false },
+        { _id: notificationIds[i]._id, read: false },
         { $set: { read: true } }
       );
     } catch (err) {
@@ -296,7 +321,6 @@ export const toggleActiveCourse = async (req, res) => {
   }
 
   foundUser.isCourseTurnOff = !foundUser.isCourseTurnOff;
-  foundUser.courseTurnOffAt = Date.now();
   try {
     await foundUser.save();
   } catch (err) {
@@ -304,7 +328,6 @@ export const toggleActiveCourse = async (req, res) => {
   }
   return res.status(200).send({
     "user isCourseTurnOff": foundUser.isCourseTurnOff,
-    time: foundUser.courseTurnOffAt,
   });
 };
 
@@ -326,7 +349,6 @@ export const toggleAnnotation = async (req, res) => {
   }
 
   foundUser.isAnnotationTurnOff = !foundUser.isAnnotationTurnOff;
-  foundUser.annotationTurnOffAt = Date.now();
 
   try {
     await foundUser.save();
@@ -335,7 +357,6 @@ export const toggleAnnotation = async (req, res) => {
   }
   return res.status(200).send({
     "user isAnnotationTurnOff": foundUser.isAnnotationTurnOff,
-    time: foundUser.isAnnotationTurnOff,
   });
 };
 
@@ -357,7 +378,6 @@ export const toggleReply = async (req, res) => {
   }
 
   foundUser.isReplyTurnOff = !foundUser.isReplyTurnOff;
-  foundUser.commentTurnOffAt = Date.now();
 
   try {
     await foundUser.save();
@@ -366,7 +386,6 @@ export const toggleReply = async (req, res) => {
   }
   return res.status(200).send({
     "user isReplyTurnOff": foundUser.isReplyTurnOff,
-    time: foundUser.isReplyTurnOff,
   });
 };
 
@@ -402,4 +421,66 @@ export const deactivateUser = async (req, res) => {
   return res.status(200).send({
     deactivatedUserLists: foundUser.deactivatedUserLists,
   });
+};
+
+export const getUserIsCourseTurnOff = async (req, res) => {
+  const userId = req.userId;
+
+  let foundUser;
+
+  try {
+    foundUser = await User.findById({
+      _id: ObjectId(userId),
+    });
+    if (!foundUser) {
+      return res.status(404).send({
+        error: `User with id ${userId} doesn't exist`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  return res.status(200).send(foundUser.isCourseTurnOff);
+};
+
+export const getUserIsRepliesTurnOff = async (req, res) => {
+  const userId = req.userId;
+
+  let foundUser;
+
+  try {
+    foundUser = await User.findById({
+      _id: ObjectId(userId),
+    });
+    if (!foundUser) {
+      return res.status(404).send({
+        error: `User with id ${userId} doesn't exist`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  return res.status(200).send(foundUser.isReplyTurnOff);
+};
+
+export const getUserIsAnnotationTurnOff = async (req, res) => {
+  const userId = req.userId;
+
+  let foundUser;
+
+  try {
+    foundUser = await User.findById({
+      _id: ObjectId(userId),
+    });
+    if (!foundUser) {
+      return res.status(404).send({
+        error: `User with id ${userId} doesn't exist`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+  return res.status(200).send(foundUser.isAnnotationTurnOff);
 };

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserServiceService } from 'src/app/services/user-service.service';
 import { StorageService } from 'src/app/services/storage.service';
+import { NotificationServiceService } from 'src/app/services/notification-service.service';
 
 @Component({
   selector: 'app-login',
@@ -16,11 +17,12 @@ export class LoginComponent implements OnInit {
   isLoggedIn = false;
   isLoginFailed = false;
   errorMessage = '';
-
+  temp: any;
   constructor(
     private userService: UserServiceService,
     private storageService: StorageService,
-    private router: Router
+    private router: Router,
+    private notificationService: NotificationServiceService
   ) {}
 
   ngOnInit(): void {
@@ -39,11 +41,17 @@ export class LoginComponent implements OnInit {
 
         this.isLoginFailed = false;
         this.isLoggedIn = true;
-        console.log('data', data);
+        console.log('user', data);
 
         // this.router.navigate(['/home']).then(() => {
         //   window.location.reload();
         // });
+        this.notificationService.getAllNotifications().subscribe((data) => {
+          this.temp = data;
+          this.notificationService.allNotificationItems.next(
+            this.temp.notificationLists
+          );
+        });
         this.router.navigate(['/home']);
       },
       error: (err) => {

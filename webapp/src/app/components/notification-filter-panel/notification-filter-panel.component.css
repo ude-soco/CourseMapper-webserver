@@ -27,6 +27,7 @@
   align-items: center;
   font-size: 1.5rem;
   margin-left: 0.5rem;
+  font-family: "lato";
 }
 .reset-btn {
   right: 50%;
@@ -52,4 +53,21 @@
   text-align: center;
   left: 18%;
   position: relative;
+}
+
+:host::ng-deep .p-button:enabled:focus {
+  outline: 0 none;
+  outline-offset: 0px;
+  box-shadow: none;
+  background-color: rgba(3, 105, 161, 255);
+}
+:host::ng-deep .p-button:enabled:hover {
+  outline: 0 none;
+  outline-offset: 0px;
+  box-shadow: none;
+  background-color: rgba(3, 105, 161, 255);
+}
+
+.star-i:hover {
+  background-color: whitesmoke;
 }

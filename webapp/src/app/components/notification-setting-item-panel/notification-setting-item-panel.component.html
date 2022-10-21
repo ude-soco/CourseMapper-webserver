@@ -6,6 +6,11 @@
         [(ngModel)]="courseUpdateChecked"
         class="toggle-button"
         (onChange)="toggleCourseUpdate($event, 'courseupdates')"
+        [title]="
+          courseUpdateChecked
+            ? 'Turn off notifications'
+            : 'Turn on notifications'
+        "
       ></p-inputSwitch>
     </div>
   </p-toolbar>
@@ -37,6 +42,11 @@
       [(ngModel)]="commentsAndMentionedChecked"
       class="toggle-button"
       (onChange)="toggleReplies($event, 'replies')"
+      [title]="
+        commentsAndMentionedChecked
+          ? 'Turn off notifications'
+          : 'Turn on notifications'
+      "
     ></p-inputSwitch>
   </div>
 </p-toolbar>
@@ -66,6 +76,9 @@
       [(ngModel)]="annotationsChecked"
       class="toggle-button"
       (onChange)="toggleAnnotations($event, 'annotation')"
+      [title]="
+        annotationsChecked ? 'Turn off notifications' : 'Turn on notifications'
+      "
     ></p-inputSwitch>
   </div>
 </p-toolbar>

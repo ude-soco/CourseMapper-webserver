@@ -1,9 +1,9 @@
 <div class="panel">
   <div class="container">
     <h1 class="headline">Notifications</h1>
-    <!-- <p-badge value="2" class="course-updates"></p-badge>
-    <p-badge value="2" class="comments-mentioned"></p-badge>
-    <p-badge value="2" class="annotations"></p-badge> -->
+    <p-badge [value]="courseNews" class="course-updates"></p-badge>
+    <p-badge [value]="repliesNews" class="comments-mentioned"></p-badge>
+    <p-badge [value]="annotationNews" class="annotations"></p-badge>
     <div class="menu">
       <p-tabMenu
         [model]="notificationItems"
@@ -26,18 +26,16 @@
           ></i>
         </div>
         <span style="margin-left: 1rem; color: rgba(3, 105, 161, 255)">
-          <a
-            routerLink="/allNotification"
-            routerLinkActive="active"
-            ariaCurrentWhenActive="page"
-            >See all</a
-          ></span
-        >
+          <a routerLinkActive="active" (click)="seeAll()">See all</a>
+        </span>
       </div>
     </div>
   </div>
 
   <div class="notification-container">
+    <span class="empty-content" *ngIf="notificationLists.length == 0"
+      >There is no content in it</span
+    >
     <app-notification-box
       [notificationItems]="notificationLists"
     ></app-notification-box>

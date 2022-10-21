@@ -37,9 +37,20 @@ export class NotificationSettingItemPanelComponent implements OnInit {
       },
       { name: 'Annotations', type: NotificationType.Annotations },
     ];
-    this.courseUpdateChecked = false;
-    this.commentsAndMentionedChecked = false;
-    this.annotationsChecked = false;
+    this.notificationService.getUserIsCourseTurnOff();
+    this.notificationService.isCourseTurnOff$.subscribe((isCourseTurnOff) => {
+      this.courseUpdateChecked = !isCourseTurnOff;
+    });
+    this.notificationService.getUserIsRepliesTurnOff();
+    this.notificationService.isRepliesTurnOff$.subscribe((isRepliesTurnOff) => {
+      this.commentsAndMentionedChecked = !isRepliesTurnOff;
+    });
+    this.notificationService.getUserIsAnnotationsTurnOff();
+    this.notificationService.isAnnotationTurnOff$.subscribe(
+      (isAnnotationTurnOff) => {
+        this.annotationsChecked = !isAnnotationTurnOff;
+      }
+    );
 
     this.notificationService.courseUpdateItems$.subscribe((item) => {
       this.courseUpdateItems = item;
@@ -51,7 +62,9 @@ export class NotificationSettingItemPanelComponent implements OnInit {
       this.annotationsItems = item;
     });
     this.getLists();
-
+    this.notificationService.isMarkAsRead$.subscribe(() => {
+      this.getLists();
+    });
     this.notificationService.filteredType$.subscribe((type) => {
       this.filteredType = type;
     });
@@ -60,7 +73,6 @@ export class NotificationSettingItemPanelComponent implements OnInit {
         this.courseUpdateItems = this.notificationItems.filter(
           (item) => item.type == 'courseupdates' && item.isStar == true
         );
-        console.log(this.notificationItems);
         this.commentsMentionedItems = this.notificationItems.filter(
           (item) => item.type == 'mentionedandreplied' && item.isStar == true
         );
@@ -99,6 +111,9 @@ export class NotificationSettingItemPanelComponent implements OnInit {
       this.temp = items;
       this.notificationItems = this.temp.notificationLists;
       this.getFilteredItems(this.notificationItems);
+      this.notificationService.allNotificationItems.next(
+        this.notificationItems
+      );
     });
   }
 
@@ -129,21 +144,14 @@ export class NotificationSettingItemPanelComponent implements OnInit {
   }
 
   toggleCourseUpdate(event: any, type: string) {
-    console.log('event', event, 'type', type);
     this.notificationService.toggleActiveCourse().subscribe((data) => {
-      console.log('response data', data);
+      console.log('data', data);
     });
   }
   toggleReplies(event: any, type: string) {
-    console.log('event', event, 'type', type);
-    this.notificationService.toggleReply().subscribe((data) => {
-      console.log('response data', data);
-    });
+    this.notificationService.toggleReply().subscribe((data) => {});
   }
   toggleAnnotations(event: any, type: string) {
-    console.log('event', event, 'type', type);
-    this.notificationService.toggleAnnotation().subscribe((data) => {
-      console.log('response data', data);
-    });
+    this.notificationService.toggleAnnotation().subscribe((data) => {});
   }
 }

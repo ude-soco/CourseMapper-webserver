@@ -65,7 +65,6 @@ export class NotificationBoxComponent implements OnInit {
   }
 
   closeMenu(op: any) {
-    console.log('click closed');
     op.hide();
     this.contextMenuOpened = false;
   }
@@ -87,6 +86,7 @@ export class NotificationBoxComponent implements OnInit {
       (item) => item._id == id
     );
     this.notificationItems[foundIndex].read = true;
+    this.notificationService.isMarkAsRead.next(true);
   }
 
   handleOnRemove(id: string) {
@@ -100,18 +100,13 @@ export class NotificationBoxComponent implements OnInit {
     }
     this.notificationService.getAllNotifications().subscribe((items) => {
       this.temp = items;
-      this.notificationService.allNotificationItems.next(
+      this.notificationService.updateNotificationLists(
         this.temp.notificationLists
       );
     });
   }
 
-  handleRemoveAll() {
-    // this.notificationService.allNotificationItems = [];
-    console.log('remove all12356');
-  }
-
   onHover() {
-    console.log('on hover');
+    // console.log('on hover');
   }
 }

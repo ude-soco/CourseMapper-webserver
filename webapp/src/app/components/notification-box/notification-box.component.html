@@ -39,9 +39,7 @@
             }}</span> -->
           </div>
         </div>
-        <span class="time">{{
-          notificationItem.createdAt | date: "medium"
-        }}</span>
+        <span class="time">{{ notificationItem.createdAt | customDate }}</span>
       </div>
       <div [ngClass]="settingClass ? 'middle' : 'right'">
         <i
@@ -67,7 +65,7 @@
         <i
           [ngClass]="notificationItem.isStar ? 'pi pi-star-fill' : 'pi pi-star'"
           *ngIf="isSettingPanel"
-          title="mark item as star"
+          title="Mark item as star"
           (click)="onStar(notificationItem._id)"
         ></i>
       </div>
@@ -86,7 +84,6 @@
       (onClick)="closeMenu(op)"
       (onMarkRead)="handleMarkAsRead($event)"
       (onRemove)="handleOnRemove($event)"
-      (isRemoveAll)="handleRemoveAll()"
     ></app-context-menu>
   </ng-template>
 </p-overlayPanel>

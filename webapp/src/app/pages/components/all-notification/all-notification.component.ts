@@ -12,10 +12,15 @@ import { NotificationServiceService } from 'src/app/services/notification-servic
 })
 export class AllNotificationComponent implements OnInit {
   notificationItems: Notification[] = [];
-
+  temp: any;
   constructor(private notificationService: NotificationServiceService) {
     this.notificationService.allNotificationItems$.subscribe((items) => {
       this.notificationItems = items;
+    });
+
+    this.notificationService.getAllNotifications().subscribe((items) => {
+      this.temp = items;
+      this.notificationItems = this.temp.notificationLists;
     });
   }
 

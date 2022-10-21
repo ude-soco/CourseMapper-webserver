@@ -12,4 +12,16 @@
 
 h1 {
   font-size: 1.5rem;
+  align-items: center;
+  display: flex;
+  font-family: "lato";
+  justify-content: center;
+}
+
+.context-menu {
+  color: rgba(3, 105, 161, 255);
+  float: right;
+  top: -1.3rem;
+  position: relative;
+  right: 5rem;
 }

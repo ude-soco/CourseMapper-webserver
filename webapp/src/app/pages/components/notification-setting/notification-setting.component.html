@@ -1,6 +1,13 @@
 <app-courses [hideContent]="true">
   <div class="container">
-    <h1>Notification Settings</h1>
+    <div class="top-container">
+      <h1>Notification Settings</h1>
+      <i
+        class="pi pi-ellipsis-h context-menu"
+        (click)="openContextMenu($event, op)"
+        title="more"
+      ></i>
+    </div>
     <!-- <p-divider></p-divider> -->
     <app-notification-filter-panel
       [notificationItems]="notificationItems"
@@ -10,3 +17,13 @@
     ></app-notification-setting-item-panel>
   </div>
 </app-courses>
+
+<p-overlayPanel #op class="context" id="op">
+  <ng-template pTemplate>
+    <app-context-menu
+      [topLevel]="true"
+      [isSetting]="true"
+      (onClick)="closeMenu(op)"
+    ></app-context-menu>
+  </ng-template>
+</p-overlayPanel>

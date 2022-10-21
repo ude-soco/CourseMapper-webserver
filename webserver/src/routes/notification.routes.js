@@ -14,54 +14,52 @@ module.exports = function (app) {
     controller.getAllNotifications
   );
 
-  // Delete a notification - checked
+  // Delete a notification
   app.delete(
     "/notifications/:notificationId",
     [authJwt.verifyToken],
     controller.deleteNotification
   );
 
-  // Delete all notifications - checked
+  // Delete all notifications
   app.put(
     "/notifications/deleteAll",
     [authJwt.verifyToken],
     controller.deleteAllNotifications
   );
 
-  // Delete by type - checked
+  // Delete by type
   app.put(
     "/notifications/courseupdates",
     [authJwt.verifyToken],
     controller.deleteNotificationsByCourseUpdates
   );
-  // checked
   app.put(
     "/notifications/replies",
     [authJwt.verifyToken],
     controller.deleteNotificationsByReplies
   );
-  // checked
   app.put(
     "/notifications/annotations",
     [authJwt.verifyToken],
     controller.deleteNotificationsByAnnotations
   );
 
-  // Mark single notification as read  - checked
+  // Mark single notification as read
   app.put(
     "/notifications/:notificationId",
     [authJwt.verifyToken],
     controller.readNotification
   );
 
-  // Mark all notification as read - checked
+  // Mark all notification as read
   app.patch(
     "/notifications/readAll",
     [authJwt.verifyToken],
     controller.readAllNotifications
   );
 
-  // Mark single notification as starred - checked
+  // Mark single notification as starred
   app.put(
     "/notifications/:notificationId/star",
     [authJwt.verifyToken],
@@ -92,5 +90,23 @@ module.exports = function (app) {
     "/notification/deactivate/:userId",
     [authJwt.verifyToken],
     controller.deactivateUser
+  );
+
+  app.get(
+    "/notification/isCourseTurnOff",
+    [authJwt.verifyToken],
+    controller.getUserIsCourseTurnOff
+  );
+
+  app.get(
+    "/notification/isRepliesTurnOff",
+    [authJwt.verifyToken],
+    controller.getUserIsRepliesTurnOff
+  );
+
+  app.get(
+    "/notification/isAnnotationTurnOff",
+    [authJwt.verifyToken],
+    controller.getUserIsAnnotationTurnOff
   );
 };
