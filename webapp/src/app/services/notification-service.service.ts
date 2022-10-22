@@ -56,7 +56,7 @@ export class NotificationServiceService {
   public isAnnotationTurnOff = new Subject<boolean>();
   isAnnotationTurnOff$ = this.isAnnotationTurnOff.asObservable();
 
-  public loggedInTime = new Subject<number>();
+  public loggedInTime = new BehaviorSubject<any>(null);
   loggedInTime$ = this.loggedInTime.asObservable();
 
   getAllNotifications() {
@@ -205,5 +205,9 @@ export class NotificationServiceService {
       .subscribe((data: any) => {
         this.isAnnotationTurnOff.next(data);
       });
+  }
+
+  getLoggedInTime() {
+    return this.loggedInTime.value;
   }
 }

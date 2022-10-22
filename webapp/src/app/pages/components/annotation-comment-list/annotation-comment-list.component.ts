@@ -11,7 +11,8 @@ import { NotificationServiceService } from 'src/app/services/notification-servic
 export class AnnotationCommentListComponent implements OnInit {
   comments!: Comment[];
   newComments!: Comment[];
-
+  lastTimeLoggedIn!: any;
+  oldComments!: Comment[];
   constructor(
     private annotationService: AnnotationService,
     private notificationService: NotificationServiceService
@@ -21,60 +22,27 @@ export class AnnotationCommentListComponent implements OnInit {
 
     this.annotationService.comments$.subscribe((comments) => {
       this.comments = comments;
+      this.updateComments();
+      console.log('new comments', this.newComments);
     });
+  }
 
-    this.notificationService.loggedInTime$.subscribe(async (time) => {
-      // let itemDate = new Date(this.comments[4].createdAt);
-      // let logged = new Date(time);
-      // itemDate = new Date(
-      //   Date.UTC(
-      //     itemDate.getUTCFullYear(),
-      //     itemDate.getUTCMonth(),
-      //     itemDate.getUTCDate()
-      //   )
-      // );
+  updateComments() {
+    const lastTime = this.notificationService.getLoggedInTime();
+    this.lastTimeLoggedIn = new Date(lastTime).toLocaleDateString();
 
-      // logged = new Date(
-      //   Date.UTC(
-      //     logged.getUTCFullYear(),
-      //     logged.getUTCMonth(),
-      //     logged.getUTCDate()
-      //   )
-      // );
-      // console.log(
-      //   'time',
-      //   new Date(time).getTime(),
-      //   new Date(this.comments[4].createdAt).getTime(),
-      //   new Date(this.comments[4].createdAt) > new Date(time)
-      // );
+    let newLists = [];
+    let old = [];
 
-      // console.log(
-      //   'test',
-      //   new Date(this.comments[1].createdAt).getTime() < time
-      // );
-      // this.comments.forEach((item) => {
-      //   const newest = new Date(item.createdAt).getTime() > time ? true : false;
-      //   console.log('newest ', newest);
-      // });
-      let old = [];
-      let old2 = [];
-
-      for (let i = 0; i < this.comments.length; i++) {
-        if (new Date(this.comments[i].createdAt).getTime() < time) {
-          old.push(this.comments[i]);
-        } else {
-          old2.push(this.comments[i]);
-        }
+    for (let i = 0; i < this.comments.length; i++) {
+      if (new Date(this.comments[i].createdAt).getTime() > lastTime) {
+        newLists.push(this.comments[i]);
+      } else {
+        old.push(this.comments[i]);
       }
-      console.log('this is old', old);
-      console.log('new', old2);
-
-      // const temp = this.comments.filter((item) => {
-      //   new Date(item.createdAt).getTime() > new Date(time).getTime();
-      // });
-      // console.log('temp', temp);
-      // once logged in, update the lists
-    });
+    }
+    this.newComments = [...newLists];
+    this.oldComments = [...old];
   }
 
   getAnnotationComments() {

@@ -1,15 +1,19 @@
 <div class="comment-list">
   <app-annotation-comment-list-item
-    [comments]="comments"
+    *ngIf="newComments"
+    [comments]="newComments"
   ></app-annotation-comment-list-item>
-  <p-divider class="divider" align="center" type="dashed">
-    <span class="p-tag"
-      >Since your last time logged in
+  <div class="divider-container" *ngIf="newComments">
+    <p-divider class="divider" align="center" type="dashed">
+      <span class="p-tag"
+        >Since your last time logged in on
 
-      <i class="pi pi-arrow-up"></i>
-    </span>
-  </p-divider>
+        <i class="pi pi-arrow-up"></i>
+        {{ lastTimeLoggedIn }}
+      </span>
+    </p-divider>
+  </div>
   <app-annotation-comment-list-item
-    [comments]="comments"
+    [comments]="oldComments ? oldComments : comments"
   ></app-annotation-comment-list-item>
 </div>

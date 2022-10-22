@@ -4,6 +4,7 @@ import { UserServiceService } from 'src/app/services/user-service.service';
 import { StorageService } from 'src/app/services/storage.service';
 import { NotificationServiceService } from 'src/app/services/notification-service.service';
 import { CustomDatePipe } from 'src/app/pipes/date.pipe';
+import { AnnotationService } from 'src/app/services/annotation.service';
 
 @Component({
   selector: 'app-login',
@@ -23,7 +24,8 @@ export class LoginComponent implements OnInit {
     private userService: UserServiceService,
     private storageService: StorageService,
     private router: Router,
-    private notificationService: NotificationServiceService
+    private notificationService: NotificationServiceService,
+    private annotationService: AnnotationService
   ) {}
 
   ngOnInit(): void {
@@ -34,8 +36,15 @@ export class LoginComponent implements OnInit {
 
   onSubmit(): void {
     const { username, password } = this.form;
-    const lastTimeLoggedIn = localStorage.getItem('loggedInTime');
-    this.notificationService.loggedInTime.next(Number(lastTimeLoggedIn));
+
+    const previousTime = !!localStorage.getItem('loggedInTime')
+      ? localStorage.getItem('loggedInTime')
+      : new Date('01.01.2022').getTime();
+
+    this.notificationService.loggedInTime.next(
+      new Date(Number(previousTime)).getTime()
+    );
+
     this.userService.login(username, password).subscribe({
       // the response from backend
       next: (data) => {
@@ -44,23 +53,17 @@ export class LoginComponent implements OnInit {
         this.isLoginFailed = false;
         this.isLoggedIn = true;
 
-        // const lastTimeLoggedIn = localStorage.getItem('loggedInTime');
-        // this.notificationService.loggedInTime.next(lastTimeLoggedIn);
-
         let loggedTime = Date.now();
 
         localStorage.setItem('loggedInTime', JSON.stringify(loggedTime));
 
-        console.log('l', lastTimeLoggedIn);
-        // this.router.navigate(['/home']).then(() => {
-        //   window.location.reload();
-        // });
         // this.notificationService.getAllNotifications().subscribe((data) => {
         //   this.temp = data;
         //   this.notificationService.allNotificationItems.next(
         //     this.temp.notificationLists
         //   );
         // });
+
         this.router.navigate(['/home']);
       },
       error: (err) => {

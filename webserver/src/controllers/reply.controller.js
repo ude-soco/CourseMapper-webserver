@@ -117,7 +117,6 @@ export const newReply = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-
   foundAnnotation.replies.push(newReply._id);
 
   try {
