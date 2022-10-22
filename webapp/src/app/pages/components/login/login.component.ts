@@ -57,12 +57,12 @@ export class LoginComponent implements OnInit {
 
         localStorage.setItem('loggedInTime', JSON.stringify(loggedTime));
 
-        // this.notificationService.getAllNotifications().subscribe((data) => {
-        //   this.temp = data;
-        //   this.notificationService.allNotificationItems.next(
-        //     this.temp.notificationLists
-        //   );
-        // });
+        this.notificationService.getAllNotifications().subscribe((data) => {
+          this.temp = data;
+          this.notificationService.allNotificationItems.next(
+            this.temp.notificationLists
+          );
+        });
 
         this.router.navigate(['/home']);
       },
