@@ -1,5 +1,4 @@
 <!--- <app-navbar></app-navbar> --->
-
 <div class="flex">
   <app-sidebar></app-sidebar>
 
@@ -10,6 +9,9 @@
       <span *ngIf="!hideContent">Content</span>
     </p>
   </div>
+  <app-annotation-comment-list
+    *ngIf="!hideContent"
+  ></app-annotation-comment-list>
 
   <ng-content></ng-content>
 </div>

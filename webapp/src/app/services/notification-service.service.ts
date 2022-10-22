@@ -56,6 +56,9 @@ export class NotificationServiceService {
   public isAnnotationTurnOff = new Subject<boolean>();
   isAnnotationTurnOff$ = this.isAnnotationTurnOff.asObservable();
 
+  public loggedInTime = new Subject<number>();
+  loggedInTime$ = this.loggedInTime.asObservable();
+
   getAllNotifications() {
     return this.http.get(environment.apiUrl + '/notifications');
   }

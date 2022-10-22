@@ -3,3 +3,10 @@ app-notification-dashboard {
   top: 20%;
   right: 10%;
 }
+
+app-annotation-comment-list {
+  top: 40%;
+  left: 50%;
+  margin: auto;
+  margin-top: 5rem;
+}

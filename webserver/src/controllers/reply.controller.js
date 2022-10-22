@@ -7,6 +7,7 @@ const User = db.user;
 const Notification = db.notification;
 const Course = db.course;
 const Topic = db.topic;
+const Role = db.role;
 
 /**
  * @function getReplies
@@ -84,6 +85,14 @@ export const newReply = async (req, res) => {
     return res.status(500).send({ error: err });
   }
 
+  let foundRole;
+  try {
+    foundRole = await Role.findOne({ _id: foundUser.role });
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+  let isAdmin = foundRole.name == "moderator" ? true : false;
+
   let authorName = `${foundUser.firstname} ${foundUser.lastname}`;
 
   let reply = new Reply({
@@ -92,6 +101,7 @@ export const newReply = async (req, res) => {
       userId: userId,
       name: authorName,
     },
+    isAdmin: isAdmin,
     courseId: foundAnnotation.courseId,
     topicId: foundAnnotation.topicId,
     channelId: foundAnnotation._id,

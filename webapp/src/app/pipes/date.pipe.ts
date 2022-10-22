@@ -3,7 +3,7 @@ import { PipeTransform, Pipe } from '@angular/core';
 @Pipe({ name: 'customDate' })
 export class CustomDatePipe implements PipeTransform {
   constructor() {}
-  transform(value: string) {
+  transform(value: string | number) {
     if (!value) return '';
     let diffMs = new Date().getTime() - new Date(value).getTime(); // milliseconds
 

@@ -8,6 +8,7 @@ const Reply = new Schema({
     userId: { type: Schema.Types.ObjectId, required: true },
     name: { type: String, required: true },
   },
+  isAdmin: { type: Boolean },
   courseId: { type: Schema.Types.ObjectId, ref: "course", required: true },
   topicId: { type: Schema.Types.ObjectId, ref: "topic", required: true },
   channelId: { type: Schema.Types.ObjectId, ref: "channel", required: true },

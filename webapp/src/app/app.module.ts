@@ -44,7 +44,6 @@ import { NotificationBoxComponent } from './components/notification-box/notifica
 import { RegistrationComponent } from './pages/components/registration/registration.component';
 
 import { registerLocaleData } from '@angular/common';
-
 import { FormsModule, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -52,7 +51,8 @@ import { LoginComponent } from './pages/components/login/login.component';
 import { HomeComponent } from './pages/home/home.component';
 import { httpInterceptorProviders } from './_helpers/http.interceptor';
 import { CustomDatePipe } from './pipes/date.pipe';
-
+import { AnnotationCommentListComponent } from './pages/components/annotation-comment-list/annotation-comment-list.component';
+import { AnnotationCommentListItemComponent } from './components/annotation-comment-list-item/annotation-comment-list-item.component';
 registerLocaleData(en);
 
 @NgModule({
@@ -76,6 +76,8 @@ registerLocaleData(en);
     LoginComponent,
     HomeComponent,
     CustomDatePipe,
+    AnnotationCommentListComponent,
+    AnnotationCommentListItemComponent,
   ],
   imports: [
     BrowserModule,

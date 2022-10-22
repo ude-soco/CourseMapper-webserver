@@ -1,0 +1,44 @@
+<div class="comments-container" *ngFor="let comment of comments">
+  <!-- <i class="pi pi-user user-icon" title="student"></i>
+  <i class="fas fa-graduation-cap"></i> -->
+  <i
+    [ngClass]="
+      comment.isAdmin
+        ? 'fas fa-graduation-cap user-icon'
+        : 'pi pi-user user-icon user-icon'
+    "
+    [title]="comment.isAdmin ? 'professor' : 'user'"
+  ></i>
+
+  <div class="content-container">
+    <div class="avatar">
+      <p-avatar
+        [label]="getInitials(comment.author.name)"
+        styleClass="mr-5"
+        [style]="{
+          'background-color': 'rgba(3,105,161,255)
+',
+          color: '#ffffff',
+          'margin-top': '5px'
+        }"
+        shape="circle"
+      ></p-avatar>
+    </div>
+    <div class="comment-box">
+      <div class="comment-info">
+        <span class="author-name"> {{ comment.author.name }}</span>
+
+        <span class="time">{{ comment.createdAt | customDate }}</span>
+      </div>
+
+      <div class="comment-content">
+        {{ comment.content }}
+      </div>
+    </div>
+  </div>
+
+  <div class="likes-container">
+    <i class="pi pi-thumbs-up likes"></i>
+    <span> {{ comment.likes.length }}</span>
+  </div>
+</div>

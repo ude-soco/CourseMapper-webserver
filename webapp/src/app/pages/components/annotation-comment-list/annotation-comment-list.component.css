@@ -1,0 +1,10 @@
+:host ::ng-deep.p-divider.p-divider-horizontal {
+  margin-bottom: 1rem;
+}
+
+:host ::ng-deep .p-tag {
+  background: green;
+}
+.pi-arrow-up {
+  font-size: 10px;
+}

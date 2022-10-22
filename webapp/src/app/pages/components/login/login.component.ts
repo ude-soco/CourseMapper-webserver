@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { UserServiceService } from 'src/app/services/user-service.service';
 import { StorageService } from 'src/app/services/storage.service';
 import { NotificationServiceService } from 'src/app/services/notification-service.service';
+import { CustomDatePipe } from 'src/app/pipes/date.pipe';
 
 @Component({
   selector: 'app-login',
@@ -33,7 +34,8 @@ export class LoginComponent implements OnInit {
 
   onSubmit(): void {
     const { username, password } = this.form;
-
+    const lastTimeLoggedIn = localStorage.getItem('loggedInTime');
+    this.notificationService.loggedInTime.next(Number(lastTimeLoggedIn));
     this.userService.login(username, password).subscribe({
       // the response from backend
       next: (data) => {
@@ -41,17 +43,24 @@ export class LoginComponent implements OnInit {
 
         this.isLoginFailed = false;
         this.isLoggedIn = true;
-        console.log('user', data);
 
+        // const lastTimeLoggedIn = localStorage.getItem('loggedInTime');
+        // this.notificationService.loggedInTime.next(lastTimeLoggedIn);
+
+        let loggedTime = Date.now();
+
+        localStorage.setItem('loggedInTime', JSON.stringify(loggedTime));
+
+        console.log('l', lastTimeLoggedIn);
         // this.router.navigate(['/home']).then(() => {
         //   window.location.reload();
         // });
-        this.notificationService.getAllNotifications().subscribe((data) => {
-          this.temp = data;
-          this.notificationService.allNotificationItems.next(
-            this.temp.notificationLists
-          );
-        });
+        // this.notificationService.getAllNotifications().subscribe((data) => {
+        //   this.temp = data;
+        //   this.notificationService.allNotificationItems.next(
+        //     this.temp.notificationLists
+        //   );
+        // });
         this.router.navigate(['/home']);
       },
       error: (err) => {

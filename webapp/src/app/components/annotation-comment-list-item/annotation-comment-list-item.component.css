@@ -1,0 +1,40 @@
+.comments-container {
+  border: 1px solid #c4c4c4;
+  padding: 1.5rem;
+  margin-bottom: 8px;
+  width: 600px;
+  box-shadow: 2px 2px #c4c4c4;
+}
+
+.content-container {
+  display: flex;
+}
+
+.comment-box {
+  display: block;
+}
+.time {
+  font-size: 10px;
+}
+.author-name {
+  font-weight: bold;
+  margin-right: 1rem;
+}
+.comment-info {
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+}
+.likes-container {
+  float: right;
+  margin-bottom: 1rem;
+  right: -0.7rem;
+  position: relative;
+}
+.user-icon {
+  float: right;
+  color: rgba(3, 105, 161, 255);
+}
+.likes {
+  margin-right: 0.1rem;
+}
