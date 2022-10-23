@@ -40,7 +40,8 @@ module.exports = function (app) {
   app.post(
     "/courses/:courseId/annotations/:annotationId/like",
     [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.likeAnnotation
+    controller.likeAnnotation,
+    logger.likeAnnotation
   );
 
   // Dislike an annotation

@@ -24,3 +24,21 @@ export const deleteAnnotation = (req, res) => {
     controller.saveStatementToMongo(statement);
     res.status(200).send(req.locals.response);
 }
+
+export const likeAnnotation = (req, res) => {
+    let statement; 
+    if (req.locals.like) {
+        statement = statementFactory
+        .getAnnotationLikeStatement(
+            req.locals.user
+            , req.locals.annotation);
+    } else {
+        statement = statementFactory
+        .getAnnotationUnlikeStatement(
+            req.locals.user
+            , req.locals.annotation);
+    }
+    lrs.sendStatementToLrs(statement);
+    controller.saveStatementToMongo(statement);
+    res.status(200).send(req.locals.response);
+}

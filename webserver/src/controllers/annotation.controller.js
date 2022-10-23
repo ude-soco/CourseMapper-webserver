@@ -322,9 +322,22 @@ export const editAnnotation = async (req, res) => {
  * @param {string} req.params.annotationId The id of the annotation
  * @param {string} req.userId The id of the user
  */
-export const likeAnnotation = async (req, res) => {
+export const likeAnnotation = async (req, res, next) => {
   const courseId = req.params.courseId;
   const annotationId = req.params.annotationId;
+  const userId = req.userId;
+
+  let user
+  try {
+    user = await User.findOne({_id: userId});
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
 
   let foundAnnotation;
   try {
@@ -343,6 +356,11 @@ export const likeAnnotation = async (req, res) => {
     return res.status(500).send({ error: err });
   }
 
+  req.locals = {
+    annotation: foundAnnotation,
+    user: user
+  }
+
   if (foundAnnotation.likes.includes(ObjectId(req.userId))) {
     foundAnnotation.likes = foundAnnotation.likes.filter(
       (user) => user.valueOf() !== req.userId
@@ -354,10 +372,14 @@ export const likeAnnotation = async (req, res) => {
       return res.status(500).send({ error: err });
     }
     let countLikes = savedAnnotation.likes.length;
-    return res.status(200).send({
+
+    req.locals.response = {
       count: countLikes,
       success: "Annotation successfully unliked!",
-    });
+    }
+    req.locals.like = false;
+    return next();
+
   } else if (foundAnnotation.dislikes.includes(ObjectId(req.userId))) {
     return res
       .status(404)
@@ -371,10 +393,15 @@ export const likeAnnotation = async (req, res) => {
       return res.status(500).send({ error: err });
     }
     let countLikes = savedAnnotation.likes.length;
-    return res.status(200).send({
+
+    req.locals.response = {
       count: countLikes,
       success: "Annotation successfully liked!",
-    });
+    }
+
+    req.locals.like = true;
+
+    return next();
   }
 };
 
