@@ -1,419 +1,419 @@
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 export const getMaterialUploadStatement = (user, material) => {
-    const fullname = `${user.firstname} ${user.lastname}`;
-    return {
-        "id": uuidv4(),
-        "timestamp": new Date(),
-        "actor": {
-            "objectType": "Agent",
-            "name": fullname,
-            "account": {
-                "homePage": "http://www.CourseMapper.v2.de",
-                "name": user.username
-            }
+  const fullname = `${user.firstname} ${user.lastname}`;
+  return {
+    id: uuidv4(),
+    timestamp: new Date(),
+    actor: {
+      objectType: "Agent",
+      name: fullname,
+      account: {
+        homePage: "http://www.CourseMapper.v2.de",
+        name: user.username,
+      },
+    },
+    verb: {
+      id: "http://activitystrea.ms/schema/1.0/share",
+      display: {
+        "en-US": "shared",
+      },
+    },
+    object: {
+      objectType: "Activity",
+      id: `http://www.CourseMapper.v2.de/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`,
+      definition: {
+        type: `http://www.CourseMapper.v2.de/activityType/material`,
+        name: {
+          "en-US": material.name,
         },
-        "verb": {
-            "id": "http://activitystrea.ms/schema/1.0/share",
-            "display": {
-                "en-US": "shared"
-            }
+        description: {
+          "en-US": material.description,
         },
-        "object": {
-            "objectType": "Activity",
-            "id": `http://www.CourseMapper.v2.de/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`, 
-            "definition": {
-                "type": `http://www.CourseMapper.v2.de/activityType/material`,
-                "name": {
-                    "en-US": material.name
-                },
-                "description": {
-                    "en-US": material.description
-                },
-                "extensions":{
-                    "http://www.CourseMapper.v2.de/extensions/material": {
-                        "id": material._id,
-                        "name": material.name,
-                        "description": material.description,
-                        "type": material.type,
-                        "url": material.url,
-                        "channel_id": material.channelId,
-                        "topic_id": material.topicId,
-                        "course_id": material.courseId
-                    }
-                }
-            }
+        extensions: {
+          "http://www.CourseMapper.v2.de/extensions/material": {
+            id: material._id,
+            name: material.name,
+            description: material.description,
+            type: material.type,
+            url: material.url,
+            channel_id: material.channelId,
+            topic_id: material.topicId,
+            course_id: material.courseId,
+          },
         },
-        "context":{
-            "platform": "CourseMapper",
-            "language": "en-US"
-        }
-    }
-}
+      },
+    },
+    context: {
+      platform: "CourseMapper",
+      language: "en-US",
+    },
+  };
+};
 
 export const getMaterialAccessStatement = (user, material) => {
-    const fullname = `${user.firstname} ${user.lastname}`;
-    return {
-        "id": uuidv4(),
-        "timestamp": new Date(),
-        "actor": {
-            "objectType": "Agent",
-            "name": fullname,
-            "account": {
-                "homePage": "http://www.CourseMapper.v2.de",
-                "name": user.username
-            }
+  const fullname = `${user.firstname} ${user.lastname}`;
+  return {
+    id: uuidv4(),
+    timestamp: new Date(),
+    actor: {
+      objectType: "Agent",
+      name: fullname,
+      account: {
+        homePage: "http://www.CourseMapper.v2.de",
+        name: user.username,
+      },
+    },
+    verb: {
+      id: "http://activitystrea.ms/schema/1.0/access",
+      display: {
+        "en-US": "accessed",
+      },
+    },
+    object: {
+      objectType: "Activity",
+      id: `http://www.CourseMapper.v2.de/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`,
+      definition: {
+        type: `http://www.CourseMapper.v2.de/activityType/material`,
+        name: {
+          "en-US": material.name,
         },
-        "verb": {
-            "id": "http://activitystrea.ms/schema/1.0/access",
-            "display": {
-                "en-US": "accessed"
-            }
+        description: {
+          "en-US": material.description,
         },
-        "object": {
-            "objectType": "Activity",
-            "id": `http://www.CourseMapper.v2.de/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`, 
-            "definition": {
-                "type": `http://www.CourseMapper.v2.de/activityType/material`,
-                "name": {
-                    "en-US": material.name
-                },
-                "description": {
-                    "en-US": material.description
-                },
-                "extensions":{
-                    "http://www.CourseMapper.v2.de/extensions/material": {
-                        "id": material._id,
-                        "name": material.name,
-                        "description": material.description,
-                        "type": material.type,
-                        "url": material.url,
-                        "channel_id": material.channelId,
-                        "topic_id": material.topicId,
-                        "course_id": material.courseId
-                    }
-                }
-            }
+        extensions: {
+          "http://www.CourseMapper.v2.de/extensions/material": {
+            id: material._id,
+            name: material.name,
+            description: material.description,
+            type: material.type,
+            url: material.url,
+            channel_id: material.channelId,
+            topic_id: material.topicId,
+            course_id: material.courseId,
+          },
         },
-        "context":{
-            "platform": "CourseMapper",
-            "language": "en-US"
-        }
-    }
-}
+      },
+    },
+    context: {
+      platform: "CourseMapper",
+      language: "en-US",
+    },
+  };
+};
 
 export const getMaterialDeletionStatement = (user, material) => {
-    const fullname = `${user.firstname} ${user.lastname}`;
-    return {
-        "id": uuidv4(),
-        "timestamp": new Date(),
-        "actor": {
-            "objectType": "Agent",
-            "name": fullname,
-            "account": {
-                "homePage": "http://www.CourseMapper.v2.de",
-                "name": user.username
-            }
+  const fullname = `${user.firstname} ${user.lastname}`;
+  return {
+    id: uuidv4(),
+    timestamp: new Date(),
+    actor: {
+      objectType: "Agent",
+      name: fullname,
+      account: {
+        homePage: "http://www.CourseMapper.v2.de",
+        name: user.username,
+      },
+    },
+    verb: {
+      id: "http://activitystrea.ms/schema/1.0/delete",
+      display: {
+        "en-US": "deleted",
+      },
+    },
+    object: {
+      objectType: "Activity",
+      id: `http://www.CourseMapper.v2.de/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`,
+      definition: {
+        type: `http://www.CourseMapper.v2.de/activityType/material`,
+        name: {
+          "en-US": material.name,
         },
-        "verb": {
-            "id": "http://activitystrea.ms/schema/1.0/delete",
-            "display": {
-                "en-US": "deleted"
-            }
+        description: {
+          "en-US": material.description,
         },
-        "object": {
-            "objectType": "Activity",
-            "id": `http://www.CourseMapper.v2.de/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`, 
-            "definition": {
-                "type": `http://www.CourseMapper.v2.de/activityType/material`,
-                "name": {
-                    "en-US": material.name
-                },
-                "description": {
-                    "en-US": material.description
-                },
-                "extensions":{
-                    "http://www.CourseMapper.v2.de/extensions/material": {
-                        "id": material._id,
-                        "name": material.name,
-                        "description": material.description,
-                        "type": material.type,
-                        "url": material.url,
-                        "channel_id": material.channelId,
-                        "topic_id": material.topicId,
-                        "course_id": material.courseId
-                    }
-                }
-            }
+        extensions: {
+          "http://www.CourseMapper.v2.de/extensions/material": {
+            id: material._id,
+            name: material.name,
+            description: material.description,
+            type: material.type,
+            url: material.url,
+            channel_id: material.channelId,
+            topic_id: material.topicId,
+            course_id: material.courseId,
+          },
         },
-        "context":{
-            "platform": "CourseMapper",
-            "language": "en-US"
-        }
-    }
-}
+      },
+    },
+    context: {
+      platform: "CourseMapper",
+      language: "en-US",
+    },
+  };
+};
 
 export const getMaterialEditStatement = (user, newMaterial, oldMaterial) => {
-    const fullname = `${user.firstname} ${user.lastname}`;
-    return {
-        "id": uuidv4(),
-        "timestamp": new Date(),
-        "actor": {
-            "objectType": "Agent",
-            "name": fullname,
-            "account": {
-                "homePage": "http://www.CourseMapper.v2.de",
-                "name": user.username
-            }
+  const fullname = `${user.firstname} ${user.lastname}`;
+  return {
+    id: uuidv4(),
+    timestamp: new Date(),
+    actor: {
+      objectType: "Agent",
+      name: fullname,
+      account: {
+        homePage: "http://www.CourseMapper.v2.de",
+        name: user.username,
+      },
+    },
+    verb: {
+      id: "http://curatr3.com/define/verb/edited",
+      display: {
+        "en-US": "edited",
+      },
+    },
+    object: {
+      objectType: "Activity",
+      id: `http://www.CourseMapper.v2.de/activity/course/${oldMaterial.courseId}/topic/${oldMaterial.topicId}/channel/${oldMaterial.channelId}/material/${oldMaterial._id}`,
+      definition: {
+        type: `http://www.CourseMapper.v2.de/activityType/material`,
+        name: {
+          "en-US": oldMaterial.name,
         },
-        "verb": {
-            "id": "http://curatr3.com/define/verb/edited",
-            "display": {
-                "en-US": "edited"
-            }
+        description: {
+          "en-US": oldMaterial.description,
         },
-        "object": {
-            "objectType": "Activity",
-            "id": `http://www.CourseMapper.v2.de/activity/course/${oldMaterial.courseId}/topic/${oldMaterial.topicId}/channel/${oldMaterial.channelId}/material/${oldMaterial._id}`, 
-            "definition": {
-                "type": `http://www.CourseMapper.v2.de/activityType/material`,
-                "name": {
-                    "en-US": oldMaterial.name
-                },
-                "description": {
-                    "en-US": oldMaterial.description
-                },
-                "extensions":{
-                    "http://www.CourseMapper.v2.de/extensions/material": {
-                        "id": oldMaterial._id,
-                        "name": oldMaterial.name,
-                        "description": oldMaterial.description,
-                        "type": oldMaterial.type,
-                        "url": oldMaterial.url,
-                        "channel_id": oldMaterial.channelId,
-                        "topic_id": oldMaterial.topicId,
-                        "course_id": oldMaterial.courseId
-                    }
-                }
-            }
+        extensions: {
+          "http://www.CourseMapper.v2.de/extensions/material": {
+            id: oldMaterial._id,
+            name: oldMaterial.name,
+            description: oldMaterial.description,
+            type: oldMaterial.type,
+            url: oldMaterial.url,
+            channel_id: oldMaterial.channelId,
+            topic_id: oldMaterial.topicId,
+            course_id: oldMaterial.courseId,
+          },
         },
-        "result":{
-            "extensions":{
-                "http://www.CourseMapper.v2.de/extensions/material": {
-                    "name": newMaterial.name,
-                    "description": newMaterial.description,
-                    "url": newMaterial.url,
-                    "type":newMaterial.type
-                }
-            }
+      },
+    },
+    result: {
+      extensions: {
+        "http://www.CourseMapper.v2.de/extensions/material": {
+          name: newMaterial.name,
+          description: newMaterial.description,
+          url: newMaterial.url,
+          type: newMaterial.type,
         },
-        "context":{
-            "platform": "CourseMapper",
-            "language": "en-US"
-        }
-    }
-}
+      },
+    },
+    context: {
+      platform: "CourseMapper",
+      language: "en-US",
+    },
+  };
+};
 
 export const getVideoPlayStatement = (user, material) => {
-    const fullname = `${user.firstname} ${user.lastname}`;
-    return {
-        "id": uuidv4(),
-        "timestamp": new Date(),
-        "actor": {
-            "objectType": "Agent",
-            "name": fullname,
-            "account": {
-                "homePage": "http://www.CourseMapper.v2.de",
-                "name": user.username
-            }
+  const fullname = `${user.firstname} ${user.lastname}`;
+  return {
+    id: uuidv4(),
+    timestamp: new Date(),
+    actor: {
+      objectType: "Agent",
+      name: fullname,
+      account: {
+        homePage: "http://www.CourseMapper.v2.de",
+        name: user.username,
+      },
+    },
+    verb: {
+      id: "http://activitystrea.ms/schema/1.0/play",
+      display: {
+        "en-US": "played",
+      },
+    },
+    object: {
+      objectType: "Activity",
+      id: `http://www.CourseMapper.v2.de/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`,
+      definition: {
+        type: `http://www.CourseMapper.v2.de/activityType/${material.type}`,
+        name: {
+          "en-US": material.name,
         },
-        "verb": {
-            "id": "http://activitystrea.ms/schema/1.0/play",
-            "display": {
-                "en-US": "played"
-            }
+        description: {
+          "en-US": material.description,
         },
-        "object": {
-            "objectType": "Activity",
-            "id": `http://www.CourseMapper.v2.de/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`, 
-            "definition": {
-                "type": `http://www.CourseMapper.v2.de/activityType/${material.type}`,
-                "name": {
-                    "en-US": material.name
-                },
-                "description": {
-                    "en-US": material.description
-                },
-                "extensions":{
-                    "http://www.CourseMapper.v2.de/extensions/material": {
-                        "id": material._id,
-                        "name": material.name,
-                        "description": material.description,
-                        "type": material.type,
-                        "url": material.url,
-                        "channel_id": material.channelId,
-                        "topic_id": material.topicId,
-                        "course_id": material.courseId
-                    }
-                }
-            }
+        extensions: {
+          "http://www.CourseMapper.v2.de/extensions/material": {
+            id: material._id,
+            name: material.name,
+            description: material.description,
+            type: material.type,
+            url: material.url,
+            channel_id: material.channelId,
+            topic_id: material.topicId,
+            course_id: material.courseId,
+          },
         },
-        "context":{
-            "platform": "CourseMapper",
-            "language": "en-US"
-        }
-    }
-}
+      },
+    },
+    context: {
+      platform: "CourseMapper",
+      language: "en-US",
+    },
+  };
+};
 
 export const getVideoPauseStatement = (user, material) => {
-    const fullname = `${user.firstname} ${user.lastname}`;
-    return {
-        "id": uuidv4(),
-        "timestamp": new Date(),
-        "actor": {
-            "objectType": "Agent",
-            "name": fullname,
-            "account": {
-                "homePage": "http://www.CourseMapper.v2.de",
-                "name": user.username
-            }
+  const fullname = `${user.firstname} ${user.lastname}`;
+  return {
+    id: uuidv4(),
+    timestamp: new Date(),
+    actor: {
+      objectType: "Agent",
+      name: fullname,
+      account: {
+        homePage: "http://www.CourseMapper.v2.de",
+        name: user.username,
+      },
+    },
+    verb: {
+      id: "http://www.CourseMapper.v2.de/verb/paused",
+      display: {
+        "en-US": "paused",
+      },
+    },
+    object: {
+      objectType: "Activity",
+      id: `http://www.CourseMapper.v2.de/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`,
+      definition: {
+        type: `http://www.CourseMapper.v2.de/activityType/${material.type}`,
+        name: {
+          "en-US": material.name,
         },
-        "verb": {
-            "id": "http://www.CourseMapper.v2.de/verb/paused",
-            "display": {
-                "en-US": "paused"
-            }
+        description: {
+          "en-US": material.description,
         },
-        "object": {
-            "objectType": "Activity",
-            "id": `http://www.CourseMapper.v2.de/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`, 
-            "definition": {
-                "type": `http://www.CourseMapper.v2.de/activityType/${material.type}`,
-                "name": {
-                    "en-US": material.name
-                },
-                "description": {
-                    "en-US": material.description
-                },
-                "extensions":{
-                    "http://www.CourseMapper.v2.de/extensions/material": {
-                        "id": material._id,
-                        "name": material.name,
-                        "description": material.description,
-                        "type": material.type,
-                        "url": material.url,
-                        "channel_id": material.channelId,
-                        "topic_id": material.topicId,
-                        "course_id": material.courseId
-                    }
-                }
-            }
+        extensions: {
+          "http://www.CourseMapper.v2.de/extensions/material": {
+            id: material._id,
+            name: material.name,
+            description: material.description,
+            type: material.type,
+            url: material.url,
+            channel_id: material.channelId,
+            topic_id: material.topicId,
+            course_id: material.courseId,
+          },
         },
-        "context":{
-            "platform": "CourseMapper",
-            "language": "en-US"
-        }
-    }
-}
+      },
+    },
+    context: {
+      platform: "CourseMapper",
+      language: "en-US",
+    },
+  };
+};
 
 export const getVideoEndStatement = (user, material) => {
-    const fullname = `${user.firstname} ${user.lastname}`;
-    return {
-        "id": uuidv4(),
-        "timestamp": new Date(),
-        "actor": {
-            "objectType": "Agent",
-            "name": fullname,
-            "account": {
-                "homePage": "http://www.CourseMapper.v2.de",
-                "name": user.username
-            }
+  const fullname = `${user.firstname} ${user.lastname}`;
+  return {
+    id: uuidv4(),
+    timestamp: new Date(),
+    actor: {
+      objectType: "Agent",
+      name: fullname,
+      account: {
+        homePage: "http://www.CourseMapper.v2.de",
+        name: user.username,
+      },
+    },
+    verb: {
+      id: "http://activitystrea.ms/schema/1.0/complete",
+      display: {
+        "en-US": "completed",
+      },
+    },
+    object: {
+      objectType: "Activity",
+      id: `http://www.CourseMapper.v2.de/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`,
+      definition: {
+        type: `http://www.CourseMapper.v2.de/activityType/${material.type}`,
+        name: {
+          "en-US": material.name,
         },
-        "verb": {
-            "id": "http://activitystrea.ms/schema/1.0/complete",
-            "display": {
-                "en-US": "completed"
-            }
+        description: {
+          "en-US": material.description,
         },
-        "object": {
-            "objectType": "Activity",
-            "id": `http://www.CourseMapper.v2.de/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`, 
-            "definition": {
-                "type": `http://www.CourseMapper.v2.de/activityType/${material.type}`,
-                "name": {
-                    "en-US": material.name
-                },
-                "description": {
-                    "en-US": material.description
-                },
-                "extensions":{
-                    "http://www.CourseMapper.v2.de/extensions/material": {
-                        "id": material._id,
-                        "name": material.name,
-                        "description": material.description,
-                        "type": material.type,
-                        "url": material.url,
-                        "channel_id": material.channelId,
-                        "topic_id": material.topicId,
-                        "course_id": material.courseId
-                    }
-                }
-            }
+        extensions: {
+          "http://www.CourseMapper.v2.de/extensions/material": {
+            id: material._id,
+            name: material.name,
+            description: material.description,
+            type: material.type,
+            url: material.url,
+            channel_id: material.channelId,
+            topic_id: material.topicId,
+            course_id: material.courseId,
+          },
         },
-        "context":{
-            "platform": "CourseMapper",
-            "language": "en-US"
-        }
-    }
-}
+      },
+    },
+    context: {
+      platform: "CourseMapper",
+      language: "en-US",
+    },
+  };
+};
 
 export const getSlideViewStatement = (user, material, slideNr) => {
-    const fullname = `${user.firstname} ${user.lastname}`;
-    return {
-        "id": uuidv4(),
-        "timestamp": new Date(),
-        "actor": {
-            "objectType": "Agent",
-            "name": fullname,
-            "account": {
-                "homePage": "http://www.CourseMapper.v2.de",
-                "name": user.username
-            }
+  const fullname = `${user.firstname} ${user.lastname}`;
+  return {
+    id: uuidv4(),
+    timestamp: new Date(),
+    actor: {
+      objectType: "Agent",
+      name: fullname,
+      account: {
+        homePage: "http://www.CourseMapper.v2.de",
+        name: user.username,
+      },
+    },
+    verb: {
+      id: "http://id.tincanapi.com/verb/viewed",
+      display: {
+        "en-US": "viewed",
+      },
+    },
+    object: {
+      objectType: "Activity",
+      id: `http://www.CourseMapper.v2.de/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slide/${slideNr}`,
+      definition: {
+        type: `http://www.CourseMapper.v2.de/activityType/slide`,
+        name: {
+          "en-US": material.name,
         },
-        "verb": {
-            "id": "http://id.tincanapi.com/verb/viewed",
-            "display": {
-                "en-US": "viewed"
-            }
+        description: {
+          "en-US": material.description,
         },
-        "object": {
-            "objectType": "Activity",
-            "id": `http://www.CourseMapper.v2.de/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slide/${slideNr}`, 
-            "definition": {
-                "type": `http://www.CourseMapper.v2.de/activityType/slide`,
-                "name": {
-                    "en-US": material.name
-                },
-                "description": {
-                    "en-US": material.description
-                },
-                "extensions":{
-                    "http://www.CourseMapper.v2.de/extensions/material": {
-                        "id": material._id,
-                        "name": material.name,
-                        "pageNr": slideNr,
-                        "description": material.description,
-                        "type": material.type,
-                        "url": material.url,
-                        "channel_id": material.channelId,
-                        "topic_id": material.topicId,
-                        "course_id": material.courseId
-                    }
-                }
-            }
+        extensions: {
+          "http://www.CourseMapper.v2.de/extensions/material": {
+            id: material._id,
+            name: material.name,
+            pageNr: slideNr,
+            description: material.description,
+            type: material.type,
+            url: material.url,
+            channel_id: material.channelId,
+            topic_id: material.topicId,
+            course_id: material.courseId,
+          },
         },
-        "context":{
-            "platform": "CourseMapper",
-            "language": "en-US"
-        }
-    }
-}
+      },
+    },
+    context: {
+      platform: "CourseMapper",
+      language: "en-US",
+    },
+  };
+};
