@@ -50,6 +50,7 @@ module.exports = function (app) {
   app.post(
     "/courses/:courseId/annotations/:annotationId/dislike",
     [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.dislikeAnnotation
+    controller.dislikeAnnotation,
+    logger.dislikeAnnotation
   );
 };

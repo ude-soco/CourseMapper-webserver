@@ -42,3 +42,21 @@ export const likeAnnotation = (req, res) => {
     controller.saveStatementToMongo(statement);
     res.status(200).send(req.locals.response);
 }
+
+export const dislikeAnnotation = (req, res) => {
+    let statement; 
+    if (req.locals.dislike) {
+        statement = statementFactory
+        .getAnnotationDislikeStatement(
+            req.locals.user
+            , req.locals.annotation);
+    } else {
+        statement = statementFactory
+        .getAnnotationUndislikeStatement(
+            req.locals.user
+            , req.locals.annotation);
+    }
+    lrs.sendStatementToLrs(statement);
+    controller.saveStatementToMongo(statement);
+    res.status(200).send(req.locals.response);
+}
