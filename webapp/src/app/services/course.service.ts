@@ -1,168 +1,169 @@
+import { CourseImp } from 'src/app/models/CourseImp';
+import { Course } from 'src/app/models/Course';
+import { environment } from '../../environments/environment';
+import { EventEmitter, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { Annotation } from 'src/assets/data/Annotation';
-import {
-  Course,
-  CreateChannel,
-  CreateCourse,
-  CreateLesson,
-  CreateMaterial,
-} from 'src/assets/data/Course';
-// import {
-//   Course,
-//   CreateChannel,
-//   CreateCourse,
-//   CreateLesson,
-//   CreateMaterial,
-// } from 'src/assets/data/Course';
-import { TagAnnotations } from 'src/assets/data/Tag';
-import { backendEndpointURL } from '../api';
-import { AuthenticationService } from './authentication.service';
+import { catchError, Observable, of, Subject, tap } from 'rxjs';
+import { TopicChannelService } from './topic-channel.service';
+import { HTTPOptions } from '../config/config';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CourseService {
+  private API_URL = environment.API_URL;
+  private courses: Course[] = [];
+  // it is not private because it is subscribed in Sidebar component
+  onUpdateCourses$ = new Subject<Course[]>();
+  // it is not private because it is subscribed in chnannelbar component
+  onSelectCourse = new EventEmitter<Course>();
+  private selectedCourse: Course = new CourseImp('', '');
+  public subscribedCourseLists = new Subject<any>();
+  subscribedCourseLists$ = this.subscribedCourseLists.asObservable();
+
   constructor(
     private http: HttpClient,
-    private authenticatioNService: AuthenticationService
+    private topicChannelService: TopicChannelService
   ) {}
 
-  courses: Course[] = [];
-  async getAllCourses(): Promise<Course[]> {
-    this.http
-      .get(`${backendEndpointURL}courses`, {
-        headers: this.authenticatioNService.getHTTPHeaders(),
-      })
-      .subscribe((course) => {
-        this.courses.push(course);
-      });
-    return this.courses;
+  getSelectedCourse(): Course {
+    return this.selectedCourse;
   }
 
-  async getCourseByID(id: string): Promise<Course | null> {
-    // @ts-ignore
-    return this.http
-      .get<Course>(`${backendEndpointURL}courses/${id}`, {
-        headers: this.authenticatioNService.getHTTPHeaders(),
-      })
-      .toPromise();
-  }
-
-  async getTagsForCourse(id: string): Promise<string[]> {
-    // @ts-ignore
-    return this.http
-      .get<string[]>(`${backendEndpointURL}courses/${id}/tags`, {
-        headers: this.authenticatioNService.getHTTPHeaders(),
-      })
-      .toPromise();
-  }
-
-  async getTagsForLesson(
-    courseID: string,
-    lessonID: string
-  ): Promise<string[]> {
-    // @ts-ignore
-    return this.http
-      .get<string[]>(
-        `${backendEndpointURL}courses/${courseID}/${lessonID}/tags`,
-        { headers: this.authenticatioNService.getHTTPHeaders() }
-      )
-      .toPromise();
-  }
-
-  async getTagsForChannel(
-    courseID: string,
-    channelID: string
-  ): Promise<string[]> {
-    // @ts-ignore
-    return this.http
-      .get<string[]>(
-        `${backendEndpointURL}courses/${courseID}/channel/${channelID}/tags`,
-        { headers: this.authenticatioNService.getHTTPHeaders() }
-      )
-      .toPromise();
-  }
-
-  async getAnnotationsWithTag(
-    courseID: string,
-    lessonID: string | undefined,
-    channelID: string | undefined,
-    tag: string
-  ): Promise<TagAnnotations> {
-    // TODO url encode tag
-    if (channelID && lessonID) {
-      // @ts-ignore
-      return this.http
-        .get<TagAnnotations>(
-          `${backendEndpointURL}courses/${courseID}/${lessonID}/${channelID}/tags/${tag}/annotations`,
-          { headers: this.authenticatioNService.getHTTPHeaders() }
-        )
-        .toPromise();
+  /**
+   * @function selectCourse
+   * set selected course
+   *
+   * @param {Course} course the course to be selected
+   *
+   */
+  selectCourse(course: Course) {
+    // if there is no selected course then no need to update the topics.
+    if (this.getSelectedCourse()._id && course._id) {
+      this.topicChannelService.updateTopics(course._id);
     }
+    this.selectedCourse = course;
+    this.onSelectCourse.emit(course);
+  }
 
-    if (lessonID) {
-      // @ts-ignore
-      return this.http
-        .get<TagAnnotations>(
-          `${backendEndpointURL}courses/${courseID}/${lessonID}/tags/${tag}/annotations`,
-          { headers: this.authenticatioNService.getHTTPHeaders() }
-        )
-        .toPromise();
-    }
-    // @ts-ignore
-    return this.http
-      .get<TagAnnotations>(
-        `${backendEndpointURL}courses/${courseID}/tags/${tag}/annotations`,
-        { headers: this.authenticatioNService.getHTTPHeaders() }
-      )
-      .toPromise();
-  }
-  async addCourse(course: CreateCourse): Promise<any> {
-    return this.http
-      .post<any>(`${backendEndpointURL}new/course`, course, {
-        headers: this.authenticatioNService.getHTTPHeaders(),
+  /**
+   * @function fetchCourses
+   * GET user's courses from the server
+   *
+   *
+   */
+  fetchCourses(): Observable<Course[]> {
+    return this.http.get<Course[]>(`${this.API_URL}/courses`).pipe(
+      tap((courses) => {
+        this.courses = courses;
       })
-      .toPromise();
+    );
   }
-  addChannel(channel: CreateChannel): Promise<any> {
-    return this.http
-      .post<any>(`${backendEndpointURL}new/channel`, channel, {
-        headers: this.authenticatioNService.getHTTPHeaders(),
-      })
-      .toPromise();
-  }
-  addNewTopic(lesson: CreateLesson): Promise<any> {
-    return this.http
-      .post<any>(`${backendEndpointURL}new/topic`, lesson, {
-        headers: this.authenticatioNService.getHTTPHeaders(),
-      })
-      .toPromise();
-  }
-  addTopicToCourse(topic: any): Promise<any> {
-    return this.http
-      .post<any>(`${backendEndpointURL}new/topic/course`, topic, {
-        headers: this.authenticatioNService.getHTTPHeaders(),
-      })
-      .toPromise();
-  }
-  addMaterialToChannel(material: CreateMaterial): Promise<any> {
-    return this.http
-      .post<any>(`${backendEndpointURL}new/material`, material, {
-        headers: this.authenticatioNService.getHTTPHeaders(),
-      })
-      .toPromise();
-  }
-  uploadFile(formData: any, materialType: string = 'lecture'): Observable<any> {
-    if (materialType == 'video') {
-      return this.http.post<any>(`${backendEndpointURL}uploadvideo`, formData, {
-        headers: this.authenticatioNService.getHTTPHeaders(),
-      });
-    }
 
-    return this.http.post<any>(`${backendEndpointURL}uploadfile`, formData, {
-      headers: this.authenticatioNService.getHTTPHeaders(),
+  /**
+   * @function addCourse
+   * Add new course in the backend and if the communication was
+   * successfull it adds the course in the frontend
+   *
+   * @param {Course} course the course to be added
+   *
+   */
+  addCourse(course: Course): any {
+    return this.http
+      .post<any>(`${this.API_URL}/course`, {
+        name: course.name,
+        description: course.description,
+        shortname: course.shortName,
+      })
+      .pipe(
+        catchError((err, sourceObservable) => {
+          if (err.status === 403) {
+            return of({ errorMsg: err.error.error });
+          } else {
+            return of({
+              errorMsg: 'Error in connection: Please reload the application',
+            });
+          }
+        }),
+        tap((res) => {
+          if (!('errorMsg' in res)) {
+            this.courses.push(res.courseSaved);
+            this.sendToOldBackend(res.courseSaved);
+            this.onUpdateCourses$.next(this.courses);
+          }
+        })
+      );
+  }
+
+  /**
+   * @function deleteCourse
+   * Delete a course in the backend
+   *
+   * @param {Course} courseTD the course to be deleted
+   *
+   */
+  deleteCourse(courseTD: Course) {}
+
+  /**
+   * @function removeCourse
+   * Delete a course from the frontend data model
+   *
+   * @param {Course} courseTD the course to be deleted
+   *
+   */
+  removeCourse(courseTD: Course) {
+    let index = this.courses.findIndex((course) => {
+      return course._id === courseTD._id;
     });
+    if (index !== -1) {
+      this.courses.splice(index, 1);
+      this.onUpdateCourses$.next(this.courses);
+      this.selectCourse(new CourseImp('', ''));
+    }
+  }
+
+  renameCourse(courseTD: Course, newName: any) {
+    return this.http
+      .put<any>(`${this.API_URL}/courses/${courseTD._id}`, newName)
+      .pipe(
+        catchError((err, sourceObservable) => {
+          return of({ errorMsg: err.error.error });
+        })
+      );
+  }
+
+  sendToOldBackend(course) {
+    // userId should be taken from the coockies. for the time being it is hard coded
+    this.http
+      .post<any>('http://localhost:8090/new/course', {
+        _id: course._id,
+        course: course.name,
+        description: course.description,
+        shortName: course.shortName,
+        userID: '633d5bc0f15907e2f211b1ea',
+      })
+      .subscribe((res) => {
+        console.log(res);
+      });
+  }
+
+  enrolCourse(courseId: string) {
+    return this.http.post(
+      environment.API_URL + '/enrol/' + courseId,
+      HTTPOptions
+    );
+  }
+
+  withdrawCourse(courseId: string) {
+    return this.http.post(
+      environment.API_URL + '/withdraw/' + courseId,
+      HTTPOptions
+    );
+  }
+
+  getSubscribedCourseLists() {
+    return this.http
+      .get(environment.API_URL + '/subscribedCourses', HTTPOptions)
+      .pipe(tap((lists) => this.subscribedCourseLists.next(lists)));
   }
 }

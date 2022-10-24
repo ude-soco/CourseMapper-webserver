@@ -17,7 +17,7 @@ export class AnnotationService {
     annotationId?: string
   ): Observable<Comment[]> {
     return this.http.get<Comment[]>(
-      environment.apiUrl +
+      environment.API_URL +
         '/courses/' +
         courseId +
         '/annotations/' +

@@ -60,7 +60,7 @@ export class NotificationServiceService {
   loggedInTime$ = this.loggedInTime.asObservable();
 
   getAllNotifications() {
-    return this.http.get(environment.apiUrl + '/notifications');
+    return this.http.get(environment.API_URL + '/notifications');
   }
 
   getNotificationLists() {
@@ -98,91 +98,91 @@ export class NotificationServiceService {
 
   removeItem(id: string) {
     return this.http.delete(
-      environment.apiUrl + '/notifications/' + id,
+      environment.API_URL + '/notifications/' + id,
       HTTPOptions
     );
   }
 
   markItemAsRead(id: string) {
     return this.http.put(
-      environment.apiUrl + '/notifications/' + id,
+      environment.API_URL + '/notifications/' + id,
       HTTPOptions
     );
   }
 
   markItemAsStar(id: string) {
     return this.http.put(
-      environment.apiUrl + '/notifications/' + id + '/star',
+      environment.API_URL + '/notifications/' + id + '/star',
       HTTPOptions
     );
   }
 
   markAllAsRead() {
     return this.http.patch(
-      environment.apiUrl + '/notifications/readAll',
+      environment.API_URL + '/notifications/readAll',
       HTTPOptions
     );
   }
 
   removeAll() {
     return this.http.put(
-      environment.apiUrl + '/notifications/deleteAll',
+      environment.API_URL + '/notifications/deleteAll',
       HTTPOptions
     );
   }
 
   removeByCourseUpdates() {
     return this.http.put(
-      environment.apiUrl + '/notifications/courseupdates',
+      environment.API_URL + '/notifications/courseupdates',
       HTTPOptions
     );
   }
 
   removeByReplies() {
     return this.http.put(
-      environment.apiUrl + '/notifications/replies',
+      environment.API_URL + '/notifications/replies',
       HTTPOptions
     );
   }
 
   removeByAnnotations() {
     return this.http.put(
-      environment.apiUrl + '/notifications/annotations',
+      environment.API_URL + '/notifications/annotations',
       HTTPOptions
     );
   }
 
   toggleActiveCourse() {
     return this.http.put(
-      environment.apiUrl + '/notifications/deactivate/course',
+      environment.API_URL + '/notifications/deactivate/course',
       HTTPOptions
     );
   }
 
   toggleAnnotation() {
     return this.http.put(
-      environment.apiUrl + '/notifications/deactivate/annotation',
+      environment.API_URL + '/notifications/deactivate/annotation',
       HTTPOptions
     );
   }
 
   toggleReply() {
     return this.http.put(
-      environment.apiUrl + '/notifications/deactivate/reply',
+      environment.API_URL + '/notifications/deactivate/reply',
       HTTPOptions
     );
   }
 
   turnOffNotification(userId: string) {
     return this.http.post(
-      environment.apiUrl + '/notification/deactivate/' + userId,
+      environment.API_URL + '/notification/deactivate/' + userId,
       HTTPOptions
     );
   }
 
   getUserIsCourseTurnOff() {
     return this.http
-      .get(environment.apiUrl + '/notification/isCourseTurnOff', HTTPOptions)
+      .get(environment.API_URL + '/notification/isCourseTurnOff', HTTPOptions)
       .subscribe((data: any) => {
         this.isCourseTurnOff.next(data);
       });
@@ -190,7 +190,7 @@ export class NotificationServiceService {
 
   getUserIsRepliesTurnOff() {
     return this.http
-      .get(environment.apiUrl + '/notification/isRepliesTurnOff', HTTPOptions)
+      .get(environment.API_URL + '/notification/isRepliesTurnOff', HTTPOptions)
       .subscribe((data: any) => {
         this.isRepliesTurnOff.next(data);
       });
@@ -199,7 +199,7 @@ export class NotificationServiceService {
   getUserIsAnnotationsTurnOff() {
     return this.http
       .get(
-        environment.apiUrl + '/notification/isAnnotationTurnOff',
+        environment.API_URL + '/notification/isAnnotationTurnOff',
         HTTPOptions
       )
       .subscribe((data: any) => {

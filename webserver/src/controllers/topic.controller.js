@@ -164,8 +164,7 @@ export const newTopic = async (req, res) => {
   }
 
   return res.send({
-    id: topic._id,
-    courseId: courseId,
+    savedTopic: savedTopic,
     success: `New topic '${topicName}' added!`,
     notification: `new notification is added `,
   });

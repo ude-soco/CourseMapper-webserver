@@ -18,6 +18,7 @@ const Notification = db.notification;
  */
 export const getAllCourses = async (req, res) => {
   let courses;
+  console.log("get all courses");
   try {
     courses = await Course.find({}).populate("topics", "-__v");
   } catch (err) {
@@ -40,18 +41,91 @@ export const getAllCourses = async (req, res) => {
 };
 
 /**
+ * @function getMyCourses
+ * Get all courses the logged in user is enrolled in controller
+ *
+ */
+export const getMyCourses = async (req, res) => {
+  let user;
+  let userId = req.userId;
+  let results = [];
+  try {
+    user = await User.findOne({ _id: ObjectId(userId) })
+      .populate({ path: "courses", populate: { path: "role" } })
+      .populate({ path: "courses", populate: { path: "courseId" } });
+  } catch (err) {
+    return res.status(500).send({ message: err });
+  }
+  user.courses.forEach((object) => {
+    let course = {
+      _id: object.courseId._id,
+      name: object.courseId.name,
+      shortName: object.courseId.shortName,
+      description: object.courseId.description,
+      numberTopics: object.courseId.topics.length,
+      numberChannels: object.courseId.channels.length,
+      numberUsers: object.courseId.users.length,
+      role: object.role.name,
+    };
+    results.push(course);
+  });
+  return res.status(200).send(results);
+};
+
+export const getSubscribedCourses = async (req, res) => {
+  let userId = req.userId;
+  let user;
+  try {
+    user = await User.findOne({ _id: ObjectId(userId) });
+  } catch (err) {
+    return res.status(500).send({ message: err });
+  }
+  let courseIdLists = [];
+  user.subscribedCourses.forEach((item) => {
+    courseIdLists.push(item.courseId.toString());
+  });
+  res.status(200).send(courseIdLists);
+};
+
+/**
  * @function getCourse
  * Get details of a course controller
  *
  * @param {string} req.params.courseId The id of the course
  */
+// export const getCourse = async (req, res) => {
+//   const courseId = req.params.courseId;
+//   let foundCourse;
+//   try {
+//     foundCourse = await Course.findOne({
+//       _id: ObjectId(courseId),
+//     }).populate("topics channels", "-__v");
+//     if (!foundCourse) {
+//       return res.status(404).send({
+//         error: `Course with id ${courseId} doesn't exist!`,
+//       });
+//     }
+//   } catch (err) {
+//     return res.status(500).send({ message: err });
+//   }
+//   return res.status(200).send(foundCourse);
+// };
+
+/**
+ * @function getCourse
+ * Get Topics of a course controller
+ *
+ * @param {string} req.params.courseId The id of the course
+ */
 export const getCourse = async (req, res) => {
   const courseId = req.params.courseId;
+  console.log("getCourse");
+  const userId = req.userId;
   let foundCourse;
   try {
-    foundCourse = await Course.findOne({
-      _id: ObjectId(courseId),
-    }).populate("topics channels", "-__v");
+    foundCourse = await Course.findOne({ _id: ObjectId(courseId) })
+      .populate("topics", "-__v")
+      .populate({ path: "topics", populate: { path: "channels" } });
     if (!foundCourse) {
       return res.status(404).send({
         error: `Course with id ${courseId} doesn't exist!`,
@@ -60,7 +134,8 @@ export const getCourse = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ message: err });
   }
-  return res.status(200).send(foundCourse);
+
+  return res.status(200).send(foundCourse.topics);
 };
 
 /**
@@ -225,9 +300,12 @@ export const withdrawCourse = async (req, res) => {
  * @param {string} req.userId The owner of the course
  */
 export const newCourse = async (req, res) => {
+  console.log("newCourse");
   const courseName = req.body.name;
   const courseDesc = req.body.description;
   const userId = req.userId;
+
+  const shortName = req.body.shortName;
   let foundUser;
   try {
     foundUser = await User.findById(userId);
@@ -250,14 +328,16 @@ export const newCourse = async (req, res) => {
     return res.status(500).send({ error: err });
   }
 
-  let shortName = courseName
-    .split(" ")
-    .map((word, index) => {
-      if (index < 3) {
-        return word[0];
-      }
-    })
-    .join("");
+  if (!shortName) {
+    shortName = courseName
+      .split(" ")
+      .map((word, index) => {
+        if (index < 3) {
+          return word[0];
+        }
+      })
+      .join("");
+  }
 
   let foundRole;
   try {
@@ -323,9 +403,20 @@ export const newCourse = async (req, res) => {
   //   return res.status(500).send({ error: err });
   // }
   return res.send({
-    id: course._id,
+    // id: course._id,
+    // success: `New course '${courseSaved.name}' added!`,
+    // // notification: notification,
+    courseSaved: {
+      _id: courseSaved._id,
+      name: courseSaved.name,
+      shortName: courseSaved.shortName,
+      description: courseSaved.description,
+      numberTopics: courseSaved.topics.length,
+      numberChannels: courseSaved.channels.length,
+      numberUsers: courseSaved.users.length,
+      role: foundRole.name,
+    },
     success: `New course '${courseSaved.name}' added!`,
-    // notification: notification,
   });
 };
 
@@ -389,7 +480,9 @@ export const deleteCourse = async (req, res) => {
 
   let foundUser;
   try {
-    foundUser = await User.findOne({ _id: req.userId });
+    //TODO uncomment following line & remove static assigned userID
+    // foundUser = await User.findOne({ _id: req.userId });
+    foundUser = await User.findOne({ _id: userId });
   } catch (err) {
     return res.status(500).send({ error: err });
   }

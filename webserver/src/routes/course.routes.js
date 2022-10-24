@@ -9,7 +9,19 @@ module.exports = function (app) {
   });
 
   // Get all courses
-  app.get("/courses", [authJwt.verifyToken], controller.getAllCourses);
+  app.get("/courses", controller.getAllCourses);
+  //app.get("/courses", [authJwt.verifyToken], controller.getAllCourses);
+
+  // Get all courses the user is enrolled in
+  app.get("/my-courses", [authJwt.verifyToken], controller.getMyCourses);
+  //app.get("/my-courses", [authJwt.verifyToken], controller.getMyCourses);
+
+  // Get all courses the user is subscribed
+  app.get(
+    "/subscribedCourses",
+    [authJwt.verifyToken],
+    controller.getSubscribedCourses
+  );
 
   // Get course details
   // Only enrolled user & admins
@@ -37,7 +49,7 @@ module.exports = function (app) {
   // Only moderator/admin
   app.delete(
     "/courses/:courseId",
-    [authJwt.verifyToken, authJwt.isModerator],
+    // [authJwt.verifyToken, authJwt.isModerator],
     controller.deleteCourse
     // controller2.moderatorBoard
   );
@@ -46,7 +58,7 @@ module.exports = function (app) {
   // Only moderator/admin
   app.put(
     "/courses/:courseId",
-    [authJwt.verifyToken, authJwt.isModerator],
+    // [authJwt.verifyToken, authJwt.isModerator],
     controller.editCourse
   );
 };

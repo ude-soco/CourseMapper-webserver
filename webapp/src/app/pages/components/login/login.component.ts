@@ -5,6 +5,7 @@ import { StorageService } from 'src/app/services/storage.service';
 import { NotificationServiceService } from 'src/app/services/notification-service.service';
 import { CustomDatePipe } from 'src/app/pipes/date.pipe';
 import { AnnotationService } from 'src/app/services/annotation.service';
+import { CourseService } from 'src/app/services/course.service';
 
 @Component({
   selector: 'app-login',
@@ -25,7 +26,8 @@ export class LoginComponent implements OnInit {
     private storageService: StorageService,
     private router: Router,
     private notificationService: NotificationServiceService,
-    private annotationService: AnnotationService
+    private annotationService: AnnotationService,
+    private courseService: CourseService
   ) {}
 
   ngOnInit(): void {
@@ -63,7 +65,7 @@ export class LoginComponent implements OnInit {
             this.temp.notificationLists
           );
         });
-
+        this.courseService.getSubscribedCourseLists();
         this.router.navigate(['/home']);
       },
       error: (err) => {

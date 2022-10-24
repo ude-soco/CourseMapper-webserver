@@ -2,6 +2,7 @@ import { PrimengModule } from './modules/primeng/primeng.module';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { en_US, NZ_I18N } from 'ng-zorro-antd/i18n';
+import { TopicDropdownComponent } from './pages/components/topic-dropdown/topic-dropdown.component';
 import { AppRoutingModule } from './app-routing.module';
 import { NzFormModule } from 'ng-zorro-antd/form';
 
@@ -19,10 +20,8 @@ import { BadgeModule } from 'primeng/badge';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { NotificationDashboardComponent } from './pages/components/notification-dashboard/notification-dashboard.component';
 import { SidebarModule } from 'primeng/sidebar';
-import { ButtonModule } from 'primeng/button';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { TabMenuModule } from 'primeng/tabmenu';
-import { MenuModule } from 'primeng/menu';
 import { MegaMenuModule } from 'primeng/megamenu';
 
 import { MenuItem } from 'primeng/api';
@@ -44,9 +43,7 @@ import { NotificationBoxComponent } from './components/notification-box/notifica
 import { RegistrationComponent } from './pages/components/registration/registration.component';
 
 import { registerLocaleData } from '@angular/common';
-import { FormsModule, FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FormBuilder } from '@angular/forms';
 import { LoginComponent } from './pages/components/login/login.component';
 import { HomeComponent } from './pages/home/home.component';
 import { httpInterceptorProviders } from './_helpers/http.interceptor';
@@ -54,6 +51,19 @@ import { CustomDatePipe } from './pipes/date.pipe';
 import { AnnotationCommentListComponent } from './pages/components/annotation-comment-list/annotation-comment-list.component';
 import { AnnotationCommentListItemComponent } from './components/annotation-comment-list-item/annotation-comment-list-item.component';
 registerLocaleData(en);
+import { DialogModule } from 'primeng/dialog';
+import { ButtonModule } from 'primeng/button';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FormsModule } from '@angular/forms';
+import { InputTextModule } from 'primeng/inputtext';
+import { HttpClientModule } from '@angular/common/http';
+import { AddCourseComponent } from './pages/components/add-course/add-course.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { AddTopicComponent } from './pages/components/add-topic/add-topic.component';
+import { AddChannelComponent } from './pages/components/add-channel/add-channel.component';
+import { MenuModule } from 'primeng/menu';
+import { ToastModule } from 'primeng/toast';
+import { RippleModule } from 'primeng/ripple';
 
 @NgModule({
   declarations: [
@@ -78,6 +88,10 @@ registerLocaleData(en);
     CustomDatePipe,
     AnnotationCommentListComponent,
     AnnotationCommentListItemComponent,
+    AddCourseComponent,
+    AddTopicComponent,
+    AddChannelComponent,
+    TopicDropdownComponent,
   ],
   imports: [
     BrowserModule,
@@ -105,6 +119,19 @@ registerLocaleData(en);
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    BrowserModule,
+    AppRoutingModule,
+    PrimengModule,
+    HttpClientModule,
+    DialogModule,
+    ButtonModule,
+    BrowserAnimationsModule,
+    FormsModule,
+    InputTextModule,
+    ReactiveFormsModule,
+    MenuModule,
+    ToastModule,
+    RippleModule,
   ],
 
   providers: [{ provide: NZ_I18N, useValue: en_US }, httpInterceptorProviders],

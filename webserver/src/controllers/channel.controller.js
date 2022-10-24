@@ -6,6 +6,7 @@ const Material = db.material;
 const Topic = db.topic;
 const Notification = db.notification;
 const User = db.user;
+
 /**
  * @function getChannel
  * Get details of a channel controller
@@ -195,7 +196,7 @@ export const newChannel = async (req, res) => {
   }
 
   return res.send({
-    id: savedChannel._id,
+    savedChannel: savedChannel,
     success: `New channel '${savedChannel.name}' added!`,
     notification: `new notification ${notification} has been added`,
   });

@@ -1,15 +1,76 @@
-<div class="relative w-72 h-screen bg-gray-200 shadow-lg">
+<div
+  class="relative w-72 h-screen bg-gray-100 shadow-lg"
+  *ngIf="selectedCourse._id"
+>
+  <div class="h-max w-72 m-0 flex flex-col bg-gray-100">
+    <div class="flex items-start justify-between py-4 pl-3 bg-gray-200">
+      <p
+        id="{{ selectedCourse._id }}"
+        (dblclick)="onRenameCourse()"
+        class="flex w-56 text-xl font-semibold"
+        #selectedCourse._id
+      >
+        {{ selectedCourse.name }}
+      </p>
+
+      <!-- <div hidden="true" id="{{selectedCourse._id}}-button">
+        <button (click)='onRenameCourseConfirm(selectedCourse._id)' class="confirm-button">confirm</button>
+      </div> -->
+      <p-menu #menu id="config_menu" [model]="options" [popup]="true"></p-menu>
+      <app-iconbutton
+        icon="bx-dots-vertical-rounded"
+        color="text-black"
+        (click)="menu.toggle($event)"
+      ></app-iconbutton>
+    </div>
+    <div class="subscribe">
+      <button
+        pButton
+        formControlName="subscribed"
+        (click)="subscribeToCourse($event, selectedCourse._id)"
+        type="button"
+        [label]="subscribeLabel"
+        [ngClass]="subscribed ? 'subscribed' : 'unsubscribe'"
+        class="subscribe-button"
+      ></button>
+    </div>
+    <app-topic-dropdown></app-topic-dropdown>
+
+    <div
+      class="flex flex-col items-center justify-start m-0 z-10 hover:bg-white transition-all cursor-pointer"
+    >
+      <div
+        class="m-0 w-full mx-2 transition duration-300 ease-in-out"
+        (click)="onAddTopicDialogueClicked()"
+      >
+        <div class="flex flex-row items-center justify-between mx-0 my-1.5">
+          <div class="flex flex-row items-center">
+            <app-iconbutton icon="bx-plus" color="text-black"></app-iconbutton>
+            <p class="text-md italic font-semibold">Add Topic</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<app-add-topic
+  [displayAddTopicDialogue]="displayAddTopicDialogue"
+  (onCloseAddTopicDialogue)="toggleAddTopicDialogueClicked($event)"
+></app-add-topic>
+
+<!-- ________________________________________________________ -->
+
+<!-- <div class="relative w-72 h-screen bg-gray-200 shadow-lg">
   <div class="h-max w-72 m-0 flex flex-col bg-gray-200">
     <div class="flex items-start justify-between py-4 px-3 bg-gray-300">
       <p class="flex w-56 text-xl font-semibold">
-        <!-- Learning Analytics -->
-        Neuroinformatik und Organic Computing Vorlesung WS21/22
+        {{selectedCourse.name}}
       </p>
 
       <app-iconbutton
         icon="bx-dots-vertical-rounded"
         color="text-black"
-        (onClick)="showMenu()"
+        (onClick)="onDeleteCourse()"
       ></app-iconbutton>
     </div>
     <div class="subscribe">
@@ -28,11 +89,41 @@
         <div
           class="flex flex-row items-center justify-evenly mx-0 cursor-pointer"
         >
-          <i
-            class="bx bx-chevron-down text-accent text-opacity-80 my-auto mr-1"
-          ></i>
+          <ul *ngIf="topics.length > 0">
+            <li *ngFor="let topic of topics">
+            <div>
+              <div (click)="onSelectTopic(topic)">
+                {{topic.name}}
+              </div>
+          
+                <select #topicSelection [id]="topic._id" (change) = "onSelectTopicOption(topicSelection.value,  topicSelection.id)">
+                  <option value="" disabled selected>----</option>
+                  <option value="Delete" name="Delete"> Delete</option>
+                  <option value="Rename" name="Rename">Rename</option>
+                </select>
+            </div>
+            <ul *ngIf="topic.channels.length > 0">
+                <li *ngFor="let channel of topic.channels">
+                  <div class="moveToRight">
+                    <p (click)="onSelectChannel(channel)">
+                      {{channel.name}}
+                    </p>
+                    <select #channelSelection [id]="channel._id" (change) = "onSelectChannelOption(channelSelection.value,  channelSelection.id)">
+                      <option value="" disabled selected>----</option>
+                      <option value="Delete" name="Delete"> Delete</option>
+                      <option value="Rename" name="Rename">Rename</option>
+                    </select>
+                  </div>
+                </li>
+            </ul>
+            <button pButton (click)="onAddNewChannelClicked(topic)">Add new Channel</button>
+            </li>
+          </ul>
         </div>
+        <button pButton (click)="onAddTopicDialogueClicked()">Add new Topic</button>
       </div>
     </div>
   </div>
 </div>
+<app-add-topic [onShowAddTopicDialogue]="onShowAddTopicDialogue"></app-add-topic>
+<app-add-channel [onShowAddChannelDialogue]="onShowAddChannelDialogue"></app-add-channel> -->

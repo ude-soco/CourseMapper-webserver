@@ -1,0 +1,19 @@
+<p-toast></p-toast>
+
+<p-dialog header="Create New Topic" [(visible)]="displayAddTopicDialogue" [modal]="true" [draggable]="false" [closable]="false">
+    <form [formGroup]="createTopicForm">
+        <div>
+            <br>
+            <span class="p-float-label">
+                <input id="name" type="text" formControlName ="name" pInputText > 
+                <label for="name">Name</label>
+                <small *ngIf="createTopicForm.get('name').invalid" class="p-error block">Please fill the field</small>
+            </span>
+        </div>
+        <br>
+        <div >
+            <button pButton icon="pi pi-check" (click)="onSubmit()" label="Submit" ></button>
+            <button pButton icon="pi pi-times" class="float-right" (click)="toggleAddTopicDialogue()" label="Cancel"></button>
+        </div>
+    </form>
+</p-dialog>
