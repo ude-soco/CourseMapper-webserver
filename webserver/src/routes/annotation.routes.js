@@ -31,7 +31,8 @@ module.exports = function (app) {
   app.put(
     "/courses/:courseId/annotations/:annotationId",
     [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.editAnnotation
+    controller.editAnnotation,
+    logger.editAnnotation
   );
 
   // Like an annotation

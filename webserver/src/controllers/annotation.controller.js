@@ -234,13 +234,26 @@ export const deleteAnnotation = async (req, res, next) => {
  * @param {string} req.body.tool The annotation tool used
  * @param {string} req.userId The id of the user. Only author of the annotation can edit
  */
-export const editAnnotation = async (req, res) => {
+export const editAnnotation = async (req, res, next) => {
   const courseId = req.params.courseId;
   const annotationId = req.params.annotationId;
   const annotationType = req.body.type;
   const annotationContent = req.body.content;
   const annotationLocation = req.body.location;
   const annotationTool = req.body.tool;
+  const userId = req.userId;
+
+  let user
+  try {
+    user = await User.findOne({_id: userId});
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
 
   let foundAnnotation;
   try {
@@ -264,6 +277,10 @@ export const editAnnotation = async (req, res) => {
     }
   } catch (err) {
     res.status(500).send({ error: err });
+  }
+
+  req.locals = {
+    oldAnnotation: JSON.parse(JSON.stringify(foundAnnotation))
   }
 
   foundAnnotation.type = annotationType;
@@ -311,7 +328,11 @@ export const editAnnotation = async (req, res) => {
     }
   }
 
-  return res.status(200).send({ success: "Annotation successfully updated" });
+  req.locals.response = { success: "Annotation successfully updated" }
+  req.locals.newAnnotation = foundAnnotation;
+  req.locals.user = user;
+
+  return next();
 };
 
 /**

@@ -335,7 +335,71 @@ export const getAnnotationUndislikeStatement = (user, annotation) => {
   };
 };
 
-export const getChannelEditStatement = (user, newChannel, oldtChannel) => {
+export const getAnnotationEditStatement = (
+  user,
+  newAnnotation,
+  oldAnnotation
+) => {
   const fullname = `${user.firstname} ${user.lastname}`;
-  return;
+  return {
+    id: uuidv4(),
+    timestamp: new Date(),
+    actor: {
+      objectType: "Agent",
+      name: fullname,
+      account: {
+        homePage: "http://www.CourseMapper.v2.de",
+        name: user.username,
+      },
+    },
+    verb: {
+      id: "http://curatr3.com/define/verb/edited",
+      display: {
+        "en-US": "edited",
+      },
+    },
+    object: {
+      objectType: "Activity",
+      id: `http://www.CourseMapper.v2.de/activity/course/${oldAnnotation.courseId}/topic/${oldAnnotation.topicId}/channel/${oldAnnotation.channelId}/material/${oldAnnotation.materialId}/annotation/${oldAnnotation._id}`,
+      definition: {
+        type: "http://www.CourseMapper.v2.de/activityType/annotation",
+        name: {
+          "en-US":
+            "Annotation:" +
+            oldAnnotation.content.slice(0, 50) +
+            (oldAnnotation.content.length > 50 ? " ..." : ""),
+        },
+        description: {
+          "en-US": oldAnnotation.content,
+        },
+        extensions: {
+          "http://www.CourseMapper.v2.de/extensions/annotation": {
+            id: oldAnnotation._id,
+            material_id: oldAnnotation.materialId,
+            channel_id: oldAnnotation.channelId,
+            topic_id: oldAnnotation.topicId,
+            course_id: oldAnnotation.courseId,
+            content: oldAnnotation.content,
+            type: oldAnnotation.type,
+            tool: oldAnnotation.tool,
+            location: oldAnnotation.location,
+          },
+        },
+      },
+    },
+    result: {
+      extensions: {
+        "http://www.CourseMapper.v2.de/extensions/annotation": {
+          content: newAnnotation.content,
+          type: newAnnotation.type,
+          tool: newAnnotation.tool,
+          location: newAnnotation.location,
+        },
+      },
+    },
+    context: {
+      platform: "CourseMapper",
+      language: "en-US",
+    },
+  };
 };

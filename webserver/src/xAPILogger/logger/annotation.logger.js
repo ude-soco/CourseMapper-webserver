@@ -58,3 +58,14 @@ export const dislikeAnnotation = (req, res) => {
   controller.saveStatementToMongo(statement);
   res.status(200).send(req.locals.response);
 };
+
+export const editAnnotation = (req, res) => {
+  const statement = statementFactory.getAnnotationEditStatement(
+    req.locals.user,
+    req.locals.newAnnotation,
+    req.locals.oldAnnotation
+  );
+  lrs.sendStatementToLrs(statement);
+  controller.saveStatementToMongo(statement);
+  res.status(200).send(req.locals.response);
+};
