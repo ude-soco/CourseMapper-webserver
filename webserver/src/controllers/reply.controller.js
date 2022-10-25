@@ -329,9 +329,22 @@ export const editReply = async (req, res) => {
  * @param {string} req.params.replyId The id of the reply
  * @param {string} req.userId The id of the user
  */
-export const likeReply = async (req, res) => {
+export const likeReply = async (req, res, next) => {
   const courseId = req.params.courseId;
   const replyId = req.params.replyId;
+  const userId = req.userId;
+
+  let user
+  try {
+    user = await User.findOne({_id: userId});
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
 
   let foundReply;
   try {
@@ -350,6 +363,12 @@ export const likeReply = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
+
+  req.locals = {
+    reply: foundReply,
+    user: user
+  }
+
   if (foundReply.likes.includes(ObjectId(req.userId))) {
     foundReply.likes = foundReply.likes.filter(
       (user) => user.valueOf() !== req.userId
@@ -361,10 +380,15 @@ export const likeReply = async (req, res) => {
       return res.status(500).send({ error: err });
     }
     let countLikes = savedReply.likes.length;
-    return res.status(200).send({
+
+    req.locals.response = {
       count: countLikes,
       success: "Reply successfully unliked!",
-    });
+    }
+    req.locals.like = false;
+
+    return next();
+
   } else if (foundReply.dislikes.includes(ObjectId(req.userId))) {
     return res
       .status(404)
@@ -380,10 +404,13 @@ export const likeReply = async (req, res) => {
 
     let countLikes = savedReply.likes.length;
 
-    return res.status(200).send({
+    req.locals.response = {
       count: countLikes,
       success: "Reply successfully liked!",
-    });
+    }
+    req.locals.like = true;
+
+    return next();
   }
 };
 

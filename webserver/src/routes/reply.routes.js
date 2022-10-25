@@ -48,7 +48,8 @@ module.exports = function (app) {
   app.post(
     "/courses/:courseId/replies/:replyId/like",
     [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.likeReply
+    controller.likeReply,
+    logger.likeReply
   );
 
   // Like a reply
