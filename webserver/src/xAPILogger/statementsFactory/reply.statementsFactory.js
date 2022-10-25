@@ -1,6 +1,10 @@
 import { v4 as uuidv4 } from "uuid";
 
-export const getReplyCreationStatement = (user, annotation, reply) => {
+export const getReplyToAnnotationCreationStatement = (
+  user,
+  annotation,
+  reply
+) => {
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
@@ -35,6 +39,69 @@ export const getReplyCreationStatement = (user, annotation, reply) => {
         },
         extensions: {
           "http://www.CourseMapper.v2.de/extensions/annotation": {
+            id: annotation._id,
+            material_id: annotation.materialId,
+            channel_id: annotation.channelId,
+            topic_id: annotation.topicId,
+            course_id: annotation.courseId,
+            content: annotation.content,
+            type: annotation.type,
+            tool: annotation.tool,
+            location: annotation.location,
+          },
+        },
+      },
+    },
+    result: {
+      extensions: {
+        "http://www.CourseMapper.v2.de/extensions/reply": {
+          id: reply._id,
+          content: reply.content,
+        },
+      },
+    },
+    context: {
+      platform: "CourseMapper",
+      language: "en-US",
+    },
+  };
+};
+
+export const getReplyToCommentCreationStatement = (user, annotation, reply) => {
+  const fullname = `${user.firstname} ${user.lastname}`;
+  return {
+    id: uuidv4(),
+    timestamp: new Date(),
+    actor: {
+      objectType: "Agent",
+      name: fullname,
+      account: {
+        homePage: "http://www.CourseMapper.v2.de",
+        name: user.username,
+      },
+    },
+    verb: {
+      id: "http://id.tincanapi.com/verb/replied",
+      display: {
+        "en-US": "replied",
+      },
+    },
+    object: {
+      objectType: "Activity",
+      id: `http://www.CourseMapper.v2.de/activity/course/${annotation.courseId}/topic/${annotation.topicId}/channel/${annotation.channelId}/material/${annotation.materialId}/comment/${annotation._id}`,
+      definition: {
+        type: "http://www.CourseMapper.v2.de/activityType/comment",
+        name: {
+          "en-US":
+            "Comment:" +
+            annotation.content.slice(0, 50) +
+            (annotation.content.length > 50 ? " ..." : ""),
+        },
+        description: {
+          "en-US": annotation.content,
+        },
+        extensions: {
+          "http://www.CourseMapper.v2.de/extensions/comment": {
             id: annotation._id,
             material_id: annotation.materialId,
             channel_id: annotation.channelId,
