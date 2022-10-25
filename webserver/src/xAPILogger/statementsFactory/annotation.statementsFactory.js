@@ -88,7 +88,10 @@ export const getAnnotaionDeletionStatement = (user, annotation) => {
       definition: {
         type: "http://www.CourseMapper.v2.de/activityType/annotation",
         name: {
-          "en-US": annotation.content.slice(0, 70) + " ...",
+          "en-US":
+            "Annotation:" +
+            annotation.content.slice(0, 50) +
+            (annotation.content.length > 50 ? " ..." : ""),
         },
         description: {
           "en-US": annotation.content,

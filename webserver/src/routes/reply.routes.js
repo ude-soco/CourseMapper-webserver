@@ -1,5 +1,6 @@
 const { authJwt } = require("../middlewares");
 const controller = require("../controllers/reply.controller");
+const logger = require('../xAPILogger/logger/reply.logger');
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -20,7 +21,8 @@ module.exports = function (app) {
   app.post(
     "/courses/:courseId/annotations/:annotationId/reply",
     [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.newReply
+    controller.newReply,
+    logger.newReply
   );
 
   // Delete a reply

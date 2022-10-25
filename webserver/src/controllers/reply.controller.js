@@ -51,10 +51,23 @@ export const getReplies = async (req, res) => {
  * @param {string} req.body.content The content of the reply
  * @param {string} req.userId The author of the reply. Anyone can create a reply
  */
-export const newReply = async (req, res) => {
+export const newReply = async (req, res, next) => {
   const courseId = req.params.courseId;
   const annotationId = req.params.annotationId;
   const replyContent = req.body.content;
+  const userId = req.userId;
+
+  let user
+  try {
+    user = await User.findOne({_id: userId});
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
 
   let foundAnnotation;
   try {
@@ -138,7 +151,14 @@ export const newReply = async (req, res) => {
     }
   }
 
-  return res.status(200).send({ id: newReply._id, success: `Reply added!` });
+  req.locals = {
+    response:{ id: newReply._id, success: `Reply added!` },
+    user: user,
+    annotation:foundAnnotation,
+    reply:newReply
+  }
+
+  return next();
 };
 
 /**
