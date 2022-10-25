@@ -30,7 +30,8 @@ module.exports = function (app) {
   app.delete(
     "/courses/:courseId/replies/:replyId",
     [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.deleteReply
+    controller.deleteReply,
+    logger.deleteReply
   );
 
   // Edit a reply

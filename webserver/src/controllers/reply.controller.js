@@ -169,9 +169,23 @@ export const newReply = async (req, res, next) => {
  * @param {string} req.params.replyId The id of the reply
  * @param {string} req.userId The id of the user. Only author/admin can delete
  */
-export const deleteReply = async (req, res) => {
+export const deleteReply = async (req, res, next) => {
   const courseId = req.params.courseId;
   const replyId = req.params.replyId;
+  const userId = req.userId;
+
+  let user
+  try {
+    user = await User.findOne({_id: userId});
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
+
   let foundReply;
   try {
     foundReply = await Reply.findOne({ _id: ObjectId(replyId) });
@@ -218,7 +232,13 @@ export const deleteReply = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  return res.status(200).send({ success: "Reply successfully deleted" });
+
+  req.locals = {
+    response: { success: "Reply successfully deleted" },
+    user: user,
+    reply: foundReply
+  }
+  return next();
 };
 
 /**

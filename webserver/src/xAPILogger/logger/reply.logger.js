@@ -12,3 +12,14 @@ export const newReply = (req, res) => {
     controller.saveStatementToMongo(statement);
     res.status(200).send(req.locals.response);
   };
+
+  export const deleteReply = (req, res) => {
+    const statement = statementFactory.getReplyDeletionStatement(
+      req.locals.user,
+      req.locals.reply
+    );
+    lrs.sendStatementToLrs(statement);
+    controller.saveStatementToMongo(statement);
+    console.log('log something');
+    res.status(200).send(req.locals.response);
+  };
