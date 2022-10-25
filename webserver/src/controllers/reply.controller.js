@@ -250,10 +250,23 @@ export const deleteReply = async (req, res, next) => {
  * @param {string} req.body.content The content of the reply
  * @param {string} req.userId The id of the user. Only author of the reply can edit
  */
-export const editReply = async (req, res) => {
+export const editReply = async (req, res, next) => {
   const courseId = req.params.courseId;
   const replyId = req.params.replyId;
   const replyContent = req.body.content;
+  const userId = req.userId;
+
+  let user
+  try {
+    user = await User.findOne({_id: userId});
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
 
   let foundReply;
   try {
@@ -275,6 +288,10 @@ export const editReply = async (req, res) => {
     }
   } catch (err) {
     return res.status(500).send({ error: err });
+  }
+
+  req.locals = {
+    oldReply: JSON.parse(JSON.stringify(foundReply))
   }
 
   foundReply.content = replyContent;
@@ -318,7 +335,11 @@ export const editReply = async (req, res) => {
     }
   }
 
-  return res.status(200).send({ success: "Reply successfully updated" });
+  req.locals.response = { success: "Reply successfully updated" }
+  req.locals.newReply = foundReply;
+  req.locals.user = user;
+
+  return next();
 };
 
 /**

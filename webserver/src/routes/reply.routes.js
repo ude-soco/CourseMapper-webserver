@@ -39,7 +39,8 @@ module.exports = function (app) {
   app.put(
     "/courses/:courseId/replies/:replyId",
     [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.editReply
+    controller.editReply,
+    logger.editReply
   );
 
   // Like a reply

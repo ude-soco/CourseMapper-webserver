@@ -327,4 +327,64 @@ export const getReplyUnlikeStatement = (user, reply) => {
       },
     }
   };
+
+  export const getReplyEditStatement = (user, oldReply, newReply) => {
+    const fullname = `${user.firstname} ${user.lastname}`;
+    return {
+      id: uuidv4(),
+      timestamp: new Date(),
+      actor: {
+        objectType: "Agent",
+        name: fullname,
+        account: {
+          homePage: "http://www.CourseMapper.v2.de",
+          name: user.username,
+        },
+      },
+      verb: {
+        id: "http://curatr3.com/define/verb/edited",
+        display: {
+          "en-US": "edited",
+        },
+      },
+      object: {
+        objectType: "Activity",
+        id: `http://www.CourseMapper.v2.de/activity/course/${oldReply.courseId}/topic/${oldReply.topicId}/channel/${oldReply.channelId}/material/${oldReply.materialId}/annotation/${oldReply.annotationId}/reply/${oldReply._id}`,
+        definition: {
+          type: "http://www.CourseMapper.v2.de/activityType/reply",
+          name: {
+            "en-US":
+              "Reply: " +
+              oldReply.content.slice(0, 50) +
+              (oldReply.content.length > 50 ? " ..." : ""),
+          },
+          description: {
+            "en-US": oldReply.content,
+          },
+          extensions: {
+            "http://www.CourseMapper.v2.de/extensions/reply": {
+                id: oldReply._id,
+                annotation_id: oldReply.annotationId,
+                material_id: oldReply.materialId,
+                channel_id: oldReply.channelId,
+                topic_id: oldReply.topicId,
+                course_id: oldReply.courseId,
+                content: oldReply.content,
+            },
+          },
+        },
+      },
+      result: {
+        extensions: {
+          "http://www.CourseMapper.v2.de/extensions/reply": {
+            content: newReply.content,
+          },
+        },
+      },
+      context: {
+        platform: "CourseMapper",
+        language: "en-US",
+      },
+    };
+  };
   

@@ -58,3 +58,14 @@ export const dislikeReply = (req, res) => {
     controller.saveStatementToMongo(statement);
     res.status(200).send(req.locals.response);
   };
+
+  export const editReply = (req, res) => {
+    let statement = statementFactory.getReplyEditStatement(
+        req.locals.user,
+        req.locals.oldReply,
+        req.locals.newReply
+      );
+    lrs.sendStatementToLrs(statement);
+    controller.saveStatementToMongo(statement);
+    res.status(200).send(req.locals.response);
+  };
