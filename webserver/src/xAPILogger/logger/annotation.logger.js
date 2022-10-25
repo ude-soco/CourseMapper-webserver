@@ -105,11 +105,20 @@ export const dislikeAnnotation = (req, res) => {
 };
 
 export const editAnnotation = (req, res) => {
-  const statement = statementFactory.getAnnotationEditStatement(
-    req.locals.user,
-    req.locals.newAnnotation,
-    req.locals.oldAnnotation
-  );
+  let statement;
+  if (!req.locals.oldAnnotation.tool) {
+    statement = statementFactory.getCommentEditStatement(
+      req.locals.user,
+      req.locals.newAnnotation,
+      req.locals.oldAnnotation
+    );
+  } else {
+    statement = statementFactory.getAnnotationEditStatement(
+      req.locals.user,
+      req.locals.newAnnotation,
+      req.locals.oldAnnotation
+    );
+  }
   lrs.sendStatementToLrs(statement);
   controller.saveStatementToMongo(statement);
   res.status(200).send(req.locals.response);
