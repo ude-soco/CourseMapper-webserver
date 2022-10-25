@@ -23,10 +23,18 @@ export const newAnnotation = (req, res) => {
 };
 
 export const deleteAnnotation = (req, res) => {
-  const statement = statementFactory.getAnnotaionDeletionStatement(
-    req.locals.user,
-    req.locals.annotation
-  );
+  let statement;
+  if (!req.locals.annotation.tool){
+    statement = statementFactory.getCommentDeletionStatement(
+      req.locals.user,
+      req.locals.annotation
+    );
+  } else {
+    statement = statementFactory.getAnnotaionDeletionStatement(
+      req.locals.user,
+      req.locals.annotation
+    );
+  }
   lrs.sendStatementToLrs(statement);
   controller.saveStatementToMongo(statement);
   res.status(200).send(req.locals.response);
