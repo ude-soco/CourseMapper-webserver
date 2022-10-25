@@ -58,6 +58,7 @@ module.exports = function (app) {
   app.post(
     "/courses/:courseId/replies/:replyId/dislike",
     [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.dislikeReply
+    controller.dislikeReply,
+    logger.dislikeReply
   );
 };

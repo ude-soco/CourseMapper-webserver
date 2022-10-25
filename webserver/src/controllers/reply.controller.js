@@ -422,9 +422,23 @@ export const likeReply = async (req, res, next) => {
  * @param {string} req.params.replyId The id of the reply
  * @param {string} req.userId The id of the user. Only author of the annotation can edit
  */
-export const dislikeReply = async (req, res) => {
+export const dislikeReply = async (req, res, next) => {
   const courseId = req.params.courseId;
   const replyId = req.params.replyId;
+  const userId = req.userId;
+
+  let user
+  try {
+    user = await User.findOne({_id: userId});
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
+
   let foundReply;
   try {
     foundReply = await Reply.findOne({ _id: ObjectId(replyId) });
@@ -441,6 +455,12 @@ export const dislikeReply = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
+
+  req.locals = {
+    user: user,
+    reply: foundReply
+  }
+
   if (foundReply.dislikes.includes(ObjectId(req.userId))) {
     foundReply.dislikes = foundReply.dislikes.filter(
       (user) => user.valueOf() !== req.userId
@@ -452,10 +472,15 @@ export const dislikeReply = async (req, res) => {
       return res.status(500).send({ error: err });
     }
     let countDislikes = savedReply.dislikes.length;
-    return res.status(200).send({
+
+    req.locals.response = {
       count: countDislikes,
       success: "Reply successfully un-disliked!",
-    });
+    }
+    req.locals.dislike = false;
+
+    return next();
+
   } else if (foundReply.likes.includes(ObjectId(req.userId))) {
     return res
       .status(404)
@@ -469,9 +494,13 @@ export const dislikeReply = async (req, res) => {
       return res.status(500).send({ error: err });
     }
     let countDislikes = savedReply.dislikes.length;
-    return res.status(200).send({
+
+    req.locals.response = {
       count: countDislikes,
       success: "Reply successfully disliked!",
-    });
+    }
+    req.locals.dislike = true;
+
+    return next();
   }
 };

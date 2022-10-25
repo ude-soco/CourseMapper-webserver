@@ -221,3 +221,110 @@ export const getReplyUnlikeStatement = (user, reply) => {
       },
     }
   };
+
+  export const getReplyDislikeStatement = (user, reply) => {
+    const fullname = `${user.firstname} ${user.lastname}`;
+    return{
+      id: uuidv4(),
+      timestamp: new Date(),
+      actor: {
+        objectType: "Agent",
+        name: fullname,
+        account: {
+          homePage: "http://www.CourseMapper.v2.de",
+          name: user.username,
+        },
+      },
+      verb: {
+        id: "http://activitystrea.ms/schema/1.0/dislike",
+        display: {
+          "en-US": "disliked",
+        },
+      },
+      object: {
+        objectType: "Activity",
+        id: `http://www.CourseMapper.v2.de/activity/course/${reply.courseId}/topic/${reply.topicId}/channel/${reply.channelId}/material/${reply.materialId}/annotation/${reply.annotationId}/reply/${reply._id}`,
+        definition: {
+          type: "http://www.CourseMapper.v2.de/activityType/reply",
+          name: {
+            "en-US":
+              "Reply: " +
+              reply.content.slice(0, 50) +
+              (reply.content.length > 50 ? " ..." : ""),
+          },
+          description: {
+            "en-US": reply.content,
+          },
+          extensions: {
+            "http://www.CourseMapper.v2.de/extensions/reply": {
+              id: reply._id,
+              annotation_id: reply.annotationId,
+              material_id: reply.materialId,
+              channel_id: reply.channelId,
+              topic_id: reply.topicId,
+              course_id: reply.courseId,
+              content: reply.content,
+            },
+          },
+        },
+      },
+      context: {
+        platform: "CourseMapper",
+        language: "en-US",
+      },
+    }
+  };
+  
+  export const getReplyUndislikeStatement = (user, reply) => {
+    const fullname = `${user.firstname} ${user.lastname}`;
+    return{
+      id: uuidv4(),
+      timestamp: new Date(),
+      actor: {
+        objectType: "Agent",
+        name: fullname,
+        account: {
+          homePage: "http://www.CourseMapper.v2.de",
+          name: user.username,
+        },
+      },
+      verb: {
+        id: "http://www.CourseMapper.v2.de/verbs/undisliked",
+        display: {
+          "en-US": "un-disliked",
+        },
+      },
+      object: {
+        objectType: "Activity",
+        id: `http://www.CourseMapper.v2.de/activity/course/${reply.courseId}/topic/${reply.topicId}/channel/${reply.channelId}/material/${reply.materialId}/annotation/${reply.annotationId}/reply/${reply._id}`,
+        definition: {
+          type: "http://www.CourseMapper.v2.de/activityType/reply",
+          name: {
+            "en-US":
+              "Reply: " +
+              reply.content.slice(0, 50) +
+              (reply.content.length > 50 ? " ..." : ""),
+          },
+          description: {
+            "en-US": reply.content,
+          },
+          extensions: {
+            "http://www.CourseMapper.v2.de/extensions/reply": {
+              id: reply._id,
+              annotation_id: reply.annotationId,
+              material_id: reply.materialId,
+              channel_id: reply.channelId,
+              topic_id: reply.topicId,
+              course_id: reply.courseId,
+              content: reply.content,
+            },
+          },
+        },
+      },
+      context: {
+        platform: "CourseMapper",
+        language: "en-US",
+      },
+    }
+  };
+  

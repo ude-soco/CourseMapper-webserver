@@ -40,3 +40,21 @@ export const likeReply = (req, res) => {
   controller.saveStatementToMongo(statement);
   res.status(200).send(req.locals.response);
 };
+
+export const dislikeReply = (req, res) => {
+    let statement;
+    if (req.locals.dislike) {
+      statement = statementFactory.getReplyDislikeStatement(
+        req.locals.user,
+        req.locals.reply
+      );
+    } else{
+      statement = statementFactory.getReplyUndislikeStatement(
+          req.locals.user,
+          req.locals.reply
+        );
+    }
+    lrs.sendStatementToLrs(statement);
+    controller.saveStatementToMongo(statement);
+    res.status(200).send(req.locals.response);
+  };

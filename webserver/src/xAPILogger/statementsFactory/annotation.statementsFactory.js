@@ -297,9 +297,9 @@ export const getAnnotationUndislikeStatement = (user, annotation) => {
       },
     },
     verb: {
-      id: "http://activitystrea.ms/schema/1.0/undislike",
+      id: "http://www.CourseMapper.v2.de/verbs/undisliked",
       display: {
-        "en-US": "undisliked",
+        "en-US": "un-disliked",
       },
     },
     object: {
