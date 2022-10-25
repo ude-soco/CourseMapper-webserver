@@ -75,15 +75,29 @@ export const likeAnnotation = (req, res) => {
 export const dislikeAnnotation = (req, res) => {
   let statement;
   if (req.locals.dislike) {
-    statement = statementFactory.getAnnotationDislikeStatement(
-      req.locals.user,
-      req.locals.annotation
-    );
+    if (!req.locals.annotation.tool) {
+      statement = statementFactory.getCommentDislikeStatement(
+        req.locals.user,
+        req.locals.annotation
+      );
+    } else {
+      statement = statementFactory.getAnnotationDislikeStatement(
+        req.locals.user,
+        req.locals.annotation
+      );
+    }
   } else {
-    statement = statementFactory.getAnnotationUndislikeStatement(
-      req.locals.user,
-      req.locals.annotation
-    );
+    if (!req.locals.annotation.tool) {
+      statement = statementFactory.getCommentUndislikeStatement(
+        req.locals.user,
+        req.locals.annotation
+      );
+    } else {
+      statement = statementFactory.getAnnotationUndislikeStatement(
+        req.locals.user,
+        req.locals.annotation
+      );
+    }
   }
   lrs.sendStatementToLrs(statement);
   controller.saveStatementToMongo(statement);
