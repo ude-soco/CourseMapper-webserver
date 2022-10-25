@@ -30,11 +30,11 @@ export const likeReply = (req, res) => {
       req.locals.user,
       req.locals.reply
     );
-  } else{
+  } else {
     statement = statementFactory.getReplyUnlikeStatement(
-        req.locals.user,
-        req.locals.reply
-      );
+      req.locals.user,
+      req.locals.reply
+    );
   }
   lrs.sendStatementToLrs(statement);
   controller.saveStatementToMongo(statement);
@@ -42,30 +42,30 @@ export const likeReply = (req, res) => {
 };
 
 export const dislikeReply = (req, res) => {
-    let statement;
-    if (req.locals.dislike) {
-      statement = statementFactory.getReplyDislikeStatement(
-        req.locals.user,
-        req.locals.reply
-      );
-    } else{
-      statement = statementFactory.getReplyUndislikeStatement(
-          req.locals.user,
-          req.locals.reply
-        );
-    }
-    lrs.sendStatementToLrs(statement);
-    controller.saveStatementToMongo(statement);
-    res.status(200).send(req.locals.response);
-  };
+  let statement;
+  if (req.locals.dislike) {
+    statement = statementFactory.getReplyDislikeStatement(
+      req.locals.user,
+      req.locals.reply
+    );
+  } else {
+    statement = statementFactory.getReplyUndislikeStatement(
+      req.locals.user,
+      req.locals.reply
+    );
+  }
+  lrs.sendStatementToLrs(statement);
+  controller.saveStatementToMongo(statement);
+  res.status(200).send(req.locals.response);
+};
 
-  export const editReply = (req, res) => {
-    let statement = statementFactory.getReplyEditStatement(
-        req.locals.user,
-        req.locals.oldReply,
-        req.locals.newReply
-      );
-    lrs.sendStatementToLrs(statement);
-    controller.saveStatementToMongo(statement);
-    res.status(200).send(req.locals.response);
-  };
+export const editReply = (req, res) => {
+  let statement = statementFactory.getReplyEditStatement(
+    req.locals.user,
+    req.locals.oldReply,
+    req.locals.newReply
+  );
+  lrs.sendStatementToLrs(statement);
+  controller.saveStatementToMongo(statement);
+  res.status(200).send(req.locals.response);
+};
