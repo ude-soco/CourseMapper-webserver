@@ -25,11 +25,12 @@
     </div>
     <div class="subscribe">
       <button
+        *ngIf="!isModerator"
         pButton
         formControlName="subscribed"
         (click)="subscribeToCourse($event, selectedCourse._id)"
         type="button"
-        [label]="subscribeLabel"
+        [label]="subscribed ? 'Unsubscribe' : 'Subscribe to course'"
         [ngClass]="subscribed ? 'subscribed' : 'unsubscribe'"
         class="subscribe-button"
       ></button>

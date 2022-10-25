@@ -15,6 +15,7 @@ import { MenuItem } from 'primeng/api';
 export class ChannelbarComponent implements OnInit {
   subscribed!: boolean;
   subscribeLabel!: string;
+  isModerator!: boolean;
 
   constructor(
     private courseService: CourseService,
@@ -47,7 +48,21 @@ export class ChannelbarComponent implements OnInit {
     });
     this.courseService.subscribedCourseLists$.subscribe((lists) => {
       this.updateSubscribeButtonLabel(lists);
+      this.checkIfModerator();
     });
+  }
+
+  checkIfModerator() {
+    console.log(this.selectedCourse._id);
+    this.courseService
+      .checkIfModerator(this.selectedCourse._id)
+      .subscribe((res: any) => {
+        if (res.role == 'moderator') {
+          this.isModerator = true;
+        } else {
+          this.isModerator = false;
+        }
+      });
   }
 
   updateSubscribeButtonLabel(lists) {
@@ -99,19 +114,15 @@ export class ChannelbarComponent implements OnInit {
   }
 
   subscribeToCourse(event: any, id: string) {
-    this.subscribed = !this.subscribed;
-
-    this.subscribeLabel = this.subscribed
-      ? 'Subscribed'
-      : 'Subscribe to course';
-
     if (this.subscribed) {
       this.courseService.withdrawCourse(id).subscribe((res) => {
-        console.log('res withdraw', res);
+        this.subscribed = false;
+        this.subscribeLabel = 'Subscribe to course';
       });
     } else {
       this.courseService.enrolCourse(id).subscribe((res) => {
-        console.log('res enroll', res);
+        this.subscribed = true;
+        this.subscribeLabel = 'Subscribed';
       });
     }
   }

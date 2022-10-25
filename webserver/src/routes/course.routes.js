@@ -61,4 +61,10 @@ module.exports = function (app) {
     // [authJwt.verifyToken, authJwt.isModerator],
     controller.editCourse
   );
+
+  app.get(
+    "/courses/:courseId/isAuthor",
+    [authJwt.verifyToken],
+    controller.checkIfAuthor
+  );
 };

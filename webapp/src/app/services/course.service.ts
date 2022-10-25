@@ -166,4 +166,11 @@ export class CourseService {
       .get(environment.API_URL + '/subscribedCourses', HTTPOptions)
       .pipe(tap((lists) => this.subscribedCourseLists.next(lists)));
   }
+
+  checkIfModerator(courseId: string) {
+    return this.http.get(
+      environment.API_URL + '/courses/' + courseId + '/isAuthor',
+      HTTPOptions
+    );
+  }
 }

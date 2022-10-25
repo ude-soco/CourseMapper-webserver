@@ -300,7 +300,6 @@ export const withdrawCourse = async (req, res) => {
  * @param {string} req.userId The owner of the course
  */
 export const newCourse = async (req, res) => {
-  console.log("newCourse");
   const courseName = req.body.name;
   const courseDesc = req.body.description;
   const userId = req.userId;
@@ -549,4 +548,54 @@ export const editCourse = async (req, res) => {
   return res
     .status(200)
     .send({ success: `Course '${courseName}' has been updated successfully!` });
+};
+
+export const checkIfAuthor = async (req, res) => {
+  const courseId = req.params.courseId;
+  const userId = req.userId;
+
+  let foundCourse;
+  try {
+    foundCourse = await Course.findById(courseId);
+    if (!foundCourse) {
+      return res.status(404).send({
+        error: `Course with id ${courseId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  let userIds = [];
+  let needIndex;
+
+  for (let i = 0; i < foundCourse.users.length; i++) {
+    userIds.push(foundCourse.users[i].userId.toString());
+    console.log(userIds);
+    if (userIds.includes(userId)) {
+      needIndex = true;
+    } else {
+      needIndex = false;
+    }
+  }
+  let role;
+  if (needIndex) {
+    let foundIndex = foundCourse.users
+      .map((user) => user.userId.toString())
+      .indexOf(userId);
+    let foundRole;
+    try {
+      foundRole = await Role.findById({
+        _id: ObjectId(foundCourse.users[foundIndex].role.toString()),
+      });
+    } catch (err) {
+      return res.status(500).send({ error: err });
+    }
+
+    role = foundRole.name;
+  } else {
+    role = "user not in this course";
+  }
+
+  return res.status(200).send({ role: role });
 };
