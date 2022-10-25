@@ -62,6 +62,68 @@ export const getAnnotationCreationStatement = (user, annotation, material) => {
     },
   };
 };
+export const getCommentCreationStatement = (user, annotation, material) => {
+  const fullname = `${user.firstname} ${user.lastname}`;
+  return {
+    id: uuidv4(),
+    timestamp: new Date(),
+    actor: {
+      objectType: "Agent",
+      name: fullname,
+      account: {
+        homePage: "http://www.CourseMapper.v2.de",
+        name: user.username,
+      },
+    },
+    verb: {
+      id: "http://adlnet.gov/expapi/verbs/commented",
+      display: {
+        "en-US": "commented",
+      },
+    },
+    object: {
+      objectType: "Activity",
+      id: `http://www.CourseMapper.v2.de/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`,
+      definition: {
+        type: "http://www.CourseMapper.v2.de/activityType/material",
+        name: {
+          "en-US": material.name,
+        },
+        description: {
+          "en-US": material.description,
+        },
+        extensions: {
+          "http://www.CourseMapper.v2.de/extensions/material": {
+            id: material._id,
+            type: material.type,
+            channel_id: material.channelId,
+            topic_id: material.topicId,
+            course_id: material.courseId,
+          },
+        },
+      },
+    },
+    result: {
+      extensions: {
+        "http://www.CourseMapper.v2.de/extensions/comment": {
+          id: annotation._id,
+          material_id: annotation.materialId,
+          channel_id: annotation.channelId,
+          topic_id: annotation.topicId,
+          course_id: annotation.courseId,
+          content: annotation.content,
+          type: annotation.type,
+          tool: annotation.tool,
+          location: annotation.location,
+        },
+      },
+    },
+    context: {
+      platform: "CourseMapper",
+      language: "en-US",
+    },
+  };
+};
 
 export const getAnnotaionDeletionStatement = (user, annotation) => {
   const fullname = `${user.firstname} ${user.lastname}`;
