@@ -3,15 +3,14 @@
 <p-dialog header="Create course" [(visible)]="displayAddCourseDialogue" [modal]="true" [draggable]="false"
           [closable]="false" [style]="{maxWidth: '500px', width: '100%'}">
   <form [formGroup]="createCourseForm" [style]="{ paddingTop: '8px'}">
-
     <span class="p-float-label">
-        <input id="name" type="text" formControlName="name" pInputText [style]="{ width: '100%'}">
-        <label for="name">
-          Course name
-        </label>
-      </span>
+      <input id="name" type="text" formControlName="name" pInputText [style]="{ width: '100%'}">
+      <label for="name">
+        Course name
+      </label>
+    </span>
     <div [style]="{height: '24px'}">
-      <small *ngIf="createCourseForm.get('name').invalid" class="p-error block">Please fill the field</small>
+      <small *ngIf="createCourseForm.get('name').invalid" class="p-error block">Please give a course name</small>
     </div>
 
     <span class="p-float-label">
@@ -23,7 +22,7 @@
     <div>
       <button pButton icon="pi pi-times" (click)="toggleAddCourseDialogue()"
               label="Cancel" class="p-button-outlined"></button>
-      <button pButton icon="pi pi-check" class="float-right" (click)="onSubmit()" label="Submit"
+      <button pButton icon="pi pi-check" class="float-right" (click)="onSubmit()" label="Confirm"
               [disabled]="createCourseForm.get('name').invalid"></button>
     </div>
   </form>

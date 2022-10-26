@@ -1,20 +1,20 @@
 <p-toast></p-toast>
 
 <p-dialog header="Create New Topic" [(visible)]="displayAddTopicDialogue" [modal]="true" [draggable]="false"
-          [closable]="false">
-  <form [formGroup]="createTopicForm">
-    <div>
-      <br>
-      <span class="p-float-label">
-        <input id="name" type="text" formControlName="name" pInputText>
-        <label for="name">Name</label>
-        <small *ngIf="createTopicForm.get('name').invalid" class="p-error block">Please fill the field</small>
-      </span>
+          [closable]="false" [style]="{maxWidth: '500px', width: '100%'}">
+  <form [formGroup]="createTopicForm" [style]="{ paddingTop: '8px'}">
+    <span class="p-float-label">
+      <input id="name" type="text" formControlName="name" pInputText [style]="{ width: '100%'}">
+      <label for="name">Topic name</label>
+    </span>
+    <div [style]="{height: '24px'}">
+      <small *ngIf="createTopicForm.get('name').invalid" class="p-error block">Please give a topic name</small>
     </div>
     <br>
     <div>
-      <button pButton icon="pi pi-check" (click)="onSubmit()" label="Submit"></button>
-      <button pButton icon="pi pi-times" class="float-right" (click)="toggleAddTopicDialogue()" label="Cancel"></button>
+      <button pButton icon="pi pi-times" (click)="toggleAddTopicDialogue()" label="Cancel" class="p-button-outlined"></button>
+      <button pButton icon="pi pi-check" class="float-right" (click)="onSubmit()" label="Confirm"
+              [disabled]="createTopicForm.get('name').invalid"></button>
     </div>
   </form>
 </p-dialog>
