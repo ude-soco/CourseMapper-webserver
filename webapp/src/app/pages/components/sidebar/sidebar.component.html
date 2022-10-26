@@ -10,10 +10,8 @@
   <div *ngFor="let course of courses; let i = index" (click)="onSelectCourse(course)" [attr.data-index]="i">
     <div class="sidebar-icon group">
       <button class="text-xl">{{ course.shortName }}</button>
-      <span class="icon-button-badge">{{ course.notification }}</span>
-      <span class="sidebar-tooltip group-hover:scale-100">{{
-        course.description
-        }}</span>
+      <span class="icon-button-badge" *ngIf="course.notification">{{ course.notification }}</span>
+      <span class="sidebar-tooltip group-hover:scale-100">{{course.name}}</span>
     </div>
   </div>
 
