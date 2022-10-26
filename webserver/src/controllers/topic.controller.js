@@ -48,6 +48,7 @@ export const getTopic = async (req, res) => {
 export const newTopic = async (req, res) => {
   let courseId = req.params.courseId;
   let topicName = req.body.name;
+  const userId = req.userId;
 
   let foundCourse;
   try {
@@ -64,7 +65,7 @@ export const newTopic = async (req, res) => {
   let topic = new Topic({
     name: topicName,
     courseId: courseId,
-    userId: req.userId,
+    userId: userId,
     createdAt: Date.now(),
     updatedAt: Date.now(),
   });
@@ -84,8 +85,7 @@ export const newTopic = async (req, res) => {
     return res.status(500).send({ error: err });
   }
   return res.send({
-    id: topic._id,
-    courseId: courseId,
+    savedTopic: savedTopic,
     success: `New topic '${topicName}' added!`,
   });
 };

@@ -17,6 +17,7 @@ const Tag = db.tag;
  */
 export const getAllCourses = async (req, res) => {
   let courses;
+  console.log('get all courses')
   try {
     courses = await Course.find({}).populate("topics", "-__v");
   } catch (err) {
@@ -38,19 +39,79 @@ export const getAllCourses = async (req, res) => {
   return res.status(200).send(results);
 };
 
+
+/**
+ * @function getMyCourses
+ * Get all courses the logged in user is enrolled in controller
+ *
+ */
+export const getMyCourses = async (req, res) => {
+  let user;
+  let userId =  req.userId;
+  let results = []
+  try {
+    user = await User
+    .findOne({_id: ObjectId(userId)})
+    .populate({path: "courses", populate: { path: "role"}})
+    .populate({path: "courses", populate: { path: "courseId"}});
+  } catch (err) {
+    return res.status(500).send({ message: err });
+  }
+  user.courses.forEach(object => {
+    let course = {
+      _id: object.courseId._id,
+      name: object.courseId.name,
+      shortName: object.courseId.shortName,
+      description: object.courseId.description,
+      numberTopics: object.courseId.topics.length,
+      numberChannels: object.courseId.channels.length,
+      numberUsers: object.courseId.users.length,
+      role: object.role.name
+    };
+    results.push(course);
+  });
+  return res.status(200).send(results);
+}
+
 /**
  * @function getCourse
  * Get details of a course controller
  *
  * @param {string} req.params.courseId The id of the course
  */
+// export const getCourse = async (req, res) => {
+//   const courseId = req.params.courseId;
+//   let foundCourse;
+//   try {
+//     foundCourse = await Course.findOne({
+//       _id: ObjectId(courseId),
+//     }).populate("topics channels", "-__v");
+//     if (!foundCourse) {
+//       return res.status(404).send({
+//         error: `Course with id ${courseId} doesn't exist!`,
+//       });
+//     }
+//   } catch (err) {
+//     return res.status(500).send({ message: err });
+//   }
+//   return res.status(200).send(foundCourse);
+// };
+
+/**
+ * @function getCourse
+ * Get Topics of a course controller
+ *
+ * @param {string} req.params.courseId The id of the course
+ */
 export const getCourse = async (req, res) => {
   const courseId = req.params.courseId;
+  console.log('getCourse')
   let foundCourse;
   try {
-    foundCourse = await Course.findOne({
-      _id: ObjectId(courseId),
-    }).populate("topics channels", "-__v");
+    foundCourse = await Course
+    .findOne({ _id: ObjectId(courseId) })
+    .populate("topics", "-__v")
+    .populate({path: 'topics', populate: {path: 'channels'}});
     if (!foundCourse) {
       return res.status(404).send({
         error: `Course with id ${courseId} doesn't exist!`,
@@ -59,7 +120,8 @@ export const getCourse = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ message: err });
   }
-  return res.status(200).send(foundCourse);
+
+  return res.status(200).send(foundCourse.topics);
 };
 
 /**
@@ -208,8 +270,10 @@ export const withdrawCourse = async (req, res) => {
  * @param {string} req.userId The owner of the course
  */
 export const newCourse = async (req, res) => {
+  console.log('newCourse');
   const courseName = req.body.name;
   const courseDesc = req.body.description;
+  let shortName = req.body.shortname;
   const userId = req.userId;
 
   let foundUser;
@@ -234,7 +298,8 @@ export const newCourse = async (req, res) => {
     return res.status(500).send({ error: err });
   }
 
-  let shortName = courseName
+  if (!shortName) {
+    shortName = courseName
     .split(" ")
     .map((word, index) => {
       if (index < 3) {
@@ -242,6 +307,7 @@ export const newCourse = async (req, res) => {
       }
     })
     .join("");
+  }
 
   let foundRole;
   try {
@@ -260,7 +326,7 @@ export const newCourse = async (req, res) => {
   let course = new Course({
     name: courseName,
     shortName: shortName,
-    // userId: req.userId,
+    userId: req.userId,
     description: courseDesc,
     createdAt: Date.now(),
     updatedAt: Date.now(),
@@ -286,8 +352,17 @@ export const newCourse = async (req, res) => {
   }
 
   return res.send({
-    id: course._id,
-    success: `New course '${courseSaved.name}' added!`,
+    courseSaved: {
+      _id: courseSaved._id,
+      name: courseSaved.name,
+      shortName: courseSaved.shortName,
+      description: courseSaved.description,
+      numberTopics: courseSaved.topics.length,
+      numberChannels: courseSaved.channels.length,
+      numberUsers: courseSaved.users.length,
+      role: foundRole.name
+    },
+    success: `New course '${courseSaved.name}' added!`
   });
 };
 

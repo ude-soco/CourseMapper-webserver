@@ -25,6 +25,7 @@ export const signup = async (req, res) => {
   }
 
   let user = new User({
+
     firstname: req.body.firstname,
     lastname: req.body.lastname,
     username: req.body.username,
@@ -35,9 +36,11 @@ export const signup = async (req, res) => {
 
   try {
     await user.save();
-    return res
-      .status(200)
-      .send({ success: "User is successfully registered!" });
+
+    return res.status(200).send({
+      id: user._id,
+      success: "User is successfully registered!",
+    });
   } catch (err) {
     return res.status(500).send({ error: err });
   }
@@ -73,8 +76,6 @@ export const signin = async (req, res) => {
       expiresIn: 86400, // 24 hours
     });
 
-    let authority = "ROLE_" + user.role.name.toUpperCase();
-
     req.session.token = token;
 
     const userName = `${user.firstname} ${user.lastname}`;
@@ -84,8 +85,6 @@ export const signin = async (req, res) => {
       name: userName,
       username: user.username,
       email: user.email,
-      role: authority,
-      courses: user.courses,
     });
   } catch (err) {
     return res.status(500).send({ error: err });

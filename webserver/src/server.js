@@ -16,7 +16,10 @@ const db = require("./models");
 const Role = db.role;
 const User = db.user;
 
-env !== "production" ? app.use(cors()) : "";
+env !== "production" ? app.use(cors({
+  credentials: true,
+  origin: ["http://localhost:4200"],
+})) : "";
 
 // Middlewares
 app.use(express.json());

@@ -1,29 +1,51 @@
-import { Component, OnInit } from '@angular/core';
-
+import { CourseImp } from 'src/app/models/CourseImp';
+import { Course } from 'src/app/models/Course';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { CourseService } from 'src/app/services/course.service';
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css'],
 })
 export class SidebarComponent implements OnInit {
-  array2 = [
-    {
-      name: 'AWT',
-      description: 'Advanced Web Techonologies',
-      notification: 14,
-    },
-    { name: 'LA', description: 'Learning Analytics', notification: 3 },
-    { name: 'IR', description: 'Information Retrieval', notification: 10 },
-    { name: 'IM', description: 'Information Mining', notification: 60 },
-    { name: 'RS', description: 'Recommender Systems', notification: 99 },
-    {
-      name: 'NEO',
-      description: 'Neuroscience and Organic Computing',
-      notification: 20,
-    },
-  ];
+  
+  courses : Course[] = [];
+  selectedCourse: Course = new CourseImp('', '');
+  displayAddCourseDialogue: boolean = false;
 
-  constructor() {}
+  constructor( private courseService: CourseService, ) { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.getCourses();
+  }
+
+  getCourses(){
+    this.courseService.fetchCourses().subscribe((courses) => this.courses = courses);
+    this.courseService.onUpdateCourses$.subscribe((courses) => this.courses = courses);
+    //this.setDefaultselection();
+  }
+
+
+  // setDefaultselection(){
+  //   if (this.courses.length > 0) {
+  //     this.courseService.selectedCourse = this.courses[0];
+  //     this.selectedCourse = this.courseService.selectedCourse;
+  //   }
+  // }
+
+  onAddCourseDialogueClicked(){
+    this.toggleAddCoursedialogue(true);
+  }
+
+  toggleAddCoursedialogue(visibility){    
+    this.displayAddCourseDialogue = visibility;
+  }
+  
+  onSelectCourse(selectedCourse: Course){
+    if (this.courseService.getSelectedCourse()._id.toString() !== selectedCourse._id.toString()) {
+      let course = this.courses.find((course: Course) => course === selectedCourse)!;
+      this.selectedCourse = course;
+      this.courseService.selectCourse(course);
+    }  
+  }
 }

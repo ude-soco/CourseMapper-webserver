@@ -50,6 +50,7 @@ export const newChannel = async (req, res) => {
   const topicId = req.params.topicId;
   const channelName = req.body.name;
   const channelDesc = req.body.description;
+  const userId = req.userId;
 
   let foundTopic;
   try {
@@ -68,7 +69,7 @@ export const newChannel = async (req, res) => {
     description: channelDesc,
     courseId: foundTopic.courseId,
     topicId: topicId,
-    userId: req.userId,
+    userId: userId,
     createdAt: Date.now(),
     updatedAt: Date.now(),
   });
@@ -103,7 +104,7 @@ export const newChannel = async (req, res) => {
     return res.status(500).send({ error: err });
   }
   return res.send({
-    id: savedChannel._id,
+    savedChannel: savedChannel,
     success: `New channel '${savedChannel.name}' added!`,
   });
 };
