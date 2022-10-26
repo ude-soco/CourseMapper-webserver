@@ -1,6 +1,6 @@
-import {Course} from './Course';
+import { Course } from './Course';
 
-export class CourseImp implements Course{
+export class CourseImp implements Course {
   _id: string;
   name: string;
   role: string;
@@ -11,88 +11,99 @@ export class CourseImp implements Course{
   numberChannels?: number;
   numberUsers?: number;
 
-  constructor( _id: string,
-               name: string,
-               shortName?: string,
-               description?: string,
-               role?: string,
-               numberTopics?: number,
-               notification?: number,
-               numberChannels?: number,
-               numberUsers?: number){
+  constructor(
+    _id: string,
+    name: string,
+    shortName?: string,
+    description?: string,
+    role?: string,
+    numberTopics?: number,
+    notification?: number,
+    numberChannels?: number,
+    numberUsers?: number
+  ) {
     this.set_id(_id);
     this.setName(name);
     this.setRole(role);
     this.setShortName(shortName);
     this.setDescription(description);
-    this.setNumberTopics(numberTopics) ;
+    this.setNumberTopics(numberTopics);
     this.setNotification(notification);
     this.setNumberChannels(numberChannels);
     this.setNumberUsers(numberUsers);
   }
 
-  set_id(_id: string){
+  set_id(_id: string) {
     this._id = _id;
-
   }
-  get_id(): string{
+
+  get_id(): string {
     return this._id;
   }
 
-  setRole(role: string){
-    role? this.role = role : this.role ='';
-
+  setRole(role: string) {
+    role ? (this.role = role) : (this.role = '');
   }
-  getRole(): string{
+
+  getRole(): string {
     return this.role;
   }
 
-  setName(name){
+  setName(name) {
     this.name = name;
   }
-  getName(): string{
+
+  getName(): string {
     return this.name;
   }
 
-  setShortName(shortName){
-    shortName? this.shortName = shortName : this.shortName ='';
+  setShortName(shortName) {
+    shortName ? (this.shortName = shortName) : (this.shortName = '');
   }
-  getShortName(): string{
+
+  getShortName(): string {
     return this.shortName;
   }
 
-  setDescription(description){
-    description? this.description = description : this.description ='';
+  setDescription(description) {
+    description ? (this.description = description) : (this.description = '');
   }
-  getDescription(): string{
+
+  getDescription(): string {
     return this.description;
   }
 
-  setNumberTopics(numberTopics){
-    numberTopics? this.numberTopics = numberTopics : this.numberTopics = 0;
+  setNumberTopics(numberTopics) {
+    numberTopics ? (this.numberTopics = numberTopics) : (this.numberTopics = 0);
   }
-  getNumberTopics(): number{
+
+  getNumberTopics(): number {
     return this.numberTopics;
   }
 
-  setNotification(notification){
-    notification? this.notification = notification : this.notification = 0;
+  setNotification(notification) {
+    notification ? (this.notification = notification) : (this.notification = 0);
   }
-  getNotification(): number{
+
+  getNotification(): number {
     return this.notification;
   }
 
-  setNumberChannels(numberChannels){
-    numberChannels? this.numberChannels = numberChannels : this.numberChannels = 0;
+  setNumberChannels(numberChannels) {
+    numberChannels
+      ? (this.numberChannels = numberChannels)
+      : (this.numberChannels = 0);
   }
-  getNumberChannels(): number{
+
+  getNumberChannels(): number {
     return this.numberChannels;
   }
 
-  setNumberUsers(numberUsers){
-    numberUsers? this.numberUsers = numberUsers : this.numberUsers = 0;
+  setNumberUsers(numberUsers) {
+    numberUsers ? (this.numberUsers = numberUsers) : (this.numberUsers = 0);
   }
-  getNumberUsers(): number{
+
+  getNumberUsers(): number {
     return this.numberUsers;
   }
 }

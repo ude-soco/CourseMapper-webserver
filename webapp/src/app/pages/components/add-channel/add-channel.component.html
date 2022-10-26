@@ -1,24 +1,26 @@
 <p-toast></p-toast>
 
-<p-dialog header="Create New Channel" [(visible)]="displayAddChannelDialogue" [modal]="true" [draggable]="false" [closable]="false">
-    <form [formGroup]="createChannelForm">
-        <div>
-            <br>
-            <span class="p-float-label">
-                <input id="name" type="text" formControlName ="name" pInputText > 
-                <label for="name">Name</label>
-                <small *ngIf="createChannelForm.get('name').invalid" class="p-error block">Please fill the field</small>
-            </span>
-            <br>
-            <span class="p-float-label">
-                <input id="description" type="text" formControlName="description" pInputText > 
-                <label for="description">Description</label>
-            </span>
-        </div>
-        <br>
-        <div >
-            <button pButton icon="pi pi-check" (click)="onSubmit()" label="Submit" ></button>
-            <button pButton icon="pi pi-times" class="float-right" (click)="toggleAddChannelDialogue()" label="Cancel"></button>
-        </div>
-    </form>
+<p-dialog header="Create New Channel" [(visible)]="displayAddChannelDialogue" [modal]="true" [draggable]="false"
+          [closable]="false">
+  <form [formGroup]="createChannelForm">
+    <div>
+      <br>
+      <span class="p-float-label">
+        <input id="name" type="text" formControlName="name" pInputText>
+        <label for="name">Name</label>
+        <small *ngIf="createChannelForm.get('name').invalid" class="p-error block">Please fill the field</small>
+      </span>
+      <br>
+      <span class="p-float-label">
+        <input id="description" type="text" formControlName="description" pInputText>
+        <label for="description">Description</label>
+      </span>
+    </div>
+    <br>
+    <div>
+      <button pButton icon="pi pi-check" (click)="onSubmit()" label="Submit"></button>
+      <button pButton icon="pi pi-times" class="float-right" (click)="toggleAddChannelDialogue()"
+              label="Cancel"></button>
+    </div>
+  </form>
 </p-dialog>

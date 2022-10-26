@@ -7,18 +7,20 @@ import { TopicChannelService } from 'src/app/services/topic-channel.service';
 @Component({
   selector: 'app-courses',
   templateUrl: './courses.component.html',
-  styleUrls: ['./courses.component.css']
+  styleUrls: ['./courses.component.css'],
 })
 export class CoursesComponent implements OnInit {
-  selectedCourse: Course = new CourseImp('','');
+  selectedCourse: Course = new CourseImp('', '');
 
-  constructor(private courseService: CourseService, private topicChannelService: TopicChannelService) { }
+  constructor(
+    private courseService: CourseService,
+    private topicChannelService: TopicChannelService
+  ) {}
 
   ngOnInit(): void {
     this.selectedCourse = this.courseService.getSelectedCourse();
     this.courseService.onSelectCourse.subscribe((course) => {
-      this.selectedCourse = course;      
-    });    
+      this.selectedCourse = course;
+    });
   }
-
 }

@@ -17,6 +17,7 @@ export class NavbarComponent implements OnInit {
   showAdminBoard = false;
   showModeratorBoard = false;
   username?: string;
+
   constructor(
     private primengConfig: PrimeNGConfig,
     public storageService: StorageService,

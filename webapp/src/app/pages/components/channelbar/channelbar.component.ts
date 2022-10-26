@@ -23,6 +23,7 @@ export class ChannelbarComponent implements OnInit {
     private messageService: MessageService,
     private confirmationService: ConfirmationService
   ) {}
+
   private API_URL = environment.API_URL;
   selectedCourse: Course = new CourseImp('', '');
   displayAddTopicDialogue: boolean = false;
@@ -45,12 +46,14 @@ export class ChannelbarComponent implements OnInit {
       command: () => this.onDeleteCourse(),
     },
   ];
+
   ngOnInit(): void {
     this.selectedCourse = this.courseService.getSelectedCourse();
     this.courseService.onSelectCourse.subscribe((course) => {
       this.selectedCourse = course;
     });
   }
+
   @HostListener('document:click', ['$event'])
   documentClick(event: MouseEvent) {
     // to confirm rename when mouse clicked anywhere
@@ -76,6 +79,7 @@ export class ChannelbarComponent implements OnInit {
       }
     });
   }
+
   onRenameCourse() {
     let selectedCurs = <HTMLInputElement>(
       document.getElementById(`${this.selectedCourse._id}`)
@@ -85,6 +89,7 @@ export class ChannelbarComponent implements OnInit {
     this.previousCourse = this.selectedCourse;
     this.selectElementContents(selectedCurs);
   }
+
   onRenameCourseConfirm(id) {
     const selectedCurs = <HTMLInputElement>document.getElementById(id);
     if (this.enterKey) {
@@ -132,6 +137,7 @@ export class ChannelbarComponent implements OnInit {
       this.courseService.renameCourse(this.previousCourse, body).subscribe();
     }
   }
+
   onTextInserted(id, e) {
     ////Prevent Special keys
     this.editable = true;
@@ -212,6 +218,7 @@ export class ChannelbarComponent implements OnInit {
   onAddTopicDialogueClicked() {
     this.toggleAddTopicDialogueClicked(true);
   }
+
   toggleAddTopicDialogueClicked(visibilty) {
     this.displayAddTopicDialogue = visibilty;
   }
@@ -237,6 +244,7 @@ export class ChannelbarComponent implements OnInit {
       detail: msg,
     });
   }
+
   /**
    * @function showError
    * shows the user if his action failed
@@ -255,7 +263,7 @@ export class ChannelbarComponent implements OnInit {
    * inform user about the result of his action
    *
    */
-  informUser(severity, summary, detail){
+  informUser(severity, summary, detail) {
     this.messageService.add({
       severity: severity,
       summary: summary,
@@ -274,7 +282,7 @@ export class ChannelbarComponent implements OnInit {
       header: 'Delete Confirmation',
       icon: 'pi pi-info-circle',
       accept: () => this.confirmDeletion(),
-      reject: () => this.informUser('info', 'Cancelled',  'Deletion cancelled')
+      reject: () => this.informUser('info', 'Cancelled', 'Deletion cancelled'),
     });
   }
 }

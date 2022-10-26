@@ -4,63 +4,74 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Course } from 'src/app/models/Course';
 import { CourseImp } from 'src/app/models/CourseImp';
 import { MessageService } from 'primeng/api';
+
 @Component({
   selector: 'app-add-course',
   templateUrl: './add-course.component.html',
   styleUrls: ['./add-course.component.css'],
-  providers: [MessageService]
+  providers: [MessageService],
 })
 export class AddCourseComponent implements OnInit {
-
   @Input() displayAddCourseDialogue: boolean = false;
   @Output() onCloseAddCourseDialogue = new EventEmitter<boolean>();
 
   createCourseForm: FormGroup;
 
-
-  constructor(private courseService: CourseService, private messageService: MessageService) { }
+  constructor(
+    private courseService: CourseService,
+    private messageService: MessageService
+  ) {}
 
   ngOnInit(): void {
     this.createCourseForm = new FormGroup({
-      	name: new FormControl(null, Validators.required),
-        shortname: new FormControl(null),
-        description: new FormControl(null)
+      name: new FormControl(null, Validators.required),
+      shortname: new FormControl(null),
+      description: new FormControl(null),
     });
   }
 
-  
-
-  onSubmit(){ 
+  onSubmit() {
     if (this.createCourseForm.valid) {
-      let newCourse: Course = new CourseImp
-        ( '', 
-        this.createCourseForm.value.name, 
+      let newCourse: Course = new CourseImp(
+        '',
+        this.createCourseForm.value.name,
         this.createCourseForm.value.shortname,
-        this.createCourseForm.value.description);
+        this.createCourseForm.value.description
+      );
       this.courseService.addCourse(newCourse).subscribe((res: any) => {
         if ('success' in res) {
           this.toggleAddCourseDialogue();
           this.showInfo(res.success);
-        }else {
+        } else {
           this.showError(res.errorMsg);
         }
       });
     }
   }
 
-  toggleAddCourseDialogue(){
+  toggleAddCourseDialogue() {
     this.displayAddCourseDialogue = !this.displayAddCourseDialogue;
     this.onCloseAddCourseDialogue.emit(this.displayAddCourseDialogue);
     this.deleteLocalData();
   }
 
-  deleteLocalData(){
+  deleteLocalData() {
     this.ngOnInit();
   }
+
   showInfo(msg) {
-    this.messageService.add({severity:'info', summary: 'Success', detail: msg});
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Success',
+      detail: msg,
+    });
   }
+
   showError(msg) {
-    this.messageService.add({severity:'error', summary: 'Error', detail: msg});
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: msg,
+    });
   }
 }
