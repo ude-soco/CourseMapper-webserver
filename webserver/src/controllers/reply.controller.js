@@ -196,6 +196,7 @@ export const newReply = async (req, res) => {
     userShortname: userShortname,
     userId: userId,
     courseId: foundAnnotation.courseId,
+    channelId: foundAnnotation.channelId,
     type: "mentionedandreplied",
     action: "has created new",
     actionObject: "comment",
@@ -334,6 +335,8 @@ export const deleteReply = async (req, res) => {
     userShortname: userShortname,
     userId: userId,
     courseId: courseId,
+    channelId: foundAnnotation.channelId,
+
     type: "mentionedandreplied",
     action: "has deleted",
     actionObject: "comment",
@@ -488,6 +491,7 @@ export const editReply = async (req, res) => {
     userShortname: userShortname,
     userId: userId,
     courseId: courseId,
+    channelId: foundReply.channelId,
     type: "mentionedandreplied",
     action: "has edited",
     actionObject: "comment",
@@ -632,6 +636,7 @@ export const likeReply = async (req, res) => {
       userShortname: userShortname,
       userId: userId,
       courseId: foundAnnotation.courseId,
+      channelId: foundReply.channelId,
       type: "mentionedandreplied",
       action: "has liked",
       actionObject: "comment",
@@ -690,6 +695,7 @@ export const likeReply = async (req, res) => {
 export const dislikeReply = async (req, res) => {
   const courseId = req.params.courseId;
   const replyId = req.params.replyId;
+  const userId = req.userId;
   let foundReply;
   try {
     foundReply = await Reply.findOne({ _id: ObjectId(replyId) });
@@ -773,7 +779,8 @@ export const dislikeReply = async (req, res) => {
       userName: foundUser.username,
       userShortname: userShortname,
       userId: userId,
-      courseId: foundAnnotation.courseId,
+      courseId: foundReply.courseId,
+      channelId: foundReply.channelId,
       type: "mentionedandreplied",
       action: "has disliked",
       actionObject: "comment",

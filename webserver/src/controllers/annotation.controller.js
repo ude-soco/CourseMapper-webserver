@@ -108,8 +108,6 @@ export const newAnnotation = async (req, res) => {
     return res.status(500).send({ error: err });
   }
 
-  console.log("found", foundRole);
-
   let isAdmin = foundRole.name == "moderator" ? true : false;
 
   let authorName = `${foundUser.firstname} ${foundUser.lastname}`;
@@ -205,6 +203,7 @@ export const newAnnotation = async (req, res) => {
     userShortname: userShortname,
     userId: userId,
     courseId: foundMaterial.courseId,
+    channelId: foundMaterial.channelId,
     type: "annotations",
     action: "has annotated ",
     actionObject: "",
@@ -368,6 +367,7 @@ export const deleteAnnotation = async (req, res) => {
     userShortname: userShortname,
     userId: userId,
     courseId: courseId,
+    channelId: foundMaterial.channelId,
     type: "annotations",
     action: "has deleted",
     actionObject: "",
@@ -542,6 +542,8 @@ export const editAnnotation = async (req, res) => {
     userShortname: userShortname,
     userId: userId,
     courseId: courseId,
+    channelId: foundAnnotation.channelId,
+
     type: "annotations",
     action: "has edited",
     actionObject: "",
@@ -685,6 +687,7 @@ export const likeAnnotation = async (req, res) => {
       userShortname: userShortname,
       userId: userId,
       courseId: foundMaterial.courseId,
+      channelId: foundAnnotation.channelId,
       type: "annotations",
       action: "has liked",
       actionObject: "",
@@ -828,7 +831,8 @@ export const dislikeAnnotation = async (req, res) => {
       userName: foundUser.username,
       userShortname: userShortname,
       userId: userId,
-      courseId: foundMaterial.courseId,
+      courseId: foundAnnotation.courseId,
+      channelId: foundAnnotation.channelId,
       type: "annotations",
       action: "has disliked",
       actionObject: "",

@@ -84,7 +84,23 @@ export const getSubscribedCourses = async (req, res) => {
   user.subscribedCourses.forEach((item) => {
     courseIdLists.push(item.courseId.toString());
   });
-  res.status(200).send(courseIdLists);
+
+  let foundCourse;
+  let foundCourseLists = [];
+  for (let i = 0; i < courseIdLists.length; i++) {
+    try {
+      foundCourse = await Course.findOne({ _id: courseIdLists[i] });
+      foundCourseLists.push(foundCourse);
+    } catch (err) {
+      return res.status(500).send({ message: err });
+    }
+  }
+  let result = [];
+  foundCourseLists.map(({ _id, name, shortName }) => {
+    result.push({ _id, name, shortName });
+  });
+
+  res.status(200).send({ courseIdLists: courseIdLists, courseDetail: result });
 };
 
 /**

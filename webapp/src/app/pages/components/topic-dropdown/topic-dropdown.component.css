@@ -6,3 +6,8 @@
 :host ::ng-deep .p-badge {
   background-color: rgba(3, 105, 161, 255);
 }
+
+.active {
+  background-color: white;
+  font-weight: 600;
+}

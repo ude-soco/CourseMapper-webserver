@@ -13,6 +13,7 @@ import { NotificationServiceService } from 'src/app/services/notification-servic
 export class NotificationSettingComponent implements OnInit {
   notificationItems: Notification[] = [];
   contextMenuOpened!: boolean;
+  isSubscriptionsOpened: boolean;
   constructor(private notificationService: NotificationServiceService) {
     this.contextMenuOpened = false;
     this.notificationService.allNotificationItems$.subscribe((items) => {
@@ -39,5 +40,13 @@ export class NotificationSettingComponent implements OnInit {
   closeMenu(op: any) {
     console.log('top menu');
     op.hide();
+  }
+
+  openSubscriptions() {
+    console.log('open sub');
+    this.isSubscriptionsOpened = true;
+  }
+  handleCloseSubscription() {
+    this.isSubscriptionsOpened = false;
   }
 }

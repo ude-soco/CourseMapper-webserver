@@ -1,0 +1,16 @@
+.container {
+  width: 70%;
+  margin: auto;
+  margin-top: 4rem;
+}
+
+.close-button-container {
+  margin-top: 1rem;
+}
+
+.head {
+  font-size: large;
+  text-align: center;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}

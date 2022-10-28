@@ -30,12 +30,12 @@
         formControlName="subscribed"
         (click)="subscribeToCourse($event, selectedCourse._id)"
         type="button"
-        [label]="subscribed ? 'Unsubscribe' : 'Subscribe to course'"
+        [label]="subscribed ? 'Withdraw from course' : 'Enrol to course'"
         [ngClass]="subscribed ? 'subscribed' : 'unsubscribe'"
         class="subscribe-button"
       ></button>
     </div>
-    <app-topic-dropdown></app-topic-dropdown>
+    <app-topic-dropdown [activeChannel]="activeChannel"></app-topic-dropdown>
 
     <div
       class="flex flex-col items-center justify-start m-0 z-10 hover:bg-white transition-all cursor-pointer"

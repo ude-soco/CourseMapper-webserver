@@ -7,6 +7,7 @@ const Notification = new Schema({
   userShortname: { type: String },
   userId: { type: String },
   courseId: { type: String },
+  channelId: { type: String },
   type: { type: String },
   action: { type: String },
   actionObject: { type: String },

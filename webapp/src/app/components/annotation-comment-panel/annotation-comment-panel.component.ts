@@ -24,7 +24,6 @@ export class AnnotationCommentPanelComponent implements OnInit {
     this.getAnnotationComments();
 
     this.annotationService.selectedAnnotation$.subscribe((activeAnnotation) => {
-      console.log('when selected annotation changed', activeAnnotation);
       this.selectedAnnotation = activeAnnotation;
       this.getAnnotationComments();
     });
@@ -34,14 +33,12 @@ export class AnnotationCommentPanelComponent implements OnInit {
     const courseId = '633ffce76076b6a2e67c3162';
     const annotationId = this.selectedAnnotation._id;
 
-    console.log('selectedAnnotation', this.selectedAnnotation.content);
     this.commentService
       .getCommentsForAnnotation(courseId, annotationId)
       .subscribe((data: any) => {
         let temp = data.replies;
         this.commentService.comments.next(temp);
         this.comments = temp;
-        console.log('comment', this.comments);
       });
   }
 

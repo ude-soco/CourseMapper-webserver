@@ -38,6 +38,5 @@ export class AnnotationCommentListItemComponent implements OnInit {
       isClosed: isClosed,
     };
     this.annotationService.selectedAnnotation.next(annotation);
-    this.notificationService.needUpdate.next(true);
   }
 }

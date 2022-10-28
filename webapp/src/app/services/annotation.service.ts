@@ -41,4 +41,15 @@ export class AnnotationService {
       HTTPOptions
     );
   }
+  getIsAnnotationClosed(courseId: string, annotationId: string) {
+    return this.http.get(
+      environment.API_URL +
+        '/courses/' +
+        courseId +
+        '/annotations/' +
+        annotationId +
+        '/isAnnotationClosed',
+      HTTPOptions
+    );
+  }
 }

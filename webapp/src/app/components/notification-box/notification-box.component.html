@@ -3,6 +3,9 @@
     class="notification-content"
     *ngFor="let notificationItem of notificationItems"
     (mouseenter)="onHover()"
+    (click)="
+      goToContext(notificationItem?.channelId, notificationItem?.courseId)
+    "
   >
     <div class="item-container">
       <!-- <div

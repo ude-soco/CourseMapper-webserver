@@ -38,6 +38,7 @@ export interface Notification {
   action: string;
   actionObject: string;
   courseId: string;
+  channelId: string;
   extraMessage: string;
   isStar: boolean;
   name: string;
@@ -47,4 +48,10 @@ export interface Notification {
   userName: string;
   userShortname: string;
   createdAt: string;
+}
+
+export interface ActiveLocation {
+  courseId: string;
+  topic?: string;
+  channelId: string;
 }

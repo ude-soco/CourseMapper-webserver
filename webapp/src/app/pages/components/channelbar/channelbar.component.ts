@@ -16,7 +16,7 @@ export class ChannelbarComponent implements OnInit {
   subscribed!: boolean;
   subscribeLabel!: string;
   isModerator!: boolean;
-
+  activeChannel: string;
   constructor(
     private courseService: CourseService,
     private topicChannelService: TopicChannelService
@@ -47,12 +47,24 @@ export class ChannelbarComponent implements OnInit {
       this.selectedCourse = course;
     });
     this.courseService.subscribedCourseLists$.subscribe((lists) => {
-      this.updateSubscribeButtonLabel(lists);
+      this.updateSubscribeButtonLabel(lists.courseIdLists);
       this.checkIfModerator();
+    });
+
+    this.topicChannelService.activeLocation$.subscribe((location) => {
+      this.activeChannel = location.channelId;
+
+      this.courseService.fetchCourses().subscribe((courses) => {
+        const foundCourse = courses.find((course) => {
+          return course._id == location.courseId;
+        });
+        this.courseService.selectCourse(foundCourse);
+      });
     });
   }
 
   checkIfModerator() {
+    if (!this.selectedCourse._id) return;
     this.courseService
       .checkIfModerator(this.selectedCourse._id)
       .subscribe((res: any) => {
@@ -114,14 +126,16 @@ export class ChannelbarComponent implements OnInit {
 
   subscribeToCourse(event: any, id: string) {
     if (this.subscribed) {
-      this.courseService.withdrawCourse(id).subscribe((res) => {
+      this.courseService.withdrawCourse(id).subscribe((res: any) => {
         this.subscribed = false;
         this.subscribeLabel = 'Enrol to course';
+        this.courseService.getSubscribedCourseLists().subscribe();
       });
     } else {
-      this.courseService.enrolCourse(id).subscribe((res) => {
+      this.courseService.enrolCourse(id).subscribe((res: any) => {
         this.subscribed = true;
         this.subscribeLabel = 'Subscribed';
+        this.courseService.getSubscribedCourseLists().subscribe();
       });
     }
   }

@@ -40,6 +40,7 @@
 
       <div
         class="pl-7 py-1 hover:bg-white transition-all"
+        [class.active]="channel._id == activeChannel"
         *ngFor="let channel of topic.channels; let i = index"
         [attr.data-index]="i"
       >

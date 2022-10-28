@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { Channel } from 'src/app/models/Channel';
 import { Topic } from 'src/app/models/Topic';
@@ -20,6 +20,7 @@ export class TopicDropdownComponent implements OnInit {
     private messageService: MessageService,
     public notificationService: NotificationServiceService
   ) {}
+  @Input() activeChannel: string;
   topics: Topic[] = [];
   displayAddChannelDialogue: boolean = false;
   selectedTopic = null;
@@ -68,6 +69,10 @@ export class TopicDropdownComponent implements OnInit {
     this.topicChannelService.onUpdateTopics$.subscribe(
       (topics) => (this.topics = topics)
     );
+
+    this.topicChannelService.activeLocation$.subscribe((location) => {
+      this.activeChannel = location.channelId;
+    });
   }
 
   showMenu() {

@@ -12,6 +12,19 @@
     <app-notification-filter-panel
       [notificationItems]="notificationItems"
     ></app-notification-filter-panel>
+    <div class="button-container" *ngIf="!isSubscriptionsOpened">
+      <button
+        pButton
+        type="button"
+        label="See my course subscriptions"
+        class="p-button-outlined"
+        (click)="openSubscriptions()"
+      ></button>
+    </div>
+    <app-course-subscriptions
+      *ngIf="isSubscriptionsOpened"
+      (closeSubscription)="handleCloseSubscription()"
+    ></app-course-subscriptions>
     <app-notification-setting-item-panel
       [notificationItems]="notificationItems"
     ></app-notification-setting-item-panel>

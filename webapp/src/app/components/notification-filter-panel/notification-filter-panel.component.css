@@ -3,7 +3,7 @@
   position: relative;
   display: flex;
   justify-content: space-around;
-  border: 1px solid #c4c4c4;
+  background-color: white;
 }
 
 .type-container,

@@ -74,8 +74,8 @@ export const deleteAllNotifications = async (req, res) => {
   }
 
   let notificationIds = [];
-  foundUser.notificationLists.forEach((notification) => {
-    notificationIds.push(notification.notificationId);
+  foundUser.notificationLists.forEach((notificationId) => {
+    notificationIds.push(notificationId);
   });
 
   for (let i = 0; i < notificationIds.length; i++) {
@@ -114,8 +114,8 @@ export const deleteNotificationsByCourseUpdates = async (req, res) => {
   }
 
   let notificationIds = [];
-  foundUser.notificationLists.forEach((notification) => {
-    notificationIds.push(notification.notificationId);
+  foundUser.notificationLists.forEach((notificationId) => {
+    notificationIds.push(notificationId);
   });
 
   for (let i = 0; i < notificationIds.length; i++) {
@@ -150,8 +150,8 @@ export const deleteNotificationsByReplies = async (req, res) => {
   }
 
   let notificationIds = [];
-  foundUser.notificationLists.forEach((notification) => {
-    notificationIds.push(notification.notificationId);
+  foundUser.notificationLists.forEach((notificationId) => {
+    notificationIds.push(notificationId);
   });
 
   for (let i = 0; i < notificationIds.length; i++) {
@@ -188,8 +188,8 @@ export const deleteNotificationsByAnnotations = async (req, res) => {
   }
 
   let notificationIds = [];
-  foundUser.notificationLists.forEach((notification) => {
-    notificationIds.push(notification.notificationId);
+  foundUser.notificationLists.forEach((notificationId) => {
+    notificationIds.push(notificationId);
   });
   for (let i = 0; i < notificationIds.length; i++) {
     try {
@@ -253,14 +253,13 @@ export const readAllNotifications = async (req, res) => {
   }
 
   let notificationIds = [];
-  foundUser.notificationLists.forEach((notification) => {
-    notificationIds.push(notification.notificationId);
+  foundUser.notificationLists.forEach((notificationId) => {
+    notificationIds.push(notificationId.toString());
   });
-
   for (let i = 0; i < notificationIds.length; i++) {
     try {
       await Notification.updateMany(
-        { _id: notificationIds[i]._id, read: false },
+        { _id: notificationIds[i], read: false },
         { $set: { read: true } }
       );
     } catch (err) {

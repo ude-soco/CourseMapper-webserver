@@ -17,6 +17,7 @@
       <div class="comment-box">
         <div class="comment-info">
           <span class="author-name"> {{ comment.author.name }}</span>
+          <span class="time">{{ comment?.createdAt | customDate }}</span>
         </div>
 
         <div class="comment-content">
@@ -27,7 +28,7 @@
   </div>
   <div class="button-container">
     <button
-      *ngIf="showCloseButton && !activeAnnotation.isClosed"
+      *ngIf="showCloseButton && !activeAnnotation.isClosed && !isClosed"
       pButton
       type="button"
       label="Close the discussion"
@@ -35,7 +36,7 @@
       (click)="closeDiscussion(activeAnnotation)"
     ></button>
   </div>
-  <div class="close-info" *ngIf="activeAnnotation.isClosed || afterClosed">
+  <div class="close-info" *ngIf="isClosed">
     <span class="author">{{ activeAnnotation.authorName }}</span
     ><span> has closed this discussion </span
     ><span> {{ activeAnnotation.closedAt | customDate }} ago</span>

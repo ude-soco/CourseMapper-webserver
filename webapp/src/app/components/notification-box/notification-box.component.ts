@@ -1,11 +1,9 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import {
-  NotificationItem,
-  Notification,
-} from 'src/app/model/notification-item';
+import { Notification, ActiveLocation } from 'src/app/model/notification-item';
 import { MenuItem } from 'primeng/api';
 import { OverlayPanel } from 'primeng/overlaypanel';
 import { NotificationServiceService } from 'src/app/services/notification-service.service';
+import { TopicChannelService } from 'src/app/services/topic-channel.service';
 
 @Component({
   selector: 'app-notification-box',
@@ -25,10 +23,10 @@ export class NotificationBoxComponent implements OnInit {
   activeUserId!: string;
   @ViewChild(OverlayPanel) panel!: OverlayPanel;
 
-  constructor(private notificationService: NotificationServiceService) {
-    // this.notificationService.allNotificationItems$.subscribe((allItems) => {
-    //   this.notificationItems = allItems;
-    // });
+  constructor(
+    private notificationService: NotificationServiceService,
+    private topicChannelService: TopicChannelService
+  ) {
     this.notificationService.isStarClicked$.subscribe(
       (isStarClicked) => (this.isStarredClicked = isStarClicked)
     );
@@ -106,7 +104,14 @@ export class NotificationBoxComponent implements OnInit {
     });
   }
 
-  onHover() {
-    // console.log('on hover');
+  onHover() {}
+
+  goToContext(channelId: string, courseId: string) {
+    const location = {
+      courseId: courseId,
+      channelId: channelId,
+    } as ActiveLocation;
+    this.topicChannelService.activeLocation.next(location);
+    this.notificationService.isPanelOpened.next(false);
   }
 }

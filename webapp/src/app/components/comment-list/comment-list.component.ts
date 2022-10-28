@@ -15,6 +15,7 @@ export class CommentListComponent implements OnInit {
   @Input() activeAnnotation: ActiveAnnotation;
   showCloseButton: boolean;
   afterClosed: boolean;
+  isClosed: boolean;
   constructor(
     private annotationService: AnnotationService,
     private notificationService: NotificationServiceService,
@@ -23,7 +24,22 @@ export class CommentListComponent implements OnInit {
   getInitials = getInitials;
 
   ngOnInit(): void {
+    this.annotationService.selectedAnnotation$.subscribe((activeAnnotation) => {
+      this.activeAnnotation = activeAnnotation;
+      this.checkIfAuthor();
+      this.getIfAnnotationClosed();
+    });
     this.checkIfAuthor();
+    this.getIfAnnotationClosed();
+  }
+
+  getIfAnnotationClosed() {
+    const courseId = '633ffce76076b6a2e67c3162';
+    this.annotationService
+      .getIsAnnotationClosed(courseId, this.activeAnnotation._id)
+      .subscribe((res: any) => {
+        this.isClosed = res.isAnnotationClosed;
+      });
   }
   checkIfAuthor() {
     const user = this.storageService.getUser();
@@ -34,13 +50,11 @@ export class CommentListComponent implements OnInit {
     }
   }
   closeDiscussion(annotation: ActiveAnnotation) {
-    console.log(this.activeAnnotation.closedAt);
     this.annotationService
       .closeDiscussion('633ffce76076b6a2e67c3162', annotation._id)
       .subscribe((data) => {
         this.getMaterialAnnotations();
-        this.showCloseButton = false;
-        this.afterClosed = true;
+        this.getIfAnnotationClosed();
       });
   }
 

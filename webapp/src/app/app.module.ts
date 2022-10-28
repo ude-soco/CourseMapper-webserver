@@ -66,6 +66,8 @@ import { ToastModule } from 'primeng/toast';
 import { RippleModule } from 'primeng/ripple';
 import { AnnotationCommentPanelComponent } from './components/annotation-comment-panel/annotation-comment-panel.component';
 import { CommentListComponent } from './components/comment-list/comment-list.component';
+import { CourseSubscriptionsComponent } from './components/course-subscriptions/course-subscriptions.component';
+import { TableModule } from 'primeng/table';
 
 @NgModule({
   declarations: [
@@ -96,6 +98,7 @@ import { CommentListComponent } from './components/comment-list/comment-list.com
     TopicDropdownComponent,
     AnnotationCommentPanelComponent,
     CommentListComponent,
+    CourseSubscriptionsComponent,
   ],
   imports: [
     BrowserModule,
@@ -136,6 +139,7 @@ import { CommentListComponent } from './components/comment-list/comment-list.com
     MenuModule,
     ToastModule,
     RippleModule,
+    TableModule,
   ],
 
   providers: [{ provide: NZ_I18N, useValue: en_US }, httpInterceptorProviders],
