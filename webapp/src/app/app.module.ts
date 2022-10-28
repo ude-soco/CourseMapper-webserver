@@ -64,6 +64,8 @@ import { AddChannelComponent } from './pages/components/add-channel/add-channel.
 import { MenuModule } from 'primeng/menu';
 import { ToastModule } from 'primeng/toast';
 import { RippleModule } from 'primeng/ripple';
+import { AnnotationCommentPanelComponent } from './components/annotation-comment-panel/annotation-comment-panel.component';
+import { CommentListComponent } from './components/comment-list/comment-list.component';
 
 @NgModule({
   declarations: [
@@ -92,6 +94,8 @@ import { RippleModule } from 'primeng/ripple';
     AddTopicComponent,
     AddChannelComponent,
     TopicDropdownComponent,
+    AnnotationCommentPanelComponent,
+    CommentListComponent,
   ],
   imports: [
     BrowserModule,

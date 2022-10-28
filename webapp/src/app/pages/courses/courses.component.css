@@ -9,4 +9,7 @@ app-annotation-comment-list {
   left: 50%;
   margin: auto;
   margin-top: 5rem;
+  /* margin-left: 15%; */
+}
+app-annotation-comment-panel {
 }

@@ -1,0 +1,39 @@
+.comments-container {
+  margin-bottom: 8px;
+}
+
+.content-container {
+  display: flex;
+  margin-bottom: 1rem;
+}
+
+.comment-box {
+  display: block;
+}
+
+.author-name {
+  font-weight: bold;
+  margin-right: 1rem;
+}
+.comment-info {
+  display: flex;
+  align-items: center;
+}
+
+.close-discussion {
+  font-size: small;
+  float: right;
+}
+
+.close-info {
+  margin-top: 2rem;
+}
+
+.button-container {
+  display: flex;
+  justify-content: end;
+}
+
+.author {
+  color: gray;
+}

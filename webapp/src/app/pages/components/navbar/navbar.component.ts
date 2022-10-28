@@ -45,6 +45,10 @@ export class NavbarComponent implements OnInit {
       }
     });
 
+    this.notificationService.needUpdate$.subscribe(() => {
+      console.log('update needed on nave bar');
+    });
+
     this.isLoggedIn = storageService.loggedIn;
   }
 

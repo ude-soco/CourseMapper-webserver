@@ -45,6 +45,9 @@ export class NotificationServiceService {
   public selectedTab = new Subject<any>();
   selectedTab$ = this.selectedTab.asObservable();
 
+  public needUpdate = new Subject<boolean>();
+  needUpdate$ = this.needUpdate.asObservable();
+
   constructor(private http: HttpClient) {}
 
   public isCourseTurnOff = new Subject<boolean>();
@@ -209,5 +212,12 @@ export class NotificationServiceService {
 
   getLoggedInTime() {
     return this.loggedInTime.value;
+  }
+
+  getNumberOfUpdates(index: number, channelId) {
+    // console.log(index, channelId);
+    //news updates on channel contains changes from
+    //materials, annotation,replies
+    return index.toString();
   }
 }

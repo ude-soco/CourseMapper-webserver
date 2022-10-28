@@ -1,9 +1,9 @@
 <div class="comment-list">
   <app-annotation-comment-list-item
-    *ngIf="newComments"
-    [comments]="newComments"
+    *ngIf="newAnnotations"
+    [annotations]="newAnnotations"
   ></app-annotation-comment-list-item>
-  <div class="divider-container" *ngIf="newComments">
+  <div class="divider-container" *ngIf="newAnnotations">
     <p-divider class="divider" align="center" type="dashed">
       <span class="p-tag"
         >Since your last time logged in on
@@ -14,6 +14,11 @@
     </p-divider>
   </div>
   <app-annotation-comment-list-item
-    [comments]="oldComments ? oldComments : comments"
+    [annotations]="oldAnnotations ? oldAnnotations : annotations"
   ></app-annotation-comment-list-item>
+</div>
+<div class="comment-panel" *ngIf="isCommentVisible">
+  <app-annotation-comment-panel
+    [selectedAnnotation]="selectedAnnotation"
+  ></app-annotation-comment-panel>
 </div>

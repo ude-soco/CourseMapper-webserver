@@ -24,8 +24,8 @@ export const getAllNotifications = async (req, res, next) => {
   }
 
   let notificationIds = [];
-  foundUser.notificationLists.forEach((notification) => {
-    notificationIds.push(notification.notificationId);
+  foundUser.notificationLists.forEach((notificationId) => {
+    notificationIds.push(notificationId);
   });
 
   let temp;

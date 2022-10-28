@@ -226,9 +226,7 @@ export const newReply = async (req, res) => {
       } catch (err) {
         return res.status(500).send({ error: err });
       }
-      subscribedUser.notificationLists.push({
-        notificationId: notificationSaved._id,
-      });
+      subscribedUser.notificationLists.push(notificationSaved._id);
 
       try {
         await subscribedUser.save();
@@ -367,9 +365,7 @@ export const deleteReply = async (req, res) => {
       } catch (err) {
         return res.status(500).send({ error: err });
       }
-      subscribedUser.notificationLists.push({
-        notificationId: notificationSaved._id,
-      });
+      subscribedUser.notificationLists.push(notificationSaved._id);
 
       try {
         await subscribedUser.save();
@@ -522,9 +518,7 @@ export const editReply = async (req, res) => {
       } catch (err) {
         return res.status(500).send({ error: err });
       }
-      subscribedUser.notificationLists.push({
-        notificationId: notificationSaved._id,
-      });
+      subscribedUser.notificationLists.push(notificationSaved._id);
 
       try {
         await subscribedUser.save();
@@ -669,9 +663,7 @@ export const likeReply = async (req, res) => {
         } catch (err) {
           return res.status(500).send({ error: err });
         }
-        subscribedUser.notificationLists.push({
-          notificationId: notificationSaved._id,
-        });
+        subscribedUser.notificationLists.push(notificationSaved._id);
 
         try {
           await subscribedUser.save();
@@ -813,9 +805,7 @@ export const dislikeReply = async (req, res) => {
         } catch (err) {
           return res.status(500).send({ error: err });
         }
-        subscribedUser.notificationLists.push({
-          notificationId: notificationSaved._id,
-        });
+        subscribedUser.notificationLists.push(notificationSaved._id);
 
         try {
           await subscribedUser.save();

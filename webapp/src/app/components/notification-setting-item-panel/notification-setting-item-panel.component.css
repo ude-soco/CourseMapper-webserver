@@ -49,7 +49,7 @@ app-notification-box {
 }
 
 ::ng-deep .p-inputswitch.p-inputswitch-checked .p-inputswitch-slider::before {
-  background: rgba(3, 105, 161, 255);
+  background: whitesmoke;
 }
 
 .noti-container {

@@ -1,0 +1,38 @@
+<div class="head">
+  <h2 class="discussion">Discussion</h2>
+  <i class="pi pi-times" (click)="closeDiscussion()"></i>
+</div>
+
+<div class="content-container">
+  <div class="avatar">
+    <p-avatar
+      [label]="getInitials(selectedAnnotation.authorName)"
+      styleClass="mr-5"
+      [style]="{
+        'background-color': 'rgba(3,105,161,255)
+',
+        color: '#ffffff',
+        'margin-top': '5px'
+      }"
+      shape="circle"
+    ></p-avatar>
+  </div>
+  <div class="comment-box">
+    <div class="comment-info">
+      <span class="author-name"> {{ selectedAnnotation.authorName }}</span>
+    </div>
+
+    <div class="comment-content">
+      {{ selectedAnnotation.content }}
+    </div>
+  </div>
+</div>
+
+<p-divider align="left" type="dashed" class="divider">
+  <b>{{ comments?.length }} Replies</b>
+</p-divider>
+
+<app-comment-list
+  [comments]="comments"
+  [activeAnnotation]="selectedAnnotation"
+></app-comment-list>

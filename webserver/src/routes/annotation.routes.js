@@ -7,6 +7,12 @@ module.exports = function (app) {
     next();
   });
 
+  app.get(
+    "/courses/:courseId/materials/:materialId/annotations",
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.getAnnotation
+  );
+
   // Add a new annotation
   // Enrolled users
   app.post(
@@ -47,5 +53,17 @@ module.exports = function (app) {
     "/courses/:courseId/annotations/:annotationId/dislike",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.dislikeAnnotation
+  );
+
+  app.post(
+    "/courses/:courseId/annotations/:annotationId/closeDiscussion",
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.closeDiscussion
+  );
+
+  app.get(
+    "/courses/:courseId/annotations/:annotationId/isAnnotationClosed",
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.isAnnotationClosed
   );
 };

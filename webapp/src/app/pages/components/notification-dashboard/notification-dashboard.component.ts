@@ -85,6 +85,11 @@ export class NotificationDashboardComponent implements OnInit {
         .filter((item: { type: string }) => item.type == 'annotations')
         .length.toString();
     });
+
+    this.notificationService.needUpdate$.subscribe(() => {
+      this.updateItems('default');
+      console.log('update needed', this.temp);
+    });
   }
 
   updateItems(type: any) {

@@ -29,7 +29,6 @@ export class HomeComponent implements OnInit {
       const user = this.storageService.getUser();
 
       this.username = user.username;
-      console.log('user', user);
       //this.router.navigate(['/Home']);
       //this.reloadComponent();
     }

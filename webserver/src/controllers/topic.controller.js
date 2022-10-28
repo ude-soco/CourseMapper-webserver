@@ -151,9 +151,7 @@ export const newTopic = async (req, res) => {
       } catch (err) {
         return res.status(500).send({ error: err });
       }
-      subscribedUser.notificationLists.push({
-        notificationId: notificationSaved._id,
-      });
+      subscribedUser.notificationLists.push(notificationSaved._id);
 
       try {
         await subscribedUser.save();
@@ -286,9 +284,7 @@ export const deleteTopic = async (req, res) => {
       } catch (err) {
         return res.status(500).send({ error: err });
       }
-      subscribedUser.notificationLists.push({
-        notificationId: notificationSaved._id,
-      });
+      subscribedUser.notificationLists.push(notificationSaved._id);
 
       try {
         await subscribedUser.save();
@@ -424,9 +420,7 @@ export const editTopic = async (req, res) => {
       } catch (err) {
         return res.status(500).send({ error: err });
       }
-      subscribedUser.notificationLists.push({
-        notificationId: notificationSaved._id,
-      });
+      subscribedUser.notificationLists.push(notificationSaved._id);
 
       try {
         await subscribedUser.save();

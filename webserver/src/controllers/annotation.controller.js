@@ -7,6 +7,54 @@ const Tag = db.tag;
 const User = db.user;
 const Notification = db.notification;
 const Course = db.course;
+const Role = db.role;
+
+export const getAnnotation = async (req, res) => {
+  const courseId = req.params.courseId;
+  const materialId = req.params.materialId;
+  const userId = req.userId;
+  let annotationLists = [];
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById({ _id: ObjectId(materialId) });
+    annotationLists.push(foundMaterial);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+    if (foundMaterial.courseId.valueOf() !== courseId) {
+      return res.status(404).send({
+        error: `Material doesn't belong to course with id ${courseId}!`,
+      });
+    }
+  } catch (err) {
+    res.status(500).send({ error: err });
+  }
+  console.log("id", annotationLists);
+  let foundAnnotationIds = [];
+  let foundAnnotations = [];
+
+  let tempAnnotation = foundMaterial.annotations;
+  tempAnnotation.forEach((item) => {
+    foundAnnotationIds.push(item.toString());
+  });
+  let temp;
+
+  for (let i = 0; i < foundAnnotationIds.length; i++) {
+    try {
+      temp = await Annotation.find({
+        _id: foundAnnotationIds[i],
+      });
+      foundAnnotations.push(temp);
+    } catch (err) {
+      return res.status(500).send({ error: err });
+    }
+  }
+
+  return res.status(200).send({ annotations: foundAnnotations.flat() });
+};
+
 /**
  * @function newAnnotation
  * Add a new annotation to a material controller.
@@ -53,6 +101,17 @@ export const newAnnotation = async (req, res) => {
     res.status(500).send({ error: err });
   }
 
+  let foundRole;
+  try {
+    foundRole = await Role.findOne({ _id: foundUser.role });
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  console.log("found", foundRole);
+
+  let isAdmin = foundRole.name == "moderator" ? true : false;
+
   let authorName = `${foundUser.firstname} ${foundUser.lastname}`;
 
   let annotation = new Annotation({
@@ -64,6 +123,7 @@ export const newAnnotation = async (req, res) => {
     },
     location: annotationLocation,
     tool: annotationTool,
+    isAdmin: isAdmin,
     courseId: foundMaterial.courseId,
     topicId: foundMaterial.topicId,
     channelId: foundMaterial.channelId,
@@ -174,9 +234,7 @@ export const newAnnotation = async (req, res) => {
       } catch (err) {
         return res.status(500).send({ error: err });
       }
-      subscribedUser.notificationLists.push({
-        notificationId: notificationSaved._id,
-      });
+      subscribedUser.notificationLists.push(notificationSaved._id);
 
       try {
         await subscribedUser.save();
@@ -340,9 +398,7 @@ export const deleteAnnotation = async (req, res) => {
       } catch (err) {
         return res.status(500).send({ error: err });
       }
-      subscribedUser.notificationLists.push({
-        notificationId: notificationSaved._id,
-      });
+      subscribedUser.notificationLists.push(notificationSaved._id);
 
       try {
         await subscribedUser.save();
@@ -516,9 +572,7 @@ export const editAnnotation = async (req, res) => {
       } catch (err) {
         return res.status(500).send({ error: err });
       }
-      subscribedUser.notificationLists.push({
-        notificationId: notificationSaved._id,
-      });
+      subscribedUser.notificationLists.push(notificationSaved._id);
 
       try {
         await subscribedUser.save();
@@ -661,9 +715,7 @@ export const likeAnnotation = async (req, res) => {
         } catch (err) {
           return res.status(500).send({ error: err });
         }
-        subscribedUser.notificationLists.push({
-          notificationId: notificationSaved._id,
-        });
+        subscribedUser.notificationLists.push(notificationSaved._id);
 
         try {
           await subscribedUser.save();
@@ -807,9 +859,7 @@ export const dislikeAnnotation = async (req, res) => {
         } catch (err) {
           return res.status(500).send({ error: err });
         }
-        subscribedUser.notificationLists.push({
-          notificationId: notificationSaved._id,
-        });
+        subscribedUser.notificationLists.push(notificationSaved._id);
 
         try {
           await subscribedUser.save();
@@ -824,4 +874,62 @@ export const dislikeAnnotation = async (req, res) => {
       notification: `new notification ${notification} has been added`,
     });
   }
+};
+
+export const closeDiscussion = async (req, res) => {
+  const courseId = req.params.courseId;
+  const annotationId = req.params.annotationId;
+
+  let foundAnnotation;
+  try {
+    foundAnnotation = await Annotation.findOne({ _id: ObjectId(annotationId) });
+    if (!foundAnnotation) {
+      res.status(404).send({
+        error: `Annotation with id ${annotationId} doesn't exist!`,
+      });
+      return;
+    }
+    if (foundAnnotation.courseId.valueOf() !== courseId) {
+      return res.status(404).send({
+        error: `Annotation doesn't belong to course with id ${courseId}!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+  foundAnnotation.isClosed = true;
+  foundAnnotation.closedAt = Date.now();
+  try {
+    await foundAnnotation.save();
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+  return res
+    .status(200)
+    .send({ success: `annotation with ${foundAnnotation._id} is closed` });
+};
+
+export const isAnnotationClosed = async (req, res) => {
+  const courseId = req.params.courseId;
+  const annotationId = req.params.annotationId;
+
+  let foundAnnotation;
+  try {
+    foundAnnotation = await Annotation.findOne({ _id: ObjectId(annotationId) });
+    if (!foundAnnotation) {
+      res.status(404).send({
+        error: `Annotation with id ${annotationId} doesn't exist!`,
+      });
+      return;
+    }
+    if (foundAnnotation.courseId.valueOf() !== courseId) {
+      return res.status(404).send({
+        error: `Annotation doesn't belong to course with id ${courseId}!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  return res.status(200).send({ isAnnotationClosed: foundAnnotation.isClosed });
 };

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AnnotationService } from 'src/app/services/annotation.service';
-import { Comment } from 'src/app/model/comment';
+import { ActiveAnnotation, Annotation } from 'src/app/model/comment';
 import { NotificationServiceService } from 'src/app/services/notification-service.service';
 
 @Component({
@@ -9,52 +9,63 @@ import { NotificationServiceService } from 'src/app/services/notification-servic
   styleUrls: ['./annotation-comment-list.component.css'],
 })
 export class AnnotationCommentListComponent implements OnInit {
-  comments!: Comment[];
-  newComments!: Comment[];
+  annotations!: Annotation[];
+  newAnnotations!: Annotation[];
   lastTimeLoggedIn!: any;
-  oldComments!: Comment[];
+  oldAnnotations!: Annotation[];
+  isCommentVisible: boolean;
+  selectedAnnotation: ActiveAnnotation;
+
   constructor(
     private annotationService: AnnotationService,
     private notificationService: NotificationServiceService
   ) {}
   ngOnInit(): void {
-    this.getAnnotationComments();
+    this.getMaterialAnnotations();
 
-    this.annotationService.comments$.subscribe((comments) => {
-      this.comments = comments;
-      this.updateComments();
-      console.log('new comments', this.newComments);
+    this.annotationService.annotations$.subscribe((annotations) => {
+      this.annotations = annotations;
+      this.updateAnnotations();
     });
+    this.annotationService.isCommentVisible$.subscribe((isVisible) => {
+      this.isCommentVisible = isVisible;
+    });
+
+    this.annotationService.selectedAnnotation$.subscribe(
+      (selectedAnnotation) => {
+        this.selectedAnnotation = selectedAnnotation;
+      }
+    );
   }
 
-  updateComments() {
+  updateAnnotations() {
     const lastTime = this.notificationService.getLoggedInTime();
     this.lastTimeLoggedIn = new Date(lastTime).toLocaleDateString();
 
     let newLists = [];
     let old = [];
 
-    for (let i = 0; i < this.comments.length; i++) {
-      if (new Date(this.comments[i].createdAt).getTime() > lastTime) {
-        newLists.push(this.comments[i]);
+    for (let i = 0; i < this.annotations.length; i++) {
+      if (new Date(this.annotations[i].createdAt).getTime() > lastTime) {
+        newLists.push(this.annotations[i]);
       } else {
-        old.push(this.comments[i]);
+        old.push(this.annotations[i]);
       }
     }
-    this.newComments = [...newLists];
-    this.oldComments = [...old];
+    this.newAnnotations = [...newLists];
+    this.oldAnnotations = [...old];
   }
 
-  getAnnotationComments() {
+  getMaterialAnnotations() {
     const courseId = '633ffce76076b6a2e67c3162';
-    const annotationId = '63514d0261d005c29e6af9c6';
+    const materialId = '63514cf661d005c29e6af9b4';
+
     this.annotationService
-      .getCommentsForAnnotation(courseId, annotationId)
+      .getAnnotationsForMaterials(courseId, materialId)
       .subscribe((data: any) => {
-        let temp = data.replies;
-        this.annotationService.comments.next(temp);
-        console.log('comments', data, temp);
-        this.comments = temp;
+        // console.log('annotation lists', data.annotations);
+        this.annotationService.annotations.next(data.annotations);
+        this.annotations = data.annotations;
       });
   }
 }

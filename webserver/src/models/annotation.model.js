@@ -20,6 +20,9 @@ const Annotation = new Schema({
   replies: [{ type: Schema.Types.ObjectId, ref: "reply", default: [] }],
   createdAt: { type: Date },
   updatedAt: { type: Date },
+  isAdmin: { type: Boolean },
+  isClosed: { type: Boolean, default: false },
+  closedAt: { type: Date },
 });
 
 module.exports = mongoose.model("annotation", Annotation);

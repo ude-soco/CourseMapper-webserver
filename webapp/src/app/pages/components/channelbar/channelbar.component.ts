@@ -53,7 +53,6 @@ export class ChannelbarComponent implements OnInit {
   }
 
   checkIfModerator() {
-    console.log(this.selectedCourse._id);
     this.courseService
       .checkIfModerator(this.selectedCourse._id)
       .subscribe((res: any) => {
@@ -117,7 +116,7 @@ export class ChannelbarComponent implements OnInit {
     if (this.subscribed) {
       this.courseService.withdrawCourse(id).subscribe((res) => {
         this.subscribed = false;
-        this.subscribeLabel = 'Subscribe to course';
+        this.subscribeLabel = 'Enrol to course';
       });
     } else {
       this.courseService.enrolCourse(id).subscribe((res) => {

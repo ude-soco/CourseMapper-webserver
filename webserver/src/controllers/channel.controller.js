@@ -183,9 +183,7 @@ export const newChannel = async (req, res) => {
       } catch (err) {
         return res.status(500).send({ error: err });
       }
-      subscribedUser.notificationLists.push({
-        notificationId: notificationSaved._id,
-      });
+      subscribedUser.notificationLists.push(notificationSaved._id);
 
       try {
         await subscribedUser.save();
@@ -329,9 +327,7 @@ export const deleteChannel = async (req, res) => {
       } catch (err) {
         return res.status(500).send({ error: err });
       }
-      subscribedUser.notificationLists.push({
-        notificationId: notificationSaved._id,
-      });
+      subscribedUser.notificationLists.push(notificationSaved._id);
 
       try {
         await subscribedUser.save();
@@ -472,9 +468,7 @@ export const editChannel = async (req, res) => {
       } catch (err) {
         return res.status(500).send({ error: err });
       }
-      subscribedUser.notificationLists.push({
-        notificationId: notificationSaved._id,
-      });
+      subscribedUser.notificationLists.push(notificationSaved._id);
 
       try {
         await subscribedUser.save();

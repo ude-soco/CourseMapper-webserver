@@ -1,19 +1,17 @@
-<div class="comments-container" *ngFor="let comment of comments">
-  <!-- <i class="pi pi-user user-icon" title="student"></i>
-  <i class="fas fa-graduation-cap"></i> -->
+<div *ngFor="let annotation of annotations" class="comments-container">
   <i
     [ngClass]="
-      comment.isAdmin
+      annotation.isAdmin
         ? 'fas fa-graduation-cap user-icon'
         : 'pi pi-user user-icon user-icon'
     "
-    [title]="comment.isAdmin ? 'professor' : 'user'"
+    [title]="annotation?.isAdmin ? 'professor' : 'user'"
   ></i>
 
   <div class="content-container">
     <div class="avatar">
       <p-avatar
-        [label]="getInitials(comment.author.name)"
+        [label]="getInitials(annotation.author.name)"
         styleClass="mr-5"
         [style]="{
           'background-color': 'rgba(3,105,161,255)
@@ -26,19 +24,41 @@
     </div>
     <div class="comment-box">
       <div class="comment-info">
-        <span class="author-name"> {{ comment.author.name }}</span>
+        <span class="author-name"> {{ annotation.author.name }}</span>
 
-        <span class="time">{{ comment.createdAt | customDate }}</span>
+        <span class="time">{{ annotation?.createdAt | customDate }}</span>
       </div>
 
       <div class="comment-content">
-        {{ comment.content }}
+        {{ annotation.content }}
       </div>
     </div>
   </div>
 
   <div class="likes-container">
     <i class="pi pi-thumbs-up likes"></i>
-    <span> {{ comment.likes.length }}</span>
+    <span> {{ annotation?.likes.length }}</span>
+  </div>
+  <div class="info-bar">
+    <span class="status" [class.closed]="annotation.isClosed">{{
+      annotation.isClosed ? "Closed" : "Open"
+    }}</span>
+    <span class="number-comments">{{ annotation.replies?.length }}</span>
+    <button
+      pButton
+      type="button"
+      label="See the discussion"
+      class="p-button-text see-discussion"
+      (click)="
+        openDiscussion(
+          annotation.content,
+          annotation.author.name,
+          annotation._id,
+          annotation.author,
+          annotation?.closedAt,
+          annotation?.isClosed
+        )
+      "
+    ></button>
   </div>
 </div>

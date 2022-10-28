@@ -8,3 +8,16 @@
 .pi-arrow-up {
   font-size: 10px;
 }
+
+.comment-panel {
+  margin-left: 1rem;
+  border: 1px solid #c4c4c4;
+  height: 500px;
+  padding: 1rem;
+  box-shadow: 2px 2px #c4c4c4;
+  width: 400px;
+}
+
+:host {
+  display: flex;
+}

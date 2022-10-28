@@ -1,0 +1,32 @@
+.discussion {
+  font-size: 1.5rem;
+  font-family: "lato";
+  margin-bottom: 1rem;
+}
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.comments-container {
+  margin-bottom: 8px;
+}
+
+.content-container {
+  display: flex;
+  margin-bottom: 1rem;
+}
+
+.comment-box {
+  display: block;
+}
+
+.author-name {
+  font-weight: bold;
+  margin-right: 1rem;
+}
+
+::ng-deep .p-divider.p-divider-horizontal .p-divider-content {
+  color: gray;
+}

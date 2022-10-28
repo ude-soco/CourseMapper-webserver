@@ -1,0 +1,43 @@
+<div class="container">
+  <div *ngFor="let comment of comments" class="comments-container">
+    <div class="content-container">
+      <div class="avatar">
+        <p-avatar
+          [label]="getInitials(comment.author.name)"
+          styleClass="mr-5"
+          [style]="{
+            'background-color': 'rgba(3,105,161,255)
+',
+            color: '#ffffff',
+            'margin-top': '5px'
+          }"
+          shape="circle"
+        ></p-avatar>
+      </div>
+      <div class="comment-box">
+        <div class="comment-info">
+          <span class="author-name"> {{ comment.author.name }}</span>
+        </div>
+
+        <div class="comment-content">
+          {{ comment.content }}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="button-container">
+    <button
+      *ngIf="showCloseButton && !activeAnnotation.isClosed"
+      pButton
+      type="button"
+      label="Close the discussion"
+      class="p-button-outlined close-discussion"
+      (click)="closeDiscussion(activeAnnotation)"
+    ></button>
+  </div>
+  <div class="close-info" *ngIf="activeAnnotation.isClosed || afterClosed">
+    <span class="author">{{ activeAnnotation.authorName }}</span
+    ><span> has closed this discussion </span
+    ><span> {{ activeAnnotation.closedAt | customDate }} ago</span>
+  </div>
+</div>

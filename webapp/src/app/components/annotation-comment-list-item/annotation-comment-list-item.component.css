@@ -38,3 +38,29 @@
 .likes {
   margin-right: 0.1rem;
 }
+
+.see-discussion {
+}
+
+:host::ng-deep .p-button.p-button-text {
+  font-size: small;
+}
+
+.status {
+  color: green;
+  font-size: small;
+  margin-right: 1rem;
+  margin-left: 5px;
+}
+.closed {
+  color: brown;
+}
+.info-bar {
+  display: flex;
+  align-items: center;
+  border: 1px solid #c4c4c4;
+  width: 50%;
+  margin-top: 1rem;
+
+  height: 25px;
+}
