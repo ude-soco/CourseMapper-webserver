@@ -17,6 +17,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 export class EditorComponent implements OnInit {
   renderIndicatorForm: FormGroup;
   @ViewChild('indicators') div: ElementRef;
+  currentIframe = null;
   constructor(private renderer: Renderer2) {}
 
   ngOnInit(): void {
@@ -55,9 +56,13 @@ export class EditorComponent implements OnInit {
       //     }
       //   }
       // }
-
+      this.clearFormInput();
       this.addIframe(attrs);
     }
+  }
+
+  clearFormInput(){
+    this.renderIndicatorForm.reset();
   }
 
   addIframe(attrs) {
@@ -65,6 +70,10 @@ export class EditorComponent implements OnInit {
     attrs.forEach((attr) => {
       iframe[attr['name']] = attr['value'];
     });
-    this.renderer.appendChild(this.div.nativeElement, iframe);
+    if (this.currentIframe !== null) {
+      this.renderer.removeChild(this.div.nativeElement, this.currentIframe);
+    }
+    this.currentIframe = iframe;
+    this.renderer.appendChild(this.div.nativeElement, this.currentIframe);
   }
 }

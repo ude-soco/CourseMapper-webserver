@@ -1,18 +1,35 @@
-<form [formGroup]="renderIndicatorForm">
-    <div>
-        <br>
+<div class="ml-4 mt-4 grid grid-cols-2 auto-cols-auto container">
+  <div>
+    <p class="mb-2 text-lg font-semibold">Show new Indicator:</p> 
+    <form id="indicatorForm" [formGroup]="renderIndicatorForm">
+      <div>
         <span class="p-float-label">
-            <textarea id="float-input" cols="50" rows="5" pInputTextarea formControlName ="userInput"></textarea>
-            <label for="float-input">paste the iframe</label>
-            <small *ngIf="renderIndicatorForm.get('userInput').invalid" class="p-error block">Invalid Input</small>
+          <textarea
+            id="float-input"
+            cols="80"
+            rows="7"
+            pInputTextarea
+            formControlName="userInput"
+          ></textarea>
+          <label for="float-input">paste the iframe</label>
+          <small
+            *ngIf="renderIndicatorForm.get('userInput').invalid"
+            class="p-error block"
+            >Invalid Input</small
+          >
         </span>
-    </div>
-    <br>
-    <div >
-        <button pButton icon="pi pi-check" (click)="showIndicator()" label="Show" ></button>
-    </div>
-</form>
-
-<div #indicators>
-
+      </div>
+      <div class="mt-2">
+        <button
+          pButton
+          icon="pi pi-check"
+          (click)="showIndicator()"
+          label="Show Demo"
+        ></button>
+      </div>
+    </form>
+  </div>
+  <div #indicators>
+    <p class="mb-2 text-lg font-semibold">Demo:</p> 
+  </div>
 </div>
