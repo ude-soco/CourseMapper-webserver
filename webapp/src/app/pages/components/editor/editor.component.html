@@ -1,0 +1,18 @@
+<form [formGroup]="renderIndicatorForm">
+    <div>
+        <br>
+        <span class="p-float-label">
+            <textarea id="float-input" cols="50" rows="5" pInputTextarea formControlName ="userInput"></textarea>
+            <label for="float-input">paste the iframe</label>
+            <small *ngIf="renderIndicatorForm.get('userInput').invalid" class="p-error block">Invalid Input</small>
+        </span>
+    </div>
+    <br>
+    <div >
+        <button pButton icon="pi pi-check" (click)="showIndicator()" label="Show" ></button>
+    </div>
+</form>
+
+<div #indicators>
+
+</div>

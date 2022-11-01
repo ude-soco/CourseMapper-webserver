@@ -24,6 +24,9 @@ import { AddChannelComponent } from './pages/components/add-channel/add-channel.
 import { MenuModule } from 'primeng/menu';
 import { ToastModule } from 'primeng/toast';
 import { RippleModule } from 'primeng/ripple';
+import { EditorComponent } from './pages/components/editor/editor.component';
+import {InputTextareaModule} from 'primeng/inputtextarea';
+
 
 @NgModule({
   declarations: [
@@ -38,7 +41,8 @@ import { RippleModule } from 'primeng/ripple';
     AddCourseComponent,
     AddTopicComponent,
     AddChannelComponent,
-    TopicDropdownComponent
+    TopicDropdownComponent,
+    EditorComponent
   ],
   imports: [
     BrowserModule,
@@ -53,7 +57,8 @@ import { RippleModule } from 'primeng/ripple';
     ReactiveFormsModule,
     MenuModule,
     ToastModule,
-    RippleModule
+    RippleModule,
+    InputTextareaModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
