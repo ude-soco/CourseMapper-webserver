@@ -22,7 +22,7 @@ export class EditorComponent implements OnInit {
 
   ngOnInit(): void {
     this.renderIndicatorForm = new FormGroup({
-      userInput: new FormControl(null, [
+      indicatorIframe: new FormControl(null, [
         Validators.required,
         iframeValidator(),
       ]),
@@ -34,7 +34,7 @@ export class EditorComponent implements OnInit {
     let attrs = [];
     if (this.renderIndicatorForm.valid) {
       const { rootNodes, errors } = parse(
-        this.renderIndicatorForm.value.userInput
+        this.renderIndicatorForm.value.indicatorIframe
       );
 
       rootNodes.forEach((node) => {
