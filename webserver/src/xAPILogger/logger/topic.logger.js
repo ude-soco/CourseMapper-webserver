@@ -1,11 +1,14 @@
 const statementFactory = require("../statementsFactory/topic.statementsFactory");
 const lrs = require("../lrs/lrs");
 const controller = require("../controller.xAPILogger");
+const ORIGIN = process.env.ORIGIN;
 
 export const newTopic = (req, res) => {
+  const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
   const statement = statementFactory.getTopicCreationStatement(
     req.locals.user,
-    req.locals.topic
+    req.locals.topic,
+    origin
   );
   lrs.sendStatementToLrs(statement);
   controller.saveStatementToMongo(statement);
@@ -13,9 +16,11 @@ export const newTopic = (req, res) => {
 };
 
 export const deleteTopic = (req, res) => {
+  const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
   const statement = statementFactory.getTopicDeletionStatement(
     req.locals.user,
-    req.locals.topic
+    req.locals.topic,
+    origin
   );
   lrs.sendStatementToLrs(statement);
   controller.saveStatementToMongo(statement);
@@ -23,9 +28,11 @@ export const deleteTopic = (req, res) => {
 };
 
 export const getTopic = (req, res) => {
+  const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
   const statement = statementFactory.getTopicAccessStatement(
     req.locals.user,
-    req.locals.topic
+    req.locals.topic,
+    origin
   );
   lrs.sendStatementToLrs(statement);
   controller.saveStatementToMongo(statement);
@@ -33,10 +40,12 @@ export const getTopic = (req, res) => {
 };
 
 export const editTopic = (req, res) => {
+  const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
   const statement = statementFactory.getTopicEditStatement(
     req.locals.user,
     req.locals.newTopic,
-    req.locals.oldTopic
+    req.locals.oldTopic,
+    origin
   );
   lrs.sendStatementToLrs(statement);
   controller.saveStatementToMongo(statement);
