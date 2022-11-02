@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
-import { channel } from "../../models";
-export const getChannelCreationStatement = (user, channel) => {
+
+export const getChannelCreationStatement = (user, channel, origin) => {
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
@@ -9,7 +9,7 @@ export const getChannelCreationStatement = (user, channel) => {
       objectType: "Agent",
       name: fullname,
       account: {
-        homePage: "http://www.CourseMapper.v2.de",
+        homePage: origin,
         name: user.username,
       },
     },
@@ -21,9 +21,9 @@ export const getChannelCreationStatement = (user, channel) => {
     },
     object: {
       objectType: "Activity",
-      id: `http://www.CourseMapper.v2.de/activity/course/${channel.courseId}/topic/${channel.topicId}/channel/${channel._id}`,
+      id: `${origin}/activity/course/${channel.courseId}/topic/${channel.topicId}/channel/${channel._id}`,
       definition: {
-        type: "http://www.CourseMapper.v2.de/activityType/channel",
+        type: "http://www.CourseMapper.de/activityType/channel",
         name: {
           "en-US": channel.name,
         },
@@ -31,7 +31,7 @@ export const getChannelCreationStatement = (user, channel) => {
           "en-US": channel.description,
         },
         extensions: {
-          "http://www.CourseMapper.v2.de/extensions/channel": {
+          "http://www.CourseMapper.de/extensions/channel": {
             id: channel._id,
             course_id: channel.courseId,
             topic_id: channel.topicId,
@@ -48,7 +48,7 @@ export const getChannelCreationStatement = (user, channel) => {
   };
 };
 
-export const getChannelDeletionStatement = (user, channel) => {
+export const getChannelDeletionStatement = (user, channel, origin) => {
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
@@ -57,7 +57,7 @@ export const getChannelDeletionStatement = (user, channel) => {
       objectType: "Agent",
       name: fullname,
       account: {
-        homePage: "http://www.CourseMapper.v2.de",
+        homePage: origin,
         name: user.username,
       },
     },
@@ -69,9 +69,9 @@ export const getChannelDeletionStatement = (user, channel) => {
     },
     object: {
       objectType: "Activity",
-      id: `http://www.CourseMapper.v2.de/activity/course/${channel.courseId}/topic/${channel.topicId}/channel/${channel._id}`,
+      id: `${origin}/activity/course/${channel.courseId}/topic/${channel.topicId}/channel/${channel._id}`,
       definition: {
-        type: "http://www.CourseMapper.v2.de/activityType/channel",
+        type: "http://www.CourseMapper.de/activityType/channel",
         name: {
           "en-US": channel.name,
         },
@@ -79,7 +79,7 @@ export const getChannelDeletionStatement = (user, channel) => {
           "en-US": channel.description,
         },
         extensions: {
-          "http://www.CourseMapper.v2.de/extensions/channel": {
+          "http://www.CourseMapper.de/extensions/channel": {
             id: channel._id,
             course_id: channel.courseId,
             topic_id: channel.topicId,
@@ -96,7 +96,7 @@ export const getChannelDeletionStatement = (user, channel) => {
   };
 };
 
-export const getChannelAccessStatement = (user, channel) => {
+export const getChannelAccessStatement = (user, channel, origin) => {
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
@@ -105,7 +105,7 @@ export const getChannelAccessStatement = (user, channel) => {
       objectType: "Agent",
       name: fullname,
       account: {
-        homePage: "http://www.CourseMapper.v2.de",
+        homePage: origin,
         name: user.username,
       },
     },
@@ -117,9 +117,9 @@ export const getChannelAccessStatement = (user, channel) => {
     },
     object: {
       objectType: "Activity",
-      id: `http://www.CourseMapper.v2.de/activity/course/${channel.courseId}/topic/${channel.topicId}/channel/${channel._id}`,
+      id: `${origin}/activity/course/${channel.courseId}/topic/${channel.topicId}/channel/${channel._id}`,
       definition: {
-        type: "http://www.CourseMapper.v2.de/activityType/channel",
+        type: "http://www.CourseMapper.de/activityType/channel",
         name: {
           "en-US": channel.name,
         },
@@ -127,7 +127,7 @@ export const getChannelAccessStatement = (user, channel) => {
           "en-US": channel.description,
         },
         extensions: {
-          "http://www.CourseMapper.v2.de/extensions/channel": {
+          "http://www.CourseMapper.de/extensions/channel": {
             id: channel._id,
             course_id: channel.courseId,
             topic_id: channel.topicId,
@@ -144,7 +144,7 @@ export const getChannelAccessStatement = (user, channel) => {
   };
 };
 
-export const getChannelEditStatement = (user, newChannel, oldtChannel) => {
+export const getChannelEditStatement = (user, newChannel, oldtChannel, origin) => {
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
@@ -153,7 +153,7 @@ export const getChannelEditStatement = (user, newChannel, oldtChannel) => {
       objectType: "Agent",
       name: fullname,
       account: {
-        homePage: "http://www.CourseMapper.v2.de",
+        homePage: origin,
         name: user.username,
       },
     },
@@ -165,9 +165,9 @@ export const getChannelEditStatement = (user, newChannel, oldtChannel) => {
     },
     object: {
       objectType: "Activity",
-      id: `http://www.CourseMapper.v2.de/activity/course/${oldtChannel.courseId}/topic/${oldtChannel.topicId}/channel/${oldtChannel._id}`,
+      id: `${origin}/activity/course/${oldtChannel.courseId}/topic/${oldtChannel.topicId}/channel/${oldtChannel._id}`,
       definition: {
-        type: "http://www.CourseMapper.v2.de/activityType/channel",
+        type: "http://www.CourseMapper.de/activityType/channel",
         name: {
           "en-US": oldtChannel.name,
         },
@@ -175,7 +175,7 @@ export const getChannelEditStatement = (user, newChannel, oldtChannel) => {
           "en-US": oldtChannel.description,
         },
         extensions: {
-          "http://www.CourseMapper.v2.de/extensions/channel": {
+          "http://www.CourseMapper.de/extensions/channel": {
             id: oldtChannel._id,
             course_id: oldtChannel.courseId,
             topic_id: oldtChannel.topicId,
@@ -187,7 +187,7 @@ export const getChannelEditStatement = (user, newChannel, oldtChannel) => {
     },
     result: {
       extensions: {
-        "http://www.CourseMapper.v2.de/extensions/channel": {
+        "http://www.CourseMapper.de/extensions/channel": {
           name: newChannel.name,
           description: newChannel.description,
         },

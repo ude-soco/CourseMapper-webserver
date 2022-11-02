@@ -1,11 +1,14 @@
 const statementFactory = require("../statementsFactory/channel.statementsFactory");
 const lrs = require("../lrs/lrs");
 const controller = require("../controller.xAPILogger");
+const ORIGIN = process.env.ORIGIN;
 
 export const newChannel = (req, res) => {
+  const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
   const statement = statementFactory.getChannelCreationStatement(
     req.locals.user,
-    req.locals.channel
+    req.locals.channel,
+    origin
   );
   lrs.sendStatementToLrs(statement);
   controller.saveStatementToMongo(statement);
@@ -13,9 +16,11 @@ export const newChannel = (req, res) => {
 };
 
 export const deleteChannel = (req, res) => {
+  const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
   const statement = statementFactory.getChannelDeletionStatement(
     req.locals.user,
-    req.locals.channel
+    req.locals.channel,
+    origin
   );
   lrs.sendStatementToLrs(statement);
   controller.saveStatementToMongo(statement);
@@ -23,9 +28,11 @@ export const deleteChannel = (req, res) => {
 };
 
 export const getChannel = (req, res) => {
+  const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
   const statement = statementFactory.getChannelAccessStatement(
     req.locals.user,
-    req.locals.channel
+    req.locals.channel,
+    origin
   );
   lrs.sendStatementToLrs(statement);
   controller.saveStatementToMongo(statement);
@@ -33,10 +40,12 @@ export const getChannel = (req, res) => {
 };
 
 export const editChannel = (req, res) => {
+  const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
   const statement = statementFactory.getChannelEditStatement(
     req.locals.user,
     req.locals.newChannel,
-    req.locals.oldChannel
+    req.locals.oldChannel,
+    origin
   );
   lrs.sendStatementToLrs(statement);
   controller.saveStatementToMongo(statement);
