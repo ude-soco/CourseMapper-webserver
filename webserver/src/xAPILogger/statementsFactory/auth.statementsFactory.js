@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 
-export const getLoginStatement = (user) => {
+export const getLoginStatement = (user, origin) => {
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
@@ -9,7 +9,7 @@ export const getLoginStatement = (user) => {
       objectType: "Agent",
       name: fullname,
       account: {
-        homePage: "http://www.CourseMapper.v2.de",
+        homePage: origin,
         name: user.username,
       },
     },
@@ -21,12 +21,15 @@ export const getLoginStatement = (user) => {
     },
     object: {
       objectType: "Activity",
-      id: "http://www.CourseMapper.v2.de/activity/CourseMapper",
+      id: `${origin}/activity/CourseMapper`,
       definition: {
-        type: "http://www.CourseMapper.v2.de/activityType/homepage",
+        type: "http://id.tincanapi.com/activitytype/lms",
         name: {
-          "en-US": "CourseMapper Homepage",
+          "en-US": "CourseMapper",
         },
+        description: {
+            "en-US": "Course Annotation and Analytics platform"
+        }
       },
     },
     context: {
@@ -36,7 +39,7 @@ export const getLoginStatement = (user) => {
   };
 };
 
-export const getLogoutStatement = (user) => {
+export const getLogoutStatement = (user, origin) => {
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
@@ -45,7 +48,7 @@ export const getLogoutStatement = (user) => {
       objectType: "Agent",
       name: fullname,
       account: {
-        homePage: "http://www.CourseMapper.v2.de",
+        homePage: origin,
         name: user.username,
       },
     },
@@ -57,12 +60,15 @@ export const getLogoutStatement = (user) => {
     },
     object: {
       objectType: "Activity",
-      id: "http://www.CourseMapper.v2.de/activity/CourseMapper",
+      id: `${origin}/activity/CourseMapper`,
       definition: {
-        type: "http://www.CourseMapper.v2.de/activityType/CourseMapper",
+        type: "http://id.tincanapi.com/activitytype/lms",
         name: {
           "en-US": "CourseMapper",
         },
+        description: {
+            "en-US": "Course Annotation and Analytics platform"
+        }
       },
     },
     context: {
@@ -72,7 +78,7 @@ export const getLogoutStatement = (user) => {
   };
 };
 
-export const getSignupStatement = (user) => {
+export const getSignupStatement = (user, origin) => {
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
@@ -81,7 +87,7 @@ export const getSignupStatement = (user) => {
       objectType: "Agent",
       name: fullname,
       account: {
-        homePage: "http://www.CourseMapper.v2.de",
+        homePage: origin,
         name: user.username,
       },
     },
@@ -93,12 +99,15 @@ export const getSignupStatement = (user) => {
     },
     object: {
       objectType: "Activity",
-      id: "http://www.CourseMapper.v2.de/activity/CourseMapper",
+      id: `${origin}/activity/CourseMapper`,
       definition: {
-        type: "http://www.CourseMapper.v2.de/activityType/CourseMapper",
+        type: "http://id.tincanapi.com/activitytype/lms",
         name: {
           "en-US": "CourseMapper",
         },
+        description: {
+            "en-US": "Course Annotation and Analytics platform"
+        }
       },
     },
     context: {
