@@ -8,6 +8,8 @@ const Notification = new Schema({
   userId: { type: String },
   courseId: { type: String },
   channelId: { type: String },
+  annotationId: { type: String },
+  replyBelongsTo: { type: String },
   type: { type: String },
   action: { type: String },
   actionObject: { type: String },

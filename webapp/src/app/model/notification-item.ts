@@ -39,7 +39,9 @@ export interface Notification {
   actionObject: string;
   courseId: string;
   channelId: string;
+  annotationId: string;
   extraMessage: string;
+  replyBelongsTo: string;
   isStar: boolean;
   name: string;
   read: boolean;

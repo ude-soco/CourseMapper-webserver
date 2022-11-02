@@ -68,6 +68,8 @@ import { AnnotationCommentPanelComponent } from './components/annotation-comment
 import { CommentListComponent } from './components/comment-list/comment-list.component';
 import { CourseSubscriptionsComponent } from './components/course-subscriptions/course-subscriptions.component';
 import { TableModule } from 'primeng/table';
+import { CustomChannelPipe } from './pipes/channel.pipe';
+import { MaterialListComponent } from './components/material-list/material-list.component';
 
 @NgModule({
   declarations: [
@@ -99,6 +101,8 @@ import { TableModule } from 'primeng/table';
     AnnotationCommentPanelComponent,
     CommentListComponent,
     CourseSubscriptionsComponent,
+    CustomChannelPipe,
+    MaterialListComponent,
   ],
   imports: [
     BrowserModule,

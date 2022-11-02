@@ -1,8 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { getInitials } from 'src/app/helper/getInitial';
 import { ActiveAnnotation, Annotation, Comment } from 'src/app/model/comment';
+import { ActiveMaterial } from 'src/app/model/material';
 import { AnnotationService } from 'src/app/services/annotation.service';
 import { CommentService } from 'src/app/services/comment.service';
+import { CourseService } from 'src/app/services/course.service';
+import { MaterialsService } from 'src/app/services/materials.service';
 import { NotificationServiceService } from 'src/app/services/notification-service.service';
 
 @Component({
@@ -12,15 +15,20 @@ import { NotificationServiceService } from 'src/app/services/notification-servic
 })
 export class AnnotationCommentPanelComponent implements OnInit {
   comments: Comment[];
+  courseId: string;
+  channelId: string;
   @Input() selectedAnnotation: ActiveAnnotation;
   constructor(
     private commentService: CommentService,
     private annotationService: AnnotationService,
-    private notificationService: NotificationServiceService
+    private materialService: MaterialsService,
+    private notificationService: NotificationServiceService,
+    private courseService: CourseService
   ) {}
   getInitials = getInitials;
 
   ngOnInit(): void {
+    this.courseId = this.courseService.getSelectedCourse()._id;
     this.getAnnotationComments();
 
     this.annotationService.selectedAnnotation$.subscribe((activeAnnotation) => {
@@ -30,11 +38,10 @@ export class AnnotationCommentPanelComponent implements OnInit {
   }
 
   getAnnotationComments() {
-    const courseId = '633ffce76076b6a2e67c3162';
     const annotationId = this.selectedAnnotation._id;
 
     this.commentService
-      .getCommentsForAnnotation(courseId, annotationId)
+      .getCommentsForAnnotation(this.courseId, annotationId)
       .subscribe((data: any) => {
         let temp = data.replies;
         this.commentService.comments.next(temp);

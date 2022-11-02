@@ -7,6 +7,12 @@ module.exports = function (app) {
     next();
   });
 
+  app.get(
+    "/courses/:courseId/channels/:channelId/materials",
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.getMaterials
+  );
+
   // Get details of material
   // Only enrolled users/admin
   app.get(

@@ -66,4 +66,6 @@ export interface ActiveAnnotation {
   author: User;
   closedAt: string;
   isClosed: boolean;
+  courseId: string;
+  materialId: string;
 }

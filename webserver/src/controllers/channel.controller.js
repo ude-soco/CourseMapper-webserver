@@ -157,6 +157,7 @@ export const newChannel = async (req, res) => {
     type: "courseupdates",
     action: "has created new",
     actionObject: "channel",
+    createdAt: Date.now(),
     extraMessage: `in ${foundTopic.name} in ${updateCourse.name}`,
     name: channelName,
   });
@@ -301,6 +302,7 @@ export const deleteChannel = async (req, res) => {
     type: "courseupdates",
     action: "has deleted",
     actionObject: "channel",
+    createdAt: Date.now(),
     extraMessage: `in ${foundTopic.name} in ${updateCourse.name}`,
     name: foundChannel.name,
   });
@@ -440,7 +442,7 @@ export const editChannel = async (req, res) => {
     userId: userId,
     courseId: courseId,
     channelId: channelId,
-
+    createdAt: Date.now(),
     type: "courseupdates",
     action: "has edited",
     actionObject: "channel",

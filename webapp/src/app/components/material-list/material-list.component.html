@@ -1,0 +1,10 @@
+<div class="container">
+  <div class="material-lists" *ngFor="let material of materials">
+    <div
+      class="material-name"
+      (click)="onActiveMaterial(material._id, material.courseId)"
+    >
+      <span> {{ material.name }}</span>
+    </div>
+  </div>
+</div>

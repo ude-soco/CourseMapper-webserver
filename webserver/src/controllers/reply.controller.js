@@ -77,6 +77,7 @@ export const newReply = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
+  console.log("foundANnotation", foundAnnotation.author.userId);
 
   let foundUser;
   try {
@@ -118,7 +119,6 @@ export const newReply = async (req, res) => {
     return res.status(500).send({ error: err });
   }
   foundAnnotation.replies.push(newReply._id);
-
   try {
     await foundAnnotation.save();
   } catch (err) {
@@ -197,9 +197,12 @@ export const newReply = async (req, res) => {
     userId: userId,
     courseId: foundAnnotation.courseId,
     channelId: foundAnnotation.channelId,
+    annotationId: annotationId,
+    replyBelongsTo: foundAnnotation.author.userId,
     type: "mentionedandreplied",
     action: "has created new",
     actionObject: "comment",
+    createdAt: Date.now(),
     extraMessage: `in ${foundCourse.name} in ${foundTopic.name}`,
     name: "",
   });
@@ -336,7 +339,9 @@ export const deleteReply = async (req, res) => {
     userId: userId,
     courseId: courseId,
     channelId: foundAnnotation.channelId,
-
+    annotationId: foundReply.annotationId,
+    replyBelongsTo: foundAnnotation.author.userId,
+    createdAt: Date.now(),
     type: "mentionedandreplied",
     action: "has deleted",
     actionObject: "comment",
@@ -492,9 +497,11 @@ export const editReply = async (req, res) => {
     userId: userId,
     courseId: courseId,
     channelId: foundReply.channelId,
+    annotationId: foundReply.annotationId,
     type: "mentionedandreplied",
     action: "has edited",
     actionObject: "comment",
+    createdAt: Date.now(),
     extraMessage: `in ${foundCourse.name}`,
     name: replyContent,
   });
@@ -546,7 +553,7 @@ export const editReply = async (req, res) => {
 export const likeReply = async (req, res) => {
   const courseId = req.params.courseId;
   const replyId = req.params.replyId;
-
+  const userId = req.userId;
   let foundReply;
   try {
     foundReply = await Reply.findOne({ _id: ObjectId(replyId) });
@@ -635,9 +642,12 @@ export const likeReply = async (req, res) => {
       userName: foundUser.username,
       userShortname: userShortname,
       userId: userId,
-      courseId: foundAnnotation.courseId,
+      courseId: foundReply.courseId,
+      annotationId: foundReply.annotationId,
+
       channelId: foundReply.channelId,
       type: "mentionedandreplied",
+      createdAt: Date.now(),
       action: "has liked",
       actionObject: "comment",
       extraMessage: `in ${foundCourse.name} in ${foundTopic.name}`,
@@ -781,8 +791,10 @@ export const dislikeReply = async (req, res) => {
       userId: userId,
       courseId: foundReply.courseId,
       channelId: foundReply.channelId,
+      annotationId: foundReply.annotationId,
       type: "mentionedandreplied",
       action: "has disliked",
+      createdAt: Date.now(),
       actionObject: "comment",
       extraMessage: `in ${foundCourse.name} in ${foundTopic.name}`,
       name: "",

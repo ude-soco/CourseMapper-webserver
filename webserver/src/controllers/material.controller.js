@@ -37,6 +37,29 @@ export const getMaterial = async (req, res) => {
   return res.status(200).send(foundMaterial);
 };
 
+export const getMaterials = async (req, res) => {
+  const courseId = req.params.courseId;
+  const channelId = req.params.channelId;
+
+  let foundMaterial;
+  let temp = [];
+  try {
+    foundMaterial = await Material.find({
+      channelId: ObjectId(channelId),
+    });
+    temp.push(foundMaterial);
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+  if (!foundMaterial) {
+    return res.status(404).send({
+      error: `Material with id ${channelId} doesn't exist!`,
+    });
+  }
+
+  return res.status(200).send({ foundMaterials: temp.flat() });
+};
+
 /**
  * @function newMaterial
  * Add a new material to a channel controller
@@ -152,6 +175,7 @@ export const newMaterial = async (req, res) => {
     action: "has uploaded new",
     actionObject: "material",
     name: materialName,
+    createdAt: Date.now(),
     extraMessage: `in ${foundChannel.name}`,
   });
   let notificationSaved;
@@ -297,6 +321,7 @@ export const deleteMaterial = async (req, res) => {
     action: "has deleted",
     actionObject: "material",
     name: foundMaterial.name,
+    createdAt: Date.now(),
     extraMessage: `in ${foundCourse.name}`,
   });
   let notificationSaved;
@@ -440,6 +465,7 @@ export const editMaterial = async (req, res) => {
     userId: userId,
     courseId: courseId,
     channelId: foundMaterial.channelId,
+    createdAt: Date.now(),
     type: "courseupdates",
     action: "has edited",
     actionObject: "material",

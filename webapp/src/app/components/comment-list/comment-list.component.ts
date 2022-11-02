@@ -1,7 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { getInitials } from 'src/app/helper/getInitial';
 import { ActiveAnnotation, Annotation, Comment } from 'src/app/model/comment';
+import { ActiveMaterial } from 'src/app/model/material';
 import { AnnotationService } from 'src/app/services/annotation.service';
+import { CourseService } from 'src/app/services/course.service';
+import { MaterialsService } from 'src/app/services/materials.service';
 import { NotificationServiceService } from 'src/app/services/notification-service.service';
 import { StorageService } from 'src/app/services/storage.service';
 
@@ -16,25 +19,44 @@ export class CommentListComponent implements OnInit {
   showCloseButton: boolean;
   afterClosed: boolean;
   isClosed: boolean;
+  courseId: string;
+  materialId: string;
   constructor(
     private annotationService: AnnotationService,
     private notificationService: NotificationServiceService,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private courseService: CourseService,
+    private materialService: MaterialsService
   ) {}
   getInitials = getInitials;
 
   ngOnInit(): void {
-    this.annotationService.selectedAnnotation$.subscribe((activeAnnotation) => {
-      this.activeAnnotation = activeAnnotation;
-      this.checkIfAuthor();
-      this.getIfAnnotationClosed();
-    });
+    this.courseId = this.courseService.getSelectedCourse()._id;
+    this.materialService.activeMaterial$.subscribe(
+      (activeMaterial: ActiveMaterial) => {
+        this.materialId = activeMaterial.materialId;
+        this.getMaterialAnnotations(
+          activeMaterial.courseId,
+          activeMaterial.materialId
+        );
+      }
+    );
+
+    this.annotationService.selectedAnnotation$.subscribe(
+      (activeAnnotation: ActiveAnnotation) => {
+        this.activeAnnotation = activeAnnotation;
+        this.checkIfAuthor();
+        this.courseId = activeAnnotation.courseId;
+        this.getIfAnnotationClosed(this.courseId);
+        this.materialId = activeAnnotation.materialId;
+        console.log('materialId', this.materialId);
+      }
+    );
     this.checkIfAuthor();
-    this.getIfAnnotationClosed();
+    this.getIfAnnotationClosed(this.courseId);
   }
 
-  getIfAnnotationClosed() {
-    const courseId = '633ffce76076b6a2e67c3162';
+  getIfAnnotationClosed(courseId: string) {
     this.annotationService
       .getIsAnnotationClosed(courseId, this.activeAnnotation._id)
       .subscribe((res: any) => {
@@ -50,18 +72,17 @@ export class CommentListComponent implements OnInit {
     }
   }
   closeDiscussion(annotation: ActiveAnnotation) {
+    console.log('materialId close', this.materialId);
+
     this.annotationService
-      .closeDiscussion('633ffce76076b6a2e67c3162', annotation._id)
+      .closeDiscussion(this.courseId, annotation._id)
       .subscribe((data) => {
-        this.getMaterialAnnotations();
-        this.getIfAnnotationClosed();
+        this.getMaterialAnnotations(this.courseId, this.materialId);
+        this.getIfAnnotationClosed(this.courseId);
       });
   }
 
-  getMaterialAnnotations() {
-    const courseId = '633ffce76076b6a2e67c3162';
-    const materialId = '63514cf661d005c29e6af9b4';
-
+  getMaterialAnnotations(courseId: string, materialId: string) {
     this.annotationService
       .getAnnotationsForMaterials(courseId, materialId)
       .subscribe((data: any) => {

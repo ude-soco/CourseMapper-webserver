@@ -18,7 +18,6 @@ const Notification = db.notification;
  */
 export const getAllCourses = async (req, res) => {
   let courses;
-  console.log("get all courses");
   try {
     courses = await Course.find({}).populate("topics", "-__v");
   } catch (err) {
@@ -135,7 +134,6 @@ export const getSubscribedCourses = async (req, res) => {
  */
 export const getCourse = async (req, res) => {
   const courseId = req.params.courseId;
-  console.log("getCourse");
   const userId = req.userId;
   let foundCourse;
   try {
@@ -396,31 +394,7 @@ export const newCourse = async (req, res) => {
     return res.status(500).send({ error: err });
   }
 
-  // let userShortname = (
-  //   foundUser.firstname.charAt(0) + foundUser.lastname.charAt(0)
-  // ).toUpperCase();
-
-  //this is pushing the item to global notification collection
-  // let notification = new Notification({
-  //   userName: foundUser.username,
-  //   userShortname: userShortname,
-  //   userId: userId,
-  //   courseId: courseSaved._id,
-  //   type: "courseupdates",
-  //   action: "has created new",
-  //   actionObject: "course",
-  //   name: courseName,
-  // });
-  // let notificationSaved;
-  // try {
-  //   notificationSaved = await notification.save();
-  // } catch (err) {
-  //   return res.status(500).send({ error: err });
-  // }
   return res.send({
-    // id: course._id,
-    // success: `New course '${courseSaved.name}' added!`,
-    // // notification: notification,
     courseSaved: {
       _id: courseSaved._id,
       name: courseSaved.name,

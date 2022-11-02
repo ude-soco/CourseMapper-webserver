@@ -109,4 +109,16 @@ module.exports = function (app) {
     [authJwt.verifyToken],
     controller.getUserIsAnnotationTurnOff
   );
+
+  app.get(
+    "/notifications/:channelId/channelNotifications",
+    [authJwt.verifyToken],
+    controller.getChannelNotifications
+  );
+
+  app.get(
+    "/notifications/:courseId/courseNotifications",
+    [authJwt.verifyToken],
+    controller.getCourseNotifications
+  );
 };

@@ -5,10 +5,9 @@ app-notification-dashboard {
 }
 
 app-annotation-comment-list {
-  top: 40%;
-  left: 50%;
-  margin: auto;
-  margin-top: 5rem;
+  left: 40%;
+  margin-top: 15rem;
+  position: absolute;
   /* margin-left: 15%; */
 }
 app-annotation-comment-panel {

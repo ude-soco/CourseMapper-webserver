@@ -3,16 +3,18 @@
     class="notification-content"
     *ngFor="let notificationItem of notificationItems"
     (mouseenter)="onHover()"
-    (click)="
-      goToContext(notificationItem?.channelId, notificationItem?.courseId)
-    "
   >
     <div class="item-container">
       <!-- <div
       class="item-container"
       [hidden]="isStarredClicked && !notificationItem.isStar"
     > -->
-      <div class="left-container">
+      <div
+        class="left-container"
+        (click)="
+          goToContext(notificationItem?.channelId, notificationItem?.courseId)
+        "
+      >
         <div class="left">
           <p-avatar
             [label]="notificationItem.userShortname"

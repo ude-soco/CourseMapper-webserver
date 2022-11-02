@@ -1,0 +1,13 @@
+.container {
+  display: flex;
+  margin-top: 3rem;
+  justify-content: center;
+  position: relative;
+  left: 40%;
+}
+.material-name {
+  margin-right: 1rem;
+  border: 1px solid gray;
+  padding: 1rem;
+  box-shadow: 1px 1px gray;
+}

@@ -26,7 +26,9 @@ export class AnnotationCommentListItemComponent implements OnInit {
     annotationId: string,
     author: User,
     closedAt: string,
-    isClosed: boolean
+    isClosed: boolean,
+    courseId: string,
+    materialId: string
   ) {
     this.annotationService.isCommentVisible.next(true);
     const annotation = {
@@ -36,6 +38,8 @@ export class AnnotationCommentListItemComponent implements OnInit {
       author: author,
       closedAt: closedAt,
       isClosed: isClosed,
+      courseId: courseId,
+      materialId: materialId,
     };
     this.annotationService.selectedAnnotation.next(annotation);
   }

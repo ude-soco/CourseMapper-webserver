@@ -66,4 +66,10 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.isAnnotationClosed
   );
+
+  app.post(
+    "/courses/:courseId/annotations/:annotationId/checkReplyToAuthor",
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.checkReplyToAuthor
+  );
 };

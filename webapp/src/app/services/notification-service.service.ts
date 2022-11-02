@@ -214,10 +214,33 @@ export class NotificationServiceService {
     return this.loggedInTime.value;
   }
 
-  getNumberOfUpdates(index: number, channelId) {
-    // console.log(index, channelId);
-    //news updates on channel contains changes from
-    //materials, annotation,replies
-    return index.toString();
+  getChannelNotification(channelId: string) {
+    return this.http.get(
+      environment.API_URL +
+        '/notifications/' +
+        channelId +
+        '/channelNotifications',
+      HTTPOptions
+    );
+  }
+
+  getCourseNotification(courseId: string) {
+    return this.http.get(
+      environment.API_URL +
+        '/notifications/' +
+        courseId +
+        '/courseNotifications',
+      HTTPOptions
+    );
+  }
+
+  getNumberOfUpdates(index?: number, channelId?: string, topicId?: string) {
+    // console.log('topic id', topicId);
+    // console.log('channelId', channelId);
+    // this.getChannelNotification(channelId).subscribe((res) => {
+    //   console.log('get channel notifications', res);
+    // });
+
+    return channelId;
   }
 }

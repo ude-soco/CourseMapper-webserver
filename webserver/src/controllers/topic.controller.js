@@ -122,6 +122,7 @@ export const newTopic = async (req, res) => {
     courseId: courseId,
     type: "courseupdates",
     action: "has created new",
+    createdAt: Date.now(),
     actionObject: "topic",
     extraMessage: `in ${foundCourse.name}`,
     name: topicName,
@@ -258,6 +259,7 @@ export const deleteTopic = async (req, res) => {
     type: "courseupdates",
     action: "has deleted",
     actionObject: "topic",
+    createdAt: Date.now(),
     extraMessage: `in ${foundCourse.name}`,
     name: foundTopic.name,
   });
@@ -392,6 +394,7 @@ export const editTopic = async (req, res) => {
     type: "courseupdates",
     action: "has edited",
     actionObject: "topic",
+    createdAt: Date.now(),
     extraMessage: `in ${foundCourse.name}`,
     name: topicName,
   });

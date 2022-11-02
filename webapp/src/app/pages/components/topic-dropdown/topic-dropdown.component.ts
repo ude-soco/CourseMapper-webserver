@@ -6,7 +6,10 @@ import { CourseService } from 'src/app/services/course.service';
 import { TopicChannelService } from 'src/app/services/topic-channel.service';
 import { MessageService } from 'primeng/api';
 import { NotificationServiceService } from 'src/app/services/notification-service.service';
-
+import { Notification } from 'src/app/model/notification-item';
+import { MaterialsService } from 'src/app/services/materials.service';
+import { AnnotationService } from 'src/app/services/annotation.service';
+import { StorageService } from 'src/app/services/storage.service';
 @Component({
   selector: 'app-topic-dropdown',
   templateUrl: './topic-dropdown.component.html',
@@ -14,17 +17,25 @@ import { NotificationServiceService } from 'src/app/services/notification-servic
   providers: [MessageService],
 })
 export class TopicDropdownComponent implements OnInit {
-  constructor(
-    private courseService: CourseService,
-    private topicChannelService: TopicChannelService,
-    private messageService: MessageService,
-    public notificationService: NotificationServiceService
-  ) {}
+  channelNotifications: Notification[];
+  courseNotifications: Notification[];
   @Input() activeChannel: string;
   topics: Topic[] = [];
   displayAddChannelDialogue: boolean = false;
   selectedTopic = null;
   selectedChannel = null;
+  courseId: string;
+  userId: string;
+  constructor(
+    private courseService: CourseService,
+    private topicChannelService: TopicChannelService,
+    private messageService: MessageService,
+    public notificationService: NotificationServiceService,
+    private materialService: MaterialsService,
+    private annotationService: AnnotationService,
+    private storageService: StorageService
+  ) {}
+
   topicOptions: MenuItem[] = [
     {
       label: 'Options',
@@ -73,6 +84,19 @@ export class TopicDropdownComponent implements OnInit {
     this.topicChannelService.activeLocation$.subscribe((location) => {
       this.activeChannel = location.channelId;
     });
+    this.courseId = this.courseService.getSelectedCourse()._id;
+    this.getCourseNotifications(this.courseId);
+
+    const user = this.storageService.getUser();
+    this.userId = user.id;
+  }
+
+  getCourseNotifications(courseId) {
+    this.notificationService
+      .getCourseNotification(courseId)
+      .subscribe((res: any) => {
+        this.courseNotifications = res.courseNotifications.flat();
+      });
   }
 
   showMenu() {
@@ -241,5 +265,41 @@ export class TopicDropdownComponent implements OnInit {
       summary: 'Error',
       detail: msg,
     });
+  }
+
+  getChannelNotification(channelId: string): { news: number; replies: string } {
+    const lastTime = this.notificationService.getLoggedInTime();
+    let newLists = [];
+    let old = [];
+    let temp = [];
+
+    for (let i = 0; i < this.courseNotifications.length; i++) {
+      if (
+        new Date(this.courseNotifications[i].createdAt).getTime() > lastTime
+      ) {
+        newLists.push(this.courseNotifications[i]);
+      } else {
+        old.push(this.courseNotifications[i]);
+      }
+    }
+    temp = newLists.filter((news: Notification) => {
+      return news.channelId == channelId;
+    });
+    let replies: any;
+    replies = temp.filter((news: Notification) => {
+      return (
+        news.type == 'mentionedandreplied' && news.replyBelongsTo == this.userId
+      );
+    });
+
+    return { news: temp.length, replies: replies.length.toString() };
+  }
+
+  selectChannel(channelId: string, courseId: string) {
+    const activeChannel = {
+      channelId: channelId,
+      courseId: courseId,
+    };
+    this.materialService.selectedChannel.next(activeChannel);
   }
 }

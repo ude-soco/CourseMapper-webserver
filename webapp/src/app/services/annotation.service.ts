@@ -52,4 +52,16 @@ export class AnnotationService {
       HTTPOptions
     );
   }
+
+  checkReplyIfAuthor(courseId: string, annotationId: string) {
+    return this.http.post(
+      environment.API_URL +
+        '/courses/' +
+        courseId +
+        '/annotations/' +
+        annotationId +
+        '/checkReplyToAuthor',
+      HTTPOptions
+    );
+  }
 }

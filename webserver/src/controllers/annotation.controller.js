@@ -31,7 +31,7 @@ export const getAnnotation = async (req, res) => {
   } catch (err) {
     res.status(500).send({ error: err });
   }
-  console.log("id", annotationLists);
+  // console.log("id", annotationLists);
   let foundAnnotationIds = [];
   let foundAnnotations = [];
 
@@ -205,8 +205,9 @@ export const newAnnotation = async (req, res) => {
     courseId: foundMaterial.courseId,
     channelId: foundMaterial.channelId,
     type: "annotations",
-    action: "has annotated ",
+    action: "has annotated",
     actionObject: "",
+    createdAt: Date.now(),
     extraMessage: `in ${foundMaterial.name}`,
   });
   let notificationSaved;
@@ -371,6 +372,7 @@ export const deleteAnnotation = async (req, res) => {
     type: "annotations",
     action: "has deleted",
     actionObject: "",
+    createdAt: Date.now(),
     extraMessage: `in ${foundCourse.name}`,
   });
   let notificationSaved;
@@ -543,7 +545,7 @@ export const editAnnotation = async (req, res) => {
     userId: userId,
     courseId: courseId,
     channelId: foundAnnotation.channelId,
-
+    createdAt: Date.now(),
     type: "annotations",
     action: "has edited",
     actionObject: "",
@@ -691,6 +693,7 @@ export const likeAnnotation = async (req, res) => {
       type: "annotations",
       action: "has liked",
       actionObject: "",
+      createdAt: Date.now(),
       extraMessage: `in ${foundMaterial.name}`,
     });
     let notificationSaved;
@@ -836,6 +839,7 @@ export const dislikeAnnotation = async (req, res) => {
       type: "annotations",
       action: "has disliked",
       actionObject: "",
+      createdAt: Date.now(),
       extraMessage: `in ${foundMaterial.name}`,
     });
     let notificationSaved;
@@ -936,4 +940,30 @@ export const isAnnotationClosed = async (req, res) => {
   }
 
   return res.status(200).send({ isAnnotationClosed: foundAnnotation.isClosed });
+};
+
+export const checkReplyToAuthor = async (req, res) => {
+  const courseId = req.params.courseId;
+  const annotationId = req.params.annotationId;
+
+  let foundAnnotation;
+  try {
+    foundAnnotation = await Annotation.findOne({ _id: ObjectId(annotationId) });
+    if (!foundAnnotation) {
+      res.status(404).send({
+        error: `Annotation with id ${annotationId} doesn't exist!`,
+      });
+      return;
+    }
+    if (foundAnnotation.courseId.valueOf() !== courseId) {
+      return res.status(404).send({
+        error: `Annotation doesn't belong to course with id ${courseId}!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+  console.log("list of replies", foundAnnotation.replies);
+
+  return res.status(200).send({ listOfReplies: foundAnnotation.replies });
 };

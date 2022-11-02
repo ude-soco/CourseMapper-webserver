@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { AnnotationService } from 'src/app/services/annotation.service';
 import { ActiveAnnotation, Annotation } from 'src/app/model/comment';
 import { NotificationServiceService } from 'src/app/services/notification-service.service';
+import { MaterialsService } from 'src/app/services/materials.service';
+import { ActiveMaterial } from 'src/app/model/material';
 
 @Component({
   selector: 'app-annotation-comment-list',
@@ -18,10 +20,19 @@ export class AnnotationCommentListComponent implements OnInit {
 
   constructor(
     private annotationService: AnnotationService,
-    private notificationService: NotificationServiceService
+    private notificationService: NotificationServiceService,
+    private materialService: MaterialsService
   ) {}
   ngOnInit(): void {
-    this.getMaterialAnnotations();
+    // this.getMaterialAnnotations();
+    this.materialService.activeMaterial$.subscribe(
+      (activeMaterial: ActiveMaterial) => {
+        this.getMaterialAnnotations(
+          activeMaterial.courseId,
+          activeMaterial.materialId
+        );
+      }
+    );
 
     this.annotationService.annotations$.subscribe((annotations) => {
       this.annotations = annotations;
@@ -56,10 +67,7 @@ export class AnnotationCommentListComponent implements OnInit {
     this.oldAnnotations = [...old];
   }
 
-  getMaterialAnnotations() {
-    const courseId = '633ffce76076b6a2e67c3162';
-    const materialId = '63514cf661d005c29e6af9b4';
-
+  getMaterialAnnotations(courseId: string, materialId: string) {
     this.annotationService
       .getAnnotationsForMaterials(courseId, materialId)
       .subscribe((data: any) => {

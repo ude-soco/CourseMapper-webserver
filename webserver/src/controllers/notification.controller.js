@@ -483,3 +483,35 @@ export const getUserIsAnnotationTurnOff = async (req, res) => {
   }
   return res.status(200).send(foundUser.isAnnotationTurnOff);
 };
+
+export const getChannelNotifications = async (req, res) => {
+  const userId = req.userId;
+  const channelId = req.params.channelId;
+
+  let channelNotifications = [];
+  let temp;
+  try {
+    temp = await Notification.find({ channelId: channelId });
+    channelNotifications.push(temp);
+  } catch (err) {
+    return res.send({ message: err });
+  }
+  return res
+    .status(200)
+    .send({ "channelNotifications ": channelNotifications });
+};
+
+export const getCourseNotifications = async (req, res) => {
+  const userId = req.userId;
+  const courseId = req.params.courseId;
+
+  let courseNotifications = [];
+  let temp;
+  try {
+    temp = await Notification.find({ courseId: courseId });
+    courseNotifications.push(temp);
+  } catch (err) {
+    return res.send({ message: err });
+  }
+  return res.status(200).send({ courseNotifications: courseNotifications });
+};
