@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-export const getCourseCreationStatement = (user, course) => {
+export const getCourseCreationStatement = (user, course, origin) => {
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
@@ -8,7 +8,7 @@ export const getCourseCreationStatement = (user, course) => {
       objectType: "Agent",
       name: fullname,
       account: {
-        homePage: "http://www.CourseMapper.v2.de",
+        homePage: origin,
         name: user.username,
       },
     },
@@ -20,9 +20,9 @@ export const getCourseCreationStatement = (user, course) => {
     },
     object: {
       objectType: "Activity",
-      id: `http://www.CourseMapper.v2.de/activity/course/${course._id}`,
+      id: `${origin}/activity/course/${course._id}`,
       definition: {
-        type: "http://www.CourseMapper.v2.de/activityType/course",
+        type: "http://adlnet.gov/expapi/activities/course",
         name: {
           "en-US": course.name,
         },
@@ -30,7 +30,7 @@ export const getCourseCreationStatement = (user, course) => {
           "en-US": course.description,
         },
         extensions: {
-          "http://www.CourseMapper.v2.de/extensions/course": {
+          "http://www.CourseMapper.de/extensions/course": {
             id: course._id,
             name: course.name,
             shortname: course.shortName,
@@ -46,7 +46,7 @@ export const getCourseCreationStatement = (user, course) => {
   };
 };
 
-export const getCourseDeletionStatement = (user, course) => {
+export const getCourseDeletionStatement = (user, course, origin) => {
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
@@ -55,7 +55,7 @@ export const getCourseDeletionStatement = (user, course) => {
       objectType: "Agent",
       name: fullname,
       account: {
-        homePage: "http://www.CourseMapper.v2.de",
+        homePage: origin,
         name: user.username,
       },
     },
@@ -67,9 +67,9 @@ export const getCourseDeletionStatement = (user, course) => {
     },
     object: {
       objectType: "Activity",
-      id: `http://www.CourseMapper.v2.de/activity/course/${course._id}`,
+      id: `${origin}/activity/course/${course._id}`,
       definition: {
-        type: "http://www.CourseMapper.v2.de/activityType/course",
+        type: "http://adlnet.gov/expapi/activities/course",
         name: {
           "en-US": course.name,
         },
@@ -77,7 +77,7 @@ export const getCourseDeletionStatement = (user, course) => {
           "en-US": course.description,
         },
         extensions: {
-          "http://www.CourseMapper.v2.de/extensions/course": {
+          "http://www.CourseMapper.de/extensions/course": {
             id: course._id,
             name: course.name,
             shortname: course.shortName,
@@ -93,7 +93,7 @@ export const getCourseDeletionStatement = (user, course) => {
   };
 };
 
-export const getCourseAccessStatement = (user, course) => {
+export const getCourseAccessStatement = (user, course, origin) => {
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
@@ -102,7 +102,7 @@ export const getCourseAccessStatement = (user, course) => {
       objectType: "Agent",
       name: fullname,
       account: {
-        homePage: "http://www.CourseMapper.v2.de",
+        homePage: origin,
         name: user.username,
       },
     },
@@ -114,9 +114,9 @@ export const getCourseAccessStatement = (user, course) => {
     },
     object: {
       objectType: "Activity",
-      id: `http://www.CourseMapper.v2.de/activity/course/${course._id}`,
+      id: `${origin}/activity/course/${course._id}`,
       definition: {
-        type: "http://www.CourseMapper.v2.de/activityType/course",
+        type: "http://adlnet.gov/expapi/activities/course",
         name: {
           "en-US": course.name,
         },
@@ -124,7 +124,7 @@ export const getCourseAccessStatement = (user, course) => {
           "en-US": course.description,
         },
         extensions: {
-          "http://www.CourseMapper.v2.de/extensions/course": {
+          "http://www.CourseMapper.de/extensions/course": {
             id: course._id,
             name: course.name,
             shortname: course.shortName,
@@ -140,7 +140,7 @@ export const getCourseAccessStatement = (user, course) => {
   };
 };
 
-export const getCourseEnrollmentStatement = (user, course) => {
+export const getCourseEnrollmentStatement = (user, course, origin) => {
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
@@ -149,7 +149,7 @@ export const getCourseEnrollmentStatement = (user, course) => {
       objectType: "Agent",
       name: fullname,
       account: {
-        homePage: "http://www.CourseMapper.v2.de",
+        homePage: origin,
         name: user.username,
       },
     },
@@ -161,9 +161,9 @@ export const getCourseEnrollmentStatement = (user, course) => {
     },
     object: {
       objectType: "Activity",
-      id: `http://www.CourseMapper.v2.de/activity/course/${course._id}`,
+      id: `${origin}/activity/course/${course._id}`,
       definition: {
-        type: "http://www.CourseMapper.v2.de/activityType/course",
+        type: "http://adlnet.gov/expapi/activities/course",
         name: {
           "en-US": course.name,
         },
@@ -171,7 +171,7 @@ export const getCourseEnrollmentStatement = (user, course) => {
           "en-US": course.description,
         },
         extensions: {
-          "http://www.CourseMapper.v2.de/extensions/course": {
+          "http://www.CourseMapper.de/extensions/course": {
             id: course._id,
             name: course.name,
             shortname: course.shortName,
@@ -187,7 +187,7 @@ export const getCourseEnrollmentStatement = (user, course) => {
   };
 };
 
-export const getCourseWithdrawStatement = (user, course) => {
+export const getCourseWithdrawStatement = (user, course, origin) => {
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
@@ -196,7 +196,7 @@ export const getCourseWithdrawStatement = (user, course) => {
       objectType: "Agent",
       name: fullname,
       account: {
-        homePage: "http://www.CourseMapper.v2.de",
+        homePage: origin,
         name: user.username,
       },
     },
@@ -208,9 +208,9 @@ export const getCourseWithdrawStatement = (user, course) => {
     },
     object: {
       objectType: "Activity",
-      id: `http://www.CourseMapper.v2.de/activity/course/${course._id}`,
+      id: `${origin}/activity/course/${course._id}`,
       definition: {
-        type: "http://www.CourseMapper.v2.de/activityType/course",
+        type: "http://adlnet.gov/expapi/activities/course",
         name: {
           "en-US": course.name,
         },
@@ -218,7 +218,7 @@ export const getCourseWithdrawStatement = (user, course) => {
           "en-US": course.description,
         },
         extensions: {
-          "http://www.CourseMapper.v2.de/extensions/course": {
+          "http://www.CourseMapper.de/extensions/course": {
             id: course._id,
             name: course.name,
             shortname: course.shortName,
@@ -234,7 +234,7 @@ export const getCourseWithdrawStatement = (user, course) => {
   };
 };
 
-export const getCourseEditStatement = (user, newCourse, oldCourse) => {
+export const getCourseEditStatement = (user, newCourse, oldCourse, origin) => {
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
@@ -243,7 +243,7 @@ export const getCourseEditStatement = (user, newCourse, oldCourse) => {
       objectType: "Agent",
       name: fullname,
       account: {
-        homePage: "http://www.CourseMapper.v2.de",
+        homePage: origin,
         name: user.username,
       },
     },
@@ -255,9 +255,9 @@ export const getCourseEditStatement = (user, newCourse, oldCourse) => {
     },
     object: {
       objectType: "Activity",
-      id: `http://www.CourseMapper.v2.de/activity/course/${oldCourse._id}`,
+      id: `${origin}/activity/course/${oldCourse._id}`,
       definition: {
-        type: "http://www.CourseMapper.v2.de/activityType/course",
+        type: "http://adlnet.gov/expapi/activities/course",
         name: {
           "en-US": oldCourse.name,
         },
@@ -265,7 +265,7 @@ export const getCourseEditStatement = (user, newCourse, oldCourse) => {
           "en-US": oldCourse.description,
         },
         extensions: {
-          "http://www.CourseMapper.v2.de/extensions/course": {
+          "http://www.CourseMapper.de/extensions/course": {
             id: oldCourse._id,
             name: oldCourse.name,
             shortname: oldCourse.shortName,
@@ -276,7 +276,7 @@ export const getCourseEditStatement = (user, newCourse, oldCourse) => {
     },
     result: {
       extensions: {
-        "http://www.CourseMapper.v2.de/extensions/course": {
+        "http://www.CourseMapper.de/extensions/course": {
           name: newCourse.name,
           shortname: newCourse.shortName,
           description: newCourse.description,
