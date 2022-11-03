@@ -1,11 +1,14 @@
 const statementFactory = require("../statementsFactory/material.statementsFactory");
 const lrs = require("../lrs/lrs");
 const controller = require("../controller.xAPILogger");
+const ORIGIN = process.env.ORIGIN;
 
 export const newMaterial = (req, res) => {
+  const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
   const statement = statementFactory.getMaterialUploadStatement(
     req.locals.user,
-    req.locals.material
+    req.locals.material,
+    origin
   );
   lrs.sendStatementToLrs(statement);
   controller.saveStatementToMongo(statement);
@@ -13,9 +16,11 @@ export const newMaterial = (req, res) => {
 };
 
 export const deleteMaterial = (req, res) => {
+  const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
   const statement = statementFactory.getMaterialDeletionStatement(
     req.locals.user,
-    req.locals.material
+    req.locals.material,
+    origin
   );
   lrs.sendStatementToLrs(statement);
   controller.saveStatementToMongo(statement);
@@ -23,9 +28,11 @@ export const deleteMaterial = (req, res) => {
 };
 
 export const getMaterial = (req, res) => {
+  const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
   const statement = statementFactory.getMaterialAccessStatement(
     req.locals.user,
-    req.locals.material
+    req.locals.material,
+    origin
   );
   lrs.sendStatementToLrs(statement);
   controller.saveStatementToMongo(statement);
@@ -33,10 +40,12 @@ export const getMaterial = (req, res) => {
 };
 
 export const editMaterial = (req, res) => {
+  const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
   const statement = statementFactory.getMaterialEditStatement(
     req.locals.user,
     req.locals.newMaterial,
-    req.locals.oldMaterial
+    req.locals.oldMaterial,
+    origin
   );
   lrs.sendStatementToLrs(statement);
   controller.saveStatementToMongo(statement);
@@ -44,10 +53,12 @@ export const editMaterial = (req, res) => {
 };
 
 export const playVideo = (req, res) => {
+  const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
   if (req.locals.material.type === "video") {
     const statement = statementFactory.getVideoPlayStatement(
       req.locals.user,
-      req.locals.material
+      req.locals.material,
+      origin
     );
     lrs.sendStatementToLrs(statement);
     controller.saveStatementToMongo(statement);
@@ -60,10 +71,12 @@ export const playVideo = (req, res) => {
 };
 
 export const pauseVideo = (req, res) => {
+  const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
   if (req.locals.material.type === "video") {
     const statement = statementFactory.getVideoPauseStatement(
       req.locals.user,
-      req.locals.material
+      req.locals.material,
+      origin
     );
     lrs.sendStatementToLrs(statement);
     controller.saveStatementToMongo(statement);
@@ -76,10 +89,12 @@ export const pauseVideo = (req, res) => {
 };
 
 export const completeVideo = (req, res) => {
+  const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
   if (req.locals.material.type === "video") {
     const statement = statementFactory.getVideoEndStatement(
       req.locals.user,
-      req.locals.material
+      req.locals.material,
+      origin
     );
     lrs.sendStatementToLrs(statement);
     controller.saveStatementToMongo(statement);
@@ -92,12 +107,32 @@ export const completeVideo = (req, res) => {
 };
 
 export const viewSlide = (req, res) => {
+  const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
   const slideNr = req.params.slideNr;
   if (req.locals.material.type === "pdf") {
     const statement = statementFactory.getSlideViewStatement(
       req.locals.user,
       req.locals.material,
-      slideNr
+      slideNr,
+      origin
+    );
+    lrs.sendStatementToLrs(statement);
+    controller.saveStatementToMongo(statement);
+    return res.status(204).send();
+  }
+
+  return res.status(406).send({
+    error: `Material with id ${req.locals.material._id} is not a pdf`,
+  });
+};
+
+export const completePDF = (req, res) => {
+  const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
+  if (req.locals.material.type === "pdf") {
+    const statement = statementFactory.getPdfCompleteStatement(
+      req.locals.user,
+      req.locals.material,
+      origin
     );
     lrs.sendStatementToLrs(statement);
     controller.saveStatementToMongo(statement);

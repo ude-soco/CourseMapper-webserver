@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-export const getMaterialUploadStatement = (user, material) => {
+export const getMaterialUploadStatement = (user, material, origin) => {
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
@@ -8,7 +8,7 @@ export const getMaterialUploadStatement = (user, material) => {
       objectType: "Agent",
       name: fullname,
       account: {
-        homePage: "http://www.CourseMapper.v2.de",
+        homePage: origin,
         name: user.username,
       },
     },
@@ -20,9 +20,9 @@ export const getMaterialUploadStatement = (user, material) => {
     },
     object: {
       objectType: "Activity",
-      id: `http://www.CourseMapper.v2.de/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`,
+      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`,
       definition: {
-        type: `http://www.CourseMapper.v2.de/activityType/material`,
+        type: `http://www.CourseMapper.de/activityType/material`,
         name: {
           "en-US": material.name,
         },
@@ -30,7 +30,7 @@ export const getMaterialUploadStatement = (user, material) => {
           "en-US": material.description,
         },
         extensions: {
-          "http://www.CourseMapper.v2.de/extensions/material": {
+          "http://www.CourseMapper.de/extensions/material": {
             id: material._id,
             name: material.name,
             description: material.description,
@@ -50,7 +50,7 @@ export const getMaterialUploadStatement = (user, material) => {
   };
 };
 
-export const getMaterialAccessStatement = (user, material) => {
+export const getMaterialAccessStatement = (user, material, origin) => {
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
@@ -59,7 +59,7 @@ export const getMaterialAccessStatement = (user, material) => {
       objectType: "Agent",
       name: fullname,
       account: {
-        homePage: "http://www.CourseMapper.v2.de",
+        homePage: origin,
         name: user.username,
       },
     },
@@ -71,9 +71,9 @@ export const getMaterialAccessStatement = (user, material) => {
     },
     object: {
       objectType: "Activity",
-      id: `http://www.CourseMapper.v2.de/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`,
+      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`,
       definition: {
-        type: `http://www.CourseMapper.v2.de/activityType/material`,
+        type: `http://www.CourseMapper.de/activityType/material`,
         name: {
           "en-US": material.name,
         },
@@ -81,7 +81,7 @@ export const getMaterialAccessStatement = (user, material) => {
           "en-US": material.description,
         },
         extensions: {
-          "http://www.CourseMapper.v2.de/extensions/material": {
+          "http://www.CourseMapper.de/extensions/material": {
             id: material._id,
             name: material.name,
             description: material.description,
@@ -101,7 +101,7 @@ export const getMaterialAccessStatement = (user, material) => {
   };
 };
 
-export const getMaterialDeletionStatement = (user, material) => {
+export const getMaterialDeletionStatement = (user, material, origin) => {
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
@@ -110,7 +110,7 @@ export const getMaterialDeletionStatement = (user, material) => {
       objectType: "Agent",
       name: fullname,
       account: {
-        homePage: "http://www.CourseMapper.v2.de",
+        homePage: origin,
         name: user.username,
       },
     },
@@ -122,9 +122,9 @@ export const getMaterialDeletionStatement = (user, material) => {
     },
     object: {
       objectType: "Activity",
-      id: `http://www.CourseMapper.v2.de/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`,
+      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`,
       definition: {
-        type: `http://www.CourseMapper.v2.de/activityType/material`,
+        type: `http://www.CourseMapper.de/activityType/material`,
         name: {
           "en-US": material.name,
         },
@@ -132,7 +132,7 @@ export const getMaterialDeletionStatement = (user, material) => {
           "en-US": material.description,
         },
         extensions: {
-          "http://www.CourseMapper.v2.de/extensions/material": {
+          "http://www.CourseMapper.de/extensions/material": {
             id: material._id,
             name: material.name,
             description: material.description,
@@ -152,7 +152,7 @@ export const getMaterialDeletionStatement = (user, material) => {
   };
 };
 
-export const getMaterialEditStatement = (user, newMaterial, oldMaterial) => {
+export const getMaterialEditStatement = (user, newMaterial, oldMaterial, origin) => {
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
@@ -161,7 +161,7 @@ export const getMaterialEditStatement = (user, newMaterial, oldMaterial) => {
       objectType: "Agent",
       name: fullname,
       account: {
-        homePage: "http://www.CourseMapper.v2.de",
+        homePage: origin,
         name: user.username,
       },
     },
@@ -173,9 +173,9 @@ export const getMaterialEditStatement = (user, newMaterial, oldMaterial) => {
     },
     object: {
       objectType: "Activity",
-      id: `http://www.CourseMapper.v2.de/activity/course/${oldMaterial.courseId}/topic/${oldMaterial.topicId}/channel/${oldMaterial.channelId}/material/${oldMaterial._id}`,
+      id: `${origin}/activity/course/${oldMaterial.courseId}/topic/${oldMaterial.topicId}/channel/${oldMaterial.channelId}/material/${oldMaterial._id}`,
       definition: {
-        type: `http://www.CourseMapper.v2.de/activityType/material`,
+        type: `http://www.CourseMapper.de/activityType/material`,
         name: {
           "en-US": oldMaterial.name,
         },
@@ -183,7 +183,7 @@ export const getMaterialEditStatement = (user, newMaterial, oldMaterial) => {
           "en-US": oldMaterial.description,
         },
         extensions: {
-          "http://www.CourseMapper.v2.de/extensions/material": {
+          "http://www.CourseMapper.de/extensions/material": {
             id: oldMaterial._id,
             name: oldMaterial.name,
             description: oldMaterial.description,
@@ -198,7 +198,7 @@ export const getMaterialEditStatement = (user, newMaterial, oldMaterial) => {
     },
     result: {
       extensions: {
-        "http://www.CourseMapper.v2.de/extensions/material": {
+        "http://www.CourseMapper.de/extensions/material": {
           name: newMaterial.name,
           description: newMaterial.description,
           url: newMaterial.url,
@@ -213,7 +213,7 @@ export const getMaterialEditStatement = (user, newMaterial, oldMaterial) => {
   };
 };
 
-export const getVideoPlayStatement = (user, material) => {
+export const getVideoPlayStatement = (user, material, origin) => {
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
@@ -222,7 +222,7 @@ export const getVideoPlayStatement = (user, material) => {
       objectType: "Agent",
       name: fullname,
       account: {
-        homePage: "http://www.CourseMapper.v2.de",
+        homePage: origin,
         name: user.username,
       },
     },
@@ -234,9 +234,9 @@ export const getVideoPlayStatement = (user, material) => {
     },
     object: {
       objectType: "Activity",
-      id: `http://www.CourseMapper.v2.de/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`,
+      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`,
       definition: {
-        type: `http://www.CourseMapper.v2.de/activityType/${material.type}`,
+        type: `http://activitystrea.ms/schema/1.0/video`,
         name: {
           "en-US": material.name,
         },
@@ -244,7 +244,7 @@ export const getVideoPlayStatement = (user, material) => {
           "en-US": material.description,
         },
         extensions: {
-          "http://www.CourseMapper.v2.de/extensions/material": {
+          "http://www.CourseMapper.de/extensions/material": {
             id: material._id,
             name: material.name,
             description: material.description,
@@ -264,7 +264,7 @@ export const getVideoPlayStatement = (user, material) => {
   };
 };
 
-export const getVideoPauseStatement = (user, material) => {
+export const getVideoPauseStatement = (user, material, origin) => {
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
@@ -273,21 +273,21 @@ export const getVideoPauseStatement = (user, material) => {
       objectType: "Agent",
       name: fullname,
       account: {
-        homePage: "http://www.CourseMapper.v2.de",
+        homePage: origin,
         name: user.username,
       },
     },
     verb: {
-      id: "http://www.CourseMapper.v2.de/verb/paused",
+      id: "http://id.tincanapi.com/verb/paused",
       display: {
         "en-US": "paused",
       },
     },
     object: {
       objectType: "Activity",
-      id: `http://www.CourseMapper.v2.de/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`,
+      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`,
       definition: {
-        type: `http://www.CourseMapper.v2.de/activityType/${material.type}`,
+        type: `http://activitystrea.ms/schema/1.0/video`,
         name: {
           "en-US": material.name,
         },
@@ -295,7 +295,7 @@ export const getVideoPauseStatement = (user, material) => {
           "en-US": material.description,
         },
         extensions: {
-          "http://www.CourseMapper.v2.de/extensions/material": {
+          "http://www.CourseMapper.de/extensions/material": {
             id: material._id,
             name: material.name,
             description: material.description,
@@ -315,7 +315,7 @@ export const getVideoPauseStatement = (user, material) => {
   };
 };
 
-export const getVideoEndStatement = (user, material) => {
+export const getVideoEndStatement = (user, material, origin) => {
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
@@ -324,7 +324,7 @@ export const getVideoEndStatement = (user, material) => {
       objectType: "Agent",
       name: fullname,
       account: {
-        homePage: "http://www.CourseMapper.v2.de",
+        homePage: origin,
         name: user.username,
       },
     },
@@ -336,9 +336,9 @@ export const getVideoEndStatement = (user, material) => {
     },
     object: {
       objectType: "Activity",
-      id: `http://www.CourseMapper.v2.de/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`,
+      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`,
       definition: {
-        type: `http://www.CourseMapper.v2.de/activityType/${material.type}`,
+        type: `http://activitystrea.ms/schema/1.0/video`,
         name: {
           "en-US": material.name,
         },
@@ -346,7 +346,7 @@ export const getVideoEndStatement = (user, material) => {
           "en-US": material.description,
         },
         extensions: {
-          "http://www.CourseMapper.v2.de/extensions/material": {
+          "http://www.CourseMapper.de/extensions/material": {
             id: material._id,
             name: material.name,
             description: material.description,
@@ -366,7 +366,7 @@ export const getVideoEndStatement = (user, material) => {
   };
 };
 
-export const getSlideViewStatement = (user, material, slideNr) => {
+export const getSlideViewStatement = (user, material, slideNr, origin) => {
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
@@ -375,7 +375,7 @@ export const getSlideViewStatement = (user, material, slideNr) => {
       objectType: "Agent",
       name: fullname,
       account: {
-        homePage: "http://www.CourseMapper.v2.de",
+        homePage: origin,
         name: user.username,
       },
     },
@@ -387,9 +387,9 @@ export const getSlideViewStatement = (user, material, slideNr) => {
     },
     object: {
       objectType: "Activity",
-      id: `http://www.CourseMapper.v2.de/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slide/${slideNr}`,
+      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slide/${slideNr}`,
       definition: {
-        type: `http://www.CourseMapper.v2.de/activityType/slide`,
+        type: `http://id.tincanapi.com/activitytype/slide`,
         name: {
           "en-US": material.name,
         },
@@ -397,10 +397,61 @@ export const getSlideViewStatement = (user, material, slideNr) => {
           "en-US": material.description,
         },
         extensions: {
-          "http://www.CourseMapper.v2.de/extensions/material": {
+          "http://www.CourseMapper.de/extensions/material": {
             id: material._id,
             name: material.name,
             pageNr: slideNr,
+            description: material.description,
+            type: material.type,
+            url: material.url,
+            channel_id: material.channelId,
+            topic_id: material.topicId,
+            course_id: material.courseId,
+          },
+        },
+      },
+    },
+    context: {
+      platform: "CourseMapper",
+      language: "en-US",
+    },
+  };
+};
+
+export const getPdfCompleteStatement = (user, material, origin) => {
+  const fullname = `${user.firstname} ${user.lastname}`;
+  return {
+    id: uuidv4(),
+    timestamp: new Date(),
+    actor: {
+      objectType: "Agent",
+      name: fullname,
+      account: {
+        homePage: origin,
+        name: user.username,
+      },
+    },
+    verb: {
+      id: "http://activitystrea.ms/schema/1.0/complete",
+      display: {
+        "en-US": "completed",
+      },
+    },
+    object: {
+      objectType: "Activity",
+      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`,
+      definition: {
+        type: `http://www.CourseMapper.de/activityType/pdf`,
+        name: {
+          "en-US": material.name,
+        },
+        description: {
+          "en-US": material.description,
+        },
+        extensions: {
+          "http://www.CourseMapper.de/extensions/material": {
+            id: material._id,
+            name: material.name,
             description: material.description,
             type: material.type,
             url: material.url,

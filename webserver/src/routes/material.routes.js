@@ -45,7 +45,7 @@ module.exports = function (app) {
   );
 
   app.get(
-    "/courses/:courseId/materials/:materialId/play",
+    "/courses/:courseId/materials/:materialId/video/play",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getMaterial,
     logger.playVideo
@@ -53,7 +53,7 @@ module.exports = function (app) {
 
 
   app.get(
-    "/courses/:courseId/materials/:materialId/pause",
+    "/courses/:courseId/materials/:materialId/video/pause",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getMaterial,
     logger.pauseVideo
@@ -61,16 +61,23 @@ module.exports = function (app) {
 
 
   app.get(
-    "/courses/:courseId/materials/:materialId/complete",
+    "/courses/:courseId/materials/:materialId/video/complete",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getMaterial,
     logger.completeVideo
   );
 
   app.get(
-    "/courses/:courseId/materials/:materialId/slide/:slideNr/view",
+    "/courses/:courseId/materials/:materialId/pdf/slide/:slideNr/view",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getMaterial,
     logger.viewSlide
+  );
+
+  app.get(
+    "/courses/:courseId/materials/:materialId/pdf/complete",
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.getMaterial,
+    logger.completePDF
   );
 };
