@@ -2,6 +2,7 @@ const statementFactory = require("../statementsFactory/topic.statementsFactory")
 const lrs = require("../lrs/lrs");
 const controller = require("../controller.xAPILogger");
 const ORIGIN = process.env.ORIGIN;
+const SEND_STATEMENT_IN_REALTIME = (process.env.SEND_STATEMENT_IN_REALTIME === 'true');
 
 export const newTopic = (req, res) => {
   const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
@@ -10,8 +11,10 @@ export const newTopic = (req, res) => {
     req.locals.topic,
     origin
   );
-  lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement);
+  if (SEND_STATEMENT_IN_REALTIME) {
+    lrs.sendStatementToLrs(statement);
+  }
+  controller.saveStatementToMongo(statement, SEND_STATEMENT_IN_REALTIME);
   res.send(req.locals.response);
 };
 
@@ -22,8 +25,10 @@ export const deleteTopic = (req, res) => {
     req.locals.topic,
     origin
   );
-  lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement);
+  if (SEND_STATEMENT_IN_REALTIME) {
+    lrs.sendStatementToLrs(statement);
+  }
+  controller.saveStatementToMongo(statement, SEND_STATEMENT_IN_REALTIME);
   res.send(req.locals.response);
 };
 
@@ -34,8 +39,10 @@ export const getTopic = (req, res) => {
     req.locals.topic,
     origin
   );
-  lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement);
+  if (SEND_STATEMENT_IN_REALTIME) {
+    lrs.sendStatementToLrs(statement);
+  }
+  controller.saveStatementToMongo(statement, SEND_STATEMENT_IN_REALTIME);
   res.status(200).send(req.locals.response);
 };
 
@@ -47,7 +54,9 @@ export const editTopic = (req, res) => {
     req.locals.oldTopic,
     origin
   );
-  lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement);
+  if (SEND_STATEMENT_IN_REALTIME) {
+    lrs.sendStatementToLrs(statement);
+  }
+  controller.saveStatementToMongo(statement, SEND_STATEMENT_IN_REALTIME);
   res.send(req.locals.response);
 };

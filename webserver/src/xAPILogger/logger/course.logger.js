@@ -2,6 +2,7 @@ const statementFactory = require("../statementsFactory/course.statementsFactory"
 const lrs = require("../lrs/lrs");
 const controller = require("../controller.xAPILogger");
 const ORIGIN = process.env.ORIGIN;
+const SEND_STATEMENT_IN_REALTIME = (process.env.SEND_STATEMENT_IN_REALTIME === 'true');
 
 export const newCourse = (req, res) => {
   const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
@@ -10,8 +11,10 @@ export const newCourse = (req, res) => {
     req.locals.course,
     origin
   );
-  lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement);
+  if (SEND_STATEMENT_IN_REALTIME) {
+    lrs.sendStatementToLrs(statement);
+  }
+  controller.saveStatementToMongo(statement, SEND_STATEMENT_IN_REALTIME);
   res.send(req.locals.response);
 };
 
@@ -22,8 +25,10 @@ export const deleteCourse = (req, res) => {
     req.locals.course,
     origin
   );
-  lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement);
+  if (SEND_STATEMENT_IN_REALTIME) {
+    lrs.sendStatementToLrs(statement);
+  }
+  controller.saveStatementToMongo(statement, SEND_STATEMENT_IN_REALTIME);
   res.send(req.locals.response);
 };
 
@@ -34,8 +39,10 @@ export const getCourse = (req, res) => {
     req.locals.course,
     origin
   );
-  lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement);
+  if (SEND_STATEMENT_IN_REALTIME) {
+    lrs.sendStatementToLrs(statement);
+  }
+  controller.saveStatementToMongo(statement, SEND_STATEMENT_IN_REALTIME);
   res.status(200).send(req.locals.response);
 };
 
@@ -46,8 +53,10 @@ export const enrolCourse = (req, res) => {
     req.locals.course,
     origin
   );
-  lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement);
+  if (SEND_STATEMENT_IN_REALTIME) {
+    lrs.sendStatementToLrs(statement);
+  }
+  controller.saveStatementToMongo(statement, SEND_STATEMENT_IN_REALTIME);
   res.status(200).send(req.locals.response);
 };
 
@@ -58,8 +67,10 @@ export const withdrawCourse = (req, res) => {
     req.locals.course,
     origin
   );
-  lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement);
+  if (SEND_STATEMENT_IN_REALTIME) {
+    lrs.sendStatementToLrs(statement);
+  }
+  controller.saveStatementToMongo(statement, SEND_STATEMENT_IN_REALTIME);
   res.status(200).send(req.locals.response);
 };
 
@@ -71,7 +82,9 @@ export const editCourse = (req, res) => {
     req.locals.oldCourse,
     origin
   );
-  lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement);
+  if (SEND_STATEMENT_IN_REALTIME) {
+    lrs.sendStatementToLrs(statement);
+  }
+  controller.saveStatementToMongo(statement, SEND_STATEMENT_IN_REALTIME);
   res.status(200).send(req.locals.response);
 };

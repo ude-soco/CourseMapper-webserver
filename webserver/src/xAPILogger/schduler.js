@@ -1,7 +1,9 @@
 const cron = require("node-cron");
 const controller = require("./controller.xAPILogger");
 const lrs = require("./lrs/lrs");
-cron.schedule("* * * * *", async () => {
+
+
+cron.schedule("0 0 * * *", async () => {
   try {
     console.log('xAPI scheduler started');
     const statements = await controller.fetchUnsentStatements();
