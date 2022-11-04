@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 
-export const getAnnotationCreationStatement = (user, annotation, material) => {
+export const getAnnotationCreationStatement = (user, annotation, material, origin) => {
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
@@ -9,7 +9,7 @@ export const getAnnotationCreationStatement = (user, annotation, material) => {
       objectType: "Agent",
       name: fullname,
       account: {
-        homePage: "http://www.CourseMapper.v2.de",
+        homePage: origin,
         name: user.username,
       },
     },
@@ -21,9 +21,9 @@ export const getAnnotationCreationStatement = (user, annotation, material) => {
     },
     object: {
       objectType: "Activity",
-      id: `http://www.CourseMapper.v2.de/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`,
+      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`,
       definition: {
-        type: "http://www.CourseMapper.v2.de/activityType/material",
+        type: "http://www.CourseMapper.de/activityType/material",
         name: {
           "en-US": material.name,
         },
@@ -31,7 +31,7 @@ export const getAnnotationCreationStatement = (user, annotation, material) => {
           "en-US": material.description,
         },
         extensions: {
-          "http://www.CourseMapper.v2.de/extensions/material": {
+          "http://www.CourseMapper.de/extensions/material": {
             id: material._id,
             type: material.type,
             channel_id: material.channelId,
@@ -43,7 +43,7 @@ export const getAnnotationCreationStatement = (user, annotation, material) => {
     },
     result: {
       extensions: {
-        "http://www.CourseMapper.v2.de/extensions/annotation": {
+        "http://www.CourseMapper.de/extensions/annotation": {
           id: annotation._id,
           material_id: annotation.materialId,
           channel_id: annotation.channelId,
@@ -62,7 +62,7 @@ export const getAnnotationCreationStatement = (user, annotation, material) => {
     },
   };
 };
-export const getCommentCreationStatement = (user, annotation, material) => {
+export const getCommentCreationStatement = (user, annotation, material, origin) => {
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
@@ -71,7 +71,7 @@ export const getCommentCreationStatement = (user, annotation, material) => {
       objectType: "Agent",
       name: fullname,
       account: {
-        homePage: "http://www.CourseMapper.v2.de",
+        homePage: origin,
         name: user.username,
       },
     },
@@ -83,9 +83,9 @@ export const getCommentCreationStatement = (user, annotation, material) => {
     },
     object: {
       objectType: "Activity",
-      id: `http://www.CourseMapper.v2.de/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`,
+      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`,
       definition: {
-        type: "http://www.CourseMapper.v2.de/activityType/material",
+        type: "http://www.CourseMapper.de/activityType/material",
         name: {
           "en-US": material.name,
         },
@@ -93,7 +93,7 @@ export const getCommentCreationStatement = (user, annotation, material) => {
           "en-US": material.description,
         },
         extensions: {
-          "http://www.CourseMapper.v2.de/extensions/material": {
+          "http://www.CourseMapper.de/extensions/material": {
             id: material._id,
             type: material.type,
             channel_id: material.channelId,
@@ -105,7 +105,7 @@ export const getCommentCreationStatement = (user, annotation, material) => {
     },
     result: {
       extensions: {
-        "http://www.CourseMapper.v2.de/extensions/comment": {
+        "http://www.CourseMapper.de/extensions/comment": {
           id: annotation._id,
           material_id: annotation.materialId,
           channel_id: annotation.channelId,
@@ -125,7 +125,7 @@ export const getCommentCreationStatement = (user, annotation, material) => {
   };
 };
 
-export const getAnnotaionDeletionStatement = (user, annotation) => {
+export const getAnnotaionDeletionStatement = (user, annotation, origin) => {
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
@@ -134,7 +134,7 @@ export const getAnnotaionDeletionStatement = (user, annotation) => {
       objectType: "Agent",
       name: fullname,
       account: {
-        homePage: "http://www.CourseMapper.v2.de",
+        homePage: origin,
         name: user.username,
       },
     },
@@ -146,9 +146,9 @@ export const getAnnotaionDeletionStatement = (user, annotation) => {
     },
     object: {
       objectType: "Activity",
-      id: `http://www.CourseMapper.v2.de/activity/course/${annotation.courseId}/topic/${annotation.topicId}/channel/${annotation.channelId}/material/${annotation.materialId}/annotation/${annotation._id}`,
+      id: `${origin}/activity/course/${annotation.courseId}/topic/${annotation.topicId}/channel/${annotation.channelId}/material/${annotation.materialId}/annotation/${annotation._id}`,
       definition: {
-        type: "http://www.CourseMapper.v2.de/activityType/annotation",
+        type: "http://www.CourseMapper.de/activityType/annotation",
         name: {
           "en-US":
             "Annotation:" +
@@ -159,7 +159,7 @@ export const getAnnotaionDeletionStatement = (user, annotation) => {
           "en-US": annotation.content,
         },
         extensions: {
-          "http://www.CourseMapper.v2.de/extensions/annotation": {
+          "http://www.CourseMapper.de/extensions/annotation": {
             id: annotation._id,
             material_id: annotation.materialId,
             channel_id: annotation.channelId,
@@ -179,7 +179,7 @@ export const getAnnotaionDeletionStatement = (user, annotation) => {
     },
   };
 };
-export const getCommentDeletionStatement = (user, annotation) => {
+export const getCommentDeletionStatement = (user, annotation, origin) => {
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
@@ -188,7 +188,7 @@ export const getCommentDeletionStatement = (user, annotation) => {
       objectType: "Agent",
       name: fullname,
       account: {
-        homePage: "http://www.CourseMapper.v2.de",
+        homePage: origin,
         name: user.username,
       },
     },
@@ -200,9 +200,9 @@ export const getCommentDeletionStatement = (user, annotation) => {
     },
     object: {
       objectType: "Activity",
-      id: `http://www.CourseMapper.v2.de/activity/course/${annotation.courseId}/topic/${annotation.topicId}/channel/${annotation.channelId}/material/${annotation.materialId}/comment/${annotation._id}`,
+      id: `${origin}/activity/course/${annotation.courseId}/topic/${annotation.topicId}/channel/${annotation.channelId}/material/${annotation.materialId}/comment/${annotation._id}`,
       definition: {
-        type: "http://www.CourseMapper.v2.de/activityType/comment",
+        type: "http://activitystrea.ms/schema/1.0/comment",
         name: {
           "en-US":
             "Comment:" +
@@ -213,7 +213,7 @@ export const getCommentDeletionStatement = (user, annotation) => {
           "en-US": annotation.content,
         },
         extensions: {
-          "http://www.CourseMapper.v2.de/extensions/comment": {
+          "http://www.CourseMapper.de/extensions/comment": {
             id: annotation._id,
             material_id: annotation.materialId,
             channel_id: annotation.channelId,
@@ -234,7 +234,7 @@ export const getCommentDeletionStatement = (user, annotation) => {
   };
 };
 
-export const getAnnotationLikeStatement = (user, annotation) => {
+export const getAnnotationLikeStatement = (user, annotation, origin) => {
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
@@ -243,7 +243,7 @@ export const getAnnotationLikeStatement = (user, annotation) => {
       objectType: "Agent",
       name: fullname,
       account: {
-        homePage: "http://www.CourseMapper.v2.de",
+        homePage: origin,
         name: user.username,
       },
     },
@@ -255,9 +255,9 @@ export const getAnnotationLikeStatement = (user, annotation) => {
     },
     object: {
       objectType: "Activity",
-      id: `http://www.CourseMapper.v2.de/activity/course/${annotation.courseId}/topic/${annotation.topicId}/channel/${annotation.channelId}/material/${annotation.materialId}/annotation/${annotation._id}`,
+      id: `${origin}/activity/course/${annotation.courseId}/topic/${annotation.topicId}/channel/${annotation.channelId}/material/${annotation.materialId}/annotation/${annotation._id}`,
       definition: {
-        type: "http://www.CourseMapper.v2.de/activityType/annotation",
+        type: "http://www.CourseMapper.de/activityType/annotation",
         name: {
           "en-US":
             "Annotation:" +
@@ -268,7 +268,7 @@ export const getAnnotationLikeStatement = (user, annotation) => {
           "en-US": annotation.content,
         },
         extensions: {
-          "http://www.CourseMapper.v2.de/extensions/annotation": {
+          "http://www.CourseMapper.de/extensions/annotation": {
             id: annotation._id,
             material_id: annotation.materialId,
             channel_id: annotation.channelId,
@@ -289,7 +289,7 @@ export const getAnnotationLikeStatement = (user, annotation) => {
   };
 };
 
-export const getCommentLikeStatement = (user, annotation) => {
+export const getCommentLikeStatement = (user, annotation, origin) => {
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
@@ -298,7 +298,7 @@ export const getCommentLikeStatement = (user, annotation) => {
       objectType: "Agent",
       name: fullname,
       account: {
-        homePage: "http://www.CourseMapper.v2.de",
+        homePage: origin,
         name: user.username,
       },
     },
@@ -310,9 +310,9 @@ export const getCommentLikeStatement = (user, annotation) => {
     },
     object: {
       objectType: "Activity",
-      id: `http://www.CourseMapper.v2.de/activity/course/${annotation.courseId}/topic/${annotation.topicId}/channel/${annotation.channelId}/material/${annotation.materialId}/comment/${annotation._id}`,
+      id: `${origin}/activity/course/${annotation.courseId}/topic/${annotation.topicId}/channel/${annotation.channelId}/material/${annotation.materialId}/comment/${annotation._id}`,
       definition: {
-        type: "http://www.CourseMapper.v2.de/activityType/comment",
+        type: "http://activitystrea.ms/schema/1.0/comment",
         name: {
           "en-US":
             "Comment:" +
@@ -323,7 +323,7 @@ export const getCommentLikeStatement = (user, annotation) => {
           "en-US": annotation.content,
         },
         extensions: {
-          "http://www.CourseMapper.v2.de/extensions/comment": {
+          "http://www.CourseMapper.de/extensions/comment": {
             id: annotation._id,
             material_id: annotation.materialId,
             channel_id: annotation.channelId,
@@ -344,7 +344,7 @@ export const getCommentLikeStatement = (user, annotation) => {
   };
 };
 
-export const getAnnotationUnlikeStatement = (user, annotation) => {
+export const getAnnotationUnlikeStatement = (user, annotation, origin) => {
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
@@ -353,7 +353,7 @@ export const getAnnotationUnlikeStatement = (user, annotation) => {
       objectType: "Agent",
       name: fullname,
       account: {
-        homePage: "http://www.CourseMapper.v2.de",
+        homePage: origin,
         name: user.username,
       },
     },
@@ -365,9 +365,9 @@ export const getAnnotationUnlikeStatement = (user, annotation) => {
     },
     object: {
       objectType: "Activity",
-      id: `http://www.CourseMapper.v2.de/activity/course/${annotation.courseId}/topic/${annotation.topicId}/channel/${annotation.channelId}/material/${annotation.materialId}/annotation/${annotation._id}`,
+      id: `${origin}/activity/course/${annotation.courseId}/topic/${annotation.topicId}/channel/${annotation.channelId}/material/${annotation.materialId}/annotation/${annotation._id}`,
       definition: {
-        type: "http://www.CourseMapper.v2.de/activityType/annotation",
+        type: "http://www.CourseMapper.de/activityType/annotation",
         name: {
           "en-US":
             "Annotation:" +
@@ -378,7 +378,7 @@ export const getAnnotationUnlikeStatement = (user, annotation) => {
           "en-US": annotation.content,
         },
         extensions: {
-          "http://www.CourseMapper.v2.de/extensions/annotation": {
+          "http://www.CourseMapper.de/extensions/annotation": {
             id: annotation._id,
             material_id: annotation.materialId,
             channel_id: annotation.channelId,
@@ -399,7 +399,7 @@ export const getAnnotationUnlikeStatement = (user, annotation) => {
   };
 };
 
-export const getCommentUnlikeStatement = (user, annotation) => {
+export const getCommentUnlikeStatement = (user, annotation, origin) => {
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
@@ -408,7 +408,7 @@ export const getCommentUnlikeStatement = (user, annotation) => {
       objectType: "Agent",
       name: fullname,
       account: {
-        homePage: "http://www.CourseMapper.v2.de",
+        homePage: origin,
         name: user.username,
       },
     },
@@ -420,9 +420,9 @@ export const getCommentUnlikeStatement = (user, annotation) => {
     },
     object: {
       objectType: "Activity",
-      id: `http://www.CourseMapper.v2.de/activity/course/${annotation.courseId}/topic/${annotation.topicId}/channel/${annotation.channelId}/material/${annotation.materialId}/comment/${annotation._id}`,
+      id: `${origin}/activity/course/${annotation.courseId}/topic/${annotation.topicId}/channel/${annotation.channelId}/material/${annotation.materialId}/comment/${annotation._id}`,
       definition: {
-        type: "http://www.CourseMapper.v2.de/activityType/comment",
+        type: "http://activitystrea.ms/schema/1.0/comment",
         name: {
           "en-US":
             "Comment:" +
@@ -433,7 +433,7 @@ export const getCommentUnlikeStatement = (user, annotation) => {
           "en-US": annotation.content,
         },
         extensions: {
-          "http://www.CourseMapper.v2.de/extensions/comment": {
+          "http://www.CourseMapper.de/extensions/comment": {
             id: annotation._id,
             material_id: annotation.materialId,
             channel_id: annotation.channelId,
@@ -454,7 +454,7 @@ export const getCommentUnlikeStatement = (user, annotation) => {
   };
 };
 
-export const getAnnotationDislikeStatement = (user, annotation) => {
+export const getAnnotationDislikeStatement = (user, annotation, origin) => {
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
@@ -463,7 +463,7 @@ export const getAnnotationDislikeStatement = (user, annotation) => {
       objectType: "Agent",
       name: fullname,
       account: {
-        homePage: "http://www.CourseMapper.v2.de",
+        homePage: origin,
         name: user.username,
       },
     },
@@ -475,9 +475,9 @@ export const getAnnotationDislikeStatement = (user, annotation) => {
     },
     object: {
       objectType: "Activity",
-      id: `http://www.CourseMapper.v2.de/activity/course/${annotation.courseId}/topic/${annotation.topicId}/channel/${annotation.channelId}/material/${annotation.materialId}/annotation/${annotation._id}`,
+      id: `${origin}/activity/course/${annotation.courseId}/topic/${annotation.topicId}/channel/${annotation.channelId}/material/${annotation.materialId}/annotation/${annotation._id}`,
       definition: {
-        type: "http://www.CourseMapper.v2.de/activityType/annotation",
+        type: "http://www.CourseMapper.de/activityType/annotation",
         name: {
           "en-US":
             "Annotation:" +
@@ -488,7 +488,7 @@ export const getAnnotationDislikeStatement = (user, annotation) => {
           "en-US": annotation.content,
         },
         extensions: {
-          "http://www.CourseMapper.v2.de/extensions/annotation": {
+          "http://www.CourseMapper.de/extensions/annotation": {
             id: annotation._id,
             material_id: annotation.materialId,
             channel_id: annotation.channelId,
@@ -509,7 +509,7 @@ export const getAnnotationDislikeStatement = (user, annotation) => {
   };
 };
 
-export const getCommentDislikeStatement = (user, annotation) => {
+export const getCommentDislikeStatement = (user, annotation, origin) => {
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
@@ -518,7 +518,7 @@ export const getCommentDislikeStatement = (user, annotation) => {
       objectType: "Agent",
       name: fullname,
       account: {
-        homePage: "http://www.CourseMapper.v2.de",
+        homePage: origin,
         name: user.username,
       },
     },
@@ -530,9 +530,9 @@ export const getCommentDislikeStatement = (user, annotation) => {
     },
     object: {
       objectType: "Activity",
-      id: `http://www.CourseMapper.v2.de/activity/course/${annotation.courseId}/topic/${annotation.topicId}/channel/${annotation.channelId}/material/${annotation.materialId}/comment/${annotation._id}`,
+      id: `${origin}/activity/course/${annotation.courseId}/topic/${annotation.topicId}/channel/${annotation.channelId}/material/${annotation.materialId}/comment/${annotation._id}`,
       definition: {
-        type: "http://www.CourseMapper.v2.de/activityType/comment",
+        type: "http://activitystrea.ms/schema/1.0/comment",
         name: {
           "en-US":
             "Comment:" +
@@ -543,7 +543,7 @@ export const getCommentDislikeStatement = (user, annotation) => {
           "en-US": annotation.content,
         },
         extensions: {
-          "http://www.CourseMapper.v2.de/extensions/comment": {
+          "http://www.CourseMapper.de/extensions/comment": {
             id: annotation._id,
             material_id: annotation.materialId,
             channel_id: annotation.channelId,
@@ -564,7 +564,7 @@ export const getCommentDislikeStatement = (user, annotation) => {
   };
 };
 
-export const getAnnotationUndislikeStatement = (user, annotation) => {
+export const getAnnotationUndislikeStatement = (user, annotation, origin) => {
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
@@ -573,21 +573,21 @@ export const getAnnotationUndislikeStatement = (user, annotation) => {
       objectType: "Agent",
       name: fullname,
       account: {
-        homePage: "http://www.CourseMapper.v2.de",
+        homePage: origin,
         name: user.username,
       },
     },
     verb: {
-      id: "http://www.CourseMapper.v2.de/verbs/undisliked",
+      id: "http://www.CourseMapper.de/verbs/undisliked",
       display: {
         "en-US": "un-disliked",
       },
     },
     object: {
       objectType: "Activity",
-      id: `http://www.CourseMapper.v2.de/activity/course/${annotation.courseId}/topic/${annotation.topicId}/channel/${annotation.channelId}/material/${annotation.materialId}/annotation/${annotation._id}`,
+      id: `${origin}/activity/course/${annotation.courseId}/topic/${annotation.topicId}/channel/${annotation.channelId}/material/${annotation.materialId}/annotation/${annotation._id}`,
       definition: {
-        type: "http://www.CourseMapper.v2.de/activityType/annotation",
+        type: "http://www.CourseMapper.de/activityType/annotation",
         name: {
           "en-US":
             "Annotation:" +
@@ -598,7 +598,7 @@ export const getAnnotationUndislikeStatement = (user, annotation) => {
           "en-US": annotation.content,
         },
         extensions: {
-          "http://www.CourseMapper.v2.de/extensions/annotation": {
+          "http://www.CourseMapper.de/extensions/annotation": {
             id: annotation._id,
             material_id: annotation.materialId,
             channel_id: annotation.channelId,
@@ -619,7 +619,7 @@ export const getAnnotationUndislikeStatement = (user, annotation) => {
   };
 };
 
-export const getCommentUndislikeStatement = (user, annotation) => {
+export const getCommentUndislikeStatement = (user, annotation, origin) => {
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
@@ -628,21 +628,21 @@ export const getCommentUndislikeStatement = (user, annotation) => {
       objectType: "Agent",
       name: fullname,
       account: {
-        homePage: "http://www.CourseMapper.v2.de",
+        homePage: origin,
         name: user.username,
       },
     },
     verb: {
-      id: "http://www.CourseMapper.v2.de/verbs/undisliked",
+      id: "http://www.CourseMapper.de/verbs/undisliked",
       display: {
         "en-US": "un-disliked",
       },
     },
     object: {
       objectType: "Activity",
-      id: `http://www.CourseMapper.v2.de/activity/course/${annotation.courseId}/topic/${annotation.topicId}/channel/${annotation.channelId}/material/${annotation.materialId}/comment/${annotation._id}`,
+      id: `${origin}/activity/course/${annotation.courseId}/topic/${annotation.topicId}/channel/${annotation.channelId}/material/${annotation.materialId}/comment/${annotation._id}`,
       definition: {
-        type: "http://www.CourseMapper.v2.de/activityType/comment",
+        type: "http://activitystrea.ms/schema/1.0/comment",
         name: {
           "en-US":
             "Comment:" +
@@ -653,7 +653,7 @@ export const getCommentUndislikeStatement = (user, annotation) => {
           "en-US": annotation.content,
         },
         extensions: {
-          "http://www.CourseMapper.v2.de/extensions/comment": {
+          "http://www.CourseMapper.de/extensions/comment": {
             id: annotation._id,
             material_id: annotation.materialId,
             channel_id: annotation.channelId,
@@ -677,7 +677,8 @@ export const getCommentUndislikeStatement = (user, annotation) => {
 export const getAnnotationEditStatement = (
   user,
   newAnnotation,
-  oldAnnotation
+  oldAnnotation,
+  origin
 ) => {
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
@@ -687,7 +688,7 @@ export const getAnnotationEditStatement = (
       objectType: "Agent",
       name: fullname,
       account: {
-        homePage: "http://www.CourseMapper.v2.de",
+        homePage: origin,
         name: user.username,
       },
     },
@@ -699,9 +700,9 @@ export const getAnnotationEditStatement = (
     },
     object: {
       objectType: "Activity",
-      id: `http://www.CourseMapper.v2.de/activity/course/${oldAnnotation.courseId}/topic/${oldAnnotation.topicId}/channel/${oldAnnotation.channelId}/material/${oldAnnotation.materialId}/annotation/${oldAnnotation._id}`,
+      id: `${origin}/activity/course/${oldAnnotation.courseId}/topic/${oldAnnotation.topicId}/channel/${oldAnnotation.channelId}/material/${oldAnnotation.materialId}/annotation/${oldAnnotation._id}`,
       definition: {
-        type: "http://www.CourseMapper.v2.de/activityType/annotation",
+        type: "http://www.CourseMapper.de/activityType/annotation",
         name: {
           "en-US":
             "Annotation:" +
@@ -712,7 +713,7 @@ export const getAnnotationEditStatement = (
           "en-US": oldAnnotation.content,
         },
         extensions: {
-          "http://www.CourseMapper.v2.de/extensions/annotation": {
+          "http://www.CourseMapper.de/extensions/annotation": {
             id: oldAnnotation._id,
             material_id: oldAnnotation.materialId,
             channel_id: oldAnnotation.channelId,
@@ -728,7 +729,7 @@ export const getAnnotationEditStatement = (
     },
     result: {
       extensions: {
-        "http://www.CourseMapper.v2.de/extensions/annotation": {
+        "http://www.CourseMapper.de/extensions/annotation": {
           content: newAnnotation.content,
           type: newAnnotation.type,
           tool: newAnnotation.tool,
@@ -746,7 +747,8 @@ export const getAnnotationEditStatement = (
 export const getCommentEditStatement = (
   user,
   newAnnotation,
-  oldAnnotation
+  oldAnnotation,
+  origin
 ) => {
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
@@ -756,7 +758,7 @@ export const getCommentEditStatement = (
       objectType: "Agent",
       name: fullname,
       account: {
-        homePage: "http://www.CourseMapper.v2.de",
+        homePage: origin,
         name: user.username,
       },
     },
@@ -768,9 +770,9 @@ export const getCommentEditStatement = (
     },
     object: {
       objectType: "Activity",
-      id: `http://www.CourseMapper.v2.de/activity/course/${oldAnnotation.courseId}/topic/${oldAnnotation.topicId}/channel/${oldAnnotation.channelId}/material/${oldAnnotation.materialId}/comment/${oldAnnotation._id}`,
+      id: `${origin}/activity/course/${oldAnnotation.courseId}/topic/${oldAnnotation.topicId}/channel/${oldAnnotation.channelId}/material/${oldAnnotation.materialId}/comment/${oldAnnotation._id}`,
       definition: {
-        type: "http://www.CourseMapper.v2.de/activityType/comment",
+        type: "http://activitystrea.ms/schema/1.0/comment",
         name: {
           "en-US":
             "Comment:" +
@@ -781,7 +783,7 @@ export const getCommentEditStatement = (
           "en-US": oldAnnotation.content,
         },
         extensions: {
-          "http://www.CourseMapper.v2.de/extensions/comment": {
+          "http://www.CourseMapper.de/extensions/comment": {
             id: oldAnnotation._id,
             material_id: oldAnnotation.materialId,
             channel_id: oldAnnotation.channelId,
@@ -797,7 +799,7 @@ export const getCommentEditStatement = (
     },
     result: {
       extensions: {
-        "http://www.CourseMapper.v2.de/extensions/comment": {
+        "http://www.CourseMapper.de/extensions/comment": {
           content: newAnnotation.content,
           type: newAnnotation.type,
           tool: newAnnotation.tool,
