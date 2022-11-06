@@ -1,17 +1,23 @@
 const { lrs } = require("./lrs.config");
+const SEND_STATEMENT_IN_REALTIME =
+  process.env.SEND_STATEMENT_IN_REALTIME === "true";
 
 export const sendStatementToLrs = async (statement) => {
-  let response;
-  try {
-    response = await lrs.put(
-      `/statements?statementId=${statement.id}`,
-      statement
-    );
-    if (response.status === 204) {
-      console.log(`sendStatementToLrs: statement ${statement.id} saved successfully to LRS`);
+  if (SEND_STATEMENT_IN_REALTIME) {
+    let response;
+    try {
+      response = await lrs.put(
+        `/statements?statementId=${statement.id}`,
+        statement
+      );
+      if (response.status === 204) {
+        console.log(
+          `sendStatementToLrs: statement ${statement.id} saved successfully to LRS`
+        );
+      }
+    } catch (error) {
+      console.log(error);
     }
-  } catch (error) {
-    console.log(error);
   }
 };
 

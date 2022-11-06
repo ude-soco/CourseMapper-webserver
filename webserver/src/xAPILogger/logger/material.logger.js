@@ -2,7 +2,6 @@ const statementFactory = require("../statementsFactory/material.statementsFactor
 const lrs = require("../lrs/lrs");
 const controller = require("../controller.xAPILogger");
 const ORIGIN = process.env.ORIGIN;
-const SEND_STATEMENT_IN_REALTIME = (process.env.SEND_STATEMENT_IN_REALTIME === 'true');
 
 export const newMaterial = (req, res) => {
   const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
@@ -11,10 +10,8 @@ export const newMaterial = (req, res) => {
     req.locals.material,
     origin
   );
-  if (SEND_STATEMENT_IN_REALTIME) {
-    lrs.sendStatementToLrs(statement);
-  }
-  controller.saveStatementToMongo(statement, SEND_STATEMENT_IN_REALTIME);
+  lrs.sendStatementToLrs(statement);
+  controller.saveStatementToMongo(statement);
   res.send(req.locals.response);
 };
 
@@ -25,10 +22,8 @@ export const deleteMaterial = (req, res) => {
     req.locals.material,
     origin
   );
-  if (SEND_STATEMENT_IN_REALTIME) {
-    lrs.sendStatementToLrs(statement);
-  }
-  controller.saveStatementToMongo(statement, SEND_STATEMENT_IN_REALTIME);
+  lrs.sendStatementToLrs(statement);
+  controller.saveStatementToMongo(statement);
   res.send(req.locals.response);
 };
 
@@ -39,10 +34,8 @@ export const getMaterial = (req, res) => {
     req.locals.material,
     origin
   );
-  if (SEND_STATEMENT_IN_REALTIME) {
-    lrs.sendStatementToLrs(statement);
-  }
-  controller.saveStatementToMongo(statement, SEND_STATEMENT_IN_REALTIME);
+  lrs.sendStatementToLrs(statement);
+  controller.saveStatementToMongo(statement);
   res.status(200).send(req.locals.response);
 };
 
@@ -54,10 +47,8 @@ export const editMaterial = (req, res) => {
     req.locals.oldMaterial,
     origin
   );
-  if (SEND_STATEMENT_IN_REALTIME) {
-    lrs.sendStatementToLrs(statement);
-  }
-  controller.saveStatementToMongo(statement, SEND_STATEMENT_IN_REALTIME);
+  lrs.sendStatementToLrs(statement);
+  controller.saveStatementToMongo(statement);
   res.status(200).send(req.locals.response);
 };
 
@@ -69,10 +60,8 @@ export const playVideo = (req, res) => {
       req.locals.material,
       origin
     );
-    if (SEND_STATEMENT_IN_REALTIME) {
-      lrs.sendStatementToLrs(statement);
-    }
-    controller.saveStatementToMongo(statement, SEND_STATEMENT_IN_REALTIME);
+    lrs.sendStatementToLrs(statement);
+    controller.saveStatementToMongo(statement);
     return res.status(204).send();
   }
 
@@ -89,10 +78,8 @@ export const pauseVideo = (req, res) => {
       req.locals.material,
       origin
     );
-    if (SEND_STATEMENT_IN_REALTIME) {
-      lrs.sendStatementToLrs(statement);
-    }
-    controller.saveStatementToMongo(statement, SEND_STATEMENT_IN_REALTIME);
+    lrs.sendStatementToLrs(statement);
+    controller.saveStatementToMongo(statement);
     return res.status(204).send();
   }
 
@@ -109,10 +96,8 @@ export const completeVideo = (req, res) => {
       req.locals.material,
       origin
     );
-    if (SEND_STATEMENT_IN_REALTIME) {
-      lrs.sendStatementToLrs(statement);
-    }
-    controller.saveStatementToMongo(statement, SEND_STATEMENT_IN_REALTIME);
+    lrs.sendStatementToLrs(statement);
+    controller.saveStatementToMongo(statement);
     return res.status(204).send();
   }
 
@@ -131,10 +116,8 @@ export const viewSlide = (req, res) => {
       slideNr,
       origin
     );
-    if (SEND_STATEMENT_IN_REALTIME) {
-      lrs.sendStatementToLrs(statement);
-    }
-    controller.saveStatementToMongo(statement, SEND_STATEMENT_IN_REALTIME);
+    lrs.sendStatementToLrs(statement);
+    controller.saveStatementToMongo(statement);
     return res.status(204).send();
   }
 
@@ -151,10 +134,8 @@ export const completePDF = (req, res) => {
       req.locals.material,
       origin
     );
-    if (SEND_STATEMENT_IN_REALTIME) {
-      lrs.sendStatementToLrs(statement);
-    }
-    controller.saveStatementToMongo(statement, SEND_STATEMENT_IN_REALTIME);
+    lrs.sendStatementToLrs(statement);
+    controller.saveStatementToMongo(statement);
     return res.status(204).send();
   }
 

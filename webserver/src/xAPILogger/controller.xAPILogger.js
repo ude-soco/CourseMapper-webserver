@@ -1,15 +1,16 @@
 const db = require("../models");
 const Action = db.action;
+const SEND_STATEMENT_IN_REALTIME = (process.env.SEND_STATEMENT_IN_REALTIME === 'true');
 
-export const saveStatementToMongo = async (statement, sent) => {
+export const saveStatementToMongo = async (statement) => {
   let action = new Action({
-    sent: sent,
+    sent: SEND_STATEMENT_IN_REALTIME,
     statement: statement,
   });
 
   let savedStatement;
   try {
-    if (!sent) {
+    if (!SEND_STATEMENT_IN_REALTIME) {
       savedStatement = await action.save();
     }
   } catch (err) {
