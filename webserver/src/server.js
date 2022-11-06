@@ -63,7 +63,8 @@ require("./routes/tag.routes")(app);
 require("./routes/fileupload.routes")(app);
 
 // xAPI scheduler
-require('./xAPILogger/schduler');
+const xapiScheduler = require('./xAPILogger/schduler');
+xapiScheduler.runXapiScheduler();
 
 // Create HTTP server
 const server = http.createServer(app);
