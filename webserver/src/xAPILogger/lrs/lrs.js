@@ -30,8 +30,10 @@ export const sendStatementsToLrs = async (statements) => {
         `sendStatementsToLrs: ${response.data.length} statemens are saved successfully to LRS`
       );
       return response.data;
-    } else {
-      console.log("sendStatementsToLrs: error in connection");
+    } else if (response.status === 400) {
+      console.log("sendStatementsToLrs: you are sending multiple Statements with the same id");
+    } else if (response.status === 409) {
+      console.log("sendStatementsToLrs: you are sending a Statement with an id that the LRS already has a Statement for");
     }
   } catch (error) {
     console.log(error);
