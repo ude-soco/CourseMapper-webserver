@@ -2,9 +2,8 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
-const Action = new Schema({
-  sent: Boolean,
+const Activity = new Schema({
   statement: mongoose.Mixed
 });
 
-module.exports = mongoose.model("action", Action);
+module.exports = mongoose.model("activity", Activity);
