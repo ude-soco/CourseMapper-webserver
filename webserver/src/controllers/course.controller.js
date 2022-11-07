@@ -16,14 +16,14 @@ const Tag = db.tag;
  */
 export const getAllCourses = async (req, res) => {
   let courses;
-  console.log('get all courses')
+  console.log("get all courses");
   try {
     courses = await Course.find({}).populate("topics", "-__v");
   } catch (err) {
     return res.status(500).send({ message: err });
   }
-  let results = []
-  courses.forEach(c => {
+  let results = [];
+  courses.forEach((c) => {
     let course = {
       _id: c.id,
       name: c.name,
@@ -31,13 +31,12 @@ export const getAllCourses = async (req, res) => {
       description: c.description,
       numberTopics: c.topics.length,
       numberChannels: c.channels.length,
-      numberUsers: c.users.length
+      numberUsers: c.users.length,
     };
     results.push(course);
-  })
+  });
   return res.status(200).send(results);
 };
-
 
 /**
  * @function getMyCourses
@@ -46,17 +45,16 @@ export const getAllCourses = async (req, res) => {
  */
 export const getMyCourses = async (req, res) => {
   let user;
-  let userId =  req.userId;
-  let results = []
+  let userId = req.userId;
+  let results = [];
   try {
-    user = await User
-    .findOne({_id: ObjectId(userId)})
-    .populate({path: "courses", populate: { path: "role"}})
-    .populate({path: "courses", populate: { path: "courseId"}});
+    user = await User.findOne({ _id: ObjectId(userId) })
+      .populate({ path: "courses", populate: { path: "role" } })
+      .populate({ path: "courses", populate: { path: "courseId" } });
   } catch (err) {
     return res.status(500).send({ message: err });
   }
-  user.courses.forEach(object => {
+  user.courses.forEach((object) => {
     let course = {
       _id: object.courseId._id,
       name: object.courseId.name,
@@ -65,12 +63,12 @@ export const getMyCourses = async (req, res) => {
       numberTopics: object.courseId.topics.length,
       numberChannels: object.courseId.channels.length,
       numberUsers: object.courseId.users.length,
-      role: object.role.name
+      role: object.role.name,
     };
     results.push(course);
   });
   return res.status(200).send(results);
-}
+};
 
 /**
  * @function getCourse
@@ -105,8 +103,8 @@ export const getMyCourses = async (req, res) => {
 export const getCourse = async (req, res, next) => {
   const courseId = req.params.courseId;
   const userId = req.userId;
-  console.log('getCourse')
-  
+  console.log("getCourse");
+
   let foundUser;
   try {
     foundUser = await User.findOne({ _id: userId });
@@ -122,10 +120,9 @@ export const getCourse = async (req, res, next) => {
   let foundCourse;
   let results = [];
   try {
-    foundCourse = await Course
-    .findOne({ _id: ObjectId(courseId) })
-    .populate("topics", "-__v")
-    .populate({path: 'topics', populate: {path: 'channels'}});
+    foundCourse = await Course.findOne({ _id: ObjectId(courseId) })
+      .populate("topics", "-__v")
+      .populate({ path: "topics", populate: { path: "channels" } });
     if (!foundCourse) {
       return res.status(404).send({
         error: `Course with id ${courseId} doesn't exist!`,
@@ -134,27 +131,27 @@ export const getCourse = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ message: err });
   }
-  results = foundCourse.topics.map( topic => { 
-    let channels = topic.channels.map(channel => {
+  results = foundCourse.topics.map((topic) => {
+    let channels = topic.channels.map((channel) => {
       return {
         _id: channel._id,
         name: channel.name,
         topic_id: channel.topicId,
-        course_id: channel.courseId
-      }
+        course_id: channel.courseId,
+      };
     });
     return {
       _id: topic._id,
       name: topic.name,
       course_id: topic.courseId,
-      channels: channels
-    }
+      channels: channels,
+    };
   });
   req.locals = {
     response: results,
     course: foundCourse,
-    user: foundUser
-  }
+    user: foundUser,
+  };
   return next();
 };
 
@@ -229,8 +226,8 @@ export const enrolCourse = async (req, res, next) => {
     req.locals = {
       response: { success: `User enrolled to course ${foundCourse.name}` },
       user: foundUser,
-      course: foundCourse
-    }
+      course: foundCourse,
+    };
     return next();
   } else {
     return res
@@ -296,8 +293,8 @@ export const withdrawCourse = async (req, res, next) => {
   req.locals = {
     response: { success: `User withdrew from course ${foundCourse.name}` },
     user: foundUser,
-    course: foundCourse
-  }
+    course: foundCourse,
+  };
   return next();
 };
 
@@ -310,7 +307,7 @@ export const withdrawCourse = async (req, res, next) => {
  * @param {string} req.userId The owner of the course
  */
 export const newCourse = async (req, res, next) => {
-  console.log('newCourse');
+  console.log("newCourse");
   const courseName = req.body.name;
   const courseDesc = req.body.description;
   let shortName = req.body.shortname;
@@ -341,13 +338,13 @@ export const newCourse = async (req, res, next) => {
 
   if (!shortName) {
     shortName = courseName
-    .split(" ")
-    .map((word, index) => {
-      if (index < 3) {
-        return word[0];
-      }
-    })
-    .join("");
+      .split(" ")
+      .map((word, index) => {
+        if (index < 3) {
+          return word[0];
+        }
+      })
+      .join("");
   }
 
   let foundRole;
@@ -400,15 +397,15 @@ export const newCourse = async (req, res, next) => {
       numberTopics: courseSaved.topics.length,
       numberChannels: courseSaved.channels.length,
       numberUsers: courseSaved.users.length,
-      role: foundRole.name
+      role: foundRole.name,
     },
-    success: `New course '${courseSaved.name}' added!`
-  }
+    success: `New course '${courseSaved.name}' added!`,
+  };
   req.locals = {
     course: courseSaved,
     user: foundUser,
-    response: response
-  }
+    response: response,
+  };
   return next();
 };
 
@@ -488,13 +485,13 @@ export const deleteCourse = async (req, res, next) => {
   }
 
   const response = {
-    success: `Course '${foundCourse.name}' successfully deleted!`
-  }
+    success: `Course '${foundCourse.name}' successfully deleted!`,
+  };
   req.locals = {
     response: response,
     course: foundCourse,
-    user: foundUser
-  }
+    user: foundUser,
+  };
   return next();
 };
 
@@ -524,7 +521,7 @@ export const editCourse = async (req, res, next) => {
     return res.status(500).send({ error: err });
   }
 
-  req.locals = {}
+  req.locals = {};
   req.locals.oldCourse = JSON.parse(JSON.stringify(foundCourse));
 
   let shortName = courseName
@@ -554,8 +551,121 @@ export const editCourse = async (req, res, next) => {
     return res.status(500).send({ error: err });
   }
 
-  req.locals.response = { success: `Course '${courseName}' has been updated successfully!` }
+  req.locals.response = {
+    success: `Course '${courseName}' has been updated successfully!`,
+  };
   req.locals.user = foundUser;
   req.locals.newCourse = foundCourse;
   return next();
+};
+
+/**
+ * @function newIndicator
+ * add new indicator controller
+ *
+ * @param {string} req.params.courseId The id of the course
+ * @param {string} req.body.src The sourse of the iframe
+ * @param {string} req.body.width The width of the iframe
+ * @param {string} req.body.height The height of the iframe
+ * @param {string} req.body.frameborder The frameborder of the iframe
+ */
+export const newIndicator = async (req, res, next) => {
+  const courseId = req.params.courseId;
+
+  let foundCourse;
+  try {
+    foundCourse = await Course.findById(courseId);
+    if (!foundCourse) {
+      return res.status(404).send({
+        error: `Course with id ${courseId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  const indicator = {
+    _id: ObjectId(),
+    src: req.body.src,
+    width: req.body.width,
+    height: req.body.height,
+    frameborder: req.body.frameborder,
+  };
+
+  foundCourse.indicators.push(indicator);
+
+  try {
+    foundCourse.save();
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  return res.status(200).send({
+    success: `indicator with id = '${indicator._id}' has been added successfully!`,
+    indicator: indicator,
+  });
+};
+
+/**
+ * @function deleteIndicator
+ * delete indicator controller
+ *
+ * @param {string} req.params.courseId The id of the course
+ * @param {string} req.params.indicatorId The id of the indicator
+ */
+export const deleteIndicator = async (req, res, next) => {
+  const courseId = req.params.courseId;
+  const indicatorId = req.params.indicatorId;
+
+  let foundCourse;
+  try {
+    foundCourse = await Course.findOne({ "indicators._id": indicatorId });
+    if (!foundCourse) {
+      return res.status(404).send({
+        error: `indicator with id ${indicatorId} doesn't exist!`,
+      });
+    }
+
+    if (foundCourse._id.toString() !== courseId) {
+      return res.status(404).send({
+        error: `indicator with id ${indicatorId} doesn't belong to course with id ${courseId}!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  foundCourse.indicators = foundCourse.indicators.filter(
+    (indicator) => indicator._id.toString() !== indicatorId
+  );
+
+  try {
+    foundCourse.save();
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  return res.status(200).send({
+    success: `indicator with id = '${indicatorId}' has been deleted successfully!`,
+  });
+};
+
+export const getIndicators = async (req, res, next) => {
+  const courseId = req.params.courseId;
+
+  let foundCourse;
+  try {
+    foundCourse = await Course.findById(courseId);
+    if (!foundCourse) {
+      return res.status(404).send({
+        error: `Course with id ${courseId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  return res.status(200).send({
+    indicators: foundCourse.indicators,
+  });
 };

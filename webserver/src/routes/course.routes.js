@@ -63,4 +63,22 @@ module.exports = function (app) {
     controller.editCourse,
     logger.editCourse
   );
+
+  app.post(
+    "/course/:courseId",
+    [authJwt.verifyToken, authJwt.isModerator],
+    controller.newIndicator
+  );
+
+  app.delete(
+    '/course/:courseId/indicator/:indicatorId',
+    [authJwt.verifyToken, authJwt.isModerator],
+    controller.deleteIndicator
+  );
+
+  app.get(
+    '/course/:courseId', 
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.getIndicators
+  );
 };
