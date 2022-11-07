@@ -65,19 +65,19 @@ module.exports = function (app) {
   );
 
   app.post(
-    "/course/:courseId",
+    "/courses/:courseId/indicator",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.newIndicator
   );
 
   app.delete(
-    '/course/:courseId/indicator/:indicatorId',
+    '/courses/:courseId/indicator/:indicatorId',
     [authJwt.verifyToken, authJwt.isModerator],
     controller.deleteIndicator
   );
 
   app.get(
-    '/course/:courseId', 
+    '/courses/:courseId/indicators', 
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getIndicators
   );

@@ -26,6 +26,8 @@ import { ToastModule } from 'primeng/toast';
 import { RippleModule } from 'primeng/ripple';
 import { EditorComponent } from './pages/components/editor/editor.component';
 import {InputTextareaModule} from 'primeng/inputtextarea';
+import { DashboardComponent } from './pages/components/dashboard/dashboard.component';
+import { ByPassUrlSanitizationPipe } from './pipes/by-pass-url-sanitization.pipe';
 
 
 @NgModule({
@@ -42,7 +44,9 @@ import {InputTextareaModule} from 'primeng/inputtextarea';
     AddTopicComponent,
     AddChannelComponent,
     TopicDropdownComponent,
-    EditorComponent
+    EditorComponent,
+    DashboardComponent,
+    ByPassUrlSanitizationPipe
   ],
   imports: [
     BrowserModule,

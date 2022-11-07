@@ -1,0 +1,61 @@
+<p-toast></p-toast>
+
+<div class="ml-4 mt-4 container" *ngIf="selectedCourse._id">
+  <div>
+    <p class="mb-2 text-lg font-semibold">Add new Indicator:</p>
+    <form id="indicatorForm" [formGroup]="indicatorForm">
+      <div class="flex flex-row">
+        <div class="mt-2">
+          <span class="p-float-label">
+            <textarea
+              id="float-input"
+              cols="100"
+              rows="1"
+              pInputTextarea
+              formControlName="indicatorIframe"
+            ></textarea>
+            <label for="float-input">paste the iframe</label>
+            <small
+              *ngIf="indicatorForm.get('indicatorIframe').invalid"
+              class="p-error block"
+              >Invalid Input</small
+            >
+          </span>
+        </div>
+        <div class="mt-2 ml-2">
+          <button
+            id="addIndicatorButton"
+            pButton
+            icon="pi pi-check"
+            (click)="onAddIndicator()"
+            label="Add to Dashboard"
+            pTooltip="Add new Indicator"
+          ></button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div
+    class="flex flex-row mt-3 mb-3"
+    *ngFor="let indicator of indicators; let i = index"
+  >
+    <div class="mr-3">
+      <iframe
+        [src]="indicator.src | byPassUrlSanitization"
+        width="{{ indicator.width }}"
+        height="{{ indicator.height }}"
+      ></iframe>
+    </div>
+    <div>
+      <button
+        pButton
+        type="button"
+        icon="pi pi-times"
+        iconPos="left"
+        class="p-button-outlined p-button-rounded"
+        pTooltip="Delete Indicator"
+        (click)="onDeleteIndicator(indicator)"
+      ></button>
+    </div>
+  </div>
+</div>

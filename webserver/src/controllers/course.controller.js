@@ -665,7 +665,5 @@ export const getIndicators = async (req, res, next) => {
     return res.status(500).send({ error: err });
   }
 
-  return res.status(200).send({
-    indicators: foundCourse.indicators,
-  });
+  return res.status(200).send(foundCourse.indicators);
 };
