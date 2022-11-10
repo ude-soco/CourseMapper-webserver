@@ -17,16 +17,19 @@ export class SidebarComponent implements OnInit {
 
   ngOnInit(): void {
     this.getCourses();
+    
   }
-
+  
   getCourses() {
     this.courseService
       .fetchCourses()
-      .subscribe((courses) => (this.courses = courses));
+      .subscribe((courses) => (this.courses = courses ));
     this.courseService.onUpdateCourses$.subscribe(
       (courses) => (this.courses = courses)
+      
     );
     //this.setDefaultselection();
+
   }
 
   // setDefaultselection(){
@@ -35,25 +38,38 @@ export class SidebarComponent implements OnInit {
   //     this.selectedCourse = this.courseService.selectedCourse;
   //   }
   // }
-
+  
   onAddCourseDialogueClicked() {
     this.toggleAddCoursedialogue(true);
+    
   }
 
   toggleAddCoursedialogue(visibility) {
     this.displayAddCourseDialogue = visibility;
+    console.log(this.displayAddCourseDialogue);
   }
-
-  onSelectCourse(selectedCourse: Course) {
-    if (
+  
+  onSelectCourse(selectedCourse: Course) {debugger
+   /* if (
       this.courseService.getSelectedCourse()._id.toString() !==
       selectedCourse._id.toString()
     ) {
+      console.log("rrrr")
+      console.log(selectedCourse);
       let course = this.courses.find(
         (course: Course) => course === selectedCourse
       )!;
       this.selectedCourse = course;
+      //1
       this.courseService.selectCourse(course);
-    }
+      console.log("nnn")
+      console.log(course);
+
+    }*/
+    selectedCourse._id.toString();
+    console.log("rrrr")
+
+      console.log(selectedCourse);
+      this.courseService.selectCourse(selectedCourse);
   }
 }

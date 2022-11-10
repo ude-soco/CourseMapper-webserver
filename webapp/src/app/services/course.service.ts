@@ -5,6 +5,7 @@ import { EventEmitter, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, Observable, of, Subject, tap } from 'rxjs';
 import { TopicChannelService } from './topic-channel.service';
+import { StorageService } from './storage.service';
 
 
 @Injectable({
@@ -18,9 +19,11 @@ export class CourseService {
   // it is not private because it is subscribed in chnannelbar component
   onSelectCourse = new EventEmitter<Course>();
   private selectedCourse: Course = new CourseImp('','');
+  private user = this.storageService.getUser();
 
 
-  constructor( private http: HttpClient, private topicChannelService : TopicChannelService) { }
+
+  constructor( private http: HttpClient, private topicChannelService : TopicChannelService, private storageService :StorageService) { }
 
   getSelectedCourse(): Course {
     return this.selectedCourse;
@@ -39,6 +42,7 @@ export class CourseService {
       this.topicChannelService.updateTopics(course._id);
     }
     this.selectedCourse = course;    
+    //2
     this.onSelectCourse.emit(course);
   }
 
@@ -155,7 +159,7 @@ export class CourseService {
     // userId should be taken from the coockies. for the time being it is hard coded
     this.http.post<any>('http://localhost:8090/new/course', 
     {_id: course._id, course: course.name, description: course.description, 
-      shortName: course.shortName, userID: '633d5bc0f15907e2f211b1ea',})
+      shortName: course.shortName, userID:   this.user.id,})
     .subscribe(res => {
       console.log(res);
     });

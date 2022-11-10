@@ -5,6 +5,8 @@ import { Topic } from 'src/app/models/Topic';
 import { CourseService } from 'src/app/services/course.service';
 import { TopicChannelService } from 'src/app/services/topic-channel.service';
 import { MessageService, ConfirmationService } from 'primeng/api';
+import { Material } from 'src/app/models/Material';
+import { MaterilasService } from 'src/app/services/materilas.service'; 
 
 @Component({
   selector: 'app-topic-dropdown',
@@ -17,7 +19,8 @@ export class TopicDropdownComponent implements OnInit {
     private courseService: CourseService,
     private topicChannelService: TopicChannelService,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private materilasService : MaterilasService
   ) {}
 
   topics: Topic[] = [];
@@ -92,7 +95,9 @@ export class TopicDropdownComponent implements OnInit {
   }
   onSelectChannel(channel: Channel) {
     console.log(channel);
-    alert(`onChannelSelect ${channel._id}`);
+    //3
+    
+    this.topicChannelService.selectChannel(channel);
   }
 
   /**

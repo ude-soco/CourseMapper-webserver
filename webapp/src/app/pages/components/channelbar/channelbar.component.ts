@@ -49,6 +49,7 @@ export class ChannelbarComponent implements OnInit {
 
   ngOnInit(): void {
     this.selectedCourse = this.courseService.getSelectedCourse();
+    //3
     this.courseService.onSelectCourse.subscribe((course) => {
       this.selectedCourse = course;
     });

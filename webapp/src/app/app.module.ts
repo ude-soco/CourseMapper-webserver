@@ -39,6 +39,7 @@ import {
   httpInterceptorProviders,
   HttpRequestInterceptor,
 } from './_helpers/http.interceptor';
+import { MaterialComponent } from './pages/components/materils/material/material.component';
 
 registerLocaleData(en);
 
@@ -59,6 +60,7 @@ registerLocaleData(en);
     RegistrationComponent,
     LoginComponent,
     HomeComponent,
+    MaterialComponent,
   ],
   imports: [
     BrowserModule,

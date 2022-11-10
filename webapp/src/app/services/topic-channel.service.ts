@@ -6,6 +6,7 @@ import { catchError, Observable, of, Subject, tap } from 'rxjs';
 import { Topic } from '../models/Topic';
 import { Channel } from '../models/Channel';
 import { Course } from '../models/Course';
+import { StorageService } from './storage.service';
   
 @Injectable({
   providedIn: 'root'
@@ -16,9 +17,13 @@ export class TopicChannelService {
   // the selectedTopic is used only to identify the Topic we add a channel to.
   private selectedTopic: Topic = new TopicImp('','','',[]);
   onUpdateTopics$ = new Subject<Topic[]>();
+  private user = this.storageService.getUser();
+  onSelectChannel = new EventEmitter<Channel>();
+  private selectedChannel: Channel;
 
 
-  constructor(private http: HttpClient) {   }
+
+  constructor(private http: HttpClient, private storageService: StorageService) {   }
   
   /**
    * @function fetchTopics 
@@ -235,7 +240,7 @@ export class TopicChannelService {
   sendTopicToOldBackend(topic, courseId){
     // userId should be taken from the coockies. for the time being it is hard coded
     this.http.post<any>('http://localhost:8090/new/topic', 
-    {_id: topic._id, topic: topic.name, courseID:courseId, userID: '633d5bc0f15907e2f211b1ea',})
+    {_id: topic._id, topic: topic.name, courseID:courseId, userID:   this.user.id,})
     .subscribe(
       
     );
@@ -246,10 +251,19 @@ export class TopicChannelService {
     this.http.post<any>('http://localhost:8090/new/channel', 
     {_id: channel._id, courseID: channel.courseId, topicID: channel.topicId, 
       name: channel.name, description:channel.description, 
-      userID: '633d5bc0f15907e2f211b1ea',})
+      userID: this.user.id,})
     .subscribe(
       
     );
+  }
+  selectChannel(channel: Channel){
+    // if there is no selected course then no need to update the topics.
+    /*if (this.getSelectedCourse()._id && course._id){      
+      this.topicChannelService.updateTopics(course._id);
+    }*/
+    this.selectedChannel = channel;    
+    //2
+    this.onSelectChannel.emit(channel);
   }
 
 }

@@ -99,7 +99,19 @@ export const newMaterial = async (req, res) => {
     return res.status(500).send({ error: err });
   }
   return res.send({
-    id: savedMaterial._id,
+   // id: savedMaterial._id,
+    material: {
+      type: material.type,
+    name: material.name,
+    url: material.url,
+    description: material.description,
+    courseId: material.courseId,
+    topicId: material.topicId,
+    channelId:material.channelId,
+   // userId: req.userId,
+   // createdAt: Date.now(),
+    //updatedAt: Date.now(),
+    },
     success: `New material '${materialName}' added!`,
   });
 };

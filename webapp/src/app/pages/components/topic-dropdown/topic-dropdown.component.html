@@ -37,6 +37,7 @@
     >
       <div  class="flex flex-row items-center justify-between">
         <p id="{{channel._id}}" 
+        
         (click)="onSelectChannel(channel)"
         (keydown)="onTextInsertedChannel(selectedChannel._id,$event)"
         (keyup)="afterTextInsertedChennel(selectedChannel._id,$event)"
@@ -47,6 +48,7 @@
           (click)="selectedChannel = channel; menu.toggle($event)"
         ></app-iconbutton>
         <p-menu #menu id="config_menu" [model]="channelsOptions" [popup]="true" appendTo="body"></p-menu>
+        
       </div>
     </div>
 
@@ -62,5 +64,7 @@
     </div>
   </div>
 </div>
+
 </div>
 <app-add-channel [displayAddChannelDialogue]="displayAddChannelDialogue" (onCloseAddChannelDialogue)="toggleAddNewChannelClicked($event)"></app-add-channel>
+
