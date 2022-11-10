@@ -22,11 +22,14 @@ export class NotificationBoxComponent implements OnInit {
   isStarredClicked!: boolean;
   activeUserId!: string;
   @ViewChild(OverlayPanel) panel!: OverlayPanel;
-
+  filteredString: string;
   constructor(
     private notificationService: NotificationServiceService,
     private topicChannelService: TopicChannelService
   ) {
+    this.notificationService.searchString$.subscribe((searchValue: any) => {
+      this.filteredString = searchValue;
+    });
     this.notificationService.isStarClicked$.subscribe(
       (isStarClicked) => (this.isStarredClicked = isStarClicked)
     );

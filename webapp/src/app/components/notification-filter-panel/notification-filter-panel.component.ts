@@ -17,8 +17,9 @@ export class NotificationFilterPanelComponent implements OnInit {
   selectedType!: NotificationTypeFilter;
   starred!: boolean;
   @Input() notificationItems: Notification[] = [];
-
+  searchValue: string;
   constructor(private notificationService: NotificationServiceService) {
+    console.log('searchvalue', this.searchValue);
     this.starred = true;
     this.notificationTypeFilter = [
       { name: 'Course updates', type: NotificationType.CourseUpdate },
@@ -47,10 +48,10 @@ export class NotificationFilterPanelComponent implements OnInit {
   }
 
   filterByNumber(e: any) {
-    console.log('filterby number', e.value);
     this.notificationService.showNumber.next(e.value);
   }
-  onBlur(e: any) {
-    console.log('blur', e.target.value);
+  onBlur(e: any) {}
+  onChange(e: any) {
+    this.notificationService.searchString.next(e);
   }
 }

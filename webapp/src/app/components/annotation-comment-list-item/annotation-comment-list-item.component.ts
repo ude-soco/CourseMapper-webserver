@@ -12,13 +12,17 @@ import { NotificationServiceService } from 'src/app/services/notification-servic
 export class AnnotationCommentListItemComponent implements OnInit {
   @Input() annotations!: Annotation[];
   getInitials = getInitials;
-
+  highlightAnnotations: string[] = [];
   constructor(
     private annotationService: AnnotationService,
     private notificationService: NotificationServiceService
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.annotationService.highlightAnnotations$.subscribe((lists: any) => {
+      this.highlightAnnotations = lists;
+    });
+  }
 
   openDiscussion(
     annotationContent: string,

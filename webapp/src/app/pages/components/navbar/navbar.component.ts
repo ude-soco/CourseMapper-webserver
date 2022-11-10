@@ -79,7 +79,7 @@ export class NavbarComponent implements OnInit {
       notificationPanel.show(event);
       this.isPanelOpened = true;
       this.notificationService.isPanelOpened.next(true);
-      this.notificationService.selectedTab.next('default');
+      this.notificationService.selectedTab.next({ id: 'default' });
     } else {
       notificationPanel.hide(event);
       this.isPanelOpened = false;

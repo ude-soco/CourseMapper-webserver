@@ -17,6 +17,9 @@ export class AnnotationService {
   public isCommentVisible = new Subject<boolean>();
   isCommentVisible$ = this.isCommentVisible.asObservable();
 
+  public highlightAnnotations = new Subject<string[]>();
+  highlightAnnotations$ = this.highlightAnnotations.asObservable();
+
   constructor(private http: HttpClient) {}
 
   getAnnotationsForMaterials(courseId: string, materialId?: string) {

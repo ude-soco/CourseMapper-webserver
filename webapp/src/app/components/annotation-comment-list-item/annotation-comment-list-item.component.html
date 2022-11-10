@@ -1,4 +1,8 @@
-<div *ngFor="let annotation of annotations" class="comments-container">
+<div
+  *ngFor="let annotation of annotations"
+  class="comments-container"
+  [class.highlight]="highlightAnnotations.includes(annotation._id)"
+>
   <i
     [ngClass]="
       annotation.isAdmin

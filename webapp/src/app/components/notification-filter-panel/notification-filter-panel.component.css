@@ -9,7 +9,8 @@
 .type-container,
 .filter-container,
 .number-container,
-.star-container {
+.star-container,
+.search-container {
   display: flex;
   align-items: center;
 }

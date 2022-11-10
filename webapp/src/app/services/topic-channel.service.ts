@@ -21,6 +21,9 @@ export class TopicChannelService {
   public activeLocation = new Subject<ActiveLocation>();
   activeLocation$ = this.activeLocation.asObservable();
 
+  public visitedChannel = new Subject<string[]>();
+  visitedChannel$ = this.visitedChannel.asObservable();
+
   constructor(private http: HttpClient) {}
 
   /**

@@ -52,7 +52,6 @@ export class AnnotationCommentListComponent implements OnInit {
   updateAnnotations() {
     const lastTime = this.notificationService.getLoggedInTime();
     this.lastTimeLoggedIn = new Date(lastTime).toLocaleDateString();
-
     let newLists = [];
     let old = [];
 

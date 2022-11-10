@@ -38,6 +38,20 @@
       items per page</span
     >
   </div>
+  <div class="search-container">
+    <span class="p-input-icon-left">
+      <i class="pi pi-search"></i>
+      <input
+        (ngModelChange)="onChange(searchValue)"
+        class="p-inputtext-sm"
+        type="text"
+        pInputText
+        placeholder="Search by course name"
+        [(ngModel)]="searchValue"
+      />
+    </span>
+  </div>
+
   <div class="star-container">
     <span class="star-icon">
       <i

@@ -6,8 +6,10 @@
     <p-badge [value]="annotationNews" class="annotations"></p-badge>
     <div class="menu">
       <p-tabMenu
+        #menu
         [model]="notificationItems"
-        [activeItem]="activeItem"
+        [activeItem]="notificationItems[0]"
+        [class.default]="notificationItems[0]"
       ></p-tabMenu>
       <div class="right-control">
         <div
@@ -34,11 +36,14 @@
 
   <div class="notification-container">
     <span class="empty-content" *ngIf="notificationLists.length == 0"
-      >There is no content in it</span
+      >There is no new notifications.</span
     >
     <app-notification-box
       [notificationItems]="notificationLists"
     ></app-notification-box>
+    <div class="see-more" *ngIf="seeMore">
+      <a routerLinkActive="active" (click)="seeAll()"> View more.</a>
+    </div>
   </div>
 
   <p-overlayPanel #op class="context" id="op">

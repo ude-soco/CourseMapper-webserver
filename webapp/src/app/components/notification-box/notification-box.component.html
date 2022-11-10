@@ -1,7 +1,7 @@
 <ng-container>
   <div
     class="notification-content"
-    *ngFor="let notificationItem of notificationItems"
+    *ngFor="let notificationItem of notificationItems | filter: filteredString"
     (mouseenter)="onHover()"
   >
     <div class="item-container">

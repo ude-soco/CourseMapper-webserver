@@ -57,6 +57,7 @@
 /* menu focus style */
 :host
   ::ng-deep
+  .default
   .p-tabmenu
   .p-tabmenu-nav
   .p-tabmenuitem
@@ -70,6 +71,17 @@
 
 :host
   ::ng-deep
+  .p-tabmenu
+  .p-tabmenu-nav
+  .p-tabmenuitem.p-highlight
+  .p-menuitem-link {
+  /* border-color: rgba(3, 105, 161, 255); */
+  color: rgba(3, 105, 161, 255);
+}
+
+:host
+  ::ng-deep
+  .default
   .p-tabmenu
   .p-tabmenu-nav
   .p-tabmenuitem.p-highlight
@@ -112,4 +124,30 @@
 }
 :host ::ng-deep .p-badge {
   background-color: rgba(3, 105, 161, 255);
+}
+
+.see-more {
+  position: relative;
+  font-size: 1rem;
+  margin-top: 2rem;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  justify-content: center;
+  color: rgba(3, 105, 161, 255);
+}
+
+:host
+  ::ng-deep
+  .p-tabmenu
+  .p-tabmenu-nav
+  .p-tabmenuitem
+  .p-menuitem-link
+  .focus {
+  color: red;
+}
+
+.notification-container {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }

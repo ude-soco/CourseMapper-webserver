@@ -42,10 +42,14 @@
         class="pl-7 py-1 hover:bg-white transition-all"
         [class.active]="channel._id == activeChannel"
         [class.channel-bold]="getChannelNotification(channel._id).news > 0"
+        [class.has-visited]="visitedChannel.includes(channel._id)"
         *ngFor="let channel of topic.channels; let i = index"
         [attr.data-index]="i"
       >
-        <div class="flex flex-row items-center justify-between">
+        <div
+          class="flex flex-row items-center justify-between"
+          (click)="handleHighlight(getChannelNotification(channel._id).replies)"
+        >
           <p
             id="{{ channel._id }}"
             (dblclick)="onDblClickRenameChannel(channel._id)"
@@ -55,9 +59,14 @@
             # {{ channel.name }} {{ channel._id }}
           </p>
           <p-badge
-            *ngIf="getChannelNotification(channel._id).replies !== '0'"
+            *ngIf="
+              getChannelNotification(channel._id).replies.length.toString() !==
+              '0'
+            "
             class="update-indicator"
-            [value]="getChannelNotification(channel._id).replies"
+            [value]="
+              getChannelNotification(channel._id).replies.length.toString()
+            "
           ></p-badge>
 
           <div hidden="true" id="{{ channel._id }}-button">

@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuItem } from 'primeng/api';
-import { Notification } from 'src/app/model/notification-item';
+import {
+  Notification,
+  NotificationType,
+} from 'src/app/model/notification-item';
 import { NotificationServiceService } from 'src/app/services/notification-service.service';
 @Component({
   selector: 'app-notification-dashboard',
@@ -18,6 +21,9 @@ export class NotificationDashboardComponent implements OnInit {
   courseNews!: string;
   annotationNews!: string;
   repliesNews!: string;
+  seeMore: boolean;
+  @Input() showDefault: boolean;
+  @ViewChild('menu') public menu: HTMLMenuElement;
 
   constructor(
     private notificationService: NotificationServiceService,
@@ -26,7 +32,6 @@ export class NotificationDashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.contextMenuOpened = false;
-
     this.notificationItems = [
       {
         label: 'All',
@@ -52,10 +57,12 @@ export class NotificationDashboardComponent implements OnInit {
       },
     ];
     this.activeItem = this.notificationItems[0];
+    console.log('menu', this.menu);
 
     this.notificationService.selectedTab.subscribe((tab) => {
       this.activeItem = tab;
       this.updateItems(tab);
+      console.log(this.activeItem);
     });
     this.updateItems('default');
 
@@ -74,75 +81,137 @@ export class NotificationDashboardComponent implements OnInit {
 
       // update the number
       this.courseNews = lists
-        .filter((item: { type: string }) => item.type == 'courseupdates')
+        .filter(
+          (item: { type: string }) => item.type == NotificationType.CourseUpdate
+        )
         .length.toString();
 
       this.repliesNews = lists
-        .filter((item: { type: string }) => item.type == 'mentionedandreplied')
+        .filter(
+          (item: { type: string }) =>
+            item.type == NotificationType.CommentsAndMentioned
+        )
         .length.toString();
 
       this.annotationNews = lists
-        .filter((item: { type: string }) => item.type == 'annotations')
+        .filter((item: { type: string }) => NotificationType.Annotations)
         .length.toString();
     });
 
     this.notificationService.needUpdate$.subscribe(() => {
       this.updateItems('default');
-      console.log('update needed', this.temp);
     });
   }
 
   updateItems(type: any) {
     this.notificationService.getAllNotifications().subscribe((data) => {
       this.temp = data;
-
+      //5.14.3
       switch (type) {
         case 'default':
           this.notificationLists = this.temp.notificationLists;
+          if (this.notificationLists.length > 5) {
+            this.notificationLists = this.limitNumberOfNotifications(
+              this.temp.notificationLists
+            );
+            this.seeMore = true;
+          } else {
+            this.notificationLists = this.temp.notificationLists;
+            this.seeMore = false;
+          }
           // update the number
-          this.courseNews = this.notificationLists
-            .filter((item: { type: string }) => item.type == 'courseupdates')
-            .length.toString();
-
-          this.repliesNews = this.notificationLists
+          this.courseNews = this.temp.notificationLists
             .filter(
-              (item: { type: string }) => item.type == 'mentionedandreplied'
+              (item: { type: string }) =>
+                item.type == NotificationType.CourseUpdate
             )
             .length.toString();
 
-          this.annotationNews = this.notificationLists
-            .filter((item: { type: string }) => item.type == 'annotations')
+          this.repliesNews = this.temp.notificationLists
+            .filter(
+              (item: { type: string }) =>
+                item.type == NotificationType.CommentsAndMentioned
+            )
+            .length.toString();
+
+          this.annotationNews = this.temp.notificationLists
+            .filter(
+              (item: { type: string }) =>
+                item.type == NotificationType.Annotations
+            )
             .length.toString();
 
           break;
-        case 'courseupdates':
-          this.notificationLists = this.temp.notificationLists.filter(
-            (item: { type: string }) => item.type == 'courseupdates'
+        case NotificationType.CourseUpdate:
+          let tempCourseUpdate = [];
+          tempCourseUpdate = this.temp.notificationLists.filter(
+            (item: { type: string }) =>
+              item.type == NotificationType.CourseUpdate
           );
-          this.courseNews = this.notificationLists.length.toString();
-          break;
-        case 'mentionedandreplied':
-          this.notificationLists = this.temp.notificationLists.filter(
-            (item: { type: string }) => item.type == 'mentionedandreplied'
-          );
-          this.repliesNews = this.notificationLists.length.toString();
+          this.courseNews = tempCourseUpdate.length.toString();
+
+          if (tempCourseUpdate.length > 5) {
+            this.seeMore = true;
+
+            this.notificationLists =
+              this.limitNumberOfNotifications(tempCourseUpdate);
+          } else {
+            this.notificationLists = tempCourseUpdate;
+            this.seeMore = false;
+          }
 
           break;
-        case 'annotations':
-          this.notificationLists = this.temp.notificationLists.filter(
-            (item: { type: string }) => item.type == 'annotations'
+        case NotificationType.CommentsAndMentioned:
+          let temp = [];
+          temp = this.temp.notificationLists.filter(
+            (item: { type: string }) =>
+              item.type == NotificationType.CommentsAndMentioned
           );
-          this.annotationNews = this.notificationLists.length.toString();
+          this.repliesNews = temp.length.toString();
+
+          if (temp.length > 5) {
+            this.seeMore = true;
+
+            this.notificationLists = this.limitNumberOfNotifications(temp);
+          } else {
+            this.notificationLists = temp;
+            this.seeMore = false;
+          }
+
+          break;
+        case NotificationType.Annotations:
+          let tempAnnotations = [];
+          tempAnnotations = this.temp.notificationLists.filter(
+            (item: { type: string }) =>
+              item.type == NotificationType.Annotations
+          );
+          this.annotationNews = tempAnnotations.length.toString();
+
+          if (tempAnnotations.length > 5) {
+            this.seeMore = true;
+
+            this.notificationLists = this.limitNumberOfNotifications(temp);
+          } else {
+            this.notificationLists = tempAnnotations;
+            this.seeMore = false;
+          }
 
           break;
       }
     });
   }
+
+  limitNumberOfNotifications(lists) {
+    const constraintLists = lists.slice(0, 5);
+    this.seeMore = true;
+    return constraintLists;
+  }
+
   onTypeSelected(event: any) {
     this.notificationType = event.item.id;
     this.activeItem = this.notificationItems[event.item.id];
     this.updateItems(this.notificationType);
-    this.notificationService.selectedTab.next(this.notificationType);
+    this.notificationService.selectedTab.next({ id: this.notificationType });
   }
 
   openTopContextMenu(event: any, op: any) {

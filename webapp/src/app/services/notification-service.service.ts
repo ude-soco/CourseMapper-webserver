@@ -4,6 +4,7 @@ import { BehaviorSubject, Subject, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Notification } from '../model/notification-item';
 import { HTTPOptions } from '../config/config';
+import { MenuItem } from 'primeng/api';
 
 @Injectable({
   providedIn: 'root',
@@ -42,7 +43,9 @@ export class NotificationServiceService {
   public isPanelOpened = new Subject<boolean>();
   isPanelOpened$ = this.isPanelOpened.asObservable();
 
-  public selectedTab = new Subject<any>();
+  public selectedTab = new BehaviorSubject<MenuItem>({
+    id: 'default',
+  });
   selectedTab$ = this.selectedTab.asObservable();
 
   public needUpdate = new Subject<boolean>();
@@ -62,12 +65,19 @@ export class NotificationServiceService {
   public loggedInTime = new BehaviorSubject<any>(null);
   loggedInTime$ = this.loggedInTime.asObservable();
 
+  public searchString = new BehaviorSubject<any>(null);
+  searchString$ = this.searchString.asObservable();
+
   getAllNotifications() {
     return this.http.get(environment.API_URL + '/notifications');
   }
 
   getNotificationLists() {
     return this.allNotificationItems.value;
+  }
+
+  getSelectedTab() {
+    return this.selectedTab.value;
   }
 
   updateNotificationLists(lists: Notification[]) {

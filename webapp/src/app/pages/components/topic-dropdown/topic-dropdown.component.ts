@@ -26,6 +26,8 @@ export class TopicDropdownComponent implements OnInit {
   selectedChannel = null;
   courseId: string;
   userId: string;
+  visitedChannel: string[] = [];
+  highlightAnnotationLists: string[] = [];
   constructor(
     private courseService: CourseService,
     private topicChannelService: TopicChannelService,
@@ -89,6 +91,10 @@ export class TopicDropdownComponent implements OnInit {
 
     const user = this.storageService.getUser();
     this.userId = user.id;
+
+    this.topicChannelService.visitedChannel$.subscribe((visitedChannel) => {
+      this.visitedChannel = visitedChannel;
+    });
   }
 
   getCourseNotifications(courseId) {
@@ -272,14 +278,17 @@ export class TopicDropdownComponent implements OnInit {
     let newLists = [];
     let old = [];
     let temp = [];
-
-    for (let i = 0; i < this.courseNotifications.length; i++) {
-      if (
-        new Date(this.courseNotifications[i].createdAt).getTime() > lastTime
-      ) {
-        newLists.push(this.courseNotifications[i]);
-      } else {
-        old.push(this.courseNotifications[i]);
+    if (lastTime) {
+      if (this.courseNotifications) {
+        for (let i = 0; i < this.courseNotifications.length; i++) {
+          if (
+            new Date(this.courseNotifications[i].createdAt).getTime() > lastTime
+          ) {
+            newLists.push(this.courseNotifications[i]);
+          } else {
+            old.push(this.courseNotifications[i]);
+          }
+        }
       }
     }
     temp = newLists.filter((news: Notification) => {
@@ -291,8 +300,7 @@ export class TopicDropdownComponent implements OnInit {
         news.type == 'mentionedandreplied' && news.replyBelongsTo == this.userId
       );
     });
-
-    return { news: temp.length, replies: replies.length.toString() };
+    return { news: temp.length, replies: replies };
   }
 
   selectChannel(channelId: string, courseId: string) {
@@ -301,5 +309,19 @@ export class TopicDropdownComponent implements OnInit {
       courseId: courseId,
     };
     this.materialService.selectedChannel.next(activeChannel);
+
+    if (!this.visitedChannel.includes(channelId)) {
+      this.visitedChannel.push(channelId);
+    }
+
+    this.topicChannelService.visitedChannel.next(this.visitedChannel);
+  }
+
+  handleHighlight(replies: any) {
+    let temp = [];
+    replies.forEach((reply) => {
+      temp.push(reply.annotationId);
+    });
+    this.annotationService.highlightAnnotations.next(temp);
   }
 }
