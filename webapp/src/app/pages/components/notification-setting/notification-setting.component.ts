@@ -38,12 +38,10 @@ export class NotificationSettingComponent implements OnInit {
   }
 
   closeMenu(op: any) {
-    console.log('top menu');
     op.hide();
   }
 
   openSubscriptions() {
-    console.log('open sub');
     this.isSubscriptionsOpened = true;
   }
   handleCloseSubscription() {

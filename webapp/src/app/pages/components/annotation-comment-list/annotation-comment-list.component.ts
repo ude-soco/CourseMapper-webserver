@@ -70,7 +70,6 @@ export class AnnotationCommentListComponent implements OnInit {
     this.annotationService
       .getAnnotationsForMaterials(courseId, materialId)
       .subscribe((data: any) => {
-        // console.log('annotation lists', data.annotations);
         this.annotationService.annotations.next(data.annotations);
         this.annotations = data.annotations;
       });

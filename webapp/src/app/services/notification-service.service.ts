@@ -243,14 +243,4 @@ export class NotificationServiceService {
       HTTPOptions
     );
   }
-
-  getNumberOfUpdates(index?: number, channelId?: string, topicId?: string) {
-    // console.log('topic id', topicId);
-    // console.log('channelId', channelId);
-    // this.getChannelNotification(channelId).subscribe((res) => {
-    //   console.log('get channel notifications', res);
-    // });
-
-    return channelId;
-  }
 }

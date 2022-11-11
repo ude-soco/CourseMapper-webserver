@@ -57,12 +57,10 @@ export class NotificationDashboardComponent implements OnInit {
       },
     ];
     this.activeItem = this.notificationItems[0];
-    console.log('menu', this.menu);
 
     this.notificationService.selectedTab.subscribe((tab) => {
       this.activeItem = tab;
       this.updateItems(tab);
-      console.log(this.activeItem);
     });
     this.updateItems('default');
 
@@ -134,7 +132,7 @@ export class NotificationDashboardComponent implements OnInit {
             )
             .length.toString();
 
-          this.annotationNews = this.temp.notificationLists
+          this.annotationNews = this.notificationLists
             .filter(
               (item: { type: string }) =>
                 item.type == NotificationType.Annotations

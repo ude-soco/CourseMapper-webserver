@@ -158,7 +158,7 @@ export const newChannel = async (req, res) => {
     action: "has created new",
     actionObject: "channel",
     createdAt: Date.now(),
-    extraMessage: `in ${foundTopic.name} in ${updateCourse.name}`,
+    extraMessage: `${foundTopic.name} topic in ${updateCourse.name} course`,
     name: channelName,
   });
 
@@ -303,7 +303,7 @@ export const deleteChannel = async (req, res) => {
     action: "has deleted",
     actionObject: "channel",
     createdAt: Date.now(),
-    extraMessage: `in ${foundTopic.name} in ${updateCourse.name}`,
+    extraMessage: `${foundTopic.name}topic in ${updateCourse.name} course`,
     name: foundChannel.name,
   });
   let notificationSaved;
@@ -446,7 +446,7 @@ export const editChannel = async (req, res) => {
     type: "courseupdates",
     action: "has edited",
     actionObject: "channel",
-    extraMessage: `in ${foundTopic.name} in ${updateCourse.name}`,
+    extraMessage: `${foundTopic.name} topic in ${updateCourse.name} course`,
     name: channelName,
   });
   let notificationSaved;

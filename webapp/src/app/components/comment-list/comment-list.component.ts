@@ -71,14 +71,12 @@ export class CommentListComponent implements OnInit {
     }
   }
   closeDiscussion(annotation: ActiveAnnotation) {
-    console.log('materialId close', this.materialId);
     this.annotationService
       .closeDiscussion(
         this.activeAnnotation.courseId,
         this.activeAnnotation._id
       )
       .subscribe((res) => {
-        console.log(res);
         this.isClosed = true;
         this.materialService.activeMaterial.next({
           materialId: this.activeAnnotation.materialId,

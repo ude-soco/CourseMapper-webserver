@@ -7,10 +7,14 @@
 
   <hr class="sidebar-hr" />
 
-  <div *ngFor="let course of courses; let i = index" (click)="onSelectCourse(course)" [attr.data-index]="i">
+  <div
+    *ngFor="let course of courses; let i = index"
+    (click)="onSelectCourse(course)"
+    [attr.data-index]="i"
+  >
     <div class="sidebar-icon group">
       <button class="text-xl">{{ course.shortName }}</button>
-      <span class="icon-button-badge">{{ course.notification }}</span>
+      <!-- <span class="icon-button-badge">{{ course.notification }}</span> -->
       <span class="sidebar-tooltip group-hover:scale-100">{{
         course.description
       }}</span>
@@ -19,7 +23,7 @@
 
   <hr class="sidebar-hr" />
 
-  <div (click) = "onAddCourseDialogueClicked()" class="sidebar-icon group">
+  <div (click)="onAddCourseDialogueClicked()" class="sidebar-icon group">
     <i class="bx bx-plus bx-md bx-tada-hover"></i>
     <span class="sidebar-tooltip group-hover:scale-100"> Add new course </span>
   </div>
@@ -31,4 +35,7 @@
     </span>
   </div>
 </div>
-<app-add-course [displayAddCourseDialogue]="displayAddCourseDialogue" (onCloseAddCourseDialogue)="toggleAddCoursedialogue($event)"></app-add-course>
+<app-add-course
+  [displayAddCourseDialogue]="displayAddCourseDialogue"
+  (onCloseAddCourseDialogue)="toggleAddCoursedialogue($event)"
+></app-add-course>

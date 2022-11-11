@@ -56,12 +56,12 @@
             class="cursor-pointer w-full"
             (click)="selectChannel(channel._id, channel.courseId)"
           >
-            # {{ channel.name }} {{ channel._id }}
+            # {{ channel.name }}
           </p>
           <p-badge
             *ngIf="
               getChannelNotification(channel._id).replies.length.toString() !==
-              '0'
+                '0' && !visitedChannel.includes(channel._id)
             "
             class="update-indicator"
             [value]="

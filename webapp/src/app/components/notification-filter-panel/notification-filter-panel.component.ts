@@ -3,6 +3,7 @@ import {
   NotificationType,
   Notification,
   NotificationTypeFilter,
+  NotificationNumberFilter,
 } from 'src/app/model/notification-item';
 import { NotificationServiceService } from 'src/app/services/notification-service.service';
 
@@ -18,8 +19,9 @@ export class NotificationFilterPanelComponent implements OnInit {
   starred!: boolean;
   @Input() notificationItems: Notification[] = [];
   searchValue: string;
+  notificationNumberFilter: NotificationNumberFilter[] = [];
+  selectedNumber: NotificationNumberFilter;
   constructor(private notificationService: NotificationServiceService) {
-    console.log('searchvalue', this.searchValue);
     this.starred = true;
     this.notificationTypeFilter = [
       { name: 'Course updates', type: NotificationType.CourseUpdate },
@@ -28,6 +30,24 @@ export class NotificationFilterPanelComponent implements OnInit {
         type: NotificationType.CommentsAndMentioned,
       },
       { name: 'Annotations', type: NotificationType.Annotations },
+    ];
+    this.notificationNumberFilter = [
+      {
+        label: '3',
+        value: 3,
+      },
+      {
+        label: '5',
+        value: 5,
+      },
+      {
+        label: '10',
+        value: 10,
+      },
+      {
+        label: '15',
+        value: 15,
+      },
     ];
   }
 
@@ -45,10 +65,11 @@ export class NotificationFilterPanelComponent implements OnInit {
 
   resetFilter() {
     this.notificationService.filteredType.next('');
+    this.notificationService.showNumber.next(undefined);
   }
 
   filterByNumber(e: any) {
-    this.notificationService.showNumber.next(e.value);
+    this.notificationService.showNumber.next(e.value.value);
   }
   onBlur(e: any) {}
   onChange(e: any) {

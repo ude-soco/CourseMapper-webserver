@@ -83,7 +83,6 @@ const isModerator = async (req, res, next) => {
 
   if (role.name === "admin") {
     req.isAdmin = true;
-    // console.log("admin")
     return next();
   } else {
     let foundCourse = user.courses.find(
@@ -99,7 +98,6 @@ const isModerator = async (req, res, next) => {
 
       if (role.name === "moderator") {
         req.isModerator = true;
-        console.log(req.isModerator);
         return next();
       }
       return res.status(403).send({ message: "Require Moderator Role!" });

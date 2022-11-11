@@ -15,6 +15,10 @@ export class MaterialsService {
 
   public activeMaterial = new Subject<ActiveMaterial>();
   activeMaterial$ = this.activeMaterial.asObservable();
+
+  public highlightMaterials = new Subject<string[]>();
+  highlightMaterials$ = this.highlightMaterials.asObservable();
+
   constructor(private http: HttpClient) {}
 
   getMaterials(courseId: string, channelId: string) {

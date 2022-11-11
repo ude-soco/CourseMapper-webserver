@@ -25,7 +25,20 @@
       [style]="{ width: '100%' }"
     ></p-dropdown>
   </div>
-  <div class="number-container">
+  <div class="type-container">
+    <p-dropdown
+      class="type-filter"
+      [options]="notificationNumberFilter"
+      [(ngModel)]="selectedNumber"
+      (onChange)="filterByNumber($event)"
+      optionLabel="label"
+      placeholder="Order by number"
+      styleClass="type-panel"
+      autoWidth="false"
+      [style]="{ width: '100%' }"
+    ></p-dropdown>
+  </div>
+  <!-- <div class="number-container">
     <span class="number-filter"
       >Show
       <p-inputNumber
@@ -37,19 +50,21 @@
       ></p-inputNumber>
       items per page</span
     >
-  </div>
+  </div> -->
   <div class="search-container">
-    <span class="p-input-icon-left">
-      <i class="pi pi-search"></i>
-      <input
-        (ngModelChange)="onChange(searchValue)"
-        class="p-inputtext-sm"
-        type="text"
-        pInputText
-        placeholder="Search by course name"
-        [(ngModel)]="searchValue"
-      />
-    </span>
+    <div class="course-filter">
+      <span class="p-input-icon-left">
+        <i class="pi pi-search"></i>
+        <input
+          (ngModelChange)="onChange(searchValue)"
+          class="p-inputtext-sm"
+          type="text"
+          pInputText
+          placeholder="Search by course name"
+          [(ngModel)]="searchValue"
+        />
+      </span>
+    </div>
   </div>
 
   <div class="star-container">
@@ -59,7 +74,7 @@
         style="color: rgba(3, 105, 161, 255); font-size: 2rem"
         class="star-i"
         (click)="viewStar()"
-        title="View starred items"
+        pTooltip="View starred items"
       ></i>
     </span>
   </div>

@@ -7,7 +7,13 @@
 }
 .material-name {
   margin-right: 1rem;
-  border: 1px solid gray;
+  border: 1px solid #c4c4c4;
   padding: 1rem;
-  box-shadow: 1px 1px gray;
+  box-shadow: 1px 1px #c4c4c4;
+}
+.material-name:hover {
+  background-color: whitesmoke;
+}
+.highlight {
+  box-shadow: 2px 2px yellow;
 }

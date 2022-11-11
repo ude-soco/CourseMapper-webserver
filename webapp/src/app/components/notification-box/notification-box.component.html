@@ -5,10 +5,6 @@
     (mouseenter)="onHover()"
   >
     <div class="item-container">
-      <!-- <div
-      class="item-container"
-      [hidden]="isStarredClicked && !notificationItem.isStar"
-    > -->
       <div
         class="left-container"
         (click)="
@@ -32,16 +28,12 @@
             <span class="action">{{ notificationItem.action }}</span>
             <span class="action">{{ notificationItem.actionObject }}</span>
             <span class="msg-location">{{ notificationItem.name }}</span>
-
-            <span class="msg-location">{{
-              notificationItem.extraMessage
-            }}</span>
-            <!-- <span class="msg-location">{{
-              notificationItem.message.topicName
-            }}</span>
-            <span class="msg-location">{{
-              notificationItem.message.channelName
-            }}</span> -->
+            <span class="in">in</span>
+            <span
+              class="msg-location"
+              [innerHTML]="replaceMessage(notificationItem.extraMessage)"
+            >
+            </span>
           </div>
         </div>
         <span class="time">{{ notificationItem.createdAt | customDate }}</span>
@@ -65,12 +57,12 @@
             )
           "
         >
-          <i class="pi pi-ellipsis-h context-menu" title="more"></i>
+          <i class="pi pi-ellipsis-h context-menu"></i>
         </div>
         <i
           [ngClass]="notificationItem.isStar ? 'pi pi-star-fill' : 'pi pi-star'"
           *ngIf="isSettingPanel"
-          title="Mark item as star"
+          pTooltip="Mark item as star"
           (click)="onStar(notificationItem._id)"
         ></i>
       </div>

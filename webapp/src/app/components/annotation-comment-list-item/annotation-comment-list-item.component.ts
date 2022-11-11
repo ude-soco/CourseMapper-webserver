@@ -19,7 +19,7 @@ export class AnnotationCommentListItemComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.annotationService.highlightAnnotations$.subscribe((lists: any) => {
+    this.annotationService.highlightAnnotations$.subscribe((lists) => {
       this.highlightAnnotations = lists;
     });
   }

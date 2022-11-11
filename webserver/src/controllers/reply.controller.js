@@ -77,7 +77,6 @@ export const newReply = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  console.log("foundANnotation", foundAnnotation.author.userId);
 
   let foundUser;
   try {
@@ -203,7 +202,7 @@ export const newReply = async (req, res) => {
     action: "has created new",
     actionObject: "comment",
     createdAt: Date.now(),
-    extraMessage: `in ${foundCourse.name} in ${foundTopic.name}`,
+    extraMessage: `${foundCourse.name} course in ${foundTopic.name} topic`,
     name: "",
   });
   let notificationSaved;
@@ -345,7 +344,7 @@ export const deleteReply = async (req, res) => {
     type: "mentionedandreplied",
     action: "has deleted",
     actionObject: "comment",
-    extraMessage: `in ${foundCourse.name} `,
+    extraMessage: `${foundCourse.name} course `,
     name: "",
   });
   let notificationSaved;
@@ -502,7 +501,7 @@ export const editReply = async (req, res) => {
     action: "has edited",
     actionObject: "comment",
     createdAt: Date.now(),
-    extraMessage: `in ${foundCourse.name}`,
+    extraMessage: `${foundCourse.name} course`,
     name: replyContent,
   });
   let notificationSaved;
@@ -650,7 +649,7 @@ export const likeReply = async (req, res) => {
       createdAt: Date.now(),
       action: "has liked",
       actionObject: "comment",
-      extraMessage: `in ${foundCourse.name} in ${foundTopic.name}`,
+      extraMessage: `${foundCourse.name} course in ${foundTopic.name} topic`,
       name: "",
     });
     let notificationSaved;
@@ -796,7 +795,7 @@ export const dislikeReply = async (req, res) => {
       action: "has disliked",
       createdAt: Date.now(),
       actionObject: "comment",
-      extraMessage: `in ${foundCourse.name} in ${foundTopic.name}`,
+      extraMessage: `${foundCourse.name} course in ${foundTopic.name} topic`,
       name: "",
     });
     let notificationSaved;

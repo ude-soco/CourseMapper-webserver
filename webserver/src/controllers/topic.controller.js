@@ -124,7 +124,7 @@ export const newTopic = async (req, res) => {
     action: "has created new",
     createdAt: Date.now(),
     actionObject: "topic",
-    extraMessage: `in ${foundCourse.name}`,
+    extraMessage: `${foundCourse.name} course`,
     name: topicName,
   });
 
@@ -260,7 +260,7 @@ export const deleteTopic = async (req, res) => {
     action: "has deleted",
     actionObject: "topic",
     createdAt: Date.now(),
-    extraMessage: `in ${foundCourse.name}`,
+    extraMessage: `${foundCourse.name}`,
     name: foundTopic.name,
   });
 
@@ -395,7 +395,7 @@ export const editTopic = async (req, res) => {
     action: "has edited",
     actionObject: "topic",
     createdAt: Date.now(),
-    extraMessage: `in ${foundCourse.name}`,
+    extraMessage: `${foundCourse.name}`,
     name: topicName,
   });
   let notificationSaved;

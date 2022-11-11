@@ -31,7 +31,6 @@ export const getAnnotation = async (req, res) => {
   } catch (err) {
     res.status(500).send({ error: err });
   }
-  // console.log("id", annotationLists);
   let foundAnnotationIds = [];
   let foundAnnotations = [];
 
@@ -208,7 +207,7 @@ export const newAnnotation = async (req, res) => {
     action: "has annotated",
     actionObject: "",
     createdAt: Date.now(),
-    extraMessage: `in ${foundMaterial.name}`,
+    extraMessage: `${foundMaterial.name}material in ${foundCourse.name} course`,
   });
   let notificationSaved;
 
@@ -373,7 +372,7 @@ export const deleteAnnotation = async (req, res) => {
     action: "has deleted",
     actionObject: "",
     createdAt: Date.now(),
-    extraMessage: `in ${foundCourse.name}`,
+    extraMessage: `${foundCourse.name} course`,
   });
   let notificationSaved;
 
@@ -549,7 +548,7 @@ export const editAnnotation = async (req, res) => {
     type: "annotations",
     action: "has edited",
     actionObject: "",
-    extraMessage: `in ${foundCourse.name}`,
+    extraMessage: `${foundCourse.name} course`,
   });
   let notificationSaved;
 
@@ -694,7 +693,7 @@ export const likeAnnotation = async (req, res) => {
       action: "has liked",
       actionObject: "",
       createdAt: Date.now(),
-      extraMessage: `in ${foundMaterial.name}`,
+      extraMessage: `${foundMaterial.name} material`,
     });
     let notificationSaved;
 
@@ -840,7 +839,7 @@ export const dislikeAnnotation = async (req, res) => {
       action: "has disliked",
       actionObject: "",
       createdAt: Date.now(),
-      extraMessage: `in ${foundMaterial.name}`,
+      extraMessage: `${foundMaterial.name} material`,
     });
     let notificationSaved;
 
@@ -963,7 +962,6 @@ export const checkReplyToAuthor = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  console.log("list of replies", foundAnnotation.replies);
 
   return res.status(200).send({ listOfReplies: foundAnnotation.replies });
 };

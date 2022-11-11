@@ -12,6 +12,7 @@
         [value]="newsAmount"
         (click)="toggleNotificationPanel($event, notificationPanel)"
         *ngIf="this.storageService.loggedIn"
+        pTooltip="Notifications"
       ></i>
 
       <span *ngIf="!this.storageService.loggedIn">

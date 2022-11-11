@@ -27,6 +27,10 @@ export interface NotificationTypeFilter {
   name: string;
   type: NotificationType;
 }
+export interface NotificationNumberFilter {
+  label: string;
+  value: number;
+}
 
 export interface NotificationData {
   isCourseTurnOff: boolean;

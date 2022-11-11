@@ -3,6 +3,7 @@
     <div
       class="material-name"
       (click)="onActiveMaterial(material._id, material.courseId)"
+      [class.highlight]="highlightMaterials.includes(material._id)"
     >
       <span> {{ material.name }}</span>
     </div>

@@ -10,6 +10,7 @@ import { Notification } from 'src/app/model/notification-item';
 import { MaterialsService } from 'src/app/services/materials.service';
 import { AnnotationService } from 'src/app/services/annotation.service';
 import { StorageService } from 'src/app/services/storage.service';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-topic-dropdown',
   templateUrl: './topic-dropdown.component.html',
@@ -35,7 +36,8 @@ export class TopicDropdownComponent implements OnInit {
     public notificationService: NotificationServiceService,
     private materialService: MaterialsService,
     private annotationService: AnnotationService,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private router: Router
   ) {}
 
   topicOptions: MenuItem[] = [
@@ -105,9 +107,7 @@ export class TopicDropdownComponent implements OnInit {
       });
   }
 
-  showMenu() {
-    console.log(this.selectedTopic);
-  }
+  showMenu() {}
 
   onSelectTopic(topic: Topic) {
     alert(`onTopicSelect ${topic._id}`);
@@ -315,6 +315,10 @@ export class TopicDropdownComponent implements OnInit {
     }
 
     this.topicChannelService.visitedChannel.next(this.visitedChannel);
+
+    this.router.navigate(['/home'], {
+      queryParams: { courseId: courseId, channelId: channelId },
+    });
   }
 
   handleHighlight(replies: any) {

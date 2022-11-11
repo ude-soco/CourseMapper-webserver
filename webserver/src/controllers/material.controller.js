@@ -176,7 +176,7 @@ export const newMaterial = async (req, res) => {
     actionObject: "material",
     name: materialName,
     createdAt: Date.now(),
-    extraMessage: `in ${foundChannel.name}`,
+    extraMessage: `${foundChannel.name}channel in ${foundCourse.name} course`,
   });
   let notificationSaved;
 
@@ -322,7 +322,7 @@ export const deleteMaterial = async (req, res) => {
     actionObject: "material",
     name: foundMaterial.name,
     createdAt: Date.now(),
-    extraMessage: `in ${foundCourse.name}`,
+    extraMessage: `${foundCourse.name} course`,
   });
   let notificationSaved;
 
@@ -470,7 +470,7 @@ export const editMaterial = async (req, res) => {
     action: "has edited",
     actionObject: "material",
     name: materialName,
-    extraMessage: `in ${foundCourse.name}`,
+    extraMessage: `${foundCourse.name} course`,
   });
   let notificationSaved;
 

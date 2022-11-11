@@ -6,14 +6,13 @@
 
   <div class="flex m-3">
     <p class="text-xl font-semibold" *ngIf="!hideContent">
-      <span>Content</span>
-      <app-material-list></app-material-list>
+      <span>Learning materials</span>
     </p>
+    <app-material-list></app-material-list>
   </div>
   <app-annotation-comment-list
     *ngIf="!hideContent"
   ></app-annotation-comment-list>
-  <!-- <app-annotation-comment-panel></app-annotation-comment-panel> -->
 
   <ng-content></ng-content>
 </div>

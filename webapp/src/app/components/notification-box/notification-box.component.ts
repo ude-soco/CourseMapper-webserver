@@ -1,9 +1,10 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, Sanitizer, ViewChild } from '@angular/core';
 import { Notification, ActiveLocation } from 'src/app/model/notification-item';
 import { MenuItem } from 'primeng/api';
 import { OverlayPanel } from 'primeng/overlaypanel';
 import { NotificationServiceService } from 'src/app/services/notification-service.service';
 import { TopicChannelService } from 'src/app/services/topic-channel.service';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-notification-box',
@@ -25,7 +26,8 @@ export class NotificationBoxComponent implements OnInit {
   filteredString: string;
   constructor(
     private notificationService: NotificationServiceService,
-    private topicChannelService: TopicChannelService
+    private topicChannelService: TopicChannelService,
+    private sanitizer: DomSanitizer
   ) {
     this.notificationService.searchString$.subscribe((searchValue: any) => {
       this.filteredString = searchValue;
@@ -116,5 +118,23 @@ export class NotificationBoxComponent implements OnInit {
     } as ActiveLocation;
     this.topicChannelService.activeLocation.next(location);
     this.notificationService.isPanelOpened.next(false);
+  }
+  replaceMessage(sentence: string) {
+    // here is to replace the word so that do not have bold style
+    const map = {
+      in: 'in',
+      course: 'course',
+      topic: 'topic',
+      channel: 'channel',
+      material: 'material',
+    };
+    sentence = sentence.replace(
+      /\b(?:course|in|topic|channel|material)\b/gi,
+      function (matched) {
+        return `<span style="font-weight: normal">${map[matched]}</span>`;
+      }
+    );
+
+    return this.sanitizer.bypassSecurityTrustHtml(sentence);
   }
 }

@@ -70,6 +70,7 @@ import { CourseSubscriptionsComponent } from './components/course-subscriptions/
 import { TableModule } from 'primeng/table';
 import { MaterialListComponent } from './components/material-list/material-list.component';
 import { FilterPipe } from './pipes/filter.pipe';
+import { TooltipModule } from 'primeng/tooltip';
 
 @NgModule({
   declarations: [
@@ -144,6 +145,7 @@ import { FilterPipe } from './pipes/filter.pipe';
     ToastModule,
     RippleModule,
     TableModule,
+    TooltipModule,
   ],
 
   providers: [{ provide: NZ_I18N, useValue: en_US }, httpInterceptorProviders],

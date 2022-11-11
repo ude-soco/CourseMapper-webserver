@@ -72,3 +72,53 @@
 .star-i:hover {
   background-color: whitesmoke;
 }
+
+.course-filter {
+  /* display: flex; */
+  /* justify-content: center; */
+  /* margin: auto; */
+  position: relative;
+  width: 100%;
+  text-align: center;
+}
+
+:host::ng-deep .p-inputtext.p-inputtext-sm {
+  height: 35px;
+  width: 70%;
+}
+
+:host::ng-deep .p-dropdown .p-inputtext {
+  font-size: 0.9rem;
+}
+
+:host::ng-deep .p-input-icon-left,
+.p-input-icon-right {
+  position: relative;
+  display: inline;
+}
+
+.filter-container::after {
+  content: "";
+  width: 1px;
+  height: 40px;
+  position: relative;
+  background-color: #c4c4c4;
+  left: 1rem;
+}
+
+.type-container::after {
+  content: "";
+  width: 1px;
+  height: 40px;
+  position: relative;
+  background-color: #c4c4c4;
+  left: 4rem;
+}
+.search-container::after {
+  content: "";
+  width: 1px;
+  height: 40px;
+  position: relative;
+  background-color: #c4c4c4;
+  left: 2rem;
+}

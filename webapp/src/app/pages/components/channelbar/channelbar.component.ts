@@ -125,6 +125,7 @@ export class ChannelbarComponent implements OnInit {
   }
 
   subscribeToCourse(event: any, id: string) {
+    console.log(event, this.subscribed);
     if (this.subscribed) {
       this.courseService.withdrawCourse(id).subscribe((res: any) => {
         this.subscribed = false;

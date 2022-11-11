@@ -28,12 +28,29 @@
         *ngIf="!isModerator"
         pButton
         formControlName="subscribed"
-        (click)="subscribeToCourse($event, selectedCourse._id)"
         type="button"
-        [label]="subscribed ? 'Withdraw from course' : 'Enrol to course'"
-        [ngClass]="subscribed ? 'subscribed' : 'unsubscribe'"
+        label="subscribed"
+        ngClass="subscribed"
         class="subscribe-button"
       ></button>
+      <div class="img-container">
+        <img
+          *ngIf="!subscribed"
+          (click)="subscribeToCourse($event, selectedCourse._id)"
+          src="../../../assets/icons/notifications_deactive.svg"
+          class="notification-active"
+          pTooltip="Turn on notifications from {{ selectedCourse.name }}"
+        />
+      </div>
+      <div class="img-container">
+        <img
+          *ngIf="subscribed"
+          src="../../../assets/icons/notifications_active.svg"
+          class="notification-active"
+          (click)="subscribeToCourse($event, selectedCourse._id)"
+          pTooltip="Turn off notifications from {{ selectedCourse.name }}"
+        />
+      </div>
     </div>
     <app-topic-dropdown [activeChannel]="activeChannel"></app-topic-dropdown>
 
