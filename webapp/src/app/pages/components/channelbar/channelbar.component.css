@@ -31,14 +31,14 @@
 }
 
 .subscribe-button:enabled :focus {
-  background-color: rgba(3, 105, 161, 255);
+  background-color: gray;
 }
 
 :host::ng-deep .p-button:enabled:focus {
   outline: 0 none;
   outline-offset: 0px;
   box-shadow: none;
-  background-color: rgba(3, 105, 161, 255);
+  background-color: gray;
 }
 .subscribed {
   background-color: gray;
