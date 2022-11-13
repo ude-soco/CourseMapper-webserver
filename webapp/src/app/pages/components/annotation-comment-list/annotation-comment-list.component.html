@@ -5,7 +5,11 @@
   ></app-annotation-comment-list-item>
   <div
     class="divider-container"
-    *ngIf="newAnnotations && lastTimeLoggedIn !== '1/1/1970'"
+    *ngIf="
+      newAnnotations &&
+      newAnnotations.length > 0 &&
+      lastTimeLoggedIn !== '1/1/1970'
+    "
   >
     <p-divider class="divider" align="center" type="dashed">
       <span class="p-tag"

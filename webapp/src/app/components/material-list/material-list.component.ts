@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Material } from 'src/app/model/material';
 import { MaterialsService } from 'src/app/services/materials.service';
 
@@ -16,11 +16,19 @@ export class MaterialListComponent implements OnInit {
 
   constructor(
     private materialService: MaterialsService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
     this.materialService.selectedChannel$.subscribe((selectedChannel: any) => {
+      if (!selectedChannel) return;
+      this.router.navigate(['/home'], {
+        queryParams: {
+          courseId: selectedChannel.courseId,
+          channelId: selectedChannel.channelId,
+        },
+      });
       (this.courseId = selectedChannel.courseId),
         (this.channelId = selectedChannel.channelId);
       this.getMaterials(this.courseId, this.channelId);
@@ -29,6 +37,7 @@ export class MaterialListComponent implements OnInit {
       this.highlightMaterials = materials;
     });
     this.route.queryParams.subscribe((params: any) => {
+      if (!params) return;
       this.getMaterials(params.courseId, params.channelId);
     });
   }

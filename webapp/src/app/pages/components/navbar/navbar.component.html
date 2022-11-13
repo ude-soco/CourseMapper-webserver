@@ -61,8 +61,15 @@
     </div>
   </div>
 </div>
-<p-overlayPanel #notificationPanel [dismissable]="true">
-  <app-notification-dashboard></app-notification-dashboard>
+<p-overlayPanel
+  #notificationPanel
+  [dismissable]="true"
+  (onShow)="onShow()"
+  (onHide)="onHide()"
+>
+  <app-notification-dashboard
+    [isPanelOpened]="isPanelOpened"
+  ></app-notification-dashboard>
 </p-overlayPanel>
 <!-- <p-sidebar [(visible)]="visibleSidebar2" position="right" [baseZIndex]="10000">
   <h3>Right Sidebar</h3>

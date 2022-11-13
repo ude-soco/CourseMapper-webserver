@@ -2,15 +2,22 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subject, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { Notification } from '../model/notification-item';
+import {
+  Notification,
+  NotificationType,
+  NotificationTypeFilter,
+} from '../model/notification-item';
 import { HTTPOptions } from '../config/config';
-import { MenuItem } from 'primeng/api';
+import { MenuItem, MessageService } from 'primeng/api';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NotificationServiceService {
-  public filteredType = new Subject<string>();
+  public filteredType = new Subject<{
+    name: string;
+    type: NotificationType;
+  }>();
   filteredType$ = this.filteredType.asObservable();
 
   public isStarClicked = new BehaviorSubject<boolean>(false);
@@ -28,7 +35,7 @@ export class NotificationServiceService {
   public annotationsItems = new BehaviorSubject<Notification[]>([]);
   annotationsItems$ = this.annotationsItems.asObservable();
 
-  public showNumber = new Subject<number>();
+  public showNumber = new Subject<{ value: number }>();
   showNumber$ = this.showNumber.asObservable();
 
   public clickedMarkAllAsRead = new Subject<boolean>();
@@ -68,6 +75,9 @@ export class NotificationServiceService {
   public searchString = new BehaviorSubject<any>(null);
   searchString$ = this.searchString.asObservable();
 
+  public turnOffUser = new BehaviorSubject<string>(null);
+  turnOffUser$ = this.turnOffUser.asObservable();
+
   getAllNotifications() {
     return this.http.get(environment.API_URL + '/notifications');
   }
@@ -92,7 +102,6 @@ export class NotificationServiceService {
       (item) => item.type == 'courseupdates'
     );
     this.courseUpdateItems.next(courseUpdates);
-    // return this.courseUpdateItems;
   }
 
   getCommentsAndMentionedItems() {

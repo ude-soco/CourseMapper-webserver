@@ -54,7 +54,7 @@ export class SidebarComponent implements OnInit {
       this.selectedCourse = course;
       this.courseService.selectCourse(course);
     }
-
+    if (!selectedCourse) return;
     this.courseService.getSubscribedCourseLists().subscribe((res: any) => {
       this.courseService.subscribedCourseLists.next(res);
     });

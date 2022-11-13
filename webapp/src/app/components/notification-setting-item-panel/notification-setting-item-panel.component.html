@@ -6,7 +6,7 @@
         [(ngModel)]="courseUpdateChecked"
         class="toggle-button"
         (onChange)="toggleCourseUpdate($event, 'courseupdates')"
-        [title]="
+        [pTooltip]="
           courseUpdateChecked
             ? 'Turn off notifications'
             : 'Turn on notifications'
@@ -42,7 +42,7 @@
       [(ngModel)]="commentsAndMentionedChecked"
       class="toggle-button"
       (onChange)="toggleReplies($event, 'replies')"
-      [title]="
+      [pTooltip]="
         commentsAndMentionedChecked
           ? 'Turn off notifications'
           : 'Turn on notifications'
@@ -76,7 +76,7 @@
       [(ngModel)]="annotationsChecked"
       class="toggle-button"
       (onChange)="toggleAnnotations($event, 'annotation')"
-      [title]="
+      [pTooltip]="
         annotationsChecked ? 'Turn off notifications' : 'Turn on notifications'
       "
     ></p-inputSwitch>

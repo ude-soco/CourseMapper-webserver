@@ -44,7 +44,6 @@ export class NavbarComponent implements OnInit {
         this.isPanelOpened = false;
       }
     });
-
     this.notificationService.needUpdate$.subscribe(() => {
       console.log(
         'update needed on nave bar for real time update after deployed'
@@ -83,9 +82,20 @@ export class NavbarComponent implements OnInit {
       this.notificationService.isPanelOpened.next(true);
       this.notificationService.selectedTab.next({ id: 'default' });
     } else {
+      this.notificationService.selectedTab.next({ id: 'default' });
+
       notificationPanel.hide(event);
       this.isPanelOpened = false;
       this.notificationService.isPanelOpened.next(false);
     }
+  }
+  onShow() {
+    this.isPanelOpened = true;
+
+    this.notificationService.selectedTab.next({ id: 'default' });
+  }
+  onHide() {
+    this.isPanelOpened = false;
+    this.notificationService.selectedTab.next({ id: 'default' });
   }
 }

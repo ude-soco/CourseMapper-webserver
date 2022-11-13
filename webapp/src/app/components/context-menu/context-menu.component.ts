@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
-import { MenuItem } from 'primeng/api';
+import { MenuItem, MessageService } from 'primeng/api';
 import { Notification } from 'src/app/model/notification-item';
 import { NotificationServiceService } from 'src/app/services/notification-service.service';
 
@@ -40,7 +40,7 @@ export class ContextMenuComponent implements OnInit {
             command: (event) => this.onMarkAsRead(event, this.activeItemId),
           },
           {
-            label: `Turn off from  ${this.activeName} `,
+            label: `Turn off notifications from  ${this.activeName} `,
             icon: 'pi pi-bell',
             command: (event) =>
               this.onTurnOffNotification(event, this.activeUserId),
@@ -141,7 +141,9 @@ export class ContextMenuComponent implements OnInit {
   onTurnOffNotification(event: any, activeUserId: string) {
     this.notificationService
       .turnOffNotification(activeUserId)
-      .subscribe((data) => {});
+      .subscribe((data) => {
+        this.notificationService.turnOffUser.next(this.activeName);
+      });
 
     this.onClick.emit();
   }

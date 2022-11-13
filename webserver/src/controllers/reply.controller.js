@@ -196,6 +196,7 @@ export const newReply = async (req, res) => {
     userId: userId,
     courseId: foundAnnotation.courseId,
     channelId: foundAnnotation.channelId,
+    materialId: foundAnnotation.materialId,
     annotationId: annotationId,
     replyBelongsTo: foundAnnotation.author.userId,
     type: "mentionedandreplied",
@@ -339,6 +340,8 @@ export const deleteReply = async (req, res) => {
     courseId: courseId,
     channelId: foundAnnotation.channelId,
     annotationId: foundReply.annotationId,
+    materialId: foundAnnotation.materialId,
+
     replyBelongsTo: foundAnnotation.author.userId,
     createdAt: Date.now(),
     type: "mentionedandreplied",
@@ -497,6 +500,8 @@ export const editReply = async (req, res) => {
     courseId: courseId,
     channelId: foundReply.channelId,
     annotationId: foundReply.annotationId,
+    materialId: foundReply.materialId,
+
     type: "mentionedandreplied",
     action: "has edited",
     actionObject: "comment",
@@ -643,7 +648,7 @@ export const likeReply = async (req, res) => {
       userId: userId,
       courseId: foundReply.courseId,
       annotationId: foundReply.annotationId,
-
+      materialId: foundReply.materialId,
       channelId: foundReply.channelId,
       type: "mentionedandreplied",
       createdAt: Date.now(),
@@ -791,6 +796,7 @@ export const dislikeReply = async (req, res) => {
       courseId: foundReply.courseId,
       channelId: foundReply.channelId,
       annotationId: foundReply.annotationId,
+      materialId: foundReply.materialId,
       type: "mentionedandreplied",
       action: "has disliked",
       createdAt: Date.now(),

@@ -47,11 +47,33 @@ export const getAllNotifications = async (req, res, next) => {
 
 export const deleteNotification = async (req, res) => {
   const notificationId = req.params.notificationId;
+  const userId = req.userId;
+  let foundUser;
+
+  try {
+    foundUser = await User.findById({
+      _id: ObjectId(userId),
+    });
+    if (!foundUser) {
+      return res.status(404).send({
+        error: `User with id ${userId} doesn't exist`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
   try {
     await Notification.deleteOne({ _id: ObjectId(notificationId) });
   } catch (err) {
     return res.status(500).send({ error: err });
   }
+  // console.log(notificationId, ObjectId(notificationId));
+  // foundUser.notificationLists = foundUser.notificationLists.filter(
+  //   (item) => item !== ObjectId(notificationId)
+  // );
+  // foundUser.save();
+  // console.log("foundUser", foundUser);
   return res.send({
     success: `Notification with id ${notificationId} successfully deleted`,
   });

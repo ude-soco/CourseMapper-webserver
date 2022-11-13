@@ -71,6 +71,7 @@ import { TableModule } from 'primeng/table';
 import { MaterialListComponent } from './components/material-list/material-list.component';
 import { FilterPipe } from './pipes/filter.pipe';
 import { TooltipModule } from 'primeng/tooltip';
+import { Ng2SearchPipeModule } from 'ng2-search-filter';
 
 @NgModule({
   declarations: [
@@ -145,6 +146,7 @@ import { TooltipModule } from 'primeng/tooltip';
     ToastModule,
     RippleModule,
     TableModule,
+    Ng2SearchPipeModule,
     TooltipModule,
   ],
 

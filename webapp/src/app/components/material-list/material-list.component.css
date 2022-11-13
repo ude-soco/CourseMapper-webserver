@@ -15,5 +15,8 @@
   background-color: whitesmoke;
 }
 .highlight {
-  box-shadow: 2px 2px yellow;
+  box-shadow: 2px 2px rgba(3, 105, 161, 255);
+  border: 1px solid rgba(3, 105, 161, 255);
+  font-weight: bold;
+  color: rgba(3, 105, 161, 255);
 }

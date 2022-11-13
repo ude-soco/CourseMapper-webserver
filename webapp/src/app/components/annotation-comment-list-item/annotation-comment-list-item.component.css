@@ -4,6 +4,7 @@
   margin-bottom: 8px;
   width: 600px;
   box-shadow: 2px 2px #c4c4c4;
+  margin-bottom: 2rem;
 }
 
 .content-container {
@@ -66,5 +67,6 @@
 }
 
 .highlight {
-  box-shadow: 2px 2px yellow;
+  box-shadow: 2px 2px rgba(3, 105, 161, 255);
+  border: 1px solid rgba(3, 105, 161, 255);
 }

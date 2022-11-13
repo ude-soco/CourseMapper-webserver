@@ -1,26 +1,8 @@
-export interface NotificationItem {
-  id: string;
-  userName: string;
-  shortName: string;
-  message: NotificationMessage;
-  time: string;
-  read: boolean;
-  isStar: boolean;
-}
-
-export interface NotificationMessage {
-  messageType: string;
-  action: string;
-  courseName: string;
-  topicName: string;
-  channelName: string;
-  message?: string;
-}
-
 export enum NotificationType {
   CourseUpdate = 'courseupdates',
   CommentsAndMentioned = 'mentionedandreplied',
   Annotations = 'annotations',
+  undefined = 'undefined',
 }
 
 export interface NotificationTypeFilter {
@@ -28,7 +10,6 @@ export interface NotificationTypeFilter {
   type: NotificationType;
 }
 export interface NotificationNumberFilter {
-  label: string;
   value: number;
 }
 
@@ -44,6 +25,7 @@ export interface Notification {
   courseId: string;
   channelId: string;
   annotationId: string;
+  materialId: string;
   extraMessage: string;
   replyBelongsTo: string;
   isStar: boolean;

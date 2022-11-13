@@ -33,22 +33,25 @@ export class NotificationFilterPanelComponent implements OnInit {
     ];
     this.notificationNumberFilter = [
       {
-        label: '3',
         value: 3,
       },
       {
-        label: '5',
         value: 5,
       },
       {
-        label: '10',
         value: 10,
       },
       {
-        label: '15',
         value: 15,
       },
     ];
+    this.notificationService.filteredType$.subscribe((filterType) => {
+      this.selectedType = { name: filterType.name, type: filterType.type };
+    });
+    this.notificationService.showNumber$.subscribe((number) => {
+      console.log(this.selectedNumber, number);
+      this.selectedNumber.value = number.value;
+    });
   }
 
   ngOnInit(): void {}
@@ -60,16 +63,19 @@ export class NotificationFilterPanelComponent implements OnInit {
   }
 
   selectType(event: any) {
-    this.notificationService.filteredType.next(event.value.type);
+    this.notificationService.filteredType.next({
+      name: event.value.name,
+      type: event.value.type,
+    });
   }
 
   resetFilter() {
-    this.notificationService.filteredType.next('');
-    this.notificationService.showNumber.next(undefined);
+    this.notificationService.filteredType.next({ name: '', type: undefined });
+    this.notificationService.showNumber.next({ value: undefined });
   }
 
   filterByNumber(e: any) {
-    this.notificationService.showNumber.next(e.value.value);
+    this.notificationService.showNumber.next({ value: e.value.value });
   }
   onBlur(e: any) {}
   onChange(e: any) {

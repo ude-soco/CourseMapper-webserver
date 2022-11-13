@@ -13,7 +13,7 @@ import { MenuItem } from 'primeng/api';
   styleUrls: ['./channelbar.component.css'],
 })
 export class ChannelbarComponent implements OnInit {
-  subscribed!: boolean;
+  subscribed: boolean;
   subscribeLabel!: string;
   isModerator!: boolean;
   activeChannel: string;
@@ -60,6 +60,9 @@ export class ChannelbarComponent implements OnInit {
         });
         this.courseService.selectCourse(foundCourse);
       });
+    });
+    this.courseService.getSubscribedCourseLists().subscribe((res: any) => {
+      this.updateSubscribeButtonLabel(res.courseIdLists);
     });
   }
 

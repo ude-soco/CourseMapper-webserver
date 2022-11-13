@@ -23,7 +23,7 @@ export class NotificationDashboardComponent implements OnInit {
   repliesNews!: string;
   seeMore: boolean;
   @Input() showDefault: boolean;
-  @ViewChild('menu') public menu: HTMLMenuElement;
+  @Input() isPanelOpened: boolean;
 
   constructor(
     private notificationService: NotificationServiceService,
@@ -41,31 +41,34 @@ export class NotificationDashboardComponent implements OnInit {
       },
       {
         label: 'Course updates',
-        id: 'courseupdates',
+        id: NotificationType.CourseUpdate,
 
         command: (event) => this.onTypeSelected(event),
       },
       {
         label: 'Comments & mentioned',
-        id: 'mentionedandreplied',
+        id: NotificationType.CommentsAndMentioned,
         command: (event) => this.onTypeSelected(event),
       },
       {
         label: 'Annotations',
-        id: 'annotations',
+        id: NotificationType.Annotations,
         command: (event) => this.onTypeSelected(event),
       },
     ];
     this.activeItem = this.notificationItems[0];
 
     this.notificationService.selectedTab.subscribe((tab) => {
-      this.activeItem = tab;
+      if (!tab) return;
+      this.activeItem = this.notificationItems[0];
+      // this.activeItem.id = tab;
+
       this.updateItems(tab);
     });
     this.updateItems('default');
 
     this.notificationService.clickedMarkAllAsRead$.subscribe(() => {
-      this.updateItems(this.activeItem?.id);
+      this.updateItems(this.activeItem);
       this.notificationLists.forEach((item) => {
         item.read = true;
       });
@@ -92,7 +95,9 @@ export class NotificationDashboardComponent implements OnInit {
         .length.toString();
 
       this.annotationNews = lists
-        .filter((item: { type: string }) => NotificationType.Annotations)
+        .filter(
+          (item: { type: string }) => item.type == NotificationType.Annotations
+        )
         .length.toString();
     });
 
@@ -104,7 +109,6 @@ export class NotificationDashboardComponent implements OnInit {
   updateItems(type: any) {
     this.notificationService.getAllNotifications().subscribe((data) => {
       this.temp = data;
-      //5.14.3
       switch (type) {
         case 'default':
           this.notificationLists = this.temp.notificationLists;
@@ -184,7 +188,6 @@ export class NotificationDashboardComponent implements OnInit {
               item.type == NotificationType.Annotations
           );
           this.annotationNews = tempAnnotations.length.toString();
-
           if (tempAnnotations.length > 5) {
             this.seeMore = true;
 
@@ -207,7 +210,7 @@ export class NotificationDashboardComponent implements OnInit {
 
   onTypeSelected(event: any) {
     this.notificationType = event.item.id;
-    this.activeItem = this.notificationItems[event.item.id];
+    this.activeItem = this.notificationItems[0];
     this.updateItems(this.notificationType);
     this.notificationService.selectedTab.next({ id: this.notificationType });
   }

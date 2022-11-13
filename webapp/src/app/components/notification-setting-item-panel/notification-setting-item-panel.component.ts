@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { catchError, tap } from 'rxjs';
 import {
-  NotificationItem,
   NotificationType,
   NotificationTypeFilter,
   Notification,
@@ -25,7 +24,7 @@ export class NotificationSettingItemPanelComponent implements OnInit {
   courseUpdateItems: Notification[] = [];
   commentsMentionedItems: Notification[] = [];
   annotationsItems: Notification[] = [];
-  filteredType!: string;
+  filteredType!: NotificationType;
   temp: any;
 
   constructor(private notificationService: NotificationServiceService) {
@@ -66,7 +65,7 @@ export class NotificationSettingItemPanelComponent implements OnInit {
       this.getLists();
     });
     this.notificationService.filteredType$.subscribe((type) => {
-      this.filteredType = type;
+      this.filteredType = type.type;
     });
     this.notificationService.isStarClicked$.subscribe((isStar) => {
       if (isStar) {
@@ -87,8 +86,8 @@ export class NotificationSettingItemPanelComponent implements OnInit {
     this.notificationService.showNumber$.subscribe((number) => {
       this.notificationService.getAllNotifications().subscribe((items) => {
         this.temp = items;
-        this.notificationItems = number
-          ? this.temp.notificationLists.slice(0, number)
+        this.notificationItems = number.value
+          ? this.temp.notificationLists.slice(0, number.value)
           : this.temp.notificationLists;
         this.getFilteredItems(this.notificationItems);
       });

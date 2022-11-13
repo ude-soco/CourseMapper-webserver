@@ -322,10 +322,16 @@ export class TopicDropdownComponent implements OnInit {
   }
 
   handleHighlight(replies: any) {
+    console.log(replies);
     let temp = [];
     replies.forEach((reply) => {
       temp.push(reply.annotationId);
     });
     this.annotationService.highlightAnnotations.next(temp);
+    let highlightMaterials = [];
+    replies.forEach((reply) => {
+      highlightMaterials.push(reply.materialId);
+    });
+    this.materialService.highlightMaterials.next(highlightMaterials);
   }
 }

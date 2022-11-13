@@ -1,6 +1,6 @@
 import { PipeTransform, Pipe } from '@angular/core';
 
-@Pipe({ name: 'filter' })
+@Pipe({ name: 'filter123' })
 export class FilterPipe implements PipeTransform {
   constructor() {}
   transform(notificationItems: any[], filteredString: any) {

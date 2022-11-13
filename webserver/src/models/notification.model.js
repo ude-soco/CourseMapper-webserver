@@ -9,6 +9,7 @@ const Notification = new Schema({
   courseId: { type: String },
   channelId: { type: String },
   annotationId: { type: String },
+  materialId: { type: String },
   replyBelongsTo: { type: String },
   type: { type: String },
   action: { type: String },

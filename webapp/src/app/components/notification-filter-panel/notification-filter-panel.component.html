@@ -31,7 +31,7 @@
       [options]="notificationNumberFilter"
       [(ngModel)]="selectedNumber"
       (onChange)="filterByNumber($event)"
-      optionLabel="label"
+      optionLabel="value"
       placeholder="Order by number"
       styleClass="type-panel"
       autoWidth="false"
@@ -60,7 +60,7 @@
           class="p-inputtext-sm"
           type="text"
           pInputText
-          placeholder="Search by course name"
+          placeholder="Search "
           [(ngModel)]="searchValue"
         />
       </span>
