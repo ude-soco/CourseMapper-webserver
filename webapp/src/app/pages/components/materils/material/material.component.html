@@ -1,10 +1,49 @@
 
-<div class="relative w-72 h-screen bg-gray-100 shadow-lg" *ngIf="selectedChannel._id">
+<div class="relative contain h-screen bg-gray-100 shadow-lg" *ngIf="selectedChannel._id">
     <div class="h-max w-72 m-0 flex flex-col bg-gray-100">
       <div class="flex items-start justify-between py-4 pl-3 bg-gray-200">  
         <p id="{{selectedChannel._id}}"          
            class="flex w-56 text-xl font-semibold" #selectedCourse._id>{{selectedChannel.name}}
         </p>
+
       </div>
     </div>
-  </div>
+
+  
+    <div style="width:80%">     
+        <table>
+            <tr>
+            
+                 <!--   <mat-checkbox #selectAfterAdding> Select tab after adding </mat-checkbox> -->
+  <mat-tab-group [selectedIndex]="selected.value"
+                 (selectedIndexChange)="selected.setValue($event)">
+                 <td>
+    <mat-tab *ngFor="let tab of tabs; let index = index" [label]="tab">
+      Contents for {{tab}} tab
+  
+      <button mat-raised-button
+              class="example-delete-tab-button"
+              [disabled]="tabs.length === 1"
+              (click)="removeTab(index)">
+        Delete Tab
+      </button>
+       
+    </mat-tab>
+</td>
+  </mat-tab-group>
+            
+            <td class="td"> 
+  <button mat-raised-button
+      class="example-add-tab-button"
+        (click)="addTab()" >
+  Add new tab
+</button>
+</td>
+</tr>
+</table>
+
+
+</div>
+
+
+</div>

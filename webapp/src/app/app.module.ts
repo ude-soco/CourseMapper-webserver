@@ -40,7 +40,8 @@ import {
   HttpRequestInterceptor,
 } from './_helpers/http.interceptor';
 import { MaterialComponent } from './pages/components/materils/material/material.component';
-
+import {MatInputModule} from '@angular/material/input';
+import {MatTabsModule} from '@angular/material/tabs';
 registerLocaleData(en);
 
 @NgModule({
@@ -77,6 +78,8 @@ registerLocaleData(en);
     ToastModule,
     RippleModule,
     ConfirmDialogModule,
+    MatInputModule,
+    MatTabsModule
   ],
   providers: [{ provide: NZ_I18N, useValue: en_US }, httpInterceptorProviders],
   bootstrap: [AppComponent],
