@@ -10,11 +10,17 @@
       class="professor-icon user-icon"
       pTooltip="Professor"
     />
-    <i
+    <img
+      *ngIf="!annotation.isAdmin"
+      src="../../../assets/icons/school.svg"
+      class="student-icon"
+      pTooltip="Student"
+    />
+    <!-- <i
       *ngIf="!annotation.isAdmin"
       class="fas fa-graduation-cap user-icon"
       pTooltip="student"
-    ></i>
+    ></i> -->
   </div>
 
   <div class="content-container">

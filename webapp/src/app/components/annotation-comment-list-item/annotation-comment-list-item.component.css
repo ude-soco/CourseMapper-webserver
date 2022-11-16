@@ -76,3 +76,11 @@
   color: rgba(3, 105, 161, 255);
   cursor: pointer;
 }
+
+.student-icon {
+  float: right;
+  color: rgba(3, 105, 161, 255);
+  position: relative;
+  top: -1rem;
+  left: 1rem;
+}
