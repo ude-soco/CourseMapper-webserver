@@ -101,8 +101,14 @@ export class NotificationDashboardComponent implements OnInit {
         .length.toString();
     });
 
-    this.notificationService.needUpdate$.subscribe(() => {
-      this.updateItems('default');
+    this.notificationService.needUpdate$.subscribe((update) => {
+      console.log('update item');
+      if (update) {
+        this.updateItems('default');
+        this.notificationService.getAllNotifications().subscribe((data) => {
+          console.log('data', data);
+        });
+      }
     });
   }
 
@@ -121,6 +127,7 @@ export class NotificationDashboardComponent implements OnInit {
             this.notificationLists = this.temp.notificationLists;
             this.seeMore = false;
           }
+          console.log('lists', this.notificationLists);
           // update the number
           this.courseNews = this.temp.notificationLists
             .filter(

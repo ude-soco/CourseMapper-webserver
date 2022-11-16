@@ -33,7 +33,11 @@
       >There is no new notifications.</span
     >
   </div>
-  <div class="clear" (click)="clear('courseupdates')"><a>Clear all</a></div>
+  <div class="clear" (click)="confirm($event, 'courseupdates')">
+    <p-confirmPopup></p-confirmPopup>
+
+    <a>Clear all</a>
+  </div>
 </div>
 <p-toolbar styleClass="toolbar">
   <div class="tab">
@@ -67,7 +71,11 @@
     >There is no new notifications.</span
   >
 </div>
-<div class="clear" (click)="clear('replies')"><a>Clear all</a></div>
+<div class="clear" (click)="confirm($event, 'replies')">
+  <p-confirmPopup></p-confirmPopup>
+
+  <a>Clear all</a>
+</div>
 
 <p-toolbar styleClass="toolbar">
   <div class="tab">
@@ -101,4 +109,8 @@
     >There is no new notifications.</span
   >
 </div>
-<div class="clear" (click)="clear('annotations')"><a>Clear all</a></div>
+<div class="clear" (click)="confirm($event, 'annotations')">
+  <p-confirmPopup></p-confirmPopup>
+
+  <a>Clear all</a>
+</div>

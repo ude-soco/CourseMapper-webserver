@@ -34,8 +34,19 @@ export class LoginComponent implements OnInit {
     if (this.storageService.isLoggedIn()) {
       this.isLoggedIn = true;
     }
-  }
 
+    this.notificationService.needUpdate$.subscribe(() => {
+      this.getNotifications();
+    });
+  }
+  getNotifications() {
+    this.notificationService.getAllNotifications().subscribe((data) => {
+      this.temp = data;
+      this.notificationService.allNotificationItems.next(
+        this.temp.notificationLists
+      );
+    });
+  }
   onSubmit(): void {
     const { username, password } = this.form;
 
@@ -59,12 +70,7 @@ export class LoginComponent implements OnInit {
 
         localStorage.setItem('loggedInTime', JSON.stringify(loggedTime));
 
-        this.notificationService.getAllNotifications().subscribe((data) => {
-          this.temp = data;
-          this.notificationService.allNotificationItems.next(
-            this.temp.notificationLists
-          );
-        });
+        this.getNotifications();
         this.courseService.getSubscribedCourseLists();
         this.router.navigate(['/home']);
       },

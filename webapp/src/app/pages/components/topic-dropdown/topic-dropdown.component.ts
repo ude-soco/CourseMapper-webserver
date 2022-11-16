@@ -160,6 +160,7 @@ export class TopicDropdownComponent implements OnInit {
     topicButton.hidden = true;
 
     this.topicChannelService.renameTopic(this.selectedTopic, body).subscribe();
+    this.notificationService.needUpdate.next(true);
   }
 
   /**
@@ -218,6 +219,7 @@ export class TopicDropdownComponent implements OnInit {
     this.topicChannelService
       .renameChannel(this.selectedChannel, channelId, body)
       .subscribe();
+    this.notificationService.needUpdate.next(true);
   }
 
   /**

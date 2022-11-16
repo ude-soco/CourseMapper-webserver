@@ -167,7 +167,6 @@ export const newChannel = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-
   for (let i = 0; i < foundUserLists.length; i++) {
     // do not push to the user who made trigger this action
     if (foundUserLists[i]._id == userId) {

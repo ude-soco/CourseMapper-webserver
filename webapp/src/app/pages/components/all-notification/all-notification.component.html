@@ -1,6 +1,23 @@
 <app-courses [hideContent]="true">
   <div class="container">
-    <h2 class="h3">All notifications</h2>
+    <div class="top-container">
+      <h2 class="h3">All notifications</h2>
+      <div
+        class="context-menu-container"
+        (click)="openTopContextMenu($event, op)"
+      >
+        <i
+          class="pi pi-ellipsis-h"
+          style="
+            text-align: center;
+            color: rgba(3, 105, 161, 255);
+            position: relative;
+            margin: auto;
+            justify-content: center;
+          "
+        ></i>
+      </div>
+    </div>
 
     <p-divider class="divider"></p-divider>
 
@@ -16,3 +33,13 @@
     </div>
   </div>
 </app-courses>
+
+<p-overlayPanel #op class="context" id="op">
+  <ng-template pTemplate>
+    <app-context-menu
+      [topLevel]="true"
+      [isSetting]="true"
+      (onClick)="closeMenu(op)"
+    ></app-context-menu>
+  </ng-template>
+</p-overlayPanel>

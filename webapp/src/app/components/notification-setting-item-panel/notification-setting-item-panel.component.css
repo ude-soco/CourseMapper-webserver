@@ -56,3 +56,31 @@ app-notification-box {
   position: relative;
   top: -1rem;
 }
+
+::ng-deep .p-button.p-button-sm {
+  font-size: 0.75rem;
+  /* padding: 0.62475rem 0.875rem; */
+  /* width: 2; */
+  /* height: 35px; */
+  height: 2rem;
+}
+
+::ng-deep.p-button.p-button-text {
+  color: rgba(3, 105, 161, 255);
+}
+::ng-deep .p-button {
+  background: rgba(3, 105, 161, 255);
+}
+::ng-deep .p-button:active {
+  background: rgba(3, 105, 161, 255);
+}
+::ng-deep .p-button:enabled:hover {
+  background: rgba(3, 105, 161, 255);
+}
+::ng-deep .p-button:enabled:focus {
+  background: rgba(3, 105, 161, 255);
+}
+
+::ng-deep .p-button:enabled:active {
+  background: rgba(3, 105, 161, 255);
+}

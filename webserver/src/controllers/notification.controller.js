@@ -68,12 +68,13 @@ export const deleteNotification = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  // console.log(notificationId, ObjectId(notificationId));
-  // foundUser.notificationLists = foundUser.notificationLists.filter(
-  //   (item) => item !== ObjectId(notificationId)
-  // );
-  // foundUser.save();
-  // console.log("foundUser", foundUser);
+
+  let index = foundUser.notificationLists.indexOf(ObjectId(notificationId));
+  if (index != -1) {
+    foundUser.notificationLists.splice(index, 1);
+  }
+  foundUser.save();
+
   return res.send({
     success: `Notification with id ${notificationId} successfully deleted`,
   });
@@ -139,8 +140,16 @@ export const deleteNotificationsByCourseUpdates = async (req, res) => {
   foundUser.notificationLists.forEach((notificationId) => {
     notificationIds.push(notificationId);
   });
-
+  let courseNotifications = [];
+  console.log("notificationIds", notificationIds);
+  let foundNotification;
   for (let i = 0; i < notificationIds.length; i++) {
+    foundNotification = await Notification.findById({
+      _id: ObjectId(notificationIds[i]),
+    });
+
+    courseNotifications.push(foundNotification);
+
     try {
       await Notification.deleteMany({
         _id: notificationIds[i]._id,
@@ -150,6 +159,22 @@ export const deleteNotificationsByCourseUpdates = async (req, res) => {
       return res.status(500).send({ error: err });
     }
   }
+  console.log("course", courseNotifications);
+
+  // let courseNotificationsIds = [];
+  // courseNotifications.forEach((notification) => {
+  //   console.log("single", notification);
+  //   if (notification.type == "courseupdates") {
+  //     courseNotificationsIds.push(notification._id);
+  //   }
+  // });
+
+  // foundUser.notificationLists = foundUser.notificationLists.filter(
+  //   (item) => courseNotificationsIds.indexOf(item) === -1
+  // );
+
+  // foundUser.save();
+  // console.log("foudUser", foundUser.notificationLists);
 
   return res.send(foundUser.notificationLists);
 };

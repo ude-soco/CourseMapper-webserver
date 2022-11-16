@@ -3,14 +3,19 @@
   class="comments-container"
   [class.highlight]="highlightAnnotations.includes(annotation._id)"
 >
-  <i
-    [ngClass]="
-      annotation.isAdmin
-        ? 'fas fa-graduation-cap user-icon'
-        : 'pi pi-user user-icon user-icon'
-    "
-    [pTooltip]="annotation?.isAdmin ? 'professor' : 'user'"
-  ></i>
+  <div class="icon-container '">
+    <img
+      *ngIf="annotation.isAdmin"
+      src="../../../assets/icons/professor.svg"
+      class="professor-icon user-icon"
+      pTooltip="Professor"
+    />
+    <i
+      *ngIf="!annotation.isAdmin"
+      class="fas fa-graduation-cap user-icon"
+      pTooltip="student"
+    ></i>
+  </div>
 
   <div class="content-container">
     <div class="avatar">
@@ -29,7 +34,16 @@
     <div class="comment-box">
       <div class="comment-info">
         <span class="author-name"> {{ annotation.author.name }}</span>
-
+        <i
+          class="pi pi-bell"
+          pTooltip="Turn off notifications from {{ annotation.author.name }}"
+          (click)="
+            turnOffNotification(
+              annotation.author.userId,
+              annotation.author.name
+            )
+          "
+        ></i>
         <span class="time">{{ annotation?.createdAt | customDate }}</span>
       </div>
 

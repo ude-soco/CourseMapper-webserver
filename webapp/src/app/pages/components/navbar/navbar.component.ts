@@ -28,11 +28,7 @@ export class NavbarComponent implements OnInit {
     private router: Router,
     private notificationService: NotificationServiceService
   ) {
-    this.notificationService.getAllNotifications().subscribe((items) => {
-      this.temp = items;
-      this.newsAmount = this.temp.notificationLists.length;
-    });
-
+    this.getNotifications();
     this.notificationService.allNotificationItems$.subscribe((data) => {
       if (!data) this.newsAmount = 0;
       this.newsAmount = data.length;
@@ -45,12 +41,20 @@ export class NavbarComponent implements OnInit {
       }
     });
     this.notificationService.needUpdate$.subscribe(() => {
+      this.getNotifications();
+
       console.log(
         'update needed on nave bar for real time update after deployed'
       );
     });
 
     this.isLoggedIn = storageService.loggedIn;
+  }
+  getNotifications() {
+    this.notificationService.getAllNotifications().subscribe((items) => {
+      this.temp = items;
+      this.newsAmount = this.temp.notificationLists.length;
+    });
   }
 
   ngOnInit(): void {}

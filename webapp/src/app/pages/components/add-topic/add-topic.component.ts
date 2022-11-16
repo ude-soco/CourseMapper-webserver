@@ -6,12 +6,13 @@ import { TopicImp } from 'src/app/models/TopicImp';
 import { CourseService } from 'src/app/services/course.service';
 import { Course } from 'src/app/models/Course';
 import { MessageService } from 'primeng/api';
+import { NotificationServiceService } from 'src/app/services/notification-service.service';
 
 @Component({
   selector: 'app-add-topic',
   templateUrl: './add-topic.component.html',
   styleUrls: ['./add-topic.component.css'],
-  providers: [MessageService]
+  providers: [MessageService],
 })
 export class AddTopicComponent implements OnInit {
   @Input() displayAddTopicDialogue: boolean = false;
@@ -19,45 +20,64 @@ export class AddTopicComponent implements OnInit {
 
   createTopicForm: FormGroup;
 
-
-  constructor( private topicChannelService: TopicChannelService, private courseService: CourseService, private messageService: MessageService ) {  }
+  constructor(
+    private topicChannelService: TopicChannelService,
+    private courseService: CourseService,
+    private notificationService: NotificationServiceService,
+    private messageService: MessageService
+  ) {}
 
   ngOnInit(): void {
     this.createTopicForm = new FormGroup({
-      name: new FormControl(null, Validators.required)
-  });
+      name: new FormControl(null, Validators.required),
+    });
   }
 
-  toggleAddTopicDialogue(){
+  toggleAddTopicDialogue() {
     this.displayAddTopicDialogue = !this.displayAddTopicDialogue;
     this.onCloseAddTopicDialogue.emit(this.displayAddTopicDialogue);
     this.deleteLocalData();
   }
 
-  deleteLocalData(){
+  deleteLocalData() {
     this.ngOnInit();
   }
 
-  onSubmit(){
+  onSubmit() {
     if (this.createTopicForm.valid) {
-      const selectedCourse : Course = this.courseService.getSelectedCourse();
-      const newTopic: Topic = new TopicImp(this.createTopicForm.value.name, '', selectedCourse._id, []);
-      this.topicChannelService.addTopic(newTopic, selectedCourse).subscribe(res => {
-        if ('success' in res) {
-          this.toggleAddTopicDialogue();
-          this.showInfo(res.success);
-        }else {
-          this.showError(res.errorMsg);
-        }
-      });
+      const selectedCourse: Course = this.courseService.getSelectedCourse();
+      const newTopic: Topic = new TopicImp(
+        this.createTopicForm.value.name,
+        '',
+        selectedCourse._id,
+        []
+      );
+      this.topicChannelService
+        .addTopic(newTopic, selectedCourse)
+        .subscribe((res) => {
+          if ('success' in res) {
+            this.toggleAddTopicDialogue();
+            this.showInfo(res.success);
+            this.notificationService.needUpdate.next(true);
+          } else {
+            this.showError(res.errorMsg);
+          }
+        });
     }
   }
 
   showInfo(msg) {
-    this.messageService.add({severity:'info', summary: 'Success', detail: msg});
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Success',
+      detail: msg,
+    });
   }
   showError(msg) {
-    this.messageService.add({severity:'error', summary: 'Error', detail: msg});
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: msg,
+    });
   }
-
 }

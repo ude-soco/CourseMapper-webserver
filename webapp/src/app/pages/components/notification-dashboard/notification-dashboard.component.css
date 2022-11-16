@@ -35,7 +35,6 @@
 .right-control {
   display: flex;
   align-items: center;
-  margin-right: 1rem;
   justify-content: end;
   width: 100%;
 }

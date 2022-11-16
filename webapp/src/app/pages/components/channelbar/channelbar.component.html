@@ -23,34 +23,46 @@
         (click)="menu.toggle($event)"
       ></app-iconbutton>
     </div>
-    <div class="subscribe">
+    <div
+      class="subscribe"
+      (click)="subscribeToCourse($event, selectedCourse._id)"
+    >
       <button
         *ngIf="!isModerator"
         pButton
         formControlName="subscribed"
         type="button"
-        label="subscribed"
+        [label]="
+          subscribed
+            ? 'Notifications are turned on'
+            : 'Notifications are turned off'
+        "
         ngClass="subscribed"
         class="subscribe-button"
-      ></button>
-      <div class="img-container">
-        <img
-          *ngIf="!subscribed"
-          (click)="subscribeToCourse($event, selectedCourse._id)"
-          src="../../../assets/icons/notifications_deactive.svg"
-          class="notification-active"
-          pTooltip="Turn on notifications from {{ selectedCourse.name }}"
-        />
-      </div>
-      <div class="img-container">
-        <img
-          *ngIf="subscribed"
-          src="../../../assets/icons/notifications_active.svg"
-          class="notification-active"
-          (click)="subscribeToCourse($event, selectedCourse._id)"
-          pTooltip="Turn off notifications from {{ selectedCourse.name }}"
-        />
-      </div>
+      >
+        <div class="internal-content">
+          <div class="img-container">
+            <img
+              *ngIf="!subscribed"
+              src="../../../assets/icons/notifications_deactive.svg"
+              class="notification-active"
+              pTooltip="Click to turn on notifications from {{
+                selectedCourse.name
+              }}"
+            />
+          </div>
+          <div class="img-container">
+            <img
+              *ngIf="subscribed"
+              src="../../../assets/icons/notifications_active.svg"
+              class="notification-active"
+              pTooltip="Click to turn off notifications from {{
+                selectedCourse.name
+              }}"
+            />
+          </div>
+        </div>
+      </button>
     </div>
     <app-topic-dropdown [activeChannel]="activeChannel"></app-topic-dropdown>
 

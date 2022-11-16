@@ -1,9 +1,8 @@
 .subscribe {
   margin-top: 1rem;
   display: flex;
-  margin-left: 5rem;
   margin-top: 1rem;
-  justify-content: start;
+  justify-content: center;
 }
 .subscribe-label,
 .subscribed-label {
@@ -27,21 +26,21 @@
 
 .subscribe-button:hover,
 :focus {
-  background-color: gray;
+  background-color: #c4c4c4;
 }
 
 .subscribe-button:enabled :focus {
-  background-color: gray;
+  background-color: #c4c4c4;
 }
 
 :host::ng-deep .p-button:enabled:focus {
   outline: 0 none;
   outline-offset: 0px;
   box-shadow: none;
-  background-color: gray;
+  background-color: #c4c4c4;
 }
 .subscribed {
-  background-color: gray;
+  background-color: #c4c4c4;
 }
 .moveToRight {
   margin-left: 20px;
@@ -64,4 +63,13 @@
 .notification-active {
   transform: scale(0.7);
   margin-left: 0.3rem;
+  cursor: pointer;
+}
+
+::ng-deep .p-button-label {
+  color: black;
+  font-size: 0.8rem;
+}
+.internal-content {
+  margin-left: -1rem;
 }

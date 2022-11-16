@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { catchError, tap } from 'rxjs';
 import {
   NotificationType,
@@ -11,6 +12,7 @@ import { NotificationServiceService } from 'src/app/services/notification-servic
   selector: 'app-notification-setting-item-panel',
   templateUrl: './notification-setting-item-panel.component.html',
   styleUrls: ['./notification-setting-item-panel.component.css'],
+  providers: [ConfirmationService, MessageService],
 })
 export class NotificationSettingItemPanelComponent implements OnInit {
   @Input() notificationItems: Notification[] = [];
@@ -27,7 +29,10 @@ export class NotificationSettingItemPanelComponent implements OnInit {
   filteredType!: NotificationType;
   temp: any;
 
-  constructor(private notificationService: NotificationServiceService) {
+  constructor(
+    private notificationService: NotificationServiceService,
+    private confirmationService: ConfirmationService
+  ) {
     this.notificationTypeFilter = [
       { name: 'Course updates', type: NotificationType.CourseUpdate },
       {
@@ -152,5 +157,18 @@ export class NotificationSettingItemPanelComponent implements OnInit {
   }
   toggleAnnotations(event: any, type: string) {
     this.notificationService.toggleAnnotation().subscribe((data) => {});
+  }
+
+  confirm(event: Event, type: string) {
+    console.log(type, event);
+
+    this.confirmationService.confirm({
+      message: 'Are you sure to remove all?',
+      target: event.target,
+      accept: () => {
+        this.clear(type);
+        //Actual logic to perform a confirmation
+      },
+    });
   }
 }

@@ -72,6 +72,9 @@ import { MaterialListComponent } from './components/material-list/material-list.
 import { FilterPipe } from './pipes/filter.pipe';
 import { TooltipModule } from 'primeng/tooltip';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ConfirmationService } from 'primeng/api';
+import { ConfirmPopupModule } from 'primeng/confirmpopup';
 
 @NgModule({
   declarations: [
@@ -148,6 +151,8 @@ import { Ng2SearchPipeModule } from 'ng2-search-filter';
     TableModule,
     Ng2SearchPipeModule,
     TooltipModule,
+    ConfirmDialogModule,
+    ConfirmPopupModule,
   ],
 
   providers: [{ provide: NZ_I18N, useValue: en_US }, httpInterceptorProviders],

@@ -207,7 +207,7 @@ export const newAnnotation = async (req, res) => {
     action: "has annotated",
     actionObject: "",
     createdAt: Date.now(),
-    extraMessage: `${foundMaterial.name}material in ${foundCourse.name} course`,
+    extraMessage: `${foundMaterial.name} material in ${foundCourse.name} course`,
   });
   let notificationSaved;
 
