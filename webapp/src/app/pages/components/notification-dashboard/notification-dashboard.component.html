@@ -32,9 +32,7 @@
   </div>
 
   <div class="notification-container">
-    <span
-      class="empty-content"
-      *ngIf="!notificationLists && notificationLists.length == 0"
+    <span class="empty-content" *ngIf="notificationLists.length == 0"
       >There is no new notifications.</span
     >
     <app-notification-box

@@ -60,8 +60,9 @@
   </div>
 
   <div class="likes-container">
-    <i class="pi pi-thumbs-up likes"></i>
-    <span> {{ annotation?.likes.length }}</span>
+    <img src="../../../assets/icons/thumsup.svg" class="likes" />
+    <!-- <i class="pi pi-thumbs-up likes"></i> -->
+    <span class="number-likes"> {{ annotation?.likes.length }}</span>
   </div>
   <div class="info-bar">
     <span class="status" [class.closed]="annotation.isClosed">{{

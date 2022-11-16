@@ -31,13 +31,11 @@
   margin-bottom: 1rem;
   right: -0.7rem;
   position: relative;
+  display: flex;
 }
 .user-icon {
   float: right;
   color: rgba(3, 105, 161, 255);
-}
-.likes {
-  margin-right: 0.1rem;
 }
 
 .see-discussion {
@@ -83,4 +81,10 @@
   position: relative;
   top: -1rem;
   left: 1rem;
+}
+
+.number-likes {
+  display: flex;
+  align-items: center;
+  margin-left: -0.5rem;
 }
