@@ -125,7 +125,7 @@ export class NotificationBoxComponent implements OnInit {
       in: 'in',
       course: 'course',
       topic: 'topic',
-      channel: 'channel',
+      channel: 'channel ',
       material: 'material',
     };
     sentence = sentence.replace(

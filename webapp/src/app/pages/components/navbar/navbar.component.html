@@ -9,7 +9,7 @@
         class="pi pi-bell mr-6 mt-2 p-text-secondary"
         pBadge
         style="font-size: 2rem; color: rgba(3, 105, 161, 255)"
-        [value]="newsAmount"
+        [value]="showNews ? newsAmount : ''"
         (click)="toggleNotificationPanel($event, notificationPanel)"
         *ngIf="this.storageService.loggedIn"
         pTooltip="Notifications"
@@ -52,7 +52,7 @@
         ></button>
 
         <p-avatar
-          label="P"
+          label="BD"
           shape="circle"
           size="large"
           [style]="{ 'background-color': '#EA580C', color: '#ffffff' }"

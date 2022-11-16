@@ -102,12 +102,9 @@ export class NotificationDashboardComponent implements OnInit {
     });
 
     this.notificationService.needUpdate$.subscribe((update) => {
-      console.log('update item');
       if (update) {
         this.updateItems('default');
-        this.notificationService.getAllNotifications().subscribe((data) => {
-          console.log('data', data);
-        });
+        this.notificationService.getAllNotifications().subscribe((data) => {});
       }
     });
   }
@@ -143,7 +140,7 @@ export class NotificationDashboardComponent implements OnInit {
             )
             .length.toString();
 
-          this.annotationNews = this.notificationLists
+          this.annotationNews = this.temp.notificationLists
             .filter(
               (item: { type: string }) =>
                 item.type == NotificationType.Annotations
@@ -198,7 +195,8 @@ export class NotificationDashboardComponent implements OnInit {
           if (tempAnnotations.length > 5) {
             this.seeMore = true;
 
-            this.notificationLists = this.limitNumberOfNotifications(temp);
+            this.notificationLists =
+              this.limitNumberOfNotifications(tempAnnotations);
           } else {
             this.notificationLists = tempAnnotations;
             this.seeMore = false;

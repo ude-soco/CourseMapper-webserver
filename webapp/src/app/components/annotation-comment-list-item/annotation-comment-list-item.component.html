@@ -42,7 +42,9 @@
         <span class="author-name"> {{ annotation.author.name }}</span>
         <i
           class="pi pi-bell"
-          pTooltip="Turn off notifications from {{ annotation.author.name }}"
+          pTooltip="Click to turn off notifications from {{
+            annotation.author.name
+          }}"
           (click)="
             turnOffNotification(
               annotation.author.userId,

@@ -20,6 +20,7 @@ export class NavbarComponent implements OnInit {
   username?: string;
   temp: any;
   isPanelOpened = false;
+  showNews: boolean;
 
   @ViewChild(' notificationPanel') notificationPanel: any;
   constructor(
@@ -30,8 +31,14 @@ export class NavbarComponent implements OnInit {
   ) {
     this.getNotifications();
     this.notificationService.allNotificationItems$.subscribe((data) => {
-      if (!data) this.newsAmount = 0;
-      this.newsAmount = data.length;
+      if (!data) {
+        // this.newsAmount = 0;
+        this.showNews = false;
+      } else {
+        this.showNews = true;
+        this.newsAmount = data.length;
+        console.log(this.newsAmount, 'newsamount', 'data', data);
+      }
     });
 
     this.notificationService.isPanelOpened$.subscribe((isOpened) => {
@@ -52,8 +59,11 @@ export class NavbarComponent implements OnInit {
   }
   getNotifications() {
     this.notificationService.getAllNotifications().subscribe((items) => {
-      this.temp = items;
-      this.newsAmount = this.temp.notificationLists.length;
+      if (items) {
+        this.temp = items;
+        this.newsAmount = this.temp.notificationLists.length;
+        this.showNews = true;
+      }
     });
   }
 
@@ -85,6 +95,8 @@ export class NavbarComponent implements OnInit {
       this.isPanelOpened = true;
       this.notificationService.isPanelOpened.next(true);
       this.notificationService.selectedTab.next({ id: 'default' });
+      this.getNotifications();
+      console.log('open dashboard');
     } else {
       this.notificationService.selectedTab.next({ id: 'default' });
 
