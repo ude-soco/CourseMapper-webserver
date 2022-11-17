@@ -1,3 +1,5 @@
+import { Material } from "./Material";
+
 export interface Channel {
   _id: string;
   name: string;
@@ -5,4 +7,5 @@ export interface Channel {
   topicId: string;
   courseId: string;
   notification?: number;
+  materials?: Material[];
 }

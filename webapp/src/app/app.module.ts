@@ -42,6 +42,9 @@ import {
 import { MaterialComponent } from './pages/components/materils/material/material.component';
 import {MatInputModule} from '@angular/material/input';
 import {MatTabsModule} from '@angular/material/tabs';
+import { AddMaterialComponent } from './pages/components/materils/add-material/add-material.component';
+
+
 registerLocaleData(en);
 
 @NgModule({
@@ -62,6 +65,9 @@ registerLocaleData(en);
     LoginComponent,
     HomeComponent,
     MaterialComponent,
+    AddMaterialComponent,
+
+  
   ],
   imports: [
     BrowserModule,

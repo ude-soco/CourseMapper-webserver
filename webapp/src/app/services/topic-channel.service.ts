@@ -20,6 +20,7 @@ export class TopicChannelService {
   private user = this.storageService.getUser();
   onSelectChannel = new EventEmitter<Channel>();
   private selectedChannel: Channel;
+  private channels: Channel[] = [];
 
 
 
@@ -264,6 +265,14 @@ export class TopicChannelService {
     this.selectedChannel = channel;    
     //2
     this.onSelectChannel.emit(channel);
+  }
+
+
+
+  getChannelDetails(channel): Observable<Channel[]> {
+    return this.http.get<Channel[]>(`${this.API_URL}/courses/${channel.courseId}/channels/${channel._id}`).pipe(tap( channels => {
+      this.channels = channels;     
+    }));
   }
 
 }

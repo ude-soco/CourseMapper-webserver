@@ -1,0 +1,34 @@
+<div class="container">
+    <button pButton type="button" label="Add a pdf" (Click)="materialType='lecture'"> </button>
+    <button pButton type="button" label="Add a video" (Click)="materialType='video'"  ></button>
+
+
+</div>
+
+    <div nz-col nzSpan="24"  style="text-align: center;margin-bottom: 1.75rem;margin-left: 2rem">
+      <form  [formGroup]="validateForm" (ngSubmit)="submitForm()">
+        <div nz-row>
+          <div  nzSpan="12">
+            <div>
+                <input nz-input formControlName="url" placeholder="Enter a video link" />
+                <input nz-input formControlName="materialName" placeholder="Enter a Name " />
+                <textarea formControlName="description" nz-input rows="2" placeholder="Enter a description"></textarea>
+            <!--    <span class="custom-file-label" for="customFile"><span style="color: red;" *ngIf="materialType == 'lecture'">* </span>Select <span *ngIf="materialType == 'lecture'">Pdf</span><span *ngIf="materialType == 'video'">Video</span> File : </span>-->
+            <button nz-button nzType="primary" [disabled]="!validateForm.valid">Submit</button>
+            </div>
+          </div>
+          <div nzSpan="12" style="margin-left: 1rem;">
+<!-- 
+            <div class="custom-file">
+              <input type="file" class="custom-file-input" id="customFile" name="uploadedFile"
+                (change)="onFileSelect($event)" #UploadFileInput hidden/>
+                <label for="customFile">Choose file</label>
+                <p style="margin-left: 1rem; width: 13em; word-wrap: break-word; "  id="file-chosen">No file chosen</p>
+            </div>
+-->
+          </div>
+
+
+        </div>
+      </form>
+    </div>

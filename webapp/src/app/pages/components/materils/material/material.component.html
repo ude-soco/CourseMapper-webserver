@@ -9,14 +9,14 @@
       </div>
     </div>
 
-  
+ <!-- 
     <div style="width:80%">     
         <table>
             <tr>
             
-                 <!--   <mat-checkbox #selectAfterAdding> Select tab after adding </mat-checkbox> -->
-  <mat-tab-group [selectedIndex]="selected.value"
-                 (selectedIndexChange)="selected.setValue($event)">
+                 <mat-checkbox #selectAfterAdding> Select tab after adding </mat-checkbox> -->
+                  <!-- 
+  <mat-tab-group [selectedIndex]="selected.value" (selectedIndexChange)="selected.setValue($event)">
                  <td>
     <mat-tab *ngFor="let tab of tabs; let index = index" [label]="tab">
       Contents for {{tab}} tab
@@ -43,6 +43,36 @@
 </table>
 
 
+</div> -->
+ <!-- <p-tabView>
+  <p-tabPanel [header]="tab" *ngFor="let tab of tabs; let i = index" [selected]="i == 0" >
+    Contents for {{tab}} tab
+  </p-tabPanel>
+  <p-tabPanel header="+" (click)="addTab()">
+    
+    Contents for Addin tab
+  </p-tabPanel>
+</p-tabView>-->
+ <p-tabView [activeIndex]="index"  (onChange)="onTabChange($event)" *ngIf="selectedChannel">
+  <ng-container *ngIf="this.materials.length > 0">
+  <p-tabPanel *ngFor="let material of materials; let i = index" [selected]="i == 0" [header]="material.name" [closable]="true"  >
+      {{material.url}}
+  </p-tabPanel>
+</ng-container>
+<ng-container *ngIf="!(this.materials.length > 0)">
+  <p-tabPanel  header="New material" [closable]="true">
+    Content 1
+</p-tabPanel>
+</ng-container>
+<ng-container>
+  <p-tabPanel  header="+" (click)="showNewMaterialModal()">
+   <app-add-material> </app-add-material>
+</p-tabPanel>
+</ng-container>
+</p-tabView>
+<div *ngIf="selectedChannel && !(this.materials.length> 0)">
+  <h3>This channel does not contain any course material at the moment. Please click on the plus button to add new
+      material</h3>
 </div>
 
 
