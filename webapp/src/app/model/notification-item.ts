@@ -10,7 +10,7 @@ export interface NotificationTypeFilter {
   type: NotificationType;
 }
 export interface NotificationNumberFilter {
-  value: number;
+  value: number | string;
 }
 
 export interface NotificationData {

@@ -137,4 +137,17 @@ export class NotificationBoxComponent implements OnInit {
 
     return this.sanitizer.bypassSecurityTrustHtml(sentence);
   }
+  replaceActionObject(sentence: string) {
+    const map = {
+      annotated: 'annotated',
+    };
+    if (sentence == 'has annotated') {
+      sentence = sentence.replace(/\b(?:annotated)\b/gi, function (matched) {
+        return `<span style="margin-right: -4px">${map[matched]}</span>`;
+      });
+    } else {
+      sentence = sentence;
+    }
+    return this.sanitizer.bypassSecurityTrustHtml(sentence);
+  }
 }

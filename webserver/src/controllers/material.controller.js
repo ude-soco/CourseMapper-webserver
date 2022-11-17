@@ -176,7 +176,7 @@ export const newMaterial = async (req, res) => {
     actionObject: "material",
     name: materialName,
     createdAt: Date.now(),
-    extraMessage: `${foundChannel.name}channel in ${foundCourse.name} course`,
+    extraMessage: `${foundChannel.name} channel in ${foundCourse.name} course`,
   });
   let notificationSaved;
 

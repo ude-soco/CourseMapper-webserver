@@ -21,7 +21,10 @@ export class NotificationFilterPanelComponent implements OnInit {
   searchValue: string;
   notificationNumberFilter: NotificationNumberFilter[] = [];
   selectedNumber: NotificationNumberFilter;
-  constructor(private notificationService: NotificationServiceService) {
+  placeholder = 'Order by number';
+  constructor(private notificationService: NotificationServiceService) {}
+
+  ngOnInit(): void {
     this.starred = true;
     this.notificationTypeFilter = [
       { name: 'Course updates', type: NotificationType.CourseUpdate },
@@ -50,11 +53,15 @@ export class NotificationFilterPanelComponent implements OnInit {
     });
     this.notificationService.showNumber$.subscribe((number) => {
       console.log(this.selectedNumber, number);
-      this.selectedNumber.value = number.value;
+      if (number.value == undefined) {
+        this.placeholder = 'Order by number';
+        console.log('it is undefined');
+      } else {
+        this.selectedNumber.value = number.value;
+      }
     });
+    console.log('number', this.selectedNumber);
   }
-
-  ngOnInit(): void {}
 
   viewStar() {
     this.starred = !this.starred;

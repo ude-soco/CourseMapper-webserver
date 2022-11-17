@@ -25,10 +25,16 @@
           ></p-avatar>
           <div class="notification-message-container">
             <span class="userName">{{ notificationItem.userName }}</span>
-            <span class="action">{{ notificationItem.action }}</span>
-            <span class="action-object">{{
+            <!-- <span class="action">{{ notificationItem.action }}</span> -->
+            <span
+              class="action"
+              [innerHTML]="replaceActionObject(notificationItem.action)"
+            ></span>
+
+            <span class="action-object" *ngIf="notificationItem.actionObject">{{
               notificationItem.actionObject
             }}</span>
+
             <span class="msg-location">{{ notificationItem.name }}</span>
             <span class="in">in</span>
             <span

@@ -205,7 +205,7 @@ export const newAnnotation = async (req, res) => {
     channelId: foundMaterial.channelId,
     type: "annotations",
     action: "has annotated",
-    actionObject: "",
+    // actionObject: "",
     createdAt: Date.now(),
     extraMessage: `${foundMaterial.name} material in ${foundCourse.name} course`,
   });
@@ -370,7 +370,7 @@ export const deleteAnnotation = async (req, res) => {
     channelId: foundMaterial.channelId,
     type: "annotations",
     action: "has deleted",
-    actionObject: "",
+    // actionObject: "",
     createdAt: Date.now(),
     extraMessage: `${foundCourse.name} course`,
   });
@@ -547,7 +547,7 @@ export const editAnnotation = async (req, res) => {
     createdAt: Date.now(),
     type: "annotations",
     action: "has edited",
-    actionObject: "",
+    // actionObject: "",
     extraMessage: `${foundCourse.name} course`,
   });
   let notificationSaved;
@@ -691,7 +691,7 @@ export const likeAnnotation = async (req, res) => {
       channelId: foundAnnotation.channelId,
       type: "annotations",
       action: "has liked",
-      actionObject: "",
+      // actionObject: "",
       createdAt: Date.now(),
       extraMessage: `${foundMaterial.name} material`,
     });
@@ -837,7 +837,7 @@ export const dislikeAnnotation = async (req, res) => {
       channelId: foundAnnotation.channelId,
       type: "annotations",
       action: "has disliked",
-      actionObject: "",
+      // actionObject: "",
       createdAt: Date.now(),
       extraMessage: `${foundMaterial.name} material`,
     });

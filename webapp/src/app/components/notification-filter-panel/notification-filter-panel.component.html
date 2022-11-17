@@ -32,7 +32,7 @@
       [(ngModel)]="selectedNumber"
       (onChange)="filterByNumber($event)"
       optionLabel="value"
-      placeholder="Order by number"
+      [placeholder]="placeholder"
       styleClass="type-panel"
       autoWidth="false"
       [style]="{ width: '100%' }"
