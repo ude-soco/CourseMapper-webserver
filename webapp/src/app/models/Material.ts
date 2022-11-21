@@ -1,4 +1,4 @@
-export type MaterialType = "lecture" | "handson" | "video" | "draft";
+export type MaterialType = "pdf" | "video";
 
 
 export interface Material {

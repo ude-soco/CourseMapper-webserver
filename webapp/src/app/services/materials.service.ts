@@ -2,7 +2,7 @@ import { EventEmitter, Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { Material, CreateMaterial } from '../models/Material';
 import { HttpClient } from '@angular/common/http';
-import { catchError, of, tap } from 'rxjs';
+import { catchError, Observable, of, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +24,7 @@ export class MaterilasService {
     this.onSelectMaterial.emit(material);
   }
 
-  addMaterial(formData: any, material: CreateMaterial) : any {
+  addMaterial(material: CreateMaterial) : any {
     return this.http.post<any>(`${this.API_URL}/courses/${material.courseID}/channels/${material.channelID}/material`, {type:material.type, url:material.url,name: material.name,  description: material.description})
     .pipe(
       catchError(( err) => {
@@ -36,5 +36,12 @@ export class MaterilasService {
     }),
       tap(res => console.log(res)));
   }
+  
+  uploadFile(formData:any, materialType: string = 'pdf'):any{
+    if (materialType == "video") {
+      return this.http.post<any>(`${this.API_URL}upload/video`, { formData }).pipe(tap(res => console.log(res)));
+    }
 
+    return this.http.post<any>(`${this.API_URL}/upload/pdf`, { formData }).pipe(tap(res => console.log(res)));
+  }
 }

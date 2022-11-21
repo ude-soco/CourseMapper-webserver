@@ -112,5 +112,9 @@ this.tabs.push('New');
 showNewMaterialModal() {
   this.isNewMaterialModalVisible = true;
 }
+closeNewMaterialModal(){
+  this.isNewMaterialModalVisible = false;
+  this.materialCreated.emit();
+}
 
 }
