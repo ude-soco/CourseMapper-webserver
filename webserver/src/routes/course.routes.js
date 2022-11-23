@@ -81,4 +81,10 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getIndicators
   );
+
+  app.put(
+    '/courses/:courseId/indicator/:indicatorId/:width/:height', 
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.editIndicator
+  );
 };

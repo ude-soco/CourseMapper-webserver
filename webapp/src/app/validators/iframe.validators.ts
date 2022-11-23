@@ -21,6 +21,8 @@ export function iframeValidator(): ValidatorFn {
       if (errors.length === 0 && iframeCount === 1 && !freeText) {
         valid = true;
       }
+    } else {
+      valid = true;
     }
 
     return !valid ? { invalidInput: { value: control.value } } : null;

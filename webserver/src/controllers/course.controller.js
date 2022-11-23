@@ -45,7 +45,7 @@ export const getAllCourses = async (req, res) => {
  */
 export const getMyCourses = async (req, res) => {
   let user;
-  let userId = req.userId;
+  let userId = req.userId; //"63387f529dd66f86548d3537"
   let results = [];
   try {
     user = await User.findOne({ _id: ObjectId(userId) })
@@ -102,7 +102,7 @@ export const getMyCourses = async (req, res) => {
  */
 export const getCourse = async (req, res, next) => {
   const courseId = req.params.courseId;
-  const userId = req.userId;
+  const userId = req.userId; //"63387f529dd66f86548d3537"
   console.log("getCourse");
 
   let foundUser;
@@ -665,5 +665,49 @@ export const getIndicators = async (req, res, next) => {
     return res.status(500).send({ error: err });
   }
 
-  return res.status(200).send(foundCourse.indicators);
+  const response = foundCourse.indicators? foundCourse.indicators : [];
+
+  return res.status(200).send(response);
+};
+
+export const editIndicator = async (req, res, next) => {
+  const courseId = req.params.courseId;
+  const indicatorId = req.params.indicatorId;
+  const width = req.params.width;
+  const height = req.params.height;
+
+  let foundCourse;
+  try {
+    foundCourse = await Course.findOne({ "indicators._id": indicatorId });
+    if (!foundCourse) {
+      return res.status(404).send({
+        error: `indicator with id ${indicatorId} doesn't exist!`,
+      });
+    }
+
+    if (foundCourse._id.toString() !== courseId) {
+      return res.status(404).send({
+        error: `indicator with id ${indicatorId} doesn't belong to course with id ${courseId}!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  foundCourse.indicators.forEach(indicator => {
+    if (indicator._id.toString() === indicatorId.toString()){
+      indicator.width = width;
+      indicator.height = height;
+    }
+  });
+
+  try {
+    foundCourse.save();
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  return res.status(200).send({
+    success: `indicator with id = '${indicatorId}' has been updated successfully!`,
+  });
 };

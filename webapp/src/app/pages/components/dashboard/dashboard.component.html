@@ -13,12 +13,13 @@
               rows="1"
               pInputTextarea
               formControlName="indicatorIframe"
+              #iframeTextarea
             ></textarea>
             <label for="float-input">paste the iframe</label>
             <small
               *ngIf="indicatorForm.get('indicatorIframe').invalid"
               class="p-error block"
-              >Invalid Input</small
+              >Invalid Input: Please check your iframe code.</small
             >
           </span>
         </div>
@@ -30,6 +31,7 @@
             (click)="onAddIndicator()"
             label="Add to Dashboard"
             pTooltip="Add new Indicator"
+            [disabled] = "indicatorForm.get('indicatorIframe').invalid  || iframeTextarea.value.length <= 0"
           ></button>
         </div>
       </div>
@@ -39,11 +41,12 @@
     class="flex flex-row mt-3 mb-3"
     *ngFor="let indicator of indicators; let i = index"
   >
-    <div class="mr-3">
+    <div class="mr-3 resizer border-2	border-black	border-solid" (mouseup)="onUpdateIndicator($event, indicator)">
       <iframe
-        [src]="indicator.src | byPassUrlSanitization"
+        [src]="indicator.src | byPassUrlSanitization"   
         width="{{ indicator.width }}"
         height="{{ indicator.height }}"
+        class="resized mt-4 mb-4 ml-4 mr-4"
       ></iframe>
     </div>
     <div>
