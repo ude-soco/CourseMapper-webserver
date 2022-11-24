@@ -39,9 +39,9 @@ export class MaterilasService {
   
   uploadFile(formData:any, materialType: string = 'pdf'):any{
     if (materialType == "video") {
-      return this.http.post<any>(`${this.API_URL}upload/video`, { formData }).pipe(tap(res => console.log(res)));
+      return this.http.post<any>(`${this.API_URL}/upload/video`,  formData ).pipe(tap(res => console.log(res)));
     }
 
-    return this.http.post<any>(`${this.API_URL}/upload/pdf`, { formData }).pipe(tap(res => console.log(res)));
+    return this.http.post<any>(`${this.API_URL}/upload/pdf`,  formData ).pipe(tap(res => console.log(res)));
   }
 }

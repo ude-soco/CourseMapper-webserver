@@ -101,6 +101,7 @@ export const newMaterial = async (req, res) => {
   return res.send({
    // id: savedMaterial._id,
     material: {
+      _id:material._id,
       type: material.type,
     name: material.name,
     url: material.url,

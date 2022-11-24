@@ -15,7 +15,7 @@ export interface CreateMaterial {
   courseID:string;
   topicID:string;
   url:string;
-  userID:string;
+  //userID:string;
   channelID:string;
   description:string
 }
