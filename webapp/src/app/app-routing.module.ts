@@ -7,6 +7,7 @@ import { RegistrationComponent } from './pages/components/registration/registrat
 import { HomeComponent } from './pages/home/home.component';
 import { MaterialComponent } from './pages/components/materils/material/material.component';
 import { ChannelbarComponent } from './pages/components/channelbar/channelbar.component';
+import { CoursesComponent } from './pages/courses/courses.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -22,21 +23,25 @@ const routes: Routes = [
     path: 'home',
     component: HomeComponent,
     canActivate: [AuthGuardService],
-    children: [
+   /* children: [
       {
-        path: 'home/material',  // child route path
+        //path: 'home/material',  // child route path
        // title: resolvedChildATitle,
-        component: MaterialComponent,  // child route component that the router renders
+        //component: MaterialComponent,  // child route component that the router renders
+        path: 'channel/:channelId', component: ChannelbarComponent,
       },
      
-    ],
+    ],*/
   },
- // {path: 'home/course/:courseId', component: ChannelbarComponent},
-  {
+  //{path: 'channel/:channelId', component: ChannelbarComponent},
+ // {path: 'home/channel', component: ChannelbarComponent},
+ //{path: 'course/:channelId', component: CoursesComponent},
+ {path: 'course/:courseID', component: CoursesComponent},
+  /*{
     path: 'channel',
     component: ChannelbarComponent,
     canActivate: [AuthGuardService],
-  },
+  },*/
   
 ];
 

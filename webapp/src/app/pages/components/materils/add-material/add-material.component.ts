@@ -22,6 +22,7 @@ export class AddMaterialComponent implements OnInit {
   @Input() channelID?: string;
   @Output() onSubmitted: EventEmitter<void> = new EventEmitter();
   materialType:string=""
+  materialId:Material;
 
   materialToAdd:CreateMaterial={
     name: '',
@@ -82,10 +83,10 @@ export class AddMaterialComponent implements OnInit {
     this.fileUploadForm?.get('file')?.setValue(this.file);
   }
  submitForm(): void {
-  var file=this.fileUploadForm?.get('file')?.value
-  var filename=file.name;
-  console.log("filename")
-  console.log(filename)
+ // var file=this.fileUploadForm?.get('file')?.value
+ // var filename=file.name;
+ // console.log("filename")
+  //console.log(filename)
   this.materialToAdd.courseID=this.courseID!;
   console.log(this.courseID)
   this.materialToAdd.topicID=this.topicID!;
@@ -105,6 +106,7 @@ export class AddMaterialComponent implements OnInit {
   }
   var result=  this.materialService.addMaterial(this.materialToAdd).subscribe({
     next: (data) => {
+      this.materialId=data;
       console.log("material roro")
       console.log(data.material._id)
       if (this.fileUploadForm?.get('file')?.value) {
@@ -126,9 +128,11 @@ export class AddMaterialComponent implements OnInit {
         this.materialService.uploadFile(this.formData, this.materialType).subscribe(res=>{
           if (res.message ==="File uploaded successfully!" ) {
             this.response=res
-            this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
+          /*  this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
               this.router.navigate([MaterialComponent]);
-          });
+          });*/
+          
+          
           } 
         }, er => {
           console.log(er);
@@ -138,6 +142,14 @@ export class AddMaterialComponent implements OnInit {
     }
   })
   if(result!=null){
+    this.fileUploadForm.reset();
+    this.validateForm.reset();
+    //window.location.reload()
+    console.log("this.materialId")
+    console.log(this.materialId)
+  //  "['artist', track.artistId]"
+   // this.router.navigate(['course', this.channelID])
+   this.router.navigate(['course', this.courseID])
 console.log(result)
    // this.onSubmitted.emit();
 
