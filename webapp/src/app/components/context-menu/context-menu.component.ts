@@ -90,11 +90,6 @@ export class ContextMenuComponent implements OnInit {
           icon: 'pi  pi-times',
           command: () => this.onRemoveAll(),
         },
-        {
-          label: 'Settings',
-          icon: 'pi pi-cog',
-          command: () => this.navigateToSettings(),
-        },
       ];
     }
   }
@@ -109,11 +104,6 @@ export class ContextMenuComponent implements OnInit {
     this.onClick.emit();
   }
 
-  navigateToSettings() {
-    this.onClick.emit();
-    this.router.navigateByUrl('/notification-settings');
-    this.notificationService.isPanelOpened.next(false);
-  }
   updateItems() {
     this.notificationService.getAllNotifications().subscribe((items) => {
       this.temp = items;

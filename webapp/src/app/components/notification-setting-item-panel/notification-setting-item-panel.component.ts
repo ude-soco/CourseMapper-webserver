@@ -57,6 +57,7 @@ export class NotificationSettingItemPanelComponent implements OnInit {
     );
 
     this.notificationService.courseUpdateItems$.subscribe((item) => {
+      console.log(item);
       this.courseUpdateItems = item;
     });
     this.notificationService.commentsMentionedItems$.subscribe((item) => {
@@ -85,36 +86,46 @@ export class NotificationSettingItemPanelComponent implements OnInit {
           (item) => item.type == 'annotations' && item.isStar == true
         );
       } else {
-        this.getLists();
+        this.courseUpdateItems = this.notificationItems.filter(
+          (item) => item.type == 'courseupdates'
+        );
+        this.commentsMentionedItems = this.notificationItems.filter(
+          (item) => item.type == 'mentionedandreplied'
+        );
+
+        this.annotationsItems = this.notificationItems.filter(
+          (item) => item.type == 'annotations'
+        );
       }
     });
     this.notificationService.showNumber$.subscribe((number) => {
       this.notificationService.getAllNotifications().subscribe((items) => {
         this.temp = items;
-        this.notificationItems = number.value
-          ? this.temp.notificationLists.slice(0, number.value)
-          : this.temp.notificationLists;
-        this.getFilteredItems(this.notificationItems);
+        this.getFilteredItems(this.notificationItems, number);
+        console.log('action number', this.notificationItems);
       });
     });
   }
 
-  getFilteredItems(lists: Notification[]) {
-    this.courseUpdateItems = lists.filter(
-      (item) => item.type == 'courseupdates'
-    );
-    this.commentsMentionedItems = lists.filter(
-      (item) => item.type == 'mentionedandreplied'
-    );
+  getFilteredItems(lists: Notification[], number) {
+    this.courseUpdateItems = lists
+      .filter((item) => item.type == 'courseupdates')
+      .slice(0, number.value);
+    this.commentsMentionedItems = lists
+      .filter((item) => item.type == 'mentionedandreplied')
+      .slice(0, number.value);
 
-    this.annotationsItems = lists.filter((item) => item.type == 'annotations');
+    this.annotationsItems = lists
+      .filter((item) => item.type == 'annotations')
+      .slice(0, number.value);
   }
 
   getLists() {
     this.notificationService.getAllNotifications().subscribe((items) => {
       this.temp = items;
       this.notificationItems = this.temp.notificationLists;
-      this.getFilteredItems(this.notificationItems);
+      // what this for?
+      // this.getFilteredItems(this.notificationItems);
       this.notificationService.allNotificationItems.next(
         this.notificationItems
       );

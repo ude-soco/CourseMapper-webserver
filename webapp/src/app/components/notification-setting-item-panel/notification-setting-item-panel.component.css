@@ -1,7 +1,7 @@
 .tab {
   display: flex;
   justify-content: space-between;
-  width: 50%;
+  width: 100%;
 }
 
 .toggle-button {
@@ -30,10 +30,10 @@ app-notification-box {
 }
 
 .clear {
-  text-align: right;
+  /* text-align: right;
   margin-right: 1rem;
   margin-bottom: 1rem;
-  margin-top: 1.5rem;
+  margin-top: 1.5rem; */
   color: rgba(3, 105, 161, 255);
 }
 
@@ -55,6 +55,8 @@ app-notification-box {
 .noti-container {
   position: relative;
   top: -1rem;
+  overflow-y: scroll;
+  max-height: 600px;
 }
 
 ::ng-deep .p-button.p-button-sm {

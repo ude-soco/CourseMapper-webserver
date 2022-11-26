@@ -21,11 +21,18 @@ export class NotificationFilterPanelComponent implements OnInit {
   searchValue: string;
   notificationNumberFilter: NotificationNumberFilter[] = [];
   selectedNumber: NotificationNumberFilter;
-  placeholder = 'Order by number';
+  placeholder = 'Filter by number';
   constructor(private notificationService: NotificationServiceService) {}
 
   ngOnInit(): void {
+    this.notificationService.filteredType.next({ name: '', type: undefined });
+    this.notificationService.showNumber.next({ value: undefined });
+    this.notificationService.searchString.next('');
+    this.searchValue = '';
     this.starred = true;
+    this.notificationService.isStarClicked$.subscribe((isStar) => {
+      this.starred = !isStar;
+    });
     this.notificationTypeFilter = [
       { name: 'Course updates', type: NotificationType.CourseUpdate },
       {
@@ -36,9 +43,6 @@ export class NotificationFilterPanelComponent implements OnInit {
     ];
     this.notificationNumberFilter = [
       {
-        value: 3,
-      },
-      {
         value: 5,
       },
       {
@@ -46,6 +50,9 @@ export class NotificationFilterPanelComponent implements OnInit {
       },
       {
         value: 15,
+      },
+      {
+        value: 20,
       },
     ];
     this.notificationService.filteredType$.subscribe((filterType) => {
@@ -56,8 +63,9 @@ export class NotificationFilterPanelComponent implements OnInit {
       if (number.value == undefined) {
         this.placeholder = 'Order by number';
         console.log('it is undefined');
+        this.selectedNumber.value = 'all';
       } else {
-        this.selectedNumber.value = number.value;
+        this.selectedNumber.value = number?.value;
       }
     });
     console.log('number', this.selectedNumber);
@@ -79,6 +87,10 @@ export class NotificationFilterPanelComponent implements OnInit {
   resetFilter() {
     this.notificationService.filteredType.next({ name: '', type: undefined });
     this.notificationService.showNumber.next({ value: undefined });
+    this.notificationService.searchString.next('');
+    this.searchValue = '';
+    this.notificationService.isStarClicked.next(false);
+    // this.selectedNumber.value = 'all';
   }
 
   filterByNumber(e: any) {

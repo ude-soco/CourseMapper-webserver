@@ -16,14 +16,16 @@ export class NotificationDashboardComponent implements OnInit {
   notificationType!: string;
   contextMenuOpened!: boolean;
   temp: any;
-  notificationLists: Notification[] = [];
+  // notificationLists: Notification[] = [];
   activeItem!: MenuItem;
-  courseNews!: string;
-  annotationNews!: string;
-  repliesNews!: string;
+
   seeMore: boolean;
   @Input() showDefault: boolean;
   @Input() isPanelOpened: boolean;
+  @Input() courseNews: string;
+  @Input() repliesNews: string;
+  @Input() annotationNews: string;
+  @Input() notificationLists: Notification[];
 
   constructor(
     private notificationService: NotificationServiceService,
@@ -73,33 +75,16 @@ export class NotificationDashboardComponent implements OnInit {
         item.read = true;
       });
     });
+    this.notificationService.isMarkAsRead$.subscribe(() => {
+      this.updateItems(this.activeItem);
+    });
 
     this.notificationService.clickedRemoveAll$.subscribe(() => {
       this.notificationLists = [];
     });
-    this.notificationService.allNotificationItems$.subscribe((lists) => {
-      // this.updateItems('default');
-
-      // update the number
-      this.courseNews = lists
-        .filter(
-          (item: { type: string }) => item.type == NotificationType.CourseUpdate
-        )
-        .length.toString();
-
-      this.repliesNews = lists
-        .filter(
-          (item: { type: string }) =>
-            item.type == NotificationType.CommentsAndMentioned
-        )
-        .length.toString();
-
-      this.annotationNews = lists
-        .filter(
-          (item: { type: string }) => item.type == NotificationType.Annotations
-        )
-        .length.toString();
-    });
+    this.notificationService.allNotificationItems$.subscribe(
+      (lists: Notification[]) => {}
+    );
 
     this.notificationService.needUpdate$.subscribe((update) => {
       if (update) {
@@ -124,37 +109,13 @@ export class NotificationDashboardComponent implements OnInit {
             this.notificationLists = this.temp.notificationLists;
             this.seeMore = false;
           }
-          console.log('lists', this.notificationLists);
-          // update the number
-          this.courseNews = this.temp.notificationLists
-            .filter(
-              (item: { type: string }) =>
-                item.type == NotificationType.CourseUpdate
-            )
-            .length.toString();
-
-          this.repliesNews = this.temp.notificationLists
-            .filter(
-              (item: { type: string }) =>
-                item.type == NotificationType.CommentsAndMentioned
-            )
-            .length.toString();
-
-          this.annotationNews = this.temp.notificationLists
-            .filter(
-              (item: { type: string }) =>
-                item.type == NotificationType.Annotations
-            )
-            .length.toString();
 
           break;
         case NotificationType.CourseUpdate:
           let tempCourseUpdate = [];
           tempCourseUpdate = this.temp.notificationLists.filter(
-            (item: { type: string }) =>
-              item.type == NotificationType.CourseUpdate
+            (item: Notification) => item.type == NotificationType.CourseUpdate
           );
-          this.courseNews = tempCourseUpdate.length.toString();
 
           if (tempCourseUpdate.length > 5) {
             this.seeMore = true;
@@ -173,7 +134,6 @@ export class NotificationDashboardComponent implements OnInit {
             (item: { type: string }) =>
               item.type == NotificationType.CommentsAndMentioned
           );
-          this.repliesNews = temp.length.toString();
 
           if (temp.length > 5) {
             this.seeMore = true;
@@ -191,7 +151,6 @@ export class NotificationDashboardComponent implements OnInit {
             (item: { type: string }) =>
               item.type == NotificationType.Annotations
           );
-          this.annotationNews = tempAnnotations.length.toString();
           if (tempAnnotations.length > 5) {
             this.seeMore = true;
 
@@ -238,6 +197,11 @@ export class NotificationDashboardComponent implements OnInit {
   seeAll() {
     this.router.navigateByUrl('/allNotification');
 
+    this.notificationService.isPanelOpened.next(false);
+  }
+
+  navigateToSettings() {
+    this.router.navigateByUrl('/notification-settings');
     this.notificationService.isPanelOpened.next(false);
   }
 }

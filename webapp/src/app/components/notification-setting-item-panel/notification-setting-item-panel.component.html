@@ -1,5 +1,10 @@
 <div class="container">
-  <p-toolbar styleClass="toolbar">
+  <p-toolbar
+    styleClass="toolbar"
+    [hidden]="
+      filteredType == 'annotations' || filteredType == 'mentionedandreplied'
+    "
+  >
     <div class="tab">
       <span>Course updates</span>
       <p-inputSwitch
@@ -12,6 +17,11 @@
             : 'Turn on notifications'
         "
       ></p-inputSwitch>
+      <div class="clear" (click)="confirm($event, 'courseupdates')">
+        <p-confirmPopup></p-confirmPopup>
+
+        <a>Remove all</a>
+      </div>
     </div>
   </p-toolbar>
   <div class="noti-container">
@@ -23,7 +33,7 @@
       [notificationItems]="courseUpdateItems"
       [isSettingPanel]="true"
     ></app-notification-box>
-    <span
+    <!-- <span
       class="empty-content"
       *ngIf="
         filteredType == 'annotations' ||
@@ -31,15 +41,13 @@
         courseUpdateItems.length == 0
       "
       >There is no new notifications.</span
-    >
-  </div>
-  <div class="clear" (click)="confirm($event, 'courseupdates')">
-    <p-confirmPopup></p-confirmPopup>
-
-    <a>Clear all</a>
+    > -->
   </div>
 </div>
-<p-toolbar styleClass="toolbar">
+<p-toolbar
+  styleClass="toolbar"
+  [hidden]="filteredType == 'annotations' || filteredType == 'courseupdates'"
+>
   <div class="tab">
     <span>Comments & mentioned</span>
     <p-inputSwitch
@@ -52,6 +60,11 @@
           : 'Turn on notifications'
       "
     ></p-inputSwitch>
+    <div class="clear" (click)="confirm($event, 'replies')">
+      <p-confirmPopup></p-confirmPopup>
+
+      <a>Remove all</a>
+    </div>
   </div>
 </p-toolbar>
 <div class="noti-container">
@@ -61,7 +74,7 @@
     [notificationItems]="commentsMentionedItems"
     [isSettingPanel]="true"
   ></app-notification-box>
-  <span
+  <!-- <span
     class="empty-content"
     *ngIf="
       filteredType == 'annotations' ||
@@ -69,15 +82,15 @@
       commentsMentionedItems.length == 0
     "
     >There is no new notifications.</span
-  >
-</div>
-<div class="clear" (click)="confirm($event, 'replies')">
-  <p-confirmPopup></p-confirmPopup>
-
-  <a>Clear all</a>
+  > -->
 </div>
 
-<p-toolbar styleClass="toolbar">
+<p-toolbar
+  styleClass="toolbar"
+  [hidden]="
+    filteredType == 'courseupdates' || filteredType == 'mentionedandreplied'
+  "
+>
   <div class="tab">
     <span>Annotations</span>
     <p-inputSwitch
@@ -88,8 +101,14 @@
         annotationsChecked ? 'Turn off notifications' : 'Turn on notifications'
       "
     ></p-inputSwitch>
+    <div class="clear" (click)="confirm($event, 'annotations')">
+      <p-confirmPopup></p-confirmPopup>
+
+      <a>Remove all</a>
+    </div>
   </div>
 </p-toolbar>
+
 <div class="noti-container">
   <app-notification-box
     [hidden]="
@@ -99,7 +118,7 @@
     [notificationItems]="annotationsItems"
     [isSettingPanel]="true"
   ></app-notification-box>
-  <span
+  <!-- <span
     class="empty-content"
     *ngIf="
       filteredType == 'courseupdates' ||
@@ -107,10 +126,5 @@
       annotationsItems.length == 0
     "
     >There is no new notifications.</span
-  >
-</div>
-<div class="clear" (click)="confirm($event, 'annotations')">
-  <p-confirmPopup></p-confirmPopup>
-
-  <a>Clear all</a>
+  > -->
 </div>

@@ -12,6 +12,11 @@
         [class.default]="notificationItems[0]"
       ></p-tabMenu>
       <div class="right-control">
+        <i
+          class="pi pi-cog setting-menu"
+          (click)="navigateToSettings()"
+          pTooltip="Settings"
+        ></i>
         <div
           class="context-menu-container"
           (click)="openTopContextMenu($event, op)"

@@ -29,3 +29,7 @@
   align-items: center;
   display: flex;
 }
+.item-container {
+  max-height: 100vh;
+  overflow: scroll;
+}

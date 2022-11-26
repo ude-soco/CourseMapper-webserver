@@ -150,3 +150,12 @@
   margin-top: 1rem;
   margin-bottom: 1rem;
 }
+.setting-menu {
+  font-size: 1.7rem;
+  color: gray;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 1rem;
+  cursor: pointer;
+}

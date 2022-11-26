@@ -4,7 +4,10 @@ import { Router } from '@angular/router';
 
 import { StorageService } from 'src/app/services/storage.service';
 import { UserServiceService } from 'src/app/services/user-service.service';
-
+import {
+  Notification,
+  NotificationType,
+} from 'src/app/model/notification-item';
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
@@ -21,7 +24,10 @@ export class NavbarComponent implements OnInit {
   temp: any;
   isPanelOpened = false;
   showNews: boolean;
-
+  courseNews: string;
+  repliesNews: string;
+  annotationNews: string;
+  notificationLists: Notification[];
   @ViewChild(' notificationPanel') notificationPanel: any;
   constructor(
     public storageService: StorageService,
@@ -36,9 +42,16 @@ export class NavbarComponent implements OnInit {
         this.showNews = false;
       } else {
         this.showNews = true;
-        this.newsAmount = data.length;
-        console.log(this.newsAmount, 'newsamount', 'data', data);
+
+        this.newsAmount = this.getUnreadMessage(data);
       }
+    });
+    this.notificationService.isMarkAsRead$.subscribe(() => {
+      this.getNotifications();
+    });
+
+    this.notificationService.clickedMarkAllAsRead$.subscribe(() => {
+      this.getNotifications();
     });
 
     this.notificationService.isPanelOpened$.subscribe((isOpened) => {
@@ -57,12 +70,49 @@ export class NavbarComponent implements OnInit {
 
     this.isLoggedIn = storageService.loggedIn;
   }
+
+  getUnreadMessage(notificationLists: Notification[]) {
+    let unreadMessage = [];
+
+    unreadMessage = notificationLists.filter(
+      (notification) => notification.read == false
+    );
+    this.courseNews = notificationLists
+      .filter(
+        (notification) =>
+          notification.read == false &&
+          notification.type == NotificationType.CourseUpdate
+      )
+      .length.toString();
+
+    this.repliesNews = notificationLists
+      .filter(
+        (notification) =>
+          notification.read == false &&
+          notification.type == NotificationType.CommentsAndMentioned
+      )
+      .length.toString();
+
+    this.annotationNews = notificationLists
+      .filter(
+        (notification) =>
+          notification.read == false &&
+          notification.type == NotificationType.Annotations
+      )
+      .length.toString();
+
+    return unreadMessage.length;
+  }
+
   getNotifications() {
     this.notificationService.getAllNotifications().subscribe((items) => {
       if (items) {
         this.temp = items;
-        this.newsAmount = this.temp.notificationLists.length;
+        this.newsAmount = this.getUnreadMessage(this.temp.notificationLists);
         this.showNews = true;
+        this.notificationLists = this.limitNumberOfNotifications(
+          this.temp.notificationLists
+        );
       }
     });
   }
@@ -113,5 +163,10 @@ export class NavbarComponent implements OnInit {
   onHide() {
     this.isPanelOpened = false;
     this.notificationService.selectedTab.next({ id: 'default' });
+  }
+
+  limitNumberOfNotifications(lists) {
+    const constraintLists = lists.slice(0, 5);
+    return constraintLists;
   }
 }

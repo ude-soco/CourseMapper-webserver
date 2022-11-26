@@ -7,9 +7,6 @@
       ></i>
       <h3 class="filter-label">Filter</h3>
     </div>
-    <p-button (click)="resetFilter()" class="reset-btn p-button-sm">
-      <span class="reset">reset</span>
-    </p-button>
   </div>
 
   <div class="type-container">
@@ -19,7 +16,7 @@
       [(ngModel)]="selectedType"
       (onChange)="selectType($event)"
       optionLabel="name"
-      placeholder="Order by type"
+      placeholder="Filter by type"
       styleClass="type-panel"
       autoWidth="false"
       [style]="{ width: '100%' }"
@@ -48,7 +45,7 @@
           class="p-inputtext-sm"
           type="text"
           pInputText
-          placeholder="Search "
+          placeholder="Search notifications "
           [(ngModel)]="searchValue"
         />
       </span>
@@ -65,5 +62,10 @@
         pTooltip="View starred items"
       ></i>
     </span>
+  </div>
+  <div class="type-container">
+    <p-button (click)="resetFilter()" class="reset-btn p-button-sm">
+      <span class="reset">reset</span>
+    </p-button>
   </div>
 </div>

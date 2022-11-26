@@ -73,7 +73,7 @@ require("./routes/notification.routes")(app);
 const server = http.createServer(app);
 
 // Listen on provided port, on all network interfaces
-server.listen(port);
+server.listen(port, "0.0.0.0");
 server.on("error", onError);
 server.on("listening", onListening);
 
@@ -172,7 +172,7 @@ function onError(error) {
 
 // Event listener for HTTP server "listening" event
 function onListening() {
-  const addr = server.address();
+  const addr = "0.0.0.0";
   const bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
   console.log("Starting " + env.trim() + " server on port " + port);
   debug("Listening on " + bind);
