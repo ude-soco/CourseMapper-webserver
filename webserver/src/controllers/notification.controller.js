@@ -101,17 +101,27 @@ export const deleteAllNotifications = async (req, res) => {
     notificationIds.push(notificationId);
   });
 
+  let notificationToBeDelete = [];
+
   for (let i = 0; i < notificationIds.length; i++) {
+    foundNotification = await Notification.findById({
+      _id: ObjectId(notificationIds[i]),
+    });
+    if (!foundNotification?.isStar) {
+      notificationToBeDelete.push(foundNotification?._id);
+    }
+  }
+
+  let foundNotification;
+  for (let i = 0; i < notificationToBeDelete.length; i++) {
     try {
       await Notification.deleteMany({
-        _id: notificationIds[i]._id,
+        _id: notificationToBeDelete[i],
       });
     } catch (err) {
       return res.status(500).send({ error: err });
     }
   }
-  foundUser.notificationLists = [];
-  foundUser.save();
 
   return res.send({
     success: `All Notifications are successfully deleted`,
@@ -137,44 +147,38 @@ export const deleteNotificationsByCourseUpdates = async (req, res) => {
   }
 
   let notificationIds = [];
+
   foundUser.notificationLists.forEach((notificationId) => {
     notificationIds.push(notificationId);
   });
-  let courseNotifications = [];
-  console.log("notificationIds", notificationIds);
-  let foundNotification;
+
+  let notificationToBeDelete = [];
+
   for (let i = 0; i < notificationIds.length; i++) {
     foundNotification = await Notification.findById({
       _id: ObjectId(notificationIds[i]),
     });
 
-    courseNotifications.push(foundNotification);
+    if (!foundNotification.isStar) {
+      notificationToBeDelete.push(foundNotification._id);
+    }
+  }
+
+  let foundNotification;
+  for (let i = 0; i < notificationToBeDelete.length; i++) {
+    foundNotification = await Notification.findById({
+      _id: ObjectId(notificationToBeDelete[i]),
+    });
 
     try {
       await Notification.deleteMany({
-        _id: notificationIds[i]._id,
+        _id: notificationToBeDelete[i],
         type: type,
       });
     } catch (err) {
       return res.status(500).send({ error: err });
     }
   }
-  console.log("course", courseNotifications);
-
-  // let courseNotificationsIds = [];
-  // courseNotifications.forEach((notification) => {
-  //   console.log("single", notification);
-  //   if (notification.type == "courseupdates") {
-  //     courseNotificationsIds.push(notification._id);
-  //   }
-  // });
-
-  // foundUser.notificationLists = foundUser.notificationLists.filter(
-  //   (item) => courseNotificationsIds.indexOf(item) === -1
-  // );
-
-  // foundUser.save();
-  // console.log("foudUser", foundUser.notificationLists);
 
   return res.send(foundUser.notificationLists);
 };
@@ -197,24 +201,36 @@ export const deleteNotificationsByReplies = async (req, res) => {
   }
 
   let notificationIds = [];
+
   foundUser.notificationLists.forEach((notificationId) => {
     notificationIds.push(notificationId);
   });
 
+  let notificationToBeDelete = [];
+
   for (let i = 0; i < notificationIds.length; i++) {
+    foundNotification = await Notification.findById({
+      _id: ObjectId(notificationIds[i]),
+    });
+    console.log("found notificaiton", foundNotification);
+    if (!foundNotification?.isStar) {
+      notificationToBeDelete.push(foundNotification?._id);
+    }
+  }
+
+  let foundNotification;
+  for (let i = 0; i < notificationToBeDelete.length; i++) {
     try {
       await Notification.deleteMany({
-        _id: notificationIds[i]._id,
+        _id: notificationToBeDelete[i],
         type: type,
       });
     } catch (err) {
       return res.status(500).send({ error: err });
     }
   }
-  return res.send({
-    success: `All replies type Notifications are successfully deleted`,
-    "notification of user": `${foundUser.notificationLists}`,
-  });
+
+  return res.send(foundUser.notificationLists);
 };
 
 export const deleteNotificationsByAnnotations = async (req, res) => {
@@ -238,10 +254,24 @@ export const deleteNotificationsByAnnotations = async (req, res) => {
   foundUser.notificationLists.forEach((notificationId) => {
     notificationIds.push(notificationId);
   });
+
+  let notificationToBeDelete = [];
+
   for (let i = 0; i < notificationIds.length; i++) {
+    foundNotification = await Notification.findById({
+      _id: ObjectId(notificationIds[i]),
+    });
+    console.log("found notificaiton", foundNotification);
+    if (!foundNotification?.isStar) {
+      notificationToBeDelete.push(foundNotification?._id);
+    }
+  }
+
+  let foundNotification;
+  for (let i = 0; i < notificationToBeDelete.length; i++) {
     try {
       await Notification.deleteMany({
-        _id: notificationIds[i]._id,
+        _id: notificationToBeDelete[i],
         type: type,
       });
     } catch (err) {

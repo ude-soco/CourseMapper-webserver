@@ -33,15 +33,9 @@
       [notificationItems]="courseUpdateItems"
       [isSettingPanel]="true"
     ></app-notification-box>
-    <!-- <span
-      class="empty-content"
-      *ngIf="
-        filteredType == 'annotations' ||
-        filteredType == 'mentionedandreplied' ||
-        courseUpdateItems.length == 0
-      "
+    <span class="empty-content" *ngIf="courseUpdateItems.length == 0"
       >There is no new notifications.</span
-    > -->
+    >
   </div>
 </div>
 <p-toolbar
@@ -74,15 +68,9 @@
     [notificationItems]="commentsMentionedItems"
     [isSettingPanel]="true"
   ></app-notification-box>
-  <!-- <span
-    class="empty-content"
-    *ngIf="
-      filteredType == 'annotations' ||
-      filteredType == 'courseupdates' ||
-      commentsMentionedItems.length == 0
-    "
+  <span class="empty-content" *ngIf="commentsMentionedItems.length == 0"
     >There is no new notifications.</span
-  > -->
+  >
 </div>
 
 <p-toolbar
@@ -118,13 +106,7 @@
     [notificationItems]="annotationsItems"
     [isSettingPanel]="true"
   ></app-notification-box>
-  <!-- <span
-    class="empty-content"
-    *ngIf="
-      filteredType == 'courseupdates' ||
-      filteredType == 'mentionedandreplied' ||
-      annotationsItems.length == 0
-    "
+  <span class="empty-content" *ngIf="annotationsItems.length == 0"
     >There is no new notifications.</span
-  > -->
+  >
 </div>

@@ -33,3 +33,12 @@
   max-height: 100vh;
   overflow: scroll;
 }
+.setting-menu {
+  font-size: 1.7rem;
+  color: gray;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 2rem;
+  cursor: pointer;
+}

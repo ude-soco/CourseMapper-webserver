@@ -35,7 +35,7 @@ export class NotificationServiceService {
   public annotationsItems = new BehaviorSubject<Notification[]>([]);
   annotationsItems$ = this.annotationsItems.asObservable();
 
-  public showNumber = new Subject<{ value: number }>();
+  public showNumber = new Subject<{ label: string; value: number }>();
   showNumber$ = this.showNumber.asObservable();
 
   public clickedMarkAllAsRead = new Subject<boolean>();
@@ -102,6 +102,7 @@ export class NotificationServiceService {
       (item) => item.type == 'courseupdates'
     );
     this.courseUpdateItems.next(courseUpdates);
+    return this.courseUpdateItems.value;
   }
 
   getCommentsAndMentionedItems() {
@@ -109,6 +110,7 @@ export class NotificationServiceService {
       (item) => item.type == 'mentionedandreplied'
     );
     this.commentsMentionedItems.next(commentsUpdates);
+    return this.commentsMentionedItems.value;
   }
 
   getAnnotationsItems() {
@@ -116,6 +118,7 @@ export class NotificationServiceService {
       (item) => item.type == 'annotations'
     );
     this.annotationsItems.next(annotationUpdates);
+    return this.annotationsItems.value;
   }
 
   removeItem(id: string) {

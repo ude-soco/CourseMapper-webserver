@@ -200,8 +200,8 @@ export const newReply = async (req, res) => {
     annotationId: annotationId,
     replyBelongsTo: foundAnnotation.author.userId,
     type: "mentionedandreplied",
-    action: "has created new",
-    actionObject: "comment",
+    action: "has commented you",
+    actionObject: "",
     createdAt: Date.now(),
     extraMessage: `${foundCourse.name} course in ${foundTopic.name} topic`,
     name: "",
@@ -213,32 +213,47 @@ export const newReply = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  for (let i = 0; i < foundUserLists.length; i++) {
-    // do not push to the user who made trigger this action
-    if (foundUserLists[i]._id == userId) {
-    } else if (foundUserLists[i].deactivatedUserLists.includes(userId)) {
-    } else if (foundUserLists[i].isReplyTurnOff) {
-    } else {
-      let subscribedUser;
-      try {
-        subscribedUser = await User.findById(foundUserLists[i]._id);
-        if (!subscribedUser) {
-          return res.status(404).send({
-            error: `User not found!`,
-          });
-        }
-      } catch (err) {
-        return res.status(500).send({ error: err });
-      }
-      subscribedUser.notificationLists.push(notificationSaved._id);
 
-      try {
-        await subscribedUser.save();
-      } catch (err) {
-        return res.status(500).send({ error: err });
+  let foundAuthor;
+  try {
+    foundAuthor = await User.findById(foundAnnotation.author.userId);
+    if (!foundAuthor) {
+      return res.status(404).send({
+        error: `User not found!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  //for (let i = 0; i < foundUserLists.length; i++) {
+  // do not push to the user who made trigger this action
+  if (foundAnnotation.author.userId == userId) {
+  } else if (foundAuthor.deactivatedUserLists.includes(userId)) {
+  } else if (foundAuthor.isReplyTurnOff) {
+  } else {
+    // push the notification only to the author of the annotation
+    let authorOfAnnotation;
+    try {
+      authorOfAnnotation = await User.findById(foundAnnotation.author.userId);
+      if (!authorOfAnnotation) {
+        return res.status(404).send({
+          error: `User not found!`,
+        });
       }
+    } catch (err) {
+      return res.status(500).send({ error: err });
+    }
+
+    authorOfAnnotation.notificationLists.push(notificationSaved._id);
+
+    try {
+      await authorOfAnnotation.save();
+    } catch (err) {
+      return res.status(500).send({ error: err });
     }
   }
+  //}
   return res.status(200).send({
     id: newReply._id,
     success: `Reply added!`,
@@ -318,6 +333,18 @@ export const deleteReply = async (req, res) => {
     return res.status(500).send({ error: err });
   }
 
+  let foundAuthor;
+  try {
+    foundAuthor = await User.findById(foundAnnotation.author.userId);
+    if (!foundAuthor) {
+      return res.status(404).send({
+        error: `User not found!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
   // lists of userId that subscribed to this course
   let subscribedUserLists = [];
   foundCourse.users.forEach((user) => {
@@ -358,30 +385,28 @@ export const deleteReply = async (req, res) => {
     return res.status(500).send({ error: err });
   }
 
-  for (let i = 0; i < foundUserLists.length; i++) {
-    // do not push to the user who made trigger this action
-    if (foundUserLists[i]._id == userId) {
-    } else if (foundUserLists[i].deactivatedUserLists.includes(userId)) {
-    } else if (foundUserLists[i].isReplyTurnOff) {
-    } else {
-      let subscribedUser;
-      try {
-        subscribedUser = await User.findById(foundUserLists[i]._id);
-        if (!subscribedUser) {
-          return res.status(404).send({
-            error: `User not found!`,
-          });
-        }
-      } catch (err) {
-        return res.status(500).send({ error: err });
+  // do not push to the user who made trigger this action
+  if (foundAnnotation.author.userId == userId) {
+  } else if (foundAuthor.deactivatedUserLists.includes(userId)) {
+  } else if (foundAuthor.isReplyTurnOff) {
+  } else {
+    let authorOfAnnotation;
+    try {
+      authorOfAnnotation = await User.findById(foundAnnotation.author.userId);
+      if (!authorOfAnnotation) {
+        return res.status(404).send({
+          error: `User not found!`,
+        });
       }
-      subscribedUser.notificationLists.push(notificationSaved._id);
+    } catch (err) {
+      return res.status(500).send({ error: err });
+    }
+    authorOfAnnotation.notificationLists.push(notificationSaved._id);
 
-      try {
-        await subscribedUser.save();
-      } catch (err) {
-        return res.status(500).send({ error: err });
-      }
+    try {
+      await authorOfAnnotation.save();
+    } catch (err) {
+      return res.status(500).send({ error: err });
     }
   }
 

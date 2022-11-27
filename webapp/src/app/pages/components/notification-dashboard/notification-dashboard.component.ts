@@ -195,9 +195,14 @@ export class NotificationDashboardComponent implements OnInit {
   }
 
   seeAll() {
-    this.router.navigateByUrl('/allNotification');
+    this.router.navigate(['/allNotification'], {
+      queryParams: {
+        type: this.notificationType ? this.notificationType : 'default',
+      },
+    });
 
     this.notificationService.isPanelOpened.next(false);
+    console.log('active tab', this.notificationType);
   }
 
   navigateToSettings() {

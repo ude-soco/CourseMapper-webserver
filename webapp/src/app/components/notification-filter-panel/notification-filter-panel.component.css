@@ -4,6 +4,7 @@
   display: flex;
   justify-content: space-around;
   background-color: white;
+  height: 12rem;
 }
 
 .type-container,
@@ -72,7 +73,9 @@
 .star-i:hover {
   background-color: whitesmoke;
 }
-
+.star-i {
+  cursor: pointer;
+}
 .course-filter {
   /* display: flex; */
   /* justify-content: center; */
@@ -112,7 +115,7 @@
   height: 40px;
   position: relative;
   background-color: #c4c4c4;
-  left: 4rem;
+  left: 3rem;
 }
 .search-container::after {
   content: "";
@@ -121,4 +124,11 @@
   position: relative;
   background-color: #c4c4c4;
   left: 2rem;
+}
+.star-label {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+.star-icon {
+  text-align: center;
 }

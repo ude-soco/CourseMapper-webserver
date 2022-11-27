@@ -1,11 +1,17 @@
 <app-courses [hideContent]="true">
   <div class="container">
     <div class="top-container">
-      <h2 class="h3">All notifications</h2>
+      <h2 class="h3">{{ type }}</h2>
+
       <div
         class="context-menu-container"
         (click)="openTopContextMenu($event, op)"
       >
+        <i
+          class="pi pi-cog setting-menu"
+          (click)="navigateToSettings()"
+          pTooltip="Settings"
+        ></i>
         <i
           class="pi pi-ellipsis-h"
           style="

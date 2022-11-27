@@ -10,50 +10,64 @@
   </div>
 
   <div class="type-container">
-    <p-dropdown
-      class="type-filter"
-      [options]="notificationTypeFilter"
-      [(ngModel)]="selectedType"
-      (onChange)="selectType($event)"
-      optionLabel="name"
-      placeholder="Filter by type"
-      styleClass="type-panel"
-      autoWidth="false"
-      [style]="{ width: '100%' }"
-    ></p-dropdown>
+    <div class="content">
+      <div class="star-label">Filter by notification type:</div>
+
+      <p-dropdown
+        class="type-filter"
+        [options]="notificationTypeFilter"
+        [(ngModel)]="selectedType"
+        (onChange)="selectType($event)"
+        optionLabel="name"
+        placeholder="Filter by type"
+        styleClass="type-panel"
+        autoWidth="false"
+        [style]="{ width: '100%' }"
+      ></p-dropdown>
+    </div>
   </div>
   <div class="type-container">
-    <p-dropdown
-      class="type-filter"
-      [options]="notificationNumberFilter"
-      [(ngModel)]="selectedNumber"
-      (onChange)="filterByNumber($event)"
-      optionLabel="value"
-      [placeholder]="placeholder"
-      styleClass="type-panel"
-      autoWidth="false"
-      [style]="{ width: '100%' }"
-    ></p-dropdown>
+    <div class="content">
+      <div class="star-label">Show number of notifications per type:</div>
+
+      <p-dropdown
+        class="type-filter"
+        [options]="notificationNumberFilter"
+        [(ngModel)]="selectedNumber"
+        (onChange)="filterByNumber($event)"
+        optionLabel="label"
+        [placeholder]="placeholder"
+        styleClass="type-panel"
+        autoWidth="false"
+        [style]="{ width: '100%' }"
+      ></p-dropdown>
+    </div>
   </div>
 
   <div class="search-container">
     <div class="course-filter">
-      <span class="p-input-icon-left">
-        <i class="pi pi-search"></i>
-        <input
-          (ngModelChange)="onChange(searchValue)"
-          class="p-inputtext-sm"
-          type="text"
-          pInputText
-          placeholder="Search notifications "
-          [(ngModel)]="searchValue"
-        />
-      </span>
+      <div class="content">
+        <div class="star-label">Filter by search:</div>
+
+        <span class="p-input-icon-left">
+          <i class="pi pi-search"></i>
+          <input
+            (ngModelChange)="onChange(searchValue)"
+            class="p-inputtext-sm"
+            type="text"
+            pInputText
+            placeholder="Search notifications "
+            [(ngModel)]="searchValue"
+          />
+        </span>
+      </div>
     </div>
   </div>
 
   <div class="star-container">
     <span class="star-icon">
+      <div class="star-label">View starred notifications:</div>
+
       <i
         [ngClass]="starred ? 'pi pi-star' : 'pi pi-star-fill'"
         style="color: rgba(3, 105, 161, 255); font-size: 2rem"

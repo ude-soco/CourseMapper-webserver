@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { Notification } from 'src/app/model/notification-item';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationServiceService } from 'src/app/services/notification-service.service';
-
+import {
+  Notification,
+  NotificationType,
+} from 'src/app/model/notification-item';
 @Component({
   selector: 'app-all-notification',
   templateUrl: './all-notification.component.html',
@@ -11,24 +14,60 @@ export class AllNotificationComponent implements OnInit {
   notificationItems: Notification[] = [];
   temp: any;
   contextMenuOpened!: boolean;
+  type: string;
+  constructor(
+    private route: ActivatedRoute,
+    private notificationService: NotificationServiceService,
+    private router: Router
+  ) {
+    this.route.queryParams.subscribe((params: any) => {
+      switch (params.type) {
+        case 'default':
+          this.type = 'All notifications';
+          this.notificationService.getAllNotifications().subscribe((items) => {
+            this.temp = items;
+            this.notificationItems = this.temp.notificationLists;
+          });
+          break;
 
-  constructor(private notificationService: NotificationServiceService) {
-    this.notificationService.allNotificationItems$.subscribe((items) => {
-      this.notificationItems = items;
+        case 'courseupdates':
+          this.type = 'Course update notifications';
+          this.notificationItems =
+            this.notificationService.getCourseUpdatesItems();
+
+          break;
+
+        case 'mentionedandreplied':
+          this.type = 'Comments & mentions notifications';
+          this.notificationItems =
+            this.notificationService.getCommentsAndMentionedItems();
+          break;
+
+        case 'annotations':
+          this.type = 'Annotation notifications';
+          this.notificationItems =
+            this.notificationService.getAnnotationsItems();
+
+          break;
+      }
     });
 
-    this.notificationService.getAllNotifications().subscribe((items) => {
-      this.temp = items;
-      this.notificationItems = this.temp.notificationLists;
-    });
-    this.notificationService.clickedMarkAllAsRead$.subscribe(() => {
-      this.notificationItems.forEach((item) => {
-        item.read = true;
-      });
-    });
-    this.notificationService.clickedRemoveAll$.subscribe(() => {
-      this.notificationItems = [];
-    });
+    // this.notificationService.allNotificationItems$.subscribe((items) => {
+    //   this.notificationItems = items;
+    // });
+
+    // this.notificationService.getAllNotifications().subscribe((items) => {
+    //   this.temp = items;
+    //   this.notificationItems = this.temp.notificationLists;
+    // });
+    // this.notificationService.clickedMarkAllAsRead$.subscribe(() => {
+    //   this.notificationItems.forEach((item) => {
+    //     item.read = true;
+    //   });
+    // });
+    // this.notificationService.clickedRemoveAll$.subscribe(() => {
+    //   this.notificationItems = [];
+    // });
   }
 
   ngOnInit(): void {}
@@ -46,5 +85,9 @@ export class AllNotificationComponent implements OnInit {
   closeMenu(op: any) {
     op.hide();
     this.contextMenuOpened = false;
+  }
+  navigateToSettings() {
+    this.router.navigateByUrl('/notification-settings');
+    this.notificationService.isPanelOpened.next(false);
   }
 }

@@ -70,6 +70,9 @@ export class NotificationSettingItemPanelComponent implements OnInit {
     this.notificationService.isMarkAsRead$.subscribe(() => {
       this.getLists();
     });
+    this.notificationService.clickedRemoveAll$.subscribe(() => {
+      this.getLists();
+    });
     this.notificationService.filteredType$.subscribe((type) => {
       this.filteredType = type.type;
     });
@@ -125,7 +128,7 @@ export class NotificationSettingItemPanelComponent implements OnInit {
       this.temp = items;
       this.notificationItems = this.temp.notificationLists;
       // what this for?
-      // this.getFilteredItems(this.notificationItems);
+      this.getFilteredItems(this.notificationItems, 0);
       this.notificationService.allNotificationItems.next(
         this.notificationItems
       );
@@ -179,6 +182,7 @@ export class NotificationSettingItemPanelComponent implements OnInit {
       accept: () => {
         this.clear(type);
         //Actual logic to perform a confirmation
+        this.notificationService.clickedRemoveAll.next(true);
       },
     });
   }
