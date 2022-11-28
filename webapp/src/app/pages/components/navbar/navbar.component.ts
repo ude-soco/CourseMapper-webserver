@@ -44,6 +44,7 @@ export class NavbarComponent implements OnInit {
         this.showNews = true;
 
         this.newsAmount = this.getUnreadMessage(data);
+        this.getNotifications();
       }
     });
     this.notificationService.isMarkAsRead$.subscribe(() => {
@@ -110,10 +111,6 @@ export class NavbarComponent implements OnInit {
         this.temp = items;
         this.newsAmount = this.getUnreadMessage(this.temp.notificationLists);
         this.showNews = true;
-
-        this.courseNotifications = this.temp.notificationLists.filter(
-          (item: Notification) => item.type == NotificationType.CourseUpdate
-        );
       }
     });
   }

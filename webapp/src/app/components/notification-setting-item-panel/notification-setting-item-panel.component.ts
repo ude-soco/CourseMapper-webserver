@@ -28,6 +28,7 @@ export class NotificationSettingItemPanelComponent implements OnInit {
   annotationsItems: Notification[] = [];
   filteredType!: NotificationType;
   temp: any;
+  showNumber: any;
 
   constructor(
     private notificationService: NotificationServiceService,
@@ -57,7 +58,6 @@ export class NotificationSettingItemPanelComponent implements OnInit {
     );
 
     this.notificationService.courseUpdateItems$.subscribe((item) => {
-      console.log(item);
       this.courseUpdateItems = item;
     });
     this.notificationService.commentsMentionedItems$.subscribe((item) => {
@@ -89,23 +89,15 @@ export class NotificationSettingItemPanelComponent implements OnInit {
           (item) => item.type == 'annotations' && item.isStar == true
         );
       } else {
-        this.courseUpdateItems = this.notificationItems.filter(
-          (item) => item.type == 'courseupdates'
-        );
-        this.commentsMentionedItems = this.notificationItems.filter(
-          (item) => item.type == 'mentionedandreplied'
-        );
-
-        this.annotationsItems = this.notificationItems.filter(
-          (item) => item.type == 'annotations'
-        );
+        this.getFilteredItems(this.notificationItems, this.showNumber);
       }
     });
+
     this.notificationService.showNumber$.subscribe((number) => {
       this.notificationService.getAllNotifications().subscribe((items) => {
         this.temp = items;
         this.getFilteredItems(this.notificationItems, number);
-        console.log('action number', this.notificationItems);
+        this.showNumber = number;
       });
     });
   }
@@ -113,14 +105,14 @@ export class NotificationSettingItemPanelComponent implements OnInit {
   getFilteredItems(lists: Notification[], number) {
     this.courseUpdateItems = lists
       .filter((item) => item.type == 'courseupdates')
-      .slice(0, number.value);
+      .slice(0, number?.value);
     this.commentsMentionedItems = lists
       .filter((item) => item.type == 'mentionedandreplied')
-      .slice(0, number.value);
+      .slice(0, number?.value);
 
     this.annotationsItems = lists
       .filter((item) => item.type == 'annotations')
-      .slice(0, number.value);
+      .slice(0, number?.value);
   }
 
   getLists() {
@@ -162,9 +154,7 @@ export class NotificationSettingItemPanelComponent implements OnInit {
   }
 
   toggleCourseUpdate(event: any, type: string) {
-    this.notificationService.toggleActiveCourse().subscribe((data) => {
-      console.log('data', data);
-    });
+    this.notificationService.toggleActiveCourse().subscribe((data) => {});
   }
   toggleReplies(event: any, type: string) {
     this.notificationService.toggleReply().subscribe((data) => {});
@@ -174,8 +164,6 @@ export class NotificationSettingItemPanelComponent implements OnInit {
   }
 
   confirm(event: Event, type: string) {
-    console.log(type, event);
-
     this.confirmationService.confirm({
       message: 'Are you sure to remove all?',
       target: event.target,

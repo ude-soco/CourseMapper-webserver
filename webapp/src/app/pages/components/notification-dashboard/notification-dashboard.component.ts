@@ -89,7 +89,9 @@ export class NotificationDashboardComponent implements OnInit {
       this.notificationLists = [];
     });
     this.notificationService.allNotificationItems$.subscribe(
-      (lists: Notification[]) => {}
+      (lists: Notification[]) => {
+        this.updateItems(this.notificationType);
+      }
     );
 
     this.notificationService.needUpdate$.subscribe((update) => {
