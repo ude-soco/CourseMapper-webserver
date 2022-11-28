@@ -28,6 +28,7 @@ export class NavbarComponent implements OnInit {
   repliesNews: string;
   annotationNews: string;
   notificationLists: Notification[];
+  courseNotifications: Notification[];
   @ViewChild(' notificationPanel') notificationPanel: any;
   constructor(
     public storageService: StorageService,
@@ -38,7 +39,6 @@ export class NavbarComponent implements OnInit {
     this.getNotifications();
     this.notificationService.allNotificationItems$.subscribe((data) => {
       if (!data) {
-        // this.newsAmount = 0;
         this.showNews = false;
       } else {
         this.showNews = true;
@@ -110,8 +110,9 @@ export class NavbarComponent implements OnInit {
         this.temp = items;
         this.newsAmount = this.getUnreadMessage(this.temp.notificationLists);
         this.showNews = true;
-        this.notificationLists = this.limitNumberOfNotifications(
-          this.temp.notificationLists
+
+        this.courseNotifications = this.temp.notificationLists.filter(
+          (item: Notification) => item.type == NotificationType.CourseUpdate
         );
       }
     });

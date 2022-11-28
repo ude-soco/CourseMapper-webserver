@@ -1,4 +1,11 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import {
@@ -26,7 +33,6 @@ export class NotificationDashboardComponent implements OnInit {
   @Input() repliesNews: string;
   @Input() annotationNews: string;
   @Input() notificationLists: Notification[];
-
   constructor(
     private notificationService: NotificationServiceService,
     private router: Router
