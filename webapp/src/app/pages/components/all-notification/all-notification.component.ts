@@ -20,6 +20,7 @@ export class AllNotificationComponent implements OnInit {
     private notificationService: NotificationServiceService,
     private router: Router
   ) {
+    console.log(this.route.snapshot.queryParams);
     this.route.queryParams.subscribe((params: any) => {
       switch (params.type) {
         case 'default':
@@ -32,21 +33,49 @@ export class AllNotificationComponent implements OnInit {
 
         case 'courseupdates':
           this.type = 'Course update notifications';
-          this.notificationItems =
-            this.notificationService.getCourseUpdatesItems();
+
+          this.notificationService
+            .getAllNotifications()
+            .subscribe((items: any) => {
+              this.temp = items;
+
+              this.notificationItems = this.temp.notificationLists.filter(
+                (item: Notification) =>
+                  item.type == NotificationType.CourseUpdate
+              );
+            });
 
           break;
 
         case 'mentionedandreplied':
           this.type = 'Comments & mentions notifications';
-          this.notificationItems =
-            this.notificationService.getCommentsAndMentionedItems();
+
+          this.notificationService
+            .getAllNotifications()
+            .subscribe((items: any) => {
+              this.temp = items;
+
+              this.notificationItems = this.temp.notificationLists.filter(
+                (item: Notification) =>
+                  item.type == NotificationType.CommentsAndMentioned
+              );
+            });
+
           break;
 
         case 'annotations':
           this.type = 'Annotation notifications';
-          this.notificationItems =
-            this.notificationService.getAnnotationsItems();
+
+          this.notificationService
+            .getAllNotifications()
+            .subscribe((items: any) => {
+              this.temp = items;
+
+              this.notificationItems = this.temp.notificationLists.filter(
+                (item: Notification) =>
+                  item.type == NotificationType.Annotations
+              );
+            });
 
           break;
       }

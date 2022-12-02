@@ -51,6 +51,5 @@ export class AnnotationCommentListItemComponent implements OnInit {
     this.notificationService.turnOffNotification(userId).subscribe((data) => {
       this.notificationService.turnOffUser.next(userName);
     });
-    console.log('turn off notifications', userId);
   }
 }

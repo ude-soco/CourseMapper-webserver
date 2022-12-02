@@ -144,7 +144,6 @@ export class NavbarComponent implements OnInit {
       this.notificationService.isPanelOpened.next(true);
       this.notificationService.selectedTab.next({ id: 'default' });
       this.getNotifications();
-      console.log('open dashboard');
     } else {
       this.notificationService.selectedTab.next({ id: 'default' });
 

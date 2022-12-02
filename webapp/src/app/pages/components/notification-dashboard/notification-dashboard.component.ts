@@ -210,7 +210,6 @@ export class NotificationDashboardComponent implements OnInit {
     });
 
     this.notificationService.isPanelOpened.next(false);
-    console.log('active tab', this.notificationType);
   }
 
   navigateToSettings() {
