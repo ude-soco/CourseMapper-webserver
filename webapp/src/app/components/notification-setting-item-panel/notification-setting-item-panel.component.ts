@@ -37,7 +37,7 @@ export class NotificationSettingItemPanelComponent implements OnInit {
     this.notificationTypeFilter = [
       { name: 'Course updates', type: NotificationType.CourseUpdate },
       {
-        name: 'Comments & mentioned',
+        name: 'Replies & mentions',
         type: NotificationType.CommentsAndMentioned,
       },
       { name: 'Annotations', type: NotificationType.Annotations },

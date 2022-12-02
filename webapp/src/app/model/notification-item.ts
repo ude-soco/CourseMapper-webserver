@@ -9,6 +9,12 @@ export interface NotificationTypeFilter {
   name: string;
   type: NotificationType;
 }
+
+export interface NotificationCourseFilter {
+  name: string;
+  id: string;
+}
+
 export interface NotificationNumberFilter {
   label: string;
   value: number;

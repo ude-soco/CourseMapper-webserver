@@ -18,7 +18,12 @@ export class NotificationServiceService {
     name: string;
     type: NotificationType;
   }>();
+  public filteredCourse = new Subject<{
+    name: string;
+    id: string;
+  }>();
   filteredType$ = this.filteredType.asObservable();
+  filteredCourse$ = this.filteredCourse.asObservable();
 
   public isStarClicked = new BehaviorSubject<boolean>(false);
   isStarClicked$ = this.isStarClicked.asObservable();

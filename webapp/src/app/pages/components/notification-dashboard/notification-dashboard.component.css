@@ -22,14 +22,14 @@
 .comments-mentioned {
   position: absolute;
   z-index: 2;
-  left: 46%;
+  left: 43%;
   top: 92px;
 }
 
 .annotations {
   position: absolute;
   z-index: 2;
-  right: 35%;
+  right: 39%;
   top: 92px;
 }
 .right-control {

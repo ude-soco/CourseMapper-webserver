@@ -111,13 +111,18 @@ export class NotificationBoxComponent implements OnInit {
 
   onHover() {}
 
-  goToContext(channelId: string, courseId: string) {
+  goToContext(channelId: string, courseId: string, notificationId: string) {
     const location = {
       courseId: courseId,
       channelId: channelId,
     } as ActiveLocation;
     this.topicChannelService.activeLocation.next(location);
     this.notificationService.isPanelOpened.next(false);
+
+    this.notificationService.markItemAsRead(notificationId).subscribe();
+
+    this.notificationService.isMarkAsRead.next(true);
+    console.log('id', notificationId);
   }
   replaceMessage(sentence: string) {
     // here is to replace the word so that do not have bold style

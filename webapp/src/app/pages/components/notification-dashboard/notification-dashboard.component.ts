@@ -54,7 +54,7 @@ export class NotificationDashboardComponent implements OnInit {
         command: (event) => this.onTypeSelected(event),
       },
       {
-        label: 'Comments & mentioned',
+        label: 'Replies & mentions',
         id: NotificationType.CommentsAndMentioned,
         command: (event) => this.onTypeSelected(event),
       },

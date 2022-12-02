@@ -1,14 +1,21 @@
-.container {
-  margin-top: 2rem;
+.top {
+  /* margin-top: 2rem; */
   position: relative;
   display: flex;
   justify-content: space-around;
-  background-color: white;
   height: 12rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
-
+.container {
+  background-color: white;
+  margin-bottom: 3rem;
+  /* height: 12%; */
+}
+.filter-container {
+  position: relative;
+}
 .type-container,
-.filter-container,
 .number-container,
 .star-container,
 .search-container {
@@ -27,9 +34,14 @@
 .filter-label {
   display: flex;
   align-items: center;
-  font-size: 1.5rem;
-  margin-left: 0.5rem;
+  font-size: 2rem;
+  /* margin-left: 0.5rem; */
   font-family: "lato";
+  text-align: center;
+  margin: auto;
+  margin-top: 2rem;
+  justify-content: center;
+  padding-top: 2rem;
 }
 .reset-btn {
   height: 100px;
@@ -82,12 +94,12 @@
   /* margin: auto; */
   position: relative;
   width: 100%;
-  text-align: center;
+  /* text-align: center; */
 }
 
 :host::ng-deep .p-inputtext.p-inputtext-sm {
   height: 35px;
-  width: 70%;
+  /* width: 70%; */
 }
 
 :host::ng-deep .p-dropdown .p-inputtext {
@@ -115,7 +127,7 @@
   height: 40px;
   position: relative;
   background-color: #c4c4c4;
-  left: 3rem;
+  left: 1.5rem;
 }
 .search-container::after {
   content: "";
@@ -128,6 +140,7 @@
 .star-label {
   font-size: 1rem;
   margin-bottom: 1rem;
+  text-align: center;
 }
 .star-icon {
   text-align: center;

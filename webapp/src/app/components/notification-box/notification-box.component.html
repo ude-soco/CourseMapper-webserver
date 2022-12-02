@@ -1,14 +1,18 @@
 <ng-container>
   <div
     class="notification-content"
-    *ngFor="let notificationItem of notificationItems | filter: filteredString"
+    *ngFor="let notificationItem of notificationItems | filter : filteredString"
     (mouseenter)="onHover()"
   >
     <div class="item-container">
       <div
         class="left-container"
         (click)="
-          goToContext(notificationItem?.channelId, notificationItem?.courseId)
+          goToContext(
+            notificationItem?.channelId,
+            notificationItem?.courseId,
+            notificationItem?._id
+          )
         "
       >
         <div class="left">
@@ -16,7 +20,8 @@
             [label]="notificationItem.userShortname"
             styleClass="mr-5"
             [style]="{
-              'background-color': 'rgba(3,105,161,255)
+              'background-color':
+                'rgba(3,105,161,255)
 ',
               color: '#ffffff',
               'margin-top': '5px'

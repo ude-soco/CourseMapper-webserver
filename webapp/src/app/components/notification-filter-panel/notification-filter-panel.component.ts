@@ -4,7 +4,9 @@ import {
   Notification,
   NotificationTypeFilter,
   NotificationNumberFilter,
+  NotificationCourseFilter,
 } from 'src/app/model/notification-item';
+import { CourseService } from 'src/app/services/course.service';
 import { NotificationServiceService } from 'src/app/services/notification-service.service';
 
 @Component({
@@ -16,13 +18,19 @@ export class NotificationFilterPanelComponent implements OnInit {
   notificationTypeFilter: NotificationTypeFilter[] = [];
   number!: number;
   selectedType!: NotificationTypeFilter;
+  selectedCourse!: NotificationCourseFilter;
+
   starred!: boolean;
   @Input() notificationItems: Notification[] = [];
   searchValue: string;
   notificationNumberFilter: NotificationNumberFilter[] = [];
   selectedNumber: NotificationNumberFilter;
   placeholder = 'Filter by number';
-  constructor(private notificationService: NotificationServiceService) {}
+  notificationCourseFilter: NotificationCourseFilter[] = [];
+  constructor(
+    private notificationService: NotificationServiceService,
+    private courseService: CourseService
+  ) {}
 
   ngOnInit(): void {
     this.notificationService.filteredType.next({ name: '', type: undefined });
@@ -39,7 +47,7 @@ export class NotificationFilterPanelComponent implements OnInit {
     this.notificationTypeFilter = [
       { name: 'Course updates', type: NotificationType.CourseUpdate },
       {
-        name: 'Comments & mentioned',
+        name: 'Replies & mentions',
         type: NotificationType.CommentsAndMentioned,
       },
       { name: 'Annotations', type: NotificationType.Annotations },
@@ -60,6 +68,21 @@ export class NotificationFilterPanelComponent implements OnInit {
     this.notificationService.filteredType$.subscribe((filterType) => {
       this.selectedType = { name: filterType.name, type: filterType.type };
     });
+
+    this.notificationService.filteredCourse$.subscribe((filterCourse) => {
+      this.selectedCourse = { name: filterCourse.name, id: filterCourse.id };
+    });
+
+    this.courseService.getSubscribedCourseLists().subscribe((res: any) => {
+      let temp = [];
+      temp = [...res.courseDetail];
+      this.notificationCourseFilter = temp.map((course) => {
+        return {
+          id: course._id,
+          name: course.name,
+        };
+      });
+    });
   }
 
   viewStar() {
@@ -74,9 +97,21 @@ export class NotificationFilterPanelComponent implements OnInit {
       type: event.value.type,
     });
   }
+  selectCourse(event: any) {
+    this.notificationService.filteredCourse.next({
+      name: event.value.name,
+      id: event.value.id,
+    });
+    this.notificationService.searchString.next(event.value.name);
+  }
 
   resetFilter() {
     this.notificationService.filteredType.next({ name: '', type: undefined });
+    this.notificationService.filteredCourse.next({
+      name: '',
+      id: undefined,
+    });
+
     this.notificationService.showNumber.next({
       label: 'all',
       value: undefined,
