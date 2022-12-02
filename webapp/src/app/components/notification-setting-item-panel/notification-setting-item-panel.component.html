@@ -24,7 +24,12 @@
       </div>
     </div>
   </p-toolbar>
-  <div class="noti-container">
+  <div
+    class="noti-container"
+    [hidden]="
+      filteredType == 'annotations' || filteredType == 'mentionedandreplied'
+    "
+  >
     <app-notification-box
       [hidden]="
         filteredType == 'annotations' || filteredType == 'mentionedandreplied'
@@ -61,7 +66,10 @@
     </div>
   </div>
 </p-toolbar>
-<div class="noti-container">
+<div
+  class="noti-container"
+  [hidden]="filteredType == 'annotations' || filteredType == 'courseupdates'"
+>
   <app-notification-box
     [hidden]="filteredType == 'annotations' || filteredType == 'courseupdates'"
     [settingClass]="true"
@@ -97,7 +105,12 @@
   </div>
 </p-toolbar>
 
-<div class="noti-container">
+<div
+  class="noti-container"
+  [hidden]="
+    filteredType == 'courseupdates' || filteredType == 'mentionedandreplied'
+  "
+>
   <app-notification-box
     [hidden]="
       filteredType == 'courseupdates' || filteredType == 'mentionedandreplied'
