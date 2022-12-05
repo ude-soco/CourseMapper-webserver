@@ -6,6 +6,11 @@
       </p>
       <p-menu #menu id="config_menu" [model]="options" [popup]="true"></p-menu>
       <app-iconbutton
+        icon="bx bxs-dashboard"
+        color="text-black"
+        (click)="menu.toggle($event)"
+      ></app-iconbutton>
+      <app-iconbutton
         icon="bx-dots-vertical-rounded"
         color="text-black"
         (click)="menu.toggle($event)"
