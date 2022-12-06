@@ -213,8 +213,9 @@ export const getMaterialEditStatement = (user, newMaterial, oldMaterial, origin)
   };
 };
 
-export const getVideoPlayStatement = (user, material, origin) => {
+export const getVideoPlayStatement = (user, material, hours, minutes, seconds, origin) => {
   const fullname = `${user.firstname} ${user.lastname}`;
+  const duration = (parseInt(hours)*60*60) + (parseInt(minutes)*60) + parseInt(seconds);
   return {
     id: uuidv4(),
     timestamp: new Date(),
@@ -253,9 +254,13 @@ export const getVideoPlayStatement = (user, material, origin) => {
             channel_id: material.channelId,
             topic_id: material.topicId,
             course_id: material.courseId,
+            duration: duration,
           },
         },
       },
+    },
+    result: {
+      duration: `PT${duration}S`
     },
     context: {
       platform: "CourseMapper",
@@ -264,8 +269,9 @@ export const getVideoPlayStatement = (user, material, origin) => {
   };
 };
 
-export const getVideoPauseStatement = (user, material, origin) => {
+export const getVideoPauseStatement = (user, material, hours, minutes, seconds, origin) => {
   const fullname = `${user.firstname} ${user.lastname}`;
+  const duration = (parseInt(hours)*60*60) + (parseInt(minutes)*60) + parseInt(seconds);
   return {
     id: uuidv4(),
     timestamp: new Date(),
@@ -304,9 +310,13 @@ export const getVideoPauseStatement = (user, material, origin) => {
             channel_id: material.channelId,
             topic_id: material.topicId,
             course_id: material.courseId,
+            duration: duration,
           },
         },
       },
+    },
+    result: {
+      duration: `PT${duration}S`
     },
     context: {
       platform: "CourseMapper",

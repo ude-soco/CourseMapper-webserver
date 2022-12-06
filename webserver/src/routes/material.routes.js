@@ -45,7 +45,7 @@ module.exports = function (app) {
   );
 
   app.get(
-    "/courses/:courseId/materials/:materialId/video/play",
+    "/courses/:courseId/materials/:materialId/:hours/:minutes/:seconds/video/play",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getMaterial,
     logger.playVideo
@@ -53,7 +53,7 @@ module.exports = function (app) {
 
 
   app.get(
-    "/courses/:courseId/materials/:materialId/video/pause",
+    "/courses/:courseId/materials/:materialId/:hours/:minutes/:seconds/video/pause",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getMaterial,
     logger.pauseVideo

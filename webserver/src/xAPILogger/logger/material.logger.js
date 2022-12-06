@@ -54,10 +54,16 @@ export const editMaterial = (req, res) => {
 
 export const playVideo = (req, res) => {
   const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
+  const hours = req.params.hours;
+  const minutes = req.params.minutes;
+  const seconds = req.params.seconds;
   if (req.locals.material.type === "video") {
     const statement = statementFactory.getVideoPlayStatement(
       req.locals.user,
       req.locals.material,
+      hours,
+      minutes,
+      seconds,
       origin
     );
     lrs.sendStatementToLrs(statement);
@@ -72,10 +78,16 @@ export const playVideo = (req, res) => {
 
 export const pauseVideo = (req, res) => {
   const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
+  const hours = req.params.hours;
+  const minutes = req.params.minutes;
+  const seconds = req.params.seconds;
   if (req.locals.material.type === "video") {
     const statement = statementFactory.getVideoPauseStatement(
       req.locals.user,
       req.locals.material,
+      hours,
+      minutes,
+      seconds,
       origin
     );
     lrs.sendStatementToLrs(statement);
