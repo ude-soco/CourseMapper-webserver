@@ -1,11 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  ViewChild,
-} from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import {
@@ -100,6 +93,14 @@ export class NotificationDashboardComponent implements OnInit {
         this.notificationService.getAllNotifications().subscribe((data) => {});
       }
     });
+
+    this.refreshNotifications();
+  }
+
+  refreshNotifications() {
+    setInterval(() => {
+      this.updateItems('default');
+    }, 5000);
   }
 
   updateItems(type: any) {

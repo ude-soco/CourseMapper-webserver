@@ -70,6 +70,12 @@ export class NavbarComponent implements OnInit {
     });
 
     this.isLoggedIn = storageService.loggedIn;
+
+    this.refreshNotifications();
+  }
+
+  refreshNotifications() {
+    setInterval(this.getNotifications, 5000);
   }
 
   getUnreadMessage(notificationLists: Notification[]) {

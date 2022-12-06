@@ -11,6 +11,14 @@ export class CommentService {
   comments$ = this.comments.asObservable();
   constructor(private http: HttpClient) {}
 
+  /**
+   * @function getCommentsForAnnotation
+   * Return all of the replies from a specific annotation
+   *
+   * @param {courseId} string id of the course
+   * @param {annotationId} string id of the annotation
+   *
+   */
   getCommentsForAnnotation(
     courseId: string,
     annotationId?: string

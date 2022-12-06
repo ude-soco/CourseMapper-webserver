@@ -5,6 +5,11 @@ const Notification = db.notification;
 const User = db.user;
 const Course = db.course;
 
+/**
+ * @function getAllNotifications
+ * Get all notifications controller
+ *
+ */
 export const getAllNotifications = async (req, res, next) => {
   const userId = req.userId;
 
@@ -45,6 +50,12 @@ export const getAllNotifications = async (req, res, next) => {
   });
 };
 
+/**
+ * @function deleteNotification
+ * Delete a notification
+ *
+ * @param {string} req.params.notificationId The id of a notification
+ */
 export const deleteNotification = async (req, res) => {
   const notificationId = req.params.notificationId;
   const userId = req.userId;
@@ -80,6 +91,11 @@ export const deleteNotification = async (req, res) => {
   });
 };
 
+/**
+ * @function deleteAllNotifications
+ * Delete delete all Notifications
+ *
+ */
 export const deleteAllNotifications = async (req, res) => {
   const userId = req.userId;
   let foundUser;
@@ -129,6 +145,11 @@ export const deleteAllNotifications = async (req, res) => {
   });
 };
 
+/**
+ * @function deleteNotificationsByCourseUpdates
+ * Delete delete all course update Notifications
+ *
+ */
 export const deleteNotificationsByCourseUpdates = async (req, res) => {
   let type = "courseupdates";
   const userId = req.userId;
@@ -183,6 +204,11 @@ export const deleteNotificationsByCourseUpdates = async (req, res) => {
   return res.send(foundUser.notificationLists);
 };
 
+/**
+ * @function deleteNotificationsByReplies
+ * Delete delete all mentionedandreplied Notifications
+ *
+ */
 export const deleteNotificationsByReplies = async (req, res) => {
   let type = "mentionedandreplied";
   const userId = req.userId;
@@ -212,7 +238,6 @@ export const deleteNotificationsByReplies = async (req, res) => {
     foundNotification = await Notification.findById({
       _id: ObjectId(notificationIds[i]),
     });
-    console.log("found notificaiton", foundNotification);
     if (!foundNotification?.isStar) {
       notificationToBeDelete.push(foundNotification?._id);
     }
@@ -233,6 +258,11 @@ export const deleteNotificationsByReplies = async (req, res) => {
   return res.send(foundUser.notificationLists);
 };
 
+/**
+ * @function deleteNotificationsByAnnotations
+ * Delete delete all annotations Notifications
+ *
+ */
 export const deleteNotificationsByAnnotations = async (req, res) => {
   let type = "annotations";
   const userId = req.userId;
@@ -284,6 +314,12 @@ export const deleteNotificationsByAnnotations = async (req, res) => {
   });
 };
 
+/**
+ * @function readNotification
+ * Mark a notification as read
+ *
+ * @param {string} req.params.notificationId The id of a notification
+ */
 export const readNotification = async (req, res) => {
   const notificationId = req.params.notificationId;
   let foundNotification;
@@ -313,6 +349,11 @@ export const readNotification = async (req, res) => {
   });
 };
 
+/**
+ * @function readAllNotifications
+ * Mark all notification as read
+ *
+ */
 export const readAllNotifications = async (req, res) => {
   const userId = req.userId;
   let foundUser;
@@ -350,6 +391,11 @@ export const readAllNotifications = async (req, res) => {
   });
 };
 
+/**
+ * @function starNotification
+ * Mark a notification as star
+ * @param {string} req.params.notificationId The id of a notification
+ */
 export const starNotification = async (req, res) => {
   const notificationId = req.params.notificationId;
   let foundNotification;
@@ -379,6 +425,11 @@ export const starNotification = async (req, res) => {
   });
 };
 
+/**
+ * @function toggleActiveCourse
+ * Turn on/off the course update notifications
+ *
+ */
 export const toggleActiveCourse = async (req, res) => {
   const userId = req.userId;
   let foundUser;
@@ -407,6 +458,11 @@ export const toggleActiveCourse = async (req, res) => {
   });
 };
 
+/**
+ * @function toggleAnnotation
+ * Turn on/off the annotations notifications
+ *
+ */
 export const toggleAnnotation = async (req, res) => {
   const userId = req.userId;
   let foundUser;
@@ -436,6 +492,11 @@ export const toggleAnnotation = async (req, res) => {
   });
 };
 
+/**
+ * @function toggleReply
+ * Turn on/off the comment and mentioned notifications
+ *
+ */
 export const toggleReply = async (req, res) => {
   const userId = req.userId;
   let foundUser;
@@ -465,6 +526,12 @@ export const toggleReply = async (req, res) => {
   });
 };
 
+/**
+ * @function deactivateUser
+ * Turn off notifications from specific user
+ *
+ * @param {string} req.params.userId The id of the user
+ */
 export const deactivateUser = async (req, res) => {
   const targetUserId = req.params.userId;
   const userId = req.userId;
@@ -499,6 +566,11 @@ export const deactivateUser = async (req, res) => {
   });
 };
 
+/**
+ * @function getUserIsCourseTurnOff
+ * Return if course update notification is on or off
+ *
+ */
 export const getUserIsCourseTurnOff = async (req, res) => {
   const userId = req.userId;
 
@@ -520,6 +592,11 @@ export const getUserIsCourseTurnOff = async (req, res) => {
   return res.status(200).send(foundUser.isCourseTurnOff);
 };
 
+/**
+ * @function getUserIsRepliesTurnOff
+ * Return if comment and mentioned notification is on or off
+ *
+ */
 export const getUserIsRepliesTurnOff = async (req, res) => {
   const userId = req.userId;
 
@@ -541,6 +618,11 @@ export const getUserIsRepliesTurnOff = async (req, res) => {
   return res.status(200).send(foundUser.isReplyTurnOff);
 };
 
+/**
+ * @function getUserIsAnnotationTurnOff
+ * Return if annotation notification is on or off
+ *
+ */
 export const getUserIsAnnotationTurnOff = async (req, res) => {
   const userId = req.userId;
 
@@ -561,6 +643,12 @@ export const getUserIsAnnotationTurnOff = async (req, res) => {
   return res.status(200).send(foundUser.isAnnotationTurnOff);
 };
 
+/**
+ * @function getChannelNotifications
+ * Return all the notifications from specific channel
+ *
+ * @param {string} req.params.channelId The id of a channel
+ */
 export const getChannelNotifications = async (req, res) => {
   const userId = req.userId;
   const channelId = req.params.channelId;
@@ -578,6 +666,12 @@ export const getChannelNotifications = async (req, res) => {
     .send({ "channelNotifications ": channelNotifications });
 };
 
+/**
+ * @function getCourseNotifications
+ * Return all the notifications from specific courses
+ *
+ * @param {string} req.params.courseId The id of a course
+ */
 export const getCourseNotifications = async (req, res) => {
   const userId = req.userId;
   const courseId = req.params.courseId;

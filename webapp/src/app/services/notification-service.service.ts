@@ -1,14 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subject, tap } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import {
-  Notification,
-  NotificationType,
-  NotificationTypeFilter,
-} from '../model/notification-item';
+import { Notification, NotificationType } from '../model/notification-item';
 import { HTTPOptions } from '../config/config';
-import { MenuItem, MessageService } from 'primeng/api';
+import { MenuItem } from 'primeng/api';
 
 @Injectable({
   providedIn: 'root',
@@ -63,8 +59,6 @@ export class NotificationServiceService {
   public needUpdate = new Subject<boolean>();
   needUpdate$ = this.needUpdate.asObservable();
 
-  constructor(private http: HttpClient) {}
-
   public isCourseTurnOff = new Subject<boolean>();
   isCourseTurnOff$ = this.isCourseTurnOff.asObservable();
 
@@ -83,18 +77,44 @@ export class NotificationServiceService {
   public turnOffUser = new BehaviorSubject<string>(null);
   turnOffUser$ = this.turnOffUser.asObservable();
 
+  constructor(private http: HttpClient) {}
+
+  /**
+   * @function getAllNotifications
+   * Get all notifications from the backend
+   *
+   */
   getAllNotifications() {
     return this.http.get(environment.API_URL + '/notifications');
   }
 
+  /**
+   * @function getNotificationLists
+   * Return the allNotificationItems observable value
+   *
+   */
   getNotificationLists() {
     return this.allNotificationItems.value;
   }
 
+  /**
+   * @function getSelectedTab
+   * Return the selected tab of dashboard
+   * It is a observable value (eg. 'default','courseupdates','mentionedandreplied','annotations')
+   *
+   */
   getSelectedTab() {
     return this.selectedTab.value;
   }
 
+  /**
+   * @function updateNotificationLists
+   * update the allNotificationItems observable value
+   * update the commentsMentionedItems observable value
+   * update the annotationsItems observable value
+   * @param {lists} Notification an array of notifications
+   *
+   */
   updateNotificationLists(lists: Notification[]) {
     this.allNotificationItems.next(lists);
     this.getCourseUpdatesItems();
@@ -102,6 +122,11 @@ export class NotificationServiceService {
     this.getAnnotationsItems();
   }
 
+  /**
+   * @function getCourseUpdatesItems
+   * Return the courseUpdateItems observable value
+   *
+   */
   getCourseUpdatesItems() {
     const courseUpdates = this.allNotificationItems.value.filter(
       (item) => item.type == 'courseupdates'
@@ -110,6 +135,11 @@ export class NotificationServiceService {
     return this.courseUpdateItems.value;
   }
 
+  /**
+   * @function getCommentsAndMentionedItems
+   * Return the commentsMentionedItems observable value
+   *
+   */
   getCommentsAndMentionedItems() {
     const commentsUpdates = this.allNotificationItems.value.filter(
       (item) => item.type == 'mentionedandreplied'
@@ -118,6 +148,11 @@ export class NotificationServiceService {
     return this.commentsMentionedItems.value;
   }
 
+  /**
+   * @function getAnnotationsItems
+   * Return the annotationsItems observable value
+   *
+   */
   getAnnotationsItems() {
     const annotationUpdates = this.allNotificationItems.value.filter(
       (item) => item.type == 'annotations'
@@ -126,6 +161,13 @@ export class NotificationServiceService {
     return this.annotationsItems.value;
   }
 
+  /**
+   * @function removeItem
+   * Remove a notification
+   *
+   * @param {id} string the id of notification
+   *
+   */
   removeItem(id: string) {
     return this.http.delete(
       environment.API_URL + '/notifications/' + id,
@@ -133,6 +175,13 @@ export class NotificationServiceService {
     );
   }
 
+  /**
+   * @function markItemAsRead
+   * Mark a notification as read
+   *
+   * @param {id} string the id of notification
+   *
+   */
   markItemAsRead(id: string) {
     return this.http.put(
       environment.API_URL + '/notifications/' + id,
@@ -140,6 +189,13 @@ export class NotificationServiceService {
     );
   }
 
+  /**
+   * @function markItemAsStar
+   * Mark a notification as star
+   *
+   * @param {id} string the id of notification
+   *
+   */
   markItemAsStar(id: string) {
     return this.http.put(
       environment.API_URL + '/notifications/' + id + '/star',
@@ -147,6 +203,11 @@ export class NotificationServiceService {
     );
   }
 
+  /**
+   * @function markAllAsRead
+   * Mark all the notifications as read
+   *
+   */
   markAllAsRead() {
     return this.http.patch(
       environment.API_URL + '/notifications/readAll',
@@ -154,6 +215,11 @@ export class NotificationServiceService {
     );
   }
 
+  /**
+   * @function removeAll
+   * Remove all the notifications
+   *
+   */
   removeAll() {
     return this.http.put(
       environment.API_URL + '/notifications/deleteAll',
@@ -161,6 +227,11 @@ export class NotificationServiceService {
     );
   }
 
+  /**
+   * @function removeByCourseUpdates
+   * Remove all the 'courseupdates' notifications
+   *
+   */
   removeByCourseUpdates() {
     return this.http.put(
       environment.API_URL + '/notifications/courseupdates',
@@ -168,6 +239,11 @@ export class NotificationServiceService {
     );
   }
 
+  /**
+   * @function removeByReplies
+   * Remove all the 'mentionedandreplied' notifications
+   *
+   */
   removeByReplies() {
     return this.http.put(
       environment.API_URL + '/notifications/replies',
@@ -175,6 +251,11 @@ export class NotificationServiceService {
     );
   }
 
+  /**
+   * @function removeByAnnotations
+   * Remove all the 'annotations' notifications
+   *
+   */
   removeByAnnotations() {
     return this.http.put(
       environment.API_URL + '/notifications/annotations',
@@ -182,6 +263,11 @@ export class NotificationServiceService {
     );
   }
 
+  /**
+   * @function toggleActiveCourse
+   * Turn on/off notifications of 'courseupdates'
+   *
+   */
   toggleActiveCourse() {
     return this.http.put(
       environment.API_URL + '/notifications/deactivate/course',
@@ -189,6 +275,11 @@ export class NotificationServiceService {
     );
   }
 
+  /**
+   * @function toggleAnnotation
+   * Turn on/off notifications of 'annotations'
+   *
+   */
   toggleAnnotation() {
     return this.http.put(
       environment.API_URL + '/notifications/deactivate/annotation',
@@ -196,6 +287,11 @@ export class NotificationServiceService {
     );
   }
 
+  /**
+   * @function toggleReply
+   * Turn on/off notifications of 'mentionedandreplied'
+   *
+   */
   toggleReply() {
     return this.http.put(
       environment.API_URL + '/notifications/deactivate/reply',
@@ -203,6 +299,13 @@ export class NotificationServiceService {
     );
   }
 
+  /**
+   * @function turnOffNotification
+   * Turn off notifications from specific user
+   *
+   * @param {userId} string the userId in which we want to turn off notifications from
+   *
+   */
   turnOffNotification(userId: string) {
     return this.http.post(
       environment.API_URL + '/notification/deactivate/' + userId,
@@ -210,6 +313,11 @@ export class NotificationServiceService {
     );
   }
 
+  /**
+   * @function getUserIsCourseTurnOff
+   * Get the value of if the 'courseupdates' notifications are turn off or on
+   *
+   */
   getUserIsCourseTurnOff() {
     return this.http
       .get(environment.API_URL + '/notification/isCourseTurnOff', HTTPOptions)
@@ -218,6 +326,11 @@ export class NotificationServiceService {
       });
   }
 
+  /**
+   * @function getUserIsRepliesTurnOff
+   * Get the value of if the 'mentionedandreplied' notifications are turn off or on
+   *
+   */
   getUserIsRepliesTurnOff() {
     return this.http
       .get(environment.API_URL + '/notification/isRepliesTurnOff', HTTPOptions)
@@ -226,6 +339,11 @@ export class NotificationServiceService {
       });
   }
 
+  /**
+   * @function getUserIsAnnotationsTurnOff
+   * Get the value of if the 'annotations' notifications are turn off or on
+   *
+   */
   getUserIsAnnotationsTurnOff() {
     return this.http
       .get(
@@ -237,10 +355,22 @@ export class NotificationServiceService {
       });
   }
 
+  /**
+   * @function getLoggedInTime
+   * Return the time of last logged in
+   *
+   */
   getLoggedInTime() {
     return this.loggedInTime.value;
   }
 
+  /**
+   * @function getChannelNotification
+   * Return the notifications from specific channel
+   *
+   * @param {channelId} string the id of channel
+   *
+   */
   getChannelNotification(channelId: string) {
     return this.http.get(
       environment.API_URL +
@@ -251,6 +381,13 @@ export class NotificationServiceService {
     );
   }
 
+  /**
+   * @function getCourseNotification
+   * Return the notifications from specific course
+   *
+   * @param {courseId} string the id of course
+   *
+   */
   getCourseNotification(courseId: string) {
     return this.http.get(
       environment.API_URL +

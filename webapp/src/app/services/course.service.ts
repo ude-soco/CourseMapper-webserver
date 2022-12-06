@@ -147,6 +147,13 @@ export class CourseService {
       });
   }
 
+  /**
+   * @function enrolCourse
+   * Turn on notification from specific course
+   *
+   * @param {courseId} string id of the course
+   *
+   */
   enrolCourse(courseId: string) {
     return this.http.post(
       environment.API_URL + '/enrol/' + courseId,
@@ -154,6 +161,13 @@ export class CourseService {
     );
   }
 
+  /**
+   * @function withdrawCourse
+   * Turn off notification from specific course
+   *
+   * @param {courseId} string id of the course
+   *
+   */
   withdrawCourse(courseId: string) {
     return this.http.post(
       environment.API_URL + '/withdraw/' + courseId,
@@ -161,12 +175,24 @@ export class CourseService {
     );
   }
 
+  /**
+   * @function getSubscribedCourseLists
+   * Return a list of courses that the logged user has subscribed to
+   *
+   */
   getSubscribedCourseLists() {
     return this.http
       .get(environment.API_URL + '/subscribedCourses', HTTPOptions)
       .pipe(tap((lists) => this.subscribedCourseLists.next(lists)));
   }
 
+  /**
+   * @function checkIfModerator
+   * Check if the logged in user is the moderator of a specific course
+   *
+   * @param {courseId} string id of the course
+   *
+   */
   checkIfModerator(courseId: string) {
     return this.http.get(
       environment.API_URL + '/courses/' + courseId + '/isAuthor',
