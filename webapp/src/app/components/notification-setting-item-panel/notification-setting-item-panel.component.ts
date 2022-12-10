@@ -29,6 +29,8 @@ export class NotificationSettingItemPanelComponent implements OnInit {
   filteredType!: NotificationType;
   temp: any;
   showNumber: any;
+  filteredString;
+  string;
 
   constructor(
     private notificationService: NotificationServiceService,
@@ -89,30 +91,56 @@ export class NotificationSettingItemPanelComponent implements OnInit {
           (item) => item.type == 'annotations' && item.isStar == true
         );
       } else {
-        this.getFilteredItems(this.notificationItems, this.showNumber);
+        this.getFilteredItems(
+          this.notificationItems,
+          this.showNumber,
+          this.filteredString
+        );
       }
     });
 
     this.notificationService.showNumber$.subscribe((number) => {
+      this.notificationService.searchString$.subscribe((searchValue: any) => {
+        this.filteredString = searchValue;
+      });
       this.notificationService.getAllNotifications().subscribe((items) => {
         this.temp = items;
-        this.getFilteredItems(this.notificationItems, number);
+        this.getFilteredItems(
+          this.notificationItems,
+          number,
+          this.filteredString
+        );
         this.showNumber = number;
       });
     });
   }
 
-  getFilteredItems(lists: Notification[], number) {
+  getFilteredItems(lists: Notification[], number, filteredString: string) {
     this.courseUpdateItems = lists
       .filter((item) => item.type == 'courseupdates')
+      .filter((s) =>
+        s.extraMessage.toLowerCase().includes(filteredString.toLowerCase())
+      )
       .slice(0, number?.value);
+
+    console.log(this.courseUpdateItems, filteredString);
     this.commentsMentionedItems = lists
       .filter((item) => item.type == 'mentionedandreplied')
+      .filter((s) =>
+        s.extraMessage.toLowerCase().includes(filteredString.toLowerCase())
+      )
       .slice(0, number?.value);
+
+    console.log(this.commentsMentionedItems, filteredString);
 
     this.annotationsItems = lists
       .filter((item) => item.type == 'annotations')
+      .filter((s) =>
+        s.extraMessage.toLowerCase().includes(filteredString.toLowerCase())
+      )
       .slice(0, number?.value);
+
+    console.log(this.annotationsItems, filteredString);
   }
 
   getLists() {
@@ -120,7 +148,7 @@ export class NotificationSettingItemPanelComponent implements OnInit {
       this.temp = items;
       this.notificationItems = this.temp.notificationLists;
       // what this for?
-      this.getFilteredItems(this.notificationItems, 0);
+      this.getFilteredItems(this.notificationItems, 0, this.filteredString);
       this.notificationService.allNotificationItems.next(
         this.notificationItems
       );

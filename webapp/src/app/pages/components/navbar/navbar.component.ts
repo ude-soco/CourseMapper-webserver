@@ -8,6 +8,7 @@ import {
   Notification,
   NotificationType,
 } from 'src/app/model/notification-item';
+import { interval } from 'rxjs';
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
@@ -61,21 +62,20 @@ export class NavbarComponent implements OnInit {
         this.isPanelOpened = false;
       }
     });
-    this.notificationService.needUpdate$.subscribe(() => {
-      this.getNotifications();
-
-      console.log(
-        'update needed on nave bar for real time update after deployed'
-      );
+    this.notificationService.needUpdate$.subscribe((update) => {
+      if (update) {
+        console.log(
+          'update needed on nave bar for real time update after deployed'
+        );
+        //                this.getNotifications();
+      }
     });
 
     this.isLoggedIn = storageService.loggedIn;
 
-    this.refreshNotifications();
-  }
-
-  refreshNotifications() {
-    setInterval(this.getNotifications, 5000);
+    interval(10000).subscribe((x) => {
+      this.getNotifications();
+    });
   }
 
   getUnreadMessage(notificationLists: Notification[]) {

@@ -88,19 +88,13 @@ export class NotificationDashboardComponent implements OnInit {
     );
 
     this.notificationService.needUpdate$.subscribe((update) => {
+      console.log('getNotifications3');
+
       if (update) {
         this.updateItems('default');
         this.notificationService.getAllNotifications().subscribe((data) => {});
       }
     });
-
-    this.refreshNotifications();
-  }
-
-  refreshNotifications() {
-    setInterval(() => {
-      this.updateItems('default');
-    }, 5000);
   }
 
   updateItems(type: any) {
@@ -115,7 +109,7 @@ export class NotificationDashboardComponent implements OnInit {
             );
             this.seeMore = true;
           } else {
-            this.notificationLists = this.temp.notificationLists;
+            this.notificationLists = this.temp.notificationLists.sort();
             this.seeMore = false;
           }
 
@@ -131,8 +125,9 @@ export class NotificationDashboardComponent implements OnInit {
 
             this.notificationLists =
               this.limitNumberOfNotifications(tempCourseUpdate);
+            console.log('after', this.notificationLists);
           } else {
-            this.notificationLists = tempCourseUpdate;
+            this.notificationLists = tempCourseUpdate.sort();
             this.seeMore = false;
           }
 

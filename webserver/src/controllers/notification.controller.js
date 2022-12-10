@@ -180,17 +180,13 @@ export const deleteNotificationsByCourseUpdates = async (req, res) => {
       _id: ObjectId(notificationIds[i]),
     });
 
-    if (!foundNotification.isStar) {
-      notificationToBeDelete.push(foundNotification._id);
+    if (!foundNotification?.isStar) {
+      notificationToBeDelete.push(foundNotification?._id);
     }
   }
 
   let foundNotification;
   for (let i = 0; i < notificationToBeDelete.length; i++) {
-    foundNotification = await Notification.findById({
-      _id: ObjectId(notificationToBeDelete[i]),
-    });
-
     try {
       await Notification.deleteMany({
         _id: notificationToBeDelete[i],
