@@ -67,7 +67,7 @@ export class NavbarComponent implements OnInit {
         console.log(
           'update needed on nave bar for real time update after deployed'
         );
-        //                this.getNotifications();
+        this.getNotifications();
       }
     });
 
@@ -112,6 +112,7 @@ export class NavbarComponent implements OnInit {
   }
 
   getNotifications() {
+    console.log('get notifi');
     this.notificationService.getAllNotifications().subscribe((items) => {
       if (items) {
         this.temp = items;

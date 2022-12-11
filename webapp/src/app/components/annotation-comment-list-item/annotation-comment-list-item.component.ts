@@ -46,6 +46,11 @@ export class AnnotationCommentListItemComponent implements OnInit {
       materialId: materialId,
     };
     this.annotationService.selectedAnnotation.next(annotation);
+    // remove hight light style
+    const index = this.highlightAnnotations.indexOf(annotationId);
+    if (index > -1) {
+      this.highlightAnnotations.splice(index, 1);
+    }
   }
   turnOffNotification(userId, userName) {
     this.notificationService.turnOffNotification(userId).subscribe((data) => {

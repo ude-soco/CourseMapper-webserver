@@ -56,5 +56,10 @@ export class MaterialListComponent implements OnInit {
       courseId: courseId,
     };
     this.materialService.activeMaterial.next(activeMaterial);
+    // remove hight light style
+    const index = this.highlightMaterials.indexOf(materialId);
+    if (index > -1) {
+      this.highlightMaterials.splice(index, 1);
+    }
   }
 }

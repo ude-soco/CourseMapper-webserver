@@ -10,6 +10,7 @@
 .container {
   background-color: white;
   margin-bottom: 3rem;
+  border-radius: 10px;
   /* height: 12%; */
 }
 .filter-container {

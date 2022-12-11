@@ -6,8 +6,10 @@
   margin-top: 3rem;
   width: 70%;
   padding: 1rem;
-  box-shadow: 5px 10px #e5e7eb;
+  /* box-shadow: 5px 10px #e5e7eb; */
   background-color: #f3f4f6;
+  border-radius: 10px;
+  margin-bottom: 5rem;
 }
 
 h1 {

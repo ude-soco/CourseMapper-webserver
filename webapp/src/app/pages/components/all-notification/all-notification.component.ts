@@ -48,7 +48,7 @@ export class AllNotificationComponent implements OnInit {
           break;
 
         case 'mentionedandreplied':
-          this.type = 'Comments & mentions notifications';
+          this.type = 'Replies & mentions notifications';
 
           this.notificationService
             .getAllNotifications()

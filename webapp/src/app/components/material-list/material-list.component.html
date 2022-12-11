@@ -1,6 +1,7 @@
 <div class="container">
   <div class="material-lists" *ngFor="let material of materials">
     <div
+      id="material"
       class="material-name"
       (click)="onActiveMaterial(material._id, material.courseId)"
       [class.highlight]="highlightMaterials.includes(material._id)"
