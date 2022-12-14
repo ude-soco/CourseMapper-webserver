@@ -60,6 +60,10 @@ export class ChannelbarComponent implements OnInit {
         });
         this.courseService.selectCourse(foundCourse);
       });
+  this.courseService.getSubscribedCourseLists().subscribe((res: any) => {
+    this.updateSubscribeButtonLabel(res.courseIdLists);
+  });
+
     });
     this.courseService.getSubscribedCourseLists().subscribe((res: any) => {
       this.updateSubscribeButtonLabel(res.courseIdLists);

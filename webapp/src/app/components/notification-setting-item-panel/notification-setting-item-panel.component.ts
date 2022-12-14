@@ -118,6 +118,7 @@ export class NotificationSettingItemPanelComponent implements OnInit {
   getFilteredItems(lists: Notification[], number, filteredString: string) {
     this.courseUpdateItems = lists
       .filter((item) => item.type == 'courseupdates')
+      .reverse()
       .filter((s) =>
         s.extraMessage.toLowerCase().includes(filteredString.toLowerCase())
       )
@@ -126,6 +127,7 @@ export class NotificationSettingItemPanelComponent implements OnInit {
     console.log(this.courseUpdateItems, filteredString);
     this.commentsMentionedItems = lists
       .filter((item) => item.type == 'mentionedandreplied')
+      .reverse()
       .filter((s) =>
         s.extraMessage.toLowerCase().includes(filteredString.toLowerCase())
       )
@@ -135,6 +137,7 @@ export class NotificationSettingItemPanelComponent implements OnInit {
 
     this.annotationsItems = lists
       .filter((item) => item.type == 'annotations')
+      .reverse()
       .filter((s) =>
         s.extraMessage.toLowerCase().includes(filteredString.toLowerCase())
       )

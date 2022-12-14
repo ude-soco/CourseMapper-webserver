@@ -27,7 +27,7 @@ export class AllNotificationComponent implements OnInit {
           this.type = 'All notifications';
           this.notificationService.getAllNotifications().subscribe((items) => {
             this.temp = items;
-            this.notificationItems = this.temp.notificationLists;
+            this.notificationItems = this.temp.notificationLists.reverse();
           });
           break;
 
@@ -39,10 +39,12 @@ export class AllNotificationComponent implements OnInit {
             .subscribe((items: any) => {
               this.temp = items;
 
-              this.notificationItems = this.temp.notificationLists.filter(
-                (item: Notification) =>
-                  item.type == NotificationType.CourseUpdate
-              );
+              this.notificationItems = this.temp.notificationLists
+                .filter(
+                  (item: Notification) =>
+                    item.type == NotificationType.CourseUpdate
+                )
+                .reverse();
             });
 
           break;
@@ -55,10 +57,12 @@ export class AllNotificationComponent implements OnInit {
             .subscribe((items: any) => {
               this.temp = items;
 
-              this.notificationItems = this.temp.notificationLists.filter(
-                (item: Notification) =>
-                  item.type == NotificationType.CommentsAndMentioned
-              );
+              this.notificationItems = this.temp.notificationLists
+                .filter(
+                  (item: Notification) =>
+                    item.type == NotificationType.CommentsAndMentioned
+                )
+                .reverse();
             });
 
           break;
@@ -71,10 +75,12 @@ export class AllNotificationComponent implements OnInit {
             .subscribe((items: any) => {
               this.temp = items;
 
-              this.notificationItems = this.temp.notificationLists.filter(
-                (item: Notification) =>
-                  item.type == NotificationType.Annotations
-              );
+              this.notificationItems = this.temp.notificationLists
+                .filter(
+                  (item: Notification) =>
+                    item.type == NotificationType.Annotations
+                )
+                .reverse();
             });
 
           break;

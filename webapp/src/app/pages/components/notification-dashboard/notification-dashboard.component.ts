@@ -171,7 +171,7 @@ export class NotificationDashboardComponent implements OnInit {
   }
 
   limitNumberOfNotifications(lists) {
-    const constraintLists = lists.slice(0, 5);
+    const constraintLists = lists.reverse().slice(0, 5);
     this.seeMore = true;
     return constraintLists;
   }
