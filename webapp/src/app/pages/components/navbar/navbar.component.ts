@@ -73,7 +73,7 @@ export class NavbarComponent implements OnInit {
 
     this.isLoggedIn = storageService.loggedIn;
 
-    interval(10000).subscribe((x) => {
+    interval(5000).subscribe((x) => {
       this.getNotifications();
     });
   }
@@ -118,6 +118,7 @@ export class NavbarComponent implements OnInit {
         this.temp = items;
         this.newsAmount = this.getUnreadMessage(this.temp.notificationLists);
         this.showNews = true;
+        // this.notificationLists = this.temp.notificationLists;
       }
     });
   }
@@ -151,6 +152,7 @@ export class NavbarComponent implements OnInit {
       this.notificationService.isPanelOpened.next(true);
       this.notificationService.selectedTab.next({ id: 'default' });
       this.getNotifications();
+      console.log(this.notificationService.getSelectedTab());
     } else {
       this.notificationService.selectedTab.next({ id: 'default' });
 

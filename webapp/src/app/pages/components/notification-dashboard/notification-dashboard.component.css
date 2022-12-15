@@ -75,7 +75,9 @@
   .p-tabmenuitem.p-highlight
   .p-menuitem-link {
   /* border-color: rgba(3, 105, 161, 255); */
-  color: rgba(3, 105, 161, 255);
+  /* color: rgba(3, 105, 161, 255); */
+
+  color: #6d6d6d;
 }
 
 :host
@@ -86,7 +88,7 @@
   .p-tabmenuitem.p-highlight
   .p-menuitem-link {
   /* border-color: rgba(3, 105, 161, 255); */
-  color: rgba(3, 105, 161, 255);
+  /* color: rgba(3, 105, 161, 255); */
 }
 
 :host ::ng-deep .p-tabmenu .p-tabmenu-nav .p-tabmenuitem .p-menuitem-link {
@@ -158,4 +160,8 @@
   align-items: center;
   margin-right: 1rem;
   cursor: pointer;
+}
+
+.p-tabmenu .p-tabmenu-nav .p-tabmenuitem.p-highlight .p-menuitem-link {
+  color: gray;
 }

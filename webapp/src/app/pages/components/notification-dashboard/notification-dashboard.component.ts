@@ -57,7 +57,7 @@ export class NotificationDashboardComponent implements OnInit {
         command: (event) => this.onTypeSelected(event),
       },
     ];
-    this.activeItem = this.notificationItems[0];
+    // this.activeItem = this.notificationItems[0];
 
     this.notificationService.selectedTab.subscribe((tab) => {
       if (!tab) return;
@@ -67,6 +67,9 @@ export class NotificationDashboardComponent implements OnInit {
       this.updateItems(tab);
     });
     this.updateItems('default');
+    this.notificationService.isPanelOpened$.subscribe((isOpen) => {
+      this.updateItems('default');
+    });
 
     this.notificationService.clickedMarkAllAsRead$.subscribe(() => {
       this.updateItems(this.activeItem);
@@ -109,7 +112,7 @@ export class NotificationDashboardComponent implements OnInit {
             );
             this.seeMore = true;
           } else {
-            this.notificationLists = this.temp.notificationLists.sort();
+            this.notificationLists = this.temp.notificationLists;
             this.seeMore = false;
           }
 
@@ -127,7 +130,7 @@ export class NotificationDashboardComponent implements OnInit {
               this.limitNumberOfNotifications(tempCourseUpdate);
             console.log('after', this.notificationLists);
           } else {
-            this.notificationLists = tempCourseUpdate.sort();
+            this.notificationLists = tempCourseUpdate;
             this.seeMore = false;
           }
 
