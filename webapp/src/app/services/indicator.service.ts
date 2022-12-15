@@ -76,10 +76,35 @@ export class IndicatorService {
       );
   }
 
+  reorderIndicators(sourseIndex, targetIndex, courseId){
+    return this.http
+    .put<any>(
+      `${this.API_URL}/courses/${courseId}/reorder/${targetIndex}/${sourseIndex}`,
+      {}
+    )
+    .pipe(
+      catchError((errResponse, sourceObservable) => {
+        if (errResponse.status === 404) {
+          return of({ errorMsg: errResponse.error.error });
+        } else {
+          return of({
+            errorMsg: 'Error in connection: Please reload the application',
+          });
+        }
+      }),
+      tap((res) => {
+        if (!('errorMsg' in res)) {
+          this.indicators = res.indicators;
+          this.onUpdateIndicators$.next(this.indicators);
+        }
+      })
+    );
+  }
+
   updateIndicator(updatedindicator, courseId) {
     return this.http
       .put<any>(
-        `${this.API_URL}/courses/${courseId}/indicator/${updatedindicator._id}/${updatedindicator.width}/${updatedindicator.height}`,
+        `${this.API_URL}/courses/${courseId}/indicator/${updatedindicator._id}/resize/${updatedindicator.width}/${updatedindicator.height}`,
         {}
       )
       .pipe(

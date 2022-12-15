@@ -670,7 +670,7 @@ export const getIndicators = async (req, res, next) => {
   return res.status(200).send(response);
 };
 
-export const editIndicator = async (req, res, next) => {
+export const resizeIndicator = async (req, res, next) => {
   const courseId = req.params.courseId;
   const indicatorId = req.params.indicatorId;
   const width = req.params.width;
@@ -709,5 +709,49 @@ export const editIndicator = async (req, res, next) => {
 
   return res.status(200).send({
     success: `indicator with id = '${indicatorId}' has been updated successfully!`,
+  });
+};
+
+
+export const reorderIndicators = async (req, res, next) => {
+  const courseId = req.params.courseId;
+  const newIndex = parseInt(req.params.newIndex);
+  const oldIndex = parseInt(req.params.oldIndex);
+
+  let foundCourse;
+  try {
+    foundCourse = await Course.findOne({ "_id": courseId });
+    if (!foundCourse) {
+      return res.status(404).send({
+        error: `Course with id ${courseId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  let indicator = foundCourse.indicators[oldIndex];
+
+  if (oldIndex < newIndex) {
+    for (let i = oldIndex; i < newIndex; i++) {
+      foundCourse.indicators[i] = foundCourse.indicators[i + 1];
+    }
+  } else {
+    for (let i = oldIndex; i > newIndex; i--) {
+      foundCourse.indicators[i] = foundCourse.indicators[i - 1];
+    }
+  }
+
+  foundCourse.indicators[newIndex] = indicator;
+
+  try {
+    foundCourse.save();
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  return res.status(200).send({
+    success: `course with id = '${courseId}' has been updated successfully!`,
+    indicators: foundCourse.indicators
   });
 };

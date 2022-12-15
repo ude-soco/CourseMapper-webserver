@@ -7,6 +7,7 @@ import { parse } from 'angular-html-parser';
 import { Course } from 'src/app/models/Course';
 import { Indicator } from 'src/app/models/Indicator';
 import { MessageService } from 'primeng/api';
+import { DragulaService } from 'ng2-dragula';
 
 @Component({
   selector: 'app-dashboard',
@@ -19,7 +20,6 @@ export class DashboardComponent implements OnInit {
   indicators: Indicator[] = [];
   selectedCourse: Course;
   private iframeTextarea: ElementRef;
-  private mouseClick: { x: number; y: number; left: number; top: number };
 
   @ViewChild('iframeTextarea') set IframeTextarea(elem: ElementRef) {
     this.iframeTextarea = elem;
@@ -33,8 +33,23 @@ export class DashboardComponent implements OnInit {
   constructor(
     private indicatorService: IndicatorService,
     private courseService: CourseService,
-    private messageService: MessageService
-  ) {}
+    private messageService: MessageService,
+    private dragulaService: DragulaService
+  ) {
+    this.dragulaService.createGroup('INDICATORS', {
+      revertOnSpill: true,
+      moves: function (el: any, container: any, handle: any): any {
+        if (handle.id === 'dragger') {
+          return true;
+        }
+        return false;
+      },
+    });
+
+    this.dragulaService.dropModel('INDICATORS').subscribe((args) => {
+      this.onReorderIndicators(args.sourceIndex, args.targetIndex, this.selectedCourse._id);
+    });
+  }
 
   ngOnInit(): void {
     this.selectedCourse = this.courseService.getSelectedCourse();
@@ -120,14 +135,28 @@ export class DashboardComponent implements OnInit {
   }
 
   onUpdateIndicator(event: MouseEvent, indicator: Indicator) {
-    const dimensions = event['path'][0]['attributes']['style']['nodeValue'];
-    indicator.width = dimensions.slice(7, dimensions.indexOf(';'));
-    indicator.height = dimensions.slice(
-      dimensions.lastIndexOf(':') + 2,
-      dimensions.lastIndexOf(';')
-    );
+    if (event['path'][0]['attributes']['style']) {
+      const dimensions = event['path'][0]['attributes']['style']['nodeValue'];
+      indicator.width = dimensions.slice(7, dimensions.indexOf(';'));
+      indicator.height = dimensions.slice(
+        dimensions.lastIndexOf(':') + 2,
+        dimensions.lastIndexOf(';')
+      );
+      this.indicatorService
+        .updateIndicator(indicator, this.selectedCourse._id)
+        .subscribe((res: any) => {
+          if ('success' in res) {
+            this.showInfo(res.success);
+          } else {
+            this.showError(res.errorMsg);
+          }
+        });
+    }
+  }
+
+  onReorderIndicators(sourceIndex, targetIndex, courseId) {
     this.indicatorService
-      .updateIndicator(indicator, this.selectedCourse._id)
+      .reorderIndicators(sourceIndex, targetIndex, courseId)
       .subscribe((res: any) => {
         if ('success' in res) {
           this.showInfo(res.success);

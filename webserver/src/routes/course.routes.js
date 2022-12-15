@@ -83,8 +83,14 @@ module.exports = function (app) {
   );
 
   app.put(
-    '/courses/:courseId/indicator/:indicatorId/:width/:height', 
+    '/courses/:courseId/indicator/:indicatorId/resize/:width/:height', 
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.editIndicator
+    controller.resizeIndicator
+  );
+
+  app.put(
+    '/courses/:courseId/reorder/:newIndex/:oldIndex', 
+    [authJwt.verifyToken, authJwt.isModerator],
+    controller.reorderIndicators
   );
 };

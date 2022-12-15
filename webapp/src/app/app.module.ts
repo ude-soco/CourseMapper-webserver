@@ -28,6 +28,7 @@ import { EditorComponent } from './pages/components/editor/editor.component';
 import {InputTextareaModule} from 'primeng/inputtextarea';
 import { DashboardComponent } from './pages/components/dashboard/dashboard.component';
 import { ByPassUrlSanitizationPipe } from './pipes/by-pass-url-sanitization.pipe';
+import { DragulaModule } from 'ng2-dragula';
 
 
 @NgModule({
@@ -63,6 +64,7 @@ import { ByPassUrlSanitizationPipe } from './pipes/by-pass-url-sanitization.pipe
     ToastModule,
     RippleModule,
     InputTextareaModule,
+    DragulaModule.forRoot() 
   ],
   providers: [],
   bootstrap: [AppComponent],
