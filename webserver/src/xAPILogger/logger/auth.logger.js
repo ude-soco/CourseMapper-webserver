@@ -3,26 +3,26 @@ const lrs = require("../lrs/lrs");
 const controller = require("../controller.xAPILogger");
 const ORIGIN = process.env.ORIGIN;
 
-export const signup = (req, res) => {
+export const signup = async (req, res) => {
   const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
   const statement = statementFactory.getSignupStatement(req.locals.user, origin);
-  lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement);
+  const sent = await lrs.sendStatementToLrs(statement);
+  controller.saveStatementToMongo(statement, sent);
   res.status(200).send(req.locals.response);
 };
 
-export const signin = (req, res) => {
+export const signin = async (req, res) => {
   const origin = req.get('origin') ? req.get('origin') : ORIGIN;
   const statement = statementFactory.getLoginStatement(req.locals.user, origin);
-  lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement);
+  const sent = await lrs.sendStatementToLrs(statement);
+  controller.saveStatementToMongo(statement, sent);
   res.status(200).send(req.locals.response);
 };
 
-export const signout = (req, res) => {
+export const signout = async (req, res) => {
   const origin = req.get('origin') ? req.get('origin') : ORIGIN;
   const statement = statementFactory.getLogoutStatement(req.locals.user, origin);
-  lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement);
+  const sent = await lrs.sendStatementToLrs(statement);
+  controller.saveStatementToMongo(statement, sent);
   res.status(200).send(req.locals.response);
 };

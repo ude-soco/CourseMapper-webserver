@@ -9,7 +9,7 @@ export const runXapiScheduler = () => {
       const statements = await controller.fetchUnsentStatements();
       if (statements.length > 0) {
         const sentStatementsIds = await lrs.sendStatementsToLrs(statements);
-        controller.deleteSentStatements(sentStatementsIds);
+        controller.updateSentStatements(sentStatementsIds);
       }
     } catch (err) {
       console.log(err);

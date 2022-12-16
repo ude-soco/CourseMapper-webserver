@@ -3,43 +3,43 @@ const lrs = require("../lrs/lrs");
 const controller = require("../controller.xAPILogger");
 const ORIGIN = process.env.ORIGIN;
 
-export const newMaterial = (req, res) => {
+export const newMaterial = async (req, res) => {
   const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
   const statement = statementFactory.getMaterialUploadStatement(
     req.locals.user,
     req.locals.material,
     origin
   );
-  lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement);
+  const sent = await lrs.sendStatementToLrs(statement);
+  controller.saveStatementToMongo(statement, sent);
   res.send(req.locals.response);
 };
 
-export const deleteMaterial = (req, res) => {
+export const deleteMaterial = async (req, res) => {
   const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
   const statement = statementFactory.getMaterialDeletionStatement(
     req.locals.user,
     req.locals.material,
     origin
   );
-  lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement);
+  const sent = await lrs.sendStatementToLrs(statement);
+  controller.saveStatementToMongo(statement, sent);
   res.send(req.locals.response);
 };
 
-export const getMaterial = (req, res) => {
+export const getMaterial = async (req, res) => {
   const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
   const statement = statementFactory.getMaterialAccessStatement(
     req.locals.user,
     req.locals.material,
     origin
   );
-  lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement);
+  const sent = await lrs.sendStatementToLrs(statement);
+  controller.saveStatementToMongo(statement, sent);
   res.status(200).send(req.locals.response);
 };
 
-export const editMaterial = (req, res) => {
+export const editMaterial = async (req, res) => {
   const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
   const statement = statementFactory.getMaterialEditStatement(
     req.locals.user,
@@ -47,12 +47,12 @@ export const editMaterial = (req, res) => {
     req.locals.oldMaterial,
     origin
   );
-  lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement);
+  const sent = await lrs.sendStatementToLrs(statement);
+  controller.saveStatementToMongo(statement, sent);
   res.status(200).send(req.locals.response);
 };
 
-export const playVideo = (req, res) => {
+export const playVideo = async (req, res) => {
   const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
   const hours = req.params.hours;
   const minutes = req.params.minutes;
@@ -66,8 +66,8 @@ export const playVideo = (req, res) => {
       seconds,
       origin
     );
-    lrs.sendStatementToLrs(statement);
-    controller.saveStatementToMongo(statement);
+    const sent = await lrs.sendStatementToLrs(statement);
+    controller.saveStatementToMongo(statement, sent);
     return res.status(204).send();
   }
 
@@ -76,7 +76,7 @@ export const playVideo = (req, res) => {
   });
 };
 
-export const pauseVideo = (req, res) => {
+export const pauseVideo = async (req, res) => {
   const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
   const hours = req.params.hours;
   const minutes = req.params.minutes;
@@ -90,8 +90,8 @@ export const pauseVideo = (req, res) => {
       seconds,
       origin
     );
-    lrs.sendStatementToLrs(statement);
-    controller.saveStatementToMongo(statement);
+    const sent = await lrs.sendStatementToLrs(statement);
+    controller.saveStatementToMongo(statement, sent);
     return res.status(204).send();
   }
 
@@ -100,7 +100,7 @@ export const pauseVideo = (req, res) => {
   });
 };
 
-export const completeVideo = (req, res) => {
+export const completeVideo = async (req, res) => {
   const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
   if (req.locals.material.type === "video") {
     const statement = statementFactory.getVideoEndStatement(
@@ -108,8 +108,8 @@ export const completeVideo = (req, res) => {
       req.locals.material,
       origin
     );
-    lrs.sendStatementToLrs(statement);
-    controller.saveStatementToMongo(statement);
+    const sent = await lrs.sendStatementToLrs(statement);
+    controller.saveStatementToMongo(statement, sent);
     return res.status(204).send();
   }
 
@@ -118,7 +118,7 @@ export const completeVideo = (req, res) => {
   });
 };
 
-export const viewSlide = (req, res) => {
+export const viewSlide = async (req, res) => {
   const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
   const slideNr = req.params.slideNr;
   if (req.locals.material.type === "pdf") {
@@ -128,8 +128,8 @@ export const viewSlide = (req, res) => {
       slideNr,
       origin
     );
-    lrs.sendStatementToLrs(statement);
-    controller.saveStatementToMongo(statement);
+    const sent = await lrs.sendStatementToLrs(statement);
+    controller.saveStatementToMongo(statement, sent);
     return res.status(204).send();
   }
 
@@ -138,7 +138,7 @@ export const viewSlide = (req, res) => {
   });
 };
 
-export const completePDF = (req, res) => {
+export const completePDF = async (req, res) => {
   const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
   if (req.locals.material.type === "pdf") {
     const statement = statementFactory.getPdfCompleteStatement(
@@ -146,8 +146,8 @@ export const completePDF = (req, res) => {
       req.locals.material,
       origin
     );
-    lrs.sendStatementToLrs(statement);
-    controller.saveStatementToMongo(statement);
+    const sent = await lrs.sendStatementToLrs(statement);
+    controller.saveStatementToMongo(statement, sent);
     return res.status(204).send();
   }
 

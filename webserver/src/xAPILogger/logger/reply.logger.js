@@ -3,7 +3,7 @@ const lrs = require("../lrs/lrs");
 const controller = require("../controller.xAPILogger");
 const ORIGIN = process.env.ORIGIN;
 
-export const newReply = (req, res) => {
+export const newReply = async (req, res) => {
   const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
   let statement;
   if (!req.locals.annotation.tool) {
@@ -21,24 +21,24 @@ export const newReply = (req, res) => {
       origin
     );
   }
-  lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement);
+  const sent = await lrs.sendStatementToLrs(statement);
+  controller.saveStatementToMongo(statement, sent);
   res.status(200).send(req.locals.response);
 };
 
-export const deleteReply = (req, res) => {
+export const deleteReply = async (req, res) => {
   const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
   const statement = statementFactory.getReplyDeletionStatement(
     req.locals.user,
     req.locals.reply,
     origin
   );
-  lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement);
+  const sent = await lrs.sendStatementToLrs(statement);
+  controller.saveStatementToMongo(statement, sent);
   res.status(200).send(req.locals.response);
 };
 
-export const likeReply = (req, res) => {
+export const likeReply = async (req, res) => {
   const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
   let statement;
   if (req.locals.like) {
@@ -54,12 +54,12 @@ export const likeReply = (req, res) => {
       origin
     );
   }
-  lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement);
+  const sent = await lrs.sendStatementToLrs(statement);
+  controller.saveStatementToMongo(statement, sent);
   res.status(200).send(req.locals.response);
 };
 
-export const dislikeReply = (req, res) => {
+export const dislikeReply = async (req, res) => {
   const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
   let statement;
   if (req.locals.dislike) {
@@ -75,12 +75,12 @@ export const dislikeReply = (req, res) => {
       origin
     );
   }
-  lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement);
+  const sent = await lrs.sendStatementToLrs(statement);
+  controller.saveStatementToMongo(statement, sent);
   res.status(200).send(req.locals.response);
 };
 
-export const editReply = (req, res) => {
+export const editReply = async (req, res) => {
   const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
   let statement = statementFactory.getReplyEditStatement(
     req.locals.user,
@@ -88,7 +88,7 @@ export const editReply = (req, res) => {
     req.locals.newReply,
     origin
   );
-  lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement);
+  const sent = await lrs.sendStatementToLrs(statement);
+  controller.saveStatementToMongo(statement, sent);
   res.status(200).send(req.locals.response);
 };

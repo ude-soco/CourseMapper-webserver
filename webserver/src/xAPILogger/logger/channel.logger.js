@@ -3,43 +3,43 @@ const lrs = require("../lrs/lrs");
 const controller = require("../controller.xAPILogger");
 const ORIGIN = process.env.ORIGIN;
 
-export const newChannel = (req, res) => {
+export const newChannel = async (req, res) => {
   const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
   const statement = statementFactory.getChannelCreationStatement(
     req.locals.user,
     req.locals.channel,
     origin
   );
-  lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement);
+  const sent = await lrs.sendStatementToLrs(statement);
+  controller.saveStatementToMongo(statement, sent);
   res.send(req.locals.response);
 };
 
-export const deleteChannel = (req, res) => {
+export const deleteChannel = async (req, res) => {
   const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
   const statement = statementFactory.getChannelDeletionStatement(
     req.locals.user,
     req.locals.channel,
     origin
   );
-  lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement);
+  const sent = await lrs.sendStatementToLrs(statement);
+  controller.saveStatementToMongo(statement, sent);
   res.send(req.locals.response);
 };
 
-export const getChannel = (req, res) => {
+export const getChannel = async (req, res) => {
   const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
   const statement = statementFactory.getChannelAccessStatement(
     req.locals.user,
     req.locals.channel,
     origin
   );
-  lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement);
+  const sent = await lrs.sendStatementToLrs(statement);
+  controller.saveStatementToMongo(statement, sent);
   res.status(200).send(req.locals.response);
 };
 
-export const editChannel = (req, res) => {
+export const editChannel = async (req, res) => {
   const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
   const statement = statementFactory.getChannelEditStatement(
     req.locals.user,
@@ -47,7 +47,7 @@ export const editChannel = (req, res) => {
     req.locals.oldChannel,
     origin
   );
-  lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement);
+  const sent = await lrs.sendStatementToLrs(statement);
+  controller.saveStatementToMongo(statement, sent);
   res.send(req.locals.response);
 };
