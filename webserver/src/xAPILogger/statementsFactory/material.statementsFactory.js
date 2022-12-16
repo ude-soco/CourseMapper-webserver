@@ -254,13 +254,10 @@ export const getVideoPlayStatement = (user, material, hours, minutes, seconds, o
             channel_id: material.channelId,
             topic_id: material.topicId,
             course_id: material.courseId,
-            duration: duration,
+            timestamp: duration,
           },
         },
       },
-    },
-    result: {
-      duration: `PT${duration}S`
     },
     context: {
       platform: "CourseMapper",
@@ -310,13 +307,10 @@ export const getVideoPauseStatement = (user, material, hours, minutes, seconds, 
             channel_id: material.channelId,
             topic_id: material.topicId,
             course_id: material.courseId,
-            duration: duration,
+            timestamp: duration,
           },
         },
       },
-    },
-    result: {
-      duration: `PT${duration}S`
     },
     context: {
       platform: "CourseMapper",
