@@ -13,7 +13,10 @@ const User = new Schema({
   courses: [{
     courseId: { type: Schema.Types.ObjectId, ref: "course", required: true },
     role: { type: Schema.Types.ObjectId, ref: "role" },
-  }]
+  }],
+  indicators: [
+    { _id : Schema.Types.ObjectId, src: String, width: String, height: String, frameborder: String },
+  ]
 });
 
 module.exports = mongoose.model("user", User);

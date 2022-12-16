@@ -650,6 +650,13 @@ export const deleteIndicator = async (req, res, next) => {
   });
 };
 
+
+/**
+ * @function getIndicators
+ * get indicators controller
+ *
+ * @param {string} req.params.courseId The id of the course
+ */
 export const getIndicators = async (req, res, next) => {
   const courseId = req.params.courseId;
 
@@ -670,6 +677,17 @@ export const getIndicators = async (req, res, next) => {
   return res.status(200).send(response);
 };
 
+
+
+/**
+ * @function resizeIndicator
+ * resize indicator controller
+ *
+ * @param {string} req.params.courseId The id of the course
+ * @param {string} req.params.indicatorId The id of the indicator
+ * @param {string} req.params.width The width of the indicator
+ * @param {string} req.params.height The height of the indicator
+ */
 export const resizeIndicator = async (req, res, next) => {
   const courseId = req.params.courseId;
   const indicatorId = req.params.indicatorId;
@@ -713,6 +731,15 @@ export const resizeIndicator = async (req, res, next) => {
 };
 
 
+
+/**
+ * @function reorderIndicators
+ * reorder indicators controller
+ *
+ * @param {string} req.params.courseId The id of the course
+ * @param {string} req.params.newIndex The newIndex of the reordered indicator
+ * @param {string} req.params.oldIndex The oldIndex of the reordered indicator
+ */
 export const reorderIndicators = async (req, res, next) => {
   const courseId = req.params.courseId;
   const newIndex = parseInt(req.params.newIndex);
@@ -751,7 +778,7 @@ export const reorderIndicators = async (req, res, next) => {
   }
 
   return res.status(200).send({
-    success: `course with id = '${courseId}' has been updated successfully!`,
+    success: `indicators have been updated successfully!`,
     indicators: foundCourse.indicators
   });
 };
