@@ -2,6 +2,7 @@ import { CourseImp } from 'src/app/models/CourseImp';
 import { Course } from 'src/app/models/Course';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CourseService } from 'src/app/services/course.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sidebar',
@@ -12,8 +13,9 @@ export class SidebarComponent implements OnInit {
   courses: Course[] = [];
   selectedCourse: Course = new CourseImp('', '');
   displayAddCourseDialogue: boolean = false;
+ 
 
-  constructor(private courseService: CourseService) {}
+  constructor(private courseService: CourseService, private router: Router) {}
 
   ngOnInit(): void {
     this.getCourses();
@@ -71,5 +73,6 @@ export class SidebarComponent implements OnInit {
 
       console.log(selectedCourse);
       this.courseService.selectCourse(selectedCourse);
+      this.router.navigate(['course', selectedCourse._id])
   }
 }

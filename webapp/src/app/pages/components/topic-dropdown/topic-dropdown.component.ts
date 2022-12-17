@@ -7,6 +7,7 @@ import { TopicChannelService } from 'src/app/services/topic-channel.service';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { Material } from 'src/app/models/Material';
 import { MaterilasService } from 'src/app/services/materials.service';  
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-topic-dropdown',
@@ -20,7 +21,7 @@ export class TopicDropdownComponent implements OnInit {
     private topicChannelService: TopicChannelService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private materilasService : MaterilasService
+    private materilasService : MaterilasService, private router: Router
   ) {}
 
   topics: Topic[] = [];
@@ -98,6 +99,7 @@ export class TopicDropdownComponent implements OnInit {
     //3
     
     this.topicChannelService.selectChannel(channel);
+    this.router.navigate(['course', this.courseService.getSelectedCourse()._id,'channel', channel._id])
   }
 
   /**

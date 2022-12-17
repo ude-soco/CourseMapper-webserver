@@ -33,7 +33,7 @@ app.use(
     httpOnly: true,
   })
 );
-
+app.use('*/public/uploads',express.static('public/uploads'));
 // Get port from environment and store in Express
 const port = normalizePort(process.env.PORT || "8090");
 app.set("port", port);

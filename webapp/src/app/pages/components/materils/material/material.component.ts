@@ -1,10 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { Channel } from 'src/app/models/Channel';
 import { TopicChannelService } from 'src/app/services/topic-channel.service';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import { ElementRef, ViewChild} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import { Material } from 'src/app/models/Material';
+import { PdfviewService } from 'src/app/services/pdfview.service';
 
 
 
@@ -25,6 +26,7 @@ export class MaterialComponent implements OnInit {
   @Output() materialCreated: EventEmitter<void> = new EventEmitter();
   private channels: Channel[] = [];
    materials: Material[] = [];
+   materialType?:string;
 
   isNewMaterialModalVisible: boolean = false;
   errorMessage: any;
@@ -32,7 +34,7 @@ export class MaterialComponent implements OnInit {
   // tabs = [];
  // selected = new FormControl(0);
   //tabtitle:string = '';
-  constructor(private topicChannelService: TopicChannelService,) { }
+  constructor(private topicChannelService: TopicChannelService,private pdfViewService: PdfviewService) { }
 
   ngOnInit(): void {
     
@@ -60,7 +62,9 @@ console.log("biigggg")
               console.log(this.channels["_id"]);
               this.materials =this.channels["materials"];
             for (let i in this.materials){
-               console.log(this.materials[i].name);
+               console.log(this.materials[i].type);
+
+             // this.selectedMaterial=this.materials[i].type
             }
             
             
@@ -91,7 +95,17 @@ console.log("biigggg")
       
   });
   }
-
+  // ngOnChanges(changes: SimpleChanges) {
+  //   if (this.initialMaterial) {
+  //     this.selectedMaterial = this.initialMaterial;
+  //     if (this.channel) {
+  //       this.index = this.channel?.materials.indexOf(this.selectedMaterial);
+  //     }
+  //    // this.updateSelectedVideo();
+  //   } else {
+  //     this.setSelectedTabIndex(0);
+  //   }
+  // }
 
   /*addTab() {
 this.tabs.push('New');
@@ -103,11 +117,34 @@ this.tabs.push('New');
   }*/
   onTabChange(e) {
     this.setSelectedTabIndex(e.index || 0);
-    this.selectedMaterial = this.channel?.materials[e.index || 0];
+    console.log("material ID")
+    console.log(this.channels["materials"])
+    //this.channel?.["materials"]
+    this.selectedMaterial = this.channels["materials"][e.index || 0];
+    console.log("material ID22222")
+    console.log(this.selectedMaterial._id)
+   
  }
  setSelectedTabIndex(index: number) {
-  this.selectedMaterial = this.channel?.materials[index];
-  //this.updateSelectedVideo();
+  this.selectedMaterial = this.channels["materials"][index];
+  console.log("this.selectedMaterial.type")
+  console.log(this.selectedMaterial)
+  this.updateSelectedMaterial();
+}
+updateSelectedMaterial() {
+  if (!this.selectedMaterial) return;
+
+
+  switch (this.selectedMaterial.type) {
+
+    case "pdf":
+      this.pdfViewService.setPageNumber(1)
+      let url=this.selectedMaterial?.url+this.selectedMaterial?._id+".pdf"
+      this.pdfViewService.setPdfURL(url)
+      break;
+
+    default:
+  }
 }
 showNewMaterialModal() {
   this.isNewMaterialModalVisible = true;

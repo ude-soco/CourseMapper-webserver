@@ -83,9 +83,9 @@ export class AddMaterialComponent implements OnInit {
     this.fileUploadForm?.get('file')?.setValue(this.file);
   }
  submitForm(): void {
- // var file=this.fileUploadForm?.get('file')?.value
+  var file=this.fileUploadForm?.get('file')?.value
  // var filename=file.name;
- // console.log("filename")
+ console.log(file)
   //console.log(filename)
   this.materialToAdd.courseID=this.courseID!;
   console.log(this.courseID)
@@ -100,26 +100,28 @@ export class AddMaterialComponent implements OnInit {
     if(this.validateForm.controls['url'].value  ){
       this.materialToAdd.url=this.validateForm.controls['url'].value
     }
-    else{
-    this.materialToAdd.url=""
+
   }
-  }
+  else{
+    //this.API_URL + "/public/uploads/pdfs/"+this.materialId+".pdf"
+  this.materialToAdd.url="/public/uploads/pdfs/" 
+}
   var result=  this.materialService.addMaterial(this.materialToAdd).subscribe({
     next: (data) => {
-      this.materialId=data;
+      this.materialId=data.material._id;
       console.log("material roro")
       console.log(data.material._id)
-      if (this.fileUploadForm?.get('file')?.value) {
+      if (file) {
    if(this.materialType=="video")
    {
-    console.log(this.fileUploadForm?.get('file')?.value)
+    console.log(file)
     this.formData = new FormData();
         this.formData.append('file', this.file, data.material._id+".mp4");
       }
         
       if(this.materialType=="pdf")
       {
-       console.log(this.fileUploadForm?.get('file')?.value)
+       console.log(file)
        this.formData = new FormData();
            this.formData.append('file', this.file, data.material._id+".pdf");
          }  
@@ -128,6 +130,8 @@ export class AddMaterialComponent implements OnInit {
         this.materialService.uploadFile(this.formData, this.materialType).subscribe(res=>{
           if (res.message ==="File uploaded successfully!" ) {
             this.response=res
+            window.location.reload()
+            this.router.navigate(['course', this.courseID,'channel', this.channelID, 'material',data.material._id ])
           /*  this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
               this.router.navigate([MaterialComponent]);
           });*/
@@ -145,11 +149,10 @@ export class AddMaterialComponent implements OnInit {
     this.fileUploadForm.reset();
     this.validateForm.reset();
     //window.location.reload()
-    console.log("this.materialId")
-    console.log(this.materialId)
   //  "['artist', track.artistId]"
    // this.router.navigate(['course', this.channelID])
-   this.router.navigate(['course', this.courseID])
+   this.router.navigate(['course', this.courseID,'channel', this.channelID, 'material',this.materialId ])
+  // this.router.navigate(['course', this.courseID])
 console.log(result)
    // this.onSubmitted.emit();
 

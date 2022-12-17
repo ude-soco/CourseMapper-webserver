@@ -8,6 +8,7 @@ import { HomeComponent } from './pages/home/home.component';
 import { MaterialComponent } from './pages/components/materils/material/material.component';
 import { ChannelbarComponent } from './pages/components/channelbar/channelbar.component';
 import { CoursesComponent } from './pages/courses/courses.component';
+import { TopicDropdownComponent } from './pages/components/topic-dropdown/topic-dropdown.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -31,12 +32,21 @@ const routes: Routes = [
         path: 'channel/:channelId', component: ChannelbarComponent,
       },
      
-    ],*/
+    ],{path: 'channel/:channelId', component: MaterialComponent} , */
   },
   //{path: 'channel/:channelId', component: ChannelbarComponent},
  // {path: 'home/channel', component: ChannelbarComponent},
  //{path: 'course/:channelId', component: CoursesComponent},
- {path: 'course/:courseID', component: CoursesComponent},
+ {path: 'course/:courseID', component: CoursesComponent,
+ children: [
+  {path: 'channel/:channelId', component: TopicDropdownComponent,
+  children: [
+    {path: 'material/:materialId', component: MaterialComponent},
+  ],
+},
+],
+},
+ 
   /*{
     path: 'channel',
     component: ChannelbarComponent,

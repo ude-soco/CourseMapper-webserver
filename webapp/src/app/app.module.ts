@@ -43,6 +43,8 @@ import { MaterialComponent } from './pages/components/materils/material/material
 import {MatInputModule} from '@angular/material/input';
 import {MatTabsModule} from '@angular/material/tabs';
 import { AddMaterialComponent } from './pages/components/materils/add-material/add-material.component';
+import {PdfViewerModule} from 'ng2-pdf-viewer';
+import { ViewPdfComponent } from './pages/components/materils/view-pdf/view-pdf.component'
 
 
 registerLocaleData(en);
@@ -66,6 +68,7 @@ registerLocaleData(en);
     HomeComponent,
     MaterialComponent,
     AddMaterialComponent,
+    ViewPdfComponent,
 
   
   ],
@@ -85,7 +88,9 @@ registerLocaleData(en);
     RippleModule,
     ConfirmDialogModule,
     MatInputModule,
-    MatTabsModule
+    MatTabsModule,
+PdfViewerModule
+
   ],
   providers: [{ provide: NZ_I18N, useValue: en_US }, httpInterceptorProviders],
   bootstrap: [AppComponent],
