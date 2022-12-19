@@ -5,9 +5,9 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { PasswordModule } from 'primeng/password';
 import {TabViewModule} from 'primeng/tabview';
-import {FileUploadModule} from 'primeng/fileupload';
-import {InputTextareaModule} from 'primeng/inputtextarea';
-
+import {ToolbarModule} from 'primeng/toolbar';
+import {ToggleButtonModule} from 'primeng/togglebutton';
+import {MenubarModule} from 'primeng/menubar';
 
 const PrimeNgComponents = [
   AvatarModule,
@@ -16,8 +16,9 @@ const PrimeNgComponents = [
   ButtonModule,
   PasswordModule,
   TabViewModule,
-  FileUploadModule,
-  InputTextareaModule
+  ToolbarModule,
+  ToggleButtonModule,
+  MenubarModule,
 ];
 
 @NgModule({

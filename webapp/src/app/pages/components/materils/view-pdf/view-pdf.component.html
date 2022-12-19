@@ -1,3 +1,4 @@
+<app-pdf-annotation-toolbar></app-pdf-annotation-toolbar>
 <pdf-viewer [src]="docURL" [render-text]="true" [render-text-mode]=3 (text-layer-rendered)=true
 (pagechanging)="pagechanging($event)" [fit-to-page]="true" [original-size]='true'
 (after-load-complete)="handlePdfLoaded($event)" (page-rendered)="pageRendered($event)" [show-all]="true"
