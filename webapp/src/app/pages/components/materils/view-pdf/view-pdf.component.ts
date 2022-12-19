@@ -69,5 +69,11 @@ export class ViewPdfComponent implements OnInit {
      }
    });
   }
+  
   pageRendered(event: any) {}
+
+  paginate(event){
+    this.currentPage = event.page + 1
+    this.pdfViewService.setPageNumber(this.currentPage)
+  }
 }

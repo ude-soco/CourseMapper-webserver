@@ -10,6 +10,7 @@ import {ToggleButtonModule} from 'primeng/togglebutton';
 import {MenubarModule} from 'primeng/menubar';
 import {FileUploadModule} from 'primeng/fileupload';
 import {InputTextareaModule} from 'primeng/inputtextarea';
+import {PaginatorModule} from 'primeng/paginator';
 
 const PrimeNgComponents = [
   AvatarModule,
@@ -23,7 +24,8 @@ const PrimeNgComponents = [
   MenubarModule,
   FileUploadModule,
   InputTextModule,
-  InputTextareaModule
+  InputTextareaModule,
+  PaginatorModule
 ];
 
 @NgModule({
