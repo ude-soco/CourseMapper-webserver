@@ -104,7 +104,6 @@
 </p-tabPanel>
 <ng-container *ngIf="this.materials.length > 0">
 <p-tabPanel *ngFor="let material of materials; let i = index" [header]="material.name" [closable]="true"  >
-  {{material.name}}
   <div *ngIf="material.type == 'pdf'">
    <app-view-pdf [materialId]="material._id" [materialType]="material.type" [material]="material"> </app-view-pdf> 
     
