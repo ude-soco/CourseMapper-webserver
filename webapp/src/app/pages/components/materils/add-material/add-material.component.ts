@@ -7,6 +7,7 @@ import { Channel } from 'src/app/models/Channel';
 import { TopicChannelService } from 'src/app/services/topic-channel.service';
 import { Router } from '@angular/router';
 import { MaterialComponent } from '../material/material.component';
+import { MessageService } from 'primeng/api';
 
 
 @Component({
@@ -43,8 +44,8 @@ export class AddMaterialComponent implements OnInit {
   fileInputLabel: string | undefined;
   
   file:File =null;
-  constructor(private formBuilder: FormBuilder,private fb: FormBuilder, private materialService: MaterilasService, private topicChannelService: TopicChannelService
-    ,  private router: Router) {    
+  constructor( private formBuilder: FormBuilder,private fb: FormBuilder, private materialService: MaterilasService, private topicChannelService: TopicChannelService
+    ,  private router: Router, ) {    
    
   }
 
@@ -74,17 +75,21 @@ export class AddMaterialComponent implements OnInit {
 }
 
   onFileSelect(event) {
-
-    this.file=<File>event.target.files[0]
-    this.fileInputLabel = this.file.name;
-    const fileChosen = document.getElementById('file-chosen');
-    fileChosen!.textContent = this.file.name
+    this.file=<File>event.files[0]
+    // this.fileInputLabel = this.file.name;
+    // console.log("this.fileInputLabel")
+    // console.log(this.fileInputLabel)
+    //const fileChosen = document.getElementById('file-chosen');
+    //fileChosen!.textContent = this.file.name
 
     this.fileUploadForm?.get('file')?.setValue(this.file);
+    console.log("test file")
+    console.log(this.fileUploadForm?.get('file').setValue(this.file))
   }
  submitForm(): void {
   var file=this.fileUploadForm?.get('file')?.value
  // var filename=file.name;
+ console.log("test file")
  console.log(file)
   //console.log(filename)
   this.materialToAdd.courseID=this.courseID!;
@@ -161,37 +166,6 @@ console.log(result)
    
   } 
 
-    uploadMaterial(){
-      var file=this.fileUploadForm?.get('uploadedFile')?.value
-      var filename=file.name;
-      console.log("filename")
-      console.log(filename)
-      this.materialToAdd.courseID=this.courseID!;
-      console.log(this.courseID)
-      this.materialToAdd.topicID=this.topicID!;
-      console.log(this.topicID)
-      this.materialToAdd.channelID=this.channelID!;
-  
-      this.materialToAdd.type = this.materialType as MaterialType;
-      this.materialToAdd.name=this.validateForm.controls['materialName'].value
-      this.materialToAdd.description=this.validateForm.controls['description'].value
-      if(this.materialType=="video" && !this.response){
-        this.materialToAdd.url=this.validateForm.controls['url'].value
-      }else{
-        this.materialToAdd.url=this.channelID!+"_"+this.validateForm.controls['materialName'].value+"_"+filename
-      }
-      var result=  this.materialService.addMaterial(this.materialToAdd).subscribe({
-        next: (data) => {
-          console.log("material")
-          console.log(data)
-        }
-      })
-      if(result!=null){
-console.log(result)
-       // this.onSubmitted.emit();
-  
-      }
-    }
 }
 /*function customValidator(control?: FormControl, control2?: FormControl) { 
 

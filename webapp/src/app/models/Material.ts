@@ -7,6 +7,7 @@ export interface Material {
   type: MaterialType;
   url: string;
   description?:string
+  courseID?:string;
 }
 export interface CreateMaterial {
   

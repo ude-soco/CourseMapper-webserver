@@ -35,4 +35,5 @@ export class PdfviewService {
   setFirstPageNumber(numb:number){
     this.firstPageNumber.next(numb)
   }
+
 }

@@ -16,6 +16,8 @@ const db = require("./models");
 const Role = db.role;
 const User = db.user;
 
+global.__basedir = __dirname;
+
 env !== "production" ? app.use(cors({
   credentials: true,
   origin: ["http://localhost:4200"],
@@ -64,6 +66,7 @@ require("./routes/annotation.routes")(app);
 require("./routes/reply.routes")(app);
 require("./routes/tag.routes")(app);
 require("./routes/fileupload.routes")(app);
+require("./routes/filedelete.routes")(app);
 
 // Create HTTP server
 const server = http.createServer(app);
