@@ -6,6 +6,7 @@ import { ElementRef, ViewChild} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import { Material } from 'src/app/models/Material';
 import { PdfviewService } from 'src/app/services/pdfview.service';
+import { MaterilasService } from 'src/app/services/materials.service';
 
 
 
@@ -34,7 +35,7 @@ export class MaterialComponent implements OnInit {
   // tabs = [];
  // selected = new FormControl(0);
   //tabtitle:string = '';
-  constructor(private topicChannelService: TopicChannelService,private pdfViewService: PdfviewService) { }
+  constructor(private topicChannelService: TopicChannelService,private pdfViewService: PdfviewService, private materialService:MaterilasService) { }
 
   ngOnInit(): void {
     
@@ -63,7 +64,7 @@ console.log("biigggg")
               this.materials =this.channels["materials"];
             for (let i in this.materials){
                console.log(this.materials[i].type);
-
+               this.setSelectedTabIndex(this.materials.length);
              // this.selectedMaterial=this.materials[i].type
             }
             
@@ -116,16 +117,24 @@ this.tabs.push('New');
     this.tabs.splice(index, 1);
   }*/
   onTabChange(e) {
-    this.setSelectedTabIndex(e.index || 0);
+    console.log("e.index")
+
+    console.log(e.index)
+    e.index1=e.index-1
+    console.log("e.index after")
+    console.log(e.index1)
+    this.setSelectedTabIndex(e.index1 || 0);
     console.log("material ID")
     console.log(this.channels["materials"])
     //this.channel?.["materials"]
-    this.selectedMaterial = this.channels["materials"][e.index || 0];
+    this.selectedMaterial = this.channels["materials"][e.index1 || 0];
     console.log("material ID22222")
     console.log(this.selectedMaterial._id)
    
  }
  setSelectedTabIndex(index: number) {
+  console.log("index22")
+  console.log(index)
   this.selectedMaterial = this.channels["materials"][index];
   console.log("this.selectedMaterial.type")
   console.log(this.selectedMaterial)
@@ -133,8 +142,6 @@ this.tabs.push('New');
 }
 updateSelectedMaterial() {
   if (!this.selectedMaterial) return;
-
-
   switch (this.selectedMaterial.type) {
 
     case "pdf":
@@ -146,12 +153,41 @@ updateSelectedMaterial() {
     default:
   }
 }
-showNewMaterialModal() {
-  this.isNewMaterialModalVisible = true;
+
+deleteMaterial(e){
+  console.log("e.index delete")
+
+  console.log(e.index)
+  e.index1=e.index-1
+  
+
+  this.selectedMaterial = this.channels["materials"][e.index1];
+  console.log("material ID delete")
+  console.log(this.selectedMaterial["_id"])
+  console.log("channel.courseId delete")
+  console.log(this.selectedMaterial["courseId"])  //this.materialService.deleteMaterial(this.selectedMaterial).subscribe
+
+  this.materialService.deleteMaterial(this.selectedMaterial).subscribe({
+    next: (data) => {
+      console.log("material deldete")
+console.log(data)
+
+this.materialService.deleteFile(this.selectedMaterial).subscribe({
+  next: (res) => {
+    console.log("file deleted")   
+    console.log(res)}
+})
+     
+    },
+    error: (err) => {
+      this.errorMessage = err.error.message;
+      
+    },
+  });
+
+
 }
-closeNewMaterialModal(){
-  this.isNewMaterialModalVisible = false;
-  this.materialCreated.emit();
-}
+
+
 
 }

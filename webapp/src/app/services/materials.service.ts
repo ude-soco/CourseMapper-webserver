@@ -44,4 +44,21 @@ export class MaterilasService {
 
     return this.http.post<any>(`${this.API_URL}/upload/pdf`,  formData ).pipe(tap(res => console.log(res)));
   }
+  deleteMaterial(material: Material){
+    return this.http.delete(`${this.API_URL}/courses/${material["courseId"]}/materials/${material._id}`,)
+    .pipe(
+      tap(res =>{
+console.log(res)
+      })
+    )
+  }
+  deleteFile(material: Material){
+ 
+    return this.http.delete(`${this.API_URL}/files/${material._id+".pdf"}`,)
+    .pipe(
+      tap(res =>{
+console.log(res)
+      })
+    )
+  }
 }

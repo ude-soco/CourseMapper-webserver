@@ -54,7 +54,13 @@
   </p-tabPanel>
 </p-tabView>-->
 
- <p-tabView [activeIndex]="index"  (onChange)="onTabChange($event)" *ngIf="selectedChannel.materials">
+
+
+
+
+
+
+ <!-- <p-tabView [activeIndex]="index"  (onChange)="onTabChange($event)" *ngIf="selectedChannel.materials">
   <ng-container *ngIf="this.materials.length > 0">
   <p-tabPanel *ngFor="let material of materials; let i = index" [selected]="i == 0" [header]="material.name" [closable]="true"  >
       {{material.name}}
@@ -83,7 +89,37 @@
 <div *ngIf="selectedChannel && !(this.materials.length> 0)">
   <h3>This channel does not contain any course material at the moment. Please click on the plus button to add new
       material</h3>
-</div>
+</div> -->
+
+
+
+
+
+<p-tabView (onChange)="onTabChange($event)" (onClose)="deleteMaterial($event)" *ngIf="selectedChannel.materials">
+ <p-tabPanel header="+" >
+    <ng-template pTemplate="content">
+      <app-add-material [courseID]="selectedChannel.courseId"
+      [topicID]="selectedChannel.topicId" [channelID]="selectedChannel._id"> </app-add-material>
+  </ng-template>
+</p-tabPanel>
+<ng-container *ngIf="this.materials.length > 0">
+<p-tabPanel *ngFor="let material of materials; let i = index" [header]="material.name" [closable]="true"  >
+  {{material.name}}
+  <div *ngIf="material.type == 'pdf'">
+   <app-view-pdf [materialId]="material._id" [materialType]="material.type" [material]="material"> </app-view-pdf> 
+    
+    </div>
+    <div *ngIf="material.type == 'video'">
+      video type
+      
+      </div>
+</p-tabPanel>
+</ng-container>
+
+ 
+
+</p-tabView>
+
 
 
 
