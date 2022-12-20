@@ -4,3 +4,11 @@
 .a-type{
     @apply relative flex mr-4
 }
+.create-annotation{
+    position: fixed;
+    top: 100px;
+    bottom: 0;
+    right: 25px;
+    width: 400px;
+    height: 100px;
+}
