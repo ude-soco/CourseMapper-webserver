@@ -19,7 +19,7 @@ export const sendStatementToLrs = async (statement) => {
       return false;
     } catch (error) {
       // in case there is a problem in connection like the LRS is down. status code 443
-      // in case the batch contains a statement with an id, the LRS is having already a statement for and the statements are not matching. status code 409
+      // in case you send a statement with an id, the LRS is having already a statement for and the both statements are not matching. status code 409
       console.log(error);
       return false;
     }

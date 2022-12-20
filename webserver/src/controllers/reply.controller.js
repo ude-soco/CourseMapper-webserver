@@ -103,9 +103,9 @@ export const newReply = async (req, res, next) => {
     },
     courseId: foundAnnotation.courseId,
     topicId: foundAnnotation.topicId,
-    channelId: foundAnnotation._id,
-    materialId: foundAnnotation._id,
-    annotationId: annotationId,
+    channelId: foundAnnotation.channelId,
+    materialId: foundAnnotation.materialId,
+    annotationId: foundAnnotation._id,
     createdAt: Date.now(),
     updatedAt: Date.now(),
   });
