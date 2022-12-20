@@ -13,6 +13,9 @@ import {InputTextareaModule} from 'primeng/inputtextarea';
 import {PaginatorModule} from 'primeng/paginator';
 import {PanelModule} from 'primeng/panel';
 import {DropdownModule} from 'primeng/dropdown';
+import {MultiSelectModule} from 'primeng/multiselect';
+import {DividerModule} from 'primeng/divider';
+import {ScrollerModule} from 'primeng/scroller';
 
 const PrimeNgComponents = [
   AvatarModule,
@@ -29,7 +32,10 @@ const PrimeNgComponents = [
   InputTextareaModule,
   PaginatorModule,
   PanelModule,
-  DropdownModule
+  DropdownModule,
+  MultiSelectModule,
+  DividerModule,
+  ScrollerModule
 ];
 
 @NgModule({
