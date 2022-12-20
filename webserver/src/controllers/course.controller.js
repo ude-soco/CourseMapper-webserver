@@ -9,6 +9,8 @@ const Annotation = db.annotation;
 const Material = db.material;
 const Reply = db.reply;
 const Tag = db.tag;
+const Activity = db.activity;
+
 /**
  * @function getAllCourses
  * Get all courses controller
@@ -461,6 +463,38 @@ export const deleteCourse = async (req, res, next) => {
     try {
       await Tag.deleteMany({ courseId: courseId });
     } catch (err) {
+      return res.status(500).send({ error: err });
+    }
+
+    let activitiesToBeDeleted;
+    try {
+      activitiesToBeDeleted = await Activity.aggregate([
+        {
+          $addFields: {
+            extensionFields: {
+              $objectToArray: "$statement.object.definition.extensions"
+            }
+          }
+        },
+        {
+          $match: {
+            $or: [
+              {"extensionFields.v.id": ObjectId(courseId)},
+              {"extensionFields.v.id": courseId},
+              {"extensionFields.v.course_id": ObjectId(courseId)},
+              {"extensionFields.v.course_id": courseId}
+            ]
+          }
+        },
+        {
+          $project: { _id: 1 }
+        }
+      ]);
+      
+      let activitiesToBeDeletedIds = activitiesToBeDeleted.map(actvity => actvity._id);
+
+      await Activity.deleteMany({_id : { $in: activitiesToBeDeletedIds }});
+    } catch (error) {
       return res.status(500).send({ error: err });
     }
   } catch (err) {
