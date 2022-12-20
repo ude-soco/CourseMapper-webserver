@@ -11,6 +11,8 @@ import {MenubarModule} from 'primeng/menubar';
 import {FileUploadModule} from 'primeng/fileupload';
 import {InputTextareaModule} from 'primeng/inputtextarea';
 import {PaginatorModule} from 'primeng/paginator';
+import {PanelModule} from 'primeng/panel';
+import {DropdownModule} from 'primeng/dropdown';
 
 const PrimeNgComponents = [
   AvatarModule,
@@ -25,7 +27,9 @@ const PrimeNgComponents = [
   FileUploadModule,
   InputTextModule,
   InputTextareaModule,
-  PaginatorModule
+  PaginatorModule,
+  PanelModule,
+  DropdownModule
 ];
 
 @NgModule({

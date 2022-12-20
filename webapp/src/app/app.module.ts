@@ -45,7 +45,8 @@ import {MatTabsModule} from '@angular/material/tabs';
 import { AddMaterialComponent } from './pages/components/materils/add-material/add-material.component';
 import {PdfViewerModule} from 'ng2-pdf-viewer';
 import { ViewPdfComponent } from './pages/components/materils/view-pdf/view-pdf.component';
-import { PdfAnnotationToolbarComponent } from './pages/components/annotations/pdf-annotation/pdf-annotation-toolbar/pdf-annotation-toolbar.component'
+import { PdfAnnotationToolbarComponent } from './pages/components/annotations/pdf-annotation/pdf-annotation-toolbar/pdf-annotation-toolbar.component';
+import { PdfCreateAnnotationComponent } from './pages/components/annotations/pdf-annotation/pdf-create-annotation/pdf-create-annotation/pdf-create-annotation.component'
 
 
 registerLocaleData(en);
@@ -71,6 +72,7 @@ registerLocaleData(en);
     AddMaterialComponent,
     ViewPdfComponent,
     PdfAnnotationToolbarComponent,
+    PdfCreateAnnotationComponent,
 
   
   ],

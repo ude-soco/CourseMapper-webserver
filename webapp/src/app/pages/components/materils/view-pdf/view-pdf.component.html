@@ -4,5 +4,6 @@
 (after-load-complete)="handlePdfLoaded($event)" (page-rendered)="pageRendered($event)" [show-all]="false"
 [(page)]="currentPage" [zoom]="zoom" style="display: block; height: 36rem"> 
 </pdf-viewer>
+<app-pdf-create-annotation></app-pdf-create-annotation>
 <p-paginator [rows]="1" [showJumpToPageDropdown]="true" [showPageLinks]="false" [showJumpToPageInput]="true" [totalRecords]="totalPages" (onPageChange)="paginate($event)" ></p-paginator>
 

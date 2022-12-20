@@ -1,0 +1,6 @@
+.dropdwon{
+    @apply relative flex mb-4
+}
+.a-type{
+    @apply relative flex mr-4
+}
