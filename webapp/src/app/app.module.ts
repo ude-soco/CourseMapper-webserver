@@ -46,7 +46,7 @@ import { AddMaterialComponent } from './pages/components/materils/add-material/a
 import {PdfViewerModule} from 'ng2-pdf-viewer';
 import { ViewPdfComponent } from './pages/components/materils/view-pdf/view-pdf.component';
 import { PdfAnnotationToolbarComponent } from './pages/components/annotations/pdf-annotation/pdf-annotation-toolbar/pdf-annotation-toolbar.component';
-import { PdfCreateAnnotationComponent } from './pages/components/annotations/pdf-annotation/pdf-create-annotation/pdf-create-annotation/pdf-create-annotation.component'
+import { PdfCreateAnnotationComponent } from './pages/components/annotations/pdf-annotation/pdf-create-annotation/pdf-create-annotation.component'
 
 
 registerLocaleData(en);
