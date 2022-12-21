@@ -8,9 +8,25 @@ export const runXapiScheduler = () => {
       console.log("xAPI scheduler started");
       const statements = await controller.fetchUnsentStatements();
       if (statements.length > 0) {
-        const sentStatementsIds = await lrs.sendStatementsToLrs(statements);
-        controller.updateSentStatements(sentStatementsIds);
+
+        if ( statements.length > 100 ){
+
+          const loops = Math.ceil(statements.length / 100);
+
+          for(let i = 0; i < loops ; i++){
+            const start = i * 100;
+            const end = start + 100 <= statements.length ? start + 100 : statements.length;
+            const sentStatementsIds = await lrs.sendStatementsToLrs(statements.slice(start, end));
+            controller.updateSentStatements(sentStatementsIds);
+          }
+
+        } else {
+          const sentStatementsIds = await lrs.sendStatementsToLrs(statements);
+          controller.updateSentStatements(sentStatementsIds);
+        }
+
       }
+      
     } catch (err) {
       console.log(err);
     }
