@@ -15,7 +15,7 @@
   ></button>
 </div>
 <div>
-  <form [formGroup]="fileUploadForm">
+  <form [formGroup]="fileUploadForm" >
     <div>
       <div>
         <div>
@@ -27,32 +27,23 @@
         </div>
       </div>
       <div>
-        <!-- <div class="custom-file">
-          <input
-            type="file"
-            class="custom-file-input"
-            id="customFile"
-            name="file"
-            (change)="onFileSelect($event)"
-            #UploadFileInput
-            hidden
-          />
-          <label for="customFile">Choose file</label>
-          <p
-           
-            id="file-chosen"
-          >
-            No file chosen
-          </p>
-        </div> -->
-        <p-fileUpload #fubauto mode="advanced" formControlName="fileUploadForm.file" type="file" name="file" 
-        [customUpload]="true"   id="file"  
+        <div class="custom-file">
+          <input type="file" class="custom-file-input" id="file" name="file"
+            (change)="onFileSelect($event)" 
+            #UploadFileInput  hidden/>
+            <label for="file">Choose file</label>
+            <p style="margin-left: 1rem; width: 13em; word-wrap: break-word; "  id="file-chosen">No file chosen</p>
+        </div>
+        
+        <!-- <p-fileUpload  #fubauto mode="basic" formControlName="fileUploadForm.file" type="file" name="file" 
+        [customUpload]="true"   id="file"  chooseLabel="Browse" 
         (onSelect)="onFileSelect($event)"
-        [auto]="true"
-        [style]="{ width: '50%' }"
+        [auto]="false"
+        #UploadFileInput
+        
         ></p-fileUpload>
        
-        <!-- <p id="file-chosen" >
+        <p id="file-chosen" >
         No file chosen
       </p> -->
       </div>

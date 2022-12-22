@@ -99,7 +99,7 @@
  <p-tabPanel header="+" >
     <ng-template pTemplate="content">
       <app-add-material [courseID]="selectedChannel.courseId"
-      [topicID]="selectedChannel.topicId" [channelID]="selectedChannel._id"> </app-add-material>
+      [topicID]="selectedChannel.topicId" [channelID]="selectedChannel._id" [channelEmittd]="selectedChannel"> </app-add-material>
   </ng-template>
 </p-tabPanel>
 <ng-container *ngIf="this.materials.length > 0">

@@ -52,7 +52,7 @@ export class SidebarComponent implements OnInit {
   }
   
   onSelectCourse(selectedCourse: Course) {
-   /* if (
+    if (
       this.courseService.getSelectedCourse()._id.toString() !==
       selectedCourse._id.toString()
     ) {
@@ -65,14 +65,11 @@ export class SidebarComponent implements OnInit {
       //1
       this.courseService.selectCourse(course);
       console.log("nnn")
-      console.log(course);
-
-    }*/
-    selectedCourse._id.toString();
-    console.log("rrrr")
-
-      console.log(selectedCourse);
-      this.courseService.selectCourse(selectedCourse);
+      console.log(course); 
       this.router.navigate(['course', selectedCourse._id])
+
+    }
+   
+     
   }
 }

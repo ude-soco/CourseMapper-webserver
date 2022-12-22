@@ -8,6 +8,7 @@ export interface Material {
   url: string;
   description?:string
   courseID?:string;
+  channelID?:string;
 }
 export interface CreateMaterial {
   
