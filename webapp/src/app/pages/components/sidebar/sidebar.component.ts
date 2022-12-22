@@ -3,6 +3,8 @@ import { Course } from 'src/app/models/Course';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CourseService } from 'src/app/services/course.service';
 import { Router } from '@angular/router';
+import { Channel } from 'src/app/models/Channel';
+import { TopicChannelService } from 'src/app/services/topic-channel.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -11,11 +13,13 @@ import { Router } from '@angular/router';
 })
 export class SidebarComponent implements OnInit {
   courses: Course[] = [];
+  channels:Channel[] = [];;
+  channel:Channel;
   selectedCourse: Course = new CourseImp('', '');
   displayAddCourseDialogue: boolean = false;
  
 
-  constructor(private courseService: CourseService, private router: Router) {}
+  constructor(private courseService: CourseService, private router: Router, private topicChannelService: TopicChannelService) {}
 
   ngOnInit(): void {
     this.getCourses();
@@ -64,12 +68,32 @@ export class SidebarComponent implements OnInit {
       this.selectedCourse = course;
       //1
       this.courseService.selectCourse(course);
+     
+    if (this.selectedCourse.numberChannels<=0)
+
+    { console.log("this.selectedCourse.numberTopics")
+    console.log(this.selectedCourse.numberChannels) 
+    this.topicChannelService.selectChannel(this.channel);
+  return
+  }
+    else {
+this.channel =this.selectedCourse["channels"][0];
+
+
+
+        this.topicChannelService.selectChannel(this.channel);
+        console.log(this.channel.name);
+    }
+      
+     }
+
+
       console.log("nnn")
-      console.log(course); 
+      //console.log(channel); 
       this.router.navigate(['course', selectedCourse._id])
 
     }
-   
+  
      
-  }
+  
 }

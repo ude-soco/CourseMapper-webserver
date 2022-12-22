@@ -32,7 +32,9 @@ export const getAllCourses = async (req, res) => {
       description: c.description,
       numberTopics: c.topics.length,
       numberChannels: c.channels.length,
-      numberUsers: c.users.length
+      numberUsers: c.users.length,
+      channels:courseSaved.channels,
+
     };
     results.push(course);
   })
@@ -66,7 +68,8 @@ export const getMyCourses = async (req, res) => {
       numberTopics: object.courseId.topics.length,
       numberChannels: object.courseId.channels.length,
       numberUsers: object.courseId.users.length,
-      role: object.role.name
+      role: object.role.name,
+      channels:object.courseId.channels,
     };
     results.push(course);
   });
@@ -360,6 +363,7 @@ export const newCourse = async (req, res) => {
       numberTopics: courseSaved.topics.length,
       numberChannels: courseSaved.channels.length,
       numberUsers: courseSaved.users.length,
+      channels:courseSaved.channels,
       role: foundRole.name
     },
     success: `New course '${courseSaved.name}' added!`

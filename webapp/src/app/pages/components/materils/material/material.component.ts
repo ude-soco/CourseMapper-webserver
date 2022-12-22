@@ -52,10 +52,11 @@ export class MaterialComponent implements OnInit {
       this.materials=[]
       //console.log(this.selectedChannel.courseId)
      // alert(`onChannelSelect ${channel.materials}`);
-     if (!(this.selectedChannel.materials.length>0))
+     if (!(this.selectedChannel.materials))
      {
-
+      console.log("empty material");
      }
+
      else {
               this.topicChannelService.getChannelDetails(this.selectedChannel).subscribe({
           next: (data) => {
