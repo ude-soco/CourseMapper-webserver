@@ -1,9 +1,10 @@
 .comment-panel{
     position: fixed;
     top: 325px;
+    overflow-y: auto;
     bottom: 0;
     right: 25px;
     width: 400px;
-    height: 100px;
+    height: 700px;
 }
 
