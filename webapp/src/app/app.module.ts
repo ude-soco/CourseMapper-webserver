@@ -48,7 +48,8 @@ import { ViewPdfComponent } from './pages/components/materils/view-pdf/view-pdf.
 import { PdfAnnotationToolbarComponent } from './pages/components/annotations/pdf-annotation/pdf-annotation-toolbar/pdf-annotation-toolbar.component';
 import { PdfCreateAnnotationComponent } from './pages/components/annotations/pdf-annotation/pdf-create-annotation/pdf-create-annotation.component';
 import { PdfCommentPanelComponent } from './pages/components/annotations/pdf-annotation/pdf-comment-panel/pdf-comment-panel.component';
-import { PdfCommentItemComponent } from './pages/components/annotations/pdf-annotation/pdf-comment-item/pdf-comment-item.component'
+import { PdfCommentItemComponent } from './pages/components/annotations/pdf-annotation/pdf-comment-item/pdf-comment-item.component';
+import { PdfMainAnnotationComponent } from './pages/components/annotations/pdf-annotation/pdf-main-annotation/pdf-main-annotation.component'
 
 
 registerLocaleData(en);
@@ -77,6 +78,7 @@ registerLocaleData(en);
     PdfCreateAnnotationComponent,
     PdfCommentPanelComponent,
     PdfCommentItemComponent,
+    PdfMainAnnotationComponent,
 
   
   ],
