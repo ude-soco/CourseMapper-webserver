@@ -10,12 +10,15 @@ import { MaterialComponent } from '../material/material.component';
 import { MessageService } from 'primeng/api';
 
 
+
 @Component({
   selector: 'app-add-material',
   templateUrl: './add-material.component.html',
   styleUrls: ['./add-material.component.css']
 })
 export class AddMaterialComponent implements OnInit {
+ // @Output() public materialemit = new EventEmitter<any>();
+ @Input() public channelEmittd :any ;
   @ViewChild('UploadFileInput', { static: false }) uploadFileInput: ElementRef | undefined;
   selectedChannel: Channel;
   @Input() courseID?: string;
@@ -24,6 +27,7 @@ export class AddMaterialComponent implements OnInit {
   @Output() onSubmitted: EventEmitter<void> = new EventEmitter();
   materialType:string=""
   materialId:Material;
+  materialComponent=MaterialComponent
 
   materialToAdd:CreateMaterial={
     name: '',
@@ -50,8 +54,7 @@ export class AddMaterialComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
-    this.validateForm = this.fb.group({
+ this.validateForm = this.fb.group({
       materialName: ['', [Validators.required]],
       url: [''],
       description: [''],
@@ -62,6 +65,7 @@ export class AddMaterialComponent implements OnInit {
     });
     //customValidator(this.validateForm.get("url").value, this.fileUploadForm.get("file").value);
   }
+
   videoTab()
 {
   this.materialType='video';
@@ -75,29 +79,20 @@ export class AddMaterialComponent implements OnInit {
 }
 
   onFileSelect(event) {
-    this.file=<File>event.files[0]
-    // this.fileInputLabel = this.file.name;
-    // console.log("this.fileInputLabel")
-    // console.log(this.fileInputLabel)
-    //const fileChosen = document.getElementById('file-chosen');
-    //fileChosen!.textContent = this.file.name
-
+  
+    this.file=<File>event.target.files[0]
+     this.fileInputLabel = this.file["name"];
+    const fileChosen = document.getElementById('file-chosen');
+    fileChosen!.textContent = this.fileInputLabel
     this.fileUploadForm?.get('file')?.setValue(this.file);
-    console.log("test file")
-    console.log(this.fileUploadForm?.get('file').setValue(this.file))
   }
+
+  
  submitForm(): void {
   var file=this.fileUploadForm?.get('file')?.value
- // var filename=file.name;
- console.log("test file")
- console.log(file)
-  //console.log(filename)
   this.materialToAdd.courseID=this.courseID!;
-  console.log(this.courseID)
   this.materialToAdd.topicID=this.topicID!;
-  console.log(this.topicID)
   this.materialToAdd.channelID=this.channelID!;
-
   this.materialToAdd.type = this.materialType as MaterialType;
   this.materialToAdd.name=this.validateForm.controls['materialName'].value
   this.materialToAdd.description=this.validateForm.controls['description'].value
@@ -114,19 +109,17 @@ export class AddMaterialComponent implements OnInit {
   var result=  this.materialService.addMaterial(this.materialToAdd).subscribe({
     next: (data) => {
       this.materialId=data.material._id;
-      console.log("material roro")
-      console.log(data.material._id)
       if (file) {
    if(this.materialType=="video")
    {
-    console.log(file)
+
     this.formData = new FormData();
         this.formData.append('file', this.file, data.material._id+".mp4");
       }
         
       if(this.materialType=="pdf")
       {
-       console.log(file)
+
        this.formData = new FormData();
            this.formData.append('file', this.file, data.material._id+".pdf");
          }  
@@ -135,13 +128,22 @@ export class AddMaterialComponent implements OnInit {
         this.materialService.uploadFile(this.formData, this.materialType).subscribe(res=>{
           if (res.message ==="File uploaded successfully!" ) {
             this.response=res
-            window.location.reload()
-            this.router.navigate(['course', this.courseID,'channel', this.channelID, 'material',data.material._id ])
-          /*  this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
-              this.router.navigate([MaterialComponent]);
-          });*/
-          
-          
+            this.fileUploadForm.reset();
+           
+
+              const fileChosen = document.getElementById('file-chosen');
+             fileChosen!.textContent = ""
+             const file = document.getElementById('file');
+             file!.textContent = ""
+             console.log("materialemit")
+            // this.materialemit=data.material._id
+             //console.log(this.materialemit)
+     this.validateForm.reset();
+     this.topicChannelService.selectChannel(this.channelEmittd)
+
+  //  this.reloadCurrentRoute()
+
+
           } 
         }, er => {
           console.log(er);
@@ -152,11 +154,10 @@ export class AddMaterialComponent implements OnInit {
   })
   if(result!=null){
     this.fileUploadForm.reset();
-    this.validateForm.reset();
     //window.location.reload()
   //  "['artist', track.artistId]"
    // this.router.navigate(['course', this.channelID])
-   this.router.navigate(['course', this.courseID,'channel', this.channelID, 'material',this.materialId ])
+  // this.router.navigate(['course', this.courseID,'channel', this.channelID, 'material',this.materialId ])
   // this.router.navigate(['course', this.courseID])
 console.log(result)
    // this.onSubmitted.emit();
@@ -165,15 +166,20 @@ console.log(result)
 
    
   } 
-
+reset(){
+  this.file=null
+  this.uploadFileInput=null
+  var fileee= this.fileUploadForm?.get('file')?.value
+  console.log("fileee")
+  console.log(fileee)
+ 
 }
-/*function customValidator(control?: FormControl, control2?: FormControl) { 
+reloadCurrentRoute() {
+  let currentUrl = this.router.url;
+  this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
+      this.router.navigate([currentUrl]);
+  });
+}
+}
 
-  if (control.value && control2.value == "") {
-    
-      return "Insert on of them"
-    
-  }
-  return control.value || control2.value; 
-}*/
 

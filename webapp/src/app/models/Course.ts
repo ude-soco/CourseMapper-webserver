@@ -1,3 +1,5 @@
+import { Channel } from "./Channel";
+
 export interface Course {
   _id: string;
   name: string;
@@ -8,4 +10,5 @@ export interface Course {
   notification?: number;
   numberChannels?: number;
   numberUsers?: number;
+  channels?:Channel
 }
