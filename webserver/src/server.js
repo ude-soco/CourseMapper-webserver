@@ -61,6 +61,8 @@ require("./routes/annotation.routes")(app);
 require("./routes/reply.routes")(app);
 require("./routes/tag.routes")(app);
 require("./routes/fileupload.routes")(app);
+require("./routes/test.routes")(app);
+
 
 // xAPI scheduler
 const xapiScheduler = require('./xAPILogger/scheduler');

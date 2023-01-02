@@ -484,7 +484,7 @@ export const dislikeAnnotation = async (req, res, next) => {
     } catch (err) {
       res.status(500).send({ error: err });
     }
-    let countDislikes = savedAnnotation.dislikes.length;
+    let countDislikes = savedAnnotation.dislikes.length ? savedAnnotation.dislikes.length : 0;
 
     req.locals.response = {
       count: countDislikes,
@@ -505,7 +505,7 @@ export const dislikeAnnotation = async (req, res, next) => {
     } catch (err) {
       return res.status(500).send({ error: err });
     }
-    let countDislikes = savedAnnotation.dislikes.length;
+    let countDislikes = savedAnnotation.dislikes.length ? savedAnnotation.dislikes.length : 0;
 
     req.locals.response = {
       count: countDislikes,
