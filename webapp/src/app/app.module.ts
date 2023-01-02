@@ -51,6 +51,7 @@ import { PdfCommentPanelComponent } from './pages/components/annotations/pdf-ann
 import { PdfCommentItemComponent } from './pages/components/annotations/pdf-annotation/pdf-comment-item/pdf-comment-item.component';
 import { PdfMainAnnotationComponent } from './pages/components/annotations/pdf-annotation/pdf-main-annotation/pdf-main-annotation.component';
 import { StoreModule } from '@ngrx/store';
+import { AnnotationModule } from './pages/components/annotations/pdf-annotation/annotation.module';
 
 registerLocaleData(en);
 
@@ -98,7 +99,8 @@ registerLocaleData(en);
     MatInputModule,
     MatTabsModule,
     PdfViewerModule,
-    StoreModule.forRoot({}, {})
+    StoreModule.forRoot({}, {}),
+    AnnotationModule
   ],
   providers: [{ provide: NZ_I18N, useValue: en_US }, httpInterceptorProviders],
   bootstrap: [AppComponent],
