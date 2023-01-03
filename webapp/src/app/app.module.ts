@@ -74,12 +74,7 @@ registerLocaleData(en);
     HomeComponent,
     MaterialComponent,
     AddMaterialComponent,
-    ViewPdfComponent,
-    PdfAnnotationToolbarComponent,
-    PdfCreateAnnotationComponent,
-    PdfCommentPanelComponent,
-    PdfCommentItemComponent,
-    PdfMainAnnotationComponent,
+    ViewPdfComponent
   ],
   imports: [
     BrowserModule,
