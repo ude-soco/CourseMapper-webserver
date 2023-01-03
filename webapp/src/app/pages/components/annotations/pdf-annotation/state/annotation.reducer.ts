@@ -1,7 +1,7 @@
 import { createAction, createFeatureSelector, createReducer, on } from '@ngrx/store';
 import * as AppState from 'src/app/state/app.state'
 
-
+// Strongly typed state
 export interface State extends AppState.State{
     annotations: AnnotationState;
 }
