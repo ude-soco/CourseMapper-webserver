@@ -3,7 +3,7 @@ import * as AppState from 'src/app/state/app.state'
 
 
 export interface State extends AppState.State{
-
+    annotations: AnnotationState;
 }
 
 export interface AnnotationState {
@@ -14,7 +14,7 @@ const initialState: AnnotationState = {
 
 }
 
-const getAnnotationFeatureState = createFeatureSelector<AnnotationState>('products');
+const getAnnotationFeatureState = createFeatureSelector<AnnotationState>('annotation');
 
 
 export const annotationReducer = createReducer<AnnotationState>(

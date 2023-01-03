@@ -1,6 +1,9 @@
 <app-pdf-annotation-toolbar
-></app-pdf-annotation-toolbar>
+  (selectedToolEvent)="getselectedToolType($event)">
+</app-pdf-annotation-toolbar>
 
+<div (mousemove)="mouseEvent($event)" (mousedown)="mouseEvent($event)"
+(mouseup)="mouseEvent($event)">
   <pdf-viewer
     [src]="docURL"
     [render-text]="true"
@@ -27,3 +30,4 @@
     [totalRecords]="totalPages"
     (onPageChange)="paginate($event)"
   ></p-paginator>
+</div>

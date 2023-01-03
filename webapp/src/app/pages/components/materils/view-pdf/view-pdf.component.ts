@@ -94,4 +94,12 @@ export class ViewPdfComponent implements OnInit {
     this.currentPage = event.page + 1;
     this.pdfViewService.setPageNumber(this.currentPage);
   }
+
+  getselectedToolType(toolType: string){
+
+  }
+
+  mouseEvent(event: { type: string; clientX: number; clientY: number; target: any; }){
+    
+  }
 }

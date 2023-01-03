@@ -22,7 +22,7 @@ import { annotationReducer } from './state/annotation.reducer';
   imports: [
     CommonModule,
     PrimengModule,
-    StoreModule.forFeature('annotations', annotationReducer)
+    StoreModule.forFeature('annotation', annotationReducer)
   ],
   exports: [
     PdfAnnotationToolbarComponent,

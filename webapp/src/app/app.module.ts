@@ -52,6 +52,7 @@ import { PdfCommentItemComponent } from './pages/components/annotations/pdf-anno
 import { PdfMainAnnotationComponent } from './pages/components/annotations/pdf-annotation/pdf-main-annotation/pdf-main-annotation.component';
 import { StoreModule } from '@ngrx/store';
 import { AnnotationModule } from './pages/components/annotations/pdf-annotation/annotation.module';
+import { MaterialsModule } from './pages/components/materils/materials.module';
 
 registerLocaleData(en);
 
@@ -71,10 +72,7 @@ registerLocaleData(en);
     TopicDropdownComponent,
     RegistrationComponent,
     LoginComponent,
-    HomeComponent,
-    MaterialComponent,
-    AddMaterialComponent,
-    ViewPdfComponent
+    HomeComponent
   ],
   imports: [
     BrowserModule,
@@ -93,9 +91,9 @@ registerLocaleData(en);
     ConfirmDialogModule,
     MatInputModule,
     MatTabsModule,
-    PdfViewerModule,
     StoreModule.forRoot({}, {}),
-    AnnotationModule
+    AnnotationModule,
+    MaterialsModule
   ],
   providers: [{ provide: NZ_I18N, useValue: en_US }, httpInterceptorProviders],
   bootstrap: [AppComponent],
