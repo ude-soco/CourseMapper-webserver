@@ -30,6 +30,7 @@ export interface AnnotationTool {
 export interface Annotation {
     _id: string;
     materialID: string;
+    courseId: string;
     userID: string;
     username: string;
     createdAt: number;

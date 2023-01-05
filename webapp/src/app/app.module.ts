@@ -53,6 +53,7 @@ import { PdfMainAnnotationComponent } from './pages/components/annotations/pdf-a
 import { StoreModule } from '@ngrx/store';
 import { AnnotationModule } from './pages/components/annotations/pdf-annotation/annotation.module';
 import { MaterialsModule } from './pages/components/materils/materials.module';
+import { EffectsModule } from '@ngrx/effects';
 
 registerLocaleData(en);
 
@@ -93,7 +94,8 @@ registerLocaleData(en);
     MatTabsModule,
     StoreModule.forRoot({}, {}),
     AnnotationModule,
-    MaterialsModule
+    MaterialsModule,
+    EffectsModule.forRoot([])
   ],
   providers: [{ provide: NZ_I18N, useValue: en_US }, httpInterceptorProviders],
   bootstrap: [AppComponent],
