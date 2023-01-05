@@ -8,6 +8,8 @@ import { PdfCommentPanelComponent } from './pdf-comment-panel/pdf-comment-panel.
 import { PdfCreateAnnotationComponent } from './pdf-create-annotation/pdf-create-annotation.component';
 import { PdfMainAnnotationComponent } from './pdf-main-annotation/pdf-main-annotation.component';
 import { annotationReducer } from './state/annotation.reducer';
+import { EffectsModule } from '@ngrx/effects';
+import { AnnotationEffects } from './state/annotation.effects';
 
 
 
@@ -22,7 +24,8 @@ import { annotationReducer } from './state/annotation.reducer';
   imports: [
     CommonModule,
     PrimengModule,
-    StoreModule.forFeature('annotation', annotationReducer)
+    StoreModule.forFeature('annotation', annotationReducer),
+    EffectsModule.forFeature([AnnotationEffects])
   ],
   exports: [
     PdfAnnotationToolbarComponent,

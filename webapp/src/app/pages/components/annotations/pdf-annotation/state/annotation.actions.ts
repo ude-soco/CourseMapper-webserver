@@ -3,12 +3,22 @@ import { Annotation } from "src/assets/Data/Annotations";
 
 // Strongly typed actions
 
-export const emptyAction = createAction(
-    'This is an empty action string'
+export const createAnnotation = createAction(
+    '[Annotation] Post Annotation Action',
+    props<{ annotation: Annotation}>()
+);
+
+export const createAnnotationSucess = createAction(
+    '[Annotation] Post Success'
+);
+
+export const createAnnotationFail = createAction(
+    '[Annotation] Post Fail',
+    props<{ error: string }>()
 );
 
 export const emptyActionWithSelection = createAction(
-    'Set current annotation',
+    'Set Current Annotation',
     props<{annotation: Annotation}>()
 );
 
