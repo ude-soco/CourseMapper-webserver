@@ -54,6 +54,8 @@ import { StoreModule } from '@ngrx/store';
 import { AnnotationModule } from './pages/components/annotations/pdf-annotation/annotation.module';
 import { MaterialsModule } from './pages/components/materils/materials.module';
 import { EffectsModule } from '@ngrx/effects';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { environment } from '../environments/environment';
 
 registerLocaleData(en);
 
@@ -95,7 +97,8 @@ registerLocaleData(en);
     StoreModule.forRoot({}, {}),
     AnnotationModule,
     MaterialsModule,
-    EffectsModule.forRoot([])
+    EffectsModule.forRoot([]),
+    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production })
   ],
   providers: [{ provide: NZ_I18N, useValue: en_US }, httpInterceptorProviders],
   bootstrap: [AppComponent],

@@ -1,24 +1,32 @@
-import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { Channel } from 'src/app/models/Channel';
 import { TopicChannelService } from 'src/app/services/topic-channel.service';
-import {COMMA, ENTER} from '@angular/cdk/keycodes';
-import { ElementRef, ViewChild} from '@angular/core';
-import {FormControl} from '@angular/forms';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { ElementRef, ViewChild } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { Material } from 'src/app/models/Material';
 import { PdfviewService } from 'src/app/services/pdfview.service';
 import { MaterilasService } from 'src/app/services/materials.service';
 import { Router } from '@angular/router';
-
-
+import { Store } from '@ngrx/store';
+import { State } from 'src/app/pages/components/materils/state/materials.reducer';
+import * as MaterialActions from 'src/app/pages/components/materils/state/materials.actions'
 
 @Component({
   selector: 'app-material',
   templateUrl: './material.component.html',
-  styleUrls: ['./material.component.css']
+  styleUrls: ['./material.component.css'],
 })
 export class MaterialComponent implements OnInit {
   @Output() public channelEmitted = new EventEmitter<any>();
- //@Input() public materialEmiited :any ;
+  //@Input() public materialEmiited :any ;
   selectedChannel: Channel;
   index = 0;
   selectedMaterial?: Material;
@@ -28,142 +36,128 @@ export class MaterialComponent implements OnInit {
   @Input() initialMaterial?: Material;
   @Output() materialCreated: EventEmitter<void> = new EventEmitter();
   private channels: Channel[] = [];
-   materials: Material[] = [];
-   materialType?:string;
+  materials: Material[] = [];
+  materialType?: string;
 
   isNewMaterialModalVisible: boolean = false;
   errorMessage: any;
- // selectAfterAdding: boolean; 
+  // selectAfterAdding: boolean;
   // tabs = [];
- // selected = new FormControl(0);
+  // selected = new FormControl(0);
   //tabtitle:string = '';
-  constructor(private topicChannelService: TopicChannelService,private pdfViewService: PdfviewService, private materialService:MaterilasService
-    , private router: Router) { }
+  constructor(
+    private topicChannelService: TopicChannelService,
+    private pdfViewService: PdfviewService,
+    private materialService: MaterilasService,
+    private router: Router,
+    private store: Store<State>
+  ) {}
 
-
-    // ngOnChanges() {
-    //   console.log("noew ng change working")
-    // }
+  // ngOnChanges() {
+  //   console.log("noew ng change working")
+  // }
   ngOnInit(): void {
-    
     this.topicChannelService.onSelectChannel.subscribe((channel) => {
       this.selectedChannel = channel;
-       this.channelEmitted.emit(this.selectedChannel);
-      this.materials=[]
+      this.channelEmitted.emit(this.selectedChannel);
+      this.materials = [];
       //console.log(this.selectedChannel.courseId)
-     // alert(`onChannelSelect ${channel.materials}`);
-     if (!(this.selectedChannel.materials))
-     {
-      console.log("empty material");
-     }
+      // alert(`onChannelSelect ${channel.materials}`);
+      if (!this.selectedChannel.materials) {
+        console.log('empty material');
+      } else {
+        this.topicChannelService
+          .getChannelDetails(this.selectedChannel)
+          .subscribe({
+            next: (data) => {
+              this.channels = data;
 
-     else {
-              this.topicChannelService.getChannelDetails(this.selectedChannel).subscribe({
-          next: (data) => {
-            
-            this.channels=data
-
-            if (this.selectedChannel._id===this.channels["_id"]){
-              
-              this.materials =this.channels["materials"];
-              // console.log("this.materials==this.materialEmiited")
-              // var matId = this.materials.findIndex(x=>x._id == this.materialEmiited);
-              // console.log(matId)
-            for (let i in this.materials){
-               console.log(this.materials[i].type);
-            
-             
-            }
-            
-            
-          }
-            else{
-              this.selectedChannel._id=this.channels["_id"]
-             // this.router.navigate(['course', this.selectedMaterial["courseId"],'channel', this.selectedMaterial["channelId"], 'material',this.selectedMaterial._id ])
-   
-            }
-           
-           
-          },
-          error: (err) => {
-            this.errorMessage = err.error.message;
-            
-          },
-        });
-     }
-     
-  });
+              if (this.selectedChannel._id === this.channels['_id']) {
+                this.materials = this.channels['materials'];
+                // console.log("this.materials==this.materialEmiited")
+                // var matId = this.materials.findIndex(x=>x._id == this.materialEmiited);
+                // console.log(matId)
+                for (let i in this.materials) {
+                  console.log(this.materials[i].type);
+                }
+              } else {
+                this.selectedChannel._id = this.channels['_id'];
+                // this.router.navigate(['course', this.selectedMaterial["courseId"],'channel', this.selectedMaterial["channelId"], 'material',this.selectedMaterial._id ])
+              }
+            },
+            error: (err) => {
+              this.errorMessage = err.error.message;
+            },
+          });
+      }
+    });
   }
 
   onTabChange(e) {
-
-    e.index1=e.index-1
+    e.index1 = e.index - 1;
 
     this.setSelectedTabIndex(e.index1 || 0);
 
-    this.selectedMaterial = this.channels["materials"][e.index1 || 0];
-
-    
-    
+    this.selectedMaterial = this.channels['materials'][e.index1 || 0];
 
     //this.onSelectTab.emit(e.index1);
-  this.router.navigate(['course', this.selectedMaterial["courseId"],'channel', this.selectedMaterial["channelId"], 'material',this.selectedMaterial._id ])
-   
-    
- }
- setSelectedTabIndex(index: number) {
-
-  this.selectedMaterial = this.channels["materials"][index];
-  this.updateSelectedMaterial();
-}
-updateSelectedMaterial() {
-  if (!this.selectedMaterial) return;
-  switch (this.selectedMaterial.type) {
-
-    case "pdf":
-      this.pdfViewService.setPageNumber(1)
-      let url=this.selectedMaterial?.url+this.selectedMaterial?._id+".pdf"
-      this.pdfViewService.setPdfURL(url)
-      break;
-
-    default:
+    this.router.navigate([
+      'course',
+      this.selectedMaterial['courseId'],
+      'channel',
+      this.selectedMaterial['channelId'],
+      'material',
+      this.selectedMaterial._id,
+    ]);
+    let materialId = this.selectedMaterial._id;
+    this.store.dispatch(MaterialActions.setMaterialId({materialId}));
   }
-}
+  setSelectedTabIndex(index: number) {
+    this.selectedMaterial = this.channels['materials'][index];
+    this.updateSelectedMaterial();
+  }
+  updateSelectedMaterial() {
+    if (!this.selectedMaterial) return;
+    switch (this.selectedMaterial.type) {
+      case 'pdf':
+        this.pdfViewService.setPageNumber(1);
+        let url =
+          this.selectedMaterial?.url + this.selectedMaterial?._id + '.pdf';
+        this.pdfViewService.setPdfURL(url);
+        break;
 
-deleteMaterial(e){
-  console.log("e.index delete")
+      default:
+    }
+  }
 
-  console.log(e.index)
-  e.index1=e.index-1
-  
+  deleteMaterial(e) {
+    console.log('e.index delete');
 
-  this.selectedMaterial = this.channels["materials"][e.index1];
+    console.log(e.index);
+    e.index1 = e.index - 1;
 
-  this.materialService.deleteMaterial(this.selectedMaterial).subscribe({
-    next: (data) => {
+    this.selectedMaterial = this.channels['materials'][e.index1];
 
-console.log(data)
+    this.materialService.deleteMaterial(this.selectedMaterial).subscribe({
+      next: (data) => {
+        console.log(data);
 
-this.materialService.deleteFile(this.selectedMaterial).subscribe({
-  next: (res) => { 
-    console.log(res)}
-})
-     
-    },
-    error: (err) => {
-      this.errorMessage = err.error.message;
-      
-    },
-  });
+        this.materialService.deleteFile(this.selectedMaterial).subscribe({
+          next: (res) => {
+            console.log(res);
+          },
+        });
+      },
+      error: (err) => {
+        this.errorMessage = err.error.message;
+      },
+    });
+  }
 
-
-}
-
-reloadCurrentRoute() {
-  let currentUrl = this.router.url;
-  this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
+  reloadCurrentRoute() {
+    let currentUrl = this.router.url;
+    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
       this.router.navigate([currentUrl]);
-  });
-}
-
+    });
+  }
 }

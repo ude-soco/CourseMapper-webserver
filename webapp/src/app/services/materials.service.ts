@@ -4,6 +4,7 @@ import { Material, CreateMaterial } from '../models/Material';
 import { HttpClient } from '@angular/common/http';
 import { catchError, Observable, of, tap } from 'rxjs';
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -20,7 +21,7 @@ export class MaterilasService {
     /*if (this.getSelectedCourse()._id && course._id){      
       this.topicChannelService.updateTopics(course._id);
     }*/
-    this.selectedMaterial = material;    
+    this.selectedMaterial = material;
     //2
     this.onSelectMaterial.emit(material);
   }

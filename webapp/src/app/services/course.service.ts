@@ -6,6 +6,9 @@ import { HttpClient } from '@angular/common/http';
 import { catchError, Observable, of, Subject, tap } from 'rxjs';
 import { TopicChannelService } from './topic-channel.service';
 import { StorageService } from './storage.service';
+import { Store } from '@ngrx/store';
+import { State } from 'src/app/pages/components/materils/state/materials.reducer';
+import * as MaterialActions from 'src/app/pages/components/materils/state/materials.actions'
 
 
 @Injectable({
@@ -23,7 +26,7 @@ export class CourseService {
 
 
 
-  constructor( private http: HttpClient, private topicChannelService : TopicChannelService, private storageService :StorageService) { }
+  constructor( private http: HttpClient, private topicChannelService : TopicChannelService, private storageService :StorageService, private store: Store<State>) { }
 
   getSelectedCourse(): Course {
     return this.selectedCourse;
@@ -41,7 +44,9 @@ export class CourseService {
     if (this.getSelectedCourse()._id && course._id){      
       this.topicChannelService.updateTopics(course._id);
     }
-    this.selectedCourse = course;    
+    this.selectedCourse = course;
+    let courseId = course._id;
+    this.store.dispatch(MaterialActions.setCourseId({ courseId }));    
     //2
     this.onSelectCourse.emit(course);
   }
