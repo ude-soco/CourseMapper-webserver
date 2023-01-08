@@ -9,8 +9,8 @@ import {
   Position,
   Rectangle,
   RectangleObject,
-} from 'src/assets/Data/AnnotationForms';
-import { PdfToolType } from 'src/assets/Data/Annotations';
+} from 'src/app/models/AnnotationForms';
+import { PdfToolType } from 'src/app/models/Annotations';
 import { environment } from 'src/environments/environment';
 
 const ZOOM_STEP: number = 0.25;

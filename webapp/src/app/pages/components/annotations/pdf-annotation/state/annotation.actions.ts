@@ -1,5 +1,5 @@
 import { createAction, props } from "@ngrx/store";
-import { Annotation } from "src/assets/Data/Annotations";
+import { Annotation } from "src/app/models/Annotations";
 
 // Strongly typed actions
 

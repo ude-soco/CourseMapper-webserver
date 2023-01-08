@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Annotation } from 'src/assets/Data/Annotations';
+import { Annotation } from 'src/app/models/Annotations';
 import { environment } from 'src/environments/environment';
 
 @Injectable({

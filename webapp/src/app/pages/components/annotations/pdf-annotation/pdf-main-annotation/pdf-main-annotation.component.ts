@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
 import { toolTypeSelection } from 'src/app/tool-type-selection';
-import { Rectangle, RectangleObject } from 'src/assets/Data/AnnotationForms';
-import { PdfToolType } from 'src/assets/Data/Annotations';
+import { Rectangle, RectangleObject } from 'src/app/models/AnnotationForms';
+import { PdfToolType } from 'src/app/models/Annotations';
 
 @Component({
   selector: 'app-pdf-main-annotation',
