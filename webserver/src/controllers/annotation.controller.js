@@ -417,3 +417,45 @@ export const dislikeAnnotation = async (req, res) => {
     });
   }
 };
+
+/**
+ * @function getAllAnnotations
+ * Retrieve annotations controller
+ *
+ * @param {string} req.params.courseId The id of the course
+ * @param {string} req.params.materialId The id of the material
+ * @param {string} req.userId The id of the user who created all annotations
+ */
+export const getAllAnnotations = async (req, res) => {
+  const courseId = req.params.courseId;
+  const materialId = req.params.materialId;
+  const channelId = req.params.channelId;
+
+  let foundAnnotations;
+  try {
+    foundAnnotations = await Annotation.find({
+      materialId: ObjectId(materialId),
+      courseId: ObjectId(courseId),
+    });
+    if (!foundAnnotations) {
+      return res.status(404).send({
+        error: `Annotations with materialId ${materialId} doesn't exist!`,
+      });
+    }
+    foundAnnotations.forEach((annotation) =>{
+      if (annotation.courseId.valueOf() !== courseId) {
+        return res.status(404).send({
+          error: `Annotation doesn't belong to course with id ${courseId}!`,
+        });
+      }
+      if (annotation.channelId.valueOf() !== channelId) {
+        return res.status(404).send({
+          error: `Annotation doesn't belong to channel with id ${channelId}!`,
+        });
+      }
+    });
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+  return res.status(200).send(foundAnnotations);
+};

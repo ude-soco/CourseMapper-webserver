@@ -48,4 +48,13 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.dislikeAnnotation
   );
+
+  // get annotations
+  // Only enrolled users/moderator/admin
+  // Note: A user when liked an annotation, it cannot be disliked
+  app.get(
+    "/courses/:courseId/channel/:channelId/materials/:materialId",
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.getAllAnnotations
+  );
 };
