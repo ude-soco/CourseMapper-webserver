@@ -18,5 +18,17 @@ export class AnnotationEffects {
     )
   );
 
+  getAnnotations$ = createEffect(() =>
+  this.actions$.pipe(
+    ofType(AnnotationActions.loadAnnotations),
+    switchMap(({material}) =>
+      this.annotationService.getAllAnnotations(material).pipe(
+        map(annotations => AnnotationActions.loadAnnotationsSuccess({annotations})),
+        catchError((error) => of(AnnotationActions.loadAnnotationsFail({ error })))
+      )
+    )
+  )
+);
+
   constructor(private actions$: Actions, private annotationService: AnnotationService) {}
 }
