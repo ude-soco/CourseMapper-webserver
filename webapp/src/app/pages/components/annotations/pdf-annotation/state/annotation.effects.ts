@@ -8,11 +8,11 @@ import * as AnnotationActions from './annotation.actions'
 export class AnnotationEffects {
   postAnnotation$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(AnnotationActions.createAnnotation),
+      ofType(AnnotationActions.postAnnotation),
       switchMap(({ annotation }) =>
-        this.annotationService.createAnnotation(annotation).pipe(
-          map(() => AnnotationActions.createAnnotationSucess()),
-          catchError((error) => of(AnnotationActions.createAnnotationFail({ error })))
+        this.annotationService.postAnnotation(annotation).pipe(
+          map(() => AnnotationActions.postAnnotationSuccess()),
+          catchError((error) => of(AnnotationActions.postAnnotationFail({ error })))
         )
       )
     )

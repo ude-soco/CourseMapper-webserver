@@ -10,7 +10,7 @@ export class AnnotationService {
 
   constructor(private http: HttpClient) { }
 
-  createAnnotation(annotation: Annotation){
+  postAnnotation(annotation: Annotation){
     return this.http.post<Annotation>(`${environment.apiUrl}courses/${annotation.courseId}/materials/${annotation.materialID}`, annotation);
   }
 }

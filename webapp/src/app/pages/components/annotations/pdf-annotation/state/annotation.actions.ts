@@ -3,16 +3,16 @@ import { Annotation } from "src/assets/Data/Annotations";
 
 // Strongly typed actions
 
-export const createAnnotation = createAction(
+export const postAnnotation = createAction(
     '[Annotation] Post Annotation Action',
     props<{ annotation: Annotation}>()
 );
 
-export const createAnnotationSucess = createAction(
+export const postAnnotationSuccess = createAction(
     '[Annotation] Post Success'
 );
 
-export const createAnnotationFail = createAction(
+export const postAnnotationFail = createAction(
     '[Annotation] Post Fail',
     props<{ error: string }>()
 );
