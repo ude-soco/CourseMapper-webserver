@@ -2,7 +2,7 @@ import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
 import { Subscription } from 'rxjs';
 import { PdfviewService } from 'src/app/services/pdfview.service';
-import { MouseEvent, PdfToolType } from 'src/app/models/Annotations';
+import {PdfToolType } from 'src/app/models/Annotations';
 import { environment } from 'src/environments/environment';
 import { State } from '../state/materials.reducer';
 import { Store } from '@ngrx/store';
@@ -95,6 +95,6 @@ export class ViewPdfComponent implements OnInit {
   }
 
   mouseEvent(event: MouseEvent){
-    // this.store.dispatch(MaterialActions.setMouseEvent(event));
+    this.store.dispatch(MaterialActions.setMouseEvent({mouseEvent: event}));
   }
 }

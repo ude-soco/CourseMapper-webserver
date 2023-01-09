@@ -44,10 +44,3 @@ export interface Annotation {
     commentCount: number;
     tags: string[];
 }
-
-export interface MouseEvent {
- type: string;
- clientX: number;
- clientY: number;
- target: any;
-}
