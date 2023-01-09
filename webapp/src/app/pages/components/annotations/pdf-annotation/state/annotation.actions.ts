@@ -44,6 +44,6 @@ export const toggleHighlightSelected = createAction(
 
 export const setSelectedTool = createAction(
     '[Annotation] Set Selected Tool',
-    props<{selectedTool: string}>()
+    props<{selectedTool: PdfToolType}>()
 );
 

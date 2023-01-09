@@ -1,6 +1,7 @@
 import { createAction, createFeatureSelector, createReducer, createSelector, on } from '@ngrx/store';
 import * as AppState from 'src/app/state/app.state'
 import * as MaterialActions from 'src/app/pages/components/materils/state/materials.actions'
+import { MouseEvent } from 'src/app/models/Annotations';
 
 
 export interface State extends AppState.State{
@@ -9,12 +10,14 @@ export interface State extends AppState.State{
 
 export interface MaterialState {
   materialId: string,
-  courseId: string
+  courseId: string,
+  mouseEvent: MouseEvent
 }
 
 const initialState: MaterialState = {
 materialId: null,
-courseId: null
+courseId: null,
+mouseEvent: null
 }
 
 const getMaterialFeatureState = createFeatureSelector<MaterialState>('material');
@@ -27,6 +30,11 @@ export const getCurrentMaterialId = createSelector(
 export const getCurrentCourseId = createSelector(
   getMaterialFeatureState,
   state => state.courseId
+);
+
+export const getMouseEvent = createSelector(
+  getMaterialFeatureState,
+  state => state.mouseEvent
 );
 
 
@@ -43,6 +51,13 @@ export const materialReducer = createReducer<MaterialState>(
       return {
         ...state,
         materialId: action.materialId
+      };
+    }),
+
+    on(MaterialActions.setMouseEvent, (state, action): MaterialState => {
+      return {
+        ...state,
+        mouseEvent: action.mouseEvent
       };
     }),
   );

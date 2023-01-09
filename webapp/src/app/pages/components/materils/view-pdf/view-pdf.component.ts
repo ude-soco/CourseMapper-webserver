@@ -1,17 +1,12 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
 import { Subscription } from 'rxjs';
-import { Material } from 'src/app/models/Material';
-
 import { PdfviewService } from 'src/app/services/pdfview.service';
-import { toolTypeSelection } from 'src/app/tool-type-selection';
-import {
-  Position,
-  Rectangle,
-  RectangleObject,
-} from 'src/app/models/AnnotationForms';
-import { PdfToolType } from 'src/app/models/Annotations';
+import { MouseEvent, PdfToolType } from 'src/app/models/Annotations';
 import { environment } from 'src/environments/environment';
+import { State } from '../state/materials.reducer';
+import { Store } from '@ngrx/store';
+import * as MaterialActions from 'src/app/pages/components/materils/state/materials.actions'
 
 const ZOOM_STEP: number = 0.25;
 const DEFAULT_ZOOM: number = 1;
@@ -33,7 +28,7 @@ export class ViewPdfComponent implements OnInit {
   docURL!: string;
   subs = new Subscription();
   private API_URL = environment.API_URL;
-  constructor(private pdfViewService: PdfviewService) {
+  constructor(private pdfViewService: PdfviewService, private store: Store<State>) {
     this.getDocUrl();
   }
 
@@ -99,7 +94,7 @@ export class ViewPdfComponent implements OnInit {
 
   }
 
-  mouseEvent(event: { type: string; clientX: number; clientY: number; target: any; }){
-    
+  mouseEvent(event: MouseEvent){
+    // this.store.dispatch(MaterialActions.setMouseEvent(event));
   }
 }

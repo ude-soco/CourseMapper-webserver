@@ -10,12 +10,12 @@ export interface State extends AppState.State{
 
 export interface AnnotationState {
   highlightSelected: boolean,
-  selectedTool: string
+  selectedTool: PdfToolType
 }
 
 const initialState: AnnotationState = {
   highlightSelected: false,
-  selectedTool: PdfToolType.None.valueOf()
+  selectedTool: PdfToolType.None
 }
 
 const getAnnotationFeatureState = createFeatureSelector<AnnotationState>('annotation');

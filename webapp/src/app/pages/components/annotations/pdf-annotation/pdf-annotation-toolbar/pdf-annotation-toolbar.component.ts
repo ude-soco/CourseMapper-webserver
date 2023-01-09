@@ -33,12 +33,10 @@ export class PdfAnnotationToolbarComponent implements OnInit {
   onHighlightButtonClicked() {
     if (!this.highlightSelected) {
       this.store.dispatch(AnnotationActions.toggleHighlightSelected());
-      let selectedTool = "highlight"
-      this.store.dispatch(AnnotationActions.setSelectedTool({selectedTool}));
+      this.store.dispatch(AnnotationActions.setSelectedTool({selectedTool: PdfToolType.Highlight}));
     }else{
       this.store.dispatch(AnnotationActions.toggleHighlightSelected());
-      let selectedTool = "none"
-      this.store.dispatch(AnnotationActions.setSelectedTool({selectedTool}));
+      this.store.dispatch(AnnotationActions.setSelectedTool({selectedTool: PdfToolType.None}));
     }
     this.showAnnotationDialog.emit();
     this.selectedToolEvent.emit("highlightTool")

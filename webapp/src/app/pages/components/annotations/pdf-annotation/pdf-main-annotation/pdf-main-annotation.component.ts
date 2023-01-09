@@ -44,7 +44,7 @@ export class PdfMainAnnotationComponent implements OnInit {
   mouseEvent(event: { type: string; clientX: number; clientY: number; target: any; }) {
     //mouse event to highlight text selection
     if (event.type === 'mouseup') {
-      if (this.selectedTool == "highlightTool") {
+      if (this.selectedTool == PdfToolType.Highlight) {
         this.getSelectedText()
       } else {
         this.mouseDownFlag = false;
