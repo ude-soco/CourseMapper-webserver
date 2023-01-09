@@ -3,6 +3,7 @@ import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { isHighlightSelected, State } from '../state/annotation.reducer';
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions'
+import { PdfToolType } from 'src/app/models/Annotations';
 
 @Component({
   selector: 'app-pdf-annotation-toolbar',
@@ -19,32 +20,31 @@ export class PdfAnnotationToolbarComponent implements OnInit {
   pinSelected = false
   drawingSelected = false
   highlightSelected$: Observable<boolean>;
+  highlightSelected: boolean;
   constructor(private store: Store<State>) { }
 
   ngOnInit(): void {
     this.selectedToolEvent.emit("none");
+    this.highlightSelected$ = this.store.select(isHighlightSelected)
+    this.store.select(isHighlightSelected).subscribe(value => {
+      this.highlightSelected = value;
+    });
   }
   onHighlightButtonClicked() {
-    this.pinSelected = false;
-    this.drawingSelected = false
-    this.store.dispatch(AnnotationActions.toggleHighlightSelected());
-    this.highlightSelected$ = this.store.select(isHighlightSelected)
+    if (!this.highlightSelected) {
+      this.store.dispatch(AnnotationActions.toggleHighlightSelected());
+      let selectedTool = "highlight"
+      this.store.dispatch(AnnotationActions.setSelectedTool({selectedTool}));
+    }else{
+      this.store.dispatch(AnnotationActions.toggleHighlightSelected());
+      let selectedTool = "none"
+      this.store.dispatch(AnnotationActions.setSelectedTool({selectedTool}));
+    }
     this.showAnnotationDialog.emit();
     this.selectedToolEvent.emit("highlightTool")
-    let selectedTool = "highlight"
-    this.store.dispatch(AnnotationActions.setSelectedTool({selectedTool}));
-    if (!this.highlightSelected$) {
-      this.resetTool()
-    }
   }
 
   resetTool() {
-    this.pinSelected = false;
-    this.drawingSelected = false
-    this.store.dispatch(AnnotationActions.toggleHighlightSelected());
-    let selectedTool = "none"
-    this.store.dispatch(AnnotationActions.setSelectedTool({selectedTool}));
-    this.resetToolEvent.emit(true)
   }
 
 }

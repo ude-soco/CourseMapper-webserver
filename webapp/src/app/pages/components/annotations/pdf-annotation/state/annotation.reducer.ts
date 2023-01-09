@@ -1,6 +1,7 @@
 import { createAction, createFeatureSelector, createReducer, createSelector, on } from '@ngrx/store';
 import * as AppState from 'src/app/state/app.state'
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions'
+import { PdfToolType } from 'src/app/models/Annotations';
 
 // Strongly typed state
 export interface State extends AppState.State{
@@ -14,7 +15,7 @@ export interface AnnotationState {
 
 const initialState: AnnotationState = {
   highlightSelected: false,
-  selectedTool: "none"
+  selectedTool: PdfToolType.None.valueOf()
 }
 
 const getAnnotationFeatureState = createFeatureSelector<AnnotationState>('annotation');

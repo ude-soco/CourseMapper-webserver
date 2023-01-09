@@ -1,5 +1,5 @@
 import { createAction, props } from "@ngrx/store";
-import { Annotation } from "src/app/models/Annotations";
+import { Annotation, PdfToolType } from "src/app/models/Annotations";
 import { Material } from "src/app/models/Material";
 
 // Strongly typed actions
