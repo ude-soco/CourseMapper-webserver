@@ -1,11 +1,15 @@
-.p-toolbar-group-left{
-    color: black;
-    padding-right: 10rem;
-    border-left: 0rem;
-    }
-    
-    .tool-divider{
-        border-left: 2px solid purple;
-        padding-right: 5cm;
-        height: 60px;
-    }
+.p-toolbar-group-left {
+  color: black;
+  padding-right: 10rem;
+  border-left: 0rem;
+}
+
+.tool-divider {
+  border-left: 2px solid purple;
+  padding-right: 5cm;
+  height: 60px;
+}
+
+.selected {
+    background-color: plum;
+}

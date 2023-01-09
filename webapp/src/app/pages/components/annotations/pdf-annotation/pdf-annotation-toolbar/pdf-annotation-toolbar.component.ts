@@ -1,4 +1,8 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
+import { isHighlightSelected, State } from '../state/annotation.reducer';
+import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions'
 
 @Component({
   selector: 'app-pdf-annotation-toolbar',
@@ -11,11 +15,11 @@ export class PdfAnnotationToolbarComponent implements OnInit {
   @Output() selectedToolEvent: EventEmitter<string> = new EventEmitter();
   @Output() resetToolEvent: EventEmitter<boolean> = new EventEmitter();
 
-  selectedTool = ""
+  selectedTool: string
   pinSelected = false
   drawingSelected = false
-  highlightSelected = false;
-  constructor() { }
+  highlightSelected$: Observable<boolean>;
+  constructor(private store: Store<State>) { }
 
   ngOnInit(): void {
     this.selectedToolEvent.emit("none");
@@ -23,20 +27,23 @@ export class PdfAnnotationToolbarComponent implements OnInit {
   onHighlightButtonClicked() {
     this.pinSelected = false;
     this.drawingSelected = false
-    this.highlightSelected = !this.highlightSelected
+    this.store.dispatch(AnnotationActions.toggleHighlightSelected());
+    this.highlightSelected$ = this.store.select(isHighlightSelected)
     this.showAnnotationDialog.emit();
     this.selectedToolEvent.emit("highlightTool")
-    this.selectedTool = "highlight"
-    if (this.highlightSelected == false) {
+    let selectedTool = "highlight"
+    this.store.dispatch(AnnotationActions.setSelectedTool({selectedTool}));
+    if (!this.highlightSelected$) {
       this.resetTool()
     }
   }
 
   resetTool() {
-    this.selectedTool = ""
     this.pinSelected = false;
     this.drawingSelected = false
-    this.highlightSelected = false
+    this.store.dispatch(AnnotationActions.toggleHighlightSelected());
+    let selectedTool = "none"
+    this.store.dispatch(AnnotationActions.setSelectedTool({selectedTool}));
     this.resetToolEvent.emit(true)
   }
 

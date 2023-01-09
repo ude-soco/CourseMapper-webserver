@@ -38,3 +38,12 @@ export const emptyActionWithSelection = createAction(
     props<{annotation: Annotation}>()
 );
 
+export const toggleHighlightSelected = createAction(
+    '[Annotation] Toggle Highlight Selected'
+);
+
+export const setSelectedTool = createAction(
+    '[Annotation] Set Selected Tool',
+    props<{selectedTool: string}>()
+);
+

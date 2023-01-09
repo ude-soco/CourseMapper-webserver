@@ -3,6 +3,8 @@ import { PdfViewerComponent } from 'ng2-pdf-viewer';
 import { toolTypeSelection } from 'src/app/tool-type-selection';
 import { Rectangle, RectangleObject } from 'src/app/models/AnnotationForms';
 import { PdfToolType } from 'src/app/models/Annotations';
+import { State } from '../state/annotation.reducer';
+import { Store } from '@ngrx/store';
 
 @Component({
   selector: 'app-pdf-main-annotation',
@@ -31,7 +33,7 @@ export class PdfMainAnnotationComponent implements OnInit {
     textSelection!: boolean;
     selectedNoteId: any
 
-  constructor() { }
+  constructor(private store: Store<State>) { }
 
   ngOnInit(): void {
   }
