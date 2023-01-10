@@ -4,7 +4,7 @@ const lrs = require("./lrs/lrs");
 const BATCH_SIZE = 300;
 
 export const runXapiScheduler = () => {
-  cron.schedule("0 * * * *", async () => {
+  cron.schedule("* * * * *", async () => {
     try {
       console.log("xAPI scheduler started");
       const statements = await controller.fetchUnsentStatements();

@@ -57,10 +57,10 @@ export class DashboardComponent implements OnInit {
       this.selectedCourse = course;
       this.focusOnIframeTextarea();
       this.getIndicators();
-    });
-
-    this.indicatorForm = new FormGroup({
-      indicatorIframe: new FormControl(null, iframeValidator()),
+      
+      this.indicatorForm = new FormGroup({
+        indicatorIframe: new FormControl(null, iframeValidator()),
+      });
     });
   }
 
