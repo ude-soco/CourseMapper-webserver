@@ -95,6 +95,9 @@ export class ViewPdfComponent implements OnInit {
   }
 
   mouseEvent(event: MouseEvent){
-    this.store.dispatch(MaterialActions.setMouseEvent({mouseEvent: event}));
+    if(event.type === "mouseup"){
+      this.store.dispatch(MaterialActions.setMouseEvent({mouseEvent: event}));
+      console.log(event.type);
+    } 
   }
 }
