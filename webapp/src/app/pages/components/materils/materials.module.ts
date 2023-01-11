@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { PrimengModule } from 'src/app/modules/primeng/primeng.module';
 import { AddMaterialComponent } from './add-material/add-material.component';
 import { MaterialComponent } from './material/material.component';
-import { ViewPdfComponent } from './view-pdf/view-pdf.component';
 import { AnnotationModule } from '../annotations/pdf-annotation/annotation.module';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -15,8 +14,7 @@ import { materialReducer } from './state/materials.reducer';
 @NgModule({
   declarations: [
     MaterialComponent,
-    AddMaterialComponent,
-    ViewPdfComponent
+    AddMaterialComponent
   ],
   imports: [
     CommonModule,
@@ -29,8 +27,7 @@ import { materialReducer } from './state/materials.reducer';
   ],
   exports: [
     MaterialComponent,
-    AddMaterialComponent,
-    ViewPdfComponent
+    AddMaterialComponent
   ]
 })
 export class MaterialsModule { }

@@ -109,8 +109,7 @@ export class MaterialComponent implements OnInit {
       'material',
       this.selectedMaterial._id,
     ]);
-    let materialId = this.selectedMaterial._id;
-    this.store.dispatch(MaterialActions.setMaterialId({materialId}));
+    this.store.dispatch(MaterialActions.setMaterialId({materialId: this.selectedMaterial._id}));
   }
   setSelectedTabIndex(index: number) {
     this.selectedMaterial = this.channels['materials'][index];

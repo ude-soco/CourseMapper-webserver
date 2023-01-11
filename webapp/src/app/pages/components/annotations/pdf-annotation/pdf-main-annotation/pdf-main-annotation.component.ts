@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
 import { toolTypeSelection } from 'src/app/tool-type-selection';
 import { Rectangle, RectangleObject } from 'src/app/models/AnnotationForms';
@@ -7,6 +7,11 @@ import { getSelectedTool, State } from '../state/annotation.reducer';
 import { Store } from '@ngrx/store';
 import { getMouseEvent } from '../../../materils/state/materials.reducer';
 import { PdfviewService } from 'src/app/services/pdfview.service';
+import { Subscription } from 'rxjs';
+import { environment } from 'src/environments/environment';
+import * as MaterialActions from 'src/app/pages/components/materils/state/materials.actions'
+const ZOOM_STEP: number = 0.25;
+const DEFAULT_ZOOM: number = 1;
 
 @Component({
   selector: 'app-pdf-main-annotation',
@@ -16,6 +21,16 @@ import { PdfviewService } from 'src/app/services/pdfview.service';
 export class PdfMainAnnotationComponent implements OnInit {
   @ViewChild(PdfViewerComponent, { static: false })
   private pdfComponent!: PdfViewerComponent;
+  matchesFound: any = 0;
+  @Input() materialId?: any;
+  @Input() material: any;
+  @Input() materialType: any;
+  currentPage: number = 1;
+  zoom = DEFAULT_ZOOM;
+  totalPages: any;
+  docURL!: string;
+  subs = new Subscription();
+  private API_URL = environment.API_URL;
 
   // Annotation properties
   drawingRect: Rectangle = {
@@ -51,7 +66,8 @@ export class PdfMainAnnotationComponent implements OnInit {
   textSelection!: boolean;
   selectedNoteId: any;
 
-  constructor(private store: Store<State>) {
+  constructor(private pdfViewService: PdfviewService, private store: Store<State>) {
+    this.getDocUrl();
     this.store.select(getMouseEvent).subscribe((event) => {
       if (event.type === 'mouseup') {
         this.store.select(getSelectedTool).subscribe((tool) => {
@@ -64,10 +80,64 @@ export class PdfMainAnnotationComponent implements OnInit {
     });
   }
 
+  getDocUrl() {
+    this.subs.add(
+      this.pdfViewService.currentDocURL.subscribe((url) => {
+        this.docURL = this.API_URL + url.replace(/\\/g, '/');
+        console.log('this.docURL');
+        console.log(url);
+      })
+    );
+  }
+
+  pagechanging(e: any) {
+    this.currentPage = e.pageNumber; // the page variable
+    console.log(' this.currentPage');
+    console.log(this.currentPage);
+    this.pdfViewService.setPageNumber(this.currentPage);
+  }
+
+  public handlePdfLoaded(pdf: any): void {
+    this.totalPages = pdf.numPages;
+    console.log(this.totalPages);
+    this.pdfViewService.setTotalPages(this.totalPages);
+    this.pdfComponent.pdfViewer.currentScaleValue = 'page-fit';
+    this.pdfComponent.pdfViewer.eventBus.on(
+      'updatefindmatchescount',
+      (data: any) => {
+        this.matchesFound = data.matchesCount.total;
+        console.log('total matches found: ', data.matchesCount.total);
+      }
+    );
+
+    this.pdfComponent.pdfViewer.eventBus.on(
+      'updatefindcontrolstate',
+      (data: any) => {
+        if (data.state === 0) {
+          console.log('no matches found');
+        }
+      }
+    );
+  }
+
+  pageRendered(event: any) {}
+
+  paginate(event) {
+    this.currentPage = event.page + 1;
+    this.pdfViewService.setPageNumber(this.currentPage);
+  }
+
+  mouseEventAction(event: MouseEvent){
+    if(event.type === "mouseup"){
+      this.store.dispatch(MaterialActions.setMouseEvent({mouseEvent: event}));
+      console.log(event.type);
+    } 
+  }
+
   ngOnInit(): void {}
 
   // Highlight annotaion tool
-
+  
   mouseEvent(event: MouseEvent) {
     //mouse event to highlight text selection
     if (this.selectedTool == PdfToolType.Highlight) {

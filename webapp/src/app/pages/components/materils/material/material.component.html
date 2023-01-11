@@ -1,21 +1,20 @@
-
 <div class="relative contain h-screen bg-gray-100 shadow-lg" *ngIf="selectedChannel._id">
-    <div class="h-max w-72 m-0 flex flex-col bg-gray-100">
-      <div class="flex items-start justify-between py-4 pl-3 bg-gray-200">  
-        <p id="{{selectedChannel._id}}"          
-           class="flex w-56 text-xl font-semibold" #selectedCourse._id>{{selectedChannel.name}}
-        </p>
+  <div class="h-max w-72 m-0 flex flex-col bg-gray-100">
+    <div class="flex items-start justify-between py-4 pl-3 bg-gray-200">
+      <p id="{{selectedChannel._id}}" class="flex w-56 text-xl font-semibold" #selectedCourse._id>
+        {{selectedChannel.name}}
+      </p>
 
-      </div>
     </div>
+  </div>
 
- <!-- 
+  <!-- 
     <div style="width:80%">     
         <table>
             <tr>
             
                  <mat-checkbox #selectAfterAdding> Select tab after adding </mat-checkbox> -->
-                  <!-- 
+  <!-- 
   <mat-tab-group [selectedIndex]="selected.value" (selectedIndexChange)="selected.setValue($event)">
                  <td>
     <mat-tab *ngFor="let tab of tabs; let index = index" [label]="tab">
@@ -44,7 +43,7 @@
 
 
 </div> -->
- <!-- <p-tabView>
+  <!-- <p-tabView>
   <p-tabPanel [header]="tab" *ngFor="let tab of tabs; let i = index" [selected]="i == 0" >
     Contents for {{tab}} tab
   </p-tabPanel>
@@ -60,7 +59,7 @@
 
 
 
- <!-- <p-tabView [activeIndex]="index"  (onChange)="onTabChange($event)" *ngIf="selectedChannel.materials">
+  <!-- <p-tabView [activeIndex]="index"  (onChange)="onTabChange($event)" *ngIf="selectedChannel.materials">
   <ng-container *ngIf="this.materials.length > 0">
   <p-tabPanel *ngFor="let material of materials; let i = index" [selected]="i == 0" [header]="material.name" [closable]="true"  >
       {{material.name}}
@@ -95,29 +94,30 @@
 
 
 
-<p-tabView (onChange)="onTabChange($event)" (onClose)="deleteMaterial($event)" *ngIf="selectedChannel.materials">
- <p-tabPanel header="+" >
-    <ng-template pTemplate="content">
-      <app-add-material [courseID]="selectedChannel.courseId"
-      [topicID]="selectedChannel.topicId" [channelID]="selectedChannel._id" [channelEmittd]="selectedChannel"> </app-add-material>
-  </ng-template>
-</p-tabPanel>
-<ng-container *ngIf="this.materials.length > 0">
-<p-tabPanel *ngFor="let material of materials; let i = index" [header]="material.name" [closable]="true"  >
-  <div *ngIf="material.type == 'pdf'">
-   <app-view-pdf [materialId]="material._id" [materialType]="material.type" [material]="material"> </app-view-pdf> 
-    
-    </div>
-    <div *ngIf="material.type == 'video'">
-      video type
-      
-      </div>
-</p-tabPanel>
-</ng-container>
+  <p-tabView (onChange)="onTabChange($event)" (onClose)="deleteMaterial($event)" *ngIf="selectedChannel.materials">
+    <p-tabPanel header="+">
+      <ng-template pTemplate="content">
+        <app-add-material [courseID]="selectedChannel.courseId" [topicID]="selectedChannel.topicId"
+          [channelID]="selectedChannel._id" [channelEmittd]="selectedChannel"> </app-add-material>
+      </ng-template>
+    </p-tabPanel>
+    <ng-container *ngIf="this.materials.length > 0">
+      <p-tabPanel *ngFor="let material of materials; let i = index" [header]="material.name" [closable]="true">
+        <div *ngIf="material.type == 'pdf'">
+          <app-pdf-main-annotation></app-pdf-main-annotation>
+          <!-- <app-view-pdf [materialId]="material._id" [materialType]="material.type" [material]="material"> </app-view-pdf> -->
 
- 
+        </div>
+        <div *ngIf="material.type == 'video'">
+          video type
 
-</p-tabView>
+        </div>
+      </p-tabPanel>
+    </ng-container>
+
+
+
+  </p-tabView>
 
 
 

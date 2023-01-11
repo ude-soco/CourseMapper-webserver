@@ -10,6 +10,7 @@ import { PdfMainAnnotationComponent } from './pdf-main-annotation/pdf-main-annot
 import { annotationReducer } from './state/annotation.reducer';
 import { EffectsModule } from '@ngrx/effects';
 import { AnnotationEffects } from './state/annotation.effects';
+import { PdfViewerModule } from 'ng2-pdf-viewer';
 
 
 
@@ -24,6 +25,7 @@ import { AnnotationEffects } from './state/annotation.effects';
   imports: [
     CommonModule,
     PrimengModule,
+    PdfViewerModule,
     StoreModule.forFeature('annotation', annotationReducer),
     EffectsModule.forFeature([AnnotationEffects])
   ],

@@ -1,1 +1,31 @@
 <app-pdf-annotation-toolbar></app-pdf-annotation-toolbar>
+<div (mousemove)="mouseEventAction($event)" (mousedown)="mouseEventAction($event)"
+(mouseup)="mouseEventAction($event)">
+  <pdf-viewer
+    [src]="docURL"
+    [render-text]="true"
+    [render-text-mode]="2"
+    (text-layer-rendered)="(true)"
+    (pagechanging)="pagechanging($event)"
+    [fit-to-page]="true"
+    [original-size]="true"
+    (after-load-complete)="handlePdfLoaded($event)"
+    (page-rendered)="pageRendered($event)"
+    [show-all]="false"
+    [(page)]="currentPage"
+    [zoom]="zoom"
+    style="display: block; height: 36rem"
+  >
+  </pdf-viewer>
+  <app-pdf-create-annotation></app-pdf-create-annotation>
+  <app-pdf-comment-panel></app-pdf-comment-panel>
+  <p-paginator
+    [rows]="1"
+    [showJumpToPageDropdown]="true"
+    [showPageLinks]="false"
+    [showJumpToPageInput]="true"
+    [totalRecords]="totalPages"
+    (onPageChange)="paginate($event)"
+  ></p-paginator>
+</div>
+
