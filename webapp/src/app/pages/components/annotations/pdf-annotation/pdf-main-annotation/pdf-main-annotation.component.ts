@@ -19,12 +19,10 @@ const DEFAULT_ZOOM: number = 1;
   styleUrls: ['./pdf-main-annotation.component.css'],
 })
 export class PdfMainAnnotationComponent implements OnInit {
+  // Pdf-View properties
   @ViewChild(PdfViewerComponent, { static: false })
   private pdfComponent!: PdfViewerComponent;
   matchesFound: any = 0;
-  @Input() materialId?: any;
-  @Input() material: any;
-  @Input() materialType: any;
   currentPage: number = 1;
   zoom = DEFAULT_ZOOM;
   totalPages: any;
@@ -120,24 +118,24 @@ export class PdfMainAnnotationComponent implements OnInit {
     );
   }
 
-  pageRendered(event: any) {}
+  pageRendered(event: any) { }
 
   paginate(event) {
     this.currentPage = event.page + 1;
     this.pdfViewService.setPageNumber(this.currentPage);
   }
 
-  mouseEventAction(event: MouseEvent){
-    if(event.type === "mouseup"){
-      this.store.dispatch(MaterialActions.setMouseEvent({mouseEvent: event}));
+  mouseEventAction(event: MouseEvent) {
+    if (event.type === "mouseup") {
+      this.store.dispatch(MaterialActions.setMouseEvent({ mouseEvent: event }));
       console.log(event.type);
-    } 
+    }
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   // Highlight annotaion tool
-  
+
   mouseEvent(event: MouseEvent) {
     //mouse event to highlight text selection
     if (this.selectedTool == PdfToolType.Highlight) {
@@ -226,16 +224,16 @@ export class PdfMainAnnotationComponent implements OnInit {
         el.setAttribute(
           'style',
           'position: absolute; background-color: RGB(238,170,0, .25); cursor:pointer; z-index:1;' +
-            'left:' +
-            left +
-            'px; top:' +
-            top +
-            'px;' +
-            'width:' +
-            width +
-            'px; height:' +
-            height +
-            'px;'
+          'left:' +
+          left +
+          'px; top:' +
+          top +
+          'px;' +
+          'width:' +
+          width +
+          'px; height:' +
+          height +
+          'px;'
         );
         this.highlightedElmts.push(el);
 

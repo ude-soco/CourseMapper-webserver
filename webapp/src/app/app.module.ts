@@ -4,7 +4,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { TopicDropdownComponent } from './pages/components/topic-dropdown/topic-dropdown.component';
 import { en_US, NZ_I18N } from 'ng-zorro-antd/i18n';
 import { AppRoutingModule } from './app-routing.module';
-import { NzFormModule } from 'ng-zorro-antd/form';
 
 import en from '@angular/common/locales/en';
 
@@ -32,23 +31,14 @@ import { RegistrationComponent } from './pages/components/registration/registrat
 
 import { registerLocaleData } from '@angular/common';
 
-import { FormsModule, FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoginComponent } from './pages/components/login/login.component';
 import { HomeComponent } from './pages/home/home.component';
 import {
   httpInterceptorProviders,
-  HttpRequestInterceptor,
 } from './_helpers/http.interceptor';
-import { MaterialComponent } from './pages/components/materils/material/material.component';
 import { MatInputModule } from '@angular/material/input';
 import { MatTabsModule } from '@angular/material/tabs';
-import { AddMaterialComponent } from './pages/components/materils/add-material/add-material.component';
-import { PdfViewerModule } from 'ng2-pdf-viewer';
-import { PdfAnnotationToolbarComponent } from './pages/components/annotations/pdf-annotation/pdf-annotation-toolbar/pdf-annotation-toolbar.component';
-import { PdfCreateAnnotationComponent } from './pages/components/annotations/pdf-annotation/pdf-create-annotation/pdf-create-annotation.component';
-import { PdfCommentPanelComponent } from './pages/components/annotations/pdf-annotation/pdf-comment-panel/pdf-comment-panel.component';
-import { PdfCommentItemComponent } from './pages/components/annotations/pdf-annotation/pdf-comment-item/pdf-comment-item.component';
-import { PdfMainAnnotationComponent } from './pages/components/annotations/pdf-annotation/pdf-main-annotation/pdf-main-annotation.component';
 import { StoreModule } from '@ngrx/store';
 import { AnnotationModule } from './pages/components/annotations/pdf-annotation/annotation.module';
 import { MaterialsModule } from './pages/components/materils/materials.module';
