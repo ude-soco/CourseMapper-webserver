@@ -16,6 +16,7 @@ import {DropdownModule} from 'primeng/dropdown';
 import {MultiSelectModule} from 'primeng/multiselect';
 import {DividerModule} from 'primeng/divider';
 import {ScrollerModule} from 'primeng/scroller';
+import {DialogModule} from 'primeng/dialog';
 
 const PrimeNgComponents = [
   AvatarModule,
@@ -35,7 +36,8 @@ const PrimeNgComponents = [
   DropdownModule,
   MultiSelectModule,
   DividerModule,
-  ScrollerModule
+  ScrollerModule,
+  DialogModule
 ];
 
 @NgModule({

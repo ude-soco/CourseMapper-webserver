@@ -10,6 +10,9 @@ import { PdfviewService } from 'src/app/services/pdfview.service';
 import { Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import * as MaterialActions from 'src/app/pages/components/materils/state/materials.actions'
+import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions'
+import * as $ from 'jquery';
+import { AnnotationType } from 'src/app/models/Annotations';
 const ZOOM_STEP: number = 0.25;
 const DEFAULT_ZOOM: number = 1;
 
@@ -61,6 +64,7 @@ export class PdfMainAnnotationComponent implements OnInit {
   highlightObjectsList: any = [];
   currentUserId = '6150542959fa724a51ba859e';
   pinCoords: any;
+  pinElement !: any;
   textSelection!: boolean;
   selectedNoteId: any;
 
@@ -308,11 +312,42 @@ export class PdfMainAnnotationComponent implements OnInit {
   }
 
   showAnnotationDialog() {
+    this.store.dispatch(AnnotationActions.setCreateAnnotationFromPanel({createAnnotationFromPanel: false}));
     this.isAnnotationDialogVisible = true;
   }
 
   getselectedToolType(toolType: PdfToolType) {
     this.selectedTool = toolType;
     toolTypeSelection(toolType);
+  }
+
+  cancel() {
+    if (this.isAnnotationDialogVisible) {
+      this.isAnnotationDialogVisible = false;
+    }
+
+    if (this.selectedTool == PdfToolType.Pin) {
+      const pinId = this.pinElement.getAttribute('id');
+      $('#' + pinId).remove();
+      this.showPopup = false;
+    } else if (this.selectedTool == PdfToolType.DrawBox) {
+      const rectId = this.drawElement.getAttribute('id');
+      $('#' + rectId).remove();
+      this.showPopup = false;
+      this.drawingRect = { x1: 0, y1: 0, x2: 0, y2: 0, width: 0, height: 0, borderRadius: 0, lineHeight: 0 };
+    } else if (this.selectedTool == PdfToolType.Highlight) {
+      var highlightedTexts = Array.from(document.getElementsByClassName('highlight' + this.currentUserId) as HTMLCollectionOf<HTMLElement>);
+      for (let i = 0; i < highlightedTexts.length; i++) {
+        let element = highlightedTexts[i];
+        element.remove()
+
+      }
+
+      this.showPopup = false;
+    } else {
+      this.showPopup = false;
+    }
+    this.showPopup = false;
+    this.store.dispatch(AnnotationActions.setCreateAnnotationFromPanel({createAnnotationFromPanel: true}));
   }
 }

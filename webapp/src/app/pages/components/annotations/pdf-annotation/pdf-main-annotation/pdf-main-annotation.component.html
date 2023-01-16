@@ -17,7 +17,12 @@
     style="display: block; height: 36rem"
   >
   </pdf-viewer>
+  <p-dialog [(visible)]="isAnnotationDialogVisible" [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}" (onHide) = "cancel()">
+    <app-pdf-create-annotation appendTo="body"></app-pdf-create-annotation>
+</p-dialog>
+<div class="create-annotation">
   <app-pdf-create-annotation></app-pdf-create-annotation>
+</div>
   <app-pdf-comment-panel></app-pdf-comment-panel>
   <p-paginator
     [rows]="1"

@@ -10,12 +10,14 @@ export interface State extends AppState.State{
 
 export interface AnnotationState {
   highlightSelected: boolean,
-  selectedTool: PdfToolType
+  selectedTool: PdfToolType,
+  createAnnotationFromPanel: boolean
 }
 
 const initialState: AnnotationState = {
   highlightSelected: false,
-  selectedTool: PdfToolType.None
+  selectedTool: PdfToolType.None,
+  createAnnotationFromPanel: true
 }
 
 const getAnnotationFeatureState = createFeatureSelector<AnnotationState>('annotation');
@@ -28,6 +30,11 @@ export const isHighlightSelected = createSelector(
 export const getSelectedTool = createSelector(
   getAnnotationFeatureState,
   state => state.selectedTool
+);
+
+export const getCreateAnnotationFromPanel = createSelector(
+  getAnnotationFeatureState,
+  state => state.createAnnotationFromPanel
 );
 
 
@@ -44,6 +51,13 @@ export const annotationReducer = createReducer<AnnotationState>(
       return {
         ...state,
         selectedTool: action.selectedTool
+      };
+    }),
+
+    on(AnnotationActions.setCreateAnnotationFromPanel, (state, action): AnnotationState => {
+      return {
+        ...state,
+        createAnnotationFromPanel: action.createAnnotationFromPanel
       };
     }),
   );

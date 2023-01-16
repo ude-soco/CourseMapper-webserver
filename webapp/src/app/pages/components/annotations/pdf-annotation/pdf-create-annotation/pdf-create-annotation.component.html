@@ -1,11 +1,33 @@
-<p-panel header="Create Annotation" [toggleable]="true" class="create-annotation">
-    <div class="dropdwon">
-        <p-dropdown [options]=""  optionLabel="name" placeholder="Annotation type" class="a-type"></p-dropdown>
-        <p-dropdown [options]=""  optionLabel="name" placeholder="Slide" class="slide-number"></p-dropdown>
-    </div>
-    <span class="p-float-label">
-        <input id="float-input" type="text" pInputText> 
-        <label for="float-input">Create a note</label>
-        <button pButton type="p-button-icon" icon="pi pi-send" class="p-button-text p-button-rounded"></button>
-    </span>
+<p-panel
+  header="Create Annotation"
+  [toggleable]="false"
+  class="create-annotation"
+>
+  <div class="dropdwon">
+    <p-dropdown
+      [options]="annotationTypes"
+      [(ngModel)]="selectedAnnotationType"
+      placeholder="Annotation type"
+      [showClear]="true"
+      appendTo="body"
+    ></p-dropdown>
+
+    <p-dropdown *ngIf="createAnnotationFromPanel$ | async"
+      [options]=""
+      optionLabel="name"
+      placeholder="Slide"
+      class="slide-number"
+      appendTo="body"
+    ></p-dropdown>
+  </div>
+  <span class="p-float-label">
+    <input id="float-input" type="text" pInputText />
+    <label for="float-input">Create a note</label>
+    <button
+      pButton
+      type="p-button-icon"
+      icon="pi pi-send"
+      class="p-button-text p-button-rounded"
+    ></button>
+  </span>
 </p-panel>

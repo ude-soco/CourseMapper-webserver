@@ -47,3 +47,8 @@ export const setSelectedTool = createAction(
     props<{selectedTool: PdfToolType}>()
 );
 
+export const setCreateAnnotationFromPanel = createAction(
+    '[Annotation] Show Slides Dropdown Menue',
+    props<{createAnnotationFromPanel: boolean}>()
+);
+
