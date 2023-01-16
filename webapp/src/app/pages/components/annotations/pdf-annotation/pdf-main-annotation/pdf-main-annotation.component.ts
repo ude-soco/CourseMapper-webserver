@@ -23,8 +23,7 @@ const DEFAULT_ZOOM: number = 1;
 })
 export class PdfMainAnnotationComponent implements OnInit {
   // Pdf-View properties
-  @ViewChild(PdfViewerComponent, { static: false })
-  private pdfComponent!: PdfViewerComponent;
+  @ViewChild(PdfViewerComponent, { static: false }) private pdfComponent!: PdfViewerComponent;
   matchesFound: any = 0;
   currentPage: number = 1;
   zoom = DEFAULT_ZOOM;
@@ -160,7 +159,7 @@ export class PdfMainAnnotationComponent implements OnInit {
 
   getSelectedText() {
     this.textSelection = true;
-    var pageIndex = this.pdfComponent.pdfViewer.currentPageNumber - 1;
+    var pageIndex = this.currentPage - 1;
     var page = this.pdfComponent.pdfViewer.getPageView(pageIndex);
     var pageRect = page.canvas.getClientRects()[0];
     let selectionRects = window.getSelection()!.getRangeAt(0).getClientRects();

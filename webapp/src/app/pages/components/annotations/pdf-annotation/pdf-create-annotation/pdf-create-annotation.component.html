@@ -21,13 +21,13 @@
     ></p-dropdown>
   </div>
   <span class="p-float-label">
-    <input id="float-input" type="text" pInputText />
-    <label for="float-input">Create a note</label>
+    <textarea pInputTextarea [(ngModel)]="text"></textarea>
     <button
       pButton
       type="p-button-icon"
       icon="pi pi-send"
       class="p-button-text p-button-rounded"
+      (click)="postAnnotation()"
     ></button>
   </span>
 </p-panel>

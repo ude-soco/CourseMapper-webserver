@@ -29,18 +29,16 @@ export interface AnnotationTool {
 
 export interface Annotation {
     _id: string;
+    type: AnnotationType;
+    content: string;
+    location: PdfGeneralAnnotationLocation;
+    tool: PdfAnnotationTool;
     materialID: string;
     courseId: string;
     userID: string;
     username: string;
-    createdAt: number;
-    updatedAt: number;
-    type: AnnotationType;
-    content: string;
     likes: string[];
     dislikes: string[];
-    location: PdfGeneralAnnotationLocation;
-    tool: PdfAnnotationTool;
     commentCount: number;
     tags: string[];
 }

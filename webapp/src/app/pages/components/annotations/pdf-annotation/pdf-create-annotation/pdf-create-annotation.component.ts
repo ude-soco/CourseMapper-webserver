@@ -12,9 +12,10 @@ import { Observable } from 'rxjs';
 })
 export class PdfCreateAnnotationComponent implements OnInit {
 
-  selectedAnnotationType: string;
+  selectedAnnotationType: AnnotationType;
   annotationTypes: string[];
   createAnnotationFromPanel$: Observable<boolean>;
+  text: string;
   
   constructor(private store: Store<State>) { 
     this.annotationTypes = [
@@ -27,6 +28,11 @@ export class PdfCreateAnnotationComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  }
+
+  postAnnotation(){
+    this.store.dispatch(AnnotationActions.setSelectedAnnotationType({selectedAnnotationType: this.selectedAnnotationType}));
+    this.store.dispatch(AnnotationActions.setAnnotationContent({annotationContent: this.text}));
   }
 
 }

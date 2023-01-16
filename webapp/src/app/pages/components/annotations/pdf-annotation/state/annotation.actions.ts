@@ -1,5 +1,5 @@
 import { createAction, props } from "@ngrx/store";
-import { Annotation, PdfToolType } from "src/app/models/Annotations";
+import { Annotation, AnnotationType, PdfToolType } from "src/app/models/Annotations";
 import { Material } from "src/app/models/Material";
 
 // Strongly typed actions
@@ -50,5 +50,15 @@ export const setSelectedTool = createAction(
 export const setCreateAnnotationFromPanel = createAction(
     '[Annotation] Show Slides Dropdown Menue',
     props<{createAnnotationFromPanel: boolean}>()
+);
+
+export const setSelectedAnnotationType = createAction(
+    '[Annotation] Set Selected Annotation Type',
+    props<{selectedAnnotationType: AnnotationType}>()
+);
+
+export const setAnnotationContent = createAction(
+    '[Annotation] Set Annotation Content Text',
+    props<{annotationContent: string}>()
 );
 

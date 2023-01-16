@@ -17,6 +17,6 @@ export class AnnotationService {
   }
 
   getAllAnnotations(material: Material): Observable<Annotation[]>{
-    return this.http.get<Annotation[]>(`${environment.apiUrl}courses/${material._id}/materials/${material.courseID}`);
+    return this.http.get<Annotation[]>(`${environment.apiUrl}courses/${material._id}/materials/${material.courseID}/getAnnotations`);
   }
 }

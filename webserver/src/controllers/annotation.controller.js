@@ -429,7 +429,6 @@ export const dislikeAnnotation = async (req, res) => {
 export const getAllAnnotations = async (req, res) => {
   const courseId = req.params.courseId;
   const materialId = req.params.materialId;
-  const channelId = req.params.channelId;
 
   let foundAnnotations;
   try {
@@ -446,11 +445,6 @@ export const getAllAnnotations = async (req, res) => {
       if (annotation.courseId.valueOf() !== courseId) {
         return res.status(404).send({
           error: `Annotation doesn't belong to course with id ${courseId}!`,
-        });
-      }
-      if (annotation.channelId.valueOf() !== channelId) {
-        return res.status(404).send({
-          error: `Annotation doesn't belong to channel with id ${channelId}!`,
         });
       }
     });
