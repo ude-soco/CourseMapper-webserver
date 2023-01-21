@@ -33,11 +33,6 @@ export const loadAnnotationsFail = createAction(
     props<{error: string}>()
 );
 
-export const emptyActionWithSelection = createAction(
-    'Set Current Annotation',
-    props<{annotation: Annotation}>()
-);
-
 export const toggleHighlightSelected = createAction(
     '[Annotation] Toggle Highlight Selected'
 );
@@ -60,5 +55,20 @@ export const setSelectedAnnotationType = createAction(
 export const setAnnotationContent = createAction(
     '[Annotation] Set Annotation Content Text',
     props<{annotationContent: string}>()
+);
+
+export const setAnnotationProperties = createAction(
+    '[Annotation] Set Annotation Properties',
+    props<{annotation: Annotation}>()
+);
+
+export const setIsAnnotationDialogVisible = createAction(
+    '[Annotation] Set AnnotationDialogVisible Value',
+    props<{isAnnotationDialogVisible: boolean}>()
+);
+
+export const setIsAnnotationCanceled = createAction(
+    '[Annotation] Set AnnotationCanceled Value',
+    props<{isAnnotationCanceled: boolean}>()
 );
 

@@ -1,7 +1,7 @@
 import { createAction, createFeatureSelector, createReducer, createSelector, on } from '@ngrx/store';
 import * as AppState from 'src/app/state/app.state'
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions'
-import { AnnotationTool, AnnotationType, PdfToolType } from 'src/app/models/Annotations';
+import { Annotation, AnnotationTool, AnnotationType, PdfGeneralAnnotationLocation, PdfToolType } from 'src/app/models/Annotations';
 
 // Strongly typed state
 export interface State extends AppState.State{
@@ -13,7 +13,11 @@ export interface AnnotationState {
   selectedTool: PdfToolType,
   createAnnotationFromPanel: boolean,
   selectedAnnotationType: AnnotationType;
-  annotationContent: string
+  annotationContent: string,
+  isAnnotationPosted: boolean,
+  annotation: Annotation,
+  isAnnotationDialogVisible: boolean,
+  isAnnotationCanceled: boolean
 }
 
 const initialState: AnnotationState = {
@@ -21,7 +25,18 @@ const initialState: AnnotationState = {
   selectedTool: PdfToolType.None,
   createAnnotationFromPanel: true,
   selectedAnnotationType: null,
-  annotationContent: null
+  annotationContent: null,
+  isAnnotationPosted: false,
+  annotation: {
+    type: null,
+    content: null,
+    location: null,
+    tool: null,
+    materialID: null,
+    courseId: null,
+  },
+  isAnnotationDialogVisible: false,
+  isAnnotationCanceled: false
 }
 
 const getAnnotationFeatureState = createFeatureSelector<AnnotationState>('annotation');
@@ -51,6 +66,26 @@ export const getAnnotationContent = createSelector(
   state => state.annotationContent
 );
 
+export const getIsAnnotationPosted = createSelector(
+  getAnnotationFeatureState,
+  state => state.isAnnotationPosted
+);
+
+export const getAnnotationProperties = createSelector(
+  getAnnotationFeatureState,
+  state => state.annotation
+);
+
+export const getIsAnnotationDialogVisible = createSelector(
+  getAnnotationFeatureState,
+  state => state.isAnnotationDialogVisible
+);
+
+export const getIsAnnotationCanceled = createSelector(
+  getAnnotationFeatureState,
+  state => state.isAnnotationCanceled
+);
+
 
 export const annotationReducer = createReducer<AnnotationState>(
     initialState,
@@ -69,10 +104,18 @@ export const annotationReducer = createReducer<AnnotationState>(
     }),
 
     on(AnnotationActions.setCreateAnnotationFromPanel, (state, action): AnnotationState => {
-      return {
-        ...state,
-        createAnnotationFromPanel: action.createAnnotationFromPanel
-      };
+      if(action.createAnnotationFromPanel){
+        return {
+          ...state,
+          createAnnotationFromPanel: action.createAnnotationFromPanel,
+          isAnnotationCanceled: false
+        };
+      }else{
+        return {
+          ...state,
+          createAnnotationFromPanel: action.createAnnotationFromPanel
+        };
+      }
     }),
 
     on(AnnotationActions.setSelectedAnnotationType, (state, action): AnnotationState => {
@@ -87,5 +130,53 @@ export const annotationReducer = createReducer<AnnotationState>(
         ...state,
         annotationContent: action.annotationContent
       };
+    }),
+
+    on(AnnotationActions.setAnnotationProperties, (state, action): AnnotationState => {
+      return {
+        ...state,
+        annotation: action.annotation
+      };
+    }),
+
+    on(AnnotationActions.postAnnotationSuccess, (state, action): AnnotationState => {
+      return {
+        ...state,
+        isAnnotationDialogVisible: false,
+        isAnnotationPosted: true,
+        isAnnotationCanceled: false
+      };
+    }),
+
+    on(AnnotationActions.postAnnotationFail, (state, action): AnnotationState => {
+      return {
+        ...state,
+        isAnnotationDialogVisible: false,
+        isAnnotationPosted: false,
+        isAnnotationCanceled: true
+      };
+    }),
+
+    on(AnnotationActions.setIsAnnotationDialogVisible, (state, action): AnnotationState => {
+      return {
+        ...state,
+        isAnnotationDialogVisible: action.isAnnotationDialogVisible
+      };
+    }),
+    
+    on(AnnotationActions.setIsAnnotationCanceled, (state, action): AnnotationState => {
+      if(action.isAnnotationCanceled){
+        return {
+          ...state,
+          isAnnotationCanceled: true,
+          isAnnotationPosted: false,
+          isAnnotationDialogVisible: false
+        };
+      }else{
+        return {
+          ...state,
+          isAnnotationCanceled: false
+        };
+      }
     }),
   );

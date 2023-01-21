@@ -2,15 +2,31 @@ import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
 import { toolTypeSelection } from 'src/app/tool-type-selection';
 import { Rectangle, RectangleObject } from 'src/app/models/AnnotationForms';
-import { PdfToolType } from 'src/app/models/Annotations';
-import { getSelectedTool, State } from '../state/annotation.reducer';
+import {
+  Annotation,
+  PdfGeneralAnnotationLocation,
+  PdfToolType,
+} from 'src/app/models/Annotations';
+import {
+  getAnnotationContent,
+  getIsAnnotationCanceled,
+  getIsAnnotationDialogVisible,
+  getIsAnnotationPosted,
+  getSelectedAnnotationType,
+  getSelectedTool,
+  State,
+} from '../state/annotation.reducer';
 import { Store } from '@ngrx/store';
-import { getMouseEvent } from '../../../materils/state/materials.reducer';
+import {
+  getCurrentCourseId,
+  getCurrentMaterialId,
+  getMouseEvent,
+} from '../../../materils/state/materials.reducer';
 import { PdfviewService } from 'src/app/services/pdfview.service';
-import { Subscription } from 'rxjs';
+import { first, Observable, Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import * as MaterialActions from 'src/app/pages/components/materils/state/materials.actions'
-import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions'
+import * as MaterialActions from 'src/app/pages/components/materils/state/materials.actions';
+import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
 import * as $ from 'jquery';
 import { AnnotationType } from 'src/app/models/Annotations';
 const ZOOM_STEP: number = 0.25;
@@ -23,7 +39,8 @@ const DEFAULT_ZOOM: number = 1;
 })
 export class PdfMainAnnotationComponent implements OnInit {
   // Pdf-View properties
-  @ViewChild(PdfViewerComponent, { static: false }) private pdfComponent!: PdfViewerComponent;
+  @ViewChild(PdfViewerComponent, { static: false })
+  private pdfComponent!: PdfViewerComponent;
   matchesFound: any = 0;
   currentPage: number = 1;
   zoom = DEFAULT_ZOOM;
@@ -48,7 +65,13 @@ export class PdfMainAnnotationComponent implements OnInit {
   dataPageNumber = 1;
   highlightedElmts: any[] = [];
   showPopup = false;
-  isAnnotationDialogVisible: boolean = false;
+
+  //Boolean flags
+  isAnnotationDialogVisible$: Observable<boolean>;
+  isAnnotationCanceled$: Observable<boolean>;
+  isAnnotationPosted$: Observable<boolean>;
+
+
   pdfAnnotationToolObject!: {
     type: PdfToolType;
     color: string;
@@ -63,12 +86,36 @@ export class PdfMainAnnotationComponent implements OnInit {
   highlightObjectsList: any = [];
   currentUserId = '6150542959fa724a51ba859e';
   pinCoords: any;
-  pinElement !: any;
+  pinElement!: any;
   textSelection!: boolean;
   selectedNoteId: any;
+  materialId: string;
+  courseId: string;
+  content: string;
+  type: AnnotationType;
 
-  constructor(private pdfViewService: PdfviewService, private store: Store<State>) {
+  constructor(
+    private pdfViewService: PdfviewService,
+    private store: Store<State>
+  ) {
     this.getDocUrl();
+
+    this.store.select(getCurrentMaterialId).subscribe((id) => {
+      this.materialId = id;
+    });
+
+    this.store.select(getCurrentCourseId).subscribe((id) => {
+      this.courseId = id;
+    });
+
+    this.store.select(getAnnotationContent).subscribe((text) => {
+      this.content = text;
+    });
+
+    this.store.select(getSelectedAnnotationType).subscribe((annotationType) => {
+      this.type = annotationType;
+    });
+
     this.store.select(getMouseEvent).subscribe((event) => {
       if (event.type === 'mouseup') {
         this.store.select(getSelectedTool).subscribe((tool) => {
@@ -79,6 +126,16 @@ export class PdfMainAnnotationComponent implements OnInit {
         this.mouseEvent(event);
       }
     });
+
+    this.store.select(getIsAnnotationCanceled).subscribe((isCanceled) => {
+      if(isCanceled){
+        this.cancel();
+      }
+    });
+
+    this.isAnnotationDialogVisible$ = this.store.select(getIsAnnotationDialogVisible);
+    this.isAnnotationCanceled$ = this.store.select(getIsAnnotationCanceled);
+    this.isAnnotationPosted$ = this.store.select(getIsAnnotationPosted);
   }
 
   getDocUrl() {
@@ -129,7 +186,7 @@ export class PdfMainAnnotationComponent implements OnInit {
   }
 
   mouseEventAction(event: MouseEvent) {
-    if (event.type === "mouseup") {
+    if (event.type === 'mouseup') {
       this.store.dispatch(MaterialActions.setMouseEvent({ mouseEvent: event }));
       console.log(event.type);
     }
@@ -142,7 +199,7 @@ export class PdfMainAnnotationComponent implements OnInit {
   mouseEvent(event: MouseEvent) {
     //mouse event to highlight text selection
     if (this.selectedTool == PdfToolType.Highlight) {
-      console.log("I am in");
+      console.log('I am in');
       this.getSelectedText();
     } else {
       this.mouseDownFlag = false;
@@ -252,7 +309,10 @@ export class PdfMainAnnotationComponent implements OnInit {
         pageElement.appendChild(el);
       });
       const lastIndex = this.highlightedElmts.length - 1;
-      if (this.textSelection == true && this.selectedTool == PdfToolType.Highlight) {
+      if (
+        this.textSelection == true &&
+        this.selectedTool == PdfToolType.Highlight
+      ) {
         this.confirm(this.highlightedElmts[lastIndex]);
       }
     }
@@ -297,7 +357,21 @@ export class PdfMainAnnotationComponent implements OnInit {
         break;
     }
     this.showPopup = false;
-    this.showAnnotationDialog();
+    var location: PdfGeneralAnnotationLocation = {
+      type: 'currentPage',
+      startPage: this.currentPage,
+      lastPage: this.currentPage,
+    };
+    var pdftool = this.pdfAnnotationToolObject;
+
+    var annotaion: Annotation = {
+      type: null,
+      content: null,
+      location: location,
+      tool: pdftool,
+      materialID: this.materialId,
+      courseId: this.courseId,
+    };
     this.drawingRect = {
       x1: 0,
       y1: 0,
@@ -308,11 +382,19 @@ export class PdfMainAnnotationComponent implements OnInit {
       borderRadius: 0,
       lineHeight: 0,
     };
+    this.store.dispatch(
+      AnnotationActions.setAnnotationProperties({ annotation: annotaion })
+    );
+    this.showAnnotationDialog();
   }
 
   showAnnotationDialog() {
-    this.store.dispatch(AnnotationActions.setCreateAnnotationFromPanel({createAnnotationFromPanel: false}));
-    this.isAnnotationDialogVisible = true;
+    this.store.dispatch(
+      AnnotationActions.setCreateAnnotationFromPanel({
+        createAnnotationFromPanel: false,
+      })
+    );
+    this.store.dispatch(AnnotationActions.setIsAnnotationDialogVisible({ isAnnotationDialogVisible: true }));
   }
 
   getselectedToolType(toolType: PdfToolType) {
@@ -321,10 +403,6 @@ export class PdfMainAnnotationComponent implements OnInit {
   }
 
   cancel() {
-    if (this.isAnnotationDialogVisible) {
-      this.isAnnotationDialogVisible = false;
-    }
-
     if (this.selectedTool == PdfToolType.Pin) {
       const pinId = this.pinElement.getAttribute('id');
       $('#' + pinId).remove();
@@ -333,13 +411,25 @@ export class PdfMainAnnotationComponent implements OnInit {
       const rectId = this.drawElement.getAttribute('id');
       $('#' + rectId).remove();
       this.showPopup = false;
-      this.drawingRect = { x1: 0, y1: 0, x2: 0, y2: 0, width: 0, height: 0, borderRadius: 0, lineHeight: 0 };
+      this.drawingRect = {
+        x1: 0,
+        y1: 0,
+        x2: 0,
+        y2: 0,
+        width: 0,
+        height: 0,
+        borderRadius: 0,
+        lineHeight: 0,
+      };
     } else if (this.selectedTool == PdfToolType.Highlight) {
-      var highlightedTexts = Array.from(document.getElementsByClassName('highlight' + this.currentUserId) as HTMLCollectionOf<HTMLElement>);
+      var highlightedTexts = Array.from(
+        document.getElementsByClassName(
+          'highlight' + this.currentUserId
+        ) as HTMLCollectionOf<HTMLElement>
+      );
       for (let i = 0; i < highlightedTexts.length; i++) {
         let element = highlightedTexts[i];
-        element.remove()
-
+        element.remove();
       }
 
       this.showPopup = false;
@@ -347,6 +437,10 @@ export class PdfMainAnnotationComponent implements OnInit {
       this.showPopup = false;
     }
     this.showPopup = false;
-    this.store.dispatch(AnnotationActions.setCreateAnnotationFromPanel({createAnnotationFromPanel: true}));
+    this.store.dispatch(
+      AnnotationActions.setCreateAnnotationFromPanel({
+        createAnnotationFromPanel: true,
+      })
+    );
   }
 }

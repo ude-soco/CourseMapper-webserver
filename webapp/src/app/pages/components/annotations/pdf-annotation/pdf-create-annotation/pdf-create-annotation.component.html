@@ -22,12 +22,9 @@
   </div>
   <span class="p-float-label">
     <textarea pInputTextarea [(ngModel)]="text"></textarea>
-    <button
-      pButton
-      type="p-button-icon"
-      icon="pi pi-send"
-      class="p-button-text p-button-rounded"
-      (click)="postAnnotation()"
-    ></button>
+    <span class="p-buttonset">
+      <button pButton pRipple type="button" icon="pi pi-check" class="p-button-rounded p-button-text" (click)="postAnnotation()"></button>
+      <button pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-text" (click)="cancel()"></button>
+    </span>
   </span>
 </p-panel>
