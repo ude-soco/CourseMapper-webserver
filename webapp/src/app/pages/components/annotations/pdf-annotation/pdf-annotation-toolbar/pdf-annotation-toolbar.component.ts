@@ -12,19 +12,17 @@ import { PdfToolType } from 'src/app/models/Annotations';
 })
 export class PdfAnnotationToolbarComponent implements OnInit {
 
-  @Output() showAnnotationDialog: EventEmitter<void> = new EventEmitter();
-  @Output() selectedToolEvent: EventEmitter<string> = new EventEmitter();
-  @Output() resetToolEvent: EventEmitter<boolean> = new EventEmitter();
-
   selectedTool: string
   pinSelected = false
   drawingSelected = false
   highlightSelected$: Observable<boolean>;
   highlightSelected: boolean;
+  PdfSearchQuery$: Observable<string>;
+  pdfQuery: string;
+
   constructor(private store: Store<State>) { }
 
   ngOnInit(): void {
-    this.selectedToolEvent.emit("none");
     this.highlightSelected$ = this.store.select(isHighlightSelected)
     this.store.select(isHighlightSelected).subscribe(value => {
       this.highlightSelected = value;
@@ -38,10 +36,11 @@ export class PdfAnnotationToolbarComponent implements OnInit {
       this.store.dispatch(AnnotationActions.toggleHighlightSelected());
       this.store.dispatch(AnnotationActions.setSelectedTool({selectedTool: PdfToolType.None}));
     }
-    this.showAnnotationDialog.emit();
-    this.selectedToolEvent.emit("highlightTool")
   }
 
+  pdfSearchQuery(event: Event){
+    this.store.dispatch(AnnotationActions.setPdfSearchQuery({pdfSearchQuery: this.pdfQuery}));
+  }
   resetTool() {
   }
 

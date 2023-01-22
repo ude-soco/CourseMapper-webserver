@@ -12,6 +12,7 @@ import {
   getIsAnnotationCanceled,
   getIsAnnotationDialogVisible,
   getIsAnnotationPosted,
+  getPdfSearchQuery,
   getSelectedAnnotationType,
   getSelectedTool,
   State,
@@ -48,7 +49,6 @@ export class PdfMainAnnotationComponent implements OnInit {
   docURL!: string;
   subs = new Subscription();
   private API_URL = environment.API_URL;
-
   // Annotation properties
   drawingRect: Rectangle = {
     x1: 0,
@@ -70,7 +70,6 @@ export class PdfMainAnnotationComponent implements OnInit {
   isAnnotationDialogVisible$: Observable<boolean>;
   isAnnotationCanceled$: Observable<boolean>;
   isAnnotationPosted$: Observable<boolean>;
-
 
   pdfAnnotationToolObject!: {
     type: PdfToolType;
@@ -128,12 +127,18 @@ export class PdfMainAnnotationComponent implements OnInit {
     });
 
     this.store.select(getIsAnnotationCanceled).subscribe((isCanceled) => {
-      if(isCanceled){
+      if (isCanceled) {
         this.cancel();
       }
     });
 
-    this.isAnnotationDialogVisible$ = this.store.select(getIsAnnotationDialogVisible);
+    this.store.select(getPdfSearchQuery).subscribe((PdfQuery) => {
+      this.searchQueryChangedNext(PdfQuery);
+    });
+
+    this.isAnnotationDialogVisible$ = this.store.select(
+      getIsAnnotationDialogVisible
+    );
     this.isAnnotationCanceled$ = this.store.select(getIsAnnotationCanceled);
     this.isAnnotationPosted$ = this.store.select(getIsAnnotationPosted);
   }
@@ -178,7 +183,7 @@ export class PdfMainAnnotationComponent implements OnInit {
     );
   }
 
-  pageRendered(event: any) { }
+  pageRendered(event: any) {}
 
   paginate(event) {
     this.currentPage = event.page + 1;
@@ -192,7 +197,7 @@ export class PdfMainAnnotationComponent implements OnInit {
     }
   }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {}
 
   // Highlight annotaion tool
 
@@ -284,16 +289,16 @@ export class PdfMainAnnotationComponent implements OnInit {
         el.setAttribute(
           'style',
           'position: absolute; background-color: RGB(238,170,0, .25); cursor:pointer; z-index:1;' +
-          'left:' +
-          left +
-          'px; top:' +
-          top +
-          'px;' +
-          'width:' +
-          width +
-          'px; height:' +
-          height +
-          'px;'
+            'left:' +
+            left +
+            'px; top:' +
+            top +
+            'px;' +
+            'width:' +
+            width +
+            'px; height:' +
+            height +
+            'px;'
         );
         this.highlightedElmts.push(el);
 
@@ -394,7 +399,11 @@ export class PdfMainAnnotationComponent implements OnInit {
         createAnnotationFromPanel: false,
       })
     );
-    this.store.dispatch(AnnotationActions.setIsAnnotationDialogVisible({ isAnnotationDialogVisible: true }));
+    this.store.dispatch(
+      AnnotationActions.setIsAnnotationDialogVisible({
+        isAnnotationDialogVisible: true,
+      })
+    );
   }
 
   getselectedToolType(toolType: PdfToolType) {
@@ -442,5 +451,16 @@ export class PdfMainAnnotationComponent implements OnInit {
         createAnnotationFromPanel: true,
       })
     );
+  }
+
+  searchQueryChangedNext(searchQuery: string) {
+    this.pdfComponent.eventBus.dispatch('find', {
+      query: searchQuery,
+      type: 'again',
+      caseSensitive: false,
+      findPrevious: undefined,
+      highlightAll: true,
+      phraseSearch: true,
+    });
   }
 }

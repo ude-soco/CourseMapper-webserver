@@ -72,3 +72,8 @@ export const setIsAnnotationCanceled = createAction(
     props<{isAnnotationCanceled: boolean}>()
 );
 
+export const setPdfSearchQuery = createAction(
+    '[Annotation] Set Pdf Search Query Value',
+    props<{pdfSearchQuery: string}>()
+);
+

@@ -17,7 +17,8 @@ export interface AnnotationState {
   isAnnotationPosted: boolean,
   annotation: Annotation,
   isAnnotationDialogVisible: boolean,
-  isAnnotationCanceled: boolean
+  isAnnotationCanceled: boolean,
+  pdfSearchQuery: string
 }
 
 const initialState: AnnotationState = {
@@ -36,7 +37,8 @@ const initialState: AnnotationState = {
     courseId: null,
   },
   isAnnotationDialogVisible: false,
-  isAnnotationCanceled: false
+  isAnnotationCanceled: false,
+  pdfSearchQuery: null
 }
 
 const getAnnotationFeatureState = createFeatureSelector<AnnotationState>('annotation');
@@ -84,6 +86,11 @@ export const getIsAnnotationDialogVisible = createSelector(
 export const getIsAnnotationCanceled = createSelector(
   getAnnotationFeatureState,
   state => state.isAnnotationCanceled
+);
+
+export const getPdfSearchQuery = createSelector(
+  getAnnotationFeatureState,
+  state => state.pdfSearchQuery
 );
 
 
@@ -178,5 +185,12 @@ export const annotationReducer = createReducer<AnnotationState>(
           isAnnotationCanceled: false
         };
       }
+    }),
+
+    on(AnnotationActions.setPdfSearchQuery, (state, action): AnnotationState => {
+      return {
+        ...state,
+        pdfSearchQuery: action.pdfSearchQuery
+      };
     }),
   );
