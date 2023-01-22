@@ -41,7 +41,15 @@ export class PdfAnnotationToolbarComponent implements OnInit {
   pdfSearchQuery(event: Event){
     this.store.dispatch(AnnotationActions.setPdfSearchQuery({pdfSearchQuery: this.pdfQuery}));
   }
-  resetTool() {
-  }
 
+  pdfZoom(buttonId: string){
+    if(buttonId == "zoomIn")
+    this.store.dispatch(AnnotationActions.setZoomIn());
+
+    if(buttonId == "zoomOut")
+    this.store.dispatch(AnnotationActions.setZoomOut());
+
+    if(buttonId == "resetZoom")
+    this.store.dispatch(AnnotationActions.resetZoom());
+  }
 }

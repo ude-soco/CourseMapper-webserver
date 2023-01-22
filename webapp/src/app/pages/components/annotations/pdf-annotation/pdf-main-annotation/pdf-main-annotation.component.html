@@ -13,7 +13,7 @@
     (page-rendered)="pageRendered($event)"
     [show-all]="false"
     [(page)]="currentPage"
-    [zoom]="zoom"
+    [zoom]="pdfZoom$ | async"
     style="display: block; height: 36rem"
   >
   </pdf-viewer>

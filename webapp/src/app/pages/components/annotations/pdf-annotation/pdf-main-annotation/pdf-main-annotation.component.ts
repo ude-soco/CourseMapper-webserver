@@ -13,6 +13,7 @@ import {
   getIsAnnotationDialogVisible,
   getIsAnnotationPosted,
   getPdfSearchQuery,
+  getPdfZoom,
   getSelectedAnnotationType,
   getSelectedTool,
   State,
@@ -30,8 +31,6 @@ import * as MaterialActions from 'src/app/pages/components/materils/state/materi
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
 import * as $ from 'jquery';
 import { AnnotationType } from 'src/app/models/Annotations';
-const ZOOM_STEP: number = 0.25;
-const DEFAULT_ZOOM: number = 1;
 
 @Component({
   selector: 'app-pdf-main-annotation',
@@ -44,7 +43,7 @@ export class PdfMainAnnotationComponent implements OnInit {
   private pdfComponent!: PdfViewerComponent;
   matchesFound: any = 0;
   currentPage: number = 1;
-  zoom = DEFAULT_ZOOM;
+  pdfZoom$: Observable<number>;
   totalPages: any;
   docURL!: string;
   subs = new Subscription();
@@ -135,6 +134,8 @@ export class PdfMainAnnotationComponent implements OnInit {
     this.store.select(getPdfSearchQuery).subscribe((PdfQuery) => {
       this.searchQueryChangedNext(PdfQuery);
     });
+
+    this.pdfZoom$ = this.store.select(getPdfZoom);
 
     this.isAnnotationDialogVisible$ = this.store.select(
       getIsAnnotationDialogVisible

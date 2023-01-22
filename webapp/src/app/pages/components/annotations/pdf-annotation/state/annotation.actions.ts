@@ -77,3 +77,15 @@ export const setPdfSearchQuery = createAction(
     props<{pdfSearchQuery: string}>()
 );
 
+export const setZoomIn = createAction(
+    '[Annotation] Set Pdf Zoom In Value'
+);
+
+export const setZoomOut = createAction(
+    '[Annotation] Set Pdf Zoom Out Value'
+);
+
+export const resetZoom = createAction(
+    '[Annotation] Reset Pdf Zoom Value'
+);
+

@@ -29,7 +29,8 @@
         class="p-button-text p-button-rounded"
       ></button>
     </div>
-    <span class="tool-divider"></span>
+    <span class="tool-divider">
+    </span>
     <div class="p-toolbar-group-right">
       <span class="tool-title">PDF Tools:</span>
       <button
@@ -43,13 +44,22 @@
         type="p-button-icon"
         icon="pi pi-search-plus"
         class="p-button-text p-button-rounded"
+        (click)="pdfZoom('zoomIn')"
       ></button>
       <button
         pButton
         type="p-button-icon"
         icon="pi pi-search-minus"
         class="p-button-text p-button-rounded"
+        (click)="pdfZoom('zoomOut')"
       ></button>
+      <button
+      pButton
+      type="p-button-icon"
+      icon="pi pi-refresh"
+      class="p-button-text p-button-rounded"
+      (click)="pdfZoom('resetZoom')"
+    ></button>
       <input type="text" pInputText [(ngModel)]="pdfQuery" (ngModelChange)="pdfSearchQuery($event)" placeholder="Search" />
     </div>
   </p-toolbar>
