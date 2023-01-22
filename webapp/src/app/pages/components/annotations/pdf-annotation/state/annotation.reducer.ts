@@ -9,25 +9,20 @@ export interface State extends AppState.State{
 }
 
 export interface AnnotationState {
-  highlightSelected: boolean,
   selectedTool: PdfToolType,
   createAnnotationFromPanel: boolean,
-  selectedAnnotationType: AnnotationType;
-  annotationContent: string,
   isAnnotationPosted: boolean,
   annotation: Annotation,
   isAnnotationDialogVisible: boolean,
   isAnnotationCanceled: boolean,
   pdfSearchQuery: string,
-  pdfZoom: number
+  pdfZoom: number,
+  pdfCurrentPage: number
 }
 
 const initialState: AnnotationState = {
-  highlightSelected: false,
   selectedTool: PdfToolType.None,
   createAnnotationFromPanel: true,
-  selectedAnnotationType: null,
-  annotationContent: null,
   isAnnotationPosted: false,
   annotation: {
     type: null,
@@ -40,15 +35,11 @@ const initialState: AnnotationState = {
   isAnnotationDialogVisible: false,
   isAnnotationCanceled: false,
   pdfSearchQuery: null,
-  pdfZoom: 1
+  pdfZoom: 1,
+  pdfCurrentPage: 1
 }
 
 const getAnnotationFeatureState = createFeatureSelector<AnnotationState>('annotation');
-
-export const isHighlightSelected = createSelector(
-  getAnnotationFeatureState,
-  state => state.highlightSelected
-);
 
 export const getSelectedTool = createSelector(
   getAnnotationFeatureState,
@@ -58,16 +49,6 @@ export const getSelectedTool = createSelector(
 export const getCreateAnnotationFromPanel = createSelector(
   getAnnotationFeatureState,
   state => state.createAnnotationFromPanel
-);
-
-export const getSelectedAnnotationType = createSelector(
-  getAnnotationFeatureState,
-  state => state.selectedAnnotationType
-);
-
-export const getAnnotationContent = createSelector(
-  getAnnotationFeatureState,
-  state => state.annotationContent
 );
 
 export const getIsAnnotationPosted = createSelector(
@@ -103,12 +84,6 @@ export const getPdfZoom = createSelector(
 
 export const annotationReducer = createReducer<AnnotationState>(
     initialState,
-    on(AnnotationActions.toggleHighlightSelected, (state): AnnotationState => {
-      return {
-        ...state,
-        highlightSelected: !state.highlightSelected
-      };
-    }),
 
     on(AnnotationActions.setSelectedTool, (state, action): AnnotationState => {
       return {
@@ -130,20 +105,6 @@ export const annotationReducer = createReducer<AnnotationState>(
           createAnnotationFromPanel: action.createAnnotationFromPanel
         };
       }
-    }),
-
-    on(AnnotationActions.setSelectedAnnotationType, (state, action): AnnotationState => {
-      return {
-        ...state,
-        selectedAnnotationType: action.selectedAnnotationType
-      };
-    }),
-
-    on(AnnotationActions.setAnnotationContent, (state, action): AnnotationState => {
-      return {
-        ...state,
-        annotationContent: action.annotationContent
-      };
     }),
 
     on(AnnotationActions.setAnnotationProperties, (state, action): AnnotationState => {

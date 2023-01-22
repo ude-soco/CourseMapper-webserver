@@ -33,10 +33,6 @@ export const loadAnnotationsFail = createAction(
     props<{error: string}>()
 );
 
-export const toggleHighlightSelected = createAction(
-    '[Annotation] Toggle Highlight Selected'
-);
-
 export const setSelectedTool = createAction(
     '[Annotation] Set Selected Tool',
     props<{selectedTool: PdfToolType}>()
@@ -45,16 +41,6 @@ export const setSelectedTool = createAction(
 export const setCreateAnnotationFromPanel = createAction(
     '[Annotation] Show Slides Dropdown Menue',
     props<{createAnnotationFromPanel: boolean}>()
-);
-
-export const setSelectedAnnotationType = createAction(
-    '[Annotation] Set Selected Annotation Type',
-    props<{selectedAnnotationType: AnnotationType}>()
-);
-
-export const setAnnotationContent = createAction(
-    '[Annotation] Set Annotation Content Text',
-    props<{annotationContent: string}>()
 );
 
 export const setAnnotationProperties = createAction(

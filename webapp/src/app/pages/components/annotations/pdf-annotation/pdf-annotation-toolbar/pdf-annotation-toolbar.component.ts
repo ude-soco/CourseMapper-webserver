@@ -1,7 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { isHighlightSelected, State } from '../state/annotation.reducer';
+import { State } from '../state/annotation.reducer';
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions'
 import { PdfToolType } from 'src/app/models/Annotations';
 
@@ -11,30 +11,47 @@ import { PdfToolType } from 'src/app/models/Annotations';
   styleUrls: ['./pdf-annotation-toolbar.component.css']
 })
 export class PdfAnnotationToolbarComponent implements OnInit {
+  pinSelected: boolean = false;
+  drawingSelected: boolean = false;
+  highlightSelected: boolean = false;
 
-  selectedTool: string
-  pinSelected = false
-  drawingSelected = false
-  highlightSelected$: Observable<boolean>;
-  highlightSelected: boolean;
+
   PdfSearchQuery$: Observable<string>;
   pdfQuery: string;
 
   constructor(private store: Store<State>) { }
 
   ngOnInit(): void {
-    this.highlightSelected$ = this.store.select(isHighlightSelected)
-    this.store.select(isHighlightSelected).subscribe(value => {
-      this.highlightSelected = value;
-    });
   }
-  onHighlightButtonClicked() {
-    if (!this.highlightSelected) {
-      this.store.dispatch(AnnotationActions.toggleHighlightSelected());
+
+  selectAnnotationTool(toolId: string){
+    if(toolId == PdfToolType.Highlight){
+      if(this.highlightSelected){
+        this.resetTools();
+        return;
+      }
+      this.resetTools();
       this.store.dispatch(AnnotationActions.setSelectedTool({selectedTool: PdfToolType.Highlight}));
-    }else{
-      this.store.dispatch(AnnotationActions.toggleHighlightSelected());
-      this.store.dispatch(AnnotationActions.setSelectedTool({selectedTool: PdfToolType.None}));
+      this.highlightSelected = true;
+    }
+    if(toolId == PdfToolType.Pin){
+      if(this.pinSelected){
+        this.resetTools();
+        return;
+      }
+      this.resetTools();
+      this.store.dispatch(AnnotationActions.setSelectedTool({selectedTool: PdfToolType.Pin}));
+      this.pinSelected = true;
+      
+    }
+    if(toolId == PdfToolType.DrawBox){
+      if(this.drawingSelected){
+        this.resetTools();
+        return;
+      }
+      this.resetTools();
+      this.store.dispatch(AnnotationActions.setSelectedTool({selectedTool: PdfToolType.DrawBox}));
+      this.drawingSelected = true;
     }
   }
 
@@ -51,5 +68,12 @@ export class PdfAnnotationToolbarComponent implements OnInit {
 
     if(buttonId == "resetZoom")
     this.store.dispatch(AnnotationActions.resetZoom());
+  }
+
+  resetTools(){
+    this.store.dispatch(AnnotationActions.setSelectedTool({selectedTool: PdfToolType.None}));
+    this.highlightSelected = false;
+    this.drawingSelected = false;
+    this.pinSelected = false;
   }
 }

@@ -10,14 +10,12 @@ export interface State extends AppState.State{
 
 export interface MaterialState {
   materialId: string,
-  courseId: string,
-  mouseEvent: MouseEvent
+  courseId: string
 }
 
 const initialState: MaterialState = {
 materialId: null,
-courseId: null,
-mouseEvent: null
+courseId: null
 }
 
 const getMaterialFeatureState = createFeatureSelector<MaterialState>('material');
@@ -30,11 +28,6 @@ export const getCurrentMaterialId = createSelector(
 export const getCurrentCourseId = createSelector(
   getMaterialFeatureState,
   state => state.courseId
-);
-
-export const getMouseEvent = createSelector(
-  getMaterialFeatureState,
-  state => state.mouseEvent
 );
 
 
@@ -51,13 +44,6 @@ export const materialReducer = createReducer<MaterialState>(
       return {
         ...state,
         materialId: action.materialId
-      };
-    }),
-
-    on(MaterialActions.setMouseEvent, (state, action): MaterialState => {
-      return {
-        ...state,
-        mouseEvent: action.mouseEvent
       };
     }),
   );

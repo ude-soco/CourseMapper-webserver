@@ -1,6 +1,6 @@
 <app-pdf-annotation-toolbar></app-pdf-annotation-toolbar>
-<div (mousemove)="mouseEventAction($event)" (mousedown)="mouseEventAction($event)"
-(mouseup)="mouseEventAction($event)">
+<div (mousemove)="mouseEventHandler($event)" (mousedown)="mouseEventHandler($event)"
+(mouseup)="mouseEventHandler($event)" (click)="mouseEventHandler($event)">
   <pdf-viewer
     [src]="docURL"
     [render-text]="true"
@@ -10,7 +10,7 @@
     [fit-to-page]="true"
     [original-size]="true"
     (after-load-complete)="handlePdfLoaded($event)"
-    (page-rendered)="pageRendered($event)"
+    (page-rendered)="pageRendered()"
     [show-all]="false"
     [(page)]="currentPage"
     [zoom]="pdfZoom$ | async"

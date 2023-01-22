@@ -13,8 +13,3 @@ export const setCourseId = createAction(
     '[Materials] Set current courseId',
     props<{courseId: string}>()
 );
-
-export const setMouseEvent = createAction(
-    '[Material] Set Mouse Event',
-    props<{mouseEvent: MouseEvent}>()
-);
