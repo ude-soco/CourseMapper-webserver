@@ -18,6 +18,7 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/pages/components/materils/state/materials.reducer';
 import * as MaterialActions from 'src/app/pages/components/materils/state/materials.actions'
+import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
 
 @Component({
   selector: 'app-material',
@@ -110,6 +111,7 @@ export class MaterialComponent implements OnInit {
       this.selectedMaterial._id,
     ]);
     this.store.dispatch(MaterialActions.setMaterialId({materialId: this.selectedMaterial._id}));
+    this.store.dispatch(AnnotationActions.loadAnnotations());
   }
   setSelectedTabIndex(index: number) {
     this.selectedMaterial = this.channels['materials'][index];

@@ -9,6 +9,7 @@ import {
   PdfToolType,
 } from 'src/app/models/Annotations';
 import {
+  getAnnotationsForMaterial,
   getIsAnnotationCanceled,
   getIsAnnotationDialogVisible,
   getIsAnnotationPosted,
@@ -91,7 +92,9 @@ export class PdfMainAnnotationComponent implements OnInit {
   pinObjectsList: any = []
   cursorMode: string = 'default';
   drawBoxObjectList: RectangleObject[] = [];
-  ngOnInit(): void {}
+  annotations: Annotation[] = [];
+  ngOnInit(): void {
+  }
   
   constructor(
     private pdfViewService: PdfviewService,
@@ -111,7 +114,7 @@ export class PdfMainAnnotationComponent implements OnInit {
     this.store.select(getSelectedTool).subscribe((tool) =>{
       this.selectedTool = tool;
       toolTypeSelection(tool);
-      this.pageRendered();
+      // this.pageRendered();
     });
 
     this.store.select(getIsAnnotationCanceled).subscribe((isCanceled) => {
@@ -122,6 +125,12 @@ export class PdfMainAnnotationComponent implements OnInit {
 
     this.store.select(getPdfSearchQuery).subscribe((PdfQuery) => {
       this.searchQueryChangedNext(PdfQuery);
+    });
+
+    this.store.select(getAnnotationsForMaterial).subscribe((annotations) => {
+      this.annotations = annotations;
+      this.getHighlightObjects(this.annotations);
+      this.getPinObjects(this.annotations);
     });
 
     this.pdfZoom$ = this.store.select(getPdfZoom);
@@ -148,7 +157,7 @@ export class PdfMainAnnotationComponent implements OnInit {
     console.log(' this.currentPage');
     console.log(this.currentPage);
     this.pdfViewService.setPageNumber(this.currentPage);
-    this.pageRendered();
+    // this.pageRendered();
   }
 
   public handlePdfLoaded(pdf: any): void {
@@ -173,9 +182,42 @@ export class PdfMainAnnotationComponent implements OnInit {
       }
     );
   }
-  
+
+  getDrawBoxObjects(annotations: Annotation[]) {
+    this.drawBoxObjectList = []
+    let drawBoxs;
+    drawBoxs = annotations.filter((n: any) => n.tool.type === 'drawing')
+    if (drawBoxs.length > 0)
+      drawBoxs.forEach((element: any) => {
+        element.tool.rect._id = element._id
+        this.drawBoxObjectList.push(element.tool.rect)
+      })
+
+  }
+  getHighlightObjects(annotations: Annotation[]) {
+    this.highlightObjectsList = []
+    let highlights = [];
+    highlights = annotations.filter((n: any) => n.tool.type === 'highlight')
+    if (highlights.length > 0)
+      highlights.forEach(element => {
+        let updatedElement = Object.assign({}, element, {tool: {...element.tool ,_id: element._id}});
+        this.highlightObjectsList.push(updatedElement.tool)
+      })
+  }
+  getPinObjects(annotations: Annotation[]) {
+    this.pinObjectsList = []
+    let pinNotes;
+    pinNotes = annotations.filter((n: any) => n.tool.type === 'pinpoint')
+    if (pinNotes.length > 0)
+      pinNotes.forEach(element => {
+        let updatedElement = Object.assign({}, element, {tool: {...element.tool ,_id: element._id}});
+        this.pinObjectsList.push(updatedElement.tool)
+      })
+  }
+
   /** Is called when a page is rendered. Is used to add Pin/rectangle/ highlight/circle on the pdf when a page is rendering */
   pageRendered() {
+    console.log(this.highlightObjectsList.length + " Debug " + this.pinObjectsList.length)
     //this.pdfComponent.pdfViewer.currentScaleValue = 'page-fit';
     if (this.hideAnnotationEvent == false) {
       this.textSelection = false
@@ -198,7 +240,7 @@ export class PdfMainAnnotationComponent implements OnInit {
 
       //get the parentElement if showallpage is set to false
       const pageIndex = this.currentPage - 1;
-      const page = this.pdfComponent.pdfViewer.getPageView(pageIndex);
+      const page = this.pdfComponent.pdfViewer?.getPageView(pageIndex);
       
       const parentElement = page?.div
       if (parentElement != undefined) {

@@ -17,7 +17,8 @@ export interface AnnotationState {
   isAnnotationCanceled: boolean,
   pdfSearchQuery: string,
   pdfZoom: number,
-  pdfCurrentPage: number
+  pdfCurrentPage: number,
+  annotationsForMaterial: Annotation[]
 }
 
 const initialState: AnnotationState = {
@@ -36,7 +37,8 @@ const initialState: AnnotationState = {
   isAnnotationCanceled: false,
   pdfSearchQuery: null,
   pdfZoom: 1,
-  pdfCurrentPage: 1
+  pdfCurrentPage: 1,
+  annotationsForMaterial: []
 }
 
 const getAnnotationFeatureState = createFeatureSelector<AnnotationState>('annotation');
@@ -79,6 +81,11 @@ export const getPdfSearchQuery = createSelector(
 export const getPdfZoom = createSelector(
   getAnnotationFeatureState,
   state => state.pdfZoom
+);
+
+export const getAnnotationsForMaterial = createSelector(
+  getAnnotationFeatureState,
+  state => state.annotationsForMaterial
 );
 
 
@@ -180,6 +187,21 @@ export const annotationReducer = createReducer<AnnotationState>(
       return {
         ...state,
         pdfZoom: 1
+      };
+    }),
+
+    on(AnnotationActions.loadAnnotationsSuccess, (state, action): AnnotationState => {
+      return {
+        ...state,
+        annotationsForMaterial: action.annotations
+      };
+    }),
+
+    on(AnnotationActions.postAnnotationFail, (state, action): AnnotationState => {
+      return {
+        ...state,
+        annotationsForMaterial: []
+
       };
     }),
   );

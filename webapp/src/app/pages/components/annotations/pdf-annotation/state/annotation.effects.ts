@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { Action, Store } from '@ngrx/store';
 import {
   catchError,
+  first,
   map,
   mergeMap,
   of,
@@ -10,6 +12,8 @@ import {
   withLatestFrom,
 } from 'rxjs';
 import { AnnotationService } from 'src/app/services/annotation.service';
+import { State } from 'src/app/state/app.state';
+import { getCurrentCourseId, getCurrentMaterialId } from '../../../materils/state/materials.reducer';
 import * as AnnotationActions from './annotation.actions';
 
 @Injectable()
@@ -31,8 +35,9 @@ export class AnnotationEffects {
   getAnnotations$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AnnotationActions.loadAnnotations),
-      switchMap(({ material }) =>
-        this.annotationService.getAllAnnotations(material).pipe(
+      withLatestFrom(this.store.select(getCurrentCourseId), this.store.select(getCurrentMaterialId)),
+      switchMap(([action, courseId, materialId]) => 
+        this.annotationService.getAllAnnotations(materialId, courseId).pipe(
           map((annotations) =>
             AnnotationActions.loadAnnotationsSuccess({ annotations })
           ),
@@ -46,6 +51,7 @@ export class AnnotationEffects {
 
   constructor(
     private actions$: Actions,
-    private annotationService: AnnotationService
+    private annotationService: AnnotationService,
+    private store: Store<State>
   ) {}
 }
