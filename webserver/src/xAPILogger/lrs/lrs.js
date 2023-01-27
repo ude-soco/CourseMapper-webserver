@@ -42,6 +42,10 @@ export const sendStatementsToLrs = async (statements) => {
     // in case there is a problem in connection like the LRS is down. status code 443
     // in case the batch contains 2 statements with the same id. status code 400
     // in case the batch contains a statement with an id, the LRS is having already a statement for and the statements are not matching. status code 409
-    console.log(error);
+    if (error.response) {
+      console.log(error.response.data);
+      console.log(error.response.status);
+      console.log(error.response.headers);
+    }
   }
 };

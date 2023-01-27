@@ -1,7 +1,7 @@
 const cron = require("node-cron");
 const controller = require("./controller.xAPILogger");
 const lrs = require("./lrs/lrs");
-const BATCH_SIZE = 300;
+const BATCH_SIZE = 500;
 
 export const runXapiScheduler = () => {
   cron.schedule("* * * * *", async () => {
@@ -18,7 +18,7 @@ export const runXapiScheduler = () => {
             const start = i * BATCH_SIZE;
             const end = start + BATCH_SIZE <= statements.length ? start + BATCH_SIZE : statements.length;
             const sentStatementsIds = await lrs.sendStatementsToLrs(statements.slice(start, end));
-            controller.updateSentStatements(sentStatementsIds);
+            await controller.updateSentStatements(sentStatementsIds);
           }
 
         } else {

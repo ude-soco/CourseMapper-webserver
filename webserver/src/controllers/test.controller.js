@@ -77,14 +77,14 @@ export const generteTestdata = async (req, res, next) => {
             console.log("pdf", pdf);
             let annotation = await newAnnotation(course._id, pdf._id, userId, annotationContent, annotationType, location, tool);
             if (annotation){
-              console.log("annotationa", annotation);
+              console.log("annotation", annotation);
               let reply = await newReply(course._id, annotation._id, replyContent, userId)
   
               if (reply){
                 console.log("reply", reply);
-                for(let i = 0 ; i<100 ; i++){
+                for(let i = 0 ; i<300 ; i++){
                   const username = userPrefix+i;
-                  let user = await createUser("firstname", "lastname", username, username+"@"+courseName+".de" );
+                  let user = await createUser( username, username, username, username+"@"+courseName+".de" );
                   if (user){
                     console.log(`"${user.username}","hashedPassword"`);
                     await enrolCourse(course._id, user._id);
