@@ -135,8 +135,8 @@ export class DashboardComponent implements OnInit {
   }
 
   onUpdateIndicator(event: MouseEvent, indicator: Indicator) {
-    if (event['path'][0]['attributes']['style']) {
-      const dimensions = event['path'][0]['attributes']['style']['nodeValue'];
+    if (event.composedPath()[0]['attributes']['style']) {
+      const dimensions = event.composedPath()[0]['attributes']['style']['nodeValue'];
       indicator.width = dimensions.slice(7, dimensions.indexOf(';'));
       indicator.height = dimensions.slice(
         dimensions.lastIndexOf(':') + 2,
