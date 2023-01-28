@@ -16,7 +16,7 @@ let lrs = axios.create({
   baseURL: process.env.LRS_endpoint,
   headers: headers,
   httpsAgent: agent,
-  timeout: 10000,
+  timeout: 30000,
 });
 
 

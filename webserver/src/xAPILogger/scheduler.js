@@ -23,7 +23,7 @@ export const runXapiScheduler = () => {
 
         } else {
           const sentStatementsIds = await lrs.sendStatementsToLrs(statements);
-          controller.updateSentStatements(sentStatementsIds);
+          await controller.updateSentStatements(sentStatementsIds);
         }
 
       }

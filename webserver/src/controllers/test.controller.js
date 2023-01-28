@@ -82,7 +82,7 @@ export const generteTestdata = async (req, res, next) => {
   
               if (reply){
                 console.log("reply", reply);
-                for(let i = 0 ; i<300 ; i++){
+                for(let i = 0 ; i<100 ; i++){
                   const username = userPrefix+i;
                   let user = await createUser( username, username, username, username+"@"+courseName+".de" );
                   if (user){
