@@ -1,70 +1,51 @@
-<p-menubar>
-  <p-toolbar>
-    <div class="p-toolbar-group-left">
-      <span class="tool-title">Annotation Tools:</span>
-      <button
-        pButton
-        type="p-button-icon"
-        icon="pi pi-pencil"
-        class="p-button-text p-button-rounded"
-        (click)="selectAnnotationTool('highlight')"
-        [class.selected]="highlightSelected"
-      ></button>
-      <button
-        pButton
-        type="p-button-icon"
-        icon="pi pi-palette"
-        class="p-button-text p-button-rounded"
-        (click)="selectAnnotationTool('drawing')"
-        [class.selected]="drawingSelected"
-      ></button>
-      <button
-        pButton
-        type="p-button-icon"
-        icon="pi pi-tag"
-        class="p-button-text p-button-rounded"
-        (click)="selectAnnotationTool('pinpoint')"
-        [class.selected]="pinSelected"
-      ></button>
-      <button
-        pButton
-        type="p-button-icon"
-        icon="pi pi-eye-slash"
-        class="p-button-text p-button-rounded"
-      ></button>
-    </div>
-    <span class="tool-divider">
-    </span>
-    <div class="p-toolbar-group-right">
-      <span class="tool-title">PDF Tools:</span>
-      <button
-        pButton
-        type="p-button-icon"
-        icon="pi pi-bolt"
-        class="p-button-text p-button-rounded"
-      ></button>
-      <button
-        pButton
-        type="p-button-icon"
-        icon="pi pi-search-plus"
-        class="p-button-text p-button-rounded"
-        (click)="pdfZoom('zoomIn')"
-      ></button>
-      <button
-        pButton
-        type="p-button-icon"
-        icon="pi pi-search-minus"
-        class="p-button-text p-button-rounded"
-        (click)="pdfZoom('zoomOut')"
-      ></button>
-      <button
-      pButton
-      type="p-button-icon"
-      icon="pi pi-refresh"
-      class="p-button-text p-button-rounded"
-      (click)="pdfZoom('resetZoom')"
-    ></button>
-      <input type="text" pInputText [(ngModel)]="pdfQuery" (ngModelChange)="pdfSearchQuery($event)" placeholder="Search" />
-    </div>
-  </p-toolbar>
-</p-menubar>
+<div class="toolbar-container">
+  <div class="tool-left">
+    <span class="tool-title">Annotation Tools:</span>
+    <app-iconbutton
+      icon="bx-highlight"
+      color="text-blue-500"
+      (onClick)="selectAnnotationTool('highlight')"
+      [class.selected]="highlightSelected"
+    ></app-iconbutton>
+    <app-iconbutton
+      icon="bx-shape-square"
+      color="text-blue-500"
+      (onClick)="selectAnnotationTool('drawing')"
+      [class.selected]="drawingSelected"
+    ></app-iconbutton>
+    <app-iconbutton
+      icon="bx-pin"
+      color="text-blue-500"
+      (onClick)="selectAnnotationTool('pinpoint')"
+      [class.selected]="pinSelected"
+    ></app-iconbutton>
+    <app-iconbutton icon="bx-show" color="text-blue-500"></app-iconbutton>
+  </div>
+  <span class="tool-divider"> </span>
+  <div class="tool-right">
+    <span class="tool-title">PDF Tools:</span>
+    <app-iconbutton icon="bxs-hand" color="text-blue-500"></app-iconbutton>
+    <app-iconbutton
+      icon="bx-zoom-in"
+      color="text-blue-500"
+      (onClick)="pdfZoom('zoomIn')"
+    ></app-iconbutton>
+    <app-iconbutton
+      icon="bx-zoom-out"
+      color="text-blue-500"
+      (onClick)="pdfZoom('zoomOut')"
+    ></app-iconbutton>
+    <app-iconbutton
+      icon="bx-reset"
+      color="text-blue-500"
+      (onClick)="pdfZoom('resetZoom')"
+    ></app-iconbutton>
+    <input
+      type="text"
+      pInputText
+      [(ngModel)]="pdfQuery"
+      (ngModelChange)="pdfSearchQuery($event)"
+      placeholder="Search"
+    />
+  </div>
+</div>

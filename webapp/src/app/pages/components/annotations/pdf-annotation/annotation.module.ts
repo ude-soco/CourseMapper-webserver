@@ -11,30 +11,34 @@ import { annotationReducer } from './state/annotation.reducer';
 import { EffectsModule } from '@ngrx/effects';
 import { AnnotationEffects } from './state/annotation.effects';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
+import { PdfDrawboxComponent } from './pdf-drawbox/pdf-drawbox.component';
+import { SharedComponentsModule } from 'src/app/components/shared-components.module';
 
 
 
 @NgModule({
-  declarations: [
-    PdfAnnotationToolbarComponent,
-    PdfCreateAnnotationComponent,
-    PdfCommentPanelComponent,
-    PdfCommentItemComponent,
-    PdfMainAnnotationComponent
-  ],
-  imports: [
-    CommonModule,
-    PrimengModule,
-    PdfViewerModule,
-    StoreModule.forFeature('annotation', annotationReducer),
-    EffectsModule.forFeature([AnnotationEffects])
-  ],
-  exports: [
-    PdfAnnotationToolbarComponent,
-    PdfCreateAnnotationComponent,
-    PdfCommentPanelComponent,
-    PdfCommentItemComponent,
-    PdfMainAnnotationComponent
-  ]
+    declarations: [
+        PdfAnnotationToolbarComponent,
+        PdfCreateAnnotationComponent,
+        PdfCommentPanelComponent,
+        PdfCommentItemComponent,
+        PdfMainAnnotationComponent,
+        PdfDrawboxComponent,
+    ],
+    exports: [
+        PdfAnnotationToolbarComponent,
+        PdfCreateAnnotationComponent,
+        PdfCommentPanelComponent,
+        PdfCommentItemComponent,
+        PdfMainAnnotationComponent
+    ],
+    imports: [
+        CommonModule,
+        PrimengModule,
+        PdfViewerModule,
+        SharedComponentsModule,
+        StoreModule.forFeature('annotation', annotationReducer),
+        EffectsModule.forFeature([AnnotationEffects]),
+    ]
 })
 export class AnnotationModule { }

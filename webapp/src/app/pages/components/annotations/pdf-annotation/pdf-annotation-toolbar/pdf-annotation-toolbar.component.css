@@ -1,15 +1,40 @@
-.p-toolbar-group-left {
-  color: black;
-  padding-right: 10rem;
-  border-left: 0rem;
+.selected {
+  background-color: cyan;
+}
+
+.toolbar-container {
+  width: 100%;
+  background-color: #c89be8c2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid;
+  border-color: black;
+}
+
+.tool-left,
+.tool-right {
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  color: white;
+  gap: 10px;
 }
 
 .tool-divider {
-  border-left: 2px solid purple;
-  padding-right: 5cm;
-  height: 60px;
+  display: block;
+  background-color: white;
+  width: 2px;
+  height: 30px;
 }
 
-.selected {
-    background-color: plum;
+.tool-title {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-top: -5px;
+}
+.tool-text {
+  font-size: 1.1rem;
+  margin-top: -5px;
+  color: white;
 }

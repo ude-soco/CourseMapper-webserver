@@ -1,0 +1,41 @@
+<div class="drawing-area">
+  <div class="drawing-toolbar" (mouseleave)="hideDrawboxOptions()">
+    <!-- <button class="toolbar-button">
+      <span *ngIf="currentTool == 'rectangle'"
+        ><app-icon iconName="rectangle" [size]="22"></app-icon
+      ></span>
+      <span *ngIf="currentTool == 'circle'"
+        ><app-icon iconName="circle" [size]="22"></app-icon
+      ></span>
+      <div class="toolbar-popover">
+        <button class="toolbar-button" (click)="onRectangleSelect()">
+          <app-icon iconName="rectangle" [size]="22"></app-icon>
+        </button>
+        <button class="toolbar-button" (click)="onCircleSelect()">
+          <app-icon iconName="circle" [size]="22"></app-icon>
+        </button>
+      </div>
+    </button> -->
+
+    <button class="toolbar-button">
+      <div class="stroke" [style.height]="currentWidth + 'px'"></div>
+      <div class="toolbar-popover">
+        <button class="toolbar-button" (click)="onLineHeightSelect(1)">
+          <div class="stroke" [style.height]="'1px'"></div>
+        </button>
+        <button class="toolbar-button" (click)="onLineHeightSelect(2)">
+          <div class="stroke" [style.height]="'2px'"></div>
+        </button>
+        <button class="toolbar-button" (click)="onLineHeightSelect(3)">
+          <div class="stroke" [style.height]="'3px'"></div>
+        </button>
+        <button class="toolbar-button" (click)="onLineHeightSelect(4)">
+          <div class="stroke" [style.height]="'4px'"></div>
+        </button>
+        <button class="toolbar-button" (click)="onLineHeightSelect(5)">
+          <div class="stroke" [style.height]="'5px'"></div>
+        </button>
+      </div>
+    </button>
+  </div>
+</div>
