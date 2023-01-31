@@ -1,12 +1,15 @@
 <!--- <app-navbar></app-navbar> --->
 
-<div class="flex items-start">
-  <app-sidebar></app-sidebar>
+<div class="flex flex-row items-start space-x-5 flex-wrap">
+  <div class="flex flex-col">
+    <app-sidebar></app-sidebar>
+  </div>
 
-  <app-channelbar></app-channelbar>
+  <div class="flex flex-col">
+    <app-channelbar></app-channelbar>
+  </div>
 
-  <div class="flex flex-wrap items-start m-3">
+  <div class="flex flex-col flex-1 w-screen">
     <app-material></app-material>
-   <!--- <p class="text-xl font-semibold">Content</p>--->
   </div>
 </div>
