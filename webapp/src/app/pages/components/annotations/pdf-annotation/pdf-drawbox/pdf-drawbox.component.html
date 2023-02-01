@@ -1,21 +1,30 @@
 <div class="drawing-area">
   <div class="drawing-toolbar" (mouseleave)="hideDrawboxOptions()">
-    <!-- <button class="toolbar-button">
-      <span *ngIf="currentTool == 'rectangle'"
-        ><app-icon iconName="rectangle" [size]="22"></app-icon
-      ></span>
+    <button class="toolbar-button">
+      <span *ngIf="currentTool == 'rectangle'">
+        <app-iconbutton
+          icon="bx-rectangle"
+          color="text-blue-100"
+        ></app-iconbutton>
+      </span>
       <span *ngIf="currentTool == 'circle'"
-        ><app-icon iconName="circle" [size]="22"></app-icon
+        ><app-iconbutton icon="bx-circle" color="text-blue-100"></app-iconbutton
       ></span>
       <div class="toolbar-popover">
         <button class="toolbar-button" (click)="onRectangleSelect()">
-          <app-icon iconName="rectangle" [size]="22"></app-icon>
+          <app-iconbutton
+            icon="bx-rectangle"
+            color="text-blue-100"
+          ></app-iconbutton>
         </button>
         <button class="toolbar-button" (click)="onCircleSelect()">
-          <app-icon iconName="circle" [size]="22"></app-icon>
+          <app-iconbutton
+            icon="bx-circle"
+            color="text-blue-100"
+          ></app-iconbutton>
         </button>
       </div>
-    </button> -->
+    </button>
 
     <button class="toolbar-button">
       <div class="stroke" [style.height]="currentWidth + 'px'"></div>

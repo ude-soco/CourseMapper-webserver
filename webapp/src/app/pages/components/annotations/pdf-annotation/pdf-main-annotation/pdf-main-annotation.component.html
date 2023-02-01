@@ -1,32 +1,36 @@
 <div class="flex flex-row space-x-10">
   <div class="flex flex-col w-100">
     <app-pdf-annotation-toolbar></app-pdf-annotation-toolbar>
+
+
+
     <div
       (mousemove)="mouseEventHandler($event)"
       (mousedown)="mouseEventHandler($event)"
       (mouseup)="mouseEventHandler($event)"
       (click)="mouseEventHandler($event)"
+      class="relative"
     >
+
+      <app-pdf-drawbox></app-pdf-drawbox>
+
       <pdf-viewer
-        [src]="docURL"
-        [render-text]="true"
-        [render-text-mode]="2"
-        (text-layer-rendered)="(true)"
-        (pagechanging)="pagechanging($event)"
-        [fit-to-page]="true"
-        [original-size]="false"
-        (after-load-complete)="handlePdfLoaded($event)"
-        (page-rendered)="pageRendered()"
-        [show-all]="false"
-        [(page)]="currentPage"
-        [zoom]="pdfZoom$ | async"
-        style="    
+      [src]="docURL"
+      [render-text]="true"
+      [render-text-mode]="2"
+      (text-layer-rendered)="(true)"
+      (pagechanging)="pagechanging($event)"
+      [fit-to-page]="true"
+      [autoresize]="true"
+      [original-size]="true"
+      (after-load-complete)="handlePdfLoaded($event)"
+      (page-rendered)="pageRendered()"
+      [show-all]="false"
+      [(page)]="currentPage"
+      [zoom]="pdfZoom$ | async"
+    >
+    </pdf-viewer>
 
-        display: block;
-        height: 50rem;"
-
-      >
-      </pdf-viewer>
     </div>
 
     <div>
@@ -40,6 +44,7 @@
       ></p-paginator>
     </div>
   </div>
+
   <div class="flex flex-col space-y-10">
     <p-dialog
       *ngIf="isAnnotationDialogVisible$ | async"
