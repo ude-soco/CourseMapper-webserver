@@ -46,6 +46,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
 import { SharedComponentsModule } from './components/shared-components.module';
+import { appReducer } from './state/app.reducer';
 
 registerLocaleData(en);
 
@@ -86,7 +87,8 @@ registerLocaleData(en);
     MaterialsModule,
     EffectsModule.forRoot([]),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
-    SharedComponentsModule
+    SharedComponentsModule,
+    StoreModule.forFeature('general', appReducer),
   ],
   providers: [{ provide: NZ_I18N, useValue: en_US }, httpInterceptorProviders],
   bootstrap: [AppComponent],

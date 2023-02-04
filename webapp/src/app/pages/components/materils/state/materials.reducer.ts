@@ -10,12 +10,14 @@ export interface State extends AppState.State{
 
 export interface MaterialState {
   materialId: string,
-  courseId: string
+  courseId: string,
+  channelSelected
 }
 
 const initialState: MaterialState = {
 materialId: null,
-courseId: null
+courseId: null,
+channelSelected: false
 }
 
 const getMaterialFeatureState = createFeatureSelector<MaterialState>('material');
@@ -28,6 +30,11 @@ export const getCurrentMaterialId = createSelector(
 export const getCurrentCourseId = createSelector(
   getMaterialFeatureState,
   state => state.courseId
+);
+
+export const getChannelSelected = createSelector(
+  getMaterialFeatureState,
+  state => state.channelSelected
 );
 
 
@@ -44,6 +51,13 @@ export const materialReducer = createReducer<MaterialState>(
       return {
         ...state,
         materialId: action.materialId
+      };
+    }),
+
+    on(MaterialActions.toggleChannelSelected, (state, action): MaterialState => {
+      return {
+        ...state,
+        channelSelected: action.channelSelected
       };
     }),
   );

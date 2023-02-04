@@ -1,6 +1,6 @@
 <div
   class="relative contain h-screen bg-gray-100 shadow-lg"
-  *ngIf="selectedChannel._id"
+  *ngIf="channelSelected$ | async"
 >
   <div class="h-max m-0 flex flex-col bg-gray-100">
     <div class="flex items-start justify-between py-4 pl-3 bg-gray-200">

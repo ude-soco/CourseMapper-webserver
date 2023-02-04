@@ -4,7 +4,7 @@
   </div>
 
   <div class="flex flex-col">
-    <app-channelbar></app-channelbar>
+    <app-channelbar *ngIf="courseSelected$ | async"></app-channelbar>
   </div>
 
   <div class="flex flex-col flex-1 w-screen">

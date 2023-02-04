@@ -16,9 +16,10 @@ import { PdfviewService } from 'src/app/services/pdfview.service';
 import { MaterilasService } from 'src/app/services/materials.service';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { State } from 'src/app/pages/components/materils/state/materials.reducer';
+import { getChannelSelected, State } from 'src/app/pages/components/materils/state/materials.reducer';
 import * as MaterialActions from 'src/app/pages/components/materils/state/materials.actions'
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-material',
@@ -29,6 +30,7 @@ export class MaterialComponent implements OnInit {
   @Output() public channelEmitted = new EventEmitter<any>();
   //@Input() public materialEmiited :any ;
   selectedChannel: Channel;
+  channelSelected$: Observable<boolean>;
   index = 0;
   selectedMaterial?: Material;
   @Input() channel?: Channel;
@@ -52,7 +54,9 @@ export class MaterialComponent implements OnInit {
     private materialService: MaterilasService,
     private router: Router,
     private store: Store<State>
-  ) {}
+  ) {
+    this.channelSelected$ = store.select(getChannelSelected);
+  }
 
   // ngOnChanges() {
   //   console.log("noew ng change working")

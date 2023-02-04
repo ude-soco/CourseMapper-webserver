@@ -13,3 +13,8 @@ export const setCourseId = createAction(
     '[Materials] Set current courseId',
     props<{courseId: string}>()
 );
+
+export const toggleChannelSelected = createAction(
+    '[App] Set channel selected boolean value',
+    props<{channelSelected: boolean}>()
+);

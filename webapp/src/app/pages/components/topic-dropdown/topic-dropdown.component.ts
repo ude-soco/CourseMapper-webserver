@@ -8,6 +8,9 @@ import { MessageService, ConfirmationService } from 'primeng/api';
 import { Material } from 'src/app/models/Material';
 import { MaterilasService } from 'src/app/services/materials.service';  
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import * as MaterialActions from 'src/app/pages/components/materils/state/materials.actions'
+import { State } from '../materils/state/materials.reducer';
 
 @Component({
   selector: 'app-topic-dropdown',
@@ -21,7 +24,8 @@ export class TopicDropdownComponent implements OnInit {
     private topicChannelService: TopicChannelService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private materilasService : MaterilasService, private router: Router
+    private materilasService : MaterilasService, private router: Router,
+    private store: Store<State>
   ) {}
 
   topics: Topic[] = [];
@@ -97,9 +101,9 @@ export class TopicDropdownComponent implements OnInit {
   onSelectChannel(channel: Channel) {
     //console.log(channel.materials);
     //3
-    
     this.topicChannelService.selectChannel(channel);
-    this.router.navigate(['course', this.courseService.getSelectedCourse()._id,'channel', channel._id])
+    this.router.navigate(['course', this.courseService.getSelectedCourse()._id,'channel', channel._id]);
+    this.store.dispatch(MaterialActions.toggleChannelSelected({channelSelected: true}));
   }
 
   /**
