@@ -11,7 +11,7 @@
     left: 0;
     display: flex;
     flex-direction: column;
-    background-color: #0277BD;
+    background-color: #c89be8c2;
     border-radius: 5px;
     padding: 5px;
     margin: 5px;
@@ -19,34 +19,34 @@
     border: 2px solid saddlebrown;
 }
 
-.toolbar-button {
+.drawing-toolbar .toolbar-button {
     position: relative;
     width: 35px;
     height: 30px;
     border: solid 1px #777;
 }
 
-:active {
+.drawing-toolbar .toolbar-button:active {
     border: solid 1px #eee;
 }
 
-.toolbar-popover {
+.drawing-toolbar .toolbar-button .toolbar-popover {
     display: none;
     position: absolute;
     top: 0;
     bottom: 0;
-    left: 0;
+    left: 5px;
     padding-left: 40px;
     gap: 10px;
     align-items: center;
-    background-color:#0277BD ;
+
 }
 
-:hover .toolbar-popover {
+.drawing-toolbar .toolbar-button:hover .toolbar-popover {
     display: flex;
 }
 
-.stroke {
+.drawing-toolbar .stroke {
     width: 100%;
-    background-color: rgb(255, 255, 255);
+    background-color: rgb(59 130 246);
 }

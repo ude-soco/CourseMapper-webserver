@@ -11,3 +11,9 @@ app-pdf-drawbox{
     position: absolute;
     z-index: 2;
 }
+
+app-pdf-comment-panel{
+    max-height: 50rem;
+    overflow-y: scroll;
+    box-shadow: 0 0 5px 5px lightblue;
+}

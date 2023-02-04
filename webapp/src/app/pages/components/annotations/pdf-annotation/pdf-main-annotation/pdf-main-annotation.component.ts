@@ -114,7 +114,6 @@ export class PdfMainAnnotationComponent implements OnInit {
     this.store.select(getSelectedTool).subscribe((tool) =>{
       this.selectedTool = tool;
       toolTypeSelection(tool);
-      // this.pageRendered();
     });
 
     this.store.select(getIsAnnotationCanceled).subscribe((isCanceled) => {
@@ -507,11 +506,11 @@ export class PdfMainAnnotationComponent implements OnInit {
       //remove duplicates in coordinatates
       var selectedUniqueSet = new Set(selected);
       var selectedUniqueArray = [...selectedUniqueSet];
-      this.highlightText({ page: pageIndex, rectangles: selectedUniqueArray });
       this.saveNoteAndCoordsAfterHighlighting({
         page: pageIndex + 1,
         rectangles: selectedUniqueArray,
       });
+      this.highlightText({ page: pageIndex, rectangles: selectedUniqueArray });
     }
   }
 

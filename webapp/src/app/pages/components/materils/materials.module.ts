@@ -8,6 +8,7 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Store, StoreModule } from '@ngrx/store';
 import { materialReducer } from './state/materials.reducer';
+import { SharedComponentsModule } from 'src/app/components/shared-components.module';
 
 
 
@@ -23,6 +24,7 @@ import { materialReducer } from './state/materials.reducer';
     PdfViewerModule,
     FormsModule,
     ReactiveFormsModule,
+    SharedComponentsModule,
     StoreModule.forFeature('material', materialReducer)
   ],
   exports: [
