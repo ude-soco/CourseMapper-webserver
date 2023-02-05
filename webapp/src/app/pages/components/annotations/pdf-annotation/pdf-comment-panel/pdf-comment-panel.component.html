@@ -1,8 +1,12 @@
 <p-panel header="Discussion" [toggleable]="false" class="comment-panel">
-    <div class="filter">
-        <h5>Filters</h5>
-        <p-multiSelect [options]=""  defaultLabel="Select a filter" optionLabel="name"
-            display="chip"></p-multiSelect>
+    <div class="flex flex-wrap flex-col space-y-5">
+        <div class="filter">
+            <h5>Filters</h5>
+            <p-multiSelect [options]=""  defaultLabel="Select a filter" optionLabel="name"
+                display="chip" autoWidth="false" [style]="{'minWidth':'100%'}"></p-multiSelect>
+        </div>
+        <div>
+            <app-pdf-comment-item></app-pdf-comment-item>
+        </div>
     </div>
-    <app-pdf-comment-item></app-pdf-comment-item>
 </p-panel>

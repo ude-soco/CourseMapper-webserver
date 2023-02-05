@@ -1,92 +1,33 @@
 <div class="card">
-    <h5>Content</h5>
-    <p-divider align="left">
-        <div class="inline-flex align-items-center">
-          <i class="pi pi-user mr-2"></i>
-          <b style="margin-right: 10px;">Ahmed Mohamed</b> <h1>10 minutes ago</h1>
-        </div>
-      </p-divider>
-    <p>
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-      tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-      quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-      consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-      cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
-      non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-    </p>
-  
+  <h2 style="font-size: 20px; font-family: Roboto">Content</h2>
+  <div *ngFor="let annotation of annotationsWithInitials" class="flex flex-col flex-wrap">
     <p-divider align="left"></p-divider>
-
-
-    <p-divider align="left">
-        <div class="inline-flex align-items-center">
-          <i class="pi pi-user mr-2"></i>
-          <b style="margin-right: 10px;">Ahmed Mohamed</b> <h1>10 minutes ago</h1>
-        </div>
-      </p-divider>
-  
-    <p>
-      Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium
-      doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore
-      veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim
-      ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia
-      consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
-      Consectetur, adipisci velit, sed quia non numquam eius modi.
-    </p>
-  
-    <p-divider align="center"></p-divider>
-
-    <p-divider align="left">
-      <div class="inline-flex align-items-center">
-        <i class="pi pi-user mr-2"></i>
-        <b style="margin-right: 10px;">Ahmed Mohamed</b> <h1>10 minutes ago</h1>
-      </div>
-    </p-divider>
-
-  <p>
-    Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium
-    doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore
-    veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim
-    ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia
-    consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
-    Consectetur, adipisci velit, sed quia non numquam eius modi.
-  </p>
-
-  <p-divider align="center"></p-divider>
-
-  <p-divider align="left">
-    <div class="inline-flex align-items-center">
-      <i class="pi pi-user mr-2"></i>
-      <b style="margin-right: 10px;">Ahmed Mohamed</b> <h1>10 minutes ago</h1>
+    <div class="inline-flex align-items-center flex-row flex-wrap space-x-2">
+      <p-avatar
+        label="{{ annotation.initials }}"
+        shape="circle"
+        size="large"
+        [style]="{ 'background-color': '#0277BD', color: '#ffffff' }"
+      ></p-avatar>
+      <app-iconbutton icon="bxs-user" color="text-grey-200"></app-iconbutton>
+      <b style="margin-right: 10px">{{ annotation.author.name }}</b>
+      <h1>{{ annotation.elapsedTime }}</h1>
     </div>
-  </p-divider>
+    <div class="mb-6 mt-6">
+      <p style="font-size: 20px; font-family: Roboto">
+        {{ annotation.content }}
+      </p>
+    </div>
+    <div class="flex flex-row flex-wrap space-x-3">
+      <app-iconbutton icon="bx-like" color="text-grey-600"></app-iconbutton>
+      <app-iconbutton icon="bx-dislike" color="text-grey-600"></app-iconbutton>
+      <app-button
+        variant="contained"
+        label="Show Annotation On Material"
+        icon="bx-highlight"
+      ></app-button>
+    </div>
 
-<p>
-  Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium
-  doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore
-  veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim
-  ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia
-  consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
-  Consectetur, adipisci velit, sed quia non numquam eius modi.
-</p>
-
-<p-divider align="center"></p-divider>
-
-<p-divider align="left">
-  <div class="inline-flex align-items-center">
-    <i class="pi pi-user mr-2"></i>
-    <b style="margin-right: 10px;">Ahmed Mohamed</b> <h1>10 minutes ago</h1>
+    <p-divider align="left"></p-divider>
   </div>
-</p-divider>
-
-<p>
-Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium
-doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore
-veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim
-ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia
-consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
-Consectetur, adipisci velit, sed quia non numquam eius modi.
-</p>
-
-<p-divider align="center"></p-divider>
-  </div>
+</div>

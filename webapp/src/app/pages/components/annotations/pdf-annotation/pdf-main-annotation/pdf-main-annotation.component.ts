@@ -193,25 +193,23 @@ export class PdfMainAnnotationComponent implements OnInit {
       })
 
   }
-  getHighlightObjects(annotations: Annotation[]) {
-    this.highlightObjectsList = []
-    let highlights = [];
-    highlights = annotations.filter((n: any) => n.tool.type === 'highlight')
-    if (highlights.length > 0)
-      highlights.forEach(element => {
-        let updatedElement = Object.assign({}, element, {tool: {...element.tool ,_id: element._id}});
-        this.highlightObjectsList.push(updatedElement.tool)
-      })
-  }
+getHighlightObjects(annotations: Annotation[]) {
+  this.highlightObjectsList = [];
+  const highlights = annotations.filter(n => n.tool.type === 'highlight');
+  highlights.forEach(element => {
+    const updatedElement = { ...element, tool: { ...element.tool, _id: element._id } };
+    this.highlightObjectsList.push(updatedElement.tool);
+  });
+}
   getPinObjects(annotations: Annotation[]) {
-    this.pinObjectsList = []
-    let pinNotes;
-    pinNotes = annotations.filter((n: any) => n.tool.type === 'pinpoint')
-    if (pinNotes.length > 0)
+    this.pinObjectsList = [];
+    const pinNotes = annotations.filter(n => n.tool.type === 'pinpoint');
+    if (pinNotes.length > 0) {
       pinNotes.forEach(element => {
-        let updatedElement = Object.assign({}, element, {tool: {...element.tool ,_id: element._id}});
-        this.pinObjectsList.push(updatedElement.tool)
-      })
+        const updatedElement = { ...element, tool: { ...element.tool, _id: element._id } };
+        this.pinObjectsList.push(updatedElement.tool);
+      });
+    }
   }
 
   /** Is called when a page is rendered. Is used to add Pin/rectangle/ highlight/circle on the pdf when a page is rendering */

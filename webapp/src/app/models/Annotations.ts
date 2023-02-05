@@ -42,10 +42,16 @@ export interface Annotation {
   tool: PdfAnnotationTool;
   materialID?: string;
   courseId?: string;
-  userID?: string;
-  username?: string;
+  author?:{
+    userId?: string;
+    name?: string;
+  };
   likes?: string[];
   dislikes?: string[];
+  replies?: string[];
+  createdAt?: number
   commentCount?: number;
   tags?: string[];
+  initials?: string;
+  elapsedTime?: string;
 }
