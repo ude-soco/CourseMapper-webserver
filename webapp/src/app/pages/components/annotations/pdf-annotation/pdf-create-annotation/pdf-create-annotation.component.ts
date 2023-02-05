@@ -18,15 +18,23 @@ export class PdfCreateAnnotationComponent implements OnInit {
   selectedAnnotationType: AnnotationType;
   annotationTypes: string[];
   createAnnotationFromPanel$: Observable<boolean>;
+  showCancelButton: boolean = false;
+  disableSlidesDropDown: boolean = false;
   text: string;
   annotation: Annotation;
 
   constructor(private store: Store<State>) {
     this.annotationTypes = ['note', 'question', 'externalResource'];
 
-    this.createAnnotationFromPanel$ = store.select(
-      getCreateAnnotationFromPanel
-    );
+    store.select(getCreateAnnotationFromPanel).subscribe((isFromPanel) =>{
+      if(isFromPanel){
+        this.showCancelButton = false;
+        this.disableSlidesDropDown = false;
+      }else{
+        this.showCancelButton = true;
+        this.disableSlidesDropDown = true;
+      }
+    });
     this.store.select(getAnnotationProperties).subscribe((_annotation) => {
       this.annotation = _annotation;
     });

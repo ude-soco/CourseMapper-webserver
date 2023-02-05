@@ -1,15 +1,15 @@
 .selected {
-  background-color: cyan;
+  background-color: #0000004D;
 }
 
 .toolbar-container {
   width: 100%;
-  background-color: #c89be8c2;
+  background-color: #FFFFFF;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border: 1px solid;
-  border-color: black;
+  border: 3px solid;
+  border-color: #0000004D;
 }
 
 .tool-left,
@@ -23,7 +23,7 @@
 
 .tool-divider {
   display: block;
-  background-color: white;
+  background-color: #0000004D;
   width: 2px;
   height: 30px;
 }

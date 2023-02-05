@@ -4,7 +4,7 @@ pdf-viewer {
     display: flex;
     height: 50rem;
     width: 70rem;
-    border: 2px solid pink;
+    border: 2px solid #0000004D;
 }
 
 app-pdf-drawbox{
@@ -15,5 +15,5 @@ app-pdf-drawbox{
 app-pdf-comment-panel{
     max-height: 50rem;
     overflow-y: scroll;
-    box-shadow: 0 0 5px 5px lightblue;
+    box-shadow: 0 0 3px 3px #70B85E;
 }
