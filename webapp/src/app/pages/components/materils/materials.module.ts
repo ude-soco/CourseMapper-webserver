@@ -8,13 +8,15 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Store, StoreModule } from '@ngrx/store';
 import { materialReducer } from './state/materials.reducer';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 
 
 @NgModule({
   declarations: [
     MaterialComponent,
-    AddMaterialComponent
+    AddMaterialComponent,
+    DashboardComponent
   ],
   imports: [
     CommonModule,

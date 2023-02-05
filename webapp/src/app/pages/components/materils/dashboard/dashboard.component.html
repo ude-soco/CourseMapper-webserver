@@ -1,0 +1,45 @@
+<div>   
+
+    <button class="strt_btn" (click)="dashboardmonitor()">Student Feedback</button>
+</div>
+
+<p-dialog header="Scores to support teacher's monitoring and awareness" [(visible)]="display">
+    <div class="container" id="popup" >
+        <div class="back_box">
+            <div class="row mx-auto">
+                <div class="col-md-4 card_box mb-3">
+                    <img src="/assets/interactive.png" alt="demo" width="100px">
+                    <p>{{ result?.objInteractivityScore}}</p>
+                    <h3>Interactivity of Active participation</h3>
+                </div>
+                <div class="col-md-4 card_box mx-3 mb-3">
+                    <img src="/assets/motivation.png" alt="demo" width="100px">
+                    <p>{{ result?.objMotivationScore}}</p>
+                    <h3>Motivation of students</h3>
+                </div>
+                <div class="col-md-4 card_box mb-3">
+                    <img src="/assets/difficulty.png" alt="demo" width="100px">
+                    <p>{{ result?.objDifficultyScore}}</p>
+                    <h3>Difficulty in reading text</h3>
+                </div>
+            </div>
+            <div class="row mx-auto mt-3">
+                <div class="col-md-4 card_box">
+                    <img src="/assets/connected.png" alt="demo" width="100px">
+                    <p>{{ result?.objConnectedScore}}</p>
+                    <h3>Connectedness between Course and material</h3>
+                </div>
+                <div class="col-md-4 card_box mx-3">
+                    <img src="/assets/Domain.png" alt="demo" width="100px">
+                    <p>{{ result?.objDomainScore}}</p>
+                    <h3>Domain knowledge of students</h3>
+                </div>
+                <div class="col-md-4 card_box">
+                    <img src="/assets/Sentiment.png" alt="demo" width="100px">
+                    <p>{{ result?.objSeentimentScore}}</p>
+                    <h3>Positive sentiment of the students</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</p-dialog>

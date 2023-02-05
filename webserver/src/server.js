@@ -21,6 +21,7 @@ global.__basedir = __dirname;
 env !== "production" ? app.use(cors({
   credentials: true,
   origin: ["http://localhost:4200"],
+ 
 })) : "";
 
 // Middlewares

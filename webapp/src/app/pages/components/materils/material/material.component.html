@@ -115,11 +115,16 @@
       </p-tabPanel>
     </ng-container>
 
-
+    <p-tabPanel header="+">
+      <ng-template pTemplate="content">
+        
+      </ng-template>
+    </p-tabPanel>
 
   </p-tabView>
 
 
 
+   <app-dashboard [channelEmittd]="selectedChannel"> </app-dashboard> 
 
 </div>
