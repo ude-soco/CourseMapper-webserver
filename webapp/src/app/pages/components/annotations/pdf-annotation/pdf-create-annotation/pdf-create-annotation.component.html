@@ -24,13 +24,13 @@
     ></p-dropdown>
 
     <p-dropdown
-      [options]=""
-      optionLabel="name"
+      [options]="annotationLocation"
+      [(ngModel)]="selectedAnnotationLocation"
       placeholder="Slide"
-      class="slide-number"
-      appendTo="body"
+      [showClear]="true"
       autoWidth="false"
       [disabled]="disableSlidesDropDown"
+      appendTo="body"
       [style]="{'minWidth':'200%'}"
     ></p-dropdown>
   </div>

@@ -16,8 +16,11 @@ import { PdfviewService } from 'src/app/services/pdfview.service';
 import { MaterilasService } from 'src/app/services/materials.service';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { getChannelSelected, State } from 'src/app/pages/components/materils/state/materials.reducer';
-import * as MaterialActions from 'src/app/pages/components/materils/state/materials.actions'
+import {
+  getChannelSelected,
+  State,
+} from 'src/app/pages/components/materils/state/materials.reducer';
+import * as MaterialActions from 'src/app/pages/components/materils/state/materials.actions';
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
 import { Observable } from 'rxjs';
 
@@ -114,7 +117,9 @@ export class MaterialComponent implements OnInit {
       'material',
       this.selectedMaterial._id,
     ]);
-    this.store.dispatch(MaterialActions.setMaterialId({materialId: this.selectedMaterial._id}));
+    this.store.dispatch(
+      MaterialActions.setMaterialId({ materialId: this.selectedMaterial._id })
+    );
     this.store.dispatch(AnnotationActions.loadAnnotations());
   }
   setSelectedTabIndex(index: number) {

@@ -18,15 +18,13 @@
       [src]="docURL"
       [render-text]="true"
       [render-text-mode]="2"
-      (text-layer-rendered)="(true)"
       (pagechanging)="pagechanging($event)"
       [fit-to-page]="true"
-      [autoresize]="true"
       [original-size]="true"
       (after-load-complete)="handlePdfLoaded($event)"
-      (page-rendered)="pageRendered()"
+      (page-rendered)="pageRendered($event)"
       [show-all]="false"
-      [(page)]="currentPage"
+      [page]="currentPage"
       [zoom]="pdfZoom$ | async"
     >
     </pdf-viewer>
@@ -38,7 +36,6 @@
         [rows]="1"
         [showJumpToPageDropdown]="true"
         [showPageLinks]="false"
-        [showJumpToPageInput]="true"
         [totalRecords]="totalPages"
         (onPageChange)="paginate($event)"
       ></p-paginator>

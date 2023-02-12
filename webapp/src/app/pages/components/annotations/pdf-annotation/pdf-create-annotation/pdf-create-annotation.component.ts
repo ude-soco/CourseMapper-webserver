@@ -17,6 +17,8 @@ import { Observable } from 'rxjs';
 export class PdfCreateAnnotationComponent implements OnInit {
   selectedAnnotationType: AnnotationType;
   annotationTypes: string[];
+  annotationLocation: string[];
+  selectedAnnotationLocation: string;
   createAnnotationFromPanel$: Observable<boolean>;
   showCancelButton: boolean = false;
   disableSlidesDropDown: boolean = false;
@@ -24,13 +26,14 @@ export class PdfCreateAnnotationComponent implements OnInit {
   annotation: Annotation;
 
   constructor(private store: Store<State>) {
-    this.annotationTypes = ['note', 'question', 'externalResource'];
+    this.annotationTypes = ['Note', 'Question', 'External Resource'];
+    this.annotationLocation = ['Current Page', 'All Slides', 'Page Range'];
 
-    store.select(getCreateAnnotationFromPanel).subscribe((isFromPanel) =>{
-      if(isFromPanel){
+    store.select(getCreateAnnotationFromPanel).subscribe((isFromPanel) => {
+      if (isFromPanel) {
         this.showCancelButton = false;
         this.disableSlidesDropDown = false;
-      }else{
+      } else {
         this.showCancelButton = true;
         this.disableSlidesDropDown = true;
       }
@@ -57,7 +60,9 @@ export class PdfCreateAnnotationComponent implements OnInit {
     );
   }
 
-  cancel(){
-    this.store.dispatch(AnnotationActions.setIsAnnotationCanceled({isAnnotationCanceled: true}));
+  cancel() {
+    this.store.dispatch(
+      AnnotationActions.setIsAnnotationCanceled({ isAnnotationCanceled: true })
+    );
   }
 }

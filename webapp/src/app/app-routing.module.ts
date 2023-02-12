@@ -9,6 +9,7 @@ import { MaterialComponent } from './pages/components/materils/material/material
 import { ChannelbarComponent } from './pages/components/channelbar/channelbar.component';
 import { CoursesComponent } from './pages/courses/courses.component';
 import { TopicDropdownComponent } from './pages/components/topic-dropdown/topic-dropdown.component';
+import { PdfMainAnnotationComponent } from './pages/components/annotations/pdf-annotation/pdf-main-annotation/pdf-main-annotation.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -24,35 +25,21 @@ const routes: Routes = [
     path: 'home',
     component: HomeComponent,
     canActivate: [AuthGuardService],
-   /* children: [
-      {
-        //path: 'home/material',  // child route path
-       // title: resolvedChildATitle,
-        //component: MaterialComponent,  // child route component that the router renders
-        path: 'channel/:channelId', component: ChannelbarComponent,
-      },
-     
-    ],{path: 'channel/:channelId', component: MaterialComponent} , */
   },
-  //{path: 'channel/:channelId', component: ChannelbarComponent},
- // {path: 'home/channel', component: ChannelbarComponent},
- //{path: 'course/:channelId', component: CoursesComponent},
- {path: 'course/:courseID', component: CoursesComponent,
- children: [
-  {path: 'channel/:channelId', component: TopicDropdownComponent,
-  children: [
-    {path: 'material/:materialId', component: MaterialComponent},
-  ],
-},
-],
-},
- 
-  /*{
-    path: 'channel',
-    component: ChannelbarComponent,
-    canActivate: [AuthGuardService],
-  },*/
-  
+
+  {
+    path: 'course/:courseID',
+    component: CoursesComponent,
+    children: [
+      {
+        path: 'channel/:channelId',
+        component: TopicDropdownComponent,
+        children: [
+          { path: 'material/:materialId', component: MaterialComponent },
+        ],
+      },
+    ],
+  },
 ];
 
 @NgModule({

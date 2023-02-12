@@ -1,4 +1,4 @@
-export type AnnotationType = 'note' | 'question' | 'externalResource';
+export type AnnotationType = 'Note' | 'Question' | 'External Resource';
 
 export type AnnotationLocationType =
   | 'time'
@@ -25,7 +25,7 @@ export enum PdfToolType {
 }
 
 export interface PdfGeneralAnnotationLocation {
-  type: 'currentPage' | 'allSlides' | 'pageRange';
+  type: 'Current Page' | 'All Slides' | 'Page Range';
   startPage: number;
   lastPage: number;
 }

@@ -126,7 +126,8 @@ export const annotationReducer = createReducer<AnnotationState>(
         ...state,
         isAnnotationDialogVisible: false,
         isAnnotationPosted: true,
-        isAnnotationCanceled: false
+        isAnnotationCanceled: false,
+        createAnnotationFromPanel: true
       };
     }),
 
@@ -135,7 +136,8 @@ export const annotationReducer = createReducer<AnnotationState>(
         ...state,
         isAnnotationDialogVisible: false,
         isAnnotationPosted: false,
-        isAnnotationCanceled: true
+        isAnnotationCanceled: true,
+        createAnnotationFromPanel: true
       };
     }),
 

@@ -20,7 +20,6 @@ export const postAnnotationFail = createAction(
 
 export const loadAnnotations = createAction(
     '[Annotation] Get Annotations Action',
-    // props<{materialId: string, courseId: string}>()
 );
 
 export const loadAnnotationsSuccess = createAction(
