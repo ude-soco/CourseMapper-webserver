@@ -18,7 +18,8 @@ export interface AnnotationState {
   pdfSearchQuery: string,
   pdfZoom: number,
   pdfCurrentPage: number,
-  annotationsForMaterial: Annotation[]
+  annotationsForMaterial: Annotation[],
+  hideAnnotations: boolean;
 }
 
 const initialState: AnnotationState = {
@@ -38,7 +39,8 @@ const initialState: AnnotationState = {
   pdfSearchQuery: null,
   pdfZoom: 1,
   pdfCurrentPage: 1,
-  annotationsForMaterial: []
+  annotationsForMaterial: [],
+  hideAnnotations: false
 }
 
 const getAnnotationFeatureState = createFeatureSelector<AnnotationState>('annotation');
@@ -86,6 +88,11 @@ export const getPdfZoom = createSelector(
 export const getAnnotationsForMaterial = createSelector(
   getAnnotationFeatureState,
   state => state.annotationsForMaterial
+);
+
+export const getHideAnnotationValue = createSelector(
+  getAnnotationFeatureState,
+  state => state.hideAnnotations
 );
 
 
@@ -204,6 +211,13 @@ export const annotationReducer = createReducer<AnnotationState>(
         ...state,
         annotationsForMaterial: []
 
+      };
+    }),
+
+    on(AnnotationActions.toggleShowHideAnnotation, (state, action): AnnotationState => {
+      return {
+        ...state,
+        hideAnnotations: !state.hideAnnotations
       };
     }),
   );

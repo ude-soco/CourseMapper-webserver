@@ -57,13 +57,14 @@
           ></app-iconbutton>
           <span>{{ material.name }}</span>
         </ng-template>
-
-        <div *ngIf="material.type == 'pdf'">
-          <app-pdf-main-annotation></app-pdf-main-annotation>
-        </div>
-        
-        <div *ngIf="material.type == 'video'">video type</div>
       </p-tabPanel>
+      <div
+        *ngIf="this.isMaterialSelected && this.selectedMaterial.type === 'pdf'"
+      >
+        <app-pdf-main-annotation></app-pdf-main-annotation>
+      </div>
+
+      <div *ngIf="this.isMaterialSelected && this.selectedMaterial.type === 'pdf'">video type</div>
     </ng-container>
   </p-tabView>
 </div>

@@ -1,48 +1,49 @@
-<div style="box-shadow: 0 0 3px 3px #70B85E;">
-  <p-panel
-  header="Create Annotation"
-  [toggleable]="false"
->
-<ng-template pTemplate="icons"  *ngIf="showCancelButton">
-  <app-iconbutton
-  icon="bx-x"
-  color="text-green-600"
-  (click)="cancel()"
-></app-iconbutton>
-
-</ng-template>
-<div class="flex flex-col justify-evenly space-y-5">
-  <div class="flex flex-row justify-items-start space-x-5 w-12/12">
-    <p-dropdown
-      [options]="annotationTypes"
-      [(ngModel)]="selectedAnnotationType"
-      placeholder="Annotation type"
-      [showClear]="true"
-      autoWidth="false"
-      appendTo="body"
-      [style]="{'minWidth':'100%'}"
-    ></p-dropdown>
-
-    <p-dropdown
-      [options]="annotationLocation"
-      [(ngModel)]="selectedAnnotationLocation"
-      placeholder="Slide"
-      [showClear]="true"
-      autoWidth="false"
-      [disabled]="disableSlidesDropDown"
-      appendTo="body"
-      [style]="{'minWidth':'200%'}"
-    ></p-dropdown>
-  </div>
-  <div class="flex flex-row space-x-3">
-      <textarea pInputTextarea [(ngModel)]="text" class="w-11/12" style="border: 1px solid #70B85E;"></textarea>
-        <app-iconbutton
-        icon="bx-send"
+<div style="box-shadow: 0 0 3px 3px #70b85e">
+  <p-panel header="Create Annotation" [toggleable]="false">
+    <ng-template pTemplate="icons" *ngIf="showCancelButton">
+      <app-iconbutton
+        icon="bx-x"
         color="text-green-600"
-        (click)="postAnnotation()"
-        class="mb-0 mt-12 flex-1 justify-end"
+        (click)="cancel()"
       ></app-iconbutton>
-  </div>
-</div>
-</p-panel>
+    </ng-template>
+    <div class="flex flex-col justify-evenly space-y-5">
+      <div class="flex flex-row justify-items-start space-x-5 w-12/12">
+        <p-dropdown
+          [options]="annotationTypes"
+          [(ngModel)]="selectedAnnotationType"
+          placeholder="Annotation type"
+          [showClear]="true"
+          autoWidth="false"
+          appendTo="body"
+          [style]="{ minWidth: '100%' }"
+        ></p-dropdown>
+
+        <p-dropdown
+          [options]="annotationLocation"
+          [(ngModel)]="selectedAnnotationLocation"
+          placeholder="Slide"
+          [showClear]="true"
+          autoWidth="false"
+          [disabled]="disableSlidesDropDown"
+          appendTo="body"
+          [style]="{ minWidth: '200%' }"
+        ></p-dropdown>
+      </div>
+      <div class="flex flex-row space-x-3">
+        <textarea
+          pInputTextarea
+          [(ngModel)]="text"
+          class="w-11/12"
+          style="border: 1px solid #70b85e"
+        ></textarea>
+        <app-iconbutton
+          icon="bx-send"
+          color="text-green-600"
+          (click)="postAnnotation()"
+          class="mb-0 mt-12 flex-1 justify-end"
+        ></app-iconbutton>
+      </div>
+    </div>
+  </p-panel>
 </div>

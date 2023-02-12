@@ -74,3 +74,7 @@ export const resetZoom = createAction(
     '[Annotation] Reset Pdf Zoom Value'
 );
 
+export const toggleShowHideAnnotation = createAction(
+    '[Annotation] Toggle Show/Hide Annotation Boolean Value'
+);
+

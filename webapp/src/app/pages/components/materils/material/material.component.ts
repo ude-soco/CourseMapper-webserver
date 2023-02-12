@@ -44,6 +44,8 @@ export class MaterialComponent implements OnInit {
   private channels: Channel[] = [];
   materials: Material[] = [];
   materialType?: string;
+  tabIndex: number = -1;
+  isMaterialSelected: boolean = false;
 
   isNewMaterialModalVisible: boolean = false;
   errorMessage: any;
@@ -102,13 +104,14 @@ export class MaterialComponent implements OnInit {
   }
 
   onTabChange(e) {
-    e.index1 = e.index - 1;
+    this.tabIndex = e.index - 1;
+    if (this.tabIndex == -1) this.isMaterialSelected = false;
+    else this.isMaterialSelected = true;
 
-    this.setSelectedTabIndex(e.index1 || 0);
+    this.setSelectedTabIndex(this.tabIndex || 0);
 
-    this.selectedMaterial = this.channels['materials'][e.index1 || 0];
+    this.selectedMaterial = this.channels['materials'][this.tabIndex || 0];
 
-    //this.onSelectTab.emit(e.index1);
     this.router.navigate([
       'course',
       this.selectedMaterial['courseId'],

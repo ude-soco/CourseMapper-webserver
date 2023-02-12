@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { PDFDocumentProxy, PdfViewerComponent } from 'ng2-pdf-viewer';
 import { toolTypeSelection } from 'src/app/tool-type-selection';
 import {
@@ -14,6 +14,7 @@ import {
 } from 'src/app/models/Annotations';
 import {
   getAnnotationsForMaterial,
+  getHideAnnotationValue,
   getIsAnnotationCanceled,
   getIsAnnotationDialogVisible,
   getIsAnnotationPosted,
@@ -28,7 +29,7 @@ import {
   getCurrentMaterialId,
 } from '../../../materils/state/materials.reducer';
 import { PdfviewService } from 'src/app/services/pdfview.service';
-import { first, Observable, Subscription } from 'rxjs';
+import { distinctUntilChanged, filter, first, Observable, Subject, Subscription, takeUntil } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import * as MaterialActions from 'src/app/pages/components/materils/state/materials.actions';
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
@@ -40,7 +41,7 @@ import { AnnotationType } from 'src/app/models/Annotations';
   templateUrl: './pdf-main-annotation.component.html',
   styleUrls: ['./pdf-main-annotation.component.css'],
 })
-export class PdfMainAnnotationComponent implements OnInit {
+export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   // Pdf-View properties
   @ViewChild(PdfViewerComponent, { static: false })
   private pdfComponent!: PdfViewerComponent;
@@ -73,6 +74,7 @@ export class PdfMainAnnotationComponent implements OnInit {
   isAnnotationDialogVisible$: Observable<boolean>;
   isAnnotationCanceled$: Observable<boolean>;
   isAnnotationPosted$: Observable<boolean>;
+  isHideAnnotations$: Observable<boolean>;
 
   pdfAnnotationToolObject!: PdfAnnotationTool;
 
@@ -97,7 +99,15 @@ export class PdfMainAnnotationComponent implements OnInit {
   drawBoxObjectList: RectangleObject[] = [];
   annotations: Annotation[] = [];
   ngOnInit(): void {
-    console.log('Pdf is initialized');
+    this.isHideAnnotations$ = this.store.select(getHideAnnotationValue);
+    this.isHideAnnotations$.subscribe((isHideAnnotations) => {
+      console.log(this.materialId);
+      this.hideAnnotations(isHideAnnotations);
+    });
+  }
+
+  ngOnDestroy(): void {
+
   }
 
   constructor(
@@ -143,6 +153,7 @@ export class PdfMainAnnotationComponent implements OnInit {
     this.isAnnotationCanceled$ = this.store.select(getIsAnnotationCanceled);
     this.isAnnotationPosted$ = this.store.select(getIsAnnotationPosted);
   }
+
 
   getDocUrl() {
       this.pdfViewService.currentDocURL.subscribe((url) => {
@@ -416,6 +427,24 @@ export class PdfMainAnnotationComponent implements OnInit {
   paginate(event: any) {
     this.currentPage = event.page + 1;
   }
+
+    /** Show/Hide Annotations on pdf */
+    hideAnnotations(hideAnnotations: boolean) {
+      var annotationItem = Array.from(document.getElementsByClassName('annotationItem') as HTMLCollectionOf<HTMLElement>)
+      if (hideAnnotations == true) {
+        this.hideAnnotationEvent = true;
+        for (let i = 0; i < annotationItem.length; i++) {
+          let annotationItemHmlElmt = annotationItem[i];
+          annotationItemHmlElmt.remove()
+        }
+      } else {
+  
+        this.hideAnnotationEvent = false;
+        this.pageRendered(hideAnnotations);
+  
+      }
+  
+    }
 
   mouseEventHandler(event: MouseEvent) {
     if (

@@ -1,6 +1,6 @@
 <div class="toolbar-container">
   <div class="tool-left">
-    <span class="tool-title" style="color:#4E4E4E">Annotation Tools:</span>
+    <span class="tool-title" style="color: #4e4e4e">Annotation Tools:</span>
     <app-iconbutton
       icon="bx-highlight"
       color="text-blue-500"
@@ -19,11 +19,22 @@
       (onClick)="selectAnnotationTool('pinpoint')"
       [class.selected]="pinSelected"
     ></app-iconbutton>
-    <app-iconbutton icon="bx-show" color="text-blue-500"></app-iconbutton>
+    <app-iconbutton
+      icon="bx-show"
+      color="text-blue-500"
+      (onClick)="toggleShowHideAnnotations()"
+      *ngIf="(hideAnnotations$ | async) == false"
+    ></app-iconbutton>
+    <app-iconbutton
+    icon="bx-hide"
+    color="text-blue-500"
+    (onClick)="toggleShowHideAnnotations()"
+    *ngIf="(hideAnnotations$ | async) == true"
+  ></app-iconbutton>
   </div>
   <span class="tool-divider"> </span>
   <div class="tool-right">
-    <span class="tool-title" style="color:#4E4E4E">PDF Tools:</span>
+    <span class="tool-title" style="color: #4e4e4e">PDF Tools:</span>
     <app-iconbutton icon="bxs-hand" color="text-blue-500"></app-iconbutton>
     <app-iconbutton
       icon="bx-zoom-in"
