@@ -59,6 +59,13 @@ export class AnnotationEffects {
     )
   );
 
+  resetAnnotationStoreValues = createEffect(() =>
+    this.actions$.pipe(
+      ofType(MaterialActions.setMaterialId),
+      mergeMap(() => [AnnotationActions.resetAnnotationStoreValues()])
+    )
+  );
+
   constructor(
     private actions$: Actions,
     private annotationService: AnnotationService,

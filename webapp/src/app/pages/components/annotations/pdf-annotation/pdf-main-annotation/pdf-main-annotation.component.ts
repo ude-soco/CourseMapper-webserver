@@ -14,6 +14,7 @@ import {
 } from 'src/app/models/Annotations';
 import {
   getAnnotationsForMaterial,
+  getCurrentPdfPage,
   getHideAnnotationValue,
   getIsAnnotationCanceled,
   getIsAnnotationDialogVisible,
@@ -99,10 +100,12 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   drawBoxObjectList: RectangleObject[] = [];
   annotations: Annotation[] = [];
   ngOnInit(): void {
-    this.isHideAnnotations$ = this.store.select(getHideAnnotationValue);
-    this.isHideAnnotations$.subscribe((isHideAnnotations) => {
-      console.log(this.materialId);
+    this.store.select(getHideAnnotationValue).subscribe((isHideAnnotations) => {
       this.hideAnnotations(isHideAnnotations);
+    });
+
+    this.store.select(getCurrentPdfPage).subscribe((currentPage) => {
+      this.currentPage = currentPage;
     });
   }
 
@@ -158,20 +161,17 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   getDocUrl() {
       this.pdfViewService.currentDocURL.subscribe((url) => {
         this.docURL = this.API_URL + url.replace(/\\/g, '/');
-        console.log('this.docURL');
-        console.log(url);
       });
   }
 
   pagechanging(e: any) {
-    this.currentPage = e.pageNumber;
+    this.store.dispatch(AnnotationActions.setCurrentPdfPage({pdfCurrentPage: e.first + 1}));
     this.pageRendered(e);
   }
 
   public handlePdfLoaded(pdf: PDFDocumentProxy): void {
     this.totalPages = pdf.numPages;
     this.currentPage = 1;
-    console.log(this.totalPages);
     this.pdfViewService.setTotalPages(this.totalPages);
     this.pdfComponent.pdfViewer.currentScaleValue = 'page-fit';
     this.pdfComponent.pdfViewer.eventBus.on(

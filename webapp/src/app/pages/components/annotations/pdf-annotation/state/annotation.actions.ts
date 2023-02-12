@@ -78,3 +78,13 @@ export const toggleShowHideAnnotation = createAction(
     '[Annotation] Toggle Show/Hide Annotation Boolean Value'
 );
 
+export const resetAnnotationStoreValues = createAction(
+    '[Annotation] Reset Annotation Store Values'
+);
+
+export const setCurrentPdfPage = createAction(
+    '[Annotation] Set Current Pdf Page',
+    props<{pdfCurrentPage: number}>()
+);
+
+

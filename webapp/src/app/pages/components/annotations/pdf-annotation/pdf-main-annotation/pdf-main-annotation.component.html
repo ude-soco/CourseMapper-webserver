@@ -18,13 +18,12 @@
       [src]="docURL"
       [render-text]="true"
       [render-text-mode]="2"
-      (pagechanging)="pagechanging($event)"
       [fit-to-page]="true"
       [original-size]="true"
       (after-load-complete)="handlePdfLoaded($event)"
       (page-rendered)="pageRendered($event)"
       [show-all]="false"
-      [page]="currentPage"
+      [(page)]="currentPage"
       [zoom]="pdfZoom$ | async"
     >
     </pdf-viewer>
@@ -37,7 +36,8 @@
         [showJumpToPageDropdown]="true"
         [showPageLinks]="false"
         [totalRecords]="totalPages"
-        (onPageChange)="paginate($event)"
+        [first]="currentPage - 1"
+        (onPageChange)="pagechanging($event)"
       ></p-paginator>
     </div>
   </div>

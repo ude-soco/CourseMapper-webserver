@@ -95,6 +95,11 @@ export const getHideAnnotationValue = createSelector(
   state => state.hideAnnotations
 );
 
+export const getCurrentPdfPage = createSelector(
+  getAnnotationFeatureState,
+  state => state.pdfCurrentPage
+);
+
 
 export const annotationReducer = createReducer<AnnotationState>(
     initialState,
@@ -218,6 +223,17 @@ export const annotationReducer = createReducer<AnnotationState>(
       return {
         ...state,
         hideAnnotations: !state.hideAnnotations
+      };
+    }),
+
+    on(AnnotationActions.resetAnnotationStoreValues, (state, action): AnnotationState => {
+      return initialState
+    }),
+
+    on(AnnotationActions.setCurrentPdfPage, (state, action): AnnotationState => {
+      return {
+        ...state,
+        pdfCurrentPage: action.pdfCurrentPage
       };
     }),
   );
