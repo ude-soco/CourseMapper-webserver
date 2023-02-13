@@ -87,4 +87,9 @@ export const setCurrentPdfPage = createAction(
     props<{pdfCurrentPage: number}>()
 );
 
+export const setPdfTotalPages = createAction(
+    '[Annotation] Set Current Pdf Total Pages',
+    props<{pdfTotalPages: number}>()
+);
+
 

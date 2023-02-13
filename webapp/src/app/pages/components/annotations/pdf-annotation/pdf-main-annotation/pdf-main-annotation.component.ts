@@ -171,6 +171,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
 
   public handlePdfLoaded(pdf: PDFDocumentProxy): void {
     this.totalPages = pdf.numPages;
+    this.store.dispatch(AnnotationActions.setPdfTotalPages({pdfTotalPages: this.totalPages}));
     this.currentPage = 1;
     this.pdfViewService.setTotalPages(this.totalPages);
     this.pdfComponent.pdfViewer.currentScaleValue = 'page-fit';

@@ -18,6 +18,7 @@ export interface AnnotationState {
   pdfSearchQuery: string,
   pdfZoom: number,
   pdfCurrentPage: number,
+  pdfTotalPages: number,
   annotationsForMaterial: Annotation[],
   hideAnnotations: boolean;
 }
@@ -39,6 +40,7 @@ const initialState: AnnotationState = {
   pdfSearchQuery: null,
   pdfZoom: 1,
   pdfCurrentPage: 1,
+  pdfTotalPages: null,
   annotationsForMaterial: [],
   hideAnnotations: false
 }
@@ -98,6 +100,11 @@ export const getHideAnnotationValue = createSelector(
 export const getCurrentPdfPage = createSelector(
   getAnnotationFeatureState,
   state => state.pdfCurrentPage
+);
+
+export const getPdfTotalNumberOfPages = createSelector(
+  getAnnotationFeatureState,
+  state => state.pdfTotalPages
 );
 
 
@@ -234,6 +241,13 @@ export const annotationReducer = createReducer<AnnotationState>(
       return {
         ...state,
         pdfCurrentPage: action.pdfCurrentPage
+      };
+    }),
+
+    on(AnnotationActions.setPdfTotalPages, (state, action): AnnotationState => {
+      return {
+        ...state,
+        pdfTotalPages: action.pdfTotalPages
       };
     }),
   );

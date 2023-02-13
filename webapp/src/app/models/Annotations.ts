@@ -11,8 +11,8 @@ export type AnnotationToolType = 'annotation' | 'brush' | 'pin';
 export interface PdfAnnotationTool {
   _id: any;
   type: PdfToolType;
-  color: string;
-  coordinates: any[];
+  color?: string;
+  coordinates?: any[];
   page?: any;
   rect?: any;
 }
@@ -21,6 +21,7 @@ export enum PdfToolType {
   Highlight = 'highlight',
   DrawBox = 'drawing',
   Pin = 'pinpoint',
+  Annotation = 'annotation',
   None = 'none',
 }
 
@@ -39,7 +40,7 @@ export interface Annotation {
   type?: AnnotationType;
   content?: string;
   location: PdfGeneralAnnotationLocation;
-  tool: PdfAnnotationTool;
+  tool?: PdfAnnotationTool;
   materialID?: string;
   courseId?: string;
   author?:{
