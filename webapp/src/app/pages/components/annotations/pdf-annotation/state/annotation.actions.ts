@@ -1,6 +1,7 @@
 import { createAction, props } from "@ngrx/store";
 import { Annotation, AnnotationType, PdfToolType } from "src/app/models/Annotations";
 import { Material } from "src/app/models/Material";
+import { Reply } from "src/app/models/Reply";
 
 // Strongly typed actions
 
@@ -119,4 +120,18 @@ export const updateAnnotationsWithRepliesFail = createAction(
 export const updateAnnotationsWithRepliesSuccess = createAction(
     '[Annotation] Updated Annotations With Replies Successfully',
     props<{error: string}>()
+);
+
+export const postReply = createAction(
+    '[Annotation] Post Reply Action',
+    props<{ annotation: Annotation, reply: Reply}>()
+);
+
+export const postReplySuccess = createAction(
+    '[Annotation] Post Reply Success'
+);
+
+export const postReplyFail = createAction(
+    '[Annotation] Post Reply Fail',
+    props<{ error: string }>()
 );

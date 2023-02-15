@@ -96,6 +96,23 @@ export class AnnotationEffects {
       )
     )
   );
+
+  postReply$ = createEffect(() =>
+  this.actions$.pipe(
+    ofType(AnnotationActions.postReply),
+    mergeMap(({ annotation, reply }) =>
+      this.annotationService.postReply(annotation, reply).pipe(
+        mergeMap(() => [
+          AnnotationActions.postReplySuccess(),
+          AnnotationActions.loadAnnotations(),
+        ]),
+        catchError((error) =>
+          of(AnnotationActions.postReplyFail({ error }))
+        )
+      )
+    )
+  )
+);
   
   constructor(
     private actions$: Actions,

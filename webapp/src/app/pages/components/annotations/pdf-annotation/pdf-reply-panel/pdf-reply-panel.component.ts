@@ -12,7 +12,6 @@ export class PdfReplyPanelComponent implements OnInit, OnChanges  {
   constructor() {}
 
   ngOnChanges(changes: SimpleChanges): void {
-
   }
 
   ngOnInit(): void {}

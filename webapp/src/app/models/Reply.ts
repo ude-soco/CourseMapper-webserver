@@ -5,11 +5,11 @@ export interface Reply {
     userId: string;
     name: string;
   };
-  courseId: string;
+  courseId?: string;
   topicId?: string;
   channelId?: string;
   materialId?: string;
-  annotationId: string;
+  annotationId?: string;
   likes?: string[];
   dislikes?: string[];
   createdAt?: number;
