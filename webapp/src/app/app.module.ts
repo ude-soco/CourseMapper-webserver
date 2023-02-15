@@ -29,6 +29,7 @@ import {InputTextareaModule} from 'primeng/inputtextarea';
 import { DashboardComponent } from './pages/components/dashboard/dashboard.component';
 import { ByPassUrlSanitizationPipe } from './pipes/by-pass-url-sanitization.pipe';
 import { DragulaModule } from 'ng2-dragula';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 
 @NgModule({
@@ -64,7 +65,8 @@ import { DragulaModule } from 'ng2-dragula';
     ToastModule,
     RippleModule,
     InputTextareaModule,
-    DragulaModule.forRoot() 
+    DragulaModule.forRoot(),
+    ConfirmDialogModule
   ],
   providers: [],
   bootstrap: [AppComponent],

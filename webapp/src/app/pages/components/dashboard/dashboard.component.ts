@@ -8,12 +8,13 @@ import { Course } from 'src/app/models/Course';
 import { Indicator } from 'src/app/models/Indicator';
 import { MessageService } from 'primeng/api';
 import { DragulaService } from 'ng2-dragula';
+import {ConfirmationService} from 'primeng/api';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
-  providers: [MessageService],
+  providers: [MessageService, ConfirmationService],
 })
 export class DashboardComponent implements OnInit {
   indicatorForm: FormGroup;
@@ -34,7 +35,8 @@ export class DashboardComponent implements OnInit {
     private indicatorService: IndicatorService,
     private courseService: CourseService,
     private messageService: MessageService,
-    private dragulaService: DragulaService
+    private dragulaService: DragulaService,
+    private confirmationService: ConfirmationService
   ) {
     this.dragulaService.createGroup('INDICATORS', {
       revertOnSpill: true,
@@ -119,15 +121,24 @@ export class DashboardComponent implements OnInit {
   }
 
   onDeleteIndicator(indicator) {
+    this.confirmationService.confirm({
+      message: 'Are you sure that you want to delete the Indicator?',
+      header: 'Confirmation',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => this.onConfirmDeletion(indicator)
+    });
+  }
+
+  onConfirmDeletion(indicator){
     this.indicatorService
-      .deleteIndicator(indicator, this.selectedCourse._id)
-      .subscribe((res: any) => {
-        if ('success' in res) {
-          this.showInfo(res.success);
-        } else {
-          this.showError(res.errorMsg);
-        }
-      });
+    .deleteIndicator(indicator, this.selectedCourse._id)
+    .subscribe((res: any) => {
+      if ('success' in res) {
+        this.showInfo(res.success);
+      } else {
+        this.showError(res.errorMsg);
+      }
+    });
   }
 
   clearFormInput() {
