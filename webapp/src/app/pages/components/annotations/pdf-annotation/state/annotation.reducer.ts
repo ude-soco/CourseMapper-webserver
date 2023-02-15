@@ -250,4 +250,11 @@ export const annotationReducer = createReducer<AnnotationState>(
         pdfTotalPages: action.pdfTotalPages
       };
     }),
+
+    on(AnnotationActions.updateAnnotationsWithReplies, (state, action): AnnotationState => {
+      return {
+        ...state,
+        annotationsForMaterial: action.annotations
+      };
+    }),
   );

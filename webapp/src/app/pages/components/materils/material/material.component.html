@@ -1,15 +1,15 @@
 <div
   class="relative contain h-screen bg-gray-100 shadow-lg"
-  *ngIf="channelSelected$ | async"
+
 >
   <div class="h-max m-0 flex flex-col bg-gray-100">
     <div class="flex items-start justify-between py-4 pl-3 bg-gray-200">
       <p
-        id="{{ selectedChannel._id }}"
+        id="{{ selectedChannel?._id }}"
         class="flex w-56 text-xl font-semibold"
         #selectedCourse._id
       >
-        {{ selectedChannel.name }}
+        {{ selectedChannel?.name }}
       </p>
     </div>
   </div>
@@ -17,7 +17,7 @@
   <p-tabView
     (onChange)="onTabChange($event)"
     (onClose)="deleteMaterial($event)"
-    *ngIf="selectedChannel.materials"
+    *ngIf="selectedChannel?.materials"
   >
     <p-tabPanel>
       <ng-template pTemplate="header">
@@ -29,9 +29,9 @@
       </ng-template>
       <ng-template pTemplate="content">
         <app-add-material
-          [courseID]="selectedChannel.courseId"
-          [topicID]="selectedChannel.topicId"
-          [channelID]="selectedChannel._id"
+          [courseID]="selectedChannel?.courseId"
+          [topicID]="selectedChannel?.topicId"
+          [channelID]="selectedChannel?._id"
           [channelEmittd]="selectedChannel"
         >
         </app-add-material>

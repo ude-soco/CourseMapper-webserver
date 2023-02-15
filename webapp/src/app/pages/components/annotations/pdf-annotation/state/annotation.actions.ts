@@ -92,4 +92,31 @@ export const setPdfTotalPages = createAction(
     props<{pdfTotalPages: number}>()
 );
 
+export const loadReplies = createAction(
+    '[Annotation] Get Replies Action',
+    props<{annotations: Annotation[]}>()
+);
 
+export const loadRepliesSuccess = createAction(
+    '[Annotation] Load Replies Success',
+);
+
+export const loadRepliesFail = createAction(
+    '[Annotation] Load Replies Fail',
+    props<{error: string}>()
+);
+
+export const updateAnnotationsWithReplies = createAction(
+    '[Annotation] Update Annotations With Replies',
+    props<{annotations: Annotation[]}>()
+);
+
+export const updateAnnotationsWithRepliesFail = createAction(
+    '[Annotation] Update Annotations With Replies Failed',
+    props<{error: string}>()
+);
+
+export const updateAnnotationsWithRepliesSuccess = createAction(
+    '[Annotation] Updated Annotations With Replies Successfully',
+    props<{error: string}>()
+);

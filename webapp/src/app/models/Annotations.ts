@@ -1,3 +1,5 @@
+import { Reply } from "./Reply";
+
 export type AnnotationType = 'Note' | 'Question' | 'External Resource';
 
 export type AnnotationLocationType =
@@ -49,7 +51,7 @@ export interface Annotation {
   };
   likes?: string[];
   dislikes?: string[];
-  replies?: string[];
+  replies?: Reply[];
   createdAt?: number
   commentCount?: number;
   tags?: string[];

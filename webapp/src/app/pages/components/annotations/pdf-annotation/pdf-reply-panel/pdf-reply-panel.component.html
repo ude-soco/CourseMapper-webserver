@@ -1,0 +1,6 @@
+<h1 color="text-grey-200" class="">Show all 12 replies</h1>
+<div class=" border-black border mx-7 my-7 snap-y">
+  <div class="bg-slate-200 my-5" *ngFor="let reply of annotation.replies">
+    <app-pdf-reply-item [reply]="reply"></app-pdf-reply-item>
+  </div>
+</div>

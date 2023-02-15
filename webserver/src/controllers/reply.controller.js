@@ -39,7 +39,7 @@ export const getReplies = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  return res.status(200).send({ replies: foundReplies });
+  return res.status(200).send(foundReplies);
 };
 
 /**

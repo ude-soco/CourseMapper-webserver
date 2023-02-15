@@ -1,7 +1,7 @@
 <p-panel header="Discussion" [toggleable]="false" class="comment-panel">
   <div class="flex flex-wrap flex-col space-y-5">
     <div class="filter">
-      <h5>Filters</h5>
+      <h2 class="text-lg font-medium">Filters</h2>
       <p-multiSelect
         [options]=""
         defaultLabel="Select a filter"
@@ -12,6 +12,7 @@
       ></p-multiSelect>
     </div>
     <div>
+      <h2 class="text-lg font-medium -mb-4">Content</h2>
       <app-pdf-comment-item
         [annotationsWithInitials]="annotationsWithInitials"
       ></app-pdf-comment-item>

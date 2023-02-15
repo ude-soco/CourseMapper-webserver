@@ -1,20 +1,19 @@
 <div class="card">
-  <h2 style="font-size: 20px; font-family: Roboto">Content</h2>
   <div
     *ngFor="let annotation of annotationsWithInitials"
-    class="flex flex-col flex-wrap"
+    class="flex flex-col flex-wrap space-y-5"
   >
     <p-divider align="left"></p-divider>
-    <div class="inline-flex align-items-center flex-row flex-wrap space-x-2">
+    <div class="inline-flex align-items-center flex-row flex-wrap space-x-3">
       <p-avatar
         label="{{ annotation.initials }}"
         shape="circle"
         size="large"
         [style]="{ 'background-color': '#0277BD', color: '#ffffff' }"
       ></p-avatar>
-      <app-iconbutton icon="bxs-user" color="text-grey-200"></app-iconbutton>
-      <b style="margin-right: 10px">{{ annotation.author.name }}</b>
-      <h1>{{ annotation.elapsedTime }}</h1>
+      <app-iconbutton icon="bxs-user" color="text-grey-200" class="mt-3"></app-iconbutton>
+      <b class="mt-4">{{ annotation.author.name }}</b>
+      <h1 class="mt-4">{{ annotation.elapsedTime }}</h1>
     </div>
     <div class="mb-6 mt-6">
       <p style="font-size: 20px; font-family: Roboto">
@@ -22,15 +21,29 @@
       </p>
     </div>
     <div class="flex flex-row flex-wrap space-x-3">
-      <app-iconbutton icon="bx-like" color="text-grey-600"></app-iconbutton>
-      <app-iconbutton icon="bx-dislike" color="text-grey-600"></app-iconbutton>
+      <app-button icon="bx-like" color="text-grey-600" label="9"></app-button>
+      <app-button icon="bx-dislike" color="text-grey-600" label="9"></app-button>
+      <app-button icon="bx-reply-all" color="text-grey-600" label="Reply"></app-button>
       <app-button
         variant="contained"
         label="Show Annotation On Material"
         icon="bx-highlight"
       ></app-button>
     </div>
-
-    <p-divider align="left"></p-divider>
+    <div class="flex flex-col">
+      <app-pdf-reply-panel [annotation]="annotation"></app-pdf-reply-panel>
+      <div class="flex flex-row space-x-3 mx-7">
+        <textarea
+          pInputTextarea
+          class="w-11/12"
+          style="border: 1px solid rgb(100 116 139)"
+        ></textarea>
+        <app-iconbutton
+          icon="bx-send"
+          color="text-slate-500"
+          class="mb-0 mt-12 flex-1 justify-end"
+        ></app-iconbutton>
+      </div>
+    </div>
   </div>
 </div>

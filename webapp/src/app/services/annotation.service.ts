@@ -4,6 +4,7 @@ import { catchError, Observable, tap, throwError } from 'rxjs';
 import { Annotation } from 'src/app/models/Annotations';
 import { environment } from 'src/environments/environment';
 import { Material } from '../models/Material';
+import { Reply } from '../models/Reply';
 
 @Injectable({
   providedIn: 'root'
@@ -18,5 +19,13 @@ export class AnnotationService {
 
   getAllAnnotations(materialId: string, courseID: string): Observable<Annotation[]>{
     return this.http.get<Annotation[]>(`${environment.apiUrl}/courses/${courseID}/materials/${materialId}/getAnnotations`);
+  }
+
+  postReply(annotation: Annotation, reply: Reply): Observable<Reply>{
+    return this.http.post<Reply>(`${environment.apiUrl}/courses/${annotation.courseId}/annotations/${annotation._id}/reply`, reply);
+  }
+
+  getAllReplies(annotation: Annotation): Observable<Reply[]>{
+    return this.http.get<Reply[]>(`${environment.apiUrl}/courses/${annotation.courseId}/annotations/${annotation._id}/replies`);
   }
 }

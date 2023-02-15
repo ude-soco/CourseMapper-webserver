@@ -13,6 +13,8 @@ import { AnnotationEffects } from './state/annotation.effects';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { PdfDrawboxComponent } from './pdf-drawbox/pdf-drawbox.component';
 import { SharedComponentsModule } from 'src/app/components/shared-components.module';
+import { PdfReplyItemComponent } from './pdf-reply-item/pdf-reply-item.component';
+import { PdfReplyPanelComponent } from './pdf-reply-panel/pdf-reply-panel.component';
 
 
 
@@ -24,6 +26,8 @@ import { SharedComponentsModule } from 'src/app/components/shared-components.mod
         PdfCommentItemComponent,
         PdfMainAnnotationComponent,
         PdfDrawboxComponent,
+        PdfReplyItemComponent,
+        PdfReplyPanelComponent,
     ],
     exports: [
         PdfAnnotationToolbarComponent,

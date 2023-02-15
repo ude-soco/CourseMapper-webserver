@@ -259,7 +259,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
 
       //get the parentElement if showallpage is set to false
       const pageIndex = this.currentPage - 1;
-      const page = this.pdfComponent.pdfViewer?.getPageView(pageIndex);
+      const page = this.pdfComponent?.pdfViewer?.getPageView(pageIndex);
 
       const parentElement = page?.div;
       if (parentElement != undefined) {
