@@ -1,6 +1,14 @@
-<h1 color="text-grey-200" class="">Show all 12 replies</h1>
-<div class=" border-black border mx-7 my-7 snap-y">
-  <div class="bg-slate-200 my-5" *ngFor="let reply of annotation.replies">
+<h1 color="text-grey-200" *ngIf="repliesCount >= 1 && !hideRepliesButton" (click)="showAllReplies()" class="cursor-pointer">
+  Show all {{ repliesCount }} replies
+</h1>
+<h1 color="text-grey-200" *ngIf="hideRepliesButton" (click)="hideReplies()" class="cursor-pointer">
+  Hide replies
+</h1>
+<div class="border-black border mx-7 my-7 snap-y">
+  <div
+    class="bg-slate-200 my-5"
+    *ngFor="let reply of annotation.replies.slice(0, shownRepliesCount)"
+  >
     <app-pdf-reply-item [reply]="reply"></app-pdf-reply-item>
   </div>
 </div>
