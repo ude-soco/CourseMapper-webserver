@@ -1,29 +1,28 @@
 <div class="card">
   <div
-    *ngFor="let annotation of annotationsWithInitials"
     class="flex flex-col flex-wrap space-y-5"
   >
     <p-divider align="left"></p-divider>
     <div class="inline-flex align-items-center flex-row flex-wrap space-x-3">
       <p-avatar
-        label="{{ annotation.initials }}"
+        label="{{ annotationInitials }}"
         shape="circle"
         size="large"
         [style]="{ 'background-color': '#0277BD', color: '#ffffff' }"
       ></p-avatar>
       <app-iconbutton icon="bxs-user" color="text-grey-200" class="mt-3"></app-iconbutton>
-      <b class="mt-4">{{ annotation.author.name }}</b>
-      <h1 class="mt-4">{{ annotation.elapsedTime }}</h1>
+      <b class="mt-4">{{ annotation?.author?.name }}</b>
+      <h1 class="mt-4">{{ annotationElapsedTime }}</h1>
     </div>
     <div class="mb-6 mt-6">
       <p style="font-size: 20px; font-family: Roboto">
-        {{ annotation.content }}
+        {{ annotation?.content }}
       </p>
     </div>
     <div class="flex flex-row flex-wrap space-x-3">
       <app-button icon="bx-like" color="text-grey-600" label="9"></app-button>
       <app-button icon="bx-dislike" color="text-grey-600" label="9"></app-button>
-      <app-button icon="bx-reply-all" color="text-grey-600" label="Reply"></app-button>
+      <app-button icon="bx-reply-all" color="text-grey-600" label="Reply" (onClick)="toggleComment()"></app-button>
       <app-button
         variant="contained"
         label="Show Annotation On Material"
@@ -32,7 +31,7 @@
     </div>
     <div class="flex flex-col">
       <app-pdf-reply-panel [annotation]="annotation"></app-pdf-reply-panel>
-      <div class="flex flex-row space-x-3 mx-7">
+      <div class="flex flex-row space-x-3 mx-7" *ngIf="toggleReplyBox">
         <textarea
           pInputTextarea
           class="w-11/12"

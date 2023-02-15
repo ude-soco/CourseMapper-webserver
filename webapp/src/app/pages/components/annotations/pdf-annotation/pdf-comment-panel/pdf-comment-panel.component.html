@@ -12,10 +12,14 @@
       ></p-multiSelect>
     </div>
     <div>
-      <h2 class="text-lg font-medium -mb-4">Content</h2>
-      <app-pdf-comment-item
-        [annotationsWithInitials]="annotationsWithInitials"
+      <div>
+        <h2 class="text-lg font-medium -mb-4">Content</h2>
+      </div>
+      <div *ngFor="let annotation of annotations">
+        <app-pdf-comment-item
+        [annotation]="annotation"
       ></app-pdf-comment-item>
+      </div>
     </div>
   </div>
 </p-panel>

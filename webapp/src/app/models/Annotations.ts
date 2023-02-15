@@ -55,6 +55,4 @@ export interface Annotation {
   createdAt?: number
   commentCount?: number;
   tags?: string[];
-  initials?: string;
-  elapsedTime?: string;
 }

@@ -9,21 +9,13 @@ import { getAnnotationsForMaterial, State } from '../state/annotation.reducer';
   styleUrls: ['./pdf-comment-panel.component.css'],
 })
 export class PdfCommentPanelComponent implements OnInit {
-  annotationsWithInitials: Annotation[] = [];
+  annotations: Annotation[] = [];
 
   constructor(private store: Store<State>) {
     this.store.select(getAnnotationsForMaterial).subscribe((annotations) => {
-      this.setInitialsforEachAnnotation(annotations);
+      this.annotations = annotations;
     });
   }
 
   ngOnInit(): void {}
-
-  setInitialsforEachAnnotation(annotations: Annotation[]) {
-    this.annotationsWithInitials = annotations.map((annotation) => ({
-      ...annotation,
-      initials: getInitials(annotation.author.name),
-      elapsedTime: computeElapsedTime(annotation.createdAt),
-    }));
-  }
 }
