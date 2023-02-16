@@ -20,8 +20,8 @@
       </p>
     </div>
     <div class="flex flex-row flex-wrap space-x-3">
-      <app-button icon="bx-like" color="text-grey-600" label="9"></app-button>
-      <app-button icon="bx-dislike" color="text-grey-600" label="9"></app-button>
+      <app-button icon="bx-like" color="text-grey-600" label="{{likesCount}}" (onClick)="likeAnnotation()"></app-button>
+      <app-button icon="bx-dislike" color="text-grey-600" label="{{dislikesCount}}" (onClick)="dislikeAnnotation()"></app-button>
       <app-button icon="bx-reply-all" color="text-grey-600" label="Reply" (onClick)="toggleComment()"></app-button>
       <app-button
         variant="contained"

@@ -51,7 +51,6 @@ module.exports = function (app) {
 
   // get annotations
   // Only enrolled users/moderator/admin
-  // Note: A user when liked an annotation, it cannot be disliked
   app.get(
     "/courses/:courseId/materials/:materialId/getAnnotations",
     [authJwt.verifyToken, authJwt.isEnrolled],

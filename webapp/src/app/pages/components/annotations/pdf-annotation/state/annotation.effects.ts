@@ -80,7 +80,10 @@ export class AnnotationEffects {
             this.annotationService
               .getAllReplies(annotation)
               .pipe(
-                map((replies) => ({ ...annotation, replies: replies } as Annotation))
+                map(
+                  (replies) =>
+                    ({ ...annotation, replies: replies } as Annotation)
+                )
               )
           )
         ).pipe(
@@ -98,22 +101,54 @@ export class AnnotationEffects {
   );
 
   postReply$ = createEffect(() =>
-  this.actions$.pipe(
-    ofType(AnnotationActions.postReply),
-    mergeMap(({ annotation, reply }) =>
-      this.annotationService.postReply(annotation, reply).pipe(
-        mergeMap(() => [
-          AnnotationActions.postReplySuccess(),
-          AnnotationActions.loadAnnotations(),
-        ]),
-        catchError((error) =>
-          of(AnnotationActions.postReplyFail({ error }))
+    this.actions$.pipe(
+      ofType(AnnotationActions.postReply),
+      mergeMap(({ annotation, reply }) =>
+        this.annotationService.postReply(annotation, reply).pipe(
+          mergeMap(() => [
+            AnnotationActions.postReplySuccess(),
+            AnnotationActions.loadAnnotations(),
+          ]),
+          catchError((error) => of(AnnotationActions.postReplyFail({ error })))
         )
       )
     )
-  )
-);
-  
+  );
+
+  likeAnnotation$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AnnotationActions.likeAnnotation),
+      mergeMap(({ annotation }) =>
+        this.annotationService.likeAnnotation(annotation).pipe(
+          mergeMap(() => [
+            AnnotationActions.likeAnnotationSuccess(),
+            AnnotationActions.loadAnnotations(),
+          ]),
+          catchError((error) =>
+            of(AnnotationActions.likeAnnotationFail({ error }))
+          )
+        )
+      )
+    )
+  );
+
+  dislikeAnnotation$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AnnotationActions.dislikeAnnotation),
+      mergeMap(({ annotation }) =>
+        this.annotationService.dislikeAnnotation(annotation).pipe(
+          mergeMap(() => [
+            AnnotationActions.dislikeAnnotationSuccess(),
+            AnnotationActions.loadAnnotations(),
+          ]),
+          catchError((error) =>
+            of(AnnotationActions.dislikeAnnotationFail({ error }))
+          )
+        )
+      )
+    )
+  );
+
   constructor(
     private actions$: Actions,
     private annotationService: AnnotationService,

@@ -135,3 +135,31 @@ export const postReplyFail = createAction(
     '[Annotation] Post Reply Fail',
     props<{ error: string }>()
 );
+
+export const likeAnnotation = createAction(
+    '[Annotation] Like Annotation Action',
+    props<{ annotation: Annotation}>()
+);
+
+export const likeAnnotationSuccess = createAction(
+    '[Annotation] Like Annotation Success'
+);
+
+export const likeAnnotationFail = createAction(
+    '[Annotation] Like Annotation Fail',
+    props<{ error: string }>()
+);
+
+export const dislikeAnnotation = createAction(
+    '[Annotation] Dislike Annotation Action',
+    props<{ annotation: Annotation}>()
+);
+
+export const dislikeAnnotationSuccess = createAction(
+    '[Annotation] Dislike Annotation Success'
+);
+
+export const dislikeAnnotationFail = createAction(
+    '[Annotation] Dislike Annotation Fail',
+    props<{ error: string }>()
+);

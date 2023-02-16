@@ -28,4 +28,12 @@ export class AnnotationService {
   getAllReplies(annotation: Annotation): Observable<Reply[]>{
     return this.http.get<Reply[]>(`${environment.apiUrl}/courses/${annotation.courseId}/annotations/${annotation._id}/replies`);
   }
+
+  likeAnnotation(annotation: Annotation): Observable<any>{
+    return this.http.post<any>(`${environment.apiUrl}/courses/${annotation.courseId}/annotations/${annotation._id}/like`, {});
+  }
+
+  dislikeAnnotation(annotation: Annotation): Observable<any>{
+    return this.http.post<any>(`${environment.apiUrl}/courses/${annotation.courseId}/annotations/${annotation._id}/dislike`, {});
+  }
 }

@@ -18,6 +18,8 @@ export class PdfCommentItemComponent implements OnInit, OnChanges {
   annotationInitials?: string;
   annotationElapsedTime?: string;
   toggleReplyBox: boolean = false;
+  likesCount: number;
+  dislikesCount: number;
 
   constructor(private store: Store<State>) {}
 
@@ -25,6 +27,8 @@ export class PdfCommentItemComponent implements OnInit, OnChanges {
     if('annotation' in changes){
       this.annotationInitials = getInitials(this.annotation?.author?.name);
       this.annotationElapsedTime = computeElapsedTime(this.annotation?.createdAt)
+      this.likesCount = this.annotation.likes.length;
+      this.dislikesCount = this.annotation.dislikes.length;
     }
   }
 
@@ -42,5 +46,13 @@ export class PdfCommentItemComponent implements OnInit, OnChanges {
     this.reply = null;
     this.replyContent = null
     this.toggleComment();
+  }
+
+  likeAnnotation(){
+    this.store.dispatch(AnnotationActions.likeAnnotation({annotation: this.annotation}));
+  }
+
+  dislikeAnnotation(){
+    this.store.dispatch(AnnotationActions.dislikeAnnotation({annotation: this.annotation}));
   }
 }
