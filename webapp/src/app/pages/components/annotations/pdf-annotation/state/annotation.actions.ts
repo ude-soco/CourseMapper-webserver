@@ -163,3 +163,36 @@ export const dislikeAnnotationFail = createAction(
     '[Annotation] Dislike Annotation Fail',
     props<{ error: string }>()
 );
+
+export const likeReply = createAction(
+    '[Annotation] Like Reply Action',
+    props<{ reply: Reply}>()
+);
+
+export const likeReplySuccess = createAction(
+    '[Annotation] Like Reply Success'
+);
+
+export const likeReplyFail = createAction(
+    '[Annotation] Like Reply Fail',
+    props<{ error: string }>()
+);
+
+export const dislikeReply = createAction(
+    '[Annotation] Dislike Reply Action',
+    props<{ reply: Reply}>()
+);
+
+export const dislikeReplySuccess = createAction(
+    '[Annotation] Dislike Reply Success'
+);
+
+export const dislikeReplyFail = createAction(
+    '[Annotation] Dislike Reply Fail',
+    props<{ error: string }>()
+);
+
+export const setHideRepliesButton = createAction(
+    '[Annotation] Set Hide Replies Button',
+    props<{ hideRepliesButton: boolean }>()
+);

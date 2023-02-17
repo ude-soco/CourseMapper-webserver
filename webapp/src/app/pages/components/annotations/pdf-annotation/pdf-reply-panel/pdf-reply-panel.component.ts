@@ -1,6 +1,10 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
 import { Annotation } from 'src/app/models/Annotations';
 import { Reply } from 'src/app/models/Reply';
+import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions'
+import { State } from '../state/annotation.reducer';
 
 @Component({
   selector: 'app-pdf-reply-panel',
@@ -12,7 +16,9 @@ export class PdfReplyPanelComponent implements OnInit, OnChanges  {
   repliesCount: number;
   shownRepliesCount: number = 1;
   hideRepliesButton: boolean = false;
-  constructor() {}
+  constructor(private store: Store<State>) {
+
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if('annotation' in changes){
@@ -29,6 +35,6 @@ export class PdfReplyPanelComponent implements OnInit, OnChanges  {
 
   hideReplies(){
     this.shownRepliesCount = 1;
-    this.hideRepliesButton = false;
+    this.hideRepliesButton = false
   }
 }

@@ -149,6 +149,40 @@ export class AnnotationEffects {
     )
   );
 
+  likeReply$ = createEffect(() =>
+  this.actions$.pipe(
+    ofType(AnnotationActions.likeReply),
+    mergeMap(({ reply }) =>
+      this.annotationService.likeReply(reply).pipe(
+        mergeMap(() => [
+          AnnotationActions.likeReplySuccess(),
+          AnnotationActions.loadAnnotations(),
+        ]),
+        catchError((error) =>
+          of(AnnotationActions.likeReplyFail({ error }))
+        )
+      )
+    )
+  )
+);
+
+dislikeReply$ = createEffect(() =>
+  this.actions$.pipe(
+    ofType(AnnotationActions.dislikeReply),
+    mergeMap(({ reply }) =>
+      this.annotationService.dislikeReply(reply).pipe(
+        mergeMap(() => [
+          AnnotationActions.dislikeReplySuccess(),
+          AnnotationActions.loadAnnotations(),
+        ]),
+        catchError((error) =>
+          of(AnnotationActions.dislikeReplyFail({ error }))
+        )
+      )
+    )
+  )
+);
+
   constructor(
     private actions$: Actions,
     private annotationService: AnnotationService,

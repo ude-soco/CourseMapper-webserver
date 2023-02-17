@@ -36,4 +36,12 @@ export class AnnotationService {
   dislikeAnnotation(annotation: Annotation): Observable<any>{
     return this.http.post<any>(`${environment.apiUrl}/courses/${annotation.courseId}/annotations/${annotation._id}/dislike`, {});
   }
+
+  likeReply(reply: Reply): Observable<any>{
+    return this.http.post<any>(`${environment.apiUrl}/courses/${reply.courseId}/replies/${reply._id}/like`, {});
+  }
+
+  dislikeReply(reply: Reply): Observable<any>{
+    return this.http.post<any>(`${environment.apiUrl}/courses/${reply.courseId}/replies/${reply._id}/dislike`, {});
+  }
 }
