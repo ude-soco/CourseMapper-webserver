@@ -22,4 +22,34 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isAdmin],
     controller.adminBoard
   );
+
+  app.post(
+    "/user/indicator",
+    [authJwt.verifyToken],
+    controller.newIndicator
+  );
+
+  app.delete(
+    '/user/indicator/:indicatorId',
+    [authJwt.verifyToken],
+    controller.deleteIndicator
+  );
+
+  app.get(
+    '/user/indicators', 
+    [authJwt.verifyToken],
+    controller.getIndicators
+  );
+
+  app.put(
+    '/user/indicator/:indicatorId/resize/:width/:height', 
+    [authJwt.verifyToken],
+    controller.resizeIndicator
+  );
+
+  app.put(
+    '/user/reorder/:newIndex/:oldIndex', 
+    [authJwt.verifyToken],
+    controller.reorderIndicators
+  );
 };

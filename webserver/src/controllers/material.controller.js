@@ -2,6 +2,8 @@ const ObjectId = require("mongoose").Types.ObjectId;
 const db = require("../models");
 const Channel = db.channel;
 const Material = db.material;
+const User = db.user;
+
 
 /**
  * @function getMaterial
@@ -10,9 +12,22 @@ const Material = db.material;
  * @param {string} req.params.materialId The id of the material
  * @param {string} req.params.courseId The id of the course
  */
-export const getMaterial = async (req, res) => {
+export const getMaterial = async (req, res, next) => {
   const materialId = req.params.materialId;
   const courseId = req.params.courseId;
+  const userId = req.userId;
+
+  let user;
+  try {
+    user = await User.findOne({_id: userId});
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
 
   let foundMaterial;
   try {
@@ -32,7 +47,13 @@ export const getMaterial = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  return res.status(200).send(foundMaterial);
+
+  req.locals = {
+    response: foundMaterial,
+    material: foundMaterial,
+    user: user
+  }
+  return next();
 };
 
 /**
@@ -47,13 +68,26 @@ export const getMaterial = async (req, res) => {
  * @param {string} req.body.description The description of the material, e.g., Lecture material of Angular for course Advanced Web Technologies
  * @param {string} req.userId The owner of the material
  */
-export const newMaterial = async (req, res) => {
+export const newMaterial = async (req, res, next) => {
   const courseId = req.params.courseId;
   const channelId = req.params.channelId;
   const materialType = req.body.type;
   const materialName = req.body.name;
   const materialUrl = req.body.url;
   const materialDesc = req.body.description;
+  const userId = req.userId;
+
+  let user
+  try {
+    user = await User.findOne({_id: userId});
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
 
   let foundChannel;
   try {
@@ -124,9 +158,22 @@ export const newMaterial = async (req, res) => {
  * @param {string} req.params.courseId The id of the course
  * @param {string} req.params.materialId The id of the material
  */
-export const deleteMaterial = async (req, res) => {
+export const deleteMaterial = async (req, res, next) => {
   let materialId = req.params.materialId;
   let courseId = req.params.courseId;
+  const userId = req.userId;
+
+  let user
+  try {
+    user = await User.findOne({_id: userId});
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
 
   let foundMaterial;
   try {
@@ -168,9 +215,15 @@ export const deleteMaterial = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  return res.send({
-    success: `Material '${foundMaterial.name}' successfully deleted!`,
-  });
+
+  req.locals = {
+    response: {
+      success: `Material '${foundMaterial.name}' successfully deleted!`,
+    },
+    material: foundMaterial,
+    user: user
+  }
+  return next();
 };
 
 /**
@@ -184,13 +237,26 @@ export const deleteMaterial = async (req, res) => {
  * @param {string} req.body.description The new description of the material
  * @param {string} req.body.url The new url of the material
  */
-export const editMaterial = async (req, res) => {
+export const editMaterial = async (req, res, next) => {
   const courseId = req.params.courseId;
   const materialId = req.params.materialId;
   const materialName = req.body.name;
   const materialDesc = req.body.description;
   const materialUrl = req.body.url;
   const materialType = req.body.type;
+  const userId = req.userId;
+
+  let user
+  try {
+    user = await User.findOne({_id: userId});
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
 
   if (!Boolean(materialName)) {
     return res.status(404).send({
@@ -217,6 +283,9 @@ export const editMaterial = async (req, res) => {
       .send({ error: `Error while searching for material` });
   }
 
+  req.locals = {}
+  req.locals.oldMaterial = JSON.parse(JSON.stringify(foundMaterial));
+
   foundMaterial.name = materialName;
   foundMaterial.url = materialUrl;
   foundMaterial.type = materialType;
@@ -229,9 +298,13 @@ export const editMaterial = async (req, res) => {
     return res.status(500).send({ error: `Error saving material!` });
   }
 
-  return res.status(200).send({
+  req.locals.response = {
     id: foundMaterial._id,
     courseId: courseId,
     success: `Material '${materialName}' has been updated successfully!`,
-  });
+  }
+  req.locals.newMaterial = foundMaterial;
+  req.locals.user = user;
+
+  return next();
 };

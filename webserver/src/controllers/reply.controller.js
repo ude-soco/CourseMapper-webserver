@@ -51,10 +51,23 @@ export const getReplies = async (req, res) => {
  * @param {string} req.body.content The content of the reply
  * @param {string} req.userId The author of the reply. Anyone can create a reply
  */
-export const newReply = async (req, res) => {
+export const newReply = async (req, res, next) => {
   const courseId = req.params.courseId;
   const annotationId = req.params.annotationId;
   const replyContent = req.body.content;
+  const userId = req.userId;
+
+  let user
+  try {
+    user = await User.findOne({_id: userId});
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
 
   let foundAnnotation;
   try {
@@ -90,9 +103,9 @@ export const newReply = async (req, res) => {
     },
     courseId: foundAnnotation.courseId,
     topicId: foundAnnotation.topicId,
-    channelId: foundAnnotation._id,
-    materialId: foundAnnotation._id,
-    annotationId: annotationId,
+    channelId: foundAnnotation.channelId,
+    materialId: foundAnnotation.materialId,
+    annotationId: foundAnnotation._id,
     createdAt: Date.now(),
     updatedAt: Date.now(),
   });
@@ -138,7 +151,14 @@ export const newReply = async (req, res) => {
     }
   }
 
-  return res.status(200).send({ id: newReply._id, success: `Reply added!` });
+  req.locals = {
+    response:{ id: newReply._id, success: `Reply added!` },
+    user: user,
+    annotation:foundAnnotation,
+    reply:newReply
+  }
+
+  return next();
 };
 
 /**
@@ -149,9 +169,23 @@ export const newReply = async (req, res) => {
  * @param {string} req.params.replyId The id of the reply
  * @param {string} req.userId The id of the user. Only author/admin can delete
  */
-export const deleteReply = async (req, res) => {
+export const deleteReply = async (req, res, next) => {
   const courseId = req.params.courseId;
   const replyId = req.params.replyId;
+  const userId = req.userId;
+
+  let user
+  try {
+    user = await User.findOne({_id: userId});
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
+
   let foundReply;
   try {
     foundReply = await Reply.findOne({ _id: ObjectId(replyId) });
@@ -198,7 +232,13 @@ export const deleteReply = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  return res.status(200).send({ success: "Reply successfully deleted" });
+
+  req.locals = {
+    response: { success: "Reply successfully deleted" },
+    user: user,
+    reply: foundReply
+  }
+  return next();
 };
 
 /**
@@ -210,10 +250,23 @@ export const deleteReply = async (req, res) => {
  * @param {string} req.body.content The content of the reply
  * @param {string} req.userId The id of the user. Only author of the reply can edit
  */
-export const editReply = async (req, res) => {
+export const editReply = async (req, res, next) => {
   const courseId = req.params.courseId;
   const replyId = req.params.replyId;
   const replyContent = req.body.content;
+  const userId = req.userId;
+
+  let user
+  try {
+    user = await User.findOne({_id: userId});
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
 
   let foundReply;
   try {
@@ -235,6 +288,10 @@ export const editReply = async (req, res) => {
     }
   } catch (err) {
     return res.status(500).send({ error: err });
+  }
+
+  req.locals = {
+    oldReply: JSON.parse(JSON.stringify(foundReply))
   }
 
   foundReply.content = replyContent;
@@ -278,7 +335,11 @@ export const editReply = async (req, res) => {
     }
   }
 
-  return res.status(200).send({ success: "Reply successfully updated" });
+  req.locals.response = { success: "Reply successfully updated" }
+  req.locals.newReply = foundReply;
+  req.locals.user = user;
+
+  return next();
 };
 
 /**
@@ -289,9 +350,22 @@ export const editReply = async (req, res) => {
  * @param {string} req.params.replyId The id of the reply
  * @param {string} req.userId The id of the user
  */
-export const likeReply = async (req, res) => {
+export const likeReply = async (req, res, next) => {
   const courseId = req.params.courseId;
   const replyId = req.params.replyId;
+  const userId = req.userId;
+
+  let user
+  try {
+    user = await User.findOne({_id: userId});
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
 
   let foundReply;
   try {
@@ -310,6 +384,12 @@ export const likeReply = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
+
+  req.locals = {
+    reply: foundReply,
+    user: user
+  }
+
   if (foundReply.likes.includes(ObjectId(req.userId))) {
     foundReply.likes = foundReply.likes.filter(
       (user) => user.valueOf() !== req.userId
@@ -321,10 +401,15 @@ export const likeReply = async (req, res) => {
       return res.status(500).send({ error: err });
     }
     let countLikes = savedReply.likes.length;
-    return res.status(200).send({
+
+    req.locals.response = {
       count: countLikes,
       success: "Reply successfully unliked!",
-    });
+    }
+    req.locals.like = false;
+
+    return next();
+
   } else if (foundReply.dislikes.includes(ObjectId(req.userId))) {
     return res
       .status(404)
@@ -340,10 +425,13 @@ export const likeReply = async (req, res) => {
 
     let countLikes = savedReply.likes.length;
 
-    return res.status(200).send({
+    req.locals.response = {
       count: countLikes,
       success: "Reply successfully liked!",
-    });
+    }
+    req.locals.like = true;
+
+    return next();
   }
 };
 
@@ -355,9 +443,23 @@ export const likeReply = async (req, res) => {
  * @param {string} req.params.replyId The id of the reply
  * @param {string} req.userId The id of the user. Only author of the annotation can edit
  */
-export const dislikeReply = async (req, res) => {
+export const dislikeReply = async (req, res, next) => {
   const courseId = req.params.courseId;
   const replyId = req.params.replyId;
+  const userId = req.userId;
+
+  let user
+  try {
+    user = await User.findOne({_id: userId});
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
+
   let foundReply;
   try {
     foundReply = await Reply.findOne({ _id: ObjectId(replyId) });
@@ -374,6 +476,12 @@ export const dislikeReply = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
+
+  req.locals = {
+    user: user,
+    reply: foundReply
+  }
+
   if (foundReply.dislikes.includes(ObjectId(req.userId))) {
     foundReply.dislikes = foundReply.dislikes.filter(
       (user) => user.valueOf() !== req.userId
@@ -385,10 +493,15 @@ export const dislikeReply = async (req, res) => {
       return res.status(500).send({ error: err });
     }
     let countDislikes = savedReply.dislikes.length;
-    return res.status(200).send({
+
+    req.locals.response = {
       count: countDislikes,
       success: "Reply successfully un-disliked!",
-    });
+    }
+    req.locals.dislike = false;
+
+    return next();
+
   } else if (foundReply.likes.includes(ObjectId(req.userId))) {
     return res
       .status(404)
@@ -402,9 +515,13 @@ export const dislikeReply = async (req, res) => {
       return res.status(500).send({ error: err });
     }
     let countDislikes = savedReply.dislikes.length;
-    return res.status(200).send({
+
+    req.locals.response = {
       count: countDislikes,
       success: "Reply successfully disliked!",
-    });
+    }
+    req.locals.dislike = true;
+
+    return next();
   }
 };

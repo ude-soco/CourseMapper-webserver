@@ -4,6 +4,7 @@ const Channel = db.channel;
 const Course = db.course;
 const Material = db.material;
 const Topic = db.topic;
+const User = db.user;
 
 /**
  * @function getChannel
@@ -12,9 +13,22 @@ const Topic = db.topic;
  * @param {string} req.params.courseId The id of the course
  * @param {string} req.params.channelId The id of the channel
  */
-export const getChannel = async (req, res) => {
+export const getChannel = async (req, res, next) => {
   const channelId = req.params.channelId;
   const courseId = req.params.courseId;
+  const userId = req.userId;
+
+  let user
+  try {
+    user = await User.findOne({_id: userId});
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
 
   let foundChannel;
   try {
@@ -34,7 +48,13 @@ export const getChannel = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ message: err });
   }
-  return res.status(200).send(foundChannel);
+
+  req.locals = {
+    response: foundChannel,
+    channel: foundChannel,
+    user: user
+  }
+  return next();
 };
 
 /**
@@ -46,11 +66,23 @@ export const getChannel = async (req, res) => {
  * @param {string} req.body.description The description of the channel, e.g., Teaching about React
  * @param {string} req.userId The owner of the channel
  */
-export const newChannel = async (req, res) => {
+export const newChannel = async (req, res, next) => {
   const topicId = req.params.topicId;
   const channelName = req.body.name;
   const channelDesc = req.body.description;
   const userId = req.userId;
+
+  let user
+  try {
+    user = await User.findOne({_id: userId});
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
 
   let foundTopic;
   try {
@@ -103,10 +135,17 @@ export const newChannel = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  return res.send({
-    savedChannel: savedChannel,
-    success: `New channel '${savedChannel.name}' added!`,
-  });
+
+  req.locals = {
+    response : {
+      id: savedChannel._id,
+      success: `New channel '${savedChannel.name}' added!`,
+    },
+    channel: savedChannel,
+    user: user
+  }
+
+  return next();
 };
 
 /**
@@ -116,9 +155,22 @@ export const newChannel = async (req, res) => {
  * @param {string} req.params.courseId The id of the course
  * @param {string} req.params.channelId The id of the channel
  */
-export const deleteChannel = async (req, res) => {
+export const deleteChannel = async (req, res, next) => {
   const channelId = req.params.channelId;
   const courseId = req.params.courseId;
+  const userId = req.userId;
+
+  let user
+  try {
+    user = await User.findOne({_id: userId});
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
 
   let foundChannel;
   try {
@@ -166,9 +218,16 @@ export const deleteChannel = async (req, res) => {
   } catch (err) {
     res.status(500).send({ error: err });
   }
-  return res.send({
-    success: `Channel '${foundChannel.name}' successfully deleted!`,
-  });
+
+  req.locals = {
+    response : {
+      success: `Channel '${foundChannel.name}' successfully deleted!`,
+    },
+    user: user,
+    channel: foundChannel
+  }
+
+  return next();
 };
 
 /**
@@ -180,11 +239,25 @@ export const deleteChannel = async (req, res) => {
  * @param {string} req.body.name The new name of the channel
  * @param {string} req.body.description The new description of the channel
  */
-export const editChannel = async (req, res) => {
+export const editChannel = async (req, res, next) => {
   const channelId = req.params.channelId;
   const courseId = req.params.courseId;
   const channelName = req.body.name;
   const channelDesc = req.body.description;
+  const userId = req.userId;
+
+  let user
+  try {
+    user = await User.findOne({_id: userId});
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
+
 
   if (!Boolean(channelName)) {
     return res.status(404).send({
@@ -207,6 +280,10 @@ export const editChannel = async (req, res) => {
         error: `Channel doesn't belong to course with id ${courseId}!`,
       });
     }
+
+    req.locals = {}
+    req.locals.oldChannel = JSON.parse(JSON.stringify(foundChannel));
+
   } catch (err) {
     return res.status(500).send({ message: err });
   }
@@ -221,9 +298,13 @@ export const editChannel = async (req, res) => {
     return res.status(500).send({ error: err });
   }
 
-  return res.status(200).send({
+  req.locals.response = {
     id: foundChannel._id,
     courseId: courseId,
     success: `Channel '${channelName}' has been updated successfully!`,
-  });
+  }
+  req.locals.newChannel = foundChannel;
+  req.locals.user = user;
+  
+  return next();
 };

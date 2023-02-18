@@ -1,5 +1,6 @@
 const { authJwt } = require("../middlewares");
 const controller = require("../controllers/course.controller");
+const logger = require('../xAPILogger/logger/course.logger')
 // const controller2 = require("../controllers/user.controller");
 
 module.exports = function (app) {
@@ -26,14 +27,16 @@ module.exports = function (app) {
   app.post(
     "/course",
     [authJwt.verifyToken],
-    controller.newCourse
+    controller.newCourse,
+    logger.newCourse
   );
 
   // Enrol in a course
   app.post(
     "/enrol/:courseId",
     [authJwt.verifyToken],
-    controller.enrolCourse
+    controller.enrolCourse,
+    logger.enrolCourse
   )
 
   // Withdraw from a course
@@ -41,7 +44,8 @@ module.exports = function (app) {
   app.post(
     "/withdraw/:courseId",
     [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.withdrawCourse
+    controller.withdrawCourse,
+    logger.withdrawCourse
   )
 
   // Delete a course
@@ -49,7 +53,8 @@ module.exports = function (app) {
   app.delete(
     "/courses/:courseId",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.deleteCourse
+    controller.deleteCourse,
+    logger.deleteCourse
     // controller2.moderatorBoard
   );
 
@@ -58,6 +63,37 @@ module.exports = function (app) {
   app.put(
     "/courses/:courseId",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.editCourse
+    controller.editCourse,
+    logger.editCourse
+  );
+
+  app.post(
+    "/courses/:courseId/indicator",
+    [authJwt.verifyToken, authJwt.isModerator],
+    controller.newIndicator
+  );
+
+  app.delete(
+    '/courses/:courseId/indicator/:indicatorId',
+    [authJwt.verifyToken, authJwt.isModerator],
+    controller.deleteIndicator
+  );
+
+  app.get(
+    '/courses/:courseId/indicators', 
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.getIndicators
+  );
+
+  app.put(
+    '/courses/:courseId/indicator/:indicatorId/resize/:width/:height', 
+    [authJwt.verifyToken, authJwt.isModerator],
+    controller.resizeIndicator
+  );
+
+  app.put(
+    '/courses/:courseId/reorder/:newIndex/:oldIndex', 
+    [authJwt.verifyToken, authJwt.isModerator],
+    controller.reorderIndicators
   );
 };

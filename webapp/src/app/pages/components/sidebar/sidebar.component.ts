@@ -62,8 +62,6 @@ export class SidebarComponent implements OnInit {
       this.courseService.getSelectedCourse()._id.toString() !==
       selectedCourse._id.toString()
     ) {
-      console.log('rrrr');
-      console.log(selectedCourse);
       let course = this.courses.find(
         (course: Course) => course === selectedCourse
       )!;

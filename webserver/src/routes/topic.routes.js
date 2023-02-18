@@ -1,5 +1,6 @@
 const { authJwt } = require("../middlewares");
 const controller = require("../controllers/topic.controller");
+const logger = require("../xAPILogger/logger/topic.logger");
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -12,7 +13,8 @@ module.exports = function (app) {
   app.get(
     "/courses/:courseId/topics/:topicId",
     [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.getTopic
+    controller.getTopic,
+    logger.getTopic
   );
 
   // Create a new topic
@@ -20,7 +22,8 @@ module.exports = function (app) {
   app.post(
     "/courses/:courseId/topic",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.newTopic
+    controller.newTopic,
+    logger.newTopic
   );
 
   // Delete a topic
@@ -28,7 +31,8 @@ module.exports = function (app) {
   app.delete(
     "/courses/:courseId/topics/:topicId",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.deleteTopic
+    controller.deleteTopic,
+    logger.deleteTopic
   );
 
   // Edit a topic
@@ -36,6 +40,7 @@ module.exports = function (app) {
   app.put(
     "/courses/:courseId/topics/:topicId",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.editTopic
+    controller.editTopic,
+    logger.editTopic
   );
 };

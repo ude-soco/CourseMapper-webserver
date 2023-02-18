@@ -33,3 +33,233 @@ export const moderatorBoard = (req, res) => {
 export const adminBoard = (req, res) => {
   res.status(200).send("Admin content");
 };
+
+
+/**
+ * @function newIndicator
+ * add new indicator controller
+ *
+ * @param {string} req.body.src The sourse of the iframe
+ * @param {string} req.body.width The width of the iframe
+ * @param {string} req.body.height The height of the iframe
+ * @param {string} req.userId The id of the user. 
+ */
+ export const newIndicator = async (req, res, next) => {
+  const userId = req.userId;
+
+  let user
+  try {
+    user = await User.findOne({_id: userId});
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
+
+  const indicator = {
+    _id: ObjectId(),
+    src: req.body.src,
+    width: req.body.width,
+    height: req.body.height,
+    frameborder: req.body.frameborder,
+  };
+
+  user.indicators.push(indicator);
+
+  try {
+    user.save();
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  return res.status(200).send({
+    success: `indicator with id = '${indicator._id}' has been added successfully!`,
+    indicator: indicator,
+  });
+};
+
+/**
+ * @function deleteIndicator
+ * delete indicator controller
+ *
+ * @param {string} req.params.indicatorId The id of the indicator
+ * @param {string} req.userId The id of the user. Only owner of the indicator can delete
+ */
+export const deleteIndicator = async (req, res, next) => {
+  const indicatorId = req.params.indicatorId;
+  const userId = req.userId;
+
+  let user
+  try {
+    user = await User.findOne({ "indicators._id": indicatorId });
+    if (!user) {
+      return res.status(404).send({
+        error: `indicator with id ${indicatorId} doesn't exist!`,
+      });
+    }
+
+    if (user._id.toString() !== userId) {
+      return res.status(404).send({
+        error: `indicator with id ${indicatorId} doesn't belong to user with id ${userId}!`,
+      });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
+
+
+
+  user.indicators = user.indicators.filter(
+    (indicator) => indicator._id.toString() !== indicatorId
+  );
+
+  try {
+    user.save();
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  return res.status(200).send({
+    success: `indicator with id = '${indicatorId}' has been deleted successfully!`,
+  });
+};
+
+
+/**
+ * @function getIndicators
+ * get indicators controller
+ *
+ * @param {string} req.userId The id of the user
+ */
+export const getIndicators = async (req, res, next) => {
+  const userId = req.userId;
+
+  let user
+  try {
+    user = await User.findOne({_id: userId});
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
+
+
+  const response = user.indicators? user.indicators : [];
+
+  return res.status(200).send(response);
+};
+
+
+
+/**
+ * @function resizeIndicator
+ * resize indicator controller
+ *
+ * @param {string} req.params.indicatorId The id of the indicator
+ * @param {string} req.params.width The width of the indicator
+ * @param {string} req.params.height The height of the indicator
+ * @param {string} req.userId The id of the user
+ */
+export const resizeIndicator = async (req, res, next) => {
+  const indicatorId = req.params.indicatorId;
+  const width = req.params.width;
+  const height = req.params.height;
+  const userId = req.userId;
+
+  let user
+  try {
+    user = await User.findOne({ "indicators._id": indicatorId });
+    if (!user) {
+      return res.status(404).send({
+        error: `indicator with id ${indicatorId} doesn't exist!`,
+      });
+    }
+
+    if (user._id.toString() !== userId) {
+      return res.status(404).send({
+        error: `indicator with id ${indicatorId} doesn't belong to user with id ${userId}!`,
+      });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
+
+
+  user.indicators.forEach(indicator => {
+    if (indicator._id.toString() === indicatorId.toString()){
+      indicator.width = width;
+      indicator.height = height;
+    }
+  });
+
+  try {
+    user.save();
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  return res.status(200).send({
+    success: `indicator with id = '${indicatorId}' has been updated successfully!`,
+  });
+};
+
+
+
+/**
+ * @function reorderIndicators
+ * reorder indicators controller
+ *
+ * @param {string} req.params.newIndex The newIndex of the reordered indicator
+ * @param {string} req.params.oldIndex The oldIndex of the reordered indicator
+ * @param {string} req.userId The id of the user
+ */
+export const reorderIndicators = async (req, res, next) => {
+  const newIndex = parseInt(req.params.newIndex);
+  const oldIndex = parseInt(req.params.oldIndex);
+  const userId = req.userId;
+
+  let user
+  try {
+    user = await User.findOne({_id: userId});
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
+
+  let indicator = user.indicators[oldIndex];
+
+  if (oldIndex < newIndex) {
+    for (let i = oldIndex; i < newIndex; i++) {
+      user.indicators[i] = user.indicators[i + 1];
+    }
+  } else {
+    for (let i = oldIndex; i > newIndex; i--) {
+      user.indicators[i] = user.indicators[i - 1];
+    }
+  }
+
+  user.indicators[newIndex] = indicator;
+
+  try {
+    user.save();
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  return res.status(200).send({
+    success: `indicators have been updated successfully!`,
+    indicators: user.indicators
+  });
+};

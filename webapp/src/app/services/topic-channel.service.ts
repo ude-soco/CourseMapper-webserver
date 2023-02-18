@@ -262,8 +262,6 @@ export class TopicChannelService {
     /*if (this.getSelectedCourse()._id && course._id){      
       this.topicChannelService.updateTopics(course._id);
     }*/
-    console.log(" new rawaa")
-    console.log(channel) 
     this.selectedChannel = channel;    
    
       //2

@@ -15,6 +15,11 @@ import { CoursesComponent } from './pages/courses/courses.component';
 import { ButtonComponent } from './components/button/button.component';
 import { IconbuttonComponent } from './components/iconbutton/iconbutton.component';
 import { AvatarComponent } from './components/avatar/avatar.component';
+import { EditorComponent } from './pages/components/editor/editor.component';
+import {InputTextareaModule} from 'primeng/inputtextarea';
+import { DashboardComponent } from './pages/components/dashboard/dashboard.component';
+import { ByPassUrlSanitizationPipe } from './pipes/by-pass-url-sanitization.pipe';
+import { DragulaModule } from 'ng2-dragula';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -51,46 +56,51 @@ import { appReducer } from './state/app.reducer';
 registerLocaleData(en);
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    SidebarComponent,
-    NavbarComponent,
-    ChannelbarComponent,
-    CoursesComponent,
-    AddCourseComponent,
-    AddTopicComponent,
-    AddChannelComponent,
-    TopicDropdownComponent,
-    RegistrationComponent,
-    LoginComponent,
-    HomeComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    PrimengModule,
-    HttpClientModule,
-    DialogModule,
-    ButtonModule,
-    BrowserAnimationsModule,
-    FormsModule,
-    InputTextModule,
-    ReactiveFormsModule,
-    MenuModule,
-    ToastModule,
-    RippleModule,
-    ConfirmDialogModule,
-    MatInputModule,
-    MatTabsModule,
-    StoreModule.forRoot({}, {}),
-    AnnotationModule,
-    MaterialsModule,
-    EffectsModule.forRoot([]),
-    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
-    SharedComponentsModule,
-    StoreModule.forFeature('general', appReducer),
-  ],
-  providers: [{ provide: NZ_I18N, useValue: en_US }, httpInterceptorProviders],
-  bootstrap: [AppComponent],
+    declarations: [
+        AppComponent,
+        SidebarComponent,
+        NavbarComponent,
+        ChannelbarComponent,
+        CoursesComponent,
+        AddCourseComponent,
+        AddTopicComponent,
+        AddChannelComponent,
+        TopicDropdownComponent,
+        RegistrationComponent,
+        LoginComponent,
+        HomeComponent,
+        EditorComponent,
+        DashboardComponent,
+        ByPassUrlSanitizationPipe,
+    ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        PrimengModule,
+        HttpClientModule,
+        DialogModule,
+        ButtonModule,
+        BrowserAnimationsModule,
+        FormsModule,
+        InputTextModule,
+        ReactiveFormsModule,
+        MenuModule,
+        ToastModule,
+        RippleModule,
+        ConfirmDialogModule,
+        MatInputModule,
+        MatTabsModule,
+        StoreModule.forRoot({}, {}),
+        AnnotationModule,
+        MaterialsModule,
+        EffectsModule.forRoot([]),
+        StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
+        SharedComponentsModule,
+        StoreModule.forFeature('general', appReducer),
+        InputTextareaModule,
+        DragulaModule.forRoot(),
+    ],
+    providers: [{ provide: NZ_I18N, useValue: en_US }, httpInterceptorProviders],
+    bootstrap: [AppComponent],
 })
 export class AppModule {}
