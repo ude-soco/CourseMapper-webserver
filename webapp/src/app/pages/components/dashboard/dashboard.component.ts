@@ -1,6 +1,6 @@
 import { CourseService } from 'src/app/services/course.service';
 import { IndicatorService } from './../../../services/indicator.service';
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { iframeValidator } from '../../../validators/iframe.validators';
 import { parse } from 'angular-html-parser';
@@ -16,8 +16,8 @@ import {ConfirmationService} from 'primeng/api';
   styleUrls: ['./dashboard.component.css'],
   providers: [MessageService, ConfirmationService],
 })
-export class DashboardComponent implements OnInit {
-  indicatorForm: FormGroup;
+export class DashboardComponent implements OnInit, OnDestroy {
+  indicatorForm?: FormGroup;
   indicators: Indicator[] = [];
   selectedCourse: Course;
   private iframeTextarea: ElementRef;
@@ -64,6 +64,10 @@ export class DashboardComponent implements OnInit {
         indicatorIframe: new FormControl(null, iframeValidator()),
       });
     });
+  }
+
+  ngOnDestroy() {
+    this.dragulaService.destroy("INDICATORS");
   }
 
   getIndicators() {

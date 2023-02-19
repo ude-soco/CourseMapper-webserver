@@ -2,6 +2,7 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnChanges,
   OnInit,
   Output,
   SimpleChanges,
@@ -14,7 +15,7 @@ import { FormControl } from '@angular/forms';
 import { Material } from 'src/app/models/Material';
 import { PdfviewService } from 'src/app/services/pdfview.service';
 import { MaterilasService } from 'src/app/services/materials.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import {
   getChannelSelected,
@@ -23,13 +24,13 @@ import {
 import * as MaterialActions from 'src/app/pages/components/materils/state/materials.actions';
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
 import { Observable } from 'rxjs';
-
+import { map } from 'rxjs/operators';
 @Component({
   selector: 'app-material',
   templateUrl: './material.component.html',
   styleUrls: ['./material.component.css'],
 })
-export class MaterialComponent implements OnInit {
+export class MaterialComponent implements OnInit{
   @Output() public channelEmitted = new EventEmitter<any>();
   //@Input() public materialEmiited :any ;
   selectedChannel: Channel;
@@ -58,10 +59,13 @@ export class MaterialComponent implements OnInit {
     private pdfViewService: PdfviewService,
     private materialService: MaterilasService,
     private router: Router,
-    private store: Store<State>
+    private store: Store<State>,
+    private route: ActivatedRoute,
   ) {
+
     this.channelSelected$ = store.select(getChannelSelected);
   }
+
 
   // ngOnChanges() {
   //   console.log("noew ng change working")
@@ -137,6 +141,7 @@ export class MaterialComponent implements OnInit {
         let url =
           this.selectedMaterial?.url + this.selectedMaterial?._id + '.pdf';
         this.pdfViewService.setPdfURL(url);
+
         break;
 
       default:

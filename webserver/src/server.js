@@ -7,6 +7,7 @@ import dotenv from "dotenv";
 import debugLib from "debug";
 import bodyParser from "body-parser";
 import path from "path";
+import socketio from './socketio';
 
 dotenv.config();
 const env = process.env.NODE_ENV || "production";
@@ -55,6 +56,19 @@ db.mongoose
     process.exit();
   });
 
+
+// xAPI scheduler
+const xapiScheduler = require('./xAPILogger/scheduler');
+xapiScheduler.runXapiScheduler();
+
+// Create HTTP server
+const server = http.createServer(app);
+socketio.init(server);
+
+socketio.getIO().on('connection', () => {
+  console.log('New Rando connected');
+});
+
 // Routes
 require("./routes/auth.routes")(app);
 require("./routes/user.routes")(app);
@@ -68,14 +82,6 @@ require("./routes/tag.routes")(app);
 require("./routes/fileupload.routes")(app);
 require("./routes/filedelete.routes")(app);
 require("./routes/test.routes")(app);
-
-
-// xAPI scheduler
-const xapiScheduler = require('./xAPILogger/scheduler');
-xapiScheduler.runXapiScheduler();
-
-// Create HTTP server
-const server = http.createServer(app);
 
 // Listen on provided port, on all network interfaces
 server.listen(port);

@@ -9,6 +9,7 @@ import { MenuItem } from 'primeng/api';
 import { environment } from 'src/environments/environment';
 import { catchError, of } from 'rxjs';
 import { MessageService, ConfirmationService } from 'primeng/api';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-channelbar',
@@ -21,7 +22,8 @@ export class ChannelbarComponent implements OnInit {
     private courseService: CourseService,
     private topicChannelService: TopicChannelService,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private router: Router
   ) {}
 
   private API_URL = environment.API_URL;
@@ -44,6 +46,11 @@ export class ChannelbarComponent implements OnInit {
       label: 'Delete',
       icon: 'pi pi-times',
       command: () => this.onDeleteCourse(),
+    },
+    {
+      label: 'Dashboard',
+      icon: 'pi pi-chart-bar',
+      command: () => this.onDashBoard()
     },
   ];
 
@@ -285,5 +292,13 @@ export class ChannelbarComponent implements OnInit {
       accept: () => this.confirmDeletion(),
       reject: () => this.informUser('info', 'Cancelled', 'Deletion cancelled'),
     });
+  }
+
+  onDashBoard(){
+    this.router.navigate([
+      'course',
+      this.courseService.getSelectedCourse()._id,
+      'dashboard'
+    ]);
   }
 }

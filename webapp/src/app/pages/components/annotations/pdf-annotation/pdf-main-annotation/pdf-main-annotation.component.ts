@@ -30,12 +30,13 @@ import {
   getCurrentMaterialId,
 } from '../../../materils/state/materials.reducer';
 import { PdfviewService } from 'src/app/services/pdfview.service';
-import { distinctUntilChanged, filter, first, Observable, Subject, Subscription, takeUntil } from 'rxjs';
+import { distinctUntilChanged, filter, first, map, Observable, Subject, Subscription, takeUntil } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import * as MaterialActions from 'src/app/pages/components/materils/state/materials.actions';
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
 import * as $ from 'jquery';
 import { AnnotationType } from 'src/app/models/Annotations';
+import { SocketIoModule, SocketIoConfig, Socket } from 'ngx-socket-io';
 
 @Component({
   selector: 'app-pdf-main-annotation',
@@ -115,7 +116,8 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
 
   constructor(
     private pdfViewService: PdfviewService,
-    private store: Store<State>
+    private store: Store<State>,
+    private socket: Socket
   ) {
     this.getDocUrl();
 
@@ -155,6 +157,10 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
     );
     this.isAnnotationCanceled$ = this.store.select(getIsAnnotationCanceled);
     this.isAnnotationPosted$ = this.store.select(getIsAnnotationPosted);
+
+    this.socket.on(this.materialId, (payload) => {
+      console.log('payload = ', payload)
+    })
   }
 
 

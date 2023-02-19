@@ -52,7 +52,8 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
 import { SharedComponentsModule } from './components/shared-components.module';
 import { appReducer } from './state/app.reducer';
-
+import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+const config: SocketIoConfig = { url: 'http://localhost:8080', options: {} };
 registerLocaleData(en);
 
 @NgModule({
@@ -99,6 +100,8 @@ registerLocaleData(en);
         StoreModule.forFeature('general', appReducer),
         InputTextareaModule,
         DragulaModule.forRoot(),
+        SocketIoModule.forRoot(config)
+
     ],
     providers: [{ provide: NZ_I18N, useValue: en_US }, httpInterceptorProviders],
     bootstrap: [AppComponent],

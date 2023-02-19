@@ -18,7 +18,7 @@
             ></textarea>
             <label for="float-input">paste the iframe</label>
             <small
-              *ngIf="indicatorForm.get('indicatorIframe').invalid"
+              *ngIf="indicatorForm?.get('indicatorIframe').invalid"
               class="p-error block"
               >Invalid Input: Please check your iframe code.</small
             >
@@ -33,7 +33,7 @@
             label="Add to Dashboard"
             pTooltip="Add new Indicator"
             [disabled]="
-              indicatorForm.get('indicatorIframe').invalid ||
+              indicatorForm?.get('indicatorIframe').invalid ||
               iframeTextarea.value.length <= 0
             "
           ></button>

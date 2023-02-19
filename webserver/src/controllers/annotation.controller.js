@@ -1,5 +1,6 @@
 const ObjectId = require("mongoose").Types.ObjectId;
 const db = require("../models");
+const socketio = require("../socketio");
 const Annotation = db.annotation;
 const Material = db.material;
 const Reply = db.reply;
@@ -110,6 +111,11 @@ export const newAnnotation = async (req, res, next) => {
       return res.status(500).send({ error: err });
     }
   }
+
+  socketio.getIO().emit(materialId, {
+    eventType: 'annotationCreated',
+    annotation: newAnnotation
+  });
 
   req.locals = {
     response: { id: newAnnotation._id, success: "Annotation added!" },
