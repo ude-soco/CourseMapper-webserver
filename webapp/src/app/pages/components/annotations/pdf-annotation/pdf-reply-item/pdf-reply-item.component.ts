@@ -1,5 +1,6 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { MenuItem } from 'primeng/api';
 import { computeElapsedTime, getInitials } from 'src/app/format';
 import { Annotation } from 'src/app/models/Annotations';
 import { Reply } from 'src/app/models/Reply';
@@ -17,6 +18,23 @@ export class PdfReplyItemComponent implements OnInit, OnChanges {
   replyElapsedTime?: string;
   likesCount: number;
   dislikesCount: number;
+  annotationOptions: MenuItem[] = [
+    {
+      label: 'Edit',
+      icon: 'pi pi-pencil',
+      // command: () => this.onRenameTopic(),
+    },
+    {
+      label: 'Delete',
+      icon: 'pi pi-times',
+      // command: () => this.onDeleteTopic(),
+    },
+    {
+      label: 'Report',
+      icon: 'pi pi-flag-fill',
+      // command: () => this.onDeleteTopic(),
+    },
+  ];
   constructor(private store: Store<State>) {
 
    }

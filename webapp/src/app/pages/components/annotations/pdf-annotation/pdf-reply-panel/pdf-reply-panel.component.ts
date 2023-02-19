@@ -22,7 +22,8 @@ export class PdfReplyPanelComponent implements OnInit, OnChanges  {
 
   ngOnChanges(changes: SimpleChanges): void {
     if('annotation' in changes){
-      this.repliesCount = this.annotation.replies.length
+      this.repliesCount = this.annotation.replies.length;
+      this.showAllReplies();
     }
   }
 

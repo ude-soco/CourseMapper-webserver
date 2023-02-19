@@ -1,6 +1,7 @@
 <div class="-my-5">
-  <div
-    class="inline-flex align-items-center flex-row flex-wrap space-x-2 mx-3 my-3"
+  <div class="flex flex-row justify-between p-5">
+    <div
+    class="flex flex-row justify-start space-x-3"
   >
     <p-avatar
       label="{{ replyInitials }}"
@@ -16,12 +17,29 @@
     <b class="mt-4">{{ reply?.author?.name }}</b>
     <h1 class="mt-4">{{ replyElapsedTime }}</h1>
   </div>
-  <div class="mb-6 mt-6 mx-10">
+
+  <div class="flex justify-end mt-3">
+    <p-menu
+      #menu
+      id="config_menu"
+      [model]="annotationOptions"
+      [popup]="true"
+      appendTo="body"
+    ></p-menu>
+    <app-iconbutton
+      icon="bx-dots-vertical-rounded"
+      color="text-black"
+      (click)="menu.toggle($event)"
+    ></app-iconbutton>
+  </div>
+  </div>
+
+  <div class="mb-6 mt-2 mx-10">
     <p style="font-size: 20px; font-family: Roboto">
       {{ reply?.content }}
     </p>
   </div>
-  <div class="flex flex-row flex-wrap space-x-3 mx-10 my-5">
+  <div class="flex flex-row flex-wrap space-x-3 mx-10">
     <app-button
       icon="bx-like"
       color="text-grey-600"

@@ -30,7 +30,6 @@ const PrimeNgComponents = [
   ToggleButtonModule,
   MenubarModule,
   FileUploadModule,
-  InputTextModule,
   InputTextareaModule,
   PaginatorModule,
   PanelModule,

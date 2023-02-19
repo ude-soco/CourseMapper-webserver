@@ -15,6 +15,7 @@ import { PdfDrawboxComponent } from './pdf-drawbox/pdf-drawbox.component';
 import { SharedComponentsModule } from 'src/app/components/shared-components.module';
 import { PdfReplyItemComponent } from './pdf-reply-item/pdf-reply-item.component';
 import { PdfReplyPanelComponent } from './pdf-reply-panel/pdf-reply-panel.component';
+import { MenuModule } from 'primeng/menu';
 
 
 
@@ -41,6 +42,7 @@ import { PdfReplyPanelComponent } from './pdf-reply-panel/pdf-reply-panel.compon
         PrimengModule,
         PdfViewerModule,
         SharedComponentsModule,
+        MenuModule,
         StoreModule.forFeature('annotation', annotationReducer),
         EffectsModule.forFeature([AnnotationEffects]),
     ]

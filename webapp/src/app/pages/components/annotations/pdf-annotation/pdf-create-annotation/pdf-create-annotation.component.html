@@ -1,4 +1,4 @@
-<div style="box-shadow: 0 0 3px 3px #70b85e">
+<div [ngStyle]="{'box-shadow': '0 0 3px 3px' + annotationColor}" class="my-5">
   <p-panel header="Create Annotation" [toggleable]="false">
     <ng-template pTemplate="icons" *ngIf="showCancelButton">
       <app-iconbutton
@@ -17,6 +17,7 @@
           autoWidth="false"
           appendTo="body"
           [style]="{ minWidth: '100%' }"
+          (ngModelChange)="onAnnotationTypeChange()"
         ></p-dropdown>
 
         <p-dropdown
@@ -61,11 +62,11 @@
           pInputTextarea
           [(ngModel)]="text"
           class="w-11/12"
-          style="border: 1px solid #70b85e"
+          style="border: 1px solid #0000004D"
         ></textarea>
         <app-iconbutton
           icon="bx-send"
-          color="text-green-600"
+          color="text-slate-500"
           (click)="postAnnotation()"
           class="mb-0 mt-12 flex-1 justify-end"
         ></app-iconbutton>

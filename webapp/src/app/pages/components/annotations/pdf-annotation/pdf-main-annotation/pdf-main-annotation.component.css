@@ -15,5 +15,5 @@ app-pdf-drawbox{
 app-pdf-comment-panel{
     max-height: 50rem;
     overflow-y: scroll;
-    box-shadow: 0 0 3px 3px #70B85E;
+    box-shadow: 0 0 3px 3px #0000004D;
 }

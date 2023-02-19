@@ -45,6 +45,7 @@ export class PdfCreateAnnotationComponent implements OnInit {
   toPageArray: number[];
   selectedFromPage: number;
   selectedToPage: number;
+  annotationColor: string = '#0000004D';
 
   constructor(private store: Store<State>) {
     this.annotationTypesArray = ['Note', 'Question', 'External Resource'];
@@ -194,5 +195,21 @@ export class PdfCreateAnnotationComponent implements OnInit {
     this.store.dispatch(
       AnnotationActions.setIsAnnotationCanceled({ isAnnotationCanceled: true })
     );
+  }
+
+  onAnnotationTypeChange(){
+    switch (this.selectedAnnotationType) {
+      case 'Note':
+        this.annotationColor = '#70b85e';
+        break;
+      case 'Question':
+        this.annotationColor = '#FFAB5E';
+        break;
+      case 'External Resource':
+        this.annotationColor = '#B85E94';
+        break;
+      case null:
+        this.annotationColor = '#0000004D';
+    }
   }
 }
