@@ -1,7 +1,7 @@
 import { Component, EventEmitter, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { getHideAnnotationValue, State } from '../state/annotation.reducer';
+import { getHideAnnotationValue, getSelectedTool, State } from '../state/annotation.reducer';
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions'
 import { PdfToolType } from 'src/app/models/Annotations';
 
@@ -22,6 +22,24 @@ export class PdfAnnotationToolbarComponent implements OnInit{
 
   constructor(private store: Store<State>) {
     this.hideAnnotations$ = this.store.select(getHideAnnotationValue);
+    this.store.select(getSelectedTool).subscribe((tool) => {
+      switch(tool){
+        case PdfToolType.Highlight:
+          this.highlightSelected = true;
+          break;
+        case PdfToolType.Pin:
+          this.pinSelected = true;
+          break;
+        case PdfToolType.DrawBox:
+          this.drawingSelected = true;
+          break;
+        case PdfToolType.None:
+          this.highlightSelected = false;
+          this.pinSelected = false;
+          this.drawingSelected = false;
+          break;
+      }
+    })
    }
   ngOnInit(): void {
   }

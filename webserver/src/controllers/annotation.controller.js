@@ -556,5 +556,6 @@ export const getAllAnnotations = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
+  foundAnnotations.sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   return res.status(200).send(foundAnnotations);
 };

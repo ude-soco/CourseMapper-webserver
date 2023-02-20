@@ -105,9 +105,7 @@ export class PdfCreateAnnotationComponent implements OnInit {
               _id: ''
             }
           };
-          this.store.dispatch(
-            AnnotationActions.postAnnotation({ annotation: this.annotation })
-          );
+          this.dispatchAnnotation();
           this.selectedAnnotationLocation = null;
           this.selectedAnnotationType = null;
           this.text = null;
@@ -129,9 +127,7 @@ export class PdfCreateAnnotationComponent implements OnInit {
               _id: ''
             }
           };
-          this.store.dispatch(
-            AnnotationActions.postAnnotation({ annotation: this.annotation })
-          );
+          this.dispatchAnnotation();
           this.selectedAnnotationLocation = null;
           this.selectedAnnotationType = null;
           this.text = null;
@@ -153,9 +149,7 @@ export class PdfCreateAnnotationComponent implements OnInit {
               _id: ''
             }
           };
-          this.store.dispatch(
-            AnnotationActions.postAnnotation({ annotation: this.annotation })
-          );
+          this.dispatchAnnotation();
           this.selectedAnnotationLocation = null;
           this.selectedAnnotationType = null;
           this.text = null;
@@ -168,15 +162,14 @@ export class PdfCreateAnnotationComponent implements OnInit {
         content: this.text
       };
 
-      this.store.dispatch(
-        AnnotationActions.setAnnotationProperties({
-          annotation: this.annotation,
-        })
-      );
-      this.store.dispatch(
-        AnnotationActions.postAnnotation({ annotation: this.annotation })
-      );
+      this.dispatchAnnotation();
+
     }
+  }
+
+  dispatchAnnotation(){
+    this.store.dispatch(AnnotationActions.postAnnotation({ annotation: this.annotation }));
+    this.annotationColor = '#0000004D';
   }
 
   onSelectedFromPage(){
