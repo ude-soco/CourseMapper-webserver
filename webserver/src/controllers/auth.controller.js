@@ -81,25 +81,17 @@ export const signin = async (req, res, next) => {
 
     const userName = `${user.firstname} ${user.lastname}`;
 
-    return res.status(200).send({
-      id: user._id,
-      name: userName,
-      username: user.username,
-      email: user.email,
-    });
-
-    // req.locals = {
-    //   user: user,
-    //   response: {
-    //     id: user._id,
-    //     name: userName,
-    //     username: user.username,
-    //     email: user.email,
-    //     role: authority,
-    //     courses: user.courses,
-    //   }
-    // }
-    // return next();
+    req.locals = {
+      user: user,
+      response: {
+        id: user._id,
+        name: userName,
+        username: user.username,
+        email: user.email,
+        courses: user.courses,
+      }
+    }
+    return next();
   } catch (err) {
     return res.status(500).send({ error: err });
   }

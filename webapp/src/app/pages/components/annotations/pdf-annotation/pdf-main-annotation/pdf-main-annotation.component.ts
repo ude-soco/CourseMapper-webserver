@@ -158,8 +158,12 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
     this.isAnnotationCanceled$ = this.store.select(getIsAnnotationCanceled);
     this.isAnnotationPosted$ = this.store.select(getIsAnnotationPosted);
 
-    this.socket.on(this.materialId, (payload) => {
+    this.socket.on(this.materialId, (payload: { eventType: string, annotation: Annotation }) => {
       console.log('payload = ', payload)
+      let annotation = this.annotations.find((anno) => payload.annotation?._id == anno._id)
+      if(annotation == null){
+        this.store.dispatch(AnnotationActions.updateAnnotationsOnSocketEmit({annotation: payload.annotation}));
+      }
     })
   }
 
@@ -236,10 +240,6 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
 
   /** Is called when a page is rendered. Is used to add Pin/rectangle/ highlight/circle on the pdf when a page is rendering */
   pageRendered(e: any) {
-    console.log('(page-rendered)', e);
-    console.log('(current-page)', this.currentPage)
-
-
     if (this.hideAnnotationEvent == false) {
       this.textSelection = false;
       let elem;

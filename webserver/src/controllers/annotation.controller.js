@@ -118,7 +118,7 @@ export const newAnnotation = async (req, res, next) => {
   });
 
   req.locals = {
-    response: { id: newAnnotation._id, success: "Annotation added!" },
+    response: newAnnotation,
     material: foundMaterial,
     user: foundUser,
     annotation: newAnnotation

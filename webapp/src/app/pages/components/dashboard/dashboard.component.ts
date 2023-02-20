@@ -16,7 +16,7 @@ import {ConfirmationService} from 'primeng/api';
   styleUrls: ['./dashboard.component.css'],
   providers: [MessageService, ConfirmationService],
 })
-export class DashboardComponent implements OnInit, OnDestroy {
+export class DashboardComponent implements OnInit {
   indicatorForm?: FormGroup;
   indicators: Indicator[] = [];
   selectedCourse: Course;
@@ -66,9 +66,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
-    this.dragulaService.destroy("INDICATORS");
-  }
+  // ngOnDestroy() {
+  //   this.dragulaService.destroy("INDICATORS");
+  // }
 
   getIndicators() {
     this.indicatorService.fetchIndicators().subscribe((indicators) => {

@@ -11,7 +11,8 @@ export const postAnnotation = createAction(
 );
 
 export const postAnnotationSuccess = createAction(
-    '[Annotation] Post Success'
+    '[Annotation] Post Success',
+    props<{postedAnnotation: Annotation}>()
 );
 
 export const postAnnotationFail = createAction(
@@ -195,4 +196,9 @@ export const dislikeReplyFail = createAction(
 export const setHideRepliesButton = createAction(
     '[Annotation] Set Hide Replies Button',
     props<{ hideRepliesButton: boolean }>()
+);
+
+export const updateAnnotationsOnSocketEmit = createAction(
+    '[Annotation] Update Stored Annotations',
+    props<{annotation: Annotation}>()
 );

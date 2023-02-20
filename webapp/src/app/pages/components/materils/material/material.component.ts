@@ -75,10 +75,8 @@ export class MaterialComponent implements OnInit{
       this.selectedChannel = channel;
       this.channelEmitted.emit(this.selectedChannel);
       this.materials = [];
-      //console.log(this.selectedChannel.courseId)
-      // alert(`onChannelSelect ${channel.materials}`);
       if (!this.selectedChannel.materials) {
-        console.log('empty material');
+        // console.log('empty material');
       } else {
         this.topicChannelService
           .getChannelDetails(this.selectedChannel)
@@ -88,15 +86,8 @@ export class MaterialComponent implements OnInit{
 
               if (this.selectedChannel._id === this.channels['_id']) {
                 this.materials = this.channels['materials'];
-                // console.log("this.materials==this.materialEmiited")
-                // var matId = this.materials.findIndex(x=>x._id == this.materialEmiited);
-                // console.log(matId)
-                for (let i in this.materials) {
-                  console.log(this.materials[i].type);
-                }
               } else {
                 this.selectedChannel._id = this.channels['_id'];
-                // this.router.navigate(['course', this.selectedMaterial["courseId"],'channel', this.selectedMaterial["channelId"], 'material',this.selectedMaterial._id ])
               }
             },
             error: (err) => {

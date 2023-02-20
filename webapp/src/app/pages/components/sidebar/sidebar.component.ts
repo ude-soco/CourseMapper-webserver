@@ -38,15 +38,7 @@ export class SidebarComponent implements OnInit {
     this.courseService.onUpdateCourses$.subscribe(
       (courses) => (this.courses = courses)
     );
-    //this.setDefaultselection();
   }
-
-  // setDefaultselection(){
-  //   if (this.courses.length > 0) {
-  //     this.courseService.selectedCourse = this.courses[0];
-  //     this.selectedCourse = this.courseService.selectedCourse;
-  //   }
-  // }
 
   onAddCourseDialogueClicked() {
     this.toggleAddCoursedialogue(true);
@@ -54,7 +46,6 @@ export class SidebarComponent implements OnInit {
 
   toggleAddCoursedialogue(visibility) {
     this.displayAddCourseDialogue = visibility;
-    console.log(this.displayAddCourseDialogue);
   }
 
   onSelectCourse(selectedCourse: Course) {
@@ -78,12 +69,8 @@ export class SidebarComponent implements OnInit {
         this.channel = this.selectedCourse['channels'][0];
 
         this.topicChannelService.selectChannel(this.channel);
-        console.log(this.channel.name);
       }
     }
-
-    console.log('nnn');
-    //console.log(channel);
     this.store.dispatch(AppActions.toggleCourseSelected({courseSelected: true}));
     this.router.navigate(['course', selectedCourse._id]);
   }

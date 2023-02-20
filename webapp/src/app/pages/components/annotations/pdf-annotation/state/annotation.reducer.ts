@@ -143,6 +143,7 @@ export const annotationReducer = createReducer<AnnotationState>(
     on(AnnotationActions.postAnnotationSuccess, (state, action): AnnotationState => {
       return {
         ...state,
+        annotationsForMaterial: [action.postedAnnotation, ...state.annotationsForMaterial] as Annotation[],
         isAnnotationDialogVisible: false,
         isAnnotationPosted: true,
         isAnnotationCanceled: false,
@@ -255,6 +256,13 @@ export const annotationReducer = createReducer<AnnotationState>(
       return {
         ...state,
         annotationsForMaterial: action.annotations
+      };
+    }),
+
+    on(AnnotationActions.updateAnnotationsOnSocketEmit, (state, action): AnnotationState => {
+      return {
+        ...state,
+        annotationsForMaterial: [action.annotation, ...state.annotationsForMaterial] as Annotation[],
       };
     }),
   );
