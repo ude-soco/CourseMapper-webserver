@@ -12,7 +12,7 @@ export const postAnnotation = createAction(
 
 export const postAnnotationSuccess = createAction(
     '[Annotation] Post Success',
-    props<{postedAnnotation: Annotation}>()
+    // props<{postedAnnotation: Annotation}>()
 );
 
 export const postAnnotationFail = createAction(

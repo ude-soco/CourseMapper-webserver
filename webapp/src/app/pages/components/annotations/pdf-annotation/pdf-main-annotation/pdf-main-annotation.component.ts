@@ -148,6 +148,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
       this.annotations = annotations;
       this.getHighlightObjects(this.annotations);
       this.getPinObjects(this.annotations);
+      this.pageRendered(annotations);
     });
 
     this.pdfZoom$ = this.store.select(getPdfZoom);

@@ -32,7 +32,7 @@ export class AnnotationEffects {
       mergeMap(({ annotation }) =>
         this.annotationService.postAnnotation(annotation).pipe(
           mergeMap((postedAnnotaion) => [
-            // AnnotationActions.postAnnotationSuccess({postedAnnotation: postedAnnotaion}),
+            AnnotationActions.postAnnotationSuccess(),
             // AnnotationActions.loadAnnotations(),
           ]),
           catchError((error) =>
