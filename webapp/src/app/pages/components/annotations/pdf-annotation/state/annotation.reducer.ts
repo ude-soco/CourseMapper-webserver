@@ -1,25 +1,37 @@
-import { createAction, createFeatureSelector, createReducer, createSelector, on } from '@ngrx/store';
-import * as AppState from 'src/app/state/app.state'
-import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions'
-import { Annotation, AnnotationTool, AnnotationType, PdfGeneralAnnotationLocation, PdfToolType } from 'src/app/models/Annotations';
+import {
+  createAction,
+  createFeatureSelector,
+  createReducer,
+  createSelector,
+  on,
+} from '@ngrx/store';
+import * as AppState from 'src/app/state/app.state';
+import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
+import {
+  Annotation,
+  AnnotationTool,
+  AnnotationType,
+  PdfGeneralAnnotationLocation,
+  PdfToolType,
+} from 'src/app/models/Annotations';
 
 // Strongly typed state
-export interface State extends AppState.State{
-    annotations: AnnotationState;
+export interface State extends AppState.State {
+  annotations: AnnotationState;
 }
 
 export interface AnnotationState {
-  selectedTool: PdfToolType,
-  createAnnotationFromPanel: boolean,
-  isAnnotationPosted: boolean,
-  annotation: Annotation,
-  isAnnotationDialogVisible: boolean,
-  isAnnotationCanceled: boolean,
-  pdfSearchQuery: string,
-  pdfZoom: number,
-  pdfCurrentPage: number,
-  pdfTotalPages: number,
-  annotationsForMaterial: Annotation[],
+  selectedTool: PdfToolType;
+  createAnnotationFromPanel: boolean;
+  isAnnotationPosted: boolean;
+  annotation: Annotation;
+  isAnnotationDialogVisible: boolean;
+  isAnnotationCanceled: boolean;
+  pdfSearchQuery: string;
+  pdfZoom: number;
+  pdfCurrentPage: number;
+  pdfTotalPages: number;
+  annotationsForMaterial: Annotation[];
   hideAnnotations: boolean;
 }
 
@@ -42,227 +54,400 @@ const initialState: AnnotationState = {
   pdfCurrentPage: 1,
   pdfTotalPages: null,
   annotationsForMaterial: [],
-  hideAnnotations: false
-}
+  hideAnnotations: false,
+};
 
-const getAnnotationFeatureState = createFeatureSelector<AnnotationState>('annotation');
+const getAnnotationFeatureState =
+  createFeatureSelector<AnnotationState>('annotation');
 
 export const getSelectedTool = createSelector(
   getAnnotationFeatureState,
-  state => state.selectedTool
+  (state) => state.selectedTool
 );
 
 export const getCreateAnnotationFromPanel = createSelector(
   getAnnotationFeatureState,
-  state => state.createAnnotationFromPanel
+  (state) => state.createAnnotationFromPanel
 );
 
 export const getIsAnnotationPosted = createSelector(
   getAnnotationFeatureState,
-  state => state.isAnnotationPosted
+  (state) => state.isAnnotationPosted
 );
 
 export const getAnnotationProperties = createSelector(
   getAnnotationFeatureState,
-  state => state.annotation
+  (state) => state.annotation
 );
 
 export const getIsAnnotationDialogVisible = createSelector(
   getAnnotationFeatureState,
-  state => state.isAnnotationDialogVisible
+  (state) => state.isAnnotationDialogVisible
 );
 
 export const getIsAnnotationCanceled = createSelector(
   getAnnotationFeatureState,
-  state => state.isAnnotationCanceled
+  (state) => state.isAnnotationCanceled
 );
 
 export const getPdfSearchQuery = createSelector(
   getAnnotationFeatureState,
-  state => state.pdfSearchQuery
+  (state) => state.pdfSearchQuery
 );
 
 export const getPdfZoom = createSelector(
   getAnnotationFeatureState,
-  state => state.pdfZoom
+  (state) => state.pdfZoom
 );
 
 export const getAnnotationsForMaterial = createSelector(
   getAnnotationFeatureState,
-  state => state.annotationsForMaterial
+  (state) => state.annotationsForMaterial
 );
 
 export const getHideAnnotationValue = createSelector(
   getAnnotationFeatureState,
-  state => state.hideAnnotations
+  (state) => state.hideAnnotations
 );
 
 export const getCurrentPdfPage = createSelector(
   getAnnotationFeatureState,
-  state => state.pdfCurrentPage
+  (state) => state.pdfCurrentPage
 );
 
 export const getPdfTotalNumberOfPages = createSelector(
   getAnnotationFeatureState,
-  state => state.pdfTotalPages
+  (state) => state.pdfTotalPages
 );
 
-
 export const annotationReducer = createReducer<AnnotationState>(
-    initialState,
+  initialState,
 
-    on(AnnotationActions.setSelectedTool, (state, action): AnnotationState => {
-      return {
-        ...state,
-        selectedTool: action.selectedTool
-      };
-    }),
+  on(AnnotationActions.setSelectedTool, (state, action): AnnotationState => {
+    return {
+      ...state,
+      selectedTool: action.selectedTool,
+    };
+  }),
 
-    on(AnnotationActions.setCreateAnnotationFromPanel, (state, action): AnnotationState => {
-      if(action.createAnnotationFromPanel){
+  on(
+    AnnotationActions.setCreateAnnotationFromPanel,
+    (state, action): AnnotationState => {
+      if (action.createAnnotationFromPanel) {
         return {
           ...state,
           createAnnotationFromPanel: action.createAnnotationFromPanel,
-          isAnnotationCanceled: false
+          isAnnotationCanceled: false,
         };
-      }else{
+      } else {
         return {
           ...state,
-          createAnnotationFromPanel: action.createAnnotationFromPanel
+          createAnnotationFromPanel: action.createAnnotationFromPanel,
         };
       }
-    }),
+    }
+  ),
 
-    on(AnnotationActions.setAnnotationProperties, (state, action): AnnotationState => {
+  on(
+    AnnotationActions.setAnnotationProperties,
+    (state, action): AnnotationState => {
       return {
         ...state,
-        annotation: action.annotation
+        annotation: action.annotation,
       };
-    }),
+    }
+  ),
 
-    on(AnnotationActions.postAnnotationSuccess, (state, action): AnnotationState => {
+  on(
+    AnnotationActions.postAnnotationSuccess,
+    (state, action): AnnotationState => {
       return {
         ...state,
         // annotationsForMaterial: [action.postedAnnotation, ...state.annotationsForMaterial] as Annotation[],
         isAnnotationDialogVisible: false,
         isAnnotationPosted: true,
         isAnnotationCanceled: false,
-        createAnnotationFromPanel: true
+        createAnnotationFromPanel: true,
       };
-    }),
+    }
+  ),
 
-    on(AnnotationActions.postAnnotationFail, (state, action): AnnotationState => {
+  on(AnnotationActions.postAnnotationFail, (state, action): AnnotationState => {
+    return {
+      ...state,
+      isAnnotationDialogVisible: false,
+      isAnnotationPosted: false,
+      isAnnotationCanceled: true,
+      createAnnotationFromPanel: true,
+    };
+  }),
+
+  on(
+    AnnotationActions.setIsAnnotationDialogVisible,
+    (state, action): AnnotationState => {
       return {
         ...state,
-        isAnnotationDialogVisible: false,
-        isAnnotationPosted: false,
-        isAnnotationCanceled: true,
-        createAnnotationFromPanel: true
+        isAnnotationDialogVisible: action.isAnnotationDialogVisible,
       };
-    }),
+    }
+  ),
 
-    on(AnnotationActions.setIsAnnotationDialogVisible, (state, action): AnnotationState => {
-      return {
-        ...state,
-        isAnnotationDialogVisible: action.isAnnotationDialogVisible
-      };
-    }),
-    
-    on(AnnotationActions.setIsAnnotationCanceled, (state, action): AnnotationState => {
-      if(action.isAnnotationCanceled){
+  on(
+    AnnotationActions.setIsAnnotationCanceled,
+    (state, action): AnnotationState => {
+      if (action.isAnnotationCanceled) {
         return {
           ...state,
           isAnnotationCanceled: true,
           isAnnotationPosted: false,
-          isAnnotationDialogVisible: false
+          isAnnotationDialogVisible: false,
         };
-      }else{
+      } else {
         return {
           ...state,
-          isAnnotationCanceled: false
+          isAnnotationCanceled: false,
         };
       }
-    }),
+    }
+  ),
 
-    on(AnnotationActions.setPdfSearchQuery, (state, action): AnnotationState => {
+  on(AnnotationActions.setPdfSearchQuery, (state, action): AnnotationState => {
+    return {
+      ...state,
+      pdfSearchQuery: action.pdfSearchQuery,
+    };
+  }),
+
+  on(AnnotationActions.setZoomIn, (state): AnnotationState => {
+    return {
+      ...state,
+      pdfZoom: state.pdfZoom + 0.25,
+    };
+  }),
+
+  on(AnnotationActions.setZoomOut, (state): AnnotationState => {
+    return {
+      ...state,
+      pdfZoom: state.pdfZoom - 0.25,
+    };
+  }),
+
+  on(AnnotationActions.resetZoom, (state): AnnotationState => {
+    return {
+      ...state,
+      pdfZoom: 1,
+    };
+  }),
+
+  on(
+    AnnotationActions.loadAnnotationsSuccess,
+    (state, action): AnnotationState => {
       return {
         ...state,
-        pdfSearchQuery: action.pdfSearchQuery
+        annotationsForMaterial: action.annotations,
       };
-    }),
+    }
+  ),
 
-    on(AnnotationActions.setZoomIn, (state): AnnotationState => {
+  on(AnnotationActions.postAnnotationFail, (state, action): AnnotationState => {
+    return {
+      ...state,
+      annotationsForMaterial: [],
+    };
+  }),
+
+  on(
+    AnnotationActions.toggleShowHideAnnotation,
+    (state, action): AnnotationState => {
       return {
         ...state,
-        pdfZoom: state.pdfZoom + 0.25
+        hideAnnotations: !state.hideAnnotations,
       };
-    }),
+    }
+  ),
 
-    on(AnnotationActions.setZoomOut, (state): AnnotationState => {
+  on(
+    AnnotationActions.resetAnnotationStoreValues,
+    (state, action): AnnotationState => {
+      return initialState;
+    }
+  ),
+
+  on(AnnotationActions.setCurrentPdfPage, (state, action): AnnotationState => {
+    return {
+      ...state,
+      pdfCurrentPage: action.pdfCurrentPage,
+    };
+  }),
+
+  on(AnnotationActions.setPdfTotalPages, (state, action): AnnotationState => {
+    return {
+      ...state,
+      pdfTotalPages: action.pdfTotalPages,
+    };
+  }),
+
+  on(
+    AnnotationActions.updateAnnotationsWithReplies,
+    (state, action): AnnotationState => {
       return {
         ...state,
-        pdfZoom: state.pdfZoom - 0.25
+        annotationsForMaterial: action.annotations,
       };
-    }),
+    }
+  ),
 
-    on(AnnotationActions.resetZoom, (state): AnnotationState => {
-      return {
-        ...state,
-        pdfZoom: 1
-      };
-    }),
-
-    on(AnnotationActions.loadAnnotationsSuccess, (state, action): AnnotationState => {
-      return {
-        ...state,
-        annotationsForMaterial: action.annotations
-      };
-    }),
-
-    on(AnnotationActions.postAnnotationFail, (state, action): AnnotationState => {
-      return {
-        ...state,
-        annotationsForMaterial: []
-
-      };
-    }),
-
-    on(AnnotationActions.toggleShowHideAnnotation, (state, action): AnnotationState => {
-      return {
-        ...state,
-        hideAnnotations: !state.hideAnnotations
-      };
-    }),
-
-    on(AnnotationActions.resetAnnotationStoreValues, (state, action): AnnotationState => {
-      return initialState
-    }),
-
-    on(AnnotationActions.setCurrentPdfPage, (state, action): AnnotationState => {
-      return {
-        ...state,
-        pdfCurrentPage: action.pdfCurrentPage
-      };
-    }),
-
-    on(AnnotationActions.setPdfTotalPages, (state, action): AnnotationState => {
-      return {
-        ...state,
-        pdfTotalPages: action.pdfTotalPages
-      };
-    }),
-
-    on(AnnotationActions.updateAnnotationsWithReplies, (state, action): AnnotationState => {
-      return {
-        ...state,
-        annotationsForMaterial: action.annotations
-      };
-    }),
-
-    on(AnnotationActions.updateAnnotationsOnSocketEmit, (state, action): AnnotationState => {
-      return {
-        ...state,
-        annotationsForMaterial: [action.annotation, ...state.annotationsForMaterial] as Annotation[],
-      };
-    }),
-  );
+  on(
+    AnnotationActions.updateAnnotationsOnSocketEmit,
+    (state, action): AnnotationState => {
+      switch (action.payload.eventType) {
+        case 'annotationCreated': {
+          return {
+            ...state,
+            annotationsForMaterial: [
+              action.payload.annotation,
+              ...state.annotationsForMaterial,
+            ] as Annotation[],
+          };
+        }
+        case 'annotationLiked': {
+          let annotations = [...state.annotationsForMaterial];
+          let index = state.annotationsForMaterial.findIndex(
+            (annotation) => annotation._id == action.payload.annotation._id
+          );
+          let updatedLikes = [...annotations[index].likes]
+          let updatedDislikes = [...annotations[index].dislikes]
+          updatedLikes = action.payload.annotation.likes;
+          updatedDislikes = action.payload.annotation.dislikes;
+          let updatedAnnotation = {
+            ...annotations[index],
+            likes: updatedLikes,
+            dislikes: updatedDislikes
+          } as Annotation;
+          annotations[index] = updatedAnnotation;
+          return {
+            ...state,
+            annotationsForMaterial: annotations,
+          };
+        }
+        case 'annotationUnliked': {
+          let annotations = [...state.annotationsForMaterial];
+          let index = state.annotationsForMaterial.findIndex(
+            (annotation) => annotation._id == action.payload.annotation._id
+          );
+          let updatedLikes = [...annotations[index].likes]
+          let updatedDislikes = [...annotations[index].dislikes]
+          updatedLikes = action.payload.annotation.likes;
+          updatedDislikes = action.payload.annotation.dislikes;
+          let updatedAnnotation = {
+            ...annotations[index],
+            likes: updatedLikes,
+            dislikes: updatedDislikes
+          } as Annotation;
+          annotations[index] = updatedAnnotation;
+          return {
+            ...state,
+            annotationsForMaterial: annotations,
+          };
+        }
+        case 'annotationUndisliked': {
+          let annotations = [...state.annotationsForMaterial];
+          let index = state.annotationsForMaterial.findIndex(
+            (annotation) => annotation._id == action.payload.annotation._id
+          );
+          let updatedLikes = [...annotations[index].likes]
+          let updatedDislikes = [...annotations[index].dislikes]
+          updatedLikes = action.payload.annotation.likes;
+          updatedDislikes = action.payload.annotation.dislikes;
+          let updatedAnnotation = {
+            ...annotations[index],
+            likes: updatedLikes,
+            dislikes: updatedDislikes
+          } as Annotation;
+          annotations[index] = updatedAnnotation;
+          return {
+            ...state,
+            annotationsForMaterial: annotations,
+          };
+        }
+        case 'annotationDisliked': {
+          let annotations = [...state.annotationsForMaterial];
+          let index = state.annotationsForMaterial.findIndex(
+            (annotation) => annotation._id == action.payload.annotation._id
+          );
+          let updatedLikes = [...annotations[index].likes]
+          let updatedDislikes = [...annotations[index].dislikes]
+          updatedLikes = action.payload.annotation.likes;
+          updatedDislikes = action.payload.annotation.dislikes;
+          let updatedAnnotation = {
+            ...annotations[index],
+            likes: updatedLikes,
+            dislikes: updatedDislikes
+          } as Annotation;
+          annotations[index] = updatedAnnotation;
+          return {
+            ...state,
+            annotationsForMaterial: annotations,
+          };
+        }
+        case 'replyCreated': {
+          let annotations = [...state.annotationsForMaterial];
+          let index = state.annotationsForMaterial.findIndex(
+            (annotation) => annotation._id === action.payload.annotation._id
+          );
+          let annotation = annotations.find(
+            (annotation) => annotation._id === action.payload.annotation._id
+          );
+          let replies = [...annotation.replies];
+          //Check if reply already exists:
+          let exists = replies.some(
+            (reply) => reply._id === action.payload.reply._id
+          );
+          if (!exists) {
+            let updatedReplies = [...replies, action.payload.reply];
+            let updatedAnnotation = {
+              ...annotation,
+              replies: updatedReplies,
+            } as Annotation;
+            annotations[index] = updatedAnnotation;
+          }
+          return {
+            ...state,
+            annotationsForMaterial: annotations,
+          };
+        }
+        // case 'replyUnliked': {
+        //   let annotations = [...state.annotationsForMaterial];
+        //   let annotation = annotations.find(
+        //     (annotation) => annotation.replies.some((reply) => reply._id === action.payload.reply._id)
+        //   );
+        //   let annotationIndex = state.annotationsForMaterial.findIndex(
+        //     (annotation) => annotation._id === annotation._id
+        //   );
+        //   let replies = [...annotation.replies];
+        //   //Check if reply already exists:
+        //   let replyIndex = replies.findIndex(
+        //     (reply) => reply._id === action.payload.reply._id
+        //   );
+        //   if (replyIndex) {
+        //     replies[replyIndex] = action.payload.reply
+        //     let updatedAnnotation = {
+        //       ...annotation,
+        //       replies: replies,
+        //     } as Annotation;
+        //     annotations[annotationIndex] = updatedAnnotation;
+        //   }
+        //   return {
+        //     ...state,
+        //     annotationsForMaterial: annotations,
+        //   };
+        // }
+        default: {
+          return {
+            ...state,
+          };
+        }
+      }
+    }
+  )
+);

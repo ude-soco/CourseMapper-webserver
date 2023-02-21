@@ -38,6 +38,7 @@ import * as $ from 'jquery';
 import { AnnotationType } from 'src/app/models/Annotations';
 import { SocketIoModule, SocketIoConfig, Socket } from 'ngx-socket-io';
 import { PdfAnnotationSummaryComponent } from '../pdf-annotation-summary/pdf-annotation-summary.component';
+import { Reply } from 'src/app/models/Reply';
 
 @Component({
   selector: 'app-pdf-main-annotation',
@@ -162,11 +163,11 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
     this.isAnnotationCanceled$ = this.store.select(getIsAnnotationCanceled);
     this.isAnnotationPosted$ = this.store.select(getIsAnnotationPosted);
 
-    this.socket.on(this.materialId, (payload: { eventType: string, annotation: Annotation }) => {
+    this.socket.on(this.materialId, (payload: { eventType: string, annotation: Annotation, reply: Reply }) => {
       console.log('payload = ', payload)
       let annotation = this.annotations.find((anno) => payload.annotation?._id == anno._id)
       if(annotation == null){
-        this.store.dispatch(AnnotationActions.updateAnnotationsOnSocketEmit({annotation: payload.annotation}));
+        this.store.dispatch(AnnotationActions.updateAnnotationsOnSocketEmit({payload: payload}));
       }
     })
   }

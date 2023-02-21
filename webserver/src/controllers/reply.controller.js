@@ -1,5 +1,6 @@
 const ObjectId = require("mongoose").Types.ObjectId;
 const db = require("../models");
+const socketio = require("../socketio");
 const Annotation = db.annotation;
 const Reply = db.reply;
 const Tag = db.tag;
@@ -157,6 +158,12 @@ export const newReply = async (req, res, next) => {
     annotation:foundAnnotation,
     reply:newReply
   }
+
+  socketio.getIO().emit(annotationId, {
+    eventType: 'replyCreated',
+    annotation: foundAnnotation,
+    reply: newReply
+  });
 
   return next();
 };
@@ -401,13 +408,19 @@ export const likeReply = async (req, res, next) => {
       return res.status(500).send({ error: err });
     }
     let countLikes = savedReply.likes.length;
+    let countDislikes = savedReply.dislikes.length;
 
     req.locals.response = {
       count: countLikes,
       success: "Reply successfully unliked!",
     }
     req.locals.like = false;
-
+    socketio.getIO().emit(replyId, {
+      eventType: 'replyUnliked',
+      likes: countLikes,
+      dislikes: countDislikes,
+      reply: savedReply
+    });
     return next();
 
   } else if (foundReply.dislikes.includes(ObjectId(req.userId))) {
@@ -424,6 +437,7 @@ export const likeReply = async (req, res, next) => {
     }
 
     let countLikes = savedReply.likes.length;
+    let countDislikes = savedReply.dislikes.length;
 
     req.locals.response = {
       count: countLikes,
@@ -431,6 +445,12 @@ export const likeReply = async (req, res, next) => {
     }
     req.locals.like = true;
 
+    socketio.getIO().emit(replyId, {
+      eventType: 'replyLiked',
+      likes: countLikes,
+      dislikes: countDislikes,
+      reply: savedReply
+    });
     return next();
   }
 };
@@ -493,13 +513,19 @@ export const dislikeReply = async (req, res, next) => {
       return res.status(500).send({ error: err });
     }
     let countDislikes = savedReply.dislikes.length;
+    let countLikes = savedReply.likes.length;
 
     req.locals.response = {
       count: countDislikes,
       success: "Reply successfully un-disliked!",
     }
     req.locals.dislike = false;
-
+    socketio.getIO().emit(replyId, {
+      eventType: 'replyUndisliked',
+      likes: countLikes,
+      dislikes: countDislikes,
+      reply: savedReply
+    });
     return next();
 
   } else if (foundReply.likes.includes(ObjectId(req.userId))) {
@@ -515,13 +541,19 @@ export const dislikeReply = async (req, res, next) => {
       return res.status(500).send({ error: err });
     }
     let countDislikes = savedReply.dislikes.length;
+    let countLikes = savedReply.likes.length;
 
     req.locals.response = {
       count: countDislikes,
       success: "Reply successfully disliked!",
     }
     req.locals.dislike = true;
-
+    socketio.getIO().emit(replyId, {
+      eventType: 'replyDisliked',
+      likes: countLikes,
+      dislikes: countDislikes,
+      reply: savedReply
+    });
     return next();
   }
 };

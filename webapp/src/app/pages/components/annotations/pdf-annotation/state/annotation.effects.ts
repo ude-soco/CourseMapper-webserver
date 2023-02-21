@@ -107,7 +107,7 @@ export class AnnotationEffects {
         this.annotationService.postReply(annotation, reply).pipe(
           mergeMap(() => [
             AnnotationActions.postReplySuccess(),
-            AnnotationActions.loadAnnotations(),
+            // AnnotationActions.loadAnnotations(),
           ]),
           catchError((error) => of(AnnotationActions.postReplyFail({ error })))
         )
@@ -122,7 +122,7 @@ export class AnnotationEffects {
         this.annotationService.likeAnnotation(annotation).pipe(
           mergeMap(() => [
             AnnotationActions.likeAnnotationSuccess(),
-            AnnotationActions.loadAnnotations(),
+            // AnnotationActions.loadAnnotations(),
           ]),
           catchError((error) =>
             of(AnnotationActions.likeAnnotationFail({ error }))
@@ -139,7 +139,7 @@ export class AnnotationEffects {
         this.annotationService.dislikeAnnotation(annotation).pipe(
           mergeMap(() => [
             AnnotationActions.dislikeAnnotationSuccess(),
-            AnnotationActions.loadAnnotations(),
+            // AnnotationActions.loadAnnotations(),
           ]),
           catchError((error) =>
             of(AnnotationActions.dislikeAnnotationFail({ error }))
@@ -156,7 +156,7 @@ export class AnnotationEffects {
       this.annotationService.likeReply(reply).pipe(
         mergeMap(() => [
           AnnotationActions.likeReplySuccess(),
-          AnnotationActions.loadAnnotations(),
+          // AnnotationActions.loadAnnotations(),
         ]),
         catchError((error) =>
           of(AnnotationActions.likeReplyFail({ error }))
@@ -173,7 +173,7 @@ dislikeReply$ = createEffect(() =>
       this.annotationService.dislikeReply(reply).pipe(
         mergeMap(() => [
           AnnotationActions.dislikeReplySuccess(),
-          AnnotationActions.loadAnnotations(),
+          // AnnotationActions.loadAnnotations(),
         ]),
         catchError((error) =>
           of(AnnotationActions.dislikeReplyFail({ error }))

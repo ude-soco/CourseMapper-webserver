@@ -114,7 +114,8 @@ export const newAnnotation = async (req, res, next) => {
 
   socketio.getIO().emit(materialId, {
     eventType: 'annotationCreated',
-    annotation: newAnnotation
+    annotation: newAnnotation,
+    reply: null
   });
 
   req.locals = {
@@ -405,6 +406,11 @@ export const likeAnnotation = async (req, res, next) => {
       success: "Annotation successfully unliked!",
     }
     req.locals.like = false;
+    socketio.getIO().emit(annotationId, {
+      eventType: 'annotationUnliked',
+      annotation: savedAnnotation,
+      reply: null
+    });
     return next();
 
   } else if (foundAnnotation.dislikes.includes(ObjectId(req.userId))) {
@@ -427,7 +433,11 @@ export const likeAnnotation = async (req, res, next) => {
     }
 
     req.locals.like = true;
-
+  socketio.getIO().emit(annotationId, {
+    eventType: 'annotationLiked',
+    annotation: savedAnnotation,
+    reply: null
+  });
     return next();
   }
 };
@@ -497,6 +507,11 @@ export const dislikeAnnotation = async (req, res, next) => {
       success: "Annotation successfully un-disliked!",
     }
     req.locals.dislike = false;
+    socketio.getIO().emit(annotationId, {
+      eventType: 'annotationUndisliked',
+      annotation: savedAnnotation,
+      reply: null
+    });
     return next();
 
   } else if (foundAnnotation.likes.includes(ObjectId(req.userId))) {
@@ -518,6 +533,11 @@ export const dislikeAnnotation = async (req, res, next) => {
       success: "Annotation successfully disliked!",
     }
     req.locals.dislike = true;
+    socketio.getIO().emit(annotationId, {
+      eventType: 'annotationDisliked',
+      annotation: savedAnnotation,
+      reply: null
+    });
     return next();
 
   }

@@ -198,7 +198,12 @@ export const setHideRepliesButton = createAction(
     props<{ hideRepliesButton: boolean }>()
 );
 
+// export const updateAnnotationsOnSocketEmit = createAction(
+//     '[Annotation] Update Stored Annotations',
+//     props<{annotation: Annotation}>()
+// );
+
 export const updateAnnotationsOnSocketEmit = createAction(
     '[Annotation] Update Stored Annotations',
-    props<{annotation: Annotation}>()
+    props<{payload: any}>()
 );

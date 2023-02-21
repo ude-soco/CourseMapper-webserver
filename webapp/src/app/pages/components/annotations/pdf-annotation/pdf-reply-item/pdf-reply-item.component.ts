@@ -6,6 +6,7 @@ import { Annotation } from 'src/app/models/Annotations';
 import { Reply } from 'src/app/models/Reply';
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions'
 import { State } from '../state/annotation.reducer';
+import { SocketIoModule, SocketIoConfig, Socket } from 'ngx-socket-io';
 
 @Component({
   selector: 'app-pdf-reply-item',
@@ -35,7 +36,7 @@ export class PdfReplyItemComponent implements OnInit, OnChanges {
       // command: () => this.onDeleteTopic(),
     },
   ];
-  constructor(private store: Store<State>) {
+  constructor(private store: Store<State>, private socket: Socket) {
 
    }
   ngOnChanges(changes: SimpleChanges): void {
@@ -44,6 +45,11 @@ export class PdfReplyItemComponent implements OnInit, OnChanges {
       this.replyElapsedTime = computeElapsedTime(this.reply?.createdAt);
       this.likesCount = this.reply?.likes?.length;
       this.dislikesCount = this.reply?.dislikes?.length;
+      this.socket.on(this.reply?._id, (payload: { eventType: string, likes: number, dislikes: number, reply: Reply }) => {
+        console.log(payload);
+        this.likesCount = payload.likes;
+        this.dislikesCount = payload.dislikes;
+      })
     }
   }
 

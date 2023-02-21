@@ -13,6 +13,7 @@ import { getAnnotationsForMaterial, getCurrentPdfPage, State } from '../state/an
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
 import { MenuItem } from 'primeng/api';
 import * as $ from 'jquery';
+import { SocketIoModule, SocketIoConfig, Socket } from 'ngx-socket-io';
 @Component({
   selector: 'app-pdf-comment-item',
   templateUrl: './pdf-comment-item.component.html',
@@ -47,10 +48,12 @@ export class PdfCommentItemComponent implements OnInit, OnChanges {
     },
   ];
 
-  constructor(private store: Store<State>) {
+  constructor(private store: Store<State>, private socket: Socket) {
     this.store.select(getCurrentPdfPage).subscribe((currentPage) => {
       this.currentPage = currentPage;
     });
+
+
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -76,10 +79,16 @@ export class PdfCommentItemComponent implements OnInit, OnChanges {
       else{
         this.showAnnotationInMaterial = true;
       }
+      this.socket.on(this.annotation._id, (payload: { eventType: string, annotation: Annotation, reply: Reply }) => {
+        console.log('payload = ', payload)
+        this.store.dispatch(AnnotationActions.updateAnnotationsOnSocketEmit({payload: payload}));
+      })
     }
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+
+  }
 
   sendReply() {
     this.reply = {
@@ -126,7 +135,7 @@ export class PdfCommentItemComponent implements OnInit, OnChanges {
     
     window.location.hash = "#pdfAnnotation-" + this.annotation._id;
     setTimeout(function () {
-      $( window.location.hash).css('box-shadow','0 0 25px rgba(152, 0, 83, 1)')
+      $( window.location.hash).css('box-shadow','0 0 25px rgba(83, 83, 255, 1)')
       setTimeout(function () {
         $( window.location.hash).css('box-shadow', 'none')
           
