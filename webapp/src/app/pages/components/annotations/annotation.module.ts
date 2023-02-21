@@ -16,6 +16,7 @@ import { SharedComponentsModule } from 'src/app/components/shared-components.mod
 import { PdfReplyItemComponent } from './pdf-annotation/pdf-reply-item/pdf-reply-item.component';
 import { PdfReplyPanelComponent } from './pdf-annotation/pdf-reply-panel/pdf-reply-panel.component';
 import { MenuModule } from 'primeng/menu';
+import { PdfAnnotationSummaryComponent } from './pdf-annotation/pdf-annotation-summary/pdf-annotation-summary.component';
 
 
 
@@ -29,6 +30,7 @@ import { MenuModule } from 'primeng/menu';
         PdfDrawboxComponent,
         PdfReplyItemComponent,
         PdfReplyPanelComponent,
+        PdfAnnotationSummaryComponent,
     ],
     exports: [
         PdfAnnotationToolbarComponent,

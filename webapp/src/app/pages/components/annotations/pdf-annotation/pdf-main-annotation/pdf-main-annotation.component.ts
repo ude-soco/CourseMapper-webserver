@@ -37,6 +37,7 @@ import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-ann
 import * as $ from 'jquery';
 import { AnnotationType } from 'src/app/models/Annotations';
 import { SocketIoModule, SocketIoConfig, Socket } from 'ngx-socket-io';
+import { PdfAnnotationSummaryComponent } from '../pdf-annotation-summary/pdf-annotation-summary.component';
 
 @Component({
   selector: 'app-pdf-main-annotation',
@@ -47,6 +48,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   // Pdf-View properties
   @ViewChild(PdfViewerComponent, { static: false })
   private pdfComponent!: PdfViewerComponent;
+  @ViewChild('annotationSummary', { static: true }) annotationSummary!: PdfAnnotationSummaryComponent;
   matchesFound: any = 0;
   currentPage: number = 1;
   pdfZoom$: Observable<number>;
@@ -107,6 +109,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
 
     this.store.select(getCurrentPdfPage).subscribe((currentPage) => {
       this.currentPage = currentPage;
+      this.pageRendered(currentPage);
     });
   }
 
@@ -178,6 +181,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   pagechanging(e: any) {
     this.store.dispatch(AnnotationActions.setCurrentPdfPage({pdfCurrentPage: e.first + 1}));
     this.pageRendered(e);
+    this.selectedNoteId = null;
   }
 
   public handlePdfLoaded(pdf: PDFDocumentProxy): void {
@@ -394,7 +398,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
                     this.showNoteInModal(pinObj._id, img);
                   });
                   // get to-draw-rectangle div and add img
-                  parentElement.children[2].appendChild(img);
+                  parentElement?.children[2]?.appendChild(img);
                 }
               });
             }
@@ -430,7 +434,9 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   }
 
   /** show note in modal after click on annotation in pdf */
-  showNoteInModal(noteId: any, element: any) {}
+  showNoteInModal(noteId: any, element: any) {
+    this.annotationSummary.showAnnotationPopOver(noteId, element);
+  }
 
   paginate(event: any) {
     this.currentPage = event.page + 1;
@@ -629,7 +635,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
     }
     var page = this.pdfComponent.pdfViewer.getPageView(pageIndex);
 
-    var pageElement = page.canvas.parentElement;
+    var pageElement = page?.canvas?.parentElement;
     var viewport = page.viewport;
     const existHighlight = document.getElementById(
       'pdfAnnotation-' + selected.noteId
@@ -667,6 +673,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
           el.id = 'pdfAnnotation-' + selected.noteId;
           el.addEventListener('click', (e: any) => {
             this.selectedNoteId = selected.noteId;
+            this.showNoteInModal(selected.noteId, el);
           });
         }
         pageElement.appendChild(el);

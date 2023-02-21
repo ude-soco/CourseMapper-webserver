@@ -23,6 +23,7 @@
     "@ngrx/effects": "^14.3.2",
     "@ngrx/store": "^14.3.2",
     "@ngrx/store-devtools": "^14.3.2",
+    "@popperjs/core": "^2.11.6",
     "angular-html-parser": "^2.1.0",
     "jquery": "^3.6.3",
     "ng-zorro-antd": "^14.0.0",

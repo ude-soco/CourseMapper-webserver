@@ -1,4 +1,4 @@
-<div class="card my-10 p-8" [ngStyle]="{'box-shadow': '0 0 3px 3px' + annotationColor}">
+<div class="card my-10 p-8 rounded-lg" [ngStyle]="{'box-shadow': '0 0 3px 3px' + annotationColor}" [id]="'annotation-' + annotation._id">
   <div class="flex flex-col flex-wrap space-y-5">
     <div class="flex flex-row justify-between">
       <div class="flex flex-row justify-start space-x-3">
@@ -51,9 +51,11 @@
         (onClick)="dislikeAnnotation()"
       ></app-button>
       <app-button
+      *ngIf="showAnnotationInMaterial"
         variant="contained"
         label="Show Annotation On Material"
         icon="bx-highlight"
+        (onClick)="showAnnotationOnMaterial()"
       ></app-button>
     </div>
     <div class="flex flex-col">

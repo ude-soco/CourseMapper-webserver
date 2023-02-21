@@ -9,10 +9,10 @@ import { Store } from '@ngrx/store';
 import { computeElapsedTime, getInitials } from 'src/app/format';
 import { Annotation } from 'src/app/models/Annotations';
 import { Reply } from 'src/app/models/Reply';
-import { getAnnotationsForMaterial, State } from '../state/annotation.reducer';
+import { getAnnotationsForMaterial, getCurrentPdfPage, State } from '../state/annotation.reducer';
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
 import { MenuItem } from 'primeng/api';
-
+import * as $ from 'jquery';
 @Component({
   selector: 'app-pdf-comment-item',
   templateUrl: './pdf-comment-item.component.html',
@@ -27,6 +27,8 @@ export class PdfCommentItemComponent implements OnInit, OnChanges {
   likesCount: number;
   dislikesCount: number;
   annotationColor: string;
+  currentPage: number;
+  showAnnotationInMaterial: boolean;
   annotationOptions: MenuItem[] = [
     {
       label: 'Edit',
@@ -45,14 +47,16 @@ export class PdfCommentItemComponent implements OnInit, OnChanges {
     },
   ];
 
-  constructor(private store: Store<State>) {}
+  constructor(private store: Store<State>) {
+    this.store.select(getCurrentPdfPage).subscribe((currentPage) => {
+      this.currentPage = currentPage;
+    });
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if ('annotation' in changes) {
       this.annotationInitials = getInitials(this.annotation?.author?.name);
-      this.annotationElapsedTime = computeElapsedTime(
-        this.annotation?.createdAt
-      );
+      this.annotationElapsedTime = computeElapsedTime(this.annotation?.createdAt);
       this.likesCount = this.annotation.likes.length;
       this.dislikesCount = this.annotation.dislikes.length;
       switch (this.annotation.type) {
@@ -65,6 +69,12 @@ export class PdfCommentItemComponent implements OnInit, OnChanges {
         case 'External Resource':
           this.annotationColor = '#B85E94';
           break;
+      }
+      if(this.annotation.tool.type == "annotation"){
+        this.showAnnotationInMaterial = false;
+      }
+      else{
+        this.showAnnotationInMaterial = true;
       }
     }
   }
@@ -95,5 +105,32 @@ export class PdfCommentItemComponent implements OnInit, OnChanges {
     this.store.dispatch(
       AnnotationActions.dislikeAnnotation({ annotation: this.annotation })
     );
+  }
+
+  showAnnotationOnMaterial(){
+    let location= this.annotation?.location.startPage;
+    if(this.currentPage != location){
+      this.store.dispatch(AnnotationActions.setCurrentPdfPage({pdfCurrentPage: location}));
+      if(this.currentPage == location){
+        this.highlightAnnotation();
+      } 
+    }else{
+      this.highlightAnnotation();
+    }
+  }
+
+  highlightAnnotation(){
+    var noHashURL = window.location.href.replace(/#.*$/, '');
+    window.history.replaceState('', document.title, noHashURL)  
+    if (!this.annotation._id) return;
+    
+    window.location.hash = "#pdfAnnotation-" + this.annotation._id;
+    setTimeout(function () {
+      $( window.location.hash).css('box-shadow','0 0 25px rgba(152, 0, 83, 1)')
+      setTimeout(function () {
+        $( window.location.hash).css('box-shadow', 'none')
+          
+      }, 2000);
+    }, 100);
   }
 }

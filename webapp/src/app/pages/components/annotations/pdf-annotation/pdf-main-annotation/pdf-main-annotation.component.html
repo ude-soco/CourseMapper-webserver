@@ -27,7 +27,7 @@
       [zoom]="pdfZoom$ | async"
     >
     </pdf-viewer>
-
+    <app-pdf-annotation-summary #annotationSummary [annotationId] = "selectedNoteId"></app-pdf-annotation-summary>
     </div>
 
     <div style="border: 2px solid #0000004D;">
