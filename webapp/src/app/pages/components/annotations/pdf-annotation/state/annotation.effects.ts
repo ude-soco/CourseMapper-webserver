@@ -179,6 +179,22 @@ dislikeReply$ = createEffect(() =>
   )
 );
 
+deleteReply$ = createEffect(() =>
+  this.actions$.pipe(
+    ofType(AnnotationActions.deleteReply),
+    mergeMap(({ reply }) =>
+      this.annotationService.deleteReply(reply).pipe(
+        mergeMap(() => [
+          AnnotationActions.deleteReplySuccess(),
+        ]),
+        catchError((error) =>
+          of(AnnotationActions.deleteReplyFail({ error }))
+        )
+      )
+    )
+  )
+);
+
   constructor(
     private actions$: Actions,
     private annotationService: AnnotationService,

@@ -44,4 +44,12 @@ export class AnnotationService {
   dislikeReply(reply: Reply): Observable<any>{
     return this.http.post<any>(`${environment.apiUrl}/courses/${reply.courseId}/replies/${reply._id}/dislike`, {});
   }
+
+  deleteReply(reply: Reply): Observable<any>{
+    return this.http.delete<any>(`${environment.apiUrl}/courses/${reply.courseId}/replies/${reply._id}`, {});
+  }
+
+  editReply(reply: Reply): Observable<any>{
+    return this.http.put<any>(`${environment.apiUrl}/courses/${reply.courseId}/replies/${reply._id}`, {});
+  }
 }

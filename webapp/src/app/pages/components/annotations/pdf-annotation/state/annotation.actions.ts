@@ -198,12 +198,21 @@ export const setHideRepliesButton = createAction(
     props<{ hideRepliesButton: boolean }>()
 );
 
-// export const updateAnnotationsOnSocketEmit = createAction(
-//     '[Annotation] Update Stored Annotations',
-//     props<{annotation: Annotation}>()
-// );
-
 export const updateAnnotationsOnSocketEmit = createAction(
     '[Annotation] Update Stored Annotations',
     props<{payload: any}>()
+);
+
+export const deleteReply = createAction(
+    '[Reply] Delete Reply',
+    props<{reply: Reply}>()
+);
+
+export const deleteReplySuccess = createAction(
+    '[Reply] Reply Deleted Successfully'
+);
+
+export const deleteReplyFail = createAction(
+    '[Reply] Failed to delete the reply',
+    props<{error: string}>()
 );

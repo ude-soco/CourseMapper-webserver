@@ -416,32 +416,33 @@ export const annotationReducer = createReducer<AnnotationState>(
             annotationsForMaterial: annotations,
           };
         }
-        // case 'replyUnliked': {
-        //   let annotations = [...state.annotationsForMaterial];
-        //   let annotation = annotations.find(
-        //     (annotation) => annotation.replies.some((reply) => reply._id === action.payload.reply._id)
-        //   );
-        //   let annotationIndex = state.annotationsForMaterial.findIndex(
-        //     (annotation) => annotation._id === annotation._id
-        //   );
-        //   let replies = [...annotation.replies];
-        //   //Check if reply already exists:
-        //   let replyIndex = replies.findIndex(
-        //     (reply) => reply._id === action.payload.reply._id
-        //   );
-        //   if (replyIndex) {
-        //     replies[replyIndex] = action.payload.reply
-        //     let updatedAnnotation = {
-        //       ...annotation,
-        //       replies: replies,
-        //     } as Annotation;
-        //     annotations[annotationIndex] = updatedAnnotation;
-        //   }
-        //   return {
-        //     ...state,
-        //     annotationsForMaterial: annotations,
-        //   };
-        // }
+        case 'replyDeleted': {
+          let annotations = [...state.annotationsForMaterial];
+          let index = state.annotationsForMaterial.findIndex(
+            (annotation) => annotation._id === action.payload.annotation._id
+          );
+          let annotation = annotations.find(
+            (annotation) => annotation._id === action.payload.annotation._id
+          );
+          let replies = [...annotation.replies];
+          //Check if reply already exists:
+          let exists = replies.some(
+            (reply) => reply._id === action.payload.reply._id
+          );
+          if (exists) {
+            replies.forEach((reply, index) => {if(reply._id === action.payload.reply._id) replies.splice(index, 1)});
+            let updatedReplies = [...replies];
+            let updatedAnnotation = {
+              ...annotation,
+              replies: updatedReplies,
+            } as Annotation;
+            annotations[index] = updatedAnnotation;
+          }
+          return {
+            ...state,
+            annotationsForMaterial: annotations,
+          };
+        }
         default: {
           return {
             ...state,

@@ -44,7 +44,7 @@ import {
 } from './_helpers/http.interceptor';
 import { MatInputModule } from '@angular/material/input';
 import { MatTabsModule } from '@angular/material/tabs';
-import { StoreModule } from '@ngrx/store';
+import { StoreModule, MetaReducer  } from '@ngrx/store';
 import { AnnotationModule } from './pages/components/annotations/annotation.module';
 import { MaterialsModule } from './pages/components/materils/materials.module';
 import { EffectsModule } from '@ngrx/effects';
@@ -54,6 +54,9 @@ import { SharedComponentsModule } from './components/shared-components.module';
 import { appReducer } from './state/app.reducer';
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 const config: SocketIoConfig = { url: 'http://localhost:8080', options: {} };
+import { hydrationMetaReducer } from "./state/hydration.reducer";
+ 
+export const metaReducers: MetaReducer[] = [hydrationMetaReducer];
 registerLocaleData(en);
 
 @NgModule({
@@ -91,7 +94,7 @@ registerLocaleData(en);
         ConfirmDialogModule,
         MatInputModule,
         MatTabsModule,
-        StoreModule.forRoot({}, {}),
+        StoreModule.forRoot({}, {metaReducers}),
         AnnotationModule,
         MaterialsModule,
         EffectsModule.forRoot([]),

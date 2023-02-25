@@ -2,6 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserServiceService } from 'src/app/services/user-service.service';
 import { StorageService } from 'src/app/services/storage.service';
+import { State } from 'src/app/state/app.reducer';
+import { Store } from '@ngrx/store';
+import { User } from 'src/app/models/User';
+import * as ApplicationActions from 'src/app/state/app.actions';
 
 @Component({
   selector: 'app-login',
@@ -20,7 +24,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private userService: UserServiceService,
     private storageService: StorageService,
-    private router: Router
+    private router: Router,
+    private store: Store<State>
   ) {}
 
   ngOnInit(): void {
@@ -39,6 +44,9 @@ export class LoginComponent implements OnInit {
 
         this.isLoginFailed = false;
         this.isLoggedIn = true;
+
+        const user = data as User;
+        this.store.dispatch(ApplicationActions.setLoggedInUser({loggedInUser: user}));
 
         // this.router.navigate(['/home']).then(() => {
         //   window.location.reload();

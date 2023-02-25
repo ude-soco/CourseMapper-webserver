@@ -245,6 +245,11 @@ export const deleteReply = async (req, res, next) => {
     user: user,
     reply: foundReply
   }
+  socketio.getIO().emit(foundAnnotation._id, {
+    eventType: 'replyDeleted',
+    annotation: foundAnnotation,
+    reply: foundReply
+  });
   return next();
 };
 
