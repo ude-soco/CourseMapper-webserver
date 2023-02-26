@@ -49,7 +49,15 @@ export class AnnotationService {
     return this.http.delete<any>(`${environment.apiUrl}/courses/${reply.courseId}/replies/${reply._id}`, {});
   }
 
-  editReply(reply: Reply): Observable<any>{
-    return this.http.put<any>(`${environment.apiUrl}/courses/${reply.courseId}/replies/${reply._id}`, {});
+  editReply(reply: Reply, content: string): Observable<any>{
+    return this.http.put<any>(`${environment.apiUrl}/courses/${reply.courseId}/replies/${reply._id}`, {content});
+  }
+
+  deleteAnnotation(annotation: Annotation): Observable<any>{
+    return this.http.delete<any>(`${environment.apiUrl}/courses/${annotation.courseId}/annotations/${annotation._id}`, {});
+  }
+
+  editAnnotation(annotation: Reply, content: string): Observable<any>{
+    return this.http.put<any>(`${environment.apiUrl}/courses/${annotation.courseId}/annotations/${annotation._id}`, {content});
   }
 }

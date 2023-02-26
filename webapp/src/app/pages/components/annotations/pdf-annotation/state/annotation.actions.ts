@@ -213,6 +213,35 @@ export const deleteReplySuccess = createAction(
 );
 
 export const deleteReplyFail = createAction(
-    '[Reply] Failed to delete the reply',
+    '[Reply] Failed To Delete The Reply',
     props<{error: string}>()
 );
+
+export const editReply = createAction(
+    '[Reply] Edit Reply',
+    props<{reply: Reply, updatedReply: string}>()
+);
+
+export const editReplySuccess = createAction(
+    '[Reply] Reply Edited Successfully'
+);
+
+export const editReplyFail = createAction(
+    '[Reply] Failed To Edit The Reply',
+    props<{error: string}>()
+);
+
+export const deleteAnnotation = createAction(
+    '[Annotation] Delete Annotation',
+    props<{annotation: Annotation}>()
+);
+
+export const deleteAnnotationSuccess = createAction(
+    '[Annotation] Annotation Deleted Successfully'
+);
+
+export const deleteAnnotationFail = createAction(
+    '[Annotation] Failed To Delete The Annotation',
+    props<{error: string}>()
+);
+

@@ -195,6 +195,38 @@ deleteReply$ = createEffect(() =>
   )
 );
 
+editReply$ = createEffect(() =>
+  this.actions$.pipe(
+    ofType(AnnotationActions.editReply),
+    mergeMap(({ reply, updatedReply }) =>
+      this.annotationService.editReply(reply, updatedReply).pipe(
+        mergeMap(() => [
+          AnnotationActions.editReplySuccess(),
+        ]),
+        catchError((error) =>
+          of(AnnotationActions.editReplyFail({ error }))
+        )
+      )
+    )
+  )
+);
+
+deleteAnnotation$ = createEffect(() =>
+  this.actions$.pipe(
+    ofType(AnnotationActions.deleteAnnotation),
+    mergeMap(({ annotation }) =>
+      this.annotationService.deleteAnnotation(annotation).pipe(
+        mergeMap(() => [
+          AnnotationActions.deleteAnnotationSuccess(),
+        ]),
+        catchError((error) =>
+          of(AnnotationActions.deleteAnnotationFail({ error }))
+        )
+      )
+    )
+  )
+);
+
   constructor(
     private actions$: Actions,
     private annotationService: AnnotationService,

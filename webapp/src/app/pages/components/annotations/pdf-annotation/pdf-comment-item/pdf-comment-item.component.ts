@@ -14,6 +14,8 @@ import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-ann
 import { MenuItem } from 'primeng/api';
 import * as $ from 'jquery';
 import { SocketIoModule, SocketIoConfig, Socket } from 'ngx-socket-io';
+import { User } from 'src/app/models/User';
+import { getLoggedInUser } from 'src/app/state/app.reducer';
 @Component({
   selector: 'app-pdf-comment-item',
   templateUrl: './pdf-comment-item.component.html',
@@ -30,30 +32,14 @@ export class PdfCommentItemComponent implements OnInit, OnChanges {
   annotationColor: string;
   currentPage: number;
   showAnnotationInMaterial: boolean;
-  annotationOptions: MenuItem[] = [
-    {
-      label: 'Edit',
-      icon: 'pi pi-pencil',
-      // command: () => this.onRenameTopic(),
-    },
-    {
-      label: 'Delete',
-      icon: 'pi pi-times',
-      // command: () => this.onDeleteTopic(),
-    },
-    {
-      label: 'Report',
-      icon: 'pi pi-flag-fill',
-      // command: () => this.onDeleteTopic(),
-    },
-  ];
+  loggedInUser: User
+  annotationOptions: MenuItem[];
+  isEditing: boolean = false;
 
   constructor(private store: Store<State>, private socket: Socket) {
     this.store.select(getCurrentPdfPage).subscribe((currentPage) => {
       this.currentPage = currentPage;
     });
-
-
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -83,11 +69,13 @@ export class PdfCommentItemComponent implements OnInit, OnChanges {
         console.log('payload = ', payload)
         this.store.dispatch(AnnotationActions.updateAnnotationsOnSocketEmit({payload: payload}));
       })
+      this.isEditing = false;
     }
   }
 
   ngOnInit(): void {
-
+    this.store.select(getLoggedInUser).subscribe((user) => {this.loggedInUser = user;});
+    this.setMenuItems();
   }
 
   sendReply() {
@@ -141,5 +129,45 @@ export class PdfCommentItemComponent implements OnInit, OnChanges {
           
       }, 2000);
     }, 100);
+  }
+
+  onDeleteAnnotation(){
+    this.store.dispatch(AnnotationActions.deleteAnnotation({annotation: this.annotation}));
+  }
+
+  onEditAnnotation(){
+    this.isEditing = true;
+    this.setMenuItems();
+  }
+
+  dispatchUpdatedAnnotation(){
+    //this.store.dispatch(AnnotationActions.editReply({reply: this.reply, updatedReply: this.updatedReply}));
+    this.isEditing = false;
+  }
+
+  cancelEditing(){
+    this.isEditing = false;
+  }
+
+  setMenuItems(){
+    this.annotationOptions = [
+      {
+        label: 'Edit',
+        icon: 'pi pi-pencil',
+        disabled: (this.loggedInUser?.id !== this.annotation?.author?.userId) && !this.isEditing,
+        command: () => this.onEditAnnotation(),
+      },
+      {
+        label: 'Delete',
+        icon: 'pi pi-times',
+        disabled: (this.loggedInUser?.id !== this.annotation?.author?.userId) && !this.isEditing,
+        command: () => this.onDeleteAnnotation(),
+      },
+      {
+        label: 'Report',
+        icon: 'pi pi-flag-fill',
+        // command: () => this.onDeleteTopic(),
+      },
+    ];
   }
 }

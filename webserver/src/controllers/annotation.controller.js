@@ -112,18 +112,18 @@ export const newAnnotation = async (req, res, next) => {
     }
   }
 
-  socketio.getIO().emit(materialId, {
-    eventType: 'annotationCreated',
-    annotation: newAnnotation,
-    reply: null
-  });
-
   req.locals = {
     response: newAnnotation,
     material: foundMaterial,
     user: foundUser,
     annotation: newAnnotation
   }
+
+  socketio.getIO().emit(materialId, {
+    eventType: 'annotationCreated',
+    annotation: newAnnotation,
+    reply: null
+  });
   
   return next()
 };
@@ -219,6 +219,12 @@ export const deleteAnnotation = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
+
+  socketio.getIO().emit(foundMaterial._id, {
+    eventType: 'annotationDeleted',
+    annotation: foundAnnotation,
+    reply: null
+  });
 
   req.locals = {
     response: { success: "Annotation successfully deleted" },

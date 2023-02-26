@@ -443,6 +443,41 @@ export const annotationReducer = createReducer<AnnotationState>(
             annotationsForMaterial: annotations,
           };
         }
+        case 'replyEdited': {
+          let annotations = [...state.annotationsForMaterial];
+          let index = state.annotationsForMaterial.findIndex(
+            (annotation) => annotation._id === action.payload.annotation._id
+          );
+          let annotation = annotations.find(
+            (annotation) => annotation._id === action.payload.annotation._id
+          );
+          let replies = [...annotation.replies];
+          //Check if reply already exists:
+          let replyIndex = replies.findIndex(
+            (reply) => reply._id === action.payload.reply._id
+          );
+          replies[replyIndex] = action.payload.reply;
+          if (replyIndex) {
+            let updatedReplies = [...replies];
+            let updatedAnnotation = {
+              ...annotation,
+              replies: updatedReplies,
+            } as Annotation;
+            annotations[index] = updatedAnnotation;
+          }
+          return {
+            ...state,
+            annotationsForMaterial: annotations,
+          };
+        }
+        case 'annotationDeleted': {
+          let annotations = [...state.annotationsForMaterial];
+          annotations.forEach((anno, index) => {if(anno._id === action.payload.annotation._id) annotations.splice(index, 1)});
+          return {
+            ...state,
+            annotationsForMaterial: annotations,
+          };
+        }
         default: {
           return {
             ...state,

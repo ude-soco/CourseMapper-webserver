@@ -27,12 +27,15 @@ export class PdfReplyItemComponent implements OnInit, OnChanges, OnDestroy {
   annotationOptions: MenuItem[];
   subscription: Subscription;
   isEditing: boolean = false;
+  updatedReply: string;
+
   constructor(private store: Store<State>, private socket: Socket) {
 
    }
 
   ngOnChanges(changes: SimpleChanges): void {
     if('reply' in  changes){
+      this.isEditing = false;
       this.replyInitials = getInitials(this.reply?.author?.name);
       this.replyElapsedTime = computeElapsedTime(this.reply?.createdAt);
       this.likesCount = this.reply?.likes?.length;
@@ -48,13 +51,13 @@ export class PdfReplyItemComponent implements OnInit, OnChanges, OnDestroy {
         {
           label: 'Edit',
           icon: 'pi pi-pencil',
-          disabled: this.loggedInUser?.id !== this.reply?.author?.userId,
+          disabled: this.loggedInUser?.id !== this.reply?.author?.userId || this.isEditing,
           command: () => this.onEditReply(),
         },
         {
           label: 'Delete',
           icon: 'pi pi-times',
-          disabled: this.loggedInUser?.id !== this.reply?.author?.userId,
+          disabled: (this.loggedInUser?.id !== this.reply?.author?.userId) && !this.isEditing,
           command: () => this.onDeleteReply(),
         },
         {
@@ -70,7 +73,6 @@ export class PdfReplyItemComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    console.log('Destroyed');
     this.subscription.unsubscribe();
     this.socket.removeAllListeners(this.reply?._id);
   }
@@ -89,7 +91,15 @@ export class PdfReplyItemComponent implements OnInit, OnChanges, OnDestroy {
 
   onEditReply(){
     this.isEditing = true;
-    
+  }
+
+  dispatchUpdatedReply(){
+    this.store.dispatch(AnnotationActions.editReply({reply: this.reply, updatedReply: this.updatedReply}));
+    this.isEditing = false;
+  }
+
+  cancelEditing(){
+    this.isEditing = false;
   }
 
   onReportReply(){}

@@ -347,10 +347,24 @@ export const editReply = async (req, res, next) => {
     }
   }
 
+  let foundAnnotation;
+  try {
+    foundAnnotation = await Annotation.findOne({
+      _id: foundReply.annotationId,
+    });
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
   req.locals.response = { success: "Reply successfully updated" }
   req.locals.newReply = foundReply;
   req.locals.user = user;
 
+  socketio.getIO().emit(foundAnnotation._id, {
+    eventType: 'replyEdited',
+    annotation: foundAnnotation,
+    reply: foundReply
+  });
   return next();
 };
 

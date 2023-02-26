@@ -166,9 +166,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
     this.socket.on(this.materialId, (payload: { eventType: string, annotation: Annotation, reply: Reply }) => {
       console.log('payload = ', payload)
       let annotation = this.annotations.find((anno) => payload.annotation?._id == anno._id)
-      if(annotation == null){
         this.store.dispatch(AnnotationActions.updateAnnotationsOnSocketEmit({payload: payload}));
-      }
     })
   }
 

@@ -35,9 +35,30 @@
   </div>
 
   <div class="mb-6 mt-2 mx-10">
-    <p style="font-size: 20px; font-family: Roboto">
+    <p style="font-size: 20px; font-family: Roboto" *ngIf="!isEditing">
       {{ reply?.content }}
     </p>
+    <div class="flex flex-row space-x-3 mx-7 my-3" *ngIf="isEditing">
+      <input
+        type="text"
+        placeholder="Edit Reply"
+        [(ngModel)]="updatedReply"
+        class="p-inputtext-sm w-11/12 h-2/3"
+        pInputText
+      />
+      <app-iconbutton
+        icon="bxs-check-circle"
+        color="text-slate-500"
+        class="mt-3 flex-1 justify-end"
+        (onClick)="dispatchUpdatedReply()"
+      ></app-iconbutton>
+      <app-iconbutton
+      icon="bxs-x-circle"
+      color="text-slate-500"
+      class="mt-3 flex-1 justify-end"
+      (onClick)="cancelEditing()"
+    ></app-iconbutton>
+    </div>
   </div>
   <div class="flex flex-row flex-wrap space-x-3 mx-10">
     <app-button

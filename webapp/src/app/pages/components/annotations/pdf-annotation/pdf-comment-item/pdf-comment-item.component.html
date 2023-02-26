@@ -1,5 +1,5 @@
 <div class="card my-10 p-8 rounded-lg" [ngStyle]="{'box-shadow': '0 0 3px 3px' + annotationColor}" [id]="'annotation-' + annotation._id">
-  <div class="flex flex-col flex-wrap space-y-5">
+  <div class="flex flex-col flex-wrap space-y-5" *ngIf="!isEditing">
     <div class="flex flex-row justify-between">
       <div class="flex flex-row justify-start space-x-3">
         <p-avatar
@@ -76,5 +76,8 @@
         ></app-iconbutton>
       </div>
     </div>
+  </div>
+  <div *ngIf="isEditing">
+    <app-pdf-create-annotation></app-pdf-create-annotation>
   </div>
 </div>
