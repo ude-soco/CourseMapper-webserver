@@ -1,4 +1,4 @@
-<div [ngStyle]="{'box-shadow': '0 0 3px 3px' + annotationColor}" class="my-5">
+<div [ngStyle]="{'box-shadow': '0 0 3px 3px' + annotationColor}" class="mb-5">
   <p-panel header="Create Annotation" [toggleable]="false">
     <ng-template pTemplate="icons" *ngIf="showCancelButton">
       <app-iconbutton
@@ -54,7 +54,7 @@
         autoWidth="false"
         [disabled]="!isFromSelected"
         appendTo="body"
-        [style]="{ minWidth: '200%' }"
+        [style]="{ minWidth: '100%' }"
       ></p-dropdown>
       </div>
       <div class="flex flex-row space-x-3">

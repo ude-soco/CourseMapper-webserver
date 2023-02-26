@@ -1,5 +1,5 @@
 <div class="flex flex-row">
-  <div class="flex flex-col w-100 space-y-2">
+  <div class="flex flex-col w-11/12 space-y-2">
     <app-pdf-annotation-toolbar></app-pdf-annotation-toolbar>
 
 
@@ -42,15 +42,18 @@
     </div>
   </div>
 
-  <div class="flex flex-col space-y-7 px-10 basis-full">
+  <div class="flex flex-col px-10 basis-full">
     <p-dialog
       *ngIf="isAnnotationDialogVisible$ | async"
       [visible]="true"
-      [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
+      [breakpoints]="{ '960px': '75vw', '600px': '100vw' }"
       [style]="{ width: '50vw' }"
       [closable]="false"
     >
+    <div class="mt-5">
       <app-pdf-create-annotation appendTo="body"></app-pdf-create-annotation>
+    </div>
+
     </p-dialog>
     <div class="create-annotation">
       <app-pdf-create-annotation></app-pdf-create-annotation>

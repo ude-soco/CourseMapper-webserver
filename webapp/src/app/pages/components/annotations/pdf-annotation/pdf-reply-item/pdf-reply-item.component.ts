@@ -26,6 +26,7 @@ export class PdfReplyItemComponent implements OnInit, OnChanges, OnDestroy {
   dislikesCount: number;
   annotationOptions: MenuItem[];
   subscription: Subscription;
+  isEditing: boolean = false;
   constructor(private store: Store<State>, private socket: Socket) {
 
    }
@@ -86,7 +87,10 @@ export class PdfReplyItemComponent implements OnInit, OnChanges, OnDestroy {
     this.store.dispatch(AnnotationActions.deleteReply({reply: this.reply}));
   }
 
-  onEditReply(){}
+  onEditReply(){
+    this.isEditing = true;
+    
+  }
 
   onReportReply(){}
 
