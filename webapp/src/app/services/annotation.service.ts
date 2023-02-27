@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, tap, throwError } from 'rxjs';
-import { Annotation } from 'src/app/models/Annotations';
+import { Annotation, AnnotationLocationType, AnnotationTool, AnnotationType, PdfAnnotationTool, PdfGeneralAnnotationLocation } from 'src/app/models/Annotations';
 import { environment } from 'src/environments/environment';
 import { Material } from '../models/Material';
 import { Reply } from '../models/Reply';
@@ -57,7 +57,11 @@ export class AnnotationService {
     return this.http.delete<any>(`${environment.apiUrl}/courses/${annotation.courseId}/annotations/${annotation._id}`, {});
   }
 
-  editAnnotation(annotation: Reply, content: string): Observable<any>{
-    return this.http.put<any>(`${environment.apiUrl}/courses/${annotation.courseId}/annotations/${annotation._id}`, {content});
+  editAnnotation(annotation: Annotation): Observable<any>{
+    let type = annotation.type;
+    let content = annotation.content;
+    let location = annotation.location;
+    let tool = annotation.tool;
+    return this.http.put<any>(`${environment.apiUrl}/courses/${annotation.courseId}/annotations/${annotation._id}`, {type, content, location, tool});
   }
 }

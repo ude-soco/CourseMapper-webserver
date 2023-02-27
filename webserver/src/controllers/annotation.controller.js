@@ -344,7 +344,11 @@ export const editAnnotation = async (req, res, next) => {
   req.locals.response = { success: "Annotation successfully updated" }
   req.locals.newAnnotation = foundAnnotation;
   req.locals.user = user;
-
+  socketio.getIO().emit(foundAnnotation.materialId, {
+    eventType: 'annotationEdited',
+    annotation: foundAnnotation,
+    reply: null
+  });
   return next();
 };
 

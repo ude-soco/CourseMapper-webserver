@@ -35,6 +35,7 @@ export class PdfCommentItemComponent implements OnInit, OnChanges {
   loggedInUser: User
   annotationOptions: MenuItem[];
   isEditing: boolean = false;
+  updatedAnnotation: string;
 
   constructor(private store: Store<State>, private socket: Socket) {
     this.store.select(getCurrentPdfPage).subscribe((currentPage) => {
@@ -137,11 +138,16 @@ export class PdfCommentItemComponent implements OnInit, OnChanges {
 
   onEditAnnotation(){
     this.isEditing = true;
+    this.updatedAnnotation = this.annotation.content;
     this.setMenuItems();
   }
 
   dispatchUpdatedAnnotation(){
-    //this.store.dispatch(AnnotationActions.editReply({reply: this.reply, updatedReply: this.updatedReply}));
+    let updatedAnnotation = {
+      ... this.annotation,
+      content: this.updatedAnnotation
+    }
+    this.store.dispatch(AnnotationActions.editAnnotation({annotation: updatedAnnotation}));
     this.isEditing = false;
   }
 

@@ -245,3 +245,17 @@ export const deleteAnnotationFail = createAction(
     props<{error: string}>()
 );
 
+export const editAnnotation = createAction(
+    '[Annotation] Edit Annotation',
+    props<{annotation: Annotation}>()
+);
+
+export const editAnnotationSuccess = createAction(
+    '[Annotation] Annotation Edited Successfully'
+);
+
+export const editAnnotationFail = createAction(
+    '[Annotation] Failed To Edit The Annotation',
+    props<{error: string}>()
+);
+

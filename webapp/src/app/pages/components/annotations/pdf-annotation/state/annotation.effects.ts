@@ -227,6 +227,22 @@ deleteAnnotation$ = createEffect(() =>
   )
 );
 
+editAnnotation$ = createEffect(() =>
+  this.actions$.pipe(
+    ofType(AnnotationActions.editAnnotation),
+    mergeMap(({ annotation }) =>
+      this.annotationService.editAnnotation(annotation).pipe(
+        mergeMap(() => [
+          AnnotationActions.editAnnotationSuccess(),
+        ]),
+        catchError((error) =>
+          of(AnnotationActions.editAnnotationFail({ error }))
+        )
+      )
+    )
+  )
+);
+
   constructor(
     private actions$: Actions,
     private annotationService: AnnotationService,

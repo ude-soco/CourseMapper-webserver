@@ -91,6 +91,7 @@ export class PdfReplyItemComponent implements OnInit, OnChanges, OnDestroy {
 
   onEditReply(){
     this.isEditing = true;
+    this.updatedReply = this.reply.content;
   }
 
   dispatchUpdatedReply(){

@@ -478,6 +478,18 @@ export const annotationReducer = createReducer<AnnotationState>(
             annotationsForMaterial: annotations,
           };
         }
+        case 'annotationEdited': {
+          let annotations = [...state.annotationsForMaterial];
+          let index = annotations.findIndex((anno) => anno._id == action.payload.annotation._id)
+          annotations[index] = {
+            ...annotations[index],
+            content: action.payload.annotation.content
+          }
+          return {
+            ...state,
+            annotationsForMaterial: annotations,
+          };
+        }
         default: {
           return {
             ...state,

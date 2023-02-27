@@ -1,5 +1,5 @@
 <div class="card my-10 p-8 rounded-lg" [ngStyle]="{'box-shadow': '0 0 3px 3px' + annotationColor}" [id]="'annotation-' + annotation._id">
-  <div class="flex flex-col flex-wrap space-y-5" *ngIf="!isEditing">
+  <div class="flex flex-col flex-wrap space-y-5">
     <div class="flex flex-row justify-between">
       <div class="flex flex-row justify-start space-x-3">
         <p-avatar
@@ -33,9 +33,30 @@
       </div>
     </div>
     <div class="mb-6 mt-6">
-      <p style="font-size: 20px; font-family: Roboto">
+      <p style="font-size: 20px; font-family: Roboto" *ngIf="!isEditing">
         {{ annotation?.content }}
       </p>
+      <div class="flex flex-row space-x-3 mx-7 my-3" *ngIf="isEditing">
+        <input
+          type="text"
+          placeholder="Edit Annotation"
+          [(ngModel)]="updatedAnnotation"
+          class="p-inputtext-sm w-11/12 h-2/3"
+          pInputText
+        />
+        <app-iconbutton
+          icon="bxs-check-circle"
+          color="text-slate-500"
+          class="mt-3 flex-1 justify-end"
+          (onClick)="dispatchUpdatedAnnotation()"
+        ></app-iconbutton>
+        <app-iconbutton
+        icon="bxs-x-circle"
+        color="text-slate-500"
+        class="mt-3 flex-1 justify-end"
+        (onClick)="cancelEditing()"
+      ></app-iconbutton>
+      </div>
     </div>
     <div class="flex flex-row flex-wrap space-x-3">
       <app-button
@@ -76,8 +97,5 @@
         ></app-iconbutton>
       </div>
     </div>
-  </div>
-  <div *ngIf="isEditing">
-    <app-pdf-create-annotation></app-pdf-create-annotation>
   </div>
 </div>
