@@ -39,6 +39,7 @@ import { AnnotationType } from 'src/app/models/Annotations';
 import { SocketIoModule, SocketIoConfig, Socket } from 'ngx-socket-io';
 import { PdfAnnotationSummaryComponent } from '../pdf-annotation-summary/pdf-annotation-summary.component';
 import { Reply } from 'src/app/models/Reply';
+import { getLoggedInUser } from 'src/app/state/app.reducer';
 
 @Component({
   selector: 'app-pdf-main-annotation',
@@ -87,7 +88,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   selectedLineHeight: number = 2;
   annotationToolForm!: string;
   highlightObjectsList: any = [];
-  currentUserId = '6150542959fa724a51ba859e';
+  currentUserId: string;
   pinCoords: any;
   pinElement!: any;
   textSelection!: boolean;
@@ -160,6 +161,8 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
     this.isAnnotationDialogVisible$ = this.store.select(
       getIsAnnotationDialogVisible
     );
+
+    this.store.select(getLoggedInUser).subscribe((user) => this.currentUserId = user.id)
     this.isAnnotationCanceled$ = this.store.select(getIsAnnotationCanceled);
     this.isAnnotationPosted$ = this.store.select(getIsAnnotationPosted);
 
@@ -179,7 +182,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
 
   pagechanging(e: any) {
     this.store.dispatch(AnnotationActions.setCurrentPdfPage({pdfCurrentPage: e.first + 1}));
-    this.pageRendered(e);
+    //this.pageRendered(e);
     this.selectedNoteId = null;
   }
 
@@ -242,195 +245,167 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
     }
   }
 
-  /** Is called when a page is rendered. Is used to add Pin/rectangle/ highlight/circle on the pdf when a page is rendering */
-  pageRendered(e: any) {
-    if (this.hideAnnotationEvent == false) {
-      this.textSelection = false;
-      let elem;
-      var divToAddAnnotation = Array.from(
-        document.getElementsByClassName(
-          'to-draw-rectangle'
-        ) as HTMLCollectionOf<HTMLElement>
-      );
-      if (divToAddAnnotation.length > 0) {
-        elem = divToAddAnnotation[0];
-      } else {
-        elem = document.createElement('div');
-        elem.className = 'to-draw-rectangle';
-        elem.style.left = 0 + 'px';
-        elem.style.top = 0 + 'px';
-        elem.style.right = 0 + 'px';
-        elem.style.bottom = 0 + 'px';
-        elem.style.cursor = this.cursorMode;
-      }
-
-      //get the parentElement  showallpage is set to true
-      //const path = this.composedPath(event.source.div);
-
-      //get the parentElement if showallpage is set to false
-      const pageIndex = this.currentPage - 1;
-      const page = this.pdfComponent?.pdfViewer?.getPageView(pageIndex);
-
-      const parentElement = page?.div;
-      if (parentElement != undefined) {
-        //const eventPath= path!.find((p: { className: string; }) => p.className === 'page')
-        const annotationItem = Array.from(
-          document.getElementsByClassName(
-            'annotationItem'
-          ) as HTMLCollectionOf<HTMLElement>
-        );
-        //remove all current annotations on pdf when update annotations list
-        if (annotationItem.length > 0) {
-          for (let i = 0; i < annotationItem.length; i++) {
-            let element = annotationItem[i];
-            element.remove();
-          }
+    /** Is called when a page is rendered. Is used to add Pin/rectangle/ highlight/circle on the pdf when a page is rendering */
+    pageRendered(event: any) {
+      //this.pdfComponent.pdfViewer.currentScaleValue = 'page-fit';
+      if (this.hideAnnotationEvent == false) {
+        this.textSelection = false
+        let elem;
+        var divToAddAnnotation = Array.from(document.getElementsByClassName('to-draw-rectangle') as HTMLCollectionOf<HTMLElement>)
+        if (divToAddAnnotation.length > 0) {
+          elem = divToAddAnnotation[0]
+        } else {
+          elem = document.createElement('div');
+          elem.className = 'to-draw-rectangle';
+          elem.style.left = 0 + 'px';
+          elem.style.top = 0 + 'px';
+          elem.style.right = 0 + 'px';
+          elem.style.bottom = 0 + 'px';
+          elem.style.cursor = this.cursorMode;
         }
-        parentElement.appendChild(elem);
-        //get the current data page number if showallpage is set to false
-        const dataPageNumber: number =
-          parentElement.getAttribute('data-page-number');
-
-        //var page:any = this.pdfComponent.pdfViewer.getPageView(dataPageNumber-1);
-
-        $('.textLayer').addClass('disable-textLayer');
-        if (this.drawBoxObjectList != null || this.pinObjectsList != null) {
-          if (
-            this.drawBoxObjectList != null &&
-            this.drawBoxObjectList.length > 0
-          ) {
-            //get annotations coordinates from database and draw rectangle/circle on pdf
-
-            var rectElemts = this.drawBoxObjectList.filter(
-              (f) => f.pageNumber == dataPageNumber
-            );
-
-            if (typeof rectElemts !== 'undefined' && rectElemts.length > 0) {
-              rectElemts.forEach((rectObj) => {
-                //check if element already exists in Html dom
-
-                const existElmt = document.getElementById(
-                  'pdfAnnotation-' + rectObj._id
-                );
-                if (existElmt == undefined) {
-                  const rect = document.createElement('div');
-                  rect.id = 'pdfAnnotation-' + rectObj._id;
-                  rect.className = 'annotationItem';
-                  rect.style.position = 'absolute';
-                  rect.style.border =
-                    rectObj.lineHeight.toString() +
-                    'px solid RGB(238,170,0, .5)';
-                  rect.style.cursor = 'pointer';
-
-                  var x = rectObj.coordinates.x1 * page.scale,
-                    y = rectObj.coordinates.y1 * page.scale,
-                    width = rectObj.coordinates.width * page.scale,
-                    height = rectObj.coordinates.height * page.scale,
-                    x2 = x + width,
-                    y2 = y + height;
-                  var pagePoint = page.viewport
-                    .convertToPdfPoint(x, y)
-                    .concat(page.viewport.convertToPdfPoint(x2, y2));
-
-                  var obj = page.viewport.convertToViewportRectangle(pagePoint);
-
-                  rect.style.borderRadius =
-                    rectObj.coordinates.borderRadius + '%';
-                  rect.style.left = obj[0] + 'px';
-                  rect.style.top = obj[1] + 'px';
-                  rect.style.width = obj[2] - obj[0] + 'px';
-                  rect.style.height = obj[3] - obj[1] + 'px';
-                  //add eventlistener show single Annotation in Modal
-                  rect.addEventListener('click', (e: any) => {
-                    this.selectedNoteId = rectObj._id;
-                    this.showNoteInModal(rectObj._id, rect);
-                  });
-                  // get to-draw-rectangle div and add rectangle
-                  parentElement.children[2].appendChild(rect);
-                }
+  
+        //get the parentElement  showallpage is set to true
+        //const path = this.composedPath(event.source.div);
+  
+        //get the parentElement if showallpage is set to false
+        const pageIndex = this.currentPage - 1;
+        const page = this.pdfComponent?.pdfViewer?.getPageView(pageIndex);
+        const parentElement = page?.div
+        if (parentElement != undefined) {
+          //const eventPath= path!.find((p: { className: string; }) => p.className === 'page')
+          const annotationItem = Array.from(document.getElementsByClassName('annotationItem') as HTMLCollectionOf<HTMLElement>)
+          //remove all current annotations on pdf when update annotations list
+          if (annotationItem.length > 0) {
+            for (let i = 0; i < annotationItem.length; i++) {
+              let element = annotationItem[i];
+              element.remove()
+            }
+          }
+          parentElement.appendChild(elem);
+          //get the current data page number if showallpage is set to false
+          const dataPageNumber: number = parentElement.getAttribute('data-page-number')
+  
+          //var page:any = this.pdfComponent.pdfViewer.getPageView(dataPageNumber-1);
+  
+          $('.textLayer').addClass('disable-textLayer');
+          if (this.drawBoxObjectList != null || this.pinObjectsList != null) {
+  
+            if (this.drawBoxObjectList != null && this.drawBoxObjectList.length > 0) {
+  
+              //get annotations coordinates from database and draw rectangle/circle on pdf
+  
+              var rectElemts = this.drawBoxObjectList.filter(f => f.pageNumber == dataPageNumber);
+  
+              if (typeof rectElemts !== 'undefined' && rectElemts.length > 0) {
+                rectElemts.forEach(rectObj => {
+  
+                  //check if element already exists in Html dom
+  
+                  const existElmt = document.getElementById('pdfAnnotation-' + rectObj._id)
+                  if (existElmt == undefined) {
+                    const rect = document.createElement('div');
+                    rect.id = 'pdfAnnotation-' + rectObj._id;
+                    rect.className = 'annotationItem';
+                    rect.style.position = 'absolute';
+                    rect.style.border = rectObj.lineHeight.toString() + 'px solid RGB(238,170,0, .5)';
+                    rect.style.cursor = 'pointer'
+  
+                    var x = rectObj.coordinates.x1 * page.scale,
+                      y = rectObj.coordinates.y1 * page.scale,
+                      width = rectObj.coordinates.width * page.scale,
+                      height = rectObj.coordinates.height * page.scale,
+                      x2 = x + width,
+                      y2 = y + height;
+                    var pagePoint = page.viewport.convertToPdfPoint(x, y)
+                      .concat(page.viewport.convertToPdfPoint(x2, y2));
+  
+                    var obj = page.viewport.convertToViewportRectangle(pagePoint);
+  
+  
+                    rect.style.borderRadius = rectObj.coordinates.borderRadius + '%';
+                    rect.style.left = obj[0] + 'px';
+                    rect.style.top = obj[1] + 'px';
+                    rect.style.width = obj[2] - obj[0] + 'px';
+                    rect.style.height = obj[3] - obj[1] + 'px';
+                    //add eventlistener show single Annotation in Modal
+                    rect.addEventListener('click', (e: any) => {
+  
+                      this.selectedNoteId = rectObj._id
+                      this.showNoteInModal(rectObj._id, rect)
+                    });
+                    // get to-draw-rectangle div and add rectangle
+                    parentElement.children[2].appendChild(rect);
+                  }
+                })
+              }
+            }
+  
+            if (this.pinObjectsList != null && this.pinObjectsList.length > 0) {
+              const pinElmts = this.pinObjectsList.filter((f: any) => f.page == dataPageNumber)
+              if (typeof pinElmts !== 'undefined' && pinElmts.length > 0) {
+                //get annotations coordinates from database and add pin on pdf
+  
+                pinElmts.forEach((pinObj: any) => {
+                  //check if element already exists in Html dom
+                  const existElmt = document.getElementById('pdfAnnotation-' + pinObj._id)
+                  if (existElmt == undefined) {
+                    const myPin = new Image();
+                    myPin.useMap = this.pinUrl;
+                    const img = document.createElement('img')
+                    img.className = 'pinIcon'
+                    img.className = "annotationItem"
+                    img.id = 'pdfAnnotation-' + pinObj._id
+                    var top = pinObj.coordinates[0].top
+                    var x = top * page.scale,
+                      y = pinObj.coordinates[0].left * page.scale,
+                      /*  x=top,
+                       y= pinObj.coordinates[0].left, */
+                      width = 0 * page.scale,
+                      height = 0 * page.scale,
+                      x2 = x + width,
+                      y2 = y + height;
+                    var pagePoint = page.viewport.convertToPdfPoint(x, y)
+                      .concat(page.viewport.convertToPdfPoint(x2, y2));
+                    var obj = page.viewport.convertToViewportRectangle(pagePoint);
+                    img.style.top = obj[0] + 'px';
+                    img.style.left = obj[1] + 'px';
+                    img.style.height = '30px';
+                    img.style.width = '30px';
+                    img.style.position = 'absolute'
+                    img.src = myPin.useMap
+                    img.style.cursor = 'pointer'
+                    //add eventlistener show single Annotation in Modal
+                    img.addEventListener('click', (e: any) => {
+                      this.selectedNoteId = pinObj._id
+                      this.showNoteInModal(pinObj._id, img)
+                    });
+                    // get to-draw-rectangle div and add img
+                    parentElement.children[2].appendChild(img);
+                  }
+                })
+              }
+            }
+            //remove position absolute style to enable the text selection in pdf
+            elem.style.position = '';
+          }
+  
+  
+          if (this.highlightObjectsList != null && this.highlightObjectsList.length > 0) {
+            this.textSelection = false
+            // get the highlight coordinates from database and highlight the text
+  
+            const highlightElemt = this.highlightObjectsList.filter((h: any) => (h.page) == dataPageNumber)
+            if (highlightElemt !== 'undefined' && highlightElemt.length > 0) {
+              highlightElemt.forEach((element: any) => {
+                //highlight only text in the cuurent page index so we remove 1 to the pagenumber to get the right index
+                this.highlightText({ page: element.page - 1, rectangles: element.coordinates, noteId: element._id })
               });
             }
           }
-
-          if (this.pinObjectsList != null && this.pinObjectsList.length > 0) {
-            const pinElmts = this.pinObjectsList.filter(
-              (f: any) => f.page == dataPageNumber
-            );
-            if (typeof pinElmts !== 'undefined' && pinElmts.length > 0) {
-              //get annotations coordinates from database and add pin on pdf
-
-              pinElmts.forEach((pinObj: any) => {
-                //check if element already exists in Html dom
-                const existElmt = document.getElementById(
-                  'pdfAnnotation-' + pinObj._id
-                );
-                if (existElmt == undefined) {
-                  const myPin = new Image();
-                  myPin.useMap = this.pinUrl;
-                  const img = document.createElement('img');
-                  img.className = 'pinIcon';
-                  img.className = 'annotationItem';
-                  img.id = 'pdfAnnotation-' + pinObj._id;
-                  var top = pinObj.coordinates[0].top;
-                  var x = top * page.scale,
-                    y = pinObj.coordinates[0].left * page.scale,
-                    /*  x=top,
-                     y= pinObj.coordinates[0].left, */
-                    width = 0 * page.scale,
-                    height = 0 * page.scale,
-                    x2 = x + width,
-                    y2 = y + height;
-                  var pagePoint = page.viewport
-                    .convertToPdfPoint(x, y)
-                    .concat(page.viewport.convertToPdfPoint(x2, y2));
-                  var obj = page.viewport.convertToViewportRectangle(pagePoint);
-                  img.style.top = obj[0] + 'px';
-                  img.style.left = obj[1] + 'px';
-                  img.style.height = '30px';
-                  img.style.width = '30px';
-                  img.style.position = 'absolute';
-                  img.src = myPin.useMap;
-                  img.style.cursor = 'pointer';
-                  //add eventlistener show single Annotation in Modal
-                  img.addEventListener('click', (e: any) => {
-                    this.selectedNoteId = pinObj._id;
-                    this.showNoteInModal(pinObj._id, img);
-                  });
-                  // get to-draw-rectangle div and add img
-                  parentElement?.children[2]?.appendChild(img);
-                }
-              });
-            }
-          }
-          //remove position absolute style to enable the text selection in pdf
-          elem.style.position = '';
+          this.getselectedToolType(this.selectedTool)
         }
-
-        if (
-          this.highlightObjectsList != null &&
-          this.highlightObjectsList.length > 0
-        ) {
-          this.textSelection = false;
-          // get the highlight coordinates from database and highlight the text
-
-          const highlightElemt = this.highlightObjectsList.filter(
-            (h: any) => h.page == dataPageNumber
-          );
-          if (highlightElemt !== 'undefined' && highlightElemt.length > 0) {
-            highlightElemt.forEach((element: any) => {
-              //highlight only text in the cuurent page index so we remove 1 to the pagenumber to get the right index
-              this.highlightText({
-                page: element.page - 1,
-                rectangles: element.coordinates,
-                noteId: element._id,
-              });
-            });
-          }
-        }
-        this.getselectedToolType(this.selectedTool);
       }
     }
-  }
 
   /** show note in modal after click on annotation in pdf */
   showNoteInModal(noteId: any, element: any) {
@@ -626,66 +601,60 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
     };
   }
 
-  highlightText(selected: { page: any; rectangles: any[]; noteId?: any }) {
-    var pageIndex = selected.page;
-
-    if (!this.textSelection) {
-      pageIndex = pageIndex;
-    }
-    var page = this.pdfComponent.pdfViewer.getPageView(pageIndex);
-
-    var pageElement = page?.canvas?.parentElement;
-    var viewport = page.viewport;
-    const existHighlight = document.getElementById(
-      'pdfAnnotation-' + selected.noteId
-    );
-    if (existHighlight == undefined) {
-      selected.rectangles.forEach((rect: any, index) => {
-        var bounds = viewport.convertToViewportRectangle(rect);
-        var el = document.createElement('div');
-        el.className = 'annotationItem';
-
-        var height = Math.abs(bounds[1] - bounds[3]);
-        var width = Math.abs(bounds[0] - bounds[2]);
-        var left = Math.min(bounds[0], bounds[2]);
-        var top = Math.min(bounds[1], bounds[3]);
-        el.setAttribute(
-          'style',
-          'position: absolute; background-color: RGB(238,170,0, .25); cursor:pointer; z-index:1;' +
-            'left:' +
-            left +
-            'px; top:' +
-            top +
-            'px;' +
-            'width:' +
-            width +
-            'px; height:' +
-            height +
-            'px;'
-        );
-        this.highlightedElmts.push(el);
-
-        if (this.textSelection == true) {
-          el.className = 'highlight' + this.currentUserId;
-        }
-        if (this.textSelection == false) {
-          el.id = 'pdfAnnotation-' + selected.noteId;
-          el.addEventListener('click', (e: any) => {
-            this.selectedNoteId = selected.noteId;
-            this.showNoteInModal(selected.noteId, el);
-          });
-        }
-        pageElement.appendChild(el);
-      });
-      const lastIndex = this.highlightedElmts.length - 1;
-      if (
-        this.textSelection == true &&
-        this.selectedTool == PdfToolType.Highlight
-      ) {
-        this.confirm(this.highlightedElmts[lastIndex]);
+    // highlighting after text selection
+    highlightText(selected: { page: any; rectangles: any[]; noteId?: any }) {
+      var pageIndex = selected.page;
+  
+      if (!this.textSelection) {
+        pageIndex = pageIndex
+  
       }
+      var page = this.pdfComponent.pdfViewer.getPageView(pageIndex);
+  
+      var pageElement = page.canvas.parentElement;
+      var viewport = page.viewport;
+      const existHighlight = document.getElementById("pdfAnnotation-" + selected.noteId)
+      if (existHighlight == undefined) {
+        selected.rectangles.forEach((rect: any, index) => {
+          var bounds = viewport.convertToViewportRectangle(rect);
+          var el = document.createElement('div');
+          el.className = "annotationItem"
+  
+          var height = Math.abs(bounds[1] - bounds[3])
+          var width = Math.abs(bounds[0] - bounds[2])
+          var left = Math.min(bounds[0], bounds[2])
+          var top = Math.min(bounds[1], bounds[3])
+          el.setAttribute('style', 'position: absolute; background-color: RGB(238,170,0, .25); cursor:pointer; z-index:1;' +
+            'left:' + left + 'px; top:' + top + 'px;' +
+            'width:' + width + 'px; height:' + height + 'px;');
+          this.highlightedElmts.push(el)
+  
+  
+          if (this.textSelection == true) {
+            el.className = "highlight" + this.currentUserId;
+          }
+  
+          //add id to current highlighted element index== selected.rectangles.length-1 && this.textSelection==false
+          if (this.textSelection == false) {
+            el.id = "pdfAnnotation-" + selected.noteId;
+            el.addEventListener('click', (e: any) => {
+              this.selectedNoteId = selected.noteId
+              this.showNoteInModal(selected.noteId, el)
+  
+            });
+          }
+          pageElement.appendChild(el);
+        });
+        const lastIndex = this.highlightedElmts.length - 1  
+  
+        //open confirmation popop after selection
+        if (this.textSelection == true && this.selectedTool == PdfToolType.Highlight) {
+          this.confirm(this.highlightedElmts[lastIndex])
+  
+        }
+      }
+  
     }
-  }
   confirm(element: any) {
     this.mouseDownFlag = false;
     this.save();
