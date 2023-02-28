@@ -33,6 +33,10 @@ export interface AnnotationState {
   pdfTotalPages: number;
   annotationsForMaterial: Annotation[];
   hideAnnotations: boolean;
+  selectedDrawingTool: string;
+  selectedLineHeight: number;
+  showDrawBoxTools: boolean;
+
 }
 
 const initialState: AnnotationState = {
@@ -55,6 +59,9 @@ const initialState: AnnotationState = {
   pdfTotalPages: null,
   annotationsForMaterial: [],
   hideAnnotations: false,
+  selectedDrawingTool: null,
+  selectedLineHeight: 2,
+  showDrawBoxTools: false
 };
 
 const getAnnotationFeatureState =
@@ -118,6 +125,21 @@ export const getCurrentPdfPage = createSelector(
 export const getPdfTotalNumberOfPages = createSelector(
   getAnnotationFeatureState,
   (state) => state.pdfTotalPages
+);
+
+export const getSelectedDrawingTool = createSelector(
+  getAnnotationFeatureState,
+  (state) => state.selectedDrawingTool
+);
+
+export const getSelectedDrawingLineHeight = createSelector(
+  getAnnotationFeatureState,
+  (state) => state.selectedLineHeight
+);
+
+export const showDrawBoxTools = createSelector(
+  getAnnotationFeatureState,
+  (state) => state.showDrawBoxTools
 );
 
 export const annotationReducer = createReducer<AnnotationState>(
@@ -294,6 +316,46 @@ export const annotationReducer = createReducer<AnnotationState>(
         annotationsForMaterial: action.annotations,
       };
     }
+  ),
+
+  on(
+    AnnotationActions.setSelectedDrawingTool,
+    (state, action): AnnotationState => {
+      return {
+        ...state,
+        selectedDrawingTool: action.tool,
+      };
+    }
+  ),
+
+  on(
+    AnnotationActions.setSelectedDrawingLineHeight,
+    (state, action): AnnotationState => {
+      return {
+        ...state,
+        selectedLineHeight: action.height,
+      };
+    }
+  ),
+
+  on(
+    AnnotationActions.setShowDrawBoxTools,
+    (state, action): AnnotationState => {
+      if(action.show){
+        return {
+          ...state,
+          showDrawBoxTools: action.show,
+          selectedTool: PdfToolType.DrawBox
+        };
+      }
+      else{
+        return {
+          ...state,
+          showDrawBoxTools: action.show,
+          selectedTool: PdfToolType.None
+        };
+      }
+      }
   ),
 
   on(

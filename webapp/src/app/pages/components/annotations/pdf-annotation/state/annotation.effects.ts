@@ -33,7 +33,7 @@ export class AnnotationEffects {
         this.annotationService.postAnnotation(annotation).pipe(
           mergeMap((postedAnnotaion) => [
             AnnotationActions.postAnnotationSuccess(),
-            // AnnotationActions.loadAnnotations(),
+            AnnotationActions.loadAnnotations(),
           ]),
           catchError((error) =>
             of(AnnotationActions.postAnnotationFail({ error }))

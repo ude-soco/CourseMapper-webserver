@@ -21,6 +21,8 @@ import {
   getIsAnnotationPosted,
   getPdfSearchQuery,
   getPdfZoom,
+  getSelectedDrawingLineHeight,
+  getSelectedDrawingTool,
   getSelectedTool,
   State,
 } from '../state/annotation.reducer';
@@ -70,7 +72,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
     borderRadius: 0,
     lineHeight: 0,
   };
-  mouseDownFlag = false;
+  mouseDownFlag: boolean = false;
   drawElement!: any;
   dataPageNumber = 1;
   highlightedElmts: any[] = [];
@@ -87,8 +89,10 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   selectedTool!: PdfToolType;
   selectedLineHeight: number = 2;
   annotationToolForm!: string;
+  selectedDrawingTool!: string;
   highlightObjectsList: any = [];
   currentUserId: string;
+  currentRectId: any
   pinCoords: any;
   pinElement!: any;
   textSelection!: boolean;
@@ -97,6 +101,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   courseId: string;
   pagePosition: Position = { x: 0, y: 0 };
   lastMousePosition: Position = { x: 0, y: 0 };
+  mousePosition: Position = { x: 0, y: 0 };
   currentPinId: string;
   pinUrl: string = '/assets/icons/PinPoint.svg';
   hideAnnotationEvent: boolean = false;
@@ -139,6 +144,9 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
       toolTypeSelection(tool);
     });
 
+    this.store.select(getSelectedDrawingTool).subscribe((tool) => this.selectedDrawingTool = tool);
+    this.store.select(getSelectedDrawingLineHeight).subscribe((height) => this.selectedLineHeight = height);
+
     this.store.select(getIsAnnotationCanceled).subscribe((isCanceled) => {
       if (isCanceled) {
         this.cancel();
@@ -151,6 +159,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
 
     this.store.select(getAnnotationsForMaterial).subscribe((annotations) => {
       this.annotations = annotations;
+      this.getDrawBoxObjects(this.annotations);
       this.getHighlightObjects(this.annotations);
       this.getPinObjects(this.annotations);
       this.pageRendered(annotations);
@@ -212,14 +221,18 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
 
   getDrawBoxObjects(annotations: Annotation[]) {
     this.drawBoxObjectList = [];
-    let drawBoxs;
-    drawBoxs = annotations.filter((n: any) => n.tool.type === 'drawing');
-    if (drawBoxs.length > 0)
-      drawBoxs.forEach((element: any) => {
-        element.tool.rect._id = element._id;
-        this.drawBoxObjectList.push(element.tool.rect);
+    const drawBoxs = annotations.filter((n: any) => n?.tool?.type === 'drawing');
+    if(drawBoxs.length > 0) {
+      drawBoxs.forEach((element) => {
+        const updatedElement = {
+          ...element,
+          tool: { ...element.tool, rect: {...element.tool.rect, _id: element._id }},
+        };
+        this.drawBoxObjectList.push(updatedElement.tool.rect);
       });
+    }
   }
+
   getHighlightObjects(annotations: Annotation[]) {
     this.highlightObjectsList = [];
     const highlights = annotations.filter((n) => n.tool.type === 'highlight');
@@ -231,6 +244,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
       this.highlightObjectsList.push(updatedElement.tool);
     });
   }
+
   getPinObjects(annotations: Annotation[]) {
     this.pinObjectsList = [];
     const pinNotes = annotations.filter((n) => n.tool.type === 'pinpoint');
@@ -538,24 +552,40 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   }
 
   highLightAndDrawing(event: MouseEvent) {
-    //mouse event to highlight text selection
-    if (
-      this.selectedTool == PdfToolType.Highlight &&
-      event.type === 'mouseup'
-    ) {
-      this.getSelectedText();
-    } else {
-      this.mouseDownFlag = false;
-
-      if (
-        this.drawingRect.height > 0 &&
-        this.drawingRect.width > 0 &&
-        this.selectedTool == PdfToolType.DrawBox
-      ) {
-        this.confirm(this.drawElement);
+    var borderRadius = 0
+    if (!this.showPopup && this.selectedTool != undefined) {
+      if (this.selectedTool === PdfToolType.DrawBox) {
+        if (this.selectedDrawingTool == 'circle') {
+          borderRadius = 50
+          this.annotationToolForm = 'circle'
+        }
+        if (this.selectedDrawingTool == 'rectangle') {
+          borderRadius = 0
+          this.annotationToolForm = 'rectangle'
+        }
       }
+      //mouse event drawing on pdf
+      if (event.type === 'mousemove' && this.selectedTool === PdfToolType.DrawBox) {
+        this.addingDrawedRectOnPage(event, borderRadius)
+      }
+      if (event.type === 'mousedown' && this.selectedTool === PdfToolType.DrawBox) {
+        this.drawingOnPage(event, borderRadius)
+      }
+      if(event.type === 'mouseup' && this.selectedTool == PdfToolType.DrawBox){
+        this.mouseDownFlag = false;
+        localStorage.setItem('mouseDownFlag', JSON.stringify(this.mouseDownFlag));
+        if (this.drawingRect.height > 0 && this.drawingRect.width > 0) {
+          this.confirm(this.drawElement);
+        }
+      }
+
+
+    //mouse event to highlight text selection
+    if (this.selectedTool == PdfToolType.Highlight && event.type === 'mouseup') {
+      this.getSelectedText();
     }
   }
+}
 
   getSelectedText() {
     this.textSelection = true;
@@ -584,7 +614,9 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
         page: pageIndex + 1,
         rectangles: selectedUniqueArray,
       });
-      this.highlightText({ page: pageIndex, rectangles: selectedUniqueArray });
+      if (this.textSelection == true && this.selectedTool == PdfToolType.Highlight) {
+        this.confirm(true)
+      }
     }
   }
 
@@ -655,12 +687,95 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
       }
   
     }
+    drawingOnPage(event: MouseEvent, borderRadius: number) {
+      this.mouseDownFlag = true;
+      localStorage.setItem('mouseDownFlag', JSON.stringify(this.mouseDownFlag));
+      
+      const path = this.composedPath(event.target);
+      const eventPath = path!.find((p: { className: string; }) => p.className === 'page');
+  
+      if (typeof eventPath !== 'undefined') {
+        this.dataPageNumber = +eventPath.getAttribute('data-page-number'); // get id of page
+  
+        const toDrawRectangle = document.getElementsByClassName('to-draw-rectangle');
+  
+        //if show all page == true get the list of element with classname and get the element on page index
+        //const pageOffset = toDrawRectangle[this.dataPageNumber - 1].getBoundingClientRect();
+  
+        const pageOffset = toDrawRectangle[0].getBoundingClientRect();
+        this.pagePosition = {
+          x: pageOffset.left,
+          y: pageOffset.top
+        };
+  
+        this.lastMousePosition = {
+          x: event.clientX - this.pagePosition.x,
+          y: event.clientY - this.pagePosition.y
+        };
+  
+        this.currentRectId = this.currentUserId + (document.getElementsByClassName('rectangle').length + 1);
+        this.drawElement = document.createElement('div');
+        this.drawElement.className = 'rectangle';
+        this.drawElement.className = "annotationItem"
+        this.drawElement.id = 'rectangle-' + this.currentRectId;
+        this.drawElement.style.position = 'absolute';
+  
+  
+        if (this.selectedLineHeight != undefined) {
+          this.drawElement.style.border = this.selectedLineHeight.toString() + 'px solid RGB(238,170,0, .5)'
+        } else {
+          this.drawElement.style.border = '2px solid RGB(238,170,0, .5)';
+        }
+  
+  
+        this.drawElement.style.borderRadius = borderRadius + '%';
+        this.drawElement.style.left = this.lastMousePosition.x + 'px';
+        this.drawElement.style.top = this.lastMousePosition.y + 'px';
+      }
+    }
+  
+    addingDrawedRectOnPage(event: MouseEvent, borderRadius: number) {
+      this.mousePosition = {
+        x: event.clientX - this.pagePosition.x,
+        y: event.clientY - this.pagePosition.y
+      };
+      if (localStorage.getItem('mouseDownFlag')) {
+        const width = this.mousePosition.x - this.lastMousePosition.x;
+        const height = this.mousePosition.y - this.lastMousePosition.y;
+        this.drawingRect = {
+          x1: this.lastMousePosition.x,
+          y1: this.lastMousePosition.y,
+          x2: this.mousePosition.x,
+          y2: this.mousePosition.y,
+          width: width,
+          height: height,
+          borderRadius: borderRadius,
+          lineHeight: this.selectedLineHeight
+        };
+  
+        if (this.drawElement != null) {
+          this.drawElement.style.width = width + 'px';
+          this.drawElement.style.height = height + 'px';
+          if (this.drawingRect.width > 0 && this.drawingRect.height > 0) {
+  
+            //If we get the collection of all element with classname= to-draw-rectangle then should draw on the specific one on the currentpage with the code beow
+            //document.getElementsByClassName('to-draw-rectangle')[this.dataPageNumber! - 1].appendChild(this.element);
+  
+            //actualy we don't render all the pdf pages one time. ShowAll=false
+            document.getElementsByClassName('to-draw-rectangle')[0].appendChild(this.drawElement);
+          }
+        }
+      }
+    }
+
   confirm(element: any) {
     this.mouseDownFlag = false;
+    localStorage.setItem('mouseDownFlag', JSON.stringify(false));
     this.save();
   }
 
   save() {
+    localStorage.setItem('mouseDownFlag', JSON.stringify(false));
     const currentRect = {
       rectangleId: ' ',
       pageNumber: this.dataPageNumber,
@@ -694,6 +809,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
         };
         break;
     }
+    this.store.dispatch(AnnotationActions.setShowDrawBoxTools({show: false}));
     this.showPopup = false;
     var location: PdfGeneralAnnotationLocation = {
       type: 'Current Page',

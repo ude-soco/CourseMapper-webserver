@@ -45,12 +45,12 @@ export class PdfAnnotationSummaryComponent implements OnInit, OnChanges {
           ''
         );
         this.summary =
-          content.length > 100 ? content.slice(0, 97) + '...' : content;
+          content?.length > 100 ? content.slice(0, 97) + '...' : content;
         this.annotationInitials = getInitials(
-          this.selectedAnnotation.author.name
+          this.selectedAnnotation?.author?.name
         );
         this.annotationElapsedTime = computeElapsedTime(
-          this.selectedAnnotation.createdAt
+          this.selectedAnnotation?.createdAt
         );
       }
     }
@@ -81,7 +81,6 @@ export class PdfAnnotationSummaryComponent implements OnInit, OnChanges {
   }
 
   popover(element: any): void {
-    console.log('popover ok open!');
     this.isVisible = true;
     const popper = document.querySelector('.js-popover') as HTMLElement;
     if (popper) {

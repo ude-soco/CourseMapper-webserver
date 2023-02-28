@@ -259,3 +259,17 @@ export const editAnnotationFail = createAction(
     props<{error: string}>()
 );
 
+export const setSelectedDrawingTool = createAction(
+    '[Annotation] Set Selected Drawing Tool',
+    props<{tool: string}>()
+);
+
+export const setSelectedDrawingLineHeight = createAction(
+    '[Annotation] Set Selected Drawing Line Height',
+    props<{height: number}>()
+);
+
+export const setShowDrawBoxTools = createAction(
+    '[Annotation] Set Show Draw Box Tools',
+    props<{show: boolean}>()
+);

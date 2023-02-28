@@ -70,7 +70,7 @@ export class PdfAnnotationToolbarComponent implements OnInit{
         return;
       }
       this.resetTools();
-      this.store.dispatch(AnnotationActions.setSelectedTool({selectedTool: PdfToolType.DrawBox}));
+      this.store.dispatch(AnnotationActions.setShowDrawBoxTools({show: true}));
       this.drawingSelected = true;
     }
   }
@@ -92,6 +92,7 @@ export class PdfAnnotationToolbarComponent implements OnInit{
 
   resetTools(){
     this.store.dispatch(AnnotationActions.setSelectedTool({selectedTool: PdfToolType.None}));
+    this.store.dispatch(AnnotationActions.setShowDrawBoxTools({show: false}));
     this.highlightSelected = false;
     this.drawingSelected = false;
     this.pinSelected = false;
