@@ -60,6 +60,7 @@ export class PdfCommentPanelComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentPage = 1;
+    this.showAnnotationOnCurrentPage();
   }
 
   showAnnotationOnCurrentPage() {
@@ -70,52 +71,63 @@ export class PdfCommentPanelComponent implements OnInit {
   onAnnotationFilterChange() {
     switch (this.selectedFilter) {
       case 0:
-        this.annotationOnCurrentPage = this.annotations.filter(
+        this.showAnnotationOnCurrentPage();
+        this.annotationOnCurrentPage = this.annotationOnCurrentPage.filter(
           (anno) => anno.tool.type == PdfToolType.DrawBox
         );
         break;
       case 1:
-        this.annotationOnCurrentPage = this.annotations.filter(
+        this.showAnnotationOnCurrentPage();
+        this.annotationOnCurrentPage = this.annotationOnCurrentPage.filter(
           (anno) => anno.tool.type == PdfToolType.Pin
         );
         break;
       case 2:
-        this.annotationOnCurrentPage = this.annotations.filter(
+        this.showAnnotationOnCurrentPage();
+        this.annotationOnCurrentPage = this.annotationOnCurrentPage.filter(
           (anno) => anno.tool.type == PdfToolType.Highlight
         );
         break;
       case 3:
-        this.annotationOnCurrentPage = this.annotations.filter(
+        this.showAnnotationOnCurrentPage();
+        this.annotationOnCurrentPage = this.annotationOnCurrentPage.filter(
           (anno) => anno.type == 'Note'
         );
         break;
       case 4:
-        this.annotationOnCurrentPage = this.annotations.filter(
+        this.showAnnotationOnCurrentPage();
+        this.annotationOnCurrentPage = this.annotationOnCurrentPage.filter(
           (anno) => anno.type == 'Question'
         );
         break;
       case 5:
-        this.annotationOnCurrentPage = this.annotations.filter(
+        this.showAnnotationOnCurrentPage();
+        this.annotationOnCurrentPage = this.annotationOnCurrentPage.filter(
           (anno) => anno.type == 'External Resource'
         );
         break;
       case 6:
+        this.showAnnotationOnCurrentPage();
         this.annotationOnCurrentPage = this.annotations
         break;
       case 7:
+        this.showAnnotationOnCurrentPage();
         this.annotationOnCurrentPage = this.annotationOnCurrentPage.sort((b,a) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
         break;
       case 8:
+        this.showAnnotationOnCurrentPage();
         this.annotationOnCurrentPage = this.annotationOnCurrentPage.sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
         break;
       case 9:
+        this.showAnnotationOnCurrentPage();
         this.annotationOnCurrentPage = this.annotationOnCurrentPage.sort((a, b) => a.author.name.toLowerCase().localeCompare(b.author.name.toLowerCase()))
         break;
       case 10:
+        this.showAnnotationOnCurrentPage();
         this.annotationOnCurrentPage = this.annotationOnCurrentPage.sort((a, b) => b.author.name.toLowerCase().localeCompare(a.author.name.toLowerCase()))
         break;
       default:
-        this.annotationOnCurrentPage = this.annotations.filter((anno) => anno.location.startPage == this.currentPage);
+        this.showAnnotationOnCurrentPage();
         break;
     }
   }
