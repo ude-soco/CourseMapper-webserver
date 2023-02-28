@@ -4,13 +4,14 @@
       <h2 class="text-lg font-medium">Filters</h2>
       <p-dropdown
         [options]="searchFilters"
-        defaultLabel="Select a filter"
+        placeholder="Select a filter"
         [showClear]="true"
         autoWidth="false"
         appendTo="body"
         [style]="{ minWidth: '100%' }"
         [(ngModel)]="selectedFilter"
         [group]="true"
+        (ngModelChange)="onAnnotationFilterChange()"
       >
       <ng-template let-group pTemplate="group">
         <div class="p-d-flex p-ai-center">
@@ -24,7 +25,7 @@
         <h2 class="text-lg font-medium -mb-4">Content</h2>
         <p-divider align="left"></p-divider>
       </div>
-      <div *ngFor="let annotation of annotations">
+      <div *ngFor="let annotation of annotationOnCurrentPage">
         <app-pdf-comment-item
         [annotation]="annotation"
       ></app-pdf-comment-item>

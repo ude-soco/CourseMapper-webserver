@@ -163,7 +163,6 @@ export const annotationReducer = createReducer<AnnotationState>(
     (state, action): AnnotationState => {
       return {
         ...state,
-        // annotationsForMaterial: [action.postedAnnotation, ...state.annotationsForMaterial] as Annotation[],
         isAnnotationDialogVisible: false,
         isAnnotationPosted: true,
         isAnnotationCanceled: false,
