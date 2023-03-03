@@ -121,6 +121,7 @@ export const newTopic = async (req, res, next) => {
   req.locals = {
     response: {
       id: topic._id,
+      savedTopic: savedTopic,
       courseId: courseId,
       success: `New topic '${topicName}' added!`,
     },

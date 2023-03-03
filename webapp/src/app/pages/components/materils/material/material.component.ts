@@ -75,7 +75,7 @@ export class MaterialComponent implements OnInit{
       this.selectedChannel = channel;
       this.channelEmitted.emit(this.selectedChannel);
       this.materials = [];
-      if (!this.selectedChannel.materials) {
+      if (!this.selectedChannel?.materials) {
         // console.log('empty material');
       } else {
         this.topicChannelService

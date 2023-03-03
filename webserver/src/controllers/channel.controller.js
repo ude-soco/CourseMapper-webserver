@@ -139,6 +139,7 @@ export const newChannel = async (req, res, next) => {
   req.locals = {
     response : {
       id: savedChannel._id,
+      savedChannel: savedChannel,
       success: `New channel '${savedChannel.name}' added!`,
     },
     channel: savedChannel,
