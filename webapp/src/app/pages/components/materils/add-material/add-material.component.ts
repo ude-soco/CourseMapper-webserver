@@ -18,6 +18,7 @@ import { MessageService } from 'primeng/api';
 })
 export class AddMaterialComponent implements OnInit {
  // @Output() public materialemit = new EventEmitter<any>();
+
  @Input() public channelEmittd :any ;
   @ViewChild('UploadFileInput', { static: false }) uploadFileInput: ElementRef | undefined;
   selectedChannel: Channel;
@@ -61,7 +62,7 @@ export class AddMaterialComponent implements OnInit {
     
     });
     this.fileUploadForm = this.formBuilder.group({
-      file: ['']
+      file: [null]
     });
     //customValidator(this.validateForm.get("url").value, this.fileUploadForm.get("file").value);
   }
@@ -85,6 +86,8 @@ export class AddMaterialComponent implements OnInit {
     const fileChosen = document.getElementById('file-chosen');
     fileChosen!.textContent = this.fileInputLabel
     this.fileUploadForm?.get('file')?.setValue(this.file);
+    event.target.value = '';
+   
   }
 
   
@@ -100,14 +103,21 @@ export class AddMaterialComponent implements OnInit {
     if(this.validateForm.controls['url'].value  ){
       this.materialToAdd.url=this.validateForm.controls['url'].value
     }
+    else {
+      this.materialToAdd.url="" 
+    }
 
   }
-  else{
+  else if (this.materialType=="pdf" ) {
     //this.API_URL + "/public/uploads/pdfs/"+this.materialId+".pdf"
   this.materialToAdd.url="/public/uploads/pdfs/" 
 }
+
+console.log("this.materialToAdd")
+console.log(this.materialToAdd)
   var result=  this.materialService.addMaterial(this.materialToAdd).subscribe({
     next: (data) => {
+
       this.materialId=data.material._id;
       if (file) {
    if(this.materialType=="video")
@@ -133,13 +143,17 @@ export class AddMaterialComponent implements OnInit {
 
               const fileChosen = document.getElementById('file-chosen');
              fileChosen!.textContent = ""
-             const file = document.getElementById('file');
+             let file = document.getElementById('file');
              file!.textContent = ""
+             this.fileUploadForm?.get('file')?.setValue(null);
+             
              console.log("materialemit")
             // this.materialemit=data.material._id
              //console.log(this.materialemit)
      this.validateForm.reset();
+     
      this.topicChannelService.selectChannel(this.channelEmittd)
+     
 
   //  this.reloadCurrentRoute()
 
@@ -150,6 +164,17 @@ export class AddMaterialComponent implements OnInit {
           alert(er.error.error);
         });
       }
+      else if (!file) { 
+        console.log("materialemit without file")
+      // this.materialemit=data.material._id
+       //console.log(this.materialemit)
+this.validateForm.reset();
+
+this.topicChannelService.selectChannel(this.channelEmittd)
+this.validateForm['url'].setValue=""
+}
+     
+
     }
   })
   if(result!=null){
@@ -166,14 +191,14 @@ console.log(result)
 
    
   } 
-reset(){
-  this.file=null
-  this.uploadFileInput=null
-  var fileee= this.fileUploadForm?.get('file')?.value
-  console.log("fileee")
-  console.log(fileee)
+// reset(){
+//   this.file=null
+//   this.uploadFileInput=null
+//   var fileee= this.fileUploadForm?.get('file')?.value
+//   console.log("fileee")
+//   console.log(fileee)
  
-}
+// }
 reloadCurrentRoute() {
   let currentUrl = this.router.url;
   this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {

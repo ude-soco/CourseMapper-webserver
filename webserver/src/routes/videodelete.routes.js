@@ -17,7 +17,7 @@ module.exports = function (app) {
     });
   
     // delete PDF file
-    app.delete("/files/:name", controller.remove); 
     
+    app.delete("/videos/:name", controller.removeVideo);
     
   };

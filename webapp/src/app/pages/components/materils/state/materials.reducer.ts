@@ -2,6 +2,7 @@ import { createAction, createFeatureSelector, createReducer, createSelector, on 
 import * as AppState from 'src/app/state/app.state'
 import * as MaterialActions from 'src/app/pages/components/materils/state/materials.actions'
 import {  } from 'src/app/models/Annotations';
+import { Material } from 'src/app/models/Material';
 
 
 export interface State extends AppState.State{
@@ -11,13 +12,15 @@ export interface State extends AppState.State{
 export interface MaterialState {
   materialId: string,
   courseId: string,
-  channelSelected
+  channelSelected:boolean,
+  selectedMaterial:Material
 }
 
 const initialState: MaterialState = {
 materialId: null,
 courseId: null,
-channelSelected: false
+channelSelected: false,
+selectedMaterial:null
 }
 
 const getMaterialFeatureState = createFeatureSelector<MaterialState>('material');
@@ -37,6 +40,10 @@ export const getChannelSelected = createSelector(
   state => state.channelSelected
 );
 
+export const getCurrentMaterial = createSelector(
+  getMaterialFeatureState,
+  state => state.selectedMaterial
+);
 
 export const materialReducer = createReducer<MaterialState>(
     initialState,
@@ -58,6 +65,13 @@ export const materialReducer = createReducer<MaterialState>(
       return {
         ...state,
         channelSelected: action.channelSelected
+      };
+    }),
+    on(MaterialActions.setCurrentMaterial, (state, action): MaterialState => {
+      return {
+        
+        ...state,
+        selectedMaterial: action.selcetedMaterial
       };
     }),
   );

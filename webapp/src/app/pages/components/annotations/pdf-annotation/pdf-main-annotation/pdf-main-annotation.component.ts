@@ -186,6 +186,10 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   getDocUrl() {
       this.pdfViewService.currentDocURL.subscribe((url) => {
         this.docURL = this.API_URL + url.replace(/\\/g, '/');
+        console.log("url")
+        console.log(url)
+        console.log(this.docURL)
+
       });
   }
 

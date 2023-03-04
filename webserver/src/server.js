@@ -20,8 +20,10 @@ const User = db.user;
 global.__basedir = __dirname;
 
 env !== "production" ? app.use(cors({
+
   credentials: true,
-  origin: ["http://localhost:4200"],
+  origin: ["http://localhost:4200", 'https://www.youtube.com/watch?v=',]
+
 })) : "";
 
 // Middlewares
@@ -81,6 +83,7 @@ require("./routes/reply.routes")(app);
 require("./routes/tag.routes")(app);
 require("./routes/fileupload.routes")(app);
 require("./routes/filedelete.routes")(app);
+require("./routes/videodelete.routes")(app);
 require("./routes/test.routes")(app);
 
 // Listen on provided port, on all network interfaces

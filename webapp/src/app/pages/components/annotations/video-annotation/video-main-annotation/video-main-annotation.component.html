@@ -1,0 +1,38 @@
+ <!-- <ngx-video-list-player [config]="config">
+ 
+</ngx-video-list-player>  -->
+
+<!-- <video class="videos" width="100rem" controls>
+    <source [src]="videoURL" alt="video" type="video/mp4">
+    Your browser does not support HTML5 video.
+</video> -->
+<!-- *ngIf="this.material && this.material.type === 'video'" -->
+
+<video controls class="video" width="65%" (play)="video()" autoplay #videoPlayer *ngIf="!youtubeactivated">
+    <source [src]="videoURL"  type="video/mp4">
+  
+  </video>
+
+
+<div *ngIf="youtubeactivated"> 
+
+
+<youtube-player
+  [videoId]="videoURL"
+  [height]="600"
+  [width]="1000"
+  suggestedQuality="hd720"
+  suggestedQuality="small"
+
+></youtube-player> </div>
+
+ <!-- <iframe [src]="videoURL" frameborder="0" allowfullscreen *ngIf="youtubeactivated"></iframe>  -->
+  <!-- <video (click)="playVideo($event)">
+  <source src="video.mp4" type="video/mp4">
+</video> -->
+<!-- <youtube-player [videoId]="videoURL"
+(ready)="savePalyer($event)"
+[playerVars]="playerVars"
+>
+  
+</youtube-player> -->

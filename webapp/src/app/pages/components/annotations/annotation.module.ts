@@ -17,6 +17,16 @@ import { PdfReplyItemComponent } from './pdf-annotation/pdf-reply-item/pdf-reply
 import { PdfReplyPanelComponent } from './pdf-annotation/pdf-reply-panel/pdf-reply-panel.component';
 import { MenuModule } from 'primeng/menu';
 import { PdfAnnotationSummaryComponent } from './pdf-annotation/pdf-annotation-summary/pdf-annotation-summary.component';
+import { VideoMainAnnotationComponent } from './video-annotation/video-main-annotation/video-main-annotation.component';
+import { videoReducer } from './video-annotation/state/video.reducer';
+//import { NgxVideoListPlayerModule } from 'ngx-video-list-player';
+//import {NgxYoutubePlayerModule} from 'ngx-youtube-player'
+import {YouTubePlayerModule} from '@angular/youtube-player';
+
+
+
+
+
 
 
 
@@ -31,13 +41,20 @@ import { PdfAnnotationSummaryComponent } from './pdf-annotation/pdf-annotation-s
         PdfReplyItemComponent,
         PdfReplyPanelComponent,
         PdfAnnotationSummaryComponent,
+        VideoMainAnnotationComponent,
     ],
     exports: [
         PdfAnnotationToolbarComponent,
         PdfCreateAnnotationComponent,
         PdfCommentPanelComponent,
         PdfCommentItemComponent,
-        PdfMainAnnotationComponent
+        PdfMainAnnotationComponent,
+        VideoMainAnnotationComponent,
+        //NgxVideoListPlayerModule,
+        YouTubePlayerModule
+        
+        
+
     ],
     imports: [
         CommonModule,
@@ -46,7 +63,17 @@ import { PdfAnnotationSummaryComponent } from './pdf-annotation/pdf-annotation-s
         SharedComponentsModule,
         MenuModule,
         StoreModule.forFeature('annotation', annotationReducer),
+        StoreModule.forFeature('video', videoReducer),
         EffectsModule.forFeature([AnnotationEffects]),
+       // NgxVideoListPlayerModule, 
+       YouTubePlayerModule
+       
+        
+       
+      
+
+       
+
     ]
 })
 export class AnnotationModule { }
