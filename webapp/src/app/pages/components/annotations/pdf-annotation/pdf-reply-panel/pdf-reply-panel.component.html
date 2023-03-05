@@ -4,9 +4,9 @@
 <h1 color="text-grey-200" *ngIf="hideRepliesButton" (click)="hideReplies()" class="cursor-pointer">
   Hide replies
 </h1>
-<div class="mx-7 my-7 snap-y rounded-lg" style="box-shadow: 0 0 2px 2px #0000004D" *ngIf="repliesCount > 0">
+<div class="mx-7 mt-7 snap-y rounded-lg" style="box-shadow: 0 0 2px 2px #0000004D" *ngIf="repliesCount > 0">
   <div
-    class="bg-slate-200 my-5"
+    class="bg-slate-200"
     *ngFor="let reply of annotation.replies.slice(0, shownRepliesCount)"
   >
     <app-pdf-reply-item [reply]="reply"></app-pdf-reply-item>

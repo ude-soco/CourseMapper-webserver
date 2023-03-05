@@ -1,24 +1,25 @@
 <div class="-my-5">
-  <div class="flex flex-row justify-between p-5">
+  <div class="flex flex-row justify-between p-2">
     <div
-    class="flex flex-row justify-start space-x-3"
+    class="flex flex-row justify-start space-x-2"
   >
     <p-avatar
       label="{{ replyInitials }}"
       shape="circle"
-      size="large"
+      size="medium"
       [style]="{ 'background-color': '#0277BD', color: '#ffffff' }"
     ></p-avatar>
     <app-iconbutton
       icon="bxs-user"
       color="text-grey-200"
-      class="mt-3"
+      class="mt-1"
+      size="small"
     ></app-iconbutton>
-    <b class="mt-4">{{ reply?.author?.name }}</b>
-    <h1 class="mt-4">{{ replyElapsedTime }}</h1>
+    <b class="mt-3 text-xs">{{ reply?.author?.name }}</b>
+    <h1 class="mt-3 text-xs">{{ replyElapsedTime }}</h1>
   </div>
 
-  <div class="flex justify-end mt-3">
+  <div class="flex justify-end mt-2">
     <p-menu
       #menu
       id="config_menu"
@@ -34,8 +35,8 @@
   </div>
   </div>
 
-  <div class="mb-6 mt-2 mx-10">
-    <p style="font-size: 20px; font-family: Roboto" *ngIf="!isEditing">
+  <div class="mb-0 mt-0 mx-2">
+    <p style="font-family: Roboto" *ngIf="!isEditing" class="text-base">
       {{ reply?.content }}
     </p>
     <div class="flex flex-row space-x-3 mx-7 my-3" *ngIf="isEditing">
@@ -60,7 +61,7 @@
     ></app-iconbutton>
     </div>
   </div>
-  <div class="flex flex-row flex-wrap space-x-3 mx-10">
+  <div class="flex flex-row flex-wrap space-x-3 mx-2">
     <app-button
       icon="bx-like"
       color="text-grey-600"
