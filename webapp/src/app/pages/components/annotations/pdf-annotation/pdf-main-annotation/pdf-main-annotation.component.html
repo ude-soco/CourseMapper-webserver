@@ -1,5 +1,5 @@
-<div class="flex flex-row">
-  <div class="flex flex-col w-11/12 space-y-2">
+<div class="flex flex-row h-screen">
+  <div class="flex flex-col w-full space-y-2 basis-full">
     <app-pdf-annotation-toolbar></app-pdf-annotation-toolbar>
 
 
@@ -9,7 +9,7 @@
       (mousedown)="mouseEventHandler($event)"
       (mouseup)="mouseEventHandler($event)"
       (click)="mouseEventHandler($event)"
-      class="relative"
+      class="relative h-full"
     >
 
       <app-pdf-drawbox></app-pdf-drawbox>
@@ -27,9 +27,6 @@
       [zoom]="pdfZoom$ | async"
     >
     </pdf-viewer>
-    <app-pdf-annotation-summary #annotationSummary [annotationId] = "selectedNoteId"></app-pdf-annotation-summary>
-    </div>
-
     <div style="border: 2px solid #0000004D;">
       <p-paginator
         [rows]="1"
@@ -40,9 +37,13 @@
         (onPageChange)="pagechanging($event)"
       ></p-paginator>
     </div>
+    <app-pdf-annotation-summary #annotationSummary [annotationId] = "selectedNoteId"></app-pdf-annotation-summary>
+    </div>
+
+
   </div>
 
-  <div class="flex flex-col px-10 basis-full">
+  <div class="flex flex-col ml-5 basis-2/4">
     <p-dialog
       *ngIf="isAnnotationDialogVisible$ | async"
       [visible]="true"
