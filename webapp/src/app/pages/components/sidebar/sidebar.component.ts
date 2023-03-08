@@ -2,7 +2,7 @@ import { CourseImp } from 'src/app/models/CourseImp';
 import { Course } from 'src/app/models/Course';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CourseService } from 'src/app/services/course.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Channel } from 'src/app/models/Channel';
 import { TopicChannelService } from 'src/app/services/topic-channel.service';
 import { State } from 'src/app/state/app.reducer';
@@ -24,7 +24,8 @@ export class SidebarComponent implements OnInit {
     private courseService: CourseService,
     private router: Router,
     private topicChannelService: TopicChannelService,
-    private store: Store<State>
+    private store: Store<State>,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -61,13 +62,11 @@ export class SidebarComponent implements OnInit {
       this.courseService.selectCourse(course);
 
       if (this.selectedCourse.numberChannels <= 0) {
-        console.log('this.selectedCourse.numberTopics');
-        console.log(this.selectedCourse.numberChannels);
         this.topicChannelService.selectChannel(this.channel);
+        this.router.navigate(['course', selectedCourse._id]);
         return;
       } else {
         this.channel = this.selectedCourse['channels'][0];
-
         this.topicChannelService.selectChannel(this.channel);
       }
     }

@@ -19,6 +19,7 @@
     (onChange)="onTabChange($event)"
     (onClose)="deleteMaterial($event)"
     *ngIf="selectedChannel?.materials"
+    [(activeIndex)]="tabIndex"
   >
     <p-tabPanel>
       <ng-template pTemplate="header">
@@ -61,16 +62,9 @@
         </ng-template>
        
       </p-tabPanel>
-       <div
-        *ngIf="this.isMaterialSelected && this.selectedMaterial.type == 'pdf'"
-      >
-        <app-pdf-main-annotation></app-pdf-main-annotation>
-      </div>
 
-      <div *ngIf="this.isMaterialSelected && this.selectedMaterial.type == 'video'">
+      <router-outlet name='material'></router-outlet>
 
-        <app-video-main-annotation> </app-video-main-annotation> 
-      </div> 
     </ng-container>
   </p-tabView>
 </div>

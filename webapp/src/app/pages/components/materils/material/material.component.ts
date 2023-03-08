@@ -3,6 +3,7 @@ import {
   EventEmitter,
   Input,
   OnChanges,
+  OnDestroy,
   OnInit,
   Output,
   SimpleChanges,
@@ -30,7 +31,7 @@ import { map } from 'rxjs/operators';
   templateUrl: './material.component.html',
   styleUrls: ['./material.component.css'],
 })
-export class MaterialComponent implements OnInit {
+export class MaterialComponent implements OnInit, OnDestroy {
   @Output() public channelEmitted = new EventEmitter<any>();
   selectedChannel: Channel;
   channelSelected$: Observable<boolean>;
@@ -57,11 +58,31 @@ export class MaterialComponent implements OnInit {
     private store: Store<State>,
     private route: ActivatedRoute,
   ) {
+    console.log('constructed');
+  const url = this.router.url;
+  if(url.includes('course') && url.includes('channel')){
+    const courseRegex = /\/course\/(\w+)/;
+    const channelRegex = /\/channel\/(\w+)/;
+    const courseId = courseRegex.exec(url)[1];
+    const channelId = channelRegex.exec(url)[1];
+    const materialId = url.match(/material:(.*?)\/(pdf|video)/)?.[1];
+    this.topicChannelService.getChannel(courseId, channelId).subscribe(foundChannel => {
+      this.selectedChannel = foundChannel;
+      this.materials = foundChannel.materials;
+      this.channels.push(this.selectedChannel);
+      this.selectedMaterial = foundChannel.materials.find(material => material._id == materialId);
+      this.tabIndex = foundChannel.materials.findIndex(material => material._id == materialId) + 1;
+      this.updateSelectedMaterial();
+    });
+  }
 
-    this.channelSelected$ = store.select(getChannelSelected);
+  }
+  ngOnDestroy(): void {
+    console.log('Destroyed');
   }
 
   ngOnInit(): void {
+    console.log('init');
     this.topicChannelService.onSelectChannel.subscribe((channel) => {
       this.selectedChannel = channel;
       this.channelEmitted.emit(this.selectedChannel);
@@ -93,30 +114,59 @@ export class MaterialComponent implements OnInit {
     this.tabIndex = e.index - 1;
     if (this.tabIndex == -1) {
       this.isMaterialSelected = false;
+      this.router.navigate([
+        'course',
+        this.selectedChannel.courseId,
+        'channel',
+        this.selectedChannel._id,
+      ]);
     }
     else {
       this.isMaterialSelected = true;
-      this.setSelectedTabIndex(this.tabIndex);
-      this.selectedMaterial = this.channels['materials'][this.tabIndex];
-      this.router.navigate([
-        'course',
-        this.selectedMaterial['courseId'],
-        'channel',
-        this.selectedMaterial['channelId'],
-        'material',
-        this.selectedMaterial._id,
-      ]);
-      this.store.dispatch(
-        MaterialActions.setMaterialId({ materialId: this.selectedMaterial._id })
-      );
-      this.store.dispatch(
-        MaterialActions.setCurrentMaterial({ selcetedMaterial: this.selectedMaterial })
-      );
-      this.store.dispatch(AnnotationActions.loadAnnotations());
+      this.selectedMaterial = this.materials[this.tabIndex];
+      this.updateSelectedMaterial();
+      console.log(this.materials);
+      console.log(this.tabIndex);
+      console.log(this.selectedMaterial);
+
+      if(this.selectedMaterial.type == 'pdf'){
+        this.store.dispatch(
+          MaterialActions.setMaterialId({ materialId: this.selectedMaterial._id })
+        );
+        this.store.dispatch(
+          MaterialActions.setCurrentMaterial({ selcetedMaterial: this.selectedMaterial })
+        );
+        this.store.dispatch(AnnotationActions.loadAnnotations());
+        this.router.navigate([
+          'course',
+          this.selectedMaterial['courseId'],
+          'channel',
+          this.selectedMaterial['channelId'],
+          'material',
+          { outlets: { 'material': [this.selectedMaterial._id, 'pdf'] } }
+        ]);
+      }
+      else if(this.selectedMaterial.type == 'video'){
+        this.store.dispatch(
+          MaterialActions.setMaterialId({ materialId: this.selectedMaterial._id })
+        );
+        this.store.dispatch(
+          MaterialActions.setCurrentMaterial({ selcetedMaterial: this.selectedMaterial })
+        );
+        this.store.dispatch(AnnotationActions.loadAnnotations());
+        this.router.navigate([
+          'course',
+          this.selectedMaterial['courseId'],
+          'channel',
+          this.selectedMaterial['channelId'],
+          'material',
+          { outlets: { 'material': [this.selectedMaterial._id, 'video'] } }
+        ]);
+      }
     }
   }
   setSelectedTabIndex(index: number) {
-    this.selectedMaterial = this.channels['materials'][index];
+    this.selectedMaterial = this.selectedChannel.materials[index];
     this.updateSelectedMaterial();
   }
   updateSelectedMaterial() {
@@ -139,8 +189,6 @@ export class MaterialComponent implements OnInit {
         else {
           this.pdfViewService.setPdfURL(this.selectedMaterial?.url);
         }
-
-
         break;
 
       default:
@@ -150,7 +198,7 @@ export class MaterialComponent implements OnInit {
   deleteMaterial(e) {
     e.index1 = e.index - 1;
 
-    this.selectedMaterial = this.channels['materials'][e.index1];
+    this.selectedMaterial = this.selectedChannel.materials[e.index1];
     if (this.selectedMaterial.type == "video" && this.selectedMaterial.url) {
       this.materialService.deleteMaterial(this.selectedMaterial).subscribe({
         next: (data) => {

@@ -7,7 +7,7 @@ import { TopicChannelService } from 'src/app/services/topic-channel.service';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { Material } from 'src/app/models/Material';
 import { MaterilasService } from 'src/app/services/materials.service';  
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import * as MaterialActions from 'src/app/pages/components/materils/state/materials.actions'
 import { State } from '../materils/state/materials.reducer';
@@ -25,7 +25,8 @@ export class TopicDropdownComponent implements OnInit {
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private materilasService : MaterilasService, private router: Router,
-    private store: Store<State>
+    private store: Store<State>,
+    private route: ActivatedRoute
   ) {}
 
   topics: Topic[] = [];
@@ -132,6 +133,7 @@ export class TopicDropdownComponent implements OnInit {
     .subscribe((res) => {
       if ('success' in res) {
         this.showInfo(res['success']);
+        this.router.navigate(['course', this.courseService.getSelectedCourse()._id]);
       } else {
         this.showError(res['errorMsg']);
       }
@@ -294,6 +296,7 @@ export class TopicDropdownComponent implements OnInit {
     .subscribe((res) => {
       if ('success' in res) {
         this.showInfo(res['success']);
+        this.router.navigate(['course', this.courseService.getSelectedCourse()._id]);
       } else {
         this.showError(res['errorMsg']);
       }

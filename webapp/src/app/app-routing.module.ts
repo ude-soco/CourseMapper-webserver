@@ -34,10 +34,8 @@ const routes: Routes = [
     children: [
       {
         path: 'channel/:channelId',
-        component: TopicDropdownComponent,
-        children: [
-          { path: 'material/:materialId', component: MaterialComponent },
-        ],
+         loadChildren: () =>
+        import('./pages/components/materils/materials.module').then(m => m.MaterialsModule)
       },
     ],
   },

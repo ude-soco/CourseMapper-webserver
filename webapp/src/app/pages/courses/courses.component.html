@@ -1,12 +1,10 @@
-<div class="flex flex-row items-start">
-  <div class="flex-col">
-    <app-sidebar></app-sidebar>
+<div class="flex flex-row">
+    <div class="flex-col">
+      <app-sidebar></app-sidebar>
+    </div>
+    <app-channelbar></app-channelbar>
+    <div class="grow">
+        <router-outlet></router-outlet>
+    </div>
   </div>
 
-  <div class="flex-none flex-col">
-    <app-channelbar *ngIf="courseSelected$ | async"></app-channelbar>
-  </div>
-  <div class="shrink flex-col w-full">
-    <app-material></app-material>
-  </div>
-</div>

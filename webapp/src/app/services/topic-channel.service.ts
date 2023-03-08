@@ -266,14 +266,7 @@ export class TopicChannelService {
    
       //2
       this.onSelectChannel.emit(channel);
-    
-   
-   
-    
-    
   }
-
-
 
   getChannelDetails(channel): Observable<Channel[]> {
     return this.http.get<Channel[]>(`${this.API_URL}/courses/${channel.courseId}/channels/${channel._id}`).pipe(tap( channels => {
@@ -281,4 +274,7 @@ export class TopicChannelService {
     }));
   }
 
+  getChannel(courseId: string, channelId: string): Observable<Channel> {
+    return this.http.get<Channel>(`${this.API_URL}/courses/${courseId}/channels/${channelId}`);
+  }
 }

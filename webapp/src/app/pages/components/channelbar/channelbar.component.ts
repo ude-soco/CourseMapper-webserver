@@ -9,7 +9,7 @@ import { MenuItem } from 'primeng/api';
 import { environment } from 'src/environments/environment';
 import { catchError, of } from 'rxjs';
 import { MessageService, ConfirmationService } from 'primeng/api';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-channelbar',
@@ -23,8 +23,18 @@ export class ChannelbarComponent implements OnInit {
     private topicChannelService: TopicChannelService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private router: Router
-  ) {}
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
+      this.route.params.subscribe(params => {
+      if(params['courseID']){
+        this.courseService.fetchCourses().subscribe((courses) => {
+          this.selectedCourse = courses.find((course) => course._id == params['courseID']);
+          this.courseService.selectCourse(this.selectedCourse);
+        });
+      }
+    })
+  }
 
   private API_URL = environment.API_URL;
   selectedCourse: Course = new CourseImp('', '');
@@ -55,11 +65,11 @@ export class ChannelbarComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    this.selectedCourse = this.courseService.getSelectedCourse();
-    //3
-    this.courseService.onSelectCourse.subscribe((course) => {
-      this.selectedCourse = course;
-    });
+      this.selectedCourse = this.courseService.getSelectedCourse();
+      //3
+      this.courseService.onSelectCourse.subscribe((course) => {
+        this.selectedCourse = course;
+      });
   }
 
   @HostListener('document:click', ['$event'])
@@ -82,6 +92,7 @@ export class ChannelbarComponent implements OnInit {
     this.courseService.deleteCourse(this.selectedCourse).subscribe((res) => {
       if ('success' in res) {
         this.showInfo(res['success']);
+        this.router.navigate(['home']);
       } else {
         this.showError(res['errorMsg']);
       }

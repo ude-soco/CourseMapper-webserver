@@ -22,6 +22,7 @@ import { videoReducer } from './video-annotation/state/video.reducer';
 //import { NgxVideoListPlayerModule } from 'ngx-video-list-player';
 //import {NgxYoutubePlayerModule} from 'ngx-youtube-player'
 import {YouTubePlayerModule} from '@angular/youtube-player';
+import { RouterModule } from '@angular/router';
 
 
 
@@ -50,7 +51,6 @@ import {YouTubePlayerModule} from '@angular/youtube-player';
         PdfCommentItemComponent,
         PdfMainAnnotationComponent,
         VideoMainAnnotationComponent,
-        //NgxVideoListPlayerModule,
         YouTubePlayerModule
         
         
@@ -65,8 +65,22 @@ import {YouTubePlayerModule} from '@angular/youtube-player';
         StoreModule.forFeature('annotation', annotationReducer),
         StoreModule.forFeature('video', videoReducer),
         EffectsModule.forFeature([AnnotationEffects]),
-       // NgxVideoListPlayerModule, 
-       YouTubePlayerModule
+        YouTubePlayerModule,
+       RouterModule.forChild([
+        {
+          path: ':materialId/pdf',
+          component: PdfMainAnnotationComponent,
+          outlet: 'material',
+          pathMatch: 'full',
+
+        },
+        {
+          path: ':materialId/video',
+          component: VideoMainAnnotationComponent,
+          outlet: 'material',
+          pathMatch: 'full',
+        },
+      ])
        
         
        
