@@ -31,6 +31,7 @@ const routes: Routes = [
   {
     path: 'course/:courseID',
     component: CoursesComponent,
+    canActivate: [AuthGuardService],
     children: [
       {
         path: 'channel/:channelId',
