@@ -1,21 +1,50 @@
-<video
-  controls
-  class="video"
-  width="65%"
-  (play)="video()"
-  autoplay
-  #videoPlayer
-  *ngIf="!youtubeactivated"
->
-  <source [src]="videoURL" type="video/mp4" />
-</video>
+<div class="flex flex-row h-screen">
+  <div class="flex flex-col w-full space-y-2">
+    <app-video-annotation-toolbar></app-video-annotation-toolbar>
+    <div
+      class="relative h-full #videoPlayerArea"
+    >
 
-<div *ngIf="youtubeactivated">
-  <youtube-player
-    [videoId]="videoURL"
-    [height]="1000"
-    [width]="1500"
-    suggestedQuality="hd720"
-    suggestedQuality="small"
-  ></youtube-player>
+    <video
+    controls
+    class="video"
+    width="100%"
+    height="100%"
+    (play)="video()"
+    autoplay
+    #videoPlayer
+    *ngIf="!youtubeactivated"
+  >
+    <source [src]="videoURL" type="video/mp4" />
+  </video>
+  
+  <div *ngIf="youtubeactivated" class="grow" #YouTubePlayerArea>
+    <youtube-player
+      [videoId]="videoURL"
+      [width]="videoWidth"
+      [height]="videoHeight"
+      (ready)="saveYouTubePlayer($event)"
+      (stateChange)="onYouTubePlayerStateChange($event)"
+    ></youtube-player>
+  </div>
+    </div>
+  </div>
+  <div class="flex flex-col ml-5">
+    <p-dialog
+      *ngIf="isAnnotationDialogVisible$ | async"
+      [visible]="true"
+      [breakpoints]="{ '960px': '75vw', '600px': '100vw' }"
+      [style]="{ width: '50vw' }"
+      [closable]="false"
+    >
+    <div class="mt-5">
+      <app-video-create-annotation appendTo="body"></app-video-create-annotation>
+    </div>
+
+    </p-dialog>
+    <div class="create-annotation">
+      <app-video-create-annotation></app-video-create-annotation>
+    </div>
+    <app-pdf-comment-panel></app-pdf-comment-panel>
+  </div>
 </div>

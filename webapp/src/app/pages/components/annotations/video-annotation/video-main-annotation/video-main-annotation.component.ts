@@ -1,6 +1,6 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Subscriber, Subscription } from 'rxjs';
+import { Observable, Subscriber, Subscription } from 'rxjs';
 import { Material } from 'src/app/models/Material';
 import { PdfviewService } from 'src/app/services/pdfview.service';
 import { environment } from 'src/environments/environment';
@@ -14,23 +14,39 @@ import { State } from '../state/video.reducer';
   templateUrl: './video-main-annotation.component.html',
   styleUrls: ['./video-main-annotation.component.css']
 })
-export class VideoMainAnnotationComponent implements OnInit, OnDestroy {
-  //@ViewChild('videoPlayer') videoplayer: ElementRef;
+export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterViewInit, AfterViewChecked {
 
+  @ViewChild('YouTubePlayerArea') YouTubePlayerArea: ElementRef<HTMLDivElement>;
   @ViewChild('videoPlayer', { static: false }) videoPlayer: ElementRef;
   apiLoaded = false;
   materilaId: string;
   material: Material;
   videoURL = null;
   subscriptions: Subscription[] = [];
-
   youtubeactivated: boolean;
-
-
   private API_URL = environment.API_URL;
+  isAnnotationDialogVisible$: Observable<boolean>;
+  YouTubePlayer : YT.Player;
+  videoWidth: number;
+  videoHeight: number;
 
-  constructor(private store: Store<State>, private pdfViewService: PdfviewService) {
+  constructor(private store: Store<State>, private pdfViewService: PdfviewService, private changeDetectorRef: ChangeDetectorRef) {
   }
+  ngAfterViewChecked(): void {
+  }
+  
+  ngAfterViewInit(): void {
+    console.log('zoom');
+    this.onResize();
+    window.addEventListener('resize', this.onResize.bind(this));
+  }
+
+  onResize(): void {
+    this.videoWidth = this.YouTubePlayerArea.nativeElement.clientWidth;
+    this.videoHeight = this.videoWidth * 0.7;
+    this.changeDetectorRef.detectChanges();
+  }
+
   ngOnDestroy(): void {
     this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
@@ -55,9 +71,7 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy {
   getVideoUrl() {
     let urlSubscriper = this.pdfViewService.currentDocURL.subscribe((url) => {
       if (this.material.url) {
-        let idStartIndex = url.lastIndexOf("/") + 1
-        let videoID = url.substring(idStartIndex, url.length);
-        console.log(videoID);
+        let videoID = this.extractIdFromLink(url);
         this.youtubeactivated = true;
         this.videoURL = videoID;
       }
@@ -69,13 +83,37 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy {
       }
     })
     this.subscriptions.push(urlSubscriper);
-    console.log(this.videoURL)
 
   }
+
   video() {
     this.videoPlayer.nativeElement.play();
   }
+
   PauseVideo() {
     this.videoPlayer.nativeElement.pause();
+  }
+
+  saveYouTubePlayer(player) {
+    this.YouTubePlayer = player.target;
+    console.log("player instance", player);
+  }
+
+  onYouTubePlayerStateChange(event) {
+    console.log("player state", event.data);
+  }
+
+  extractIdFromLink(link: string): string {
+    const regex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/;
+    const match = link.match(regex);
+    return match ? match[1] : '';
+  }
+
+  playVideo() {
+    this.YouTubePlayer.playVideo();
+  }
+
+  pauseVideo() {
+    this.YouTubePlayer.pauseVideo();
   }
 }

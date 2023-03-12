@@ -58,7 +58,6 @@ export class MaterialComponent implements OnInit, OnDestroy {
     private store: Store<State>,
     private route: ActivatedRoute,
   ) {
-    console.log('constructed');
   const url = this.router.url;
   if(url.includes('course') && url.includes('channel')){
     const courseRegex = /\/course\/(\w+)/;
@@ -78,11 +77,9 @@ export class MaterialComponent implements OnInit, OnDestroy {
 
   }
   ngOnDestroy(): void {
-    console.log('Destroyed');
   }
 
   ngOnInit(): void {
-    console.log('init');
     this.topicChannelService.onSelectChannel.subscribe((channel) => {
       this.selectedChannel = channel;
       this.channelEmitted.emit(this.selectedChannel);
@@ -125,9 +122,6 @@ export class MaterialComponent implements OnInit, OnDestroy {
       this.isMaterialSelected = true;
       this.selectedMaterial = this.materials[this.tabIndex];
       this.updateSelectedMaterial();
-      console.log(this.materials);
-      console.log(this.tabIndex);
-      console.log(this.selectedMaterial);
 
       if(this.selectedMaterial.type == 'pdf'){
         this.store.dispatch(
@@ -240,7 +234,6 @@ export class MaterialComponent implements OnInit, OnDestroy {
           this.selectedMaterial['courseId'],
           'channel',
           this.selectedMaterial['channelId'],
-
         ]);
 
         e.index = 1

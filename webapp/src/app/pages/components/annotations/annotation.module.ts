@@ -23,6 +23,8 @@ import { videoReducer } from './video-annotation/state/video.reducer';
 //import {NgxYoutubePlayerModule} from 'ngx-youtube-player'
 import {YouTubePlayerModule} from '@angular/youtube-player';
 import { RouterModule } from '@angular/router';
+import { VideoAnnotationToolbarComponent } from './video-annotation/video-annotation-toolbar/video-annotation-toolbar.component';
+import { VideoCreateAnnotationComponent } from './video-annotation/video-create-annotation/video-create-annotation.component';
 
 
 
@@ -43,6 +45,8 @@ import { RouterModule } from '@angular/router';
         PdfReplyPanelComponent,
         PdfAnnotationSummaryComponent,
         VideoMainAnnotationComponent,
+        VideoAnnotationToolbarComponent,
+        VideoCreateAnnotationComponent,
     ],
     exports: [
         PdfAnnotationToolbarComponent,
