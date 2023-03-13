@@ -1,11 +1,12 @@
 import { AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, Subscriber, Subscription } from 'rxjs';
+import { DrawingData } from 'src/app/models/Drawing';
 import { Material } from 'src/app/models/Material';
 import { PdfviewService } from 'src/app/services/pdfview.service';
 import { environment } from 'src/environments/environment';
 import { getCurrentMaterial, getCurrentMaterialId } from '../../../materils/state/materials.reducer';
-import { State } from '../state/video.reducer';
+import { getIsBrushSelectionActive, State } from '../state/video.reducer';
 
 
 
@@ -14,7 +15,7 @@ import { State } from '../state/video.reducer';
   templateUrl: './video-main-annotation.component.html',
   styleUrls: ['./video-main-annotation.component.css']
 })
-export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterViewInit, AfterViewChecked {
+export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   @ViewChild('YouTubePlayerArea') YouTubePlayerArea: ElementRef<HTMLDivElement>;
   @ViewChild('videoPlayer', { static: false }) videoPlayer: ElementRef;
@@ -29,21 +30,17 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
   YouTubePlayer : YT.Player;
   videoWidth: number;
   videoHeight: number;
+  drawingData: any;
+  isBrushSelectionActive$ : Observable<boolean>;
+  boundingRect: DOMRect;
 
   constructor(private store: Store<State>, private pdfViewService: PdfviewService, private changeDetectorRef: ChangeDetectorRef) {
+    this.isBrushSelectionActive$ = this.store.select(getIsBrushSelectionActive);
   }
   ngAfterViewChecked(): void {
-  }
-  
-  ngAfterViewInit(): void {
-    console.log('zoom');
-    this.onResize();
-    window.addEventListener('resize', this.onResize.bind(this));
-  }
-
-  onResize(): void {
-    this.videoWidth = this.YouTubePlayerArea.nativeElement.clientWidth;
-    this.videoHeight = this.videoWidth * 0.7;
+    this.boundingRect = this.YouTubePlayerArea?.nativeElement.getBoundingClientRect();
+    this.videoWidth = this.boundingRect.width;
+    this.videoHeight = this.boundingRect.height;
     this.changeDetectorRef.detectChanges();
   }
 
@@ -97,6 +94,16 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
   saveYouTubePlayer(player) {
     this.YouTubePlayer = player.target;
     console.log("player instance", player);
+
+    const iframe = player.target.h
+    iframe.style.width = "100%";
+    iframe.style.height = "100%";
+    iframe.style.minHeight = "700px";
+
+    this.boundingRect = this.YouTubePlayerArea?.nativeElement.getBoundingClientRect();
+    this.videoWidth = this.boundingRect.width;
+    this.videoHeight = this.boundingRect.height;
+    console.log(this.boundingRect);
   }
 
   onYouTubePlayerStateChange(event) {
@@ -115,5 +122,30 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
 
   pauseVideo() {
     this.YouTubePlayer.pauseVideo();
+  }
+
+  drawingChanged(event: DrawingData) {
+    // this.drawingData = event;
+  }
+
+  doneDrawing() {
+    // if (!this.drawingData) return;
+
+    // if (this.drawingData.drawings.length == 0) {
+    //   window.alert("You must have at least 1 drawing");
+    //   return;
+    // }
+
+    // this.showAnnotationDialog();
+
+    // this.isBrushSelectionActive = false;
+  }
+
+  cancelSelection() {
+    // this.isBrushSelectionActive = false;
+    // this.isPinpointSelectionActive = false;
+    // this.drawingData = undefined;
+    // this.pintpointCoordinates = undefined;
+    // this.pintpointPosition = undefined;
   }
 }

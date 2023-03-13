@@ -6,7 +6,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { computeElapsedTime, getInitials } from 'src/app/format';
+import { computeElapsedTime, getInitials } from 'src/app/_helpers/format';
 import { Annotation } from 'src/app/models/Annotations';
 import { Reply } from 'src/app/models/Reply';
 import { getAnnotationsForMaterial, getCurrentPdfPage, State } from '../state/annotation.reducer';

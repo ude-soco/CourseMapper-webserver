@@ -1,4 +1,4 @@
-import { PdfToolType } from './models/Annotations';
+import { PdfToolType } from '../models/Annotations';
 
 export function toolTypeSelection(selectedTool: PdfToolType) {
     if(selectedTool == PdfToolType.DrawBox || selectedTool == PdfToolType.Pin){

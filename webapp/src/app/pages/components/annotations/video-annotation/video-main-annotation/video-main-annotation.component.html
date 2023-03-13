@@ -1,32 +1,37 @@
 <div class="flex flex-row h-screen">
   <div class="flex flex-col w-full space-y-2">
     <app-video-annotation-toolbar></app-video-annotation-toolbar>
-    <div
-      class="relative h-full #videoPlayerArea"
-    >
+    <div class="relative h-fit #videoPlayerArea">
+      <video
+        controls
+        class="video"
+        width="100%"
+        height="100%"
+        (play)="video()"
+        autoplay
+        #videoPlayer
+        *ngIf="!youtubeactivated"
+      >
+        <source [src]="videoURL" type="video/mp4" />
+      </video>
 
-    <video
-    controls
-    class="video"
-    width="100%"
-    height="100%"
-    (play)="video()"
-    autoplay
-    #videoPlayer
-    *ngIf="!youtubeactivated"
-  >
-    <source [src]="videoURL" type="video/mp4" />
-  </video>
-  
-  <div *ngIf="youtubeactivated" class="grow" #YouTubePlayerArea>
-    <youtube-player
-      [videoId]="videoURL"
-      [width]="videoWidth"
-      [height]="videoHeight"
-      (ready)="saveYouTubePlayer($event)"
-      (stateChange)="onYouTubePlayerStateChange($event)"
-    ></youtube-player>
-  </div>
+      <div *ngIf="youtubeactivated" #YouTubePlayerArea>
+        <youtube-player
+          [videoId]="videoURL"
+          (ready)="saveYouTubePlayer($event)"
+          (stateChange)="onYouTubePlayerStateChange($event)"
+        ></youtube-player>
+      </div>
+      <app-video-drawing-overlay
+      class="brush-selection-overlay"
+      (drawingChanged)="drawingChanged($event)"
+      [boundingRect]="boundingRect"
+      [videoWidth]="videoWidth"
+      [videoHeight]="videoHeight"
+      (cancelSelection)="cancelSelection()"
+      (doneDrawing)="doneDrawing()"
+    >
+    </app-video-drawing-overlay>
     </div>
   </div>
   <div class="flex flex-col ml-5">
@@ -37,10 +42,11 @@
       [style]="{ width: '50vw' }"
       [closable]="false"
     >
-    <div class="mt-5">
-      <app-video-create-annotation appendTo="body"></app-video-create-annotation>
-    </div>
-
+      <div class="mt-5">
+        <app-video-create-annotation
+          appendTo="body"
+        ></app-video-create-annotation>
+      </div>
     </p-dialog>
     <div class="create-annotation">
       <app-video-create-annotation></app-video-create-annotation>

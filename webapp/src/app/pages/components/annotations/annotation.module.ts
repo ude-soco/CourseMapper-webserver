@@ -25,6 +25,7 @@ import {YouTubePlayerModule} from '@angular/youtube-player';
 import { RouterModule } from '@angular/router';
 import { VideoAnnotationToolbarComponent } from './video-annotation/video-annotation-toolbar/video-annotation-toolbar.component';
 import { VideoCreateAnnotationComponent } from './video-annotation/video-create-annotation/video-create-annotation.component';
+import { VideoDrawingOverlayComponent } from './video-annotation/video-drawing-overlay/video-drawing-overlay.component';
 
 
 
@@ -47,6 +48,7 @@ import { VideoCreateAnnotationComponent } from './video-annotation/video-create-
         VideoMainAnnotationComponent,
         VideoAnnotationToolbarComponent,
         VideoCreateAnnotationComponent,
+        VideoDrawingOverlayComponent,
     ],
     exports: [
         PdfAnnotationToolbarComponent,

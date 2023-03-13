@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
-import { computeElapsedTime, getInitials } from 'src/app/format';
+import { computeElapsedTime, getInitials } from 'src/app/_helpers/format';
 import { Annotation } from 'src/app/models/Annotations';
 import { getAnnotationsForMaterial, State } from '../state/annotation.reducer';
 import { createPopper } from '@popperjs/core';

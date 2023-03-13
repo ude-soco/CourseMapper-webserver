@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { PDFDocumentProxy, PdfViewerComponent } from 'ng2-pdf-viewer';
-import { toolTypeSelection } from 'src/app/tool-type-selection';
+import { toolTypeSelection } from 'src/app/_helpers/tool-type-selection';
 import {
   Position,
   Rectangle,

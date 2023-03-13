@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Annotation, PdfToolType } from 'src/app/models/Annotations';
 import { Store } from '@ngrx/store';
-import { computeElapsedTime, getInitials } from 'src/app/format';
+import { computeElapsedTime, getInitials } from 'src/app/_helpers/format';
 import { getAnnotationsForMaterial, getCurrentPdfPage, State } from '../state/annotation.reducer';
 import { SelectItemGroup } from 'primeng/api';
 @Component({
