@@ -6,7 +6,8 @@ import { Material } from 'src/app/models/Material';
 import { PdfviewService } from 'src/app/services/pdfview.service';
 import { environment } from 'src/environments/environment';
 import { getCurrentMaterial, getCurrentMaterialId } from '../../../materils/state/materials.reducer';
-import { getIsBrushSelectionActive, State } from '../state/video.reducer';
+import { getIsBrushSelectionActive, getIsVideoPaused, getIsVideoPlayed, State } from '../state/video.reducer';
+import * as VideoActions from '../state/video.action'
 
 
 
@@ -18,7 +19,7 @@ import { getIsBrushSelectionActive, State } from '../state/video.reducer';
 export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   @ViewChild('YouTubePlayerArea') YouTubePlayerArea: ElementRef<HTMLDivElement>;
-  @ViewChild('videoPlayer', { static: false }) videoPlayer: ElementRef;
+  @ViewChild('video', { static: false }) videoPlayer: ElementRef<HTMLVideoElement>;
   apiLoaded = false;
   materilaId: string;
   material: Material;
@@ -30,18 +31,40 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
   YouTubePlayer : YT.Player;
   videoWidth: number;
   videoHeight: number;
-  drawingData: any;
-  isBrushSelectionActive$ : Observable<boolean>;
   boundingRect: DOMRect;
+  isPinpointSelectionActive: boolean = false;
+  isBrushSelectionActive: boolean = false;
+  drawingData?: DrawingData;
+  pintpointCoordinates?: [number, number]
+  pintpointPosition?: [number, number]
 
   constructor(private store: Store<State>, private pdfViewService: PdfviewService, private changeDetectorRef: ChangeDetectorRef) {
-    this.isBrushSelectionActive$ = this.store.select(getIsBrushSelectionActive);
+    this.store.select(getIsBrushSelectionActive).subscribe((isActive) => this.isBrushSelectionActive = isActive);
+    this.store.select(getIsVideoPlayed).subscribe((isPlayed) => {
+      if(isPlayed){
+        this.playVideo();
+      }
+    });
+    this.store.select(getIsVideoPaused).subscribe((isPaused) => {
+      if(isPaused){
+        this.pauseVideo();
+      }
+    });
   }
+  
   ngAfterViewChecked(): void {
-    this.boundingRect = this.YouTubePlayerArea?.nativeElement.getBoundingClientRect();
-    this.videoWidth = this.boundingRect.width;
-    this.videoHeight = this.boundingRect.height;
-    this.changeDetectorRef.detectChanges();
+    if(this.youtubeactivated){
+      this.boundingRect = this.YouTubePlayerArea?.nativeElement.getBoundingClientRect();
+      this.videoWidth = this.boundingRect.width;
+      this.videoHeight = this.boundingRect.height;
+      this.changeDetectorRef.detectChanges();
+    }
+    else{
+      this.boundingRect = this.videoPlayer?.nativeElement.getBoundingClientRect();
+      this.videoWidth = this.boundingRect.width;
+      this.videoHeight = this.boundingRect.height;
+      this.changeDetectorRef.detectChanges();
+    }
   }
 
   ngOnDestroy(): void {
@@ -75,20 +98,10 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
       else {
         this.youtubeactivated = false;
         this.videoURL = this.API_URL + url.replace(/\\/g, '/');
-        this.videoPlayer?.nativeElement.load();
-        this.videoPlayer?.nativeElement.play();
       }
     })
     this.subscriptions.push(urlSubscriper);
 
-  }
-
-  video() {
-    this.videoPlayer.nativeElement.play();
-  }
-
-  PauseVideo() {
-    this.videoPlayer.nativeElement.pause();
   }
 
   saveYouTubePlayer(player) {
@@ -103,7 +116,6 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
     this.boundingRect = this.YouTubePlayerArea?.nativeElement.getBoundingClientRect();
     this.videoWidth = this.boundingRect.width;
     this.videoHeight = this.boundingRect.height;
-    console.log(this.boundingRect);
   }
 
   onYouTubePlayerStateChange(event) {
@@ -117,35 +129,48 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
   }
 
   playVideo() {
-    this.YouTubePlayer.playVideo();
+    if(this.youtubeactivated){
+      this.YouTubePlayer.playVideo();
+    }else{
+      this.videoPlayer.nativeElement.play();
+    }
   }
 
   pauseVideo() {
-    this.YouTubePlayer.pauseVideo();
+    if(this.youtubeactivated){
+      this.YouTubePlayer.pauseVideo();
+    }else{
+      this.videoPlayer?.nativeElement.pause();
+      console.log(this.videoPlayer?.nativeElement.currentTime.toFixed(2));
+    }
   }
 
-  drawingChanged(event: DrawingData) {
-    // this.drawingData = event;
+  drawingChanged(drawings: DrawingData) {
+    this.drawingData = drawings;
   }
 
   doneDrawing() {
-    // if (!this.drawingData) return;
+    if (!this.drawingData) return;
 
-    // if (this.drawingData.drawings.length == 0) {
-    //   window.alert("You must have at least 1 drawing");
-    //   return;
-    // }
+    if (this.drawingData.drawings.length == 0) {
+      window.alert("You must have at least 1 drawing");
+      return;
+    }
 
-    // this.showAnnotationDialog();
+    this.showAnnotationDialog();
 
-    // this.isBrushSelectionActive = false;
+    this.store.dispatch(VideoActions.setIsBrushSelectionActive({isBrushSelectionActive: false}));
   }
 
   cancelSelection() {
-    // this.isBrushSelectionActive = false;
-    // this.isPinpointSelectionActive = false;
-    // this.drawingData = undefined;
-    // this.pintpointCoordinates = undefined;
-    // this.pintpointPosition = undefined;
+    this.store.dispatch(VideoActions.setIsBrushSelectionActive({isBrushSelectionActive: false}));
+    this.isPinpointSelectionActive = false;
+    this.drawingData = undefined;
+    this.pintpointCoordinates = undefined;
+    this.pintpointPosition = undefined;
+  }
+
+  showAnnotationDialog(){
+
   }
 }

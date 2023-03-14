@@ -3,7 +3,6 @@ export function calculateMousePositionInVideo(mouseX: number, mouseY: number, bo
     const zoomRatio = (videoHeight || 0) / (actualHeight || 1);
     const actualWidth = (videoWidth || 0) / (zoomRatio || 1);
 
-    // const startX = (boundingRect?.left || 0) + ((boundingRect?.width || 0) - (actualWidth || 0)) / 2;
     const startX = (boundingRect?.left || 0);
     const startY = (boundingRect?.top || 0);
 

@@ -4,13 +4,10 @@
     <div class="relative h-fit #videoPlayerArea">
       <video
         controls
-        class="video"
         width="100%"
         height="100%"
-        (play)="video()"
-        autoplay
-        #videoPlayer
         *ngIf="!youtubeactivated"
+        #video
       >
         <source [src]="videoURL" type="video/mp4" />
       </video>
@@ -23,6 +20,7 @@
         ></youtube-player>
       </div>
       <app-video-drawing-overlay
+      *ngIf="isBrushSelectionActive" 
       class="brush-selection-overlay"
       (drawingChanged)="drawingChanged($event)"
       [boundingRect]="boundingRect"

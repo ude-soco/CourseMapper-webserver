@@ -54,7 +54,7 @@ import { SharedComponentsModule } from './components/shared-components.module';
 import { appReducer } from './state/app.reducer';
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 const config: SocketIoConfig = { url: 'http://localhost:8080', options: {} };
-import { hydrationMetaReducer } from "./state/hydration.reducer";
+import { hydrationMetaReducer} from "./state/hydration.reducer";
  
 export const metaReducers: MetaReducer[] = [hydrationMetaReducer];
 registerLocaleData(en);

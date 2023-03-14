@@ -1,22 +1,27 @@
-import { ActionReducer, INIT, UPDATE } from "@ngrx/store";
+import { Action, ActionReducer, INIT, UPDATE } from "@ngrx/store";
 import { State } from "src/app/state/app.state";
- 
-export const hydrationMetaReducer = (
-  reducer: ActionReducer<State>
-): ActionReducer<State> => {
+
+export const hydrationMetaReducer = (reducer: ActionReducer<State>): ActionReducer<State> => {
   return (state, action) => {
     if (action.type === INIT || action.type === UPDATE) {
-      const storageValue = localStorage.getItem("state");
+      const storageValue = localStorage.getItem('state');
       if (storageValue) {
         try {
-          return JSON.parse(storageValue);
+          const parsedValue = JSON.parse(storageValue);
+          return { ...state, ...parsedValue };
         } catch {
-          localStorage.removeItem("state");
+          localStorage.removeItem('state');
         }
       }
     }
+
     const nextState = reducer(state, action);
-    localStorage.setItem("state", JSON.stringify(nextState));
+
+    // Only update local storage if state has changed
+    if (state !== nextState) {
+      localStorage.setItem('state', JSON.stringify(nextState));
+    }
+
     return nextState;
   };
 };

@@ -1,7 +1,10 @@
 import { Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { Drawing, DrawingData, DrawingTool } from 'src/app/models/Drawing';
 import { paintDrawing } from 'src/app/_helpers/canvas';
 import { calculateMousePositionInVideo } from 'src/app/_helpers/video-helper';
+import { State } from '../state/video.reducer';
+import * as VideoActions from '../state/video.action'
 
 type EditingAction = "draw" | "move" | "points" | "delete";
 
@@ -32,6 +35,7 @@ export class VideoDrawingOverlayComponent {
   @Output() cancelSelection: EventEmitter<void> = new EventEmitter();
   @Output() doneDrawing: EventEmitter<void> = new EventEmitter();
 
+  constructor(private store: Store<State>){}
 
   ngOnInit(): void {
     this.drawingChanged.emit(this.drawingData);

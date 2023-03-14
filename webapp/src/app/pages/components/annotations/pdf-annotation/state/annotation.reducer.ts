@@ -61,7 +61,7 @@ const initialState: AnnotationState = {
   hideAnnotations: false,
   selectedDrawingTool: null,
   selectedLineHeight: 2,
-  showDrawBoxTools: false
+  showDrawBoxTools: false,
 };
 
 const getAnnotationFeatureState =

@@ -19,20 +19,11 @@ import { MenuModule } from 'primeng/menu';
 import { PdfAnnotationSummaryComponent } from './pdf-annotation/pdf-annotation-summary/pdf-annotation-summary.component';
 import { VideoMainAnnotationComponent } from './video-annotation/video-main-annotation/video-main-annotation.component';
 import { videoReducer } from './video-annotation/state/video.reducer';
-//import { NgxVideoListPlayerModule } from 'ngx-video-list-player';
-//import {NgxYoutubePlayerModule} from 'ngx-youtube-player'
 import {YouTubePlayerModule} from '@angular/youtube-player';
 import { RouterModule } from '@angular/router';
 import { VideoAnnotationToolbarComponent } from './video-annotation/video-annotation-toolbar/video-annotation-toolbar.component';
 import { VideoCreateAnnotationComponent } from './video-annotation/video-create-annotation/video-create-annotation.component';
 import { VideoDrawingOverlayComponent } from './video-annotation/video-drawing-overlay/video-drawing-overlay.component';
-
-
-
-
-
-
-
 
 @NgModule({
     declarations: [
