@@ -4,41 +4,23 @@
       <app-iconbutton
       icon="bx-pin"
       color="text-blue-500"
+      (onClick)="OnPinToolSelection()"
     ></app-iconbutton>
       <app-iconbutton
         icon="bx-shape-square"
         color="text-blue-500"
         (onClick)="OnDrawToolSelection()"
       ></app-iconbutton>
-      <app-iconbutton
-        icon="bx-show"
-        color="text-blue-500"
-      ></app-iconbutton>
-      <app-iconbutton
-      icon="bx-hide"
-      color="text-blue-500"
-    ></app-iconbutton>
     </div>
     <span class="tool-divider"> </span>
     <div class="tool-right">
-      <span class="tool-title" style="color: #4e4e4e">Video Tools:</span>
-      <app-iconbutton icon="bx-rewind" color="text-blue-500"></app-iconbutton>
       <app-iconbutton
-      *ngIf="(isVideoPaused$ | async) == true"
-        icon="bx-play"
-        color="text-blue-500"
-        (onClick)="onPlayVideoClick()"
-      ></app-iconbutton>
-      <app-iconbutton
-      *ngIf="(isVideoPlayed$ | async) == true"
-        icon="bx-pause"
-        color="text-blue-500"
-        (onClick)="onPauseVideClick()"
-      ></app-iconbutton>
-      <app-iconbutton
-        icon="bx-fast-forward"
-        color="text-blue-500"
-      ></app-iconbutton>
-    </div>
+      icon="bx-show"
+      color="text-blue-500"
+    ></app-iconbutton>
+    <app-iconbutton
+    icon="bx-hide"
+    color="text-blue-500"
+  ></app-iconbutton>
   </div>
   

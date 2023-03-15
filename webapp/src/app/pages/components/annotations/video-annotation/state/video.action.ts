@@ -5,6 +5,11 @@ export const setIsBrushSelectionActive = createAction(
     props<{ isBrushSelectionActive: boolean}>()
 );
 
+export const setIsPinpointSelectionActive = createAction(
+    '[Video] Set Is Pinpoint Selection Active',
+    props<{ isPinpointSelectionActive: boolean}>()
+);
+
 export const PlayVideo = createAction(
     '[Video] Play Video',
 );

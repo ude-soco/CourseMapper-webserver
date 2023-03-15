@@ -13,20 +13,15 @@ export class VideoAnnotationToolbarComponent {
   isVideoPlayed$: Observable<boolean>;
   isVideoPaused$: Observable<boolean>;
   constructor(private store: Store<State>){
-    this.isVideoPlayed$ = this.store.select(getIsVideoPlayed);
-    this.isVideoPaused$ = this.store.select(getIsVideoPaused);
+
   }
 
   OnDrawToolSelection(){
     this.store.dispatch(VideoActions.setIsBrushSelectionActive({isBrushSelectionActive: true}));
   }
 
-  onPlayVideoClick(){
-    this.store.dispatch(VideoActions.PlayVideo());
-  }
-
-  onPauseVideClick(){
-    this.store.dispatch(VideoActions.PauseVideo());
+  OnPinToolSelection(){
+    this.store.dispatch(VideoActions.setIsPinpointSelectionActive({isPinpointSelectionActive: true}));
   }
 
 }

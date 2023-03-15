@@ -6,8 +6,9 @@ import { Material } from 'src/app/models/Material';
 import { PdfviewService } from 'src/app/services/pdfview.service';
 import { environment } from 'src/environments/environment';
 import { getCurrentMaterial, getCurrentMaterialId } from '../../../materils/state/materials.reducer';
-import { getIsBrushSelectionActive, getIsVideoPaused, getIsVideoPlayed, State } from '../state/video.reducer';
+import { getIsBrushSelectionActive, getIsPinpointSelectionActive, getIsVideoPaused, getIsVideoPlayed, State } from '../state/video.reducer';
 import * as VideoActions from '../state/video.action'
+import { calculateMousePositionInVideo } from 'src/app/_helpers/video-helper';
 
 
 
@@ -40,18 +41,9 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
 
   constructor(private store: Store<State>, private pdfViewService: PdfviewService, private changeDetectorRef: ChangeDetectorRef) {
     this.store.select(getIsBrushSelectionActive).subscribe((isActive) => this.isBrushSelectionActive = isActive);
-    this.store.select(getIsVideoPlayed).subscribe((isPlayed) => {
-      if(isPlayed){
-        this.playVideo();
-      }
-    });
-    this.store.select(getIsVideoPaused).subscribe((isPaused) => {
-      if(isPaused){
-        this.pauseVideo();
-      }
-    });
+    this.store.select(getIsPinpointSelectionActive).subscribe((isActive) => this.isPinpointSelectionActive = isActive);
   }
-  
+
   ngAfterViewChecked(): void {
     if(this.youtubeactivated){
       this.boundingRect = this.YouTubePlayerArea?.nativeElement.getBoundingClientRect();
@@ -120,6 +112,11 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
 
   onYouTubePlayerStateChange(event) {
     console.log("player state", event.data);
+    if(event.data === 1){
+      this.store.dispatch(VideoActions.PlayVideo());
+    }else if(event.data === 2){
+      this.store.dispatch(VideoActions.PauseVideo());
+    }
   }
 
   extractIdFromLink(link: string): string {
@@ -141,8 +138,17 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
       this.YouTubePlayer.pauseVideo();
     }else{
       this.videoPlayer?.nativeElement.pause();
-      console.log(this.videoPlayer?.nativeElement.currentTime.toFixed(2));
     }
+  }
+
+  videoPlayed() {
+    this.store.dispatch(VideoActions.PlayVideo());
+    console.log('Played: ', this.videoPlayer?.nativeElement.currentTime)
+  }
+
+  videoPaused() {
+    this.store.dispatch(VideoActions.PauseVideo());
+    console.log('Paused: ', this.videoPlayer?.nativeElement.currentTime)
   }
 
   drawingChanged(drawings: DrawingData) {
@@ -172,5 +178,34 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
 
   showAnnotationDialog(){
 
+  }
+
+  setPintpointPosition(event: MouseEvent){
+    let boundingRect;
+    if(this.youtubeactivated){
+      boundingRect = this.YouTubePlayerArea?.nativeElement.getBoundingClientRect();
+    }
+    else{
+      boundingRect = this.videoPlayer?.nativeElement.getBoundingClientRect();
+    }
+
+    if (!this.videoWidth || !this.videoHeight || !boundingRect) return;
+
+    const {isInsideVideo, xRatio, yRatio, xPosition, yPosition} = calculateMousePositionInVideo(
+      event.clientX,
+      event.clientY,
+      boundingRect,
+      this.videoWidth,
+      this.videoHeight,
+    );
+
+    if (!isInsideVideo) return;
+
+    this.pintpointCoordinates = [xRatio, yRatio];
+    this.pintpointPosition = [xPosition, yPosition];
+
+    this.showAnnotationDialog();
+
+    this.store.dispatch(VideoActions.setIsPinpointSelectionActive({isPinpointSelectionActive: false}));
   }
 }

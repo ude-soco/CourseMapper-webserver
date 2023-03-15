@@ -7,16 +7,16 @@ export interface State extends AppState.State {
 
 export interface VideoState {
   isBrushSelectionActive: boolean;
+  isPinpointSelectionActive: boolean;
   videoPlayed: boolean;
   videoPaused: boolean;
-  test: any;
 }
 
 const initialState: VideoState = {
   isBrushSelectionActive: false,
+  isPinpointSelectionActive: false,
   videoPlayed: false,
   videoPaused: true,
-  test: null
 }
 
 const getVideoFeatureState =
@@ -25,6 +25,11 @@ const getVideoFeatureState =
 export const getIsBrushSelectionActive = createSelector(
   getVideoFeatureState,
   (state) => state.isBrushSelectionActive
+);
+
+export const getIsPinpointSelectionActive = createSelector(
+  getVideoFeatureState,
+  (state) => state.isPinpointSelectionActive
 );
 
 export const getIsVideoPlayed = createSelector(
@@ -43,6 +48,13 @@ export const videoReducer = createReducer<VideoState>(
     return {
       ...state,
       isBrushSelectionActive: action.isBrushSelectionActive,
+    };
+  }),
+
+  on(VideoActions.setIsPinpointSelectionActive, (state, action): VideoState => {
+    return {
+      ...state,
+      isPinpointSelectionActive: action.isPinpointSelectionActive,
     };
   }),
 

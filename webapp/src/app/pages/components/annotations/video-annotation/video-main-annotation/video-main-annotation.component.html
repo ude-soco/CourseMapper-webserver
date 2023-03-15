@@ -8,6 +8,8 @@
         height="100%"
         *ngIf="!youtubeactivated"
         #video
+        (play)="videoPlayed()"
+        (pause)="videoPaused()"
       >
         <source [src]="videoURL" type="video/mp4" />
       </video>
@@ -19,17 +21,33 @@
           (stateChange)="onYouTubePlayerStateChange($event)"
         ></youtube-player>
       </div>
+      <div
+        *ngIf="isPinpointSelectionActive"
+        class="pinpoint-selection-overlay"
+        (click)="setPintpointPosition($event)"
+      ></div>
       <app-video-drawing-overlay
-      *ngIf="isBrushSelectionActive" 
-      class="brush-selection-overlay"
-      (drawingChanged)="drawingChanged($event)"
-      [boundingRect]="boundingRect"
-      [videoWidth]="videoWidth"
-      [videoHeight]="videoHeight"
-      (cancelSelection)="cancelSelection()"
-      (doneDrawing)="doneDrawing()"
-    >
-    </app-video-drawing-overlay>
+        *ngIf="isBrushSelectionActive"
+        class="brush-selection-overlay"
+        (drawingChanged)="drawingChanged($event)"
+        [boundingRect]="boundingRect"
+        [videoWidth]="videoWidth"
+        [videoHeight]="videoHeight"
+        (cancelSelection)="cancelSelection()"
+        (doneDrawing)="doneDrawing()"
+      >
+      </app-video-drawing-overlay>
+      <div
+        class="pinpoint-display-pin"
+        *ngIf="
+          (isPinpointSelectionActive || isAnnotationDialogVisible$) &&
+          pintpointPosition
+        "
+        [style.left]="pintpointPosition[0] + 'px'"
+        [style.top]="pintpointPosition[1] + 'px'"
+      >
+        <app-iconbutton icon="bx-pin" color="text-white"></app-iconbutton>
+      </div>
     </div>
   </div>
   <div class="flex flex-col ml-5">
