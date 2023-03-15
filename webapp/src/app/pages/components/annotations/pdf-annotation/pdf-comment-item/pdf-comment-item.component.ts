@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { computeElapsedTime, getInitials } from 'src/app/_helpers/format';
-import { Annotation } from 'src/app/models/Annotations';
+import { Annotation, PdfGeneralAnnotationLocation } from 'src/app/models/Annotations';
 import { Reply } from 'src/app/models/Reply';
 import { getAnnotationsForMaterial, getCurrentPdfPage, State } from '../state/annotation.reducer';
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
@@ -106,10 +106,10 @@ export class PdfCommentItemComponent implements OnInit, OnChanges {
   }
 
   showAnnotationOnMaterial(){
-    let location= this.annotation?.location.startPage;
-    if(this.currentPage != location){
-      this.store.dispatch(AnnotationActions.setCurrentPdfPage({pdfCurrentPage: location}));
-      if(this.currentPage == location){
+    let location = this.annotation?.location as PdfGeneralAnnotationLocation;
+    if(this.currentPage != location.startPage){
+      this.store.dispatch(AnnotationActions.setCurrentPdfPage({pdfCurrentPage: location.startPage}));
+      if(this.currentPage == location.startPage){
         this.highlightAnnotation();
       } 
     }else{

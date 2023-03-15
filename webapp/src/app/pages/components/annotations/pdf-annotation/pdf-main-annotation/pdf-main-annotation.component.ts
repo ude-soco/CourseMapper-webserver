@@ -224,9 +224,10 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
     const drawBoxs = annotations.filter((n: any) => n?.tool?.type === 'drawing');
     if(drawBoxs.length > 0) {
       drawBoxs.forEach((element) => {
+        let rect = (element.tool as PdfAnnotationTool).rect
         const updatedElement = {
           ...element,
-          tool: { ...element.tool, rect: {...element.tool.rect, _id: element._id }},
+          tool: { ...element.tool, rect: {...rect, _id: element._id }},
         };
         this.drawBoxObjectList.push(updatedElement.tool.rect);
       });

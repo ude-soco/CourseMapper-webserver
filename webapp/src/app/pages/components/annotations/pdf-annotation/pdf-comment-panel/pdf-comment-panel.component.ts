@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Annotation, PdfToolType } from 'src/app/models/Annotations';
+import { Annotation, PdfGeneralAnnotationLocation, PdfToolType } from 'src/app/models/Annotations';
 import { Store } from '@ngrx/store';
 import { computeElapsedTime, getInitials } from 'src/app/_helpers/format';
 import { getAnnotationsForMaterial, getCurrentPdfPage, State } from '../state/annotation.reducer';
@@ -65,7 +65,7 @@ export class PdfCommentPanelComponent implements OnInit {
 
   showAnnotationOnCurrentPage() {
     
-    this.annotationOnCurrentPage = this.annotations.filter((anno) => anno.location.startPage == this.currentPage);
+    this.annotationOnCurrentPage = this.annotations.filter((anno) => (anno.location as PdfGeneralAnnotationLocation).startPage == this.currentPage);
   }
 
   onAnnotationFilterChange() {
