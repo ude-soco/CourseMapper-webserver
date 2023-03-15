@@ -19,6 +19,7 @@ import {ScrollerModule} from 'primeng/scroller';
 import {DialogModule} from 'primeng/dialog';
 import {EditorModule} from 'primeng/editor';
 import {SliderModule} from 'primeng/slider';
+import {CardModule} from 'primeng/card';
 
 const PrimeNgComponents = [
   AvatarModule,
@@ -40,7 +41,8 @@ const PrimeNgComponents = [
   ScrollerModule,
   DialogModule,
   EditorModule,
-  SliderModule
+  SliderModule,
+  CardModule
   
 ];
 

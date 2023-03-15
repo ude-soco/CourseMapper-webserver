@@ -1,0 +1,67 @@
+
+
+<div>
+    <div class="img-div">
+        <img alt="Card" src="https://source.unsplash.com/user/c_v_r/1900x800" class="img">
+    
+        <div class="transbox">
+            <h1>CourseMapper</h1>
+            <p>Collaboration, annotation and analytics platform</p>
+          </div>
+          <div class="bottom-right">
+    
+            <span class="p-input-icon-left">
+                <i class="pi pi-search" ></i>
+                <input type="text" pInputText [(ngModel)]="value1" placeholder="Search for courses ..." class="search" >         
+            </span>
+    
+            
+        </div>
+    </div>
+    
+    
+    
+    <div  style="margin-left:9rem;  " >
+    <div *ngFor="let course of courses"  >
+    <div *ngIf="value1=== '' || course.name.toLowerCase().includes(value1)">
+    
+    
+     <p-card  styleClass="p-card-shadow" class="course-card">
+        <hr style="margin-bottom: 0.75rem ; margin-top: 0%;">
+        <ng-template pTemplate="header">
+            <img alt="Card" src="https://primefaces.org/cdn/primeng/images/usercard.png">
+        </ng-template>
+        <ng-template pTemplate="content-center" style="float: left; ">
+        <p-avatar
+        label="{{course.shortName}}"
+        shape="circle"
+        size="large"
+        [style]="{ 'background-color': '#0277BD', color: '#ffffff' , float: 'left', top_margin:'0.5rem' }"
+      ></p-avatar>
+        <p style="margin: 1.5rem 1rem 1rem 4rem"> {{course.name}}</p>
+    </ng-template>
+        <ng-template pTemplate="footer">
+            <!-- <p-button label="Save" icon="pi pi-check"></p-button>
+            <p-button label="Cancel" icon="pi pi-times" styleClass="p-button-secondary" [style]="{'margin-left': '.5em'}"></p-button> -->
+            <p> {{course.description}}</p>
+        </ng-template>
+    </p-card> 
+    </div>
+    </div>
+    </div>
+    </div>
+    <!-- <div class="row">
+        <div class="column" style="background-color:#aaa;">
+          <h2>Column 1</h2>
+          <p>Some text..</p>
+        </div>
+        <div class="column" style="background-color:#bbb;">
+          <h2>Column 2</h2>
+          <p>Some text..</p>
+        </div>
+        <div class="column" style="background-color:#ccc;">
+          <h2>Column 3</h2>
+          <p>Some text..</p>
+        </div>
+      </div>
+       -->

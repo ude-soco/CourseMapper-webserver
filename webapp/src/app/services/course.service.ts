@@ -159,7 +159,13 @@ export class CourseService {
       this.onUpdateCourses$.next(this.courses);
     }
   }
-
+  GetAllCourses():  Observable<Course[]> {
+    return this.http.get<Course[]>(`${this.API_URL}/courses`).pipe(tap(courses => {
+      this.courses = courses;
+      console.log("all courses from service course")
+      console.log(this.courses)
+    }));
+  }
   sendToOldBackend(course){
     // userId should be taken from the coockies. for the time being it is hard coded
     this.http.post<any>('http://localhost:8090/new/course', 

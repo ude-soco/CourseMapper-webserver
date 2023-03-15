@@ -34,7 +34,7 @@ export const getAllCourses = async (req, res) => {
       numberTopics: c.topics.length,
       numberChannels: c.channels.length,
       numberUsers: c.users.length,
-      channels:courseSaved.channels,
+      channels:c.channels,
     };
     results.push(course);
   });
