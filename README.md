@@ -37,10 +37,10 @@ Use either step 1 or 2 to install the project. After successfully installation o
         - Stop the server by pressing `cntl + c` inside the command prompt
 
     - Webapp installation
-        - Move to the `webapp` directory, open a command prompt/terminal in the `webapp` directory, and type the
-          command `npm ci` to install node
-          packages
+        - Move to the `webapp` directory, open a command prompt/terminal in the `webapp` directory
         - Install the Angular CLI by typing the command `npm i -g @angular/cli` in the command prompt
+        - Type the command `npm install --force` in the command prompt to install node packages
+        
         - After the packages are installed, type `ng serve` to run the server
         - Application will open automatically at http://localhost:4200
         - Stop the server by pressing `cntl + c` inside the command prompt
