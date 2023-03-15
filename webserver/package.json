@@ -46,7 +46,8 @@
     "socket.io": "^4.6.0"
   },
   "devDependencies": {
-    "cors": "^2.8.5"
+    "cors": "^2.8.5",
+    "win-node-env": "^0.6.1"
   },
   "optionalDependencies": {
     "win-node-env": "^0.6.1"

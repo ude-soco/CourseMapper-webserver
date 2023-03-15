@@ -277,13 +277,13 @@
           class="alert alert-danger">
 
           <div *ngIf="validateForm.controls['username'].errors?.['required']">
-            <span class="validation_span"> Username is required.</span>
+            <span class="validation_span"> Username is required</span>
           </div>
           <div *ngIf="validateForm.controls['username'].errors?.['minlength']">
-            <span class="validation_span"> Username must be at least 4 characters long.</span>
+            <span class="validation_span"> Username must be at least 4 characters long</span>
           </div>
           <div *ngIf="validateForm.controls['username'].errors?.['maxlength']">
-            <span class="validation_span"> Username must be maximum 20 characters long. </span>
+            <span class="validation_span"> Username must be maximum 20 characters long </span>
           </div>
         </div>
       </div>
@@ -296,7 +296,7 @@
             formControlName="firstname"
             [style]="{ }"
           />
-          <label for="firstname">firstname</label>
+          <label for="firstname">First name</label>
         </div>
 
         <div
@@ -304,13 +304,13 @@
           class="alert alert-danger">
 
           <div *ngIf="validateForm.controls['firstname'].errors?.['required']">
-            <span class="validation_span"> Firstname is required. </span>
+            <span class="validation_span"> First name is required </span>
           </div>
           <div *ngIf="validateForm.controls['firstname'].errors?.['minlength']">
-            <span class="validation_span"> Firstname must be at least 4 characters long. </span>
+            <span class="validation_span"> First name must be at least 4 characters long </span>
           </div>
           <div *ngIf="validateForm.controls['firstname'].errors?.['maxlength']">
-            <span class="validation_span"> Firstname must be maximum 20 characters long. </span>
+            <span class="validation_span"> First name must be maximum 20 characters long </span>
           </div>
         </div>
       </div>
@@ -323,7 +323,7 @@
             formControlName="lastname"
             [style]="{ }"
           />
-          <label for="lastname">lastname</label>
+          <label for="lastname">Last name</label>
         </div>
 
         <div
@@ -331,13 +331,37 @@
           class="alert alert-danger">
 
           <div *ngIf="validateForm.controls['lastname'].errors?.['required']">
-            <span class="validation_span">  Lastname is required. </span>
+            <span class="validation_span">  Last name is required </span>
           </div>
           <div *ngIf="validateForm.controls['lastname'].errors?.['minlength']">
-            <span class="validation_span"> Lastname must be at least 4 characters long. </span>
+            <span class="validation_span"> Last name must be at least 4 characters long </span>
           </div>
           <div *ngIf="validateForm.controls['lastname'].errors?.['maxlength']">
-            <span class="validation_span">   Lastname must be maximum 20 characters long. </span>
+            <span class="validation_span"> Last name must be maximum 20 characters long </span>
+          </div>
+        </div>
+      </div>
+      <div class="subdiv">
+        <div class="p-float-label mb-4">
+          <input
+            id="email"
+            type="text"
+            pInputText
+            formControlName="email"
+            [style]="{  }"
+          />
+          <label for="email">Email</label>
+        </div>
+
+        <div
+          *ngIf="validateForm.controls['email'].invalid && (validateForm.controls['email'].dirty || validateForm.controls['email'].touched)"
+          class="alert alert-danger">
+
+          <div *ngIf="validateForm.controls['email'].errors?.['required']">
+            <span class="validation_span"> Email is required </span>
+          </div>
+          <div *ngIf="validateForm.controls['email'].errors?.['email']">
+            <span class="validation_span"> Invalid Email </span>
           </div>
         </div>
       </div>
@@ -346,15 +370,15 @@
           <p-password id="password" type="password" formControlName="password" class="mb-4"
                       [style]="{   width: '19rem' }">
             <ng-template pTemplate="header">
-              <h6>Pick a password</h6>
+              <h6>Create a password</h6>
             </ng-template>
             <ng-template pTemplate="footer">
 
-              <p class="mt-2">Suggestions</p>
+              <p class="mt-2">To create a strong password:</p>
               <ul class="pl-2 ml-2 mt-0" style="line-height: 1.5">
-                <li>At least one lowercase</li>
-                <li>At least one uppercase</li>
-                <li>At least one numeric</li>
+                <li>At least one lowercase letter</li>
+                <li>At least one uppercase letter</li>
+                <li>At least one numeric letter</li>
                 <li>Minimum 8 characters</li>
               </ul>
             </ng-template>
@@ -366,13 +390,13 @@
           class="alert alert-danger">
 
           <div *ngIf="validateForm.controls['password'].errors?.['required']">
-            <span class="validation_span"> Password is required. </span>
+            <span class="validation_span"> Password is required </span>
           </div>
           <div *ngIf="validateForm.controls['password'].errors?.['minlength']">
-            <span class="validation_span"> Password must be at least 8 characters long. </span>
+            <span class="validation_span"> Password must be at least 8 characters long </span>
           </div>
           <div *ngIf="validateForm.controls['password'].errors?.['maxlength']">
-            <span class="validation_span">Password must be maximum 20 characters long.  </span>
+            <span class="validation_span">Password must be maximum 20 characters long  </span>
           </div>
         </div>
       </div>
@@ -386,7 +410,7 @@
             formControlName="checkPassword"
             [style]="{  }"
           />
-          <label for="checkPassword">checkPassword</label>
+          <label for="checkPassword">Confirm Password</label>
         </div>
 
         <div
@@ -394,54 +418,31 @@
           class="alert alert-danger">
 
           <div *ngIf="validateForm.controls['checkPassword'].errors?.['required']">
-            <span class="validation_span">  Password is required.</span>
+            <span class="validation_span">Password is required</span>
           </div>
           <div *ngIf="validateForm.controls['checkPassword'].errors?.['minlength']">
-            <span class="validation_span">  Password must be at least 8 characters long.</span>
+            <span class="validation_span">  Password must be at least 8 characters long</span>
           </div>
           <div *ngIf="validateForm.controls['checkPassword'].errors?.['maxlength']">
-            <span class="validation_span">  Password must be maximum 20 characters long.</span>
+            <span class="validation_span">  Password must be maximum 20 characters long</span>
           </div>
           <div *ngIf="validateForm.controls['checkPassword'].errors?.['confirmedValidator']">
-            <span class="validation_span"> Password and Confirm Password must be match. </span></div>
+            <span class="validation_span"> Passwords do not match </span></div>
         </div>
       </div>
-      <div class="subdiv">
-        <div class="p-float-label mb-4">
-          <input
-            id="email"
-            type="text"
-            pInputText
-            formControlName="email"
-            [style]="{  }"
-          />
-          <label for="email">email</label>
-        </div>
-
-        <div
-          *ngIf="validateForm.controls['email'].invalid && (validateForm.controls['email'].dirty || validateForm.controls['email'].touched)"
-          class="alert alert-danger">
-
-          <div *ngIf="validateForm.controls['email'].errors?.['required']">
-            <span class="validation_span"> Email is required. </span>
-          </div>
-          <div *ngIf="validateForm.controls['email'].errors?.['email']">
-            <span class="validation_span"> Email not valid. </span>
-          </div>
-        </div>
-      </div>
+      
       <div class="container">
         <button
           pButton
           [ngStyle]="{ backgroundColor: '#EA580C',width: '62%',
       margin: '10px 80px 10px 0px'}"
           type="button"
-          label="signup"
+          label="Sign Up"
 
           (click)="onSubmit()"></button>
       </div>
       <div class="alert alert-warning" *ngIf="isSignUpFailed">
-        Signup failed!<br/>{{ errorMessage }}
+        Sign up unsuccessful<br/>{{ errorMessage }}
       </div>
     </form>
 

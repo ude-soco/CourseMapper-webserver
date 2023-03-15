@@ -2,7 +2,7 @@ import { PrimengModule } from './modules/primeng/primeng.module';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { TopicDropdownComponent } from './pages/components/topic-dropdown/topic-dropdown.component';
-import { en_US, NZ_I18N } from 'ng-zorro-antd/i18n';
+
 import { AppRoutingModule } from './app-routing.module';
 
 import en from '@angular/common/locales/en';
@@ -42,8 +42,6 @@ import { HomeComponent } from './pages/home/home.component';
 import {
   httpInterceptorProviders,
 } from './_helpers/http.interceptor';
-import { MatInputModule } from '@angular/material/input';
-import { MatTabsModule } from '@angular/material/tabs';
 import { StoreModule, MetaReducer  } from '@ngrx/store';
 import { AnnotationModule } from './pages/components/annotations/annotation.module';
 import { MaterialsModule } from './pages/components/materils/materials.module';
@@ -94,8 +92,6 @@ registerLocaleData(en);
         ToastModule,
         RippleModule,
         ConfirmDialogModule,
-        MatInputModule,
-        MatTabsModule,
         StoreModule.forRoot({}, {metaReducers}),
         AnnotationModule,
         MaterialsModule,
@@ -108,7 +104,7 @@ registerLocaleData(en);
         SocketIoModule.forRoot(config)
 
     ],
-    providers: [{ provide: NZ_I18N, useValue: en_US }, httpInterceptorProviders],
+    providers: [httpInterceptorProviders],
     bootstrap: [AppComponent],
 })
 export class AppModule {}
