@@ -296,7 +296,7 @@
             formControlName="firstname"
             [style]="{ }"
           />
-          <label for="firstname">firstname</label>
+          <label for="firstname">First name</label>
         </div>
 
         <div
@@ -338,6 +338,30 @@
           </div>
           <div *ngIf="validateForm.controls['lastname'].errors?.['maxlength']">
             <span class="validation_span">   Lastname must be maximum 20 characters long. </span>
+          </div>
+        </div>
+      </div>
+      <div class="subdiv">
+        <div class="p-float-label mb-4">
+          <input
+            id="email"
+            type="text"
+            pInputText
+            formControlName="email"
+            [style]="{  }"
+          />
+          <label for="email">email</label>
+        </div>
+
+        <div
+          *ngIf="validateForm.controls['email'].invalid && (validateForm.controls['email'].dirty || validateForm.controls['email'].touched)"
+          class="alert alert-danger">
+
+          <div *ngIf="validateForm.controls['email'].errors?.['required']">
+            <span class="validation_span"> Email is required. </span>
+          </div>
+          <div *ngIf="validateForm.controls['email'].errors?.['email']">
+            <span class="validation_span"> Email not valid. </span>
           </div>
         </div>
       </div>
@@ -406,30 +430,7 @@
             <span class="validation_span"> Password and Confirm Password must be match. </span></div>
         </div>
       </div>
-      <div class="subdiv">
-        <div class="p-float-label mb-4">
-          <input
-            id="email"
-            type="text"
-            pInputText
-            formControlName="email"
-            [style]="{  }"
-          />
-          <label for="email">email</label>
-        </div>
-
-        <div
-          *ngIf="validateForm.controls['email'].invalid && (validateForm.controls['email'].dirty || validateForm.controls['email'].touched)"
-          class="alert alert-danger">
-
-          <div *ngIf="validateForm.controls['email'].errors?.['required']">
-            <span class="validation_span"> Email is required. </span>
-          </div>
-          <div *ngIf="validateForm.controls['email'].errors?.['email']">
-            <span class="validation_span"> Email not valid. </span>
-          </div>
-        </div>
-      </div>
+      
       <div class="container">
         <button
           pButton
