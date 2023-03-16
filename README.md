@@ -37,7 +37,13 @@ CourseMapper is a collaborative course annotation and analytics platform that fo
 
 	If you face issue with `npm ci` command, try `npm install` or `npm install --force` command. Caution: `npm install` and `npm install --force` will delete all the existing node packages, install the new ones and update the `package-lock.json` file. Please make sure you do not push your changes to the `package-lock.json` file.
 
-- After the packages are installed, type `npm run watch:dev` to run the server at [http://localhost:8080](http://localhost:8080)
+- After the packages are installed, type the following command to run the server 
+
+	```bash
+	npm run watch:dev
+	```
+
+	The server will run at [http://localhost:8080](http://localhost:8080)
 
 - Stop the server by pressing `Cntl + c` inside the command prompt
 
@@ -57,7 +63,13 @@ CourseMapper is a collaborative course annotation and analytics platform that fo
 	npm ci
 	```
 
-- After the packages are installed, type `ng serve` to run the server at [http://localhost:4200](http://localhost:4200)
+- After the packages are installed, type the following command to run the server 
+
+	```bash
+	ng serve
+	```
+
+	The server will run at [http://localhost:4200](http://localhost:4200)
 
 - Stop the server by pressing `Cntl + c` inside the command prompt
 
