@@ -14,18 +14,18 @@ CourseMapper is a collaborative course annotation and analytics platform that fo
 
 #### Step 1: Pre-requisites
 
-1.  Download NodeJS (v16.14.2) from [the official website](https://nodejs.org/en/blog/release/v16.14.2)
+- Download NodeJS (v16.14.2) from [the official website](https://nodejs.org/en/blog/release/v16.14.2)
 
-2.  Download [IntelliJ Ultimate](https://www.jetbrains.com/de-de/idea/download/#section=windows) or [Visual Studio Code](https://code.visualstudio.com/download) and install one of the code editors
+- Download [IntelliJ Ultimate](https://www.jetbrains.com/de-de/idea/download/#section=windows) or [Visual Studio Code](https://code.visualstudio.com/download) and install one of the code editors
 
-3. Download [MongoDB Community Server](https://www.mongodb.com/try/download/community) and [MongoDB Compass](https://www.mongodb.com/try/download/compass) and install them
+- Download [MongoDB Community Server](https://www.mongodb.com/try/download/community) and [MongoDB Compass](https://www.mongodb.com/try/download/compass) and install them
 
-4. Download [Postman](https://www.postman.com/downloads/) and install it
+- Download [Postman](https://www.postman.com/downloads/) and install it
 
 
 #### Step 2: Installation Guide for CourseMapper webserver
 
-- Using your file explorer, go inside the directory `webserver`, copy the `example.env` file and paste it in the same folder. Rename the copied twitter config file to `.env`
+- Using your file explorer, go inside the directory `webserver`, copy the `example.env` file and paste it in the same folder. Rename the copied environment file to `.env`
 
 - Open a command prompt/terminal in the `webserver` directory
 
