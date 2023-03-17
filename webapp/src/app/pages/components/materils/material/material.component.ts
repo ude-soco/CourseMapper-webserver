@@ -192,7 +192,7 @@ export class MaterialComponent implements OnInit, OnDestroy {
   deleteMaterial(e) {
     e.index1 = e.index - 1;
 
-    this.selectedMaterial = this.selectedChannel.materials[e.index1];
+    this.selectedMaterial = this.materials[e.index1];
     if (this.selectedMaterial.type == "video" && this.selectedMaterial.url) {
       this.materialService.deleteMaterial(this.selectedMaterial).subscribe({
         next: (data) => {
