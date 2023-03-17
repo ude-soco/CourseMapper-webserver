@@ -21,12 +21,17 @@ const Course = new Schema({
       default: [],
     },
   ],
+  indicators: [
+    { _id : Schema.Types.ObjectId, src: String, width: String, height: String, frameborder: String },
+  ],
   createdAt: { type: Date },
   updatedAt: { type: Date },
-  users: [{
-    userId: { type: Schema.Types.ObjectId, ref: "user", required: true },
-    role: { type: Schema.Types.ObjectId, ref: "role" },
-  }]
+  users: [
+    {
+      userId: { type: Schema.Types.ObjectId, ref: "user", required: true },
+      role: { type: Schema.Types.ObjectId, ref: "role" },
+    },
+  ],
 });
 
 module.exports = mongoose.model("course", Course);

@@ -16,7 +16,7 @@ const Role = db.role;
  * @param {string} req.body.email The email
  * @param {string} req.body.password The new password
  */
-export const signup = async (req, res) => {
+export const signup = async (req, res, next) => {
   let role;
   try {
     role = await Role.findOne({ name: "user" });
@@ -25,6 +25,7 @@ export const signup = async (req, res) => {
   }
 
   let user = new User({
+
     firstname: req.body.firstname,
     lastname: req.body.lastname,
     username: req.body.username,
@@ -35,9 +36,12 @@ export const signup = async (req, res) => {
 
   try {
     await user.save();
-    return res
-      .status(200)
-      .send({ success: "User is successfully registered!" });
+
+    req.locals = {
+      user: user,
+      response: { success: "User is successfully registered!" }
+    }
+    return next();
   } catch (err) {
     return res.status(500).send({ error: err });
   }
@@ -50,7 +54,7 @@ export const signup = async (req, res) => {
  * @param {string} req.body.username The username
  * @param {string} req.body.password The new password
  */
-export const signin = async (req, res) => {
+export const signin = async (req, res, next) => {
   let username = req.body.username;
   let password = req.body.password;
 
@@ -73,20 +77,22 @@ export const signin = async (req, res) => {
       expiresIn: 86400, // 24 hours
     });
 
-    let authority = "ROLE_" + user.role.name.toUpperCase();
-
     req.session.token = token;
 
     const userName = `${user.firstname} ${user.lastname}`;
 
-    return res.status(200).send({
-      id: user._id,
-      name: userName,
-      username: user.username,
-      email: user.email,
-      role: authority,
-      courses: user.courses,
-    });
+    req.locals = {
+      user: user,
+      response: {
+        id: user._id,
+        name: userName,
+        username: user.username,
+        role: user.role,
+        email: user.email,
+        courses: user.courses,
+      }
+    }
+    return next();
   } catch (err) {
     return res.status(500).send({ error: err });
   }
@@ -97,10 +103,22 @@ export const signin = async (req, res) => {
  * User logout controller
  *
  */
-export const signout = async (req, res) => {
+export const signout = async (req, res, next) => {
+  const userId = req.userId;
   try {
+    let user = await User.findOne({ _id: userId });
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
     req.session = null;
-    return res.status(200).send({ success: "You've been signed out!" });
+
+    req.locals = {
+      user: user,
+      response: { success: "You've been signed out!" }
+    }
+    return next();
   } catch (err) {
     this.next(err);
   }

@@ -1,0 +1,129 @@
+<div class="container">
+  <button
+    pButton
+    type="button"
+    label="Add a video"
+    (click)="videoTab()"
+    [disabled]="materialType == 'video'"
+  ></button>
+  <button
+    pButton
+    type="button"
+    label="Add a pdf"
+    (click)="pdfTab()"
+    [disabled]="materialType == 'pdf'"
+  ></button>
+</div>
+<div>
+  <form [formGroup]="fileUploadForm" >
+    <div>
+      <div>
+        <div>
+          <span class="custom-file-label" for="customFile"
+            ><span style="color: red" *ngIf="materialType == 'pdf'">* </span
+            >Select <span *ngIf="materialType == 'pdf'">Pdf</span
+            ><span *ngIf="materialType == 'video'">Video</span> File :
+          </span>
+        </div>
+      </div>
+      <div>
+        <div class="custom-file">
+          <input type="file" class="custom-file-input" id="file" name="file"
+            (change)="onFileSelect($event)" 
+            #UploadFileInput  hidden/>
+            <label for="file">Choose file</label>
+            <p style="margin-left: 1rem; width: 13em; word-wrap: break-word; "  id="file-chosen">No file chosen</p>
+        </div>
+        
+        <!-- <p-fileUpload  #fubauto mode="basic" formControlName="fileUploadForm.file" type="file" name="file" 
+        [customUpload]="true"   id="file"  chooseLabel="Browse" 
+        (onSelect)="onFileSelect($event)"
+        [auto]="false"
+        #UploadFileInput
+        
+        ></p-fileUpload>
+       
+        <p id="file-chosen" >
+        No file chosen
+      </p> -->
+      </div>
+    </div>
+  </form>
+</div>
+<p class="separator" *ngIf="materialType == 'video'">OR</p>
+<div
+  *ngIf="materialType == 'pdf' || materialType == 'video'"
+>
+  <form [formGroup]="validateForm" (ngSubmit)="submitForm()">
+    <div *ngIf="materialType == 'video'">
+      <label for="float-input">Enter URL</label>
+      <input
+      id="float-input"
+      type="text"
+      pInputText
+      formControlName="url"
+      [style]="{ width: '50%' }"
+      placeholder="Enter a video link" 
+    />
+
+      <!-- <label for="url">Enter URL</label>
+      <input formControlName="url" placeholder="Enter a video link" /> -->
+    
+    </div>
+    <div style="width: 100%">
+      <div style="width: 50%">
+      <label for="float-input">Enter Material Name</label> </div>
+      <div style="width: 50%">
+      <input
+      id="float-input"
+      type="text"
+      pInputText
+        formControlName="materialName"
+        [style]="{ width: '100%' }"
+        placeholder="Enter a Name "
+      />
+    </div>
+    </div>
+    <div style="width: 100%">
+      <div style="width: 40%">
+      <label for="float-input">Enter Material description</label></div>
+      <div style="width: 60%">
+      <textarea pInputTextarea
+      formControlName="description"
+      placeholder="Enter a description"
+      id="float-input"
+      [autoResize]="true"
+      [rows]="5" [cols]="71"
+     
+      ></textarea>
+    </div>
+    </div>
+
+    <span class="custom-file-label" for="customFile"
+      ><span style="color: red" *ngIf="materialType == 'pdf'">* </span>Select
+      <span *ngIf="materialType == 'pdf'">Pdf</span
+      ><span *ngIf="materialType == 'video'">Video</span> File :
+    </span>
+
+
+
+    <div style="color: red" *ngIf="materialType == 'video' && fileUploadForm.controls['file'].value ==''  && validateForm.controls['url'].value  == ''"> 
+    <span style="color: red" >Upload Video or Enter URL </span></div>
+    
+  
+    <!-- <button nz-button nzType="primary" [disabled]="!validateForm.valid">
+      Submit
+    </button> -->
+
+    <button
+    pButton
+    [ngStyle]="{ backgroundColor: '#EA580C' }"
+    type="button"
+    label="submit"
+    (click)="submitForm()"
+  ></button>
+
+    
+  </form>
+</div>
+

@@ -1,0 +1,450 @@
+<!---<div class="register-form">
+  <form [formGroup]="validateForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label>firstname</label>
+      <input
+        type="text"
+        formControlName="firstname"
+        class="form-control"
+        [ngClass]="{ 'is-invalid': submitted && f['firstname'].errors }"
+      />
+      <div *ngIf="submitted && f['firstname'].errors" class="invalid-feedback">
+        <div *ngIf="f['firstname'].errors['required']">firstname is required</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>lastname</label>
+      <input
+        type="text"
+        formControlName="lastname"
+        class="form-control"
+        [ngClass]="{ 'is-invalid': submitted && f['lastname'].errors }"
+      />
+      <div *ngIf="submitted && f['lastname'].errors" class="invalid-feedback">
+        <div *ngIf="f['lastname'].errors['required']">firstname is required</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Username</label>
+      <input
+        type="text"
+        formControlName="username"
+        class="form-control"
+        [ngClass]="{ 'is-invalid': submitted && f['username'].errors }"
+      />
+      <div *ngIf="submitted && f['username'].errors" class="invalid-feedback">
+        <div *ngIf="f['username'].errors['required']">Username is required</div>
+        <div *ngIf="f['username'].errors['minlength']">
+          Username must be at least 6 characters
+        </div>
+        <div *ngIf="f['username'].errors['maxlength']">
+          Username must not exceed 20 characters
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Email</label>
+      <input
+        type="text"
+        formControlName="email"
+        class="form-control"
+        [ngClass]="{ 'is-invalid': submitted && f['email'].errors }"
+      />
+      <div *ngIf="submitted && f['email'].errors" class="invalid-feedback">
+        <div *ngIf="f['email'].errors['required']">Email is required</div>
+        <div *ngIf="f['email'].errors['email']">Email is invalid</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Password</label>
+      <input
+        type="password"
+        formControlName="password"
+        class="form-control"
+        [ngClass]="{ 'is-invalid': submitted && f['password'].errors }"
+      />
+      <div *ngIf="submitted && f['password'].errors" class="invalid-feedback">
+        <div *ngIf="f['password'].errors['required']">Password is required</div>
+        <div *ngIf="f['password'].errors['minlength']">
+          Password must be at least 6 characters
+        </div>
+        <div *ngIf="f['password'].errors['maxlength']">
+          Username must not exceed 40 characters
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Confirm Password</label>
+      <input
+        type="password"
+        formControlName="checkPassword"
+        class="form-control"
+        [ngClass]="{ 'is-invalid': submitted && f['checkPassword'].errors }"
+      />
+      <div
+        *ngIf="submitted && f['checkPassword'].errors"
+        class="invalid-feedback"
+      >
+        <div *ngIf="f['checkPassword'].errors['required']">
+          Confirm Password is required
+        </div>
+        <div *ngIf="f['checkPassword'].errors['notmatched']
+        && (f['checkPassword'].touched || f['checkPassword'].dirty)">
+          Confirm Password does not match
+        </div>
+      </div>
+    </div>
+
+
+    <div class="form-group">
+
+      <div class="container">
+        <button type="button" (click)="onSubmit()">signup</button>
+      </div>
+    </div>
+  </form>
+</div>
+--->
+<!---
+<div>
+  <form [formGroup]="validateForm">
+    <div class="container">
+      <label for="email">Email</label>
+
+      <input
+        type="text"
+        formControlName="email"
+        required
+        placeholder="Email"
+        class="textclass"
+      />
+      <div
+        *ngIf="
+          validateForm.controls['email'].invalid &&
+          (validateForm.controls['email'].dirty ||
+            validateForm.controls['email'].touched)
+        "
+      >
+        This is required
+      </div>
+    </div>
+    <div class="container">
+      <label for="password">password</label>
+
+      <input
+        type="text"
+        formControlName="password"
+        required
+        placeholder="password"
+        class="textclass"
+      />
+      <div
+        *ngIf="
+          validateForm.controls['password'].invalid &&
+          (validateForm.controls['password'].dirty ||
+            validateForm.controls['password'].touched)
+        "
+      >
+        This is required
+      </div>
+    </div>
+    <div class="container">
+      <label for="checkPassword">checkPassword</label>
+
+      <input
+        type="text"
+        formControlName="checkPassword"
+        required
+        placeholder="checkPassword"
+        class="textclass"
+      />
+      <div
+        *ngIf="
+        validateForm.controls['checkPassword'].errors?.['notmatched'] &&
+          (validateForm.controls['checkPassword'].dirty ||
+            validateForm.controls['checkPassword'].touched  )
+        "
+      >
+         Name cannot match alter ego.
+      </div>
+      <div
+      *ngIf="
+        validateForm.controls['checkPassword'].invalid &&
+        (validateForm.controls['checkPassword'].dirty ||
+          validateForm.controls['checkPassword'].touched)
+
+      "
+    >
+      This is required
+    </div>
+    </div>
+    <div class="container">
+      <label for="firstname">firstname</label>
+
+      <input
+        type="text"
+        formControlName="firstname"
+        required
+        placeholder="firstname"
+        class="textclass"
+      />
+      <div
+        *ngIf="
+          validateForm.controls['firstname'].invalid &&
+          (validateForm.controls['firstname'].dirty ||
+            validateForm.controls['firstname'].touched)
+        "
+      >
+        This is required
+      </div>
+    </div>
+    <div class="container">
+      <label for="lastname">lastname</label>
+
+      <input
+        type="text"
+        formControlName="lastname"
+        required
+        placeholder="lastname"
+        class="textclass"
+      />
+      <div
+        *ngIf="
+          validateForm.controls['lastname'].invalid &&
+          (validateForm.controls['lastname'].dirty ||
+            validateForm.controls['lastname'].touched)
+        "
+      >
+        This is required
+      </div>
+    </div>
+    <div class="container">
+      <label for="username">username</label>
+
+      <input
+        type="text"
+        formControlName="username"
+        required
+        placeholder="username"
+        class="textclass"
+      />
+      <div
+        *ngIf="
+          validateForm.controls['username'].invalid &&
+          (validateForm.controls['username'].dirty ||
+            validateForm.controls['username'].touched)
+        "
+      >
+        This is required
+      </div>
+    </div>
+    <div class="container">
+      <button type="button" (click)="onSubmit()">signup</button>
+    </div>
+    <div class="alert alert-warning" *ngIf="isSignUpFailed">
+      Signup failed!<br />{{ errorMessage }}
+    </div>
+  </form>
+  <a routerLink="/login">Login</a>
+  <div class="alert alert-success" *ngIf="isSuccessful">
+    Your registration is successful!
+  </div>
+</div>
+--->
+
+
+<div class="flex flex-wrap justify-center py-14">
+  <div class="flex flex-col" [style]="{ width: '25rem' }">
+
+    <form [formGroup]="validateForm">
+      <div class="subdiv">
+        <div class="p-float-label mb-4">
+          <input
+            id="username"
+            type="text"
+            pInputText
+            formControlName="username"
+            [style]="{ }"
+          />
+          <label for="username">Username</label>
+        </div>
+        <div
+          *ngIf="validateForm.controls['username'].invalid && (validateForm.controls['username'].dirty || validateForm.controls['username'].touched)"
+          class="alert alert-danger">
+
+          <div *ngIf="validateForm.controls['username'].errors?.['required']">
+            <span class="validation_span"> Username is required</span>
+          </div>
+          <div *ngIf="validateForm.controls['username'].errors?.['minlength']">
+            <span class="validation_span"> Username must be at least 4 characters long</span>
+          </div>
+          <div *ngIf="validateForm.controls['username'].errors?.['maxlength']">
+            <span class="validation_span"> Username must be maximum 20 characters long </span>
+          </div>
+        </div>
+      </div>
+      <div class="subdiv">
+        <div class="p-float-label mb-4">
+          <input
+            id="firstname"
+            type="text"
+            pInputText
+            formControlName="firstname"
+            [style]="{ }"
+          />
+          <label for="firstname">First name</label>
+        </div>
+
+        <div
+          *ngIf="validateForm.controls['firstname'].invalid && (validateForm.controls['firstname'].dirty || validateForm.controls['firstname'].touched)"
+          class="alert alert-danger">
+
+          <div *ngIf="validateForm.controls['firstname'].errors?.['required']">
+            <span class="validation_span"> First name is required </span>
+          </div>
+          <div *ngIf="validateForm.controls['firstname'].errors?.['minlength']">
+            <span class="validation_span"> First name must be at least 4 characters long </span>
+          </div>
+          <div *ngIf="validateForm.controls['firstname'].errors?.['maxlength']">
+            <span class="validation_span"> First name must be maximum 20 characters long </span>
+          </div>
+        </div>
+      </div>
+      <div class="subdiv">
+        <div class="p-float-label mb-4">
+          <input
+            id="lastname"
+            type="text"
+            pInputText
+            formControlName="lastname"
+            [style]="{ }"
+          />
+          <label for="lastname">Last name</label>
+        </div>
+
+        <div
+          *ngIf="validateForm.controls['lastname'].invalid && (validateForm.controls['lastname'].dirty || validateForm.controls['lastname'].touched)"
+          class="alert alert-danger">
+
+          <div *ngIf="validateForm.controls['lastname'].errors?.['required']">
+            <span class="validation_span">  Last name is required </span>
+          </div>
+          <div *ngIf="validateForm.controls['lastname'].errors?.['minlength']">
+            <span class="validation_span"> Last name must be at least 4 characters long </span>
+          </div>
+          <div *ngIf="validateForm.controls['lastname'].errors?.['maxlength']">
+            <span class="validation_span"> Last name must be maximum 20 characters long </span>
+          </div>
+        </div>
+      </div>
+      <div class="subdiv">
+        <div class="p-float-label mb-4">
+          <input
+            id="email"
+            type="text"
+            pInputText
+            formControlName="email"
+            [style]="{  }"
+          />
+          <label for="email">Email</label>
+        </div>
+
+        <div
+          *ngIf="validateForm.controls['email'].invalid && (validateForm.controls['email'].dirty || validateForm.controls['email'].touched)"
+          class="alert alert-danger">
+
+          <div *ngIf="validateForm.controls['email'].errors?.['required']">
+            <span class="validation_span"> Email is required </span>
+          </div>
+          <div *ngIf="validateForm.controls['email'].errors?.['email']">
+            <span class="validation_span"> Invalid Email </span>
+          </div>
+        </div>
+      </div>
+      <div class="subdiv">
+        <div class="p-float-label mb-4" [style]="{   width: '19rem' }">
+          <p-password id="password" type="password" formControlName="password" class="mb-4"
+                      [style]="{   width: '19rem' }">
+            <ng-template pTemplate="header">
+              <h6>Create a password</h6>
+            </ng-template>
+            <ng-template pTemplate="footer">
+
+              <p class="mt-2">To create a strong password:</p>
+              <ul class="pl-2 ml-2 mt-0" style="line-height: 1.5">
+                <li>At least one lowercase letter</li>
+                <li>At least one uppercase letter</li>
+                <li>At least one numeric letter</li>
+                <li>Minimum 8 characters</li>
+              </ul>
+            </ng-template>
+          </p-password>
+          <label for="password">Password</label>
+        </div>
+        <div
+          *ngIf="validateForm.controls['password'].invalid && (validateForm.controls['password'].dirty || validateForm.controls['password'].touched)"
+          class="alert alert-danger">
+
+          <div *ngIf="validateForm.controls['password'].errors?.['required']">
+            <span class="validation_span"> Password is required </span>
+          </div>
+          <div *ngIf="validateForm.controls['password'].errors?.['minlength']">
+            <span class="validation_span"> Password must be at least 8 characters long </span>
+          </div>
+          <div *ngIf="validateForm.controls['password'].errors?.['maxlength']">
+            <span class="validation_span">Password must be maximum 20 characters long  </span>
+          </div>
+        </div>
+      </div>
+      <div class="subdiv">
+        <div class="p-float-label mb-4">
+          <input
+            id="checkPassword"
+            type="text"
+            type="password"
+            pInputText
+            formControlName="checkPassword"
+            [style]="{  }"
+          />
+          <label for="checkPassword">Confirm Password</label>
+        </div>
+
+        <div
+          *ngIf="validateForm.controls['checkPassword'].invalid && (validateForm.controls['checkPassword'].dirty || validateForm.controls['checkPassword'].touched)"
+          class="alert alert-danger">
+
+          <div *ngIf="validateForm.controls['checkPassword'].errors?.['required']">
+            <span class="validation_span">Password is required</span>
+          </div>
+          <div *ngIf="validateForm.controls['checkPassword'].errors?.['minlength']">
+            <span class="validation_span">  Password must be at least 8 characters long</span>
+          </div>
+          <div *ngIf="validateForm.controls['checkPassword'].errors?.['maxlength']">
+            <span class="validation_span">  Password must be maximum 20 characters long</span>
+          </div>
+          <div *ngIf="validateForm.controls['checkPassword'].errors?.['confirmedValidator']">
+            <span class="validation_span"> Passwords do not match </span></div>
+        </div>
+      </div>
+      
+      <div class="container">
+        <button
+          pButton
+          [ngStyle]="{ backgroundColor: '#EA580C',width: '62%',
+      margin: '10px 80px 10px 0px'}"
+          type="button"
+          label="Sign Up"
+
+          (click)="onSubmit()"></button>
+      </div>
+      <div class="alert alert-warning" *ngIf="isSignUpFailed">
+        Sign up unsuccessful<br/>{{ errorMessage }}
+      </div>
+    </form>
+
+  </div>
+</div>

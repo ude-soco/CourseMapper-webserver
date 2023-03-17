@@ -7,6 +7,7 @@ import dotenv from "dotenv";
 import debugLib from "debug";
 import bodyParser from "body-parser";
 import path from "path";
+import socketio from './socketio';
 
 dotenv.config();
 const env = process.env.NODE_ENV || "production";
@@ -16,7 +17,14 @@ const db = require("./models");
 const Role = db.role;
 const User = db.user;
 
-env !== "production" ? app.use(cors()) : "";
+global.__basedir = __dirname;
+
+env !== "production" ? app.use(cors({
+
+  credentials: true,
+  origin: ["http://localhost:4200", 'https://www.youtube.com/watch?v=',]
+
+})) : "";
 
 // Middlewares
 app.use(express.json());
@@ -30,7 +38,7 @@ app.use(
     httpOnly: true,
   })
 );
-
+app.use('*/public/uploads',express.static('public/uploads'));
 // Get port from environment and store in Express
 const port = normalizePort(process.env.PORT || "8090");
 app.set("port", port);
@@ -50,6 +58,19 @@ db.mongoose
     process.exit();
   });
 
+
+// xAPI scheduler
+const xapiScheduler = require('./xAPILogger/scheduler');
+xapiScheduler.runXapiScheduler();
+
+// Create HTTP server
+const server = http.createServer(app);
+socketio.init(server);
+
+socketio.getIO().on('connection', () => {
+  console.log('New Rando connected');
+});
+
 // Routes
 require("./routes/auth.routes")(app);
 require("./routes/user.routes")(app);
@@ -61,9 +82,9 @@ require("./routes/annotation.routes")(app);
 require("./routes/reply.routes")(app);
 require("./routes/tag.routes")(app);
 require("./routes/fileupload.routes")(app);
-
-// Create HTTP server
-const server = http.createServer(app);
+require("./routes/filedelete.routes")(app);
+require("./routes/videodelete.routes")(app);
+require("./routes/test.routes")(app);
 
 // Listen on provided port, on all network interfaces
 server.listen(port);

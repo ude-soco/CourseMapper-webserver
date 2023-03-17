@@ -1,0 +1,41 @@
+.selected {
+    background-color: #0000004D;
+  }
+  
+  .toolbar-container {
+    width: 100%;
+    background-color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 3px solid;
+    border-color: #0000004D;
+  }
+  
+  .tool-left,
+  .tool-right {
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    color: white;
+    gap: 10px;
+  }
+  
+  .tool-divider {
+    display: block;
+    background-color: #0000004D;
+    width: 2px;
+    height: 30px;
+  }
+  
+  .tool-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-top: -5px;
+  }
+  .tool-text {
+    font-size: 1.1rem;
+    margin-top: -5px;
+    color: white;
+  }
+  

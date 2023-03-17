@@ -1,0 +1,13 @@
+.table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  .td {
+    
+    text-align: left;
+   
+    padding: 10px 20px 30px;
+  }
+  

@@ -1,0 +1,62 @@
+<div class="toolbar-container">
+  <div class="tool-left">
+    <span class="tool-title" style="color: #4e4e4e">Annotation Tools:</span>
+    <app-iconbutton
+      icon="bx-highlight"
+      color="text-blue-500"
+      (onClick)="selectAnnotationTool('highlight')"
+      [class.selected]="highlightSelected"
+    ></app-iconbutton>
+    <app-iconbutton
+      icon="bx-shape-square"
+      color="text-blue-500"
+      (onClick)="selectAnnotationTool('drawing')"
+      [class.selected]="drawingSelected"
+    ></app-iconbutton>
+    <app-iconbutton
+      icon="bx-pin"
+      color="text-blue-500"
+      (onClick)="selectAnnotationTool('pinpoint')"
+      [class.selected]="pinSelected"
+    ></app-iconbutton>
+    <app-iconbutton
+      icon="bx-show"
+      color="text-blue-500"
+      (onClick)="toggleShowHideAnnotations()"
+      *ngIf="(hideAnnotations$ | async) == false"
+    ></app-iconbutton>
+    <app-iconbutton
+    icon="bx-hide"
+    color="text-blue-500"
+    (onClick)="toggleShowHideAnnotations()"
+    *ngIf="(hideAnnotations$ | async) == true"
+  ></app-iconbutton>
+  </div>
+  <span class="tool-divider"> </span>
+  <div class="tool-right">
+    <span class="tool-title" style="color: #4e4e4e">PDF Tools:</span>
+    <app-iconbutton icon="bxs-hand" color="text-blue-500"></app-iconbutton>
+    <app-iconbutton
+      icon="bx-zoom-in"
+      color="text-blue-500"
+      (onClick)="pdfZoom('zoomIn')"
+    ></app-iconbutton>
+    <app-iconbutton
+      icon="bx-zoom-out"
+      color="text-blue-500"
+      (onClick)="pdfZoom('zoomOut')"
+    ></app-iconbutton>
+    <app-iconbutton
+      icon="bx-reset"
+      color="text-blue-500"
+      (onClick)="pdfZoom('resetZoom')"
+    ></app-iconbutton>
+    <input
+      type="text"
+      pInputText
+      [(ngModel)]="pdfQuery"
+      (ngModelChange)="pdfSearchQuery($event)"
+      placeholder="Search"
+    />
+  </div>
+</div>

@@ -5,9 +5,10 @@ const fileName = (req, file, cb) => {
   cb(
     null,
     `${file.originalname
-      .split(".")
+     /* .split(".")
       .slice(0, -1)
-      .join(".")}-${Date.now()}.${fileExtension(file.originalname)}`
+    .join(".")}-${Date.now()}.${fileExtension(file.originalname)*/
+  }`
   );
 };
 

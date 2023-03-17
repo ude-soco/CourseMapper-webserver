@@ -1,0 +1,79 @@
+<div class="-my-5">
+  <div class="flex flex-row justify-between p-2">
+    <div
+    class="flex flex-row justify-start space-x-2"
+  >
+    <p-avatar
+      label="{{ replyInitials }}"
+      shape="circle"
+      size="medium"
+      [style]="{ 'background-color': '#0277BD', color: '#ffffff' }"
+    ></p-avatar>
+    <app-iconbutton
+      icon="bxs-user"
+      color="text-grey-200"
+      class="mt-1"
+      size="small"
+    ></app-iconbutton>
+    <b class="mt-3 text-xs">{{ reply?.author?.name }}</b>
+    <h1 class="mt-3 text-xs">{{ replyElapsedTime }}</h1>
+  </div>
+
+  <div class="flex justify-end mt-2">
+    <p-menu
+      #menu
+      id="config_menu"
+      [model]="annotationOptions"
+      [popup]="true"
+      appendTo="body"
+    ></p-menu>
+    <app-iconbutton
+      icon="bx-dots-vertical-rounded"
+      color="text-black"
+      (click)="menu.toggle($event)"
+    ></app-iconbutton>
+  </div>
+  </div>
+
+  <div class="mb-0 mt-0 mx-2">
+    <p style="font-family: Roboto" *ngIf="!isEditing" class="text-base">
+      {{ reply?.content }}
+    </p>
+    <div class="flex flex-row space-x-3 mx-7 my-3" *ngIf="isEditing">
+      <input
+        type="text"
+        placeholder="Edit Reply"
+        [(ngModel)]="updatedReply"
+        class="p-inputtext-sm w-11/12 h-2/3"
+        pInputText
+      />
+      <app-iconbutton
+        icon="bxs-check-circle"
+        color="text-slate-500"
+        class="mt-3 flex-1 justify-end"
+        (onClick)="dispatchUpdatedReply()"
+      ></app-iconbutton>
+      <app-iconbutton
+      icon="bxs-x-circle"
+      color="text-slate-500"
+      class="mt-3 flex-1 justify-end"
+      (onClick)="cancelEditing()"
+    ></app-iconbutton>
+    </div>
+  </div>
+  <div class="flex flex-row flex-wrap space-x-3 mx-2">
+    <app-button
+      icon="bx-like"
+      color="text-grey-600"
+      label="{{ likesCount }}"
+      (onClick)="likeReply()"
+    ></app-button>
+    <app-button
+      icon="bx-dislike"
+      color="text-grey-600"
+      label="{{ dislikesCount }}"
+      (onClick)="dislikeReply()"
+    ></app-button>
+  </div>
+  <p-divider align="left"></p-divider>
+</div>

@@ -1,5 +1,6 @@
 const ObjectId = require("mongoose").Types.ObjectId;
 const db = require("../models");
+const socketio = require("../socketio");
 const Annotation = db.annotation;
 const Material = db.material;
 const Reply = db.reply;
@@ -19,7 +20,7 @@ const User = db.user;
  * @param {string} req.body.tool The annotation tool used
  * @param {string} req.userId The author of the annotation. Anyone can create an annotation
  */
-export const newAnnotation = async (req, res) => {
+export const newAnnotation = async (req, res, next) => {
   const courseId = req.params.courseId;
   const materialId = req.params.materialId;
   const annotationContent = req.body.content;
@@ -110,9 +111,21 @@ export const newAnnotation = async (req, res) => {
       return res.status(500).send({ error: err });
     }
   }
-  return res
-    .status(200)
-    .send({ id: newAnnotation._id, success: "Annotation added!" });
+
+  req.locals = {
+    response: newAnnotation,
+    material: foundMaterial,
+    user: foundUser,
+    annotation: newAnnotation
+  }
+
+  socketio.getIO().emit(materialId, {
+    eventType: 'annotationCreated',
+    annotation: newAnnotation,
+    reply: null
+  });
+  
+  return next()
 };
 
 /**
@@ -123,9 +136,22 @@ export const newAnnotation = async (req, res) => {
  * @param {string} req.params.annotationId The id of the annotation
  * @param {string} req.userId The id of the user. Only author of the annotation can delete
  */
-export const deleteAnnotation = async (req, res) => {
+export const deleteAnnotation = async (req, res, next) => {
   const courseId = req.params.courseId;
   const annotationId = req.params.annotationId;
+  const userId = req.userId;
+
+  let user
+  try {
+    user = await User.findOne({_id: userId});
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
 
   let foundAnnotation;
   try {
@@ -194,7 +220,19 @@ export const deleteAnnotation = async (req, res) => {
     return res.status(500).send({ error: err });
   }
 
-  return res.status(200).send({ success: "Annotation successfully deleted" });
+  socketio.getIO().emit(foundMaterial._id, {
+    eventType: 'annotationDeleted',
+    annotation: foundAnnotation,
+    reply: null
+  });
+
+  req.locals = {
+    response: { success: "Annotation successfully deleted" },
+    annotation: foundAnnotation,
+    user: user
+  }
+  
+  return next();
 };
 
 /**
@@ -209,13 +247,26 @@ export const deleteAnnotation = async (req, res) => {
  * @param {string} req.body.tool The annotation tool used
  * @param {string} req.userId The id of the user. Only author of the annotation can edit
  */
-export const editAnnotation = async (req, res) => {
+export const editAnnotation = async (req, res, next) => {
   const courseId = req.params.courseId;
   const annotationId = req.params.annotationId;
   const annotationType = req.body.type;
   const annotationContent = req.body.content;
   const annotationLocation = req.body.location;
   const annotationTool = req.body.tool;
+  const userId = req.userId;
+
+  let user
+  try {
+    user = await User.findOne({_id: userId});
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
 
   let foundAnnotation;
   try {
@@ -239,6 +290,10 @@ export const editAnnotation = async (req, res) => {
     }
   } catch (err) {
     res.status(500).send({ error: err });
+  }
+
+  req.locals = {
+    oldAnnotation: JSON.parse(JSON.stringify(foundAnnotation))
   }
 
   foundAnnotation.type = annotationType;
@@ -286,7 +341,15 @@ export const editAnnotation = async (req, res) => {
     }
   }
 
-  return res.status(200).send({ success: "Annotation successfully updated" });
+  req.locals.response = { success: "Annotation successfully updated" }
+  req.locals.newAnnotation = foundAnnotation;
+  req.locals.user = user;
+  socketio.getIO().emit(foundAnnotation.materialId, {
+    eventType: 'annotationEdited',
+    annotation: foundAnnotation,
+    reply: null
+  });
+  return next();
 };
 
 /**
@@ -297,9 +360,22 @@ export const editAnnotation = async (req, res) => {
  * @param {string} req.params.annotationId The id of the annotation
  * @param {string} req.userId The id of the user
  */
-export const likeAnnotation = async (req, res) => {
+export const likeAnnotation = async (req, res, next) => {
   const courseId = req.params.courseId;
   const annotationId = req.params.annotationId;
+  const userId = req.userId;
+
+  let user
+  try {
+    user = await User.findOne({_id: userId});
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
 
   let foundAnnotation;
   try {
@@ -318,6 +394,11 @@ export const likeAnnotation = async (req, res) => {
     return res.status(500).send({ error: err });
   }
 
+  req.locals = {
+    annotation: foundAnnotation,
+    user: user
+  }
+
   if (foundAnnotation.likes.includes(ObjectId(req.userId))) {
     foundAnnotation.likes = foundAnnotation.likes.filter(
       (user) => user.valueOf() !== req.userId
@@ -329,10 +410,19 @@ export const likeAnnotation = async (req, res) => {
       return res.status(500).send({ error: err });
     }
     let countLikes = savedAnnotation.likes.length;
-    return res.status(200).send({
+
+    req.locals.response = {
       count: countLikes,
       success: "Annotation successfully unliked!",
+    }
+    req.locals.like = false;
+    socketio.getIO().emit(annotationId, {
+      eventType: 'annotationUnliked',
+      annotation: savedAnnotation,
+      reply: null
     });
+    return next();
+
   } else if (foundAnnotation.dislikes.includes(ObjectId(req.userId))) {
     return res
       .status(404)
@@ -346,10 +436,19 @@ export const likeAnnotation = async (req, res) => {
       return res.status(500).send({ error: err });
     }
     let countLikes = savedAnnotation.likes.length;
-    return res.status(200).send({
+
+    req.locals.response = {
       count: countLikes,
       success: "Annotation successfully liked!",
-    });
+    }
+
+    req.locals.like = true;
+  socketio.getIO().emit(annotationId, {
+    eventType: 'annotationLiked',
+    annotation: savedAnnotation,
+    reply: null
+  });
+    return next();
   }
 };
 
@@ -361,9 +460,22 @@ export const likeAnnotation = async (req, res) => {
  * @param {string} req.params.annotationId The id of the annotation
  * @param {string} req.userId The id of the user
  */
-export const dislikeAnnotation = async (req, res) => {
+export const dislikeAnnotation = async (req, res, next) => {
   const courseId = req.params.courseId;
   const annotationId = req.params.annotationId;
+  const userId = req.userId;
+
+  let user
+  try {
+    user = await User.findOne({_id: userId});
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
 
   let foundAnnotation;
   try {
@@ -383,6 +495,11 @@ export const dislikeAnnotation = async (req, res) => {
     return res.status(500).send({ error: err });
   }
 
+  req.locals = {
+    annotation: foundAnnotation,
+    user: user
+  }
+
   if (foundAnnotation.dislikes.includes(ObjectId(req.userId))) {
     foundAnnotation.dislikes = foundAnnotation.dislikes.filter(
       (user) => user.valueOf() !== req.userId
@@ -393,11 +510,20 @@ export const dislikeAnnotation = async (req, res) => {
     } catch (err) {
       res.status(500).send({ error: err });
     }
-    let countDislikes = savedAnnotation.dislikes.length;
-    return res.status(200).send({
+    let countDislikes = savedAnnotation.dislikes.length ? savedAnnotation.dislikes.length : 0;
+
+    req.locals.response = {
       count: countDislikes,
       success: "Annotation successfully un-disliked!",
+    }
+    req.locals.dislike = false;
+    socketio.getIO().emit(annotationId, {
+      eventType: 'annotationUndisliked',
+      annotation: savedAnnotation,
+      reply: null
     });
+    return next();
+
   } else if (foundAnnotation.likes.includes(ObjectId(req.userId))) {
     return res
       .status(404)
@@ -410,10 +536,56 @@ export const dislikeAnnotation = async (req, res) => {
     } catch (err) {
       return res.status(500).send({ error: err });
     }
-    let countDislikes = savedAnnotation.dislikes.length;
-    return res.status(200).send({
+    let countDislikes = savedAnnotation.dislikes.length ? savedAnnotation.dislikes.length : 0;
+
+    req.locals.response = {
       count: countDislikes,
       success: "Annotation successfully disliked!",
+    }
+    req.locals.dislike = true;
+    socketio.getIO().emit(annotationId, {
+      eventType: 'annotationDisliked',
+      annotation: savedAnnotation,
+      reply: null
     });
+    return next();
+
   }
+};
+
+/**
+ * @function getAllAnnotations
+ * Retrieve annotations controller
+ *
+ * @param {string} req.params.courseId The id of the course
+ * @param {string} req.params.materialId The id of the material
+ * @param {string} req.userId The id of the user who created all annotations
+ */
+export const getAllAnnotations = async (req, res) => {
+  const courseId = req.params.courseId;
+  const materialId = req.params.materialId;
+
+  let foundAnnotations;
+  try {
+    foundAnnotations = await Annotation.find({
+      materialId: ObjectId(materialId),
+      courseId: ObjectId(courseId),
+    });
+    if (!foundAnnotations) {
+      return res.status(404).send({
+        error: `Annotations with materialId ${materialId} doesn't exist!`,
+      });
+    }
+    foundAnnotations.forEach((annotation) =>{
+      if (annotation.courseId.valueOf() !== courseId) {
+        return res.status(404).send({
+          error: `Annotation doesn't belong to course with id ${courseId}!`,
+        });
+      }
+    });
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+  foundAnnotations.sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  return res.status(200).send(foundAnnotations);
 };

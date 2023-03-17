@@ -1,11 +1,10 @@
-<app-navbar></app-navbar>
-
-<div class="flex items-start">
-  <app-sidebar></app-sidebar>
-
-  <app-channelbar></app-channelbar>
-
-  <div class="flex flex-wrap items-start m-3">
-    <p class="text-xl font-semibold">Content</p>
+<div class="flex flex-row">
+    <div class="flex-col">
+      <app-sidebar></app-sidebar>
+    </div>
+    <app-channelbar></app-channelbar>
+    <div class="grow">
+        <router-outlet></router-outlet>
+    </div>
   </div>
-</div>
+

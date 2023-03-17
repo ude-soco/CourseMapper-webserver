@@ -1,0 +1,19 @@
+pdf-viewer {
+    flex: 1; /* taking up the full width and height of the parent component */
+    z-index: 1;
+    display: flex;
+    height: 80%;
+    width: 100%;
+    border: 2px solid #0000004D;
+}
+
+app-pdf-drawbox{
+    position: absolute;
+    z-index: 2;
+}
+
+app-pdf-comment-panel{
+    max-height: 50rem;
+    overflow-y: scroll;
+    box-shadow: 0 0 3px 3px #0000004D;
+}

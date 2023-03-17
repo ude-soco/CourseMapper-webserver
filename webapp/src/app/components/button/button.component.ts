@@ -9,11 +9,11 @@ export class ButtonComponent implements OnInit {
   /**
    * How to use the component:
    * <app-button
-        variant="contained"
-        label="Login"
-        icon="bx-log-in-circle"
-        (onClick)="login()"
-      ></app-button>
+   variant="contained"
+   label="Login"
+   icon="bx-log-in-circle"
+   (onClick)="login()"
+   ></app-button>
    */
   @Input() variant: string = 'default';
   @Input() label: string = 'button';

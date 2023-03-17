@@ -1,0 +1,64 @@
+<div class="flex flex-row h-screen">
+  <div class="flex flex-col w-full space-y-2 basis-full">
+    <app-pdf-annotation-toolbar></app-pdf-annotation-toolbar>
+
+
+
+    <div
+      (mousemove)="mouseEventHandler($event)"
+      (mousedown)="mouseEventHandler($event)"
+      (mouseup)="mouseEventHandler($event)"
+      (click)="mouseEventHandler($event)"
+      class="relative h-full"
+    >
+
+      <app-pdf-drawbox></app-pdf-drawbox>
+
+      <pdf-viewer
+      [src]="docURL"
+      [render-text]="true"
+      [render-text-mode]="2"
+      [fit-to-page]="true"
+      [original-size]="true"
+      (after-load-complete)="handlePdfLoaded($event)"
+      (page-rendered)="pageRendered($event)"
+      [show-all]="false"
+      [(page)]="currentPage"
+      [zoom]="pdfZoom$ | async"
+    >
+    </pdf-viewer>
+    <div style="border: 2px solid #0000004D;">
+      <p-paginator
+        [rows]="1"
+        [showJumpToPageDropdown]="true"
+        [showPageLinks]="false"
+        [totalRecords]="totalPages"
+        [first]="currentPage - 1"
+        (onPageChange)="pagechanging($event)"
+      ></p-paginator>
+    </div>
+    <app-pdf-annotation-summary #annotationSummary [annotationId] = "selectedNoteId"></app-pdf-annotation-summary>
+    </div>
+
+
+  </div>
+
+  <div class="flex flex-col ml-5 basis-2/4">
+    <p-dialog
+      *ngIf="isAnnotationDialogVisible$ | async"
+      [visible]="true"
+      [breakpoints]="{ '960px': '75vw', '600px': '100vw' }"
+      [style]="{ width: '50vw' }"
+      [closable]="false"
+    >
+    <div class="mt-5">
+      <app-pdf-create-annotation appendTo="body"></app-pdf-create-annotation>
+    </div>
+
+    </p-dialog>
+    <div class="create-annotation">
+      <app-pdf-create-annotation></app-pdf-create-annotation>
+    </div>
+    <app-pdf-comment-panel></app-pdf-comment-panel>
+  </div>
+</div>

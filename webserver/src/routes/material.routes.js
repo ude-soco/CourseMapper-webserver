@@ -1,5 +1,6 @@
 const { authJwt } = require("../middlewares");
 const controller = require("../controllers/material.controller");
+const logger = require("../xAPILogger/logger/material.logger");
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -12,7 +13,8 @@ module.exports = function (app) {
   app.get(
     "/courses/:courseId/materials/:materialId",
     [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.getMaterial
+    controller.getMaterial,
+    logger.getMaterial
   );
 
   // Create a new material
@@ -20,7 +22,8 @@ module.exports = function (app) {
   app.post(
     "/courses/:courseId/channels/:channelId/material",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.newMaterial
+    controller.newMaterial,
+    logger.newMaterial
   );
 
   // Delete a material
@@ -28,7 +31,8 @@ module.exports = function (app) {
   app.delete(
     "/courses/:courseId/materials/:materialId",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.deleteMaterial
+    controller.deleteMaterial,
+    logger.deleteMaterial
   );
 
   // Edit a material
@@ -36,6 +40,44 @@ module.exports = function (app) {
   app.put(
     "/courses/:courseId/materials/:materialId",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.editMaterial
+    controller.editMaterial,
+    logger.editMaterial
+  );
+
+  app.get(
+    "/courses/:courseId/materials/:materialId/:hours/:minutes/:seconds/video/play",
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.getMaterial,
+    logger.playVideo
+  );
+
+
+  app.get(
+    "/courses/:courseId/materials/:materialId/:hours/:minutes/:seconds/video/pause",
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.getMaterial,
+    logger.pauseVideo
+  );
+
+
+  app.get(
+    "/courses/:courseId/materials/:materialId/video/complete",
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.getMaterial,
+    logger.completeVideo
+  );
+
+  app.get(
+    "/courses/:courseId/materials/:materialId/pdf/slide/:slideNr/view",
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.getMaterial,
+    logger.viewSlide
+  );
+
+  app.get(
+    "/courses/:courseId/materials/:materialId/pdf/complete",
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.getMaterial,
+    logger.completePDF
   );
 };

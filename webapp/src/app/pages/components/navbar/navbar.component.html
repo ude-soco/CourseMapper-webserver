@@ -1,21 +1,52 @@
-<div class="sticky top-0 z-20">
+<div class="sticky z-20">
   <div
     class="flex flex-wrap justify-between content-center items-center px-4 h-16 bg-white text-white shadow-lg"
   >
-    <img src="../../../assets/logo.svg" alt="logo" class="w-72" />
+    <img src="../../../assets/logo.svg" alt="logo" class="w-72"/>
     <div class="flex flex-wrap my-1">
-      <!-- <p-avatar
-        label="P"
-        shape="circle"
-        size="large"
-        [style]="{ backgroundColor: 'var(--orange-600)' }"
-      ></p-avatar> -->
-      <p-avatar
-        label="P"
-        shape="circle"
-        size="large"
-        [style]="{ 'background-color': '#EA580C', color: '#ffffff' }"
-      ></p-avatar>
+      <span *ngIf="!this.storageService.loggedIn">
+        <button
+          pButton
+          [ngStyle]="{
+            border: '1px solid #EA580C',
+            backgroundColor: 'white',
+            color: '#EA580C',
+            marginRight: '8px'
+          }"
+          type="button"
+          label="Login"
+          (click)="handleLogin()"
+        ></button>
+        <button
+          pButton
+          [ngStyle]="{ backgroundColor: '#EA580C' }"
+          type="button"
+          label="Sign Up"
+          (click)="handleRegistration()"
+        ></button>
+      </span>
+
+      <span *ngIf="this.storageService.loggedIn">
+        <button
+          pButton
+          [ngStyle]="{
+            border: '1px solid #EA580C',
+            backgroundColor: 'white',
+            color: '#EA580C',
+            marginRight: '8px'
+          }"
+          type="button"
+          label="Logout"
+          (click)="handleLogout()"
+        ></button>
+
+        <p-avatar
+          label="P"
+          shape="circle"
+          size="large"
+          [style]="{ 'background-color': '#EA580C', color: '#ffffff' }"
+        ></p-avatar>
+      </span>
     </div>
   </div>
 </div>

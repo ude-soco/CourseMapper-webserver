@@ -1,4 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+
+import { PrimeNGConfig } from 'primeng/api';
+import { USER_KEY } from 'src/app/config/config';
+import { StorageService } from 'src/app/services/storage.service';
+import { UserServiceService } from 'src/app/services/user-service.service';
 
 @Component({
   selector: 'app-navbar',
@@ -6,11 +12,48 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./navbar.component.css'],
 })
 export class NavbarComponent implements OnInit {
-  constructor() {}
+  isLoggedIn: boolean = false;
 
-  ngOnInit(): void {}
+  showAdminBoard = false;
+  showModeratorBoard = false;
+  username?: string;
 
-  login() {
-    console.log('login');
+  constructor(
+    private primengConfig: PrimeNGConfig,
+    public storageService: StorageService,
+    private userService: UserServiceService,
+    private router: Router
+  ) {
+    this.isLoggedIn = storageService.loggedIn;
+  }
+
+  ngOnInit(): void {
+    // this.primengConfig.ripple = true;
+    // this.isLoggedIn = this.storageService.isLoggedIn();
+    // console.log('changes');
+    // if (this.isLoggedIn) {
+    //   const user = this.storageService.getUser();
+    //   this.username = user.username;
+    // }
+  }
+
+  handleLogin() {
+    this.router.navigate(['/login']);
+  }
+
+  handleRegistration() {
+    this.router.navigate(['/signup']);
+  }
+
+  handleLogout(): void {
+    this.userService.logout().subscribe({
+      next: () => {
+        this.storageService.clean();
+        this.router.navigate(['/login']);
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
   }
 }

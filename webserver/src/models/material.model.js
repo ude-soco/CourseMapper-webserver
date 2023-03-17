@@ -6,7 +6,7 @@ const Material = new Schema({
   type: { type: String, required: true },
   name: { type: String, required: true },
   description: { type: String, default: "" },
-  url: { type: String, required: true },
+  url: { type: String },
   topicId: {
     type: Schema.Types.ObjectId,
     ref: "topic",

@@ -1,5 +1,6 @@
 const { authJwt } = require("../middlewares");
 const controller = require("../controllers/reply.controller");
+const logger = require('../xAPILogger/logger/reply.logger');
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -20,7 +21,8 @@ module.exports = function (app) {
   app.post(
     "/courses/:courseId/annotations/:annotationId/reply",
     [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.newReply
+    controller.newReply,
+    logger.newReply
   );
 
   // Delete a reply
@@ -28,7 +30,8 @@ module.exports = function (app) {
   app.delete(
     "/courses/:courseId/replies/:replyId",
     [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.deleteReply
+    controller.deleteReply,
+    logger.deleteReply
   );
 
   // Edit a reply
@@ -36,7 +39,8 @@ module.exports = function (app) {
   app.put(
     "/courses/:courseId/replies/:replyId",
     [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.editReply
+    controller.editReply,
+    logger.editReply
   );
 
   // Like a reply
@@ -45,7 +49,8 @@ module.exports = function (app) {
   app.post(
     "/courses/:courseId/replies/:replyId/like",
     [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.likeReply
+    controller.likeReply,
+    logger.likeReply
   );
 
   // Like a reply
@@ -54,6 +59,7 @@ module.exports = function (app) {
   app.post(
     "/courses/:courseId/replies/:replyId/dislike",
     [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.dislikeReply
+    controller.dislikeReply,
+    logger.dislikeReply
   );
 };

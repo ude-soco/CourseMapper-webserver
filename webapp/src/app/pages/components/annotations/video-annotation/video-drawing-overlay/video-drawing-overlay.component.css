@@ -1,0 +1,64 @@
+.brush-drawing-area {
+    width: 100%;
+    height: 100%;
+    flex: 1;
+    position: relative;
+}
+
+.brush-drawing-catcher {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+.brush-drawing-toolbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff;
+    border-radius: 5px;
+    padding: 5px;
+    margin: 5px;
+    gap: 10px;
+}
+
+.brush-drawing-toolbar .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.brush-drawing-toolbar .toolbar-button {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    border: solid 1px #777;
+}
+
+.brush-drawing-toolbar .toolbar-button:active {
+    border: solid 1px #eee;
+}
+
+.brush-drawing-toolbar .toolbar-button .toolbar-popover {
+    display: none;
+    position: absolute;
+    z-index: 1000;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    padding-left: 40px;
+    gap: 10px;
+    align-items: center;
+}
+
+.brush-drawing-toolbar .toolbar-button:hover .toolbar-popover {
+    display: flex;
+}
+
+.brush-drawing-toolbar .stroke {
+    width: 100%;
+    background-color: black;
+}

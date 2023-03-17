@@ -1,0 +1,27 @@
+button {
+    margin-left: 8px;
+  }
+ .primary{
+     background-color: #1890ff;
+     color: white;
+ }
+ .custom-file-input::-webkit-file-upload-button {
+    visibility: hidden;
+  }
+ 
+  label{
+    display: inline-block;
+    background-color: #1890ff;
+    color: white; 
+    padding: 0.5rem;
+    font-family: sans-serif;
+    border-radius: 0.3rem;
+    cursor: pointer;
+  
+  }
+  .separator {
+    text-align: center;
+    margin-bottom: 1rem;
+    font-weight: bold;
+    width: 100%;
+  }

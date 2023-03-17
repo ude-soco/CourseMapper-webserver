@@ -12,10 +12,10 @@ export class AvatarComponent implements OnInit {
    * 2. Use the tailwindcss text colors
    * 3. Use the onClick eventHandler
    * <app-iconbutton
-      icon="bx-dots-vertical-rounded"
-      color="text-orange-500"
-      (onClick)="showMenu()"
-    ></app-iconbutton>
+   icon="bx-dots-vertical-rounded"
+   color="text-orange-500"
+   (onClick)="showMenu()"
+   ></app-iconbutton>
    */
   @Input() label: string = '';
   @Input() color: string = '';

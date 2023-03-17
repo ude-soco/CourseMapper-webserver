@@ -9,7 +9,7 @@
 
   .sidebar-tooltip {
     @apply absolute w-auto p-2 m-2 min-w-max left-16 rounded-md shadow-md
-    text-white bg-gray-800 text-sm transition-all duration-100 scale-0 origin-left;
+    text-white bg-gray-800 text-sm transition-all duration-100 scale-0 origin-left z-20;
   }
 
   .sidebar-hr {
@@ -18,8 +18,8 @@
 
   .icon-button {
     @apply relative flex items-center justify-center h-12 w-12 my-1 mx-auto
-       bg-gray-800 text-orange-500 hover:bg-orange-600 hover:text-white rounded-3xl shadow-lg
-       hover:rounded-xl transition-all;
+    bg-gray-800 text-orange-500 hover:bg-orange-600 hover:text-white rounded-3xl shadow-lg
+    hover:rounded-xl transition-all;
   }
 
   .icon-button-badge {

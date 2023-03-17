@@ -1,0 +1,35 @@
+<p-panel header="Discussion" [toggleable]="false" class="comment-panel">
+  <div class="flex flex-wrap flex-col space-y-5">
+    <div class="filter">
+      <h2 class="text-lg font-medium">Filters</h2>
+      <p-dropdown
+        [options]="searchFilters"
+        placeholder="Select a filter"
+        [showClear]="true"
+        autoWidth="false"
+        appendTo="body"
+        [style]="{ minWidth: '100%' }"
+        [(ngModel)]="selectedFilter"
+        [group]="true"
+        (ngModelChange)="onAnnotationFilterChange()"
+      >
+      <ng-template let-group pTemplate="group">
+        <div class="p-d-flex p-ai-center">
+          <span>{{group.label}}</span>
+        </div>
+      </ng-template>
+    </p-dropdown>
+    </div>
+    <div class="p-1">
+      <div>
+        <h2 class="text-lg font-medium -mb-4">Content</h2>
+        <p-divider align="left"></p-divider>
+      </div>
+      <div *ngFor="let annotation of annotationOnCurrentPage">
+        <app-pdf-comment-item
+        [annotation]="annotation"
+      ></app-pdf-comment-item>
+      </div>
+    </div>
+  </div>
+</p-panel>

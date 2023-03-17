@@ -1,6 +1,6 @@
 <p align="center">
 <a href="https://www.uni-due.de/soco/research/projects/elas.php" target="_blank" rel="noopener noreferrer">
-<img width=75% src="webapp/src/assets/logo.svg" alt="re-frame logo">
+<img width=50% src="webapp/src/assets/logo.svg" alt="re-frame logo">
 </a>
 </p>
 
@@ -10,48 +10,81 @@ CourseMapper is a collaborative course annotation and analytics platform that fo
 
 ## 🚀 Get Started
 
-Download and install the following softwares
+### Manual Installation Guide 🔨
 
-- [MongoDB](https://www.mongodb.com/try/download/community)
-- [MongoDB Compass](https://www.mongodb.com/try/download/compass)
-- [NodeJS](https://nodejs.org/en/)
-- [Postman](https://www.postman.com/downloads/)
+#### Step 1: Pre-requisites
 
-Use either step 1 or 2 to install the project. After successfully installation of the project, jump to step 3.
+- Download NodeJS (v16.14.2) from [the official website](https://nodejs.org/en/blog/release/v16.14.2)
 
-1. Using Docker 🐳
+- Download [IntelliJ Ultimate](https://www.jetbrains.com/de-de/idea/download/#section=windows) or [Visual Studio Code](https://code.visualstudio.com/download) and install one of the code editors
 
-    - Download and install [Docker](https://www.docker.com/products/docker-desktop)
-    - Open a command prompt, move to the `webserver` directory, and then type the command `npm ci`
-    - Then move to the `webapp` directory, and type the command `npm ci`
-    - Move back to root directory and type the following command `docker-compose up --build`
+- Download [MongoDB Community Server](https://www.mongodb.com/try/download/community) and [MongoDB Compass](https://www.mongodb.com/try/download/compass) and install them
 
-2. Manual Installation Guide 🔨
-
-    - Webserver installation
-        - Move to the `webserver` directory and rename the file `example.env` to `.env`
-        - Open a command prompt/terminal in the `webserver` directory, and type the command `npm ci` to install node
-          packages
-        - After the packages are installed, type `npm run watch:dev` to run the server
-        - Application will open automatically at http://localhost:8080
-        - Stop the server by pressing `cntl + c` inside the command prompt
-
-    - Webapp installation
-        - Move to the `webapp` directory, open a command prompt/terminal in the `webapp` directory, and type the
-          command `npm ci` to install node
-          packages
-        - Install the Angular CLI by typing the command `npm i -g @angular/cli` in the command prompt
-        - After the packages are installed, type `ng serve` to run the server
-        - Application will open automatically at http://localhost:4200
-        - Stop the server by pressing `cntl + c` inside the command prompt
-
-3. Postman configuration
-
-    - Open the Postman software and import the file `CourseMapper.postman_collection.json` found under `docs` folder
-
-4. MongoDB Compass configuration
-
-    - Open MongoDB Compass and type `mongodb://localhost:27017` in the URI textbox and press connect button
-    - Find the database `coursemapper_v2` in the left panel
+- Download [Postman](https://www.postman.com/downloads/) and install it
 
 
+#### Step 2: Installation Guide for CourseMapper webserver
+
+- Using your file explorer, go inside the directory `webserver`, copy the `example.env` file and paste it in the same folder. Rename the copied environment file to `.env`
+
+- Open a command prompt/terminal in the `webserver` directory
+
+- Type the command in the command prompt/terminal to install node packages
+
+	```bash
+	npm ci
+	```
+
+	If you face issue with `npm ci` command, try `npm install` or `npm install --force` command. Caution: `npm install` and `npm install --force` will delete all the existing node packages, install the new ones and update the `package-lock.json` file. Please make sure you do not push your changes to the `package-lock.json` file.
+
+- After the packages are installed, type the following command to run the server 
+
+	```bash
+	npm run watch:dev
+	```
+
+	The server will run at [http://localhost:8080](http://localhost:8080)
+
+- Stop the server by pressing `Cntl + c` inside the command prompt
+
+#### Step 3: Installation Guide for CourseMapper webapp
+
+- Open a command prompt/terminal in the `webapp` directory
+
+- Type the command in the command prompt/terminal to install the Angular CLI
+
+	```bash
+	npm i -g @angular/cli
+	```
+
+- Type the command in the command prompt/terminal to install node packages
+
+	```bash
+	npm ci
+	```
+
+- After the packages are installed, type the following command to run the server 
+
+	```bash
+	ng serve
+	```
+
+	The server will run at [http://localhost:4200](http://localhost:4200)
+
+- Stop the server by pressing `Cntl + c` inside the command prompt
+
+#### Step 4: Postman configuration
+
+- Open the Postman software and import the file `CourseMapper.postman_collection.json` found under `docs` folder
+
+#### Step 5: MongoDB Compass configuration
+
+- Open MongoDB Compass and type `mongodb://localhost:27017` in the URI textbox and press connect button
+- Find the database `coursemapper_v2` in the left panel
+
+### Installation using Using Docker 🐳 (Updates required)
+
+- Download and install [Docker](https://www.docker.com/products/docker-desktop)
+- Open a command prompt, move to the `webserver` directory, and then type the command `npm ci`
+- Then move to the `webapp` directory, and type the command `npm ci`
+- Move back to root directory and type the following command `docker-compose up --build`
