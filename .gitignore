@@ -105,3 +105,4 @@ dist
 webserver/dist-server/*
 webserver/.idea/*
 /.idea/
+.vscode
