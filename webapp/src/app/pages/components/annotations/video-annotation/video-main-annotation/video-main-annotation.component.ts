@@ -9,6 +9,10 @@ import { getCurrentMaterial, getCurrentMaterialId } from '../../../materils/stat
 import { getIsBrushSelectionActive, getIsPinpointSelectionActive, getIsVideoPaused, getIsVideoPlayed, State } from '../state/video.reducer';
 import * as VideoActions from '../state/video.action'
 import { calculateMousePositionInVideo } from 'src/app/_helpers/video-helper';
+import { Socket } from 'ngx-socket-io';
+import { Annotation } from 'src/app/models/Annotations';
+import { Reply } from 'src/app/models/Reply';
+import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions'
 
 
 
@@ -21,6 +25,7 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
 
   @ViewChild('YouTubePlayerArea') YouTubePlayerArea: ElementRef<HTMLDivElement>;
   @ViewChild('video', { static: false }) videoPlayer: ElementRef<HTMLVideoElement>;
+  YouTubeTimeUpdateInterval?: number;
   apiLoaded = false;
   materilaId: string;
   material: Material;
@@ -39,7 +44,7 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
   pintpointCoordinates?: [number, number]
   pintpointPosition?: [number, number]
 
-  constructor(private store: Store<State>, private pdfViewService: PdfviewService, private changeDetectorRef: ChangeDetectorRef) {
+  constructor(private store: Store<State>, private pdfViewService: PdfviewService, private changeDetectorRef: ChangeDetectorRef, private socket: Socket) {
     this.store.select(getIsBrushSelectionActive).subscribe((isActive) => this.isBrushSelectionActive = isActive);
     this.store.select(getIsPinpointSelectionActive).subscribe((isActive) => this.isPinpointSelectionActive = isActive);
   }
@@ -70,6 +75,10 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
         this.materilaId = material._id;
         this.getVideoUrl();
       }
+    })
+    this.socket.on(this.material._id, (payload: { eventType: string, annotation: Annotation, reply: Reply }) => {
+      console.log('payload = ', payload)
+        this.store.dispatch(AnnotationActions.updateAnnotationsOnSocketEmit({payload: payload}));
     })
     this.subscriptions.push(materialSubscriper);
     if (!this.apiLoaded) {
@@ -108,6 +117,20 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
     this.boundingRect = this.YouTubePlayerArea?.nativeElement.getBoundingClientRect();
     this.videoWidth = this.boundingRect.width;
     this.videoHeight = this.boundingRect.height;
+
+    this.store.dispatch(VideoActions.SetVideoDuration({videoDuration: Math.floor(this.YouTubePlayer.getDuration())}));
+
+    let currentTime = -1;
+
+    this.YouTubeTimeUpdateInterval = window.setInterval(() => {
+      if (!this.YouTubePlayer?.getCurrentTime) return;
+
+      const time = this.YouTubePlayer.getCurrentTime();
+      if (time != currentTime) {
+        this.store.dispatch(VideoActions.SetCurrentTime({currentTime: Math.floor(time)}));
+        currentTime = time;
+      }
+    }, 1000);
   }
 
   onYouTubePlayerStateChange(event) {
@@ -143,12 +166,18 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
 
   videoPlayed() {
     this.store.dispatch(VideoActions.PlayVideo());
-    console.log('Played: ', this.videoPlayer?.nativeElement.currentTime)
   }
 
   videoPaused() {
     this.store.dispatch(VideoActions.PauseVideo());
-    console.log('Paused: ', this.videoPlayer?.nativeElement.currentTime)
+  }
+
+  videoPlayerTimeChanged(event: any){
+    this.store.dispatch(VideoActions.SetCurrentTime({currentTime: Math.floor((event.target! as HTMLVideoElement).currentTime)}));
+  }
+
+  videoPlayerReady(event: any){
+    this.store.dispatch(VideoActions.SetVideoDuration({videoDuration: Math.floor(this.videoPlayer?.nativeElement.duration)}));
   }
 
   drawingChanged(drawings: DrawingData) {
@@ -177,6 +206,7 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
   }
 
   showAnnotationDialog(){
+    
 
   }
 

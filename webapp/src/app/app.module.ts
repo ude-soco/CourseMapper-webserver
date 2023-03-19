@@ -94,7 +94,7 @@ registerLocaleData(en);
         ConfirmDialogModule,
         MatInputModule,
         MatTabsModule,
-        StoreModule.forRoot({}, {metaReducers}),
+        StoreModule.forRoot({}, {}),
         AnnotationModule,
         MaterialsModule,
         EffectsModule.forRoot([]),

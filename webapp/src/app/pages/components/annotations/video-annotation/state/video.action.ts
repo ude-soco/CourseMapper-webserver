@@ -17,3 +17,13 @@ export const PlayVideo = createAction(
 export const PauseVideo = createAction(
     '[Video] Pause Video',
 );
+
+export const SetVideoDuration = createAction(
+    '[Video] Set Video Duration',
+    props<{ videoDuration: number}>()
+);
+
+export const SetCurrentTime = createAction(
+    '[Video] Set Current Time',
+    props<{ currentTime: number}>()
+);

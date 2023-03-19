@@ -29,3 +29,9 @@
     color: white;
     filter: drop-shadow(0 0 3px rgb(255, 255, 255));
 }
+
+app-pdf-comment-panel{
+    max-height: 50rem;
+    overflow-y: scroll;
+    box-shadow: 0 0 3px 3px #0000004D;
+}

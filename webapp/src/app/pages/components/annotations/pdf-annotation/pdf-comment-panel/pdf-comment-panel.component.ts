@@ -4,6 +4,8 @@ import { Store } from '@ngrx/store';
 import { computeElapsedTime, getInitials } from 'src/app/_helpers/format';
 import { getAnnotationsForMaterial, getCurrentPdfPage, State } from '../state/annotation.reducer';
 import { SelectItemGroup } from 'primeng/api';
+import { Material } from 'src/app/models/Material';
+import { getCurrentMaterial } from '../../../materils/state/materials.reducer';
 @Component({
   selector: 'app-pdf-comment-panel',
   templateUrl: './pdf-comment-panel.component.html',
@@ -15,6 +17,7 @@ export class PdfCommentPanelComponent implements OnInit {
   selectedFilter: number;
   currentPage: number;
   annotationOnCurrentPage: Annotation[];
+  selectedMaterial: Material;
 
   constructor(private store: Store<State>) {
     this.searchFilters = [
@@ -45,10 +48,16 @@ export class PdfCommentPanelComponent implements OnInit {
           ]
       }
   ];
-  
+
+  this.store.select(getCurrentMaterial).subscribe((material) => this.selectedMaterial = material);
+
     this.store.select(getAnnotationsForMaterial).subscribe((annotations) => {
       this.annotations = annotations;
-      this.showAnnotationOnCurrentPage();
+      if(this.selectedMaterial.type === "pdf"){
+        this.showAnnotationOnCurrentPage();
+      }else{
+        this.showVideoAnnotations();
+      }
     });
 
     this.store.select(getCurrentPdfPage).subscribe((page) => {
@@ -66,6 +75,10 @@ export class PdfCommentPanelComponent implements OnInit {
   showAnnotationOnCurrentPage() {
     
     this.annotationOnCurrentPage = this.annotations.filter((anno) => (anno.location as PdfGeneralAnnotationLocation).startPage == this.currentPage);
+  }
+
+  showVideoAnnotations(){
+    this.annotationOnCurrentPage = this.annotations;
   }
 
   onAnnotationFilterChange() {

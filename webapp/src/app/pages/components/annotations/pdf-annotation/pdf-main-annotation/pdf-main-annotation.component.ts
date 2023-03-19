@@ -191,7 +191,6 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
 
   pagechanging(e: any) {
     this.store.dispatch(AnnotationActions.setCurrentPdfPage({pdfCurrentPage: e.first + 1}));
-    //this.pageRendered(e);
     this.selectedNoteId = null;
   }
 

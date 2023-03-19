@@ -10,6 +10,8 @@
         #video
         (play)="videoPlayed()"
         (pause)="videoPaused()"
+        (timeupdate)="videoPlayerTimeChanged($event)"
+        (loadeddata)="videoPlayerReady($event)"
       >
         <source [src]="videoURL" type="video/mp4" />
       </video>
@@ -50,7 +52,7 @@
       </div>
     </div>
   </div>
-  <div class="flex flex-col ml-5">
+  <div class="flex flex-col ml-5 w-1/2">
     <p-dialog
       *ngIf="isAnnotationDialogVisible$ | async"
       [visible]="true"

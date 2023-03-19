@@ -10,6 +10,9 @@ import { environment } from 'src/environments/environment';
 import { catchError, of } from 'rxjs';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { ActivatedRoute, Router } from '@angular/router';
+import { State } from 'src/app/state/app.state';
+import { Store } from '@ngrx/store';
+import * as AppActions from 'src/app/state/app.actions'
 
 @Component({
   selector: 'app-channelbar',
@@ -24,13 +27,15 @@ export class ChannelbarComponent implements OnInit {
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private store: Store<State>
   ) {
       this.route.params.subscribe(params => {
       if(params['courseID']){
         this.courseService.fetchCourses().subscribe((courses) => {
           this.selectedCourse = courses.find((course) => course._id == params['courseID']);
           this.courseService.selectCourse(this.selectedCourse);
+          this.store.dispatch(AppActions.toggleCourseSelected({courseSelected: true}));
         });
       }
     })

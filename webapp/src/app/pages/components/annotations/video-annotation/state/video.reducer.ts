@@ -10,6 +10,8 @@ export interface VideoState {
   isPinpointSelectionActive: boolean;
   videoPlayed: boolean;
   videoPaused: boolean;
+  videoDuration: number;
+  currentTime: number;
 }
 
 const initialState: VideoState = {
@@ -17,6 +19,8 @@ const initialState: VideoState = {
   isPinpointSelectionActive: false,
   videoPlayed: false,
   videoPaused: true,
+  videoDuration: 0,
+  currentTime: 0
 }
 
 const getVideoFeatureState =
@@ -40,6 +44,16 @@ export const getIsVideoPlayed = createSelector(
 export const getIsVideoPaused = createSelector(
   getVideoFeatureState,
   (state) => state.videoPaused
+);
+
+export const getVideoDuration = createSelector(
+  getVideoFeatureState,
+  (state) => state.videoDuration
+);
+
+export const getCurrentTime = createSelector(
+  getVideoFeatureState,
+  (state) => state.currentTime
 );
 
 export const videoReducer = createReducer<VideoState>(
@@ -71,6 +85,20 @@ export const videoReducer = createReducer<VideoState>(
       ...state,
       videoPlayed: false,
       videoPaused: true
+    };
+  }),
+
+  on(VideoActions.SetVideoDuration, (state, action): VideoState => {
+    return {
+      ...state,
+      videoDuration: action.videoDuration,
+    };
+  }),
+
+  on(VideoActions.SetCurrentTime, (state, action): VideoState => {
+    return {
+      ...state,
+      currentTime: action.currentTime,
     };
   }),
 )

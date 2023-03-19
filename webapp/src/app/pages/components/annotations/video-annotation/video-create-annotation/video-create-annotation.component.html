@@ -1,59 +1,57 @@
-<div [ngStyle]="{'box-shadow': '0 0 3px 3px' + annotationColor}" class="mb-5">
-    <p-panel header="Create Annotation" [toggleable]="false">
-      <ng-template pTemplate="icons">
-        <app-iconbutton
-          icon="bx-x"
-          color="text-green-600"
-        ></app-iconbutton>
-      </ng-template>
-      <div class="flex flex-col justify-evenly space-y-5">
-        <div class="flex flex-row justify-items-start space-x-5 w-12/12">
-          <p-dropdown
-            placeholder="Annotation type"
-            [showClear]="true"
-            autoWidth="false"
-            appendTo="body"
-            [style]="{ minWidth: '100%' }"
-          ></p-dropdown>
-  
-          <p-dropdown
-            placeholder="Slide"
-            [showClear]="true"
-            autoWidth="false"
-            appendTo="body"
-            [style]="{ minWidth: '100%' }"
-          ></p-dropdown>
-  
-          <p-dropdown
-          placeholder="From Page"
-          [showClear]="true"
-          autoWidth="false"
-          appendTo="body"
-          [style]="{ minWidth: '100%' }"
-        ></p-dropdown>
-  
+<div [ngStyle]="{ 'box-shadow': '0 0 3px 3px' + annotationColor }" class="mb-5">
+  <p-panel header="Create Annotation" [toggleable]="false">
+    <ng-template pTemplate="icons">
+      <app-iconbutton icon="bx-x" color="text-green-600"></app-iconbutton>
+    </ng-template>
+    <div class="flex flex-col justify-evenly space-y-5">
+      <div class="flex flex-row justify-items-start space-x-5 w-12/12">
         <p-dropdown
-          placeholder="To Page"
+          placeholder="Annotation type"
+          [options]="annotationTypesArray"
+          [(ngModel)]="selectedAnnotationType"
+          (ngModelChange)="onAnnotationTypeChange()"
           [showClear]="true"
           autoWidth="false"
           appendTo="body"
           [style]="{ minWidth: '100%' }"
         ></p-dropdown>
-        </div>
-        <p-slider [(ngModel)]="rangeValues" [range]="true"></p-slider>
-        <div class="flex flex-row space-x-3">
-          <textarea
-            pInputTextarea
-            class="w-11/12"
-            style="border: 1px solid #0000004D"
-          ></textarea>
-          <app-iconbutton
-            icon="bx-send"
-            color="text-slate-500"
-            class="mb-0 mt-12 flex-1 justify-end"
-          ></app-iconbutton>
-        </div>
+
+        <p-dropdown
+          placeholder="Time"
+          [options]="annotationLocationsArray"
+          [(ngModel)]="selectedAnnotationLocation"
+          (ngModelChange)="onAnnotationLocationChange()"
+          [showClear]="true"
+          autoWidth="false"
+          appendTo="body"
+          [style]="{ minWidth: '100%' }"
+        ></p-dropdown>
       </div>
-    </p-panel>
-  </div>
-  
+      <div *ngIf="isTimeLineSelection" class="space-y-2">
+        <h5 class="mb-2">{{ printTime(rangeValues[0]) }} - {{ printTime(rangeValues[1]) }}</h5>
+        <p-slider
+          [(ngModel)]="rangeValues"
+          [range]="true"
+          [max]="maxTime"
+          [min]="minTime"
+          (ngModelChange)="onSliderChange($event)"
+          class="max-w-full"
+        ></p-slider>
+      </div>
+      <div class="flex flex-row space-x-3">
+        <textarea
+          pInputTextarea
+          class="w-11/12"
+          style="border: 1px solid #0000004d"
+          [(ngModel)]="content"
+        ></textarea>
+        <app-iconbutton
+          icon="bx-send"
+          color="text-slate-500"
+          class="mb-0 mt-12 flex-1 justify-end"
+          (onClick)="postAnnotation()"
+        ></app-iconbutton>
+      </div>
+    </div>
+  </p-panel>
+</div>

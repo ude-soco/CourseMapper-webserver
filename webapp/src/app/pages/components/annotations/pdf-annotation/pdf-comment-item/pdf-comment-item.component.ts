@@ -66,6 +66,7 @@ export class PdfCommentItemComponent implements OnInit, OnChanges {
       else{
         this.showAnnotationInMaterial = true;
       }
+      console.log(this.annotation);
       this.socket.on(this.annotation._id, (payload: { eventType: string, annotation: Annotation, reply: Reply }) => {
         console.log('payload = ', payload)
         this.store.dispatch(AnnotationActions.updateAnnotationsOnSocketEmit({payload: payload}));
