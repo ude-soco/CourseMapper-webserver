@@ -1,39 +1,42 @@
 version: "3"
 
 services:
-  mongoDB:
-    image: mongo
+  webapp:
+    image: coursemapper-webserver-webapp
+    build:
+      context: webapp
+    environment:
+      BASE_URL: http://127.0.0.1:8080
     ports:
-      - "27017:27017"
-    volumes:
-      - mongodbdata:/data/db
-    networks:
+      - "4200:4200"
+    depends_on:
       - webserver
 
-  coursemapper-webserver:
-    image: coursemapper-webserver
+  webserver:
+    image: coursemapper-webserver-webserver
     build:
-      context: ./webserver
-      dockerfile: dev.Dockerfile
-    restart: unless-stopped
+      context: webserver
     environment:
       - PORT=8080
       - COOKIE_SECRET=secret
       - JWT_SECRET=secret
       - PASS=adminpassword
-      - MONGO_DB=mongodb://mongoDB:27017/coursemapper
+      - MONGO_DB=mongodb://mongo:27017/coursemapper
     ports:
       - "8080:8080"
-    volumes:
-      - ./webserver/:/app/
     depends_on:
-      - mongoDB
-    networks:
-      - webserver
-networks:
-  webserver:
-    driver: bridge
+      mongo:
+        condition: service_healthy
+
+  mongo:
+    image: mongo
+    command: mongod --quiet --logpath /dev/null
+    volumes:
+      - mongo:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      start_period: 1s
+      interval: 1s
 
 volumes:
-  mongodbdata:
-    driver: local
+  mongo:

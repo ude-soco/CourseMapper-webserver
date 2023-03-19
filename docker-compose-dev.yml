@@ -1,0 +1,7 @@
+services:
+  webserver:
+    image: coursemapper-webserver-webserver:dev
+    build:
+      dockerfile: dev.Dockerfile
+    volumes:
+    - ./webserver:/app

@@ -1,5 +1,6 @@
 .gitignore
-*.Dockerfile
-/.gitignore
 /public
 example*
+node_modules
+npm-debug.log
+README*
