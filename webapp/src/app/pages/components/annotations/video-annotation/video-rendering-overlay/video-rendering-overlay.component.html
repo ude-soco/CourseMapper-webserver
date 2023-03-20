@@ -1,0 +1,22 @@
+<div #RenderingArea class="RenderingArea">
+  <div class="canvas">
+    <canvas
+    #canvas
+    [width]="videoBoundingRect?.width || 1"
+    [height]="videoBoundingRect?.height || 1"
+  ></canvas>
+  </div>
+  <div
+    *ngIf="cursorPosition && hoveredAnnotations.length > 0"
+    class="annotation-click-zone"
+    [style.left]="cursorPosition[0] - 5 + 'px'"
+    [style.top]="cursorPosition[1] - 5 + 'px'"
+    [style.cursor]="hoveredAnnotations.length > 0 ? 'pointer' : 'default'"
+    (click)="hoveredAnnotationClicked()"
+  ></div>
+  <div
+    *ngIf="activeAnnotations.length > 0"
+    class="annotation-background"
+    (click)="closeAnnotation()"
+  ></div>
+</div>

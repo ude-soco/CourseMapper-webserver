@@ -1,7 +1,7 @@
 <div class="flex flex-row h-screen">
   <div class="flex flex-col w-full space-y-2">
     <app-video-annotation-toolbar></app-video-annotation-toolbar>
-    <div class="relative h-fit #videoPlayerArea">
+    <div class="relative h-fit videoPlayerArea">
       <video
         controls
         width="100%"
@@ -16,7 +16,7 @@
         <source [src]="videoURL" type="video/mp4" />
       </video>
 
-      <div *ngIf="youtubeactivated" #YouTubePlayerArea>
+      <div *ngIf="youtubeactivated" #YouTubePlayerArea class="YouTubePlayerArea">
         <youtube-player
           [videoId]="videoURL"
           (ready)="saveYouTubePlayer($event)"
@@ -24,7 +24,7 @@
         ></youtube-player>
       </div>
       <div
-        *ngIf="isPinpointSelectionActive"
+        *ngIf="isPinpointSelectionActive$ | async"
         class="pinpoint-selection-overlay"
         (click)="setPintpointPosition($event)"
       ></div>
@@ -39,14 +39,31 @@
         (doneDrawing)="doneDrawing()"
       >
       </app-video-drawing-overlay>
+      <app-video-rendering-overlay
+        class="video-annotations-overlay"
+        [class.visible]="
+          !isBrushSelectionActive &&
+          (isPinpointSelectionActive$ | async) == false &&
+          (showAnnotations$ | async)
+        "
+        [boundingRect]="boundingRect"
+        [videoWidth]="videoWidth"
+        [videoHeight]="videoHeight"
+        [cursorPositionInVideo]="cursorPositionInVideo"
+        [cursorPosition]="cursorPosition"
+        (pauseVideo)="pauseVideo()"
+        (playVideo)="playVideo()"
+        (seekVideo)="seekVideo($event)"
+      >
+      </app-video-rendering-overlay>
       <div
         class="pinpoint-display-pin"
         *ngIf="
-          (isPinpointSelectionActive || isAnnotationDialogVisible$) &&
-          pintpointPosition
+          (isPinpointSelectionActive$ | async) ||
+          ((isAnnotationDialogVisible$ | async) && pinpointPosition)
         "
-        [style.left]="pintpointPosition[0] + 'px'"
-        [style.top]="pintpointPosition[1] + 'px'"
+        [style.left]="pinpointPosition[0] + 'px'"
+        [style.top]="pinpointPosition[1] + 'px'"
       >
         <app-iconbutton icon="bx-pin" color="text-white"></app-iconbutton>
       </div>

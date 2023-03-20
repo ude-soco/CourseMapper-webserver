@@ -17,10 +17,14 @@
       <app-iconbutton
       icon="bx-show"
       color="text-blue-500"
+      (onClick)="showHideAnnotations()"
+      *ngIf="!showAnnotations"
     ></app-iconbutton>
     <app-iconbutton
     icon="bx-hide"
     color="text-blue-500"
+    (onClick)="showHideAnnotations()"
+    *ngIf="showAnnotations"
   ></app-iconbutton>
   </div>
   

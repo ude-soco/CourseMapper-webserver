@@ -16,6 +16,9 @@ import * as $ from 'jquery';
 import { SocketIoModule, SocketIoConfig, Socket } from 'ngx-socket-io';
 import { User } from 'src/app/models/User';
 import { getLoggedInUser } from 'src/app/state/app.reducer';
+import { Material } from 'src/app/models/Material';
+import { getCurrentMaterial } from '../../../materils/state/materials.reducer';
+import * as VideoActions from 'src/app/pages/components/annotations/video-annotation/state/video.action'
 @Component({
   selector: 'app-pdf-comment-item',
   templateUrl: './pdf-comment-item.component.html',
@@ -36,11 +39,14 @@ export class PdfCommentItemComponent implements OnInit, OnChanges {
   annotationOptions: MenuItem[];
   isEditing: boolean = false;
   updatedAnnotation: string;
+  selectedMaterial: Material
 
   constructor(private store: Store<State>, private socket: Socket) {
     this.store.select(getCurrentPdfPage).subscribe((currentPage) => {
       this.currentPage = currentPage;
     });
+
+    this.store.select(getCurrentMaterial).subscribe((material) => this.selectedMaterial = material);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -66,7 +72,6 @@ export class PdfCommentItemComponent implements OnInit, OnChanges {
       else{
         this.showAnnotationInMaterial = true;
       }
-      console.log(this.annotation);
       this.socket.on(this.annotation._id, (payload: { eventType: string, annotation: Annotation, reply: Reply }) => {
         console.log('payload = ', payload)
         this.store.dispatch(AnnotationActions.updateAnnotationsOnSocketEmit({payload: payload}));
@@ -107,14 +112,18 @@ export class PdfCommentItemComponent implements OnInit, OnChanges {
   }
 
   showAnnotationOnMaterial(){
-    let location = this.annotation?.location as PdfGeneralAnnotationLocation;
-    if(this.currentPage != location.startPage){
-      this.store.dispatch(AnnotationActions.setCurrentPdfPage({pdfCurrentPage: location.startPage}));
-      if(this.currentPage == location.startPage){
+    if(this.selectedMaterial.type === "pdf"){
+      let location = this.annotation?.location as PdfGeneralAnnotationLocation;
+      if(this.currentPage != location.startPage){
+        this.store.dispatch(AnnotationActions.setCurrentPdfPage({pdfCurrentPage: location.startPage}));
+        if(this.currentPage == location.startPage){
+          this.highlightAnnotation();
+        } 
+      }else{
         this.highlightAnnotation();
-      } 
+      }
     }else{
-      this.highlightAnnotation();
+      this.store.dispatch(VideoActions.SetActiveAnnotaion({activeAnnotation: this.annotation}));
     }
   }
 
@@ -173,7 +182,6 @@ export class PdfCommentItemComponent implements OnInit, OnChanges {
       {
         label: 'Report',
         icon: 'pi pi-flag-fill',
-        // command: () => this.onDeleteTopic(),
       },
     ];
   }

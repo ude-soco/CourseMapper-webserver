@@ -35,3 +35,19 @@ app-pdf-comment-panel{
     overflow-y: scroll;
     box-shadow: 0 0 3px 3px #0000004D;
 }
+
+.video-annotations-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 20;
+    display: none;
+    flex-direction: column;
+    pointer-events: none;
+  }
+  
+  .video-annotations-overlay.visible {
+    display: flex;
+  }

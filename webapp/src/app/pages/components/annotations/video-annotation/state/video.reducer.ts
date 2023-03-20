@@ -1,4 +1,6 @@
 import { createFeatureSelector, createReducer, createSelector, on } from '@ngrx/store';
+import { Annotation } from 'src/app/models/Annotations';
+import { DrawingData } from 'src/app/models/Drawing';
 import * as AppState from 'src/app/state/app.state';
 import * as VideoActions from './video.action'
 export interface State extends AppState.State {
@@ -12,6 +14,12 @@ export interface VideoState {
   videoPaused: boolean;
   videoDuration: number;
   currentTime: number;
+  isAnnotationDialogVisible: boolean;
+  isAnnotationCreationCanceled: boolean;
+  drawingData: DrawingData;
+  pinpointPosition: [number, number];
+  activeAnnotation: Annotation;
+  showAnnotations: boolean;
 }
 
 const initialState: VideoState = {
@@ -20,7 +28,13 @@ const initialState: VideoState = {
   videoPlayed: false,
   videoPaused: true,
   videoDuration: 0,
-  currentTime: 0
+  currentTime: 0,
+  isAnnotationDialogVisible: false,
+  isAnnotationCreationCanceled: false,
+  drawingData: null,
+  pinpointPosition: [null, null],
+  activeAnnotation: null,
+  showAnnotations: true
 }
 
 const getVideoFeatureState =
@@ -54,6 +68,36 @@ export const getVideoDuration = createSelector(
 export const getCurrentTime = createSelector(
   getVideoFeatureState,
   (state) => state.currentTime
+);
+
+export const getIsAnnotationDialogVisible = createSelector(
+  getVideoFeatureState,
+  (state) => state.isAnnotationDialogVisible
+);
+
+export const getIsAnnotationCreationCanceled = createSelector(
+  getVideoFeatureState,
+  (state) => state.isAnnotationCreationCanceled
+);
+
+export const getDrawingData = createSelector(
+  getVideoFeatureState,
+  (state) => state.drawingData
+);
+
+export const getPinPointPosition = createSelector(
+  getVideoFeatureState,
+  (state) => state.pinpointPosition
+);
+
+export const getActiveAnnotation = createSelector(
+  getVideoFeatureState,
+  (state) => state.activeAnnotation
+);
+
+export const getShowAnnotations = createSelector(
+  getVideoFeatureState,
+  (state) => state.showAnnotations
 );
 
 export const videoReducer = createReducer<VideoState>(
@@ -99,6 +143,56 @@ export const videoReducer = createReducer<VideoState>(
     return {
       ...state,
       currentTime: action.currentTime,
+    };
+  }),
+
+  on(VideoActions.SetIsAnnotationDialogVisible, (state, action): VideoState => {
+    return {
+      ...state,
+      isAnnotationDialogVisible: action.isAnnotationDialogVisible,
+    };
+  }),
+
+  on(VideoActions.SetIsAnnotationCreationCanceled, (state, action): VideoState => {
+    if(action.isAnnotationCreationCanceled){
+      return {
+        ...state,
+        isAnnotationDialogVisible: false,
+        isAnnotationCreationCanceled: true
+      };
+    }else{
+      return {
+        ...state,
+        isAnnotationCreationCanceled: false
+      };  
+    }
+  }),
+
+  on(VideoActions.SetDrawingData, (state, action): VideoState => {
+    return {
+      ...state,
+      drawingData: action.drawingData,
+    };
+  }),
+
+  on(VideoActions.SetPinPointPosition, (state, action): VideoState => {
+    return {
+      ...state,
+      pinpointPosition: action.pinpointPosition,
+    };
+  }),
+
+  on(VideoActions.SetActiveAnnotaion, (state, action): VideoState => {
+    return {
+      ...state,
+      activeAnnotation: action.activeAnnotation,
+    };
+  }),
+
+  on(VideoActions.SetShowAnnotations, (state, action): VideoState => {
+    return {
+      ...state,
+      showAnnotations: action.showAnnotations,
     };
   }),
 )

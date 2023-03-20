@@ -1,4 +1,4 @@
-import { AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, Subscriber, Subscription } from 'rxjs';
 import { DrawingData } from 'src/app/models/Drawing';
@@ -6,7 +6,7 @@ import { Material } from 'src/app/models/Material';
 import { PdfviewService } from 'src/app/services/pdfview.service';
 import { environment } from 'src/environments/environment';
 import { getCurrentMaterial, getCurrentMaterialId } from '../../../materils/state/materials.reducer';
-import { getIsBrushSelectionActive, getIsPinpointSelectionActive, getIsVideoPaused, getIsVideoPlayed, State } from '../state/video.reducer';
+import { getIsAnnotationCreationCanceled, getIsAnnotationDialogVisible, getIsBrushSelectionActive, getIsPinpointSelectionActive, getIsVideoPaused, getIsVideoPlayed, getShowAnnotations, State } from '../state/video.reducer';
 import * as VideoActions from '../state/video.action'
 import { calculateMousePositionInVideo } from 'src/app/_helpers/video-helper';
 import { Socket } from 'ngx-socket-io';
@@ -38,15 +38,21 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
   videoWidth: number;
   videoHeight: number;
   boundingRect: DOMRect;
-  isPinpointSelectionActive: boolean = false;
+  isPinpointSelectionActive$: Observable<boolean>;
   isBrushSelectionActive: boolean = false;
   drawingData?: DrawingData;
   pintpointCoordinates?: [number, number]
-  pintpointPosition?: [number, number]
+  pinpointPosition?: [number, number]
+  showAnnotations$: Observable<boolean>;
+  cursorPositionInVideo?: [number, number];
+  cursorPosition?: [number, number];
 
   constructor(private store: Store<State>, private pdfViewService: PdfviewService, private changeDetectorRef: ChangeDetectorRef, private socket: Socket) {
     this.store.select(getIsBrushSelectionActive).subscribe((isActive) => this.isBrushSelectionActive = isActive);
-    this.store.select(getIsPinpointSelectionActive).subscribe((isActive) => this.isPinpointSelectionActive = isActive);
+    this.isPinpointSelectionActive$ = this.store.select(getIsPinpointSelectionActive);
+    this.isAnnotationDialogVisible$ = this.store.select(getIsAnnotationDialogVisible);
+    this.store.select(getIsAnnotationCreationCanceled).subscribe((isCanceled) => {if(isCanceled) this.cancelSelection()});
+    this.showAnnotations$ = this.store.select(getShowAnnotations);
   }
 
   ngAfterViewChecked(): void {
@@ -102,17 +108,21 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
       }
     })
     this.subscriptions.push(urlSubscriper);
+    // this.addMouseMoveEventListener();
 
   }
 
   saveYouTubePlayer(player) {
     this.YouTubePlayer = player.target;
-    console.log("player instance", player);
 
     const iframe = player.target.h
     iframe.style.width = "100%";
     iframe.style.height = "100%";
     iframe.style.minHeight = "700px";
+
+    // iframe.addEventListener('mousemove', this.mouseMovedOnVideo.bind(this));
+  
+    console.log(iframe);
 
     this.boundingRect = this.YouTubePlayerArea?.nativeElement.getBoundingClientRect();
     this.videoWidth = this.boundingRect.width;
@@ -131,6 +141,28 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
         currentTime = time;
       }
     }, 1000);
+  }
+
+  addMouseMoveEventListener() {
+    // create an overlay element that covers the player element
+    const overlay = document.createElement('div');
+    overlay.style.position = 'absolute';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.background = 'transparent';
+    // overlay.style.pointerEvents = 'auto'
+    overlay.style.zIndex = '18';
+
+
+    // add the overlay element to the video container
+    const videoContainer = document.querySelector('.videoPlayerArea');
+    videoContainer.appendChild(overlay);
+
+
+    // add a mousemove listener to the child element
+    videoContainer.addEventListener('mousemove', this.mouseMovedOnVideo.bind(this));
   }
 
   onYouTubePlayerStateChange(event) {
@@ -164,6 +196,15 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
     }
   }
 
+  seekVideo(time: number){
+    if(this.youtubeactivated){
+      this.YouTubePlayer.seekTo(time, true);
+    }else{
+      console.log(this.videoPlayer);
+      this.videoPlayer.nativeElement.currentTime = time;
+    }
+  }
+
   videoPlayed() {
     this.store.dispatch(VideoActions.PlayVideo());
   }
@@ -191,23 +232,21 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
       window.alert("You must have at least 1 drawing");
       return;
     }
-
+    this.store.dispatch(VideoActions.SetDrawingData({drawingData: this.drawingData}));
     this.showAnnotationDialog();
-
-    this.store.dispatch(VideoActions.setIsBrushSelectionActive({isBrushSelectionActive: false}));
   }
 
   cancelSelection() {
     this.store.dispatch(VideoActions.setIsBrushSelectionActive({isBrushSelectionActive: false}));
-    this.isPinpointSelectionActive = false;
+    this.store.dispatch(VideoActions.setIsPinpointSelectionActive({isPinpointSelectionActive: false}));
+    this.store.dispatch(VideoActions.SetIsAnnotationCreationCanceled({isAnnotationCreationCanceled: false}));
     this.drawingData = undefined;
     this.pintpointCoordinates = undefined;
-    this.pintpointPosition = undefined;
+    this.pinpointPosition = undefined;
   }
 
   showAnnotationDialog(){
-    
-
+    this.store.dispatch(VideoActions.SetIsAnnotationDialogVisible({isAnnotationDialogVisible: true}));
   }
 
   setPintpointPosition(event: MouseEvent){
@@ -232,10 +271,35 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
     if (!isInsideVideo) return;
 
     this.pintpointCoordinates = [xRatio, yRatio];
-    this.pintpointPosition = [xPosition, yPosition];
+    this.pinpointPosition = [xPosition, yPosition];
 
+    this.store.dispatch(VideoActions.SetPinPointPosition({pinpointPosition: this.pinpointPosition}));
     this.showAnnotationDialog();
+  }
 
-    this.store.dispatch(VideoActions.setIsPinpointSelectionActive({isPinpointSelectionActive: false}));
+  @HostListener('document:mousemove', ['$event']) 
+  mouseMovedOnVideo(event: MouseEvent) {
+    // console.log(event.clientX, event.clientY);
+    const boundingRect = this.boundingRect;
+
+
+    if (!this.videoWidth || !this.videoHeight || !boundingRect) return;
+
+    const {isInsideVideo, xRatio, yRatio, xPosition, yPosition} = calculateMousePositionInVideo(
+      event.clientX,
+      event.clientY,
+      boundingRect,
+      this.videoWidth,
+      this.videoHeight,
+    );
+
+    if (!isInsideVideo) {
+      this.cursorPositionInVideo = undefined;
+      this.cursorPosition = undefined;
+      return;
+    }
+
+    this.cursorPositionInVideo = [xRatio, yRatio];
+    this.cursorPosition = [xPosition, yPosition];
   }
 }

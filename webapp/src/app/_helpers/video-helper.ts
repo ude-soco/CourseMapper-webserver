@@ -32,7 +32,7 @@ export function calculateMousePositionInVideo(mouseX: number, mouseY: number, bo
 }
 
 export function calculatePositionFromRatios(xRatio: number, yRatio: number, boundingRect: DOMRect, videoWidth: number, videoHeight: number) {
-    const actualHeight = Math.min(600, (boundingRect?.height || 0));
+    const actualHeight = Math.min(700, (boundingRect?.height || 0));
     const zoomRatio = (videoHeight || 0) / (actualHeight || 1);
     const actualWidth = (videoWidth || 0) / (zoomRatio || 1);
 
