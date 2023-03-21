@@ -46,6 +46,9 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
   showAnnotations$: Observable<boolean>;
   cursorPositionInVideo?: [number, number];
   cursorPosition?: [number, number];
+  videoIsPlaying$: Observable<boolean>;
+  videoIsPaused$: Observable<boolean>;
+  cursorisInsideVideo: boolean;
 
   constructor(private store: Store<State>, private pdfViewService: PdfviewService, private changeDetectorRef: ChangeDetectorRef, private socket: Socket) {
     this.store.select(getIsBrushSelectionActive).subscribe((isActive) => this.isBrushSelectionActive = isActive);
@@ -53,6 +56,8 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
     this.isAnnotationDialogVisible$ = this.store.select(getIsAnnotationDialogVisible);
     this.store.select(getIsAnnotationCreationCanceled).subscribe((isCanceled) => {if(isCanceled) this.cancelSelection()});
     this.showAnnotations$ = this.store.select(getShowAnnotations);
+    this.videoIsPlaying$ = this.store.select(getIsVideoPlayed);
+    this.videoIsPaused$ = this.store.select(getIsVideoPaused);
   }
 
   ngAfterViewChecked(): void {
@@ -108,7 +113,6 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
       }
     })
     this.subscriptions.push(urlSubscriper);
-    // this.addMouseMoveEventListener();
 
   }
 
@@ -119,10 +123,6 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
     iframe.style.width = "100%";
     iframe.style.height = "100%";
     iframe.style.minHeight = "700px";
-
-    // iframe.addEventListener('mousemove', this.mouseMovedOnVideo.bind(this));
-  
-    console.log(iframe);
 
     this.boundingRect = this.YouTubePlayerArea?.nativeElement.getBoundingClientRect();
     this.videoWidth = this.boundingRect.width;
@@ -141,6 +141,8 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
         currentTime = time;
       }
     }, 1000);
+
+    this.addMouseMoveEventListener();
   }
 
   addMouseMoveEventListener() {
@@ -150,10 +152,10 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
     overlay.style.top = '0';
     overlay.style.left = '0';
     overlay.style.width = '100%';
-    overlay.style.height = '100%';
+    overlay.style.height = '94%';
     overlay.style.background = 'transparent';
-    // overlay.style.pointerEvents = 'auto'
-    overlay.style.zIndex = '18';
+    overlay.style.pointerEvents = 'auto';
+    overlay.className = 'selection-overlay';
 
 
     // add the overlay element to the video container
@@ -161,12 +163,10 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
     videoContainer.appendChild(overlay);
 
 
-    // add a mousemove listener to the child element
-    videoContainer.addEventListener('mousemove', this.mouseMovedOnVideo.bind(this));
+    overlay.addEventListener('click', this.handleClickOnYouTubeOverlay.bind(this));
   }
 
   onYouTubePlayerStateChange(event) {
-    console.log("player state", event.data);
     if(event.data === 1){
       this.store.dispatch(VideoActions.PlayVideo());
     }else if(event.data === 2){
@@ -182,16 +182,26 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
 
   playVideo() {
     if(this.youtubeactivated){
+      if(this.YouTubePlayer?.getPlayerState() === YT.PlayerState.PLAYING)
+      return;
+
       this.YouTubePlayer.playVideo();
     }else{
+      if(this.videoPlayer.nativeElement.paused)
       this.videoPlayer.nativeElement.play();
     }
   }
 
   pauseVideo() {
     if(this.youtubeactivated){
-      this.YouTubePlayer.pauseVideo();
+      if(this.YouTubePlayer?.getPlayerState() === YT.PlayerState.PLAYING){
+        this.YouTubePlayer.pauseVideo()
+        return;
+      }
     }else{
+      if(this.videoPlayer.nativeElement.paused)
+      return;
+
       this.videoPlayer?.nativeElement.pause();
     }
   }
@@ -200,7 +210,6 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
     if(this.youtubeactivated){
       this.YouTubePlayer.seekTo(time, true);
     }else{
-      console.log(this.videoPlayer);
       this.videoPlayer.nativeElement.currentTime = time;
     }
   }
@@ -279,7 +288,6 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
 
   @HostListener('document:mousemove', ['$event']) 
   mouseMovedOnVideo(event: MouseEvent) {
-    // console.log(event.clientX, event.clientY);
     const boundingRect = this.boundingRect;
 
 
@@ -293,13 +301,23 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
       this.videoHeight,
     );
 
+    this.cursorisInsideVideo = isInsideVideo;
+
     if (!isInsideVideo) {
-      this.cursorPositionInVideo = undefined;
-      this.cursorPosition = undefined;
       return;
     }
 
     this.cursorPositionInVideo = [xRatio, yRatio];
     this.cursorPosition = [xPosition, yPosition];
+  }
+
+  handleClickOnYouTubeOverlay(){
+    if(this.YouTubePlayer?.getPlayerState() === YT.PlayerState.PLAYING){
+      this.pauseVideo();
+    }else if(this.YouTubePlayer?.getPlayerState() === YT.PlayerState.PAUSED){
+      this.playVideo();
+    }else{
+      this.playVideo();
+    }
   }
 }

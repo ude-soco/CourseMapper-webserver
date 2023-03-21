@@ -19,6 +19,7 @@ import { getLoggedInUser } from 'src/app/state/app.reducer';
 import { Material } from 'src/app/models/Material';
 import { getCurrentMaterial } from '../../../materils/state/materials.reducer';
 import * as VideoActions from 'src/app/pages/components/annotations/video-annotation/state/video.action'
+import { getShowAnnotations } from '../../video-annotation/state/video.reducer';
 @Component({
   selector: 'app-pdf-comment-item',
   templateUrl: './pdf-comment-item.component.html',
@@ -40,6 +41,7 @@ export class PdfCommentItemComponent implements OnInit, OnChanges {
   isEditing: boolean = false;
   updatedAnnotation: string;
   selectedMaterial: Material
+  isShowAnnotationsOnVideo: boolean;
 
   constructor(private store: Store<State>, private socket: Socket) {
     this.store.select(getCurrentPdfPage).subscribe((currentPage) => {
@@ -47,6 +49,8 @@ export class PdfCommentItemComponent implements OnInit, OnChanges {
     });
 
     this.store.select(getCurrentMaterial).subscribe((material) => this.selectedMaterial = material);
+
+    this.store.select(getShowAnnotations).subscribe((isShowAnnotationsOnVideo) => this.isShowAnnotationsOnVideo = isShowAnnotationsOnVideo);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -123,7 +127,19 @@ export class PdfCommentItemComponent implements OnInit, OnChanges {
         this.highlightAnnotation();
       }
     }else{
-      this.store.dispatch(VideoActions.SetActiveAnnotaion({activeAnnotation: this.annotation}));
+      if(!this.isShowAnnotationsOnVideo){
+        console.log('here');
+        setTimeout(() => {
+          this.store.dispatch(VideoActions.SetShowAnnotations({showAnnotations: true}));
+          this.store.dispatch(VideoActions.SetActiveAnnotaion({activeAnnotation: this.annotation}));
+          setTimeout(() => {
+            this.store.dispatch(VideoActions.SetShowAnnotations({showAnnotations: false}));
+            this.store.dispatch(VideoActions.SetActiveAnnotaion({activeAnnotation: null}));
+          }, 5000);
+        }, 100);
+      }else{
+        this.store.dispatch(VideoActions.SetActiveAnnotaion({activeAnnotation: this.annotation}));
+      }
     }
   }
 

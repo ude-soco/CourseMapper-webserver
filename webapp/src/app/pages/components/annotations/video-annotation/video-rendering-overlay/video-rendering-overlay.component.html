@@ -1,10 +1,10 @@
 <div #RenderingArea class="RenderingArea">
   <div class="canvas">
     <canvas
-    #canvas
-    [width]="videoBoundingRect?.width || 1"
-    [height]="videoBoundingRect?.height || 1"
-  ></canvas>
+      #canvas
+      [width]="videoBoundingRect?.width || 1"
+      [height]="videoBoundingRect?.height || 1"
+    ></canvas>
   </div>
   <div
     *ngIf="cursorPosition && hoveredAnnotations.length > 0"
@@ -12,11 +12,18 @@
     [style.left]="cursorPosition[0] - 5 + 'px'"
     [style.top]="cursorPosition[1] - 5 + 'px'"
     [style.cursor]="hoveredAnnotations.length > 0 ? 'pointer' : 'default'"
-    (click)="hoveredAnnotationClicked()"
+    (click)="hoveredAnnotationClicked(hoveredAnnotations[0]._id)"
   ></div>
   <div
     *ngIf="activeAnnotations.length > 0"
     class="annotation-background"
     (click)="closeAnnotation()"
-  ></div>
+  >
+    <app-video-annotation-summary
+      [annotationId]="popOverAnnotationId"
+      [style.left]="boundingRect.width / 3 + 'px'"
+      [style.top]="boundingRect.height / 3 + 'px'"
+      [style.position]="'absolute'"
+    ></app-video-annotation-summary>
+  </div>
 </div>

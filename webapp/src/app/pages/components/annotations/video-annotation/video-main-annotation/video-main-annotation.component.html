@@ -16,7 +16,11 @@
         <source [src]="videoURL" type="video/mp4" />
       </video>
 
-      <div *ngIf="youtubeactivated" #YouTubePlayerArea class="YouTubePlayerArea">
+      <div
+        *ngIf="youtubeactivated"
+        #YouTubePlayerArea
+        class="YouTubePlayerArea"
+      >
         <youtube-player
           [videoId]="videoURL"
           (ready)="saveYouTubePlayer($event)"
@@ -60,12 +64,14 @@
         class="pinpoint-display-pin"
         *ngIf="
           (isPinpointSelectionActive$ | async) ||
-          ((isAnnotationDialogVisible$ | async) && pinpointPosition)
-        "
-        [style.left]="pinpointPosition[0] + 'px'"
-        [style.top]="pinpointPosition[1] + 'px'"
+          ((isAnnotationDialogVisible$ | async) && cursorPosition && cursorisInsideVideo)"
+        [style.left]="cursorPosition[0] + 'px'"
+        [style.top]="cursorPosition[1] + 'px'"
       >
-        <app-iconbutton icon="bx-pin" color="text-white"></app-iconbutton>
+        <app-iconbutton
+          icon="bx-pin"
+          color="text-white"
+        ></app-iconbutton>
       </div>
     </div>
   </div>

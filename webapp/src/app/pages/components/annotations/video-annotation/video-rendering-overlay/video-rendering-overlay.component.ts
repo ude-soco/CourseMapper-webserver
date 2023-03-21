@@ -32,6 +32,7 @@ export class VideoRenderingOverlayComponent implements AfterViewChecked {
   hoveredAnnotations: Annotation[] = [];
   activeAnnotations: Annotation[] = [];
   activeAnnotationPosition?: [number, number];
+  popOverAnnotationId: string = null;
 
   @ViewChild('canvas') canvas?: ElementRef<HTMLCanvasElement>;
   @ViewChild('RenderingArea') RenderingArea: ElementRef<HTMLDivElement>;
@@ -77,10 +78,12 @@ export class VideoRenderingOverlayComponent implements AfterViewChecked {
           this.activeAnnotationPosition = [x, y];
         }
 
-        this.pauseVideo.emit();
+
         if (annotation.location.type == "time" && annotation.location.from >= 0) {
           this.seekVideo.emit(annotation.location.from);
         }
+        this.pauseVideo.emit();
+        this.popOverAnnotationId = annotation._id;
         this.repaintCanvas();
       }
     });
@@ -88,11 +91,9 @@ export class VideoRenderingOverlayComponent implements AfterViewChecked {
 
   ngOnInit(): void {
     this.closeAnnotation();
-    // this.addMouseMoveEventListener();
   }
 
   ngAfterViewChecked(): void {
-    // console.log(this.cursorPosition, this.cursorPositionInVideo);
     if(this.videoBoundingRect !== this.boundingRect){
       this.videoBoundingRect = this.boundingRect
       this.changeDetectorRef.detectChanges();
@@ -195,7 +196,6 @@ export class VideoRenderingOverlayComponent implements AfterViewChecked {
           for (const drawing of annotation.tool.data.drawings) {
             if (isPointInDrawing(newPosition[0], newPosition[1], drawing, startX, this.videoBoundingRect)) {
               hoveredAnnotations.add(annotation);
-              console.log('brush');
             }
           }
           break;
@@ -203,7 +203,6 @@ export class VideoRenderingOverlayComponent implements AfterViewChecked {
         case "pin":
           if (isPointInPin(newPosition[0], newPosition[1], (annotation.tool as VideoPinTool).x, (annotation.tool as VideoPinTool).y, startX, this.videoBoundingRect)) {
             hoveredAnnotations.add(annotation);
-            console.log('pin');
           }
           break;
       }
@@ -212,13 +211,14 @@ export class VideoRenderingOverlayComponent implements AfterViewChecked {
     this.hoveredAnnotations = [...hoveredAnnotations];
   }
 
-  hoveredAnnotationClicked() {
+  hoveredAnnotationClicked(annotationId: string) {
     if (this.hoveredAnnotations.length == 0) return;
 
     this.activeAnnotations = this.hoveredAnnotations;
     this.activeAnnotationPosition = this.cursorPosition;
     this.pauseVideo.emit();
     this.repaintCanvas();
+    this.popOverAnnotationId = annotationId;
   }
 
   activeAnnotationClicked(id: string) {
@@ -236,53 +236,7 @@ export class VideoRenderingOverlayComponent implements AfterViewChecked {
 
   closeAnnotation() {
     this.activeAnnotations = [];
+    this.popOverAnnotationId = null;
     this.repaintCanvas();
-  }
-
-  mouseMovedOnVideo(event: MouseEvent) {
-    console.log(event.clientX, event.clientY);
-    const boundingRect = this.boundingRect;
-
-
-    if (!this.videoWidth || !this.videoHeight || !boundingRect) return;
-
-    const {isInsideVideo, xRatio, yRatio, xPosition, yPosition} = calculateMousePositionInVideo(
-      event.clientX,
-      event.clientY,
-      boundingRect,
-      this.videoWidth,
-      this.videoHeight,
-    );
-
-    if (!isInsideVideo) {
-      this.cursorPositionInVideo = undefined;
-      this.cursorPosition = undefined;
-      return;
-    }
-
-    this.cursorPositionInVideo = [xRatio, yRatio];
-    this.cursorPosition = [xPosition, yPosition];
-  }
-
-  addMouseMoveEventListener() {
-    // create an overlay element that covers the player element
-    const overlay = document.createElement('div');
-    overlay.style.position = 'absolute';
-    overlay.style.top = '0';
-    overlay.style.left = '0';
-    overlay.style.width = '100%';
-    overlay.style.height = '100%';
-    overlay.style.background = 'red';
-    overlay.style.pointerEvents = 'auto'
-    overlay.style.zIndex = '1';
-
-
-    // add the overlay element to the video container
-    const videoContainer = document.querySelector('.canvas');
-    videoContainer.appendChild(overlay);
-
-
-    // add a mousemove listener to the child element
-    videoContainer.addEventListener('mousemove', this.mouseMovedOnVideo.bind(this));
-  }
+  }  
 }
