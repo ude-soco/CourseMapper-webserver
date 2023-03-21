@@ -17,7 +17,8 @@ export class SidebarComponent implements OnInit {
   courses: Course[] = [];
   channels: Channel[] = [];
   channel: Channel;
-  public routerLinkVariable = "/landingPage";
+  public LandingPage = "/landingPage";
+  public HomePage="/home"
   selectedCourse: Course = new CourseImp('', '');
   displayAddCourseDialogue: boolean = false;
 

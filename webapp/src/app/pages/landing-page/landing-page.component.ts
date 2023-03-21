@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { Course } from 'src/app/models/Course';
 import { CourseService } from 'src/app/services/course.service';
+import { StorageService } from 'src/app/services/storage.service';
 
 @Component({
   selector: 'app-landing-page',
@@ -12,9 +14,23 @@ export class LandingPageComponent {
   courses: Array<Course> ;
   value1=""
   updatedCourses: any;
-  constructor( private courseService: CourseService){}
+  currentUser: {} | undefined;
+  isloggedin: boolean = false;
+  hideImg:boolean=false;
+  username?: string;
+  constructor( private storageService: StorageService,private courseService: CourseService, private router: Router){}
   
   ngOnInit(){
+    // this.currentUser = this.storageService.getUser();
+    this.isloggedin = this.storageService.isLoggedIn();
+
+      // const user = this.storageService.getUser();
+
+      // this.username = user.username;
+       console.log("this.username landing page")
+      console.log(this.isloggedin)
+      
+    
     this.getAllCourses();
   }
   
@@ -34,7 +50,7 @@ export class LandingPageComponent {
     
  this.updatedCourses = this.courses.find(obj => obj.name === this.value1);
   //updatedCourses=coursesList
-    
+    //this.hideImg=true
     console.log(this.updatedCourses);
     
     

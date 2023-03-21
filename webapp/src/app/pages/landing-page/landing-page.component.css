@@ -6,7 +6,7 @@
     font-family: Arial;
     margin-left:10rem ; width: 103rem; border-radius:14px;
     top: 2rem;
-    margin-bottom: 10rem;
+    margin-bottom: 5rem;
    
    
   }
@@ -67,6 +67,12 @@ padding-right: 20px;
     right: 40%;
     
   }
+  div.bottom-right1 {
+    
+    bottom: -1.75rem;
+    right: 40%;
+    
+  }
   .search{
     width:30rem;
   }
@@ -84,11 +90,16 @@ search-results hr{
         
     }
     search-results p{
-        margin:10px 0px
+        margin:5px 0px
     }
-    .course-card{
+.course-card{
       float: left;
 left:1rem;
 width: 22rem;;
 margin: 1REM;
+    }
+    .course-div{
+      margin-left:9rem;
+       overflow: scroll;
+      height: 35rem; 
     }

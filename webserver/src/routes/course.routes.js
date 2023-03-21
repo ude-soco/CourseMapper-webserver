@@ -11,7 +11,8 @@ module.exports = function (app) {
 
   // Get all courses
   // app.get("/courses",  controller.getAllCourses);
-  app.get("/courses", [authJwt.verifyToken], controller.getAllCourses);
+  //app.get("/courses", [authJwt.verifyToken], controller.getAllCourses);
+  app.get("/courses",  controller.getAllCourses);
 
   // Get all courses the user is enrolled in
   // app.get("/my-courses",  controller.getMyCourses);
