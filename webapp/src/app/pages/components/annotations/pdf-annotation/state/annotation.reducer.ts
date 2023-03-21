@@ -189,6 +189,8 @@ export const annotationReducer = createReducer<AnnotationState>(
         isAnnotationPosted: true,
         isAnnotationCanceled: false,
         createAnnotationFromPanel: true,
+        selectedTool: PdfToolType.None,
+        showDrawBoxTools: false
       };
     }
   ),
