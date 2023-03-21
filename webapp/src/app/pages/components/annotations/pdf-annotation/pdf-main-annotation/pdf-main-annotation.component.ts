@@ -191,7 +191,6 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
 
   pagechanging(e: any) {
     this.store.dispatch(AnnotationActions.setCurrentPdfPage({pdfCurrentPage: e.first + 1}));
-    //this.pageRendered(e);
     this.selectedNoteId = null;
   }
 
@@ -224,9 +223,10 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
     const drawBoxs = annotations.filter((n: any) => n?.tool?.type === 'drawing');
     if(drawBoxs.length > 0) {
       drawBoxs.forEach((element) => {
+        let rect = (element.tool as PdfAnnotationTool).rect
         const updatedElement = {
           ...element,
-          tool: { ...element.tool, rect: {...element.tool.rect, _id: element._id }},
+          tool: { ...element.tool, rect: {...rect, _id: element._id }},
         };
         this.drawBoxObjectList.push(updatedElement.tool.rect);
       });
@@ -573,7 +573,6 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
       }
       if(event.type === 'mouseup' && this.selectedTool == PdfToolType.DrawBox){
         this.mouseDownFlag = false;
-        localStorage.setItem('mouseDownFlag', JSON.stringify(this.mouseDownFlag));
         if (this.drawingRect.height > 0 && this.drawingRect.width > 0) {
           this.confirm(this.drawElement);
         }
@@ -695,12 +694,9 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
       const eventPath = path!.find((p: { className: string; }) => p.className === 'page');
   
       if (typeof eventPath !== 'undefined') {
-        this.dataPageNumber = +eventPath.getAttribute('data-page-number'); // get id of page
+        this.dataPageNumber = +eventPath.getAttribute('data-page-number');
   
         const toDrawRectangle = document.getElementsByClassName('to-draw-rectangle');
-  
-        //if show all page == true get the list of element with classname and get the element on page index
-        //const pageOffset = toDrawRectangle[this.dataPageNumber - 1].getBoundingClientRect();
   
         const pageOffset = toDrawRectangle[0].getBoundingClientRect();
         this.pagePosition = {
@@ -739,7 +735,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
         x: event.clientX - this.pagePosition.x,
         y: event.clientY - this.pagePosition.y
       };
-      if (localStorage.getItem('mouseDownFlag')) {
+      if (this.mouseDownFlag) {
         const width = this.mousePosition.x - this.lastMousePosition.x;
         const height = this.mousePosition.y - this.lastMousePosition.y;
         this.drawingRect = {
@@ -757,11 +753,6 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
           this.drawElement.style.width = width + 'px';
           this.drawElement.style.height = height + 'px';
           if (this.drawingRect.width > 0 && this.drawingRect.height > 0) {
-  
-            //If we get the collection of all element with classname= to-draw-rectangle then should draw on the specific one on the currentpage with the code beow
-            //document.getElementsByClassName('to-draw-rectangle')[this.dataPageNumber! - 1].appendChild(this.element);
-  
-            //actualy we don't render all the pdf pages one time. ShowAll=false
             document.getElementsByClassName('to-draw-rectangle')[0].appendChild(this.drawElement);
           }
         }
@@ -809,7 +800,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
         };
         break;
     }
-    this.store.dispatch(AnnotationActions.setShowDrawBoxTools({show: false}));
+
     this.showPopup = false;
     var location: PdfGeneralAnnotationLocation = {
       type: 'Current Page',
@@ -900,6 +891,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
         createAnnotationFromPanel: true,
       })
     );
+    this.store.dispatch(AnnotationActions.setShowDrawBoxTools({show: false}));
   }
 
   searchQueryChangedNext(searchQuery: string) {

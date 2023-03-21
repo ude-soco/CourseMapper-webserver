@@ -92,7 +92,7 @@ registerLocaleData(en);
         ToastModule,
         RippleModule,
         ConfirmDialogModule,
-        StoreModule.forRoot({}, {metaReducers}),
+        StoreModule.forRoot({}, {}),
         AnnotationModule,
         MaterialsModule,
         EffectsModule.forRoot([]),

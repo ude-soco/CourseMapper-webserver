@@ -71,6 +71,7 @@ export class MaterialComponent implements OnInit, OnDestroy {
       this.channels.push(this.selectedChannel);
       this.selectedMaterial = foundChannel.materials.find(material => material._id == materialId);
       this.tabIndex = foundChannel.materials.findIndex(material => material._id == materialId) + 1;
+      this.store.dispatch(MaterialActions.toggleChannelSelected({channelSelected: true}));
       this.updateSelectedMaterial();
     });
   }
@@ -187,6 +188,9 @@ export class MaterialComponent implements OnInit, OnDestroy {
 
       default:
     }
+    this.store.dispatch(MaterialActions.setCurrentMaterial({ selcetedMaterial: this.selectedMaterial }));
+    this.store.dispatch(MaterialActions.setMaterialId({ materialId: this.selectedMaterial._id }));
+    this.store.dispatch(AnnotationActions.loadAnnotations());
   }
 
   deleteMaterial(e) {

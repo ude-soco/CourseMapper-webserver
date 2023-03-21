@@ -24,6 +24,8 @@ import { RouterModule } from '@angular/router';
 import { VideoAnnotationToolbarComponent } from './video-annotation/video-annotation-toolbar/video-annotation-toolbar.component';
 import { VideoCreateAnnotationComponent } from './video-annotation/video-create-annotation/video-create-annotation.component';
 import { VideoDrawingOverlayComponent } from './video-annotation/video-drawing-overlay/video-drawing-overlay.component';
+import { VideoRenderingOverlayComponent } from './video-annotation/video-rendering-overlay/video-rendering-overlay.component';
+import { VideoAnnotationSummaryComponent } from './video-annotation/video-annotation-summary/video-annotation-summary.component';
 
 @NgModule({
     declarations: [
@@ -40,6 +42,8 @@ import { VideoDrawingOverlayComponent } from './video-annotation/video-drawing-o
         VideoAnnotationToolbarComponent,
         VideoCreateAnnotationComponent,
         VideoDrawingOverlayComponent,
+        VideoRenderingOverlayComponent,
+        VideoAnnotationSummaryComponent,
     ],
     exports: [
         PdfAnnotationToolbarComponent,

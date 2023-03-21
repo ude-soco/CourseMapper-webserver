@@ -1,0 +1,18 @@
+.annotation-click-zone {
+    position: absolute;
+    z-index: 20;
+    border-radius: 5px;
+    pointer-events: all;
+    width: 10px;
+    height: 10px;
+  }
+  
+  .annotation-background {
+    position: absolute;
+    z-index: 25;
+    pointer-events: all;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+  }

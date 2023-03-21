@@ -1,4 +1,4 @@
-import { AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, Subscriber, Subscription } from 'rxjs';
 import { DrawingData } from 'src/app/models/Drawing';
@@ -6,8 +6,13 @@ import { Material } from 'src/app/models/Material';
 import { PdfviewService } from 'src/app/services/pdfview.service';
 import { environment } from 'src/environments/environment';
 import { getCurrentMaterial, getCurrentMaterialId } from '../../../materils/state/materials.reducer';
-import { getIsBrushSelectionActive, getIsVideoPaused, getIsVideoPlayed, State } from '../state/video.reducer';
+import { getIsAnnotationCreationCanceled, getIsAnnotationDialogVisible, getIsBrushSelectionActive, getIsPinpointSelectionActive, getIsVideoPaused, getIsVideoPlayed, getShowAnnotations, State } from '../state/video.reducer';
 import * as VideoActions from '../state/video.action'
+import { calculateMousePositionInVideo } from 'src/app/_helpers/video-helper';
+import { Socket } from 'ngx-socket-io';
+import { Annotation } from 'src/app/models/Annotations';
+import { Reply } from 'src/app/models/Reply';
+import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions'
 
 
 
@@ -20,6 +25,7 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
 
   @ViewChild('YouTubePlayerArea') YouTubePlayerArea: ElementRef<HTMLDivElement>;
   @ViewChild('video', { static: false }) videoPlayer: ElementRef<HTMLVideoElement>;
+  YouTubeTimeUpdateInterval?: number;
   apiLoaded = false;
   materilaId: string;
   material: Material;
@@ -32,26 +38,28 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
   videoWidth: number;
   videoHeight: number;
   boundingRect: DOMRect;
-  isPinpointSelectionActive: boolean = false;
+  isPinpointSelectionActive$: Observable<boolean>;
   isBrushSelectionActive: boolean = false;
   drawingData?: DrawingData;
   pintpointCoordinates?: [number, number]
-  pintpointPosition?: [number, number]
+  pinpointPosition?: [number, number]
+  showAnnotations$: Observable<boolean>;
+  cursorPositionInVideo?: [number, number];
+  cursorPosition?: [number, number];
+  videoIsPlaying$: Observable<boolean>;
+  videoIsPaused$: Observable<boolean>;
+  cursorisInsideVideo: boolean;
 
-  constructor(private store: Store<State>, private pdfViewService: PdfviewService, private changeDetectorRef: ChangeDetectorRef) {
+  constructor(private store: Store<State>, private pdfViewService: PdfviewService, private changeDetectorRef: ChangeDetectorRef, private socket: Socket) {
     this.store.select(getIsBrushSelectionActive).subscribe((isActive) => this.isBrushSelectionActive = isActive);
-    this.store.select(getIsVideoPlayed).subscribe((isPlayed) => {
-      if(isPlayed){
-        this.playVideo();
-      }
-    });
-    this.store.select(getIsVideoPaused).subscribe((isPaused) => {
-      if(isPaused){
-        this.pauseVideo();
-      }
-    });
+    this.isPinpointSelectionActive$ = this.store.select(getIsPinpointSelectionActive);
+    this.isAnnotationDialogVisible$ = this.store.select(getIsAnnotationDialogVisible);
+    this.store.select(getIsAnnotationCreationCanceled).subscribe((isCanceled) => {if(isCanceled) this.cancelSelection()});
+    this.showAnnotations$ = this.store.select(getShowAnnotations);
+    this.videoIsPlaying$ = this.store.select(getIsVideoPlayed);
+    this.videoIsPaused$ = this.store.select(getIsVideoPaused);
   }
-  
+
   ngAfterViewChecked(): void {
     if(this.youtubeactivated){
       this.boundingRect = this.YouTubePlayerArea?.nativeElement.getBoundingClientRect();
@@ -78,6 +86,10 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
         this.materilaId = material._id;
         this.getVideoUrl();
       }
+    })
+    this.socket.on(this.material._id, (payload: { eventType: string, annotation: Annotation, reply: Reply }) => {
+      console.log('payload = ', payload)
+        this.store.dispatch(AnnotationActions.updateAnnotationsOnSocketEmit({payload: payload}));
     })
     this.subscriptions.push(materialSubscriper);
     if (!this.apiLoaded) {
@@ -106,7 +118,6 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
 
   saveYouTubePlayer(player) {
     this.YouTubePlayer = player.target;
-    console.log("player instance", player);
 
     const iframe = player.target.h
     iframe.style.width = "100%";
@@ -116,10 +127,51 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
     this.boundingRect = this.YouTubePlayerArea?.nativeElement.getBoundingClientRect();
     this.videoWidth = this.boundingRect.width;
     this.videoHeight = this.boundingRect.height;
+
+    this.store.dispatch(VideoActions.SetVideoDuration({videoDuration: Math.floor(this.YouTubePlayer.getDuration())}));
+
+    let currentTime = -1;
+
+    this.YouTubeTimeUpdateInterval = window.setInterval(() => {
+      if (!this.YouTubePlayer?.getCurrentTime) return;
+
+      const time = this.YouTubePlayer.getCurrentTime();
+      if (time != currentTime) {
+        this.store.dispatch(VideoActions.SetCurrentTime({currentTime: Math.floor(time)}));
+        currentTime = time;
+      }
+    }, 1000);
+
+    this.addMouseMoveEventListener();
+  }
+
+  addMouseMoveEventListener() {
+    // create an overlay element that covers the player element
+    const overlay = document.createElement('div');
+    overlay.style.position = 'absolute';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100%';
+    overlay.style.height = '94%';
+    overlay.style.background = 'transparent';
+    overlay.style.pointerEvents = 'auto';
+    overlay.className = 'selection-overlay';
+
+
+    // add the overlay element to the video container
+    const videoContainer = document.querySelector('.videoPlayerArea');
+    videoContainer.appendChild(overlay);
+
+
+    overlay.addEventListener('click', this.handleClickOnYouTubeOverlay.bind(this));
   }
 
   onYouTubePlayerStateChange(event) {
-    console.log("player state", event.data);
+    if(event.data === 1){
+      this.store.dispatch(VideoActions.PlayVideo());
+    }else if(event.data === 2){
+      this.store.dispatch(VideoActions.PauseVideo());
+    }
   }
 
   extractIdFromLink(link: string): string {
@@ -130,19 +182,52 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
 
   playVideo() {
     if(this.youtubeactivated){
+      if(this.YouTubePlayer?.getPlayerState() === YT.PlayerState.PLAYING)
+      return;
+
       this.YouTubePlayer.playVideo();
     }else{
+      if(this.videoPlayer.nativeElement.paused)
       this.videoPlayer.nativeElement.play();
     }
   }
 
   pauseVideo() {
     if(this.youtubeactivated){
-      this.YouTubePlayer.pauseVideo();
+      if(this.YouTubePlayer?.getPlayerState() === YT.PlayerState.PLAYING){
+        this.YouTubePlayer.pauseVideo()
+        return;
+      }
     }else{
+      if(this.videoPlayer.nativeElement.paused)
+      return;
+
       this.videoPlayer?.nativeElement.pause();
-      console.log(this.videoPlayer?.nativeElement.currentTime.toFixed(2));
     }
+  }
+
+  seekVideo(time: number){
+    if(this.youtubeactivated){
+      this.YouTubePlayer.seekTo(time, true);
+    }else{
+      this.videoPlayer.nativeElement.currentTime = time;
+    }
+  }
+
+  videoPlayed() {
+    this.store.dispatch(VideoActions.PlayVideo());
+  }
+
+  videoPaused() {
+    this.store.dispatch(VideoActions.PauseVideo());
+  }
+
+  videoPlayerTimeChanged(event: any){
+    this.store.dispatch(VideoActions.SetCurrentTime({currentTime: Math.floor((event.target! as HTMLVideoElement).currentTime)}));
+  }
+
+  videoPlayerReady(event: any){
+    this.store.dispatch(VideoActions.SetVideoDuration({videoDuration: Math.floor(this.videoPlayer?.nativeElement.duration)}));
   }
 
   drawingChanged(drawings: DrawingData) {
@@ -156,21 +241,83 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
       window.alert("You must have at least 1 drawing");
       return;
     }
-
+    this.store.dispatch(VideoActions.SetDrawingData({drawingData: this.drawingData}));
     this.showAnnotationDialog();
-
-    this.store.dispatch(VideoActions.setIsBrushSelectionActive({isBrushSelectionActive: false}));
   }
 
   cancelSelection() {
     this.store.dispatch(VideoActions.setIsBrushSelectionActive({isBrushSelectionActive: false}));
-    this.isPinpointSelectionActive = false;
+    this.store.dispatch(VideoActions.setIsPinpointSelectionActive({isPinpointSelectionActive: false}));
+    this.store.dispatch(VideoActions.SetIsAnnotationCreationCanceled({isAnnotationCreationCanceled: false}));
     this.drawingData = undefined;
     this.pintpointCoordinates = undefined;
-    this.pintpointPosition = undefined;
+    this.pinpointPosition = undefined;
   }
 
   showAnnotationDialog(){
+    this.store.dispatch(VideoActions.SetIsAnnotationDialogVisible({isAnnotationDialogVisible: true}));
+  }
 
+  setPintpointPosition(event: MouseEvent){
+    let boundingRect;
+    if(this.youtubeactivated){
+      boundingRect = this.YouTubePlayerArea?.nativeElement.getBoundingClientRect();
+    }
+    else{
+      boundingRect = this.videoPlayer?.nativeElement.getBoundingClientRect();
+    }
+
+    if (!this.videoWidth || !this.videoHeight || !boundingRect) return;
+
+    const {isInsideVideo, xRatio, yRatio, xPosition, yPosition} = calculateMousePositionInVideo(
+      event.clientX,
+      event.clientY,
+      boundingRect,
+      this.videoWidth,
+      this.videoHeight,
+    );
+
+    if (!isInsideVideo) return;
+
+    this.pintpointCoordinates = [xRatio, yRatio];
+    this.pinpointPosition = [xPosition, yPosition];
+
+    this.store.dispatch(VideoActions.SetPinPointPosition({pinpointPosition: this.pinpointPosition}));
+    this.showAnnotationDialog();
+  }
+
+  @HostListener('document:mousemove', ['$event']) 
+  mouseMovedOnVideo(event: MouseEvent) {
+    const boundingRect = this.boundingRect;
+
+
+    if (!this.videoWidth || !this.videoHeight || !boundingRect) return;
+
+    const {isInsideVideo, xRatio, yRatio, xPosition, yPosition} = calculateMousePositionInVideo(
+      event.clientX,
+      event.clientY,
+      boundingRect,
+      this.videoWidth,
+      this.videoHeight,
+    );
+
+    this.cursorisInsideVideo = isInsideVideo;
+
+    if (!isInsideVideo) {
+      return;
+    }
+
+    this.cursorPositionInVideo = [xRatio, yRatio];
+    this.cursorPosition = [xPosition, yPosition];
+  }
+
+  handleClickOnYouTubeOverlay(){
+    if(this.YouTubePlayer?.getPlayerState() === YT.PlayerState.PLAYING){
+      this.pauseVideo();
+    }else if(this.YouTubePlayer?.getPlayerState() === YT.PlayerState.PAUSED){
+      this.playVideo();
+    }else{
+      this.playVideo();
+    }
   }
 }

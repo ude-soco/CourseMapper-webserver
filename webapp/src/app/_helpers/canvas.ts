@@ -143,33 +143,39 @@ export function isPointInDrawing(pointXRatio: number, pointYRatio: number, drawi
 }
 
 export function paintPin(xRatio: number, yRatio: number, ctx: CanvasRenderingContext2D, startX: number, videoBoundingRect: DOMRect) {
-    let p = new Path2D("M16,12V4H17V2H7V4H8V12L6,14V16H11.2V22H12.8V16H18V14L16,12Z");
-
+    let p = new Path2D("m12 22 1-2v-3h5a1 1 0 0 0 1-1v-1.586c0-.526-.214-1.042-.586-1.414L17 11.586V8a1 1 0 0 0 1-1V4c0-1.103-.897-2-2-2H8c-1.103 0-2 .897-2 2v3a1 1 0 0 0 1 1v3.586L5.586 13A2.01 2.01 0 0 0 5 14.414V16a1 1 0 0 0 1 1h5v3l1 2zM8 4h8v2H8V4zM7 14.414l1.707-1.707A.996.996 0 0 0 9 12V8h6v4c0 .266.105.52.293.707L17 14.414V15H7v-.586z");
     const x = ((videoBoundingRect?.width || 0) - startX * 2) * xRatio + startX;
     const y = (videoBoundingRect?.height || 0) * yRatio;
 
+
     ctx.fillStyle = "#000";
-    ctx.translate(x - 18, y - 24);
+    ctx.translate(xRatio - 18, yRatio - 24);
     ctx.scale(1.5, 1.3);
     ctx.fill(p);
     ctx.resetTransform();
 
     ctx.fillStyle = "#fff";
-    ctx.translate(x - 12, y - 22);
+    ctx.translate(xRatio - 12, yRatio - 22);
     ctx.fill(p);
     ctx.resetTransform();
+
 }
 
 export function isPointInPin(pointXRatio: number, pointYRatio: number, xRatio: number, yRatio: number, startX: number, videoBoundingRect: DOMRect) {
     const x = ((videoBoundingRect?.width || 0) - startX * 2) * xRatio + startX;
     const y = (videoBoundingRect?.height || 0) * yRatio;
 
+    // console.log('pointRation: ', pointXRatio, pointYRatio);
+    // console.log('Ratio: ', xRatio, yRatio);
+    // console.log('x, y: ', x, y);
+
     const xa = ((videoBoundingRect?.width || 0) - startX * 2) * pointXRatio + startX;
     const ya = (videoBoundingRect?.height || 0) * pointYRatio;
 
-    if (xa > x - 18 && xa < x + 18 && ya > y - 24 && ya < y) {
+    // console.log('xa, ya: ', xa, ya);
+
+    if (xa > xRatio - 18 && xa < xRatio + 18 && ya > yRatio - 24 && ya < yRatio) {
         return true;
     }
-
     return false;
 }
