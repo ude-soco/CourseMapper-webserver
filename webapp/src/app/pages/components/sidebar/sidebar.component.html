@@ -1,7 +1,7 @@
   <div class="z-0 w-20 bg-white h-screen text-white shadow-lg">
     <div class="h-max w-20 flex flex-col  ">
       <div class="sidebar-icon group">
-        <a [routerLink]="[routerLinkVariable]"> 
+        <a [routerLink]="[HomePage]"> 
         <i class="bx bx-home bx-md bx-tada-hover"></i>
         <span class="sidebar-tooltip group-hover:scale-100"> Home </span></a>
       </div>
@@ -24,10 +24,11 @@
       </div>
   
       <div class="sidebar-icon group">
+        <a [routerLink]="[LandingPage]"> 
         <i class="bx bx-search bx-md bx-tada-hover"></i>
         <span class="sidebar-tooltip group-hover:scale-100">
           Search for courses
-        </span>
+        </span></a>
       </div>
     </div>
     <app-add-course [displayAddCourseDialogue]="displayAddCourseDialogue"

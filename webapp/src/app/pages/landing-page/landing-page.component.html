@@ -1,27 +1,38 @@
 
+<div class="flex flex-row">
+  <div class="flex-col" *ngIf="isloggedin">
+    <app-sidebar></app-sidebar>
+  </div>
 
 <div>
     <div class="img-div">
+      <div  *ngIf="value1  == '' "   >
         <img alt="Card" src="https://source.unsplash.com/user/c_v_r/1900x800" class="img">
     
         <div class="transbox">
             <h1>CourseMapper</h1>
             <p>Collaboration, annotation and analytics platform</p>
           </div>
-          <div class="bottom-right">
-    
+        </div>
+
+          <div [ngClass]="{'bottom-right': value1  == '', 'bottom-right1' : value1  != '' }">
+           
             <span class="p-input-icon-left">
                 <i class="pi pi-search" ></i>
-                <input type="text" pInputText [(ngModel)]="value1" placeholder="Search for courses ..." class="search" >         
+                <input type="text" pInputText [(ngModel)]="value1" placeholder="Search for courses ..." class="search" >     
+                <div *ngIf="value1  != '' " class="bottom-right1">
+                 <p> Showing results for {{value1}} </p> 
+                </div>    
             </span>
     
-            
+           
         </div>
+
     </div>
     
     
     
-    <div  style="margin-left:9rem;  " >
+    <div  class="course-div" >
     <div *ngFor="let course of courses"  >
     <div *ngIf="value1=== '' || course.name.toLowerCase().includes(value1)">
     
@@ -50,6 +61,7 @@
     </div>
     </div>
     </div>
+  </div>
     <!-- <div class="row">
         <div class="column" style="background-color:#aaa;">
           <h2>Column 1</h2>
