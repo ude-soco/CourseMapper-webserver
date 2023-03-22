@@ -504,19 +504,30 @@ export const deleteCourse = async (req, res, next) => {
     return res.status(500).send({ error: err });
   }
 
-  let foundUser;
+let foundUsers;
+try {
+  foundUsers = await User.find();
+} catch (err) {
+  return res.status(500).send({ error: err });
+}
+
+foundUsers.forEach((user) => {
+  user.courses = user.courses.filter(
+    (course) => course.courseId.valueOf() !== courseId
+  );
+});
+
+foundUsers.forEach(async (user) => {
   try {
-    foundUser = await User.findOne({ _id: req.userId });
+    await user.save();
   } catch (err) {
     return res.status(500).send({ error: err });
   }
+});
 
-  foundUser.courses = foundUser.courses.filter(
-    (course) => course.courseId.valueOf() !== courseId
-  );
-
+  let foundUser;
   try {
-    await foundUser.save();
+    foundUser = await User.findOne({ _id: req.userId });
   } catch (err) {
     return res.status(500).send({ error: err });
   }
