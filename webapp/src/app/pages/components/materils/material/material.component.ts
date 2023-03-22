@@ -10,7 +10,6 @@ import {
 } from '@angular/core';
 import { Channel } from 'src/app/models/Channel';
 import { TopicChannelService } from 'src/app/services/topic-channel.service';
-import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { ElementRef, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Material } from 'src/app/models/Material';
