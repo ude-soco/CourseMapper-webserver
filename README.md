@@ -8,6 +8,14 @@
 CourseMapper is a collaborative course annotation and analytics platform that fosters collaboration and interaction around pdf/video learning materials, supported by visual learning analytics.
 </p>
 
+## Build and run all services
+
+* `make up` (or `docker compose up`) to run the application
+* `make tilt` to automatically rebuild/restart containers during development
+* `make dev` to run processes in containers, but mount source code from host machine
+* see the manual below to install dependencies and run processes w/o containers
+
+
 ## 🚀 Get Started
 
 ### Manual Installation Guide 🔨
