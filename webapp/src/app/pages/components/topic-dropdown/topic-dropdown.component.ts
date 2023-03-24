@@ -33,6 +33,7 @@ export class TopicDropdownComponent implements OnInit {
   displayAddChannelDialogue: boolean = false;
   selectedTopic = null;
   selectedChannel = null;
+  selectedChannelId = null;
   editable: boolean = false;
   escapeKey: boolean = false;
   enterKey: boolean = false;

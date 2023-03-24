@@ -6,3 +6,10 @@
   background-color: lightblue;
   color: white;
 }
+:host ::ng-deep .p-toast {
+  width: 23%;
+  font-size: 15px;
+}
+:host ::ng-deep .p-toast-icon {
+  font-size: 15px;
+}

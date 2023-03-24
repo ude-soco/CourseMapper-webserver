@@ -1,5 +1,5 @@
 <!-- Topics -->
-<p-toast></p-toast>
+<p-toast position="bottom-left"></p-toast>
 
 <p-confirmDialog></p-confirmDialog>
 
@@ -35,7 +35,22 @@
       *ngFor="let channel of topic.channels; let i = index"
       [attr.data-index]="i"
     >
-      <div  class="flex flex-row items-center justify-between">
+      <div *ngIf="channel._id!=selectedChannelId" class="flex flex-row items-center justify-between">
+        <p id="{{channel._id}}" 
+        
+        (click)="onSelectChannel(channel)"
+        (keydown)="onTextInsertedChannel(selectedChannel._id,$event)"
+        (keyup)="afterTextInsertedChennel(selectedChannel._id,$event)"
+        class="cursor-pointer w-full">#{{ channel.name }}</p>
+        <app-iconbutton
+          icon="bx-dots-vertical-rounded"
+          color="text-black"
+          (click)="selectedChannel = channel; menu.toggle($event)"
+        ></app-iconbutton>
+        <p-menu #menu id="config_menu" [model]="channelsOptions" [popup]="true" appendTo="body"></p-menu>
+        
+      </div>
+      <div *ngIf="channel._id==selectedChannelId"  class="flex flex-row items-center justify-between bg-gray-200">
         <p id="{{channel._id}}" 
         
         (click)="onSelectChannel(channel)"
@@ -63,6 +78,8 @@
       </div>
     </div>
   </div>
+
+  
 </div>
 
 </div>
