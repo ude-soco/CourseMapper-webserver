@@ -12,19 +12,19 @@
       <label for="float-input">Username</label>
     </div>
 
-    <p-password class="p-float-label"
-      [(ngModel)]="form.password"
-      [toggleMask]="true"
-      [feedback]="false"
-      [style]="{ width: '100%' }"
-      class="mb-4"
-    ></p-password>
+    <span class="p-float-label">
+      <p-password [(ngModel)]="form.password"      [toggleMask]="true"
+      [feedback]="false" [style]="{ width: '100%' }" class="mb-4"></p-password>
+      <label for="password">Password</label>
+  </span>
+  
+   
 
    
   
     <button
       pButton
-      [ngStyle]="{ backgroundColor: '#EA580C' , width: '100%'}"
+      [ngStyle]="{ backgroundColor: '#EA580C' , width: '100%',    margin: '1rem 0rem'}"
       type="button"
       label="Login"
       (click)="onSubmit()"
