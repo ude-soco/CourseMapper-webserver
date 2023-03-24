@@ -24,6 +24,8 @@ services:
       - MONGO_DB=mongodb://mongo:27017/coursemapper
     ports:
       - "8080:8080"
+    volumes:
+      - webserver-uploads:/app/public/uploads
     depends_on:
       mongo:
         condition: service_healthy
