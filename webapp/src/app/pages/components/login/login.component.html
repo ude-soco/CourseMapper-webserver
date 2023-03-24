@@ -7,16 +7,16 @@
         type="text"
         pInputText
         [(ngModel)]="form.username"
-        [style]="{ width: '87%' }"
+        [style]="{ width: '100%' }"
       />
       <label for="float-input">Username</label>
     </div>
 
     <p-password class="p-float-label"
       [(ngModel)]="form.password"
-      [toggleMask]="false"
+      [toggleMask]="true"
       [feedback]="false"
-      [style]="{ width: '140%' }"
+      [style]="{ width: '100%' }"
       class="mb-4"
     ></p-password>
 
@@ -24,7 +24,7 @@
   
     <button
       pButton
-      [ngStyle]="{ backgroundColor: '#EA580C' , width: '87%'}"
+      [ngStyle]="{ backgroundColor: '#EA580C' , width: '100%'}"
       type="button"
       label="Login"
       (click)="onSubmit()"
