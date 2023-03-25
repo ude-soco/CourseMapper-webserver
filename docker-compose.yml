@@ -42,3 +42,4 @@ services:
 
 volumes:
   mongo:
+  webserver-uploads:
