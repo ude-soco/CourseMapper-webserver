@@ -2,7 +2,6 @@
 <div
   class="relative contain bg-gray-100 shadow-lg"
   *ngIf="selectedChannel?.materials"
-
 >
   <div class="h-max m-0 flex flex-col bg-gray-100">
     <div class="flex items-start justify-between py-4 pl-3 bg-gray-200">
@@ -43,7 +42,7 @@
     <ng-container *ngIf="this.materials.length > 0">
       <p-tabPanel
         *ngFor="let material of materials; let i = index"
-        [closable]="true"
+        [closable]="false"
       >
         <ng-template pTemplate="header" *ngIf="material.type == 'pdf'">
           <app-iconbutton
@@ -51,8 +50,13 @@
             color="text-blue-500"
           ></app-iconbutton>
           <span>{{ material.name }}</span>
+          <p-menu #materialMenu id="material_menu" [model]="materialOptions" [popup]="true" appendTo="body"></p-menu>
+          <app-iconbutton style="z-index: 1;"
+            icon="bx-dots-vertical-rounded"
+            color="text-blue-500"
+            (click)="selectedMaterial= material ; materialMenu.toggle($event)"
+            ></app-iconbutton>
         </ng-template>
-      
 
         <ng-template pTemplate="header" *ngIf="material.type == 'video'">
           <app-iconbutton
@@ -60,12 +64,16 @@
             color="text-blue-500"
           ></app-iconbutton>
           <span>{{ material.name }}</span>
+          <p-menu #materialMenu id="material_menu" [model]="materialOptions" [popup]="true" appendTo="body"></p-menu>
+          <app-iconbutton style="z-index: 1;"
+            icon="bx-dots-vertical-rounded"
+            color="text-blue-500"
+            (click)="selectedMaterial= material ; materialMenu.toggle($event)"
+            ></app-iconbutton>
         </ng-template>
-       
       </p-tabPanel>
 
-      <router-outlet name='material'></router-outlet>
-
+      <router-outlet name="material"></router-outlet>
     </ng-container>
   </p-tabView>
 </div>

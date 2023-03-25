@@ -12,6 +12,7 @@ import { SharedComponentsModule } from 'src/app/components/shared-components.mod
 import { RouterModule } from '@angular/router';
 import { PdfMainAnnotationComponent } from '../annotations/pdf-annotation/pdf-main-annotation/pdf-main-annotation.component';
 import { ToastModule } from 'primeng/toast';
+import {MenuModule} from 'primeng/menu';
 
 
 
@@ -29,6 +30,7 @@ import { ToastModule } from 'primeng/toast';
     ToastModule,
     ReactiveFormsModule,
     SharedComponentsModule,
+    MenuModule,
     StoreModule.forFeature('material', materialReducer),
     RouterModule.forChild([
       {

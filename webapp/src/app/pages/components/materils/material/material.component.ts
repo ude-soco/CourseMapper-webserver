@@ -26,7 +26,7 @@ import * as MaterialActions from 'src/app/pages/components/materils/state/materi
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 @Component({
   selector: 'app-material',
   templateUrl: './material.component.html',
@@ -80,6 +80,18 @@ export class MaterialComponent implements OnInit, OnDestroy {
   }
 
   }
+  materialOptions: MenuItem[] = [
+    // {
+    //   label: 'Rename',
+    //   icon: 'pi pi-refresh',
+    //   command: () => this.onRenameMaterial(),
+    // },
+    {
+      label: 'Delete',
+      icon: 'pi pi-times',
+      command: (e) => this.deleteMaterial(e),
+    },
+  ];
   ngOnDestroy(): void {
   }
 
@@ -195,11 +207,13 @@ export class MaterialComponent implements OnInit, OnDestroy {
     this.store.dispatch(MaterialActions.setMaterialId({ materialId: this.selectedMaterial._id }));
     this.store.dispatch(AnnotationActions.loadAnnotations());
   }
-
+  testClicked(){
+    console.log('clicked!!!')
+  }
   deleteMaterial(e) {
     e.index1 = e.index - 1;
 
-    this.selectedMaterial = this.materials[e.index1];
+    // this.selectedMaterial = this.materials[e.index1];
     if (this.selectedMaterial.type == "video" && this.selectedMaterial.url) {
       this.materialService.deleteMaterial(this.selectedMaterial).subscribe({
         next: (data) => {
@@ -209,7 +223,6 @@ export class MaterialComponent implements OnInit, OnDestroy {
             this.selectedMaterial['courseId'],
             'channel',
             this.selectedMaterial['channelId'],
-
           ]);
           e.index = 1
 
