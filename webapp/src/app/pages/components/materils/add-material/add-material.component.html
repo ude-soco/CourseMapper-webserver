@@ -34,7 +34,7 @@
             <label for="file">Choose file</label>
             <p style="margin-left: 1rem; width: 13em; word-wrap: break-word; "  id="file-chosen">No file chosen</p>
         </div>
-        
+
         <!-- <p-fileUpload  #fubauto mode="basic" formControlName="fileUploadForm.file" type="file" name="file" 
         [customUpload]="true"   id="file"  chooseLabel="Browse" 
         (onSelect)="onFileSelect($event)"
@@ -99,7 +99,7 @@
     </div>
     </div>
 
-    <span class="custom-file-label" for="customFile"
+    <span class="custom-file-label" for="customFile" *ngIf="file === null"
       ><span style="color: red" *ngIf="materialType == 'pdf'">* </span>Select
       <span *ngIf="materialType == 'pdf'">Pdf</span
       ><span *ngIf="materialType == 'video'">Video</span> File :
@@ -115,15 +115,14 @@
       Submit
     </button> -->
 
-    <button
-    pButton
-    [ngStyle]="{ backgroundColor: '#EA580C' }"
-    type="button"
-    label="submit"
-    (click)="submitForm()"
-  ></button>
-
-    
+    <div>
+      <button
+        pButton
+        [ngStyle]="{ backgroundColor: '#EA580C' }"
+        type="button"
+        label="submit"
+        (click)="submitForm()"
+      ></button>
+    </div>
   </form>
 </div>
-
