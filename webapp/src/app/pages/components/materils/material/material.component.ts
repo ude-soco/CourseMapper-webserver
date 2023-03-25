@@ -26,10 +26,12 @@ import * as MaterialActions from 'src/app/pages/components/materils/state/materi
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { ConfirmationService, MessageService } from 'primeng/api';
 @Component({
   selector: 'app-material',
   templateUrl: './material.component.html',
   styleUrls: ['./material.component.css'],
+  providers: [MessageService, ConfirmationService],
 })
 export class MaterialComponent implements OnInit, OnDestroy {
   @Output() public channelEmitted = new EventEmitter<any>();
@@ -57,6 +59,7 @@ export class MaterialComponent implements OnInit, OnDestroy {
     private router: Router,
     private store: Store<State>,
     private route: ActivatedRoute,
+    private messageService: MessageService,
   ) {
   const url = this.router.url;
   if(url.includes('course') && url.includes('channel')){
@@ -241,7 +244,7 @@ export class MaterialComponent implements OnInit, OnDestroy {
         ]);
 
         e.index = 1
-
+        this.showInfo('Successfully removed '+this.selectedMaterial.name+'!')
       },
       error: (err) => {
         this.errorMessage = err.error.message;
@@ -255,4 +258,17 @@ export class MaterialComponent implements OnInit, OnDestroy {
       this.router.navigate([currentUrl]);
     });
   }
+
+      /**
+   * @function showInfo
+   * shows the user if his action succeeded
+   *
+   */
+      showInfo(msg) {
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Success',
+          detail: msg,
+        });
+      }
 }

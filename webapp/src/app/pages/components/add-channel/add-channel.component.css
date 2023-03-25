@@ -5,6 +5,6 @@ input.ng-invalid {
   width: 23%;
   font-size: 15px;
 }
-:host ::ng-deep .p-toast-icon {
-  font-size: 15px;
+:host ::ng-deep .p-toast .p-toast-message-icon{
+  font-size: 2em !important;
 }

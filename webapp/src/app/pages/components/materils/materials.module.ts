@@ -11,6 +11,7 @@ import { materialReducer } from './state/materials.reducer';
 import { SharedComponentsModule } from 'src/app/components/shared-components.module';
 import { RouterModule } from '@angular/router';
 import { PdfMainAnnotationComponent } from '../annotations/pdf-annotation/pdf-main-annotation/pdf-main-annotation.component';
+import { ToastModule } from 'primeng/toast';
 
 
 
@@ -25,6 +26,7 @@ import { PdfMainAnnotationComponent } from '../annotations/pdf-annotation/pdf-ma
     AnnotationModule,
     PdfViewerModule,
     FormsModule,
+    ToastModule,
     ReactiveFormsModule,
     SharedComponentsModule,
     StoreModule.forFeature('material', materialReducer),
