@@ -257,7 +257,7 @@ export class MaterialComponent implements OnInit, OnDestroy {
         ]);
 
         e.index = 1
-        this.showInfo('Successfully removed '+this.selectedMaterial.name+'!')
+        this.showInfo('Successfully removed "'+this.selectedMaterial.name+'"!')
       },
       error: (err) => {
         this.errorMessage = err.error.message;
