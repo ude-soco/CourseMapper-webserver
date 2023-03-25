@@ -60,6 +60,7 @@ export class MaterialComponent implements OnInit, OnDestroy {
     private store: Store<State>,
     private route: ActivatedRoute,
     private messageService: MessageService,
+    private confirmationService: ConfirmationService,
   ) {
   const url = this.router.url;
   if(url.includes('course') && url.includes('channel')){
@@ -89,7 +90,7 @@ export class MaterialComponent implements OnInit, OnDestroy {
     {
       label: 'Delete',
       icon: 'pi pi-times',
-      command: (e) => this.deleteMaterial(e),
+      command: () => this.onDeleteMaterial(),
     },
   ];
   ngOnDestroy(): void {
@@ -207,11 +208,17 @@ export class MaterialComponent implements OnInit, OnDestroy {
     this.store.dispatch(MaterialActions.setMaterialId({ materialId: this.selectedMaterial._id }));
     this.store.dispatch(AnnotationActions.loadAnnotations());
   }
-  testClicked(){
-    console.log('clicked!!!')
+  onDeleteMaterial() {
+    this.confirmationService.confirm({
+      message: 'Do you want to delete "'+ this.selectedMaterial.name+ '" material?',
+      header: 'Delete Confirmation',
+      icon: 'pi pi-info-circle',
+      accept: (e) => this.deleteMaterial(e),
+      reject: () => this.informUser('info', 'Cancelled', 'Deletion cancelled'),
+    });
   }
   deleteMaterial(e) {
-    e.index1 = e.index - 1;
+    // e.index1 = e.index - 1;
 
     // this.selectedMaterial = this.materials[e.index1];
     if (this.selectedMaterial.type == "video" && this.selectedMaterial.url) {
@@ -256,7 +263,7 @@ export class MaterialComponent implements OnInit, OnDestroy {
           this.selectedMaterial['channelId'],
         ]);
 
-        e.index = 1
+        // e.index = 1
         this.showInfo('Successfully removed "'+this.selectedMaterial.name+'"!')
       },
       error: (err) => {
@@ -284,4 +291,17 @@ export class MaterialComponent implements OnInit, OnDestroy {
           detail: msg,
         });
       }
+
+      /**
+   * @function informUser
+   * inform user about the result of his action
+   *
+   */
+  informUser(severity, summary, detail) {
+    this.messageService.add({
+      severity: severity,
+      summary: summary,
+      detail: detail,
+    });
+  }
 }
