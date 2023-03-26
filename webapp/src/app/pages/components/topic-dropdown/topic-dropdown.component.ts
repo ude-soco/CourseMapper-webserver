@@ -90,7 +90,7 @@ export class TopicDropdownComponent implements OnInit {
 
   ngOnDestroy() {
     this.expandTopic = null;
-    this.selectedChannelId=null
+    this.selectedChannelId = null;
   }
 
   @HostListener('document:click', ['$event'])
@@ -116,6 +116,16 @@ export class TopicDropdownComponent implements OnInit {
       this.expandTopic = null;
     } else {
       this.expandTopic = topic._id;
+      // wait until expanded topic rendered
+      setTimeout(() => {
+        // if exists channel previously selected --> make channel container bg=white
+        if(this.selectedChannelId){
+          let channelNameContainer = document.getElementById(
+            this.selectedChannelId + '-container'
+            );
+            channelNameContainer.style.backgroundColor = 'white';
+          }
+        }, 2);
     }
   }
   onSelectChannel(channel: Channel) {
@@ -132,19 +142,22 @@ export class TopicDropdownComponent implements OnInit {
       MaterialActions.toggleChannelSelected({ channelSelected: true })
     );
     // make selected channel's background white
-    this.selectedChannelId=channel._id
-    
+    this.selectedChannelId = channel._id;
+
     // make all channels' container background Null
-    this.topics.forEach((topic)=>{
-      topic.channels.forEach((channelEle)=>{
-        var nonSelectedChannels=document.getElementById(channelEle._id+'-container');
-        nonSelectedChannels.style.backgroundColor= null
-      })
-    })
+    this.topics.forEach((topic) => {
+      topic.channels.forEach((channelEle) => {
+        var nonSelectedChannels = document.getElementById(
+          channelEle._id + '-container'
+        );
+        nonSelectedChannels.style.backgroundColor = null;
+      });
+    });
     // make selected channel's container background white
-    let channelNameContainer = document.getElementById(channel._id+'-container');
-    channelNameContainer.style.backgroundColor='white'
-    console.log(channelNameContainer)
+    let channelNameContainer = document.getElementById(
+      channel._id + '-container'
+    );
+    channelNameContainer.style.backgroundColor = 'white';
   }
 
   /**
