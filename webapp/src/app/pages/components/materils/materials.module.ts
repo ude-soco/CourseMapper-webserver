@@ -22,7 +22,6 @@ import { PdfMainAnnotationComponent } from '../annotations/pdf-annotation/pdf-ma
   imports: [
     CommonModule,
     PrimengModule,
-    AnnotationModule,
     PdfViewerModule,
     FormsModule,
     ReactiveFormsModule,
