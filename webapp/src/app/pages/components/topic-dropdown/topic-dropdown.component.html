@@ -8,7 +8,7 @@
   class="flex flex-col items-center justify-start m-0 z-10"
   *ngFor="let topic of topics; let i = index"
 >
-  <div class="m-0 w-full mx-2 pb-2 transition duration-300 ease-in-out">
+  <div class="m-0 w-full mx-2 pb-2 transition duration-300 ease-in-out" *ngIf="expandTopic===topic._id">
     <div class="flex flex-row items-center justify-between mx-0 my-1.5">
       <div class="flex flex-row items-center">
         <app-iconbutton
@@ -79,7 +79,7 @@
     </div>
   </div>
 
-  <!-- <div class="m-0 w-full mx-2 pb-2 transition duration-300 ease-in-out">
+  <div class="m-0 w-full mx-2 pb-2 transition duration-300 ease-in-out" *ngIf="expandTopic!==topic._id">
     <div class="flex flex-row items-center justify-between mx-0 my-1.5">
       <div class="flex flex-row items-center">
         <app-iconbutton
@@ -94,13 +94,13 @@
         #{{topic._id}}>{{ topic.name }}</p>
       </div>
       <p-menu #menu id="config_menu" [model]="topicOptions" [popup]="true" appendTo="body"></p-menu>
-      <app-iconbutton
+      <app-iconbutton *ngIf="showModeratorPrivileges"
         icon="bx-dots-vertical-rounded"
         color="text-black"
         (click)="selectedTopic = topic; menu.toggle($event)"
       ></app-iconbutton>
     </div>
-  </div> -->
+  </div>
 </div>
 
 </div>
