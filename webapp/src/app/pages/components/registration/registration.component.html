@@ -258,7 +258,7 @@
 
 
 <div class="flex flex-wrap justify-center py-14">
-  <div class="flex flex-col" [style]="{ width: '25rem' }">
+  <div class="flex flex-col" [style]="{  }">
 
     <form [formGroup]="validateForm">
       <div class="subdiv">
@@ -268,7 +268,7 @@
             type="text"
             pInputText
             formControlName="username"
-            [style]="{ }"
+            [style]="{width:'80%' }"
           />
           <label for="username">Username</label>
         </div>
@@ -294,7 +294,7 @@
             type="text"
             pInputText
             formControlName="firstname"
-            [style]="{ }"
+            [style]="{width:'80%' }"
           />
           <label for="firstname">First name</label>
         </div>
@@ -321,7 +321,7 @@
             type="text"
             pInputText
             formControlName="lastname"
-            [style]="{ }"
+            [style]="{width:'80%' }"
           />
           <label for="lastname">Last name</label>
         </div>
@@ -348,7 +348,7 @@
             type="text"
             pInputText
             formControlName="email"
-            [style]="{  }"
+            [style]="{width:'80%' }"
           />
           <label for="email">Email</label>
         </div>
@@ -366,9 +366,10 @@
         </div>
       </div>
       <div class="subdiv">
-        <div class="p-float-label mb-4" [style]="{   width: '19rem' }">
-          <p-password id="password" type="password" formControlName="password" class="mb-4"
-                      [style]="{   width: '19rem' }">
+        <div class="p-float-label mb-4" [style]="{   width: '100%' }">
+          <p-password id="password" type="password" formControlName="password" 
+          [toggleMask]="true"
+          [feedback]="true" >
             <ng-template pTemplate="header">
               <h6>Create a password</h6>
             </ng-template>
@@ -401,16 +402,24 @@
         </div>
       </div>
       <div class="subdiv">
-        <div class="p-float-label mb-4">
-          <input
+        <div class="mb-4">
+
+          <!-- <input
             id="checkPassword"
-            type="text"
+           
             type="password"
             pInputText
             formControlName="checkPassword"
             [style]="{  }"
+          
           />
-          <label for="checkPassword">Confirm Password</label>
+          <label for="checkPassword">Confirm Password</label> -->
+
+          <span class="p-float-label">
+            <p-password id="checkPassword" formControlName="checkPassword" [toggleMask]="true"
+            [feedback]="false"  [style]="{ }" ></p-password>
+            <label for="checkPassword">Confirm Password</label>
+        </span>
         </div>
 
         <div
@@ -434,8 +443,7 @@
       <div class="container">
         <button
           pButton
-          [ngStyle]="{ backgroundColor: '#EA580C',width: '62%',
-      margin: '10px 80px 10px 0px'}"
+          [ngStyle]="{ backgroundColor: '#EA580C',width: '80%'}"
           type="button"
           label="Sign Up"
 
