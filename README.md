@@ -15,6 +15,8 @@ CourseMapper is a collaborative course annotation and analytics platform that fo
 * `make dev` to run processes in containers, but mount source code from host machine
 * see the manual below to install dependencies and run processes w/o containers
 
+The proxy service runs on [port 8000](http://localhost:8000/).
+
 
 ## 🚀 Get Started
 

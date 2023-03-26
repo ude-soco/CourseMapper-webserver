@@ -3,6 +3,8 @@ services:
     image: coursemapper-webserver-webapp:dev
     build:
       dockerfile: dev.Dockerfile
+    ports:
+      - "4200:4200"
     volumes:
     - ./webapp:/app
 
@@ -10,6 +12,8 @@ services:
     image: coursemapper-webserver-webserver:dev
     build:
       dockerfile: dev.Dockerfile
+    ports:
+      - "8080:8080"
     volumes:
     - ./webserver:/app
     - ./webserver/public/uploads:/app/public/uploads
