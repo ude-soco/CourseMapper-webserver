@@ -30,7 +30,8 @@
           [disabled]="isAnnotationDialogVisible"
           autoWidth="false"
           appendTo="body"
-          [style]="{ minWidth: '100%', maxWidth: '200px', 'border': '1px solid' + annotationColor, height: '55px' }"
+          [appUpdateBorderColor]="annotationColor"
+          [style]="{ minWidth: '100%', maxWidth: '200px', height: '55px' }"
         ></p-dropdown>
         </div>
       </div>

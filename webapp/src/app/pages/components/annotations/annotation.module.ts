@@ -26,6 +26,7 @@ import { VideoCreateAnnotationComponent } from './video-annotation/video-create-
 import { VideoDrawingOverlayComponent } from './video-annotation/video-drawing-overlay/video-drawing-overlay.component';
 import { VideoRenderingOverlayComponent } from './video-annotation/video-rendering-overlay/video-rendering-overlay.component';
 import { VideoAnnotationSummaryComponent } from './video-annotation/video-annotation-summary/video-annotation-summary.component';
+import { UpdateBorderColorDirective } from 'src/app/custom_directives/update-border-color.directive';
 
 @NgModule({
     declarations: [
@@ -44,6 +45,7 @@ import { VideoAnnotationSummaryComponent } from './video-annotation/video-annota
         VideoDrawingOverlayComponent,
         VideoRenderingOverlayComponent,
         VideoAnnotationSummaryComponent,
+        UpdateBorderColorDirective
     ],
     exports: [
         PdfAnnotationToolbarComponent,

@@ -33,7 +33,8 @@
           autoWidth="false"
           [disabled]="disableSlidesDropDown"
           appendTo="body"
-          [style]="{ minWidth: '100%', maxWidth: '150px', 'border': '1px solid' + annotationColor, height: '55px' }"
+          [appUpdateBorderColor]="annotationColor"
+          [style]="{ minWidth: '100%', height: '55px'}"
         ></p-dropdown>
         </div>
 
