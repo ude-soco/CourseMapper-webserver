@@ -90,6 +90,7 @@ export class TopicDropdownComponent implements OnInit {
 
   ngOnDestroy() {
     this.expandTopic = null;
+    this.selectedChannelId=null
   }
 
   @HostListener('document:click', ['$event'])
@@ -130,6 +131,20 @@ export class TopicDropdownComponent implements OnInit {
     this.store.dispatch(
       MaterialActions.toggleChannelSelected({ channelSelected: true })
     );
+    // make selected channel's background white
+    this.selectedChannelId=channel._id
+    
+    // make all channels' container background Null
+    this.topics.forEach((topic)=>{
+      topic.channels.forEach((channelEle)=>{
+        var nonSelectedChannels=document.getElementById(channelEle._id+'-container');
+        nonSelectedChannels.style.backgroundColor= null
+      })
+    })
+    // make selected channel's container background white
+    let channelNameContainer = document.getElementById(channel._id+'-container');
+    channelNameContainer.style.backgroundColor='white'
+    console.log(channelNameContainer)
   }
 
   /**
