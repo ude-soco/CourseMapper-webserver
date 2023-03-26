@@ -13,6 +13,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { State } from 'src/app/state/app.state';
 import { Store } from '@ngrx/store';
 import * as AppActions from 'src/app/state/app.actions'
+import { ModeratorPrivilegesService } from 'src/app/services/moderator-privileges.service';
 
 @Component({
   selector: 'app-channelbar',
@@ -28,7 +29,8 @@ export class ChannelbarComponent implements OnInit {
     private confirmationService: ConfirmationService,
     private router: Router,
     private route: ActivatedRoute,
-    private store: Store<State>
+    private store: Store<State>,
+    private moderatorPrivilegesService:ModeratorPrivilegesService,
   ) {
       this.route.params.subscribe(params => {
       if(params['courseID']){
@@ -50,6 +52,7 @@ export class ChannelbarComponent implements OnInit {
   previousCourse: Course = new CourseImp('', '');
   insertedText: string = '';
   selectedId: string = '';
+  showModeratorPrivileges=false
 
   options: MenuItem[] = [
     {
@@ -74,6 +77,15 @@ export class ChannelbarComponent implements OnInit {
       //3
       this.courseService.onSelectCourse.subscribe((course) => {
         this.selectedCourse = course;
+        if(this.selectedCourse.role==='moderator'){
+          this.moderatorPrivilegesService.showModeratorPrivileges=true
+          this.showModeratorPrivileges=true
+          this.moderatorPrivilegesService.setPrivilegesValue(this.showModeratorPrivileges)
+        }else{
+          this.moderatorPrivilegesService.showModeratorPrivileges=false
+          this.showModeratorPrivileges=false
+          this.moderatorPrivilegesService.setPrivilegesValue(this.showModeratorPrivileges)
+        }
       });
   }
 

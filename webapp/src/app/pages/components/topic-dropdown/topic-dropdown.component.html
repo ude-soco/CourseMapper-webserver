@@ -23,7 +23,7 @@
         #{{topic._id}}>{{ topic.name }}</p>
       </div>
       <p-menu #menu id="config_menu" [model]="topicOptions" [popup]="true" appendTo="body"></p-menu>
-      <app-iconbutton
+      <app-iconbutton *ngIf="showModeratorPrivileges"
         icon="bx-dots-vertical-rounded"
         color="text-black"
         (click)="selectedTopic = topic; menu.toggle($event)"
@@ -42,7 +42,7 @@
         (keydown)="onTextInsertedChannel(selectedChannel._id,$event)"
         (keyup)="afterTextInsertedChennel(selectedChannel._id,$event)"
         class="cursor-pointer w-full">#{{ channel.name }}</p>
-        <app-iconbutton
+        <app-iconbutton *ngIf="showModeratorPrivileges"
           icon="bx-dots-vertical-rounded"
           color="text-black"
           (click)="selectedChannel = channel; menu.toggle($event)"
@@ -57,7 +57,7 @@
         (keydown)="onTextInsertedChannel(selectedChannel._id,$event)"
         (keyup)="afterTextInsertedChennel(selectedChannel._id,$event)"
         class="cursor-pointer w-full">#{{ channel.name }}</p>
-        <app-iconbutton
+        <app-iconbutton *ngIf="showModeratorPrivileges"
           icon="bx-dots-vertical-rounded"
           color="text-black"
           (click)="selectedChannel = channel; menu.toggle($event)"
@@ -67,7 +67,7 @@
       </div>
     </div>
 
-    <div class="pl-5 py-1 hover:bg-white transition-all" (click)="onAddNewChannelClicked(topic)">
+    <div class="pl-5 py-1 hover:bg-white transition-all" (click)="onAddNewChannelClicked(topic)" *ngIf="showModeratorPrivileges">
       <div class="flex flex-row items-center">
         <app-iconbutton
           icon="bx-plus"
@@ -104,5 +104,5 @@
 </div>
 
 </div>
-<app-add-channel [displayAddChannelDialogue]="displayAddChannelDialogue" (onCloseAddChannelDialogue)="toggleAddNewChannelClicked($event)"></app-add-channel>
+<app-add-channel [displayAddChannelDialogue]="displayAddChannelDialogue" (onCloseAddChannelDialogue)="toggleAddNewChannelClicked($event)" ></app-add-channel>
 

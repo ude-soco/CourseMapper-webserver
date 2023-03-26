@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, HostListener } from '@angular/core';
+import { Component, EventEmitter, OnInit, HostListener, Input } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { Channel } from 'src/app/models/Channel';
 import { Topic } from 'src/app/models/Topic';
@@ -28,6 +28,7 @@ export class TopicDropdownComponent implements OnInit {
     private store: Store<State>,
     private route: ActivatedRoute
   ) {}
+  @Input() showModeratorPrivileges:boolean
 
   topics: Topic[] = [];
   displayAddChannelDialogue: boolean = false;
