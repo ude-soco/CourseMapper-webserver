@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, Renderer2 } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { Channel } from 'src/app/models/Channel';
@@ -20,7 +20,8 @@ export class AddChannelComponent implements OnInit {
 
   constructor(
     private topicChannelService: TopicChannelService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private renderer: Renderer2,
   ) {}
 
   ngOnInit(): void {
@@ -77,5 +78,15 @@ export class AddChannelComponent implements OnInit {
       summary: 'Error',
       detail: msg,
     });
+  }
+  preventEnterKey(e) {
+    let confirmButton = document.getElementById('addChannelConfirm');
+    if (e.keyCode === 13) {
+      e.preventDefault();
+      this.renderer.addClass(confirmButton, 'confirmViaEnter');
+      setTimeout(() => {
+        this.renderer.removeClass(confirmButton, 'confirmViaEnter');
+      }, 150);
+    }
   }
 }

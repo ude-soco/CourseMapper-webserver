@@ -8,3 +8,7 @@ input.ng-invalid {
 :host ::ng-deep .p-toast .p-toast-message-icon{
   font-size: 2em !important;
 }
+
+.confirmViaEnter{
+  background-color: #D32F2F;
+}
