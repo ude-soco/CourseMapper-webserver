@@ -803,7 +803,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
 
     this.showPopup = false;
     var location: PdfGeneralAnnotationLocation = {
-      type: 'Current Page',
+      type: 'Current Slide',
       startPage: this.currentPage,
       lastPage: this.currentPage,
     };
@@ -853,11 +853,11 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
 
   cancel() {
     if (this.selectedTool == PdfToolType.Pin) {
-      const pinId = this.pinElement.getAttribute('id');
+      const pinId = this.pinElement?.getAttribute('id');
       $('#' + pinId).remove();
       this.showPopup = false;
     } else if (this.selectedTool == PdfToolType.DrawBox) {
-      const rectId = this.drawElement.getAttribute('id');
+      const rectId = this.drawElement?.getAttribute('id');
       $('#' + rectId).remove();
       this.showPopup = false;
       this.drawingRect = {

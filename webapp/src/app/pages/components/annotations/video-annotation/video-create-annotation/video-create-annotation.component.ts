@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Annotation, AnnotationType, VideoAnnotationTool } from 'src/app/models/Annotations';
 import { printTime } from 'src/app/_helpers/format';
@@ -14,7 +14,7 @@ import { DrawingData } from 'src/app/models/Drawing';
   templateUrl: './video-create-annotation.component.html',
   styleUrls: ['./video-create-annotation.component.css']
 })
-export class VideoCreateAnnotationComponent {
+export class VideoCreateAnnotationComponent implements OnInit {
   annotationColor: string = '#0000004D';
   rangeValues: number[];
   selectedAnnotationType: AnnotationType;
@@ -30,11 +30,12 @@ export class VideoCreateAnnotationComponent {
   showAnnotationDialog: boolean;
   courseId: string;
   materialId: string;
-  isAnnotationDialogVisible$: Observable<boolean>;
+  isAnnotationDialogVisible: boolean;
   drawingData: DrawingData;
   pinpointPosition: [number, number];
   isBrushSelectionActive: boolean;
   isPinpointSelectionActive: boolean;
+  sendButtonColor: string = 'text-green-600';
   
   constructor(private store: Store<State>){
     this.annotationTypesArray = ['Note', 'Question', 'External Resource'];
@@ -44,12 +45,19 @@ export class VideoCreateAnnotationComponent {
     this.store.select(getCurrentTime).subscribe((currentTime) => this.currentTime = currentTime);
     this.store.select(getCurrentCourseId).subscribe((id) => this.courseId = id);
     this.store.select(getCurrentMaterialId).subscribe((id) => this.materialId = id);
-    this.isAnnotationDialogVisible$ = this.store.select(getIsAnnotationDialogVisible);
+    this.store.select(getIsAnnotationDialogVisible).subscribe((isVisible) => {
+      this.isAnnotationDialogVisible = isVisible;
+    })
     this.store.select(getDrawingData).subscribe((drawings) => this.drawingData = drawings);
     this.store.select(getIsBrushSelectionActive).subscribe((isBrush) => this.isBrushSelectionActive = isBrush);
     this.store.select(getIsPinpointSelectionActive).subscribe((isPin) => this.isPinpointSelectionActive = isPin);
     this.store.select(getIsAnnotationDialogVisible).subscribe((isVisible) => this.showAnnotationDialog == isVisible);
     this.store.select(getPinPointPosition).subscribe((position) => this.pinpointPosition = position);
+  }
+  ngOnInit(): void {
+    this.selectedAnnotationType = 'Note';
+    this.selectedAnnotationLocation = 'Current Timeline';
+    this.annotationColor = '#70b85e';
   }
   printTime = printTime
 
@@ -57,15 +65,20 @@ export class VideoCreateAnnotationComponent {
     switch (this.selectedAnnotationType) {
       case 'Note':
         this.annotationColor = '#70b85e';
+        this.sendButtonColor ='text-green-600';
         break;
       case 'Question':
         this.annotationColor = '#FFAB5E';
+        this.sendButtonColor ='text-amber-500';
         break;
       case 'External Resource':
         this.annotationColor = '#B85E94';
+        this.sendButtonColor ='text-pink-700';
         break;
       case null:
         this.annotationColor = '#0000004D';
+        this.sendButtonColor ='text-green-600';
+        break;
     }
   }
 
@@ -95,7 +108,7 @@ export class VideoCreateAnnotationComponent {
       return;
     }
 
-    if(!this.isAnnotationDialogVisible$){
+    if(!this.isAnnotationDialogVisible){
 
       if(!this.selectedAnnotationLocation){
         alert("Please Choose Annotation Time Location");

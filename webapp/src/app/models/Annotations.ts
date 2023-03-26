@@ -44,7 +44,7 @@ export enum PdfToolType {
 }
 
 export interface PdfGeneralAnnotationLocation {
-  type: 'Current Page' | 'All Slides' | 'Page Range';
+  type: 'Current Slide' | 'All Slides' | 'Slide Range';
   startPage: number;
   lastPage: number;
 }

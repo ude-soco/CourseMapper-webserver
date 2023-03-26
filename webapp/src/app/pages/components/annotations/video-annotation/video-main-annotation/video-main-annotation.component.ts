@@ -159,7 +159,7 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
 
 
     // add the overlay element to the video container
-    const videoContainer = document.querySelector('.videoPlayerArea');
+    const videoContainer = document.querySelector('.YouTubePlayerArea');
     videoContainer.appendChild(overlay);
 
 

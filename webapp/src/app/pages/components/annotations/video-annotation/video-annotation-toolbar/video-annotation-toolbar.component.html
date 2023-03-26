@@ -4,11 +4,13 @@
       <app-iconbutton
       icon="bx-pin"
       color="text-blue-500"
+      pTooltip="Pinpoint on Video" tooltipPosition="top"
       (onClick)="OnPinToolSelection()"
     ></app-iconbutton>
       <app-iconbutton
         icon="bx-shape-square"
         color="text-blue-500"
+        pTooltip="Draw on Video" tooltipPosition="top"
         (onClick)="OnDrawToolSelection()"
       ></app-iconbutton>
     </div>
@@ -17,12 +19,14 @@
       <app-iconbutton
       icon="bx-show"
       color="text-blue-500"
+      pTooltip="Show Annotations" tooltipPosition="top"
       (onClick)="showHideAnnotations()"
       *ngIf="!showAnnotations"
     ></app-iconbutton>
     <app-iconbutton
     icon="bx-hide"
     color="text-blue-500"
+    pTooltip="Hide Annotations" tooltipPosition="top"
     (onClick)="showHideAnnotations()"
     *ngIf="showAnnotations"
   ></app-iconbutton>

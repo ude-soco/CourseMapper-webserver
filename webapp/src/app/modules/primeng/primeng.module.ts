@@ -20,6 +20,7 @@ import {DialogModule} from 'primeng/dialog';
 import {EditorModule} from 'primeng/editor';
 import {SliderModule} from 'primeng/slider';
 import {CardModule} from 'primeng/card';
+import {TooltipModule} from 'primeng/tooltip';
 
 const PrimeNgComponents = [
   AvatarModule,
@@ -42,7 +43,8 @@ const PrimeNgComponents = [
   DialogModule,
   EditorModule,
   SliderModule,
-  CardModule
+  CardModule,
+  TooltipModule
   
 ];
 

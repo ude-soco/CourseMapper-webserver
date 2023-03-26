@@ -1,76 +1,86 @@
-<div [ngStyle]="{'box-shadow': '0 0 3px 3px' + annotationColor}" class="mb-5">
-  <p-panel header="Create Annotation" [toggleable]="false">
-    <ng-template pTemplate="icons" *ngIf="showCancelButton">
+<div class="flex-col justify-evenly">
+  <div class="flex flex-row w-full">
+    <span class="font-medium text-xl w-full">Create Annotation</span>
+    <div class="flex w-full justify-end" *ngIf="showCancelButton">
       <app-iconbutton
         icon="bx-x"
-        color="text-green-600"
+        color="{{sendButtonColor}}"
         (click)="cancel()"
       ></app-iconbutton>
-    </ng-template>
-    <div class="flex flex-col justify-evenly space-y-5">
-      <div class="flex flex-row justify-items-start space-x-5 w-12/12">
-        <p-dropdown
+    </div>
+  </div>
+  <div [ngStyle]="{'border': '2px solid' + annotationColor}" class="rounded-lg p-3 mt-2">
+    <div class="flex flex-col justify-evenly space-y-2">
+      <div class="flex flex-row justify-start space-x-3 w-full">
+        <div class="flex-col">
+          <span>Annotation Type</span>
+          <p-dropdown
           [options]="annotationTypesArray"
           [(ngModel)]="selectedAnnotationType"
-          placeholder="Annotation type"
-          [showClear]="true"
           autoWidth="false"
           appendTo="body"
-          [style]="{ minWidth: '100%' }"
+          [style]="{ minWidth: '100%', maxWidth: '50px', 'border': '1px solid' + annotationColor, height: '55px' }"
+          class="mr-6"
           (ngModelChange)="onAnnotationTypeChange()"
         ></p-dropdown>
+        </div>
 
-        <p-dropdown
+        <div class="flex-col">
+          <span>Slide</span>
+          <p-dropdown
           [options]="annotationLocationsArray"
           [(ngModel)]="selectedAnnotationLocation"
-          placeholder="Slide"
-          [showClear]="true"
           autoWidth="false"
           [disabled]="disableSlidesDropDown"
           appendTo="body"
-          [style]="{ minWidth: '100%' }"
+          [style]="{ minWidth: '100%', maxWidth: '150px', 'border': '1px solid' + annotationColor, height: '55px' }"
         ></p-dropdown>
+        </div>
 
-        <p-dropdown
-        *ngIf="selectedAnnotationLocation === 'Page Range'"
-        [options]="fromPageArray"
-        [(ngModel)]="selectedFromPage"
-        placeholder="From Page"
-        [showClear]="true"
-        autoWidth="false"
-        [disabled]="disableSlidesDropDown"
-        appendTo="body"
-        [style]="{ minWidth: '100%' }"
-        (onChange)="onSelectedFromPage()"
-        (onShow)="onShowOfSelectedFromPageDropDpown()"
-      ></p-dropdown>
+        <div *ngIf="selectedAnnotationLocation === 'Slide Range'">
+          <span>From</span>
+          <p-dropdown
+          [options]="fromPageArray"
+          [(ngModel)]="selectedFromPage"
+          autoWidth="false"
+          [disabled]="disableSlidesDropDown"
+          appendTo="body"
+          [style]="{ minWidth: '100%', 'border': '1px solid' + annotationColor, height: '55px' }"
+          (onChange)="onSelectedFromPage()"
+          (onShow)="onShowOfSelectedFromPageDropDpown()"
+        ></p-dropdown>
+        </div>
 
-      <p-dropdown
-      *ngIf="selectedAnnotationLocation === 'Page Range'"
-        [options]="toPageArray"
-        [(ngModel)]="selectedToPage"
-        placeholder="To Page"
-        [showClear]="true"
-        autoWidth="false"
-        [disabled]="!isFromSelected"
-        appendTo="body"
-        [style]="{ minWidth: '100%' }"
-      ></p-dropdown>
+        <div *ngIf="selectedAnnotationLocation === 'Slide Range'">
+          <span>To</span>
+          <p-dropdown
+            [options]="toPageArray"
+            [(ngModel)]="selectedToPage"
+            autoWidth="false"
+            [disabled]="!isFromSelected"
+            appendTo="body"
+            [style]="{ minWidth: '100%', 'border': '1px solid' + annotationColor, height: '55px' }"
+          ></p-dropdown>
+        </div>
       </div>
       <div class="flex flex-row space-x-3">
         <textarea
           pInputTextarea
           [(ngModel)]="text"
-          class="w-11/12"
-          style="border: 1px solid #0000004D"
+          [autoResize]="true"
+          rows="2" cols="60"
+          class="w-full"
+          [style]="{'border': '1px solid' + annotationColor}"
         ></textarea>
         <app-iconbutton
           icon="bx-send"
-          color="text-slate-500"
+          color="{{sendButtonColor}}"
           (click)="postAnnotation()"
-          class="mb-0 mt-12 flex-1 justify-end"
+          class="mb-0 mt-9 flex-1 justify-end"
+          [ngStyle]="{'color': annotationColor }"
         ></app-iconbutton>
       </div>
     </div>
-  </p-panel>
 </div>
+</div>
+
