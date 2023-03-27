@@ -5,12 +5,15 @@ WORKDIR /app
 ENV PATH "$PATH:/app/node_modules/.bin"
 ENV NODE_ENV production
 ENV NPM_CONFIG_UPDATE_NOTIFIER false
+ENV NG_PERSISTENT_BUILD_CACHE 1
 
 COPY package*.json .
-RUN  npm ci --legacy-peer-deps --omit=optional --no-fund && npm version
+RUN  --mount=type=cache,target=/app/.npm,rw \
+     npm ci --legacy-peer-deps --omit=optional --no-fund
 
 COPY . .
-RUN  npm run build
+RUN  --mount=type=cache,target=/app/node_modules/.cache,rw \
+     ng build
 
 
 
