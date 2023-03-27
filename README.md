@@ -15,7 +15,17 @@ CourseMapper is a collaborative course annotation and analytics platform that fo
 * `make dev` to run processes in containers, but mount source code from host machine
 * see the manual below to install dependencies and run processes w/o containers
 
-The proxy service runs on [port 8000](http://localhost:8000/).
+Visit the [proxy service on port 8000](http://localhost:8000/) to use the application.
+
+
+## Container images
+
+The services making up the coursemapper-webserver project use the following images:
+
+* Proxy: [socialcomputing/coursemapper-webserver-proxy](https://hub.docker.com/repository/docker/socialcomputing/coursemapper-webserver-proxy/general)
+* Webapp: [socialcomputing/coursemapper-webserver-webapp](https://hub.docker.com/repository/docker/socialcomputing/coursemapper-webserver-webapp/general)
+* Webserver: [socialcomputing/coursemapper-webserver-webserver](https://hub.docker.com/repository/docker/socialcomputing/coursemapper-webserver-webserver/general)
+* MongoDB: [mongo](https://hub.docker.com/_/mongo)
 
 
 ## 🚀 Get Started
