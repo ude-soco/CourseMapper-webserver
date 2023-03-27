@@ -54,6 +54,7 @@ import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 const config: SocketIoConfig = { url: 'http://localhost:8080', options: {} };
 import { hydrationMetaReducer} from "./state/hydration.reducer";
 import { LandingPageComponent } from './pages/landing-page/landing-page.component';
+import { PrivacyComponent } from './pages/components/privacy/privacy.component';
  
 export const metaReducers: MetaReducer[] = [hydrationMetaReducer];
 registerLocaleData(en);
@@ -76,6 +77,7 @@ registerLocaleData(en);
         DashboardComponent,
         ByPassUrlSanitizationPipe,
         LandingPageComponent,
+        PrivacyComponent,
     ],
     imports: [
         BrowserModule,

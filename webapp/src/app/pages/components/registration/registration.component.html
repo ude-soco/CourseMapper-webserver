@@ -1,3 +1,4 @@
+<link href="//netdna.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" />
 <!---<div class="register-form">
   <form [formGroup]="validateForm" (ngSubmit)="onSubmit()">
     <div class="form-group">
@@ -652,6 +653,9 @@
               <label for="acceptTerms" class="form-check-label">Accept Terms & Conditions</label>
               <div *ngIf="submitted && f.acceptTerms.errors" class="invalid-feedback">Accept Ts & Cs is required</div>
           </div> -->
+          <div class="form-group" [style]="{width:'100%' }">
+            <p>We respect your privacy. Please read <a href="/privacy" target="_blank" >here</a> to learn more about our Privacy Policy.</p>
+          </div>
           <div class="text-center">
             <button
             pButton
