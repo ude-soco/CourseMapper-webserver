@@ -520,7 +520,7 @@ export const annotationReducer = createReducer<AnnotationState>(
             (reply) => reply._id === action.payload.reply._id
           );
           replies[replyIndex] = action.payload.reply;
-          if (replyIndex) {
+          if (replies[replyIndex]) {
             let updatedReplies = [...replies];
             let updatedAnnotation = {
               ...annotation,

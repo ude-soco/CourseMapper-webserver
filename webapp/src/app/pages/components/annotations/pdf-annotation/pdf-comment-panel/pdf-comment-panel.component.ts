@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { Annotation, PdfAnnotationTool, PdfGeneralAnnotationLocation, PdfToolType } from 'src/app/models/Annotations';
+import { Annotation, PdfAnnotationTool, PdfGeneralAnnotationLocation, PdfToolType, VideoAnnotationLocation } from 'src/app/models/Annotations';
 import { Store } from '@ngrx/store';
 import { computeElapsedTime, getInitials } from 'src/app/_helpers/format';
 import { getAnnotationsForMaterial, getCurrentPdfPage, State } from '../state/annotation.reducer';
 import { SelectItemGroup } from 'primeng/api';
 import { Material } from 'src/app/models/Material';
 import { getCurrentMaterial } from '../../../materils/state/materials.reducer';
+import { getCurrentTime } from '../../video-annotation/state/video.reducer';
 @Component({
   selector: 'app-pdf-comment-panel',
   templateUrl: './pdf-comment-panel.component.html',
@@ -22,6 +23,8 @@ export class PdfCommentPanelComponent implements OnInit {
   annotationsToShow: Annotation[];
   selectedMaterial: Material;
   disableSortFilters: boolean = false;
+  currentTime: number = 0;
+  currentTimeSpanSelected: boolean = false;
 
   constructor(private store: Store<State>) {
 
@@ -43,6 +46,13 @@ export class PdfCommentPanelComponent implements OnInit {
       this.selectedFiltersForPDF = null;
       this.showPDFAnnotations();
     });
+
+   this.store.select(getCurrentTime).subscribe((time) => {
+      this.currentTime = time;
+      if(this.selectedMaterial.type === "video" && this.currentTimeSpanSelected){
+        this.annotationsToShow = this.annotations.filter((a) => (a.location as VideoAnnotationLocation).from <= time && (a.location as VideoAnnotationLocation).to > time);
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -54,12 +64,10 @@ export class PdfCommentPanelComponent implements OnInit {
 
     this.annotationOnCurrentPage = this.annotations.filter((anno) => (anno.location as PdfGeneralAnnotationLocation).startPage == this.currentPage);
     this.annotationsToShow = this.annotationOnCurrentPage;
-    console.log(this.annotationsToShow);
   }
 
   showVideoAnnotations() {
     this.annotationsToShow = this.annotations;
-    console.log(this.annotationsToShow);
   }
 
   onPDFAnnotationFiltersChange(filters: number[]) {
@@ -144,6 +152,12 @@ export class PdfCommentPanelComponent implements OnInit {
     let allAnnotations = this.annotations;
     let annotationsToFilter: Annotation[] = allAnnotations;
 
+    if (filters.includes(6)) {
+      this.annotationsToShow = this.annotations.filter((a) => (a.location as VideoAnnotationLocation).from <= this.currentTime && (a.location as VideoAnnotationLocation).to > this.currentTime);
+      this.currentTimeSpanSelected = true;
+      return;
+    }
+
     if (filters.length > 0) {
       let annotationPerTool;
       let annotationPerType;
@@ -180,6 +194,7 @@ export class PdfCommentPanelComponent implements OnInit {
       this.annotationsToShow = filteredAnnotations;
     }
     else {
+      this.currentTimeSpanSelected = false;
       this.showVideoAnnotations();
     }
   }
