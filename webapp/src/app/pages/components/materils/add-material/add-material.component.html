@@ -1,128 +1,213 @@
-<div class="container">
-  <button
-    pButton
-    type="button"
-    label="Add a video"
-    (click)="videoTab()"
-    [disabled]="materialType == 'video'"
-  ></button>
-  <button
-    pButton
-    type="button"
-    label="Add a pdf"
-    (click)="pdfTab()"
-    [disabled]="materialType == 'pdf'"
-  ></button>
-</div>
-<div>
-  <form [formGroup]="fileUploadForm" >
-    <div>
-      <div>
-        <div>
-          <span class="custom-file-label" for="customFile"
-            ><span style="color: red" *ngIf="materialType == 'pdf'">* </span
-            >Select <span *ngIf="materialType == 'pdf'">Pdf</span
-            ><span *ngIf="materialType == 'video'">Video</span> File :
-          </span>
-        </div>
-      </div>
-      <div>
-        <div class="custom-file">
-          <input type="file" class="custom-file-input" id="file" name="file"
-            (change)="onFileSelect($event)" 
-            #UploadFileInput  hidden/>
-            <label for="file">Choose file</label>
-            <p style="margin-left: 1rem; width: 13em; word-wrap: break-word; "  id="file-chosen">No file chosen</p>
-        </div>
+<h2 class="text-3xl text-center mb-8">
+  Upload a learning material to this channel
+</h2>
 
-        <!-- <p-fileUpload  #fubauto mode="basic" formControlName="fileUploadForm.file" type="file" name="file" 
-        [customUpload]="true"   id="file"  chooseLabel="Browse" 
-        (onSelect)="onFileSelect($event)"
-        [auto]="false"
-        #UploadFileInput
-        
-        ></p-fileUpload>
-       
-        <p id="file-chosen" >
-        No file chosen
-      </p> -->
-      </div>
+<div class="card-container">
+  <p-card (click)="showPdfAddModel()">
+    <div class="header-container">
+      <span class="card-header"> Add PDF </span>
     </div>
-  </form>
+  </p-card>
+  <p-card (click)="showVideoAddModel()">
+    <div class="header-container">
+      <span class="card-header"> Add Video </span>
+    </div>
+  </p-card>
 </div>
-<p class="separator" *ngIf="materialType == 'video'">OR</p>
-<div
-  *ngIf="materialType == 'pdf' || materialType == 'video'"
+
+<p-dialog
+  header="Upload a PDF File"
+  [(visible)]="pdfAddModelDisplay"
+  [baseZIndex]="10000"
+  (onHide)="resetDialogs($event)"
 >
-  <form [formGroup]="validateForm" (ngSubmit)="submitForm()">
-    <div *ngIf="materialType == 'video'">
-      <label for="float-input">Enter URL</label>
-      <input
-      id="float-input"
-      type="text"
-      pInputText
-      formControlName="url"
-      [style]="{ width: '50%' }"
-      placeholder="Enter a video link" 
-    />
+  <ng-template pTemplate="header">
+    <div class="dialog-header">Upload a PDF File</div>
+    <div class="break-line"></div>
+  </ng-template>
 
-      <!-- <label for="url">Enter URL</label>
-      <input formControlName="url" placeholder="Enter a video link" /> -->
-    
-    </div>
-    <div style="width: 100%">
-      <div style="width: 50%">
-      <label for="float-input">Enter Material Name</label> </div>
-      <div style="width: 50%">
-      <input
-      id="float-input"
-      type="text"
-      pInputText
-        formControlName="materialName"
-        [style]="{ width: '100%' }"
-        placeholder="Enter a Name "
-      />
-    </div>
-    </div>
-    <div style="width: 100%">
-      <div style="width: 40%">
-      <label for="float-input">Enter Material description</label></div>
-      <div style="width: 60%">
-      <textarea pInputTextarea
-      formControlName="description"
-      placeholder="Enter a description"
-      id="float-input"
-      [autoResize]="true"
-      [rows]="5" [cols]="71"
-     
-      ></textarea>
-    </div>
-    </div>
+  <form [formGroup]="validateForm">
+    <div class="input-container">
+      <div class="input">
+        <label for="pdf-file-input"> Select a PDF </label>
+        <p-fileUpload
+          mode="advanced"
+          name="file"
+          id="pdf-file-input"
+          [customUpload]="true"
+          (onSelect)="myUploader($event)"
+          chooseLabel="{{ pdfAttachButtonText }}"
+          chooseIcon="pi pi-paperclip"
+          [showUploadButton]="false"
+          [showCancelButton]="false"
+          accept="application/pdf"
+        ></p-fileUpload>
+        <span>{{ invalidPDFFileMessage }}</span>
+      </div>
 
-    <span class="custom-file-label" for="customFile" *ngIf="file === null"
-      ><span style="color: red" *ngIf="materialType == 'pdf'">* </span>Select
-      <span *ngIf="materialType == 'pdf'">Pdf</span
-      ><span *ngIf="materialType == 'video'">Video</span> File :
-    </span>
-
-
-
-    <div style="color: red" *ngIf="materialType == 'video' && fileUploadForm.controls['file'].value ==''  && validateForm.controls['url'].value  == ''"> 
-    <span style="color: red" >Upload Video or Enter URL </span></div>
-    
-  
-    <!-- <button nz-button nzType="primary" [disabled]="!validateForm.valid">
-      Submit
-    </button> -->
-
-    <div>
-      <button
-        pButton
-        [ngStyle]="{ backgroundColor: '#EA580C' }"
-        type="button"
-        label="submit"
-        (click)="submitForm()"
-      ></button>
+      <div class="input">
+        <label for="materialName">Name</label>
+        <input
+          id="materialName"
+          type="text"
+          pInputText
+          formControlName="materialName"
+          placeholder="Give a name to your file"
+        />
+      </div>
+      <div class="input">
+        <label for="description">Description</label>
+        <input
+          id="description"
+          type="text"
+          pInputText
+          formControlName="description"
+          placeholder="Give a description to your file"
+        />
+      </div>
     </div>
   </form>
-</div>
+
+  <ng-template pTemplate="footer">
+    <p-button
+      styleClass="submit"
+      icon="pi pi-check"
+      (onClick)="submitForm()"
+      label="Submit"
+      [disabled]="!validateForm.valid || isFileSelectedInvalid"
+    ></p-button>
+  </ng-template>
+</p-dialog>
+
+<p-dialog
+  [(visible)]="videoAddModelDisplay"
+  [baseZIndex]="10000"
+  (onHide)="resetDialogs($event)"
+>
+  <ng-template pTemplate="header">
+    <div class="dialog-header">Upload a Video</div>
+    <div class="break-line"></div>
+  </ng-template>
+
+  <form [formGroup]="radioFormGroup">
+    <div class="radioButtons">
+      <div class="radioOption">
+        <label for="url-radio">Add a URL</label>
+        <input
+          formControlName="videoRadio"
+          id="url-radio"
+          type="radio"
+          value="urlOption"
+        />
+      </div>
+      <div class="radioOption">
+        <label for="url-radio">Add a video file</label>
+        <input
+          formControlName="videoRadio"
+          id="url-radio"
+          type="radio"
+          value="videoOption"
+        />
+      </div>
+    </div>
+  </form>
+
+  <div class="input-container" *ngIf="urlOrFile === 'videoOption'">
+    <form [formGroup]="validateForm">
+      <div class="input">
+        <label for="pdf-file-input"> Select a Video </label>
+        <p-fileUpload
+          mode="advanced"
+          name="file"
+          id="pdf-file-input"
+          [customUpload]="true"
+          (onSelect)="myUploader($event)"
+          chooseLabel="{{ videoAttachButtonText }}"
+          chooseIcon="pi pi-paperclip"
+          [showUploadButton]="false"
+          [showCancelButton]="false"
+          accept="video/mp4,video/x-m4v,video/*"
+        ></p-fileUpload>
+        <span>{{ invalidVideoFileMessage }}</span>
+      </div>
+
+      <div class="input">
+        <label for="materialName">Name</label>
+        <input
+          id="materialName"
+          type="text"
+          pInputText
+          formControlName="materialName"
+        />
+      </div>
+      <div class="input">
+        <label for="description">Description</label>
+        <input
+          id="description"
+          type="text"
+          pInputText
+          formControlName="description"
+          placeholder="Give a description to your file"
+        />
+      </div>
+    </form>
+  </div>
+
+  <div class="input-container" *ngIf="urlOrFile === 'urlOption'">
+    <div class="input">
+      <label for="url">URL</label>
+      <input
+        id="url"
+        type="text"
+        pInputText
+        [formControl]="urlFormControl"
+        placeholder="Add a YouTube URL"
+      />
+      <span>{{ invalidVideoFileMessage }}</span>
+    </div>
+
+    <form [formGroup]="validateForm">
+      <div class="input">
+        <label for="materialName">Name</label>
+        <input
+          id="materialName"
+          type="text"
+          pInputText
+          formControlName="materialName"
+          placeholder="Give a name to your file"
+        />
+      </div>
+      <div class="input">
+        <label for="description">Description</label>
+        <input
+          id="description"
+          type="text"
+          pInputText
+          formControlName="description"
+          placeholder="Give a description to your file"
+        />
+      </div>
+    </form>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <p-button
+      *ngIf="urlOrFile === 'urlOption'"
+      styleClass="submit"
+      icon="pi pi-check"
+      label="Submit"
+      [disabled]="validateForm.invalid || urlFormControl.invalid"
+      (onClick)="submitForm()"
+    >
+    </p-button>
+    <p-button
+      *ngIf="urlOrFile === 'videoOption'"
+      styleClass="submit"
+      icon="pi pi-check"
+      label="Submit"
+      [disabled]="validateForm.invalid || isFileSelectedInvalid"
+      (onClick)="submitForm()"
+    >
+    </p-button>
+  </ng-template>
+</p-dialog>
