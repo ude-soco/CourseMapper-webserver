@@ -8,8 +8,9 @@ ENV NPM_CONFIG_UPDATE_NOTIFIER false
 
 FROM base as build
 COPY package*.json ./
-RUN  npm ci --omit=dev --omit=optional --no-fund &&\
-     npm version
+RUN  --mount=type=cache,target=/app/.npm,rw \
+     npm ci --cache=/app/.npm --prefer-offline --no-audit --omit=dev --omit=optional --no-fund
+
 COPY . ./
 RUN  npm run build &&\
      mkdir -p dist &&\

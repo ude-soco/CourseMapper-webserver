@@ -9,7 +9,7 @@ ENV NG_PERSISTENT_BUILD_CACHE 1
 
 COPY package*.json .
 RUN  --mount=type=cache,target=/app/.npm,rw \
-     npm ci --legacy-peer-deps --omit=optional --no-fund
+     npm ci --cache=/app/.npm --prefer-offline --no-audit --legacy-peer-deps --omit=optional --no-fund
 
 COPY . .
 RUN  --mount=type=cache,target=/app/node_modules/.cache,rw \
