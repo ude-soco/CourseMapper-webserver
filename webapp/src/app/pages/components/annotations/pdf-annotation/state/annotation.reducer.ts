@@ -36,6 +36,7 @@ export interface AnnotationState {
   selectedDrawingTool: string;
   selectedLineHeight: number;
   showDrawBoxTools: boolean;
+  showAllPDFAnnotations: boolean;
 
 }
 
@@ -62,6 +63,7 @@ const initialState: AnnotationState = {
   selectedDrawingTool: null,
   selectedLineHeight: 2,
   showDrawBoxTools: false,
+  showAllPDFAnnotations: false
 };
 
 const getAnnotationFeatureState =
@@ -140,6 +142,11 @@ export const getSelectedDrawingLineHeight = createSelector(
 export const showDrawBoxTools = createSelector(
   getAnnotationFeatureState,
   (state) => state.showDrawBoxTools
+);
+
+export const getshowAllPDFAnnotations = createSelector(
+  getAnnotationFeatureState,
+  (state) => state.showAllPDFAnnotations
 );
 
 export const annotationReducer = createReducer<AnnotationState>(
@@ -336,6 +343,16 @@ export const annotationReducer = createReducer<AnnotationState>(
       return {
         ...state,
         selectedLineHeight: action.height,
+      };
+    }
+  ),
+
+  on(
+    AnnotationActions.setshowAllPDFAnnotations,
+    (state, action): AnnotationState => {
+      return {
+        ...state,
+        showAllPDFAnnotations: action.showAllPDFAnnotations,
       };
     }
   ),

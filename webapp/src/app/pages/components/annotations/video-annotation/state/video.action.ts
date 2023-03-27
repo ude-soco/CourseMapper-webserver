@@ -59,3 +59,8 @@ export const SetShowAnnotations = createAction(
     '[Video] Set Show Annotations',
     props<{ showAnnotations: boolean}>()
 );
+
+export const SetSeekVideo = createAction(
+    '[Video] Set Seek Video Time',
+    props<{ seekVideo: [number, number]}>()
+);

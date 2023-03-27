@@ -7,19 +7,21 @@ import {
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { computeElapsedTime, getInitials } from 'src/app/_helpers/format';
-import { Annotation, PdfGeneralAnnotationLocation } from 'src/app/models/Annotations';
+import { Annotation, PdfGeneralAnnotationLocation, PdfToolType, VideoAnnotationLocation } from 'src/app/models/Annotations';
 import { Reply } from 'src/app/models/Reply';
-import { getAnnotationsForMaterial, getCurrentPdfPage, State } from '../state/annotation.reducer';
+import { getAnnotationsForMaterial, getCurrentPdfPage, getshowAllPDFAnnotations, State } from '../state/annotation.reducer';
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
 import { MenuItem } from 'primeng/api';
 import * as $ from 'jquery';
 import { SocketIoModule, SocketIoConfig, Socket } from 'ngx-socket-io';
 import { User } from 'src/app/models/User';
+import { printTime } from 'src/app/_helpers/format';
 import { getLoggedInUser } from 'src/app/state/app.reducer';
 import { Material } from 'src/app/models/Material';
 import { getCurrentMaterial } from '../../../materils/state/materials.reducer';
 import * as VideoActions from 'src/app/pages/components/annotations/video-annotation/state/video.action'
 import { getShowAnnotations } from '../../video-annotation/state/video.reducer';
+import { Observable } from 'rxjs';
 @Component({
   selector: 'app-pdf-comment-item',
   templateUrl: './pdf-comment-item.component.html',
@@ -44,6 +46,9 @@ export class PdfCommentItemComponent implements OnInit, OnChanges {
   isShowAnnotationsOnVideo: boolean;
   blueLikeButtonEnabled: boolean = false;
   blueDislikeButtonEnabled: boolean = false;
+  PDFAnnotationLocation: [number, number] = [1,1];
+  VideoAnnotationLocation: [number, number] = [0,0];
+  showAllPDFAnnotations$: Observable<boolean>;
 
   constructor(private store: Store<State>, private socket: Socket) {
     this.store.select(getCurrentPdfPage).subscribe((currentPage) => {
@@ -54,6 +59,7 @@ export class PdfCommentItemComponent implements OnInit, OnChanges {
 
     this.store.select(getShowAnnotations).subscribe((isShowAnnotationsOnVideo) => this.isShowAnnotationsOnVideo = isShowAnnotationsOnVideo);
     this.store.select(getLoggedInUser).subscribe((user) => {this.loggedInUser = user;});
+    this.showAllPDFAnnotations$ = this.store.select(getshowAllPDFAnnotations);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -99,6 +105,13 @@ export class PdfCommentItemComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.setMenuItems();
+    if(this.selectedMaterial.type === "pdf"){
+        this.PDFAnnotationLocation[0] = (this.annotation?.location as PdfGeneralAnnotationLocation).startPage;
+        this.PDFAnnotationLocation[1] = (this.annotation?.location as PdfGeneralAnnotationLocation).lastPage;
+    }else{
+      this.VideoAnnotationLocation[0] = (this.annotation?.location as VideoAnnotationLocation).from;
+      this.VideoAnnotationLocation[1] = (this.annotation?.location as VideoAnnotationLocation).to;
+    }
   }
 
   sendReply() {
@@ -127,20 +140,24 @@ export class PdfCommentItemComponent implements OnInit, OnChanges {
     );
   }
 
+  printTime = printTime;
+
   showAnnotationOnMaterial(){
     if(this.selectedMaterial.type === "pdf"){
       let location = this.annotation?.location as PdfGeneralAnnotationLocation;
       if(this.currentPage != location.startPage){
         this.store.dispatch(AnnotationActions.setCurrentPdfPage({pdfCurrentPage: location.startPage}));
-        if(this.currentPage == location.startPage){
+        this.store.dispatch(AnnotationActions.setshowAllPDFAnnotations({showAllPDFAnnotations: false}));
+        if(this.currentPage == location.startPage && this.annotation.tool.type != PdfToolType.Annotation){
           this.highlightAnnotation();
         } 
       }else{
-        this.highlightAnnotation();
+        if(this.currentPage == location.startPage && this.annotation.tool.type != PdfToolType.Annotation){
+          this.highlightAnnotation();
+        } 
       }
     }else{
       if(!this.isShowAnnotationsOnVideo){
-        console.log('here');
         setTimeout(() => {
           this.store.dispatch(VideoActions.SetShowAnnotations({showAnnotations: true}));
           this.store.dispatch(VideoActions.SetActiveAnnotaion({activeAnnotation: this.annotation}));
@@ -150,6 +167,10 @@ export class PdfCommentItemComponent implements OnInit, OnChanges {
           }, 5000);
         }, 100);
       }else{
+        if(this.annotation.tool.type === "annotation"){
+          console.log((this.annotation.location as VideoAnnotationLocation).from);
+          this.store.dispatch(VideoActions.SetSeekVideo({seekVideo: [(this.annotation.location as VideoAnnotationLocation).from, (this.annotation.location as VideoAnnotationLocation).to]}));
+        }
         this.store.dispatch(VideoActions.SetActiveAnnotaion({activeAnnotation: this.annotation}));
       }
     }

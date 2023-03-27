@@ -1,4 +1,8 @@
-<div class="card my-5 p-2 rounded-lg" [ngStyle]="{'border': '2px solid' + annotationColor}" [id]="'annotation-' + annotation._id">
+<div
+  class="card my-5 p-2 rounded-lg"
+  [ngStyle]="{ border: '2px solid' + annotationColor }"
+  [id]="'annotation-' + annotation._id"
+>
   <div class="flex flex-col flex-wrap space-y-2">
     <div class="flex flex-row justify-between">
       <div class="flex flex-row justify-start space-x-2">
@@ -15,6 +19,20 @@
         ></app-iconbutton>
         <b class="mt-4 text-base">{{ annotation?.author?.name }}</b>
         <h1 class="mt-5 text-xs">{{ annotationElapsedTime }}</h1>
+        <h1
+          class="mt-5 text-xs cursor-pointer hover:underline hover:text-blue-600"
+          *ngIf="selectedMaterial?.type === 'pdf' && (showAllPDFAnnotations$ | async)"
+          (click)="showAnnotationOnMaterial()"
+        >
+          Page {{ PDFAnnotationLocation[0] }}-{{ PDFAnnotationLocation[1] }}
+        </h1>
+        <h1
+        class="mt-5 text-xs cursor-pointer hover:underline hover:text-blue-600"
+        *ngIf="selectedMaterial?.type === 'video'"
+        (click)="showAnnotationOnMaterial()"
+      >
+      {{ printTime(VideoAnnotationLocation[0]) }} - {{ printTime(VideoAnnotationLocation[1]) }}
+      </h1>
       </div>
 
       <div class="flex justify-end mt-3">
@@ -51,46 +69,46 @@
           (onClick)="dispatchUpdatedAnnotation()"
         ></app-iconbutton>
         <app-iconbutton
-        icon="bxs-x-circle"
-        color="text-slate-500"
-        class="mt-3 flex-1 justify-end"
-        (onClick)="cancelEditing()"
-      ></app-iconbutton>
+          icon="bxs-x-circle"
+          color="text-slate-500"
+          class="mt-3 flex-1 justify-end"
+          (onClick)="cancelEditing()"
+        ></app-iconbutton>
       </div>
     </div>
     <div class="flex flex-row flex-wrap space-x-3">
       <app-button
-      *ngIf="!blueLikeButtonEnabled"
+        *ngIf="!blueLikeButtonEnabled"
         icon="bx-like"
         color="text-grey-600"
         label="{{ likesCount }}"
         (onClick)="likeAnnotation()"
       ></app-button>
       <app-button
-      *ngIf="blueLikeButtonEnabled"
-      icon="bxs-like"
-      color="text-blue-600"
-      class="text-blue-600"
-      label="{{ likesCount }}"
-      (onClick)="likeAnnotation()"
-    ></app-button>
+        *ngIf="blueLikeButtonEnabled"
+        icon="bxs-like"
+        color="text-blue-600"
+        class="text-blue-600"
+        label="{{ likesCount }}"
+        (onClick)="likeAnnotation()"
+      ></app-button>
       <app-button
-      *ngIf="!blueDislikeButtonEnabled"
+        *ngIf="!blueDislikeButtonEnabled"
         icon="bx-dislike"
         color="text-grey-600"
         label="{{ dislikesCount }}"
         (onClick)="dislikeAnnotation()"
       ></app-button>
       <app-button
-      *ngIf="blueDislikeButtonEnabled"
-      icon="bxs-dislike"
-      color="text-grey-600"
-      class="text-blue-600"
-      label="{{ dislikesCount }}"
-      (onClick)="dislikeAnnotation()"
-    ></app-button>
+        *ngIf="blueDislikeButtonEnabled"
+        icon="bxs-dislike"
+        color="text-grey-600"
+        class="text-blue-600"
+        label="{{ dislikesCount }}"
+        (onClick)="dislikeAnnotation()"
+      ></app-button>
       <app-button
-      *ngIf="showAnnotationInMaterial"
+        *ngIf="showAnnotationInMaterial"
         variant="contained"
         label="Show Annotation On Material"
         class="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline"

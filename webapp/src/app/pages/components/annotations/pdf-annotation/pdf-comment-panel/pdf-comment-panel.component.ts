@@ -7,6 +7,7 @@ import { SelectItemGroup } from 'primeng/api';
 import { Material } from 'src/app/models/Material';
 import { getCurrentMaterial } from '../../../materils/state/materials.reducer';
 import { getCurrentTime } from '../../video-annotation/state/video.reducer';
+import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions'
 @Component({
   selector: 'app-pdf-comment-panel',
   templateUrl: './pdf-comment-panel.component.html',
@@ -103,8 +104,10 @@ export class PdfCommentPanelComponent implements OnInit {
     let annotationsToFilter: Annotation[] = [];
     if (filters.includes(6)) {
       annotationsToFilter = allAnnotations;
+      this.store.dispatch(AnnotationActions.setshowAllPDFAnnotations({showAllPDFAnnotations: true}));
     } else {
       annotationsToFilter = annotationOnCurrentPage;
+      this.store.dispatch(AnnotationActions.setshowAllPDFAnnotations({showAllPDFAnnotations: false}));
     }
 
     if (filters.length > 0) {
