@@ -28,9 +28,11 @@ export class PdfReplyItemComponent implements OnInit, OnChanges, OnDestroy {
   subscription: Subscription;
   isEditing: boolean = false;
   updatedReply: string;
+  blueLikeButtonEnabled: boolean = false;
+  blueDislikeButtonEnabled: boolean = false;
 
   constructor(private store: Store<State>, private socket: Socket) {
-
+    this.subscription = this.store.select(getLoggedInUser).subscribe((user) => this.loggedInUser = user);
    }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -40,11 +42,20 @@ export class PdfReplyItemComponent implements OnInit, OnChanges, OnDestroy {
       this.replyElapsedTime = computeElapsedTime(this.reply?.createdAt);
       this.likesCount = this.reply?.likes?.length;
       this.dislikesCount = this.reply?.dislikes?.length;
-      this.subscription = this.store.select(getLoggedInUser).subscribe((user) => this.loggedInUser = user);
       this.socket.on(this.reply?._id, (payload: { eventType: string, likes: number, dislikes: number, reply: Reply }) => {
         console.log(payload);
         this.likesCount = payload.likes;
         this.dislikesCount = payload.dislikes;
+        if(payload.reply.likes.some((like) => this.loggedInUser.id === like)){
+          this.blueLikeButtonEnabled = true;
+        }else{
+          this.blueLikeButtonEnabled = false;
+        }
+        if(payload.reply.dislikes.some((like) => this.loggedInUser.id === like)){
+          this.blueDislikeButtonEnabled = true;
+        }else{
+          this.blueDislikeButtonEnabled = false;
+        }
       })
 
       this.annotationOptions = [

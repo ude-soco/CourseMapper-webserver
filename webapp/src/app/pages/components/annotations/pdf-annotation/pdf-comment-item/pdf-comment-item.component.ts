@@ -42,6 +42,8 @@ export class PdfCommentItemComponent implements OnInit, OnChanges {
   updatedAnnotation: string;
   selectedMaterial: Material
   isShowAnnotationsOnVideo: boolean;
+  blueLikeButtonEnabled: boolean = false;
+  blueDislikeButtonEnabled: boolean = false;
 
   constructor(private store: Store<State>, private socket: Socket) {
     this.store.select(getCurrentPdfPage).subscribe((currentPage) => {
@@ -51,6 +53,7 @@ export class PdfCommentItemComponent implements OnInit, OnChanges {
     this.store.select(getCurrentMaterial).subscribe((material) => this.selectedMaterial = material);
 
     this.store.select(getShowAnnotations).subscribe((isShowAnnotationsOnVideo) => this.isShowAnnotationsOnVideo = isShowAnnotationsOnVideo);
+    this.store.select(getLoggedInUser).subscribe((user) => {this.loggedInUser = user;});
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -81,11 +84,20 @@ export class PdfCommentItemComponent implements OnInit, OnChanges {
         this.store.dispatch(AnnotationActions.updateAnnotationsOnSocketEmit({payload: payload}));
       })
       this.isEditing = false;
+      if(this.annotation.likes.some((like) => this.loggedInUser.id === like)){
+        this.blueLikeButtonEnabled = true;
+      }else{
+        this.blueLikeButtonEnabled = false;
+      }
+      if(this.annotation.dislikes.some((like) => this.loggedInUser.id === like)){
+        this.blueDislikeButtonEnabled = true;
+      }else{
+        this.blueDislikeButtonEnabled = false;
+      }
     }
   }
 
   ngOnInit(): void {
-    this.store.select(getLoggedInUser).subscribe((user) => {this.loggedInUser = user;});
     this.setMenuItems();
   }
 
