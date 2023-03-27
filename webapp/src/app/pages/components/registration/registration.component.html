@@ -529,7 +529,7 @@
                 type="text"
                 pInputText
                 formControlName="email"
-                [style]="{width:'100%' }"
+                [style]="{width:'99%' }"
               />
               <label for="email">Email</label>
             </div>
@@ -553,7 +553,7 @@
                 type="text"
                 pInputText
                 formControlName="username"
-                [style]="{width:'100%' }"
+                [style]="{width:'99%' }"
               />
               <label for="username">Username</label>
             </div>
@@ -572,9 +572,9 @@
               </div>
             </div>
           </div>
-          <div class="form-row">
-              <div class="form-group col">
-                <div class="p-float-label mb-4" [style]="{   width: '100%' }">
+          <div class="form-row" style=" width: 115%  ">
+              <div class="form-group col-5" [style]="{   width: '100%' }">
+                <div class="p-float-label" >
                   <p-password id="password" type="password" formControlName="password" 
                   [toggleMask]="true"
                   [feedback]="true" >
@@ -609,8 +609,8 @@
                   </div>
                 </div>
               </div>
-              <div class="form-group col">
-                <div class="mb-4">
+              <div class="form-group col-5" style="margin: '0rem 0rem 0rem 2.6rem'; width:'100%'  ">
+               
 
                   <!-- <input
                     id="checkPassword"
@@ -623,12 +623,12 @@
                   />
                   <label for="checkPassword">Confirm Password</label> -->
         
-                  <span class="p-float-label">
+                  <span class="p-float-label" >
                     <p-password id="checkPassword" formControlName="checkPassword" [toggleMask]="true"
-                    [feedback]="false"  [style]="{ width: '100%'}" ></p-password>
+                    [feedback]="false" p-password-meter></p-password>
                     <label for="checkPassword">Confirm Password</label>
                 </span>
-                </div>
+               
         
                 <div
                   *ngIf="validateForm.controls['checkPassword'].invalid && (validateForm.controls['checkPassword'].dirty || validateForm.controls['checkPassword'].touched)"
@@ -654,7 +654,7 @@
               <div *ngIf="submitted && f.acceptTerms.errors" class="invalid-feedback">Accept Ts & Cs is required</div>
           </div> -->
           <div class="form-group" [style]="{width:'100%' }">
-            <p>We respect your privacy. Please read <a href="/privacy" target="_blank" >here</a> to learn more about our Privacy Policy.</p>
+            <p>We respect your privacy. Please read <a href="/privacy">here</a> to learn more about our Privacy Policy.</p>
           </div>
           <div class="text-center">
             <button
