@@ -98,6 +98,10 @@ export class RegistrationComponent implements OnInit {
   }
 
   onSubmit(): void {
+    this.validateForm.markAllAsTouched(); 
+    if (this.validateForm.valid) {
+     return;
+    } else {
     console.log('222');
     console.log(this.validateForm.value);
     this.errors = null;
@@ -121,7 +125,7 @@ export class RegistrationComponent implements OnInit {
       });
   }
 }
-
+}
 export default class Validation {}
 
 export function ConfirmedValidator(
