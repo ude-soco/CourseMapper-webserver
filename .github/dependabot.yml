@@ -1,0 +1,33 @@
+version: 2
+updates:
+
+- package-ecosystem: "github-actions"
+  directory: "/"
+  schedule:
+    interval: "daily"
+
+- package-ecosystem: "docker"
+  directory: "/webapp"
+  schedule:
+    interval: "daily"
+
+- package-ecosystem: "docker"
+  directory: "/webserver"
+  schedule:
+    interval: "daily"
+
+- package-ecosystem: "npm"
+  directory: "/webapp"
+  schedule:
+    interval: "daily"
+  ignore:
+  - dependency-name: "*"
+    update-types: ["version-update:semver-major"]
+
+- package-ecosystem: "npm"
+  directory: "/webserver"
+  schedule:
+    interval: "daily"
+  ignore:
+  - dependency-name: "*"
+    update-types: ["version-update:semver-major"]
