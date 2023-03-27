@@ -1,6 +1,9 @@
 services:
+  proxy:
+    image: coursemapper-webserver-proxy
+
   webapp:
-    image: coursemapper-webserver-webapp:dev
+    image: coursemapper-webserver-webapp
     build:
       dockerfile: dev.Dockerfile
     ports:
@@ -9,7 +12,7 @@ services:
     - ./webapp:/app
 
   webserver:
-    image: coursemapper-webserver-webserver:dev
+    image: coursemapper-webserver-webserver
     build:
       dockerfile: dev.Dockerfile
     ports:

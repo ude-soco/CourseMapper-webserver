@@ -2,13 +2,13 @@ version: "3"
 
 services:
   proxy:
-    image: coursemapper-webserver-proxy
+    image: ${IMAGE_NAME_PREFIX:-socialcomputing/}coursemapper-webserver-proxy${IMAGE_TAG:-latest}
     build: proxy
     ports:
       - 8000:8000
 
   webapp:
-    image: coursemapper-webserver-webapp
+    image: ${IMAGE_NAME_PREFIX:-socialcomputing/}coursemapper-webserver-webapp${IMAGE_TAG:-latest}
     build:
       context: webapp
     environment:
@@ -17,7 +17,7 @@ services:
       - webserver
 
   webserver:
-    image: coursemapper-webserver-webserver
+    image: ${IMAGE_NAME_PREFIX:-socialcomputing/}coursemapper-webserver-webserver${IMAGE_TAG:-latest}
     build:
       context: webserver
     environment:
