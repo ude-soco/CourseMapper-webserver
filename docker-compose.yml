@@ -6,6 +6,10 @@ services:
     build: proxy
     ports:
       - 8000:8000
+    restart: always
+    depends_on:
+      - webapp
+      - webserver
 
   webapp:
     image: ${IMAGE_NAME_PREFIX:-socialcomputing/}coursemapper-webserver-webapp${IMAGE_TAG:-latest}
