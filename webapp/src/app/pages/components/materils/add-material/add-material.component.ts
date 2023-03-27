@@ -28,8 +28,16 @@ export class AddMaterialComponent implements OnInit {
   @Output() onSubmitted: EventEmitter<void> = new EventEmitter();
   materialType: string = ""
   materialId: Material;
-  materialComponent = MaterialComponent
-
+  materialComponent = MaterialComponent;
+  pdfAddModelDisplay:boolean = false;
+  videoAddModelDisplay:boolean = false;
+  isFileSelectedInvalid:boolean = true;
+  invalidPDFFileMessage:string = "Please choose a PDF file";
+  pdfAttachButtonText = "Attach a PDF";
+  chosenFile=null;
+  urlOrFile = "urlOption";
+  videoAttachButtonText = "Attach a video"
+  invalidVideoFileMessage:string = "Please choose a video file"
   materialToAdd: CreateMaterial = {
     name: '',
     type: 'pdf',
@@ -37,9 +45,23 @@ export class AddMaterialComponent implements OnInit {
     topicID: '',
     channelID: '',
     url: '',
-
+  
     description: ''
   }
+
+
+  showPdfAddModel() {
+    this.pdfAddModelDisplay = true;
+    this.materialType = 'pdf';
+    console.log(this.materialType)
+}
+  showVideoAddModel() {
+    this.videoAddModelDisplay = true;
+    this.materialType = 'video';
+    console.log(this.materialType)
+}
+
+
   formData: FormData = null;
   validateForm: FormGroup;
   channelName: string = ''
@@ -47,39 +69,44 @@ export class AddMaterialComponent implements OnInit {
   response: any
   fileUploadForm: FormGroup | undefined;
   fileInputLabel: string | undefined;
+  radioFormGroup:FormGroup;
+  urlFormControl = new FormControl('',[Validators.required]);
 
-  file: File = null;
-  constructor(private formBuilder: FormBuilder, private fb: FormBuilder, private materialService: MaterilasService, private topicChannelService: TopicChannelService
-    , private router: Router,) {
-
+  
+  constructor(private formBuilder: FormBuilder, 
+    private fb: FormBuilder, 
+    private materialService: MaterilasService, 
+    private topicChannelService: TopicChannelService,
+    private router: Router) {
   }
 
   ngOnInit(): void {
     this.validateForm = this.fb.group({
       materialName: ['', [Validators.required]],
-      url: [''],
+      //REMEMBER THIS WILL CAUSE ERRORS
       description: [''],
-
     });
+
     this.fileUploadForm = this.formBuilder.group({
-      file: [null]
+      file: ['', []]
     });
     //customValidator(this.validateForm.get("url").value, this.fileUploadForm.get("file").value);
+
+    this.radioFormGroup = new FormGroup({
+      videoRadio: new FormControl('urlOption'),
+    });
+    this.radioFormGroup.valueChanges.subscribe(val =>{
+      this.urlOrFile = val.videoRadio;
+      this.resetDialogs();
+    })
+
   }
 
-  videoTab() {
-    this.materialType = 'video';
-    console.log(this.materialType)
-  }
-  pdfTab() {
 
-    this.materialType = 'pdf';
-    console.log(this.materialType)
-  }
+/*   onFileSelect(event) {
 
-  onFileSelect(event) {
-
-    this.file = <File>event.target.files[0]
+    this.file = <File>event.target.files[0];
+    console.log(this.file);
     this.fileInputLabel = this.file["name"];
     const fileChosen = document.getElementById('file-chosen');
     fileChosen!.textContent = this.fileInputLabel
@@ -87,10 +114,35 @@ export class AddMaterialComponent implements OnInit {
     event.target.value = '';
 
   }
+ */
 
+  //this method basically makes the input boxes red only after the submit button is pressed
+  validateFields(){
+    if(!this.chosenFile && this.materialType==="pdf"){
+      this.invalidPDFFileMessage = "Please choose a PDF file";
+    }
+    Object.keys(this.validateForm.controls).forEach(field=>{
+      const control = this.validateForm.get(field);
+      control.markAsTouched({onlySelf:true});
+    })
+  }
 
   submitForm(): void {
-    var file = this.fileUploadForm?.get('file')?.value
+    console.log("submit form called");
+      if(this.materialType ==="pdf"){
+      if(this.chosenFile ===null){
+        return;
+      }
+      this.validateFields();
+      this.pdfAddModelDisplay = false
+    }
+
+    if(this.materialType === "video"){
+      this.validateFields();
+      this.videoAddModelDisplay = false;
+      
+    }
+    let file = this.chosenFile;
     this.materialToAdd.courseID = this.courseID!;
     this.materialToAdd.topicID = this.topicID!;
     this.materialToAdd.channelID = this.channelID!;
@@ -98,8 +150,8 @@ export class AddMaterialComponent implements OnInit {
     this.materialToAdd.name = this.validateForm.controls['materialName'].value
     this.materialToAdd.description = this.validateForm.controls['description'].value
     if (this.materialType == "video") {
-      if (this.validateForm.controls['url'].value) {
-        this.materialToAdd.url = this.validateForm.controls['url'].value
+      if (this.urlFormControl.value) {
+        this.materialToAdd.url = this.urlFormControl.value;
       }
       else {
         this.materialToAdd.url = ""
@@ -121,13 +173,14 @@ export class AddMaterialComponent implements OnInit {
           if (this.materialType == "video") {
 
             this.formData = new FormData();
-            this.formData.append('file', this.file, data.material._id + ".mp4");
+            this.formData.append('file', file, data.material._id + ".mp4");
           }
 
           if (this.materialType == "pdf") {
-
+            console.log("this is the file: ");
+            console.log(file);
             this.formData = new FormData();
-            this.formData.append('file', this.file, data.material._id + ".pdf");
+            this.formData.append('file', file, data.material._id + ".pdf");
           }
 
 
@@ -137,13 +190,13 @@ export class AddMaterialComponent implements OnInit {
               this.fileUploadForm.reset();
 
 
-              const fileChosen = document.getElementById('file-chosen');
-              fileChosen!.textContent = ""
-              let file = document.getElementById('file');
-              file!.textContent = ""
-              this.fileUploadForm?.get('file')?.setValue(null);
-
-              console.log("materialemit")
+              /* const fileChosen = document.getElementById('file-chosen');
+              fileChosen!.textContent = "" */
+              /* let file = document.getElementById('file');
+              file!.textContent = "" */
+              /* this.fileUploadForm?.get('file')?.setValue(null); */
+              this.resetDialogs();
+                console.log("materialemit")
               // this.materialemit=data.material._id
               //console.log(this.materialemit)
               this.validateForm.reset();
@@ -152,8 +205,6 @@ export class AddMaterialComponent implements OnInit {
               this.router.navigate(['course', data.material.courseId, 'channel', data.material.channelId]);
 
               //  this.reloadCurrentRoute()
-
-
             }
           }, er => {
             console.log(er);
@@ -201,6 +252,49 @@ export class AddMaterialComponent implements OnInit {
       this.router.navigate([currentUrl]);
     });
   }
+
+  myUploader(event){
+    console.log(event);
+    this.chosenFile = event.currentFiles[0];
+    
+    if(this.materialType === "pdf"){
+      if(this.chosenFile.type!=="application/pdf"){
+        this.isFileSelectedInvalid = true;
+        this.invalidPDFFileMessage = "* Please upload a PDF File";
+      }
+      else{
+        this.isFileSelectedInvalid= false;
+        this.invalidPDFFileMessage = "";
+        this.pdfAttachButtonText = this.chosenFile.name;
+      }
+      return;
+    }
+
+    if(this.materialType ==="video"){
+      this.isFileSelectedInvalid = false;
+      this.invalidVideoFileMessage = "";
+      this.videoAttachButtonText = this.chosenFile.name;
+    }
+  }
+
+  resetDialogs(event?){
+    console.log("reset pdf element called!");
+    Object.keys(this.validateForm.controls).forEach(field=>{
+      const control = this.validateForm.get(field);
+      control.markAsUntouched({onlySelf:true});
+    });
+    this.urlFormControl.reset();
+    this.validateForm.reset();
+    this.chosenFile = null;
+    this.invalidPDFFileMessage = "Please choose a PDF file";
+    this.pdfAttachButtonText = "Select a PDF";
+    this.invalidVideoFileMessage= "Please choose a video file";
+    this.videoAttachButtonText = "Select a video"
+    this.isFileSelectedInvalid = true;
+
+    
+  }
+  
 }
 
 
