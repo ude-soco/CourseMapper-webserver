@@ -657,7 +657,7 @@
             pButton
             [ngStyle]="{ backgroundColor: '#EA580C',width: '100%'}"
             type="button"
-            label="Sign Up"
+            label="Register"
             
             (click)="onSubmit()"></button>
        
@@ -665,6 +665,10 @@
           Sign up unsuccessful<br/>{{ errorMessage }}
         </div>
               <!-- <button class="btn btn-secondary" type="reset" (click)="onReset()">Cancel</button> -->
+          </div>
+          <div style="text-align: center;
+          margin: 1rem;" >
+            Already have an account?  <a [routerLink]="[login]" style="color: blue;"> Log in</a><br/>
           </div>
       </form>
   </div>

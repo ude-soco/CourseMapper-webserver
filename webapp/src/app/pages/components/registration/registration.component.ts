@@ -32,6 +32,7 @@ export class RegistrationComponent implements OnInit {
   submitted = false;
   errors = null;
   _id: string = '';
+  public login="/login"
 
   constructor(
     private userService: UserServiceService,
