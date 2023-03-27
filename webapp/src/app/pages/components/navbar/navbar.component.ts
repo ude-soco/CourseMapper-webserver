@@ -1,10 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 
 import { PrimeNGConfig } from 'primeng/api';
 import { USER_KEY } from 'src/app/config/config';
+import { User } from 'src/app/models/User';
 import { StorageService } from 'src/app/services/storage.service';
 import { UserServiceService } from 'src/app/services/user-service.service';
+import { getLoggedInUser } from 'src/app/state/app.reducer';
+import { State } from 'src/app/state/app.state';
+import { getInitials } from 'src/app/_helpers/format';
 
 @Component({
   selector: 'app-navbar',
@@ -17,14 +22,17 @@ export class NavbarComponent implements OnInit {
   showAdminBoard = false;
   showModeratorBoard = false;
   username?: string;
+  loggedInUser: User;
 
   constructor(
     private primengConfig: PrimeNGConfig,
     public storageService: StorageService,
     private userService: UserServiceService,
-    private router: Router
+    private router: Router,
+    private store: Store<State>
   ) {
     this.isLoggedIn = storageService.loggedIn;
+    this.store.select(getLoggedInUser).subscribe((user) => this.loggedInUser = user);
   }
 
   ngOnInit(): void {
@@ -56,4 +64,6 @@ export class NavbarComponent implements OnInit {
       },
     });
   }
+
+  getIntitials = getInitials
 }
