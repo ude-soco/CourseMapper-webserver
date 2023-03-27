@@ -130,6 +130,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
     private socket: Socket
   ) {
     this.getDocUrl();
+    this.store.dispatch(AnnotationActions.loadAnnotations());
 
     this.store.select(getCurrentMaterialId).subscribe((id) => {
       this.materialId = id;

@@ -51,6 +51,7 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
   cursorisInsideVideo: boolean;
 
   constructor(private store: Store<State>, private pdfViewService: PdfviewService, private changeDetectorRef: ChangeDetectorRef, private socket: Socket) {
+    this.store.dispatch(AnnotationActions.loadAnnotations());
     this.store.select(getIsBrushSelectionActive).subscribe((isActive) => this.isBrushSelectionActive = isActive);
     this.isPinpointSelectionActive$ = this.store.select(getIsPinpointSelectionActive);
     this.isAnnotationDialogVisible$ = this.store.select(getIsAnnotationDialogVisible);

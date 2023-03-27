@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Annotation, PdfGeneralAnnotationLocation, PdfToolType } from 'src/app/models/Annotations';
+import { Annotation, PdfAnnotationTool, PdfGeneralAnnotationLocation, PdfToolType } from 'src/app/models/Annotations';
 import { Store } from '@ngrx/store';
 import { computeElapsedTime, getInitials } from 'src/app/_helpers/format';
 import { getAnnotationsForMaterial, getCurrentPdfPage, State } from '../state/annotation.reducer';
@@ -13,135 +13,347 @@ import { getCurrentMaterial } from '../../../materils/state/materials.reducer';
 })
 export class PdfCommentPanelComponent implements OnInit {
   annotations: Annotation[] = [];
-  searchFilters: SelectItemGroup[];
-  selectedFilter: number;
+  searchFiltersForPDF: SelectItemGroup[];
+  searchFiltersForVideo: SelectItemGroup[];
+  selectedFiltersForPDF: number[];
+  selectedFiltersForVideo: number[];
   currentPage: number;
   annotationOnCurrentPage: Annotation[];
+  annotationsToShow: Annotation[];
   selectedMaterial: Material;
+  disableSortFilters: boolean = false;
 
   constructor(private store: Store<State>) {
-    this.searchFilters = [
-      {
-          label: 'Annotation Tools', value: 'tool', 
-          items: [
-              {label: 'Drawing', value: 0},
-              {label: 'Pinpoint', value: 1},
-              {label: 'Highlight', value: 2},
-          ]
-      },
-      {
-          label: 'Annotation Types', value: 'type', 
-          items: [
-              {label: 'Note', value: 3},
-              {label: 'Question', value: 4},
-              {label: 'External Resource', value: 5},
-          ]
-      },
-      {
-          label: 'Sort By', value: 'sort', 
-          items: [
-              {label: 'Show All Annotations', value: 6},
-              {label: 'Date (Oldest To Newest)', value: 7},
-              {label: 'Date (Newest To Oldest)', value: 8},
-              {label: 'By User Name (A-Z)', value: 9},
-              {label: 'By User Name (Z-A)', value: 10}
-          ]
-      }
-  ];
 
-  this.store.select(getCurrentMaterial).subscribe((material) => this.selectedMaterial = material);
+    this.store.select(getCurrentMaterial).subscribe((material) => this.selectedMaterial = material);
 
     this.store.select(getAnnotationsForMaterial).subscribe((annotations) => {
       this.annotations = annotations;
-      if(this.selectedMaterial.type === "pdf"){
-        this.showAnnotationOnCurrentPage();
-      }else{
+      if (this.selectedMaterial.type === "pdf") {
+        this.updateFilterItemsforPDF();
+        this.showPDFAnnotations();
+      } else {
+        this.updateFilterItemsforVideo();
         this.showVideoAnnotations();
       }
     });
 
     this.store.select(getCurrentPdfPage).subscribe((page) => {
       this.currentPage = page;
-      this.selectedFilter = null;
-      this.showAnnotationOnCurrentPage();
+      this.selectedFiltersForPDF = null;
+      this.showPDFAnnotations();
     });
   }
 
   ngOnInit(): void {
     this.currentPage = 1;
-    this.showAnnotationOnCurrentPage();
+    this.showPDFAnnotations();
   }
 
-  showAnnotationOnCurrentPage() {
-    
+  showPDFAnnotations() {
+
     this.annotationOnCurrentPage = this.annotations.filter((anno) => (anno.location as PdfGeneralAnnotationLocation).startPage == this.currentPage);
+    this.annotationsToShow = this.annotationOnCurrentPage;
+    console.log(this.annotationsToShow);
   }
 
-  showVideoAnnotations(){
-    this.annotationOnCurrentPage = this.annotations;
+  showVideoAnnotations() {
+    this.annotationsToShow = this.annotations;
+    console.log(this.annotationsToShow);
   }
 
-  onAnnotationFilterChange() {
-    switch (this.selectedFilter) {
-      case 0:
-        this.showAnnotationOnCurrentPage();
-        this.annotationOnCurrentPage = this.annotationOnCurrentPage.filter(
-          (anno) => anno.tool.type == PdfToolType.DrawBox
-        );
-        break;
-      case 1:
-        this.showAnnotationOnCurrentPage();
-        this.annotationOnCurrentPage = this.annotationOnCurrentPage.filter(
-          (anno) => anno.tool.type == PdfToolType.Pin
-        );
-        break;
-      case 2:
-        this.showAnnotationOnCurrentPage();
-        this.annotationOnCurrentPage = this.annotationOnCurrentPage.filter(
-          (anno) => anno.tool.type == PdfToolType.Highlight
-        );
-        break;
-      case 3:
-        this.showAnnotationOnCurrentPage();
-        this.annotationOnCurrentPage = this.annotationOnCurrentPage.filter(
-          (anno) => anno.type == 'Note'
-        );
-        break;
-      case 4:
-        this.showAnnotationOnCurrentPage();
-        this.annotationOnCurrentPage = this.annotationOnCurrentPage.filter(
-          (anno) => anno.type == 'Question'
-        );
-        break;
-      case 5:
-        this.showAnnotationOnCurrentPage();
-        this.annotationOnCurrentPage = this.annotationOnCurrentPage.filter(
-          (anno) => anno.type == 'External Resource'
-        );
-        break;
-      case 6:
-        this.showAnnotationOnCurrentPage();
-        this.annotationOnCurrentPage = this.annotations
-        break;
-      case 7:
-        this.showAnnotationOnCurrentPage();
-        this.annotationOnCurrentPage = this.annotationOnCurrentPage.sort((b,a) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-        break;
-      case 8:
-        this.showAnnotationOnCurrentPage();
-        this.annotationOnCurrentPage = this.annotationOnCurrentPage.sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-        break;
-      case 9:
-        this.showAnnotationOnCurrentPage();
-        this.annotationOnCurrentPage = this.annotationOnCurrentPage.sort((a, b) => a.author.name.toLowerCase().localeCompare(b.author.name.toLowerCase()))
-        break;
-      case 10:
-        this.showAnnotationOnCurrentPage();
-        this.annotationOnCurrentPage = this.annotationOnCurrentPage.sort((a, b) => b.author.name.toLowerCase().localeCompare(a.author.name.toLowerCase()))
-        break;
-      default:
-        this.showAnnotationOnCurrentPage();
-        break;
+  onPDFAnnotationFiltersChange(filters: number[]) {
+    if ([7, 8, 9, 10].some(num => filters.includes(num))) {
+      this.disableSortFilters = true;
+      this.updateFilterItemsforPDF();
+      this.filterAnnotationsForPDF(filters);
+
+    } else {
+      this.disableSortFilters = false;
+      this.updateFilterItemsforPDF();
+      this.filterAnnotationsForPDF(filters);
     }
+  }
+
+  onVideoAnnotationFiltersChange(filters: number[]) {
+    if ([7, 8, 9, 10].some(num => filters.includes(num))) {
+      this.disableSortFilters = true;
+      this.updateFilterItemsforVideo();
+      this.filterAnnotationsForVideo(filters);
+
+    } else {
+      this.disableSortFilters = false;
+      this.updateFilterItemsforVideo();
+      this.filterAnnotationsForVideo(filters);
+    }
+  }
+
+  filterAnnotationsForPDF(filters: number[]) {
+    let filteredAnnotations: Annotation[] = [];
+    let annotationOnCurrentPage = this.annotations.filter((anno) => (anno.location as PdfGeneralAnnotationLocation).startPage == this.currentPage);
+    let allAnnotations = this.annotations;
+    let annotationsToFilter: Annotation[] = [];
+    if (filters.includes(6)) {
+      annotationsToFilter = allAnnotations;
+    } else {
+      annotationsToFilter = annotationOnCurrentPage;
+    }
+
+    if (filters.length > 0) {
+      let annotationPerTool;
+      let annotationPerType;
+      let sortedAnnotations;
+
+      if ([0, 1, 2].some(num => filters.includes(num))) {
+        annotationPerTool = this.filterPDFAnnotationsPerTool(filters, annotationsToFilter);
+      }
+      else{
+        annotationPerTool = null;
+      }
+
+      if ([3, 4, 5].some(num => filters.includes(num))) {
+
+        annotationPerType = this.filterAnnotationsPerType(filters, annotationsToFilter);
+
+      }else{
+        annotationPerType = null;
+      }
+
+      let intersectedArray = this.intersectionBetweenToolandType(annotationPerTool, annotationPerType);
+
+      if ([6, 7, 8, 9, 10].some(num => filters.includes(num))) {
+
+        if(intersectedArray){
+          sortedAnnotations = this.sortAnnotations(filters, intersectedArray);
+        }else{
+          sortedAnnotations = this.sortAnnotations(filters, annotationsToFilter);
+        }
+        filteredAnnotations = sortedAnnotations;
+      }else{
+        filteredAnnotations = intersectedArray;
+      }
+      this.annotationsToShow = filteredAnnotations;
+    }
+    else {
+      this.showPDFAnnotations();
+    }
+  }
+
+  filterAnnotationsForVideo(filters: number[]) {
+    let filteredAnnotations: Annotation[] = [];
+    let allAnnotations = this.annotations;
+    let annotationsToFilter: Annotation[] = allAnnotations;
+
+    if (filters.length > 0) {
+      let annotationPerTool;
+      let annotationPerType;
+      let sortedAnnotations;
+
+      if ([0, 1, 2].some(num => filters.includes(num))) {
+        annotationPerTool = this.filterVideoAnnotationsPerTool(filters, annotationsToFilter);
+      }
+      else{
+        annotationPerTool = null;
+      }
+
+      if ([3, 4, 5].some(num => filters.includes(num))) {
+
+        annotationPerType = this.filterAnnotationsPerType(filters, annotationsToFilter);
+
+      }else{
+        annotationPerType = null;
+      }
+
+      let intersectedArray = this.intersectionBetweenToolandType(annotationPerTool, annotationPerType);
+
+      if ([6, 7, 8, 9, 10].some(num => filters.includes(num))) {
+
+        if(intersectedArray){
+          sortedAnnotations = this.sortAnnotations(filters, intersectedArray);
+        }else{
+          sortedAnnotations = this.sortAnnotations(filters, annotationsToFilter);
+        }
+        filteredAnnotations = sortedAnnotations;
+      }else{
+        filteredAnnotations = intersectedArray;
+      }
+      this.annotationsToShow = filteredAnnotations;
+    }
+    else {
+      this.showVideoAnnotations();
+    }
+  }
+
+  filterPDFAnnotationsPerTool(filters: number[], annotations: Annotation[]): Annotation[] {
+    let annotationsFilteredWithTool: Annotation[] = [];
+    filters.forEach(filter => {
+      switch (filter) {
+        case 0: // Drawing tool
+          annotationsFilteredWithTool.push(...annotations.filter(a => a.tool.type === PdfToolType.DrawBox));
+          break;
+        case 1: // Pinpoint tool
+          annotationsFilteredWithTool.push(...annotations.filter(a => a.tool.type === PdfToolType.Pin));
+          break;
+        case 2: // Highlight tool
+          annotationsFilteredWithTool.push(...annotations.filter(a => a.tool.type === PdfToolType.Highlight));
+          break;
+        default:
+          break;
+      }
+    });
+    return annotationsFilteredWithTool;
+  }
+
+  filterVideoAnnotationsPerTool(filters: number[], annotations: Annotation[]): Annotation[] {
+    let annotationsFilteredWithTool: Annotation[] = [];
+    filters.forEach(filter => {
+      switch (filter) {
+        case 0: // Drawing tool
+          annotationsFilteredWithTool.push(...annotations.filter(a => a.tool.type === "brush"));
+          break;
+        case 1: // Pinpoint tool
+          annotationsFilteredWithTool.push(...annotations.filter(a => a.tool.type === "pin"));
+          break;
+        case 2: // Annotation tool
+          annotationsFilteredWithTool.push(...annotations.filter(a => a.tool.type === "annotation"));
+          break;
+        default:
+          break;
+      }
+    });
+    return annotationsFilteredWithTool;
+  }
+
+  filterAnnotationsPerType(filters: number[], annotations: Annotation[]): Annotation[] {
+    let annotationsFilteredWithType: Annotation[] = [];
+    filters.forEach(filter => {
+      switch (filter) {
+        case 3: // Note type
+          annotationsFilteredWithType.push(...annotations.filter(a => a.type === 'Note'));
+          break;
+        case 4: // Question type
+          annotationsFilteredWithType.push(...annotations.filter(a => a.type === 'Question'));
+          break;
+        case 5: // External Resource type
+          annotationsFilteredWithType.push(...annotations.filter(a => a.type === 'External Resource'));
+          break;
+        default:
+          break;
+      }
+    });
+    return annotationsFilteredWithType;
+  }
+
+  intersectionBetweenToolandType(annotationPerTool: Annotation[], annotationPerType: Annotation[]): Annotation[] {
+
+    if(annotationPerTool && !annotationPerType){
+      return annotationPerTool;
+    }else if(!annotationPerTool && annotationPerType){
+      return annotationPerType
+    }else if(!annotationPerTool && !annotationPerType){
+      return null;
+    }
+    else{
+      const intersectedAnnotations = annotationPerType.filter((secondElement) => {
+        return annotationPerTool.some((firstElement) => firstElement._id === secondElement._id);
+      });
+      return intersectedAnnotations;
+    }
+  }
+
+  sortAnnotations(filters: number[], annotations: Annotation[]): Annotation[] {
+    let sortedAnnotations: Annotation[] = [];
+    filters.forEach(filter => {
+      switch (filter) {
+        case 7: // Date (Oldest To Newest) sort
+          sortedAnnotations = annotations.sort((b, a) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+          break;
+        case 8: // Date (Newest To Oldest) sort
+          sortedAnnotations = annotations.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+          break;
+        case 9: // By User Name (A-Z) sort
+          sortedAnnotations = annotations.sort((a, b) => a.author?.name?.toLowerCase().localeCompare(b.author?.name.toLowerCase()));
+          break;
+        case 10: // By User Name (Z-A) sort
+          sortedAnnotations = annotations.sort((a, b) => b.author?.name?.toLowerCase().localeCompare(a.author?.name.toLowerCase()));
+          break;
+        default:
+          sortedAnnotations = annotations;
+          break;
+      }
+    });
+    return sortedAnnotations;
+  }
+
+  updateFilterItemsforPDF() {
+    this.searchFiltersForPDF = [
+      {
+        label: 'Annotation Tools', value: 'tool',
+        items: [
+          { label: 'Drawing', value: 0 },
+          { label: 'Pinpoint', value: 1 },
+          { label: 'Highlight', value: 2 },
+        ]
+      },
+      {
+        label: 'Annotation Types', value: 'type',
+        items: [
+          { label: 'Note', value: 3 },
+          { label: 'Question', value: 4 },
+          { label: 'External Resource', value: 5 },
+        ]
+      },
+      {
+        label: 'Show All', value: 'all',
+        items: [
+          { label: 'Show All Annotations', value: 6 },
+        ]
+      },
+      {
+        label: 'Sort By', value: 'sort',
+        items: [
+          { label: 'Date (Oldest To Newest)', value: 7, disabled: this.disableSortFilters },
+          { label: 'Date (Newest To Oldest)', value: 8, disabled: this.disableSortFilters },
+          { label: 'By User Name (A-Z)', value: 9, disabled: this.disableSortFilters },
+          { label: 'By User Name (Z-A)', value: 10, disabled: this.disableSortFilters }
+        ]
+      }
+    ];
+  }
+
+  updateFilterItemsforVideo() {
+    this.searchFiltersForVideo = [
+      {
+        label: 'Annotation Tools', value: 'tool',
+        items: [
+          { label: 'Drawing', value: 0 },
+          { label: 'Pinpoint', value: 1 },
+          { label: 'Annotation', value: 2 },
+        ]
+      },
+      {
+        label: 'Annotation Types', value: 'type',
+        items: [
+          { label: 'Note', value: 3 },
+          { label: 'Question', value: 4 },
+          { label: 'External Resource', value: 5 },
+        ]
+      },
+      {
+        label: 'Show All', value: 'all',
+        items: [
+          { label: 'Current Time Span', value: 6 },
+        ]
+      },
+      {
+        label: 'Sort By', value: 'sort',
+        items: [
+          { label: 'Date (Oldest To Newest)', value: 7, disabled: this.disableSortFilters },
+          { label: 'Date (Newest To Oldest)', value: 8, disabled: this.disableSortFilters },
+          { label: 'By User Name (A-Z)', value: 9, disabled: this.disableSortFilters },
+          { label: 'By User Name (Z-A)', value: 10, disabled: this.disableSortFilters }
+        ]
+      }
+    ];
   }
 }

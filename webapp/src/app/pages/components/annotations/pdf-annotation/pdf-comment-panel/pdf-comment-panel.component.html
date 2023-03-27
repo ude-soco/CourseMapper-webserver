@@ -1,32 +1,42 @@
 <p-divider align="center"></p-divider>
 
 <div class="filter mb-5">
-  <p-dropdown
-    [options]="searchFilters"
-    placeholder="Filters"
-    [showClear]="true"
-    autoWidth="false"
-    appendTo="body"
-    [style]="{ minWidth: '100%', 'border-radius': '0.5rem'}"
-    [(ngModel)]="selectedFilter"
+  <p-multiSelect
+  *ngIf="selectedMaterial.type === 'pdf'"
+    [options]="searchFiltersForPDF"
+    [(ngModel)]="selectedFiltersForPDF"
+    (ngModelChange)="onPDFAnnotationFiltersChange($event)"
+    [style]="{ minWidth: '100%', 'border-radius': '0.5rem' }"
+    defaultLabel="Filters"
+    [optionLabel]="'label'"
+    [optionValue]="'value'"
     [group]="true"
-    (ngModelChange)="onAnnotationFilterChange()"
+    display="chip"
+    optionDisabled="disabled"
   >
-  <ng-template let-group pTemplate="group">
-    <div class="p-d-flex p-ai-center">
-      <span>{{group.label}}</span>
-    </div>
-  </ng-template>
-</p-dropdown>
+  </p-multiSelect>
+
+  <p-multiSelect
+  *ngIf="selectedMaterial.type === 'video'"
+    [options]="searchFiltersForVideo"
+    [(ngModel)]="selectedFiltersForVideo"
+    (ngModelChange)="onVideoAnnotationFiltersChange($event)"
+    [style]="{ minWidth: '100%', 'border-radius': '0.5rem' }"
+    defaultLabel="Filters"
+    [optionLabel]="'label'"
+    [optionValue]="'value'"
+    [group]="true"
+    display="chip"
+    optionDisabled="disabled"
+  >
+  </p-multiSelect>
 </div>
 
 <div class="flex flex-col">
   <span class="font-medium text-xl">Annotations</span>
-    <div class="overflow-y-scroll max-h-[40rem]">
-      <div *ngFor="let annotation of annotationOnCurrentPage" class="mr-2">
-        <app-pdf-comment-item
-        [annotation]="annotation"
-      ></app-pdf-comment-item>
-      </div>
+  <div class="overflow-y-scroll max-h-[40rem]">
+    <div *ngFor="let annotation of annotationsToShow" class="mr-2">
+      <app-pdf-comment-item [annotation]="annotation"></app-pdf-comment-item>
     </div>
   </div>
+</div>
