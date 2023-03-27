@@ -56,7 +56,8 @@ export class AddChannelComponent implements OnInit {
         .subscribe((res) => {
           if ('success' in res) {
             this.toggleAddChannelDialogue();
-            this.showInfo(res.success);
+            // this.showInfo(res.success);
+            this.showInfo('Channel successfully added!');
           } else {
             this.showError(res.errorMsg);
           }

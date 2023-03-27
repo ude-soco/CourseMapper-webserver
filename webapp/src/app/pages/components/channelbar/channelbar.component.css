@@ -7,7 +7,7 @@
   color: white;
 }
 :host ::ng-deep .p-toast {
-  max-width:350px;
+  width:350px;
   font-size: 15px;
 }
 :host ::ng-deep .p-toast .p-toast-message-icon{

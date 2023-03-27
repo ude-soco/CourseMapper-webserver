@@ -22,7 +22,7 @@
     *ngIf="selectedChannel?.materials"
     [(activeIndex)]="tabIndex"
   >
-    <p-tabPanel>
+    <p-tabPanel >
       <ng-template pTemplate="header">
         <app-iconbutton
           icon="bxs-folder-plus"
@@ -52,7 +52,7 @@
             color="text-blue-500"
           ></app-iconbutton>
           <span>{{ material.name }}</span>
-          <p-menu #materialMenu id="material_menu" [model]="materialOptions" [popup]="true" appendTo="body"></p-menu>
+          <p-menu #materialMenu id="material_menu" [model]="materialOptions" [popup]="true" appendTo="body" ></p-menu>
           <app-iconbutton style="z-index: 1;" *ngIf="showModeratorPrivileges"
             icon="bx-dots-vertical-rounded"
             color="text-blue-500"

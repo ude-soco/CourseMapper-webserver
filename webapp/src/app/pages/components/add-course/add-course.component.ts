@@ -42,7 +42,8 @@ export class AddCourseComponent implements OnInit {
       this.courseService.addCourse(newCourse).subscribe((res: any) => {
         if ('success' in res) {
           this.toggleAddCourseDialogue();
-          this.showInfo(res.success);
+          // this.showInfo(res.success);
+          this.showInfo('Course successfully added!');
         } else {
           this.showError(res.errorMsg);
         }

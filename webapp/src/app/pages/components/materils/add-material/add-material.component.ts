@@ -182,7 +182,7 @@ export class AddMaterialComponent implements OnInit {
                     ]);
 
                     //  this.reloadCurrentRoute()
-                    this.showInfo('File uploaded successfully!');
+                    this.showInfo('Material successfully added!');
                   }
                 },
                 (er) => {

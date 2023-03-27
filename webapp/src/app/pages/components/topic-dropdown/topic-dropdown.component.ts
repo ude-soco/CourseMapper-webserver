@@ -121,7 +121,8 @@ export class TopicDropdownComponent implements OnInit {
       // wait until expanded topic rendered
       setTimeout(() => {
         // if exists channel previously selected --> make channel container bg=white
-        if(this.selectedChannelId){
+        if(this.selectedChannelId && topic.channels.find((channl)=>channl._id===this.selectedChannelId)){
+          console.log(this.selectedChannelId)
           let channelNameContainer = document.getElementById(
             this.selectedChannelId + '-container'
             );
@@ -195,7 +196,8 @@ export class TopicDropdownComponent implements OnInit {
       .deleteTopic(this.selectedTopic)
       .subscribe((res) => {
         if ('success' in res) {
-          this.showInfo(res['success']);
+          // this.showInfo(res['success']);
+          this.showInfo('Topic successfully deleted!');
           this.router.navigate([
             'course',
             this.courseService.getSelectedCourse()._id,
@@ -370,7 +372,8 @@ export class TopicDropdownComponent implements OnInit {
       .deleteChannel(this.selectedChannel)
       .subscribe((res) => {
         if ('success' in res) {
-          this.showInfo(res['success']);
+          // this.showInfo(res['success']);
+          this.showInfo('Channel successfully deleted!');
           this.router.navigate([
             'course',
             this.courseService.getSelectedCourse()._id,

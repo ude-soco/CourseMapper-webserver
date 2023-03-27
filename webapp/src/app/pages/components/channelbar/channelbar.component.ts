@@ -19,7 +19,7 @@ import { ModeratorPrivilegesService } from 'src/app/services/moderator-privilege
   selector: 'app-channelbar',
   templateUrl: './channelbar.component.html',
   styleUrls: ['./channelbar.component.css'],
-  providers: [ConfirmationService, MessageService],
+  providers: [MessageService,ConfirmationService,],
 })
 export class ChannelbarComponent implements OnInit {
   constructor(
@@ -109,7 +109,8 @@ export class ChannelbarComponent implements OnInit {
   confirmDeletion() {
     this.courseService.deleteCourse(this.selectedCourse).subscribe((res) => {
       if ('success' in res) {
-        this.showInfo(res['success']);
+        // this.showInfo(res['success']);
+        this.showInfo('Course successfully deleted!');
         this.router.navigate(['home']);
       } else {
         this.showError(res['errorMsg']);
@@ -276,8 +277,8 @@ export class ChannelbarComponent implements OnInit {
    */
   showInfo(msg) {
     this.messageService.add({
-      severity: 'info',
-      summary: 'Success',
+      severity: 'error',
+      summary: 'Error',
       detail: msg,
     });
   }

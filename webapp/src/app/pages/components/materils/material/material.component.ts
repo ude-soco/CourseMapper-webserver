@@ -143,7 +143,7 @@ export class MaterialComponent implements OnInit, OnDestroy {
     });
     this.showModeratorPrivileges=this.moderatorPrivilegesService.showModeratorPrivileges
   }
-
+  
   onTabChange(e) {
     this.tabIndex = e.index - 1;
     if (this.tabIndex == -1) {
@@ -296,7 +296,7 @@ export class MaterialComponent implements OnInit, OnDestroy {
 
         // e.index = 1
         this.showInfo(
-          'Successfully removed "' + this.selectedMaterial.name + '"!'
+          'Material successfully deleted!'
         );
       },
       error: (err) => {

@@ -56,7 +56,8 @@ export class AddTopicComponent implements OnInit {
         .subscribe((res) => {
           if ('success' in res) {
             this.toggleAddTopicDialogue();
-            this.showInfo(res.success);
+            // this.showInfo(res.success);
+            this.showInfo('Topic successfully added!');
           } else {
             this.showError(res.errorMsg);
           }
