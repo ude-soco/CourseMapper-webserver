@@ -108,9 +108,9 @@ export class PdfCommentPanelComponent implements OnInit {
     }
 
     if (filters.length > 0) {
-      let annotationPerTool;
-      let annotationPerType;
-      let sortedAnnotations;
+      let annotationPerTool: Annotation[];
+      let annotationPerType: Annotation[];
+      let sortedAnnotations: Annotation[];
 
       if ([0, 1, 2].some(num => filters.includes(num))) {
         annotationPerTool = this.filterPDFAnnotationsPerTool(filters, annotationsToFilter);
@@ -150,18 +150,20 @@ export class PdfCommentPanelComponent implements OnInit {
   filterAnnotationsForVideo(filters: number[]) {
     let filteredAnnotations: Annotation[] = [];
     let allAnnotations = this.annotations;
-    let annotationsToFilter: Annotation[] = allAnnotations;
+    let annotationsToFilter: Annotation[] = [];
 
     if (filters.includes(6)) {
       this.annotationsToShow = this.annotations.filter((a) => (a.location as VideoAnnotationLocation).from <= this.currentTime && (a.location as VideoAnnotationLocation).to > this.currentTime);
       this.currentTimeSpanSelected = true;
       return;
+    }else{
+      annotationsToFilter = allAnnotations;
     }
 
     if (filters.length > 0) {
-      let annotationPerTool;
-      let annotationPerType;
-      let sortedAnnotations;
+      let annotationPerTool: Annotation[];
+      let annotationPerType: Annotation[];
+      let sortedAnnotations: Annotation[];
 
       if ([0, 1, 2].some(num => filters.includes(num))) {
         annotationPerTool = this.filterVideoAnnotationsPerTool(filters, annotationsToFilter);
@@ -278,19 +280,20 @@ export class PdfCommentPanelComponent implements OnInit {
 
   sortAnnotations(filters: number[], annotations: Annotation[]): Annotation[] {
     let sortedAnnotations: Annotation[] = [];
+    console.log(annotations);
     filters.forEach(filter => {
       switch (filter) {
         case 7: // Date (Oldest To Newest) sort
-          sortedAnnotations = annotations.sort((b, a) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+          sortedAnnotations = annotations.slice().sort((b, a) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
           break;
         case 8: // Date (Newest To Oldest) sort
-          sortedAnnotations = annotations.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+          sortedAnnotations = annotations.slice().sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
           break;
         case 9: // By User Name (A-Z) sort
-          sortedAnnotations = annotations.sort((a, b) => a.author?.name?.toLowerCase().localeCompare(b.author?.name.toLowerCase()));
+          sortedAnnotations = annotations.slice().sort((a, b) => a.author?.name?.toLowerCase().localeCompare(b.author?.name.toLowerCase()));
           break;
         case 10: // By User Name (Z-A) sort
-          sortedAnnotations = annotations.sort((a, b) => b.author?.name?.toLowerCase().localeCompare(a.author?.name.toLowerCase()));
+          sortedAnnotations = annotations.slice().sort((a, b) => b.author?.name?.toLowerCase().localeCompare(a.author?.name.toLowerCase()));
           break;
         default:
           sortedAnnotations = annotations;
