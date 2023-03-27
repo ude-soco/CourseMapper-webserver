@@ -1,11 +1,11 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://localhost:8080/api',
-  API_URL: 'http://localhost:8080/api',
+  apiUrl: 'DUMMY_BASE_URL',
+  API_URL: 'DUMMY_BASE_URL',
 };
 
 export const environment_2 = {
   production: true,
-  apiUrl: 'http://localhost:8080/api',
-  API_URL: 'http://localhost:8080/api',
+  apiUrl: 'DUMMY_BASE_URL',
+  API_URL: 'DUMMY_BASE_URL',
 };
