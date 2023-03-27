@@ -1,7 +1,6 @@
 <div
   class="relative contain bg-gray-100 shadow-lg"
   *ngIf="selectedChannel?.materials"
-
 >
   <div class="h-max m-0 flex flex-col bg-gray-100">
     <div class="flex items-start justify-between py-4 pl-3 bg-gray-200">
@@ -51,7 +50,6 @@
           ></app-iconbutton>
           <span>{{ material.name }}</span>
         </ng-template>
-      
 
         <ng-template pTemplate="header" *ngIf="material.type == 'video'">
           <app-iconbutton
@@ -60,11 +58,9 @@
           ></app-iconbutton>
           <span>{{ material.name }}</span>
         </ng-template>
-       
       </p-tabPanel>
 
-      <router-outlet name='material'></router-outlet>
-
+      <router-outlet name="material"></router-outlet>
     </ng-container>
   </p-tabView>
 </div>
