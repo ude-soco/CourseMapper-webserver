@@ -7,7 +7,7 @@ import dotenv from "dotenv";
 import debugLib from "debug";
 import bodyParser from "body-parser";
 import path from "path";
-import socketio from './socketio';
+import socketio from "./socketio";
 
 dotenv.config();
 const env = process.env.NODE_ENV || "production";
@@ -19,12 +19,14 @@ const User = db.user;
 
 global.__basedir = __dirname;
 
-env !== "production" ? app.use(cors({
-
-  credentials: true,
-  origin: ["http://localhost:4200", 'https://www.youtube.com/watch?v=',]
-
-})) : "";
+env !== "production"
+  ? app.use(
+      cors({
+        credentials: true,
+        origin: ["http://localhost:4200", "https://www.youtube.com/watch?v="],
+      })
+    )
+  : "";
 
 // Middlewares
 app.use(express.json());
@@ -38,7 +40,8 @@ app.use(
     httpOnly: true,
   })
 );
-app.use('*/public/uploads',express.static('public/uploads'));
+app.use("/api/public/uploads", express.static("public/uploads"));
+
 // Get port from environment and store in Express
 const port = normalizePort(process.env.PORT || "8090");
 app.set("port", port);
@@ -58,17 +61,16 @@ db.mongoose
     process.exit();
   });
 
-
 // xAPI scheduler
-const xapiScheduler = require('./xAPILogger/scheduler');
+const xapiScheduler = require("./xAPILogger/scheduler");
 xapiScheduler.runXapiScheduler();
 
 // Create HTTP server
 const server = http.createServer(app);
 socketio.init(server);
 
-socketio.getIO().on('connection', () => {
-  console.log('New Rando connected');
+socketio.getIO().on("connection", () => {
+  console.log("New Rando connected");
 });
 
 // Routes

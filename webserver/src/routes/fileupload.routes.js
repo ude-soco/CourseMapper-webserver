@@ -1,5 +1,11 @@
-const { uploadPDFFile, uploadVideoFile } = require("../middlewares/fileUploader");
-const { pdfFileUploader, videoFileUpload} = require("../controllers/fileUpload.controller");
+const {
+  uploadPDFFile,
+  uploadVideoFile,
+} = require("../middlewares/fileUploader");
+const {
+  pdfFileUploader,
+  videoFileUpload,
+} = require("../controllers/fileUpload.controller");
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -8,8 +14,12 @@ module.exports = function (app) {
   });
 
   // Upload PDF file
-  app.post("/upload/pdf", uploadPDFFile.single("file"), pdfFileUploader);
+  app.post("/api/upload/pdf", uploadPDFFile.single("file"), pdfFileUploader);
 
   // Upload video file
-  app.post("/upload/video", uploadVideoFile.single("file"), videoFileUpload);
+  app.post(
+    "/api/upload/video",
+    uploadVideoFile.single("file"),
+    videoFileUpload
+  );
 };

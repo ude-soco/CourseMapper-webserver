@@ -24,31 +24,31 @@ module.exports = function (app) {
   );
 
   app.post(
-    "/user/indicator",
+    "/api/user/indicator",
     [authJwt.verifyToken],
     controller.newIndicator
   );
 
   app.delete(
-    '/user/indicator/:indicatorId',
+    "/api/user/indicator/:indicatorId",
     [authJwt.verifyToken],
     controller.deleteIndicator
   );
 
   app.get(
-    '/user/indicators', 
+    "/api/user/indicators",
     [authJwt.verifyToken],
     controller.getIndicators
   );
 
   app.put(
-    '/user/indicator/:indicatorId/resize/:width/:height', 
+    "/api/user/indicator/:indicatorId/resize/:width/:height",
     [authJwt.verifyToken],
     controller.resizeIndicator
   );
 
   app.put(
-    '/user/reorder/:newIndex/:oldIndex', 
+    "/api/user/reorder/:newIndex/:oldIndex",
     [authJwt.verifyToken],
     controller.reorderIndicators
   );
