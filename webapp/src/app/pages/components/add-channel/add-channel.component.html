@@ -18,7 +18,7 @@
     <br>
     <div>
       <button pButton icon="pi pi-times" (click)="toggleAddChannelDialogue()"
-              label="Cancel"></button>
+              label="Cancel" class="p-button-outlined"></button>
       <button id="addChannelConfirm" pButton icon="pi pi-check" class="float-right" (click)="onSubmit()" label="Confirm"
               [disabled]="createChannelForm.get('name').invalid"></button>
     </div>

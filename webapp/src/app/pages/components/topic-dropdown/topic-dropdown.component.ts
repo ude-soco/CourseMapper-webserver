@@ -4,6 +4,7 @@ import {
   OnInit,
   HostListener,
   Input,
+  Renderer2,
 } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { Channel } from 'src/app/models/Channel';
@@ -33,7 +34,8 @@ export class TopicDropdownComponent implements OnInit {
     private materilasService: MaterilasService,
     private router: Router,
     private store: Store<State>,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private renderer: Renderer2,
   ) {}
   @Input() showModeratorPrivileges: boolean;
 
@@ -171,8 +173,16 @@ export class TopicDropdownComponent implements OnInit {
       header: 'Delete Confirmation',
       icon: 'pi pi-info-circle',
       accept: () => this.confirmTopicDeletion(),
-      reject: () => this.informUser('info', 'Cancelled', 'Deletion cancelled'),
+      reject: () => {
+        // this.informUser('info', 'Cancelled', 'Deletion cancelled')
+      },
     });
+    setTimeout(() => {
+      const rejectButton = document.getElementsByClassName("p-confirm-dialog-reject") as HTMLCollectionOf<HTMLElement>;
+      for (var i=0; i<rejectButton.length;i++){
+        this.renderer.addClass(rejectButton[i], 'p-button-outlined');
+      }
+    }, 0);
   }
 
   /**
@@ -337,8 +347,17 @@ export class TopicDropdownComponent implements OnInit {
       header: 'Delete Confirmation',
       icon: 'pi pi-info-circle',
       accept: () => this.confirmChannelDeletion(),
-      reject: () => this.informUser('info', 'Cancelled', 'Deletion cancelled'),
+      reject: () => 
+      {
+        // this.informUser('info', 'Cancelled', 'Deletion cancelled')
+      },
     });
+    setTimeout(() => {
+      const rejectButton = document.getElementsByClassName("p-confirm-dialog-reject") as HTMLCollectionOf<HTMLElement>;
+      for (var i=0; i<rejectButton.length;i++){
+        this.renderer.addClass(rejectButton[i], 'p-button-outlined');
+      }
+    }, 0);
   }
 
   /**

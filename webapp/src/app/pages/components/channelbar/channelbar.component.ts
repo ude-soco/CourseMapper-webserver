@@ -1,6 +1,6 @@
 import { TopicChannelService } from '../../../services/topic-channel.service';
 import { CourseService } from '../../../services/course.service';
-import { Component, EventEmitter, OnInit, HostListener } from '@angular/core';
+import { Component, EventEmitter, OnInit, HostListener, Renderer2 } from '@angular/core';
 import { Course } from 'src/app/models/Course';
 import { CourseImp } from 'src/app/models/CourseImp';
 import { Channel } from 'src/app/models/Channel';
@@ -31,6 +31,7 @@ export class ChannelbarComponent implements OnInit {
     private route: ActivatedRoute,
     private store: Store<State>,
     private moderatorPrivilegesService:ModeratorPrivilegesService,
+    private renderer: Renderer2,
   ) {
       this.route.params.subscribe(params => {
       if(params['courseID']){
@@ -318,8 +319,17 @@ export class ChannelbarComponent implements OnInit {
       header: 'Delete Confirmation',
       icon: 'pi pi-info-circle',
       accept: () => this.confirmDeletion(),
-      reject: () => this.informUser('info', 'Cancelled', 'Deletion cancelled'),
+      reject: () => {
+        // this.informUser('info', 'Cancelled', 'Deletion cancelled')
+      }
+      ,
     });
+    setTimeout(() => {
+      const rejectButton = document.getElementsByClassName("p-confirm-dialog-reject") as HTMLCollectionOf<HTMLElement>;
+      for (var i=0; i<rejectButton.length;i++){
+        this.renderer.addClass(rejectButton[i], 'p-button-outlined');
+      }
+    }, 0);
   }
 
   onDashBoard(){
@@ -328,5 +338,15 @@ export class ChannelbarComponent implements OnInit {
       this.courseService.getSelectedCourse()._id,
       'dashboard'
     ]);
+  }
+  preventEnterKey(e) {
+    let confirmButton = document.getElementById('addChannelConfirm');
+    if (e.keyCode === 13) {
+      e.preventDefault();
+      this.renderer.addClass(confirmButton, 'confirmViaEnter');
+      setTimeout(() => {
+        this.renderer.removeClass(confirmButton, 'confirmViaEnter');
+      }, 150);
+    }
   }
 }

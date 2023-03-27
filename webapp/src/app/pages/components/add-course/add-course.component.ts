@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, Renderer2 } from '@angular/core';
 import { CourseService } from 'src/app/services/course.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Course } from 'src/app/models/Course';
@@ -19,7 +19,8 @@ export class AddCourseComponent implements OnInit {
 
   constructor(
     private courseService: CourseService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private renderer: Renderer2,
   ) {}
 
   ngOnInit(): void {
@@ -73,5 +74,15 @@ export class AddCourseComponent implements OnInit {
       summary: 'Error',
       detail: msg,
     });
+  }
+  preventEnterKey(e) {
+    let confirmButton = document.getElementById('addCourseConfirm');
+    if (e.keyCode === 13) {
+      e.preventDefault();
+      this.renderer.addClass(confirmButton, 'confirmViaEnter');
+      setTimeout(() => {
+        this.renderer.removeClass(confirmButton, 'confirmViaEnter');
+      }, 150);
+    }
   }
 }

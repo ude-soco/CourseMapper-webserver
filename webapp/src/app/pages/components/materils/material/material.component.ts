@@ -7,6 +7,7 @@ import {
   OnInit,
   Output,
   SimpleChanges,
+  Renderer2,
 } from '@angular/core';
 import { Channel } from 'src/app/models/Channel';
 import { TopicChannelService } from 'src/app/services/topic-channel.service';
@@ -65,7 +66,8 @@ export class MaterialComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private moderatorPrivilegesService: ModeratorPrivilegesService
+    private moderatorPrivilegesService: ModeratorPrivilegesService,
+    private renderer: Renderer2,
   ) {
     const url = this.router.url;
     if (url.includes('course') && url.includes('channel')) {
@@ -242,8 +244,16 @@ export class MaterialComponent implements OnInit, OnDestroy {
       header: 'Delete Confirmation',
       icon: 'pi pi-info-circle',
       accept: (e) => this.deleteMaterial(e),
-      reject: () => this.informUser('info', 'Cancelled', 'Deletion cancelled'),
+      reject: () => {
+        // this.informUser('info', 'Cancelled', 'Deletion cancelled')
+    },
     });
+    setTimeout(() => {
+      const rejectButton = document.getElementsByClassName("p-confirm-dialog-reject") as HTMLCollectionOf<HTMLElement>;
+      for (var i=0; i<rejectButton.length;i++){
+        this.renderer.addClass(rejectButton[i], 'p-button-outlined');
+      }
+    }, 0);
   }
   deleteMaterial(e) {
     // e.index1 = e.index - 1;
