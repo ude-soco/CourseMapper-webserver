@@ -1,0 +1,23 @@
+name: CI
+
+on:
+  push:
+    tags: ['v*']
+    branches: ['main']
+    paths:
+    - '.github/workflows/build-proxy.yml'
+    - 'proxy/**'
+  pull_request:
+    branches: ['main']
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+    with:
+      services:        [ proxy, webapp, webserver ]
+      base_image_name: "socialcomputing/coursemapper-webserver-"
+      push:            "${{ github.event_name != 'pull_request' }}"
+      registry:        "hub.docker.com"
+      registry_user:   "${{ ENV.DOCKERHUB_USERNAME }}"
+    secrets:
+      registry_token:  "${{ ENV.DOCKERHUB_TOKEN }}"
