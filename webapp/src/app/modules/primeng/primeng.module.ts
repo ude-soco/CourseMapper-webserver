@@ -20,6 +20,9 @@ import {DialogModule} from 'primeng/dialog';
 import {EditorModule} from 'primeng/editor';
 import {SliderModule} from 'primeng/slider';
 import {CardModule} from 'primeng/card';
+import {TooltipModule} from 'primeng/tooltip';
+import {CheckboxModule} from 'primeng/checkbox';
+import {ColorPickerModule} from 'primeng/colorpicker';
 
 const PrimeNgComponents = [
   AvatarModule,
@@ -42,7 +45,10 @@ const PrimeNgComponents = [
   DialogModule,
   EditorModule,
   SliderModule,
-  CardModule
+  CardModule,
+  TooltipModule,
+  CheckboxModule,
+  ColorPickerModule
   
 ];
 

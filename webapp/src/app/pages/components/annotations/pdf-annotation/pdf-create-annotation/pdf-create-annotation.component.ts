@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewChecked, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
   Annotation,
@@ -10,6 +10,7 @@ import {
   getAnnotationProperties,
   getCreateAnnotationFromPanel,
   getCurrentPdfPage,
+  getIsAnnotationDialogVisible,
   getPdfTotalNumberOfPages,
   State,
 } from '../state/annotation.reducer';
@@ -25,7 +26,7 @@ import {
   templateUrl: './pdf-create-annotation.component.html',
   styleUrls: ['./pdf-create-annotation.component.css'],
 })
-export class PdfCreateAnnotationComponent implements OnInit {
+export class PdfCreateAnnotationComponent implements OnInit, AfterViewChecked {
   selectedAnnotationType: AnnotationType;
   annotationTypesArray: string[];
   annotationLocationsArray: string[];
@@ -46,10 +47,13 @@ export class PdfCreateAnnotationComponent implements OnInit {
   selectedFromPage: number;
   selectedToPage: number;
   annotationColor: string = '#0000004D';
+  sendButtonColor: string = 'text-green-600';
+  showCancelButton$: Observable<boolean>;
+  sendButtonDisabled: boolean = true;
 
-  constructor(private store: Store<State>) {
+  constructor(private store: Store<State>, private changeDetectorRef: ChangeDetectorRef) {
     this.annotationTypesArray = ['Note', 'Question', 'External Resource'];
-    this.annotationLocationsArray = ['Current Page', 'All Slides', 'Page Range'];
+    this.annotationLocationsArray = ['Current Slide', 'All Slides', 'Slide Range'];
 
     store.select(getCreateAnnotationFromPanel).subscribe((isFromPanel) => {
       if (isFromPanel) {
@@ -61,6 +65,8 @@ export class PdfCreateAnnotationComponent implements OnInit {
         this.disableSlidesDropDown = true;
       }
     });
+
+    this.showCancelButton$ = this.store.select(getIsAnnotationDialogVisible);
 
     this.store.select(getAnnotationProperties).subscribe((_annotation) => {
       this.annotation = _annotation;
@@ -82,14 +88,21 @@ export class PdfCreateAnnotationComponent implements OnInit {
       this.fromPageArray = Array.from({length: this.totalPages}, (_, i) => i + 1);
     });
   }
+  ngAfterViewChecked(): void {
+    this.changeDetectorRef.detectChanges();
+  }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.selectedAnnotationType = 'Note';
+    this.selectedAnnotationLocation = 'Current Slide';
+    this.annotationColor = '#70b85e';
+  }
 
   postAnnotation() {
     if (this.createAnnotationFromPanel) {
       this.annotation = null;
       switch (this.selectedAnnotationLocation) {
-        case 'Current Page':
+        case 'Current Slide':
           this.annotation = {
             type: this.selectedAnnotationType,
             content: this.text,
@@ -133,7 +146,7 @@ export class PdfCreateAnnotationComponent implements OnInit {
           this.text = null;
           break;
 
-        case 'Page Range':
+        case 'Slide Range':
           this.annotation = {
             type: this.selectedAnnotationType,
             content: this.text,
@@ -170,6 +183,7 @@ export class PdfCreateAnnotationComponent implements OnInit {
   dispatchAnnotation(){
     this.store.dispatch(AnnotationActions.postAnnotation({ annotation: this.annotation }));
     this.annotationColor = '#0000004D';
+    this.sendButtonDisabled = true;
   }
 
   onSelectedFromPage(){
@@ -184,6 +198,15 @@ export class PdfCreateAnnotationComponent implements OnInit {
   onShowOfSelectedFromPageDropDpown(){
     this.isFromSelected = false;
   }
+
+  onTextChange(){
+    if(this.text.replace(/<\/?[^>]+(>|$)/g, "") == ""){
+      this.sendButtonDisabled = true;
+    }else{
+      this.sendButtonDisabled = false;
+    }
+  }
+
   cancel() {
     this.store.dispatch(
       AnnotationActions.setIsAnnotationCanceled({ isAnnotationCanceled: true })
@@ -194,15 +217,20 @@ export class PdfCreateAnnotationComponent implements OnInit {
     switch (this.selectedAnnotationType) {
       case 'Note':
         this.annotationColor = '#70b85e';
+        this.sendButtonColor ='text-green-600';
         break;
       case 'Question':
         this.annotationColor = '#FFAB5E';
+        this.sendButtonColor ='text-amber-500';
         break;
       case 'External Resource':
         this.annotationColor = '#B85E94';
+        this.sendButtonColor ='text-pink-700';
         break;
       case null:
         this.annotationColor = '#0000004D';
+        this.sendButtonColor ='text-green-600';
+        break;
     }
   }
 }

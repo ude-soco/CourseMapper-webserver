@@ -4,6 +4,7 @@ export interface Reply {
   author?: {
     userId: string;
     name: string;
+    role?: string;
   };
   courseId?: string;
   topicId?: string;

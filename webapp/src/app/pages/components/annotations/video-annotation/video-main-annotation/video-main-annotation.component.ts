@@ -6,7 +6,7 @@ import { Material } from 'src/app/models/Material';
 import { PdfviewService } from 'src/app/services/pdfview.service';
 import { environment } from 'src/environments/environment';
 import { getCurrentMaterial, getCurrentMaterialId } from '../../../materils/state/materials.reducer';
-import { getIsAnnotationCreationCanceled, getIsAnnotationDialogVisible, getIsBrushSelectionActive, getIsPinpointSelectionActive, getIsVideoPaused, getIsVideoPlayed, getShowAnnotations, State } from '../state/video.reducer';
+import { getIsAnnotationCreationCanceled, getIsAnnotationDialogVisible, getIsBrushSelectionActive, getIsPinpointSelectionActive, getIsVideoPaused, getIsVideoPlayed, getSeekVideo, getShowAnnotations, State } from '../state/video.reducer';
 import * as VideoActions from '../state/video.action'
 import { calculateMousePositionInVideo } from 'src/app/_helpers/video-helper';
 import { Socket } from 'ngx-socket-io';
@@ -51,6 +51,7 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
   cursorisInsideVideo: boolean;
 
   constructor(private store: Store<State>, private pdfViewService: PdfviewService, private changeDetectorRef: ChangeDetectorRef, private socket: Socket) {
+    this.store.dispatch(AnnotationActions.loadAnnotations());
     this.store.select(getIsBrushSelectionActive).subscribe((isActive) => this.isBrushSelectionActive = isActive);
     this.isPinpointSelectionActive$ = this.store.select(getIsPinpointSelectionActive);
     this.isAnnotationDialogVisible$ = this.store.select(getIsAnnotationDialogVisible);
@@ -58,6 +59,11 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
     this.showAnnotations$ = this.store.select(getShowAnnotations);
     this.videoIsPlaying$ = this.store.select(getIsVideoPlayed);
     this.videoIsPaused$ = this.store.select(getIsVideoPaused);
+    this.store.select(getSeekVideo).subscribe((time) => {
+      if(time != null){
+        this.seekVideo(time[0]);
+      }
+    })
   }
 
   ngAfterViewChecked(): void {
@@ -159,7 +165,7 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
 
 
     // add the overlay element to the video container
-    const videoContainer = document.querySelector('.videoPlayerArea');
+    const videoContainer = document.querySelector('.YouTubePlayerArea');
     videoContainer.appendChild(overlay);
 
 

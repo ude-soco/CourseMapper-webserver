@@ -53,6 +53,8 @@ export const newAnnotation = async (req, res, next) => {
   }
 
   let authorName = `${foundUser.firstname} ${foundUser.lastname}`;
+  let foundCourse = foundUser.courses.find((course) => course.courseId.toString() == courseId)
+
 
   let annotation = new Annotation({
     type: annotationType,
@@ -60,6 +62,7 @@ export const newAnnotation = async (req, res, next) => {
     author: {
       userId: req.userId,
       name: authorName,
+      role: foundCourse.role
     },
     location: annotationLocation,
     tool: annotationTool,

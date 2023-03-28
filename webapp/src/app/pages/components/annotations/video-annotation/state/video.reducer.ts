@@ -20,6 +20,7 @@ export interface VideoState {
   pinpointPosition: [number, number];
   activeAnnotation: Annotation;
   showAnnotations: boolean;
+  seekVideo: [number, number];
 }
 
 const initialState: VideoState = {
@@ -34,7 +35,8 @@ const initialState: VideoState = {
   drawingData: null,
   pinpointPosition: [null, null],
   activeAnnotation: null,
-  showAnnotations: true
+  showAnnotations: true,
+  seekVideo: null,
 }
 
 const getVideoFeatureState =
@@ -98,6 +100,11 @@ export const getActiveAnnotation = createSelector(
 export const getShowAnnotations = createSelector(
   getVideoFeatureState,
   (state) => state.showAnnotations
+);
+
+export const getSeekVideo = createSelector(
+  getVideoFeatureState,
+  (state) => state.seekVideo
 );
 
 export const videoReducer = createReducer<VideoState>(
@@ -193,6 +200,13 @@ export const videoReducer = createReducer<VideoState>(
     return {
       ...state,
       showAnnotations: action.showAnnotations,
+    };
+  }),
+
+  on(VideoActions.SetSeekVideo, (state, action): VideoState => {
+    return {
+      ...state,
+      seekVideo: action.seekVideo,
     };
   }),
 )

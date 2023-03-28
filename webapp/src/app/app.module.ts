@@ -95,8 +95,6 @@ registerLocaleData(en);
         RippleModule,
         ConfirmDialogModule,
         StoreModule.forRoot({}, {}),
-        AnnotationModule,
-        MaterialsModule,
         EffectsModule.forRoot([]),
         StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
         SharedComponentsModule,

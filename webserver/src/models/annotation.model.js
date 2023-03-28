@@ -8,6 +8,7 @@ const Annotation = new Schema({
   author: {
     userId: { type: Schema.Types.ObjectId, required: true },
     name: { type: String, required: true },
+    role: { type: Schema.Types.ObjectId, ref: "role" },
   },
   location: { type: Schema.Types.Mixed },
   tool: { type: Schema.Types.Mixed },

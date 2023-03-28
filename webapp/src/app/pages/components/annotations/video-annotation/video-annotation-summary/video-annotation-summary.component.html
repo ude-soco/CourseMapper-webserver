@@ -1,4 +1,4 @@
-<div class="video-popover absolute z-50 bg-slate-200 border-black border-2 p-5 w-max rounded-lg" *ngIf="selectedAnnotation">
+<div class="video-popover absolute z-50 bg-slate-200 border-black border-2 p-2 w-max rounded-lg" *ngIf="selectedAnnotation">
     <div class="flex-col flex-wrap space-y-5">
       <div class="flex flex-row justify-between">
         <div class="flex flex-row justify-start space-x-3">
@@ -16,7 +16,7 @@
           <b class="mt-4">{{ selectedAnnotation?.author?.name }}</b>
           <h1 class="mt-4">{{ annotationElapsedTime }}</h1>
         </div>
-        <div class="flex justify-end mt-3">
+        <div class="flex justify-end -mt-2 -mr-2">
           <span>
             <app-iconbutton
               icon="bx-x"

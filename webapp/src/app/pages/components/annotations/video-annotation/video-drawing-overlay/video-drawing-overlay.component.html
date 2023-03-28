@@ -5,45 +5,37 @@
     <div class="brush-drawing-toolbar">
         <div class="grid">
             <button class="toolbar-button" (click)="setAction('move')">
-                <app-iconbutton icon="bx-move" color="text-blue-500"></app-iconbutton>
+                <app-iconbutton icon="bx-move" color="text-blue-500" pTooltip="Move" tooltipPosition="left"></app-iconbutton>
             </button>
-            <button class="toolbar-button" (click)="setAction('draw')">
+            <button class="toolbar-button" (click)="setAction('draw')" pTooltip="Tool" tooltipPosition="left">
                 <span *ngIf="currentTool == 'brush'"><app-iconbutton icon="bx-brush" color="text-blue-500"></app-iconbutton></span>
                 <span *ngIf="currentTool == 'line'"><app-iconbutton icon="bx-trending-up" color="text-blue-500"></app-iconbutton></span>
                 <span *ngIf="currentTool == 'rectangle'"><app-iconbutton icon="bx-rectangle" color="text-blue-500"></app-iconbutton></span>
                 <span *ngIf="currentTool == 'circle'"><app-iconbutton icon="bx-circle" color="text-blue-500"></app-iconbutton></span>
                 <span *ngIf="currentTool == 'arrow'"><app-iconbutton icon="bx-right-arrow-alt" color="text-blue-500"></app-iconbutton></span>
                 <div class="toolbar-popover">
-                    <button class="toolbar-button" (click)="currentTool = 'brush'"><app-iconbutton icon="bx-brush" color="text-blue-500"></app-iconbutton></button>
-                    <button class="toolbar-button" (click)="currentTool = 'line'"><app-iconbutton icon="bx-trending-up" color="text-blue-500"></app-iconbutton></button>
-                    <button class="toolbar-button" (click)="currentTool = 'rectangle'"><app-iconbutton icon="bx-rectangle" color="text-blue-500"></app-iconbutton></button>
-                    <button class="toolbar-button" (click)="currentTool = 'circle'"><app-iconbutton icon="bx-circle" color="text-blue-500"></app-iconbutton></button>
-                    <button class="toolbar-button" (click)="currentTool = 'arrow'"><app-iconbutton icon="bx-right-arrow-alt" color="text-blue-500"></app-iconbutton></button>
+                    <button class="toolbar-button" (click)="currentTool = 'brush'"><app-iconbutton icon="bx-brush" color="text-blue-500" pTooltip="Brush" tooltipPosition="top"></app-iconbutton></button>
+                    <button class="toolbar-button" (click)="currentTool = 'line'"><app-iconbutton icon="bx-trending-up" color="text-blue-500" pTooltip="Line" tooltipPosition="top"></app-iconbutton></button>
+                    <button class="toolbar-button" (click)="currentTool = 'rectangle'"><app-iconbutton icon="bx-rectangle" color="text-blue-500" pTooltip="Rectangle" tooltipPosition="top"></app-iconbutton></button>
+                    <button class="toolbar-button" (click)="currentTool = 'circle'"><app-iconbutton icon="bx-circle" color="text-blue-500" pTooltip="Circle" tooltipPosition="top"></app-iconbutton></button>
+                    <button class="toolbar-button" (click)="currentTool = 'arrow'"><app-iconbutton icon="bx-right-arrow-alt" color="text-blue-500" pTooltip="Arrow" tooltipPosition="top"></app-iconbutton></button>
                 </div>
             </button>
             <button class="toolbar-button" (click)="setAction('points')">
-                <app-iconbutton icon="bxs-hand-up" color="text-blue-500"></app-iconbutton>
+                <app-iconbutton icon="bxs-hand-up" color="text-blue-500" pTooltip="Move Points" tooltipPosition="left"></app-iconbutton>
             </button>
-            <button class="toolbar-button" [style.background-color]="currentColor">
-                <div class="toolbar-popover">
-                    <button class="toolbar-button" [style.background-color]="'#000000'" (click)="currentColor = '#000000'"></button>
-                    <button class="toolbar-button" [style.background-color]="'#FF0000'" (click)="currentColor = '#FF0000'"></button>
-                    <button class="toolbar-button" [style.background-color]="'#00FF00'" (click)="currentColor = '#00FF00'"></button>
-                    <button class="toolbar-button" [style.background-color]="'#0000FF'" (click)="currentColor = '#0000FF'"></button>
-                    <button class="toolbar-button" [style.background-color]="'#FFFFFF'" (click)="currentColor = '#FFFFFF'"></button>
-                </div>
-            </button>
+            <p-colorPicker [(ngModel)]="currentColor" pTooltip="Drawing Color" tooltipPosition="left"></p-colorPicker>
             <button class="toolbar-button" (click)="setAction('delete')">
-                <app-iconbutton icon="bx-trash" color="text-blue-500"></app-iconbutton>
+                <app-iconbutton icon="bx-trash" color="text-blue-500" pTooltip="Delete" tooltipPosition="left"></app-iconbutton>
             </button>
-            <button class="toolbar-button">
+            <button class="toolbar-button" pTooltip="Line Width" tooltipPosition="left">
                 <div class="stroke" [style.height]="currentWidth + 'px'"></div>
                 <div class="toolbar-popover">
-                    <button class="toolbar-button" (click)="currentWidth = 1"><div class="stroke" [style.height]="'1px'"></div></button>
-                    <button class="toolbar-button" (click)="currentWidth = 2"><div class="stroke" [style.height]="'2px'"></div></button>
-                    <button class="toolbar-button" (click)="currentWidth = 3"><div class="stroke" [style.height]="'3px'"></div></button>
-                    <button class="toolbar-button" (click)="currentWidth = 4"><div class="stroke" [style.height]="'4px'"></div></button>
-                    <button class="toolbar-button" (click)="currentWidth = 5"><div class="stroke" [style.height]="'5px'"></div></button>
+                    <button class="toolbar-button" (click)="currentWidth = 1" pTooltip="1px" tooltipPosition="top"><div class="stroke" [style.height]="'1px'"></div></button>
+                    <button class="toolbar-button" (click)="currentWidth = 2" pTooltip="2px" tooltipPosition="top"><div class="stroke" [style.height]="'2px'"></div></button>
+                    <button class="toolbar-button" (click)="currentWidth = 3" pTooltip="3px" tooltipPosition="top"><div class="stroke" [style.height]="'3px'"></div></button>
+                    <button class="toolbar-button" (click)="currentWidth = 4" pTooltip="4px" tooltipPosition="top"><div class="stroke" [style.height]="'4px'"></div></button>
+                    <button class="toolbar-button" (click)="currentWidth = 5" pTooltip="5px" tooltipPosition="top"><div class="stroke" [style.height]="'5px'"></div></button>
                 </div>
             </button>
         </div>

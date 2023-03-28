@@ -61,12 +61,7 @@ export class ChannelbarComponent implements OnInit {
       label: 'Delete',
       icon: 'pi pi-times',
       command: () => this.onDeleteCourse(),
-    },
-    {
-      label: 'Dashboard',
-      icon: 'pi pi-chart-bar',
-      command: () => this.onDashBoard()
-    },
+    }
   ];
 
   ngOnInit(): void {
