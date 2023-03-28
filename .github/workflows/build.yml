@@ -9,14 +9,22 @@ on:
       services:
         required: true
         type: string
+      platforms:
+        type: string
+        default: "linux/amd64"
+        required: false
       registry:
         required: false
         type: string
-        default:  "hub.docker.com"
+        default: "hub.docker.com"
       push:
         required: false
         type: boolean
-        default:  false
+        default: false
+      timeout:
+        required: false
+        type: number
+        default: 10
     secrets:
       registry_user:
         required: false
@@ -26,6 +34,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: ${{ inputs.timeout }}
 
     strategy:
       fail-fast: true
@@ -35,6 +44,9 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
@@ -62,6 +74,7 @@ jobs:
     - name: Build and push container image
       uses: docker/build-push-action@v4
       with:
+        platforms:  ${{ inputs.platforms }}
         context:    ${{ matrix.service }}
         tags:       ${{ steps.meta.outputs.tags }}
         labels:     ${{ steps.meta.outputs.labels }}
