@@ -86,7 +86,17 @@
             icon="bxs-videos"
             color="text-blue-500"
           ></app-iconbutton>
-          <span>{{ material.name }}</span>
+          <span *ngIf="selectedMaterial">
+            <p
+              id="{{ material._id }}"
+              (keydown)="onTextInserted(selectedMaterial._id, $event)"
+              (keyup)="afterTextInserted(selectedMaterial._id, $event)"
+              #selectedMaterial._id
+            >
+              {{ material.name }}
+            </p></span
+          >
+          <span *ngIf="!selectedMaterial">{{ material.name }}</span>
           <p-menu
             #materialMenu
             id="material_menu"
