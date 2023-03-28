@@ -1,3 +1,5 @@
+import { role, ROLES } from "../models";
+
 const ObjectId = require("mongoose").Types.ObjectId;
 const db = require("../models");
 const socketio = require("../socketio");
@@ -6,6 +8,7 @@ const Material = db.material;
 const Reply = db.reply;
 const Tag = db.tag;
 const User = db.user;
+const Role = db.role
 
 /**
  * @function newAnnotation
@@ -54,7 +57,7 @@ export const newAnnotation = async (req, res, next) => {
 
   let authorName = `${foundUser.firstname} ${foundUser.lastname}`;
   let foundCourse = foundUser.courses.find((course) => course.courseId.toString() == courseId)
-
+  let foundRole = await Role.findById({ _id: ObjectId(foundCourse.role) });
 
   let annotation = new Annotation({
     type: annotationType,
@@ -62,7 +65,7 @@ export const newAnnotation = async (req, res, next) => {
     author: {
       userId: req.userId,
       name: authorName,
-      role: foundCourse.role
+      role: foundRole
     },
     location: annotationLocation,
     tool: annotationTool,

@@ -70,7 +70,10 @@ export interface Annotation {
   author?:{
     userId?: string;
     name?: string;
-    role?: string;
+    role?: {
+      _id?: string,
+      name?: string
+    }
   };
   likes?: string[];
   dislikes?: string[];

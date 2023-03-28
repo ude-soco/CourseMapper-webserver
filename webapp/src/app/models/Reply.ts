@@ -4,7 +4,10 @@ export interface Reply {
   author?: {
     userId: string;
     name: string;
-    role?: string;
+    role?: {
+      _id?: string,
+      name?: string
+    }
   };
   courseId?: string;
   topicId?: string;

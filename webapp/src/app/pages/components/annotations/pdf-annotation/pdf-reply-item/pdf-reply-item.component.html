@@ -8,14 +8,14 @@
         [style]="{ 'background-color': '#0277BD', color: '#ffffff' }"
       ></p-avatar>
       <app-iconbutton
-      *ngIf="reply?.author?.role === Roles.User"
+      *ngIf="reply?.author?.role?.name=== Roles.User"
         icon="bxs-user"
         color="text-grey-200"
         class="mt-1"
         size="small"
       ></app-iconbutton>
       <app-iconbutton
-      *ngIf="reply?.author?.role === Roles.Moderator || reply?.author?.role === Roles.Admin"
+      *ngIf="reply?.author?.role?.name === Roles.Moderator || reply?.author?.role?.name === Roles.Admin"
       icon="bxs-graduation"
       color="text-grey-200"
       class="mt-1"

@@ -13,13 +13,13 @@
           [style]="{ 'background-color': '#0277BD', color: '#ffffff' }"
         ></p-avatar>
         <app-iconbutton
-        *ngIf="annotation?.author?.role === Roles.User"
+        *ngIf="annotation?.author?.role?.name === Roles.User"
           icon="bxs-user"
           color="text-grey-200"
           class="mt-3"
         ></app-iconbutton>
         <app-iconbutton
-        *ngIf="annotation?.author?.role === Roles.Moderator || annotation?.author?.role === Roles.Admin"
+        *ngIf="annotation?.author?.role?.name === Roles.Moderator || annotation?.author?.role?.name === Roles.Admin"
         icon="bxs-graduation"
         color="text-grey-200"
         class="mt-3"
