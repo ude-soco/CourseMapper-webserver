@@ -51,7 +51,6 @@
       </div>
     </div>
     <div class="mb-0 mt-0">
-      <p style="font-family: Roboto" *ngIf="!isEditing" class="text-lg">
         <p style="font-family: Roboto" *ngIf="!isEditing" class="text-lg" [innerHTML]="linkifyText(annotation?.content)"></p>
       <div class="flex flex-row space-x-3 mx-7 my-3" *ngIf="isEditing">
         <input

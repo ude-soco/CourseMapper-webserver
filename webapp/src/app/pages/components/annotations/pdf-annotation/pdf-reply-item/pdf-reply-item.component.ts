@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
+import { AfterViewInit, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { MenuItem } from 'primeng/api';
 import { computeElapsedTime, getInitials } from 'src/app/_helpers/format';
@@ -17,7 +17,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './pdf-reply-item.component.html',
   styleUrls: ['./pdf-reply-item.component.css']
 })
-export class PdfReplyItemComponent implements OnInit, OnChanges, OnDestroy {
+export class PdfReplyItemComponent implements OnInit, OnChanges, OnDestroy, AfterViewInit {
   @Input() reply: Reply;
   loggedInUser: User
   replyInitials?: string;
@@ -34,6 +34,29 @@ export class PdfReplyItemComponent implements OnInit, OnChanges, OnDestroy {
   constructor(private store: Store<State>, private socket: Socket) {
     this.subscription = this.store.select(getLoggedInUser).subscribe((user) => this.loggedInUser = user);
    }
+
+  ngAfterViewInit(): void {
+    const moreSpan = document.querySelectorAll('.clickable-text');
+    moreSpan.forEach(clickableText => {
+      clickableText.addEventListener('click', (event) => {
+        if(clickableText.matches('.show-more')){
+          const hiddenText = (event.target as HTMLElement).nextSibling as HTMLSpanElement;
+          const showMoreWord = hiddenText.previousElementSibling as HTMLSpanElement;
+          const showLessWord = hiddenText.nextElementSibling as HTMLSpanElement;
+          hiddenText.style.display = 'inline';
+          showLessWord.style.display = 'inline';
+          showMoreWord.style.display = 'none';
+        }else if(clickableText.matches('.show-less')){
+          const hiddenText = (event.target as HTMLElement).previousSibling as HTMLSpanElement;
+          const showMoreWord = hiddenText.previousElementSibling as HTMLSpanElement;
+          const showLessWord = hiddenText.nextElementSibling as HTMLSpanElement;
+          hiddenText.style.display = 'none';
+          showMoreWord.style.display = 'inline';
+          showLessWord.style.display = 'none';
+        }
+      });
+    });
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if('reply' in  changes){
@@ -107,5 +130,25 @@ export class PdfReplyItemComponent implements OnInit, OnChanges, OnDestroy {
 
   cancelEditing(){
     this.isEditing = false;
+  }
+
+  linkifyText(text: string): string {
+    const linkRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
+    const newlineRegex = /(\r\n|\n|\r)/gm;
+    const truncatedText = text.substring(0, 180);
+    const truncated = text.length > 180;
+    const linkedText = truncated
+      ? truncatedText +
+      '<span class=" ml-1 clickable-text show-more cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline">...show more</span>' +
+          '<span class="hidden">' +
+          text.substring(180) +
+          '</span>' +
+          '<span class="ml-1 cursor-pointer text-blue-500 dark:text-blue-500 hover:underline clickable-text show-less hidden">show less</span>'
+      : text;
+  
+    const linkedHtml = linkedText
+      .replace(linkRegex, '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline" href="$1" target="_blank">$1</a>')
+      .replace(newlineRegex, '<br>');
+    return linkedHtml;
   }
 }
