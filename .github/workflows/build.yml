@@ -8,7 +8,7 @@ on:
         type: string
       services:
         required: true
-        type:
+        type: string
       registry:
         required: false
         default:  "hub.docker.com"
