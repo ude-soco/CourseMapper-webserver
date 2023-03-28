@@ -121,7 +121,9 @@
           type="text"
           placeholder="Reply"
           [(ngModel)]="replyContent"
+          (ngModelChange)="onReplyContentChange()"
           class="p-inputtext-sm w-11/12 h-2/3"
+          (keyup.enter)="sendReply()"
           pInputText
         />
         <app-iconbutton
@@ -129,6 +131,7 @@
           color="text-slate-500"
           class="mt-3 flex-1 justify-end"
           (onClick)="sendReply()"
+          [disabled]="sendButtonDisabled"
         ></app-iconbutton>
       </div>
     </div>

@@ -51,6 +51,7 @@ export class PdfCommentItemComponent implements OnInit, OnChanges, AfterViewInit
   PDFAnnotationLocation: [number, number] = [1,1];
   VideoAnnotationLocation: [number, number] = [0,0];
   showAllPDFAnnotations$: Observable<boolean>;
+  sendButtonDisabled: boolean = true;
 
   constructor(private store: Store<State>, private socket: Socket) {
     this.store.select(getCurrentPdfPage).subscribe((currentPage) => {
@@ -138,7 +139,20 @@ export class PdfCommentItemComponent implements OnInit, OnChanges, AfterViewInit
     }
   }
 
+  onReplyContentChange(){
+    if(this.replyContent.replace(/<\/?[^>]+(>|$)/g, "") == ""){
+      this.sendButtonDisabled = true;
+    }else{
+      this.sendButtonDisabled = false;
+    }
+  }
+
   sendReply() {
+    if(this.replyContent.replace(/<\/?[^>]+(>|$)/g, "") == ""){
+      this.sendButtonDisabled = true;
+      window.alert('Cannot Send Empty Reply');
+      return;
+    }
     this.reply = {
       content: this.replyContent,
     };

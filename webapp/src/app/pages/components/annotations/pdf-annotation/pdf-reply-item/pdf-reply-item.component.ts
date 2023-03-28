@@ -133,22 +133,25 @@ export class PdfReplyItemComponent implements OnInit, OnChanges, OnDestroy, Afte
   }
 
   linkifyText(text: string): string {
-    const linkRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
-    const newlineRegex = /(\r\n|\n|\r)/gm;
-    const truncatedText = text.substring(0, 180);
-    const truncated = text.length > 180;
-    const linkedText = truncated
-      ? truncatedText +
-      '<span class=" ml-1 clickable-text show-more cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline">...show more</span>' +
-          '<span class="hidden">' +
-          text.substring(180) +
-          '</span>' +
-          '<span class="ml-1 cursor-pointer text-blue-500 dark:text-blue-500 hover:underline clickable-text show-less hidden">show less</span>'
-      : text;
-  
-    const linkedHtml = linkedText
-      .replace(linkRegex, '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline" href="$1" target="_blank">$1</a>')
-      .replace(newlineRegex, '<br>');
-    return linkedHtml;
+    if(text){
+      const linkRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
+      const newlineRegex = /(\r\n|\n|\r)/gm;
+      const truncatedText = text?.substring(0, 180);
+      const truncated = text?.length > 180;
+      const linkedText = truncated
+        ? truncatedText +
+        '<span class=" ml-1 clickable-text show-more cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline">...show more</span>' +
+            '<span class="hidden">' +
+            text.substring(180) +
+            '</span>' +
+            '<span class="ml-1 cursor-pointer text-blue-500 dark:text-blue-500 hover:underline clickable-text show-less hidden">show less</span>'
+        : text;
+    
+      const linkedHtml = linkedText
+        .replace(linkRegex, '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline" href="$1" target="_blank">$1</a>')
+        .replace(newlineRegex, '<br>');
+      return linkedHtml;
+    }
+    return '';
   }
 }
