@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      component: mongodb
+  template:
+    metadata:
+      labels:
+        component: mongodb
+    spec:
+      initContainers:
+      - name: repair
+        image: mongo
+        command:
+        - mongod
+        - --repair
+        volumeMounts:
+        - mountPath: /data/db
+          name: mongodb
+      containers:
+      - name: mongodb
+        image: mongo
+        command:
+        - mongod
+        - --bind_ip_all
+        - --quiet
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - mountPath: /data/db
+          name: mongodb
+        resources:
+          requests:
+            memory: 85Mi
+            cpu: 100m
+          limits:
+            memory: 256Mi
+            cpu: 1
+      volumes:
+      - name: mongodb
+        persistentVolumeClaim:
+          claimName: mongodb
