@@ -74,7 +74,7 @@ export class RegistrationComponent implements OnInit {
           [
             Validators.required,
             Validators.maxLength(20),
-            Validators.minLength(2),
+            Validators.minLength(1),
           ],
         ],
         lastname: [
@@ -82,7 +82,7 @@ export class RegistrationComponent implements OnInit {
           [
             Validators.required,
             Validators.maxLength(20),
-            Validators.minLength(2),
+            Validators.minLength(1),
           ],
         ],
       },
