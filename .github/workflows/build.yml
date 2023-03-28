@@ -11,6 +11,7 @@ on:
         type: string
       registry:
         required: false
+        type: string
         default:  "hub.docker.com"
       push:
         required: false
