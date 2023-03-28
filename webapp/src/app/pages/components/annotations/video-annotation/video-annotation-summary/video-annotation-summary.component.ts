@@ -5,6 +5,7 @@ import { Annotation } from 'src/app/models/Annotations';
 import { getInitials, computeElapsedTime } from 'src/app/_helpers/format';
 import { getAnnotationsForMaterial } from '../../pdf-annotation/state/annotation.reducer';
 import { State } from '../state/video.reducer';
+import * as $ from 'jquery';
 
 @Component({
   selector: 'app-video-annotation-summary',
@@ -46,6 +47,13 @@ export class VideoAnnotationSummaryComponent implements OnInit, OnChanges {
   scrollToDiscussion(){
     this.isVisible = false;
     window.location.hash = '#annotation-' + this.selectedAnnotation._id;
+    setTimeout(function () {
+      $( window.location.hash).css('box-shadow','0 0 25px rgba(83, 83, 255, 1)')
+      setTimeout(function () {
+        $( window.location.hash).css('box-shadow', 'none')
+          
+      }, 2000);
+    }, 100);
   }
 
   cancel(){
