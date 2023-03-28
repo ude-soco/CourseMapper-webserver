@@ -5,8 +5,10 @@ on:
     inputs:
       base_image_name:
         required: true
+        type: string
       services:
         required: true
+        type:
       registry:
         required: false
         default:  "hub.docker.com"
@@ -24,9 +26,9 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
-        service: ${{ inputs.services }}
+        service: ${{ fromJson(inputs.services) }}
 
     steps:
     - name: Checkout repository
