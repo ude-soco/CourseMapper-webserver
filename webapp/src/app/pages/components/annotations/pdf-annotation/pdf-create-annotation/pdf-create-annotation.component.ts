@@ -49,6 +49,7 @@ export class PdfCreateAnnotationComponent implements OnInit, AfterViewChecked {
   annotationColor: string = '#0000004D';
   sendButtonColor: string = 'text-green-600';
   showCancelButton$: Observable<boolean>;
+  sendButtonDisabled: boolean = true;
 
   constructor(private store: Store<State>, private changeDetectorRef: ChangeDetectorRef) {
     this.annotationTypesArray = ['Note', 'Question', 'External Resource'];
@@ -182,6 +183,7 @@ export class PdfCreateAnnotationComponent implements OnInit, AfterViewChecked {
   dispatchAnnotation(){
     this.store.dispatch(AnnotationActions.postAnnotation({ annotation: this.annotation }));
     this.annotationColor = '#0000004D';
+    this.sendButtonDisabled = true;
   }
 
   onSelectedFromPage(){
@@ -196,6 +198,15 @@ export class PdfCreateAnnotationComponent implements OnInit, AfterViewChecked {
   onShowOfSelectedFromPageDropDpown(){
     this.isFromSelected = false;
   }
+
+  onTextChange(){
+    if(this.text.replace(/<\/?[^>]+(>|$)/g, "") == ""){
+      this.sendButtonDisabled = true;
+    }else{
+      this.sendButtonDisabled = false;
+    }
+  }
+
   cancel() {
     this.store.dispatch(
       AnnotationActions.setIsAnnotationCanceled({ isAnnotationCanceled: true })

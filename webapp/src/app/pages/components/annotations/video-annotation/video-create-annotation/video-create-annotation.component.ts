@@ -36,6 +36,7 @@ export class VideoCreateAnnotationComponent implements OnInit {
   isBrushSelectionActive: boolean;
   isPinpointSelectionActive: boolean;
   sendButtonColor: string = 'text-green-600';
+  sendButtonDisabled: boolean = true;
   
   constructor(private store: Store<State>){
     this.annotationTypesArray = ['Note', 'Question', 'External Resource'];
@@ -94,6 +95,14 @@ export class VideoCreateAnnotationComponent implements OnInit {
 
   onSliderChange(ranges: number[]){
 
+  }
+
+  onTextChange(){
+    if(this.content.replace(/<\/?[^>]+(>|$)/g, "") == ""){
+      this.sendButtonDisabled = true;
+    }else{
+      this.sendButtonDisabled = false;
+    }
   }
 
   postAnnotation(){
@@ -226,6 +235,7 @@ export class VideoCreateAnnotationComponent implements OnInit {
     this.selectedAnnotationLocation = null;
     this.selectedAnnotationType = null;
     this.content = null;
+    this.sendButtonDisabled = true;
   }
 
   cancelCreateAnnotation(){

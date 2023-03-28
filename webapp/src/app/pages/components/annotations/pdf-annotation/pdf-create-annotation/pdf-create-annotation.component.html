@@ -68,6 +68,7 @@
         <textarea
           pInputTextarea
           [(ngModel)]="text"
+          (ngModelChange)="onTextChange()"
           [autoResize]="true"
           rows="2" cols="60"
           class="w-full"
@@ -76,9 +77,10 @@
         <app-iconbutton
           icon="bx-send"
           color="{{sendButtonColor}}"
-          (click)="postAnnotation()"
-          class="mb-0 mt-9 flex-1 justify-end"
+          (onClick)="postAnnotation()"
+          class="mb-0 mt-12 flex-1 justify-end"
           [ngStyle]="{'color': annotationColor }"
+          [disabled]="sendButtonDisabled"
         ></app-iconbutton>
       </div>
     </div>

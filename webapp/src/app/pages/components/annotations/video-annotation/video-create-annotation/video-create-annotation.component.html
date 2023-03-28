@@ -53,6 +53,7 @@
           rows="2" cols="60"
           [style]="{'border': '1px solid' + annotationColor}"
           [(ngModel)]="content"
+          (ngModelChange)="onTextChange()"
           class="w-full"
         ></textarea>
         <app-iconbutton
@@ -60,6 +61,7 @@
           color="{{sendButtonColor}}"
           class="mb-0 mt-12 flex-1 justify-end"
           (onClick)="postAnnotation()"
+          [disabled]="sendButtonDisabled"
         ></app-iconbutton>
       </div>
     </div>
