@@ -16,7 +16,7 @@ on:
       registry:
         required: false
         type: string
-        default: "hub.docker.com"
+        default: "index.docker.io"
       push:
         required: false
         type: boolean
