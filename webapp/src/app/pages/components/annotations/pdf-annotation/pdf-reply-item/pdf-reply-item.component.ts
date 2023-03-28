@@ -11,6 +11,7 @@ import { User } from 'src/app/models/User';
 import { getLoggedInUser } from 'src/app/state/app.reducer';
 import { NgIf } from '@angular/common';
 import { Subscription } from 'rxjs';
+import {Roles} from 'src/app/models/Roles'
 
 @Component({
   selector: 'app-pdf-reply-item',
@@ -30,6 +31,7 @@ export class PdfReplyItemComponent implements OnInit, OnChanges, OnDestroy, Afte
   updatedReply: string;
   blueLikeButtonEnabled: boolean = false;
   blueDislikeButtonEnabled: boolean = false;
+  Roles = Roles;
 
   constructor(private store: Store<State>, private socket: Socket) {
     this.subscription = this.store.select(getLoggedInUser).subscribe((user) => this.loggedInUser = user);

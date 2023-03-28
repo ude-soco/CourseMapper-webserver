@@ -7,6 +7,7 @@ const Reply = new Schema({
   author: {
     userId: { type: Schema.Types.ObjectId, required: true },
     name: { type: String, required: true },
+    role: { type: Schema.Types.ObjectId, ref: "role" },
   },
   courseId: { type: Schema.Types.ObjectId, ref: "course", required: true },
   topicId: { type: Schema.Types.ObjectId, ref: "topic", required: true },

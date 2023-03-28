@@ -95,12 +95,14 @@ export const newReply = async (req, res, next) => {
   }
 
   let authorName = `${foundUser.firstname} ${foundUser.lastname}`;
+  let foundCourse = foundUser.courses.find((course) => course.courseId.toString() == courseId)
 
   let reply = new Reply({
     content: replyContent,
     author: {
       userId: req.userId,
       name: authorName,
+      role: foundCourse.role
     },
     courseId: foundAnnotation.courseId,
     topicId: foundAnnotation.topicId,

@@ -24,6 +24,7 @@ import * as VideoActions from 'src/app/pages/components/annotations/video-annota
 import { getShowAnnotations } from '../../video-annotation/state/video.reducer';
 import { Observable } from 'rxjs';
 import { event } from 'jquery';
+import {Roles} from 'src/app/models/Roles'
 @Component({
   selector: 'app-pdf-comment-item',
   templateUrl: './pdf-comment-item.component.html',
@@ -52,6 +53,7 @@ export class PdfCommentItemComponent implements OnInit, OnChanges, AfterViewInit
   VideoAnnotationLocation: [number, number] = [0,0];
   showAllPDFAnnotations$: Observable<boolean>;
   sendButtonDisabled: boolean = true;
+  Roles = Roles;
 
   constructor(private store: Store<State>, private socket: Socket) {
     this.store.select(getCurrentPdfPage).subscribe((currentPage) => {
