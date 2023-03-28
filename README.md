@@ -1,3 +1,5 @@
+[![CI](https://github.com/ude-soco/CourseMapper-webserver/actions/workflows/ci.yml/badge.svg)](https://github.com/ude-soco/CourseMapper-webserver/actions/workflows/ci.yml)
+
 <p align="center">
 <a href="https://www.uni-due.de/soco/research/projects/elas.php" target="_blank" rel="noopener noreferrer">
 <img width=50% src="webapp/src/assets/logo.svg" alt="re-frame logo">
