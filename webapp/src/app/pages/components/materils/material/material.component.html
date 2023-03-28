@@ -3,7 +3,7 @@
 <div
   class="relative contain bg-gray-100 shadow-lg"
   *ngIf="selectedChannel?.materials"
-  >
+>
   <div class="h-max m-0 flex flex-col bg-gray-100">
     <div class="flex items-start justify-between py-4 pl-3 bg-gray-200">
       <p
@@ -22,7 +22,7 @@
     *ngIf="selectedChannel?.materials"
     [(activeIndex)]="tabIndex"
   >
-    <p-tabPanel >
+    <p-tabPanel>
       <ng-template pTemplate="header">
         <app-iconbutton
           icon="bxs-folder-plus"
@@ -31,14 +31,17 @@
         <span>ADD MATERIAL</span>
       </ng-template>
       <ng-template pTemplate="content">
-        <app-add-material *ngIf="showModeratorPrivileges"
+        <app-add-material
+          *ngIf="showModeratorPrivileges"
           [courseID]="selectedChannel?.courseId"
           [topicID]="selectedChannel?.topicId"
           [channelID]="selectedChannel?._id"
           [channelEmittd]="selectedChannel"
         >
         </app-add-material>
-        <p *ngIf="!showModeratorPrivileges">Only course moderator can add material</p>
+        <p *ngIf="!showModeratorPrivileges">
+          Only course moderator can add material
+        </p>
       </ng-template>
     </p-tabPanel>
     <ng-container *ngIf="this.materials.length > 0">
@@ -51,13 +54,31 @@
             icon="bxs-file-pdf"
             color="text-blue-500"
           ></app-iconbutton>
-          <span>{{ material.name }}</span>
-          <p-menu #materialMenu id="material_menu" [model]="materialOptions" [popup]="true" appendTo="body" ></p-menu>
-          <app-iconbutton style="z-index: 1;" *ngIf="showModeratorPrivileges"
+          <span *ngIf="selectedMaterial">
+            <p
+              id="{{ material._id }}"
+              (keydown)="onTextInserted(selectedMaterial._id, $event)"
+              (keyup)="afterTextInserted(selectedMaterial._id, $event)"
+              #selectedMaterial._id
+            >
+              {{ material.name }}
+            </p></span
+          >
+          <span *ngIf="!selectedMaterial">{{ material.name }}</span>
+          <p-menu
+            #materialMenu
+            id="material_menu"
+            [model]="materialOptions"
+            [popup]="true"
+            appendTo="body"
+          ></p-menu>
+          <app-iconbutton
+            style="z-index: 1"
+            *ngIf="showModeratorPrivileges"
             icon="bx-dots-vertical-rounded"
             color="text-blue-500"
-            (click)="selectedMaterial= material ; materialMenu.toggle($event)"
-            ></app-iconbutton>
+            (click)="selectedMaterial = material; materialMenu.toggle($event)"
+          ></app-iconbutton>
         </ng-template>
 
         <ng-template pTemplate="header" *ngIf="material.type == 'video'">
@@ -66,12 +87,20 @@
             color="text-blue-500"
           ></app-iconbutton>
           <span>{{ material.name }}</span>
-          <p-menu #materialMenu id="material_menu" [model]="materialOptions" [popup]="true" appendTo="body"></p-menu>
-          <app-iconbutton style="z-index: 1;" *ngIf="showModeratorPrivileges"
+          <p-menu
+            #materialMenu
+            id="material_menu"
+            [model]="materialOptions"
+            [popup]="true"
+            appendTo="body"
+          ></p-menu>
+          <app-iconbutton
+            style="z-index: 1"
+            *ngIf="showModeratorPrivileges"
             icon="bx-dots-vertical-rounded"
             color="text-blue-500"
-            (click)="selectedMaterial= material ; materialMenu.toggle($event)"
-            ></app-iconbutton>
+            (click)="selectedMaterial = material; materialMenu.toggle($event)"
+          ></app-iconbutton>
         </ng-template>
       </p-tabPanel>
 

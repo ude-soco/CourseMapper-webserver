@@ -8,6 +8,7 @@ import {
   Output,
   SimpleChanges,
   Renderer2,
+  HostListener,
 } from '@angular/core';
 import { Channel } from 'src/app/models/Channel';
 import { TopicChannelService } from 'src/app/services/topic-channel.service';
@@ -52,6 +53,13 @@ export class MaterialComponent implements OnInit, OnDestroy {
   tabIndex: number = -1;
   isMaterialSelected: boolean = false;
 
+  displayAddTopicDialogue: boolean = false;
+  editable: boolean = false;
+  escapeKey: boolean = false;
+  enterKey: boolean = false;
+  insertedText: string = '';
+  selectedId: string = '';
+  previousMaterial: Material
   isNewMaterialModalVisible: boolean = false;
   errorMessage: any;
 
@@ -103,11 +111,11 @@ export class MaterialComponent implements OnInit, OnDestroy {
       });
   }
   materialOptions: MenuItem[] = [
-    // {
-    //   label: 'Rename',
-    //   icon: 'pi pi-refresh',
-    //   command: () => this.onRenameMaterial(),
-    // },
+    {
+      label: 'Rename',
+      icon: 'pi pi-refresh',
+      command: () => this.onRenameMaterial(),
+    },
     {
       label: 'Delete',
       icon: 'pi pi-times',
@@ -310,6 +318,196 @@ export class MaterialComponent implements OnInit, OnDestroy {
     this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
       this.router.navigate([currentUrl]);
     });
+  }
+
+  onRenameMaterial() {
+    let selectedMat = <HTMLInputElement>(
+      document.getElementById(`${this.selectedMaterial._id}`)
+    );
+    console.log(selectedMat)
+    this.selectedId = this.selectedMaterial._id;
+    selectedMat.contentEditable = 'true';
+    this.previousMaterial = this.selectedMaterial;
+    this.previousMaterial = this.selectedMaterial;
+    this.selectElementContents(selectedMat);
+  }
+  selectElementContents(el) {
+    // select text on rename
+    var range = document.createRange();
+    range.selectNodeContents(el);
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+  onRenameMaterialConfirm(id) {
+    const selectedMat = <HTMLInputElement>document.getElementById(id);
+    if (this.enterKey) {
+      //confirmed by keyboard
+      let MaterialName = this.previousMaterial.name;
+      const materialDescription = this.previousMaterial.description;
+      const curseId = this.previousMaterial.courseId;
+      const matId = this.previousMaterial._id;
+      const matUrl = this.previousMaterial.url;
+      const mattype = this.previousMaterial.type;
+      let body = { name: MaterialName, description: materialDescription,
+        courseId:curseId,
+        materialId:matId,
+        url:matUrl,
+        type:mattype,
+      };
+      let newMaterialName = this.insertedText;
+      newMaterialName = newMaterialName.replace(/(\r\n|\n|\r)/gm, ''); //remove newlines
+      if (newMaterialName && newMaterialName !== '') {
+        body = {
+          name: newMaterialName,
+          description: materialDescription, //keep description value
+          courseId:curseId,
+        materialId:matId,
+        url:matUrl,
+        type:mattype,
+        };
+      }
+      this.enterKey = false;
+      this.materialService.renameMaterial(curseId,this.previousMaterial, body).subscribe();
+    } else if (this.escapeKey === true) {
+      //ESC pressed
+      console.log('ESC Pressed');
+      console.log(this.previousMaterial)
+      let MaterialName = this.previousMaterial.name;
+      const MaterialDescription = this.previousMaterial.description;
+      const curseId = this.previousMaterial.courseId;
+      console.log(curseId)
+      const matId = this.previousMaterial._id;
+      const matUrl = this.previousMaterial.url;
+      const mattype = this.previousMaterial.type;
+      let body = { name: MaterialName, description: MaterialDescription,
+        courseId:curseId,
+        materialId:matId,
+        url:matUrl,
+        type:mattype, };
+      this.escapeKey = false;
+      this.materialService.renameMaterial(curseId,this.selectedMaterial, body).subscribe();
+    } else {
+      //confirmed by mouse click
+      console.log('logged from mouse');
+      let MaterialName = this.previousMaterial.name;
+      const MaterialDescription = this.previousMaterial.description;
+      const curseId = this.previousMaterial.courseId;
+      const matId = this.previousMaterial._id;
+      const matUrl = this.previousMaterial.url;
+      const mattype = this.previousMaterial.type;
+      let body = { name: MaterialName, description: MaterialDescription,
+        courseId:curseId,
+        materialId:matId,
+        url:matUrl,
+        type:mattype, };
+      let newMaterialName = this.insertedText;
+      newMaterialName = newMaterialName.replace(/(\r\n|\n|\r)/gm, ''); //remove newlines
+      if (
+        newMaterialName &&
+        newMaterialName !== '' &&
+        newMaterialName !== this.previousMaterial.name
+      ) {
+        body = {
+          name: newMaterialName,
+          description: MaterialDescription, //keep description value
+          courseId:curseId,
+        materialId:matId,
+        url:matUrl,
+        type:mattype,
+        };
+      }
+      this.editable = false;
+      this.materialService.renameMaterial(curseId,this.previousMaterial, body).subscribe();
+    }
+  }
+
+  @HostListener('document:click', ['$event'])
+  documentClick(event: MouseEvent) {
+    // to confirm rename when mouse clicked anywhere
+    if (this.editable) {
+      //course name <p> has been changed to editable
+      console.log('logged to mouse event');
+      this.enterKey = false;
+      this.onRenameMaterialConfirm(this.selectedId);
+    }
+  }
+
+  onTextInserted(id, e) {
+    ////Prevent Special keys
+    this.editable = true;
+    if (
+      window.getSelection().toString() ==
+      (<HTMLInputElement>document.getElementById(id)).innerText
+    ) {
+      //all text is selected
+      if (e.keyCode === 32) {
+        //spacebar pressed when text is selected
+        e.preventDefault(); //prevent text modification
+      } else if (e.keyCode === 13) {
+        // Enter pressed && All Text is selected
+        e.preventDefault();
+        let inText = (<HTMLInputElement>document.getElementById(id)).innerText;
+        if (/\s/g.test(inText)) {
+          //name !== null or white space(s)
+          (<HTMLInputElement>document.getElementById(id)).contentEditable =
+            'false';
+          window.getSelection().removeAllRanges(); // deselect text on confirm
+          this.enterKey = true;
+          this.onRenameMaterialConfirm(id);
+        } else if (!/\s/g.test(inText)) {
+          // this.showError('Course name field is empty');
+        } //name is null or white space(s)
+      } else if (e.keyCode === 27) {
+        // on ESC pressed
+        e.preventDefault();
+        (<HTMLInputElement>document.getElementById(id)).contentEditable =
+          'false';
+        this.insertedText = this.selectedMaterial.name;
+        window.getSelection().removeAllRanges(); // deselect text on confirm
+        // (<HTMLInputElement>document.getElementById(id)).innerText=this.insertedText
+        this.escapeKey = true;
+        this.onRenameMaterialConfirm(id);
+      }
+    } else if (e.keyCode === 13) {
+      /**if text is not selected check following cases */
+      // on Enter pressed
+      // e.preventDefault();
+      (<HTMLInputElement>document.getElementById(id)).contentEditable = 'false';
+      window.getSelection().removeAllRanges(); // deselect text on confirm
+      this.enterKey = true;
+      this.onRenameMaterialConfirm(id);
+    } else if (e.keyCode === 27) {
+      // on ESC pressed
+      (<HTMLInputElement>document.getElementById(id)).contentEditable = 'false';
+      this.insertedText = this.selectedMaterial.name;
+      window.getSelection().removeAllRanges(); // deselect text on confirm
+      this.escapeKey = true;
+      // (<HTMLInputElement>document.getElementById(id)).innerHTML=this.insertedText;
+      this.onRenameMaterialConfirm(id);
+    }
+    // else if(e.keyCode===8 || e.keyCode===46){//Backspace || Delete
+    //   //Do Nothing
+    // }
+    // // else{
+    // //   this.insertedText= (<HTMLInputElement>document.getElementById(id)).innerText
+    // //   if (e.key.length===1){this.insertedText=this.insertedText+e.key}
+    // // }
+  }
+
+  afterTextInserted(id, e) {
+    //check on button release | get inner text as long as it's inserted
+    if (e.keyCode === 8 || e.keyCode === 46) {
+      //Backspace || delete
+      this.insertedText = (<HTMLInputElement>(
+        document.getElementById(id)
+      )).innerText;
+    } else if (e.keyCode !== 32 && e.keyCode !== 27) {
+      //not (enter, esc)
+      this.insertedText = (<HTMLInputElement>(
+        document.getElementById(id)
+      )).innerText;
+    }
   }
 
   /**

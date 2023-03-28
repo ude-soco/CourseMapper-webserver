@@ -53,9 +53,9 @@ export class AddMaterialComponent implements OnInit {
   materialToAdd: CreateMaterial = {
     name: '',
     type: 'pdf',
-    courseID: '',
-    topicID: '',
-    channelID: '',
+    courseId: '',
+    topicId: '',
+    channelId: '',
     url: '',
 
     description: '',
@@ -110,9 +110,9 @@ export class AddMaterialComponent implements OnInit {
 
   submitForm(): void {
     var file = this.fileUploadForm?.get('file')?.value;
-    this.materialToAdd.courseID = this.courseID!;
-    this.materialToAdd.topicID = this.topicID!;
-    this.materialToAdd.channelID = this.channelID!;
+    this.materialToAdd.courseId = this.courseID!;
+    this.materialToAdd.topicId = this.topicID!;
+    this.materialToAdd.channelId = this.channelID!;
     this.materialToAdd.type = this.materialType as MaterialType;
     this.materialToAdd.name = this.validateForm.controls['materialName'].value;
     this.materialToAdd.description =
