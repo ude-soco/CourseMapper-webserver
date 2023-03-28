@@ -22,6 +22,7 @@ import {SliderModule} from 'primeng/slider';
 import {CardModule} from 'primeng/card';
 import {TooltipModule} from 'primeng/tooltip';
 import {CheckboxModule} from 'primeng/checkbox';
+import {ColorPickerModule} from 'primeng/colorpicker';
 
 const PrimeNgComponents = [
   AvatarModule,
@@ -46,7 +47,8 @@ const PrimeNgComponents = [
   SliderModule,
   CardModule,
   TooltipModule,
-  CheckboxModule
+  CheckboxModule,
+  ColorPickerModule
   
 ];
 

@@ -24,15 +24,7 @@
             <button class="toolbar-button" (click)="setAction('points')">
                 <app-iconbutton icon="bxs-hand-up" color="text-blue-500" pTooltip="Move Points" tooltipPosition="left"></app-iconbutton>
             </button>
-            <button class="toolbar-button" [style.background-color]="currentColor" pTooltip="Drawing Color" tooltipPosition="left">
-                <div class="toolbar-popover">
-                    <button class="toolbar-button" [style.background-color]="'#000000'" (click)="currentColor = '#000000'"></button>
-                    <button class="toolbar-button" [style.background-color]="'#FF0000'" (click)="currentColor = '#FF0000'"></button>
-                    <button class="toolbar-button" [style.background-color]="'#00FF00'" (click)="currentColor = '#00FF00'"></button>
-                    <button class="toolbar-button" [style.background-color]="'#0000FF'" (click)="currentColor = '#0000FF'"></button>
-                    <button class="toolbar-button" [style.background-color]="'#FFFFFF'" (click)="currentColor = '#FFFFFF'"></button>
-                </div>
-            </button>
+            <p-colorPicker [(ngModel)]="currentColor" pTooltip="Drawing Color" tooltipPosition="left"></p-colorPicker>
             <button class="toolbar-button" (click)="setAction('delete')">
                 <app-iconbutton icon="bx-trash" color="text-blue-500" pTooltip="Delete" tooltipPosition="left"></app-iconbutton>
             </button>
