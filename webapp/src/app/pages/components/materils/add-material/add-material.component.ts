@@ -1,5 +1,5 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators, ValidatorFn, ValidationErrors } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { Material, CreateMaterial, MaterialType } from 'src/app/models/Material';
 import { MaterilasService } from 'src/app/services/materials.service';
@@ -32,12 +32,12 @@ export class AddMaterialComponent implements OnInit {
   pdfAddModelDisplay:boolean = false;
   videoAddModelDisplay:boolean = false;
   isFileSelectedInvalid:boolean = true;
-  invalidPDFFileMessage:string = "Please choose a PDF file";
+  invalidPDFFileMessage:string = "No File Chosen";
   pdfAttachButtonText = "Attach a PDF";
   chosenFile=null;
   urlOrFile = "urlOption";
   videoAttachButtonText = "Attach a video"
-  invalidVideoFileMessage:string = "Please choose a video file"
+  invalidVideoFileMessage:string = "No File Chosen"
   materialToAdd: CreateMaterial = {
     name: '',
     type: 'pdf',
@@ -70,7 +70,17 @@ export class AddMaterialComponent implements OnInit {
   fileUploadForm: FormGroup | undefined;
   fileInputLabel: string | undefined;
   radioFormGroup:FormGroup;
-  urlFormControl = new FormControl('',[Validators.required]);
+  validUrl:  ValidatorFn = (control) => {
+    let validUrl = true;
+    try {
+      new URL(control.value)
+    } catch {
+      validUrl = false;
+    }
+
+    return validUrl ? null : { invalidUrl: true };
+  }
+  urlFormControl = new FormControl('',[Validators.required, this.validUrl]);
 
   
   constructor(private formBuilder: FormBuilder, 
@@ -97,8 +107,15 @@ export class AddMaterialComponent implements OnInit {
     });
     this.radioFormGroup.valueChanges.subscribe(val =>{
       this.urlOrFile = val.videoRadio;
+      if(val.videoRadio ==="urlOption"){
+        this.invalidVideoFileMessage= "Please enter a URL";
+      }
+      else{
+        this.invalidVideoFileMessage= "No File Chosen";
+      }
       this.resetDialogs();
     })
+
 
   }
 
@@ -115,6 +132,8 @@ export class AddMaterialComponent implements OnInit {
 
   }
  */
+
+
 
   //this method basically makes the input boxes red only after the submit button is pressed
   validateFields(){
@@ -260,7 +279,7 @@ export class AddMaterialComponent implements OnInit {
     if(this.materialType === "pdf"){
       if(this.chosenFile.type!=="application/pdf"){
         this.isFileSelectedInvalid = true;
-        this.invalidPDFFileMessage = "* Please upload a PDF File";
+        this.invalidPDFFileMessage = "Please upload a PDF File";
       }
       else{
         this.isFileSelectedInvalid= false;
@@ -286,13 +305,10 @@ export class AddMaterialComponent implements OnInit {
     this.urlFormControl.reset();
     this.validateForm.reset();
     this.chosenFile = null;
-    this.invalidPDFFileMessage = "Please choose a PDF file";
+    this.invalidPDFFileMessage = "No File Chosen";
     this.pdfAttachButtonText = "Select a PDF";
-    this.invalidVideoFileMessage= "Please choose a video file";
     this.videoAttachButtonText = "Select a video"
     this.isFileSelectedInvalid = true;
-
-    
   }
   
 }

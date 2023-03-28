@@ -1,16 +1,16 @@
-<h2 class="text-3xl text-center mb-8">
+<h2 class="text-xl text-center mb-8">
   Upload a learning material to this channel
 </h2>
 
 <div class="card-container">
   <p-card (click)="showPdfAddModel()">
     <div class="header-container">
-      <span class="card-header"> Add PDF </span>
+      <span class="card-header"> Add a Pdf </span>
     </div>
   </p-card>
   <p-card (click)="showVideoAddModel()">
     <div class="header-container">
-      <span class="card-header"> Add Video </span>
+      <span class="card-header"> Add a Video </span>
     </div>
   </p-card>
 </div>
@@ -158,12 +158,22 @@
       <label for="url">URL</label>
       <input
         id="url"
-        type="text"
+        type="url"
         pInputText
         [formControl]="urlFormControl"
         placeholder="Add a YouTube URL"
       />
-      <span>{{ invalidVideoFileMessage }}</span>
+      <span *ngIf="urlFormControl.errors && urlFormControl.hasError('required')"
+        >Please add a valid URL</span
+      >
+      <span
+        *ngIf="
+          urlFormControl.errors &&
+          urlFormControl.hasError('invalidUrl') &&
+          !urlFormControl.hasError('required')
+        "
+        >The URL format is invalid</span
+      >
     </div>
 
     <form [formGroup]="validateForm">
