@@ -147,13 +147,14 @@ export class MaterialComponent implements OnInit, OnDestroy {
               this.errorMessage = err.error.message;
             },
           });
-      }
-    });
+        }
+      });
     this.showModeratorPrivileges=this.moderatorPrivilegesService.showModeratorPrivileges
   }
   
   onTabChange(e) {
     this.tabIndex = e.index - 1;
+    // if (this.tabIndex == -1 && this.showModeratorPrivileges) {
     if (this.tabIndex == -1) {
       this.isMaterialSelected = false;
       this.router.navigate([
@@ -164,6 +165,9 @@ export class MaterialComponent implements OnInit, OnDestroy {
       ]);
     } else {
       this.isMaterialSelected = true;
+      // if(!this.showModeratorPrivileges){
+      //   this.tabIndex = e.index
+      // }
       this.selectedMaterial = this.materials[this.tabIndex];
       this.updateSelectedMaterial();
 
@@ -215,6 +219,10 @@ export class MaterialComponent implements OnInit, OnDestroy {
     this.updateSelectedMaterial();
   }
   updateSelectedMaterial() {
+    // if(this.selectedChannel.materials && !this.selectedMaterial){
+    //   this.tabIndex=0
+    //   this.selectedMaterial=this.selectedChannel.materials[0]
+    // }
     if (!this.selectedMaterial) return;
     switch (this.selectedMaterial.type) {
       case 'pdf':

@@ -22,7 +22,8 @@
     *ngIf="selectedChannel?.materials"
     [(activeIndex)]="tabIndex"
   >
-    <p-tabPanel>
+  <!-- *ngIf="showModeratorPrivileges" -->
+    <p-tabPanel >
       <ng-template pTemplate="header">
         <app-iconbutton
           icon="bxs-folder-plus"

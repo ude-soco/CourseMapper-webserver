@@ -110,6 +110,7 @@ export class AddMaterialComponent implements OnInit {
 
   submitForm(): void {
     var file = this.fileUploadForm?.get('file')?.value;
+    console.log(file)
     this.materialToAdd.courseId = this.courseID!;
     this.materialToAdd.topicId = this.topicID!;
     this.materialToAdd.channelId = this.channelID!;

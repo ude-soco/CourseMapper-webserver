@@ -35,7 +35,7 @@ export class TopicDropdownComponent implements OnInit {
     private router: Router,
     private store: Store<State>,
     private route: ActivatedRoute,
-    private renderer: Renderer2,
+    private renderer: Renderer2
   ) {}
   @Input() showModeratorPrivileges: boolean;
 
@@ -54,7 +54,7 @@ export class TopicDropdownComponent implements OnInit {
   insertedText: string = '';
   selectedIdTp: string = '';
   selectedIdCh: string = '';
-  expandTopic = null;
+  expandTopic = [];
 
   topicOptions: MenuItem[] = [
     {
@@ -114,25 +114,30 @@ export class TopicDropdownComponent implements OnInit {
   }
 
   onSelectTopic(topic: Topic) {
-    if (this.expandTopic === topic._id) {
-      this.expandTopic = null;
+    if (this.expandTopic.includes(topic._id)) {
+      this.expandTopic.some((topicId, index) => {
+        if (topicId === topic._id) {
+          this.expandTopic.splice(index, 1);
+        }
+      });
     } else {
-      this.expandTopic = topic._id;
+      this.expandTopic.push(topic._id);
       // wait until expanded topic rendered
       setTimeout(() => {
         // if exists channel previously selected --> make channel container bg=white
-        if(this.selectedChannelId && topic.channels.find((channl)=>channl._id===this.selectedChannelId)){
-          console.log(this.selectedChannelId)
+        if (
+          this.selectedChannelId &&
+          topic.channels.find((channl) => channl._id === this.selectedChannelId)
+        ) {
           let channelNameContainer = document.getElementById(
             this.selectedChannelId + '-container'
-            );
-            channelNameContainer.style.backgroundColor = 'white';
-          }
-        }, 2);
+          );
+          channelNameContainer.style.backgroundColor = 'white';
+        }
+      }, 2);
     }
   }
   onSelectChannel(channel: Channel) {
-    //console.log(channel.materials);
     //3
     this.topicChannelService.selectChannel(channel);
     this.router.navigate([
@@ -179,8 +184,10 @@ export class TopicDropdownComponent implements OnInit {
       },
     });
     setTimeout(() => {
-      const rejectButton = document.getElementsByClassName("p-confirm-dialog-reject") as HTMLCollectionOf<HTMLElement>;
-      for (var i=0; i<rejectButton.length;i++){
+      const rejectButton = document.getElementsByClassName(
+        'p-confirm-dialog-reject'
+      ) as HTMLCollectionOf<HTMLElement>;
+      for (var i = 0; i < rejectButton.length; i++) {
         this.renderer.addClass(rejectButton[i], 'p-button-outlined');
       }
     }, 0);
@@ -349,14 +356,15 @@ export class TopicDropdownComponent implements OnInit {
       header: 'Delete Confirmation',
       icon: 'pi pi-info-circle',
       accept: () => this.confirmChannelDeletion(),
-      reject: () => 
-      {
+      reject: () => {
         // this.informUser('info', 'Cancelled', 'Deletion cancelled')
       },
     });
     setTimeout(() => {
-      const rejectButton = document.getElementsByClassName("p-confirm-dialog-reject") as HTMLCollectionOf<HTMLElement>;
-      for (var i=0; i<rejectButton.length;i++){
+      const rejectButton = document.getElementsByClassName(
+        'p-confirm-dialog-reject'
+      ) as HTMLCollectionOf<HTMLElement>;
+      for (var i = 0; i < rejectButton.length; i++) {
         this.renderer.addClass(rejectButton[i], 'p-button-outlined');
       }
     }, 0);

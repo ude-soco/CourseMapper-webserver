@@ -10,7 +10,7 @@
   >
     <div
       class="m-0 w-full mx-2 pb-2 transition duration-300 ease-in-out"
-      *ngIf="expandTopic === topic._id"
+      *ngIf="expandTopic.includes(topic._id)"
     >
       <div class="flex flex-row items-center justify-between mx-0 my-1.5">
         <div class="flex flex-row items-center">
@@ -126,7 +126,7 @@
 
     <div
       class="m-0 w-full mx-2 pb-2 transition duration-300 ease-in-out"
-      *ngIf="expandTopic !== topic._id"
+      *ngIf="!expandTopic.includes(topic._id)"
     >
       <div class="flex flex-row items-center justify-between mx-0 my-1.5">
         <div class="flex flex-row items-center">
