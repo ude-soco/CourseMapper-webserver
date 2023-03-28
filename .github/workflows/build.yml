@@ -15,9 +15,9 @@ on:
       push:
         required: false
         default:  false
+    secrets:
       registry_user:
         required: false
-    secrets:
       registry_token:
         required: false
 
