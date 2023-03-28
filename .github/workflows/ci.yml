@@ -13,7 +13,6 @@ on:
 
 jobs:
   build:
-    timeout-minutes: 15
     uses: ./.github/workflows/build.yml
     with:
       services:        "[ 'proxy', 'webapp', 'webserver' ]"
