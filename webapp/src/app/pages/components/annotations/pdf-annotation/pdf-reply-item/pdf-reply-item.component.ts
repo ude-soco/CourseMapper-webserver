@@ -70,12 +70,7 @@ export class PdfReplyItemComponent implements OnInit, OnChanges, OnDestroy {
           icon: 'pi pi-times',
           disabled: (this.loggedInUser?.id !== this.reply?.author?.userId) && !this.isEditing,
           command: () => this.onDeleteReply(),
-        },
-        {
-          label: 'Report',
-          icon: 'pi pi-flag-fill',
-          command: () => this.onReportReply(),
-        },
+        }
       ];
     }
   }
@@ -113,7 +108,4 @@ export class PdfReplyItemComponent implements OnInit, OnChanges, OnDestroy {
   cancelEditing(){
     this.isEditing = false;
   }
-
-  onReportReply(){}
-
 }

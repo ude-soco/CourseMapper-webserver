@@ -227,11 +227,7 @@ export class PdfCommentItemComponent implements OnInit, OnChanges {
         icon: 'pi pi-times',
         disabled: (this.loggedInUser?.id !== this.annotation?.author?.userId) && !this.isEditing,
         command: () => this.onDeleteAnnotation(),
-      },
-      {
-        label: 'Report',
-        icon: 'pi pi-flag-fill',
-      },
+      }
     ];
   }
 }
