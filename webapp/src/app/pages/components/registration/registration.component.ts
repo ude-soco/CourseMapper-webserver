@@ -100,9 +100,10 @@ export class RegistrationComponent implements OnInit {
 
   onSubmit(): void {
     this.validateForm.markAllAsTouched(); 
-    if (this.validateForm.valid) {
-     return;
-    } else {
+    if(!this.validateForm.valid){
+      return ;
+      } 
+      else {
     console.log('222');
     console.log(this.validateForm.value);
     this.errors = null;
@@ -144,8 +145,10 @@ export function ConfirmedValidator(
     }
     if (control.value !== matchingControl.value) {
       matchingControl.setErrors({ confirmedValidator: true });
+      console.log('not matched')
     } else {
-      matchingControl.setErrors(null);
+      matchingControl.setErrors(null );
     }
   };
 }
+

@@ -464,7 +464,7 @@
 <div class=" m-3" >
   <h5 style="font-weight: bold; text-align: center;">Create an account</h5>
   <div class="card-body">
-      <form [formGroup]="validateForm" >
+      <form [formGroup]="validateForm" (ngSubmit)="onSubmit()" >
           <div class="form-row">
 
               <div class="form-group col-5" [style]="{ width:'120%'}">
@@ -662,8 +662,8 @@
             [ngStyle]="{ backgroundColor: '#EA580C',width: '100%'}"
             type="button"
             label="Sign Up"
-            
-            (click)="onSubmit()"></button>
+            type="submit"
+           ></button>
        
         <div class="alert alert-warning" *ngIf="isSignUpFailed">
           Sign Up unsuccessful<br/>{{ errorMessage }}
