@@ -36,6 +36,7 @@
       >
       {{ printTime(VideoAnnotationLocation[0]) }} - {{ printTime(VideoAnnotationLocation[1]) }}
       </h1>
+      <div *ngIf="this.loggedInUser?.id == this.annotation?.author?.userId">
         <p-menu
           #menu
           id="config_menu"
@@ -48,6 +49,7 @@
           color="text-black"
           (click)="menu.toggle($event)"
         ></app-iconbutton>
+      </div>
       </div>
     </div>
     <div class="mb-0 mt-0">
