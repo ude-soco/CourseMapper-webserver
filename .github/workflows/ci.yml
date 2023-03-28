@@ -20,6 +20,7 @@ jobs:
       platforms:       "linux/amd64,linux/arm64"
       push:            ${{ github.event_name != 'pull_request' }}
       registry:        "hub.docker.com"
+      timeout:         10 # minutes
     secrets:
       registry_user:   ${{ secrets.DOCKERHUB_USERNAME }}
       registry_token:  ${{ secrets.DOCKERHUB_TOKEN }}

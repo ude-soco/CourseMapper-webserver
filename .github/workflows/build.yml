@@ -21,6 +21,10 @@ on:
         required: false
         type: boolean
         default: false
+      timeout:
+        required: false
+        type: number
+        default: 10
     secrets:
       registry_user:
         required: false
@@ -30,7 +34,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: ${{ inputs.timeout }}
 
     strategy:
       fail-fast: true
