@@ -14,6 +14,7 @@ on:
         default:  "hub.docker.com"
       push:
         required: false
+        type: boolean
         default:  false
     secrets:
       registry_user:
