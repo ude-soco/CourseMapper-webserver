@@ -25,13 +25,12 @@
         ></p-dropdown>
         </div>
 
-        <div class="flex-col">
+        <div class="flex-col" *ngIf="!disableSlidesDropDown">
           <span>Slide</span>
           <p-dropdown
           [options]="annotationLocationsArray"
           [(ngModel)]="selectedAnnotationLocation"
           autoWidth="false"
-          [disabled]="disableSlidesDropDown"
           appendTo="body"
           [appUpdateBorderColor]="annotationColor"
           [style]="{ minWidth: '100%', height: '55px'}"
