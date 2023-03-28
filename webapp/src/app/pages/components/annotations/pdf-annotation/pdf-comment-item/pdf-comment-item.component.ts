@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component,
   Input,
   OnChanges,
@@ -22,12 +23,13 @@ import { getCurrentMaterial } from '../../../materils/state/materials.reducer';
 import * as VideoActions from 'src/app/pages/components/annotations/video-annotation/state/video.action'
 import { getShowAnnotations } from '../../video-annotation/state/video.reducer';
 import { Observable } from 'rxjs';
+import { event } from 'jquery';
 @Component({
   selector: 'app-pdf-comment-item',
   templateUrl: './pdf-comment-item.component.html',
   styleUrls: ['./pdf-comment-item.component.css'],
 })
-export class PdfCommentItemComponent implements OnInit, OnChanges {
+export class PdfCommentItemComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() annotation: Annotation;
   reply: Reply;
   replyContent: string;
@@ -60,6 +62,28 @@ export class PdfCommentItemComponent implements OnInit, OnChanges {
     this.store.select(getShowAnnotations).subscribe((isShowAnnotationsOnVideo) => this.isShowAnnotationsOnVideo = isShowAnnotationsOnVideo);
     this.store.select(getLoggedInUser).subscribe((user) => {this.loggedInUser = user;});
     this.showAllPDFAnnotations$ = this.store.select(getshowAllPDFAnnotations);
+  }
+  ngAfterViewInit(): void {
+    const moreSpan = document.querySelectorAll('.clickable-text');
+    moreSpan.forEach(clickableText => {
+      clickableText.addEventListener('click', (event) => {
+        if(clickableText.matches('.show-more')){
+          const hiddenText = (event.target as HTMLElement).nextSibling as HTMLSpanElement;
+          const showMoreWord = hiddenText.previousElementSibling as HTMLSpanElement;
+          const showLessWord = hiddenText.nextElementSibling as HTMLSpanElement;
+          hiddenText.style.display = 'inline';
+          showLessWord.style.display = 'inline';
+          showMoreWord.style.display = 'none';
+        }else if(clickableText.matches('.show-less')){
+          const hiddenText = (event.target as HTMLElement).previousSibling as HTMLSpanElement;
+          const showMoreWord = hiddenText.previousElementSibling as HTMLSpanElement;
+          const showLessWord = hiddenText.nextElementSibling as HTMLSpanElement;
+          hiddenText.style.display = 'none';
+          showMoreWord.style.display = 'inline';
+          showLessWord.style.display = 'none';
+        }
+      });
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -230,4 +254,27 @@ export class PdfCommentItemComponent implements OnInit, OnChanges {
       }
     ];
   }
+
+  linkifyText(text: string): string {
+    const linkRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
+    const newlineRegex = /(\r\n|\n|\r)/gm;
+    const truncatedText = text.substring(0, 180);
+    const truncated = text.length > 180;
+    const linkedText = truncated
+      ? truncatedText +
+      '<span class=" ml-1 clickable-text show-more cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline">...show more</span>' +
+          '<span class="hidden">' +
+          text.substring(180) +
+          '</span>' +
+          '<span class="ml-1 cursor-pointer text-blue-500 dark:text-blue-500 hover:underline clickable-text show-less hidden">show less</span>'
+      : text;
+  
+    const linkedHtml = linkedText
+      .replace(linkRegex, '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline" href="$1" target="_blank">$1</a>')
+      .replace(newlineRegex, '<br>');
+    return linkedHtml;
+  }
+
+
+  
 }
