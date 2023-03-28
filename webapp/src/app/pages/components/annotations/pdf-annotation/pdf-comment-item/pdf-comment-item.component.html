@@ -19,23 +19,23 @@
         ></app-iconbutton>
         <b class="mt-4 text-base">{{ annotation?.author?.name }}</b>
         <h1 class="mt-5 text-xs">{{ annotationElapsedTime }}</h1>
+      </div>
+
+      <div class="flex justify-end mt-3">
         <h1
-          class="mt-5 text-xs cursor-pointer hover:underline hover:text-blue-600"
-          *ngIf="selectedMaterial?.type === 'pdf' && (showAllPDFAnnotations$ | async)"
-          (click)="showAnnotationOnMaterial()"
-        >
-          Page {{ PDFAnnotationLocation[0] }}-{{ PDFAnnotationLocation[1] }}
-        </h1>
+        class="mt-2 mr-2 text-xs cursor-pointer hover:underline hover:text-blue-600"
+        *ngIf="selectedMaterial?.type === 'pdf' && (showAllPDFAnnotations$ | async)"
+        (click)="showAnnotationOnMaterial()"
+      >
+        Page {{ PDFAnnotationLocation[0] }}-{{ PDFAnnotationLocation[1] }}
+      </h1>
         <h1
-        class="mt-5 text-xs cursor-pointer hover:underline hover:text-blue-600"
+        class="mt-2 mr-2 text-xs cursor-pointer hover:underline hover:text-blue-600"
         *ngIf="selectedMaterial?.type === 'video'"
         (click)="showAnnotationOnMaterial()"
       >
       {{ printTime(VideoAnnotationLocation[0]) }} - {{ printTime(VideoAnnotationLocation[1]) }}
       </h1>
-      </div>
-
-      <div class="flex justify-end mt-3">
         <p-menu
           #menu
           id="config_menu"
