@@ -24,7 +24,7 @@
     "watch:dev": "nodemon"
   },
   "dependencies": {
-    "@babel/cli": "^7.17.10",
+    "@babel/cli": "^7.21.0",
     "@babel/core": "^7.18.2",
     "@babel/preset-env": "^7.20.2",
     "axios": "^1.3.4",
