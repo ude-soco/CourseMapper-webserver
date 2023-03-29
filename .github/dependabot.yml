@@ -39,7 +39,7 @@ updates:
     prefix: "[webapp] "
   labels:
   - "dependencies"
-  - "npm"
+  - "javascript"
   - "webapp"
 
 - package-ecosystem: "npm"
@@ -51,5 +51,5 @@ updates:
     prefix: "[webserver] "
   labels:
   - "dependencies"
-  - "npm"
+  - "javascript"
   - "webserver"
