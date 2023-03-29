@@ -109,6 +109,8 @@ export class TopicDropdownComponent implements OnInit {
   if(this.selectedCourseId!==this.prevSelectedCourseId){
     this.prevSelectedCourseId=this.selectedCourseId
     this.selectedChannelId=null
+
+    //to avoid error messages when values got changed after being checked
     this.changeDetectorRef.detectChanges()
   }
   }
