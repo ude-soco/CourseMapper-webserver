@@ -5,29 +5,53 @@ updates:
   directory: "/"
   schedule:
     interval: "daily"
+  commit-message:
+    prefix: "[CI] "
 
 - package-ecosystem: "docker"
   directory: "/webapp"
   schedule:
     interval: "daily"
+  commit-message:
+    prefix: "[Dockerfile] "
+  labels:
+  - "dependencies"
+  - "docker"
+  - "webapp"
 
 - package-ecosystem: "docker"
   directory: "/webserver"
   schedule:
     interval: "daily"
+  commit-message:
+    prefix: "[Dockerfile] "
+  labels:
+  - "dependencies"
+  - "docker"
+  - "webserver"
 
 - package-ecosystem: "npm"
   directory: "/webapp"
   schedule:
     interval: "daily"
-  ignore:
-  - dependency-name: "*"
-    update-types: ["version-update:semver-major"]
+  open-pull-requests-limit: 10
+  commit-message:
+    prefix: "[webapp] "
+    include: "scope"
+  labels:
+  - "dependencies"
+  - "npm"
+  - "webapp"
 
 - package-ecosystem: "npm"
   directory: "/webserver"
   schedule:
     interval: "daily"
-  ignore:
-  - dependency-name: "*"
-    update-types: ["version-update:semver-major"]
+  open-pull-requests-limit: 10
+  commit-message:
+    prefix: "[webserver] "
+    include: "scope"
+  labels:
+  - "dependencies"
+  - "npm"
+  - "webserver"
