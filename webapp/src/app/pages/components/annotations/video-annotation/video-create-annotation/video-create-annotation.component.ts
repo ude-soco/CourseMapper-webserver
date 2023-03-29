@@ -117,14 +117,13 @@ export class VideoCreateAnnotationComponent implements OnInit {
       return;
     }
 
-    if(!this.isAnnotationDialogVisible){
+    if(!this.isBrushSelectionActive && !this.isPinpointSelectionActive){
 
       if(!this.selectedAnnotationLocation){
         alert("Please Choose Annotation Time Location");
         return;
       }
 
-      let createdTool: VideoAnnotationTool
       switch(this.selectedAnnotationLocation){
         case "Current Timeline":{
           this.createdAnnotation = {
@@ -185,41 +184,135 @@ export class VideoCreateAnnotationComponent implements OnInit {
       }
     }else{
       if(this.isBrushSelectionActive){
-        this.createdAnnotation = {
-          type: this.selectedAnnotationType,
-          content: this.content,
-          courseId: this.courseId,
-          materialID: this.materialId,
-          location: {
-            type: "time",
-            from: this.currentTime,
-            to: this.currentTime + 5
-          },
-          tool: {
-            type: "brush",
-            data: this.drawingData
+        switch(this.selectedAnnotationLocation){
+          case "Current Timeline":{
+            this.createdAnnotation = {
+              type: this.selectedAnnotationType,
+              content: this.content,
+              courseId: this.courseId,
+              materialID: this.materialId,
+              location: {
+                type: "time",
+                from: this.currentTime,
+                to: this.currentTime + 5
+              },
+              tool: {
+                type: "brush",
+                data: this.drawingData
+              }
+            }
+            this.dispatchAnnotation();
+            break;
           }
+          case "Whole Video":{
+            this.createdAnnotation = {
+              type: this.selectedAnnotationType,
+              content: this.content,
+              courseId: this.courseId,
+              materialID: this.materialId,
+              location: {
+                type: "time",
+                from: 0,
+                to: this.maxTime
+              },
+              tool: {
+                type: "brush",
+                data: this.drawingData
+              }
+            }
+            this.dispatchAnnotation();
+            break;
+          }
+          case "Timeline Selection":{
+            this.createdAnnotation = {
+              type: this.selectedAnnotationType,
+              content: this.content,
+              courseId: this.courseId,
+              materialID: this.materialId,
+              location: {
+                type: "time",
+                from: this.rangeValues[0],
+                to: this.rangeValues[1]
+              },
+              tool: {
+                type: "brush",
+                data: this.drawingData
+              }
+            }
+            this.dispatchAnnotation();
+            break;
+          }
+          default:
+            break;
         }
-        this.dispatchAnnotation();
+
       }else if(this.isPinpointSelectionActive){
-        this.createdAnnotation = {
-          type: this.selectedAnnotationType,
-          content: this.content,
-          courseId: this.courseId,
-          materialID: this.materialId,
-          location: {
-            type: "time",
-            from: this.currentTime,
-            to: this.currentTime + 5
-          },
-          tool: {
-            type: "pin",
-            x: this.pinpointPosition[0],
-            y: this.pinpointPosition[1]
-            
+        switch(this.selectedAnnotationLocation){
+          case "Current Timeline":{
+            this.createdAnnotation = {
+              type: this.selectedAnnotationType,
+              content: this.content,
+              courseId: this.courseId,
+              materialID: this.materialId,
+              location: {
+                type: "time",
+                from: this.currentTime,
+                to: this.currentTime + 5
+              },
+              tool: {
+                type: "pin",
+                x: this.pinpointPosition[0],
+                y: this.pinpointPosition[1]                
+              }
+            }
+            this.dispatchAnnotation();
+            break;
           }
+          case "Whole Video":{
+            this.createdAnnotation = {
+              type: this.selectedAnnotationType,
+              content: this.content,
+              courseId: this.courseId,
+              materialID: this.materialId,
+              location: {
+                type: "time",
+                from: 0,
+                to: this.maxTime
+              },
+              tool: {
+                type: "pin",
+                x: this.pinpointPosition[0],
+                y: this.pinpointPosition[1]
+                
+              }
+            }
+            this.dispatchAnnotation();
+            break;
+          }
+          case "Timeline Selection":{
+            this.createdAnnotation = {
+              type: this.selectedAnnotationType,
+              content: this.content,
+              courseId: this.courseId,
+              materialID: this.materialId,
+              location: {
+                type: "time",
+                from: this.rangeValues[0],
+                to: this.rangeValues[1]
+              },
+              tool: {
+                type: "pin",
+                x: this.pinpointPosition[0],
+                y: this.pinpointPosition[1]
+                
+              }
+            }
+            this.dispatchAnnotation();
+            break;
+          }
+          default:
+            break;
         }
-        this.dispatchAnnotation();
       }
     }
   }
