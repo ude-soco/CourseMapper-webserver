@@ -24,7 +24,7 @@
     "@ngrx/effects": "^14.3.2",
     "@ngrx/store": "^14.3.2",
     "@ngrx/store-devtools": "^14.3.2",
-    "@popperjs/core": "^2.11.6",
+    "@popperjs/core": "^2.11.7",
     "angular-html-parser": "^2.1.0",
     "jquery": "^3.6.3",
     "ng2-dragula": "^2.1.1",
