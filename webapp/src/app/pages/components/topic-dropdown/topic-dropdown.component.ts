@@ -37,7 +37,7 @@ export class TopicDropdownComponent implements OnInit {
     private store: Store<State>,
     private route: ActivatedRoute,
     private renderer: Renderer2,
-    private changeDetectorRef: ChangeDetectorRef,
+    private changeDetectorRef: ChangeDetectorRef
   ) {}
   @Input() showModeratorPrivileges: boolean;
 
@@ -58,8 +58,8 @@ export class TopicDropdownComponent implements OnInit {
   selectedIdTp: string = '';
   selectedIdCh: string = '';
   expandTopic = [];
-  selectedCourseId=null
-  prevSelectedCourseId=null
+  selectedCourseId = null;
+  prevSelectedCourseId = null;
 
   topicOptions: MenuItem[] = [
     {
@@ -100,19 +100,19 @@ export class TopicDropdownComponent implements OnInit {
     this.selectedChannelId = null;
   }
 
-  ngAfterViewChecked(){
-  //   if(this.prevSelectedTopic!==this.selectedTopic){
-  //   console.log(this.selectedTopic)
-  //   this.prevSelectedTopic=this.selectedTopic
-  // }
-  this.selectedCourseId=this.courseService.getSelectedCourse()._id
-  if(this.selectedCourseId!==this.prevSelectedCourseId){
-    this.prevSelectedCourseId=this.selectedCourseId
-    this.selectedChannelId=null
+  ngAfterViewChecked() {
+    //   if(this.prevSelectedTopic!==this.selectedTopic){
+    //   console.log(this.selectedTopic)
+    //   this.prevSelectedTopic=this.selectedTopic
+    // }
+    this.selectedCourseId = this.courseService.getSelectedCourse()._id;
+    if (this.selectedCourseId !== this.prevSelectedCourseId) {
+      this.prevSelectedCourseId = this.selectedCourseId;
+      this.selectedChannelId = null;
 
-    //to avoid error messages when values got changed after being checked
-    this.changeDetectorRef.detectChanges()
-  }
+      //to avoid error messages when values got changed after being checked
+      this.changeDetectorRef.detectChanges();
+    }
   }
 
   @HostListener('document:click', ['$event'])
@@ -155,24 +155,24 @@ export class TopicDropdownComponent implements OnInit {
           );
           channelNameContainer.style.backgroundColor = 'white';
         }
-    //     else{
-    //       // make all channels' container background Null
-    // this.topics.forEach((topic) => {
-    //   topic.channels.forEach((channelEle) => {
-    //     var nonSelectedChannels = document.getElementById(
-    //       channelEle._id + '-container'
-    //     );
-    //     nonSelectedChannels.style.backgroundColor = null;
-    //   });
-    // });
-    //     }
+        //     else{
+        //       // make all channels' container background Null
+        // this.topics.forEach((topic) => {
+        //   topic.channels.forEach((channelEle) => {
+        //     var nonSelectedChannels = document.getElementById(
+        //       channelEle._id + '-container'
+        //     );
+        //     nonSelectedChannels.style.backgroundColor = null;
+        //   });
+        // });
+        //     }
       }, 2);
     }
   }
   onSelectChannel(channel: Channel) {
     //3
-    this.selectedCourseId=this.courseService.getSelectedCourse()._id
-    this.prevSelectedCourseId=this.selectedCourseId
+    this.selectedCourseId = this.courseService.getSelectedCourse()._id;
+    this.prevSelectedCourseId = this.selectedCourseId;
     this.topicChannelService.selectChannel(channel);
     this.router.navigate([
       'course',
@@ -192,7 +192,8 @@ export class TopicDropdownComponent implements OnInit {
         var nonSelectedChannels = document.getElementById(
           channelEle._id + '-container'
         );
-        nonSelectedChannels.style.backgroundColor = null;
+        if(nonSelectedChannels){
+        nonSelectedChannels.style.backgroundColor = null;}
       });
     });
     // make selected channel's container background white
