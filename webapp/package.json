@@ -19,7 +19,7 @@
     "@angular/platform-browser": "^15.2.1",
     "@angular/platform-browser-dynamic": "^15.2.4",
     "@angular/router": "^15.2.1",
-    "@angular/youtube-player": "^15.2.1",
+    "@angular/youtube-player": "^15.2.4",
     "@hercilio/ngx-youtube-player": "^14.2.6",
     "@ngrx/effects": "^14.3.2",
     "@ngrx/store": "^14.3.2",
