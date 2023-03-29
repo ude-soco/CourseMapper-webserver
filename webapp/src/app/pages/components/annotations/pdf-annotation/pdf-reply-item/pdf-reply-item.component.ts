@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { MenuItem } from 'primeng/api';
+import { MenuItem, Message, MessageService, PrimeNGConfig } from 'primeng/api';
 import { computeElapsedTime, getInitials } from 'src/app/_helpers/format';
 import { Annotation } from 'src/app/models/Annotations';
 import { Reply } from 'src/app/models/Reply';
@@ -12,11 +12,13 @@ import { getLoggedInUser } from 'src/app/state/app.reducer';
 import { NgIf } from '@angular/common';
 import { Subscription } from 'rxjs';
 import {Roles} from 'src/app/models/Roles'
+import {ConfirmationService} from 'primeng/api';
 
 @Component({
   selector: 'app-pdf-reply-item',
   templateUrl: './pdf-reply-item.component.html',
-  styleUrls: ['./pdf-reply-item.component.css']
+  styleUrls: ['./pdf-reply-item.component.css'],
+  providers: [ConfirmationService],
 })
 export class PdfReplyItemComponent implements OnInit, OnChanges, OnDestroy, AfterViewInit {
   @Input() reply: Reply;
@@ -32,8 +34,9 @@ export class PdfReplyItemComponent implements OnInit, OnChanges, OnDestroy, Afte
   blueLikeButtonEnabled: boolean = false;
   blueDislikeButtonEnabled: boolean = false;
   Roles = Roles;
+  msgs: Message[] = [];
 
-  constructor(private store: Store<State>, private socket: Socket) {
+  constructor(private store: Store<State>, private socket: Socket, private confirmationService: ConfirmationService, private messageService: MessageService) {
     this.subscription = this.store.select(getLoggedInUser).subscribe((user) => this.loggedInUser = user);
    }
 
@@ -94,7 +97,7 @@ export class PdfReplyItemComponent implements OnInit, OnChanges, OnDestroy, Afte
           label: 'Delete',
           icon: 'pi pi-times',
           disabled: (this.loggedInUser?.id !== this.reply?.author?.userId) && !this.isEditing,
-          command: () => this.onDeleteReply(),
+          command: () => this.onDeleteConfirmation(),
         }
       ];
     }
@@ -116,6 +119,21 @@ export class PdfReplyItemComponent implements OnInit, OnChanges, OnDestroy, Afte
     this.store.dispatch(AnnotationActions.dislikeReply({reply: this.reply}));
   }
 
+  onDeleteConfirmation(){
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to delete this reply?',
+      header: 'Confirmation',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.onDeleteReply();
+        this.messageService.add({key: 'annotation-toast', severity:'info', summary: 'Info', detail: 'Reply Deleted'});
+      },
+      reject: () => {
+        this.messageService.add({key: 'annotation-toast', severity:'info', summary: 'Info', detail: 'Reply Deletion Canceled'});
+      }
+  });
+  }
+
   onDeleteReply(){
     this.store.dispatch(AnnotationActions.deleteReply({reply: this.reply}));
   }
@@ -131,7 +149,18 @@ export class PdfReplyItemComponent implements OnInit, OnChanges, OnDestroy, Afte
   }
 
   cancelEditing(){
-    this.isEditing = false;
+    this.confirmationService.confirm({
+      message: 'Do you want to discard this draft?',
+      header: 'Confirmation',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.isEditing = false;
+        this.messageService.add({key: 'annotation-toast', severity:'info', summary: 'Info', detail: 'Reply Edit Discarded'});
+      },
+      reject: () => {
+        return;
+      }
+  });
   }
 
   linkifyText(text: string): string {
