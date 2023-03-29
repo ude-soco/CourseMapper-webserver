@@ -5,6 +5,7 @@ import {
   HostListener,
   Input,
   Renderer2,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { Channel } from 'src/app/models/Channel';
@@ -35,13 +36,15 @@ export class TopicDropdownComponent implements OnInit {
     private router: Router,
     private store: Store<State>,
     private route: ActivatedRoute,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private changeDetectorRef: ChangeDetectorRef,
   ) {}
   @Input() showModeratorPrivileges: boolean;
 
   topics: Topic[] = [];
   displayAddChannelDialogue: boolean = false;
   selectedTopic = null;
+  prevSelectedTopic = null;
   selectedChannel = null;
   selectedChannelId = null;
   editable: boolean = false;
@@ -55,6 +58,8 @@ export class TopicDropdownComponent implements OnInit {
   selectedIdTp: string = '';
   selectedIdCh: string = '';
   expandTopic = [];
+  selectedCourseId=null
+  prevSelectedCourseId=null
 
   topicOptions: MenuItem[] = [
     {
@@ -95,6 +100,19 @@ export class TopicDropdownComponent implements OnInit {
     this.selectedChannelId = null;
   }
 
+  ngAfterViewChecked(){
+  //   if(this.prevSelectedTopic!==this.selectedTopic){
+  //   console.log(this.selectedTopic)
+  //   this.prevSelectedTopic=this.selectedTopic
+  // }
+  this.selectedCourseId=this.courseService.getSelectedCourse()._id
+  if(this.selectedCourseId!==this.prevSelectedCourseId){
+    this.prevSelectedCourseId=this.selectedCourseId
+    this.selectedChannelId=null
+    this.changeDetectorRef.detectChanges()
+  }
+  }
+
   @HostListener('document:click', ['$event'])
   documentClick(event: MouseEvent) {
     // to confirm rename when mouse clicked anywhere
@@ -114,6 +132,7 @@ export class TopicDropdownComponent implements OnInit {
   }
 
   onSelectTopic(topic: Topic) {
+    // console.log(this.selectedTopic)
     if (this.expandTopic.includes(topic._id)) {
       this.expandTopic.some((topicId, index) => {
         if (topicId === topic._id) {
@@ -134,11 +153,24 @@ export class TopicDropdownComponent implements OnInit {
           );
           channelNameContainer.style.backgroundColor = 'white';
         }
+    //     else{
+    //       // make all channels' container background Null
+    // this.topics.forEach((topic) => {
+    //   topic.channels.forEach((channelEle) => {
+    //     var nonSelectedChannels = document.getElementById(
+    //       channelEle._id + '-container'
+    //     );
+    //     nonSelectedChannels.style.backgroundColor = null;
+    //   });
+    // });
+    //     }
       }, 2);
     }
   }
   onSelectChannel(channel: Channel) {
     //3
+    this.selectedCourseId=this.courseService.getSelectedCourse()._id
+    this.prevSelectedCourseId=this.selectedCourseId
     this.topicChannelService.selectChannel(channel);
     this.router.navigate([
       'course',

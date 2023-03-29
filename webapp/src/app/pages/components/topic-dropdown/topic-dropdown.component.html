@@ -17,7 +17,7 @@
           <app-iconbutton
             icon="bx-chevron-down"
             color="text-black"
-            (click)="onSelectTopic(topic)"
+            (click)="selectedTopic=topic;onSelectTopic(topic)"
           ></app-iconbutton>
           <p
             id="{{ topic._id }}"
@@ -133,7 +133,7 @@
           <app-iconbutton
             icon="bx-chevron-right"
             color="text-black"
-            (click)="onSelectTopic(topic)"
+            (click)="selectedTopic=topic;onSelectTopic(topic)"
           ></app-iconbutton>
           <p
             id="{{ topic._id }}"
