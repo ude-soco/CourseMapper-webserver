@@ -20,12 +20,12 @@ export class AddMaterialComponent implements OnInit {
   // @Output() public materialemit = new EventEmitter<any>();
 
   @Input() public channelEmittd: any;
-  @ViewChild('UploadFileInput', { static: false }) uploadFileInput: ElementRef | undefined;
+ /*  @ViewChild('UploadFileInput', { static: false }) uploadFileInput: ElementRef | undefined; */
   selectedChannel: Channel;
   @Input() courseID?: string;
   @Input() topicID?: string;
   @Input() channelID?: string;
-  @Output() onSubmitted: EventEmitter<void> = new EventEmitter();
+/*   @Output() onSubmitted: EventEmitter<void> = new EventEmitter(); */
   materialType: string = ""
   materialId: Material;
   materialComponent = MaterialComponent;
@@ -65,10 +65,10 @@ export class AddMaterialComponent implements OnInit {
   formData: FormData = null;
   validateForm: FormGroup;
   channelName: string = ''
-  subs = new Subscription()
+ /*  subs = new Subscription() */
   response: any
-  fileUploadForm: FormGroup | undefined;
-  fileInputLabel: string | undefined;
+/*   fileUploadForm: FormGroup | undefined; */
+ /*  fileInputLabel: string | undefined; */
   radioFormGroup:FormGroup;
   validUrl:  ValidatorFn = (control) => {
     let validUrl = true;
@@ -93,13 +93,12 @@ export class AddMaterialComponent implements OnInit {
   ngOnInit(): void {
     this.validateForm = this.fb.group({
       materialName: ['', [Validators.required]],
-      //REMEMBER THIS WILL CAUSE ERRORS
       description: [''],
     });
 
-    this.fileUploadForm = this.formBuilder.group({
+  /*   this.fileUploadForm = this.formBuilder.group({
       file: ['', []]
-    });
+    }); */
     //customValidator(this.validateForm.get("url").value, this.fileUploadForm.get("file").value);
 
     this.radioFormGroup = new FormGroup({
@@ -118,21 +117,6 @@ export class AddMaterialComponent implements OnInit {
 
 
   }
-
-
-/*   onFileSelect(event) {
-
-    this.file = <File>event.target.files[0];
-    console.log(this.file);
-    this.fileInputLabel = this.file["name"];
-    const fileChosen = document.getElementById('file-chosen');
-    fileChosen!.textContent = this.fileInputLabel
-    this.fileUploadForm?.get('file')?.setValue(this.file);
-    event.target.value = '';
-
-  }
- */
-
 
 
   //this method basically makes the input boxes red only after the submit button is pressed
@@ -206,7 +190,7 @@ export class AddMaterialComponent implements OnInit {
           this.materialService.uploadFile(this.formData, this.materialType).subscribe(res => {
             if (res.message === "File uploaded successfully!") {
               this.response = res
-              this.fileUploadForm.reset();
+              /* this.fileUploadForm.reset(); */
 
 
               /* const fileChosen = document.getElementById('file-chosen');
@@ -244,7 +228,7 @@ export class AddMaterialComponent implements OnInit {
       }
     })
     if (result != null) {
-      this.fileUploadForm.reset();
+      /* this.fileUploadForm.reset(); */
       //window.location.reload()
       //  "['artist', track.artistId]"
       // this.router.navigate(['course', this.channelID])
@@ -265,12 +249,12 @@ export class AddMaterialComponent implements OnInit {
   //   console.log(fileee)
 
   // }
-  reloadCurrentRoute() {
+/*   reloadCurrentRoute() {
     let currentUrl = this.router.url;
     this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
       this.router.navigate([currentUrl]);
     });
-  }
+  } */
 
   myUploader(event){
     console.log(event);
