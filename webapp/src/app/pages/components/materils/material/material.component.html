@@ -1,3 +1,5 @@
+<p-toast position="bottom-left"></p-toast>
+<p-confirmDialog></p-confirmDialog>
 <div
   class="relative contain bg-gray-100 shadow-lg"
   *ngIf="selectedChannel?.materials"
@@ -20,7 +22,8 @@
     *ngIf="selectedChannel?.materials"
     [(activeIndex)]="tabIndex"
   >
-    <p-tabPanel>
+  <!-- *ngIf="showModeratorPrivileges" -->
+    <p-tabPanel >
       <ng-template pTemplate="header">
         <app-iconbutton
           icon="bxs-folder-plus"
@@ -30,25 +33,53 @@
       </ng-template>
       <ng-template pTemplate="content">
         <app-add-material
+          *ngIf="showModeratorPrivileges"
           [courseID]="selectedChannel?.courseId"
           [topicID]="selectedChannel?.topicId"
           [channelID]="selectedChannel?._id"
           [channelEmittd]="selectedChannel"
         >
         </app-add-material>
+        <p *ngIf="!showModeratorPrivileges">
+          Only course moderator can add material
+        </p>
       </ng-template>
     </p-tabPanel>
     <ng-container *ngIf="this.materials.length > 0">
       <p-tabPanel
         *ngFor="let material of materials; let i = index"
-        [closable]="true"
+        [closable]="false"
       >
         <ng-template pTemplate="header" *ngIf="material.type == 'pdf'">
           <app-iconbutton
             icon="bxs-file-pdf"
             color="text-blue-500"
           ></app-iconbutton>
-          <span>{{ material.name }}</span>
+          <span *ngIf="selectedMaterial">
+            <p
+              id="{{ material._id }}"
+              (keydown)="onTextInserted(selectedMaterial._id, $event)"
+              (keyup)="afterTextInserted(selectedMaterial._id, $event)"
+              #selectedMaterial._id
+            >
+              {{ material.name }}
+            </p></span
+          >
+          <span *ngIf="!selectedMaterial">{{ material.name }}</span>
+          <p-menu
+            #materialMenu
+            id="material_menu"
+            [model]="materialOptions"
+            [popup]="true"
+            appendTo="body"
+          ></p-menu>
+          <app-iconbutton
+            style="z-index: 1"
+            *ngIf="showModeratorPrivileges"
+            icon="bx-dots-vertical-rounded"
+            color="text-blue-500"
+            (click)="selectedMaterial = material; materialMenu.toggle($event)"
+          ></app-iconbutton>
         </ng-template>
 
         <ng-template pTemplate="header" *ngIf="material.type == 'video'">
@@ -56,7 +87,31 @@
             icon="bxs-videos"
             color="text-blue-500"
           ></app-iconbutton>
-          <span>{{ material.name }}</span>
+          <span *ngIf="selectedMaterial">
+            <p
+              id="{{ material._id }}"
+              (keydown)="onTextInserted(selectedMaterial._id, $event)"
+              (keyup)="afterTextInserted(selectedMaterial._id, $event)"
+              #selectedMaterial._id
+            >
+              {{ material.name }}
+            </p></span
+          >
+          <span *ngIf="!selectedMaterial">{{ material.name }}</span>
+          <p-menu
+            #materialMenu
+            id="material_menu"
+            [model]="materialOptions"
+            [popup]="true"
+            appendTo="body"
+          ></p-menu>
+          <app-iconbutton
+            style="z-index: 1"
+            *ngIf="showModeratorPrivileges"
+            icon="bx-dots-vertical-rounded"
+            color="text-blue-500"
+            (click)="selectedMaterial = material; materialMenu.toggle($event)"
+          ></app-iconbutton>
         </ng-template>
       </p-tabPanel>
 

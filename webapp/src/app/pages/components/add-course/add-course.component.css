@@ -1,3 +1,13 @@
 input.ng-invalid {
   border: red 1px solid;
 }
+:host ::ng-deep .p-toast {
+  width:350px;
+  font-size: 15px;
+}
+:host ::ng-deep .p-toast .p-toast-message-icon{
+  font-size: 2em !important;
+}
+.confirmViaEnter{
+  background-color: #FF6600;
+}

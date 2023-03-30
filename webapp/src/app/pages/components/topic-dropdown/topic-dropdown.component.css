@@ -1,4 +1,16 @@
-.confirm-button{
-    background-color: lightblue;
-    color: white;
+.confirm-button {
+  background-color: lightblue;
+  color: white;
+}
+:host ::ng-deep .p-toast {
+  width:350px;
+  font-size: 15px;
+}
+:host ::ng-deep .p-toast .p-toast-message-icon{
+  font-size: 2em !important;
+}
+
+.topicDiv {
+  display: none;
+  padding: 5px;
 }

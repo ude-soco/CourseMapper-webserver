@@ -25,6 +25,7 @@ button {
     width: 100%;
   }
 
+
   .options-card{
     width: 5rem;
   }
@@ -158,3 +159,12 @@ button {
 ::ng-deep .p-fileupload .p-component {
   box-sizing: content-box;
 }
+
+  :host ::ng-deep .p-toast {
+    width:350px;
+    font-size: 15px;
+  }
+  :host ::ng-deep .p-toast .p-toast-message-icon{
+    font-size: 2em !important;
+  }
+
