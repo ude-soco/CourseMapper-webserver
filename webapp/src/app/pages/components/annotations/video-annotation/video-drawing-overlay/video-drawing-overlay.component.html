@@ -5,7 +5,7 @@
     <div class="brush-drawing-toolbar">
         <div class="grid">
             <button class="toolbar-button" (click)="setAction('move')">
-                <app-iconbutton icon="bx-move" color="text-blue-500" pTooltip="Move" tooltipPosition="left"></app-iconbutton>
+                <app-iconbutton icon="bx-move" color="text-blue-500" pTooltip="Move Shape" tooltipPosition="left"></app-iconbutton>
             </button>
             <button class="toolbar-button" (click)="setAction('draw')" pTooltip="Tool" tooltipPosition="left">
                 <span *ngIf="currentTool == 'brush'"><app-iconbutton icon="bx-brush" color="text-blue-500"></app-iconbutton></span>
