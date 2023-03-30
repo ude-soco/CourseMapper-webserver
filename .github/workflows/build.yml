@@ -46,6 +46,8 @@ jobs:
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
+      with:
+        platforms:  ${{ inputs.platforms }}
 
     - name: Login to container registry
       if:   ${{ inputs.push }}
@@ -60,6 +62,7 @@ jobs:
       with:
         images: ${{ inputs.base_image_name }}${{ matrix.service }}
         tags: |
+          type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
           type=semver,pattern={{version}}
           type=semver,pattern={{major}}.{{minor}}
           type=semver,pattern={{major}},enable=${{ !startsWith(github.ref, 'refs/tags/v0.') }}
