@@ -16,7 +16,7 @@ updates:
   - dependency-name: "node"
     versions: ["17.x-slim", "19.x-slim", "21.x-slim"]
   commit-message:
-    prefix: "[Dockerfile] "
+    prefix: "[webapp] "
   labels:
   - "dependencies"
   - "docker"
@@ -27,7 +27,7 @@ updates:
   schedule:
     interval: "daily"
   commit-message:
-    prefix: "[Dockerfile] "
+    prefix: "[webserver] "
   labels:
   - "dependencies"
   - "docker"
