@@ -22,6 +22,7 @@
   (onHide)="resetDialogs($event)"
   [modal]="true"
   header="Upload a PDF File"
+  styleClass="add-material"
 >
   <!--   <ng-template pTemplate="header">
     <div class="dialog-header">Upload a PDF File</div>
@@ -43,6 +44,7 @@
           [showUploadButton]="false"
           [showCancelButton]="false"
           accept="application/pdf"
+          styleClass="test"
         ></p-fileUpload>
         <span>{{ invalidPDFFileMessage }}</span>
       </div>
@@ -87,6 +89,7 @@
   (onHide)="resetDialogs($event)"
   [modal]="true"
   header="Upload a Video"
+  styleClass="add-material"
 >
   <!--   <ng-template pTemplate="header">
     <div class="dialog-header">Upload a Video</div>
