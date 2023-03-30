@@ -12,6 +12,9 @@ updates:
   directory: "/webapp"
   schedule:
     interval: "daily"
+  ignore:
+  - dependency-name: "node"
+    versions: ["17.x-slim", "19.x-slim", "21.x-slim"]
   commit-message:
     prefix: "[Dockerfile] "
   labels:
