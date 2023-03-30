@@ -9,6 +9,17 @@ updates:
     prefix: "[CI] "
 
 - package-ecosystem: "docker"
+  directory: "/proxy"
+  schedule:
+    interval: "weekly"
+  commit-message:
+    prefix: "[proxy] "
+  labels:
+  - "dependencies"
+  - "docker"
+  - "proxy"
+
+- package-ecosystem: "docker"
   directory: "/webapp"
   schedule:
     interval: "daily"
