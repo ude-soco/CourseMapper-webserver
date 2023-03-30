@@ -2,7 +2,7 @@
 
 <div class="filter mb-5">
   <p-multiSelect
-  *ngIf="selectedMaterial.type === 'pdf'"
+    *ngIf="selectedMaterial.type === 'pdf'"
     [options]="searchFiltersForPDF"
     [(ngModel)]="selectedFiltersForPDF"
     (ngModelChange)="onPDFAnnotationFiltersChange($event)"
@@ -17,7 +17,7 @@
   </p-multiSelect>
 
   <p-multiSelect
-  *ngIf="selectedMaterial.type === 'video'"
+    *ngIf="selectedMaterial.type === 'video'"
     [options]="searchFiltersForVideo"
     [(ngModel)]="selectedFiltersForVideo"
     (ngModelChange)="onVideoAnnotationFiltersChange($event)"
@@ -32,7 +32,11 @@
   </p-multiSelect>
 </div>
 
-<div class="flex flex-col">
+<span class="font-medium text-xl" *ngIf="annotationsToShow?.length === 0"
+  >Be the first to create an annotation!</span
+>
+
+<div class="flex flex-col" *ngIf="annotationsToShow?.length > 0">
   <span class="font-medium text-xl">Annotations</span>
   <div class="overflow-y-scroll max-h-[40rem]">
     <div *ngFor="let annotation of annotationsToShow" class="mr-2">

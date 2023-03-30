@@ -115,7 +115,7 @@ export class PdfCommentPanelComponent implements OnInit {
       let annotationPerType: Annotation[];
       let sortedAnnotations: Annotation[];
 
-      if ([0, 1, 2].some(num => filters.includes(num))) {
+      if ([0, 1, 2, 11].some(num => filters.includes(num))) {
         annotationPerTool = this.filterPDFAnnotationsPerTool(filters, annotationsToFilter);
       }
       else{
@@ -217,6 +217,9 @@ export class PdfCommentPanelComponent implements OnInit {
         case 2: // Highlight tool
           annotationsFilteredWithTool.push(...annotations.filter(a => a.tool.type === PdfToolType.Highlight));
           break;
+          case 11: // Without tool
+          annotationsFilteredWithTool.push(...annotations.filter(a => a.tool.type === PdfToolType.Annotation));
+          break;
         default:
           break;
       }
@@ -314,6 +317,7 @@ export class PdfCommentPanelComponent implements OnInit {
           { label: 'Drawing', value: 0 },
           { label: 'Pinpoint', value: 1 },
           { label: 'Highlight', value: 2 },
+          { label: 'Without Tool', value: 11 },
         ]
       },
       {
@@ -349,7 +353,7 @@ export class PdfCommentPanelComponent implements OnInit {
         items: [
           { label: 'Drawing', value: 0 },
           { label: 'Pinpoint', value: 1 },
-          { label: 'Annotation', value: 2 },
+          { label: 'Without Tool', value: 2 },
         ]
       },
       {
