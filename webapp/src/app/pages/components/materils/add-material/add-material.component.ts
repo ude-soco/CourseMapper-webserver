@@ -91,10 +91,19 @@ export class AddMaterialComponent implements OnInit {
       validUrl = false;
     } */
     let term = control.value;
-    let re = new RegExp(
+    const regExp = new RegExp(
       '(?:https?://)?(?:www.)?(?:youtube.com|youtu.be)/(?:watch?(?=.*v=[w-]+)|([w-]+))'
     );
-    if (!re.test(term)) {
+    const regexYouTubeSharedLink =
+      /^https?:\/\/(?:www\.)?youtu\.be\/([\w-]{11})$/;
+    const regexYoutubeSharedLinkWithTime =
+      /^https?:\/\/(?:www\.)?youtu\.be\/([\w-]{11})(?:\?t=\d+)?$/;
+
+    if (
+      !regExp.test(term) &&
+      !regexYouTubeSharedLink.test(term) &&
+      !regexYoutubeSharedLinkWithTime.test(term)
+    ) {
       validUrl = false;
     }
 
