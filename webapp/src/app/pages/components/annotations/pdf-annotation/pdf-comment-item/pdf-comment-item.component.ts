@@ -309,7 +309,7 @@ export class PdfCommentItemComponent implements OnInit, OnChanges, AfterViewInit
       : text;
   
     const linkedHtml = linkedText
-      .replace(linkRegex, '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline" href="$1" target="_blank">$1</a>')
+      .replace(linkRegex, '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="$1" target="_blank">$1</a>')
       .replace(newlineRegex, '<br>');
     return linkedHtml;
   }

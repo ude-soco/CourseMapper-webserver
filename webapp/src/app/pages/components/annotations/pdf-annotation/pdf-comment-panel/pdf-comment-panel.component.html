@@ -6,7 +6,7 @@
     [options]="searchFiltersForPDF"
     [(ngModel)]="selectedFiltersForPDF"
     (ngModelChange)="onPDFAnnotationFiltersChange($event)"
-    [style]="{ minWidth: '100%', 'border-radius': '0.5rem' }"
+    [style]="{ minWidth: '100%', 'border-radius': '0.5rem', maxWidth: '100%' }"
     defaultLabel="Filters"
     [optionLabel]="'label'"
     [optionValue]="'value'"
@@ -21,7 +21,7 @@
     [options]="searchFiltersForVideo"
     [(ngModel)]="selectedFiltersForVideo"
     (ngModelChange)="onVideoAnnotationFiltersChange($event)"
-    [style]="{ minWidth: '100%', 'border-radius': '0.5rem' }"
+    [style]="{ minWidth: '100%', 'border-radius': '0.5rem', maxWidth: '100%' }"
     defaultLabel="Filters"
     [optionLabel]="'label'"
     [optionValue]="'value'"
@@ -38,7 +38,7 @@
 
 <div class="flex flex-col" *ngIf="annotationsToShow?.length > 0">
   <span class="font-medium text-xl">Annotations</span>
-  <div class="overflow-y-scroll max-h-[40rem]">
+  <div class="overflow-y-auto max-h-[40rem]">
     <div *ngFor="let annotation of annotationsToShow" class="mr-2">
       <app-pdf-comment-item [annotation]="annotation"></app-pdf-comment-item>
     </div>
