@@ -122,7 +122,7 @@ export class PdfReplyItemComponent implements OnInit, OnChanges, OnDestroy, Afte
   onDeleteConfirmation(){
     this.confirmationService.confirm({
       message: 'Are you sure you want to delete this reply?',
-      header: 'Confirmation',
+      header: 'Delete Reply Comfirmation',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.onDeleteReply();

@@ -235,7 +235,7 @@ export class PdfCommentItemComponent implements OnInit, OnChanges, AfterViewInit
   onDeleteAnnotation(){
     this.confirmationService.confirm({
       message: 'Are you sure you want to delete this annotation?',
-      header: 'Confirmation',
+      header: 'Delete Annotation Comfirmation',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.store.dispatch(AnnotationActions.deleteAnnotation({annotation: this.annotation}));
@@ -309,7 +309,7 @@ export class PdfCommentItemComponent implements OnInit, OnChanges, AfterViewInit
       : text;
   
     const linkedHtml = linkedText
-      .replace(linkRegex, '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline" href="$1" target="_blank">$1</a>')
+      .replace(linkRegex, '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="$1" target="_blank">$1</a>')
       .replace(newlineRegex, '<br>');
     return linkedHtml;
   }
