@@ -1,5 +1,5 @@
 import { TopicChannelService } from 'src/app/services/topic-channel.service';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, Renderer2 } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Topic } from 'src/app/models/Topic';
 import { TopicImp } from 'src/app/models/TopicImp';
@@ -22,7 +22,8 @@ export class AddTopicComponent implements OnInit {
   constructor(
     private topicChannelService: TopicChannelService,
     private courseService: CourseService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private renderer: Renderer2,
   ) {}
 
   ngOnInit(): void {
@@ -55,7 +56,8 @@ export class AddTopicComponent implements OnInit {
         .subscribe((res) => {
           if ('success' in res) {
             this.toggleAddTopicDialogue();
-            this.showInfo(res.success);
+            // this.showInfo(res.success);
+            this.showInfo('Topic successfully added!');
           } else {
             this.showError(res.errorMsg);
           }
@@ -77,5 +79,16 @@ export class AddTopicComponent implements OnInit {
       summary: 'Error',
       detail: msg,
     });
+  }
+
+  preventEnterKey(e) {
+    let confirmButton = document.getElementById('addTopicConfirm');
+    if (e.keyCode === 13) {
+      e.preventDefault();
+      this.renderer.addClass(confirmButton, 'confirmViaEnter');
+      setTimeout(() => {
+        this.renderer.removeClass(confirmButton, 'confirmViaEnter');
+      }, 150);
+    }
   }
 }

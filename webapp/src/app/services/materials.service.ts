@@ -27,7 +27,7 @@ export class MaterilasService {
   }
 
   addMaterial(material: CreateMaterial) : any {
-    return this.http.post<any>(`${this.API_URL}/courses/${material.courseID}/channels/${material.channelID}/material`, {type:material.type, url:material.url,name: material.name,  description: material.description})
+    return this.http.post<any>(`${this.API_URL}/courses/${material.courseId}/channels/${material.channelId}/material`, {type:material.type, url:material.url,name: material.name,  description: material.description})
     .pipe(
       catchError(( err) => {
        if (err.status ===  403) {
@@ -74,5 +74,14 @@ console.log(res)
       })
     )
    }
+  }
+
+  renameMaterial(courseId:any,materialTD: Material, body: any){
+    return this.http.put<any>(`${this.API_URL}/courses/${courseId}/materials/${materialTD._id}`,body)
+    .pipe(
+      catchError(( err, sourceObservable) => {
+        return of({errorMsg: err.error.error });
+      }),
+    )
   }
 }

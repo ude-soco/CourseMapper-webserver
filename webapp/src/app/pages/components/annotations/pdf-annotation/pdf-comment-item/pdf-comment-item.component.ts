@@ -12,7 +12,7 @@ import { Annotation, PdfGeneralAnnotationLocation, PdfToolType, VideoAnnotationL
 import { Reply } from 'src/app/models/Reply';
 import { getAnnotationsForMaterial, getCurrentPdfPage, getshowAllPDFAnnotations, State } from '../state/annotation.reducer';
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
-import { MenuItem } from 'primeng/api';
+import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import * as $ from 'jquery';
 import { SocketIoModule, SocketIoConfig, Socket } from 'ngx-socket-io';
 import { User } from 'src/app/models/User';
@@ -29,6 +29,7 @@ import {Roles} from 'src/app/models/Roles'
   selector: 'app-pdf-comment-item',
   templateUrl: './pdf-comment-item.component.html',
   styleUrls: ['./pdf-comment-item.component.css'],
+  providers: [ConfirmationService],
 })
 export class PdfCommentItemComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() annotation: Annotation;
@@ -55,7 +56,7 @@ export class PdfCommentItemComponent implements OnInit, OnChanges, AfterViewInit
   sendButtonDisabled: boolean = true;
   Roles = Roles;
 
-  constructor(private store: Store<State>, private socket: Socket) {
+  constructor(private store: Store<State>, private socket: Socket, private confirmationService: ConfirmationService, private messageService: MessageService) {
     this.store.select(getCurrentPdfPage).subscribe((currentPage) => {
       this.currentPage = currentPage;
     });
@@ -232,7 +233,18 @@ export class PdfCommentItemComponent implements OnInit, OnChanges, AfterViewInit
   }
 
   onDeleteAnnotation(){
-    this.store.dispatch(AnnotationActions.deleteAnnotation({annotation: this.annotation}));
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to delete this annotation?',
+      header: 'Confirmation',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.store.dispatch(AnnotationActions.deleteAnnotation({annotation: this.annotation}));
+        this.messageService.add({key: 'annotation-toast', severity:'info', summary: 'Info', detail: 'Annotation Deleted'});
+      },
+      reject: () => {
+        this.messageService.add({key: 'annotation-toast', severity:'info', summary: 'Info', detail: 'Annotation Deletion Canceled'});
+      }
+  });
   }
 
   onEditAnnotation(){
@@ -251,7 +263,18 @@ export class PdfCommentItemComponent implements OnInit, OnChanges, AfterViewInit
   }
 
   cancelEditing(){
-    this.isEditing = false;
+    this.confirmationService.confirm({
+      message: 'Do you want to discard this draft?',
+      header: 'Confirmation',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.isEditing = false;
+        this.messageService.add({key: 'annotation-toast', severity:'info', summary: 'Info', detail: 'Annotation Edit Discarded'});
+      },
+      reject: () => {
+        return;
+      }
+  });
   }
 
   setMenuItems(){

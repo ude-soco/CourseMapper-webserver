@@ -55,9 +55,6 @@ import { UpdateBorderColorDirective } from 'src/app/custom_directives/update-bor
         PdfMainAnnotationComponent,
         VideoMainAnnotationComponent,
         YouTubePlayerModule
-        
-        
-
     ],
     imports: [
         CommonModule,
@@ -84,13 +81,6 @@ import { UpdateBorderColorDirective } from 'src/app/custom_directives/update-bor
           pathMatch: 'full',
         },
       ])
-       
-        
-       
-      
-
-       
-
     ]
 })
 export class AnnotationModule { }

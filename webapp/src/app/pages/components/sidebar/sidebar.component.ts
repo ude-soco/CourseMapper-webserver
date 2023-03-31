@@ -8,6 +8,7 @@ import { TopicChannelService } from 'src/app/services/topic-channel.service';
 import { State } from 'src/app/state/app.reducer';
 import { Store } from '@ngrx/store';
 import * as AppActions from 'src/app/state/app.actions'
+import { ModeratorPrivilegesService } from 'src/app/services/moderator-privileges.service';
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
@@ -21,13 +22,15 @@ import * as AppActions from 'src/app/state/app.actions'
   public HomePage="/home"
   selectedCourse: Course = new CourseImp('', '');
   displayAddCourseDialogue: boolean = false;
+  showModeratorPrivileges:boolean
 
   constructor(
     private courseService: CourseService,
     private router: Router,
     private topicChannelService: TopicChannelService,
     private store: Store<State>,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private moderatorPrivilegesService: ModeratorPrivilegesService,
   ) {}
 
   ngOnInit(): void {

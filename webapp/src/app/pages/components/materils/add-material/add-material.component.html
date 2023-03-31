@@ -1,16 +1,16 @@
-<h2 class="text-3xl text-center mb-8">
+<h2 class="text-xl text-center mb-8">
   Upload a learning material to this channel
 </h2>
 
 <div class="card-container">
   <p-card (click)="showPdfAddModel()">
     <div class="header-container">
-      <span class="card-header"> Add PDF </span>
+      <span class="card-header"> Add a PDF </span>
     </div>
   </p-card>
   <p-card (click)="showVideoAddModel()">
     <div class="header-container">
-      <span class="card-header"> Add Video </span>
+      <span class="card-header"> Add a Video </span>
     </div>
   </p-card>
 </div>
@@ -20,11 +20,14 @@
   [(visible)]="pdfAddModelDisplay"
   [baseZIndex]="10000"
   (onHide)="resetDialogs($event)"
+  [modal]="true"
+  header="Upload a PDF File"
+  styleClass="add-material"
 >
-  <ng-template pTemplate="header">
+  <!--   <ng-template pTemplate="header">
     <div class="dialog-header">Upload a PDF File</div>
     <div class="break-line"></div>
-  </ng-template>
+  </ng-template> -->
 
   <form [formGroup]="validateForm">
     <div class="input-container">
@@ -41,6 +44,7 @@
           [showUploadButton]="false"
           [showCancelButton]="false"
           accept="application/pdf"
+          styleClass="test"
         ></p-fileUpload>
         <span>{{ invalidPDFFileMessage }}</span>
       </div>
@@ -62,7 +66,7 @@
           type="text"
           pInputText
           formControlName="description"
-          placeholder="Give a description to your file"
+          placeholder="File description"
         />
       </div>
     </div>
@@ -83,31 +87,34 @@
   [(visible)]="videoAddModelDisplay"
   [baseZIndex]="10000"
   (onHide)="resetDialogs($event)"
+  [modal]="true"
+  header="Upload a Video"
+  styleClass="add-material"
 >
-  <ng-template pTemplate="header">
+  <!--   <ng-template pTemplate="header">
     <div class="dialog-header">Upload a Video</div>
     <div class="break-line"></div>
-  </ng-template>
+  </ng-template> -->
 
   <form [formGroup]="radioFormGroup">
     <div class="radioButtons">
       <div class="radioOption">
-        <label for="url-radio">Add a URL</label>
         <input
           formControlName="videoRadio"
           id="url-radio"
           type="radio"
           value="urlOption"
         />
+        <label for="url-radio">Add a URL</label>
       </div>
       <div class="radioOption">
-        <label for="url-radio">Add a video file</label>
         <input
           formControlName="videoRadio"
           id="url-radio"
           type="radio"
           value="videoOption"
         />
+        <label for="url-radio">Add a video file</label>
       </div>
     </div>
   </form>
@@ -147,7 +154,7 @@
           type="text"
           pInputText
           formControlName="description"
-          placeholder="Give a description to your file"
+          placeholder="File description"
         />
       </div>
     </form>
@@ -158,12 +165,22 @@
       <label for="url">URL</label>
       <input
         id="url"
-        type="text"
+        type="url"
         pInputText
         [formControl]="urlFormControl"
         placeholder="Add a YouTube URL"
       />
-      <span>{{ invalidVideoFileMessage }}</span>
+      <span *ngIf="urlFormControl.errors && urlFormControl.hasError('required')"
+        >Please add a valid URL</span
+      >
+      <span
+        *ngIf="
+          urlFormControl.errors &&
+          urlFormControl.hasError('invalidUrl') &&
+          !urlFormControl.hasError('required')
+        "
+        >The URL format is invalid</span
+      >
     </div>
 
     <form [formGroup]="validateForm">
@@ -184,7 +201,7 @@
           type="text"
           pInputText
           formControlName="description"
-          placeholder="Give a description to your file"
+          placeholder="File Description"
         />
       </div>
     </form>
@@ -211,3 +228,4 @@
     </p-button>
   </ng-template>
 </p-dialog>
+<p-toast position="bottom-left"></p-toast>

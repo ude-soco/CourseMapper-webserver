@@ -25,12 +25,13 @@ button {
     width: 100%;
   }
 
+
   .options-card{
     width: 5rem;
   }
 
   .card-header{
-    font-size: 2vw;
+    font-size: 20px;
     text-align: center;
   }
 
@@ -57,18 +58,19 @@ button {
   }
 
   ::ng-deep .p-card{
-    width: clamp(50px, 20vw, 500px);
+    width: 150px;
     border-radius: 20px;
-    border: 5px solid transparent;
+    border: 3px solid #0277bd;
+
   }
   ::ng-deep .p-card:hover{
-    border: 5px solid #0369a1;
+    border: 3px solid #022c42;
     
   }
 
    p-card{
     display:block;
-    width: clamp(50px, 20vw, 500px);
+    width: 150px;
     margin: 1rem;
   }
 
@@ -79,19 +81,21 @@ button {
     gap: 3rem;
   }
 
-  ::ng-deep .p-dialog{
-    width: 30vw ;
+  ::ng-deep  .p-dialog.add-material{
+    width: 32vw ;
     min-width: 580px;
   }
 
   ::ng-deep .p-dialog .p-button.submit{
     background: #ea580c;
   }
-  ::ng-deep .p-dialog .p-button{
+
+
+  ::ng-deep .p-dialog .test .p-button{
     background: #0177bd;
     min-width: 190px;
   }
-  ::ng-deep .p-dialog .p-button:hover{
+  ::ng-deep .p-dialog .test .p-button:hover{
     background: #00598d;
     min-width: 190px;
 
@@ -110,19 +114,28 @@ button {
 
   ::ng-deep .p-fileupload .p-fileupload-buttonbar {
     border: 0px solid #e0e0e0;
+    padding: 0;
+    min-width: 60px;
+    margin-right: 10px;
+    box-sizing: content-box;
+  
 }
 
 .ng-invalid.ng-touched:not(form){
-  border: 5px solid #a94442; /* red */
+  border: 1px solid #a94442; /* red */
 }
 
-.ng-valid:not(form), .ng-valid:not(form):focus-visible{
-  border: 5px solid #17a30a;
+/* .ng-valid:not(form), .ng-valid:not(form):focus-visible{
+  border: 1px solid #17a30a;
+} */
+
+.ng-untouched:not(form){
+  border: 1px solid #3a95cc;
 }
 
 .input label{
   width: 3.5vw;
-  min-width: 100px;;
+  min-width: 150px;
 }
 
 .input input{
@@ -133,12 +146,27 @@ button {
 .radioButtons{
   display:flex;
   justify-content: space-around;
+  margin-bottom: 1.5rem;
 }
 .radioOption label{
-  margin-right: 1rem;
+  margin-left: 1rem;
+  font-size: 1.25rem;
 }
 
 .radioOption{
   display:flex;
   justify-content: space-around;
 }
+
+::ng-deep .p-fileupload .p-component {
+  box-sizing: content-box;
+}
+
+  :host ::ng-deep .p-toast {
+    width:350px;
+    font-size: 15px;
+  }
+  :host ::ng-deep .p-toast .p-toast-message-icon{
+    font-size: 2em !important;
+  }
+
