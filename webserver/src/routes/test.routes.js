@@ -12,4 +12,6 @@ module.exports = function (app) {
     authJwt.verifyToken,
     controller.generteTestdata
   );
+
+  app.get("/api/healthz", controller.healthz);
 };
