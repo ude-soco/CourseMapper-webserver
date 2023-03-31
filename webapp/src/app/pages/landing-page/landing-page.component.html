@@ -33,7 +33,7 @@
     
     
     <div  class="course-div" >
-    <div *ngFor="let course of courses"  >
+    <div *ngFor="let course of courses"  (click)="onSelectCourse(course)">
     <div *ngIf="value1=== '' || course.name.toLowerCase().includes(value1)">
     
     
@@ -42,20 +42,25 @@
         <ng-template pTemplate="header">
             <img alt="Card" src="https://primefaces.org/cdn/primeng/images/usercard.png">
         </ng-template>
-        <ng-template pTemplate="content-center" style="float: left; ">
+       
+        <ng-template pTemplate="content-center" style="float: left; "> 
+       
         <p-avatar
         label="{{course.shortName}}"
         shape="circle"
         size="large"
         [style]="{ 'background-color': '#0277BD', color: '#ffffff' , float: 'left', top_margin:'0.5rem' }"
       ></p-avatar>
-        <p style="margin: 1.5rem 1rem 1rem 4rem"> {{course.name}}</p>
+      <button> <p style="margin: 1.5rem 1rem 1rem 4rem"> {{course.name}}</p></button>
+       
+        
     </ng-template>
         <ng-template pTemplate="footer">
             <!-- <p-button label="Save" icon="pi pi-check"></p-button>
             <p-button label="Cancel" icon="pi pi-times" styleClass="p-button-secondary" [style]="{'margin-left': '.5em'}"></p-button> -->
             <p> {{course.description}}</p>
         </ng-template>
+    
     </p-card> 
     </div>
     </div>

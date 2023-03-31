@@ -13,7 +13,7 @@ import * as AppActions from 'src/app/state/app.actions'
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css'],
 })
-export class SidebarComponent implements OnInit {
+ export  class SidebarComponent implements OnInit {
   courses: Course[] = [];
   channels: Channel[] = [];
   channel: Channel;

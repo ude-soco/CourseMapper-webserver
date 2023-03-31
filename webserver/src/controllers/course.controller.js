@@ -35,6 +35,8 @@ export const getAllCourses = async (req, res) => {
       numberChannels: c.channels.length,
       numberUsers: c.users.length,
       channels:c.channels,
+      createdAt:c.createdAt,
+      users:c.users
     };
     results.push(course);
   });
@@ -73,6 +75,8 @@ export const getMyCourses = async (req, res) => {
   });
   return res.status(200).send(results);
 }
+
+
 
 /**
  * @function getCourse
