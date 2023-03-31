@@ -25,6 +25,7 @@ button {
     width: 100%;
   }
 
+
   .options-card{
     width: 5rem;
   }
@@ -80,7 +81,7 @@ button {
     gap: 3rem;
   }
 
-  ::ng-deep .p-dialog{
+  ::ng-deep  .p-dialog.add-material{
     width: 32vw ;
     min-width: 580px;
   }
@@ -88,11 +89,13 @@ button {
   ::ng-deep .p-dialog .p-button.submit{
     background: #ea580c;
   }
-  ::ng-deep .p-dialog .p-button{
+
+
+  ::ng-deep .p-dialog .test .p-button{
     background: #0177bd;
     min-width: 190px;
   }
-  ::ng-deep .p-dialog .p-button:hover{
+  ::ng-deep .p-dialog .test .p-button:hover{
     background: #00598d;
     min-width: 190px;
 
@@ -146,7 +149,8 @@ button {
   margin-bottom: 1.5rem;
 }
 .radioOption label{
-  margin-right: 1rem;
+  margin-left: 1rem;
+  font-size: 1.25rem;
 }
 
 .radioOption{
@@ -157,3 +161,12 @@ button {
 ::ng-deep .p-fileupload .p-component {
   box-sizing: content-box;
 }
+
+  :host ::ng-deep .p-toast {
+    width:350px;
+    font-size: 15px;
+  }
+  :host ::ng-deep .p-toast .p-toast-message-icon{
+    font-size: 2em !important;
+  }
+

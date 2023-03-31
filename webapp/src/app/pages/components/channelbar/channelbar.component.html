@@ -1,7 +1,8 @@
-<p-toast></p-toast>
+<p-toast position="bottom-left"></p-toast>
 
 <p-confirmDialog></p-confirmDialog>
-<div class="flex flex-row">
+<!-- <div class="flex flex-row" style="max-width: 25%;"> -->
+<div class="">
   <div>
     <div class="relative bg-gray-100 shadow-lg h-screen" *ngIf="selectedCourse._id">
       <div class="h-max m-0 flex flex-col bg-gray-100">
@@ -23,14 +24,14 @@
             [popup]="true"
             appendTo="body"
           ></p-menu>
-          <app-iconbutton
+          <app-iconbutton *ngIf="showModeratorPrivileges"
             icon="bx-dots-vertical-rounded"
             color="text-black"
             (click)="menu.toggle($event)"
           ></app-iconbutton>
         </div>
     
-        <app-topic-dropdown></app-topic-dropdown>
+        <app-topic-dropdown [showModeratorPrivileges]="showModeratorPrivileges"></app-topic-dropdown>
     
         <div
           class="flex flex-col items-center justify-start m-0 z-10 hover:bg-white transition-all cursor-pointer"
@@ -39,7 +40,7 @@
             class="m-0 w-full mx-2 transition duration-300 ease-in-out"
             (click)="onAddTopicDialogueClicked()"
           >
-            <div class="flex flex-row items-center justify-between mx-0 my-1.5">
+            <div class="flex flex-row items-center justify-between mx-0 my-1.5" *ngIf="showModeratorPrivileges">
               <div class="flex flex-row items-center">
                 <app-iconbutton icon="bx-plus" color="text-black"></app-iconbutton>
                 <p class="text-md italic font-semibold">Add Topic</p>

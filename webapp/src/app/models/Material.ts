@@ -7,17 +7,17 @@ export interface Material {
   type: MaterialType;
   url: string;
   description?:string
-  courseID?:string;
-  channelID?:string;
+  courseId?:string;
+  channelId?:string;
 }
 export interface CreateMaterial {
   
   name: string;
   type: MaterialType;
-  courseID:string;
-  topicID:string;
+  courseId:string;
+  topicId:string;
   url:string;
   //userID:string;
-  channelID:string;
+  channelId:string;
   description:string
 }
