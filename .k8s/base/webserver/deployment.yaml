@@ -30,11 +30,11 @@ spec:
         - containerPort: 8080
         readinessProbe:
           httpGet:
-            path: /api/courses
+            path: /api/healthz
             port: 8080
         livenessProbe:
           httpGet:
-            path: /api/courses
+            path: /api/healthz
             port: 8080
           periodSeconds: 60
           timeoutSeconds: 5
