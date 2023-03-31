@@ -235,7 +235,7 @@ export class PdfCommentItemComponent implements OnInit, OnChanges, AfterViewInit
   onDeleteAnnotation(){
     this.confirmationService.confirm({
       message: 'Are you sure you want to delete this annotation?',
-      header: 'Confirmation',
+      header: 'Delete Annotation Comfirmation',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.store.dispatch(AnnotationActions.deleteAnnotation({annotation: this.annotation}));
