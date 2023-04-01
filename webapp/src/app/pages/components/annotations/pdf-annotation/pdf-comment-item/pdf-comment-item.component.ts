@@ -237,7 +237,7 @@ export class PdfCommentItemComponent implements OnInit, OnChanges, AfterViewInit
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.store.dispatch(AnnotationActions.deleteAnnotation({annotation: this.annotation}));
-        this.messageService.add({key: 'annotation-toast', severity:'info', summary: 'Info', detail: 'Annotation Deleted'});
+        this.messageService.add({key: 'annotation-toast', severity:'info', summary: 'Success', detail: 'Annotation successfully deleted!'});
       },
       reject: () => {
         this.messageService.add({key: 'annotation-toast', severity:'info', summary: 'Info', detail: 'Annotation Deletion Canceled'});
