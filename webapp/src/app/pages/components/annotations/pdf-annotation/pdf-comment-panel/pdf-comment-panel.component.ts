@@ -286,7 +286,6 @@ export class PdfCommentPanelComponent implements OnInit {
 
   sortAnnotations(filters: number[], annotations: Annotation[]): Annotation[] {
     let sortedAnnotations: Annotation[] = [];
-    console.log(annotations);
     filters.forEach(filter => {
       switch (filter) {
         case 7: // Date (Oldest To Newest) sort

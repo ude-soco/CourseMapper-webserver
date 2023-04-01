@@ -71,7 +71,6 @@ export class PdfReplyItemComponent implements OnInit, OnChanges, OnDestroy, Afte
       this.likesCount = this.reply?.likes?.length;
       this.dislikesCount = this.reply?.dislikes?.length;
       this.socket.on(this.reply?._id, (payload: { eventType: string, likes: number, dislikes: number, reply: Reply }) => {
-        console.log(payload);
         this.likesCount = payload.likes;
         this.dislikesCount = payload.dislikes;
         if(payload.reply.likes.some((like) => this.loggedInUser.id === like)){

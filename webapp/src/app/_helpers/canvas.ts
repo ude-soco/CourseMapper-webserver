@@ -165,14 +165,10 @@ export function isPointInPin(pointXRatio: number, pointYRatio: number, xRatio: n
     const x = ((videoBoundingRect?.width || 0) - startX * 2) * xRatio + startX;
     const y = (videoBoundingRect?.height || 0) * yRatio;
 
-    // console.log('pointRation: ', pointXRatio, pointYRatio);
-    // console.log('Ratio: ', xRatio, yRatio);
-    // console.log('x, y: ', x, y);
 
     const xa = ((videoBoundingRect?.width || 0) - startX * 2) * pointXRatio + startX;
     const ya = (videoBoundingRect?.height || 0) * pointYRatio;
 
-    // console.log('xa, ya: ', xa, ya);
 
     if (xa > xRatio - 18 && xa < xRatio + 18 && ya > yRatio - 24 && ya < yRatio) {
         return true;

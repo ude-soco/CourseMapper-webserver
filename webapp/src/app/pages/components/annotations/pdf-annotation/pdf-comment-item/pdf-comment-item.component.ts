@@ -114,7 +114,6 @@ export class PdfCommentItemComponent implements OnInit, OnChanges, AfterViewInit
         this.showAnnotationInMaterial = true;
       }
       this.socket.on(this.annotation._id, (payload: { eventType: string, annotation: Annotation, reply: Reply }) => {
-        console.log('payload = ', payload)
         this.store.dispatch(AnnotationActions.updateAnnotationsOnSocketEmit({payload: payload}));
       })
       this.isEditing = false;
@@ -209,7 +208,6 @@ export class PdfCommentItemComponent implements OnInit, OnChanges, AfterViewInit
         }, 100);
       }else{
         if(this.annotation.tool.type === "annotation"){
-          console.log((this.annotation.location as VideoAnnotationLocation).from);
           this.store.dispatch(VideoActions.SetSeekVideo({seekVideo: [(this.annotation.location as VideoAnnotationLocation).from, (this.annotation.location as VideoAnnotationLocation).to]}));
         }
         this.store.dispatch(VideoActions.SetActiveAnnotaion({activeAnnotation: this.annotation}));

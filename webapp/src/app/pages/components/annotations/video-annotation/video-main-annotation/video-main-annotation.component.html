@@ -12,6 +12,7 @@
         (pause)="videoPaused()"
         (timeupdate)="videoPlayerTimeChanged($event)"
         (loadeddata)="videoPlayerReady($event)"
+        (ended)="videoPlayerEnded($event)"
       >
         <source [src]="videoURL" type="video/mp4" />
       </video>
