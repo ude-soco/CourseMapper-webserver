@@ -49,6 +49,13 @@ spec:
         volumeMounts:
         - mountPath: /app/public/uploads
           name: webserver-uploads
+        resources:
+          requests:
+            memory: 8Mi
+            cpu: 10m
+          limits:
+            memory: 256Mi
+            cpu: 1
       volumes:
       - name: webserver-uploads
         persistentVolumeClaim:
