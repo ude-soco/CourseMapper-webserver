@@ -260,7 +260,7 @@ export class MaterialComponent implements OnInit, OnDestroy {
   onDeleteMaterial() {
     this.confirmationService.confirm({
       message:
-        'Do you want to delete "' + this.selectedMaterial.name + '" material?',
+        'Are you sure you want to delete "' + this.selectedMaterial.name + '" material?',
       header: 'Delete Confirmation',
       icon: 'pi pi-info-circle',
       accept: (e) => this.deleteMaterial(e),
