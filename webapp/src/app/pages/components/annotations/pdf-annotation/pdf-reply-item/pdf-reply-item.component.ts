@@ -85,6 +85,17 @@ export class PdfReplyItemComponent implements OnInit, OnChanges, OnDestroy, Afte
         }
       })
 
+      if(this.reply?.likes?.some((like) => this.loggedInUser.id === like)){
+        this.blueLikeButtonEnabled = true;
+      }else{
+        this.blueLikeButtonEnabled = false;
+      }
+      if(this.reply?.dislikes?.some((like) => this.loggedInUser.id === like)){
+        this.blueDislikeButtonEnabled = true;
+      }else{
+        this.blueDislikeButtonEnabled = false;
+      }
+
       this.annotationOptions = [
         {
           label: 'Edit',
