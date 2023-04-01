@@ -23,6 +23,7 @@ import {
 import * as AnnotationActions from './annotation.actions';
 import * as MaterialActions from '../../../materils/state/materials.actions';
 import { Annotation } from 'src/app/models/Annotations';
+import { LoggerService } from 'src/app/services/logger.service';
 
 @Injectable()
 export class AnnotationEffects {
@@ -246,6 +247,7 @@ editAnnotation$ = createEffect(() =>
   constructor(
     private actions$: Actions,
     private annotationService: AnnotationService,
+    private loggerService: LoggerService,
     private store: Store<State>
   ) {}
 }
