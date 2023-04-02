@@ -1,8 +1,12 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import {  Store } from '@ngrx/store';
 import { Course } from 'src/app/models/Course';
 import { CourseService } from 'src/app/services/course.service';
 import { StorageService } from 'src/app/services/storage.service';
+import { State } from '../courses/state/course.reducer';
+
+import * as CourseAction from 'src/app/pages/courses/state/course.actions'
 
 @Component({
   selector: 'app-landing-page',
@@ -18,7 +22,7 @@ export class LandingPageComponent {
   isloggedin: boolean = false;
   hideImg:boolean=false;
   username?: string;
-  constructor( private storageService: StorageService,private courseService: CourseService, private router: Router){}
+  constructor( private storageService: StorageService,private courseService: CourseService, private router: Router, private store: Store<State>,){}
   
   ngOnInit(){
     // this.currentUser = this.storageService.getUser();
@@ -54,5 +58,13 @@ export class LandingPageComponent {
     console.log(this.updatedCourses);
     
     
+  }
+  onSelectCourse(selcetedCourse:Course)
+  {
+    this.store.dispatch(CourseAction.setCurrentCourse({selcetedCourse}));
+    this.store.dispatch(CourseAction.setCurrentCourseID({selcetedCourseID:selcetedCourse._id }));
+    this.router.navigate(['course-description', selcetedCourse._id]);
+    console.log("course landing page")
+    console.log(selcetedCourse)
   }
 }

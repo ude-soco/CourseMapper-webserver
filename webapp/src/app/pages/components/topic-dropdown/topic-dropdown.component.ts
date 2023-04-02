@@ -210,7 +210,7 @@ export class TopicDropdownComponent implements OnInit {
    */
   onDeleteTopic() {
     this.confirmationService.confirm({
-      message: 'Do you want to delete this topic?',
+      message: 'Are you sure you want to delete this topic?',
       header: 'Delete Confirmation',
       icon: 'pi pi-info-circle',
       accept: () => this.confirmTopicDeletion(),
@@ -387,7 +387,7 @@ export class TopicDropdownComponent implements OnInit {
    */
   onDeleteChannel() {
     this.confirmationService.confirm({
-      message: 'Do you want to delete this channel?',
+      message: 'Are you sure you want to delete this channel?',
       header: 'Delete Confirmation',
       icon: 'pi pi-info-circle',
       accept: () => this.confirmChannelDeletion(),

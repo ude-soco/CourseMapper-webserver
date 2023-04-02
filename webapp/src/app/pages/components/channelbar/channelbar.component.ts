@@ -311,7 +311,7 @@ export class ChannelbarComponent implements OnInit {
    */
   onDeleteCourse() {
     this.confirmationService.confirm({
-      message: 'Do you want to delete this course?',
+      message: 'Are you sure you want to delete this course?',
       header: 'Delete Confirmation',
       icon: 'pi pi-info-circle',
       accept: () => this.confirmDeletion(),

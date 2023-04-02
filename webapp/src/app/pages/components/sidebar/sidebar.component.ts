@@ -14,7 +14,7 @@ import { ModeratorPrivilegesService } from 'src/app/services/moderator-privilege
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css'],
 })
-export class SidebarComponent implements OnInit {
+ export  class SidebarComponent implements OnInit {
   courses: Course[] = [];
   channels: Channel[] = [];
   channel: Channel;

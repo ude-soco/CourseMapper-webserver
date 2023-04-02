@@ -27,7 +27,6 @@
           [options]="annotationLocationsArray"
           [(ngModel)]="selectedAnnotationLocation"
           (ngModelChange)="onAnnotationLocationChange()"
-          [disabled]="isAnnotationDialogVisible"
           autoWidth="false"
           appendTo="body"
           [appUpdateBorderColor]="annotationColor"
@@ -55,6 +54,7 @@
           [(ngModel)]="content"
           (ngModelChange)="onTextChange()"
           class="w-full"
+          placeholder="Add a general annotation without a tool"
         ></textarea>
         <app-iconbutton
           icon="bx-send"
