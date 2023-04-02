@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webserver
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      component: webserver
+  template:
+    metadata:
+      labels:
+        component: webserver
+    spec:
+      initContainers:
+      - name: wait-for-mongodb
+        image: mongo
+        command: ['sh', '-c',
+          'mongosh --nodb --eval "disableTelemetry()"; until echo "db.runCommand({ping: 1}).ok" | mongosh $(MONGODB_SERVICE):27017/test --quiet;
+          do echo "Waiting for MongoDB ..."; sleep 2; done;']
+        env:
+        - name: MONGODB_SERVICE
+          value: $(MONGODB_SERVICE)
+      containers:
+      - name: webserver
+        image: socialcomputing/coursemapper-webserver-webserver
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /api/healthz
+            port: 8080
+        livenessProbe:
+          httpGet:
+            path: /api/healthz
+            port: 8080
+          periodSeconds: 60
+          timeoutSeconds: 5
+        env:
+        - name: PORT
+          value: "8080"
+        - name: MONGO_DB
+          value: "mongodb://$(MONGODB_SERVICE):27017/coursemapper"
+        envFrom:
+        - secretRef:
+            name: webserver
+        volumeMounts:
+        - mountPath: /app/public/uploads
+          name: webserver-uploads
+        resources:
+          requests:
+            memory: 8Mi
+            cpu: 10m
+          limits:
+            memory: 256Mi
+            cpu: 1
+      volumes:
+      - name: webserver-uploads
+        persistentVolumeClaim:
+          claimName: webserver-uploads

@@ -103,5 +103,6 @@ dist
 # Project specific files
 /webserver/dist-server
 /webserver/public
+*.example
 .idea
 .vscode
