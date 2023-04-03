@@ -8,6 +8,7 @@ import { TopicChannelService } from 'src/app/services/topic-channel.service';
 import { UserServiceService } from 'src/app/services/user-service.service';
 import { getCourseSelected, State } from 'src/app/state/app.reducer';
 import { getCurrentCourse } from './state/course.reducer';
+import { getChannelSelected } from '../components/materils/state/materials.reducer';
 
 @Component({
   selector: 'app-courses',
@@ -22,6 +23,7 @@ export class CoursesComponent implements OnInit {
   firstName:string;
   lastName:string;
   ChannelToggel:boolean=false;
+  channelSelected$: Observable<boolean>;
   constructor(
     private courseService: CourseService,
     private topicChannelService: TopicChannelService,
@@ -29,9 +31,7 @@ export class CoursesComponent implements OnInit {
     private userService:UserServiceService, 
   ) {
     this.courseSelected$ = store.select(getCourseSelected);
-    this.ChannelToggel=false
-    
-
+    this.channelSelected$ = this.store.select(getChannelSelected);
   }
 
   ngOnInit(): void {

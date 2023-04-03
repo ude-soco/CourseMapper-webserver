@@ -9,6 +9,7 @@ import { State } from 'src/app/state/app.reducer';
 import { Store } from '@ngrx/store';
 import * as AppActions from 'src/app/state/app.actions'
 import { ModeratorPrivilegesService } from 'src/app/services/moderator-privileges.service';
+import * as  MaterialActions from 'src/app/pages/components/materils/state/materials.actions'
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
@@ -76,6 +77,7 @@ import { ModeratorPrivilegesService } from 'src/app/services/moderator-privilege
       }
     }
     this.store.dispatch(AppActions.toggleCourseSelected({courseSelected: true}));
+    this.store.dispatch(MaterialActions.toggleChannelSelected({ channelSelected: false }));
     this.router.navigate(['course', selectedCourse._id]);
   }
 }
