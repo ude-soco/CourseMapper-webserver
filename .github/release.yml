@@ -12,29 +12,21 @@ changelog:
       labels:
         - bug
 
-    - title: 🎨 Other Changes
-      labels:
-        - '*'
-      exclude:
-        labels:
-          - enhancement
-          - dependencies
-          - bug
-
-    - title: 🔗 Proxy Dependencies
-      labels:
-        - dependencies
-        - proxy
-
     - title: 🔗 Webapp Dependencies
       labels:
         - dependencies
-        - webapp
+      exclude:
+        labels:
+          - proxy
+          - webserver
 
     - title: 🔗 Webserver Dependencies
       labels:
         - dependencies
-        - webserver
+      exclude:
+        labels:
+          - proxy
+          - webapp
 
     - title: 🔗 Other Dependencies
       labels:
@@ -43,3 +35,12 @@ changelog:
         labels:
           - webapp
           - webserver
+
+    - title: 🎨 Other Changes
+      labels:
+        - '*'
+      exclude:
+        labels:
+          - enhancement
+          - bug
+          - dependencies
