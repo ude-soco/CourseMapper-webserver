@@ -57,7 +57,7 @@ export class NavbarComponent implements OnInit {
     this.userService.logout().subscribe({
       next: () => {
         this.storageService.clean();
-        this.router.navigate(['/login']);
+        this.router.navigate(['/landingPage']);
       },
       error: (err) => {
         console.log(err);

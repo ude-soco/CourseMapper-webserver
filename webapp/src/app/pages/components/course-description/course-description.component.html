@@ -7,21 +7,32 @@
        
         <div class="courseheader" >
             <div style="width: 90%; float:left">
-                 <p class="font-serif  font-bold leading-normal h1" > Welcome To  </p>
+                 <p class="font-serif  font-bold leading-normal h1" > Welcome to  </p>
         <p class="font-serif  font-bold leading-normal h1"> {{course.name}} </p> 
       
          <p class="p" > This is the welcome page of the course </p>
          <p class="p" >  Course created on: {{createdAt}}</p> 
             </div>
             <div style="width: 10%; float:right">
-       
-           <button 
+      
+           <button  *ngIf="Enrolled== true"
          pButton 
          [ngStyle]="{ 'background-color': '#0277BD', color: '#ffffff' , float: 'right', 'margin-top':'3rem', 'margin-right': '2rem' }"
          type="button"
-         label="Enrol to Course"
+         label= 'Go To Course'
+         (click)="GoToCOurse()"
         
        ></button>
+    
+    
+       <button *ngIf="Enrolled== false"
+         pButton 
+         [ngStyle]="{ 'background-color': '#0277BD', color: '#ffffff' , float: 'right', 'margin-top':'3rem', 'margin-right': '2rem' }"
+         type="button"
+         label='Enroll To Course'
+    (click)="EnrollToCOurse()"
+       ></button>
+    
     </div>
          <hr class="solid">
        
@@ -32,6 +43,7 @@
         shape="circle"
         size="large"
         [style]="{ 'background-color': '#0277BD', color: '#ffffff' , float: 'left', top_margin:'0.5rem' }"
+        
       ></p-avatar>
       <div style="    margin-left: 4rem;">
 

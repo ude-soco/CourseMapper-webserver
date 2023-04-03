@@ -1,9 +1,49 @@
 <div class="flex flex-row">
     <div class="flex-col">
-      <app-sidebar></app-sidebar>
+      <app-sidebar ></app-sidebar>
     </div>
-    <app-channelbar style="width: 15%;"></app-channelbar>
+    <app-channelbar style="width: 15%;" (click)="NowClicked()" ></app-channelbar>
+      <div style="width: 100%;" *ngIf="ChannelToggel==false">
+       
+      <div class="courseheader" >
+          <div style="width: 90%; float:left">
+               <p class="font-serif  font-bold leading-normal h1" > Welcome to  </p>
+      <p class="font-serif  font-bold leading-normal h1"> {{selectedCourse.name}} </p> 
+    
+       <p class="p" > This is the welcome page of the course </p>
+       <p class="p" >  Course created on: {{createdAt}}</p> 
+          </div>
+          <div style="width: 10%; float:right">
+    
+  
+
+  
+  </div>
+       <hr class="solid">
+     
+      </div>
+   <div class="courseDes">
+      <p-avatar
+      label="{{getName(this.firstName, this.lastName)}}"
+      shape="circle"
+      size="large"
+      [style]="{ 'background-color': '#0277BD', color: '#ffffff' , float: 'left', top_margin:'0.5rem' }"
+      
+    ></p-avatar>
+    <div style="    margin-left: 4rem;">
+
+    
+      <p class="p" style=" font-weight: bold;" > Creator Name {{ this.firstName }} {{this.lastName}}</p>
+
+      <p class="p ">  {{createdAt}}</p>
+      
+          <p class="p"  > Course Description </p>
+          <div  > {{ selectedCourse.description }}</div>
+      </div>
+ </div>
+  </div>   
     <div class="grow">
+
         <router-outlet></router-outlet>
     </div>
   </div>

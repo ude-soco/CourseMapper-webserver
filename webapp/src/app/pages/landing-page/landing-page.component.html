@@ -51,15 +51,11 @@
         size="large"
         [style]="{ 'background-color': '#0277BD', color: '#ffffff' , float: 'left', top_margin:'0.5rem' }"
       ></p-avatar>
-      <button> <p style="margin: 1.5rem 1rem 1rem 4rem"> {{course.name}}</p></button>
-       
+      <button> <p style="margin: 1rem"> {{course.name}}</p></button>
+      <p style="justify-content: center;"> {{ (course.description.length>6)? (course.description | slice:0:150)+'...':(course.description) }} </p>
         
     </ng-template>
-        <ng-template pTemplate="footer">
-            <!-- <p-button label="Save" icon="pi pi-check"></p-button>
-            <p-button label="Cancel" icon="pi pi-times" styleClass="p-button-secondary" [style]="{'margin-left': '.5em'}"></p-button> -->
-            <p> {{course.description}}</p>
-        </ng-template>
+
     
     </p-card> 
     </div>
