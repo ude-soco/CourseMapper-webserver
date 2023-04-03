@@ -2,14 +2,13 @@ name: CI
 
 on:
   push:
-    tags: ['v*']
-    branches: ['main']
+    tags: [ 'v*' ]
+    branches: [ $default-branch ]
     paths:
-      - '.github/workflows/build-proxy.yml'
-      - 'proxy/**'
+    - '.github/workflows/build-proxy.yml'
+    - 'proxy/**'
   pull_request:
-    branches:
-      - 'main'
+    branches: [ $default-branch ]
 
 jobs:
   build:
