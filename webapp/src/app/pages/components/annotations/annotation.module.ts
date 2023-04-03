@@ -27,6 +27,7 @@ import { VideoDrawingOverlayComponent } from './video-annotation/video-drawing-o
 import { VideoRenderingOverlayComponent } from './video-annotation/video-rendering-overlay/video-rendering-overlay.component';
 import { VideoAnnotationSummaryComponent } from './video-annotation/video-annotation-summary/video-annotation-summary.component';
 import { UpdateBorderColorDirective } from 'src/app/custom_directives/update-border-color.directive';
+import { VideoEffects } from './video-annotation/state/video.effects';
 
 @NgModule({
     declarations: [
@@ -65,6 +66,7 @@ import { UpdateBorderColorDirective } from 'src/app/custom_directives/update-bor
         StoreModule.forFeature('annotation', annotationReducer),
         StoreModule.forFeature('video', videoReducer),
         EffectsModule.forFeature([AnnotationEffects]),
+        EffectsModule.forFeature([VideoEffects]),
         YouTubePlayerModule,
        RouterModule.forChild([
         {

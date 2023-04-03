@@ -177,7 +177,6 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
     this.isAnnotationPosted$ = this.store.select(getIsAnnotationPosted);
 
     this.socket.on(this.materialId, (payload: { eventType: string, annotation: Annotation, reply: Reply }) => {
-      console.log('payload = ', payload)
       let annotation = this.annotations.find((anno) => payload.annotation?._id == anno._id)
         this.store.dispatch(AnnotationActions.updateAnnotationsOnSocketEmit({payload: payload}));
     })
@@ -205,7 +204,6 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
       'updatefindmatchescount',
       (data: any) => {
         this.matchesFound = data.matchesCount.total;
-        console.log('total matches found: ', data.matchesCount.total);
       }
     );
 
@@ -213,7 +211,6 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
       'updatefindcontrolstate',
       (data: any) => {
         if (data.state === 0) {
-          console.log('no matches found');
         }
       }
     );
@@ -258,6 +255,10 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
         this.pinObjectsList.push(updatedElement.tool);
       });
     }
+  }
+
+  afterLoadComplete(event: any){
+    this.store.dispatch(AnnotationActions.setCurrentPdfPage({pdfCurrentPage: 1}));
   }
 
     /** Is called when a page is rendered. Is used to add Pin/rectangle/ highlight/circle on the pdf when a page is rendering */
@@ -477,10 +478,8 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
         var pageIndex = this.currentPage - 1;
         var page = this.pdfComponent.pdfViewer.getPageView(pageIndex);
         var pageRect = page.canvas.getClientRects()[0];
-        console.log(event);
         // const pageOffset = toDrawRectangle[this.dataPageNumber - 1].getBoundingClientRect();
         const pageOffset = toDrawRectangle[0].getBoundingClientRect();
-        console.log(pageOffset);
         this.pagePosition = {
           x: pageOffset.left,
           y: pageOffset.top,
@@ -490,7 +489,6 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
           x: event.clientX - this.pagePosition.x,
           y: event.clientY - this.pagePosition.y,
         };
-        console.log(this.lastMousePosition);
         //get curentNumber of pin element
         this.currentPinId =
           this.currentUserId +

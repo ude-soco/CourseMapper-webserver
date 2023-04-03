@@ -94,7 +94,6 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
       }
     })
     this.socket.on(this.material._id, (payload: { eventType: string, annotation: Annotation, reply: Reply }) => {
-      console.log('payload = ', payload)
         this.store.dispatch(AnnotationActions.updateAnnotationsOnSocketEmit({payload: payload}));
     })
     this.subscriptions.push(materialSubscriper);
@@ -177,6 +176,8 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
       this.store.dispatch(VideoActions.PlayVideo());
     }else if(event.data === 2){
       this.store.dispatch(VideoActions.PauseVideo());
+    }else if(event.data === 0){
+      this.store.dispatch(VideoActions.VideoCompleted());
     }
   }
 
@@ -229,11 +230,16 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
   }
 
   videoPlayerTimeChanged(event: any){
-    this.store.dispatch(VideoActions.SetCurrentTime({currentTime: Math.floor((event.target! as HTMLVideoElement).currentTime)}));
+    const time =  Math.floor((event.target! as HTMLVideoElement).currentTime);
+    this.store.dispatch(VideoActions.SetCurrentTime({currentTime: time}));
   }
 
   videoPlayerReady(event: any){
     this.store.dispatch(VideoActions.SetVideoDuration({videoDuration: Math.floor(this.videoPlayer?.nativeElement.duration)}));
+  }
+
+  videoPlayerEnded(event: any){
+    this.store.dispatch(VideoActions.VideoCompleted());
   }
 
   drawingChanged(drawings: DrawingData) {

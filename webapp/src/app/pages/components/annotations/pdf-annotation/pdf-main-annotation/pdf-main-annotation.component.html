@@ -22,6 +22,7 @@
       [show-all]="false"
       [(page)]="currentPage"
       [zoom]="pdfZoom$ | async"
+      (after-load-complete)="afterLoadComplete($event)"
     >
     </pdf-viewer>
     <app-pdf-annotation-summary #annotationSummary [annotationId] = "selectedNoteId"></app-pdf-annotation-summary>

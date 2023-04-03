@@ -64,3 +64,7 @@ export const SetSeekVideo = createAction(
     '[Video] Set Seek Video Time',
     props<{ seekVideo: [number, number]}>()
 );
+
+export const VideoCompleted = createAction(
+    '[Video] Video Is Completed',
+);

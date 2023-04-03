@@ -91,11 +91,11 @@ button {
   }
 
 
-  ::ng-deep .p-dialog .test .p-button{
+  ::ng-deep .p-dialog .blue-button .p-button{
     background: #0177bd;
     min-width: 190px;
   }
-  ::ng-deep .p-dialog .test .p-button:hover{
+  ::ng-deep .p-dialog .blue-button.p-button:hover{
     background: #00598d;
     min-width: 190px;
 
