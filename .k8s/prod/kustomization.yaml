@@ -13,6 +13,7 @@ labels:
 
 secretGenerator:
 - name: webserver
+  behavior: merge
   env: webserver.env
 
 images:

@@ -2,17 +2,17 @@ name: CI
 
 on:
   push:
-    tags: ['v*']
-    branches: ['main']
+    tags: [ 'v*' ]
+    branches: [ $default-branch ]
     paths:
-      - '.github/workflows/build-proxy.yml'
-      - 'proxy/**'
+    - '.github/workflows/build-proxy.yml'
+    - 'proxy/**'
   pull_request:
-    branches:
-      - 'main'
+    branches: [ $default-branch ]
 
 jobs:
   build:
+    name: Build container images
     uses: ./.github/workflows/build.yml
     with:
       services:        "[ 'proxy', 'webapp', 'webserver' ]"
@@ -21,3 +21,16 @@ jobs:
     secrets:
       registry_user:   ${{ secrets.DOCKERHUB_USERNAME }}
       registry_token:  ${{ secrets.DOCKERHUB_TOKEN }}
+
+  kubeconform:
+    name: Check Kubernetes manifests
+    runs-on: ubuntu-latest
+    container: deck15/kubeval-tools
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    - name: kubeval
+      run: kubectl kustomize .k8s/local | kubeval --schema-location https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master
+    - name: kube-score
+      run: kubectl kustomize .k8s/local | kube-score score -
+      continue-on-error: true

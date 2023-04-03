@@ -44,4 +44,10 @@ tilt:
 dev: down
 	@$(compose-dev) up --force-recreate --build
 
-.PHONY: help tilt run start up stop down clean cleanall build push
+# Check Kubernetes manifests
+lint:
+	@cp -n .k8s/prod/webserver.env.example .k8s/prod/webserver.env || echo ".env file not copied"
+	@kubectl kustomize .k8s/prod | kubeval --schema-location https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master
+	@kubectl kustomize .k8s/prod | kubectl score score --kubernetes-version v1.26 -
+
+.PHONY: help run start up stop down clean cleanall build push tilt dev lint
