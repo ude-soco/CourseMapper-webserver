@@ -12,7 +12,7 @@ changelog:
       labels:
         - bug
 
-    - title: 🎨 Other changes
+    - title: 🎨 Other Changes
       labels:
         - '*'
       exclude:
@@ -21,6 +21,25 @@ changelog:
           - dependencies
           - bug
 
-    - title: 🔗 Dependencies
+    - title: 🔗 Proxy Dependencies
       labels:
         - dependencies
+        - proxy
+
+    - title: 🔗 Webapp Dependencies
+      labels:
+        - dependencies
+        - webapp
+
+    - title: 🔗 Webserver Dependencies
+      labels:
+        - dependencies
+        - webserver
+
+    - title: 🔗 Other Dependencies
+      labels:
+        - dependencies
+      exclude:
+        labels:
+          - webapp
+          - webserver
