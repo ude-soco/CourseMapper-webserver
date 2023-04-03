@@ -51,7 +51,7 @@
         size="large"
         [style]="{ 'background-color': '#0277BD', color: '#ffffff' , float: 'left', top_margin:'0.5rem' }"
       ></p-avatar>
-      <button> <p style="margin: 1rem"> {{course.name}}</p></button>
+      <button> <p style="margin: 1rem; font-weight: bold;"> {{course.name}}</p></button>
       <p style="justify-content: center;"> {{ (course.description.length>6)? (course.description | slice:0:150)+'...':(course.description) }} </p>
         
     </ng-template>

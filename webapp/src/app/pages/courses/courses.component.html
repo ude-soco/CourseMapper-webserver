@@ -7,11 +7,11 @@
        
       <div class="courseheader" >
           <div style="width: 90%; float:left">
-               <p class="font-serif  font-bold leading-normal h1" > Welcome to  </p>
-      <p class="font-serif  font-bold leading-normal h1"> {{selectedCourse.name}} </p> 
-    
-       <p class="p" > This is the welcome page of the course </p>
-       <p class="p" >  Course created on: {{createdAt}}</p> 
+               <p class="font-roboto  font-bold leading-normal h1" > Welcome to  </p>
+      <p class="font-roboto  font-bold leading-normal h1"> {{selectedCourse.name}} </p> 
+            <br>
+       <p class="font-roboto   leading-normal h2"> This is the welcome page of the course </p>   
+       <br>
           </div>
           <div style="width: 10%; float:right">
     
@@ -33,11 +33,11 @@
     <div style="    margin-left: 4rem;">
 
     
-      <p class="p" style=" font-weight: bold;" > Creator Name {{ this.firstName }} {{this.lastName}}</p>
+      <p class="p" style=" font-weight: bold;" > Course created by: {{ this.firstName }} {{this.lastName}}</p>
 
-      <p class="p ">  {{createdAt}}</p>
+      <p class="p" style=" font-weight: bold;">  Created on: {{createdAt}}</p>
       
-          <p class="p"  > Course Description </p>
+      <p class="p" style=" font-weight: bold;" > Course Description: </p>
           <div  > {{ selectedCourse.description }}</div>
       </div>
  </div>
