@@ -100,7 +100,6 @@ export class MaterialComponent implements OnInit, OnDestroy {
           this.store.dispatch(
             MaterialActions.toggleChannelSelected({ channelSelected: true })
           );
-          this.store.dispatch(MaterialActions.setCourseId({ courseId })); 
           this.updateSelectedMaterial();
         });
     }
@@ -260,7 +259,7 @@ export class MaterialComponent implements OnInit, OnDestroy {
   onDeleteMaterial() {
     this.confirmationService.confirm({
       message:
-        'Are you sure you want to delete "' + this.selectedMaterial.name + '" material?',
+        'Do you want to delete "' + this.selectedMaterial.name + '" material?',
       header: 'Delete Confirmation',
       icon: 'pi pi-info-circle',
       accept: (e) => this.deleteMaterial(e),

@@ -166,6 +166,18 @@ export class CourseService {
       console.log(this.courses)
     }));
   }
+
+
+  EnrollToCOurse(course:Course): any{
+   return this.http.post<any>(`${this.API_URL}/enrol/${course._id}`, {}).pipe(tap(
+    Enrolcourses => {
+     
+      console.log("Enrolcourses from service course")
+      console.log(Enrolcourses)
+    }
+   ))
+
+  }
   sendToOldBackend(course){
     // userId should be taken from the coockies. for the time being it is hard coded
     this.http.post<any>('http://localhost:8090/new/course', 

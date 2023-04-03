@@ -22,6 +22,7 @@ export class LandingPageComponent {
   isloggedin: boolean = false;
   hideImg:boolean=false;
   username?: string;
+  CourseDes:string;
   constructor( private storageService: StorageService,private courseService: CourseService, private router: Router, private store: Store<State>,){}
   
   ngOnInit(){
@@ -44,6 +45,9 @@ export class LandingPageComponent {
     this.courseService.GetAllCourses()
       .subscribe({next:
          (courses) => {this.courses = courses;
+        
+
+       
       console.log("all courses from landing page")
       console.log(this.courses)
          }

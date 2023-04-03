@@ -544,6 +544,9 @@
               <div *ngIf="validateForm.controls['email'].errors?.['email']">
                 <span style="color: red;"> Invalid Email </span>
               </div>
+              <div *ngIf="validateForm.controls['email'].errors?.['pattern']">
+                <span style="color: red;">  Invalid Email format </span>
+              </div>
             </div>
           </div>
           <div class="form-group">

@@ -44,7 +44,7 @@
           [showUploadButton]="false"
           [showCancelButton]="false"
           accept="application/pdf"
-          styleClass="test"
+          styleClass="blue-button"
         ></p-fileUpload>
         <span>{{ invalidPDFFileMessage }}</span>
       </div>
@@ -134,6 +134,7 @@
           [showUploadButton]="false"
           [showCancelButton]="false"
           accept="video/mp4,video/x-m4v,video/*"
+          styleClass="blue-button"
         ></p-fileUpload>
         <span>{{ invalidVideoFileMessage }}</span>
       </div>
@@ -145,6 +146,7 @@
           type="text"
           pInputText
           formControlName="materialName"
+          placeholder="Give a name to your file"
         />
       </div>
       <div class="input">

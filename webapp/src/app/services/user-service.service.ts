@@ -63,6 +63,8 @@ export class UserServiceService {
   GetUserName(_id:string): Observable<any> {
     return this.http.get<any>(`${this.API_URL}/users/${_id}`).pipe(tap( user => {
 this.user=user
+console.log("this.user GetUserName")
+console.log(this.user)
     }))
   }
 

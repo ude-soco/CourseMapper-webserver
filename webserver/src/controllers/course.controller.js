@@ -70,6 +70,9 @@ export const getMyCourses = async (req, res) => {
       numberUsers: object.courseId.users.length,
       role: object.role.name,
       channels:object.courseId.channels,
+      createdAt:object.courseId.createdAt,
+      users:object.courseId.users
+
     };
     results.push(course);
   });
