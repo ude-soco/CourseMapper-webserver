@@ -1,0 +1,46 @@
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+
+  categories:
+    - title: 🎉 Exciting New Features
+      labels:
+        - enhancement
+
+    - title: 🧰 Fixes
+      labels:
+        - bug
+
+    - title: 🔗 Webapp Dependencies
+      labels:
+        - dependencies
+      exclude:
+        labels:
+          - proxy
+          - webserver
+
+    - title: 🔗 Webserver Dependencies
+      labels:
+        - dependencies
+      exclude:
+        labels:
+          - proxy
+          - webapp
+
+    - title: 🔗 Other Dependencies
+      labels:
+        - dependencies
+      exclude:
+        labels:
+          - webapp
+          - webserver
+
+    - title: 🎨 Other Changes
+      labels:
+        - '*'
+      exclude:
+        labels:
+          - enhancement
+          - bug
+          - dependencies

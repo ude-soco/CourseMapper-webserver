@@ -23,9 +23,6 @@ export const fetchUnsentStatements = async () => {
       { statement: 1, _id: 0 }
     );
     const unsentStatements = unsentActivities.map((activity) => activity.statement);
-    console.log(
-      `fetchUnsentStatements: ${unsentStatements.length} statements are found`
-    );
     return unsentStatements;
   } catch (err) {
     console.log(err);

@@ -2,7 +2,7 @@ const fs = require("fs");
 
 const remove = (req, res) => {
   const fileName = req.params.name;
-  const directoryPath = "public/uploads/pdfs/" ;
+  const directoryPath = "public/uploads/pdfs/";
 
   fs.unlink(directoryPath + fileName, (err) => {
     if (err) {
@@ -19,7 +19,7 @@ const remove = (req, res) => {
 
 const removeSync = (req, res) => {
   const fileName = req.params.name;
-  const directoryPath = "public/uploads/pdfs/" ;
+  const directoryPath = "public/uploads/pdfs/";
 
   try {
     fs.unlinkSync(directoryPath + fileName);
@@ -69,5 +69,5 @@ module.exports = {
   remove,
   removeSync,
   removeVideo,
-  removeSyncVideo
+  removeSyncVideo,
 };

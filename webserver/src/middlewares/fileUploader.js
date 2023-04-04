@@ -4,11 +4,12 @@ const fileExtension = require("file-extension");
 const fileName = (req, file, cb) => {
   cb(
     null,
-    `${file.originalname
-     /* .split(".")
+    `${
+      file.originalname
+      /* .split(".")
       .slice(0, -1)
     .join(".")}-${Date.now()}.${fileExtension(file.originalname)*/
-  }`
+    }`
   );
 };
 

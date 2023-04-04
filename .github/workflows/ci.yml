@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    tags: [ 'v*' ]
+    branches: [ $default-branch ]
+    paths:
+    - '.github/workflows/build-proxy.yml'
+    - 'proxy/**'
+  pull_request:
+    branches: [ $default-branch ]
+
+jobs:
+  build:
+    name: Build container images
+    uses: ./.github/workflows/build.yml
+    with:
+      services:        "[ 'proxy', 'webapp', 'webserver' ]"
+      base_image_name: "socialcomputing/coursemapper-webserver-"
+      push:            ${{ github.event_name != 'pull_request' }}
+    secrets:
+      registry_user:   ${{ secrets.DOCKERHUB_USERNAME }}
+      registry_token:  ${{ secrets.DOCKERHUB_TOKEN }}
+
+  kubeconform:
+    name: Check Kubernetes manifests
+    runs-on: ubuntu-latest
+    container: deck15/kubeval-tools
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    - name: kubeval
+      run: kubectl kustomize .k8s/local | kubeval --schema-location https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master
+    - name: kube-score
+      run: kubectl kustomize .k8s/local | kube-score score -
+      continue-on-error: true

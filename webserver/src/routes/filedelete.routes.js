@@ -11,13 +11,11 @@ const controller = require("../controllers/deleteFile.controller");
 // module.exports = routes;
 
 module.exports = function (app) {
-    app.use(function (req, res, next) {
-      res.header("Access-Control-Allow-Headers", "Origin, Content-Type, Accept");
-      next();
-    });
-  
-    // delete PDF file
-    app.delete("/files/:name", controller.remove); 
-    
-    
-  };
+  app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Headers", "Origin, Content-Type, Accept");
+    next();
+  });
+
+  // delete PDF file
+  app.delete("/api/files/:name", controller.remove);
+};

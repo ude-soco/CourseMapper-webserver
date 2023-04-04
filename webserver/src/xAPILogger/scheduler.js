@@ -6,7 +6,6 @@ const BATCH_SIZE = 500;
 export const runXapiScheduler = () => {
   cron.schedule("* * * * *", async () => {
     try {
-      console.log("xAPI scheduler started");
       const statements = await controller.fetchUnsentStatements();
       if (statements.length > 0) {
 

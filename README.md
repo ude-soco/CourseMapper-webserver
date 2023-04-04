@@ -1,3 +1,5 @@
+[![CI](https://github.com/ude-soco/CourseMapper-webserver/actions/workflows/ci.yml/badge.svg)](https://github.com/ude-soco/CourseMapper-webserver/actions/workflows/ci.yml)
+
 <p align="center">
 <a href="https://www.uni-due.de/soco/research/projects/elas.php" target="_blank" rel="noopener noreferrer">
 <img width=50% src="webapp/src/assets/logo.svg" alt="re-frame logo">
@@ -7,6 +9,26 @@
 <p>
 CourseMapper is a collaborative course annotation and analytics platform that fosters collaboration and interaction around pdf/video learning materials, supported by visual learning analytics.
 </p>
+
+## Build and run all services
+
+* `make up` (or `docker compose up`) to run the application
+* `make tilt` to automatically rebuild/restart containers during development
+* `make dev` to run processes in containers, but mount source code from host machine
+* see the manual below to install dependencies and run processes w/o containers
+
+Visit the [proxy service on port 8000](http://localhost:8000/) to use the application.
+
+
+## Container images
+
+The services making up the coursemapper-webserver project use the following images:
+
+* Proxy: [socialcomputing/coursemapper-webserver-proxy](https://hub.docker.com/repository/docker/socialcomputing/coursemapper-webserver-proxy/general)
+* Webapp: [socialcomputing/coursemapper-webserver-webapp](https://hub.docker.com/repository/docker/socialcomputing/coursemapper-webserver-webapp/general)
+* Webserver: [socialcomputing/coursemapper-webserver-webserver](https://hub.docker.com/repository/docker/socialcomputing/coursemapper-webserver-webserver/general)
+* MongoDB: [mongo](https://hub.docker.com/_/mongo)
+
 
 ## 🚀 Get Started
 
@@ -37,7 +59,7 @@ CourseMapper is a collaborative course annotation and analytics platform that fo
 
 	If you face issue with `npm ci` command, try `npm install` or `npm install --force` command. Caution: `npm install` and `npm install --force` will delete all the existing node packages, install the new ones and update the `package-lock.json` file. Please make sure you do not push your changes to the `package-lock.json` file.
 
-- After the packages are installed, type the following command to run the server 
+- After the packages are installed, type the following command to run the server
 
 	```bash
 	npm run watch:dev
@@ -63,7 +85,7 @@ CourseMapper is a collaborative course annotation and analytics platform that fo
 	npm ci
 	```
 
-- After the packages are installed, type the following command to run the server 
+- After the packages are installed, type the following command to run the server
 
 	```bash
 	ng serve
