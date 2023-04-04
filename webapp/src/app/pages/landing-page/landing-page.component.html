@@ -22,7 +22,11 @@
                 <input type="text" pInputText [(ngModel)]="value1" placeholder="Search for courses ..." class="search" >     
                 <div *ngIf="value1  != '' " class="bottom-right1">
                  <p> Showing results for {{value1}} </p> 
-                </div>    
+                </div>   
+                 <!-- <div *ngIf="noCOurse">
+                  <p> CCC results for {{value1}} </p> 
+                 </div> 
+                 -->
             </span>
     
            
@@ -33,11 +37,11 @@
     
     
     <div  class="course-div" >
-    <div *ngFor="let course of courses"  (click)="onSelectCourse(course)">
-    <div *ngIf="value1=== '' || course.name.toLowerCase().includes(value1)">
-    
-    
-     <p-card  styleClass="p-card-shadow" class="course-card">
+    <div *ngFor="let course of courses; let i = index"   (click)="onSelectCourse(course)"  >
+    <div  *ngIf="value1=== '' || course.name.toLowerCase().includes(value1)" >
+  
+    <div courseScript= course.name >  </div>
+     <p-card styleClass="p-card-shadow" class="course-card">
         <hr style="margin-bottom: 0.75rem ; margin-top: 0%;">
         <ng-template pTemplate="header">
             <img alt="Card" src="https://primefaces.org/cdn/primeng/images/usercard.png">
@@ -52,17 +56,31 @@
         [style]="{ 'background-color': '#0277BD', color: '#ffffff' , float: 'left', top_margin:'0.5rem' }"
       ></p-avatar>
       <button> <p style="margin: 1rem"> {{course.name}}</p></button>
-      <p style="justify-content: center;"> {{ (course.description.length>6)? (course.description | slice:0:150)+'...':(course.description) }} </p>
+      <p style="justify-content: center;"> {{ (course.description.length>150)? (course.description | slice:0:150)+'...':(course.description) }} </p>
+      <p style="justify-content: center;" *ngIf="course.description.length==0"> {{ 'No discription given...'}} </p>
+      <p style="justify-content: center;" *ngIf="course.description.length==0"> <br/></p>
+      <p style="justify-content: center;" *ngIf="course.description.length==0"> <br/></p>
+     
+      <p style="justify-content: center;" *ngIf="course.description.length>6 && course.description.length<150">  <br/> </p>
+      <p style="justify-content: center;" *ngIf="course.description.length>6 && course.description.length<150"  > <br/> </p>
+      <p style="justify-content: center;" *ngIf="course.description.length>6 && course.description.length<150"  > <br/> </p>
         
     </ng-template>
 
     
     </p-card> 
     </div>
+    <!-- <div  *ngIf="value1=== '' || !course.name.toLowerCase().includes(value1)" >
+      <p> Showing results for {{value1}} </p> 
+    </div> -->
+    </div>
+    
     </div>
     </div>
-    </div>
+    
   </div>
+
+
     <!-- <div class="row">
         <div class="column" style="background-color:#aaa;">
           <h2>Column 1</h2>

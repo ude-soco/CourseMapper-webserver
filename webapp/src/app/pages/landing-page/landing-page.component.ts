@@ -16,7 +16,10 @@ import * as CourseAction from 'src/app/pages/courses/state/course.actions'
 export class LandingPageComponent {
   ids: Array<number>= [1,2,3]; ;
   courses: Array<Course> ;
+  i:number
   value1=""
+  course1: any
+  noCOurse:boolean =false
   updatedCourses: any;
   currentUser: {} | undefined;
   isloggedin: boolean = false;
@@ -47,22 +50,22 @@ export class LandingPageComponent {
          (courses) => {this.courses = courses;
         
 
-       
       console.log("all courses from landing page")
       console.log(this.courses)
-         }
+         
+        }
     });
        
   }
-  Search(){
+//   Search(){
     
- this.updatedCourses = this.courses.find(obj => obj.name === this.value1);
-  //updatedCourses=coursesList
-    //this.hideImg=true
-    console.log(this.updatedCourses);
+//  this.updatedCourses = this.courses.find(obj => obj.name === this.value1);
+//   //updatedCourses=coursesList
+//     //this.hideImg=true
+//     console.log(this.updatedCourses);
     
     
-  }
+//   }
   onSelectCourse(selcetedCourse:Course)
   {
     this.store.dispatch(CourseAction.setCurrentCourse({selcetedCourse}));
@@ -70,5 +73,9 @@ export class LandingPageComponent {
     this.router.navigate(['course-description', selcetedCourse._id]);
     console.log("course landing page")
     console.log(selcetedCourse)
+   
   }
+  change(event){
+    console.log(event, 'course no results') // input value is logged
+ }
 }
