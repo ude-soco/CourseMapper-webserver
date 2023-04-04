@@ -18,9 +18,9 @@ secretGenerator:
 
 images:
 - name: socialcomputing/coursemapper-webserver-webapp
-  newTag: 0.0.7
+  newTag: 0.0.8
 - name: socialcomputing/coursemapper-webserver-webserver
-  newTag: 0.0.7
+  newTag: 0.0.8
 
 resources:
 - ../base
