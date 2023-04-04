@@ -66,7 +66,7 @@ export class LandingPageComponent {
   onSelectCourse(selcetedCourse:Course)
   {
     this.store.dispatch(CourseAction.setCurrentCourse({selcetedCourse}));
-    this.store.dispatch(CourseAction.setCurrentCourseID({selcetedCourseID:selcetedCourse._id }));
+    this.store.dispatch(CourseAction.setCourseId({ courseId:  selcetedCourse._id}));  
     this.router.navigate(['course-description', selcetedCourse._id]);
     console.log("course landing page")
     console.log(selcetedCourse)

@@ -17,7 +17,6 @@ import {
 import { AnnotationService } from 'src/app/services/annotation.service';
 import { State } from 'src/app/state/app.state';
 import {
-  getCurrentCourseId,
   getCurrentMaterialId,
 } from '../../../materils/state/materials.reducer';
 import * as AnnotationActions from './annotation.actions';
@@ -27,6 +26,7 @@ import { Annotation } from 'src/app/models/Annotations';
 import { LoggerService } from 'src/app/services/logger.service';
 import { getCurrentTime } from '../../video-annotation/state/video.reducer';
 import { getCurrentPdfPage, getPdfTotalNumberOfPages } from './annotation.reducer';
+import { getCurrentCourseId } from 'src/app/pages/courses/state/course.reducer';
 
 @Injectable()
 export class AnnotationEffects {

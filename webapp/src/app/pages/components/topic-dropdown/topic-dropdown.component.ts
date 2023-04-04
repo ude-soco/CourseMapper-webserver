@@ -19,6 +19,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import * as MaterialActions from 'src/app/pages/components/materils/state/materials.actions';
 import { State } from '../materils/state/materials.reducer';
+import * as  CourseActions from 'src/app/pages/courses/state/course.actions'
 
 @Component({
   selector: 'app-topic-dropdown',
@@ -181,7 +182,7 @@ export class TopicDropdownComponent implements OnInit {
       channel._id,
     ]);
     this.store.dispatch(
-      MaterialActions.toggleChannelSelected({ channelSelected: true })
+      CourseActions.toggleChannelSelected({ channelSelected: true })
     );
     // make selected channel's background white
     this.selectedChannelId = channel._id;

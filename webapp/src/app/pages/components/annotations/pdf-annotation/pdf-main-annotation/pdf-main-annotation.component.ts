@@ -28,7 +28,6 @@ import {
 } from '../state/annotation.reducer';
 import { Store } from '@ngrx/store';
 import {
-  getCurrentCourseId,
   getCurrentMaterialId,
 } from '../../../materils/state/materials.reducer';
 import { PdfviewService } from 'src/app/services/pdfview.service';
@@ -42,6 +41,7 @@ import { SocketIoModule, SocketIoConfig, Socket } from 'ngx-socket-io';
 import { PdfAnnotationSummaryComponent } from '../pdf-annotation-summary/pdf-annotation-summary.component';
 import { Reply } from 'src/app/models/Reply';
 import { getLoggedInUser } from 'src/app/state/app.reducer';
+import { getCurrentCourseId } from 'src/app/pages/courses/state/course.reducer';
 
 @Component({
   selector: 'app-pdf-main-annotation',

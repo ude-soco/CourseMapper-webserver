@@ -8,6 +8,7 @@ import * as MaterialActions from 'src/app/pages/components/materils/state/materi
 import { CourseService } from 'src/app/services/course.service';
 import { Course } from 'src/app/models/Course';
 import * as CourseAction from 'src/app/pages/courses/state/course.actions'
+import * as  CourseActions from 'src/app/pages/courses/state/course.actions'
 
 @Component({
   selector: 'app-home',
@@ -35,7 +36,7 @@ export class HomeComponent implements OnInit {
       AppActions.toggleCourseSelected({ courseSelected: false })
     );
     this.store.dispatch(
-      MaterialActions.toggleChannelSelected({ channelSelected: false })
+      CourseActions.toggleChannelSelected({ channelSelected: false })
     );
 
     if (this.isloggedin == false) {
@@ -52,7 +53,7 @@ export class HomeComponent implements OnInit {
   onSelectCourse(selcetedCourse:Course)
   {
     this.store.dispatch(CourseAction.setCurrentCourse({selcetedCourse}));
-    this.store.dispatch(CourseAction.setCurrentCourseID({selcetedCourseID:selcetedCourse._id }));
+    this.store.dispatch(CourseActions.setCourseId({ courseId: selcetedCourse._id}));
     this.router.navigate(['course-description', selcetedCourse._id]);
     console.log("course Home page")
     console.log(selcetedCourse)

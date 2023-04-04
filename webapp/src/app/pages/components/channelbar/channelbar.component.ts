@@ -15,6 +15,7 @@ import { Store } from '@ngrx/store';
 import * as AppActions from 'src/app/state/app.actions'
 import { ModeratorPrivilegesService } from 'src/app/services/moderator-privileges.service';
 import * as  MaterialActions from 'src/app/pages/components/materils/state/materials.actions'
+import * as  CourseActions from 'src/app/pages/courses/state/course.actions'
 
 @Component({
   selector: 'app-channelbar',
@@ -40,7 +41,7 @@ export class ChannelbarComponent implements OnInit {
           this.selectedCourse = courses.find((course) => course._id == params['courseID']);
           this.courseService.selectCourse(this.selectedCourse);
           this.store.dispatch(AppActions.toggleCourseSelected({courseSelected: true}));
-          this.store.dispatch(MaterialActions.toggleChannelSelected({ channelSelected: false }));
+          this.store.dispatch(CourseActions.toggleChannelSelected({ channelSelected: false }));
         });
       }
     })
