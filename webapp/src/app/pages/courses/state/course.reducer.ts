@@ -10,14 +10,16 @@ export interface CourseState {
     
     courseId: string,
     courseName: string,
-    selectedCourse:Course
+    selectedCourse:Course,
+    channelSelected:boolean,
  
   }
   const initialState: CourseState = {
 
   courseId: null,
   courseName:null,
-  selectedCourse:null
+  selectedCourse:null,
+  channelSelected: false,
   }
   const getCourseFeatureState = createFeatureSelector<CourseState>('course');
 
@@ -26,9 +28,14 @@ export interface CourseState {
     state => state.selectedCourse
   );
 
-  export const getCurrentCourseID = createSelector(
+  export const getCurrentCourseId = createSelector(
     getCourseFeatureState,
-    state => state.selectedCourse._id
+    state => state.courseId
+  );
+
+  export const getChannelSelected = createSelector(
+    getCourseFeatureState,
+    state => state.channelSelected
   );
 
   export const courseReducer = createReducer<CourseState>(
@@ -43,13 +50,17 @@ export interface CourseState {
       };
     }),
 
-    on(CourseAction.setCurrentCourseID, (state, action): CourseState => {
+    on(CourseAction.setCourseId, (state, action): CourseState => {
+      return {
+        ...state,
+        courseId: action.courseId
+      };
+    }),
+
+      on(CourseAction.toggleChannelSelected, (state, action): CourseState => {
         return {
-          
           ...state,
-          courseId: action.selcetedCourseID,
-          
-  
+          channelSelected: action.channelSelected
         };
       }),
   );

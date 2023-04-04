@@ -21,7 +21,6 @@ import { MaterilasService } from 'src/app/services/materials.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import {
-  getChannelSelected,
   State,
 } from 'src/app/pages/components/materils/state/materials.reducer';
 import * as MaterialActions from 'src/app/pages/components/materils/state/materials.actions';
@@ -30,6 +29,7 @@ import { Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { ModeratorPrivilegesService } from 'src/app/services/moderator-privileges.service';
+import * as  CourseActions from 'src/app/pages/courses/state/course.actions'
 @Component({
   selector: 'app-material',
   templateUrl: './material.component.html',
@@ -98,7 +98,7 @@ export class MaterialComponent implements OnInit, OnDestroy {
               (material) => material._id == materialId
             ) + 1;
           this.store.dispatch(
-            MaterialActions.toggleChannelSelected({ channelSelected: true })
+            CourseActions.toggleChannelSelected({ channelSelected: true })
           );
           this.updateSelectedMaterial();
         });

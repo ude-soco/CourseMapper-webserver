@@ -17,9 +17,9 @@ import {
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
 import { Observable } from 'rxjs';
 import {
-  getCurrentCourseId,
   getCurrentMaterialId,
 } from '../../../materils/state/materials.reducer';
+import { getCurrentCourseId } from 'src/app/pages/courses/state/course.reducer';
 
 @Component({
   selector: 'app-pdf-create-annotation',

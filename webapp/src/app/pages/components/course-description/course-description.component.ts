@@ -6,7 +6,7 @@ import { Course } from 'src/app/models/Course';
 import { CourseService } from 'src/app/services/course.service';
 import { StorageService } from 'src/app/services/storage.service';
 import { UserServiceService } from 'src/app/services/user-service.service';
-import { getCurrentCourse, getCurrentCourseID, State } from '../../courses/state/course.reducer';
+import { getCurrentCourse, getCurrentCourseId, State } from '../../courses/state/course.reducer';
 
 @Component({
   selector: 'app-course-description',
@@ -83,7 +83,7 @@ if(varcc){
 console.log(this.Enrolled)
 })
   
-    this.store.select(getCurrentCourseID).subscribe((id) => console.log(id));
+    this.store.select(getCurrentCourseId).subscribe((id) => console.log(id));
   }
   ngOnInit(): void {
     this.isloggedin = this.storageService.isLoggedIn();

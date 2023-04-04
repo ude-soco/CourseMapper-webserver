@@ -138,9 +138,9 @@ export class PdfReplyItemComponent implements OnInit, OnChanges, OnDestroy, Afte
         this.onDeleteReply(),
         this.messageService.add({key: 'annotation-toast', severity:'info', summary: 'Success', detail: 'Reply successfully deleted'})
       ),
-      reject: () => (
-        this.messageService.add({key: 'annotation-toast', severity:'info', summary: 'Info', detail: 'Reply deletion canceled'})
-      ),
+      reject: () => {
+        return;
+      }
     });
     
     setTimeout(() => {

@@ -9,6 +9,7 @@ import { StorageService } from './storage.service';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/pages/components/materils/state/materials.reducer';
 import * as MaterialActions from 'src/app/pages/components/materils/state/materials.actions'
+import * as  CourseActions from 'src/app/pages/courses/state/course.actions'
 
 
 @Injectable({
@@ -46,7 +47,7 @@ export class CourseService {
     }
     this.selectedCourse = course;
     let courseId = course._id;
-    this.store.dispatch(MaterialActions.setCourseId({ courseId }));    
+    this.store.dispatch(CourseActions.setCourseId({ courseId }));    
     //2
     this.onSelectCourse.emit(course);
   }
