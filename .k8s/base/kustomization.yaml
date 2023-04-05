@@ -25,6 +25,11 @@ secretGenerator:
 images:
 - name: mongo
   newTag: "6.0"
+- name: socialcomputing/coursemapper-webserver-webapp
+  newTag: latest
+- name: socialcomputing/coursemapper-webserver-webserver
+  newTag: latest
+
 resources:
 - webapp/deployment.yaml
 - webapp/service.yaml
