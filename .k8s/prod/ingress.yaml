@@ -5,6 +5,7 @@ metadata:
   annotations:
     description: CourseMapper-webserver
     kubernetes.io/tls-acme: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
     ingress.kubernetes.io/redirect-entry-point: https
 spec:
   rules:
