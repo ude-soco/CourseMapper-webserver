@@ -37,7 +37,7 @@ services:
         condition: service_healthy
 
   mongo:
-    image: mongo
+    image: mongo:6.0
     command: mongod --wiredTigerCacheSizeGB 0.25 --quiet --logpath /dev/null
     volumes:
       - mongo:/data/db

@@ -22,6 +22,9 @@ secretGenerator:
   - JWT_SECRET=secret
   - PASS=adminpassword
 
+images:
+- name: mongo
+  newTag: "6.0"
 resources:
 - webapp/deployment.yaml
 - webapp/service.yaml
