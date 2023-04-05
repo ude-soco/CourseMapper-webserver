@@ -56,6 +56,7 @@ spec:
           limits:
             memory: 256Mi
             cpu: 1
+            ephemeral-storage: 1Gi
       volumes:
       - name: webserver-uploads
         persistentVolumeClaim:
