@@ -14,21 +14,12 @@ spec:
       labels:
         component: webserver
     spec:
-      initContainers:
-      - name: wait-for-mongodb
-        image: mongo
-        command: ['sh', '-c',
-          'mongosh --nodb --eval "disableTelemetry()"; until echo "db.runCommand({ping: 1}).ok" | mongosh $(MONGODB_SERVICE):27017/test --quiet;
-          do echo "Waiting for MongoDB ..."; sleep 2; done;']
-        env:
-        - name: MONGODB_SERVICE
-          value: $(MONGODB_SERVICE)
       containers:
       - name: webserver
         image: socialcomputing/coursemapper-webserver-webserver
         ports:
         - containerPort: 8080
-        readinessProbe:
+        startupProbe:
           httpGet:
             path: /api/healthz
             port: 8080
@@ -36,8 +27,6 @@ spec:
           httpGet:
             path: /api/healthz
             port: 8080
-          periodSeconds: 60
-          timeoutSeconds: 5
         env:
         - name: PORT
           value: "8080"
