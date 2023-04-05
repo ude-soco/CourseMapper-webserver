@@ -22,7 +22,7 @@
     "@angular/youtube-player": "^15.2.5",
     "@hercilio/ngx-youtube-player": "^14.2.6",
     "@ngrx/effects": "^15.4.0",
-    "@ngrx/store": "^14.3.2",
+    "@ngrx/store": "^15.4.0",
     "@ngrx/store-devtools": "^15.4.0",
     "@popperjs/core": "^2.11.7",
     "angular-html-parser": "^4.0.1",
