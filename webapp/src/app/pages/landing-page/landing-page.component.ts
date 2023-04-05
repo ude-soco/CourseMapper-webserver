@@ -22,21 +22,24 @@ export class LandingPageComponent {
   noCOurse:boolean =false
   updatedCourses: any;
   currentUser: {} | undefined;
-  isloggedin: boolean = false;
+  loggedInUser: boolean = false;
   hideImg:boolean=false;
   username?: string;
   CourseDes:string;
-  constructor( private storageService: StorageService,private courseService: CourseService, private router: Router, private store: Store<State>,){}
+  constructor( private storageService: StorageService,private courseService: CourseService, private router: Router, private store: Store<State>,)
+  {
+    this.loggedInUser = this.storageService.isLoggedIn();
+
+    // const user = this.storageService.getUser();
+
+    // this.username = user.username;
+     console.log("this.username landing page")
+    console.log(this.loggedInUser)
+  }
   
   ngOnInit(){
     // this.currentUser = this.storageService.getUser();
-    this.isloggedin = this.storageService.isLoggedIn();
-
-      // const user = this.storageService.getUser();
-
-      // this.username = user.username;
-       console.log("this.username landing page")
-      console.log(this.isloggedin)
+ 
       
     
     this.getAllCourses();
@@ -75,7 +78,4 @@ export class LandingPageComponent {
     console.log(selcetedCourse)
    
   }
-  change(event){
-    console.log(event, 'course no results') // input value is logged
- }
 }

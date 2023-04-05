@@ -1,6 +1,6 @@
 
 <div class="flex flex-row">
-  <div class="flex-col" *ngIf="isloggedin">
+  <div class="flex-col" *ngIf="loggedInUser">
     <app-sidebar></app-sidebar>
   </div>
 
@@ -57,14 +57,15 @@
       ></p-avatar>
 
       <button> <p style="margin: 1rem"> {{course.name}}</p></button>
-      <p style="justify-content: center;"> {{ (course.description.length>150)? (course.description | slice:0:150)+'...':(course.description) }} </p>
+      <p style="justify-content: center;" > {{ 'Please click here for course description'}} </p>
+      <!-- <p style="justify-content: center;"> {{ (course.description.length>150)? (course.description | slice:0:150)+'...':(course.description) }} </p>
       <p style="justify-content: center;" *ngIf="course.description.length==0"> {{ 'No discription given...'}} </p>
       <p style="justify-content: center;" *ngIf="course.description.length==0"> <br/></p>
       <p style="justify-content: center;" *ngIf="course.description.length==0"> <br/></p>
      
       <p style="justify-content: center;" *ngIf="course.description.length>6 && course.description.length<150">  <br/> </p>
       <p style="justify-content: center;" *ngIf="course.description.length>6 && course.description.length<150"  > <br/> </p>
-      <p style="justify-content: center;" *ngIf="course.description.length>6 && course.description.length<150"  > <br/> </p>
+      <p style="justify-content: center;" *ngIf="course.description.length>6 && course.description.length<150"  > <br/> </p> -->
 
         
     </ng-template>

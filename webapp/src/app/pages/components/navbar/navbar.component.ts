@@ -23,6 +23,7 @@ export class NavbarComponent implements OnInit {
   showModeratorBoard = false;
   username?: string;
   loggedInUser: User;
+  
 
   constructor(
     private primengConfig: PrimeNGConfig,
@@ -31,8 +32,9 @@ export class NavbarComponent implements OnInit {
     private router: Router,
     private store: Store<State>
   ) {
-    this.isLoggedIn = storageService.loggedIn;
-    this.store.select(getLoggedInUser).subscribe((user) => this.loggedInUser = user);
+   // this.isLoggedIn = storageService.isLoggedIn();
+    //this.store.select(getLoggedInUser).subscribe((user) => this.loggedInUser = user);
+
   }
 
   ngOnInit(): void {
@@ -43,6 +45,13 @@ export class NavbarComponent implements OnInit {
     //   const user = this.storageService.getUser();
     //   this.username = user.username;
     // }
+    this.loggedInUser = this.storageService.getUser();
+    this.isLoggedIn = this.storageService.isLoggedIn();
+
+    // const user = this.storageService.getUser();
+
+    // this.username = user.username;
+     
   }
 
   handleLogin() {

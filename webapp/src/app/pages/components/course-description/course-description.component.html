@@ -48,11 +48,12 @@
       <div style="    margin-left: 4rem;">
 
       
-        <p class="p" style=" font-weight: bold;" > Course created by: {{ this.firstName }} {{this.lastName}}</p>
+        <p class="p" style=" font-weight: bold;" > Course created by: <span style=" font-weight: unset;">{{ this.firstName }} {{this.lastName}}</span> </p>
 
         <p class="p" style=" font-weight: bold;">  Created on: {{createdAt}}</p>
         
         <p class="p" style=" font-weight: bold;" > Course Description: </p>
+        <p style="justify-content: center;" *ngIf="course.description.length==0"> {{ 'No discription given...'}} </p>
             <div  > {{ course.description }}</div>
         </div>
    </div>
