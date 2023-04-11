@@ -20,7 +20,7 @@
       <hr class="solid" />
     </div>
     <div class="courseDes">
-      <div style="  width: '50%'; 
+      <div style="  width: '40%'; 
       float:'left ';
       text-align: end;
       ">
@@ -37,7 +37,7 @@
       ></p-avatar>
     </div>
    
-      <div style=" width: 50%; float:right; text-align: start;">
+      <div style=" width: 60%; float:right; text-align: start;">
         <p class="p" style="font-weight: bold">
            Created by: {{ this.firstName }} {{ this.lastName }}
         </p>
@@ -52,11 +52,12 @@
   <div>
     <p class="p" style="font-weight: bold; margin-top: 6rem;
     text-align: center;
-    width: 85%;">Course Description:</p>
+    width:84%;">Course Description:</p>
     <p style="
     text-align: center;
-    width: 85%;
-    margin-left: 0.47rem;" *ngIf="selectedCourse.description.length==0"> {{ 'No discription given...'}} </p>
+    width: 84%;
+    margin-left: 0.25%;
+    " *ngIf="selectedCourse.description.length==0"> {{ 'No discription given...'}} </p>
     {{ selectedCourse.description }}</div>
   </div>
   <div class="grow">
