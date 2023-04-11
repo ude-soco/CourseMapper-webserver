@@ -20,6 +20,10 @@
       <hr class="solid" />
     </div>
     <div class="courseDes">
+      <div style="  width: '50%'; 
+      float:'left ';
+      text-align: end;
+      ">
       <p-avatar
         label="{{ getName(this.firstName, this.lastName) }}"
         shape="circle"
@@ -27,21 +31,33 @@
         [style]="{
           'background-color': '#0277BD',
           color: '#ffffff',
-          float: 'left',
+        
           top_margin: '0.5rem'
         }"
       ></p-avatar>
-      <div style="margin-left: 4rem">
+    </div>
+   
+      <div style=" width: 50%; float:right; text-align: start;">
         <p class="p" style="font-weight: bold">
-          Course created by: {{ this.firstName }} {{ this.lastName }}
+           Created by: {{ this.firstName }} {{ this.lastName }}
         </p>
 
         <p class="p" style="font-weight: bold">Created on: {{ createdAt }}</p>
 
-        <p class="p" style="font-weight: bold">Course Description:</p>
-        <div>{{ selectedCourse.description }}</div>
+    
+        
       </div>
-    </div>
+ 
+  </div>
+  <div>
+    <p class="p" style="font-weight: bold; margin-top: 6rem;
+    text-align: center;
+    width: 85%;">Course Description:</p>
+    <p style="
+    text-align: center;
+    width: 85%;
+    margin-left: 0.47rem;" *ngIf="selectedCourse.description.length==0"> {{ 'No discription given...'}} </p>
+    {{ selectedCourse.description }}</div>
   </div>
   <div class="grow">
     <router-outlet></router-outlet>
