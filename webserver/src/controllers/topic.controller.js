@@ -4,6 +4,10 @@ const Channel = db.channel;
 const Course = db.course;
 const Topic = db.topic;
 const User = db.user;
+const Annotation = db.annotation;
+const Reply = db.reply;
+const Tag = db.tag;
+const Material = db.material;
 
 /**
  * @function getTopic
@@ -180,6 +184,30 @@ export const deleteTopic = async (req, res, next) => {
 
   try {
     await Channel.deleteMany({ topicId: { $in: topicId } });
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  try {
+    await Material.deleteMany({ topicId: topicId });
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  try {
+    await Annotation.deleteMany({ topicId: topicId});
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  try {
+    await Reply.deleteMany({ topicId: topicId});
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  try {
+    await Tag.deleteMany({ topicId: topicId });
   } catch (err) {
     return res.status(500).send({ error: err });
   }
