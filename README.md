@@ -30,6 +30,12 @@ The services making up the coursemapper-webserver project use the following imag
 * MongoDB: [mongo](https://hub.docker.com/_/mongo)
 
 
+## Public deployment
+
+* Production: [coursemapper-webserver.sc.lb.inko.cloud](https://coursemapper-webserver.sc.lb.inko.cloud/) (v0.0.8)
+* Preview: [cmw-dev.sc.lb.inko.cloud](https://cmw-dev.sc.lb.inko.cloud/) (latest)
+
+
 ## 🚀 Get Started
 
 ### Manual Installation Guide 🔨
