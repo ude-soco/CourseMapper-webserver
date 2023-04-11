@@ -93,70 +93,38 @@ server.listen(port);
 server.on("error", onError);
 server.on("listening", onListening);
 
-// Initialize database
 function initializeDB() {
-  Role.estimatedDocumentCount((err, count) => {
-    if (!err && count === 0) {
-      new Role({
-        name: "user",
-      }).save((err) => {
-        if (err) {
-          console.log("error", err);
-        }
-        console.log("Added 'user' to roles collection");
-      });
-      new Role({
-        name: "moderator",
-      }).save((err) => {
-        if (err) {
-          console.log("error", err);
-        }
-        console.log("Added 'moderator' to roles collection");
-      });
-      new Role({
-        name: "admin",
-      }).save((err) => {
-        if (err) {
-          console.log("error", err);
-        }
-        console.log("Added 'admin' to roles collection");
-      });
-    }
-  });
-
-  User.estimatedDocumentCount((err, count) => {
-    if (!err && count === 0) {
-      let password = hashSync(process.env.PASS, 10);
-      new User({
-        firstname: "Admin",
-        lastname: "User",
-        username: "admin",
-        email: "admin@soco.com",
-        password: password,
-      }).save((err, user) => {
-        if (err) {
-          console.log("error", err);
-          return;
-        }
-        Role.findOne({ name: "admin" }, (err, role) => {
-          if (err) {
-            console.log("error", err);
+  Role.countDocuments({}).
+    then(count => {
+      if (count > 0) {
+        console.log(count + " Roles present, skipping initialization")
+      } else {
+        ["user", "moderator", "admin"].forEach(userName => {
+          console.log("Adding Role: { name: " + userName + " }");
+          new Role({ name: userName }).save();
+        })
+      };
+    }).
+    then(() => {
+      User.countDocuments({}).
+        then(count => {
+          if (count > 0) {
+            console.log(count + " Users present, skipping initialization");
+          } else {
+            let password = hashSync(process.env.PASS, 10);
+            console.log("Adding User: { name: admin, password: " + process.env.PASS + " }");
+            new User({
+              firstname: "Admin", lastname: "User", username: "admin",
+              email: "admin@soco.com", password: password,
+            }).save()
           }
-          user.role = role._id;
-          user.save((err) => {
-            if (err) {
-              console.log("error", err);
-            }
-            console.log(
-              "Admin created successfully! Username: admin" +
-                ", Password: " +
-                process.env.PASS
-            );
-          });
-        });
-      });
-    }
-  });
+        }).
+        then(() => {
+          console.log("Assigning admin Role to admin User");
+          Role.findOne({ name: "admin" }).
+            then(role => User.findOneAndUpdate({ name: "admin" }, { role: role._id} ))
+        })
+    })
 }
 
 // Normalize a port into a number, string, or false
