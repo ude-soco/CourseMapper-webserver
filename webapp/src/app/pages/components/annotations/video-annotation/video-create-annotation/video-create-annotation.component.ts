@@ -16,7 +16,7 @@ import { getCurrentCourseId } from 'src/app/pages/courses/state/course.reducer';
   styleUrls: ['./video-create-annotation.component.css']
 })
 export class VideoCreateAnnotationComponent implements OnInit {
-  annotationColor: string = '#0000004D';
+  annotationColor: string = '#70b85e';
   rangeValues: number[];
   selectedAnnotationType: AnnotationType;
   selectedAnnotationLocation: string;
@@ -78,7 +78,7 @@ export class VideoCreateAnnotationComponent implements OnInit {
         this.sendButtonColor ='text-pink-700';
         break;
       case null:
-        this.annotationColor = '#0000004D';
+        this.annotationColor = '#70b85e';
         this.sendButtonColor ='text-green-600';
         break;
     }
@@ -325,9 +325,6 @@ export class VideoCreateAnnotationComponent implements OnInit {
     this.store.dispatch(VideoActions.setIsPinpointSelectionActive({isPinpointSelectionActive: false}));
     this.store.dispatch(VideoActions.SetDrawingData({drawingData: null}));
     this.store.dispatch(VideoActions.SetPinPointPosition({pinpointPosition: [null, null]}));
-    this.annotationColor = '#0000004D';
-    this.selectedAnnotationLocation = null;
-    this.selectedAnnotationType = null;
     this.content = null;
     this.sendButtonDisabled = true;
   }
