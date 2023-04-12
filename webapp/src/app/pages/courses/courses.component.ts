@@ -1,4 +1,5 @@
 import { Component, Input, OnInit, Renderer2 } from '@angular/core';
+import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { ConfirmationService, MessageService } from 'primeng/api';
 
@@ -32,7 +33,9 @@ export class CoursesComponent implements OnInit {
     private store: Store<State>,
     private userService:UserServiceService, 
     private confirmationService: ConfirmationService,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private router: Router,
+    private messageService: MessageService
   ) {
     this.courseSelected$ = store.select(getCourseSelected);
     this.channelSelected$ = this.store.select(getChannelSelected);
@@ -91,6 +94,7 @@ NowClicked()
             header: 'Un-Enroll Confirmation',
             icon: 'pi pi-info-circle',
             accept: (e) => this.unEnrolleCourse(this.selectedCourse),
+           
             reject: () => {
               // this.informUser('info', 'Cancelled', 'Deletion cancelled')
             },
@@ -101,5 +105,40 @@ NowClicked()
 unEnrolleCourse(course : Course){
        console.log('un enole triggred')
 console.log(course)
+this.courseService.WithdrawFromCourse(course).subscribe(
+  (res) => {
+   if ('success' in res)
+   {
+    this.showInfo('You have been  withdrewed successfully ');
+    console.log("response of enrollment", res)
+   this.router.navigate(['./home']);
+   }
+   (er) => {
+    console.log(er);
+    alert(er.error.error);
+    this.showError('Please make sure to add a valid data!');
+  }
+    
+  })
+      }
+
+      showInfo(msg) {
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Success',
+          detail: msg,
+        });
+      }
+      /**
+       * @function showError
+       * shows the user if his action failed
+       *
+       */
+      showError(msg) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: msg,
+        });
       }
 }
