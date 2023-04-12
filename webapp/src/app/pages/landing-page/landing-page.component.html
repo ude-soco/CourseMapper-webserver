@@ -56,14 +56,14 @@
       
       <button> <p style="margin: 1rem; font-weight: bold;"> {{course.name}}</p></button>
       
-      <p class="p" style=" font-weight: bold;" > 
+      <p class="p" > 
         <svg
         xmlns="http://www.w3.org/2000/svg"
         width="22"
         height="22"
         
         viewBox="0 0 22 22"
-        style="fill: orange; transform: msFilter ; float: left; margin-right:2px;"
+        style="fill: #EA580C; transform: msFilter ; float: left; margin-right:2px;"
         
       >
         <path d="M2 7v1l11 4 9-4V7L11 4z"></path>
@@ -71,9 +71,9 @@
           d="M4 11v4.267c0 1.621 4.001 3.893 9 3.734 4-.126 6.586-1.972 7-3.467.024-.089.037-.178.037-.268V11L13 14l-5-1.667v3.213l-1-.364V12l-3-1z"
         ></path>
       </svg>
-        Created By: <span style=" font-weight: unset;">{{ this.firstNames[i] }} {{this.lastNames[i]}}</span> </p>
+        Created By: {{ this.firstNames[i] }} {{this.lastNames[i]}} </p>
 
-      <p class="p" style=" font-weight: bold; margin-left: 4px;"> <i class="pi pi-calendar"  style="font-size: 1rem ; color: orange"></i> Created On: {{this.createdAtDates[i]}}</p>
+      <p class="p" style=" margin-left: 4px;"> <i class="pi pi-calendar"  style="font-size: 1rem ; color: #EA580C"></i> Created On: {{this.createdAtDates[i]}}</p>
 
         
     </ng-template>

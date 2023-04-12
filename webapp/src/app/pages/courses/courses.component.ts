@@ -1,5 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Renderer2 } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { ConfirmationService, MessageService } from 'primeng/api';
+
 import { Observable } from 'rxjs';
 import { Course } from 'src/app/models/Course';
 import { CourseImp } from 'src/app/models/CourseImp';
@@ -13,6 +15,7 @@ import { getChannelSelected, getCurrentCourse } from './state/course.reducer';
   selector: 'app-courses',
   templateUrl: './courses.component.html',
   styleUrls: ['./courses.component.css'],
+  providers: [MessageService, ConfirmationService],
 })
 export class CoursesComponent implements OnInit {
   selectedCourse: Course = new CourseImp('', '');
@@ -28,6 +31,8 @@ export class CoursesComponent implements OnInit {
     private topicChannelService: TopicChannelService,
     private store: Store<State>,
     private userService:UserServiceService, 
+    private confirmationService: ConfirmationService,
+    private renderer: Renderer2
   ) {
     this.courseSelected$ = store.select(getCourseSelected);
     this.channelSelected$ = this.store.select(getChannelSelected);
@@ -72,9 +77,29 @@ export class CoursesComponent implements OnInit {
     let Name=firstName+" "+lastName
         return Name.split(" ").slice(0, 2).map((part) => part[0]).join("").toUpperCase();
       }
-      NowClicked()
-      {
+NowClicked()
+    {
         this.ChannelToggel=true
      
+    }
+ deEnrole()
+      {
+       
+          this.confirmationService.confirm({
+            message:
+              'Are you sure you want to Un Enroll from course"' + this.selectedCourse.name + '"?',
+            header: 'Un-Enroll Confirmation',
+            icon: 'pi pi-info-circle',
+            accept: (e) => this.unEnrolleCourse(this.selectedCourse),
+            reject: () => {
+              // this.informUser('info', 'Cancelled', 'Deletion cancelled')
+            },
+          });
+
+        
+      }
+unEnrolleCourse(course : Course){
+       console.log('un enole triggred')
+console.log(course)
       }
 }

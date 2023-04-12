@@ -1,3 +1,5 @@
+<p-toast position="bottom-left"></p-toast>
+<p-confirmDialog></p-confirmDialog>
 <div class="flex flex-row">
   <div class="flex-col">
     <app-sidebar></app-sidebar>
@@ -11,12 +13,20 @@
           {{ selectedCourse.name }}
         </p>
         <br />
-        <p class="font-roboto leading-normal h2">
+        <button  
+        pButton 
+        [ngStyle]="{ 'background-color': '#ffffff', color: '#EA580C' ,  'margin-right': '2rem' , 'margin-bottom':'1rem', 'border': '2px solid #EA580C'}"
+        type="button"
+        label= 'Un-enroll Course'
+        (click)="deEnrole()"
+       
+      ></button>
+        <p class="font-roboto leading-normal">
           This is the welcome page of the course
         </p>
-        <br />
+       
       </div>
-      <div style="width: 10%; float: right"></div>
+    
       <hr class="solid" />
     </div>
     <div class="courseDes">
@@ -49,16 +59,17 @@
       </div>
  
   </div>
-  <div>
-    <p class="p" style="font-weight: bold; margin-top: 6rem;
-    text-align: center;
-    width:84%;">Course Description:</p>
+  <div  style="margin-top: 6rem;
+  text-align: center;
+  width:84%;">
+    <p class="p" style="font-weight: bold;" >Course Description:</p>
     <p style="
-    text-align: center;
-    width: 84%;
-    margin-left: 0.25%;
+    margin-left: 1%;
     " *ngIf="selectedCourse.description.length==0"> {{ 'No discription given...'}} </p>
-    {{ selectedCourse.description }}</div>
+  <p style="
+  margin-left: 2.5%;
+  " > {{ selectedCourse.description }}</p> 
+  </div>
   </div>
   <div class="grow">
     <router-outlet></router-outlet>

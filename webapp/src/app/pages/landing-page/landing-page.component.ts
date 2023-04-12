@@ -121,6 +121,8 @@ export class LandingPageComponent {
 //   }
   onSelectCourse(selcetedCourse:Course)
   {
+    if(this.loggedInUser)
+    {
     let varcc=this.myCourses.find(course=> selcetedCourse._id === course._id  )
   
     
@@ -128,7 +130,9 @@ export class LandingPageComponent {
     if(varcc){
       this.Enrolled= true
       this.router.navigate(['course', selcetedCourse._id]);
-    }else{
+    }
+    else
+    {
       this.Enrolled= false
         this.store.dispatch(CourseAction.setCurrentCourse({selcetedCourse}));
     this.store.dispatch(CourseAction.setCourseId({ courseId:  selcetedCourse._id}));  
@@ -138,6 +142,13 @@ export class LandingPageComponent {
    
     }
     console.log(this.Enrolled)
+    }
+    else{
+      this.store.dispatch(CourseAction.setCurrentCourse({selcetedCourse}));
+    this.store.dispatch(CourseAction.setCourseId({ courseId:  selcetedCourse._id}));  
+    this.router.navigate(['course-description', selcetedCourse._id]);
+    }
+
 
   }
 }
