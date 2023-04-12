@@ -5,6 +5,9 @@ const Course = db.course;
 const Material = db.material;
 const Topic = db.topic;
 const User = db.user;
+const Annotation = db.annotation;
+const Reply = db.reply;
+const Tag = db.tag;
 
 /**
  * @function getChannel
@@ -198,6 +201,24 @@ export const deleteChannel = async (req, res, next) => {
 
   try {
     await Material.deleteMany({ _id: { $in: foundChannel.materials } });
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  try {
+    await Annotation.deleteMany({ channelId: channelId });
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  try {
+    await Reply.deleteMany({ channelId: channelId });
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  try {
+    await Tag.deleteMany({ channelId: channelId });
   } catch (err) {
     return res.status(500).send({ error: err });
   }

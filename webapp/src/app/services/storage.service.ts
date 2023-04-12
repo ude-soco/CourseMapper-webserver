@@ -15,6 +15,7 @@ export class StorageService {
   }
 
   public clean(): void {
+
     window.localStorage.removeItem(USER_KEY);
     this.navBarChange.next(false);
   }

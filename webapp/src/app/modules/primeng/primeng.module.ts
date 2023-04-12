@@ -60,6 +60,6 @@ const PrimeNgComponents = [
 @NgModule({
   imports: [PrimeNgComponents],
   exports: [PrimeNgComponents],
-  providers: [MessageService],
+  providers: [MessageService, ],
 })
 export class PrimengModule {}

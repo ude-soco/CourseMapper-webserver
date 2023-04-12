@@ -179,6 +179,16 @@ export class CourseService {
    ))
 
   }
+  WithdrawFromCourse(course:Course): any
+  {
+    return this.http.post<any>(`${this.API_URL}/withdraw/${course._id}`, {}).pipe(tap(
+      withdrawcourses => {
+       
+        console.log("withdraw courses from service course")
+        console.log(withdrawcourses)
+      }
+     ))
+  }
   sendToOldBackend(course){
     // userId should be taken from the coockies. for the time being it is hard coded
     this.http.post<any>('http://localhost:8090/new/course', 

@@ -21,9 +21,10 @@ hr.solid {
   .courseDes{
     position: relative;
     font-family: Arial;
-    margin-left:1rem ; width: 103rem; border-radius:14px;
+    margin-left:1rem ;  border-radius:14px;
     top: 1rem;
     margin-bottom: 5rem;
-    float: left;
-    width:99%
+   
+    text-align: center;
+    width: 100%;
   }

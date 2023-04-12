@@ -182,7 +182,6 @@ export class PdfCreateAnnotationComponent implements OnInit, AfterViewChecked {
 
   dispatchAnnotation(){
     this.store.dispatch(AnnotationActions.postAnnotation({ annotation: this.annotation }));
-    this.annotationColor = '#0000004D';
     this.sendButtonDisabled = true;
   }
 
@@ -228,7 +227,7 @@ export class PdfCreateAnnotationComponent implements OnInit, AfterViewChecked {
         this.sendButtonColor ='text-pink-700';
         break;
       case null:
-        this.annotationColor = '#0000004D';
+        this.annotationColor = '#70b85e';
         this.sendButtonColor ='text-green-600';
         break;
     }

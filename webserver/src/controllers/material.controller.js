@@ -3,6 +3,9 @@ const db = require("../models");
 const Channel = db.channel;
 const Material = db.material;
 const User = db.user;
+const Annotation = db.annotation;
+const Reply = db.reply;
+const Tag = db.tag;
 
 
 /**
@@ -194,6 +197,24 @@ export const deleteMaterial = async (req, res, next) => {
 
   try {
     await Material.findByIdAndRemove({ _id: materialId });
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  try {
+    await Annotation.deleteMany({ materialId: materialId });
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  try {
+    await Reply.deleteMany({ materialId: materialId });
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  try {
+    await Tag.deleteMany({ materialId: materialId });
   } catch (err) {
     return res.status(500).send({ error: err });
   }
