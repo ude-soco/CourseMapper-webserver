@@ -93,39 +93,54 @@ server.listen(port);
 server.on("error", onError);
 server.on("listening", onListening);
 
-function initializeDB() {
-  Role.countDocuments({}).
-    then(count => {
-      if (count > 0) {
-        console.log(count + " Roles present, skipping initialization")
+const initializeDB = async () => {
+  let countRole;
+  let countUser;
+  try {
+    countRole = await Role.countDocuments({});
+    if (countRole > 0) {
+      console.log(countRole + " Roles present, skipping initialization");
+    } else {
+      ["user", "moderator", "admin"].forEach(async (userName) => {
+        console.log("Adding Role: { name: " + userName + " }");
+        try {
+          await new Role({ name: userName }).save();
+        } catch (err) {
+          console.log(err, "Error in creating role");
+          return;
+        }
+      });
+    }
+
+    try {
+      countUser = await User.countDocuments({});
+      if (countUser > 0) {
+        console.log(countUser + " Users present, skipping initialization");
       } else {
-        ["user", "moderator", "admin"].forEach(userName => {
-          console.log("Adding Role: { name: " + userName + " }");
-          new Role({ name: userName }).save();
-        })
-      };
-    }).
-    then(() => {
-      User.countDocuments({}).
-        then(count => {
-          if (count > 0) {
-            console.log(count + " Users present, skipping initialization");
-          } else {
-            let password = hashSync(process.env.PASS, 10);
-            console.log("Adding User: { name: admin, password: " + process.env.PASS + " }");
-            new User({
-              firstname: "Admin", lastname: "User", username: "admin",
-              email: "admin@soco.com", password: password,
-            }).save()
-          }
-        }).
-        then(() => {
-          console.log("Assigning admin Role to admin User");
-          Role.findOne({ name: "admin" }).
-            then(role => User.findOneAndUpdate({ name: "admin" }, { role: role._id} ))
-        })
-    })
-}
+        let password = hashSync(process.env.PASS, 10);
+        console.log(
+          "Adding User: { name: admin, password: " + process.env.PASS + " }"
+        );
+        try {
+          await new User({
+            firstname: "Admin",
+            lastname: "User",
+            username: "admin",
+            email: "admin@soco.com",
+            password: password,
+          }).save();
+        } catch (err) {
+          console.log(err, "Error in creating user");
+          return;
+        }
+      }
+    } catch (err) {
+      console.log(err, "Error in counting number of users");
+    }
+  } catch (err) {
+    console.log(err, "Error in counting number of roles");
+  }
+};
 
 // Normalize a port into a number, string, or false
 function normalizePort(val) {
