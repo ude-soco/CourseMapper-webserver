@@ -111,7 +111,7 @@ this.courseService.WithdrawFromCourse(course).subscribe(
    {
     this.showInfo('You have been  withdrewed successfully ');
     console.log("response of enrollment", res)
-   this.router.navigate(['./home']);
+    this.router.navigate(['course-description', course._id]);
    }
    (er) => {
     console.log(er);
