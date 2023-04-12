@@ -1,6 +1,6 @@
 <div class="drawing-area">
   <div class="drawing-toolbar" *ngIf="showDrawBoxTools$ | async">
-    <button class="toolbar-button">
+    <button class="toolbar-button" pTooltip="Drawing Shape" tooltipPosition="left">
       <span *ngIf="currentTool == 'rectangle'">
         <app-iconbutton
           icon="bx-rectangle"
@@ -15,33 +15,35 @@
           <app-iconbutton
             icon="bx-rectangle"
             color="text-blue-500"
+            pTooltip="Rectangle" tooltipPosition="top"
           ></app-iconbutton>
         </button>
         <button class="toolbar-button" (click)="onCircleSelect()">
           <app-iconbutton
             icon="bx-circle"
             color="text-blue-500"
+            pTooltip="Circle" tooltipPosition="top"
           ></app-iconbutton>
         </button>
       </div>
     </button>
 
-    <button class="toolbar-button">
+    <button class="toolbar-button" pTooltip="Line Width" tooltipPosition="left">
       <div class="stroke" [style.height]="currentWidth + 'px'"></div>
       <div class="toolbar-popover">
-        <button class="toolbar-button" (click)="onLineHeightSelect(1)">
+        <button class="toolbar-button" (click)="onLineHeightSelect(1)" pTooltip="1px" tooltipPosition="top">
           <div class="stroke" [style.height]="'1px'"></div>
         </button>
-        <button class="toolbar-button" (click)="onLineHeightSelect(2)">
+        <button class="toolbar-button" (click)="onLineHeightSelect(2)" pTooltip="2px" tooltipPosition="top">
           <div class="stroke" [style.height]="'2px'"></div>
         </button>
-        <button class="toolbar-button" (click)="onLineHeightSelect(3)">
+        <button class="toolbar-button" (click)="onLineHeightSelect(3)" pTooltip="3px" tooltipPosition="top">
           <div class="stroke" [style.height]="'3px'"></div>
         </button>
-        <button class="toolbar-button" (click)="onLineHeightSelect(4)">
+        <button class="toolbar-button" (click)="onLineHeightSelect(4)" pTooltip="4px" tooltipPosition="top">
           <div class="stroke" [style.height]="'4px'"></div>
         </button>
-        <button class="toolbar-button" (click)="onLineHeightSelect(5)">
+        <button class="toolbar-button" (click)="onLineHeightSelect(5)" pTooltip="5px" tooltipPosition="top">
           <div class="stroke" [style.height]="'5px'"></div>
         </button>
       </div>

@@ -35,6 +35,8 @@ export const getAllCourses = async (req, res) => {
       numberChannels: c.channels.length,
       numberUsers: c.users.length,
       channels:c.channels,
+      createdAt:c.createdAt,
+      users:c.users
     };
     results.push(course);
   });
@@ -68,11 +70,16 @@ export const getMyCourses = async (req, res) => {
       numberUsers: object.courseId.users.length,
       role: object.role.name,
       channels:object.courseId.channels,
+      createdAt:object.courseId.createdAt,
+      users:object.courseId.users
+
     };
     results.push(course);
   });
   return res.status(200).send(results);
 }
+
+
 
 /**
  * @function getCourse
@@ -504,19 +511,30 @@ export const deleteCourse = async (req, res, next) => {
     return res.status(500).send({ error: err });
   }
 
-  let foundUser;
+let foundUsers;
+try {
+  foundUsers = await User.find();
+} catch (err) {
+  return res.status(500).send({ error: err });
+}
+
+foundUsers.forEach((user) => {
+  user.courses = user.courses.filter(
+    (course) => course.courseId.valueOf() !== courseId
+  );
+});
+
+foundUsers.forEach(async (user) => {
   try {
-    foundUser = await User.findOne({ _id: req.userId });
+    await user.save();
   } catch (err) {
     return res.status(500).send({ error: err });
   }
+});
 
-  foundUser.courses = foundUser.courses.filter(
-    (course) => course.courseId.valueOf() !== courseId
-  );
-
+  let foundUser;
   try {
-    await foundUser.save();
+    foundUser = await User.findOne({ _id: req.userId });
   } catch (err) {
     return res.status(500).send({ error: err });
   }

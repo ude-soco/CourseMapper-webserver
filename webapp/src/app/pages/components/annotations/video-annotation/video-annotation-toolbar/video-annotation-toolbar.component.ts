@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { getIsVideoPaused, getIsVideoPlayed, State } from '../state/video.reducer';
+import { getIsVideoPaused, getIsVideoPlayed, getShowAnnotations, State } from '../state/video.reducer';
 import * as VideoActions from '../state/video.action'
 import { Observable } from 'rxjs';
 
@@ -12,21 +12,25 @@ import { Observable } from 'rxjs';
 export class VideoAnnotationToolbarComponent {
   isVideoPlayed$: Observable<boolean>;
   isVideoPaused$: Observable<boolean>;
+  showAnnotations: boolean;
   constructor(private store: Store<State>){
-    this.isVideoPlayed$ = this.store.select(getIsVideoPlayed);
-    this.isVideoPaused$ = this.store.select(getIsVideoPaused);
+    this.store.select(getShowAnnotations).subscribe((isShow) => this.showAnnotations = isShow);
   }
 
   OnDrawToolSelection(){
     this.store.dispatch(VideoActions.setIsBrushSelectionActive({isBrushSelectionActive: true}));
   }
 
-  onPlayVideoClick(){
-    this.store.dispatch(VideoActions.PlayVideo());
+  OnPinToolSelection(){
+    this.store.dispatch(VideoActions.setIsPinpointSelectionActive({isPinpointSelectionActive: true}));
   }
 
-  onPauseVideClick(){
-    this.store.dispatch(VideoActions.PauseVideo());
+  showHideAnnotations(){
+    if(this.showAnnotations){
+      this.store.dispatch(VideoActions.SetShowAnnotations({showAnnotations: false}));
+    }else{
+      this.store.dispatch(VideoActions.SetShowAnnotations({showAnnotations: true}));
+    }
   }
 
 }

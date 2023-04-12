@@ -1,10 +1,77 @@
+<p-toast position="bottom-left"></p-toast>
+<p-confirmDialog></p-confirmDialog>
 <div class="flex flex-row">
-    <div class="flex-col">
-      <app-sidebar></app-sidebar>
-    </div>
-    <app-channelbar></app-channelbar>
-    <div class="grow">
-        <router-outlet></router-outlet>
-    </div>
+  <div class="flex-col">
+    <app-sidebar></app-sidebar>
   </div>
+  <app-channelbar style="width: 15%" (click)="NowClicked()"></app-channelbar>
+  <div style="width: 100%" *ngIf="(channelSelected$ | async) == false">
+    <div class="courseheader">
+      <div style="width: 90%; float: left">
+        <p class="font-roboto font-bold leading-normal h1">Welcome to</p>
+        <p class="font-roboto font-bold leading-normal h1">
+          {{ selectedCourse.name }}
+        </p>
+        <br />
+        <button  
+        pButton 
+        [ngStyle]="{ 'background-color': '#ffffff', color: '#EA580C' ,  'margin-right': '2rem' , 'margin-bottom':'1rem', 'border': '2px solid #EA580C'}"
+        type="button"
+        label= 'Un-enroll Course'
+        (click)="deEnrole()"
+       
+      ></button>
+        <p class="font-roboto leading-normal">
+          This is the welcome page of the course
+        </p>
+       
+      </div>
+    
+      <hr class="solid" />
+    </div>
+    <div class="courseDes">
+      <div style="  width: '40%'; 
+      float:'left ';
+      text-align: end;
+      ">
+      <p-avatar
+        label="{{ getName(this.firstName, this.lastName) }}"
+        shape="circle"
+        size="large"
+        [style]="{
+          'background-color': '#0277BD',
+          color: '#ffffff',
+        
+          top_margin: '0.5rem'
+        }"
+      ></p-avatar>
+    </div>
+   
+      <div style=" width: 60%; float:right; text-align: start;">
+        <p class="p" style="font-weight: bold">
+           Created by: {{ this.firstName }} {{ this.lastName }}
+        </p>
 
+        <p class="p" style="font-weight: bold">Created on: {{ createdAt }}</p>
+
+    
+        
+      </div>
+ 
+  </div>
+  <div  style="margin-top: 6rem;
+  text-align: center;
+  width:84%;">
+    <p class="p" style="font-weight: bold;" >Course Description:</p>
+    <p style="
+    margin-left: 1%;
+    " *ngIf="selectedCourse.description.length==0"> {{ 'No discription given...'}} </p>
+  <p style="
+  margin-left: 2.5%;
+  " > {{ selectedCourse.description }}</p> 
+  </div>
+  </div>
+  <div class="grow">
+    <router-outlet></router-outlet>
+  </div>
+</div>

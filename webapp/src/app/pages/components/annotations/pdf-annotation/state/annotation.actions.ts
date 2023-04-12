@@ -273,3 +273,8 @@ export const setShowDrawBoxTools = createAction(
     '[Annotation] Set Show Draw Box Tools',
     props<{show: boolean}>()
 );
+
+export const setshowAllPDFAnnotations = createAction(
+    '[Annotation] Set Show All PDF Annotations',
+    props<{showAllPDFAnnotations: boolean}>()
+);

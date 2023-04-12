@@ -8,7 +8,7 @@
 
 .container {
   text-align: center;
-  width: 22rem;
+  width: 100%
 }
 
 .new1 {
@@ -17,7 +17,7 @@
 
 .subdiv {
   margin: 30px;
-  width: 22rem;
+  width: 100%;
 }
 
 .validation_span {

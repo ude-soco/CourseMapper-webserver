@@ -1,4 +1,5 @@
 import { Course } from './Course';
+import { User } from './User';
 
 export class CourseImp implements Course {
   _id: string;
@@ -10,6 +11,9 @@ export class CourseImp implements Course {
   notification?: number;
   numberChannels?: number;
   numberUsers?: number;
+  createdAt?:string;
+  users?:User
+  
 
   constructor(
     _id: string,
@@ -20,7 +24,11 @@ export class CourseImp implements Course {
     numberTopics?: number,
     notification?: number,
     numberChannels?: number,
-    numberUsers?: number
+    numberUsers?: number,
+    createdAt?:string,
+    users?:User
+    
+
   ) {
     this.set_id(_id);
     this.setName(name);
@@ -31,6 +39,24 @@ export class CourseImp implements Course {
     this.setNotification(notification);
     this.setNumberChannels(numberChannels);
     this.setNumberUsers(numberUsers);
+    this.setcreatedAt(createdAt);
+    this.setUsers(users);
+
+  }
+  setcreatedAt(createdAtd: string) {
+    this.createdAt = createdAtd;
+  }
+
+  getcreatedAt(): string {
+    return this.createdAt;
+  }
+
+  setUsers(users: User) {
+    this.users = users;
+  }
+
+  getUsers(): User {
+    return this.users;
   }
 
   set_id(_id: string) {

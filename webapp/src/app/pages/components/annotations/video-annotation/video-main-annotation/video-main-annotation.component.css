@@ -9,3 +9,39 @@
     display: flex;
     flex-direction: column;
 }
+
+.pinpoint-selection-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 10;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.pinpoint-display-pin {
+    margin-top: -22px;
+    margin-left: -12px;
+    position: absolute;
+    z-index: 9;
+    pointer-events: none;
+    color: white;
+    filter: drop-shadow(0 0 3px rgb(255, 255, 255));
+}
+
+.video-annotations-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 20;
+    display: none;
+    flex-direction: column;
+    pointer-events: none;
+  }
+  
+  .video-annotations-overlay.visible {
+    display: flex;
+  }

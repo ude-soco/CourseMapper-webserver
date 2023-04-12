@@ -5,6 +5,7 @@ const Annotation = db.annotation;
 const Reply = db.reply;
 const Tag = db.tag;
 const User = db.user;
+const Role = db.role
 
 /**
  * @function getReplies
@@ -95,12 +96,15 @@ export const newReply = async (req, res, next) => {
   }
 
   let authorName = `${foundUser.firstname} ${foundUser.lastname}`;
+  let foundCourse = foundUser.courses.find((course) => course.courseId.toString() == courseId)
+  let foundRole = await Role.findById({ _id: ObjectId(foundCourse.role) });
 
   let reply = new Reply({
     content: replyContent,
     author: {
       userId: req.userId,
       name: authorName,
+      role: foundRole
     },
     courseId: foundAnnotation.courseId,
     topicId: foundAnnotation.topicId,

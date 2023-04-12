@@ -54,6 +54,10 @@ import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 const config: SocketIoConfig = { url: 'http://localhost:8080', options: {} };
 import { hydrationMetaReducer} from "./state/hydration.reducer";
 import { LandingPageComponent } from './pages/landing-page/landing-page.component';
+import { PrivacyComponent } from './pages/components/privacy/privacy.component';
+
+import { CourseModule } from './pages/courses/course.module';
+import { CourseDescriptionComponent } from './pages/components/course-description/course-description.component';
  
 export const metaReducers: MetaReducer[] = [hydrationMetaReducer];
 registerLocaleData(en);
@@ -76,6 +80,9 @@ registerLocaleData(en);
         DashboardComponent,
         ByPassUrlSanitizationPipe,
         LandingPageComponent,
+        PrivacyComponent,
+        CourseDescriptionComponent,
+       
     ],
     imports: [
         BrowserModule,
@@ -92,18 +99,24 @@ registerLocaleData(en);
         ToastModule,
         RippleModule,
         ConfirmDialogModule,
-        StoreModule.forRoot({}, {metaReducers}),
-        AnnotationModule,
-        MaterialsModule,
+        StoreModule.forRoot({}, {}),
         EffectsModule.forRoot([]),
         StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
         SharedComponentsModule,
         StoreModule.forFeature('general', appReducer),
         InputTextareaModule,
         DragulaModule.forRoot(),
-        SocketIoModule.forRoot(config)
+        SocketIoModule.forRoot(config),
+        CourseModule,
+        
+        
+        
 
     ],
+    exports:[
+        SidebarComponent
+    ],
+  
     providers: [httpInterceptorProviders],
     bootstrap: [AppComponent],
 })

@@ -11,6 +11,7 @@ import { computeElapsedTime, getInitials } from 'src/app/_helpers/format';
 import { Annotation } from 'src/app/models/Annotations';
 import { getAnnotationsForMaterial, State } from '../state/annotation.reducer';
 import { createPopper } from '@popperjs/core';
+import * as $ from 'jquery';
 
 @Component({
   selector: 'app-pdf-annotation-summary',
@@ -73,6 +74,13 @@ export class PdfAnnotationSummaryComponent implements OnInit, OnChanges {
   scrollToDiscussion(): void {
     this.isVisible = false;
     window.location.hash = '#annotation-' + this.selectedAnnotation._id;
+    setTimeout(function () {
+      $( window.location.hash).css('box-shadow','0 0 25px rgba(83, 83, 255, 1)')
+      setTimeout(function () {
+        $( window.location.hash).css('box-shadow', 'none')
+          
+      }, 2000);
+    }, 100);
   }
 
   cancel(): void {
