@@ -15,6 +15,11 @@ labels:
   pairs:
     app: coursemapper-webserver
 
+configMapGenerator:
+- name: ingress
+  literals:
+  - host=coursemapper.soco.inko.cloud
+
 secretGenerator:
 - name: webserver
   literals:
@@ -30,7 +35,30 @@ images:
 - name: socialcomputing/coursemapper-webserver-webserver
   newTag: latest
 
+replacements:
+- source:
+    kind: ConfigMap
+    name: ingress
+    fieldPath: data.host
+  targets:
+  - select:
+      kind: Ingress
+      name: proxy
+    fieldPaths:
+    - spec.rules.0.host
+- source:
+    kind: ConfigMap
+    name: ingress
+    fieldPath: data.host
+  targets:
+  - select:
+      kind: Ingress
+      name: proxy
+    fieldPaths:
+    - spec.tls.0.hosts.0
+
 resources:
+- ingress.yaml
 - webapp/deployment.yaml
 - webapp/service.yaml
 - webserver/deployment.yaml

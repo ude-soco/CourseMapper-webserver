@@ -3,14 +3,19 @@ kind: Kustomization
 
 namespace: sc
 
+configMapGenerator:
+- name: ingress
+  behavior: merge
+  literals:
+    host: coursemapper-webserver.lacolhost.com
+
 patches:
 - target:
     kind: Deployment
   patch: |-
-    - op: add
-      path: /spec/template/spec/containers/0/imagePullPolicy
-      value: Never
+  - op: add
+    path: /spec/template/spec/containers/0/imagePullPolicy
+    value: Never
 
 resources:
 - ../base
-- ingress.yaml
