@@ -1,39 +1,51 @@
 version: "3"
 
 services:
-  mongoDB:
-    image: mongo
+  proxy:
+    image: ${IMAGE_NAME_PREFIX:-socialcomputing/}coursemapper-webserver-proxy:${IMAGE_TAG:-latest}
+    build: proxy
     ports:
-      - "27017:27017"
-    volumes:
-      - mongodbdata:/data/db
-    networks:
+      - 8000:8000
+    restart: always
+    depends_on:
+      - webapp
       - webserver
 
-  coursemapper-webserver:
-    image: coursemapper-webserver
+  webapp:
+    image: ${IMAGE_NAME_PREFIX:-socialcomputing/}coursemapper-webserver-webapp:${IMAGE_TAG:-latest}
     build:
-      context: ./webserver
-      dockerfile: dev.Dockerfile
-    restart: unless-stopped
+      context: webapp
+    environment:
+      BASE_URL: http://localhost:8000/api
+    depends_on:
+      - webserver
+
+  webserver:
+    image: ${IMAGE_NAME_PREFIX:-socialcomputing/}coursemapper-webserver-webserver:${IMAGE_TAG:-latest}
+    build:
+      context: webserver
     environment:
       - PORT=8080
       - COOKIE_SECRET=secret
       - JWT_SECRET=secret
       - PASS=adminpassword
-      - MONGO_DB=mongodb://mongoDB:27017/coursemapper
-    ports:
-      - "8080:8080"
+      - MONGO_DB=mongodb://mongo:27017/coursemapper
     volumes:
-      - ./webserver/:/app/
+      - webserver-uploads:/app/public/uploads
     depends_on:
-      - mongoDB
-    networks:
-      - webserver
-networks:
-  webserver:
-    driver: bridge
+      mongo:
+        condition: service_healthy
+
+  mongo:
+    image: mongo:6.0
+    command: mongod --wiredTigerCacheSizeGB 0.25 --quiet --logpath /dev/null
+    volumes:
+      - mongo:/data/db
+    healthcheck:
+      test: "mongosh --nodb --eval 'disableTelemetry()'; echo 'db.runCommand({ping: 1}).ok' | mongosh localhost:27017/test --quiet"
+      start_period: 2s
+      interval: 10s
 
 volumes:
-  mongodbdata:
-    driver: local
+  mongo:
+  webserver-uploads:

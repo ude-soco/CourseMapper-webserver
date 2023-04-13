@@ -8,27 +8,26 @@ module.exports = function (app) {
   });
 
   app.get(
-    "/courses/:courseId/tags",
+    "/api/courses/:courseId/tags",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.courseTags
   );
 
   app.get(
-    "/courses/:courseId/topics/:topicId/tags",
+    "/api/courses/:courseId/topics/:topicId/tags",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.topicTags
   );
 
   app.get(
-    "/courses/:courseId/channels/:channelId/tags",
+    "/api/courses/:courseId/channels/:channelId/tags",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.channelTags
   );
 
   app.get(
-    "/courses/:courseId/materials/:materialId/tags",
+    "/api/courses/:courseId/materials/:materialId/tags",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.materialTags
   );
-
 };

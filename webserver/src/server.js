@@ -7,7 +7,7 @@ import dotenv from "dotenv";
 import debugLib from "debug";
 import bodyParser from "body-parser";
 import path from "path";
-import socketio from './socketio';
+import socketio from "./socketio";
 
 dotenv.config();
 const env = process.env.NODE_ENV || "production";
@@ -19,12 +19,14 @@ const User = db.user;
 
 global.__basedir = __dirname;
 
-env !== "production" ? app.use(cors({
-
-  credentials: true,
-  origin: ["http://localhost:4200", 'https://www.youtube.com/watch?v=',]
-
-})) : "";
+env !== "production"
+  ? app.use(
+      cors({
+        credentials: true,
+        origin: ["http://localhost:4200", "https://www.youtube.com/watch?v="],
+      })
+    )
+  : "";
 
 // Middlewares
 app.use(express.json());
@@ -38,7 +40,8 @@ app.use(
     httpOnly: true,
   })
 );
-app.use('*/public/uploads',express.static('public/uploads'));
+app.use("/api/public/uploads", express.static("public/uploads"));
+
 // Get port from environment and store in Express
 const port = normalizePort(process.env.PORT || "8090");
 app.set("port", port);
@@ -58,17 +61,16 @@ db.mongoose
     process.exit();
   });
 
-
 // xAPI scheduler
-const xapiScheduler = require('./xAPILogger/scheduler');
+const xapiScheduler = require("./xAPILogger/scheduler");
 xapiScheduler.runXapiScheduler();
 
 // Create HTTP server
 const server = http.createServer(app);
 socketio.init(server);
 
-socketio.getIO().on('connection', () => {
-  console.log('New Rando connected');
+socketio.getIO().on("connection", () => {
+  console.log("New Rando connected");
 });
 
 // Routes
@@ -91,71 +93,54 @@ server.listen(port);
 server.on("error", onError);
 server.on("listening", onListening);
 
-// Initialize database
-function initializeDB() {
-  Role.estimatedDocumentCount((err, count) => {
-    if (!err && count === 0) {
-      new Role({
-        name: "user",
-      }).save((err) => {
-        if (err) {
-          console.log("error", err);
-        }
-        console.log("Added 'user' to roles collection");
-      });
-      new Role({
-        name: "moderator",
-      }).save((err) => {
-        if (err) {
-          console.log("error", err);
-        }
-        console.log("Added 'moderator' to roles collection");
-      });
-      new Role({
-        name: "admin",
-      }).save((err) => {
-        if (err) {
-          console.log("error", err);
-        }
-        console.log("Added 'admin' to roles collection");
-      });
-    }
-  });
-
-  User.estimatedDocumentCount((err, count) => {
-    if (!err && count === 0) {
-      let password = hashSync(process.env.PASS, 10);
-      new User({
-        firstname: "Admin",
-        lastname: "User",
-        username: "admin",
-        email: "admin@soco.com",
-        password: password,
-      }).save((err, user) => {
-        if (err) {
-          console.log("error", err);
+const initializeDB = async () => {
+  let countRole;
+  let countUser;
+  try {
+    countRole = await Role.countDocuments({});
+    if (countRole > 0) {
+      console.log(countRole + " Roles present, skipping initialization");
+    } else {
+      ["user", "moderator", "admin"].forEach(async (userName) => {
+        console.log("Adding Role: { name: " + userName + " }");
+        try {
+          await new Role({ name: userName }).save();
+        } catch (err) {
+          console.log(err, "Error in creating role");
           return;
         }
-        Role.findOne({ name: "admin" }, (err, role) => {
-          if (err) {
-            console.log("error", err);
-          }
-          user.role = role._id;
-          user.save((err) => {
-            if (err) {
-              console.log("error", err);
-            }
-            console.log(
-              "Admin created successfully! Username: admin" +
-                ", Password: " +
-                process.env.PASS
-            );
-          });
-        });
       });
     }
-  });
-}
+
+    try {
+      countUser = await User.countDocuments({});
+      if (countUser > 0) {
+        console.log(countUser + " Users present, skipping initialization");
+      } else {
+        let password = hashSync(process.env.PASS, 10);
+        console.log(
+          "Adding User: { name: admin, password: " + process.env.PASS + " }"
+        );
+        try {
+          await new User({
+            firstname: "Admin",
+            lastname: "User",
+            username: "admin",
+            email: "admin@soco.com",
+            password: password,
+          }).save();
+        } catch (err) {
+          console.log(err, "Error in creating user");
+          return;
+        }
+      }
+    } catch (err) {
+      console.log(err, "Error in counting number of users");
+    }
+  } catch (err) {
+    console.log(err, "Error in counting number of roles");
+  }
+};
 
 // Normalize a port into a number, string, or false
 function normalizePort(val) {

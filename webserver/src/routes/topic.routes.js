@@ -11,7 +11,7 @@ module.exports = function (app) {
   // Get topic details
   // Only enrolled users can view topic
   app.get(
-    "/courses/:courseId/topics/:topicId",
+    "/api/courses/:courseId/topics/:topicId",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getTopic,
     logger.getTopic
@@ -20,7 +20,7 @@ module.exports = function (app) {
   // Create a new topic
   // Only moderator/admin
   app.post(
-    "/courses/:courseId/topic",
+    "/api/courses/:courseId/topic",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.newTopic,
     logger.newTopic
@@ -29,7 +29,7 @@ module.exports = function (app) {
   // Delete a topic
   // Only moderator/admin
   app.delete(
-    "/courses/:courseId/topics/:topicId",
+    "/api/courses/:courseId/topics/:topicId",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.deleteTopic,
     logger.deleteTopic
@@ -38,7 +38,7 @@ module.exports = function (app) {
   // Edit a topic
   // Only moderator/admin
   app.put(
-    "/courses/:courseId/topics/:topicId",
+    "/api/courses/:courseId/topics/:topicId",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.editTopic,
     logger.editTopic
