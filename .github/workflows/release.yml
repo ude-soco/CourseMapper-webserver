@@ -3,7 +3,6 @@ name: Draft a Release
 on:
   push:
     tags: [ v* ]
-    branches: [ main]
 
 jobs:
   build:
@@ -16,8 +15,8 @@ jobs:
     - name: Create draft release
       uses: ncipollo/release-action@v1
       with:
-        tag: ${{ github.ref }}
-        name: Release ${{ github.ref }}
+        tag: ${{ github.ref_name }}
+        name: Release ${{ github.ref_name }}
         draft: true
         allowUpdates: true
         updateOnlyUnreleased: true
