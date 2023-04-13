@@ -1,0 +1,25 @@
+.h1{
+  font-size: 3rem;
+  font-weight: bold;
+  text-align: center;
+  margin: 1rem;
+  font-family: Roboto;
+  color:#0277BD
+ 
+}
+.p{
+  font-size: 2rem;
+  font-family: Roboto;
+  text-align: center;
+}
+.course-card{
+      float: left;
+left:1rem;
+width: 22rem;;
+margin: 1REM;
+    }
+    .course-div{
+      margin-left:9rem;
+     
+      height: 35rem; 
+    }

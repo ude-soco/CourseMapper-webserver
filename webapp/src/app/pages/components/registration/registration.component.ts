@@ -32,6 +32,7 @@ export class RegistrationComponent implements OnInit {
   submitted = false;
   errors = null;
   _id: string = '';
+  public login="/login"
 
   constructor(
     private userService: UserServiceService,
@@ -42,7 +43,7 @@ export class RegistrationComponent implements OnInit {
   ngOnInit(): void {
     this.validateForm = this.fb.group(
       {
-        email: ['', [Validators.required, Validators.email]],
+        email: ['', [Validators.required, Validators.email, Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,9}$")]],
         password: [
           '',
           [
@@ -73,7 +74,7 @@ export class RegistrationComponent implements OnInit {
           [
             Validators.required,
             Validators.maxLength(20),
-            Validators.minLength(4),
+            Validators.minLength(1),
           ],
         ],
         lastname: [
@@ -81,7 +82,7 @@ export class RegistrationComponent implements OnInit {
           [
             Validators.required,
             Validators.maxLength(20),
-            Validators.minLength(4),
+            Validators.minLength(1),
           ],
         ],
       },
@@ -98,6 +99,11 @@ export class RegistrationComponent implements OnInit {
   }
 
   onSubmit(): void {
+    this.validateForm.markAllAsTouched(); 
+    if(!this.validateForm.valid){
+      return ;
+      } 
+      else {
     console.log('222');
     console.log(this.validateForm.value);
     this.errors = null;
@@ -121,7 +127,7 @@ export class RegistrationComponent implements OnInit {
       });
   }
 }
-
+}
 export default class Validation {}
 
 export function ConfirmedValidator(
@@ -139,8 +145,10 @@ export function ConfirmedValidator(
     }
     if (control.value !== matchingControl.value) {
       matchingControl.setErrors({ confirmedValidator: true });
+      console.log('not matched')
     } else {
-      matchingControl.setErrors(null);
+      matchingControl.setErrors(null );
     }
   };
 }
+

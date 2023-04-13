@@ -47,10 +47,6 @@ export class LoginComponent implements OnInit {
 
         const user = data as User;
         this.store.dispatch(ApplicationActions.setLoggedInUser({loggedInUser: user}));
-
-        // this.router.navigate(['/home']).then(() => {
-        //   window.location.reload();
-        // });
         this.router.navigate(['/home']);
       },
       error: (err) => {

@@ -143,33 +143,35 @@ export function isPointInDrawing(pointXRatio: number, pointYRatio: number, drawi
 }
 
 export function paintPin(xRatio: number, yRatio: number, ctx: CanvasRenderingContext2D, startX: number, videoBoundingRect: DOMRect) {
-    let p = new Path2D("M16,12V4H17V2H7V4H8V12L6,14V16H11.2V22H12.8V16H18V14L16,12Z");
-
+    let p = new Path2D("M15 11.586V6h2V4a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v2h2v5.586l-2.707 1.707A.996.996 0 0 0 6 14v2a1 1 0 0 0 1 1h4v3l1 2 1-2v-3h4a1 1 0 0 0 1-1v-2a.996.996 0 0 0-.293-.707L15 11.586z");
     const x = ((videoBoundingRect?.width || 0) - startX * 2) * xRatio + startX;
     const y = (videoBoundingRect?.height || 0) * yRatio;
 
+
     ctx.fillStyle = "#000";
-    ctx.translate(x - 18, y - 24);
+    ctx.translate(xRatio - 18, yRatio - 24);
     ctx.scale(1.5, 1.3);
     ctx.fill(p);
     ctx.resetTransform();
 
     ctx.fillStyle = "#fff";
-    ctx.translate(x - 12, y - 22);
+    ctx.translate(xRatio - 12, yRatio - 22);
     ctx.fill(p);
     ctx.resetTransform();
+
 }
 
 export function isPointInPin(pointXRatio: number, pointYRatio: number, xRatio: number, yRatio: number, startX: number, videoBoundingRect: DOMRect) {
     const x = ((videoBoundingRect?.width || 0) - startX * 2) * xRatio + startX;
     const y = (videoBoundingRect?.height || 0) * yRatio;
 
+
     const xa = ((videoBoundingRect?.width || 0) - startX * 2) * pointXRatio + startX;
     const ya = (videoBoundingRect?.height || 0) * pointYRatio;
 
-    if (xa > x - 18 && xa < x + 18 && ya > y - 24 && ya < y) {
+
+    if (xa > xRatio - 18 && xa < xRatio + 18 && ya > yRatio - 24 && ya < yRatio) {
         return true;
     }
-
     return false;
 }

@@ -1,44 +1,99 @@
-<div class="flex flex-row h-screen">
+<div class="flex flex-row">
   <div class="flex flex-col w-full space-y-2">
     <app-video-annotation-toolbar></app-video-annotation-toolbar>
-    <div class="relative h-fit #videoPlayerArea">
+    <div class="relative h-fit videoPlayerArea">
       <video
         controls
         width="100%"
         height="100%"
         *ngIf="!youtubeactivated"
         #video
+        (play)="videoPlayed()"
+        (pause)="videoPaused()"
+        (timeupdate)="videoPlayerTimeChanged($event)"
+        (loadeddata)="videoPlayerReady($event)"
+        (ended)="videoPlayerEnded($event)"
       >
         <source [src]="videoURL" type="video/mp4" />
       </video>
 
-      <div *ngIf="youtubeactivated" #YouTubePlayerArea>
+      <div
+        *ngIf="youtubeactivated"
+        #YouTubePlayerArea
+        class="YouTubePlayerArea"
+      >
         <youtube-player
           [videoId]="videoURL"
           (ready)="saveYouTubePlayer($event)"
           (stateChange)="onYouTubePlayerStateChange($event)"
         ></youtube-player>
       </div>
+      <div
+        *ngIf="isPinpointSelectionActive$ | async"
+        class="pinpoint-selection-overlay"
+        (click)="setPintpointPosition($event)"
+      ></div>
       <app-video-drawing-overlay
-      *ngIf="isBrushSelectionActive" 
-      class="brush-selection-overlay"
-      (drawingChanged)="drawingChanged($event)"
-      [boundingRect]="boundingRect"
-      [videoWidth]="videoWidth"
-      [videoHeight]="videoHeight"
-      (cancelSelection)="cancelSelection()"
-      (doneDrawing)="doneDrawing()"
-    >
-    </app-video-drawing-overlay>
+        *ngIf="isBrushSelectionActive"
+        class="brush-selection-overlay"
+        (drawingChanged)="drawingChanged($event)"
+        [boundingRect]="boundingRect"
+        [videoWidth]="videoWidth"
+        [videoHeight]="videoHeight"
+        (cancelSelection)="cancelSelection()"
+        (doneDrawing)="doneDrawing()"
+      >
+      </app-video-drawing-overlay>
+      <app-video-rendering-overlay
+        class="video-annotations-overlay"
+        [class.visible]="
+          !isBrushSelectionActive &&
+          (isPinpointSelectionActive$ | async) == false &&
+          (showAnnotations$ | async)
+        "
+        [boundingRect]="boundingRect"
+        [videoWidth]="videoWidth"
+        [videoHeight]="videoHeight"
+        [cursorPositionInVideo]="cursorPositionInVideo"
+        [cursorPosition]="cursorPosition"
+        (pauseVideo)="pauseVideo()"
+        (playVideo)="playVideo()"
+        (seekVideo)="seekVideo($event)"
+      >
+      </app-video-rendering-overlay>
+      <div
+        class="pinpoint-display-pin"
+        *ngIf="
+          (isPinpointSelectionActive$ | async) &&
+          ((isAnnotationDialogVisible$ | async) == false &&
+            cursorPosition &&
+            cursorisInsideVideo)
+        "
+        [style.left]="cursorPosition[0] + 'px'"
+        [style.top]="cursorPosition[1] + 'px'"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          style="fill: rgba(255, 255, 255, 1);"
+        >
+          <path
+            d="M15 11.586V6h2V4a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v2h2v5.586l-2.707 1.707A.996.996 0 0 0 6 14v2a1 1 0 0 0 1 1h4v3l1 2 1-2v-3h4a1 1 0 0 0 1-1v-2a.996.996 0 0 0-.293-.707L15 11.586z"
+          ></path>
+        </svg>
+      </div>
     </div>
   </div>
-  <div class="flex flex-col ml-5">
+  <div class="flex flex-col ml-5 w-1/2">
     <p-dialog
       *ngIf="isAnnotationDialogVisible$ | async"
       [visible]="true"
       [breakpoints]="{ '960px': '75vw', '600px': '100vw' }"
       [style]="{ width: '50vw' }"
       [closable]="false"
+      [showHeader]="false"
     >
       <div class="mt-5">
         <app-video-create-annotation
@@ -52,3 +107,4 @@
     <app-pdf-comment-panel></app-pdf-comment-panel>
   </div>
 </div>
+<p-toast position="bottom-left" key="annotation-toast"></p-toast>

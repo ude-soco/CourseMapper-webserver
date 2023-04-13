@@ -1,3 +1,7 @@
+const ObjectId = require("mongoose").Types.ObjectId;
+const db = require("../models");
+const User = db.user;
+
 /**
  * @function allAccess
  * Test public access to all type of user roles
@@ -262,4 +266,73 @@ export const reorderIndicators = async (req, res, next) => {
     success: `indicators have been updated successfully!`,
     indicators: user.indicators
   });
+};
+
+export const getAllUsers = async (req, res) => {
+  let users;
+  console.log('get all users')
+  try {
+    users = await User.find({}).populate("courses", "-__v");
+  } catch (err) {
+    return res.status(500).send({ message: err });
+  }
+  let results = [];
+  users.forEach((c) => {
+    let user = {
+      _id: c.id,
+      firstname: c.firstname,
+      lastname:c.lastname
+      
+    };
+    results.push(user);
+  });
+  return res.status(200).send(results);
+};
+
+// export const getUserName = async (req, res) => {
+//   let user;
+//   let userId =  req.userId;
+//   let results = []
+//   try {
+
+//     Founduser = await User
+//     .findById({_id: ObjectId(userId)})
+//   } catch (err) {
+//     return res.status(500).send({ message: err });
+//   }
+//   user.courses.forEach(object => {
+//     let course = {
+//       _id: object.courseId._id,
+//       name: object.courseId.name,
+//       shortName: object.courseId.shortName,
+//       description: object.courseId.description,
+//       numberTopics: object.courseId.topics.length,
+//       numberChannels: object.courseId.channels.length,
+//       numberUsers: object.courseId.users.length,
+//       role: object.role.name,
+//       channels:object.courseId.channels,
+//     };
+//     results.push(course);
+//   });
+//   return res.status(200).send(results);
+// }
+
+export const getUser = async (req, res) => {
+ 
+  let userId =  req.params.userId;
+
+  let foundUser;
+  let results = [];
+  try {
+    foundUser = await User.findOne({ _id: ObjectId(userId) })
+    .populate("courses", "-__v");
+    if (!foundUser) {
+      return res.status(404).send({
+        error: `User with id ${userId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+  return res.status(200).send(foundUser);
 };

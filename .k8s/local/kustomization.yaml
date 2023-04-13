@@ -3,20 +3,6 @@ kind: Kustomization
 
 namespace: sc
 
-secretGenerator:
-- name: webserver
-  behavior: merge
-  literals:
-  - COOKIE_SECRET=secret
-  - JWT_SECRET=secret
-  - PASS=admin
-
-images:
-- name: socialcomputing/coursemapper-webserver-webapp
-  newTag: latest
-- name: socialcomputing/coursemapper-webserver-webserver
-  newTag: latest
-
 patches:
 - target:
     kind: Deployment

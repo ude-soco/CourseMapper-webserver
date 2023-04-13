@@ -3,12 +3,12 @@ name: CI
 on:
   push:
     tags: [ 'v*' ]
-    branches: [ $default-branch ]
+    branches: [ main ]
     paths:
     - '.github/workflows/build-proxy.yml'
     - 'proxy/**'
   pull_request:
-    branches: [ $default-branch ]
+    branches: [ main ]
 
 jobs:
   build:

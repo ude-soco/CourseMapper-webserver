@@ -1,6 +1,6 @@
 <!--<div class="col-md-12">-->
 <div class="flex flex-wrap justify-center py-14">
-  <div class="flex flex-col" [style]="{ width: '248px' }">
+  <div class="flex flex-col" [style]="{  width: '248px' }">
     <div class="p-float-label mb-4">
       <input
         id="float-input"
@@ -12,16 +12,19 @@
       <label for="float-input">Username</label>
     </div>
 
-    <p-password
-      [(ngModel)]="form.password"
-      [toggleMask]="true"
-      [style]="{ width: '100%' }"
-      class="mb-4"
-    ></p-password>
+    <span class="p-float-label">
+      <p-password [(ngModel)]="form.password"      [toggleMask]="true"
+      [feedback]="false" [style]="{ width: '100%' }" class="mb-4"></p-password>
+      <label for="password">Password</label>
+  </span>
+  
+   
 
+   
+  
     <button
       pButton
-      [ngStyle]="{ backgroundColor: '#EA580C' }"
+      [ngStyle]="{ backgroundColor: '#EA580C' , width: '100%',    margin: '1rem 0rem'}"
       type="button"
       label="Login"
       (click)="onSubmit()"

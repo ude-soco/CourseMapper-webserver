@@ -1,6 +1,6 @@
 import { TopicChannelService } from '../../../services/topic-channel.service';
 import { CourseService } from '../../../services/course.service';
-import { Component, EventEmitter, OnInit, HostListener } from '@angular/core';
+import { Component, EventEmitter, OnInit, HostListener, Renderer2 } from '@angular/core';
 import { Course } from 'src/app/models/Course';
 import { CourseImp } from 'src/app/models/CourseImp';
 import { Channel } from 'src/app/models/Channel';
@@ -10,12 +10,18 @@ import { environment } from 'src/environments/environment';
 import { catchError, of } from 'rxjs';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { ActivatedRoute, Router } from '@angular/router';
+import { State } from 'src/app/state/app.state';
+import { Store } from '@ngrx/store';
+import * as AppActions from 'src/app/state/app.actions'
+import { ModeratorPrivilegesService } from 'src/app/services/moderator-privileges.service';
+import * as  MaterialActions from 'src/app/pages/components/materils/state/materials.actions'
+import * as  CourseActions from 'src/app/pages/courses/state/course.actions'
 
 @Component({
   selector: 'app-channelbar',
   templateUrl: './channelbar.component.html',
   styleUrls: ['./channelbar.component.css'],
-  providers: [ConfirmationService, MessageService],
+  providers: [MessageService,ConfirmationService,],
 })
 export class ChannelbarComponent implements OnInit {
   constructor(
@@ -24,13 +30,18 @@ export class ChannelbarComponent implements OnInit {
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private store: Store<State>,
+    private moderatorPrivilegesService:ModeratorPrivilegesService,
+    private renderer: Renderer2,
   ) {
       this.route.params.subscribe(params => {
       if(params['courseID']){
         this.courseService.fetchCourses().subscribe((courses) => {
           this.selectedCourse = courses.find((course) => course._id == params['courseID']);
           this.courseService.selectCourse(this.selectedCourse);
+          this.store.dispatch(AppActions.toggleCourseSelected({courseSelected: true}));
+          this.store.dispatch(CourseActions.toggleChannelSelected({ channelSelected: false }));
         });
       }
     })
@@ -45,6 +56,7 @@ export class ChannelbarComponent implements OnInit {
   previousCourse: Course = new CourseImp('', '');
   insertedText: string = '';
   selectedId: string = '';
+  showModeratorPrivileges=false
 
   options: MenuItem[] = [
     {
@@ -56,12 +68,7 @@ export class ChannelbarComponent implements OnInit {
       label: 'Delete',
       icon: 'pi pi-times',
       command: () => this.onDeleteCourse(),
-    },
-    {
-      label: 'Dashboard',
-      icon: 'pi pi-chart-bar',
-      command: () => this.onDashBoard()
-    },
+    }
   ];
 
   ngOnInit(): void {
@@ -69,6 +76,15 @@ export class ChannelbarComponent implements OnInit {
       //3
       this.courseService.onSelectCourse.subscribe((course) => {
         this.selectedCourse = course;
+        if(this.selectedCourse.role==='moderator'){
+          this.moderatorPrivilegesService.showModeratorPrivileges=true
+          this.showModeratorPrivileges=true
+          this.moderatorPrivilegesService.setPrivilegesValue(this.showModeratorPrivileges)
+        }else{
+          this.moderatorPrivilegesService.showModeratorPrivileges=false
+          this.showModeratorPrivileges=false
+          this.moderatorPrivilegesService.setPrivilegesValue(this.showModeratorPrivileges)
+        }
       });
   }
 
@@ -91,7 +107,8 @@ export class ChannelbarComponent implements OnInit {
   confirmDeletion() {
     this.courseService.deleteCourse(this.selectedCourse).subscribe((res) => {
       if ('success' in res) {
-        this.showInfo(res['success']);
+        // this.showInfo(res['success']);
+        this.showInfo('Course successfully deleted!');
         this.router.navigate(['home']);
       } else {
         this.showError(res['errorMsg']);
@@ -258,8 +275,8 @@ export class ChannelbarComponent implements OnInit {
    */
   showInfo(msg) {
     this.messageService.add({
-      severity: 'info',
-      summary: 'Success',
+      severity: 'error',
+      summary: 'Error',
       detail: msg,
     });
   }
@@ -297,12 +314,21 @@ export class ChannelbarComponent implements OnInit {
    */
   onDeleteCourse() {
     this.confirmationService.confirm({
-      message: 'Do you want to delete this course?',
+      message: 'Are you sure you want to delete this course?',
       header: 'Delete Confirmation',
       icon: 'pi pi-info-circle',
       accept: () => this.confirmDeletion(),
-      reject: () => this.informUser('info', 'Cancelled', 'Deletion cancelled'),
+      reject: () => {
+        // this.informUser('info', 'Cancelled', 'Deletion cancelled')
+      }
+      ,
     });
+    setTimeout(() => {
+      const rejectButton = document.getElementsByClassName("p-confirm-dialog-reject") as HTMLCollectionOf<HTMLElement>;
+      for (var i=0; i<rejectButton.length;i++){
+        this.renderer.addClass(rejectButton[i], 'p-button-outlined');
+      }
+    }, 0);
   }
 
   onDashBoard(){
@@ -311,5 +337,15 @@ export class ChannelbarComponent implements OnInit {
       this.courseService.getSelectedCourse()._id,
       'dashboard'
     ]);
+  }
+  preventEnterKey(e) {
+    let confirmButton = document.getElementById('addChannelConfirm');
+    if (e.keyCode === 13) {
+      e.preventDefault();
+      this.renderer.addClass(confirmButton, 'confirmViaEnter');
+      setTimeout(() => {
+        this.renderer.removeClass(confirmButton, 'confirmViaEnter');
+      }, 150);
+    }
   }
 }

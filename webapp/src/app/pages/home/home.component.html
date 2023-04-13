@@ -1,5 +1,66 @@
+
 <div class="flex flex-row">
   <div class="flex-col">
     <app-sidebar></app-sidebar>
   </div>
-</div>
+
+<div style="width: 100%;">
+  <div *ngIf="this.courses.length == 0">
+    
+    <p class="p">Currently you have no courses enrolled. </p>
+    <p class="p"> <a href="landingPage" style="color: #0277BD;"> Click here</a>  to search for courses to start learning!</p>
+  </div>
+  <div *ngIf="this.courses.length > 0">
+  <p class=" font-bold leading-normal h1" > My Courses  </p>
+    <p class="p">Welcome back!  Pick a course from your list to start learning</p>
+
+    
+    
+    
+    <div  class="course-div" >
+    <div *ngFor="let course of courses"  (click)="onSelectCourse(course)">
+    
+    
+    
+     <p-card  styleClass="p-card-shadow" class="course-card">
+        <hr style="margin-bottom: 0.75rem ; margin-top: 0%;">
+        <ng-template pTemplate="header">
+            <img alt="Card" src="https://primefaces.org/cdn/primeng/images/usercard.png">
+        </ng-template>
+       
+        <ng-template pTemplate="content-center" style="float: left; "> 
+       
+        <p-avatar
+        label="{{course.shortName}}"
+        shape="circle"
+        size="large"
+        [style]="{ 'background-color': '#0277BD', color: '#ffffff' , float: 'left', top_margin:'0.5rem' }"
+      ></p-avatar>
+      <button> <p style="margin: 1rem; font-weight: bold;"> {{course.name}}</p></button>
+       
+      <p style="justify-content: center;" > {{ 'Please click here for course description'}} </p>
+    </ng-template>
+       
+    
+    </p-card> 
+    
+    </div>
+    </div>
+  </div>
+    </div>
+  </div>
+    <!-- <div class="row">
+        <div class="column" style="background-color:#aaa;">
+          <h2>Column 1</h2>
+          <p>Some text..</p>
+        </div>
+        <div class="column" style="background-color:#bbb;">
+          <h2>Column 2</h2>
+          <p>Some text..</p>
+        </div>
+        <div class="column" style="background-color:#ccc;">
+          <h2>Column 3</h2>
+          <p>Some text..</p>
+        </div>
+      </div>
+       -->

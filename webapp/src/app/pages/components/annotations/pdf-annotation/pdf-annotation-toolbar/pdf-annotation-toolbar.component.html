@@ -6,48 +6,55 @@
       color="text-blue-500"
       (onClick)="selectAnnotationTool('highlight')"
       [class.selected]="highlightSelected"
+      pTooltip="Highlight Text" tooltipPosition="top"
     ></app-iconbutton>
     <app-iconbutton
       icon="bx-shape-square"
       color="text-blue-500"
       (onClick)="selectAnnotationTool('drawing')"
       [class.selected]="drawingSelected"
+      pTooltip="Draw on PDF" tooltipPosition="top"
     ></app-iconbutton>
     <app-iconbutton
       icon="bx-pin"
       color="text-blue-500"
       (onClick)="selectAnnotationTool('pinpoint')"
       [class.selected]="pinSelected"
+      pTooltip="Pinpoint on PDF" tooltipPosition="top"
     ></app-iconbutton>
     <app-iconbutton
       icon="bx-show"
       color="text-blue-500"
+      pTooltip="Show Annotations" tooltipPosition="top"
       (onClick)="toggleShowHideAnnotations()"
-      *ngIf="(hideAnnotations$ | async) == false"
+      *ngIf="(hideAnnotations$ | async) == true"
     ></app-iconbutton>
     <app-iconbutton
     icon="bx-hide"
     color="text-blue-500"
+    pTooltip="Hide Annotations" tooltipPosition="top"
     (onClick)="toggleShowHideAnnotations()"
-    *ngIf="(hideAnnotations$ | async) == true"
+    *ngIf="(hideAnnotations$ | async) == false"
   ></app-iconbutton>
   </div>
-  <span class="tool-divider"> </span>
+
   <div class="tool-right">
     <span class="tool-title" style="color: #4e4e4e">PDF Tools:</span>
-    <app-iconbutton icon="bxs-hand" color="text-blue-500"></app-iconbutton>
     <app-iconbutton
       icon="bx-zoom-in"
       color="text-blue-500"
+      pTooltip="Zoom In" tooltipPosition="top"
       (onClick)="pdfZoom('zoomIn')"
     ></app-iconbutton>
     <app-iconbutton
       icon="bx-zoom-out"
+      pTooltip="Zoom Out" tooltipPosition="top"
       color="text-blue-500"
       (onClick)="pdfZoom('zoomOut')"
     ></app-iconbutton>
     <app-iconbutton
       icon="bx-reset"
+      pTooltip="Reset Zoom" tooltipPosition="top"
       color="text-blue-500"
       (onClick)="pdfZoom('resetZoom')"
     ></app-iconbutton>

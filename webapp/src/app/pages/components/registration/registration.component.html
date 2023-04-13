@@ -1,3 +1,4 @@
+<link href="//netdna.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" />
 <!---<div class="register-form">
   <form [formGroup]="validateForm" (ngSubmit)="onSubmit()">
     <div class="form-group">
@@ -257,8 +258,8 @@
 --->
 
 
-<div class="flex flex-wrap justify-center py-14">
-  <div class="flex flex-col" [style]="{ width: '25rem' }">
+<!-- <div class="flex flex-wrap justify-center py-14">
+  <div class="flex flex-col" [style]="{  }">
 
     <form [formGroup]="validateForm">
       <div class="subdiv">
@@ -268,7 +269,7 @@
             type="text"
             pInputText
             formControlName="username"
-            [style]="{ }"
+            [style]="{width:'80%' }"
           />
           <label for="username">Username</label>
         </div>
@@ -294,7 +295,7 @@
             type="text"
             pInputText
             formControlName="firstname"
-            [style]="{ }"
+            [style]="{width:'80%' }"
           />
           <label for="firstname">First name</label>
         </div>
@@ -321,7 +322,7 @@
             type="text"
             pInputText
             formControlName="lastname"
-            [style]="{ }"
+            [style]="{width:'80%' }"
           />
           <label for="lastname">Last name</label>
         </div>
@@ -348,7 +349,7 @@
             type="text"
             pInputText
             formControlName="email"
-            [style]="{  }"
+            [style]="{width:'80%' }"
           />
           <label for="email">Email</label>
         </div>
@@ -366,9 +367,10 @@
         </div>
       </div>
       <div class="subdiv">
-        <div class="p-float-label mb-4" [style]="{   width: '19rem' }">
-          <p-password id="password" type="password" formControlName="password" class="mb-4"
-                      [style]="{   width: '19rem' }">
+        <div class="p-float-label mb-4" [style]="{   width: '100%' }">
+          <p-password id="password" type="password" formControlName="password" 
+          [toggleMask]="true"
+          [feedback]="true" >
             <ng-template pTemplate="header">
               <h6>Create a password</h6>
             </ng-template>
@@ -401,16 +403,24 @@
         </div>
       </div>
       <div class="subdiv">
-        <div class="p-float-label mb-4">
-          <input
+        <div class="mb-4">
+
+          <!-- <input
             id="checkPassword"
-            type="text"
+           
             type="password"
             pInputText
             formControlName="checkPassword"
             [style]="{  }"
+          
           />
-          <label for="checkPassword">Confirm Password</label>
+          <label for="checkPassword">Confirm Password</label> 
+
+          <span class="p-float-label">
+            <p-password id="checkPassword" formControlName="checkPassword" [toggleMask]="true"
+            [feedback]="false"  [style]="{ }" ></p-password>
+            <label for="checkPassword">Confirm Password</label>
+        </span>
         </div>
 
         <div
@@ -434,11 +444,10 @@
       <div class="container">
         <button
           pButton
-          [ngStyle]="{ backgroundColor: '#EA580C',width: '62%',
-      margin: '10px 80px 10px 0px'}"
+          [ngStyle]="{ backgroundColor: '#EA580C',width: '80%'}"
           type="button"
           label="Sign Up"
-
+          [disabled]="validateForm.pristine || validateForm.invalid"
           (click)="onSubmit()"></button>
       </div>
       <div class="alert alert-warning" *ngIf="isSignUpFailed">
@@ -447,4 +456,232 @@
     </form>
 
   </div>
+</div> -->
+
+
+<!-- main app container -->
+<div class="flex flex-wrap justify-center py-14">
+<div class=" m-3" >
+  <h5 style="font-weight: bold; text-align: center;">Create an account</h5>
+  <div class="card-body">
+      <form [formGroup]="validateForm" (ngSubmit)="onSubmit()" >
+          <div class="form-row">
+
+              <div class="form-group col-5" [style]="{ width:'120%'}">
+                <div class="p-float-label" >
+                  <input
+                    id="firstname"
+                    type="text"
+                    pInputText
+                    formControlName="firstname"
+                    [style]="{width:'120%' }"
+                  />
+                  <label for="firstname">First name</label>
+                </div>
+        
+                <div
+                  *ngIf="validateForm.controls['firstname'].invalid && (validateForm.controls['firstname'].dirty || validateForm.controls['firstname'].touched)"
+                   [style]="{width:'120%' }">
+        
+                  <div *ngIf="validateForm.controls['firstname'].errors?.['required']">
+                    <span style="color: red;"> First name is required </span>
+                  </div>
+                  <div *ngIf="validateForm.controls['firstname'].errors?.['minlength']">
+                    <span style="color: red;"> First name must be at least 4 characters long </span>
+                  </div>
+                  <div *ngIf="validateForm.controls['firstname'].errors?.['maxlength']">
+                    <span style="color: red;"> First name must be maximum 20 characters long </span>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group col-5" style="margin: '0rem 0rem 0rem 2.6rem'; width:'120%'">
+                <div class="p-float-label">
+                  <input
+                    id="lastname"
+                    type="text"
+                    pInputText
+                    formControlName="lastname"
+                    [style]="{width:'120%' }"
+                  />
+                  <label for="lastname"  class="justify-center" >Last name</label>
+                </div>
+        
+                <div
+                  *ngIf="validateForm.controls['lastname'].invalid && (validateForm.controls['lastname'].dirty || validateForm.controls['lastname'].touched)"
+                  [style]="{width:'120%' }">
+        
+                  <div *ngIf="validateForm.controls['lastname'].errors?.['required']">
+                    <span style="color: red;">  Last name is required </span>
+                  </div>
+                  <div *ngIf="validateForm.controls['lastname'].errors?.['minlength']">
+                    <span style="color: red;"> Last name must be at least 4 characters long </span>
+                  </div>
+                  <div *ngIf="validateForm.controls['lastname'].errors?.['maxlength']">
+                    <span style="color: red;"> Last name must be maximum 20 characters long </span>
+                  </div>
+                </div>
+              </div>
+          </div>
+          <div class="form-group">
+            <div class="p-float-label">
+              <input
+                id="email"
+                type="text"
+                pInputText
+                formControlName="email"
+                [style]="{width:'99%' }"
+              />
+              <label for="email">Email</label>
+            </div>
+    
+            <div
+              *ngIf="validateForm.controls['email'].invalid && (validateForm.controls['email'].dirty || validateForm.controls['email'].touched)"
+              >
+    
+              <div *ngIf="validateForm.controls['email'].errors?.['required']">
+                <span style="color: red;"> Email is required </span>
+              </div>
+              <!-- <div *ngIf="validateForm.controls['email'].errors?.['email']">
+                <span style="color: red;"> Invalid Email </span>
+              </div> -->
+              <div *ngIf="validateForm.controls['email'].errors?.['pattern']">
+
+                <!-- <span style="color: red;">  Invalid Email </span> -->
+
+                <span style="color: red;">  Invalid Email format </span>
+
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="p-float-label">
+              <input
+                id="username"
+                type="text"
+                pInputText
+                formControlName="username"
+                [style]="{width:'99%' }"
+              />
+              <label for="username">Username</label>
+            </div>
+            <div
+              *ngIf="validateForm.controls['username'].invalid && (validateForm.controls['username'].dirty || validateForm.controls['username'].touched)"
+              >
+    
+              <div *ngIf="validateForm.controls['username'].errors?.['required']">
+                <span style="color: red;"> Username is required</span>
+              </div>
+              <div *ngIf="validateForm.controls['username'].errors?.['minlength']">
+                <span style="color: red;"> Username must be at least 4 characters long</span>
+              </div>
+              <div *ngIf="validateForm.controls['username'].errors?.['maxlength']">
+                <span style="color: red;"> Username must be maximum 20 characters long </span>
+              </div>
+            </div>
+          </div>
+          <div class="form-row" style=" width: 115%  ">
+              <div class="form-group col-5" [style]="{   width: '100%' }">
+                <div class="p-float-label" >
+                  <p-password id="password" type="password" formControlName="password" 
+                  [toggleMask]="true"
+                  [feedback]="true" >
+                    <ng-template pTemplate="header">
+                      <h6>Create a password</h6>
+                    </ng-template>
+                    <ng-template pTemplate="footer">
+        
+                      <p class="mt-2">To create a strong password:</p>
+                      <ul class="pl-2 ml-2 mt-0" style="line-height: 1.5">
+                        <li>At least one lowercase letter</li>
+                        <li>At least one uppercase letter</li>
+                        <li>At least one numeric letter</li>
+                        <li>Minimum 8 characters</li>
+                      </ul>
+                    </ng-template>
+                  </p-password>
+                  <label for="password">Password</label>
+                </div>
+                <div
+                  *ngIf="validateForm.controls['password'].invalid && (validateForm.controls['password'].dirty || validateForm.controls['password'].touched)"
+                  >
+        
+                  <div *ngIf="validateForm.controls['password'].errors?.['required']">
+                    <span style="color: red;"> Password is required </span>
+                  </div>
+                  <div *ngIf="validateForm.controls['password'].errors?.['minlength']">
+                    <span style="color: red;"> Password must be at least 8 characters long </span>
+                  </div>
+                  <div *ngIf="validateForm.controls['password'].errors?.['maxlength']">
+                    <span style="color: red;">Password must be maximum 20 characters long  </span>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group col-5" style="margin: '0rem 0rem 0rem 2.6rem'; width:'100%'  ">
+               
+
+                  <!-- <input
+                    id="checkPassword"
+                   
+                    type="password"
+                    pInputText
+                    formControlName="checkPassword"
+                    [style]="{  }"
+                  
+                  />
+                  <label for="checkPassword">Confirm Password</label> -->
+        
+                  <span class="p-float-label" >
+                    <p-password id="checkPassword" formControlName="checkPassword" [toggleMask]="true"
+                    [feedback]="false" p-password-meter></p-password>
+                    <label for="checkPassword">Confirm Password</label>
+                </span>
+               
+        
+                <div
+                  *ngIf="validateForm.controls['checkPassword'].invalid && (validateForm.controls['checkPassword'].dirty || validateForm.controls['checkPassword'].touched)"
+                 >
+        
+                  <div *ngIf="validateForm.controls['checkPassword'].errors?.['required']">
+                    <span style="color: red;">Password is required</span>
+                  </div>
+                  <div *ngIf="validateForm.controls['checkPassword'].errors?.['minlength']">
+                    <span style="color: red;">  Password must be at least 8 characters long</span>
+                  </div>
+                  <div *ngIf="validateForm.controls['checkPassword'].errors?.['maxlength']">
+                    <span style="color: red;">  Password must be maximum 20 characters long</span>
+                  </div>
+                  <div *ngIf="validateForm.controls['checkPassword'].errors?.['confirmedValidator']">
+                    <span style="color: red;"> Passwords do not match </span></div>
+                </div>
+              </div>
+          </div>
+          <!-- <div class="form-group form-check">
+              <input type="checkbox" formControlName="acceptTerms" id="acceptTerms" class="form-check-input" [ngClass]="{ 'is-invalid': submitted && f.acceptTerms.errors }" />
+              <label for="acceptTerms" class="form-check-label">Accept Terms & Conditions</label>
+              <div *ngIf="submitted && f.acceptTerms.errors" class="invalid-feedback">Accept Ts & Cs is required</div>
+          </div> -->
+          <div class="form-group" [style]="{width:'100%' }">
+            <p>We respect your privacy. Please read <a href="/privacy">here</a> to learn more about our Privacy Policy.</p>
+          </div>
+          <div class="text-center">
+            <button
+            pButton
+            [ngStyle]="{ backgroundColor: '#EA580C',width: '100%'}"
+            type="button"
+            label="Sign Up"
+            type="submit"
+           ></button>
+       
+        <div style="color: red;" *ngIf="isSignUpFailed">
+          Sign Up unsuccessful<br/>{{ errorMessage }}
+        </div>
+              <!-- <button class="btn btn-secondary" type="reset" (click)="onReset()">Cancel</button> -->
+          </div>
+          <div style="text-align: center;
+          margin: 1rem;" >
+            Already have an account?  <a [routerLink]="[login]" style="color: #0277BD;"> Log in</a><br/>
+          </div>
+      </form>
+  </div>
+</div>
 </div>

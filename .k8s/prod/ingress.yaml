@@ -5,10 +5,10 @@ metadata:
   annotations:
     description: CourseMapper-webserver
     kubernetes.io/tls-acme: "true"
-    ingress.kubernetes.io/redirect-entry-point: https
+    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   rules:
-  - host: coursemapper-webserver.sc.inko.cloud
+  - host: coursemapper.soco.inko.cloud
     http:
       paths:
       - pathType: Prefix
@@ -28,4 +28,4 @@ spec:
   tls:
   - secretName: tls-certificate
     hosts:
-    - coursemapper-webserver.sc.inko.cloud
+    - coursemapper.soco.inko.cloud
