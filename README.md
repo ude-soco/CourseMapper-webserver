@@ -32,7 +32,7 @@ The services making up the coursemapper-webserver project use the following imag
 
 ## Live instances
 
-* Production: [coursemapper.soco.inko.cloud](https://coursemapper.soco.inko.cloud/) (Release `v0.0.x`)
+* Production: [coursemapper.soco.inko.cloud](https://coursemapper.soco.inko.cloud/) (Latest `v0.x.x` [release](https://github.com/ude-soco/CourseMapper-webserver/releases))
 * Preview: [dev.coursemapper.soco.inko.cloud](https://dev.coursemapper.soco.inko.cloud/)
 
 
