@@ -23,13 +23,22 @@ spec:
         volumeMounts:
         - mountPath: /data/db
           name: mongodb
+        resources:
+          requests:
+            memory: 160Mi
+            cpu: 10m
+          limits:
+            memory: 1Gi
+            cpu: 2
+            ephemeral-storage: 1Gi
       containers:
       - name: mongodb
         image: mongo
-        command:
+        args:
         - mongod
         - --bind_ip_all
         - --quiet
+        - --wiredTigerCacheSizeGB=0.25
         ports:
         - containerPort: 27017
         volumeMounts:
@@ -37,11 +46,12 @@ spec:
           name: mongodb
         resources:
           requests:
-            memory: 160Mi
+            memory: 300Mi
             cpu: 100m
           limits:
-            memory: 320Mi
+            memory: 1Gi
             cpu: 1
+            ephemeral-storage: 1Gi
       volumes:
       - name: mongodb
         persistentVolumeClaim:

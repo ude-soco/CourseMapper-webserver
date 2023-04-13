@@ -104,5 +104,6 @@ dist
 /webserver/dist-server
 /webserver/public
 *.example
+.envrc
 .idea
 .vscode

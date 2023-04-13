@@ -1,7 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: sc-cmw-prod
+namespace: sc-cmw-dev
 namePrefix: sc-
 commonAnnotations:
   contact: Ralf Berger <ralf.berger@uni-due.de>
@@ -9,7 +9,7 @@ labels:
 - includeSelectors: true
   pairs:
     owner: sc
-    stage: prod
+    stage: dev
 
 secretGenerator:
 - name: webserver
@@ -18,9 +18,9 @@ secretGenerator:
 
 images:
 - name: socialcomputing/coursemapper-webserver-webapp
-  newTag: 0.0.10
+  newTag: latest
 - name: socialcomputing/coursemapper-webserver-webserver
-  newTag: 0.0.10
+  newTag: latest
 
 resources:
 - ../base

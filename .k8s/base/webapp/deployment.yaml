@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: webapp
 spec:
-  replicas: 1
+  replicas: 3
   strategy:
     type: Recreate
   selector:
@@ -22,20 +22,15 @@ spec:
         env:
         - name: BASE_URL
           value: "/api"
-        readinessProbe:
-          httpGet:
-            path: /
-            port: 4200
         livenessProbe:
           httpGet:
             path: /
             port: 4200
-          periodSeconds: 60
-          timeoutSeconds: 5
         resources:
           requests:
-            memory: 80Mi
+            memory: 8Mi
             cpu: 10m
           limits:
-            memory: 160Mi
-            cpu: 200m
+            memory: 256Mi
+            cpu: 1
+            ephemeral-storage: 16Mi

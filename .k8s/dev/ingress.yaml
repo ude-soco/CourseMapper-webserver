@@ -8,7 +8,7 @@ metadata:
     cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   rules:
-  - host: coursemapper.soco.inko.cloud
+  - host: dev.coursemapper.soco.inko.cloud
     http:
       paths:
       - pathType: Prefix
@@ -28,4 +28,4 @@ spec:
   tls:
   - secretName: tls-certificate
     hosts:
-    - coursemapper.soco.inko.cloud
+    - dev.coursemapper.soco.inko.cloud
