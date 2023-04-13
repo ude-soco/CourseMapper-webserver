@@ -6,7 +6,7 @@ on:
 
 jobs:
   release:
-    name: Create Github Release draft
+    name: Create Github Release
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -18,7 +18,7 @@ jobs:
       with:
         tag: ${{ github.ref_name }}
         name: Release ${{ github.ref_name }}
-        draft: true
+        draft: false
         allowUpdates: true
         updateOnlyUnreleased: true
         skipIfReleaseExists: true
