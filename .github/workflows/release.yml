@@ -1,11 +1,12 @@
-name: Draft a Release
+name: Release the application
 
 on:
   push:
-    tags: [ v* ]
+    tags: [ v*.*.* ]
 
 jobs:
-  build:
+  release:
+    name: Create Github Release draft
     runs-on: ubuntu-latest
     permissions:
       contents: write
