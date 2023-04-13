@@ -4,23 +4,23 @@ on:
   workflow_call:
     inputs:
       base_image_name:
-        required: true
         type: string
+        required: true
       services:
-        required: true
         type: string
+        required: true
       platforms:
         type: string
         default: "linux/amd64"
         required: false
       push:
-        required: false
         type: boolean
         default: false
-      timeout:
         required: false
+      timeout:
         type: number
         default: 10
+        required: false
     secrets:
       registry_user:
         required: false
