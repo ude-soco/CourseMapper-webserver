@@ -36,6 +36,7 @@ export interface AnnotationState {
   selectedDrawingTool: string;
   selectedLineHeight: number;
   showDrawBoxTools: boolean;
+  showAllPDFAnnotations: boolean;
 
 }
 
@@ -62,6 +63,7 @@ const initialState: AnnotationState = {
   selectedDrawingTool: null,
   selectedLineHeight: 2,
   showDrawBoxTools: false,
+  showAllPDFAnnotations: false
 };
 
 const getAnnotationFeatureState =
@@ -142,6 +144,11 @@ export const showDrawBoxTools = createSelector(
   (state) => state.showDrawBoxTools
 );
 
+export const getshowAllPDFAnnotations = createSelector(
+  getAnnotationFeatureState,
+  (state) => state.showAllPDFAnnotations
+);
+
 export const annotationReducer = createReducer<AnnotationState>(
   initialState,
 
@@ -189,6 +196,8 @@ export const annotationReducer = createReducer<AnnotationState>(
         isAnnotationPosted: true,
         isAnnotationCanceled: false,
         createAnnotationFromPanel: true,
+        selectedTool: PdfToolType.None,
+        showDrawBoxTools: false
       };
     }
   ),
@@ -334,6 +343,16 @@ export const annotationReducer = createReducer<AnnotationState>(
       return {
         ...state,
         selectedLineHeight: action.height,
+      };
+    }
+  ),
+
+  on(
+    AnnotationActions.setshowAllPDFAnnotations,
+    (state, action): AnnotationState => {
+      return {
+        ...state,
+        showAllPDFAnnotations: action.showAllPDFAnnotations,
       };
     }
   ),
@@ -518,7 +537,7 @@ export const annotationReducer = createReducer<AnnotationState>(
             (reply) => reply._id === action.payload.reply._id
           );
           replies[replyIndex] = action.payload.reply;
-          if (replyIndex) {
+          if (replies[replyIndex]) {
             let updatedReplies = [...replies];
             let updatedAnnotation = {
               ...annotation,

@@ -1,4 +1,12 @@
-import { Component, EventEmitter, OnInit, HostListener } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  OnInit,
+  HostListener,
+  Input,
+  Renderer2,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { Channel } from 'src/app/models/Channel';
 import { Topic } from 'src/app/models/Topic';
@@ -6,11 +14,12 @@ import { CourseService } from 'src/app/services/course.service';
 import { TopicChannelService } from 'src/app/services/topic-channel.service';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { Material } from 'src/app/models/Material';
-import { MaterilasService } from 'src/app/services/materials.service';  
+import { MaterilasService } from 'src/app/services/materials.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import * as MaterialActions from 'src/app/pages/components/materils/state/materials.actions'
+import * as MaterialActions from 'src/app/pages/components/materils/state/materials.actions';
 import { State } from '../materils/state/materials.reducer';
+import * as  CourseActions from 'src/app/pages/courses/state/course.actions'
 
 @Component({
   selector: 'app-topic-dropdown',
@@ -24,15 +33,21 @@ export class TopicDropdownComponent implements OnInit {
     private topicChannelService: TopicChannelService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private materilasService : MaterilasService, private router: Router,
+    private materilasService: MaterilasService,
+    private router: Router,
     private store: Store<State>,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private renderer: Renderer2,
+    private changeDetectorRef: ChangeDetectorRef
   ) {}
+  @Input() showModeratorPrivileges: boolean;
 
   topics: Topic[] = [];
   displayAddChannelDialogue: boolean = false;
   selectedTopic = null;
+  prevSelectedTopic = null;
   selectedChannel = null;
+  selectedChannelId = null;
   editable: boolean = false;
   escapeKey: boolean = false;
   enterKey: boolean = false;
@@ -43,6 +58,9 @@ export class TopicDropdownComponent implements OnInit {
   insertedText: string = '';
   selectedIdTp: string = '';
   selectedIdCh: string = '';
+  expandTopic = [];
+  selectedCourseId = null;
+  prevSelectedCourseId = null;
 
   topicOptions: MenuItem[] = [
     {
@@ -78,6 +96,26 @@ export class TopicDropdownComponent implements OnInit {
     );
   }
 
+  ngOnDestroy() {
+    this.expandTopic = null;
+    this.selectedChannelId = null;
+  }
+
+  ngAfterViewChecked() {
+    //   if(this.prevSelectedTopic!==this.selectedTopic){
+    //   console.log(this.selectedTopic)
+    //   this.prevSelectedTopic=this.selectedTopic
+    // }
+    this.selectedCourseId = this.courseService.getSelectedCourse()._id;
+    if (this.selectedCourseId !== this.prevSelectedCourseId) {
+      this.prevSelectedCourseId = this.selectedCourseId;
+      this.selectedChannelId = null;
+
+      //to avoid error messages when values got changed after being checked
+      this.changeDetectorRef.detectChanges();
+    }
+  }
+
   @HostListener('document:click', ['$event'])
   documentClick(event: MouseEvent) {
     // to confirm rename when mouse clicked anywhere
@@ -97,14 +135,73 @@ export class TopicDropdownComponent implements OnInit {
   }
 
   onSelectTopic(topic: Topic) {
-    alert(`onTopicSelect ${topic._id}`);
+    // console.log(this.selectedTopic)
+    if (this.expandTopic.includes(topic._id)) {
+      this.expandTopic.some((topicId, index) => {
+        if (topicId === topic._id) {
+          this.expandTopic.splice(index, 1);
+        }
+      });
+    } else {
+      this.expandTopic.push(topic._id);
+      // wait until expanded topic rendered
+      setTimeout(() => {
+        // if exists channel previously selected --> make channel container bg=white
+        if (
+          this.selectedChannelId &&
+          topic.channels.find((channl) => channl._id === this.selectedChannelId)
+        ) {
+          let channelNameContainer = document.getElementById(
+            this.selectedChannelId + '-container'
+          );
+          channelNameContainer.style.backgroundColor = 'white';
+        }
+        //     else{
+        //       // make all channels' container background Null
+        // this.topics.forEach((topic) => {
+        //   topic.channels.forEach((channelEle) => {
+        //     var nonSelectedChannels = document.getElementById(
+        //       channelEle._id + '-container'
+        //     );
+        //     nonSelectedChannels.style.backgroundColor = null;
+        //   });
+        // });
+        //     }
+      }, 2);
+    }
   }
   onSelectChannel(channel: Channel) {
-    //console.log(channel.materials);
     //3
+    this.selectedCourseId = this.courseService.getSelectedCourse()._id;
+    this.prevSelectedCourseId = this.selectedCourseId;
     this.topicChannelService.selectChannel(channel);
-    this.router.navigate(['course', this.courseService.getSelectedCourse()._id,'channel', channel._id]);
-    this.store.dispatch(MaterialActions.toggleChannelSelected({channelSelected: true}));
+    this.router.navigate([
+      'course',
+      this.courseService.getSelectedCourse()._id,
+      'channel',
+      channel._id,
+    ]);
+    this.store.dispatch(
+      CourseActions.toggleChannelSelected({ channelSelected: true })
+    );
+    // make selected channel's background white
+    this.selectedChannelId = channel._id;
+
+    // make all channels' container background Null
+    this.topics.forEach((topic) => {
+      topic.channels.forEach((channelEle) => {
+        var nonSelectedChannels = document.getElementById(
+          channelEle._id + '-container'
+        );
+        if(nonSelectedChannels){
+        nonSelectedChannels.style.backgroundColor = null;}
+      });
+    });
+    // make selected channel's container background white
+    let channelNameContainer = document.getElementById(
+      channel._id + '-container'
+    );
+    channelNameContainer.style.backgroundColor = 'white';
   }
 
   /**
@@ -114,12 +211,22 @@ export class TopicDropdownComponent implements OnInit {
    */
   onDeleteTopic() {
     this.confirmationService.confirm({
-      message: 'Do you want to delete this topic?',
+      message: 'Are you sure you want to delete this topic?',
       header: 'Delete Confirmation',
       icon: 'pi pi-info-circle',
       accept: () => this.confirmTopicDeletion(),
-      reject: () => this.informUser('info', 'Cancelled',  'Deletion cancelled')
+      reject: () => {
+        // this.informUser('info', 'Cancelled', 'Deletion cancelled')
+      },
     });
+    setTimeout(() => {
+      const rejectButton = document.getElementsByClassName(
+        'p-confirm-dialog-reject'
+      ) as HTMLCollectionOf<HTMLElement>;
+      for (var i = 0; i < rejectButton.length; i++) {
+        this.renderer.addClass(rejectButton[i], 'p-button-outlined');
+      }
+    }, 0);
   }
 
   /**
@@ -127,17 +234,21 @@ export class TopicDropdownComponent implements OnInit {
    * Captures topic deletion confirmation from ui
    *
    */
-  confirmTopicDeletion(){
+  confirmTopicDeletion() {
     this.topicChannelService
-    .deleteTopic(this.selectedTopic)
-    .subscribe((res) => {
-      if ('success' in res) {
-        this.showInfo(res['success']);
-        this.router.navigate(['course', this.courseService.getSelectedCourse()._id]);
-      } else {
-        this.showError(res['errorMsg']);
-      }
-    });
+      .deleteTopic(this.selectedTopic)
+      .subscribe((res) => {
+        if ('success' in res) {
+          // this.showInfo(res['success']);
+          this.showInfo('Topic successfully deleted!');
+          this.router.navigate([
+            'course',
+            this.courseService.getSelectedCourse()._id,
+          ]);
+        } else {
+          this.showError(res['errorMsg']);
+        }
+      });
   }
 
   onRenameTopic() {
@@ -238,7 +349,7 @@ export class TopicDropdownComponent implements OnInit {
         this.onRenameConfirmedTopic(id);
       }
     } else if (e.keyCode === 13) {
-    /**if text is not selected check following cases */
+      /**if text is not selected check following cases */
       // on Enter pressed
       (<HTMLInputElement>document.getElementById(id)).contentEditable = 'false';
       window.getSelection().removeAllRanges(); // deselect text on confirm
@@ -277,12 +388,22 @@ export class TopicDropdownComponent implements OnInit {
    */
   onDeleteChannel() {
     this.confirmationService.confirm({
-      message: 'Do you want to delete this channel?',
+      message: 'Are you sure you want to delete this channel?',
       header: 'Delete Confirmation',
       icon: 'pi pi-info-circle',
       accept: () => this.confirmChannelDeletion(),
-      reject: () => this.informUser('info', 'Cancelled',  'Deletion cancelled')
+      reject: () => {
+        // this.informUser('info', 'Cancelled', 'Deletion cancelled')
+      },
     });
+    setTimeout(() => {
+      const rejectButton = document.getElementsByClassName(
+        'p-confirm-dialog-reject'
+      ) as HTMLCollectionOf<HTMLElement>;
+      for (var i = 0; i < rejectButton.length; i++) {
+        this.renderer.addClass(rejectButton[i], 'p-button-outlined');
+      }
+    }, 0);
   }
 
   /**
@@ -290,17 +411,21 @@ export class TopicDropdownComponent implements OnInit {
    * Captures channel deletion confirmation from ui
    *
    */
-  confirmChannelDeletion(){
+  confirmChannelDeletion() {
     this.topicChannelService
-    .deleteChannel(this.selectedChannel)
-    .subscribe((res) => {
-      if ('success' in res) {
-        this.showInfo(res['success']);
-        this.router.navigate(['course', this.courseService.getSelectedCourse()._id]);
-      } else {
-        this.showError(res['errorMsg']);
-      }
-    });
+      .deleteChannel(this.selectedChannel)
+      .subscribe((res) => {
+        if ('success' in res) {
+          // this.showInfo(res['success']);
+          this.showInfo('Channel successfully deleted!');
+          this.router.navigate([
+            'course',
+            this.courseService.getSelectedCourse()._id,
+          ]);
+        } else {
+          this.showError(res['errorMsg']);
+        }
+      });
   }
 
   onRenameChannel() {
@@ -415,7 +540,7 @@ export class TopicDropdownComponent implements OnInit {
         this.onRenameConfirmedChannel(id);
       }
     } else if (e.keyCode === 13) {
-    /**if text is not selected check following cases */
+      /**if text is not selected check following cases */
       // on Enter pressed
       (<HTMLInputElement>document.getElementById(id)).contentEditable = 'false';
       window.getSelection().removeAllRanges(); // deselect text on confirm
@@ -504,7 +629,7 @@ export class TopicDropdownComponent implements OnInit {
    * inform user about the result of his action
    *
    */
-   informUser(severity, summary, detail){
+  informUser(severity, summary, detail) {
     this.messageService.add({
       severity: severity,
       summary: summary,

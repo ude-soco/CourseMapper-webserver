@@ -36,6 +36,7 @@
     width: 30px;
     height: 30px;
     border: solid 1px #777;
+    background-color: #ffffff;
 }
 
 .brush-drawing-toolbar .toolbar-button:active {

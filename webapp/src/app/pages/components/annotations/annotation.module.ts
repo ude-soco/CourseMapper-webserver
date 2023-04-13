@@ -24,6 +24,10 @@ import { RouterModule } from '@angular/router';
 import { VideoAnnotationToolbarComponent } from './video-annotation/video-annotation-toolbar/video-annotation-toolbar.component';
 import { VideoCreateAnnotationComponent } from './video-annotation/video-create-annotation/video-create-annotation.component';
 import { VideoDrawingOverlayComponent } from './video-annotation/video-drawing-overlay/video-drawing-overlay.component';
+import { VideoRenderingOverlayComponent } from './video-annotation/video-rendering-overlay/video-rendering-overlay.component';
+import { VideoAnnotationSummaryComponent } from './video-annotation/video-annotation-summary/video-annotation-summary.component';
+import { UpdateBorderColorDirective } from 'src/app/custom_directives/update-border-color.directive';
+import { VideoEffects } from './video-annotation/state/video.effects';
 
 @NgModule({
     declarations: [
@@ -40,6 +44,9 @@ import { VideoDrawingOverlayComponent } from './video-annotation/video-drawing-o
         VideoAnnotationToolbarComponent,
         VideoCreateAnnotationComponent,
         VideoDrawingOverlayComponent,
+        VideoRenderingOverlayComponent,
+        VideoAnnotationSummaryComponent,
+        UpdateBorderColorDirective
     ],
     exports: [
         PdfAnnotationToolbarComponent,
@@ -49,9 +56,6 @@ import { VideoDrawingOverlayComponent } from './video-annotation/video-drawing-o
         PdfMainAnnotationComponent,
         VideoMainAnnotationComponent,
         YouTubePlayerModule
-        
-        
-
     ],
     imports: [
         CommonModule,
@@ -62,6 +66,7 @@ import { VideoDrawingOverlayComponent } from './video-annotation/video-drawing-o
         StoreModule.forFeature('annotation', annotationReducer),
         StoreModule.forFeature('video', videoReducer),
         EffectsModule.forFeature([AnnotationEffects]),
+        EffectsModule.forFeature([VideoEffects]),
         YouTubePlayerModule,
        RouterModule.forChild([
         {
@@ -78,13 +83,6 @@ import { VideoDrawingOverlayComponent } from './video-annotation/video-drawing-o
           pathMatch: 'full',
         },
       ])
-       
-        
-       
-      
-
-       
-
     ]
 })
 export class AnnotationModule { }

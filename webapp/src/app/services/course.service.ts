@@ -9,6 +9,7 @@ import { StorageService } from './storage.service';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/pages/components/materils/state/materials.reducer';
 import * as MaterialActions from 'src/app/pages/components/materils/state/materials.actions'
+import * as  CourseActions from 'src/app/pages/courses/state/course.actions'
 
 
 @Injectable({
@@ -46,7 +47,7 @@ export class CourseService {
     }
     this.selectedCourse = course;
     let courseId = course._id;
-    this.store.dispatch(MaterialActions.setCourseId({ courseId }));    
+    this.store.dispatch(CourseActions.setCourseId({ courseId }));    
     //2
     this.onSelectCourse.emit(course);
   }
@@ -165,6 +166,28 @@ export class CourseService {
       console.log("all courses from service course")
       console.log(this.courses)
     }));
+  }
+
+
+  EnrollToCOurse(course:Course): any{
+   return this.http.post<any>(`${this.API_URL}/enrol/${course._id}`, {}).pipe(tap(
+    Enrolcourses => {
+     
+      console.log("Enrolcourses from service course")
+      console.log(Enrolcourses)
+    }
+   ))
+
+  }
+  WithdrawFromCourse(course:Course): any
+  {
+    return this.http.post<any>(`${this.API_URL}/withdraw/${course._id}`, {}).pipe(tap(
+      withdrawcourses => {
+       
+        console.log("withdraw courses from service course")
+        console.log(withdrawcourses)
+      }
+     ))
   }
   sendToOldBackend(course){
     // userId should be taken from the coockies. for the time being it is hard coded

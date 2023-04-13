@@ -1,0 +1,81 @@
+<div class="flex flex-row">
+    <div class="flex-col" *ngIf="isloggedin">
+      <app-sidebar></app-sidebar>
+     </div>
+    
+    <div style="width: 100%;">
+       
+        <div class="courseheader" >
+            <div style="width: 90%; float: left">
+                 <p class="font-roboto  font-bold leading-normal h1" > Welcome to  </p>
+        <p class="font-roboto  font-bold leading-normal h1"> {{course.name}} </p> 
+        <br>
+        <button  *ngIf="Enrolled== true"
+        pButton 
+        [ngStyle]="{ 'background-color': '#EA580C', color: '#ffffff' ,  'margin-right': '2rem' , 'margin-bottom':'1rem'}"
+        type="button"
+        label= 'Go To Course'
+        (click)="GoToCOurse()"
+       
+      ></button>
+   
+   
+      <button *ngIf="Enrolled== false"
+        pButton 
+        [ngStyle]="{ 'background-color': '#EA580C', color: '#ffffff' , 'margin-right': '2rem', 'margin-bottom':'1rem' }"
+        type="button"
+        label='Enroll To Course'
+   (click)="EnrollToCOurse()"
+      ></button>
+        <p class="font-roboto   leading-normal ">  This is the welcome page of the course!</p>
+        <p class="font-roboto   leading-normal "[ngStyle]=" { 'margin-bottom':'1rem'}">  Enroll to the course to access all the learning materials. </p>
+       
+            </div>
+            <div >
+      
+         
+    
+    </div>
+         <hr class="solid">
+       
+        </div>
+     <div class="courseDes">
+      <div style="  width: '40%'; 
+      float:'left ';
+      text-align: end;
+      ">
+        <p-avatar
+        label="{{getName(this.firstName, this.lastName)}}"
+        shape="circle"
+        size="large"
+        [style]="{ 'background-color': '#0277BD', color: '#ffffff' ,  top_margin:'0.5rem' }"
+        
+      ></p-avatar>
+      </div>
+      <div style="    width: 60%; float:right; text-align: start;">
+
+      
+        <p class="p" style=" font-weight: bold;" > Course created by: <span style=" font-weight: unset;">{{ this.firstName }} {{this.lastName}}</span> </p>
+
+        <p class="p" style=" font-weight: bold;">  Created on: {{createdAt}}</p>
+        
+     
+        
+        </div>
+   </div>
+   <div  style="margin-top: 6rem;
+   text-align: center;
+   width:84%;">
+     <p class="p" style="font-weight: bold;" >Course Description:</p>
+     <p style="
+     margin-left: 1%;
+     " *ngIf="course.description.length==0"> {{ 'No discription given...'}} </p>
+   <p style="
+   margin-left: 2.5%;
+   " > {{ course.description }}</p> 
+   </div>
+    </div> 
+        
+
+   
+  </div>

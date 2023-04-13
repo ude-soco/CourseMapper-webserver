@@ -17,12 +17,16 @@ import {
 import { AnnotationService } from 'src/app/services/annotation.service';
 import { State } from 'src/app/state/app.state';
 import {
-  getCurrentCourseId,
   getCurrentMaterialId,
 } from '../../../materils/state/materials.reducer';
 import * as AnnotationActions from './annotation.actions';
 import * as MaterialActions from '../../../materils/state/materials.actions';
+import * as VideoActions from 'src/app/pages/components/annotations/video-annotation/state/video.action'
 import { Annotation } from 'src/app/models/Annotations';
+import { LoggerService } from 'src/app/services/logger.service';
+import { getCurrentTime } from '../../video-annotation/state/video.reducer';
+import { getCurrentPdfPage, getPdfTotalNumberOfPages } from './annotation.reducer';
+import { getCurrentCourseId } from 'src/app/pages/courses/state/course.reducer';
 
 @Injectable()
 export class AnnotationEffects {
@@ -243,9 +247,29 @@ editAnnotation$ = createEffect(() =>
   )
 );
 
+logSlideSeen$ = createEffect(() =>
+  this.actions$.pipe(
+    ofType(AnnotationActions.setCurrentPdfPage),
+    withLatestFrom(
+      this.store.select(getCurrentCourseId),
+      this.store.select(getCurrentMaterialId),
+      this.store.select(getCurrentPdfPage),
+      this.store.select(getPdfTotalNumberOfPages)
+    ),
+    tap(([action, courseId, materialId, pageNumber, totalPages]) => {
+      this.loggerService.slideSeen(courseId, materialId, pageNumber);
+      if(pageNumber === totalPages){
+        this.loggerService.pdfCompleted(courseId, materialId);
+      }
+    })
+  ),
+  { dispatch: false }
+);
+
   constructor(
     private actions$: Actions,
     private annotationService: AnnotationService,
+    private loggerService: LoggerService,
     private store: Store<State>
   ) {}
 }

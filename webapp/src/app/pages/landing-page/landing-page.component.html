@@ -1,6 +1,6 @@
 
 <div class="flex flex-row">
-  <div class="flex-col" *ngIf="isloggedin">
+  <div class="flex-col" *ngIf="loggedInUser">
     <app-sidebar></app-sidebar>
   </div>
 
@@ -22,7 +22,9 @@
                 <input type="text" pInputText [(ngModel)]="value1" placeholder="Search for courses ..." class="search" >     
                 <div *ngIf="value1  != '' " class="bottom-right1">
                  <p> Showing results for {{value1}} </p> 
-                </div>    
+                </div>   
+               
+                 -->
             </span>
     
            
@@ -33,35 +35,61 @@
     
     
     <div  class="course-div" >
-    <div *ngFor="let course of courses"  >
-    <div *ngIf="value1=== '' || course.name.toLowerCase().includes(value1)">
-    
-    
-     <p-card  styleClass="p-card-shadow" class="course-card">
+    <div *ngFor="let course of this.courses; let i = index ; "   (click)="onSelectCourse(course)"  >
+    <div  *ngIf="value1=== '' || course.name.toLowerCase().includes(value1)" >
+  
+    <div courseScript= course.name >  </div>
+     <p-card styleClass="p-card-shadow" class="course-card">
         <hr style="margin-bottom: 0.75rem ; margin-top: 0%;">
         <ng-template pTemplate="header">
             <img alt="Card" src="https://primefaces.org/cdn/primeng/images/usercard.png">
         </ng-template>
-        <ng-template pTemplate="content-center" style="float: left; ">
+       
+        <ng-template pTemplate="content-center" style="float: left; "> 
+       
         <p-avatar
         label="{{course.shortName}}"
         shape="circle"
         size="large"
         [style]="{ 'background-color': '#0277BD', color: '#ffffff' , float: 'left', top_margin:'0.5rem' }"
       ></p-avatar>
-        <p style="margin: 1.5rem 1rem 1rem 4rem"> {{course.name}}</p>
+      
+      <button> <p style="margin: 1rem; font-weight: bold;"> {{course.name}}</p></button>
+      
+      <p class="p" > 
+        <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="22"
+        height="22"
+        
+        viewBox="0 0 22 22"
+        style="fill: #EA580C; transform: msFilter ; float: left; margin-right:2px;"
+        
+      >
+        <path d="M2 7v1l11 4 9-4V7L11 4z"></path>
+        <path
+          d="M4 11v4.267c0 1.621 4.001 3.893 9 3.734 4-.126 6.586-1.972 7-3.467.024-.089.037-.178.037-.268V11L13 14l-5-1.667v3.213l-1-.364V12l-3-1z"
+        ></path>
+      </svg>
+        Created By: {{ this.firstNames[i] }} {{this.lastNames[i]}} </p>
+
+      <p class="p" style=" margin-left: 4px;"> <i class="pi pi-calendar"  style="font-size: 1rem ; color: #EA580C"></i> Created On: {{this.createdAtDates[i]}}</p>
+
+        
     </ng-template>
-        <ng-template pTemplate="footer">
-            <!-- <p-button label="Save" icon="pi pi-check"></p-button>
-            <p-button label="Cancel" icon="pi pi-times" styleClass="p-button-secondary" [style]="{'margin-left': '.5em'}"></p-button> -->
-            <p> {{course.description}}</p>
-        </ng-template>
+  
+    
     </p-card> 
     </div>
+   
+    </div>
+    
     </div>
     </div>
-    </div>
+    
   </div>
+
+
     <!-- <div class="row">
         <div class="column" style="background-color:#aaa;">
           <h2>Column 1</h2>

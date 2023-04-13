@@ -1,19 +1,26 @@
 version: 2
 updates:
-
 - package-ecosystem: "github-actions"
   directory: "/"
   schedule:
-    interval: "daily"
-  commit-message:
-    prefix: "[CI] "
+    interval: "weekly"
+
+- package-ecosystem: "docker"
+  directory: "/proxy"
+  schedule:
+    interval: "weekly"
+  labels:
+  - "dependencies"
+  - "docker"
+  - "proxy"
 
 - package-ecosystem: "docker"
   directory: "/webapp"
   schedule:
     interval: "daily"
-  commit-message:
-    prefix: "[Dockerfile] "
+  ignore:
+  - dependency-name: "node"
+    versions: ["17.x-slim", "19.x-slim", "21.x-slim"]
   labels:
   - "dependencies"
   - "docker"
@@ -23,8 +30,6 @@ updates:
   directory: "/webserver"
   schedule:
     interval: "daily"
-  commit-message:
-    prefix: "[Dockerfile] "
   labels:
   - "dependencies"
   - "docker"
@@ -35,8 +40,6 @@ updates:
   schedule:
     interval: "daily"
   open-pull-requests-limit: 10
-  commit-message:
-    prefix: "[webapp] "
   labels:
   - "dependencies"
   - "javascript"
@@ -47,8 +50,6 @@ updates:
   schedule:
     interval: "daily"
   open-pull-requests-limit: 10
-  commit-message:
-    prefix: "[webserver] "
   labels:
   - "dependencies"
   - "javascript"

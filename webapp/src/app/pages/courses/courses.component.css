@@ -1,0 +1,31 @@
+.courseheader{
+    width: 98%;
+   
+    text-align: center;
+    margin: 1rem;
+}
+.h1{
+    font-size: 3rem;
+    font-weight: bold;
+   
+}
+.p{
+    font-size: 1rem;
+    font-family: 'Times New Roman', Times, serif;
+}
+hr.solid {
+    border-top: 3px solid #bbb;
+    width:99%;
+    text-align: center;
+  }
+  .courseDes{
+    position: relative;
+    font-family: Arial;
+    margin-left:1rem ;  border-radius:14px;
+    top: 1rem;
+    margin-bottom: 5rem;
+   
+    text-align: center;
+    width: 100%;
+  
+  }

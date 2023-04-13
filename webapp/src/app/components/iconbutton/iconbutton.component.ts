@@ -19,7 +19,7 @@ export class IconbuttonComponent implements OnInit {
    */
   @Input() icon: string = '';
   @Input() color: string = 'text-white';
-
+  @Input() disabled: boolean;
   @Output() onClick: EventEmitter<void> = new EventEmitter();
 
   constructor() {}

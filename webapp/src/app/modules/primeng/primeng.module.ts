@@ -20,6 +20,12 @@ import {DialogModule} from 'primeng/dialog';
 import {EditorModule} from 'primeng/editor';
 import {SliderModule} from 'primeng/slider';
 import {CardModule} from 'primeng/card';
+import {TooltipModule} from 'primeng/tooltip';
+import {CheckboxModule} from 'primeng/checkbox';
+import {ColorPickerModule} from 'primeng/colorpicker';
+import {ConfirmDialogModule} from 'primeng/confirmdialog';
+import {ToastModule} from 'primeng/toast';
+import {MessageService} from 'primeng/api';
 
 const PrimeNgComponents = [
   AvatarModule,
@@ -42,12 +48,18 @@ const PrimeNgComponents = [
   DialogModule,
   EditorModule,
   SliderModule,
-  CardModule
+  CardModule,
+  TooltipModule,
+  CheckboxModule,
+  ColorPickerModule,
+  ConfirmDialogModule,
+  ToastModule
   
 ];
 
 @NgModule({
   imports: [PrimeNgComponents],
   exports: [PrimeNgComponents],
+  providers: [MessageService, ],
 })
 export class PrimengModule {}

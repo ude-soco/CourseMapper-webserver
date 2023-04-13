@@ -44,4 +44,4 @@ tilt:
 dev: down
 	@$(compose-dev) up --force-recreate --build
 
-.PHONY: help tilt run start up stop down clean cleanall build push
+.PHONY: help run start up stop down clean cleanall build push tilt dev

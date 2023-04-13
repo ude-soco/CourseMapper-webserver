@@ -8,12 +8,15 @@ import { TopicChannelService } from 'src/app/services/topic-channel.service';
 import { State } from 'src/app/state/app.reducer';
 import { Store } from '@ngrx/store';
 import * as AppActions from 'src/app/state/app.actions'
+import { ModeratorPrivilegesService } from 'src/app/services/moderator-privileges.service';
+import * as  MaterialActions from 'src/app/pages/components/materils/state/materials.actions'
+import * as  CourseActions from 'src/app/pages/courses/state/course.actions'
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css'],
 })
-export class SidebarComponent implements OnInit {
+ export  class SidebarComponent implements OnInit {
   courses: Course[] = [];
   channels: Channel[] = [];
   channel: Channel;
@@ -21,13 +24,15 @@ export class SidebarComponent implements OnInit {
   public HomePage="/home"
   selectedCourse: Course = new CourseImp('', '');
   displayAddCourseDialogue: boolean = false;
+  showModeratorPrivileges:boolean
 
   constructor(
     private courseService: CourseService,
     private router: Router,
     private topicChannelService: TopicChannelService,
     private store: Store<State>,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private moderatorPrivilegesService: ModeratorPrivilegesService,
   ) {}
 
   ngOnInit(): void {
@@ -73,6 +78,7 @@ export class SidebarComponent implements OnInit {
       }
     }
     this.store.dispatch(AppActions.toggleCourseSelected({courseSelected: true}));
+    this.store.dispatch(CourseActions.toggleChannelSelected({ channelSelected: false }));
     this.router.navigate(['course', selectedCourse._id]);
   }
 }
