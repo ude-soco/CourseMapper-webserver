@@ -5,7 +5,7 @@ metadata:
   annotations:
     keel.sh/policy: patch
     keel.sh/trigger: poll
-    keel.sh/pollSchedule: "@every 1d"
+    keel.sh/pollSchedule: "@every 1h"
 spec:
   replicas: 1
   strategy:
