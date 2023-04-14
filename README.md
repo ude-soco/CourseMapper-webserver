@@ -1,28 +1,29 @@
 [![CI](https://github.com/ude-soco/CourseMapper-webserver/actions/workflows/ci.yml/badge.svg)](https://github.com/ude-soco/CourseMapper-webserver/actions/workflows/ci.yml)
 
-<p align="center">
-<a href="https://www.uni-due.de/soco/research/projects/elas.php" target="_blank" rel="noopener noreferrer">
-<img width=50% src="webapp/src/assets/logo.svg" alt="re-frame logo">
-</a>
-</p>
+<p align="center"><a href="https://www.uni-due.de/soco/research/projects/elas.php" target="_blank" rel="noopener noreferrer"><img width=50% src="webapp/src/assets/logo.svg" alt="re-frame logo"></a></p>
 
-<p>
 CourseMapper is a collaborative course annotation and analytics platform that fosters collaboration and interaction around pdf/video learning materials, supported by visual learning analytics.
-</p>
 
-## Build and run all services
+## 🚀 Get Started
 
-* `make up` (or `docker compose up`) to run the application
-* `make tilt` to automatically rebuild/restart containers during development
-* `make dev` to run processes in containers, but mount source code from host machine
-* see the manual below to install dependencies and run processes w/o containers
+### Live instances
+
+* Production: [coursemapper.soco.inko.cloud](https://coursemapper.soco.inko.cloud/) (Latest `v0.x.x` [release](https://github.com/ude-soco/CourseMapper-webserver/releases))
+* Preview: [dev.coursemapper.soco.inko.cloud](https://dev.coursemapper.soco.inko.cloud/)
+
+### Build and run
+
+* `make up` to run the application using *Docker Compose*
+* `make tilt` to automatically rebuild during development using *Tilt*
+* `make mounted` to run processes using *Docker Compose*, but mount source code from host machine
+* see `./.k8s` for base configuration to run the application on *Kubernetes*
+* see the manual below to install dependencies and run processes *locally, without containers*
 
 Visit the [proxy service on port 8000](http://localhost:8000/) to use the application.
 
+## Application stack
 
-## Container images
-
-The services making up the coursemapper-webserver project use the following images:
+The services making up the coursemapper-webserver project use the following images, hosted on Docker Hub:
 
 * Proxy: [socialcomputing/coursemapper-webserver-proxy](https://hub.docker.com/repository/docker/socialcomputing/coursemapper-webserver-proxy/general)
 * Webapp: [socialcomputing/coursemapper-webserver-webapp](https://hub.docker.com/repository/docker/socialcomputing/coursemapper-webserver-webapp/general)
@@ -30,15 +31,7 @@ The services making up the coursemapper-webserver project use the following imag
 * MongoDB: [mongo](https://hub.docker.com/_/mongo)
 
 
-## Live instances
-
-* Production: [coursemapper.soco.inko.cloud](https://coursemapper.soco.inko.cloud/) (Latest `v0.x.x` [release](https://github.com/ude-soco/CourseMapper-webserver/releases))
-* Preview: [dev.coursemapper.soco.inko.cloud](https://dev.coursemapper.soco.inko.cloud/)
-
-
-## 🚀 Get Started
-
-### Manual Installation Guide 🔨
+## 🔨 Development Setup Guide
 
 #### Step 1: Pre-requisites
 
@@ -109,10 +102,3 @@ The services making up the coursemapper-webserver project use the following imag
 
 - Open MongoDB Compass and type `mongodb://localhost:27017` in the URI textbox and press connect button
 - Find the database `coursemapper_v2` in the left panel
-
-### Installation using Using Docker 🐳 (Updates required)
-
-- Download and install [Docker](https://www.docker.com/products/docker-desktop)
-- Open a command prompt, move to the `webserver` directory, and then type the command `npm ci`
-- Then move to the `webapp` directory, and type the command `npm ci`
-- Move back to root directory and type the following command `docker-compose up --build`
