@@ -1,8 +1,7 @@
 name: Release the application
 
 on:
-  push:
-    tags: [ v*.*.* ]
+  workflow_call:
 
 jobs:
   release:
