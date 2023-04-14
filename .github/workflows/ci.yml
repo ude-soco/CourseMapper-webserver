@@ -2,10 +2,10 @@ name: CI
 
 on:
   push:
-    tags: [ v*.*.* ]
-    branches: [ main ]
+    tags:       [ v*.*.* ]
+    branches:   [ main, development ]
   pull_request:
-    branches: [ main ]
+    branches:   [ main, development ]
 
 jobs:
   build-images:
@@ -20,20 +20,20 @@ jobs:
       registry_token:  ${{ secrets.DOCKERHUB_TOKEN }}
 
   check-k8s:
-    name: Check K8s manifests
-    runs-on: ubuntu-latest
+    name:      Check K8s manifests
+    runs-on:   ubuntu-latest
     container: deck15/kubeval-tools
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
     - name: kubeval
-      run: kubectl kustomize .k8s/local | kubeval --schema-location https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master
+      run:  kubectl kustomize .k8s/local | kubeval --schema-location https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master
     - name: kube-score
-      run: kubectl kustomize .k8s/local | kube-score score -
+      run:  kubectl kustomize .k8s/local | kube-score score -
       continue-on-error: true
 
   gh-release:
-    name: Release
+    name:  Release
     needs: build-images
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
-    uses: ./.github/workflows/release.yml
+    if:    github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    uses:  ./.github/workflows/release.yml
