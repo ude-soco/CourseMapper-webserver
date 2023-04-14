@@ -27,9 +27,9 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
     - name: kubeval
-      run:  kubectl kustomize .k8s/local | kubeval --schema-location https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master
+      run:  kubectl kustomize .k8s | kubeval --schema-location https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master
     - name: kube-score
-      run:  kubectl kustomize .k8s/local | kube-score score -
+      run:  kubectl kustomize .k8s | kube-score score -
       continue-on-error: true
 
   gh-release:
