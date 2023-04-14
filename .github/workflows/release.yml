@@ -5,7 +5,7 @@ on:
 
 jobs:
   release:
-    name: Create Github Release
+    name: Create GH Release
     runs-on: ubuntu-latest
     permissions:
       contents: write
