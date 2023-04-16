@@ -1,4 +1,4 @@
-name: Build container images
+name: Build images
 
 on:
   workflow_call:
@@ -29,6 +29,7 @@ on:
 
 jobs:
   build:
+    name: Build image
     runs-on: ubuntu-latest
     timeout-minutes: ${{ inputs.timeout }}
 

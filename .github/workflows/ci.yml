@@ -8,8 +8,7 @@ on:
     branches:   [ main, development ]
 
 jobs:
-  build-images:
-    name: Build container images
+  build:
     uses: ./.github/workflows/build.yml
     with:
       services:        "[ 'proxy', 'webapp', 'webserver' ]"
@@ -19,8 +18,8 @@ jobs:
       registry_user:   ${{ secrets.DOCKERHUB_USERNAME }}
       registry_token:  ${{ secrets.DOCKERHUB_TOKEN }}
 
-  check-k8s:
-    name:      Check K8s manifests
+  check:
+    name:      Validate manifests
     runs-on:   ubuntu-latest
     container: deck15/kubeval-tools
     steps:
@@ -32,8 +31,7 @@ jobs:
       run:  kubectl kustomize .k8s | kube-score score -
       continue-on-error: true
 
-  gh-release:
-    name:  Release
+  release:
     needs: build-images
     if:    github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     uses:  ./.github/workflows/release.yml
