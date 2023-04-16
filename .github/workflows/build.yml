@@ -67,6 +67,7 @@ jobs:
       with:
         images: ${{ inputs.base_image_name }}${{ matrix.service }}
         tags: |
+          type=edge
           type=raw,value=latest,enable=${{ github.ref == steps.latest.outputs.version }}
           type=semver,pattern={{version}}
           type=semver,pattern={{major}}.{{minor}}
