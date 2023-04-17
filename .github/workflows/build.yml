@@ -73,7 +73,7 @@ jobs:
           type=semver,pattern={{version}}
           type=semver,pattern={{major}}.{{minor}}
           type=semver,pattern={{major}},enable=${{ !startsWith(github.ref, 'refs/tags/v0.') }}
-          type=ref,event=branch
+          type=ref,event=branch,enable=${{ github.ref != 'refs/heads/main' }}
           type=ref,event=pr
 
     - name: Build and push container image
@@ -86,3 +86,16 @@ jobs:
         push:       ${{ inputs.push }}
         cache-from: type=gha
         cache-to:   type=gha,mode=max
+
+    - name: Update registry description
+      if:   github.ref == steps.latest.outputs.version
+      uses: christian-korneck/update-container-description-action@v1
+      env:
+        DOCKER_USER: ${{ secrets.registry_user }}
+        DOCKER_PASS: ${{ secrets.registry_token }}
+      with:
+        destination_container_repo: ${{ inputs.base_image_name }}${{ matrix.service }}
+        provider: dockerhub
+        short_description: CourseMapper-webserver, ${{ matrix.service }} service
+        readme_file: 'README.md'
+      continue-on-error: true
