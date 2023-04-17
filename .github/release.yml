@@ -1,48 +1,46 @@
 changelog:
   exclude:
     labels:
-    - ignore-for-release
-    authors:
-    - dependabot
+      - ignore-for-release
 
   categories:
-  - title: 🎉 Exciting New Features
-    labels:
-    - enhancement
-
-  - title: 🧰 Fixes
-    labels:
-    - bug
-
-  - title: 🔗 Webapp Dependencies
-    labels:
-    - dependencies
-    exclude:
+    - title: 🎉 Exciting New Features
       labels:
-        - proxy
-        - webserver
+        - enhancement
 
-  - title: 🔗 Webserver Dependencies
-    labels:
-    - dependencies
-    exclude:
+    - title: 🧰 Fixes
       labels:
-      - proxy
-      - webapp
+        - bug
 
-  - title: 🔗 Other Dependencies
-    labels:
-    - dependencies
-    exclude:
+    - title: 🔗 Webapp Dependencies
       labels:
-      - webapp
-      - webserver
+        - dependencies
+      exclude:
+        labels:
+          - proxy
+          - webserver
 
-  - title: 🎨 Other Changes
-    labels:
-    - '*'
-    exclude:
+    - title: 🔗 Webserver Dependencies
       labels:
-      - enhancement
-      - bug
-      - dependencies
+        - dependencies
+      exclude:
+        labels:
+          - proxy
+          - webapp
+
+    - title: 🔗 Other Dependencies
+      labels:
+        - dependencies
+      exclude:
+        labels:
+          - webapp
+          - webserver
+
+    - title: 🎨 Other Changes
+      labels:
+        - '*'
+      exclude:
+        labels:
+          - enhancement
+          - bug
+          - dependencies
