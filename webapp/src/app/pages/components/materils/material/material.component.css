@@ -17,3 +17,11 @@
   :host ::ng-deep .p-toast .p-toast-message-icon{
     font-size: 2em !important;
   }
+  :host ::ng-deep #showMaterialKG{
+    /* position: absolute; */
+    font-size: 14px;
+    /* color: #ffffff; */
+    color: #EB590D;
+    /* background: #EB590D; */
+    border: #EB590D;
+}

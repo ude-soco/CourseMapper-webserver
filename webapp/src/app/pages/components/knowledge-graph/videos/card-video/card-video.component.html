@@ -1,0 +1,29 @@
+<div class="mb-8 grid-cols-1 lg:flex border-b border-b-4 border-gray-300">
+    <div class="items-center image-video flex-col sm:w-fit sm:h-fit bg-transparent bg-cover text-center">
+      <img (click)="readVideo(videoElement)" class="object-cover max-w-sm md:max-w-lg rounded" [src]=videoElement.thumbnail alt="tailwind logo" />
+      <app-rating [element]="videoElement" [notUnderstoodConcepts]="notUnderstoodConcepts" ></app-rating>
+    </div>
+    <div class="bg-white sm:w-50 px-4 pb-4 flex flex-col">
+      <div class="text-gray-900 items-center font-bold flex flex-row text-xl">
+        <h2 class="title-video text-xl font-bold inline-block" (click)="readVideo(videoElement)" [class.active]="isActive"  [innerHTML] = "videoElement.title"></h2>
+        <span pTooltip="Similarity between the concepts not understood and the content of this video"
+              class="text-sm font-semibold flex-none w-40 text-center py-1 px-2 rounded bg-white text-primary-600 border mx-4 last:mr-0 mr-1">
+          Similarity Score: {{videoElement.similarity_score | percent}}
+        </span>
+      </div>
+      <p class="text-sm text-gray-600 my-2 items-center">
+        {{ videoElement.views | number }} views - {{ videoElement.publish_time | dateAgo }}
+      </p>
+      <div *ngIf="videoElement.concepts.length !== 0" class="flex flex-row mb-3 mt-6">
+        <p class="mr-2 font-semibold italic">Keyphrases: </p>
+        <div *ngFor="let concept of videoElement.concepts.slice(0, 5)" pTooltip="Main keyphrases extracted from this video"
+             class="text-xs uppercase text-chips-txt bg-gray-200 mx-1 p-1 px-2 font-semibold rounded-2xl">{{concept}}</div>
+      </div>
+      <div class="flex flex-row">
+        <p *ngIf="videoElement.description_full" class="mr-2 font-semibold italic">Description: </p>
+        <p class="text-gray-700 text-base line-clamp" [innerHTML]="videoElement.description_full | linkify"></p>
+        <!--<p class="text-gray-700 text-base" *ngIf="videoElement.description_full.length > DESCRIPTION_MAX_LENGTH" [innerHTML]="videoElement.description_full.substring(0, DESCRIPTION_MAX_LENGTH)+'...' | linkify"></p>
+      --></div>
+    </div>
+  </div>
+  

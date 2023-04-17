@@ -13,11 +13,13 @@ import { environment } from 'src/environments/environment';
 export class UserServiceService {
   public resu: any;
   firstname!: string;
-  user:User;
+  user: User;
   private API_URL = environment.API_URL;
   constructor(private http: HttpClient, private router: Router) {}
 
   login(username: string, password: string): Observable<any> {
+    console.log('HTTPOptions')
+    console.log(HTTPOptions)
     return this.http.post(
       AUTH_API + 'signin',
       { username, password },
@@ -60,13 +62,13 @@ export class UserServiceService {
     return this.http.post(AUTH_API + 'signout', {}, HTTPOptions);
   }
 
-  GetUserName(_id:string): Observable<any> {
-    return this.http.get<any>(`${this.API_URL}/users/${_id}`).pipe(tap( user => {
-this.user=user
-console.log("this.user GetUserName")
-console.log(this.user)
-    }))
+  GetUserName(_id: string): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/users/${_id}`).pipe(
+      tap((user) => {
+        this.user = user;
+        console.log('this.user GetUserName');
+        console.log(this.user);
+      })
+    );
   }
-
- 
 }

@@ -42,6 +42,7 @@ import { SocketIoModule, SocketIoConfig, Socket } from 'ngx-socket-io';
 import { PdfAnnotationSummaryComponent } from '../pdf-annotation-summary/pdf-annotation-summary.component';
 import { Reply } from 'src/app/models/Reply';
 import { getLoggedInUser } from 'src/app/state/app.reducer';
+import { SlideKgOrderedService } from 'src/app/services/slide-kg-ordered.service';
 
 @Component({
   selector: 'app-pdf-main-annotation',
@@ -109,6 +110,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   cursorMode: string = 'default';
   drawBoxObjectList: RectangleObject[] = [];
   annotations: Annotation[] = [];
+  showConceptMapEvent: boolean = false;
   ngOnInit(): void {
     this.store.select(getHideAnnotationValue).subscribe((isHideAnnotations) => {
       this.hideAnnotations(isHideAnnotations);
@@ -127,7 +129,8 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   constructor(
     private pdfViewService: PdfviewService,
     private store: Store<State>,
-    private socket: Socket
+    private socket: Socket,
+    private slideKgGenerator: SlideKgOrderedService,
   ) {
     this.getDocUrl();
     this.store.dispatch(AnnotationActions.loadAnnotations());
@@ -904,5 +907,10 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
         phraseSearch: true,
       });
     }
+  }
+
+  onConceptMapButtonClicked(show: boolean) {
+    this.showConceptMapEvent=show
+    this.slideKgGenerator.slideKgOrdered()
   }
 }

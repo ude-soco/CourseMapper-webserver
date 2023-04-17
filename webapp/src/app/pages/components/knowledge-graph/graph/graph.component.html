@@ -1,0 +1,191 @@
+<p-toast key="statusUpdated"></p-toast>
+<div class="graphDiv" *ngIf="materialKnowledgeGraph" style="display: block">
+  <div class="graphAbstract" style="width: 100%">
+    <app-cytoscape
+      [elements]="conceptMapData"
+      [selectedFilterValues]="selectedFilterValues"
+      [topNConcepts]="topNConcepts"
+      [filterUpdated]="filterUpdated"
+      (selectedNodeEvent)="nodeChange($event)"
+      [cyHeight]="cyHeight"
+    >
+    </app-cytoscape>
+    <!-- [showConceptAbstract]="showConceptAbstract" -->
+  </div>
+  <div
+    *ngIf="node_name && node_type !== 'user'"
+    class="abstractBlock"
+    id="abstractBlockContainer"
+  >
+    <p-sidebar
+      *ngIf="node_name && node_type !== 'user'"
+      [(visible)]="showConceptAbstract"
+      [baseZIndex]="-1"
+      [dismissible]="true"
+      [showCloseIcon]="true"
+      position="right"
+      styleClass="abstractSidebar"
+      [autoZIndex]="false"
+      id="abstractSidebarBlock"
+      (onHide)="closeAbstractPanel()"
+    >
+      <div class="innerAbstractBlock" style="display: inline-block">
+        <div style="display: inline-block; margin: 2px">
+          <h2 class="font-medium leading-tight text-4xl mt-0 mb-2 ml-5">
+            {{ node_name }}
+          </h2>
+        </div>
+        <hr style="margin: 0 5px; padding: 0; width: 95%" />
+        <div *ngIf="node_abstract">
+          <div style="display: inline-block; margin: 2px">
+            <div>
+              <span id="abstractSpan" class="abstractParagraph">
+                {{ node_abstract }} ...
+                <a
+                  class="no-underline text-primary-400 hover: hover:underline mb-4 transition duration-300 ease-in-out"
+                  id="clampedAnchorTag"
+                  *ngIf="node_wikipedia"
+                  href="javascript:void(0);"
+                  (click)="goToWikipediaPage(node_wikipedia)"
+                  >Read full article on wikipedia <i class="pi pi-link"></i></a
+              ></span>
+              <a
+                *ngIf="node_wikipedia && clamped"
+                class="no-underline text-primary-400 hover: hover:underline mb-4 transition duration-300 ease-in-out"
+                href="javascript:void(0);"
+                (click)="goToWikipediaPage(node_wikipedia)"
+                style="margin-left: 5px; margin-top: 0; margin-bottom: 2px"
+                >Read full article on wikipedia <i class="pi pi-link"></i
+              ></a>
+            </div>
+          </div>
+        </div>
+        <div
+          *ngIf="node_abstract == '' && node_wikipedia"
+          style="display: inline-block; margin: 2px"
+        >
+          <div style="display: inline-block; margin: 2px">
+            <div class="abstractParagraph">
+              No abstract available ...
+              <a
+                class="no-underline text-primary-400 hover: hover:underline mb-4 transition duration-300 ease-in-out"
+                *ngIf="node_wikipedia"
+                href="javascript:void(0);"
+                (click)="goToWikipediaPage(node_wikipedia)"
+                >Read full article on wikipedia<i class="pi pi-link"></i
+              ></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-sidebar>
+  </div>
+</div>
+
+<div
+  class="graphDiv"
+  *ngIf="slideKnowledgeGraph && !recommenderKnowledgeGraph"
+  style="display: flex"
+>
+  <div class="graphAbstract" style="width: 100%">
+    <!-- <app-cytoscape-slide -->
+    <app-cytoscape-slide
+      [elements]="conceptMapData"
+      [selectedFilterValues]="selectedFilterValues"
+      [topNConcepts]="topNConcepts"
+      [filterUpdated]="filterUpdated"
+      (selectedNodeEvent)="nodeChange($event)"
+      [cyHeight]="cyHeight"
+    >
+    <!-- </app-cytoscape-slide> -->
+    </app-cytoscape-slide>
+  </div>
+  <div
+    *ngIf="node_name && node_type !== 'user'"
+    class="abstractBlock"
+    style="max-width: 35.85%; max-height: 75%;"
+  >
+    <div
+      class="innerAbstractBlock"
+      style="display: inline-block; max-height: 75.5%"
+    >
+      <i
+        id="abstractCloseButton"
+        style="position: relative; float: right; margin-right: 0.5rem;margin-top: 0.5rem;"
+        (click)="closeAbstractPanel()"
+        type="button"
+        class="pi pi-times"
+      ></i>
+      <div style="display: inline-block; margin: 2px">
+        <h2 class="font-medium leading-tight text-4xl mt-0 mb-2 ml-5">
+          {{ node_name }}
+        </h2>
+      </div>
+      <hr style="margin: 0 5px; padding: 0; width: 95%" />
+      <div *ngIf="node_abstract">
+        <div style="display: inline-block; margin: 2px">
+          <div>
+            <span id="abstractSpan" class="abstractParagraph">
+              {{ node_abstract }} ...
+              <a
+                class="no-underline text-primary-400 hover: hover:underline mb-4 transition duration-300 ease-in-out"
+                id="clampedAnchorTag"
+                *ngIf="node_wikipedia"
+                href="javascript:void(0);"
+                (click)="goToWikipediaPage(node_wikipedia)"
+                >Read full article on wikipedia <i class="pi pi-link"></i></a
+            ></span>
+            <a
+              *ngIf="node_wikipedia && clamped"
+              class="no-underline text-primary-400 hover: hover:underline mb-4 transition duration-300 ease-in-out"
+              href="javascript:void(0);"
+              (click)="goToWikipediaPage(node_wikipedia)"
+              style="margin-left: 5px; margin-top: 0; margin-bottom: 2px"
+              >Read full article on wikipedia <i class="pi pi-link"></i
+            ></a>
+          </div>
+        </div>
+      </div>
+      <div
+        *ngIf="node_abstract == '' && node_wikipedia"
+        style="display: inline-block; margin: 2px"
+      >
+        <div style="display: inline-block; margin: 2px">
+          <div class="abstractParagraph">
+            No abstract available ...
+            <a
+              class="no-underline text-primary-400 hover: hover:underline mb-4 transition duration-300 ease-in-out"
+              *ngIf="node_wikipedia"
+              href="javascript:void(0);"
+              (click)="goToWikipediaPage(node_wikipedia)"
+              >Read full article on wikipedia<i class="pi pi-link"></i
+            ></a>
+          </div>
+        </div>
+      </div>
+      <div
+        class="UnderstandButtons"
+        style="text-align: center; margin-bottom: 7px; margin-top: 5px"
+      >
+        <button
+          pButton
+          type="button"
+          label="MARK AS UNDERSTOOD"
+          class="p-button-outlined p-button-sm"
+          (click)="markAsUnderstood(node_id, node_cid, node_name)"
+          icon="pi pi-check"
+          style="font-size: 12px; margin-bottom: 7px; margin-right: 7px"
+        ></button>
+        <button
+          pButton
+          type="button"
+          label="MARK AS NOT UNDERSTOOD"
+          class="p-button-outlined p-button-sm"
+          (click)="markAsDidNotUnderstand(node_id, node_cid, node_name)"
+          icon="pi pi-times"
+          style="font-size: 12px; margin-bottom: 7px; margin-left: 7px"
+        ></button>
+      </div>
+    </div>
+  </div>
+</div>

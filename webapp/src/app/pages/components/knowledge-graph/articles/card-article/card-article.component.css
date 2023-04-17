@@ -1,0 +1,41 @@
+a{
+    color: #0377bd;
+    cursor: pointer;
+  }
+  .image-article {
+    cursor: pointer;
+  }
+  .title-article.active {
+    color: #0377bd;
+    cursor: pointer;
+  }
+  .title-article:hover {
+    color: #0377bd;
+    cursor: pointer;
+  }
+  .like-button.active {
+    color: #FFFFFF;
+    background-color: #0377bd;
+  }
+  .dislike-button.active {
+    color: #FFFFFF;
+    background-color: red;
+    border: white;
+  }
+  
+  a {
+    display: inline-block;
+  }
+  a svg {
+    display: inline-block;
+    vertical-align: middle;
+  }
+  
+  button {
+    display: inline-block;
+  }
+  button svg {
+    display: inline-block;
+    vertical-align: middle;
+  }
+  

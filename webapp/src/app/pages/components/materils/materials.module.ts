@@ -14,6 +14,7 @@ import { PdfMainAnnotationComponent } from '../annotations/pdf-annotation/pdf-ma
 import { ToastModule } from 'primeng/toast';
 import { MenuModule } from 'primeng/menu';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { KnowledgeGraphModule } from '../knowledge-graph/knowledge-graph.module';
 
 @NgModule({
   declarations: [MaterialComponent, AddMaterialComponent],
@@ -27,6 +28,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
     SharedComponentsModule,
     MenuModule,
     ConfirmDialogModule,
+    KnowledgeGraphModule,
     StoreModule.forFeature('material', materialReducer),
     RouterModule.forChild([
       {

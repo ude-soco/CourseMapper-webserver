@@ -336,3 +336,52 @@ export const getUser = async (req, res) => {
   }
   return res.status(200).send(foundUser);
 };
+
+export const getUserConcepts = async (req, res) => {
+ 
+  let userId =  req.params.userId;
+
+  let foundUser;
+  let results;
+  console.log('userId is:')
+  console.log(userId)
+  console.log(typeof(userId))
+  try {
+    foundUser = await User.findOne({ _id: ObjectId(userId) })
+    .populate("courses", "-__v");
+    if (!foundUser) {
+      return res.status(404).send({
+        error: `User with id ${userId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+  results={
+    understoodConcepts: foundUser.understoodConcepts,
+    didNotUnderstandConcepts: foundUser.didNotUnderstandConcepts,
+  }
+  return res.status(200).send(results);
+};
+
+export async function updateUserConcepts(props) {
+  let userId= props.body.userId
+  let foundUser
+  const updatedDocument={$set: {
+    understoodConcepts: props.body.understoodConcepts,
+    didNotUnderstandConcepts: props.body.didNotUnderstandConcepts,
+  },}
+  try {
+    foundUser = await User.findOne({ _id: ObjectId(props.body.userId) })
+    .populate("courses", "-__v");
+    if (!foundUser) {
+      return res.status(404).send({
+        error: `User with id ${userId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+  // console.log(updatedDocument)
+  await foundUser.updateOne(updatedDocument);
+}

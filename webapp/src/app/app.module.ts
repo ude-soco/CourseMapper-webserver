@@ -16,7 +16,7 @@ import { ButtonComponent } from './components/button/button.component';
 import { IconbuttonComponent } from './components/iconbutton/iconbutton.component';
 import { AvatarComponent } from './components/avatar/avatar.component';
 import { EditorComponent } from './pages/components/editor/editor.component';
-import {InputTextareaModule} from 'primeng/inputtextarea';
+import { InputTextareaModule } from 'primeng/inputtextarea';
 import { DashboardComponent } from './pages/components/dashboard/dashboard.component';
 import { ByPassUrlSanitizationPipe } from './pipes/by-pass-url-sanitization.pipe';
 import { DragulaModule } from 'ng2-dragula';
@@ -39,10 +39,8 @@ import { registerLocaleData } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoginComponent } from './pages/components/login/login.component';
 import { HomeComponent } from './pages/home/home.component';
-import {
-  httpInterceptorProviders,
-} from './_helpers/http.interceptor';
-import { StoreModule, MetaReducer  } from '@ngrx/store';
+import { httpInterceptorProviders } from './_helpers/http.interceptor';
+import { StoreModule, MetaReducer } from '@ngrx/store';
 import { AnnotationModule } from './pages/components/annotations/annotation.module';
 import { MaterialsModule } from './pages/components/materils/materials.module';
 import { EffectsModule } from '@ngrx/effects';
@@ -52,72 +50,70 @@ import { SharedComponentsModule } from './components/shared-components.module';
 import { appReducer } from './state/app.reducer';
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 const config: SocketIoConfig = { url: 'http://localhost:8080', options: {} };
-import { hydrationMetaReducer} from "./state/hydration.reducer";
+import { hydrationMetaReducer } from './state/hydration.reducer';
 import { LandingPageComponent } from './pages/landing-page/landing-page.component';
 import { PrivacyComponent } from './pages/components/privacy/privacy.component';
 
 import { CourseModule } from './pages/courses/course.module';
 import { CourseDescriptionComponent } from './pages/components/course-description/course-description.component';
- 
+import { KnowledgeGraphModule } from './pages/components/knowledge-graph/knowledge-graph.module';
+
 export const metaReducers: MetaReducer[] = [hydrationMetaReducer];
 registerLocaleData(en);
 
 @NgModule({
-    declarations: [
-        AppComponent,
-        SidebarComponent,
-        NavbarComponent,
-        ChannelbarComponent,
-        CoursesComponent,
-        AddCourseComponent,
-        AddTopicComponent,
-        AddChannelComponent,
-        TopicDropdownComponent,
-        RegistrationComponent,
-        LoginComponent,
-        HomeComponent,
-        EditorComponent,
-        DashboardComponent,
-        ByPassUrlSanitizationPipe,
-        LandingPageComponent,
-        PrivacyComponent,
-        CourseDescriptionComponent,
-       
-    ],
-    imports: [
-        BrowserModule,
-        AppRoutingModule,
-        PrimengModule,
-        HttpClientModule,
-        DialogModule,
-        ButtonModule,
-        BrowserAnimationsModule,
-        FormsModule,
-        InputTextModule,
-        ReactiveFormsModule,
-        MenuModule,
-        ToastModule,
-        RippleModule,
-        ConfirmDialogModule,
-        StoreModule.forRoot({}, {}),
-        EffectsModule.forRoot([]),
-        StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
-        SharedComponentsModule,
-        StoreModule.forFeature('general', appReducer),
-        InputTextareaModule,
-        DragulaModule.forRoot(),
-        SocketIoModule.forRoot(config),
-        CourseModule,
-        
-        
-        
+  declarations: [
+    AppComponent,
+    SidebarComponent,
+    NavbarComponent,
+    ChannelbarComponent,
+    CoursesComponent,
+    AddCourseComponent,
+    AddTopicComponent,
+    AddChannelComponent,
+    TopicDropdownComponent,
+    RegistrationComponent,
+    LoginComponent,
+    HomeComponent,
+    EditorComponent,
+    DashboardComponent,
+    ByPassUrlSanitizationPipe,
+    LandingPageComponent,
+    PrivacyComponent,
+    CourseDescriptionComponent,
+  ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    PrimengModule,
+    HttpClientModule,
+    DialogModule,
+    ButtonModule,
+    BrowserAnimationsModule,
+    FormsModule,
+    InputTextModule,
+    ReactiveFormsModule,
+    MenuModule,
+    ToastModule,
+    RippleModule,
+    ConfirmDialogModule,
+    StoreModule.forRoot({}, {}),
+    EffectsModule.forRoot([]),
+    StoreDevtoolsModule.instrument({
+      maxAge: 25,
+      logOnly: environment.production,
+    }),
+    SharedComponentsModule,
+    StoreModule.forFeature('general', appReducer),
+    InputTextareaModule,
+    DragulaModule.forRoot(),
+    SocketIoModule.forRoot(config),
+    CourseModule,
+    KnowledgeGraphModule,
+  ],
+  exports: [SidebarComponent],
 
-    ],
-    exports:[
-        SidebarComponent
-    ],
-  
-    providers: [httpInterceptorProviders],
-    bootstrap: [AppComponent],
+  providers: [httpInterceptorProviders],
+  bootstrap: [AppComponent],
 })
 export class AppModule {}

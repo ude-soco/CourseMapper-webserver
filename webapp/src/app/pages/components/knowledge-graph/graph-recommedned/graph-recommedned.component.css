@@ -1,0 +1,94 @@
+app-cytoscape {
+  height: 100%;
+  float: left;
+  width: 100%;
+  position: relative;
+}
+
+.legend-circle-concept {
+  width: 1em;
+  height: 1em;
+  background: #32a856;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.legend-circle-related-concept {
+  width: 1em;
+  height: 1em;
+  background: #328ea8;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.legend-circle-category {
+  width: 1em;
+  height: 1em;
+  background: #a8a832;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* .abstractBlock {
+  display: block;
+  position: absolute;
+  max-height: 500px;
+  top: 8.5rem;
+  right: 3rem;
+  float: right;
+  overflow: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 8px;
+  z-index: 11;
+} */
+.abstractBlock {
+  display:block;
+  float:right;
+  position: absolute;
+  margin-right: 1.2rem;
+  margin-top: 0.2rem;
+  border: 1px solid #d1d1d1;
+  stroke: #d1d1d1;
+  box-shadow: -2px 2px #d1d1d1;
+  border-radius: 20px 20px 20px 20px;
+  right: 0.5rem;
+  background:#fefefe;
+  z-index: 11;
+}
+.abstractParagraph {
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 5px;
+  margin-bottom: 0;
+}
+#abstractCloseButton {
+  position: relative;
+  background-color: #ffffff;
+  color: #70757a;
+  float: right;
+  margin-left: auto;
+  margin-right: 0.5rem;
+  margin-top: 0.5rem;
+  cursor: pointer;
+}
+li:before {
+  /* content: "\2B24";
+  color: black; */
+  padding-right: 6px;
+}
+:host ::ng-deep .p-radiobutton-icon {
+  background-color: #0284c7 !important;
+}
+:host ::ng-deep .p-toast {
+    width:350px;
+    font-size: 15px;
+  }
+  :host ::ng-deep .p-accordion-header-link{
+    color:red;
+  }

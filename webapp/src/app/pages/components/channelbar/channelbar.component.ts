@@ -1,6 +1,6 @@
 import { TopicChannelService } from '../../../services/topic-channel.service';
 import { CourseService } from '../../../services/course.service';
-import { Component, EventEmitter, OnInit, HostListener, Renderer2 } from '@angular/core';
+import { Component, EventEmitter, OnInit, HostListener, Renderer2, Output } from '@angular/core';
 import { Course } from 'src/app/models/Course';
 import { CourseImp } from 'src/app/models/CourseImp';
 import { Channel } from 'src/app/models/Channel';
@@ -14,6 +14,7 @@ import { State } from 'src/app/state/app.state';
 import { Store } from '@ngrx/store';
 import * as AppActions from 'src/app/state/app.actions'
 import { ModeratorPrivilegesService } from 'src/app/services/moderator-privileges.service';
+import { MaterialKgOrderedService } from 'src/app/services/material-kg-ordered.service';
 
 @Component({
   selector: 'app-channelbar',
@@ -22,6 +23,12 @@ import { ModeratorPrivilegesService } from 'src/app/services/moderator-privilege
   providers: [MessageService,ConfirmationService,],
 })
 export class ChannelbarComponent implements OnInit {
+  showConceptMapEvent: boolean = false;
+
+  @Output() conceptMapEvent: EventEmitter<boolean> = new EventEmitter();
+  @Output() selectedToolEvent: EventEmitter<string> = new EventEmitter();
+  cmSelected = false;
+
   constructor(
     private courseService: CourseService,
     private topicChannelService: TopicChannelService,
@@ -32,6 +39,7 @@ export class ChannelbarComponent implements OnInit {
     private store: Store<State>,
     private moderatorPrivilegesService:ModeratorPrivilegesService,
     private renderer: Renderer2,
+    private materialKgService: MaterialKgOrderedService,
   ) {
       this.route.params.subscribe(params => {
       if(params['courseID']){
@@ -344,5 +352,11 @@ export class ChannelbarComponent implements OnInit {
         this.renderer.removeClass(confirmButton, 'confirmViaEnter');
       }, 150);
     }
+  }
+  onConceptMapButtonClicked(show: boolean) {
+    // this.conceptMapEvent.emit(show);
+    // this.cmSelected = show;
+    // this.selectedToolEvent.emit('none');
+    this.materialKgService.courseKgOrdered(this.selectedCourse);
   }
 }
