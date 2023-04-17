@@ -188,8 +188,8 @@ export class ConceptMapComponent {
         console.log(this.filteredMapData);
         setTimeout(() => {
           this.filteredMapData = tempMapData;
-          console.log(this.filteredMapData);          
-        }, 1000);
+          console.log(this.filteredMapData);
+        }, 500);
         //if navigating from recommendedMaterialsTab
         if (this.recommendedMaterialsTab) {
           //show sidebar on main tab
@@ -345,37 +345,37 @@ export class ConceptMapComponent {
         this.showCourseKg = false;
 
         this.kgNodes = null;
-          this.recommendedConcepts = null;
-          this.tabs[1].disabled = true;
-          this.tabs[2].disabled = true;
-          this.kgTabsActivated = false;
-          this.filteredMapData = null;
-          this.resultMaterials = null;
+        this.recommendedConcepts = null;
+        this.tabs[1].disabled = true;
+        this.tabs[2].disabled = true;
+        this.kgTabsActivated = false;
+        this.filteredMapData = null;
+        this.resultMaterials = null;
 
-          this.concepts1 = null;
-          this.concepts2 = null;
+        this.concepts1 = null;
+        this.concepts2 = null;
 
-          this.recommendedConcepts = null;
-          this.conceptMapRecommendedData = null;
-          this.filteredMapRecData = null;
-          this.recommenderKnowledgeGraph = false;
-          this.slideKnowledgeGraph = false;
-          this.resultMaterials = null;
-          this.kgNodes = [];
-          this.mainConceptsTab = true;
-          this.recommendedConceptsTab = false;
-          this.recommendedMaterialsTab = false;
+        this.recommendedConcepts = null;
+        this.conceptMapRecommendedData = null;
+        this.filteredMapRecData = null;
+        this.recommenderKnowledgeGraph = false;
+        this.slideKnowledgeGraph = false;
+        this.resultMaterials = null;
+        this.kgNodes = [];
+        this.mainConceptsTab = true;
+        this.recommendedConceptsTab = false;
+        this.recommendedMaterialsTab = false;
 
-          this.firstUpdate = false;
-          this.allUnderstoodConcepts = null; //clear all understood concepts lidst
-          this.hideChevronRightButton = false;
-          this.showRecommendationButtonClicked = false;
-          this.displaySidebarProperty = false;
-          this.conceptMapCourse = [];
-          this.conceptMapTopic = [];
-          this.conceptMapChannel = [];
-          this.conceptMapMaterial = [];
-          // end of clean properties
+        this.firstUpdate = false;
+        this.allUnderstoodConcepts = null; //clear all understood concepts lidst
+        this.hideChevronRightButton = false;
+        this.showRecommendationButtonClicked = false;
+        this.displaySidebarProperty = false;
+        this.conceptMapCourse = [];
+        this.conceptMapTopic = [];
+        this.conceptMapChannel = [];
+        this.conceptMapMaterial = [];
+        // end of clean properties
         setTimeout(() => {
           this.getConceptMapDataCurrentSlide();
         }, 10);
@@ -391,7 +391,7 @@ export class ConceptMapComponent {
           this.showCourseKg = false;
           this.showSlideKg = false;
           setTimeout(() => {
-           this.getConceptMapData()
+            this.getConceptMapData();
           }, 10);
         }, 0);
       }); //Show materialKG
@@ -407,7 +407,7 @@ export class ConceptMapComponent {
         setTimeout(() => {
           this.kgTitle = materialKgGenerator.selectedCourseService.name;
           setTimeout(() => {
-            this.getConceptMapData()
+            this.getConceptMapData();
           }, 10);
         }, 0);
       }); //Show courseKG
@@ -857,11 +857,9 @@ export class ConceptMapComponent {
     if (this.showMaterialKg) {
       var startTime = performance.now();
       try {
-        console.log('Current Material: ', this.currentMaterial);
         const materialId = this.currentMaterial!._id;
         // Check availability in neo4j
         const materialFound = await this.neo4jService.checkMaterial(materialId);
-        // console.log(materialFound)
         // get slide_kg from neo4j
         if (materialFound.records.length) {
           let kgNodes = [];
@@ -872,12 +870,14 @@ export class ConceptMapComponent {
           );
           materialNodes.records.forEach((data) => {
             var type = data._fields[5];
+            var conceptName = this.capitalizeWords(data._fields[3]);
             var nodeEle;
             nodeEle = {
               // label:data._fields[0][0],
               id: data._fields[1].low,
               cid: data._fields[2],
-              name: data._fields[3],
+              // name: data._fields[3],
+              name: conceptName,
               uri: data._fields[4],
               type: type,
               weight: data._fields[6],
@@ -924,6 +924,10 @@ export class ConceptMapComponent {
             );
             console.log('result from python server' + result);
             this.conceptMapData = result;
+            // capitalize nodes names
+            this.conceptMapData.nodes.forEach((node) => {
+              node.name = this.capitalizeWords(node.name);
+            });
           } catch (error) {
             console.log('Error:', error);
             this.isLoading = false;
@@ -1061,11 +1065,13 @@ export class ConceptMapComponent {
           courseMaterialsNodes.records.forEach((data) => {
             var type = data._fields[5];
             var nodeEle;
+            var conceptName = data._fields[3];
             nodeEle = {
               // label:data._fields[0][0],
               id: data._fields[1].low,
               cid: data._fields[2],
-              name: data._fields[3],
+              // name: data._fields[3],
+              name: this.capitalizeWords(conceptName),
               uri: data._fields[4],
               type: type,
               weight: data._fields[6],
@@ -1275,11 +1281,13 @@ export class ConceptMapComponent {
       let slideKgNodes = [];
       const slideNodes = await this.neo4jService.getSlide(slideId);
       slideNodes.records.forEach((data) => {
+        let conceptName = this.capitalizeWords(data._fields[3]);
         let nodeEle = {
           // label:data._fields[0][0],
           id: data._fields[1].low,
           cid: data._fields[2],
-          name: data._fields[3],
+          // name: data._fields[3],
+          name: conceptName,
           uri: data._fields[4],
           type: data._fields[5],
           weight: data._fields[6],
@@ -1475,21 +1483,21 @@ export class ConceptMapComponent {
       try {
         const reqData = await this.getRecommendedMaterialsPerSlide();
         ////////////////////////////////Call Concept recommender///////////////////////////////////////
-        const reqDataMaterial1 =
-          await this.getRecommendedMaterialsPerSlideMaterial();
+        // const reqDataMaterial1 =
+        //   await this.getRecommendedMaterialsPerSlideMaterial();
 
-        var resultConcepts =
-          await this.materialsRecommenderService.getRecommendedConcepts(
-            // reqData
-            reqDataMaterial1
-          ); //receive recommended concepts
-        this.recommendedConcepts = resultConcepts;
+        // var resultConcepts =
+        //   await this.materialsRecommenderService.getRecommendedConcepts(
+        //     // reqData
+        //     reqDataMaterial1
+        //   ); //receive recommended concepts
+        // this.recommendedConcepts = resultConcepts;
 
-        //set to local storage
-        localStorage.setItem(
-          'resultConcepts',
-          JSON.stringify(this.recommendedConcepts)
-        );
+        // //set to local storage
+        // localStorage.setItem(
+        //   'resultConcepts',
+        //   JSON.stringify(this.recommendedConcepts)
+        // );
         ////////////////////////////////////////////////////////////////////
 
         // get from local storage
@@ -1516,66 +1524,65 @@ export class ConceptMapComponent {
         this.kgTabs.kgTabsEnable();
         this.mainConceptsTab = false;
         this.recommendedConceptsTab = true;
-        this.tabs[2].disabled=true
+        this.tabs[2].disabled = true;
         this.recommendedMaterialsTab = false;
         //////////////////////////call material-recommender/////////////////////////
-        console.log('calling material recommender')
-        this.resultMaterials =
-        await this.materialsRecommenderService.getRecommendedMaterials(
-          reqData
-          ); // receive recommended materials
-          console.log('material recommender has been called')
-            console.log('#################################################')
-            console.log(this.resultMaterials)
-        this.concepts1 = this.resultMaterials.concepts;
-        this.concepts1.forEach((el, index, array) => {
-          if (
-            this.didNotUnderstandConceptsObj.some(
-              (concept) => concept.id.toString() === el.id.toString()
-            )
-          ) {
-            el.status = 'notUnderstood';
-            array[index] = el;
-          } else if (
-            this.previousConceptsObj.some(
-              (concept) => concept.cid.toString() === el.cid.toString()
-            )
-          ) {
-            el.status = 'notUnderstood';
-            array[index] = el;
-          } else if (
-            this.understoodConceptsObj.some(
-              (concept) => concept.id.toString() === el.id.toString()
-            )
-          ) {
-            el.status = 'understood';
-            array[index] = el;
-          } else {
-            el.status = 'unread';
-            array[index] = el;
-          }
-        });
+        console.log('calling material recommender');
+        // this.resultMaterials =
+        //   await this.materialsRecommenderService.getRecommendedMaterials(
+        //     reqData
+        //   ); // receive recommended materials
+        // console.log('material recommender has been called');
+        // console.log('#################################################');
+        // console.log(this.resultMaterials);
+        // this.concepts1 = this.resultMaterials.concepts;
+        // this.concepts1.forEach((el, index, array) => {
+        //   if (
+        //     this.didNotUnderstandConceptsObj.some(
+        //       (concept) => concept.id.toString() === el.id.toString()
+        //     )
+        //   ) {
+        //     el.status = 'notUnderstood';
+        //     array[index] = el;
+        //   } else if (
+        //     this.previousConceptsObj.some(
+        //       (concept) => concept.cid.toString() === el.cid.toString()
+        //     )
+        //   ) {
+        //     el.status = 'notUnderstood';
+        //     array[index] = el;
+        //   } else if (
+        //     this.understoodConceptsObj.some(
+        //       (concept) => concept.id.toString() === el.id.toString()
+        //     )
+        //   ) {
+        //     el.status = 'understood';
+        //     array[index] = el;
+        //   } else {
+        //     el.status = 'unread';
+        //     array[index] = el;
+        //   }
+        // });
 
-        //set to local storage
-        localStorage.setItem(
-          'resultMaterials',
-          JSON.stringify(this.resultMaterials)
-        );
-        this.resultMaterials = this.resultMaterials.nodes;
+        // //set to local storage
+        // localStorage.setItem(
+        //   'resultMaterials',
+        //   JSON.stringify(this.resultMaterials)
+        // );
+        // this.resultMaterials = this.resultMaterials.nodes;
         /////////////////////////////////////////////////////////////////////////
-        //get from local storage
-        // this.resultMaterials = JSON.parse(
-        //   localStorage.getItem('resultMaterials1')
-        // ).nodes;
+        // // get from local storage
+        this.resultMaterials = JSON.parse(
+          localStorage.getItem('resultMaterials1')
+        ).nodes;
 
         this.kgTabs.kgTabsEnable();
-        this.tabs[2].disabled=false
+        // this.tabs[2].disabled = false;
 
         console.log(
           'getconceptMapRecommendedData:::getconceptMapRecommendedData',
           this.conceptMapRecommendedData
         );
-        
       } catch (error) {
         console.log('Error:', error);
         this.displayMessage(error.message);
@@ -1946,6 +1953,15 @@ export class ConceptMapComponent {
     this.selectedFilterValues = this.checkOptionsOne
       .filter((item) => item.checked)
       .map((i) => i.value);
+  }
+  capitalizeWords(str) {
+    var words = str.split(' ');
+    for (var i = 0; i < words.length; i++) {
+      var word = words[i];
+      var firstLetter = word.charAt(0);
+      words[i] = firstLetter.toUpperCase() + word.slice(1);
+    }
+    return words.join(' ');
   }
   infoToast() {
     this.messageService.add({

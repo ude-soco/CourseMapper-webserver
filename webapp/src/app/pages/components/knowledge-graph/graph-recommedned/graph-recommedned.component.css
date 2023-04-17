@@ -92,3 +92,8 @@ li:before {
   :host ::ng-deep .p-accordion-header-link{
     color:red;
   }
+  #abstractButtons{
+    color:#EB590D;
+    border: #EB590D;
+    /* font-size: 12px; */
+  }

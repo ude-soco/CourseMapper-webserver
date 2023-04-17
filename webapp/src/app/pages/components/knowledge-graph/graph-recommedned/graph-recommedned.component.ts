@@ -82,7 +82,7 @@ export class GraphRecommednedComponent {
   ngAfterContentChecked() {
     try {
       this.linkTop = document
-        .getElementById('clampedAnchorTag')
+        .getElementById('clampedAnchorTagIcon')
         .getBoundingClientRect().top;
       this.abstractDivBottom = document
         .getElementById('abstractSpan')

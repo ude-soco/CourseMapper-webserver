@@ -35,11 +35,12 @@ export class GraphComponent {
   understoodConceptsObj = [];
   didNotUnderstandConceptsObj = [];
   newConceptsObj = [];
-  showConceptAbstract=false
+  showConceptAbstract = false;
 
   newConceptsSubscription: Subscription;
   didNotUnderstandConceptsSubscription: Subscription;
   understoodConceptsSubscription: Subscription;
+  truncatedAbstract: string;
 
   constructor(
     private messageService: MessageService, // show toast msgs
@@ -60,25 +61,57 @@ export class GraphComponent {
         this.understoodConceptsObj = res;
       });
   }
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   ngOnChanges() {}
 
   ngAfterContentChecked() {
+    //check if text is bigger than container & show wiki_link depending on it
     try {
       this.linkTop = document
-        .getElementById('clampedAnchorTag')
+        .getElementById('clampedAnchorTagIcon')
         .getBoundingClientRect().top;
       this.abstractDivBottom = document
         .getElementById('abstractSpan')
         .getBoundingClientRect().bottom;
+        //if the top coordinate of link icon is bigger than bottom coordinate of abstract_text
+        //show link on new line
       if (this.linkTop > this.abstractDivBottom) {
         this.clamped = true;
       } else {
         this.clamped = false;
       }
     } catch {}
+  }
+
+  onResize(e){
+    // set number of shown text for abstract on page resize
+    let abstractSidebar = document.getElementById('abstractSidebarBlock');
+    //if kg at material or course level && abstract sidebar shown
+        if (abstractSidebar && this.materialKnowledgeGraph) {
+          let sidebarChild = document.getElementById('abstractSidebarBlock')
+            .childNodes[0] as HTMLElement;
+          let spanAbstract = document.getElementById('abstractSpan');
+          spanAbstract.style.webkitLineClamp = null;
+          let sBarAbstract = sidebarChild.childNodes[1].childNodes[0]
+            .childNodes[0] as HTMLElement;
+          console.log(sBarAbstract.clientHeight);
+          let sBarHeight =
+            sidebarChild.clientHeight - sBarAbstract.clientHeight;
+          let sBarWidth = sidebarChild.clientWidth;
+          //font size is 20 by default
+          let fontSize = 20;
+          var maxChars =
+            Math.floor(sBarWidth / fontSize) *
+              Math.floor(sBarHeight / fontSize) -
+            95; //get max number of abstract chars in which no scrolling needed [(container area/ font size)-header area - link size]
+          this.truncatedAbstract = this.node_abstract.substring(0, maxChars); // limit max size of chars at abstract
+          this.truncatedAbstract = this.truncatedAbstract.substring(
+            0,
+            this.truncatedAbstract.lastIndexOf(' ')
+          ); // subtract last word to prevent showing words with subtracted chars
+        
+        }
   }
 
   nodeChange(event: any) {
@@ -89,16 +122,42 @@ export class GraphComponent {
       this.node_type = event.type;
       this.node_abstract = event.abstract;
       this.node_wikipedia = event.wikipedia;
-      this.showConceptAbstract=true
+      this.showConceptAbstract = true;
       setTimeout(() => {
-        let abstractContainer= document.getElementById('abstractBlockContainer')
-        let abstractSidebar= document.getElementById('abstractSidebarBlock')
-        if(abstractSidebar){
-          abstractSidebar.style.width=0.4*this.cyWidth+'px'
-          let sidebarChild = document.getElementById('abstractSidebarBlock').childNodes[0] as HTMLElement
-          sidebarChild.style.height=100+'%'
-          abstractContainer.style.height=0.9*this.cyHeight+'px'
-
+        let abstractContainer = document.getElementById(
+          'abstractBlockContainer'
+        );
+        let abstractSidebar = document.getElementById('abstractSidebarBlock');
+        if (abstractSidebar) {
+          abstractSidebar.style.width = 0.4 * this.cyWidth + 'px';
+          let sidebarChild = document.getElementById('abstractSidebarBlock')
+            .childNodes[0] as HTMLElement;
+          sidebarChild.style.height = 100 + '%';
+          abstractContainer.style.height = 0.9 * this.cyHeight + 'px';
+          if (this.materialKnowledgeGraph) {
+            let spanAbstract = document.getElementById('abstractSpan');
+            spanAbstract.style.webkitLineClamp = null;
+            let sBarAbstract = sidebarChild.childNodes[1].childNodes[0]
+              .childNodes[0] as HTMLElement;
+            console.log(sBarAbstract.clientHeight);
+            let sBarHeight =
+              sidebarChild.clientHeight - sBarAbstract.clientHeight;
+            let sBarWidth = sidebarChild.clientWidth;
+            //font size is 20 by default
+            let fontSize = 20;
+            var maxChars =
+              Math.floor(sBarWidth / fontSize) *
+                Math.floor(sBarHeight / fontSize) -
+              95; //get max number of abstract chars in which no scrolling needed [(container area/ font size)-header area - link size]
+            this.truncatedAbstract = this.node_abstract.substring(0, maxChars); // limit max size of chars at abstract
+            this.truncatedAbstract = this.truncatedAbstract.substring(
+              0,
+              this.truncatedAbstract.lastIndexOf(' ')
+            ); // subtract last word to prevent showing words with subtracted chars
+          }
+        } else if (this.slideKnowledgeGraph) {
+          let spanAbstract = document.getElementById('abstractSpan');
+          spanAbstract.style.webkitLineClamp = '10';
         }
       }, 0);
     } else {
@@ -108,7 +167,7 @@ export class GraphComponent {
       this.node_type = undefined;
       this.node_abstract = undefined;
       this.node_wikipedia = undefined;
-      this.showConceptAbstract=false
+      this.showConceptAbstract = false;
     }
   }
 
@@ -122,33 +181,29 @@ export class GraphComponent {
     this.node_type = undefined;
     this.node_abstract = undefined;
     this.node_wikipedia = undefined;
-    this.showConceptAbstract=false
-    this.statusServie.abstractStatusChanged()
+    this.showConceptAbstract = false;
+    this.statusServie.abstractStatusChanged();
   }
   markAsUnderstood(nodeId, nodeCid, nodeName) {
     const nodeObj = {
-      id:nodeId,
-      cid:nodeCid,
-      name:nodeName,
-    }
-    this.slideConceptservice.updateUnderstoodConcepts(nodeObj)
+      id: nodeId,
+      cid: nodeCid,
+      name: nodeName,
+    };
+    this.slideConceptservice.updateUnderstoodConcepts(nodeObj);
     // this.kgToastService.understoodListupdated()
-    this.understoodConceptMsgToast()
+    this.understoodConceptMsgToast();
   }
   markAsDidNotUnderstand(nodeId, nodeCid, nodeName) {
-    console.log(nodeId)
-    console.log(nodeCid)
-    console.log(nodeName)
     const nodeObj = {
-      id:nodeId,
-      cid:nodeCid,
-      name:nodeName,
-    }
-    console.log(nodeObj)
-    this.slideConceptservice.updateDidNotUnderstandConcepts(nodeObj)
-    this.statusServie.statusChanged()
+      id: nodeId,
+      cid: nodeCid,
+      name: nodeName,
+    };
+    this.slideConceptservice.updateDidNotUnderstandConcepts(nodeObj);
+    this.statusServie.statusChanged();
     // this.kgToastService.notUnderstoodListupdated()
-    this.notUnderstoodConceptMsgToast()
+    this.notUnderstoodConceptMsgToast();
   }
 
   understoodConceptMsgToast() {

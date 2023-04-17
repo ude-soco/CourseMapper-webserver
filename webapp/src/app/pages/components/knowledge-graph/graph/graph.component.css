@@ -42,7 +42,7 @@ app-cytoscape {
 }
 .abstractParagraph {
   display: -webkit-box;
-  -webkit-line-clamp: 10;
+  /* -webkit-line-clamp: 10; */
   -webkit-box-orient: vertical;
   overflow: hidden;
   margin: 5px;
@@ -55,4 +55,15 @@ app-cytoscape {
   border-radius: 20px 20px 20px 20px;
   position: relative;
   z-index: 11;
+}
+:host ::ng-deep .p-toast {
+  width:350px;
+  font-size: 15px;
+}
+#abstractButtons{
+  color:#EB590D;
+  border: #EB590D;
+  /* font-size: 12px; */
+}
+#clampedAnchorTag{
 }
