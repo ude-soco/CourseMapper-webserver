@@ -20,7 +20,7 @@ export const getAllCourses = async (req, res) => {
   let courses;
   console.log('get all courses')
   try {
-    courses = await Course.find({}).populate("topics", "-__v");
+    courses = await Course.find({}).populate("topics", "-__v").populate({ path: "users", populate: { path: "role" } });
   } catch (err) {
     return res.status(500).send({ message: err });
   }

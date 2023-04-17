@@ -9,6 +9,10 @@ import { State } from '../courses/state/course.reducer';
 import * as CourseAction from 'src/app/pages/courses/state/course.actions'
 import { UserServiceService } from 'src/app/services/user-service.service';
 import { User } from 'src/app/modules/primeng/UserModule';
+import { Roles } from 'src/app/models/Roles';
+import { ThisReceiver } from '@angular/compiler';
+import { toggleShowHideAnnotation } from '../components/annotations/pdf-annotation/state/annotation.actions';
+
 
 
 @Component({
@@ -17,7 +21,15 @@ import { User } from 'src/app/modules/primeng/UserModule';
   styleUrls: ['./landing-page.component.css']
 })
 export class LandingPageComponent {
-  ids: Array<number>= [1,2,3]; ;
+  ids: Array<number>= [1,2,3];
+  // landingInfo: {
+  //   courseName:string;
+  //   shortName:string;
+  //   createdAt:string;
+  //   firstName:string;
+  //   lastName:string;
+  // };
+ ;
   courses: Array<Course> ;
   i:number
   value1=""
@@ -33,12 +45,16 @@ export class LandingPageComponent {
   Enrolled:boolean=false;
   createdAt:string
   createdAtDates:string[] = [];
-  firstName:string;
-  lastName:string;
-  course:Course;
-  User:User
+  firstName:string ="";
+  lastName:string="";
+  
+Users:any 
+user:any
   firstNames:string [] = [];
   lastNames:string [] = [];
+  Role:Roles
+  Moderarors:User
+  userArray: any = new Array()
   constructor( private storageService: StorageService,private courseService: CourseService, 
     private userService:UserServiceService, private router: Router, private store: Store<State>,)
   {
@@ -47,15 +63,14 @@ export class LandingPageComponent {
     // const user = this.storageService.getUser();
 
     // this.username = user.username;
-     console.log("this.username landing page")
-    console.log(this.loggedInUser)
+
   }
   
   ngOnInit(){
     // this.currentUser = this.storageService.getUser();
-    this.courseService.fetchCourses().subscribe( (courses) => {
-      this.myCourses=courses
-      console.log("my courses Rawaa", courses)  
+    this.courseService.fetchCourses().subscribe( (courses1) => {
+      this.myCourses=courses1
+      console.log("my courses Rawaa", courses1)  
       
     
   })
@@ -65,50 +80,101 @@ export class LandingPageComponent {
     
   }
   
-  getAllCourses() {
-
+   getAllCourses() {
     
+console.log(this.firstNames, "print array" )
+// this.firstNames.length = 0;
+// this.lastNames.length = 0;
     this.courseService.GetAllCourses()
       .subscribe({next:
-         (courses) => {this.courses = courses;
-        
-
-      console.log("all courses from landing page")
-      console.log(this.courses)
-      for (var course of this.courses){
-        this.course=course
-        var index = course.createdAt.indexOf('T');
-        this.createdAt=course.createdAt.slice(0, index), course.createdAt.slice(index + 1);
-        console.log(this. createdAt)
-        console.log(course.users[0].userId)
-        console.log( course.users[0].role)
-        this.createdAtDates.push(this.createdAt)
+         async (courses) => {this.courses = courses;
      
-       //  this.materialService.deleteMaterial(this.selectedMaterial).subscribe({
-       //   next: (data) => {
-       this.userService.GetUserName(course.users[0].userId).subscribe({
-         next:(user) =>{
-          this.User=user
-          this.User.firstname
-           this.firstName=user.firstname
-           this.lastName=user.lastname
-           console.log( this.firstName)
-           console.log( this.lastName)
-           this.firstNames.push(user.firstname)
-           this.lastNames.push(user.lastname)
-         }
+        
        
-       }
+      for (var course of this.courses){
+        this.Users=[];
+        console.log(course.name)
+
+        // console.log( "print course details")
+        // console.log( this.course)
        
-       )
+
+       // this.createdAtDates.push(this.createdAt)
+        this.Users=course.users
+         console.log( "print course users")
+         console.log(  this.Users)
+        let userModerator=this.Users.find(user=> user.role.name==='moderator'  )
+        console.log(userModerator, "before calling getuser Name")
        
-       console.log(this.firstNames,'this.names')
-       console.log(this.lastNames,'this.names')
+
+              console.log("this.userArray")
+              console.log(this.userArray)
+
+      this.buildCardInfo(userModerator.userId,course)
+        
+             
+      
+        
+  
+     
+       
       }
-         
+  
+      // for (let moderator of this.Moderarors)
+      // {
+      //   console.log(moderator)
+      //     this.userService.GetUserName(moderator.).subscribe((user)=> {
+      //      console.log(user, "after calling getuser Name")
+      //      console.log("service called form landing page")
+      //  //   console.log(user.firstname)
+      //    //  console.log(user.lastname)
+      //      this.firstNames.push( user.firstname)
+      //       console.log(this.firstNames.length,'this.names')
+      //     //console.log("name pushed")
+      //      this.lastNames.push( user.lastname)
+      //    })
+      // }
+       
+
+      console.log(this.firstNames,'this.names')
+       console.log(this.lastNames,'this.lastnames')
+
         }
     });
        
+  }
+
+   buildCardInfo(userModeratorID: string, course:Course){
+    console.log("course.createdAt")
+    console.log(course.createdAt)
+   
+        this.userService.GetUserName(userModeratorID).subscribe( (user)=> {
+                console.log(user, "after calling getuser Name")
+                console.log("service called form landing page")
+            //   console.log(user.firstname)
+              //  console.log(user.lastname)
+              this.firstName=user.firstname
+              this.lastName=user.lastname
+              //  this.firstNames.push( user.firstname)
+                 console.log(this.firstNames)
+               //console.log("name pushed")
+             //   this.lastNames.push( user.lastname) 
+             console.log(" now pushed")
+              var index = course.createdAt.indexOf('T');
+    this.createdAt=course.createdAt.slice(0, index), course.createdAt.slice(index + 1);
+                let ingoPush={
+                  id:course._id,
+        name:course.name,
+        shortName:course.shortName,
+        createdAt:this.createdAt,
+        firstName:this.firstName,
+        lastName:this.lastName
+      }
+      this.userArray.push(ingoPush)
+      console.log("  pushed eneded")
+      
+      
+              })
   }
 //   Search(){
     
@@ -119,34 +185,37 @@ export class LandingPageComponent {
     
     
 //   }
-  onSelectCourse(selcetedCourse:Course)
+  onSelectCourse(selcetedCourseId:string)
   {
+    let selcetedCourse=this.courses.find(course=> course._id==selcetedCourseId  )
+    console.log("selcetedCourse")
+    console.log(selcetedCourse)
     if(this.loggedInUser)
     {
-    let varcc=this.myCourses.find(course=> selcetedCourse._id === course._id  )
+    let varcc=this.myCourses.find(course=> selcetedCourseId === course._id  )
   
     
     console.log(varcc)
     if(varcc){
       this.Enrolled= true
-      this.router.navigate(['course', selcetedCourse._id]);
+      this.router.navigate(['course', selcetedCourseId]);
     }
     else
     {
       this.Enrolled= false
         this.store.dispatch(CourseAction.setCurrentCourse({selcetedCourse}));
-    this.store.dispatch(CourseAction.setCourseId({ courseId:  selcetedCourse._id}));  
-    this.router.navigate(['course-description', selcetedCourse._id]);
+    this.store.dispatch(CourseAction.setCourseId({ courseId:  selcetedCourseId}));  
+    this.router.navigate(['course-description', selcetedCourseId]);
     console.log("course landing page")
-    console.log(selcetedCourse)
+    //console.log(selcetedCourse)
    
     }
     console.log(this.Enrolled)
     }
     else{
       this.store.dispatch(CourseAction.setCurrentCourse({selcetedCourse}));
-    this.store.dispatch(CourseAction.setCourseId({ courseId:  selcetedCourse._id}));  
-    this.router.navigate(['course-description', selcetedCourse._id]);
+    this.store.dispatch(CourseAction.setCourseId({ courseId:  selcetedCourseId}));  
+    this.router.navigate(['course-description', selcetedCourseId]);
     }
 
 
