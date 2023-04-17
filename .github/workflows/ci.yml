@@ -11,7 +11,7 @@ jobs:
   build:
     uses: ./.github/workflows/build.yml
     with:
-      services:        "[ 'proxy', 'webapp', 'webserver' ]"
+      services:        "[ 'webapp', 'webserver' ]"
       base_image_name: "socialcomputing/coursemapper-webserver-"
       push:            ${{ github.event_name != 'pull_request' }}
     secrets:
