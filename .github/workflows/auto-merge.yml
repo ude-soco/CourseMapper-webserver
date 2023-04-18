@@ -3,12 +3,14 @@ name: Merge dependency updates
 on:
   pull_request:
 
+permissions:
+  contents: write
+  pull-requests: write
+  packages: read
+
 jobs:
   merge:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: write
     steps:
     - uses: actions/checkout@v3
     - uses: ahmadnassri/action-dependabot-auto-merge@v2
