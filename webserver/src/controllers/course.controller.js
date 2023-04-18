@@ -18,7 +18,7 @@ const Activity = db.activity;
  */
 export const getAllCourses = async (req, res) => {
   let courses;
-  console.log('get all courses')
+  console.log("get all courses");
   try {
     courses = await Course.find({}).populate("topics", "-__v").populate({ path: "users", populate: { path: "role" } });
   } catch (err) {
@@ -34,9 +34,9 @@ export const getAllCourses = async (req, res) => {
       numberTopics: c.topics.length,
       numberChannels: c.channels.length,
       numberUsers: c.users.length,
-      channels:c.channels,
-      createdAt:c.createdAt,
-      users:c.users
+      channels: c.channels,
+      createdAt: c.createdAt,
+      users: c.users,
     };
     results.push(course);
   });
@@ -49,17 +49,16 @@ export const getAllCourses = async (req, res) => {
  */
 export const getMyCourses = async (req, res) => {
   let user;
-  let userId =  req.userId;
-  let results = []
+  let userId = req.userId;
+  let results = [];
   try {
-    user = await User
-    .findOne({_id: ObjectId(userId)})
-    .populate({path: "courses", populate: { path: "role"}})
-    .populate({path: "courses", populate: { path: "courseId"}});
+    user = await User.findOne({ _id: ObjectId(userId) })
+      .populate({ path: "courses", populate: { path: "role" } })
+      .populate({ path: "courses", populate: { path: "courseId" } });
   } catch (err) {
     return res.status(500).send({ message: err });
   }
-  user.courses.forEach(object => {
+  user.courses.forEach((object) => {
     let course = {
       _id: object.courseId._id,
       name: object.courseId.name,
@@ -69,17 +68,14 @@ export const getMyCourses = async (req, res) => {
       numberChannels: object.courseId.channels.length,
       numberUsers: object.courseId.users.length,
       role: object.role.name,
-      channels:object.courseId.channels,
-      createdAt:object.courseId.createdAt,
-      users:object.courseId.users
-
+      channels: object.courseId.channels,
+      createdAt: object.courseId.createdAt,
+      users: object.courseId.users,
     };
     results.push(course);
   });
   return res.status(200).send(results);
-}
-
-
+};
 
 /**
  * @function getCourse
@@ -113,7 +109,6 @@ export const getMyCourses = async (req, res) => {
  */
 export const getCourse = async (req, res) => {
   const courseId = req.params.courseId;
-  console.log('getCourse')
   const userId = req.userId; //"63387f529dd66f86548d3537"
 
   let foundUser;
@@ -131,41 +126,42 @@ export const getCourse = async (req, res) => {
   let foundCourse;
   let results = [];
   try {
-    foundCourse = await Course
-    .findOne({ _id: ObjectId(courseId) })
-    .populate("topics", "-__v")
-    .populate({path: 'topics', populate: {path: 'channels'}});
+    foundCourse = await Course.findOne({ _id: courseId })
+      .populate("topics", "-__v")
+      .populate({ path: "topics", populate: { path: "channels" } });
     if (!foundCourse) {
       return res.status(404).send({
         error: `Course with id ${courseId} doesn't exist!`,
       });
     }
   } catch (err) {
-    return res.status(500).send({ message: err });
+    return res.status(500).send({ message: `${err}, error when finding a course!` });
   }
-  return res.status(200).send(foundCourse.topics);
-  results = foundCourse.topics.map((topic) => {
-    let channels = topic.channels.map((channel) => {
-      return {
-        _id: channel._id,
-        name: channel.name,
-        topic_id: channel.topicId,
-        course_id: channel.courseId,
-      };
-    });
-    return {
-      _id: topic._id,
-      name: topic.name,
-      course_id: topic.courseId,
-      channels: channels,
-    };
-  });
-  req.locals = {
-    response: results,
-    course: foundCourse,
-    user: foundUser,
-  };
-  return next();
+  return res.status(200).send(foundCourse);
+
+  // TODO: Uncomment these code when logger is added
+  // results = foundCourse.topics.map((topic) => {
+  //   let channels = topic.channels.map((channel) => {
+  //     return {
+  //       _id: channel._id,
+  //       name: channel.name,
+  //       topic_id: channel.topicId,
+  //       course_id: channel.courseId,
+  //     };
+  //   });
+  //   return {
+  //     _id: topic._id,
+  //     name: topic.name,
+  //     course_id: topic.courseId,
+  //     channels: channels,
+  //   };
+  // });
+  // req.locals = {
+  //   response: results,
+  //   course: foundCourse,
+  //   user: foundUser,
+  // };
+  // return next();
 };
 
 /**
@@ -482,28 +478,30 @@ export const deleteCourse = async (req, res, next) => {
         {
           $addFields: {
             extensionFields: {
-              $objectToArray: "$statement.object.definition.extensions"
-            }
-          }
+              $objectToArray: "$statement.object.definition.extensions",
+            },
+          },
         },
         {
           $match: {
             $or: [
-              {"extensionFields.v.id": ObjectId(courseId)},
-              {"extensionFields.v.id": courseId},
-              {"extensionFields.v.course_id": ObjectId(courseId)},
-              {"extensionFields.v.course_id": courseId}
-            ]
-          }
+              { "extensionFields.v.id": ObjectId(courseId) },
+              { "extensionFields.v.id": courseId },
+              { "extensionFields.v.course_id": ObjectId(courseId) },
+              { "extensionFields.v.course_id": courseId },
+            ],
+          },
         },
         {
-          $project: { _id: 1 }
-        }
+          $project: { _id: 1 },
+        },
       ]);
-      
-      let activitiesToBeDeletedIds = activitiesToBeDeleted.map(actvity => actvity._id);
 
-      await Activity.deleteMany({_id : { $in: activitiesToBeDeletedIds }});
+      let activitiesToBeDeletedIds = activitiesToBeDeleted.map(
+        (actvity) => actvity._id
+      );
+
+      await Activity.deleteMany({ _id: { $in: activitiesToBeDeletedIds } });
     } catch (error) {
       return res.status(500).send({ error: err });
     }
@@ -511,26 +509,26 @@ export const deleteCourse = async (req, res, next) => {
     return res.status(500).send({ error: err });
   }
 
-let foundUsers;
-try {
-  foundUsers = await User.find();
-} catch (err) {
-  return res.status(500).send({ error: err });
-}
-
-foundUsers.forEach((user) => {
-  user.courses = user.courses.filter(
-    (course) => course.courseId.valueOf() !== courseId
-  );
-});
-
-foundUsers.forEach(async (user) => {
+  let foundUsers;
   try {
-    await user.save();
+    foundUsers = await User.find();
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-});
+
+  foundUsers.forEach((user) => {
+    user.courses = user.courses.filter(
+      (course) => course.courseId.valueOf() !== courseId
+    );
+  });
+
+  foundUsers.forEach(async (user) => {
+    try {
+      await user.save();
+    } catch (err) {
+      return res.status(500).send({ error: err });
+    }
+  });
 
   let foundUser;
   try {
@@ -705,7 +703,6 @@ export const deleteIndicator = async (req, res, next) => {
   });
 };
 
-
 /**
  * @function getIndicators
  * get indicators controller
@@ -727,12 +724,10 @@ export const getIndicators = async (req, res, next) => {
     return res.status(500).send({ error: err });
   }
 
-  const response = foundCourse.indicators? foundCourse.indicators : [];
+  const response = foundCourse.indicators ? foundCourse.indicators : [];
 
   return res.status(200).send(response);
 };
-
-
 
 /**
  * @function resizeIndicator
@@ -767,8 +762,8 @@ export const resizeIndicator = async (req, res, next) => {
     return res.status(500).send({ error: err });
   }
 
-  foundCourse.indicators.forEach(indicator => {
-    if (indicator._id.toString() === indicatorId.toString()){
+  foundCourse.indicators.forEach((indicator) => {
+    if (indicator._id.toString() === indicatorId.toString()) {
       indicator.width = width;
       indicator.height = height;
     }
@@ -785,8 +780,6 @@ export const resizeIndicator = async (req, res, next) => {
   });
 };
 
-
-
 /**
  * @function reorderIndicators
  * reorder indicators controller
@@ -802,7 +795,7 @@ export const reorderIndicators = async (req, res, next) => {
 
   let foundCourse;
   try {
-    foundCourse = await Course.findOne({ "_id": courseId });
+    foundCourse = await Course.findOne({ _id: courseId });
     if (!foundCourse) {
       return res.status(404).send({
         error: `Course with id ${courseId} doesn't exist!`,
@@ -834,6 +827,6 @@ export const reorderIndicators = async (req, res, next) => {
 
   return res.status(200).send({
     success: `indicators have been updated successfully!`,
-    indicators: foundCourse.indicators
+    indicators: foundCourse.indicators,
   });
 };
