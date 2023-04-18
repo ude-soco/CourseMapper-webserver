@@ -45,8 +45,31 @@
           label="{{getIntitials(loggedInUser?.name)}}"
           shape="circle"
           size="large"
-          [style]="{ 'background-color': '#EA580C', color: '#ffffff' }"
+          [style]="{ 'background-color': '#EA580C', color: '#ffffff', cursor: 'pointer' }"
+          (click)="op.toggle($event)"
         ></p-avatar>
+        <p-overlayPanel #op [style]="{width: '400px'}">
+          <ng-template pTemplate>
+              <div class="flex-col">
+                <div class="font-medium text-2xl w-full">
+                  {{loggedInUser.name}}
+                </div>
+                <div class="flex flex-row w-full">
+                  <div class=" text-blue-500 dark:text-blue-500 hover:underline mt-2">
+                    {{loggedInUser.id}}
+                  </div>
+                  <div class="flex justify-end w-full">
+                    <app-iconbutton
+                    icon="bx-copy"
+                    color="text-black"
+                    (onClick)="copyUserId(loggedInUser.id)"
+                    pTooltip="Copy" tooltipPosition="top"
+                  ></app-iconbutton>
+                  </div>
+                </div>
+              </div>
+          </ng-template>
+      </p-overlayPanel>
       </span>
     </div>
   </div>

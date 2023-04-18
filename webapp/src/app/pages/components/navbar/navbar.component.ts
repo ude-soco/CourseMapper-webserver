@@ -83,4 +83,8 @@ export class NavbarComponent implements OnInit {
   
   }
   getIntitials = getInitials
+
+  copyUserId(userId){
+    navigator.clipboard.writeText(userId);
+  }
 }
