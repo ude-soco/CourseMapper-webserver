@@ -1,0 +1,14 @@
+name: Merge dependency updates
+
+on:
+  pull_request:
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: ahmadnassri/action-dependabot-auto-merge@v2
+      with:
+        target: patch
+        github-token: ${{ secrets.GITHUB_TOKEN }}

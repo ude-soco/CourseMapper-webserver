@@ -1,0 +1,15 @@
+name: Validate manifests
+on:   [ workflow_call ]
+jobs:
+  check:
+    name:      Validate manifests
+    runs-on:   ubuntu-latest
+    container: deck15/kubeval-tools
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    - name: kubeval
+      run:  kubectl kustomize .k8s | kubeval --schema-location https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master
+    - name: kube-score
+      run:  kubectl kustomize .k8s | kube-score score -
+      continue-on-error: true

@@ -1,26 +1,26 @@
-name: Build container images
+name: Build images
 
 on:
   workflow_call:
     inputs:
       base_image_name:
-        required: true
         type: string
+        required: true
       services:
-        required: true
         type: string
+        required: true
       platforms:
         type: string
         default: "linux/amd64"
         required: false
       push:
-        required: false
         type: boolean
         default: false
-      timeout:
         required: false
+      timeout:
         type: number
         default: 10
+        required: false
     secrets:
       registry_user:
         required: false
@@ -29,6 +29,7 @@ on:
 
 jobs:
   build:
+    name: Build image
     runs-on: ubuntu-latest
     timeout-minutes: ${{ inputs.timeout }}
 
@@ -56,17 +57,23 @@ jobs:
         username: ${{ secrets.registry_user }}
         password: ${{ secrets.registry_token }}
 
+    - name: Determine latest semver tag
+      id:   latest
+      run: |
+        version=$(git tag | sort -V | tail -n 1 | tr -d '\n') >> $GITHUB_OUTPUT
+
     - name: Get tagging metadata
       id:   meta
       uses: docker/metadata-action@v4
       with:
         images: ${{ inputs.base_image_name }}${{ matrix.service }}
         tags: |
-          type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+          type=edge
+          type=raw,value=latest,enable=${{ github.ref == steps.latest.outputs.version }}
           type=semver,pattern={{version}}
           type=semver,pattern={{major}}.{{minor}}
           type=semver,pattern={{major}},enable=${{ !startsWith(github.ref, 'refs/tags/v0.') }}
-          type=ref,event=branch
+          type=ref,event=branch,enable=${{ github.ref != 'refs/heads/main' }}
           type=ref,event=pr
 
     - name: Build and push container image
@@ -79,3 +86,16 @@ jobs:
         push:       ${{ inputs.push }}
         cache-from: type=gha
         cache-to:   type=gha,mode=max
+
+    - name: Update registry description
+      if:   github.ref == steps.latest.outputs.version
+      uses: christian-korneck/update-container-description-action@v1
+      env:
+        DOCKER_USER: ${{ secrets.registry_user }}
+        DOCKER_PASS: ${{ secrets.registry_token }}
+      with:
+        destination_container_repo: ${{ inputs.base_image_name }}${{ matrix.service }}
+        provider: dockerhub
+        short_description: CourseMapper-webserver, ${{ matrix.service }} service
+        readme_file: 'README.md'
+      continue-on-error: true

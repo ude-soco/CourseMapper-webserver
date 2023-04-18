@@ -1,8 +1,7 @@
 help:
 	@cat $(MAKEFILE_LIST) | docker run --rm -i --platform linux/amd64 xanders/make-help
 
-compose     = docker compose -f docker-compose.yml
-compose-dev = docker compose -f docker-compose.yml -f docker-compose-dev.yml
+compose = docker compose -f docker-compose.yml
 
 all: clean build run
 
@@ -40,8 +39,11 @@ tilt:
 	@tilt up
 	@$(compose) down
 
-# Start all services using dev config (files on host, processes in container)
-dev: down
-	@$(compose-dev) up --force-recreate --build
+# Start all services with processes in containers, but mounted source files on host
+mounted: down
+	@$(compose) -f docker-compose-mounted.yml up --force-recreate --build
 
-.PHONY: help run start up stop down clean cleanall build push tilt dev
+dev:
+	@echo 'Please switch to using new target: ${MAKE} mounted'
+
+.PHONY: help run start up stop down clean cleanall build push tilt mounted dev

@@ -1,46 +1,55 @@
 changelog:
   exclude:
     labels:
-      - ignore-for-release
+    - ignore-for-release
 
   categories:
     - title: 🎉 Exciting New Features
       labels:
-        - enhancement
+      - enhancement
 
     - title: 🧰 Fixes
       labels:
-        - bug
+      - bug
 
     - title: 🔗 Webapp Dependencies
       labels:
-        - dependencies
+      - dependencies
       exclude:
         labels:
-          - proxy
-          - webserver
+        - webserver
+        - github_actions
 
     - title: 🔗 Webserver Dependencies
       labels:
-        - dependencies
+      - dependencies
       exclude:
         labels:
-          - proxy
-          - webapp
+        - webapp
+        - github_actions
+
+    - title: 🔗 CI/CD Dependencies
+      labels:
+      - dependencies
+      exclude:
+        labels:
+        - webapp
+        - webserver
 
     - title: 🔗 Other Dependencies
       labels:
-        - dependencies
+      - dependencies
       exclude:
         labels:
-          - webapp
-          - webserver
+        - webapp
+        - webserver
+        - github_actions
 
     - title: 🎨 Other Changes
       labels:
-        - '*'
+      - '*'
       exclude:
         labels:
-          - enhancement
-          - bug
-          - dependencies
+        - enhancement
+        - bug
+        - dependencies
