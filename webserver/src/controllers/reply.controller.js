@@ -20,7 +20,7 @@ export const getReplies = async (req, res) => {
   let foundAnnotation;
   try {
     foundAnnotation = await Annotation.findById({
-      _id: ObjectId(annotationId),
+      _id: annotationId,
     });
     if (!foundAnnotation) {
       return res.status(404).send({
@@ -97,7 +97,7 @@ export const newReply = async (req, res, next) => {
 
   let authorName = `${foundUser.firstname} ${foundUser.lastname}`;
   let foundCourse = foundUser.courses.find((course) => course.courseId.toString() == courseId)
-  let foundRole = await Role.findById({ _id: ObjectId(foundCourse.role) });
+  let foundRole = await Role.findById({ _id: foundCourse.role });
 
   let reply = new Reply({
     content: replyContent,
@@ -199,7 +199,7 @@ export const deleteReply = async (req, res, next) => {
 
   let foundReply;
   try {
-    foundReply = await Reply.findOne({ _id: ObjectId(replyId) });
+    foundReply = await Reply.findOne({ _id: replyId });
     if (!foundReply) {
       return res.status(404).send({
         error: `Reply with id ${replyId} doesn't exist!`,
@@ -286,7 +286,7 @@ export const editReply = async (req, res, next) => {
 
   let foundReply;
   try {
-    foundReply = await Reply.findOne({ _id: ObjectId(replyId) });
+    foundReply = await Reply.findOne({ _id: replyId });
     if (!foundReply) {
       return res.status(404).send({
         error: `Reply with id ${req.params.replyId} doesn't exist!`,
@@ -399,7 +399,7 @@ export const likeReply = async (req, res, next) => {
 
   let foundReply;
   try {
-    foundReply = await Reply.findOne({ _id: ObjectId(replyId) });
+    foundReply = await Reply.findOne({ _id: replyId });
     if (!foundReply) {
       res.status(404).send({
         error: `Reply with id ${replyId} doesn't exist!`,
@@ -505,7 +505,7 @@ export const dislikeReply = async (req, res, next) => {
 
   let foundReply;
   try {
-    foundReply = await Reply.findOne({ _id: ObjectId(replyId) });
+    foundReply = await Reply.findOne({ _id: replyId });
     if (!foundReply) {
       return res.status(404).send({
         error: `Reply with id ${replyId} doesn't exist!`,

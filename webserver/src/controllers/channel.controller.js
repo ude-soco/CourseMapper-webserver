@@ -36,7 +36,7 @@ export const getChannel = async (req, res, next) => {
   let foundChannel;
   try {
     foundChannel = await Channel.findOne({
-      _id: ObjectId(channelId),
+      _id: channelId,
     }).populate("materials", "-__v");
     if (!foundChannel) {
       return res.status(404).send({
@@ -89,7 +89,7 @@ export const newChannel = async (req, res, next) => {
 
   let foundTopic;
   try {
-    foundTopic = await Topic.findOne({ _id: ObjectId(topicId) });
+    foundTopic = await Topic.findOne({ _id: topicId });
     if (!foundTopic) {
       return res.status(404).send({
         error: `Topic with id ${topicId} doesn't exist!`,
@@ -290,7 +290,7 @@ export const editChannel = async (req, res, next) => {
   let foundChannel;
   try {
     foundChannel = await Channel.findOne({
-      _id: ObjectId(channelId),
+      _id: channelId,
     }).populate("materials", "-__v");
     if (!foundChannel) {
       return res.status(404).send({

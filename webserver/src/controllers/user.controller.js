@@ -324,7 +324,7 @@ export const getUser = async (req, res) => {
   let foundUser;
   let results = [];
   try {
-    foundUser = await User.findOne({ _id: ObjectId(userId) })
+    foundUser = await User.findOne({ _id: userId})
     .populate("courses", "-__v");
     if (!foundUser) {
       return res.status(404).send({

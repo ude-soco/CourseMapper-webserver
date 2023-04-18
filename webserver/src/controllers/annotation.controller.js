@@ -33,7 +33,7 @@ export const newAnnotation = async (req, res, next) => {
 
   let foundMaterial;
   try {
-    foundMaterial = await Material.findById({ _id: ObjectId(materialId) });
+    foundMaterial = await Material.findById({ _id: materialId });
     if (!foundMaterial) {
       return res.status(404).send({
         error: `Material with id ${materialId} doesn't exist!`,
@@ -50,14 +50,14 @@ export const newAnnotation = async (req, res, next) => {
 
   let foundUser;
   try {
-    foundUser = await User.findById({ _id: ObjectId(req.userId) });
+    foundUser = await User.findById({ _id: req.userId });
   } catch (err) {
     res.status(500).send({ error: err });
   }
 
   let authorName = `${foundUser.firstname} ${foundUser.lastname}`;
   let foundCourse = foundUser.courses.find((course) => course.courseId.toString() == courseId)
-  let foundRole = await Role.findById({ _id: ObjectId(foundCourse.role) });
+  let foundRole = await Role.findById({ _id: foundCourse.role });
 
   let annotation = new Annotation({
     type: annotationType,
@@ -162,7 +162,7 @@ export const deleteAnnotation = async (req, res, next) => {
   let foundAnnotation;
   try {
     foundAnnotation = await Annotation.findById({
-      _id: ObjectId(annotationId),
+      _id: annotationId,
     });
     if (!foundAnnotation) {
       return res.status(404).send({
@@ -277,7 +277,7 @@ export const editAnnotation = async (req, res, next) => {
   let foundAnnotation;
   try {
     foundAnnotation = await Annotation.findById({
-      _id: ObjectId(annotationId),
+      _id: annotationId,
     });
     if (!foundAnnotation) {
       return res.status(404).send({
@@ -385,7 +385,7 @@ export const likeAnnotation = async (req, res, next) => {
 
   let foundAnnotation;
   try {
-    foundAnnotation = await Annotation.findOne({ _id: ObjectId(annotationId) });
+    foundAnnotation = await Annotation.findOne({ _id: annotationId });
     if (!foundAnnotation) {
       return res.status(404).send({
         error: `Annotation with id ${annotationId} doesn't exist!`,
@@ -485,7 +485,7 @@ export const dislikeAnnotation = async (req, res, next) => {
 
   let foundAnnotation;
   try {
-    foundAnnotation = await Annotation.findOne({ _id: ObjectId(annotationId) });
+    foundAnnotation = await Annotation.findOne({ _id: annotationId });
     if (!foundAnnotation) {
       res.status(404).send({
         error: `Annotation with id ${annotationId} doesn't exist!`,
@@ -574,8 +574,8 @@ export const getAllAnnotations = async (req, res) => {
   let foundAnnotations;
   try {
     foundAnnotations = await Annotation.find({
-      materialId: ObjectId(materialId),
-      courseId: ObjectId(courseId),
+      materialId: materialId,
+      courseId: courseId,
     });
     if (!foundAnnotations) {
       return res.status(404).send({

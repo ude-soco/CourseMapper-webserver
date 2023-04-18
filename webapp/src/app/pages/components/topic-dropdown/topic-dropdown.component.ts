@@ -90,7 +90,7 @@ export class TopicDropdownComponent implements OnInit {
   ngOnInit(): void {
     this.topicChannelService
       .fetchTopics(this.courseService.getSelectedCourse()._id)
-      .subscribe((topics) => (this.topics = topics));
+      .subscribe((course) => (this.topics = course.topics));
     this.topicChannelService.onUpdateTopics$.subscribe(
       (topics) => (this.topics = topics)
     );

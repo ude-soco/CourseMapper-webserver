@@ -52,7 +52,7 @@ export const getMyCourses = async (req, res) => {
   let userId = req.userId;
   let results = [];
   try {
-    user = await User.findOne({ _id: ObjectId(userId) })
+    user = await User.findOne({ _id: userId })
       .populate({ path: "courses", populate: { path: "role" } })
       .populate({ path: "courses", populate: { path: "courseId" } });
   } catch (err) {
@@ -113,7 +113,8 @@ export const getCourse = async (req, res) => {
 
   let foundUser;
   try {
-    foundUser = await User.findOne({ _id: userId });
+    
+    foundUser = await User.findOne({ _id: userId })
     if (!foundUser) {
       return res.status(404).send({
         error: `User not found!`,
@@ -126,6 +127,7 @@ export const getCourse = async (req, res) => {
   let foundCourse;
   let results = [];
   try {
+    
     foundCourse = await Course.findOne({ _id: courseId })
       .populate("topics", "-__v")
       .populate({ path: "topics", populate: { path: "channels" } });
@@ -388,7 +390,8 @@ export const newCourse = async (req, res, next) => {
 
   foundUser.courses.push({
     courseId: courseSaved._id,
-    role: foundRole._id,
+    role: foundRole.id,
+    role: foundRole.name,
   });
 
   try {

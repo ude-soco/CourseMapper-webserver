@@ -35,7 +35,7 @@ export const getMaterial = async (req, res, next) => {
   let foundMaterial;
   try {
     foundMaterial = await Material.findById({
-      _id: ObjectId(materialId),
+      _id: materialId,
     }).populate("annotations", "-__v");
     if (!foundMaterial) {
       return res.status(404).send({
@@ -94,7 +94,7 @@ export const newMaterial = async (req, res, next) => {
 
   let foundChannel;
   try {
-    foundChannel = await Channel.findById({ _id: ObjectId(channelId) });
+    foundChannel = await Channel.findById({ _id: channelId });
     if (!foundChannel) {
       return res.status(404).send({
         error: `Channel with id ${channelId} doesn't exist!`,
@@ -180,7 +180,7 @@ export const deleteMaterial = async (req, res, next) => {
 
   let foundMaterial;
   try {
-    foundMaterial = await Material.findById({ _id: ObjectId(materialId) });
+    foundMaterial = await Material.findById({ _id: materialId });
     if (!foundMaterial) {
       return res.status(404).send({
         error: `Material with id ${materialId} doesn't exist!`,
@@ -287,7 +287,7 @@ export const editMaterial = async (req, res, next) => {
 
   let foundMaterial;
   try {
-    foundMaterial = await Material.findById({ _id: ObjectId(materialId) });
+    foundMaterial = await Material.findById({ _id: materialId });
     if (!foundMaterial) {
       return res.status(404).send({
         error: `Material with id ${materialId} doesn't exist!`,

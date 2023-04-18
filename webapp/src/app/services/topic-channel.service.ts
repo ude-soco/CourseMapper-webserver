@@ -33,9 +33,10 @@ export class TopicChannelService {
    * @param {string} courseId the id of a course, the topics belongs to
    * 
    */
-  fetchTopics(courseId: string):  Observable<Topic[]> {
-    return this.http.get<Topic[]>(`${this.API_URL}/courses/${courseId}`).pipe(tap( topics => {
-      this.topics = topics;     
+  fetchTopics(courseId: string):  Observable<Course> {
+    return this.http.get<Course>(`${this.API_URL}/courses/${courseId}`).pipe(tap( course => {
+      console.log(course,"course")
+      this.topics = course.topics;     
     }));
   }
 
@@ -47,8 +48,8 @@ export class TopicChannelService {
    * 
    */
   updateTopics(courseId: string){
-    this.fetchTopics(courseId).subscribe(topics => {
-      this.topics = topics;
+    this.fetchTopics(courseId).subscribe(course => {
+      this.topics = course.topics;
       this.onUpdateTopics$.next(this.topics);
     });
   }

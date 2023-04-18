@@ -113,27 +113,29 @@ export class LandingPageComponent {
   //     console.log(this.updatedCourses);
 
   //   }
-  onSelectCourse(selcetedCourseId: string) {
-    let selcetedCourse = this.courses.find(
-      (course) => course._id == selcetedCourseId
-    );
+  onSelectCourse(selcetedCourse: any) {
+    console.log("Rawaa selcetedCourseId")
+    console.log(selcetedCourse)
+    // let selcetedCourse = this.courses.find(
+    //   (course) => course._id == selcetedCourseId
+    // );
 
     if (this.loggedInUser) {
       let varcc = this.myCourses.find(
-        (course) => selcetedCourseId === course._id
+        (course) => selcetedCourse.id === course._id
       );
 
       console.log(varcc);
       if (varcc) {
         this.Enrolled = true;
-        this.router.navigate(['course', selcetedCourseId]);
+        this.router.navigate(['course', selcetedCourse.id]);
       } else {
         this.Enrolled = false;
         this.store.dispatch(CourseAction.setCurrentCourse({ selcetedCourse }));
         this.store.dispatch(
-          CourseAction.setCourseId({ courseId: selcetedCourseId })
+          CourseAction.setCourseId({ courseId: selcetedCourse.id })
         );
-        this.router.navigate(['course-description', selcetedCourseId]);
+        this.router.navigate(['course-description', selcetedCourse.id]);
         console.log('course landing page');
         //console.log(selcetedCourse)
       }
@@ -141,9 +143,9 @@ export class LandingPageComponent {
     } else {
       this.store.dispatch(CourseAction.setCurrentCourse({ selcetedCourse }));
       this.store.dispatch(
-        CourseAction.setCourseId({ courseId: selcetedCourseId })
+        CourseAction.setCourseId({ courseId: selcetedCourse.id })
       );
-      this.router.navigate(['course-description', selcetedCourseId]);
+      this.router.navigate(['course-description', selcetedCourse.id]);
     }
   }
 }

@@ -35,7 +35,7 @@
     
     
     <div  class="course-div" >
-    <div *ngFor="let course of userArray ; "   (click)="onSelectCourse(course.id)"  >
+    <div *ngFor="let course of userArray ; "   (click)="onSelectCourse(course)"  >
     <div  *ngIf="value1=== '' || course.name.toLowerCase().includes(value1)" >
   
     <div courseScript= course.name >  </div>

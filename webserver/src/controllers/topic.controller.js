@@ -35,7 +35,7 @@ export const getTopic = async (req, res, next) => {
 
   let foundTopic;
   try {
-    foundTopic = await Topic.findOne({ _id: ObjectId(topicId) }).populate(
+    foundTopic = await Topic.findOne({ _id: topicId }).populate(
       "channels",
       "-__v"
     );
@@ -89,7 +89,7 @@ export const newTopic = async (req, res, next) => {
 
   let foundCourse;
   try {
-    foundCourse = await Course.findOne({ _id: ObjectId(courseId) });
+    foundCourse = await Course.findOne({ _id: courseId });
     if (!foundCourse) {
       return res.status(404).send({
         error: `Course with id ${courseId} doesn't exist!`,
@@ -273,7 +273,7 @@ export const editTopic = async (req, res, next) => {
 
   let foundTopic;
   try {
-    foundTopic = await Topic.findOne({ _id: ObjectId(topicId) });
+    foundTopic = await Topic.findOne({ _id: topicId });
     if (!foundTopic) {
       return res
         .status(404)
