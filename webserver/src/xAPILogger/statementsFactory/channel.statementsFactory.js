@@ -1,16 +1,17 @@
 import { v4 as uuidv4 } from "uuid";
 
 export const getChannelCreationStatement = (user, channel, origin) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -49,16 +50,17 @@ export const getChannelCreationStatement = (user, channel, origin) => {
 };
 
 export const getChannelDeletionStatement = (user, channel, origin) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -97,16 +99,17 @@ export const getChannelDeletionStatement = (user, channel, origin) => {
 };
 
 export const getChannelAccessStatement = (user, channel, origin) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -144,17 +147,23 @@ export const getChannelAccessStatement = (user, channel, origin) => {
   };
 };
 
-export const getChannelEditStatement = (user, newChannel, oldtChannel, origin) => {
+export const getChannelEditStatement = (
+  user,
+  newChannel,
+  oldtChannel,
+  origin
+) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
