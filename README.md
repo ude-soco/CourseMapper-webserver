@@ -6,12 +6,13 @@ CourseMapper is a collaborative course annotation and analytics platform that fo
 
 ## 🚀 Get Started
 
-### Live instances
+#### Live instances
 
-* Production: [coursemapper.soco.inko.cloud](https://coursemapper.soco.inko.cloud/) (Latest `v0.x.x` [release](https://github.com/ude-soco/CourseMapper-webserver/releases))
-* Preview: [dev.coursemapper.soco.inko.cloud](https://dev.coursemapper.soco.inko.cloud/)
+* Production: [coursemapper.soco.inko.cloud](https://coursemapper.soco.inko.cloud/) (latest `v0.x.x` [release](https://github.com/ude-soco/CourseMapper-webserver/releases))
+* Edge: [edge.coursemapper.soco.inko.cloud](https://dev.coursemapper.soco.inko.cloud/)
+* Branch `development`: [development.coursemapper.soco.inko.cloud](https://dev.coursemapper.soco.inko.cloud/)
 
-### Build and run
+#### Build and run
 
 * `make up` to run the application using *Docker Compose*
 * `make tilt` to automatically rebuild during development using *Tilt*
@@ -21,7 +22,7 @@ CourseMapper is a collaborative course annotation and analytics platform that fo
 
 Visit the [proxy service on port 8000](http://localhost:8000/) to use the application.
 
-## Application stack
+#### Application stack
 
 The services making up the coursemapper-webserver project use the following images, hosted on Docker Hub:
 
