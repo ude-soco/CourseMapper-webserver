@@ -3,13 +3,6 @@ kind: Kustomization
 
 namePrefix: coursemapper-webserver-
 
-vars:
-- fieldref: {}
-  name: MONGODB_SERVICE
-  objref:
-    apiVersion: v1
-    kind: Service
-    name: mongodb
 labels:
 - includeSelectors: true
   pairs:
@@ -18,7 +11,7 @@ labels:
 configMapGenerator:
 - name: ingress
   literals:
-  - host=coursemapper.soco.inko.cloud
+  - host=example.org
 
 secretGenerator:
 - name: webserver
@@ -35,27 +28,20 @@ images:
 - name: socialcomputing/coursemapper-webserver-webserver
   newTag: latest
 
-replacements:
-- source:
+vars:
+- name: MONGODB_SERVICE
+  objref:
+    apiVersion: v1
+    kind: Service
+    name: mongodb
+  fieldref: {}
+- name: FQDN
+  objref:
+    apiVersion: v1
     kind: ConfigMap
     name: ingress
-    fieldPath: data.host
-  targets:
-  - select:
-      kind: Ingress
-      name: proxy
-    fieldPaths:
-    - spec.rules.0.host
-- source:
-    kind: ConfigMap
-    name: ingress
-    fieldPath: data.host
-  targets:
-  - select:
-      kind: Ingress
-      name: proxy
-    fieldPaths:
-    - spec.tls.0.hosts.0
+  fieldref:
+    fieldpath: data.host
 
 resources:
 - ingress.yaml
