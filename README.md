@@ -9,8 +9,8 @@ CourseMapper is a collaborative course annotation and analytics platform that fo
 #### Live instances
 
 * Production: [coursemapper.soco.inko.cloud](https://coursemapper.soco.inko.cloud/) (latest `v0.x.x` [release](https://github.com/ude-soco/CourseMapper-webserver/releases))
-* Edge: [edge.coursemapper.soco.inko.cloud](https://dev.coursemapper.soco.inko.cloud/)
-* Branch `development`: [development.coursemapper.soco.inko.cloud](https://dev.coursemapper.soco.inko.cloud/)
+* Edge: [edge.coursemapper.soco.inko.cloud](https://edge.coursemapper.soco.inko.cloud/)
+* Branch `development`: [development.coursemapper.soco.inko.cloud](https://development.coursemapper.soco.inko.cloud/)
 
 #### Build and run
 
