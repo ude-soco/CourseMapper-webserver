@@ -10,13 +10,21 @@ const User = new Schema({
   password: { type: String, required: true },
   role: { type: Schema.Types.ObjectId, ref: "role" },
   createdAt: { type: Date, default: Date.now() },
-  courses: [{
-    courseId: { type: Schema.Types.ObjectId, ref: "course", required: true },
-    role: { type: Schema.Types.ObjectId, ref: "role" },
-  }],
+  courses: [
+    {
+      courseId: { type: Schema.Types.ObjectId, ref: "course", required: true },
+      role: { type: Schema.Types.ObjectId, ref: "role" },
+    },
+  ],
   indicators: [
-    { _id : Schema.Types.ObjectId, src: String, width: String, height: String, frameborder: String },
-  ]
+    {
+      _id: Schema.Types.ObjectId,
+      src: String,
+      width: String,
+      height: String,
+      frameborder: String,
+    },
+  ],
 });
 
 module.exports = mongoose.model("user", User);

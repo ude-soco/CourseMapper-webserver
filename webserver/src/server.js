@@ -87,6 +87,7 @@ require("./routes/fileupload.routes")(app);
 require("./routes/filedelete.routes")(app);
 require("./routes/videodelete.routes")(app);
 require("./routes/test.routes")(app);
+require("./routes/activity.routes")(app);
 
 // Listen on provided port, on all network interfaces
 server.listen(port);
@@ -94,6 +95,8 @@ server.on("error", onError);
 server.on("listening", onListening);
 
 const initializeDB = async () => {
+  let newRole;
+  let foundAdmin;
   let countRole;
   let countUser;
   try {
@@ -103,8 +106,12 @@ const initializeDB = async () => {
     } else {
       ["user", "moderator", "admin"].forEach(async (userName) => {
         console.log("Adding Role: { name: " + userName + " }");
+        newRole = new Role({ name: userName });
+        if (userName === "admin") {
+          foundAdmin = newRole;
+        }
         try {
-          await new Role({ name: userName }).save();
+          await newRole.save();
         } catch (err) {
           console.log(err, "Error in creating role");
           return;
@@ -121,12 +128,14 @@ const initializeDB = async () => {
         console.log(
           "Adding User: { name: admin, password: " + process.env.PASS + " }"
         );
+
         try {
           await new User({
             firstname: "Admin",
             lastname: "User",
             username: "admin",
             email: "admin@soco.com",
+            role: foundAdmin._id,
             password: password,
           }).save();
         } catch (err) {
@@ -176,3 +185,5 @@ function onListening() {
   console.log("Starting " + env.trim() + " server on port " + port);
   debug("Listening on " + bind);
 }
+
+module.exports = server;

@@ -1,16 +1,22 @@
 import { v4 as uuidv4 } from "uuid";
 
-export const getAnnotationCreationStatement = (user, annotation, material, origin) => {
+export const getAnnotationCreationStatement = (
+  user,
+  annotation,
+  material,
+  origin
+) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -62,17 +68,23 @@ export const getAnnotationCreationStatement = (user, annotation, material, origi
     },
   };
 };
-export const getCommentCreationStatement = (user, annotation, material, origin) => {
+export const getCommentCreationStatement = (
+  user,
+  annotation,
+  material,
+  origin
+) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -126,16 +138,17 @@ export const getCommentCreationStatement = (user, annotation, material, origin) 
 };
 
 export const getAnnotaionDeletionStatement = (user, annotation, origin) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -180,16 +193,17 @@ export const getAnnotaionDeletionStatement = (user, annotation, origin) => {
   };
 };
 export const getCommentDeletionStatement = (user, annotation, origin) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -235,16 +249,17 @@ export const getCommentDeletionStatement = (user, annotation, origin) => {
 };
 
 export const getAnnotationLikeStatement = (user, annotation, origin) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -290,16 +305,17 @@ export const getAnnotationLikeStatement = (user, annotation, origin) => {
 };
 
 export const getCommentLikeStatement = (user, annotation, origin) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -345,16 +361,17 @@ export const getCommentLikeStatement = (user, annotation, origin) => {
 };
 
 export const getAnnotationUnlikeStatement = (user, annotation, origin) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -400,16 +417,17 @@ export const getAnnotationUnlikeStatement = (user, annotation, origin) => {
 };
 
 export const getCommentUnlikeStatement = (user, annotation, origin) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -455,16 +473,17 @@ export const getCommentUnlikeStatement = (user, annotation, origin) => {
 };
 
 export const getAnnotationDislikeStatement = (user, annotation, origin) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -510,16 +529,17 @@ export const getAnnotationDislikeStatement = (user, annotation, origin) => {
 };
 
 export const getCommentDislikeStatement = (user, annotation, origin) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -565,16 +585,17 @@ export const getCommentDislikeStatement = (user, annotation, origin) => {
 };
 
 export const getAnnotationUndislikeStatement = (user, annotation, origin) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -620,16 +641,17 @@ export const getAnnotationUndislikeStatement = (user, annotation, origin) => {
 };
 
 export const getCommentUndislikeStatement = (user, annotation, origin) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -680,16 +702,17 @@ export const getAnnotationEditStatement = (
   oldAnnotation,
   origin
 ) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -750,16 +773,17 @@ export const getCommentEditStatement = (
   oldAnnotation,
   origin
 ) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -813,4 +837,3 @@ export const getCommentEditStatement = (
     },
   };
 };
-
