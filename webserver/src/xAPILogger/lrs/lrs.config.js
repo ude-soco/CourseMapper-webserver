@@ -19,18 +19,21 @@ let lrs = axios.create({
   timeout: 30000,
 });
 
-
-lrs.interceptors.request.use( x => {
+lrs.interceptors.request.use((x) => {
   // to avoid overwriting if another interceptor
   // already defined the same object (meta)
-  x.meta = x.meta || {}
+  x.meta = x.meta || {};
   x.meta.requestStartedAt = new Date().getTime();
   return x;
 });
 
-lrs.interceptors.response.use(x => {
-  console.log(`Execution time for: ${x.config.url} - ${new Date().getTime() - x.config.meta.requestStartedAt} ms`)
+lrs.interceptors.response.use((x) => {
+  console.log(
+    `Execution time for: ${x.config.url} - ${
+      new Date().getTime() - x.config.meta.requestStartedAt
+    } ms`
+  );
   return x;
-})
+});
 
 module.exports.lrs = lrs;
