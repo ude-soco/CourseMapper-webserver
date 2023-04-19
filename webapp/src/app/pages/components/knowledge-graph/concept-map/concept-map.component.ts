@@ -1528,48 +1528,48 @@ export class ConceptMapComponent {
         this.recommendedMaterialsTab = false;
         //////////////////////////call material-recommender/////////////////////////
         console.log('calling material recommender');
-        // this.resultMaterials =
-        //   await this.materialsRecommenderService.getRecommendedMaterials(
-        //     reqData
-        //   ); // receive recommended materials
-        // console.log('material recommender has been called');
-        // console.log('#################################################');
-        // console.log(this.resultMaterials);
-        // this.concepts1 = this.resultMaterials.concepts;
-        // this.concepts1.forEach((el, index, array) => {
-        //   if (
-        //     this.didNotUnderstandConceptsObj.some(
-        //       (concept) => concept.id.toString() === el.id.toString()
-        //     )
-        //   ) {
-        //     el.status = 'notUnderstood';
-        //     array[index] = el;
-        //   } else if (
-        //     this.previousConceptsObj.some(
-        //       (concept) => concept.cid.toString() === el.cid.toString()
-        //     )
-        //   ) {
-        //     el.status = 'notUnderstood';
-        //     array[index] = el;
-        //   } else if (
-        //     this.understoodConceptsObj.some(
-        //       (concept) => concept.id.toString() === el.id.toString()
-        //     )
-        //   ) {
-        //     el.status = 'understood';
-        //     array[index] = el;
-        //   } else {
-        //     el.status = 'unread';
-        //     array[index] = el;
-        //   }
-        // });
+        this.resultMaterials =
+          await this.materialsRecommenderService.getRecommendedMaterials(
+            reqData
+          ); // receive recommended materials
+        console.log('material recommender has been called');
+        console.log('#################################################');
+        console.log(this.resultMaterials);
+        this.concepts1 = this.resultMaterials.concepts;
+        this.concepts1.forEach((el, index, array) => {
+          if (
+            this.didNotUnderstandConceptsObj.some(
+              (concept) => concept.id.toString() === el.id.toString()
+            )
+          ) {
+            el.status = 'notUnderstood';
+            array[index] = el;
+          } else if (
+            this.previousConceptsObj.some(
+              (concept) => concept.cid.toString() === el.cid.toString()
+            )
+          ) {
+            el.status = 'notUnderstood';
+            array[index] = el;
+          } else if (
+            this.understoodConceptsObj.some(
+              (concept) => concept.id.toString() === el.id.toString()
+            )
+          ) {
+            el.status = 'understood';
+            array[index] = el;
+          } else {
+            el.status = 'unread';
+            array[index] = el;
+          }
+        });
 
-        // //set to local storage
-        // localStorage.setItem(
-        //   'resultMaterials',
-        //   JSON.stringify(this.resultMaterials)
-        // );
-        // this.resultMaterials = this.resultMaterials.nodes;
+        //set to local storage
+        localStorage.setItem(
+          'resultMaterials',
+          JSON.stringify(this.resultMaterials)
+        );
+        this.resultMaterials = this.resultMaterials.nodes;
         /////////////////////////////////////////////////////////////////////////
         // // get from local storage
         this.resultMaterials = JSON.parse(
