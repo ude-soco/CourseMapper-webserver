@@ -129,7 +129,7 @@ export const getCourse = async (req, res) => {
   try {
     
     foundCourse = await Course.findOne({ _id: courseId })
-      .populate("topics", "-__v")
+      .populate("topics", "-__v").populate({ path: "users", populate: { path: "role" } })
       .populate({ path: "topics", populate: { path: "channels" } });
     if (!foundCourse) {
       return res.status(404).send({
@@ -368,6 +368,7 @@ export const newCourse = async (req, res, next) => {
   let newUser = {
     userId: foundUser._id,
     role: foundRole._id,
+    role: foundRole.name,
   };
   userList.push(newUser);
 
@@ -390,7 +391,7 @@ export const newCourse = async (req, res, next) => {
 
   foundUser.courses.push({
     courseId: courseSaved._id,
-    role: foundRole.id,
+    role: foundRole._id,
     role: foundRole.name,
   });
 

@@ -10,17 +10,17 @@
                  <p class="font-roboto  font-bold leading-normal h1" > Welcome to  </p>
         <p class="font-roboto  font-bold leading-normal h1"> {{course.name}} </p> 
         <br>
-        <button  *ngIf="Enrolled== true"
+        <!-- <button  *ngIf="Enrolled== true"
         pButton 
         [ngStyle]="{ 'background-color': '#EA580C', color: '#ffffff' ,  'margin-right': '2rem' , 'margin-bottom':'1rem'}"
         type="button"
         label= 'Go To Course'
         (click)="GoToCOurse()"
        
-      ></button>
+      ></button> -->
    
    
-      <button *ngIf="Enrolled== false"
+      <button 
         pButton 
         [ngStyle]="{ 'background-color': '#EA580C', color: '#ffffff' , 'margin-right': '2rem', 'margin-bottom':'1rem' }"
         type="button"
@@ -69,7 +69,7 @@
      <p class="p" style="font-weight: bold;" >Course Description:</p>
      <p style="
      margin-left: 1%;
-     " *ngIf="course.description.length==0"> {{ 'No discription given...'}} </p>
+     " > {{ 'No discription given...'}} </p>
    <p style="
    margin-left: 2.5%;
    " > {{ course.description }}</p> 

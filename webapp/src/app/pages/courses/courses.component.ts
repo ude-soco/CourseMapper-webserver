@@ -30,6 +30,7 @@ export class CoursesComponent implements OnInit {
   userArray: any = new Array();
   channelSelected$: Observable<boolean>;
   courseId:string
+  moderator:boolean=false
   constructor(
     private courseService: CourseService,
     private topicChannelService: TopicChannelService,
@@ -47,34 +48,44 @@ export class CoursesComponent implements OnInit {
 
   ngOnInit(): void {
     
-     this.selectedCourse = this.courseService.getSelectedCourse();
-     this.ChannelToggel=false
+    this.selectedCourse = this.courseService.getSelectedCourse();
+     this.ChannelToggel=false 
+     this.Users = [];
       this.courseService.onSelectCourse.subscribe((course) => {
         this.selectedCourse = course;
         console.log("this.selectedCourse")
         console.log(this.selectedCourse)
 
-        this.Users = [];
+       
 
-        //this.Users = this.selectedCourse.users;
-
-        // let userModerator = this.Users.find(
-        //   (user) => user.role.name === 'moderator'
-        // );
-
-        // this.buildCardInfo(userModerator.userId, this.selectedCourse);
+        
+       
       
-       this.ChannelToggel=false
+       this.ChannelToggel=false  
+      this.topicChannelService.fetchTopics(course._id).subscribe( (course) =>{
+        this.selectedCourse = course;
+        console.log(course,"this.selectedCourse from des page")
+        this.Users = course.users;
+        console.log(this.Users)
+           let userModerator =  this.Users.find(
+            (user) => user.role.name === 'moderator'
 
+          );
+     
+          
+          console.log(userModerator,"moderator")
+         this.buildCardInfo(userModerator.userId, course);
+      }
+   )
+   if(this.selectedCourse.role==='moderator'){
+    this.moderator=true
+  }
+  else{
+    this.moderator=false
+  }
       });
 
-    
-     this.topicChannelService.fetchTopics(this.selectedCourse._id).subscribe( (course) =>{
-      
-       console.log(course,"this.selectedCourse from des page")
-     }
-
-   )
+  
 
   }
   buildCardInfo(userModeratorID: string, course: Course) {

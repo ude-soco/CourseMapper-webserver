@@ -124,7 +124,7 @@ export class LandingPageComponent {
       let varcc = this.myCourses.find(
         (course) => selcetedCourse.id === course._id
       );
-
+      console.log("varcc");
       console.log(varcc);
       if (varcc) {
         this.Enrolled = true;
