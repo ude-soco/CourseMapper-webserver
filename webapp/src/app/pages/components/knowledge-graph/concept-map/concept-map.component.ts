@@ -1389,15 +1389,17 @@ export class ConceptMapComponent {
         this.understoodConceptsObj
       );
       this.firstUpdate = false;
+      this.rankNodes(this.conceptMapData)
 
-      // emit kg to cytoscape
-      this.dataReceivedEvent.emit(this.conceptMapData);
-      this.filteredMapData = this.conceptMapData;
-      this.kgSlideReceivedResponse = true;
-      console.log(
-        'ConceptMapComponent:::getConceptMapData',
-        this.conceptMapData
-      );
+        
+        // emit kg to cytoscape
+        this.dataReceivedEvent.emit(this.conceptMapData);
+        this.filteredMapData = this.conceptMapData;
+        this.kgSlideReceivedResponse = true;
+        console.log(
+          'ConceptMapComponent:::getConceptMapData',
+          this.conceptMapData
+          );
     } else {
       console.log('No KG received for this slide!!');
     }
@@ -1441,6 +1443,16 @@ export class ConceptMapComponent {
       }, 100);
     } catch {}
   }
+  rankNodes(conceptsList: any) {
+    //sort nodes to give rank
+    conceptsList.nodes.sort((a, b) => b.data.weight - a.data.weight);
+    let rank = 1;
+    conceptsList.nodes.forEach((node) => {
+      node.data.rank =rank
+      rank++;
+    })
+    this.conceptMapData=conceptsList
+  }
   async showRecommendations() {
     if (this.disableShowRecommendationsButton) {
       this.infoToast();
@@ -1483,21 +1495,21 @@ export class ConceptMapComponent {
       try {
         const reqData = await this.getRecommendedMaterialsPerSlide();
         ////////////////////////////////Call Concept recommender///////////////////////////////////////
-        // const reqDataMaterial1 =
-        //   await this.getRecommendedMaterialsPerSlideMaterial();
+        const reqDataMaterial1 =
+          await this.getRecommendedMaterialsPerSlideMaterial();
 
-        // var resultConcepts =
-        //   await this.materialsRecommenderService.getRecommendedConcepts(
-        //     // reqData
-        //     reqDataMaterial1
-        //   ); //receive recommended concepts
-        // this.recommendedConcepts = resultConcepts;
+        var resultConcepts =
+          await this.materialsRecommenderService.getRecommendedConcepts(
+            // reqData
+            reqDataMaterial1
+          ); //receive recommended concepts
+        this.recommendedConcepts = resultConcepts;
 
-        // //set to local storage
-        // localStorage.setItem(
-        //   'resultConcepts',
-        //   JSON.stringify(this.recommendedConcepts)
-        // );
+        //set to local storage
+        localStorage.setItem(
+          'resultConcepts',
+          JSON.stringify(this.recommendedConcepts)
+        );
         ////////////////////////////////////////////////////////////////////
 
         // get from local storage

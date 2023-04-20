@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, Renderer2, } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  Renderer2,
+} from '@angular/core';
 import cytoscape from 'cytoscape';
 import dagre from 'cytoscape-dagre';
 import cola from 'cytoscape-cola';
@@ -14,7 +22,7 @@ import { CallRecommendationsService } from 'src/app/services/call-recommendation
 import { MessageService } from 'primeng/api';
 import { MaterialsRecommenderService } from 'src/app/services/materials-recommender.service';
 import { Subscription } from 'rxjs';
-import * as $ from "jquery";
+import * as $ from 'jquery';
 
 cytoscape.use(cxtmenu);
 cytoscape.use(dagre);
@@ -25,11 +33,10 @@ cytoscape.use(coseBilkent);
 cytoscape.use(fcose);
 cytoscape.use(popper);
 
-
 @Component({
   selector: 'app-cytoscape-slide',
   templateUrl: './cytoscape-slide.component.html',
-  styleUrls: ['./cytoscape-slide.component.css']
+  styleUrls: ['./cytoscape-slide.component.css'],
 })
 export class CytoscapeSlideComponent implements OnInit, OnChanges {
   @Input() elements: any;
@@ -54,8 +61,10 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
   public selectedTriggered: boolean = false;
 
   public _elements: any;
+  public allElements: any;
+  public topElements: any;
 
-  layout:any;
+  layout: any;
 
   newConceptsSubscription: Subscription; // on new concepts list updated
   didNotUnderstandConceptsSubscription: Subscription; // on did not understand concepts list updated
@@ -67,6 +76,10 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
   recDataSubscription: Subscription;
   loadingRecommendaion = false;
   allNotUnderstoodConcepts: any[];
+  moreThanFive: boolean;
+  showMoreActivated: boolean;
+  showLessActivated: boolean;
+  chosenElements: any;
 
   constructor(
     private renderer: Renderer2,
@@ -75,7 +88,7 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
     private callRecommendationsService: CallRecommendationsService,
     private messageService: MessageService,
     private materialsRecommenderService: MaterialsRecommenderService
-  ){
+  ) {
     this.layout = {
       name: 'spread',
       minDist: 70,
@@ -202,7 +215,7 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
             this.reqDataForm
           ); //receive recommended concepts
         var result = resultConcepts;
-        console.log(result)
+        console.log(result);
       });
   }
 
@@ -323,17 +336,45 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
   }
   async ngOnChanges() {
     for (let index = 0; index < 2; index++) {
-      this.init();      
+      this.init();
     }
   }
+  ngOnDestroy(){
+    this.moreThanFive= false;
+    this.showMoreActivated= false;
+    this.showLessActivated= false;
+    this.chosenElements= false;
+  }
   init() {
-    setTimeout( () => {
-    let cy_container = this.renderer.selectRootElement('#cySlide');
-    
-    if (this.elements !== undefined) {
-      this._elements = this.elements;
-        
-        this.cy =  cytoscape({
+    setTimeout(() => {
+      let cy_container = this.renderer.selectRootElement('#cySlide');
+
+      if (this.elements !== undefined) {
+        if (Object.keys(this.elements.nodes).length > 5) {
+          let topElements = this.elements.nodes.filter(
+            (node) => node.data.rank < 6
+          );
+          let topNodes = [];
+          topElements.forEach((ele) => {
+            // let node={ele}
+            topNodes.push(ele);
+          });
+          this.topElements = {
+            nodes: topNodes,
+          };
+          this.chosenElements = topElements;
+          this._elements = this.chosenElements;
+          this.allElements = this.elements;
+          this._elements = this.topElements;
+          this.moreThanFive = true;
+          this.showLessActivated = true;
+        } else {
+          this.allElements = this.elements;
+          this._elements = this.allElements;
+          this.moreThanFive = false;
+        }
+
+        this.cy = cytoscape({
           container: cy_container,
           layout: this.layout,
           minZoom: this.zoom.min,
@@ -343,9 +384,9 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
           autounselectify: true,
         });
 
-        let cySlideComponent =document.getElementById('cySlide')
+        let cySlideComponent = document.getElementById('cySlide');
 
-        cySlideComponent.style.height=(this.cyHeight)+'px'
+        cySlideComponent.style.height = this.cyHeight + 'px';
 
         this.cy.cxtmenu(this.default);
         if (this._elements !== undefined) {
@@ -355,7 +396,7 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
         }
       }
     }, 5);
-    }
+  }
   render() {
     if (this._elements !== undefined) {
       let selectedNode: any = undefined;
@@ -412,41 +453,40 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
         }
       });
       this.cy.on('mouseover', 'node', (event) => {
-        if(event){
+        if (event) {
+          var node = event.target;
+          if (node !== this.cy) {
+            if (node.isNode() && node.data('wikipedia')) {
+              let bodyElement = $('html,body');
+              bodyElement.css('cursor', 'pointer');
+              // $('html,body').css('cursor', 'pointer');
+              let div = document.createElement('div');
 
-        
-        var node = event.target;
-        if (node !== this.cy) {
-          if (node.isNode() && node.data('wikipedia')) {
-            let bodyElement=$('html,body')
-            bodyElement.css('cursor', 'pointer');
-            // $('html,body').css('cursor', 'pointer');
-            let div = document.createElement('div');
+              div.classList.add('popper-div');
 
-            div.classList.add('popper-div');
+              div.innerHTML = 'Right click and hold to show options';
 
-            div.innerHTML = 'Right click and hold to show options';
+              div.style.zIndex = '9999';
+              div.style.background = '#a0a0a0';
+              div.style.color = '#ffffff';
+              div.style.borderRadius = '4xp 4xp 0 0';
 
-            div.style.zIndex = '9999';
-            div.style.background = '#a0a0a0';
-            div.style.color = '#ffffff';
-            div.style.borderRadius = '4xp 4xp 0 0';
-
-            document.body.appendChild(div);
-            let popper = node.popper({
-              content: function () {
-                return div;
-              },
-            });
-            let update = function () {
-              popper.update();
-            };
-            node.on('position', update);
+              document.body.appendChild(div);
+              let popper = node.popper({
+                content: function () {
+                  return div;
+                },
+              });
+              let update = function () {
+                popper.update();
+              };
+              node.on('position', update);
+            }
           }
-        }}
+        }
       });
       this.cy.on('cxttapstart', (event: any) => {
-        let bodyElement=$('html,body')
+        let bodyElement = $('html,body');
         bodyElement.css('cursor', 'default');
         // $('html,body').css('cursor', 'default');
         var node = event.target;
@@ -522,4 +562,47 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
     }
   }
 
+  showMoreElements() {
+    let cy_container = this.renderer.selectRootElement('#cySlide');
+    this._elements = this.allElements;
+    console.log(this.allElements);
+    this.showMoreActivated = true;
+    this.showLessActivated = false;
+    this.cy = cytoscape({
+      container: cy_container,
+      layout: this.layout,
+      minZoom: this.zoom.min,
+      maxZoom: this.zoom.max,
+      style: this.showAllStyle,
+      elements: this._elements,
+      autounselectify: true,
+    });
+    this.cy.cxtmenu(this.default);
+    if (this._elements !== undefined) {
+      this.cy.ready(() => {
+        this.render();
+      });
+    }
+  }
+  showLessElements() {
+    let cy_container = this.renderer.selectRootElement('#cySlide');
+    this._elements = this.topElements;
+    this.showLessActivated = true;
+    this.showMoreActivated = false;
+    this.cy = cytoscape({
+      container: cy_container,
+      layout: this.layout,
+      minZoom: this.zoom.min,
+      maxZoom: this.zoom.max,
+      style: this.showAllStyle,
+      elements: this._elements,
+      autounselectify: true,
+    });
+    this.cy.cxtmenu(this.default);
+    if (this._elements !== undefined) {
+      this.cy.ready(() => {
+        this.render();
+      });
+    }
+  }
 }
