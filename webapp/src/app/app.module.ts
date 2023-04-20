@@ -57,6 +57,10 @@ import { PrivacyComponent } from './pages/components/privacy/privacy.component';
 import { CourseModule } from './pages/courses/course.module';
 import { CourseDescriptionComponent } from './pages/components/course-description/course-description.component';
 import { KnowledgeGraphModule } from './pages/components/knowledge-graph/knowledge-graph.module';
+import {ChatComponent} from "./components/chat/chat.component";
+import {SafeHtmlPipe} from "./pipes/safehtml.pipe";
+import {DateAgoPipe} from "./pipes/date-ago.pipe";
+import {LinkifyPipe} from "./pipes/linkify.pipe";
 
 export const metaReducers: MetaReducer[] = [hydrationMetaReducer];
 registerLocaleData(en);
@@ -81,6 +85,10 @@ registerLocaleData(en);
     LandingPageComponent,
     PrivacyComponent,
     CourseDescriptionComponent,
+    ChatComponent,
+    SafeHtmlPipe,
+    DateAgoPipe,
+    LinkifyPipe
   ],
   imports: [
     BrowserModule,
