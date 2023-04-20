@@ -20,7 +20,8 @@ export const getAllCourses = async (req, res) => {
   let courses;
   console.log("get all courses");
   try {
-    courses = await Course.find({}).populate("topics", "-__v").populate({ path: "users", populate: { path: "role" } });
+    courses = await Course.find({}).populate("topics", "-__v").
+    populate({ path: "users", populate: { path: "role" } });
   } catch (err) {
     return res.status(500).send({ message: err });
   }
@@ -54,7 +55,10 @@ export const getMyCourses = async (req, res) => {
   try {
     user = await User.findOne({ _id: userId })
       .populate({ path: "courses", populate: { path: "role" } })
-      .populate({ path: "courses", populate: { path: "courseId" } });
+      .populate({ path: "courses", populate: { path: "courseId" } })
+     
+      
+     ;
   } catch (err) {
     return res.status(500).send({ message: err });
   }
@@ -71,6 +75,8 @@ export const getMyCourses = async (req, res) => {
       channels: object.courseId.channels,
       createdAt: object.courseId.createdAt,
       users: object.courseId.users,
+      
+     
     };
     results.push(course);
   });
@@ -368,7 +374,7 @@ export const newCourse = async (req, res, next) => {
   let newUser = {
     userId: foundUser._id,
     role: foundRole._id,
-    role: foundRole.name,
+   
   };
   userList.push(newUser);
 
@@ -392,7 +398,7 @@ export const newCourse = async (req, res, next) => {
   foundUser.courses.push({
     courseId: courseSaved._id,
     role: foundRole._id,
-    role: foundRole.name,
+   
   });
 
   try {

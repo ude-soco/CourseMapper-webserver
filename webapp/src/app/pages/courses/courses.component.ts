@@ -2,7 +2,7 @@ import { Component, Input, OnInit, Renderer2 } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { ConfirmationService, MessageService } from 'primeng/api';
-
+import * as CourseAction from 'src/app/pages/courses/state/course.actions';
 import { Observable } from 'rxjs';
 import { Course } from 'src/app/models/Course';
 import { CourseImp } from 'src/app/models/CourseImp';
@@ -124,12 +124,14 @@ NowClicked()
               'Are you sure you want to Un Enroll from course"' + this.selectedCourse.name + '"?',
             header: 'Un-Enroll Confirmation',
             icon: 'pi pi-info-circle',
-            accept: (e) => this.unEnrolleCourse(this.selectedCourse),
+            accept: (e) => this.unEnrolleCourse(this.selectedCourse) ,
            
             reject: () => {
               // this.informUser('info', 'Cancelled', 'Deletion cancelled')
             },
+           
           });
+          console.log(this.selectedCourse, "un enroll")
 
         
       }
@@ -142,6 +144,7 @@ this.courseService.WithdrawFromCourse(course).subscribe(
    {
     this.showInfo('You have been  withdrewed successfully ');
     console.log("response of enrollment", res)
+    this.store.dispatch(CourseAction.setCurrentCourse({ selcetedCourse:course }));
     this.router.navigate(['course-description', course._id]);
    }
    (er) => {

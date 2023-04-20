@@ -21,7 +21,8 @@ export class CourseDescriptionComponent {
   firstName:string;
   lastName:string;
   Enrolled:boolean=false;
-
+  Users: any;
+  
   constructor(private storageService: StorageService, 
     private store: Store<State>, 
     private userService:UserServiceService, 
@@ -33,58 +34,22 @@ export class CourseDescriptionComponent {
     this.store.select(getCurrentCourse).subscribe((course) => 
     this.course=course);
     console.log(this.course, "this.course course des page")
-  //   var index = this.course.createdAt.indexOf('T');
-  //  this.createdAt=this.course.createdAt.slice(0, index), this.course.createdAt.slice(index + 1);
-  this.createdAt=this.course.createdAt
-  this.firstName=this.course.firstName
-  this.lastName=this.course.lastName
-   console.log(this. createdAt)
-   console.log(this. course.id)
 
+   this.courseService.GetAllCourses().subscribe( (courses) => {console.log("course desc All courses ", courses)  
+   let varcc=courses.find(course=> this.course.id === course._id || this.course._id === course._id  )
+ 
+   this.Users = [];
+  console.log(varcc, "course found from des page")
+   this.Users = varcc.users;
+   var index = varcc.createdAt.indexOf('T');
+      (this.createdAt = varcc.createdAt.slice(0, index)),
+      varcc.createdAt.slice(index + 1);
+   let userModerator = this.Users.find(
+     (user) => user.role.name === 'moderator'
+   );
 
-  //  this.materialService.deleteMaterial(this.selectedMaterial).subscribe({
-  //   next: (data) => {
-  // this.userService.GetUserName(this.course.users[0].userId).subscribe({
-  //   next:(user) =>{
-  //     this.firstName=user.firstname
-  //     this.lastName=user.lastname
-  //     console.log( this.firstName)
-  //     console.log( this.lastName)
-        
-  //   }
-  // }
+   this.buildCardInfo(userModerator.userId, this.course);
 
-  // )
-   this.courseService.fetchCourses().subscribe( (courses) => {console.log("course desc course Rawaa", courses)  
-   let varcc=courses.find(course=> this.course.id === course._id  )
-    //{
-   //if(this.course._id === course._id )
-   {
-     // console.log(course._id)
-     // this.Enrolled=true;
-    // console.log(this.Enrolled)
-     // return this.Enrolled;
-    // return course;
-   //}
-   // else{
-  //   // console.log(this.Enrolled)
-  //   // console.log(course._id)
-  //   // this.Enrolled=false;
-   //   // return this.Enrolled;
-  //   return course;
-  // }
-  
-
- }
-
- console.log(varcc)
- if(varcc){
-   this.Enrolled= true
- }else{
-   this.Enrolled= false
-
- }
- console.log(this.Enrolled)
  })
   
 //     this.store.select(getCurrentCourseId).subscribe((id) => console.log(id));
@@ -104,6 +69,16 @@ export class CourseDescriptionComponent {
   getName(firstName: string, lastName: string) {
 let Name=firstName+" "+lastName
     return Name.split(" ").slice(0, 2).map((part) => part[0]).join("").toUpperCase();
+  }
+  buildCardInfo(userModeratorID: string, course: Course) {
+    this.userService.GetUserName(userModeratorID).subscribe((user) => {
+      this.firstName = user.firstname;
+      this.lastName = user.lastname;
+
+      
+
+    
+    });
   }
   EnrollToCOurse(){
     if (this.isloggedin== false){

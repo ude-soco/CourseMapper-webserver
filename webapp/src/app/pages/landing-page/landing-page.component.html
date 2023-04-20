@@ -24,7 +24,7 @@
                  <p> Showing results for {{value1}} </p> 
                 </div>   
                
-                 -->
+                 
             </span>
     
            
@@ -34,11 +34,11 @@
     
     
     
-    <div  class="course-div" >
+    <div  class="course-div cursor-pointer" >
     <div *ngFor="let course of userArray ; "   (click)="onSelectCourse(course)"  >
     <div  *ngIf="value1=== '' || course.name.toLowerCase().includes(value1)" >
   
-    <div courseScript= course.name >  </div>
+  
      <p-card styleClass="p-card-shadow" class="course-card">
         <hr style="margin-bottom: 0.75rem ; margin-top: 0%;">
         <ng-template pTemplate="header">

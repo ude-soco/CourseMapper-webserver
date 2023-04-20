@@ -101,8 +101,10 @@ export class LandingPageComponent {
         createdAt: this.createdAt,
         firstName: this.firstName,
         lastName: this.lastName,
+        description:course.description
       };
       this.userArray.push(ingoPush);
+      
     });
   }
   //   Search(){
