@@ -90,7 +90,7 @@ export class TopicDropdownComponent implements OnInit {
   ngOnInit(): void {
     this.topicChannelService
       .fetchTopics(this.courseService.getSelectedCourse()._id)
-      .subscribe((topics) => (this.topics = topics));
+      .subscribe((course) => (this.topics = course.topics));
     this.topicChannelService.onUpdateTopics$.subscribe(
       (topics) => (this.topics = topics)
     );
@@ -183,6 +183,9 @@ export class TopicDropdownComponent implements OnInit {
     ]);
     this.store.dispatch(
       CourseActions.toggleChannelSelected({ channelSelected: true })
+    );
+    this.store.dispatch(
+      CourseActions.SetSelectedChannel({ selectedChannel: channel })
     );
     // make selected channel's background white
     this.selectedChannelId = channel._id;

@@ -16,6 +16,8 @@ import * as AppActions from 'src/app/state/app.actions'
 import { ModeratorPrivilegesService } from 'src/app/services/moderator-privileges.service';
 import * as  MaterialActions from 'src/app/pages/components/materils/state/materials.actions'
 import * as  CourseActions from 'src/app/pages/courses/state/course.actions'
+import { getSelectedChannel, getTagsForChannel } from '../../courses/state/course.reducer';
+import { Tag } from 'src/app/models/Tag';
 
 @Component({
   selector: 'app-channelbar',
@@ -42,9 +44,13 @@ export class ChannelbarComponent implements OnInit {
           this.courseService.selectCourse(this.selectedCourse);
           this.store.dispatch(AppActions.toggleCourseSelected({courseSelected: true}));
           this.store.dispatch(CourseActions.toggleChannelSelected({ channelSelected: false }));
+          this.store.dispatch(CourseActions.SetSelectedChannel({ selectedChannel: null }));
         });
       }
     })
+
+    this.store.select(getSelectedChannel).subscribe((currentChannel) => this.selectedChannel = currentChannel);
+    this.store.select(getTagsForChannel).subscribe((tags) => this.tagsForChannel = tags);
   }
 
   private API_URL = environment.API_URL;
@@ -56,7 +62,9 @@ export class ChannelbarComponent implements OnInit {
   previousCourse: Course = new CourseImp('', '');
   insertedText: string = '';
   selectedId: string = '';
-  showModeratorPrivileges=false
+  showModeratorPrivileges=false;
+  selectedChannel: Channel;
+  tagsForChannel: Tag[];
 
   options: MenuItem[] = [
     {

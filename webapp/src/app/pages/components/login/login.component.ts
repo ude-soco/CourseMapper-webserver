@@ -20,7 +20,7 @@ export class LoginComponent implements OnInit {
   isLoggedIn = false;
   isLoginFailed = false;
   errorMessage = '';
-
+  public signup="/signup"
   constructor(
     private userService: UserServiceService,
     private storageService: StorageService,

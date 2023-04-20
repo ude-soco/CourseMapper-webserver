@@ -1,4 +1,5 @@
 import { Channel } from "./Channel";
+import { Topic } from "./Topic";
 import { User } from "./User";
 
 export interface Course {
@@ -13,6 +14,7 @@ export interface Course {
   numberUsers?: number;
   channels?:Channel;
   createdAt?:string;
-  users?:User
+  users?:User;
+  topics?:Topic[];
   
 }

@@ -186,6 +186,7 @@ export class PdfReplyItemComponent implements OnInit, OnChanges, OnDestroy, Afte
   linkifyText(text: string): string {
     if(text){
       const linkRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
+      const hashtagRegex = /(^|\s)(#[a-z\d-]+)/gi;
       const newlineRegex = /(\r\n|\n|\r)/gm;
       const truncatedText = text?.substring(0, 180);
       const truncated = text?.length > 180;
@@ -200,6 +201,7 @@ export class PdfReplyItemComponent implements OnInit, OnChanges, OnDestroy, Afte
     
       const linkedHtml = linkedText
         .replace(linkRegex, '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="$1" target="_blank">$1</a>')
+        .replace(hashtagRegex, '$1<span class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all"><strong>$2</strong></span>')
         .replace(newlineRegex, '<br>');
       return linkedHtml;
     }

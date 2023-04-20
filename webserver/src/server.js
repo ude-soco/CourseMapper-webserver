@@ -23,7 +23,7 @@ env !== "production"
   ? app.use(
       cors({
         credentials: true,
-        origin: ["http://localhost:4200", "https://www.youtube.com/watch?v="],
+        origin: ["http://localhost:4200", "https://www.youtube.com/watch?v=", "http://127.0.0.1:8081 "],
       })
     )
   : "";

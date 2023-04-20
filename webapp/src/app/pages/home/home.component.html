@@ -5,23 +5,25 @@
   </div>
 
 <div style="width: 100%;">
-  <div *ngIf="this.courses.length == 0">
+  <div  *ngIf="this.courses.length == 0">
+     
+     
     
-    <p class="p">Currently you have no courses enrolled. </p>
-    <p class="p"> <a href="landingPage" style="color: #0277BD;"> Click here</a>  to search for courses to start learning!</p>
+    <p class="text-5xl leading-normal font-bold text-center mt-6">Currently you have no courses enrolled. </p>
+    <p class="text-4xl leading-normal text-center mt-6"> <a href="landingPage" style="color: #0277BD;"> Click here</a>  to search for courses to start learning!</p>
   </div>
   <div *ngIf="this.courses.length > 0">
-  <p class=" font-bold leading-normal h1" > My Courses  </p>
-    <p class="p">Welcome back!  Pick a course from your list to start learning</p>
+  <p  class=" text-5xl leading-normal font-bold text-center mt-6" style="color: #0277BD;"> My Courses  </p>
+    <p class="text-4xl leading-normal text-center mt-6">Welcome back!  Pick a course from your list to start learning</p>
 
     
     
     
-    <div  class="course-div" >
-    <div *ngFor="let course of courses"  (click)="onSelectCourse(course)">
+    <div  class="course-div cursor-pointer" >
+    <div *ngFor="let course of userArray"  (click)="onSelectCourse(course)">
     
     
-    
+      
      <p-card  styleClass="p-card-shadow" class="course-card">
         <hr style="margin-bottom: 0.75rem ; margin-top: 0%;">
         <ng-template pTemplate="header">
@@ -38,7 +40,24 @@
       ></p-avatar>
       <button> <p style="margin: 1rem; font-weight: bold;"> {{course.name}}</p></button>
        
-      <p style="justify-content: center;" > {{ 'Please click here for course description'}} </p>
+      <p class="p" > 
+        <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="22"
+        height="22"
+        
+        viewBox="0 0 22 22"
+        style="fill: #EA580C; transform: msFilter ; float: left; margin-right:2px;"
+        
+      >
+        <path d="M2 7v1l11 4 9-4V7L11 4z"></path>
+        <path
+          d="M4 11v4.267c0 1.621 4.001 3.893 9 3.734 4-.126 6.586-1.972 7-3.467.024-.089.037-.178.037-.268V11L13 14l-5-1.667v3.213l-1-.364V12l-3-1z"
+        ></path>
+      </svg>
+        Created By: {{ course.firstName }} {{course.lastName}} </p>
+
+      <p class="p" style=" margin-left: 4px;"> <i class="pi pi-calendar"  style="font-size: 1rem ; color: #EA580C"></i> Created On: {{course.createdAt}}</p>
     </ng-template>
        
     

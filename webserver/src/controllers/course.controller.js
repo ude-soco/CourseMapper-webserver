@@ -19,7 +19,9 @@ const Activity = db.activity;
 export const getAllCourses = async (req, res) => {
   let courses;
   try {
-    courses = await Course.find({}).populate("topics", "-__v");
+    courses = await Course.find({})
+      .populate("topics", "-__v")
+      .populate({ path: "users", populate: { path: "role" } });
   } catch (err) {
     return res.status(500).send({ message: err });
   }
@@ -127,6 +129,7 @@ export const getCourse = async (req, res) => {
   try {
     foundCourse = await Course.findById(courseId)
       .populate("topics", "-__v")
+      .populate({ path: "users", populate: { path: "role" } })
       .populate({ path: "topics", populate: { path: "channels" } });
     if (!foundCourse) {
       return res.status(404).send({
