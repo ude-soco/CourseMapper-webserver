@@ -34,13 +34,13 @@ const isAdmin = async (req, res, next) => {
   try {
     user = await User.findById(req.userId);
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding user" });
   }
   let role;
   try {
     role = await Role.findOne({ _id: user.role });
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding role" });
   }
   if (role.name === "admin") {
     req.isAdmin = true;
@@ -71,14 +71,14 @@ const isModerator = async (req, res, next) => {
       });
     }
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding user" });
   }
 
   let role;
   try {
     role = await Role.findOne({ _id: user.role });
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding role" });
   }
 
   if (role.name === "admin") {
@@ -93,7 +93,7 @@ const isModerator = async (req, res, next) => {
       try {
         role = await Role.findOne({ _id: foundCourse.role });
       } catch (err) {
-        return res.status(500).send({ error: err });
+        return res.status(500).send({ error: "Error finding role" });
       }
 
       if (role.name === "moderator") {
@@ -128,14 +128,14 @@ const isEnrolled = async (req, res, next) => {
       });
     }
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding user" });
   }
 
   let role;
   try {
     role = await Role.findOne({ _id: user.role });
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding role" });
   }
 
   if (role.name === "admin") {

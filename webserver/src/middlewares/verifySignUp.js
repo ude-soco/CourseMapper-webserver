@@ -12,7 +12,7 @@ const checkDuplicateUsernameOrEmail = async (req, res, next) => {
         .send({ message: "Failed! Username is already in use!" });
     }
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding user" });
   }
   try {
     user = await User.findOne({ email: req.body.email });
@@ -21,7 +21,7 @@ const checkDuplicateUsernameOrEmail = async (req, res, next) => {
       return;
     }
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding user" });
   }
   return next();
 };
