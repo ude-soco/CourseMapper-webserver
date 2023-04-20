@@ -1,4 +1,3 @@
-const ObjectId = require("mongoose").Types.ObjectId;
 const db = require("../models");
 const Channel = db.channel;
 const Material = db.material;
@@ -6,7 +5,6 @@ const User = db.user;
 const Annotation = db.annotation;
 const Reply = db.reply;
 const Tag = db.tag;
-
 
 /**
  * @function getMaterial
@@ -22,21 +20,19 @@ export const getMaterial = async (req, res, next) => {
 
   let user;
   try {
-    user = await User.findOne({_id: userId});
-
+    user = await User.findById(userId);
     if (!user) {
       return res.status(404).send({ error: "User not found." });
     }
-
   } catch (error) {
-    return res.status(500).send({ error: error });
+    return res.status(500).send({ error: "Error finding user" });
   }
-
   let foundMaterial;
   try {
-    foundMaterial = await Material.findById({
-      _id: ObjectId(materialId),
-    }).populate("annotations", "-__v");
+    foundMaterial = await Material.findById(materialId).populate(
+      "annotations",
+      "-__v"
+    );
     if (!foundMaterial) {
       return res.status(404).send({
         error: `Material with id ${materialId} doesn't exist!`,
@@ -48,14 +44,13 @@ export const getMaterial = async (req, res, next) => {
       });
     }
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding material" });
   }
-
   req.locals = {
     response: foundMaterial,
     material: foundMaterial,
-    user: user
-  }
+    user: user,
+  };
   return next();
 };
 
@@ -80,21 +75,20 @@ export const newMaterial = async (req, res, next) => {
   const materialDesc = req.body.description;
   const userId = req.userId;
 
-  let user
+  let user;
   try {
-    user = await User.findOne({_id: userId});
+    user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).send({ error: "User not found." });
     }
-
   } catch (error) {
-    return res.status(500).send({ error: error });
+    return res.status(500).send({ error: "Error finding user" });
   }
 
   let foundChannel;
   try {
-    foundChannel = await Channel.findById({ _id: ObjectId(channelId) });
+    foundChannel = await Channel.findById(channelId);
     if (!foundChannel) {
       return res.status(404).send({
         error: `Channel with id ${channelId} doesn't exist!`,
@@ -106,7 +100,7 @@ export const newMaterial = async (req, res, next) => {
       });
     }
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding channel" });
   }
 
   let material = new Material({
@@ -126,29 +120,29 @@ export const newMaterial = async (req, res, next) => {
   try {
     savedMaterial = await material.save();
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error saving material" });
   }
 
   foundChannel.materials.push(savedMaterial._id);
   try {
     await foundChannel.save();
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error saving channel" });
   }
   return res.send({
-   // id: savedMaterial._id,
+    // id: savedMaterial._id,
     material: {
-      _id:material._id,
+      _id: material._id,
       type: material.type,
-    name: material.name,
-    url: material.url,
-    description: material.description,
-    courseId: material.courseId,
-    topicId: material.topicId,
-    channelId:material.channelId,
-   // userId: req.userId,
-   // createdAt: Date.now(),
-    //updatedAt: Date.now(),
+      name: material.name,
+      url: material.url,
+      description: material.description,
+      courseId: material.courseId,
+      topicId: material.topicId,
+      channelId: material.channelId,
+      // userId: req.userId,
+      // createdAt: Date.now(),
+      //updatedAt: Date.now(),
     },
     success: `New material '${materialName}' added!`,
   });
@@ -166,21 +160,20 @@ export const deleteMaterial = async (req, res, next) => {
   let courseId = req.params.courseId;
   const userId = req.userId;
 
-  let user
+  let user;
   try {
-    user = await User.findOne({_id: userId});
+    user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).send({ error: "User not found." });
     }
-
   } catch (error) {
-    return res.status(500).send({ error: error });
+    return res.status(500).send({ error: "Error finding user" });
   }
 
   let foundMaterial;
   try {
-    foundMaterial = await Material.findById({ _id: ObjectId(materialId) });
+    foundMaterial = await Material.findById(materialId);
     if (!foundMaterial) {
       return res.status(404).send({
         error: `Material with id ${materialId} doesn't exist!`,
@@ -192,41 +185,42 @@ export const deleteMaterial = async (req, res, next) => {
       });
     }
   } catch (err) {
-    res.status(500).send({ error: err });
+    res.status(500).send({ error: "Error finding material" });
   }
-
   try {
-    await Material.findByIdAndRemove({ _id: materialId });
+    await Material.findByIdAndRemove(materialId);
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res
+      .status(500)
+      .send({ error: "Error finding and removing material" });
   }
 
   try {
     await Annotation.deleteMany({ materialId: materialId });
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error removing annotaion" });
   }
 
   try {
     await Reply.deleteMany({ materialId: materialId });
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error removing reply" });
   }
 
   try {
     await Tag.deleteMany({ materialId: materialId });
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error deleting tag" });
   }
 
   let foundChannel;
   try {
-    foundChannel = await Channel.findById({ _id: foundMaterial.channelId });
+    foundChannel = await Channel.findById(foundMaterial.channelId);
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding channel" });
   }
 
-  let materialIndex = foundChannel["materials"].indexOf(ObjectId(materialId));
+  let materialIndex = foundChannel["materials"].indexOf(materialId);
   if (materialIndex >= 0) {
     foundChannel["materials"].splice(materialIndex, 1);
   }
@@ -234,7 +228,7 @@ export const deleteMaterial = async (req, res, next) => {
   try {
     await foundChannel.save();
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error saving channel" });
   }
 
   req.locals = {
@@ -242,8 +236,8 @@ export const deleteMaterial = async (req, res, next) => {
       success: `Material '${foundMaterial.name}' successfully deleted!`,
     },
     material: foundMaterial,
-    user: user
-  }
+    user: user,
+  };
   return next();
 };
 
@@ -267,27 +261,23 @@ export const editMaterial = async (req, res, next) => {
   const materialType = req.body.type;
   const userId = req.userId;
 
-  let user
+  let user;
   try {
-    user = await User.findOne({_id: userId});
-
+    user = await User.findById(userId);
     if (!user) {
       return res.status(404).send({ error: "User not found." });
     }
-
   } catch (error) {
-    return res.status(500).send({ error: error });
+    return res.status(500).send({ error: "Error finding user." });
   }
-
   if (!Boolean(materialName)) {
     return res.status(404).send({
       error: `Material requires a name!`,
     });
   }
-
   let foundMaterial;
   try {
-    foundMaterial = await Material.findById({ _id: ObjectId(materialId) });
+    foundMaterial = await Material.findById(materialId);
     if (!foundMaterial) {
       return res.status(404).send({
         error: `Material with id ${materialId} doesn't exist!`,
@@ -303,27 +293,23 @@ export const editMaterial = async (req, res, next) => {
       .status(500)
       .send({ error: `Error while searching for material` });
   }
-
-  req.locals = {}
+  req.locals = {};
   req.locals.oldMaterial = JSON.parse(JSON.stringify(foundMaterial));
-
   foundMaterial.name = materialName;
   foundMaterial.url = materialUrl;
   foundMaterial.type = materialType;
   foundMaterial.description = materialDesc;
   foundMaterial.updatedAt = Date.now();
-
   try {
     await foundMaterial.save();
   } catch (err) {
     return res.status(500).send({ error: `Error saving material!` });
   }
-
   req.locals.response = {
     id: foundMaterial._id,
     courseId: courseId,
     success: `Material '${materialName}' has been updated successfully!`,
-  }
+  };
   req.locals.newMaterial = foundMaterial;
   req.locals.user = user;
 

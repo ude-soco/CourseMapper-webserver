@@ -70,7 +70,7 @@ const server = http.createServer(app);
 socketio.init(server);
 
 socketio.getIO().on("connection", () => {
-  console.log("New Rando connected");
+  console.log("Socket.IO connection established");
 });
 
 // Routes

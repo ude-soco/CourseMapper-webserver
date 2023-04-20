@@ -1,4 +1,3 @@
-const ObjectId = require("mongoose").Types.ObjectId;
 const db = require("../models");
 const Tag = db.tag;
 
@@ -19,7 +18,7 @@ export const courseTags = async (req, res) => {
       });
     }
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error fidning tags" });
   }
   let newFoundTags = [];
   foundTags.forEach((tag) => {
@@ -56,7 +55,7 @@ export const topicTags = async (req, res) => {
       });
     }
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding tag" });
   }
   let newFoundTags = [];
   foundTags.forEach((tag) => {

@@ -18,7 +18,6 @@ const Activity = db.activity;
  */
 export const getAllCourses = async (req, res) => {
   let courses;
-  console.log("get all courses");
   try {
     courses = await Course.find({}).populate("topics", "-__v");
   } catch (err) {
@@ -52,11 +51,11 @@ export const getMyCourses = async (req, res) => {
   let userId = req.userId;
   let results = [];
   try {
-    user = await User.findOne({ _id: ObjectId(userId) })
+    user = await User.findById(userId)
       .populate({ path: "courses", populate: { path: "role" } })
       .populate({ path: "courses", populate: { path: "courseId" } });
   } catch (err) {
-    return res.status(500).send({ message: err });
+    return res.status(500).send({ message: "Error finding user" });
   }
   user.courses.forEach((object) => {
     let course = {
@@ -113,20 +112,20 @@ export const getCourse = async (req, res) => {
 
   let foundUser;
   try {
-    foundUser = await User.findOne({ _id: userId });
+    foundUser = await User.findById(userId);
     if (!foundUser) {
       return res.status(404).send({
         error: `User not found!`,
       });
     }
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding user" });
   }
 
   let foundCourse;
   let results = [];
   try {
-    foundCourse = await Course.findOne({ _id: courseId })
+    foundCourse = await Course.findById(courseId)
       .populate("topics", "-__v")
       .populate({ path: "topics", populate: { path: "channels" } });
     if (!foundCourse) {
@@ -135,7 +134,7 @@ export const getCourse = async (req, res) => {
       });
     }
   } catch (err) {
-    return res.status(500).send({ message: `${err}, error when finding a course!` });
+    return res.status(500).send({ message: "Error finding a course" });
   }
   return res.status(200).send(foundCourse);
 
@@ -186,51 +185,45 @@ export const enrolCourse = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-
   let foundUser;
   try {
-    foundUser = await User.findOne({ _id: userId });
+    foundUser = await User.findById(userId);
     if (!foundUser) {
       return res.status(404).send({
         error: `User not found!`,
       });
     }
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding user" });
   }
-
   let alreadyEnrolled = foundUser.courses.find(
     (course) => course.courseId.valueOf() === courseId
   );
-
   if (!alreadyEnrolled) {
     let role;
     try {
       role = await Role.findOne({ name: "user" });
     } catch (err) {
-      return res.status(500).send({ error: err });
+      return res.status(500).send({ error: "Error finding role" });
     }
 
     foundUser.courses.push({
       courseId: foundCourse._id,
       role: role._id,
     });
-
     try {
       await foundUser.save();
     } catch (err) {
-      return res.status(500).send({ error: err });
+      return res.status(500).send({ error: "Error savinguser" });
     }
-
     foundCourse.users.push({
       userId: foundUser._id,
       role: role._id,
     });
-
     try {
       await foundCourse.save();
     } catch (err) {
-      return res.status(500).send({ error: err });
+      return res.status(500).send({ error: "Error saving course" });
     }
     req.locals = {
       response: { success: `User enrolled to course ${foundCourse.name}` },
@@ -264,41 +257,35 @@ export const withdrawCourse = async (req, res, next) => {
       });
     }
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding course" });
   }
-
   let foundUser;
   try {
-    foundUser = await User.findOne({ _id: userId });
+    foundUser = await User.findById(userId);
     if (!foundUser) {
       return res.status(404).send({
         error: `User not found!`,
       });
     }
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding user" });
   }
-
   foundUser.courses = foundUser.courses.filter(
     (course) => course.courseId.valueOf() !== courseId
   );
-
   try {
     await foundUser.save();
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding user" });
   }
-
   foundCourse.users = foundCourse.users.filter(
     (user) => user.userId.valueOf() !== userId
   );
-
   try {
     await foundCourse.save();
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error saving user" });
   }
-
   req.locals = {
     response: { success: `User withdrew from course ${foundCourse.name}` },
     user: foundUser,
@@ -316,7 +303,6 @@ export const withdrawCourse = async (req, res, next) => {
  * @param {string} req.userId The owner of the course
  */
 export const newCourse = async (req, res, next) => {
-  console.log("newCourse");
   const courseName = req.body.name;
   const courseDesc = req.body.description;
   let shortName = req.body.shortname;
@@ -331,9 +317,8 @@ export const newCourse = async (req, res, next) => {
       });
     }
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding user" });
   }
-
   let foundCourse;
   try {
     foundCourse = await Course.findOne({ name: courseName });
@@ -341,9 +326,8 @@ export const newCourse = async (req, res, next) => {
       return res.status(403).send({ error: "Course name already taken!" });
     }
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding course" });
   }
-
   if (!shortName) {
     shortName = courseName
       .split(" ")
@@ -354,21 +338,18 @@ export const newCourse = async (req, res, next) => {
       })
       .join("");
   }
-
   let foundRole;
   try {
     foundRole = await Role.findOne({ name: "moderator" });
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding role" });
   }
-
   let userList = [];
   let newUser = {
     userId: foundUser._id,
     role: foundRole._id,
   };
   userList.push(newUser);
-
   let course = new Course({
     name: courseName,
     shortName: shortName,
@@ -378,23 +359,20 @@ export const newCourse = async (req, res, next) => {
     updatedAt: Date.now(),
     users: userList,
   });
-
   let courseSaved;
   try {
     courseSaved = await course.save();
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error saving course" });
   }
-
   foundUser.courses.push({
     courseId: courseSaved._id,
     role: foundRole._id,
   });
-
   try {
     await foundUser.save();
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error saving user" });
   }
   const response = {
     courseSaved: {
@@ -429,49 +407,42 @@ export const deleteCourse = async (req, res, next) => {
 
   let foundCourse;
   try {
-    foundCourse = await Course.findByIdAndRemove({ _id: ObjectId(courseId) });
+    foundCourse = await Course.findByIdAndRemove(courseId);
     if (!foundCourse) {
       return res.status(404).send({
         error: `Course with id ${courseId} doesn't exist!`,
       });
     }
-
     try {
       await Topic.deleteMany({ _id: { $in: foundCourse.topics } });
     } catch (err) {
-      return res.status(500).send({ error: err });
+      return res.status(500).send({ error: "Error deleting topic" });
     }
-
     try {
       await Channel.deleteMany({ _id: { $in: foundCourse.channels } });
     } catch (err) {
-      return res.status(500).send({ error: err });
+      return res.status(500).send({ error: "Error deleting channel" });
     }
-
     try {
       await Material.deleteMany({ courseId: courseId });
     } catch (err) {
-      return res.status(500).send({ error: err });
+      return res.status(500).send({ error: "Error deleting material" });
     }
-
     try {
       await Annotation.deleteMany({ courseId: courseId });
     } catch (err) {
-      return res.status(500).send({ error: err });
+      return res.status(500).send({ error: "Error deleting annotation" });
     }
-
     try {
       await Reply.deleteMany({ courseId: courseId });
     } catch (err) {
-      return res.status(500).send({ error: err });
+      return res.status(500).send({ error: "Error deleting reply" });
     }
-
     try {
       await Tag.deleteMany({ courseId: courseId });
     } catch (err) {
-      return res.status(500).send({ error: err });
+      return res.status(500).send({ error: "Error deleting tag" });
     }
-
     let activitiesToBeDeleted;
     try {
       activitiesToBeDeleted = await Activity.aggregate([
@@ -485,9 +456,9 @@ export const deleteCourse = async (req, res, next) => {
         {
           $match: {
             $or: [
-              { "extensionFields.v.id": ObjectId(courseId) },
               { "extensionFields.v.id": courseId },
-              { "extensionFields.v.course_id": ObjectId(courseId) },
+              { "extensionFields.v.id": courseId },
+              { "extensionFields.v.course_id": courseId },
               { "extensionFields.v.course_id": courseId },
             ],
           },
@@ -496,47 +467,40 @@ export const deleteCourse = async (req, res, next) => {
           $project: { _id: 1 },
         },
       ]);
-
       let activitiesToBeDeletedIds = activitiesToBeDeleted.map(
         (actvity) => actvity._id
       );
-
       await Activity.deleteMany({ _id: { $in: activitiesToBeDeletedIds } });
     } catch (error) {
-      return res.status(500).send({ error: err });
+      return res.status(500).send({ error: "Error deleting activity" });
     }
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding and removing course" });
   }
-
   let foundUsers;
   try {
     foundUsers = await User.find();
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding user" });
   }
-
   foundUsers.forEach((user) => {
     user.courses = user.courses.filter(
       (course) => course.courseId.valueOf() !== courseId
     );
   });
-
   foundUsers.forEach(async (user) => {
     try {
       await user.save();
     } catch (err) {
-      return res.status(500).send({ error: err });
+      return res.status(500).send({ error: "Error saving user" });
     }
   });
-
   let foundUser;
   try {
-    foundUser = await User.findOne({ _id: req.userId });
+    foundUser = await User.findById(req.userId);
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding user" });
   }
-
   const response = {
     success: `Course '${foundCourse.name}' successfully deleted!`,
   };
@@ -571,12 +535,10 @@ export const editCourse = async (req, res, next) => {
       });
     }
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding course" });
   }
-
   req.locals = {};
   req.locals.oldCourse = JSON.parse(JSON.stringify(foundCourse));
-
   let shortName = courseName
     .split(" ")
     .map((word, index) => {
@@ -585,23 +547,21 @@ export const editCourse = async (req, res, next) => {
       }
     })
     .join("");
-
   foundCourse.name = courseName;
   foundCourse.shortName = shortName;
   foundCourse.description = courseDesc;
   foundCourse.updatedAt = Date.now();
-
   let foundUser;
   try {
-    foundUser = await User.findOne({ _id: userId });
+    foundUser = await User.findById(userId);
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding user" });
   }
 
   try {
     await foundCourse.save();
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error saving course" });
   }
 
   req.locals.response = {
@@ -634,7 +594,7 @@ export const newIndicator = async (req, res, next) => {
       });
     }
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding course" });
   }
 
   const indicator = {
@@ -650,7 +610,7 @@ export const newIndicator = async (req, res, next) => {
   try {
     foundCourse.save();
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error saving course" });
   }
 
   return res.status(200).send({
@@ -685,7 +645,7 @@ export const deleteIndicator = async (req, res, next) => {
       });
     }
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding course" });
   }
 
   foundCourse.indicators = foundCourse.indicators.filter(
@@ -695,7 +655,7 @@ export const deleteIndicator = async (req, res, next) => {
   try {
     foundCourse.save();
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error saving course" });
   }
 
   return res.status(200).send({
@@ -759,7 +719,7 @@ export const resizeIndicator = async (req, res, next) => {
       });
     }
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding course" });
   }
 
   foundCourse.indicators.forEach((indicator) => {
@@ -772,7 +732,7 @@ export const resizeIndicator = async (req, res, next) => {
   try {
     foundCourse.save();
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error saving course" });
   }
 
   return res.status(200).send({
@@ -795,18 +755,16 @@ export const reorderIndicators = async (req, res, next) => {
 
   let foundCourse;
   try {
-    foundCourse = await Course.findOne({ _id: courseId });
+    foundCourse = await Course.findById(courseId);
     if (!foundCourse) {
       return res.status(404).send({
         error: `Course with id ${courseId} doesn't exist!`,
       });
     }
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding course" });
   }
-
   let indicator = foundCourse.indicators[oldIndex];
-
   if (oldIndex < newIndex) {
     for (let i = oldIndex; i < newIndex; i++) {
       foundCourse.indicators[i] = foundCourse.indicators[i + 1];
@@ -816,15 +774,12 @@ export const reorderIndicators = async (req, res, next) => {
       foundCourse.indicators[i] = foundCourse.indicators[i - 1];
     }
   }
-
   foundCourse.indicators[newIndex] = indicator;
-
   try {
     foundCourse.save();
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error saving course" });
   }
-
   return res.status(200).send({
     success: `indicators have been updated successfully!`,
     indicators: foundCourse.indicators,
