@@ -4,13 +4,13 @@
         <h2 class="title-article text-xl font-bold truncate inline-flex mt-1" (click)="openArticle(article)" *ngIf="article.title.length <= TITLE_MAX_LENGTH" [class.active]="isActive">{{ article.title }}</h2>
         <h2 class="title-article text-xl font-bold truncate inline-flex mt-1" (click)="openArticle(article)" *ngIf="article.title.length > TITLE_MAX_LENGTH" [class.active]="isActive">{{ article.title.substring(0, TITLE_MAX_LENGTH) + "..." }}</h2>
         <span pTooltip="Similarity between the concepts not understood and the content of this article"
-              class="text-sm mt-2 font-semibold inline-flex items-center py-1 px-2 rounded bg-white text-primary-600 border mx-2 last:mr-0 mr-1">
+              class="text-sm mt-2 font-semibold inline-flex items-center py-1 px-2 rounded bg-white text-[#0277BD] border mx-2 last:mr-0 mr-1">
           Similarity Score: {{article.similarity_score | percent}}
         </span>
       </span>
-      <div *ngIf="article.concepts.length !== 0" class="flex flex-row mb-3 mt-6">
+      <div *ngIf="article.keyphrases.length !== 0" class="flex flex-row mb-3 mt-6">
         <p class="mr-2 font-semibold italic">Keyphrases: </p>
-        <div *ngFor="let concept of article.concepts.slice(0, 5)" pTooltip="Main keyphrases extracted from this article"
+        <div *ngFor="let concept of article.keyphrases.slice(0, 5)" pTooltip="Main keyphrases extracted from this article"
              class=" text-xs uppercase bg-gray-200 text-chips-txt bg-gray-200 mx-1 p-1 px-2 font-semibold rounded-2xl">{{concept}}</div>
       </div>
       <div class="flex flex-row">
@@ -37,11 +37,11 @@
       <div class="py-3 pl-7">
         <app-rating [element]="article" [notUnderstoodConcepts]="notUnderstoodConcepts" ></app-rating>
       </div>
-  
+
       <div class="py-3 pl-7">
         <div class="flex flex-row px-3 py-5 justify-center">
           <div class="flex items-center">
-            <button class="inline-flex bg-transparent hover:bg-primary-600 text-primary-600 hover:text-white py-2 px-4 border border-primary-600 hover:border-transparent rounded" (click)="openArticle(article)">
+            <button class="inline-flex bg-transparent hover:bg-[#0277BD] text-[#0277BD] hover:text-white py-2 px-4 border border-[#0277BD] hover:border-transparent rounded" (click)="openArticle(article)">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up-right-circle-fill" viewBox="0 0 16 16"> <path d="M0 8a8 8 0 1 0 16 0A8 8 0 0 0 0 8zm5.904 2.803a.5.5 0 1 1-.707-.707L9.293 6H6.525a.5.5 0 1 1 0-1H10.5a.5.5 0 0 1 .5.5v3.975a.5.5 0 0 1-1 0V6.707l-4.096 4.096z"/> </svg>
               <span class="text-sm ml-2 italic">View on Wikipedia</span>
             </button>
@@ -50,4 +50,3 @@
       </div>
     </div>
   </div>
-  

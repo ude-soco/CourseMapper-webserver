@@ -7,16 +7,16 @@
       <div class="text-gray-900 items-center font-bold flex flex-row text-xl">
         <h2 class="title-video text-xl font-bold inline-block" (click)="readVideo(videoElement)" [class.active]="isActive"  [innerHTML] = "videoElement.title"></h2>
         <span pTooltip="Similarity between the concepts not understood and the content of this video"
-              class="text-sm font-semibold flex-none w-40 text-center py-1 px-2 rounded bg-white text-primary-600 border mx-4 last:mr-0 mr-1">
+              class="text-sm font-semibold flex-none w-40 text-center py-1 px-2 rounded bg-white text-[#0277BD] border mx-4 last:mr-0 mr-1">
           Similarity Score: {{videoElement.similarity_score | percent}}
         </span>
       </div>
       <p class="text-sm text-gray-600 my-2 items-center">
         {{ videoElement.views | number }} views - {{ videoElement.publish_time | dateAgo }}
       </p>
-      <div *ngIf="videoElement.concepts.length !== 0" class="flex flex-row mb-3 mt-6">
+      <div *ngIf="videoElement.keyphrases.length !== 0" class="flex flex-row mb-3 mt-6">
         <p class="mr-2 font-semibold italic">Keyphrases: </p>
-        <div *ngFor="let concept of videoElement.concepts.slice(0, 5)" pTooltip="Main keyphrases extracted from this video"
+        <div *ngFor="let concept of videoElement.keyphrases.slice(0, 5)" pTooltip="Main keyphrases extracted from this video"
              class="text-xs uppercase text-chips-txt bg-gray-200 mx-1 p-1 px-2 font-semibold rounded-2xl">{{concept}}</div>
       </div>
       <div class="flex flex-row">
@@ -26,4 +26,3 @@
       --></div>
     </div>
   </div>
-  

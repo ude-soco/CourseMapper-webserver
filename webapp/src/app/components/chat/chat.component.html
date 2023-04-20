@@ -1,0 +1,64 @@
+<div *ngIf="visible==false; else showChat">
+  <div class="fixed bottom-1 right-px mr-2 mb-2">
+    <button
+      pRipple
+      id="didNotUnderstandButton"
+      class=""
+      pTooltip="Did not understand this slide?"
+      (click)="showDialog()"
+    ><img
+      height="60px"
+      width="60px"
+      src="./assets/img/ChatGPT_logo.svg"
+      alt=""
+    /></button>
+  </div>
+</div>
+
+
+<ng-template #showChat >
+  <div class="fixed bottom-1 mt-auto right-px mr-2 mb-2" style="z-index: 10;">
+    <div class="container" >
+      <div class="card">
+        <div class="header">
+        <span class="flex flex-row font-extrabold">
+          <img
+            height="30px"
+            width="30px"
+            src="./assets/img/ChatGPT_logo.svg"
+            alt=""
+          />
+        </span>
+          <span (click)="showDialog()" class="close-button text-[#0277BD]">X</span>
+        </div>
+        <div class="chat-list" #chatListContainer>
+
+          <ng-container *ngFor="let item of chatMessages">
+            <div class="chat-item"
+                 [ngClass]="{'right' : item?.user?.id == human.id, 'left': item?.user?.id != human.id}">
+              <img class="avatar" alt="avatar" [src]="item?.user?.profileImageUrl">
+              <p class="message-body" [ngClass]="{from: item?.user?.id == human.id, to: item?.user?.id != human.id}" [innerHTML]="item?.message | linkify"></p>
+            </div>
+          </ng-container>
+          <div *ngIf="isTyping">
+            <div class="chat-item" [ngClass]="{'right' : false, 'left': true}">
+              <img class="avatar" alt="avatar" [src]="bot.profileImageUrl">
+              <div class="message-body" [ngClass]="{from: false, to: true}" >
+                <div class="dot-flashing"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="chat-footer flex flex-row">
+          <input matInput class="chat-textarea w-full m-0 resize-none border-none flex-grow-2 bg-transparent p-0 pr-14 " (keydown.enter)="sendMessage()" [(ngModel)]="chatInputMessage" required>
+          <button class="chat-button" (click)="sendMessage()" [disabled]="chatInputMessage === ''">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16"> <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z"/> </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</ng-template>
+
+

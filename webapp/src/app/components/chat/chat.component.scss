@@ -1,0 +1,227 @@
+$background: white;
+$primary: #027ABC;
+
+//.typewriter p {
+//  color: #fff;
+//  font-family: monospace;
+//  overflow: hidden; /* Ensures the content is not revealed until the animation */
+//  border-right: .15em solid orange; /* The typwriter cursor */
+//  white-space: nowrap; /* Keeps the content on a single line */
+//  margin: 0 auto; /* Gives that scrolling effect as the typing happens */
+//  letter-spacing: .15em; /* Adjust as needed */
+//  animation:
+//    typing 3.5s steps(30, end),
+//    blink-caret .5s step-end infinite;
+//}
+//
+///* The typing effect */
+//@keyframes typing {
+//  from { width: 0 }
+//  to { width: 100% }
+//}
+//
+///* The typewriter cursor effect */
+//@keyframes blink-caret {
+//  from, to { border-color: transparent }
+//  50% { border-color: orange }
+//}
+
+.dot-flashing {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: $background;
+  color: $background;
+  animation: dot-flashing 1s infinite linear alternate;
+  animation-delay: 0.5s;
+}
+.dot-flashing::before, .dot-flashing::after {
+  content: "";
+  display: inline-block;
+  position: absolute;
+  top: 0;
+}
+.dot-flashing::before {
+  left: -15px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: $background;
+  color: $background;
+  animation: dot-flashing 1s infinite alternate;
+  animation-delay: 0s;
+}
+.dot-flashing::after {
+  left: 15px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: $background;
+  color: $background;
+  animation: dot-flashing 1s infinite alternate;
+  animation-delay: 1s;
+}
+
+@keyframes dot-flashing {
+  0% {
+    background-color: $background;
+  }
+  50%, 100% {
+    background-color: rgba(152, 128, 255, 0.2);
+  }
+}
+
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 18px;
+  margin-right: 18px;
+}
+
+.caption {
+  padding: 30px;
+  text-align: center;
+  color: $primary;
+}
+
+#thumbnail {
+  height: 130px;
+  width: 130px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.card {
+  background: $background;
+  width: 500px;
+  height: 500px;
+  display: flex;
+  flex-direction: column;
+  filter: drop-shadow(0px 0px 5px black);
+  border-radius: 15px;
+  padding: 16px;
+  .header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .close-button {
+      cursor: pointer;
+      font-size: 1.2rem;
+      color: black;
+    }
+  }
+}
+
+.chat-list {
+  margin-top: 16px;
+  margin-bottom: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  overflow-y: scroll;
+
+
+  .chat-item {
+    max-width: 80%;
+    margin: 8px 0px;
+    display: flex;
+    flex-direction: row;
+
+    .message-body.from {
+      background: #E5E4E9;
+      margin: auto 8px;
+      padding: 12px 24px;
+      border-radius: 30px;
+      color: #363636;;
+      display: flex;
+      flex-direction: row;
+    }
+
+    .message-body.to {
+      background: $primary;
+      margin: auto 8px;
+      padding: 12px 24px;
+      border-radius: 30px;
+      color: white;
+      display: flex;
+      flex-direction: row;
+    }
+
+    .avatar {
+      height: 44px;
+      width: 44px;
+      object-fit: cover;
+      border-radius: 50%;
+      z-index: 99;
+      border: 3px solid $background;
+    }
+  }
+
+  .left {
+    margin-right: auto;
+    margin-left: 8px;
+
+    #message-body {
+      margin-left: -10px;
+    }
+  }
+
+  .right {
+    margin-right: 8px;
+    margin-left: auto;
+    flex-direction: row-reverse;
+
+    #message-body {
+      margin-right: -10px;
+    }
+  }
+}
+
+.chat-footer {
+  .chat-textarea {
+    margin: 0 8px;
+    box-shadow: 0 0 16px rgba(0, 0, 0, 0.5);
+    border-radius: 6px;
+    padding: 10px;
+    .chat-textarea:focus{
+      outline: none;
+    }
+  }
+
+  .chat-button{
+    margin-left: -30px;
+    border: 0;
+    padding: 2px;
+    .chat-button:focus{
+      background: lightgrey;
+    }
+    -webkit-appearance: none;
+  }
+
+}
+
+#clear-button {
+  border: 0;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 10px;
+  background: $primary;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+.close-button {
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+}

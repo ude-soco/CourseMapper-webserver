@@ -4,7 +4,7 @@ export const ArticleMock: ArticleElementModel[] = [
   {
     id: 1,
     thumbnail: 'https://source.unsplash.com/odxB5oIG_iA/400x250',
-    concepts: ['freelancing'],
+    keyphrases: ['freelancing'],
     title: 'The Road to Freedom',
     abstract:
       'Freelancing can be a great way to experience true freedom in your life. You can work anywhere, everywhere...',
@@ -19,7 +19,7 @@ export const ArticleMock: ArticleElementModel[] = [
   {
     id: 2,
     thumbnail: 'https://source.unsplash.com/e-S-Pe2EmrE/400x250',
-    concepts: ['freelancing'],
+    keyphrases: ['freelancing'],
     title: 'The Road to Freedom',
     abstract:
       'Freelancing can be a great way to experience true freedom in your life. You can work anywhere, everywhere...',
@@ -34,7 +34,7 @@ export const ArticleMock: ArticleElementModel[] = [
   {
     id: 3,
     thumbnail: 'https://source.unsplash.com/EAvS-4KnGrk/400x250',
-    concepts: ['freelancing'],
+    keyphrases: ['freelancing'],
     title: 'The Road to Freedom',
     abstract:
       'Freelancing can be a great way to experience true freedom in your life. You can work anywhere, everywhere...',
@@ -49,7 +49,7 @@ export const ArticleMock: ArticleElementModel[] = [
   {
     id: 4,
     thumbnail: 'https://source.unsplash.com/RP6Ba_6U154/400x250',
-    concepts: ['freelancing'],
+    keyphrases: ['freelancing'],
     title: 'The Road to Freedom',
     abstract:
       'Freelancing can be a great way to experience true freedom in your life. You can work anywhere, everywhere...',
@@ -64,7 +64,7 @@ export const ArticleMock: ArticleElementModel[] = [
   {
     id: 5,
     thumbnail: 'https://source.unsplash.com/I2YSmEUAgDY/400x250',
-    concepts: ['freelancing'],
+    keyphrases: ['freelancing'],
     title: 'The Road to Freedom',
     abstract:
       'Freelancing can be a great way to experience true freedom in your life. You can work anywhere, everywhere...',
@@ -79,7 +79,7 @@ export const ArticleMock: ArticleElementModel[] = [
   {
     id: 6,
     thumbnail: 'https://source.unsplash.com/hpTH5b6mo2s/400x250',
-    concepts: ['freelancing'],
+    keyphrases: ['freelancing'],
     title: 'The Road to Freedom',
     abstract:
       'Freelancing can be a great way to experience true freedom in your life. You can work anywhere, everywhere...',
@@ -94,7 +94,7 @@ export const ArticleMock: ArticleElementModel[] = [
   {
     id: 7,
     thumbnail: 'https://source.unsplash.com/2TQwrtZnl08/400x250',
-    concepts: ['freelancing'],
+    keyphrases: ['freelancing'],
     title: 'The Road to Freedom',
     abstract:
       'Freelancing can be a great way to experience true freedom in your life. You can work anywhere, everywhere...',
@@ -109,7 +109,7 @@ export const ArticleMock: ArticleElementModel[] = [
   {
     id: 8,
     thumbnail: 'https://source.unsplash.com/2TQwrtZnl08/400x250',
-    concepts: ['freelancing'],
+    keyphrases: ['freelancing'],
     title: 'The Road to Freedom',
     abstract:
       'Freelancing can be a great way to experience true freedom in your life. You can work anywhere, everywhere...',

@@ -4,3 +4,7 @@
 <div>
     <router-outlet></router-outlet>
 </div>
+
+<div *ngIf="isLoggedIn">
+  <app-chat></app-chat>
+</div>
