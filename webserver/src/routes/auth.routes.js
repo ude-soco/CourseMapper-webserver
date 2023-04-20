@@ -1,5 +1,6 @@
 const { verifySignUp, authJwt } = require("../middlewares");
 const controller = require("../controllers/auth.controller");
+const controllerActivity = require("../controllers/activity.controller");
 const logger = require("../xAPILogger/logger/auth.logger");
 
 module.exports = function (app) {
@@ -25,5 +26,11 @@ module.exports = function (app) {
     [authJwt.verifyToken],
     controller.signout,
     logger.signout
+  );
+
+  app.get(
+    "/api/auth/collect-activities",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    controllerActivity.collectActivities
   );
 };
