@@ -1,7 +1,7 @@
 export interface ArticleElementModel {
     id: number;
     thumbnail?: string;
-    concepts?: string[];
+    keyphrases?: string[];
     title: string;
     abstract: string;
     post_date?: string;
@@ -12,4 +12,3 @@ export interface ArticleElementModel {
     helpful_counter: number;
     not_helpful_counter: number;
   }
-  

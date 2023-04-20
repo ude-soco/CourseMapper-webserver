@@ -17,18 +17,18 @@
 
 
 <ng-template #showChat >
-  <div class="fixed bottom-1 mt-auto right-px mr-2 mb-2">
-    <div class="container">
+  <div class="fixed bottom-1 mt-auto right-px mr-2 mb-2" style="z-index: 10;">
+    <div class="container" >
       <div class="card">
         <div class="header">
-          <span class="flex flex-row font-extrabold">
-            <img
-              height="30px"
-              width="30px"
-              src="./assets/img/ChatGPT_logo.svg"
-              alt=""
-            />
-          </span>
+        <span class="flex flex-row font-extrabold">
+          <img
+            height="30px"
+            width="30px"
+            src="./assets/img/ChatGPT_logo.svg"
+            alt=""
+          />
+        </span>
           <span (click)="showDialog()" class="close-button text-primary-600">X</span>
         </div>
         <div class="chat-list" #chatListContainer>
@@ -60,4 +60,5 @@
   </div>
 
 </ng-template>
-`
+
+

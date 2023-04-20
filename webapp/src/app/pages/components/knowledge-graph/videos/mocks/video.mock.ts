@@ -4,7 +4,7 @@ export const videoMock: VideoElementModel[] = [
   {
     id: 'wTZUHiLUY94',
     title: 'Introduction to Recommender Systems',
-    concepts: ['Recommender Systems'],
+    keyphrases: ['Recommender Systems'],
     thumbnail: 'https://i.ytimg.com/vi/gxXn9LDAdcU/hqdefault.jpg',
     description_full: 'We introduce you to the big world of recommender systems. We cover what they are, why they are important, and how they work.',
     views: '20323',
@@ -18,7 +18,7 @@ export const videoMock: VideoElementModel[] = [
   {
     id: 'n3RKsY2H-NE',
     title: 'How Recommender Systems Work (Netflix/Amazon)',
-    concepts: ['Recommender Systems', 'Machine Learning'],
+    keyphrases: ['Recommender Systems', 'Machine Learning'],
     thumbnail: 'https://i.ytimg.com/vi/n3RKsY2H-NE/hqdefault.jpg',
     description_full: 'The key insights behind content and collaborative filtering (Matrix Factorization). How Amazon, Netflix, Facebook and others ...',
     views: '137137',
@@ -32,7 +32,7 @@ export const videoMock: VideoElementModel[] = [
   {
     id: 'BthUPVwA59s',
     title: 'Recommendation systems overview (Building recommendation systems with TensorFlow)',
-    concepts: ['Recommender Systems', 'Machine Learning'],
+    keyphrases: ['Recommender Systems', 'Machine Learning'],
     thumbnail: 'https://i.ytimg.com/vi/BthUPVwA59s/hqdefault.jpg',
     description_full: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. ',
     views: '62233',
@@ -46,7 +46,7 @@ export const videoMock: VideoElementModel[] = [
   {
     id: 'U-yq3I9QugQ',
     title: 'Recommender System in 6 Minutes',
-    concepts: ['Recommender Systems', 'Machine Learning'],
+    keyphrases: ['Recommender Systems', 'Machine Learning'],
     thumbnail: 'https://i.ytimg.com/vi/U-yq3I9QugQ/hqdefault.jpg',
     description_full: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. ',
     views: '29996',
@@ -60,7 +60,7 @@ export const videoMock: VideoElementModel[] = [
   {
     id: '1JRrCEgiyHM',
     title: 'Lecture 41 — Overview of Recommender Systems | Stanford University',
-    concepts: ['Recommender Systems', 'Machine Learning'],
+    keyphrases: ['Recommender Systems', 'Machine Learning'],
     thumbnail: 'https://i.ytimg.com/vi/1JRrCEgiyHM/hqdefault.jpg',
     description_full: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. ',
     views: '106956',

@@ -1573,7 +1573,7 @@ export class ConceptMapComponent {
         /////////////////////////////////////////////////////////////////////////
         // // get from local storage
         this.resultMaterials = JSON.parse(
-          localStorage.getItem('resultMaterials1')
+          localStorage.getItem('resultMaterials')
         ).nodes;
 
         this.kgTabs.kgTabsEnable();

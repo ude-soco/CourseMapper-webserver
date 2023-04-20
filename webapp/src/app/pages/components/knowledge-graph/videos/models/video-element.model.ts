@@ -2,7 +2,7 @@ export interface VideoElementModel {
     id: string;
     title: string;
     thumbnail: string;
-    concepts?: string[];
+    keyphrases?: string[];
     description?: string;
     description_full: string;
     views: string;
@@ -13,4 +13,3 @@ export interface VideoElementModel {
     not_helpful_counter: number;
     duration: string;
   }
-  
