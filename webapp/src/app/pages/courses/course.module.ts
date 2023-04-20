@@ -9,6 +9,8 @@ import { RouterModule } from '@angular/router';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { PrimengModule } from 'src/app/modules/primeng/primeng.module';
 import { ToastModule } from 'primeng/toast';
+import { EffectsModule } from '@ngrx/effects';
+import { CourseEffects } from './state/course.effects';
 
 
 
@@ -35,6 +37,7 @@ import { ToastModule } from 'primeng/toast';
     imports: [
         CommonModule,
         StoreModule.forFeature('course', courseReducer),
+        EffectsModule.forFeature([CourseEffects]),
         ConfirmDialogModule,
         PrimengModule,
         ToastModule

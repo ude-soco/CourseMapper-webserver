@@ -278,3 +278,11 @@ export const setshowAllPDFAnnotations = createAction(
     '[Annotation] Set Show All PDF Annotations',
     props<{showAllPDFAnnotations: boolean}>()
 );
+
+export function LoadTagsSuccess(arg0: { tags: import("../../../../../models/Tag").Tag[]; }): any {
+    throw new Error('Function not implemented.');
+}
+
+export function LoadTagsFail(arg0: { error: any; }): any {
+    throw new Error('Function not implemented.');
+}

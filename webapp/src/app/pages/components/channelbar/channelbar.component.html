@@ -4,7 +4,10 @@
 <!-- <div class="flex flex-row" style="max-width: 25%;"> -->
 <div class="">
   <div>
-    <div class="relative bg-gray-100 shadow-lg h-screen" *ngIf="selectedCourse._id">
+    <div
+      class="relative bg-gray-100 shadow-lg h-screen"
+      *ngIf="selectedCourse._id"
+    >
       <div class="h-max m-0 flex flex-col bg-gray-100">
         <div class="flex items-start justify-between py-4 pl-3 bg-gray-200">
           <p
@@ -16,7 +19,7 @@
           >
             {{ selectedCourse.name }}
           </p>
-    
+
           <p-menu
             #menu
             id="config_menu"
@@ -24,15 +27,18 @@
             [popup]="true"
             appendTo="body"
           ></p-menu>
-          <app-iconbutton *ngIf="showModeratorPrivileges"
+          <app-iconbutton
+            *ngIf="showModeratorPrivileges"
             icon="bx-dots-vertical-rounded"
             color="text-black"
             (click)="menu.toggle($event)"
           ></app-iconbutton>
         </div>
-    
-        <app-topic-dropdown [showModeratorPrivileges]="showModeratorPrivileges"></app-topic-dropdown>
-    
+
+        <app-topic-dropdown
+          [showModeratorPrivileges]="showModeratorPrivileges"
+        ></app-topic-dropdown>
+
         <div
           class="flex flex-col items-center justify-start m-0 z-10 hover:bg-white transition-all cursor-pointer"
         >
@@ -40,13 +46,34 @@
             class="m-0 w-full mx-2 transition duration-300 ease-in-out"
             (click)="onAddTopicDialogueClicked()"
           >
-            <div class="flex flex-row items-center justify-between mx-0 my-1.5" *ngIf="showModeratorPrivileges">
+            <div
+              class="flex flex-row items-center justify-between mx-0 my-1.5"
+              *ngIf="showModeratorPrivileges"
+            >
               <div class="flex flex-row items-center">
-                <app-iconbutton icon="bx-plus" color="text-black"></app-iconbutton>
+                <app-iconbutton
+                  icon="bx-plus"
+                  color="text-black"
+                ></app-iconbutton>
                 <p class="text-md italic font-semibold">Add Topic</p>
               </div>
             </div>
           </div>
+        </div>
+        <div *ngIf="selectedChannel && tagsForChannel">
+          <p-divider align="center"></p-divider>
+          <div class="mb-3">
+            <p class="text-xl italic font-semibold justify-center">
+              Tags for {{ selectedChannel?.name }}
+            </p>
+          </div>
+          <div class="flex flex-row flex-wrap" >
+            <span
+              class="bg-[#0277BD] text-[#FFFFFF] text-sm px-[0.5rem] py-[0.25rem] m-2 border-black rounded-lg border-2 border-double uppercase hover:underline break-all font-bold"
+              *ngFor="let tag of tagsForChannel">{{tag?.name}}</span
+            >
+          </div>
+          <p-divider align="center"></p-divider>
         </div>
       </div>
     </div>
@@ -54,9 +81,5 @@
       [displayAddTopicDialogue]="displayAddTopicDialogue"
       (onCloseAddTopicDialogue)="toggleAddTopicDialogueClicked($event)"
     ></app-add-topic>
-    
   </div>
 </div>
-
-
-

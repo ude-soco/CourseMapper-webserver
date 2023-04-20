@@ -7,6 +7,7 @@ import { Topic } from '../models/Topic';
 import { Channel } from '../models/Channel';
 import { Course } from '../models/Course';
 import { StorageService } from './storage.service';
+import { Tag } from '../models/Tag';
   
 @Injectable({
   providedIn: 'root'
@@ -277,5 +278,9 @@ export class TopicChannelService {
 
   getChannel(courseId: string, channelId: string): Observable<Channel> {
     return this.http.get<Channel>(`${this.API_URL}/courses/${courseId}/channels/${channelId}`);
+  }
+
+  getAllTagsForCurrentChannel(channel: Channel): Observable<Tag[]>{
+    return this.http.get<Tag[]>(`${environment.apiUrl}/courses/${channel.courseId}/channels/${channel._id}/tags`);
   }
 }

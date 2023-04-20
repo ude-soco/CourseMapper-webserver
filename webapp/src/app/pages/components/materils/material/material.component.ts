@@ -99,6 +99,9 @@ export class MaterialComponent implements OnInit, OnDestroy {
           this.store.dispatch(
             CourseActions.toggleChannelSelected({ channelSelected: true })
           );
+          this.store.dispatch(
+            CourseActions.SetSelectedChannel({ selectedChannel: foundChannel })
+          );
           this.updateSelectedMaterial();
         });
     }

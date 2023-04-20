@@ -63,7 +63,7 @@ export class AnnotationEffects {
           catchError((error) =>
             of(AnnotationActions.loadAnnotationsFail({ error }))
           )
-        )
+        ),
       )
     )
   );

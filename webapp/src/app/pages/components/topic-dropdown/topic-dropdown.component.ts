@@ -184,6 +184,9 @@ export class TopicDropdownComponent implements OnInit {
     this.store.dispatch(
       CourseActions.toggleChannelSelected({ channelSelected: true })
     );
+    this.store.dispatch(
+      CourseActions.SetSelectedChannel({ selectedChannel: channel })
+    );
     // make selected channel's background white
     this.selectedChannelId = channel._id;
 
