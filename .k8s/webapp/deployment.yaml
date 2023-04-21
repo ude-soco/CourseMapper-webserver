@@ -5,6 +5,7 @@ metadata:
   annotations:
     keel.sh/policy: minor
     keel.sh/trigger: poll
+    keel.sh/pollSchedule: "@every 5m"
 spec:
   replicas: 3
   strategy:
