@@ -28,10 +28,10 @@ jobs:
       uses: multani/action-setup-kustomize@v1
 
     - name: Render manifests
-      run:  kustomize build --output k8s.yaml .k8s
+      run:  kustomize build --output coursemapper-webserver-base.yaml .k8s
 
     - name: Upload manifests
       uses: actions/upload-artifact@v3
       with:
-        name: Kubernetes manifest
-        path: k8s.yaml
+        path: coursemapper-webserver-base.yaml
+        if-no-files-found: error
