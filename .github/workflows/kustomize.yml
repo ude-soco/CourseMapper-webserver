@@ -16,6 +16,14 @@ jobs:
       run:  kubectl kustomize .k8s | kube-score score -
       continue-on-error: true
 
+  create:
+    name:    Create manifests
+    needs:   [ check ]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
     - name: Render manifests
       uses: karancode/kustomize-github-action@master
       with:
