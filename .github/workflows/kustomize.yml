@@ -24,11 +24,11 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
+    - name: Setup Kustomize
+      uses: multani/action-setup-kustomize@v1
+
     - name: Render manifests
-      uses: karancode/kustomize-github-action@master
-      with:
-        kustomize_build_dir: .k8s
-        kustomize_output_file: k8s.yaml
+      run:  kustomize build --output k8s.yaml .k8s
 
     - name: Upload manifests
       uses: actions/upload-artifact@v3
