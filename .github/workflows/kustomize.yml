@@ -1,4 +1,4 @@
-name: Validate manifests
+name: Kustomize
 on:   [ workflow_call ]
 jobs:
   check:
@@ -8,8 +8,22 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
+
     - name: kubeval
       run:  kubectl kustomize .k8s | kubeval --schema-location https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master
+
     - name: kube-score
       run:  kubectl kustomize .k8s | kube-score score -
       continue-on-error: true
+
+    - name: Render manifests
+      uses: karancode/kustomize-github-action@master
+      with:
+        kustomize_build_dir: .k8s
+        kustomize_output_file: k8s.yaml
+
+    - name: Upload manifests
+      uses: actions/upload-artifact@v3
+      with:
+        name: Kubernetes manifest
+        path: k8s.yaml

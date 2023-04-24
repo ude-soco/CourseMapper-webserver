@@ -18,10 +18,10 @@ jobs:
       registry_user:   ${{ secrets.DOCKERHUB_USERNAME }}
       registry_token:  ${{ secrets.DOCKERHUB_TOKEN }}
 
-  check:
-    uses:  ./.github/workflows/check.yml
+  kustomize:
+    uses:  ./.github/workflows/kustomize.yml
 
   release:
-    needs: [ build, check ]
+    needs: [ build, kustomize ]
     if:    github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     uses:  ./.github/workflows/release.yml
