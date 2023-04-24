@@ -13,7 +13,7 @@ export const saveStatementToMongo = async (statement, sent) => {
   try {
     savedStatement = await activity.save();
   } catch (err) {
-    console.log(err);
+    console.log("Error in saving statement to mongo");
   }
 };
 
@@ -28,7 +28,7 @@ export const fetchUnsentStatements = async () => {
     );
     return unsentStatements;
   } catch (err) {
-    console.log(err);
+    console.log("Error in fetching unsent statements");
   }
 };
 
@@ -45,6 +45,6 @@ export const updateSentStatements = async (sentStatementsIds) => {
       `updateSentStatements: ${dbRes.modifiedCount} statements are updated`
     );
   } catch (err) {
-    console.log(err);
+    console.log("Error in updating sent statements");
   }
 };

@@ -23,7 +23,7 @@ env !== "production"
   ? app.use(
       cors({
         credentials: true,
-        origin: ["http://localhost:4200", "https://www.youtube.com/watch?v="],
+        origin: ["http://localhost:4200", "https://www.youtube.com/watch?v=", "http://127.0.0.1:8081 "],
       })
     )
   : "";
@@ -70,7 +70,7 @@ const server = http.createServer(app);
 socketio.init(server);
 
 socketio.getIO().on("connection", () => {
-  console.log("New Rando connected");
+  console.log("Socket.IO connection established");
 });
 
 // Routes

@@ -55,6 +55,7 @@ module.exports = function (app) {
     logger.dislikeAnnotation
   );
 
+  // TODO: Change the getAnnotations to get-all-annotations
   // get annotations
   // Only enrolled users/moderator/admin
   app.get(

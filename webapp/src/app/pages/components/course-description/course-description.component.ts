@@ -14,14 +14,15 @@ import { getCurrentCourse, getCurrentCourseId, State } from '../../courses/state
   styleUrls: ['./course-description.component.css']
 })
 export class CourseDescriptionComponent {
-  course:  Course ;
+  course:  any ;
   CourseId:  Observable<string> ;
   isloggedin: boolean = false;
   createdAt:string
   firstName:string;
   lastName:string;
   Enrolled:boolean=false;
-
+  Users: any;
+  
   constructor(private storageService: StorageService, 
     private store: Store<State>, 
     private userService:UserServiceService, 
@@ -32,58 +33,26 @@ export class CourseDescriptionComponent {
     
     this.store.select(getCurrentCourse).subscribe((course) => 
     this.course=course);
-    var index = this.course.createdAt.indexOf('T');
-   this.createdAt=this.course.createdAt.slice(0, index), this.course.createdAt.slice(index + 1);
-   console.log(this. createdAt)
-   console.log(this.course.users[0].userId)
-   console.log( this.course.users[0].userId.role)
+    console.log(this.course, "this.course course des page")
 
-  //  this.materialService.deleteMaterial(this.selectedMaterial).subscribe({
-  //   next: (data) => {
-  this.userService.GetUserName(this.course.users[0].userId).subscribe({
-    next:(user) =>{
-      this.firstName=user.firstname
-      this.lastName=user.lastname
-      console.log( this.firstName)
-      console.log( this.lastName)
-        
-    }
-  }
+   this.courseService.GetAllCourses().subscribe( (courses) => {console.log("course desc All courses ", courses)  
+   let varcc=courses.find(course=> this.course.id === course._id || this.course._id === course._id  )
+ 
+   this.Users = [];
+  console.log(varcc, "course found from des page")
+   this.Users = varcc.users;
+   var index = varcc.createdAt.indexOf('T');
+      (this.createdAt = varcc.createdAt.slice(0, index)),
+      varcc.createdAt.slice(index + 1);
+   let userModerator = this.Users.find(
+     (user) => user.role.name === 'moderator'
+   );
 
-  )
-  this.courseService.fetchCourses().subscribe( (course) => {console.log("course desc course Rawaa", course)  
-  let varcc=course.find(course=> this.course._id === course._id  )
-//     {
-//   if(this.course._id === course._id )
-//   {
-//     // console.log(course._id)
-//     // this.Enrolled=true;
-//     // console.log(this.Enrolled)
-//     // return this.Enrolled;
-//     return course;
-//   }
-//   // else{
-//   //   // console.log(this.Enrolled)
-//   //   // console.log(course._id)
-//   //   // this.Enrolled=false;
-//   //   // return this.Enrolled;
-//   //   return course;
-//   // }
+   this.buildCardInfo(userModerator.userId, this.course);
+
+ })
   
-
-// }
-
-console.log(varcc)
-if(varcc){
-  this.Enrolled= true
-}else{
-  this.Enrolled= false
-
-}
-console.log(this.Enrolled)
-})
-  
-    this.store.select(getCurrentCourseId).subscribe((id) => console.log(id));
+//     this.store.select(getCurrentCourseId).subscribe((id) => console.log(id));
   }
   ngOnInit(): void {
     this.isloggedin = this.storageService.isLoggedIn();
@@ -101,16 +70,26 @@ console.log(this.Enrolled)
 let Name=firstName+" "+lastName
     return Name.split(" ").slice(0, 2).map((part) => part[0]).join("").toUpperCase();
   }
+  buildCardInfo(userModeratorID: string, course: Course) {
+    this.userService.GetUserName(userModeratorID).subscribe((user) => {
+      this.firstName = user.firstname;
+      this.lastName = user.lastname;
+
+      
+
+    
+    });
+  }
   EnrollToCOurse(){
     if (this.isloggedin== false){
       this.router.navigate(['login']);
     }
     else if (this.isloggedin== true) {
-    this.courseService.EnrollToCOurse(this.course).subscribe(
+    this.courseService.EnrollToCOurse(this.course.id).subscribe(
        (data) => {
         this.Enrolled= true
         console.log("response of enrollment", data)
-        this.router.navigate(['course', this.course._id]);
+        this.router.navigate(['course', this.course.id]);
          
        })
       }

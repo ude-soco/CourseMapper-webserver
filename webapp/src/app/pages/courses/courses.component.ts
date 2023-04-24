@@ -2,7 +2,7 @@ import { Component, Input, OnInit, Renderer2 } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { ConfirmationService, MessageService } from 'primeng/api';
-
+import * as CourseAction from 'src/app/pages/courses/state/course.actions';
 import { Observable } from 'rxjs';
 import { Course } from 'src/app/models/Course';
 import { CourseImp } from 'src/app/models/CourseImp';
@@ -10,7 +10,7 @@ import { CourseService } from 'src/app/services/course.service';
 import { TopicChannelService } from 'src/app/services/topic-channel.service';
 import { UserServiceService } from 'src/app/services/user-service.service';
 import { getCourseSelected, State } from 'src/app/state/app.reducer';
-import { getChannelSelected, getCurrentCourse } from './state/course.reducer';
+import { getChannelSelected, getCurrentCourse, getCurrentCourseId } from './state/course.reducer';
 
 @Component({
   selector: 'app-courses',
@@ -26,7 +26,11 @@ export class CoursesComponent implements OnInit {
   firstName:string;
   lastName:string;
   ChannelToggel:boolean=false;
+  Users: any;
+  userArray: any = new Array();
   channelSelected$: Observable<boolean>;
+  courseId:string
+  moderator:boolean=false
   constructor(
     private courseService: CourseService,
     private topicChannelService: TopicChannelService,
@@ -35,7 +39,8 @@ export class CoursesComponent implements OnInit {
     private confirmationService: ConfirmationService,
     private renderer: Renderer2,
     private router: Router,
-    private messageService: MessageService
+    private messageService: MessageService,
+  
   ) {
     this.courseSelected$ = store.select(getCourseSelected);
     this.channelSelected$ = this.store.select(getChannelSelected);
@@ -44,37 +49,63 @@ export class CoursesComponent implements OnInit {
   ngOnInit(): void {
     
     this.selectedCourse = this.courseService.getSelectedCourse();
-    this.ChannelToggel=false
-    this.courseService.onSelectCourse.subscribe((course) => {
-      this.selectedCourse = course;
-      console.log(this.selectedCourse)
-      var index = this.selectedCourse.createdAt.indexOf('T');
-      this.createdAt=this.selectedCourse.createdAt.slice(0, index), this.selectedCourse.createdAt.slice(index + 1);
-      console.log(this. createdAt)
-      console.log(this.selectedCourse.users[0].userId)
-      console.log( this.selectedCourse.users[0].userId.role)
-   
-     //  this.materialService.deleteMaterial(this.selectedMaterial).subscribe({
-     //   next: (data) => {
-     this.userService.GetUserName(this.selectedCourse.users[0].userId).subscribe({
-       next:(user) =>{
-         this.firstName=user.firstname
-         this.lastName=user.lastname
-         console.log( this.firstName)
-         console.log( this.lastName)
-         
+     this.ChannelToggel=false 
+     this.Users = [];
+      this.courseService.onSelectCourse.subscribe((course) => {
+        this.selectedCourse = course;
+        console.log("this.selectedCourse")
+        console.log(this.selectedCourse)
+
        
-           
-       }
-     }
-   
-     )
+
+        
+       
       
-     this.ChannelToggel=false
+       this.ChannelToggel=false  
+      this.topicChannelService.fetchTopics(course._id).subscribe( (course) =>{
+        this.selectedCourse = course;
+        console.log(course,"this.selectedCourse from des page")
+        this.Users = course.users;
+        console.log(this.Users)
+           let userModerator =  this.Users.find(
+            (user) => user.role.name === 'moderator'
 
+          );
+     
+          
+          console.log(userModerator,"moderator")
+         this.buildCardInfo(userModerator.userId, course);
+      }
+   )
+   if(this.selectedCourse.role==='moderator'){
+    this.moderator=true
+  }
+  else{
+    this.moderator=false
+  }
+      });
+
+  
+
+  }
+  buildCardInfo(userModeratorID: string, course: Course) {
+    this.userService.GetUserName(userModeratorID).subscribe((user) => {
+      this.firstName = user.firstname;
+      this.lastName = user.lastname;
+
+      var index = course.createdAt.indexOf('T');
+      (this.createdAt = course.createdAt.slice(0, index)),
+        course.createdAt.slice(index + 1);
+      let ingoPush = {
+        id: course._id,
+        name: course.name,
+        shortName: course.shortName,
+        createdAt: this.createdAt,
+        firstName: this.firstName,
+        lastName: this.lastName,
+      };
+      this.userArray.push(ingoPush);
     });
-
-
   }
   getName(firstName: string, lastName: string) {
     let Name=firstName+" "+lastName
@@ -93,12 +124,14 @@ NowClicked()
               'Are you sure you want to Un Enroll from course"' + this.selectedCourse.name + '"?',
             header: 'Un-Enroll Confirmation',
             icon: 'pi pi-info-circle',
-            accept: (e) => this.unEnrolleCourse(this.selectedCourse),
+            accept: (e) => this.unEnrolleCourse(this.selectedCourse) ,
            
             reject: () => {
               // this.informUser('info', 'Cancelled', 'Deletion cancelled')
             },
+           
           });
+          console.log(this.selectedCourse, "un enroll")
 
         
       }
@@ -111,6 +144,7 @@ this.courseService.WithdrawFromCourse(course).subscribe(
    {
     this.showInfo('You have been  withdrewed successfully ');
     console.log("response of enrollment", res)
+    this.store.dispatch(CourseAction.setCurrentCourse({ selcetedCourse:course }));
     this.router.navigate(['course-description', course._id]);
    }
    (er) => {

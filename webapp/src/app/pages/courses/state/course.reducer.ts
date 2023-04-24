@@ -2,6 +2,8 @@ import { createAction, createFeatureSelector, createReducer, createSelector, on 
 import * as AppState from 'src/app/state/app.state'
 import * as CourseAction from 'src/app/pages/courses/state/course.actions'
 import { Course } from 'src/app/models/Course';
+import { Channel } from 'src/app/models/Channel';
+import { Tag } from 'src/app/models/Tag';
 
 export interface State extends AppState.State{
     courses: CourseState;
@@ -12,6 +14,8 @@ export interface CourseState {
     courseName: string,
     selectedCourse:Course,
     channelSelected:boolean,
+    selectedChannel: Channel,
+    tags: Tag[]
  
   }
   const initialState: CourseState = {
@@ -20,6 +24,8 @@ export interface CourseState {
   courseName:null,
   selectedCourse:null,
   channelSelected: false,
+  selectedChannel: null,
+  tags: null
   }
   const getCourseFeatureState = createFeatureSelector<CourseState>('course');
 
@@ -37,6 +43,17 @@ export interface CourseState {
     getCourseFeatureState,
     state => state.channelSelected
   );
+
+  export const getSelectedChannel = createSelector(
+    getCourseFeatureState,
+    state => state.selectedChannel
+  );
+
+  export const getTagsForChannel = createSelector(
+    getCourseFeatureState,
+    state => state.tags
+  );
+
 
   export const courseReducer = createReducer<CourseState>(
     initialState,
@@ -61,6 +78,20 @@ export interface CourseState {
         return {
           ...state,
           channelSelected: action.channelSelected
+        };
+      }),
+
+      on(CourseAction.SetSelectedChannel, (state, action): CourseState => {
+        return {
+          ...state,
+          selectedChannel: action.selectedChannel
+        };
+      }),
+
+      on(CourseAction.LoadTagsSuccess, (state, action): CourseState => {
+        return {
+          ...state,
+          tags: action.tags
         };
       }),
   );

@@ -21,11 +21,10 @@ export const signup = async (req, res, next) => {
   try {
     role = await Role.findOne({ name: "user" });
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding role" });
   }
 
   let user = new User({
-
     firstname: req.body.firstname,
     lastname: req.body.lastname,
     username: req.body.username,
@@ -36,14 +35,13 @@ export const signup = async (req, res, next) => {
 
   try {
     await user.save();
-
     req.locals = {
       user: user,
-      response: { success: "User is successfully registered!" }
-    }
+      response: { success: "User is successfully registered!" },
+    };
     return next();
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error saving user" });
   }
 };
 
@@ -66,21 +64,15 @@ export const signin = async (req, res, next) => {
     if (!user) {
       return res.status(404).send({ error: "User not found." });
     }
-
     let passwordIsValid = await compareSync(password, user.password);
-
     if (!passwordIsValid) {
       return res.status(401).send({ error: "Invalid Password!" });
     }
-
     let token = sign({ id: user.id }, config.secret, {
       expiresIn: 86400, // 24 hours
     });
-
     req.session.token = token;
-
     const userName = `${user.firstname} ${user.lastname}`;
-
     req.locals = {
       user: user,
       response: {
@@ -90,11 +82,11 @@ export const signin = async (req, res, next) => {
         role: user.role,
         email: user.email,
         courses: user.courses,
-      }
-    }
+      },
+    };
     return next();
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding user" });
   }
 };
 
@@ -106,18 +98,15 @@ export const signin = async (req, res, next) => {
 export const signout = async (req, res, next) => {
   const userId = req.userId;
   try {
-    let user = await User.findOne({ _id: userId });
-
+    let user = await User.findById(userId);
     if (!user) {
       return res.status(404).send({ error: "User not found." });
     }
-
     req.session = null;
-
     req.locals = {
       user: user,
-      response: { success: "You've been signed out!" }
-    }
+      response: { success: "You've been signed out!" },
+    };
     return next();
   } catch (err) {
     this.next(err);

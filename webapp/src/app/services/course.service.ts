@@ -169,8 +169,8 @@ export class CourseService {
   }
 
 
-  EnrollToCOurse(course:Course): any{
-   return this.http.post<any>(`${this.API_URL}/enrol/${course._id}`, {}).pipe(tap(
+  EnrollToCOurse(courseID:string): any{
+   return this.http.post<any>(`${this.API_URL}/enrol/${courseID}`, {}).pipe(tap(
     Enrolcourses => {
      
       console.log("Enrolcourses from service course")

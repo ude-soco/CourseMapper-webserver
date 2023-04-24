@@ -52,10 +52,10 @@ module.exports = function (app) {
     [authJwt.verifyToken],
     controller.reorderIndicators
   );
-  app.get("/users",  controller.getAllUsers);
+  app.get("/api/users",  controller.getAllUsers);
 
   app.get(
-    "/users/:userId",
+    "/api/users/:userId",
     
     controller.getUser
   );

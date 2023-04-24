@@ -24,7 +24,7 @@ export class NavbarComponent implements OnInit {
   showModeratorBoard = false;
   username?: string;
   loggedInUser: User;
- 
+  public LandingPage = "/landingPage";
 
   constructor(
     private primengConfig: PrimeNGConfig,
@@ -83,4 +83,8 @@ export class NavbarComponent implements OnInit {
   
   }
   getIntitials = getInitials
+
+  copyUserId(userId){
+    navigator.clipboard.writeText(userId);
+  }
 }

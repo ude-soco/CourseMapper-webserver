@@ -11,7 +11,6 @@ const User = db.user;
 export const collectActivities = async (req, res) => {
   let activities;
   let jsonStream;
-  console.log("Admin collecting activities");
   try {
     activities = await Activity.find({});
     jsonStream = new Readable({

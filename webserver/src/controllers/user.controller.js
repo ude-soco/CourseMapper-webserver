@@ -38,7 +38,6 @@ export const adminBoard = (req, res) => {
   res.status(200).send("Admin content");
 };
 
-
 /**
  * @function newIndicator
  * add new indicator controller
@@ -46,19 +45,18 @@ export const adminBoard = (req, res) => {
  * @param {string} req.body.src The sourse of the iframe
  * @param {string} req.body.width The width of the iframe
  * @param {string} req.body.height The height of the iframe
- * @param {string} req.userId The id of the user. 
+ * @param {string} req.userId The id of the user.
  */
- export const newIndicator = async (req, res, next) => {
+export const newIndicator = async (req, res, next) => {
   const userId = req.userId;
 
-  let user
+  let user;
   try {
-    user = await User.findOne({_id: userId});
+    user = await User.findOne({ _id: userId });
 
     if (!user) {
       return res.status(404).send({ error: "User not found." });
     }
-
   } catch (error) {
     return res.status(500).send({ error: error });
   }
@@ -96,7 +94,7 @@ export const deleteIndicator = async (req, res, next) => {
   const indicatorId = req.params.indicatorId;
   const userId = req.userId;
 
-  let user
+  let user;
   try {
     user = await User.findOne({ "indicators._id": indicatorId });
     if (!user) {
@@ -110,12 +108,9 @@ export const deleteIndicator = async (req, res, next) => {
         error: `indicator with id ${indicatorId} doesn't belong to user with id ${userId}!`,
       });
     }
-
   } catch (error) {
     return res.status(500).send({ error: error });
   }
-
-
 
   user.indicators = user.indicators.filter(
     (indicator) => indicator._id.toString() !== indicatorId
@@ -132,7 +127,6 @@ export const deleteIndicator = async (req, res, next) => {
   });
 };
 
-
 /**
  * @function getIndicators
  * get indicators controller
@@ -142,25 +136,21 @@ export const deleteIndicator = async (req, res, next) => {
 export const getIndicators = async (req, res, next) => {
   const userId = req.userId;
 
-  let user
+  let user;
   try {
-    user = await User.findOne({_id: userId});
+    user = await User.findOne({ _id: userId });
 
     if (!user) {
       return res.status(404).send({ error: "User not found." });
     }
-
   } catch (error) {
     return res.status(500).send({ error: error });
   }
 
-
-  const response = user.indicators? user.indicators : [];
+  const response = user.indicators ? user.indicators : [];
 
   return res.status(200).send(response);
 };
-
-
 
 /**
  * @function resizeIndicator
@@ -177,7 +167,7 @@ export const resizeIndicator = async (req, res, next) => {
   const height = req.params.height;
   const userId = req.userId;
 
-  let user
+  let user;
   try {
     user = await User.findOne({ "indicators._id": indicatorId });
     if (!user) {
@@ -191,14 +181,12 @@ export const resizeIndicator = async (req, res, next) => {
         error: `indicator with id ${indicatorId} doesn't belong to user with id ${userId}!`,
       });
     }
-
   } catch (error) {
     return res.status(500).send({ error: error });
   }
 
-
-  user.indicators.forEach(indicator => {
-    if (indicator._id.toString() === indicatorId.toString()){
+  user.indicators.forEach((indicator) => {
+    if (indicator._id.toString() === indicatorId.toString()) {
       indicator.width = width;
       indicator.height = height;
     }
@@ -215,8 +203,6 @@ export const resizeIndicator = async (req, res, next) => {
   });
 };
 
-
-
 /**
  * @function reorderIndicators
  * reorder indicators controller
@@ -230,14 +216,13 @@ export const reorderIndicators = async (req, res, next) => {
   const oldIndex = parseInt(req.params.oldIndex);
   const userId = req.userId;
 
-  let user
+  let user;
   try {
-    user = await User.findOne({_id: userId});
+    user = await User.findOne({ _id: userId });
 
     if (!user) {
       return res.status(404).send({ error: "User not found." });
     }
-
   } catch (error) {
     return res.status(500).send({ error: error });
   }
@@ -264,13 +249,12 @@ export const reorderIndicators = async (req, res, next) => {
 
   return res.status(200).send({
     success: `indicators have been updated successfully!`,
-    indicators: user.indicators
+    indicators: user.indicators,
   });
 };
 
 export const getAllUsers = async (req, res) => {
   let users;
-  console.log('get all users')
   try {
     users = await User.find({}).populate("courses", "-__v");
   } catch (err) {
@@ -281,8 +265,7 @@ export const getAllUsers = async (req, res) => {
     let user = {
       _id: c.id,
       firstname: c.firstname,
-      lastname:c.lastname
-      
+      lastname: c.lastname,
     };
     results.push(user);
   });
@@ -318,21 +301,18 @@ export const getAllUsers = async (req, res) => {
 // }
 
 export const getUser = async (req, res) => {
- 
-  let userId =  req.params.userId;
+  let userId = req.params.userId;
 
   let foundUser;
-  let results = [];
   try {
-    foundUser = await User.findOne({ _id: ObjectId(userId) })
-    .populate("courses", "-__v");
+    foundUser = await User.findById(userId).populate("courses", "-__v");
     if (!foundUser) {
       return res.status(404).send({
         error: `User with id ${userId} doesn't exist!`,
       });
     }
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding user" });
   }
   return res.status(200).send(foundUser);
 };
