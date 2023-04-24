@@ -1,8 +1,10 @@
 name: Release
+
 on: workflow_call
+
 jobs:
   release:
-    name: Create GH Release
+    name: Create release
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -10,13 +12,19 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
+
     - name: Check for stable semver
       id:   semver
       run: |
         if [[ ${{ github.event.ref }} =~ ^refs/tags/v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "stable=true" >> $GITHUB_OUTPUT
         fi
-    - name: Create draft release
+
+    - uses: actions/download-artifact@v3
+      with:
+        name: Kubernetes Manifests
+
+    - name: Create release
       if:   steps.semver.outputs.stable == 'true'
       uses: ncipollo/release-action@v1
       with:
@@ -27,3 +35,4 @@ jobs:
         updateOnlyUnreleased: true
         skipIfReleaseExists: true
         generateReleaseNotes: true
+        artifacts: coursemapper-webserver-base.yaml

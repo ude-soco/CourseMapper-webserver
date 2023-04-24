@@ -17,10 +17,10 @@ updates:
 - package-ecosystem: "docker"
   directory: "/webapp"
   schedule:
-    interval: "daily"
+    interval: "weekly"
   ignore:
   - dependency-name: "node"
-    versions: ["17.x-slim", "19.x-slim", "21.x-slim"]
+    versions: ["17.x-slim", "19.x-slim", "21.x-slim", "23.x-slim"]
   labels:
   - "dependencies"
   - "docker"
@@ -29,7 +29,10 @@ updates:
 - package-ecosystem: "docker"
   directory: "/webserver"
   schedule:
-    interval: "daily"
+    interval: "weekly"
+  ignore:
+  - dependency-name: "node"
+    versions: ["17.x-slim", "19.x-slim", "21.x-slim", "23.x-slim"]
   labels:
   - "dependencies"
   - "docker"

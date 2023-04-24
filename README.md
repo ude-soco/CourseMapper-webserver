@@ -26,10 +26,10 @@ Visit the [proxy service on port 8000](http://localhost:8000/) to use the applic
 
 The services making up the coursemapper-webserver project use the following images, hosted on Docker Hub:
 
-* Proxy: [socialcomputing/coursemapper-webserver-proxy](https://hub.docker.com/repository/docker/socialcomputing/coursemapper-webserver-proxy/general)
+* Proxy: not published, only required for environments without built-in HTTP routing
 * Webapp: [socialcomputing/coursemapper-webserver-webapp](https://hub.docker.com/repository/docker/socialcomputing/coursemapper-webserver-webapp/general)
 * Webserver: [socialcomputing/coursemapper-webserver-webserver](https://hub.docker.com/repository/docker/socialcomputing/coursemapper-webserver-webserver/general)
-* MongoDB: [mongo](https://hub.docker.com/_/mongo)
+* MongoDB: [mongo (official image)](https://hub.docker.com/_/mongo)
 
 
 ## 🔨 Development Setup Guide
