@@ -32,9 +32,10 @@ export const getReplies = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: "Error finding annotation" });
   }
+  console.log();
   let foundReplies;
   try {
-    foundReplies = await Reply.findById(annotationId);
+    foundReplies = await Reply.find({ annotationId: annotationId });
   } catch (err) {
     return res.status(500).send({ error: "Error finding reply" });
   }
