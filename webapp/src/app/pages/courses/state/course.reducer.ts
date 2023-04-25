@@ -4,6 +4,7 @@ import * as CourseAction from 'src/app/pages/courses/state/course.actions'
 import { Course } from 'src/app/models/Course';
 import { Channel } from 'src/app/models/Channel';
 import { Tag } from 'src/app/models/Tag';
+import { Topic } from 'src/app/models/Topic';
 
 export interface State extends AppState.State{
     courses: CourseState;
@@ -11,21 +12,23 @@ export interface State extends AppState.State{
 export interface CourseState {
     
     courseId: string,
-    courseName: string,
     selectedCourse:Course,
     channelSelected:boolean,
     selectedChannel: Channel,
-    tags: Tag[]
+    tags: Tag[],
+    tagSelected: boolean,
+    selcetedTopic: Topic
  
   }
   const initialState: CourseState = {
 
   courseId: null,
-  courseName:null,
   selectedCourse:null,
   channelSelected: false,
   selectedChannel: null,
-  tags: null
+  tags: null,
+  tagSelected: false,
+  selcetedTopic: null
   }
   const getCourseFeatureState = createFeatureSelector<CourseState>('course');
 
@@ -47,6 +50,11 @@ export interface CourseState {
   export const getSelectedChannel = createSelector(
     getCourseFeatureState,
     state => state.selectedChannel
+  );
+
+  export const getSelectedTopic = createSelector(
+    getCourseFeatureState,
+    state => state.selcetedTopic
   );
 
   export const getTagsForChannel = createSelector(
@@ -92,6 +100,13 @@ export interface CourseState {
         return {
           ...state,
           tags: action.tags
+        };
+      }),
+
+      on(CourseAction.setCurrentTopic, (state, action): CourseState => {
+        return {
+          ...state,
+          selcetedTopic: action.selcetedTopic
         };
       }),
   );

@@ -279,8 +279,4 @@ export class TopicChannelService {
   getChannel(courseId: string, channelId: string): Observable<Channel> {
     return this.http.get<Channel>(`${this.API_URL}/courses/${courseId}/channels/${channelId}`);
   }
-
-  getAllTagsForCurrentChannel(channel: Channel): Observable<Tag[]>{
-    return this.http.get<Tag[]>(`${environment.apiUrl}/courses/${channel.courseId}/channels/${channel._id}/tags`);
-  }
 }

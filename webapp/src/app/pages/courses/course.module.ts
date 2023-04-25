@@ -11,6 +11,7 @@ import { PrimengModule } from 'src/app/modules/primeng/primeng.module';
 import { ToastModule } from 'primeng/toast';
 import { EffectsModule } from '@ngrx/effects';
 import { CourseEffects } from './state/course.effects';
+import { TagsPageComponent } from './tags-page/tags-page.component';
 
 
 
@@ -26,7 +27,9 @@ import { CourseEffects } from './state/course.effects';
         
         
         
-    ],
+    
+    TagsPageComponent
+  ],
     exports: [
        
         

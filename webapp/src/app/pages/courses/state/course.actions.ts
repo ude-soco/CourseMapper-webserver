@@ -2,10 +2,16 @@ import { createAction, props } from "@ngrx/store";
 import { Channel } from "src/app/models/Channel";
 import { Course } from "src/app/models/Course";
 import { Tag } from "src/app/models/Tag";
+import { Topic } from "src/app/models/Topic";
 
 export const setCurrentCourse = createAction(
     '[Course] Set Current Course value',
     props<{selcetedCourse: Course}>()
+);
+
+export const setCurrentTopic = createAction(
+    '[Course] Set Current Topic value',
+    props<{selcetedTopic: Topic}>()
 );
 
 export const setCourseId = createAction(

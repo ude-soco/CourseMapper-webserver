@@ -39,12 +39,27 @@ export class TopicDropdownComponent implements OnInit {
     private route: ActivatedRoute,
     private renderer: Renderer2,
     private changeDetectorRef: ChangeDetectorRef
-  ) {}
+  ) {
+    const url = this.router.url;
+    if (url.includes('course') && url.includes('channel')) {
+      const courseRegex = /\/course\/(\w+)/;
+      const channelRegex = /\/channel\/(\w+)/;
+      const courseId = courseRegex.exec(url)[1];
+      const channelId = channelRegex.exec(url)[1];
+      const materialId = url.match(/material:(.*?)\/(pdf|video)/)?.[1];
+      this.topicChannelService.fetchTopics(courseId).subscribe((course) => {
+        this.selectedTopic = course.topics.find((topic) => topic.channels.find((channel) => channel._id === channelId));
+        console.log('mango: ' + this.selectedTopic._id);
+        this.onSelectTopic(this.selectedTopic);
+        this.selectedChannelId = channelId;
+      })
+    }
+  }
   @Input() showModeratorPrivileges: boolean;
 
   topics: Topic[] = [];
   displayAddChannelDialogue: boolean = false;
-  selectedTopic = null;
+  selectedTopic : Topic = null;
   prevSelectedTopic = null;
   selectedChannel = null;
   selectedChannelId = null;
@@ -142,8 +157,11 @@ export class TopicDropdownComponent implements OnInit {
           this.expandTopic.splice(index, 1);
         }
       });
+      this.store.dispatch(CourseActions.setCurrentTopic({selcetedTopic: null}));
     } else {
+      this.expandTopic = [];
       this.expandTopic.push(topic._id);
+      this.store.dispatch(CourseActions.setCurrentTopic({selcetedTopic: topic}));
       // wait until expanded topic rendered
       setTimeout(() => {
         // if exists channel previously selected --> make channel container bg=white

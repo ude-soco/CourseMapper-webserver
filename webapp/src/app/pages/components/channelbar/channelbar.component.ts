@@ -43,6 +43,7 @@ export class ChannelbarComponent implements OnInit {
           this.selectedCourse = courses.find((course) => course._id == params['courseID']);
           this.courseService.selectCourse(this.selectedCourse);
           this.store.dispatch(AppActions.toggleCourseSelected({courseSelected: true}));
+          this.store.dispatch(CourseActions.setCurrentCourse({selcetedCourse: this.selectedCourse}));
           this.store.dispatch(CourseActions.toggleChannelSelected({ channelSelected: false }));
           this.store.dispatch(CourseActions.SetSelectedChannel({ selectedChannel: null }));
         });

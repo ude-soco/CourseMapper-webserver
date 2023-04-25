@@ -78,6 +78,7 @@ import * as  CourseActions from 'src/app/pages/courses/state/course.actions'
       }
     }
     this.store.dispatch(AppActions.toggleCourseSelected({courseSelected: true}));
+    this.store.dispatch(CourseActions.setCurrentCourse({selcetedCourse: selectedCourse}));
     this.store.dispatch(CourseActions.toggleChannelSelected({ channelSelected: false }));
     this.store.dispatch(CourseActions.SetSelectedChannel({ selectedChannel: null }));
     this.router.navigate(['course', selectedCourse._id]);

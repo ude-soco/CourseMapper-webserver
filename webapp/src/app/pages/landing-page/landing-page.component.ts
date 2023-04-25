@@ -133,7 +133,7 @@ export class LandingPageComponent {
         this.router.navigate(['course', selcetedCourse.id]);
       } else {
         this.Enrolled = false;
-        this.store.dispatch(CourseAction.setCurrentCourse({ selcetedCourse }));
+        this.store.dispatch(CourseAction.setCurrentCourse({ selcetedCourse: selcetedCourse }));
         this.store.dispatch(
           CourseAction.setCourseId({ courseId: selcetedCourse.id })
         );
@@ -143,7 +143,7 @@ export class LandingPageComponent {
       }
       console.log(this.Enrolled);
     } else {
-      this.store.dispatch(CourseAction.setCurrentCourse({ selcetedCourse }));
+      this.store.dispatch(CourseAction.setCurrentCourse({ selcetedCourse: selcetedCourse }));
       this.store.dispatch(
         CourseAction.setCourseId({ courseId: selcetedCourse.id })
       );

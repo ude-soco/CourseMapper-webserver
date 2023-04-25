@@ -52,7 +52,9 @@ export class HomeComponent implements OnInit {
 
     this.store.dispatch(
       AppActions.toggleCourseSelected({ courseSelected: false })
+      
     );
+    this.store.dispatch(CourseActions.setCurrentCourse({selcetedCourse: null}));
     this.store.dispatch(
       CourseActions.toggleChannelSelected({ channelSelected: false })
     );
@@ -106,11 +108,10 @@ export class HomeComponent implements OnInit {
   }
   onSelectCourse(selcetedCourse:any)
   {
-    
-    this.store.dispatch(CourseAction.setCurrentCourse({selcetedCourse}));
-    this.store.dispatch(CourseActions.setCourseId({ courseId: selcetedCourse.id}));
-    
+        
     this.router.navigate(['course', selcetedCourse.id]);
+    this.store.dispatch(CourseAction.setCurrentCourse({selcetedCourse: selcetedCourse}));
+    this.store.dispatch(CourseActions.setCourseId({ courseId: selcetedCourse.id}));
     console.log("course Home page")
     console.log(selcetedCourse)
   }

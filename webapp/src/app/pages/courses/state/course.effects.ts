@@ -8,6 +8,7 @@ import { withLatestFrom, switchMap, mergeMap, catchError, of, filter } from 'rxj
 import { AnnotationService } from 'src/app/services/annotation.service';
 import { LoggerService } from 'src/app/services/logger.service';
 import { TopicChannelService } from 'src/app/services/topic-channel.service';
+import { TagService } from 'src/app/services/tag.service';
 @Injectable()
 export class CourseEffects {
   getTags$ = createEffect(() =>
@@ -25,7 +26,7 @@ export class CourseEffects {
       ),
       filter(([action, channel]) => !!channel),
       switchMap(([action, channel]) =>
-        this.TopicChannelService.getAllTagsForCurrentChannel(channel).pipe(
+        this.TagService.getAllTagsForCurrentChannel(channel).pipe(
           mergeMap((tags) => [CourseActions.LoadTagsSuccess({ tags }),]),
           catchError((error) =>
             of(CourseActions.LoadTagsFail({ error }))
@@ -37,7 +38,7 @@ export class CourseEffects {
 
   constructor(
     private actions$: Actions,
-    private TopicChannelService: TopicChannelService,
+    private TagService: TagService,
     private loggerService: LoggerService,
     private store: Store<State>
   ) { }
