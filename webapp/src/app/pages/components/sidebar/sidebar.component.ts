@@ -9,7 +9,7 @@ import { State } from 'src/app/state/app.reducer';
 import { Store } from '@ngrx/store';
 import * as AppActions from 'src/app/state/app.actions'
 import { ModeratorPrivilegesService } from 'src/app/services/moderator-privileges.service';
-import * as  MaterialActions from 'src/app/pages/components/materils/state/materials.actions'
+import * as  MaterialActions from 'src/app/pages/components/materials/state/materials.actions'
 import * as  CourseActions from 'src/app/pages/courses/state/course.actions'
 @Component({
   selector: 'app-sidebar',

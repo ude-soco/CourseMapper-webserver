@@ -21,8 +21,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import {
   State,
-} from 'src/app/pages/components/materils/state/materials.reducer';
-import * as MaterialActions from 'src/app/pages/components/materils/state/materials.actions';
+} from 'src/app/pages/components/materials/state/materials.reducer';
+import * as MaterialActions from 'src/app/pages/components/materials/state/materials.actions';
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
 import { Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';

@@ -18,9 +18,9 @@ import { AnnotationService } from 'src/app/services/annotation.service';
 import { State } from 'src/app/state/app.state';
 import {
   getCurrentMaterialId,
-} from '../../../materils/state/materials.reducer';
+} from '../../../materials/state/materials.reducer';
 import * as AnnotationActions from './annotation.actions';
-import * as MaterialActions from '../../../materils/state/materials.actions';
+import * as MaterialActions from '../../../materials/state/materials.actions';
 import * as VideoActions from 'src/app/pages/components/annotations/video-annotation/state/video.action'
 import { Annotation } from 'src/app/models/Annotations';
 import { LoggerService } from 'src/app/services/logger.service';

@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store';
 import { StorageService } from 'src/app/services/storage.service';
 import { State } from 'src/app/state/app.reducer';
 import * as AppActions from 'src/app/state/app.actions';
-import * as MaterialActions from 'src/app/pages/components/materils/state/materials.actions';
+import * as MaterialActions from 'src/app/pages/components/materials/state/materials.actions';
 import { CourseService } from 'src/app/services/course.service';
 import { Course } from 'src/app/models/Course';
 import * as CourseAction from 'src/app/pages/courses/state/course.actions'

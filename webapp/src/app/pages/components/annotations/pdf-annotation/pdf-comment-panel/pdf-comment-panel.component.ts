@@ -5,7 +5,7 @@ import { computeElapsedTime, getInitials } from 'src/app/_helpers/format';
 import { getAnnotationsForMaterial, getCurrentPdfPage, State } from '../state/annotation.reducer';
 import { SelectItemGroup } from 'primeng/api';
 import { Material } from 'src/app/models/Material';
-import { getCurrentMaterial } from '../../../materils/state/materials.reducer';
+import { getCurrentMaterial } from '../../../materials/state/materials.reducer';
 import { getCurrentTime } from '../../video-annotation/state/video.reducer';
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions'
 @Component({

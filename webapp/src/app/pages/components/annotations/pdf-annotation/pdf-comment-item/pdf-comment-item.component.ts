@@ -20,7 +20,7 @@ import { User } from 'src/app/models/User';
 import { printTime } from 'src/app/_helpers/format';
 import { getLoggedInUser } from 'src/app/state/app.reducer';
 import { Material } from 'src/app/models/Material';
-import { getCurrentMaterial } from '../../../materils/state/materials.reducer';
+import { getCurrentMaterial } from '../../../materials/state/materials.reducer';
 import * as VideoActions from 'src/app/pages/components/annotations/video-annotation/state/video.action'
 import { getShowAnnotations } from '../../video-annotation/state/video.reducer';
 import { Observable } from 'rxjs';

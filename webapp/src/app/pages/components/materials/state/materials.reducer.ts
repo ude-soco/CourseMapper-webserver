@@ -1,6 +1,6 @@
 import { createAction, createFeatureSelector, createReducer, createSelector, on } from '@ngrx/store';
 import * as AppState from 'src/app/state/app.state'
-import * as MaterialActions from 'src/app/pages/components/materils/state/materials.actions'
+import * as MaterialActions from 'src/app/pages/components/materials/state/materials.actions'
 import {  } from 'src/app/models/Annotations';
 import { Material } from 'src/app/models/Material';
 

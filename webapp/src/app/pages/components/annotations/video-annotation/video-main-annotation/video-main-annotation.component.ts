@@ -5,7 +5,7 @@ import { DrawingData } from 'src/app/models/Drawing';
 import { Material } from 'src/app/models/Material';
 import { PdfviewService } from 'src/app/services/pdfview.service';
 import { environment } from 'src/environments/environment';
-import { getCurrentMaterial, getCurrentMaterialId } from '../../../materils/state/materials.reducer';
+import { getCurrentMaterial, getCurrentMaterialId } from '../../../materials/state/materials.reducer';
 import { getIsAnnotationCreationCanceled, getIsAnnotationDialogVisible, getIsBrushSelectionActive, getIsPinpointSelectionActive, getIsVideoPaused, getIsVideoPlayed, getSeekVideo, getShowAnnotations, State } from '../state/video.reducer';
 import * as VideoActions from '../state/video.action'
 import { calculateMousePositionInVideo } from 'src/app/_helpers/video-helper';

@@ -18,7 +18,7 @@ import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-ann
 import { Observable } from 'rxjs';
 import {
   getCurrentMaterialId,
-} from '../../../materils/state/materials.reducer';
+} from '../../../materials/state/materials.reducer';
 import { getCurrentCourseId } from 'src/app/pages/courses/state/course.reducer';
 
 @Component({

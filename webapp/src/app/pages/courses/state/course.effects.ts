@@ -16,7 +16,9 @@ export class CourseEffects {
         (action) =>
           action.type === CourseActions.SetSelectedChannel.type ||
           action.type === AnnotationActions.postAnnotationSuccess.type ||
-          action.type === AnnotationActions.postReplySuccess.type
+          action.type === AnnotationActions.postReplySuccess.type ||
+          action.type === AnnotationActions.deleteAnnotationSuccess.type ||
+          action.type === AnnotationActions.deleteReplySuccess.type
       ),
       withLatestFrom(
         this.store.select(getSelectedChannel),
