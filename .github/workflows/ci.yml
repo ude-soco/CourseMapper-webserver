@@ -8,9 +8,6 @@ on:
     branches:   [ main, development ]
 
 jobs:
-  manifests:
-    uses:  ./.github/workflows/kustomize.yml
-
   images:
     uses: ./.github/workflows/build.yml
     with:
@@ -22,6 +19,6 @@ jobs:
       registry_token:  ${{ secrets.DOCKERHUB_TOKEN }}
 
   release:
-    needs: [ manifests, images ]
+    needs: [ images ]
     if:    github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     uses:  ./.github/workflows/release.yml
