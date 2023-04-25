@@ -17,7 +17,6 @@ CourseMapper is a collaborative course annotation and analytics platform that fo
 * `make up` to run the application using *Docker Compose*
 * `make tilt` to automatically rebuild during development using *Tilt*
 * `make mounted` to run processes using *Docker Compose*, but mount source code from host machine
-* see `./.k8s` for base configuration to run the application on *Kubernetes*
 * see the manual below to install dependencies and run processes *locally, without containers*
 
 Visit the [proxy service on port 8000](http://localhost:8000/) to use the application.
