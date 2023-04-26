@@ -104,7 +104,7 @@ registerLocaleData(en);
     InputTextareaModule,
     DragulaModule.forRoot(),
     SocketIoModule.forRoot({
-      url: `http://localhost:8080`,
+      url: `${environment.apiUrl}`,
       options: {
         path: '/api/socket.io',
         transports: ['websocket'],
