@@ -4,6 +4,7 @@ import * as MaterialActions from 'src/app/pages/components/materials/state/mater
 import {  } from 'src/app/models/Annotations';
 import { Material } from 'src/app/models/Material';
 import { Tag } from 'src/app/models/Tag';
+import * as CourseAction from 'src/app/pages/courses/state/course.actions'
 
 
 export interface State extends AppState.State{

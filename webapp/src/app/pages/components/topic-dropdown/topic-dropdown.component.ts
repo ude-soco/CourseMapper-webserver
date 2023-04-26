@@ -205,6 +205,9 @@ export class TopicDropdownComponent implements OnInit {
     this.store.dispatch(
       CourseActions.SetSelectedChannel({ selectedChannel: channel })
     );
+    this.store.dispatch(
+      MaterialActions.setCurrentMaterial({ selcetedMaterial: null })
+    );
     // make selected channel's background white
     this.selectedChannelId = channel._id;
 

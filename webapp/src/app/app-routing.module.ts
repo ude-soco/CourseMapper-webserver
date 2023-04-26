@@ -14,7 +14,7 @@ import { DashboardComponent } from './pages/components/dashboard/dashboard.compo
 import { LandingPageComponent } from './pages/landing-page/landing-page.component';
 import { PrivacyComponent } from './pages/components/privacy/privacy.component';
 import { CourseDescriptionComponent } from './pages/components/course-description/course-description.component'; 
-import { TagsPageComponent } from './pages/courses/tags-page/tags-page.component';
+import { TagsPageComponent } from './pages/components/annotations/tags/tags-page/tags-page.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'landingPage', pathMatch: 'full' },
@@ -57,10 +57,11 @@ const routes: Routes = [
          loadChildren: () =>
         import('./pages/components/materials/materials.module').then(m => m.MaterialsModule)
       },
-      {
-        path: 'tag/:tagId',
-        component: TagsPageComponent,
-      },
+      // {
+      //   path: 'tag',
+      //   loadChildren: () =>
+      //   import('./pages/components/annotations/annotation.module').then(m => m.AnnotationModule)
+      // },
     ],
   },
 

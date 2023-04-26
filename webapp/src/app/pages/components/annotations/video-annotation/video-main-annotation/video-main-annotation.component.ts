@@ -87,7 +87,7 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
 
   ngOnInit(): void {
     let materialSubscriper = this.store.select(getCurrentMaterial).subscribe((material) => {
-      if(material.type === "video"){
+      if(material && material.type === "video"){
         this.material = material;
         this.materilaId = material._id;
         this.getVideoUrl();
