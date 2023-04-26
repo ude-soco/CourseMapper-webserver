@@ -17,7 +17,6 @@ export class TagsPageComponent {
   constructor(private store: Store<State>, private router: Router,){
       const url = this.router.url;
       if (url.includes('tag')){
-        console.log('lmao');
         this.store.dispatch(CourseActions.selectTag({tagSelected: true}));
       }
     this.store.select(getAnnotationsForSelectedTag).subscribe((annotations) => this.annotationsForTag = annotations);

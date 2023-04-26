@@ -1,1 +1,14 @@
-<p>tag-reply-panel works!</p>
+<h1 color="text-grey-200" *ngIf="repliesCount >= 1 && !hideRepliesButton" (click)="showAllReplies()" class="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline">
+    Show all {{ repliesCount }} replies
+  </h1>
+  <h1 color="text-grey-200" *ngIf="hideRepliesButton && repliesCount >= 2" (click)="hideReplies()" class="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline">
+    Hide replies
+  </h1>
+  <div class="mx-7 snap-y divide-y divide-neutral-500" style="border: 1px solid #0000004D" *ngIf="repliesCount > 0">
+    <div
+      class="bg-slate-200"
+      *ngFor="let reply of annotation.replies.slice(0, shownRepliesCount)"
+    >
+      <app-tag-reply-item [reply]="reply"></app-tag-reply-item>
+    </div>
+  </div>

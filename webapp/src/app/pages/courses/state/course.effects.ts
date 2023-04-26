@@ -5,7 +5,7 @@ import { getCurrentCourse, getSelectedChannel, getSelectedTag, getSelectedTopic 
 import { Injectable } from '@angular/core';
 import { createEffect, ofType, Actions } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { withLatestFrom, switchMap, mergeMap, catchError, of, filter, EMPTY } from 'rxjs';
+import { withLatestFrom, switchMap, mergeMap, catchError, of, filter, EMPTY, forkJoin, map } from 'rxjs';
 import { AnnotationService } from 'src/app/services/annotation.service';
 import { LoggerService } from 'src/app/services/logger.service';
 import { TopicChannelService } from 'src/app/services/topic-channel.service';
@@ -13,6 +13,7 @@ import { TagService } from 'src/app/services/tag.service';
 import { getCurrentMaterial } from '../../components/materials/state/materials.reducer';
 import { Router } from '@angular/router';
 import { State } from 'src/app/state/app.reducer';
+import { Annotation } from 'src/app/models/Annotations';
 @Injectable()
 export class CourseEffects {
   getTagsForCourse$ = createEffect(() =>
@@ -103,11 +104,183 @@ export class CourseEffects {
     filter(([action, course, tag]) => !!course && !!tag),
     switchMap(([action, course, tag]) =>
       this.TagService.getAllAnnotationsForTag(course, tag).pipe(
-        mergeMap((annotations) => [CourseActions.loadAnnotationsForSelectedTagSuccess({ annotations: annotations}),]),
+        mergeMap((annotations) => [CourseActions.loadAnnotationsForSelectedTagSuccess({ annotations: annotations}), CourseActions.loadReplies({ annotations })]),
         catchError((error) =>
           of(CourseActions.loadAnnotationsForSelectedTagFail({ error }))
         )
       ),
+    )
+  )
+);
+
+loadRepliesForTag$ = createEffect(() =>
+this.actions$.pipe(
+  ofType(CourseActions.loadReplies),
+  switchMap(({ annotations }) =>
+    forkJoin(
+      annotations.map((annotation) =>
+        this.annotationService
+          .getAllReplies(annotation)
+          .pipe(
+            map(
+              (replies) =>
+                ({ ...annotation, replies: replies } as Annotation)
+            )
+          )
+      )
+    ).pipe(
+      map((updatedAnnotations) =>
+      CourseActions.updateAnnotationsWithReplies({
+          annotations: updatedAnnotations,
+        })
+      ),
+      catchError((error) =>
+        of(CourseActions.updateAnnotationsWithRepliesFail({ error }))
+      )
+    )
+  )
+)
+);
+
+postReplyForTag$ = createEffect(() =>
+this.actions$.pipe(
+  ofType(CourseActions.postReply),
+  mergeMap(({ annotation, reply }) =>
+    this.annotationService.postReply(annotation, reply).pipe(
+      mergeMap(() => [
+        CourseActions.postReplySuccess(),
+        // AnnotationActions.loadAnnotations(),
+      ]),
+      catchError((error) => of(CourseActions.postReplyFail({ error })))
+    )
+  )
+)
+);
+
+likeAnnotationForTag$ = createEffect(() =>
+this.actions$.pipe(
+  ofType(CourseActions.likeAnnotation),
+  mergeMap(({ annotation }) =>
+    this.annotationService.likeAnnotation(annotation).pipe(
+      mergeMap(() => [
+        CourseActions.likeAnnotationSuccess(),
+      ]),
+      catchError((error) =>
+        of(CourseActions.likeAnnotationFail({ error }))
+      )
+    )
+  )
+)
+);
+
+dislikeAnnotationForTag$ = createEffect(() =>
+this.actions$.pipe(
+  ofType(CourseActions.dislikeAnnotation),
+  mergeMap(({ annotation }) =>
+    this.annotationService.dislikeAnnotation(annotation).pipe(
+      mergeMap(() => [
+        CourseActions.dislikeAnnotationSuccess(),
+      ]),
+      catchError((error) =>
+        of(CourseActions.dislikeAnnotationFail({ error }))
+      )
+    )
+  )
+)
+);
+
+likeReplyForTag$ = createEffect(() =>
+this.actions$.pipe(
+ofType(CourseActions.likeReply),
+mergeMap(({ reply }) =>
+  this.annotationService.likeReply(reply).pipe(
+    mergeMap(() => [
+      CourseActions.likeReplySuccess(),
+    ]),
+    catchError((error) =>
+      of(CourseActions.likeReplyFail({ error }))
+    )
+  )
+)
+)
+);
+
+dislikeReplyForTag$ = createEffect(() =>
+this.actions$.pipe(
+ofType(CourseActions.dislikeReply),
+mergeMap(({ reply }) =>
+  this.annotationService.dislikeReply(reply).pipe(
+    mergeMap(() => [
+      CourseActions.dislikeReplySuccess(),
+    ]),
+    catchError((error) =>
+      of(CourseActions.dislikeReplyFail({ error }))
+    )
+  )
+)
+)
+);
+
+deleteReplyForTag$ = createEffect(() =>
+  this.actions$.pipe(
+    ofType(CourseActions.deleteReply),
+    mergeMap(({ reply }) =>
+      this.annotationService.deleteReply(reply).pipe(
+        mergeMap(() => [
+          CourseActions.deleteReplySuccess(),
+        ]),
+        catchError((error) =>
+          of(CourseActions.deleteReplyFail({ error }))
+        )
+      )
+    )
+  )
+);
+
+editReplyForTag$ = createEffect(() =>
+  this.actions$.pipe(
+    ofType(CourseActions.editReply),
+    mergeMap(({ reply, updatedReply }) =>
+      this.annotationService.editReply(reply, updatedReply).pipe(
+        mergeMap(() => [
+          CourseActions.editReplySuccess(),
+        ]),
+        catchError((error) =>
+          of(CourseActions.editReplyFail({ error }))
+        )
+      )
+    )
+  )
+);
+
+deleteAnnotationForTag$ = createEffect(() =>
+  this.actions$.pipe(
+    ofType(CourseActions.deleteAnnotation),
+    mergeMap(({ annotation }) =>
+      this.annotationService.deleteAnnotation(annotation).pipe(
+        mergeMap(() => [
+          CourseActions.deleteAnnotationSuccess(),
+        ]),
+        catchError((error) =>
+          of(CourseActions.deleteAnnotationFail({ error }))
+        )
+      )
+    )
+  )
+);
+
+editAnnotationForTag$ = createEffect(() =>
+  this.actions$.pipe(
+    ofType(CourseActions.editAnnotation),
+    mergeMap(({ annotation }) =>
+      this.annotationService.editAnnotation(annotation).pipe(
+        mergeMap(() => [
+          CourseActions.editAnnotationSuccess(),
+        ]),
+        catchError((error) =>
+          of(CourseActions.editAnnotationFail({ error }))
+        )
+      )
     )
   )
 );
@@ -117,6 +290,7 @@ export class CourseEffects {
     private TagService: TagService,
     private loggerService: LoggerService,
     private store: Store<State>,
-    private router: Router
+    private router: Router,
+    private annotationService: AnnotationService,
   ) { }
 }

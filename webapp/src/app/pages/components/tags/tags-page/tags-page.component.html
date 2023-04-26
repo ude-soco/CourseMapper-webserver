@@ -1,9 +1,10 @@
-<!-- <div class="flex flex-col" *ngIf="annotationsForTag?.length > 0">
+<div class="p-5">
+  <div class="flex flex-col" *ngIf="annotationsForTag">
     <span class="font-medium text-xl">Annotations</span>
-    <div class="overflow-y-auto max-h-[40rem]">
+    <div class="overflow-y-auto">
       <div *ngFor="let annotation of annotationsForTag" class="mr-2">
-        <app-pdf-comment-item [annotation]="annotation"></app-pdf-comment-item>
+        <app-tag-comment-item [annotation]="annotation"></app-tag-comment-item>
       </div>
     </div>
-  </div> -->
-  <h1>Hello!</h1>
+  </div>
+</div>
