@@ -1,4 +1,4 @@
-import en from '@angular/common/locales/en'; 
+import en from '@angular/common/locales/en';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
@@ -25,7 +25,6 @@ import { RippleModule } from 'primeng/ripple';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 import { ByPassUrlSanitizationPipe } from './pipes/by-pass-url-sanitization.pipe';
-
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { httpInterceptorProviders } from './_helpers/http.interceptor';
@@ -104,7 +103,13 @@ registerLocaleData(en);
     StoreModule.forFeature('general', appReducer),
     InputTextareaModule,
     DragulaModule.forRoot(),
-    SocketIoModule.forRoot(environment.socketConfig),
+    SocketIoModule.forRoot({
+      url: `http://localhost:8080`,
+      options: {
+        path: '/api/socket.io',
+        transports: ['websocket'],
+      },
+    }),
     CourseModule,
   ],
   exports: [SidebarComponent],
