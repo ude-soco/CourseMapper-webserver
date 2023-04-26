@@ -1,7 +1,7 @@
 <div class="p-5">
   <div class="flex flex-col" *ngIf="annotationsForTag">
-    <span class="font-medium text-xl">Annotations</span>
-    <div class="overflow-y-auto">
+    <span class="font-medium text-xl">Annotations for {{hashTagName}}</span>
+    <div class="overflow-y-auto max-h-screen">
       <div *ngFor="let annotation of annotationsForTag" class="mr-2">
         <app-tag-comment-item [annotation]="annotation"></app-tag-comment-item>
       </div>

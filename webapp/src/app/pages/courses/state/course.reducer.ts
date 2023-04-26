@@ -20,7 +20,7 @@ export interface CourseState {
     tagsForTopic: Tag[],
     tagsForChannel: Tag[],
     tagSelected: boolean,
-    selectedTag: Tag,
+    selectedTagName: string,
     selcetedTopic: Topic,
     annotationsForSelectedTag: Annotation[]
  
@@ -35,7 +35,7 @@ export interface CourseState {
   tagsForTopic: null,
   tagsForChannel: null,
   tagSelected: false,
-  selectedTag: null,
+  selectedTagName: null,
   selcetedTopic: null,
   annotationsForSelectedTag: null
   }
@@ -91,9 +91,9 @@ export interface CourseState {
     state => state.annotationsForSelectedTag
   );
 
-  export const getSelectedTag = createSelector(
+  export const getSelectedTagName = createSelector(
     getCourseFeatureState,
-    state => state.selectedTag
+    state => state.selectedTagName
   );
 
 
@@ -105,7 +105,7 @@ export interface CourseState {
         ...state,
         selectedCourse: action.selcetedCourse,
         tagSelected: false,
-        selectedTag: null,
+        selectedTagName: null,
         tagsForChannel: null,
         tagsForTopic: null,
         
@@ -145,7 +145,8 @@ export interface CourseState {
         return {
           ...state,
           tagSelected: action.tagSelected,
-          selectedTag: action.selectedTag
+          selectedTagName: action.selectedTagName,
+          courseId: action.courseId
         };
       }),
 

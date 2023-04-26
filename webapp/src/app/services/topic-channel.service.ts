@@ -36,7 +36,6 @@ export class TopicChannelService {
    */
   fetchTopics(courseId: string):  Observable<Course> {
     return this.http.get<Course>(`${this.API_URL}/courses/${courseId}`).pipe(tap( course => {
-      console.log(course,"course")
       this.topics = course.topics;     
     }));
   }

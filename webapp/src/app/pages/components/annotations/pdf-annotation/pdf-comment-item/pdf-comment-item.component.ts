@@ -305,7 +305,7 @@ export class PdfCommentItemComponent implements OnInit, OnChanges, AfterViewInit
 
   linkifyText(text: string): string {
     const linkRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
-    const hashtagRegex = /(^|\s)(#[a-z\d-]+)/gi;
+    const hashtagRegex = /(\s|^)(#[a-z\d-]+)/gi;
     const newlineRegex = /(\r\n|\n|\r)/gm;
     const truncatedText = text.substring(0, 180);
     const truncated = text.length > 180;
@@ -318,12 +318,14 @@ export class PdfCommentItemComponent implements OnInit, OnChanges, AfterViewInit
           '<span class="ml-1 cursor-pointer text-blue-500 dark:text-blue-500 hover:underline clickable-text show-less hidden">show less</span>'
       : text;
   
-    const linkedHtml = linkedText
+      const linkedHtml = linkedText
       .replace(linkRegex, '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="$1" target="_blank">$1</a>')
-      .replace(hashtagRegex, '$1<span class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all"><strong>$2</strong></span>')
+      .replace(hashtagRegex, `$1<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="/course/${this.annotation?.courseId}/tag/${('$2')}"><strong>$2</strong></a>`)
       .replace(newlineRegex, '<br>');
+    
     return linkedHtml;
   }
+  
 
 
   

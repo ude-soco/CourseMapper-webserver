@@ -48,7 +48,7 @@ export const selectTag = createAction(
 
 export const loadAnnotationsForSelectedTag = createAction(
     '[Course] Load All Annotations for Selected Tag',
-    props<{tagSelected: true, selectedTag: Tag}>()
+    props<{tagSelected: boolean, selectedTagName: string, courseId: string}>()
 );
 
 export const loadAnnotationsForSelectedTagSuccess = createAction(

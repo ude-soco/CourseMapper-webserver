@@ -49,12 +49,12 @@ export class CoursesComponent implements OnInit {
         const url = this.router.url;
         if (!url.includes('tag')){
           this.store.dispatch(CourseActions.selectTag({tagSelected: false}));
+          this.tagSelected$ = this.store.select(getIsTagSelected);
         }
       }
     });
     this.courseSelected$ = store.select(getCourseSelected);
     this.channelSelected$ = this.store.select(getChannelSelected);
-    this.tagSelected$ = this.store.select(getIsTagSelected);
   }
 
   ngOnInit(): void {
@@ -63,8 +63,6 @@ export class CoursesComponent implements OnInit {
      this.Users = [];
       this.courseService.onSelectCourse.subscribe((course) => {
         this.selectedCourse = course;
-        console.log("this.selectedCourse")
-        console.log(this.selectedCourse)
 
        
 
@@ -74,16 +72,14 @@ export class CoursesComponent implements OnInit {
        this.ChannelToggel=false  
       this.topicChannelService.fetchTopics(course._id).subscribe( (course) =>{
         this.selectedCourse = course;
-        console.log(course,"this.selectedCourse from des page")
         this.Users = course.users;
-        console.log(this.Users)
            let userModerator =  this.Users.find(
             (user) => user.role.name === 'moderator'
 
           );
      
           
-          console.log(userModerator,"moderator")
+
          this.buildCardInfo(userModerator.userId, course);
       }
    )

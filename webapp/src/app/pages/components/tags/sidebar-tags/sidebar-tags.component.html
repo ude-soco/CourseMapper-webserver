@@ -2,13 +2,13 @@
     <div *ngIf="selectedCourse && tagsForCourse" #TagsForCourse>
         <p-divider align="center"></p-divider>
         <div class="mb-3">
-          <p class="text-xl italic font-semibold justify-center">
+          <p class="text-xl font-semibold justify-center">
             Tags for {{ selectedCourse?.name }}
           </p>
         </div>
         <div class="flex flex-row flex-wrap">
           <span
-            class="bg-[#0277BD] text-[#FFFFFF] text-sm px-[0.5rem] py-[0.25rem] m-2 border-black rounded-lg border-2 border-double uppercase hover:underline break-all font-bold cursor-pointer"
+            class="bg-[#0277BD] text-[#FFFFFF] font-semibold rounded-full text-sm px-[0.5rem] py-[0.25rem] m-1 hover:underline break-all cursor-pointer"
             *ngFor="let tag of tagsForCourse | slice:0:10" (click)="navigateToTagPage(tag)"
             >{{ tag?.name }}</span
           >
@@ -18,13 +18,13 @@
     <div *ngIf="selectedTopic && tagsForTopic" #TagsForTopic>
         <p-divider align="center"></p-divider>
         <div class="mb-3">
-          <p class="text-xl italic font-semibold justify-center">
+          <p class="text-xl font-semibold justify-center">
             Tags for {{ selectedTopic?.name }}
           </p>
         </div>
         <div class="flex flex-row flex-wrap">
           <span
-            class="bg-[#0277BD] text-[#FFFFFF] text-sm px-[0.5rem] py-[0.25rem] m-2 border-black rounded-lg border-2 border-double uppercase hover:underline break-all font-bold cursor-pointer"
+          class="bg-[#0277BD] text-[#FFFFFF] font-semibold rounded-full text-sm px-[0.5rem] py-[0.25rem] m-1 hover:underline break-all cursor-pointer"
             *ngFor="let tag of tagsForTopic | slice:0:10 " (click)="navigateToTagPage(tag)"
             >{{ tag?.name }}</span
           >
@@ -34,13 +34,13 @@
   <div *ngIf="selectedChannel && tagsForChannel" #TagsForChannel>
     <p-divider align="center"></p-divider>
     <div class="mb-3">
-      <p class="text-xl italic font-semibold justify-center">
+      <p class="text-xl font-semibold justify-center">
         Tags for {{ selectedChannel?.name }}
       </p>
     </div>
     <div class="flex flex-row flex-wrap">
       <span
-        class="bg-[#0277BD] text-[#FFFFFF] text-sm px-[0.5rem] py-[0.25rem] m-2 border-black rounded-lg border-2 border-double uppercase hover:underline break-all font-bold cursor-pointer"
+      class="bg-[#0277BD] text-[#FFFFFF] font-semibold rounded-full text-sm px-[0.5rem] py-[0.25rem] m-1 hover:underline break-all cursor-pointer"
         *ngFor="let tag of tagsForChannel | slice:0:10" (click)="navigateToTagPage(tag)"
         >{{ tag?.name }}</span
       >
@@ -50,13 +50,13 @@
   <div *ngIf="selectedMaterial && tagsForMaterial" #TagsForMaterial>
     <p-divider align="center"></p-divider>
     <div class="mb-3">
-      <p class="text-xl italic font-semibold justify-center">
+      <p class="text-xl font-semibold justify-center">
         Tags for {{ selectedMaterial?.name }}
       </p>
     </div>
     <div class="flex flex-row flex-wrap">
       <span
-        class="bg-[#0277BD] text-[#FFFFFF] text-sm px-[0.5rem] py-[0.25rem] m-2 border-black rounded-lg border-2 border-double uppercase hover:underline break-all font-bold cursor-pointer"
+      class="bg-[#0277BD] text-[#FFFFFF] font-semibold rounded-full text-sm px-[0.5rem] py-[0.25rem] m-1 hover:underline break-all cursor-pointer"
         *ngFor="let tag of tagsForMaterial | slice:0:10" (click)="navigateToTagPage(tag)"
         >{{ tag?.name }}</span
       >

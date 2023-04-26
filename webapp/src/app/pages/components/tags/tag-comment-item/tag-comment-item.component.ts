@@ -96,7 +96,6 @@ export class TagCommentItemComponent {
         this.showAnnotationInMaterial = true;
       }
       this.socket.on(this.annotation._id, (payload: { eventType: string, annotation: Annotation, reply: Reply }) => {
-        console.log('payload: ' + payload);
         this.store.dispatch(CourseActions.updateAnnotationsForSelectedTag({payload: payload}));
       })
       this.isEditing = false;

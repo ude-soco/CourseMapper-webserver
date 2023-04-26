@@ -32,8 +32,7 @@ export class TagService {
     return this.http.get<Tag[]>(`${environment.apiUrl}/courses/${material.courseId}/materials/${material._id}/tags`);
   }
 
-  getAllAnnotationsForTag(course: Course, tag: Tag): Observable<Annotation[]>{
-    console.log(tag.name);
-    return this.http.get<Annotation[]>(`${environment.apiUrl}/courses/${course._id}/tag/${encodeURIComponent(tag.name)}/get-all-annotation-for-tag`);
+  getAllAnnotationsForTag(courseId: string, tagName: string): Observable<Annotation[]>{
+    return this.http.get<Annotation[]>(`${environment.apiUrl}/courses/${courseId}/tag/${encodeURIComponent(tagName)}/get-all-annotation-for-tag`);
   }
 }

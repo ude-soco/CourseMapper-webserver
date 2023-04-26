@@ -55,7 +55,7 @@ export class SidebarTagsComponent {
   }
 
   navigateToTagPage(tag: Tag){
-    this.store.dispatch(CourseActions.loadAnnotationsForSelectedTag({tagSelected: true, selectedTag: tag}));
+    this.store.dispatch(CourseActions.loadAnnotationsForSelectedTag({tagSelected: true, selectedTagName: tag.name, courseId: this.selectedCourse._id}));
     this.router.navigate(['course', this.selectedCourse._id, 'tag', tag.name]);
   }
 }
