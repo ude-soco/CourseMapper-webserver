@@ -42,7 +42,7 @@ export const LoadTagsFail = createAction(
 
 export const selectTag = createAction(
     '[Course] Tag is Selected',
-    props<{tagSelected: true}>()
+    props<{tagSelected: boolean}>()
 );
 
 export const loadAnnotationsForSelectedTag = createAction(

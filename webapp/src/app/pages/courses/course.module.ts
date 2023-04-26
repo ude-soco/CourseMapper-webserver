@@ -11,7 +11,7 @@ import { PrimengModule } from 'src/app/modules/primeng/primeng.module';
 import { ToastModule } from 'primeng/toast';
 import { EffectsModule } from '@ngrx/effects';
 import { CourseEffects } from './state/course.effects';
-import { TagsPageComponent } from '../components/annotations/tags/tags-page/tags-page.component';
+import { TagsPageComponent } from '../components/tags-page/tags-page.component';
 import { AnnotationModule } from "../components/annotations/annotation.module";
 import { PdfCommentItemComponent } from '../components/annotations/pdf-annotation/pdf-comment-item/pdf-comment-item.component';
 @NgModule({

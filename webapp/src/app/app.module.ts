@@ -59,6 +59,7 @@ import { PrivacyComponent } from './pages/components/privacy/privacy.component';
 import { CourseModule } from './pages/courses/course.module';
 import { CourseDescriptionComponent } from './pages/components/course-description/course-description.component';
 import { SidebarTagsComponent } from './pages/components/sidebar-tags/sidebar-tags.component';
+import { TagsPageComponent } from './pages/components/tags-page/tags-page.component';
  
 export const metaReducers: MetaReducer[] = [hydrationMetaReducer];
 registerLocaleData(en);
@@ -84,6 +85,7 @@ registerLocaleData(en);
         PrivacyComponent,
         CourseDescriptionComponent,
         SidebarTagsComponent,
+        TagsPageComponent
        
     ],
     imports: [

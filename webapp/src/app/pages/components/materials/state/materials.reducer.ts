@@ -5,6 +5,7 @@ import {  } from 'src/app/models/Annotations';
 import { Material } from 'src/app/models/Material';
 import { Tag } from 'src/app/models/Tag';
 import * as CourseAction from 'src/app/pages/courses/state/course.actions'
+import { CourseState } from 'src/app/pages/courses/state/course.reducer';
 
 
 export interface State extends AppState.State{
@@ -61,6 +62,15 @@ export const materialReducer = createReducer<MaterialState>(
         
         ...state,
         tagsForMaterial: action.tags
+      };
+    }),
+    on(CourseAction.setCurrentCourse, (state, action): MaterialState => {
+      return {
+        
+        ...state,
+        tagsForMaterial: null
+        
+
       };
     }),
   );

@@ -105,7 +105,9 @@ export interface CourseState {
         ...state,
         selectedCourse: action.selcetedCourse,
         tagSelected: false,
-        selectedTag: null
+        selectedTag: null,
+        tagsForChannel: null,
+        tagsForTopic: null,
         
 
       };

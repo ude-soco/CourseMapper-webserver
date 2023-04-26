@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Annotation } from 'src/app/models/Annotations';
 import { State } from 'src/app/state/app.reducer';
-import { getAnnotationsForSelectedTag } from '../../../../courses/state/course.reducer';
+import { getAnnotationsForSelectedTag } from '../../courses/state/course.reducer';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as CourseActions from 'src/app/pages/courses/state/course.actions'
 
@@ -17,7 +17,7 @@ export class TagsPageComponent {
   constructor(private store: Store<State>, private router: Router,){
       const url = this.router.url;
       if (url.includes('tag')){
-        console.log('tag selected');
+        console.log('lmao');
         this.store.dispatch(CourseActions.selectTag({tagSelected: true}));
       }
     this.store.select(getAnnotationsForSelectedTag).subscribe((annotations) => this.annotationsForTag = annotations);
