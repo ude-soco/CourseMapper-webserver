@@ -268,6 +268,8 @@ export class TopicDropdownComponent implements OnInit {
             'course',
             this.courseService.getSelectedCourse()._id,
           ]);
+          this.store.dispatch(CourseActions.SetSelectedChannel({selectedChannel: null}));
+          this.store.dispatch(CourseActions.toggleChannelSelected({channelSelected: false}));
         } else {
           this.showError(res['errorMsg']);
         }
