@@ -107,7 +107,7 @@ registerLocaleData(en);
       url: `${environment.apiUrl}`,
       options: {
         path: '/api/socket.io',
-        transports: ['websocket'],
+        // transports: ['websocket'],
       },
     }),
     CourseModule,
