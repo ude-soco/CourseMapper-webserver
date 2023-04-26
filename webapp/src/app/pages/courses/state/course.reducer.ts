@@ -18,7 +18,6 @@ export interface CourseState {
     tagsForCourse: Tag[],
     tagsForTopic: Tag[],
     tagsForChannel: Tag[],
-    tagsForMaterial: Tag[],
     tagSelected: boolean,
     selcetedTopic: Topic
  
@@ -32,7 +31,6 @@ export interface CourseState {
   tagsForCourse: null,
   tagsForTopic: null,
   tagsForChannel: null,
-  tagsForMaterial: null,
   tagSelected: false,
   selcetedTopic: null
   }
@@ -76,11 +74,6 @@ export interface CourseState {
   export const getTagsForChannel = createSelector(
     getCourseFeatureState,
     state => state.tagsForChannel
-  );
-
-  export const getTagsForMaterial = createSelector(
-    getCourseFeatureState,
-    state => state.tagsForMaterial
   );
 
 
@@ -135,12 +128,6 @@ export interface CourseState {
             return {
               ...state,
               tagsForChannel: action.tags
-            };
-          }
-          case 'material':{
-            return {
-              ...state,
-              tagsForMaterial: action.tags
             };
           }
           default:{

@@ -14,6 +14,8 @@ import { PdfMainAnnotationComponent } from '../annotations/pdf-annotation/pdf-ma
 import { ToastModule } from 'primeng/toast';
 import { MenuModule } from 'primeng/menu';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { MaterialEffects } from './state/material.effects';
+import { EffectsModule } from '@ngrx/effects';
 
 @NgModule({
   declarations: [MaterialComponent, AddMaterialComponent],
@@ -28,6 +30,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
     MenuModule,
     ConfirmDialogModule,
     StoreModule.forFeature('material', materialReducer),
+    EffectsModule.forFeature([MaterialEffects]),
     RouterModule.forChild([
       {
         path: '',

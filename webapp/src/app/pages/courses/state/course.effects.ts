@@ -1,7 +1,7 @@
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
 import * as CourseActions from 'src/app/pages/courses/state/course.actions'
 import * as MaterialActions from 'src/app/pages/components/materials/state/materials.actions'
-import { State, getCurrentCourse, getSelectedChannel, getSelectedTopic } from './course.reducer';
+import { getCurrentCourse, getSelectedChannel, getSelectedTopic } from './course.reducer';
 import { Injectable } from '@angular/core';
 import { createEffect, ofType, Actions } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
@@ -12,6 +12,7 @@ import { TopicChannelService } from 'src/app/services/topic-channel.service';
 import { TagService } from 'src/app/services/tag.service';
 import { getCurrentMaterial } from '../../components/materials/state/materials.reducer';
 import { Router } from '@angular/router';
+import { State } from 'src/app/state/app.reducer';
 @Injectable()
 export class CourseEffects {
   getTagsForCourse$ = createEffect(() =>
@@ -88,39 +89,6 @@ export class CourseEffects {
       )
     )
   );
-
-getTagsForMaterial$ = createEffect(() =>
-  this.actions$.pipe(
-    filter(
-      (action) =>
-        action.type === MaterialActions.setCurrentMaterial.type ||
-        action.type === AnnotationActions.postAnnotationSuccess.type ||
-        action.type === AnnotationActions.postReplySuccess.type ||
-        action.type === AnnotationActions.deleteAnnotationSuccess.type ||
-        action.type === AnnotationActions.deleteReplySuccess.type
-    ),
-    switchMap(() => {
-            // Check if the module is loaded
-            const url = this.router.url;
-            if (!url.includes('material')){
-              // If the module is not loaded, return an empty observable
-              return EMPTY;
-            }
-      return this.store.select(getCurrentMaterial).pipe(
-        filter((material) => !!material),
-        switchMap((material) =>
-          this.TagService.getAllTagsForCurrentMaterial(material).pipe(
-            mergeMap((tags) => [CourseActions.LoadTagsSuccess({ tags: tags, tagsFor: 'material' })]),
-            catchError((error) =>
-              of(CourseActions.LoadTagsFail({ error }))
-            )
-          )
-        )
-      );
-    })
-  )
-);
-
 
   constructor(
     private actions$: Actions,

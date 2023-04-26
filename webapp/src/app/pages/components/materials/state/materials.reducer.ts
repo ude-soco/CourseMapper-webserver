@@ -3,6 +3,7 @@ import * as AppState from 'src/app/state/app.state'
 import * as MaterialActions from 'src/app/pages/components/materials/state/materials.actions'
 import {  } from 'src/app/models/Annotations';
 import { Material } from 'src/app/models/Material';
+import { Tag } from 'src/app/models/Tag';
 
 
 export interface State extends AppState.State{
@@ -11,12 +12,14 @@ export interface State extends AppState.State{
 
 export interface MaterialState {
   materialId: string,
-  selectedMaterial:Material
+  selectedMaterial:Material,
+  tagsForMaterial: Tag[],
 }
 
 const initialState: MaterialState = {
 materialId: null,
-selectedMaterial:null
+selectedMaterial:null,
+tagsForMaterial: null,
 }
 
 const getMaterialFeatureState = createFeatureSelector<MaterialState>('material');
@@ -29,6 +32,11 @@ export const getCurrentMaterialId = createSelector(
 export const getCurrentMaterial = createSelector(
   getMaterialFeatureState,
   state => state.selectedMaterial
+);
+
+export const getTagsForMaterial = createSelector(
+  getMaterialFeatureState,
+  state => state.tagsForMaterial
 );
 
 export const materialReducer = createReducer<MaterialState>(
@@ -44,6 +52,14 @@ export const materialReducer = createReducer<MaterialState>(
         
         ...state,
         selectedMaterial: action.selcetedMaterial
+      };
+    }),
+
+    on(MaterialActions.LoadTagsSuccessForMaterial, (state, action): MaterialState => {
+      return {
+        
+        ...state,
+        tagsForMaterial: action.tags
       };
     }),
   );
