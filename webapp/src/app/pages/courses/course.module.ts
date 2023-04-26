@@ -12,46 +12,20 @@ import { ToastModule } from 'primeng/toast';
 import { EffectsModule } from '@ngrx/effects';
 import { CourseEffects } from './state/course.effects';
 import { TagsPageComponent } from './tags-page/tags-page.component';
-
-
-
-
-
-
-
-
-
-
+import { AnnotationModule } from "../components/annotations/annotation.module";
+import { PdfCommentItemComponent } from '../components/annotations/pdf-annotation/pdf-comment-item/pdf-comment-item.component';
 @NgModule({
     declarations: [
-        
-        
-        
-    
-    TagsPageComponent
-  ],
-    exports: [
-       
-        
-        
-        
-        
+        TagsPageComponent,
     ],
+    exports: [],
     imports: [
         CommonModule,
         StoreModule.forFeature('course', courseReducer),
         EffectsModule.forFeature([CourseEffects]),
         ConfirmDialogModule,
         PrimengModule,
-        ToastModule
-        
-        
-    
-        
-        
-        
-        
-        
+        ToastModule,
     ]
 })
 export class CourseModule { }

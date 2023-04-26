@@ -7,6 +7,7 @@ import { HttpClient } from '@angular/common/http';
 import { Topic } from '../models/Topic';
 import { Material } from '../models/Material';
 import { Course } from '../models/Course';
+import { Annotation } from '../models/Annotations';
 
 @Injectable({
   providedIn: 'root'
@@ -29,5 +30,10 @@ export class TagService {
 
   getAllTagsForCurrentMaterial(material: Material): Observable<Tag[]>{
     return this.http.get<Tag[]>(`${environment.apiUrl}/courses/${material.courseId}/materials/${material._id}/tags`);
+  }
+
+  getAllAnnotationsForTag(course: Course, tag: Tag): Observable<Annotation[]>{
+    console.log(tag.name);
+    return this.http.get<Annotation[]>(`${environment.apiUrl}/courses/${course._id}/tag/${encodeURIComponent(tag.name)}/get-all-annotation-for-tag`);
   }
 }

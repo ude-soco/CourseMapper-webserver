@@ -63,4 +63,13 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getAllAnnotations
   );
+
+
+  // get annotations for specific tag
+  // Only enrolled users/moderator/admin
+  app.get(
+    "/api/courses/:courseId/tag/:tagName/get-all-annotation-for-tag",
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.getAllAnnotationsForSpecificTag
+  );
 };

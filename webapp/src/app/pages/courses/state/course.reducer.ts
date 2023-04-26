@@ -5,6 +5,7 @@ import { Course } from 'src/app/models/Course';
 import { Channel } from 'src/app/models/Channel';
 import { Tag } from 'src/app/models/Tag';
 import { Topic } from 'src/app/models/Topic';
+import { Annotation } from 'src/app/models/Annotations';
 
 export interface State extends AppState.State{
     courses: CourseState;
@@ -19,7 +20,9 @@ export interface CourseState {
     tagsForTopic: Tag[],
     tagsForChannel: Tag[],
     tagSelected: boolean,
-    selcetedTopic: Topic
+    selectedTag: Tag,
+    selcetedTopic: Topic,
+    annotationsForSelectedTag: Annotation[]
  
   }
   const initialState: CourseState = {
@@ -32,7 +35,9 @@ export interface CourseState {
   tagsForTopic: null,
   tagsForChannel: null,
   tagSelected: false,
-  selcetedTopic: null
+  selectedTag: null,
+  selcetedTopic: null,
+  annotationsForSelectedTag: null
   }
   const getCourseFeatureState = createFeatureSelector<CourseState>('course');
 
@@ -76,6 +81,21 @@ export interface CourseState {
     state => state.tagsForChannel
   );
 
+  export const getIsTagSelected = createSelector(
+    getCourseFeatureState,
+    state => state.tagSelected
+  );
+
+  export const getAnnotationsForSelectedTag = createSelector(
+    getCourseFeatureState,
+    state => state.annotationsForSelectedTag
+  );
+
+  export const getSelectedTag = createSelector(
+    getCourseFeatureState,
+    state => state.selectedTag
+  );
+
 
   export const courseReducer = createReducer<CourseState>(
     initialState,
@@ -84,6 +104,8 @@ export interface CourseState {
         
         ...state,
         selectedCourse: action.selcetedCourse,
+        tagSelected: false,
+        selectedTag: null
         
 
       };
@@ -107,6 +129,21 @@ export interface CourseState {
         return {
           ...state,
           selectedChannel: action.selectedChannel
+        };
+      }),
+
+      on(CourseAction.selectTag, (state, action): CourseState => {
+        return {
+          ...state,
+          tagSelected: action.tagSelected
+        };
+      }),
+
+      on(CourseAction.loadAnnotationsForSelectedTag, (state, action): CourseState => {
+        return {
+          ...state,
+          tagSelected: action.tagSelected,
+          selectedTag: action.selectedTag
         };
       }),
 

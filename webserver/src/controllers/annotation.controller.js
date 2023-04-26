@@ -565,3 +565,51 @@ export const getAllAnnotations = async (req, res) => {
   );
   return res.status(200).send(foundAnnotations);
 };
+
+/**
+ * @function getAllAnnotationsForSpecificTag
+ * Retrieve annotations controller
+ *
+ * @param {string} req.params.courseId The id of the course
+ * @param {string} req.params.tagName The name of the tag
+ * @param {string} req.userId The id of the user requested all annotations for this tag
+ */
+export const getAllAnnotationsForSpecificTag = async (req, res) => {
+  const courseId = req.params.courseId;
+  const tagName = decodeURIComponent(req.params.tagName);
+
+  let foundTags;
+  try {
+    foundTags = await Tag.find({ courseId: courseId, name: tagName});
+    if (!foundTags) {
+      return res.status(404).send({
+        error: `Course with id ${courseId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding tags" });
+  }
+
+  let foundAnnotations = []; // initialize the variable
+  try {
+    for (const tag of foundTags) {
+      const annotation = await Annotation.findById(tag.annotationId);
+      if (annotation) {
+        foundAnnotations.push(annotation);
+      }
+    }
+
+    if (!foundAnnotations.length) { // check if the array is empty
+      return res.status(404).send({
+        error: `Annotations with courseId ${courseId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding annotation" });
+  }
+  foundAnnotations.sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
+  return res.status(200).send(foundAnnotations);
+};
+

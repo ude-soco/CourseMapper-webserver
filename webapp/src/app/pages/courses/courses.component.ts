@@ -10,7 +10,7 @@ import { CourseService } from 'src/app/services/course.service';
 import { TopicChannelService } from 'src/app/services/topic-channel.service';
 import { UserServiceService } from 'src/app/services/user-service.service';
 import { getCourseSelected, State } from 'src/app/state/app.reducer';
-import { getChannelSelected, getCurrentCourse, getCurrentCourseId } from './state/course.reducer';
+import { getChannelSelected, getCurrentCourse, getCurrentCourseId, getIsTagSelected } from './state/course.reducer';
 
 @Component({
   selector: 'app-courses',
@@ -21,6 +21,7 @@ import { getChannelSelected, getCurrentCourse, getCurrentCourseId } from './stat
 export class CoursesComponent implements OnInit {
   selectedCourse: Course = new CourseImp('', '');
   courseSelected$: Observable<boolean>;
+  tagSelected$: Observable<boolean>;
   course:  Course ;
   createdAt:string
   firstName:string;
@@ -44,6 +45,7 @@ export class CoursesComponent implements OnInit {
   ) {
     this.courseSelected$ = store.select(getCourseSelected);
     this.channelSelected$ = this.store.select(getChannelSelected);
+    this.tagSelected$ = this.store.select(getIsTagSelected);
   }
 
   ngOnInit(): void {

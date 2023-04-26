@@ -1,7 +1,7 @@
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
 import * as CourseActions from 'src/app/pages/courses/state/course.actions'
 import * as MaterialActions from 'src/app/pages/components/materials/state/materials.actions'
-import { getCurrentCourse, getSelectedChannel, getSelectedTopic } from './course.reducer';
+import { getCurrentCourse, getSelectedChannel, getSelectedTag, getSelectedTopic } from './course.reducer';
 import { Injectable } from '@angular/core';
 import { createEffect, ofType, Actions } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
@@ -89,6 +89,28 @@ export class CourseEffects {
       )
     )
   );
+
+  getAnnotationsForTag$ = createEffect(() =>
+  this.actions$.pipe(
+    filter(
+      (action) =>
+        action.type === CourseActions.loadAnnotationsForSelectedTag.type
+    ),
+    withLatestFrom(
+      this.store.select(getCurrentCourse),
+      this.store.select(getSelectedTag)
+    ),
+    filter(([action, course, tag]) => !!course && !!tag),
+    switchMap(([action, course, tag]) =>
+      this.TagService.getAllAnnotationsForTag(course, tag).pipe(
+        mergeMap((annotations) => [CourseActions.loadAnnotationsForSelectedTagSuccess({ annotations: annotations}),]),
+        catchError((error) =>
+          of(CourseActions.loadAnnotationsForSelectedTagFail({ error }))
+        )
+      ),
+    )
+  )
+);
 
   constructor(
     private actions$: Actions,

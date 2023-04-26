@@ -1,4 +1,5 @@
 import { createAction, props } from "@ngrx/store";
+import { Annotation } from "src/app/models/Annotations";
 import { Channel } from "src/app/models/Channel";
 import { Course } from "src/app/models/Course";
 import { Tag } from "src/app/models/Tag";
@@ -36,5 +37,25 @@ export const LoadTagsSuccess = createAction(
 
 export const LoadTagsFail = createAction(
     '[Course] Failed To Load Tags For Selected Channel',
+    props<{error: string}>()
+);
+
+export const selectTag = createAction(
+    '[Course] Tag is Selected',
+    props<{tagSelected: true}>()
+);
+
+export const loadAnnotationsForSelectedTag = createAction(
+    '[Course] Load All Annotations for Selected Tag',
+    props<{tagSelected: true, selectedTag: Tag}>()
+);
+
+export const loadAnnotationsForSelectedTagSuccess = createAction(
+    '[Course] Load All Annotations for Selected Tag Success',
+    props<{annotations: Annotation[]}>()
+);
+
+export const loadAnnotationsForSelectedTagFail = createAction(
+    '[Course] Failed To Load Annotations For Selected Tag',
     props<{error: string}>()
 );

@@ -9,13 +9,14 @@ import { Topic } from 'src/app/models/Topic';
 import { Course } from 'src/app/models/Course';
 import { getCurrentMaterial, getTagsForMaterial } from '../materials/state/materials.reducer';
 import { NavigationEnd, Router } from '@angular/router';
+import * as CourseActions from '../../courses/state/course.actions';
 
 @Component({
   selector: 'app-sidebar-tags',
   templateUrl: './sidebar-tags.component.html',
   styleUrls: ['./sidebar-tags.component.css']
 })
-export class SidebarTagsComponent implements OnInit {
+export class SidebarTagsComponent {
   selectedCourse: Course;
   selectedTopic: Topic;
   selectedChannel: Channel;
@@ -53,7 +54,8 @@ export class SidebarTagsComponent implements OnInit {
 
   }
 
-  ngOnInit(): void {
-
+  navigateToTagPage(tag: Tag){
+    this.store.dispatch(CourseActions.loadAnnotationsForSelectedTag({tagSelected: true, selectedTag: tag}));
+    this.router.navigate(['course', this.selectedCourse._id, 'tag', tag.name]);
   }
 }
