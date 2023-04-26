@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Annotation } from 'src/app/models/Annotations';
 import { State } from 'src/app/state/app.reducer';
-import { getAnnotationsForSelectedTag } from '../../courses/state/course.reducer';
+import { getAnnotationsForSelectedTag } from '../../../courses/state/course.reducer';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as CourseActions from 'src/app/pages/courses/state/course.actions'
 

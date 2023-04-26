@@ -58,8 +58,11 @@ import { PrivacyComponent } from './pages/components/privacy/privacy.component';
 
 import { CourseModule } from './pages/courses/course.module';
 import { CourseDescriptionComponent } from './pages/components/course-description/course-description.component';
-import { SidebarTagsComponent } from './pages/components/sidebar-tags/sidebar-tags.component';
-import { TagsPageComponent } from './pages/components/tags-page/tags-page.component';
+import { SidebarTagsComponent } from './pages/components/tags/sidebar-tags/sidebar-tags.component';
+import { TagsPageComponent } from './pages/components/tags/tags-page/tags-page.component';
+import { TagCommentItemComponent } from './pages/components/tags/tag-comment-item/tag-comment-item.component';
+import { TagReplyPanelComponent } from './pages/components/tags/tag-reply-panel/tag-reply-panel.component';
+import { TagReplyItemComponent } from './pages/components/tags/tag-reply-item/tag-reply-item.component';
  
 export const metaReducers: MetaReducer[] = [hydrationMetaReducer];
 registerLocaleData(en);
@@ -85,7 +88,10 @@ registerLocaleData(en);
         PrivacyComponent,
         CourseDescriptionComponent,
         SidebarTagsComponent,
-        TagsPageComponent
+        TagsPageComponent,
+        TagCommentItemComponent,
+        TagReplyPanelComponent,
+        TagReplyItemComponent
        
     ],
     imports: [

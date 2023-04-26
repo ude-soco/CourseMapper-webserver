@@ -3,13 +3,13 @@ import { Store } from '@ngrx/store';
 import { Channel } from 'src/app/models/Channel';
 import { Tag } from 'src/app/models/Tag';
 import { State } from 'src/app/state/app.state';
-import { getCurrentCourse, getSelectedChannel, getSelectedTopic, getTagsForChannel, getTagsForCourse, getTagsForTopic } from '../../courses/state/course.reducer';
+import { getCurrentCourse, getSelectedChannel, getSelectedTopic, getTagsForChannel, getTagsForCourse, getTagsForTopic } from '../../../courses/state/course.reducer';
 import { Material } from 'src/app/models/Material';
 import { Topic } from 'src/app/models/Topic';
 import { Course } from 'src/app/models/Course';
-import { getCurrentMaterial, getTagsForMaterial } from '../materials/state/materials.reducer';
+import { getCurrentMaterial, getTagsForMaterial } from '../../materials/state/materials.reducer';
 import { NavigationEnd, Router } from '@angular/router';
-import * as CourseActions from '../../courses/state/course.actions';
+import * as CourseActions from '../../../courses/state/course.actions';
 
 @Component({
   selector: 'app-sidebar-tags',

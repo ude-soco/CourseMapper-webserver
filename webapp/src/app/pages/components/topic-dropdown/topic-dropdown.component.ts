@@ -52,6 +52,9 @@ export class TopicDropdownComponent implements OnInit {
         this.onSelectTopic(this.selectedTopic);
         this.selectedChannelId = channelId;
       })
+    }else{
+      this.selectedChannelId = null;
+      this.selectedChannel = null;
     }
   }
   @Input() showModeratorPrivileges: boolean;
