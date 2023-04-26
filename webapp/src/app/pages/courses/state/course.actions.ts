@@ -30,8 +30,8 @@ export const SetSelectedChannel = createAction(
 );
 
 export const LoadTagsSuccess = createAction(
-    '[Course] Tgas Successfully Loaded For Selected Channel',
-    props<{tags: Tag[]}>()
+    '[Course] Tgas Successfully Loaded',
+    props<{tags: Tag[], tagsFor: string}>()
 );
 
 export const LoadTagsFail = createAction(

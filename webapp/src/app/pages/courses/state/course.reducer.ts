@@ -15,7 +15,10 @@ export interface CourseState {
     selectedCourse:Course,
     channelSelected:boolean,
     selectedChannel: Channel,
-    tags: Tag[],
+    tagsForCourse: Tag[],
+    tagsForTopic: Tag[],
+    tagsForChannel: Tag[],
+    tagsForMaterial: Tag[],
     tagSelected: boolean,
     selcetedTopic: Topic
  
@@ -26,7 +29,10 @@ export interface CourseState {
   selectedCourse:null,
   channelSelected: false,
   selectedChannel: null,
-  tags: null,
+  tagsForCourse: null,
+  tagsForTopic: null,
+  tagsForChannel: null,
+  tagsForMaterial: null,
   tagSelected: false,
   selcetedTopic: null
   }
@@ -57,9 +63,24 @@ export interface CourseState {
     state => state.selcetedTopic
   );
 
+  export const getTagsForCourse = createSelector(
+    getCourseFeatureState,
+    state => state.tagsForCourse
+  );
+
+  export const getTagsForTopic = createSelector(
+    getCourseFeatureState,
+    state => state.tagsForTopic
+  );
+
   export const getTagsForChannel = createSelector(
     getCourseFeatureState,
-    state => state.tags
+    state => state.tagsForChannel
+  );
+
+  export const getTagsForMaterial = createSelector(
+    getCourseFeatureState,
+    state => state.tagsForMaterial
   );
 
 
@@ -97,10 +118,38 @@ export interface CourseState {
       }),
 
       on(CourseAction.LoadTagsSuccess, (state, action): CourseState => {
-        return {
-          ...state,
-          tags: action.tags
-        };
+        switch(action.tagsFor){
+          case 'course':{
+            return {
+              ...state,
+              tagsForCourse: action.tags
+            };
+          }
+          case 'topic':{
+            return {
+              ...state,
+              tagsForTopic: action.tags
+            };
+          }
+          case 'channel':{
+            return {
+              ...state,
+              tagsForChannel: action.tags
+            };
+          }
+          case 'material':{
+            return {
+              ...state,
+              tagsForMaterial: action.tags
+            };
+          }
+          default:{
+            return {
+              ...state,
+              tagsForCourse: action.tags
+            };
+          }
+        }
       }),
 
       on(CourseAction.setCurrentTopic, (state, action): CourseState => {
