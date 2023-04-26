@@ -49,9 +49,6 @@ export class ChannelbarComponent implements OnInit {
         });
       }
     })
-
-    this.store.select(getSelectedChannel).subscribe((currentChannel) => this.selectedChannel = currentChannel);
-    this.store.select(getTagsForChannel).subscribe((tags) => this.tagsForChannel = tags);
   }
 
   private API_URL = environment.API_URL;
@@ -65,7 +62,6 @@ export class ChannelbarComponent implements OnInit {
   selectedId: string = '';
   showModeratorPrivileges=false;
   selectedChannel: Channel;
-  tagsForChannel: Tag[];
 
   options: MenuItem[] = [
     {

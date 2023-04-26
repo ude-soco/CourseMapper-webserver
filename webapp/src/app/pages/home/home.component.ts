@@ -54,10 +54,11 @@ export class HomeComponent implements OnInit {
       AppActions.toggleCourseSelected({ courseSelected: false })
       
     );
+    this.store.dispatch(CourseActions.setCurrentTopic({selcetedTopic: null}));
     this.store.dispatch(CourseActions.setCurrentCourse({selcetedCourse: null}));
-    this.store.dispatch(
-      CourseActions.toggleChannelSelected({ channelSelected: false })
-    );
+    this.store.dispatch(CourseActions.setCourseId({ courseId: null}));
+    this.store.dispatch(CourseActions.SetSelectedChannel({ selectedChannel: null}));
+    this.store.dispatch(CourseActions.toggleChannelSelected({ channelSelected: false }));
 
     if (this.isloggedin == false) {
       this.router.navigate(['login']);
