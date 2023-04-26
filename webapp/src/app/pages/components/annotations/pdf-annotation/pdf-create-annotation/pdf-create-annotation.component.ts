@@ -17,9 +17,9 @@ import {
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
 import { Observable } from 'rxjs';
 import {
-  getCurrentCourseId,
   getCurrentMaterialId,
-} from '../../../materils/state/materials.reducer';
+} from '../../../materials/state/materials.reducer';
+import { getCurrentCourseId } from 'src/app/pages/courses/state/course.reducer';
 
 @Component({
   selector: 'app-pdf-create-annotation',
@@ -182,7 +182,6 @@ export class PdfCreateAnnotationComponent implements OnInit, AfterViewChecked {
 
   dispatchAnnotation(){
     this.store.dispatch(AnnotationActions.postAnnotation({ annotation: this.annotation }));
-    this.annotationColor = '#0000004D';
     this.sendButtonDisabled = true;
   }
 
@@ -228,7 +227,7 @@ export class PdfCreateAnnotationComponent implements OnInit, AfterViewChecked {
         this.sendButtonColor ='text-pink-700';
         break;
       case null:
-        this.annotationColor = '#0000004D';
+        this.annotationColor = '#70b85e';
         this.sendButtonColor ='text-green-600';
         break;
     }

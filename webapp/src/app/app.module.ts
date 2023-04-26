@@ -44,7 +44,7 @@ import {
 } from './_helpers/http.interceptor';
 import { StoreModule, MetaReducer  } from '@ngrx/store';
 import { AnnotationModule } from './pages/components/annotations/annotation.module';
-import { MaterialsModule } from './pages/components/materils/materials.module';
+import { MaterialsModule } from './pages/components/materials/materials.module';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
@@ -58,6 +58,7 @@ import { PrivacyComponent } from './pages/components/privacy/privacy.component';
 
 import { CourseModule } from './pages/courses/course.module';
 import { CourseDescriptionComponent } from './pages/components/course-description/course-description.component';
+import { SidebarTagsComponent } from './pages/components/sidebar-tags/sidebar-tags.component';
  
 export const metaReducers: MetaReducer[] = [hydrationMetaReducer];
 registerLocaleData(en);
@@ -82,6 +83,7 @@ registerLocaleData(en);
         LandingPageComponent,
         PrivacyComponent,
         CourseDescriptionComponent,
+        SidebarTagsComponent,
        
     ],
     imports: [

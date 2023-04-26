@@ -11,7 +11,7 @@ module.exports = function (app) {
   // Get channel details
   // Only enrolled/admin
   app.get(
-    "/courses/:courseId/channels/:channelId",
+    "/api/courses/:courseId/channels/:channelId",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getChannel,
     logger.getChannel
@@ -20,7 +20,7 @@ module.exports = function (app) {
   // Create a new channel
   // Only moderator/admin
   app.post(
-    "/courses/:courseId/topics/:topicId/channel",
+    "/api/courses/:courseId/topics/:topicId/channel",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.newChannel,
     logger.newChannel
@@ -29,7 +29,7 @@ module.exports = function (app) {
   // Delete a channel
   // Only moderator/admin
   app.delete(
-    "/courses/:courseId/channels/:channelId",
+    "/api/courses/:courseId/channels/:channelId",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.deleteChannel,
     logger.deleteChannel
@@ -38,7 +38,7 @@ module.exports = function (app) {
   // Edit a channel
   // Only moderator/admin
   app.put(
-    "/courses/:courseId/channels/:channelId",
+    "/api/courses/:courseId/channels/:channelId",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.editChannel,
     logger.editChannel

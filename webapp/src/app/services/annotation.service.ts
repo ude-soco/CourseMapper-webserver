@@ -5,6 +5,8 @@ import { Annotation, AnnotationLocationType, AnnotationTool, AnnotationType, Pdf
 import { environment } from 'src/environments/environment';
 import { Material } from '../models/Material';
 import { Reply } from '../models/Reply';
+import { Channel } from '../models/Channel';
+import { Tag } from '../models/Tag';
 
 @Injectable({
   providedIn: 'root'

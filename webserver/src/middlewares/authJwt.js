@@ -34,13 +34,13 @@ const isAdmin = async (req, res, next) => {
   try {
     user = await User.findById(req.userId);
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding user" });
   }
   let role;
   try {
     role = await Role.findOne({ _id: user.role });
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding role" });
   }
   if (role.name === "admin") {
     req.isAdmin = true;
@@ -71,19 +71,18 @@ const isModerator = async (req, res, next) => {
       });
     }
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding user" });
   }
 
   let role;
   try {
     role = await Role.findOne({ _id: user.role });
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding role" });
   }
 
   if (role.name === "admin") {
     req.isAdmin = true;
-    // console.log("admin")
     return next();
   } else {
     let foundCourse = user.courses.find(
@@ -94,12 +93,11 @@ const isModerator = async (req, res, next) => {
       try {
         role = await Role.findOne({ _id: foundCourse.role });
       } catch (err) {
-        return res.status(500).send({ error: err });
+        return res.status(500).send({ error: "Error finding role" });
       }
 
       if (role.name === "moderator") {
         req.isModerator = true;
-        console.log(req.isModerator);
         return next();
       }
       return res.status(403).send({ message: "Require Moderator Role!" });
@@ -130,14 +128,14 @@ const isEnrolled = async (req, res, next) => {
       });
     }
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding user" });
   }
 
   let role;
   try {
     role = await Role.findOne({ _id: user.role });
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding role" });
   }
 
   if (role.name === "admin") {

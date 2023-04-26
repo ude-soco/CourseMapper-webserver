@@ -1,16 +1,38 @@
-<p align="center">
-<a href="https://www.uni-due.de/soco/research/projects/elas.php" target="_blank" rel="noopener noreferrer">
-<img width=50% src="webapp/src/assets/logo.svg" alt="re-frame logo">
-</a>
-</p>
+[![CI](https://github.com/ude-soco/CourseMapper-webserver/actions/workflows/ci.yml/badge.svg)](https://github.com/ude-soco/CourseMapper-webserver/actions/workflows/ci.yml)
 
-<p>
+<p align="center"><a href="https://www.uni-due.de/soco/research/projects/elas.php" target="_blank" rel="noopener noreferrer"><img width=50% src="webapp/src/assets/logo.svg" alt="re-frame logo"></a></p>
+
 CourseMapper is a collaborative course annotation and analytics platform that fosters collaboration and interaction around pdf/video learning materials, supported by visual learning analytics.
-</p>
 
 ## 🚀 Get Started
 
-### Manual Installation Guide 🔨
+#### Live instances
+
+* Production: [coursemapper.soco.inko.cloud](https://coursemapper.soco.inko.cloud/) (latest `v0.x.x` [release](https://github.com/ude-soco/CourseMapper-webserver/releases))
+* Edge: [edge.coursemapper.soco.inko.cloud](https://edge.coursemapper.soco.inko.cloud/)
+* Branch `development`: [development.coursemapper.soco.inko.cloud](https://development.coursemapper.soco.inko.cloud/)
+
+#### Build and run
+
+* `make up` to run the application using *Docker Compose*
+* `make tilt` to automatically rebuild during development using *Tilt*
+* `make mounted` to run processes using *Docker Compose*, but mount source code from host machine
+* see `./.k8s` for base configuration to run the application on *Kubernetes*
+* see the manual below to install dependencies and run processes *locally, without containers*
+
+Visit the [proxy service on port 8000](http://localhost:8000/) to use the application.
+
+#### Application stack
+
+The services making up the coursemapper-webserver project use the following images, hosted on Docker Hub:
+
+* Proxy: not published, only required for environments without built-in HTTP routing
+* Webapp: [socialcomputing/coursemapper-webserver-webapp](https://hub.docker.com/repository/docker/socialcomputing/coursemapper-webserver-webapp/general)
+* Webserver: [socialcomputing/coursemapper-webserver-webserver](https://hub.docker.com/repository/docker/socialcomputing/coursemapper-webserver-webserver/general)
+* MongoDB: [mongo (official image)](https://hub.docker.com/_/mongo)
+
+
+## 🔨 Development Setup Guide
 
 #### Step 1: Pre-requisites
 
@@ -37,7 +59,7 @@ CourseMapper is a collaborative course annotation and analytics platform that fo
 
 	If you face issue with `npm ci` command, try `npm install` or `npm install --force` command. Caution: `npm install` and `npm install --force` will delete all the existing node packages, install the new ones and update the `package-lock.json` file. Please make sure you do not push your changes to the `package-lock.json` file.
 
-- After the packages are installed, type the following command to run the server 
+- After the packages are installed, type the following command to run the server
 
 	```bash
 	npm run watch:dev
@@ -63,7 +85,7 @@ CourseMapper is a collaborative course annotation and analytics platform that fo
 	npm ci
 	```
 
-- After the packages are installed, type the following command to run the server 
+- After the packages are installed, type the following command to run the server
 
 	```bash
 	ng serve
@@ -81,10 +103,3 @@ CourseMapper is a collaborative course annotation and analytics platform that fo
 
 - Open MongoDB Compass and type `mongodb://localhost:27017` in the URI textbox and press connect button
 - Find the database `coursemapper_v2` in the left panel
-
-### Installation using Using Docker 🐳 (Updates required)
-
-- Download and install [Docker](https://www.docker.com/products/docker-desktop)
-- Open a command prompt, move to the `webserver` directory, and then type the command `npm ci`
-- Then move to the `webapp` directory, and type the command `npm ci`
-- Move back to root directory and type the following command `docker-compose up --build`

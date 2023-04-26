@@ -6,16 +6,17 @@ export const getReplyToAnnotationCreationStatement = (
   reply,
   origin
 ) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -74,16 +75,17 @@ export const getReplyToCommentCreationStatement = (
   reply,
   origin
 ) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -137,16 +139,17 @@ export const getReplyToCommentCreationStatement = (
 };
 
 export const getReplyDeletionStatement = (user, reply, origin) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -190,16 +193,17 @@ export const getReplyDeletionStatement = (user, reply, origin) => {
 };
 
 export const getReplyLikeStatement = (user, reply, origin) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -243,16 +247,17 @@ export const getReplyLikeStatement = (user, reply, origin) => {
 };
 
 export const getReplyUnlikeStatement = (user, reply, origin) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -296,16 +301,17 @@ export const getReplyUnlikeStatement = (user, reply, origin) => {
 };
 
 export const getReplyDislikeStatement = (user, reply, origin) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -349,16 +355,17 @@ export const getReplyDislikeStatement = (user, reply, origin) => {
 };
 
 export const getReplyUndislikeStatement = (user, reply, origin) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -402,16 +409,17 @@ export const getReplyUndislikeStatement = (user, reply, origin) => {
 };
 
 export const getReplyEditStatement = (user, oldReply, newReply, origin) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {

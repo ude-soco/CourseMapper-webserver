@@ -1,15 +1,16 @@
 import { v4 as uuidv4 } from "uuid";
 export const getMaterialUploadStatement = (user, material, origin) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -51,16 +52,17 @@ export const getMaterialUploadStatement = (user, material, origin) => {
 };
 
 export const getMaterialAccessStatement = (user, material, origin) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -102,16 +104,17 @@ export const getMaterialAccessStatement = (user, material, origin) => {
 };
 
 export const getMaterialDeletionStatement = (user, material, origin) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -152,17 +155,23 @@ export const getMaterialDeletionStatement = (user, material, origin) => {
   };
 };
 
-export const getMaterialEditStatement = (user, newMaterial, oldMaterial, origin) => {
+export const getMaterialEditStatement = (
+  user,
+  newMaterial,
+  oldMaterial,
+  origin
+) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -213,18 +222,27 @@ export const getMaterialEditStatement = (user, newMaterial, oldMaterial, origin)
   };
 };
 
-export const getVideoPlayStatement = (user, material, hours, minutes, seconds, origin) => {
+export const getVideoPlayStatement = (
+  user,
+  material,
+  hours,
+  minutes,
+  seconds,
+  origin
+) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
-  const duration = (parseInt(hours)*60*60) + (parseInt(minutes)*60) + parseInt(seconds);
+  const duration =
+    parseInt(hours) * 60 * 60 + parseInt(minutes) * 60 + parseInt(seconds);
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -266,18 +284,27 @@ export const getVideoPlayStatement = (user, material, hours, minutes, seconds, o
   };
 };
 
-export const getVideoPauseStatement = (user, material, hours, minutes, seconds, origin) => {
+export const getVideoPauseStatement = (
+  user,
+  material,
+  hours,
+  minutes,
+  seconds,
+  origin
+) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
-  const duration = (parseInt(hours)*60*60) + (parseInt(minutes)*60) + parseInt(seconds);
+  const duration =
+    parseInt(hours) * 60 * 60 + parseInt(minutes) * 60 + parseInt(seconds);
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -320,16 +347,17 @@ export const getVideoPauseStatement = (user, material, hours, minutes, seconds, 
 };
 
 export const getVideoEndStatement = (user, material, origin) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -371,16 +399,17 @@ export const getVideoEndStatement = (user, material, origin) => {
 };
 
 export const getSlideViewStatement = (user, material, slideNr, origin) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -423,16 +452,17 @@ export const getSlideViewStatement = (user, material, slideNr, origin) => {
 };
 
 export const getPdfCompleteStatement = (user, material, origin) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {

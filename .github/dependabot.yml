@@ -1,0 +1,59 @@
+version: 2
+updates:
+- package-ecosystem: "github-actions"
+  directory: "/"
+  schedule:
+    interval: "weekly"
+
+- package-ecosystem: "docker"
+  directory: "/proxy"
+  schedule:
+    interval: "weekly"
+  labels:
+  - "dependencies"
+  - "docker"
+  - "proxy"
+
+- package-ecosystem: "docker"
+  directory: "/webapp"
+  schedule:
+    interval: "weekly"
+  ignore:
+  - dependency-name: "node"
+    versions: ["17.x-slim", "19.x-slim", "21.x-slim", "23.x-slim"]
+  labels:
+  - "dependencies"
+  - "docker"
+  - "webapp"
+
+- package-ecosystem: "docker"
+  directory: "/webserver"
+  schedule:
+    interval: "weekly"
+  ignore:
+  - dependency-name: "node"
+    versions: ["17.x-slim", "19.x-slim", "21.x-slim", "23.x-slim"]
+  labels:
+  - "dependencies"
+  - "docker"
+  - "webserver"
+
+- package-ecosystem: "npm"
+  directory: "/webapp"
+  schedule:
+    interval: "daily"
+  open-pull-requests-limit: 10
+  labels:
+  - "dependencies"
+  - "javascript"
+  - "webapp"
+
+- package-ecosystem: "npm"
+  directory: "/webserver"
+  schedule:
+    interval: "daily"
+  open-pull-requests-limit: 10
+  labels:
+  - "dependencies"
+  - "javascript"
+  - "webserver"

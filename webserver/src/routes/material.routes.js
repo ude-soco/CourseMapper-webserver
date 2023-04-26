@@ -11,7 +11,7 @@ module.exports = function (app) {
   // Get details of material
   // Only enrolled users/admin
   app.get(
-    "/courses/:courseId/materials/:materialId",
+    "/api/courses/:courseId/materials/:materialId",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getMaterial,
     logger.getMaterial
@@ -20,7 +20,7 @@ module.exports = function (app) {
   // Create a new material
   // Only moderator/admin
   app.post(
-    "/courses/:courseId/channels/:channelId/material",
+    "/api/courses/:courseId/channels/:channelId/material",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.newMaterial,
     logger.newMaterial
@@ -29,7 +29,7 @@ module.exports = function (app) {
   // Delete a material
   // Only moderator/admin
   app.delete(
-    "/courses/:courseId/materials/:materialId",
+    "/api/courses/:courseId/materials/:materialId",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.deleteMaterial,
     logger.deleteMaterial
@@ -38,44 +38,42 @@ module.exports = function (app) {
   // Edit a material
   // Only moderator/admin
   app.put(
-    "/courses/:courseId/materials/:materialId",
+    "/api/courses/:courseId/materials/:materialId",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.editMaterial,
     logger.editMaterial
   );
 
   app.get(
-    "/courses/:courseId/materials/:materialId/:hours/:minutes/:seconds/video/play",
+    "/api/courses/:courseId/materials/:materialId/:hours/:minutes/:seconds/video/play",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getMaterial,
     logger.playVideo
   );
 
-
   app.get(
-    "/courses/:courseId/materials/:materialId/:hours/:minutes/:seconds/video/pause",
+    "/api/courses/:courseId/materials/:materialId/:hours/:minutes/:seconds/video/pause",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getMaterial,
     logger.pauseVideo
   );
 
-
   app.get(
-    "/courses/:courseId/materials/:materialId/video/complete",
+    "/api/courses/:courseId/materials/:materialId/video/complete",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getMaterial,
     logger.completeVideo
   );
 
   app.get(
-    "/courses/:courseId/materials/:materialId/pdf/slide/:slideNr/view",
+    "/api/courses/:courseId/materials/:materialId/pdf/slide/:slideNr/view",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getMaterial,
     logger.viewSlide
   );
 
   app.get(
-    "/courses/:courseId/materials/:materialId/pdf/complete",
+    "/api/courses/:courseId/materials/:materialId/pdf/complete",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getMaterial,
     logger.completePDF

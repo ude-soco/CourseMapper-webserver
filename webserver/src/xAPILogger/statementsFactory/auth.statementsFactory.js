@@ -1,16 +1,17 @@
 import { v4 as uuidv4 } from "uuid";
 
 export const getLoginStatement = (user, origin) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -40,16 +41,17 @@ export const getLoginStatement = (user, origin) => {
 };
 
 export const getLogoutStatement = (user, origin) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -79,16 +81,17 @@ export const getLogoutStatement = (user, origin) => {
 };
 
 export const getSignupStatement = (user, origin) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {

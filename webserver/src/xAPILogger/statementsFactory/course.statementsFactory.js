@@ -1,15 +1,16 @@
 import { v4 as uuidv4 } from "uuid";
 export const getCourseCreationStatement = (user, course, origin) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -47,16 +48,17 @@ export const getCourseCreationStatement = (user, course, origin) => {
 };
 
 export const getCourseDeletionStatement = (user, course, origin) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -94,16 +96,17 @@ export const getCourseDeletionStatement = (user, course, origin) => {
 };
 
 export const getCourseAccessStatement = (user, course, origin) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -141,16 +144,17 @@ export const getCourseAccessStatement = (user, course, origin) => {
 };
 
 export const getCourseEnrollmentStatement = (user, course, origin) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -188,16 +192,17 @@ export const getCourseEnrollmentStatement = (user, course, origin) => {
 };
 
 export const getCourseWithdrawStatement = (user, course, origin) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {
@@ -235,16 +240,17 @@ export const getCourseWithdrawStatement = (user, course, origin) => {
 };
 
 export const getCourseEditStatement = (user, newCourse, oldCourse, origin) => {
+  let userId = user._id.toString();
   const fullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: fullname,
+      name: userId,
       account: {
         homePage: origin,
-        name: user.username,
+        name: userId,
       },
     },
     verb: {

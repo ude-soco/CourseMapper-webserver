@@ -2,12 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Annotation, AnnotationType, VideoAnnotationTool } from 'src/app/models/Annotations';
 import { printTime } from 'src/app/_helpers/format';
-import { getCurrentCourseId, getCurrentMaterialId } from '../../../materils/state/materials.reducer';
+import { getCurrentMaterialId } from '../../../materials/state/materials.reducer';
 import { getCurrentTime, getDrawingData, getIsAnnotationDialogVisible, getIsBrushSelectionActive, getIsPinpointSelectionActive, getPinPointPosition, getVideoDuration, State } from '../state/video.reducer';
 import * as AnnotationActions from '../../pdf-annotation/state/annotation.actions'
 import * as VideoActions from 'src/app/pages/components/annotations/video-annotation/state/video.action'
 import { Observable } from 'rxjs';
 import { DrawingData } from 'src/app/models/Drawing';
+import { getCurrentCourseId } from 'src/app/pages/courses/state/course.reducer';
 
 @Component({
   selector: 'app-video-create-annotation',
@@ -15,7 +16,7 @@ import { DrawingData } from 'src/app/models/Drawing';
   styleUrls: ['./video-create-annotation.component.css']
 })
 export class VideoCreateAnnotationComponent implements OnInit {
-  annotationColor: string = '#0000004D';
+  annotationColor: string = '#70b85e';
   rangeValues: number[];
   selectedAnnotationType: AnnotationType;
   selectedAnnotationLocation: string;
@@ -77,7 +78,7 @@ export class VideoCreateAnnotationComponent implements OnInit {
         this.sendButtonColor ='text-pink-700';
         break;
       case null:
-        this.annotationColor = '#0000004D';
+        this.annotationColor = '#70b85e';
         this.sendButtonColor ='text-green-600';
         break;
     }
@@ -324,9 +325,6 @@ export class VideoCreateAnnotationComponent implements OnInit {
     this.store.dispatch(VideoActions.setIsPinpointSelectionActive({isPinpointSelectionActive: false}));
     this.store.dispatch(VideoActions.SetDrawingData({drawingData: null}));
     this.store.dispatch(VideoActions.SetPinPointPosition({pinpointPosition: [null, null]}));
-    this.annotationColor = '#0000004D';
-    this.selectedAnnotationLocation = null;
-    this.selectedAnnotationType = null;
     this.content = null;
     this.sendButtonDisabled = true;
   }

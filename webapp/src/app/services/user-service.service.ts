@@ -19,7 +19,7 @@ export class UserServiceService {
 
   login(username: string, password: string): Observable<any> {
     return this.http.post(
-      AUTH_API + 'signin',
+      AUTH_API_2 + 'signin',
       { username, password },
       HTTPOptions
     );
@@ -34,7 +34,7 @@ export class UserServiceService {
   ): Observable<any> {
     return this.http
       .post(
-        AUTH_API + 'signup',
+        AUTH_API_2 + 'signup',
         { firstname, lastname, username, email, password },
         HTTPOptions
       )
@@ -57,12 +57,14 @@ export class UserServiceService {
   }
 
   logout(): Observable<any> {
-    return this.http.post(AUTH_API + 'signout', {}, HTTPOptions);
+    return this.http.post(AUTH_API_2 + 'signout', {}, HTTPOptions);
   }
 
   GetUserName(_id:string): Observable<any> {
     return this.http.get<any>(`${this.API_URL}/users/${_id}`).pipe(tap( user => {
 this.user=user
+console.log("this.user GetUserName")
+console.log(this.user)
     }))
   }
 

@@ -17,8 +17,9 @@ import { Material } from 'src/app/models/Material';
 import { MaterilasService } from 'src/app/services/materials.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import * as MaterialActions from 'src/app/pages/components/materils/state/materials.actions';
-import { State } from '../materils/state/materials.reducer';
+import * as MaterialActions from 'src/app/pages/components/materials/state/materials.actions';
+import { State } from '../materials/state/materials.reducer';
+import * as  CourseActions from 'src/app/pages/courses/state/course.actions'
 
 @Component({
   selector: 'app-topic-dropdown',
@@ -38,12 +39,27 @@ export class TopicDropdownComponent implements OnInit {
     private route: ActivatedRoute,
     private renderer: Renderer2,
     private changeDetectorRef: ChangeDetectorRef
-  ) {}
+  ) {
+    const url = this.router.url;
+    if (url.includes('course') && url.includes('channel')) {
+      const courseRegex = /\/course\/(\w+)/;
+      const channelRegex = /\/channel\/(\w+)/;
+      const courseId = courseRegex.exec(url)[1];
+      const channelId = channelRegex.exec(url)[1];
+      const materialId = url.match(/material:(.*?)\/(pdf|video)/)?.[1];
+      this.topicChannelService.fetchTopics(courseId).subscribe((course) => {
+        this.selectedTopic = course.topics.find((topic) => topic.channels.find((channel) => channel._id === channelId));
+        console.log('mango: ' + this.selectedTopic._id);
+        this.onSelectTopic(this.selectedTopic);
+        this.selectedChannelId = channelId;
+      })
+    }
+  }
   @Input() showModeratorPrivileges: boolean;
 
   topics: Topic[] = [];
   displayAddChannelDialogue: boolean = false;
-  selectedTopic = null;
+  selectedTopic : Topic = null;
   prevSelectedTopic = null;
   selectedChannel = null;
   selectedChannelId = null;
@@ -89,7 +105,7 @@ export class TopicDropdownComponent implements OnInit {
   ngOnInit(): void {
     this.topicChannelService
       .fetchTopics(this.courseService.getSelectedCourse()._id)
-      .subscribe((topics) => (this.topics = topics));
+      .subscribe((course) => (this.topics = course.topics));
     this.topicChannelService.onUpdateTopics$.subscribe(
       (topics) => (this.topics = topics)
     );
@@ -141,8 +157,11 @@ export class TopicDropdownComponent implements OnInit {
           this.expandTopic.splice(index, 1);
         }
       });
+      this.store.dispatch(CourseActions.setCurrentTopic({selcetedTopic: null}));
     } else {
+      this.expandTopic = [];
       this.expandTopic.push(topic._id);
+      this.store.dispatch(CourseActions.setCurrentTopic({selcetedTopic: topic}));
       // wait until expanded topic rendered
       setTimeout(() => {
         // if exists channel previously selected --> make channel container bg=white
@@ -181,7 +200,10 @@ export class TopicDropdownComponent implements OnInit {
       channel._id,
     ]);
     this.store.dispatch(
-      MaterialActions.toggleChannelSelected({ channelSelected: true })
+      CourseActions.toggleChannelSelected({ channelSelected: true })
+    );
+    this.store.dispatch(
+      CourseActions.SetSelectedChannel({ selectedChannel: channel })
     );
     // make selected channel's background white
     this.selectedChannelId = channel._id;

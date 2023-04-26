@@ -6,6 +6,12 @@ import { CourseDescriptionComponent } from '../components/course-description/cou
 import { AppModule } from "../../app.module";
 import { SidebarComponent } from '../components/sidebar/sidebar.component';
 import { RouterModule } from '@angular/router';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { PrimengModule } from 'src/app/modules/primeng/primeng.module';
+import { ToastModule } from 'primeng/toast';
+import { EffectsModule } from '@ngrx/effects';
+import { CourseEffects } from './state/course.effects';
+import { TagsPageComponent } from './tags-page/tags-page.component';
 
 
 
@@ -21,7 +27,9 @@ import { RouterModule } from '@angular/router';
         
         
         
-    ],
+    
+    TagsPageComponent
+  ],
     exports: [
        
         
@@ -32,6 +40,10 @@ import { RouterModule } from '@angular/router';
     imports: [
         CommonModule,
         StoreModule.forFeature('course', courseReducer),
+        EffectsModule.forFeature([CourseEffects]),
+        ConfirmDialogModule,
+        PrimengModule,
+        ToastModule
         
         
     

@@ -1,6 +1,3 @@
-import { role, ROLES } from "../models";
-
-const ObjectId = require("mongoose").Types.ObjectId;
 const db = require("../models");
 const socketio = require("../socketio");
 const Annotation = db.annotation;
@@ -8,7 +5,7 @@ const Material = db.material;
 const Reply = db.reply;
 const Tag = db.tag;
 const User = db.user;
-const Role = db.role
+const Role = db.role;
 
 /**
  * @function newAnnotation
@@ -19,7 +16,7 @@ const Role = db.role
  * @param {string} req.params.materialId The id of the material
  * @param {string} req.body.type The type of the annotation
  * @param {string} req.body.content The content of the annotation
- * @param {string} req.body.location The location of the annotation
+ * @param {string} req.body.location The location of the annotfindByIdation
  * @param {string} req.body.tool The annotation tool used
  * @param {string} req.userId The author of the annotation. Anyone can create an annotation
  */
@@ -33,7 +30,7 @@ export const newAnnotation = async (req, res, next) => {
 
   let foundMaterial;
   try {
-    foundMaterial = await Material.findById({ _id: ObjectId(materialId) });
+    foundMaterial = await Material.findById(materialId);
     if (!foundMaterial) {
       return res.status(404).send({
         error: `Material with id ${materialId} doesn't exist!`,
@@ -45,27 +42,33 @@ export const newAnnotation = async (req, res, next) => {
       });
     }
   } catch (err) {
-    res.status(500).send({ error: err });
+    res.status(500).send({ error: "Error finding material" });
   }
 
   let foundUser;
   try {
-    foundUser = await User.findById({ _id: ObjectId(req.userId) });
+    foundUser = await User.findById(req.userId);
   } catch (err) {
-    res.status(500).send({ error: err });
+    res.status(500).send({ error: "Error finding user" });
   }
 
   let authorName = `${foundUser.firstname} ${foundUser.lastname}`;
-  let foundCourse = foundUser.courses.find((course) => course.courseId.toString() == courseId)
-  let foundRole = await Role.findById({ _id: ObjectId(foundCourse.role) });
-
+  let foundCourse = foundUser.courses.find(
+    (course) => course.courseId.toString() == courseId
+  );
+  let foundRole;
+  try {
+    foundRole = await Role.findById(foundCourse.role);
+  } catch (err) {
+    res.status(500).send({ error: "Error finding role" });
+  }
   let annotation = new Annotation({
     type: annotationType,
     content: annotationContent,
     author: {
       userId: req.userId,
       name: authorName,
-      role: foundRole
+      role: foundRole,
     },
     location: annotationLocation,
     tool: annotationTool,
@@ -81,20 +84,16 @@ export const newAnnotation = async (req, res, next) => {
   try {
     newAnnotation = await annotation.save();
   } catch (err) {
-    res.status(500).send({ error: err });
+    res.status(500).send({ error: "Error saving annotation" });
   }
-
   foundMaterial.annotations.push(newAnnotation._id);
-
   try {
     await foundMaterial.save();
   } catch (err) {
-    res.status(500).send({ error: err });
+    res.status(500).send({ error: "Error saving material" });
   }
-
   // Checks for hashtags in content
   let foundTags = annotationContent.split(" ").filter((v) => v.startsWith("#"));
-
   if (foundTags.length !== 0) {
     let foundTagsSchema = [];
     foundTags.forEach((tag) => {
@@ -110,28 +109,25 @@ export const newAnnotation = async (req, res, next) => {
       });
       foundTagsSchema.push(newTag);
     });
-
     try {
       await Tag.insertMany(foundTagsSchema);
     } catch (err) {
-      return res.status(500).send({ error: err });
+      return res.status(500).send({ error: "Error saving tags" });
     }
   }
-
   req.locals = {
     response: newAnnotation,
     material: foundMaterial,
     user: foundUser,
-    annotation: newAnnotation
-  }
-
-  socketio.getIO().emit(materialId, {
-    eventType: 'annotationCreated',
     annotation: newAnnotation,
-    reply: null
+  };
+  socketio.getIO().emit(materialId, {
+    eventType: "annotationCreated",
+    annotation: newAnnotation,
+    reply: null,
   });
-  
-  return next()
+
+  return next();
 };
 
 /**
@@ -147,23 +143,19 @@ export const deleteAnnotation = async (req, res, next) => {
   const annotationId = req.params.annotationId;
   const userId = req.userId;
 
-  let user
+  let user;
   try {
-    user = await User.findOne({_id: userId});
+    user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).send({ error: "User not found." });
     }
-
   } catch (error) {
-    return res.status(500).send({ error: error });
+    return res.status(500).send({ error: "Error finding user" });
   }
-
   let foundAnnotation;
   try {
-    foundAnnotation = await Annotation.findById({
-      _id: ObjectId(annotationId),
-    });
+    foundAnnotation = await Annotation.findById(annotationId);
     if (!foundAnnotation) {
       return res.status(404).send({
         error: `Annotation with id ${annotationId} doesn't exist!`,
@@ -174,7 +166,6 @@ export const deleteAnnotation = async (req, res, next) => {
         error: `Annotation doesn't belong to course with id ${courseId}!`,
       });
     }
-
     if (
       req.userId !== foundAnnotation.author.userId.valueOf() &&
       !req.isAdmin &&
@@ -185,59 +176,49 @@ export const deleteAnnotation = async (req, res, next) => {
       });
     }
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding annotation" });
   }
-
   try {
     // TODO: Should not delete if there are replies
-    await foundAnnotation.deleteOne({ _id: ObjectId(annotationId) });
+    await foundAnnotation.deleteOne({ _id: annotationId });
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error deleting reply" });
   }
-
   let foundMaterial;
   try {
-    foundMaterial = await Material.findById({
-      _id: foundAnnotation.materialId,
-    });
+    foundMaterial = await Material.findById(foundAnnotation.materialId);
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding material" });
   }
-
   foundMaterial.annotations = foundMaterial.annotations.filter(
     (annotation) => annotation.valueOf() !== annotationId
   );
-
   try {
     await foundMaterial.save();
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error saving material" });
   }
-
   try {
     await Reply.deleteMany({ annotationId: annotationId });
   } catch (err) {
-      return res.status(500).send({error: err});
+    return res.status(500).send({ error: "Error deleting reply" });
   }
-
   try {
     await Tag.deleteMany({ annotationId: annotationId });
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error deleting tag" });
   }
-
   socketio.getIO().emit(foundMaterial._id, {
-    eventType: 'annotationDeleted',
+    eventType: "annotationDeleted",
     annotation: foundAnnotation,
-    reply: null
+    reply: null,
   });
-
   req.locals = {
     response: { success: "Annotation successfully deleted" },
     annotation: foundAnnotation,
-    user: user
-  }
-  
+    user: user,
+  };
+
   return next();
 };
 
@@ -262,23 +243,18 @@ export const editAnnotation = async (req, res, next) => {
   const annotationTool = req.body.tool;
   const userId = req.userId;
 
-  let user
+  let user;
   try {
-    user = await User.findOne({_id: userId});
-
+    user = await User.findById(userId);
     if (!user) {
       return res.status(404).send({ error: "User not found." });
     }
-
   } catch (error) {
-    return res.status(500).send({ error: error });
+    return res.status(500).send({ error: "Error finding user" });
   }
-
   let foundAnnotation;
   try {
-    foundAnnotation = await Annotation.findById({
-      _id: ObjectId(annotationId),
-    });
+    foundAnnotation = await Annotation.findById(annotationId);
     if (!foundAnnotation) {
       return res.status(404).send({
         error: `Annotation with id ${annotationId} doesn't exist!`,
@@ -295,35 +271,29 @@ export const editAnnotation = async (req, res, next) => {
       });
     }
   } catch (err) {
-    res.status(500).send({ error: err });
+    res.status(500).send({ error: "Error finding annotation" });
   }
-
   req.locals = {
-    oldAnnotation: JSON.parse(JSON.stringify(foundAnnotation))
-  }
-
+    oldAnnotation: JSON.parse(JSON.stringify(foundAnnotation)),
+  };
   foundAnnotation.type = annotationType;
   foundAnnotation.content = annotationContent;
   foundAnnotation.location = annotationLocation;
   foundAnnotation.tool = annotationTool;
   foundAnnotation.updatedAt = Date.now();
-
   try {
     // TODO: Check if the tag has changed and/or new tag(s) is added
     await foundAnnotation.save();
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error saving annotation" });
   }
-
   try {
     await Tag.deleteMany({ annotationId: annotationId });
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error deleting tag" });
   }
-
   // Checks for hashtags in content
   let foundTags = annotationContent.split(" ").filter((v) => v.startsWith("#"));
-
   let foundTagsSchema = [];
   if (foundTags.length !== 0) {
     foundTags.forEach((tag) => {
@@ -339,22 +309,21 @@ export const editAnnotation = async (req, res, next) => {
       });
       foundTagsSchema.push(newTag);
     });
-
     try {
       await Tag.insertMany(foundTagsSchema);
     } catch (err) {
-      return res.status(500).send({ error: err });
+      return res.status(500).send({ error: "Error inserting tag" });
     }
   }
-
-  req.locals.response = { success: "Annotation successfully updated" }
+  req.locals.response = { success: "Annotation successfully updated" };
   req.locals.newAnnotation = foundAnnotation;
   req.locals.user = user;
   socketio.getIO().emit(foundAnnotation.materialId, {
-    eventType: 'annotationEdited',
+    eventType: "annotationEdited",
     annotation: foundAnnotation,
-    reply: null
+    reply: null,
   });
+
   return next();
 };
 
@@ -371,21 +340,20 @@ export const likeAnnotation = async (req, res, next) => {
   const annotationId = req.params.annotationId;
   const userId = req.userId;
 
-  let user
+  let user;
   try {
-    user = await User.findOne({_id: userId});
+    user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).send({ error: "User not found." });
     }
-
   } catch (error) {
-    return res.status(500).send({ error: error });
+    return res.status(500).send({ error: "Error finding user" });
   }
 
   let foundAnnotation;
   try {
-    foundAnnotation = await Annotation.findOne({ _id: ObjectId(annotationId) });
+    foundAnnotation = await Annotation.findById(annotationId);
     if (!foundAnnotation) {
       return res.status(404).send({
         error: `Annotation with id ${annotationId} doesn't exist!`,
@@ -397,15 +365,15 @@ export const likeAnnotation = async (req, res, next) => {
       });
     }
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding annotation" });
   }
 
   req.locals = {
     annotation: foundAnnotation,
-    user: user
-  }
+    user: user,
+  };
 
-  if (foundAnnotation.likes.includes(ObjectId(req.userId))) {
+  if (foundAnnotation.likes.includes(req.userId)) {
     foundAnnotation.likes = foundAnnotation.likes.filter(
       (user) => user.valueOf() !== req.userId
     );
@@ -413,47 +381,46 @@ export const likeAnnotation = async (req, res, next) => {
     try {
       savedAnnotation = await foundAnnotation.save();
     } catch (err) {
-      return res.status(500).send({ error: err });
+      return res.status(500).send({ error: "Error saving annotation" });
     }
     let countLikes = savedAnnotation.likes.length;
 
     req.locals.response = {
       count: countLikes,
       success: "Annotation successfully unliked!",
-    }
+    };
     req.locals.like = false;
     socketio.getIO().emit(annotationId, {
-      eventType: 'annotationUnliked',
+      eventType: "annotationUnliked",
       annotation: savedAnnotation,
-      reply: null
+      reply: null,
     });
     return next();
-
-  } else if (foundAnnotation.dislikes.includes(ObjectId(req.userId))) {
+  } else if (foundAnnotation.dislikes.includes(req.userId)) {
     return res
       .status(404)
       .send({ error: "Cannot like! Annotation already disliked by user!" });
   } else {
-    foundAnnotation.likes.push(ObjectId(req.userId));
+    foundAnnotation.likes.push(req.userId);
     let savedAnnotation;
     try {
       savedAnnotation = await foundAnnotation.save();
     } catch (err) {
-      return res.status(500).send({ error: err });
+      return res.status(500).send({ error: "Error saving annotation" });
     }
     let countLikes = savedAnnotation.likes.length;
 
     req.locals.response = {
       count: countLikes,
       success: "Annotation successfully liked!",
-    }
+    };
 
     req.locals.like = true;
-  socketio.getIO().emit(annotationId, {
-    eventType: 'annotationLiked',
-    annotation: savedAnnotation,
-    reply: null
-  });
+    socketio.getIO().emit(annotationId, {
+      eventType: "annotationLiked",
+      annotation: savedAnnotation,
+      reply: null,
+    });
     return next();
   }
 };
@@ -471,21 +438,20 @@ export const dislikeAnnotation = async (req, res, next) => {
   const annotationId = req.params.annotationId;
   const userId = req.userId;
 
-  let user
+  let user;
   try {
-    user = await User.findOne({_id: userId});
+    user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).send({ error: "User not found." });
     }
-
   } catch (error) {
-    return res.status(500).send({ error: error });
+    return res.status(500).send({ error: "Error finding user" });
   }
 
   let foundAnnotation;
   try {
-    foundAnnotation = await Annotation.findOne({ _id: ObjectId(annotationId) });
+    foundAnnotation = await Annotation.findById(annotationId);
     if (!foundAnnotation) {
       res.status(404).send({
         error: `Annotation with id ${annotationId} doesn't exist!`,
@@ -498,15 +464,15 @@ export const dislikeAnnotation = async (req, res, next) => {
       });
     }
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding annotation" });
   }
 
   req.locals = {
     annotation: foundAnnotation,
-    user: user
-  }
+    user: user,
+  };
 
-  if (foundAnnotation.dislikes.includes(ObjectId(req.userId))) {
+  if (foundAnnotation.dislikes.includes(req.userId)) {
     foundAnnotation.dislikes = foundAnnotation.dislikes.filter(
       (user) => user.valueOf() !== req.userId
     );
@@ -514,48 +480,50 @@ export const dislikeAnnotation = async (req, res, next) => {
     try {
       savedAnnotation = await foundAnnotation.save();
     } catch (err) {
-      res.status(500).send({ error: err });
+      res.status(500).send({ error: "Error saving annotation" });
     }
-    let countDislikes = savedAnnotation.dislikes.length ? savedAnnotation.dislikes.length : 0;
+    let countDislikes = savedAnnotation.dislikes.length
+      ? savedAnnotation.dislikes.length
+      : 0;
 
     req.locals.response = {
       count: countDislikes,
       success: "Annotation successfully un-disliked!",
-    }
+    };
     req.locals.dislike = false;
     socketio.getIO().emit(annotationId, {
-      eventType: 'annotationUndisliked',
+      eventType: "annotationUndisliked",
       annotation: savedAnnotation,
-      reply: null
+      reply: null,
     });
     return next();
-
-  } else if (foundAnnotation.likes.includes(ObjectId(req.userId))) {
+  } else if (foundAnnotation.likes.includes(req.userId)) {
     return res
       .status(404)
       .send({ error: "Cannot dislike! Annotation already liked by user!" });
   } else {
-    foundAnnotation.dislikes.push(ObjectId(req.userId));
+    foundAnnotation.dislikes.push(req.userId);
     let savedAnnotation;
     try {
       savedAnnotation = await foundAnnotation.save();
     } catch (err) {
-      return res.status(500).send({ error: err });
+      return res.status(500).send({ error: "Error saving annotation" });
     }
-    let countDislikes = savedAnnotation.dislikes.length ? savedAnnotation.dislikes.length : 0;
+    let countDislikes = savedAnnotation.dislikes.length
+      ? savedAnnotation.dislikes.length
+      : 0;
 
     req.locals.response = {
       count: countDislikes,
       success: "Annotation successfully disliked!",
-    }
+    };
     req.locals.dislike = true;
     socketio.getIO().emit(annotationId, {
-      eventType: 'annotationDisliked',
+      eventType: "annotationDisliked",
       annotation: savedAnnotation,
-      reply: null
+      reply: null,
     });
     return next();
-
   }
 };
 
@@ -574,15 +542,15 @@ export const getAllAnnotations = async (req, res) => {
   let foundAnnotations;
   try {
     foundAnnotations = await Annotation.find({
-      materialId: ObjectId(materialId),
-      courseId: ObjectId(courseId),
+      materialId: materialId,
+      courseId: courseId,
     });
     if (!foundAnnotations) {
       return res.status(404).send({
         error: `Annotations with materialId ${materialId} doesn't exist!`,
       });
     }
-    foundAnnotations.forEach((annotation) =>{
+    foundAnnotations.forEach((annotation) => {
       if (annotation.courseId.valueOf() !== courseId) {
         return res.status(404).send({
           error: `Annotation doesn't belong to course with id ${courseId}!`,
@@ -590,8 +558,10 @@ export const getAllAnnotations = async (req, res) => {
       }
     });
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding annotation" });
   }
-  foundAnnotations.sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  foundAnnotations.sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
   return res.status(200).send(foundAnnotations);
 };

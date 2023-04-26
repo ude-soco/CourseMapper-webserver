@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp
+  annotations:
+    keel.sh/policy: minor
+    keel.sh/trigger: poll
+    keel.sh/pollSchedule: "@every 5m"
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      component: webapp
+  template:
+    metadata:
+      labels:
+        component: webapp
+    spec:
+      containers:
+      - name: webapp
+        image: socialcomputing/coursemapper-webserver-webapp
+        ports:
+        - containerPort: 4200
+        env:
+        - name: BASE_URL
+          value: "/api"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 4200
+        resources:
+          requests:
+            memory: 8Mi
+            cpu: 10m
+          limits:
+            memory: 256Mi
+            cpu: 1
+            ephemeral-storage: 16Mi

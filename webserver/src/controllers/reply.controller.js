@@ -1,11 +1,10 @@
-const ObjectId = require("mongoose").Types.ObjectId;
 const db = require("../models");
 const socketio = require("../socketio");
 const Annotation = db.annotation;
 const Reply = db.reply;
 const Tag = db.tag;
 const User = db.user;
-const Role = db.role
+const Role = db.role;
 
 /**
  * @function getReplies
@@ -19,9 +18,7 @@ export const getReplies = async (req, res) => {
   const annotationId = req.params.annotationId;
   let foundAnnotation;
   try {
-    foundAnnotation = await Annotation.findById({
-      _id: ObjectId(annotationId),
-    });
+    foundAnnotation = await Annotation.findById(annotationId);
     if (!foundAnnotation) {
       return res.status(404).send({
         error: `Annotation with id ${annotationId} doesn't exist!`,
@@ -33,13 +30,14 @@ export const getReplies = async (req, res) => {
       });
     }
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding annotation" });
   }
+  console.log();
   let foundReplies;
   try {
-    foundReplies = await Reply.find({ annotationId: ObjectId(annotationId) });
+    foundReplies = await Reply.find({ annotationId: annotationId });
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding reply" });
   }
   return res.status(200).send(foundReplies);
 };
@@ -59,21 +57,20 @@ export const newReply = async (req, res, next) => {
   const replyContent = req.body.content;
   const userId = req.userId;
 
-  let user
+  let user;
   try {
-    user = await User.findOne({_id: userId});
+    user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).send({ error: "User not found." });
     }
-
   } catch (error) {
-    return res.status(500).send({ error: error });
+    return res.status(500).send({ error: "Error finding user" });
   }
 
   let foundAnnotation;
   try {
-    foundAnnotation = await Annotation.findOne({ _id: annotationId });
+    foundAnnotation = await Annotation.findById(annotationId);
     if (!foundAnnotation) {
       return res.status(404).send({
         error: `Annotation with id ${annotationId} doesn't exist!`,
@@ -85,26 +82,32 @@ export const newReply = async (req, res, next) => {
       });
     }
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding annotation" });
   }
 
   let foundUser;
   try {
-    foundUser = await User.findOne({ _id: req.userId });
+    foundUser = await User.findById(req.userId);
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding user" });
   }
 
   let authorName = `${foundUser.firstname} ${foundUser.lastname}`;
-  let foundCourse = foundUser.courses.find((course) => course.courseId.toString() == courseId)
-  let foundRole = await Role.findById({ _id: ObjectId(foundCourse.role) });
-
+  let foundCourse = foundUser.courses.find(
+    (course) => course.courseId.toString() == courseId
+  );
+  let foundRole;
+  try {
+    foundRole = await Role.findById(foundCourse.role);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding role" });
+  }
   let reply = new Reply({
     content: replyContent,
     author: {
       userId: req.userId,
       name: authorName,
-      role: foundRole
+      role: foundRole,
     },
     courseId: foundAnnotation.courseId,
     topicId: foundAnnotation.topicId,
@@ -119,19 +122,15 @@ export const newReply = async (req, res, next) => {
   try {
     newReply = await reply.save();
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error saving reply" });
   }
-
   foundAnnotation.replies.push(newReply._id);
-
   try {
     await foundAnnotation.save();
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error saving annotation" });
   }
-
   let foundTags = replyContent.split(" ").filter((v) => v.startsWith("#"));
-
   let foundTagsSchema = [];
   if (foundTags.length !== 0) {
     foundTags.forEach((tag) => {
@@ -148,25 +147,22 @@ export const newReply = async (req, res, next) => {
       });
       foundTagsSchema.push(newTag);
     });
-
     try {
       await Tag.insertMany(foundTagsSchema);
     } catch (err) {
-      return res.status(500).send({error: err});
+      return res.status(500).send({ error: "Error saving tags" });
     }
   }
-
   req.locals = {
-    response:{ id: newReply._id, success: `Reply added!` },
+    response: { id: newReply._id, success: `Reply added!` },
     user: user,
-    annotation:foundAnnotation,
-    reply:newReply
-  }
-
-  socketio.getIO().emit(annotationId, {
-    eventType: 'replyCreated',
     annotation: foundAnnotation,
-    reply: newReply
+    reply: newReply,
+  };
+  socketio.getIO().emit(annotationId, {
+    eventType: "replyCreated",
+    annotation: foundAnnotation,
+    reply: newReply,
   });
 
   return next();
@@ -185,21 +181,19 @@ export const deleteReply = async (req, res, next) => {
   const replyId = req.params.replyId;
   const userId = req.userId;
 
-  let user
+  let user;
   try {
-    user = await User.findOne({_id: userId});
-
+    user = await User.findById(userId);
     if (!user) {
       return res.status(404).send({ error: "User not found." });
     }
-
   } catch (error) {
-    return res.status(500).send({ error: error });
+    return res.status(500).send({ error: "Error finding user" });
   }
 
   let foundReply;
   try {
-    foundReply = await Reply.findOne({ _id: ObjectId(replyId) });
+    foundReply = await Reply.findById(replyId);
     if (!foundReply) {
       return res.status(404).send({
         error: `Reply with id ${replyId} doesn't exist!`,
@@ -220,20 +214,18 @@ export const deleteReply = async (req, res, next) => {
       });
     }
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding reply" });
   }
   try {
     await foundReply.deleteOne({ _id: replyId });
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error deleting reply" });
   }
   let foundAnnotation;
   try {
-    foundAnnotation = await Annotation.findOne({
-      _id: foundReply.annotationId,
-    });
+    foundAnnotation = await Annotation.findById(foundReply.annotationId);
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding annotation" });
   }
   foundAnnotation.replies = foundAnnotation.replies.filter(
     (reply) => reply.valueOf() !== replyId
@@ -241,19 +233,19 @@ export const deleteReply = async (req, res, next) => {
   try {
     await foundAnnotation.save();
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error saving annotation" });
   }
-
   req.locals = {
     response: { success: "Reply successfully deleted" },
     user: user,
-    reply: foundReply
-  }
+    reply: foundReply,
+  };
   socketio.getIO().emit(foundAnnotation._id, {
-    eventType: 'replyDeleted',
+    eventType: "replyDeleted",
     annotation: foundAnnotation,
-    reply: foundReply
+    reply: foundReply,
   });
+
   return next();
 };
 
@@ -272,21 +264,18 @@ export const editReply = async (req, res, next) => {
   const replyContent = req.body.content;
   const userId = req.userId;
 
-  let user
+  let user;
   try {
-    user = await User.findOne({_id: userId});
-
+    user = await User.findById(userId);
     if (!user) {
       return res.status(404).send({ error: "User not found." });
     }
-
   } catch (error) {
-    return res.status(500).send({ error: error });
+    return res.status(500).send({ error: "Error finding user" });
   }
-
   let foundReply;
   try {
-    foundReply = await Reply.findOne({ _id: ObjectId(replyId) });
+    foundReply = await Reply.findById(replyId);
     if (!foundReply) {
       return res.status(404).send({
         error: `Reply with id ${req.params.replyId} doesn't exist!`,
@@ -303,30 +292,24 @@ export const editReply = async (req, res, next) => {
       });
     }
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding reply" });
   }
-
   req.locals = {
-    oldReply: JSON.parse(JSON.stringify(foundReply))
-  }
-
+    oldReply: JSON.parse(JSON.stringify(foundReply)),
+  };
   foundReply.content = replyContent;
   foundReply.updatedAt = Date.now();
-
   try {
     await foundReply.save();
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error saving reply" });
   }
-
   try {
     await Tag.deleteMany({ replyId: replyId });
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error deleting tags" });
   }
-
   let foundTags = replyContent.split(" ").filter((v) => v.startsWith("#"));
-
   let foundTagsSchema = [];
   if (foundTags.length !== 0) {
     foundTags.forEach((tag) => {
@@ -343,32 +326,27 @@ export const editReply = async (req, res, next) => {
       });
       foundTagsSchema.push(newTag);
     });
-
     try {
       await Tag.insertMany(foundTagsSchema);
     } catch (err) {
-      return res.status(500).send({error: err});
+      return res.status(500).send({ error: "Error saving tags" });
     }
   }
-
   let foundAnnotation;
   try {
-    foundAnnotation = await Annotation.findOne({
-      _id: foundReply.annotationId,
-    });
+    foundAnnotation = await Annotation.findById(foundReply.annotationId);
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding annotation" });
   }
-
-  req.locals.response = { success: "Reply successfully updated" }
+  req.locals.response = { success: "Reply successfully updated" };
   req.locals.newReply = foundReply;
   req.locals.user = user;
-
   socketio.getIO().emit(foundAnnotation._id, {
-    eventType: 'replyEdited',
+    eventType: "replyEdited",
     annotation: foundAnnotation,
-    reply: foundReply
+    reply: foundReply,
   });
+
   return next();
 };
 
@@ -385,21 +363,20 @@ export const likeReply = async (req, res, next) => {
   const replyId = req.params.replyId;
   const userId = req.userId;
 
-  let user
+  let user;
   try {
-    user = await User.findOne({_id: userId});
+    user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).send({ error: "User not found." });
     }
-
   } catch (error) {
-    return res.status(500).send({ error: error });
+    return res.status(500).send({ error: "Error finding user" });
   }
 
   let foundReply;
   try {
-    foundReply = await Reply.findOne({ _id: ObjectId(replyId) });
+    foundReply = await Reply.findById(replyId);
     if (!foundReply) {
       res.status(404).send({
         error: `Reply with id ${replyId} doesn't exist!`,
@@ -412,15 +389,15 @@ export const likeReply = async (req, res, next) => {
       });
     }
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding reply" });
   }
 
   req.locals = {
     reply: foundReply,
-    user: user
-  }
+    user: user,
+  };
 
-  if (foundReply.likes.includes(ObjectId(req.userId))) {
+  if (foundReply.likes.includes(req.userId)) {
     foundReply.likes = foundReply.likes.filter(
       (user) => user.valueOf() !== req.userId
     );
@@ -428,7 +405,7 @@ export const likeReply = async (req, res, next) => {
     try {
       savedReply = await foundReply.save();
     } catch (err) {
-      return res.status(500).send({ error: err });
+      return res.status(500).send({ error: "Error saving reply" });
     }
     let countLikes = savedReply.likes.length;
     let countDislikes = savedReply.dislikes.length;
@@ -436,27 +413,26 @@ export const likeReply = async (req, res, next) => {
     req.locals.response = {
       count: countLikes,
       success: "Reply successfully unliked!",
-    }
+    };
     req.locals.like = false;
     socketio.getIO().emit(replyId, {
-      eventType: 'replyUnliked',
+      eventType: "replyUnliked",
       likes: countLikes,
       dislikes: countDislikes,
-      reply: savedReply
+      reply: savedReply,
     });
     return next();
-
-  } else if (foundReply.dislikes.includes(ObjectId(req.userId))) {
+  } else if (foundReply.dislikes.includes(req.userId)) {
     return res
       .status(404)
       .send({ error: "Cannot like! Reply already disliked by user!" });
   } else {
-    foundReply.likes.push(ObjectId(req.userId));
+    foundReply.likes.push(req.userId);
     let savedReply;
     try {
       savedReply = await foundReply.save();
     } catch (err) {
-      return res.status(500).send({ error: err });
+      return res.status(500).send({ error: "Error saving reply" });
     }
 
     let countLikes = savedReply.likes.length;
@@ -465,15 +441,16 @@ export const likeReply = async (req, res, next) => {
     req.locals.response = {
       count: countLikes,
       success: "Reply successfully liked!",
-    }
+    };
     req.locals.like = true;
 
     socketio.getIO().emit(replyId, {
-      eventType: 'replyLiked',
+      eventType: "replyLiked",
       likes: countLikes,
       dislikes: countDislikes,
-      reply: savedReply
+      reply: savedReply,
     });
+
     return next();
   }
 };
@@ -491,21 +468,20 @@ export const dislikeReply = async (req, res, next) => {
   const replyId = req.params.replyId;
   const userId = req.userId;
 
-  let user
+  let user;
   try {
-    user = await User.findOne({_id: userId});
+    user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).send({ error: "User not found." });
     }
-
   } catch (error) {
-    return res.status(500).send({ error: error });
+    return res.status(500).send({ error: "Error finding user" });
   }
 
   let foundReply;
   try {
-    foundReply = await Reply.findOne({ _id: ObjectId(replyId) });
+    foundReply = await Reply.findById(replyId);
     if (!foundReply) {
       return res.status(404).send({
         error: `Reply with id ${replyId} doesn't exist!`,
@@ -517,15 +493,13 @@ export const dislikeReply = async (req, res, next) => {
       });
     }
   } catch (err) {
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ error: "Error finding reply" });
   }
-
   req.locals = {
     user: user,
-    reply: foundReply
-  }
-
-  if (foundReply.dislikes.includes(ObjectId(req.userId))) {
+    reply: foundReply,
+  };
+  if (foundReply.dislikes.includes(req.userId)) {
     foundReply.dislikes = foundReply.dislikes.filter(
       (user) => user.valueOf() !== req.userId
     );
@@ -533,7 +507,7 @@ export const dislikeReply = async (req, res, next) => {
     try {
       savedReply = await foundReply.save();
     } catch (err) {
-      return res.status(500).send({ error: err });
+      return res.status(500).send({ error: "Error saving reply" });
     }
     let countDislikes = savedReply.dislikes.length;
     let countLikes = savedReply.likes.length;
@@ -541,27 +515,26 @@ export const dislikeReply = async (req, res, next) => {
     req.locals.response = {
       count: countDislikes,
       success: "Reply successfully un-disliked!",
-    }
+    };
     req.locals.dislike = false;
     socketio.getIO().emit(replyId, {
-      eventType: 'replyUndisliked',
+      eventType: "replyUndisliked",
       likes: countLikes,
       dislikes: countDislikes,
-      reply: savedReply
+      reply: savedReply,
     });
     return next();
-
-  } else if (foundReply.likes.includes(ObjectId(req.userId))) {
+  } else if (foundReply.likes.includes(req.userId)) {
     return res
       .status(404)
       .send({ error: "Cannot dislike! Reply already liked by user!" });
   } else {
-    foundReply.dislikes.push(ObjectId(req.userId));
+    foundReply.dislikes.push(req.userId);
     let savedReply;
     try {
       savedReply = await foundReply.save();
     } catch (err) {
-      return res.status(500).send({ error: err });
+      return res.status(500).send({ error: "Error saving reply" });
     }
     let countDislikes = savedReply.dislikes.length;
     let countLikes = savedReply.likes.length;
@@ -569,13 +542,13 @@ export const dislikeReply = async (req, res, next) => {
     req.locals.response = {
       count: countDislikes,
       success: "Reply successfully disliked!",
-    }
+    };
     req.locals.dislike = true;
     socketio.getIO().emit(replyId, {
-      eventType: 'replyDisliked',
+      eventType: "replyDisliked",
       likes: countLikes,
       dislikes: countDislikes,
-      reply: savedReply
+      reply: savedReply,
     });
     return next();
   }

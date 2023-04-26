@@ -28,13 +28,12 @@ import {
 } from '../state/annotation.reducer';
 import { Store } from '@ngrx/store';
 import {
-  getCurrentCourseId,
   getCurrentMaterialId,
-} from '../../../materils/state/materials.reducer';
+} from '../../../materials/state/materials.reducer';
 import { PdfviewService } from 'src/app/services/pdfview.service';
 import { distinctUntilChanged, filter, first, map, Observable, Subject, Subscription, takeUntil } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import * as MaterialActions from 'src/app/pages/components/materils/state/materials.actions';
+import * as MaterialActions from 'src/app/pages/components/materials/state/materials.actions';
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
 import * as $ from 'jquery';
 import { AnnotationType } from 'src/app/models/Annotations';
@@ -42,6 +41,7 @@ import { SocketIoModule, SocketIoConfig, Socket } from 'ngx-socket-io';
 import { PdfAnnotationSummaryComponent } from '../pdf-annotation-summary/pdf-annotation-summary.component';
 import { Reply } from 'src/app/models/Reply';
 import { getLoggedInUser } from 'src/app/state/app.reducer';
+import { getCurrentCourseId } from 'src/app/pages/courses/state/course.reducer';
 
 @Component({
   selector: 'app-pdf-main-annotation',
