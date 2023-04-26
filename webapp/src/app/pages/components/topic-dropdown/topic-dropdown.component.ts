@@ -49,7 +49,6 @@ export class TopicDropdownComponent implements OnInit {
       const materialId = url.match(/material:(.*?)\/(pdf|video)/)?.[1];
       this.topicChannelService.fetchTopics(courseId).subscribe((course) => {
         this.selectedTopic = course.topics.find((topic) => topic.channels.find((channel) => channel._id === channelId));
-        console.log('mango: ' + this.selectedTopic._id);
         this.onSelectTopic(this.selectedTopic);
         this.selectedChannelId = channelId;
       })

@@ -166,11 +166,13 @@ export class TopicChannelService {
     }),
       tap(res => {
         if ( !('errorMsg' in res) ){
-          this.topics.forEach(topic => {
+          this.topics.forEach((topic, index) => {
             if (topic._id.toString() === res.savedChannel.topicId.toString()) {
-              topic.channels.push(res.savedChannel);
+              const newChannels = [...topic.channels, res.savedChannel];
+              const newTopic = { ...topic, channels: newChannels };
+              this.topics[index] = newTopic;
             }
-          })
+          });
           this.sendChannelToOldBackend(res.savedChannel)
           this.onUpdateTopics$.next(this.topics);
         }
