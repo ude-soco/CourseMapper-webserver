@@ -104,12 +104,7 @@ registerLocaleData(en);
     StoreModule.forFeature('general', appReducer),
     InputTextareaModule,
     DragulaModule.forRoot(),
-    SocketIoModule.forRoot({
-      url: `http://localhost:8080`,
-      options: {
-        path: '/api/socket.io',
-      },
-    }),
+    SocketIoModule.forRoot(environment.socketConfig),
     CourseModule,
   ],
   exports: [SidebarComponent],

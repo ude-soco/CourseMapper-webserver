@@ -5,7 +5,14 @@
 export const environment = {
   production: false,
   API_URL: 'http://localhost:8080/api',
-  apiUrl: "http://localhost:8080/api"
+  apiUrl: "http://localhost:8080/api",
+  socketConfig: {
+    url: `http://localhost:8080`,
+    options: {
+      path: '/api/socket.io',
+      transports: ['websocket'],
+    },
+  }
 };
 export const environment_2 = {
   production: false,
