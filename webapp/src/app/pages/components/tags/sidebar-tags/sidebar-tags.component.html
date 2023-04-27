@@ -1,5 +1,5 @@
 <div class="">
-    <div *ngIf="selectedCourse && tagsForCourse" #TagsForCourse>
+    <div *ngIf="selectedCourse && tagsForCourse.length > 0" #TagsForCourse>
         <p-divider align="center"></p-divider>
         <div class="mb-3">
           <p class="text-xl font-semibold justify-center">
@@ -15,7 +15,7 @@
         </div>
       </div>
 
-    <div *ngIf="selectedTopic && tagsForTopic" #TagsForTopic>
+    <div *ngIf="selectedTopic && tagsForTopic.length > 0" #TagsForTopic>
         <p-divider align="center"></p-divider>
         <div class="mb-3">
           <p class="text-xl font-semibold justify-center">
@@ -31,7 +31,7 @@
         </div>
       </div>
 
-  <div *ngIf="selectedChannel && tagsForChannel" #TagsForChannel>
+  <div *ngIf="selectedChannel && tagsForChannel.length > 0" #TagsForChannel>
     <p-divider align="center"></p-divider>
     <div class="mb-3">
       <p class="text-xl font-semibold justify-center">
@@ -47,7 +47,7 @@
     </div>
   </div>
 
-  <div *ngIf="selectedMaterial && tagsForMaterial" #TagsForMaterial>
+  <div *ngIf="selectedMaterial && tagsForMaterial.length > 0" #TagsForMaterial>
     <p-divider align="center"></p-divider>
     <div class="mb-3">
       <p class="text-xl font-semibold justify-center">
