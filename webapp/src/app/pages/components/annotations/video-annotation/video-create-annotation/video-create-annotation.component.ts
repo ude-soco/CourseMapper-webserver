@@ -131,7 +131,7 @@ export class VideoCreateAnnotationComponent implements OnInit {
             type: this.selectedAnnotationType,
             content: this.content,
             courseId: this.courseId,
-            materialID: this.materialId,
+            materialId: this.materialId,
             location: {
               type: "time",
               from: this.currentTime,
@@ -149,7 +149,7 @@ export class VideoCreateAnnotationComponent implements OnInit {
             type: this.selectedAnnotationType,
             content: this.content,
             courseId: this.courseId,
-            materialID: this.materialId,
+            materialId: this.materialId,
             location: {
               type: "time",
               from: 0,
@@ -167,7 +167,7 @@ export class VideoCreateAnnotationComponent implements OnInit {
             type: this.selectedAnnotationType,
             content: this.content,
             courseId: this.courseId,
-            materialID: this.materialId,
+            materialId: this.materialId,
             location: {
               type: "time",
               from: this.rangeValues[0],
@@ -191,7 +191,7 @@ export class VideoCreateAnnotationComponent implements OnInit {
               type: this.selectedAnnotationType,
               content: this.content,
               courseId: this.courseId,
-              materialID: this.materialId,
+              materialId: this.materialId,
               location: {
                 type: "time",
                 from: this.currentTime,
@@ -210,7 +210,7 @@ export class VideoCreateAnnotationComponent implements OnInit {
               type: this.selectedAnnotationType,
               content: this.content,
               courseId: this.courseId,
-              materialID: this.materialId,
+              materialId: this.materialId,
               location: {
                 type: "time",
                 from: 0,
@@ -229,7 +229,7 @@ export class VideoCreateAnnotationComponent implements OnInit {
               type: this.selectedAnnotationType,
               content: this.content,
               courseId: this.courseId,
-              materialID: this.materialId,
+              materialId: this.materialId,
               location: {
                 type: "time",
                 from: this.rangeValues[0],
@@ -254,7 +254,7 @@ export class VideoCreateAnnotationComponent implements OnInit {
               type: this.selectedAnnotationType,
               content: this.content,
               courseId: this.courseId,
-              materialID: this.materialId,
+              materialId: this.materialId,
               location: {
                 type: "time",
                 from: this.currentTime,
@@ -274,7 +274,7 @@ export class VideoCreateAnnotationComponent implements OnInit {
               type: this.selectedAnnotationType,
               content: this.content,
               courseId: this.courseId,
-              materialID: this.materialId,
+              materialId: this.materialId,
               location: {
                 type: "time",
                 from: 0,
@@ -295,7 +295,7 @@ export class VideoCreateAnnotationComponent implements OnInit {
               type: this.selectedAnnotationType,
               content: this.content,
               courseId: this.courseId,
-              materialID: this.materialId,
+              materialId: this.materialId,
               location: {
                 type: "time",
                 from: this.rangeValues[0],

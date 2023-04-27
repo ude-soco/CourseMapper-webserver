@@ -24,7 +24,10 @@ export class CourseEffects {
         action.type === AnnotationActions.postAnnotationSuccess.type ||
         action.type === AnnotationActions.postReplySuccess.type ||
         action.type === AnnotationActions.deleteAnnotationSuccess.type ||
-        action.type === AnnotationActions.deleteReplySuccess.type
+        action.type === AnnotationActions.deleteReplySuccess.type ||
+        action.type === CourseActions.postReplySuccess.type ||
+        action.type === CourseActions.deleteAnnotationSuccess.type ||
+        action.type === CourseActions.deleteReplySuccess.type
     ),
     withLatestFrom(
       this.store.select(getCurrentCourse),
@@ -49,7 +52,10 @@ export class CourseEffects {
         action.type === AnnotationActions.postAnnotationSuccess.type ||
         action.type === AnnotationActions.postReplySuccess.type ||
         action.type === AnnotationActions.deleteAnnotationSuccess.type ||
-        action.type === AnnotationActions.deleteReplySuccess.type
+        action.type === AnnotationActions.deleteReplySuccess.type ||
+        action.type === CourseActions.postReplySuccess.type ||
+        action.type === CourseActions.deleteAnnotationSuccess.type ||
+        action.type === CourseActions.deleteReplySuccess.type
     ),
     withLatestFrom(
       this.store.select(getSelectedTopic),
@@ -74,7 +80,10 @@ export class CourseEffects {
           action.type === AnnotationActions.postAnnotationSuccess.type ||
           action.type === AnnotationActions.postReplySuccess.type ||
           action.type === AnnotationActions.deleteAnnotationSuccess.type ||
-          action.type === AnnotationActions.deleteReplySuccess.type
+          action.type === AnnotationActions.deleteReplySuccess.type ||
+          action.type === CourseActions.postReplySuccess.type ||
+          action.type === CourseActions.deleteAnnotationSuccess.type ||
+          action.type === CourseActions.deleteReplySuccess.type
       ),
       withLatestFrom(
         this.store.select(getSelectedChannel),

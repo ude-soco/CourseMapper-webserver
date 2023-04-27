@@ -196,9 +196,13 @@ export class TagReplyItemComponent {
             '<span class="ml-1 cursor-pointer text-blue-500 dark:text-blue-500 hover:underline clickable-text show-less hidden">show less</span>'
         : text;
     
-      const linkedHtml = linkedText
+        const linkedHtml = linkedText
         .replace(linkRegex, '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="$1" target="_blank">$1</a>')
-        .replace(hashtagRegex, '$1<span class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all"><strong>$2</strong></span>')
+        .replace(hashtagRegex, (match, before, hashtag) => {
+          const tagLink = `/course/${this.reply?.courseId}/tag/${encodeURIComponent(hashtag)}`;
+          const tagHtml = `<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="${tagLink}" onClick="handleTagClick(event, '${hashtag}')"><strong>${hashtag}</strong></a>`;
+          return `${before}${tagHtml}`;
+        })
         .replace(newlineRegex, '<br>');
       return linkedHtml;
     }

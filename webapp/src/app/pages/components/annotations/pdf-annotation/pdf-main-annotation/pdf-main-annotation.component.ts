@@ -813,7 +813,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
       content: null,
       location: location,
       tool: pdftool,
-      materialID: this.materialId,
+      materialId: this.materialId,
       courseId: this.courseId,
     };
     this.drawingRect = {

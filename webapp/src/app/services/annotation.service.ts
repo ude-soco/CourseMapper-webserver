@@ -16,7 +16,7 @@ export class AnnotationService {
   constructor(private http: HttpClient) { }
 
   postAnnotation(annotation: Annotation): Observable<Annotation>{
-    return this.http.post<Annotation>(`${environment.apiUrl}/courses/${annotation.courseId}/materials/${annotation.materialID}/annotation`, annotation);
+    return this.http.post<Annotation>(`${environment.apiUrl}/courses/${annotation.courseId}/materials/${annotation.materialId}/annotation`, annotation);
   }
 
   getAllAnnotations(materialId: string, courseID: string): Observable<Annotation[]>{

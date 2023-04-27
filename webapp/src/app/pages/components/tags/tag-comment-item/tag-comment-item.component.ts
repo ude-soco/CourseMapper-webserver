@@ -13,6 +13,7 @@ import { getLoggedInUser } from 'src/app/state/app.reducer';
 import { State } from 'src/app/state/app.state';
 
 import * as CourseActions from 'src/app/pages/courses/state/course.actions'
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-tag-comment-item',
@@ -45,7 +46,7 @@ export class TagCommentItemComponent {
   sendButtonDisabled: boolean = true;
   Roles = Roles;
 
-  constructor(private store: Store<State>, private socket: Socket, private confirmationService: ConfirmationService, private messageService: MessageService, private renderer: Renderer2) {
+  constructor(private store: Store<State>, private socket: Socket, private confirmationService: ConfirmationService, private messageService: MessageService, private renderer: Renderer2, private router: Router) {
     this.store.select(getLoggedInUser).subscribe((user) => {this.loggedInUser = user;});
 
   }
@@ -157,8 +158,26 @@ export class TagCommentItemComponent {
 
   printTime = printTime;
 
-  showAnnotationOnMaterial(){
-
+  showAnnotationOnMaterial(annotation: Annotation){
+    if(annotation.location.type == "time"){
+      this.router.navigate([
+        'course',
+        this.annotation?.courseId,
+        'channel',
+        this.annotation?.channelId,
+        'material',
+        { outlets: { material: [this.annotation?.materialId, 'video'] } },
+      ]);
+    }else{
+      this.router.navigate([
+        'course',
+        this.annotation?.courseId,
+        'channel',
+        this.annotation?.channelId,
+        'material',
+        { outlets: { material: [this.annotation?.materialId, 'pdf'] } },
+      ]);
+    }
   }
 
   highlightAnnotation(){
@@ -263,9 +282,13 @@ export class TagCommentItemComponent {
           '<span class="ml-1 cursor-pointer text-blue-500 dark:text-blue-500 hover:underline clickable-text show-less hidden">show less</span>'
       : text;
   
-    const linkedHtml = linkedText
+      const linkedHtml = linkedText
       .replace(linkRegex, '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="$1" target="_blank">$1</a>')
-      .replace(hashtagRegex, '$1<span class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all"><strong>$2</strong></span>')
+      .replace(hashtagRegex, (match, before, hashtag) => {
+        const tagLink = `/course/${this.annotation?.courseId}/tag/${encodeURIComponent(hashtag)}`;
+        const tagHtml = `<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="${tagLink}" onClick="handleTagClick(event, '${hashtag}')"><strong>${hashtag}</strong></a>`;
+        return `${before}${tagHtml}`;
+      })
       .replace(newlineRegex, '<br>');
     return linkedHtml;
   }

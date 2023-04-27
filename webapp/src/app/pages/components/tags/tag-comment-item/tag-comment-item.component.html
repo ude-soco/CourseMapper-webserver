@@ -52,23 +52,6 @@
       </div>
 
       <div class="flex justify-end mt-3">
-        <h1
-          class="mt-2 mr-2 text-xs cursor-pointer hover:underline hover:text-blue-600"
-          *ngIf="
-            selectedMaterial?.type === 'pdf' && (showAllPDFAnnotations$ | async)
-          "
-          (click)="showAnnotationOnMaterial()"
-        >
-          Page {{ PDFAnnotationLocation[0] }}-{{ PDFAnnotationLocation[1] }}
-        </h1>
-        <h1
-          class="mt-2 mr-2 text-xs cursor-pointer hover:underline hover:text-blue-600"
-          *ngIf="selectedMaterial?.type === 'video'"
-          (click)="showAnnotationOnMaterial()"
-        >
-          {{ printTime(VideoAnnotationLocation[0]) }} -
-          {{ printTime(VideoAnnotationLocation[1]) }}
-        </h1>
         <div *ngIf="this.loggedInUser?.id == this.annotation?.author?.userId">
           <p-menu
             #menu
@@ -146,12 +129,11 @@
         (onClick)="dislikeAnnotation()"
       ></app-button>
       <app-button
-        *ngIf="showAnnotationInMaterial"
         variant="contained"
         label="Show Annotation On Material"
         class="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline"
         icon="bx-highlight"
-        (onClick)="showAnnotationOnMaterial()"
+        (onClick)="showAnnotationOnMaterial(annotation)"
       ></app-button>
     </div>
     <div class="flex flex-col">

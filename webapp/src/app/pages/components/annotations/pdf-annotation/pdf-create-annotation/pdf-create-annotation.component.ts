@@ -107,7 +107,7 @@ export class PdfCreateAnnotationComponent implements OnInit, AfterViewChecked {
             type: this.selectedAnnotationType,
             content: this.text,
             courseId: this.courseId,
-            materialID: this.materialId,
+            materialId: this.materialId,
             location: {
               type: this.selectedAnnotationLocation,
               startPage: this.currentPage,
@@ -129,7 +129,7 @@ export class PdfCreateAnnotationComponent implements OnInit, AfterViewChecked {
             type: this.selectedAnnotationType,
             content: this.text,
             courseId: this.courseId,
-            materialID: this.materialId,
+            materialId: this.materialId,
             location: {
               type: this.selectedAnnotationLocation,
               startPage: 1,
@@ -151,7 +151,7 @@ export class PdfCreateAnnotationComponent implements OnInit, AfterViewChecked {
             type: this.selectedAnnotationType,
             content: this.text,
             courseId: this.courseId,
-            materialID: this.materialId,
+            materialId: this.materialId,
             location: {
               type: this.selectedAnnotationLocation,
               startPage: this.selectedFromPage,
