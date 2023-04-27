@@ -317,12 +317,16 @@ export class PdfCommentItemComponent implements OnInit, OnChanges, AfterViewInit
           '</span>' +
           '<span class="ml-1 cursor-pointer text-blue-500 dark:text-blue-500 hover:underline clickable-text show-less hidden">show less</span>'
       : text;
-  
+
       const linkedHtml = linkedText
       .replace(linkRegex, '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="$1" target="_blank">$1</a>')
-      .replace(hashtagRegex, `$1<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="/course/${this.annotation?.courseId}/tag/${('$2')}"><strong>$2</strong></a>`)
+      .replace(hashtagRegex, (match, before, hashtag) => {
+        const tagLink = `/course/${this.annotation?.courseId}/tag/${encodeURIComponent(hashtag)}`;
+        const tagHtml = `<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="${tagLink}" onClick="handleTagClick(event, '${hashtag}')"><strong>${hashtag}</strong></a>`;
+        return `${before}${tagHtml}`;
+      })
       .replace(newlineRegex, '<br>');
-    
+
     return linkedHtml;
   }
   
