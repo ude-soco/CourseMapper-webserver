@@ -23,6 +23,16 @@ export class TagsPageComponent {
          this.hashTagName = decodeURIComponent(url.match(/\/tag\/(.+)/)[1]);
         this.store.dispatch(CourseActions.loadAnnotationsForSelectedTag({tagSelected: true, selectedTagName: this.hashTagName, courseId: this.courseId}));
       }
+      this.router.events.subscribe(event => {
+        if (event instanceof NavigationEnd) {
+          const url = this.router.url;
+          if (url.includes('tag')){
+            this.courseId = url.match(/\/course\/([\w\d]+)\//)[1];
+            this.hashTagName = decodeURIComponent(url.match(/\/tag\/(.+)/)[1]);
+           this.store.dispatch(CourseActions.loadAnnotationsForSelectedTag({tagSelected: true, selectedTagName: this.hashTagName, courseId: this.courseId}));
+          }
+        }
+      });
     this.store.select(getAnnotationsForSelectedTag).subscribe((annotations) => this.annotationsForTag = annotations);
   }
 
