@@ -119,7 +119,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
   ngAfterViewChecked(): void {
     let inkBar = document.getElementsByClassName('p-tabview-ink-bar')[0] as HTMLElement;
-    let currentTab = document.getElementsByClassName('p-highlight')[this.tabIndex] as HTMLElement;
+    let currentTab = document.getElementsByClassName('p-highlight')[0] as HTMLElement;
     if(inkBar && currentTab){
       inkBar.style.width = currentTab.clientWidth + 'px';
       this.changeDetectorRef.detectChanges();
