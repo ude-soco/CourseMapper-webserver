@@ -82,6 +82,10 @@ export class NavbarComponent implements OnInit {
     });
   
   }
+
+  privacy(){
+    this.router.navigate(['/privacy']);
+  }
   getIntitials = getInitials
 
   copyUserId(userId){
