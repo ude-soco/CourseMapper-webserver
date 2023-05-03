@@ -68,6 +68,10 @@ export class HomeComponent implements OnInit {
       this.username = user.username;
     }
 
+this.getMyCourses();
+  }
+  getMyCourses()
+  {
     this.courseService.fetchCourses().subscribe( (courses) => {console.log("course desc course Rawaa",this.courses=courses)  
     console.log(this.courses)
    
@@ -85,8 +89,22 @@ export class HomeComponent implements OnInit {
 
 
      })
+     this.courseService.onUpdateCourses$.subscribe(
+      {next: (courses1) => {(
+        // this.courses .push(courses1[courses1.length-1]),
+        // console.log(this.courses, "before"),
+        
+        // console.log(this.courses, "after"),  
+       
+        this.ngOnInit()
+        )}
+      
+    } 
+    
+    );
   }
   buildCardInfo(userModeratorID: string, course: Course) {
+    this.userArray.length=0
     this.userService.GetUserName(userModeratorID).subscribe((user) => {
       this.firstName = user.firstname;
       this.lastName = user.lastname;
