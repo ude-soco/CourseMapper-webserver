@@ -8,7 +8,24 @@ on:
     branches:   [ main, development ]
 
 jobs:
+  assert-branch:
+    name: Assert main branch
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: rickstaa/action-contains-tag@v1
+      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+      id: contains_tag
+      with:
+        reference: main
+        tag: ${{ github.ref }}
+    - if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && steps.contains_tag.outputs.retval != true
+      uses: actions/github-script@v3
+      with:
+        script: core.setFailed('Release tags not on main branch')
+
   images:
+    needs: [ assert-branch ]
     uses: ./.github/workflows/build.yml
     with:
       services:        "[ 'webapp', 'webserver' ]"
