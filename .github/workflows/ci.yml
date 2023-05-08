@@ -20,7 +20,7 @@ jobs:
         reference: main
         tag: ${{ github.ref }}
     - if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && steps.contains_tag.outputs.retval != true
-      uses: actions/github-script@v3
+      uses: actions/github-script@v6
       with:
         script: core.setFailed('Release tags not on main branch')
 
