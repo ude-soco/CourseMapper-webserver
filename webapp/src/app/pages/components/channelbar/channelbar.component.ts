@@ -18,6 +18,7 @@ import * as  MaterialActions from 'src/app/pages/components/materials/state/mate
 import * as  CourseActions from 'src/app/pages/courses/state/course.actions'
 import { getSelectedChannel, getTagsForChannel } from '../../courses/state/course.reducer';
 import { Tag } from 'src/app/models/Tag';
+import { StorageService } from 'src/app/services/storage.service';
 
 @Component({
   selector: 'app-channelbar',
@@ -36,6 +37,7 @@ export class ChannelbarComponent implements OnInit {
     private store: Store<State>,
     private moderatorPrivilegesService:ModeratorPrivilegesService,
     private renderer: Renderer2,
+    private storageService: StorageService,
   ) {
       this.route.params.subscribe(params => {
       if(params['courseID']){
@@ -62,7 +64,7 @@ export class ChannelbarComponent implements OnInit {
   selectedId: string = '';
   showModeratorPrivileges=false;
   selectedChannel: Channel;
-
+   user = this.storageService.getUser();
   options: MenuItem[] = [
     {
       label: 'Rename',
@@ -78,10 +80,13 @@ export class ChannelbarComponent implements OnInit {
 
   ngOnInit(): void {
       this.selectedCourse = this.courseService.getSelectedCourse();
+      
+
       //3
       this.courseService.onSelectCourse.subscribe((course) => {
         this.selectedCourse = course;
-        if(this.selectedCourse.role==='moderator'){
+        console.log( this.selectedCourse, ' this.selectedCourse channel bar')
+        if(this.selectedCourse.role==='moderator' || this.user.role.name==='admin'){
           this.moderatorPrivilegesService.showModeratorPrivileges=true
           this.showModeratorPrivileges=true
           this.moderatorPrivilegesService.setPrivilegesValue(this.showModeratorPrivileges)
@@ -91,6 +96,7 @@ export class ChannelbarComponent implements OnInit {
           this.moderatorPrivilegesService.setPrivilegesValue(this.showModeratorPrivileges)
         }
       });
+      console.log(this.user.role.name, 'user role previllage')
   }
 
   @HostListener('document:click', ['$event'])

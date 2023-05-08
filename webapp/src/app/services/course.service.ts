@@ -46,7 +46,7 @@ export class CourseService {
       this.topicChannelService.updateTopics(course._id);
     }
     this.selectedCourse = course;
-    let courseId = course._id;
+    let courseId = this.selectedCourse._id;
     this.store.dispatch(CourseActions.setCourseId({ courseId }));    
     //2
     this.onSelectCourse.emit(course);
