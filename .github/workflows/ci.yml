@@ -17,8 +17,8 @@ jobs:
       if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
       id: contains_tag
       with:
-        reference: main
-        tag: ${{ github.ref }}
+        reference: "main"
+        tag: "${{ github.ref }}"
     - if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && steps.contains_tag.outputs.retval != true
       uses: actions/github-script@v6
       with:
