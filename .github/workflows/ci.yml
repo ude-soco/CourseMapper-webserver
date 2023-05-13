@@ -13,18 +13,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0 # all history
     - uses: rickstaa/action-contains-tag@v1
       if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
       id: contains_tag
       with:
         reference: main
-        tag: ${{ github.ref }}
-    - if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && steps.contains_tag.outputs.retval != true
+        tag: ${{ github.ref_name }}
+    - if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && steps.contains_tag.outputs.retval != 'true'
       uses: actions/github-script@v6
       with:
-        script: core.setFailed('Release tags not on main branch')
+        script: core.setFailed('Release tag not on main branch')
 
   images:
+    name: Build container images
     needs: [ assert-branch ]
     uses: ./.github/workflows/build.yml
     with:
@@ -36,6 +39,7 @@ jobs:
       registry_token:  ${{ secrets.DOCKERHUB_TOKEN }}
 
   release:
-    needs: [ images ]
-    if:    github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
-    uses:  ./.github/workflows/release.yml
+    name: Release on GitHub
+    needs: [ assert-branch, images ]
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    uses: ./.github/workflows/release.yml
