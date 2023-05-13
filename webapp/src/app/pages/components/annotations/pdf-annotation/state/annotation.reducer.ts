@@ -49,7 +49,7 @@ const initialState: AnnotationState = {
     content: null,
     location: null,
     tool: null,
-    materialID: null,
+    materialId: null,
     courseId: null,
   },
   isAnnotationDialogVisible: false,

@@ -65,8 +65,9 @@ export interface Annotation {
   content?: string;
   location: VideoAnnotationLocation | PdfGeneralAnnotationLocation;
   tool?: VideoAnnotationTool | VideoBrushTool | VideoPinTool | PdfAnnotationTool;
-  materialID?: string;
+  materialId?: string;
   courseId?: string;
+  channelId?: string;
   author?:{
     userId?: string;
     name?: string;

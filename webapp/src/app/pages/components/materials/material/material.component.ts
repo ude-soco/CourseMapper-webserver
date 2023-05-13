@@ -9,6 +9,8 @@ import {
   SimpleChanges,
   Renderer2,
   HostListener,
+  ChangeDetectorRef,
+  AfterViewChecked,
 } from '@angular/core';
 import { Channel } from 'src/app/models/Channel';
 import { TopicChannelService } from 'src/app/services/topic-channel.service';
@@ -21,8 +23,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import {
   State,
-} from 'src/app/pages/components/materils/state/materials.reducer';
-import * as MaterialActions from 'src/app/pages/components/materils/state/materials.actions';
+} from 'src/app/pages/components/materials/state/materials.reducer';
+import * as MaterialActions from 'src/app/pages/components/materials/state/materials.actions';
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
 import { Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -35,7 +37,7 @@ import * as  CourseActions from 'src/app/pages/courses/state/course.actions'
   styleUrls: ['./material.component.css'],
   providers: [MessageService, ConfirmationService],
 })
-export class MaterialComponent implements OnInit, OnDestroy {
+export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
   @Output() public channelEmitted = new EventEmitter<any>();
   selectedChannel: Channel;
   channelSelected$: Observable<boolean>;
@@ -74,7 +76,8 @@ export class MaterialComponent implements OnInit, OnDestroy {
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private moderatorPrivilegesService: ModeratorPrivilegesService,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private changeDetectorRef: ChangeDetectorRef
   ) {
     const url = this.router.url;
     if (url.includes('course') && url.includes('channel')) {
@@ -113,6 +116,15 @@ export class MaterialComponent implements OnInit, OnDestroy {
         this.showModeratorPrivileges =
           moderatorPrivilegesService.showModeratorPrivileges;
       });
+  }
+  ngAfterViewChecked(): void {
+    let inkBar = document.getElementsByClassName('p-tabview-ink-bar')[0] as HTMLElement;
+    let currentTab = document.getElementsByClassName('p-highlight')[0] as HTMLElement;
+    if(inkBar && currentTab){
+      inkBar.style.width = currentTab.clientWidth + 'px';
+      this.changeDetectorRef.detectChanges();
+    }
+
   }
   materialOptions: MenuItem[] = [
     {

@@ -5,7 +5,7 @@ import { DrawingData } from 'src/app/models/Drawing';
 import { Material } from 'src/app/models/Material';
 import { PdfviewService } from 'src/app/services/pdfview.service';
 import { environment } from 'src/environments/environment';
-import { getCurrentMaterial, getCurrentMaterialId } from '../../../materils/state/materials.reducer';
+import { getCurrentMaterial, getCurrentMaterialId } from '../../../materials/state/materials.reducer';
 import { getIsAnnotationCreationCanceled, getIsAnnotationDialogVisible, getIsBrushSelectionActive, getIsPinpointSelectionActive, getIsVideoPaused, getIsVideoPlayed, getSeekVideo, getShowAnnotations, State } from '../state/video.reducer';
 import * as VideoActions from '../state/video.action'
 import { calculateMousePositionInVideo } from 'src/app/_helpers/video-helper';
@@ -87,7 +87,7 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
 
   ngOnInit(): void {
     let materialSubscriper = this.store.select(getCurrentMaterial).subscribe((material) => {
-      if(material.type === "video"){
+      if(material && material.type === "video"){
         this.material = material;
         this.materilaId = material._id;
         this.getVideoUrl();
@@ -124,7 +124,8 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
   saveYouTubePlayer(player) {
     this.YouTubePlayer = player.target;
 
-    const iframe = player.target.h
+    const iframe = player.target.g
+
     iframe.style.width = "100%";
     iframe.style.height = "100%";
     iframe.style.minHeight = "700px";

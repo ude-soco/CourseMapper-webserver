@@ -24,6 +24,7 @@ export const courseTags = async (req, res) => {
   foundTags.forEach((tag) => {
     if (!newFoundTags.some((item) => item.name === tag.name)) {
       let newTag = {
+        _id: tag._id,
         name: tag.name,
         count: foundTags.filter((item) => item.name === tag.name).length,
       };
@@ -33,9 +34,9 @@ export const courseTags = async (req, res) => {
   newFoundTags.sort((a, b) =>
     a.count < b.count ? 1 : b.count < a.count ? -1 : 0
   );
-  return res.status(200).send({
-    tags: newFoundTags,
-  });
+  return res.status(200).send(
+    newFoundTags,
+  );
 };
 
 /**
@@ -61,6 +62,7 @@ export const topicTags = async (req, res) => {
   foundTags.forEach((tag) => {
     if (!newFoundTags.some((item) => item.name === tag.name)) {
       let newTag = {
+        _id: tag._id,
         name: tag.name,
         count: foundTags.filter((item) => item.name === tag.name).length,
       };
@@ -70,9 +72,9 @@ export const topicTags = async (req, res) => {
   newFoundTags.sort((a, b) =>
     a.count < b.count ? 1 : b.count < a.count ? -1 : 0
   );
-  return res.status(200).send({
-    tags: newFoundTags,
-  });
+  return res.status(200).send(
+    newFoundTags,
+  );
 };
 
 /**
@@ -98,6 +100,7 @@ export const channelTags = async (req, res) => {
   foundTags.forEach((tag) => {
     if (!newFoundTags.some((item) => item.name === tag.name)) {
       let newTag = {
+        _id: tag._id,
         name: tag.name,
         count: foundTags.filter((item) => item.name === tag.name).length,
       };
@@ -135,6 +138,7 @@ export const materialTags = async (req, res) => {
   foundTags.forEach((tag) => {
     if (!newFoundTags.some((item) => item.name === tag.name)) {
       let newTag = {
+        _id: tag._id,
         name: tag.name,
         count: foundTags.filter((item) => item.name === tag.name).length,
       };
@@ -144,7 +148,7 @@ export const materialTags = async (req, res) => {
   newFoundTags.sort((a, b) =>
     a.count < b.count ? 1 : b.count < a.count ? -1 : 0
   );
-  return res.status(200).send({
-    tags: newFoundTags,
-  });
+  return res.status(200).send(
+    newFoundTags,
+  );
 };
