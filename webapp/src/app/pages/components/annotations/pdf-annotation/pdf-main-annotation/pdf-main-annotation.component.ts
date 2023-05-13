@@ -29,11 +29,11 @@ import {
 import { Store } from '@ngrx/store';
 import {
   getCurrentMaterialId,
-} from '../../../materils/state/materials.reducer';
+} from '../../../materials/state/materials.reducer';
 import { PdfviewService } from 'src/app/services/pdfview.service';
 import { distinctUntilChanged, filter, first, map, Observable, Subject, Subscription, takeUntil } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import * as MaterialActions from 'src/app/pages/components/materils/state/materials.actions';
+import * as MaterialActions from 'src/app/pages/components/materials/state/materials.actions';
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
 import * as $ from 'jquery';
 import { AnnotationType } from 'src/app/models/Annotations';
@@ -813,7 +813,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
       content: null,
       location: location,
       tool: pdftool,
-      materialID: this.materialId,
+      materialId: this.materialId,
       courseId: this.courseId,
     };
     this.drawingRect = {

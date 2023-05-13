@@ -9,7 +9,7 @@ import { State } from 'src/app/state/app.reducer';
 import { Store } from '@ngrx/store';
 import * as AppActions from 'src/app/state/app.actions'
 import { ModeratorPrivilegesService } from 'src/app/services/moderator-privileges.service';
-import * as  MaterialActions from 'src/app/pages/components/materils/state/materials.actions'
+import * as  MaterialActions from 'src/app/pages/components/materials/state/materials.actions'
 import * as  CourseActions from 'src/app/pages/courses/state/course.actions'
 @Component({
   selector: 'app-sidebar',
@@ -43,17 +43,22 @@ import * as  CourseActions from 'src/app/pages/courses/state/course.actions'
     this.courseService
       .fetchCourses()
       .subscribe((courses) => (this.courses = courses));
+
     this.courseService.onUpdateCourses$.subscribe(
       (courses) => (this.courses = courses)
+      
     );
+  
   }
 
   onAddCourseDialogueClicked() {
     this.toggleAddCoursedialogue(true);
+
   }
 
   toggleAddCoursedialogue(visibility) {
     this.displayAddCourseDialogue = visibility;
+
   }
 
   onSelectCourse(selectedCourse: Course) {
@@ -78,6 +83,7 @@ import * as  CourseActions from 'src/app/pages/courses/state/course.actions'
       }
     }
     this.store.dispatch(AppActions.toggleCourseSelected({courseSelected: true}));
+    this.store.dispatch(CourseActions.setCurrentCourse({selcetedCourse: selectedCourse}));
     this.store.dispatch(CourseActions.toggleChannelSelected({ channelSelected: false }));
     this.store.dispatch(CourseActions.SetSelectedChannel({ selectedChannel: null }));
     this.router.navigate(['course', selectedCourse._id]);

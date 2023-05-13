@@ -5,7 +5,7 @@ import { LoginComponent } from './pages/components/login/login.component';
 
 import { RegistrationComponent } from './pages/components/registration/registration.component';
 import { HomeComponent } from './pages/home/home.component';
-import { MaterialComponent } from './pages/components/materils/material/material.component';
+import { MaterialComponent } from './pages/components/materials/material/material.component';
 import { ChannelbarComponent } from './pages/components/channelbar/channelbar.component';
 import { CoursesComponent } from './pages/courses/courses.component';
 import { TopicDropdownComponent } from './pages/components/topic-dropdown/topic-dropdown.component';
@@ -14,6 +14,7 @@ import { DashboardComponent } from './pages/components/dashboard/dashboard.compo
 import { LandingPageComponent } from './pages/landing-page/landing-page.component';
 import { PrivacyComponent } from './pages/components/privacy/privacy.component';
 import { CourseDescriptionComponent } from './pages/components/course-description/course-description.component'; 
+import { TagsPageComponent } from './pages/components/tags/tags-page/tags-page.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'landingPage', pathMatch: 'full' },
@@ -54,12 +55,17 @@ const routes: Routes = [
       {
         path: 'channel/:channelId',
          loadChildren: () =>
-        import('./pages/components/materils/materials.module').then(m => m.MaterialsModule)
+        import('./pages/components/materials/materials.module').then(m => m.MaterialsModule)
+      },
+      {
+        path: 'tag/:tagName',
+        component: TagsPageComponent,
       },
     ],
   },
 
   {path: 'course/:courseID/dashboard', component: DashboardComponent},
+
 ];
 
 @NgModule({

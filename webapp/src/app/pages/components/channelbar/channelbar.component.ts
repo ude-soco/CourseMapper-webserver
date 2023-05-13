@@ -14,10 +14,11 @@ import { State } from 'src/app/state/app.state';
 import { Store } from '@ngrx/store';
 import * as AppActions from 'src/app/state/app.actions'
 import { ModeratorPrivilegesService } from 'src/app/services/moderator-privileges.service';
-import * as  MaterialActions from 'src/app/pages/components/materils/state/materials.actions'
+import * as  MaterialActions from 'src/app/pages/components/materials/state/materials.actions'
 import * as  CourseActions from 'src/app/pages/courses/state/course.actions'
 import { getSelectedChannel, getTagsForChannel } from '../../courses/state/course.reducer';
 import { Tag } from 'src/app/models/Tag';
+import { StorageService } from 'src/app/services/storage.service';
 
 @Component({
   selector: 'app-channelbar',
@@ -36,6 +37,7 @@ export class ChannelbarComponent implements OnInit {
     private store: Store<State>,
     private moderatorPrivilegesService:ModeratorPrivilegesService,
     private renderer: Renderer2,
+    private storageService: StorageService,
   ) {
       this.route.params.subscribe(params => {
       if(params['courseID']){
@@ -43,14 +45,12 @@ export class ChannelbarComponent implements OnInit {
           this.selectedCourse = courses.find((course) => course._id == params['courseID']);
           this.courseService.selectCourse(this.selectedCourse);
           this.store.dispatch(AppActions.toggleCourseSelected({courseSelected: true}));
+          this.store.dispatch(CourseActions.setCurrentCourse({selcetedCourse: this.selectedCourse}));
           this.store.dispatch(CourseActions.toggleChannelSelected({ channelSelected: false }));
           this.store.dispatch(CourseActions.SetSelectedChannel({ selectedChannel: null }));
         });
       }
     })
-
-    this.store.select(getSelectedChannel).subscribe((currentChannel) => this.selectedChannel = currentChannel);
-    this.store.select(getTagsForChannel).subscribe((tags) => this.tagsForChannel = tags);
   }
 
   private API_URL = environment.API_URL;
@@ -64,8 +64,7 @@ export class ChannelbarComponent implements OnInit {
   selectedId: string = '';
   showModeratorPrivileges=false;
   selectedChannel: Channel;
-  tagsForChannel: Tag[];
-
+   user = this.storageService.getUser();
   options: MenuItem[] = [
     {
       label: 'Rename',
@@ -81,10 +80,13 @@ export class ChannelbarComponent implements OnInit {
 
   ngOnInit(): void {
       this.selectedCourse = this.courseService.getSelectedCourse();
+      
+
       //3
       this.courseService.onSelectCourse.subscribe((course) => {
         this.selectedCourse = course;
-        if(this.selectedCourse.role==='moderator'){
+        console.log( this.selectedCourse, ' this.selectedCourse channel bar')
+        if(this.selectedCourse.role==='moderator' || this.user.role.name==='admin'){
           this.moderatorPrivilegesService.showModeratorPrivileges=true
           this.showModeratorPrivileges=true
           this.moderatorPrivilegesService.setPrivilegesValue(this.showModeratorPrivileges)
@@ -94,6 +96,7 @@ export class ChannelbarComponent implements OnInit {
           this.moderatorPrivilegesService.setPrivilegesValue(this.showModeratorPrivileges)
         }
       });
+      console.log(this.user.role.name, 'user role previllage')
   }
 
   @HostListener('document:click', ['$event'])

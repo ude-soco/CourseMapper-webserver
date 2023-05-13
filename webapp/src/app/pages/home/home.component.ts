@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store';
 import { StorageService } from 'src/app/services/storage.service';
 import { State } from 'src/app/state/app.reducer';
 import * as AppActions from 'src/app/state/app.actions';
-import * as MaterialActions from 'src/app/pages/components/materils/state/materials.actions';
+import * as MaterialActions from 'src/app/pages/components/materials/state/materials.actions';
 import { CourseService } from 'src/app/services/course.service';
 import { Course } from 'src/app/models/Course';
 import * as CourseAction from 'src/app/pages/courses/state/course.actions'
@@ -52,10 +52,13 @@ export class HomeComponent implements OnInit {
 
     this.store.dispatch(
       AppActions.toggleCourseSelected({ courseSelected: false })
+      
     );
-    this.store.dispatch(
-      CourseActions.toggleChannelSelected({ channelSelected: false })
-    );
+    this.store.dispatch(CourseActions.setCurrentTopic({selcetedTopic: null}));
+    this.store.dispatch(CourseActions.setCurrentCourse({selcetedCourse: null}));
+    this.store.dispatch(CourseActions.setCourseId({ courseId: null}));
+    this.store.dispatch(CourseActions.SetSelectedChannel({ selectedChannel: null}));
+    this.store.dispatch(CourseActions.toggleChannelSelected({ channelSelected: false }));
 
     if (this.isloggedin == false) {
       this.router.navigate(['login']);
@@ -65,6 +68,10 @@ export class HomeComponent implements OnInit {
       this.username = user.username;
     }
 
+this.getMyCourses();
+  }
+  getMyCourses()
+  {
     this.courseService.fetchCourses().subscribe( (courses) => {console.log("course desc course Rawaa",this.courses=courses)  
     console.log(this.courses)
    
@@ -82,8 +89,22 @@ export class HomeComponent implements OnInit {
 
 
      })
+     this.courseService.onUpdateCourses$.subscribe(
+      {next: (courses1) => {(
+        // this.courses .push(courses1[courses1.length-1]),
+        // console.log(this.courses, "before"),
+        
+        // console.log(this.courses, "after"),  
+       
+        this.ngOnInit()
+        )}
+      
+    } 
+    
+    );
   }
   buildCardInfo(userModeratorID: string, course: Course) {
+    this.userArray.length=0
     this.userService.GetUserName(userModeratorID).subscribe((user) => {
       this.firstName = user.firstname;
       this.lastName = user.lastname;
@@ -106,11 +127,10 @@ export class HomeComponent implements OnInit {
   }
   onSelectCourse(selcetedCourse:any)
   {
-    
-    this.store.dispatch(CourseAction.setCurrentCourse({selcetedCourse}));
-    this.store.dispatch(CourseActions.setCourseId({ courseId: selcetedCourse.id}));
-    
+        
     this.router.navigate(['course', selcetedCourse.id]);
+    this.store.dispatch(CourseAction.setCurrentCourse({selcetedCourse: selcetedCourse}));
+    this.store.dispatch(CourseActions.setCourseId({ courseId: selcetedCourse.id}));
     console.log("course Home page")
     console.log(selcetedCourse)
   }

@@ -7,8 +7,8 @@ import { catchError, Observable, of, Subject, tap } from 'rxjs';
 import { TopicChannelService } from './topic-channel.service';
 import { StorageService } from './storage.service';
 import { Store } from '@ngrx/store';
-import { State } from 'src/app/pages/components/materils/state/materials.reducer';
-import * as MaterialActions from 'src/app/pages/components/materils/state/materials.actions'
+import { State } from 'src/app/pages/components/materials/state/materials.reducer';
+import * as MaterialActions from 'src/app/pages/components/materials/state/materials.actions'
 import * as  CourseActions from 'src/app/pages/courses/state/course.actions'
 
 
@@ -46,7 +46,7 @@ export class CourseService {
       this.topicChannelService.updateTopics(course._id);
     }
     this.selectedCourse = course;
-    let courseId = course._id;
+    let courseId = this.selectedCourse._id;
     this.store.dispatch(CourseActions.setCourseId({ courseId }));    
     //2
     this.onSelectCourse.emit(course);
@@ -85,8 +85,11 @@ export class CourseService {
       tap(res => {
         if ( !('errorMsg' in res) ){
           this.courses.push(res.courseSaved);
-          this.sendToOldBackend(res.courseSaved);
+          //this.sendToOldBackend(res.courseSaved);
           this.onUpdateCourses$.next(this.courses);
+          
+          
+          
         }
     }));
   }
@@ -189,13 +192,13 @@ export class CourseService {
       }
      ))
   }
-  sendToOldBackend(course){
-    // userId should be taken from the coockies. for the time being it is hard coded
-    this.http.post<any>('http://localhost:8090/new/course', 
-    {_id: course._id, course: course.name, description: course.description, 
-      shortName: course.shortName, userID:   this.user.id,})
-    .subscribe(res => {
-      console.log(res);
-    });
-  }
+  // sendToOldBackend(course){
+  //   // userId should be taken from the coockies. for the time being it is hard coded
+  //   this.http.post<any>('http://localhost:8090/new/course', 
+  //   {_id: course._id, course: course.name, description: course.description, 
+  //     shortName: course.shortName, userID:   this.user.id,})
+  //   .subscribe(res => {
+  //     console.log(res);
+  //   });
+  // }
 }

@@ -38,9 +38,9 @@ export class LandingPageComponent {
 
   firstName: string = '';
   lastName: string = '';
-
+activateUpdaeCourse:boolean =false;
   Users: any;
-
+  user = this.storageService.getUser();
   Moderarors: User;
   userArray: any = new Array();
   constructor(
@@ -64,11 +64,14 @@ export class LandingPageComponent {
     });
 
     this.getAllCourses();
+
+ 
   }
 
   getAllCourses() {
-    this.courseService.GetAllCourses().subscribe({
-      next: async (courses) => {
+
+          this.courseService.GetAllCourses().subscribe({
+      next:  (courses) => {
         this.courses = courses;
 
         for (var course of this.courses) {
@@ -81,12 +84,29 @@ export class LandingPageComponent {
           );
 
           this.buildCardInfo(userModerator.userId, course);
+        
         }
       },
     });
-  }
+    this.courseService.onUpdateCourses$.subscribe(
+      {next: (courses1) => {(
+        // this.courses .push(courses1[courses1.length-1]),
+        // console.log(this.courses, "before"),
+        
+        // console.log(this.courses, "after"),  
+       
+        this.ngOnInit()
+        )}
+      
+    } 
+    
+    );
+
+  
+}
 
   buildCardInfo(userModeratorID: string, course: Course) {
+    this.userArray.length=0
     this.userService.GetUserName(userModeratorID).subscribe((user) => {
       this.firstName = user.firstname;
       this.lastName = user.lastname;
@@ -104,6 +124,7 @@ export class LandingPageComponent {
         description:course.description
       };
       this.userArray.push(ingoPush);
+
       
     });
   }
@@ -116,34 +137,48 @@ export class LandingPageComponent {
 
   //   }
   onSelectCourse(selcetedCourse: any) {
-    console.log("Rawaa selcetedCourseId")
-    console.log(selcetedCourse)
+
     // let selcetedCourse = this.courses.find(
     //   (course) => course._id == selcetedCourseId
     // );
 
     if (this.loggedInUser) {
+console.log(this.user.role.name, 'this.user.role.name lndingpage')
+      // if(this.user.role.name==='admin')
+      // {
+      //   let adminCourse = this.courses.find(
+      //     (course) => selcetedCourse.id === course._id
+      //   );
+        
+      //     this.Enrolled = true;
+      //     console.log(selcetedCourse, 'selcetedCourse.id landingpage admin role')
+      //     this.router.navigate(['course', selcetedCourse.id]);
+        
+
+      // }
       let varcc = this.myCourses.find(
         (course) => selcetedCourse.id === course._id
       );
-      console.log("varcc");
-      console.log(varcc);
-      if (varcc) {
+
+       if(varcc || this.user.role.name==='admin') {
         this.Enrolled = true;
+        console.log(selcetedCourse, 'selcetedCourse.id landingpage')
         this.router.navigate(['course', selcetedCourse.id]);
-      } else {
+      }
+       else {
         this.Enrolled = false;
-        this.store.dispatch(CourseAction.setCurrentCourse({ selcetedCourse }));
+        this.store.dispatch(CourseAction.setCurrentCourse({ selcetedCourse: selcetedCourse }));
         this.store.dispatch(
           CourseAction.setCourseId({ courseId: selcetedCourse.id })
         );
         this.router.navigate(['course-description', selcetedCourse.id]);
-        console.log('course landing page');
+
         //console.log(selcetedCourse)
       }
-      console.log(this.Enrolled);
-    } else {
-      this.store.dispatch(CourseAction.setCurrentCourse({ selcetedCourse }));
+
+    } 
+    else {
+      this.store.dispatch(CourseAction.setCurrentCourse({ selcetedCourse: selcetedCourse }));
       this.store.dispatch(
         CourseAction.setCourseId({ courseId: selcetedCourse.id })
       );

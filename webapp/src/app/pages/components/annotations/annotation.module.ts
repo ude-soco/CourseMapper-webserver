@@ -28,6 +28,7 @@ import { VideoRenderingOverlayComponent } from './video-annotation/video-renderi
 import { VideoAnnotationSummaryComponent } from './video-annotation/video-annotation-summary/video-annotation-summary.component';
 import { UpdateBorderColorDirective } from 'src/app/custom_directives/update-border-color.directive';
 import { VideoEffects } from './video-annotation/state/video.effects';
+import { TagsPageComponent } from '../tags/tags-page/tags-page.component';
 
 @NgModule({
     declarations: [
@@ -46,7 +47,7 @@ import { VideoEffects } from './video-annotation/state/video.effects';
         VideoDrawingOverlayComponent,
         VideoRenderingOverlayComponent,
         VideoAnnotationSummaryComponent,
-        UpdateBorderColorDirective
+        UpdateBorderColorDirective,
     ],
     exports: [
         PdfAnnotationToolbarComponent,
@@ -81,7 +82,7 @@ import { VideoEffects } from './video-annotation/state/video.effects';
           component: VideoMainAnnotationComponent,
           outlet: 'material',
           pathMatch: 'full',
-        },
+        }
       ])
     ]
 })
