@@ -12,19 +12,28 @@ jobs:
     name: Assert main branch
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v3
       with:
         fetch-depth: 0 # all history
-    - uses: rickstaa/action-contains-tag@v1
+
+    - name: Determine if tag is contained in branch history
       if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+      uses: rickstaa/action-contains-tag@v1
       id: contains_tag
       with:
         reference: main
         tag: ${{ github.ref_name }}
-    - if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && steps.contains_tag.outputs.retval != 'true'
+
+    - name: Notify about allowed branch
+      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && steps.contains_tag.outputs.retval == 'true'
+      run: echo "::notice::Release tag located on main branch"
+
+    - name: Fail because of forbidden branch
+      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && steps.contains_tag.outputs.retval != 'true'
       uses: actions/github-script@v6
       with:
-        script: core.setFailed('Release tag not on main branch')
+        script: core.setFailed('Release tag not located on main branch')
 
   images:
     name: Build container images
