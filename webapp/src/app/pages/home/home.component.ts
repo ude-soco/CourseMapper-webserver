@@ -39,7 +39,7 @@ export class HomeComponent implements OnInit {
       {
         next: async (courses) => {
           this.Allcourses = courses;
-          
+         
          
         }
       }
@@ -73,6 +73,7 @@ this.getMyCourses();
   getMyCourses()
   {
     this.courseService.fetchCourses().subscribe( (courses) => {  
+      this.courses=courses
    
    
     for (var course of this.courses) {
@@ -122,6 +123,7 @@ this.getMyCourses();
         description:course.description
       };
       this.userArray.push(ingoPush);
+      
 
     });
   }
