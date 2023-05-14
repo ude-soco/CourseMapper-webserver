@@ -349,7 +349,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     let selectedMat = <HTMLInputElement>(
       document.getElementById(`${this.selectedMaterial._id}`)
     );
-    console.log(selectedMat);
+   
     this.selectedId = this.selectedMaterial._id;
     selectedMat.contentEditable = 'true';
     this.previousMaterial = this.selectedMaterial;
@@ -400,12 +400,11 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
         .subscribe();
     } else if (this.escapeKey === true) {
       //ESC pressed
-      console.log('ESC Pressed');
-      console.log(this.previousMaterial);
+   
       let MaterialName = this.previousMaterial.name;
       const MaterialDescription = this.previousMaterial.description;
       const curseId = this.previousMaterial.courseId;
-      console.log(curseId);
+ 
       const matId = this.previousMaterial._id;
       const matUrl = this.previousMaterial.url;
       const mattype = this.previousMaterial.type;
@@ -423,7 +422,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
         .subscribe();
     } else {
       //confirmed by mouse click
-      console.log('logged from mouse');
+     // console.log('logged from mouse');
       let MaterialName = this.previousMaterial.name;
       const MaterialDescription = this.previousMaterial.description;
       const curseId = this.previousMaterial.courseId;
@@ -466,7 +465,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     // to confirm rename when mouse clicked anywhere
     if (this.editable) {
       //course name <p> has been changed to editable
-      console.log('logged to mouse event');
+      //console.log('logged to mouse event');
       this.enterKey = false;
       this.onRenameMaterialConfirm(this.selectedId);
     }

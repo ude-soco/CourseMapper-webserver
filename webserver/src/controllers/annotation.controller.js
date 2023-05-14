@@ -59,6 +59,7 @@ export const newAnnotation = async (req, res, next) => {
   let foundRole;
   try {
     foundRole = await Role.findById(foundCourse.role);
+   
   } catch (err) {
     res.status(500).send({ error: "Error finding role" });
   }

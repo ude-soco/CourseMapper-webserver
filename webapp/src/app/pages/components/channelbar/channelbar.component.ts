@@ -40,15 +40,33 @@ export class ChannelbarComponent implements OnInit {
     private storageService: StorageService,
   ) {
       this.route.params.subscribe(params => {
+        
       if(params['courseID']){
-        this.courseService.fetchCourses().subscribe((courses) => {
-          this.selectedCourse = courses.find((course) => course._id == params['courseID']);
-          this.courseService.selectCourse(this.selectedCourse);
-          this.store.dispatch(AppActions.toggleCourseSelected({courseSelected: true}));
-          this.store.dispatch(CourseActions.setCurrentCourse({selcetedCourse: this.selectedCourse}));
-          this.store.dispatch(CourseActions.toggleChannelSelected({ channelSelected: false }));
-          this.store.dispatch(CourseActions.SetSelectedChannel({ selectedChannel: null }));
-        });
+//         if(this.user.role.name==='admin')
+//         {
+          
+//           this.courseService.GetAllCourses().subscribe((courses) => {
+//             this.selectedCourse = courses.find((course) => course._id == params['courseID']);
+//             this.courseService.selectCourse(this.selectedCourse);
+//             console.log(this.selectedCourse,"this.selectedCourse admin channel bar")
+//             this.store.dispatch(AppActions.toggleCourseSelected({courseSelected: true}));
+//             this.store.dispatch(CourseActions.setCurrentCourse({selcetedCourse: this.selectedCourse}));
+//             this.store.dispatch(CourseActions.toggleChannelSelected({ channelSelected: false }));
+//             this.store.dispatch(CourseActions.SetSelectedChannel({ selectedChannel: null }));
+//             console.log(params['courseID'], "params['courseID'] admin channel bar")
+//           });
+//         }
+// else{
+  this.courseService.fetchCourses().subscribe((courses) => {
+    this.selectedCourse = courses.find((course) => course._id == params['courseID']);
+    this.courseService.selectCourse(this.selectedCourse);
+    
+    this.store.dispatch(AppActions.toggleCourseSelected({courseSelected: true}));
+    this.store.dispatch(CourseActions.setCurrentCourse({selcetedCourse: this.selectedCourse}));
+    this.store.dispatch(CourseActions.toggleChannelSelected({ channelSelected: false }));
+    this.store.dispatch(CourseActions.SetSelectedChannel({ selectedChannel: null }));
+  });
+//}
       }
     })
   }
@@ -85,7 +103,7 @@ export class ChannelbarComponent implements OnInit {
       //3
       this.courseService.onSelectCourse.subscribe((course) => {
         this.selectedCourse = course;
-        console.log( this.selectedCourse, ' this.selectedCourse channel bar')
+        
         if(this.selectedCourse.role==='moderator' || this.user.role.name==='admin'){
           this.moderatorPrivilegesService.showModeratorPrivileges=true
           this.showModeratorPrivileges=true
@@ -96,7 +114,7 @@ export class ChannelbarComponent implements OnInit {
           this.moderatorPrivilegesService.setPrivilegesValue(this.showModeratorPrivileges)
         }
       });
-      console.log(this.user.role.name, 'user role previllage')
+      
   }
 
   @HostListener('document:click', ['$event'])
@@ -104,7 +122,7 @@ export class ChannelbarComponent implements OnInit {
     // to confirm rename when mouse clicked anywhere
     if (this.editable) {
       //course name <p> has been changed to editable
-      console.log('logged to mouse event');
+      
       this.enterKey = false;
       this.onRenameCourseConfirm(this.selectedId);
     }
@@ -156,7 +174,7 @@ export class ChannelbarComponent implements OnInit {
       this.courseService.renameCourse(this.previousCourse, body).subscribe();
     } else if (this.escapeKey === true) {
       //ESC pressed
-      console.log('ESC Pressed');
+      //console.log('ESC Pressed');
       let CourseName = this.previousCourse.name;
       const courseDescription = this.previousCourse.description;
       let body = { name: CourseName, description: courseDescription };
@@ -164,7 +182,7 @@ export class ChannelbarComponent implements OnInit {
       this.courseService.renameCourse(this.selectedCourse, body).subscribe();
     } else {
       //confirmed by mouse click
-      console.log('logged from mouse');
+      //console.log('logged from mouse');
       let CourseName = this.previousCourse.name;
       const courseDescription = this.previousCourse.description;
       let body = { name: CourseName, description: courseDescription };

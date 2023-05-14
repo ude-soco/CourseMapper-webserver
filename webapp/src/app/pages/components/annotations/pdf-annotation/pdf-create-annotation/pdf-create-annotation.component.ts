@@ -182,6 +182,7 @@ export class PdfCreateAnnotationComponent implements OnInit, AfterViewChecked {
 
   dispatchAnnotation(){
     this.store.dispatch(AnnotationActions.postAnnotation({ annotation: this.annotation }));
+    
     this.sendButtonDisabled = true;
   }
 

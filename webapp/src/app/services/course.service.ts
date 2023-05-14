@@ -166,8 +166,7 @@ export class CourseService {
   GetAllCourses():  Observable<Course[]> {
     return this.http.get<Course[]>(`${this.API_URL}/courses`).pipe(tap(courses => {
       this.courses = courses;
-      console.log("all courses from service course")
-      console.log(this.courses)
+
     }));
   }
 
@@ -176,8 +175,7 @@ export class CourseService {
    return this.http.post<any>(`${this.API_URL}/enrol/${courseID}`, {}).pipe(tap(
     Enrolcourses => {
      
-      console.log("Enrolcourses from service course")
-      console.log(Enrolcourses)
+
     }
    ))
 
@@ -187,8 +185,7 @@ export class CourseService {
     return this.http.post<any>(`${this.API_URL}/withdraw/${course._id}`, {}).pipe(tap(
       withdrawcourses => {
        
-        console.log("withdraw courses from service course")
-        console.log(withdrawcourses)
+
       }
      ))
   }

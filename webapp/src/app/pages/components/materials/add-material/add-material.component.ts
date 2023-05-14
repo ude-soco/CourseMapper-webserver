@@ -68,12 +68,12 @@ export class AddMaterialComponent implements OnInit {
   showPdfAddModel() {
     this.pdfAddModelDisplay = true;
     this.materialType = 'pdf';
-    console.log(this.materialType);
+    
   }
   showVideoAddModel() {
     this.videoAddModelDisplay = true;
     this.materialType = 'video';
-    console.log(this.materialType);
+    
   }
 
   formData: FormData = null;
@@ -152,7 +152,7 @@ export class AddMaterialComponent implements OnInit {
   }
 
   submitForm(): void {
-    console.log('submit form called');
+    
     if (this.materialType === 'pdf') {
       if (this.chosenFile === null) {
         return;
@@ -183,8 +183,7 @@ export class AddMaterialComponent implements OnInit {
       this.materialToAdd.url = '/public/uploads/pdfs/';
     }
 
-    console.log('this.materialToAdd');
-    console.log(this.materialToAdd);
+
     var result = this.materialService
       .addMaterial(this.materialToAdd)
       .subscribe({
@@ -197,8 +196,7 @@ export class AddMaterialComponent implements OnInit {
             }
 
             if (this.materialType == 'pdf') {
-              console.log('this is the file: ');
-              console.log(file);
+
               this.formData = new FormData();
               this.formData.append('file', file, data.material._id + '.pdf');
             }
@@ -211,7 +209,7 @@ export class AddMaterialComponent implements OnInit {
                     this.response = res;
 
                     this.resetDialogs();
-                    console.log('materialemit');
+                    
 
                     this.validateForm.reset();
 
@@ -234,7 +232,7 @@ export class AddMaterialComponent implements OnInit {
                 }
               );
           } else if (!file) {
-            console.log('materialemit without file');
+          
             // this.materialemit=data.material._id
             //console.log(this.materialemit)
             this.validateForm.reset();
@@ -245,12 +243,12 @@ export class AddMaterialComponent implements OnInit {
         },
       });
     if (result != null) {
-      console.log(result);
+      
     }
   }
 
   myUploader(event) {
-    console.log(event);
+    
     this.chosenFile = event.currentFiles[0];
 
     if (this.materialType === 'pdf') {
@@ -273,7 +271,7 @@ export class AddMaterialComponent implements OnInit {
   }
 
   resetDialogs(event?) {
-    console.log('reset pdf element called!');
+   
     Object.keys(this.validateForm.controls).forEach((field) => {
       const control = this.validateForm.get(field);
       control.markAsUntouched({ onlySelf: true });

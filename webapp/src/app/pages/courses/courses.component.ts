@@ -137,19 +137,19 @@ NowClicked()
             },
            
           });
-          console.log(this.selectedCourse, "un enroll")
+          
 
         
       }
 unEnrolleCourse(course : Course){
-       console.log('un enole triggred')
-console.log(course)
+      
+
 this.courseService.WithdrawFromCourse(course).subscribe(
   (res) => {
    if ('success' in res)
    {
     this.showInfo('You have been  withdrewed successfully ');
-    console.log("response of enrollment", res)
+  
     this.store.dispatch(CourseAction.setCurrentCourse({ selcetedCourse:course }));
     this.router.navigate(['course-description', course._id]);
    }

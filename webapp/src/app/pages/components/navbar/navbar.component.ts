@@ -74,7 +74,7 @@ export class NavbarComponent implements OnInit {
       next: () => {
         this.storageService.clean();
         this.router.navigate(['/landingPage']);
-        console.log('loggedout')
+      
       },
       error: (err) => {
         console.log(err);

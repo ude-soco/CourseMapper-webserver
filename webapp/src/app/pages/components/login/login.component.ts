@@ -46,7 +46,7 @@ export class LoginComponent implements OnInit {
         this.isLoggedIn = true;
 
         const user = data as User;
-        console.log(user, "user")
+        
         this.store.dispatch(ApplicationActions.setLoggedInUser({loggedInUser: user}));
         this.router.navigate(['/home']);
       },
