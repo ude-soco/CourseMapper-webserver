@@ -5,11 +5,11 @@
 export const environment = {
   production: false,
   API_URL: 'http://localhost:8080/api',
-  apiUrl: "http://localhost:8080/api"
+  apiUrl: 'http://localhost:8080/api',
 };
 export const environment_2 = {
   production: false,
-  apiUrl: "http://localhost:8090/api"
+  apiUrl: 'http://localhost:8090/api',
 };
 
 /*

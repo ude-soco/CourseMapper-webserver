@@ -31,7 +31,8 @@ services:
       - PASS=adminpassword
       - MONGO_DB=mongodb://mongo:27017/coursemapper
     volumes:
-      - webserver-uploads:/app/public/uploads
+      - webserver-uploads-pdfs:/app/public/uploads/pdfs
+      - webserver-uploads-videos:/app/public/uploads/videos
     depends_on:
       mongo:
         condition: service_healthy
@@ -48,4 +49,5 @@ services:
 
 volumes:
   mongo:
-  webserver-uploads:
+  webserver-uploads-pdfs:
+  webserver-uploads-videos:

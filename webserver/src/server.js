@@ -23,7 +23,12 @@ env !== "production"
   ? app.use(
       cors({
         credentials: true,
-        origin: ["http://localhost:4200", "https://www.youtube.com/watch?v=", "http://127.0.0.1:8081 "],
+        origin: [
+          "http://localhost:4200",
+          "https://www.youtube.com/watch?v=",
+          "http://127.0.0.1:8081 ",
+          process.env.WEBAPP_URL,
+        ],
       })
     )
   : "";
@@ -74,6 +79,8 @@ socketio.getIO().on("connection", () => {
 });
 
 // Routes
+let apiURL = "/api"
+app.use(apiURL, require("./routes/activity.routes"));
 require("./routes/auth.routes")(app);
 require("./routes/user.routes")(app);
 require("./routes/course.routes")(app);
@@ -87,7 +94,6 @@ require("./routes/fileupload.routes")(app);
 require("./routes/filedelete.routes")(app);
 require("./routes/videodelete.routes")(app);
 require("./routes/test.routes")(app);
-require("./routes/activity.routes")(app);
 
 // Listen on provided port, on all network interfaces
 server.listen(port);
