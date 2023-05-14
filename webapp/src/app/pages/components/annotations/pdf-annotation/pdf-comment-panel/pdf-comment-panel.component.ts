@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Annotation, PdfAnnotationTool, PdfGeneralAnnotationLocation, PdfToolType, VideoAnnotationLocation } from 'src/app/models/Annotations';
 import { Store } from '@ngrx/store';
 import { computeElapsedTime, getInitials } from 'src/app/_helpers/format';
@@ -27,7 +27,7 @@ export class PdfCommentPanelComponent implements OnInit {
   currentTime: number = 0;
   currentTimeSpanSelected: boolean = false;
 
-  constructor(private store: Store<State>) {
+  constructor(private store: Store<State>, private changeDetectorRef: ChangeDetectorRef) {
 
     this.store.select(getCurrentMaterial).subscribe((material) => this.selectedMaterial = material);
 
@@ -54,6 +54,17 @@ export class PdfCommentPanelComponent implements OnInit {
         this.annotationsToShow = this.annotations.filter((a) => (a.location as VideoAnnotationLocation).from <= time && (a.location as VideoAnnotationLocation).to > time);
       }
     });
+  }
+
+  ngAfterViewChecked(): void {
+    let container = document.getElementsByClassName('materialContainer')[0] as HTMLElement;
+    let commentPanel = document.getElementsByClassName('commentPanel')[0] as HTMLElement;
+    if(container && commentPanel){
+      commentPanel.style.maxHeight = container.clientHeight / 2 + 'px';
+      commentPanel.style.overflow = 'auto'
+      this.changeDetectorRef.detectChanges();
+    }
+
   }
 
   ngOnInit(): void {

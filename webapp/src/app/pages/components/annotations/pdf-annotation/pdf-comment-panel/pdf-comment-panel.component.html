@@ -38,7 +38,7 @@
 
 <div class="flex flex-col" *ngIf="annotationsToShow?.length > 0">
   <span class="font-medium text-xl">Annotations</span>
-  <div class="overflow-y-auto max-h-[40rem]">
+  <div class="commentPanel">
     <div *ngFor="let annotation of annotationsToShow" class="mr-2">
       <app-pdf-comment-item [annotation]="annotation"></app-pdf-comment-item>
     </div>

@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { PDFDocumentProxy, PdfViewerComponent } from 'ng2-pdf-viewer';
 import { toolTypeSelection } from 'src/app/_helpers/tool-type-selection';
 import {
@@ -127,7 +127,8 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   constructor(
     private pdfViewService: PdfviewService,
     private store: Store<State>,
-    private socket: Socket
+    private socket: Socket,
+    private changeDetectorRef: ChangeDetectorRef
   ) {
     this.getDocUrl();
     this.store.dispatch(AnnotationActions.loadAnnotations());
@@ -180,6 +181,16 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
       let annotation = this.annotations.find((anno) => payload.annotation?._id == anno._id)
         this.store.dispatch(AnnotationActions.updateAnnotationsOnSocketEmit({payload: payload}));
     })
+  }
+
+  ngAfterViewChecked(): void {
+    let container = document.getElementsByClassName('pdfViewerContainer')[0] as HTMLElement;
+    let viewer = document.getElementsByClassName('pdfViewer')[0] as HTMLElement;
+    if(container && viewer){
+      container.style.height = viewer.clientHeight + 50 + 'px';
+      this.changeDetectorRef.detectChanges();
+    }
+
   }
 
 
