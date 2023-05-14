@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1.5
-FROM node:19-slim
+FROM node:20-slim
 
 WORKDIR /app
 ENV PATH "$PATH:/app/node_modules/.bin"

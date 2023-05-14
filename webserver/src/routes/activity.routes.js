@@ -1,15 +1,16 @@
 const { authJwt } = require("../middlewares");
 const controller = require("../controllers/activity.controller");
+const activityRouter = require("express").Router();
 
-module.exports = function (app) {
-  app.use(function (req, res, next) {
-    res.header("Access-Control-Allow-Headers", "Origin, Content-Type, Accept");
-    next();
-  });
+activityRouter.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Headers", "Origin, Content-Type, Accept");
+  next();
+});
 
-  app.get(
-    "/api/collect-activities",
-    [authJwt.verifyToken, authJwt.isAdmin],
-    controller.collectActivities
-  );
-};
+activityRouter.get(
+  "/collect-activities",
+  [authJwt.verifyToken, authJwt.isAdmin],
+  controller.collectActivities
+);
+
+module.exports = activityRouter;
