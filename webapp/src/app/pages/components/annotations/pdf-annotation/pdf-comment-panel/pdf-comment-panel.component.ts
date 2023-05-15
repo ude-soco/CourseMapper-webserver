@@ -57,14 +57,15 @@ export class PdfCommentPanelComponent implements OnInit {
   }
 
   ngAfterViewChecked(): void {
-    let container = document.getElementsByClassName('materialContainer')[0] as HTMLElement;
+    let annotationPanel = document.getElementsByClassName('materialContainer')[0] as HTMLElement;
     let commentPanel = document.getElementsByClassName('commentPanel')[0] as HTMLElement;
-    if(container && commentPanel){
-      commentPanel.style.maxHeight = container.clientHeight / 2 + 'px';
+    let createAnnotationPanel = document.getElementsByClassName('create-annotation')[0] as HTMLElement;
+    let filterPanel = document.getElementsByClassName('filter-panel')[0] as HTMLElement;
+    if(annotationPanel && commentPanel && createAnnotationPanel && filterPanel){
+      commentPanel.style.maxHeight = annotationPanel.clientHeight - (createAnnotationPanel.clientHeight +  filterPanel.clientHeight + 60) + 'px';
       commentPanel.style.overflow = 'auto'
       this.changeDetectorRef.detectChanges();
     }
-
   }
 
   ngOnInit(): void {

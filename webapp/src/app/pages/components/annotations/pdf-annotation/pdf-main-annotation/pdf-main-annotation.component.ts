@@ -186,8 +186,11 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   ngAfterViewChecked(): void {
     let container = document.getElementsByClassName('pdfViewerContainer')[0] as HTMLElement;
     let viewer = document.getElementsByClassName('pdfViewer')[0] as HTMLElement;
+    let annotationPanel = document.getElementsByClassName('annotation-panel')[0] as HTMLElement;
+    let materialContainer = document.getElementsByClassName('materialContainer')[0] as HTMLElement;
     if(container && viewer){
-      container.style.height = viewer.clientHeight + 50 + 'px';
+      container.style.height = viewer.clientHeight + 20 + 'px';
+      annotationPanel.style.height = materialContainer.clientHeight + 'px';
       this.changeDetectorRef.detectChanges();
     }
 
