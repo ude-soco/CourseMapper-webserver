@@ -189,7 +189,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
     let annotationPanel = document.getElementsByClassName('annotation-panel')[0] as HTMLElement;
     let materialContainer = document.getElementsByClassName('materialContainer')[0] as HTMLElement;
     if(container && viewer){
-      container.style.height = viewer.clientHeight + 20 + 'px';
+      container.style.height = viewer.clientHeight + 30 + 'px';
       annotationPanel.style.height = materialContainer.clientHeight + 'px';
       this.changeDetectorRef.detectChanges();
     }
