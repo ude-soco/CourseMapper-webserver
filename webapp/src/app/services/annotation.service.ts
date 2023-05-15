@@ -1,19 +1,19 @@
-import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
-import { Annotation } from "src/app/models/Annotations";
-import { environment } from "src/environments/environment";
-import { Reply } from "../models/Reply";
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Annotation } from 'src/app/models/Annotations';
+import { environment } from 'src/environments/environment';
+import { Reply } from '../models/Reply';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class AnnotationService {
   constructor(private http: HttpClient) {}
 
   postAnnotation(annotation: Annotation): Observable<Annotation> {
     return this.http.post<Annotation>(
-      `${environment.apiUrl}/courses/${annotation.courseId}/materials/${annotation.materialId}/annotation`,
+      `${environment.API_URL}/courses/${annotation.courseId}/materials/${annotation.materialId}/annotation`,
       annotation
     );
   }
