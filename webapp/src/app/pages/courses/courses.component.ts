@@ -137,7 +137,14 @@ NowClicked()
             },
            
           });
-          
+          setTimeout(() => {
+            const rejectButton = document.getElementsByClassName(
+              'p-confirm-dialog-reject'
+            ) as HTMLCollectionOf<HTMLElement>;
+            for (var i = 0; i < rejectButton.length; i++) {
+              this.renderer.addClass(rejectButton[i], 'p-button-outlined');
+            }
+          }, 0);
 
         
       }
