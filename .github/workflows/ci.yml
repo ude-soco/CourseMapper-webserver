@@ -12,7 +12,12 @@ jobs:
     name: Assert main branch
     runs-on: ubuntu-latest
     steps:
+    - name: Notify if untagged
+      if: ${{ !(github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) }}
+      run: echo "::notice::Not tagged, skipping branch check"
+
     - name: Checkout repository
+      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
       uses: actions/checkout@v3
       with:
         fetch-depth: 0 # all history
