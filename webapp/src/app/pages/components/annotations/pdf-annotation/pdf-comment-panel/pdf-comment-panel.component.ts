@@ -74,7 +74,7 @@ export class PdfCommentPanelComponent implements OnInit {
 
   showPDFAnnotations() {
 
-    this.annotationOnCurrentPage = this.annotations.filter((anno) => (anno.location as PdfGeneralAnnotationLocation).startPage == this.currentPage);
+    this.annotationOnCurrentPage = this.annotations.filter((anno) => this.currentPage >= (anno.location as PdfGeneralAnnotationLocation).startPage && this.currentPage <= (anno.location as PdfGeneralAnnotationLocation).lastPage);
     this.annotationsToShow = this.annotationOnCurrentPage;
   }
 
