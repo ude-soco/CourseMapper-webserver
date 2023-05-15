@@ -90,6 +90,10 @@ jobs:
         cache-from: type=gha
         cache-to:   type=gha,mode=max
 
+    - name: Output tags
+      if: inputs.push
+      run: 'echo "::notice::Pushed container image tags: ${{ steps.meta.outputs.tags }}"'
+
     - name: Update registry description
       if:   ${{ github.ref_type == 'tag' && github.ref_name == steps.latest.outputs.version }}
       uses: christian-korneck/update-container-description-action@v1
