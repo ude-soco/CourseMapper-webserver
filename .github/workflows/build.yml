@@ -92,7 +92,7 @@ jobs:
 
     - name: Output tags
       if: inputs.push
-      run: 'echo "::notice::Pushed container image tags: ${{ steps.meta.outputs.tags }}"'
+      run: 'echo "::notice::Tags pushed: ${{ steps.meta.outputs.tags }}"'
 
     - name: Update registry description
       if:   ${{ github.ref_type == 'tag' && github.ref_name == steps.latest.outputs.version }}
