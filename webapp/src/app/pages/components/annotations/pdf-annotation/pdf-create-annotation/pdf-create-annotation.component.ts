@@ -86,6 +86,10 @@ export class PdfCreateAnnotationComponent implements OnInit, AfterViewChecked {
     this.store.select(getPdfTotalNumberOfPages).subscribe((total) => {
       this.totalPages = total;
       this.fromPageArray = Array.from({length: this.totalPages}, (_, i) => i + 1);
+      this.selectedFromPage = 1;
+      this.toPageArray = Array.from({length: this.totalPages - this.selectedFromPage + 1}, (_, i) => i + this.selectedFromPage);
+      this.selectedToPage = 1;
+
     });
   }
   ngAfterViewChecked(): void {
@@ -196,7 +200,8 @@ export class PdfCreateAnnotationComponent implements OnInit, AfterViewChecked {
   }
 
   onShowOfSelectedFromPageDropDpown(){
-    this.isFromSelected = false;
+    this.toPageArray = Array.from({length: this.totalPages - this.selectedFromPage + 1}, (_, i) => i + this.selectedFromPage);
+    this.isFromSelected = true;
   }
 
   onTextChange(){

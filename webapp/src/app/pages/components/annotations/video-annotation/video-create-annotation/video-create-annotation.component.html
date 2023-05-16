@@ -46,7 +46,17 @@
         ></p-slider>
       </div>
       <div class="flex flex-row space-x-3">
-        <textarea
+        <textarea *ngIf="isAnnotationDialogVisible"
+        pInputTextarea
+        [autoResize]="true"
+        rows="2" cols="60"
+        [style]="{'border': '1px solid' + annotationColor}"
+        [(ngModel)]="content"
+        (ngModelChange)="onTextChange()"
+        class="w-full"
+        placeholder="Add an annotation with the selected tool"
+      ></textarea>
+        <textarea *ngIf="!isAnnotationDialogVisible"
           pInputTextarea
           [autoResize]="true"
           rows="2" cols="60"
