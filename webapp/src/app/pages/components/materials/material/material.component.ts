@@ -9,6 +9,8 @@ import {
   SimpleChanges,
   Renderer2,
   HostListener,
+  ChangeDetectorRef,
+  AfterViewChecked,
 } from '@angular/core';
 import { Channel } from 'src/app/models/Channel';
 import { TopicChannelService } from 'src/app/services/topic-channel.service';
@@ -35,7 +37,7 @@ import * as  CourseActions from 'src/app/pages/courses/state/course.actions'
   styleUrls: ['./material.component.css'],
   providers: [MessageService, ConfirmationService],
 })
-export class MaterialComponent implements OnInit, OnDestroy {
+export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
   @Output() public channelEmitted = new EventEmitter<any>();
   selectedChannel: Channel;
   channelSelected$: Observable<boolean>;
@@ -74,7 +76,8 @@ export class MaterialComponent implements OnInit, OnDestroy {
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private moderatorPrivilegesService: ModeratorPrivilegesService,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private changeDetectorRef: ChangeDetectorRef
   ) {
     const url = this.router.url;
     if (url.includes('course') && url.includes('channel')) {
@@ -113,6 +116,15 @@ export class MaterialComponent implements OnInit, OnDestroy {
         this.showModeratorPrivileges =
           moderatorPrivilegesService.showModeratorPrivileges;
       });
+  }
+  ngAfterViewChecked(): void {
+    let inkBar = document.getElementsByClassName('p-tabview-ink-bar')[0] as HTMLElement;
+    let currentTab = document.getElementsByClassName('p-highlight')[0] as HTMLElement;
+    if(inkBar && currentTab){
+      inkBar.style.width = currentTab.clientWidth + 'px';
+      this.changeDetectorRef.detectChanges();
+    }
+
   }
   materialOptions: MenuItem[] = [
     {
@@ -337,7 +349,7 @@ export class MaterialComponent implements OnInit, OnDestroy {
     let selectedMat = <HTMLInputElement>(
       document.getElementById(`${this.selectedMaterial._id}`)
     );
-    console.log(selectedMat);
+   
     this.selectedId = this.selectedMaterial._id;
     selectedMat.contentEditable = 'true';
     this.previousMaterial = this.selectedMaterial;
@@ -388,12 +400,11 @@ export class MaterialComponent implements OnInit, OnDestroy {
         .subscribe();
     } else if (this.escapeKey === true) {
       //ESC pressed
-      console.log('ESC Pressed');
-      console.log(this.previousMaterial);
+   
       let MaterialName = this.previousMaterial.name;
       const MaterialDescription = this.previousMaterial.description;
       const curseId = this.previousMaterial.courseId;
-      console.log(curseId);
+ 
       const matId = this.previousMaterial._id;
       const matUrl = this.previousMaterial.url;
       const mattype = this.previousMaterial.type;
@@ -411,7 +422,7 @@ export class MaterialComponent implements OnInit, OnDestroy {
         .subscribe();
     } else {
       //confirmed by mouse click
-      console.log('logged from mouse');
+     // console.log('logged from mouse');
       let MaterialName = this.previousMaterial.name;
       const MaterialDescription = this.previousMaterial.description;
       const curseId = this.previousMaterial.courseId;
@@ -454,7 +465,7 @@ export class MaterialComponent implements OnInit, OnDestroy {
     // to confirm rename when mouse clicked anywhere
     if (this.editable) {
       //course name <p> has been changed to editable
-      console.log('logged to mouse event');
+      //console.log('logged to mouse event');
       this.enterKey = false;
       this.onRenameMaterialConfirm(this.selectedId);
     }

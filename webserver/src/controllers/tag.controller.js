@@ -24,6 +24,7 @@ export const courseTags = async (req, res) => {
   foundTags.forEach((tag) => {
     if (!newFoundTags.some((item) => item.name === tag.name)) {
       let newTag = {
+        _id: tag._id,
         name: tag.name,
         count: foundTags.filter((item) => item.name === tag.name).length,
       };
@@ -61,6 +62,7 @@ export const topicTags = async (req, res) => {
   foundTags.forEach((tag) => {
     if (!newFoundTags.some((item) => item.name === tag.name)) {
       let newTag = {
+        _id: tag._id,
         name: tag.name,
         count: foundTags.filter((item) => item.name === tag.name).length,
       };
@@ -98,6 +100,7 @@ export const channelTags = async (req, res) => {
   foundTags.forEach((tag) => {
     if (!newFoundTags.some((item) => item.name === tag.name)) {
       let newTag = {
+        _id: tag._id,
         name: tag.name,
         count: foundTags.filter((item) => item.name === tag.name).length,
       };
@@ -135,6 +138,7 @@ export const materialTags = async (req, res) => {
   foundTags.forEach((tag) => {
     if (!newFoundTags.some((item) => item.name === tag.name)) {
       let newTag = {
+        _id: tag._id,
         name: tag.name,
         count: foundTags.filter((item) => item.name === tag.name).length,
       };

@@ -51,7 +51,7 @@ export class MaterilasService {
     return this.http.delete(`${this.API_URL}/courses/${material["courseId"]}/materials/${material._id}`,)
     .pipe(
       tap(res =>{
-console.log(res)
+//console.log(res)
       })
     )
   }
@@ -61,7 +61,7 @@ console.log(res)
   return this.http.delete(`${this.API_URL}/files/${material._id+".pdf"}`,)
     .pipe(
       tap(res =>{
-console.log(res)
+//console.log(res)
       })
     )
   }
@@ -70,7 +70,7 @@ console.log(res)
     return this.http.delete(`${this.API_URL}/videos/${material._id+".mp4"}`,)
     .pipe(
       tap(res =>{
-console.log(res)
+//console.log(res)
       })
     )
    }

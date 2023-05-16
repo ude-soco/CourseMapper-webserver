@@ -43,17 +43,22 @@ import * as  CourseActions from 'src/app/pages/courses/state/course.actions'
     this.courseService
       .fetchCourses()
       .subscribe((courses) => (this.courses = courses));
+
     this.courseService.onUpdateCourses$.subscribe(
       (courses) => (this.courses = courses)
+      
     );
+  
   }
 
   onAddCourseDialogueClicked() {
     this.toggleAddCoursedialogue(true);
+
   }
 
   toggleAddCoursedialogue(visibility) {
     this.displayAddCourseDialogue = visibility;
+
   }
 
   onSelectCourse(selectedCourse: Course) {

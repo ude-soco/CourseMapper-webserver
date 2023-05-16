@@ -1,4 +1,4 @@
-name: Release
+name: Create GitHub Release
 
 on: workflow_call
 
@@ -20,10 +20,6 @@ jobs:
             echo "stable=true" >> $GITHUB_OUTPUT
         fi
 
-    - uses: actions/download-artifact@v3
-      with:
-        name: Kubernetes Manifests
-
     - name: Create release
       if:   steps.semver.outputs.stable == 'true'
       uses: ncipollo/release-action@v1
@@ -35,4 +31,3 @@ jobs:
         updateOnlyUnreleased: true
         skipIfReleaseExists: true
         generateReleaseNotes: true
-        artifacts: coursemapper-webserver-base.yaml

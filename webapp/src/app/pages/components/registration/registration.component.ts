@@ -93,8 +93,7 @@ export class RegistrationComponent implements OnInit {
   }
 
   get f(): { [key: string]: AbstractControl } {
-    console.log('111');
-    console.log(this.validateForm.value);
+   
     return this.validateForm.controls;
   }
 
@@ -104,8 +103,7 @@ export class RegistrationComponent implements OnInit {
       return ;
       } 
       else {
-    console.log('222');
-    console.log(this.validateForm.value);
+
     this.errors = null;
     const { firstname, lastname, username, email, password } =
       this.validateForm.value;
@@ -114,7 +112,7 @@ export class RegistrationComponent implements OnInit {
       .register(firstname, lastname, username, email, password)
       .subscribe({
         next: (data) => {
-          console.log(data);
+        
           this.isSuccessful = true;
           this.isSignUpFailed = false;
           this.submitted = true;
@@ -145,7 +143,7 @@ export function ConfirmedValidator(
     }
     if (control.value !== matchingControl.value) {
       matchingControl.setErrors({ confirmedValidator: true });
-      console.log('not matched')
+      
     } else {
       matchingControl.setErrors(null );
     }

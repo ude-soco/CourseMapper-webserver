@@ -5,6 +5,7 @@ import { Course } from 'src/app/models/Course';
 import { Channel } from 'src/app/models/Channel';
 import { Tag } from 'src/app/models/Tag';
 import { Topic } from 'src/app/models/Topic';
+import { Annotation } from 'src/app/models/Annotations';
 
 export interface State extends AppState.State{
     courses: CourseState;
@@ -19,7 +20,9 @@ export interface CourseState {
     tagsForTopic: Tag[],
     tagsForChannel: Tag[],
     tagSelected: boolean,
-    selcetedTopic: Topic
+    selectedTagName: string,
+    selcetedTopic: Topic,
+    annotationsForSelectedTag: Annotation[]
  
   }
   const initialState: CourseState = {
@@ -32,7 +35,9 @@ export interface CourseState {
   tagsForTopic: null,
   tagsForChannel: null,
   tagSelected: false,
-  selcetedTopic: null
+  selectedTagName: null,
+  selcetedTopic: null,
+  annotationsForSelectedTag: null
   }
   const getCourseFeatureState = createFeatureSelector<CourseState>('course');
 
@@ -76,6 +81,21 @@ export interface CourseState {
     state => state.tagsForChannel
   );
 
+  export const getIsTagSelected = createSelector(
+    getCourseFeatureState,
+    state => state.tagSelected
+  );
+
+  export const getAnnotationsForSelectedTag = createSelector(
+    getCourseFeatureState,
+    state => state.annotationsForSelectedTag
+  );
+
+  export const getSelectedTagName = createSelector(
+    getCourseFeatureState,
+    state => state.selectedTagName
+  );
+
 
   export const courseReducer = createReducer<CourseState>(
     initialState,
@@ -84,6 +104,10 @@ export interface CourseState {
         
         ...state,
         selectedCourse: action.selcetedCourse,
+        tagSelected: false,
+        selectedTagName: null,
+        tagsForChannel: null,
+        tagsForTopic: null,
         
 
       };
@@ -107,6 +131,30 @@ export interface CourseState {
         return {
           ...state,
           selectedChannel: action.selectedChannel
+        };
+      }),
+
+      on(CourseAction.selectTag, (state, action): CourseState => {
+        return {
+          ...state,
+          tagSelected: action.tagSelected
+        };
+      }),
+
+      on(CourseAction.loadAnnotationsForSelectedTag, (state, action): CourseState => {
+        return {
+          ...state,
+          tagSelected: action.tagSelected,
+          selectedTagName: action.selectedTagName,
+          courseId: action.courseId
+        };
+      }),
+
+      on(CourseAction.loadAnnotationsForSelectedTagSuccess, (state, action): CourseState => {
+        return {
+          ...state,
+          annotationsForSelectedTag: action.annotations,
+
         };
       }),
 
@@ -145,4 +193,215 @@ export interface CourseState {
           selcetedTopic: action.selcetedTopic
         };
       }),
+
+      on(
+        CourseAction.updateAnnotationsForSelectedTag,
+        (state, action): CourseState => {
+          switch (action.payload.eventType) {
+            case 'annotationCreated': {
+              return {
+                ...state,
+                annotationsForSelectedTag: [
+                  action.payload.annotation,
+                  ...state.annotationsForSelectedTag,
+                ] as Annotation[],
+              };
+            }
+            case 'annotationLiked': {
+              let annotations = [...state.annotationsForSelectedTag];
+              let index = state.annotationsForSelectedTag.findIndex(
+                (annotation) => annotation._id == action.payload.annotation._id
+              );
+              let updatedLikes = [...annotations[index].likes]
+              let updatedDislikes = [...annotations[index].dislikes]
+              updatedLikes = action.payload.annotation.likes;
+              updatedDislikes = action.payload.annotation.dislikes;
+              let updatedAnnotation = {
+                ...annotations[index],
+                likes: updatedLikes,
+                dislikes: updatedDislikes
+              } as Annotation;
+              annotations[index] = updatedAnnotation;
+              return {
+                ...state,
+                annotationsForSelectedTag: annotations,
+              };
+            }
+            case 'annotationUnliked': {
+              let annotations = [...state.annotationsForSelectedTag];
+              let index = state.annotationsForSelectedTag.findIndex(
+                (annotation) => annotation._id == action.payload.annotation._id
+              );
+              let updatedLikes = [...annotations[index].likes]
+              let updatedDislikes = [...annotations[index].dislikes]
+              updatedLikes = action.payload.annotation.likes;
+              updatedDislikes = action.payload.annotation.dislikes;
+              let updatedAnnotation = {
+                ...annotations[index],
+                likes: updatedLikes,
+                dislikes: updatedDislikes
+              } as Annotation;
+              annotations[index] = updatedAnnotation;
+              return {
+                ...state,
+                annotationsForSelectedTag: annotations,
+              };
+            }
+            case 'annotationUndisliked': {
+              let annotations = [...state.annotationsForSelectedTag];
+              let index = state.annotationsForSelectedTag.findIndex(
+                (annotation) => annotation._id == action.payload.annotation._id
+              );
+              let updatedLikes = [...annotations[index].likes]
+              let updatedDislikes = [...annotations[index].dislikes]
+              updatedLikes = action.payload.annotation.likes;
+              updatedDislikes = action.payload.annotation.dislikes;
+              let updatedAnnotation = {
+                ...annotations[index],
+                likes: updatedLikes,
+                dislikes: updatedDislikes
+              } as Annotation;
+              annotations[index] = updatedAnnotation;
+              return {
+                ...state,
+                annotationsForSelectedTag: annotations,
+              };
+            }
+            case 'annotationDisliked': {
+              let annotations = [...state.annotationsForSelectedTag];
+              let index = state.annotationsForSelectedTag.findIndex(
+                (annotation) => annotation._id == action.payload.annotation._id
+              );
+              let updatedLikes = [...annotations[index].likes]
+              let updatedDislikes = [...annotations[index].dislikes]
+              updatedLikes = action.payload.annotation.likes;
+              updatedDislikes = action.payload.annotation.dislikes;
+              let updatedAnnotation = {
+                ...annotations[index],
+                likes: updatedLikes,
+                dislikes: updatedDislikes
+              } as Annotation;
+              annotations[index] = updatedAnnotation;
+              return {
+                ...state,
+                annotationsForSelectedTag: annotations,
+              };
+            }
+            case 'replyCreated': {
+              let annotations = [...state.annotationsForSelectedTag];
+              let index = state.annotationsForSelectedTag.findIndex(
+                (annotation) => annotation._id === action.payload.annotation._id
+              );
+              let annotation = annotations.find(
+                (annotation) => annotation._id === action.payload.annotation._id
+              );
+              let replies = [...annotation.replies];
+              //Check if reply already exists:
+              let exists = replies.some(
+                (reply) => reply._id === action.payload.reply._id
+              );
+              if (!exists) {
+                let updatedReplies = [...replies, action.payload.reply];
+                let updatedAnnotation = {
+                  ...annotation,
+                  replies: updatedReplies,
+                } as Annotation;
+                annotations[index] = updatedAnnotation;
+              }
+              return {
+                ...state,
+                annotationsForSelectedTag: annotations,
+              };
+            }
+            case 'replyDeleted': {
+              let annotations = [...state.annotationsForSelectedTag];
+              let index = state.annotationsForSelectedTag.findIndex(
+                (annotation) => annotation._id === action.payload.annotation._id
+              );
+              let annotation = annotations.find(
+                (annotation) => annotation._id === action.payload.annotation._id
+              );
+              let replies = [...annotation.replies];
+              //Check if reply already exists:
+              let exists = replies.some(
+                (reply) => reply._id === action.payload.reply._id
+              );
+              if (exists) {
+                replies.forEach((reply, index) => {if(reply._id === action.payload.reply._id) replies.splice(index, 1)});
+                let updatedReplies = [...replies];
+                let updatedAnnotation = {
+                  ...annotation,
+                  replies: updatedReplies,
+                } as Annotation;
+                annotations[index] = updatedAnnotation;
+              }
+              return {
+                ...state,
+                annotationsForSelectedTag: annotations,
+              };
+            }
+            case 'replyEdited': {
+              let annotations = [...state.annotationsForSelectedTag];
+              let index = state.annotationsForSelectedTag.findIndex(
+                (annotation) => annotation._id === action.payload.annotation._id
+              );
+              let annotation = annotations.find(
+                (annotation) => annotation._id === action.payload.annotation._id
+              );
+              let replies = [...annotation.replies];
+              //Check if reply already exists:
+              let replyIndex = replies.findIndex(
+                (reply) => reply._id === action.payload.reply._id
+              );
+              replies[replyIndex] = action.payload.reply;
+              if (replies[replyIndex]) {
+                let updatedReplies = [...replies];
+                let updatedAnnotation = {
+                  ...annotation,
+                  replies: updatedReplies,
+                } as Annotation;
+                annotations[index] = updatedAnnotation;
+              }
+              return {
+                ...state,
+                annotationsForSelectedTag: annotations,
+              };
+            }
+            case 'annotationDeleted': {
+              let annotations = [...state.annotationsForSelectedTag];
+              annotations.forEach((anno, index) => {if(anno._id === action.payload.annotation._id) annotations.splice(index, 1)});
+              return {
+                ...state,
+                annotationsForSelectedTag: annotations,
+              };
+            }
+            case 'annotationEdited': {
+              let annotations = [...state.annotationsForSelectedTag];
+              let index = annotations.findIndex((anno) => anno._id == action.payload.annotation._id)
+              annotations[index] = {
+                ...annotations[index],
+                content: action.payload.annotation.content
+              }
+              return {
+                ...state,
+                annotationsForSelectedTag: annotations,
+              };
+            }
+            default: {
+              return {
+                ...state,
+              };
+            }
+          }
+        }
+      ),
+      on(
+        CourseAction.updateAnnotationsWithReplies,
+        (state, action): CourseState => {
+          return {
+            ...state,
+            annotationsForSelectedTag: action.annotations,
+          };
+        }
+      ),
   );

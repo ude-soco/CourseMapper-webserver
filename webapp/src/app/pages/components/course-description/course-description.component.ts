@@ -33,13 +33,14 @@ export class CourseDescriptionComponent {
     
     this.store.select(getCurrentCourse).subscribe((course) => 
     this.course=course);
-    console.log(this.course, "this.course course des page")
+    //console.log(this.course, "this.course course des page")
 
-   this.courseService.GetAllCourses().subscribe( (courses) => {console.log("course desc All courses ", courses)  
+   this.courseService.GetAllCourses().subscribe( (courses) => {
+    //console.log("course desc All courses ", courses)  
    let varcc=courses.find(course=> this.course.id === course._id || this.course._id === course._id  )
  
    this.Users = [];
-  console.log(varcc, "course found from des page")
+  //console.log(varcc, "course found from des page")
    this.Users = varcc.users;
    var index = varcc.createdAt.indexOf('T');
       (this.createdAt = varcc.createdAt.slice(0, index)),
@@ -56,8 +57,7 @@ export class CourseDescriptionComponent {
   }
   ngOnInit(): void {
     this.isloggedin = this.storageService.isLoggedIn();
-    console.log("this.username course description")
-    console.log(this.isloggedin)
+   
 //       this.store.select(getCurrentCourse).subscribe((data) => {
 //   console.log("channel name observable called")
 //   this.Course=data
@@ -88,7 +88,7 @@ let Name=firstName+" "+lastName
     this.courseService.EnrollToCOurse(this.course.id).subscribe(
        (data) => {
         this.Enrolled= true
-        console.log("response of enrollment", data)
+        
         this.router.navigate(['course', this.course.id]);
          
        })

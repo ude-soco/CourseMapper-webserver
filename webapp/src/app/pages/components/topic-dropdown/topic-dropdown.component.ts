@@ -49,10 +49,12 @@ export class TopicDropdownComponent implements OnInit {
       const materialId = url.match(/material:(.*?)\/(pdf|video)/)?.[1];
       this.topicChannelService.fetchTopics(courseId).subscribe((course) => {
         this.selectedTopic = course.topics.find((topic) => topic.channels.find((channel) => channel._id === channelId));
-        console.log('mango: ' + this.selectedTopic._id);
         this.onSelectTopic(this.selectedTopic);
         this.selectedChannelId = channelId;
       })
+    }else{
+      this.selectedChannelId = null;
+      this.selectedChannel = null;
     }
   }
   @Input() showModeratorPrivileges: boolean;
@@ -146,7 +148,7 @@ export class TopicDropdownComponent implements OnInit {
   }
 
   showMenu() {
-    console.log(this.selectedTopic);
+   
   }
 
   onSelectTopic(topic: Topic) {
@@ -204,6 +206,9 @@ export class TopicDropdownComponent implements OnInit {
     );
     this.store.dispatch(
       CourseActions.SetSelectedChannel({ selectedChannel: channel })
+    );
+    this.store.dispatch(
+      MaterialActions.setCurrentMaterial({ selcetedMaterial: null })
     );
     // make selected channel's background white
     this.selectedChannelId = channel._id;
@@ -266,6 +271,8 @@ export class TopicDropdownComponent implements OnInit {
             'course',
             this.courseService.getSelectedCourse()._id,
           ]);
+          this.store.dispatch(CourseActions.SetSelectedChannel({selectedChannel: null}));
+          this.store.dispatch(CourseActions.toggleChannelSelected({channelSelected: false}));
         } else {
           this.showError(res['errorMsg']);
         }
@@ -302,7 +309,7 @@ export class TopicDropdownComponent implements OnInit {
       this.selectedTopic.name = body.name;
     } else if (this.escapeKey === true) {
       //ESC pressed
-      console.log('ESC Pressed');
+      //console.log('ESC Pressed');
       this.escapeKey = false;
     } else {
       //confirmed by mouse click
@@ -334,8 +341,8 @@ export class TopicDropdownComponent implements OnInit {
     //Prevent Special keys
     this.editable = true;
     this.textFromTopic = true;
-    console.log(e.keyCode);
-    console.log(e);
+    // console.log(e.keyCode);
+    // console.log(e);
     if (
       window.getSelection().toString() ==
       (<HTMLInputElement>document.getElementById(id)).innerText
@@ -443,6 +450,8 @@ export class TopicDropdownComponent implements OnInit {
             'course',
             this.courseService.getSelectedCourse()._id,
           ]);
+          this.store.dispatch(CourseActions.SetSelectedChannel({selectedChannel: null}));
+          this.store.dispatch(CourseActions.toggleChannelSelected({channelSelected: false}));
         } else {
           this.showError(res['errorMsg']);
         }
@@ -472,7 +481,7 @@ export class TopicDropdownComponent implements OnInit {
         newChannelName = newChannelName.substring(1); // to remove the additional hash
       }
       newChannelName = newChannelName.replace(/(\r\n|\n|\r)/gm, ''); //remove newlines
-      console.log(newChannelName);
+      //console.log(newChannelName);
       if (newChannelName && newChannelName !== '') {
         body = {
           name: newChannelName,
@@ -487,11 +496,11 @@ export class TopicDropdownComponent implements OnInit {
       this.selectedChannel.description = body.description;
     } else if (this.escapeKey === true) {
       //ESC pressed
-      console.log('ESC Pressed');
+    //  console.log('ESC Pressed');
       this.escapeKey = false;
     } else {
       //confirmed by mouse click
-      console.log('logged from mouse');
+      //console.log('logged from mouse');
       let ChannelName = this.previousChannel.name;
       const channelDescription = this.previousChannel.description;
       let body = { name: ChannelName, description: channelDescription };
@@ -500,7 +509,7 @@ export class TopicDropdownComponent implements OnInit {
         newChannelName = newChannelName.substring(1); // to remove the additional hash
       }
       newChannelName = newChannelName.replace(/(\r\n|\n|\r)/gm, ''); //remove newlines
-      console.log(newChannelName);
+      //console.log(newChannelName);
       if (
         newChannelName &&
         newChannelName !== '' &&

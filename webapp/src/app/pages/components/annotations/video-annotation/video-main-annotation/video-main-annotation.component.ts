@@ -87,7 +87,7 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
 
   ngOnInit(): void {
     let materialSubscriper = this.store.select(getCurrentMaterial).subscribe((material) => {
-      if(material.type === "video"){
+      if(material && material.type === "video"){
         this.material = material;
         this.materilaId = material._id;
         this.getVideoUrl();
@@ -124,7 +124,8 @@ export class VideoMainAnnotationComponent implements OnInit, OnDestroy, AfterVie
   saveYouTubePlayer(player) {
     this.YouTubePlayer = player.target;
 
-    const iframe = player.target.h
+    const iframe = player.target.g
+
     iframe.style.width = "100%";
     iframe.style.height = "100%";
     iframe.style.minHeight = "700px";

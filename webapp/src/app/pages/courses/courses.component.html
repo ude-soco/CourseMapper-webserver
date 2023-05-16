@@ -1,11 +1,11 @@
 <p-toast position="bottom-left"></p-toast>
-<p-confirmDialog></p-confirmDialog>
+<p-confirmDialog #cd></p-confirmDialog>
 <div class="flex flex-row">
   <div class="flex-col">
     <app-sidebar></app-sidebar>
   </div>
   <app-channelbar style="width: 15%" (click)="NowClicked()"></app-channelbar>
-  <div class="flex flex-col w-full items-center mt-6   " *ngIf="(channelSelected$ | async) == false">
+  <div class="flex flex-col w-full items-center mt-6   " *ngIf="(channelSelected$ | async) == false && (tagSelected$ | async) == false">
     <div > <p class="text-5xl leading-normal font-bold">Welcome to</p> </div>
     <div > 
       <p class="text-5xl leading-normal font-bold">{{selectedCourse.name}}</p>

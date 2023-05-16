@@ -14,7 +14,7 @@ import { DashboardComponent } from './pages/components/dashboard/dashboard.compo
 import { LandingPageComponent } from './pages/landing-page/landing-page.component';
 import { PrivacyComponent } from './pages/components/privacy/privacy.component';
 import { CourseDescriptionComponent } from './pages/components/course-description/course-description.component'; 
-import { TagsPageComponent } from './pages/courses/tags-page/tags-page.component';
+import { TagsPageComponent } from './pages/components/tags/tags-page/tags-page.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'landingPage', pathMatch: 'full' },
@@ -58,13 +58,14 @@ const routes: Routes = [
         import('./pages/components/materials/materials.module').then(m => m.MaterialsModule)
       },
       {
-        path: 'tag/:tagId',
+        path: 'tag/:tagName',
         component: TagsPageComponent,
       },
     ],
   },
 
   {path: 'course/:courseID/dashboard', component: DashboardComponent},
+
 ];
 
 @NgModule({

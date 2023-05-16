@@ -1,4 +1,4 @@
-name: CI
+name: Continuous Integration
 
 on:
   push:
@@ -8,10 +8,27 @@ on:
     branches:   [ main, development ]
 
 jobs:
-  manifests:
-    uses:  ./.github/workflows/kustomize.yml
+  assert-branch:
+    name: Assert main branch
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0 # all history
+    - uses: rickstaa/action-contains-tag@v1
+      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+      id: contains_tag
+      with:
+        reference: main
+        tag: ${{ github.ref_name }}
+    - if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && steps.contains_tag.outputs.retval != 'true'
+      uses: actions/github-script@v6
+      with:
+        script: core.setFailed('Release tag not on main branch')
 
   images:
+    name: Build container images
+    needs: [ assert-branch ]
     uses: ./.github/workflows/build.yml
     with:
       services:        "[ 'webapp', 'webserver' ]"
@@ -22,6 +39,7 @@ jobs:
       registry_token:  ${{ secrets.DOCKERHUB_TOKEN }}
 
   release:
-    needs: [ manifests, images ]
-    if:    github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
-    uses:  ./.github/workflows/release.yml
+    name: Release on GitHub
+    needs: [ assert-branch, images ]
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    uses: ./.github/workflows/release.yml

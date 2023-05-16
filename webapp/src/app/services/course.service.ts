@@ -46,7 +46,7 @@ export class CourseService {
       this.topicChannelService.updateTopics(course._id);
     }
     this.selectedCourse = course;
-    let courseId = course._id;
+    let courseId = this.selectedCourse._id;
     this.store.dispatch(CourseActions.setCourseId({ courseId }));    
     //2
     this.onSelectCourse.emit(course);
@@ -85,8 +85,11 @@ export class CourseService {
       tap(res => {
         if ( !('errorMsg' in res) ){
           this.courses.push(res.courseSaved);
-          this.sendToOldBackend(res.courseSaved);
+          //this.sendToOldBackend(res.courseSaved);
           this.onUpdateCourses$.next(this.courses);
+          
+          
+          
         }
     }));
   }
@@ -163,8 +166,7 @@ export class CourseService {
   GetAllCourses():  Observable<Course[]> {
     return this.http.get<Course[]>(`${this.API_URL}/courses`).pipe(tap(courses => {
       this.courses = courses;
-      console.log("all courses from service course")
-      console.log(this.courses)
+
     }));
   }
 
@@ -173,8 +175,7 @@ export class CourseService {
    return this.http.post<any>(`${this.API_URL}/enrol/${courseID}`, {}).pipe(tap(
     Enrolcourses => {
      
-      console.log("Enrolcourses from service course")
-      console.log(Enrolcourses)
+
     }
    ))
 
@@ -184,18 +185,17 @@ export class CourseService {
     return this.http.post<any>(`${this.API_URL}/withdraw/${course._id}`, {}).pipe(tap(
       withdrawcourses => {
        
-        console.log("withdraw courses from service course")
-        console.log(withdrawcourses)
+
       }
      ))
   }
-  sendToOldBackend(course){
-    // userId should be taken from the coockies. for the time being it is hard coded
-    this.http.post<any>('http://localhost:8090/new/course', 
-    {_id: course._id, course: course.name, description: course.description, 
-      shortName: course.shortName, userID:   this.user.id,})
-    .subscribe(res => {
-      console.log(res);
-    });
-  }
+  // sendToOldBackend(course){
+  //   // userId should be taken from the coockies. for the time being it is hard coded
+  //   this.http.post<any>('http://localhost:8090/new/course', 
+  //   {_id: course._id, course: course.name, description: course.description, 
+  //     shortName: course.shortName, userID:   this.user.id,})
+  //   .subscribe(res => {
+  //     console.log(res);
+  //   });
+  // }
 }

@@ -74,13 +74,17 @@ export class NavbarComponent implements OnInit {
       next: () => {
         this.storageService.clean();
         this.router.navigate(['/landingPage']);
-        console.log('loggedout')
+      
       },
       error: (err) => {
         console.log(err);
       },
     });
   
+  }
+
+  privacy(){
+    this.router.navigate(['/privacy']);
   }
   getIntitials = getInitials
 

@@ -57,14 +57,14 @@
             [options]="toPageArray"
             [(ngModel)]="selectedToPage"
             autoWidth="false"
-            [disabled]="!isFromSelected"
             appendTo="body"
             [style]="{ minWidth: '100%', 'border': '1px solid' + annotationColor, height: '55px' }"
           ></p-dropdown>
         </div>
       </div>
       <div class="flex flex-row space-x-3">
-        <textarea
+
+        <textarea *ngIf="disableSlidesDropDown"
           pInputTextarea
           [(ngModel)]="text"
           (ngModelChange)="onTextChange()"
@@ -72,8 +72,18 @@
           rows="2" cols="60"
           class="w-full"
           [style]="{'border': '1px solid' + annotationColor}"
-          placeholder="Add a general annotation without a tool"
+          placeholder="Add an annotation with the selected tool"
         ></textarea>
+        <textarea *ngIf="!disableSlidesDropDown"
+        pInputTextarea
+        [(ngModel)]="text"
+        (ngModelChange)="onTextChange()"
+        [autoResize]="true"
+        rows="2" cols="60"
+        class="w-full"
+        [style]="{'border': '1px solid' + annotationColor}"
+        placeholder="Add a general annotation without a tool"
+      ></textarea>
         <app-iconbutton
           icon="bx-send"
           color="{{sendButtonColor}}"

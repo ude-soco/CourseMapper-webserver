@@ -5,6 +5,20 @@
   <a [routerLink]="[LandingPage]"> 
     <img src="../../../assets/logo.svg" alt="logo" class="w-72"/></a>
     <div class="flex flex-wrap my-1">
+      <button
+      pButton
+      [ngStyle]="{
+        
+        backgroundColor: 'white',
+        color: '#0277BD',
+        marginRight: '8px'
+      }"
+      type="button"
+      label="Privacy"
+      (click)="privacy()"
+    ></button>
+      
+     
       <span *ngIf="!this.storageService.loggedIn">
         <button
           pButton
@@ -18,6 +32,7 @@
           label="Login"
           (click)="handleLogin()"
         ></button>
+       
         <button
           pButton
           [ngStyle]="{ backgroundColor: '#EA580C' }"

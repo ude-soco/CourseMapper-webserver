@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, Renderer2 } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import * as CourseAction from 'src/app/pages/courses/state/course.actions';
@@ -10,7 +10,8 @@ import { CourseService } from 'src/app/services/course.service';
 import { TopicChannelService } from 'src/app/services/topic-channel.service';
 import { UserServiceService } from 'src/app/services/user-service.service';
 import { getCourseSelected, State } from 'src/app/state/app.reducer';
-import { getChannelSelected, getCurrentCourse, getCurrentCourseId } from './state/course.reducer';
+import { getChannelSelected, getCurrentCourse, getCurrentCourseId, getIsTagSelected } from './state/course.reducer';
+import * as CourseActions from 'src/app/pages/courses/state/course.actions'
 
 @Component({
   selector: 'app-courses',
@@ -21,6 +22,7 @@ import { getChannelSelected, getCurrentCourse, getCurrentCourseId } from './stat
 export class CoursesComponent implements OnInit {
   selectedCourse: Course = new CourseImp('', '');
   courseSelected$: Observable<boolean>;
+  tagSelected$: Observable<boolean>;
   course:  Course ;
   createdAt:string
   firstName:string;
@@ -42,19 +44,25 @@ export class CoursesComponent implements OnInit {
     private messageService: MessageService,
   
   ) {
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        const url = this.router.url;
+        if (!url.includes('tag')){
+          this.store.dispatch(CourseActions.selectTag({tagSelected: false}));
+          this.tagSelected$ = this.store.select(getIsTagSelected);
+        }
+      }
+    });
     this.courseSelected$ = store.select(getCourseSelected);
     this.channelSelected$ = this.store.select(getChannelSelected);
   }
 
   ngOnInit(): void {
-    
     this.selectedCourse = this.courseService.getSelectedCourse();
      this.ChannelToggel=false 
      this.Users = [];
       this.courseService.onSelectCourse.subscribe((course) => {
         this.selectedCourse = course;
-        console.log("this.selectedCourse")
-        console.log(this.selectedCourse)
 
        
 
@@ -64,16 +72,14 @@ export class CoursesComponent implements OnInit {
        this.ChannelToggel=false  
       this.topicChannelService.fetchTopics(course._id).subscribe( (course) =>{
         this.selectedCourse = course;
-        console.log(course,"this.selectedCourse from des page")
         this.Users = course.users;
-        console.log(this.Users)
            let userModerator =  this.Users.find(
             (user) => user.role.name === 'moderator'
 
           );
      
           
-          console.log(userModerator,"moderator")
+
          this.buildCardInfo(userModerator.userId, course);
       }
    )
@@ -131,19 +137,26 @@ NowClicked()
             },
            
           });
-          console.log(this.selectedCourse, "un enroll")
+          setTimeout(() => {
+            const rejectButton = document.getElementsByClassName(
+              'p-confirm-dialog-reject'
+            ) as HTMLCollectionOf<HTMLElement>;
+            for (var i = 0; i < rejectButton.length; i++) {
+              this.renderer.addClass(rejectButton[i], 'p-button-outlined');
+            }
+          }, 0);
 
         
       }
 unEnrolleCourse(course : Course){
-       console.log('un enole triggred')
-console.log(course)
+      
+
 this.courseService.WithdrawFromCourse(course).subscribe(
   (res) => {
    if ('success' in res)
    {
     this.showInfo('You have been  withdrewed successfully ');
-    console.log("response of enrollment", res)
+  
     this.store.dispatch(CourseAction.setCurrentCourse({ selcetedCourse:course }));
     this.router.navigate(['course-description', course._id]);
    }

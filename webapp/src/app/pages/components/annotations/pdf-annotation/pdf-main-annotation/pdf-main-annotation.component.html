@@ -1,12 +1,12 @@
 <div class="flex flex-row h-full">
-  <div class="flex flex-col w-full space-y-1 basis-full min-h-[1000px]">
+  <div class="flex flex-col w-full space-y-1 basis-full materialContainer h-full">
       <app-pdf-annotation-toolbar></app-pdf-annotation-toolbar>
     <div
       (mousemove)="mouseEventHandler($event)"
       (mousedown)="mouseEventHandler($event)"
       (mouseup)="mouseEventHandler($event)"
       (click)="mouseEventHandler($event)"
-      class="relative h-full"
+      class="relative pdfViewerContainer"
     >
 
       <app-pdf-drawbox></app-pdf-drawbox>
@@ -39,7 +39,7 @@
     </div>
   </div>
 
-  <div class="flex flex-col ml-5 basis-2/4 max-w-2xl">
+  <div class="flex flex-col ml-5 basis-2/4 max-w-2xl annotation-panel">
     <p-dialog
       *ngIf="isAnnotationDialogVisible$ | async"
       [visible]="true"
