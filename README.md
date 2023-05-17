@@ -4,6 +4,7 @@
 
 CourseMapper is a collaborative course annotation and analytics platform that fosters collaboration and interaction around pdf/video learning materials, supported by visual learning analytics.
 
+
 ## 🚀 Get Started
 
 #### Live instances
@@ -21,7 +22,8 @@ CourseMapper is a collaborative course annotation and analytics platform that fo
 
 Visit the [proxy service on port 8000](http://localhost:8000/) to use the application.
 
-#### Application stack
+
+## 🖥️ Application stack
 
 The services making up the coursemapper-webserver project use the following images, hosted on Docker Hub:
 
