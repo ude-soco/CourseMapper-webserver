@@ -122,7 +122,7 @@ export const newChannel = async (req, res, next) => {
   }
   updateCourse.channels.push(savedChannel._id);
   try {
-    await updateCourse.save();
+    updateCourse = await updateCourse.save();
   } catch (err) {
     return res.status(500).send({ error: "Error saving course" });
   }
@@ -133,6 +133,8 @@ export const newChannel = async (req, res, next) => {
       success: `New channel '${savedChannel.name}' added!`,
     },
     channel: savedChannel,
+    savedCourse: updateCourse,
+    foundTopic: savedTopic,
     user: user,
   };
   return next();

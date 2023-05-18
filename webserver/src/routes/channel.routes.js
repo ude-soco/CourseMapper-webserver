@@ -1,4 +1,4 @@
-const { authJwt } = require("../middlewares");
+const { authJwt, channelNotifications } = require("../middlewares");
 const controller = require("../controllers/channel.controller");
 const logger = require("../xAPILogger/logger/channel.logger");
 
@@ -23,7 +23,8 @@ module.exports = function (app) {
     "/api/courses/:courseId/topics/:topicId/channel",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.newChannel,
-    logger.newChannel
+    logger.newChannel,
+    channelNotifications.newChannelNotification
   );
 
   // Delete a channel
