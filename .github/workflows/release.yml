@@ -26,7 +26,7 @@ jobs:
       with:
         tag: ${{ github.ref_name }}
         name: Release ${{ github.ref_name }}
-        draft: false
+        draft: true
         allowUpdates: true
         updateOnlyUnreleased: true
         skipIfReleaseExists: true
