@@ -55,6 +55,7 @@
             </ng-template>
 
             <ng-template pTemplate="content-center" style="float: left">
+              <div class="w-full h-14">
               <p-avatar
                 label="{{ course.shortName }}"
                 shape="circle"
@@ -67,9 +68,9 @@
                 }"
               ></p-avatar>
 
-              <button>
-                <p style="margin: 1rem; font-weight: bold">{{ course.name }}</p>
-              </button>
+             
+                <p class="font-bold pt-2 pl-51" style="padding-left: 60px;">{{ course.name }}</p>
+              </div>
 
               <p class="p">
                 <svg

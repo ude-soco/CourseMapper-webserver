@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Annotation, PdfAnnotationTool, PdfGeneralAnnotationLocation, PdfToolType, VideoAnnotationLocation } from 'src/app/models/Annotations';
 import { Store } from '@ngrx/store';
 import { computeElapsedTime, getInitials } from 'src/app/_helpers/format';
@@ -27,7 +27,7 @@ export class PdfCommentPanelComponent implements OnInit {
   currentTime: number = 0;
   currentTimeSpanSelected: boolean = false;
 
-  constructor(private store: Store<State>) {
+  constructor(private store: Store<State>, private changeDetectorRef: ChangeDetectorRef) {
 
     this.store.select(getCurrentMaterial).subscribe((material) => this.selectedMaterial = material);
 
@@ -56,6 +56,18 @@ export class PdfCommentPanelComponent implements OnInit {
     });
   }
 
+  ngAfterViewChecked(): void {
+    let annotationPanel = document.getElementsByClassName('materialContainer')[0] as HTMLElement;
+    let commentPanel = document.getElementsByClassName('commentPanel')[0] as HTMLElement;
+    let createAnnotationPanel = document.getElementsByClassName('create-annotation')[0] as HTMLElement;
+    let filterPanel = document.getElementsByClassName('filter-panel')[0] as HTMLElement;
+    if(annotationPanel && commentPanel && createAnnotationPanel && filterPanel){
+      commentPanel.style.maxHeight = annotationPanel.clientHeight - (createAnnotationPanel.clientHeight +  filterPanel.clientHeight + 60) + 'px';
+      commentPanel.style.overflow = 'auto'
+      this.changeDetectorRef.detectChanges();
+    }
+  }
+
   ngOnInit(): void {
     this.currentPage = 1;
     this.showPDFAnnotations();
@@ -63,7 +75,7 @@ export class PdfCommentPanelComponent implements OnInit {
 
   showPDFAnnotations() {
 
-    this.annotationOnCurrentPage = this.annotations.filter((anno) => (anno.location as PdfGeneralAnnotationLocation).startPage == this.currentPage);
+    this.annotationOnCurrentPage = this.annotations.filter((anno) => this.currentPage >= (anno.location as PdfGeneralAnnotationLocation).startPage && this.currentPage <= (anno.location as PdfGeneralAnnotationLocation).lastPage);
     this.annotationsToShow = this.annotationOnCurrentPage;
   }
 

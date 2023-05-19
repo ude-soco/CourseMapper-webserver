@@ -39,7 +39,7 @@ export class HomeComponent implements OnInit {
       {
         next: async (courses) => {
           this.Allcourses = courses;
-          console.log("this.Allcourses",this.Allcourses)
+         
          
         }
       }
@@ -72,8 +72,9 @@ this.getMyCourses();
   }
   getMyCourses()
   {
-    this.courseService.fetchCourses().subscribe( (courses) => {console.log("course desc course Rawaa",this.courses=courses)  
-    console.log(this.courses)
+    this.courseService.fetchCourses().subscribe( (courses) => {  
+      this.courses=courses
+   
    
     for (var course of this.courses) {
       this.Users = [];
@@ -122,7 +123,8 @@ this.getMyCourses();
         description:course.description
       };
       this.userArray.push(ingoPush);
-      console.log(this.userArray)
+      
+
     });
   }
   onSelectCourse(selcetedCourse:any)
@@ -131,7 +133,6 @@ this.getMyCourses();
     this.router.navigate(['course', selcetedCourse.id]);
     this.store.dispatch(CourseAction.setCurrentCourse({selcetedCourse: selcetedCourse}));
     this.store.dispatch(CourseActions.setCourseId({ courseId: selcetedCourse.id}));
-    console.log("course Home page")
-    console.log(selcetedCourse)
+
   }
 }

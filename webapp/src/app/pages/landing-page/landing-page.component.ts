@@ -143,29 +143,30 @@ activateUpdaeCourse:boolean =false;
     // );
 
     if (this.loggedInUser) {
-console.log(this.user.role.name, 'this.user.role.name lndingpage')
-      // if(this.user.role.name==='admin')
-      // {
+
+let varcc = this.myCourses.find(
+  (course) => selcetedCourse.id === course._id
+);
+
+      //  if(this.user.role.name==='admin')
+      //  {
       //   let adminCourse = this.courses.find(
       //     (course) => selcetedCourse.id === course._id
-      //   );
+      //    );
         
-      //     this.Enrolled = true;
-      //     console.log(selcetedCourse, 'selcetedCourse.id landingpage admin role')
-      //     this.router.navigate(['course', selcetedCourse.id]);
+      //      this.Enrolled = true;
+      //      console.log(selcetedCourse, 'selcetedCourse.id landingpage admin role')
+      //    this.router.navigate(['course', selcetedCourse.id]);
         
 
-      // }
-      let varcc = this.myCourses.find(
-        (course) => selcetedCourse.id === course._id
-      );
-
-       if(varcc || this.user.role.name==='admin') {
+      //  }
+      
+        if(varcc ) {
         this.Enrolled = true;
-        console.log(selcetedCourse, 'selcetedCourse.id landingpage')
+        
         this.router.navigate(['course', selcetedCourse.id]);
       }
-       else {
+       else  {
         this.Enrolled = false;
         this.store.dispatch(CourseAction.setCurrentCourse({ selcetedCourse: selcetedCourse }));
         this.store.dispatch(

@@ -137,19 +137,26 @@ NowClicked()
             },
            
           });
-          console.log(this.selectedCourse, "un enroll")
+          setTimeout(() => {
+            const rejectButton = document.getElementsByClassName(
+              'p-confirm-dialog-reject'
+            ) as HTMLCollectionOf<HTMLElement>;
+            for (var i = 0; i < rejectButton.length; i++) {
+              this.renderer.addClass(rejectButton[i], 'p-button-outlined');
+            }
+          }, 0);
 
         
       }
 unEnrolleCourse(course : Course){
-       console.log('un enole triggred')
-console.log(course)
+      
+
 this.courseService.WithdrawFromCourse(course).subscribe(
   (res) => {
    if ('success' in res)
    {
     this.showInfo('You have been  withdrewed successfully ');
-    console.log("response of enrollment", res)
+  
     this.store.dispatch(CourseAction.setCurrentCourse({ selcetedCourse:course }));
     this.router.navigate(['course-description', course._id]);
    }

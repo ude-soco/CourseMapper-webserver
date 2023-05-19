@@ -59,6 +59,7 @@ export const newAnnotation = async (req, res, next) => {
   let foundRole;
   try {
     foundRole = await Role.findById(foundCourse.role);
+   
   } catch (err) {
     res.status(500).send({ error: "Error finding role" });
   }
@@ -93,7 +94,12 @@ export const newAnnotation = async (req, res, next) => {
     res.status(500).send({ error: "Error saving material" });
   }
   // Checks for hashtags in content
-  let foundTags = annotationContent.split(" ").filter((v) => v.startsWith("#"));
+  let foundTags = annotationContent
+  .split(" ")
+  .filter((v) => /^#[A-Za-z0-9]+$/.test(v));
+
+console.log(foundTags);
+
   if (foundTags.length !== 0) {
     let foundTagsSchema = [];
     foundTags.forEach((tag) => {
