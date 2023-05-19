@@ -101,8 +101,8 @@ height: 20rem;
     }
     .course-div{
       margin-left:9rem;
-       overflow: scroll;
-      height: max-content 
+         
+      overflow-y: scroll;
     }
 .wrapper:not(:empty) + .default {
     display: none;

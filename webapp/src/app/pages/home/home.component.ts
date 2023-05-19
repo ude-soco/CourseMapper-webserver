@@ -28,6 +28,7 @@ export class HomeComponent implements OnInit {
 
   firstName: string = '';
   lastName: string = '';
+    courseTriggered: boolean=false;
   constructor(
     private storageService: StorageService,
     private router: Router,
@@ -90,19 +91,22 @@ this.getMyCourses();
 
 
      })
+     if(this.courseTriggered==false)
+    {
      this.courseService.onUpdateCourses$.subscribe(
       {next: (courses1) => {(
         // this.courses .push(courses1[courses1.length-1]),
         // console.log(this.courses, "before"),
         
         // console.log(this.courses, "after"),  
-       
+        this.courseTriggered=true,
         this.ngOnInit()
         )}
       
     } 
     
     );
+  }
   }
   buildCardInfo(userModeratorID: string, course: Course) {
     this.userArray.length=0

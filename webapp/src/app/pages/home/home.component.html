@@ -1,5 +1,5 @@
 
-<div class="flex flex-row">
+<div class="flex flex-row min-h-screen h-screen">
   <div class="flex-col">
     <app-sidebar></app-sidebar>
   </div>
@@ -19,7 +19,7 @@
     
     
     
-    <div  class="course-div cursor-pointer" >
+    <div  class="course-div cursor-pointer overscroll-y-auto h-1/2" >
     <div *ngFor="let course of userArray"  (click)="onSelectCourse(course)">
     
     
@@ -32,13 +32,22 @@
        
         <ng-template pTemplate="content-center" style="float: left; "> 
        
-        <p-avatar
-        label="{{course.shortName}}"
-        shape="circle"
-        size="large"
-        [style]="{ 'background-color': '#0277BD', color: '#ffffff' , float: 'left', top_margin:'0.5rem' }"
-      ></p-avatar>
-      <button> <p style="margin: 1rem; font-weight: bold;"> {{course.name}}</p></button>
+                     <div class="w-full h-14">
+              <p-avatar
+                label="{{ course.shortName }}"
+                shape="circle"
+                size="large"
+                [style]="{
+                  'background-color': '#0277BD',
+                  color: '#ffffff',
+                  float: 'left',
+                  top_margin: '0.5rem'
+                }"
+              ></p-avatar>
+
+             
+                <p class="font-bold pt-2 pl-51" style="padding-left: 60px;">{{ course.name }}</p>
+              </div>
        
       <p class="p" > 
         <svg
