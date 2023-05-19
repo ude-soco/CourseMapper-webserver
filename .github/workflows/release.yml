@@ -31,4 +31,4 @@ jobs:
         updateOnlyUnreleased: true
         skipIfReleaseExists: true
         generateReleaseNotes: true
-        discussionCategory: Announcements
+        discussionCategory: Release
