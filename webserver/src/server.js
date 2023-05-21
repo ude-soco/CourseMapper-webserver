@@ -95,6 +95,7 @@ require("./routes/filedelete.routes")(app);
 require("./routes/videodelete.routes")(app);
 require("./routes/test.routes")(app);
 require("./routes/debug.routes")(app);
+require("./routes/notifications.routes")(app);
 
 // Listen on provided port, on all network interfaces
 server.listen(port);
