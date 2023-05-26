@@ -36,6 +36,7 @@ import { State, getLoggedInUser } from 'src/app/state/app.reducer';
 import { environment } from 'src/environments/environment';
 import { getCurrentMaterial } from '../../materils/state/materials.reducer';
 import { getCurrentPdfPage } from '../../annotations/pdf-annotation/state/annotation.reducer';
+import { ViewChild } from '@angular/core';
 interface conceptModel {
   name: string;
   code: string;
@@ -74,18 +75,18 @@ export class ConceptMapComponent {
     { label: 'All', value: 'All' },
   ];
 
-  allChecked = false;
+  // allChecked = false;
 
-  checkOptionsOne = [
-    {
-      label: 'Main Concepts',
-      value: 'annotation',
-      checked: true,
-      disabled: true,
-    },
-    { label: 'Related Concepts', value: 'property', checked: true },
-    { label: 'Categories', value: 'category', checked: true },
-  ];
+  // checkOptionsOne = [
+  //   {
+  //     label: 'Main Concepts',
+  //     value: 'annotation',
+  //     checked: true,
+  //     disabled: true,
+  //   },
+  //   { label: 'Related Concepts', value: 'property', checked: true },
+  //   { label: 'Categories', value: 'category', checked: true },
+  // ];
 
   selectedFilterValues?: string[];
   defaultModel = 'squeezebert/squeezebert-mnli';
@@ -385,8 +386,16 @@ export class ConceptMapComponent {
       .subscribe(() => {
         this.conceptMapData = null;
         this.filteredMapData = null;
+        // this.materialKgActivated =true
         setTimeout(() => {
+          //reset dropdown value
+          this.selectedTopN= null;
+          this.selectedTopNodes(15)
+          //reset checkboxes values
+          this.selectedOption = this.selectedCheckOptions.slice(0, 1);
+          //get current material's data
           this.currentMaterial = materialKgGenerator.selectedMaterialService;
+          //activate material kg & ensure that other views are deactivated
           this.showMaterialKg = true;
           this.showCourseKg = false;
           this.showSlideKg = false;
@@ -406,6 +415,9 @@ export class ConceptMapComponent {
         this.showSlideKg = false;
         setTimeout(() => {
           this.kgTitle = materialKgGenerator.selectedCourseService.name;
+           //reset dropdown value
+           this.selectedTopN= null;
+           this.selectedTopNodes(15)
           setTimeout(() => {
             this.getConceptMapData();
           }, 10);
@@ -741,9 +753,6 @@ export class ConceptMapComponent {
       },
     ];
     this.selectedCategories = this.conceptscategories.slice(0, 1);
-    // this.selectedCourse = this.materialInfo.selectedCourse || undefined;
-    // this.selectedTopic = this.materialInfo.selectedTopic || undefined;
-    // this.selectedChannel = this.materialInfo.selectedChannel || undefined;
 
     this.selectedRecModel = this.recModels[0];
     this.selectedOption = this.selectedCheckOptions.slice(0, 1);
@@ -780,6 +789,18 @@ export class ConceptMapComponent {
 
     if (!this.showSlideKg && this.updateUserConcepts) {
       this.onSubmitCancel();
+    }
+
+    // if(!this.showMaterialKg && this.materialKgActivated){
+    //     this.onSubmitCancel();
+    // }
+
+    if (this.materialKgActivated && !this.showMaterialKg) {
+      console.log('cancelled');
+      this.materialKgActivated = false;
+
+      // this.dropdownMaterial.reset();
+      // this.onSubmitCancel();
     }
   }
 
@@ -872,11 +893,13 @@ export class ConceptMapComponent {
             var type = data._fields[5];
             var conceptName = this.capitalizeWords(data._fields[3]);
             var nodeEle;
+            var rank = data._fields[9];
             nodeEle = {
               // label:data._fields[0][0],
               id: data._fields[1].low,
               cid: data._fields[2],
               // name: data._fields[3],
+              // name: rank+'\n '+conceptName,
               name: conceptName,
               uri: data._fields[4],
               type: type,
@@ -1389,17 +1412,16 @@ export class ConceptMapComponent {
         this.understoodConceptsObj
       );
       this.firstUpdate = false;
-      this.rankNodes(this.conceptMapData)
+      this.rankNodes(this.conceptMapData);
 
-        
-        // emit kg to cytoscape
-        this.dataReceivedEvent.emit(this.conceptMapData);
-        this.filteredMapData = this.conceptMapData;
-        this.kgSlideReceivedResponse = true;
-        console.log(
-          'ConceptMapComponent:::getConceptMapData',
-          this.conceptMapData
-          );
+      // emit kg to cytoscape
+      this.dataReceivedEvent.emit(this.conceptMapData);
+      this.filteredMapData = this.conceptMapData;
+      this.kgSlideReceivedResponse = true;
+      console.log(
+        'ConceptMapComponent:::getConceptMapData',
+        this.conceptMapData
+      );
     } else {
       console.log('No KG received for this slide!!');
     }
@@ -1448,10 +1470,10 @@ export class ConceptMapComponent {
     conceptsList.nodes.sort((a, b) => b.data.weight - a.data.weight);
     let rank = 1;
     conceptsList.nodes.forEach((node) => {
-      node.data.rank =rank
+      node.data.rank = rank;
       rank++;
-    })
-    this.conceptMapData=conceptsList
+    });
+    this.conceptMapData = conceptsList;
   }
   async showRecommendations() {
     if (this.disableShowRecommendationsButton) {
@@ -1493,8 +1515,10 @@ export class ConceptMapComponent {
       this.showRecommendationButtonClicked = true;
       // this.callRecommendationsService.showRecommendationsClicked();
       try {
+        // prepare form of understood & did not understand concepts
         const reqData = await this.getRecommendedMaterialsPerSlide();
         ////////////////////////////////Call Concept recommender///////////////////////////////////////
+        //Send request for concept recommendation
         const reqDataMaterial1 =
           await this.getRecommendedMaterialsPerSlideMaterial();
 
@@ -1589,7 +1613,7 @@ export class ConceptMapComponent {
         ).nodes;
 
         this.kgTabs.kgTabsEnable();
-        // this.tabs[2].disabled = false;
+        this.tabs[2].disabled = false;
 
         console.log(
           'getconceptMapRecommendedData:::getconceptMapRecommendedData',
@@ -1796,7 +1820,7 @@ export class ConceptMapComponent {
   }
 
   async onSubmitCancel() {
-    console.log('canel');
+    console.log('cancel');
     //if closed from slide_KG
     if (this.updateUserConcepts) {
       console.log('hello from if statement');
@@ -1958,13 +1982,13 @@ export class ConceptMapComponent {
     }
   }
   resetFilter() {
-    this.checkOptionsOne.forEach((item) => {
-      item.checked = true;
-    });
-    this.filterUpdated = false;
-    this.selectedFilterValues = this.checkOptionsOne
-      .filter((item) => item.checked)
-      .map((i) => i.value);
+    // this.checkOptionsOne.forEach((item) => {
+    //   item.checked = true;
+    // });
+    // this.filterUpdated = false;
+    // this.selectedFilterValues = this.checkOptionsOne
+    //   .filter((item) => item.checked)
+    //   .map((i) => i.value);
   }
   capitalizeWords(str) {
     var words = str.split(' ');

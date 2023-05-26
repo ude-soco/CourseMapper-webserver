@@ -20,6 +20,8 @@ export class GraphComponent {
   @Input() recommenderKnowledgeGraph: boolean;
   @Input() cyHeight: any;
   @Input() cyWidth: any;
+  @Input() showMaterialKg: boolean;
+  @Input() showCourseKg: boolean;
 
   node_id: string | undefined;
   node_cid: string | undefined;
@@ -74,8 +76,8 @@ export class GraphComponent {
       this.abstractDivBottom = document
         .getElementById('abstractSpan')
         .getBoundingClientRect().bottom;
-        //if the top coordinate of link icon is bigger than bottom coordinate of abstract_text
-        //show link on new line
+      //if the top coordinate of link icon is bigger than bottom coordinate of abstract_text
+      //show link on new line
       if (this.linkTop > this.abstractDivBottom) {
         this.clamped = true;
       } else {
@@ -84,34 +86,31 @@ export class GraphComponent {
     } catch {}
   }
 
-  onResize(e){
+  onResize(e) {
     // set number of shown text for abstract on page resize
     let abstractSidebar = document.getElementById('abstractSidebarBlock');
     //if kg at material or course level && abstract sidebar shown
-        if (abstractSidebar && this.materialKnowledgeGraph) {
-          let sidebarChild = document.getElementById('abstractSidebarBlock')
-            .childNodes[0] as HTMLElement;
-          let spanAbstract = document.getElementById('abstractSpan');
-          spanAbstract.style.webkitLineClamp = null;
-          let sBarAbstract = sidebarChild.childNodes[1].childNodes[0]
-            .childNodes[0] as HTMLElement;
-          console.log(sBarAbstract.clientHeight);
-          let sBarHeight =
-            sidebarChild.clientHeight - sBarAbstract.clientHeight;
-          let sBarWidth = sidebarChild.clientWidth;
-          //font size is 20 by default
-          let fontSize = 20;
-          var maxChars =
-            Math.floor(sBarWidth / fontSize) *
-              Math.floor(sBarHeight / fontSize) -
-            95; //get max number of abstract chars in which no scrolling needed [(container area/ font size)-header area - link size]
-          this.truncatedAbstract = this.node_abstract.substring(0, maxChars); // limit max size of chars at abstract
-          this.truncatedAbstract = this.truncatedAbstract.substring(
-            0,
-            this.truncatedAbstract.lastIndexOf(' ')
-          ); // subtract last word to prevent showing words with subtracted chars
-        
-        }
+    if (abstractSidebar && this.materialKnowledgeGraph) {
+      let sidebarChild = document.getElementById('abstractSidebarBlock')
+        .childNodes[0] as HTMLElement;
+      let spanAbstract = document.getElementById('abstractSpan');
+      spanAbstract.style.webkitLineClamp = null;
+      let sBarAbstract = sidebarChild.childNodes[1].childNodes[0]
+        .childNodes[0] as HTMLElement;
+      console.log(sBarAbstract.clientHeight);
+      let sBarHeight = sidebarChild.clientHeight - sBarAbstract.clientHeight;
+      let sBarWidth = sidebarChild.clientWidth;
+      //font size is 20 by default
+      let fontSize = 20;
+      var maxChars =
+        Math.floor(sBarWidth / fontSize) * Math.floor(sBarHeight / fontSize) -
+        95; //get max number of abstract chars in which no scrolling needed [(container area/ font size)-header area - link size]
+      this.truncatedAbstract = this.node_abstract.substring(0, maxChars); // limit max size of chars at abstract
+      this.truncatedAbstract = this.truncatedAbstract.substring(
+        0,
+        this.truncatedAbstract.lastIndexOf(' ')
+      ); // subtract last word to prevent showing words with subtracted chars
+    }
   }
 
   nodeChange(event: any) {
@@ -136,7 +135,9 @@ export class GraphComponent {
           abstractContainer.style.height = 0.9 * this.cyHeight + 'px';
           if (this.materialKnowledgeGraph) {
             let spanAbstract = document.getElementById('abstractSpan');
-            spanAbstract.style.webkitLineClamp = null;
+            if (spanAbstract) {// If selected node is category ==> no abstract span
+              spanAbstract.style.webkitLineClamp = null;
+            }
             let sBarAbstract = sidebarChild.childNodes[1].childNodes[0]
               .childNodes[0] as HTMLElement;
             console.log(sBarAbstract.clientHeight);

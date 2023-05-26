@@ -36,6 +36,8 @@ export class CytoscapeComponent {
   @Input() zoom: any;
   @Input() cyHeight: any;
   // @Input() showConceptAbstract: boolean;
+  @Input() showMaterialKg: boolean;
+  @Input() showCourseKg: boolean;
 
   @Output() selectedNodeEvent: EventEmitter<object> = new EventEmitter();
 
@@ -330,6 +332,9 @@ export class CytoscapeComponent {
       document.getElementById('cy').style.height = this.cyHeight + 'px';
     }
     this.nodeSelected = false;
+
+    console.log(this.showCourseKg)
+    console.log(this.showMaterialKg)
   }
 
   render() {

@@ -11,6 +11,7 @@
     header="{{ this.currentMaterial?.name }}"
     [(visible)]="this.showMaterialKg"
     [blockScroll]="true"
+    (onShow)="materialKgActivated=true"
     (onHide)="onSubmitCancel()"
     [style]="{
       position: 'relative',
@@ -33,6 +34,7 @@
             optionLabel="name"
             optionValue="code"
             (onChange)="selectedTopNodes(selectedTopN)"
+            icon="pi"
           ></p-dropdown>
         </span>
         <div id="materialKgControlPanel" class="noContentRecieved">
@@ -123,6 +125,8 @@
                 [recommenderKnowledgeGraph]="false"
                 [cyHeight]="cyHeight"
                 [cyWidth]="cyWidth"
+                [showMaterialKg]="showMaterialKg"
+                [showCourseKg]="showCourseKg"
               >
               </app-graph>
             </div>
@@ -251,6 +255,8 @@
                 [recommenderKnowledgeGraph]="false"
                 [cyHeight]="cyHeight"
                 [cyWidth]="cyWidth"
+                [showMaterialKg]="showMaterialKg"
+                [showCourseKg]="showCourseKg"
               >
               </app-graph>
             </div>

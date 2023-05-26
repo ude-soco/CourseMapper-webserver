@@ -1,6 +1,6 @@
 <div #cy id="cy" (window:resize)="onResize($event)"></div>
 <div id="Legends" style="text-align: left">
-    <div>
+    <div *ngIf="showMaterialKg">
       <span>
         <div class="legend-circle-main-concept"></div>
         Main Concept
