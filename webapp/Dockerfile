@@ -26,7 +26,7 @@ RUN chown -R nginx:nginx .
 USER 101
 COPY --link --from=build --chown=101 /app/dist/webapp/ ./
 COPY --link ./nginx/conf.d/* /etc/nginx/conf.d/
-COPY --link ./nginx/docker-entrypoint.d/* /docker-entrypoint.d/
+COPY --link --chmod=0755 ./nginx/docker-entrypoint.d/* /docker-entrypoint.d/
 
 ENV NGINX_ENTRYPOINT_QUIET_LOGS 1
 EXPOSE 4200
