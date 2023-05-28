@@ -133,13 +133,16 @@ export const newChannel = async (req, res, next) => {
       success: `New channel '${savedChannel.name}' added!`,
     },
     channel: savedChannel,
-    savedCourse: updateCourse,
-    foundTopic: savedTopic,
+    course: updateCourse,
+    topic: savedTopic,
     user: user,
+    category: "courseupdates",
   };
   return next();
 };
 
+//TODO - update the course after the channel has been deleted
+//in the below method
 /**
  * @function deleteChannel
  * Delete a channel controller
@@ -217,9 +220,16 @@ export const deleteChannel = async (req, res, next) => {
     foundTopic["channels"].splice(topicIndex, 1);
   }
   try {
-    await foundTopic.save();
+    foundTopic = await foundTopic.save();
   } catch (err) {
     res.status(500).send({ error: "Error saving topic" });
+  }
+
+  let course;
+  try {
+    course = await Course.findById(courseId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding course" });
   }
   req.locals = {
     response: {
@@ -227,6 +237,9 @@ export const deleteChannel = async (req, res, next) => {
     },
     user: user,
     channel: foundChannel,
+    topic: foundTopic,
+    course: course,
+    category: "courseupdates",
   };
   return next();
 };
@@ -286,10 +299,18 @@ export const editChannel = async (req, res, next) => {
   foundChannel.updatedAt = Date.now();
   foundChannel.description = channelDesc;
   try {
-    await foundChannel.save();
+    foundChannel = await foundChannel.save();
   } catch (err) {
     return res.status(500).send({ error: "Error saving channel" });
   }
+
+  let course;
+  try {
+    course = await Course.findById(courseId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding course" });
+  }
+
   req.locals.response = {
     id: foundChannel._id,
     courseId: courseId,
@@ -297,5 +318,7 @@ export const editChannel = async (req, res, next) => {
   };
   req.locals.newChannel = foundChannel;
   req.locals.user = user;
+  req.locals.category = "courseupdates";
+  req.locals.course = course;
   return next();
 };

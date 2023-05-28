@@ -15,8 +15,10 @@ export const getAllNotifications = async (req, res, next) => {
       userId: new ObjectId(userId),
     }).populate("activityId", [
       "notificationInfo.userShortname",
-      "notificationInfo.extraMessage",
-      "statement.object.definition.extension",
+      "notificationInfo.courseName",
+      "notificationInfo.topicName",
+      "notificationInfo.channelName",
+      "statement.object.definition.extensions",
       "statement.object.id",
       "statement.object.definition.type",
       "statement.verb.display.en-US",

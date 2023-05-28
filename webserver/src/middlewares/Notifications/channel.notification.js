@@ -18,22 +18,33 @@ export const generateNotificationInfo = (req) => {
   const firstInitial = req.locals.user.firstname.charAt(0).toUpperCase();
   const secondInitial = req.locals.user.lastname.charAt(0).toUpperCase();
 
-  //extraMessage being calculated here
-  const extraMessage =
-    req.locals.foundTopic.name +
-    " in " +
-    req.locals.savedCourse._doc.name +
-    " course";
+  //adding the courseName, topicName, and channelName to the notificationInfo object if they exist
+  let courseName;
+  let topicName;
+  let channelName;
+  if (req.locals.topic) {
+    topicName = req.locals.topic.name;
+  }
+  if (req.locals.course) {
+    courseName = req.locals.course.name;
+  }
+  if (req.locals.channel) {
+    channelName = req.locals.channel.name;
+  }
   return {
     userShortname: firstInitial + secondInitial,
-    extraMessage,
+    ...(courseName && { courseName }),
+    ...(topicName && { topicName }),
+    ...(channelName && { channelName }),
+    username: req.locals.user.username,
+    category: req.locals.category,
   };
 };
 
 //TODO: When saving the several inserts use the option "lean" to skip Mongoose validitity checks
-export const newChannelNotification = async (req, res) => {
+export const notifyUsers = async (req, res) => {
   let user = req.locals.user;
-  let course = req.locals.savedCourse;
+  let course = req.locals.course;
   let activity = req.locals.activity;
   const userToBeNotified = course.users;
   const arrUserNotification = [];
@@ -51,11 +62,14 @@ export const newChannelNotification = async (req, res) => {
 
   try {
     await UserNotification.insertMany(arrUserNotification);
-    res.status(200).send({ success: "Channel created!" });
+    res.status(200).send({ success: req.locals.response.success });
   } catch (err) {
     return res.status(500).send({ error: "Error saving notification" });
   }
 };
 
-let channelNotifications = { newChannelNotification, generateNotificationInfo };
+let channelNotifications = {
+  notifyUsers: notifyUsers,
+  generateNotificationInfo,
+};
 module.exports = channelNotifications;

@@ -24,7 +24,7 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isModerator],
     controller.newChannel,
     logger.newChannel,
-    channelNotifications.newChannelNotification
+    channelNotifications.notifyUsers
   );
 
   // Delete a channel
@@ -33,7 +33,8 @@ module.exports = function (app) {
     "/api/courses/:courseId/channels/:channelId",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.deleteChannel,
-    logger.deleteChannel
+    logger.deleteChannel,
+    channelNotifications.notifyUsers
   );
 
   // Edit a channel
@@ -42,6 +43,7 @@ module.exports = function (app) {
     "/api/courses/:courseId/channels/:channelId",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.editChannel,
-    logger.editChannel
+    logger.editChannel,
+    channelNotifications.notifyUsers
   );
 };
