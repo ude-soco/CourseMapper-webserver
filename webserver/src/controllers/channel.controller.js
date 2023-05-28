@@ -154,6 +154,12 @@ export const deleteChannel = async (req, res, next) => {
   const channelId = req.params.channelId;
   const courseId = req.params.courseId;
   const userId = req.userId;
+  let courseDoc;
+  try {
+    courseDoc = await Course.findById(courseId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding course" });
+  }
 
   let user;
   try {

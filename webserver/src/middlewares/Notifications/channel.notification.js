@@ -64,7 +64,10 @@ export const notifyUsers = async (req, res) => {
     await UserNotification.insertMany(arrUserNotification);
     res.status(200).send({ success: req.locals.response.success });
   } catch (err) {
-    return res.status(500).send({ error: "Error saving notification" });
+    return res.status(500).send({
+      error: "Operation successful but Error saving notification",
+      err,
+    });
   }
 };
 
