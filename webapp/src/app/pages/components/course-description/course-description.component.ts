@@ -7,6 +7,7 @@ import { CourseService } from 'src/app/services/course.service';
 import { StorageService } from 'src/app/services/storage.service';
 import { UserServiceService } from 'src/app/services/user-service.service';
 import { getCurrentCourse, getCurrentCourseId, State } from '../../courses/state/course.reducer';
+import * as  CourseActions from 'src/app/pages/courses/state/course.actions'
 
 @Component({
   selector: 'app-course-description',
@@ -82,6 +83,8 @@ let Name=firstName+" "+lastName
   }
   EnrollToCOurse(){
     if (this.isloggedin== false){
+      console.log(this.course, "this.course")
+      this.store.dispatch(CourseActions.setCurrentCourse({selcetedCourse: this.course}));
       this.router.navigate(['login']);
     }
     else if (this.isloggedin== true) {

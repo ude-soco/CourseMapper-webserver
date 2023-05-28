@@ -1,4 +1,4 @@
-<div class="flex flex-row">
+<div class="flex flex-row min-h-screen h-screen">
   <div class="flex-col" *ngIf="loggedInUser">
     <app-sidebar></app-sidebar>
   </div>
@@ -40,7 +40,7 @@
       </div>
     </div>
 
-    <div class="course-div cursor-pointer">
+    <div class="course-div cursor-pointer overscroll-y-auto h-1/2">
       <div *ngFor="let course of userArray" (click)="onSelectCourse(course)">
         <div
           *ngIf="value1 === '' || course.name.toLowerCase().includes(value1)"
