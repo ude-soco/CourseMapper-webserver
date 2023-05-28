@@ -116,7 +116,7 @@ registerLocaleData(en);
     SocketIoModule.forRoot({
       url: `${environment.apiUrl}`,
       options: {
-        path: "/api/socket.io",
+        path: "/socket.io",
         // transports: ['websocket'],
       },
     }),
