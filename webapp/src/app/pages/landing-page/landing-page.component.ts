@@ -21,7 +21,7 @@ import { toggleShowHideAnnotation } from '../components/annotations/pdf-annotati
 export class LandingPageComponent {
   ids: Array<number> = [1, 2, 3];
 
-  courses: Array<Course>;
+  courses=[];
   i: number;
   value1 = '';
   course1: any;
@@ -42,7 +42,8 @@ activateUpdaeCourse:boolean =false;
   Users: any;
   user = this.storageService.getUser();
   Moderarors: User;
-  userArray: any = new Array();
+  userArray =  [];
+  courseTriggered: boolean=false;
   constructor(
     private storageService: StorageService,
     private courseService: CourseService,
@@ -55,23 +56,30 @@ activateUpdaeCourse:boolean =false;
     // const user = this.storageService.getUser();
 
     // this.username = user.username;
+    
   }
 
   ngOnInit() {
+    //console.log("ngOnInit triggered")
     // this.currentUser = this.storageService.getUser();
     this.courseService.fetchCourses().subscribe((courses1) => {
       this.myCourses = courses1;
     });
-
-    this.getAllCourses();
-
+    //console.log(this.userArray.length, "userArray ngOnInit" )
+//this.userArray =  []
+this.getAllCourses();
+   // console.log(this.userArray.length, "userArray ngOnInit after" )
+    
  
   }
 
   getAllCourses() {
-
+    // console.log("getAllCourses triggered")
+    // console.log(this.userArray.length, "userArray getAllCourses begining" )
           this.courseService.GetAllCourses().subscribe({
+
       next:  (courses) => {
+       //console.log("courseService.GetAllCourses triggered")
         this.courses = courses;
 
         for (var course of this.courses) {
@@ -82,32 +90,50 @@ activateUpdaeCourse:boolean =false;
           let userModerator = this.Users.find(
             (user) => user.role.name === 'moderator'
           );
-
+          //this.userArray =  []
+         
+         // console.log(this.userArray.length, "userArray befre build card")
+        // console.log("buildCardInfo go")
           this.buildCardInfo(userModerator.userId, course);
-        
+          //console.log(this.userArray.length, "userArray after build card")
+         // this.userArray =  []
         }
+       // this.userArray =  []
+       // console.log(this.userArray, "userArray after build card func" )
+       //console.log(this.courses, "GetAllCourses")
       },
     });
+    if(this.courseTriggered==false)
+    {
     this.courseService.onUpdateCourses$.subscribe(
       {next: (courses1) => {(
         // this.courses .push(courses1[courses1.length-1]),
-        // console.log(this.courses, "before"),
+       
+        
+        // console.log(this.userArray, "userArray onUpdateCourses" ),
         
         // console.log(this.courses, "after"),  
-       
+       // this.courses = courses1,
+       this.courseTriggered=true,
         this.ngOnInit()
+        
         )}
       
     } 
     
     );
-
+  }
   
 }
 
+
   buildCardInfo(userModeratorID: string, course: Course) {
-    this.userArray.length=0
+   // console.log("buildCardInfo triggered")
+    //this.userArray.length=0
+    this.userArray =  []
+    //console.log(this.userArray, "userArray inside build card func" )
     this.userService.GetUserName(userModeratorID).subscribe((user) => {
+     
       this.firstName = user.firstname;
       this.lastName = user.lastname;
 
@@ -124,9 +150,14 @@ activateUpdaeCourse:boolean =false;
         description:course.description
       };
       this.userArray.push(ingoPush);
-
+      
+     
       
     });
+   // console.log(this.userArray, "userArray")
+   this.userArray =  []
+   // console.log(this.userArray, "userArray end of building card func" )
+    
   }
   //   Search(){
 
