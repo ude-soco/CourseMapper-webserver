@@ -113,13 +113,7 @@ registerLocaleData(en);
     StoreModule.forFeature("general", appReducer),
     InputTextareaModule,
     DragulaModule.forRoot(),
-    SocketIoModule.forRoot({
-      url: `${environment.apiUrl}`,
-      options: {
-        path: "/socket.io",
-        // transports: ['websocket'],
-      },
-    }),
+    SocketIoModule.forRoot({ url: "/", }),
     CourseModule,
   ],
   exports: [SidebarComponent],

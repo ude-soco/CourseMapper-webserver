@@ -8,7 +8,6 @@ let io;
 module.exports = {
   init: (server) => {
     io = socketIO(server, {
-      path: "/api/socket.io",
       cors: {
         origin:
           env !== "production"
