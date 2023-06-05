@@ -8,115 +8,128 @@ import { TopicChannelService } from './topic-channel.service';
 import { StorageService } from './storage.service';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/pages/components/materials/state/materials.reducer';
-import * as MaterialActions from 'src/app/pages/components/materials/state/materials.actions'
-import * as  CourseActions from 'src/app/pages/courses/state/course.actions'
-
+import * as MaterialActions from 'src/app/pages/components/materials/state/materials.actions';
+import * as CourseActions from 'src/app/pages/courses/state/course.actions';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CourseService {
   private API_URL = environment.API_URL;
-  private courses : Course[] = [];
+  private courses: Course[] = [];
   // it is not private because it is subscribed in Sidebar component
   onUpdateCourses$ = new Subject<Course[]>();
   // it is not private because it is subscribed in chnannelbar component
   onSelectCourse = new EventEmitter<Course>();
-  private selectedCourse: Course = new CourseImp('','');
+  private selectedCourse: Course = new CourseImp('', '');
   private user = this.storageService.getUser();
 
-
-
-  constructor( private http: HttpClient, private topicChannelService : TopicChannelService, private storageService :StorageService, private store: Store<State>) { }
+  constructor(
+    private http: HttpClient,
+    private topicChannelService: TopicChannelService,
+    private storageService: StorageService,
+    private store: Store<State>
+  ) {}
 
   getSelectedCourse(): Course {
     return this.selectedCourse;
   }
 
   /**
-   * @function selectCourse 
+   * @function selectCourse
    * set selected course
    *
    * @param {Course} course the course to be selected
-   * 
-   */ 
-  selectCourse(course: Course){
+   *
+   */
+  selectCourse(course: Course) {
     // if there is no selected course then no need to update the topics.
-    if (this.getSelectedCourse()._id && course._id){      
+    if (this.getSelectedCourse()._id && course._id) {
       this.topicChannelService.updateTopics(course._id);
     }
     this.selectedCourse = course;
     let courseId = this.selectedCourse._id;
-    this.store.dispatch(CourseActions.setCourseId({ courseId }));    
+    this.store.dispatch(CourseActions.setCourseId({ courseId }));
     //2
     this.onSelectCourse.emit(course);
   }
 
   /**
-   * @function fetchCourses 
-   * GET user's courses from the server 
+   * @function fetchCourses
+   * GET user's courses from the server
    *
-   * 
+   *
    */
-  fetchCourses():  Observable<Course[]> {
-    return this.http.get<Course[]>(`${this.API_URL}/my-courses`).pipe(tap(courses => {
-      this.courses = courses;
-    }));
+  fetchCourses(): Observable<Course[]> {
+    return this.http.get<Course[]>(`${this.API_URL}/my-courses`).pipe(
+      tap((courses) => {
+        console.log(courses);
+        this.courses = courses;
+      })
+    );
   }
 
   /**
-   * @function addCourse 
-   * Add new course in the backend and if the communication was 
+   * @function addCourse
+   * Add new course in the backend and if the communication was
    * successfull it adds the course in the frontend
    *
    * @param {Course} course the course to be added
-   * 
+   *
    */
-  addCourse(course: Course) : any {
-    return this.http.post<any>(`${this.API_URL}/course`, {name: course.name, description: course.description, shortname: course.shortName})
-    .pipe(
-      catchError(( err, sourceObservable) => {
-       if (err.status ===  403) {
-        return of({errorMsg: err.error.error });
-       }else {
-        return of({errorMsg: "Error in connection: Please reload the application" })
-       }
-    }),
-      tap(res => {
-        if ( !('errorMsg' in res) ){
-          this.courses.push(res.courseSaved);
-          //this.sendToOldBackend(res.courseSaved);
-          this.onUpdateCourses$.next(this.courses);
-          
-          
-          
-        }
-    }));
+  addCourse(course: Course): any {
+    return this.http
+      .post<any>(`${this.API_URL}/course`, {
+        name: course.name,
+        description: course.description,
+        shortname: course.shortName,
+      })
+      .pipe(
+        catchError((err, sourceObservable) => {
+          if (err.status === 403) {
+            return of({ errorMsg: err.error.error });
+          } else {
+            return of({
+              errorMsg: 'Error in connection: Please reload the application',
+            });
+          }
+        }),
+        tap((res) => {
+          if (!('errorMsg' in res)) {
+            this.courses.push(res.courseSaved);
+            //this.sendToOldBackend(res.courseSaved);
+            this.onUpdateCourses$.next(this.courses);
+          }
+        })
+      );
   }
-
 
   /**
    * @function deleteCourse
    * Delete a course in the backend
    *
    * @param {Course} courseTD the course to be deleted
-   * 
+   *
    */
-  deleteCourse(courseTD: Course){
-    return this.http.delete<any>(`${this.API_URL}/courses/${courseTD._id}`)
-    .pipe(
-      catchError(( errResponse, sourceObservable) => {
-        if (errResponse.status ===  404) {
-          return of({errorMsg: errResponse.error.error });
-         }else {        
-          return of({errorMsg: "Error in connection: Please reload the application" })
-         }
-      }),
-      tap( res => {
-        if ( !('errorMsg' in res) ){
-          this.removeCourse(courseTD);
-        }
-      }));
+  deleteCourse(courseTD: Course) {
+    return this.http
+      .delete<any>(`${this.API_URL}/courses/${courseTD._id}`)
+      .pipe(
+        catchError((errResponse, sourceObservable) => {
+          if (errResponse.status === 404) {
+            return of({ errorMsg: errResponse.error.error });
+          } else {
+            return of({
+              errorMsg: 'Error in connection: Please reload the application',
+            });
+          }
+        }),
+        tap((res) => {
+          if (!('errorMsg' in res)) {
+            this.removeCourse(courseTD);
+          }
+        })
+      );
   }
 
   /**
@@ -124,75 +137,68 @@ export class CourseService {
    * Delete a course from the frontend data model
    *
    * @param {Course} courseTD the course to be deleted
-   * 
+   *
    */
-  removeCourse(courseTD: Course){
+  removeCourse(courseTD: Course) {
     let index = this.courses.findIndex((course) => {
-      return course._id === courseTD._id
+      return course._id === courseTD._id;
     });
     if (index !== -1) {
       this.courses.splice(index, 1);
       this.onUpdateCourses$.next(this.courses);
-      this.selectCourse(new CourseImp('',''));
+      this.selectCourse(new CourseImp('', ''));
     }
   }
 
-  renameCourse(courseTD: Course, body: any){
-    return this.http.put<any>(`${this.API_URL}/courses/${courseTD._id}`,body)
-    .pipe(
-      catchError(( err, sourceObservable) => {
-        return of({errorMsg: err.error.error });
-      }),
-      tap(res => {
-        if ( !('errorMsg' in res) ){
-          this.renameCourseSuccess(courseTD,body.name)
-        }
-    })
-    )
+  renameCourse(courseTD: Course, body: any) {
+    return this.http
+      .put<any>(`${this.API_URL}/courses/${courseTD._id}`, body)
+      .pipe(
+        catchError((err, sourceObservable) => {
+          return of({ errorMsg: err.error.error });
+        }),
+        tap((res) => {
+          if (!('errorMsg' in res)) {
+            this.renameCourseSuccess(courseTD, body.name);
+          }
+        })
+      );
   }
 
-  renameCourseSuccess(renamedCourse,newName){
+  renameCourseSuccess(renamedCourse, newName) {
     let cIndex = null;
     this.courses.map((course, i) => {
-      if (course._id === renamedCourse._id){
+      if (course._id === renamedCourse._id) {
         cIndex = i;
       }
     });
     if (cIndex !== -1 && cIndex !== null) {
-      this.courses[cIndex].name=newName;
+      this.courses[cIndex].name = newName;
       this.onUpdateCourses$.next(this.courses);
     }
   }
-  GetAllCourses():  Observable<Course[]> {
-    return this.http.get<Course[]>(`${this.API_URL}/courses`).pipe(tap(courses => {
-      this.courses = courses;
-
-    }));
+  GetAllCourses(): Observable<Course[]> {
+    return this.http.get<Course[]>(`${this.API_URL}/courses`).pipe(
+      tap((courses) => {
+        this.courses = courses;
+      })
+    );
   }
 
-
-  EnrollToCOurse(courseID:string): any{
-   return this.http.post<any>(`${this.API_URL}/enrol/${courseID}`, {}).pipe(tap(
-    Enrolcourses => {
-     
-
-    }
-   ))
-
+  EnrollToCOurse(courseID: string): any {
+    return this.http
+      .post<any>(`${this.API_URL}/enrol/${courseID}`, {})
+      .pipe(tap((Enrolcourses) => {}));
   }
-  WithdrawFromCourse(course:Course): any
-  {
-    return this.http.post<any>(`${this.API_URL}/withdraw/${course._id}`, {}).pipe(tap(
-      withdrawcourses => {
-       
-
-      }
-     ))
+  WithdrawFromCourse(course: Course): any {
+    return this.http
+      .post<any>(`${this.API_URL}/withdraw/${course._id}`, {})
+      .pipe(tap((withdrawcourses) => {}));
   }
   // sendToOldBackend(course){
   //   // userId should be taken from the coockies. for the time being it is hard coded
-  //   this.http.post<any>('http://localhost:8090/new/course', 
-  //   {_id: course._id, course: course.name, description: course.description, 
+  //   this.http.post<any>('http://localhost:8090/new/course',
+  //   {_id: course._id, course: course.name, description: course.description,
   //     shortName: course.shortName, userID:   this.user.id,})
   //   .subscribe(res => {
   //     console.log(res);

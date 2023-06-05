@@ -9,7 +9,7 @@ module.exports = function (app) {
 
   // Get all the notifications for user
   app.get(
-    "/notifications",
+    "/api/notifications",
     [authJwt.verifyToken],
     controller.getAllNotifications
   );

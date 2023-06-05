@@ -59,19 +59,19 @@ export const getMyCourses = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ message: "Error finding user" });
   }
-  user.courses.forEach((object) => {
+  user.courses?.forEach((object) => {
     let course = {
-      _id: object.courseId._id,
-      name: object.courseId.name,
-      shortName: object.courseId.shortName,
-      description: object.courseId.description,
-      numberTopics: object.courseId.topics.length,
-      numberChannels: object.courseId.channels.length,
-      numberUsers: object.courseId.users.length,
-      role: object.role.name,
-      channels: object.courseId.channels,
-      createdAt: object.courseId.createdAt,
-      users: object.courseId.users,
+      _id: object?.courseId?._id,
+      name: object?.courseId.name,
+      shortName: object?.courseId.shortName,
+      description: object?.courseId.description,
+      numberTopics: object?.courseId.topics?.length,
+      numberChannels: object?.courseId.channels?.length,
+      numberUsers: object?.courseId.users?.length,
+      role: object?.role?.name,
+      channels: object?.courseId?.channels,
+      createdAt: object?.courseId?.createdAt,
+      users: object?.courseId?.users,
     };
     results.push(course);
   });

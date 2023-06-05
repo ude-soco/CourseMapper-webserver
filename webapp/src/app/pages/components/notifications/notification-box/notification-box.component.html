@@ -1,0 +1,36 @@
+<ng-container *ngIf="$notificationList | async as notifications">
+  <div class="notification-content" *ngFor="let notification of notifications">
+    <div class="item-container">
+      <div class="left-container">
+        <div class="left">
+          <p-avatar
+            label="{{ notification.userShortname }}"
+            styleClass="mr-5"
+            [style]="{
+              'background-color':
+                'rgba(3,105,161,255)
+  ',
+              color: '#ffffff',
+              'margin-top': '5px'
+            }"
+            shape="circle"
+          ></p-avatar>
+          <div class="notification-message-container">
+            <span class="userName"> {{ notification.username }} </span>
+
+            <span class="action">{{ notification.action }}</span>
+
+            <span class="action-object"> {{ notification.object }} </span>
+
+            <span class="msg-location">{{ notification.name }} </span>
+            <span class="in">in</span>
+            <span class="msg-location">{{ notification.courseName }}</span>
+          </div>
+        </div>
+        <!-- TODO Insert date below -->
+        <span class="time"> </span>
+      </div>
+    </div>
+    <p-divider class="divider"></p-divider>
+  </div>
+</ng-container>

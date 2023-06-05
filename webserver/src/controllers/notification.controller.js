@@ -14,6 +14,7 @@ export const getAllNotifications = async (req, res, next) => {
     notifications = await UserNotification.find({
       userId: new ObjectId(userId),
     }).populate("activityId", [
+      "notificationInfo.userName",
       "notificationInfo.userShortname",
       "notificationInfo.courseName",
       "notificationInfo.topicName",

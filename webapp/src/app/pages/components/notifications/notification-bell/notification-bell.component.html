@@ -1,0 +1,14 @@
+<i
+  class="pi pi-bell mr-6 mt-2 p-text-secondary"
+  pBadge
+  style="font-size: 2rem; color: rgba(3, 105, 161, 255)"
+  pTooltip="Notifications"
+  tooltipPosition="bottom"
+  (click)="toggleNotificationPanel($event, notificationPanel)"
+></i>
+
+<p-overlayPanel #notificationPanel>
+  <ng-template pTemplate="content">
+    <app-notification-box></app-notification-box>
+  </ng-template>
+</p-overlayPanel>

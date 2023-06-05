@@ -1,3 +1,5 @@
+const socketio = require("../../socketio");
+
 const db = require("../../models");
 const UserNotification = db.userNotifications;
 //TODO Ask why the users objects in the course contains an _id field aside from the userID field
@@ -32,6 +34,7 @@ export const generateNotificationInfo = (req) => {
     channelName = req.locals.channel.name;
   }
   return {
+    userName: req.locals.user?.firstname + " " + req.locals.user?.lastname,
     userShortname: firstInitial + secondInitial,
     ...(courseName && { courseName }),
     ...(topicName && { topicName }),
@@ -41,13 +44,36 @@ export const generateNotificationInfo = (req) => {
   };
 };
 
+const emitNotificationsToSubscribedUsers = async (
+  req,
+  userToBeNotified,
+  insertedUserNotifications
+) => {
+  for (let i = 0; i < userToBeNotified.length; i++) {
+    const user = userToBeNotified[i];
+    const socketId = user.userId;
+    console.log("about to emit notification for socketId: ", socketId);
+    console.log("the body is: ", req.locals.activity);
+    socketio.getIO().emit(socketId, [req.locals.activity]);
+  }
+
+  /*   for (let i = 0; i < insertedUserNotifications.length; i++) {
+    const userNotification = insertedUserNotifications[i];
+    const socketId = userNotification.userId;
+    console.log("about to emit notification for socketId: ", socketId);
+    console.log("the body is: ", userNotification);
+    socketio.getIO().emit(socketId, userNotification);
+  } */
+};
 //TODO: When saving the several inserts use the option "lean" to skip Mongoose validitity checks
+//TODO: rename this method to "populateUserNotification"
 export const notifyUsers = async (req, res) => {
   let user = req.locals.user;
   let course = req.locals.course;
   let activity = req.locals.activity;
   const userToBeNotified = course.users;
   const arrUserNotification = [];
+  let insertedUserNotifications;
   //Removing the user who does the action from the list of users to be notified
   removeUserFromList(userToBeNotified, user._id);
   userToBeNotified.forEach((user) => {
@@ -61,14 +87,30 @@ export const notifyUsers = async (req, res) => {
   });
 
   try {
-    await UserNotification.insertMany(arrUserNotification);
-    res.status(200).send({ success: req.locals.response.success });
+    insertedUserNotifications = await UserNotification.insertMany(
+      arrUserNotification
+    );
   } catch (err) {
     return res.status(500).send({
-      error: "Operation successful but Error saving notification",
+      error: "Operation successful but Error populating UserNotification",
       err,
     });
   }
+
+  try {
+    await emitNotificationsToSubscribedUsers(
+      req,
+      userToBeNotified,
+      insertedUserNotifications
+    );
+  } catch (err) {
+    return res.status(500).send({
+      error: "Error emitting notifications",
+      err,
+    });
+  }
+
+  return res.status(200).send({ success: req.locals.response.success });
 };
 
 let channelNotifications = {
