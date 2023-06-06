@@ -2,7 +2,7 @@ const statementFactory = require("../statementsFactory/channel.statementsFactory
 const lrs = require("../lrs/lrs");
 const controller = require("../controller.xAPILogger");
 const ORIGIN = process.env.ORIGIN;
-const channelNotifications = require("../../middlewares/Notifications/channel.notification");
+const notifications = require("../../middlewares/Notifications/notifications");
 
 export const newChannel = async (req, res, next) => {
   const origin = req.get("origin") ? req.get("origin") : ORIGIN;
@@ -12,7 +12,7 @@ export const newChannel = async (req, res, next) => {
     origin
   );
 
-  const notificationInfo = channelNotifications.generateNotificationInfo(req);
+  const notificationInfo = notifications.generateNotificationInfo(req);
   const sent = await lrs.sendStatementToLrs(statement);
   try {
     const activity = await controller.saveStatementToMongo(
@@ -35,7 +35,7 @@ export const deleteChannel = async (req, res, next) => {
     req.locals.channel,
     origin
   );
-  const notificationInfo = channelNotifications.generateNotificationInfo(req);
+  const notificationInfo = notifications.generateNotificationInfo(req);
   const sent = await lrs.sendStatementToLrs(statement);
   try {
     const activity = await controller.saveStatementToMongo(
@@ -59,7 +59,7 @@ export const editChannel = async (req, res, next) => {
     req.locals.oldChannel,
     origin
   );
-  const notificationInfo = channelNotifications.generateNotificationInfo(req);
+  const notificationInfo = notifications.generateNotificationInfo(req);
   const sent = await lrs.sendStatementToLrs(statement);
   try {
     const activity = await controller.saveStatementToMongo(

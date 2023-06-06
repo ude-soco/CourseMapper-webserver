@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { NotificationsService } from 'src/app/services/notifications.service';
 
+//TODO: put this component behind an Auth guard
 @Component({
   selector: 'app-notification-bell',
   templateUrl: './notification-bell.component.html',

@@ -36,11 +36,11 @@ export const generateNotificationInfo = (req) => {
   return {
     userName: req.locals.user?.firstname + " " + req.locals.user?.lastname,
     userShortname: firstInitial + secondInitial,
+    username: req.locals.user.username,
+    category: req.locals.category,
     ...(courseName && { courseName }),
     ...(topicName && { topicName }),
     ...(channelName && { channelName }),
-    username: req.locals.user.username,
-    category: req.locals.category,
   };
 };
 
@@ -67,7 +67,7 @@ const emitNotificationsToSubscribedUsers = async (
 };
 //TODO: When saving the several inserts use the option "lean" to skip Mongoose validitity checks
 //TODO: rename this method to "populateUserNotification"
-export const notifyUsers = async (req, res) => {
+export const populateUserNotification = async (req, res) => {
   let user = req.locals.user;
   let course = req.locals.course;
   let activity = req.locals.activity;
@@ -110,11 +110,16 @@ export const notifyUsers = async (req, res) => {
     });
   }
 
-  return res.status(200).send({ success: req.locals.response.success });
+  let objectToSend = {
+    message: "Users notified and Your operation completed without errors!",
+    ...(req.locals.response && { response: req.locals.response }),
+  };
+
+  return res.status(200).send(objectToSend);
 };
 
-let channelNotifications = {
-  notifyUsers: notifyUsers,
+let notifications = {
+  populateUserNotification,
   generateNotificationInfo,
 };
-module.exports = channelNotifications;
+module.exports = notifications;

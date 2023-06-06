@@ -123,6 +123,8 @@ export const newTopic = async (req, res, next) => {
     },
     topic: savedTopic,
     user: user,
+    course: foundCourse,
+    category: "courseudpates",
   };
   return next();
 };
@@ -215,10 +217,13 @@ export const deleteTopic = async (req, res, next) => {
     },
     topic: foundTopic,
     user: user,
+    category: "courseupdates",
+    course: foundCourse,
   };
   return next();
 };
 
+//TODO: Maybe the extraMessage can be changed for topic being edited. from "<newTopicName> was edited" to <"old topic name> was renamed to <newTopicName>"
 /**
  * @function editTopic
  * Edit a topic controller
@@ -232,6 +237,18 @@ export const editTopic = async (req, res, next) => {
   const courseId = req.params.courseId;
   const topicName = req.body.name;
   const userId = req.userId;
+
+  let foundCourse;
+  try {
+    foundCourse = await Course.findById(courseId);
+    if (!foundCourse) {
+      return res.status(404).send({
+        error: `Course with id ${courseId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding course" });
+  }
 
   let user;
   try {
@@ -281,6 +298,10 @@ export const editTopic = async (req, res, next) => {
   };
   req.locals.user = user;
   req.locals.newTopic = foundTopic;
+  req.locals.category = "courseupdates";
+  req.locals.user = user;
+  req.locals.course = foundCourse;
+  req.locals.topic = newTopic;
 
   return next();
 };

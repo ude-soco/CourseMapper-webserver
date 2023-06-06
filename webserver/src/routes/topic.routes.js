@@ -1,4 +1,4 @@
-const { authJwt } = require("../middlewares");
+const { authJwt, notifications } = require("../middlewares");
 const controller = require("../controllers/topic.controller");
 const logger = require("../xAPILogger/logger/topic.logger");
 
@@ -23,7 +23,8 @@ module.exports = function (app) {
     "/api/courses/:courseId/topic",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.newTopic,
-    logger.newTopic
+    logger.newTopic,
+    notifications.populateUserNotification
   );
 
   // Delete a topic
@@ -32,7 +33,8 @@ module.exports = function (app) {
     "/api/courses/:courseId/topics/:topicId",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.deleteTopic,
-    logger.deleteTopic
+    logger.deleteTopic,
+    notifications.populateUserNotification
   );
 
   // Edit a topic
@@ -41,6 +43,7 @@ module.exports = function (app) {
     "/api/courses/:courseId/topics/:topicId",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.editTopic,
-    logger.editTopic
+    logger.editTopic,
+    notifications.populateUserNotification
   );
 };

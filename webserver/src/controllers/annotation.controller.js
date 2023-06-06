@@ -6,6 +6,7 @@ const Reply = db.reply;
 const Tag = db.tag;
 const User = db.user;
 const Role = db.role;
+const Course = db.role;
 
 /**
  * @function newAnnotation
@@ -27,6 +28,8 @@ export const newAnnotation = async (req, res, next) => {
   const annotationType = req.body.type;
   const annotationLocation = req.body.location;
   const annotationTool = req.body.tool;
+
+  let course = await Course.find({ _id: courseId });
 
   let foundMaterial;
   try {
@@ -59,7 +62,6 @@ export const newAnnotation = async (req, res, next) => {
   let foundRole;
   try {
     foundRole = await Role.findById(foundCourse.role);
-   
   } catch (err) {
     res.status(500).send({ error: "Error finding role" });
   }
@@ -95,10 +97,10 @@ export const newAnnotation = async (req, res, next) => {
   }
   // Checks for hashtags in content
   let foundTags = annotationContent
-  .split(" ")
-  .filter((v) => /^#[A-Za-z0-9]+$/.test(v));
+    .split(" ")
+    .filter((v) => /^#[A-Za-z0-9]+$/.test(v));
 
-console.log(foundTags);
+  console.log(foundTags);
 
   if (foundTags.length !== 0) {
     let foundTagsSchema = [];
@@ -122,9 +124,11 @@ console.log(foundTags);
     }
   }
   req.locals = {
+    user: foundUser,
+    category: "annotations",
+    course: course,
     response: newAnnotation,
     material: foundMaterial,
-    user: foundUser,
     annotation: newAnnotation,
   };
   socketio.getIO().emit(materialId, {
@@ -148,6 +152,8 @@ export const deleteAnnotation = async (req, res, next) => {
   const courseId = req.params.courseId;
   const annotationId = req.params.annotationId;
   const userId = req.userId;
+
+  const course = await Course.find({ _id: courseId });
 
   let user;
   try {
@@ -223,6 +229,8 @@ export const deleteAnnotation = async (req, res, next) => {
     response: { success: "Annotation successfully deleted" },
     annotation: foundAnnotation,
     user: user,
+    course: course,
+    category: "annotations",
   };
 
   return next();
@@ -248,6 +256,8 @@ export const editAnnotation = async (req, res, next) => {
   const annotationLocation = req.body.location;
   const annotationTool = req.body.tool;
   const userId = req.userId;
+
+  let course = await Course.find({ _id: courseId });
 
   let user;
   try {
@@ -324,6 +334,8 @@ export const editAnnotation = async (req, res, next) => {
   req.locals.response = { success: "Annotation successfully updated" };
   req.locals.newAnnotation = foundAnnotation;
   req.locals.user = user;
+  req.locals.category = "annotations";
+  req.locals.course = course;
   socketio.getIO().emit(foundAnnotation.materialId, {
     eventType: "annotationEdited",
     annotation: foundAnnotation,
@@ -345,6 +357,8 @@ export const likeAnnotation = async (req, res, next) => {
   const courseId = req.params.courseId;
   const annotationId = req.params.annotationId;
   const userId = req.userId;
+
+  let course = await Course.find({ _id: courseId });
 
   let user;
   try {
@@ -422,6 +436,9 @@ export const likeAnnotation = async (req, res, next) => {
     };
 
     req.locals.like = true;
+    req.locals.user = user;
+    req.locals.category = "annotations";
+    req.locals.course = course;
     socketio.getIO().emit(annotationId, {
       eventType: "annotationLiked",
       annotation: savedAnnotation,
@@ -443,6 +460,7 @@ export const dislikeAnnotation = async (req, res, next) => {
   const courseId = req.params.courseId;
   const annotationId = req.params.annotationId;
   const userId = req.userId;
+  let course = await Course.find({ _id: courseId });
 
   let user;
   try {
@@ -524,6 +542,9 @@ export const dislikeAnnotation = async (req, res, next) => {
       success: "Annotation successfully disliked!",
     };
     req.locals.dislike = true;
+    req.locals.user = user;
+    req.locals.course = course;
+    req.locals.category = "annotations";
     socketio.getIO().emit(annotationId, {
       eventType: "annotationDisliked",
       annotation: savedAnnotation,
@@ -544,6 +565,7 @@ export const dislikeAnnotation = async (req, res, next) => {
 export const getAllAnnotations = async (req, res) => {
   const courseId = req.params.courseId;
   const materialId = req.params.materialId;
+  let course = await Course.find({ _id: courseId });
 
   let foundAnnotations;
   try {
@@ -586,7 +608,7 @@ export const getAllAnnotationsForSpecificTag = async (req, res) => {
 
   let foundTags;
   try {
-    foundTags = await Tag.find({ courseId: courseId, name: tagName});
+    foundTags = await Tag.find({ courseId: courseId, name: tagName });
     if (!foundTags) {
       return res.status(404).send({
         error: `Course with id ${courseId} doesn't exist!`,
@@ -605,7 +627,8 @@ export const getAllAnnotationsForSpecificTag = async (req, res) => {
       }
     }
 
-    if (!foundAnnotations.length) { // check if the array is empty
+    if (!foundAnnotations.length) {
+      // check if the array is empty
       return res.status(404).send({
         error: `Annotations with courseId ${courseId} doesn't exist!`,
       });
@@ -618,4 +641,3 @@ export const getAllAnnotationsForSpecificTag = async (req, res) => {
   );
   return res.status(200).send(foundAnnotations);
 };
-

@@ -2,11 +2,12 @@ const statementFactory = require("../statementsFactory/annotation.statementsFact
 const lrs = require("../lrs/lrs");
 const controller = require("../controller.xAPILogger");
 const ORIGIN = process.env.ORIGIN;
+const notifications = require("../../middlewares/Notifications/notifications");
 
 export const newAnnotation = async (req, res) => {
-  const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
+  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
   let statement;
-  if (!req.locals.annotation.tool){
+  if (!req.locals.annotation.tool) {
     statement = statementFactory.getCommentCreationStatement(
       req.locals.user,
       req.locals.annotation,
@@ -21,15 +22,16 @@ export const newAnnotation = async (req, res) => {
       origin
     );
   }
+  const notificationInfo = notifications.generateNotificationInfo(req);
   const sent = await lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement, sent);
+  controller.saveStatementToMongo(statement, sent, notificationInfo);
   res.status(200).send(req.locals.response);
 };
 
 export const deleteAnnotation = async (req, res) => {
-  const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
+  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
   let statement;
-  if (!req.locals.annotation.tool){
+  if (!req.locals.annotation.tool) {
     statement = statementFactory.getCommentDeletionStatement(
       req.locals.user,
       req.locals.annotation,
@@ -42,13 +44,14 @@ export const deleteAnnotation = async (req, res) => {
       origin
     );
   }
+  const notificationInfo = notifications.generateNotificationInfo(req);
   const sent = await lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement, sent);
+  controller.saveStatementToMongo(statement, sent, notificationInfo);
   res.status(200).send(req.locals.response);
 };
 
 export const likeAnnotation = async (req, res) => {
-  const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
+  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
   let statement;
   if (req.locals.like) {
     if (!req.locals.annotation.tool) {
@@ -65,7 +68,7 @@ export const likeAnnotation = async (req, res) => {
       );
     }
   } else {
-    if (!req.locals.annotation.tool){
+    if (!req.locals.annotation.tool) {
       statement = statementFactory.getCommentUnlikeStatement(
         req.locals.user,
         req.locals.annotation,
@@ -79,13 +82,14 @@ export const likeAnnotation = async (req, res) => {
       );
     }
   }
+  const notificationInfo = notifications.generateNotificationInfo(req);
   const sent = await lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement, sent);
+  controller.saveStatementToMongo(statement, sent, notificationInfo);
   res.status(200).send(req.locals.response);
 };
 
 export const dislikeAnnotation = async (req, res) => {
-  const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
+  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
   let statement;
   if (req.locals.dislike) {
     if (!req.locals.annotation.tool) {
@@ -116,13 +120,14 @@ export const dislikeAnnotation = async (req, res) => {
       );
     }
   }
+  const notificationInfo = notifications.generateNotificationInfo(req);
   const sent = await lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement, sent);
+  controller.saveStatementToMongo(statement, sent, notificationInfo);
   res.status(200).send(req.locals.response);
 };
 
 export const editAnnotation = async (req, res) => {
-  const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
+  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
   let statement;
   if (!req.locals.oldAnnotation.tool) {
     statement = statementFactory.getCommentEditStatement(
@@ -139,7 +144,8 @@ export const editAnnotation = async (req, res) => {
       origin
     );
   }
-  const sent = await lrs.sendStatementToLrs(statement);
+  const notificationInfo = notifications.generateNotificationInfo(req);
+  const sent = await lrs.sendStatementToLrs(statement, notificationInfo);
   controller.saveStatementToMongo(statement, sent);
   res.status(200).send(req.locals.response);
 };

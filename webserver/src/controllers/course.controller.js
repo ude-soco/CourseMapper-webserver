@@ -10,6 +10,7 @@ const Material = db.material;
 const Reply = db.reply;
 const Tag = db.tag;
 const Activity = db.activity;
+const UserNotification = db.userNotifications;
 
 /**
  * @function getAllCourses
@@ -476,6 +477,18 @@ export const deleteCourse = async (req, res, next) => {
       await Activity.deleteMany({ _id: { $in: activitiesToBeDeletedIds } });
     } catch (error) {
       return res.status(500).send({ error: "Error deleting activity" });
+    }
+
+    //delete all entries from UserNotification where acitivityId is in activitiesToBeDeleted array
+    //TODO: Test the below method
+    try {
+      await UserNotification.deleteMany({
+        activityId: { $in: activitiesToBeDeleted },
+      });
+    } catch (error) {
+      return res
+        .status(500)
+        .send({ error: "Error deleting user notification" });
     }
   } catch (err) {
     return res.status(500).send({ error: "Error finding and removing course" });

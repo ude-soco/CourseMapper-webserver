@@ -1,9 +1,9 @@
 const authJwt = require("./authJwt");
 const verifySignUp = require("./verifySignUp");
-const channelNotifications = require("./Notifications/channel.notification");
+const notifications = require("./Notifications/notifications");
 
 module.exports = {
   authJwt,
   verifySignUp,
-  channelNotifications,
+  notifications,
 };

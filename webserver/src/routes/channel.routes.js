@@ -1,4 +1,4 @@
-const { authJwt, channelNotifications } = require("../middlewares");
+const { authJwt, notifications } = require("../middlewares");
 const controller = require("../controllers/channel.controller");
 const logger = require("../xAPILogger/logger/channel.logger");
 
@@ -24,7 +24,7 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isModerator],
     controller.newChannel,
     logger.newChannel,
-    channelNotifications.notifyUsers
+    notifications.populateUserNotification
   );
 
   // Delete a channel
@@ -34,7 +34,7 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isModerator],
     controller.deleteChannel,
     logger.deleteChannel,
-    channelNotifications.notifyUsers
+    notifications.populateUserNotification
   );
 
   // Edit a channel
@@ -44,6 +44,6 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isModerator],
     controller.editChannel,
     logger.editChannel,
-    channelNotifications.notifyUsers
+    notifications.populateUserNotification
   );
 };
