@@ -5,6 +5,7 @@ const User = db.user;
 const Annotation = db.annotation;
 const Reply = db.reply;
 const Tag = db.tag;
+const Course = db.course;
 
 /**
  * @function getMaterial
@@ -75,6 +76,13 @@ export const newMaterial = async (req, res, next) => {
   const materialDesc = req.body.description;
   const userId = req.userId;
 
+  let course;
+  try {
+    course = await Course.findById(courseId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding course" });
+  }
+
   let user;
   try {
     user = await User.findById(userId);
@@ -129,7 +137,17 @@ export const newMaterial = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: "Error saving channel" });
   }
-  return res.send({
+
+  req.locals = {
+    material: savedMaterial,
+    user,
+    response: { success: `New material '${materialName}' added!` },
+    category: "courseupdates",
+    course,
+  };
+  next();
+
+  /*   return res.send({
     // id: savedMaterial._id,
     material: {
       _id: material._id,
@@ -145,7 +163,7 @@ export const newMaterial = async (req, res, next) => {
       //updatedAt: Date.now(),
     },
     success: `New material '${materialName}' added!`,
-  });
+  }); */
 };
 
 /**
@@ -159,6 +177,12 @@ export const deleteMaterial = async (req, res, next) => {
   let materialId = req.params.materialId;
   let courseId = req.params.courseId;
   const userId = req.userId;
+  let course;
+  try {
+    course = await Course.findById(courseId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding course" });
+  }
 
   let user;
   try {
@@ -237,6 +261,8 @@ export const deleteMaterial = async (req, res, next) => {
     },
     material: foundMaterial,
     user: user,
+    category: "courseupdates",
+    course: course,
   };
   return next();
 };
@@ -256,10 +282,17 @@ export const editMaterial = async (req, res, next) => {
   const courseId = req.params.courseId;
   const materialId = req.params.materialId;
   const materialName = req.body.name;
-  const materialDesc = req.body.description;
   const materialUrl = req.body.url;
   const materialType = req.body.type;
   const userId = req.userId;
+  const materialDesc = req.body.description;
+
+  let course;
+  try {
+    course = await Course.findById(courseId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding course" });
+  }
 
   let user;
   try {
@@ -298,13 +331,15 @@ export const editMaterial = async (req, res, next) => {
   foundMaterial.name = materialName;
   foundMaterial.url = materialUrl;
   foundMaterial.type = materialType;
-  foundMaterial.description = materialDesc;
-  foundMaterial.updatedAt = Date.now();
-  try {
-    await foundMaterial.save();
-  } catch (err) {
-    return res.status(500).send({ error: `Error saving material!` });
+  if (materialDesc) {
+    foundMaterial.description = materialDesc;
   }
+  foundMaterial.updatedAt = Date.now();
+  foundMaterial = await foundMaterial.save();
+  /*  try {
+  } catch (err) {
+    return res.status(500).send({ error: `Error saving material!`, err });
+  } */
   req.locals.response = {
     id: foundMaterial._id,
     courseId: courseId,
@@ -312,6 +347,9 @@ export const editMaterial = async (req, res, next) => {
   };
   req.locals.newMaterial = foundMaterial;
   req.locals.user = user;
+  req.locals.material = foundMaterial;
+  req.locals.category = "courseupdates";
+  req.locals.course = course;
 
   return next();
 };

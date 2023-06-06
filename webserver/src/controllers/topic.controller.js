@@ -129,6 +129,8 @@ export const newTopic = async (req, res, next) => {
   return next();
 };
 
+//TODO: Perhaps delete topic notifications when topic is deleted even though the activities related to the topic are not being deleted
+
 /**
  * @function deleteTopic
  * Delete a topic controller

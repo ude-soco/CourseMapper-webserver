@@ -24,6 +24,7 @@ export const generateNotificationInfo = (req) => {
   let courseName;
   let topicName;
   let channelName;
+  let materialName;
   if (req.locals.topic) {
     topicName = req.locals.topic.name;
   }
@@ -33,6 +34,9 @@ export const generateNotificationInfo = (req) => {
   if (req.locals.channel) {
     channelName = req.locals.channel.name;
   }
+  if (req.locals.material) {
+    materialName = req.locals.material.name;
+  }
   return {
     userName: req.locals.user?.firstname + " " + req.locals.user?.lastname,
     userShortname: firstInitial + secondInitial,
@@ -41,6 +45,7 @@ export const generateNotificationInfo = (req) => {
     ...(courseName && { courseName }),
     ...(topicName && { topicName }),
     ...(channelName && { channelName }),
+    ...(materialName && { materialName }),
   };
 };
 
