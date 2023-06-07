@@ -1,6 +1,7 @@
 const { authJwt } = require("../middlewares");
 const controller = require("../controllers/reply.controller");
 const logger = require("../xAPILogger/logger/reply.logger");
+const { notifications } = require("../middlewares");
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -22,7 +23,8 @@ module.exports = function (app) {
     "/api/courses/:courseId/annotations/:annotationId/reply",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.newReply,
-    logger.newReply
+    logger.newReply,
+    notifications.populateUserNotification
   );
 
   // Delete a reply
@@ -31,7 +33,8 @@ module.exports = function (app) {
     "/api/courses/:courseId/replies/:replyId",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.deleteReply,
-    logger.deleteReply
+    logger.deleteReply,
+    notifications.populateUserNotification
   );
 
   // Edit a reply
@@ -40,7 +43,8 @@ module.exports = function (app) {
     "/api/courses/:courseId/replies/:replyId",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.editReply,
-    logger.editReply
+    logger.editReply,
+    notifications.populateUserNotification
   );
 
   // Like a reply
@@ -50,7 +54,8 @@ module.exports = function (app) {
     "/api/courses/:courseId/replies/:replyId/like",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.likeReply,
-    logger.likeReply
+    logger.likeReply,
+    notifications.populateUserNotification
   );
 
   // Like a reply
@@ -60,6 +65,7 @@ module.exports = function (app) {
     "/api/courses/:courseId/replies/:replyId/dislike",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.dislikeReply,
-    logger.dislikeReply
+    logger.dislikeReply,
+    notifications.populateUserNotification
   );
 };

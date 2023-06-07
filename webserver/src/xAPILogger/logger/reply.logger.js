@@ -2,9 +2,10 @@ const statementFactory = require("../statementsFactory/reply.statementsFactory")
 const lrs = require("../lrs/lrs");
 const controller = require("../controller.xAPILogger");
 const ORIGIN = process.env.ORIGIN;
+const notifications = require("../../middlewares/Notifications/notifications");
 
-export const newReply = async (req, res) => {
-  const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
+export const newReply = async (req, res, next) => {
+  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
   let statement;
   if (!req.locals.annotation.tool) {
     statement = statementFactory.getReplyToCommentCreationStatement(
@@ -21,25 +22,47 @@ export const newReply = async (req, res) => {
       origin
     );
   }
+  const notificationInfo = notifications.generateNotificationInfo(req);
   const sent = await lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement, sent);
-  res.status(200).send(req.locals.response);
+  try {
+    const activity = await controller.saveStatementToMongo(
+      statement,
+      sent,
+      notificationInfo
+    );
+    //Add activity to req.locals so it can be used in the notification
+    req.locals.activity = activity;
+  } catch (err) {
+    res.status(500).send({ error: "Error saving statement to mongo", err });
+  }
+  next();
 };
 
-export const deleteReply = async (req, res) => {
-  const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
+export const deleteReply = async (req, res, next) => {
+  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
   const statement = statementFactory.getReplyDeletionStatement(
     req.locals.user,
     req.locals.reply,
     origin
   );
+  const notificationInfo = notifications.generateNotificationInfo(req);
   const sent = await lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement, sent);
-  res.status(200).send(req.locals.response);
+  try {
+    const activity = await controller.saveStatementToMongo(
+      statement,
+      sent,
+      notificationInfo
+    );
+    //Add activity to req.locals so it can be used in the notification
+    req.locals.activity = activity;
+  } catch (err) {
+    res.status(500).send({ error: "Error saving statement to mongo", err });
+  }
+  next();
 };
 
-export const likeReply = async (req, res) => {
-  const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
+export const likeReply = async (req, res, next) => {
+  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
   let statement;
   if (req.locals.like) {
     statement = statementFactory.getReplyLikeStatement(
@@ -54,13 +77,24 @@ export const likeReply = async (req, res) => {
       origin
     );
   }
+  const notificationInfo = notifications.generateNotificationInfo(req);
   const sent = await lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement, sent);
-  res.status(200).send(req.locals.response);
+  try {
+    const activity = await controller.saveStatementToMongo(
+      statement,
+      sent,
+      notificationInfo
+    );
+    //Add activity to req.locals so it can be used in the notification
+    req.locals.activity = activity;
+  } catch (err) {
+    res.status(500).send({ error: "Error saving statement to mongo", err });
+  }
+  next();
 };
 
-export const dislikeReply = async (req, res) => {
-  const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
+export const dislikeReply = async (req, res, next) => {
+  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
   let statement;
   if (req.locals.dislike) {
     statement = statementFactory.getReplyDislikeStatement(
@@ -75,20 +109,42 @@ export const dislikeReply = async (req, res) => {
       origin
     );
   }
+  const notificationInfo = notifications.generateNotificationInfo(req);
   const sent = await lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement, sent);
-  res.status(200).send(req.locals.response);
+  try {
+    const activity = await controller.saveStatementToMongo(
+      statement,
+      sent,
+      notificationInfo
+    );
+    //Add activity to req.locals so it can be used in the notification
+    req.locals.activity = activity;
+  } catch (err) {
+    res.status(500).send({ error: "Error saving statement to mongo", err });
+  }
+  next();
 };
 
-export const editReply = async (req, res) => {
-  const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
+export const editReply = async (req, res, next) => {
+  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
   let statement = statementFactory.getReplyEditStatement(
     req.locals.user,
     req.locals.oldReply,
     req.locals.newReply,
     origin
   );
+  const notificationInfo = notifications.generateNotificationInfo(req);
   const sent = await lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement, sent);
-  res.status(200).send(req.locals.response);
+  try {
+    const activity = await controller.saveStatementToMongo(
+      statement,
+      sent,
+      notificationInfo
+    );
+    //Add activity to req.locals so it can be used in the notification
+    req.locals.activity = activity;
+  } catch (err) {
+    res.status(500).send({ error: "Error saving statement to mongo", err });
+  }
+  next();
 };

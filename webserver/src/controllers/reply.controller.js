@@ -5,6 +5,7 @@ const Reply = db.reply;
 const Tag = db.tag;
 const User = db.user;
 const Role = db.role;
+const Course = db.course;
 
 /**
  * @function getReplies
@@ -56,6 +57,13 @@ export const newReply = async (req, res, next) => {
   const annotationId = req.params.annotationId;
   const replyContent = req.body.content;
   const userId = req.userId;
+
+  let course;
+  try {
+    course = await Course.findById(courseId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding course" });
+  }
 
   let user;
   try {
@@ -155,9 +163,11 @@ export const newReply = async (req, res, next) => {
   }
   req.locals = {
     response: { id: newReply._id, success: `Reply added!` },
-    user: user,
     annotation: foundAnnotation,
     reply: newReply,
+    user: user,
+    category: "mentionedandreplied",
+    course,
   };
   socketio.getIO().emit(annotationId, {
     eventType: "replyCreated",
@@ -180,6 +190,13 @@ export const deleteReply = async (req, res, next) => {
   const courseId = req.params.courseId;
   const replyId = req.params.replyId;
   const userId = req.userId;
+
+  let course;
+  try {
+    course = await Course.findById(courseId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding course" });
+  }
 
   let user;
   try {
@@ -238,6 +255,8 @@ export const deleteReply = async (req, res, next) => {
   req.locals = {
     response: { success: "Reply successfully deleted" },
     user: user,
+    category: "mentionedandreplied",
+    course,
     reply: foundReply,
   };
   socketio.getIO().emit(foundAnnotation._id, {
@@ -263,6 +282,13 @@ export const editReply = async (req, res, next) => {
   const replyId = req.params.replyId;
   const replyContent = req.body.content;
   const userId = req.userId;
+
+  let course;
+  try {
+    course = await Course.findById(courseId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding course" });
+  }
 
   let user;
   try {
@@ -341,6 +367,8 @@ export const editReply = async (req, res, next) => {
   req.locals.response = { success: "Reply successfully updated" };
   req.locals.newReply = foundReply;
   req.locals.user = user;
+  req.locals.category = "mentionedandreplied";
+  req.locals.course = course;
   socketio.getIO().emit(foundAnnotation._id, {
     eventType: "replyEdited",
     annotation: foundAnnotation,
@@ -363,6 +391,12 @@ export const likeReply = async (req, res, next) => {
   const replyId = req.params.replyId;
   const userId = req.userId;
 
+  let course;
+  try {
+    course = await Course.findById(courseId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding course" });
+  }
   let user;
   try {
     user = await User.findById(userId);
@@ -395,6 +429,8 @@ export const likeReply = async (req, res, next) => {
   req.locals = {
     reply: foundReply,
     user: user,
+    course: course,
+    category: "mentionedandreplied",
   };
 
   if (foundReply.likes.includes(req.userId)) {
@@ -468,6 +504,13 @@ export const dislikeReply = async (req, res, next) => {
   const replyId = req.params.replyId;
   const userId = req.userId;
 
+  let course;
+  try {
+    course = await Course.findById(courseId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding course" });
+  }
+
   let user;
   try {
     user = await User.findById(userId);
@@ -498,6 +541,8 @@ export const dislikeReply = async (req, res, next) => {
   req.locals = {
     user: user,
     reply: foundReply,
+    course: course,
+    category: "mentionedandreplied",
   };
   if (foundReply.dislikes.includes(req.userId)) {
     foundReply.dislikes = foundReply.dislikes.filter(

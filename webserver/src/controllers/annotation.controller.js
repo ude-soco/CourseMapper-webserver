@@ -6,7 +6,7 @@ const Reply = db.reply;
 const Tag = db.tag;
 const User = db.user;
 const Role = db.role;
-const Course = db.role;
+const Course = db.course;
 
 /**
  * @function newAnnotation
@@ -29,7 +29,12 @@ export const newAnnotation = async (req, res, next) => {
   const annotationLocation = req.body.location;
   const annotationTool = req.body.tool;
 
-  let course = await Course.find({ _id: courseId });
+  let courseForGeneratingNotifications;
+  try {
+    courseForGeneratingNotifications = await Course.findById(courseId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding course" });
+  }
 
   let foundMaterial;
   try {
@@ -126,7 +131,7 @@ export const newAnnotation = async (req, res, next) => {
   req.locals = {
     user: foundUser,
     category: "annotations",
-    course: course,
+    course: courseForGeneratingNotifications,
     response: newAnnotation,
     material: foundMaterial,
     annotation: newAnnotation,
@@ -153,7 +158,12 @@ export const deleteAnnotation = async (req, res, next) => {
   const annotationId = req.params.annotationId;
   const userId = req.userId;
 
-  const course = await Course.find({ _id: courseId });
+  let courseForGeneratingNotifications;
+  try {
+    courseForGeneratingNotifications = await Course.findById(courseId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding course" });
+  }
 
   let user;
   try {
@@ -229,11 +239,11 @@ export const deleteAnnotation = async (req, res, next) => {
     response: { success: "Annotation successfully deleted" },
     annotation: foundAnnotation,
     user: user,
-    course: course,
+    course: courseForGeneratingNotifications,
     category: "annotations",
   };
 
-  return next();
+  next();
 };
 
 /**
@@ -257,7 +267,12 @@ export const editAnnotation = async (req, res, next) => {
   const annotationTool = req.body.tool;
   const userId = req.userId;
 
-  let course = await Course.find({ _id: courseId });
+  let courseForGeneratingNotifications;
+  try {
+    courseForGeneratingNotifications = await Course.findById(courseId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding course" });
+  }
 
   let user;
   try {
@@ -335,7 +350,7 @@ export const editAnnotation = async (req, res, next) => {
   req.locals.newAnnotation = foundAnnotation;
   req.locals.user = user;
   req.locals.category = "annotations";
-  req.locals.course = course;
+  req.locals.course = courseForGeneratingNotifications;
   socketio.getIO().emit(foundAnnotation.materialId, {
     eventType: "annotationEdited",
     annotation: foundAnnotation,
@@ -358,7 +373,12 @@ export const likeAnnotation = async (req, res, next) => {
   const annotationId = req.params.annotationId;
   const userId = req.userId;
 
-  let course = await Course.find({ _id: courseId });
+  let courseForGeneratingNotifications;
+  try {
+    courseForGeneratingNotifications = await Course.findById(courseId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding course" });
+  }
 
   let user;
   try {
@@ -391,6 +411,8 @@ export const likeAnnotation = async (req, res, next) => {
   req.locals = {
     annotation: foundAnnotation,
     user: user,
+    course: courseForGeneratingNotifications,
+    category: "annotations",
   };
 
   if (foundAnnotation.likes.includes(req.userId)) {
@@ -415,7 +437,7 @@ export const likeAnnotation = async (req, res, next) => {
       annotation: savedAnnotation,
       reply: null,
     });
-    return next();
+    next();
   } else if (foundAnnotation.dislikes.includes(req.userId)) {
     return res
       .status(404)
@@ -436,15 +458,12 @@ export const likeAnnotation = async (req, res, next) => {
     };
 
     req.locals.like = true;
-    req.locals.user = user;
-    req.locals.category = "annotations";
-    req.locals.course = course;
     socketio.getIO().emit(annotationId, {
       eventType: "annotationLiked",
       annotation: savedAnnotation,
       reply: null,
     });
-    return next();
+    next();
   }
 };
 
@@ -460,7 +479,12 @@ export const dislikeAnnotation = async (req, res, next) => {
   const courseId = req.params.courseId;
   const annotationId = req.params.annotationId;
   const userId = req.userId;
-  let course = await Course.find({ _id: courseId });
+  let courseForGeneratingNotifications;
+  try {
+    courseForGeneratingNotifications = await Course.findById(courseId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding course" });
+  }
 
   let user;
   try {
@@ -494,6 +518,8 @@ export const dislikeAnnotation = async (req, res, next) => {
   req.locals = {
     annotation: foundAnnotation,
     user: user,
+    course: courseForGeneratingNotifications,
+    category: "annotations",
   };
 
   if (foundAnnotation.dislikes.includes(req.userId)) {
@@ -515,6 +541,7 @@ export const dislikeAnnotation = async (req, res, next) => {
       success: "Annotation successfully un-disliked!",
     };
     req.locals.dislike = false;
+
     socketio.getIO().emit(annotationId, {
       eventType: "annotationUndisliked",
       annotation: savedAnnotation,
@@ -542,9 +569,6 @@ export const dislikeAnnotation = async (req, res, next) => {
       success: "Annotation successfully disliked!",
     };
     req.locals.dislike = true;
-    req.locals.user = user;
-    req.locals.course = course;
-    req.locals.category = "annotations";
     socketio.getIO().emit(annotationId, {
       eventType: "annotationDisliked",
       annotation: savedAnnotation,
@@ -565,7 +589,6 @@ export const dislikeAnnotation = async (req, res, next) => {
 export const getAllAnnotations = async (req, res) => {
   const courseId = req.params.courseId;
   const materialId = req.params.materialId;
-  let course = await Course.find({ _id: courseId });
 
   let foundAnnotations;
   try {
