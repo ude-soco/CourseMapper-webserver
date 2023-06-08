@@ -1,0 +1,1823 @@
+[
+    {
+        "_id": "64787b0fd6cfa11df32c3d34",
+        "activityId": {
+            "_id": "64787b0fd6cfa11df32c3d32",
+            "statement": {
+                "timestamp": "2023-06-01T11:03:43.669Z",
+                "verb": {
+                    "display": {
+                        "en-US": "created"
+                    }
+                },
+                "object": {
+                    "id": "http://localhost:4200/activity/course/647666fb1296a965aa631cfa/topic/647856b01296a965aa6321cd/channel/64787b0fd6cfa11df32c3d2b",
+                    "definition": {
+                        "type": "http://www.CourseMapper.de/activityType/channel",
+                        "name": {
+                            "en-US": "Lec 6"
+                        },
+                        "extensions": {
+                            "http://www.CourseMapper.de/extensions/channel": {
+                                "id": "64787b0fd6cfa11df32c3d2b",
+                                "course_id": "647666fb1296a965aa631cfa",
+                                "topic_id": "647856b01296a965aa6321cd",
+                                "name": "Lec 6",
+                                "description": ""
+                            }
+                        }
+                    }
+                }
+            },
+            "notificationInfo": {
+                "userName": "Admin User",
+                "userShortname": "AU",
+                "courseName": "Front end fundamentals",
+                "topicName": "UX Design",
+                "channelName": "Lec 6",
+                "category": "courseupdates"
+            }
+        },
+        "userId": "6476674f1296a965aa631d16",
+        "isStar": false,
+        "isRead": false,
+        "__v": 0
+    },
+    {
+        "_id": "64788278d6cfa11df32c3f79",
+        "activityId": {
+            "_id": "64788278d6cfa11df32c3f77",
+            "statement": {
+                "timestamp": "2023-06-01T11:35:20.579Z",
+                "verb": {
+                    "display": {
+                        "en-US": "created"
+                    }
+                },
+                "object": {
+                    "id": "http://localhost:4200/activity/course/647666fb1296a965aa631cfa/topic/647856b01296a965aa6321cd/channel/64788278d6cfa11df32c3f70",
+                    "definition": {
+                        "type": "http://www.CourseMapper.de/activityType/channel",
+                        "name": {
+                            "en-US": "Lec7"
+                        },
+                        "extensions": {
+                            "http://www.CourseMapper.de/extensions/channel": {
+                                "id": "64788278d6cfa11df32c3f70",
+                                "course_id": "647666fb1296a965aa631cfa",
+                                "topic_id": "647856b01296a965aa6321cd",
+                                "name": "Lec7",
+                                "description": ""
+                            }
+                        }
+                    }
+                }
+            },
+            "notificationInfo": {
+                "userName": "Admin User",
+                "userShortname": "AU",
+                "courseName": "Front end fundamentals",
+                "topicName": "UX Design",
+                "channelName": "Lec7",
+                "category": "courseupdates"
+            }
+        },
+        "userId": "6476674f1296a965aa631d16",
+        "isStar": false,
+        "isRead": false,
+        "__v": 0
+    },
+    {
+        "_id": "64788aee01fc97174d2ff60c",
+        "activityId": {
+            "_id": "64788aee01fc97174d2ff60a",
+            "statement": {
+                "timestamp": "2023-06-01T12:11:26.748Z",
+                "verb": {
+                    "display": {
+                        "en-US": "created"
+                    }
+                },
+                "object": {
+                    "id": "http://localhost:4200/activity/course/647666fb1296a965aa631cfa/topic/647856b01296a965aa6321cd/channel/64788aee01fc97174d2ff603",
+                    "definition": {
+                        "type": "http://www.CourseMapper.de/activityType/channel",
+                        "name": {
+                            "en-US": "Lec8"
+                        },
+                        "extensions": {
+                            "http://www.CourseMapper.de/extensions/channel": {
+                                "id": "64788aee01fc97174d2ff603",
+                                "course_id": "647666fb1296a965aa631cfa",
+                                "topic_id": "647856b01296a965aa6321cd",
+                                "name": "Lec8",
+                                "description": ""
+                            }
+                        }
+                    }
+                }
+            },
+            "notificationInfo": {
+                "userName": "Admin User",
+                "userShortname": "AU",
+                "courseName": "Front end fundamentals",
+                "topicName": "UX Design",
+                "channelName": "Lec8",
+                "category": "courseupdates"
+            }
+        },
+        "userId": "6476674f1296a965aa631d16",
+        "isStar": false,
+        "isRead": false,
+        "__v": 0
+    },
+    {
+        "_id": "64788b0001fc97174d2ff61d",
+        "activityId": {
+            "_id": "64788b0001fc97174d2ff61b",
+            "statement": {
+                "timestamp": "2023-06-01T12:11:44.194Z",
+                "verb": {
+                    "display": {
+                        "en-US": "created"
+                    }
+                },
+                "object": {
+                    "id": "http://localhost:4200/activity/course/647666fb1296a965aa631cfa/topic/647856b01296a965aa6321cd/channel/64788b0001fc97174d2ff614",
+                    "definition": {
+                        "type": "http://www.CourseMapper.de/activityType/channel",
+                        "name": {
+                            "en-US": "Lec9"
+                        },
+                        "extensions": {
+                            "http://www.CourseMapper.de/extensions/channel": {
+                                "id": "64788b0001fc97174d2ff614",
+                                "course_id": "647666fb1296a965aa631cfa",
+                                "topic_id": "647856b01296a965aa6321cd",
+                                "name": "Lec9",
+                                "description": ""
+                            }
+                        }
+                    }
+                }
+            },
+            "notificationInfo": {
+                "userName": "Admin User",
+                "userShortname": "AU",
+                "courseName": "Front end fundamentals",
+                "topicName": "UX Design",
+                "channelName": "Lec9",
+                "category": "courseupdates"
+            }
+        },
+        "userId": "6476674f1296a965aa631d16",
+        "isStar": false,
+        "isRead": false,
+        "__v": 0
+    },
+    {
+        "_id": "64788d6101fc97174d2ff6ec",
+        "activityId": {
+            "_id": "64788d6101fc97174d2ff6ea",
+            "statement": {
+                "timestamp": "2023-06-01T12:21:53.700Z",
+                "verb": {
+                    "display": {
+                        "en-US": "created"
+                    }
+                },
+                "object": {
+                    "id": "http://localhost:4200/activity/course/647666fb1296a965aa631cfa/topic/647856b01296a965aa6321cd/channel/64788d6101fc97174d2ff6e3",
+                    "definition": {
+                        "type": "http://www.CourseMapper.de/activityType/channel",
+                        "name": {
+                            "en-US": "Lecture 10"
+                        },
+                        "extensions": {
+                            "http://www.CourseMapper.de/extensions/channel": {
+                                "id": "64788d6101fc97174d2ff6e3",
+                                "course_id": "647666fb1296a965aa631cfa",
+                                "topic_id": "647856b01296a965aa6321cd",
+                                "name": "Lecture 10",
+                                "description": ""
+                            }
+                        }
+                    }
+                }
+            },
+            "notificationInfo": {
+                "userName": "Admin User",
+                "userShortname": "AU",
+                "courseName": "Front end fundamentals",
+                "topicName": "UX Design",
+                "channelName": "Lecture 10",
+                "category": "courseupdates"
+            }
+        },
+        "userId": "6476674f1296a965aa631d16",
+        "isStar": false,
+        "isRead": false,
+        "__v": 0
+    },
+    {
+        "_id": "64789a1301fc97174d2ff795",
+        "activityId": {
+            "_id": "64789a1301fc97174d2ff793",
+            "statement": {
+                "timestamp": "2023-06-01T13:16:03.304Z",
+                "verb": {
+                    "display": {
+                        "en-US": "created"
+                    }
+                },
+                "object": {
+                    "id": "http://localhost:4200/activity/course/647666fb1296a965aa631cfa/topic/647856b01296a965aa6321cd/channel/64789a1301fc97174d2ff78c",
+                    "definition": {
+                        "type": "http://www.CourseMapper.de/activityType/channel",
+                        "name": {
+                            "en-US": "Lec 11"
+                        },
+                        "extensions": {
+                            "http://www.CourseMapper.de/extensions/channel": {
+                                "id": "64789a1301fc97174d2ff78c",
+                                "course_id": "647666fb1296a965aa631cfa",
+                                "topic_id": "647856b01296a965aa6321cd",
+                                "name": "Lec 11",
+                                "description": ""
+                            }
+                        }
+                    }
+                }
+            },
+            "notificationInfo": {
+                "userName": "Admin User",
+                "userShortname": "AU",
+                "courseName": "Front end fundamentals",
+                "topicName": "UX Design",
+                "channelName": "Lec 11",
+                "category": "courseupdates"
+            }
+        },
+        "userId": "6476674f1296a965aa631d16",
+        "isStar": false,
+        "isRead": false,
+        "__v": 0
+    },
+    {
+        "_id": "6478a28301fc97174d2ff818",
+        "activityId": {
+            "_id": "6478a28301fc97174d2ff816",
+            "statement": {
+                "timestamp": "2023-06-01T13:52:03.845Z",
+                "verb": {
+                    "display": {
+                        "en-US": "created"
+                    }
+                },
+                "object": {
+                    "id": "http://localhost:4200/activity/course/647666fb1296a965aa631cfa/topic/647856b01296a965aa6321cd/channel/6478a28301fc97174d2ff80f",
+                    "definition": {
+                        "type": "http://www.CourseMapper.de/activityType/channel",
+                        "name": {
+                            "en-US": "Lec13"
+                        },
+                        "extensions": {
+                            "http://www.CourseMapper.de/extensions/channel": {
+                                "id": "6478a28301fc97174d2ff80f",
+                                "course_id": "647666fb1296a965aa631cfa",
+                                "topic_id": "647856b01296a965aa6321cd",
+                                "name": "Lec13",
+                                "description": ""
+                            }
+                        }
+                    }
+                }
+            },
+            "notificationInfo": {
+                "userName": "Admin User",
+                "userShortname": "AU",
+                "courseName": "Front end fundamentals",
+                "topicName": "UX Design",
+                "channelName": "Lec13",
+                "category": "courseupdates"
+            }
+        },
+        "userId": "6476674f1296a965aa631d16",
+        "isStar": false,
+        "isRead": false,
+        "__v": 0
+    },
+    {
+        "_id": "647ef264e2c03f930e3b3859",
+        "activityId": {
+            "_id": "647ef264e2c03f930e3b3857",
+            "statement": {
+                "timestamp": "2023-06-06T08:46:28.938Z",
+                "verb": {
+                    "display": {
+                        "en-US": "created"
+                    }
+                },
+                "object": {
+                    "id": "undefined/activity/course/647666fb1296a965aa631cfa/topic/647ef264e2c03f930e3b3854",
+                    "definition": {
+                        "type": "http://www.CourseMapper.de/activityType/topic",
+                        "name": {
+                            "en-US": "Web Design"
+                        },
+                        "extensions": {
+                            "http://www.CourseMapper.de/extensions/topic": {
+                                "id": "647ef264e2c03f930e3b3854",
+                                "course_id": "647666fb1296a965aa631cfa",
+                                "name": "Web Design"
+                            }
+                        }
+                    }
+                }
+            },
+            "notificationInfo": {
+                "userName": "Admin User",
+                "userShortname": "AU",
+                "courseName": "Front end fundamentals",
+                "topicName": "Web Design",
+                "category": "courseudpates"
+            }
+        },
+        "userId": "6476674f1296a965aa631d16",
+        "isStar": false,
+        "isRead": false,
+        "__v": 0
+    },
+    {
+        "_id": "647ef3f3f79eca61097edd5f",
+        "activityId": {
+            "_id": "647ef3f3f79eca61097edd5d",
+            "statement": {
+                "timestamp": "2023-06-06T08:53:07.467Z",
+                "verb": {
+                    "display": {
+                        "en-US": "created"
+                    }
+                },
+                "object": {
+                    "id": "undefined/activity/course/647666fb1296a965aa631cfa/topic/647ef3f3f79eca61097edd5a",
+                    "definition": {
+                        "type": "http://www.CourseMapper.de/activityType/topic",
+                        "name": {
+                            "en-US": "Web Design 2"
+                        },
+                        "extensions": {
+                            "http://www.CourseMapper.de/extensions/topic": {
+                                "id": "647ef3f3f79eca61097edd5a",
+                                "course_id": "647666fb1296a965aa631cfa",
+                                "name": "Web Design 2"
+                            }
+                        }
+                    }
+                }
+            },
+            "notificationInfo": {
+                "userName": "Admin User",
+                "userShortname": "AU",
+                "courseName": "Front end fundamentals",
+                "topicName": "Web Design 2",
+                "category": "courseudpates"
+            }
+        },
+        "userId": "6476674f1296a965aa631d16",
+        "isStar": false,
+        "isRead": false,
+        "__v": 0
+    },
+    {
+        "_id": "647ef488f79eca61097edd77",
+        "activityId": {
+            "_id": "647ef488f79eca61097edd75",
+            "statement": {
+                "timestamp": "2023-06-06T08:55:36.966Z",
+                "verb": {
+                    "display": {
+                        "en-US": "deleted"
+                    }
+                },
+                "object": {
+                    "id": "undefined/activity/course/647666fb1296a965aa631cfa/topic/647ef3f3f79eca61097edd5a",
+                    "definition": {
+                        "type": "http://www.CourseMapper.de/activityType/topic",
+                        "name": {
+                            "en-US": "Web Design 2"
+                        },
+                        "extensions": {
+                            "http://www.CourseMapper.de/extensions/topic": {
+                                "id": "647ef3f3f79eca61097edd5a",
+                                "course_id": "647666fb1296a965aa631cfa",
+                                "name": "Web Design 2"
+                            }
+                        }
+                    }
+                }
+            },
+            "notificationInfo": {
+                "userName": "Admin User",
+                "userShortname": "AU",
+                "courseName": "Front end fundamentals",
+                "topicName": "Web Design 2",
+                "category": "courseupdates"
+            }
+        },
+        "userId": "6476674f1296a965aa631d16",
+        "isStar": false,
+        "isRead": false,
+        "__v": 0
+    },
+    {
+        "_id": "647efbb2d74141393de5fbfb",
+        "activityId": {
+            "_id": "647efbb2d74141393de5fbf9",
+            "statement": {
+                "timestamp": "2023-06-06T09:26:10.554Z",
+                "verb": {
+                    "display": {
+                        "en-US": "edited"
+                    }
+                },
+                "object": {
+                    "id": "undefined/activity/course/647666fb1296a965aa631cfa/topic/647ef264e2c03f930e3b3854",
+                    "definition": {
+                        "type": "http://www.CourseMapper.de/activityType/topic",
+                        "name": {
+                            "en-US": "Artificial Intelligence"
+                        },
+                        "extensions": {
+                            "http://www.CourseMapper.de/extensions/topic": {
+                                "id": "647ef264e2c03f930e3b3854",
+                                "course_id": "647666fb1296a965aa631cfa",
+                                "name": "Artificial Intelligence"
+                            }
+                        }
+                    }
+                }
+            },
+            "notificationInfo": {
+                "userName": "Admin User",
+                "userShortname": "AU",
+                "category": "courseupdates",
+                "courseName": "Front end fundamentals",
+                "topicName": "newTopic"
+            }
+        },
+        "userId": "6476674f1296a965aa631d16",
+        "isStar": false,
+        "isRead": false,
+        "__v": 0
+    },
+    {
+        "_id": "647f0be964d6de7946c9ecc4",
+        "activityId": {
+            "_id": "647f0be964d6de7946c9ecc2",
+            "statement": {
+                "timestamp": "2023-06-06T10:35:21.597Z",
+                "verb": {
+                    "display": {
+                        "en-US": "shared"
+                    }
+                },
+                "object": {
+                    "id": "undefined/activity/course/647666fb1296a965aa631cfa/topic/647856b01296a965aa6321cd/channel/647856cd1296a965aa63221e/material/647f0be964d6de7946c9ecbf",
+                    "definition": {
+                        "type": "http://www.CourseMapper.de/activityType/material",
+                        "name": {
+                            "en-US": "Tutorial 1"
+                        },
+                        "extensions": {
+                            "http://www.CourseMapper.de/extensions/material": {
+                                "id": "647f0be964d6de7946c9ecbf",
+                                "name": "Tutorial 1",
+                                "description": "",
+                                "type": "video",
+                                "url": "https://www.youtube.com/watch?v=zJxJerQtUdk",
+                                "channel_id": "647856cd1296a965aa63221e",
+                                "topic_id": "647856b01296a965aa6321cd",
+                                "course_id": "647666fb1296a965aa631cfa"
+                            }
+                        }
+                    }
+                }
+            },
+            "notificationInfo": {
+                "userName": "Admin User",
+                "userShortname": "AU",
+                "category": "courseupdates",
+                "courseName": "Front end fundamentals"
+            }
+        },
+        "userId": "6476674f1296a965aa631d16",
+        "isStar": false,
+        "isRead": false,
+        "__v": 0
+    },
+    {
+        "_id": "647f0fa951e3f56b4f5cfde6",
+        "activityId": {
+            "_id": "647f0fa951e3f56b4f5cfde4",
+            "statement": {
+                "timestamp": "2023-06-06T10:51:21.056Z",
+                "verb": {
+                    "display": {
+                        "en-US": "edited"
+                    }
+                },
+                "object": {
+                    "id": "undefined/activity/course/647666fb1296a965aa631cfa/topic/647856b01296a965aa6321cd/channel/647856cd1296a965aa63221e/material/647f0be964d6de7946c9ecbf",
+                    "definition": {
+                        "type": "http://www.CourseMapper.de/activityType/material",
+                        "name": {
+                            "en-US": "Tutorial 1"
+                        },
+                        "extensions": {
+                            "http://www.CourseMapper.de/extensions/material": {
+                                "id": "647f0be964d6de7946c9ecbf",
+                                "name": "Tutorial 1",
+                                "description": "",
+                                "type": "video",
+                                "url": "https://www.youtube.com/watch?v=zJxJerQtUdk",
+                                "channel_id": "647856cd1296a965aa63221e",
+                                "topic_id": "647856b01296a965aa6321cd",
+                                "course_id": "647666fb1296a965aa631cfa"
+                            }
+                        }
+                    }
+                }
+            },
+            "notificationInfo": {
+                "userName": "Admin User",
+                "userShortname": "AU",
+                "category": "courseupdates",
+                "courseName": "Front end fundamentals"
+            }
+        },
+        "userId": "6476674f1296a965aa631d16",
+        "isStar": false,
+        "isRead": false,
+        "__v": 0
+    },
+    {
+        "_id": "647f104451e3f56b4f5cfe12",
+        "activityId": {
+            "_id": "647f104451e3f56b4f5cfe10",
+            "statement": {
+                "timestamp": "2023-06-06T10:53:56.653Z",
+                "verb": {
+                    "display": {
+                        "en-US": "deleted"
+                    }
+                },
+                "object": {
+                    "id": "undefined/activity/course/647666fb1296a965aa631cfa/topic/647856b01296a965aa6321cd/channel/647856cd1296a965aa63221e/material/647f0be964d6de7946c9ecbf",
+                    "definition": {
+                        "type": "http://www.CourseMapper.de/activityType/material",
+                        "name": {
+                            "en-US": "Spark Tutorial"
+                        },
+                        "extensions": {
+                            "http://www.CourseMapper.de/extensions/material": {
+                                "id": "647f0be964d6de7946c9ecbf",
+                                "name": "Spark Tutorial",
+                                "description": "",
+                                "type": "video",
+                                "url": "https://www.youtube.com/watch?v=zJxJerQtUdk",
+                                "channel_id": "647856cd1296a965aa63221e",
+                                "topic_id": "647856b01296a965aa6321cd",
+                                "course_id": "647666fb1296a965aa631cfa"
+                            }
+                        }
+                    }
+                }
+            },
+            "notificationInfo": {
+                "userName": "Admin User",
+                "userShortname": "AU",
+                "category": "courseupdates",
+                "courseName": "Front end fundamentals"
+            }
+        },
+        "userId": "6476674f1296a965aa631d16",
+        "isStar": false,
+        "isRead": false,
+        "__v": 0
+    },
+    {
+        "_id": "647f888decb27c7953dc78a3",
+        "activityId": {
+            "_id": "647f888decb27c7953dc78a1",
+            "statement": {
+                "timestamp": "2023-06-06T19:27:09.810Z",
+                "verb": {
+                    "display": {
+                        "en-US": "annotated"
+                    }
+                },
+                "object": {
+                    "id": "undefined/activity/course/647666fb1296a965aa631cfa/topic/647856b01296a965aa6321cd/channel/647856cd1296a965aa63221e/material/647f0b60357600cd72cffbc3",
+                    "definition": {
+                        "type": "http://www.CourseMapper.de/activityType/material",
+                        "name": {
+                            "en-US": "Tutorial 1"
+                        },
+                        "extensions": {
+                            "http://www.CourseMapper.de/extensions/material": {
+                                "id": "647f0b60357600cd72cffbc3",
+                                "type": "video",
+                                "channel_id": "647856cd1296a965aa63221e",
+                                "topic_id": "647856b01296a965aa6321cd",
+                                "course_id": "647666fb1296a965aa631cfa"
+                            }
+                        }
+                    }
+                }
+            },
+            "notificationInfo": {
+                "userName": "Admin User",
+                "userShortname": "AU",
+                "category": "annotations",
+                "courseName": "Front end fundamentals"
+            }
+        },
+        "userId": "6476674f1296a965aa631d16",
+        "isStar": false,
+        "isRead": false,
+        "__v": 0
+    },
+    {
+        "_id": "647f8a2d846c2f0317627313",
+        "activityId": {
+            "_id": "647f8a2d846c2f0317627311",
+            "statement": {
+                "timestamp": "2023-06-06T19:34:05.184Z",
+                "verb": {
+                    "display": {
+                        "en-US": "edited"
+                    }
+                },
+                "object": {
+                    "id": "undefined/activity/course/647666fb1296a965aa631cfa/topic/647856b01296a965aa6321cd/channel/647856cd1296a965aa63221e/material/647f0b60357600cd72cffbc3/annotation/647f888decb27c7953dc789b",
+                    "definition": {
+                        "type": "http://www.CourseMapper.de/activityType/annotation",
+                        "name": {
+                            "en-US": "Annotation:This is an bigdata #apacheSpark annotation."
+                        },
+                        "extensions": {
+                            "http://www.CourseMapper.de/extensions/annotation": {
+                                "id": "647f888decb27c7953dc789b",
+                                "material_id": "647f0b60357600cd72cffbc3",
+                                "channel_id": "647856cd1296a965aa63221e",
+                                "topic_id": "647856b01296a965aa6321cd",
+                                "course_id": "647666fb1296a965aa631cfa",
+                                "content": "This is an bigdata #apacheSpark annotation.",
+                                "type": "externalResource",
+                                "tool": {
+                                    "id": "a21",
+                                    "type": "drawBox",
+                                    "coordinates": [],
+                                    "color": "RGB(238,170,0, .5)",
+                                    "page": 2,
+                                    "rect": {
+                                        "id": "a21",
+                                        "type": "rectangle",
+                                        "isDelete": false,
+                                        "pageNumber": 2,
+                                        "lineHeight": 3,
+                                        "coordinates": {
+                                            "height": 18,
+                                            "width": 362,
+                                            "x1": 269.40625,
+                                            "x2": 631.40625,
+                                            "y1": 630.359375,
+                                            "y2": 648.359375
+                                        },
+                                        "rectangleId": "rectangle-2"
+                                    }
+                                },
+                                "location": {
+                                    "type": "time",
+                                    "startPage": 2,
+                                    "lastPage": 2
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "notificationInfo": {
+                "userName": "Admin User",
+                "userShortname": "AU",
+                "category": "annotations",
+                "courseName": "Front end fundamentals"
+            }
+        },
+        "userId": "6476674f1296a965aa631d16",
+        "isStar": false,
+        "isRead": false,
+        "__v": 0
+    },
+    {
+        "_id": "647f8a68846c2f0317627324",
+        "activityId": {
+            "_id": "647f8a68846c2f0317627322",
+            "statement": {
+                "timestamp": "2023-06-06T19:35:04.215Z",
+                "verb": {
+                    "display": {
+                        "en-US": "edited"
+                    }
+                },
+                "object": {
+                    "id": "undefined/activity/course/647666fb1296a965aa631cfa/topic/647856b01296a965aa6321cd/channel/647856cd1296a965aa63221e/material/647f0b60357600cd72cffbc3/annotation/647f888decb27c7953dc789b",
+                    "definition": {
+                        "type": "http://www.CourseMapper.de/activityType/annotation",
+                        "name": {
+                            "en-US": "Annotation:This is an bigdata #apacheSpark annotation."
+                        },
+                        "extensions": {
+                            "http://www.CourseMapper.de/extensions/annotation": {
+                                "id": "647f888decb27c7953dc789b",
+                                "material_id": "647f0b60357600cd72cffbc3",
+                                "channel_id": "647856cd1296a965aa63221e",
+                                "topic_id": "647856b01296a965aa6321cd",
+                                "course_id": "647666fb1296a965aa631cfa",
+                                "content": "This is an bigdata #apacheSpark annotation.",
+                                "type": "externalResource",
+                                "tool": {
+                                    "id": "a21",
+                                    "type": "drawBox",
+                                    "coordinates": [],
+                                    "color": "RGB(238,170,0, .5)",
+                                    "page": 2,
+                                    "rect": {
+                                        "id": "a21",
+                                        "type": "rectangle",
+                                        "isDelete": false,
+                                        "pageNumber": 2,
+                                        "lineHeight": 3,
+                                        "coordinates": {
+                                            "height": 18,
+                                            "width": 362,
+                                            "x1": 269.40625,
+                                            "x2": 631.40625,
+                                            "y1": 630.359375,
+                                            "y2": 648.359375
+                                        },
+                                        "rectangleId": "rectangle-2"
+                                    }
+                                },
+                                "location": {
+                                    "type": "time",
+                                    "startPage": 2,
+                                    "lastPage": 2
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "notificationInfo": {
+                "userName": "Admin User",
+                "userShortname": "AU",
+                "category": "annotations",
+                "courseName": "Front end fundamentals"
+            }
+        },
+        "userId": "6476674f1296a965aa631d16",
+        "isStar": false,
+        "isRead": false,
+        "__v": 0
+    },
+    {
+        "_id": "647f8c7ed66bf2dded4b8a3c",
+        "activityId": {
+            "_id": "647f8c7ed66bf2dded4b8a3a",
+            "statement": {
+                "timestamp": "2023-06-06T19:43:58.609Z",
+                "verb": {
+                    "display": {
+                        "en-US": "liked"
+                    }
+                },
+                "object": {
+                    "id": "undefined/activity/course/647666fb1296a965aa631cfa/topic/647856b01296a965aa6321cd/channel/647856cd1296a965aa63221e/material/647f0b60357600cd72cffbc3/annotation/647f888decb27c7953dc789b",
+                    "definition": {
+                        "type": "http://www.CourseMapper.de/activityType/annotation",
+                        "name": {
+                            "en-US": "Annotation:This is revised annotation."
+                        },
+                        "extensions": {
+                            "http://www.CourseMapper.de/extensions/annotation": {
+                                "id": "647f888decb27c7953dc789b",
+                                "material_id": "647f0b60357600cd72cffbc3",
+                                "channel_id": "647856cd1296a965aa63221e",
+                                "topic_id": "647856b01296a965aa6321cd",
+                                "course_id": "647666fb1296a965aa631cfa",
+                                "content": "This is revised annotation.",
+                                "type": "externalResource",
+                                "tool": {
+                                    "id": "a21",
+                                    "type": "drawBox",
+                                    "coordinates": [],
+                                    "color": "RGB(238,170,0, .5)",
+                                    "page": 2,
+                                    "rect": {
+                                        "id": "a21",
+                                        "type": "rectangle",
+                                        "isDelete": false,
+                                        "pageNumber": 2,
+                                        "lineHeight": 3,
+                                        "coordinates": {
+                                            "height": 18,
+                                            "width": 362,
+                                            "x1": 269.40625,
+                                            "x2": 631.40625,
+                                            "y1": 630.359375,
+                                            "y2": 648.359375
+                                        },
+                                        "rectangleId": "rectangle-2"
+                                    }
+                                },
+                                "location": {
+                                    "type": "time",
+                                    "startPage": 2,
+                                    "lastPage": 2
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "notificationInfo": {
+                "userName": "Admin User",
+                "userShortname": "AU",
+                "category": "annotations",
+                "courseName": "Front end fundamentals"
+            }
+        },
+        "userId": "6476674f1296a965aa631d16",
+        "isStar": false,
+        "isRead": false,
+        "__v": 0
+    },
+    {
+        "_id": "647f8dbe163d1da7ae6edba6",
+        "activityId": {
+            "_id": "647f8dbe163d1da7ae6edba4",
+            "statement": {
+                "timestamp": "2023-06-06T19:49:18.115Z",
+                "verb": {
+                    "display": {
+                        "en-US": "liked"
+                    }
+                },
+                "object": {
+                    "id": "undefined/activity/course/647666fb1296a965aa631cfa/topic/647856b01296a965aa6321cd/channel/647856cd1296a965aa63221e/material/647f0b60357600cd72cffbc3/annotation/647f888decb27c7953dc789b",
+                    "definition": {
+                        "type": "http://www.CourseMapper.de/activityType/annotation",
+                        "name": {
+                            "en-US": "Annotation:This is revised annotation."
+                        },
+                        "extensions": {
+                            "http://www.CourseMapper.de/extensions/annotation": {
+                                "id": "647f888decb27c7953dc789b",
+                                "material_id": "647f0b60357600cd72cffbc3",
+                                "channel_id": "647856cd1296a965aa63221e",
+                                "topic_id": "647856b01296a965aa6321cd",
+                                "course_id": "647666fb1296a965aa631cfa",
+                                "content": "This is revised annotation.",
+                                "type": "externalResource",
+                                "tool": {
+                                    "id": "a21",
+                                    "type": "drawBox",
+                                    "coordinates": [],
+                                    "color": "RGB(238,170,0, .5)",
+                                    "page": 2,
+                                    "rect": {
+                                        "id": "a21",
+                                        "type": "rectangle",
+                                        "isDelete": false,
+                                        "pageNumber": 2,
+                                        "lineHeight": 3,
+                                        "coordinates": {
+                                            "height": 18,
+                                            "width": 362,
+                                            "x1": 269.40625,
+                                            "x2": 631.40625,
+                                            "y1": 630.359375,
+                                            "y2": 648.359375
+                                        },
+                                        "rectangleId": "rectangle-2"
+                                    }
+                                },
+                                "location": {
+                                    "type": "time",
+                                    "startPage": 2,
+                                    "lastPage": 2
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "notificationInfo": {
+                "userName": "Admin User",
+                "userShortname": "AU",
+                "category": "annotations",
+                "courseName": "Front end fundamentals"
+            }
+        },
+        "userId": "6476674f1296a965aa631d16",
+        "isStar": false,
+        "isRead": false,
+        "__v": 0
+    },
+    {
+        "_id": "6480178d21c84f05afe1a448",
+        "activityId": {
+            "_id": "6480178d21c84f05afe1a446",
+            "statement": {
+                "timestamp": "2023-06-07T05:37:17.941Z",
+                "verb": {
+                    "display": {
+                        "en-US": "unliked"
+                    }
+                },
+                "object": {
+                    "id": "undefined/activity/course/647666fb1296a965aa631cfa/topic/647856b01296a965aa6321cd/channel/647856cd1296a965aa63221e/material/647f0b60357600cd72cffbc3/annotation/647f888decb27c7953dc789b",
+                    "definition": {
+                        "type": "http://www.CourseMapper.de/activityType/annotation",
+                        "name": {
+                            "en-US": "Annotation:This is revised annotation."
+                        },
+                        "extensions": {
+                            "http://www.CourseMapper.de/extensions/annotation": {
+                                "id": "647f888decb27c7953dc789b",
+                                "material_id": "647f0b60357600cd72cffbc3",
+                                "channel_id": "647856cd1296a965aa63221e",
+                                "topic_id": "647856b01296a965aa6321cd",
+                                "course_id": "647666fb1296a965aa631cfa",
+                                "content": "This is revised annotation.",
+                                "type": "externalResource",
+                                "tool": {
+                                    "id": "a21",
+                                    "type": "drawBox",
+                                    "coordinates": [],
+                                    "color": "RGB(238,170,0, .5)",
+                                    "page": 2,
+                                    "rect": {
+                                        "id": "a21",
+                                        "type": "rectangle",
+                                        "isDelete": false,
+                                        "pageNumber": 2,
+                                        "lineHeight": 3,
+                                        "coordinates": {
+                                            "height": 18,
+                                            "width": 362,
+                                            "x1": 269.40625,
+                                            "x2": 631.40625,
+                                            "y1": 630.359375,
+                                            "y2": 648.359375
+                                        },
+                                        "rectangleId": "rectangle-2"
+                                    }
+                                },
+                                "location": {
+                                    "type": "time",
+                                    "startPage": 2,
+                                    "lastPage": 2
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "notificationInfo": {
+                "userName": "Admin User",
+                "userShortname": "AU",
+                "category": "annotations",
+                "courseName": "Front end fundamentals"
+            }
+        },
+        "userId": "6476674f1296a965aa631d16",
+        "isStar": false,
+        "isRead": false,
+        "__v": 0
+    },
+    {
+        "_id": "648018a60721b32a459574cf",
+        "activityId": {
+            "_id": "648018a60721b32a459574cd",
+            "statement": {
+                "timestamp": "2023-06-07T05:41:58.403Z",
+                "verb": {
+                    "display": {
+                        "en-US": "unliked"
+                    }
+                },
+                "object": {
+                    "id": "undefined/activity/course/647666fb1296a965aa631cfa/topic/647856b01296a965aa6321cd/channel/647856cd1296a965aa63221e/material/647f0b60357600cd72cffbc3/annotation/647f888decb27c7953dc789b",
+                    "definition": {
+                        "type": "http://www.CourseMapper.de/activityType/annotation",
+                        "name": {
+                            "en-US": "Annotation:This is revised annotation."
+                        },
+                        "extensions": {
+                            "http://www.CourseMapper.de/extensions/annotation": {
+                                "id": "647f888decb27c7953dc789b",
+                                "material_id": "647f0b60357600cd72cffbc3",
+                                "channel_id": "647856cd1296a965aa63221e",
+                                "topic_id": "647856b01296a965aa6321cd",
+                                "course_id": "647666fb1296a965aa631cfa",
+                                "content": "This is revised annotation.",
+                                "type": "externalResource",
+                                "tool": {
+                                    "id": "a21",
+                                    "type": "drawBox",
+                                    "coordinates": [],
+                                    "color": "RGB(238,170,0, .5)",
+                                    "page": 2,
+                                    "rect": {
+                                        "id": "a21",
+                                        "type": "rectangle",
+                                        "isDelete": false,
+                                        "pageNumber": 2,
+                                        "lineHeight": 3,
+                                        "coordinates": {
+                                            "height": 18,
+                                            "width": 362,
+                                            "x1": 269.40625,
+                                            "x2": 631.40625,
+                                            "y1": 630.359375,
+                                            "y2": 648.359375
+                                        },
+                                        "rectangleId": "rectangle-2"
+                                    }
+                                },
+                                "location": {
+                                    "type": "time",
+                                    "startPage": 2,
+                                    "lastPage": 2
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "notificationInfo": {
+                "userName": "Admin User",
+                "userShortname": "AU",
+                "category": "annotations",
+                "courseName": "Front end fundamentals"
+            }
+        },
+        "userId": "6476674f1296a965aa631d16",
+        "isStar": false,
+        "isRead": false,
+        "__v": 0
+    },
+    {
+        "_id": "648018aa0721b32a459574df",
+        "activityId": {
+            "_id": "648018aa0721b32a459574dd",
+            "statement": {
+                "timestamp": "2023-06-07T05:42:02.134Z",
+                "verb": {
+                    "display": {
+                        "en-US": "liked"
+                    }
+                },
+                "object": {
+                    "id": "undefined/activity/course/647666fb1296a965aa631cfa/topic/647856b01296a965aa6321cd/channel/647856cd1296a965aa63221e/material/647f0b60357600cd72cffbc3/annotation/647f888decb27c7953dc789b",
+                    "definition": {
+                        "type": "http://www.CourseMapper.de/activityType/annotation",
+                        "name": {
+                            "en-US": "Annotation:This is revised annotation."
+                        },
+                        "extensions": {
+                            "http://www.CourseMapper.de/extensions/annotation": {
+                                "id": "647f888decb27c7953dc789b",
+                                "material_id": "647f0b60357600cd72cffbc3",
+                                "channel_id": "647856cd1296a965aa63221e",
+                                "topic_id": "647856b01296a965aa6321cd",
+                                "course_id": "647666fb1296a965aa631cfa",
+                                "content": "This is revised annotation.",
+                                "type": "externalResource",
+                                "tool": {
+                                    "id": "a21",
+                                    "type": "drawBox",
+                                    "coordinates": [],
+                                    "color": "RGB(238,170,0, .5)",
+                                    "page": 2,
+                                    "rect": {
+                                        "id": "a21",
+                                        "type": "rectangle",
+                                        "isDelete": false,
+                                        "pageNumber": 2,
+                                        "lineHeight": 3,
+                                        "coordinates": {
+                                            "height": 18,
+                                            "width": 362,
+                                            "x1": 269.40625,
+                                            "x2": 631.40625,
+                                            "y1": 630.359375,
+                                            "y2": 648.359375
+                                        },
+                                        "rectangleId": "rectangle-2"
+                                    }
+                                },
+                                "location": {
+                                    "type": "time",
+                                    "startPage": 2,
+                                    "lastPage": 2
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "notificationInfo": {
+                "userName": "Admin User",
+                "userShortname": "AU",
+                "category": "annotations",
+                "courseName": "Front end fundamentals"
+            }
+        },
+        "userId": "6476674f1296a965aa631d16",
+        "isStar": false,
+        "isRead": false,
+        "__v": 0
+    },
+    {
+        "_id": "648018dc0721b32a45957502",
+        "activityId": {
+            "_id": "648018dc0721b32a45957500",
+            "statement": {
+                "timestamp": "2023-06-07T05:42:52.429Z",
+                "verb": {
+                    "display": {
+                        "en-US": "unliked"
+                    }
+                },
+                "object": {
+                    "id": "undefined/activity/course/647666fb1296a965aa631cfa/topic/647856b01296a965aa6321cd/channel/647856cd1296a965aa63221e/material/647f0b60357600cd72cffbc3/annotation/647f888decb27c7953dc789b",
+                    "definition": {
+                        "type": "http://www.CourseMapper.de/activityType/annotation",
+                        "name": {
+                            "en-US": "Annotation:This is revised annotation."
+                        },
+                        "extensions": {
+                            "http://www.CourseMapper.de/extensions/annotation": {
+                                "id": "647f888decb27c7953dc789b",
+                                "material_id": "647f0b60357600cd72cffbc3",
+                                "channel_id": "647856cd1296a965aa63221e",
+                                "topic_id": "647856b01296a965aa6321cd",
+                                "course_id": "647666fb1296a965aa631cfa",
+                                "content": "This is revised annotation.",
+                                "type": "externalResource",
+                                "tool": {
+                                    "id": "a21",
+                                    "type": "drawBox",
+                                    "coordinates": [],
+                                    "color": "RGB(238,170,0, .5)",
+                                    "page": 2,
+                                    "rect": {
+                                        "id": "a21",
+                                        "type": "rectangle",
+                                        "isDelete": false,
+                                        "pageNumber": 2,
+                                        "lineHeight": 3,
+                                        "coordinates": {
+                                            "height": 18,
+                                            "width": 362,
+                                            "x1": 269.40625,
+                                            "x2": 631.40625,
+                                            "y1": 630.359375,
+                                            "y2": 648.359375
+                                        },
+                                        "rectangleId": "rectangle-2"
+                                    }
+                                },
+                                "location": {
+                                    "type": "time",
+                                    "startPage": 2,
+                                    "lastPage": 2
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "notificationInfo": {
+                "userName": "Admin User",
+                "userShortname": "AU",
+                "category": "annotations",
+                "courseName": "Front end fundamentals"
+            }
+        },
+        "userId": "6476674f1296a965aa631d16",
+        "isStar": false,
+        "isRead": false,
+        "__v": 0
+    },
+    {
+        "_id": "648018e60721b32a45957512",
+        "activityId": {
+            "_id": "648018e60721b32a45957510",
+            "statement": {
+                "timestamp": "2023-06-07T05:43:02.175Z",
+                "verb": {
+                    "display": {
+                        "en-US": "disliked"
+                    }
+                },
+                "object": {
+                    "id": "undefined/activity/course/647666fb1296a965aa631cfa/topic/647856b01296a965aa6321cd/channel/647856cd1296a965aa63221e/material/647f0b60357600cd72cffbc3/annotation/647f888decb27c7953dc789b",
+                    "definition": {
+                        "type": "http://www.CourseMapper.de/activityType/annotation",
+                        "name": {
+                            "en-US": "Annotation:This is revised annotation."
+                        },
+                        "extensions": {
+                            "http://www.CourseMapper.de/extensions/annotation": {
+                                "id": "647f888decb27c7953dc789b",
+                                "material_id": "647f0b60357600cd72cffbc3",
+                                "channel_id": "647856cd1296a965aa63221e",
+                                "topic_id": "647856b01296a965aa6321cd",
+                                "course_id": "647666fb1296a965aa631cfa",
+                                "content": "This is revised annotation.",
+                                "type": "externalResource",
+                                "tool": {
+                                    "id": "a21",
+                                    "type": "drawBox",
+                                    "coordinates": [],
+                                    "color": "RGB(238,170,0, .5)",
+                                    "page": 2,
+                                    "rect": {
+                                        "id": "a21",
+                                        "type": "rectangle",
+                                        "isDelete": false,
+                                        "pageNumber": 2,
+                                        "lineHeight": 3,
+                                        "coordinates": {
+                                            "height": 18,
+                                            "width": 362,
+                                            "x1": 269.40625,
+                                            "x2": 631.40625,
+                                            "y1": 630.359375,
+                                            "y2": 648.359375
+                                        },
+                                        "rectangleId": "rectangle-2"
+                                    }
+                                },
+                                "location": {
+                                    "type": "time",
+                                    "startPage": 2,
+                                    "lastPage": 2
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "notificationInfo": {
+                "userName": "Admin User",
+                "userShortname": "AU",
+                "category": "annotations",
+                "courseName": "Front end fundamentals"
+            }
+        },
+        "userId": "6476674f1296a965aa631d16",
+        "isStar": false,
+        "isRead": false,
+        "__v": 0
+    },
+    {
+        "_id": "648018ea0721b32a45957520",
+        "activityId": {
+            "_id": "648018e90721b32a4595751e",
+            "statement": {
+                "timestamp": "2023-06-07T05:43:05.990Z",
+                "verb": {
+                    "display": {
+                        "en-US": "un-disliked"
+                    }
+                },
+                "object": {
+                    "id": "undefined/activity/course/647666fb1296a965aa631cfa/topic/647856b01296a965aa6321cd/channel/647856cd1296a965aa63221e/material/647f0b60357600cd72cffbc3/annotation/647f888decb27c7953dc789b",
+                    "definition": {
+                        "type": "http://www.CourseMapper.de/activityType/annotation",
+                        "name": {
+                            "en-US": "Annotation:This is revised annotation."
+                        },
+                        "extensions": {
+                            "http://www.CourseMapper.de/extensions/annotation": {
+                                "id": "647f888decb27c7953dc789b",
+                                "material_id": "647f0b60357600cd72cffbc3",
+                                "channel_id": "647856cd1296a965aa63221e",
+                                "topic_id": "647856b01296a965aa6321cd",
+                                "course_id": "647666fb1296a965aa631cfa",
+                                "content": "This is revised annotation.",
+                                "type": "externalResource",
+                                "tool": {
+                                    "id": "a21",
+                                    "type": "drawBox",
+                                    "coordinates": [],
+                                    "color": "RGB(238,170,0, .5)",
+                                    "page": 2,
+                                    "rect": {
+                                        "id": "a21",
+                                        "type": "rectangle",
+                                        "isDelete": false,
+                                        "pageNumber": 2,
+                                        "lineHeight": 3,
+                                        "coordinates": {
+                                            "height": 18,
+                                            "width": 362,
+                                            "x1": 269.40625,
+                                            "x2": 631.40625,
+                                            "y1": 630.359375,
+                                            "y2": 648.359375
+                                        },
+                                        "rectangleId": "rectangle-2"
+                                    }
+                                },
+                                "location": {
+                                    "type": "time",
+                                    "startPage": 2,
+                                    "lastPage": 2
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "notificationInfo": {
+                "userName": "Admin User",
+                "userShortname": "AU",
+                "category": "annotations",
+                "courseName": "Front end fundamentals"
+            }
+        },
+        "userId": "6476674f1296a965aa631d16",
+        "isStar": false,
+        "isRead": false,
+        "__v": 0
+    },
+    {
+        "_id": "64801a64e7cbf8ab247ebea9",
+        "activityId": {
+            "_id": "64801a64e7cbf8ab247ebea7",
+            "statement": {
+                "timestamp": "2023-06-07T05:49:24.844Z",
+                "verb": {
+                    "display": {
+                        "en-US": "deleted"
+                    }
+                },
+                "object": {
+                    "id": "undefined/activity/course/647666fb1296a965aa631cfa/topic/647856b01296a965aa6321cd/channel/647856cd1296a965aa63221e/material/647f0b60357600cd72cffbc3/annotation/647f8831ecb27c7953dc7883",
+                    "definition": {
+                        "type": "http://www.CourseMapper.de/activityType/annotation",
+                        "name": {
+                            "en-US": "Annotation:This is the #bigdata #component annotation."
+                        },
+                        "extensions": {
+                            "http://www.CourseMapper.de/extensions/annotation": {
+                                "id": "647f8831ecb27c7953dc7883",
+                                "material_id": "647f0b60357600cd72cffbc3",
+                                "channel_id": "647856cd1296a965aa63221e",
+                                "topic_id": "647856b01296a965aa6321cd",
+                                "course_id": "647666fb1296a965aa631cfa",
+                                "content": "This is the #bigdata #component annotation.",
+                                "type": "externalResource",
+                                "tool": {
+                                    "id": "a21",
+                                    "type": "drawBox",
+                                    "coordinates": [],
+                                    "color": "RGB(238,170,0, .5)",
+                                    "page": 2,
+                                    "rect": {
+                                        "id": "a21",
+                                        "type": "rectangle",
+                                        "isDelete": false,
+                                        "pageNumber": 2,
+                                        "lineHeight": 3,
+                                        "coordinates": {
+                                            "height": 18,
+                                            "width": 362,
+                                            "x1": 269.40625,
+                                            "x2": 631.40625,
+                                            "y1": 630.359375,
+                                            "y2": 648.359375
+                                        },
+                                        "rectangleId": "rectangle-2"
+                                    }
+                                },
+                                "location": {
+                                    "type": "time",
+                                    "startPage": 2,
+                                    "lastPage": 2
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "notificationInfo": {
+                "userName": "Admin User",
+                "userShortname": "AU",
+                "category": "annotations",
+                "courseName": "Front end fundamentals"
+            }
+        },
+        "userId": "6476674f1296a965aa631d16",
+        "isStar": false,
+        "isRead": false,
+        "__v": 0
+    },
+    {
+        "_id": "64801d00e7cbf8ab247ebed4",
+        "activityId": {
+            "_id": "64801d00e7cbf8ab247ebed2",
+            "statement": {
+                "timestamp": "2023-06-07T06:00:32.545Z",
+                "verb": {
+                    "display": {
+                        "en-US": "replied"
+                    }
+                },
+                "object": {
+                    "id": "undefined/activity/course/647666fb1296a965aa631cfa/topic/647856b01296a965aa6321cd/channel/647856cd1296a965aa63221e/material/647f0b60357600cd72cffbc3/annotation/647f86dfe1a3b17a22aa6121",
+                    "definition": {
+                        "type": "http://www.CourseMapper.de/activityType/annotation",
+                        "name": {
+                            "en-US": "Annotation:This is the #bigdata #component annotation."
+                        },
+                        "extensions": {
+                            "http://www.CourseMapper.de/extensions/annotation": {
+                                "id": "647f86dfe1a3b17a22aa6121",
+                                "material_id": "647f0b60357600cd72cffbc3",
+                                "channel_id": "647856cd1296a965aa63221e",
+                                "topic_id": "647856b01296a965aa6321cd",
+                                "course_id": "647666fb1296a965aa631cfa",
+                                "content": "This is the #bigdata #component annotation.",
+                                "type": "externalResource",
+                                "tool": {
+                                    "id": "a21",
+                                    "type": "drawBox",
+                                    "coordinates": [],
+                                    "color": "RGB(238,170,0, .5)",
+                                    "page": 2,
+                                    "rect": {
+                                        "id": "a21",
+                                        "type": "rectangle",
+                                        "isDelete": false,
+                                        "pageNumber": 2,
+                                        "lineHeight": 3,
+                                        "coordinates": {
+                                            "height": 18,
+                                            "width": 362,
+                                            "x1": 269.40625,
+                                            "x2": 631.40625,
+                                            "y1": 630.359375,
+                                            "y2": 648.359375
+                                        },
+                                        "rectangleId": "rectangle-2"
+                                    }
+                                },
+                                "location": {
+                                    "type": "time",
+                                    "startPage": 2,
+                                    "lastPage": 2
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "notificationInfo": {
+                "userName": "Admin User",
+                "userShortname": "AU",
+                "category": "mentionedandreplied",
+                "courseName": "Front end fundamentals"
+            }
+        },
+        "userId": "6476674f1296a965aa631d16",
+        "isStar": false,
+        "isRead": false,
+        "__v": 0
+    },
+    {
+        "_id": "64801dd1e7cbf8ab247ebeee",
+        "activityId": {
+            "_id": "64801dd1e7cbf8ab247ebeec",
+            "statement": {
+                "timestamp": "2023-06-07T06:04:01.845Z",
+                "verb": {
+                    "display": {
+                        "en-US": "edited"
+                    }
+                },
+                "object": {
+                    "id": "undefined/activity/course/647666fb1296a965aa631cfa/topic/647856b01296a965aa6321cd/channel/647856cd1296a965aa63221e/material/647f0b60357600cd72cffbc3/annotation/647f86dfe1a3b17a22aa6121/reply/64801d00e7cbf8ab247ebecd",
+                    "definition": {
+                        "type": "http://www.CourseMapper.de/activityType/reply",
+                        "name": {
+                            "en-US": "Reply: This is the first reply of #spark"
+                        },
+                        "extensions": {
+                            "http://www.CourseMapper.de/extensions/reply": {
+                                "id": "64801d00e7cbf8ab247ebecd",
+                                "annotation_id": "647f86dfe1a3b17a22aa6121",
+                                "material_id": "647f0b60357600cd72cffbc3",
+                                "channel_id": "647856cd1296a965aa63221e",
+                                "topic_id": "647856b01296a965aa6321cd",
+                                "course_id": "647666fb1296a965aa631cfa",
+                                "content": "This is the first reply of #spark"
+                            }
+                        }
+                    }
+                }
+            },
+            "notificationInfo": {
+                "userName": "Admin User",
+                "userShortname": "AU",
+                "category": "mentionedandreplied",
+                "courseName": "Front end fundamentals"
+            }
+        },
+        "userId": "6476674f1296a965aa631d16",
+        "isStar": false,
+        "isRead": false,
+        "__v": 0
+    },
+    {
+        "_id": "64801e25e7cbf8ab247ebefe",
+        "activityId": {
+            "_id": "64801e25e7cbf8ab247ebefc",
+            "statement": {
+                "timestamp": "2023-06-07T06:05:25.214Z",
+                "verb": {
+                    "display": {
+                        "en-US": "liked"
+                    }
+                },
+                "object": {
+                    "id": "undefined/activity/course/647666fb1296a965aa631cfa/topic/647856b01296a965aa6321cd/channel/647856cd1296a965aa63221e/material/647f0b60357600cd72cffbc3/annotation/647f86dfe1a3b17a22aa6121/reply/64801d00e7cbf8ab247ebecd",
+                    "definition": {
+                        "type": "http://www.CourseMapper.de/activityType/reply",
+                        "name": {
+                            "en-US": "Reply: This is the first reply of #apacheSpark"
+                        },
+                        "extensions": {
+                            "http://www.CourseMapper.de/extensions/reply": {
+                                "id": "64801d00e7cbf8ab247ebecd",
+                                "annotation_id": "647f86dfe1a3b17a22aa6121",
+                                "material_id": "647f0b60357600cd72cffbc3",
+                                "channel_id": "647856cd1296a965aa63221e",
+                                "topic_id": "647856b01296a965aa6321cd",
+                                "course_id": "647666fb1296a965aa631cfa",
+                                "content": "This is the first reply of #apacheSpark"
+                            }
+                        }
+                    }
+                }
+            },
+            "notificationInfo": {
+                "userName": "Admin User",
+                "userShortname": "AU",
+                "category": "mentionedandreplied",
+                "courseName": "Front end fundamentals"
+            }
+        },
+        "userId": "6476674f1296a965aa631d16",
+        "isStar": false,
+        "isRead": false,
+        "__v": 0
+    },
+    {
+        "_id": "64801e29e7cbf8ab247ebf0c",
+        "activityId": {
+            "_id": "64801e29e7cbf8ab247ebf0a",
+            "statement": {
+                "timestamp": "2023-06-07T06:05:29.113Z",
+                "verb": {
+                    "display": {
+                        "en-US": "unliked"
+                    }
+                },
+                "object": {
+                    "id": "undefined/activity/course/647666fb1296a965aa631cfa/topic/647856b01296a965aa6321cd/channel/647856cd1296a965aa63221e/material/647f0b60357600cd72cffbc3/annotation/647f86dfe1a3b17a22aa6121/reply/64801d00e7cbf8ab247ebecd",
+                    "definition": {
+                        "type": "http://www.CourseMapper.de/activityType/reply",
+                        "name": {
+                            "en-US": "Reply: This is the first reply of #apacheSpark"
+                        },
+                        "extensions": {
+                            "http://www.CourseMapper.de/extensions/reply": {
+                                "id": "64801d00e7cbf8ab247ebecd",
+                                "annotation_id": "647f86dfe1a3b17a22aa6121",
+                                "material_id": "647f0b60357600cd72cffbc3",
+                                "channel_id": "647856cd1296a965aa63221e",
+                                "topic_id": "647856b01296a965aa6321cd",
+                                "course_id": "647666fb1296a965aa631cfa",
+                                "content": "This is the first reply of #apacheSpark"
+                            }
+                        }
+                    }
+                }
+            },
+            "notificationInfo": {
+                "userName": "Admin User",
+                "userShortname": "AU",
+                "category": "mentionedandreplied",
+                "courseName": "Front end fundamentals"
+            }
+        },
+        "userId": "6476674f1296a965aa631d16",
+        "isStar": false,
+        "isRead": false,
+        "__v": 0
+    },
+    {
+        "_id": "64801e2ce7cbf8ab247ebf1a",
+        "activityId": {
+            "_id": "64801e2ce7cbf8ab247ebf18",
+            "statement": {
+                "timestamp": "2023-06-07T06:05:32.519Z",
+                "verb": {
+                    "display": {
+                        "en-US": "liked"
+                    }
+                },
+                "object": {
+                    "id": "undefined/activity/course/647666fb1296a965aa631cfa/topic/647856b01296a965aa6321cd/channel/647856cd1296a965aa63221e/material/647f0b60357600cd72cffbc3/annotation/647f86dfe1a3b17a22aa6121/reply/64801d00e7cbf8ab247ebecd",
+                    "definition": {
+                        "type": "http://www.CourseMapper.de/activityType/reply",
+                        "name": {
+                            "en-US": "Reply: This is the first reply of #apacheSpark"
+                        },
+                        "extensions": {
+                            "http://www.CourseMapper.de/extensions/reply": {
+                                "id": "64801d00e7cbf8ab247ebecd",
+                                "annotation_id": "647f86dfe1a3b17a22aa6121",
+                                "material_id": "647f0b60357600cd72cffbc3",
+                                "channel_id": "647856cd1296a965aa63221e",
+                                "topic_id": "647856b01296a965aa6321cd",
+                                "course_id": "647666fb1296a965aa631cfa",
+                                "content": "This is the first reply of #apacheSpark"
+                            }
+                        }
+                    }
+                }
+            },
+            "notificationInfo": {
+                "userName": "Admin User",
+                "userShortname": "AU",
+                "category": "mentionedandreplied",
+                "courseName": "Front end fundamentals"
+            }
+        },
+        "userId": "6476674f1296a965aa631d16",
+        "isStar": false,
+        "isRead": false,
+        "__v": 0
+    },
+    {
+        "_id": "64801e81e7cbf8ab247ebf33",
+        "activityId": {
+            "_id": "64801e81e7cbf8ab247ebf31",
+            "statement": {
+                "timestamp": "2023-06-07T06:06:57.644Z",
+                "verb": {
+                    "display": {
+                        "en-US": "unliked"
+                    }
+                },
+                "object": {
+                    "id": "undefined/activity/course/647666fb1296a965aa631cfa/topic/647856b01296a965aa6321cd/channel/647856cd1296a965aa63221e/material/647f0b60357600cd72cffbc3/annotation/647f86dfe1a3b17a22aa6121/reply/64801d00e7cbf8ab247ebecd",
+                    "definition": {
+                        "type": "http://www.CourseMapper.de/activityType/reply",
+                        "name": {
+                            "en-US": "Reply: This is the first reply of #apacheSpark"
+                        },
+                        "extensions": {
+                            "http://www.CourseMapper.de/extensions/reply": {
+                                "id": "64801d00e7cbf8ab247ebecd",
+                                "annotation_id": "647f86dfe1a3b17a22aa6121",
+                                "material_id": "647f0b60357600cd72cffbc3",
+                                "channel_id": "647856cd1296a965aa63221e",
+                                "topic_id": "647856b01296a965aa6321cd",
+                                "course_id": "647666fb1296a965aa631cfa",
+                                "content": "This is the first reply of #apacheSpark"
+                            }
+                        }
+                    }
+                }
+            },
+            "notificationInfo": {
+                "userName": "Admin User",
+                "userShortname": "AU",
+                "category": "mentionedandreplied",
+                "courseName": "Front end fundamentals"
+            }
+        },
+        "userId": "6476674f1296a965aa631d16",
+        "isStar": false,
+        "isRead": false,
+        "__v": 0
+    },
+    {
+        "_id": "64801e85e7cbf8ab247ebf43",
+        "activityId": {
+            "_id": "64801e85e7cbf8ab247ebf41",
+            "statement": {
+                "timestamp": "2023-06-07T06:07:01.319Z",
+                "verb": {
+                    "display": {
+                        "en-US": "disliked"
+                    }
+                },
+                "object": {
+                    "id": "undefined/activity/course/647666fb1296a965aa631cfa/topic/647856b01296a965aa6321cd/channel/647856cd1296a965aa63221e/material/647f0b60357600cd72cffbc3/annotation/647f86dfe1a3b17a22aa6121/reply/64801d00e7cbf8ab247ebecd",
+                    "definition": {
+                        "type": "http://www.CourseMapper.de/activityType/reply",
+                        "name": {
+                            "en-US": "Reply: This is the first reply of #apacheSpark"
+                        },
+                        "extensions": {
+                            "http://www.CourseMapper.de/extensions/reply": {
+                                "id": "64801d00e7cbf8ab247ebecd",
+                                "annotation_id": "647f86dfe1a3b17a22aa6121",
+                                "material_id": "647f0b60357600cd72cffbc3",
+                                "channel_id": "647856cd1296a965aa63221e",
+                                "topic_id": "647856b01296a965aa6321cd",
+                                "course_id": "647666fb1296a965aa631cfa",
+                                "content": "This is the first reply of #apacheSpark"
+                            }
+                        }
+                    }
+                }
+            },
+            "notificationInfo": {
+                "userName": "Admin User",
+                "userShortname": "AU",
+                "category": "mentionedandreplied",
+                "courseName": "Front end fundamentals"
+            }
+        },
+        "userId": "6476674f1296a965aa631d16",
+        "isStar": false,
+        "isRead": false,
+        "__v": 0
+    },
+    {
+        "_id": "64801ea4e7cbf8ab247ebf53",
+        "activityId": {
+            "_id": "64801ea4e7cbf8ab247ebf51",
+            "statement": {
+                "timestamp": "2023-06-07T06:07:32.265Z",
+                "verb": {
+                    "display": {
+                        "en-US": "deleted"
+                    }
+                },
+                "object": {
+                    "id": "undefined/activity/course/647666fb1296a965aa631cfa/topic/647856b01296a965aa6321cd/channel/647856cd1296a965aa63221e/material/647f0b60357600cd72cffbc3/annotation/647f86dfe1a3b17a22aa6121/reply/64801d00e7cbf8ab247ebecd",
+                    "definition": {
+                        "type": "http://www.CourseMapper.de/activityType/reply",
+                        "name": {
+                            "en-US": "Reply: This is the first reply of #apacheSpark"
+                        },
+                        "extensions": {
+                            "http://www.CourseMapper.de/extensions/reply": {
+                                "id": "64801d00e7cbf8ab247ebecd",
+                                "annotation_id": "647f86dfe1a3b17a22aa6121",
+                                "material_id": "647f0b60357600cd72cffbc3",
+                                "channel_id": "647856cd1296a965aa63221e",
+                                "topic_id": "647856b01296a965aa6321cd",
+                                "course_id": "647666fb1296a965aa631cfa",
+                                "content": "This is the first reply of #apacheSpark"
+                            }
+                        }
+                    }
+                }
+            },
+            "notificationInfo": {
+                "userName": "Admin User",
+                "userShortname": "AU",
+                "category": "mentionedandreplied",
+                "courseName": "Front end fundamentals"
+            }
+        },
+        "userId": "6476674f1296a965aa631d16",
+        "isStar": false,
+        "isRead": false,
+        "__v": 0
+    }
+]

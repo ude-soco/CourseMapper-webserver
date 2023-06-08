@@ -1,0 +1,27 @@
+<!-- The below div contains the navigation tab and the 3 ellipses settings button -->
+<!-- Clicking on the ellipses button shows us the 3 settings: Mark all as read,
+etc -->
+<div class="flex flex-row gap-8 p-8 justify-between">
+  <p-tabMenu
+    (activeItemChange)="onTabSwitched($event)"
+    [model]="tabOptions"
+  ></p-tabMenu>
+  <p-button
+    icon="pi pi-ellipsis-h"
+    styleClass="p-button-rounded p-button-text"
+    (click)="menu.toggle($event)"
+    #navSettingsButton
+  ></p-button>
+</div>
+
+<p-menu #menu [model]="menuOptions" [popup]="true" appendTo="body"></p-menu>
+
+<div class="p-8 pt-0">
+  <ng-container *ngIf="filteredNotifications$ | async as notifications">
+    <app-notification-box
+      *ngFor="let notification of notifications"
+      [notification]="notification"
+    >
+    </app-notification-box>
+  </ng-container>
+</div>

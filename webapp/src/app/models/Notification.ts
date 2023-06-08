@@ -1,6 +1,7 @@
 export interface UserNotification {
   activityId: {
     notificationInfo: {
+      category: any;
       userShortname: string;
       courseName: string;
       topicName: string;
@@ -73,4 +74,13 @@ export interface Notification {
   action: string;
   name: string;
   object: string;
+  category: string;
+}
+
+export enum NotificationCategory {
+  CourseUpdate = 'courseupdates',
+  CommentsAndMentioned = 'mentionedandreplied',
+  Annotations = 'annotations',
+  All = 'All',
+  undefined = 'undefined',
 }

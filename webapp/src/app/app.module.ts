@@ -1,6 +1,6 @@
 //TODO: angular.json: the default configuration was changed to development
 //TODO: package.json, playing around with the scripts
-
+//TODO: delete data.json
 import en from '@angular/common/locales/en';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -59,11 +59,13 @@ import { TagsPageComponent } from './pages/components/tags/tags-page/tags-page.c
 import { TagCommentItemComponent } from './pages/components/tags/tag-comment-item/tag-comment-item.component';
 import { TagReplyPanelComponent } from './pages/components/tags/tag-reply-panel/tag-reply-panel.component';
 import { TagReplyItemComponent } from './pages/components/tags/tag-reply-item/tag-reply-item.component';
-
+import { ContextMenuModule } from 'primeng/contextmenu';
 import { environment } from '../environments/environment';
 import { NotificationBellComponent } from './pages/components/notifications/notification-bell/notification-bell.component';
 import { NotificationBoxComponent } from './pages/components/notifications/notification-box/notification-box.component';
-
+import { NotificationDashboardComponent } from './pages/components/notifications/notification-dashboard/notification-dashboard.component';
+import { MenubarModule } from 'primeng/menubar';
+import { TabMenuModule } from 'primeng/tabmenu';
 export const metaReducers: MetaReducer[] = [hydrationMetaReducer];
 registerLocaleData(en);
 
@@ -94,9 +96,12 @@ registerLocaleData(en);
     TagReplyItemComponent,
     NotificationBellComponent,
     NotificationBoxComponent,
+    NotificationDashboardComponent,
   ],
   imports: [
+    MenuModule,
     BrowserModule,
+    ContextMenuModule,
     AppRoutingModule,
     PrimengModule,
     HttpClientModule,
@@ -106,7 +111,6 @@ registerLocaleData(en);
     FormsModule,
     InputTextModule,
     ReactiveFormsModule,
-    MenuModule,
     ToastModule,
     RippleModule,
     ConfirmDialogModule,
@@ -128,6 +132,7 @@ registerLocaleData(en);
       },
     }),
     CourseModule,
+    TabMenuModule,
   ],
   exports: [SidebarComponent],
   providers: [httpInterceptorProviders],

@@ -19,6 +19,7 @@ export const getAllNotifications = async (req, res, next) => {
       "notificationInfo.courseName",
       "notificationInfo.topicName",
       "notificationInfo.channelName",
+      "notificationInfo.category",
       "statement.object.definition.extensions",
       "statement.object.id",
       "statement.object.definition.type",

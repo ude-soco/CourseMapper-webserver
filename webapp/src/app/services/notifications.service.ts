@@ -27,7 +27,7 @@ export class NotificationsService {
     private socket: Socket
   ) {}
 
-  private notificationsSubject = new BehaviorSubject<Notification[]>([]);
+  /*   private notificationsSubject = new BehaviorSubject<Notification[]>([]);
   private notificationsList$ = this.notificationsSubject.asObservable();
 
   private liveNotificationsSubject = new BehaviorSubject<LiveNotification[]>(
@@ -65,11 +65,11 @@ export class NotificationsService {
     map(([notifications, liveNotifications]) => {
       return [...notifications, ...liveNotifications];
     })
-  );
+  ); */
 
   //fetch the data when the bell component is initialized but do not subscribe to it
   //TODO: add error handling
-  public fetchNotifications() {
+  /*   public fetchNotifications() {
     this.httpClient
       .get<UserNotification[]>(`${environment.API_URL}/notifications`)
       .pipe(
@@ -102,9 +102,9 @@ export class NotificationsService {
       .subscribe((notifications) => {
         this.notificationsSubject.next(notifications);
       });
-  }
+  } */
 
-  public initialiseSocketConnection() {
+  /*   public initialiseSocketConnection() {
     console.log('initialising socket connection');
     const user = this.storageService.getUser();
     console.log(user);
@@ -113,5 +113,5 @@ export class NotificationsService {
       console.log(data);
       this.liveNotificationsSubject.next(data);
     });
-  }
+  } */
 }

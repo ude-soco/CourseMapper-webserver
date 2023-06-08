@@ -1,62 +1,52 @@
-.item-container {
-    display: flex;
-    justify-content: space-between;
-  }
-  
+
+
   .time {
     margin-left: 3.3rem;
     font-size: 8px;
     position: relative;
     top: -0.5rem;
   }
-  
+
   .left {
     display: flex;
     align-items: center;
   }
-  
+
   .left-container {
     display: block;
     position: relative;
-    top: 8px;
+
   }
-  
+
   .userName {
     font-weight: bold;
     margin: 0 1px;
     margin-right: 4px;
-    font-size: small;
   }
-  
+
   .msg-location {
     font-weight: bold;
     margin: 0 1px;
-    font-size: small;
     margin-left: 2px;
   }
   .in {
-    font-size: small;
     margin-left: 3px;
     margin-right: 2px;
   }
   .action {
     margin-right: 2px;
-    font-size: small;
   }
   .action-object {
-    font-size: small;
   }
-  
+
   ::ng-deep .p-divider.p-divider-horizontal {
     margin: 0;
   }
-  
-  ::ng-deep .p-overlaypanel .p-overlaypanel-content {
-    padding: 0;
-  }
-  
+
+
+
   /* setting panel right control */
-  
+
   .right {
     display: flex;
     align-items: center;
@@ -68,13 +58,13 @@
     position: relative;
     top: -10px;
   }
-  
+
   .pi-circle-fill {
     font-size: 0.3rem;
     color: rgba(3, 105, 161, 255);
     margin-right: 1.5rem;
   }
-  
+
   .context-menu {
     position: relative;
     top: -2px;
@@ -85,13 +75,13 @@
   .context-menu-container {
     display: flex;
   }
-  
+
   .pi-star,
   .pi-star-fill {
     color: rgba(3, 105, 161, 255);
     margin-left: 1rem;
   }
-  
+
   .context-menu-container:hover {
     background-color: #c4c4c4;
     align-items: center;
@@ -101,25 +91,28 @@
     height: 30px;
     display: flex;
   }
-  
+
   /* recent one */
   .recent {
     font-size: 0.3rem;
     color: rgba(3, 105, 161, 255);
     margin-right: 1.5rem;
   }
-  
+
   .notification-message-container {
     width: 80%;
     overflow: auto;
   }
 
-  .notification-content{
-    width: 20vw;
-    padding: 0.5rem;
-  }
-  
+
+
   .notification-content:hover {
     background-color: whitesmoke;
   }
-  
+
+ .item {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 0 1rem 1rem;
+}
+

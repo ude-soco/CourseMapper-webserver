@@ -1,36 +1,41 @@
-<ng-container *ngIf="$notificationList | async as notifications">
-  <div class="notification-content" *ngFor="let notification of notifications">
-    <div class="item-container">
-      <div class="left-container">
-        <div class="left">
-          <p-avatar
-            label="{{ notification.userShortname }}"
-            styleClass="mr-5"
-            [style]="{
-              'background-color':
-                'rgba(3,105,161,255)
+<!--TODO change the options that are occuring in the menu -->
+<div class="notification-content">
+  <div class="item">
+    <div class="left">
+      <p-avatar
+        label="{{ notification.userShortname }}"
+        styleClass="mr-5"
+        [style]="{
+          'background-color':
+            'rgba(3,105,161,255)
   ',
-              color: '#ffffff',
-              'margin-top': '5px'
-            }"
-            shape="circle"
-          ></p-avatar>
-          <div class="notification-message-container">
-            <span class="userName"> {{ notification.username }} </span>
+          color: '#ffffff',
+          'margin-top': '5px'
+        }"
+        shape="circle"
+      ></p-avatar>
+      <div class="notification-message-container">
+        <span class="userName"> {{ notification.username }} </span>
 
-            <span class="action">{{ notification.action }}</span>
+        <span class="action">{{ notification.action }}</span>
 
-            <span class="action-object"> {{ notification.object }} </span>
+        <span class="action-object"> {{ notification.object }} </span>
 
-            <span class="msg-location">{{ notification.name }} </span>
-            <span class="in">in</span>
-            <span class="msg-location">{{ notification.courseName }}</span>
-          </div>
-        </div>
-        <!-- TODO Insert date below -->
-        <span class="time"> </span>
+        <span class="msg-location">{{ notification.name }} </span>
+        <span class="in">in</span>
+        <span class="msg-location">{{ notification.courseName }}</span>
       </div>
+      <!-- TODO Insert date below -->
+      <span class="time"> </span>
     </div>
-    <p-divider class="divider"></p-divider>
+    <p-button
+      icon="pi pi-ellipsis-h"
+      styleClass="p-button-rounded p-button-text"
+      (click)="menu.toggle($event)"
+      #navSettingsButton
+    ></p-button>
   </div>
-</ng-container>
+  <p-divider class="divider"></p-divider>
+</div>
+
+<p-menu #menu [model]="menuOptions" [popup]="true" appendTo="body"></p-menu>

@@ -13,8 +13,8 @@ export class NotificationBellComponent {
   ngOnInit(): void {
     console.log('Notification bell component initialized');
     console.log('Fetching notifications');
-    this.notificationsService.initialiseSocketConnection();
-    this.notificationsService.fetchNotifications();
+    /*   this.notificationsService.initialiseSocketConnection();
+    this.notificationsService.fetchNotifications(); */
   }
 
   isPanelOpen: boolean = false;

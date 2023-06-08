@@ -1,0 +1,16 @@
+/* Styling the badge on */
+:host ::ng-deep .p-tabmenu .p-tabmenu-nav .p-menuitem-badge {
+  background: var(--course-mapper-blue);
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  min-width: 1.5rem;
+  height: 1.5rem;
+  line-height: 1.5rem;
+  border-radius: 50%;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  position:absolute;
+  top: 0;
+  right:0;
+}
