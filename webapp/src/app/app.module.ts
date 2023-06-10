@@ -61,11 +61,9 @@ import { TagReplyPanelComponent } from './pages/components/tags/tag-reply-panel/
 import { TagReplyItemComponent } from './pages/components/tags/tag-reply-item/tag-reply-item.component';
 import { ContextMenuModule } from 'primeng/contextmenu';
 import { environment } from '../environments/environment';
-import { NotificationBellComponent } from './pages/components/notifications/notification-bell/notification-bell.component';
-import { NotificationBoxComponent } from './pages/components/notifications/notification-box/notification-box.component';
-import { NotificationDashboardComponent } from './pages/components/notifications/notification-dashboard/notification-dashboard.component';
-import { MenubarModule } from 'primeng/menubar';
+
 import { TabMenuModule } from 'primeng/tabmenu';
+import { NotificationModule } from './pages/components/notifications/notification.module';
 export const metaReducers: MetaReducer[] = [hydrationMetaReducer];
 registerLocaleData(en);
 
@@ -94,9 +92,6 @@ registerLocaleData(en);
     TagCommentItemComponent,
     TagReplyPanelComponent,
     TagReplyItemComponent,
-    NotificationBellComponent,
-    NotificationBoxComponent,
-    NotificationDashboardComponent,
   ],
   imports: [
     MenuModule,
@@ -114,6 +109,7 @@ registerLocaleData(en);
     ToastModule,
     RippleModule,
     ConfirmDialogModule,
+    NotificationModule,
     StoreModule.forRoot({}, {}),
     EffectsModule.forRoot([]),
     StoreDevtoolsModule.instrument({
