@@ -32,6 +32,8 @@ export interface UserNotification {
       timestamp: string;
     };
   };
+  isStar: boolean;
+  isRead: boolean;
 }
 
 export interface LiveNotification {
@@ -75,6 +77,8 @@ export interface Notification {
   name: string;
   object: string;
   category: string;
+  isStar: boolean;
+  isRead: boolean;
 }
 
 export enum NotificationCategory {

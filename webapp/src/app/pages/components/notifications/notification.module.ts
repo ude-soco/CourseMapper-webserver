@@ -6,14 +6,24 @@ import { NotificationDashboardComponent } from './notification-dashboard/notific
 import { PrimengModule } from 'src/app/modules/primeng/primeng.module';
 import { TabMenu, TabMenuModule } from 'primeng/tabmenu';
 import { MenuModule } from 'primeng/menu';
-
+import { StoreModule } from '@ngrx/store';
+import { notificationReducer } from './state/notifications.reducer';
+import { EffectsModule } from '@ngrx/effects';
+import { NotificationEffects } from './state/notifications.effects';
 @NgModule({
   declarations: [
     NotificationBellComponent,
     NotificationBoxComponent,
     NotificationDashboardComponent,
   ],
-  imports: [CommonModule, PrimengModule, TabMenuModule, MenuModule],
+  imports: [
+    CommonModule,
+    PrimengModule,
+    TabMenuModule,
+    MenuModule,
+    StoreModule.forFeature('notifications', notificationReducer),
+    EffectsModule.forFeature([NotificationEffects]),
+  ],
   exports: [NotificationBellComponent],
 })
 export class NotificationModule {}

@@ -14,6 +14,16 @@ import {
   UserNotification,
   NotificationCategory,
 } from 'src/app/models/Notification';
+import {
+  State,
+  getAllNotificationsNumUnread,
+  getFilteredNotifications,
+  getCourseUpdatesNumUnread,
+  getCommentsAndMentionedNumUnread,
+  getAnnotationsNumUnread,
+} from '../state/notifications.reducer';
+import { Store } from '@ngrx/store';
+import * as NotificationActions from '../state/notifications.actions';
 @Component({
   selector: 'app-notification-dashboard',
   templateUrl: './notification-dashboard.component.html',
@@ -22,17 +32,29 @@ import {
 export class NotificationDashboardComponent implements OnInit {
   tabOptions: MenuItem[];
   menuOptions: MenuItem[];
-  tabSwitchBehaviour: BehaviorSubject<{ category: string }> =
+  private tabSwitchBehaviour: BehaviorSubject<{ category: string }> =
     new BehaviorSubject({
       category: 'All',
     });
   notifications$: Observable<Notification[]>;
   tabSwitch$: Observable<{ category: string }> =
     this.tabSwitchBehaviour.asObservable();
-  filteredNotifications$: Observable<Notification[]>;
+  allNotificationsNumUnread$: Observable<number> = this.store.select(
+    getAllNotificationsNumUnread
+  );
+  courseUpdatesNumUnread$: Observable<number> = this.store.select(
+    getCourseUpdatesNumUnread
+  );
+  commentsAndMentionedNumUnread$: Observable<number> = this.store.select(
+    getCommentsAndMentionedNumUnread
+  );
+  annotationsNumUnread$: Observable<number> = this.store.select(
+    getAnnotationsNumUnread
+  );
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private store: Store<State>) {}
 
+  //TODO: Unsubscribing the observables
   ngOnInit() {
     //initialising the items for the menu
     this.tabOptions = [
@@ -67,65 +89,46 @@ export class NotificationDashboardComponent implements OnInit {
     ];
 
     //fetch the data data.json for now
-    this.notifications$ = this.http
-      .get<UserNotification[]>('assets/data.json')
-      .pipe(
-        tap((notifications) => console.log(notifications)),
-        map((notifications) => {
-          return notifications.map((notification) => {
-            const lastWord =
-              notification.activityId.statement.object.definition.type.slice(
-                40
-              );
-
-            return {
-              userShortname:
-                notification.activityId.notificationInfo.userShortname,
-              courseName: notification.activityId.notificationInfo.courseName,
-              username: notification.activityId.notificationInfo.userName,
-              action: notification.activityId.statement.verb.display['en-US'],
-              name: notification.activityId.statement.object.definition.name[
-                'en-US'
-              ],
-              object: lastWord,
-              category: notification.activityId.notificationInfo.category,
-            };
-          });
-        }),
-        tap((notifications) => console.log(notifications))
-      );
-
-    this.filteredNotifications$ = combineLatest([
-      this.notifications$,
-      this.tabSwitch$,
-    ]).pipe(
-      map(([notifications, tabSwitch]) => {
-        if (tabSwitch.category === NotificationCategory.All) {
-          return notifications;
-        }
-        return notifications.filter((notification) => {
-          return notification.category === tabSwitch.category;
-        });
-      })
-    );
+    //and make a side effect to update the badge count for each tab
+    this.notifications$ = this.store.select(getFilteredNotifications);
+    this.allNotificationsNumUnread$.subscribe((num) => {
+      this.tabOptions[0].badge = num.toString();
+    });
+    this.courseUpdatesNumUnread$.subscribe((num) => {
+      this.tabOptions[1].badge = num.toString();
+    });
+    this.commentsAndMentionedNumUnread$.subscribe((num) => {
+      this.tabOptions[2].badge = num.toString();
+    });
+    this.annotationsNumUnread$.subscribe((num) => {
+      this.tabOptions[3].badge = num.toString();
+    });
   }
 
   onTabSwitched(selectedItem: MenuItem) {
     console.log(selectedItem);
     if (selectedItem.label === 'All') {
-      this.tabSwitchBehaviour.next({ category: NotificationCategory.All });
+      this.store.dispatch(
+        NotificationActions.tabSwitched({ tab: NotificationCategory.All })
+      );
     } else if (selectedItem.label === 'Course Updates') {
-      this.tabSwitchBehaviour.next({
-        category: NotificationCategory.CourseUpdate,
-      });
+      this.store.dispatch(
+        NotificationActions.tabSwitched({
+          tab: NotificationCategory.CourseUpdate,
+        })
+      );
     } else if (selectedItem.label === 'Comments & Mentioned') {
-      this.tabSwitchBehaviour.next({
-        category: NotificationCategory.CommentsAndMentioned,
-      });
+      this.store.dispatch(
+        NotificationActions.tabSwitched({
+          tab: NotificationCategory.CommentsAndMentioned,
+        })
+      );
     } else if (selectedItem.label === 'Annotations') {
-      this.tabSwitchBehaviour.next({
-        category: NotificationCategory.Annotations,
-      });
+      this.store.dispatch(
+        NotificationActions.tabSwitched({
+          tab: NotificationCategory.Annotations,
+        })
+      );
     }
   }
 }

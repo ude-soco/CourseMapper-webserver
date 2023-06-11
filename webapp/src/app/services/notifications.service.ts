@@ -27,7 +27,40 @@ export class NotificationsService {
     private socket: Socket
   ) {}
 
-  /*   private notificationsSubject = new BehaviorSubject<Notification[]>([]);
+  //Todo: error handling
+  public getAllNotifications(): Observable<Notification[]> {
+    console.log('In Service: Fetching notifications');
+    return this.httpClient
+      .get<UserNotification[]>(`${environment.API_URL}/notifications`)
+      .pipe(
+        tap((notifications) => console.log(notifications)),
+        map((notifications) => {
+          return notifications.map((notification) => {
+            const lastWord =
+              notification.activityId.statement.object.definition.type.slice(
+                40
+              );
+
+            return {
+              userShortname:
+                notification.activityId.notificationInfo.userShortname,
+              courseName: notification.activityId.notificationInfo.courseName,
+              username: notification.activityId.notificationInfo.userName,
+              action: notification.activityId.statement.verb.display['en-US'],
+              name: notification.activityId.statement.object.definition.name[
+                'en-US'
+              ],
+              object: lastWord,
+              category: notification.activityId.notificationInfo.category,
+              isStar: notification.isStar,
+              isRead: notification.isRead,
+            };
+          });
+        }),
+        tap((notifications) => console.log(notifications))
+      );
+
+    /*   private notificationsSubject = new BehaviorSubject<Notification[]>([]);
   private notificationsList$ = this.notificationsSubject.asObservable();
 
   private liveNotificationsSubject = new BehaviorSubject<LiveNotification[]>(
@@ -67,9 +100,9 @@ export class NotificationsService {
     })
   ); */
 
-  //fetch the data when the bell component is initialized but do not subscribe to it
-  //TODO: add error handling
-  /*   public fetchNotifications() {
+    //fetch the data when the bell component is initialized but do not subscribe to it
+    //TODO: add error handling
+    /*   public fetchNotifications() {
     this.httpClient
       .get<UserNotification[]>(`${environment.API_URL}/notifications`)
       .pipe(
@@ -104,7 +137,7 @@ export class NotificationsService {
       });
   } */
 
-  /*   public initialiseSocketConnection() {
+    /*   public initialiseSocketConnection() {
     console.log('initialising socket connection');
     const user = this.storageService.getUser();
     console.log(user);
@@ -114,4 +147,5 @@ export class NotificationsService {
       this.liveNotificationsSubject.next(data);
     });
   } */
+  }
 }
