@@ -79,6 +79,7 @@ export interface Notification {
   category: string;
   isStar: boolean;
   isRead: boolean;
+  timestamp: string;
 }
 
 export enum NotificationCategory {

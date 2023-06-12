@@ -52,6 +52,7 @@ export class NotificationsService {
       category: notification.activityId.notificationInfo.category,
       isStar: notification.isStar,
       isRead: notification.isRead,
+      timestamp: notification.activityId.statement.timestamp,
     };
   }
 

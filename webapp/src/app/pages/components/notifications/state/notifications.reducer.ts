@@ -107,9 +107,15 @@ export const notificationReducer = createReducer<NotificationState>(
     NotificationActions.loadNotificationsSuccess,
     (state, action): NotificationState => {
       //returning the new state
+      let sortedNotifications = [...action.notifications];
+      sortedNotifications.sort((a, b) => {
+        return (
+          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+        );
+      });
       return {
         ...state,
-        notifications: action.notifications,
+        notifications: sortedNotifications,
       };
     }
   ),
