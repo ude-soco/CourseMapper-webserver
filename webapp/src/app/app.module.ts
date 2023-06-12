@@ -28,7 +28,7 @@ import { RippleModule } from 'primeng/ripple';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 import { ByPassUrlSanitizationPipe } from './pipes/by-pass-url-sanitization.pipe';
-
+import { CustomDatePipe } from './pipes/date.pipe';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { httpInterceptorProviders } from './_helpers/http.interceptor';
 import { SocketIoModule } from 'ngx-socket-io';

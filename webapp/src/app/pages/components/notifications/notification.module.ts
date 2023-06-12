@@ -10,11 +10,14 @@ import { StoreModule } from '@ngrx/store';
 import { notificationReducer } from './state/notifications.reducer';
 import { EffectsModule } from '@ngrx/effects';
 import { NotificationEffects } from './state/notifications.effects';
+import { CustomDatePipe } from 'src/app/pipes/date.pipe';
+
 @NgModule({
   declarations: [
     NotificationBellComponent,
     NotificationBoxComponent,
     NotificationDashboardComponent,
+    CustomDatePipe,
   ],
   imports: [
     CommonModule,

@@ -24,9 +24,9 @@
         <span class="msg-location">{{ notification.name }} </span>
         <span class="in">in</span>
         <span class="msg-location">{{ notification.courseName }}</span>
+        <div class="time">{{ notification.timestamp | customDate }}</div>
       </div>
       <!-- TODO Insert date below -->
-      <span class="time"> </span>
     </div>
     <p-button
       icon="pi pi-ellipsis-h"
