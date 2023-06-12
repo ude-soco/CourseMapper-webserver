@@ -54,12 +54,13 @@ const emitNotificationsToSubscribedUsers = async (
   userToBeNotified,
   insertedUserNotifications
 ) => {
-  for (let i = 0; i < userToBeNotified.length; i++) {
-    const user = userToBeNotified[i];
-    const socketId = user.userId;
+  for (let i = 0; i < insertedUserNotifications.length; i++) {
+    const userNotification = insertedUserNotifications[i];
+    const socketId = userNotification.userId;
+    userNotification.activityId = req.locals.activity;
     console.log("about to emit notification for socketId: ", socketId);
-    console.log("the body is: ", req.locals.activity);
-    socketio.getIO().emit(socketId, [req.locals.activity]);
+    console.log("the body is: ", userNotification);
+    socketio.getIO().emit(socketId, [userNotification]);
   }
 
   /*   for (let i = 0; i < insertedUserNotifications.length; i++) {

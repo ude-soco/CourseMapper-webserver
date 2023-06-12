@@ -16,12 +16,14 @@ export class NotificationBellComponent {
     private store: Store<State>
   ) {}
 
+  //TODO Move the loadNotifications dispatch action and the initialiseSocketConnection method to the app.component.ts or somewhere else.
   ngOnInit(): void {
     /* console.log('Notification bell component initialized'); */
     console.log('Fetching notifications');
     /*   this.notificationsService.initialiseSocketConnection();
     this.notificationsService.fetchNotifications(); */
     this.store.dispatch(NotificationActions.loadNotifications());
+    this.notificationsService.initialiseSocketConnection();
   }
 
   isPanelOpen: boolean = false;

@@ -17,3 +17,8 @@ export const tabSwitched = createAction(
   '[Notification] Tab Switched',
   props<{ tab: NotificationCategory }>()
 );
+
+export const newNotificationArrived = createAction(
+  '[Notification] New Notification Arrived',
+  props<{ notification: Notification }>()
+);

@@ -118,5 +118,11 @@ export const notificationReducer = createReducer<NotificationState>(
       ...state,
       currentlySelectedTab: action.tab,
     };
+  }),
+  on(NotificationActions.newNotificationArrived, (state, action) => {
+    return {
+      ...state,
+      notifications: [action.notification, ...state.notifications],
+    };
   })
 );

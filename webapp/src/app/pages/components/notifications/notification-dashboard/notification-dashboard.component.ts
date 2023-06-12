@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { HttpClient } from '@angular/common/http';
 import {
@@ -24,6 +24,7 @@ import {
 } from '../state/notifications.reducer';
 import { Store } from '@ngrx/store';
 import * as NotificationActions from '../state/notifications.actions';
+
 @Component({
   selector: 'app-notification-dashboard',
   templateUrl: './notification-dashboard.component.html',
@@ -52,7 +53,11 @@ export class NotificationDashboardComponent implements OnInit {
     getAnnotationsNumUnread
   );
 
-  constructor(private http: HttpClient, private store: Store<State>) {}
+  constructor(
+    private http: HttpClient,
+    private store: Store<State>,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   //TODO: Unsubscribing the observables
   ngOnInit() {
@@ -93,6 +98,9 @@ export class NotificationDashboardComponent implements OnInit {
     this.notifications$ = this.store.select(getFilteredNotifications);
     this.allNotificationsNumUnread$.subscribe((num) => {
       this.tabOptions[0].badge = num.toString();
+      let tempTabOptions = [...this.tabOptions];
+      tempTabOptions[0].badge = num.toString();
+      this.tabOptions = [...tempTabOptions];
     });
     this.courseUpdatesNumUnread$.subscribe((num) => {
       this.tabOptions[1].badge = num.toString();
