@@ -1,0 +1,53 @@
+#cySlide {
+    width: 100%;
+    position: relative;
+    left: 0;
+    top: 0;
+    z-index: 10;
+    border: 1px solid  #b3b3b3;
+    border-radius: 8px;
+    padding-bottom: 0;
+  }
+  #slideLegends{
+    height: 60px;
+    margin: 0;
+    padding: 0;
+  }
+  .legend-circle-concept-slide {
+    width: 1em;
+    height: 1em;
+    background: #2196F3;
+    border-radius: 50%;
+    display: inline-block;
+    font-weight: 300;
+  }
+  .legend-circle-understood-concept-slide {
+    width: 1em;
+    height: 1em;
+    background: #689F38;
+    border-radius: 50%;
+    display: inline-block;
+    font-weight: 300;
+  }
+  .legend-circle-not-understood-slide {
+    width: 1em;
+    height: 1em;
+    background: #D32F2F;
+    border-radius: 50%;
+    display: inline-block;
+    font-weight: 300;
+  }
+  @keyframes animate{
+    0%{
+      left: -50%;
+      width: 0;
+      height: 0;
+      opacity: 0.8;
+    }
+    100%{
+      left: 500%;
+      width: 500px;
+      height: 500px;
+      opacity: 0;
+    }
+  }

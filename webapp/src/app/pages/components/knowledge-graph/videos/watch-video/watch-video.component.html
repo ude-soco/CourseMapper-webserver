@@ -1,0 +1,28 @@
+<div class="video" autoscroll="true">
+    <iframe title="IFrame Title" [src]="safeURL" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen></iframe>
+    <div class="bg-white sm:w-50
+                px-3 py-4 flex mb-3 flex-col border-b border-l border-r rounded-b">
+      <div class="flex flex-row text-gray-900 items-center justify-between">
+        <div class="title-video">
+          <h2 class="text-xl font-bold truncate inline-flex" [innerHTML] = "video.title"></h2>
+          <span pTooltip="Similarity between the concepts not understood and the content of this video"
+                class="text-sm font-semibold inline-flex items-center py-1 px-2 rounded bg-white text-[#0277BD] border mx-4 last:mr-0 mr-1">
+          Similarity Score: {{ video.similarity_score | percent }}
+          </span>
+        </div>
+        <app-rating [element]="video" [notUnderstoodConcepts]="notUnderstoodConcepts" ></app-rating>
+      </div>
+      <p class="text-sm text-gray-600 my-2 items-center">
+        {{ video.views | number }} views - {{ video.publish_time | dateAgo }}
+      </p>
+      <div *ngIf="video.keyphrases.length !== 0" class="flex flex-row mb-3 mt-6">
+        <p class="mr-2 font-semibold italic">Keyphrases: </p>
+        <div *ngFor="let concept of video.keyphrases.slice(0, 5)" pTooltip="Main keyphrases extracted from this video" class=" text-xs uppercase text-chips-txt bg-gray-200 mx-1 p-1 px-2 font-semibold rounded-2xl">{{concept}}</div>
+      </div>
+      <div class="flex flex-row">
+        <p *ngIf="video.description_full" class="mr-2 font-semibold italic">Description: </p>
+        <p class="text-gray-700 text-base" [innerHTML]="video.description_full | linkify"></p>
+      </div>
+    </div>
+  </div>

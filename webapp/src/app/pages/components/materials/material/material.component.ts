@@ -31,6 +31,7 @@ import { map } from 'rxjs/operators';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { ModeratorPrivilegesService } from 'src/app/services/moderator-privileges.service';
 import * as  CourseActions from 'src/app/pages/courses/state/course.actions'
+import { MaterialKgOrderedService } from 'src/app/services/material-kg-ordered.service';
 @Component({
   selector: 'app-material',
   templateUrl: './material.component.html',
@@ -39,6 +40,7 @@ import * as  CourseActions from 'src/app/pages/courses/state/course.actions'
 })
 export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
   @Output() public channelEmitted = new EventEmitter<any>();
+
   selectedChannel: Channel;
   channelSelected$: Observable<boolean>;
   index = 0;
@@ -63,6 +65,11 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
   previousMaterial: Material;
   isNewMaterialModalVisible: boolean = false;
   errorMessage: any;
+  showConceptMapEvent: boolean = false;
+
+  @Output() conceptMapEvent: EventEmitter<boolean> = new EventEmitter();
+  @Output() selectedToolEvent: EventEmitter<string> = new EventEmitter();
+  cmSelected = false;
 
   showModeratorPrivileges: boolean;
   privilegesSubscription: Subscription;
@@ -77,7 +84,8 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     private confirmationService: ConfirmationService,
     private moderatorPrivilegesService: ModeratorPrivilegesService,
     private renderer: Renderer2,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    private materialKgService: MaterialKgOrderedService,
   ) {
     const url = this.router.url;
     if (url.includes('course') && url.includes('channel')) {
@@ -167,6 +175,8 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     });
     this.showModeratorPrivileges =
       this.moderatorPrivilegesService.showModeratorPrivileges;
+
+    this.selectedToolEvent.emit('none');
   }
 
   onTabChange(e) {
@@ -546,6 +556,17 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
         document.getElementById(id)
       )).innerText;
     }
+  }
+
+  // onConceptMapButtonClicked(show: boolean) {
+  //   this.showConceptMapEvent=show
+  // }
+  onConceptMapButtonClicked(show: boolean) {
+    console.log('clicked')
+    this.conceptMapEvent.emit(show);
+    this.cmSelected = show;
+    this.selectedToolEvent.emit('none');
+    this.materialKgService.materialKgOrdered(this.selectedMaterial);
   }
 
   /**

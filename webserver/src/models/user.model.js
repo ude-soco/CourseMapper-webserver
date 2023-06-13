@@ -16,6 +16,8 @@ const User = new Schema({
       role: { type: Schema.Types.ObjectId, ref: "role" },
     },
   ],
+  understoodConcepts: [],//saves ids for concepts that user understand
+  didNotUnderstandConcepts: [],//saves ids for concepts that user did not understand
   indicators: [
     {
       _id: Schema.Types.ObjectId,

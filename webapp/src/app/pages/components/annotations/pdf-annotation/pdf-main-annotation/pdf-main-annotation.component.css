@@ -11,3 +11,18 @@ app-pdf-drawbox{
     position: absolute;
     z-index: 2;
 }
+
+:host ::ng-deep #didNotUnderstandButton{
+    /* position: absolute; */
+    font-size: 14px;
+    color: #ffffff;
+    background: #EB590D;
+    border: #EB590D;
+}
+:host ::ng-deep #p_paginator{
+    margin-left: 22%;
+    margin-right: auto;
+}
+/* :host ::ng-deep .p-paginator{
+    margin-left: auto;
+} */

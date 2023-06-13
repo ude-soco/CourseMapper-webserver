@@ -1,0 +1,481 @@
+#wrapper {
+    position: relative;
+    height: 100%;
+  }
+  
+  .profile-main-loader {
+    left: 50% !important;
+    margin-left: -100px;
+    position: fixed !important;
+    top: 50% !important;
+    margin-top: -100px;
+    width: 45px;
+    z-index: 7000 !important;
+  }
+  
+  .profile-main-loader .loader {
+    position: relative;
+    margin: 0px auto;
+    width: 200px;
+    height: 200px;
+  }
+  .profile-main-loader .loader:before {
+    content: "";
+    display: block;
+    padding-top: 100%;
+  }
+  
+  .circular-loader {
+    -webkit-animation: rotate 2s linear infinite;
+    animation: rotate 2s linear infinite;
+    height: 100%;
+    -webkit-transform-origin: center center;
+    -ms-transform-origin: center center;
+    transform-origin: center center;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: auto;
+  }
+  
+  .loader-path {
+    stroke-dasharray: 150, 200;
+    stroke-dashoffset: -10;
+    -webkit-animation: dash 1.5s ease-in-out infinite,
+      color 6s ease-in-out infinite;
+    animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite;
+    stroke-linecap: round;
+  }
+  
+  @-webkit-keyframes rotate {
+    100% {
+      -webkit-transform: rotate(360deg);
+      transform: rotate(360deg);
+    }
+  }
+  
+  @keyframes rotate {
+    100% {
+      -webkit-transform: rotate(360deg);
+      transform: rotate(360deg);
+    }
+  }
+  @-webkit-keyframes dash {
+    0% {
+      stroke-dasharray: 1, 200;
+      stroke-dashoffset: 0;
+    }
+    50% {
+      stroke-dasharray: 89, 200;
+      stroke-dashoffset: -35;
+    }
+    100% {
+      stroke-dasharray: 89, 200;
+      stroke-dashoffset: -124;
+    }
+  }
+  @keyframes dash {
+    0% {
+      stroke-dasharray: 1, 200;
+      stroke-dashoffset: 0;
+    }
+    50% {
+      stroke-dasharray: 89, 200;
+      stroke-dashoffset: -35;
+    }
+    100% {
+      stroke-dasharray: 89, 200;
+      stroke-dashoffset: -124;
+    }
+  }
+  @-webkit-keyframes color {
+    0% {
+      stroke: #0277bd;
+    }
+    40% {
+      stroke: #0277bd;
+    }
+    66% {
+      stroke: #0277bd;
+    }
+    80%,
+    90% {
+      stroke: #0277bd;
+    }
+  }
+  @keyframes color {
+    0% {
+      stroke: #0277bd;
+    }
+    40% {
+      stroke: #0277bd;
+    }
+    66% {
+      stroke: #0277bd;
+    }
+    80%,
+    90% {
+      stroke: #0277bd;
+    }
+  }
+  
+  .legend-circle-concept {
+    width: 1em;
+    height: 1em;
+    background: #32a856;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .legend-circle-related-concept {
+    width: 1em;
+    height: 1em;
+    background: #328ea8;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .legend-circle-category {
+    width: 1em;
+    height: 1em;
+    background: #a8a832;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .legend-circle-concept-slide {
+    width: 1em;
+    height: 1em;
+    background: #2196f3;
+    border-radius: 50%;
+    display: inline-block;
+    font-weight: 300;
+  }
+  .legend-circle-understood-concept-slide {
+    width: 1em;
+    height: 1em;
+    background: #689f38;
+    border-radius: 50%;
+    display: inline-block;
+    font-weight: 300;
+  }
+  .legend-circle-not-understood-slide {
+    width: 1em;
+    height: 1em;
+    background: #d32f2f;
+    border-radius: 50%;
+    display: inline-block;
+    font-weight: 300;
+  }
+  #mClickIcon {
+    position: absolute;
+    left: 0%;
+    bottom: 0;
+  }
+  .mousePosition {
+    position: relative;
+    bottom: 0;
+    right: 0;
+  }
+  #tabButtons {
+    padding-left: 0.3rem;
+  }
+  .recommenderTabs {
+    display: none;
+  } /* hide radio buttons */
+  .recommenderTabs + .recommenderLabel {
+    display: inline-block;
+  } /* show labels in line */
+  .recommenderTabs ~ .tab {
+    display: none;
+  } /* hide contents */
+  .materialsContents {
+    display: none;
+  } /* hide contents */
+  /* show contents only for selected tab */
+  #tabMainConcept:checked ~ .tab.mainConcepts,
+  #tabConcept:checked ~ .tab.concepts,
+  #tabMaterial:checked ~ .tab.materials {
+    display: block;
+  }
+  
+  .recommenderTabs:enabled + .recommenderLabel {
+    /* box with rounded corner */
+    border: 1px solid #2196f3;
+    background: #ffffff;
+    color: #2196f3;
+    stroke: #2196f3;
+    padding: 4px 12px;
+    border-radius: 20px 20px 0 0;
+    position: relative;
+    top: 1px;
+  }
+  .recommenderTabs:checked + .recommenderLabel {
+    /* white background for selected tab */
+    background: #2196f3;
+    color: aliceblue;
+    border-bottom: 1px solid transparent;
+  }
+  .recommenderTabs:disabled + .recommenderLabel {
+    /* white background for selected tab */
+    background: #ffffff;
+    color: #7a7a7a;
+    border: 1px solid #d1d1d1;
+    stroke: #d1d1d1;
+    padding: 4px 12px;
+    border-radius: 20px 20px 0 0;
+    position: relative;
+    top: 1px;
+  }
+  .recommenderTabs ~ .tab {
+    /* grey line between tab and contents */
+     /* border-top: 1px solid #999; */
+    padding: 12px;
+    padding-bottom: 0;
+    margin-bottom: 0;
+  }
+  :host ::ng-deep .p-dialog {
+    background: #ffffff !important;
+  }
+  :host ::ng-deep .dialogMask {
+    background: #d9d9d9 !important;
+  }
+  #previousConcepts {
+    border: 1px solid #2196f3;
+    color: #2196f3;
+    padding: 20px;
+    border-radius: 8px;
+    padding: 5px;
+    vertical-align: top;
+    font-size: 13px;
+  }
+  #currentConcepts {
+    border: 1px solid #2196f3;
+    color: #2196f3;
+    padding: 20px;
+    border-radius: 8px;
+    padding: 5px;
+    vertical-align: top;
+    font-size: 13px;
+  }
+  .my-overflow {
+    overflow-y: auto;
+    height: 50px;
+    max-height: 50px;
+  }
+  
+  #kgPanelContainer {
+    background-color: red;
+  }
+  #flexboxNotUnderstood {
+    z-index: 11;
+  }
+  #notUnderstoodConceptsPanel {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    border: 1px solid #b3b3b3;
+    border-radius: 8px;
+  }
+  #currentNotUnderstandDiv {
+    width: 99%;
+    text-align: left;
+  }
+  #previousNotUnderstandDiv {
+    width: 99%;
+    text-align: left;
+    max-height: 30%;
+    overflow-y: auto;
+  }
+  :host ::ng-deep #recommendationButton {
+    position: relative;
+    white-space: normal;
+    word-wrap: break-word;
+    color: #ffffff;
+    background: #eb590d;
+    border: #eb590d;
+  }
+  #hideNonUnderstoodPanel {
+    position: absolute;
+    left: 412px;
+    float: right;
+    top: 50%;
+    z-index: 12;
+    color: #ffffff;
+    background: #A8A9AA;
+    border-radius: 16px;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    padding-left: 0.125rem;
+    padding-right: 0.125rem;
+    font-size: 2px;
+  }
+  
+  #showNonUnderstoodPanel {
+    position: absolute;
+    background-color: #ffffff;
+    color: #2196F3;
+    border: 1px solid #2196F3;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    left: 1;
+    margin-top: 0.5rem;
+    z-index: 12;
+  }
+  #conceptsCategoryButton {
+    position: absolute;
+    margin-top: 0.5rem;
+    font-size: 13px;
+    z-index: 12;
+  }
+  #checkboxConceptsLabel {
+    margin-top: 0.25rem;
+    margin-left: 0.25rem;
+  }
+  :host ::ng-deep .closeKGStyle {
+    max-width: 50%;
+    max-height: 50%;
+    overflow: hidden;
+  }
+  :host ::ng-deep #closeKGStyle {
+    overflow: hidden;
+  }
+  #slideConceptCheckboxGroup {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-left: 5%;
+  }
+  #closeDialogButtons {
+    margin-left: 20%;
+  }
+  .conceptCheckboxgroup {
+    width: 50%;
+  }
+  :host ::ng-deep #saveAndExitButton {
+    margin-left: 35%;
+    margin-bottom: 0;
+  }
+  
+  :host ::ng-deep .p-radiobutton-icon {
+    background-color: #0284c7 !important;
+  }
+  
+  :host ::ng-deep .p-sidebar {
+    width: 400px;
+    height: 90%;
+    position: relative;
+  }
+  :host ::ng-deep .p-accordionTab {
+    margin-top: 5px;
+  }
+  .accordionTab{
+    background: #f8f9fa;
+    color:red;
+  }
+  :host ::ng-deep .p-badge {
+    position: absolute;
+    z-index: 13;
+    margin-left: 0.25rem;
+    margin-top: 2.5rem;
+    -webkit-transition: opacity 1s ease-in-out;
+    -moz-transition: opacity 1s ease-in-out;
+    -ms-transition: opacity 1s ease-in-out;
+    -o-transition: opacity 1s ease-in-out;
+    transition: opacity 1s ease-in-out;
+    opacity: 0;
+    animation: fadeOut 3s;
+  }
+  :host ::ng-deep .p-badge:hover {
+    position: absolute;
+    z-index: 13;
+    -webkit-transition: opacity 1s ease-in-out;
+    -moz-transition: opacity 1s ease-in-out;
+    -ms-transition: opacity 1s ease-in-out;
+    -o-transition: opacity 1s ease-in-out;
+    transition: opacity 1s ease-in-out;
+    opacity: 1;
+    margin-left: 0.25rem;
+    margin-bottom: 1.5rem;
+  }
+  :host ::ng-deep .p-badge .conceptsListChanged {
+    display: inline;
+    position: absolute;
+    z-index: 13;
+    margin-left: 0.25rem;
+    margin-bottom: 1.5rem;
+    -webkit-transition: opacity 1s ease-in-out;
+    -moz-transition: opacity 1s ease-in-out;
+    -ms-transition: opacity 1s ease-in-out;
+    -o-transition: opacity 1s ease-in-out;
+    transition: opacity 1s ease-in-out;
+    opacity: 0;
+    animation: fadeOutDisappear 3s;
+  }
+  @keyframes animate{
+    0%{
+      left: -50%;
+      width: 0;
+      height: 0;
+      opacity: 0.8;
+    }
+    100%{
+      left: 500%;
+      width: 500px;
+      height: 500px;
+      opacity: 0;
+    }
+  }
+  @keyframes fadeOut {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+  @keyframes fadeOutDisappear {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      display: none;
+    }
+  }
+  :host ::ng-deep .p-tabMenu .p-tabmenu-nav {
+    color: #eb590d;
+    background-color: #eb590d;
+  }
+  
+  .sidebarShown {
+    margin-left: 1rem;
+  }
+  .sidebarHidden {
+    width: 100%;
+  }
+  :host ::ng-deep .startKGStyle {
+    font-size: 15 px;
+    color: red;
+  }
+  
+  :host ::ng-deep .checkLabel {
+    margin-left: 0.1rem;
+  }
+  
+  :host ::ng-deep #didNotUnderstandButton{
+    color: #ffffff;
+    background: #EB590D;
+    border: #EB590D;
+  }
+  .noContentRecieved{
+    text-align: right;
+    margin-top:5px;
+    margin-bottom:5px;
+  }
+  :host ::ng-deep .p-toast {
+    width:350px;
+    font-size: 15px;
+  }

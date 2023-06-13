@@ -1,0 +1,39 @@
+<div #cySlide id="cySlide"></div>
+<div id="slideLegends" style="text-align: left">
+  <div>
+    <span>
+      <div class="legend-circle-concept-slide"></div>
+      New Concepts
+    </span>
+    <span>
+      <div class="legend-circle-understood-concept-slide"></div>
+      Understood Concepts
+    </span>
+    <span>
+      <div class="legend-circle-not-understood-slide"></div>
+      Not Understood Concepts
+    </span>
+    <button
+    *ngIf="moreThanFive && showLessActivated"
+      id="moreConcepts"
+      pButton
+      type="button"
+      label="More Concepts"
+      pTooltip="Show all slide concepts"
+      class="p-button-secondary p-button-rounded"
+      (click)="showMoreElements()"
+      style="margin-top: 5px; float: right;color: #ffffff; background: #EB590D; border: #EB590D;"
+      ></button>
+    <button
+    *ngIf="moreThanFive && showMoreActivated"
+      id="lessConcepts"
+      pButton
+      type="button"
+      label="less Concepts"
+      pTooltip="Show only top-5 concepts"
+      class="p-button-secondary p-button-rounded"
+      (click)="showLessElements()"
+      style="margin-top: 5px; float: right;color: #ffffff; background: #EB590D; border: #EB590D;"
+      ></button>
+  </div>
+</div>

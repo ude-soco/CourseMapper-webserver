@@ -13,11 +13,13 @@ import { environment } from 'src/environments/environment';
 export class UserServiceService {
   public resu: any;
   firstname!: string;
-  user:User;
+  user: User;
   private API_URL = environment.API_URL;
   constructor(private http: HttpClient, private router: Router) {}
 
   login(username: string, password: string): Observable<any> {
+    console.log('HTTPOptions')
+    console.log(HTTPOptions)
     return this.http.post(
       AUTH_API_2 + 'signin',
       { username, password },
@@ -65,6 +67,4 @@ export class UserServiceService {
 this.user=user
     }))
   }
-
- 
 }

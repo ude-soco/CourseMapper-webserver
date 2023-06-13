@@ -17,7 +17,7 @@
           <app-iconbutton
             icon="bx-chevron-down"
             color="text-black"
-            (click)="selectedTopic=topic;onSelectTopic(topic)"
+            (click)="selectedTopic = topic; onSelectTopic(topic)"
           ></app-iconbutton>
           <p
             id="{{ topic._id }}"
@@ -36,6 +36,10 @@
           [popup]="true"
           appendTo="body"
         ></p-menu>
+        <!-- <app-iconbutton
+          icon="bx-network-chart"
+          color="text-orange-500"
+        ></app-iconbutton> -->
         <app-iconbutton
           *ngIf="showModeratorPrivileges"
           icon="bx-dots-vertical-rounded"
@@ -64,6 +68,10 @@
             >
               #{{ channel.name }}
             </p>
+            <!-- <app-iconbutton
+              icon="bx-network-chart"
+              color="text-orange-500"
+            ></app-iconbutton> -->
             <app-iconbutton
               *ngIf="showModeratorPrivileges"
               icon="bx-dots-vertical-rounded"
@@ -91,6 +99,10 @@
             >
               #{{ channel.name }}
             </p>
+            <!-- <app-iconbutton
+              icon="bx-network-chart"
+              color="text-orange-500"
+            ></app-iconbutton> -->
             <app-iconbutton
               *ngIf="showModeratorPrivileges"
               icon="bx-dots-vertical-rounded"
@@ -133,7 +145,7 @@
           <app-iconbutton
             icon="bx-chevron-right"
             color="text-black"
-            (click)="selectedTopic=topic;onSelectTopic(topic)"
+            (click)="selectedTopic = topic; onSelectTopic(topic)"
           ></app-iconbutton>
           <p
             id="{{ topic._id }}"
@@ -152,6 +164,10 @@
           [popup]="true"
           appendTo="body"
         ></p-menu>
+        <!-- <app-iconbutton
+          icon="bx-network-chart"
+          color="text-orange-500"
+        ></app-iconbutton> -->
         <app-iconbutton
           *ngIf="showModeratorPrivileges"
           icon="bx-dots-vertical-rounded"

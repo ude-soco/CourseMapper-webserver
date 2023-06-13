@@ -59,4 +59,14 @@ module.exports = function (app) {
     
     controller.getUser
   );
+
+  app.get(
+    "/users/user-concepts/:userId",
+    controller.getUserConcepts
+  );
+  app.post(
+    "/users/user-concepts",
+    // [authJwt.verifyToken],
+    controller.updateUserConcepts
+  );
 };

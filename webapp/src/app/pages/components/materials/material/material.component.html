@@ -1,9 +1,6 @@
 <p-toast position="bottom-left"></p-toast>
 <p-confirmDialog></p-confirmDialog>
-<div
-  class="relative contain bg-gray-100"
-  *ngIf="selectedChannel?.materials"
->
+<div class="relative contain bg-gray-100" *ngIf="selectedChannel?.materials">
   <div class="h-max m-0 flex flex-col bg-gray-100">
     <div class="flex items-start justify-between py-4 pl-3 bg-gray-200">
       <p
@@ -22,8 +19,8 @@
     *ngIf="selectedChannel?.materials"
     [(activeIndex)]="tabIndex"
   >
-  <!-- *ngIf="showModeratorPrivileges" -->
-    <p-tabPanel >
+    <!-- *ngIf="showModeratorPrivileges" -->
+    <p-tabPanel>
       <ng-template pTemplate="header">
         <app-iconbutton
           icon="bxs-folder-plus"
@@ -73,6 +70,25 @@
             [popup]="true"
             appendTo="body"
           ></p-menu>
+          <!-- <button
+            pButton
+            pRipple
+            type="button"
+            class="p-button-outlined p-button-rounded"
+            label="Graph"
+            style="margin-left: 3px; font-size: 15px; padding: 0px; z-index: 10;"
+            id="showMaterialKG"
+            pTooltip="Explore materials concepts"
+            (click)="selectedMaterial = material; onConceptMapButtonClicked(true)"
+          > -->
+            <app-iconbutton
+              style="z-index: 10; padding: 0"
+              icon="bx-network-chart"
+              color="text-orange-500"
+              (click)="selectedMaterial = material; onConceptMapButtonClicked(true)"
+              pTooltip="View material knowledge graph"
+            ></app-iconbutton>
+          <!-- </button> -->
           <app-iconbutton
             style="z-index: 1"
             *ngIf="showModeratorPrivileges"
@@ -119,3 +135,8 @@
     </ng-container>
   </p-tabView>
 </div>
+<ng-container>
+  <!-- <app-concept-map #conceptMap [material]="selectedMaterial">
+  </app-concept-map> -->
+  <!-- (loading)="passLoadingStatus($event)" -->
+</ng-container>

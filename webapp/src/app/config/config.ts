@@ -10,3 +10,7 @@ export const HTTPOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
   // withCredentials: true,
 };
+
+// export const HTTPPythonHeader ={
+//   headers: new HttpHeaders({"Authorization": `Bearer ${this.jwt}`})
+// }
