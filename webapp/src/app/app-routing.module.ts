@@ -13,8 +13,9 @@ import { PdfMainAnnotationComponent } from './pages/components/annotations/pdf-a
 import { DashboardComponent } from './pages/components/dashboard/dashboard.component';
 import { LandingPageComponent } from './pages/landing-page/landing-page.component';
 import { PrivacyComponent } from './pages/components/privacy/privacy.component';
-import { CourseDescriptionComponent } from './pages/components/course-description/course-description.component'; 
+import { CourseDescriptionComponent } from './pages/components/course-description/course-description.component';
 import { TagsPageComponent } from './pages/components/tags/tags-page/tags-page.component';
+import { CourseWelcomeComponent } from './course-welcome/course-welcome.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'landingPage', pathMatch: 'full' },
@@ -54,18 +55,23 @@ const routes: Routes = [
     children: [
       {
         path: 'channel/:channelId',
-         loadChildren: () =>
-        import('./pages/components/materials/materials.module').then(m => m.MaterialsModule)
+        loadChildren: () =>
+          import('./pages/components/materials/materials.module').then(
+            (m) => m.MaterialsModule
+          ),
       },
       {
         path: 'tag/:tagName',
         component: TagsPageComponent,
       },
+      {
+        path: 'welcome',
+        component: CourseWelcomeComponent,
+      },
     ],
   },
 
-  {path: 'course/:courseID/dashboard', component: DashboardComponent},
-
+  { path: 'course/:courseID/dashboard', component: DashboardComponent },
 ];
 
 @NgModule({

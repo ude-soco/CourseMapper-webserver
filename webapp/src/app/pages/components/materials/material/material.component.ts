@@ -21,16 +21,14 @@ import { PdfviewService } from 'src/app/services/pdfview.service';
 import { MaterilasService } from 'src/app/services/materials.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import {
-  State,
-} from 'src/app/pages/components/materials/state/materials.reducer';
+import { State } from 'src/app/pages/components/materials/state/materials.reducer';
 import * as MaterialActions from 'src/app/pages/components/materials/state/materials.actions';
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
 import { Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { ModeratorPrivilegesService } from 'src/app/services/moderator-privileges.service';
-import * as  CourseActions from 'src/app/pages/courses/state/course.actions'
+import * as CourseActions from 'src/app/pages/courses/state/course.actions';
 @Component({
   selector: 'app-material',
   templateUrl: './material.component.html',
@@ -72,7 +70,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     private materialService: MaterilasService,
     private router: Router,
     private store: Store<State>,
-    private route: ActivatedRoute,
+    private activatedRoute: ActivatedRoute,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private moderatorPrivilegesService: ModeratorPrivilegesService,
@@ -116,15 +114,26 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.showModeratorPrivileges =
           moderatorPrivilegesService.showModeratorPrivileges;
       });
+
+    //attempt to refresh the component:
+    this.activatedRoute.params.subscribe((params) => {
+      console.log(
+        'RUNNING METHOD IN MATERIAL COMPONENT WHENEVER THE ROUTE CHANGES!'
+      );
+      /* this.reloadCurrentRoute(); */
+    });
   }
   ngAfterViewChecked(): void {
-    let inkBar = document.getElementsByClassName('p-tabview-ink-bar')[0] as HTMLElement;
-    let currentTab = document.getElementsByClassName('p-highlight')[0] as HTMLElement;
-    if(inkBar && currentTab){
+    let inkBar = document.getElementsByClassName(
+      'p-tabview-ink-bar'
+    )[0] as HTMLElement;
+    let currentTab = document.getElementsByClassName(
+      'p-highlight'
+    )[0] as HTMLElement;
+    if (inkBar && currentTab) {
       inkBar.style.width = currentTab.clientWidth + 'px';
       this.changeDetectorRef.detectChanges();
     }
-
   }
   materialOptions: MenuItem[] = [
     {
@@ -270,6 +279,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     );
     this.store.dispatch(AnnotationActions.loadAnnotations());
   }
+
   onDeleteMaterial() {
     this.confirmationService.confirm({
       message:
@@ -349,7 +359,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     let selectedMat = <HTMLInputElement>(
       document.getElementById(`${this.selectedMaterial._id}`)
     );
-   
+
     this.selectedId = this.selectedMaterial._id;
     selectedMat.contentEditable = 'true';
     this.previousMaterial = this.selectedMaterial;
@@ -400,11 +410,11 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
         .subscribe();
     } else if (this.escapeKey === true) {
       //ESC pressed
-   
+
       let MaterialName = this.previousMaterial.name;
       const MaterialDescription = this.previousMaterial.description;
       const curseId = this.previousMaterial.courseId;
- 
+
       const matId = this.previousMaterial._id;
       const matUrl = this.previousMaterial.url;
       const mattype = this.previousMaterial.type;
@@ -422,7 +432,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
         .subscribe();
     } else {
       //confirmed by mouse click
-     // console.log('logged from mouse');
+      // console.log('logged from mouse');
       let MaterialName = this.previousMaterial.name;
       const MaterialDescription = this.previousMaterial.description;
       const curseId = this.previousMaterial.courseId;

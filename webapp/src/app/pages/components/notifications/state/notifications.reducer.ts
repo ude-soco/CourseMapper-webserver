@@ -18,11 +18,15 @@ export interface State extends AppState.State {
 export interface NotificationState {
   notifications: Notification[];
   currentlySelectedTab: NotificationCategory;
+  isNavigatingToNotificationContextThroughCourseComponent: boolean;
+  notificationToNavigateTo: Notification;
 }
 
 const initialState: NotificationState = {
   notifications: null,
   currentlySelectedTab: NotificationCategory.All,
+  isNavigatingToNotificationContextThroughCourseComponent: false,
+  notificationToNavigateTo: null,
 };
 
 //selectors
@@ -130,5 +134,15 @@ export const notificationReducer = createReducer<NotificationState>(
       ...state,
       notifications: [action.notification, ...state.notifications],
     };
-  })
+  }) /* ,
+  on(
+    NotificationActions.navigateToNotificationContextThroughCourseComponent,
+    (state, action) => {
+      return {
+        ...state,
+        isNavigatingToNotificationContextThroughCourseComponent: true,
+        notificationToNavigateTo: action.notification,
+      };
+    }
+  ) */
 );

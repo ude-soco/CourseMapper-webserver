@@ -16,10 +16,14 @@ export interface UserNotification {
             'en-US': string;
           };
           extensions: {
-            id: string;
-            course_id: string;
-            topic_id: string;
-            description: string;
+            [key: string]: {
+              id: string;
+              course_id: string;
+              topic_id?: string;
+              channel_id?: string;
+              material_id?: string;
+              description: string;
+            };
           };
           type: string;
         };
@@ -80,6 +84,10 @@ export interface Notification {
   isStar: boolean;
   isRead: boolean;
   timestamp: string;
+  course_id: string;
+  topic_id?: string;
+  channel_id?: string;
+  material_id?: string;
 }
 
 export enum NotificationCategory {

@@ -64,6 +64,7 @@ import { environment } from '../environments/environment';
 
 import { TabMenuModule } from 'primeng/tabmenu';
 import { NotificationModule } from './pages/components/notifications/notification.module';
+import { CourseWelcomeComponent } from './course-welcome/course-welcome.component';
 export const metaReducers: MetaReducer[] = [hydrationMetaReducer];
 registerLocaleData(en);
 
@@ -92,6 +93,7 @@ registerLocaleData(en);
     TagCommentItemComponent,
     TagReplyPanelComponent,
     TagReplyItemComponent,
+    CourseWelcomeComponent,
   ],
   imports: [
     MenuModule,

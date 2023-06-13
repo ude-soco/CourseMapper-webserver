@@ -9,6 +9,8 @@ import {
   map,
   tap,
 } from 'rxjs';
+import { Router } from '@angular/router';
+import * as courseActions from 'src/app/pages/courses/state/course.actions';
 import {
   Notification,
   UserNotification,
@@ -24,6 +26,8 @@ import {
 } from '../state/notifications.reducer';
 import { Store } from '@ngrx/store';
 import * as NotificationActions from '../state/notifications.actions';
+import { NotificationsService } from 'src/app/services/notifications.service';
+import { CourseService } from 'src/app/services/course.service';
 
 @Component({
   selector: 'app-notification-dashboard',
@@ -54,9 +58,10 @@ export class NotificationDashboardComponent implements OnInit {
   );
 
   constructor(
-    private http: HttpClient,
     private store: Store<State>,
-    private cdr: ChangeDetectorRef
+    private router: Router,
+    private notificationService: NotificationsService,
+    private courseService: CourseService
   ) {}
 
   //TODO: Unsubscribing the observables
@@ -137,6 +142,55 @@ export class NotificationDashboardComponent implements OnInit {
           tab: NotificationCategory.Annotations,
         })
       );
+    }
+  }
+
+  onNotificationClicked(notification: Notification) {
+    console.log(notification);
+    console.log('navigate to the notification');
+    this.notificationService.previousURL = this.router.url;
+
+    if (notification.category === NotificationCategory.CourseUpdate) {
+      //need to check if its a material update first
+      if (notification.material_id) {
+        console.log('its a material update');
+        this.courseService.Notification = notification;
+        this.courseService.navigatingToMaterial = true;
+        this.router.navigate(['/course', notification.course_id]);
+      } else if (notification.channel_id) {
+        //check if its a channel update
+
+        this.router.navigate([
+          '/course',
+          notification.course_id,
+          'channel',
+          notification.channel_id,
+        ]);
+      } else {
+        this.router.navigate(['/course', notification.course_id]);
+      }
+    }
+    if (notification.category === NotificationCategory.Annotations) {
+      this.notificationService.notificationToNavigateTo = notification;
+      this.router.navigate([
+        'course',
+        notification.course_id,
+        /*         'channel',
+      notification.channel_id,
+      'material',
+      { outlets: { material: [notification.material_id, 'video'] } }, */
+      ]);
+
+      /*       this.router.navigateByUrl(
+      '/course/' +
+        notification.course_id +
+        '/channel/' +
+        notification.channel_id +
+        '/material/' +
+        '(material:' +
+        notification.material_id +
+        '/video)'
+    ); */
     }
   }
 }

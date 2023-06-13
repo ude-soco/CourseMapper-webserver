@@ -21,6 +21,7 @@ etc -->
     <app-notification-box
       *ngFor="let notification of notifications"
       [notification]="notification"
+      (click)="onNotificationClicked(notification)"
     >
     </app-notification-box>
   </ng-container>

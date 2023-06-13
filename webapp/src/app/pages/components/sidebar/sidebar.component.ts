@@ -7,24 +7,24 @@ import { Channel } from 'src/app/models/Channel';
 import { TopicChannelService } from 'src/app/services/topic-channel.service';
 import { State } from 'src/app/state/app.reducer';
 import { Store } from '@ngrx/store';
-import * as AppActions from 'src/app/state/app.actions'
+import * as AppActions from 'src/app/state/app.actions';
 import { ModeratorPrivilegesService } from 'src/app/services/moderator-privileges.service';
-import * as  MaterialActions from 'src/app/pages/components/materials/state/materials.actions'
-import * as  CourseActions from 'src/app/pages/courses/state/course.actions'
+import * as MaterialActions from 'src/app/pages/components/materials/state/materials.actions';
+import * as CourseActions from 'src/app/pages/courses/state/course.actions';
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css'],
 })
- export  class SidebarComponent implements OnInit {
+export class SidebarComponent implements OnInit {
   courses: Course[] = [];
   channels: Channel[] = [];
   channel: Channel;
-  public LandingPage = "/landingPage";
-  public HomePage="/home"
+  public LandingPage = '/landingPage';
+  public HomePage = '/home';
   selectedCourse: Course = new CourseImp('', '');
   displayAddCourseDialogue: boolean = false;
-  showModeratorPrivileges:boolean
+  showModeratorPrivileges: boolean;
 
   constructor(
     private courseService: CourseService,
@@ -32,7 +32,7 @@ import * as  CourseActions from 'src/app/pages/courses/state/course.actions'
     private topicChannelService: TopicChannelService,
     private store: Store<State>,
     private route: ActivatedRoute,
-    private moderatorPrivilegesService: ModeratorPrivilegesService,
+    private moderatorPrivilegesService: ModeratorPrivilegesService
   ) {}
 
   ngOnInit(): void {
@@ -46,19 +46,15 @@ import * as  CourseActions from 'src/app/pages/courses/state/course.actions'
 
     this.courseService.onUpdateCourses$.subscribe(
       (courses) => (this.courses = courses)
-      
     );
-  
   }
 
   onAddCourseDialogueClicked() {
     this.toggleAddCoursedialogue(true);
-
   }
 
   toggleAddCoursedialogue(visibility) {
     this.displayAddCourseDialogue = visibility;
-
   }
 
   onSelectCourse(selectedCourse: Course) {
@@ -75,17 +71,25 @@ import * as  CourseActions from 'src/app/pages/courses/state/course.actions'
 
       if (this.selectedCourse.numberChannels <= 0) {
         this.topicChannelService.selectChannel(this.channel);
-        this.router.navigate(['course', selectedCourse._id]);
+        this.router.navigate(['course', selectedCourse._id, 'welcome']);
         return;
       } else {
         this.channel = this.selectedCourse['channels'][0];
         this.topicChannelService.selectChannel(this.channel);
       }
     }
-    this.store.dispatch(AppActions.toggleCourseSelected({courseSelected: true}));
-    this.store.dispatch(CourseActions.setCurrentCourse({selcetedCourse: selectedCourse}));
-    this.store.dispatch(CourseActions.toggleChannelSelected({ channelSelected: false }));
-    this.store.dispatch(CourseActions.SetSelectedChannel({ selectedChannel: null }));
-    this.router.navigate(['course', selectedCourse._id]);
+    this.store.dispatch(
+      AppActions.toggleCourseSelected({ courseSelected: true })
+    );
+    this.store.dispatch(
+      CourseActions.setCurrentCourse({ selcetedCourse: selectedCourse })
+    );
+    this.store.dispatch(
+      CourseActions.toggleChannelSelected({ channelSelected: false })
+    );
+    this.store.dispatch(
+      CourseActions.SetSelectedChannel({ selectedChannel: null })
+    );
+    this.router.navigate(['course', selectedCourse._id, 'welcome']);
   }
 }

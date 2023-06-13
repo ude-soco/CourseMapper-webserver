@@ -22,3 +22,9 @@ export const newNotificationArrived = createAction(
   '[Notification] New Notification Arrived',
   props<{ notification: Notification }>()
 );
+
+/* export const navigateToNotificationContextThroughCourseComponent = createAction(
+  '[Notification] Navigate To Notification Context Through Course Component',
+  props<{ notification: Notification }>()
+);
+ */

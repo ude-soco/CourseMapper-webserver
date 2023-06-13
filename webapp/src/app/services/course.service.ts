@@ -10,6 +10,7 @@ import { Store } from '@ngrx/store';
 import { State } from 'src/app/pages/components/materials/state/materials.reducer';
 import * as MaterialActions from 'src/app/pages/components/materials/state/materials.actions';
 import * as CourseActions from 'src/app/pages/courses/state/course.actions';
+import { Notification } from '../models/Notification';
 
 @Injectable({
   providedIn: 'root',
@@ -23,6 +24,8 @@ export class CourseService {
   onSelectCourse = new EventEmitter<Course>();
   private selectedCourse: Course = new CourseImp('', '');
   private user = this.storageService.getUser();
+  public navigatingToMaterial: boolean = false;
+  public Notification: Notification = null;
 
   constructor(
     private http: HttpClient,

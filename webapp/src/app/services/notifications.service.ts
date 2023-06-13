@@ -24,6 +24,9 @@ export class NotificationsService {
     private store: Store<State>
   ) {}
 
+  public previousURL: string = null;
+  public notificationToNavigateTo: Notification = null;
+
   //Todo: error handling
   public getAllNotifications(): Observable<Notification[]> {
     console.log('In Service: Fetching notifications');
@@ -41,6 +44,28 @@ export class NotificationsService {
   private transformNotification(notification: UserNotification): Notification {
     const lastWord =
       notification.activityId.statement.object.definition.type.slice(40);
+    const extensions = Object.values(
+      notification.activityId.statement.object.definition.extensions
+    )[0];
+    let channel_id = null;
+    let material_id = null;
+
+    if (
+      notification.activityId.statement.object.definition.type ===
+      'http://www.CourseMapper.de/activityType/channel'
+    ) {
+      channel_id = extensions.id;
+    } else if (extensions.channel_id) {
+      channel_id = extensions.channel_id;
+    }
+    if (
+      notification.activityId.statement.object.definition.type ===
+      'http://www.CourseMapper.de/activityType/material'
+    ) {
+      material_id = extensions.id;
+    } else if (extensions.material_id) {
+      material_id = extensions.material_id;
+    }
 
     return {
       userShortname: notification.activityId.notificationInfo.userShortname,
@@ -53,6 +78,14 @@ export class NotificationsService {
       isStar: notification.isStar,
       isRead: notification.isRead,
       timestamp: notification.activityId.statement.timestamp,
+      ...(extensions.course_id && { course_id: extensions.course_id }),
+      ...(extensions.topic_id && { topic_id: extensions.topic_id }),
+      ...((extensions.channel_id || channel_id) && {
+        channel_id,
+      }),
+      ...((extensions.material_id || material_id) && {
+        material_id,
+      }),
     };
   }
 
@@ -78,82 +111,3 @@ export class NotificationsService {
     });
   }
 }
-
-/*   private notificationsSubject = new BehaviorSubject<Notification[]>([]);
-  private notificationsList$ = this.notificationsSubject.asObservable();
-
-  private liveNotificationsSubject = new BehaviorSubject<LiveNotification[]>(
-    []
-  );
-  private liveNotificationsList$ = this.liveNotificationsSubject.asObservable();
-  private mappedliveNotificationsList$: Observable<Notification[]> =
-    this.liveNotificationsList$.pipe(
-      map((notifications) =>
-        notifications.map((notification) => {
-          const extensions =
-            notification.statement.object.definition.extensions;
-          const urlExtension = Object.keys(extensions)[0];
-          const lastPart = urlExtension.substring(
-            urlExtension.lastIndexOf('/') + 1
-          );
-          const words = lastPart.split('.');
-          const lastWord = words[words.length - 1];
-          return {
-            userShortname: notification.notificationInfo.userShortname,
-            courseName: notification.notificationInfo.courseName,
-            username: notification.notificationInfo.userName,
-            action: notification.statement.verb.display['en-US'],
-            name: notification.statement.object.definition.name['en-US'],
-            object: lastWord,
-          };
-        })
-      )
-    );
-
-  public $notifications = combineLatest([
-    this.notificationsList$,
-    this.mappedliveNotificationsList$,
-  ]).pipe(
-    map(([notifications, liveNotifications]) => {
-      return [...notifications, ...liveNotifications];
-    })
-  ); */
-
-//fetch the data when the bell component is initialized but do not subscribe to it
-//TODO: add error handling
-/*   public fetchNotifications() {
-    this.httpClient
-      .get<UserNotification[]>(`${environment.API_URL}/notifications`)
-      .pipe(
-        tap((notifications) => console.log(notifications)),
-        map((notifications) => {
-          return notifications.map((notification) => {
-            const extensions =
-              notification.activityId.statement.object.definition.extensions;
-            const urlExtension = Object.keys(extensions)[0];
-            const lastPart = urlExtension.substring(
-              urlExtension.lastIndexOf('/') + 1
-            );
-            const words = lastPart.split('.');
-            const lastWord = words[words.length - 1];
-            return {
-              userShortname:
-                notification.activityId.notificationInfo.userShortname,
-              courseName: notification.activityId.notificationInfo.courseName,
-              username: notification.activityId.notificationInfo.userName,
-              action: notification.activityId.statement.verb.display['en-US'],
-              name: notification.activityId.statement.object.definition.name[
-                'en-US'
-              ],
-              object: lastWord,
-            };
-          });
-        }),
-        tap((notifications) => console.log(notifications))
-      )
-      .subscribe((notifications) => {
-        this.notificationsSubject.next(notifications);
-      });
-  } */
-
-/*    */
