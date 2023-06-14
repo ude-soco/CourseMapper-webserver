@@ -53,14 +53,14 @@ export class CoursesComponent implements OnInit {
     private messageService: MessageService
   ) {
     this.router.events.subscribe((event) => {
-      if (event) {
+      if (event instanceof NavigationEnd) {
         console.log('running the courses component callback!');
         if (courseService.navigatingToMaterial) {
           console.log('navigating to video');
           let notification = { ...courseService.Notification };
           courseService.navigatingToMaterial = false;
           courseService.Notification = null;
-          this.router.navigateByUrl(
+          /*           this.router.navigateByUrl(
             '/course/' +
               notification.course_id +
               '/channel/' +
@@ -69,7 +69,8 @@ export class CoursesComponent implements OnInit {
               '(material:' +
               notification.material_id +
               '/video)'
-          );
+          ); */
+          this.reloadCurrentRoute();
         }
       }
       if (event instanceof NavigationEnd) {
@@ -85,9 +86,14 @@ export class CoursesComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.selectedCourse = this.courseService.getSelectedCourse();
     this.ChannelToggel = false;
-    this.Users = [];
+    this.courseService.onSelectCourse.subscribe((course) => {
+      this.ChannelToggel = false;
+    });
+
+    /*     this.selectedCourse = this.courseService.getSelectedCourse();
+this.ChannelToggel = false;
+this.Users = [];
     this.courseService.onSelectCourse.subscribe((course) => {
       this.selectedCourse = course;
 
@@ -106,9 +112,9 @@ export class CoursesComponent implements OnInit {
       } else {
         this.moderator = false;
       }
-    });
+    }); */
   }
-  buildCardInfo(userModeratorID: string, course: Course) {
+  /*   buildCardInfo(userModeratorID: string, course: Course) {
     this.userService.GetUserName(userModeratorID).subscribe((user) => {
       this.firstName = user.firstname;
       this.lastName = user.lastname;
@@ -134,9 +140,6 @@ export class CoursesComponent implements OnInit {
       .map((part) => part[0])
       .join('')
       .toUpperCase();
-  }
-  NowClicked() {
-    this.ChannelToggel = true;
   }
   deEnrole() {
     this.confirmationService.confirm({
@@ -186,16 +189,25 @@ export class CoursesComponent implements OnInit {
       detail: msg,
     });
   }
-  /**
-   * @function showError
-   * shows the user if his action failed
-   *
-   */
+
   showError(msg) {
     this.messageService.add({
       severity: 'error',
       summary: 'Error',
       detail: msg,
+    });
+  } */
+
+  NowClicked() {
+    this.ChannelToggel = true;
+  }
+
+  reloadCurrentRoute() {
+    console.log('reloading the current route');
+    console.log(this.router.url);
+    let currentUrl = this.router.url;
+    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      this.router.navigateByUrl(currentUrl);
     });
   }
 }

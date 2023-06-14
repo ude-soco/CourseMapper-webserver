@@ -148,7 +148,7 @@ export class NotificationDashboardComponent implements OnInit {
   onNotificationClicked(notification: Notification) {
     console.log(notification);
     console.log('navigate to the notification');
-    this.notificationService.previousURL = this.router.url;
+    /* this.notificationService.previousURL = this.router.url; */
 
     if (notification.category === NotificationCategory.CourseUpdate) {
       //need to check if its a material update first
@@ -156,10 +156,21 @@ export class NotificationDashboardComponent implements OnInit {
         console.log('its a material update');
         this.courseService.Notification = notification;
         this.courseService.navigatingToMaterial = true;
-        this.router.navigate(['/course', notification.course_id]);
+        /* this.router.navigate(['/course', notification.course_id]); */
+        this.router.navigateByUrl(
+          '/course/' +
+            notification.course_id +
+            '/channel/' +
+            notification.channel_id +
+            '/material/' +
+            '(material:' +
+            notification.material_id +
+            '/video)'
+        );
       } else if (notification.channel_id) {
         //check if its a channel update
-
+        this.courseService.Notification = notification;
+        this.courseService.navigatingToMaterial = true;
         this.router.navigate([
           '/course',
           notification.course_id,
@@ -167,6 +178,8 @@ export class NotificationDashboardComponent implements OnInit {
           notification.channel_id,
         ]);
       } else {
+        this.courseService.Notification = notification;
+        this.courseService.navigatingToMaterial = true;
         this.router.navigate(['/course', notification.course_id]);
       }
     }
