@@ -16,7 +16,7 @@ etc -->
 
 <p-menu #menu [model]="menuOptions" [popup]="true" appendTo="body"></p-menu>
 
-<div class="p-8 pt-0">
+<!-- <div class="p-8 pt-0">
   <ng-container *ngIf="notifications$ | async as notifications; else loading">
     <app-notification-box
       *ngFor="let notification of notifications"
@@ -28,5 +28,25 @@ etc -->
 
   <ng-template #loading>
     <div>Loading.......</div>
+  </ng-template>
+</div>
+ -->
+<div class="p-8 pt-0">
+  <ng-container *ngIf="loading$ | async; else notificationsArrived">
+    Loading....
+  </ng-container>
+
+  <ng-template #notificationsArrived>
+    <ng-container *ngIf="notifications$ | async as notifications">
+      <ng-container *ngIf="notifications.length > 0; else noNotifications">
+        <app-notification-box
+          *ngFor="let notification of notifications"
+          [notification]="notification"
+          (click)="onNotificationClicked(notification)"
+        ></app-notification-box>
+      </ng-container>
+
+      <ng-template #noNotifications> No notifications present </ng-template>
+    </ng-container>
   </ng-template>
 </div>

@@ -23,7 +23,7 @@ export interface NotificationState {
 }
 
 const initialState: NotificationState = {
-  notifications: null,
+  notifications: undefined,
   currentlySelectedTab: NotificationCategory.All,
   isNavigatingToNotificationContextThroughCourseComponent: false,
   notificationToNavigateTo: null,

@@ -11,6 +11,7 @@ import { notificationReducer } from './state/notifications.reducer';
 import { EffectsModule } from '@ngrx/effects';
 import { NotificationEffects } from './state/notifications.effects';
 import { CustomDatePipe } from 'src/app/pipes/date.pipe';
+import { BaseNotificationDashboardComponent } from './base-notification-dashboard/base-notification-dashboard.component';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { CustomDatePipe } from 'src/app/pipes/date.pipe';
     NotificationBoxComponent,
     NotificationDashboardComponent,
     CustomDatePipe,
+    BaseNotificationDashboardComponent,
   ],
   imports: [
     CommonModule,

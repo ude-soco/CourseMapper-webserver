@@ -13,4 +13,6 @@ module.exports = function (app) {
     [authJwt.verifyToken],
     controller.getAllNotifications
   );
+
+  app.delete("/api/notifications", controller.deleteAllNotifications);
 };

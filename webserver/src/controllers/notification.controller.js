@@ -37,3 +37,19 @@ export const getAllNotifications = async (req, res, next) => {
   console.log("notifications: ", notifications);
   return res.status(200).send(notifications);
 };
+
+export const deleteAllNotifications = async (req, res, next) => {
+  console.log("endpoint: deleteAllNotifications");
+  const userId = req.userId;
+
+  // Delete all notifications for user
+  try {
+    await UserNotification.deleteMany({});
+  } catch (error) {
+    return res
+      .status(500)
+      .send({ error: "Error deleting notifications", error });
+  }
+
+  return res.status(200).send({ message: "Notifications deleted" });
+};

@@ -124,7 +124,7 @@ export const newTopic = async (req, res, next) => {
     topic: savedTopic,
     user: user,
     course: foundCourse,
-    category: "courseudpates",
+    category: "courseupdates",
   };
   return next();
 };

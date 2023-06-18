@@ -28,56 +28,41 @@ import { Store } from '@ngrx/store';
 import * as NotificationActions from '../state/notifications.actions';
 import { NotificationsService } from 'src/app/services/notifications.service';
 import { CourseService } from 'src/app/services/course.service';
-import { BaseNotificationDashboardComponent } from '../base-notification-dashboard/base-notification-dashboard.component';
 @Component({
-  selector: 'app-notification-dashboard',
-  templateUrl: './notification-dashboard.component.html',
-  styleUrls: ['./notification-dashboard.component.css'],
+  selector: 'app-base-notification-dashboard',
+  template: '',
+  styleUrls: ['./base-notification-dashboard.component.css'],
 })
-export class NotificationDashboardComponent extends BaseNotificationDashboardComponent {
-  constructor(
-    protected override store: Store<State>,
-    protected override router: Router,
-    protected override courseService: CourseService
-  ) {
-    super(store, router, courseService); // Invoke the superclass constructor
-  }
-
-  protected override ngOnInit(): void {
-    super.ngOnInit();
-  }
-
-  /*   tabOptions: MenuItem[];
-  menuOptions: MenuItem[];
+export class BaseNotificationDashboardComponent {
+  protected tabOptions: MenuItem[];
+  protected menuOptions: MenuItem[];
   private tabSwitchBehaviour: BehaviorSubject<{ category: string }> =
     new BehaviorSubject({
       category: 'All',
     });
-  notifications$: Observable<Notification[]>;
-  tabSwitch$: Observable<{ category: string }> =
+  protected notifications$: Observable<Notification[]>;
+  protected tabSwitch$: Observable<{ category: string }> =
     this.tabSwitchBehaviour.asObservable();
-  allNotificationsNumUnread$: Observable<number> = this.store.select(
+  protected allNotificationsNumUnread$: Observable<number> = this.store.select(
     getAllNotificationsNumUnread
   );
-  courseUpdatesNumUnread$: Observable<number> = this.store.select(
+  protected courseUpdatesNumUnread$: Observable<number> = this.store.select(
     getCourseUpdatesNumUnread
   );
-  commentsAndMentionedNumUnread$: Observable<number> = this.store.select(
-    getCommentsAndMentionedNumUnread
-  );
-  annotationsNumUnread$: Observable<number> = this.store.select(
+  protected commentsAndMentionedNumUnread$: Observable<number> =
+    this.store.select(getCommentsAndMentionedNumUnread);
+  protected annotationsNumUnread$: Observable<number> = this.store.select(
     getAnnotationsNumUnread
   );
-  loading$: Observable<boolean>;
+  protected loading$: Observable<boolean>;
 
   constructor(
-    private store: Store<State>,
-    private router: Router,
-    private courseService: CourseService
+    protected store: Store<State>,
+    protected router: Router,
+    protected courseService: CourseService
   ) {}
 
-  //TODO: Unsubscribing the observables
-  ngOnInit() {
+  protected ngOnInit(): void {
     //initialising the items for the menu
     this.tabOptions = [
       { label: 'All', badge: '0' },
@@ -109,9 +94,6 @@ export class NotificationDashboardComponent extends BaseNotificationDashboardCom
         },
       },
     ];
-
-    //fetch the data data.json for now
-    //and make a side effect to update the badge count for each tab
     this.notifications$ = this.store.select(getFilteredNotifications);
     this.allNotificationsNumUnread$.subscribe((num) => {
       this.tabOptions[0].badge = num.toString();
@@ -133,7 +115,7 @@ export class NotificationDashboardComponent extends BaseNotificationDashboardCom
     );
   }
 
-  onTabSwitched(selectedItem: MenuItem) {
+  protected onTabSwitched(selectedItem: MenuItem) {
     console.log(selectedItem);
     if (selectedItem.label === 'All') {
       this.store.dispatch(
@@ -160,9 +142,10 @@ export class NotificationDashboardComponent extends BaseNotificationDashboardCom
     }
   }
 
-  onNotificationClicked(notification: Notification) {
+  protected onNotificationClicked(notification: Notification) {
     console.log(notification);
     console.log('navigate to the notification');
+    /* this.notificationService.previousURL = this.router.url; */
 
     if (notification.category === NotificationCategory.CourseUpdate) {
       //need to check if its a material update first
@@ -170,6 +153,7 @@ export class NotificationDashboardComponent extends BaseNotificationDashboardCom
         console.log('its a material update');
         this.courseService.Notification = notification;
         this.courseService.navigatingToMaterial = true;
+        /* this.router.navigate(['/course', notification.course_id]); */
         this.router.navigateByUrl(
           '/course/' +
             notification.course_id +
@@ -200,6 +184,7 @@ export class NotificationDashboardComponent extends BaseNotificationDashboardCom
       console.log('its an annotation notification');
       this.courseService.Notification = notification;
       this.courseService.navigatingToMaterial = true;
+      /* this.router.navigate(['/course', notification.course_id]); */
       this.router.navigateByUrl(
         '/course/' +
           notification.course_id +
@@ -211,5 +196,5 @@ export class NotificationDashboardComponent extends BaseNotificationDashboardCom
           `/${notification.materialType})`
       );
     }
-  } */
+  }
 }
