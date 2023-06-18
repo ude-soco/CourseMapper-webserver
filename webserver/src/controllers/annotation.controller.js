@@ -135,6 +135,7 @@ export const newAnnotation = async (req, res, next) => {
     response: newAnnotation,
     material: foundMaterial,
     annotation: newAnnotation,
+    materialType: foundMaterial.type,
   };
   socketio.getIO().emit(materialId, {
     eventType: "annotationCreated",
@@ -240,7 +241,7 @@ export const deleteAnnotation = async (req, res, next) => {
     annotation: foundAnnotation,
     user: user,
     course: courseForGeneratingNotifications,
-    category: "annotations",
+    category: "courseupdates",
   };
 
   next();
@@ -304,6 +305,14 @@ export const editAnnotation = async (req, res, next) => {
   } catch (err) {
     res.status(500).send({ error: "Error finding annotation" });
   }
+
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(foundAnnotation.materialId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
   req.locals = {
     oldAnnotation: JSON.parse(JSON.stringify(foundAnnotation)),
   };
@@ -350,6 +359,7 @@ export const editAnnotation = async (req, res, next) => {
   req.locals.newAnnotation = foundAnnotation;
   req.locals.user = user;
   req.locals.category = "annotations";
+  req.locals.materialType = foundMaterial.type;
   req.locals.course = courseForGeneratingNotifications;
   socketio.getIO().emit(foundAnnotation.materialId, {
     eventType: "annotationEdited",
@@ -408,11 +418,19 @@ export const likeAnnotation = async (req, res, next) => {
     return res.status(500).send({ error: "Error finding annotation" });
   }
 
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(foundAnnotation.materialId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
   req.locals = {
     annotation: foundAnnotation,
     user: user,
     course: courseForGeneratingNotifications,
     category: "annotations",
+    materialType: foundMaterial.type,
   };
 
   if (foundAnnotation.likes.includes(req.userId)) {
@@ -515,11 +533,19 @@ export const dislikeAnnotation = async (req, res, next) => {
     return res.status(500).send({ error: "Error finding annotation" });
   }
 
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(foundAnnotation.materialId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
   req.locals = {
     annotation: foundAnnotation,
     user: user,
     course: courseForGeneratingNotifications,
     category: "annotations",
+    materialType: foundMaterial.type,
   };
 
   if (foundAnnotation.dislikes.includes(req.userId)) {

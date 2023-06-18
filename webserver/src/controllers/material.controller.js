@@ -143,6 +143,7 @@ export const newMaterial = async (req, res, next) => {
     user,
     response: { success: `New material '${materialName}' added!` },
     category: "courseupdates",
+    materialType,
     course,
   };
   next();
@@ -350,6 +351,7 @@ export const editMaterial = async (req, res, next) => {
   req.locals.material = foundMaterial;
   req.locals.category = "courseupdates";
   req.locals.course = course;
+  req.locals.materialType = materialType;
 
   return next();
 };

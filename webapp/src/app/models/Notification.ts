@@ -7,6 +7,7 @@ export interface UserNotification {
       topicName: string;
       channelName: string;
       userName: string;
+      materialType?: string;
     };
     statement: {
       object: {
@@ -88,6 +89,7 @@ export interface Notification {
   topic_id?: string;
   channel_id?: string;
   material_id?: string;
+  materialType?: string;
 }
 
 export enum NotificationCategory {

@@ -75,6 +75,9 @@ export class NotificationsService {
       name: notification.activityId.statement.object.definition.name['en-US'],
       object: lastWord,
       category: notification.activityId.notificationInfo.category,
+      ...(notification.activityId.notificationInfo.materialType && {
+        materialType: notification.activityId.notificationInfo.materialType,
+      }),
       isStar: notification.isStar,
       isRead: notification.isRead,
       timestamp: notification.activityId.statement.timestamp,

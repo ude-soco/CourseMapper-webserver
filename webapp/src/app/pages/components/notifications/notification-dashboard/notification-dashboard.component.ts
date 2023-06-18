@@ -165,7 +165,7 @@ export class NotificationDashboardComponent implements OnInit {
             '/material/' +
             '(material:' +
             notification.material_id +
-            '/video)'
+            `/${notification.materialType})`
         );
       } else if (notification.channel_id) {
         //check if its a channel update
@@ -184,26 +184,20 @@ export class NotificationDashboardComponent implements OnInit {
       }
     }
     if (notification.category === NotificationCategory.Annotations) {
-      this.notificationService.notificationToNavigateTo = notification;
-      this.router.navigate([
-        'course',
-        notification.course_id,
-        /*         'channel',
-      notification.channel_id,
-      'material',
-      { outlets: { material: [notification.material_id, 'video'] } }, */
-      ]);
-
-      /*       this.router.navigateByUrl(
-      '/course/' +
-        notification.course_id +
-        '/channel/' +
-        notification.channel_id +
-        '/material/' +
-        '(material:' +
-        notification.material_id +
-        '/video)'
-    ); */
+      console.log('its an annotation notification');
+      this.courseService.Notification = notification;
+      this.courseService.navigatingToMaterial = true;
+      /* this.router.navigate(['/course', notification.course_id]); */
+      this.router.navigateByUrl(
+        '/course/' +
+          notification.course_id +
+          '/channel/' +
+          notification.channel_id +
+          '/material/' +
+          '(material:' +
+          notification.material_id +
+          `/${notification.materialType})`
+      );
     }
   }
 }

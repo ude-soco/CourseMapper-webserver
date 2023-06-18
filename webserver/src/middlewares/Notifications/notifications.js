@@ -46,6 +46,7 @@ export const generateNotificationInfo = (req) => {
     ...(topicName && { topicName }),
     ...(channelName && { channelName }),
     ...(materialName && { materialName }),
+    ...(req.locals.materialType && { materialType: req.locals.materialType }),
   };
 };
 
