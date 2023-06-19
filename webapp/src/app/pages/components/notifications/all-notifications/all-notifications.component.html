@@ -8,6 +8,18 @@
     </span>
 
     <span class="p-float-label">
+      <p-multiSelect
+        [options]="categories"
+        [(ngModel)]="selectedCategory"
+        optionLabel="label"
+        (onChange)="onFiltersModified($event)"
+      >
+        <ng-template pTemplate="filtericon"> </ng-template>
+      </p-multiSelect>
+      <label for="ms-cities">Filter by Type</label>
+    </span>
+
+    <span class="p-float-label">
       <p-dropdown
         [options]="numberOptions"
         [(ngModel)]="selectedNumber"
@@ -23,7 +35,10 @@
   </div>
 
   <div class="main-container">
-    <div class="type-container">
+    <div
+      *ngIf="isCourseUpdatesNotificationsVisible$ | async"
+      class="type-container"
+    >
       <h2>Course updates</h2>
       <div
         class="notifications-container"
@@ -36,7 +51,10 @@
         ></app-notification-box>
       </div>
     </div>
-    <div class="type-container">
+    <div
+      class="type-container"
+      *ngIf="isCommentsAndMentionedNotificationsVisible$ | async"
+    >
       <h2>Comments and Mentioned</h2>
       <div
         class="notifications-container"
@@ -49,7 +67,10 @@
         ></app-notification-box>
       </div>
     </div>
-    <div class="type-container">
+    <div
+      *ngIf="isAnnotationsNotificationsVisible$ | async"
+      class="type-container"
+    >
       <h2>Annotations</h2>
       <div
         class="notifications-container"
