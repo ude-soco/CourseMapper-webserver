@@ -30,15 +30,18 @@ export class NotificationsService {
   //Todo: error handling
   public getAllNotifications(): Observable<Notification[]> {
     console.log('In Service: Fetching notifications');
-    return this.httpClient
-      .get<UserNotification[]>(`${environment.API_URL}/notifications`)
-      .pipe(
-        tap((notifications) => console.log(notifications)),
-        map((notifications) => {
-          return notifications.map(this.transformNotification);
-        }),
-        tap((notifications) => console.log(notifications))
-      );
+    return (
+      this.httpClient
+        .get<UserNotification[]>('assets/data.json')
+        /* .get<UserNotification[]>(`${environment.API_URL}/notifications`) */
+        .pipe(
+          tap((notifications) => console.log(notifications)),
+          map((notifications) => {
+            return notifications.map(this.transformNotification);
+          }),
+          tap((notifications) => console.log(notifications))
+        )
+    );
   }
 
   private transformNotification(notification: UserNotification): Notification {

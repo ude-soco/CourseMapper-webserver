@@ -1,0 +1,66 @@
+<div>
+  <div class="filter-container">
+    <span class="p-float-label">
+      <p-multiSelect [options]="courses" [(ngModel)]="selectedCourses">
+        <ng-template pTemplate="filtericon"> </ng-template>
+      </p-multiSelect>
+      <label for="ms-cities">Filter by Courses</label>
+    </span>
+
+    <span class="p-float-label">
+      <p-dropdown
+        [options]="numberOptions"
+        [(ngModel)]="selectedNumber"
+      ></p-dropdown>
+      <label for="ms-cities"># per Category</label>
+    </span>
+
+    <span class="p-input-icon-left p-float-label">
+      <i class="pi pi-search"></i>
+      <input type="text" pInputText [(ngModel)]="value" />
+      <label htmlFor="search">Search</label>
+    </span>
+  </div>
+
+  <div class="main-container">
+    <div class="type-container">
+      <h2>Course updates</h2>
+      <div
+        class="notifications-container"
+        *ngIf="courseUpdatesNotifications$ | async as notifications"
+      >
+        <app-notification-box
+          *ngFor="let notification of notifications"
+          [notification]="notification"
+          (click)="onNotificationClicked(notification)"
+        ></app-notification-box>
+      </div>
+    </div>
+    <div class="type-container">
+      <h2>Comments and Mentioned</h2>
+      <div
+        class="notifications-container"
+        *ngIf="commentsAndMentionedNotifications$ | async as notifications"
+      >
+        <app-notification-box
+          *ngFor="let notification of notifications"
+          [notification]="notification"
+          (click)="onNotificationClicked(notification)"
+        ></app-notification-box>
+      </div>
+    </div>
+    <div class="type-container">
+      <h2>Annotations</h2>
+      <div
+        class="notifications-container"
+        *ngIf="annotationsNotifications$ | async as notifications"
+      >
+        <app-notification-box
+          *ngFor="let notification of notifications"
+          [notification]="notification"
+          (click)="onNotificationClicked(notification)"
+        ></app-notification-box>
+      </div>
+    </div>
+  </div>
+</div>

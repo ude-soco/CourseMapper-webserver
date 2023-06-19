@@ -44,6 +44,12 @@ etc -->
           [notification]="notification"
           (click)="onNotificationClicked(notification)"
         ></app-notification-box>
+        <div
+          routerLink="notification/all"
+          class="text-center text-xl text-sky-700 cursor-pointer mt-4;"
+        >
+          View All
+        </div>
       </ng-container>
 
       <ng-template #noNotifications> No notifications present </ng-template>

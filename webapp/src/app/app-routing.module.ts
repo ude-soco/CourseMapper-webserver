@@ -16,6 +16,7 @@ import { PrivacyComponent } from './pages/components/privacy/privacy.component';
 import { CourseDescriptionComponent } from './pages/components/course-description/course-description.component';
 import { TagsPageComponent } from './pages/components/tags/tags-page/tags-page.component';
 import { CourseWelcomeComponent } from './course-welcome/course-welcome.component';
+import { AllNotificationsComponent } from './pages/components/notifications/all-notifications/all-notifications.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'landingPage', pathMatch: 'full' },
@@ -70,8 +71,8 @@ const routes: Routes = [
       },
     ],
   },
-
   { path: 'course/:courseID/dashboard', component: DashboardComponent },
+  { path: 'notification/all', component: AllNotificationsComponent },
 ];
 
 @NgModule({

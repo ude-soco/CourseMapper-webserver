@@ -8,6 +8,7 @@
   .left {
     display: flex;
     align-items: center;
+    width: 90%
   }
 
   .left-container {
@@ -98,7 +99,7 @@
   }
 
   .notification-message-container {
-    width: 80%;
+
     overflow: auto;
   }
 

@@ -104,6 +104,42 @@ export const getAnnotationsNumUnread = createSelector(
       : 0
 );
 
+export const getCourseUpdatesNotifications = createSelector(
+  getNotifications,
+  (notifications) => {
+    return notifications
+      ? notifications.filter(
+          (notification) =>
+            notification.category === NotificationCategory.CourseUpdate
+        )
+      : null;
+  }
+);
+
+export const getCommentsAndMentionedNotifications = createSelector(
+  getNotifications,
+  (notifications) => {
+    return notifications
+      ? notifications.filter(
+          (notification) =>
+            notification.category === NotificationCategory.CommentsAndMentioned
+        )
+      : null;
+  }
+);
+
+export const getAnnotationsNotifications = createSelector(
+  getNotifications,
+  (notifications) => {
+    return notifications
+      ? notifications.filter(
+          (notification) =>
+            notification.category === NotificationCategory.Annotations
+        )
+      : null;
+  }
+);
+
 //Reducer
 export const notificationReducer = createReducer<NotificationState>(
   initialState,

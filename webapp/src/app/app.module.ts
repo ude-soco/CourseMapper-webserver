@@ -70,8 +70,8 @@ registerLocaleData(en);
 
 @NgModule({
   declarations: [
-    AppComponent,
     SidebarComponent,
+    AppComponent,
     NavbarComponent,
     ChannelbarComponent,
     CoursesComponent,
