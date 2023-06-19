@@ -55,6 +55,8 @@ export class BaseNotificationDashboardComponent {
     getAnnotationsNumUnread
   );
   protected loading$: Observable<boolean>;
+  protected isUnreadChecked = false;
+  protected activeItem: MenuItem;
 
   constructor(
     protected store: Store<State>,
@@ -70,6 +72,8 @@ export class BaseNotificationDashboardComponent {
       { label: 'Comments & Mentioned', badge: '0' },
       { label: 'Annotations', badge: '0' },
     ];
+
+    this.activeItem = this.tabOptions[0];
 
     this.menuOptions = [
       {
@@ -116,6 +120,7 @@ export class BaseNotificationDashboardComponent {
   }
 
   protected onTabSwitched(selectedItem: MenuItem) {
+    this.activeItem = selectedItem;
     console.log(selectedItem);
     if (selectedItem.label === 'All') {
       this.store.dispatch(

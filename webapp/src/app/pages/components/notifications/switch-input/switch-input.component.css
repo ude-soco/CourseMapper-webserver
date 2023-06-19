@@ -1,7 +1,6 @@
 
-
 /*Switch Styling */
-/* :host ::ng-deep .p-inputswitch.p-inputswitch-checked .p-inputswitch-slider {
+:host ::ng-deep .p-inputswitch.p-inputswitch-checked .p-inputswitch-slider {
   background: rgb(234 88 12);
   height: 25px;
   border-radius: 20px;
@@ -22,4 +21,3 @@
 :host ::ng-deep .p-inputswitch.p-inputswitch-checked:not(.p-disabled):hover .p-inputswitch-slider {
   background: rgb(205 78 12);
 }
- */

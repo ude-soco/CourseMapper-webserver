@@ -1,21 +1,11 @@
-<!-- The below div contains the navigation tab and the 3 ellipses settings button -->
-<!-- Clicking on the ellipses button shows us the 3 settings: Mark all as read,
-etc -->
-<div class="flex flex-row gap-8 p-8 justify-between">
-  <p-tabMenu
-    (activeItemChange)="onTabSwitched($event)"
-    [model]="tabOptions"
-  ></p-tabMenu>
-  <p-button
-    icon="pi pi-ellipsis-h"
-    styleClass="p-button-rounded p-button-text"
-    (click)="menu.toggle($event)"
-    #navSettingsButton
-  ></p-button>
-</div>
-
-<p-menu #menu [model]="menuOptions" [popup]="true" appendTo="body"></p-menu>
-
+<app-tab-menu
+  [tabOptions]="tabOptions"
+  [activeItem]="activeItem"
+  (onTabChange)="onTabSwitched($event)"
+  [menuOptions]="menuOptions"
+  #menu
+>
+</app-tab-menu>
 <!-- <div class="p-8 pt-0">
   <ng-container *ngIf="notifications$ | async as notifications; else loading">
     <app-notification-box
@@ -31,7 +21,7 @@ etc -->
   </ng-template>
 </div>
  -->
-<div class="p-8 pt-0">
+<div class="p-4 pt-0">
   <ng-container *ngIf="loading$ | async; else notificationsArrived">
     Loading....
   </ng-container>
@@ -39,6 +29,19 @@ etc -->
   <ng-template #notificationsArrived>
     <ng-container *ngIf="notifications$ | async as notifications">
       <ng-container *ngIf="notifications.length > 0; else noNotifications">
+        <div class="flex flex-row justify-between m-4">
+          <div>
+            <app-switch-input
+              [isUnreadChecked]="isUnreadChecked"
+            ></app-switch-input>
+            <span class="ml-4">Unread only</span>
+          </div>
+          <span
+            routerLink="notification/all"
+            class="text-blue-600 hover:underline cursor-pointer"
+            >See all</span
+          >
+        </div>
         <app-notification-box
           *ngFor="let notification of notifications"
           [notification]="notification"

@@ -15,6 +15,9 @@ import { BaseNotificationDashboardComponent } from './base-notification-dashboar
 import { AllNotificationsComponent } from './all-notifications/all-notifications.component';
 import { AppModule } from 'src/app/app.module';
 import { SidebarComponent } from '../sidebar/sidebar.component';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { TabMenuComponent } from './tab-menu/tab-menu.component';
+import { SwitchInputComponent } from './switch-input/switch-input.component';
 
 @NgModule({
   declarations: [
@@ -24,8 +27,11 @@ import { SidebarComponent } from '../sidebar/sidebar.component';
     CustomDatePipe,
     BaseNotificationDashboardComponent,
     AllNotificationsComponent,
+    TabMenuComponent,
+    SwitchInputComponent,
   ],
   imports: [
+    InputSwitchModule,
     CommonModule,
     PrimengModule,
     TabMenuModule,
