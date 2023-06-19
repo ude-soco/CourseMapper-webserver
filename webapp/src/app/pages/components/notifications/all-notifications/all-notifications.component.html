@@ -19,13 +19,13 @@
       <label for="ms-cities">Filter by Type</label>
     </span>
 
-    <span class="p-float-label">
+    <!--     <span class="p-float-label">
       <p-dropdown
         [options]="numberOptions"
         [(ngModel)]="selectedNumber"
       ></p-dropdown>
       <label for="ms-cities"># per Category</label>
-    </span>
+    </span> -->
 
     <span class="p-input-icon-left p-float-label">
       <i class="pi pi-search"></i>
@@ -36,8 +36,8 @@
 
   <div class="main-container">
     <div
-      *ngIf="isCourseUpdatesNotificationsVisible$ | async"
       class="type-container"
+      *ngIf="isCourseUpdatesNotificationsVisible$ | async"
     >
       <h2>Course updates</h2>
       <div
@@ -68,8 +68,8 @@
       </div>
     </div>
     <div
-      *ngIf="isAnnotationsNotificationsVisible$ | async"
       class="type-container"
+      *ngIf="isAnnotationsNotificationsVisible$ | async"
     >
       <h2>Annotations</h2>
       <div
@@ -82,6 +82,18 @@
           (click)="onNotificationClicked(notification)"
         ></app-notification-box>
       </div>
+    </div>
+    <div
+      class="type-container"
+      *ngIf="
+        !(isCourseUpdatesNotificationsVisible$ | async) &&
+        !(isCommentsAndMentionedNotificationsVisible$ | async) &&
+        !(isAnnotationsNotificationsVisible$ | async)
+      "
+    >
+      <h2>
+        No Notifications to show. Please choose atleast one category from above!
+      </h2>
     </div>
   </div>
 </div>
