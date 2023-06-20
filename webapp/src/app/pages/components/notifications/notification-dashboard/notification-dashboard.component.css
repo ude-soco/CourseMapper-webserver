@@ -1,34 +1,22 @@
 
 
-/*Switch Styling */
-/* :host ::ng-deep .p-inputswitch.p-inputswitch-checked .p-inputswitch-slider {
-  background: rgb(234 88 12);
-  height: 25px;
-  border-radius: 20px;
-}
-
-:host ::ng-deep .p-inputswitch .p-inputswitch-slider {
-  background: rgb(133 120 120 / 38%);
-  transition: background-color 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s, background-size 0.2s cubic-bezier(0.64, 0.09, 0.08, 1);
-  border-radius: 0.5rem;
-  height: 25px;
-  border-radius: 20px;
-}
-
-:host ::ng-deep .p-inputswitch.p-inputswitch-checked .p-inputswitch-slider:before {
-  background: #0369a1;
-}
-
-:host ::ng-deep .p-inputswitch.p-inputswitch-checked:not(.p-disabled):hover .p-inputswitch-slider {
-  background: rgb(205 78 12);
-}
- */
-
  .test{
   display: flex;
-  padding-left: 1rem
+  padding-left: 1rem;
+  width: 100%;
  }
 
  .test:hover{
   background-color: whitesmoke;
  }
+
+ :host ::ng-deep .p-checkbox:not(.p-checkbox-disabled) .p-checkbox-box.p-highlight:hover {
+  border-color: #ea580c;
+  background: #ea580c;
+  color: #ffffff;
+}
+
+:host ::ng-deep .p-checkbox .p-checkbox-box.p-highlight {
+  border-color: #0369a1;
+  background: #0369a1;
+}

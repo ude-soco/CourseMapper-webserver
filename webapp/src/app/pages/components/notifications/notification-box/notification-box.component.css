@@ -1,5 +1,7 @@
 
-
+:host{
+  flex-grow: 1;
+}
 
   .time {
     color: #00000091;
@@ -75,11 +77,6 @@
     display: flex;
   }
 
-  .pi-star,
-  .pi-star-fill {
-    color: rgba(3, 105, 161, 255);
-    margin-left: 1rem;
-  }
 
   .context-menu-container:hover {
     background-color: #c4c4c4;
@@ -113,7 +110,17 @@
     display: flex;
     justify-content: space-between;
     padding: 1rem 0 1rem 1rem;
-
+    align-items: center;
   }
 
 
+  .star-icon {
+    font-size: 24px;
+    cursor: pointer;
+    transition: color 0.2s;
+    margin-right: 1rem;
+}
+
+  .star-icon:hover {
+    color: #ea580c; /* Set the filled color when hovered */
+  }
