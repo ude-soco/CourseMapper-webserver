@@ -29,6 +29,7 @@ import * as NotificationActions from '../state/notifications.actions';
 import { NotificationsService } from 'src/app/services/notifications.service';
 import { CourseService } from 'src/app/services/course.service';
 import { BaseNotificationDashboardComponent } from '../base-notification-dashboard/base-notification-dashboard.component';
+import { FormBuilder } from '@angular/forms';
 @Component({
   selector: 'app-notification-dashboard',
   templateUrl: './notification-dashboard.component.html',
@@ -38,9 +39,10 @@ export class NotificationDashboardComponent extends BaseNotificationDashboardCom
   constructor(
     protected override store: Store<State>,
     protected override router: Router,
-    protected override courseService: CourseService
+    protected override courseService: CourseService,
+    protected override fb: FormBuilder
   ) {
-    super(store, router, courseService); // Invoke the superclass constructor
+    super(store, router, courseService, fb); // Invoke the superclass constructor
   }
 
   protected override ngOnInit(): void {

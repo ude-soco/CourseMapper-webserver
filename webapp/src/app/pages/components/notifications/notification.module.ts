@@ -18,6 +18,8 @@ import { SidebarComponent } from '../sidebar/sidebar.component';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { TabMenuComponent } from './tab-menu/tab-menu.component';
 import { SwitchInputComponent } from './switch-input/switch-input.component';
+import { CheckboxModule } from 'primeng/checkbox';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -38,6 +40,8 @@ import { SwitchInputComponent } from './switch-input/switch-input.component';
     MenuModule,
     StoreModule.forFeature('notifications', notificationReducer),
     EffectsModule.forFeature([NotificationEffects]),
+    CheckboxModule,
+    ReactiveFormsModule,
   ],
   exports: [NotificationBellComponent],
 })

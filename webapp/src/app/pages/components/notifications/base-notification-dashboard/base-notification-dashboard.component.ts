@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { HttpClient } from '@angular/common/http';
+import { FormArray, FormControl } from '@angular/forms';
 import {
   BehaviorSubject,
   Observable,
@@ -16,6 +17,7 @@ import {
   UserNotification,
   NotificationCategory,
 } from 'src/app/models/Notification';
+import { FormBuilder } from '@angular/forms';
 import {
   State,
   getAllNotificationsNumUnread,
@@ -40,6 +42,8 @@ export class BaseNotificationDashboardComponent {
     new BehaviorSubject({
       category: 'All',
     });
+
+  protected notifications: Notification[];
   protected notifications$: Observable<Notification[]>;
   protected tabSwitch$: Observable<{ category: string }> =
     this.tabSwitchBehaviour.asObservable();
@@ -57,11 +61,14 @@ export class BaseNotificationDashboardComponent {
   protected loading$: Observable<boolean>;
   protected isUnreadChecked = false;
   protected activeItem: MenuItem;
-
+  protected selectedNotifications: Notification[] = [];
+  protected checkBoxesGroup = this.fb.group({});
+  protected masterCheckBox = new FormControl(false);
   constructor(
     protected store: Store<State>,
     protected router: Router,
-    protected courseService: CourseService
+    protected courseService: CourseService,
+    protected fb: FormBuilder
   ) {}
 
   protected ngOnInit(): void {
@@ -117,9 +124,39 @@ export class BaseNotificationDashboardComponent {
     this.loading$ = this.notifications$.pipe(
       map((notifications) => (notifications === null ? true : false))
     );
+
+    //for all the notifications that are returned, we create a formcontrol for each one
+    this.notifications$.subscribe((notifications) => {
+      if (notifications) {
+        notifications.forEach((notification) => {
+          if (!this.checkBoxesGroup.contains(notification._id)) {
+            const control = new FormControl(false);
+            control.valueChanges.subscribe((val) => {
+              console.log('Notification with title: ' + notification._id);
+              console.log(val.valueOf());
+            });
+            this.checkBoxesGroup.addControl(notification._id, control);
+          }
+        });
+      }
+    });
+
+    //making a new form control for the masterCheckbox
+    this.masterCheckBox.valueChanges.subscribe((val) => {
+      console.log('susbscriber running! master changed');
+      console.log(val);
+      const controls = this.checkBoxesGroup.controls;
+      console.log(controls);
+      Object.keys(controls).forEach((controlName) => {
+        console.log(controlName);
+        const control = controls[controlName];
+        control.setValue(val, { emitEvent: false });
+      });
+    });
   }
 
   protected onTabSwitched(selectedItem: MenuItem) {
+    this.removeAllCheckBoxControls();
     this.activeItem = selectedItem;
     console.log(selectedItem);
     if (selectedItem.label === 'All') {
@@ -145,6 +182,11 @@ export class BaseNotificationDashboardComponent {
         })
       );
     }
+  }
+  removeAllCheckBoxControls() {
+    //this method removes all the controls that are present in the formgroup
+    this.checkBoxesGroup.reset();
+    this.masterCheckBox.reset();
   }
 
   protected onNotificationClicked(notification: Notification) {

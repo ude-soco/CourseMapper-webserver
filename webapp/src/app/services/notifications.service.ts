@@ -92,6 +92,7 @@ export class NotificationsService {
       ...((extensions.material_id || material_id) && {
         material_id,
       }),
+      _id: notification._id,
     };
   }
 

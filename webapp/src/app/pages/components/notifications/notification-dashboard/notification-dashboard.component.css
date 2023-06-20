@@ -23,3 +23,12 @@
   background: rgb(205 78 12);
 }
  */
+
+ .test{
+  display: flex;
+  padding-left: 1rem
+ }
+
+ .test:hover{
+  background-color: whitesmoke;
+ }

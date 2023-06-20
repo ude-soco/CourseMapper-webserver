@@ -15,6 +15,7 @@ import {
   NotificationCategory,
 } from 'src/app/models/Notification';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'app-all-notifications',
@@ -22,7 +23,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
   styleUrls: ['./all-notifications.component.css'],
 })
 export class AllNotificationsComponent extends BaseNotificationDashboardComponent {
-  courses = ['Angular', 'React', 'Vue', 'Node'];
+  /*   courses = ['Angular', 'React', 'Vue', 'Node'];
   selectedCourses = ['Angular', 'React'];
   numberOptions = [5, 10, 15, 20];
   selectedNumber = 5;
@@ -56,9 +57,9 @@ export class AllNotificationsComponent extends BaseNotificationDashboardComponen
       value: NotificationCategory.Annotations,
     },
   ];
-
+ */
   //obsevable streams
-  courseUpdatesNotifications$ = this.store.select(
+  /*   courseUpdatesNotifications$ = this.store.select(
     getCourseUpdatesNotifications
   );
   commentsAndMentionedNotifications$ = this.store.select(
@@ -69,24 +70,25 @@ export class AllNotificationsComponent extends BaseNotificationDashboardComponen
   isCommentsAndMentionedNotificationsVisible$ = new BehaviorSubject<boolean>(
     true
   );
-  isAnnotationsNotificationsVisible$ = new BehaviorSubject<boolean>(true);
+  isAnnotationsNotificationsVisible$ = new BehaviorSubject<boolean>(true); */
 
   constructor(
     protected override store: Store<State>,
     protected override router: Router,
     protected override courseService: CourseService,
+    protected override fb: FormBuilder,
     private httpClient: HttpClient
   ) {
-    super(store, router, courseService); // Invoke the superclass constructor
+    super(store, router, courseService, fb); // Invoke the superclass constructor
   }
 
   override ngOnInit(): void {
-    this.httpClient.get('assets/data.json').subscribe((data) => {
+    /*     this.httpClient.get('assets/data.json').subscribe((data) => {
       console.log(data);
-    });
+    }); */
   }
 
-  onFiltersModified($event: any) {
+  /*   onFiltersModified($event: any) {
     console.log($event);
     this.categories.forEach((category) => {
       const found = $event.value.find(
@@ -114,5 +116,5 @@ export class AllNotificationsComponent extends BaseNotificationDashboardComponen
         }
       }
     });
-  }
+  } */
 }

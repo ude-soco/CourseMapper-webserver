@@ -1,4 +1,5 @@
 export interface UserNotification {
+  _id: string;
   activityId: {
     notificationInfo: {
       category: any;
@@ -75,6 +76,7 @@ export interface LiveNotification {
 }
 
 export interface Notification {
+  _id: string;
   userShortname: string;
   courseName: string;
   username: string;

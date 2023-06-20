@@ -21,7 +21,7 @@
   </ng-template>
 </div>
  -->
-<div class="p-4 pt-0">
+<div>
   <ng-container *ngIf="loading$ | async; else notificationsArrived">
     Loading....
   </ng-container>
@@ -31,6 +31,12 @@
       <ng-container *ngIf="notifications.length > 0; else noNotifications">
         <div class="flex flex-row justify-between m-4">
           <div>
+            <p-checkbox
+              [formControl]="masterCheckBox"
+              class="mr-4"
+              [binary]="true"
+              checked
+            ></p-checkbox>
             <app-switch-input
               [isUnreadChecked]="isUnreadChecked"
             ></app-switch-input>
@@ -42,17 +48,20 @@
             >See all</span
           >
         </div>
-        <app-notification-box
-          *ngFor="let notification of notifications"
-          [notification]="notification"
-          (click)="onNotificationClicked(notification)"
-        ></app-notification-box>
-        <div
-          routerLink="notification/all"
-          class="text-center text-xl text-sky-700 cursor-pointer mt-4;"
-        >
-          View All
-        </div>
+        <ng-container [formGroup]="checkBoxesGroup">
+          <div class="test" *ngFor="let notification of notifications">
+            <p-checkbox
+              name="selectedNotificationGroup"
+              [value]="notification"
+              [formControlName]="notification._id"
+              [binary]="true"
+            ></p-checkbox>
+            <app-notification-box
+              [notification]="notification"
+              (click)="onNotificationClicked(notification)"
+            ></app-notification-box>
+          </div>
+        </ng-container>
       </ng-container>
 
       <ng-template #noNotifications> No notifications present </ng-template>
