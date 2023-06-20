@@ -49,18 +49,20 @@
           >
         </div>
         <ng-container [formGroup]="checkBoxesGroup">
-          <div class="test" *ngFor="let notification of notifications">
-            <p-checkbox
-              name="selectedNotificationGroup"
-              [value]="notification"
-              [formControlName]="notification._id"
-              [binary]="true"
-            ></p-checkbox>
-            <app-notification-box
-              [notification]="notification"
-              (click)="onNotificationClicked(notification)"
-            ></app-notification-box>
-          </div>
+          <ng-container *ngFor="let notification of notifications">
+            <div class="notification">
+              <p-checkbox
+                name="selectedNotificationGroup"
+                [value]="notification"
+                [formControlName]="notification._id"
+                [binary]="true"
+              ></p-checkbox>
+              <app-notification-box
+                [notification]="notification"
+                (click)="onNotificationClicked(notification)"
+              ></app-notification-box>
+            </div>
+          </ng-container>
         </ng-container>
       </ng-container>
 
