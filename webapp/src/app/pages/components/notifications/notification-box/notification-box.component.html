@@ -16,15 +16,34 @@
         shape="circle"
       ></p-avatar>
       <div class="notification-message-container">
-        <span class="userName"> {{ notification.username }} </span>
+        <span
+          [ngClass]="{
+            'userName-unread': !notification.isRead,
+            'userName-read': notification.isRead
+          }"
+        >
+          {{ notification.username }}
+        </span>
 
         <span class="action">{{ notification.action }}</span>
 
         <span class="action-object"> {{ notification.object }} </span>
 
-        <span class="msg-location">{{ notification.name }} </span>
+        <span
+          [ngClass]="{
+            'msg-location-unread': !notification.isRead,
+            'msg-location-read': notification.isRead
+          }"
+          >{{ notification.name }}
+        </span>
         <span class="in">in</span>
-        <span class="msg-location">{{ notification.courseName }}</span>
+        <span
+          [ngClass]="{
+            'msg-location-unread': !notification.isRead,
+            'msg-location-read': notification.isRead
+          }"
+          >{{ notification.courseName }}</span
+        >
         <div class="time">{{ notification.timestamp | customDate }}</div>
       </div>
       <!-- TODO Insert date below -->
@@ -32,6 +51,9 @@
     <p-button
       icon="pi pi-ellipsis-h"
       styleClass="p-button-rounded p-button-text"
+      [ngClass]="{
+        'p-button-unread': !notification.isRead
+      }"
       (click)="menu.toggle($event)"
       #navSettingsButton
     ></p-button>

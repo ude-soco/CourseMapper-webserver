@@ -39,7 +39,7 @@
             }
         },
         "userId": "6476674f1296a965aa631d16",
-        "isStar": false,
+        "isStar": true,
         "isRead": false,
         "__v": 0
     },
@@ -83,7 +83,7 @@
             }
         },
         "userId": "6476674f1296a965aa631d16",
-        "isStar": false,
+        "isStar": true,
         "isRead": false,
         "__v": 0
     },
@@ -127,7 +127,7 @@
             }
         },
         "userId": "6476674f1296a965aa631d16",
-        "isStar": false,
+        "isStar": true,
         "isRead": false,
         "__v": 0
     },
@@ -171,7 +171,7 @@
             }
         },
         "userId": "6476674f1296a965aa631d16",
-        "isStar": false,
+        "isStar": true,
         "isRead": false,
         "__v": 0
     },
@@ -215,7 +215,7 @@
             }
         },
         "userId": "6476674f1296a965aa631d16",
-        "isStar": false,
+        "isStar": true,
         "isRead": false,
         "__v": 0
     },
@@ -259,7 +259,7 @@
             }
         },
         "userId": "6476674f1296a965aa631d16",
-        "isStar": false,
+        "isStar": true,
         "isRead": false,
         "__v": 0
     },
@@ -303,7 +303,7 @@
             }
         },
         "userId": "6476674f1296a965aa631d16",
-        "isStar": false,
+        "isStar": true,
         "isRead": false,
         "__v": 0
     },
@@ -344,8 +344,8 @@
             }
         },
         "userId": "6476674f1296a965aa631d16",
-        "isStar": false,
-        "isRead": false,
+        "isStar": true,
+        "isRead": true,
         "__v": 0
     },
     {
@@ -386,7 +386,7 @@
         },
         "userId": "6476674f1296a965aa631d16",
         "isStar": false,
-        "isRead": false,
+        "isRead": true,
         "__v": 0
     },
     {
@@ -427,7 +427,7 @@
         },
         "userId": "6476674f1296a965aa631d16",
         "isStar": false,
-        "isRead": false,
+        "isRead": true,
         "__v": 0
     },
     {

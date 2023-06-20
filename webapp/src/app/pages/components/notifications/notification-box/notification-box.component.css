@@ -19,17 +19,23 @@
 
   }
 
-  .userName {
+  .userName-unread{
     font-weight: bold;
+  }
+  .userName-read, .userName-unread{
     margin: 0 1px;
     margin-right: 4px;
   }
 
-  .msg-location {
+  .msg-location-unread{
     font-weight: bold;
+  }
+
+  .msg-location-read, .msg-location-unread{
     margin: 0 1px;
     margin-left: 2px;
   }
+
   .in {
     margin-left: 3px;
     margin-right: 2px;
@@ -124,3 +130,13 @@
   .star-icon:hover {
     color: #ea580c; /* Set the filled color when hovered */
   }
+
+/*   .p-button-unread::before{
+    content: '';
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background-color: blue;
+    border-radius: 50%;
+    margin-right: 5px;
+  } */

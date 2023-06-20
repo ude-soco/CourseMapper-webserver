@@ -86,6 +86,7 @@ export class AllNotificationsComponent extends BaseNotificationDashboardComponen
     /*     this.httpClient.get('assets/data.json').subscribe((data) => {
       console.log(data);
     }); */
+    super.ngOnInit();
   }
 
   /*   onFiltersModified($event: any) {

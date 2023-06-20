@@ -50,7 +50,12 @@
         </div>
         <ng-container [formGroup]="checkBoxesGroup">
           <ng-container *ngFor="let notification of notifications">
-            <div class="notification">
+            <div
+              [ngClass]="{
+                'notification-read': notification.isRead,
+                'notification-unread': !notification.isRead
+              }"
+            >
               <p-checkbox
                 name="selectedNotificationGroup"
                 [value]="notification"
