@@ -227,7 +227,10 @@ export class BaseNotificationDashboardComponent {
         this.router.navigate(['/course', notification.course_id]);
       }
     }
-    if (notification.category === NotificationCategory.Annotations) {
+    if (
+      notification.category === NotificationCategory.Annotations ||
+      notification.category === NotificationCategory.CommentsAndMentioned
+    ) {
       console.log('its an annotation notification');
       this.courseService.Notification = notification;
       this.courseService.navigatingToMaterial = true;

@@ -6,6 +6,7 @@ const Tag = db.tag;
 const User = db.user;
 const Role = db.role;
 const Course = db.course;
+const Material = db.material;
 
 /**
  * @function getReplies
@@ -93,6 +94,13 @@ export const newReply = async (req, res, next) => {
     return res.status(500).send({ error: "Error finding annotation" });
   }
 
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(foundAnnotation.materialId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
   let foundUser;
   try {
     foundUser = await User.findById(req.userId);
@@ -168,6 +176,7 @@ export const newReply = async (req, res, next) => {
     user: user,
     category: "mentionedandreplied",
     course,
+    materialType: foundMaterial.type,
   };
   socketio.getIO().emit(annotationId, {
     eventType: "replyCreated",
@@ -244,6 +253,12 @@ export const deleteReply = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: "Error finding annotation" });
   }
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(foundAnnotation.materialId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
   foundAnnotation.replies = foundAnnotation.replies.filter(
     (reply) => reply.valueOf() !== replyId
   );
@@ -258,6 +273,7 @@ export const deleteReply = async (req, res, next) => {
     category: "mentionedandreplied",
     course,
     reply: foundReply,
+    materialType: foundMaterial.type,
   };
   socketio.getIO().emit(foundAnnotation._id, {
     eventType: "replyDeleted",
@@ -364,11 +380,18 @@ export const editReply = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: "Error finding annotation" });
   }
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(foundAnnotation.materialId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
   req.locals.response = { success: "Reply successfully updated" };
   req.locals.newReply = foundReply;
   req.locals.user = user;
   req.locals.category = "mentionedandreplied";
   req.locals.course = course;
+  req.locals.materialType = foundMaterial.type;
   socketio.getIO().emit(foundAnnotation._id, {
     eventType: "replyEdited",
     annotation: foundAnnotation,
@@ -426,11 +449,25 @@ export const likeReply = async (req, res, next) => {
     return res.status(500).send({ error: "Error finding reply" });
   }
 
+  let foundAnnotation;
+  try {
+    foundAnnotation = await Annotation.findById(foundReply.annotationId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding annotation" });
+  }
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(foundAnnotation.materialId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
   req.locals = {
     reply: foundReply,
     user: user,
     course: course,
     category: "mentionedandreplied",
+    materialType: foundMaterial.type,
   };
 
   if (foundReply.likes.includes(req.userId)) {
@@ -538,11 +575,25 @@ export const dislikeReply = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: "Error finding reply" });
   }
+
+  let foundAnnotation;
+  try {
+    foundAnnotation = await Annotation.findById(foundReply.annotationId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding annotation" });
+  }
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(foundAnnotation.materialId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
   req.locals = {
     user: user,
     reply: foundReply,
     course: course,
     category: "mentionedandreplied",
+    materialType: foundMaterial.type,
   };
   if (foundReply.dislikes.includes(req.userId)) {
     foundReply.dislikes = foundReply.dislikes.filter(
