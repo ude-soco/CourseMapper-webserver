@@ -153,6 +153,9 @@ export class BaseNotificationDashboardComponent {
         control.setValue(val, { emitEvent: false });
       });
     });
+
+    //everytime the tab is opened, we want to show the all notifications tab
+    this.onTabSwitched(this.tabOptions[0]);
   }
 
   protected onTabSwitched(selectedItem: MenuItem) {
@@ -246,5 +249,9 @@ export class BaseNotificationDashboardComponent {
           `/${notification.materialType})`
       );
     }
+  }
+
+  protected onNotificationDashboardClosed() {
+    console.log('closing the notification dashboard!');
   }
 }

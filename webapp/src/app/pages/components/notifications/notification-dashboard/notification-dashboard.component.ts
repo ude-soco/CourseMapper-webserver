@@ -49,6 +49,10 @@ export class NotificationDashboardComponent extends BaseNotificationDashboardCom
     super.ngOnInit();
   }
 
+  ngOnDestroy(): void {
+    console.log('ngOnDestroyCalled');
+  }
+
   /*   tabOptions: MenuItem[];
   menuOptions: MenuItem[];
   private tabSwitchBehaviour: BehaviorSubject<{ category: string }> =
