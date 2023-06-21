@@ -53,3 +53,58 @@ export const deleteAllNotifications = async (req, res, next) => {
 
   return res.status(200).send({ message: "Notifications deleted" });
 };
+
+export const markNotificationsAsRead = async (req, res, next) => {
+  console.log("endpoint: markNotificationsAsRead");
+  //request body contains an array of strings of the notification ids
+  const notificationIds = req.body.notificationIds;
+  console.log("notificationIds: ", notificationIds);
+  console.log(req.body);
+
+  try {
+    //User notifications with the id's in the variable notificationIds are updated to have the isRead field set to true
+    await UserNotification.updateMany(
+      { _id: { $in: notificationIds } },
+      { isRead: true }
+    );
+  } catch (error) {
+    return res
+      .status(500)
+      .send({ error: "Error updating notifications", error });
+  }
+
+  return res.status(200).send({ message: "Notifications marked as read!" });
+};
+
+export const markNotificationsAsUnread = async (req, res, next) => {
+  console.log("endpoint: markNotificationsAsUnread");
+  //request body contains an array of strings of the notification ids
+  const notificationIds = req.body.notificationIds;
+
+  try {
+    //User notifications with the id's in the variable notificationIds are updated to have the isRead field set to true
+    await UserNotification.updateMany(
+      { _id: { $in: notificationIds } },
+      { isRead: false }
+    );
+  } catch (error) {
+    return res
+      .status(500)
+      .send({ error: "Error updating notifications", error });
+  }
+
+  return res.status(200).send({ message: "Notification/s marked as unread!" });
+};
+
+//the below function deletes the rows from the userNotifications table
+export const removeNotification = async (req, res, next) => {
+  const notificationIds = req.body.notificationIds;
+
+  try {
+    await UserNotification.deleteMany({ _id: { $in: notificationIds } });
+  } catch (error) {
+    return res
+      .status(500)
+      .send({ error: "Error deleting notifications", error });
+  }
+};

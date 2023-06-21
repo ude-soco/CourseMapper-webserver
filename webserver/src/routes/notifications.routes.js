@@ -14,5 +14,18 @@ module.exports = function (app) {
     controller.getAllNotifications
   );
 
+  //end point for marking the notifications as read. It should not generate a notification itself
+  app.put(
+    "/api/notifications/read",
+    [authJwt.verifyToken],
+    controller.markNotificationsAsRead
+  );
+  //end point for marking the notifications as unread. It should not generate a notification itself
+  app.put(
+    "/api/notifications/unread",
+    [authJwt.verifyToken],
+    controller.markNotificationsAsUnread
+  );
+
   app.delete("/api/notifications", controller.deleteAllNotifications);
 };

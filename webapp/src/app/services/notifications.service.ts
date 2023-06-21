@@ -32,8 +32,8 @@ export class NotificationsService {
     console.log('In Service: Fetching notifications');
     return (
       this.httpClient
-        .get<UserNotification[]>('assets/data.json')
-        /* .get<UserNotification[]>(`${environment.API_URL}/notifications`) */
+        /* .get<UserNotification[]>('assets/data.json') */
+        .get<UserNotification[]>(`${environment.API_URL}/notifications`)
         .pipe(
           tap((notifications) => console.log(notifications)),
           map((notifications) => {
