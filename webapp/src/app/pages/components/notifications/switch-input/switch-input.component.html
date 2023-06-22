@@ -1,1 +1,4 @@
-<p-inputSwitch [(ngModel)]="isUnreadChecked"></p-inputSwitch>
+<p-inputSwitch
+  (onChange)="onSwitchToggle($event)"
+  [(ngModel)]="isChecked"
+></p-inputSwitch>

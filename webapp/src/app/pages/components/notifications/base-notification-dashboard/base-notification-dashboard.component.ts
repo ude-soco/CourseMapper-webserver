@@ -63,6 +63,10 @@ export class BaseNotificationDashboardComponent {
   protected activeItem: MenuItem;
   protected checkBoxesGroup = this.fb.group({});
   protected masterCheckBox = new FormControl(false);
+  protected unreadSwitchBehaviourSubject = new BehaviorSubject<boolean>(false);
+  protected unreadSwitch$ = this.unreadSwitchBehaviourSubject.asObservable();
+  protected filteredNotifications$: Observable<Notification[]>;
+
   constructor(
     protected store: Store<State>,
     protected router: Router,
@@ -111,7 +115,8 @@ export class BaseNotificationDashboardComponent {
         },
       },
     ];
-    this.notifications$ = this.store.select(getFilteredNotifications);
+    /* this.notifications$ = this.store.select(getFilteredNotifications); */
+    this.filteredNotifications$ = this.store.select(getFilteredNotifications);
     this.allNotificationsNumUnread$.subscribe((num) => {
       this.tabOptions[0].badge = num.toString();
       let tempTabOptions = [...this.tabOptions];
@@ -127,6 +132,30 @@ export class BaseNotificationDashboardComponent {
     this.annotationsNumUnread$.subscribe((num) => {
       this.tabOptions[3].badge = num.toString();
     });
+
+    this.notifications$ = combineLatest([
+      this.filteredNotifications$,
+      this.unreadSwitch$,
+    ]).pipe(
+      map(([notifications, unreadSwitch]) => {
+        if (notifications) {
+          if (unreadSwitch) {
+            return notifications.filter((notification) => {
+              return notification.isRead === false;
+            });
+          } else {
+            return notifications;
+          }
+        } else {
+          return [];
+        }
+      }),
+      tap((notifications) => {
+        console.log('in the tap opeerator');
+        console.log(notifications);
+      })
+    );
+
     this.loading$ = this.notifications$.pipe(
       map((notifications) => (notifications === null ? true : false))
     );
@@ -323,5 +352,12 @@ export class BaseNotificationDashboardComponent {
         notifications: selectedNotifications,
       })
     );
+  }
+
+  protected unreadSwitchToggled($event) {
+    console.log('unread switch toggled');
+    console.log($event);
+    this.isUnreadChecked = $event;
+    this.unreadSwitchBehaviourSubject.next($event);
   }
 }

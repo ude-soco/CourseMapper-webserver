@@ -134,7 +134,8 @@
               checked
             ></p-checkbox>
             <app-switch-input
-              [isUnreadChecked]="isUnreadChecked"
+              [isChecked]="isUnreadChecked"
+              (onSwitchToggled)="unreadSwitchToggled($event)"
             ></app-switch-input>
             <span class="ml-4">Unread only</span>
           </div>

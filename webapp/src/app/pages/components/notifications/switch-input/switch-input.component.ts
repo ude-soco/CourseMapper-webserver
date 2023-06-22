@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-switch-input',
@@ -6,5 +6,10 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./switch-input.component.css'],
 })
 export class SwitchInputComponent {
-  @Input() isUnreadChecked: boolean;
+  @Input() isChecked: boolean;
+  @Output() onSwitchToggled = new EventEmitter<boolean>();
+
+  onSwitchToggle($event): void {
+    this.onSwitchToggled.emit($event.checked);
+  }
 }
