@@ -90,10 +90,17 @@ export class BaseNotificationDashboardComponent {
         },
       },
       {
+        label: 'Mark all as unread',
+        icon: 'pi pi-envelope',
+        command: ($event) => {
+          this.markSelectedAsUnread($event);
+        },
+      },
+      {
         label: 'Remove all',
         icon: 'pi pi-times',
-        command: () => {
-          console.log('Delete clicked');
+        command: ($event) => {
+          this.removeSelected($event);
         },
       },
       {
@@ -194,6 +201,11 @@ export class BaseNotificationDashboardComponent {
   protected onNotificationClicked(notification: Notification) {
     console.log(notification);
     console.log('navigate to the notification');
+    this.store.dispatch(
+      NotificationActions.notificationsMarkedAsRead({
+        notifications: [notification._id],
+      })
+    );
     /* this.notificationService.previousURL = this.router.url; */
 
     if (notification.category === NotificationCategory.CourseUpdate) {
@@ -271,6 +283,43 @@ export class BaseNotificationDashboardComponent {
     }); */
     this.store.dispatch(
       NotificationActions.notificationsMarkedAsRead({
+        notifications: selectedNotifications,
+      })
+    );
+  }
+
+  protected markSelectedAsUnread($event) {
+    $event.originalEvent.stopPropagation();
+    console.log('marking selected as unread');
+    console.log(this.checkBoxesGroup.value);
+    let selectedNotifications = [];
+    Object.keys(this.checkBoxesGroup.value).forEach((key) => {
+      if (this.checkBoxesGroup.value[key]) {
+        selectedNotifications.push(key);
+      }
+    });
+
+    console.log(selectedNotifications);
+    this.store.dispatch(
+      NotificationActions.notificationsMarkedAsUnread({
+        notifications: selectedNotifications,
+      })
+    );
+  }
+
+  protected removeSelected($event) {
+    $event.originalEvent.stopPropagation();
+    console.log('removing selected notifications');
+    console.log(this.checkBoxesGroup.value);
+    let selectedNotifications = [];
+    Object.keys(this.checkBoxesGroup.value).forEach((key) => {
+      if (this.checkBoxesGroup.value[key]) {
+        selectedNotifications.push(key);
+      }
+    });
+    console.log(selectedNotifications);
+    this.store.dispatch(
+      NotificationActions.notificationsRemoved({
         notifications: selectedNotifications,
       })
     );

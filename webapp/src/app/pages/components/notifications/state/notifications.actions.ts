@@ -29,17 +29,38 @@ export const notificationsMarkedAsRead = createAction(
 );
 
 export const notificationsMarkedAsReadSuccess = createAction(
-  '[Notification] Notifications Marked As Read Success',
-  props<{ notifications: Notification[] }>()
+  '[Notification] Notifications Marked As Read Success'
 );
 
 export const notificationsMarkedAsReadFailure = createAction(
   '[Notification] Notifications Marked As Read Failure',
-  props<{ error: any; notifications: Notification[] }>()
+  props<{ error: any; notifications: string[] }>()
 );
 
-/* export const navigateToNotificationContextThroughCourseComponent = createAction(
-  '[Notification] Navigate To Notification Context Through Course Component',
-  props<{ notification: Notification }>()
+export const notificationsMarkedAsUnread = createAction(
+  '[Notification] Notifications Marked As Unread',
+  props<{ notifications: string[] }>()
 );
- */
+
+export const notificationsMarkedAsUnreadSuccess = createAction(
+  '[Notification] Notifications Marked As Unread Success'
+);
+
+export const notificationsMarkedAsUnreadFailure = createAction(
+  '[Notification] Notifications Marked As Unread Failure',
+  props<{ error: any; notifications: string[] }>()
+);
+
+export const notificationsRemoved = createAction(
+  '[Notification] Notifications Removed',
+  props<{ notifications: string[] }>()
+);
+
+export const notificationsRemovedSuccess = createAction(
+  '[Notification] Notifications Removed Success'
+);
+
+export const notificationsRemovedFailure = createAction(
+  '[Notification] Notifications Removed Failure',
+  props<{ error: any; notifications: string[] }>()
+);
