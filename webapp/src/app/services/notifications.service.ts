@@ -44,6 +44,46 @@ export class NotificationsService {
     );
   }
 
+  public initialiseSocketConnection() {
+    console.log('initialising socket connection');
+    const user = this.storageService.getUser();
+    console.log(user);
+    this.socket.on(user.id, (data: UserNotification[]) => {
+      console.log('received notification');
+      console.log(data);
+      const notification = data.map(this.transformNotification);
+      console.log('mapped notifications');
+      console.log(notification);
+      notification.forEach((notification) => {
+        console.log('dispatching notification');
+
+        this.store.dispatch(
+          NotificationActions.newNotificationArrived({ notification })
+        );
+      });
+
+      //TODO: Dispatch an action to add the notifications to the store.
+    });
+  }
+
+  markNotificationAsRead(notification: string[]) {
+    console.log('In Service: Marking notification as read');
+    console.log(notification);
+    return this.httpClient.put<{ message: string }>(
+      `${environment.API_URL}/notifications/read`,
+      { notificationIds: notification }
+    );
+  }
+
+  markNotificationAsUnread(notification: string[]) {
+    console.log('In Service: Marking notification as unread');
+    console.log(notification);
+    return this.httpClient.put<{ message: string }>(
+      `${environment.API_URL}/notifications/unread`,
+      { notificationIds: notification }
+    );
+  }
+
   private transformNotification(notification: UserNotification): Notification {
     const lastWord =
       notification.activityId.statement.object.definition.type.slice(40);
@@ -94,27 +134,5 @@ export class NotificationsService {
       }),
       _id: notification._id,
     };
-  }
-
-  public initialiseSocketConnection() {
-    console.log('initialising socket connection');
-    const user = this.storageService.getUser();
-    console.log(user);
-    this.socket.on(user.id, (data: UserNotification[]) => {
-      console.log('received notification');
-      console.log(data);
-      const notification = data.map(this.transformNotification);
-      console.log('mapped notifications');
-      console.log(notification);
-      notification.forEach((notification) => {
-        console.log('dispatching notification');
-
-        this.store.dispatch(
-          NotificationActions.newNotificationArrived({ notification })
-        );
-      });
-
-      //TODO: Dispatch an action to add the notifications to the store.
-    });
   }
 }

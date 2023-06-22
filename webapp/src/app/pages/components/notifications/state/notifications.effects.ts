@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { map, tap } from 'rxjs';
+import { catchError, map, of, tap } from 'rxjs';
 import { Observable, mergeMap } from 'rxjs';
 import { NotificationsService } from 'src/app/services/notifications.service';
 import * as NotificationActions from './notifications.actions';
@@ -17,7 +17,7 @@ export class NotificationEffects {
   getNotifications$ = createEffect(
     (): Observable<Action> =>
       this.actions$.pipe(
-        ofType('[Notification] Load Notifications'),
+        ofType(NotificationActions.loadNotifications),
         tap(() => console.log('In Effect: Fetching notifications')),
         mergeMap(() =>
           this.notificationService
@@ -26,6 +26,59 @@ export class NotificationEffects {
               map((notifications: any) =>
                 NotificationActions.loadNotificationsSuccess({ notifications })
               )
+            )
+        )
+      )
+  );
+
+  //make effect for marking a notification as read
+  markNotificationAsRead$ = createEffect(
+    (): Observable<Action> =>
+      this.actions$.pipe(
+        ofType(NotificationActions.notificationsMarkedAsRead),
+        tap(() => console.log('In Effect: Marking notification as read')),
+        mergeMap((action) =>
+          this.notificationService
+            .markNotificationAsRead(action.notifications)
+            .pipe(
+              map((successMsg: { message: string }) =>
+                NotificationActions.notificationsMarkedAsReadSuccess()
+              ),
+              catchError((error) => {
+                console.log(error);
+                return of(
+                  NotificationActions.notificationsMarkedAsReadFailure({
+                    error,
+                    notifications: action.notifications,
+                  })
+                );
+              })
+            )
+        )
+      )
+  );
+
+  markNotificationAsUnread$ = createEffect(
+    (): Observable<Action> =>
+      this.actions$.pipe(
+        ofType(NotificationActions.notificationsMarkedAsUnread),
+        tap(() => console.log('In Effect: Marking notification as unread')),
+        mergeMap((action) =>
+          this.notificationService
+            .markNotificationAsUnread(action.notifications)
+            .pipe(
+              map((successMsg: { message: string }) =>
+                NotificationActions.notificationsMarkedAsUnreadSuccess()
+              ),
+              catchError((error) => {
+                console.log(error);
+                return of(
+                  NotificationActions.notificationsMarkedAsUnreadFailure({
+                    error,
+                    notifications: action.notifications,
+                  })
+                );
+              })
             )
         )
       )

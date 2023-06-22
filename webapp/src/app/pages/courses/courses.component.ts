@@ -57,19 +57,8 @@ export class CoursesComponent implements OnInit {
         console.log('running the courses component callback!');
         if (courseService.navigatingToMaterial) {
           console.log('navigating to video');
-          let notification = { ...courseService.Notification };
           courseService.navigatingToMaterial = false;
           courseService.Notification = null;
-          /*           this.router.navigateByUrl(
-            '/course/' +
-              notification.course_id +
-              '/channel/' +
-              notification.channel_id +
-              '/material/' +
-              '(material:' +
-              notification.material_id +
-              '/video)'
-          ); */
           this.reloadCurrentRoute();
         }
       }
@@ -203,8 +192,6 @@ this.Users = [];
   }
 
   reloadCurrentRoute() {
-    console.log('reloading the current route');
-    console.log(this.router.url);
     let currentUrl = this.router.url;
     this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
       this.router.navigateByUrl(currentUrl);

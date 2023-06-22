@@ -182,6 +182,24 @@ export const notificationReducer = createReducer<NotificationState>(
       }),
     };
   }),
+  on(NotificationActions.notificationsMarkedAsReadSuccess, (state, action) => {
+    return { ...state };
+  }),
+  on(
+    NotificationActions.notificationsMarkedAsReadFailure,
+    (state, { notifications }) => {
+      return {
+        ...state,
+        notifications: state.notifications.map((notification) => {
+          if (notifications.some((n) => n == notification._id)) {
+            return { ...notification, isRead: false };
+          }
+          return notification;
+        }),
+      };
+    }
+  ),
+
   on(NotificationActions.notificationsMarkedAsUnread, (state, action) => {
     return {
       ...state,
@@ -193,6 +211,28 @@ export const notificationReducer = createReducer<NotificationState>(
       }),
     };
   }),
+
+  on(
+    NotificationActions.notificationsMarkedAsUnreadSuccess,
+    (state, action) => {
+      return { ...state };
+    }
+  ),
+
+  on(
+    NotificationActions.notificationsMarkedAsUnreadFailure,
+    (state, action) => {
+      return {
+        ...state,
+        notifications: state.notifications.map((notification) => {
+          if (action.notifications.some((n) => n == notification._id)) {
+            return { ...notification, isRead: true };
+          }
+          return notification;
+        }),
+      };
+    }
+  ),
 
   on(NotificationActions.notificationsRemoved, (state, action) => {
     return {
