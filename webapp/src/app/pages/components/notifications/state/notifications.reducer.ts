@@ -170,15 +170,16 @@ export const notificationReducer = createReducer<NotificationState>(
       ...state,
       notifications: [action.notification, ...state.notifications],
     };
-  }) /* ,
-  on(
-    NotificationActions.navigateToNotificationContextThroughCourseComponent,
-    (state, action) => {
-      return {
-        ...state,
-        isNavigatingToNotificationContextThroughCourseComponent: true,
-        notificationToNavigateTo: action.notification,
-      };
-    }
-  ) */
+  }),
+  on(NotificationActions.notificationsMarkedAsRead, (state, action) => {
+    return {
+      ...state,
+      notifications: state.notifications.map((notification) => {
+        if (action.notifications.some((n) => n == notification._id)) {
+          return { ...notification, isRead: true };
+        }
+        return notification;
+      }),
+    };
+  })
 );

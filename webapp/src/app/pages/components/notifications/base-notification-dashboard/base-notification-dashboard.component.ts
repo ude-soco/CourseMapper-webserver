@@ -61,7 +61,6 @@ export class BaseNotificationDashboardComponent {
   protected loading$: Observable<boolean>;
   protected isUnreadChecked = false;
   protected activeItem: MenuItem;
-  protected selectedNotifications: Notification[] = [];
   protected checkBoxesGroup = this.fb.group({});
   protected masterCheckBox = new FormControl(false);
   constructor(
@@ -86,8 +85,8 @@ export class BaseNotificationDashboardComponent {
       {
         label: 'Mark all as read',
         icon: 'pi pi-check',
-        command: () => {
-          console.log('Mark all as read clicked');
+        command: ($event) => {
+          this.markSelectedAsRead($event);
         },
       },
       {
@@ -253,5 +252,27 @@ export class BaseNotificationDashboardComponent {
 
   protected onNotificationDashboardClosed() {
     console.log('closing the notification dashboard!');
+  }
+
+  protected markSelectedAsRead($event) {
+    $event.originalEvent.stopPropagation();
+    console.log('marking selected as read');
+    console.log(this.checkBoxesGroup.value);
+    let selectedNotifications = [];
+    Object.keys(this.checkBoxesGroup.value).forEach((key) => {
+      if (this.checkBoxesGroup.value[key]) {
+        selectedNotifications.push(key);
+      }
+    });
+
+    console.log(selectedNotifications);
+    /* NotificationActions.notificationsMarkedAsRead({
+      notifications: selectedNotifications,
+    }); */
+    this.store.dispatch(
+      NotificationActions.notificationsMarkedAsRead({
+        notifications: selectedNotifications,
+      })
+    );
   }
 }

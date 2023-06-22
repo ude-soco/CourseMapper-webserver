@@ -23,6 +23,21 @@ export const newNotificationArrived = createAction(
   props<{ notification: Notification }>()
 );
 
+export const notificationsMarkedAsRead = createAction(
+  '[Notification] Notifications Marked As Read',
+  props<{ notifications: string[] }>()
+);
+
+export const notificationsMarkedAsReadSuccess = createAction(
+  '[Notification] Notifications Marked As Read Success',
+  props<{ notifications: Notification[] }>()
+);
+
+export const notificationsMarkedAsReadFailure = createAction(
+  '[Notification] Notifications Marked As Read Failure',
+  props<{ error: any; notifications: Notification[] }>()
+);
+
 /* export const navigateToNotificationContextThroughCourseComponent = createAction(
   '[Notification] Navigate To Notification Context Through Course Component',
   props<{ notification: Notification }>()
