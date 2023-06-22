@@ -83,21 +83,21 @@ export class BaseNotificationDashboardComponent {
 
     this.menuOptions = [
       {
-        label: 'Mark all as read',
+        label: 'Mark selected as read',
         icon: 'pi pi-check',
         command: ($event) => {
           this.markSelectedAsRead($event);
         },
       },
       {
-        label: 'Mark all as unread',
+        label: 'Mark selected as unread',
         icon: 'pi pi-envelope',
         command: ($event) => {
           this.markSelectedAsUnread($event);
         },
       },
       {
-        label: 'Remove all',
+        label: 'Delete selected notifications',
         icon: 'pi pi-times',
         command: ($event) => {
           this.removeSelected($event);
@@ -199,8 +199,8 @@ export class BaseNotificationDashboardComponent {
   }
 
   protected onNotificationClicked(notification: Notification) {
+    console.log('Notification clicked!');
     console.log(notification);
-    console.log('navigate to the notification');
     this.store.dispatch(
       NotificationActions.notificationsMarkedAsRead({
         notifications: [notification._id],

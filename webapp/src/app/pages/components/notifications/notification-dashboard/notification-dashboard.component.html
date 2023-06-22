@@ -64,8 +64,9 @@
               ></p-checkbox>
               <app-notification-box
                 [notification]="notification"
-                (click)="onNotificationClicked(notification)"
+                (notificationClicked)="onNotificationClicked(notification)"
               ></app-notification-box>
+              <!-- (click)="onNotificationClicked($event, notification)" -->
             </div>
           </ng-container>
         </ng-container>

@@ -1,8 +1,12 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Observable } from 'rxjs';
 import { NotificationsService } from 'src/app/services/notifications.service';
 import { Notification } from 'src/app/models/Notification';
 import { MenuItem } from 'primeng/api';
+import { Store } from '@ngrx/store';
+import { State } from '../state/notifications.reducer';
+import * as NotificationActions from '../state/notifications.actions';
+
 @Component({
   selector: 'app-notification-box',
   templateUrl: './notification-box.component.html',
@@ -10,35 +14,87 @@ import { MenuItem } from 'primeng/api';
 })
 export class NotificationBoxComponent {
   @Input() notification;
-  menuOptions: MenuItem[];
+  @Output() notificationClicked = new EventEmitter<Notification>();
+  readNotificationMenuOptions: MenuItem[];
+  unreadNotificationMenuOptions: MenuItem[];
+  defaultNotificationMenuOptions: MenuItem[];
 
   /*  $notificationList: Observable<Notification[]> | undefined; */
-  constructor(private notificationService: NotificationsService) {}
+  constructor(
+    private notificationService: NotificationsService,
+    protected store: Store<State>
+  ) {}
 
   ngOnInit(): void {
     /* this.$notificationList = this.notificationService.$notifications; */
-    this.menuOptions = [
+    this.defaultNotificationMenuOptions = [
       {
-        label: 'Mark all as read',
-        icon: 'pi pi-check',
-        command: () => {
-          console.log('Mark all as read clicked');
-        },
-      },
-      {
-        label: 'Remove all',
+        label: 'Remove',
         icon: 'pi pi-times',
-        command: () => {
+        command: ($event) => {
+          $event.originalEvent.stopPropagation();
           console.log('Delete clicked');
-        },
-      },
-      {
-        label: 'Settings',
-        icon: 'pi pi-cog',
-        command: () => {
-          console.log('Settings clicked');
+          this.store.dispatch(
+            NotificationActions.notificationsRemoved({
+              notifications: [this.notification._id],
+            })
+          );
         },
       },
     ];
+
+    this.readNotificationMenuOptions = [
+      {
+        label: 'Mark as read',
+        icon: 'pi pi-check',
+        command: ($event) => {
+          $event.originalEvent.stopPropagation();
+          console.log('Mark all as read clicked');
+          this.store.dispatch(
+            NotificationActions.notificationsMarkedAsRead({
+              notifications: [this.notification._id],
+            })
+          );
+        },
+      },
+
+      ...this.defaultNotificationMenuOptions,
+    ];
+
+    this.unreadNotificationMenuOptions = [
+      {
+        label: 'Mark as unread',
+        icon: 'pi pi-times',
+        command: ($event) => {
+          $event.originalEvent.stopPropagation();
+          console.log('Mark as unread clicked');
+          this.store.dispatch(
+            NotificationActions.notificationsMarkedAsUnread({
+              notifications: [this.notification._id],
+            })
+          );
+        },
+      },
+
+      ...this.defaultNotificationMenuOptions,
+    ];
+  }
+
+  get menuOptions() {
+    if (this.notification.isRead) {
+      return this.unreadNotificationMenuOptions;
+    } else {
+      return this.readNotificationMenuOptions;
+    }
+  }
+
+  toggleMenuOptions($event, menu) {
+    menu.toggle($event);
+    $event.originalEvent.stopPropagation();
+  }
+
+  onNotificationClicked() {
+    console.log('notification clicked!');
+    this.notificationClicked.emit();
   }
 }

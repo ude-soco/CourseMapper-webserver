@@ -2,7 +2,7 @@
 <div class="notification-content">
   <div class="item">
     <span class="pi pi-star star-icon"></span>
-    <div class="left">
+    <div class="left" (click)="onNotificationClicked()">
       <p-avatar
         label="{{ notification.userShortname }}"
         styleClass="mr-5"
@@ -54,7 +54,7 @@
       [ngClass]="{
         'p-button-unread': !notification.isRead
       }"
-      (click)="menu.toggle($event)"
+      (click)="toggleMenuOptions($event, menu)"
       #navSettingsButton
     ></p-button>
   </div>
