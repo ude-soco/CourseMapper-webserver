@@ -20,6 +20,7 @@ import { TabMenuComponent } from './tab-menu/tab-menu.component';
 import { SwitchInputComponent } from './switch-input/switch-input.component';
 import { CheckboxModule } from 'primeng/checkbox';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SharedComponentsModule } from 'src/app/components/shared-components.module';
 
 @NgModule({
   declarations: [
@@ -42,6 +43,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     EffectsModule.forFeature([NotificationEffects]),
     CheckboxModule,
     ReactiveFormsModule,
+    SharedComponentsModule,
   ],
   exports: [NotificationBellComponent],
 })

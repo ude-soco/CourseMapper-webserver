@@ -233,6 +233,57 @@ export const notificationReducer = createReducer<NotificationState>(
       };
     }
   ),
+  on(NotificationActions.starNotifications, (state, action) => {
+    return {
+      ...state,
+      notifications: state.notifications.map((notification) => {
+        if (action.notifications.some((n) => n == notification._id)) {
+          return { ...notification, isStarred: true };
+        }
+        return notification;
+      }),
+    };
+  }),
+  on(NotificationActions.starNotificationsSuccess, (state, action) => {
+    return { ...state };
+  }),
+  on(NotificationActions.starNotificationsFailure, (state, action) => {
+    return {
+      ...state,
+      notifications: state.notifications.map((notification) => {
+        if (action.notifications.some((n) => n == notification._id)) {
+          return { ...notification, isStarred: false };
+        }
+        return notification;
+      }),
+    };
+  }),
+  on(NotificationActions.unstarNotifications, (state, action) => {
+    return {
+      ...state,
+      notifications: state.notifications.map((notification) => {
+        if (action.notifications.some((n) => n == notification._id)) {
+          return { ...notification, isStarred: false };
+        }
+        return notification;
+      }),
+    };
+  }),
+  on(NotificationActions.unstarNotificationsSuccess, (state, action) => {
+    return { ...state };
+  }),
+
+  on(NotificationActions.unstarNotificationsFailure, (state, action) => {
+    return {
+      ...state,
+      notifications: state.notifications.map((notification) => {
+        if (action.notifications.some((n) => n == notification._id)) {
+          return { ...notification, isStarred: true };
+        }
+        return notification;
+      }),
+    };
+  }),
 
   on(NotificationActions.notificationsRemoved, (state, action) => {
     return {

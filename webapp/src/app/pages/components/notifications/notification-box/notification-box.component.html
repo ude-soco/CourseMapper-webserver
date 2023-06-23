@@ -1,7 +1,24 @@
 <!--TODO change the options that are occuring in the menu -->
 <div class="notification-content">
   <div class="item">
-    <span class="pi pi-star star-icon"></span>
+    <i
+      (click)="onStarNotification($event)"
+      *ngIf="!notification.isStar"
+      class="pi pi-star star-icon"
+    ></i>
+
+    <!--    <app-svg-icon
+      *ngIf="!notification.isStar"
+      [path]="'assets/black-star-icon.svg'"
+      class="black-star-icon"
+    ></app-svg-icon> -->
+    <app-svg-icon
+      (click)="onUnstarNotification($event)"
+      *ngIf="notification.isStar"
+      [path]="'assets/black-star-icon.svg'"
+      class="black-star-icon"
+    ></app-svg-icon>
+
     <div class="left" (click)="onNotificationClicked()">
       <p-avatar
         label="{{ notification.userShortname }}"

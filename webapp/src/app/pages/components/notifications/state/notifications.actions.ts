@@ -64,3 +64,31 @@ export const notificationsRemovedFailure = createAction(
   '[Notification] Notifications Removed Failure',
   props<{ error: any; notifications: string[] }>()
 );
+
+export const starNotifications = createAction(
+  '[Notification] Notifications Starred',
+  props<{ notifications: string[] }>()
+);
+
+export const starNotificationsSuccess = createAction(
+  '[Notification] Notifications Starred Success'
+);
+
+export const starNotificationsFailure = createAction(
+  '[Notification] Notifications Starred Failure',
+  props<{ error: any; notifications: string[] }>()
+);
+
+export const unstarNotifications = createAction(
+  '[Notification] Notifications Unstarred',
+  props<{ notifications: string[] }>()
+);
+
+export const unstarNotificationsSuccess = createAction(
+  '[Notification] Notifications Unstarred Success'
+);
+
+export const unstarNotificationsFailure = createAction(
+  '[Notification] Notifications Unstarred Failure',
+  props<{ error: any; notifications: string[] }>()
+);

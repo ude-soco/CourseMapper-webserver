@@ -97,4 +97,14 @@ export class NotificationBoxComponent {
     console.log('notification clicked!');
     this.notificationClicked.emit();
   }
+
+  onStarNotification($event) {
+    $event.stopPropagation();
+    console.log('star clicked!');
+  }
+
+  onUnstarNotification($event) {
+    $event.stopPropagation();
+    console.log('unstar clicked!');
+  }
 }

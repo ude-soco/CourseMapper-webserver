@@ -128,8 +128,22 @@
 }
 
   .star-icon:hover {
-    color: #ea580c; /* Set the filled color when hovered */
+    color: #0202025b;; /* Set the filled color when hovered */
   }
+
+ .black-star-icon {
+      background-color: black;
+      height: 22px;
+      width: 22px;
+      margin-right: 0.7rem;
+  }
+
+  .black-star-icon:hover{
+    background-color: #0202025b;
+  }
+
+
+
 
 /*   .p-button-unread::before{
     content: '';
