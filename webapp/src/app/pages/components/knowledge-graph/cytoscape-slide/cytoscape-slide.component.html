@@ -22,7 +22,7 @@
       pTooltip="View all main concepts"
       class="p-button-secondary p-button-rounded"
       (click)="showMoreElements()"
-      style="margin-top: 5px; float: right;color: #ffffff; background: #EB590D; border: #EB590D;"
+      style="margin-top: 5px; float: right; font-size: 17px; max-height: 95%; color: #ffffff; background: #EB590D; border: #EB590D;"
       ></button>
     <button
     *ngIf="!moreThanFive"
@@ -33,18 +33,18 @@
       pTooltip="No more concepts available"
       disabled="true"
       class="p-button-secondary p-button-rounded"
-      style="margin-top: 5px; float: right;"
+      style="margin-top: 5px; float: right; font-size: 17px; max-height: 95%;"
       ></button>
     <button
     *ngIf="moreThanFive && showMoreActivated"
       id="lessConcepts"
       pButton
       type="button"
-      label="less Concepts"
+      label="Less Concepts"
       pTooltip="View only top-5 main concepts"
       class="p-button-secondary p-button-rounded"
       (click)="showLessElements()"
-      style="margin-top: 5px; float: right;color: #ffffff; background: #EB590D; border: #EB590D;"
+      style="margin-top: 5px; float: right; font-size: 17px; max-height: 95%; color: #ffffff; background: #EB590D; border: #EB590D;"
       ></button>
   </div>
 </div>
