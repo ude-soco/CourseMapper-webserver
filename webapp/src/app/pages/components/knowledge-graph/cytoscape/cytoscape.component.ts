@@ -187,17 +187,17 @@ export class CytoscapeComponent {
   // }
 
   onResize(e) {
-    if (this.nodeSelected) {
-      setTimeout(() => {
-        let abstractContainer = document.getElementById(
-          'abstractBlockContainer'
-        );
+    let abstractContainer =document.getElementById(
+      'abstractBlockContainer'
+    )
+    if (abstractContainer) {
+      
         document.getElementById('cy').style.width = 100 + '%';
         let currentWidth = document.getElementById('cy').clientWidth;
         document.getElementById('cy').style.width =
           currentWidth - abstractContainer.clientWidth - 20 + 'px';
         this.nodeSelected = true;
-      }, 0);
+
     } else {
       document.getElementById('cy').style.width = 100 + '%';
     }

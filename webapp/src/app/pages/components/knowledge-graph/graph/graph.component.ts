@@ -91,6 +91,11 @@ export class GraphComponent {
     let abstractSidebar = document.getElementById('abstractSidebarBlock');
     //if kg at material or course level && abstract sidebar shown
     if (abstractSidebar && this.materialKnowledgeGraph) {
+      let abstractContainer = document.getElementById(
+        'abstractBlockContainer'
+      );
+      abstractContainer.style.height = (Number(this.cyHeight -75)).toString() + 'px';
+
       let sidebarChild = document.getElementById('abstractSidebarBlock')
         .childNodes[0] as HTMLElement;
       let spanAbstract = document.getElementById('abstractSpan');
@@ -132,7 +137,15 @@ export class GraphComponent {
           let sidebarChild = document.getElementById('abstractSidebarBlock')
             .childNodes[0] as HTMLElement;
           sidebarChild.style.height = 100 + '%';
-          abstractContainer.style.height = 0.9 * this.cyHeight + 'px';
+
+          //get sidebar header
+          let sidebarHeader = sidebarChild.childNodes[0] as HTMLElement
+          //set icon position to right
+          sidebarHeader.style.position='absolute'
+          sidebarHeader.style.padding='0'
+          sidebarHeader.style.marginLeft=(Number(sidebarChild.offsetWidth) - sidebarHeader.offsetWidth).toString() + 'px'
+
+          abstractContainer.style.height = (Number(this.cyHeight -75)).toString() + 'px';
           if (this.materialKnowledgeGraph) {
             let spanAbstract = document.getElementById('abstractSpan');
             if (spanAbstract) {// If selected node is category ==> no abstract span

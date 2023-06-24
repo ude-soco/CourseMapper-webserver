@@ -31,14 +31,16 @@ app-cytoscape {
   position: absolute;
   margin-right: 1.2rem;
   margin-top: 0.2rem;
-  border: 1px solid #d1d1d1;
-  stroke: #d1d1d1;
-  box-shadow: -2px 2px #d1d1d1;
-  border-radius: 20px 20px 20px 20px;
+  border: 1px solid #b3b3b3;
+  stroke: #b3b3b3;
+  /* box-shadow: -2px 2px #d1d1d1; */
+  /* border-radius: 20px 20px 20px 20px; */
+  border-radius: 8px;
   right: 0.5rem;
   float: right;
   background:#fefefe;
   z-index: 11;
+  margin-top: 0;
 }
 .abstractParagraph {
   display: -webkit-box;

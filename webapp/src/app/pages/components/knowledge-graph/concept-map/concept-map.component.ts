@@ -1523,12 +1523,12 @@ export class ConceptMapComponent {
         const reqDataMaterial1 =
           await this.getRecommendedMaterialsPerSlideMaterial();
 
-        // var resultConcepts =
-        //   await this.materialsRecommenderService.getRecommendedConcepts(
-        //     // reqData
-        //     reqDataMaterial1
-        //   ); //receive recommended concepts
-        // this.recommendedConcepts = resultConcepts;
+        var resultConcepts =
+          await this.materialsRecommenderService.getRecommendedConcepts(
+            // reqData
+            reqDataMaterial1
+          ); //receive recommended concepts
+        this.recommendedConcepts = resultConcepts;
 
         // //set to local storage
         // localStorage.setItem(
@@ -1537,10 +1537,10 @@ export class ConceptMapComponent {
         // );
         ////////////////////////////////////////////////////////////////////
 
-        // get from local storage
-        this.recommendedConcepts = JSON.parse(
-          localStorage.getItem('resultConcepts')
-        );
+        // // get from local storage
+        // this.recommendedConcepts = JSON.parse(
+        //   localStorage.getItem('resultConcepts')
+        // );
 
         this.conceptMapRecommendedData = this.recommendedConcepts;
         this.filteredMapRecData = this.conceptMapRecommendedData;
@@ -1561,7 +1561,7 @@ export class ConceptMapComponent {
         this.kgTabs.kgTabsEnable();
         this.mainConceptsTab = false;
         this.recommendedConceptsTab = true;
-        this.tabs[2].disabled = true;
+        // this.tabs[2].disabled = true;
         this.recommendedMaterialsTab = false;
         //////////////////////////call material-recommender/////////////////////////
         console.log('calling material recommender');
@@ -1615,8 +1615,10 @@ export class ConceptMapComponent {
         /////////////////////////////////////////////////////////////////////////
         // // // get from local storage
         // this.resultMaterials = JSON.parse(
-        //   localStorage.getItem('resultMaterials')
-        // ).nodes;
+          //   localStorage.getItem('resultMaterials')
+          // ).nodes;
+
+          this.resultMaterials = this.resultMaterials.nodes;
 
         this.kgTabs.kgTabsEnable();
         this.tabs[2].disabled = false;
