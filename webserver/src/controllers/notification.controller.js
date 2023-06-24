@@ -96,6 +96,47 @@ export const markNotificationsAsUnread = async (req, res, next) => {
   return res.status(200).send({ message: "Notification/s marked as unread!" });
 };
 
+export const starNotification = async (req, res, next) => {
+  console.log("endpoint: starNotification");
+  //request body contains an array of strings of the notification ids
+  const notificationIds = req.body.notificationIds;
+
+  try {
+    //User notifications with the id's in the variable notificationIds are updated to have the isRead field set to true
+    await UserNotification.updateMany(
+      { _id: { $in: notificationIds } },
+      { isStar: true }
+    );
+  } catch (error) {
+    return res
+      .status(500)
+      .send({ error: "Error updating notifications", error });
+  }
+
+  return res.status(200).send({ message: "Notification/s starred!" });
+};
+
+export const unstarNotification = async (req, res, next) => {
+  console.log("endpoint: unstarNotification");
+  //request body contains an array of strings of the notification ids
+  const notificationIds = req.body.notificationIds;
+
+  try {
+    //User notifications with the id's in the variable notificationIds are updated to have the isRead field set to true
+    await UserNotification.updateMany(
+      { _id: { $in: notificationIds } },
+      { isStar: false }
+    );
+  } catch (error) {
+    return res
+
+      .status(500)
+      .send({ error: "Error updating notifications", error });
+  }
+
+  return res.status(200).send({ message: "Notification/s unstarred!" });
+};
+
 //the below function deletes the rows from the userNotifications table
 export const removeNotification = async (req, res, next) => {
   const notificationIds = req.body.notificationIds;

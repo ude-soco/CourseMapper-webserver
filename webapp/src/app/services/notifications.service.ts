@@ -84,6 +84,24 @@ export class NotificationsService {
     );
   }
 
+  starNotification(notification: string[]) {
+    console.log('In Service: Starring notification');
+    console.log(notification);
+    return this.httpClient.put<{ message: string }>(
+      `${environment.API_URL}/notifications/star`,
+      { notificationIds: notification }
+    );
+  }
+
+  unstarNotification(notification: string[]) {
+    console.log('In Service: Unstarring notification');
+    console.log(notification);
+    return this.httpClient.put<{ message: string }>(
+      `${environment.API_URL}/notifications/unstar`,
+      { notificationIds: notification }
+    );
+  }
+
   private transformNotification(notification: UserNotification): Notification {
     const lastWord =
       notification.activityId.statement.object.definition.type.slice(40);

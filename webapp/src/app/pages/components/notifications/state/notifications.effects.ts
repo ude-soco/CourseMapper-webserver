@@ -83,4 +83,54 @@ export class NotificationEffects {
         )
       )
   );
+
+  starNotification$ = createEffect(
+    (): Observable<Action> =>
+      this.actions$.pipe(
+        ofType(NotificationActions.starNotifications),
+        tap(() => console.log('In Effect: Starring notification')),
+        mergeMap((action) =>
+          this.notificationService.starNotification(action.notifications).pipe(
+            map((successMsg: { message: string }) =>
+              NotificationActions.starNotificationsSuccess()
+            ),
+            catchError((error) => {
+              console.log(error);
+              return of(
+                NotificationActions.starNotificationsFailure({
+                  error,
+                  notifications: action.notifications,
+                })
+              );
+            })
+          )
+        )
+      )
+  );
+
+  unstarNotification$ = createEffect(
+    (): Observable<Action> =>
+      this.actions$.pipe(
+        ofType(NotificationActions.unstarNotifications),
+        tap(() => console.log('In Effect: Unstarring notification')),
+        mergeMap((action) =>
+          this.notificationService
+            .unstarNotification(action.notifications)
+            .pipe(
+              map((successMsg: { message: string }) =>
+                NotificationActions.unstarNotificationsSuccess()
+              ),
+              catchError((error) => {
+                console.log(error);
+                return of(
+                  NotificationActions.unstarNotificationsFailure({
+                    error,
+                    notifications: action.notifications,
+                  })
+                );
+              })
+            )
+        )
+      )
+  );
 }

@@ -27,5 +27,17 @@ module.exports = function (app) {
     controller.markNotificationsAsUnread
   );
 
+  app.put(
+    "/api/notifications/star",
+    [authJwt.verifyToken],
+    controller.starNotification
+  );
+
+  app.put(
+    "/api/notifications/unstar",
+    [authJwt.verifyToken],
+    controller.unstarNotification
+  );
+
   app.delete("/api/notifications", controller.deleteAllNotifications);
 };

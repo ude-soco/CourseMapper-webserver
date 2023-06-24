@@ -124,22 +124,29 @@
     font-size: 24px;
     cursor: pointer;
     transition: color 0.2s;
-    margin-right: 1rem;
 }
 
   .star-icon:hover {
     color: #0202025b;; /* Set the filled color when hovered */
   }
 
- .black-star-icon {
-      background-color: black;
-      height: 22px;
-      width: 22px;
-      margin-right: 0.7rem;
-  }
+
+  .black-star-icon{
+    background-color: black;
+    height: 23px;
+    width: 24px;
+    display: block;
+}
 
   .black-star-icon:hover{
     background-color: #0202025b;
+  }
+
+  .star-container{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 1rem;
   }
 
 

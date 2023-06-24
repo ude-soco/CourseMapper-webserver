@@ -233,12 +233,13 @@ export const notificationReducer = createReducer<NotificationState>(
       };
     }
   ),
+
   on(NotificationActions.starNotifications, (state, action) => {
     return {
       ...state,
       notifications: state.notifications.map((notification) => {
         if (action.notifications.some((n) => n == notification._id)) {
-          return { ...notification, isStarred: true };
+          return { ...notification, isStar: true };
         }
         return notification;
       }),
@@ -252,7 +253,7 @@ export const notificationReducer = createReducer<NotificationState>(
       ...state,
       notifications: state.notifications.map((notification) => {
         if (action.notifications.some((n) => n == notification._id)) {
-          return { ...notification, isStarred: false };
+          return { ...notification, isStar: false };
         }
         return notification;
       }),
@@ -263,7 +264,7 @@ export const notificationReducer = createReducer<NotificationState>(
       ...state,
       notifications: state.notifications.map((notification) => {
         if (action.notifications.some((n) => n == notification._id)) {
-          return { ...notification, isStarred: false };
+          return { ...notification, isStar: false };
         }
         return notification;
       }),
@@ -278,7 +279,7 @@ export const notificationReducer = createReducer<NotificationState>(
       ...state,
       notifications: state.notifications.map((notification) => {
         if (action.notifications.some((n) => n == notification._id)) {
-          return { ...notification, isStarred: true };
+          return { ...notification, isStar: true };
         }
         return notification;
       }),

@@ -13,7 +13,7 @@ import * as NotificationActions from '../state/notifications.actions';
   styleUrls: ['./notification-box.component.css'],
 })
 export class NotificationBoxComponent {
-  @Input() notification;
+  @Input() notification: Notification;
   @Output() notificationClicked = new EventEmitter<Notification>();
   readNotificationMenuOptions: MenuItem[];
   unreadNotificationMenuOptions: MenuItem[];
@@ -101,10 +101,19 @@ export class NotificationBoxComponent {
   onStarNotification($event) {
     $event.stopPropagation();
     console.log('star clicked!');
+    this.store.dispatch(
+      NotificationActions.starNotifications({
+        notifications: [this.notification._id],
+      })
+    );
   }
 
   onUnstarNotification($event) {
     $event.stopPropagation();
-    console.log('unstar clicked!');
+    this.store.dispatch(
+      NotificationActions.unstarNotifications({
+        notifications: [this.notification._id],
+      })
+    );
   }
 }

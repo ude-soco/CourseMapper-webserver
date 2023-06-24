@@ -1,23 +1,25 @@
 <!--TODO change the options that are occuring in the menu -->
 <div class="notification-content">
   <div class="item">
-    <i
+    <!--     <i
       (click)="onStarNotification($event)"
       *ngIf="!notification.isStar"
       class="pi pi-star star-icon"
-    ></i>
+      ></i> -->
+    <div class="star-container" *ngIf="!notification.isStar">
+      <app-svg-icon
+        (click)="onStarNotification($event)"
+        class="pi pi-star star-icon"
+      ></app-svg-icon>
+    </div>
 
-    <!--    <app-svg-icon
-      *ngIf="!notification.isStar"
-      [path]="'assets/black-star-icon.svg'"
-      class="black-star-icon"
-    ></app-svg-icon> -->
-    <app-svg-icon
-      (click)="onUnstarNotification($event)"
-      *ngIf="notification.isStar"
-      [path]="'assets/black-star-icon.svg'"
-      class="black-star-icon"
-    ></app-svg-icon>
+    <div class="star-container" *ngIf="notification.isStar">
+      <app-svg-icon
+        (click)="onUnstarNotification($event)"
+        [path]="'assets/black-star-icon.svg'"
+        class="black-star-icon"
+      ></app-svg-icon>
+    </div>
 
     <div class="left" (click)="onNotificationClicked()">
       <p-avatar

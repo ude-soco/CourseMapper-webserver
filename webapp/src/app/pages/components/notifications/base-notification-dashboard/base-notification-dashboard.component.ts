@@ -137,6 +137,9 @@ export class BaseNotificationDashboardComponent {
       this.filteredNotifications$,
       this.unreadSwitch$,
     ]).pipe(
+      tap((notifications) => {
+        console.log('notifications were updated!!!!!');
+      }),
       map(([notifications, unreadSwitch]) => {
         if (notifications) {
           if (unreadSwitch) {
