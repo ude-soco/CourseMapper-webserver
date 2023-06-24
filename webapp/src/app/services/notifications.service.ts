@@ -102,6 +102,16 @@ export class NotificationsService {
     );
   }
 
+  //TODO: Fix the URL being used for the below method. Purposely set to false URL to cause error
+  removeNotification(notification: string[]) {
+    console.log('In Service: Removing notification');
+    console.log(notification);
+    return this.httpClient.put<{ message: string }>(
+      `${environment.API_URL}/notifications/FALSEURL`,
+      { notificationIds: notification }
+    );
+  }
+
   private transformNotification(notification: UserNotification): Notification {
     const lastWord =
       notification.activityId.statement.object.definition.type.slice(40);

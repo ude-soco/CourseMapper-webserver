@@ -39,5 +39,11 @@ module.exports = function (app) {
     controller.unstarNotification
   );
 
+  app.put(
+    "/api/notifications/remove",
+    [authJwt.verifyToken],
+    controller.removeNotification
+  );
+
   app.delete("/api/notifications", controller.deleteAllNotifications);
 };

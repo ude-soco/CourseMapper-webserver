@@ -36,7 +36,7 @@ export class NotificationBoxComponent {
           console.log('Delete clicked');
           this.store.dispatch(
             NotificationActions.notificationsRemoved({
-              notifications: [this.notification._id],
+              notifications: [this.notification],
             })
           );
         },

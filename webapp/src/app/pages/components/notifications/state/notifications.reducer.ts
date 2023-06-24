@@ -43,17 +43,30 @@ export const getCurrentlySelectedTab = createSelector(
   (state) => state.currentlySelectedTab
 );
 
+//the notifications being returned should be sorted according to the timestamp property of the notifications in descending order
 export const getFilteredNotifications = createSelector(
   getNotifications,
   getCurrentlySelectedTab,
   (notifications, currentlySelectedTab) => {
     if (notifications) {
       if (currentlySelectedTab === NotificationCategory.All) {
-        return notifications;
+        return notifications
+          .filter((notification) => notification)
+          .sort((a, b) => {
+            return (
+              new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+            );
+          });
       } else {
-        return notifications.filter(
-          (notification) => notification.category === currentlySelectedTab
-        );
+        return notifications
+          .filter(
+            (notification) => notification.category === currentlySelectedTab
+          )
+          .sort((a, b) => {
+            return (
+              new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+            );
+          });
       }
     }
     return null;
@@ -291,8 +304,19 @@ export const notificationReducer = createReducer<NotificationState>(
       ...state,
       notifications: state.notifications.filter(
         (notification) =>
-          !action.notifications.some((n) => n == notification._id)
+          !action.notifications.some((n) => n._id === notification._id)
       ),
+    };
+  }),
+
+  on(NotificationActions.notificationsRemovedSuccess, (state, action) => {
+    return { ...state };
+  }),
+  on(NotificationActions.notificationsRemovedFailure, (state, action) => {
+    console.log(action.notifications);
+    return {
+      ...state,
+      notifications: [...state.notifications, ...action.notifications],
     };
   })
 );

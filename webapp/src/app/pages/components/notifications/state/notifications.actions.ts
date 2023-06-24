@@ -53,7 +53,7 @@ export const notificationsMarkedAsUnreadFailure = createAction(
 
 export const notificationsRemoved = createAction(
   '[Notification] Notifications Removed',
-  props<{ notifications: string[] }>()
+  props<{ notifications: Notification[] }>()
 );
 
 export const notificationsRemovedSuccess = createAction(
@@ -62,7 +62,7 @@ export const notificationsRemovedSuccess = createAction(
 
 export const notificationsRemovedFailure = createAction(
   '[Notification] Notifications Removed Failure',
-  props<{ error: any; notifications: string[] }>()
+  props<{ error: any; notifications: Notification[] }>()
 );
 
 export const starNotifications = createAction(

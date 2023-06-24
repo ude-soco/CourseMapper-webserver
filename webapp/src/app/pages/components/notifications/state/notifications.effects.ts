@@ -133,4 +133,32 @@ export class NotificationEffects {
         )
       )
   );
+
+  removeNotification$ = createEffect(
+    (): Observable<Action> =>
+      this.actions$.pipe(
+        ofType(NotificationActions.notificationsRemoved),
+        tap(() => console.log('In Effect: Removing notification')),
+        mergeMap((action) =>
+          this.notificationService
+            .removeNotification(
+              action.notifications.map((notification) => notification._id)
+            )
+            .pipe(
+              map((successMsg: { message: string }) =>
+                NotificationActions.notificationsRemovedSuccess()
+              ),
+              catchError((error) => {
+                console.log(error);
+                return of(
+                  NotificationActions.notificationsRemovedFailure({
+                    error,
+                    notifications: action.notifications,
+                  })
+                );
+              })
+            )
+        )
+      )
+  );
 }

@@ -8,6 +8,7 @@ import {
   combineLatest,
   filter,
   map,
+  take,
   tap,
 } from 'rxjs';
 import { Router } from '@angular/router';
@@ -101,7 +102,7 @@ export class BaseNotificationDashboardComponent {
         },
       },
       {
-        label: 'Delete selected notifications',
+        label: 'Remove selected notifications',
         icon: 'pi pi-times',
         command: ($event) => {
           this.removeSelected($event);
@@ -350,11 +351,27 @@ export class BaseNotificationDashboardComponent {
       }
     });
     console.log(selectedNotifications);
-    this.store.dispatch(
-      NotificationActions.notificationsRemoved({
-        notifications: selectedNotifications,
-      })
-    );
+
+    //subscribe to the notifications observable and get the notifications whose id's are present in the selectedNotifications array and then dispatch the action and then unsuscribe from the observable
+    let notificationsToRemove: Notification[];
+    this.notifications$
+      .pipe(
+        take(1),
+        map((notifications) =>
+          notifications.filter((notification) =>
+            selectedNotifications.includes(notification._id)
+          )
+        )
+      )
+      .subscribe((notifications) => {
+        console.log(notifications);
+        notificationsToRemove = notifications;
+        this.store.dispatch(
+          NotificationActions.notificationsRemoved({
+            notifications: notificationsToRemove,
+          })
+        );
+      });
   }
 
   protected unreadSwitchToggled($event) {
