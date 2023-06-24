@@ -13,21 +13,30 @@
       *ngIf="expandTopic.includes(topic._id)"
     >
       <div class="flex flex-row items-center justify-between mx-0 my-1.5">
-        <div class="flex flex-row items-center">
-          <app-iconbutton
-            icon="bx-chevron-down"
-            color="text-black"
-            (click)="selectedTopic=topic;onSelectTopic(topic)"
-          ></app-iconbutton>
-          <p
-            id="{{ topic._id }}"
-            class="text-lg font-semibold"
-            (keydown)="onTextInsertedTopic(selectedTopic._id, $event)"
-            (keyup)="afterTextInsertedTopic(selectedTopic._id, $event)"
-            #{{topic._id}}
-          >
-            {{ topic.name }}
-          </p>
+        <div class="flex flex-row items-center grow justify-between pr-2">
+          <div class="flex flex-row">
+            <app-iconbutton
+              icon="bx-chevron-down"
+              color="text-black"
+              (click)="selectedTopic = topic; onSelectTopic(topic)"
+            ></app-iconbutton>
+            <div
+              id="{{ topic._id }}"
+              class="text-lg font-semibold"
+              (keydown)="onTextInsertedTopic(selectedTopic._id, $event)"
+              (keyup)="afterTextInsertedTopic(selectedTopic._id, $event)"
+              #{{topic._id}}
+            >
+              <!-- {{ topic.name }}  -->
+              <span>{{ topic.name }} </span>
+            </div>
+          </div>
+          <div class="bell-icon-container">
+            <app-svg-icon
+              [path]="'assets/cancel-bell-notification-icon.svg'"
+              class="bell-icon"
+            ></app-svg-icon>
+          </div>
         </div>
         <p-menu
           #menu
@@ -129,21 +138,31 @@
       *ngIf="!expandTopic.includes(topic._id)"
     >
       <div class="flex flex-row items-center justify-between mx-0 my-1.5">
-        <div class="flex flex-row items-center">
-          <app-iconbutton
-            icon="bx-chevron-right"
-            color="text-black"
-            (click)="selectedTopic=topic;onSelectTopic(topic)"
-          ></app-iconbutton>
-          <p
-            id="{{ topic._id }}"
-            class="text-lg font-semibold"
-            (keydown)="onTextInsertedTopic(selectedTopic._id, $event)"
-            (keyup)="afterTextInsertedTopic(selectedTopic._id, $event)"
-            #{{topic._id}}
-          >
-            {{ topic.name }}
-          </p>
+        <div class="flex flex-row items-center grow justify-between pr-2">
+          <div class="flex flex-row">
+            <app-iconbutton
+              icon="bx-chevron-right"
+              color="text-black"
+              (click)="selectedTopic = topic; onSelectTopic(topic)"
+            ></app-iconbutton>
+            <div
+              id="{{ topic._id }}"
+              class="text-lg font-semibold"
+              (keydown)="onTextInsertedTopic(selectedTopic._id, $event)"
+              (keyup)="afterTextInsertedTopic(selectedTopic._id, $event)"
+              #{{topic._id}}
+            >
+              <!-- {{ topic.name }}  -->
+              <span>{{ topic.name }} </span>
+            </div>
+          </div>
+
+          <div class="bell-icon-container">
+            <app-svg-icon
+              [path]="'assets/cancel-bell-notification-icon.svg'"
+              class="bell-icon"
+            ></app-svg-icon>
+          </div>
         </div>
         <p-menu
           #menu
