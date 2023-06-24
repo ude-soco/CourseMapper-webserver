@@ -130,7 +130,7 @@ export class CytoscapeComponent {
         color: '#323232',
         'text-outline-color': '#fff',
         'text-outline-width': 1,
-        'font-size': 10,
+        'font-size': 12,
       },
     },
     {
