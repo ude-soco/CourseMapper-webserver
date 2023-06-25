@@ -11,6 +11,9 @@ const Reply = db.reply;
 const Tag = db.tag;
 const Activity = db.activity;
 const UserNotification = db.userNotifications;
+const UserCourseSubscriber = db.userCourseSubscriber;
+const UserTopicSubscriber = db.userTopicSubscriber;
+const UserChannelSubscriber = db.userChannelSubscriber;
 
 /**
  * @function getAllCourses
@@ -229,6 +232,53 @@ export const enrolCourse = async (req, res, next) => {
     } catch (err) {
       return res.status(500).send({ error: "Error saving course" });
     }
+
+    //populate the UserCourseSubscriber table. it will contain the userId and courseId
+    let userCourseSubscriber = new UserCourseSubscriber({
+      userId: foundUser._id,
+      courseId: foundCourse._id,
+    });
+    try {
+      await userCourseSubscriber.save();
+    } catch (err) {
+      return res
+        .status(500)
+        .send({ error: "Error saving userCourseSubscriber" });
+    }
+    //populate the UserTopicSubscriber table. For every topic that the foundCourse contains, add a document to the table. each document contains the userId and the topicId and the courseId
+    const userTopicSubscribers = foundCourse.topics.map((topic) => {
+      return new UserTopicSubscriber({
+        userId: foundUser._id,
+        topicId: topic._id,
+        courseId: foundCourse._id,
+      });
+    });
+
+    try {
+      await UserTopicSubscriber.insertMany(userTopicSubscribers);
+    } catch (err) {
+      return res
+        .status(500)
+        .send({ error: "Error saving userTopicSubscribers" });
+    }
+
+    //populate the UserChannelSubscriber table. For every channel that the foundCourse contains, add a document to the table. each document contains the userId and the courseId and the channelId
+    const userChannelSubscribers = foundCourse.channels.map((channel) => {
+      return new UserChannelSubscriber({
+        userId: foundUser._id,
+        channelId: channel._id,
+        courseId: foundCourse._id,
+      });
+    });
+
+    try {
+      await UserChannelSubscriber.insertMany(userChannelSubscribers);
+    } catch (err) {
+      return res
+        .status(500)
+        .send({ error: "Error saving userChannelSubscribers" });
+    }
+
     req.locals = {
       response: { success: `User enrolled to course ${foundCourse.name}` },
       user: foundUser,
@@ -290,6 +340,43 @@ export const withdrawCourse = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: "Error saving user" });
   }
+
+  //delete the UserCourseSubscriber document
+  try {
+    await UserCourseSubscriber.deleteOne({
+      userId: foundUser._id,
+      courseId: foundCourse._id,
+    });
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ error: "Error deleting userCourseSubscriber" });
+  }
+
+  //delete the UserTopicSubscriber documents
+  try {
+    await UserTopicSubscriber.deleteMany({
+      userId: foundUser._id,
+      courseId: foundCourse._id,
+    });
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ error: "Error deleting userTopicSubscribers" });
+  }
+
+  //delete the UserChannelSubscriber documents
+  try {
+    await UserChannelSubscriber.deleteMany({
+      userId: foundUser._id,
+      courseId: foundCourse._id,
+    });
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ error: "Error deleting userChannelSubscribers" });
+  }
+
   req.locals = {
     response: { success: `User withdrew from course ${foundCourse.name}` },
     user: foundUser,
@@ -391,6 +478,21 @@ export const newCourse = async (req, res, next) => {
     },
     success: `New course '${courseSaved.name}' added!`,
   };
+
+  //Add the admin to the UserCourseSubscriberTable
+  let adminCourseSubscriber = new UserCourseSubscriber({
+    userId: foundUser._id,
+    courseId: courseSaved._id,
+  });
+
+  try {
+    await adminCourseSubscriber.save();
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ error: "Error saving userCourseSubscriber for admin!" });
+  }
+
   req.locals = {
     course: courseSaved,
     user: foundUser,
@@ -412,6 +514,44 @@ export const deleteCourse = async (req, res, next) => {
   let foundCourse;
   try {
     foundCourse = await Course.findByIdAndRemove(courseId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding course" });
+  }
+
+  try {
+    //delete the UserCourseSubscriber document
+    try {
+      await UserCourseSubscriber.deleteMany({
+        courseId: foundCourse._id,
+      });
+    } catch (err) {
+      return res
+        .status(500)
+        .send({ error: "Error deleting userCourseSubscribers" });
+    }
+
+    //delete the UserTopicSubscriber documents
+    try {
+      await UserTopicSubscriber.deleteMany({
+        courseId: foundCourse._id,
+      });
+    } catch (err) {
+      return res
+        .status(500)
+        .send({ error: "Error deleting userTopicSubscribers" });
+    }
+
+    //delete the UserChannelSubscriber documents
+    try {
+      await UserChannelSubscriber.deleteMany({
+        courseId: foundCourse._id,
+      });
+    } catch (err) {
+      return res
+        .status(500)
+        .send({ error: "Error deleting userChannelSubscribers" });
+    }
+
     if (!foundCourse) {
       return res.status(404).send({
         error: `Course with id ${courseId} doesn't exist!`,
@@ -525,6 +665,7 @@ export const deleteCourse = async (req, res, next) => {
     course: foundCourse,
     user: foundUser,
   };
+
   return next();
 };
 

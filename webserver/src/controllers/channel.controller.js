@@ -7,6 +7,9 @@ const User = db.user;
 const Annotation = db.annotation;
 const Reply = db.reply;
 const Tag = db.tag;
+const UserTopicSubscriber = db.userTopicSubscriber;
+const UserChannelSubscriber = db.userChannelSubscriber;
+const UserCourseSubscriber = db.userCourseSubscriber;
 
 /**
  * @function getChannel
@@ -126,6 +129,34 @@ export const newChannel = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: "Error saving course" });
   }
+
+  let userCourseSubscribers;
+  try {
+    userCourseSubscribers = await UserCourseSubscriber.find({
+      courseId: updateCourse._id,
+    });
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ error: "Error finding user course subscribers" });
+  }
+
+  const userChannelSubscriber = userCourseSubscribers.map((subscriber) => {
+    return new UserChannelSubscriber({
+      userId: subscriber.userId,
+      channelId: savedChannel._id,
+      courseId: updateCourse._id,
+    });
+  });
+
+  try {
+    await UserChannelSubscriber.insertMany(userChannelSubscriber);
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ error: "Error saving user channel subscribers" });
+  }
+
   req.locals = {
     response: {
       id: savedChannel._id,
@@ -151,6 +182,7 @@ export const newChannel = async (req, res, next) => {
  * @param {string} req.params.channelId The id of the channel
  */
 export const deleteChannel = async (req, res, next) => {
+  console.log("endpoint delete channel!");
   const channelId = req.params.channelId;
   const courseId = req.params.courseId;
   const userId = req.userId;
@@ -237,6 +269,16 @@ export const deleteChannel = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: "Error finding course" });
   }
+
+  //delete all the user channel subscribers for this channel
+  try {
+    await UserChannelSubscriber.deleteMany({ channelId: channelId });
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ error: "Error deleting user channel subscribers" });
+  }
+
   req.locals = {
     response: {
       success: `Channel '${foundChannel.name}' successfully deleted!`,

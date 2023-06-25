@@ -45,5 +45,45 @@ module.exports = function (app) {
     controller.removeNotification
   );
 
+  //subscribe to a channel
+  app.post(
+    "/api/notifications/subscribe/channel",
+    [authJwt.verifyToken],
+    controller.subscribeChannel
+  );
+
+  //unsubscribe from a channel
+  app.post(
+    "/api/notifications/unsubscribe/channel",
+    [authJwt.verifyToken],
+    controller.unsubscribeChannel
+  );
+
+  //subscribe to a topic
+  app.post(
+    "/api/notifications/subscribe/topic",
+    [authJwt.verifyToken],
+    controller.subscribeTopic
+  );
+
+  //unsubscribe from a topic
+  app.post(
+    "/api/notifications/unsubscribe/topic",
+    [authJwt.verifyToken],
+    controller.unsubscribeTopic
+  );
+
+  app.post(
+    "/api/notifications/subscribe/course",
+    [authJwt.verifyToken],
+    controller.subscribeCourse
+  );
+
+  app.post(
+    "/api/notifications/unsubscribe/course",
+    [authJwt.verifyToken],
+    controller.unsubscribeCourse
+  );
+
   app.delete("/api/notifications", controller.deleteAllNotifications);
 };
