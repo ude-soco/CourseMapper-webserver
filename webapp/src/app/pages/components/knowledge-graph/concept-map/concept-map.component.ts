@@ -723,7 +723,7 @@ export class ConceptMapComponent {
       },
       {
         label: 'Revert to new',
-        icon: 'pi pi-circle-off',
+        icon: 'pi pi-replay',
         command: (e) => {
           this.previousConceptsObj.some((ele, index) => {
             if (ele.cid === this.conceptFromChipObj.cid) {
@@ -768,25 +768,6 @@ export class ConceptMapComponent {
       this.cyWidth = window.innerWidth * 0.9;
       this.changeDetectorRef.detectChanges();
     }
-    // if (this.showCourseKg && this.showConceptsListSidebar) {
-    // try {
-    //   setTimeout(() => {
-    //     let accordionTab1 = document.getElementById('accordionTab1')
-    //       .childNodes[0].childNodes[0].childNodes[0] as HTMLElement;
-    //     let accordionTab2 = document.getElementById('accordionTab2')
-    //       .childNodes[0].childNodes[0].childNodes[0] as HTMLElement;
-    //     if (accordionTab1) {
-    //       accordionTab1.style.backgroundColor = '#e9ecef';
-    //       accordionTab1.style.color = '#747d84';
-    //     }
-    //     if (accordionTab2) {
-    //       accordionTab2.style.backgroundColor = '#e9ecef';
-    //       accordionTab2.style.color = '#747d84';
-    //     }
-    //   }, 100);
-    // } catch {}
-    // }
-
     if (this.showSlideKg) {
       let accTab1 = document.getElementById('accordionTab1');
       let accTab2 = document.getElementById('accordionTab2');
@@ -802,6 +783,26 @@ export class ConceptMapComponent {
         if (accordionTab2) {
           accordionTab2.style.backgroundColor = '#e9ecef';
           accordionTab2.style.color = '#747d84';
+        }
+      }
+
+      let dnuPanel = document.getElementById('flexboxNotUnderstood')
+      if(dnuPanel){
+        let sideBarComponent= dnuPanel.childNodes[0].childNodes[0].childNodes[1] as HTMLElement
+        if(sideBarComponent.clientHeight>=this.cyHeight -100){
+          document.getElementById('previousConcepts').style.height=Number(this.cyHeight*0.8).toString() + 'px'
+          document.getElementById('previousConcepts').style.overflowY='scroll'
+          if(sideBarComponent.clientHeight>=this.cyHeight -100){
+            document.getElementById('previousConcepts').style.height=Number(this.cyHeight*0.18).toString() + 'px'
+            document.getElementById('currentConcepts').style.maxHeight=Number(this.cyHeight*0.35).toString() + 'px'
+            document.getElementById('currentConcepts').style.overflowY='scroll'
+          }else{
+            document.getElementById('previousConcepts').style.height=Number(this.cyHeight*0.8).toString() + 'px'
+            document.getElementById('currentConcepts').style.overflowY='auto'
+          }
+        }else{
+          document.getElementById('previousConcepts').style.maxHeight=Number(this.cyHeight*0.8).toString() + 'px'
+          document.getElementById('previousConcepts').style.overflowY='scroll'
         }
       }
     }
@@ -1521,7 +1522,7 @@ export class ConceptMapComponent {
         const reqData = await this.getRecommendedMaterialsPerSlide();
         ////////////////////////////////Call Concept recommender///////////////////////////////////////
         // // //Send request for concept recommendation
-        
+
         const reqDataMaterial1 =
           await this.getRecommendedMaterialsPerSlideMaterial();
 
@@ -1622,8 +1623,9 @@ export class ConceptMapComponent {
 
         this.resultMaterials = this.resultMaterials.nodes;
 
+        console.log('tab 2 will be activated');
         this.kgTabs.kgTabsEnable();
-        this.tabs[2].disabled = false;
+        console.log('tab 2 has been activated');
 
         console.log(
           'getconceptMapRecommendedData:::getconceptMapRecommendedData',
@@ -1635,11 +1637,11 @@ export class ConceptMapComponent {
         this.isLoading = false;
         this.loading.emit(false);
       }
-      // activate after recommenders evaluations
-      this.kgTabs.kgTabsEnable();
-      this.mainConceptsTab = false;
-      this.recommendedConceptsTab = true;
-      this.recommendedMaterialsTab = false;
+      // // activate after recommenders evaluations
+      // this.kgTabs.kgTabsEnable();
+      // this.mainConceptsTab = false;
+      // this.recommendedConceptsTab = true;
+      // this.recommendedMaterialsTab = false;
       this.showRecommendationButtonClicked = false;
     }
   }
@@ -1782,36 +1784,37 @@ export class ConceptMapComponent {
     return file;
   }
 
-  disabledTabClicked() {
-    this.callRecommendationsService.disabledTabClicked();
-    let buttonToRipple;
-    if (this.hideChevronRightButton) {
-      buttonToRipple = document.getElementById('recommendationButton');
-    } else if (!this.hideChevronRightButton) {
-      buttonToRipple = document.getElementById('showNonUnderstoodPanel');
-    }
-    // let rightChevronButton = document.getElementById('showRecClicked');
-    console.log(buttonToRipple);
-    let x = buttonToRipple.clientWidth;
-    let y = buttonToRipple.clientHeight;
-    let ripple = document.createElement('span');
-    ripple.style.position = 'absolute';
-    ripple.style.width = x + 'px';
-    ripple.style.height = y + 'px';
-    // ripple.style.backgroundColor='#eb590d'//orange primary color
-    // ripple.style.backgroundColor = '#d32f2f'; //danger color
-    ripple.style.backgroundColor = '#ffffff'; //danger color
-    ripple.style.borderBottomLeftRadius = '0';
-    ripple.style.borderTopLeftRadius = '0';
-    ripple.style.borderBottomRightRadius = '8px';
-    ripple.style.borderTopRightRadius = '8px';
-    // ripple.style.transform='translate(-50%,-50%)'
-    ripple.style.pointerEvents = 'none';
-    ripple.style.animation = 'animate 1s linear infinite';
-    buttonToRipple.appendChild(ripple);
-    setTimeout(() => {
-      ripple.remove();
-    }, 300);
+  async disabledTabClicked() {
+    let counter = 0;
+
+    const startFlashing = () => {
+      flashingButton();
+    };
+
+    const flashingButton = () => {
+      let buttonToRipple = document.getElementById('recommendationButton');
+      if (counter < 6) {
+        setTimeout(() => {
+          console.log('inside flashing');
+          if (buttonToRipple.style.backgroundColor === 'white') {
+            buttonToRipple.style.backgroundColor = '#eb590d';
+          } else {
+            buttonToRipple.style.backgroundColor = 'white';
+          }
+          counter++;
+          flashingButton();
+        }, 75);
+      } else {
+        let buttonToRipple = document.getElementById('recommendationButton');
+        if (this.disableShowRecommendationsButton) {
+          buttonToRipple.style.backgroundColor = '#e0e0e0';
+        }else{
+          buttonToRipple.style.backgroundColor = '#eb590d';
+        }
+      }
+    };
+
+    startFlashing();
   }
 
   async handleCancelMiddle() {
@@ -2000,6 +2003,33 @@ export class ConceptMapComponent {
     //   .filter((item) => item.checked)
     //   .map((i) => i.value);
   }
+
+  kgTabsAreaClicked() {
+    // ripple show-recommendations button onClick on tabs if not activated
+    let kgTabsArea = document.getElementById('kgTabsArea');
+    if (kgTabsArea) {
+      let showRecommendationsButton = document.getElementById(
+        'recommendationButton'
+      );
+      if (showRecommendationsButton) {
+        let x = showRecommendationsButton.clientWidth;
+        let y = showRecommendationsButton.clientHeight;
+        let ripple = document.createElement('span');
+        ripple.style.position = 'absolute';
+        ripple.style.width = x + 'px';
+        ripple.style.height = y + 'px';
+        ripple.style.backgroundColor = '#ffffff'; //danger color
+        ripple.style.borderRadius = '12px';
+        ripple.style.pointerEvents = 'none';
+        ripple.style.animation = 'animate 5s linear infinite';
+        showRecommendationsButton.appendChild(ripple);
+        setTimeout(() => {
+          ripple.remove();
+        }, 300);
+      }
+    }
+  }
+
   capitalizeWords(str) {
     var words = str.split(' ');
     for (var i = 0; i < words.length; i++) {

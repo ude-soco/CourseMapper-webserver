@@ -288,7 +288,7 @@
       <ng-container>
         <div class="graphBody" id="slideKgDialogDiv">
           <div class="dialogTabs">
-            <span style="white-space: nowrap; display: inline">
+            <span id="kgTabsArea" style="white-space: nowrap; display: inline">
               <div (click)="disabledTabClicked()">
                 <p-tabMenu
                   id="deActivatedTabs"
@@ -382,7 +382,7 @@
                         <fieldset
                           id="currentConcepts"
                           #currentConcepts
-                          style="max-height: 100px; overflow-y: auto"
+                          style=" overflow-y: auto"
                           *ngIf="didNotUnderstandConceptsObj.length"
                         >
                           <div
@@ -463,7 +463,7 @@
                         <fieldset
                           id="previousConcepts"
                           #previousConcepts
-                          style="max-height: 75px; overflow-y: scroll"
+                          style="overflow-y: auto;"
                           *ngIf="previousConceptsObj.length"
                         >
                           <div
@@ -543,19 +543,20 @@
                   >
                     <span
                       id="recommendationSpan"
-                      (click)="showRecommendations()"
+                      
                     >
                       <button
                         pButton
                         pRipple
                         type="button"
+                        *ngIf="!disableShowRecommendationsButton"
                         id="recommendationButton"
                         class="p-button-sm showRecommendations p-button-rounded"
                         label="Show Recommendations"
-                        [disabled]="disableShowRecommendationsButton"
                         pTooltip="Show recommendations for not understood concepts"
                         style="font-size: 17px; max-height: 95%"
                         pStyleClass="showRecoomendationsButton"
+                        (click)="showRecommendations()"
                       >
                         <p-progressSpinner
                           *ngIf="showRecommendationButtonClicked"
@@ -565,6 +566,19 @@
                           animationDuration=".5s"
                         ></p-progressSpinner>
                       </button>
+                      <button
+                        pButton
+                        pRipple
+                        type="button"
+                        id="recommendationButton"
+                        *ngIf="disableShowRecommendationsButton"
+                        class="p-button-sm showRecommendations p-button-rounded"
+                        label="Show Recommendations"
+                        pTooltip="Select not inderstood concept(s) to get recommended"
+                        style="font-size: 17px; max-height: 95%; background-color: #e0e0e0; color: #8b8b8b; cursor: auto;"
+                        pStyleClass="showRecoomendationsButton"
+                        (click)="showRecommendations()"
+                      ></button>
                     </span>
                   </div>
                 </ng-template>

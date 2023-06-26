@@ -418,15 +418,17 @@
   }
   @keyframes animate{
     0%{
-      left: -50%;
+      /* left: 0; */
       width: 0;
       height: 0;
       opacity: 0.8;
     }
     100%{
-      left: 500%;
-      width: 500px;
-      height: 500px;
+      /* left: 500%; */
+      /* width: 500px;
+      height: 500px; */
+      width: 200%;
+      height: 200%;
       opacity: 0;
     }
   }
@@ -465,6 +467,10 @@
   
   :host ::ng-deep .checkLabel {
     margin-left: 0.1rem;
+    margin-top:5.5rem;
+  }
+  :host ::ng-deep .p-checkbox-box{
+    margin-top:-5px;
   }
   
   :host ::ng-deep #didNotUnderstandButton{
