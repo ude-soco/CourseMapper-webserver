@@ -1,0 +1,28 @@
+.autocomplete-dropdown {
+  position: absolute;
+  top: 100%; /* Position the dropdown below the input element */
+  left: 0;
+  z-index: 100; /* Ensure the dropdown appears above other elements */
+  background-color: #ffffff; /* Set the background color for the dropdown */
+  border: 1px solid #e5e7eb; /* Add a border to the dropdown */
+  border-radius: 4px; /* Apply border radius */
+  padding: 8px; /* Add some padding */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Apply a shadow to the dropdown */
+  max-height: 200px; /* Define a maximum height for the dropdown to enable scrolling if needed */
+  overflow-y: auto; /* Enable vertical scrolling */
+  right: 0;
+  left: 0;
+}
+
+.input-container{
+  position: relative;
+}
+
+.autocomplete-dropdown  li {
+  padding: 4px 8px; /* Apply padding to each dropdown item */
+  cursor: pointer; /* Add a pointer cursor on hover */
+}
+
+.autocomplete-dropdown  li:hover {
+  background-color: #f3f4f6; /* Apply a background color on hover */
+}

@@ -156,22 +156,32 @@
     </div>
     <div class="flex flex-col">
       <app-pdf-reply-panel [annotation]="annotation"></app-pdf-reply-panel>
-      <div class="flex flex-row space-x-3 mx-7 my-2">
-        <input
-          type="text"
-          placeholder="Reply"
-          [(ngModel)]="replyContent"
-          (ngModelChange)="onReplyContentChange()"
-          class="p-inputtext-sm w-11/12 h-2/3"
-          pInputText
-        />
-        <app-iconbutton
-          icon="bx-send"
-          color="text-slate-500"
-          class="mt-3 flex-1 justify-end"
-          (onClick)="sendReply()"
-          [disabled]="sendButtonDisabled"
-        ></app-iconbutton>
+      <div class="input-container">
+        <div class="flex flex-row space-x-3 mx-7 my-2">
+          <input
+            type="text"
+            placeholder="Reply"
+            [(ngModel)]="replyContent"
+            (ngModelChange)="onReplyContentChange()"
+            class="p-inputtext-sm w-11/12 h-2/3"
+            pInputText
+          />
+          <app-iconbutton
+            icon="bx-send"
+            color="text-slate-500"
+            class="mt-3 flex-1 justify-end"
+            (onClick)="sendReply()"
+            [disabled]="sendButtonDisabled"
+          ></app-iconbutton>
+        </div>
+        <ul class="autocomplete-dropdown" *ngIf="showDropDown">
+          <li
+            *ngFor="let username of filteredUsernames$ | async"
+            (click)="selectUsername(username)"
+          >
+            {{ username }}
+          </li>
+        </ul>
       </div>
     </div>
   </div>
