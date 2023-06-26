@@ -48,12 +48,7 @@ app-cytoscape {
   z-index: 12;
   background: white;
 }
-:host ::ng-deep .p-accordion.p-accordion-header.pAccRec {
-  background-color:red;
-  background:red;
-  color:red;
-  margin:9999px;
-}
+
 
 .abstractParagraph {
   display: -webkit-box;
