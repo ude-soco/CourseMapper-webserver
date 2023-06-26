@@ -33,6 +33,7 @@ import { Material } from 'src/app/models/Material';
 import { getCurrentMaterial } from '../../../materials/state/materials.reducer';
 import * as VideoActions from 'src/app/pages/components/annotations/video-annotation/state/video.action';
 import { getShowAnnotations } from '../../video-annotation/state/video.reducer';
+import * as AnnotationSelectors from '../state/annotation.reducer';
 import {
   BehaviorSubject,
   Observable,
@@ -77,6 +78,11 @@ export class PdfCommentItemComponent
   showAllPDFAnnotations$: Observable<boolean>;
   sendButtonDisabled: boolean = true;
   Roles = Roles;
+  usernames$: Observable<{ name: string; username: string }[]>;
+  onUserInput: BehaviorSubject<string> = new BehaviorSubject<string>('');
+  onUserInput$ = this.onUserInput.asObservable();
+  showDropDown = false;
+  filteredUsernames$: Observable<{ name: string; username: string }[]>;
 
   constructor(
     private store: Store<State>,
@@ -202,6 +208,27 @@ export class PdfCommentItemComponent
         this.annotation?.location as VideoAnnotationLocation
       ).to;
     }
+
+    this.usernames$ = this.store.select(
+      AnnotationSelectors.getUnionOfAnnotationAndReplyAuthors
+    );
+    this.filteredUsernames$ = combineLatest([
+      this.usernames$,
+      this.onUserInput$,
+    ]).pipe(
+      tap(([username, input]) => {
+        console.log('pipeline running again!');
+        console.log(username);
+        console.log(input);
+      }),
+      map(([usernames, onUserInput]) => {
+        return usernames.filter((username) =>
+          (username.name + ' ' + username.username)
+            .toLowerCase()
+            .includes(onUserInput.toLowerCase())
+        );
+      })
+    );
   }
 
   sendReply() {
@@ -495,7 +522,7 @@ export class PdfCommentItemComponent
     this.showDropDown = false;
   }
 
-  usernames: string[] = [
+  /*   usernames: string[] = [
     'ebro123',
     'osama123',
     'ahmed1324',
@@ -504,23 +531,7 @@ export class PdfCommentItemComponent
     'oiehkjncm',
     'vh9023unvq',
     'kn034ngljal',
-  ];
+  ]; */
 
-  usernames$ = of(this.usernames);
-  onUserInput: BehaviorSubject<string> = new BehaviorSubject<string>('');
-  onUserInput$ = this.onUserInput.asObservable();
-  filteredUsernames$ = combineLatest([this.usernames$, this.onUserInput$]).pipe(
-    tap(([username, input]) => {
-      console.log('pipeline running again!');
-      console.log(username);
-      console.log(input);
-    }),
-    map(([usernames, onUserInput]) => {
-      return usernames.filter((username) =>
-        username.toLowerCase().includes(onUserInput.toLowerCase())
-      );
-    })
-  );
-
-  showDropDown = false;
+  /*  usernames$ = of(this.usernames); */
 }

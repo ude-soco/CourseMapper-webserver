@@ -124,6 +124,7 @@ export const newReply = async (req, res, next) => {
       userId: req.userId,
       name: authorName,
       role: foundRole,
+      username: foundUser.username,
     },
     courseId: foundAnnotation.courseId,
     topicId: foundAnnotation.topicId,

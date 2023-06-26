@@ -77,6 +77,7 @@ export const newAnnotation = async (req, res, next) => {
       userId: req.userId,
       name: authorName,
       role: foundRole,
+      username: foundUser.username,
     },
     location: annotationLocation,
     tool: annotationTool,

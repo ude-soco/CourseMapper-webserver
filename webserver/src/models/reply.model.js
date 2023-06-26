@@ -6,11 +6,12 @@ const Reply = new Schema({
   content: { type: String, required: true },
   author: {
     userId: { type: Schema.Types.ObjectId, required: true },
+    username: { type: String, required: true },
     name: { type: String, required: true },
     role: {
       _id: { type: Schema.Types.ObjectId, ref: "role" },
       name: { type: String, required: true },
-    }
+    },
   },
   courseId: { type: Schema.Types.ObjectId, ref: "course", required: true },
   topicId: { type: Schema.Types.ObjectId, ref: "topic", required: true },
