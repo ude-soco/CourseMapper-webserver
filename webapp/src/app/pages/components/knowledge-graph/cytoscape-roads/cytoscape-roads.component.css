@@ -1,5 +1,5 @@
 #cyRoads {
-    height: 100%;/*this must be 100% to avoid hiding graph after rendering*/
+    /* height: 400px;this must be 100% to avoid hiding graph after rendering */
     width: 100%;
     position: relative;
     left: 0;

@@ -29,10 +29,12 @@ export class CytoscapeRoadsComponent {
   @Input() style: any;
   @Input() layout: any;
   @Input() zoom: any;
+  @Input() cyHeight: any;
 
   public cy: any;
 
   public _elements: any;
+  checked= false;
 
   constructor(private renderer: Renderer2) {
     this.layout = {
@@ -81,92 +83,101 @@ export class CytoscapeRoadsComponent {
     },
   ];
   ngOnChanges() {
-    this.init();
-    console.log('done init');
+    // this.checked=false
+      this.init();
+
     // this.render();
     // console.log('done render')
   }
+  ngAfterContentChecked() {
+    // let cyRoads = document.getElementById('cyRoads');
+    // if (this.cyHeight && !this.checked) {
+    //   cyRoads.style.height = this.cyHeight + 'px';
+    //   this.checked=true
+    //   this.init()
+    // }
+  }
   init() {
-      let cy_container = this.renderer.selectRootElement('#cyRoads');
-      if (this.elements !== undefined) {
-        console.log(this.elements);
-        let nodes = [];
-        let edges = [];
-        let prevNode = null;
-        this.elements.forEach((element) => {
-          if (element) {
-            element.forEach((val, valIndex) => {
-              if (val) {
-                if (val.type) {
-                  if (val.type === 'user') {
-                    val.id = '0';
-                  }
-                  if (valIndex === element.length - 1) {
-                    val.lastNode = true;
-                    val.type = 'Recommended Concept';
-                  }
-                  let node = {
-                    data: val,
-                  };
-                  nodes.push(node);
-                  prevNode = val;
-                } else {
-                  if (val === 'dnu') {
-                    val = 'Not Understand';
-                  }
-                  if (val === 'RELATED_TO') {
-                    val = 'Related To';
-                  }
-                  if (val === 'BELONGS_TO') {
-                    val = 'Belongs To';
-                  }
-                  if (val === 'CONTAINS') {
-                    val = 'Contains';
-                  }
-                  let source = element[valIndex - 1].id;
-                  let target = element[valIndex + 1].id;
-                  let type = val;
-                  let edge = {
-                    data: {
-                      source: source,
-                      target: target,
-                      type: type,
-                    },
-                  };
-                  edges.push(edge);
+    let cy_container = this.renderer.selectRootElement('#cyRoads');
+    if (this.elements !== undefined) {
+      let cyRoads = document.getElementById('cyRoads');
+      cyRoads.style.height = this.cyHeight;
+      
+      let nodes = [];
+      let edges = [];
+      let prevNode = null;
+      this.elements.forEach((element) => {
+        if (element) {
+          element.forEach((val, valIndex) => {
+            if (val) {
+              if (val.type) {
+                if (val.type === 'user') {
+                  val.id = '0';
                 }
+                if (valIndex === element.length - 1) {
+                  val.lastNode = true;
+                  val.type = 'Recommended Concept';
+                }
+                let node = {
+                  data: val,
+                };
+                nodes.push(node);
+                prevNode = val;
+              } else {
+                if (val === 'dnu') {
+                  val = 'Not Understand';
+                }
+                if (val === 'RELATED_TO') {
+                  val = 'Related To';
+                }
+                if (val === 'BELONGS_TO') {
+                  val = 'Belongs To';
+                }
+                if (val === 'CONTAINS') {
+                  val = 'Contains';
+                }
+                let source = element[valIndex - 1].id;
+                let target = element[valIndex + 1].id;
+                let type = val;
+                let edge = {
+                  data: {
+                    source: source,
+                    target: target,
+                    type: type,
+                  },
+                };
+                edges.push(edge);
               }
-            });
-          }
+            }
+          });
+        }
+      });
+      this._elements = {
+        nodes: nodes,
+        edges: edges,
+      };
+      try {
+        this.cy = cytoscape({
+          container: cy_container,
+          layout: this.layout,
+          minZoom: this.zoom.min,
+          maxZoom: this.zoom.max,
+          style: this.showAllStyle,
+          elements: this._elements,
+          autounselectify: true,
         });
-        this._elements = {
-          nodes: nodes,
-          edges: edges,
-        };
-        try{
-          
-          this.cy = cytoscape({
-            container: cy_container,
-            layout: this.layout,
-            minZoom: this.zoom.min,
-            maxZoom: this.zoom.max,
-            style: this.showAllStyle,
-            elements: this._elements,
-            autounselectify: true,
-          });
-        }catch(e){
-          console.log(e)
-          this.init()
-        }
-        this.cy.userZoomingEnabled(false);
-        if (this._elements !== undefined) {
-          console.log(this._elements);
-          this.cy.ready(() => {
-          });
-          this.render();
-          console.log('done render');
-        }
+      } catch (e) {
+        console.log(e);
+        this.init();
       }
+      this.cy.userZoomingEnabled(false);
+      if (this._elements !== undefined) {
+        console.log(this._elements);
+        this.cy.ready(() => {});
+        this.render();
+        console.log('done render');
+      }
+    }
   }
 
   render() {

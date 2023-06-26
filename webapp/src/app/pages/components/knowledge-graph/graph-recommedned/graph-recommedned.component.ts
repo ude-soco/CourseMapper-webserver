@@ -43,6 +43,8 @@ export class GraphRecommednedComponent {
 
   selectedExplanation: any = null;
 
+  cyHeightRec:any;
+
   explanations: any[] = [
     { name: 'Visual Explanation', key: 'V' },
     { name: 'Textual Explanation', key: 'T' },
@@ -80,6 +82,20 @@ export class GraphRecommednedComponent {
   }
 
   ngAfterContentChecked() {
+    
+    let accordionTabAbstract = document.getElementById('accordionHeader');
+    let accordionTabReason = document.getElementById('accordionHeaderReason');
+    if(accordionTabAbstract && accordionTabReason){
+      let accordionComponentHeader1=accordionTabAbstract.childNodes[0].childNodes[0].childNodes[0] as HTMLElement;
+      accordionComponentHeader1.style.color='#212121'
+      accordionComponentHeader1.style.backgroundColor='white'
+      accordionComponentHeader1.style.borderBottom='solid #E5E7EB 1px'
+      
+      let accordionComponentHeader2=accordionTabReason.childNodes[0].childNodes[0].childNodes[0] as HTMLElement;
+      accordionComponentHeader2.style.color='#212121'
+      accordionComponentHeader2.style.backgroundColor='white'
+      accordionComponentHeader2.style.borderBottom='solid #E5E7EB 1px'
+    }
     try {
       this.linkTop = document
         .getElementById('clampedAnchorTagIcon')
@@ -106,7 +122,7 @@ export class GraphRecommednedComponent {
       this.node_wikipedia = event.wikipedia;
       this.node_score = event.score;
       this.node_reason = event.reason;
-      this.node_roads = event.roads;
+
       if (this.node_reason) {
         try {
           this.unclearConcepts = [];
@@ -187,9 +203,10 @@ export class GraphRecommednedComponent {
 
         setTimeout(() => {
           let accordionHeader = document.getElementById('accordionHeader')
-          .childNodes[0].childNodes[0].childNodes[0] as HTMLElement;
-          let accordionHeaderReason = document.getElementById('accordionHeaderReason')
-          .childNodes[0].childNodes[0].childNodes[0] as HTMLElement;
+            .childNodes[0].childNodes[0].childNodes[0] as HTMLElement;
+          let accordionHeaderReason = document.getElementById(
+            'accordionHeaderReason'
+          ).childNodes[0].childNodes[0].childNodes[0] as HTMLElement;
 
           if (accordionHeader) {
             accordionHeader.style.backgroundColor = '#e9ecef';
@@ -199,6 +216,23 @@ export class GraphRecommednedComponent {
             accordionHeaderReason.style.backgroundColor = '#e9ecef';
             accordionHeaderReason.style.color = '#747d84';
           }
+
+          let abstracBlock = document.getElementById(
+            'recommenderAbstractBlock'
+          ) as HTMLElement;
+    
+          if (abstracBlock) {
+            abstracBlock.style.maxHeight = Number(this.cyHeight-75).toString() + 'px';
+            console.log(abstracBlock)
+            console.log(abstracBlock.style.maxHeight)
+            let accordionAbstract = document.getElementById('accordionHeader').childNodes[0].childNodes[0] as HTMLElement;
+            this.cyHeightRec =Number(this.cyHeight - 75 - 3 * accordionAbstract.offsetHeight - 65).toString() + 'px';
+            console.log(this.cyHeightRec)
+            }
+          // setTimeout(() => {
+          //   console.log(this.cyHeightRec)
+            this.node_roads = event.roads;        
+          // }, 10);
         }, 1);
       }
     } else {
@@ -252,6 +286,11 @@ export class GraphRecommednedComponent {
     } else if (key === 'T') {
       this.showVisual = false;
       this.showTextual = true;
+        
+      let accordionAbstract = document.getElementById('accordionHeader').childNodes[0].childNodes[0] as HTMLElement;
+      setTimeout(() => {
+        document.getElementById('abstract_reason_Block_Text').style.height= Number(this.cyHeight - 75 - 3 * accordionAbstract.offsetHeight - 20).toString() +'px';
+      }, 2);          
     }
   }
   understoodConceptMsgToast() {

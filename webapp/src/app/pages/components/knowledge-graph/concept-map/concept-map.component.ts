@@ -389,8 +389,8 @@ export class ConceptMapComponent {
         // this.materialKgActivated =true
         setTimeout(() => {
           //reset dropdown value
-          this.selectedTopN= null;
-          this.selectedTopNodes(15)
+          this.selectedTopN = null;
+          this.selectedTopNodes(15);
           //reset checkboxes values
           this.selectedOption = this.selectedCheckOptions.slice(0, 1);
           //get current material's data
@@ -415,9 +415,9 @@ export class ConceptMapComponent {
         this.showSlideKg = false;
         setTimeout(() => {
           this.kgTitle = materialKgGenerator.selectedCourseService.name;
-           //reset dropdown value
-           this.selectedTopN= null;
-           this.selectedTopNodes(15)
+          //reset dropdown value
+          this.selectedTopN = null;
+          this.selectedTopNodes(15);
           setTimeout(() => {
             this.getConceptMapData();
           }, 10);
@@ -786,6 +786,25 @@ export class ConceptMapComponent {
     //   }, 100);
     // } catch {}
     // }
+
+    if (this.showSlideKg) {
+      let accTab1 = document.getElementById('accordionTab1');
+      let accTab2 = document.getElementById('accordionTab2');
+      if (accTab1 && accTab2) {
+        let accordionTab1 = document.getElementById('accordionTab1')
+          .childNodes[0].childNodes[0].childNodes[0] as HTMLElement;
+        let accordionTab2 = document.getElementById('accordionTab2')
+          .childNodes[0].childNodes[0].childNodes[0] as HTMLElement;
+        if (accordionTab1) {
+          accordionTab1.style.backgroundColor = '#e9ecef';
+          accordionTab1.style.color = '#747d84';
+        }
+        if (accordionTab2) {
+          accordionTab2.style.backgroundColor = '#e9ecef';
+          accordionTab2.style.color = '#747d84';
+        }
+      }
+    }
 
     if (!this.showSlideKg && this.updateUserConcepts) {
       this.onSubmitCancel();
@@ -1246,7 +1265,7 @@ export class ConceptMapComponent {
     var startTime = performance.now();
     try {
       //get all concepts that a user marked previously as understood or not & save in this.previousConcepts
-      console.log(this.userid)
+      console.log(this.userid);
       await this.userConceptsService
         .getUserConcepts(this.userid)
         .then((val) => {
@@ -1446,25 +1465,7 @@ export class ConceptMapComponent {
         slideKgDialogDiv.offsetWidth - flexboxNotUnderstood.offsetWidth;
       document.getElementById('graphSection').style.width =
         this.slideKgWidth + 'px';
-    }, 2);
-    try {
-      setTimeout(() => {
-        let accordionTab1 = document.getElementById('accordionTab1')
-          .childNodes[0].childNodes[0].childNodes[0] as HTMLElement;
-        let accordionTab2 = document.getElementById('accordionTab2')
-          .childNodes[0].childNodes[0].childNodes[0] as HTMLElement;
-        console.log(accordionTab1);
-        console.log(accordionTab2);
-        if (accordionTab1) {
-          accordionTab1.style.backgroundColor = '#e9ecef';
-          accordionTab1.style.color = '#747d84';
-        }
-        if (accordionTab2) {
-          accordionTab2.style.backgroundColor = '#e9ecef';
-          accordionTab2.style.color = '#747d84';
-        }
-      }, 100);
-    } catch {}
+    }, 5);
   }
   rankNodes(conceptsList: any) {
     //sort nodes to give rank
@@ -1519,7 +1520,8 @@ export class ConceptMapComponent {
         // prepare form of understood & did not understand concepts
         const reqData = await this.getRecommendedMaterialsPerSlide();
         ////////////////////////////////Call Concept recommender///////////////////////////////////////
-        //Send request for concept recommendation
+        // // //Send request for concept recommendation
+        
         const reqDataMaterial1 =
           await this.getRecommendedMaterialsPerSlideMaterial();
 
@@ -1530,14 +1532,14 @@ export class ConceptMapComponent {
           ); //receive recommended concepts
         this.recommendedConcepts = resultConcepts;
 
-        // //set to local storage
+        // // //set to local storage
         // localStorage.setItem(
         //   'resultConcepts',
         //   JSON.stringify(this.recommendedConcepts)
         // );
         ////////////////////////////////////////////////////////////////////
 
-        // // get from local storage
+        // // // get from local storage
         // this.recommendedConcepts = JSON.parse(
         //   localStorage.getItem('resultConcepts')
         // );
@@ -1615,10 +1617,10 @@ export class ConceptMapComponent {
         /////////////////////////////////////////////////////////////////////////
         // // // get from local storage
         // this.resultMaterials = JSON.parse(
-          //   localStorage.getItem('resultMaterials')
-          // ).nodes;
+        //   localStorage.getItem('resultMaterials')
+        // ).nodes;
 
-          this.resultMaterials = this.resultMaterials.nodes;
+        this.resultMaterials = this.resultMaterials.nodes;
 
         this.kgTabs.kgTabsEnable();
         this.tabs[2].disabled = false;

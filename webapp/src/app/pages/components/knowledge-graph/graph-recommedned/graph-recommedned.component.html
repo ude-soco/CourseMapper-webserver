@@ -18,10 +18,12 @@
   </div>
   <div
     *ngIf="node_name && node_type !== 'user'"
+    id="recommenderAbstractBlock"
     class="abstractBlock"
-    style="max-width: 35.85%; max-height: 75%"
-  >
-    <p-accordion>
+    style="max-width: 35.85%;"
+    >
+    <!-- style="max-width: 35.85%; max-height: 75%" -->
+    <p-accordion styleClass="pAccRec" id="accordionComponent">
       <p-accordionTab header="{{ node_name }}" [selected]="true" id="accordionHeader">
         <div
           class="innerAbstractBlock"
@@ -96,11 +98,11 @@
           </div>
         </div>
       </p-accordionTab>
-      <p-accordionTab header="Why is '{{ node_name }}' recommended?" id="accordionHeaderReason">
-        <div id="abstract_reason_Block" *ngIf="showVisual && node_roads" style="height: 400px;">
-          <app-cytoscape-roads [elements]="node_roads"> </app-cytoscape-roads>
+      <p-accordionTab header="Why is '{{ node_name }}' recommended?" id="accordionHeaderReason" >
+        <div id="abstract_reason_Block" *ngIf="showVisual && node_roads">
+          <app-cytoscape-roads [elements]="node_roads" [cyHeight]="cyHeightRec"> </app-cytoscape-roads>
         </div>
-        <div id="abstract_reason_Block" *ngIf="showTextual" style="height: 400px;overflow-y: scroll;" >
+        <div id="abstract_reason_Block_Text" *ngIf="showTextual" style="overflow-y: scroll;" >
           <h4>Reading the Wikipedia article for the concept: <b>'{{node_name}}'</b> is recommended to help you understand the concept(s): <b><span *ngFor="let concept of unclearConcepts">{{concept}}</span></b></h4>
           <br>
           <p>This concept has been recommended due to the reason(s):</p>
@@ -113,7 +115,7 @@
         <div
           *ngFor="let explanation of explanations"
           class="p-field-checkbox"
-          style="display: inline-block; margin-top: 0px;"
+          style="display: inline-block; margin-top: 0px; height: 100%;"
         >
           <p-radioButton
             [inputId]="explanation.key"

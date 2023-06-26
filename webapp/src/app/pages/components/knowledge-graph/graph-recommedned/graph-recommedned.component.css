@@ -29,36 +29,32 @@ app-cytoscape {
   display: inline-block;
 }
 
-/* .abstractBlock {
-  display: block;
-  position: absolute;
-  max-height: 500px;
-  top: 8.5rem;
-  right: 3rem;
-  float: right;
-  overflow: auto;
-  overflow-x: hidden;
-  box-sizing: border-box;
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.3);
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  border-radius: 8px;
-  z-index: 11;
-} */
 .abstractBlock {
-  display:block;
-  float:right;
+  display: block;
+  float: right;
   position: absolute;
   margin-right: 1.2rem;
   margin-top: 0.2rem;
-  border: 1px solid #d1d1d1;
-  stroke: #d1d1d1;
-  box-shadow: -2px 2px #d1d1d1;
-  border-radius: 20px 20px 20px 20px;
   right: 0.5rem;
-  background:#fefefe;
+  background: white;
+  border:none;
   z-index: 11;
+  padding: 0px;
 }
+:host ::ng-deep .p-accordion.pAccRec {
+  border-left: 1px solid #b3b3b3;
+  border-right: 1px solid #b3b3b3;
+  border-top: 1px solid #b3b3b3;
+  z-index: 12;
+  background: white;
+}
+:host ::ng-deep .p-accordion.p-accordion-header.pAccRec {
+  background-color:red;
+  background:red;
+  color:red;
+  margin:9999px;
+}
+
 .abstractParagraph {
   display: -webkit-box;
   -webkit-line-clamp: 5;
@@ -86,14 +82,14 @@ li:before {
   background-color: #0284c7 !important;
 }
 :host ::ng-deep .p-toast {
-    width:350px;
-    font-size: 15px;
-  }
-  :host ::ng-deep .p-accordion-header-link{
-    color:red;
-  }
-  #abstractButtons{
-    color:#EB590D;
-    border: #EB590D;
-    /* font-size: 12px; */
-  }
+  width: 350px;
+  font-size: 15px;
+}
+:host ::ng-deep .p-accordion-header-link {
+  color: red;
+}
+#abstractButtons {
+  color: #eb590d;
+  border: #eb590d;
+  /* font-size: 12px; */
+}

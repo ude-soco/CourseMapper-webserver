@@ -11,7 +11,7 @@
     header="{{ this.currentMaterial?.name }}"
     [(visible)]="this.showMaterialKg"
     [blockScroll]="true"
-    (onShow)="materialKgActivated=true"
+    (onShow)="materialKgActivated = true"
     (onHide)="onSubmitCancel()"
     [style]="{
       position: 'relative',
@@ -359,13 +359,15 @@
                   styleClass="mediumSize"
                   [autoZIndex]="false"
                 >
-                  <h3 style="color: #0288d1; font-size: 1em; font-weight: bold">
+                <ng-template pTemplate="header">
+                  <h3 style="color: #0288d1; font-size: 1em">
                     Not Understood Concepts Lists
                   </h3>
-                  <div style="border: 0.2px solid #0284c7; position: relative">
+                </ng-template>
+                  <div style="position: relative">
                     <p-accordion [multiple]="true">
                       <p-accordionTab
-                      id="accordionTab1"
+                        id="accordionTab1"
                         header="Not understood concepts from this slide - ({{
                           didNotUnderstandConceptsObj.length
                         }}) concepts "
@@ -446,7 +448,8 @@
                           </div>
                         </fieldset>
                       </p-accordionTab>
-                      <p-accordionTab id="accordionTab2"
+                      <p-accordionTab
+                        id="accordionTab2"
                         header="Not understood concepts from other slides - ({{
                           previousConceptsObj.length
                         }}) concepts"
@@ -529,14 +532,14 @@
                       </p-accordionTab>
                     </p-accordion>
                   </div>
+                  <ng-template pTemplate="footer">
                   <div
-                    class="showRecommenderButton mt-2"
                     *ngIf="
                       showNotUnderstoodConceptsList &&
                       mainConceptsTab &&
                       kgSlideReceivedResponse
                     "
-                    style="text-align: center; bottom: 0"
+                    style="margin: 0 20%;"
                   >
                     <span
                       id="recommendationSpan"
@@ -551,12 +554,7 @@
                         label="Show Recommendations"
                         [disabled]="disableShowRecommendationsButton"
                         pTooltip="Show recommendations for not understood concepts"
-                        style="
-                          font-size: 17px;
-                          max-height: 95%;
-                          margin: auto;
-                          margin-bottom: 10px;
-                        "
+                        style="font-size: 17px; max-height: 95%"
                         pStyleClass="showRecoomendationsButton"
                       >
                         <p-progressSpinner
@@ -569,7 +567,9 @@
                       </button>
                     </span>
                   </div>
+                </ng-template>
                 </p-sidebar>
+
                 <button
                   id="hideNonUnderstoodPanel"
                   (click)="showConceptsListSidebar = false; hideConceptsList()"
@@ -635,8 +635,8 @@
               </div>
               <div *ngIf="recommendedMaterialsTab" class="tab mainConcepts">
                 <app-result-view
-                [concepts1]="concepts1"
-                [results1]="resultMaterials"
+                  [concepts1]="concepts1"
+                  [results1]="resultMaterials"
                 ></app-result-view>
                 <!-- [concepts2]="concepts2"
                 [results2]="resultMaterials2"

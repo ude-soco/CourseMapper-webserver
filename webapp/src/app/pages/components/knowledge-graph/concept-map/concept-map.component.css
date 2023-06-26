@@ -288,12 +288,14 @@
     overflow-y: auto;
   }
   :host ::ng-deep #recommendationButton {
-    position: relative;
-    white-space: normal;
-    word-wrap: break-word;
+    position: absolute;
+    /* white-space: normal; */
+    /* word-wrap: break-word; */
     color: #ffffff;
     background: #eb590d;
     border: #eb590d;
+    margin-left:auto;
+    z-index:12;
   }
   #hideNonUnderstoodPanel {
     position: absolute;
@@ -478,4 +480,9 @@
   :host ::ng-deep .p-toast {
     width:350px;
     font-size: 15px;
+  }
+  :host ::ng-deep .p-sidebar.mediumSize {
+    box-shadow: none;
+    border-radius: 8px;
+    border: 1px solid #b3b3b3;
   }
