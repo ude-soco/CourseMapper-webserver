@@ -475,3 +475,30 @@ export const unsubscribeCourse = async (req, res, next) => {
 
   res.status(200).send({ message: "User unsubscribed from course" });
 };
+
+export const searchUsers = async (req, res, next) => {
+  const { courseId, partialString } = req.query;
+  const searchQuery = partialString ? partialString : "";
+  try {
+    const users = await User.find({
+      "courses.courseId": courseId,
+      $or: [
+        { username: { $regex: searchQuery, $options: "i" } },
+        { firstname: { $regex: searchQuery, $options: "i" } },
+        { lastname: { $regex: searchQuery, $options: "i" } },
+      ],
+    }).limit(10);
+
+    if (users.length === 0) {
+      return res.json([]);
+    }
+    const suggestions = users.map((user) => ({
+      name: user.firstname + " " + user.lastname,
+      username: user.username,
+    }));
+
+    res.json(suggestions);
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+};

@@ -34,17 +34,21 @@ import { getCurrentMaterial } from '../../../materials/state/materials.reducer';
 import * as VideoActions from 'src/app/pages/components/annotations/video-annotation/state/video.action';
 import { getShowAnnotations } from '../../video-annotation/state/video.reducer';
 import * as AnnotationSelectors from '../state/annotation.reducer';
+import { getCurrentCourseId } from 'src/app/pages/courses/state/course.reducer';
 import {
   BehaviorSubject,
   Observable,
   combineLatest,
+  debounceTime,
   map,
   of,
+  switchMap,
   take,
   tap,
 } from 'rxjs';
 import { event } from 'jquery';
 import { Roles } from 'src/app/models/Roles';
+import { NotificationsService } from 'src/app/services/notifications.service';
 
 @Component({
   selector: 'app-pdf-comment-item',
@@ -83,12 +87,15 @@ export class PdfCommentItemComponent
   onUserInput$ = this.onUserInput.asObservable();
   showDropDown = false;
   filteredUsernames$: Observable<{ name: string; username: string }[]>;
-
+  filteredUsernamesBackend$: Observable<{ name: string; username: string }[]>;
+  totalUsers$: Observable<{ name: string; username: string }[]>;
+  courseId: string;
   constructor(
     private store: Store<State>,
     private socket: Socket,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
+    private notificationService: NotificationsService,
     private renderer: Renderer2
   ) {
     this.store.select(getCurrentPdfPage).subscribe((currentPage) => {
@@ -209,6 +216,10 @@ export class PdfCommentItemComponent
       ).to;
     }
 
+    this.store.select(getCurrentCourseId).subscribe((courseId) => {
+      this.courseId = courseId;
+    });
+
     this.usernames$ = this.store.select(
       AnnotationSelectors.getUnionOfAnnotationAndReplyAuthors
     );
@@ -227,6 +238,53 @@ export class PdfCommentItemComponent
             .toLowerCase()
             .includes(onUserInput.toLowerCase())
         );
+      })
+    );
+
+    this.filteredUsernamesBackend$ = this.onUserInput$.pipe(
+      tap((input) => {
+        console.log('input is: ' + input);
+      }),
+      tap((input) => {
+        console.log('courseId is: ' + this.courseId);
+      }),
+      switchMap((input) => {
+        return this.notificationService
+          .getUserNames({ partialString: input, courseId: this.courseId })
+          .pipe(
+            tap((users) => {
+              console.log('backend pipeline running!');
+              console.log(users);
+            })
+          );
+      })
+    );
+
+    this.totalUsers$ = combineLatest([
+      this.filteredUsernames$,
+      this.filteredUsernamesBackend$,
+    ]).pipe(
+      tap(([frontend, backend]) => {
+        console.log('frontend is: ');
+        console.log(frontend);
+        console.log('backend is: ');
+        console.log(backend);
+      }),
+      map(([frontend, backend]) => {
+        let usernames: Map<string, string> = new Map<string, string>();
+        frontend.forEach((user) => {
+          usernames.set(user.username, user.name);
+        });
+        backend.forEach((user) => {
+          usernames.set(user.username, user.name);
+        });
+        let arr: { name: string; username: string }[];
+        console.log(usernames);
+        arr = Array.from(usernames, ([username, name]) => ({
+          username,
+          name,
+        }));
+        return arr;
       })
     );
   }
@@ -503,6 +561,9 @@ export class PdfCommentItemComponent
             console.log('hide dropdown');
             this.showDropDown = false;
           }
+        });
+        this.filteredUsernamesBackend$.pipe(take(1)).subscribe((usernames) => {
+          console.log(usernames);
         });
       }
     } else {

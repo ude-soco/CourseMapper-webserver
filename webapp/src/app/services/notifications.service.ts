@@ -112,6 +112,18 @@ export class NotificationsService {
     );
   }
 
+  getUserNames({
+    partialString,
+    courseId,
+  }: {
+    partialString: string;
+    courseId: string;
+  }) {
+    return this.httpClient.get<{ name: string; username: string }[]>(
+      `${environment.API_URL}/notifications/searchUsers?partialString=${partialString}&courseId=${courseId}`
+    );
+  }
+
   private transformNotification(notification: UserNotification): Notification {
     const lastWord =
       notification.activityId.statement.object.definition.type.slice(40);

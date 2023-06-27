@@ -187,7 +187,7 @@ export const getUnionOfAnnotationAndReplyAuthors = createSelector(
       unionOfAuthors.set(key, value);
     });
     let arr: { name: string; username: string }[];
-    arr = Array.from(unionOfAuthors, ([name, username]) => ({
+    arr = Array.from(unionOfAuthors, ([username, name]) => ({
       name,
       username,
     }));

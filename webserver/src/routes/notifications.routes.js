@@ -86,4 +86,6 @@ module.exports = function (app) {
   );
 
   app.delete("/api/notifications", controller.deleteAllNotifications);
+
+  app.get("/api/notifications/searchUsers", controller.searchUsers);
 };
