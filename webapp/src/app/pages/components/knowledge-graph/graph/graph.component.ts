@@ -65,8 +65,6 @@ export class GraphComponent {
   }
   ngOnInit(): void {}
 
-  ngOnChanges() {}
-
   ngAfterContentChecked() {
     //check if text is bigger than container & show wiki_link depending on it
     try {
@@ -91,10 +89,9 @@ export class GraphComponent {
     let abstractSidebar = document.getElementById('abstractSidebarBlock');
     //if kg at material or course level && abstract sidebar shown
     if (abstractSidebar && this.materialKnowledgeGraph) {
-      let abstractContainer = document.getElementById(
-        'abstractBlockContainer'
-      );
-      abstractContainer.style.height = (Number(this.cyHeight -75)).toString() + 'px';
+      let abstractContainer = document.getElementById('abstractBlockContainer');
+      abstractContainer.style.height =
+        Number(this.cyHeight - 75).toString() + 'px';
 
       let sidebarChild = document.getElementById('abstractSidebarBlock')
         .childNodes[0] as HTMLElement;
@@ -102,8 +99,7 @@ export class GraphComponent {
       spanAbstract.style.webkitLineClamp = null;
       let sBarAbstract = sidebarChild.childNodes[1].childNodes[0]
         .childNodes[0] as HTMLElement;
-      console.log(sBarAbstract.clientHeight);
-      let sBarHeight = sidebarChild.clientHeight - sBarAbstract.clientHeight;
+      let sBarHeight = sidebarChild.offsetHeight - sBarAbstract.offsetHeight;
       let sBarWidth = sidebarChild.clientWidth;
       //font size is 20 by default
       let fontSize = 20;
@@ -111,10 +107,10 @@ export class GraphComponent {
         Math.floor(sBarWidth / fontSize) * Math.floor(sBarHeight / fontSize) -
         95; //get max number of abstract chars in which no scrolling needed [(container area/ font size)-header area - link size]
       this.truncatedAbstract = this.node_abstract.substring(0, maxChars); // limit max size of chars at abstract
-      this.truncatedAbstract = this.truncatedAbstract.substring(
-        0,
-        this.truncatedAbstract.lastIndexOf(' ')
-      ); // subtract last word to prevent showing words with subtracted chars
+      // this.truncatedAbstract = this.truncatedAbstract.substring(
+      //   0,
+      //   this.truncatedAbstract.lastIndexOf(' ')
+      // ); // subtract last word to prevent showing words with subtracted chars
     }
   }
 
@@ -139,37 +135,52 @@ export class GraphComponent {
           sidebarChild.style.height = 100 + '%';
 
           //get sidebar header
-          let sidebarHeader = sidebarChild.childNodes[0] as HTMLElement
+          let sidebarHeader = sidebarChild.childNodes[0] as HTMLElement;
           //set icon position to right
-          sidebarHeader.style.position='absolute'
-          sidebarHeader.style.padding='0'
-          sidebarHeader.style.marginLeft=(Number(sidebarChild.offsetWidth) - sidebarHeader.offsetWidth).toString() + 'px'
+          sidebarHeader.style.position = 'absolute';
+          sidebarHeader.style.padding = '0';
+          sidebarHeader.style.marginLeft =
+            (
+              Number(sidebarChild.offsetWidth) - sidebarHeader.offsetWidth
+            ).toString() + 'px';
+          
+          // set abstractPanel length to be equal to shown kg length
+          abstractContainer.style.height =
+            Number(this.cyHeight - 75).toString() + 'px';
 
-          abstractContainer.style.height = (Number(this.cyHeight -75)).toString() + 'px';
+          // set text length for abstract at material-view and course-view KGs
           if (this.materialKnowledgeGraph) {
             let spanAbstract = document.getElementById('abstractSpan');
-            if (spanAbstract) {// If selected node is category ==> no abstract span
+            if (spanAbstract) {
+              // If selected node is category ==> no abstract span
               spanAbstract.style.webkitLineClamp = null;
             }
+            // get abstract's title height
             let sBarAbstract = sidebarChild.childNodes[1].childNodes[0]
               .childNodes[0] as HTMLElement;
-            console.log(sBarAbstract.clientHeight);
+
+            // set abstract text container's height to be whole height except the title's height
             let sBarHeight =
-              sidebarChild.clientHeight - sBarAbstract.clientHeight;
+              sidebarChild.offsetHeight - sBarAbstract.offsetHeight;
             let sBarWidth = sidebarChild.clientWidth;
             //font size is 20 by default
             let fontSize = 20;
+
+            // max number of characters to be shown in the abstractContainer, depends on the font size and abstract area (height * width)
+            // considering the length of the shown wiki link that is 95
             var maxChars =
               Math.floor(sBarWidth / fontSize) *
-                Math.floor(sBarHeight / fontSize) -
-              95; //get max number of abstract chars in which no scrolling needed [(container area/ font size)-header area - link size]
+                Math.floor(sBarHeight / fontSize) -95; //get max number of abstract chars in which no scrolling needed [(container area/ font size)-header area - link size]
             this.truncatedAbstract = this.node_abstract.substring(0, maxChars); // limit max size of chars at abstract
-            this.truncatedAbstract = this.truncatedAbstract.substring(
-              0,
-              this.truncatedAbstract.lastIndexOf(' ')
-            ); // subtract last word to prevent showing words with subtracted chars
+
+            // // in case removing last word from the text is needed
+            // this.truncatedAbstract = this.truncatedAbstract.substring(
+            //   0,
+            //   this.truncatedAbstract.lastIndexOf(' ')
+            // ); // subtract last word to prevent showing words with subtracted chars
           }
         } else if (this.slideKnowledgeGraph) {
+          // if abstract is shown in slide-kg, show only 10 lines
           let spanAbstract = document.getElementById('abstractSpan');
           spanAbstract.style.webkitLineClamp = '10';
         }
