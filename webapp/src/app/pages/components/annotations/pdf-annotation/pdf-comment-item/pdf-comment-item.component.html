@@ -176,8 +176,8 @@
         </div>
         <ul class="autocomplete-dropdown" *ngIf="showDropDown">
           <li
-            *ngFor="let username of totalUsers$ | async"
-            (click)="selectUsername(username.name)"
+            *ngFor="let username of filteredUserNames$ | async"
+            (click)="selectUsername(username.username)"
           >
             {{ username.name + " (" + username.username + ")" }}
           </li>

@@ -86,9 +86,11 @@ export class PdfCommentItemComponent
   onUserInput: BehaviorSubject<string> = new BehaviorSubject<string>('');
   onUserInput$ = this.onUserInput.asObservable();
   showDropDown = false;
-  filteredUsernames$: Observable<{ name: string; username: string }[]>;
-  filteredUsernamesBackend$: Observable<{ name: string; username: string }[]>;
-  totalUsers$: Observable<{ name: string; username: string }[]>;
+  filteredUsernamesFromAnnotationAndRepliesAuthors$: Observable<
+    { name: string; username: string }[]
+  >;
+  filteredEnrolledUsernames$: Observable<{ name: string; username: string }[]>;
+  filteredUserNames$: Observable<{ name: string; username: string }[]>;
   courseId: string;
   constructor(
     private store: Store<State>,
@@ -223,7 +225,7 @@ export class PdfCommentItemComponent
     this.usernames$ = this.store.select(
       AnnotationSelectors.getUnionOfAnnotationAndReplyAuthors
     );
-    this.filteredUsernames$ = combineLatest([
+    this.filteredUsernamesFromAnnotationAndRepliesAuthors$ = combineLatest([
       this.usernames$,
       this.onUserInput$,
     ]).pipe(
@@ -241,7 +243,7 @@ export class PdfCommentItemComponent
       })
     );
 
-    this.filteredUsernamesBackend$ = this.onUserInput$.pipe(
+    this.filteredEnrolledUsernames$ = this.onUserInput$.pipe(
       tap((input) => {
         console.log('input is: ' + input);
       }),
@@ -260,9 +262,9 @@ export class PdfCommentItemComponent
       })
     );
 
-    this.totalUsers$ = combineLatest([
-      this.filteredUsernames$,
-      this.filteredUsernamesBackend$,
+    this.filteredUserNames$ = combineLatest([
+      this.filteredUsernamesFromAnnotationAndRepliesAuthors$,
+      this.filteredEnrolledUsernames$,
     ]).pipe(
       tap(([frontend, backend]) => {
         console.log('frontend is: ');
@@ -542,28 +544,20 @@ export class PdfCommentItemComponent
     } else {
       this.sendButtonDisabled = false;
     }
-
     const atSymbolRegex: RegExp = /(^|\s)@/;
-
     if (atSymbolRegex.test(this.replyContent)) {
       const lastIndex = this.replyContent.lastIndexOf('@');
-
       if (lastIndex !== -1) {
         const content = this.replyContent.substring(lastIndex + 1).trim();
         console.log(content);
         this.onUserInput.next(content);
-        this.filteredUsernames$.pipe(take(1)).subscribe((usernames) => {
-          console.log(usernames);
-          if (usernames.length > 0) {
-            console.log('show dropdown');
+        this.filteredUserNames$.pipe(take(1)).subscribe((totalUsers) => {
+          console.log(totalUsers);
+          if (totalUsers.length > 0) {
             this.showDropDown = true;
           } else {
-            console.log('hide dropdown');
             this.showDropDown = false;
           }
-        });
-        this.filteredUsernamesBackend$.pipe(take(1)).subscribe((usernames) => {
-          console.log(usernames);
         });
       }
     } else {
@@ -572,8 +566,6 @@ export class PdfCommentItemComponent
   }
 
   selectUsername(username: string) {
-    /* this.searchQuery = '@' + username;
-    this.filteredUsernames = []; */
     const lastIndex = this.replyContent.lastIndexOf('@');
 
     if (lastIndex !== -1) {
@@ -582,17 +574,4 @@ export class PdfCommentItemComponent
     }
     this.showDropDown = false;
   }
-
-  /*   usernames: string[] = [
-    'ebro123',
-    'osama123',
-    'ahmed1324',
-    'random',
-    'asdfsdf',
-    'oiehkjncm',
-    'vh9023unvq',
-    'kn034ngljal',
-  ]; */
-
-  /*  usernames$ = of(this.usernames); */
 }
