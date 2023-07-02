@@ -43,14 +43,38 @@ export const initialiseNotificationSettings = async (course, user) => {
   //fetch the topics of the course to get the channels
   let topicIds = course.topics;
   let topics = await Topic.find({ _id: { $in: topicIds } });
+
   let channelIds = [];
   topics.forEach((topic) => {
     channelIds = channelIds.concat(topic.channels);
   });
+
+  //make a second loop storing the topicIds, channelIds
+  let channelIdsAndTopicIds = [];
+  topics.forEach((topic) => {
+    channelIdsAndTopicIds = channelIdsAndTopicIds.concat(
+      topic.channels.map((channelId) => {
+        return {
+          channelId: channelId,
+          topicId: topic._id,
+        };
+      })
+    );
+  });
+
   let channels = await Channel.find({ _id: { $in: channelIds } });
-  let materialIds = [];
+  let materialIdsAndChannelIdsAndTopicIds = [];
   channels.forEach((channel) => {
-    materialIds = materialIds.concat(channel.materials);
+    materialIdsAndChannelIdsAndTopicIds =
+      materialIdsAndChannelIdsAndTopicIds.concat(
+        channel.materials.map((materialId) => {
+          return {
+            materialId: materialId,
+            channelId: channel._id,
+            topicId: channel.topicId,
+          };
+        })
+      );
   });
 
   //loop over all the topicIds, channelIds, and materialIds and set the 3 notification settings for each of them
@@ -63,25 +87,32 @@ export const initialiseNotificationSettings = async (course, user) => {
         userReplyAndMentionedNotificationSetting,
     };
   });
-  let blockingNotificationChannels = channelIds.map((channelId) => {
-    return {
-      channelId: channelId,
-      isCourseUpdateNotificationsEnabled: userCourseUpdateNotificationSetting,
-      isAnnotationNotificationsEnabled: userAnnotationNotificationSetting,
-      isReplyAndMentionedNotificationsEnabled:
-        userReplyAndMentionedNotificationSetting,
-    };
-  });
+  let blockingNotificationChannels = channelIdsAndTopicIds.map(
+    (channelIdAndTopicId) => {
+      return {
+        channelId: channelIdAndTopicId.channelId,
+        topicId: channelIdAndTopicId.topicId,
+        isCourseUpdateNotificationsEnabled: userCourseUpdateNotificationSetting,
+        isAnnotationNotificationsEnabled: userAnnotationNotificationSetting,
+        isReplyAndMentionedNotificationsEnabled:
+          userReplyAndMentionedNotificationSetting,
+      };
+    }
+  );
 
-  let blockingNotificationMaterials = materialIds.map((materialId) => {
-    return {
-      materialId: materialId,
-      isCourseUpdateNotificationsEnabled: userCourseUpdateNotificationSetting,
-      isAnnotationNotificationsEnabled: userAnnotationNotificationSetting,
-      isReplyAndMentionedNotificationsEnabled:
-        userReplyAndMentionedNotificationSetting,
-    };
-  });
+  let blockingNotificationMaterials = materialIdsAndChannelIdsAndTopicIds.map(
+    (materialIdAndChannelIds) => {
+      return {
+        materialId: materialIdAndChannelIds.materialId,
+        channelId: materialIdAndChannelIds.channelId,
+        topicId: materialIdAndChannelIds.topicId,
+        isCourseUpdateNotificationsEnabled: userCourseUpdateNotificationSetting,
+        isAnnotationNotificationsEnabled: userAnnotationNotificationSetting,
+        isReplyAndMentionedNotificationsEnabled:
+          userReplyAndMentionedNotificationSetting,
+      };
+    }
+  );
 
   console.log("blockingNotificationTopics", blockingNotificationTopics);
   console.log("blockingNotificationChannels", blockingNotificationChannels);

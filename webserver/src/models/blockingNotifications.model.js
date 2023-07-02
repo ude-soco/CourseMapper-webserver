@@ -31,9 +31,13 @@ const BlockingNotifications = new Schema({
   ],
   channels: [
     {
-      channelId: {
+      topicId: {
         type: Schema.Types.ObjectId,
         ref: "topic",
+      },
+      channelId: {
+        type: Schema.Types.ObjectId,
+        ref: "channel",
       },
       isAnnotationNotificationsEnabled: { type: Boolean },
       isReplyAndMentionedNotificationsEnabled: { type: Boolean },
@@ -44,7 +48,15 @@ const BlockingNotifications = new Schema({
     {
       materialId: {
         type: Schema.Types.ObjectId,
+        ref: "material",
+      },
+      topicId: {
+        type: Schema.Types.ObjectId,
         ref: "topic",
+      },
+      channelId: {
+        type: Schema.Types.ObjectId,
+        ref: "channel",
       },
       isAnnotationNotificationsEnabled: { type: Boolean },
       isReplyAndMentionedNotificationsEnabled: { type: Boolean },
