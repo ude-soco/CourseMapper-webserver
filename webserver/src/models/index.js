@@ -19,6 +19,7 @@ db.notification = require("./notificationBaoui.model");
 db.userTopicSubscriber = require("./userTopicSubscriber.model");
 db.userChannelSubscriber = require("./userChannelSubscriber.model");
 db.userCourseSubscriber = require("./userCourseSubscriber.model");
+db.blockingNotification = require("./blockingNotifications.model");
 db.ROLES = ["user", "admin", "moderator"];
 
 module.exports = db;

@@ -14,6 +14,9 @@ const User = new Schema({
     {
       courseId: { type: Schema.Types.ObjectId, ref: "course", required: true },
       role: { type: Schema.Types.ObjectId, ref: "role" },
+      isAnnotationNotificationsEnabled: { type: Boolean, default: true },
+      isReplyAndMentionedNotificationsEnabled: { type: Boolean, default: true },
+      isCourseUpdateNotificationsEnabled: { type: Boolean, default: true },
     },
   ],
   indicators: [

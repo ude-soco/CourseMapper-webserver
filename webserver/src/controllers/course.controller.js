@@ -14,7 +14,8 @@ const UserNotification = db.userNotifications;
 const UserCourseSubscriber = db.userCourseSubscriber;
 const UserTopicSubscriber = db.userTopicSubscriber;
 const UserChannelSubscriber = db.userChannelSubscriber;
-
+const BlockingNotification = db.blockingNotifications;
+const helpers = require("../helpers/helpers");
 /**
  * @function getAllCourses
  * Get all courses controller
@@ -219,7 +220,7 @@ export const enrolCourse = async (req, res, next) => {
       role: role._id,
     });
     try {
-      await foundUser.save();
+      foundUser = await foundUser.save();
     } catch (err) {
       return res.status(500).send({ error: "Error savinguser" });
     }
@@ -228,56 +229,12 @@ export const enrolCourse = async (req, res, next) => {
       role: role._id,
     });
     try {
-      await foundCourse.save();
+      foundCourse = await foundCourse.save();
     } catch (err) {
       return res.status(500).send({ error: "Error saving course" });
     }
 
-    //populate the UserCourseSubscriber table. it will contain the userId and courseId
-    let userCourseSubscriber = new UserCourseSubscriber({
-      userId: foundUser._id,
-      courseId: foundCourse._id,
-    });
-    try {
-      await userCourseSubscriber.save();
-    } catch (err) {
-      return res
-        .status(500)
-        .send({ error: "Error saving userCourseSubscriber" });
-    }
-    //populate the UserTopicSubscriber table. For every topic that the foundCourse contains, add a document to the table. each document contains the userId and the topicId and the courseId
-    const userTopicSubscribers = foundCourse.topics.map((topic) => {
-      return new UserTopicSubscriber({
-        userId: foundUser._id,
-        topicId: topic._id,
-        courseId: foundCourse._id,
-      });
-    });
-
-    try {
-      await UserTopicSubscriber.insertMany(userTopicSubscribers);
-    } catch (err) {
-      return res
-        .status(500)
-        .send({ error: "Error saving userTopicSubscribers" });
-    }
-
-    //populate the UserChannelSubscriber table. For every channel that the foundCourse contains, add a document to the table. each document contains the userId and the courseId and the channelId
-    const userChannelSubscribers = foundCourse.channels.map((channel) => {
-      return new UserChannelSubscriber({
-        userId: foundUser._id,
-        channelId: channel._id,
-        courseId: foundCourse._id,
-      });
-    });
-
-    try {
-      await UserChannelSubscriber.insertMany(userChannelSubscribers);
-    } catch (err) {
-      return res
-        .status(500)
-        .send({ error: "Error saving userChannelSubscribers" });
-    }
+    await helpers.initialiseNotificationSettings(foundCourse, foundUser);
 
     req.locals = {
       response: { success: `User enrolled to course ${foundCourse.name}` },
