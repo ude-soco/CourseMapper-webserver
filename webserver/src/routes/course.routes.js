@@ -26,6 +26,12 @@ module.exports = function (app) {
     controller.getCourse
     // TODO: Probably we need to provide the getCourse logger
   );
+  app.get(
+    "/api/coursesTest/:courseId",
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.getCourseTest
+    // TODO: Probably we need to provide the getCourse logger
+  );
   // app.get("/courses/:courseId", controller.getCourse);
 
   // Create a new course

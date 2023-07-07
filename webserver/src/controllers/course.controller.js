@@ -132,10 +132,210 @@ export const getCourse = async (req, res) => {
   let foundCourse;
   let results = [];
   try {
-    foundCourse = await Course.findById(courseId)
-      .populate("topics", "-__v")
-      .populate({ path: "users", populate: { path: "role" } })
-      .populate({ path: "topics", populate: { path: "channels" } });
+    foundCourse = await BlockingNotification.aggregate([
+      {
+        $match: {
+          courseId: new ObjectId(courseId),
+          userId: new ObjectId(userId),
+        },
+      },
+      {
+        $unset: "materials",
+      },
+
+      {
+        $lookup: {
+          from: "topics",
+          localField: "topics.topicId",
+          foreignField: "_id",
+          as: "result",
+        },
+      },
+
+      {
+        $addFields: {
+          topics: {
+            $map: {
+              input: "$topics",
+              as: "topic",
+              in: {
+                $mergeObjects: [
+                  "$$topic",
+                  {
+                    $arrayElemAt: [
+                      "$result",
+                      {
+                        $indexOfArray: ["$result._id", "$$topic.topicId"],
+                      },
+                    ],
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          result: 0,
+        },
+      },
+      /* 
+      {
+        $project: {
+          topics: {
+            $map: {
+              input: "$topics",
+              as: "topic",
+              in: {
+                $arrayToObject: {
+                  $filter: {
+                    input: {
+                      $objectToArray: "$$topic"
+                    },
+                    cond: {
+                      $ne: ["$$this.k", "channels"]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          courseId: 1,
+          userId: 1,
+          materials: 1,
+          channels: 1,
+          __v: 1
+        }
+      }, */
+
+      {
+        $lookup: {
+          from: "channels",
+          localField: "channels.channelId",
+          foreignField: "_id",
+          as: "result",
+        },
+      },
+      {
+        $addFields: {
+          channels: {
+            $map: {
+              input: "$channels",
+              as: "channel",
+              in: {
+                $mergeObjects: [
+                  "$$channel",
+                  {
+                    $arrayElemAt: [
+                      "$result",
+                      {
+                        $indexOfArray: ["$result._id", "$$channel.channelId"],
+                      },
+                    ],
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+      {
+        $addFields: {
+          topics: {
+            $map: {
+              input: "$topics",
+              as: "topic",
+              in: {
+                $mergeObjects: [
+                  "$$topic",
+                  {
+                    channels: {
+                      $filter: {
+                        input: "$channels",
+                        as: "channel",
+                        cond: {
+                          $eq: ["$$channel.topicId", "$$topic.topicId"],
+                        },
+                      },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+      {
+        $unset: "result",
+      },
+      {
+        $lookup: {
+          from: "courses",
+          localField: "courseId",
+          foreignField: "_id",
+          as: "course",
+        },
+      },
+      {
+        $replaceRoot: {
+          newRoot: {
+            $mergeObjects: [{ $arrayElemAt: ["$course", 0] }, "$$ROOT"],
+          },
+        },
+      },
+      {
+        $unset: "course",
+      },
+
+      {
+        $set: {
+          _id: "$courseId",
+        },
+      },
+      {
+        $unset: ["courseId", "userId"],
+      },
+      {
+        $lookup: {
+          from: "roles",
+          localField: "users.role",
+          foreignField: "_id",
+          as: "result",
+        },
+      },
+      {
+        $addFields: {
+          users: {
+            $map: {
+              input: "$users",
+              as: "user",
+              in: {
+                $mergeObjects: [
+                  "$$user",
+                  {
+                    role: {
+                      $first: {
+                        $filter: {
+                          input: "$result",
+                          as: "result",
+                          cond: {
+                            $eq: ["$$user.role", "$$result._id"],
+                          },
+                        },
+                      },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+      {
+        $unset: "result",
+      },
+    ]);
     if (!foundCourse) {
       return res.status(404).send({
         error: `Course with id ${courseId} doesn't exist!`,
@@ -144,7 +344,7 @@ export const getCourse = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ message: "Error finding a course" });
   }
-  return res.status(200).send(foundCourse);
+  return res.status(200).send(foundCourse[0]);
 
   // TODO: Uncomment these code when logger is added
   // results = foundCourse.topics.map((topic) => {
@@ -898,4 +1098,237 @@ export const reorderIndicators = async (req, res, next) => {
     success: `indicators have been updated successfully!`,
     indicators: foundCourse.indicators,
   });
+};
+
+export const getCourseTest = async (req, res) => {
+  const courseId = req.params.courseId;
+  const userId = req.userId; //"63387f529dd66f86548d3537"
+
+  let foundUser;
+  try {
+    foundUser = await User.findById(userId);
+    if (!foundUser) {
+      return res.status(404).send({
+        error: `User not found!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding user" });
+  }
+
+  let foundCourse;
+  let results = [];
+  foundCourse = await BlockingNotification.aggregate([
+    {
+      $match: {
+        courseId: new ObjectId(courseId),
+        userId: new ObjectId(userId),
+      },
+    },
+    {
+      $unset: "materials",
+    },
+
+    {
+      $lookup: {
+        from: "topics",
+        localField: "topics.topicId",
+        foreignField: "_id",
+        as: "result",
+      },
+    },
+
+    {
+      $addFields: {
+        topics: {
+          $map: {
+            input: "$topics",
+            as: "topic",
+            in: {
+              $mergeObjects: [
+                "$$topic",
+                {
+                  $arrayElemAt: [
+                    "$result",
+                    {
+                      $indexOfArray: ["$result._id", "$$topic.topicId"],
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        },
+      },
+    },
+    {
+      $project: {
+        result: 0,
+      },
+    },
+    /* 
+    {
+      $project: {
+        topics: {
+          $map: {
+            input: "$topics",
+            as: "topic",
+            in: {
+              $arrayToObject: {
+                $filter: {
+                  input: {
+                    $objectToArray: "$$topic"
+                  },
+                  cond: {
+                    $ne: ["$$this.k", "channels"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        courseId: 1,
+        userId: 1,
+        materials: 1,
+        channels: 1,
+        __v: 1
+      }
+    }, */
+
+    {
+      $lookup: {
+        from: "channels",
+        localField: "channels.channelId",
+        foreignField: "_id",
+        as: "result",
+      },
+    },
+    {
+      $addFields: {
+        channels: {
+          $map: {
+            input: "$channels",
+            as: "channel",
+            in: {
+              $mergeObjects: [
+                "$$channel",
+                {
+                  $arrayElemAt: [
+                    "$result",
+                    {
+                      $indexOfArray: ["$result._id", "$$channel.channelId"],
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        },
+      },
+    },
+    {
+      $addFields: {
+        topics: {
+          $map: {
+            input: "$topics",
+            as: "topic",
+            in: {
+              $mergeObjects: [
+                "$$topic",
+                {
+                  channels: {
+                    $filter: {
+                      input: "$channels",
+                      as: "channel",
+                      cond: {
+                        $eq: ["$$channel.topicId", "$$topic.topicId"],
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        },
+      },
+    },
+    {
+      $unset: "result",
+    },
+    {
+      $lookup: {
+        from: "courses",
+        localField: "courseId",
+        foreignField: "_id",
+        as: "course",
+      },
+    },
+    {
+      $replaceRoot: {
+        newRoot: {
+          $mergeObjects: [{ $arrayElemAt: ["$course", 0] }, "$$ROOT"],
+        },
+      },
+    },
+    {
+      $unset: "course",
+    },
+
+    {
+      $set: {
+        _id: "$courseId",
+      },
+    },
+    {
+      $unset: ["courseId", "userId"],
+    },
+    {
+      $lookup: {
+        from: "roles",
+        localField: "users.role",
+        foreignField: "_id",
+        as: "result",
+      },
+    },
+    {
+      $addFields: {
+        users: {
+          $map: {
+            input: "$users",
+            as: "user",
+            in: {
+              $mergeObjects: [
+                "$$user",
+                {
+                  role: {
+                    $first: {
+                      $filter: {
+                        input: "$result",
+                        as: "result",
+                        cond: {
+                          $eq: ["$$user.role", "$$result._id"],
+                        },
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        },
+      },
+    },
+    {
+      $unset: "result",
+    },
+  ]);
+  if (!foundCourse) {
+    return res.status(404).send({
+      error: `Course with id ${courseId} doesn't exist!`,
+    });
+  }
+  /* catch (err) {
+    return res.status(500).send({ message: "Error finding a course", err });
+  } */
+  return res.status(200).send(foundCourse[0]);
 };
