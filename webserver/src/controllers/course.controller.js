@@ -415,6 +415,7 @@ export const enrolCourse = async (req, res, next) => {
       return res.status(500).send({ error: "Error finding role" });
     }
 
+    //the default notification settings are to be found in the User Model
     foundUser.courses.push({
       courseId: foundCourse._id,
       role: role._id,

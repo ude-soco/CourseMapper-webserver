@@ -12,6 +12,9 @@ const BlockingNotifications = new Schema({
     ref: "course",
     index: true,
   },
+  isAnnotationNotificationsEnabled: { type: Boolean },
+  isReplyAndMentionedNotificationsEnabled: { type: Boolean },
+  isCourseUpdateNotificationsEnabled: { type: Boolean },
   userId: {
     type: Schema.Types.ObjectId,
     ref: "user",
