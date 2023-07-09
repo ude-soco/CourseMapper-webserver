@@ -21,5 +21,6 @@ db.userChannelSubscriber = require("./userChannelSubscriber.model");
 db.userCourseSubscriber = require("./userCourseSubscriber.model");
 db.blockingNotifications = require("./blockingNotifications.model");
 db.ROLES = ["user", "admin", "moderator"];
+db.followAnnotation = require("./followAnnotation.model");
 
 module.exports = db;

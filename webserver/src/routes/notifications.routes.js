@@ -49,6 +49,18 @@ module.exports = function (app) {
 
   app.get("/api/notifications/searchUsers", controller.searchUsers);
 
+  app.post(
+    "/api/notifications/followAnnotation/:annotationId",
+    [authJwt.verifyToken],
+    controller.followAnnotation
+  );
+
+  app.post(
+    "/api/notifications/unfollowAnnotation/:annotationId",
+    [authJwt.verifyToken],
+    controller.unfollowAnnotation
+  );
+
   /*   //subscribe to a channel
   app.post(
     "/api/notifications/subscribe/channel",
