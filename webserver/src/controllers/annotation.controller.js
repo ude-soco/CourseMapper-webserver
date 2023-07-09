@@ -7,6 +7,7 @@ const Tag = db.tag;
 const User = db.user;
 const Role = db.role;
 const Course = db.course;
+const ObjectId = require("mongoose").Types.ObjectId;
 
 /**
  * @function newAnnotation
@@ -616,13 +617,63 @@ export const dislikeAnnotation = async (req, res, next) => {
 export const getAllAnnotations = async (req, res) => {
   const courseId = req.params.courseId;
   const materialId = req.params.materialId;
+  const userId = req.userId;
 
   let foundAnnotations;
   try {
-    foundAnnotations = await Annotation.find({
+    /*     foundAnnotations = await Annotation.find({
       materialId: materialId,
       courseId: courseId,
-    });
+    }); */
+    foundAnnotations = await Annotation.aggregate([
+      {
+        $match: {
+          materialId: ObjectId(materialId),
+        },
+      },
+      {
+        $lookup: {
+          from: "followannotations",
+          localField: "_id",
+          foreignField: "annotationId",
+          as: "followStatus",
+          pipeline: [
+            {
+              $match: {
+                userId: ObjectId(userId),
+              },
+            },
+            {
+              $project: {
+                isFollowing: 1,
+                _id: 0,
+              },
+            },
+            {
+              $unset: "followStatus",
+            },
+          ],
+        },
+      },
+      {
+        $addFields: {
+          isFollowing: {
+            $cond: {
+              if: {
+                $eq: [
+                  {
+                    $size: "$followStatus",
+                  },
+                  0,
+                ],
+              },
+              then: false,
+              else: true,
+            },
+          },
+        },
+      },
+    ]);
     if (!foundAnnotations) {
       return res.status(404).send({
         error: `Annotations with materialId ${materialId} doesn't exist!`,
