@@ -3,12 +3,11 @@ const db = require("../models");
 
 const UserNotification = db.userNotifications;
 const User = db.user;
-const UserCourseSubscriber = db.userCourseSubscriber;
-const UserChannelSubscriber = db.userChannelSubscriber;
-const UserTopicSubscriber = db.userTopicSubscriber;
 const Course = db.course;
 const FollowAnnotation = db.followAnnotation;
 const Annotation = db.annotation;
+const BlockingNotifications = db.blockingNotifications;
+const Material = db.material;
 
 export const getAllNotifications = async (req, res, next) => {
   console.log("endpoint: getAllNotifications");
@@ -230,7 +229,59 @@ export const followAnnotation = async (req, res, next) => {
 
   try {
     await followAnnotationToBeSaved.save();
-    res.status(200).json({ message: "Followed the Annotation!" });
+    /* res.status(200).json({ message: "Followed the Annotation!" }); */
+  } catch (error) {
+    res.status(500).json({ error: "Could not Follow the Annotation!" });
+  }
+
+  //update the followingAnnotations array in the BlockingNotifications collection for the respective channel
+  //fetch the BlockingNotification for the respective User and CourseId
+
+  /*   try {
+    blockingNotification = await BlockingNotifications.findOne({
+      userId: userId,
+      courseId: courseId,
+    });
+    //blocking Notification should exist 100% as it is created when the user joins the course
+  } catch (error) {
+    return res.status(500).json({
+      error: "Error in finding the Blocking Notification for the User!",
+    });
+  } */
+
+  //fetch the material to which this annotation belongs to to get the material Type.
+  let material;
+  try {
+    material = await Material.findById(materialId);
+  } catch (error) {
+    return res.status(500).json({ error: "Material not found" });
+  }
+
+  const newFollowingAnnotation = {
+    annotationId: annotationId,
+    channelId: channelId,
+    materialId: materialId,
+    annotationContent: annotation.content,
+    materialType: material.type,
+  };
+
+  try {
+    const updatedDocument = await BlockingNotifications.findOneAndUpdate(
+      {
+        userId: userId,
+        courseId: courseId,
+        "channels.channelId": channelId,
+        "channels.followingAnnotations.annotationId": { $ne: annotationId },
+      },
+      { $push: { "channels.$.followingAnnotations": newFollowingAnnotation } },
+      { new: true }
+    );
+
+    if (updatedDocument) {
+      res.status(200).json({ message: "Followed the Annotation!" });
+    } else {
+      res.status(500).json({ error: "Already following the annotation!" });
+    }
   } catch (error) {
     res.status(500).json({ error: "Could not Follow the Annotation!" });
   }
@@ -246,7 +297,8 @@ export const unfollowAnnotation = async (req, res, next) => {
   } catch (error) {
     return res.status(500).json({ error: "Annotation not found" });
   }
-
+  const channelId = annotation.channelId;
+  const courseId = annotation.courseId;
   //check if the user is already not following the annotation
   let followAnnotation;
   try {
@@ -272,6 +324,31 @@ export const unfollowAnnotation = async (req, res, next) => {
     });
   } catch (error) {
     res.status(500).json({ error: "Could not unfollow the Annotation!" });
+  }
+
+  //update the followingAnnotations array in the BlockingNotifications collection for the respective channel
+  try {
+    const updatedDocument = await BlockingNotifications.findOneAndUpdate(
+      {
+        userId: userId,
+        courseId: courseId,
+        "channels.channelId": channelId,
+        "channels.followingAnnotations.annotationId": annotationId,
+      },
+      {
+        $pull: {
+          "channels.$.followingAnnotations": { annotationId: annotationId },
+        },
+      },
+      { new: true }
+    );
+
+    console.log(
+      "Element removed successfully from followingAnnotations array."
+    );
+    // Handle the updated document as needed
+  } catch (error) {
+    console.error("Error occurred while updating the document:", error);
   }
 
   return res.status(200).json({ message: "Annotation unfollowed!" });

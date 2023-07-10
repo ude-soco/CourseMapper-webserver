@@ -42,6 +42,20 @@ const BlockingNotifications = new Schema({
         type: Schema.Types.ObjectId,
         ref: "channel",
       },
+      followingAnnotations: [
+        {
+          annotationId: {
+            type: Schema.Types.ObjectId,
+            ref: "annotation",
+          },
+          materialId: {
+            type: Schema.Types.ObjectId,
+            ref: "material",
+          },
+          materialType: { type: String },
+          annotationContent: { type: String },
+        },
+      ],
       isAnnotationNotificationsEnabled: { type: Boolean },
       isReplyAndMentionedNotificationsEnabled: { type: Boolean },
       isCourseUpdateNotificationsEnabled: { type: Boolean },
@@ -64,6 +78,9 @@ const BlockingNotifications = new Schema({
       isAnnotationNotificationsEnabled: { type: Boolean },
       isReplyAndMentionedNotificationsEnabled: { type: Boolean },
       isCourseUpdateNotificationsEnabled: { type: Boolean },
+      isMaterialLevelOverride: { type: Boolean, default: false },
+      isChannelLevelOverride: { type: Boolean, default: false },
+      isTopicLevelOverride: { type: Boolean, default: false },
     },
   ],
 
