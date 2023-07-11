@@ -353,7 +353,7 @@ export const unfollowAnnotation = async (req, res, next) => {
   return res.status(200).json({ message: "Annotation unfollowed!" });
 };
 
-export const updateMaterialNotificationSettings = async (req, res, next) => {
+export const setMaterialNotificationSettings = async (req, res, next) => {
   const userId = req.userId;
   const courseId = req.body.courseId;
   const materialId = req.body.materialId;
@@ -373,17 +373,6 @@ export const updateMaterialNotificationSettings = async (req, res, next) => {
         courseId: courseId,
       },
       {
-        /*         $set: {
-          "materials.$[elem].isAnnotationNotificationsEnabled":
-            isAnnotationNotificationsEnabled,
-          "materials.$[elem].isReplyAndMentionedNotificationsEnabled":
-            isReplyAndMentionedNotificationsEnabled,
-          "materials.$[elem].isCourseUpdateNotificationsEnabled":
-            isCourseUpdateNotificationsEnabled,
-          "materials.$[elem].isMaterialLevelOverride": true,
-          "materials.$[elem].isChannelLevelOverride": false,
-          "materials.$[elem].isTopicLevelOverride": false,
-        }, */
         $set: {
           "materials.$.isAnnotationNotificationsEnabled":
             isAnnotationNotificationsEnabled,
@@ -398,6 +387,65 @@ export const updateMaterialNotificationSettings = async (req, res, next) => {
       },
       {
         new: true,
+      }
+    );
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ error: "Could not update the material notification settings!" });
+  }
+
+  return res
+    .status(200)
+    .json({ message: "Material notification settings updated!" });
+};
+
+export const unsetMaterialNotificationSettings = async (req, res, next) => {
+  const userId = req.userId;
+  const courseId = req.body.courseId;
+  const materialId = req.body.materialId;
+
+  let blockingNotification;
+  try {
+    blockingNotification = await BlockingNotifications.findOne({
+      userId: userId,
+      courseId: courseId,
+    });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ error: "Could not find blocking notification!" });
+  }
+
+  let materialObj = blockingNotification.materials.find((material) =>
+    material.materialId.equals(materialId)
+  );
+
+  let channelObj = blockingNotification.channels.find((channel) =>
+    channel.channelId.equals(materialObj.channelId)
+  );
+
+  //update the material in the Blocking Notification collection
+  try {
+    blockingNotification = await BlockingNotifications.findOneAndUpdate(
+      {
+        "materials.materialId": materialId,
+        userId: userId,
+        courseId: courseId,
+      },
+      {
+        $set: {
+          "materials.$.isAnnotationNotificationsEnabled":
+            channelObj.isAnnotationNotificationsEnabled,
+          "materials.$.isReplyAndMentionedNotificationsEnabled":
+            channelObj.isReplyAndMentionedNotificationsEnabled,
+          "materials.$.isCourseUpdateNotificationsEnabled":
+            channelObj.isCourseUpdateNotificationsEnabled,
+          "materials.$.isMaterialLevelOverride": false,
+          "materials.$.isChannelLevelOverride":
+            channelObj.isChannelLevelOverride,
+          "materials.$.isTopicLevelOverride": channelObj.isTopicLevelOverride,
+        },
       }
     );
   } catch (error) {

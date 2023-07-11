@@ -62,9 +62,14 @@ module.exports = function (app) {
   );
 
   app.put(
-    "/api/notifications/materialNotificationSettings",
+    "/api/notifications/setMaterialNotificationSettings",
     [authJwt.verifyToken],
-    controller.updateMaterialNotificationSettings
+    controller.setMaterialNotificationSettings
+  );
+  app.put(
+    "/api/notifications/unsetMaterialNotificationSettings",
+    [authJwt.verifyToken],
+    controller.unsetMaterialNotificationSettings
   );
 
   /*   //subscribe to a channel
