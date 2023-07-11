@@ -30,6 +30,9 @@ const BlockingNotifications = new Schema({
       isAnnotationNotificationsEnabled: { type: Boolean },
       isReplyAndMentionedNotificationsEnabled: { type: Boolean },
       isCourseUpdateNotificationsEnabled: { type: Boolean },
+      isMaterialLevelOverride: { type: Boolean, default: false },
+      isChannelLevelOverride: { type: Boolean, default: false },
+      isTopicLevelOverride: { type: Boolean, default: false },
     },
   ],
   channels: [
@@ -59,6 +62,9 @@ const BlockingNotifications = new Schema({
       isAnnotationNotificationsEnabled: { type: Boolean },
       isReplyAndMentionedNotificationsEnabled: { type: Boolean },
       isCourseUpdateNotificationsEnabled: { type: Boolean },
+      isMaterialLevelOverride: { type: Boolean, default: false },
+      isChannelLevelOverride: { type: Boolean, default: false },
+      isTopicLevelOverride: { type: Boolean, default: false },
     },
   ],
   materials: [

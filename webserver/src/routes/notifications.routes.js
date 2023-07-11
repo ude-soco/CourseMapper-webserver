@@ -61,6 +61,12 @@ module.exports = function (app) {
     controller.unfollowAnnotation
   );
 
+  app.put(
+    "/api/notifications/materialNotificationSettings",
+    [authJwt.verifyToken],
+    controller.updateMaterialNotificationSettings
+  );
+
   /*   //subscribe to a channel
   app.post(
     "/api/notifications/subscribe/channel",

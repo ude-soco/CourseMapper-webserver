@@ -333,7 +333,6 @@ export const unfollowAnnotation = async (req, res, next) => {
         userId: userId,
         courseId: courseId,
         "channels.channelId": channelId,
-        "channels.followingAnnotations.annotationId": annotationId,
       },
       {
         $pull: {
@@ -352,6 +351,64 @@ export const unfollowAnnotation = async (req, res, next) => {
   }
 
   return res.status(200).json({ message: "Annotation unfollowed!" });
+};
+
+export const updateMaterialNotificationSettings = async (req, res, next) => {
+  const userId = req.userId;
+  const courseId = req.body.courseId;
+  const materialId = req.body.materialId;
+  const isAnnotationNotificationsEnabled =
+    req.body.isAnnotationNotificationsEnabled;
+  const isReplyAndMentionedNotificationsEnabled =
+    req.body.isReplyAndMentionedNotificationsEnabled;
+  const isCourseUpdateNotificationsEnabled =
+    req.body.isCourseUpdateNotificationsEnabled;
+
+  //update the material in the Blocking Notification collection
+  try {
+    const updatedDocument = await BlockingNotifications.findOneAndUpdate(
+      {
+        "materials.materialId": materialId,
+        userId: userId,
+        courseId: courseId,
+      },
+      {
+        /*         $set: {
+          "materials.$[elem].isAnnotationNotificationsEnabled":
+            isAnnotationNotificationsEnabled,
+          "materials.$[elem].isReplyAndMentionedNotificationsEnabled":
+            isReplyAndMentionedNotificationsEnabled,
+          "materials.$[elem].isCourseUpdateNotificationsEnabled":
+            isCourseUpdateNotificationsEnabled,
+          "materials.$[elem].isMaterialLevelOverride": true,
+          "materials.$[elem].isChannelLevelOverride": false,
+          "materials.$[elem].isTopicLevelOverride": false,
+        }, */
+        $set: {
+          "materials.$.isAnnotationNotificationsEnabled":
+            isAnnotationNotificationsEnabled,
+          "materials.$.isReplyAndMentionedNotificationsEnabled":
+            isReplyAndMentionedNotificationsEnabled,
+          "materials.$.isCourseUpdateNotificationsEnabled":
+            isCourseUpdateNotificationsEnabled,
+          "materials.$.isMaterialLevelOverride": true,
+          "materials.$.isChannelLevelOverride": false,
+          "materials.$.isTopicLevelOverride": false,
+        },
+      },
+      {
+        new: true,
+      }
+    );
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ error: "Could not update the material notification settings!" });
+  }
+
+  return res
+    .status(200)
+    .json({ message: "Material notification settings updated!" });
 };
 
 /* export const subscribeChannel = async (req, res, next) => {
