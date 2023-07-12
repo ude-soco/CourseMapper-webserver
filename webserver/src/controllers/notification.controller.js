@@ -811,6 +811,56 @@ export const setCourseNotificationSettings = async (req, res, next) => {
     .json({ message: "Channel notification settings updated!" });
 };
 
+export const blockUser = async (req, res, next) => {
+  const userId = req.userId;
+  const userToBlockId = req.body.userToBlockId;
+
+  //Add the user to be blocked to the blocking list
+  try {
+    await User.findOneAndUpdate(
+      {
+        _id: ObjectId(userToBlockId),
+      },
+      {
+        $addToSet: {
+          blockedByUser: ObjectId(userId),
+        },
+      }
+    );
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Could not add user to blocking list!" });
+  }
+
+  return res.status(200).json({ message: "User blocked!" });
+};
+
+export const unblockUser = async (req, res, next) => {
+  const userId = req.userId;
+  const userToUnblockId = req.body.userToUnblockId;
+
+  //Remove the user to be unblocked from the blocking list
+  try {
+    await User.findOneAndUpdate(
+      {
+        _id: userToUnblockId,
+      },
+      {
+        $pull: {
+          blockedByUser: userId,
+        },
+      }
+    );
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Could not remove user from blocking list!" });
+  }
+
+  return res.status(200).json({ message: "User unblocked!" });
+};
+
 /* export const subscribeChannel = async (req, res, next) => {
       console.log("endpoint: subscribeChannel");
       const userId = req.userId;

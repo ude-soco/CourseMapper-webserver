@@ -10,6 +10,7 @@ const User = new Schema({
   password: { type: String, required: true },
   role: { type: Schema.Types.ObjectId, ref: "role" },
   createdAt: { type: Date, default: Date.now() },
+  //TODO: later remove the below boolean attrbiutes if not being used anywhere in front end later.
   courses: [
     {
       courseId: { type: Schema.Types.ObjectId, ref: "course", required: true },
@@ -28,6 +29,7 @@ const User = new Schema({
       frameborder: String,
     },
   ],
+  blockedByUser: [{ type: Schema.Types.ObjectId, ref: "user", required: true }],
 });
 
 module.exports = mongoose.model("user", User);

@@ -100,6 +100,18 @@ module.exports = function (app) {
     controller.setCourseNotificationSettings
   );
 
+  app.put(
+    "/api/notifications/blockUser",
+    [authJwt.verifyToken],
+    controller.blockUser
+  );
+
+  app.put(
+    "/api/notifications/unblockUser",
+    [authJwt.verifyToken],
+    controller.unblockUser
+  );
+
   /*   //subscribe to a channel
   app.post(
     "/api/notifications/subscribe/channel",
