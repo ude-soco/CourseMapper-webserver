@@ -459,6 +459,356 @@ export const unsetMaterialNotificationSettings = async (req, res, next) => {
     .json({ message: "Material notification settings updated!" });
 };
 
+export const setChannelNotificationSettings = async (req, res, next) => {
+  const userId = req.userId;
+  const courseId = req.body.courseId;
+  const channelId = req.body.channelId;
+  const isAnnotationNotificationsEnabled =
+    req.body.isAnnotationNotificationsEnabled;
+  const isReplyAndMentionedNotificationsEnabled =
+    req.body.isReplyAndMentionedNotificationsEnabled;
+  const isCourseUpdateNotificationsEnabled =
+    req.body.isCourseUpdateNotificationsEnabled;
+
+  //update the channel in the Blocking Notification collection
+  try {
+    await BlockingNotifications.findOneAndUpdate(
+      {
+        courseId: courseId,
+        userId: userId,
+      },
+      {
+        $set: {
+          "channels.$[channelElem].isAnnotationNotificationsEnabled":
+            isAnnotationNotificationsEnabled,
+          "channels.$[channelElem].isReplyAndMentionedNotificationsEnabled":
+            isReplyAndMentionedNotificationsEnabled,
+          "channels.$[channelElem].isCourseUpdateNotificationsEnabled":
+            isCourseUpdateNotificationsEnabled,
+          "channels.$[channelElem].isChannelLevelOverride": true,
+          "channels.$[channelElem].isTopicLevelOverride": false,
+          "materials.$[materialElem].isAnnotationNotificationsEnabled":
+            isAnnotationNotificationsEnabled,
+          "materials.$[materialElem].isReplyAndMentionedNotificationsEnabled":
+            isReplyAndMentionedNotificationsEnabled,
+          "materials.$[materialElem].isCourseUpdateNotificationsEnabled":
+            isCourseUpdateNotificationsEnabled,
+          "materials.$[materialElem].isMaterialLevelOverride": false,
+          "materials.$[materialElem].isChannelLevelOverride": true,
+          "materials.$[materialElem].isTopicLevelOverride": false,
+        },
+      },
+      {
+        arrayFilters: [
+          { "channelElem.channelId": channelId },
+          {
+            "materialElem.channelId": channelId,
+            "materialElem.isMaterialLevelOverride": false,
+          },
+        ],
+      }
+    );
+  } catch (error) {
+    return res.status(500).json({ error });
+  }
+
+  return res
+    .status(200)
+    .json({ message: "Channel notification settings updated!" });
+};
+
+export const unsetChannelNotificationSettings = async (req, res, next) => {
+  const userId = req.userId;
+  const courseId = req.body.courseId;
+  const channelId = req.body.channelId;
+
+  let blockingNotification;
+  try {
+    blockingNotification = await BlockingNotifications.findOne({
+      userId: userId,
+      courseId: courseId,
+    });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ error: "Could not find blocking notification!" });
+  }
+
+  let channelObj = blockingNotification.channels.find((channel) =>
+    channel.channelId.equals(channelId)
+  );
+
+  let topicObj = blockingNotification.topics.find((topic) =>
+    topic.topicId.equals(channelObj.topicId)
+  );
+
+  //update the channel in the Blocking Notification collection
+  try {
+    blockingNotification = await BlockingNotifications.findOneAndUpdate(
+      {
+        "channels.channelId": channelId,
+        userId: userId,
+        courseId: courseId,
+      },
+      {
+        $set: {
+          "channels.$[channelElem].isAnnotationNotificationsEnabled":
+            topicObj.isAnnotationNotificationsEnabled,
+          "channels.$[channelElem].isReplyAndMentionedNotificationsEnabled":
+            topicObj.isReplyAndMentionedNotificationsEnabled,
+          "channels.$[channelElem].isCourseUpdateNotificationsEnabled":
+            topicObj.isCourseUpdateNotificationsEnabled,
+          "channels.$[channelElem].isChannelLevelOverride": false,
+          "channels.$[channelElem].isTopicLevelOverride":
+            topicObj.isTopicLevelOverride,
+          "materials.$[materialElem].isAnnotationNotificationsEnabled":
+            topicObj.isAnnotationNotificationsEnabled,
+          "materials.$[materialElem].isReplyAndMentionedNotificationsEnabled":
+            topicObj.isReplyAndMentionedNotificationsEnabled,
+          "materials.$[materialElem].isCourseUpdateNotificationsEnabled":
+            topicObj.isCourseUpdateNotificationsEnabled,
+          "materials.$[materialElem].isMaterialLevelOverride": false,
+          "materials.$[materialElem].isChannelLevelOverride": false,
+          "materials.$[materialElem].isTopicLevelOverride":
+            topicObj.isTopicLevelOverride,
+        },
+      },
+      {
+        arrayFilters: [
+          { "channelElem.channelId": channelId },
+          {
+            "materialElem.channelId": channelId,
+            "materialElem.isMaterialLevelOverride": false,
+            "materialElem.isChannelLevelOverride": true,
+          },
+        ],
+      }
+    );
+  } catch (error) {
+    return res.status(500).json({ error });
+  }
+
+  return res
+    .status(200)
+    .json({ message: "Channel notification settings unset!" });
+};
+
+export const setTopicNotificationSettings = async (req, res, next) => {
+  const userId = req.userId;
+  const courseId = req.body.courseId;
+  const topicId = req.body.topicId;
+  const isAnnotationNotificationsEnabled =
+    req.body.isAnnotationNotificationsEnabled;
+  const isReplyAndMentionedNotificationsEnabled =
+    req.body.isReplyAndMentionedNotificationsEnabled;
+  const isCourseUpdateNotificationsEnabled =
+    req.body.isCourseUpdateNotificationsEnabled;
+  try {
+    await BlockingNotifications.findOneAndUpdate(
+      {
+        courseId: courseId,
+        userId: userId,
+      },
+      {
+        $set: {
+          "topics.$[topicElem].isAnnotationNotificationsEnabled":
+            isAnnotationNotificationsEnabled,
+          "topics.$[topicElem].isReplyAndMentionedNotificationsEnabled":
+            isReplyAndMentionedNotificationsEnabled,
+          "topics.$[topicElem].isCourseUpdateNotificationsEnabled":
+            isCourseUpdateNotificationsEnabled,
+          "topics.$[topicElem].isTopicLevelOverride": true,
+          "channels.$[channelElem].isAnnotationNotificationsEnabled":
+            isAnnotationNotificationsEnabled,
+          "channels.$[channelElem].isReplyAndMentionedNotificationsEnabled":
+            isReplyAndMentionedNotificationsEnabled,
+          "channels.$[channelElem].isCourseUpdateNotificationsEnabled":
+            isCourseUpdateNotificationsEnabled,
+          "channels.$[channelElem].isChannelLevelOverride": false,
+          "channels.$[channelElem].isTopicLevelOverride": true,
+          "materials.$[materialElem].isAnnotationNotificationsEnabled":
+            isAnnotationNotificationsEnabled,
+          "materials.$[materialElem].isReplyAndMentionedNotificationsEnabled":
+            isReplyAndMentionedNotificationsEnabled,
+          "materials.$[materialElem].isCourseUpdateNotificationsEnabled":
+            isCourseUpdateNotificationsEnabled,
+          "materials.$[materialElem].isMaterialLevelOverride": false,
+          "materials.$[materialElem].isChannelLevelOverride": false,
+          "materials.$[materialElem].isTopicLevelOverride": true,
+        },
+      },
+      {
+        arrayFilters: [
+          {
+            "topicElem.topicId": topicId,
+          },
+          {
+            "channelElem.topicId": topicId,
+            "channelElem.isChannelLevelOverride": false,
+          },
+          {
+            "materialElem.topicId": channelId,
+            "materialElem.isMaterialLevelOverride": false,
+            "materialElem.isChannelLevelOverride": false,
+          },
+        ],
+      }
+    );
+  } catch (error) {
+    return res.status(500).json({ error });
+  }
+
+  return res.status(200).json({ message: "Topic notification settings set!" });
+};
+
+export const unsetTopicNotificationSettings = async (req, res, next) => {
+  const userId = req.userId;
+  const courseId = req.body.courseId;
+  const topicId = req.body.topicId;
+
+  let blockingNotification;
+  try {
+    blockingNotification = await BlockingNotifications.findOne({
+      userId: userId,
+      courseId: courseId,
+    });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ error: "Could not find blocking notification!" });
+  }
+
+  //update the channel in the Blocking Notification collection
+  try {
+    blockingNotification = await BlockingNotifications.findOneAndUpdate(
+      {
+        userId: userId,
+        courseId: courseId,
+      },
+      {
+        $set: {
+          "topics.$[topicElem].isAnnotationNotificationsEnabled":
+            blockingNotification.isAnnotationNotificationsEnabled,
+          "topics.$[topicElem].isReplyAndMentionedNotificationsEnabled":
+            blockingNotification.isReplyAndMentionedNotificationsEnabled,
+          "topics.$[topicElem].isCourseUpdateNotificationsEnabled":
+            blockingNotification.isCourseUpdateNotificationsEnabled,
+          "topics.$[topicElem].isTopicLevelOverride": false,
+          "channels.$[channelElem].isAnnotationNotificationsEnabled":
+            blockingNotification.isAnnotationNotificationsEnabled,
+          "channels.$[channelElem].isReplyAndMentionedNotificationsEnabled":
+            blockingNotification.isReplyAndMentionedNotificationsEnabled,
+          "channels.$[channelElem].isCourseUpdateNotificationsEnabled":
+            blockingNotification.isCourseUpdateNotificationsEnabled,
+          "channels.$[channelElem].isChannelLevelOverride": false,
+          "channels.$[channelElem].isTopicLevelOverride": false,
+          "materials.$[materialElem].isAnnotationNotificationsEnabled":
+            blockingNotification.isAnnotationNotificationsEnabled,
+          "materials.$[materialElem].isReplyAndMentionedNotificationsEnabled":
+            blockingNotification.isReplyAndMentionedNotificationsEnabled,
+          "materials.$[materialElem].isCourseUpdateNotificationsEnabled":
+            blockingNotification.isCourseUpdateNotificationsEnabled,
+          "materials.$[materialElem].isMaterialLevelOverride": false,
+          "materials.$[materialElem].isChannelLevelOverride": false,
+          "materials.$[materialElem].isTopicLevelOverride": false,
+        },
+      },
+      {
+        arrayFilters: [
+          {
+            "topicElem.topicId": topicId,
+            "topicElem.isTopicLevelOverride": true,
+          },
+          {
+            "channelElem.topicId": topicId,
+            "channelElem.isChannelLevelOverride": false,
+            "channelElem.isTopicLevelOverride": true,
+          },
+          {
+            "materialElem.topicId": channelId,
+            "materialElem.isMaterialLevelOverride": false,
+            "materialElem.isChannelLevelOverride": false,
+            "materialElem.isTopicLevelOverride": true,
+          },
+        ],
+      }
+    );
+  } catch (error) {
+    return res.status(500).json({ error });
+  }
+
+  return res
+    .status(200)
+    .json({ message: "Topic notification settings unset!" });
+};
+
+export const setCourseNotificationSettings = async (req, res, next) => {
+  const userId = req.userId;
+  const courseId = req.body.courseId;
+  const isAnnotationNotificationsEnabled =
+    req.body.isAnnotationNotificationsEnabled;
+  const isReplyAndMentionedNotificationsEnabled =
+    req.body.isReplyAndMentionedNotificationsEnabled;
+  const isCourseUpdateNotificationsEnabled =
+    req.body.isCourseUpdateNotificationsEnabled;
+
+  try {
+    await BlockingNotifications.findOneAndUpdate(
+      {
+        courseId: courseId,
+        userId: userId,
+      },
+      {
+        $set: {
+          isAnnotationNotificationsEnabled: isAnnotationNotificationsEnabled,
+          isReplyAndMentionedNotificationsEnabled:
+            isReplyAndMentionedNotificationsEnabled,
+          isCourseUpdateNotificationsEnabled:
+            isCourseUpdateNotificationsEnabled,
+          "topics.$[topicElem].isAnnotationNotificationsEnabled":
+            isAnnotationNotificationsEnabled,
+          "topics.$[topicElem].isReplyAndMentionedNotificationsEnabled":
+            isReplyAndMentionedNotificationsEnabled,
+          "topics.$[topicElem].isCourseUpdateNotificationsEnabled":
+            isCourseUpdateNotificationsEnabled,
+          "channels.$[channelElem].isAnnotationNotificationsEnabled":
+            isAnnotationNotificationsEnabled,
+          "channels.$[channelElem].isReplyAndMentionedNotificationsEnabled":
+            isReplyAndMentionedNotificationsEnabled,
+          "channels.$[channelElem].isCourseUpdateNotificationsEnabled":
+            isCourseUpdateNotificationsEnabled,
+          "materials.$[materialElem].isAnnotationNotificationsEnabled":
+            isAnnotationNotificationsEnabled,
+          "materials.$[materialElem].isReplyAndMentionedNotificationsEnabled":
+            isReplyAndMentionedNotificationsEnabled,
+          "materials.$[materialElem].isCourseUpdateNotificationsEnabled":
+            isCourseUpdateNotificationsEnabled,
+        },
+      },
+      {
+        arrayFilters: [
+          { "topicElem.isTopicLevelOverride": false },
+          {
+            "channelElem.isChannelLevelOverride": false,
+            "channelElem.isTopicLevelOverride": false,
+          },
+          {
+            "materialElem.isMaterialLevelOverride": false,
+            "materialElem.isChannellLevelOverride": false,
+            "materialElem.isTopicLevelOverride": false,
+          },
+        ],
+      }
+    );
+  } catch (error) {
+    return res.status(500).json({ error });
+  }
+
+  return res
+    .status(200)
+    .json({ message: "Channel notification settings updated!" });
+};
+
 /* export const subscribeChannel = async (req, res, next) => {
       console.log("endpoint: subscribeChannel");
       const userId = req.userId;

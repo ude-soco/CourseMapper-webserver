@@ -71,6 +71,16 @@ module.exports = function (app) {
     [authJwt.verifyToken],
     controller.unsetMaterialNotificationSettings
   );
+  app.put(
+    "/api/notifications/setChannelNotificationSettings",
+    [authJwt.verifyToken],
+    controller.setChannelNotificationSettings
+  );
+  app.put(
+    "/api/notifications/unsetChannelNotificationSettings",
+    [authJwt.verifyToken],
+    controller.unsetChannelNotificationSettings
+  );
 
   /*   //subscribe to a channel
   app.post(
