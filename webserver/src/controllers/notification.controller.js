@@ -647,7 +647,7 @@ export const setTopicNotificationSettings = async (req, res, next) => {
             "channelElem.isChannelLevelOverride": false,
           },
           {
-            "materialElem.topicId": channelId,
+            "materialElem.topicId": topicId,
             "materialElem.isMaterialLevelOverride": false,
             "materialElem.isChannelLevelOverride": false,
           },
@@ -655,7 +655,9 @@ export const setTopicNotificationSettings = async (req, res, next) => {
       }
     );
   } catch (error) {
-    return res.status(500).json({ error });
+    return res
+      .status(500)
+      .json({ message: "Could not set topic notification settings!" });
   }
 
   return res.status(200).json({ message: "Topic notification settings set!" });
@@ -725,7 +727,7 @@ export const unsetTopicNotificationSettings = async (req, res, next) => {
             "channelElem.isTopicLevelOverride": true,
           },
           {
-            "materialElem.topicId": channelId,
+            "materialElem.topicId": topicId,
             "materialElem.isMaterialLevelOverride": false,
             "materialElem.isChannelLevelOverride": false,
             "materialElem.isTopicLevelOverride": true,

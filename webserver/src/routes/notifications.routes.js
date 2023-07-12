@@ -82,6 +82,24 @@ module.exports = function (app) {
     controller.unsetChannelNotificationSettings
   );
 
+  app.put(
+    "/api/notifications/setTopicNotificationSettings",
+    [authJwt.verifyToken],
+    controller.setTopicNotificationSettings
+  );
+
+  app.put(
+    "/api/notifications/unsetTopicNotificationSettings",
+    [authJwt.verifyToken],
+    controller.unsetTopicNotificationSettings
+  );
+
+  app.put(
+    "/api/notifications/setCourseNotificationSettings",
+    [authJwt.verifyToken],
+    controller.setCourseNotificationSettings
+  );
+
   /*   //subscribe to a channel
   app.post(
     "/api/notifications/subscribe/channel",
