@@ -15,6 +15,7 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.newAnnotation,
     logger.newAnnotation,
+    notifications.newAnnotationNotificationUsersCalculate,
     notifications.populateUserNotification
   );
 
