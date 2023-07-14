@@ -178,6 +178,7 @@ export const newReply = async (req, res, next) => {
     category: "mentionedandreplied",
     course,
     materialType: foundMaterial.type,
+    annotationId: foundAnnotation._id,
   };
   socketio.getIO().emit(annotationId, {
     eventType: "replyCreated",
@@ -275,6 +276,7 @@ export const deleteReply = async (req, res, next) => {
     course,
     reply: foundReply,
     materialType: foundMaterial.type,
+    annotationId: foundAnnotation._id,
   };
   socketio.getIO().emit(foundAnnotation._id, {
     eventType: "replyDeleted",
@@ -392,6 +394,7 @@ export const editReply = async (req, res, next) => {
   req.locals.user = user;
   req.locals.category = "mentionedandreplied";
   req.locals.course = course;
+  req.locals.annotationId = foundAnnotation._id;
   req.locals.materialType = foundMaterial.type;
   socketio.getIO().emit(foundAnnotation._id, {
     eventType: "replyEdited",

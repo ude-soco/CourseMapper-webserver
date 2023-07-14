@@ -6,6 +6,7 @@ const db = require("../../models");
 const UserNotification = db.userNotifications;
 const User = db.user;
 const BlockingNotifications = db.blockingNotifications;
+const FollowAnnotation = db.followAnnotation;
 const ObjectId = require("mongoose").Types.ObjectId;
 //TODO Ask why the users objects in the course contains an _id field aside from the userID field
 
@@ -132,6 +133,10 @@ export const populateUserNotification = async (req, res) => {
   return res.status(200).send(objectToSend);
 };
 
+const removeUserFromList = (userToBeNotified, userId) => {
+  return userToBeNotified.filter((id) => !id.equals(userId));
+};
+
 export const newAnnotationNotificationUsersCalculate = async (
   req,
   res,
@@ -163,6 +168,7 @@ export const newAnnotationNotificationUsersCalculate = async (
 
   const userIdsOfUsersAllowingAnnotationNotifications =
     usersAllowingAnnotationNotifications.map((user) => user.userId);
+
   if (blockedByUsers.length > 0) {
     const blockedByUserSet = new Set(blockedByUsers);
     resultingUsers = userIdsOfUsersAllowingAnnotationNotifications.filter(
@@ -180,13 +186,43 @@ export const newAnnotationNotificationUsersCalculate = async (
   next();
 };
 
-const removeUserFromList = (userToBeNotified, userId) => {
-  return userToBeNotified.filter((id) => !id.equals(userId));
+//the below method calculates which users are following an annotation. so that we can generate notifications for them.
+export const calculateUsersFollowingAnnotation = async (req, res, next) => {
+  const annotationId = req.locals.annotationId;
+  const userId = req.userId;
+  let foundUser = await User.findById(userId);
+  let blockedByUsers = foundUser.blockedByUser.map((userId) =>
+    userId.toString()
+  );
+  const followingAnnotations = await FollowAnnotation.find({
+    annotationId: annotationId,
+  });
+  const userIdsOfUsersFollowingAnnotation = followingAnnotations.map(
+    (user) => user.userId
+  );
+
+  let resultingUsers;
+  if (blockedByUsers.length > 0) {
+    const blockedByUserSet = new Set(blockedByUsers);
+    resultingUsers = userIdsOfUsersFollowingAnnotation.filter(
+      (userId) => !blockedByUserSet.has(userId.toString())
+    );
+  } else {
+    resultingUsers = userIdsOfUsersFollowingAnnotation;
+  }
+
+  let finalListOfUsersToNotify = removeUserFromList(
+    resultingUsers,
+    ObjectId(userId)
+  );
+  req.locals.usersToBeNotified = finalListOfUsersToNotify;
+  next();
 };
 
 let notifications = {
   populateUserNotification,
   generateNotificationInfo,
   newAnnotationNotificationUsersCalculate,
+  calculateUsersFollowingAnnotation,
 };
 module.exports = notifications;

@@ -28,6 +28,7 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.deleteAnnotation,
     logger.deleteAnnotation,
+    notifications.calculateUsersFollowingAnnotation,
     notifications.populateUserNotification
   );
 
@@ -38,6 +39,7 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.editAnnotation,
     logger.editAnnotation,
+    notifications.calculateUsersFollowingAnnotation,
     notifications.populateUserNotification
   );
 

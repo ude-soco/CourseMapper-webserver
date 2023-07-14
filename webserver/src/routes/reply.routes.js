@@ -24,6 +24,7 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.newReply,
     logger.newReply,
+    notifications.calculateUsersFollowingAnnotation,
     notifications.populateUserNotification
   );
 
@@ -34,6 +35,7 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.deleteReply,
     logger.deleteReply,
+    notifications.calculateUsersFollowingAnnotation,
     notifications.populateUserNotification
   );
 
@@ -44,6 +46,7 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.editReply,
     logger.editReply,
+    notifications.calculateUsersFollowingAnnotation,
     notifications.populateUserNotification
   );
 
@@ -58,7 +61,7 @@ module.exports = function (app) {
     notifications.populateUserNotification
   );
 
-  // Like a reply
+  // Dislike a reply
   // Only enrolled users/moderator/admin
   // Note: A user when liked a reply, it cannot be disliked
   app.post(
