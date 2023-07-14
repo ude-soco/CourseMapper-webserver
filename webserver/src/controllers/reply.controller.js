@@ -472,6 +472,7 @@ export const likeReply = async (req, res, next) => {
     course: course,
     category: "mentionedandreplied",
     materialType: foundMaterial.type,
+    annotationAuthorId: foundAnnotation.author.userId,
   };
 
   if (foundReply.likes.includes(req.userId)) {
@@ -598,6 +599,7 @@ export const dislikeReply = async (req, res, next) => {
     course: course,
     category: "mentionedandreplied",
     materialType: foundMaterial.type,
+    annotationAuthorId: foundAnnotation.author.userId,
   };
   if (foundReply.dislikes.includes(req.userId)) {
     foundReply.dislikes = foundReply.dislikes.filter(

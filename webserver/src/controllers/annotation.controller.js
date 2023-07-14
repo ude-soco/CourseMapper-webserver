@@ -440,6 +440,7 @@ export const likeAnnotation = async (req, res, next) => {
     course: courseForGeneratingNotifications,
     category: "annotations",
     materialType: foundMaterial.type,
+    annotationAuthorId: foundAnnotation.author.userId,
   };
 
   if (foundAnnotation.likes.includes(req.userId)) {
@@ -555,6 +556,7 @@ export const dislikeAnnotation = async (req, res, next) => {
     course: courseForGeneratingNotifications,
     category: "annotations",
     materialType: foundMaterial.type,
+    annotationAuthorId: foundAnnotation.author.userId,
   };
 
   if (foundAnnotation.dislikes.includes(req.userId)) {

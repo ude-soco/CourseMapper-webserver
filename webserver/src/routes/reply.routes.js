@@ -58,6 +58,7 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.likeReply,
     logger.likeReply,
+    notifications.LikesDislikesMentionedNotificationUsers,
     notifications.populateUserNotification
   );
 
@@ -69,6 +70,7 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.dislikeReply,
     logger.dislikeReply,
+    notifications.LikesDislikesMentionedNotificationUsers,
     notifications.populateUserNotification
   );
 };

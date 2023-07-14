@@ -219,10 +219,42 @@ export const calculateUsersFollowingAnnotation = async (req, res, next) => {
   next();
 };
 
+export const LikesDislikesMentionedNotificationUsers = async (
+  req,
+  res,
+  next
+) => {
+  const userId = req.userId;
+  let foundUser = await User.findById(userId);
+  let blockedByUsers = foundUser.blockedByUser.map((userId) =>
+    userId.toString()
+  );
+
+  const annotationAuthorId = [req.locals.annotationAuthorId];
+
+  let resultingUsers;
+  if (blockedByUsers.length > 0) {
+    const blockedByUserSet = new Set(blockedByUsers);
+    resultingUsers = annotationAuthorId.filter(
+      (userId) => !blockedByUserSet.has(userId.toString())
+    );
+  } else {
+    resultingUsers = annotationAuthorId;
+  }
+
+  let finalListOfUsersToNotify = removeUserFromList(
+    resultingUsers,
+    ObjectId(userId)
+  );
+  req.locals.usersToBeNotified = finalListOfUsersToNotify;
+  next();
+};
+
 let notifications = {
   populateUserNotification,
   generateNotificationInfo,
   newAnnotationNotificationUsersCalculate,
   calculateUsersFollowingAnnotation,
+  LikesDislikesMentionedNotificationUsers,
 };
 module.exports = notifications;
