@@ -1,6 +1,7 @@
 const { authJwt, notifications } = require("../middlewares");
 const controller = require("../controllers/annotation.controller");
 const logger = require("../xAPILogger/logger/annotation.logger");
+const notificationsController = require("../controllers/notification.controller");
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -15,6 +16,7 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.newAnnotation,
     logger.newAnnotation,
+    notificationsController.followAnnotation,
     notifications.newAnnotationNotificationUsersCalculate,
     notifications.populateUserNotification
   );

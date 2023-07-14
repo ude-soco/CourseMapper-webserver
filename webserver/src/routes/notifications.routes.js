@@ -52,7 +52,8 @@ module.exports = function (app) {
   app.post(
     "/api/notifications/followAnnotation/:annotationId",
     [authJwt.verifyToken],
-    controller.followAnnotation
+    controller.followAnnotation,
+    controller.followAnnotationSuccess
   );
 
   app.post(

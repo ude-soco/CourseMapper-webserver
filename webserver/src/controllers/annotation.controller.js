@@ -7,6 +7,8 @@ const Tag = db.tag;
 const User = db.user;
 const Role = db.role;
 const Course = db.course;
+const FollowAnnotation = db.followAnnotation;
+const BlockingNotifications = db.blockingNotifications;
 const ObjectId = require("mongoose").Types.ObjectId;
 
 /**
@@ -130,6 +132,9 @@ export const newAnnotation = async (req, res, next) => {
       return res.status(500).send({ error: "Error saving tags" });
     }
   }
+
+  req.params.annotationId = newAnnotation._id;
+  //when user makes a new annotation, make the user automatically start following it
   req.locals = {
     user: foundUser,
     category: "annotations",

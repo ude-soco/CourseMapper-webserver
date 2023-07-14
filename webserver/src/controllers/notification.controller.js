@@ -237,18 +237,6 @@ export const followAnnotation = async (req, res, next) => {
   //update the followingAnnotations array in the BlockingNotifications collection for the respective channel
   //fetch the BlockingNotification for the respective User and CourseId
 
-  /*   try {
-    blockingNotification = await BlockingNotifications.findOne({
-      userId: userId,
-      courseId: courseId,
-    });
-    //blocking Notification should exist 100% as it is created when the user joins the course
-  } catch (error) {
-    return res.status(500).json({
-      error: "Error in finding the Blocking Notification for the User!",
-    });
-  } */
-
   //fetch the material to which this annotation belongs to to get the material Type.
   let material;
   try {
@@ -278,7 +266,8 @@ export const followAnnotation = async (req, res, next) => {
     );
 
     if (updatedDocument) {
-      res.status(200).json({ message: "Followed the Annotation!" });
+      /* res.status(200).json({ message: "Followed the Annotation!" }); */
+      next();
     } else {
       res.status(500).json({ error: "Already following the annotation!" });
     }
@@ -859,6 +848,10 @@ export const unblockUser = async (req, res, next) => {
   }
 
   return res.status(200).json({ message: "User unblocked!" });
+};
+
+export const followAnnotationSuccess = async (req, res, next) => {
+  res.status(200).json({ message: "Annotation followed successfully!" });
 };
 
 /* export const subscribeChannel = async (req, res, next) => {
