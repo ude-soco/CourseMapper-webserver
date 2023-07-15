@@ -24,6 +24,7 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isModerator],
     controller.newMaterial,
     logger.newMaterial,
+    notifications.updateBlockingNotificationsNewMaterial,
     notifications.materialCourseUpdateNotificationsUsers,
     notifications.populateUserNotification
   );

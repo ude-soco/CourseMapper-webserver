@@ -415,6 +415,102 @@ export const topicCourseUpdateNotificationUsers = async (req, res, next) => {
   next();
 };
 
+export const updateBlockingNotificationsNewMaterial = async (
+  req,
+  res,
+  next
+) => {
+  const userId = req.userId;
+  const course = req.locals.course;
+  const material = req.locals.material;
+  const materialId = material._id;
+  const channelId = material.channelId;
+  const courseId = course._id;
+
+  let channelDocuments = await BlockingNotifications.aggregate([
+    {
+      $match: {
+        channels: {
+          $elemMatch: {
+            channelId: ObjectId(channelId),
+          },
+        },
+      },
+    },
+    {
+      $project: {
+        userId: 1,
+        channels: {
+          $filter: {
+            input: "$channels",
+            as: "channel",
+            cond: {
+              $eq: ["$$channel.channelId", ObjectId(channelId)],
+            },
+          },
+        },
+      },
+    },
+    {
+      $unwind:
+        /**
+         * path: Path to the array field.
+         * includeArrayIndex: Optional name for index.
+         * preserveNullAndEmptyArrays: Optional
+         *   toggle to unwind null and empty values.
+         */
+        {
+          path: "$channels",
+        },
+    },
+    {
+      $set:
+        /**
+         * field: The field name
+         * expression: The expression.
+         */
+        {
+          channel: "$channels",
+        },
+    },
+    {
+      $unset: "channels",
+    },
+  ]);
+
+  const updatePromises = channelDocuments.map((channelDocument) => {
+    let newObj = {
+      materialId: materialId,
+      topicId: material.topicId,
+      channelId: channelId,
+      isAnnotationNotificationsEnabled:
+        channelDocument.channel.isAnnotationNotificationsEnabled,
+      isCourseUpdateNotificationsEnabled:
+        channelDocument.channel.isCourseUpdateNotificationsEnabled,
+      isReplyAndMentionedNotificationsEnabled:
+        channelDocument.channel.isReplyAndMentionedNotificationsEnabled,
+      isMaterialLevelOverride: false,
+      isChannelLevelOverride: channelDocument.channel.isChannelLevelOverride,
+      isTopicLevelOverride: channelDocument.channel.isTopicLevelOverride,
+    };
+    return BlockingNotifications.findOneAndUpdate(
+      {
+        userId: channelDocument.userId,
+        courseId: courseId,
+      },
+      {
+        $push: {
+          materials: newObj,
+        },
+      }
+    );
+  });
+
+  await Promise.all(updatePromises);
+
+  next();
+};
+
 let notifications = {
   populateUserNotification,
   generateNotificationInfo,
@@ -424,5 +520,6 @@ let notifications = {
   channelCourseUpdateNotificationUsers,
   materialCourseUpdateNotificationsUsers,
   topicCourseUpdateNotificationUsers,
+  updateBlockingNotificationsNewMaterial,
 };
 module.exports = notifications;
