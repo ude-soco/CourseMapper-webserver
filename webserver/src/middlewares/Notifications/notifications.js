@@ -599,6 +599,56 @@ export const updateBlockingNotificationsNewChannel = async (req, res, next) => {
   next();
 };
 
+export const updateBlockingNotificationsNewTopic = async (req, res, next) => {
+  const course = req.locals.course;
+  const topic = req.locals.topic;
+  const courseId = course._id;
+
+  let courseDocuments = await BlockingNotifications.aggregate([
+    {
+      $match: {
+        courseId: ObjectId(courseId),
+      },
+    },
+    {
+      $project: {
+        userId: 1,
+        isAnnotationNotificationsEnabled: 1,
+        isCourseUpdateNotificationsEnabled: 1,
+        isReplyAndMentionedNotificationsEnabled: 1,
+      },
+    },
+  ]);
+
+  const updatePromises = courseDocuments.map((courseDocument) => {
+    let newObj = {
+      topicId: topic._id,
+      isAnnotationNotificationsEnabled:
+        courseDocument.isAnnotationNotificationsEnabled,
+      isCourseUpdateNotificationsEnabled:
+        courseDocument.isCourseUpdateNotificationsEnabled,
+      isReplyAndMentionedNotificationsEnabled:
+        courseDocument.isReplyAndMentionedNotificationsEnabled,
+      isTopicLevelOverride: false,
+    };
+    return BlockingNotifications.findOneAndUpdate(
+      {
+        userId: courseDocument.userId,
+        courseId: courseId,
+      },
+      {
+        $push: {
+          topics: newObj,
+        },
+      }
+    );
+  });
+
+  await Promise.all(updatePromises);
+
+  next();
+};
+
 let notifications = {
   populateUserNotification,
   generateNotificationInfo,
@@ -610,5 +660,6 @@ let notifications = {
   topicCourseUpdateNotificationUsers,
   updateBlockingNotificationsNewMaterial,
   updateBlockingNotificationsNewChannel,
+  updateBlockingNotificationsNewTopic,
 };
 module.exports = notifications;

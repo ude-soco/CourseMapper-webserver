@@ -24,6 +24,7 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isModerator],
     controller.newTopic,
     logger.newTopic,
+    notifications.updateBlockingNotificationsNewTopic,
     notifications.topicCourseUpdateNotificationUsers,
     notifications.populateUserNotification
   );
