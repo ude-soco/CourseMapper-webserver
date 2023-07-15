@@ -623,6 +623,8 @@ export const newCourse = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: "Error saving user" });
   }
+
+  await helpers.initialiseNotificationSettings(courseSaved, foundUser);
   const response = {
     courseSaved: {
       _id: courseSaved._id,
