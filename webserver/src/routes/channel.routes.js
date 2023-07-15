@@ -34,6 +34,7 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isModerator],
     controller.deleteChannel,
     logger.deleteChannel,
+    notifications.channelCourseUpdateNotificationUsers,
     notifications.populateUserNotification
   );
 
@@ -44,6 +45,7 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isModerator],
     controller.editChannel,
     logger.editChannel,
+    notifications.channelCourseUpdateNotificationUsers,
     notifications.populateUserNotification
   );
 };

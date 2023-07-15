@@ -24,6 +24,7 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isModerator],
     controller.newMaterial,
     logger.newMaterial,
+    notifications.materialCourseUpdateNotificationsUsers,
     notifications.populateUserNotification
   );
 
@@ -34,6 +35,7 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isModerator],
     controller.deleteMaterial,
     logger.deleteMaterial,
+    notifications.materialCourseUpdateNotificationsUsers,
     notifications.populateUserNotification
   );
 
@@ -44,6 +46,7 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isModerator],
     controller.editMaterial,
     logger.editMaterial,
+    notifications.materialCourseUpdateNotificationsUsers,
     notifications.populateUserNotification
   );
 

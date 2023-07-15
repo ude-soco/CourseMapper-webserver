@@ -349,7 +349,7 @@ export const editTopic = async (req, res, next) => {
   req.locals.category = "courseupdates";
   req.locals.user = user;
   req.locals.course = foundCourse;
-  req.locals.topic = newTopic;
+  req.locals.topic = foundTopic;
 
   return next();
 };

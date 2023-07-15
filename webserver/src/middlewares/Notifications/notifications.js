@@ -145,6 +145,7 @@ export const newAnnotationNotificationUsersCalculate = async (
   //get the users blocked by the user doing the action
   const userId = req.userId;
   const material = req.locals.material;
+  const course = req.locals.course;
   //for the above userId get the array of users who have blocked him
 
   let foundUser = await User.findById(userId);
@@ -152,17 +153,20 @@ export const newAnnotationNotificationUsersCalculate = async (
     userId.toString()
   );
 
-  let usersAllowingAnnotationNotifications = await BlockingNotifications.find()
-    .elemMatch("materials", {
-      materialId: material._id,
-      isAnnotationNotificationsEnabled: true,
-    })
-    .select("userId");
-
-  console.log(
-    "usersAllowingAnnotationNotifications: ",
-    usersAllowingAnnotationNotifications
-  );
+  const usersAllowingAnnotationNotifications =
+    await BlockingNotifications.aggregate([
+      {
+        $match: {
+          courseId: ObjectId(course._id),
+          materials: {
+            $elemMatch: {
+              materialId: material._id,
+              isAnnotationNotificationsEnabled: true,
+            },
+          },
+        },
+      },
+    ]);
 
   let resultingUsers;
 
@@ -229,8 +233,24 @@ export const LikesDislikesMentionedNotificationUsers = async (
   let blockedByUsers = foundUser.blockedByUser.map((userId) =>
     userId.toString()
   );
+  const courseId = req.locals.course._id;
 
-  const annotationAuthorId = [req.locals.annotationAuthorId];
+  const authorDocument = await BlockingNotifications.aggregate([
+    {
+      $match: {
+        courseId: ObjectId(courseId),
+        userId: ObjectId(req.locals.annotationAuthorId),
+        materials: {
+          $elemMatch: {
+            materialId: ObjectId(req.locals.materialId),
+            isReplyAndMentionedNotificationsEnabled: true,
+          },
+        },
+      },
+    },
+  ]);
+
+  const annotationAuthorId = authorDocument.map((user) => user.userId);
 
   let resultingUsers;
   if (blockedByUsers.length > 0) {
@@ -250,11 +270,159 @@ export const LikesDislikesMentionedNotificationUsers = async (
   next();
 };
 
+export const materialCourseUpdateNotificationsUsers = async (
+  req,
+  res,
+  next
+) => {
+  const userId = req.userId;
+  const course = req.locals.course;
+  const material = req.locals.material;
+  let foundUser = await User.findById(userId);
+  let blockedByUsers = foundUser.blockedByUser.map((userId) =>
+    userId.toString()
+  );
+  const usersAllowingCourseUpdatesMaterialLevel =
+    await BlockingNotifications.aggregate([
+      {
+        $match: {
+          courseId: ObjectId(course._id),
+          materials: {
+            $elemMatch: {
+              materialId: ObjectId(material._id),
+              isCourseUpdateNotificationsEnabled: true,
+            },
+          },
+        },
+      },
+    ]);
+
+  let resultingUsers;
+  const userIdsOfUsersAllowingCourseUpdatesMaterialLevel =
+    usersAllowingCourseUpdatesMaterialLevel.map((user) => user.userId);
+
+  if (blockedByUsers.length > 0) {
+    const blockedByUserSet = new Set(blockedByUsers);
+    resultingUsers = userIdsOfUsersAllowingCourseUpdatesMaterialLevel.filter(
+      (userId) => !blockedByUserSet.has(userId.toString())
+    );
+  } else {
+    resultingUsers = userIdsOfUsersAllowingCourseUpdatesMaterialLevel;
+  }
+
+  let finalListOfUsersToNotify = removeUserFromList(
+    resultingUsers,
+    ObjectId(userId)
+  );
+  req.locals.usersToBeNotified = finalListOfUsersToNotify;
+
+  next();
+};
+
+export const channelCourseUpdateNotificationUsers = async (req, res, next) => {
+  const userId = req.userId;
+  const course = req.locals.course;
+  const channel = req.locals.channel;
+  let foundUser = await User.findById(userId);
+  let blockedByUsers = foundUser.blockedByUser.map((userId) =>
+    userId.toString()
+  );
+
+  const usersAllowingCourseUpdatesChannelLevel =
+    await BlockingNotifications.aggregate([
+      {
+        $match:
+          /**
+           * query: The query in MQL.
+           */
+          {
+            courseId: ObjectId(course._id),
+            channels: {
+              $elemMatch: {
+                channelId: ObjectId(channel._id),
+                isCourseUpdateNotificationsEnabled: true,
+              },
+            },
+          },
+      },
+    ]);
+
+  let resultingUsers;
+
+  const userIdsOfUsersAllowingCourseUpdatesChannelLevel =
+    usersAllowingCourseUpdatesChannelLevel.map((user) => user.userId);
+
+  if (blockedByUsers.length > 0) {
+    const blockedByUserSet = new Set(blockedByUsers);
+    resultingUsers = userIdsOfUsersAllowingCourseUpdatesChannelLevel.filter(
+      (userId) => !blockedByUserSet.has(userId.toString())
+    );
+  } else {
+    resultingUsers = userIdsOfUsersAllowingCourseUpdatesChannelLevel;
+  }
+
+  let finalListOfUsersToNotify = removeUserFromList(
+    resultingUsers,
+    ObjectId(userId)
+  );
+  req.locals.usersToBeNotified = finalListOfUsersToNotify;
+  next();
+};
+
+export const topicCourseUpdateNotificationUsers = async (req, res, next) => {
+  const userId = req.userId;
+  const course = req.locals.course;
+  const topic = req.locals.topic;
+
+  let foundUser = await User.findById(userId);
+  let blockedByUsers = foundUser.blockedByUser.map((userId) =>
+    userId.toString()
+  );
+  const usersAllowingCourseUpdatesTopicLevel =
+    await BlockingNotifications.aggregate([
+      {
+        $match: {
+          courseId: ObjectId(course._id),
+          topics: {
+            $elemMatch: {
+              topicId: ObjectId(topic._id),
+              isCourseUpdateNotificationsEnabled: true,
+            },
+          },
+        },
+      },
+    ]);
+
+  let resultingUsers;
+  const userIdsOfUsersAllowingCourseUpdatesTopicLevel =
+    usersAllowingCourseUpdatesTopicLevel.map((user) => user.userId);
+
+  if (blockedByUsers.length > 0) {
+    const blockedByUserSet = new Set(blockedByUsers);
+    resultingUsers = userIdsOfUsersAllowingCourseUpdatesTopicLevel.filter(
+      (userId) => !blockedByUserSet.has(userId.toString())
+    );
+  } else {
+    resultingUsers = userIdsOfUsersAllowingCourseUpdatesTopicLevel;
+  }
+
+  let finalListOfUsersToNotify = removeUserFromList(
+    resultingUsers,
+    ObjectId(userId)
+  );
+  req.locals.usersToBeNotified = finalListOfUsersToNotify;
+
+  next();
+};
+
 let notifications = {
   populateUserNotification,
   generateNotificationInfo,
   newAnnotationNotificationUsersCalculate,
   calculateUsersFollowingAnnotation,
   LikesDislikesMentionedNotificationUsers,
+  channelCourseUpdateNotificationUsers,
+  materialCourseUpdateNotificationsUsers,
+  topicCourseUpdateNotificationUsers,
 };
 module.exports = notifications;

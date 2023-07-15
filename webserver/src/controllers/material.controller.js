@@ -145,6 +145,7 @@ export const newMaterial = async (req, res, next) => {
     category: "courseupdates",
     materialType,
     course,
+    channel: foundChannel,
   };
   next();
 

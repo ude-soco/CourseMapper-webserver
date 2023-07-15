@@ -397,15 +397,6 @@ export const deleteChannel = async (req, res, next) => {
     return res.status(500).send({ error: "Error finding course" });
   }
 
-  //delete all the user channel subscribers for this channel
-  try {
-    await UserChannelSubscriber.deleteMany({ channelId: channelId });
-  } catch (err) {
-    return res
-      .status(500)
-      .send({ error: "Error deleting user channel subscribers" });
-  }
-
   req.locals = {
     response: {
       success: `Channel '${foundChannel.name}' successfully deleted!`,
@@ -495,5 +486,6 @@ export const editChannel = async (req, res, next) => {
   req.locals.user = user;
   req.locals.category = "courseupdates";
   req.locals.course = course;
+  req.local.channel = foundChannel;
   return next();
 };

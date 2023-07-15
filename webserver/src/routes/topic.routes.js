@@ -24,6 +24,7 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isModerator],
     controller.newTopic,
     logger.newTopic,
+    notifications.topicCourseUpdateNotificationUsers,
     notifications.populateUserNotification
   );
 
@@ -34,6 +35,7 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isModerator],
     controller.deleteTopic,
     logger.deleteTopic,
+    notifications.topicCourseUpdateNotificationUsers,
     notifications.populateUserNotification
   );
 
@@ -44,6 +46,7 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isModerator],
     controller.editTopic,
     logger.editTopic,
+    notifications.topicCourseUpdateNotificationUsers,
     notifications.populateUserNotification
   );
 };
