@@ -510,6 +510,94 @@ export const updateBlockingNotificationsNewMaterial = async (
 
   next();
 };
+export const updateBlockingNotificationsNewChannel = async (req, res, next) => {
+  const course = req.locals.course;
+  const channel = req.locals.channel;
+  const courseId = course._id;
+
+  let topicDocuments = await BlockingNotifications.aggregate([
+    {
+      $match: {
+        topics: {
+          $elemMatch: {
+            topicId: ObjectId(channel.topicId),
+          },
+        },
+      },
+    },
+    {
+      $project: {
+        userId: 1,
+        topics: {
+          $filter: {
+            input: "$topics",
+            as: "topic",
+            cond: {
+              $eq: ["$$topic.topicId", ObjectId(channel.topicId)],
+            },
+          },
+        },
+      },
+    },
+    {
+      $unwind:
+        /**
+         * path: Path to the array field.
+         * includeArrayIndex: Optional name for index.
+         * preserveNullAndEmptyArrays: Optional
+         *   toggle to unwind null and empty values.
+         */
+        {
+          path: "$topics",
+        },
+    },
+    {
+      $set:
+        /**
+         * field: The field name
+         * expression: The expression.
+         */
+        {
+          topic: "$topics",
+        },
+    },
+    {
+      $unset: "topics",
+    },
+  ]);
+
+  const updatePromises = topicDocuments.map((topicDocument) => {
+    let newObj = {
+      topicId: channel.topicId,
+      channelId: channel._id,
+      isAnnotationNotificationsEnabled:
+        topicDocument.topic.isAnnotationNotificationsEnabled,
+      isCourseUpdateNotificationsEnabled:
+        topicDocument.topic.isCourseUpdateNotificationsEnabled,
+      isReplyAndMentionedNotificationsEnabled:
+        topicDocument.topic.isReplyAndMentionedNotificationsEnabled,
+
+      isChannelLevelOverride: false,
+      isTopicLevelOverride: topicDocument.topic.isTopicLevelOverride,
+      followingAnnotations: [],
+    };
+    return BlockingNotifications.findOneAndUpdate(
+      {
+        userId: topicDocument.userId,
+        courseId: courseId,
+      },
+      {
+        $push: {
+          channels: newObj,
+        },
+      }
+    );
+  });
+
+  await Promise.all(updatePromises);
+
+  next();
+};
 
 let notifications = {
   populateUserNotification,
@@ -521,5 +609,6 @@ let notifications = {
   materialCourseUpdateNotificationsUsers,
   topicCourseUpdateNotificationUsers,
   updateBlockingNotificationsNewMaterial,
+  updateBlockingNotificationsNewChannel,
 };
 module.exports = notifications;

@@ -24,6 +24,8 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isModerator],
     controller.newChannel,
     logger.newChannel,
+    notifications.updateBlockingNotificationsNewChannel,
+    notifications.channelCourseUpdateNotificationUsers,
     notifications.populateUserNotification
   );
 
