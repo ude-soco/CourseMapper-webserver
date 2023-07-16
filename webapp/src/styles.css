@@ -30,3 +30,7 @@
   :root {
     --course-mapper-blue: #0369a1;
   }
+
+  .p-menu.p-menu-overlay.course-context-menu{
+    width: fit-content;
+  }

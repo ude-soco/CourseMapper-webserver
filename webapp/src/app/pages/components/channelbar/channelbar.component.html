@@ -23,12 +23,14 @@
           <p-menu
             #menu
             id="config_menu"
-            [model]="options"
+            [model]="
+              showModeratorPrivileges ? moderatorUserOptions : normalUserOptions
+            "
             [popup]="true"
             appendTo="body"
+            styleClass="course-context-menu"
           ></p-menu>
           <app-iconbutton
-            *ngIf="showModeratorPrivileges"
             icon="bx-dots-vertical-rounded"
             color="text-black"
             (click)="menu.toggle($event)"
