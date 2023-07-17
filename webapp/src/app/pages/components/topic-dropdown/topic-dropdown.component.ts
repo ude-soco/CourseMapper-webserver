@@ -6,6 +6,8 @@ import {
   Input,
   Renderer2,
   ChangeDetectorRef,
+  ViewChild,
+  ElementRef,
 } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { Channel } from 'src/app/models/Channel';
@@ -19,7 +21,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import * as MaterialActions from 'src/app/pages/components/materials/state/materials.actions';
 import { State } from '../materials/state/materials.reducer';
-import * as  CourseActions from 'src/app/pages/courses/state/course.actions'
+import * as CourseActions from 'src/app/pages/courses/state/course.actions';
+import { FormBuilder, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-topic-dropdown',
@@ -38,7 +41,8 @@ export class TopicDropdownComponent implements OnInit {
     private store: Store<State>,
     private route: ActivatedRoute,
     private renderer: Renderer2,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    protected fb: FormBuilder
   ) {
     const url = this.router.url;
     if (url.includes('course') && url.includes('channel')) {
@@ -48,20 +52,23 @@ export class TopicDropdownComponent implements OnInit {
       const channelId = channelRegex.exec(url)[1];
       const materialId = url.match(/material:(.*?)\/(pdf|video)/)?.[1];
       this.topicChannelService.fetchTopics(courseId).subscribe((course) => {
-        this.selectedTopic = course.topics.find((topic) => topic.channels.find((channel) => channel._id === channelId));
+        this.selectedTopic = course.topics.find((topic) =>
+          topic.channels.find((channel) => channel._id === channelId)
+        );
         this.onSelectTopic(this.selectedTopic);
         this.selectedChannelId = channelId;
-      })
-    }else{
+      });
+    } else {
       this.selectedChannelId = null;
       this.selectedChannel = null;
     }
   }
   @Input() showModeratorPrivileges: boolean;
+  @ViewChild('menu') menu: any;
 
   topics: Topic[] = [];
   displayAddChannelDialogue: boolean = false;
-  selectedTopic : Topic = null;
+  selectedTopic: Topic = null;
   prevSelectedTopic = null;
   selectedChannel = null;
   selectedChannelId = null;
@@ -78,6 +85,7 @@ export class TopicDropdownComponent implements OnInit {
   expandTopic = [];
   selectedCourseId = null;
   prevSelectedCourseId = null;
+  protected checkBoxesGroup = this.fb.group({});
 
   topicOptions: MenuItem[] = [
     {
@@ -89,6 +97,11 @@ export class TopicDropdownComponent implements OnInit {
       label: 'Delete',
       icon: 'pi pi-times',
       command: () => this.onDeleteTopic(),
+    },
+    {
+      label: 'Notification Settings',
+      icon: 'pi pi-bell',
+      /* command: () => this.onNotificationSettingsClicked(), */
     },
   ];
   channelsOptions: MenuItem[] = [
@@ -103,14 +116,44 @@ export class TopicDropdownComponent implements OnInit {
       command: () => this.onDeleteChannel(),
     },
   ];
+  notificationOptions = [
+    {
+      label: 'Course default',
+      value: null,
+    },
+    {
+      label: 'Topic Updates',
+      value: null,
+    },
+    {
+      label: 'Replies & Mentions',
+      value: null,
+    },
+    {
+      label: 'Annotations',
+      value: null,
+    },
+  ];
 
   ngOnInit(): void {
     this.topicChannelService
       .fetchTopics(this.courseService.getSelectedCourse()._id)
-      .subscribe((course) => (this.topics = course.topics));
+      .subscribe((course) => {
+        this.topics = course.topics;
+        this.store.dispatch(
+          CourseActions.saveTopics({ topics: course.topics })
+        );
+      });
+
     this.topicChannelService.onUpdateTopics$.subscribe(
       (topics) => (this.topics = topics)
     );
+
+    //loop over the notification options and make a form control
+    this.notificationOptions.forEach((o) => {
+      const control = new FormControl<boolean>(o.value);
+      this.checkBoxesGroup.addControl(o.label, control);
+    });
   }
 
   ngOnDestroy() {
@@ -147,9 +190,7 @@ export class TopicDropdownComponent implements OnInit {
     }
   }
 
-  showMenu() {
-   
-  }
+  showMenu() {}
 
   onSelectTopic(topic: Topic) {
     // console.log(this.selectedTopic)
@@ -159,11 +200,15 @@ export class TopicDropdownComponent implements OnInit {
           this.expandTopic.splice(index, 1);
         }
       });
-      this.store.dispatch(CourseActions.setCurrentTopic({selcetedTopic: null}));
+      this.store.dispatch(
+        CourseActions.setCurrentTopic({ selcetedTopic: null })
+      );
     } else {
       this.expandTopic = [];
       this.expandTopic.push(topic._id);
-      this.store.dispatch(CourseActions.setCurrentTopic({selcetedTopic: topic}));
+      this.store.dispatch(
+        CourseActions.setCurrentTopic({ selcetedTopic: topic })
+      );
       // wait until expanded topic rendered
       setTimeout(() => {
         // if exists channel previously selected --> make channel container bg=white
@@ -176,17 +221,6 @@ export class TopicDropdownComponent implements OnInit {
           );
           channelNameContainer.style.backgroundColor = 'white';
         }
-        //     else{
-        //       // make all channels' container background Null
-        // this.topics.forEach((topic) => {
-        //   topic.channels.forEach((channelEle) => {
-        //     var nonSelectedChannels = document.getElementById(
-        //       channelEle._id + '-container'
-        //     );
-        //     nonSelectedChannels.style.backgroundColor = null;
-        //   });
-        // });
-        //     }
       }, 2);
     }
   }
@@ -219,8 +253,9 @@ export class TopicDropdownComponent implements OnInit {
         var nonSelectedChannels = document.getElementById(
           channelEle._id + '-container'
         );
-        if(nonSelectedChannels){
-        nonSelectedChannels.style.backgroundColor = null;}
+        if (nonSelectedChannels) {
+          nonSelectedChannels.style.backgroundColor = null;
+        }
       });
     });
     // make selected channel's container background white
@@ -271,8 +306,12 @@ export class TopicDropdownComponent implements OnInit {
             'course',
             this.courseService.getSelectedCourse()._id,
           ]);
-          this.store.dispatch(CourseActions.SetSelectedChannel({selectedChannel: null}));
-          this.store.dispatch(CourseActions.toggleChannelSelected({channelSelected: false}));
+          this.store.dispatch(
+            CourseActions.SetSelectedChannel({ selectedChannel: null })
+          );
+          this.store.dispatch(
+            CourseActions.toggleChannelSelected({ channelSelected: false })
+          );
         } else {
           this.showError(res['errorMsg']);
         }
@@ -450,8 +489,12 @@ export class TopicDropdownComponent implements OnInit {
             'course',
             this.courseService.getSelectedCourse()._id,
           ]);
-          this.store.dispatch(CourseActions.SetSelectedChannel({selectedChannel: null}));
-          this.store.dispatch(CourseActions.toggleChannelSelected({channelSelected: false}));
+          this.store.dispatch(
+            CourseActions.SetSelectedChannel({ selectedChannel: null })
+          );
+          this.store.dispatch(
+            CourseActions.toggleChannelSelected({ channelSelected: false })
+          );
         } else {
           this.showError(res['errorMsg']);
         }
@@ -496,7 +539,7 @@ export class TopicDropdownComponent implements OnInit {
       this.selectedChannel.description = body.description;
     } else if (this.escapeKey === true) {
       //ESC pressed
-    //  console.log('ESC Pressed');
+      //  console.log('ESC Pressed');
       this.escapeKey = false;
     } else {
       //confirmed by mouse click
@@ -627,6 +670,27 @@ export class TopicDropdownComponent implements OnInit {
     var sel = window.getSelection();
     sel.removeAllRanges();
     sel.addRange(range);
+  }
+
+  threeDotMenuClicked(event, topic) {
+    this.selectedTopic = topic;
+    this.onSelectTopic(topic);
+    console.log(topic);
+  }
+
+  onNotificationSettingsClicked($event, notificationOption): void {
+    console.log('notification settings clicked');
+    $event.stopPropagation();
+    const control = this.checkBoxesGroup.get(notificationOption.label);
+    control.setValue(!control.value);
+    if (notificationOption.label === this.notificationOptions[0].label) {
+      for (const controlName in this.checkBoxesGroup.controls) {
+        if (controlName !== notificationOption.label) {
+          this.checkBoxesGroup.get(controlName).setValue(false);
+        }
+      }
+    }
+    console.log(this.checkBoxesGroup.value);
   }
 
   /**

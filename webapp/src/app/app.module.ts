@@ -67,6 +67,7 @@ import { NotificationModule } from './pages/components/notifications/notificatio
 import { CourseWelcomeComponent } from './course-welcome/course-welcome.component';
 export const metaReducers: MetaReducer[] = [hydrationMetaReducer];
 registerLocaleData(en);
+import { DividerModule } from 'primeng/divider';
 
 @NgModule({
   declarations: [
@@ -131,6 +132,7 @@ registerLocaleData(en);
     }),
     CourseModule,
     TabMenuModule,
+    DividerModule,
   ],
   exports: [SidebarComponent],
   providers: [httpInterceptorProviders],

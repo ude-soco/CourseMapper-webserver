@@ -27,6 +27,8 @@ export interface CourseState {
   selectedTagName: string;
   selcetedTopic: Topic;
   annotationsForSelectedTag: Annotation[];
+  topics: Topic[];
+  channels: Channel[];
 }
 const initialState: CourseState = {
   courseId: null,
@@ -40,6 +42,8 @@ const initialState: CourseState = {
   selectedTagName: null,
   selcetedTopic: null,
   annotationsForSelectedTag: null,
+  topics: null,
+  channels: null,
 };
 const getCourseFeatureState = createFeatureSelector<CourseState>('course');
 
@@ -414,5 +418,17 @@ export const courseReducer = createReducer<CourseState>(
         annotationsForSelectedTag: action.annotations,
       };
     }
-  )
+  ),
+  on(CourseAction.saveTopics, (state, action): CourseState => {
+    return {
+      ...state,
+      topics: action.topics,
+    };
+  }),
+  on(CourseAction.saveChannels, (state, action): CourseState => {
+    return {
+      ...state,
+      channels: action.channels,
+    };
+  })
 );

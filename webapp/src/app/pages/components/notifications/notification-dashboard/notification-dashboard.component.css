@@ -1,4 +1,9 @@
 
+:host ::ng-deep.p-tabmenu .p-tabmenu-nav {
+  background: #ffffff;
+  border: solid rgba(0, 0, 0, 0);
+  border-width: 0 0 1px 0;
+}
 
 
 :host ::ng-deep.p-checkbox .p-checkbox-box.p-highlight{

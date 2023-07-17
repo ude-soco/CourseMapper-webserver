@@ -1,3 +1,5 @@
+
+
 .confirm-button {
   background-color: lightblue;
   color: white;
@@ -29,5 +31,27 @@
   display: block;
 }
 
+
+:host ::ng-deep .p-button:enabled:hover {
+  background: rgb(214 215 223 / 92%);
+  color: #090909;
+  border-color: transparent;
+}
+
+:host ::ng-deep .p-button {
+  color: #000000;
+  background: #ffffff;
+  border: 0 none;
+  padding: 0.714rem 1rem;
+  font-size: 1rem;
+  /* transition: background-color 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s, background-size 0.2s cubic-bezier(0.64, 0.09, 0.08, 1); */
+  border-radius: 4px;
+}
+
+.topic-context-menu-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 
 

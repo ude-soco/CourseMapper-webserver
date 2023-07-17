@@ -34,3 +34,43 @@
   .p-menu.p-menu-overlay.course-context-menu{
     width: fit-content;
   }
+
+  .p-overlaypanel.topicContextMenu .p-overlaypanel-content {
+    padding: 0;
+  }
+
+ .p-overlaypanel.topicContextMenu{
+    padding: 0
+  }
+
+  .contextMenuButton.p-button:enabled:hover {
+    background: rgb(214 215 223 / 92%);
+    color: #090909;
+    border-color: transparent;
+  }
+
+  .contextMenuButton.p-button {
+    color: #000000;
+    background: #ffffff;
+    border: 0 none;
+    padding: 0.714rem 1rem;
+    font-size: 1rem;
+    border-radius: 4px;
+    width: 100%;
+    text-align: left;
+    font-weight: 300
+  }
+
+  .contextMenuButton.p-button:enabled:active {
+    background: rgb(214 215 223 / 92%);
+    color: #090909;
+    border-color: transparent;
+}
+
+.contextMenuButton.p-button:enabled:focus {
+  background: rgb(214 215 223 / 92%);
+  color: #090909;
+  border-color: transparent;
+}
+
+

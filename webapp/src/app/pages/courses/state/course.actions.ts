@@ -220,3 +220,13 @@ export const editAnnotationFail = createAction(
   '[Tag Annotation] Failed To Edit The Annotation',
   props<{ error: string }>()
 );
+
+export const saveTopics = createAction(
+  '[Course] Save Topics',
+  props<{ topics: Topic[] }>()
+);
+
+export const saveChannels = createAction(
+  '[Course] Save Channels',
+  props<{ channels: Channel[] }>()
+);

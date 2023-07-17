@@ -38,20 +38,59 @@
             ></app-svg-icon>
           </div> -->
         </div>
-        <p-menu
-          #menu
-          id="config_menu"
-          [model]="topicOptions"
-          [popup]="true"
-          appendTo="body"
-        ></p-menu>
+        <p-overlayPanel #menu styleClass="topicContextMenu">
+          <ng-template pTemplate="content">
+            <div class="topic-context-menu-container">
+              <p-button
+                label="Rename"
+                icon="pi pi-refresh"
+                styleClass="contextMenuButton"
+              ></p-button>
+              <p-button
+                label="Delete"
+                icon="pi pi-times"
+                styleClass="contextMenuButton"
+              ></p-button>
+              <p-divider align="center">
+                <div class="inline-flex align-items-center">
+                  <i class="pi pi-bell mr-2"></i>
+                  <b>Notification Settings</b>
+                </div>
+              </p-divider>
+              <div>
+                <div
+                  class="topic-context-menu-container"
+                  [formGroup]="checkBoxesGroup"
+                >
+                  <p-button
+                    styleClass="contextMenuButton"
+                    *ngFor="let notificationOption of notificationOptions"
+                    (click)="
+                      onNotificationSettingsClicked($event, notificationOption)
+                    "
+                  >
+                    <div>
+                      <p-checkbox
+                        [formControlName]="notificationOption.label"
+                        [binary]="true"
+                      ></p-checkbox>
+                      <span>{{ notificationOption.label }}</span>
+                    </div>
+                  </p-button>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </p-overlayPanel>
         <app-iconbutton
+          #menuBtn
           *ngIf="showModeratorPrivileges"
           icon="bx-dots-vertical-rounded"
           color="text-black"
           (click)="selectedTopic = topic; menu.toggle($event)"
         ></app-iconbutton>
       </div>
+
       <div
         *ngFor="let channel of topic.channels; let i = index"
         [attr.data-index]="i"
@@ -164,14 +203,15 @@
             ></app-svg-icon>
           </div> -->
         </div>
-        <p-menu
+        <p-contextMenu
           #menu
           id="config_menu"
           [model]="topicOptions"
-          [popup]="true"
           appendTo="body"
-        ></p-menu>
+          triggerEvent="click"
+        ></p-contextMenu>
         <app-iconbutton
+          #menuBtn
           *ngIf="showModeratorPrivileges"
           icon="bx-dots-vertical-rounded"
           color="text-black"

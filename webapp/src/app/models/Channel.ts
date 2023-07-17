@@ -1,4 +1,4 @@
-import { Material } from "./Material";
+import { Material } from './Material';
 
 export interface Channel {
   _id: string;
@@ -8,4 +8,9 @@ export interface Channel {
   courseId: string;
   notification?: number;
   materials?: Material[];
+  isAnnotationNotificationsEnabled?: boolean;
+  isReplyAndMentionedNotificationsEnabled?: boolean;
+  isCourseUpdateNotificationsEnabled?: boolean;
+  isTopicLevelOverride?: boolean;
+  isChannelLevelOverride?: boolean;
 }
