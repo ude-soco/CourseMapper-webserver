@@ -123,6 +123,8 @@ export class TopicDropdownComponent implements OnInit {
       command: () => this.onDeleteChannel(),
     },
   ];
+
+  //TODO Remove the null default values. not needed. form controls supply the values.
   notificationOptions = [
     {
       label: 'Course default',
@@ -162,7 +164,7 @@ export class TopicDropdownComponent implements OnInit {
     //loop over the notification options and make a form control
     this.notificationSettingsOfLastTopicMenuClicked$.subscribe(
       (notificationSettings) => {
-        console.log('ID CHANGED');
+        console.log('TOPIC ID CHANGED');
         if (!notificationSettings) return;
         //delete all the controls in the form Group
         this.checkBoxesGroup = this.fb.group({});
@@ -701,11 +703,18 @@ export class TopicDropdownComponent implements OnInit {
     console.log(topic);
   }
 
-  onNotificationSettingsClicked($event, notificationOption): void {
+  onNotificationSettingsClicked(
+    $event,
+    notificationOption: { key: string; value: FormControl }
+  ): void {
     console.log('notification settings clicked');
     $event.stopPropagation();
     console.log(this.checkBoxesGroup.value);
     console.log(notificationOption);
+    //get the control with the key of the notificationOptionj label
+    //toggle the value of the control
+    notificationOption.value.setValue(!notificationOption.value.value);
+    console.log(this.checkBoxesGroup.value);
   }
 
   /**

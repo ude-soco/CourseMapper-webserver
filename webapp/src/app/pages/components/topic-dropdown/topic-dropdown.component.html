@@ -64,18 +64,16 @@
                 >
                   <p-button
                     styleClass="contextMenuButton"
-                    *ngFor="let notificationOption of notificationOptions"
-                    (click)="
-                      onNotificationSettingsClicked($event, notificationOption)
-                    "
+                    *ngFor="let control of checkBoxesGroup.controls | keyvalue"
+                    (click)="onNotificationSettingsClicked($event, control)"
                   >
                     <div>
                       <p-checkbox
-                        [formControlName]="notificationOption.label"
-                        [value]="notificationOption.value"
+                        [formControlName]="control.key"
+                        [value]="control.value"
                         [binary]="true"
                       ></p-checkbox>
-                      <span>{{ notificationOption.label }}</span>
+                      <span>{{ control.key }}</span>
                     </div>
                   </p-button>
                 </div>
@@ -237,18 +235,16 @@
                 >
                   <p-button
                     styleClass="contextMenuButton"
-                    *ngFor="let notificationOption of notificationOptions"
-                    (click)="
-                      onNotificationSettingsClicked($event, notificationOption)
-                    "
+                    *ngFor="let control of checkBoxesGroup.controls | keyvalue"
+                    (click)="onNotificationSettingsClicked($event, control)"
                   >
                     <div>
                       <p-checkbox
-                        [formControlName]="notificationOption.label"
-                        [value]="notificationOption.value"
+                        [formControlName]="control.key"
+                        [value]="control.value"
                         [binary]="true"
                       ></p-checkbox>
-                      <span>{{ notificationOption.label }}</span>
+                      <span>{{ control.key }}</span>
                     </div>
                   </p-button>
                 </div>
