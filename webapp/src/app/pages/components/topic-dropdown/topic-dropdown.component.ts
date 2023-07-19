@@ -23,7 +23,8 @@ import * as MaterialActions from 'src/app/pages/components/materials/state/mater
 import { State } from '../materials/state/materials.reducer';
 import * as CourseActions from 'src/app/pages/courses/state/course.actions';
 import { FormBuilder, FormControl } from '@angular/forms';
-
+import { Observable } from 'rxjs/internal/Observable';
+import { getNotificationSettingsOfLastTopicMenuClicked } from '../../courses/state/course.reducer';
 @Component({
   selector: 'app-topic-dropdown',
   templateUrl: './topic-dropdown.component.html',
@@ -86,6 +87,12 @@ export class TopicDropdownComponent implements OnInit {
   selectedCourseId = null;
   prevSelectedCourseId = null;
   protected checkBoxesGroup = this.fb.group({});
+  notificationSettingsOfLastTopicMenuClicked$: Observable<
+    {
+      label: string;
+      value: boolean;
+    }[]
+  > = null;
 
   topicOptions: MenuItem[] = [
     {
@@ -149,11 +156,22 @@ export class TopicDropdownComponent implements OnInit {
       (topics) => (this.topics = topics)
     );
 
+    this.notificationSettingsOfLastTopicMenuClicked$ = this.store.select(
+      getNotificationSettingsOfLastTopicMenuClicked
+    );
     //loop over the notification options and make a form control
-    this.notificationOptions.forEach((o) => {
-      const control = new FormControl<boolean>(o.value);
-      this.checkBoxesGroup.addControl(o.label, control);
-    });
+    this.notificationSettingsOfLastTopicMenuClicked$.subscribe(
+      (notificationSettings) => {
+        console.log('ID CHANGED');
+        if (!notificationSettings) return;
+        //delete all the controls in the form Group
+        this.checkBoxesGroup = this.fb.group({});
+        notificationSettings.forEach((o) => {
+          const control = new FormControl<boolean>(o.value);
+          this.checkBoxesGroup.addControl(o.label, control);
+        });
+      }
+    );
   }
 
   ngOnDestroy() {
@@ -672,25 +690,22 @@ export class TopicDropdownComponent implements OnInit {
     sel.addRange(range);
   }
 
-  threeDotMenuClicked(event, topic) {
+  threeDotMenuClicked($event, topic: Topic) {
     this.selectedTopic = topic;
-    this.onSelectTopic(topic);
+    this.menu.toggle($event);
+    this.store.dispatch(
+      CourseActions.setLastTopicMenuClicked({
+        lastTopicMenuClickedId: topic._id,
+      })
+    );
     console.log(topic);
   }
 
   onNotificationSettingsClicked($event, notificationOption): void {
     console.log('notification settings clicked');
     $event.stopPropagation();
-    const control = this.checkBoxesGroup.get(notificationOption.label);
-    control.setValue(!control.value);
-    if (notificationOption.label === this.notificationOptions[0].label) {
-      for (const controlName in this.checkBoxesGroup.controls) {
-        if (controlName !== notificationOption.label) {
-          this.checkBoxesGroup.get(controlName).setValue(false);
-        }
-      }
-    }
     console.log(this.checkBoxesGroup.value);
+    console.log(notificationOption);
   }
 
   /**

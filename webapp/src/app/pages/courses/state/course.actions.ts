@@ -226,7 +226,19 @@ export const saveTopics = createAction(
   props<{ topics: Topic[] }>()
 );
 
-export const saveChannels = createAction(
-  '[Course] Save Channels',
-  props<{ channels: Channel[] }>()
+//The below action is for the notification feature. When the 3 dotted Menu for a topic is clicked, the topic which was clicked is saved. This is used in order to show the notification settings in the context menu for the particular topic clicked in the context menu
+export const setLastTopicMenuClicked = createAction(
+  '[Course] Set Last Topic Menu Clicked',
+  props<{ lastTopicMenuClickedId: string }>()
+);
+
+export const updateTopicLevelNotifications = createAction(
+  '[Course] Update Topic Level Notifications',
+  props<{
+    settings: {
+      label: string;
+      value: boolean;
+    }[];
+    settingChanged: { label: string; value: boolean };
+  }>()
 );

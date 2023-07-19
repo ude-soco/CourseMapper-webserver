@@ -29,6 +29,7 @@ export interface CourseState {
   annotationsForSelectedTag: Annotation[];
   topics: Topic[];
   channels: Channel[];
+  lastTopicMenuClickedId: string;
 }
 const initialState: CourseState = {
   courseId: null,
@@ -44,6 +45,7 @@ const initialState: CourseState = {
   annotationsForSelectedTag: null,
   topics: null,
   channels: null,
+  lastTopicMenuClickedId: null,
 };
 const getCourseFeatureState = createFeatureSelector<CourseState>('course');
 
@@ -100,6 +102,39 @@ export const getAnnotationsForSelectedTag = createSelector(
 export const getSelectedTagName = createSelector(
   getCourseFeatureState,
   (state) => state.selectedTagName
+);
+
+//return an array of object. where the object has a label and value property
+//the label is type of Notifications enabled. and the value is a boolean
+export const getNotificationSettingsOfLastTopicMenuClicked = createSelector(
+  getCourseFeatureState,
+  (state) => {
+    if (!state.topics || !state.lastTopicMenuClickedId) {
+      return null;
+    }
+    const topic = state.topics.find(
+      (topic) => topic._id === state.lastTopicMenuClickedId
+    );
+    const notificationSettings = [
+      {
+        label: 'Annotations',
+        value: topic.isAnnotationNotificationsEnabled,
+      },
+      {
+        label: 'Replies & Mentions',
+        value: topic.isReplyAndMentionedNotificationsEnabled,
+      },
+      {
+        label: 'Topic Updates',
+        value: topic.isCourseUpdateNotificationsEnabled,
+      },
+      {
+        label: 'Course default',
+        value: topic.isTopicLevelOverride ? false : true,
+      },
+    ];
+    return notificationSettings;
+  }
 );
 
 export const courseReducer = createReducer<CourseState>(
@@ -425,10 +460,10 @@ export const courseReducer = createReducer<CourseState>(
       topics: action.topics,
     };
   }),
-  on(CourseAction.saveChannels, (state, action): CourseState => {
+  on(CourseAction.setLastTopicMenuClicked, (state, action): CourseState => {
     return {
       ...state,
-      channels: action.channels,
+      lastTopicMenuClickedId: action.lastTopicMenuClickedId,
     };
   })
 );
