@@ -8,9 +8,9 @@ export interface Channel {
   courseId: string;
   notification?: number;
   materials?: Material[];
-  isAnnotationNotificationsEnabled?: boolean;
+  /*   isAnnotationNotificationsEnabled?: boolean;
   isReplyAndMentionedNotificationsEnabled?: boolean;
   isCourseUpdateNotificationsEnabled?: boolean;
   isTopicLevelOverride?: boolean;
-  isChannelLevelOverride?: boolean;
+  isChannelLevelOverride?: boolean; */
 }

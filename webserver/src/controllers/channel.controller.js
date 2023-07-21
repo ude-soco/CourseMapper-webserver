@@ -191,7 +191,7 @@ export const getChannel = async (req, res, next) => {
   }
 
   req.locals = {
-    response: { foundChannel, notificationSettings },
+    response: { channel: foundChannel, notificationSettings },
     channel: foundChannel,
     user: user,
   };

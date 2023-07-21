@@ -12,6 +12,11 @@ import { Channel } from 'src/app/models/Channel';
 import { Tag } from 'src/app/models/Tag';
 import { Topic } from 'src/app/models/Topic';
 import { Annotation } from 'src/app/models/Annotations';
+import {
+  MaterialNotificationSettings,
+  ChannelNotificationSettings,
+  TopicNotificationSettings,
+} from 'src/app/models/BlockingNotification';
 export interface State extends AppState.State {
   courses: CourseState;
 }
@@ -27,9 +32,10 @@ export interface CourseState {
   selectedTagName: string;
   selcetedTopic: Topic;
   annotationsForSelectedTag: Annotation[];
-  topics: Topic[];
-  channels: Channel[];
   lastTopicMenuClickedId: string;
+  topicsNotificationSettings: TopicNotificationSettings[];
+  channelsNotificationSettings: ChannelNotificationSettings[];
+  materialsNotificationSettings: MaterialNotificationSettings[];
 }
 const initialState: CourseState = {
   courseId: null,
@@ -43,9 +49,10 @@ const initialState: CourseState = {
   selectedTagName: null,
   selcetedTopic: null,
   annotationsForSelectedTag: null,
-  topics: null,
-  channels: null,
   lastTopicMenuClickedId: null,
+  topicsNotificationSettings: null,
+  channelsNotificationSettings: null,
+  materialsNotificationSettings: null,
 };
 const getCourseFeatureState = createFeatureSelector<CourseState>('course');
 
@@ -109,34 +116,38 @@ export const getSelectedTagName = createSelector(
 export const getNotificationSettingsOfLastTopicMenuClicked = createSelector(
   getCourseFeatureState,
   (state) => {
-    if (!state.topics || !state.lastTopicMenuClickedId) {
+    if (!state.topicsNotificationSettings || !state.lastTopicMenuClickedId) {
       return null;
     }
-    const topic = state.topics.find(
-      (topic) => topic._id === state.lastTopicMenuClickedId
+    const topic = state.topicsNotificationSettings.find(
+      (topic) => topic.topicId === state.lastTopicMenuClickedId
     );
     const notificationSettings = [
       {
-        label: 'Annotations',
-        value: topic.isAnnotationNotificationsEnabled,
-      },
-      {
-        label: 'Replies & Mentions',
-        value: topic.isReplyAndMentionedNotificationsEnabled,
+        label: 'Course default',
+        value: topic.isTopicLevelOverride ? false : true,
       },
       {
         label: 'Topic Updates',
         value: topic.isCourseUpdateNotificationsEnabled,
       },
       {
-        label: 'Course default',
-        value: topic.isTopicLevelOverride ? false : true,
+        label: 'Replies & Mentions',
+        value: topic.isReplyAndMentionedNotificationsEnabled,
+      },
+      {
+        label: 'Annotations',
+        value: topic.isAnnotationNotificationsEnabled,
       },
     ];
     return notificationSettings;
   }
 );
 
+export const getLastTopicMenuClickedId = createSelector(
+  getCourseFeatureState,
+  (state) => state.lastTopicMenuClickedId
+);
 export const courseReducer = createReducer<CourseState>(
   initialState,
   on(CourseAction.setCurrentCourse, (state, action): CourseState => {
@@ -454,16 +465,46 @@ export const courseReducer = createReducer<CourseState>(
       };
     }
   ),
-  on(CourseAction.saveTopics, (state, action): CourseState => {
-    return {
-      ...state,
-      topics: action.topics,
-    };
-  }),
+  on(
+    CourseAction.initialiseNotificationSettings,
+    (state, action): CourseState => {
+      return {
+        ...state,
+        topicsNotificationSettings: action.notificationSettings.topics,
+      };
+    }
+  ),
   on(CourseAction.setLastTopicMenuClicked, (state, action): CourseState => {
     return {
       ...state,
       lastTopicMenuClickedId: action.lastTopicMenuClickedId,
     };
-  })
+  }),
+
+  on(
+    CourseAction.initialiseNotificationSettings,
+    (state, action): CourseState => {
+      return {
+        ...state,
+        topicsNotificationSettings: action.notificationSettings.topics,
+        channelsNotificationSettings: action.notificationSettings.channels,
+        materialsNotificationSettings: action.notificationSettings.materials,
+      };
+    }
+  ),
+
+  on(
+    CourseAction.setTopicNotificationSettingsSuccess,
+    (state, action): CourseState => {
+      //update the topics and the channels in the state, and add/update the material array
+      let updatedDoc = action.updatedDoc;
+      let infoSentToBackend = action.infoSentToBackend;
+      return {
+        ...state,
+        topicsNotificationSettings: updatedDoc.topics,
+        channelsNotificationSettings: updatedDoc.channels,
+        materialsNotificationSettings: updatedDoc.materials,
+      };
+    }
+  )
 );

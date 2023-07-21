@@ -48,8 +48,8 @@ export class CourseWelcomeComponent {
     this.Users = [];
     this.courseService.onSelectCourse.subscribe((course) => {
       this.selectedCourse = course;
-      this.topicChannelService.fetchTopics(course._id).subscribe((course) => {
-        this.selectedCourse = course;
+      this.topicChannelService.fetchTopics(course._id).subscribe((res) => {
+        this.selectedCourse = res.course;
         this.Users = course.users;
         let userModerator = this.Users.find(
           (user) => user.role.name === 'moderator'

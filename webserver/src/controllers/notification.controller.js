@@ -352,10 +352,11 @@ export const setMaterialNotificationSettings = async (req, res, next) => {
     req.body.isReplyAndMentionedNotificationsEnabled;
   const isCourseUpdateNotificationsEnabled =
     req.body.isCourseUpdateNotificationsEnabled;
+  let updatedDocument;
 
   //update the material in the Blocking Notification collection
   try {
-    const updatedDocument = await BlockingNotifications.findOneAndUpdate(
+    updatedDocument = await BlockingNotifications.findOneAndUpdate(
       {
         "materials.materialId": materialId,
         userId: userId,
@@ -384,9 +385,7 @@ export const setMaterialNotificationSettings = async (req, res, next) => {
       .json({ error: "Could not update the material notification settings!" });
   }
 
-  return res
-    .status(200)
-    .json({ message: "Material notification settings updated!" });
+  return res.status(200).json(updatedDocument);
 };
 
 export const unsetMaterialNotificationSettings = async (req, res, next) => {
@@ -414,9 +413,11 @@ export const unsetMaterialNotificationSettings = async (req, res, next) => {
     channel.channelId.equals(materialObj.channelId)
   );
 
+  let updatedDoc;
+
   //update the material in the Blocking Notification collection
   try {
-    blockingNotification = await BlockingNotifications.findOneAndUpdate(
+    updatedDoc = await BlockingNotifications.findOneAndUpdate(
       {
         "materials.materialId": materialId,
         userId: userId,
@@ -435,6 +436,9 @@ export const unsetMaterialNotificationSettings = async (req, res, next) => {
             channelObj.isChannelLevelOverride,
           "materials.$.isTopicLevelOverride": channelObj.isTopicLevelOverride,
         },
+      },
+      {
+        new: true,
       }
     );
   } catch (error) {
@@ -443,9 +447,7 @@ export const unsetMaterialNotificationSettings = async (req, res, next) => {
       .json({ error: "Could not update the material notification settings!" });
   }
 
-  return res
-    .status(200)
-    .json({ message: "Material notification settings updated!" });
+  return res.status(200).json(updatedDoc);
 };
 
 export const setChannelNotificationSettings = async (req, res, next) => {
@@ -459,9 +461,10 @@ export const setChannelNotificationSettings = async (req, res, next) => {
   const isCourseUpdateNotificationsEnabled =
     req.body.isCourseUpdateNotificationsEnabled;
 
+  let updatedDoc;
   //update the channel in the Blocking Notification collection
   try {
-    await BlockingNotifications.findOneAndUpdate(
+    updatedDoc = await BlockingNotifications.findOneAndUpdate(
       {
         courseId: courseId,
         userId: userId,
@@ -495,6 +498,7 @@ export const setChannelNotificationSettings = async (req, res, next) => {
             "materialElem.isMaterialLevelOverride": false,
           },
         ],
+        new: true,
       }
     );
   } catch (error) {
@@ -531,9 +535,10 @@ export const unsetChannelNotificationSettings = async (req, res, next) => {
     topic.topicId.equals(channelObj.topicId)
   );
 
+  let updatedDoc;
   //update the channel in the Blocking Notification collection
   try {
-    blockingNotification = await BlockingNotifications.findOneAndUpdate(
+    updatedDoc = await BlockingNotifications.findOneAndUpdate(
       {
         "channels.channelId": channelId,
         userId: userId,
@@ -571,15 +576,14 @@ export const unsetChannelNotificationSettings = async (req, res, next) => {
             "materialElem.isChannelLevelOverride": true,
           },
         ],
+        new: true,
       }
     );
   } catch (error) {
     return res.status(500).json({ error });
   }
 
-  return res
-    .status(200)
-    .json({ message: "Channel notification settings unset!" });
+  return res.status(200).json(updatedDoc);
 };
 
 export const setTopicNotificationSettings = async (req, res, next) => {
@@ -592,8 +596,9 @@ export const setTopicNotificationSettings = async (req, res, next) => {
     req.body.isReplyAndMentionedNotificationsEnabled;
   const isCourseUpdateNotificationsEnabled =
     req.body.isCourseUpdateNotificationsEnabled;
+  let updatedDoc;
   try {
-    await BlockingNotifications.findOneAndUpdate(
+    updatedDoc = await BlockingNotifications.findOneAndUpdate(
       {
         courseId: courseId,
         userId: userId,
@@ -641,6 +646,7 @@ export const setTopicNotificationSettings = async (req, res, next) => {
             "materialElem.isChannelLevelOverride": false,
           },
         ],
+        new: true,
       }
     );
   } catch (error) {
@@ -649,7 +655,7 @@ export const setTopicNotificationSettings = async (req, res, next) => {
       .json({ message: "Could not set topic notification settings!" });
   }
 
-  return res.status(200).json({ message: "Topic notification settings set!" });
+  return res.status(200).json(updatedDoc);
 };
 
 export const unsetTopicNotificationSettings = async (req, res, next) => {
@@ -669,9 +675,10 @@ export const unsetTopicNotificationSettings = async (req, res, next) => {
       .json({ error: "Could not find blocking notification!" });
   }
 
+  let updatedDoc;
   //update the channel in the Blocking Notification collection
   try {
-    blockingNotification = await BlockingNotifications.findOneAndUpdate(
+    updatedDoc = await BlockingNotifications.findOneAndUpdate(
       {
         userId: userId,
         courseId: courseId,
@@ -722,15 +729,14 @@ export const unsetTopicNotificationSettings = async (req, res, next) => {
             "materialElem.isTopicLevelOverride": true,
           },
         ],
+        new: true,
       }
     );
   } catch (error) {
     return res.status(500).json({ error });
   }
 
-  return res
-    .status(200)
-    .json({ message: "Topic notification settings unset!" });
+  return res.status(200).json(updatedDoc);
 };
 
 export const setCourseNotificationSettings = async (req, res, next) => {
@@ -743,8 +749,9 @@ export const setCourseNotificationSettings = async (req, res, next) => {
   const isCourseUpdateNotificationsEnabled =
     req.body.isCourseUpdateNotificationsEnabled;
 
+  let updatedDoc;
   try {
-    await BlockingNotifications.findOneAndUpdate(
+    updatedDoc = await BlockingNotifications.findOneAndUpdate(
       {
         courseId: courseId,
         userId: userId,
@@ -789,15 +796,14 @@ export const setCourseNotificationSettings = async (req, res, next) => {
             "materialElem.isTopicLevelOverride": false,
           },
         ],
+        new: true,
       }
     );
   } catch (error) {
     return res.status(500).json({ error });
   }
 
-  return res
-    .status(200)
-    .json({ message: "Channel notification settings updated!" });
+  return res.status(200).json(updatedDoc);
 };
 
 export const blockUser = async (req, res, next) => {

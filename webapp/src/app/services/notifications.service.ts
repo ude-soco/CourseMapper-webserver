@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as NotificationActions from '../pages/components/notifications/state/notifications.actions';
-import { BehaviorSubject, Observable, map, tap } from 'rxjs';
+import { BehaviorSubject, Observable, map, switchMap, take, tap } from 'rxjs';
 import {
   UserNotification,
   Notification,
@@ -13,6 +13,11 @@ import { UserServiceService } from './user-service.service';
 import { StorageService } from './storage.service';
 import { State } from '../pages/components/notifications/state/notifications.reducer';
 import { Store } from '@ngrx/store';
+import {
+  getCurrentCourse,
+  getLastTopicMenuClickedId,
+} from '../pages/courses/state/course.reducer';
+import { BlockingNotifications } from '../models/BlockingNotification';
 @Injectable({
   providedIn: 'root',
 })
@@ -99,6 +104,35 @@ export class NotificationsService {
     return this.httpClient.put<{ message: string }>(
       `${environment.API_URL}/notifications/unstar`,
       { notificationIds: notification }
+    );
+  }
+
+  setTopicNotificationSettings(settings: {
+    courseId: string;
+    Annotations: boolean;
+    'Replies & Mentions': boolean;
+    'Topic Updates': boolean;
+    topicId: string;
+  }) {
+    let isAnnotationNotificationsEnabled: boolean = settings['Annotations'];
+    let isReplyAndMentionedNotificationsEnabled: boolean =
+      settings['Replies & Mentions'];
+    let isCourseUpdateNotificationsEnabled: boolean = settings['Topic Updates'];
+    let courseId = settings['courseId'];
+    let topicId = settings['topicId'];
+
+    let objToSend = {
+      isAnnotationNotificationsEnabled: isAnnotationNotificationsEnabled,
+      isReplyAndMentionedNotificationsEnabled:
+        isReplyAndMentionedNotificationsEnabled,
+      isCourseUpdateNotificationsEnabled: isCourseUpdateNotificationsEnabled,
+      courseId: courseId,
+      topicId: topicId,
+    };
+    console.log(objToSend);
+    return this.httpClient.put<BlockingNotifications>(
+      `${environment.API_URL}/notifications/setTopicNotificationSettings`,
+      objToSend
     );
   }
 

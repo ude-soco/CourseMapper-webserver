@@ -6,6 +6,7 @@ import { Reply } from 'src/app/models/Reply';
 import { Tag } from 'src/app/models/Tag';
 import { Topic } from 'src/app/models/Topic';
 import { Notification } from 'src/app/models/Notification';
+import { BlockingNotifications } from 'src/app/models/BlockingNotification';
 export const setCurrentCourse = createAction(
   '[Course] Set Current Course value',
   props<{ selcetedCourse: Course }>()
@@ -221,9 +222,9 @@ export const editAnnotationFail = createAction(
   props<{ error: string }>()
 );
 
-export const saveTopics = createAction(
-  '[Course] Save Topics',
-  props<{ topics: Topic[] }>()
+export const initialiseNotificationSettings = createAction(
+  '[Course] Initialise Notification Settings',
+  props<{ notificationSettings: BlockingNotifications }>()
 );
 
 //The below action is for the notification feature. When the 3 dotted Menu for a topic is clicked, the topic which was clicked is saved. This is used in order to show the notification settings in the context menu for the particular topic clicked in the context menu
@@ -232,13 +233,87 @@ export const setLastTopicMenuClicked = createAction(
   props<{ lastTopicMenuClickedId: string }>()
 );
 
-export const updateTopicLevelNotifications = createAction(
-  '[Course] Update Topic Level Notifications',
+export const setTopicNotificationSettings = createAction(
+  '[Notification] Set Topic Notification Settings',
   props<{
     settings: {
-      label: string;
-      value: boolean;
-    }[];
-    settingChanged: { label: string; value: boolean };
+      courseId: string;
+      topicId: string;
+      Annotations: boolean;
+      'Replies & Mentions': boolean;
+      'Topic Updates': boolean;
+    };
+  }>()
+);
+
+export const setTopicNotificationSettingsSuccess = createAction(
+  '[Notification] Set Topic Notification Settings Success',
+  props<{
+    updatedDoc: BlockingNotifications;
+    infoSentToBackend: {
+      courseId: string;
+      topicId: string;
+      Annotations: boolean;
+      'Replies & Mentions': boolean;
+      'Topic Updates': boolean;
+    };
+  }>()
+);
+
+export const setTopicNotificationSettingsFailure = createAction(
+  '[Notification] Set Topic Notification Settings Failure',
+  props<{
+    error: any;
+  }>()
+);
+
+export const setChannelNotificationSettings = createAction(
+  '[Notification] Set Channel Notification Settings',
+  props<{
+    settings: {
+      courseId: string;
+      topicId: string;
+      channelId: string;
+      Annotations: boolean;
+      'Replies & Mentions': boolean;
+      'Topic Updates': boolean;
+    };
+  }>()
+);
+
+export const setChannelNotificationSettingsSuccess = createAction(
+  '[Notification] Set Channel Notification Settings Success',
+  props<{
+    updatedDoc: BlockingNotifications;
+    infoSentToBackend: {
+      courseId: string;
+      topicId: string;
+      channelId: string;
+      Annotations: boolean;
+      'Replies & Mentions': boolean;
+      'Topic Updates': boolean;
+    };
+  }>()
+);
+
+export const setChannelNotificationSettingsFailure = createAction(
+  '[Notification] Set Channel Notification Settings Failure',
+  props<{
+    error: any;
+  }>()
+);
+
+export const setMaterialNotificationSettings = createAction(
+  '[Notification] Set Material Notification Settings',
+  props<{
+    settings: {
+      courseId: string;
+      topicId: string;
+      channelId: string;
+      materialId: string;
+      Annotations: boolean;
+      'Replies & Mentions': boolean;
+      'Topic Updates': boolean;
+    };
   }>()
 );

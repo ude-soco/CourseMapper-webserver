@@ -6,8 +6,8 @@ export interface Topic {
   courseId?: string;
   channels: Channel[];
   notification?: number;
-  isAnnotationNotificationsEnabled?: boolean;
+  /*   isAnnotationNotificationsEnabled?: boolean;
   isReplyAndMentionedNotificationsEnabled?: boolean;
   isCourseUpdateNotificationsEnabled?: boolean;
-  isTopicLevelOverride?: boolean;
+  isTopicLevelOverride?: boolean; */
 }

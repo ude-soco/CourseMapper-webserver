@@ -5,6 +5,7 @@ import { Observable, mergeMap } from 'rxjs';
 import { NotificationsService } from 'src/app/services/notifications.service';
 import * as NotificationActions from './notifications.actions';
 import { Action } from '@ngrx/store';
+import { BlockingNotifications } from 'src/app/models/BlockingNotification';
 
 @Injectable()
 export class NotificationEffects {

@@ -333,7 +333,7 @@ export const getCourse = async (req, res) => {
       .send({ message: "Error finding notification settings" });
   }
 
-  return res.status(200).send({ foundCourse, notificationSettings });
+  return res.status(200).send({ course: foundCourse, notificationSettings });
 
   // TODO: Uncomment these code when logger is added
   // results = foundCourse.topics.map((topic) => {

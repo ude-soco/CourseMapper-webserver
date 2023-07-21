@@ -2,11 +2,12 @@ import { TopicImp } from '../models/TopicImp';
 import { environment } from '../../environments/environment';
 import { EventEmitter, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, Observable, of, Subject, tap } from 'rxjs';
+import { catchError, map, Observable, of, Subject, tap } from 'rxjs';
 import { Topic } from '../models/Topic';
 import { Channel } from '../models/Channel';
 import { Course } from '../models/Course';
 import { StorageService } from './storage.service';
+import { BlockingNotifications } from '../models/BlockingNotification';
 
 @Injectable({
   providedIn: 'root',
@@ -34,14 +35,21 @@ export class TopicChannelService {
    * @param {string} courseId the id of a course, the topics belongs to
    *
    */
-  fetchTopics(courseId: string): Observable<Course> {
-    return this.http.get<Course>(`${this.API_URL}/courses/${courseId}`).pipe(
-      tap((course) => {
-        console.log('course: ');
-        console.log(course);
-        this.topics = course.topics;
-      })
-    );
+  fetchTopics(courseId: string): Observable<{
+    course: Course;
+    notificationSettings: BlockingNotifications;
+  }> {
+    return this.http
+      .get<{ course: Course; notificationSettings: BlockingNotifications }>(
+        `${this.API_URL}/courses/${courseId}`
+      )
+      .pipe(
+        tap((res) => {
+          console.log('course: ');
+          console.log(res);
+          this.topics = res.course.topics;
+        })
+      );
   }
 
   /**
@@ -52,8 +60,8 @@ export class TopicChannelService {
    *
    */
   updateTopics(courseId: string) {
-    this.fetchTopics(courseId).subscribe((course) => {
-      this.topics = course.topics;
+    this.fetchTopics(courseId).subscribe((res) => {
+      this.topics = res.course.topics;
       this.onUpdateTopics$.next(this.topics);
     });
   }
@@ -313,10 +321,12 @@ export class TopicChannelService {
 
   getChannelDetails(channel): Observable<Channel[]> {
     return this.http
-      .get<Channel[]>(
-        `${this.API_URL}/courses/${channel.courseId}/channels/${channel._id}`
-      )
+      .get<{
+        channel: Channel[];
+        notificationSettings: BlockingNotifications;
+      }>(`${this.API_URL}/courses/${channel.courseId}/channels/${channel._id}`)
       .pipe(
+        map((res) => res.channel),
         tap((channels) => {
           this.channels = channels;
         })
@@ -324,8 +334,11 @@ export class TopicChannelService {
   }
 
   getChannel(courseId: string, channelId: string): Observable<Channel> {
-    return this.http.get<Channel>(
-      `${this.API_URL}/courses/${courseId}/channels/${channelId}`
-    );
+    return this.http
+      .get<{
+        channel: Channel;
+        notificationSettings: BlockingNotifications;
+      }>(`${this.API_URL}/courses/${courseId}/channels/${channelId}`)
+      .pipe(map((res) => res.channel));
   }
 }

@@ -52,8 +52,8 @@ export class TopicDropdownComponent implements OnInit {
       const courseId = courseRegex.exec(url)[1];
       const channelId = channelRegex.exec(url)[1];
       const materialId = url.match(/material:(.*?)\/(pdf|video)/)?.[1];
-      this.topicChannelService.fetchTopics(courseId).subscribe((course) => {
-        this.selectedTopic = course.topics.find((topic) =>
+      this.topicChannelService.fetchTopics(courseId).subscribe((res) => {
+        this.selectedTopic = res.course.topics.find((topic) =>
           topic.channels.find((channel) => channel._id === channelId)
         );
         this.onSelectTopic(this.selectedTopic);
@@ -147,10 +147,12 @@ export class TopicDropdownComponent implements OnInit {
   ngOnInit(): void {
     this.topicChannelService
       .fetchTopics(this.courseService.getSelectedCourse()._id)
-      .subscribe((course) => {
-        this.topics = course.topics;
+      .subscribe((res) => {
+        this.topics = res.course.topics;
         this.store.dispatch(
-          CourseActions.saveTopics({ topics: course.topics })
+          CourseActions.initialiseNotificationSettings({
+            notificationSettings: res.notificationSettings,
+          })
         );
       });
 
@@ -705,16 +707,26 @@ export class TopicDropdownComponent implements OnInit {
 
   onNotificationSettingsClicked(
     $event,
-    notificationOption: { key: string; value: FormControl }
+    notificationOption: { key: string; value: FormControl },
+    topic: Topic
   ): void {
-    console.log('notification settings clicked');
-    $event.stopPropagation();
-    console.log(this.checkBoxesGroup.value);
-    console.log(notificationOption);
+    console.log('the topic clicked: ');
+    console.log(topic);
     //get the control with the key of the notificationOptionj label
     //toggle the value of the control
     notificationOption.value.setValue(!notificationOption.value.value);
-    console.log(this.checkBoxesGroup.value);
+
+    let objToSend = {
+      topicId: topic._id,
+      courseId: this.selectedCourseId,
+      Annotations: this.checkBoxesGroup.value['Annotations'],
+      'Replies & Mentions': this.checkBoxesGroup.value['Replies & Mentions'],
+      'Topic Updates': this.checkBoxesGroup.value['Topic Updates'],
+    };
+
+    this.store.dispatch(
+      CourseActions.setTopicNotificationSettings({ settings: objToSend })
+    );
   }
 
   /**

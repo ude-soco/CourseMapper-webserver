@@ -65,7 +65,9 @@
                   <p-button
                     styleClass="contextMenuButton"
                     *ngFor="let control of checkBoxesGroup.controls | keyvalue"
-                    (click)="onNotificationSettingsClicked($event, control)"
+                    (click)="
+                      onNotificationSettingsClicked($event, control, topic)
+                    "
                   >
                     <div>
                       <p-checkbox
@@ -236,7 +238,9 @@
                   <p-button
                     styleClass="contextMenuButton"
                     *ngFor="let control of checkBoxesGroup.controls | keyvalue"
-                    (click)="onNotificationSettingsClicked($event, control)"
+                    (click)="
+                      onNotificationSettingsClicked($event, control, topic)
+                    "
                   >
                     <div>
                       <p-checkbox
