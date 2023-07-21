@@ -132,7 +132,7 @@ export const getCourse = async (req, res) => {
   let foundCourse;
   let results = [];
   try {
-    foundCourse = await BlockingNotification.aggregate([
+    /*    foundCourse = await BlockingNotification.aggregate([
       {
         $match: {
           courseId: new ObjectId(courseId),
@@ -180,34 +180,6 @@ export const getCourse = async (req, res) => {
           result: 0,
         },
       },
-      /* 
-      {
-        $project: {
-          topics: {
-            $map: {
-              input: "$topics",
-              as: "topic",
-              in: {
-                $arrayToObject: {
-                  $filter: {
-                    input: {
-                      $objectToArray: "$$topic"
-                    },
-                    cond: {
-                      $ne: ["$$this.k", "channels"]
-                    }
-                  }
-                }
-              }
-            }
-          },
-          courseId: 1,
-          userId: 1,
-          materials: 1,
-          channels: 1,
-          __v: 1
-        }
-      }, */
 
       {
         $lookup: {
@@ -335,7 +307,11 @@ export const getCourse = async (req, res) => {
       {
         $unset: "result",
       },
-    ]);
+    ]); */
+    foundCourse = await Course.findById(courseId)
+      .populate("topics", "-__v")
+      .populate({ path: "users", populate: { path: "role" } })
+      .populate({ path: "topics", populate: { path: "channels" } });
     if (!foundCourse) {
       return res.status(404).send({
         error: `Course with id ${courseId} doesn't exist!`,
@@ -344,7 +320,20 @@ export const getCourse = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ message: "Error finding a course" });
   }
-  return res.status(200).send(foundCourse[0]);
+
+  let notificationSettings;
+  try {
+    notificationSettings = await BlockingNotification.findOne({
+      userId: userId,
+      courseId: courseId,
+    });
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ message: "Error finding notification settings" });
+  }
+
+  return res.status(200).send({ foundCourse, notificationSettings });
 
   // TODO: Uncomment these code when logger is added
   // results = foundCourse.topics.map((topic) => {

@@ -36,11 +36,11 @@ export const getChannel = async (req, res, next) => {
   }
   let foundChannel;
   try {
-    /*     foundChannel = await Channel.findById(channelId).populate(
+    foundChannel = await Channel.findById(channelId).populate(
       "materials",
       "-__v"
-    ); */
-    foundChannel = await BlockingNotifications.aggregate([
+    );
+    /*     foundChannel = await BlockingNotifications.aggregate([
       {
         $match: {
           courseId: ObjectId(courseId),
@@ -163,8 +163,7 @@ export const getChannel = async (req, res, next) => {
           },
         },
       },
-    ]);
-    foundChannel = foundChannel[0];
+    ]); */
     if (!foundChannel) {
       return res.status(404).send({
         error: `Channel with id ${channelId} doesn't exist!`,
@@ -178,8 +177,21 @@ export const getChannel = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ message: "Error finding channel", err });
   }
+
+  let notificationSettings;
+  try {
+    notificationSettings = await BlockingNotifications.findOne({
+      userId: userId,
+      courseId: courseId,
+    });
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ message: "Error finding notification settings" });
+  }
+
   req.locals = {
-    response: foundChannel,
+    response: { foundChannel, notificationSettings },
     channel: foundChannel,
     user: user,
   };
