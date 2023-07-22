@@ -32,6 +32,7 @@ import { getNotificationSettingsOfLastTopicMenuClicked } from '../../courses/sta
   providers: [MessageService, ConfirmationService],
 })
 export class TopicDropdownComponent implements OnInit {
+  checkBoxesArray: { label: string; control: FormControl<boolean> }[] = [];
   constructor(
     private courseService: CourseService,
     private topicChannelService: TopicChannelService,
@@ -170,10 +171,15 @@ export class TopicDropdownComponent implements OnInit {
         if (!notificationSettings) return;
         //delete all the controls in the form Group
         this.checkBoxesGroup = this.fb.group({});
+        this.checkBoxesArray = [];
         notificationSettings.forEach((o) => {
           const control = new FormControl<boolean>(o.value);
+          this.checkBoxesArray.push({ label: o.label, control: control });
           this.checkBoxesGroup.addControl(o.label, control);
         });
+        /*        this.checkBoxesArray = Object.keys(this.checkBoxesGroup.controls).map(
+          (key) => ({ key, value: this.checkBoxesGroup.controls[key].value })
+        ); */
       }
     );
   }
@@ -708,14 +714,16 @@ export class TopicDropdownComponent implements OnInit {
 
   onNotificationSettingsClicked(
     $event,
-    notificationOption: { key: string; value: FormControl },
+    /*  notificationOption: { key: string; value: FormControl }, */
+    notificationOption: FormControl<Boolean>,
     topic: Topic
   ): void {
     console.log('the topic clicked: ');
     console.log(topic);
     //get the control with the key of the notificationOptionj label
     //toggle the value of the control
-    notificationOption.value.setValue(!notificationOption.value.value);
+    /*  notificationOption.value.setValue(!notificationOption.value.value); */
+    notificationOption.setValue(!notificationOption.value);
 
     let objToSend = {
       topicId: this.topicIdOfTopicMenuClicked,

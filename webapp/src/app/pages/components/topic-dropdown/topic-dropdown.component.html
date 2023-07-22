@@ -64,18 +64,17 @@
                 >
                   <p-button
                     styleClass="contextMenuButton"
-                    *ngFor="let control of checkBoxesGroup.controls | keyvalue"
+                    *ngFor="let item of checkBoxesArray"
                     (click)="
-                      onNotificationSettingsClicked($event, control, topic)
+                      onNotificationSettingsClicked($event, item.control, topic)
                     "
                   >
                     <div>
                       <p-checkbox
-                        [formControlName]="control.key"
-                        [value]="control.value"
+                        [formControlName]="item.label"
                         [binary]="true"
                       ></p-checkbox>
-                      <span>{{ control.key }}</span>
+                      <span>{{ item.label }}</span>
                     </div>
                   </p-button>
                 </div>
@@ -237,18 +236,17 @@
                 >
                   <p-button
                     styleClass="contextMenuButton"
-                    *ngFor="let control of checkBoxesGroup.controls | keyvalue"
+                    *ngFor="let item of checkBoxesArray"
                     (click)="
-                      onNotificationSettingsClicked($event, control, topic)
+                      onNotificationSettingsClicked($event, item.control, topic)
                     "
                   >
                     <div>
                       <p-checkbox
-                        [formControlName]="control.key"
-                        [value]="control.value"
+                        [formControlName]="item.label"
                         [binary]="true"
                       ></p-checkbox>
-                      <span>{{ control.key }}</span>
+                      <span>{{ item.label }}</span>
                     </div>
                   </p-button>
                 </div>
