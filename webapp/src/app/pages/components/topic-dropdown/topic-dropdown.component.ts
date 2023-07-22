@@ -123,7 +123,7 @@ export class TopicDropdownComponent implements OnInit {
       command: () => this.onDeleteChannel(),
     },
   ];
-
+  topicIdOfTopicMenuClicked: string = null;
   //TODO Remove the null default values. not needed. form controls supply the values.
   notificationOptions = [
     {
@@ -697,6 +697,7 @@ export class TopicDropdownComponent implements OnInit {
   threeDotMenuClicked($event, topic: Topic) {
     this.selectedTopic = topic;
     this.menu.toggle($event);
+    this.topicIdOfTopicMenuClicked = topic._id;
     this.store.dispatch(
       CourseActions.setLastTopicMenuClicked({
         lastTopicMenuClickedId: topic._id,
@@ -717,7 +718,7 @@ export class TopicDropdownComponent implements OnInit {
     notificationOption.value.setValue(!notificationOption.value.value);
 
     let objToSend = {
-      topicId: topic._id,
+      topicId: this.topicIdOfTopicMenuClicked,
       courseId: this.selectedCourseId,
       Annotations: this.checkBoxesGroup.value['Annotations'],
       'Replies & Mentions': this.checkBoxesGroup.value['Replies & Mentions'],
