@@ -558,7 +558,7 @@ export const dislikeAnnotation = async (req, res, next) => {
     category: "annotations",
     materialType: foundMaterial.type,
     annotationAuthorId: foundAnnotation.author.userId,
-    materialId: foundAnnotation._id,
+    materialId: foundMaterial._id,
   };
 
   if (foundAnnotation.dislikes.includes(req.userId)) {

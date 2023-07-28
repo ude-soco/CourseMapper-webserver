@@ -172,11 +172,12 @@ export class BaseNotificationDashboardComponent {
             const control = new FormControl(false);
             control.valueChanges.subscribe((val) => {
               console.log('Notification with title: ' + notification._id);
-              console.log(val.valueOf());
+              console.log(val?.valueOf());
             });
             this.checkBoxesGroup.addControl(notification._id, control);
           }
         });
+        console.log('forEach is over');
       }
     });
 
