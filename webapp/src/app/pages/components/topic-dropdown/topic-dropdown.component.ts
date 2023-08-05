@@ -25,6 +25,7 @@ import * as CourseActions from 'src/app/pages/courses/state/course.actions';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { Observable } from 'rxjs/internal/Observable';
 import { getNotificationSettingsOfLastTopicMenuClicked } from '../../courses/state/course.reducer';
+import { topicNotificationSettingLabels } from 'src/app/models/Notification';
 @Component({
   selector: 'app-topic-dropdown',
   templateUrl: './topic-dropdown.component.html',
@@ -94,6 +95,7 @@ export class TopicDropdownComponent implements OnInit {
       value: boolean;
     }[]
   > = null;
+  isResetTopicNotificationsButtonEnabled: boolean;
 
   topicOptions: MenuItem[] = [
     {
@@ -128,19 +130,19 @@ export class TopicDropdownComponent implements OnInit {
   //TODO Remove the null default values. not needed. form controls supply the values.
   notificationOptions = [
     {
-      label: 'Course default',
+      label: topicNotificationSettingLabels.courseDefault,
       value: null,
     },
     {
-      label: 'Topic Updates',
+      label: topicNotificationSettingLabels.topicUpdates,
       value: null,
     },
     {
-      label: 'Replies & Mentions',
+      label: topicNotificationSettingLabels.commentsAndMentioned,
       value: null,
     },
     {
-      label: 'Annotations',
+      label: topicNotificationSettingLabels.annotations,
       value: null,
     },
   ];
@@ -172,14 +174,15 @@ export class TopicDropdownComponent implements OnInit {
         //delete all the controls in the form Group
         this.checkBoxesGroup = this.fb.group({});
         this.checkBoxesArray = [];
-        notificationSettings.forEach((o) => {
+        notificationSettings.forEach((o, index) => {
+          if (index === 0) {
+            this.isResetTopicNotificationsButtonEnabled = o.value;
+            return;
+          }
           const control = new FormControl<boolean>(o.value);
           this.checkBoxesArray.push({ label: o.label, control: control });
           this.checkBoxesGroup.addControl(o.label, control);
         });
-        /*        this.checkBoxesArray = Object.keys(this.checkBoxesGroup.controls).map(
-          (key) => ({ key, value: this.checkBoxesGroup.controls[key].value })
-        ); */
       }
     );
   }
@@ -713,28 +716,63 @@ export class TopicDropdownComponent implements OnInit {
   }
 
   onNotificationSettingsClicked(
-    $event,
+    $event: any,
     /*  notificationOption: { key: string; value: FormControl }, */
-    notificationOption: FormControl<Boolean>,
+    notificationOption: { label: string; control: FormControl<boolean> },
     topic: Topic
   ): void {
     console.log('the topic clicked: ');
     console.log(topic);
-    //get the control with the key of the notificationOptionj label
-    //toggle the value of the control
-    /*  notificationOption.value.setValue(!notificationOption.value.value); */
-    notificationOption.setValue(!notificationOption.value);
+    console.log('The control clicked is: ');
+    console.log(notificationOption.label);
 
+    //toggle the value of the control
+    /*      notificationOption.control.setValue(!notificationOption.control.value); */
+    const labelClicked: string = notificationOption.label;
     let objToSend = {
       topicId: this.topicIdOfTopicMenuClicked,
       courseId: this.selectedCourseId,
-      Annotations: this.checkBoxesGroup.value['Annotations'],
-      'Replies & Mentions': this.checkBoxesGroup.value['Replies & Mentions'],
-      'Topic Updates': this.checkBoxesGroup.value['Topic Updates'],
+
+      [topicNotificationSettingLabels.annotations]:
+        labelClicked === topicNotificationSettingLabels.annotations
+          ? !this.checkBoxesGroup.value[
+              topicNotificationSettingLabels.annotations
+            ]
+          : this.checkBoxesGroup.value[
+              topicNotificationSettingLabels.annotations
+            ],
+      [topicNotificationSettingLabels.commentsAndMentioned]:
+        labelClicked === topicNotificationSettingLabels.commentsAndMentioned
+          ? !this.checkBoxesGroup.value[
+              topicNotificationSettingLabels.commentsAndMentioned
+            ]
+          : this.checkBoxesGroup.value[
+              topicNotificationSettingLabels.commentsAndMentioned
+            ],
+      [topicNotificationSettingLabels.topicUpdates]:
+        labelClicked === topicNotificationSettingLabels.topicUpdates
+          ? !this.checkBoxesGroup.value[
+              topicNotificationSettingLabels.topicUpdates
+            ]
+          : this.checkBoxesGroup.value[
+              topicNotificationSettingLabels.topicUpdates
+            ],
     };
 
     this.store.dispatch(
       CourseActions.setTopicNotificationSettings({ settings: objToSend })
+    );
+  }
+
+  onResetTopicNotificationsClicked($event) {
+    console.log('value is false');
+    this.store.dispatch(
+      CourseActions.unsetTopicNotificationSettings({
+        settings: {
+          topicId: this.topicIdOfTopicMenuClicked,
+          courseId: this.selectedCourseId,
+        },
+      })
     );
   }
 

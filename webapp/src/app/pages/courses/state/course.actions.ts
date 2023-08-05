@@ -239,9 +239,7 @@ export const setTopicNotificationSettings = createAction(
     settings: {
       courseId: string;
       topicId: string;
-      Annotations: boolean;
-      'Replies & Mentions': boolean;
-      'Topic Updates': boolean;
+      [key: string]: boolean | string;
     };
   }>()
 );
@@ -250,13 +248,13 @@ export const setTopicNotificationSettingsSuccess = createAction(
   '[Notification] Set Topic Notification Settings Success',
   props<{
     updatedDoc: BlockingNotifications;
-    infoSentToBackend: {
+    /*     infoSentToBackend: {
       courseId: string;
       topicId: string;
       Annotations: boolean;
       'Replies & Mentions': boolean;
       'Topic Updates': boolean;
-    };
+    }; */
   }>()
 );
 
@@ -265,6 +263,28 @@ export const setTopicNotificationSettingsFailure = createAction(
   props<{
     error: any;
   }>()
+);
+
+export const unsetTopicNotificationSettings = createAction(
+  '[Notification] Unset Topic Notification Settings',
+  props<{
+    settings: {
+      courseId: string;
+      topicId: string;
+    };
+  }>()
+);
+
+export const unsetTopicNotificationSettingsSuccess = createAction(
+  '[Notification] Unset Topic Notification Settings Success',
+  props<{
+    updatedDoc: BlockingNotifications;
+  }>()
+);
+
+export const unsetTopicNotificationSettingsFailure = createAction(
+  '[Notification] Unset Topic Notification Settings Failure',
+  props<{ error: any }>()
 );
 
 export const setChannelNotificationSettings = createAction(

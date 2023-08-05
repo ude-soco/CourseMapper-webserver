@@ -101,3 +101,10 @@ export enum NotificationCategory {
   All = 'All',
   undefined = 'undefined',
 }
+
+export enum topicNotificationSettingLabels {
+  courseDefault = 'Course default',
+  topicUpdates = 'Topic updates',
+  commentsAndMentioned = 'Comments and mentioned',
+  annotations = 'Annotations',
+}

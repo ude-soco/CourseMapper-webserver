@@ -295,13 +295,40 @@ export class CourseEffects {
             map((updatedDoc: BlockingNotifications) =>
               CourseActions.setTopicNotificationSettingsSuccess({
                 updatedDoc,
-                infoSentToBackend: action.settings,
+                /*   infoSentToBackend: action.settings, */
               })
             ),
             catchError((error) => {
               console.log(error);
               return of(
                 CourseActions.setTopicNotificationSettingsFailure({
+                  error,
+                })
+              );
+            })
+          )
+      )
+    );
+  });
+
+  unsetTopicLevelNotification$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(CourseActions.unsetTopicNotificationSettings),
+      tap(() => console.log('In Effect: Unsetting topic level notification')),
+      mergeMap((action) =>
+        this.notificationService
+          .unsetTopicNotificationSettings(action.settings)
+          .pipe(
+            map((updatedDoc: BlockingNotifications) =>
+              CourseActions.unsetTopicNotificationSettingsSuccess({
+                updatedDoc,
+                /*   infoSentToBackend: action.settings, */
+              })
+            ),
+            catchError((error) => {
+              console.log(error);
+              return of(
+                CourseActions.unsetTopicNotificationSettingsFailure({
                   error,
                 })
               );

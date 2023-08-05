@@ -18,6 +18,7 @@ import {
   getLastTopicMenuClickedId,
 } from '../pages/courses/state/course.reducer';
 import { BlockingNotifications } from '../models/BlockingNotification';
+import { topicNotificationSettingLabels } from 'src/app/models/Notification';
 @Injectable({
   providedIn: 'root',
 })
@@ -109,15 +110,18 @@ export class NotificationsService {
 
   setTopicNotificationSettings(settings: {
     courseId: string;
-    Annotations: boolean;
-    'Replies & Mentions': boolean;
-    'Topic Updates': boolean;
     topicId: string;
+    [key: string]: boolean | string;
   }) {
-    let isAnnotationNotificationsEnabled: boolean = settings['Annotations'];
-    let isReplyAndMentionedNotificationsEnabled: boolean =
-      settings['Replies & Mentions'];
-    let isCourseUpdateNotificationsEnabled: boolean = settings['Topic Updates'];
+    let isAnnotationNotificationsEnabled: boolean = settings[
+      topicNotificationSettingLabels.annotations
+    ] as boolean;
+    let isReplyAndMentionedNotificationsEnabled: boolean = settings[
+      topicNotificationSettingLabels.commentsAndMentioned
+    ] as boolean;
+    let isCourseUpdateNotificationsEnabled: boolean = settings[
+      topicNotificationSettingLabels.topicUpdates
+    ] as boolean;
     let courseId = settings['courseId'];
     let topicId = settings['topicId'];
 
@@ -132,6 +136,23 @@ export class NotificationsService {
     console.log(objToSend);
     return this.httpClient.put<BlockingNotifications>(
       `${environment.API_URL}/notifications/setTopicNotificationSettings`,
+      objToSend
+    );
+  }
+
+  unsetTopicNotificationSettings(settings: {
+    courseId: string;
+    topicId: string;
+  }) {
+    let courseId = settings['courseId'];
+    let topicId = settings['topicId'];
+    let objToSend = {
+      courseId: courseId,
+      topicId: topicId,
+    };
+    console.log(objToSend);
+    return this.httpClient.put<BlockingNotifications>(
+      `${environment.API_URL}/notifications/unsetTopicNotificationSettings`,
       objToSend
     );
   }

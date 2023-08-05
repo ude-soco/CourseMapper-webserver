@@ -17,6 +17,7 @@ import {
   ChannelNotificationSettings,
   TopicNotificationSettings,
 } from 'src/app/models/BlockingNotification';
+import { topicNotificationSettingLabels } from 'src/app/models/Notification';
 export interface State extends AppState.State {
   courses: CourseState;
 }
@@ -124,19 +125,19 @@ export const getNotificationSettingsOfLastTopicMenuClicked = createSelector(
     );
     const notificationSettings = [
       {
-        label: 'Course default',
-        value: topic.isTopicLevelOverride ? false : true,
+        label: topicNotificationSettingLabels.courseDefault,
+        value: topic.isTopicLevelOverride,
       },
       {
-        label: 'Topic Updates',
+        label: topicNotificationSettingLabels.topicUpdates,
         value: topic.isCourseUpdateNotificationsEnabled,
       },
       {
-        label: 'Replies & Mentions',
+        label: topicNotificationSettingLabels.commentsAndMentioned,
         value: topic.isReplyAndMentionedNotificationsEnabled,
       },
       {
-        label: 'Annotations',
+        label: topicNotificationSettingLabels.annotations,
         value: topic.isAnnotationNotificationsEnabled,
       },
     ];
@@ -498,7 +499,22 @@ export const courseReducer = createReducer<CourseState>(
     (state, action): CourseState => {
       //update the topics and the channels in the state, and add/update the material array
       let updatedDoc = action.updatedDoc;
-      let infoSentToBackend = action.infoSentToBackend;
+      /*  let infoSentToBackend = action.infoSentToBackend; */
+      return {
+        ...state,
+        topicsNotificationSettings: updatedDoc.topics,
+        channelsNotificationSettings: updatedDoc.channels,
+        materialsNotificationSettings: updatedDoc.materials,
+      };
+    }
+  ),
+
+  on(
+    CourseAction.unsetTopicNotificationSettingsSuccess,
+    (state, action): CourseState => {
+      //update the topics and the channels in the state, and add/update the material array
+      let updatedDoc = action.updatedDoc;
+      /*  let infoSentToBackend = action.infoSentToBackend; */
       return {
         ...state,
         topicsNotificationSettings: updatedDoc.topics,
