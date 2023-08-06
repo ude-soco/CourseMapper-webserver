@@ -64,6 +64,7 @@ export const getMyCourses = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ message: "Error finding user" });
   }
+
   user.courses?.forEach((object) => {
     let course = {
       _id: object?.courseId?._id,

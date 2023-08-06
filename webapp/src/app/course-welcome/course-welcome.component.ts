@@ -51,11 +51,13 @@ export class CourseWelcomeComponent {
       this.topicChannelService.fetchTopics(course._id).subscribe((res) => {
         this.selectedCourse = res.course;
         this.Users = course.users;
-        let userModerator = this.Users.find(
+        /*         let userModerator = this.Users.find(
           (user) => user.role.name === 'moderator'
         );
 
         this.buildCardInfo(userModerator.userId, course);
+ */
+        this.buildCardInfo(course.users[0].userId, course);
       });
       if (this.selectedCourse.role === 'moderator') {
         this.moderator = true;

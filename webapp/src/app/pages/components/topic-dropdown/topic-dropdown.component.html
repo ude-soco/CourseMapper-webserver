@@ -42,14 +42,18 @@
           <ng-template pTemplate="content">
             <div class="topic-context-menu-container">
               <p-button
+                *ngIf="showModeratorPrivileges"
                 label="Rename"
                 icon="pi pi-refresh"
                 styleClass="contextMenuButton"
+                (onClick)="onRenameTopic()"
               ></p-button>
               <p-button
+                *ngIf="showModeratorPrivileges"
                 label="Delete"
                 icon="pi pi-times"
                 styleClass="contextMenuButton"
+                (onClick)="onDeleteTopic()"
               ></p-button>
               <p-divider align="center">
                 <div class="inline-flex align-items-center">
@@ -62,6 +66,15 @@
                   class="topic-context-menu-container"
                   [formGroup]="checkBoxesGroup"
                 >
+                  <p-button
+                    styleClass="contextMenuButton"
+                    [disabled]="!isResetTopicNotificationsButtonEnabled"
+                    (onClick)="onResetTopicNotificationsClicked($event)"
+                  >
+                    <div>
+                      <span>Use course level settings</span>
+                    </div>
+                  </p-button>
                   <p-button
                     styleClass="contextMenuButton"
                     *ngFor="let item of checkBoxesArray"
@@ -82,7 +95,6 @@
         </p-overlayPanel>
         <app-iconbutton
           #menuBtn
-          *ngIf="showModeratorPrivileges"
           icon="bx-dots-vertical-rounded"
           color="text-black"
           (click)="threeDotMenuClicked($event, topic)"
@@ -212,12 +224,14 @@
           <ng-template pTemplate="content">
             <div class="topic-context-menu-container">
               <p-button
+                *ngIf="showModeratorPrivileges"
                 label="Rename"
                 icon="pi pi-refresh"
                 styleClass="contextMenuButton"
                 (onClick)="onRenameTopic()"
               ></p-button>
               <p-button
+                *ngIf="showModeratorPrivileges"
                 label="Delete"
                 icon="pi pi-times"
                 styleClass="contextMenuButton"
@@ -263,7 +277,6 @@
         </p-overlayPanel>
         <app-iconbutton
           #menuBtn
-          *ngIf="showModeratorPrivileges"
           icon="bx-dots-vertical-rounded"
           color="text-black"
           (click)="threeDotMenuClicked($event, topic)"
