@@ -21,6 +21,7 @@ import { SwitchInputComponent } from './switch-input/switch-input.component';
 import { CheckboxModule } from 'primeng/checkbox';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedComponentsModule } from 'src/app/components/shared-components.module';
+import { ContextMenuComponent } from './context-menu/context-menu.component';
 
 @NgModule({
   declarations: [
@@ -32,6 +33,7 @@ import { SharedComponentsModule } from 'src/app/components/shared-components.mod
     AllNotificationsComponent,
     TabMenuComponent,
     SwitchInputComponent,
+    ContextMenuComponent,
   ],
   imports: [
     InputSwitchModule,
@@ -45,6 +47,6 @@ import { SharedComponentsModule } from 'src/app/components/shared-components.mod
     ReactiveFormsModule,
     SharedComponentsModule,
   ],
-  exports: [NotificationBellComponent],
+  exports: [NotificationBellComponent, ContextMenuComponent],
 })
 export class NotificationModule {}

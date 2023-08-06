@@ -715,14 +715,10 @@ export class TopicDropdownComponent implements OnInit {
     console.log(topic);
   }
 
-  onNotificationSettingsClicked(
-    $event: any,
-    /*  notificationOption: { key: string; value: FormControl }, */
-    notificationOption: { label: string; control: FormControl<boolean> },
-    topic: Topic
-  ): void {
-    console.log('the topic clicked: ');
-    console.log(topic);
+  onNotificationSettingsClicked(notificationOption: {
+    label: string;
+    control: FormControl<boolean>;
+  }): void {
     console.log('The control clicked is: ');
     console.log(notificationOption.label);
 
@@ -764,7 +760,7 @@ export class TopicDropdownComponent implements OnInit {
     );
   }
 
-  onResetTopicNotificationsClicked($event) {
+  onResetTopicNotificationsClicked() {
     console.log('value is false');
     this.store.dispatch(
       CourseActions.unsetTopicNotificationSettings({

@@ -1,0 +1,5 @@
+.settings-context-menu-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
