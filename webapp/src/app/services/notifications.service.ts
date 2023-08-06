@@ -18,7 +18,10 @@ import {
   getLastTopicMenuClickedId,
 } from '../pages/courses/state/course.reducer';
 import { BlockingNotifications } from '../models/BlockingNotification';
-import { topicNotificationSettingLabels } from 'src/app/models/Notification';
+import {
+  topicNotificationSettingLabels,
+  channelNotificationSettingLabels,
+} from 'src/app/models/Notification';
 @Injectable({
   providedIn: 'root',
 })
@@ -153,6 +156,72 @@ export class NotificationsService {
     console.log(objToSend);
     return this.httpClient.put<BlockingNotifications>(
       `${environment.API_URL}/notifications/unsetTopicNotificationSettings`,
+      objToSend
+    );
+  }
+
+  setChannelNotificationSettings(settings: {
+    courseId: string;
+    channelId: string;
+    [key: string]: boolean | string;
+  }) {
+    let isAnnotationNotificationsEnabled: boolean = settings[
+      channelNotificationSettingLabels.annotations
+    ] as boolean;
+    let isReplyAndMentionedNotificationsEnabled: boolean = settings[
+      channelNotificationSettingLabels.commentsAndMentioned
+    ] as boolean;
+    let isCourseUpdateNotificationsEnabled: boolean = settings[
+      channelNotificationSettingLabels.channelUpdates
+    ] as boolean;
+    let courseId = settings['courseId'];
+    let channelId = settings['channelId'];
+
+    let objToSend = {
+      isAnnotationNotificationsEnabled: isAnnotationNotificationsEnabled,
+      isReplyAndMentionedNotificationsEnabled:
+        isReplyAndMentionedNotificationsEnabled,
+      isCourseUpdateNotificationsEnabled: isCourseUpdateNotificationsEnabled,
+      courseId: courseId,
+      channelId,
+    };
+    console.log(objToSend);
+    return this.httpClient.put<BlockingNotifications>(
+      `${environment.API_URL}/notifications/setChannelNotificationSettings`,
+      objToSend
+    );
+  }
+
+  unsetChannelNotificationSettings(settings: {
+    courseId: string;
+    channelId: string;
+  }) {
+    let courseId = settings['courseId'];
+    let channelId = settings['channelId'];
+    let objToSend = {
+      courseId: courseId,
+      channelId: channelId,
+    };
+    console.log(objToSend);
+    return this.httpClient.put<BlockingNotifications>(
+      `${environment.API_URL}/notifications/unsetChannelNotificationSettings`,
+      objToSend
+    );
+  }
+
+  unsetMaterialNotificationSettings(settings: {
+    courseId: string;
+    materialId: string;
+  }) {
+    let courseId = settings['courseId'];
+    let materialId = settings['materialId'];
+    let objToSend = {
+      courseId: courseId,
+      materialId: materialId,
+    };
+    console.log(objToSend);
+    return this.httpClient.put<BlockingNotifications>(
+      `${environment.API_URL}/notifications/unsetMaterialNotificationSettings`,
       objToSend
     );
   }

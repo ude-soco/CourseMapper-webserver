@@ -505,9 +505,7 @@ export const setChannelNotificationSettings = async (req, res, next) => {
     return res.status(500).json({ error });
   }
 
-  return res
-    .status(200)
-    .json({ message: "Channel notification settings updated!" });
+  return res.status(200).json(updatedDoc);
 };
 
 export const unsetChannelNotificationSettings = async (req, res, next) => {

@@ -38,7 +38,7 @@
             ></app-svg-icon>
           </div> -->
         </div>
-        <p-overlayPanel #menu styleClass="settingsContextMenu">
+        <p-overlayPanel #topicMenu styleClass="settingsContextMenu">
           <ng-template pTemplate="content">
             <app-context-menu
               [showModeratorPrivileges]="showModeratorPrivileges"
@@ -50,7 +50,7 @@
               (deleteClicked)="onDeleteTopic()"
               (resetButtonClicked)="onResetTopicNotificationsClicked()"
               (notificationSettingClicked)="
-                onNotificationSettingsClicked($event)
+                onTopicNotificationSettingsClicked($event)
               "
             ></app-context-menu>
           </ng-template>
@@ -59,7 +59,7 @@
           #menuBtn
           icon="bx-dots-vertical-rounded"
           color="text-black"
-          (click)="threeDotMenuClicked($event, topic)"
+          (click)="topicMenuButtonClicked($event, topic)"
         ></app-iconbutton>
       </div>
 
@@ -88,15 +88,26 @@
               *ngIf="showModeratorPrivileges"
               icon="bx-dots-vertical-rounded"
               color="text-black"
-              (click)="selectedChannel = channel; menu.toggle($event)"
+              (click)="channelMenuButtonClicked($event, channel)"
             ></app-iconbutton>
-            <p-menu
-              #menu
-              id="config_menu"
-              [model]="channelsOptions"
-              [popup]="true"
-              appendTo="body"
-            ></p-menu>
+            <p-overlayPanel #channelMenu styleClass="settingsContextMenu">
+              <ng-template pTemplate="content">
+                <app-context-menu
+                  [showModeratorPrivileges]="showModeratorPrivileges"
+                  [checkBoxesGroup]="channelCheckBoxesGroup"
+                  [checkBoxesArray]="channelCheckBoxesArray"
+                  [isResetButtonEnabled]="
+                    isResetChannelNotificationsButtonEnabled
+                  "
+                  (renameClicked)="onRenameChannel()"
+                  (deleteClicked)="onDeleteChannel()"
+                  (resetButtonClicked)="onResetChannelNotificationsClicked()"
+                  (notificationSettingClicked)="
+                    onChannelNotificationSettingsClicked($event)
+                  "
+                ></app-context-menu>
+              </ng-template>
+            </p-overlayPanel>
           </div>
           <div
             *ngIf="channel._id === selectedChannelId"
@@ -183,7 +194,7 @@
           triggerEvent="click"
         ></p-contextMenu> -->
 
-        <p-overlayPanel #menu styleClass="settingsContextMenu">
+        <p-overlayPanel #topicMenu styleClass="settingsContextMenu">
           <ng-template pTemplate="content">
             <app-context-menu
               [showModeratorPrivileges]="showModeratorPrivileges"
@@ -195,7 +206,7 @@
               (deleteClicked)="onDeleteTopic()"
               (resetButtonClicked)="onResetTopicNotificationsClicked()"
               (notificationSettingClicked)="
-                onNotificationSettingsClicked($event)
+                onTopicNotificationSettingsClicked($event)
               "
             ></app-context-menu>
           </ng-template>
@@ -204,7 +215,7 @@
           #menuBtn
           icon="bx-dots-vertical-rounded"
           color="text-black"
-          (click)="threeDotMenuClicked($event, topic)"
+          (click)="topicMenuButtonClicked($event, topic)"
         ></app-iconbutton>
       </div>
     </div>

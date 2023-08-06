@@ -108,3 +108,10 @@ export enum topicNotificationSettingLabels {
   commentsAndMentioned = 'Comments and mentioned',
   annotations = 'Annotations',
 }
+
+export enum channelNotificationSettingLabels {
+  topicDefault = 'Topic default',
+  channelUpdates = 'Channel updates',
+  commentsAndMentioned = 'Comments and mentioned',
+  annotations = 'Annotations',
+}

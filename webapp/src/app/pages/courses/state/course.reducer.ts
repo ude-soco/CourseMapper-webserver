@@ -17,7 +17,10 @@ import {
   ChannelNotificationSettings,
   TopicNotificationSettings,
 } from 'src/app/models/BlockingNotification';
-import { topicNotificationSettingLabels } from 'src/app/models/Notification';
+import {
+  topicNotificationSettingLabels,
+  channelNotificationSettingLabels,
+} from 'src/app/models/Notification';
 export interface State extends AppState.State {
   courses: CourseState;
 }
@@ -34,6 +37,7 @@ export interface CourseState {
   selcetedTopic: Topic;
   annotationsForSelectedTag: Annotation[];
   lastTopicMenuClickedId: string;
+  lastChannelMenuClickedId: string;
   topicsNotificationSettings: TopicNotificationSettings[];
   channelsNotificationSettings: ChannelNotificationSettings[];
   materialsNotificationSettings: MaterialNotificationSettings[];
@@ -51,6 +55,7 @@ const initialState: CourseState = {
   selcetedTopic: null,
   annotationsForSelectedTag: null,
   lastTopicMenuClickedId: null,
+  lastChannelMenuClickedId: null,
   topicsNotificationSettings: null,
   channelsNotificationSettings: null,
   materialsNotificationSettings: null,
@@ -139,6 +144,39 @@ export const getNotificationSettingsOfLastTopicMenuClicked = createSelector(
       {
         label: topicNotificationSettingLabels.annotations,
         value: topic.isAnnotationNotificationsEnabled,
+      },
+    ];
+    return notificationSettings;
+  }
+);
+export const getNotificationSettingsOfLastChannelMenuClicked = createSelector(
+  getCourseFeatureState,
+  (state) => {
+    if (
+      !state.channelsNotificationSettings ||
+      !state.lastChannelMenuClickedId
+    ) {
+      return null;
+    }
+    const channel = state.channelsNotificationSettings.find(
+      (channel) => channel.channelId === state.lastChannelMenuClickedId
+    );
+    const notificationSettings = [
+      {
+        label: channelNotificationSettingLabels.topicDefault,
+        value: channel.isChannelLevelOverride,
+      },
+      {
+        label: channelNotificationSettingLabels.channelUpdates,
+        value: channel.isCourseUpdateNotificationsEnabled,
+      },
+      {
+        label: channelNotificationSettingLabels.commentsAndMentioned,
+        value: channel.isReplyAndMentionedNotificationsEnabled,
+      },
+      {
+        label: channelNotificationSettingLabels.annotations,
+        value: channel.isAnnotationNotificationsEnabled,
       },
     ];
     return notificationSettings;
@@ -481,6 +519,12 @@ export const courseReducer = createReducer<CourseState>(
       lastTopicMenuClickedId: action.lastTopicMenuClickedId,
     };
   }),
+  on(CourseAction.setLastChannelMenuClicked, (state, action): CourseState => {
+    return {
+      ...state,
+      lastChannelMenuClickedId: action.lastChannelMenuClickedId,
+    };
+  }),
 
   on(
     CourseAction.initialiseNotificationSettings,
@@ -508,6 +552,20 @@ export const courseReducer = createReducer<CourseState>(
       };
     }
   ),
+  on(
+    CourseAction.setChannelNotificationSettingsSuccess,
+    (state, action): CourseState => {
+      //update the topics and the channels in the state, and add/update the material array
+      let updatedDoc = action.updatedDoc;
+      /*  let infoSentToBackend = action.infoSentToBackend; */
+      return {
+        ...state,
+        topicsNotificationSettings: updatedDoc.topics,
+        channelsNotificationSettings: updatedDoc.channels,
+        materialsNotificationSettings: updatedDoc.materials,
+      };
+    }
+  ),
 
   on(
     CourseAction.unsetTopicNotificationSettingsSuccess,
@@ -515,6 +573,19 @@ export const courseReducer = createReducer<CourseState>(
       //update the topics and the channels in the state, and add/update the material array
       let updatedDoc = action.updatedDoc;
       /*  let infoSentToBackend = action.infoSentToBackend; */
+      return {
+        ...state,
+        topicsNotificationSettings: updatedDoc.topics,
+        channelsNotificationSettings: updatedDoc.channels,
+        materialsNotificationSettings: updatedDoc.materials,
+      };
+    }
+  ),
+  on(
+    CourseAction.unsetChannelNotificationSettingsSuccess,
+    (state, action): CourseState => {
+      //update the topics and the channels in the state, and add/update the material array
+      let updatedDoc = action.updatedDoc;
       return {
         ...state,
         topicsNotificationSettings: updatedDoc.topics,

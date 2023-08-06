@@ -248,13 +248,6 @@ export const setTopicNotificationSettingsSuccess = createAction(
   '[Notification] Set Topic Notification Settings Success',
   props<{
     updatedDoc: BlockingNotifications;
-    /*     infoSentToBackend: {
-      courseId: string;
-      topicId: string;
-      Annotations: boolean;
-      'Replies & Mentions': boolean;
-      'Topic Updates': boolean;
-    }; */
   }>()
 );
 
@@ -287,16 +280,18 @@ export const unsetTopicNotificationSettingsFailure = createAction(
   props<{ error: any }>()
 );
 
+export const setLastChannelMenuClicked = createAction(
+  '[Course] Set Last Channel Menu Clicked',
+  props<{ lastChannelMenuClickedId: string }>()
+);
+
 export const setChannelNotificationSettings = createAction(
   '[Notification] Set Channel Notification Settings',
   props<{
     settings: {
       courseId: string;
-      topicId: string;
       channelId: string;
-      Annotations: boolean;
-      'Replies & Mentions': boolean;
-      'Topic Updates': boolean;
+      [key: string]: boolean | string;
     };
   }>()
 );
@@ -305,14 +300,6 @@ export const setChannelNotificationSettingsSuccess = createAction(
   '[Notification] Set Channel Notification Settings Success',
   props<{
     updatedDoc: BlockingNotifications;
-    infoSentToBackend: {
-      courseId: string;
-      topicId: string;
-      channelId: string;
-      Annotations: boolean;
-      'Replies & Mentions': boolean;
-      'Topic Updates': boolean;
-    };
   }>()
 );
 
@@ -323,7 +310,29 @@ export const setChannelNotificationSettingsFailure = createAction(
   }>()
 );
 
-export const setMaterialNotificationSettings = createAction(
+export const unsetChannelNotificationSettings = createAction(
+  '[Notification] Unset Channel Notification Settings',
+  props<{
+    settings: {
+      courseId: string;
+      channelId: string;
+    };
+  }>()
+);
+
+export const unsetChannelNotificationSettingsSuccess = createAction(
+  '[Notification] Unset Channel Notification Settings Success',
+  props<{
+    updatedDoc: BlockingNotifications;
+  }>()
+);
+
+export const unsetChannelNotificationSettingsFailure = createAction(
+  '[Notification] Unset Channel Notification Settings Failure',
+  props<{ error: any }>()
+);
+
+/* export const setMaterialNotificationSettings = createAction(
   '[Notification] Set Material Notification Settings',
   props<{
     settings: {
@@ -336,4 +345,4 @@ export const setMaterialNotificationSettings = createAction(
       'Topic Updates': boolean;
     };
   }>()
-);
+); */

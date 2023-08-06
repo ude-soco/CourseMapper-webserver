@@ -295,13 +295,37 @@ export class CourseEffects {
             map((updatedDoc: BlockingNotifications) =>
               CourseActions.setTopicNotificationSettingsSuccess({
                 updatedDoc,
-                /*   infoSentToBackend: action.settings, */
               })
             ),
             catchError((error) => {
               console.log(error);
               return of(
                 CourseActions.setTopicNotificationSettingsFailure({
+                  error,
+                })
+              );
+            })
+          )
+      )
+    );
+  });
+  setChannelLevelNotification$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(CourseActions.setChannelNotificationSettings),
+      tap(() => console.log('In Effect: Setting channel level notification')),
+      mergeMap((action) =>
+        this.notificationService
+          .setChannelNotificationSettings(action.settings)
+          .pipe(
+            map((updatedDoc: BlockingNotifications) =>
+              CourseActions.setChannelNotificationSettingsSuccess({
+                updatedDoc,
+              })
+            ),
+            catchError((error) => {
+              console.log(error);
+              return of(
+                CourseActions.setChannelNotificationSettingsFailure({
                   error,
                 })
               );
@@ -329,6 +353,31 @@ export class CourseEffects {
               console.log(error);
               return of(
                 CourseActions.unsetTopicNotificationSettingsFailure({
+                  error,
+                })
+              );
+            })
+          )
+      )
+    );
+  });
+  unsetChannelLevelNotification$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(CourseActions.unsetChannelNotificationSettings),
+      tap(() => console.log('In Effect: Unsetting Channel Level notification')),
+      mergeMap((action) =>
+        this.notificationService
+          .unsetChannelNotificationSettings(action.settings)
+          .pipe(
+            map((updatedDoc: BlockingNotifications) =>
+              CourseActions.unsetChannelNotificationSettingsSuccess({
+                updatedDoc,
+              })
+            ),
+            catchError((error) => {
+              console.log(error);
+              return of(
+                CourseActions.unsetChannelNotificationSettingsFailure({
                   error,
                 })
               );

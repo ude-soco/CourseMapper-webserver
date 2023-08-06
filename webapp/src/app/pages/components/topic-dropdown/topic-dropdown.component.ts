@@ -24,8 +24,14 @@ import { State } from '../materials/state/materials.reducer';
 import * as CourseActions from 'src/app/pages/courses/state/course.actions';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { Observable } from 'rxjs/internal/Observable';
-import { getNotificationSettingsOfLastTopicMenuClicked } from '../../courses/state/course.reducer';
-import { topicNotificationSettingLabels } from 'src/app/models/Notification';
+import {
+  getNotificationSettingsOfLastChannelMenuClicked,
+  getNotificationSettingsOfLastTopicMenuClicked,
+} from '../../courses/state/course.reducer';
+import {
+  topicNotificationSettingLabels,
+  channelNotificationSettingLabels,
+} from 'src/app/models/Notification';
 @Component({
   selector: 'app-topic-dropdown',
   templateUrl: './topic-dropdown.component.html',
@@ -33,7 +39,6 @@ import { topicNotificationSettingLabels } from 'src/app/models/Notification';
   providers: [MessageService, ConfirmationService],
 })
 export class TopicDropdownComponent implements OnInit {
-  checkBoxesArray: { label: string; control: FormControl<boolean> }[] = [];
   constructor(
     private courseService: CourseService,
     private topicChannelService: TopicChannelService,
@@ -67,8 +72,8 @@ export class TopicDropdownComponent implements OnInit {
     }
   }
   @Input() showModeratorPrivileges: boolean;
-  @ViewChild('menu') menu: any;
-
+  @ViewChild('topicMenu') topicMenu: any;
+  @ViewChild('channelMenu') channelMenu: any;
   topics: Topic[] = [];
   displayAddChannelDialogue: boolean = false;
   selectedTopic: Topic = null;
@@ -89,13 +94,27 @@ export class TopicDropdownComponent implements OnInit {
   selectedCourseId = null;
   prevSelectedCourseId = null;
   protected checkBoxesGroup = this.fb.group({});
+  checkBoxesArray: { label: string; control: FormControl<boolean> }[] = [];
+  protected channelCheckBoxesGroup = this.fb.group({});
+  channelCheckBoxesArray: { label: string; control: FormControl<boolean> }[] =
+    [];
+  channelIdOfChannelMenuClicked: string;
+  topicIdOfTopicMenuClicked: string = null;
+
   notificationSettingsOfLastTopicMenuClicked$: Observable<
     {
       label: string;
       value: boolean;
     }[]
   > = null;
+  notificationSettingsOfLastChannelMenuClicked$: Observable<
+    {
+      label: string;
+      value: boolean;
+    }[]
+  > = null;
   isResetTopicNotificationsButtonEnabled: boolean;
+  isResetChannelNotificationsButtonEnabled: boolean;
 
   topicOptions: MenuItem[] = [
     {
@@ -111,7 +130,7 @@ export class TopicDropdownComponent implements OnInit {
     {
       label: 'Notification Settings',
       icon: 'pi pi-bell',
-      /* command: () => this.onNotificationSettingsClicked(), */
+      /* command: () => this.onTopicNotificationSettingsClicked(), */
     },
   ];
   channelsOptions: MenuItem[] = [
@@ -126,7 +145,6 @@ export class TopicDropdownComponent implements OnInit {
       command: () => this.onDeleteChannel(),
     },
   ];
-  topicIdOfTopicMenuClicked: string = null;
   //TODO Remove the null default values. not needed. form controls supply the values.
   notificationOptions = [
     {
@@ -166,6 +184,9 @@ export class TopicDropdownComponent implements OnInit {
     this.notificationSettingsOfLastTopicMenuClicked$ = this.store.select(
       getNotificationSettingsOfLastTopicMenuClicked
     );
+    this.notificationSettingsOfLastChannelMenuClicked$ = this.store.select(
+      getNotificationSettingsOfLastChannelMenuClicked
+    );
     //loop over the notification options and make a form control
     this.notificationSettingsOfLastTopicMenuClicked$.subscribe(
       (notificationSettings) => {
@@ -183,6 +204,29 @@ export class TopicDropdownComponent implements OnInit {
           this.checkBoxesArray.push({ label: o.label, control: control });
           this.checkBoxesGroup.addControl(o.label, control);
         });
+      }
+    );
+    this.notificationSettingsOfLastChannelMenuClicked$.subscribe(
+      (notificationSettings) => {
+        console.log('CHANNEL ID CHANGED');
+        if (!notificationSettings) return;
+        //delete all the controls in the form Group
+        this.channelCheckBoxesGroup = this.fb.group({});
+        this.channelCheckBoxesArray = [];
+        notificationSettings.forEach((o, index) => {
+          if (index === 0) {
+            this.isResetChannelNotificationsButtonEnabled = o.value;
+            return;
+          }
+          const control = new FormControl<boolean>(o.value);
+          this.channelCheckBoxesArray.push({
+            label: o.label,
+            control: control,
+          });
+          this.channelCheckBoxesGroup.addControl(o.label, control);
+        });
+        console.log(this.channelCheckBoxesArray);
+        console.log(this.channelCheckBoxesGroup);
       }
     );
   }
@@ -703,9 +747,9 @@ export class TopicDropdownComponent implements OnInit {
     sel.addRange(range);
   }
 
-  threeDotMenuClicked($event, topic: Topic) {
+  topicMenuButtonClicked($event, topic: Topic) {
     this.selectedTopic = topic;
-    this.menu.toggle($event);
+    this.topicMenu.toggle($event);
     this.topicIdOfTopicMenuClicked = topic._id;
     this.store.dispatch(
       CourseActions.setLastTopicMenuClicked({
@@ -715,7 +759,19 @@ export class TopicDropdownComponent implements OnInit {
     console.log(topic);
   }
 
-  onNotificationSettingsClicked(notificationOption: {
+  channelMenuButtonClicked($event, channel: Channel) {
+    this.selectedChannel = channel;
+    this.channelMenu.toggle($event);
+    this.channelIdOfChannelMenuClicked = channel._id;
+    this.store.dispatch(
+      CourseActions.setLastChannelMenuClicked({
+        lastChannelMenuClickedId: channel._id,
+      })
+    );
+    console.log(channel);
+  }
+
+  onTopicNotificationSettingsClicked(notificationOption: {
     label: string;
     control: FormControl<boolean>;
   }): void {
@@ -760,12 +816,65 @@ export class TopicDropdownComponent implements OnInit {
     );
   }
 
+  onChannelNotificationSettingsClicked(notificationOption: {
+    label: string;
+    control: FormControl<boolean>;
+  }): void {
+    console.log('The control clicked is: ');
+    console.log(notificationOption.label);
+
+    const labelClicked: string = notificationOption.label;
+    let objToSend = {
+      channelId: this.channelIdOfChannelMenuClicked,
+      courseId: this.selectedCourseId,
+
+      [channelNotificationSettingLabels.annotations]:
+        labelClicked === channelNotificationSettingLabels.annotations
+          ? !this.channelCheckBoxesGroup.value[
+              channelNotificationSettingLabels.annotations
+            ]
+          : this.channelCheckBoxesGroup.value[
+              channelNotificationSettingLabels.annotations
+            ],
+      [channelNotificationSettingLabels.commentsAndMentioned]:
+        labelClicked === channelNotificationSettingLabels.commentsAndMentioned
+          ? !this.channelCheckBoxesGroup.value[
+              channelNotificationSettingLabels.commentsAndMentioned
+            ]
+          : this.channelCheckBoxesGroup.value[
+              channelNotificationSettingLabels.commentsAndMentioned
+            ],
+      [channelNotificationSettingLabels.channelUpdates]:
+        labelClicked === channelNotificationSettingLabels.channelUpdates
+          ? !this.channelCheckBoxesGroup.value[
+              channelNotificationSettingLabels.channelUpdates
+            ]
+          : this.channelCheckBoxesGroup.value[
+              channelNotificationSettingLabels.channelUpdates
+            ],
+    };
+
+    this.store.dispatch(
+      CourseActions.setChannelNotificationSettings({ settings: objToSend })
+    );
+  }
+
   onResetTopicNotificationsClicked() {
     console.log('value is false');
     this.store.dispatch(
       CourseActions.unsetTopicNotificationSettings({
         settings: {
           topicId: this.topicIdOfTopicMenuClicked,
+          courseId: this.selectedCourseId,
+        },
+      })
+    );
+  }
+  onResetChannelNotificationsClicked() {
+    this.store.dispatch(
+      CourseActions.unsetChannelNotificationSettings({
+        settings: {
+          channelId: this.channelIdOfChannelMenuClicked,
           courseId: this.selectedCourseId,
         },
       })
