@@ -15,7 +15,7 @@ import {
 import { Channel } from 'src/app/models/Channel';
 import { TopicChannelService } from 'src/app/services/topic-channel.service';
 import { ElementRef, ViewChild } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormBuilder, FormControl } from '@angular/forms';
 import { Material } from 'src/app/models/Material';
 import { PdfviewService } from 'src/app/services/pdfview.service';
 import { MaterilasService } from 'src/app/services/materials.service';
@@ -29,6 +29,8 @@ import { map } from 'rxjs/operators';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { ModeratorPrivilegesService } from 'src/app/services/moderator-privileges.service';
 import * as CourseActions from 'src/app/pages/courses/state/course.actions';
+import { getNotificationSettingsOfLastMaterialMenuClicked } from 'src/app/pages/courses/state/course.reducer';
+import { materialNotificationSettingLabels } from 'src/app/models/Notification';
 @Component({
   selector: 'app-material',
   templateUrl: './material.component.html',
@@ -64,6 +66,20 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   showModeratorPrivileges: boolean;
   privilegesSubscription: Subscription;
+  @ViewChild('materialMenu') materialMenu: any;
+  materialIdOfMaterialMenuClicked: string;
+  /*   protected checkBoxesGroup = this.fb.group({});
+  checkBoxesArray: { label: string; control: FormControl<boolean> }[] = []; */
+  protected materialCheckBoxesGroup = this.fb.group({});
+  materialCheckBoxesArray: { label: string; control: FormControl<boolean> }[] =
+    [];
+  notificationSettingsOfLastMaterialMenuClicked$: Observable<
+    {
+      label: string;
+      value: boolean;
+    }[]
+  > = null;
+  isResetMaterialNotificationsButtonEnabled: boolean;
   constructor(
     private topicChannelService: TopicChannelService,
     private pdfViewService: PdfviewService,
@@ -75,7 +91,8 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     private confirmationService: ConfirmationService,
     private moderatorPrivilegesService: ModeratorPrivilegesService,
     private renderer: Renderer2,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    protected fb: FormBuilder
   ) {
     const url = this.router.url;
     if (url.includes('course') && url.includes('channel')) {
@@ -176,6 +193,86 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     });
     this.showModeratorPrivileges =
       this.moderatorPrivilegesService.showModeratorPrivileges;
+
+    this.notificationSettingsOfLastMaterialMenuClicked$ = this.store.select(
+      getNotificationSettingsOfLastMaterialMenuClicked
+    );
+
+    this.notificationSettingsOfLastMaterialMenuClicked$.subscribe(
+      (notificationSettings) => {
+        console.log('MaterialID CHANGED');
+        if (!notificationSettings) return;
+        //delete all the controls in the form Group
+        this.materialCheckBoxesGroup = this.fb.group({});
+        this.materialCheckBoxesArray = [];
+        notificationSettings.forEach((o, index) => {
+          if (index === 0) {
+            this.isResetMaterialNotificationsButtonEnabled = o.value;
+            return;
+          }
+          const control = new FormControl<boolean>(o.value);
+          this.materialCheckBoxesArray.push({
+            label: o.label,
+            control: control,
+          });
+          this.materialCheckBoxesGroup.addControl(o.label, control);
+        });
+      }
+    );
+  }
+
+  onMaterialNotificationSettingsClicked(notificationOption: {
+    label: string;
+    control: FormControl<boolean>;
+  }): void {
+    console.log('The control clicked is: ');
+    console.log(notificationOption.label);
+
+    const labelClicked: string = notificationOption.label;
+    let objToSend = {
+      materialId: this.materialIdOfMaterialMenuClicked,
+      courseId: this.courseID,
+
+      [materialNotificationSettingLabels.annotations]:
+        labelClicked === materialNotificationSettingLabels.annotations
+          ? !this.materialCheckBoxesGroup.value[
+              materialNotificationSettingLabels.annotations
+            ]
+          : this.materialCheckBoxesGroup.value[
+              materialNotificationSettingLabels.annotations
+            ],
+      [materialNotificationSettingLabels.commentsAndMentioned]:
+        labelClicked === materialNotificationSettingLabels.commentsAndMentioned
+          ? !this.materialCheckBoxesGroup.value[
+              materialNotificationSettingLabels.commentsAndMentioned
+            ]
+          : this.materialCheckBoxesGroup.value[
+              materialNotificationSettingLabels.commentsAndMentioned
+            ],
+      [materialNotificationSettingLabels.materialUpdates]:
+        labelClicked === materialNotificationSettingLabels.materialUpdates
+          ? !this.materialCheckBoxesGroup.value[
+              materialNotificationSettingLabels.materialUpdates
+            ]
+          : this.materialCheckBoxesGroup.value[
+              materialNotificationSettingLabels.materialUpdates
+            ],
+    };
+
+    this.store.dispatch(
+      CourseActions.setMaterialNotificationSettings({ settings: objToSend })
+    );
+  }
+
+  onResetMaterialNotificationsClicked() {
+    this.store.dispatch(
+      CourseActions.unsetMaterialNotificationSettings({
+        settings: {
+          materialId: this.materialIdOfMaterialMenuClicked,
+          courseId: this.courseID,
+        },
+      })
+    );
   }
 
   onTabChange(e) {
@@ -556,6 +653,19 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
         document.getElementById(id)
       )).innerText;
     }
+  }
+
+  materialMenuButtonClicked($event, material: Material) {
+    this.selectedMaterial = material;
+    this.materialMenu.toggle($event);
+    this.materialIdOfMaterialMenuClicked = material._id;
+    this.courseID = material.courseId;
+    this.store.dispatch(
+      CourseActions.setLastMaterialMenuClicked({
+        lastMaterialMenuClickedId: material._id,
+      })
+    );
+    console.log(material);
   }
 
   /**

@@ -332,17 +332,54 @@ export const unsetChannelNotificationSettingsFailure = createAction(
   props<{ error: any }>()
 );
 
-/* export const setMaterialNotificationSettings = createAction(
+export const setLastMaterialMenuClicked = createAction(
+  '[Course] Set Last Material Menu Clicked',
+  props<{ lastMaterialMenuClickedId: string }>()
+);
+
+export const setMaterialNotificationSettings = createAction(
   '[Notification] Set Material Notification Settings',
   props<{
     settings: {
       courseId: string;
-      topicId: string;
-      channelId: string;
       materialId: string;
-      Annotations: boolean;
-      'Replies & Mentions': boolean;
-      'Topic Updates': boolean;
+      [key: string]: boolean | string;
     };
   }>()
-); */
+);
+
+export const setMaterialNotificationSettingsSuccess = createAction(
+  '[Notification] Set Material Notification Settings Success',
+  props<{
+    updatedDoc: BlockingNotifications;
+  }>()
+);
+
+export const setMaterialNotificationSettingsFailure = createAction(
+  '[Notification] Set Material Notification Settings Failure',
+  props<{
+    error: any;
+  }>()
+);
+
+export const unsetMaterialNotificationSettings = createAction(
+  '[Notification] Unset Material Notification Settings',
+  props<{
+    settings: {
+      courseId: string;
+      materialId: string;
+    };
+  }>()
+);
+
+export const unsetMaterialNotificationSettingsSuccess = createAction(
+  '[Notification] Unset Material Notification Settings Success',
+  props<{
+    updatedDoc: BlockingNotifications;
+  }>()
+);
+
+export const unsetMaterialNotificationSettingsFailure = createAction(
+  '[Notification] Unset Material Notification Settings Failure',
+  props<{ error: any }>()
+);

@@ -45,6 +45,7 @@
               [checkBoxesGroup]="checkBoxesGroup"
               [checkBoxesArray]="checkBoxesArray"
               [isResetButtonEnabled]="isResetTopicNotificationsButtonEnabled"
+              resetTo="course"
               [checkBoxesArray]="checkBoxesArray"
               (renameClicked)="onRenameTopic()"
               (deleteClicked)="onDeleteTopic()"
@@ -85,7 +86,6 @@
               #{{ channel.name }}
             </p>
             <app-iconbutton
-              *ngIf="showModeratorPrivileges"
               icon="bx-dots-vertical-rounded"
               color="text-black"
               (click)="channelMenuButtonClicked($event, channel)"
@@ -99,6 +99,7 @@
                   [isResetButtonEnabled]="
                     isResetChannelNotificationsButtonEnabled
                   "
+                  resetTo="topic"
                   (renameClicked)="onRenameChannel()"
                   (deleteClicked)="onDeleteChannel()"
                   (resetButtonClicked)="onResetChannelNotificationsClicked()"
@@ -122,19 +123,43 @@
             >
               #{{ channel.name }}
             </p>
-            <app-iconbutton
+            <!--           <app-iconbutton
               *ngIf="showModeratorPrivileges"
               icon="bx-dots-vertical-rounded"
               color="text-black"
               (click)="selectedChannel = channel; menu.toggle($event)"
+            ></app-iconbutton> -->
+            <app-iconbutton
+              icon="bx-dots-vertical-rounded"
+              color="text-black"
+              (click)="channelMenuButtonClicked($event, channel)"
             ></app-iconbutton>
-            <p-menu
+            <!--            <p-menu
               #menu
               id="config_menu"
               [model]="channelsOptions"
               [popup]="true"
               appendTo="body"
-            ></p-menu>
+            ></p-menu> -->
+            <p-overlayPanel #channelMenu styleClass="settingsContextMenu">
+              <ng-template pTemplate="content">
+                <app-context-menu
+                  [showModeratorPrivileges]="showModeratorPrivileges"
+                  [checkBoxesGroup]="channelCheckBoxesGroup"
+                  [checkBoxesArray]="channelCheckBoxesArray"
+                  [isResetButtonEnabled]="
+                    isResetChannelNotificationsButtonEnabled
+                  "
+                  resetTo="topic"
+                  (renameClicked)="onRenameChannel()"
+                  (deleteClicked)="onDeleteChannel()"
+                  (resetButtonClicked)="onResetChannelNotificationsClicked()"
+                  (notificationSettingClicked)="
+                    onChannelNotificationSettingsClicked($event)
+                  "
+                ></app-context-menu>
+              </ng-template>
+            </p-overlayPanel>
           </div>
         </div>
       </div>
@@ -202,6 +227,7 @@
               [checkBoxesArray]="checkBoxesArray"
               [isResetButtonEnabled]="isResetTopicNotificationsButtonEnabled"
               [checkBoxesArray]="checkBoxesArray"
+              resetTo="course"
               (renameClicked)="onRenameTopic()"
               (deleteClicked)="onDeleteTopic()"
               (resetButtonClicked)="onResetTopicNotificationsClicked()"

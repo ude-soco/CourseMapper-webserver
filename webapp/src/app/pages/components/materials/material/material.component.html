@@ -1,9 +1,6 @@
 <p-toast position="bottom-left"></p-toast>
 <p-confirmDialog></p-confirmDialog>
-<div
-  class="relative contain bg-gray-100"
-  *ngIf="selectedChannel?.materials"
->
+<div class="relative contain bg-gray-100" *ngIf="selectedChannel?.materials">
   <div class="h-max m-0 flex flex-col bg-gray-100">
     <div class="flex items-start justify-between py-4 pl-3 bg-gray-200">
       <p
@@ -22,8 +19,8 @@
     *ngIf="selectedChannel?.materials"
     [(activeIndex)]="tabIndex"
   >
-  <!-- *ngIf="showModeratorPrivileges" -->
-    <p-tabPanel >
+    <!-- *ngIf="showModeratorPrivileges" -->
+    <p-tabPanel>
       <ng-template pTemplate="header">
         <app-iconbutton
           icon="bxs-folder-plus"
@@ -98,19 +95,39 @@
             </p></span
           >
           <span *ngIf="!selectedMaterial">{{ material.name }}</span>
-          <p-menu
+          <!--         <p-menu
             #materialMenu
             id="material_menu"
             [model]="materialOptions"
             [popup]="true"
             appendTo="body"
-          ></p-menu>
+          ></p-menu> -->
+
+          <p-overlayPanel #materialMenu styleClass="settingsContextMenu">
+            <ng-template pTemplate="content">
+              <app-context-menu
+                [showModeratorPrivileges]="showModeratorPrivileges"
+                [checkBoxesGroup]="materialCheckBoxesGroup"
+                [checkBoxesArray]="materialCheckBoxesArray"
+                [isResetButtonEnabled]="
+                  isResetMaterialNotificationsButtonEnabled
+                "
+                resetTo="channel"
+                (renameClicked)="onRenameMaterial()"
+                (deleteClicked)="onDeleteMaterial()"
+                (resetButtonClicked)="onResetMaterialNotificationsClicked()"
+                (notificationSettingClicked)="
+                  onMaterialNotificationSettingsClicked($event)
+                "
+              ></app-context-menu>
+            </ng-template>
+          </p-overlayPanel>
           <app-iconbutton
             style="z-index: 1"
             *ngIf="showModeratorPrivileges"
             icon="bx-dots-vertical-rounded"
             color="text-blue-500"
-            (click)="selectedMaterial = material; materialMenu.toggle($event)"
+            (click)="materialMenuButtonClicked($event, material)"
           ></app-iconbutton>
         </ng-template>
       </p-tabPanel>

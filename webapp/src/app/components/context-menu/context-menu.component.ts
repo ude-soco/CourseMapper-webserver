@@ -10,6 +10,7 @@ export class ContextMenuComponent {
   @Input() checkBoxesGroup: FormGroup<{}>;
   @Input() isResetButtonEnabled: boolean;
   @Input() checkBoxesArray: { label: string; control: FormControl<boolean> }[];
+  @Input() resetTo: string;
   @Output() renameClicked = new EventEmitter();
   @Output() deleteClicked = new EventEmitter();
   @Output() resetButtonClicked = new EventEmitter();

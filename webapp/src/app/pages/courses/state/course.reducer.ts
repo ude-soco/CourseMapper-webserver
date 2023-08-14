@@ -20,6 +20,7 @@ import {
 import {
   topicNotificationSettingLabels,
   channelNotificationSettingLabels,
+  materialNotificationSettingLabels,
 } from 'src/app/models/Notification';
 export interface State extends AppState.State {
   courses: CourseState;
@@ -38,6 +39,7 @@ export interface CourseState {
   annotationsForSelectedTag: Annotation[];
   lastTopicMenuClickedId: string;
   lastChannelMenuClickedId: string;
+  lastMaterialMenuClickedId: string;
   topicsNotificationSettings: TopicNotificationSettings[];
   channelsNotificationSettings: ChannelNotificationSettings[];
   materialsNotificationSettings: MaterialNotificationSettings[];
@@ -56,6 +58,7 @@ const initialState: CourseState = {
   annotationsForSelectedTag: null,
   lastTopicMenuClickedId: null,
   lastChannelMenuClickedId: null,
+  lastMaterialMenuClickedId: null,
   topicsNotificationSettings: null,
   channelsNotificationSettings: null,
   materialsNotificationSettings: null,
@@ -177,6 +180,40 @@ export const getNotificationSettingsOfLastChannelMenuClicked = createSelector(
       {
         label: channelNotificationSettingLabels.annotations,
         value: channel.isAnnotationNotificationsEnabled,
+      },
+    ];
+    return notificationSettings;
+  }
+);
+
+export const getNotificationSettingsOfLastMaterialMenuClicked = createSelector(
+  getCourseFeatureState,
+  (state) => {
+    if (
+      !state.materialsNotificationSettings ||
+      !state.lastMaterialMenuClickedId
+    ) {
+      return null;
+    }
+    const material = state.materialsNotificationSettings.find(
+      (material) => material.materialId === state.lastMaterialMenuClickedId
+    );
+    const notificationSettings = [
+      {
+        label: materialNotificationSettingLabels.channelDefault,
+        value: material.isMaterialLevelOverride,
+      },
+      {
+        label: materialNotificationSettingLabels.materialUpdates,
+        value: material.isCourseUpdateNotificationsEnabled,
+      },
+      {
+        label: materialNotificationSettingLabels.commentsAndMentioned,
+        value: material.isReplyAndMentionedNotificationsEnabled,
+      },
+      {
+        label: materialNotificationSettingLabels.annotations,
+        value: material.isAnnotationNotificationsEnabled,
       },
     ];
     return notificationSettings;
@@ -504,7 +541,7 @@ export const courseReducer = createReducer<CourseState>(
       };
     }
   ),
-  on(
+  /*   on(
     CourseAction.initialiseNotificationSettings,
     (state, action): CourseState => {
       return {
@@ -512,7 +549,7 @@ export const courseReducer = createReducer<CourseState>(
         topicsNotificationSettings: action.notificationSettings.topics,
       };
     }
-  ),
+  ), */
   on(CourseAction.setLastTopicMenuClicked, (state, action): CourseState => {
     return {
       ...state,
@@ -523,6 +560,12 @@ export const courseReducer = createReducer<CourseState>(
     return {
       ...state,
       lastChannelMenuClickedId: action.lastChannelMenuClickedId,
+    };
+  }),
+  on(CourseAction.setLastMaterialMenuClicked, (state, action): CourseState => {
+    return {
+      ...state,
+      lastMaterialMenuClickedId: action.lastMaterialMenuClickedId,
     };
   }),
 
@@ -568,6 +611,21 @@ export const courseReducer = createReducer<CourseState>(
   ),
 
   on(
+    CourseAction.setMaterialNotificationSettingsSuccess,
+    (state, action): CourseState => {
+      //update the topics and the channels in the state, and add/update the material array
+      let updatedDoc = action.updatedDoc;
+      /*  let infoSentToBackend = action.infoSentToBackend; */
+      return {
+        ...state,
+        topicsNotificationSettings: updatedDoc.topics,
+        channelsNotificationSettings: updatedDoc.channels,
+        materialsNotificationSettings: updatedDoc.materials,
+      };
+    }
+  ),
+
+  on(
     CourseAction.unsetTopicNotificationSettingsSuccess,
     (state, action): CourseState => {
       //update the topics and the channels in the state, and add/update the material array
@@ -583,6 +641,20 @@ export const courseReducer = createReducer<CourseState>(
   ),
   on(
     CourseAction.unsetChannelNotificationSettingsSuccess,
+    (state, action): CourseState => {
+      //update the topics and the channels in the state, and add/update the material array
+      let updatedDoc = action.updatedDoc;
+      return {
+        ...state,
+        topicsNotificationSettings: updatedDoc.topics,
+        channelsNotificationSettings: updatedDoc.channels,
+        materialsNotificationSettings: updatedDoc.materials,
+      };
+    }
+  ),
+
+  on(
+    CourseAction.unsetMaterialNotificationSettingsSuccess,
     (state, action): CourseState => {
       //update the topics and the channels in the state, and add/update the material array
       let updatedDoc = action.updatedDoc;

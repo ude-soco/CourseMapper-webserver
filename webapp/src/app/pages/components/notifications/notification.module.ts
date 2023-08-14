@@ -21,7 +21,7 @@ import { SwitchInputComponent } from './switch-input/switch-input.component';
 import { CheckboxModule } from 'primeng/checkbox';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedComponentsModule } from 'src/app/components/shared-components.module';
-import { ContextMenuComponent } from './context-menu/context-menu.component';
+import { ContextMenuComponent } from '../../../components/context-menu/context-menu.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +33,6 @@ import { ContextMenuComponent } from './context-menu/context-menu.component';
     AllNotificationsComponent,
     TabMenuComponent,
     SwitchInputComponent,
-    ContextMenuComponent,
   ],
   imports: [
     InputSwitchModule,
@@ -41,12 +40,12 @@ import { ContextMenuComponent } from './context-menu/context-menu.component';
     PrimengModule,
     TabMenuModule,
     MenuModule,
+    CheckboxModule,
     StoreModule.forFeature('notifications', notificationReducer),
     EffectsModule.forFeature([NotificationEffects]),
-    CheckboxModule,
     ReactiveFormsModule,
     SharedComponentsModule,
   ],
-  exports: [NotificationBellComponent, ContextMenuComponent],
+  exports: [NotificationBellComponent],
 })
 export class NotificationModule {}

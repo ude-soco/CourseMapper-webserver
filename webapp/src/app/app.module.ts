@@ -68,7 +68,7 @@ import { CourseWelcomeComponent } from './course-welcome/course-welcome.componen
 export const metaReducers: MetaReducer[] = [hydrationMetaReducer];
 registerLocaleData(en);
 import { DividerModule } from 'primeng/divider';
-import { ContextMenuComponent } from './pages/components/notifications/context-menu/context-menu.component';
+import { ContextMenuComponent } from './components/context-menu/context-menu.component';
 
 @NgModule({
   declarations: [

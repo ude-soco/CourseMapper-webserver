@@ -335,6 +335,32 @@ export class CourseEffects {
     );
   });
 
+  setMaterialLevelNotification$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(CourseActions.setMaterialNotificationSettings),
+      tap(() => console.log('In Effect: Setting material level notification')),
+      mergeMap((action) =>
+        this.notificationService
+          .setMaterialNotificationSettings(action.settings)
+          .pipe(
+            map((updatedDoc: BlockingNotifications) =>
+              CourseActions.setMaterialNotificationSettingsSuccess({
+                updatedDoc,
+              })
+            ),
+            catchError((error) => {
+              console.log(error);
+              return of(
+                CourseActions.setMaterialNotificationSettingsFailure({
+                  error,
+                })
+              );
+            })
+          )
+      )
+    );
+  });
+
   unsetTopicLevelNotification$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(CourseActions.unsetTopicNotificationSettings),
@@ -378,6 +404,33 @@ export class CourseEffects {
               console.log(error);
               return of(
                 CourseActions.unsetChannelNotificationSettingsFailure({
+                  error,
+                })
+              );
+            })
+          )
+      )
+    );
+  });
+  unsetMaterialLevelNotification$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(CourseActions.unsetMaterialNotificationSettings),
+      tap(() =>
+        console.log('In Effect: Unsetting Material Level notification')
+      ),
+      mergeMap((action) =>
+        this.notificationService
+          .unsetMaterialNotificationSettings(action.settings)
+          .pipe(
+            map((updatedDoc: BlockingNotifications) =>
+              CourseActions.unsetMaterialNotificationSettingsSuccess({
+                updatedDoc,
+              })
+            ),
+            catchError((error) => {
+              console.log(error);
+              return of(
+                CourseActions.unsetMaterialNotificationSettingsFailure({
                   error,
                 })
               );

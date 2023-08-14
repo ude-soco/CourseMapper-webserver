@@ -115,3 +115,10 @@ export enum channelNotificationSettingLabels {
   commentsAndMentioned = 'Comments and mentioned',
   annotations = 'Annotations',
 }
+
+export enum materialNotificationSettingLabels {
+  channelDefault = 'Channel default',
+  materialUpdates = 'Material updates',
+  commentsAndMentioned = 'Comments and mentioned',
+  annotations = 'Annotations',
+}

@@ -760,6 +760,7 @@ export class TopicDropdownComponent implements OnInit {
   }
 
   channelMenuButtonClicked($event, channel: Channel) {
+    console.log('channel Menu button clicked!');
     this.selectedChannel = channel;
     this.channelMenu.toggle($event);
     this.channelIdOfChannelMenuClicked = channel._id;
