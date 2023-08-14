@@ -90,6 +90,7 @@ export const newAnnotation = async (req, res, next) => {
     materialId: foundMaterial._id,
     createdAt: Date.now(),
     updatedAt: Date.now(),
+    materialType:foundMaterial.type
   });
 
   let newAnnotation;

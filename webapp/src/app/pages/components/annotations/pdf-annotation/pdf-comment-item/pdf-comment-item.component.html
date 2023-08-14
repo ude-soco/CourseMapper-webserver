@@ -70,13 +70,50 @@
           {{ printTime(VideoAnnotationLocation[1]) }}
         </h1>
         <div *ngIf="this.loggedInUser?.id == this.annotation?.author?.userId">
-          <p-menu
+          <p-overlayPanel #menu styleClass="settingsContextMenu">
+            <ng-template pTemplate="content">
+              <div class="settings-context-menu-container">
+                <p-button
+                  *ngIf="
+                    this.loggedInUser?.id == this.annotation?.author?.userId
+                  "
+                  label="Edit"
+                  icon="pi pi-pencil"
+                  styleClass="contextMenuButton"
+                  (onClick)="onEditAnnotation()"
+                  [disabled]="
+                    this.loggedInUser?.id !== this.annotation?.author?.userId &&
+                    !this.isEditing
+                  "
+                ></p-button>
+                <p-button
+                  *ngIf="
+                    this.loggedInUser?.id == this.annotation?.author?.userId
+                  "
+                  label="Delete"
+                  icon="pi pi-times"
+                  styleClass="contextMenuButton"
+                  (onClick)="onDeleteAnnotation()"
+                  [disabled]="
+                    this.loggedInUser?.id !== this.annotation?.author?.userId &&
+                    !this.isEditing
+                  "
+                ></p-button>
+                <p-button
+                  label="Unfollow/Follow"
+                  styleClass="contextMenuButton"
+                ></p-button>
+              </div>
+            </ng-template>
+          </p-overlayPanel>
+          <!--           <p-menu
             #menu
             id="config_menu"
             [model]="annotationOptions"
             [popup]="true"
             appendTo="body"
-          ></p-menu>
+          ></p-menu> -->
+
           <app-iconbutton
             icon="bx-dots-vertical-rounded"
             color="text-black"

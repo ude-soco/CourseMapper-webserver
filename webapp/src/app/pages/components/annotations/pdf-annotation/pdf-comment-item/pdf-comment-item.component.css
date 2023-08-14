@@ -26,3 +26,9 @@
 .autocomplete-dropdown  li:hover {
   background-color: #f3f4f6; /* Apply a background color on hover */
 }
+
+.settings-context-menu-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}

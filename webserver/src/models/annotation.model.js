@@ -25,6 +25,7 @@ const Annotation = new Schema({
   replies: [{ type: Schema.Types.ObjectId, ref: "reply", default: [] }],
   createdAt: { type: Date },
   updatedAt: { type: Date },
+  materialType: { type: String },
 });
 
 module.exports = mongoose.model("annotation", Annotation);
