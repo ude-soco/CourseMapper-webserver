@@ -49,5 +49,10 @@ interface Annotation {
   materialId: string;
   materialType: string;
   annotationContent: string;
+  topicId: string;
+  channelId: string;
+  courseId: string;
+  userId: string;
+  isFollowing: boolean;
   _id: string;
 }

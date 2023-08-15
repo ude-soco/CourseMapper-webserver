@@ -170,6 +170,7 @@ export class TopicDropdownComponent implements OnInit {
       .fetchTopics(this.courseService.getSelectedCourse()._id)
       .subscribe((res) => {
         this.topics = res.course.topics;
+        console.log(res.notificationSettings);
         this.store.dispatch(
           CourseActions.initialiseNotificationSettings({
             notificationSettings: res.notificationSettings,

@@ -131,7 +131,6 @@ export const getCourse = async (req, res) => {
   }
 
   let foundCourse;
-  let results = [];
   try {
     /*    foundCourse = await BlockingNotification.aggregate([
       {
@@ -324,17 +323,124 @@ export const getCourse = async (req, res) => {
 
   let notificationSettings;
   try {
-    notificationSettings = await BlockingNotification.findOne({
+    /*     notificationSettings = await BlockingNotification.findOne({
       userId: userId,
       courseId: courseId,
-    });
+    }); */
+    notificationSettings = await BlockingNotification.aggregate([
+      {
+        $match: {
+          courseId: new ObjectId(courseId),
+          userId: new ObjectId(userId),
+        },
+      },
+      {
+        $lookup: {
+          from: "followannotations",
+          let: {
+            uId: "$userId",
+            cId: "$courseId",
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    {
+                      $eq: ["$$cId", "$courseId"],
+                    },
+
+                    {
+                      $eq: ["$$uId", "$userId"],
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+
+          as: "result",
+        },
+      },
+      {
+        $lookup: {
+          from: "annotations",
+          localField: "result.annotationId",
+          foreignField: "_id",
+          as: "annotations",
+        },
+      },
+      {
+        $addFields: {
+          mergedObjects: {
+            $map: {
+              input: "$annotations",
+              in: {
+                $mergeObjects: [
+                  {
+                    materialType: "$$this.materialType",
+                    content: "$$this.content",
+                  },
+                  {
+                    $arrayElemAt: [
+                      "$result",
+                      {
+                        $indexOfArray: ["$result.annotationId", "$$this._id"],
+                      },
+                    ],
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+      {
+        $unset: "annotations",
+      },
+      {
+        $unset: "result",
+      },
+      {
+        $addFields: {
+          channels: {
+            $map: {
+              input: "$channels",
+              as: "channel",
+              in: {
+                $mergeObjects: [
+                  "$$channel",
+                  {
+                    followingAnnotations: {
+                      $filter: {
+                        input: "$mergedObjects",
+                        as: "mergedObj",
+                        cond: {
+                          $eq: ["$$mergedObj.channelId", "$$channel.channelId"],
+                        },
+                      },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+      {
+        $unset: "mergedObjects",
+      },
+    ]);
   } catch (err) {
     return res
       .status(500)
       .send({ message: "Error finding notification settings" });
   }
 
-  return res.status(200).send({ course: foundCourse, notificationSettings });
+  return res.status(200).send({
+    course: foundCourse,
+    notificationSettings: notificationSettings[0],
+  });
 
   // TODO: Uncomment these code when logger is added
   // results = foundCourse.topics.map((topic) => {
