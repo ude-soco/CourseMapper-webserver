@@ -34,7 +34,10 @@ import { getCurrentMaterial } from '../../../materials/state/materials.reducer';
 import * as VideoActions from 'src/app/pages/components/annotations/video-annotation/state/video.action';
 import { getShowAnnotations } from '../../video-annotation/state/video.reducer';
 import * as AnnotationSelectors from '../state/annotation.reducer';
-import { getCurrentCourseId } from 'src/app/pages/courses/state/course.reducer';
+import {
+  getCurrentCourseId,
+  getFollowStatusOfAnnotationsOfSelectedChannel,
+} from 'src/app/pages/courses/state/course.reducer';
 import {
   BehaviorSubject,
   Observable,
@@ -92,6 +95,7 @@ export class PdfCommentItemComponent
   filteredEnrolledUsernames$: Observable<{ name: string; username: string }[]>;
   filteredUserNames$: Observable<{ name: string; username: string }[]>;
   courseId: string;
+  isAnnotationBeingFollowed$: Observable<boolean>;
   constructor(
     private store: Store<State>,
     private socket: Socket,
@@ -289,6 +293,16 @@ export class PdfCommentItemComponent
         return arr;
       })
     );
+
+    this.isAnnotationBeingFollowed$ = this.store
+      .select(getFollowStatusOfAnnotationsOfSelectedChannel)
+      .pipe(
+        map((annotations) => {
+          return annotations.some(
+            (annotation) => annotation.annotationId === this.annotation._id
+          );
+        })
+      );
   }
 
   sendReply() {

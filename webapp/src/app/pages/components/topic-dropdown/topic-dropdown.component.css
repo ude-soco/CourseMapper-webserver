@@ -52,13 +52,14 @@
   left: 22px;
   position: absolute;
 } */
-/* .spineBorder-1-F4s1 {
-  background: hsl( 210 calc( 1 *9.3%) 78.8% /1);
+.spineBorder-1-F4s1 {
+/*   background: hsl( 210 calc( 1 *9.3%) 78.8% /1);
   border-radius: 2px;
 
   top: 10px;
-  width: 2px;
-} */
+  width: 2px; */
+  cursor: pointer;
+}
 .spine-29OFwR {
   color: hsl( 210 calc( 1 *9.3%) 78.8% /1);
   margin-right: 5px;

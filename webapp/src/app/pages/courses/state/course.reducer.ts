@@ -258,6 +258,21 @@ export const getFollowingAnnotationsOfDisplayedChannels = createSelector(
   }
 );
 
+export const getFollowStatusOfAnnotationsOfSelectedChannel = createSelector(
+  getSelectedChannel,
+  getChannelsNotificationSettings,
+  (selectChannel, channelNotificationSettings) => {
+    if (!selectChannel || !channelNotificationSettings) {
+      return null;
+    }
+    const channel = channelNotificationSettings.find(
+      (channel) => channel.channelId === selectChannel._id
+    );
+
+    return channel.followingAnnotations;
+  }
+);
+
 export const courseReducer = createReducer<CourseState>(
   initialState,
   on(CourseAction.setCurrentCourse, (state, action): CourseState => {

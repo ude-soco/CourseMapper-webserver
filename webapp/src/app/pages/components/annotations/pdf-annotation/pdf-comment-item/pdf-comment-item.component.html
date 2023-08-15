@@ -100,9 +100,12 @@
                   "
                 ></p-button>
                 <p-button
-                  label="Unfollow/Follow"
+                  [label]="
+                    (isAnnotationBeingFollowed$ | async) ? 'Unfollow' : 'Follow'
+                  "
                   styleClass="contextMenuButton"
-                ></p-button>
+                >
+                </p-button>
               </div>
             </ng-template>
           </p-overlayPanel>
