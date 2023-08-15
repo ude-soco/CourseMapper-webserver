@@ -132,141 +132,11 @@ export const getCourse = async (req, res) => {
 
   let foundCourse;
   try {
-    /*    foundCourse = await BlockingNotification.aggregate([
+    foundCourse = await Course.aggregate([
       {
         $match: {
-          courseId: new ObjectId(courseId),
-          userId: new ObjectId(userId),
+          _id: new ObjectId(courseId),
         },
-      },
-      {
-        $unset: "materials",
-      },
-
-      {
-        $lookup: {
-          from: "topics",
-          localField: "topics.topicId",
-          foreignField: "_id",
-          as: "result",
-        },
-      },
-
-      {
-        $addFields: {
-          topics: {
-            $map: {
-              input: "$topics",
-              as: "topic",
-              in: {
-                $mergeObjects: [
-                  "$$topic",
-                  {
-                    $arrayElemAt: [
-                      "$result",
-                      {
-                        $indexOfArray: ["$result._id", "$$topic.topicId"],
-                      },
-                    ],
-                  },
-                ],
-              },
-            },
-          },
-        },
-      },
-      {
-        $project: {
-          result: 0,
-        },
-      },
-
-      {
-        $lookup: {
-          from: "channels",
-          localField: "channels.channelId",
-          foreignField: "_id",
-          as: "result",
-        },
-      },
-      {
-        $addFields: {
-          channels: {
-            $map: {
-              input: "$channels",
-              as: "channel",
-              in: {
-                $mergeObjects: [
-                  "$$channel",
-                  {
-                    $arrayElemAt: [
-                      "$result",
-                      {
-                        $indexOfArray: ["$result._id", "$$channel.channelId"],
-                      },
-                    ],
-                  },
-                ],
-              },
-            },
-          },
-        },
-      },
-      {
-        $addFields: {
-          topics: {
-            $map: {
-              input: "$topics",
-              as: "topic",
-              in: {
-                $mergeObjects: [
-                  "$$topic",
-                  {
-                    channels: {
-                      $filter: {
-                        input: "$channels",
-                        as: "channel",
-                        cond: {
-                          $eq: ["$$channel.topicId", "$$topic.topicId"],
-                        },
-                      },
-                    },
-                  },
-                ],
-              },
-            },
-          },
-        },
-      },
-      {
-        $unset: "result",
-      },
-      {
-        $lookup: {
-          from: "courses",
-          localField: "courseId",
-          foreignField: "_id",
-          as: "course",
-        },
-      },
-      {
-        $replaceRoot: {
-          newRoot: {
-            $mergeObjects: [{ $arrayElemAt: ["$course", 0] }, "$$ROOT"],
-          },
-        },
-      },
-      {
-        $unset: "course",
-      },
-
-      {
-        $set: {
-          _id: "$courseId",
-        },
-      },
-      {
-        $unset: ["courseId", "userId"],
       },
       {
         $lookup: {
@@ -283,17 +153,155 @@ export const getCourse = async (req, res) => {
               input: "$users",
               as: "user",
               in: {
+                userId: "$$user.userId",
+                _id: "$$user._id",
+                role: {
+                  $arrayElemAt: [
+                    "$result",
+                    {
+                      $indexOfArray: ["$result._id", "$$user.role"],
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        },
+      },
+      {
+        $unset: "result",
+      },
+      {
+        $lookup: {
+          from: "channels",
+          localField: "channels",
+          foreignField: "_id",
+          as: "result",
+        },
+      },
+      {
+        $lookup: {
+          from: "followannotations",
+          let: {
+            cId: "$_id",
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    {
+                      $eq: ["$$cId", "$courseId"],
+                    },
+                    {
+                      $eq: ["$userId", new ObjectId(userId)],
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+          as: "followannotations",
+        },
+      },
+      {
+        $lookup: {
+          from: "annotations",
+          localField: "followannotations.annotationId",
+          foreignField: "_id",
+          as: "annotations",
+        },
+      },
+      {
+        $addFields: {
+          mergedObjects: {
+            $map: {
+              input: "$annotations",
+              in: {
                 $mergeObjects: [
-                  "$$user",
                   {
-                    role: {
-                      $first: {
-                        $filter: {
-                          input: "$result",
-                          as: "result",
-                          cond: {
-                            $eq: ["$$user.role", "$$result._id"],
-                          },
+                    materialType: "$$this.materialType",
+                    content: "$$this.content",
+                  },
+                  {
+                    $arrayElemAt: [
+                      "$followannotations",
+                      {
+                        $indexOfArray: [
+                          "$followannotations.annotationId",
+                          "$$this._id",
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+      {
+        $unset: "annotations",
+      },
+      {
+        $unset: "followannotations",
+      },
+      {
+        $addFields: {
+          channels: {
+            $map: {
+              input: "$result",
+              as: "channel",
+              in: {
+                $mergeObjects: [
+                  "$$channel",
+                  {
+                    followingAnnotations: {
+                      $filter: {
+                        input: "$mergedObjects",
+                        as: "mergedObj",
+                        cond: {
+                          $eq: ["$$mergedObj.channelId", "$$channel._id"],
+                        },
+                      },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+      {
+        $unset: "mergedObjects",
+      },
+      {
+        $unset: "result",
+      },
+      {
+        $lookup: {
+          from: "topics",
+          localField: "topics",
+          foreignField: "_id",
+          as: "result",
+        },
+      },
+      {
+        $addFields: {
+          topics: {
+            $map: {
+              input: "$result",
+              as: "topic",
+              in: {
+                $mergeObjects: [
+                  "$$topic",
+                  {
+                    channels: {
+                      $filter: {
+                        input: "$channels",
+                        as: "channel",
+                        cond: {
+                          $eq: ["$$channel.topicId", "$$topic._id"],
                         },
                       },
                     },
@@ -307,11 +315,14 @@ export const getCourse = async (req, res) => {
       {
         $unset: "result",
       },
-    ]); */
-    foundCourse = await Course.findById(courseId)
+      {
+        $unset: "channels",
+      },
+    ]);
+    /*     foundCourse = await Course.findById(courseId)
       .populate("topics", "-__v")
       .populate({ path: "users", populate: { path: "role" } })
-      .populate({ path: "topics", populate: { path: "channels" } });
+      .populate({ path: "topics", populate: { path: "channels" } }); */
     if (!foundCourse) {
       return res.status(404).send({
         error: `Course with id ${courseId} doesn't exist!`,
@@ -323,11 +334,11 @@ export const getCourse = async (req, res) => {
 
   let notificationSettings;
   try {
-    /*     notificationSettings = await BlockingNotification.findOne({
+    notificationSettings = await BlockingNotification.findOne({
       userId: userId,
       courseId: courseId,
-    }); */
-    notificationSettings = await BlockingNotification.aggregate([
+    });
+    /*     notificationSettings = await BlockingNotification.aggregate([
       {
         $match: {
           courseId: new ObjectId(courseId),
@@ -430,7 +441,7 @@ export const getCourse = async (req, res) => {
       {
         $unset: "mergedObjects",
       },
-    ]);
+    ]); */
   } catch (err) {
     return res
       .status(500)
@@ -438,8 +449,8 @@ export const getCourse = async (req, res) => {
   }
 
   return res.status(200).send({
-    course: foundCourse,
-    notificationSettings: notificationSettings[0],
+    course: foundCourse[0],
+    notificationSettings: notificationSettings,
   });
 
   // TODO: Uncomment these code when logger is added

@@ -43,7 +43,7 @@ const BlockingNotifications = new Schema({
         type: Schema.Types.ObjectId,
         ref: "channel",
       },
-      followingAnnotations: [
+      /*       followingAnnotations: [
         {
           annotationId: {
             type: Schema.Types.ObjectId,
@@ -56,7 +56,7 @@ const BlockingNotifications = new Schema({
           materialType: { type: String },
           annotationContent: { type: String },
         },
-      ],
+      ], */
       isAnnotationNotificationsEnabled: { type: Boolean },
       isReplyAndMentionedNotificationsEnabled: { type: Boolean },
       isCourseUpdateNotificationsEnabled: { type: Boolean },

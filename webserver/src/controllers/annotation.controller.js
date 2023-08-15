@@ -7,8 +7,7 @@ const Tag = db.tag;
 const User = db.user;
 const Role = db.role;
 const Course = db.course;
-const FollowAnnotation = db.followAnnotation;
-const BlockingNotifications = db.blockingNotifications;
+
 const ObjectId = require("mongoose").Types.ObjectId;
 
 /**
@@ -90,7 +89,7 @@ export const newAnnotation = async (req, res, next) => {
     materialId: foundMaterial._id,
     createdAt: Date.now(),
     updatedAt: Date.now(),
-    materialType:foundMaterial.type
+    materialType: foundMaterial.type,
   });
 
   let newAnnotation;

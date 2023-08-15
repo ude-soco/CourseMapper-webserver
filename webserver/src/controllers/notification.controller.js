@@ -233,27 +233,28 @@ export const followAnnotation = async (req, res, next) => {
   } catch (error) {
     res.status(500).json({ error: "Could not Follow the Annotation!" });
   }
+  next();
 
   //update the followingAnnotations array in the BlockingNotifications collection for the respective channel
   //fetch the BlockingNotification for the respective User and CourseId
 
   //fetch the material to which this annotation belongs to to get the material Type.
-  let material;
+  /*   let material;
   try {
     material = await Material.findById(materialId);
   } catch (error) {
     return res.status(500).json({ error: "Material not found" });
-  }
+  } */
 
-  const newFollowingAnnotation = {
+  /*   const newFollowingAnnotation = {
     annotationId: annotationId,
     channelId: channelId,
     materialId: materialId,
     annotationContent: annotation.content,
     materialType: material.type,
   };
-
-  try {
+ */
+  /*   try {
     const updatedDocument = await BlockingNotifications.findOneAndUpdate(
       {
         userId: userId,
@@ -266,14 +267,14 @@ export const followAnnotation = async (req, res, next) => {
     );
 
     if (updatedDocument) {
-      /* res.status(200).json({ message: "Followed the Annotation!" }); */
+      res.status(200).json({ message: "Followed the Annotation!" });
       next();
     } else {
       res.status(500).json({ error: "Already following the annotation!" });
     }
   } catch (error) {
     res.status(500).json({ error: "Could not Follow the Annotation!" });
-  }
+  } */
 };
 
 export const unfollowAnnotation = async (req, res, next) => {
@@ -316,7 +317,7 @@ export const unfollowAnnotation = async (req, res, next) => {
   }
 
   //update the followingAnnotations array in the BlockingNotifications collection for the respective channel
-  try {
+  /*   try {
     const updatedDocument = await BlockingNotifications.findOneAndUpdate(
       {
         userId: userId,
@@ -337,7 +338,7 @@ export const unfollowAnnotation = async (req, res, next) => {
     // Handle the updated document as needed
   } catch (error) {
     console.error("Error occurred while updating the document:", error);
-  }
+  } */
 
   return res.status(200).json({ message: "Annotation unfollowed!" });
 };
