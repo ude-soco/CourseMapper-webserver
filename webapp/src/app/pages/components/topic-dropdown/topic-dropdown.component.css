@@ -48,5 +48,25 @@
   border-radius: 4px;
 }
 
+/* .spine-29OFwR, .spineBorder-1-F4s1 {
+  left: 22px;
+  position: absolute;
+} */
+/* .spineBorder-1-F4s1 {
+  background: hsl( 210 calc( 1 *9.3%) 78.8% /1);
+  border-radius: 2px;
 
+  top: 10px;
+  width: 2px;
+} */
+.spine-29OFwR {
+  color: hsl( 210 calc( 1 *9.3%) 78.8% /1);
+  margin-right: 5px;
+}
 
+.truncate-text{
+  white-space: nowrap; /* Prevents text from wrapping to the next line */
+  overflow: hidden;    /* Hides the overflowed content */
+  text-overflow: ellipsis; /* Displays an ellipsis (...) at the end of the truncated text */
+  max-width: 21ch;
+}

@@ -27,11 +27,13 @@ import { Observable } from 'rxjs/internal/Observable';
 import {
   getNotificationSettingsOfLastChannelMenuClicked,
   getNotificationSettingsOfLastTopicMenuClicked,
+  getFollowingAnnotationsOfDisplayedChannels,
 } from '../../courses/state/course.reducer';
 import {
   topicNotificationSettingLabels,
   channelNotificationSettingLabels,
 } from 'src/app/models/Notification';
+import { map, tap } from 'rxjs';
 @Component({
   selector: 'app-topic-dropdown',
   templateUrl: './topic-dropdown.component.html',
@@ -115,7 +117,7 @@ export class TopicDropdownComponent implements OnInit {
   > = null;
   isResetTopicNotificationsButtonEnabled: boolean;
   isResetChannelNotificationsButtonEnabled: boolean;
-
+  followingAnnotationsOfDisplayedChannels$: Observable<any> = null;
   topicOptions: MenuItem[] = [
     {
       label: 'Rename',
@@ -229,6 +231,26 @@ export class TopicDropdownComponent implements OnInit {
         console.log(this.channelCheckBoxesArray);
         console.log(this.channelCheckBoxesGroup);
       }
+    );
+
+    this.followingAnnotationsOfDisplayedChannels$ = this.store.select(
+      getFollowingAnnotationsOfDisplayedChannels
+    );
+  }
+
+  getFollowingAnnotationsOfDisplayedChannels(channelId: string) {
+    return this.followingAnnotationsOfDisplayedChannels$.pipe(
+      tap((followingAnnotations) => {
+        console.log('BRUHHHHHHHHHHHHH');
+        console.log(channelId);
+        console.log(followingAnnotations);
+      }),
+      map((followingAnnotations) => {
+        if (!followingAnnotations) {
+          return [];
+        }
+        return followingAnnotations[channelId];
+      })
     );
   }
 

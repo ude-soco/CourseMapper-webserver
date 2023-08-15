@@ -132,7 +132,7 @@ export const getCourse = async (req, res) => {
 
   let foundCourse;
   try {
-    foundCourse = await Course.aggregate([
+    /*     foundCourse = await Course.aggregate([
       {
         $match: {
           _id: new ObjectId(courseId),
@@ -318,11 +318,11 @@ export const getCourse = async (req, res) => {
       {
         $unset: "channels",
       },
-    ]);
-    /*     foundCourse = await Course.findById(courseId)
+    ]); */
+    foundCourse = await Course.findById(courseId)
       .populate("topics", "-__v")
       .populate({ path: "users", populate: { path: "role" } })
-      .populate({ path: "topics", populate: { path: "channels" } }); */
+      .populate({ path: "topics", populate: { path: "channels" } });
     if (!foundCourse) {
       return res.status(404).send({
         error: `Course with id ${courseId} doesn't exist!`,
@@ -334,11 +334,11 @@ export const getCourse = async (req, res) => {
 
   let notificationSettings;
   try {
-    notificationSettings = await BlockingNotification.findOne({
+    /*     notificationSettings = await BlockingNotification.findOne({
       userId: userId,
       courseId: courseId,
-    });
-    /*     notificationSettings = await BlockingNotification.aggregate([
+    }); */
+    notificationSettings = await BlockingNotification.aggregate([
       {
         $match: {
           courseId: new ObjectId(courseId),
@@ -441,7 +441,7 @@ export const getCourse = async (req, res) => {
       {
         $unset: "mergedObjects",
       },
-    ]); */
+    ]);
   } catch (err) {
     return res
       .status(500)
@@ -449,8 +449,8 @@ export const getCourse = async (req, res) => {
   }
 
   return res.status(200).send({
-    course: foundCourse[0],
-    notificationSettings: notificationSettings,
+    course: foundCourse,
+    notificationSettings: notificationSettings[0],
   });
 
   // TODO: Uncomment these code when logger is added

@@ -44,7 +44,7 @@ export interface MaterialNotificationSettings {
   _id: string;
 }
 
-interface Annotation {
+export interface Annotation {
   annotationId: string;
   materialId: string;
   materialType: string;

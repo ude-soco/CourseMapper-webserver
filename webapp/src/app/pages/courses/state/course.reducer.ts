@@ -224,6 +224,40 @@ export const getLastTopicMenuClickedId = createSelector(
   getCourseFeatureState,
   (state) => state.lastTopicMenuClickedId
 );
+
+const getSelectTopic = createSelector(
+  getCourseFeatureState,
+  (state) => state.selcetedTopic
+);
+
+const getChannelsNotificationSettings = createSelector(
+  getCourseFeatureState,
+  (state) => state.channelsNotificationSettings
+);
+
+export const getFollowingAnnotationsOfDisplayedChannels = createSelector(
+  getSelectTopic,
+  getChannelsNotificationSettings,
+  (selectedTopic, channelNotificationSettings) => {
+    //in the state, we have the channelsNotificationSettings array
+    //in the channelNotificationSettignsArray, for all the channels that have topicId equal to the topicId of the selected topic, for them return an object where they key is the id of the channel and the value is an array that contains the following annotations of that channel
+    if (!channelNotificationSettings || !selectedTopic) {
+      return null;
+    }
+    const channels = channelNotificationSettings.filter(
+      (channel) => channel.topicId === selectedTopic._id
+    );
+    const followingAnnotationsOfDisplayedChannels = {};
+    channels.forEach((channel) => {
+      followingAnnotationsOfDisplayedChannels[channel.channelId] =
+        channel.followingAnnotations;
+    });
+    console.log('THIS are the following annotations:  ');
+    console.log(followingAnnotationsOfDisplayedChannels);
+    return followingAnnotationsOfDisplayedChannels;
+  }
+);
+
 export const courseReducer = createReducer<CourseState>(
   initialState,
   on(CourseAction.setCurrentCourse, (state, action): CourseState => {
