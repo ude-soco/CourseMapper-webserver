@@ -8,6 +8,9 @@ const FollowAnnotation = db.followAnnotation;
 const Annotation = db.annotation;
 const BlockingNotifications = db.blockingNotifications;
 const Material = db.material;
+const {
+  getNotificationSettingsWithFollowingAnnotations,
+} = require("../middlewares/Notifications/notifications");
 
 export const getAllNotifications = async (req, res, next) => {
   console.log("endpoint: getAllNotifications");
@@ -386,7 +389,17 @@ export const setMaterialNotificationSettings = async (req, res, next) => {
       .json({ error: "Could not update the material notification settings!" });
   }
 
-  return res.status(200).json(updatedDocument);
+  let notificationSettings;
+  try {
+    notificationSettings =
+      await getNotificationSettingsWithFollowingAnnotations(courseId, userId);
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ message: "Error finding updated notification settings" });
+  }
+
+  return res.status(200).json(notificationSettings[0]);
 };
 
 export const unsetMaterialNotificationSettings = async (req, res, next) => {
@@ -448,7 +461,17 @@ export const unsetMaterialNotificationSettings = async (req, res, next) => {
       .json({ error: "Could not update the material notification settings!" });
   }
 
-  return res.status(200).json(updatedDoc);
+  let notificationSettings;
+  try {
+    notificationSettings =
+      await getNotificationSettingsWithFollowingAnnotations(courseId, userId);
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ message: "Error finding updated notification settings" });
+  }
+
+  return res.status(200).json(notificationSettings[0]);
 };
 
 export const setChannelNotificationSettings = async (req, res, next) => {
@@ -506,7 +529,17 @@ export const setChannelNotificationSettings = async (req, res, next) => {
     return res.status(500).json({ error });
   }
 
-  return res.status(200).json(updatedDoc);
+  let notificationSettings;
+  try {
+    notificationSettings =
+      await getNotificationSettingsWithFollowingAnnotations(courseId, userId);
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ message: "Error finding updated notification settings" });
+  }
+
+  return res.status(200).json(notificationSettings[0]);
 };
 
 export const unsetChannelNotificationSettings = async (req, res, next) => {
@@ -582,7 +615,17 @@ export const unsetChannelNotificationSettings = async (req, res, next) => {
     return res.status(500).json({ error });
   }
 
-  return res.status(200).json(updatedDoc);
+  let notificationSettings;
+  try {
+    notificationSettings =
+      await getNotificationSettingsWithFollowingAnnotations(courseId, userId);
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ message: "Error finding updated notification settings" });
+  }
+
+  return res.status(200).json(notificationSettings[0]);
 };
 
 export const setTopicNotificationSettings = async (req, res, next) => {
@@ -654,7 +697,17 @@ export const setTopicNotificationSettings = async (req, res, next) => {
       .json({ message: "Could not set topic notification settings!" });
   }
 
-  return res.status(200).json(updatedDoc);
+  let notificationSettings;
+  try {
+    notificationSettings =
+      await getNotificationSettingsWithFollowingAnnotations(courseId, userId);
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ message: "Error finding updated notification settings" });
+  }
+
+  return res.status(200).json(notificationSettings[0]);
 };
 
 export const unsetTopicNotificationSettings = async (req, res, next) => {
@@ -735,7 +788,17 @@ export const unsetTopicNotificationSettings = async (req, res, next) => {
     return res.status(500).json({ error });
   }
 
-  return res.status(200).json(updatedDoc);
+  let notificationSettings;
+  try {
+    notificationSettings =
+      await getNotificationSettingsWithFollowingAnnotations(courseId, userId);
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ message: "Error finding updated notification settings" });
+  }
+
+  return res.status(200).json(notificationSettings[0]);
 };
 
 export const setCourseNotificationSettings = async (req, res, next) => {
@@ -802,7 +865,17 @@ export const setCourseNotificationSettings = async (req, res, next) => {
     return res.status(500).json({ error });
   }
 
-  return res.status(200).json(updatedDoc);
+  let notificationSettings;
+  try {
+    notificationSettings =
+      await getNotificationSettingsWithFollowingAnnotations(courseId, userId);
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ message: "Error finding updated notification settings" });
+  }
+
+  return res.status(200).json(notificationSettings[0]);
 };
 
 export const blockUser = async (req, res, next) => {
