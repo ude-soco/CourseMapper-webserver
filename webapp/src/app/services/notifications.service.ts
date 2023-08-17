@@ -269,6 +269,24 @@ export class NotificationsService {
     );
   }
 
+  followAnnotation(annotationId: string) {
+    console.log('In Service: Following annotation');
+    console.log(annotationId);
+    return this.httpClient.post<BlockingNotifications>(
+      `${environment.API_URL}/notifications/followAnnotation/${annotationId}`,
+      {}
+    );
+  }
+
+  unfollowAnnotation(annotationId: string) {
+    console.log('In Service: Unfollowing annotation');
+    console.log(annotationId);
+    return this.httpClient.post<BlockingNotifications>(
+      `${environment.API_URL}/notifications/unfollowAnnotation/${annotationId}`,
+      {}
+    );
+  }
+
   getUserNames({
     partialString,
     courseId,

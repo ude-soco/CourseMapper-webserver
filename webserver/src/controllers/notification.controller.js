@@ -236,6 +236,18 @@ export const followAnnotation = async (req, res, next) => {
   } catch (error) {
     res.status(500).json({ error: "Could not Follow the Annotation!" });
   }
+
+  let notificationSettings;
+  try {
+    notificationSettings =
+      await getNotificationSettingsWithFollowingAnnotations(courseId, userId);
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ message: "Error finding updated notification settings" });
+  }
+
+  res.response = notificationSettings[0];
   next();
 
   //update the followingAnnotations array in the BlockingNotifications collection for the respective channel
@@ -343,7 +355,17 @@ export const unfollowAnnotation = async (req, res, next) => {
     console.error("Error occurred while updating the document:", error);
   } */
 
-  return res.status(200).json({ message: "Annotation unfollowed!" });
+  let notificationSettings;
+  try {
+    notificationSettings =
+      await getNotificationSettingsWithFollowingAnnotations(courseId, userId);
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ message: "Error finding updated notification settings" });
+  }
+
+  res.status(200).send(notificationSettings[0]);
 };
 
 export const setMaterialNotificationSettings = async (req, res, next) => {
@@ -929,7 +951,7 @@ export const unblockUser = async (req, res, next) => {
 };
 
 export const followAnnotationSuccess = async (req, res, next) => {
-  res.status(200).json({ message: "Annotation followed successfully!" });
+  res.status(200).json(res.response);
 };
 
 /* export const subscribeChannel = async (req, res, next) => {

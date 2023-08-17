@@ -714,5 +714,25 @@ export const courseReducer = createReducer<CourseState>(
         materialsNotificationSettings: updatedDoc.materials,
       };
     }
-  )
+  ),
+  on(CourseAction.followAnnotationSuccess, (state, action): CourseState => {
+    //update the topics and the channels in the state, and add/update the material array
+    let updatedDoc = action.updatedDoc;
+    return {
+      ...state,
+      topicsNotificationSettings: updatedDoc.topics,
+      channelsNotificationSettings: updatedDoc.channels,
+      materialsNotificationSettings: updatedDoc.materials,
+    };
+  }),
+  on(CourseAction.unfollowAnnotationSuccess, (state, action): CourseState => {
+    //update the topics and the channels in the state, and add/update the material array
+    let updatedDoc = action.updatedDoc;
+    return {
+      ...state,
+      topicsNotificationSettings: updatedDoc.topics,
+      channelsNotificationSettings: updatedDoc.channels,
+      materialsNotificationSettings: updatedDoc.materials,
+    };
+  })
 );

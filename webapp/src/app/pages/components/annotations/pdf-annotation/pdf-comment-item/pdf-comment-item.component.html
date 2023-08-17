@@ -69,7 +69,7 @@
           {{ printTime(VideoAnnotationLocation[0]) }} -
           {{ printTime(VideoAnnotationLocation[1]) }}
         </h1>
-        <div *ngIf="this.loggedInUser?.id == this.annotation?.author?.userId">
+        <div>
           <p-overlayPanel #menu styleClass="settingsContextMenu">
             <ng-template pTemplate="content">
               <div class="settings-context-menu-container">
@@ -100,10 +100,17 @@
                   "
                 ></p-button>
                 <p-button
-                  [label]="
-                    (isAnnotationBeingFollowed$ | async) ? 'Unfollow' : 'Follow'
-                  "
+                  *ngIf="isAnnotationBeingFollowed$ | async"
+                  label="Unfollow Annotation"
                   styleClass="contextMenuButton"
+                  (onClick)="onUnfollowAnnotationClicked()"
+                >
+                </p-button>
+                <p-button
+                  *ngIf="!(isAnnotationBeingFollowed$ | async)"
+                  label="Follow Annotation"
+                  styleClass="contextMenuButton"
+                  (onClick)="onFollowAnnotationClicked()"
                 >
                 </p-button>
               </div>

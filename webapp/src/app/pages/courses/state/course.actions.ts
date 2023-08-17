@@ -383,3 +383,33 @@ export const unsetMaterialNotificationSettingsFailure = createAction(
   '[Notification] Unset Material Notification Settings Failure',
   props<{ error: any }>()
 );
+
+export const followAnnotation = createAction(
+  '[Notification] Follow Annotation Action',
+  props<{ annotationId: string }>()
+);
+
+export const followAnnotationSuccess = createAction(
+  '[Notification] Follow Annotation Success',
+  props<{ updatedDoc: BlockingNotifications }>()
+);
+
+export const followAnnotationFailure = createAction(
+  '[Notification] Follow Annotation Failure',
+  props<{ error: any }>()
+);
+
+export const unfollowAnnotation = createAction(
+  '[Notification] Unfollow Annotation Action',
+  props<{ annotationId: string }>()
+);
+
+export const unfollowAnnotationSuccess = createAction(
+  '[Notification] Unfollow Annotation Success',
+  props<{ updatedDoc: BlockingNotifications }>()
+);
+
+export const unfollowAnnotationFailure = createAction(
+  '[Notification] Unfollow Annotation Failure',
+  props<{ error: any }>()
+);

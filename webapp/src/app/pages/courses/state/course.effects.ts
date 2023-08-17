@@ -439,6 +439,53 @@ export class CourseEffects {
       )
     );
   });
+  followAnnotation$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(CourseActions.followAnnotation),
+      tap(() => console.log('In Effect: Following Annotation')),
+      mergeMap((action) =>
+        this.notificationService.followAnnotation(action.annotationId).pipe(
+          map((updatedDoc: BlockingNotifications) =>
+            CourseActions.followAnnotationSuccess({
+              updatedDoc,
+            })
+          ),
+          catchError((error) => {
+            console.log(error);
+            return of(
+              CourseActions.followAnnotationFailure({
+                error,
+              })
+            );
+          })
+        )
+      )
+    );
+  });
+
+  unfollowAnnotation$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(CourseActions.unfollowAnnotation),
+      tap(() => console.log('In Effect: Unfollowing Annotation')),
+      mergeMap((action) =>
+        this.notificationService.unfollowAnnotation(action.annotationId).pipe(
+          map((updatedDoc: BlockingNotifications) =>
+            CourseActions.unfollowAnnotationSuccess({
+              updatedDoc,
+            })
+          ),
+          catchError((error) => {
+            console.log(error);
+            return of(
+              CourseActions.unfollowAnnotationFailure({
+                error,
+              })
+            );
+          })
+        )
+      )
+    );
+  });
 
   constructor(
     private actions$: Actions,

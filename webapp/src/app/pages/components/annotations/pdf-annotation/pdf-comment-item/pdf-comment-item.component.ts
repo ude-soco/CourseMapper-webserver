@@ -23,6 +23,8 @@ import {
   State,
 } from '../state/annotation.reducer';
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
+
+import * as CourseActions from 'src/app/pages/courses/state/course.actions';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import * as $ from 'jquery';
 import { SocketIoModule, SocketIoConfig, Socket } from 'ngx-socket-io';
@@ -303,6 +305,22 @@ export class PdfCommentItemComponent
           );
         })
       );
+  }
+
+  onUnfollowAnnotationClicked() {
+    this.store.dispatch(
+      CourseActions.unfollowAnnotation({
+        annotationId: this.annotation._id,
+      })
+    );
+  }
+
+  onFollowAnnotationClicked() {
+    this.store.dispatch(
+      CourseActions.followAnnotation({
+        annotationId: this.annotation._id,
+      })
+    );
   }
 
   sendReply() {
