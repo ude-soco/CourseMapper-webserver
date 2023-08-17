@@ -16,6 +16,9 @@ const UserTopicSubscriber = db.userTopicSubscriber;
 const UserChannelSubscriber = db.userChannelSubscriber;
 const BlockingNotification = db.blockingNotifications;
 const helpers = require("../helpers/helpers");
+const {
+  getNotificationSettingsWithFollowingAnnotations,
+} = require("../middlewares/Notifications/notifications");
 /**
  * @function getAllCourses
  * Get all courses controller
@@ -338,7 +341,10 @@ export const getCourse = async (req, res) => {
       userId: userId,
       courseId: courseId,
     }); */
-    notificationSettings = await BlockingNotification.aggregate([
+
+    notificationSettings =
+      await getNotificationSettingsWithFollowingAnnotations(courseId, userId);
+    /*    notificationSettings = await BlockingNotification.aggregate([
       {
         $match: {
           courseId: new ObjectId(courseId),
@@ -441,7 +447,7 @@ export const getCourse = async (req, res) => {
       {
         $unset: "mergedObjects",
       },
-    ]);
+    ]); */
   } catch (err) {
     return res
       .status(500)

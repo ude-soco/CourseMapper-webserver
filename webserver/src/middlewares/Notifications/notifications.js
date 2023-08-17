@@ -598,7 +598,6 @@ export const updateBlockingNotificationsNewChannel = async (req, res, next) => {
 
   next();
 };
-
 export const updateBlockingNotificationsNewTopic = async (req, res, next) => {
   const course = req.locals.course;
   const topic = req.locals.topic;
@@ -649,6 +648,118 @@ export const updateBlockingNotificationsNewTopic = async (req, res, next) => {
   next();
 };
 
+export const getNotificationSettingsWithFollowingAnnotations = async (
+  courseId,
+  userId
+) => {
+  const notificationSettings = await BlockingNotifications.aggregate([
+    {
+      $match: {
+        courseId: new ObjectId(courseId),
+        userId: new ObjectId(userId),
+      },
+    },
+    {
+      $lookup: {
+        from: "followannotations",
+        let: {
+          uId: "$userId",
+          cId: "$courseId",
+        },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  {
+                    $eq: ["$$cId", "$courseId"],
+                  },
+
+                  {
+                    $eq: ["$$uId", "$userId"],
+                  },
+                ],
+              },
+            },
+          },
+        ],
+
+        as: "result",
+      },
+    },
+    {
+      $lookup: {
+        from: "annotations",
+        localField: "result.annotationId",
+        foreignField: "_id",
+        as: "annotations",
+      },
+    },
+    {
+      $addFields: {
+        mergedObjects: {
+          $map: {
+            input: "$annotations",
+            in: {
+              $mergeObjects: [
+                {
+                  materialType: "$$this.materialType",
+                  content: "$$this.content",
+                },
+                {
+                  $arrayElemAt: [
+                    "$result",
+                    {
+                      $indexOfArray: ["$result.annotationId", "$$this._id"],
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        },
+      },
+    },
+    {
+      $unset: "annotations",
+    },
+    {
+      $unset: "result",
+    },
+    {
+      $addFields: {
+        channels: {
+          $map: {
+            input: "$channels",
+            as: "channel",
+            in: {
+              $mergeObjects: [
+                "$$channel",
+                {
+                  followingAnnotations: {
+                    $filter: {
+                      input: "$mergedObjects",
+                      as: "mergedObj",
+                      cond: {
+                        $eq: ["$$mergedObj.channelId", "$$channel.channelId"],
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        },
+      },
+    },
+    {
+      $unset: "mergedObjects",
+    },
+  ]);
+
+  return notificationSettings;
+};
+
 let notifications = {
   populateUserNotification,
   generateNotificationInfo,
@@ -661,5 +772,6 @@ let notifications = {
   updateBlockingNotificationsNewMaterial,
   updateBlockingNotificationsNewChannel,
   updateBlockingNotificationsNewTopic,
+  getNotificationSettingsWithFollowingAnnotations,
 };
 module.exports = notifications;
