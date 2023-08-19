@@ -1,4 +1,3 @@
-import { TopicChannelService } from '../../../services/topic-channel.service';
 import { CourseService } from '../../../services/course.service';
 import {
   Component,
@@ -6,39 +5,32 @@ import {
   OnInit,
   HostListener,
   Renderer2,
+  ViewChild,
 } from '@angular/core';
 import { Course } from 'src/app/models/Course';
 import { CourseImp } from 'src/app/models/CourseImp';
 import { Channel } from 'src/app/models/Channel';
-import { Topic } from 'src/app/models/Topic';
 import { MenuItem } from 'primeng/api';
 import { environment } from 'src/environments/environment';
-import { catchError, of } from 'rxjs';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { ActivatedRoute, Router } from '@angular/router';
 import { State } from 'src/app/state/app.state';
 import { Store } from '@ngrx/store';
 import * as AppActions from 'src/app/state/app.actions';
 import { ModeratorPrivilegesService } from 'src/app/services/moderator-privileges.service';
-import * as MaterialActions from 'src/app/pages/components/materials/state/materials.actions';
 import * as CourseActions from 'src/app/pages/courses/state/course.actions';
-import {
-  getSelectedChannel,
-  getTagsForChannel,
-} from '../../courses/state/course.reducer';
-import { Tag } from 'src/app/models/Tag';
 import { StorageService } from 'src/app/services/storage.service';
-
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { CourseLevelNotificationSettingsComponent } from 'src/app/components/course-level-notification-settings/course-level-notification-settings.component';
 @Component({
   selector: 'app-channelbar',
   templateUrl: './channelbar.component.html',
   styleUrls: ['./channelbar.component.scss'],
-  providers: [MessageService, ConfirmationService],
+  providers: [MessageService, ConfirmationService, DialogService],
 })
 export class ChannelbarComponent implements OnInit {
   constructor(
     private courseService: CourseService,
-    private topicChannelService: TopicChannelService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private router: Router,
@@ -46,7 +38,8 @@ export class ChannelbarComponent implements OnInit {
     private store: Store<State>,
     private moderatorPrivilegesService: ModeratorPrivilegesService,
     private renderer: Renderer2,
-    private storageService: StorageService
+    private storageService: StorageService,
+    public dialogService: DialogService
   ) {
     this.route.params.subscribe((params) => {
       if (params['courseID']) {
@@ -117,7 +110,7 @@ export class ChannelbarComponent implements OnInit {
     {
       label: 'Notification Settings',
       icon: 'pi pi-bell',
-      command: () => this.onNotificationSettingsClicked(),
+      command: ($event) => this.onNotificationSettingsClicked($event),
     },
   ];
 
@@ -125,10 +118,12 @@ export class ChannelbarComponent implements OnInit {
     {
       label: 'Notification Settings',
       icon: 'pi pi-bell',
-      command: () => this.onNotificationSettingsClicked(),
+      command: ($event) => this.onNotificationSettingsClicked($event),
     },
   ];
 
+  /*   @ViewChild('notificationSettingsPanel') notificationSettingsPanel: any; */
+  ref: DynamicDialogRef | undefined;
   ngOnInit(): void {
     this.selectedCourse = this.courseService.getSelectedCourse();
 
@@ -153,6 +148,16 @@ export class ChannelbarComponent implements OnInit {
         );
       }
     });
+  }
+
+  onNotificationSettingsClicked($event) {
+    /*  this.notificationSettingsPanel.show($event); */
+    this.ref = this.dialogService.open(
+      CourseLevelNotificationSettingsComponent,
+      {
+        header: 'Notification Settings',
+      }
+    );
   }
 
   @HostListener('document:click', ['$event'])
@@ -415,9 +420,5 @@ export class ChannelbarComponent implements OnInit {
         this.renderer.removeClass(confirmButton, 'confirmViaEnter');
       }, 150);
     }
-  }
-
-  onNotificationSettingsClicked() {
-    console.log('notification settings clicked!');
   }
 }

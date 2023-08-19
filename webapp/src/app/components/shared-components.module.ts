@@ -7,6 +7,7 @@ import { SvgIconComponent } from './svg-icon/svg-icon.component';
 import { ContextMenuComponent } from 'src/app/components/context-menu/context-menu.component';
 import { PrimengModule } from '../modules/primeng/primeng.module';
 import { ReactiveFormsModule } from '@angular/forms';
+import { CourseLevelNotificationSettingsComponent } from './course-level-notification-settings/course-level-notification-settings.component';
 
 @NgModule({
   declarations: [
@@ -15,6 +16,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     AvatarComponent,
     SvgIconComponent,
     ContextMenuComponent,
+    CourseLevelNotificationSettingsComponent,
   ],
   imports: [CommonModule, PrimengModule, ReactiveFormsModule],
   exports: [

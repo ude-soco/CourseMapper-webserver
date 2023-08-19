@@ -284,6 +284,58 @@ export class CourseEffects {
     )
   );
 
+  setCourseLevelNotification$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(CourseActions.setCourseNotificationSettings),
+      tap(() => console.log('In Effect: Setting course level notification')),
+      mergeMap((action) =>
+        this.notificationService
+          .setCourseNotificationSettings(action.settings)
+          .pipe(
+            map((updatedDoc: BlockingNotifications) =>
+              CourseActions.setCourseNotificationSettingsSuccess({
+                updatedDoc,
+              })
+            ),
+            catchError((error) => {
+              console.log(error);
+              return of(
+                CourseActions.setCourseNotificationSettingsFailure({
+                  error,
+                })
+              );
+            })
+          )
+      )
+    );
+  });
+
+  unsetCourseLevelNotification$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(CourseActions.unsetCourseNotificationSettings),
+      tap(() => console.log('In Effect: Unsetting course level notification')),
+      mergeMap((action) =>
+        this.notificationService
+          .unsetCourseNotificationSettings(action.settings)
+          .pipe(
+            map((updatedDoc: BlockingNotifications) =>
+              CourseActions.unsetCourseNotificationSettingsSuccess({
+                updatedDoc,
+              })
+            ),
+            catchError((error) => {
+              console.log(error);
+              return of(
+                CourseActions.unsetCourseNotificationSettingsFailure({
+                  error,
+                })
+              );
+            })
+          )
+      )
+    );
+  });
+
   setTopicLevelNotification$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(CourseActions.setTopicNotificationSettings),

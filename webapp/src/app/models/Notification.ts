@@ -122,3 +122,9 @@ export enum materialNotificationSettingLabels {
   commentsAndMentioned = 'Comments and mentioned',
   annotations = 'Annotations',
 }
+export enum courseNotificationSettingLabels {
+  globalDefault = 'Global default',
+  courseUpdates = 'Course Updates',
+  commentsAndMentioned = 'Comments and mentioned',
+  annotations = 'Annotations',
+}

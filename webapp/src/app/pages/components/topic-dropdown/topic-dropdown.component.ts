@@ -240,11 +240,6 @@ export class TopicDropdownComponent implements OnInit {
 
   getFollowingAnnotationsOfDisplayedChannels(channelId: string) {
     return this.followingAnnotationsOfDisplayedChannels$.pipe(
-      /*       tap((followingAnnotations) => {
-        console.log('BRUHHHHHHHHHHHHH');
-        console.log(channelId);
-        console.log(followingAnnotations);
-      }), */
       map((followingAnnotations) => {
         if (!followingAnnotations) {
           return [];

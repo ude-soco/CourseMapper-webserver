@@ -21,6 +21,7 @@ import {
   topicNotificationSettingLabels,
   channelNotificationSettingLabels,
   materialNotificationSettingLabels,
+  courseNotificationSettingLabels,
 } from 'src/app/models/Notification';
 export interface State extends AppState.State {
   courses: CourseState;
@@ -43,6 +44,9 @@ export interface CourseState {
   topicsNotificationSettings: TopicNotificationSettings[];
   channelsNotificationSettings: ChannelNotificationSettings[];
   materialsNotificationSettings: MaterialNotificationSettings[];
+  isAnnotationNotificationsEnabled: boolean;
+  isCourseUpdateNotificationsEnabled: boolean;
+  isReplyAndMentionedNotificationsEnabled: boolean;
 }
 const initialState: CourseState = {
   courseId: null,
@@ -62,6 +66,9 @@ const initialState: CourseState = {
   topicsNotificationSettings: null,
   channelsNotificationSettings: null,
   materialsNotificationSettings: null,
+  isAnnotationNotificationsEnabled: null,
+  isCourseUpdateNotificationsEnabled: null,
+  isReplyAndMentionedNotificationsEnabled: null,
 };
 const getCourseFeatureState = createFeatureSelector<CourseState>('course');
 
@@ -214,6 +221,32 @@ export const getNotificationSettingsOfLastMaterialMenuClicked = createSelector(
       {
         label: materialNotificationSettingLabels.annotations,
         value: material.isAnnotationNotificationsEnabled,
+      },
+    ];
+    return notificationSettings;
+  }
+);
+
+export const getNotificationSettingsOfCurrentCourse = createSelector(
+  getCourseFeatureState,
+  (state) => {
+    const notificationSettings = [
+      {
+        label: topicNotificationSettingLabels.courseDefault,
+        //TODO: change the below line when global notifications settings are implemented
+        value: false,
+      },
+      {
+        label: courseNotificationSettingLabels.courseUpdates,
+        value: state.isCourseUpdateNotificationsEnabled,
+      },
+      {
+        label: courseNotificationSettingLabels.commentsAndMentioned,
+        value: state.isReplyAndMentionedNotificationsEnabled,
+      },
+      {
+        label: courseNotificationSettingLabels.annotations,
+        value: state.isAnnotationNotificationsEnabled,
       },
     ];
     return notificationSettings;
@@ -626,6 +659,12 @@ export const courseReducer = createReducer<CourseState>(
         topicsNotificationSettings: action.notificationSettings.topics,
         channelsNotificationSettings: action.notificationSettings.channels,
         materialsNotificationSettings: action.notificationSettings.materials,
+        isAnnotationNotificationsEnabled:
+          action.notificationSettings.isAnnotationNotificationsEnabled,
+        isCourseUpdateNotificationsEnabled:
+          action.notificationSettings.isCourseUpdateNotificationsEnabled,
+        isReplyAndMentionedNotificationsEnabled:
+          action.notificationSettings.isReplyAndMentionedNotificationsEnabled,
       };
     }
   ),
@@ -715,6 +754,7 @@ export const courseReducer = createReducer<CourseState>(
       };
     }
   ),
+
   on(CourseAction.followAnnotationSuccess, (state, action): CourseState => {
     //update the topics and the channels in the state, and add/update the material array
     let updatedDoc = action.updatedDoc;
@@ -734,5 +774,45 @@ export const courseReducer = createReducer<CourseState>(
       channelsNotificationSettings: updatedDoc.channels,
       materialsNotificationSettings: updatedDoc.materials,
     };
-  })
+  }),
+
+  on(
+    CourseAction.setCourseNotificationSettingsSuccess,
+    (state, action): CourseState => {
+      //update the topics and the channels in the state, and add/update the material array
+      let updatedDoc = action.updatedDoc;
+      return {
+        ...state,
+        topicsNotificationSettings: updatedDoc.topics,
+        channelsNotificationSettings: updatedDoc.channels,
+        materialsNotificationSettings: updatedDoc.materials,
+        isAnnotationNotificationsEnabled:
+          action.updatedDoc.isAnnotationNotificationsEnabled,
+        isCourseUpdateNotificationsEnabled:
+          action.updatedDoc.isCourseUpdateNotificationsEnabled,
+        isReplyAndMentionedNotificationsEnabled:
+          action.updatedDoc.isReplyAndMentionedNotificationsEnabled,
+      };
+    }
+  ),
+
+  on(
+    CourseAction.unsetCourseNotificationSettingsSuccess,
+    (state, action): CourseState => {
+      //update the topics and the channels in the state, and add/update the material array
+      let updatedDoc = action.updatedDoc;
+      return {
+        ...state,
+        topicsNotificationSettings: updatedDoc.topics,
+        channelsNotificationSettings: updatedDoc.channels,
+        materialsNotificationSettings: updatedDoc.materials,
+        isAnnotationNotificationsEnabled:
+          action.updatedDoc.isAnnotationNotificationsEnabled,
+        isCourseUpdateNotificationsEnabled:
+          action.updatedDoc.isCourseUpdateNotificationsEnabled,
+        isReplyAndMentionedNotificationsEnabled:
+          action.updatedDoc.isReplyAndMentionedNotificationsEnabled,
+      };
+    }
+  )
 );

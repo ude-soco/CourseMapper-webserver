@@ -1,0 +1,28 @@
+<div class="course-notifications-settings-container">
+  <div>
+    <div class="settings-context-menu-container" [formGroup]="checkBoxesGroup">
+      <p-button
+        styleClass="contextMenuButton"
+        [disabled]="!isResetCourseNotificationsButtonEnabled"
+        (onClick)="onResetButtonClicked()"
+      >
+        <div>
+          <span>Use global level settings</span>
+        </div>
+      </p-button>
+      <p-button
+        styleClass="contextMenuButton"
+        *ngFor="let item of checkBoxesArray"
+        (click)="onSettingsClicked(item)"
+      >
+        <div>
+          <p-checkbox
+            [formControlName]="item.label"
+            [binary]="true"
+          ></p-checkbox>
+          <span>{{ item.label }}</span>
+        </div>
+      </p-button>
+    </div>
+  </div>
+</div>

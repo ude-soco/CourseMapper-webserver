@@ -22,6 +22,7 @@ import {
   topicNotificationSettingLabels,
   channelNotificationSettingLabels,
   materialNotificationSettingLabels,
+  courseNotificationSettingLabels,
 } from 'src/app/models/Notification';
 @Injectable({
   providedIn: 'root',
@@ -109,6 +110,47 @@ export class NotificationsService {
     return this.httpClient.put<{ message: string }>(
       `${environment.API_URL}/notifications/unstar`,
       { notificationIds: notification }
+    );
+  }
+
+  setCourseNotificationSettings(settings: {
+    courseId: string;
+    [key: string]: boolean | string;
+  }) {
+    let isAnnotationNotificationsEnabled: boolean = settings[
+      courseNotificationSettingLabels.annotations
+    ] as boolean;
+    let isReplyAndMentionedNotificationsEnabled: boolean = settings[
+      courseNotificationSettingLabels.commentsAndMentioned
+    ] as boolean;
+    let isCourseUpdateNotificationsEnabled: boolean = settings[
+      courseNotificationSettingLabels.courseUpdates
+    ] as boolean;
+    let courseId = settings['courseId'];
+
+    let objToSend = {
+      isAnnotationNotificationsEnabled: isAnnotationNotificationsEnabled,
+      isReplyAndMentionedNotificationsEnabled:
+        isReplyAndMentionedNotificationsEnabled,
+      isCourseUpdateNotificationsEnabled: isCourseUpdateNotificationsEnabled,
+      courseId: courseId,
+    };
+    console.log(objToSend);
+    return this.httpClient.put<BlockingNotifications>(
+      `${environment.API_URL}/notifications/setCourseNotificationSettings`,
+      objToSend
+    );
+  }
+
+  unsetCourseNotificationSettings(settings: { courseId: string }) {
+    let courseId = settings['courseId'];
+    let objToSend = {
+      courseId: courseId,
+    };
+    console.log(objToSend);
+    return this.httpClient.put<BlockingNotifications>(
+      `${environment.API_URL}/notifications/unsetCourseNotificationSettings`,
+      objToSend
     );
   }
 

@@ -372,6 +372,51 @@ export const unsetMaterialNotificationSettings = createAction(
   }>()
 );
 
+export const setCourseNotificationSettings = createAction(
+  '[Notification] Set Course Notification Settings',
+  props<{
+    settings: {
+      courseId: string;
+      [key: string]: boolean | string;
+    };
+  }>()
+);
+
+export const setCourseNotificationSettingsSuccess = createAction(
+  '[Notification] Set Course Notification Settings Success',
+  props<{
+    updatedDoc: BlockingNotifications;
+  }>()
+);
+
+export const setCourseNotificationSettingsFailure = createAction(
+  '[Notification] Set Course Notification Settings Failure',
+  props<{
+    error: any;
+  }>()
+);
+
+export const unsetCourseNotificationSettings = createAction(
+  '[Notification] Unset Course Notification Settings',
+  props<{
+    settings: {
+      courseId: string;
+    };
+  }>()
+);
+
+export const unsetCourseNotificationSettingsSuccess = createAction(
+  '[Notification] Unset Course Notification Settings Success',
+  props<{
+    updatedDoc: BlockingNotifications;
+  }>()
+);
+
+export const unsetCourseNotificationSettingsFailure = createAction(
+  '[Notification] Unset Course Notification Settings Failure',
+  props<{ error: any }>()
+);
+
 export const unsetMaterialNotificationSettingsSuccess = createAction(
   '[Notification] Unset Material Notification Settings Success',
   props<{

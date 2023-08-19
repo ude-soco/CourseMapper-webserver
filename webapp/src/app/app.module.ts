@@ -69,6 +69,7 @@ export const metaReducers: MetaReducer[] = [hydrationMetaReducer];
 registerLocaleData(en);
 import { DividerModule } from 'primeng/divider';
 import { ContextMenuComponent } from './components/context-menu/context-menu.component';
+import { DynamicDialogModule } from 'primeng/dynamicdialog';
 
 @NgModule({
   declarations: [
@@ -98,6 +99,7 @@ import { ContextMenuComponent } from './components/context-menu/context-menu.com
     CourseWelcomeComponent,
   ],
   imports: [
+    DynamicDialogModule,
     MenuModule,
     BrowserModule,
     ContextMenuModule,
