@@ -138,6 +138,7 @@ export const getNotificationSettingsOfLastTopicMenuClicked = createSelector(
     const topic = state.topicsNotificationSettings.find(
       (topic) => topic.topicId === state.lastTopicMenuClickedId
     );
+    console.log(topic);
     const notificationSettings = [
       {
         label: topicNotificationSettingLabels.courseDefault,

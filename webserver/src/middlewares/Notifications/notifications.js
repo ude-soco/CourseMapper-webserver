@@ -661,6 +661,162 @@ export const getNotificationSettingsWithFollowingAnnotations = async (
     },
     {
       $lookup: {
+        from: "topics",
+        localField: "topics.topicId",
+        foreignField: "_id",
+        as: "fetchedTopics",
+      },
+    },
+    {
+      $addFields: {
+        fetchedTopics: {
+          $map: {
+            input: "$fetchedTopics",
+            // Replace with the actual field you're working with
+            as: "currentElement",
+            in: {
+              name: "$$currentElement.name",
+              _id: "$$currentElement._id",
+            },
+          },
+        },
+      },
+    },
+    {
+      $addFields: {
+        topics: {
+          $map: {
+            input: "$topics",
+            as: "currentElement",
+            in: {
+              $mergeObjects: [
+                "$$currentElement",
+                {
+                  $arrayElemAt: [
+                    "$fetchedTopics",
+                    {
+                      $indexOfArray: [
+                        "$fetchedTopics._id",
+                        "$$currentElement.topicId",
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        },
+      },
+    },
+    {
+      $unset: "fetchedTopics",
+    },
+    {
+      $lookup: {
+        from: "channels",
+        localField: "channels.channelId",
+        foreignField: "_id",
+        as: "fetchedChannels",
+      },
+    },
+    {
+      $addFields: {
+        fetchedChannels: {
+          $map: {
+            input: "$fetchedChannels",
+            // Replace with the actual field you're working with
+            as: "currentElement",
+            in: {
+              name: "$$currentElement.name",
+              _id: "$$currentElement._id",
+            },
+          },
+        },
+      },
+    },
+    {
+      $addFields: {
+        channels: {
+          $map: {
+            input: "$channels",
+            as: "currentElement",
+            in: {
+              $mergeObjects: [
+                "$$currentElement",
+                {
+                  $arrayElemAt: [
+                    "$fetchedChannels",
+                    {
+                      $indexOfArray: [
+                        "$fetchedChannels._id",
+                        "$$currentElement.channelId",
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        },
+      },
+    },
+    {
+      $unset: "fetchedChannels",
+    },
+    {
+      $lookup: {
+        from: "materials",
+        localField: "materials.materialId",
+        foreignField: "_id",
+        as: "fetchedMaterials",
+      },
+    },
+    {
+      $addFields: {
+        fetchedMaterials: {
+          $map: {
+            input: "$fetchedMaterials",
+            // Replace with the actual field you're working with
+            as: "currentElement",
+            in: {
+              name: "$$currentElement.name",
+              _id: "$$currentElement._id",
+            },
+          },
+        },
+      },
+    },
+    {
+      $addFields: {
+        materials: {
+          $map: {
+            input: "$materials",
+            as: "currentElement",
+            in: {
+              $mergeObjects: [
+                "$$currentElement",
+                {
+                  $arrayElemAt: [
+                    "$fetchedMaterials",
+                    {
+                      $indexOfArray: [
+                        "$fetchedMaterials._id",
+                        "$$currentElement.materialId",
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        },
+      },
+    },
+    {
+      $unset: "fetchedMaterials",
+    },
+    {
+      $lookup: {
         from: "followannotations",
         let: {
           uId: "$userId",
@@ -674,7 +830,6 @@ export const getNotificationSettingsWithFollowingAnnotations = async (
                   {
                     $eq: ["$$cId", "$courseId"],
                   },
-
                   {
                     $eq: ["$$uId", "$userId"],
                   },
@@ -683,7 +838,6 @@ export const getNotificationSettingsWithFollowingAnnotations = async (
             },
           },
         ],
-
         as: "result",
       },
     },
