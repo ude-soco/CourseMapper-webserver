@@ -1,7 +1,8 @@
 
-.override{
+.grid{
   display: grid;
-  grid-template-columns: 1fr 100px 100px 100px 100px; /* Responsive column takes up remaining space */
+  grid-template-columns: 1fr 200px 300px 200px;
+   /* Responsive column takes up remaining space */
   /* gap: 10px; */ /* Adjust the gap between columns as needed */
   margin-bottom: 1rem;
 }
@@ -37,8 +38,9 @@
 
 /* Style for the first responsive column */
 .column1 {
-  background-color: #f2f2f2;
   padding: 10px;
+  justify-self: center;
+  font-weight: bold;
 }
 
 /* Styles for the fixed-width columns */
@@ -46,8 +48,10 @@
 .column3,
 .column4,
 .column5 {
-  background-color: #e0e0e0;
   padding: 10px;
+  justify-self: center;
+  font-weight: bold;
+  text-transform: uppercase;
 }
 
 .checked{
@@ -62,4 +66,23 @@
   height: 22px;
   border: 2px solid black;
   border-radius: 5px;
+}
+
+
+
+.name{
+  justify-self: left;
+  padding: 0.5rem;
+}
+
+.override{
+  background-color:#f9f9f9;
+    border: 1px solid #00000014;
+    border-radius: 5px;
+}
+
+h2{
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+  font-weight: 500;
 }

@@ -26,18 +26,26 @@
     </div>
   </div>
 
+  <h2>NOTIFICATION OVERRIDES</h2>
   <div
     class="overrides-container"
     *ngIf="
       overriddenChannelTopicMaterialNotificationSettings | async as overrides
     "
   >
-    <div class="override-parent" *ngFor="let override of overrides">
-      <div class="override">
-        <ng-container *ngIf="override.type === 'topic'">
-          <div class="column1">{{ override.name }}</div>
+    <div class="grid">
+      <div class="column1">Topic</div>
+      <div class="column2">Course Updates</div>
+      <div class="column3">Comments & Mentioned</div>
+      <div class="column4">Annotations</div>
+    </div>
 
-          <p-button styleClass="contextMenuButton">
+    <div class="override-parent" *ngFor="let override of overrides">
+      <ng-container *ngIf="override.type === 'topic'">
+        <div class="grid override">
+          <div class="name">{{ override.name }}</div>
+
+          <p-button styleClass="checkbox-button">
             <div *ngIf="override.isCourseUpdateNotificationsEnabled">
               <app-svg-icon
                 [path]="'assets/checkbox-checked.svg'"
@@ -49,7 +57,7 @@
               <div class="unchecked"></div>
             </div>
           </p-button>
-          <p-button styleClass="contextMenuButton">
+          <p-button styleClass="checkbox-button">
             <div *ngIf="override.isReplyAndMentionedNotificationsEnabled">
               <app-svg-icon
                 [path]="'assets/checkbox-checked.svg'"
@@ -60,7 +68,7 @@
               <div class="unchecked"></div>
             </div>
           </p-button>
-          <p-button styleClass="contextMenuButton">
+          <p-button styleClass="checkbox-button">
             <div *ngIf="override.isAnnotationNotificationsEnabled">
               <app-svg-icon
                 [path]="'assets/checkbox-checked.svg'"
@@ -71,8 +79,9 @@
               <div class="unchecked"></div>
             </div>
           </p-button>
-        </ng-container>
-      </div>
+        </div>
+      </ng-container>
+
       <div class="overlay">
         <span class="close-icon">✕</span>
       </div>

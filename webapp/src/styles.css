@@ -81,3 +81,32 @@
   margin-right: 10px;
 }
 
+
+.checkbox-button.p-button:enabled:hover {
+  background: rgb(214 215 223 / 92%);
+  color: #090909;
+  border-color: transparent;
+}
+
+.checkbox-button.p-button {
+  color: #000000;
+  background: #f9f9f9;
+  border: 0 none;
+  font-size: 1rem;
+  border-radius: 4px;
+  width: 100%;
+  display: flex;
+    justify-content: center;
+}
+
+.checkbox-button.p-button:enabled:active {
+  background: rgb(214 215 223 / 92%);
+  color: #090909;
+  border-color: transparent;
+}
+
+.checkbox-button.p-button:enabled:focus {
+background: rgb(214 215 223 / 92%);
+color: #090909;
+border-color: transparent;
+}
