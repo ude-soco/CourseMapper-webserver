@@ -15,6 +15,12 @@ import {
   MaterialNotificationSettings,
   TopicNotificationSettings,
 } from 'src/app/models/BlockingNotification';
+
+import {
+  topicNotificationSettingLabels,
+  channelNotificationSettingLabels,
+  materialNotificationSettingLabels,
+} from 'src/app/models/Notification';
 @Component({
   selector: 'app-course-level-notification-settings',
   templateUrl: './course-level-notification-settings.component.html',
@@ -31,6 +37,9 @@ export class CourseLevelNotificationSettingsComponent implements OnInit {
       | TopicNotificationSettings
     )[]
   >;
+  topicNotificationSettingLabels = topicNotificationSettingLabels;
+  channelNotificationSettingLabels = channelNotificationSettingLabels;
+  materialNotificationSettingLabels = materialNotificationSettingLabels;
 
   constructor(private store: Store<State>, protected fb: FormBuilder) {}
 
@@ -71,7 +80,7 @@ export class CourseLevelNotificationSettingsComponent implements OnInit {
     console.log('reset button clicked!!');
   }
 
-  onSettingsClicked(notificationOption: {
+  onCourseSettingClicked(notificationOption: {
     label: string;
     control: FormControl<boolean>;
   }): void {
@@ -110,6 +119,152 @@ export class CourseLevelNotificationSettingsComponent implements OnInit {
 
       this.store.dispatch(
         CourseActions.setCourseNotificationSettings({ settings: objToSend })
+      );
+    });
+  }
+
+  onTopicSettingClicked(
+    notificationSettings: TopicNotificationSettings,
+    settingClicked: topicNotificationSettingLabels
+  ) {
+    console.log('topic setting clicked!!');
+    console.log('notificationSettings: ', notificationSettings);
+    console.log('settingClicked: ', settingClicked);
+    this.store.select(getCurrentCourseId).subscribe((courseId) => {
+      let objToSend = {
+        courseId,
+        topicId: notificationSettings.topicId,
+        [topicNotificationSettingLabels.annotations]:
+          settingClicked === topicNotificationSettingLabels.annotations
+            ? !notificationSettings['isAnnotationNotificationsEnabled']
+            : notificationSettings['isAnnotationNotificationsEnabled'],
+        [topicNotificationSettingLabels.commentsAndMentioned]:
+          settingClicked === topicNotificationSettingLabels.commentsAndMentioned
+            ? !notificationSettings['isReplyAndMentionedNotificationsEnabled']
+            : notificationSettings['isReplyAndMentionedNotificationsEnabled'],
+        [topicNotificationSettingLabels.topicUpdates]:
+          settingClicked === topicNotificationSettingLabels.topicUpdates
+            ? !notificationSettings['isCourseUpdateNotificationsEnabled']
+            : notificationSettings['isCourseUpdateNotificationsEnabled'],
+      };
+
+      this.store.dispatch(
+        CourseActions.setTopicNotificationSettings({ settings: objToSend })
+      );
+    });
+  }
+
+  onRemoveTopic(notificationOption: TopicNotificationSettings) {
+    console.log('remove topic clicked!!');
+    console.log('notificationOption: ', notificationOption);
+    this.store.select(getCurrentCourseId).subscribe((courseId) => {
+      let objToSend = {
+        courseId,
+        topicId: notificationOption.topicId,
+      };
+
+      this.store.dispatch(
+        CourseActions.unsetTopicNotificationSettings({
+          settings: objToSend,
+        })
+      );
+    });
+  }
+
+  onRemoveChannel(notificationOption: ChannelNotificationSettings) {
+    console.log('remove channel clicked!!');
+    console.log('notificationOption: ', notificationOption);
+    this.store.select(getCurrentCourseId).subscribe((courseId) => {
+      let objToSend = {
+        courseId,
+        channelId: notificationOption.channelId,
+      };
+
+      this.store.dispatch(
+        CourseActions.unsetChannelNotificationSettings({
+          settings: objToSend,
+        })
+      );
+    });
+  }
+
+  onRemoveMaterial(notificationOption: MaterialNotificationSettings) {
+    console.log('remove material clicked!!');
+    console.log('notificationOption: ', notificationOption);
+    this.store.select(getCurrentCourseId).subscribe((courseId) => {
+      let objToSend = {
+        courseId,
+        materialId: notificationOption.materialId,
+      };
+
+      this.store.dispatch(
+        CourseActions.unsetMaterialNotificationSettings({
+          settings: objToSend,
+        })
+      );
+    });
+  }
+
+  onChannelSettingClicked(
+    notificationSettings: ChannelNotificationSettings,
+    settingClicked: channelNotificationSettingLabels
+  ) {
+    console.log('channel setting clicked!!');
+    console.log('notificationSettings: ', notificationSettings);
+    console.log('settingClicked: ', settingClicked);
+    this.store.select(getCurrentCourseId).subscribe((courseId) => {
+      let objToSend = {
+        courseId,
+        channelId: notificationSettings.channelId,
+        [channelNotificationSettingLabels.annotations]:
+          settingClicked === channelNotificationSettingLabels.annotations
+            ? !notificationSettings['isAnnotationNotificationsEnabled']
+            : notificationSettings['isAnnotationNotificationsEnabled'],
+        [channelNotificationSettingLabels.commentsAndMentioned]:
+          settingClicked ===
+          channelNotificationSettingLabels.commentsAndMentioned
+            ? !notificationSettings['isReplyAndMentionedNotificationsEnabled']
+            : notificationSettings['isReplyAndMentionedNotificationsEnabled'],
+        [channelNotificationSettingLabels.channelUpdates]:
+          settingClicked === channelNotificationSettingLabels.channelUpdates
+            ? !notificationSettings['isCourseUpdateNotificationsEnabled']
+            : notificationSettings['isCourseUpdateNotificationsEnabled'],
+      };
+
+      this.store.dispatch(
+        CourseActions.setChannelNotificationSettings({ settings: objToSend })
+      );
+    });
+  }
+
+  onMaterialSettingClicked(
+    notificationSettings: MaterialNotificationSettings,
+    settingClicked: materialNotificationSettingLabels
+  ) {
+    console.log('material setting clicked!!');
+    console.log('notificationSettings: ', notificationSettings);
+    console.log('settingClicked: ', settingClicked);
+    this.store.select(getCurrentCourseId).subscribe((courseId) => {
+      let objToSend = {
+        courseId,
+        materialId: notificationSettings.materialId,
+        [materialNotificationSettingLabels.annotations]:
+          settingClicked === materialNotificationSettingLabels.annotations
+            ? !notificationSettings['isAnnotationNotificationsEnabled']
+            : notificationSettings['isAnnotationNotificationsEnabled'],
+        [materialNotificationSettingLabels.commentsAndMentioned]:
+          settingClicked ===
+          materialNotificationSettingLabels.commentsAndMentioned
+            ? !notificationSettings['isReplyAndMentionedNotificationsEnabled']
+            : notificationSettings['isReplyAndMentionedNotificationsEnabled'],
+        [materialNotificationSettingLabels.materialUpdates]:
+          settingClicked === materialNotificationSettingLabels.materialUpdates
+            ? !notificationSettings['isCourseUpdateNotificationsEnabled']
+            : notificationSettings['isCourseUpdateNotificationsEnabled'],
+      };
+
+      this.store.dispatch(
+        CourseActions.setMaterialNotificationSettings({ settings: objToSend })
       );
     });
   }

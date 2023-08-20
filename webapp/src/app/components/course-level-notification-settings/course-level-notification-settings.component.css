@@ -68,11 +68,10 @@
   border-radius: 5px;
 }
 
-
-
 .name{
   justify-self: left;
   padding: 0.5rem;
+  cursor: default;
 }
 
 .override{
