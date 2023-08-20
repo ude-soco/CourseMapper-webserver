@@ -307,6 +307,43 @@ export const getFollowStatusOfAnnotationsOfSelectedChannel = createSelector(
   }
 );
 
+export const getOverriddenChannelsMaterialsTopics = createSelector(
+  getCourseFeatureState,
+  (state) => {
+    //for all the channels, topics and materials, check if they are overridden or not
+    //if the are overridden, push that object to an array. in the end return that array
+    const overriddenChannelsMaterialsTopics = [];
+    if (state.channelsNotificationSettings) {
+      state.channelsNotificationSettings.forEach((channel) => {
+        if (channel.isChannelLevelOverride) {
+          overriddenChannelsMaterialsTopics.push({
+            ...channel,
+            type: 'channel',
+          });
+        }
+      });
+    }
+    if (state.topicsNotificationSettings) {
+      state.topicsNotificationSettings.forEach((topic) => {
+        if (topic.isTopicLevelOverride) {
+          overriddenChannelsMaterialsTopics.push({ ...topic, type: 'topic' });
+        }
+      });
+    }
+    if (state.materialsNotificationSettings) {
+      state.materialsNotificationSettings.forEach((material) => {
+        if (material.isMaterialLevelOverride) {
+          overriddenChannelsMaterialsTopics.push({
+            ...material,
+            type: 'material',
+          });
+        }
+      });
+    }
+    return overriddenChannelsMaterialsTopics;
+  }
+);
+
 export const courseReducer = createReducer<CourseState>(
   initialState,
   on(CourseAction.setCurrentCourse, (state, action): CourseState => {

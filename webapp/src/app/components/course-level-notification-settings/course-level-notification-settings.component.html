@@ -25,4 +25,57 @@
       </p-button>
     </div>
   </div>
+
+  <div
+    class="overrides-container"
+    *ngIf="
+      overriddenChannelTopicMaterialNotificationSettings | async as overrides
+    "
+  >
+    <div class="override-parent" *ngFor="let override of overrides">
+      <div class="override">
+        <ng-container *ngIf="override.type === 'topic'">
+          <div class="column1">{{ override.name }}</div>
+
+          <p-button styleClass="contextMenuButton">
+            <div *ngIf="override.isCourseUpdateNotificationsEnabled">
+              <app-svg-icon
+                [path]="'assets/checkbox-checked.svg'"
+                class="checked"
+              ></app-svg-icon>
+            </div>
+            <div *ngIf="!override.isCourseUpdateNotificationsEnabled">
+              <!-- make a div with a 2px black border and height and width 25px -->
+              <div class="unchecked"></div>
+            </div>
+          </p-button>
+          <p-button styleClass="contextMenuButton">
+            <div *ngIf="override.isReplyAndMentionedNotificationsEnabled">
+              <app-svg-icon
+                [path]="'assets/checkbox-checked.svg'"
+                class="checked"
+              ></app-svg-icon>
+            </div>
+            <div *ngIf="!override.isReplyAndMentionedNotificationsEnabled">
+              <div class="unchecked"></div>
+            </div>
+          </p-button>
+          <p-button styleClass="contextMenuButton">
+            <div *ngIf="override.isAnnotationNotificationsEnabled">
+              <app-svg-icon
+                [path]="'assets/checkbox-checked.svg'"
+                class="checked"
+              ></app-svg-icon>
+            </div>
+            <div *ngIf="!override.isAnnotationNotificationsEnabled">
+              <div class="unchecked"></div>
+            </div>
+          </p-button>
+        </ng-container>
+      </div>
+      <div class="overlay">
+        <span class="close-icon">✕</span>
+      </div>
+    </div>
+  </div>
 </div>

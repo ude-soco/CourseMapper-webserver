@@ -17,6 +17,8 @@ export interface TopicNotificationSettings {
   isCourseUpdateNotificationsEnabled: boolean;
   isTopicLevelOverride: boolean;
   _id: string;
+  name: string;
+  type?: string;
 }
 
 export interface ChannelNotificationSettings {
@@ -29,12 +31,15 @@ export interface ChannelNotificationSettings {
   isChannelLevelOverride: boolean;
   isTopicLevelOverride: boolean;
   _id: string;
+  name: string;
+  type?: string;
 }
 
 export interface MaterialNotificationSettings {
   materialId: string;
   topicId: string;
   channelId: string;
+  name: string;
   isAnnotationNotificationsEnabled: boolean;
   isReplyAndMentionedNotificationsEnabled: boolean;
   isCourseUpdateNotificationsEnabled: boolean;
@@ -42,6 +47,7 @@ export interface MaterialNotificationSettings {
   isChannelLevelOverride: boolean;
   isTopicLevelOverride: boolean;
   _id: string;
+  type?: string;
 }
 
 export interface Annotation {
@@ -52,6 +58,7 @@ export interface Annotation {
   topicId: string;
   channelId: string;
   courseId: string;
+
   userId: string;
   isFollowing: boolean;
   _id: string;

@@ -5,9 +5,16 @@ import { Store } from '@ngrx/store';
 import {
   getNotificationSettingsOfCurrentCourse,
   getCurrentCourseId,
+  getOverriddenChannelsMaterialsTopics,
 } from 'src/app/pages/courses/state/course.reducer';
 import { courseNotificationSettingLabels } from 'src/app/models/Notification';
 import * as CourseActions from 'src/app/pages/courses/state/course.actions';
+import { Observable, tap } from 'rxjs';
+import {
+  ChannelNotificationSettings,
+  MaterialNotificationSettings,
+  TopicNotificationSettings,
+} from 'src/app/models/BlockingNotification';
 @Component({
   selector: 'app-course-level-notification-settings',
   templateUrl: './course-level-notification-settings.component.html',
@@ -17,6 +24,13 @@ export class CourseLevelNotificationSettingsComponent implements OnInit {
   checkBoxesGroup = this.fb.group({});
   checkBoxesArray: { label: string; control: FormControl<boolean> }[] = [];
   isResetCourseNotificationsButtonEnabled: boolean;
+  overriddenChannelTopicMaterialNotificationSettings: Observable<
+    (
+      | MaterialNotificationSettings
+      | ChannelNotificationSettings
+      | TopicNotificationSettings
+    )[]
+  >;
 
   constructor(private store: Store<State>, protected fb: FormBuilder) {}
 
@@ -40,6 +54,17 @@ export class CourseLevelNotificationSettingsComponent implements OnInit {
           this.checkBoxesGroup.addControl(o.label, control);
         });
       });
+
+    this.overriddenChannelTopicMaterialNotificationSettings = this.store
+      .select(getOverriddenChannelsMaterialsTopics)
+      .pipe(
+        tap((o) => {
+          console.log(
+            'overriddenChannelTopicMaterialNotificationSettings: ',
+            o
+          );
+        })
+      );
   }
 
   onResetButtonClicked() {
