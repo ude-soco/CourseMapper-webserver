@@ -2,3 +2,7 @@
   padding: 0;
   width: 740px;
 }
+
+:host ::ng-deep .p-badge{
+  background: #ea580c;
+}

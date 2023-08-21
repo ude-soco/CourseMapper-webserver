@@ -21,8 +21,7 @@ import { SwitchInputComponent } from './switch-input/switch-input.component';
 import { CheckboxModule } from 'primeng/checkbox';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedComponentsModule } from 'src/app/components/shared-components.module';
-
-import { CourseLevelNotificationSettingsComponent } from '../../../components/course-level-notification-settings/course-level-notification-settings.component';
+import { BadgeModule } from 'primeng/badge';
 
 @NgModule({
   declarations: [
@@ -36,6 +35,7 @@ import { CourseLevelNotificationSettingsComponent } from '../../../components/co
     SwitchInputComponent,
   ],
   imports: [
+    BadgeModule,
     InputSwitchModule,
     CommonModule,
     PrimengModule,
