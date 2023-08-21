@@ -14,7 +14,7 @@ import { CustomDatePipe } from 'src/app/pipes/date.pipe';
 import { BaseNotificationDashboardComponent } from './base-notification-dashboard/base-notification-dashboard.component';
 import { AllNotificationsComponent } from './all-notifications/all-notifications.component';
 import { AppModule } from 'src/app/app.module';
-import { SidebarComponent } from '../sidebar/sidebar.component';
+import { SidebarComponent } from '../../../components/sidebar/sidebar.component';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { TabMenuComponent } from './tab-menu/tab-menu.component';
 import { SwitchInputComponent } from './switch-input/switch-input.component';

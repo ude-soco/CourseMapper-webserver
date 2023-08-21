@@ -1,112 +1,6 @@
-<!-- <div>
-  <div class="filter-container">
-    <span class="p-float-label">
-      <p-multiSelect [options]="courses" [(ngModel)]="selectedCourses">
-        <ng-template pTemplate="filtericon"> </ng-template>
-      </p-multiSelect>
-      <label for="ms-cities">Filter by Courses</label>
-    </span>
-
-    <span class="p-float-label">
-      <p-multiSelect
-        [options]="categories"
-        [(ngModel)]="selectedCategory"
-        optionLabel="label"
-        (onChange)="onFiltersModified($event)"
-      >
-        <ng-template pTemplate="filtericon"> </ng-template>
-      </p-multiSelect>
-      <label for="ms-cities">Filter by Type</label>
-    </span>
-
-         <span class="p-float-label">
-      <p-dropdown
-        [options]="numberOptions"
-        [(ngModel)]="selectedNumber"
-      ></p-dropdown>
-      <label for="ms-cities"># per Category</label>
-    </span>
-
-    <span class="p-input-icon-left p-float-label">
-      <i class="pi pi-search"></i>
-      <input type="text" pInputText [(ngModel)]="value" />
-      <label htmlFor="search">Search</label>
-    </span>
-  </div>
-
-  <div class="main-container">
-    <div
-      class="type-container"
-      *ngIf="isCourseUpdatesNotificationsVisible$ | async"
-    >
-      <h2>Course updates</h2>
-      <div
-        class="notifications-container"
-        *ngIf="courseUpdatesNotifications$ | async as notifications"
-      >
-        <app-notification-box
-          *ngFor="let notification of notifications"
-          [notification]="notification"
-          (click)="onNotificationClicked(notification)"
-        ></app-notification-box>
-      </div>
-    </div>
-    <div
-      class="type-container"
-      *ngIf="isCommentsAndMentionedNotificationsVisible$ | async"
-    >
-      <h2>Comments and Mentioned</h2>
-      <div
-        class="notifications-container"
-        *ngIf="commentsAndMentionedNotifications$ | async as notifications"
-      >
-        <app-notification-box
-          *ngFor="let notification of notifications"
-          [notification]="notification"
-          (click)="onNotificationClicked(notification)"
-        ></app-notification-box>
-      </div>
-    </div>
-    <div
-      class="type-container"
-      *ngIf="isAnnotationsNotificationsVisible$ | async"
-    >
-      <h2>Annotations</h2>
-      <div
-        class="notifications-container"
-        *ngIf="annotationsNotifications$ | async as notifications"
-      >
-        <app-notification-box
-          *ngFor="let notification of notifications"
-          [notification]="notification"
-          (click)="onNotificationClicked(notification)"
-        ></app-notification-box>
-      </div>
-    </div>
-    <div
-      class="type-container"
-      *ngIf="
-        !(isCourseUpdatesNotificationsVisible$ | async) &&
-        !(isCommentsAndMentionedNotificationsVisible$ | async) &&
-        !(isAnnotationsNotificationsVisible$ | async)
-      "
-    >
-      <h2>
-        No Notifications to show. Please choose atleast one category from above!
-      </h2>
-    </div>
-  </div>
-</div> -->
-
-<!-- <app-tab-menu
-  [tabOptions]="tabOptions"
-  [activeItem]="activeItem"
-  (onTabChange)="onTabSwitched($event)"
-  [menuOptions]="menuOptions"
-  #menu
->
-</app-tab-menu>
- -->
+<div class="sidebar-container">
+  <app-sidebar></app-sidebar>
+</div>
 
 <app-tab-menu
   [tabOptions]="tabOptions"
@@ -139,11 +33,6 @@
             ></app-switch-input>
             <span class="ml-4">Unread only</span>
           </div>
-          <span
-            routerLink="notification/all"
-            class="text-blue-600 hover:underline cursor-pointer"
-            >See all</span
-          >
         </div>
         <ng-container [formGroup]="checkBoxesGroup">
           <ng-container *ngFor="let notification of notifications">

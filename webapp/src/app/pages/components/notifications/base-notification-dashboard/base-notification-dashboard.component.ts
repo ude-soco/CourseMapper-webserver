@@ -80,7 +80,7 @@ export class BaseNotificationDashboardComponent {
     this.tabOptions = [
       { label: 'All', badge: '0' },
       { label: 'Course Updates', badge: '0' },
-      { label: 'Comments & Mentioned', badge: '0' },
+      { label: 'Comments & Mentions', badge: '0' },
       { label: 'Annotations', badge: '0' },
     ];
 
@@ -212,7 +212,7 @@ export class BaseNotificationDashboardComponent {
           tab: NotificationCategory.CourseUpdate,
         })
       );
-    } else if (selectedItem.label === 'Comments & Mentioned') {
+    } else if (selectedItem.label === 'Comments & Mentions') {
       this.store.dispatch(
         NotificationActions.tabSwitched({
           tab: NotificationCategory.CommentsAndMentioned,

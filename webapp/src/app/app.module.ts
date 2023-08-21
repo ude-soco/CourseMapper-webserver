@@ -40,14 +40,14 @@ import { AppComponent } from './app.component';
 import { TopicDropdownComponent } from './pages/components/topic-dropdown/topic-dropdown.component';
 import { DashboardComponent } from './pages/components/dashboard/dashboard.component';
 import { RegistrationComponent } from './pages/components/registration/registration.component';
-import { SidebarComponent } from './pages/components/sidebar/sidebar.component';
+import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { NavbarComponent } from './pages/components/navbar/navbar.component';
 import { ChannelbarComponent } from './pages/components/channelbar/channelbar.component';
 import { CoursesComponent } from './pages/courses/courses.component';
 import { EditorComponent } from './pages/components/editor/editor.component';
 import { LoginComponent } from './pages/components/login/login.component';
 import { HomeComponent } from './pages/home/home.component';
-import { AddCourseComponent } from './pages/components/add-course/add-course.component';
+import { AddCourseComponent } from './components/add-course/add-course.component';
 import { AddTopicComponent } from './pages/components/add-topic/add-topic.component';
 import { AddChannelComponent } from './pages/components/add-channel/add-channel.component';
 import { LandingPageComponent } from './pages/landing-page/landing-page.component';
@@ -73,12 +73,10 @@ import { DynamicDialogModule } from 'primeng/dynamicdialog';
 
 @NgModule({
   declarations: [
-    SidebarComponent,
     AppComponent,
     NavbarComponent,
     ChannelbarComponent,
     CoursesComponent,
-    AddCourseComponent,
     AddTopicComponent,
     AddChannelComponent,
     TopicDropdownComponent,
@@ -137,7 +135,7 @@ import { DynamicDialogModule } from 'primeng/dynamicdialog';
     TabMenuModule,
     DividerModule,
   ],
-  exports: [SidebarComponent],
+  exports: [],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent],
 })

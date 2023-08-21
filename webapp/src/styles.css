@@ -110,3 +110,12 @@ background: rgb(214 215 223 / 92%);
 color: #090909;
 border-color: transparent;
 }
+
+.p-overlaypanel.notifications-dashboard .p-overlaypanel-content {
+  padding: 0;
+  width: 740px;
+  width: 65vw;
+  height: 80vh;
+  overflow-x: hidden;
+    overflow-y: scroll;
+}

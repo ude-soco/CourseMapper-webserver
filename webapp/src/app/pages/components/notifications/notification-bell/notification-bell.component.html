@@ -8,7 +8,7 @@
   (click)="toggleNotificationPanel($event, notificationPanel)"
 ></i>
 
-<p-overlayPanel #notificationPanel>
+<p-overlayPanel styleClass="notifications-dashboard" #notificationPanel>
   <ng-template pTemplate="content">
     <app-notification-dashboard></app-notification-dashboard>
   </ng-template>

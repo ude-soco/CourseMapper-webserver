@@ -76,3 +76,9 @@ h2{
 .container{
   max-width: 740px;
 }
+
+.sidebar-container{
+  position: absolute;
+  left: 0;
+  height: 100%;
+}

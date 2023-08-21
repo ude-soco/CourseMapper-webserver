@@ -8,6 +8,8 @@ import { ContextMenuComponent } from 'src/app/components/context-menu/context-me
 import { PrimengModule } from '../modules/primeng/primeng.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CourseLevelNotificationSettingsComponent } from './course-level-notification-settings/course-level-notification-settings.component';
+import { SidebarComponent } from './sidebar/sidebar.component';
+import { AddCourseComponent } from './add-course/add-course.component';
 
 @NgModule({
   declarations: [
@@ -17,6 +19,8 @@ import { CourseLevelNotificationSettingsComponent } from './course-level-notific
     SvgIconComponent,
     ContextMenuComponent,
     CourseLevelNotificationSettingsComponent,
+    SidebarComponent,
+    AddCourseComponent,
   ],
   imports: [CommonModule, PrimengModule, ReactiveFormsModule],
   exports: [
@@ -25,6 +29,8 @@ import { CourseLevelNotificationSettingsComponent } from './course-level-notific
     AvatarComponent,
     SvgIconComponent,
     ContextMenuComponent,
+    SidebarComponent,
+    AddCourseComponent,
   ],
 })
 export class SharedComponentsModule {}
