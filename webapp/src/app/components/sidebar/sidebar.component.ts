@@ -40,9 +40,12 @@ export class SidebarComponent implements OnInit {
   }
 
   getCourses() {
-    this.courseService
-      .fetchCourses()
-      .subscribe((courses) => (this.courses = courses));
+    this.courseService.fetchCourses().subscribe((courses) => {
+      this.courses = courses;
+      this.store.dispatch(
+        AppActions.setSubscribedCourses({ subscribedCourses: courses })
+      );
+    });
 
     this.courseService.onUpdateCourses$.subscribe(
       (courses) => (this.courses = courses)

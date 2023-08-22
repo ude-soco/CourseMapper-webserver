@@ -10,6 +10,20 @@
   #menu
 >
 </app-tab-menu>
+<div>
+  <app-switch-input
+    [isChecked]="isUnreadChecked"
+    (onSwitchToggled)="unreadSwitchToggled($event)"
+  ></app-switch-input>
+  <span class="ml-4">Unread only</span>
+</div>
+<p-multiSelect
+  [options]="courseOptions"
+  [(ngModel)]="selectedCourses"
+  optionLabel="name"
+  optionValue="id"
+  (onChange)="onCourseFilterChanged($event)"
+></p-multiSelect>
 
 <div>
   <ng-container *ngIf="loading$ | async; else notificationsArrived">
@@ -27,11 +41,6 @@
               [binary]="true"
               checked
             ></p-checkbox>
-            <app-switch-input
-              [isChecked]="isUnreadChecked"
-              (onSwitchToggled)="unreadSwitchToggled($event)"
-            ></app-switch-input>
-            <span class="ml-4">Unread only</span>
           </div>
         </div>
         <ng-container [formGroup]="checkBoxesGroup">

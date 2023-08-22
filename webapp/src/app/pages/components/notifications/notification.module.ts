@@ -22,7 +22,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedComponentsModule } from 'src/app/components/shared-components.module';
 import { BadgeModule } from 'primeng/badge';
-
+import { MultiSelectModule } from 'primeng/multiselect';
 @NgModule({
   declarations: [
     NotificationBellComponent,
@@ -46,6 +46,7 @@ import { BadgeModule } from 'primeng/badge';
     EffectsModule.forFeature([NotificationEffects]),
     ReactiveFormsModule,
     SharedComponentsModule,
+    MultiSelectModule,
   ],
   exports: [NotificationBellComponent],
 })
