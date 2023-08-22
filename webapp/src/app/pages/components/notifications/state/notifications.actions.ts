@@ -94,3 +94,8 @@ export const unstarNotificationsFailure = createAction(
   '[Notification] Notifications Unstarred Failure',
   props<{ error: any; notifications: string[] }>()
 );
+
+export const setSearchTerm = createAction(
+  '[Notification] Set Search Term',
+  props<{ searchTerm: string }>()
+);

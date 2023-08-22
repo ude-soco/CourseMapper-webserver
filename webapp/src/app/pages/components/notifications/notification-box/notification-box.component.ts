@@ -4,7 +4,7 @@ import { NotificationsService } from 'src/app/services/notifications.service';
 import { Notification } from 'src/app/models/Notification';
 import { MenuItem } from 'primeng/api';
 import { Store } from '@ngrx/store';
-import { State } from '../state/notifications.reducer';
+import { State, getSearchedTerm } from '../state/notifications.reducer';
 import * as NotificationActions from '../state/notifications.actions';
 
 @Component({
@@ -18,6 +18,7 @@ export class NotificationBoxComponent {
   readNotificationMenuOptions: MenuItem[];
   unreadNotificationMenuOptions: MenuItem[];
   defaultNotificationMenuOptions: MenuItem[];
+  searchTerm: Observable<string>;
 
   /*  $notificationList: Observable<Notification[]> | undefined; */
   constructor(
@@ -78,6 +79,8 @@ export class NotificationBoxComponent {
 
       ...this.defaultNotificationMenuOptions,
     ];
+
+    this.searchTerm = this.store.select(getSearchedTerm);
   }
 
   get menuOptions() {

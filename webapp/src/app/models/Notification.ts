@@ -92,6 +92,7 @@ export interface Notification {
   channel_id?: string;
   material_id?: string;
   materialType?: string;
+  extraMessage?: string;
 }
 
 export enum NotificationCategory {

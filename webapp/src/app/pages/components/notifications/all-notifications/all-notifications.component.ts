@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, Renderer2 } from '@angular/core';
 import { BaseNotificationDashboardComponent } from '../base-notification-dashboard/base-notification-dashboard.component';
 import { Store } from '@ngrx/store';
 
@@ -96,6 +96,8 @@ export class AllNotificationsComponent {
   protected unreadSwitch$ = this.unreadSwitchBehaviourSubject.asObservable();
   protected starredBehaviourSubject = new BehaviorSubject<boolean>(false);
   protected starred$ = this.starredBehaviourSubject.asObservable();
+  protected searchInputBehaviorSubject = new BehaviorSubject<string>('');
+  protected searchInput$ = this.searchInputBehaviorSubject.asObservable();
 
   protected tabBehaviourSubject = new BehaviorSubject<string>(
     NotificationCategory.All
@@ -124,12 +126,16 @@ export class AllNotificationsComponent {
   notificationsFilteredByCourseAndTabAndUnreadAndStarred$: Observable<
     Notification[]
   >;
+  protected _searchValue: string = '';
+  notificationsFilteredByCourseAndSearchTerm$: Observable<Notification[]>;
   constructor(
     protected store: Store<State>,
     protected router: Router,
     protected courseService: CourseService,
     protected fb: FormBuilder,
-    private httpClient: HttpClient
+    private httpClient: HttpClient,
+    private el: ElementRef,
+    private renderer: Renderer2
   ) {
     /* super(store, router, courseService, fb); // Invoke the superclass constructor */
   }
@@ -201,8 +207,24 @@ export class AllNotificationsComponent {
       })
     );
 
-    this.notificationsFilteredByCourseAndTab$ = combineLatest([
+    this.notificationsFilteredByCourseAndSearchTerm$ = combineLatest([
       this.notificationsFilteredByCourse$,
+      this.searchInput$,
+    ]).pipe(
+      map(([notifications, searchTerm]) => {
+        if (searchTerm === '') {
+          return notifications;
+        }
+        return notifications.filter((notification) =>
+          notification.extraMessage
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase())
+        );
+      })
+    );
+
+    this.notificationsFilteredByCourseAndTab$ = combineLatest([
+      this.notificationsFilteredByCourseAndSearchTerm$,
       this.tab$,
     ]).pipe(
       map(([notifications, tab]) => {
@@ -258,7 +280,6 @@ export class AllNotificationsComponent {
             this.checkBoxesGroup.addControl(notification._id, control);
           }
         });
-        console.log('forEach is over');
       }
     });
 
@@ -350,6 +371,20 @@ export class AllNotificationsComponent {
     console.log('filter updated');
     console.log($event.value);
     this.courseFilterUpdatedBehaviorSubject.next($event.value);
+  }
+
+  get searchValue() {
+    return this._searchValue;
+  }
+
+  set searchValue(value: string) {
+    this._searchValue = value;
+    console.log('search value changed');
+    console.log(value);
+    this.searchInputBehaviorSubject.next(value);
+    this.store.dispatch(
+      NotificationActions.setSearchTerm({ searchTerm: value })
+    );
   }
 
   protected unreadSwitchToggled($event) {
@@ -528,7 +563,44 @@ export class AllNotificationsComponent {
     }
   }
 
-  /*   onFiltersModified($event: any) {
+  /*   ngAfterViewChecked() {
+    const element = this.el.nativeElement;
+    console.log('view checked!');
+    const spans = element.querySelectorAll('.notification-message');
+    spans.forEach((span) => {
+      this.renderer.addClass(span, 'highlight');
+    }); */
+  /*   ngAfterViewChecked() {
+    const element = this.el.nativeElement;
+    const searchValue = this.searchValue.toLowerCase(); // Convert to lowercase for case-insensitive matching
+
+    const spans = element.querySelectorAll('.notification-message');
+    spans.forEach((span) => {
+      const originalText = span.innerHTML; // Get the original text content of the span
+      // Break up the text into words
+      const words = originalText.split(' ');
+
+      // Check if the search value is present for any word in the words array, if it is, the part of the word that matches the search value will be highlighted, else the whole word remains unhighlighted.
+      const highlightedWords = words.map((word) => {
+        if (word.toLowerCase().includes(searchValue)) {
+          // Highlight the word while keeping the original casing
+          return word.replace(
+            new RegExp(searchValue, 'gi'),
+            `<span class="highlight">$&</span>`
+          );
+        } else {
+          return word;
+        }
+      });
+
+      // Now the elements in the highlightedWords array are either highlighted or not highlighted, so we need to join them back to form a string
+      const highlightedText = highlightedWords.join(' ');
+      span.innerHTML = highlightedText;
+    });
+  } */
+}
+
+/*   onFiltersModified($event: any) {
     console.log($event);
     this.categories.forEach((category) => {
       const found = $event.value.find(
@@ -557,4 +629,3 @@ export class AllNotificationsComponent {
       }
     });
   } */
-}

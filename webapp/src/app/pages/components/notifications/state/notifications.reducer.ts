@@ -20,6 +20,7 @@ export interface NotificationState {
   currentlySelectedTab: NotificationCategory;
   isNavigatingToNotificationContextThroughCourseComponent: boolean;
   notificationToNavigateTo: Notification;
+  searchTerm?: string;
 }
 
 const initialState: NotificationState = {
@@ -27,11 +28,18 @@ const initialState: NotificationState = {
   currentlySelectedTab: NotificationCategory.All,
   isNavigatingToNotificationContextThroughCourseComponent: false,
   notificationToNavigateTo: null,
+  searchTerm: '',
 };
 
 //selectors
+
 const getNotificationFeatureState =
   createFeatureSelector<NotificationState>('notifications');
+
+export const getSearchedTerm = createSelector(
+  getNotificationFeatureState,
+  (state) => state.searchTerm
+);
 
 export const getNotifications = createSelector(
   getNotificationFeatureState,

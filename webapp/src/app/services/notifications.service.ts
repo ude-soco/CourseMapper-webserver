@@ -390,6 +390,7 @@ export class NotificationsService {
         material_id,
       }),
       _id: notification._id,
+      extraMessage: `${notification.activityId.notificationInfo.userShortname} ${notification.activityId.statement.verb.display['en-US']} ${lastWord} ${notification.activityId.statement.object.definition.name['en-US']} in ${notification.activityId.notificationInfo.courseName}`,
     };
   }
 }

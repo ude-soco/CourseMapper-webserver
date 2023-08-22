@@ -23,6 +23,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedComponentsModule } from 'src/app/components/shared-components.module';
 import { BadgeModule } from 'primeng/badge';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { HighlightPipe } from 'src/app/pipes/highlight.pipe';
 @NgModule({
   declarations: [
     NotificationBellComponent,
@@ -33,6 +34,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
     AllNotificationsComponent,
     TabMenuComponent,
     SwitchInputComponent,
+    HighlightPipe,
   ],
   imports: [
     BadgeModule,

@@ -35,7 +35,7 @@
         shape="circle"
       ></p-avatar>
       <div class="notification-message-container">
-        <span
+        <!--         <span
           [ngClass]="{
             'userName-unread': !notification.isRead,
             'userName-read': notification.isRead
@@ -62,7 +62,17 @@
             'msg-location-read': notification.isRead
           }"
           >{{ notification.courseName }}</span
+        > -->
+        <span
+          class="notification-message"
+          [ngClass]="{
+            'userName-unread': !notification.isRead,
+            'userName-read': notification.isRead
+          }"
         >
+          {{ notification.extraMessage }}
+        </span>
+
         <div class="time">{{ notification.timestamp | customDate }}</div>
       </div>
       <!-- TODO Insert date below -->
