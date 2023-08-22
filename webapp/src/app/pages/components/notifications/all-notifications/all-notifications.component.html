@@ -10,20 +10,30 @@
   #menu
 >
 </app-tab-menu>
-<div>
-  <app-switch-input
-    [isChecked]="isUnreadChecked"
-    (onSwitchToggled)="unreadSwitchToggled($event)"
-  ></app-switch-input>
-  <span class="ml-4">Unread only</span>
+
+<div class="flex justify-between">
+  <div>
+    <app-switch-input
+      [isChecked]="isStarredChecked"
+      (onSwitchToggled)="starredSwitchToggled($event)"
+    ></app-switch-input>
+    <span class="ml-4">Starred only</span>
+  </div>
+  <div>
+    <app-switch-input
+      [isChecked]="isUnreadChecked"
+      (onSwitchToggled)="unreadSwitchToggled($event)"
+    ></app-switch-input>
+    <span class="ml-4">Unread only</span>
+  </div>
+  <p-multiSelect
+    [options]="courseOptions"
+    [(ngModel)]="selectedCourses"
+    optionLabel="name"
+    optionValue="id"
+    (onChange)="onCourseFilterChanged($event)"
+  ></p-multiSelect>
 </div>
-<p-multiSelect
-  [options]="courseOptions"
-  [(ngModel)]="selectedCourses"
-  optionLabel="name"
-  optionValue="id"
-  (onChange)="onCourseFilterChanged($event)"
-></p-multiSelect>
 
 <div>
   <ng-container *ngIf="loading$ | async; else notificationsArrived">

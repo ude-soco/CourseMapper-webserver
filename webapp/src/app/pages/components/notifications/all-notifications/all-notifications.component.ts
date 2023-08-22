@@ -88,11 +88,15 @@ export class AllNotificationsComponent {
   protected tabOptions: MenuItem[];
   protected menuOptions: MenuItem[];
   protected isUnreadChecked = false;
+  protected isStarredChecked = false;
   protected activeItem: MenuItem;
   protected checkBoxesGroup = this.fb.group({});
   protected masterCheckBox = new FormControl(false);
   protected unreadSwitchBehaviourSubject = new BehaviorSubject<boolean>(false);
   protected unreadSwitch$ = this.unreadSwitchBehaviourSubject.asObservable();
+  protected starredBehaviourSubject = new BehaviorSubject<boolean>(false);
+  protected starred$ = this.starredBehaviourSubject.asObservable();
+
   protected tabBehaviourSubject = new BehaviorSubject<string>(
     NotificationCategory.All
   );
@@ -117,6 +121,9 @@ export class AllNotificationsComponent {
   >;
   public notifications$: Observable<Notification[]>;
   public loading$: Observable<boolean>;
+  notificationsFilteredByCourseAndTabAndUnreadAndStarred$: Observable<
+    Notification[]
+  >;
   constructor(
     protected store: Store<State>,
     protected router: Router,
@@ -220,7 +227,21 @@ export class AllNotificationsComponent {
       })
     );
 
-    this.notifications$ = this.notificationsFilteredByCourseAndTabAndUnread$;
+    this.notificationsFilteredByCourseAndTabAndUnreadAndStarred$ =
+      combineLatest([
+        this.notificationsFilteredByCourseAndTabAndUnread$,
+        this.starred$,
+      ]).pipe(
+        map(([notifications, starred]) => {
+          if (starred) {
+            return notifications.filter((notification) => notification.isStar);
+          }
+          return notifications;
+        })
+      );
+
+    this.notifications$ =
+      this.notificationsFilteredByCourseAndTabAndUnreadAndStarred$;
     this.loading$ = this.notifications$.pipe(
       map((notifications) => (notifications === null ? true : false))
     );
@@ -334,8 +355,16 @@ export class AllNotificationsComponent {
   protected unreadSwitchToggled($event) {
     console.log('unread switch toggled');
     console.log($event);
+    //$event contains either the value true or false
     this.isUnreadChecked = $event;
     this.unreadSwitchBehaviourSubject.next($event);
+  }
+
+  protected starredSwitchToggled($event) {
+    console.log('starred switch toggled');
+    console.log($event);
+    this.isStarredChecked = $event;
+    this.starredBehaviourSubject.next($event);
   }
 
   protected onTabSwitched(selectedItem: MenuItem) {
