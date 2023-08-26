@@ -36,55 +36,6 @@ import * as NotificationActions from '../state/notifications.actions';
   styleUrls: ['./all-notifications.component.css'],
 })
 export class AllNotificationsComponent {
-  /*   courses = ['Angular', 'React', 'Vue', 'Node'];
-  selectedCourses = ['Angular', 'React'];
-  numberOptions = [5, 10, 15, 20];
-  selectedNumber = 5;
-  value: string = 'Admin notifications';
-  categories = [
-    {
-      label: 'Course Updates',
-      value: NotificationCategory.CourseUpdate,
-    },
-    {
-      label: 'Comments and Mentions',
-      value: NotificationCategory.CommentsAndMentioned,
-    },
-    {
-      label: 'Annotations',
-      value: NotificationCategory.Annotations,
-    },
-  ];
-
-  selectedCategory = [
-    {
-      label: 'Course Updates',
-      value: NotificationCategory.CourseUpdate,
-    },
-    {
-      label: 'Comments and Mentions',
-      value: NotificationCategory.CommentsAndMentioned,
-    },
-    {
-      label: 'Annotations',
-      value: NotificationCategory.Annotations,
-    },
-  ];
- */
-  //obsevable streams
-  /*   courseUpdatesNotifications$ = this.store.select(
-    getCourseUpdatesNotifications
-  );
-  commentsAndMentionedNotifications$ = this.store.select(
-    getCommentsAndMentionedNotifications
-  );
-  annotationsNotifications$ = this.store.select(getAnnotationsNotifications);
-  isCourseUpdatesNotificationsVisible$ = new BehaviorSubject<boolean>(true);
-  isCommentsAndMentionedNotificationsVisible$ = new BehaviorSubject<boolean>(
-    true
-  );
-  isAnnotationsNotificationsVisible$ = new BehaviorSubject<boolean>(true); */
-
   protected _searchValue: string = '';
   private _selectedDateSortingOption = 'Newest first';
   protected tabOptions: MenuItem[];
@@ -139,6 +90,7 @@ export class AllNotificationsComponent {
   notificationsFilteredByCourseAndTabAndUnreadAndStarredAndDateSorting$: Observable<
     Notification[]
   >;
+  protected showBulkOperations = false;
 
   constructor(
     protected store: Store<State>,
@@ -167,27 +119,6 @@ export class AllNotificationsComponent {
     this.activeItem = this.tabOptions[0];
 
     this.menuOptions = [
-      {
-        label: 'Mark selected as read',
-        icon: 'pi pi-check',
-        command: ($event) => {
-          this.markSelectedAsRead($event);
-        },
-      },
-      {
-        label: 'Mark selected as unread',
-        icon: 'pi pi-envelope',
-        command: ($event) => {
-          this.markSelectedAsUnread($event);
-        },
-      },
-      {
-        label: 'Remove selected notifications',
-        icon: 'pi pi-times',
-        command: ($event) => {
-          this.removeSelected($event);
-        },
-      },
       {
         label: 'Settings',
         icon: 'pi pi-cog',
@@ -327,6 +258,7 @@ export class AllNotificationsComponent {
     this.masterCheckBox.valueChanges.subscribe((val) => {
       console.log('susbscriber running! master changed');
       console.log(val);
+      this.showBulkOperations = val;
       const controls = this.checkBoxesGroup.controls;
       console.log(controls);
       Object.keys(controls).forEach((controlName) => {
@@ -334,6 +266,23 @@ export class AllNotificationsComponent {
         const control = controls[controlName];
         control.setValue(val, { emitEvent: false });
       });
+    });
+
+    this.checkBoxesGroup.valueChanges.subscribe((val) => {
+      console.log('susbscriber running! checkbox changed');
+      console.log(val);
+      const controls = this.checkBoxesGroup.controls;
+      console.log(controls);
+      //check if anyone of control has value true, if yes, the set the variable showBulkOperations to true, else set it to false
+      let showBulkOperations = false;
+      Object.keys(controls).forEach((controlName) => {
+        console.log(controlName);
+        const control = controls[controlName];
+        if (control.value) {
+          showBulkOperations = true;
+        }
+      });
+      this.showBulkOperations = showBulkOperations;
     });
 
     this.numAllUnreadNotifications$ = this.notificationsFilteredByCourse$.pipe(
@@ -474,7 +423,7 @@ export class AllNotificationsComponent {
   }
 
   protected removeSelected($event) {
-    $event.originalEvent.stopPropagation();
+    $event.stopPropagation();
     console.log('removing selected notifications');
     console.log(this.checkBoxesGroup.value);
     let selectedNotifications = [];
@@ -508,7 +457,7 @@ export class AllNotificationsComponent {
   }
 
   protected markSelectedAsUnread($event) {
-    $event.originalEvent.stopPropagation();
+    $event.stopPropagation();
     console.log('marking selected as unread');
     console.log(this.checkBoxesGroup.value);
     let selectedNotifications = [];
@@ -527,7 +476,7 @@ export class AllNotificationsComponent {
   }
 
   protected markSelectedAsRead($event) {
-    $event.originalEvent.stopPropagation();
+    $event.stopPropagation();
     console.log('marking selected as read');
     console.log(this.checkBoxesGroup.value);
     let selectedNotifications = [];

@@ -6,7 +6,6 @@
   [tabOptions]="tabOptions"
   [activeItem]="activeItem"
   (onTabChange)="onTabSwitched($event)"
-  [menuOptions]="menuOptions"
   #menu
 >
 </app-tab-menu>
@@ -50,6 +49,13 @@
       (onSwitchToggled)="starredSwitchToggled($event)"
     ></app-switch-input>
     <span class="ml-4">View Starred</span>
+  </div>
+  <div class="flex gap-8 cursor-pointer" *ngIf="showBulkOperations">
+    <div (click)="markSelectedAsRead($event)">
+      <!--  <i class="pi pi-check" style="font-size: 2rem"></i> -->Mark as read
+    </div>
+    <div (click)="markSelectedAsUnread($event)">Mark as unread</div>
+    <div (click)="removeSelected($event)">Remove</div>
   </div>
 </div>
 <div>

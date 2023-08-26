@@ -76,3 +76,7 @@
 .tab-selected {
   color: white;
 }
+
+:host ::ng-deep .pi {
+  font-size: 1.5rem;
+}

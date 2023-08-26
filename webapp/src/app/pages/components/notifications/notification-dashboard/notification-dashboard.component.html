@@ -2,25 +2,25 @@
   [tabOptions]="tabOptions"
   [activeItem]="activeItem"
   (onTabChange)="onTabSwitched($event)"
-  [menuOptions]="menuOptions"
   #menu
 >
 </app-tab-menu>
-<!-- <div class="p-8 pt-0">
-  <ng-container *ngIf="notifications$ | async as notifications; else loading">
-    <app-notification-box
-      *ngFor="let notification of notifications"
-      [notification]="notification"
-      (click)="onNotificationClicked(notification)"
-    >
-    </app-notification-box>
-  </ng-container>
-
-  <ng-template #loading>
-    <div>Loading.......</div>
-  </ng-template>
+<div class="flex items-center gap-8 mt-4 ml-4">
+  <div>
+    <app-switch-input
+      [isChecked]="isUnreadChecked"
+      (onSwitchToggled)="unreadSwitchToggled($event)"
+    ></app-switch-input>
+    <span class="ml-4">Unread only</span>
+  </div>
+  <div class="flex gap-8 cursor-pointer" *ngIf="showBulkOperations">
+    <div (click)="markSelectedAsRead($event)">
+      <!--  <i class="pi pi-check" style="font-size: 2rem"></i> -->Mark as read
+    </div>
+    <div (click)="markSelectedAsUnread($event)">Mark as unread</div>
+    <div (click)="removeSelected($event)">Remove</div>
+  </div>
 </div>
- -->
 <div>
   <ng-container *ngIf="loading$ | async; else notificationsArrived">
     Loading....
@@ -37,11 +37,6 @@
               [binary]="true"
               checked
             ></p-checkbox>
-            <app-switch-input
-              [isChecked]="isUnreadChecked"
-              (onSwitchToggled)="unreadSwitchToggled($event)"
-            ></app-switch-input>
-            <span class="ml-4">Unread only</span>
           </div>
           <span
             routerLink="notification/all"

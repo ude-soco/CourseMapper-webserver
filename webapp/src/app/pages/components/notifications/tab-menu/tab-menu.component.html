@@ -19,11 +19,11 @@
     </ng-template>
   </p-tabMenu>
   <p-button
-    icon="pi pi-ellipsis-h"
+    icon="pi pi-cog"
     styleClass="p-button-rounded p-button-text"
-    (click)="menu.toggle($event)"
+    (click)="onSettingsClick($event)"
     #navSettingsButton
   ></p-button>
 </div>
 
-<p-menu #menu [model]="menuOptions" [popup]="true" appendTo="body"></p-menu>
+<!-- <p-menu #menu [model]="menuOptions" [popup]="true" appendTo="body"></p-menu> -->

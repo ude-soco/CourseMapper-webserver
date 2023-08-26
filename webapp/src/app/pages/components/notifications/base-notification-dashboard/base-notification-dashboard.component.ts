@@ -67,6 +67,7 @@ export class BaseNotificationDashboardComponent {
   protected unreadSwitchBehaviourSubject = new BehaviorSubject<boolean>(false);
   protected unreadSwitch$ = this.unreadSwitchBehaviourSubject.asObservable();
   protected filteredNotifications$: Observable<Notification[]>;
+  protected showBulkOperations = false;
 
   constructor(
     protected store: Store<State>,
@@ -185,6 +186,7 @@ export class BaseNotificationDashboardComponent {
     this.masterCheckBox.valueChanges.subscribe((val) => {
       console.log('susbscriber running! master changed');
       console.log(val);
+      this.showBulkOperations = val;
       const controls = this.checkBoxesGroup.controls;
       console.log(controls);
       Object.keys(controls).forEach((controlName) => {
@@ -192,6 +194,23 @@ export class BaseNotificationDashboardComponent {
         const control = controls[controlName];
         control.setValue(val, { emitEvent: false });
       });
+    });
+
+    this.checkBoxesGroup.valueChanges.subscribe((val) => {
+      console.log('susbscriber running! checkbox changed');
+      console.log(val);
+      const controls = this.checkBoxesGroup.controls;
+      console.log(controls);
+      //check if anyone of control has value true, if yes, the set the variable showBulkOperations to true, else set it to false
+      let showBulkOperations = false;
+      Object.keys(controls).forEach((controlName) => {
+        console.log(controlName);
+        const control = controls[controlName];
+        if (control.value) {
+          showBulkOperations = true;
+        }
+      });
+      this.showBulkOperations = showBulkOperations;
     });
 
     //everytime the tab is opened, we want to show the all notifications tab
@@ -301,7 +320,7 @@ export class BaseNotificationDashboardComponent {
   }
 
   protected markSelectedAsRead($event) {
-    $event.originalEvent.stopPropagation();
+    $event.stopPropagation();
     console.log('marking selected as read');
     console.log(this.checkBoxesGroup.value);
     let selectedNotifications = [];
@@ -323,7 +342,7 @@ export class BaseNotificationDashboardComponent {
   }
 
   protected markSelectedAsUnread($event) {
-    $event.originalEvent.stopPropagation();
+    $event.stopPropagation();
     console.log('marking selected as unread');
     console.log(this.checkBoxesGroup.value);
     let selectedNotifications = [];
@@ -342,7 +361,7 @@ export class BaseNotificationDashboardComponent {
   }
 
   protected removeSelected($event) {
-    $event.originalEvent.stopPropagation();
+    $event.stopPropagation();
     console.log('removing selected notifications');
     console.log(this.checkBoxesGroup.value);
     let selectedNotifications = [];

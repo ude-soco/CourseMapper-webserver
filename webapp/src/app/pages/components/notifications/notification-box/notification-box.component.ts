@@ -143,7 +143,7 @@ export class NotificationBoxComponent {
 
   toggleMenuOptions($event, menu) {
     menu.toggle($event);
-    $event.originalEvent.stopPropagation();
+    $event.stopPropagation();
   }
 
   onNotificationClicked() {
