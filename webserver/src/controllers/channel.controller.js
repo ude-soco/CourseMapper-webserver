@@ -498,6 +498,6 @@ export const editChannel = async (req, res, next) => {
   req.locals.user = user;
   req.locals.category = "courseupdates";
   req.locals.course = course;
-  req.local.channel = foundChannel;
+  req.locals.channel = foundChannel;
   return next();
 };
