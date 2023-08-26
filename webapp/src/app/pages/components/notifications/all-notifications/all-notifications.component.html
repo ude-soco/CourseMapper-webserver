@@ -12,13 +12,31 @@
 </app-tab-menu>
 
 <div class="flex justify-between items-center">
+  <p-multiSelect
+    [options]="courseOptions"
+    [(ngModel)]="selectedCourses"
+    optionLabel="name"
+    optionValue="id"
+    (onChange)="onCourseFilterChanged($event)"
+    defaultLabel="Select Courses"
+  ></p-multiSelect>
+  <span class="p-input-icon-left">
+    <i class="pi pi-search"></i>
+    <input
+      placeholder="Search Notifications"
+      type="text"
+      pInputText
+      [(ngModel)]="searchValue"
+    />
+  </span>
   <div>
-    <app-switch-input
-      [isChecked]="isStarredChecked"
-      (onSwitchToggled)="starredSwitchToggled($event)"
-    ></app-switch-input>
-    <span class="ml-4">Starred only</span>
+    <p-dropdown
+      [options]="dateSortingOptions"
+      [(ngModel)]="selectedDateSortingOption"
+    ></p-dropdown>
   </div>
+</div>
+<div class="flex items-center gap-8 mt-4">
   <div>
     <app-switch-input
       [isChecked]="isUnreadChecked"
@@ -26,19 +44,14 @@
     ></app-switch-input>
     <span class="ml-4">Unread only</span>
   </div>
-  <p-multiSelect
-    [options]="courseOptions"
-    [(ngModel)]="selectedCourses"
-    optionLabel="name"
-    optionValue="id"
-    (onChange)="onCourseFilterChanged($event)"
-  ></p-multiSelect>
-  <span class="p-input-icon-left">
-    <i class="pi pi-search"></i>
-    <input type="text" pInputText [(ngModel)]="searchValue" />
-  </span>
+  <div>
+    <app-switch-input
+      [isChecked]="isStarredChecked"
+      (onSwitchToggled)="starredSwitchToggled($event)"
+    ></app-switch-input>
+    <span class="ml-4">View Starred</span>
+  </div>
 </div>
-
 <div>
   <ng-container *ngIf="loading$ | async; else notificationsArrived">
     Loading....
@@ -49,12 +62,15 @@
       <ng-container *ngIf="notifications.length > 0; else noNotifications">
         <div class="flex flex-row justify-between m-4">
           <div>
-            <p-checkbox
-              [formControl]="masterCheckBox"
-              class="mr-4"
-              [binary]="true"
-              checked
-            ></p-checkbox>
+            <span>
+              <p-checkbox
+                [formControl]="masterCheckBox"
+                class="mr-4"
+                [binary]="true"
+                checked
+              ></p-checkbox>
+              <span>Select all</span>
+            </span>
           </div>
         </div>
         <ng-container [formGroup]="checkBoxesGroup">

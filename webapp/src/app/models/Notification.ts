@@ -9,8 +9,12 @@ export interface UserNotification {
       channelName: string;
       userName: string;
       materialType?: string;
+      authorEmail: string;
     };
     statement: {
+      actor: {
+        name: string;
+      };
       object: {
         id: string;
         definition: {
@@ -42,44 +46,13 @@ export interface UserNotification {
   isRead: boolean;
 }
 
-export interface LiveNotification {
-  notificationInfo: {
-    userShortname: string;
-    courseName: string;
-    topicName: string;
-    channelName: string;
-    userName: string;
-  };
-  statement: {
-    object: {
-      id: string;
-      definition: {
-        name: {
-          'en-US': string;
-        };
-        extensions: {
-          id: string;
-          course_id: string;
-          topic_id: string;
-          description: string;
-        };
-        type: string;
-      };
-    };
-    verb: {
-      display: {
-        'en-US': string;
-      };
-    };
-    timestamp: string;
-  };
-}
-
 export interface Notification {
   _id: string;
   userShortname: string;
   courseName: string;
   username: string;
+  authorId: string;
+  authorEmail: string;
   action: string;
   name: string;
   object: string;
@@ -93,6 +66,23 @@ export interface Notification {
   material_id?: string;
   materialType?: string;
   extraMessage?: string;
+}
+
+export interface BlockingUsers {
+  _id: string;
+  firstname: string;
+  lastname: string;
+  email: string;
+}
+
+export interface NotificationsWithBlockedUsers {
+  notifications: UserNotification[];
+  blockingUsers: BlockingUsers[];
+}
+
+export interface TransformedNotificationsWithBlockedUsers {
+  notifications: Notification[];
+  blockingUsers: BlockingUsers[];
 }
 
 export enum NotificationCategory {

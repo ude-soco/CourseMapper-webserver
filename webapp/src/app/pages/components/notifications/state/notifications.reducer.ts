@@ -7,6 +7,7 @@ import {
 import {
   Notification,
   NotificationCategory,
+  BlockingUsers,
 } from 'src/app/models/Notification';
 
 import * as AppState from 'src/app/state/app.state';
@@ -17,6 +18,7 @@ export interface State extends AppState.State {
 
 export interface NotificationState {
   notifications: Notification[];
+  blockingUsers: BlockingUsers[];
   currentlySelectedTab: NotificationCategory;
   isNavigatingToNotificationContextThroughCourseComponent: boolean;
   notificationToNavigateTo: Notification;
@@ -25,6 +27,7 @@ export interface NotificationState {
 
 const initialState: NotificationState = {
   notifications: [],
+  blockingUsers: [],
   currentlySelectedTab: NotificationCategory.All,
   isNavigatingToNotificationContextThroughCourseComponent: false,
   notificationToNavigateTo: null,
@@ -49,6 +52,11 @@ export const getNotifications = createSelector(
 export const getCurrentlySelectedTab = createSelector(
   getNotificationFeatureState,
   (state) => state.currentlySelectedTab
+);
+
+export const getBlockingUsers = createSelector(
+  getNotificationFeatureState,
+  (state) => state.blockingUsers
 );
 
 //the notifications being returned should be sorted according to the timestamp property of the notifications in descending order
@@ -168,7 +176,9 @@ export const notificationReducer = createReducer<NotificationState>(
     NotificationActions.loadNotificationsSuccess,
     (state, action): NotificationState => {
       //returning the new state
-      let sortedNotifications = [...action.notifications];
+      let sortedNotifications = [
+        ...action.transformedNotificationsWithBlockedUsers.notifications,
+      ];
       sortedNotifications.sort((a, b) => {
         return (
           new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
@@ -177,6 +187,8 @@ export const notificationReducer = createReducer<NotificationState>(
       return {
         ...state,
         notifications: sortedNotifications,
+        blockingUsers:
+          action.transformedNotificationsWithBlockedUsers.blockingUsers,
       };
     }
   ),
@@ -315,6 +327,20 @@ export const notificationReducer = createReducer<NotificationState>(
           !action.notifications.some((n) => n._id === notification._id)
       ),
     };
+  }),
+
+  on(NotificationActions.blockUserSuccess, (state, action) => {
+    return {
+      ...state,
+      blockingUsers: action.blockingUsers,
+    };
+  }),
+
+  on(NotificationActions.unblockUserSuccess, (state,action) =>{
+    return {
+      ...state,
+      blockingUsers:action.blockingUsers
+    }
   }),
 
   on(NotificationActions.notificationsRemovedSuccess, (state, action) => {

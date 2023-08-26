@@ -85,6 +85,8 @@ export class AllNotificationsComponent {
   );
   isAnnotationsNotificationsVisible$ = new BehaviorSubject<boolean>(true); */
 
+  protected _searchValue: string = '';
+  private _selectedDateSortingOption = 'Newest first';
   protected tabOptions: MenuItem[];
   protected menuOptions: MenuItem[];
   protected isUnreadChecked = false;
@@ -96,8 +98,14 @@ export class AllNotificationsComponent {
   protected unreadSwitch$ = this.unreadSwitchBehaviourSubject.asObservable();
   protected starredBehaviourSubject = new BehaviorSubject<boolean>(false);
   protected starred$ = this.starredBehaviourSubject.asObservable();
-  protected searchInputBehaviorSubject = new BehaviorSubject<string>('');
+  protected searchInputBehaviorSubject = new BehaviorSubject<string>(
+    this._searchValue
+  );
   protected searchInput$ = this.searchInputBehaviorSubject.asObservable();
+  protected dateSortingBehaviourSubject = new BehaviorSubject<string>(
+    this._selectedDateSortingOption
+  );
+  protected dateSorting$ = this.dateSortingBehaviourSubject.asObservable();
 
   protected tabBehaviourSubject = new BehaviorSubject<string>(
     NotificationCategory.All
@@ -126,8 +134,12 @@ export class AllNotificationsComponent {
   notificationsFilteredByCourseAndTabAndUnreadAndStarred$: Observable<
     Notification[]
   >;
-  protected _searchValue: string = '';
   notificationsFilteredByCourseAndSearchTerm$: Observable<Notification[]>;
+  protected dateSortingOptions = ['Newest first', 'Oldest first'];
+  notificationsFilteredByCourseAndTabAndUnreadAndStarredAndDateSorting$: Observable<
+    Notification[]
+  >;
+
   constructor(
     protected store: Store<State>,
     protected router: Router,
@@ -262,8 +274,37 @@ export class AllNotificationsComponent {
         })
       );
 
+    this.notificationsFilteredByCourseAndTabAndUnreadAndStarredAndDateSorting$ =
+      combineLatest([
+        this.notificationsFilteredByCourseAndTabAndUnreadAndStarred$,
+        this.dateSorting$,
+      ]).pipe(
+        map(([notifications, dateSorting]) => {
+          // Create a new array to hold the sorted notifications
+          const sortedNotifications = [...notifications]; // Use the spread operator to clone the array
+
+          if (dateSorting === 'Oldest first') {
+            sortedNotifications.sort((a, b) => {
+              return (
+                new Date(a.timestamp).getTime() -
+                new Date(b.timestamp).getTime()
+              );
+            });
+          } else {
+            sortedNotifications.sort((a, b) => {
+              return (
+                new Date(b.timestamp).getTime() -
+                new Date(a.timestamp).getTime()
+              );
+            });
+          }
+
+          return sortedNotifications; // Return the new sorted array
+        })
+      );
+
     this.notifications$ =
-      this.notificationsFilteredByCourseAndTabAndUnreadAndStarred$;
+      this.notificationsFilteredByCourseAndTabAndUnreadAndStarredAndDateSorting$;
     this.loading$ = this.notifications$.pipe(
       map((notifications) => (notifications === null ? true : false))
     );
@@ -382,9 +423,17 @@ export class AllNotificationsComponent {
     console.log('search value changed');
     console.log(value);
     this.searchInputBehaviorSubject.next(value);
-    this.store.dispatch(
-      NotificationActions.setSearchTerm({ searchTerm: value })
-    );
+  }
+
+  get selectedDateSortingOption() {
+    return this._selectedDateSortingOption;
+  }
+
+  set selectedDateSortingOption(value: string) {
+    this._selectedDateSortingOption = value;
+    console.log('date sorting option changed');
+    console.log(value);
+    this.dateSortingBehaviourSubject.next(value);
   }
 
   protected unreadSwitchToggled($event) {

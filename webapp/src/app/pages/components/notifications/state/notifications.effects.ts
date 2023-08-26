@@ -6,6 +6,7 @@ import { NotificationsService } from 'src/app/services/notifications.service';
 import * as NotificationActions from './notifications.actions';
 import { Action } from '@ngrx/store';
 import { BlockingNotifications } from 'src/app/models/BlockingNotification';
+import { TransformedNotificationsWithBlockedUsers } from 'src/app/models/Notification';
 
 @Injectable()
 export class NotificationEffects {
@@ -21,13 +22,13 @@ export class NotificationEffects {
         ofType(NotificationActions.loadNotifications),
         tap(() => console.log('In Effect: Fetching notifications')),
         mergeMap(() =>
-          this.notificationService
-            .getAllNotifications()
-            .pipe(
-              map((notifications: any) =>
-                NotificationActions.loadNotificationsSuccess({ notifications })
-              )
+          this.notificationService.getAllNotifications().pipe(
+            map((transformedNotificationsWithBlockedUsers) =>
+              NotificationActions.loadNotificationsSuccess({
+                transformedNotificationsWithBlockedUsers,
+              })
             )
+          )
         )
       )
   );
@@ -159,6 +160,52 @@ export class NotificationEffects {
                 );
               })
             )
+        )
+      )
+  );
+
+  blockUser$ = createEffect(
+    (): Observable<Action> =>
+      this.actions$.pipe(
+        ofType(NotificationActions.blockUser),
+        tap(() => console.log('In Effect: Blocking user')),
+        mergeMap((action) =>
+          this.notificationService.blockUser(action.userId).pipe(
+            map((blockingUsers) =>
+              NotificationActions.blockUserSuccess({ blockingUsers })
+            ),
+            catchError((error) => {
+              console.log(error);
+              return of(
+                NotificationActions.blockUserFailure({
+                  error,
+                })
+              );
+            })
+          )
+        )
+      )
+  );
+
+  unblockUser$ = createEffect(
+    (): Observable<Action> =>
+      this.actions$.pipe(
+        ofType(NotificationActions.unblockUser),
+        tap(() => console.log('In Effect: Unblocking user')),
+        mergeMap((action) =>
+          this.notificationService.unblockUser(action.userId).pipe(
+            map((blockingUsers) =>
+              NotificationActions.unblockUserSuccess({ blockingUsers })
+            ),
+            catchError((error) => {
+              console.log(error);
+              return of(
+                NotificationActions.unblockUserFailure({
+                  error,
+                })
+              );
+            })
+          )
         )
       )
   );

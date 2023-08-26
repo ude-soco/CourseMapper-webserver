@@ -35,34 +35,6 @@
         shape="circle"
       ></p-avatar>
       <div class="notification-message-container">
-        <!--         <span
-          [ngClass]="{
-            'userName-unread': !notification.isRead,
-            'userName-read': notification.isRead
-          }"
-        >
-          {{ notification.username }}
-        </span>
-
-        <span class="action">{{ notification.action }}</span>
-
-        <span class="action-object"> {{ notification.object }} </span>
-
-        <span
-          [ngClass]="{
-            'msg-location-unread': !notification.isRead,
-            'msg-location-read': notification.isRead
-          }"
-          >{{ notification.name }}
-        </span>
-        <span class="in">in</span>
-        <span
-          [ngClass]="{
-            'msg-location-unread': !notification.isRead,
-            'msg-location-read': notification.isRead
-          }"
-          >{{ notification.courseName }}</span
-        > -->
         <span
           class="notification-message"
           [ngClass]="{
@@ -90,4 +62,9 @@
   <p-divider class="divider"></p-divider>
 </div>
 
-<p-menu #menu [model]="menuOptions" [popup]="true" appendTo="body"></p-menu>
+<p-menu
+  #menu
+  [model]="menuOptions$ | async"
+  [popup]="true"
+  appendTo="body"
+></p-menu>

@@ -29,7 +29,9 @@ export const getAllNotifications = async (req, res, next) => {
       "notificationInfo.channelName",
       "notificationInfo.category",
       "notificationInfo.materialType",
+      "notificationInfo.authorEmail",
       "statement.object.definition.extensions",
+      "statement.actor.name",
       "statement.object.id",
       "statement.object.definition.type",
       "statement.verb.display.en-US",
@@ -42,8 +44,25 @@ export const getAllNotifications = async (req, res, next) => {
       .send({ error: "Error finding notifications", error });
   }
 
+  //get blocked users:
+  let blockingUsers;
+  try {
+    blockingUsers = await User.findById(userId).populate("blockingUsers", [
+      "_id",
+      "firstname",
+      "lastname",
+      "email",
+    ]);
+  } catch (error) {
+    return res
+      .status(500)
+      .send({ error: "Error finding blocking users", error });
+  }
+
   console.log("notifications: ", notifications);
-  return res.status(200).send(notifications);
+  return res
+    .status(200)
+    .send({ notifications, blockingUsers: blockingUsers.blockingUsers });
 };
 
 export const deleteAllNotifications = async (req, res, next) => {
@@ -903,7 +922,7 @@ export const setCourseNotificationSettings = async (req, res, next) => {
 export const blockUser = async (req, res, next) => {
   const userId = req.userId;
   const userToBlockId = req.body.userToBlockId;
-
+  let user;
   //Add the user to be blocked to the blocking list
   try {
     await User.findOneAndUpdate(
@@ -916,19 +935,47 @@ export const blockUser = async (req, res, next) => {
         },
       }
     );
+
+    user = await User.findOneAndUpdate(
+      {
+        _id: ObjectId(userId),
+      },
+      {
+        $addToSet: {
+          blockingUsers: ObjectId(userToBlockId),
+        },
+      },
+      {
+        new: true,
+      }
+    );
   } catch (error) {
     return res
       .status(500)
       .json({ message: "Could not add user to blocking list!" });
   }
 
-  return res.status(200).json({ message: "User blocked!" });
+  let blockingUsers;
+  try {
+    blockingUsers = await User.findById(userId).populate("blockingUsers", [
+      "_id",
+      "firstname",
+      "lastname",
+      "email",
+    ]);
+  } catch (error) {
+    return res
+      .status(500)
+      .send({ error: "Error finding blocking users", error });
+  }
+
+  return res.status(200).json(blockingUsers.blockingUsers);
 };
 
 export const unblockUser = async (req, res, next) => {
   const userId = req.userId;
   const userToUnblockId = req.body.userToUnblockId;
-
+  let user;
   //Remove the user to be unblocked from the blocking list
   try {
     await User.findOneAndUpdate(
@@ -941,13 +988,41 @@ export const unblockUser = async (req, res, next) => {
         },
       }
     );
+
+    user = await User.findOneAndUpdate(
+      {
+        _id: userId,
+      },
+      {
+        $pull: {
+          blockingUsers: userToUnblockId,
+        },
+      },
+      {
+        new: true,
+      }
+    );
   } catch (err) {
     return res
       .status(500)
-      .json({ message: "Could not remove user from blocking list!" });
+      .json("Could not remove user from blocking list! " + err.message);
   }
 
-  return res.status(200).json({ message: "User unblocked!" });
+  let blockingUsers;
+  try {
+    blockingUsers = await User.findById(userId).populate("blockingUsers", [
+      "_id",
+      "firstname",
+      "lastname",
+      "email",
+    ]);
+  } catch (error) {
+    return res
+      .status(500)
+      .send({ error: "Error finding blocking users", error });
+  }
+
+  return res.status(200).json(blockingUsers.blockingUsers);
 };
 
 export const followAnnotationSuccess = async (req, res, next) => {

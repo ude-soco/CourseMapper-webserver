@@ -2,8 +2,10 @@ import { createAction, props } from '@ngrx/store';
 import { BlockableUI } from 'primeng/api';
 import { BlockingNotifications } from 'src/app/models/BlockingNotification';
 import {
+  BlockingUsers,
   Notification,
   NotificationCategory,
+  TransformedNotificationsWithBlockedUsers,
 } from 'src/app/models/Notification';
 
 export const loadNotifications = createAction(
@@ -12,7 +14,9 @@ export const loadNotifications = createAction(
 
 export const loadNotificationsSuccess = createAction(
   '[Notification] Notifications Loaded Success',
-  props<{ notifications: Notification[] }>()
+  props<{
+    transformedNotificationsWithBlockedUsers: TransformedNotificationsWithBlockedUsers;
+  }>()
 );
 
 export const tabSwitched = createAction(
@@ -93,6 +97,36 @@ export const unstarNotificationsSuccess = createAction(
 export const unstarNotificationsFailure = createAction(
   '[Notification] Notifications Unstarred Failure',
   props<{ error: any; notifications: string[] }>()
+);
+
+export const blockUser = createAction(
+  '[Notification] User Blocked',
+  props<{ userId: string }>()
+);
+
+export const blockUserSuccess = createAction(
+  '[Notification] User Blocked Success',
+  props<{ blockingUsers: BlockingUsers[] }>()
+);
+
+export const blockUserFailure = createAction(
+  '[Notification] User Blocked Failure',
+  props<{ error: any }>()
+);
+
+export const unblockUser = createAction(
+  '[Notification] User Unblocked',
+  props<{ userId: string }>()
+);
+
+export const unblockUserSuccess = createAction(
+  '[Notification] User Unblocked Success',
+  props<{ blockingUsers: BlockingUsers[] }>()
+);
+
+export const unblockUserFailure = createAction(
+  '[Notification] User Unblocked Failure',
+  props<{ error: any }>()
 );
 
 export const setSearchTerm = createAction(

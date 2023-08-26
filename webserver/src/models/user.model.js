@@ -29,7 +29,12 @@ const User = new Schema({
       frameborder: String,
     },
   ],
-  blockedByUser: [{ type: Schema.Types.ObjectId, ref: "user", required: true }],
+  blockedByUser: [
+    { type: Schema.Types.ObjectId, ref: "user", required: true, default: [] },
+  ],
+  blockingUsers: [
+    { type: Schema.Types.ObjectId, ref: "user", required: true, default: [] },
+  ],
 });
 
 module.exports = mongoose.model("user", User);

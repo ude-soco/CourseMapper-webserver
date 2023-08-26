@@ -4,7 +4,9 @@ import { BehaviorSubject, Observable, map, switchMap, take, tap } from 'rxjs';
 import {
   UserNotification,
   Notification,
-  LiveNotification,
+  NotificationsWithBlockedUsers,
+  TransformedNotificationsWithBlockedUsers,
+  BlockingUsers,
 } from '../models/Notification';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
@@ -39,16 +41,28 @@ export class NotificationsService {
   public notificationToNavigateTo: Notification = null;
 
   //Todo: error handling
-  public getAllNotifications(): Observable<Notification[]> {
+  public getAllNotifications(): Observable<TransformedNotificationsWithBlockedUsers> {
     console.log('In Service: Fetching notifications');
     return (
       this.httpClient
         /* .get<UserNotification[]>('assets/data.json') */
-        .get<UserNotification[]>(`${environment.API_URL}/notifications`)
+        .get<NotificationsWithBlockedUsers>(
+          `${environment.API_URL}/notifications`
+        )
         .pipe(
-          tap((notifications) => console.log(notifications)),
-          map((notifications) => {
-            return notifications.map(this.transformNotification);
+          tap(({ notifications, blockingUsers }) => {
+            console.log(notifications);
+            console.log(blockingUsers);
+          }),
+          map(({ notifications, blockingUsers }) => {
+            let transformedNotifications = notifications.map(
+              this.transformNotification
+            );
+
+            return {
+              notifications: transformedNotifications,
+              blockingUsers,
+            };
           }),
           tap((notifications) => console.log(notifications))
         )
@@ -329,6 +343,24 @@ export class NotificationsService {
     );
   }
 
+  blockUser(userId: string) {
+    console.log('In Service: Blocking user');
+    console.log(userId);
+    return this.httpClient.put<BlockingUsers[]>(
+      `${environment.API_URL}/notifications/blockUser`,
+      { userToBlockId: userId }
+    );
+  }
+
+  unblockUser(userId: string) {
+    console.log('In Service: Unblocking user');
+    console.log(userId);
+    return this.httpClient.put<BlockingUsers[]>(
+      `${environment.API_URL}/notifications/unblockUser`,
+      { userToUnblockId: userId }
+    );
+  }
+
   getUserNames({
     partialString,
     courseId,
@@ -371,6 +403,8 @@ export class NotificationsService {
       userShortname: notification.activityId.notificationInfo.userShortname,
       courseName: notification.activityId.notificationInfo.courseName,
       username: notification.activityId.notificationInfo.userName,
+      authorId: notification.activityId.statement.actor?.name,
+      authorEmail: notification.activityId.notificationInfo.authorEmail,
       action: notification.activityId.statement.verb.display['en-US'],
       name: notification.activityId.statement.object.definition.name['en-US'],
       object: lastWord,
@@ -390,7 +424,7 @@ export class NotificationsService {
         material_id,
       }),
       _id: notification._id,
-      extraMessage: `${notification.activityId.notificationInfo.userShortname} ${notification.activityId.statement.verb.display['en-US']} ${lastWord} ${notification.activityId.statement.object.definition.name['en-US']} in ${notification.activityId.notificationInfo.courseName}`,
+      extraMessage: `${notification.activityId.notificationInfo.userName} ${notification.activityId.statement.verb.display['en-US']} ${lastWord} ${notification.activityId.statement.object.definition.name['en-US']} in ${notification.activityId.notificationInfo.courseName}`,
     };
   }
 }
