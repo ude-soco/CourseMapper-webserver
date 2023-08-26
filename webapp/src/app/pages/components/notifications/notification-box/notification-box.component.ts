@@ -85,7 +85,7 @@ export class NotificationBoxComponent {
     };
 
     this.UnblockUserNotificationMenuOptions = {
-      label: 'Unblock user',
+      label: `Unblock ${this.notification.username}`,
       icon: 'pi pi-times',
       command: ($event) => {
         $event.originalEvent.stopPropagation();
@@ -99,7 +99,7 @@ export class NotificationBoxComponent {
     };
 
     this.BlockUserNotificationMenuOptions = {
-      label: 'Block user',
+      label: `Block ${this.notification.username}`,
       icon: 'pi pi-times',
       command: ($event) => {
         $event.originalEvent.stopPropagation();
