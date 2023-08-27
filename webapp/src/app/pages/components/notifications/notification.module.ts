@@ -16,7 +16,6 @@ import { AllNotificationsComponent } from './all-notifications/all-notifications
 import { AppModule } from 'src/app/app.module';
 import { SidebarComponent } from '../../../components/sidebar/sidebar.component';
 import { InputSwitchModule } from 'primeng/inputswitch';
-import { TabMenuComponent } from './tab-menu/tab-menu.component';
 import { SwitchInputComponent } from './switch-input/switch-input.component';
 import { CheckboxModule } from 'primeng/checkbox';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -32,7 +31,6 @@ import { HighlightPipe } from 'src/app/pipes/highlight.pipe';
     CustomDatePipe,
     BaseNotificationDashboardComponent,
     AllNotificationsComponent,
-    TabMenuComponent,
     SwitchInputComponent,
     HighlightPipe,
   ],

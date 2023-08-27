@@ -1,0 +1,37 @@
+<div class="sidebar-container">
+  <app-sidebar></app-sidebar>
+</div>
+
+<div class="w-[1000px] flex justify-center mx-auto my-0 flex-col items-center">
+  <p-tabMenu
+    (activeItemChange)="onTabSwitched($event)"
+    [model]="tabOptions"
+    [activeItem]="activeItem"
+  >
+    <ng-template pTemplate="item" let-item let-i="index">
+      <div style="position: relative">
+        <span>
+          {{ item.label }}
+        </span>
+      </div>
+    </ng-template>
+  </p-tabMenu>
+
+  <div>
+    <div
+      class="w-[500px] flex justify-between items-center mt-8 cursor-default pb-4 border-b-[#0000001c] border-b border-solid"
+      *ngFor="let blockedUser of blockingUsers$ | async"
+    >
+      <span
+        >{{ blockedUser.firstname }} {{ blockedUser.lastname }} ({{
+          blockedUser.email
+        }})</span
+      >
+      <p-button
+        label="Unblock"
+        styleClass="p-button-success"
+        (click)="onUnBlockClicked($event, blockedUser)"
+      ></p-button>
+    </div>
+  </div>
+</div>

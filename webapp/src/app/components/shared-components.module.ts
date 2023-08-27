@@ -10,6 +10,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { CourseLevelNotificationSettingsComponent } from './course-level-notification-settings/course-level-notification-settings.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { AddCourseComponent } from './add-course/add-course.component';
+import { TabMenuComponent } from './tab-menu/tab-menu.component';
+import { TabMenuModule } from 'primeng/tabmenu';
 
 @NgModule({
   declarations: [
@@ -21,8 +23,9 @@ import { AddCourseComponent } from './add-course/add-course.component';
     CourseLevelNotificationSettingsComponent,
     SidebarComponent,
     AddCourseComponent,
+    TabMenuComponent,
   ],
-  imports: [CommonModule, PrimengModule, ReactiveFormsModule],
+  imports: [CommonModule, PrimengModule, ReactiveFormsModule, TabMenuModule],
   exports: [
     ButtonComponent,
     IconbuttonComponent,
@@ -31,6 +34,7 @@ import { AddCourseComponent } from './add-course/add-course.component';
     ContextMenuComponent,
     SidebarComponent,
     AddCourseComponent,
+    TabMenuComponent,
   ],
 })
 export class SharedComponentsModule {}

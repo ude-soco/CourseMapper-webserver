@@ -70,6 +70,7 @@ registerLocaleData(en);
 import { DividerModule } from 'primeng/divider';
 import { ContextMenuComponent } from './components/context-menu/context-menu.component';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
+import { SettingsComponent } from './pages/components/settings/settings.component';
 
 @NgModule({
   declarations: [
@@ -95,6 +96,7 @@ import { DynamicDialogModule } from 'primeng/dynamicdialog';
     TagReplyPanelComponent,
     TagReplyItemComponent,
     CourseWelcomeComponent,
+    SettingsComponent,
   ],
   imports: [
     DynamicDialogModule,

@@ -16,8 +16,4 @@ export class TabMenuComponent {
   onTabSwitched(event$) {
     this.onTabChange.emit(event$);
   }
-
-  onSettingsClick(event$) {
-    this.onSettingsClicked.emit(event$);
-  }
 }
