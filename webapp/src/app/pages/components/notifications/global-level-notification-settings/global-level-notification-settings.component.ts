@@ -10,7 +10,7 @@ import {
   getOverriddenCourses,
 } from '../state/notifications.reducer';
 import * as NotificationActions from '../state/notifications.actions';
-
+import * as CourseActions from '../../../courses/state/course.actions';
 @Component({
   selector: 'app-global-level-notification-settings',
   templateUrl: './global-level-notification-settings.component.html',
@@ -55,7 +55,7 @@ export class GlobalLevelNotificationSettingsComponent {
     );
   }
 
-  onCourseSettingClicked(notificationOption: {
+  onGlobalSettingClicked(notificationOption: {
     label: string;
     control: FormControl<boolean>;
   }): void {
@@ -90,6 +90,16 @@ export class GlobalLevelNotificationSettingsComponent {
 
     this.store.dispatch(
       NotificationActions.setGlobalNotificationSettings(objToSend)
+    );
+  }
+
+  onRemoveCourse(course: CourseNotificationSettings) {
+    console.log('remove course clicked!!');
+    console.log('course: ', course);
+    this.store.dispatch(
+      CourseActions.unsetCourseNotificationSettings({
+        settings: { courseId: course.courseId },
+      })
     );
   }
 

@@ -4,7 +4,7 @@
       <p-button
         styleClass="contextMenuButton"
         *ngFor="let item of checkBoxesArray"
-        (click)="onCourseSettingClicked(item)"
+        (click)="onGlobalSettingClicked(item)"
       >
         <div>
           <p-checkbox
@@ -70,8 +70,7 @@
       </div>
 
       <div class="overlay">
-        <span class="close-icon">✕</span>
-        <!-- <span class="close-icon" (click)="onRemoveTopic(override)">✕</span> -->
+        <span class="close-icon" (click)="onRemoveCourse(override)">✕</span>
       </div>
     </div>
   </div>

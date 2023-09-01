@@ -1,6 +1,7 @@
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
 import * as CourseActions from 'src/app/pages/courses/state/course.actions';
 import * as MaterialActions from 'src/app/pages/components/materials/state/materials.actions';
+import * as NotificationActions from 'src/app/pages/components/notifications/state/notifications.actions';
 import {
   getCurrentCourse,
   getCurrentCourseId,
@@ -318,11 +319,14 @@ export class CourseEffects {
         this.notificationService
           .unsetCourseNotificationSettings(action.settings)
           .pipe(
-            map((updatedDoc: BlockingNotifications) =>
+            mergeMap((updatedDoc: BlockingNotifications) => [
               CourseActions.unsetCourseNotificationSettingsSuccess({
                 updatedDoc,
-              })
-            ),
+              }),
+              NotificationActions.unsetCourseNotificationSettingsSuccess({
+                updatedDoc,
+              }),
+            ]),
             catchError((error) => {
               console.log(error);
               return of(
