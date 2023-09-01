@@ -1,6 +1,9 @@
 import { createAction, props } from '@ngrx/store';
 import { BlockableUI } from 'primeng/api';
-import { BlockingNotifications } from 'src/app/models/BlockingNotification';
+import {
+  BlockingNotifications,
+  GlobalAndCourseNotificationSettings,
+} from 'src/app/models/BlockingNotification';
 import {
   BlockingUsers,
   Notification,
@@ -132,4 +135,33 @@ export const unblockUserFailure = createAction(
 export const setSearchTerm = createAction(
   '[Notification] Set Search Term',
   props<{ searchTerm: string }>()
+);
+
+export const loadGlobalAndCoursesNotificationSettings = createAction(
+  '[Notification] Load Global And Courses Notification Settings'
+);
+
+export const loadGlobalAndCoursesNotificationSettingsSuccess = createAction(
+  '[Notification] Load Global And Courses Notification Settings Success',
+  props<GlobalAndCourseNotificationSettings>()
+);
+
+export const loadGlobalAndCoursesNotificationSettingsFailure = createAction(
+  '[Notification] Load Global And Courses Notification Settings Failure',
+  props<{ error: any }>()
+);
+
+export const setGlobalNotificationSettings = createAction(
+  '[Notification] Set Global Notification Settings',
+  props<{ [key: string]: boolean | string }>()
+);
+
+export const setGlobalNotificationSettingsSuccess = createAction(
+  '[Notification] Set Global Notification Settings Success',
+  props<{ [key: string]: boolean }>()
+);
+
+export const setGlobalNotificationSettingsFailure = createAction(
+  '[Notification] Set Global Notification Settings Failure',
+  props<{ error: any }>()
 );

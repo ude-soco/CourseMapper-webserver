@@ -233,7 +233,7 @@ export const getNotificationSettingsOfCurrentCourse = createSelector(
   (state) => {
     const notificationSettings = [
       {
-        label: topicNotificationSettingLabels.courseDefault,
+        label: courseNotificationSettingLabels.globalDefault,
         //TODO: change the below line when global notifications settings are implemented
         value: false,
       },

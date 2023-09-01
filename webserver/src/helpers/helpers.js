@@ -21,11 +21,10 @@ export const initialiseNotificationSettings = async (course, user) => {
     return userCourse.courseId.equals(course._id);
   });
   let userCourseUpdateNotificationSetting =
-    courseUserEnrolledTo.isCourseUpdateNotificationsEnabled;
-  let userAnnotationNotificationSetting =
-    courseUserEnrolledTo.isAnnotationNotificationsEnabled;
+    user.isCourseUpdateNotificationsEnabled;
+  let userAnnotationNotificationSetting = user.isAnnotationNotificationsEnabled;
   let userReplyAndMentionedNotificationSetting =
-    courseUserEnrolledTo.isReplyAndMentionedNotificationsEnabled;
+    user.isReplyAndMentionedNotificationsEnabled;
 
   console.log(
     "userCourseUpdateNotificationSetting",

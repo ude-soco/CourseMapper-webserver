@@ -15,6 +15,7 @@ const BlockingNotifications = new Schema({
   isAnnotationNotificationsEnabled: { type: Boolean },
   isReplyAndMentionedNotificationsEnabled: { type: Boolean },
   isCourseUpdateNotificationsEnabled: { type: Boolean },
+  isCourseLevelOverride: { type: Boolean, default: false },
   userId: {
     type: Schema.Types.ObjectId,
     ref: "user",
@@ -31,6 +32,7 @@ const BlockingNotifications = new Schema({
       isReplyAndMentionedNotificationsEnabled: { type: Boolean },
       isCourseUpdateNotificationsEnabled: { type: Boolean },
       isTopicLevelOverride: { type: Boolean, default: false },
+      isCourseLevelOverride: { type: Boolean, default: false },
     },
   ],
   channels: [
@@ -62,6 +64,7 @@ const BlockingNotifications = new Schema({
       isCourseUpdateNotificationsEnabled: { type: Boolean },
       isChannelLevelOverride: { type: Boolean, default: false },
       isTopicLevelOverride: { type: Boolean, default: false },
+      isCourseLevelOverride: { type: Boolean, default: false },
     },
   ],
   materials: [
@@ -84,6 +87,7 @@ const BlockingNotifications = new Schema({
       isMaterialLevelOverride: { type: Boolean, default: false },
       isChannelLevelOverride: { type: Boolean, default: false },
       isTopicLevelOverride: { type: Boolean, default: false },
+      isCourseLevelOverride: { type: Boolean, default: false },
     },
   ],
 

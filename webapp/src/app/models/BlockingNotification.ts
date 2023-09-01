@@ -50,6 +50,23 @@ export interface MaterialNotificationSettings {
   type?: string;
 }
 
+export interface CourseNotificationSettings {
+  courseId: string;
+  isAnnotationNotificationsEnabled: boolean;
+  isReplyAndMentionedNotificationsEnabled: boolean;
+  isCourseUpdateNotificationsEnabled: boolean;
+  isCourseLevelOverride: boolean;
+  courseName: string;
+  _id: string;
+}
+
+export interface GlobalAndCourseNotificationSettings {
+  coursesSettings: CourseNotificationSettings[];
+  isAnnotationNotificationsEnabled: boolean;
+  isReplyAndMentionedNotificationsEnabled: boolean;
+  isCourseUpdateNotificationsEnabled: boolean;
+}
+
 export interface Annotation {
   annotationId: string;
   materialId: string;

@@ -15,9 +15,6 @@ const User = new Schema({
     {
       courseId: { type: Schema.Types.ObjectId, ref: "course", required: true },
       role: { type: Schema.Types.ObjectId, ref: "role" },
-      isAnnotationNotificationsEnabled: { type: Boolean, default: true },
-      isReplyAndMentionedNotificationsEnabled: { type: Boolean, default: true },
-      isCourseUpdateNotificationsEnabled: { type: Boolean, default: true },
     },
   ],
   indicators: [
@@ -35,6 +32,9 @@ const User = new Schema({
   blockingUsers: [
     { type: Schema.Types.ObjectId, ref: "user", required: true, default: [] },
   ],
+  isAnnotationNotificationsEnabled: { type: Boolean, default: true },
+  isReplyAndMentionedNotificationsEnabled: { type: Boolean, default: true },
+  isCourseUpdateNotificationsEnabled: { type: Boolean, default: true },
 });
 
 module.exports = mongoose.model("user", User);

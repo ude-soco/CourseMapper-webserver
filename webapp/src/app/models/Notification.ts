@@ -119,3 +119,9 @@ export enum courseNotificationSettingLabels {
   commentsAndMentioned = 'Comments and mentions',
   annotations = 'Annotations',
 }
+
+export enum globalNotificationSettingsLabels {
+  courseUpdates = 'Course Updates',
+  commentsAndMentioned = 'Comments and mentions',
+  annotations = 'Annotations',
+}

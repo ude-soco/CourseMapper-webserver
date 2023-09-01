@@ -209,4 +209,44 @@ export class NotificationEffects {
         )
       )
   );
+
+  loadGlobalAndCoursesNotificationSettings$ = createEffect(
+    (): Observable<Action> =>
+      this.actions$.pipe(
+        ofType(NotificationActions.loadGlobalAndCoursesNotificationSettings),
+        tap(() =>
+          console.log('In Effect: Fetching global and courses notification')
+        ),
+        mergeMap(() =>
+          this.notificationService
+            .getCourseNotificationSettings()
+            .pipe(
+              map((notificationSettings) =>
+                NotificationActions.loadGlobalAndCoursesNotificationSettingsSuccess(
+                  notificationSettings
+                )
+              )
+            )
+        )
+      )
+  );
+
+  setGlobalNotificationSettings$ = createEffect(
+    (): Observable<Action> =>
+      this.actions$.pipe(
+        ofType(NotificationActions.setGlobalNotificationSettings),
+        tap(() => console.log('In Effect: Setting global notification')),
+        mergeMap((action) =>
+          this.notificationService
+            .setGlobalNotificationSettings(action)
+            .pipe(
+              map((notificationSettings) =>
+                NotificationActions.setGlobalNotificationSettingsSuccess(
+                  notificationSettings
+                )
+              )
+            )
+        )
+      )
+  );
 }

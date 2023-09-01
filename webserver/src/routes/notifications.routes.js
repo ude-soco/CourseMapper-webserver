@@ -102,6 +102,18 @@ module.exports = function (app) {
   );
 
   app.put(
+    "/api/notifications/unsetCourseNotificationSettings",
+    [authJwt.verifyToken],
+    controller.unsetCourseNotificationSettings
+  );
+
+  app.put(
+    "/api/notifications/setGlobalNotificationSettings",
+    [authJwt.verifyToken],
+    controller.setGlobalNotificationSettings
+  );
+
+  app.put(
     "/api/notifications/blockUser",
     [authJwt.verifyToken],
     controller.blockUser
@@ -111,6 +123,12 @@ module.exports = function (app) {
     "/api/notifications/unblockUser",
     [authJwt.verifyToken],
     controller.unblockUser
+  );
+
+  app.get(
+    "/api/notifications/getAllCourseNotificationSettings",
+    [authJwt.verifyToken],
+    controller.getAllCourseNotificationSettings
   );
 
   /*   //subscribe to a channel

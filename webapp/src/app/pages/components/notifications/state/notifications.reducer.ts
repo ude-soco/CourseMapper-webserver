@@ -8,10 +8,13 @@ import {
   Notification,
   NotificationCategory,
   BlockingUsers,
+  courseNotificationSettingLabels,
+  globalNotificationSettingsLabels,
 } from 'src/app/models/Notification';
 
 import * as AppState from 'src/app/state/app.state';
 import * as NotificationActions from './notifications.actions';
+import { CourseNotificationSettings } from 'src/app/models/BlockingNotification';
 export interface State extends AppState.State {
   notifications: NotificationState;
 }
@@ -23,6 +26,10 @@ export interface NotificationState {
   isNavigatingToNotificationContextThroughCourseComponent: boolean;
   notificationToNavigateTo: Notification;
   searchTerm?: string;
+  coursesSettings: CourseNotificationSettings[];
+  isAnnotationNotificationsEnabled: boolean;
+  isReplyAndMentionedNotificationsEnabled: boolean;
+  isCourseUpdateNotificationsEnabled: boolean;
 }
 
 const initialState: NotificationState = {
@@ -32,6 +39,10 @@ const initialState: NotificationState = {
   isNavigatingToNotificationContextThroughCourseComponent: false,
   notificationToNavigateTo: null,
   searchTerm: '',
+  coursesSettings: [],
+  isAnnotationNotificationsEnabled: null,
+  isReplyAndMentionedNotificationsEnabled: null,
+  isCourseUpdateNotificationsEnabled: null,
 };
 
 //selectors
@@ -166,6 +177,41 @@ export const getAnnotationsNotifications = createSelector(
             notification.category === NotificationCategory.Annotations
         )
       : null;
+  }
+);
+
+export const getGlobalNotificationSettings = createSelector(
+  getNotificationFeatureState,
+  (state) => {
+    const notificationSettings = [
+      {
+        label: globalNotificationSettingsLabels.courseUpdates,
+        value: state.isCourseUpdateNotificationsEnabled,
+      },
+      {
+        label: globalNotificationSettingsLabels.commentsAndMentioned,
+        value: state.isReplyAndMentionedNotificationsEnabled,
+      },
+      {
+        label: globalNotificationSettingsLabels.annotations,
+        value: state.isAnnotationNotificationsEnabled,
+      },
+    ];
+    return notificationSettings;
+  }
+);
+
+export const getOverriddenCourses = createSelector(
+  getNotificationFeatureState,
+  (state) => {
+    const overriddenCourses = [];
+    state.coursesSettings.forEach((courseSetting) => {
+      if (courseSetting.isCourseLevelOverride) {
+        overriddenCourses.push(courseSetting);
+      }
+    });
+
+    return overriddenCourses;
   }
 );
 
@@ -336,11 +382,11 @@ export const notificationReducer = createReducer<NotificationState>(
     };
   }),
 
-  on(NotificationActions.unblockUserSuccess, (state,action) =>{
+  on(NotificationActions.unblockUserSuccess, (state, action) => {
     return {
       ...state,
-      blockingUsers:action.blockingUsers
-    }
+      blockingUsers: action.blockingUsers,
+    };
   }),
 
   on(NotificationActions.notificationsRemovedSuccess, (state, action) => {
@@ -352,5 +398,36 @@ export const notificationReducer = createReducer<NotificationState>(
       ...state,
       notifications: [...state.notifications, ...action.notifications],
     };
-  })
+  }),
+
+  on(
+    NotificationActions.loadGlobalAndCoursesNotificationSettingsSuccess,
+    (state, action) => {
+      return {
+        ...state,
+        isAnnotationNotificationsEnabled:
+          action.isAnnotationNotificationsEnabled,
+        isReplyAndMentionedNotificationsEnabled:
+          action.isReplyAndMentionedNotificationsEnabled,
+        isCourseUpdateNotificationsEnabled:
+          action.isCourseUpdateNotificationsEnabled,
+        coursesSettings: action.coursesSettings,
+      };
+    }
+  ),
+
+  on(
+    NotificationActions.setGlobalNotificationSettingsSuccess,
+    (state, action) => {
+      return {
+        ...state,
+        isAnnotationNotificationsEnabled:
+          action['isAnnotationNotificationsEnabled'],
+        isReplyAndMentionedNotificationsEnabled:
+          action['isReplyAndMentionedNotificationsEnabled'],
+        isCourseUpdateNotificationsEnabled:
+          action['isCourseUpdateNotificationsEnabled'],
+      };
+    }
+  )
 );

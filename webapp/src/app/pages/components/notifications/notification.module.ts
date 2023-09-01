@@ -23,6 +23,8 @@ import { SharedComponentsModule } from 'src/app/components/shared-components.mod
 import { BadgeModule } from 'primeng/badge';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { HighlightPipe } from 'src/app/pipes/highlight.pipe';
+import { GlobalLevelNotificationSettingsComponent } from './global-level-notification-settings/global-level-notification-settings.component';
+import { SettingsComponent } from './settings/settings.component';
 @NgModule({
   declarations: [
     NotificationBellComponent,
@@ -33,6 +35,8 @@ import { HighlightPipe } from 'src/app/pipes/highlight.pipe';
     AllNotificationsComponent,
     SwitchInputComponent,
     HighlightPipe,
+    GlobalLevelNotificationSettingsComponent,
+    SettingsComponent,
   ],
   imports: [
     BadgeModule,

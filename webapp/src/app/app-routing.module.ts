@@ -17,7 +17,7 @@ import { CourseDescriptionComponent } from './pages/components/course-descriptio
 import { TagsPageComponent } from './pages/components/tags/tags-page/tags-page.component';
 import { CourseWelcomeComponent } from './course-welcome/course-welcome.component';
 import { AllNotificationsComponent } from './pages/components/notifications/all-notifications/all-notifications.component';
-import { SettingsComponent } from './pages/components/settings/settings.component';
+import { SettingsComponent } from './pages/components/notifications/settings/settings.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'landingPage', pathMatch: 'full' },

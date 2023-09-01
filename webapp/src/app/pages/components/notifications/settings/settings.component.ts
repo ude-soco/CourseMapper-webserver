@@ -3,12 +3,12 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { MenuItem } from 'primeng/api';
 import { State } from 'src/app/state/app.state';
-import { getActiveAnnotation } from '../annotations/video-annotation/state/video.reducer';
-import { getBlockingUsers } from '../notifications/state/notifications.reducer';
+import { getActiveAnnotation } from '../../annotations/video-annotation/state/video.reducer';
+import { getBlockingUsers } from '../state/notifications.reducer';
 import { BlockingNotifications } from 'src/app/models/BlockingNotification';
 import { Observable } from 'rxjs';
 import { BlockingUsers } from 'src/app/models/Notification';
-import * as NotificationActions from '../notifications/state/notifications.actions';
+import * as NotificationActions from '../state/notifications.actions';
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
@@ -40,6 +40,7 @@ export class SettingsComponent {
     ];
 
     this.activeItem = this.tabOptions[0];
+    this.componentToShow = 'blocked-users';
 
     this.blockingUsers$ = this.store.select(getBlockingUsers);
   }

@@ -418,6 +418,7 @@ export const setMaterialNotificationSettings = async (req, res, next) => {
           "materials.$.isMaterialLevelOverride": true,
           "materials.$.isChannelLevelOverride": false,
           "materials.$.isTopicLevelOverride": false,
+          "materials.$.isCourseLevelOverride": false,
         },
       },
       {
@@ -490,6 +491,7 @@ export const unsetMaterialNotificationSettings = async (req, res, next) => {
           "materials.$.isChannelLevelOverride":
             channelObj.isChannelLevelOverride,
           "materials.$.isTopicLevelOverride": channelObj.isTopicLevelOverride,
+          "materials.$.isCourseLevelOverride": channelObj.isCourseLevelOverride,
         },
       },
       {
@@ -544,6 +546,7 @@ export const setChannelNotificationSettings = async (req, res, next) => {
             isCourseUpdateNotificationsEnabled,
           "channels.$[channelElem].isChannelLevelOverride": true,
           "channels.$[channelElem].isTopicLevelOverride": false,
+          "channels.$[channelElem].isCourseLevelOverride": false,
           "materials.$[materialElem].isAnnotationNotificationsEnabled":
             isAnnotationNotificationsEnabled,
           "materials.$[materialElem].isReplyAndMentionedNotificationsEnabled":
@@ -553,6 +556,7 @@ export const setChannelNotificationSettings = async (req, res, next) => {
           "materials.$[materialElem].isMaterialLevelOverride": false,
           "materials.$[materialElem].isChannelLevelOverride": true,
           "materials.$[materialElem].isTopicLevelOverride": false,
+          "materials.$[materialElem].isCourseLevelOverride": false,
         },
       },
       {
@@ -628,6 +632,8 @@ export const unsetChannelNotificationSettings = async (req, res, next) => {
           "channels.$[channelElem].isChannelLevelOverride": false,
           "channels.$[channelElem].isTopicLevelOverride":
             topicObj.isTopicLevelOverride,
+          "channels.$[channelElem].isCourseLevelOverride":
+            topicObj.isCourseLevelOverride,
           "materials.$[materialElem].isAnnotationNotificationsEnabled":
             topicObj.isAnnotationNotificationsEnabled,
           "materials.$[materialElem].isReplyAndMentionedNotificationsEnabled":
@@ -638,6 +644,8 @@ export const unsetChannelNotificationSettings = async (req, res, next) => {
           "materials.$[materialElem].isChannelLevelOverride": false,
           "materials.$[materialElem].isTopicLevelOverride":
             topicObj.isTopicLevelOverride,
+          "materials.$[materialElem].isCourseLevelOverride":
+            topicObj.isCourseLevelOverride,
         },
       },
       {
@@ -695,6 +703,7 @@ export const setTopicNotificationSettings = async (req, res, next) => {
           "topics.$[topicElem].isCourseUpdateNotificationsEnabled":
             isCourseUpdateNotificationsEnabled,
           "topics.$[topicElem].isTopicLevelOverride": true,
+          "topics.$[topicElem].isCourseLevelOverride": false,
           "channels.$[channelElem].isAnnotationNotificationsEnabled":
             isAnnotationNotificationsEnabled,
           "channels.$[channelElem].isReplyAndMentionedNotificationsEnabled":
@@ -703,6 +712,7 @@ export const setTopicNotificationSettings = async (req, res, next) => {
             isCourseUpdateNotificationsEnabled,
           "channels.$[channelElem].isChannelLevelOverride": false,
           "channels.$[channelElem].isTopicLevelOverride": true,
+          "channels.$[channelElem].isCourseLevelOverride": false,
           "materials.$[materialElem].isAnnotationNotificationsEnabled":
             isAnnotationNotificationsEnabled,
           "materials.$[materialElem].isReplyAndMentionedNotificationsEnabled":
@@ -712,6 +722,7 @@ export const setTopicNotificationSettings = async (req, res, next) => {
           "materials.$[materialElem].isMaterialLevelOverride": false,
           "materials.$[materialElem].isChannelLevelOverride": false,
           "materials.$[materialElem].isTopicLevelOverride": true,
+          "materials.$[materialElem].isCourseLevelOverride": false,
         },
       },
       {
@@ -785,6 +796,8 @@ export const unsetTopicNotificationSettings = async (req, res, next) => {
           "topics.$[topicElem].isCourseUpdateNotificationsEnabled":
             blockingNotification.isCourseUpdateNotificationsEnabled,
           "topics.$[topicElem].isTopicLevelOverride": false,
+          "topics.$[topicElem].isCourseLevelOverride":
+            blockingNotification.isCourseLevelOverride,
           "channels.$[channelElem].isAnnotationNotificationsEnabled":
             blockingNotification.isAnnotationNotificationsEnabled,
           "channels.$[channelElem].isReplyAndMentionedNotificationsEnabled":
@@ -793,6 +806,8 @@ export const unsetTopicNotificationSettings = async (req, res, next) => {
             blockingNotification.isCourseUpdateNotificationsEnabled,
           "channels.$[channelElem].isChannelLevelOverride": false,
           "channels.$[channelElem].isTopicLevelOverride": false,
+          "channels.$[channelElem].isCourseLevelOverride":
+            blockingNotification.isCourseLevelOverride,
           "materials.$[materialElem].isAnnotationNotificationsEnabled":
             blockingNotification.isAnnotationNotificationsEnabled,
           "materials.$[materialElem].isReplyAndMentionedNotificationsEnabled":
@@ -802,6 +817,8 @@ export const unsetTopicNotificationSettings = async (req, res, next) => {
           "materials.$[materialElem].isMaterialLevelOverride": false,
           "materials.$[materialElem].isChannelLevelOverride": false,
           "materials.$[materialElem].isTopicLevelOverride": false,
+          "materials.$[materialElem].isCourseLevelOverride":
+            blockingNotification.isCourseLevelOverride,
         },
       },
       {
@@ -853,11 +870,215 @@ export const setCourseNotificationSettings = async (req, res, next) => {
     req.body.isCourseUpdateNotificationsEnabled;
 
   let updatedDoc;
+  /*   try { */
+  updatedDoc = await BlockingNotifications.findOneAndUpdate(
+    {
+      courseId: courseId,
+      userId: userId,
+    },
+    {
+      $set: {
+        isAnnotationNotificationsEnabled: isAnnotationNotificationsEnabled,
+        isReplyAndMentionedNotificationsEnabled:
+          isReplyAndMentionedNotificationsEnabled,
+        isCourseUpdateNotificationsEnabled: isCourseUpdateNotificationsEnabled,
+        isCourseLevelOverride: true,
+        "topics.$[topicElem].isAnnotationNotificationsEnabled":
+          isAnnotationNotificationsEnabled,
+        "topics.$[topicElem].isReplyAndMentionedNotificationsEnabled":
+          isReplyAndMentionedNotificationsEnabled,
+        "topics.$[topicElem].isCourseUpdateNotificationsEnabled":
+          isCourseUpdateNotificationsEnabled,
+        "topics.$[topicElem].isCourseLevelOverride": true,
+        "channels.$[channelElem].isAnnotationNotificationsEnabled":
+          isAnnotationNotificationsEnabled,
+        "channels.$[channelElem].isReplyAndMentionedNotificationsEnabled":
+          isReplyAndMentionedNotificationsEnabled,
+        "channels.$[channelElem].isCourseUpdateNotificationsEnabled":
+          isCourseUpdateNotificationsEnabled,
+        "channels.$[channelElem].isCourseLevelOverride": true,
+        "materials.$[materialElem].isAnnotationNotificationsEnabled":
+          isAnnotationNotificationsEnabled,
+        "materials.$[materialElem].isReplyAndMentionedNotificationsEnabled":
+          isReplyAndMentionedNotificationsEnabled,
+        "materials.$[materialElem].isCourseUpdateNotificationsEnabled":
+          isCourseUpdateNotificationsEnabled,
+        "materials.$[materialElem].isCourseLevelOverride": true,
+      },
+    },
+    {
+      arrayFilters: [
+        { "topicElem.isTopicLevelOverride": false },
+        {
+          "channelElem.isChannelLevelOverride": false,
+          "channelElem.isTopicLevelOverride": false,
+        },
+        {
+          "materialElem.isMaterialLevelOverride": false,
+          "materialElem.isChannelLevelOverride": false,
+          "materialElem.isTopicLevelOverride": false,
+        },
+      ],
+      new: true,
+    }
+  );
+  /*   } catch (error) {
+    return res.status(500).json({ error });
+  } */
+
+  let notificationSettings;
+  try {
+    notificationSettings =
+      await getNotificationSettingsWithFollowingAnnotations(courseId, userId);
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ message: "Error finding updated notification settings" });
+  }
+
+  return res.status(200).json(notificationSettings[0]);
+};
+
+export const unsetCourseNotificationSettings = async (req, res, next) => {
+  const userId = req.userId;
+  const courseId = req.body.courseId;
+
+  //fetch the User
+  let user;
+  try {
+    user = await User.findOne({
+      _id: userId,
+    });
+  } catch (err) {
+    return res.status(500).json({ error: "Error finding user" });
+  }
+
+  let updatedDoc;
+  //update the channel in the Blocking Notification collection
   try {
     updatedDoc = await BlockingNotifications.findOneAndUpdate(
       {
-        courseId: courseId,
         userId: userId,
+        courseId: courseId,
+      },
+      {
+        $set: {
+          isCourseLevelOverride: false,
+          isAnnotationNotificationsEnabled:
+            user.isAnnotationNotificationsEnabled,
+          isReplyAndMentionedNotificationsEnabled:
+            user.isReplyAndMentionedNotificationsEnabled,
+          isCourseUpdateNotificationsEnabled:
+            user.isCourseUpdateNotificationsEnabled,
+          "topics.$[topicElem].isAnnotationNotificationsEnabled":
+            user.isAnnotationNotificationsEnabled,
+          "topics.$[topicElem].isReplyAndMentionedNotificationsEnabled":
+            user.isReplyAndMentionedNotificationsEnabled,
+          "topics.$[topicElem].isCourseUpdateNotificationsEnabled":
+            user.isCourseUpdateNotificationsEnabled,
+          "topics.$[topicElem].isTopicLevelOverride": false,
+          "topics.$[topicElem].isCourseLevelOverride": false,
+          "channels.$[channelElem].isAnnotationNotificationsEnabled":
+            user.isAnnotationNotificationsEnabled,
+          "channels.$[channelElem].isReplyAndMentionedNotificationsEnabled":
+            user.isReplyAndMentionedNotificationsEnabled,
+          "channels.$[channelElem].isCourseUpdateNotificationsEnabled":
+            user.isCourseUpdateNotificationsEnabled,
+          "channels.$[channelElem].isChannelLevelOverride": false,
+          "channels.$[channelElem].isTopicLevelOverride": false,
+          "channels.$[channelElem].isCourseLevelOverride": false,
+          "materials.$[materialElem].isAnnotationNotificationsEnabled":
+            user.isAnnotationNotificationsEnabled,
+          "materials.$[materialElem].isReplyAndMentionedNotificationsEnabled":
+            user.isReplyAndMentionedNotificationsEnabled,
+          "materials.$[materialElem].isCourseUpdateNotificationsEnabled":
+            user.isCourseUpdateNotificationsEnabled,
+          "materials.$[materialElem].isMaterialLevelOverride": false,
+          "materials.$[materialElem].isChannelLevelOverride": false,
+          "materials.$[materialElem].isTopicLevelOverride": false,
+          "materials.$[materialElem].isCourseLevelOverride": false,
+        },
+      },
+      {
+        arrayFilters: [
+          {
+            "topicElem.isTopicLevelOverride": false,
+            "topicElem.isCourseLevelOverride": true,
+          },
+          {
+            "channelElem.isChannelLevelOverride": false,
+            "channelElem.isTopicLevelOverride": false,
+            "channelElem.isCourseLevelOverride": true,
+          },
+          {
+            "materialElem.isMaterialLevelOverride": false,
+            "materialElem.isChannelLevelOverride": false,
+            "materialElem.isTopicLevelOverride": false,
+            "materialElem.isCourseLevelOverride": true,
+          },
+        ],
+        new: true,
+      }
+    );
+  } catch (error) {
+    return res.status(500).json({ error });
+  }
+
+  let notificationSettings;
+  try {
+    notificationSettings =
+      await getNotificationSettingsWithFollowingAnnotations(courseId, userId);
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ message: "Error finding updated notification settings" });
+  }
+
+  return res.status(200).json(notificationSettings[0]);
+};
+
+export const setGlobalNotificationSettings = async (req, res, next) => {
+  const userId = req.userId;
+  const isAnnotationNotificationsEnabled =
+    req.body.isAnnotationNotificationsEnabled;
+  const isReplyAndMentionedNotificationsEnabled =
+    req.body.isReplyAndMentionedNotificationsEnabled;
+  const isCourseUpdateNotificationsEnabled =
+    req.body.isCourseUpdateNotificationsEnabled;
+
+  //First the user document will get updated, after that, all the Blocking Notification documents that have the userId = userId will get updated with the new values for the user's notification settings, and all the channels, topics, and materials that have not been overridden will also get the new values
+
+  //update the user document
+  let updatedUser;
+  try {
+    updatedUser = await User.findOneAndUpdate(
+      {
+        _id: userId,
+      },
+      {
+        $set: {
+          isAnnotationNotificationsEnabled: isAnnotationNotificationsEnabled,
+          isReplyAndMentionedNotificationsEnabled:
+            isReplyAndMentionedNotificationsEnabled,
+          isCourseUpdateNotificationsEnabled:
+            isCourseUpdateNotificationsEnabled,
+        },
+      },
+      {
+        new: true,
+      }
+    );
+  } catch (error) {
+    return res.status(500).json({ error });
+  }
+
+  //update the Blocking Notification documents
+  let updatedBlockingNotifications;
+  try {
+    updatedBlockingNotifications = await BlockingNotifications.updateMany(
+      {
+        userId: userId,
+        isCourseLevelOverride: false,
       },
       {
         $set: {
@@ -888,15 +1109,20 @@ export const setCourseNotificationSettings = async (req, res, next) => {
       },
       {
         arrayFilters: [
-          { "topicElem.isTopicLevelOverride": false },
+          {
+            "topicElem.isTopicLevelOverride": false,
+            "topicElem.isCourseLevelOverride": false,
+          },
           {
             "channelElem.isChannelLevelOverride": false,
             "channelElem.isTopicLevelOverride": false,
+            "channelElem.isCourseLevelOverride": false,
           },
           {
             "materialElem.isMaterialLevelOverride": false,
-            "materialElem.isChannellLevelOverride": false,
+            "materialElem.isChannelLevelOverride": false,
             "materialElem.isTopicLevelOverride": false,
+            "materialElem.isCourseLevelOverride": false,
           },
         ],
         new: true,
@@ -906,17 +1132,74 @@ export const setCourseNotificationSettings = async (req, res, next) => {
     return res.status(500).json({ error });
   }
 
+  return res.status(200).json(updatedUser);
+};
+
+export const getAllCourseNotificationSettings = async (req, res, next) => {
+  const userId = req.userId;
+
+  //fetch the User
+  let user;
+  try {
+    user = await User.findOne({
+      _id: userId,
+    });
+  } catch (err) {
+    return res.status(500).json({ error: "Error finding user" });
+  }
+
   let notificationSettings;
   try {
-    notificationSettings =
-      await getNotificationSettingsWithFollowingAnnotations(courseId, userId);
+    notificationSettings = await BlockingNotifications.aggregate([
+      {
+        $match: {
+          userId: new ObjectId(userId),
+        },
+      },
+      {
+        $project: {
+          courseId: 1,
+          isAnnotationNotificationsEnabled: 1,
+          isReplyAndMentionedNotificationsEnabled: 1,
+          isCourseUpdateNotificationsEnabled: 1,
+          isCourseLevelOverride: 1,
+        },
+      },
+      {
+        $lookup: {
+          from: "courses",
+          localField: "courseId",
+          foreignField: "_id",
+          as: "courseInfo",
+        },
+      },
+      {
+        $unwind: {
+          path: "$courseInfo",
+        },
+      },
+      {
+        $set: {
+          courseName: "$courseInfo.name",
+        },
+      },
+      {
+        $unset: "courseInfo",
+      },
+    ]);
   } catch (err) {
     return res
       .status(500)
-      .send({ message: "Error finding updated notification settings" });
+      .json({ error: "Error fetching notification settings" });
   }
 
-  return res.status(200).json(notificationSettings[0]);
+  return res.status(200).json({
+    coursesSettings: notificationSettings,
+    isAnnotationNotificationsEnabled: user.isAnnotationNotificationsEnabled,
+    isReplyAndMentionedNotificationsEnabled:
+      user.isReplyAndMentionedNotificationsEnabled,
+    isCourseUpdateNotificationsEnabled: user.isCourseUpdateNotificationsEnabled,
+  });
 };
 
 export const blockUser = async (req, res, next) => {

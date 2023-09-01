@@ -19,7 +19,11 @@ import {
   getCurrentCourse,
   getLastTopicMenuClickedId,
 } from '../pages/courses/state/course.reducer';
-import { BlockingNotifications } from '../models/BlockingNotification';
+import {
+  BlockingNotifications,
+  CourseNotificationSettings,
+  GlobalAndCourseNotificationSettings,
+} from '../models/BlockingNotification';
 import {
   topicNotificationSettingLabels,
   channelNotificationSettingLabels,
@@ -124,6 +128,30 @@ export class NotificationsService {
     return this.httpClient.put<{ message: string }>(
       `${environment.API_URL}/notifications/unstar`,
       { notificationIds: notification }
+    );
+  }
+
+  setGlobalNotificationSettings(settings: { [key: string]: boolean | string }) {
+    let isAnnotationNotificationsEnabled: boolean = settings[
+      courseNotificationSettingLabels.annotations
+    ] as boolean;
+    let isReplyAndMentionedNotificationsEnabled: boolean = settings[
+      courseNotificationSettingLabels.commentsAndMentioned
+    ] as boolean;
+    let isCourseUpdateNotificationsEnabled: boolean = settings[
+      courseNotificationSettingLabels.courseUpdates
+    ] as boolean;
+
+    let objToSend = {
+      isAnnotationNotificationsEnabled: isAnnotationNotificationsEnabled,
+      isReplyAndMentionedNotificationsEnabled:
+        isReplyAndMentionedNotificationsEnabled,
+      isCourseUpdateNotificationsEnabled: isCourseUpdateNotificationsEnabled,
+    };
+    console.log(objToSend);
+    return this.httpClient.put<{ [key: string]: boolean }>(
+      `${environment.API_URL}/notifications/setGlobalNotificationSettings`,
+      objToSend
     );
   }
 
@@ -331,6 +359,12 @@ export class NotificationsService {
     return this.httpClient.post<BlockingNotifications>(
       `${environment.API_URL}/notifications/followAnnotation/${annotationId}`,
       {}
+    );
+  }
+
+  getCourseNotificationSettings() {
+    return this.httpClient.get<GlobalAndCourseNotificationSettings>(
+      `${environment.API_URL}/notifications/getAllCourseNotificationSettings`
     );
   }
 
