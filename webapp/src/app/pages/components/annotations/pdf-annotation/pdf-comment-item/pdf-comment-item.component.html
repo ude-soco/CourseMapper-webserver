@@ -205,14 +205,22 @@
       <app-pdf-reply-panel [annotation]="annotation"></app-pdf-reply-panel>
       <div class="input-container">
         <div class="flex flex-row space-x-3 mx-7 my-2">
-          <input
+          <!--   <input
             type="text"
             placeholder="Reply"
             [(ngModel)]="replyContent"
             (ngModelChange)="onReplyContentChange()"
             class="p-inputtext-sm w-11/12 h-2/3"
             pInputText
-          />
+          /> -->
+          <div
+            #editableDiv
+            editable="true"
+            [(ngModel)]="replyContent"
+            propValueAccessor="innerHTML"
+            class="p-inputtext-sm w-11/12 h-2/3"
+            pInputText
+          ></div>
           <app-iconbutton
             icon="bx-send"
             color="text-slate-500"
@@ -224,7 +232,7 @@
         <ul class="autocomplete-dropdown" *ngIf="showDropDown">
           <li
             *ngFor="let namesWithEmails of filteredUserNames$ | async"
-            (click)="selectUsername(namesWithEmails.email)"
+            (click)="selectUsername(namesWithEmails.name)"
           >
             {{ namesWithEmails.name + " (" + namesWithEmails.email + ")" }}
           </li>
