@@ -87,15 +87,15 @@ export class PdfCommentItemComponent
   showAllPDFAnnotations$: Observable<boolean>;
   sendButtonDisabled: boolean = true;
   Roles = Roles;
-  usernames$: Observable<{ name: string; username: string }[]>;
+  nameWithEmail$: Observable<{ name: string; email: string }[]>;
   onUserInput: BehaviorSubject<string> = new BehaviorSubject<string>('');
   onUserInput$ = this.onUserInput.asObservable();
   showDropDown = false;
   filteredUsernamesFromAnnotationAndRepliesAuthors$: Observable<
-    { name: string; username: string }[]
+    { name: string; email: string }[]
   >;
-  filteredEnrolledUsernames$: Observable<{ name: string; username: string }[]>;
-  filteredUserNames$: Observable<{ name: string; username: string }[]>;
+  filteredEnrolledUsernames$: Observable<{ name: string; email: string }[]>;
+  filteredUserNames$: Observable<{ name: string; email: string }[]>;
   courseId: string;
   isAnnotationBeingFollowed$: Observable<boolean>;
   constructor(
@@ -228,11 +228,11 @@ export class PdfCommentItemComponent
       this.courseId = courseId;
     });
 
-    this.usernames$ = this.store.select(
+    this.nameWithEmail$ = this.store.select(
       AnnotationSelectors.getUnionOfAnnotationAndReplyAuthors
     );
     this.filteredUsernamesFromAnnotationAndRepliesAuthors$ = combineLatest([
-      this.usernames$,
+      this.nameWithEmail$,
       this.onUserInput$,
     ]).pipe(
       tap(([username, input]) => {
@@ -240,9 +240,9 @@ export class PdfCommentItemComponent
         console.log(username);
         console.log(input);
       }),
-      map(([usernames, onUserInput]) => {
-        return usernames.filter((username) =>
-          (username.name + ' ' + username.username)
+      map(([nameWithEmails, onUserInput]) => {
+        return nameWithEmails.filter((nameWithEmail) =>
+          (nameWithEmail.name + ' ' + nameWithEmail.email)
             .toLowerCase()
             .includes(onUserInput.toLowerCase())
         );
@@ -279,17 +279,17 @@ export class PdfCommentItemComponent
         console.log(backend);
       }),
       map(([frontend, backend]) => {
-        let usernames: Map<string, string> = new Map<string, string>();
+        let namesWithEmails: Map<string, string> = new Map<string, string>();
         frontend.forEach((user) => {
-          usernames.set(user.username, user.name);
+          namesWithEmails.set(user.email, user.name);
         });
         backend.forEach((user) => {
-          usernames.set(user.username, user.name);
+          namesWithEmails.set(user.email, user.name);
         });
-        let arr: { name: string; username: string }[];
-        console.log(usernames);
-        arr = Array.from(usernames, ([username, name]) => ({
-          username,
+        let arr: { name: string; email: string }[];
+        console.log(namesWithEmails);
+        arr = Array.from(namesWithEmails, ([email, name]) => ({
+          email,
           name,
         }));
         return arr;

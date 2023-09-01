@@ -151,27 +151,24 @@ export const getshowAllPDFAnnotations = createSelector(
 const getUsernameOfReplyAuthors = createSelector(
   getAnnotationFeatureState,
   (state) => {
-    let usernamesAndNamesMap: Map<string, string> = new Map<string, string>();
+    let emailAndNamesMap: Map<string, string> = new Map<string, string>();
     state.annotationsForMaterial.forEach((annotation) => {
       annotation.replies.forEach((reply) => {
-        usernamesAndNamesMap.set(reply.author.username, reply.author.name);
+        emailAndNamesMap.set(reply.author.email, reply.author.name);
       });
     });
-    return usernamesAndNamesMap;
+    return emailAndNamesMap;
   }
 );
 
 const getUsernameOfAnnotationAuthors = createSelector(
   getAnnotationFeatureState,
   (state) => {
-    let usernamesAndNamesMap: Map<string, string> = new Map<string, string>();
+    let emailAndNamesMap: Map<string, string> = new Map<string, string>();
     state.annotationsForMaterial.forEach((annotation) => {
-      usernamesAndNamesMap.set(
-        annotation.author.username,
-        annotation.author.name
-      );
+      emailAndNamesMap.set(annotation.author.email, annotation.author.name);
     });
-    return usernamesAndNamesMap;
+    return emailAndNamesMap;
   }
 );
 
@@ -186,10 +183,10 @@ export const getUnionOfAnnotationAndReplyAuthors = createSelector(
     annotationAuthors.forEach((value, key) => {
       unionOfAuthors.set(key, value);
     });
-    let arr: { name: string; username: string }[];
-    arr = Array.from(unionOfAuthors, ([username, name]) => ({
+    let arr: { name: string; email: string }[];
+    arr = Array.from(unionOfAuthors, ([email, name]) => ({
       name,
-      username,
+      email,
     }));
     return arr;
   }

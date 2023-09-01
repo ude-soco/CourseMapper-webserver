@@ -223,10 +223,10 @@
         </div>
         <ul class="autocomplete-dropdown" *ngIf="showDropDown">
           <li
-            *ngFor="let username of filteredUserNames$ | async"
-            (click)="selectUsername(username.username)"
+            *ngFor="let namesWithEmails of filteredUserNames$ | async"
+            (click)="selectUsername(namesWithEmails.email)"
           >
-            {{ username.name + " (" + username.username + ")" }}
+            {{ namesWithEmails.name + " (" + namesWithEmails.email + ")" }}
           </li>
         </ul>
       </div>

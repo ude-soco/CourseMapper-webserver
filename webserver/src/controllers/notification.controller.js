@@ -184,7 +184,7 @@ export const searchUsers = async (req, res, next) => {
     const users = await User.find({
       "courses.courseId": courseId,
       $or: [
-        { username: { $regex: searchQuery, $options: "i" } },
+        { email: { $regex: searchQuery, $options: "i" } },
         { firstname: { $regex: searchQuery, $options: "i" } },
         { lastname: { $regex: searchQuery, $options: "i" } },
       ],
@@ -195,7 +195,7 @@ export const searchUsers = async (req, res, next) => {
     }
     const suggestions = users.map((user) => ({
       name: user.firstname + " " + user.lastname,
-      username: user.username,
+      email: user.email,
     }));
 
     res.json(suggestions);
