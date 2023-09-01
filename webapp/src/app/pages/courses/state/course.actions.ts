@@ -373,7 +373,7 @@ export const unsetMaterialNotificationSettings = createAction(
 );
 
 export const setCourseNotificationSettings = createAction(
-  '[Notification] Set Course Notification Settings',
+  '[Notification] Set Course Notification Settings1',
   props<{
     settings: {
       courseId: string;
@@ -406,7 +406,7 @@ export const unsetCourseNotificationSettings = createAction(
 );
 
 export const unsetCourseNotificationSettingsSuccess = createAction(
-  '[Notification] Unset Course Notification Settings Success',
+  '[Notification] Unset Course Notification Settings Success1',
   props<{
     updatedDoc: BlockingNotifications;
   }>()

@@ -77,7 +77,17 @@ export class CourseLevelNotificationSettingsComponent implements OnInit {
   }
 
   onResetButtonClicked() {
-    console.log('reset button clicked!!');
+    this.store.select(getCurrentCourseId).subscribe((courseId) => {
+      let objToSend = {
+        courseId,
+      };
+
+      this.store.dispatch(
+        CourseActions.unsetCourseNotificationSettings({
+          settings: objToSend,
+        })
+      );
+    });
   }
 
   onCourseSettingClicked(notificationOption: {

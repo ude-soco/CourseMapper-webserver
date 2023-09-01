@@ -165,3 +165,17 @@ export const setGlobalNotificationSettingsFailure = createAction(
   '[Notification] Set Global Notification Settings Failure',
   props<{ error: any }>()
 );
+
+export const setCourseNotificationSettingsSuccess = createAction(
+  '[Notification] Set Course Notification Settings Success2',
+  props<{
+    updatedDoc: BlockingNotifications;
+  }>()
+);
+
+export const unsetCourseNotificationSettingsSuccess = createAction(
+  '[Notification] Unset Course Notification Settings Success2',
+  props<{
+    updatedDoc: BlockingNotifications;
+  }>()
+);

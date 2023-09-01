@@ -47,6 +47,7 @@ export interface CourseState {
   isAnnotationNotificationsEnabled: boolean;
   isCourseUpdateNotificationsEnabled: boolean;
   isReplyAndMentionedNotificationsEnabled: boolean;
+  isCourseLevelOverride: boolean;
 }
 const initialState: CourseState = {
   courseId: null,
@@ -69,6 +70,7 @@ const initialState: CourseState = {
   isAnnotationNotificationsEnabled: null,
   isCourseUpdateNotificationsEnabled: null,
   isReplyAndMentionedNotificationsEnabled: null,
+  isCourseLevelOverride: null,
 };
 const getCourseFeatureState = createFeatureSelector<CourseState>('course');
 
@@ -235,7 +237,7 @@ export const getNotificationSettingsOfCurrentCourse = createSelector(
       {
         label: courseNotificationSettingLabels.globalDefault,
         //TODO: change the below line when global notifications settings are implemented
-        value: false,
+        value: state.isCourseLevelOverride,
       },
       {
         label: courseNotificationSettingLabels.courseUpdates,
@@ -703,6 +705,8 @@ export const courseReducer = createReducer<CourseState>(
           action.notificationSettings.isCourseUpdateNotificationsEnabled,
         isReplyAndMentionedNotificationsEnabled:
           action.notificationSettings.isReplyAndMentionedNotificationsEnabled,
+        isCourseLevelOverride:
+          action.notificationSettings.isCourseLevelOverride,
       };
     }
   ),
@@ -830,6 +834,7 @@ export const courseReducer = createReducer<CourseState>(
           action.updatedDoc.isCourseUpdateNotificationsEnabled,
         isReplyAndMentionedNotificationsEnabled:
           action.updatedDoc.isReplyAndMentionedNotificationsEnabled,
+        isCourseLevelOverride: action.updatedDoc.isCourseLevelOverride,
       };
     }
   ),
@@ -850,6 +855,7 @@ export const courseReducer = createReducer<CourseState>(
           action.updatedDoc.isCourseUpdateNotificationsEnabled,
         isReplyAndMentionedNotificationsEnabled:
           action.updatedDoc.isReplyAndMentionedNotificationsEnabled,
+        isCourseLevelOverride: action.updatedDoc.isCourseLevelOverride,
       };
     }
   )

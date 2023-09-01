@@ -429,5 +429,48 @@ export const notificationReducer = createReducer<NotificationState>(
           action['isCourseUpdateNotificationsEnabled'],
       };
     }
+  ),
+
+  on(
+    NotificationActions.setCourseNotificationSettingsSuccess,
+    (state, action) => {
+      //for the course that was just updated, we need to update the course notification settings using the ID
+      const updatedCourseNotificationSettings = state.coursesSettings.map(
+        (courseSetting) => {
+          if (courseSetting.courseId === action.updatedDoc.courseId) {
+            return {
+              ...courseSetting,
+              isAnnotationNotificationsEnabled:
+                action.updatedDoc.isAnnotationNotificationsEnabled,
+              isReplyAndMentionedNotificationsEnabled:
+                action.updatedDoc.isReplyAndMentionedNotificationsEnabled,
+              isCourseUpdateNotificationsEnabled:
+                action.updatedDoc.isCourseUpdateNotificationsEnabled,
+            };
+          }
+          return courseSetting;
+        }
+      );
+
+      return {
+        ...state,
+        coursesSettings: updatedCourseNotificationSettings,
+      };
+    }
+  ),
+
+  on(
+    NotificationActions.unsetCourseNotificationSettingsSuccess,
+    (state, action) => {
+      //for the course that was just updated, we need to update the course notification settings using the ID
+      const updatedCourseNotificationSettings = state.coursesSettings.filter(
+        (courseSetting) => courseSetting.courseId !== action.updatedDoc.courseId
+      );
+
+      return {
+        ...state,
+        coursesSettings: updatedCourseNotificationSettings,
+      };
+    }
   )
 );

@@ -8,6 +8,7 @@ export interface BlockingNotifications {
   topics: TopicNotificationSettings[];
   channels: ChannelNotificationSettings[];
   materials: MaterialNotificationSettings[];
+  isCourseLevelOverride: boolean;
 }
 
 export interface TopicNotificationSettings {
