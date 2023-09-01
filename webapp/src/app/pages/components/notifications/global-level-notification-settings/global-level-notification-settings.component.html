@@ -33,7 +33,15 @@
       <div class="grid override">
         <div class="name">{{ override.courseName }}</div>
 
-        <p-button styleClass="checkbox-button">
+        <p-button
+          styleClass="checkbox-button"
+          (onClick)="
+            onCourseSettingClicked(
+              override,
+              courseNotificationSettingLabels.courseUpdates
+            )
+          "
+        >
           <div *ngIf="override.isCourseUpdateNotificationsEnabled">
             <app-svg-icon
               [path]="'assets/checkbox-checked.svg'"
@@ -45,7 +53,15 @@
             <div class="unchecked"></div>
           </div>
         </p-button>
-        <p-button styleClass="checkbox-button">
+        <p-button
+          styleClass="checkbox-button"
+          (onClick)="
+            onCourseSettingClicked(
+              override,
+              courseNotificationSettingLabels.commentsAndMentioned
+            )
+          "
+        >
           <div *ngIf="override.isReplyAndMentionedNotificationsEnabled">
             <app-svg-icon
               [path]="'assets/checkbox-checked.svg'"
@@ -56,7 +72,15 @@
             <div class="unchecked"></div>
           </div>
         </p-button>
-        <p-button styleClass="checkbox-button">
+        <p-button
+          styleClass="checkbox-button"
+          (onClick)="
+            onCourseSettingClicked(
+              override,
+              courseNotificationSettingLabels.annotations
+            )
+          "
+        >
           <div *ngIf="override.isAnnotationNotificationsEnabled">
             <app-svg-icon
               [path]="'assets/checkbox-checked.svg'"

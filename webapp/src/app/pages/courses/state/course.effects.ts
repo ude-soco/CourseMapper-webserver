@@ -293,11 +293,14 @@ export class CourseEffects {
         this.notificationService
           .setCourseNotificationSettings(action.settings)
           .pipe(
-            map((updatedDoc: BlockingNotifications) =>
+            mergeMap((updatedDoc: BlockingNotifications) => [
               CourseActions.setCourseNotificationSettingsSuccess({
                 updatedDoc,
-              })
-            ),
+              }),
+              NotificationActions.setCourseNotificationSettingsSuccess({
+                updatedDoc,
+              }),
+            ]),
             catchError((error) => {
               console.log(error);
               return of(

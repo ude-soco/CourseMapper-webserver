@@ -3,7 +3,10 @@ import { FormBuilder, FormControl } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Observable, tap } from 'rxjs';
 import { CourseNotificationSettings } from 'src/app/models/BlockingNotification';
-import { globalNotificationSettingsLabels } from 'src/app/models/Notification';
+import {
+  courseNotificationSettingLabels,
+  globalNotificationSettingsLabels,
+} from 'src/app/models/Notification';
 import { State } from 'src/app/state/app.state';
 import {
   getGlobalNotificationSettings,
@@ -11,6 +14,7 @@ import {
 } from '../state/notifications.reducer';
 import * as NotificationActions from '../state/notifications.actions';
 import * as CourseActions from '../../../courses/state/course.actions';
+import { getCurrentCourseId } from 'src/app/pages/courses/state/course.reducer';
 @Component({
   selector: 'app-global-level-notification-settings',
   templateUrl: './global-level-notification-settings.component.html',
@@ -20,7 +24,7 @@ export class GlobalLevelNotificationSettingsComponent {
   checkBoxesGroup = this.fb.group({});
   checkBoxesArray: { label: string; control: FormControl<boolean> }[] = [];
   overriddenCourses: Observable<CourseNotificationSettings[]>;
-  globalNotificationSettingsLabels = globalNotificationSettingsLabels;
+  courseNotificationSettingLabels = courseNotificationSettingLabels;
 
   constructor(private store: Store<State>, protected fb: FormBuilder) {}
 
@@ -103,51 +107,33 @@ export class GlobalLevelNotificationSettingsComponent {
     );
   }
 
-  /*   onTopicSettingClicked(
-    notificationSettings: TopicNotificationSettings,
-    settingClicked: topicNotificationSettingLabels
+  onCourseSettingClicked(
+    notificationSettings: CourseNotificationSettings,
+    settingClicked: courseNotificationSettingLabels
   ) {
     console.log('topic setting clicked!!');
     console.log('notificationSettings: ', notificationSettings);
     console.log('settingClicked: ', settingClicked);
-    this.store.select(getCurrentCourseId).subscribe((courseId) => {
-      let objToSend = {
-        courseId,
-        topicId: notificationSettings.topicId,
-        [topicNotificationSettingLabels.annotations]:
-          settingClicked === topicNotificationSettingLabels.annotations
-            ? !notificationSettings['isAnnotationNotificationsEnabled']
-            : notificationSettings['isAnnotationNotificationsEnabled'],
-        [topicNotificationSettingLabels.commentsAndMentioned]:
-          settingClicked === topicNotificationSettingLabels.commentsAndMentioned
-            ? !notificationSettings['isReplyAndMentionedNotificationsEnabled']
-            : notificationSettings['isReplyAndMentionedNotificationsEnabled'],
-        [topicNotificationSettingLabels.topicUpdates]:
-          settingClicked === topicNotificationSettingLabels.topicUpdates
-            ? !notificationSettings['isCourseUpdateNotificationsEnabled']
-            : notificationSettings['isCourseUpdateNotificationsEnabled'],
-      };
 
-      this.store.dispatch(
-        CourseActions.setTopicNotificationSettings({ settings: objToSend })
-      );
-    });
-  } */
+    let objToSend = {
+      courseId: notificationSettings.courseId,
 
-  /*   onRemoveTopic(notificationOption: TopicNotificationSettings) {
-    console.log('remove topic clicked!!');
-    console.log('notificationOption: ', notificationOption);
-    this.store.select(getCurrentCourseId).subscribe((courseId) => {
-      let objToSend = {
-        courseId,
-        topicId: notificationOption.topicId,
-      };
+      [courseNotificationSettingLabels.annotations]:
+        settingClicked === courseNotificationSettingLabels.annotations
+          ? !notificationSettings['isAnnotationNotificationsEnabled']
+          : notificationSettings['isAnnotationNotificationsEnabled'],
+      [courseNotificationSettingLabels.commentsAndMentioned]:
+        settingClicked === courseNotificationSettingLabels.commentsAndMentioned
+          ? !notificationSettings['isReplyAndMentionedNotificationsEnabled']
+          : notificationSettings['isReplyAndMentionedNotificationsEnabled'],
+      [courseNotificationSettingLabels.courseUpdates]:
+        settingClicked === courseNotificationSettingLabels.courseUpdates
+          ? !notificationSettings['isCourseUpdateNotificationsEnabled']
+          : notificationSettings['isCourseUpdateNotificationsEnabled'],
+    };
 
-      this.store.dispatch(
-        CourseActions.unsetTopicNotificationSettings({
-          settings: objToSend,
-        })
-      );
-    });
-  } */
+    this.store.dispatch(
+      CourseActions.setCourseNotificationSettings({ settings: objToSend })
+    );
+  }
 }
