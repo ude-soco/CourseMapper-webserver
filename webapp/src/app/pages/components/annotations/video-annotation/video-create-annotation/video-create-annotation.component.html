@@ -2,40 +2,54 @@
   <div class="flex flex-row w-full">
     <span class="font-medium text-xl w-full">Create Annotation</span>
     <div *ngIf="isAnnotationDialogVisible" class="flex w-full justify-end">
-      <app-iconbutton icon="bx-x" color="{{sendButtonColor}}" (onClick)="cancelCreateAnnotation()"></app-iconbutton>
+      <app-iconbutton
+        icon="bx-x"
+        color="{{ sendButtonColor }}"
+        (onClick)="cancelCreateAnnotation()"
+      ></app-iconbutton>
     </div>
   </div>
-  <div [ngStyle]="{ 'border': '2px solid' + annotationColor }" class="rounded-lg p-3 mt-2">
+  <div
+    [ngStyle]="{ border: '2px solid' + annotationColor }"
+    class="rounded-lg p-3 mt-2"
+  >
     <div class="flex flex-col justify-evenly space-y-2">
       <div class="flex flex-row justify-start space-x-3 w-full">
         <div class="flex-col">
           <span>Annotation Type</span>
           <p-dropdown
-          placeholder="Annotation type"
-          [options]="annotationTypesArray"
-          [(ngModel)]="selectedAnnotationType"
-          (ngModelChange)="onAnnotationTypeChange()"
-          autoWidth="false"
-          appendTo="body"
-          [style]="{ minWidth: '100%', maxWidth: '50px', 'border': '1px solid' + annotationColor, height: '55px' }"
-        ></p-dropdown>
+            placeholder="Annotation type"
+            [options]="annotationTypesArray"
+            [(ngModel)]="selectedAnnotationType"
+            (ngModelChange)="onAnnotationTypeChange()"
+            autoWidth="false"
+            appendTo="body"
+            [style]="{
+              minWidth: '100%',
+              maxWidth: '50px',
+              border: '1px solid' + annotationColor,
+              height: '55px'
+            }"
+          ></p-dropdown>
         </div>
         <div class="flex-col">
           <span>Time</span>
           <p-dropdown
-          placeholder="Time"
-          [options]="annotationLocationsArray"
-          [(ngModel)]="selectedAnnotationLocation"
-          (ngModelChange)="onAnnotationLocationChange()"
-          autoWidth="false"
-          appendTo="body"
-          [appUpdateBorderColor]="annotationColor"
-          [style]="{ minWidth: '100%', maxWidth: '200px', height: '55px' }"
-        ></p-dropdown>
+            placeholder="Time"
+            [options]="annotationLocationsArray"
+            [(ngModel)]="selectedAnnotationLocation"
+            (ngModelChange)="onAnnotationLocationChange()"
+            autoWidth="false"
+            appendTo="body"
+            [appUpdateBorderColor]="annotationColor"
+            [style]="{ minWidth: '100%', maxWidth: '200px', height: '55px' }"
+          ></p-dropdown>
         </div>
       </div>
       <div *ngIf="isTimeLineSelection" class="space-y-2">
-        <h5 class="mb-2">{{ printTime(rangeValues[0]) }} - {{ printTime(rangeValues[1]) }}</h5>
+        <h5 class="mb-2">
+          {{ printTime(rangeValues[0]) }} - {{ printTime(rangeValues[1]) }}
+        </h5>
         <p-slider
           [(ngModel)]="rangeValues"
           [range]="true"
@@ -46,21 +60,25 @@
         ></p-slider>
       </div>
       <div class="flex flex-row space-x-3">
-        <textarea *ngIf="isAnnotationDialogVisible"
-        pInputTextarea
-        [autoResize]="true"
-        rows="2" cols="60"
-        [style]="{'border': '1px solid' + annotationColor}"
-        [(ngModel)]="content"
-        (ngModelChange)="onTextChange()"
-        class="w-full"
-        placeholder="Add an annotation with the selected tool"
-      ></textarea>
-        <textarea *ngIf="!isAnnotationDialogVisible"
+        <textarea
+          *ngIf="isAnnotationDialogVisible"
           pInputTextarea
           [autoResize]="true"
-          rows="2" cols="60"
-          [style]="{'border': '1px solid' + annotationColor}"
+          rows="2"
+          cols="60"
+          [style]="{ border: '1px solid' + annotationColor }"
+          [(ngModel)]="content"
+          (ngModelChange)="onTextChange()"
+          class="w-full"
+          placeholder="Add an annotation with the selected tool"
+        ></textarea>
+        <textarea
+          *ngIf="!isAnnotationDialogVisible"
+          pInputTextarea
+          [autoResize]="true"
+          rows="2"
+          cols="60"
+          [style]="{ border: '1px solid' + annotationColor }"
           [(ngModel)]="content"
           (ngModelChange)="onTextChange()"
           class="w-full"
@@ -68,12 +86,12 @@
         ></textarea>
         <app-iconbutton
           icon="bx-send"
-          color="{{sendButtonColor}}"
+          color="{{ sendButtonColor }}"
           class="mb-0 mt-12 flex-1 justify-end"
           (onClick)="postAnnotation()"
           [disabled]="sendButtonDisabled"
         ></app-iconbutton>
       </div>
     </div>
-</div>
+  </div>
 </div>

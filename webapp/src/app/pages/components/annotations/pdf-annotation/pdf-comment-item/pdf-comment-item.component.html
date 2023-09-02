@@ -213,14 +213,22 @@
             class="p-inputtext-sm w-11/12 h-2/3"
             pInputText
           /> -->
-          <div
+          <!--           <div
             #editableDiv
+            id="editableDivElement"
             editable="true"
             [(ngModel)]="replyContent"
             propValueAccessor="innerHTML"
             class="p-inputtext-sm w-11/12 h-2/3"
+          ></div> -->
+          <textarea
+            cols="32"
+            rows="1"
+            #textareaRef
+            placeholder="Enter '@' and start typing..."
+            [(ngModel)]="text"
             pInputText
-          ></div>
+          ></textarea>
           <app-iconbutton
             icon="bx-send"
             color="text-slate-500"
@@ -229,14 +237,28 @@
             [disabled]="sendButtonDisabled"
           ></app-iconbutton>
         </div>
-        <ul class="autocomplete-dropdown" *ngIf="showDropDown">
+        <!--         <ul class="autocomplete-dropdown" *ngIf="showDropDown">
           <li
             *ngFor="let namesWithEmails of filteredUserNames$ | async"
             (click)="selectUsername(namesWithEmails.name)"
           >
             {{ namesWithEmails.name + " (" + namesWithEmails.email + ")" }}
           </li>
-        </ul>
+        </ul> -->
+
+        <ng-template #menuTemplate let-selectChoice="selectChoice">
+          <ul class="flx-selectable-list">
+            <li
+              *ngFor="let namesWithEmails of filteredUserNames$ | async"
+              class="flx-selectable-list-item"
+              (click)="selectUsername(namesWithEmails.name)"
+            >
+              <span title="{{ namesWithEmails.name }}">{{
+                namesWithEmails.email
+              }}</span>
+            </li>
+          </ul>
+        </ng-template>
       </div>
     </div>
   </div>

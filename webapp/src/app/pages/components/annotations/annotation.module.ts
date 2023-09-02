@@ -30,6 +30,7 @@ import { UpdateBorderColorDirective } from 'src/app/custom_directives/update-bor
 import { VideoEffects } from './video-annotation/state/video.effects';
 import { TagsPageComponent } from '../tags/tags-page/tags-page.component';
 import { NgsContenteditableModule } from '@ng-stack/contenteditable';
+import { MentionsModule } from '@flxng/mentions';
 @NgModule({
   declarations: [
     PdfAnnotationToolbarComponent,
@@ -59,7 +60,7 @@ import { NgsContenteditableModule } from '@ng-stack/contenteditable';
     YouTubePlayerModule,
   ],
   imports: [
-    NgsContenteditableModule,
+    MentionsModule,
     CommonModule,
     PrimengModule,
     PdfViewerModule,
