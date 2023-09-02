@@ -1,13 +1,11 @@
 import {
   AfterViewInit,
   Component,
-  ElementRef,
   Input,
   OnChanges,
   OnInit,
   Renderer2,
   SimpleChanges,
-  ViewChild,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { computeElapsedTime, getInitials } from 'src/app/_helpers/format';
@@ -68,7 +66,7 @@ export class PdfCommentItemComponent
 {
   @Input() annotation: Annotation;
   reply: Reply;
-  private _replyContent: string;
+  replyContent: string;
   annotationInitials?: string;
   annotationElapsedTime?: string;
   likesCount: number;
@@ -100,7 +98,6 @@ export class PdfCommentItemComponent
   filteredUserNames$: Observable<{ name: string; email: string }[]>;
   courseId: string;
   isAnnotationBeingFollowed$: Observable<boolean>;
-  @ViewChild('editableDiv') editableDiv: ElementRef;
   constructor(
     private store: Store<State>,
     private socket: Socket,
@@ -573,42 +570,7 @@ export class PdfCommentItemComponent
     return linkedHtml;
   }
 
-  get replyContent(): string {
-    return this._replyContent;
-  }
-
-  set replyContent(value: string) {
-    this._replyContent = value;
-    console.log('reply content changed!');
-    if (this.replyContent.replace(/<\/?[^>]+(>|$)/g, '') == '') {
-      this.sendButtonDisabled = true;
-    } else {
-      this.sendButtonDisabled = false;
-    }
-    const atSymbolRegex: RegExp = /(^|\s)@/;
-    if (atSymbolRegex.test(this._replyContent)) {
-      const lastIndex = this._replyContent.lastIndexOf('@');
-      if (lastIndex !== -1) {
-        const content = this._replyContent.substring(lastIndex + 1).trim();
-        console.log(content);
-        this.onUserInput.next(content);
-        this.filteredUserNames$.pipe(take(1)).subscribe((totalUsers) => {
-          console.log(totalUsers);
-          if (totalUsers.length > 0) {
-            this.showDropDown = true;
-          } else {
-            this.showDropDown = false;
-          }
-        });
-      }
-    } else {
-      this.showDropDown = false;
-    }
-  }
-
-  onReplyContentChange($event) {
-    this.replyContent = $event.target.innerHTML;
-    console.log('reply content changed!');
+  onReplyContentChange() {
     if (this.replyContent.replace(/<\/?[^>]+(>|$)/g, '') == '') {
       this.sendButtonDisabled = true;
     } else {
@@ -635,14 +597,12 @@ export class PdfCommentItemComponent
     }
   }
 
-  selectUsername(name: string) {
+  selectUsername(username: string) {
     const lastIndex = this.replyContent.lastIndexOf('@');
 
     if (lastIndex !== -1) {
       const contentBeforeLastAt = this.replyContent.substring(0, lastIndex + 1);
-      this.replyContent = `${contentBeforeLastAt}<span>${name}</span> `;
-      console.log('selected a name');
-      console.log(this.replyContent);
+      this.replyContent = contentBeforeLastAt + username;
     }
     this.showDropDown = false;
   }

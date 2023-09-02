@@ -19,7 +19,7 @@ import { MenuModule } from 'primeng/menu';
 import { PdfAnnotationSummaryComponent } from './pdf-annotation/pdf-annotation-summary/pdf-annotation-summary.component';
 import { VideoMainAnnotationComponent } from './video-annotation/video-main-annotation/video-main-annotation.component';
 import { videoReducer } from './video-annotation/state/video.reducer';
-import { YouTubePlayerModule } from '@angular/youtube-player';
+import {YouTubePlayerModule} from '@angular/youtube-player';
 import { RouterModule } from '@angular/router';
 import { VideoAnnotationToolbarComponent } from './video-annotation/video-annotation-toolbar/video-annotation-toolbar.component';
 import { VideoCreateAnnotationComponent } from './video-annotation/video-create-annotation/video-create-annotation.component';
@@ -29,61 +29,61 @@ import { VideoAnnotationSummaryComponent } from './video-annotation/video-annota
 import { UpdateBorderColorDirective } from 'src/app/custom_directives/update-border-color.directive';
 import { VideoEffects } from './video-annotation/state/video.effects';
 import { TagsPageComponent } from '../tags/tags-page/tags-page.component';
-import { NgsContenteditableModule } from '@ng-stack/contenteditable';
+
 @NgModule({
-  declarations: [
-    PdfAnnotationToolbarComponent,
-    PdfCreateAnnotationComponent,
-    PdfCommentPanelComponent,
-    PdfCommentItemComponent,
-    PdfMainAnnotationComponent,
-    PdfDrawboxComponent,
-    PdfReplyItemComponent,
-    PdfReplyPanelComponent,
-    PdfAnnotationSummaryComponent,
-    VideoMainAnnotationComponent,
-    VideoAnnotationToolbarComponent,
-    VideoCreateAnnotationComponent,
-    VideoDrawingOverlayComponent,
-    VideoRenderingOverlayComponent,
-    VideoAnnotationSummaryComponent,
-    UpdateBorderColorDirective,
-  ],
-  exports: [
-    PdfAnnotationToolbarComponent,
-    PdfCreateAnnotationComponent,
-    PdfCommentPanelComponent,
-    PdfCommentItemComponent,
-    PdfMainAnnotationComponent,
-    VideoMainAnnotationComponent,
-    YouTubePlayerModule,
-  ],
-  imports: [
-    NgsContenteditableModule,
-    CommonModule,
-    PrimengModule,
-    PdfViewerModule,
-    SharedComponentsModule,
-    MenuModule,
-    StoreModule.forFeature('annotation', annotationReducer),
-    StoreModule.forFeature('video', videoReducer),
-    EffectsModule.forFeature([AnnotationEffects]),
-    EffectsModule.forFeature([VideoEffects]),
-    YouTubePlayerModule,
-    RouterModule.forChild([
-      {
-        path: ':materialId/pdf',
-        component: PdfMainAnnotationComponent,
-        outlet: 'material',
-        pathMatch: 'full',
-      },
-      {
-        path: ':materialId/video',
-        component: VideoMainAnnotationComponent,
-        outlet: 'material',
-        pathMatch: 'full',
-      },
-    ]),
-  ],
+    declarations: [
+        PdfAnnotationToolbarComponent,
+        PdfCreateAnnotationComponent,
+        PdfCommentPanelComponent,
+        PdfCommentItemComponent,
+        PdfMainAnnotationComponent,
+        PdfDrawboxComponent,
+        PdfReplyItemComponent,
+        PdfReplyPanelComponent,
+        PdfAnnotationSummaryComponent,
+        VideoMainAnnotationComponent,
+        VideoAnnotationToolbarComponent,
+        VideoCreateAnnotationComponent,
+        VideoDrawingOverlayComponent,
+        VideoRenderingOverlayComponent,
+        VideoAnnotationSummaryComponent,
+        UpdateBorderColorDirective,
+    ],
+    exports: [
+        PdfAnnotationToolbarComponent,
+        PdfCreateAnnotationComponent,
+        PdfCommentPanelComponent,
+        PdfCommentItemComponent,
+        PdfMainAnnotationComponent,
+        VideoMainAnnotationComponent,
+        YouTubePlayerModule
+    ],
+    imports: [
+        CommonModule,
+        PrimengModule,
+        PdfViewerModule,
+        SharedComponentsModule,
+        MenuModule,
+        StoreModule.forFeature('annotation', annotationReducer),
+        StoreModule.forFeature('video', videoReducer),
+        EffectsModule.forFeature([AnnotationEffects]),
+        EffectsModule.forFeature([VideoEffects]),
+        YouTubePlayerModule,
+       RouterModule.forChild([
+        {
+          path: ':materialId/pdf',
+          component: PdfMainAnnotationComponent,
+          outlet: 'material',
+          pathMatch: 'full',
+
+        },
+        {
+          path: ':materialId/video',
+          component: VideoMainAnnotationComponent,
+          outlet: 'material',
+          pathMatch: 'full',
+        }
+      ])
+    ]
 })
-export class AnnotationModule {}
+export class AnnotationModule { }
