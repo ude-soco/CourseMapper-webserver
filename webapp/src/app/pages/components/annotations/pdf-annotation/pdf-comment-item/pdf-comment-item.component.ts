@@ -100,7 +100,6 @@ export class PdfCommentItemComponent
   filteredUserNames$: Observable<{ name: string; email: string }[]>;
   courseId: string;
   isAnnotationBeingFollowed$: Observable<boolean>;
-  text: string;
   @ViewChild('editableDiv') editableDiv: ElementRef;
   constructor(
     private store: Store<State>,
@@ -575,13 +574,10 @@ export class PdfCommentItemComponent
   }
 
   get replyContent(): string {
-    console.log('get reply called!');
     return this._replyContent;
   }
 
   set replyContent(value: string) {
-    console.log('SET REPLY CALLED!!!!');
-    console.log(value);
     this._replyContent = value;
     console.log('reply content changed!');
     if (this.replyContent.replace(/<\/?[^>]+(>|$)/g, '') == '') {
@@ -610,7 +606,7 @@ export class PdfCommentItemComponent
     }
   }
 
-  /*   onReplyContentChange($event) {
+  onReplyContentChange($event) {
     this.replyContent = $event.target.innerHTML;
     console.log('reply content changed!');
     if (this.replyContent.replace(/<\/?[^>]+(>|$)/g, '') == '') {
@@ -638,36 +634,16 @@ export class PdfCommentItemComponent
       this.showDropDown = false;
     }
   }
- */
-  selectUsername(name: string) {
-    console.log('select username called!');
-    console.log(name);
-    /*     const lastIndex = this.replyContent.lastIndexOf('@');
 
-    this.showDropDown = false;
+  selectUsername(name: string) {
+    const lastIndex = this.replyContent.lastIndexOf('@');
+
     if (lastIndex !== -1) {
-      const contentBeforeLastAt = this.replyContent.substring(0, lastIndex);
-      this.replyContent = `${contentBeforeLastAt}<span>@${name}</span> <br></br>`;
+      const contentBeforeLastAt = this.replyContent.substring(0, lastIndex + 1);
+      this.replyContent = `${contentBeforeLastAt}<span>${name}</span> `;
       console.log('selected a name');
       console.log(this.replyContent);
-      // Use setTimeout to move the cursor to the end after a short delay
-
-      setTimeout(() => {
-        let editableDiv = this.editableDiv.nativeElement;
-        const selection = window.getSelection();
-        const range = document.createRange();
-        const spanElements = editableDiv.getElementsByTagName('span');
-        let lastSpan: HTMLElement;
-        if (spanElements.length > 0) {
-          lastSpan = spanElements[spanElements.length - 1]; // Get the last <span>
-          console.log(lastSpan); // Output the last <span> element
-          range.setStartAfter(lastSpan);
-          range.setEndAfter(lastSpan); // Set the cursor to after the last span
-          range.collapse(false);
-          selection.removeAllRanges();
-          selection.addRange(range);
-          editableDiv.focus();
-        }
-      }, 0); */
+    }
+    this.showDropDown = false;
   }
 }
