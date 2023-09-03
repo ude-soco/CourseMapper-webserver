@@ -336,7 +336,7 @@ export class PdfCommentItemComponent
   }
 
   sendReply() {
-    if (this.replyContent.replace(/<\/?[^>]+(>|$)/g, '') == '') {
+    if (this.replyContent?.replace(/<\/?[^>]+(>|$)/g, '') == '') {
       this.sendButtonDisabled = true;
       window.alert('Cannot Send Empty Reply');
       return;

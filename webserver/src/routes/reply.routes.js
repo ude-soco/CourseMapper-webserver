@@ -25,6 +25,9 @@ module.exports = function (app) {
     controller.newReply,
     logger.newReply,
     notifications.calculateUsersFollowingAnnotation,
+    notifications.populateUserNotification,
+    logger.newMention,
+    notifications.newMentionNotificationUsersCalculate,
     notifications.populateUserNotification
   );
 

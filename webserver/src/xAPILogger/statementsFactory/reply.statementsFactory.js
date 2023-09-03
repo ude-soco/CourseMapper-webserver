@@ -468,3 +468,52 @@ export const getReplyEditStatement = (user, oldReply, newReply, origin) => {
     },
   };
 };
+
+export const getNewMentionCreationStatement = (user, reply, origin) => {
+  let userId = user._id.toString();
+  const fullname = `${user.firstname} ${user.lastname}`;
+  return {
+    id: uuidv4(),
+    timestamp: new Date(),
+    actor: {
+      objectType: "Agent",
+      name: userId,
+      account: {
+        homePage: origin,
+        name: userId,
+      },
+    },
+    verb: {
+      id: "http://id.tincanapi.com/verb/mentioned",
+      display: {
+        "en-US": "mentioned",
+      },
+    },
+    object: {
+      objectType: "User",
+
+      definition: {
+        type: "http://www.CourseMapper.de/activityType/you",
+        name: {
+          "en-US": "you",
+        },
+        extensions: {
+          "http://www.CourseMapper.de/extensions/reply": {
+            id: reply._id,
+            annotation_id: reply.annotationId,
+            material_id: reply.materialId,
+            channel_id: reply.channelId,
+            topic_id: reply.topicId,
+            course_id: reply.courseId,
+            content: reply.content,
+          },
+        },
+      },
+    },
+
+    context: {
+      platform: "CourseMapper",
+      language: "en-US",
+    },
+  };
+};

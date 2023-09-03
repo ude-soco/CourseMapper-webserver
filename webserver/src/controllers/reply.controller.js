@@ -56,7 +56,8 @@ export const getReplies = async (req, res) => {
 export const newReply = async (req, res, next) => {
   const courseId = req.params.courseId;
   const annotationId = req.params.annotationId;
-  const replyContent = req.body.content;
+  const replyContent = req.body.reply.content;
+  const mentionedUsers = req.body.mentionedUsers;
   const userId = req.userId;
 
   let course;
@@ -179,6 +180,8 @@ export const newReply = async (req, res, next) => {
     course,
     materialType: foundMaterial.type,
     annotationId: foundAnnotation._id,
+    isMentionedUsersPresent: mentionedUsers.length > 0,
+    material: foundMaterial,
   };
   socketio.getIO().emit(annotationId, {
     eventType: "replyCreated",

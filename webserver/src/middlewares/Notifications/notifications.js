@@ -81,7 +81,7 @@ const emitNotificationsToSubscribedUsers = async (
 };
 //TODO: When saving the several inserts use the option "lean" to skip Mongoose validitity checks
 //TODO: rename this method to "populateUserNotification"
-export const populateUserNotification = async (req, res) => {
+export const populateUserNotification = async (req, res, next) => {
   let user = req.locals.user;
   let course = req.locals.course;
   let activity = req.locals.activity;
@@ -124,6 +124,10 @@ export const populateUserNotification = async (req, res) => {
       error: "Error emitting notifications",
       err,
     });
+  }
+
+  if (req.locals.isMentionedUsersPresent) {
+    return next();
   }
 
   let objectToSend = {
@@ -268,6 +272,56 @@ export const LikesDislikesMentionedNotificationUsers = async (
     ObjectId(userId)
   );
   req.locals.usersToBeNotified = finalListOfUsersToNotify;
+  next();
+};
+
+export const newMentionNotificationUsersCalculate = async (req, res, next) => {
+  let mentionedUsers = req.body.mentionedUsers;
+  let userId = req.userId;
+  let courseId = req.locals.course._id;
+
+  let mentionedUsersIds = mentionedUsers.map((user) => user.userId);
+  const objectIdArray = mentionedUsersIds.map((id) => new ObjectId(id));
+
+  let foundUser = await User.findById(userId);
+  //fetch the users who have blocked the user doing the action
+  let blockedByUsers = foundUser.blockedByUser.map((userId) =>
+    userId.toString()
+  );
+
+  const usersAllowingMentionNotifications =
+    await BlockingNotifications.aggregate([
+      {
+        $match: {
+          courseId: ObjectId(courseId),
+          userId: {
+            $in: objectIdArray,
+          },
+          materials: {
+            $elemMatch: {
+              materialId: req.locals.material._id,
+              isReplyAndMentionedNotificationsEnabled: true,
+            },
+          },
+        },
+      },
+    ]);
+
+  const userIdsOfUsersAllowingMentionNotifications =
+    usersAllowingMentionNotifications.map((user) => user.userId.toString());
+
+  let resultingUsers;
+  if (blockedByUsers.length > 0) {
+    const blockedByUserSet = new Set(blockedByUsers);
+    resultingUsers = userIdsOfUsersAllowingMentionNotifications.filter(
+      (userId) => !blockedByUserSet.has(userId.toString())
+    );
+  } else {
+    resultingUsers = userIdsOfUsersAllowingMentionNotifications;
+  }
+
+  req.locals.usersToBeNotified = resultingUsers;
+  req.locals.isMentionedUsersPresent = false;
   next();
 };
 
@@ -673,7 +727,6 @@ export const getNotificationSettingsWithFollowingAnnotations = async (
         fetchedTopics: {
           $map: {
             input: "$fetchedTopics",
-            // Replace with the actual field you're working with
             as: "currentElement",
             in: {
               name: "$$currentElement.name",
@@ -928,5 +981,6 @@ let notifications = {
   updateBlockingNotificationsNewChannel,
   updateBlockingNotificationsNewTopic,
   getNotificationSettingsWithFollowingAnnotations,
+  newMentionNotificationUsersCalculate,
 };
 module.exports = notifications;
