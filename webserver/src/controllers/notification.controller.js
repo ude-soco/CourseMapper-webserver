@@ -196,6 +196,7 @@ export const searchUsers = async (req, res, next) => {
     const suggestions = users.map((user) => ({
       name: user.firstname + " " + user.lastname,
       email: user.email,
+      userId: user._id,
     }));
 
     res.json(suggestions);

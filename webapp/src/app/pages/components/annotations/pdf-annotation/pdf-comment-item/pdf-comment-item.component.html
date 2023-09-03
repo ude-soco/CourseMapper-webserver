@@ -208,7 +208,7 @@
           <input
             type="text"
             placeholder="Reply"
-            (ngModelChange)="onReplyContentChange()"
+            (input)="onReplyContentChange($event)"
             class="p-inputtext-sm w-11/12 h-2/3"
             [mention]="filteredUserNames$ | async"
             [mentionConfig]="{
@@ -218,10 +218,13 @@
             }"
             (searchTerm)="searchUserNames($event)"
             [mentionListTemplate]="mentionListTemplate"
+            (itemSelected)="selectName($event)"
             pInputText
           />
           <ng-template #mentionListTemplate let-item="item">
-            <span>{{ item.name }} ({{ item.email }})</span>
+            <span class="cursor-pointer"
+              >{{ item.name }} ({{ item.email }})</span
+            >
           </ng-template>
           <app-iconbutton
             icon="bx-send"

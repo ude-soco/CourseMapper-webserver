@@ -27,10 +27,14 @@ export class AnnotationService {
     );
   }
 
-  postReply(annotation: Annotation, reply: Reply): Observable<Reply> {
+  postReply(
+    annotation: Annotation,
+    reply: Reply,
+    mentionedUsers: { userId: string; name: string; email: string }[]
+  ): Observable<Reply> {
     return this.http.post<Reply>(
       `${environment.API_URL}/courses/${annotation.courseId}/annotations/${annotation._id}/reply`,
-      reply
+      { reply, mentionedUsers }
     );
   }
 

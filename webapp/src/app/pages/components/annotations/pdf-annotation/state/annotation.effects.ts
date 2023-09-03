@@ -16,16 +16,17 @@ import {
 } from 'rxjs';
 import { AnnotationService } from 'src/app/services/annotation.service';
 import { State } from 'src/app/state/app.state';
-import {
-  getCurrentMaterialId,
-} from '../../../materials/state/materials.reducer';
+import { getCurrentMaterialId } from '../../../materials/state/materials.reducer';
 import * as AnnotationActions from './annotation.actions';
 import * as MaterialActions from '../../../materials/state/materials.actions';
-import * as VideoActions from 'src/app/pages/components/annotations/video-annotation/state/video.action'
+import * as VideoActions from 'src/app/pages/components/annotations/video-annotation/state/video.action';
 import { Annotation } from 'src/app/models/Annotations';
 import { LoggerService } from 'src/app/services/logger.service';
 import { getCurrentTime } from '../../video-annotation/state/video.reducer';
-import { getCurrentPdfPage, getPdfTotalNumberOfPages } from './annotation.reducer';
+import {
+  getCurrentPdfPage,
+  getPdfTotalNumberOfPages,
+} from './annotation.reducer';
 import { getCurrentCourseId } from 'src/app/pages/courses/state/course.reducer';
 
 @Injectable()
@@ -63,7 +64,7 @@ export class AnnotationEffects {
           catchError((error) =>
             of(AnnotationActions.loadAnnotationsFail({ error }))
           )
-        ),
+        )
       )
     )
   );
@@ -107,14 +108,18 @@ export class AnnotationEffects {
   postReply$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AnnotationActions.postReply),
-      mergeMap(({ annotation, reply }) =>
-        this.annotationService.postReply(annotation, reply).pipe(
-          mergeMap(() => [
-            AnnotationActions.postReplySuccess(),
-            AnnotationActions.loadAnnotations(),
-          ]),
-          catchError((error) => of(AnnotationActions.postReplyFail({ error })))
-        )
+      mergeMap(({ annotation, reply, mentionedUsers }) =>
+        this.annotationService
+          .postReply(annotation, reply, mentionedUsers)
+          .pipe(
+            mergeMap(() => [
+              AnnotationActions.postReplySuccess(),
+              AnnotationActions.loadAnnotations(),
+            ]),
+            catchError((error) =>
+              of(AnnotationActions.postReplyFail({ error }))
+            )
+          )
       )
     )
   );
@@ -154,125 +159,122 @@ export class AnnotationEffects {
   );
 
   likeReply$ = createEffect(() =>
-  this.actions$.pipe(
-    ofType(AnnotationActions.likeReply),
-    mergeMap(({ reply }) =>
-      this.annotationService.likeReply(reply).pipe(
-        mergeMap(() => [
-          AnnotationActions.likeReplySuccess(),
-          AnnotationActions.loadAnnotations(),
-        ]),
-        catchError((error) =>
-          of(AnnotationActions.likeReplyFail({ error }))
+    this.actions$.pipe(
+      ofType(AnnotationActions.likeReply),
+      mergeMap(({ reply }) =>
+        this.annotationService.likeReply(reply).pipe(
+          mergeMap(() => [
+            AnnotationActions.likeReplySuccess(),
+            AnnotationActions.loadAnnotations(),
+          ]),
+          catchError((error) => of(AnnotationActions.likeReplyFail({ error })))
         )
       )
     )
-  )
-);
+  );
 
-dislikeReply$ = createEffect(() =>
-  this.actions$.pipe(
-    ofType(AnnotationActions.dislikeReply),
-    mergeMap(({ reply }) =>
-      this.annotationService.dislikeReply(reply).pipe(
-        mergeMap(() => [
-          AnnotationActions.dislikeReplySuccess(),
-          AnnotationActions.loadAnnotations(),
-        ]),
-        catchError((error) =>
-          of(AnnotationActions.dislikeReplyFail({ error }))
+  dislikeReply$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AnnotationActions.dislikeReply),
+      mergeMap(({ reply }) =>
+        this.annotationService.dislikeReply(reply).pipe(
+          mergeMap(() => [
+            AnnotationActions.dislikeReplySuccess(),
+            AnnotationActions.loadAnnotations(),
+          ]),
+          catchError((error) =>
+            of(AnnotationActions.dislikeReplyFail({ error }))
+          )
         )
       )
     )
-  )
-);
+  );
 
-deleteReply$ = createEffect(() =>
-  this.actions$.pipe(
-    ofType(AnnotationActions.deleteReply),
-    mergeMap(({ reply }) =>
-      this.annotationService.deleteReply(reply).pipe(
-        mergeMap(() => [
-          AnnotationActions.deleteReplySuccess(),
-          AnnotationActions.loadAnnotations(),
-        ]),
-        catchError((error) =>
-          of(AnnotationActions.deleteReplyFail({ error }))
+  deleteReply$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AnnotationActions.deleteReply),
+      mergeMap(({ reply }) =>
+        this.annotationService.deleteReply(reply).pipe(
+          mergeMap(() => [
+            AnnotationActions.deleteReplySuccess(),
+            AnnotationActions.loadAnnotations(),
+          ]),
+          catchError((error) =>
+            of(AnnotationActions.deleteReplyFail({ error }))
+          )
         )
       )
     )
-  )
-);
+  );
 
-editReply$ = createEffect(() =>
-  this.actions$.pipe(
-    ofType(AnnotationActions.editReply),
-    mergeMap(({ reply, updatedReply }) =>
-      this.annotationService.editReply(reply, updatedReply).pipe(
-        mergeMap(() => [
-          AnnotationActions.editReplySuccess(),
-          AnnotationActions.loadAnnotations(),
-        ]),
-        catchError((error) =>
-          of(AnnotationActions.editReplyFail({ error }))
+  editReply$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AnnotationActions.editReply),
+      mergeMap(({ reply, updatedReply }) =>
+        this.annotationService.editReply(reply, updatedReply).pipe(
+          mergeMap(() => [
+            AnnotationActions.editReplySuccess(),
+            AnnotationActions.loadAnnotations(),
+          ]),
+          catchError((error) => of(AnnotationActions.editReplyFail({ error })))
         )
       )
     )
-  )
-);
+  );
 
-deleteAnnotation$ = createEffect(() =>
-  this.actions$.pipe(
-    ofType(AnnotationActions.deleteAnnotation),
-    mergeMap(({ annotation }) =>
-      this.annotationService.deleteAnnotation(annotation).pipe(
-        mergeMap(() => [
-          AnnotationActions.deleteAnnotationSuccess(),
-          AnnotationActions.loadAnnotations(),
-        ]),
-        catchError((error) =>
-          of(AnnotationActions.deleteAnnotationFail({ error }))
+  deleteAnnotation$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AnnotationActions.deleteAnnotation),
+      mergeMap(({ annotation }) =>
+        this.annotationService.deleteAnnotation(annotation).pipe(
+          mergeMap(() => [
+            AnnotationActions.deleteAnnotationSuccess(),
+            AnnotationActions.loadAnnotations(),
+          ]),
+          catchError((error) =>
+            of(AnnotationActions.deleteAnnotationFail({ error }))
+          )
         )
       )
     )
-  )
-);
+  );
 
-editAnnotation$ = createEffect(() =>
-  this.actions$.pipe(
-    ofType(AnnotationActions.editAnnotation),
-    mergeMap(({ annotation }) =>
-      this.annotationService.editAnnotation(annotation).pipe(
-        mergeMap(() => [
-          AnnotationActions.editAnnotationSuccess(),
-          AnnotationActions.loadAnnotations(),
-        ]),
-        catchError((error) =>
-          of(AnnotationActions.editAnnotationFail({ error }))
+  editAnnotation$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AnnotationActions.editAnnotation),
+      mergeMap(({ annotation }) =>
+        this.annotationService.editAnnotation(annotation).pipe(
+          mergeMap(() => [
+            AnnotationActions.editAnnotationSuccess(),
+            AnnotationActions.loadAnnotations(),
+          ]),
+          catchError((error) =>
+            of(AnnotationActions.editAnnotationFail({ error }))
+          )
         )
       )
     )
-  )
-);
+  );
 
-logSlideSeen$ = createEffect(() =>
-  this.actions$.pipe(
-    ofType(AnnotationActions.setCurrentPdfPage),
-    withLatestFrom(
-      this.store.select(getCurrentCourseId),
-      this.store.select(getCurrentMaterialId),
-      this.store.select(getCurrentPdfPage),
-      this.store.select(getPdfTotalNumberOfPages)
-    ),
-    tap(([action, courseId, materialId, pageNumber, totalPages]) => {
-      this.loggerService.slideSeen(courseId, materialId, pageNumber);
-      if(pageNumber === totalPages){
-        this.loggerService.pdfCompleted(courseId, materialId);
-      }
-    })
-  ),
-  { dispatch: false }
-);
+  logSlideSeen$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AnnotationActions.setCurrentPdfPage),
+        withLatestFrom(
+          this.store.select(getCurrentCourseId),
+          this.store.select(getCurrentMaterialId),
+          this.store.select(getCurrentPdfPage),
+          this.store.select(getPdfTotalNumberOfPages)
+        ),
+        tap(([action, courseId, materialId, pageNumber, totalPages]) => {
+          this.loggerService.slideSeen(courseId, materialId, pageNumber);
+          if (pageNumber === totalPages) {
+            this.loggerService.pdfCompleted(courseId, materialId);
+          }
+        })
+      ),
+    { dispatch: false }
+  );
 
   constructor(
     private actions$: Actions,

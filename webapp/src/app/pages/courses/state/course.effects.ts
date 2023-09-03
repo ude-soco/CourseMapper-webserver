@@ -170,11 +170,12 @@ export class CourseEffects {
     )
   );
 
+  //TODO: Edit code below when implementing mentions for tag page.
   postReplyForTag$ = createEffect(() =>
     this.actions$.pipe(
       ofType(CourseActions.postReply),
       mergeMap(({ annotation, reply }) =>
-        this.annotationService.postReply(annotation, reply).pipe(
+        this.annotationService.postReply(annotation, reply, []).pipe(
           mergeMap(() => [
             CourseActions.postReplySuccess(),
             // AnnotationActions.loadAnnotations(),

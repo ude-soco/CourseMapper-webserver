@@ -87,17 +87,22 @@ export class PdfCommentItemComponent
   showAllPDFAnnotations$: Observable<boolean>;
   sendButtonDisabled: boolean = true;
   Roles = Roles;
-  nameWithEmail$: Observable<{ name: string; email: string }[]>;
+  nameWithEmail$: Observable<{ name: string; email: string; userId: string }[]>;
   onUserInput: BehaviorSubject<string> = new BehaviorSubject<string>('');
   onUserInput$ = this.onUserInput.asObservable();
   showDropDown = false;
   filteredUsernamesFromAnnotationAndRepliesAuthors$: Observable<
-    { name: string; email: string }[]
+    { name: string; email: string; userId: string }[]
   >;
-  filteredEnrolledUsernames$: Observable<{ name: string; email: string }[]>;
-  filteredUserNames$: Observable<{ name: string; email: string }[]>;
+  filteredEnrolledUsernames$: Observable<
+    { name: string; email: string; userId: string }[]
+  >;
+  filteredUserNames$: Observable<
+    { name: string; email: string; userId: string }[]
+  >;
   courseId: string;
   isAnnotationBeingFollowed$: Observable<boolean>;
+  mentionedUsers: { name: string; email: string; userId: string }[] = [];
   constructor(
     private store: Store<State>,
     private socket: Socket,
@@ -279,18 +284,25 @@ export class PdfCommentItemComponent
         console.log(backend);
       }),
       map(([frontend, backend]) => {
-        let namesWithEmails: Map<string, string> = new Map<string, string>();
+        let namesWithEmails: Map<string, { name: string; email: string }> =
+          new Map<string, { name: string; email: string }>();
         frontend.forEach((user) => {
-          namesWithEmails.set(user.email, user.name);
+          namesWithEmails.set(user.userId, {
+            name: user.name,
+            email: user.email,
+          });
         });
         backend.forEach((user) => {
-          namesWithEmails.set(user.email, user.name);
+          namesWithEmails.set(user.userId, {
+            name: user.name,
+            email: user.email,
+          });
         });
-        let arr: { name: string; email: string }[];
+        let arr: { name: string; email: string; userId: string }[];
         console.log(namesWithEmails);
-        arr = Array.from(namesWithEmails, ([email, name]) => ({
-          email,
-          name,
+        arr = Array.from(namesWithEmails, ([userId, userData]) => ({
+          userId,
+          ...userData,
         }));
         return arr;
       })
@@ -332,14 +344,29 @@ export class PdfCommentItemComponent
     this.reply = {
       content: this.replyContent,
     };
+    //check if all the mentioned Users are still present in the reply. if not, remove them from the mentionedUsers array
+    this.mentionedUsers.forEach((user) => {
+      if (!this.replyContent.includes(user.name)) {
+        this.mentionedUsers.splice(this.mentionedUsers.indexOf(user), 1);
+      }
+    });
+
+    //Remove repeated users from mentionedUsers array
+    this.mentionedUsers = this.mentionedUsers.filter(
+      (user, index, self) =>
+        index === self.findIndex((t) => t.userId === user.userId)
+    );
+
     this.store.dispatch(
       AnnotationActions.postReply({
         reply: this.reply,
         annotation: this.annotation,
+        mentionedUsers: this.mentionedUsers,
       })
     );
     this.reply = null;
     this.replyContent = null;
+    this.mentionedUsers = [];
   }
 
   likeAnnotation() {
@@ -570,7 +597,9 @@ export class PdfCommentItemComponent
     return linkedHtml;
   }
 
-  onReplyContentChange() {
+  onReplyContentChange($event) {
+    console.log('onReplyChagned called!');
+    this.replyContent = $event.target.value;
     if (this.replyContent.replace(/<\/?[^>]+(>|$)/g, '') == '') {
       this.sendButtonDisabled = true;
     } else {
@@ -597,17 +626,13 @@ export class PdfCommentItemComponent
     } */
   }
 
-  searchUserNames($event) {
-    console.log($event);
+  searchUserNames(userInput: string) {
+    console.log(userInput);
+    this.onUserInput.next(userInput);
   }
 
-  selectUsername(username: string) {
-    const lastIndex = this.replyContent.lastIndexOf('@');
-
-    if (lastIndex !== -1) {
-      const contentBeforeLastAt = this.replyContent.substring(0, lastIndex + 1);
-      this.replyContent = contentBeforeLastAt + username;
-    }
-    this.showDropDown = false;
+  selectName(mentionedUser) {
+    console.log(mentionedUser);
+    this.mentionedUsers.push(mentionedUser);
   }
 }

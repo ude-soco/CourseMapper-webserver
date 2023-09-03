@@ -151,22 +151,30 @@ export const getshowAllPDFAnnotations = createSelector(
 const getUsernameOfReplyAuthors = createSelector(
   getAnnotationFeatureState,
   (state) => {
-    let emailAndNamesMap: Map<string, string> = new Map<string, string>();
+    let idAndEmailAndNamesMap: Map<string, { name: string; email: string }> =
+      new Map<string, { name: string; email: string }>();
     state.annotationsForMaterial.forEach((annotation) => {
       annotation.replies.forEach((reply) => {
-        emailAndNamesMap.set(reply.author.email, reply.author.name);
+        idAndEmailAndNamesMap.set(reply.author?.userId, {
+          name: reply.author?.name,
+          email: reply.author?.email,
+        });
       });
     });
-    return emailAndNamesMap;
+    return idAndEmailAndNamesMap;
   }
 );
 
 const getUsernameOfAnnotationAuthors = createSelector(
   getAnnotationFeatureState,
   (state) => {
-    let emailAndNamesMap: Map<string, string> = new Map<string, string>();
+    let emailAndNamesMap: Map<string, { name: string; email: string }> =
+      new Map<string, { name: string; email: string }>();
     state.annotationsForMaterial.forEach((annotation) => {
-      emailAndNamesMap.set(annotation.author.email, annotation.author.name);
+      emailAndNamesMap.set(annotation.author.userId, {
+        name: annotation.author.name,
+        email: annotation.author.email,
+      });
     });
     return emailAndNamesMap;
   }
@@ -176,17 +184,18 @@ export const getUnionOfAnnotationAndReplyAuthors = createSelector(
   getUsernameOfReplyAuthors,
   getUsernameOfAnnotationAuthors,
   (replyAuthors, annotationAuthors) => {
-    let unionOfAuthors = new Map<string, string>();
+    let unionOfAuthors = new Map<string, { name: string; email: string }>();
     replyAuthors.forEach((value, key) => {
       unionOfAuthors.set(key, value);
     });
     annotationAuthors.forEach((value, key) => {
       unionOfAuthors.set(key, value);
     });
-    let arr: { name: string; email: string }[];
-    arr = Array.from(unionOfAuthors, ([email, name]) => ({
-      name,
-      email,
+    let arr: { userId: string; name: string; email: string }[];
+    arr = Array.from(unionOfAuthors, ([userId, userData]) => ({
+      userId,
+      name: userData.name,
+      email: userData.email,
     }));
     return arr;
   }

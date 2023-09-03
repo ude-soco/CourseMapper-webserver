@@ -402,7 +402,9 @@ export class NotificationsService {
     partialString: string;
     courseId: string;
   }) {
-    return this.httpClient.get<{ name: string; email: string }[]>(
+    return this.httpClient.get<
+      { name: string; email: string; userId: string }[]
+    >(
       `${environment.API_URL}/notifications/searchUsers?partialString=${partialString}&courseId=${courseId}`
     );
   }
