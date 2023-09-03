@@ -208,11 +208,21 @@
           <input
             type="text"
             placeholder="Reply"
-            [(ngModel)]="replyContent"
             (ngModelChange)="onReplyContentChange()"
             class="p-inputtext-sm w-11/12 h-2/3"
+            [mention]="filteredUserNames$ | async"
+            [mentionConfig]="{
+              triggerChar: '@',
+              labelKey: 'name',
+              allowSpace: true
+            }"
+            (searchTerm)="searchUserNames($event)"
+            [mentionListTemplate]="mentionListTemplate"
             pInputText
           />
+          <ng-template #mentionListTemplate let-item="item">
+            <span>{{ item.name }} ({{ item.email }})</span>
+          </ng-template>
           <app-iconbutton
             icon="bx-send"
             color="text-slate-500"
@@ -221,14 +231,14 @@
             [disabled]="sendButtonDisabled"
           ></app-iconbutton>
         </div>
-        <ul class="autocomplete-dropdown" *ngIf="showDropDown">
+        <!--         <ul class="autocomplete-dropdown" *ngIf="showDropDown">
           <li
             *ngFor="let namesWithEmails of filteredUserNames$ | async"
             (click)="selectUsername(namesWithEmails.email)"
           >
             {{ namesWithEmails.name + " (" + namesWithEmails.email + ")" }}
           </li>
-        </ul>
+        </ul> -->
       </div>
     </div>
   </div>

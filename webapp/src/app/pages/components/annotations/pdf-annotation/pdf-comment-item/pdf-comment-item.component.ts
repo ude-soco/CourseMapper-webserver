@@ -576,7 +576,7 @@ export class PdfCommentItemComponent
     } else {
       this.sendButtonDisabled = false;
     }
-    const atSymbolRegex: RegExp = /(^|\s)@/;
+    /*     const atSymbolRegex: RegExp = /(^|\s)@/;
     if (atSymbolRegex.test(this.replyContent)) {
       const lastIndex = this.replyContent.lastIndexOf('@');
       if (lastIndex !== -1) {
@@ -594,7 +594,11 @@ export class PdfCommentItemComponent
       }
     } else {
       this.showDropDown = false;
-    }
+    } */
+  }
+
+  searchUserNames($event) {
+    console.log($event);
   }
 
   selectUsername(username: string) {
