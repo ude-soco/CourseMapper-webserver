@@ -495,7 +495,7 @@ export const getNewMentionCreationStatement = (user, reply, origin) => {
       definition: {
         type: "http://www.CourseMapper.de/activityType/you",
         name: {
-          "en-US": "you",
+          "en-US": "",
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/reply": {
