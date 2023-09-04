@@ -31,12 +31,15 @@
       <ng-container *ngIf="notifications.length > 0; else noNotifications">
         <div class="flex flex-row justify-between m-4">
           <div>
-            <p-checkbox
-              [formControl]="masterCheckBox"
-              class="mr-4"
-              [binary]="true"
-              checked
-            ></p-checkbox>
+            <span class="flex items-center">
+              <p-checkbox
+                [formControl]="masterCheckBox"
+                class="mr-4"
+                [binary]="true"
+                checked
+              ></p-checkbox>
+              <span>Select all</span>
+            </span>
           </div>
           <span
             routerLink="notification/all"
@@ -67,7 +70,9 @@
         </ng-container>
       </ng-container>
 
-      <ng-template #noNotifications> No notifications present </ng-template>
+      <ng-template #noNotifications>
+        <app-no-data [message]="'notifications present'"></app-no-data>
+      </ng-template>
     </ng-container>
   </ng-template>
 </div>

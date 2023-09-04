@@ -25,10 +25,12 @@
         styleClass="contextMenuButton"
         [disabled]="!isResetButtonEnabled"
         (onClick)="onResetButtonClicked()"
+        icon="pi pi-times-circle"
+        label="Reset to {{ resetTo }} level settings"
       >
-        <div>
-          <span>Use {{ resetTo }} level settings</span>
-        </div>
+        <!--         <div>
+          <span>Reset to {{ resetTo }} level settings</span>
+        </div> -->
       </p-button>
       <p-button
         styleClass="contextMenuButton"

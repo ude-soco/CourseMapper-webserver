@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { PrimeNGConfig } from 'primeng/api';
 import { StorageService } from './services/storage.service';
 import { UserServiceService } from './services/user-service.service';
@@ -45,4 +45,11 @@ export class AppComponent {
 
     window.location.reload();
   }
+
+  /*   @HostListener('window:beforeunload', ['$event'])
+  beforeUnloadHandler($event: any): void {
+    $event.returnValue = 'Are you sure?';
+    console.log('before unload');
+    alert('before unload');
+  } */
 }

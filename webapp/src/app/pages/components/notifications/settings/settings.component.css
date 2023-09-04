@@ -3,3 +3,7 @@
   left: 0;
   height: 100%;
 }
+
+:host ::ng-deep .p-button.p-button-success {
+  background: #0369a1;;
+}

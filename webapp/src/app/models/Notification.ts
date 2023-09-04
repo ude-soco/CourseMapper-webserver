@@ -95,33 +95,33 @@ export enum NotificationCategory {
 
 export enum topicNotificationSettingLabels {
   courseDefault = 'Course default',
-  topicUpdates = 'Topic updates',
-  commentsAndMentioned = 'Comments and mentions',
+  topicUpdates = 'Topic Updates',
+  commentsAndMentioned = 'Comments & Mentions',
   annotations = 'Annotations',
 }
 
 export enum channelNotificationSettingLabels {
   topicDefault = 'Topic default',
-  channelUpdates = 'Channel updates',
-  commentsAndMentioned = 'Comments and mentions',
+  channelUpdates = 'Channel Updates',
+  commentsAndMentioned = 'Comments & Mentions',
   annotations = 'Annotations',
 }
 
 export enum materialNotificationSettingLabels {
   channelDefault = 'Channel default',
-  materialUpdates = 'Material updates',
-  commentsAndMentioned = 'Comments and mentions',
+  materialUpdates = 'Material Updates',
+  commentsAndMentioned = 'Comments & Mentions',
   annotations = 'Annotations',
 }
 export enum courseNotificationSettingLabels {
   globalDefault = 'Global default',
   courseUpdates = 'Course Updates',
-  commentsAndMentioned = 'Comments and mentions',
+  commentsAndMentioned = 'Comments & Mentions',
   annotations = 'Annotations',
 }
 
 export enum globalNotificationSettingsLabels {
   courseUpdates = 'Course Updates',
-  commentsAndMentioned = 'Comments and mentions',
+  commentsAndMentioned = 'Comments & Mentions',
   annotations = 'Annotations',
 }

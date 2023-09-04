@@ -18,21 +18,28 @@
   </p-tabMenu>
 
   <div *ngIf="componentToShow === 'blocked-users'">
-    <div
-      class="w-[500px] flex justify-between items-center mt-8 cursor-default pb-4 border-b-[#0000001c] border-b border-solid"
-      *ngFor="let blockedUser of blockingUsers$ | async"
+    <ng-container
+      *ngIf="(blockingUsers$ | async).length > 0; else noBlockedUsers"
     >
-      <span
-        >{{ blockedUser.firstname }} {{ blockedUser.lastname }} ({{
-          blockedUser.email
-        }})</span
+      <div
+        class="w-[500px] flex justify-between items-center mt-8 cursor-default pb-4 border-b-[#0000001c] border-b border-solid"
+        *ngFor="let blockedUser of blockingUsers$ | async"
       >
-      <p-button
-        label="Unblock"
-        styleClass="p-button-success"
-        (click)="onUnBlockClicked($event, blockedUser)"
-      ></p-button>
-    </div>
+        <span
+          >{{ blockedUser.firstname }} {{ blockedUser.lastname }} ({{
+            blockedUser.email
+          }})</span
+        >
+        <p-button
+          label="Unblock"
+          styleClass="p-button-success"
+          (click)="onUnBlockClicked($event, blockedUser)"
+        ></p-button>
+      </div>
+    </ng-container>
+    <ng-template #noBlockedUsers>
+      <app-no-data [message]="'blocked users'"></app-no-data>
+    </ng-template>
   </div>
 
   <div *ngIf="componentToShow === 'notification-settings-panel'">

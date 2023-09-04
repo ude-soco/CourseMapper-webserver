@@ -71,6 +71,7 @@ import { DividerModule } from 'primeng/divider';
 import { ContextMenuComponent } from './components/context-menu/context-menu.component';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { SettingsComponent } from './pages/components/notifications/settings/settings.component';
+import { NoDataComponent } from './components/no-data/no-data.component';
 
 @NgModule({
   declarations: [

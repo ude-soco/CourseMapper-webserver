@@ -12,6 +12,7 @@ import { SidebarComponent } from './sidebar/sidebar.component';
 import { AddCourseComponent } from './add-course/add-course.component';
 import { TabMenuComponent } from './tab-menu/tab-menu.component';
 import { TabMenuModule } from 'primeng/tabmenu';
+import { NoDataComponent } from './no-data/no-data.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { TabMenuModule } from 'primeng/tabmenu';
     SidebarComponent,
     AddCourseComponent,
     TabMenuComponent,
+    NoDataComponent,
   ],
   imports: [CommonModule, PrimengModule, ReactiveFormsModule, TabMenuModule],
   exports: [
@@ -35,6 +37,7 @@ import { TabMenuModule } from 'primeng/tabmenu';
     SidebarComponent,
     AddCourseComponent,
     TabMenuComponent,
+    NoDataComponent,
   ],
 })
 export class SharedComponentsModule {}

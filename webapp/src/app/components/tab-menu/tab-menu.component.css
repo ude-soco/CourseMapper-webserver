@@ -80,3 +80,8 @@
 :host ::ng-deep .pi {
   font-size: 1.5rem;
 }
+
+
+:host ::ng-deep .p-button.p-button-text {
+  color: #0369a1;
+}
