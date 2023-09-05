@@ -13,7 +13,7 @@ import { environment } from 'src/environments/environment';
 export class UserServiceService {
   public resu: any;
   firstname!: string;
-  user:User;
+  user: User;
   private API_URL = environment.API_URL;
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -40,7 +40,7 @@ export class UserServiceService {
       )
       .pipe(
         tap((res: { id?: string; success?: string }) => {
-         // console.log(res.id);
+          // console.log(res.id);
           this.resu = res.id;
 
           this.register_2(this.resu, username, email, password);
@@ -52,7 +52,7 @@ export class UserServiceService {
     this.http
       .post<any>(AUTH_API_2 + 'signup', { _id, username, email, password })
       .subscribe((res) => {
-       // console.log(res);
+        // console.log(res);
       });
   }
 
@@ -60,11 +60,15 @@ export class UserServiceService {
     return this.http.post(AUTH_API_2 + 'signout', {}, HTTPOptions);
   }
 
-  GetUserName(_id:string): Observable<any> {
-    return this.http.get<any>(`${this.API_URL}/users/${_id}`).pipe(tap( user => {
-this.user=user
-    }))
+  GetUserName(_id: string): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/users/${_id}`).pipe(
+      tap((user) => {
+        this.user = user;
+      })
+    );
   }
 
- 
+  setlastTimeCourseMapperOpened() {
+    return this.http.put(`${this.API_URL}/user/lastTimeCourseMapperOpened`, {});
+  }
 }

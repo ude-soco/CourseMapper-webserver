@@ -316,3 +316,45 @@ export const getUser = async (req, res) => {
   }
   return res.status(200).send(foundUser);
 };
+
+export const getLastTimeCourseMapperOpened = async (req, res) => {
+  let userId = req.userId;
+
+  let foundUser;
+  try {
+    foundUser = await User.findById(userId);
+    if (!foundUser) {
+      return res.status(404).send({
+        error: `User with id ${userId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding user" });
+  }
+  return res.status(200).send(foundUser.lastTimeCourseMapperOpened);
+};
+
+export const updateLastTimeCourseMapperOpened = async (req, res) => {
+  let userId = req.userId;
+  console.log("UPDATE LAST TIME COURSEMAPPER OPENED!");
+
+  let foundUser;
+  try {
+    foundUser = await User.findById(userId);
+    if (!foundUser) {
+      return res.status(404).send({
+        error: `User with id ${userId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding user" });
+  }
+  foundUser.lastTimeCourseMapperOpened = new Date();
+  try {
+    foundUser = await foundUser.save();
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+  console.log(foundUser);
+  return res.status(200).send(foundUser.lastTimeCourseMapperOpened);
+};

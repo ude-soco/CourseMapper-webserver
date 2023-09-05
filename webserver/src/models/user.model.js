@@ -35,6 +35,7 @@ const User = new Schema({
   isAnnotationNotificationsEnabled: { type: Boolean, default: true },
   isReplyAndMentionedNotificationsEnabled: { type: Boolean, default: true },
   isCourseUpdateNotificationsEnabled: { type: Boolean, default: true },
+  lastTimeCourseMapperOpened: { type: Date, default: Date.now() },
 });
 
 module.exports = mongoose.model("user", User);

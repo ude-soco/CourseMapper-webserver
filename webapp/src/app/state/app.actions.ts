@@ -15,3 +15,8 @@ export const setSubscribedCourses = createAction(
   '[App] Set Subscribed Courses',
   props<{ subscribedCourses: Course[] }>()
 );
+
+export const setLastTimeCourseMapperOpened = createAction(
+  '[App] Set Last Time Course Mapper Opened',
+  props<{ lastTimeCourseMapperOpened: string }>()
+);

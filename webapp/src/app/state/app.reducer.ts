@@ -17,12 +17,14 @@ export interface GeneralState {
   courseSelected: boolean;
   loggedInUser: User;
   subscribedCourses?: { name: string; id: string }[];
+  lastTimeCourseMapperOpened: string;
 }
 
 const initialState: GeneralState = {
   courseSelected: false,
   loggedInUser: null,
   subscribedCourses: [],
+  lastTimeCourseMapperOpened: null,
 };
 
 const getAppFeatureState = createFeatureSelector<GeneralState>('general');

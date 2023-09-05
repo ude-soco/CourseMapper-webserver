@@ -46,10 +46,8 @@ export class AppComponent {
     window.location.reload();
   }
 
-  /*   @HostListener('window:beforeunload', ['$event'])
+  @HostListener('window:beforeunload', ['$event'])
   beforeUnloadHandler($event: any): void {
-    $event.returnValue = 'Are you sure?';
-    console.log('before unload');
-    alert('before unload');
-  } */
+    this.userService.setlastTimeCourseMapperOpened().subscribe();
+  }
 }
