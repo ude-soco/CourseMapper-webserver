@@ -31,6 +31,7 @@ import { ModeratorPrivilegesService } from 'src/app/services/moderator-privilege
 import * as CourseActions from 'src/app/pages/courses/state/course.actions';
 import { getNotificationSettingsOfLastMaterialMenuClicked } from 'src/app/pages/courses/state/course.reducer';
 import { materialNotificationSettingLabels } from 'src/app/models/Notification';
+import { getNotifications } from '../../notifications/state/notifications.reducer';
 @Component({
   selector: 'app-material',
   templateUrl: './material.component.html',
@@ -221,6 +222,19 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     );
   }
 
+  getNumUnreadNotificationsForMaterial(materialId: string) {
+    return this.store.select(getNotifications).pipe(
+      map((notifications) => {
+        if (!notifications) {
+          return 0;
+        }
+        return notifications.filter(
+          (notification) =>
+            notification.material_id === materialId && !notification.isRead
+        ).length;
+      })
+    );
+  }
   onMaterialNotificationSettingsClicked(notificationOption: {
     label: string;
     control: FormControl<boolean>;

@@ -254,6 +254,33 @@ export class TopicDropdownComponent implements OnInit {
     );
   }
 
+  getNumUnreadNotificationsForChannel(channelId: string) {
+    return this.store.select(getNotifications).pipe(
+      map((notifications) => {
+        if (!notifications) {
+          return 0;
+        }
+        return notifications.filter(
+          (notification) =>
+            notification.channel_id === channelId && !notification.isRead
+        ).length;
+      })
+    );
+  }
+  /*   getNumUnreadNotificationsForAnnotation(annotationlId: string) {
+    return this.store.select(getNotifications).pipe(
+      map((notifications) => {
+        if (!notifications) {
+          return 0;
+        }
+        return notifications.filter(
+          (notification) =>
+            notification.annotationId === channelId && !notification.isRead
+        ).length;
+      })
+    );
+  } */
+
   getFollowingAnnotationsOfDisplayedChannels(channelId: string) {
     return this.followingAnnotationsOfDisplayedChannels$.pipe(
       map((followingAnnotations) => {

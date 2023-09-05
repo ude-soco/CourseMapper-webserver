@@ -29,7 +29,7 @@
             >
               <span>{{ topic.name }} </span>
               <span
-                class="bg-orange-600 text-[white] text-base p-[0.1rem] w-[1.7rem] text-center rounded-[15px]"
+                class="bg-orange-600 text-[white] text-base p-[0.1rem] w-8 text-center rounded-[15px] text-[0.8rem]"
                 *ngIf="getNumUnreadNotificationsForTopic(topic._id) | async"
                 >{{
                   getNumUnreadNotificationsForTopic(topic._id) | async
@@ -91,6 +91,13 @@
             >
               {{ channel.name }}
             </p>
+            <span
+              class="bg-orange-600 text-[white] text-base p-[0.1rem] w-8 text-center rounded-[15px] font-semibold text-[0.8rem]"
+              *ngIf="getNumUnreadNotificationsForChannel(channel._id) | async"
+              >{{
+                getNumUnreadNotificationsForChannel(channel._id) | async
+              }}</span
+            >
             <app-iconbutton
               icon="bx-dots-vertical-rounded"
               color="text-black"
@@ -127,14 +134,15 @@
               (keyup)="afterTextInsertedChennel(selectedChannel._id, $event)"
               class="cursor-pointer w-full"
             >
-              #{{ channel.name }}
+              {{ channel.name }}
             </p>
-            <!--           <app-iconbutton
-              *ngIf="showModeratorPrivileges"
-              icon="bx-dots-vertical-rounded"
-              color="text-black"
-              (click)="selectedChannel = channel; menu.toggle($event)"
-            ></app-iconbutton> -->
+            <span
+              class="bg-orange-600 text-[white] text-base p-[0.1rem] w-8 text-center rounded-[15px] font-semibold text-[0.8rem]"
+              *ngIf="getNumUnreadNotificationsForChannel(channel._id) | async"
+              >{{
+                getNumUnreadNotificationsForChannel(channel._id) | async
+              }}</span
+            >
             <app-iconbutton
               icon="bx-dots-vertical-rounded"
               color="text-black"
@@ -238,7 +246,7 @@
             >
               <span class="mr-2">{{ topic.name }} </span>
               <span
-                class="bg-orange-600 text-[white] text-base p-[0.1rem] w-[1.7rem] text-center rounded-[15px]"
+                class="bg-orange-600 text-[white] text-base p-[0.1rem] w-8 text-center rounded-[15px] text-[0.8rem]"
                 *ngIf="getNumUnreadNotificationsForTopic(topic._id) | async"
                 >{{
                   getNumUnreadNotificationsForTopic(topic._id) | async
