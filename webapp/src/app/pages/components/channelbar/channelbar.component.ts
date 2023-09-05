@@ -22,6 +22,9 @@ import * as CourseActions from 'src/app/pages/courses/state/course.actions';
 import { StorageService } from 'src/app/services/storage.service';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { CourseLevelNotificationSettingsComponent } from 'src/app/components/course-level-notification-settings/course-level-notification-settings.component';
+import { getNotifications } from '../notifications/state/notifications.reducer';
+import { Observable, map } from 'rxjs';
+
 @Component({
   selector: 'app-channelbar',
   templateUrl: './channelbar.component.html',
@@ -29,6 +32,46 @@ import { CourseLevelNotificationSettingsComponent } from 'src/app/components/cou
   providers: [MessageService, ConfirmationService, DialogService],
 })
 export class ChannelbarComponent implements OnInit {
+  private API_URL = environment.API_URL;
+  selectedCourse: Course = new CourseImp('', '');
+  displayAddTopicDialogue: boolean = false;
+  editable: boolean = false;
+  escapeKey: boolean = false;
+  enterKey: boolean = false;
+  previousCourse: Course = new CourseImp('', '');
+  insertedText: string = '';
+  selectedId: string = '';
+  showModeratorPrivileges = false;
+  selectedChannel: Channel;
+  user = this.storageService.getUser();
+  moderatorUserOptions: MenuItem[] = [
+    {
+      label: 'Rename',
+      icon: 'pi pi-refresh',
+      command: () => this.onRenameCourse(),
+    },
+    {
+      label: 'Delete',
+      icon: 'pi pi-times',
+      command: () => this.onDeleteCourse(),
+    },
+    {
+      label: 'Notification Settings',
+      icon: 'pi pi-bell',
+      command: ($event) => this.onNotificationSettingsClicked($event),
+    },
+  ];
+
+  normalUserOptions: MenuItem[] = [
+    {
+      label: 'Notification Settings',
+      icon: 'pi pi-bell',
+      command: ($event) => this.onNotificationSettingsClicked($event),
+    },
+  ];
+  /*   @ViewChild('notificationSettingsPanel') notificationSettingsPanel: any; */
+  ref: DynamicDialogRef | undefined;
+  numOfUnreadNotificationsInSelectedCourse$: Observable<number>;
   constructor(
     private courseService: CourseService,
     private messageService: MessageService,
@@ -84,52 +127,35 @@ export class ChannelbarComponent implements OnInit {
     });
   }
 
-  private API_URL = environment.API_URL;
-  selectedCourse: Course = new CourseImp('', '');
-  displayAddTopicDialogue: boolean = false;
-  editable: boolean = false;
-  escapeKey: boolean = false;
-  enterKey: boolean = false;
-  previousCourse: Course = new CourseImp('', '');
-  insertedText: string = '';
-  selectedId: string = '';
-  showModeratorPrivileges = false;
-  selectedChannel: Channel;
-  user = this.storageService.getUser();
-  moderatorUserOptions: MenuItem[] = [
-    {
-      label: 'Rename',
-      icon: 'pi pi-refresh',
-      command: () => this.onRenameCourse(),
-    },
-    {
-      label: 'Delete',
-      icon: 'pi pi-times',
-      command: () => this.onDeleteCourse(),
-    },
-    {
-      label: 'Notification Settings',
-      icon: 'pi pi-bell',
-      command: ($event) => this.onNotificationSettingsClicked($event),
-    },
-  ];
-
-  normalUserOptions: MenuItem[] = [
-    {
-      label: 'Notification Settings',
-      icon: 'pi pi-bell',
-      command: ($event) => this.onNotificationSettingsClicked($event),
-    },
-  ];
-
-  /*   @ViewChild('notificationSettingsPanel') notificationSettingsPanel: any; */
-  ref: DynamicDialogRef | undefined;
   ngOnInit(): void {
     this.selectedCourse = this.courseService.getSelectedCourse();
-
+    this.numOfUnreadNotificationsInSelectedCourse$ = this.store
+      .select(getNotifications)
+      .pipe(
+        map((notifications) => {
+          return notifications.filter((notification) => {
+            return (
+              notification.course_id === this.selectedCourse._id &&
+              !notification.isRead
+            );
+          }).length;
+        })
+      );
     //3
     this.courseService.onSelectCourse.subscribe((course) => {
       this.selectedCourse = course;
+      this.numOfUnreadNotificationsInSelectedCourse$ = this.store
+        .select(getNotifications)
+        .pipe(
+          map((notifications) => {
+            return notifications.filter((notification) => {
+              return (
+                notification.course_id === this.selectedCourse._id &&
+                !notification.isRead
+              );
+            }).length;
+          })
+        );
 
       if (
         this.selectedCourse.role === 'moderator' ||

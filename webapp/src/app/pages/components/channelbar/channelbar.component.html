@@ -17,9 +17,20 @@
             class="flex w-56 text-xl font-semibold"
             #selectedCourse._id
           >
-            {{ selectedCourse.name }}
+            <span class="mr-4">
+              {{ selectedCourse.name }}
+            </span>
+            <span
+              class="bg-orange-600 text-[white] text-base p-[0.1rem] w-[1.7rem] text-center rounded-[15px]"
+              >{{ numOfUnreadNotificationsInSelectedCourse$ | async }}</span
+            >
           </p>
 
+          <app-iconbutton
+            icon="bx-dots-vertical-rounded"
+            color="text-black"
+            (click)="menu.toggle($event)"
+          ></app-iconbutton>
           <p-menu
             #menu
             id="config_menu"
@@ -30,11 +41,6 @@
             appendTo="body"
             styleClass="course-context-menu"
           ></p-menu>
-          <app-iconbutton
-            icon="bx-dots-vertical-rounded"
-            color="text-black"
-            (click)="menu.toggle($event)"
-          ></app-iconbutton>
         </div>
 
         <app-topic-dropdown
