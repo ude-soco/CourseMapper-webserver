@@ -44,6 +44,11 @@ export const getSubscribedCourses = createSelector(
   (state) => state.subscribedCourses
 );
 
+export const getLastTimeCourseMapperOpened = createSelector(
+  getAppFeatureState,
+  (state) => state.lastTimeCourseMapperOpened
+);
+
 export const appReducer = createReducer<GeneralState>(
   initialState,
   on(AppActions.toggleCourseSelected, (state, action): GeneralState => {

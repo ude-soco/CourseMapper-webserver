@@ -31,6 +31,7 @@ import { Store } from '@ngrx/store';
 import * as NotificationActions from '../state/notifications.actions';
 import { NotificationsService } from 'src/app/services/notifications.service';
 import { CourseService } from 'src/app/services/course.service';
+import { getLastTimeCourseMapperOpened } from 'src/app/state/app.reducer';
 @Component({
   selector: 'app-base-notification-dashboard',
   template: '',
@@ -68,6 +69,9 @@ export class BaseNotificationDashboardComponent {
   protected unreadSwitch$ = this.unreadSwitchBehaviourSubject.asObservable();
   protected filteredNotifications$: Observable<Notification[]>;
   protected showBulkOperations = false;
+  protected lastTimeCourseMapperOpened$: Observable<string>;
+  protected earlierNotifications$: Observable<Notification[]>;
+  protected newerNotifications$: Observable<Notification[]>;
 
   constructor(
     protected store: Store<State>,
@@ -117,6 +121,10 @@ export class BaseNotificationDashboardComponent {
         },
       },
     ];
+
+    this.lastTimeCourseMapperOpened$ = this.store.select(
+      getLastTimeCourseMapperOpened
+    );
     /* this.notifications$ = this.store.select(getFilteredNotifications); */
     this.filteredNotifications$ = this.store.select(getFilteredNotifications);
     this.allNotificationsNumUnread$.subscribe((num) => {
@@ -138,6 +146,7 @@ export class BaseNotificationDashboardComponent {
     this.notifications$ = combineLatest([
       this.filteredNotifications$,
       this.unreadSwitch$,
+      this.lastTimeCourseMapperOpened$,
     ]).pipe(
       tap((notifications) => {
         console.log('notifications were updated!!!!!');
@@ -158,6 +167,42 @@ export class BaseNotificationDashboardComponent {
       tap((notifications) => {
         console.log('in the tap opeerator');
         console.log(notifications);
+      })
+    );
+
+    this.earlierNotifications$ = combineLatest([
+      this.notifications$,
+      this.lastTimeCourseMapperOpened$,
+    ]).pipe(
+      map(([notifications, lastTimeCourseMapperOpened]) => {
+        const lastTimeCourseMapperOpenedConverted = new Date(
+          lastTimeCourseMapperOpened
+        );
+        return notifications.filter((notification) => {
+          const notificationDate = new Date(notification.timestamp);
+          if (notificationDate < lastTimeCourseMapperOpenedConverted) {
+            return true;
+          }
+          return false;
+        });
+      })
+    );
+
+    this.newerNotifications$ = combineLatest([
+      this.notifications$,
+      this.lastTimeCourseMapperOpened$,
+    ]).pipe(
+      map(([notifications, lastTimeCourseMapperOpened]) => {
+        const lastTimeCourseMapperOpenedConverted = new Date(
+          lastTimeCourseMapperOpened
+        );
+        return notifications.filter((notification) => {
+          const notificationDate = new Date(notification.timestamp);
+          if (notificationDate >= lastTimeCourseMapperOpenedConverted) {
+            return true;
+          }
+          return false;
+        });
       })
     );
 

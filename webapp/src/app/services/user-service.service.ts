@@ -57,6 +57,7 @@ export class UserServiceService {
   }
 
   logout(): Observable<any> {
+    this.setlastTimeCourseMapperOpened().subscribe();
     return this.http.post(AUTH_API_2 + 'signout', {}, HTTPOptions);
   }
 

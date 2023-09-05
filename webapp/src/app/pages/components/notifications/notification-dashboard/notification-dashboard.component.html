@@ -48,24 +48,67 @@
           >
         </div>
         <ng-container [formGroup]="checkBoxesGroup">
-          <ng-container *ngFor="let notification of notifications">
-            <div
-              [ngClass]="{
-                'notification-read': notification.isRead,
-                'notification-unread': !notification.isRead
-              }"
+          <ng-container
+            *ngIf="
+              (newerNotifications$ | async) &&
+              (newerNotifications$ | async).length > 0
+            "
+          >
+            <div class="text-2xl font-medium pl-4">New</div>
+            <ng-container
+              *ngFor="let newerNotification of newerNotifications$ | async"
             >
-              <p-checkbox
-                [value]="notification"
-                [formControlName]="notification._id"
-                [binary]="true"
-              ></p-checkbox>
-              <app-notification-box
-                [notification]="notification"
-                (notificationClicked)="onNotificationClicked(notification)"
-              ></app-notification-box>
-              <!-- (click)="onNotificationClicked($event, notification)" -->
-            </div>
+              <div
+                [ngClass]="{
+                  'notification-read': newerNotification.isRead,
+                  'notification-unread': !newerNotification.isRead
+                }"
+              >
+                <p-checkbox
+                  [value]="newerNotification"
+                  [formControlName]="newerNotification._id"
+                  [binary]="true"
+                ></p-checkbox>
+                <app-notification-box
+                  [notification]="newerNotification"
+                  (notificationClicked)="
+                    onNotificationClicked(newerNotification)
+                  "
+                ></app-notification-box>
+                <!-- (click)="onNotificationClicked($event, notification)" -->
+              </div>
+            </ng-container>
+          </ng-container>
+          <ng-container
+            *ngIf="
+              (earlierNotifications$ | async) &&
+              (earlierNotifications$ | async).length > 0
+            "
+          >
+            <div class="text-2xl font-medium pl-4 pt-4">Earlier</div>
+            <ng-container
+              *ngFor="let earlierNotification of earlierNotifications$ | async"
+            >
+              <div
+                [ngClass]="{
+                  'notification-read': earlierNotification.isRead,
+                  'notification-unread': !earlierNotification.isRead
+                }"
+              >
+                <p-checkbox
+                  [value]="earlierNotification"
+                  [formControlName]="earlierNotification._id"
+                  [binary]="true"
+                ></p-checkbox>
+                <app-notification-box
+                  [notification]="earlierNotification"
+                  (notificationClicked)="
+                    onNotificationClicked(earlierNotification)
+                  "
+                ></app-notification-box>
+                <!-- (click)="onNotificationClicked($event, notification)" -->
+              </div>
+            </ng-container>
           </ng-container>
         </ng-container>
       </ng-container>
