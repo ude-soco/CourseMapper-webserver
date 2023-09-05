@@ -34,6 +34,7 @@ import {
   channelNotificationSettingLabels,
 } from 'src/app/models/Notification';
 import { map, tap } from 'rxjs';
+import { getNotifications } from '../notifications/state/notifications.reducer';
 @Component({
   selector: 'app-topic-dropdown',
   templateUrl: './topic-dropdown.component.html',
@@ -118,6 +119,7 @@ export class TopicDropdownComponent implements OnInit {
   isResetTopicNotificationsButtonEnabled: boolean;
   isResetChannelNotificationsButtonEnabled: boolean;
   followingAnnotationsOfDisplayedChannels$: Observable<any> = null;
+
   topicOptions: MenuItem[] = [
     {
       label: 'Rename',
@@ -235,6 +237,20 @@ export class TopicDropdownComponent implements OnInit {
 
     this.followingAnnotationsOfDisplayedChannels$ = this.store.select(
       getFollowingAnnotationsOfDisplayedChannels
+    );
+  }
+
+  getNumUnreadNotificationsForTopic(topicId: string) {
+    return this.store.select(getNotifications).pipe(
+      map((notifications) => {
+        if (!notifications) {
+          return 0;
+        }
+        return notifications.filter(
+          (notification) =>
+            notification.topic_id === topicId && !notification.isRead
+        ).length;
+      })
     );
   }
 
