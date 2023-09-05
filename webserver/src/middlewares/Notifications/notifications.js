@@ -54,6 +54,7 @@ export const generateNotificationInfo = (req) => {
     ...(materialName && { materialName }),
     ...(req.locals.materialType && { materialType: req.locals.materialType }),
     authorEmail: req.locals.user?.email,
+    ...(req.locals.annotation && { annotation_id: req.locals.annotation._id }),
   };
 };
 

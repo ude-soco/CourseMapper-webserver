@@ -280,6 +280,7 @@ export const deleteReply = async (req, res, next) => {
     reply: foundReply,
     materialType: foundMaterial.type,
     annotationId: foundAnnotation._id,
+    annotation: foundAnnotation,
   };
   socketio.getIO().emit(foundAnnotation._id, {
     eventType: "replyDeleted",
@@ -399,6 +400,7 @@ export const editReply = async (req, res, next) => {
   req.locals.course = course;
   req.locals.annotationId = foundAnnotation._id;
   req.locals.materialType = foundMaterial.type;
+  req.locals.annotation = foundAnnotation;
   socketio.getIO().emit(foundAnnotation._id, {
     eventType: "replyEdited",
     annotation: foundAnnotation,
@@ -476,6 +478,7 @@ export const likeReply = async (req, res, next) => {
     category: "mentionedandreplied",
     materialType: foundMaterial.type,
     annotationAuthorId: foundAnnotation.author.userId,
+    annotation: foundAnnotation,
     materialId: foundMaterial._id,
   };
 
@@ -604,6 +607,7 @@ export const dislikeReply = async (req, res, next) => {
     category: "mentionedandreplied",
     materialType: foundMaterial.type,
     annotationAuthorId: foundAnnotation.author.userId,
+    annotation: foundAnnotation,
     materialId: foundMaterial._id,
   };
   if (foundReply.dislikes.includes(req.userId)) {

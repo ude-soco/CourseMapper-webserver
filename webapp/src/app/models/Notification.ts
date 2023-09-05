@@ -10,6 +10,7 @@ export interface UserNotification {
       userName: string;
       materialType?: string;
       authorEmail: string;
+      annotation_id?: string;
     };
     statement: {
       actor: {
@@ -64,6 +65,7 @@ export interface Notification {
   topic_id?: string;
   channel_id?: string;
   material_id?: string;
+  annotation_id?: string;
   materialType?: string;
   extraMessage?: string;
 }

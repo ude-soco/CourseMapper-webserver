@@ -444,6 +444,9 @@ export class NotificationsService {
       action: notification.activityId.statement.verb.display['en-US'],
       name: notification.activityId.statement.object.definition.name['en-US'],
       object: lastWord,
+      ...(notification.activityId.notificationInfo.annotation_id && {
+        annotation_id: notification.activityId.notificationInfo.annotation_id,
+      }),
       category: notification.activityId.notificationInfo.category,
       ...(notification.activityId.notificationInfo.materialType && {
         materialType: notification.activityId.notificationInfo.materialType,

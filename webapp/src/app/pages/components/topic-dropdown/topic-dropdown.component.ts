@@ -267,7 +267,7 @@ export class TopicDropdownComponent implements OnInit {
       })
     );
   }
-  /*   getNumUnreadNotificationsForAnnotation(annotationlId: string) {
+  getNumUnreadNotificationsForAnnotation(annotationlId: string) {
     return this.store.select(getNotifications).pipe(
       map((notifications) => {
         if (!notifications) {
@@ -275,11 +275,11 @@ export class TopicDropdownComponent implements OnInit {
         }
         return notifications.filter(
           (notification) =>
-            notification.annotationId === channelId && !notification.isRead
+            notification.annotation_id === annotationlId && !notification.isRead
         ).length;
       })
     );
-  } */
+  }
 
   getFollowingAnnotationsOfDisplayedChannels(channelId: string) {
     return this.followingAnnotationsOfDisplayedChannels$.pipe(
