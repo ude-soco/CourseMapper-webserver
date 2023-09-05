@@ -248,7 +248,7 @@ export const deleteAnnotation = async (req, res, next) => {
     annotation: foundAnnotation,
     user: user,
     course: courseForGeneratingNotifications,
-    category: "courseupdates",
+    category: "annotations",
     annotationId: foundAnnotation._id,
   };
 
