@@ -66,5 +66,14 @@ export const appReducer = createReducer<GeneralState>(
         return { name: course.name, id: course._id };
       }),
     };
-  })
+  }),
+  on(
+    AppActions.getLastTimeCourseMapperOpenedSuccess,
+    (state, action): GeneralState => {
+      return {
+        ...state,
+        lastTimeCourseMapperOpened: action.lastTimeCourseMapperOpened,
+      };
+    }
+  )
 );

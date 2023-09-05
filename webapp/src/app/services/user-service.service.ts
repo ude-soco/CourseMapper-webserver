@@ -71,4 +71,10 @@ export class UserServiceService {
   setlastTimeCourseMapperOpened() {
     return this.http.put(`${this.API_URL}/user/lastTimeCourseMapperOpened`, {});
   }
+
+  getlastTimeCourseMapperOpened() {
+    return this.http.get<{ lastTimeCourseMapperOpened: string }>(
+      `${this.API_URL}/user/lastTimeCourseMapperOpened`
+    );
+  }
 }

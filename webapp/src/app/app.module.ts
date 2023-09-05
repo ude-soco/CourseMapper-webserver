@@ -72,6 +72,7 @@ import { ContextMenuComponent } from './components/context-menu/context-menu.com
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { SettingsComponent } from './pages/components/notifications/settings/settings.component';
 import { NoDataComponent } from './components/no-data/no-data.component';
+import { AppEffects } from './state/app.effects';
 
 @NgModule({
   declarations: [
@@ -124,6 +125,7 @@ import { NoDataComponent } from './components/no-data/no-data.component';
     }),
     SharedComponentsModule,
     StoreModule.forFeature('general', appReducer),
+    EffectsModule.forFeature([AppEffects]),
     InputTextareaModule,
     DragulaModule.forRoot(),
     SocketIoModule.forRoot({

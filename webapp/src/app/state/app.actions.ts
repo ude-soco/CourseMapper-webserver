@@ -16,7 +16,16 @@ export const setSubscribedCourses = createAction(
   props<{ subscribedCourses: Course[] }>()
 );
 
-export const setLastTimeCourseMapperOpened = createAction(
-  '[App] Set Last Time Course Mapper Opened',
+export const getLastTimeCourseMapperOpened = createAction(
+  '[App] Get Last Time Course Mapper Opened'
+);
+
+export const getLastTimeCourseMapperOpenedSuccess = createAction(
+  '[App] Get Last Time Course Mapper Opened Success',
   props<{ lastTimeCourseMapperOpened: string }>()
+);
+
+export const getLastTimeCourseMapperOpenedFailure = createAction(
+  '[App] Get Last Time Course Mapper Opened Failure',
+  props<{ error: any }>()
 );
