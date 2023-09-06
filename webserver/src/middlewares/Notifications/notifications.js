@@ -275,6 +275,52 @@ export const LikesDislikesMentionedNotificationUsers = async (
   req.locals.usersToBeNotified = finalListOfUsersToNotify;
   next();
 };
+export const LikesDislikesAnnotationNotificationUsers = async (
+  req,
+  res,
+  next
+) => {
+  const userId = req.userId;
+  let foundUser = await User.findById(userId);
+  let blockedByUsers = foundUser.blockedByUser.map((userId) =>
+    userId.toString()
+  );
+  const courseId = req.locals.course._id;
+
+  const authorDocument = await BlockingNotifications.aggregate([
+    {
+      $match: {
+        courseId: ObjectId(courseId),
+        userId: ObjectId(req.locals.annotationAuthorId),
+        materials: {
+          $elemMatch: {
+            materialId: ObjectId(req.locals.materialId),
+            isAnnotationNotificationsEnabled: true,
+          },
+        },
+      },
+    },
+  ]);
+
+  const annotationAuthorId = authorDocument.map((user) => user.userId);
+
+  let resultingUsers;
+  if (blockedByUsers.length > 0) {
+    const blockedByUserSet = new Set(blockedByUsers);
+    resultingUsers = annotationAuthorId.filter(
+      (userId) => !blockedByUserSet.has(userId.toString())
+    );
+  } else {
+    resultingUsers = annotationAuthorId;
+  }
+
+  let finalListOfUsersToNotify = removeUserFromList(
+    resultingUsers,
+    ObjectId(userId)
+  );
+  req.locals.usersToBeNotified = finalListOfUsersToNotify;
+  next();
+};
 
 export const newMentionNotificationUsersCalculate = async (req, res, next) => {
   let mentionedUsers = req.body.mentionedUsers;
@@ -983,5 +1029,6 @@ let notifications = {
   updateBlockingNotificationsNewTopic,
   getNotificationSettingsWithFollowingAnnotations,
   newMentionNotificationUsersCalculate,
+  LikesDislikesAnnotationNotificationUsers,
 };
 module.exports = notifications;

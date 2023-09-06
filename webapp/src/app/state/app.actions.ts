@@ -29,3 +29,5 @@ export const getLastTimeCourseMapperOpenedFailure = createAction(
   '[App] Get Last Time Course Mapper Opened Failure',
   props<{ error: any }>()
 );
+
+export const removeLoggedInUser = createAction('[App] Remove Logged In User');

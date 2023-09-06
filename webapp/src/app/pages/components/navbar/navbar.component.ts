@@ -11,7 +11,6 @@ import { getLoggedInUser } from 'src/app/state/app.reducer';
 import { State } from 'src/app/state/app.state';
 import { getInitials } from 'src/app/_helpers/format';
 
-
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
@@ -24,7 +23,8 @@ export class NavbarComponent implements OnInit {
   showModeratorBoard = false;
   username?: string;
   loggedInUser: User;
-  public LandingPage = "/landingPage";
+  public LandingPage = '/landingPage';
+  protected loggedInUser$;
 
   constructor(
     private primengConfig: PrimeNGConfig,
@@ -34,8 +34,9 @@ export class NavbarComponent implements OnInit {
     private store: Store<State>
   ) {
     this.isLoggedIn = storageService.isLoggedIn();
-    this.store.select(getLoggedInUser).subscribe((user) => this.loggedInUser = user);
-
+    this.store
+      .select(getLoggedInUser)
+      .subscribe((user) => (this.loggedInUser = user));
   }
 
   ngOnInit(): void {
@@ -46,13 +47,13 @@ export class NavbarComponent implements OnInit {
     //   const user = this.storageService.getUser();
     //   this.username = user.username;
     // }
-     this.loggedInUser = this.storageService.getUser();
+    this.loggedInUser = this.storageService.getUser();
+    this.loggedInUser$ = this.store.select(getLoggedInUser);
     // this.isLoggedIn = this.storageService.isLoggedIn();
 
     // const user = this.storageService.getUser();
 
     // this.username = user.username;
-     
   }
 
   handleLogin() {
@@ -64,31 +65,28 @@ export class NavbarComponent implements OnInit {
   }
 
   handleLogout(): void {
-    if(window.sessionStorage.length==0)
-    {
+    if (window.sessionStorage.length == 0) {
       this.storageService.clean();
-      this.router.navigate(['/landingPage']); 
+      this.router.navigate(['/landingPage']);
     }
 
     this.userService.logout().subscribe({
       next: () => {
         this.storageService.clean();
         this.router.navigate(['/landingPage']);
-      
       },
       error: (err) => {
         console.log(err);
       },
     });
-  
   }
 
-  privacy(){
+  privacy() {
     this.router.navigate(['/privacy']);
   }
-  getIntitials = getInitials
+  getIntitials = getInitials;
 
-  copyUserId(userId){
+  copyUserId(userId) {
     navigator.clipboard.writeText(userId);
   }
 }

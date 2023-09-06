@@ -410,8 +410,11 @@ export class NotificationsService {
   }
 
   private transformNotification(notification: UserNotification): Notification {
-    const lastWord =
+    let lastWord =
       notification.activityId.statement.object.definition.type.slice(40);
+    if (lastWord === 'annotation' || lastWord === 'reply') {
+      lastWord = '';
+    }
     const extensions = Object.values(
       notification.activityId.statement.object.definition.extensions
     )[0];

@@ -6,7 +6,9 @@
       <img src="../../../assets/logo.svg" alt="logo" class="w-72"
     /></a>
     <div class="flex flex-wrap my-1">
-      <app-notification-bell></app-notification-bell>
+      <app-notification-bell
+        *ngIf="loggedInUser$ | async"
+      ></app-notification-bell>
 
       <button
         pButton

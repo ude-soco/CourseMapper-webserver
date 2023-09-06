@@ -80,5 +80,11 @@ export const appReducer = createReducer<GeneralState>(
         lastTimeCourseMapperOpened: action.lastTimeCourseMapperOpened,
       };
     }
-  )
+  ),
+  on(AppActions.removeLoggedInUser, (state): GeneralState => {
+    return {
+      ...state,
+      loggedInUser: null,
+    };
+  })
 );
