@@ -1,4 +1,4 @@
-<i
+<!-- <i
   class="pi pi-bell mr-6 mt-2 p-text-secondary"
   pBadge
   value="{{ totalNumUnreadNotifications$ | async }}"
@@ -6,7 +6,18 @@
   pTooltip="Notifications"
   tooltipPosition="bottom"
   (click)="toggleNotificationPanel($event, notificationPanel)"
-></i>
+></i> -->
+<i
+  class="pi pi-bell mr-6 mt-2 p-text-secondary"
+  pTooltip="Notifications"
+  tooltipPosition="bottom"
+  (click)="toggleNotificationPanel($event, notificationPanel)"
+  style="font-size: 2rem; color: rgba(3, 105, 161, 255)"
+>
+  <ng-container *ngIf="(totalNumUnreadNotifications$ | async) > 0">
+    <span pBadge value="{{ totalNumUnreadNotifications$ | async }}"></span>
+  </ng-container>
+</i>
 
 <p-overlayPanel styleClass="notifications-dashboard" #notificationPanel>
   <ng-template pTemplate="content">

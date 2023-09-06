@@ -4,6 +4,7 @@ import { NotificationsService } from 'src/app/services/notifications.service';
 import { State } from '../state/notifications.reducer';
 import * as NotificationActions from '../state/notifications.actions';
 import { getAllNotificationsNumUnread } from '../state/notifications.reducer';
+import { Observable } from 'rxjs';
 //TODO: put this component behind an Auth guard
 @Component({
   selector: 'app-notification-bell',
@@ -16,7 +17,7 @@ export class NotificationBellComponent {
     private store: Store<State>
   ) {}
 
-  totalNumUnreadNotifications$;
+  totalNumUnreadNotifications$: Observable<number>;
 
   //TODO Move the loadNotifications dispatch action and the initialiseSocketConnection method to the app.component.ts or somewhere else.
   ngOnInit(): void {

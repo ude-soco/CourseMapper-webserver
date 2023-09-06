@@ -21,6 +21,7 @@
               {{ selectedCourse.name }}
             </span>
             <span
+              *ngIf="(numOfUnreadNotificationsInSelectedCourse$ | async) > 0"
               class="bg-orange-600 text-[white] text-base p-[0.1rem] w-[1.7rem] text-center rounded-[15px]"
               >{{ numOfUnreadNotificationsInSelectedCourse$ | async }}</span
             >
