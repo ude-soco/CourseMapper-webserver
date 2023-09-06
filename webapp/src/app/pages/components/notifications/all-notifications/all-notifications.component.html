@@ -102,7 +102,9 @@
         </ng-container>
       </ng-container>
 
-      <ng-template #noNotifications> No notifications present </ng-template>
+      <ng-template #noNotifications>
+        <app-no-data [message]="'notifications present'"></app-no-data>
+      </ng-template>
     </ng-container>
   </ng-template>
 </div>
