@@ -789,20 +789,31 @@ export class ConceptMapComponent {
       let dnuPanel = document.getElementById('flexboxNotUnderstood')
       if(dnuPanel){
         let sideBarComponent= dnuPanel.childNodes[0].childNodes[0].childNodes[1] as HTMLElement
+        const previousConcepts = document.getElementById('previousConcepts')
+        const currentConcepts = document.getElementById('currentConcepts')
         if(sideBarComponent.clientHeight>=this.cyHeight -100){
-          document.getElementById('previousConcepts').style.height=Number(this.cyHeight*0.8).toString() + 'px'
-          document.getElementById('previousConcepts').style.overflowY='scroll'
-          if(sideBarComponent.clientHeight>=this.cyHeight -100){
-            document.getElementById('previousConcepts').style.height=Number(this.cyHeight*0.18).toString() + 'px'
-            document.getElementById('currentConcepts').style.maxHeight=Number(this.cyHeight*0.35).toString() + 'px'
-            document.getElementById('currentConcepts').style.overflowY='scroll'
-          }else{
+          if (previousConcepts) {
             document.getElementById('previousConcepts').style.height=Number(this.cyHeight*0.8).toString() + 'px'
-            document.getElementById('currentConcepts').style.overflowY='auto'
+            document.getElementById('previousConcepts').style.overflowY='scroll'
+            if(sideBarComponent.clientHeight>=this.cyHeight -100){
+              document.getElementById('previousConcepts').style.height=Number(this.cyHeight*0.18).toString() + 'px'
+            } else {
+              document.getElementById('previousConcepts').style.height=Number(this.cyHeight*0.8).toString() + 'px'
+            }
+          }
+          if (currentConcepts) {
+            if(sideBarComponent.clientHeight>=this.cyHeight -100){
+              document.getElementById('currentConcepts').style.maxHeight=Number(this.cyHeight*0.35).toString() + 'px'
+              document.getElementById('currentConcepts').style.overflowY='scroll'
+            }else{
+              document.getElementById('currentConcepts').style.overflowY='auto'
+            }
           }
         }else{
-          document.getElementById('previousConcepts').style.maxHeight=Number(this.cyHeight*0.8).toString() + 'px'
-          document.getElementById('previousConcepts').style.overflowY='scroll'
+          if (previousConcepts) {
+            document.getElementById('previousConcepts').style.maxHeight=Number(this.cyHeight*0.8).toString() + 'px'
+            document.getElementById('previousConcepts').style.overflowY='scroll'
+          }
         }
       }
     }
