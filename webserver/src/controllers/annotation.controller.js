@@ -365,7 +365,7 @@ export const editAnnotation = async (req, res, next) => {
   }
   req.locals.response = { success: "Annotation successfully updated" };
   req.locals.newAnnotation = foundAnnotation;
-  rec.locals.annotation = foundAnnotation;
+  req.locals.annotation = foundAnnotation;
   req.locals.user = user;
   req.locals.category = "annotations";
   req.locals.materialType = foundMaterial.type;

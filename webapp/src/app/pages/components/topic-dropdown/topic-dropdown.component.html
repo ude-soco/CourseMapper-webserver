@@ -29,7 +29,7 @@
             >
               <span>{{ topic.name }} </span>
               <span
-                class="bg-orange-600 text-[white] text-base p-[0.25rem] w-8 text-center rounded-[15px] text-[0.8rem]"
+                class="bg-orange-600 text-[white] text-base p-[0.1rem] w-[1.7rem] text-center rounded-[15px]"
                 *ngIf="getNumUnreadNotificationsForTopic(topic._id) | async"
                 >{{
                   getNumUnreadNotificationsForTopic(topic._id) | async
