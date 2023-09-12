@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { lastValueFrom } from 'rxjs';
+import { Observable, lastValueFrom } from 'rxjs';
 import { environment_Python } from 'src/environments/environment';
 import { HTTPOptions } from '../config/config';
 @Injectable({
@@ -16,16 +16,14 @@ export class ConceptMapService {
   // constructor(private http: HttpClient, private authenticationService: AuthenticationService) { }
   constructor(private http: HttpClient) {}
 
-  async getConceptMapData(formData: any): Promise<any> {
-    const MaterialKG$ = this.http.post<any>(
+  getConceptMapData(formData: any): Observable<any> {
+    this.MaterialKG = this.http.post<any>(
       `${this.cmEndpointURL}concept-map`,
       formData,
       // { headers: this.httpHeader }
       // { headers: this.httpHeader }
       { withCredentials: true }
     );
-    this.MaterialKG = await lastValueFrom(MaterialKG$);
-    console.log(this.MaterialKG)
     return this.MaterialKG;
     // return this.http.post<any>(`${this.cmEndpointURL}concept-map`, formData, { headers: this.authenticationService.getHTTPHeaders() }).toPromise();
   }

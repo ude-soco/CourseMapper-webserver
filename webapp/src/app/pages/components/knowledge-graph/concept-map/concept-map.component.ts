@@ -13,7 +13,7 @@ import {
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { MenuItem, MessageService } from 'primeng/api';
-import { Subscription } from 'rxjs';
+import { Subscription, lastValueFrom } from 'rxjs';
 import { Channel } from 'src/app/models/Channel';
 import { Course } from 'src/app/models/Course';
 import { Material } from 'src/app/models/Material';
@@ -787,32 +787,32 @@ export class ConceptMapComponent {
       }
 
       let dnuPanel = document.getElementById('flexboxNotUnderstood')
-      if(dnuPanel){
-        let sideBarComponent= dnuPanel.childNodes[0].childNodes[0].childNodes[1] as HTMLElement
+      if (dnuPanel) {
+        let sideBarComponent = dnuPanel.childNodes[0].childNodes[0].childNodes[1] as HTMLElement
         const previousConcepts = document.getElementById('previousConcepts')
         const currentConcepts = document.getElementById('currentConcepts')
-        if(sideBarComponent.clientHeight>=this.cyHeight -100){
+        if (sideBarComponent.clientHeight >= this.cyHeight - 100) {
           if (previousConcepts) {
-            document.getElementById('previousConcepts').style.height=Number(this.cyHeight*0.8).toString() + 'px'
-            document.getElementById('previousConcepts').style.overflowY='scroll'
-            if(sideBarComponent.clientHeight>=this.cyHeight -100){
-              document.getElementById('previousConcepts').style.height=Number(this.cyHeight*0.18).toString() + 'px'
+            document.getElementById('previousConcepts').style.height = Number(this.cyHeight * 0.8).toString() + 'px'
+            document.getElementById('previousConcepts').style.overflowY = 'scroll'
+            if (sideBarComponent.clientHeight >= this.cyHeight - 100) {
+              document.getElementById('previousConcepts').style.height = Number(this.cyHeight * 0.18).toString() + 'px'
             } else {
-              document.getElementById('previousConcepts').style.height=Number(this.cyHeight*0.8).toString() + 'px'
+              document.getElementById('previousConcepts').style.height = Number(this.cyHeight * 0.8).toString() + 'px'
             }
           }
           if (currentConcepts) {
-            if(sideBarComponent.clientHeight>=this.cyHeight -100){
-              document.getElementById('currentConcepts').style.maxHeight=Number(this.cyHeight*0.35).toString() + 'px'
-              document.getElementById('currentConcepts').style.overflowY='scroll'
-            }else{
-              document.getElementById('currentConcepts').style.overflowY='auto'
+            if (sideBarComponent.clientHeight >= this.cyHeight - 100) {
+              document.getElementById('currentConcepts').style.maxHeight = Number(this.cyHeight * 0.35).toString() + 'px'
+              document.getElementById('currentConcepts').style.overflowY = 'scroll'
+            } else {
+              document.getElementById('currentConcepts').style.overflowY = 'auto'
             }
           }
-        }else{
+        } else {
           if (previousConcepts) {
-            document.getElementById('previousConcepts').style.maxHeight=Number(this.cyHeight*0.8).toString() + 'px'
-            document.getElementById('previousConcepts').style.overflowY='scroll'
+            document.getElementById('previousConcepts').style.maxHeight = Number(this.cyHeight * 0.8).toString() + 'px'
+            document.getElementById('previousConcepts').style.overflowY = 'scroll'
           }
         }
       }
@@ -967,26 +967,28 @@ export class ConceptMapComponent {
           this.conceptMapMaterial = materialKgMeta;
           this.conceptMapData = materialKgMeta;
         } else {
-          try {
-            console.log('no kg saved, constructing a new one...');
-            this.resetFilter();
-            this.isLoading = true;
-            this.loading.emit(true);
-            const reqData = await this.getReqData();
-            var result = await this.conceptMapService.getConceptMapData(
-              reqData
-            );
-            console.log('result from python server' + result);
-            this.conceptMapData = result;
-            // capitalize nodes names
-            this.conceptMapData.nodes.forEach((node) => {
-              node.name = this.capitalizeWords(node.name);
-            });
-          } catch (error) {
-            console.log('Error:', error);
-            this.isLoading = false;
-            this.loading.emit(false);
-          }
+          console.log('no kg saved, constructing a new one...');
+          this.resetFilter();
+          this.isLoading = true;
+          this.loading.emit(true);
+          const reqData = await this.getReqData();
+          this.conceptMapService.getConceptMapData(
+            reqData
+          ).subscribe({
+            next: (result) => {
+              console.log('result from python server' + result);
+              this.conceptMapData = result;
+              // capitalize nodes names
+              this.conceptMapData.nodes.forEach((node) => {
+                node.name = this.capitalizeWords(node.name);
+              });
+            },
+            error: (error) => {
+              console.log('Error:', error);
+              this.isLoading = false;
+              this.loading.emit(false);
+            },
+          });
         }
 
         //filter edges with no weights, or/and slide's edges
@@ -1077,8 +1079,8 @@ export class ConceptMapComponent {
             // query +
             // ')  RETURN LABELS(c) as labels,ID(c) AS id, c.cid as cid, c.name AS name, c.uri as uri, c.type as type, c.weight as weight, c.wikipedia as wikipedia, c.abstract as abstract, c.rank as rank, c.mid as mid';
             query =
-              query +
-              ') and c.rank<51 and c.type="annotation" RETURN LABELS(c) as labels,ID(c) AS id, c.cid as cid, c.name AS name, c.uri as uri, c.type as type, c.weight as weight, c.wikipedia as wikipedia, c.abstract as abstract, c.rank as rank, c.mid as mid';
+            query +
+            ') and c.rank<51 and c.type="annotation" RETURN LABELS(c) as labels,ID(c) AS id, c.cid as cid, c.name AS name, c.uri as uri, c.type as type, c.weight as weight, c.wikipedia as wikipedia, c.abstract as abstract, c.rank as rank, c.mid as mid';
           const courseMaterialsNodes =
             await this.neo4jService.getHigherLevelsNodes(query);
 
@@ -1236,7 +1238,7 @@ export class ConceptMapComponent {
             matKgControlPanel.style.float = 'right';
           }
         }, 100);
-      } catch {}
+      } catch { }
     }
   }
   async getReqData() {
@@ -1275,209 +1277,208 @@ export class ConceptMapComponent {
     //end cleaning properties
 
     var startTime = performance.now();
-    try {
-      //get all concepts that a user marked previously as understood or not & save in this.previousConcepts
-      console.log(this.userid);
-      await this.userConceptsService
-        .getUserConcepts(this.userid)
-        .then((val) => {
+    this.userConceptsService
+      .getUserConcepts(this.userid)
+      .subscribe({
+        next: async (val) => {
           this.previousConcepts = val;
-        });
-      if (this.previousConcepts.understoodConcepts) {
-        this.allUnderstoodConcepts = this.previousConcepts.understoodConcepts;
-      }
-    } catch (err) {
-      console.log(err);
-    }
-    //get material's concepts_ids
-    const materialId = this.currentMaterial!._id;
-    // Check material_KG availability in neo4j
-    const materialFound = await this.neo4jService.checkMaterial(materialId);
-    //if material_KG found
-    if (materialFound.records.length) {
-      // get slide_kg from neo4j
-      const materialNodes = await this.neo4jService.getMaterialConceptsIds(
-        materialId
-      );
-      //Prepare kgNodes to contain [cid & name] for all concepts of "CurrentMaterial"
-      materialNodes.records.forEach((data) => {
-        let nodeObj = {
-          // id:data._fields[0].low.toString(),
-          cid: data._fields[0].toString(),
-          name: data._fields[1],
-        };
-        this.kgNodes.push(nodeObj);
-      });
-      //from this material's concepts [kgNodes],
-      // get only (id & name) for the concepts that the user previously did not understand
-      // save to this.previousConceptsObj
-      if (this.previousConcepts.didNotUnderstandConcepts) {
-        this.previousConcepts.didNotUnderstandConcepts.forEach((cid) => {
-          let conceptObj: any;
-          // var repeated = false;
-          conceptObj = this.kgNodes.find(
-            (concept) => concept.cid.toString() === cid.toString()
-          );
-          if (conceptObj) {
-            this.previousConceptsObj.push(conceptObj);
+          if (this.previousConcepts.understoodConcepts) {
+            this.allUnderstoodConcepts = this.previousConcepts.understoodConcepts;
           }
-        });
-      }
-    }
-    const slideId =
-      (await this.currentMaterial!._id) +
-      '_slide_' +
-      this.kgCurrentPage.toString();
-    // Check slide_KG availability in neo4j
-    const slideFound = await this.neo4jService.checkSlide(slideId);
-    // get slide_kg from neo4j
-    if (slideFound.records.length) {
-      // list of current slide_KG nodes
-      let slideKgNodes = [];
-      const slideNodes = await this.neo4jService.getSlide(slideId);
-      slideNodes.records.forEach((data) => {
-        let conceptName = this.capitalizeWords(data._fields[3]);
-        let nodeEle = {
-          // label:data._fields[0][0],
-          id: data._fields[1].low,
-          cid: data._fields[2],
-          // name: data._fields[3],
-          name: conceptName,
-          uri: data._fields[4],
-          type: data._fields[5],
-          weight: data._fields[6],
-          wikipedia: data._fields[7],
-          abstract: data._fields[8],
-        };
-        slideKgNodes.push(nodeEle);
-      });
-      const nodes = [];
-      //turn it to a pattern that is readable to cytoscape
-      slideKgNodes.forEach((data) => {
-        let node = { data };
-        nodes.push(node);
-      });
-      let slideKgMeta = {
-        nodes: nodes,
-      };
-      this.conceptMapData = slideKgMeta;
-    } else {
-      try {
-        // if kg isn't saved in neo4j, send a request to python to construct a kg
-        console.log('no kg saved, constructing a new one...');
-        // const reqData = await this.getReqDataSlide();
-        // const result = await this.conceptSlideService.getConceptMapDataSlide(
-        //   reqData
-        // );
-        // this.conceptMapData = result;
-        // this.displaySidebarProperty = true;
-        // setInterval(() => {
-        //   this.displaySidebarProperty = false;
-        // }, 2000);
-      } catch (err) {
-        console.log(err);
-      }
-    }
-    //Start assigning status for current user [understood, not understood, new concept]
-
-    //if result contains nodes
-    if (this.conceptMapData.nodes.length) {
-      var understood = false;
-      var notUnderstood = false;
-      // for current slide, check if any concept.cid === cid of previously understood concept
-      this.conceptMapData.nodes.forEach((node) => {
-        //if there are previous nodes marked by user as understood
-        if (this.previousConcepts.understoodConcepts) {
-          //check if user understood concepts exists in current slide
-          this.previousConcepts.understoodConcepts.some((cid) => {
-            if (node.data.cid.toString() === cid) {
-              //assign a status
-              node.data.status = 'understood';
-              understood = true;
+          //get material's concepts_ids
+          const materialId = this.currentMaterial!._id;
+          // Check material_KG availability in neo4j
+          const materialFound = await this.neo4jService.checkMaterial(materialId);
+          //if material_KG found
+          if (materialFound.records.length) {
+            // get slide_kg from neo4j
+            const materialNodes = await this.neo4jService.getMaterialConceptsIds(
+              materialId
+            );
+            //Prepare kgNodes to contain [cid & name] for all concepts of "CurrentMaterial"
+            materialNodes.records.forEach((data) => {
+              let nodeObj = {
+                // id:data._fields[0].low.toString(),
+                cid: data._fields[0].toString(),
+                name: data._fields[1],
+              };
+              this.kgNodes.push(nodeObj);
+            });
+            //from this material's concepts [kgNodes],
+            // get only (id & name) for the concepts that the user previously did not understand
+            // save to this.previousConceptsObj
+            if (this.previousConcepts.didNotUnderstandConcepts) {
+              this.previousConcepts.didNotUnderstandConcepts.forEach((cid) => {
+                let conceptObj: any;
+                // var repeated = false;
+                conceptObj = this.kgNodes.find(
+                  (concept) => concept.cid.toString() === cid.toString()
+                );
+                if (conceptObj) {
+                  this.previousConceptsObj.push(conceptObj);
+                }
+              });
             }
-          });
-        }
-        //Check for user not understood concepts
-        if (!understood && this.previousConcepts.didNotUnderstandConcepts) {
-          this.previousConcepts.didNotUnderstandConcepts.some((cid) => {
-            if (node.data.cid.toString() === cid) {
-              node.data.status = 'notUnderstood';
-              notUnderstood = true;
+          }
+          const slideId =
+            this.currentMaterial!._id +
+            '_slide_' +
+            this.kgCurrentPage.toString();
+          // Check slide_KG availability in neo4j
+          const slideFound = await this.neo4jService.checkSlide(slideId);
+          // get slide_kg from neo4j
+          if (slideFound.records.length) {
+            // list of current slide_KG nodes
+            let slideKgNodes = [];
+            const slideNodes = await this.neo4jService.getSlide(slideId);
+            slideNodes.records.forEach((data) => {
+              let conceptName = this.capitalizeWords(data._fields[3]);
+              let nodeEle = {
+                // label:data._fields[0][0],
+                id: data._fields[1].low,
+                cid: data._fields[2],
+                // name: data._fields[3],
+                name: conceptName,
+                uri: data._fields[4],
+                type: data._fields[5],
+                weight: data._fields[6],
+                wikipedia: data._fields[7],
+                abstract: data._fields[8],
+              };
+              slideKgNodes.push(nodeEle);
+            });
+            const nodes = [];
+            //turn it to a pattern that is readable to cytoscape
+            slideKgNodes.forEach((data) => {
+              let node = { data };
+              nodes.push(node);
+            });
+            let slideKgMeta = {
+              nodes: nodes,
+            };
+            this.conceptMapData = slideKgMeta;
+          } else {
+            try {
+              // if kg isn't saved in neo4j, send a request to python to construct a kg
+              console.log('no kg saved, constructing a new one...');
+              // const reqData = await this.getReqDataSlide();
+              // const result = await this.conceptSlideService.getConceptMapDataSlide(
+              //   reqData
+              // );
+              // this.conceptMapData = result;
+              // this.displaySidebarProperty = true;
+              // setInterval(() => {
+              //   this.displaySidebarProperty = false;
+              // }, 2000);
+            } catch (err) {
+              console.log(err);
             }
-          });
-        }
-        //if not marked
-        if (!understood && !notUnderstood) {
-          node.data.status = 'unread';
-        }
-        understood = false;
-        notUnderstood = false;
-      });
+          }
+          //Start assigning status for current user [understood, not understood, new concept]
 
-      //Assign nodes' status to related list [all_nodes, understood_nodes, not_understood_nodes, new_concepts_nodes] in a service
-      this.conceptMapData.nodes.forEach((node) => {
-        let nodeId = node.data.id.toString();
-        let nodeCid = node.data.cid.toString();
-        let nodeName = node.data.name;
-        let nodeObj = {
-          id: nodeId,
-          name: nodeName,
-          status: node.data.status,
-          cid: nodeCid,
-        };
-        this.allConceptsObj.push(nodeObj);
-        if (node.data.status === 'notUnderstood') {
-          this.didNotUnderstandConceptsObj.push(nodeObj);
-        } else if (node.data.status === 'understood') {
-          this.understoodConceptsObj.push(nodeObj);
-        } else {
-          this.newConceptsObj.push(nodeObj);
+          //if result contains nodes
+          if (this.conceptMapData.nodes.length) {
+            var understood = false;
+            var notUnderstood = false;
+            // for current slide, check if any concept.cid === cid of previously understood concept
+            this.conceptMapData.nodes.forEach((node) => {
+              //if there are previous nodes marked by user as understood
+              if (this.previousConcepts.understoodConcepts) {
+                //check if user understood concepts exists in current slide
+                this.previousConcepts.understoodConcepts.some((cid) => {
+                  if (node.data.cid.toString() === cid) {
+                    //assign a status
+                    node.data.status = 'understood';
+                    understood = true;
+                  }
+                });
+              }
+              //Check for user not understood concepts
+              if (!understood && this.previousConcepts.didNotUnderstandConcepts) {
+                this.previousConcepts.didNotUnderstandConcepts.some((cid) => {
+                  if (node.data.cid.toString() === cid) {
+                    node.data.status = 'notUnderstood';
+                    notUnderstood = true;
+                  }
+                });
+              }
+              //if not marked
+              if (!understood && !notUnderstood) {
+                node.data.status = 'unread';
+              }
+              understood = false;
+              notUnderstood = false;
+            });
+
+            //Assign nodes' status to related list [all_nodes, understood_nodes, not_understood_nodes, new_concepts_nodes] in a service
+            this.conceptMapData.nodes.forEach((node) => {
+              let nodeId = node.data.id.toString();
+              let nodeCid = node.data.cid.toString();
+              let nodeName = node.data.name;
+              let nodeObj = {
+                id: nodeId,
+                name: nodeName,
+                status: node.data.status,
+                cid: nodeCid,
+              };
+              this.allConceptsObj.push(nodeObj);
+              if (node.data.status === 'notUnderstood') {
+                this.didNotUnderstandConceptsObj.push(nodeObj);
+              } else if (node.data.status === 'understood') {
+                this.understoodConceptsObj.push(nodeObj);
+              } else {
+                this.newConceptsObj.push(nodeObj);
+              }
+            });
+            this.firstUpdate = true;
+            this.slideConceptservice.setAllConcepts(this.allConceptsObj);
+            this.slideConceptservice.setNewConcepts(this.newConceptsObj);
+            this.slideConceptservice.setDidNotUnderstandConcepts(
+              this.didNotUnderstandConceptsObj
+            );
+            this.slideConceptservice.setUnderstoodConcepts(
+              this.understoodConceptsObj
+            );
+            this.firstUpdate = false;
+            this.rankNodes(this.conceptMapData);
+
+            // emit kg to cytoscape
+            this.dataReceivedEvent.emit(this.conceptMapData);
+            this.filteredMapData = this.conceptMapData;
+            this.kgSlideReceivedResponse = true;
+            console.log(
+              'ConceptMapComponent:::getConceptMapData',
+              this.conceptMapData
+            );
+          } else {
+            console.log('No KG received for this slide!!');
+          }
+          var endTime = performance.now();
+          console.log(
+            `Call to show Slide_KG took ${endTime - startTime} milliseconds`
+          );
+          this.slideConceptservice.setAllNotUnderstoodConcepts(
+            this.totalNotUnderstoodList
+          );
+          setTimeout(() => {
+            this.showConceptsList();
+          }, 1);
+
+          var slideKgDialogDiv = document.getElementById('slideKgDialogDiv');
+          setTimeout(() => {
+            var flexboxNotUnderstood = document.getElementById(
+              'flexboxNotUnderstood'
+            );
+            this.slideKgWidth =
+              slideKgDialogDiv.offsetWidth - flexboxNotUnderstood.offsetWidth;
+            document.getElementById('graphSection').style.width =
+              this.slideKgWidth + 'px';
+          }, 5);
+        },
+        error: (err) => {
+          console.log(err);
         }
-      });
-      this.firstUpdate = true;
-      this.slideConceptservice.setAllConcepts(this.allConceptsObj);
-      this.slideConceptservice.setNewConcepts(this.newConceptsObj);
-      this.slideConceptservice.setDidNotUnderstandConcepts(
-        this.didNotUnderstandConceptsObj
-      );
-      this.slideConceptservice.setUnderstoodConcepts(
-        this.understoodConceptsObj
-      );
-      this.firstUpdate = false;
-      this.rankNodes(this.conceptMapData);
-
-      // emit kg to cytoscape
-      this.dataReceivedEvent.emit(this.conceptMapData);
-      this.filteredMapData = this.conceptMapData;
-      this.kgSlideReceivedResponse = true;
-      console.log(
-        'ConceptMapComponent:::getConceptMapData',
-        this.conceptMapData
-      );
-    } else {
-      console.log('No KG received for this slide!!');
-    }
-    var endTime = performance.now();
-    console.log(
-      `Call to show Slide_KG took ${endTime - startTime} milliseconds`
-    );
-    this.slideConceptservice.setAllNotUnderstoodConcepts(
-      this.totalNotUnderstoodList
-    );
-    setTimeout(() => {
-      this.showConceptsList();
-    }, 1);
-
-    var slideKgDialogDiv = document.getElementById('slideKgDialogDiv');
-    setTimeout(() => {
-      var flexboxNotUnderstood = document.getElementById(
-        'flexboxNotUnderstood'
-      );
-      this.slideKgWidth =
-        slideKgDialogDiv.offsetWidth - flexboxNotUnderstood.offsetWidth;
-      document.getElementById('graphSection').style.width =
-        this.slideKgWidth + 'px';
-    }, 5);
+      })
   }
   rankNodes(conceptsList: any) {
     //sort nodes to give rank
@@ -1715,7 +1716,7 @@ export class ConceptMapComponent {
     return formData;
   }
   async getRecommendedMaterialsPerSlideMaterial(): // model: string
-  Promise<FormData> {
+    Promise<FormData> {
     const formData = new FormData();
     const file = await this.getMaterialFile();
     const slideID =
@@ -1819,7 +1820,7 @@ export class ConceptMapComponent {
         let buttonToRipple = document.getElementById('recommendationButton');
         if (this.disableShowRecommendationsButton) {
           buttonToRipple.style.backgroundColor = '#e0e0e0';
-        }else{
+        } else {
           buttonToRipple.style.backgroundColor = '#eb590d';
         }
       }
