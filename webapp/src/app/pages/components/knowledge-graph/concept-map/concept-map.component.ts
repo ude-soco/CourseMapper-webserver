@@ -1926,11 +1926,11 @@ export class ConceptMapComponent {
 
           console.log('hello before mongoDB');
           //send to mongoDB
-          await this.userConceptsService.updateUserConcepts(
+          this.userConceptsService.updateUserConcepts(
             this.userid,
             this.previousConcepts.understoodConcepts,
             this.previousConcepts.didNotUnderstandConcepts
-          );
+          ).subscribe(() => {});
         }
       } catch (err) {
         console.log(err);
