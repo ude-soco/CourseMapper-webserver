@@ -30,7 +30,9 @@
               <span>{{ topic.name }} </span>
               <span
                 class="bg-orange-600 text-[white] text-base p-[0.1rem] w-[1.7rem] text-center rounded-[15px]"
-                *ngIf="getNumUnreadNotificationsForTopic(topic._id) | async"
+                *ngIf="
+                  (getNumUnreadNotificationsForTopic(topic._id) | async) > 0
+                "
                 >{{
                   getNumUnreadNotificationsForTopic(topic._id) | async
                 }}</span
@@ -93,7 +95,9 @@
             </p>
             <span
               class="bg-orange-600 text-[white] text-base p-[0.1rem] w-8 text-center rounded-[15px] font-semibold text-[0.8rem]"
-              *ngIf="getNumUnreadNotificationsForChannel(channel._id) | async"
+              *ngIf="
+                (getNumUnreadNotificationsForChannel(channel._id) | async) > 0
+              "
               >{{
                 getNumUnreadNotificationsForChannel(channel._id) | async
               }}</span
@@ -138,7 +142,9 @@
             </p>
             <span
               class="bg-orange-600 text-[white] text-base p-[0.1rem] w-8 text-center rounded-[15px] font-semibold text-[0.8rem]"
-              *ngIf="getNumUnreadNotificationsForChannel(channel._id) | async"
+              *ngIf="
+                (getNumUnreadNotificationsForChannel(channel._id) | async) > 0
+              "
               >{{
                 getNumUnreadNotificationsForChannel(channel._id) | async
               }}</span
@@ -207,9 +213,9 @@
               <span
                 class="bg-orange-600 text-[white] text-base p-[0.1rem] w-8 text-center rounded-[15px] font-semibold text-[0.8rem]"
                 *ngIf="
-                  getNumUnreadNotificationsForAnnotation(
+                  (getNumUnreadNotificationsForAnnotation(
                     followingAnnotation.annotationId
-                  ) | async
+                  ) | async) > 0
                 "
                 >{{
                   getNumUnreadNotificationsForAnnotation(
@@ -260,7 +266,9 @@
               <span class="mr-2">{{ topic.name }} </span>
               <span
                 class="bg-orange-600 text-[white] text-base p-[0.25rem] w-8 text-center rounded-[15px] text-[0.8rem]"
-                *ngIf="getNumUnreadNotificationsForTopic(topic._id) | async"
+                *ngIf="
+                  (getNumUnreadNotificationsForTopic(topic._id) | async) > 0
+                "
                 >{{
                   getNumUnreadNotificationsForTopic(topic._id) | async
                 }}</span
