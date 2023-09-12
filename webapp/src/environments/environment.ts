@@ -18,7 +18,7 @@ export const environment_Python = {
 export const environment_Neo4j = {  
   neo4j_url : 'bolt://localhost:7687',
   neo4j_name : 'neo4j',
-  neo4j_pass : 'root',
+  neo4j_pass : '1234qwer!',
   }
 
 /*
