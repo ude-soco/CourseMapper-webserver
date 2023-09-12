@@ -1529,126 +1529,130 @@ export class ConceptMapComponent {
       }
       this.showRecommendationButtonClicked = true;
       // this.callRecommendationsService.showRecommendationsClicked();
-      try {
-        // prepare form of understood & did not understand concepts
-        const reqData = await this.getRecommendedMaterialsPerSlide();
-        ////////////////////////////////Call Concept recommender///////////////////////////////////////
-        // // //Send request for concept recommendation
 
-        const reqDataMaterial1 =
-          await this.getRecommendedMaterialsPerSlideMaterial();
+      // prepare form of understood & did not understand concepts
+      const reqData = await this.getRecommendedMaterialsPerSlide();
+      ////////////////////////////////Call Concept recommender///////////////////////////////////////
+      // // //Send request for concept recommendation
 
-        var resultConcepts =
-          await this.materialsRecommenderService.getRecommendedConcepts(
-            // reqData
-            reqDataMaterial1
-          ); //receive recommended concepts
-        this.recommendedConcepts = resultConcepts;
+      const reqDataMaterial1 =
+        await this.getRecommendedMaterialsPerSlideMaterial();
 
-        // // //set to local storage
-        // localStorage.setItem(
-        //   'resultConcepts',
-        //   JSON.stringify(this.recommendedConcepts)
-        // );
-        ////////////////////////////////////////////////////////////////////
+      this.materialsRecommenderService.getRecommendedConcepts(
+        // reqData
+        reqDataMaterial1
+      ).subscribe({
+        next: async (resultConcepts) => {
+          this.recommendedConcepts = resultConcepts;
 
-        // // // get from local storage
-        // this.recommendedConcepts = JSON.parse(
-        //   localStorage.getItem('resultConcepts')
-        // );
-
-        this.conceptMapRecommendedData = this.recommendedConcepts;
-        this.filteredMapRecData = this.conceptMapRecommendedData;
-        this.recommenderKnowledgeGraph = true;
-        this.slideKnowledgeGraph = true;
-        if (this.showConceptsListSidebar) {
-          setTimeout(() => {
-            this.showConceptsList();
-          }, 1);
-        } else {
-          setTimeout(() => {
-            this.hideConceptsList();
-          }, 1);
-        }
-
-        console.log('recommended concepts are:');
-        console.log(this.filteredMapRecData);
-        this.kgTabs.kgTabsEnable();
-        this.mainConceptsTab = false;
-        this.recommendedConceptsTab = true;
-        // this.tabs[2].disabled = true;
-        this.recommendedMaterialsTab = false;
-        //////////////////////////call material-recommender/////////////////////////
-        console.log('calling material recommender');
-        this.resultMaterials =
-          await this.materialsRecommenderService.getRecommendedMaterials(
-            reqData
-          ); // receive recommended materials
-        console.log('material recommender has been called');
-        console.log('#################################################');
-        // // // get from local storage
-        // this.resultMaterials = JSON.parse(
-        //   localStorage.getItem('resultMaterials')
-        // );
-
-        console.log(this.resultMaterials);
-        this.concepts1 = this.resultMaterials.concepts;
-        this.concepts1.forEach((el, index, array) => {
-          if (
-            this.didNotUnderstandConceptsObj.some(
-              (concept) => concept.id.toString() === el.id.toString()
-            )
-          ) {
-            el.status = 'notUnderstood';
-            array[index] = el;
-          } else if (
-            this.previousConceptsObj.some(
-              (concept) => concept.cid.toString() === el.cid.toString()
-            )
-          ) {
-            el.status = 'notUnderstood';
-            array[index] = el;
-          } else if (
-            this.understoodConceptsObj.some(
-              (concept) => concept.id.toString() === el.id.toString()
-            )
-          ) {
-            el.status = 'understood';
-            array[index] = el;
+          this.conceptMapRecommendedData = this.recommendedConcepts;
+          this.filteredMapRecData = this.conceptMapRecommendedData;
+          this.recommenderKnowledgeGraph = true;
+          this.slideKnowledgeGraph = true;
+          if (this.showConceptsListSidebar) {
+            setTimeout(() => {
+              this.showConceptsList();
+            }, 1);
           } else {
-            el.status = 'unread';
-            array[index] = el;
+            setTimeout(() => {
+              this.hideConceptsList();
+            }, 1);
           }
-        });
 
-        // //set to local storage
-        // localStorage.setItem(
-        //   'resultMaterials',
-        //   JSON.stringify(this.resultMaterials)
-        // );
-        // this.resultMaterials = this.resultMaterials.nodes;
-        /////////////////////////////////////////////////////////////////////////
-        // // // get from local storage
-        // this.resultMaterials = JSON.parse(
-        //   localStorage.getItem('resultMaterials')
-        // ).nodes;
+          console.log('recommended concepts are:');
+          console.log(this.filteredMapRecData);
+          this.kgTabs.kgTabsEnable();
+          this.mainConceptsTab = false;
+          this.recommendedConceptsTab = true;
+          // this.tabs[2].disabled = true;
+          this.recommendedMaterialsTab = false;
+          //////////////////////////call material-recommender/////////////////////////
+          console.log('calling material recommender');
+          this.materialsRecommenderService.getRecommendedMaterials(
+            reqData
+          ).subscribe((result) => {
+            console.log('material recommender has been called');
+            console.log('#################################################');
+            // // // get from local storage
+            // this.resultMaterials = JSON.parse(
+            //   localStorage.getItem('resultMaterials')
+            // );
 
-        this.resultMaterials = this.resultMaterials.nodes;
+            console.log(this.resultMaterials);
+            this.concepts1 = this.resultMaterials.concepts;
+            this.concepts1.forEach((el, index, array) => {
+              if (
+                this.didNotUnderstandConceptsObj.some(
+                  (concept) => concept.id.toString() === el.id.toString()
+                )
+              ) {
+                el.status = 'notUnderstood';
+                array[index] = el;
+              } else if (
+                this.previousConceptsObj.some(
+                  (concept) => concept.cid.toString() === el.cid.toString()
+                )
+              ) {
+                el.status = 'notUnderstood';
+                array[index] = el;
+              } else if (
+                this.understoodConceptsObj.some(
+                  (concept) => concept.id.toString() === el.id.toString()
+                )
+              ) {
+                el.status = 'understood';
+                array[index] = el;
+              } else {
+                el.status = 'unread';
+                array[index] = el;
+              }
+            });
 
-        console.log('tab 2 will be activated');
-        this.kgTabs.kgTabsEnable();
-        console.log('tab 2 has been activated');
+            // //set to local storage
+            // localStorage.setItem(
+            //   'resultMaterials',
+            //   JSON.stringify(this.resultMaterials)
+            // );
+            // this.resultMaterials = this.resultMaterials.nodes;
+            /////////////////////////////////////////////////////////////////////////
+            // // // get from local storage
+            // this.resultMaterials = JSON.parse(
+            //   localStorage.getItem('resultMaterials')
+            // ).nodes;
 
-        console.log(
-          'getconceptMapRecommendedData:::getconceptMapRecommendedData',
-          this.conceptMapRecommendedData
-        );
-      } catch (error) {
-        console.log('Error:', error);
-        this.displayMessage(error.message);
-        this.isLoading = false;
-        this.loading.emit(false);
-      }
+            this.resultMaterials = this.resultMaterials.nodes;
+
+            console.log('tab 2 will be activated');
+            this.kgTabs.kgTabsEnable();
+            console.log('tab 2 has been activated');
+
+            console.log(
+              'getconceptMapRecommendedData:::getconceptMapRecommendedData',
+              this.conceptMapRecommendedData
+            );
+          }) // receive recommended materials
+
+        },
+        error: (error) => {
+          console.log('Error:', error);
+          this.displayMessage(error.message);
+          this.isLoading = false;
+          this.loading.emit(false);
+        }
+      })
+      //receive recommended concepts
+
+      // // //set to local storage
+      // localStorage.setItem(
+      //   'resultConcepts',
+      //   JSON.stringify(this.recommendedConcepts)
+      // );
+      ////////////////////////////////////////////////////////////////////
+
+      // // // get from local storage
+      // this.recommendedConcepts = JSON.parse(
+      //   localStorage.getItem('resultConcepts')
+      // );
       // // activate after recommenders evaluations
       // this.kgTabs.kgTabsEnable();
       // this.mainConceptsTab = false;
