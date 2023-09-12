@@ -1638,6 +1638,9 @@ export class ConceptMapComponent {
           this.displayMessage(error.message);
           this.isLoading = false;
           this.loading.emit(false);
+        },
+        complete: () => {
+          this.showRecommendationButtonClicked = false;
         }
       })
       //receive recommended concepts
@@ -1658,7 +1661,6 @@ export class ConceptMapComponent {
       // this.mainConceptsTab = false;
       // this.recommendedConceptsTab = true;
       // this.recommendedMaterialsTab = false;
-      this.showRecommendationButtonClicked = false;
     }
   }
   //prepare formData for [concepts & materials] recommenders
