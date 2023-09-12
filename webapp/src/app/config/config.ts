@@ -8,7 +8,7 @@ export const AUTH_API_2 = `${environment.API_URL}/auth/`;
 
 export const HTTPOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
-  // withCredentials: true,
+  withCredentials: true,
 };
 
 // export const HTTPPythonHeader ={
