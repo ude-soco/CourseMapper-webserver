@@ -478,6 +478,7 @@ export const likeReply = async (req, res, next) => {
     category: "mentionedandreplied",
     materialType: foundMaterial.type,
     annotationAuthorId: foundAnnotation.author.userId,
+    replyAuthorId: foundReply.author.userId,
     annotation: foundAnnotation,
     materialId: foundMaterial._id,
   };
@@ -607,6 +608,7 @@ export const dislikeReply = async (req, res, next) => {
     category: "mentionedandreplied",
     materialType: foundMaterial.type,
     annotationAuthorId: foundAnnotation.author.userId,
+    replyAuthorId: foundReply.author.userId,
     annotation: foundAnnotation,
     materialId: foundMaterial._id,
   };

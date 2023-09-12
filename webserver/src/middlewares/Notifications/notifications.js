@@ -245,7 +245,7 @@ export const LikesDislikesMentionedNotificationUsers = async (
     {
       $match: {
         courseId: ObjectId(courseId),
-        userId: ObjectId(req.locals.annotationAuthorId),
+        userId: ObjectId(req.locals.replyAuthorId),
         materials: {
           $elemMatch: {
             materialId: ObjectId(req.locals.materialId),
