@@ -210,12 +210,12 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
       .subscribe(async () => {
         this.reqDataForm = this.callRecommendationsService.reqDataForm;
         console.log(this.reqDataForm);
-        var resultConcepts =
-          await this.materialsRecommenderService.getRecommendedConcepts(
-            this.reqDataForm
-          ); //receive recommended concepts
-        var result = resultConcepts;
-        console.log(result);
+        this.materialsRecommenderService.getRecommendedConcepts(
+          this.reqDataForm
+        ).subscribe((result) => {
+          console.log(result)
+        })
+        //receive recommended concepts
       });
   }
 
