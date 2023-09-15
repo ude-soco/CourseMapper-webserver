@@ -376,7 +376,7 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
 
         this.cy = cytoscape({
           container: cy_container,
-          layout: this.layout,
+          layout: this.layout.run,
           minZoom: this.zoom.min,
           maxZoom: this.zoom.max,
           style: this.showAllStyle,
