@@ -10,13 +10,13 @@ export class Neo4jService {
   neo4j_url=environment_Neo4j.neo4j_url
   neo4j_name=environment_Neo4j.neo4j_name
   neo4j_pass=environment_Neo4j.neo4j_pass
-  
+
   neo4jDriver = neo4j.driver(
     this.neo4j_url,
     neo4j.auth.basic(this.neo4j_name, this.neo4j_pass)
   );
   session = this.neo4jDriver.session();
-  
+
   constructor() { }
   async checkSlide(slideId: string) {
     return this.session
