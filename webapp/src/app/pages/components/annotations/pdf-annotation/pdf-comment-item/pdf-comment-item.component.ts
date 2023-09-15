@@ -155,6 +155,27 @@ export class PdfCommentItemComponent
         }
       });
     });
+
+    const url = window.location.href;
+    console.log(url);
+    if (url.includes('#')) {
+      const annotationId = url.match(/#annotation-(.+)/)[1];
+      const elementToScrollTo = document.getElementById(
+        `annotation-${annotationId}`
+      );
+      // Scroll to the element
+      elementToScrollTo.scrollIntoView();
+      window.location.hash = '#annotation-' + annotationId;
+      setTimeout(function () {
+        $(window.location.hash).css(
+          'box-shadow',
+          '0 0 25px rgba(83, 83, 255, 1)'
+        );
+        setTimeout(function () {
+          $(window.location.hash).css('box-shadow', 'none');
+        }, 2000);
+      }, 100);
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {

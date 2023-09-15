@@ -31,11 +31,12 @@ export const getAllNotifications = async (req, res, next) => {
       "notificationInfo.materialType",
       "notificationInfo.authorEmail",
       "statement.object.definition.extensions",
-      "statement.actor.name",
       "statement.object.id",
       "statement.object.definition.type",
-      "statement.verb.display.en-US",
       "statement.object.definition.name.en-US",
+      "statement.actor.name",
+      "statement.verb.display.en-US",
+      "statement.result.extensions",
       "statement.timestamp",
     ]);
   } catch (error) {

@@ -418,8 +418,23 @@ export class NotificationsService {
     const extensions = Object.values(
       notification.activityId.statement.object.definition.extensions
     )[0];
+    const extensionsFirstKey = Object.keys(
+      notification.activityId.statement.object.definition.extensions
+    )[0];
+
+    let resultExtensions = null;
+    let resultExtensionFirstKey = null;
+    if (notification.activityId.statement.result?.extensions) {
+      resultExtensions = Object.values(
+        notification.activityId.statement.result?.extensions
+      )[0];
+      resultExtensionFirstKey = Object.keys(
+        notification.activityId.statement.result?.extensions
+      )[0];
+    }
     let channel_id = null;
     let material_id = null;
+    let annotation_id = null;
 
     if (
       notification.activityId.statement.object.definition.type ===
@@ -436,6 +451,19 @@ export class NotificationsService {
       material_id = extensions.id;
     } else if (extensions.material_id) {
       material_id = extensions.material_id;
+    }
+    if (
+      notification.activityId.statement.object.definition.type ===
+      'http://www.CourseMapper.de/activityType/annotation'
+    ) {
+      annotation_id = extensions.id;
+    }
+    if (
+      resultExtensionFirstKey ===
+        'http://www.CourseMapper.de/extensions/annotation' &&
+      extensionsFirstKey === 'http://www.CourseMapper.de/extensions/material'
+    ) {
+      annotation_id = resultExtensions.id;
     }
 
     return {
@@ -464,6 +492,9 @@ export class NotificationsService {
       }),
       ...((extensions.material_id || material_id) && {
         material_id,
+      }),
+      ...(annotation_id && {
+        annotation_id,
       }),
       _id: notification._id,
       extraMessage: `${notification.activityId.notificationInfo.userName} ${notification.activityId.statement.verb.display['en-US']} ${lastWord} ${notification.activityId.statement.object.definition.name['en-US']} in ${notification.activityId.notificationInfo.courseName}`,

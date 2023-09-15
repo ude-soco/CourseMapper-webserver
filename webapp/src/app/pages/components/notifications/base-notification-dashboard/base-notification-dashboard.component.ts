@@ -347,16 +347,19 @@ export class BaseNotificationDashboardComponent {
       this.courseService.Notification = notification;
       this.courseService.navigatingToMaterial = true;
       /* this.router.navigate(['/course', notification.course_id]); */
-      this.router.navigateByUrl(
-        '/course/' +
-          notification.course_id +
-          '/channel/' +
-          notification.channel_id +
-          '/material/' +
-          '(material:' +
-          notification.material_id +
-          `/${notification.materialType})`
-      );
+      if (notification.annotation_id) {
+        this.router.navigateByUrl(
+          '/course/' +
+            notification.course_id +
+            '/channel/' +
+            notification.channel_id +
+            '/material/' +
+            '(material:' +
+            notification.material_id +
+            `/${notification.materialType})` +
+            `#annotation-${notification.annotation_id}`
+        );
+      }
     }
   }
 

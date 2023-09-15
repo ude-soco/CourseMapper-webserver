@@ -1,4 +1,10 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { Store } from '@ngrx/store';
 import { createPopper } from '@popperjs/core';
 import { Annotation } from 'src/app/models/Annotations';
@@ -10,7 +16,7 @@ import * as $ from 'jquery';
 @Component({
   selector: 'app-video-annotation-summary',
   templateUrl: './video-annotation-summary.component.html',
-  styleUrls: ['./video-annotation-summary.component.css']
+  styleUrls: ['./video-annotation-summary.component.css'],
 })
 export class VideoAnnotationSummaryComponent implements OnInit, OnChanges {
   @Input() annotationId!: any;
@@ -26,37 +32,53 @@ export class VideoAnnotationSummaryComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if ('annotationId' in changes) {
-      if (this.annotationId == null){
+      if (this.annotationId == null) {
         this.cancel();
         return;
-      } 
-      else {
-        this.store.select(getAnnotationsForMaterial).subscribe((annotations) => {
+      } else {
+        this.store
+          .select(getAnnotationsForMaterial)
+          .subscribe((annotations) => {
             this.selectedAnnotation = annotations.find(
               (anno) => anno._id == this.annotationId
             );
           });
-        const content = this.selectedAnnotation?.content.replace(/<\/?[^>]+(>|$)/g, '');
-        this.summary = content?.length > 100 ? content.slice(0, 97) + '...' : content;
-        this.annotationInitials = getInitials(this.selectedAnnotation?.author?.name);
-        this.annotationElapsedTime = computeElapsedTime(this.selectedAnnotation?.createdAt);
+        const content = this.selectedAnnotation?.content.replace(
+          /<\/?[^>]+(>|$)/g,
+          ''
+        );
+        this.summary =
+          content?.length > 100 ? content.slice(0, 97) + '...' : content;
+        this.annotationInitials = getInitials(
+          this.selectedAnnotation?.author?.name
+        );
+        this.annotationElapsedTime = computeElapsedTime(
+          this.selectedAnnotation?.createdAt
+        );
       }
     }
   }
 
-  scrollToDiscussion(){
+  scrollToDiscussion() {
     this.isVisible = false;
+    const elementToScrollTo = document.getElementById(
+      `annotation-${this.selectedAnnotation._id}`
+    );
+    // Scroll to the element
+    elementToScrollTo.scrollIntoView();
     window.location.hash = '#annotation-' + this.selectedAnnotation._id;
     setTimeout(function () {
-      $( window.location.hash).css('box-shadow','0 0 25px rgba(83, 83, 255, 1)')
+      $(window.location.hash).css(
+        'box-shadow',
+        '0 0 25px rgba(83, 83, 255, 1)'
+      );
       setTimeout(function () {
-        $( window.location.hash).css('box-shadow', 'none')
-          
+        $(window.location.hash).css('box-shadow', 'none');
       }, 2000);
     }, 100);
   }
 
-  cancel(){
+  cancel() {
     this.isVisible = false;
     this.annotationId = null;
   }

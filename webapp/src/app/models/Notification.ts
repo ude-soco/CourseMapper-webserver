@@ -40,6 +40,14 @@ export interface UserNotification {
           'en-US': string;
         };
       };
+      result?: {
+        extensions: {
+          [key: string]: {
+            id: string; // Assuming _id is of string type
+            content: string; // Assuming content is of string type
+          };
+        };
+      };
       timestamp: string;
     };
   };
