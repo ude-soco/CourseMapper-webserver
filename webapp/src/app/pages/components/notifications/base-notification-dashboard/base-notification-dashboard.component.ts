@@ -347,6 +347,21 @@ export class BaseNotificationDashboardComponent {
       console.log('its an annotation notification');
       this.courseService.Notification = notification;
       /* this.router.navigate(['/course', notification.course_id]); */
+      if (notification.reply_id) {
+        this.courseService.navigatingToMaterial = true;
+        this.router.navigateByUrl(
+          '/course/' +
+            notification.course_id +
+            '/channel/' +
+            notification.channel_id +
+            '/material/' +
+            '(material:' +
+            notification.material_id +
+            `/${notification.materialType})` +
+            `#reply-${notification.reply_id}`
+        );
+        return;
+      }
       if (notification.annotation_id) {
         //if website is already on the same material, then just scroll to the annotation
         if (

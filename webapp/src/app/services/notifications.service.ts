@@ -435,6 +435,7 @@ export class NotificationsService {
     let channel_id = null;
     let material_id = null;
     let annotation_id = null;
+    let reply_id = null;
 
     if (
       notification.activityId.statement.object.definition.type ===
@@ -464,6 +465,19 @@ export class NotificationsService {
       extensionsFirstKey === 'http://www.CourseMapper.de/extensions/material'
     ) {
       annotation_id = resultExtensions.id;
+    }
+    if (
+      notification.activityId.statement.object.definition.type ===
+      'http://www.CourseMapper.de/activityType/reply'
+    ) {
+      reply_id = extensions.id;
+    }
+    if (
+      resultExtensionFirstKey ===
+        'http://www.CourseMapper.de/extensions/reply' &&
+      extensionsFirstKey === 'http://www.CourseMapper.de/extensions/annotation'
+    ) {
+      reply_id = resultExtensions.id;
     }
 
     return {
@@ -496,6 +510,7 @@ export class NotificationsService {
       ...(annotation_id && {
         annotation_id,
       }),
+      ...(reply_id && { reply_id }),
       _id: notification._id,
       extraMessage: `${notification.activityId.notificationInfo.userName} ${notification.activityId.statement.verb.display['en-US']} ${lastWord} ${notification.activityId.statement.object.definition.name['en-US']} in ${notification.activityId.notificationInfo.courseName}`,
     };

@@ -128,6 +128,7 @@ export class CourseWelcomeComponent {
         this.store.dispatch(
           CourseAction.setCurrentCourse({ selcetedCourse: course })
         );
+        this.store.dispatch(CourseAction.setCourseId({ courseId: course._id }));
         this.router.navigate(['course-description', course._id]);
       }
       (er) => {

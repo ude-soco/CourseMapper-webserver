@@ -74,6 +74,7 @@ export interface Notification {
   channel_id?: string;
   material_id?: string;
   annotation_id?: string;
+  reply_id?: string;
   materialType?: string;
   extraMessage?: string;
 }

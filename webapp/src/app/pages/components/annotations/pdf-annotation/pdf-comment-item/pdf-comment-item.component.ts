@@ -158,7 +158,7 @@ export class PdfCommentItemComponent
 
     const url = window.location.href;
     console.log(url);
-    if (url.includes('#')) {
+    if (url.includes('#annotation')) {
       const annotationId = url.match(/#annotation-(.+)/)[1];
       if (annotationId === this.annotation._id) {
         const elementToScrollTo = document.getElementById(
