@@ -91,6 +91,9 @@ export class SidebarComponent implements OnInit {
       CourseActions.toggleChannelSelected({ channelSelected: false })
     );
     this.store.dispatch(
+      CourseActions.setCourseId({ courseId: selectedCourse._id })
+    );
+    this.store.dispatch(
       CourseActions.SetSelectedChannel({ selectedChannel: null })
     );
     this.router.navigate(['course', selectedCourse._id, 'welcome']);

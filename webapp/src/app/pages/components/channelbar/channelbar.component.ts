@@ -116,6 +116,9 @@ export class ChannelbarComponent implements OnInit {
             })
           );
           this.store.dispatch(
+            CourseActions.setCourseId({ courseId: this.selectedCourse._id })
+          );
+          this.store.dispatch(
             CourseActions.toggleChannelSelected({ channelSelected: false })
           );
           this.store.dispatch(

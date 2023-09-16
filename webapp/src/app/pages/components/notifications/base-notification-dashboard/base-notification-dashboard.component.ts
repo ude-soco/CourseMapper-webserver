@@ -32,6 +32,7 @@ import * as NotificationActions from '../state/notifications.actions';
 import { NotificationsService } from 'src/app/services/notifications.service';
 import { CourseService } from 'src/app/services/course.service';
 import { getLastTimeCourseMapperOpened } from 'src/app/state/app.reducer';
+import * as $ from 'jquery';
 @Component({
   selector: 'app-base-notification-dashboard',
   template: '',
@@ -345,9 +346,42 @@ export class BaseNotificationDashboardComponent {
     ) {
       console.log('its an annotation notification');
       this.courseService.Notification = notification;
-      this.courseService.navigatingToMaterial = true;
       /* this.router.navigate(['/course', notification.course_id]); */
       if (notification.annotation_id) {
+        //if website is already on the same material, then just scroll to the annotation
+        if (
+          this.router.url.includes(
+            '/course/' +
+              notification.course_id +
+              '/channel/' +
+              notification.channel_id +
+              '/material/' +
+              '(material:' +
+              notification.material_id +
+              `/${notification.materialType})`
+          )
+        ) {
+          this.courseService.navigatingToMaterial = false;
+          const url = window.location.href;
+          console.log(url);
+          const elementToScrollTo = document.getElementById(
+            `annotation-${notification.annotation_id}`
+          );
+          elementToScrollTo.scrollIntoView();
+          // Scroll to the element
+          window.location.hash = '#annotation-' + notification.annotation_id;
+          setTimeout(function () {
+            $(window.location.hash).css(
+              'box-shadow',
+              '0 0 25px rgba(83, 83, 255, 1)'
+            );
+            setTimeout(function () {
+              $(window.location.hash).css('box-shadow', 'none');
+            }, 5000);
+          }, 100);
+          return;
+        }
+        this.courseService.navigatingToMaterial = true;
         this.router.navigateByUrl(
           '/course/' +
             notification.course_id +
