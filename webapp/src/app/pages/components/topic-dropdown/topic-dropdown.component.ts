@@ -35,6 +35,8 @@ import {
 } from 'src/app/models/Notification';
 import { map, tap } from 'rxjs';
 import { getNotifications } from '../notifications/state/notifications.reducer';
+import { Annotation } from 'src/app/models/BlockingNotification';
+import * as $ from 'jquery';
 @Component({
   selector: 'app-topic-dropdown',
   templateUrl: './topic-dropdown.component.html',
@@ -290,6 +292,59 @@ export class TopicDropdownComponent implements OnInit {
         return followingAnnotations[channelId];
       })
     );
+  }
+
+  onFollowingAnnotationClicked(followingAnnotation: Annotation) {
+    console.log('its an annotation notification');
+    /* this.router.navigate(['/course', notification.course_id]); */
+    if (followingAnnotation.annotationId) {
+      //if website is already on the same material, then just scroll to the annotation
+      if (
+        this.router.url.includes(
+          '/course/' +
+            followingAnnotation.courseId +
+            '/channel/' +
+            followingAnnotation.channelId +
+            '/material/' +
+            '(material:' +
+            followingAnnotation.materialId +
+            `/${followingAnnotation.materialType})`
+        )
+      ) {
+        this.courseService.navigatingToMaterial = false;
+        const url = window.location.href;
+        console.log(url);
+        const elementToScrollTo = document.getElementById(
+          `annotation-${followingAnnotation.annotationId}`
+        );
+        elementToScrollTo.scrollIntoView();
+        // Scroll to the element
+        window.location.hash =
+          '#annotation-' + followingAnnotation.annotationId;
+        setTimeout(function () {
+          $(window.location.hash).css(
+            'box-shadow',
+            '0 0 25px rgba(83, 83, 255, 1)'
+          );
+          setTimeout(function () {
+            $(window.location.hash).css('box-shadow', 'none');
+          }, 5000);
+        }, 100);
+        return;
+      }
+      this.courseService.navigatingToMaterial = true;
+      this.router.navigateByUrl(
+        '/course/' +
+          followingAnnotation.courseId +
+          '/channel/' +
+          followingAnnotation.channelId +
+          '/material/' +
+          '(material:' +
+          followingAnnotation.materialId +
+          `/${followingAnnotation.materialType})` +
+          `#annotation-${followingAnnotation.annotationId}`
+      );
+    }
   }
 
   ngOnDestroy() {
