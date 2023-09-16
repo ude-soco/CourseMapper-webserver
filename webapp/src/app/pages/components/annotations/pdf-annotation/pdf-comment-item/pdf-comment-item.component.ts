@@ -160,21 +160,23 @@ export class PdfCommentItemComponent
     console.log(url);
     if (url.includes('#')) {
       const annotationId = url.match(/#annotation-(.+)/)[1];
-      const elementToScrollTo = document.getElementById(
-        `annotation-${annotationId}`
-      );
-      // Scroll to the element
-      elementToScrollTo.scrollIntoView();
-      window.location.hash = '#annotation-' + annotationId;
-      setTimeout(function () {
-        $(window.location.hash).css(
-          'box-shadow',
-          '0 0 25px rgba(83, 83, 255, 1)'
+      if (annotationId === this.annotation._id) {
+        const elementToScrollTo = document.getElementById(
+          `annotation-${annotationId}`
         );
+        elementToScrollTo.scrollIntoView();
+        // Scroll to the element
+        window.location.hash = '#annotation-' + annotationId;
         setTimeout(function () {
-          $(window.location.hash).css('box-shadow', 'none');
-        }, 2000);
-      }, 100);
+          $(window.location.hash).css(
+            'box-shadow',
+            '0 0 25px rgba(83, 83, 255, 1)'
+          );
+          setTimeout(function () {
+            $(window.location.hash).css('box-shadow', 'none');
+          }, 5000);
+        }, 100);
+      }
     }
   }
 
