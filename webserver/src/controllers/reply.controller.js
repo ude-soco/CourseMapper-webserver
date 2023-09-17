@@ -127,6 +127,7 @@ export const newReply = async (req, res, next) => {
       role: foundRole,
       username: foundUser.username,
     },
+    mentionedUsers: mentionedUsers,
     courseId: foundAnnotation.courseId,
     topicId: foundAnnotation.topicId,
     channelId: foundAnnotation.channelId,

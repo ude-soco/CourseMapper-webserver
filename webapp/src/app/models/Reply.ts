@@ -11,6 +11,11 @@ export interface Reply {
       name?: string;
     };
   };
+  mentionedUsers?: {
+    userId: string;
+    name: string;
+    email: string;
+  }[];
   courseId?: string;
   topicId?: string;
   channelId?: string;
