@@ -11,7 +11,10 @@ import { Reply } from 'src/app/models/Reply';
 
 export const postAnnotation = createAction(
   '[Annotation] Post Annotation Action',
-  props<{ annotation: Annotation }>()
+  props<{
+    annotation: Annotation;
+    mentionedUsers: { userId: string; name: string; email: string }[];
+  }>()
 );
 
 export const postAnnotationSuccess = createAction(

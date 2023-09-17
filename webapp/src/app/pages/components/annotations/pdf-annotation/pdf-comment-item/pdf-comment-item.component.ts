@@ -268,13 +268,13 @@ export class PdfCommentItemComponent
   }
 
   sendReply() {
-    if (this.replyContent?.replace(/<\/?[^>]+(>|$)/g, '') == '') {
+    if (this.content?.replace(/<\/?[^>]+(>|$)/g, '') == '') {
       this.sendButtonDisabled = true;
       window.alert('Cannot Send Empty Reply');
       return;
     }
     this.reply = {
-      content: this.replyContent,
+      content: this.content,
     };
     //check if all the mentioned Users are still present in the reply. if not, remove them from the mentionedUsers array
 
@@ -288,7 +288,7 @@ export class PdfCommentItemComponent
       })
     );
     this.reply = null;
-    this.replyContent = null;
+    this.content = null;
     this.mentionedUsers = [];
   }
 
@@ -503,7 +503,7 @@ export class PdfCommentItemComponent
         '<span class="ml-1 cursor-pointer text-blue-500 dark:text-blue-500 hover:underline clickable-text show-less hidden">show less</span>'
       : text;
 
-    const linkedHtml = linkedText
+    let linkedHtml = linkedText
       .replace(
         linkRegex,
         '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="$1" target="_blank">$1</a>'
@@ -517,12 +517,24 @@ export class PdfCommentItemComponent
       })
       .replace(newlineRegex, '<br>');
 
+    let mentionedUsers = this.annotation.mentionedUsers;
+    if (mentionedUsers) {
+      mentionedUsers.forEach((mentionedUser) => {
+        //check if the name of the mentioned user is in the linkedHtml, if so, make the name blue
+        if (linkedHtml.includes(`@${mentionedUser.name}`)) {
+          const userHtml = `<span class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" ><strong>${mentionedUser.name}</strong></span>`;
+          linkedHtml = linkedHtml.replace(`@${mentionedUser.name}`, userHtml);
+          console.log(linkedHtml);
+        }
+      });
+    }
+
     return linkedHtml;
   }
 
   onReplyContentChange($event) {
-    this.replyContent = $event.target.value;
-    if (this.replyContent.replace(/<\/?[^>]+(>|$)/g, '') == '') {
+    this.content = $event.target.value;
+    if (this.content.replace(/<\/?[^>]+(>|$)/g, '') == '') {
       this.sendButtonDisabled = true;
     } else {
       this.sendButtonDisabled = false;

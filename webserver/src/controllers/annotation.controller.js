@@ -26,10 +26,11 @@ const ObjectId = require("mongoose").Types.ObjectId;
 export const newAnnotation = async (req, res, next) => {
   const courseId = req.params.courseId;
   const materialId = req.params.materialId;
-  const annotationContent = req.body.content;
-  const annotationType = req.body.type;
-  const annotationLocation = req.body.location;
-  const annotationTool = req.body.tool;
+  const annotationContent = req.body.annotation.content;
+  const annotationType = req.body.annotation.type;
+  const annotationLocation = req.body.annotation.location;
+  const annotationTool = req.body.annotation.tool;
+  const mentionedUsers = req.body.mentionedUsers;
 
   let courseForGeneratingNotifications;
   try {
@@ -90,6 +91,7 @@ export const newAnnotation = async (req, res, next) => {
     createdAt: Date.now(),
     updatedAt: Date.now(),
     materialType: foundMaterial.type,
+    mentionedUsers: mentionedUsers,
   });
 
   let newAnnotation;

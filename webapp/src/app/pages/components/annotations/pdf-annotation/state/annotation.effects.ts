@@ -34,8 +34,8 @@ export class AnnotationEffects {
   postAnnotation$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AnnotationActions.postAnnotation),
-      mergeMap(({ annotation }) =>
-        this.annotationService.postAnnotation(annotation).pipe(
+      mergeMap(({ annotation, mentionedUsers }) =>
+        this.annotationService.postAnnotation(annotation, mentionedUsers).pipe(
           mergeMap((postedAnnotaion) => [
             AnnotationActions.postAnnotationSuccess(),
             AnnotationActions.loadAnnotations(),

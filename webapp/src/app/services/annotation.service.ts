@@ -11,10 +11,13 @@ import { Reply } from '../models/Reply';
 export class AnnotationService {
   constructor(private http: HttpClient) {}
 
-  postAnnotation(annotation: Annotation): Observable<Annotation> {
+  postAnnotation(
+    annotation: Annotation,
+    mentionedUsers: { userId: string; name: string; email: string }[]
+  ): Observable<Annotation> {
     return this.http.post<Annotation>(
       `${environment.API_URL}/courses/${annotation.courseId}/materials/${annotation.materialId}/annotation`,
-      annotation
+      { annotation, mentionedUsers }
     );
   }
 

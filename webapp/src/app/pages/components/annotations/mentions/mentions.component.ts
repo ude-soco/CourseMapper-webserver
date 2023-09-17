@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { State } from '../pdf-annotation/state/annotation.reducer';
+import { VideoState } from '../video-annotation/state/video.reducer';
 import {
   BehaviorSubject,
   Observable,
@@ -32,7 +33,7 @@ export class MentionsComponent implements OnInit {
   >;
   mentionedUsers: { name: string; email: string; userId: string }[] = [];
   courseId: string;
-  replyContent: string;
+  content: string = '';
 
   constructor(
     protected store: Store<State>,
@@ -122,7 +123,7 @@ export class MentionsComponent implements OnInit {
 
   protected removeRepeatedUsersFromMentionsArray() {
     this.mentionedUsers.forEach((user) => {
-      if (!this.replyContent.includes(user.name)) {
+      if (!this.content.includes(user.name)) {
         this.mentionedUsers.splice(this.mentionedUsers.indexOf(user), 1);
       }
     });

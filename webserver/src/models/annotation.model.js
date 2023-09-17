@@ -23,6 +23,13 @@ const Annotation = new Schema({
   likes: [{ type: Schema.Types.ObjectId, default: [] }],
   dislikes: [{ type: Schema.Types.ObjectId, default: [] }],
   replies: [{ type: Schema.Types.ObjectId, ref: "reply", default: [] }],
+  mentionedUsers: [
+    {
+      userId: { type: Schema.Types.ObjectId, ref: "user", required: true },
+      name: { type: String, required: true },
+      email: { type: String, required: true },
+    },
+  ],
   createdAt: { type: Date },
   updatedAt: { type: Date },
   materialType: { type: String },

@@ -63,6 +63,11 @@ export interface Annotation {
   _id?: string;
   type?: AnnotationType;
   content?: string;
+  mentionedUsers?: {
+    userId: string;
+    name: string;
+    email: string;
+  }[];
   location: VideoAnnotationLocation | PdfGeneralAnnotationLocation;
   tool?:
     | VideoAnnotationTool
