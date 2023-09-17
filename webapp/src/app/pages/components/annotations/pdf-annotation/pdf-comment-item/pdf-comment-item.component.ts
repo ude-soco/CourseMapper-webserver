@@ -35,7 +35,7 @@ import { Material } from 'src/app/models/Material';
 import { getCurrentMaterial } from '../../../materials/state/materials.reducer';
 import * as VideoActions from 'src/app/pages/components/annotations/video-annotation/state/video.action';
 import { getShowAnnotations } from '../../video-annotation/state/video.reducer';
-import * as AnnotationSelectors from '../state/annotation.reducer';
+
 import {
   getCurrentCourseId,
   getFollowStatusOfAnnotationsOfSelectedChannel,
@@ -54,6 +54,7 @@ import {
 import { event } from 'jquery';
 import { Roles } from 'src/app/models/Roles';
 import { NotificationsService } from 'src/app/services/notifications.service';
+import { MentionsComponent } from '../../mentions/mentions.component';
 
 @Component({
   selector: 'app-pdf-comment-item',
@@ -62,11 +63,11 @@ import { NotificationsService } from 'src/app/services/notifications.service';
   providers: [ConfirmationService],
 })
 export class PdfCommentItemComponent
+  extends MentionsComponent
   implements OnInit, OnChanges, AfterViewInit
 {
   @Input() annotation: Annotation;
   reply: Reply;
-  replyContent: string;
   annotationInitials?: string;
   annotationElapsedTime?: string;
   likesCount: number;
@@ -87,30 +88,16 @@ export class PdfCommentItemComponent
   showAllPDFAnnotations$: Observable<boolean>;
   sendButtonDisabled: boolean = true;
   Roles = Roles;
-  nameWithEmail$: Observable<{ name: string; email: string; userId: string }[]>;
-  onUserInput: BehaviorSubject<string> = new BehaviorSubject<string>('');
-  onUserInput$ = this.onUserInput.asObservable();
-  showDropDown = false;
-  filteredUsernamesFromAnnotationAndRepliesAuthors$: Observable<
-    { name: string; email: string; userId: string }[]
-  >;
-  filteredEnrolledUsernames$: Observable<
-    { name: string; email: string; userId: string }[]
-  >;
-  filteredUserNames$: Observable<
-    { name: string; email: string; userId: string }[]
-  >;
-  courseId: string;
   isAnnotationBeingFollowed$: Observable<boolean>;
-  mentionedUsers: { name: string; email: string; userId: string }[] = [];
   constructor(
-    private store: Store<State>,
     private socket: Socket,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
-    private notificationService: NotificationsService,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    protected override store: Store<State>,
+    protected override notificationService: NotificationsService
   ) {
+    super(store, notificationService);
     this.store.select(getCurrentPdfPage).subscribe((currentPage) => {
       this.currentPage = currentPage;
     });
@@ -234,7 +221,8 @@ export class PdfCommentItemComponent
     }
   }
 
-  ngOnInit(): void {
+  override ngOnInit(): void {
+    super.ngOnInit();
     this.setMenuItems();
     if (this.selectedMaterial.type === 'pdf') {
       this.PDFAnnotationLocation[0] = (
@@ -251,85 +239,6 @@ export class PdfCommentItemComponent
         this.annotation?.location as VideoAnnotationLocation
       ).to;
     }
-
-    this.store.select(getCurrentCourseId).subscribe((courseId) => {
-      this.courseId = courseId;
-    });
-
-    this.nameWithEmail$ = this.store.select(
-      AnnotationSelectors.getUnionOfAnnotationAndReplyAuthors
-    );
-    this.filteredUsernamesFromAnnotationAndRepliesAuthors$ = combineLatest([
-      this.nameWithEmail$,
-      this.onUserInput$,
-    ]).pipe(
-      tap(([username, input]) => {
-        console.log('pipeline running again!');
-        console.log(username);
-        console.log(input);
-      }),
-      map(([nameWithEmails, onUserInput]) => {
-        return nameWithEmails.filter((nameWithEmail) =>
-          (nameWithEmail.name + ' ' + nameWithEmail.email)
-            .toLowerCase()
-            .includes(onUserInput.toLowerCase())
-        );
-      })
-    );
-
-    this.filteredEnrolledUsernames$ = this.onUserInput$.pipe(
-      tap((input) => {
-        console.log('input is: ' + input);
-      }),
-      tap((input) => {
-        console.log('courseId is: ' + this.courseId);
-      }),
-      switchMap((input) => {
-        return this.notificationService
-          .getUserNames({ partialString: input, courseId: this.courseId })
-          .pipe(
-            tap((users) => {
-              console.log('backend pipeline running!');
-              console.log(users);
-            })
-          );
-      })
-    );
-
-    this.filteredUserNames$ = combineLatest([
-      this.filteredUsernamesFromAnnotationAndRepliesAuthors$,
-      this.filteredEnrolledUsernames$,
-    ]).pipe(
-      tap(([frontend, backend]) => {
-        console.log('frontend is: ');
-        console.log(frontend);
-        console.log('backend is: ');
-        console.log(backend);
-      }),
-      map(([frontend, backend]) => {
-        let namesWithEmails: Map<string, { name: string; email: string }> =
-          new Map<string, { name: string; email: string }>();
-        frontend.forEach((user) => {
-          namesWithEmails.set(user.userId, {
-            name: user.name,
-            email: user.email,
-          });
-        });
-        backend.forEach((user) => {
-          namesWithEmails.set(user.userId, {
-            name: user.name,
-            email: user.email,
-          });
-        });
-        let arr: { name: string; email: string; userId: string }[];
-        console.log(namesWithEmails);
-        arr = Array.from(namesWithEmails, ([userId, userData]) => ({
-          userId,
-          ...userData,
-        }));
-        return arr;
-      })
-    );
 
     this.isAnnotationBeingFollowed$ = this.store
       .select(getFollowStatusOfAnnotationsOfSelectedChannel)
@@ -368,17 +277,8 @@ export class PdfCommentItemComponent
       content: this.replyContent,
     };
     //check if all the mentioned Users are still present in the reply. if not, remove them from the mentionedUsers array
-    this.mentionedUsers.forEach((user) => {
-      if (!this.replyContent.includes(user.name)) {
-        this.mentionedUsers.splice(this.mentionedUsers.indexOf(user), 1);
-      }
-    });
 
-    //Remove repeated users from mentionedUsers array
-    this.mentionedUsers = this.mentionedUsers.filter(
-      (user, index, self) =>
-        index === self.findIndex((t) => t.userId === user.userId)
-    );
+    this.removeRepeatedUsersFromMentionsArray();
 
     this.store.dispatch(
       AnnotationActions.postReply({
@@ -621,41 +521,11 @@ export class PdfCommentItemComponent
   }
 
   onReplyContentChange($event) {
-    console.log('onReplyChagned called!');
     this.replyContent = $event.target.value;
     if (this.replyContent.replace(/<\/?[^>]+(>|$)/g, '') == '') {
       this.sendButtonDisabled = true;
     } else {
       this.sendButtonDisabled = false;
     }
-    /*     const atSymbolRegex: RegExp = /(^|\s)@/;
-    if (atSymbolRegex.test(this.replyContent)) {
-      const lastIndex = this.replyContent.lastIndexOf('@');
-      if (lastIndex !== -1) {
-        const content = this.replyContent.substring(lastIndex + 1).trim();
-        console.log(content);
-        this.onUserInput.next(content);
-        this.filteredUserNames$.pipe(take(1)).subscribe((totalUsers) => {
-          console.log(totalUsers);
-          if (totalUsers.length > 0) {
-            this.showDropDown = true;
-          } else {
-            this.showDropDown = false;
-          }
-        });
-      }
-    } else {
-      this.showDropDown = false;
-    } */
-  }
-
-  searchUserNames(userInput: string) {
-    console.log(userInput);
-    this.onUserInput.next(userInput);
-  }
-
-  selectName(mentionedUser) {
-    console.log(mentionedUser);
-    this.mentionedUsers.push(mentionedUser);
   }
 }
