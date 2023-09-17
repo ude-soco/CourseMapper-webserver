@@ -23,13 +23,18 @@ import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-ann
 import { Observable } from 'rxjs';
 import { getCurrentMaterialId } from '../../../materials/state/materials.reducer';
 import { getCurrentCourseId } from 'src/app/pages/courses/state/course.reducer';
+import { MentionsComponent } from '../../mentions/mentions.component';
+import { NotificationsService } from 'src/app/services/notifications.service';
 
 @Component({
   selector: 'app-pdf-create-annotation',
   templateUrl: './pdf-create-annotation.component.html',
   styleUrls: ['./pdf-create-annotation.component.css'],
 })
-export class PdfCreateAnnotationComponent implements OnInit, AfterViewChecked {
+export class PdfCreateAnnotationComponent
+  extends MentionsComponent
+  implements OnInit, AfterViewChecked
+{
   selectedAnnotationType: AnnotationType;
   annotationTypesArray: string[];
   annotationLocationsArray: string[];
@@ -37,9 +42,7 @@ export class PdfCreateAnnotationComponent implements OnInit, AfterViewChecked {
   createAnnotationFromPanel: boolean;
   showCancelButton: boolean = false;
   disableSlidesDropDown: boolean = false;
-  text: string;
   annotation: Annotation;
-  courseId: string;
   materialId: string;
   postAnnotationLocation: PdfGeneralAnnotationLocation;
   currentPage: number;
@@ -55,9 +58,18 @@ export class PdfCreateAnnotationComponent implements OnInit, AfterViewChecked {
   sendButtonDisabled: boolean = true;
 
   constructor(
-    private store: Store<State>,
+    override store: Store<State>,
+    override notificationService: NotificationsService,
     private changeDetectorRef: ChangeDetectorRef
   ) {
+    super(store, notificationService);
+  }
+  ngAfterViewChecked(): void {
+    this.changeDetectorRef.detectChanges();
+  }
+
+  override ngOnInit(): void {
+    super.ngOnInit();
     this.annotationTypesArray = ['Note', 'Question', 'External Resource'];
     this.annotationLocationsArray = [
       'Current Slide',
@@ -65,7 +77,7 @@ export class PdfCreateAnnotationComponent implements OnInit, AfterViewChecked {
       'Slide Range',
     ];
 
-    store.select(getCreateAnnotationFromPanel).subscribe((isFromPanel) => {
+    this.store.select(getCreateAnnotationFromPanel).subscribe((isFromPanel) => {
       if (isFromPanel) {
         this.createAnnotationFromPanel = isFromPanel;
         this.showCancelButton = false;
@@ -106,12 +118,6 @@ export class PdfCreateAnnotationComponent implements OnInit, AfterViewChecked {
       );
       this.selectedToPage = 1;
     });
-  }
-  ngAfterViewChecked(): void {
-    this.changeDetectorRef.detectChanges();
-  }
-
-  ngOnInit(): void {
     this.selectedAnnotationType = 'Note';
     this.selectedAnnotationLocation = 'Current Slide';
     this.annotationColor = '#70b85e';
@@ -124,7 +130,7 @@ export class PdfCreateAnnotationComponent implements OnInit, AfterViewChecked {
         case 'Current Slide':
           this.annotation = {
             type: this.selectedAnnotationType,
-            content: this.text,
+            content: this.content,
             courseId: this.courseId,
             materialId: this.materialId,
             location: {
@@ -140,13 +146,13 @@ export class PdfCreateAnnotationComponent implements OnInit, AfterViewChecked {
           this.dispatchAnnotation();
           this.selectedAnnotationLocation = null;
           this.selectedAnnotationType = null;
-          this.text = null;
+          this.content = null;
           break;
 
         case 'All Slides':
           this.annotation = {
             type: this.selectedAnnotationType,
-            content: this.text,
+            content: this.content,
             courseId: this.courseId,
             materialId: this.materialId,
             location: {
@@ -162,13 +168,13 @@ export class PdfCreateAnnotationComponent implements OnInit, AfterViewChecked {
           this.dispatchAnnotation();
           this.selectedAnnotationLocation = null;
           this.selectedAnnotationType = null;
-          this.text = null;
+          this.content = null;
           break;
 
         case 'Slide Range':
           this.annotation = {
             type: this.selectedAnnotationType,
-            content: this.text,
+            content: this.content,
             courseId: this.courseId,
             materialId: this.materialId,
             location: {
@@ -184,26 +190,26 @@ export class PdfCreateAnnotationComponent implements OnInit, AfterViewChecked {
           this.dispatchAnnotation();
           this.selectedAnnotationLocation = null;
           this.selectedAnnotationType = null;
-          this.text = null;
+          this.content = null;
           break;
       }
     } else {
       this.annotation = {
         ...this.annotation,
         type: this.selectedAnnotationType,
-        content: this.text,
+        content: this.content,
       };
 
       this.dispatchAnnotation();
     }
   }
 
-  //TODO edit this class too
   dispatchAnnotation() {
+    this.removeRepeatedUsersFromMentionsArray();
     this.store.dispatch(
       AnnotationActions.postAnnotation({
         annotation: this.annotation,
-        mentionedUsers: [],
+        mentionedUsers: this.mentionedUsers,
       })
     );
 
@@ -231,7 +237,7 @@ export class PdfCreateAnnotationComponent implements OnInit, AfterViewChecked {
   }
 
   onTextChange() {
-    if (this.text.replace(/<\/?[^>]+(>|$)/g, '') == '') {
+    if (this.content.replace(/<\/?[^>]+(>|$)/g, '') == '') {
       this.sendButtonDisabled = true;
     } else {
       this.sendButtonDisabled = false;

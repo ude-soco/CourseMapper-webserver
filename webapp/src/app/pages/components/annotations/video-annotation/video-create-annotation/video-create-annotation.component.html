@@ -71,6 +71,15 @@
           (ngModelChange)="onTextChange()"
           class="w-full"
           placeholder="Add an annotation with the selected tool"
+          [mention]="filteredUserNames$ | async"
+          [mentionConfig]="{
+            triggerChar: '@',
+            labelKey: 'name',
+            allowSpace: true
+          }"
+          (searchTerm)="searchUserNames($event)"
+          [mentionListTemplate]="mentionListTemplate"
+          (itemSelected)="selectName($event)"
         ></textarea>
         <textarea
           *ngIf="!isAnnotationDialogVisible"

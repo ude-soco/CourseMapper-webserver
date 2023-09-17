@@ -41,6 +41,7 @@ export class MentionsComponent implements OnInit {
   ) {}
 
   public ngOnInit() {
+    this.mentionedUsers = [];
     this.store.select(getCurrentCourseId).subscribe((courseId) => {
       this.courseId = courseId;
     });
@@ -127,12 +128,14 @@ export class MentionsComponent implements OnInit {
         this.mentionedUsers.splice(this.mentionedUsers.indexOf(user), 1);
       }
     });
+    console.log('test');
 
     //Remove repeated users from mentionedUsers array
     this.mentionedUsers = this.mentionedUsers.filter(
       (user, index, self) =>
         index === self.findIndex((t) => t.userId === user.userId)
     );
+    console.log('test');
   }
 
   searchUserNames(userInput: string) {
@@ -142,6 +145,7 @@ export class MentionsComponent implements OnInit {
 
   selectName(mentionedUser) {
     console.log(mentionedUser);
-    this.mentionedUsers.push(mentionedUser);
+    this.mentionedUsers = [...this.mentionedUsers, mentionedUser];
+    console.log(this.mentionedUsers);
   }
 }

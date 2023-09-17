@@ -47,7 +47,7 @@
         *ngFor="let material of materials; let i = index"
         [closable]="false"
       >
-        <ng-template pTemplate="header" *ngIf="material.type == 'pdf'">
+        <ng-template pTemplate="header" *ngIf="material.type === 'pdf'">
           <app-iconbutton
             icon="bxs-file-pdf"
             color="text-blue-500"
@@ -72,19 +72,25 @@
               getNumUnreadNotificationsForMaterial(material._id) | async
             }}</span
           >
-          <app-context-menu
-            [showModeratorPrivileges]="showModeratorPrivileges"
-            [checkBoxesGroup]="materialCheckBoxesGroup"
-            [checkBoxesArray]="materialCheckBoxesArray"
-            [isResetButtonEnabled]="isResetMaterialNotificationsButtonEnabled"
-            resetTo="channel"
-            (renameClicked)="onRenameMaterial()"
-            (deleteClicked)="onDeleteMaterial()"
-            (resetButtonClicked)="onResetMaterialNotificationsClicked()"
-            (notificationSettingClicked)="
-              onMaterialNotificationSettingsClicked($event)
-            "
-          ></app-context-menu>
+          <p-overlayPanel #materialMenu styleClass="settingsContextMenu">
+            <ng-template pTemplate="content">
+              <app-context-menu
+                [showModeratorPrivileges]="showModeratorPrivileges"
+                [checkBoxesGroup]="materialCheckBoxesGroup"
+                [checkBoxesArray]="materialCheckBoxesArray"
+                [isResetButtonEnabled]="
+                  isResetMaterialNotificationsButtonEnabled
+                "
+                resetTo="channel"
+                (renameClicked)="onRenameMaterial()"
+                (deleteClicked)="onDeleteMaterial()"
+                (resetButtonClicked)="onResetMaterialNotificationsClicked()"
+                (notificationSettingClicked)="
+                  onMaterialNotificationSettingsClicked($event)
+                "
+              ></app-context-menu>
+            </ng-template>
+          </p-overlayPanel>
           <app-iconbutton
             style="z-index: 1"
             icon="bx-dots-vertical-rounded"
@@ -93,7 +99,7 @@
           ></app-iconbutton>
         </ng-template>
 
-        <ng-template pTemplate="header" *ngIf="material.type == 'video'">
+        <ng-template pTemplate="header" *ngIf="material.type === 'video'">
           <app-iconbutton
             icon="bxs-videos"
             color="text-blue-500"
