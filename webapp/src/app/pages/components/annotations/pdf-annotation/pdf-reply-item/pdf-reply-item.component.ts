@@ -283,7 +283,7 @@ export class PdfReplyItemComponent
           '<span class="ml-1 cursor-pointer text-blue-500 dark:text-blue-500 hover:underline clickable-text show-less hidden">show less</span>'
         : text;
 
-      const linkedHtml = linkedText
+      let linkedHtml = linkedText
         .replace(
           linkRegex,
           '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="$1" target="_blank">$1</a>'
@@ -296,6 +296,19 @@ export class PdfReplyItemComponent
           return `${before}${tagHtml}`;
         })
         .replace(newlineRegex, '<br>');
+
+      let mentionedUsers = this.reply?.mentionedUsers;
+      if (mentionedUsers) {
+        mentionedUsers.forEach((mentionedUser) => {
+          //check if the name of the mentioned user is in the linkedHtml, if so, make the name blue
+          if (linkedHtml.includes(`@${mentionedUser.name}`)) {
+            const userHtml = `<span class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" ><strong>${mentionedUser.name}</strong></span>`;
+            linkedHtml = linkedHtml.replace(`@${mentionedUser.name}`, userHtml);
+            console.log(linkedHtml);
+          }
+        });
+      }
+
       return linkedHtml;
     }
     return '';
