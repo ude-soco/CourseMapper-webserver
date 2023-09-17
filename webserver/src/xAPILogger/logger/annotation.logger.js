@@ -199,3 +199,26 @@ export const editAnnotation = async (req, res, next) => {
   }
   next();
 };
+
+export const newMention = async (req, res, next) => {
+  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
+  const statement = statementFactory.getNewMentionCreationStatement(
+    req.locals.user,
+    req.locals.annotation,
+    origin
+  );
+  const notificationInfo = notifications.generateNotificationInfo(req);
+  const sent = await lrs.sendStatementToLrs(statement);
+  try {
+    const activity = await controller.saveStatementToMongo(
+      statement,
+      sent,
+      notificationInfo
+    );
+    //Add activity to req.locals so it can be used in the notification
+    req.locals.activity = activity;
+  } catch (err) {
+    res.status(500).send({ error: "Error saving statement to mongo", err });
+  }
+  next();
+};

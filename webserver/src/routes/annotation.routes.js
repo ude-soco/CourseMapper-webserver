@@ -18,6 +18,8 @@ module.exports = function (app) {
     logger.newAnnotation,
     notificationsController.followAnnotation,
     notifications.newAnnotationNotificationUsersCalculate,
+    logger.newMention,
+    notifications.newMentionNotificationUsersCalculate,
     notifications.populateUserNotification
   );
 

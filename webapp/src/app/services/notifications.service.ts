@@ -479,6 +479,21 @@ export class NotificationsService {
     ) {
       reply_id = resultExtensions.id;
     }
+    if (
+      notification.activityId.statement.verb.display['en-US'] === 'mentioned'
+    ) {
+      if (
+        extensionsFirstKey === 'http://www.CourseMapper.de/extensions/reply'
+      ) {
+        reply_id = extensions.id;
+      }
+      if (
+        extensionsFirstKey ===
+        'http://www.CourseMapper.de/extensions/annotation'
+      ) {
+        annotation_id = extensions.id;
+      }
+    }
 
     return {
       userShortname: notification.activityId.notificationInfo.userShortname,
