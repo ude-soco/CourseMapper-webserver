@@ -226,11 +226,11 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
       style: {
         height: function (elm) {
           if (elm.data().type === 'user') return '100';
-          else return 25;
+          else return elm.data().weight * 25 + 25;
         },
         width: function (elm) {
           if (elm.data().type === 'user') return '100';
-          else return 25;
+          else return elm.data().weight * 25 + 25;
         },
         'text-valign': 'center',
         'text-halign': 'right',

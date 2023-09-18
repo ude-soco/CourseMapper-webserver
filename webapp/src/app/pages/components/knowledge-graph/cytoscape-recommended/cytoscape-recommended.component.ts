@@ -133,11 +133,11 @@ export class CytoscapeRecommendedComponent {
       style: {
         height: function (elm) {
           if (elm.data().type === 'user') return '100';
-          else return 'mapData(weight, 0, 1, 25, 100)';
+          else return elm.data().score * 25 + 25;
         },
         width: function (elm) {
           if (elm.data().type === 'user') return '100';
-          else return 'mapData(weight, 0, 1, 25, 100)';
+          else return elm.data().score * 25 + 25;
         },
         'text-valign': 'center',
         'text-halign': 'right',
