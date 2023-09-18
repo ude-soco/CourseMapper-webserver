@@ -522,7 +522,7 @@ export class PdfCommentItemComponent
       mentionedUsers.forEach((mentionedUser) => {
         //check if the name of the mentioned user is in the linkedHtml, if so, make the name blue
         if (linkedHtml.includes(`@${mentionedUser.name}`)) {
-          const userHtml = `<span class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" ><strong>${mentionedUser.name}</strong></span>`;
+          const userHtml = `<span class="cursor-auto font-medium text-blue-500 dark:text-blue-500  break-all" ><strong>${mentionedUser.name}</strong></span>`;
           linkedHtml = linkedHtml.replace(`@${mentionedUser.name}`, userHtml);
         }
       });

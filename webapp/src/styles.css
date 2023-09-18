@@ -114,7 +114,7 @@ border-color: transparent;
 .p-overlaypanel.notifications-dashboard .p-overlaypanel-content {
   padding: 0;
   width: 740px;
-  width: 65vw;
+  width: 40vw;
   height: 80vh;
   overflow-x: hidden;
     overflow-y: scroll;
