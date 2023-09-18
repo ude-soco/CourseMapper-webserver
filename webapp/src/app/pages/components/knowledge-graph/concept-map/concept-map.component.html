@@ -545,17 +545,30 @@
                       id="recommendationSpan"
                       
                     >
+                   <!--   <button
+                        pButton
+                        pRipple
+                        type="button"
+                        *ngIf="!disableShowRecommendationsButton"
+                        id="recommendationButton"
+                        class="p-button-sm p-button-rounded"
+                        label="Show Recommendations"
+                        pTooltip="Show recommendations for not understood concepts"
+                        style="font-size: 17px; max-height: 95%"
+                        pStyleClass="showRecoomendationsButton"
+                        (click)="showRecommendations()"
+                      >-->
                       <button
                         pButton
                         pRipple
                         type="button"
                         *ngIf="!disableShowRecommendationsButton"
                         id="recommendationButton"
-                        class="p-button-sm showRecommendations p-button-rounded"
+                        class="p-button-sm p-button-rounded"
                         label="Show Recommendations"
                         pTooltip="Show recommendations for not understood concepts"
                         style="font-size: 17px; max-height: 95%"
-                        pStyleClass="showRecoomendationsButton"
+                        
                         (click)="showRecommendations()"
                       >
                         <p-progressSpinner
@@ -566,7 +579,7 @@
                           animationDuration=".5s"
                         ></p-progressSpinner>
                       </button>
-                      <button
+                  <!--    <button
                         pButton
                         pRipple
                         type="button"
@@ -577,6 +590,19 @@
                         pTooltip="Select not inderstood concept(s) to get recommended"
                         style="font-size: 17px; max-height: 95%; background-color: #e0e0e0; color: #8b8b8b; cursor: auto;"
                         pStyleClass="showRecoomendationsButton"
+                        (click)="showRecommendations()"
+                      ></button>-->
+                      <button
+                        pButton
+                        pRipple
+                        type="button"
+                        id="recommendationButton"
+                        *ngIf="disableShowRecommendationsButton"
+                        class="p-button-sm showRecommendations p-button-rounded"
+                        label="Show Recommendations"
+                        pTooltip="Select not inderstood concept(s) to get recommended"
+                        style="font-size: 17px; max-height: 95%; background-color: #e0e0e0; color: #8b8b8b; cursor: auto;"
+                        
                         (click)="showRecommendations()"
                       ></button>
                     </span>
