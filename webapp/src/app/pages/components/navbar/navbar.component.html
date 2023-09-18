@@ -10,7 +10,7 @@
         *ngIf="loggedInUser$ | async"
       ></app-notification-bell>
 
-      <button
+      <!--       <button
         pButton
         [ngStyle]="{
           backgroundColor: 'white',
@@ -20,7 +20,7 @@
         type="button"
         label="Privacy"
         (click)="privacy()"
-      ></button>
+      ></button> -->
 
       <span *ngIf="!this.storageService.loggedIn">
         <button
