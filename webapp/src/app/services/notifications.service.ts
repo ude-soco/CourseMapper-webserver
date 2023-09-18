@@ -325,10 +325,9 @@ export class NotificationsService {
     );
   }
 
-  //TODO: Fix the URL being used for the below method. Purposely set to false URL to cause error
   removeNotification(notification: string[]) {
     return this.httpClient.put<{ message: string }>(
-      `${environment.API_URL}/notifications/FALSEURL`,
+      `${environment.API_URL}/notifications/remove`,
       { notificationIds: notification }
     );
   }
