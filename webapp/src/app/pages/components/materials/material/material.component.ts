@@ -201,7 +201,6 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     this.notificationSettingsOfLastMaterialMenuClicked$.subscribe(
       (notificationSettings) => {
-        console.log('MaterialID CHANGED');
         if (!notificationSettings) return;
         //delete all the controls in the form Group
         this.materialCheckBoxesGroup = this.fb.group({});
@@ -239,9 +238,6 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     label: string;
     control: FormControl<boolean>;
   }): void {
-    console.log('The control clicked is: ');
-    console.log(notificationOption.label);
-
     const labelClicked: string = notificationOption.label;
     let objToSend = {
       materialId: this.materialIdOfMaterialMenuClicked,
@@ -543,7 +539,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
         .subscribe();
     } else {
       //confirmed by mouse click
-      // console.log('logged from mouse');
+      //
       let MaterialName = this.previousMaterial.name;
       const MaterialDescription = this.previousMaterial.description;
       const curseId = this.previousMaterial.courseId;
@@ -586,7 +582,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     // to confirm rename when mouse clicked anywhere
     if (this.editable) {
       //course name <p> has been changed to editable
-      //console.log('logged to mouse event');
+      //
       this.enterKey = false;
       this.onRenameMaterialConfirm(this.selectedId);
     }
@@ -679,7 +675,6 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
         lastMaterialMenuClickedId: material._id,
       })
     );
-    console.log(material);
   }
 
   /**

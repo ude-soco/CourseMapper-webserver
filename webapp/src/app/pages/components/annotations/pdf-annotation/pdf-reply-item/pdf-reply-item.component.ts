@@ -87,7 +87,7 @@ export class PdfReplyItemComponent
     });
 
     const url = window.location.href;
-    console.log(url);
+
     if (url.includes('#reply-')) {
       const replyId = url.match(/#reply-(.+)/)[1];
       if (replyId === this.reply._id) {
@@ -304,7 +304,6 @@ export class PdfReplyItemComponent
           if (linkedHtml.includes(`@${mentionedUser.name}`)) {
             const userHtml = `<span class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" ><strong>${mentionedUser.name}</strong></span>`;
             linkedHtml = linkedHtml.replace(`@${mentionedUser.name}`, userHtml);
-            console.log(linkedHtml);
           }
         });
       }

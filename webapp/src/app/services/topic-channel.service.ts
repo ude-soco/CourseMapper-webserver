@@ -45,8 +45,6 @@ export class TopicChannelService {
       )
       .pipe(
         tap((res) => {
-          console.log('course: ');
-          console.log(res);
           this.topics = res.course.topics;
         })
       );

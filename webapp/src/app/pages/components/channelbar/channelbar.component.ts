@@ -246,7 +246,7 @@ export class ChannelbarComponent implements OnInit {
       this.courseService.renameCourse(this.previousCourse, body).subscribe();
     } else if (this.escapeKey === true) {
       //ESC pressed
-      //console.log('ESC Pressed');
+      //
       let CourseName = this.previousCourse.name;
       const courseDescription = this.previousCourse.description;
       let body = { name: CourseName, description: courseDescription };
@@ -254,7 +254,7 @@ export class ChannelbarComponent implements OnInit {
       this.courseService.renameCourse(this.selectedCourse, body).subscribe();
     } else {
       //confirmed by mouse click
-      //console.log('logged from mouse');
+      //
       let CourseName = this.previousCourse.name;
       const courseDescription = this.previousCourse.description;
       let body = { name: CourseName, description: courseDescription };

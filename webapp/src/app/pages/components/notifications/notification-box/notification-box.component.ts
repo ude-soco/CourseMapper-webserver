@@ -47,7 +47,7 @@ export class NotificationBoxComponent {
       icon: 'pi pi-times',
       command: ($event) => {
         $event.originalEvent.stopPropagation();
-        console.log('Delete clicked');
+
         this.store.dispatch(
           NotificationActions.notificationsRemoved({
             notifications: [this.notification],
@@ -61,7 +61,7 @@ export class NotificationBoxComponent {
       icon: 'pi pi-check',
       command: ($event) => {
         $event.originalEvent.stopPropagation();
-        console.log('Mark all as read clicked');
+
         this.store.dispatch(
           NotificationActions.notificationsMarkedAsRead({
             notifications: [this.notification._id],
@@ -75,7 +75,7 @@ export class NotificationBoxComponent {
       icon: 'pi pi-times',
       command: ($event) => {
         $event.originalEvent.stopPropagation();
-        console.log('Mark as unread clicked');
+
         this.store.dispatch(
           NotificationActions.notificationsMarkedAsUnread({
             notifications: [this.notification._id],
@@ -89,7 +89,7 @@ export class NotificationBoxComponent {
       icon: 'pi pi-times',
       command: ($event) => {
         $event.originalEvent.stopPropagation();
-        console.log('Unblock user clicked');
+
         this.store.dispatch(
           NotificationActions.unblockUser({
             userId: this.notification.authorId,
@@ -103,7 +103,7 @@ export class NotificationBoxComponent {
       icon: 'pi pi-times',
       command: ($event) => {
         $event.originalEvent.stopPropagation();
-        console.log('Block user clicked');
+
         this.store.dispatch(
           NotificationActions.blockUser({
             userId: this.notification.authorId,
@@ -147,13 +147,13 @@ export class NotificationBoxComponent {
   }
 
   onNotificationClicked() {
-    console.log('notification clicked!');
+
     this.notificationClicked.emit();
   }
 
   onStarNotification($event) {
     $event.stopPropagation();
-    console.log('star clicked!');
+
     this.store.dispatch(
       NotificationActions.starNotifications({
         notifications: [this.notification._id],

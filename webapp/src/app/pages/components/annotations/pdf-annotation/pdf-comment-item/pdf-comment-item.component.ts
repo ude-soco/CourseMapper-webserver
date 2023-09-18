@@ -144,7 +144,7 @@ export class PdfCommentItemComponent
     });
 
     const url = window.location.href;
-    console.log(url);
+
     if (url.includes('#annotation')) {
       const annotationId = url.match(/#annotation-(.+)/)[1];
       if (annotationId === this.annotation._id) {
@@ -524,7 +524,6 @@ export class PdfCommentItemComponent
         if (linkedHtml.includes(`@${mentionedUser.name}`)) {
           const userHtml = `<span class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" ><strong>${mentionedUser.name}</strong></span>`;
           linkedHtml = linkedHtml.replace(`@${mentionedUser.name}`, userHtml);
-          console.log(linkedHtml);
         }
       });
     }

@@ -87,7 +87,6 @@ export class CourseDescriptionComponent {
   }
   EnrollToCOurse() {
     if (this.isloggedin == false) {
-      console.log(this.course, 'this.course');
       this.store.dispatch(
         CourseActions.setCurrentCourse({ selcetedCourse: this.course })
       );

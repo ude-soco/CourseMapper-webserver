@@ -42,17 +42,13 @@ export class SettingsComponent {
     this.activeItem = this.tabOptions[0];
     this.componentToShow = 'blocked-users';
 
-    this.blockingUsers$ = this.store.select(getBlockingUsers).pipe(
-      tap((blockingUsers) => {
-        console.log(blockingUsers);
-      })
-    );
+    this.blockingUsers$ = this.store
+      .select(getBlockingUsers)
+      .pipe(tap((blockingUsers) => {}));
   }
 
   protected onTabSwitched(selectedItem: MenuItem) {
-    console.log('tab switch');
     this.activeItem = selectedItem;
-    console.log(this.activeItem);
   }
 
   protected onUnBlockClicked($event, blockedUser: BlockingUsers) {

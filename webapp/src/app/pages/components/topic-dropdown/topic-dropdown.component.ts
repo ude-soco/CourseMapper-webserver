@@ -176,7 +176,7 @@ export class TopicDropdownComponent implements OnInit {
       .fetchTopics(this.courseService.getSelectedCourse()._id)
       .subscribe((res) => {
         this.topics = res.course.topics;
-        console.log(res.notificationSettings);
+
         this.store.dispatch(
           CourseActions.initialiseNotificationSettings({
             notificationSettings: res.notificationSettings,
@@ -197,7 +197,7 @@ export class TopicDropdownComponent implements OnInit {
     //loop over the notification options and make a form control
     this.notificationSettingsOfLastTopicMenuClicked$.subscribe(
       (notificationSettings) => {
-        console.log('TOPIC ID CHANGED');
+
         if (!notificationSettings) return;
         //delete all the controls in the form Group
         this.checkBoxesGroup = this.fb.group({});
@@ -215,7 +215,7 @@ export class TopicDropdownComponent implements OnInit {
     );
     this.notificationSettingsOfLastChannelMenuClicked$.subscribe(
       (notificationSettings) => {
-        console.log('CHANNEL ID CHANGED');
+
         if (!notificationSettings) return;
         //delete all the controls in the form Group
         this.channelCheckBoxesGroup = this.fb.group({});
@@ -232,8 +232,8 @@ export class TopicDropdownComponent implements OnInit {
           });
           this.channelCheckBoxesGroup.addControl(o.label, control);
         });
-        console.log(this.channelCheckBoxesArray);
-        console.log(this.channelCheckBoxesGroup);
+
+
       }
     );
 
@@ -295,7 +295,7 @@ export class TopicDropdownComponent implements OnInit {
   }
 
   onFollowingAnnotationClicked(followingAnnotation: Annotation) {
-    console.log('its an annotation notification');
+
     /* this.router.navigate(['/course', notification.course_id]); */
     if (followingAnnotation.annotationId) {
       //if website is already on the same material, then just scroll to the annotation
@@ -313,7 +313,7 @@ export class TopicDropdownComponent implements OnInit {
       ) {
         this.courseService.navigatingToMaterial = false;
         const url = window.location.href;
-        console.log(url);
+
         const elementToScrollTo = document.getElementById(
           `annotation-${followingAnnotation.annotationId}`
         );
@@ -539,7 +539,7 @@ export class TopicDropdownComponent implements OnInit {
       this.selectedTopic.name = body.name;
     } else if (this.escapeKey === true) {
       //ESC pressed
-      //console.log('ESC Pressed');
+      //
       this.escapeKey = false;
     } else {
       //confirmed by mouse click
@@ -571,8 +571,8 @@ export class TopicDropdownComponent implements OnInit {
     //Prevent Special keys
     this.editable = true;
     this.textFromTopic = true;
-    // console.log(e.keyCode);
-    // console.log(e);
+    //
+    //
     if (
       window.getSelection().toString() ==
       (<HTMLInputElement>document.getElementById(id)).innerText
@@ -715,7 +715,7 @@ export class TopicDropdownComponent implements OnInit {
         newChannelName = newChannelName.substring(1); // to remove the additional hash
       }
       newChannelName = newChannelName.replace(/(\r\n|\n|\r)/gm, ''); //remove newlines
-      //console.log(newChannelName);
+      //
       if (newChannelName && newChannelName !== '') {
         body = {
           name: newChannelName,
@@ -730,11 +730,11 @@ export class TopicDropdownComponent implements OnInit {
       this.selectedChannel.description = body.description;
     } else if (this.escapeKey === true) {
       //ESC pressed
-      //  console.log('ESC Pressed');
+      //
       this.escapeKey = false;
     } else {
       //confirmed by mouse click
-      //console.log('logged from mouse');
+      //
       let ChannelName = this.previousChannel.name;
       const channelDescription = this.previousChannel.description;
       let body = { name: ChannelName, description: channelDescription };
@@ -743,7 +743,7 @@ export class TopicDropdownComponent implements OnInit {
         newChannelName = newChannelName.substring(1); // to remove the additional hash
       }
       newChannelName = newChannelName.replace(/(\r\n|\n|\r)/gm, ''); //remove newlines
-      //console.log(newChannelName);
+      //
       if (
         newChannelName &&
         newChannelName !== '' &&
@@ -872,11 +872,11 @@ export class TopicDropdownComponent implements OnInit {
         lastTopicMenuClickedId: topic._id,
       })
     );
-    console.log(topic);
+
   }
 
   channelMenuButtonClicked($event, channel: Channel) {
-    console.log('channel Menu button clicked!');
+
     this.selectedChannel = channel;
     this.channelMenu.toggle($event);
     this.channelIdOfChannelMenuClicked = channel._id;
@@ -885,15 +885,15 @@ export class TopicDropdownComponent implements OnInit {
         lastChannelMenuClickedId: channel._id,
       })
     );
-    console.log(channel);
+
   }
 
   onTopicNotificationSettingsClicked(notificationOption: {
     label: string;
     control: FormControl<boolean>;
   }): void {
-    console.log('The control clicked is: ');
-    console.log(notificationOption.label);
+
+
 
     //toggle the value of the control
     /*      notificationOption.control.setValue(!notificationOption.control.value); */
@@ -937,8 +937,8 @@ export class TopicDropdownComponent implements OnInit {
     label: string;
     control: FormControl<boolean>;
   }): void {
-    console.log('The control clicked is: ');
-    console.log(notificationOption.label);
+
+
 
     const labelClicked: string = notificationOption.label;
     let objToSend = {
@@ -977,7 +977,7 @@ export class TopicDropdownComponent implements OnInit {
   }
 
   onResetTopicNotificationsClicked() {
-    console.log('value is false');
+
     this.store.dispatch(
       CourseActions.unsetTopicNotificationSettings({
         settings: {

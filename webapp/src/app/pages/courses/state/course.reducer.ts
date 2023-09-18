@@ -140,7 +140,7 @@ export const getNotificationSettingsOfLastTopicMenuClicked = createSelector(
     const topic = state.topicsNotificationSettings.find(
       (topic) => topic.topicId === state.lastTopicMenuClickedId
     );
-    console.log(topic);
+
     const notificationSettings = [
       {
         label: topicNotificationSettingLabels.courseDefault,
@@ -288,8 +288,8 @@ export const getFollowingAnnotationsOfDisplayedChannels = createSelector(
       followingAnnotationsOfDisplayedChannels[channel.channelId] =
         channel.followingAnnotations;
     });
-    console.log('THIS are the following annotations:  ');
-    console.log(followingAnnotationsOfDisplayedChannels);
+
+
     return followingAnnotationsOfDisplayedChannels;
   }
 );

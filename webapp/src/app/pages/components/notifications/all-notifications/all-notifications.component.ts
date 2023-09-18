@@ -106,7 +106,7 @@ export class AllNotificationsComponent {
 
   ngOnInit(): void {
     /*     this.httpClient.get('assets/data.json').subscribe((data) => {
-      console.log(data);
+
     }); */
     /*  super.ngOnInit(); */
     this.tabOptions = [
@@ -122,9 +122,7 @@ export class AllNotificationsComponent {
       {
         label: 'Settings',
         icon: 'pi pi-cog',
-        command: () => {
-          console.log('Settings clicked');
-        },
+        command: () => {},
       },
     ];
     this.store.select(getSubscribedCourses).subscribe((courses) => {
@@ -246,7 +244,6 @@ export class AllNotificationsComponent {
           if (!this.checkBoxesGroup.contains(notification._id)) {
             const control = new FormControl(false);
             control.valueChanges.subscribe((val) => {
-              console.log('Notification with title: ' + notification._id);
               console.log(val?.valueOf());
             });
             this.checkBoxesGroup.addControl(notification._id, control);
@@ -256,27 +253,21 @@ export class AllNotificationsComponent {
     });
 
     this.masterCheckBox.valueChanges.subscribe((val) => {
-      console.log('susbscriber running! master changed');
-      console.log(val);
       this.showBulkOperations = val;
       const controls = this.checkBoxesGroup.controls;
-      console.log(controls);
+
       Object.keys(controls).forEach((controlName) => {
-        console.log(controlName);
         const control = controls[controlName];
         control.setValue(val, { emitEvent: false });
       });
     });
 
     this.checkBoxesGroup.valueChanges.subscribe((val) => {
-      console.log('susbscriber running! checkbox changed');
-      console.log(val);
       const controls = this.checkBoxesGroup.controls;
-      console.log(controls);
+
       //check if anyone of control has value true, if yes, the set the variable showBulkOperations to true, else set it to false
       let showBulkOperations = false;
       Object.keys(controls).forEach((controlName) => {
-        console.log(controlName);
         const control = controls[controlName];
         if (control.value) {
           showBulkOperations = true;
@@ -358,8 +349,6 @@ export class AllNotificationsComponent {
   }
 
   onCourseFilterChanged($event) {
-    console.log('filter updated');
-    console.log($event.value);
     this.courseFilterUpdatedBehaviorSubject.next($event.value);
   }
 
@@ -369,8 +358,7 @@ export class AllNotificationsComponent {
 
   set searchValue(value: string) {
     this._searchValue = value;
-    console.log('search value changed');
-    console.log(value);
+
     this.searchInputBehaviorSubject.next(value);
   }
 
@@ -380,31 +368,25 @@ export class AllNotificationsComponent {
 
   set selectedDateSortingOption(value: string) {
     this._selectedDateSortingOption = value;
-    console.log('date sorting option changed');
-    console.log(value);
+
     this.dateSortingBehaviourSubject.next(value);
   }
 
   protected unreadSwitchToggled($event) {
-    console.log('unread switch toggled');
-    console.log($event);
     //$event contains either the value true or false
     this.isUnreadChecked = $event;
     this.unreadSwitchBehaviourSubject.next($event);
   }
 
   protected starredSwitchToggled($event) {
-    console.log('starred switch toggled');
-    console.log($event);
     this.isStarredChecked = $event;
     this.starredBehaviourSubject.next($event);
   }
 
   protected onTabSwitched(selectedItem: MenuItem) {
-    console.log('tab switch');
     this.removeAllCheckBoxControls();
     this.activeItem = selectedItem;
-    console.log(selectedItem);
+
     if (selectedItem.label === 'All') {
       this.tabBehaviourSubject.next(NotificationCategory.All);
     } else if (selectedItem.label === 'Course Updates') {
@@ -424,15 +406,13 @@ export class AllNotificationsComponent {
 
   protected removeSelected($event) {
     $event.stopPropagation();
-    console.log('removing selected notifications');
-    console.log(this.checkBoxesGroup.value);
+
     let selectedNotifications = [];
     Object.keys(this.checkBoxesGroup.value).forEach((key) => {
       if (this.checkBoxesGroup.value[key]) {
         selectedNotifications.push(key);
       }
     });
-    console.log(selectedNotifications);
 
     //subscribe to the notifications observable and get the notifications whose id's are present in the selectedNotifications array and then dispatch the action and then unsuscribe from the observable
     let notificationsToRemove: Notification[];
@@ -446,7 +426,6 @@ export class AllNotificationsComponent {
         )
       )
       .subscribe((notifications) => {
-        console.log(notifications);
         notificationsToRemove = notifications;
         this.store.dispatch(
           NotificationActions.notificationsRemoved({
@@ -458,8 +437,7 @@ export class AllNotificationsComponent {
 
   protected markSelectedAsUnread($event) {
     $event.stopPropagation();
-    console.log('marking selected as unread');
-    console.log(this.checkBoxesGroup.value);
+
     let selectedNotifications = [];
     Object.keys(this.checkBoxesGroup.value).forEach((key) => {
       if (this.checkBoxesGroup.value[key]) {
@@ -467,7 +445,6 @@ export class AllNotificationsComponent {
       }
     });
 
-    console.log(selectedNotifications);
     this.store.dispatch(
       NotificationActions.notificationsMarkedAsUnread({
         notifications: selectedNotifications,
@@ -477,8 +454,7 @@ export class AllNotificationsComponent {
 
   protected markSelectedAsRead($event) {
     $event.stopPropagation();
-    console.log('marking selected as read');
-    console.log(this.checkBoxesGroup.value);
+
     let selectedNotifications = [];
     Object.keys(this.checkBoxesGroup.value).forEach((key) => {
       if (this.checkBoxesGroup.value[key]) {
@@ -486,7 +462,6 @@ export class AllNotificationsComponent {
       }
     });
 
-    console.log(selectedNotifications);
     /* NotificationActions.notificationsMarkedAsRead({
       notifications: selectedNotifications,
     }); */
@@ -498,8 +473,6 @@ export class AllNotificationsComponent {
   }
 
   protected onNotificationClicked(notification: Notification) {
-    console.log('Notification clicked!');
-    console.log(notification);
     this.store.dispatch(
       NotificationActions.notificationsMarkedAsRead({
         notifications: [notification._id],
@@ -510,7 +483,6 @@ export class AllNotificationsComponent {
     if (notification.category === NotificationCategory.CourseUpdate) {
       //need to check if its a material update first
       if (notification.material_id) {
-        console.log('its a material update');
         this.courseService.Notification = notification;
         this.courseService.navigatingToMaterial = true;
         /* this.router.navigate(['/course', notification.course_id]); */
@@ -544,7 +516,6 @@ export class AllNotificationsComponent {
       notification.category === NotificationCategory.Annotations ||
       notification.category === NotificationCategory.CommentsAndMentioned
     ) {
-      console.log('its an annotation notification');
       this.courseService.Notification = notification;
       this.courseService.navigatingToMaterial = true;
       /* this.router.navigate(['/course', notification.course_id]); */
@@ -563,7 +534,7 @@ export class AllNotificationsComponent {
 
   /*   ngAfterViewChecked() {
     const element = this.el.nativeElement;
-    console.log('view checked!');
+
     const spans = element.querySelectorAll('.notification-message');
     spans.forEach((span) => {
       this.renderer.addClass(span, 'highlight');
@@ -599,7 +570,7 @@ export class AllNotificationsComponent {
 }
 
 /*   onFiltersModified($event: any) {
-    console.log($event);
+
     this.categories.forEach((category) => {
       const found = $event.value.find(
         (element: any) => element.value === category.value

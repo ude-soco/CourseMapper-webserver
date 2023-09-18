@@ -40,7 +40,7 @@ export class UserServiceService {
       )
       .pipe(
         tap((res: { id?: string; success?: string }) => {
-          // console.log(res.id);
+          //
           this.resu = res.id;
 
           this.register_2(this.resu, username, email, password);
@@ -52,7 +52,7 @@ export class UserServiceService {
     this.http
       .post<any>(AUTH_API_2 + 'signup', { _id, username, email, password })
       .subscribe((res) => {
-        // console.log(res);
+        //
       });
   }
 

@@ -48,7 +48,6 @@ export class CourseLevelNotificationSettingsComponent implements OnInit {
     this.store
       .select(getNotificationSettingsOfCurrentCourse)
       .subscribe((notificationSettings) => {
-        console.log('course notification settings updated!!');
         if (!notificationSettings) return;
         //delete all the controls in the form Group
         this.checkBoxesGroup = this.fb.group({});
@@ -94,9 +93,7 @@ export class CourseLevelNotificationSettingsComponent implements OnInit {
     label: string;
     control: FormControl<boolean>;
   }): void {
-    console.log('settings clicked!!');
     this.store.select(getCurrentCourseId).subscribe((courseId) => {
-      console.log('courseId: ', courseId);
       const labelClicked: string = notificationOption.label;
       let objToSend = {
         courseId,
@@ -137,9 +134,6 @@ export class CourseLevelNotificationSettingsComponent implements OnInit {
     notificationSettings: TopicNotificationSettings,
     settingClicked: topicNotificationSettingLabels
   ) {
-    console.log('topic setting clicked!!');
-    console.log('notificationSettings: ', notificationSettings);
-    console.log('settingClicked: ', settingClicked);
     this.store.select(getCurrentCourseId).subscribe((courseId) => {
       let objToSend = {
         courseId,
@@ -165,8 +159,6 @@ export class CourseLevelNotificationSettingsComponent implements OnInit {
   }
 
   onRemoveTopic(notificationOption: TopicNotificationSettings) {
-    console.log('remove topic clicked!!');
-    console.log('notificationOption: ', notificationOption);
     this.store.select(getCurrentCourseId).subscribe((courseId) => {
       let objToSend = {
         courseId,
@@ -182,8 +174,6 @@ export class CourseLevelNotificationSettingsComponent implements OnInit {
   }
 
   onRemoveChannel(notificationOption: ChannelNotificationSettings) {
-    console.log('remove channel clicked!!');
-    console.log('notificationOption: ', notificationOption);
     this.store.select(getCurrentCourseId).subscribe((courseId) => {
       let objToSend = {
         courseId,
@@ -199,8 +189,6 @@ export class CourseLevelNotificationSettingsComponent implements OnInit {
   }
 
   onRemoveMaterial(notificationOption: MaterialNotificationSettings) {
-    console.log('remove material clicked!!');
-    console.log('notificationOption: ', notificationOption);
     this.store.select(getCurrentCourseId).subscribe((courseId) => {
       let objToSend = {
         courseId,
@@ -219,9 +207,6 @@ export class CourseLevelNotificationSettingsComponent implements OnInit {
     notificationSettings: ChannelNotificationSettings,
     settingClicked: channelNotificationSettingLabels
   ) {
-    console.log('channel setting clicked!!');
-    console.log('notificationSettings: ', notificationSettings);
-    console.log('settingClicked: ', settingClicked);
     this.store.select(getCurrentCourseId).subscribe((courseId) => {
       let objToSend = {
         courseId,
@@ -251,9 +236,6 @@ export class CourseLevelNotificationSettingsComponent implements OnInit {
     notificationSettings: MaterialNotificationSettings,
     settingClicked: materialNotificationSettingLabels
   ) {
-    console.log('material setting clicked!!');
-    console.log('notificationSettings: ', notificationSettings);
-    console.log('settingClicked: ', settingClicked);
     this.store.select(getCurrentCourseId).subscribe((courseId) => {
       let objToSend = {
         courseId,

@@ -50,7 +50,7 @@ export class NotificationDashboardComponent extends BaseNotificationDashboardCom
   }
 
   ngOnDestroy(): void {
-    console.log('ngOnDestroyCalled');
+
   }
 
   /*   tabOptions: MenuItem[];
@@ -97,21 +97,21 @@ export class NotificationDashboardComponent extends BaseNotificationDashboardCom
         label: 'Mark all as read',
         icon: 'pi pi-check',
         command: () => {
-          console.log('Mark all as read clicked');
+
         },
       },
       {
         label: 'Remove all',
         icon: 'pi pi-times',
         command: () => {
-          console.log('Delete clicked');
+
         },
       },
       {
         label: 'Settings',
         icon: 'pi pi-cog',
         command: () => {
-          console.log('Settings clicked');
+
         },
       },
     ];
@@ -140,7 +140,7 @@ export class NotificationDashboardComponent extends BaseNotificationDashboardCom
   }
 
   onTabSwitched(selectedItem: MenuItem) {
-    console.log(selectedItem);
+
     if (selectedItem.label === 'All') {
       this.store.dispatch(
         NotificationActions.tabSwitched({ tab: NotificationCategory.All })
@@ -167,13 +167,13 @@ export class NotificationDashboardComponent extends BaseNotificationDashboardCom
   }
 
   onNotificationClicked(notification: Notification) {
-    console.log(notification);
-    console.log('navigate to the notification');
+
+
 
     if (notification.category === NotificationCategory.CourseUpdate) {
       //need to check if its a material update first
       if (notification.material_id) {
-        console.log('its a material update');
+
         this.courseService.Notification = notification;
         this.courseService.navigatingToMaterial = true;
         this.router.navigateByUrl(
@@ -203,7 +203,7 @@ export class NotificationDashboardComponent extends BaseNotificationDashboardCom
       }
     }
     if (notification.category === NotificationCategory.Annotations) {
-      console.log('its an annotation notification');
+
       this.courseService.Notification = notification;
       this.courseService.navigatingToMaterial = true;
       this.router.navigateByUrl(

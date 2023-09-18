@@ -5,7 +5,6 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class HighlightPipe implements PipeTransform {
   transform(value: string, query: string): string {
-    console.log('HIGHLIGHTERRRRRRRRRRRRRR');
     if (!query || query === '') {
       return value;
     }

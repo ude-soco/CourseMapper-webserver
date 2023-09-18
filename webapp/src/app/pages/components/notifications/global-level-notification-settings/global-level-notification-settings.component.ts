@@ -36,7 +36,7 @@ export class GlobalLevelNotificationSettingsComponent {
     this.store
       .select(getGlobalNotificationSettings)
       .subscribe((notificationSettings) => {
-        console.log('course notification settings updated!!');
+
         if (!notificationSettings) return;
         //delete all the controls in the form Group
         this.checkBoxesGroup = this.fb.group({});
@@ -54,7 +54,7 @@ export class GlobalLevelNotificationSettingsComponent {
 
     this.overriddenCourses = this.store.select(getOverriddenCourses).pipe(
       tap((o) => {
-        console.log('overriddenCourses: ', o);
+
       })
     );
   }
@@ -63,7 +63,7 @@ export class GlobalLevelNotificationSettingsComponent {
     label: string;
     control: FormControl<boolean>;
   }): void {
-    console.log('settings clicked!!');
+
     const labelClicked: string = notificationOption.label;
     let objToSend = {
       [globalNotificationSettingsLabels.annotations]:
@@ -98,8 +98,8 @@ export class GlobalLevelNotificationSettingsComponent {
   }
 
   onRemoveCourse(course: CourseNotificationSettings) {
-    console.log('remove course clicked!!');
-    console.log('course: ', course);
+
+
     this.store.dispatch(
       CourseActions.unsetCourseNotificationSettings({
         settings: { courseId: course.courseId },
@@ -111,9 +111,9 @@ export class GlobalLevelNotificationSettingsComponent {
     notificationSettings: CourseNotificationSettings,
     settingClicked: courseNotificationSettingLabels
   ) {
-    console.log('topic setting clicked!!');
-    console.log('notificationSettings: ', notificationSettings);
-    console.log('settingClicked: ', settingClicked);
+
+
+
 
     let objToSend = {
       courseId: notificationSettings.courseId,

@@ -54,9 +54,7 @@ export class CoursesComponent implements OnInit {
   ) {
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        console.log('running the courses component callback!');
         if (courseService.navigatingToMaterial) {
-          console.log('navigating to video');
           courseService.navigatingToMaterial = false;
           courseService.Notification = null;
           this.reloadCurrentRoute();

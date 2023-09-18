@@ -117,9 +117,7 @@ export class BaseNotificationDashboardComponent {
       {
         label: 'Settings',
         icon: 'pi pi-cog',
-        command: () => {
-          console.log('Settings clicked');
-        },
+        command: () => {},
       },
     ];
 
@@ -149,9 +147,7 @@ export class BaseNotificationDashboardComponent {
       this.unreadSwitch$,
       this.lastTimeCourseMapperOpened$,
     ]).pipe(
-      tap((notifications) => {
-        console.log('notifications were updated!!!!!');
-      }),
+      tap((notifications) => {}),
       map(([notifications, unreadSwitch]) => {
         if (notifications) {
           if (unreadSwitch) {
@@ -165,10 +161,7 @@ export class BaseNotificationDashboardComponent {
           return [];
         }
       }),
-      tap((notifications) => {
-        console.log('in the tap opeerator');
-        console.log(notifications);
-      })
+      tap((notifications) => {})
     );
 
     this.earlierNotifications$ = combineLatest([
@@ -218,39 +211,31 @@ export class BaseNotificationDashboardComponent {
           if (!this.checkBoxesGroup.contains(notification._id)) {
             const control = new FormControl(false);
             control.valueChanges.subscribe((val) => {
-              console.log('Notification with title: ' + notification._id);
               console.log(val?.valueOf());
             });
             this.checkBoxesGroup.addControl(notification._id, control);
           }
         });
-        console.log('forEach is over');
       }
     });
 
     //making a new form control for the masterCheckbox
     this.masterCheckBox.valueChanges.subscribe((val) => {
-      console.log('susbscriber running! master changed');
-      console.log(val);
       this.showBulkOperations = val;
       const controls = this.checkBoxesGroup.controls;
-      console.log(controls);
+
       Object.keys(controls).forEach((controlName) => {
-        console.log(controlName);
         const control = controls[controlName];
         control.setValue(val, { emitEvent: false });
       });
     });
 
     this.checkBoxesGroup.valueChanges.subscribe((val) => {
-      console.log('susbscriber running! checkbox changed');
-      console.log(val);
       const controls = this.checkBoxesGroup.controls;
-      console.log(controls);
+
       //check if anyone of control has value true, if yes, the set the variable showBulkOperations to true, else set it to false
       let showBulkOperations = false;
       Object.keys(controls).forEach((controlName) => {
-        console.log(controlName);
         const control = controls[controlName];
         if (control.value) {
           showBulkOperations = true;
@@ -266,7 +251,7 @@ export class BaseNotificationDashboardComponent {
   protected onTabSwitched(selectedItem: MenuItem) {
     this.removeAllCheckBoxControls();
     this.activeItem = selectedItem;
-    console.log(selectedItem);
+
     if (selectedItem.label === 'All') {
       this.store.dispatch(
         NotificationActions.tabSwitched({ tab: NotificationCategory.All })
@@ -298,8 +283,6 @@ export class BaseNotificationDashboardComponent {
   }
 
   protected onNotificationClicked(notification: Notification) {
-    console.log('Notification clicked!');
-    console.log(notification);
     this.store.dispatch(
       NotificationActions.notificationsMarkedAsRead({
         notifications: [notification._id],
@@ -310,7 +293,6 @@ export class BaseNotificationDashboardComponent {
     if (notification.category === NotificationCategory.CourseUpdate) {
       //need to check if its a material update first
       if (notification.material_id) {
-        console.log('its a material update');
         this.courseService.Notification = notification;
         this.courseService.navigatingToMaterial = true;
         /* this.router.navigate(['/course', notification.course_id]); */
@@ -344,7 +326,6 @@ export class BaseNotificationDashboardComponent {
       notification.category === NotificationCategory.Annotations ||
       notification.category === NotificationCategory.CommentsAndMentioned
     ) {
-      console.log('its an annotation notification');
       this.courseService.Notification = notification;
       /* this.router.navigate(['/course', notification.course_id]); */
       if (notification.reply_id) {
@@ -378,7 +359,7 @@ export class BaseNotificationDashboardComponent {
         ) {
           this.courseService.navigatingToMaterial = false;
           const url = window.location.href;
-          console.log(url);
+
           const elementToScrollTo = document.getElementById(
             `annotation-${notification.annotation_id}`
           );
@@ -412,14 +393,11 @@ export class BaseNotificationDashboardComponent {
     }
   }
 
-  protected onNotificationDashboardClosed() {
-    console.log('closing the notification dashboard!');
-  }
+  protected onNotificationDashboardClosed() {}
 
   protected markSelectedAsRead($event) {
     $event.stopPropagation();
-    console.log('marking selected as read');
-    console.log(this.checkBoxesGroup.value);
+
     let selectedNotifications = [];
     Object.keys(this.checkBoxesGroup.value).forEach((key) => {
       if (this.checkBoxesGroup.value[key]) {
@@ -427,7 +405,6 @@ export class BaseNotificationDashboardComponent {
       }
     });
 
-    console.log(selectedNotifications);
     /* NotificationActions.notificationsMarkedAsRead({
       notifications: selectedNotifications,
     }); */
@@ -440,8 +417,7 @@ export class BaseNotificationDashboardComponent {
 
   protected markSelectedAsUnread($event) {
     $event.stopPropagation();
-    console.log('marking selected as unread');
-    console.log(this.checkBoxesGroup.value);
+
     let selectedNotifications = [];
     Object.keys(this.checkBoxesGroup.value).forEach((key) => {
       if (this.checkBoxesGroup.value[key]) {
@@ -449,7 +425,6 @@ export class BaseNotificationDashboardComponent {
       }
     });
 
-    console.log(selectedNotifications);
     this.store.dispatch(
       NotificationActions.notificationsMarkedAsUnread({
         notifications: selectedNotifications,
@@ -459,15 +434,13 @@ export class BaseNotificationDashboardComponent {
 
   protected removeSelected($event) {
     $event.stopPropagation();
-    console.log('removing selected notifications');
-    console.log(this.checkBoxesGroup.value);
+
     let selectedNotifications = [];
     Object.keys(this.checkBoxesGroup.value).forEach((key) => {
       if (this.checkBoxesGroup.value[key]) {
         selectedNotifications.push(key);
       }
     });
-    console.log(selectedNotifications);
 
     //subscribe to the notifications observable and get the notifications whose id's are present in the selectedNotifications array and then dispatch the action and then unsuscribe from the observable
     let notificationsToRemove: Notification[];
@@ -481,7 +454,6 @@ export class BaseNotificationDashboardComponent {
         )
       )
       .subscribe((notifications) => {
-        console.log(notifications);
         notificationsToRemove = notifications;
         this.store.dispatch(
           NotificationActions.notificationsRemoved({
@@ -492,8 +464,6 @@ export class BaseNotificationDashboardComponent {
   }
 
   protected unreadSwitchToggled($event) {
-    console.log('unread switch toggled');
-    console.log($event);
     this.isUnreadChecked = $event;
     this.unreadSwitchBehaviourSubject.next($event);
   }

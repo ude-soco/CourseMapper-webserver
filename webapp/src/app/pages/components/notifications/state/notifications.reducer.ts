@@ -393,7 +393,6 @@ export const notificationReducer = createReducer<NotificationState>(
     return { ...state };
   }),
   on(NotificationActions.notificationsRemovedFailure, (state, action) => {
-    console.log(action.notifications);
     return {
       ...state,
       notifications: [...state.notifications, ...action.notifications],

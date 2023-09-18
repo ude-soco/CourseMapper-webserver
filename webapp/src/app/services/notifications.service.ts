@@ -46,7 +46,6 @@ export class NotificationsService {
 
   //Todo: error handling
   public getAllNotifications(): Observable<TransformedNotificationsWithBlockedUsers> {
-    console.log('In Service: Fetching notifications');
     return (
       this.httpClient
         /* .get<UserNotification[]>('assets/data.json') */
@@ -54,10 +53,7 @@ export class NotificationsService {
           `${environment.API_URL}/notifications`
         )
         .pipe(
-          tap(({ notifications, blockingUsers }) => {
-            console.log(notifications);
-            console.log(blockingUsers);
-          }),
+          tap(({ notifications, blockingUsers }) => {}),
           map(({ notifications, blockingUsers }) => {
             let transformedNotifications = notifications.map(
               this.transformNotification
@@ -74,18 +70,12 @@ export class NotificationsService {
   }
 
   public initialiseSocketConnection() {
-    console.log('initialising socket connection');
     const user = this.storageService.getUser();
-    console.log(user);
-    this.socket.on(user.id, (data: UserNotification[]) => {
-      console.log('received notification');
-      console.log(data);
-      const notification = data.map(this.transformNotification);
-      console.log('mapped notifications');
-      console.log(notification);
-      notification.forEach((notification) => {
-        console.log('dispatching notification');
 
+    this.socket.on(user.id, (data: UserNotification[]) => {
+      const notification = data.map(this.transformNotification);
+
+      notification.forEach((notification) => {
         this.store.dispatch(
           NotificationActions.newNotificationArrived({ notification })
         );
@@ -96,8 +86,6 @@ export class NotificationsService {
   }
 
   markNotificationAsRead(notification: string[]) {
-    console.log('In Service: Marking notification as read');
-    console.log(notification);
     return this.httpClient.put<{ message: string }>(
       `${environment.API_URL}/notifications/read`,
       { notificationIds: notification }
@@ -105,8 +93,6 @@ export class NotificationsService {
   }
 
   markNotificationAsUnread(notification: string[]) {
-    console.log('In Service: Marking notification as unread');
-    console.log(notification);
     return this.httpClient.put<{ message: string }>(
       `${environment.API_URL}/notifications/unread`,
       { notificationIds: notification }
@@ -114,8 +100,6 @@ export class NotificationsService {
   }
 
   starNotification(notification: string[]) {
-    console.log('In Service: Starring notification');
-    console.log(notification);
     return this.httpClient.put<{ message: string }>(
       `${environment.API_URL}/notifications/star`,
       { notificationIds: notification }
@@ -123,8 +107,6 @@ export class NotificationsService {
   }
 
   unstarNotification(notification: string[]) {
-    console.log('In Service: Unstarring notification');
-    console.log(notification);
     return this.httpClient.put<{ message: string }>(
       `${environment.API_URL}/notifications/unstar`,
       { notificationIds: notification }
@@ -148,7 +130,7 @@ export class NotificationsService {
         isReplyAndMentionedNotificationsEnabled,
       isCourseUpdateNotificationsEnabled: isCourseUpdateNotificationsEnabled,
     };
-    console.log(objToSend);
+
     return this.httpClient.put<{ [key: string]: boolean }>(
       `${environment.API_URL}/notifications/setGlobalNotificationSettings`,
       objToSend
@@ -177,7 +159,7 @@ export class NotificationsService {
       isCourseUpdateNotificationsEnabled: isCourseUpdateNotificationsEnabled,
       courseId: courseId,
     };
-    console.log(objToSend);
+
     return this.httpClient.put<BlockingNotifications>(
       `${environment.API_URL}/notifications/setCourseNotificationSettings`,
       objToSend
@@ -189,7 +171,7 @@ export class NotificationsService {
     let objToSend = {
       courseId: courseId,
     };
-    console.log(objToSend);
+
     return this.httpClient.put<BlockingNotifications>(
       `${environment.API_URL}/notifications/unsetCourseNotificationSettings`,
       objToSend
@@ -221,7 +203,7 @@ export class NotificationsService {
       courseId: courseId,
       topicId: topicId,
     };
-    console.log(objToSend);
+
     return this.httpClient.put<BlockingNotifications>(
       `${environment.API_URL}/notifications/setTopicNotificationSettings`,
       objToSend
@@ -238,7 +220,7 @@ export class NotificationsService {
       courseId: courseId,
       topicId: topicId,
     };
-    console.log(objToSend);
+
     return this.httpClient.put<BlockingNotifications>(
       `${environment.API_URL}/notifications/unsetTopicNotificationSettings`,
       objToSend
@@ -270,7 +252,7 @@ export class NotificationsService {
       courseId: courseId,
       channelId,
     };
-    console.log(objToSend);
+
     return this.httpClient.put<BlockingNotifications>(
       `${environment.API_URL}/notifications/setChannelNotificationSettings`,
       objToSend
@@ -287,7 +269,7 @@ export class NotificationsService {
       courseId: courseId,
       channelId: channelId,
     };
-    console.log(objToSend);
+
     return this.httpClient.put<BlockingNotifications>(
       `${environment.API_URL}/notifications/unsetChannelNotificationSettings`,
       objToSend
@@ -319,7 +301,7 @@ export class NotificationsService {
       courseId: courseId,
       materialId,
     };
-    console.log(objToSend);
+
     return this.httpClient.put<BlockingNotifications>(
       `${environment.API_URL}/notifications/setMaterialNotificationSettings`,
       objToSend
@@ -336,7 +318,7 @@ export class NotificationsService {
       courseId: courseId,
       materialId: materialId,
     };
-    console.log(objToSend);
+
     return this.httpClient.put<BlockingNotifications>(
       `${environment.API_URL}/notifications/unsetMaterialNotificationSettings`,
       objToSend
@@ -345,8 +327,6 @@ export class NotificationsService {
 
   //TODO: Fix the URL being used for the below method. Purposely set to false URL to cause error
   removeNotification(notification: string[]) {
-    console.log('In Service: Removing notification');
-    console.log(notification);
     return this.httpClient.put<{ message: string }>(
       `${environment.API_URL}/notifications/FALSEURL`,
       { notificationIds: notification }
@@ -354,8 +334,6 @@ export class NotificationsService {
   }
 
   followAnnotation(annotationId: string) {
-    console.log('In Service: Following annotation');
-    console.log(annotationId);
     return this.httpClient.post<BlockingNotifications>(
       `${environment.API_URL}/notifications/followAnnotation/${annotationId}`,
       {}
@@ -369,8 +347,6 @@ export class NotificationsService {
   }
 
   unfollowAnnotation(annotationId: string) {
-    console.log('In Service: Unfollowing annotation');
-    console.log(annotationId);
     return this.httpClient.post<BlockingNotifications>(
       `${environment.API_URL}/notifications/unfollowAnnotation/${annotationId}`,
       {}
@@ -378,8 +354,6 @@ export class NotificationsService {
   }
 
   blockUser(userId: string) {
-    console.log('In Service: Blocking user');
-    console.log(userId);
     return this.httpClient.put<BlockingUsers[]>(
       `${environment.API_URL}/notifications/blockUser`,
       { userToBlockId: userId }
@@ -387,8 +361,6 @@ export class NotificationsService {
   }
 
   unblockUser(userId: string) {
-    console.log('In Service: Unblocking user');
-    console.log(userId);
     return this.httpClient.put<BlockingUsers[]>(
       `${environment.API_URL}/notifications/unblockUser`,
       { userToUnblockId: userId }

@@ -66,7 +66,6 @@ export class CourseService {
   fetchCourses(): Observable<Course[]> {
     return this.http.get<Course[]>(`${this.API_URL}/my-courses`).pipe(
       tap((courses) => {
-        console.log(courses);
         this.courses = courses;
       })
     );
@@ -204,7 +203,7 @@ export class CourseService {
   //   {_id: course._id, course: course.name, description: course.description,
   //     shortName: course.shortName, userID:   this.user.id,})
   //   .subscribe(res => {
-  //     console.log(res);
+  //
   //   });
   // }
 }
