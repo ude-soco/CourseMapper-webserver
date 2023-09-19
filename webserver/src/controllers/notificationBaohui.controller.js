@@ -289,7 +289,6 @@ export const deleteNotificationsByAnnotations = async (req, res) => {
     foundNotification = await Notification.findById({
       _id: ObjectId(notificationIds[i]),
     });
-    console.log("found notificaiton", foundNotification);
     if (!foundNotification?.isStar) {
       notificationToBeDelete.push(foundNotification?._id);
     }

@@ -67,9 +67,7 @@ const emitNotificationsToSubscribedUsers = async (
     const userNotification = insertedUserNotifications[i];
     const socketId = userNotification.userId;
     userNotification.activityId = req.locals.activity;
-    console.log("about to emit notification for socketId: ", socketId);
-    console.log("the body is: ", userNotification);
-    socketio.getIO().emit(socketId, [userNotification]);
+            socketio.getIO().emit(socketId, [userNotification]);
   }
 };
 

@@ -321,7 +321,6 @@ export const newChannel = async (req, res, next) => {
  * @param {string} req.params.channelId The id of the channel
  */
 export const deleteChannel = async (req, res, next) => {
-  console.log("endpoint delete channel!");
   const channelId = req.params.channelId;
   const courseId = req.params.courseId;
   const userId = req.userId;

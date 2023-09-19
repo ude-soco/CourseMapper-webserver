@@ -13,7 +13,6 @@ const {
 } = require("../middlewares/Notifications/notifications");
 
 export const getAllNotifications = async (req, res, next) => {
-  console.log("endpoint: getAllNotifications");
   const userId = req.userId;
 
   // Get all notifications for user by populating the activityId
@@ -60,14 +59,12 @@ export const getAllNotifications = async (req, res, next) => {
       .send({ error: "Error finding blocking users", error });
   }
 
-  console.log("notifications: ", notifications);
   return res
     .status(200)
     .send({ notifications, blockingUsers: blockingUsers.blockingUsers });
 };
 
 export const deleteAllNotifications = async (req, res, next) => {
-  console.log("endpoint: deleteAllNotifications");
   const userId = req.userId;
 
   // Delete all notifications for user
@@ -83,11 +80,8 @@ export const deleteAllNotifications = async (req, res, next) => {
 };
 
 export const markNotificationsAsRead = async (req, res, next) => {
-  console.log("endpoint: markNotificationsAsRead");
   //request body contains an array of strings of the notification ids
   const notificationIds = req.body.notificationIds;
-  console.log("notificationIds: ", notificationIds);
-  console.log(req.body);
 
   try {
     //User notifications with the id's in the variable notificationIds are updated to have the isRead field set to true
@@ -105,7 +99,6 @@ export const markNotificationsAsRead = async (req, res, next) => {
 };
 
 export const markNotificationsAsUnread = async (req, res, next) => {
-  console.log("endpoint: markNotificationsAsUnread");
   //request body contains an array of strings of the notification ids
   const notificationIds = req.body.notificationIds;
 
@@ -125,7 +118,6 @@ export const markNotificationsAsUnread = async (req, res, next) => {
 };
 
 export const starNotification = async (req, res, next) => {
-  console.log("endpoint: starNotification");
   //request body contains an array of strings of the notification ids
   const notificationIds = req.body.notificationIds;
 
@@ -145,7 +137,6 @@ export const starNotification = async (req, res, next) => {
 };
 
 export const unstarNotification = async (req, res, next) => {
-  console.log("endpoint: unstarNotification");
   //request body contains an array of strings of the notification ids
   const notificationIds = req.body.notificationIds;
 
@@ -368,10 +359,7 @@ export const unfollowAnnotation = async (req, res, next) => {
       { new: true }
     );
 
-    console.log(
-      "Element removed successfully from followingAnnotations array."
-    );
-    // Handle the updated document as needed
+        // Handle the updated document as needed
   } catch (error) {
     console.error("Error occurred while updating the document:", error);
   } */
@@ -1315,8 +1303,7 @@ export const followAnnotationSuccess = async (req, res, next) => {
 };
 
 /* export const subscribeChannel = async (req, res, next) => {
-      console.log("endpoint: subscribeChannel");
-      const userId = req.userId;
+            const userId = req.userId;
       const channelId = req.body.channelId;
       const courseId = req.body.courseId;
     
@@ -1358,8 +1345,7 @@ export const followAnnotationSuccess = async (req, res, next) => {
     };
     
     export const unsubscribeChannel = async (req, res, next) => {
-      console.log("endpoint: unsubscribeChannel");
-      const userId = req.userId;
+            const userId = req.userId;
       const channelId = req.body.channelId;
     
       let userChannelSubscriber;
@@ -1395,8 +1381,7 @@ export const followAnnotationSuccess = async (req, res, next) => {
     };
     
     export const subscribeTopic = async (req, res, next) => {
-      console.log("endpoint: subscribeTopic");
-      const userId = req.userId;
+            const userId = req.userId;
       const topicId = req.body.topicId;
       const courseId = req.body.courseId;
     
@@ -1439,8 +1424,7 @@ export const followAnnotationSuccess = async (req, res, next) => {
     
     //unsubscribe from a topic
     export const unsubscribeTopic = async (req, res, next) => {
-      console.log("endpoint: unsubscribeTopic");
-      const userId = req.userId;
+            const userId = req.userId;
       const topicId = req.body.topicId;
     
       let userTopicSubscriber;
@@ -1476,8 +1460,7 @@ export const followAnnotationSuccess = async (req, res, next) => {
     };
     
     export const subscribeCourse = async (req, res, next) => {
-      console.log("endpoint: subscribeCourse");
-      const userId = req.userId;
+            const userId = req.userId;
       const courseId = req.body.courseId;
     
       let foundCourse;
@@ -1570,8 +1553,7 @@ export const followAnnotationSuccess = async (req, res, next) => {
     };
     
     export const unsubscribeCourse = async (req, res, next) => {
-      console.log("endpoint: unsubscribeCourse");
-      const userId = req.userId;
+            const userId = req.userId;
       const courseId = req.body.courseId;
     
       let foundCourse;

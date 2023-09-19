@@ -338,7 +338,6 @@ export const getLastTimeCourseMapperOpened = async (req, res) => {
 
 export const updateLastTimeCourseMapperOpened = async (req, res) => {
   let userId = req.userId;
-  console.log("UPDATE LAST TIME COURSEMAPPER OPENED!");
 
   let foundUser;
   try {
@@ -357,7 +356,6 @@ export const updateLastTimeCourseMapperOpened = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  console.log(foundUser);
   return res
     .status(200)
     .send({ lastTimeCourseMapperOpened: foundUser.lastTimeCourseMapperOpened });

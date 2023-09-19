@@ -34,7 +34,6 @@ export const getReplies = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: "Error finding annotation" });
   }
-  console.log();
   let foundReplies;
   try {
     foundReplies = await Reply.find({ annotationId: annotationId });

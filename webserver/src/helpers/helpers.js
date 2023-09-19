@@ -15,7 +15,6 @@ const BlockingNotifications = db.blockingNotifications;
 //write a method to make a new document in the blockingNotification collection. The argumetns for the method will be the courseID and the userID. and according to the default notifications variables in the course document set the notifications variables for the materials, channels, topics.
 
 export const initialiseNotificationSettings = async (course, user) => {
-  console.log("initialiseNotificationSettings working");
   let userCourses = user.courses;
   let courseUserEnrolledTo = userCourses.find((userCourse) => {
     return userCourse.courseId.equals(course._id);
@@ -25,19 +24,6 @@ export const initialiseNotificationSettings = async (course, user) => {
   let userAnnotationNotificationSetting = user.isAnnotationNotificationsEnabled;
   let userReplyAndMentionedNotificationSetting =
     user.isReplyAndMentionedNotificationsEnabled;
-
-  console.log(
-    "userCourseUpdateNotificationSetting",
-    userCourseUpdateNotificationSetting
-  );
-  console.log(
-    "userAnnotationNotificationSetting",
-    userAnnotationNotificationSetting
-  );
-  console.log(
-    "userReplyAndMentionedNotificationSetting",
-    userReplyAndMentionedNotificationSetting
-  );
 
   //fetch the topics of the course to get the channels
   let topicIds = course.topics;
@@ -112,10 +98,6 @@ export const initialiseNotificationSettings = async (course, user) => {
       };
     }
   );
-
-  console.log("blockingNotificationTopics", blockingNotificationTopics);
-  console.log("blockingNotificationChannels", blockingNotificationChannels);
-  console.log("blockingNotificationMaterials", blockingNotificationMaterials);
 
   let blockingNotification = new BlockingNotifications({
     userId: user._id,

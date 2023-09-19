@@ -111,8 +111,6 @@ export const newAnnotation = async (req, res, next) => {
     .split(" ")
     .filter((v) => /^#[A-Za-z0-9]+$/.test(v));
 
-  console.log(foundTags);
-
   if (foundTags.length !== 0) {
     let foundTagsSchema = [];
     foundTags.forEach((tag) => {
