@@ -202,6 +202,7 @@ export const editAnnotation = async (req, res, next) => {
 
 export const newMention = async (req, res, next) => {
   const origin = req.get("origin") ? req.get("origin") : ORIGIN;
+  req.locals.category = "mentionedandreplied";
   const statement = statementFactory.getNewMentionCreationStatement(
     req.locals.user,
     req.locals.annotation,
