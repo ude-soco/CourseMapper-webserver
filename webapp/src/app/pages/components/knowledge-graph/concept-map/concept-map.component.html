@@ -674,14 +674,34 @@
                 </div>
               </div>
               <div *ngIf="recommendedMaterialsTab" class="tab mainConcepts">
-                <app-result-view
+                
+              <div
+              class="profile-main-loader"
+            >
+              <div class="loader">
+                <p-progressSpinner
+                *ngIf="this.resultMaterials==null"
+                [style]="{ width: '80px', height: '80px' }"
+                styleClass="custom-spinner"
+                strokeWidth="8"
+                fill="var(--surface-ground)"
+                animationDuration=".5s"
+              ></p-progressSpinner>
+              </div>
+            </div>
+            <app-result-view
+            *ngIf="this.resultMaterials!=null"
                   [concepts1]="concepts1"
                   [results1]="resultMaterials"
-                ></app-result-view>
+                  
+                >
+              
+              </app-result-view>
                 <!-- [concepts2]="concepts2"
                 [results2]="resultMaterials2"
                 [results3]="resultMaterials3"
                 [results4]="resultMaterials4" -->
+
               </div>
             </div>
           </div>
