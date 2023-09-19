@@ -71,17 +71,8 @@ const emitNotificationsToSubscribedUsers = async (
     console.log("the body is: ", userNotification);
     socketio.getIO().emit(socketId, [userNotification]);
   }
-
-  /*   for (let i = 0; i < insertedUserNotifications.length; i++) {
-    const userNotification = insertedUserNotifications[i];
-    const socketId = userNotification.userId;
-    console.log("about to emit notification for socketId: ", socketId);
-    console.log("the body is: ", userNotification);
-    socketio.getIO().emit(socketId, userNotification);
-  } */
 };
-//TODO: When saving the several inserts use the option "lean" to skip Mongoose validitity checks
-//TODO: rename this method to "populateUserNotification"
+
 export const populateUserNotification = async (req, res, next) => {
   let user = req.locals.user;
   let course = req.locals.course;
@@ -90,8 +81,6 @@ export const populateUserNotification = async (req, res, next) => {
   const userToBeNotified = req.locals.usersToBeNotified;
   const arrUserNotification = [];
   let insertedUserNotifications;
-  //Removing the user who does the action from the list of users to be notified
-  /*  removeUserFromList(userToBeNotified, user._id); */
 
   userToBeNotified.forEach((userId) => {
     let userNotification = new UserNotification({
@@ -366,6 +355,9 @@ export const newMentionNotificationUsersCalculate = async (req, res, next) => {
   } else {
     resultingUsers = userIdsOfUsersAllowingMentionNotifications;
   }
+
+  //make sure the array resultingUsers does not have any strings that appear more than once
+  resultingUsers = [...new Set(resultingUsers)];
 
   req.locals.usersToBeNotified = resultingUsers;
   req.locals.isMentionedUsersPresent = false;

@@ -38,7 +38,7 @@ export class AnnotationEffects {
         this.annotationService.postAnnotation(annotation, mentionedUsers).pipe(
           mergeMap((postedAnnotaion) => [
             AnnotationActions.postAnnotationSuccess(),
-            AnnotationActions.loadAnnotations(),
+            /* AnnotationActions.loadAnnotations(), */
           ]),
           catchError((error) =>
             of(AnnotationActions.postAnnotationFail({ error }))
@@ -114,7 +114,7 @@ export class AnnotationEffects {
           .pipe(
             mergeMap(() => [
               AnnotationActions.postReplySuccess(),
-              AnnotationActions.loadAnnotations(),
+              /* AnnotationActions.loadAnnotations(), */
             ]),
             catchError((error) =>
               of(AnnotationActions.postReplyFail({ error }))
@@ -131,7 +131,7 @@ export class AnnotationEffects {
         this.annotationService.likeAnnotation(annotation).pipe(
           mergeMap(() => [
             AnnotationActions.likeAnnotationSuccess(),
-            AnnotationActions.loadAnnotations(),
+            /* AnnotationActions.loadAnnotations(), */
           ]),
           catchError((error) =>
             of(AnnotationActions.likeAnnotationFail({ error }))
@@ -148,7 +148,7 @@ export class AnnotationEffects {
         this.annotationService.dislikeAnnotation(annotation).pipe(
           mergeMap(() => [
             AnnotationActions.dislikeAnnotationSuccess(),
-            AnnotationActions.loadAnnotations(),
+            /* AnnotationActions.loadAnnotations(), */
           ]),
           catchError((error) =>
             of(AnnotationActions.dislikeAnnotationFail({ error }))
@@ -165,7 +165,7 @@ export class AnnotationEffects {
         this.annotationService.likeReply(reply).pipe(
           mergeMap(() => [
             AnnotationActions.likeReplySuccess(),
-            AnnotationActions.loadAnnotations(),
+            /* AnnotationActions.loadAnnotations(), */
           ]),
           catchError((error) => of(AnnotationActions.likeReplyFail({ error })))
         )
@@ -180,7 +180,7 @@ export class AnnotationEffects {
         this.annotationService.dislikeReply(reply).pipe(
           mergeMap(() => [
             AnnotationActions.dislikeReplySuccess(),
-            AnnotationActions.loadAnnotations(),
+            /* AnnotationActions.loadAnnotations(), */
           ]),
           catchError((error) =>
             of(AnnotationActions.dislikeReplyFail({ error }))
@@ -197,7 +197,7 @@ export class AnnotationEffects {
         this.annotationService.deleteReply(reply).pipe(
           mergeMap(() => [
             AnnotationActions.deleteReplySuccess(),
-            AnnotationActions.loadAnnotations(),
+            /* AnnotationActions.loadAnnotations(), */
           ]),
           catchError((error) =>
             of(AnnotationActions.deleteReplyFail({ error }))
@@ -214,7 +214,7 @@ export class AnnotationEffects {
         this.annotationService.editReply(reply, updatedReply).pipe(
           mergeMap(() => [
             AnnotationActions.editReplySuccess(),
-            AnnotationActions.loadAnnotations(),
+            /* AnnotationActions.loadAnnotations(), */
           ]),
           catchError((error) => of(AnnotationActions.editReplyFail({ error })))
         )
@@ -229,7 +229,7 @@ export class AnnotationEffects {
         this.annotationService.deleteAnnotation(annotation).pipe(
           mergeMap(() => [
             AnnotationActions.deleteAnnotationSuccess(),
-            AnnotationActions.loadAnnotations(),
+            /* AnnotationActions.loadAnnotations(), */
           ]),
           catchError((error) =>
             of(AnnotationActions.deleteAnnotationFail({ error }))
@@ -246,7 +246,7 @@ export class AnnotationEffects {
         this.annotationService.editAnnotation(annotation).pipe(
           mergeMap(() => [
             AnnotationActions.editAnnotationSuccess(),
-            AnnotationActions.loadAnnotations(),
+            /* AnnotationActions.loadAnnotations(), */
           ]),
           catchError((error) =>
             of(AnnotationActions.editAnnotationFail({ error }))

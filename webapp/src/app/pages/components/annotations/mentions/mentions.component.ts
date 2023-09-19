@@ -53,7 +53,6 @@ export class MentionsComponent implements OnInit {
       this.nameWithEmail$,
       this.onUserInput$,
     ]).pipe(
-      tap(([username, input]) => {}),
       map(([nameWithEmails, onUserInput]) => {
         return nameWithEmails.filter((nameWithEmail) =>
           (nameWithEmail.name + ' ' + nameWithEmail.email)
@@ -64,12 +63,14 @@ export class MentionsComponent implements OnInit {
     );
 
     this.filteredEnrolledUsernames$ = this.onUserInput$.pipe(
-      tap((input) => {}),
-      tap((input) => {}),
       switchMap((input) => {
-        return this.notificationService
-          .getUserNames({ partialString: input, courseId: this.courseId })
-          .pipe(tap((users) => {}));
+        if (input.replace(/<\/?[^>]+(>|$)/g, '') == '') {
+          return [];
+        }
+        return this.notificationService.getUserNames({
+          partialString: input,
+          courseId: this.courseId,
+        });
       })
     );
 
@@ -77,7 +78,6 @@ export class MentionsComponent implements OnInit {
       this.filteredUsernamesFromAnnotationAndRepliesAuthors$,
       this.filteredEnrolledUsernames$,
     ]).pipe(
-      tap(([frontend, backend]) => {}),
       map(([frontend, backend]) => {
         let namesWithEmails: Map<string, { name: string; email: string }> =
           new Map<string, { name: string; email: string }>();
@@ -119,6 +119,9 @@ export class MentionsComponent implements OnInit {
   }
 
   searchUserNames(userInput: string) {
+    if (userInput.replace(/<\/?[^>]+(>|$)/g, '') == '') {
+      return;
+    }
     this.onUserInput.next(userInput);
   }
 
