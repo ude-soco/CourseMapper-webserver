@@ -289,7 +289,6 @@ export const getFollowingAnnotationsOfDisplayedChannels = createSelector(
         channel.followingAnnotations;
     });
 
-
     return followingAnnotationsOfDisplayedChannels;
   }
 );
@@ -859,4 +858,13 @@ export const courseReducer = createReducer<CourseState>(
       };
     }
   )
+
+  /*   on(CourseAction.updateFollowingAnnotationsOnSocketEmit,
+    (state, action): CourseState => {
+      switch(action.payload.eventType){
+        case 'annotationDeleted' :{
+          let followingAnnotation = [...(state.channelsNotificationSettings.follow)]
+        }
+      }
+    }) */
 );

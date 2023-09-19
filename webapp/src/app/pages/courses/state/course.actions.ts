@@ -458,3 +458,8 @@ export const unfollowAnnotationFailure = createAction(
   '[Notification] Unfollow Annotation Failure',
   props<{ error: any }>()
 );
+
+export const updateFollowingAnnotationsOnSocketEmit = createAction(
+  '[Notification] Update Following Annotations On Socket Emit',
+  props<{ payload: any }>()
+);
