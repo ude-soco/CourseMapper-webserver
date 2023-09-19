@@ -327,7 +327,9 @@ export class BaseNotificationDashboardComponent {
       notification.category === NotificationCategory.CommentsAndMentioned
     ) {
       this.courseService.Notification = notification;
-      /* this.router.navigate(['/course', notification.course_id]); */
+      this.store.dispatch(
+        courseActions.setCourseId({ courseId: notification.course_id })
+      );
       if (notification.reply_id) {
         this.courseService.navigatingToMaterial = true;
         this.router.navigateByUrl(

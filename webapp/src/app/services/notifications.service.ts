@@ -53,7 +53,6 @@ export class NotificationsService {
           `${environment.API_URL}/notifications`
         )
         .pipe(
-          tap(({ notifications, blockingUsers }) => {}),
           map(({ notifications, blockingUsers }) => {
             let transformedNotifications = notifications.map(
               this.transformNotification
