@@ -1200,22 +1200,22 @@ export const blockUser = async (req, res, next) => {
   try {
     await User.findOneAndUpdate(
       {
-        _id: ObjectId(userToBlockId),
+        _id: new ObjectId(userToBlockId),
       },
       {
         $addToSet: {
-          blockedByUser: ObjectId(userId),
+          blockedByUser: new ObjectId(userId),
         },
       }
     );
 
     user = await User.findOneAndUpdate(
       {
-        _id: ObjectId(userId),
+        _id: new ObjectId(userId),
       },
       {
         $addToSet: {
-          blockingUsers: ObjectId(userToBlockId),
+          blockingUsers: new ObjectId(userToBlockId),
         },
       },
       {

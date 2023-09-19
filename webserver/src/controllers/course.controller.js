@@ -924,7 +924,7 @@ export const newIndicator = async (req, res, next) => {
   }
 
   const indicator = {
-    _id: ObjectId(),
+    _id: new ObjectId(),
     src: req.body.src,
     width: req.body.width,
     height: req.body.height,

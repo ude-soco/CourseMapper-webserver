@@ -641,7 +641,7 @@ export const getAllAnnotations = async (req, res) => {
     foundAnnotations = await Annotation.aggregate([
       {
         $match: {
-          materialId: ObjectId(materialId),
+          materialId: new ObjectId(materialId),
         },
       },
       {
@@ -653,7 +653,7 @@ export const getAllAnnotations = async (req, res) => {
           pipeline: [
             {
               $match: {
-                userId: ObjectId(userId),
+                userId: new ObjectId(userId),
               },
             },
             {

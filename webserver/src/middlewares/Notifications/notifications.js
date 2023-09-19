@@ -67,7 +67,7 @@ const emitNotificationsToSubscribedUsers = async (
     const userNotification = insertedUserNotifications[i];
     const socketId = userNotification.userId;
     userNotification.activityId = req.locals.activity;
-            socketio.getIO().emit(socketId, [userNotification]);
+    socketio.getIO().emit(socketId, [userNotification]);
   }
 };
 
@@ -150,7 +150,7 @@ export const newAnnotationNotificationUsersCalculate = async (
     await BlockingNotifications.aggregate([
       {
         $match: {
-          courseId: ObjectId(course._id),
+          courseId: new ObjectId(course._id),
           materials: {
             $elemMatch: {
               materialId: material._id,
@@ -177,7 +177,7 @@ export const newAnnotationNotificationUsersCalculate = async (
 
   let finalListOfUsersToNotify = removeUserFromList(
     resultingUsers,
-    ObjectId(userId)
+    new ObjectId(userId)
   );
   req.locals.usersToBeNotified = finalListOfUsersToNotify;
   next();
@@ -210,7 +210,7 @@ export const calculateUsersFollowingAnnotation = async (req, res, next) => {
 
   let finalListOfUsersToNotify = removeUserFromList(
     resultingUsers,
-    ObjectId(userId)
+    new ObjectId(userId)
   );
   req.locals.usersToBeNotified = finalListOfUsersToNotify;
   next();
@@ -231,11 +231,11 @@ export const LikesDislikesMentionedNotificationUsers = async (
   const authorDocument = await BlockingNotifications.aggregate([
     {
       $match: {
-        courseId: ObjectId(courseId),
-        userId: ObjectId(req.locals.replyAuthorId),
+        courseId: new ObjectId(courseId),
+        userId: new ObjectId(req.locals.replyAuthorId),
         materials: {
           $elemMatch: {
-            materialId: ObjectId(req.locals.materialId),
+            materialId: new ObjectId(req.locals.materialId),
             isReplyAndMentionedNotificationsEnabled: true,
           },
         },
@@ -257,7 +257,7 @@ export const LikesDislikesMentionedNotificationUsers = async (
 
   let finalListOfUsersToNotify = removeUserFromList(
     resultingUsers,
-    ObjectId(userId)
+    new ObjectId(userId)
   );
   req.locals.usersToBeNotified = finalListOfUsersToNotify;
   next();
@@ -277,11 +277,11 @@ export const LikesDislikesAnnotationNotificationUsers = async (
   const authorDocument = await BlockingNotifications.aggregate([
     {
       $match: {
-        courseId: ObjectId(courseId),
-        userId: ObjectId(req.locals.annotationAuthorId),
+        courseId: new ObjectId(courseId),
+        userId: new ObjectId(req.locals.annotationAuthorId),
         materials: {
           $elemMatch: {
-            materialId: ObjectId(req.locals.materialId),
+            materialId: new ObjectId(req.locals.materialId),
             isAnnotationNotificationsEnabled: true,
           },
         },
@@ -303,7 +303,7 @@ export const LikesDislikesAnnotationNotificationUsers = async (
 
   let finalListOfUsersToNotify = removeUserFromList(
     resultingUsers,
-    ObjectId(userId)
+    new ObjectId(userId)
   );
   req.locals.usersToBeNotified = finalListOfUsersToNotify;
   next();
@@ -327,7 +327,7 @@ export const newMentionNotificationUsersCalculate = async (req, res, next) => {
     await BlockingNotifications.aggregate([
       {
         $match: {
-          courseId: ObjectId(courseId),
+          courseId: new ObjectId(courseId),
           userId: {
             $in: objectIdArray,
           },
@@ -378,10 +378,10 @@ export const materialCourseUpdateNotificationsUsers = async (
     await BlockingNotifications.aggregate([
       {
         $match: {
-          courseId: ObjectId(course._id),
+          courseId: new ObjectId(course._id),
           materials: {
             $elemMatch: {
-              materialId: ObjectId(material._id),
+              materialId: new ObjectId(material._id),
               isCourseUpdateNotificationsEnabled: true,
             },
           },
@@ -404,7 +404,7 @@ export const materialCourseUpdateNotificationsUsers = async (
 
   let finalListOfUsersToNotify = removeUserFromList(
     resultingUsers,
-    ObjectId(userId)
+    new ObjectId(userId)
   );
   req.locals.usersToBeNotified = finalListOfUsersToNotify;
 
@@ -428,10 +428,10 @@ export const channelCourseUpdateNotificationUsers = async (req, res, next) => {
            * query: The query in MQL.
            */
           {
-            courseId: ObjectId(course._id),
+            courseId: new ObjectId(course._id),
             channels: {
               $elemMatch: {
-                channelId: ObjectId(channel._id),
+                channelId: new ObjectId(channel._id),
                 isCourseUpdateNotificationsEnabled: true,
               },
             },
@@ -455,7 +455,7 @@ export const channelCourseUpdateNotificationUsers = async (req, res, next) => {
 
   let finalListOfUsersToNotify = removeUserFromList(
     resultingUsers,
-    ObjectId(userId)
+    new ObjectId(userId)
   );
   req.locals.usersToBeNotified = finalListOfUsersToNotify;
   next();
@@ -474,10 +474,10 @@ export const topicCourseUpdateNotificationUsers = async (req, res, next) => {
     await BlockingNotifications.aggregate([
       {
         $match: {
-          courseId: ObjectId(course._id),
+          courseId: new ObjectId(course._id),
           topics: {
             $elemMatch: {
-              topicId: ObjectId(topic._id),
+              topicId: new ObjectId(topic._id),
               isCourseUpdateNotificationsEnabled: true,
             },
           },
@@ -500,7 +500,7 @@ export const topicCourseUpdateNotificationUsers = async (req, res, next) => {
 
   let finalListOfUsersToNotify = removeUserFromList(
     resultingUsers,
-    ObjectId(userId)
+    new ObjectId(userId)
   );
   req.locals.usersToBeNotified = finalListOfUsersToNotify;
 
@@ -524,7 +524,7 @@ export const updateBlockingNotificationsNewMaterial = async (
       $match: {
         channels: {
           $elemMatch: {
-            channelId: ObjectId(channelId),
+            channelId: new ObjectId(channelId),
           },
         },
       },
@@ -537,7 +537,7 @@ export const updateBlockingNotificationsNewMaterial = async (
             input: "$channels",
             as: "channel",
             cond: {
-              $eq: ["$$channel.channelId", ObjectId(channelId)],
+              $eq: ["$$channel.channelId", new ObjectId(channelId)],
             },
           },
         },
@@ -612,7 +612,7 @@ export const updateBlockingNotificationsNewChannel = async (req, res, next) => {
       $match: {
         topics: {
           $elemMatch: {
-            topicId: ObjectId(channel.topicId),
+            topicId: new ObjectId(channel.topicId),
           },
         },
       },
@@ -625,7 +625,7 @@ export const updateBlockingNotificationsNewChannel = async (req, res, next) => {
             input: "$topics",
             as: "topic",
             cond: {
-              $eq: ["$$topic.topicId", ObjectId(channel.topicId)],
+              $eq: ["$$topic.topicId", new ObjectId(channel.topicId)],
             },
           },
         },
@@ -698,7 +698,7 @@ export const updateBlockingNotificationsNewTopic = async (req, res, next) => {
   let courseDocuments = await BlockingNotifications.aggregate([
     {
       $match: {
-        courseId: ObjectId(courseId),
+        courseId: new ObjectId(courseId),
       },
     },
     {
