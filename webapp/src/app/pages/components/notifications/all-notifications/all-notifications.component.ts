@@ -1,7 +1,7 @@
 import { Component, ElementRef, Renderer2 } from '@angular/core';
 import { BaseNotificationDashboardComponent } from '../base-notification-dashboard/base-notification-dashboard.component';
 import { Store } from '@ngrx/store';
-
+import * as courseActions from '../../../courses/state/course.actions';
 import {
   State,
   getAnnotationsNotifications,
@@ -517,18 +517,39 @@ export class AllNotificationsComponent {
       notification.category === NotificationCategory.CommentsAndMentioned
     ) {
       this.courseService.Notification = notification;
-      this.courseService.navigatingToMaterial = true;
-      /* this.router.navigate(['/course', notification.course_id]); */
-      this.router.navigateByUrl(
-        '/course/' +
-          notification.course_id +
-          '/channel/' +
-          notification.channel_id +
-          '/material/' +
-          '(material:' +
-          notification.material_id +
-          `/${notification.materialType})`
+      this.store.dispatch(
+        courseActions.setCourseId({ courseId: notification.course_id })
       );
+      if (notification.reply_id) {
+        this.courseService.navigatingToMaterial = true;
+        this.router.navigateByUrl(
+          '/course/' +
+            notification.course_id +
+            '/channel/' +
+            notification.channel_id +
+            '/material/' +
+            '(material:' +
+            notification.material_id +
+            `/${notification.materialType})` +
+            `#reply-${notification.reply_id}`
+        );
+        return;
+      }
+      if (notification.annotation_id) {
+        //if website is already on the same material, then just scroll to the annotation
+        this.courseService.navigatingToMaterial = true;
+        this.router.navigateByUrl(
+          '/course/' +
+            notification.course_id +
+            '/channel/' +
+            notification.channel_id +
+            '/material/' +
+            '(material:' +
+            notification.material_id +
+            `/${notification.materialType})` +
+            `#annotation-${notification.annotation_id}`
+        );
+      }
     }
   }
 
