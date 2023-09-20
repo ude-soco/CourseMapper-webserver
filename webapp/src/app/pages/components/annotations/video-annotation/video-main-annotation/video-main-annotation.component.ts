@@ -36,6 +36,7 @@ import { Socket } from 'ngx-socket-io';
 import { Annotation } from 'src/app/models/Annotations';
 import { Reply } from 'src/app/models/Reply';
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
+import * as CourseActions from '../../../../courses/state/course.actions';
 
 @Component({
   selector: 'app-video-main-annotation',
@@ -142,6 +143,11 @@ export class VideoMainAnnotationComponent
       }) => {
         this.store.dispatch(
           AnnotationActions.updateAnnotationsOnSocketEmit({ payload: payload })
+        );
+        this.store.dispatch(
+          CourseActions.updateFollowingAnnotationsOnSocketEmit({
+            payload: payload,
+          })
         );
       }
     );
