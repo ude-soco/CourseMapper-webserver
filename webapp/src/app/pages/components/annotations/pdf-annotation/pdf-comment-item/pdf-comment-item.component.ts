@@ -203,6 +203,11 @@ export class PdfCommentItemComponent
               payload: payload,
             })
           );
+          this.store.dispatch(
+            CourseActions.updateFollowingAnnotationsOnSocketEmit({
+              payload: payload,
+            })
+          );
         }
       );
       this.isEditing = false;

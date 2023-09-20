@@ -857,14 +857,60 @@ export const courseReducer = createReducer<CourseState>(
         isCourseLevelOverride: action.updatedDoc.isCourseLevelOverride,
       };
     }
-  )
-
-  /*   on(CourseAction.updateFollowingAnnotationsOnSocketEmit,
+  ),
+  on(
+    CourseAction.updateFollowingAnnotationsOnSocketEmit,
     (state, action): CourseState => {
-      switch(action.payload.eventType){
-        case 'annotationDeleted' :{
-          let followingAnnotation = [...(state.channelsNotificationSettings.follow)]
+      console.log('somethign happening');
+      switch (action.payload.eventType) {
+        case 'annotationDeleted': {
+          let channelNotificationSetting =
+            state.channelsNotificationSettings.find(
+              (channelNotificationSetting) =>
+                channelNotificationSetting.channelId ===
+                action.payload.annotation.channelId
+            );
+
+          //from the channelNotificationSetting remove the followingAnnotation that has ID equal to the ID of the annotation that was deleted
+          let followingAnnotations = [
+            ...channelNotificationSetting.followingAnnotations,
+          ];
+          followingAnnotations.forEach((followingAnnotation, index) => {
+            if (
+              followingAnnotation.annotationId === action.payload.annotation._id
+            ) {
+              followingAnnotations.splice(index, 1);
+            }
+          });
+
+          //update the channelNotificationSetting with the new followingAnnotations array
+          let updatedChannelNotificationSetting = {
+            ...channelNotificationSetting,
+            followingAnnotations: followingAnnotations,
+          };
+
+          //update the channelsNotificationSettings array with the updatedChannelNotificationSetting
+          let updatedChannelsNotificationSettings = [
+            ...state.channelsNotificationSettings,
+          ];
+          let index = updatedChannelsNotificationSettings.findIndex(
+            (channelNotificationSetting) =>
+              channelNotificationSetting.channelId ===
+              action.payload.annotation.channelId
+          );
+
+          updatedChannelsNotificationSettings[index] =
+            updatedChannelNotificationSetting;
+
+          return {
+            ...state,
+            channelsNotificationSettings: updatedChannelsNotificationSettings,
+          };
+        }
+        default: {
+          return state;
         }
       }
-    }) */
+    }
+  )
 );
