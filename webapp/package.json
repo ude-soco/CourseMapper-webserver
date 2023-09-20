@@ -27,7 +27,7 @@
     "@popperjs/core": "^2.11.8",
     "angular-html-parser": "^4.0.1",
     "jquery": "^3.7.1",
-    "ng2-dragula": "^2.1.1",
+    "ng2-dragula": "^5.0.1",
     "ng2-pdf-viewer": "^9.1.5",
     "ngx-socket-io": "^4.5.1",
     "primeicons": "^6.0.1",
