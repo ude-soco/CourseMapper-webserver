@@ -221,22 +221,19 @@ export const deleteMaterial = async (req, res, next) => {
     return res.status(500).send({ error: "Error deleting tag" });
   }
 
-  let foundChannel;
   try {
-    foundChannel = await Channel.findById(foundMaterial.channelId);
-  } catch (err) {
-    return res.status(500).send({ error: "Error finding channel" });
-  }
+    const updatedChannel = await Channel.findOneAndUpdate(
+      { _id: foundMaterial.channelId },
+      { $pull: { materials: materialId } },
+      { new: true } // To return the updated document
+    );
 
-  let materialIndex = foundChannel["materials"].indexOf(materialId);
-  if (materialIndex >= 0) {
-    foundChannel["materials"].splice(materialIndex, 1);
-  }
-
-  try {
-    await foundChannel.save();
-  } catch (err) {
-    return res.status(500).send({ error: "Error saving channel" });
+    if (!updatedChannel) {
+      return res.status(404).send({ error: "Channel not found" });
+    }
+  } catch (error) {
+    console.error("Error updating channel:", error);
+    return res.status(500).send({ error: "Error updating channel" });
   }
 
   req.locals = {

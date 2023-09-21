@@ -421,7 +421,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
             'channel',
             this.selectedMaterial['channelId'],
           ]);
-          e.index = 1;
+          /*  e.index = 1; */
         },
         error: (err) => {
           this.errorMessage = err.error.message;
