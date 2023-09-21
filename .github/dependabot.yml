@@ -47,6 +47,10 @@ updates:
   - "dependencies"
   - "javascript"
   - "webapp"
+  groups:
+    angular:
+     patterns:
+     - @angular/*
 
 - package-ecosystem: "npm"
   directory: "/webserver"
