@@ -8,6 +8,9 @@ import { Channel } from '../models/Channel';
 import { Course } from '../models/Course';
 import { StorageService } from './storage.service';
 import { BlockingNotifications } from '../models/BlockingNotification';
+import { Store } from '@ngrx/store';
+import { State } from '../pages/courses/state/course.reducer';
+import * as CourseActions from '../pages/courses/state/course.actions';
 
 @Injectable({
   providedIn: 'root',
@@ -25,7 +28,8 @@ export class TopicChannelService {
 
   constructor(
     private http: HttpClient,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private store: Store<State>
   ) {}
 
   /**
@@ -91,6 +95,11 @@ export class TopicChannelService {
             this.topics.push(res.savedTopic);
             this.sendTopicToOldBackend(res.savedTopic, course._id);
             this.onUpdateTopics$.next(this.topics);
+            this.store.dispatch(
+              CourseActions.setTopicNotificationSettingsSuccess({
+                updatedDoc: res.updatedNotificationSettings,
+              })
+            );
           }
         })
       );
@@ -205,6 +214,11 @@ export class TopicChannelService {
             });
             this.sendChannelToOldBackend(res.savedChannel);
             this.onUpdateTopics$.next(this.topics);
+            this.store.dispatch(
+              CourseActions.setChannelNotificationSettingsSuccess({
+                updatedDoc: res.updatedNotificationSettings,
+              })
+            );
           }
         })
       );

@@ -120,7 +120,7 @@ export const populateUserNotification = async (req, res, next) => {
 
   let objectToSend = {
     message: "Users notified and Your operation completed without errors!",
-    ...(req.locals.response && { response: req.locals.response }),
+    ...(req.locals.response && req.locals.response),
   };
 
   return res.status(200).send(objectToSend);
@@ -600,12 +600,89 @@ export const updateBlockingNotificationsNewMaterial = async (
 
   await Promise.all(updatePromises);
 
+  let notificationSettings;
+  try {
+    notificationSettings =
+      await getNotificationSettingsWithFollowingAnnotations(courseId, userId);
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ message: "Error finding updated notification settings" });
+  }
+
+  req.locals.response.updatedNotificationSettings = notificationSettings[0];
+
   next();
 };
+
+export const updateBlockingNotificationsNewTopic = async (req, res, next) => {
+  const course = req.locals.course;
+  const topic = req.locals.topic;
+  const courseId = course._id;
+  const userId = req.userId;
+
+  let courseDocuments = await BlockingNotifications.aggregate([
+    {
+      $match: {
+        courseId: new ObjectId(courseId),
+      },
+    },
+    {
+      $project: {
+        userId: 1,
+        isAnnotationNotificationsEnabled: 1,
+        isCourseUpdateNotificationsEnabled: 1,
+        isReplyAndMentionedNotificationsEnabled: 1,
+      },
+    },
+  ]);
+
+  const updatePromises = courseDocuments.map((courseDocument) => {
+    let newObj = {
+      topicId: topic._id,
+      isAnnotationNotificationsEnabled:
+        courseDocument.isAnnotationNotificationsEnabled,
+      isCourseUpdateNotificationsEnabled:
+        courseDocument.isCourseUpdateNotificationsEnabled,
+      isReplyAndMentionedNotificationsEnabled:
+        courseDocument.isReplyAndMentionedNotificationsEnabled,
+      isTopicLevelOverride: false,
+    };
+    return BlockingNotifications.findOneAndUpdate(
+      {
+        userId: courseDocument.userId,
+        courseId: courseId,
+      },
+      {
+        $push: {
+          topics: newObj,
+        },
+      }
+    );
+  });
+
+  await Promise.all(updatePromises);
+
+  let notificationSettings;
+  try {
+    notificationSettings =
+      await getNotificationSettingsWithFollowingAnnotations(courseId, userId);
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ message: "Error finding updated notification settings" });
+  }
+
+  req.locals.response.updatedNotificationSettings = notificationSettings[0];
+
+  next();
+};
+
 export const updateBlockingNotificationsNewChannel = async (req, res, next) => {
   const course = req.locals.course;
   const channel = req.locals.channel;
   const courseId = course._id;
+  const userId = req.userId;
 
   let topicDocuments = await BlockingNotifications.aggregate([
     {
@@ -688,56 +765,19 @@ export const updateBlockingNotificationsNewChannel = async (req, res, next) => {
 
   await Promise.all(updatePromises);
 
-  next();
-};
-export const updateBlockingNotificationsNewTopic = async (req, res, next) => {
-  const course = req.locals.course;
-  const topic = req.locals.topic;
-  const courseId = course._id;
+  let notificationSettings;
+  try {
+    notificationSettings =
+      await getNotificationSettingsWithFollowingAnnotations(courseId, userId);
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ message: "Error finding updated notification settings" });
+  }
 
-  let courseDocuments = await BlockingNotifications.aggregate([
-    {
-      $match: {
-        courseId: new ObjectId(courseId),
-      },
-    },
-    {
-      $project: {
-        userId: 1,
-        isAnnotationNotificationsEnabled: 1,
-        isCourseUpdateNotificationsEnabled: 1,
-        isReplyAndMentionedNotificationsEnabled: 1,
-      },
-    },
-  ]);
+  req.locals.response.updatedNotificationSettings = notificationSettings[0];
 
-  const updatePromises = courseDocuments.map((courseDocument) => {
-    let newObj = {
-      topicId: topic._id,
-      isAnnotationNotificationsEnabled:
-        courseDocument.isAnnotationNotificationsEnabled,
-      isCourseUpdateNotificationsEnabled:
-        courseDocument.isCourseUpdateNotificationsEnabled,
-      isReplyAndMentionedNotificationsEnabled:
-        courseDocument.isReplyAndMentionedNotificationsEnabled,
-      isTopicLevelOverride: false,
-    };
-    return BlockingNotifications.findOneAndUpdate(
-      {
-        userId: courseDocument.userId,
-        courseId: courseId,
-      },
-      {
-        $push: {
-          topics: newObj,
-        },
-      }
-    );
-  });
-
-  await Promise.all(updatePromises);
-
-  next();
+  return next();
 };
 
 export const getNotificationSettingsWithFollowingAnnotations = async (
