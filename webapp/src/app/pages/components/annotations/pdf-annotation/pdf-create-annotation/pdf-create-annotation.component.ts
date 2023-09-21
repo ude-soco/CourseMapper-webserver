@@ -23,7 +23,7 @@ import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-ann
 import { Observable } from 'rxjs';
 import { getCurrentMaterialId } from '../../../materials/state/materials.reducer';
 import { getCurrentCourseId } from 'src/app/pages/courses/state/course.reducer';
-import { MentionsComponent } from '../../mentions/mentions.component';
+import { MentionsComponent } from '../../../../../components/mentions/mentions.component';
 import { NotificationsService } from 'src/app/services/notifications.service';
 
 @Component({

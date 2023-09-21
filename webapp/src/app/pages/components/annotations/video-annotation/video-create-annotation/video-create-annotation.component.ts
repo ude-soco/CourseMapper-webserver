@@ -24,7 +24,7 @@ import * as VideoActions from 'src/app/pages/components/annotations/video-annota
 import { Observable } from 'rxjs';
 import { DrawingData } from 'src/app/models/Drawing';
 import { getCurrentCourseId } from 'src/app/pages/courses/state/course.reducer';
-import { MentionsComponent } from '../../mentions/mentions.component';
+import { MentionsComponent } from '../../../../../components/mentions/mentions.component';
 import { NotificationsService } from 'src/app/services/notifications.service';
 
 @Component({

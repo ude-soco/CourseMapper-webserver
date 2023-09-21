@@ -13,6 +13,8 @@ import { AddCourseComponent } from './add-course/add-course.component';
 import { TabMenuComponent } from './tab-menu/tab-menu.component';
 import { TabMenuModule } from 'primeng/tabmenu';
 import { NoDataComponent } from './no-data/no-data.component';
+import { MentionsComponent } from './mentions/mentions.component';
+import { MentionModule } from 'angular-mentions';
 
 @NgModule({
   declarations: [
@@ -26,8 +28,15 @@ import { NoDataComponent } from './no-data/no-data.component';
     AddCourseComponent,
     TabMenuComponent,
     NoDataComponent,
+    MentionsComponent,
   ],
-  imports: [CommonModule, PrimengModule, ReactiveFormsModule, TabMenuModule],
+  imports: [
+    CommonModule,
+    PrimengModule,
+    ReactiveFormsModule,
+    TabMenuModule,
+    MentionModule,
+  ],
   exports: [
     ButtonComponent,
     IconbuttonComponent,
@@ -38,6 +47,7 @@ import { NoDataComponent } from './no-data/no-data.component';
     AddCourseComponent,
     TabMenuComponent,
     NoDataComponent,
+    MentionsComponent,
   ],
 })
 export class SharedComponentsModule {}

@@ -145,8 +145,21 @@
           [(ngModel)]="replyContent"
           (ngModelChange)="onReplyContentChange()"
           class="p-inputtext-sm w-11/12 h-2/3"
+          [mention]="filteredEnrolledUsernames$ | async"
+          [mentionConfig]="{
+            triggerChar: '@',
+            labelKey: 'name',
+            allowSpace: true
+          }"
+          (searchTerm)="searchUserNames($event)"
+          [mentionListTemplate]="mentionListTemplate"
+          (itemSelected)="selectName($event)"
           pInputText
         />
+        <ng-template #mentionListTemplate let-item="item">
+          <span class="cursor-pointer">{{ item.name }} ({{ item.email }})</span>
+        </ng-template>
+
         <app-iconbutton
           icon="bx-send"
           color="text-slate-500"

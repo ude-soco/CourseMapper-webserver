@@ -98,7 +98,11 @@ export const updateAnnotationsWithRepliesSuccess = createAction(
 
 export const postReply = createAction(
   '[Tag Annotation] Post Reply Action',
-  props<{ annotation: Annotation; reply: Reply }>()
+  props<{
+    annotation: Annotation;
+    reply: Reply;
+    mentionedUsers: { userId: string; name: string; email: string }[];
+  }>()
 );
 
 export const postReplySuccess = createAction(

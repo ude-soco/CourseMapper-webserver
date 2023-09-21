@@ -174,14 +174,16 @@ export class CourseEffects {
   postReplyForTag$ = createEffect(() =>
     this.actions$.pipe(
       ofType(CourseActions.postReply),
-      mergeMap(({ annotation, reply }) =>
-        this.annotationService.postReply(annotation, reply, []).pipe(
-          mergeMap(() => [
-            CourseActions.postReplySuccess(),
-            // AnnotationActions.loadAnnotations(),
-          ]),
-          catchError((error) => of(CourseActions.postReplyFail({ error })))
-        )
+      mergeMap(({ annotation, reply, mentionedUsers }) =>
+        this.annotationService
+          .postReply(annotation, reply, mentionedUsers)
+          .pipe(
+            mergeMap(() => [
+              CourseActions.postReplySuccess(),
+              // AnnotationActions.loadAnnotations(),
+            ]),
+            catchError((error) => of(CourseActions.postReplyFail({ error })))
+          )
       )
     )
   );

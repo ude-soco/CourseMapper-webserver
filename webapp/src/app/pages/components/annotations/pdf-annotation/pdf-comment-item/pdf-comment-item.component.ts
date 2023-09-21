@@ -54,7 +54,7 @@ import {
 import { event } from 'jquery';
 import { Roles } from 'src/app/models/Roles';
 import { NotificationsService } from 'src/app/services/notifications.service';
-import { MentionsComponent } from '../../mentions/mentions.component';
+import { MentionsComponent } from '../../../../../components/mentions/mentions.component';
 
 @Component({
   selector: 'app-pdf-comment-item',

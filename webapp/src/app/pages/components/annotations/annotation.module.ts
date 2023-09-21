@@ -30,8 +30,6 @@ import { UpdateBorderColorDirective } from 'src/app/custom_directives/update-bor
 import { VideoEffects } from './video-annotation/state/video.effects';
 import { TagsPageComponent } from '../tags/tags-page/tags-page.component';
 import { MentionModule } from 'angular-mentions';
-import { MentionsComponent } from './mentions/mentions.component';
-
 @NgModule({
   declarations: [
     PdfAnnotationToolbarComponent,
@@ -50,7 +48,6 @@ import { MentionsComponent } from './mentions/mentions.component';
     VideoRenderingOverlayComponent,
     VideoAnnotationSummaryComponent,
     UpdateBorderColorDirective,
-    MentionsComponent,
   ],
   exports: [
     PdfAnnotationToolbarComponent,

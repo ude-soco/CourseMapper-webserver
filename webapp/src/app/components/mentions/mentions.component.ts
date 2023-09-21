@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { State } from '../pdf-annotation/state/annotation.reducer';
-import { VideoState } from '../video-annotation/state/video.reducer';
+import { State } from '../../pages/components/annotations/pdf-annotation/state/annotation.reducer';
+import { VideoState } from '../../pages/components/annotations/video-annotation/state/video.reducer';
 import {
   BehaviorSubject,
   Observable,
@@ -10,7 +10,7 @@ import {
   switchMap,
   tap,
 } from 'rxjs';
-import * as AnnotationSelectors from '../pdf-annotation/state/annotation.reducer';
+import * as AnnotationSelectors from '../../pages/components/annotations/pdf-annotation/state/annotation.reducer';
 import { NotificationsService } from 'src/app/services/notifications.service';
 import { getCurrentCourseId } from 'src/app/pages/courses/state/course.reducer';
 @Component({

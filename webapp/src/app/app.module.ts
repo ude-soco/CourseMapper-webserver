@@ -73,7 +73,7 @@ import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { SettingsComponent } from './pages/components/notifications/settings/settings.component';
 import { NoDataComponent } from './components/no-data/no-data.component';
 import { AppEffects } from './state/app.effects';
-
+import { MentionModule } from 'angular-mentions';
 @NgModule({
   declarations: [
     AppComponent,
@@ -100,6 +100,7 @@ import { AppEffects } from './state/app.effects';
     CourseWelcomeComponent,
   ],
   imports: [
+    MentionModule,
     DynamicDialogModule,
     MenuModule,
     BrowserModule,
