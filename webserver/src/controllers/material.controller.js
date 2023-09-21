@@ -148,24 +148,6 @@ export const newMaterial = async (req, res, next) => {
     channel: foundChannel,
   };
   next();
-
-  /*   return res.send({
-    // id: savedMaterial._id,
-    material: {
-      _id: material._id,
-      type: material.type,
-      name: material.name,
-      url: material.url,
-      description: material.description,
-      courseId: material.courseId,
-      topicId: material.topicId,
-      channelId: material.channelId,
-      // userId: req.userId,
-      // createdAt: Date.now(),
-      //updatedAt: Date.now(),
-    },
-    success: `New material '${materialName}' added!`,
-  }); */
 };
 
 /**
