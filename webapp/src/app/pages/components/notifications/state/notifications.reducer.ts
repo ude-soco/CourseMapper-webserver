@@ -245,6 +245,13 @@ export const notificationReducer = createReducer<NotificationState>(
     };
   }),
   on(NotificationActions.newNotificationArrived, (state, action) => {
+    if (
+      state.notifications.some(
+        (notification) => notification._id === action.notification._id
+      )
+    ) {
+      return state;
+    }
     return {
       ...state,
       notifications: [action.notification, ...state.notifications],
