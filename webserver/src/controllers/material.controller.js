@@ -141,7 +141,7 @@ export const newMaterial = async (req, res, next) => {
   req.locals = {
     material: savedMaterial,
     user,
-    response: { success: `New material '${materialName}' added!` },
+    response: { savedMaterial: savedMaterial },
     category: "courseupdates",
     materialType,
     course,

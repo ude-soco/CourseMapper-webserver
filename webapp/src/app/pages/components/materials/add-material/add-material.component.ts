@@ -68,12 +68,10 @@ export class AddMaterialComponent implements OnInit {
   showPdfAddModel() {
     this.pdfAddModelDisplay = true;
     this.materialType = 'pdf';
-    
   }
   showVideoAddModel() {
     this.videoAddModelDisplay = true;
     this.materialType = 'video';
-    
   }
 
   formData: FormData = null;
@@ -124,6 +122,7 @@ export class AddMaterialComponent implements OnInit {
     this.validateForm = this.fb.group({
       materialName: ['', [Validators.required]],
       description: [''],
+      url: [''],
     });
 
     this.radioFormGroup = new FormGroup({
@@ -152,7 +151,6 @@ export class AddMaterialComponent implements OnInit {
   }
 
   submitForm(): void {
-    
     if (this.materialType === 'pdf') {
       if (this.chosenFile === null) {
         return;
@@ -183,7 +181,6 @@ export class AddMaterialComponent implements OnInit {
       this.materialToAdd.url = '/public/uploads/pdfs/';
     }
 
-
     var result = this.materialService
       .addMaterial(this.materialToAdd)
       .subscribe({
@@ -196,7 +193,6 @@ export class AddMaterialComponent implements OnInit {
             }
 
             if (this.materialType == 'pdf') {
-
               this.formData = new FormData();
               this.formData.append('file', file, data.material._id + '.pdf');
             }
@@ -209,7 +205,6 @@ export class AddMaterialComponent implements OnInit {
                     this.response = res;
 
                     this.resetDialogs();
-                    
 
                     this.validateForm.reset();
 
@@ -232,23 +227,19 @@ export class AddMaterialComponent implements OnInit {
                 }
               );
           } else if (!file) {
-          
             // this.materialemit=data.material._id
             //console.log(this.materialemit)
             this.validateForm.reset();
-
             this.topicChannelService.selectChannel(this.channelEmittd);
-            this.validateForm['url'].setValue = '';
+            /* this.validateForm['url'].setValue = ''; */
           }
         },
       });
     if (result != null) {
-      
     }
   }
 
   myUploader(event) {
-    
     this.chosenFile = event.currentFiles[0];
 
     if (this.materialType === 'pdf') {
@@ -271,7 +262,6 @@ export class AddMaterialComponent implements OnInit {
   }
 
   resetDialogs(event?) {
-   
     Object.keys(this.validateForm.controls).forEach((field) => {
       const control = this.validateForm.get(field);
       control.markAsUntouched({ onlySelf: true });
