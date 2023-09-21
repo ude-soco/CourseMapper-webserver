@@ -19,6 +19,7 @@ import { State } from 'src/app/state/app.state';
 import { getCurrentMaterialId } from '../../../materials/state/materials.reducer';
 import * as AnnotationActions from './annotation.actions';
 import * as MaterialActions from '../../../materials/state/materials.actions';
+import * as CourseActions from '../../../../courses/state/course.actions';
 import * as VideoActions from 'src/app/pages/components/annotations/video-annotation/state/video.action';
 import { Annotation } from 'src/app/models/Annotations';
 import { LoggerService } from 'src/app/services/logger.service';
@@ -38,6 +39,9 @@ export class AnnotationEffects {
         this.annotationService.postAnnotation(annotation, mentionedUsers).pipe(
           mergeMap((postedAnnotaion) => [
             AnnotationActions.postAnnotationSuccess(),
+            CourseActions.followAnnotationSuccess({
+              updatedDoc: postedAnnotaion.response,
+            }),
             /* AnnotationActions.loadAnnotations(), */
           ]),
           catchError((error) =>

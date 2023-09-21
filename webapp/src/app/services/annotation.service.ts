@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Annotation } from 'src/app/models/Annotations';
 import { environment } from 'src/environments/environment';
 import { Reply } from '../models/Reply';
+import { BlockingNotifications } from '../models/BlockingNotification';
 
 @Injectable({
   providedIn: 'root',
@@ -14,8 +15,8 @@ export class AnnotationService {
   postAnnotation(
     annotation: Annotation,
     mentionedUsers: { userId: string; name: string; email: string }[]
-  ): Observable<Annotation> {
-    return this.http.post<Annotation>(
+  ): Observable<{ response: BlockingNotifications }> {
+    return this.http.post<{ response: BlockingNotifications }>(
       `${environment.API_URL}/courses/${annotation.courseId}/materials/${annotation.materialId}/annotation`,
       { annotation, mentionedUsers }
     );
