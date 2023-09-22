@@ -64,9 +64,9 @@ export class MentionsComponent implements OnInit {
 
     this.filteredEnrolledUsernames$ = this.onUserInput$.pipe(
       switchMap((input) => {
-        if (input.replace(/<\/?[^>]+(>|$)/g, '') == '') {
+        /*         if (input.replace(/<\/?[^>]+(>|$)/g, '') == '') {
           return [];
-        }
+        } */
         return this.notificationService.getUserNames({
           partialString: input,
           courseId: this.courseId,
@@ -119,9 +119,9 @@ export class MentionsComponent implements OnInit {
   }
 
   searchUserNames(userInput: string) {
-    if (userInput.replace(/<\/?[^>]+(>|$)/g, '') == '') {
+    /*     if (userInput.replace(/<\/?[^>]+(>|$)/g, '') == '') {
       return;
-    }
+    } */
     this.onUserInput.next(userInput);
   }
 
