@@ -52,6 +52,9 @@ updates:
       patterns:
       - "@angular/*"
       - "@angular-devkit/*"
+    ngrx:
+      patterns:
+      - "@ngrx/*"
 
 - package-ecosystem: "npm"
   directory: "/webserver"
