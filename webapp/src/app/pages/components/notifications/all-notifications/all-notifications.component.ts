@@ -380,6 +380,17 @@ export class AllNotificationsComponent {
     this.starredBehaviourSubject.next($event);
   }
 
+  protected resetFilters() {
+    this.isUnreadChecked = false;
+    this.unreadSwitchBehaviourSubject.next(false);
+    this.isStarredChecked = false;
+    this.starredBehaviourSubject.next(false);
+    this.searchValue = '';
+    this.searchInputBehaviorSubject.next('');
+    this.selectedDateSortingOption = 'Newest first';
+    this.dateSortingBehaviourSubject.next('Newest first');
+  }
+
   protected onTabSwitched(selectedItem: MenuItem) {
     this.removeAllCheckBoxControls();
     this.activeItem = selectedItem;
@@ -458,10 +469,6 @@ export class AllNotificationsComponent {
         selectedNotifications.push(key);
       }
     });
-
-    /* NotificationActions.notificationsMarkedAsRead({
-      notifications: selectedNotifications,
-    }); */
     this.store.dispatch(
       NotificationActions.notificationsMarkedAsRead({
         notifications: selectedNotifications,
@@ -549,70 +556,4 @@ export class AllNotificationsComponent {
       }
     }
   }
-
-  /*   ngAfterViewChecked() {
-    const element = this.el.nativeElement;
-
-    const spans = element.querySelectorAll('.notification-message');
-    spans.forEach((span) => {
-      this.renderer.addClass(span, 'highlight');
-    }); */
-  /*   ngAfterViewChecked() {
-    const element = this.el.nativeElement;
-    const searchValue = this.searchValue.toLowerCase(); // Convert to lowercase for case-insensitive matching
-
-    const spans = element.querySelectorAll('.notification-message');
-    spans.forEach((span) => {
-      const originalText = span.innerHTML; // Get the original text content of the span
-      // Break up the text into words
-      const words = originalText.split(' ');
-
-      // Check if the search value is present for any word in the words array, if it is, the part of the word that matches the search value will be highlighted, else the whole word remains unhighlighted.
-      const highlightedWords = words.map((word) => {
-        if (word.toLowerCase().includes(searchValue)) {
-          // Highlight the word while keeping the original casing
-          return word.replace(
-            new RegExp(searchValue, 'gi'),
-            `<span class="highlight">$&</span>`
-          );
-        } else {
-          return word;
-        }
-      });
-
-      // Now the elements in the highlightedWords array are either highlighted or not highlighted, so we need to join them back to form a string
-      const highlightedText = highlightedWords.join(' ');
-      span.innerHTML = highlightedText;
-    });
-  } */
 }
-
-/*   onFiltersModified($event: any) {
-
-    this.categories.forEach((category) => {
-      const found = $event.value.find(
-        (element: any) => element.value === category.value
-      );
-      if (found) {
-        if (category.value === NotificationCategory.CourseUpdate) {
-          this.isCourseUpdatesNotificationsVisible$.next(true);
-        }
-        if (category.value === NotificationCategory.CommentsAndMentioned) {
-          this.isCommentsAndMentionedNotificationsVisible$.next(true);
-        }
-        if (category.value === NotificationCategory.Annotations) {
-          this.isAnnotationsNotificationsVisible$.next(true);
-        }
-      } else {
-        if (category.value === NotificationCategory.CourseUpdate) {
-          this.isCourseUpdatesNotificationsVisible$.next(false);
-        }
-        if (category.value === NotificationCategory.CommentsAndMentioned) {
-          this.isCommentsAndMentionedNotificationsVisible$.next(false);
-        }
-        if (category.value === NotificationCategory.Annotations) {
-          this.isAnnotationsNotificationsVisible$.next(false);
-        }
-      }
-    });
-  } */

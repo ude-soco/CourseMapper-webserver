@@ -62,6 +62,10 @@ h2{
   height: 45px;
 }
 
+:host ::ng-deep .p-multiselect-panel .p-multiselect-header .p-multiselect-close {
+  display: none;
+}
+
 :host ::ng-deep .p-dropdown .p-inputtext {
   height: 45px;
   /* text-align: center; */

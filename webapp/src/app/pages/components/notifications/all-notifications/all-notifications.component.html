@@ -53,6 +53,10 @@
     ></app-switch-input>
     <span class="ml-4">View Starred</span>
   </div>
+  <div class="cursor-pointer">
+    <i class="pi pi-undo mr-1"></i>
+    <span (click)="resetFilters()">Reset Filters</span>
+  </div>
   <div class="flex gap-8 cursor-pointer" *ngIf="showBulkOperations">
     <div (click)="markSelectedAsRead($event)">
       <!--  <i class="pi pi-check" style="font-size: 2rem"></i> -->Mark as read
@@ -61,6 +65,7 @@
     <div (click)="removeSelected($event)">Delete</div>
   </div>
 </div>
+
 <div>
   <ng-container *ngIf="loading$ | async; else notificationsArrived">
     Loading....
