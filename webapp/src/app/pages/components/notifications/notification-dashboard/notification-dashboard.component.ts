@@ -88,7 +88,7 @@ export class NotificationDashboardComponent extends BaseNotificationDashboardCom
     this.tabOptions = [
       { label: 'All', badge: '0' },
       { label: 'Course Updates', badge: '0' },
-      { label: 'Comments & Mentions', badge: '0' },
+      { label: 'Replies & Mentions', badge: '0' },
       { label: 'Annotations', badge: '0' },
     ];
 
@@ -151,7 +151,7 @@ export class NotificationDashboardComponent extends BaseNotificationDashboardCom
           tab: NotificationCategory.CourseUpdate,
         })
       );
-    } else if (selectedItem.label === 'Comments & Mentions') {
+    } else if (selectedItem.label === 'Replies & Mentions') {
       this.store.dispatch(
         NotificationActions.tabSwitched({
           tab: NotificationCategory.CommentsAndMentioned,

@@ -87,7 +87,7 @@ export class BaseNotificationDashboardComponent {
     this.tabOptions = [
       { label: 'All' },
       { label: 'Course Updates' },
-      { label: 'Comments & Mentions' },
+      { label: 'Replies & Mentions' },
       { label: 'Annotations' },
     ];
 
@@ -273,7 +273,7 @@ export class BaseNotificationDashboardComponent {
           tab: NotificationCategory.CourseUpdate,
         })
       );
-    } else if (selectedItem.label === 'Comments & Mentions') {
+    } else if (selectedItem.label === 'Replies & Mentions') {
       this.store.dispatch(
         NotificationActions.tabSwitched({
           tab: NotificationCategory.CommentsAndMentioned,

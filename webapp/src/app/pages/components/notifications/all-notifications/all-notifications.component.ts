@@ -112,7 +112,7 @@ export class AllNotificationsComponent {
     this.tabOptions = [
       { label: 'All', badge: '0' },
       { label: 'Course Updates', badge: '0' },
-      { label: 'Comments & Mentions', badge: '0' },
+      { label: 'Replies & Mentions', badge: '0' },
       { label: 'Annotations', badge: '0' },
     ];
 
@@ -388,7 +388,7 @@ export class AllNotificationsComponent {
       this.tabBehaviourSubject.next(NotificationCategory.All);
     } else if (selectedItem.label === 'Course Updates') {
       this.tabBehaviourSubject.next(NotificationCategory.CourseUpdate);
-    } else if (selectedItem.label === 'Comments & Mentions') {
+    } else if (selectedItem.label === 'Replies & Mentions') {
       this.tabBehaviourSubject.next(NotificationCategory.CommentsAndMentioned);
     } else if (selectedItem.label === 'Annotations') {
       this.tabBehaviourSubject.next(NotificationCategory.Annotations);
