@@ -35,7 +35,7 @@
     ></p-dropdown>
   </div>
 </div>
-<div class="flex items-center gap-8 mt-4">
+<div class="flex items-center gap-8 mt-4 mb-4">
   <div>
     <app-switch-input
       [isChecked]="isUnreadChecked"
@@ -103,7 +103,7 @@
       </ng-container>
 
       <ng-template #noNotifications>
-        <app-no-data [message]="'notifications present'"></app-no-data>
+        <app-no-data [message]="'There are no notifications'"></app-no-data>
       </ng-template>
     </ng-container>
   </ng-template>

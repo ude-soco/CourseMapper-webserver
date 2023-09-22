@@ -40,10 +40,6 @@ const routes: Routes = [
     canActivate: [AuthGuardService],
   },
   {
-    path: 'landingPage',
-    component: LandingPageComponent,
-  },
-  {
     path: 'privacy',
     component: PrivacyComponent,
   },
@@ -74,8 +70,16 @@ const routes: Routes = [
     ],
   },
   { path: 'course/:courseID/dashboard', component: DashboardComponent },
-  { path: 'notification/all', component: AllNotificationsComponent },
-  { path: 'settings', component: SettingsComponent },
+  {
+    path: 'notification/all',
+    component: AllNotificationsComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'settings',
+    component: SettingsComponent,
+    canActivate: [AuthGuardService],
+  },
 ];
 
 @NgModule({
