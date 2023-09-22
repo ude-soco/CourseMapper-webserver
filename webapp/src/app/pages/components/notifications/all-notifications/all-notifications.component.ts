@@ -389,6 +389,12 @@ export class AllNotificationsComponent {
     this.searchInputBehaviorSubject.next('');
     this.selectedDateSortingOption = 'Newest first';
     this.dateSortingBehaviourSubject.next('Newest first');
+    this.store.select(getSubscribedCourses).subscribe((courses) => {
+      this.courseOptions = courses;
+      //by default all courses are selected
+      this.selectedCourses = courses.map((course) => course.id);
+      this.courseFilterUpdatedBehaviorSubject.next(this.selectedCourses);
+    });
   }
 
   protected onTabSwitched(selectedItem: MenuItem) {
