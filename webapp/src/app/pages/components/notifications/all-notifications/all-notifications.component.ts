@@ -243,9 +243,6 @@ export class AllNotificationsComponent {
         notifications.forEach((notification) => {
           if (!this.checkBoxesGroup.contains(notification._id)) {
             const control = new FormControl(false);
-            control.valueChanges.subscribe((val) => {
-              console.log(val?.valueOf());
-            });
             this.checkBoxesGroup.addControl(notification._id, control);
           }
         });

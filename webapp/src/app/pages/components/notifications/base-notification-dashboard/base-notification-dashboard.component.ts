@@ -33,6 +33,7 @@ import { NotificationsService } from 'src/app/services/notifications.service';
 import { CourseService } from 'src/app/services/course.service';
 import { getLastTimeCourseMapperOpened } from 'src/app/state/app.reducer';
 import * as $ from 'jquery';
+import * as AppActions from 'src/app/state/app.actions';
 @Component({
   selector: 'app-base-notification-dashboard',
   template: '',
@@ -223,9 +224,6 @@ export class BaseNotificationDashboardComponent {
         notifications.forEach((notification) => {
           if (!this.checkBoxesGroup.contains(notification._id)) {
             const control = new FormControl(false);
-            control.valueChanges.subscribe((val) => {
-              console.log(val?.valueOf());
-            });
             this.checkBoxesGroup.addControl(notification._id, control);
           }
         });
@@ -295,6 +293,13 @@ export class BaseNotificationDashboardComponent {
     this.masterCheckBox.reset();
   }
 
+  onSeeAllClicked($event) {
+    this.store.dispatch(
+      AppActions.setShowNotificationsPanel({ showNotificationsPanel: false })
+    );
+    this.router.navigate(['/notification/all']);
+  }
+
   protected onNotificationClicked(notification: Notification) {
     this.store.dispatch(
       NotificationActions.notificationsMarkedAsRead({
@@ -308,7 +313,11 @@ export class BaseNotificationDashboardComponent {
       if (notification.material_id) {
         this.courseService.Notification = notification;
         this.courseService.navigatingToMaterial = true;
-        /* this.router.navigate(['/course', notification.course_id]); */
+        this.store.dispatch(
+          AppActions.setShowNotificationsPanel({
+            showNotificationsPanel: false,
+          })
+        );
         this.router.navigateByUrl(
           '/course/' +
             notification.course_id +
@@ -323,6 +332,12 @@ export class BaseNotificationDashboardComponent {
         //check if its a channel update
         this.courseService.Notification = notification;
         this.courseService.navigatingToMaterial = true;
+        this.store.dispatch(
+          AppActions.setShowNotificationsPanel({
+            showNotificationsPanel: false,
+          })
+        );
+
         this.router.navigate([
           '/course',
           notification.course_id,
@@ -332,6 +347,12 @@ export class BaseNotificationDashboardComponent {
       } else {
         this.courseService.Notification = notification;
         this.courseService.navigatingToMaterial = true;
+        this.store.dispatch(
+          AppActions.setShowNotificationsPanel({
+            showNotificationsPanel: false,
+          })
+        );
+
         this.router.navigate(['/course', notification.course_id]);
       }
     }
@@ -340,11 +361,18 @@ export class BaseNotificationDashboardComponent {
       notification.category === NotificationCategory.CommentsAndMentioned
     ) {
       this.courseService.Notification = notification;
+
       this.store.dispatch(
         courseActions.setCourseId({ courseId: notification.course_id })
       );
       if (notification.reply_id) {
         this.courseService.navigatingToMaterial = true;
+        this.store.dispatch(
+          AppActions.setShowNotificationsPanel({
+            showNotificationsPanel: false,
+          })
+        );
+
         this.router.navigateByUrl(
           '/course/' +
             notification.course_id +
@@ -360,6 +388,7 @@ export class BaseNotificationDashboardComponent {
       }
       if (notification.annotation_id) {
         //if website is already on the same material, then just scroll to the annotation
+
         if (
           this.router.url.includes(
             '/course/' +
@@ -372,6 +401,12 @@ export class BaseNotificationDashboardComponent {
               `/${notification.materialType})`
           )
         ) {
+          this.store.dispatch(
+            AppActions.setShowNotificationsPanel({
+              showNotificationsPanel: false,
+            })
+          );
+
           this.courseService.navigatingToMaterial = false;
           const url = window.location.href;
 
@@ -393,6 +428,12 @@ export class BaseNotificationDashboardComponent {
           return;
         }
         this.courseService.navigatingToMaterial = true;
+        this.store.dispatch(
+          AppActions.setShowNotificationsPanel({
+            showNotificationsPanel: false,
+          })
+        );
+
         this.router.navigateByUrl(
           '/course/' +
             notification.course_id +

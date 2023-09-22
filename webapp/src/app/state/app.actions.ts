@@ -30,4 +30,9 @@ export const getLastTimeCourseMapperOpenedFailure = createAction(
   props<{ error: any }>()
 );
 
+export const setShowNotificationsPanel = createAction(
+  '[App] Set Show Notifications Panel',
+  props<{ showNotificationsPanel: boolean }>()
+);
+
 export const removeLoggedInUser = createAction('[App] Remove Logged In User');
