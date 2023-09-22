@@ -20,7 +20,7 @@ updates:
     interval: "weekly"
   ignore:
   - dependency-name: "node"
-    versions: ["17.x-slim", "19.x-slim", "21.x-slim", "23.x-slim"]
+    versions: ["17.x-slim", "19.x-slim", "21.x-slim", "23.x-slim", "25.x-slim"]
   labels:
   - "dependencies"
   - "docker"
@@ -32,7 +32,7 @@ updates:
     interval: "weekly"
   ignore:
   - dependency-name: "node"
-    versions: ["17.x-slim", "19.x-slim", "21.x-slim", "23.x-slim"]
+    versions: ["17.x-slim", "19.x-slim", "21.x-slim", "23.x-slim", "25.x-slim"]
   labels:
   - "dependencies"
   - "docker"
@@ -49,8 +49,8 @@ updates:
   - "webapp"
   groups:
     angular:
-     patterns:
-     - @angular/*
+      patterns:
+      - "@angular/*"
 
 - package-ecosystem: "npm"
   directory: "/webserver"
