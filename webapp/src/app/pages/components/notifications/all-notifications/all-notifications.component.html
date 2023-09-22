@@ -14,10 +14,13 @@
   <p-multiSelect
     [options]="courseOptions"
     [(ngModel)]="selectedCourses"
+    [displaySelectedLabel]="false"
     optionLabel="name"
     optionValue="id"
     (onChange)="onCourseFilterChanged($event)"
+    placeholder="Select Courses"
     defaultLabel="Select Courses"
+    [showClear]="true"
   ></p-multiSelect>
   <span class="p-input-icon-left">
     <i class="pi pi-search"></i>

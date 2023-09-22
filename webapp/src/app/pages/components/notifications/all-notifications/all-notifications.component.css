@@ -48,6 +48,29 @@ h2{
   background: #0369a1;
 }
 
+
+:host ::ng-deep p-multiselect.p-multiselect-clearable .p-multiselect-label-container {
+  padding-right: 2rem;
+  height: 45px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+:host ::ng-deep .p-input-icon-left > .p-inputtext {
+  padding-left: 3rem;
+  height: 45px;
+}
+
+:host ::ng-deep .p-dropdown .p-inputtext {
+  height: 45px;
+  /* text-align: center; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 0 none;
+}
+
 :host ::ng-deep.p-checkbox:not(.p-checkbox-disabled) .p-checkbox-box.p-highlight:hover  {
  border-color: #ea580c;
  background: #ea580c;
