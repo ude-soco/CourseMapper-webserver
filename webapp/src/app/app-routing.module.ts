@@ -24,6 +24,7 @@ const routes: Routes = [
   {
     path: 'landingPage',
     component: LandingPageComponent,
+    canActivate: [AuthGuardService],
   },
   {
     path: 'signup',
