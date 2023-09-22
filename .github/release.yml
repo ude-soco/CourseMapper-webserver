@@ -18,6 +18,7 @@ changelog:
       exclude:
         labels:
         - webserver
+        - proxy
         - github_actions
 
     - title: 🔗 Webserver Dependencies
@@ -26,6 +27,7 @@ changelog:
       exclude:
         labels:
         - webapp
+        - proxy
         - github_actions
 
     - title: 🔗 CI/CD Dependencies
@@ -35,6 +37,7 @@ changelog:
         labels:
         - webapp
         - webserver
+        - proxy
 
     - title: 🔗 Other Dependencies
       labels:
