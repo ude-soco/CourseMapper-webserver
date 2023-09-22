@@ -12,7 +12,7 @@
   pTooltip="Notifications"
   tooltipPosition="bottom"
   (click)="toggleNotificationPanel($event, notificationPanel)"
-  style="font-size: 2rem; color: rgba(3, 105, 161, 255)"
+  style="font-size: 2rem; color: rgba(3, 105, 161, 255); cursor: pointer"
 >
   <ng-container *ngIf="(totalNumUnreadNotifications$ | async) > 0">
     <span pBadge value="{{ totalNumUnreadNotifications$ | async }}"></span>
