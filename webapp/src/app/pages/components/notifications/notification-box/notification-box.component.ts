@@ -72,7 +72,7 @@ export class NotificationBoxComponent {
 
     this.unreadNotificationMenuOptions = {
       label: 'Mark as unread',
-      icon: 'pi pi-times',
+      icon: 'pi pi-check',
       command: ($event) => {
         $event.originalEvent.stopPropagation();
 
@@ -100,7 +100,7 @@ export class NotificationBoxComponent {
 
     this.BlockUserNotificationMenuOptions = {
       label: `Block ${this.notification.username}`,
-      icon: 'pi pi-times',
+      icon: 'pi pi-ban',
       command: ($event) => {
         $event.originalEvent.stopPropagation();
 
