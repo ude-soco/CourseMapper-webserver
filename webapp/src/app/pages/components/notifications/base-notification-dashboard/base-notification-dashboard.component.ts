@@ -84,10 +84,10 @@ export class BaseNotificationDashboardComponent {
   protected ngOnInit(): void {
     //initialising the items for the menu
     this.tabOptions = [
-      { label: 'All', badge: '0' },
-      { label: 'Course Updates', badge: '0' },
-      { label: 'Comments & Mentions', badge: '0' },
-      { label: 'Annotations', badge: '0' },
+      { label: 'All' },
+      { label: 'Course Updates' },
+      { label: 'Comments & Mentions' },
+      { label: 'Annotations' },
     ];
 
     this.activeItem = this.tabOptions[0];
@@ -127,19 +127,32 @@ export class BaseNotificationDashboardComponent {
     /* this.notifications$ = this.store.select(getFilteredNotifications); */
     this.filteredNotifications$ = this.store.select(getFilteredNotifications);
     this.allNotificationsNumUnread$.subscribe((num) => {
-      this.tabOptions[0].badge = num.toString();
-      let tempTabOptions = [...this.tabOptions];
-      tempTabOptions[0].badge = num.toString();
-      this.tabOptions = [...tempTabOptions];
+      if (num >= 0) {
+        let tempTabOptions = [...this.tabOptions];
+        tempTabOptions[0].badge = num.toString();
+        this.tabOptions = [...tempTabOptions];
+      }
     });
     this.courseUpdatesNumUnread$.subscribe((num) => {
-      this.tabOptions[1].badge = num.toString();
+      if (num >= 0) {
+        let tempTabOptions = [...this.tabOptions];
+        tempTabOptions[1].badge = num.toString();
+        this.tabOptions = [...tempTabOptions];
+      }
     });
     this.commentsAndMentionedNumUnread$.subscribe((num) => {
-      this.tabOptions[2].badge = num.toString();
+      if (num >= 0) {
+        let tempTabOptions = [...this.tabOptions];
+        tempTabOptions[2].badge = num.toString();
+        this.tabOptions = [...tempTabOptions];
+      }
     });
     this.annotationsNumUnread$.subscribe((num) => {
-      this.tabOptions[3].badge = num.toString();
+      if (num >= 0) {
+        let tempTabOptions = [...this.tabOptions];
+        tempTabOptions[3].badge = num.toString();
+        this.tabOptions = [...tempTabOptions];
+      }
     });
 
     this.notifications$ = combineLatest([

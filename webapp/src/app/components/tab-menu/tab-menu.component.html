@@ -12,7 +12,7 @@
         >
           {{ item.label }}
         </span>
-        <span class="badge">
+        <span class="badge" *ngIf="item.badge > 0">
           {{ item.badge }}
         </span>
       </div>
