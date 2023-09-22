@@ -51,6 +51,7 @@ updates:
     angular:
       patterns:
       - "@angular/*"
+      - "@angular-devkit/*"
 
 - package-ecosystem: "npm"
   directory: "/webserver"
