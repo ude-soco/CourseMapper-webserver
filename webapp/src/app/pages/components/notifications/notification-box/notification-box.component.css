@@ -132,14 +132,14 @@
 
 
   .black-star-icon{
-    background-color: black;
+    background-color: #f7ca4c;
     height: 23px;
     width: 24px;
     display: block;
 }
 
   .black-star-icon:hover{
-    background-color: #0202025b;
+    background-color: #f7c94c88;
   }
 
   .star-container{

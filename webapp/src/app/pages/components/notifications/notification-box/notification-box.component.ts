@@ -43,7 +43,7 @@ export class NotificationBoxComponent {
   ngOnInit(): void {
     /* this.$notificationList = this.notificationService.$notifications; */
     this.defaultNotificationMenuOptions = {
-      label: 'Remove',
+      label: 'Delete',
       icon: 'pi pi-times',
       command: ($event) => {
         $event.originalEvent.stopPropagation();
@@ -147,7 +147,6 @@ export class NotificationBoxComponent {
   }
 
   onNotificationClicked() {
-
     this.notificationClicked.emit();
   }
 
