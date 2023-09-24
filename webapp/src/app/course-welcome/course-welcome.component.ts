@@ -5,16 +5,22 @@ import { CourseImp } from '../models/CourseImp';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { CourseService } from '../services/course.service';
 import { Store } from '@ngrx/store';
-import { getCourseSelected, State } from 'src/app/state/app.reducer';
+import {
+  getCourseSelected,
+  getShowPopupMessage,
+  State,
+} from 'src/app/state/app.reducer';
 import * as CourseAction from 'src/app/pages/courses/state/course.actions';
 import { Router } from '@angular/router';
 import { getChannelSelected } from '../pages/courses/state/course.reducer';
 import { TopicChannelService } from 'src/app/services/topic-channel.service';
 import { UserServiceService } from '../services/user-service.service';
+import * as AppActions from '../state/app.actions';
 @Component({
   selector: 'app-course-welcome',
   templateUrl: './course-welcome.component.html',
   styleUrls: ['./course-welcome.component.css'],
+  providers: [MessageService, ConfirmationService],
 })
 export class CourseWelcomeComponent {
   selectedCourse: Course = new CourseImp('', '');

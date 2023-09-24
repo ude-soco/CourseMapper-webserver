@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output, Renderer2 } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  Renderer2,
+} from '@angular/core';
 import { CourseService } from 'src/app/services/course.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Course } from 'src/app/models/Course';
@@ -20,7 +27,7 @@ export class AddCourseComponent implements OnInit {
   constructor(
     private courseService: CourseService,
     private messageService: MessageService,
-    private renderer: Renderer2,
+    private renderer: Renderer2
   ) {}
 
   ngOnInit(): void {

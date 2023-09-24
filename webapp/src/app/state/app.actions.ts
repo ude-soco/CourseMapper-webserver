@@ -35,4 +35,9 @@ export const setShowNotificationsPanel = createAction(
   props<{ showNotificationsPanel: boolean }>()
 );
 
+export const setShowPopupMessage = createAction(
+  '[App] Set Show Popup Message',
+  props<{ showPopupMessage: boolean; popupMessage: string }>()
+);
+
 export const removeLoggedInUser = createAction('[App] Remove Logged In User');

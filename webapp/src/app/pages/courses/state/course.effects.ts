@@ -34,6 +34,7 @@ import { State } from 'src/app/state/app.reducer';
 import { Annotation } from 'src/app/models/Annotations';
 import { NotificationsService } from 'src/app/services/notifications.service';
 import { BlockingNotifications } from 'src/app/models/BlockingNotification';
+import * as AppActions from 'src/app/state/app.actions';
 @Injectable()
 export class CourseEffects {
   getTagsForCourse$ = createEffect(() =>
@@ -507,11 +508,16 @@ export class CourseEffects {
       tap(() => console.log('In Effect: Following Annotation')),
       mergeMap((action) =>
         this.notificationService.followAnnotation(action.annotationId).pipe(
-          map((updatedDoc: BlockingNotifications) =>
+          mergeMap((updatedDoc: BlockingNotifications) => [
             CourseActions.followAnnotationSuccess({
               updatedDoc,
-            })
-          ),
+            }),
+            AppActions.setShowPopupMessage({
+              showPopupMessage: true,
+              popupMessage:
+                'You will now receive notifications for this annotation.',
+            }),
+          ]),
           catchError((error) => {
             console.log(error);
             return of(
@@ -531,11 +537,16 @@ export class CourseEffects {
       tap(() => console.log('In Effect: Unfollowing Annotation')),
       mergeMap((action) =>
         this.notificationService.unfollowAnnotation(action.annotationId).pipe(
-          map((updatedDoc: BlockingNotifications) =>
+          mergeMap((updatedDoc: BlockingNotifications) => [
             CourseActions.unfollowAnnotationSuccess({
               updatedDoc,
-            })
-          ),
+            }),
+            AppActions.setShowPopupMessage({
+              showPopupMessage: true,
+              popupMessage:
+                'You will now receive no notifications for this annotation.',
+            }),
+          ]),
           catchError((error) => {
             console.log(error);
             return of(

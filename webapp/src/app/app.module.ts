@@ -74,6 +74,7 @@ import { SettingsComponent } from './pages/components/notifications/settings/set
 import { NoDataComponent } from './components/no-data/no-data.component';
 import { AppEffects } from './state/app.effects';
 import { MentionModule } from 'angular-mentions';
+import { MessageService } from 'primeng/api';
 @NgModule({
   declarations: [
     AppComponent,

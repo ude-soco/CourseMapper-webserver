@@ -7,7 +7,7 @@ import * as NotificationActions from './notifications.actions';
 import { Action } from '@ngrx/store';
 import { BlockingNotifications } from 'src/app/models/BlockingNotification';
 import { TransformedNotificationsWithBlockedUsers } from 'src/app/models/Notification';
-
+import * as AppActions from 'src/app/state/app.actions';
 @Injectable()
 export class NotificationEffects {
   constructor(
@@ -171,9 +171,13 @@ export class NotificationEffects {
         tap(() => console.log('In Effect: Blocking user')),
         mergeMap((action) =>
           this.notificationService.blockUser(action.userId).pipe(
-            map((blockingUsers) =>
-              NotificationActions.blockUserSuccess({ blockingUsers })
-            ),
+            mergeMap((blockingUsers) => [
+              NotificationActions.blockUserSuccess({ blockingUsers }),
+              AppActions.setShowPopupMessage({
+                showPopupMessage: true,
+                popupMessage: 'You have successfully blocked the user!',
+              }),
+            ]),
             catchError((error) => {
               console.log(error);
               return of(
@@ -194,9 +198,13 @@ export class NotificationEffects {
         tap(() => console.log('In Effect: Unblocking user')),
         mergeMap((action) =>
           this.notificationService.unblockUser(action.userId).pipe(
-            map((blockingUsers) =>
-              NotificationActions.unblockUserSuccess({ blockingUsers })
-            ),
+            mergeMap((blockingUsers) => [
+              NotificationActions.unblockUserSuccess({ blockingUsers }),
+              AppActions.setShowPopupMessage({
+                showPopupMessage: true,
+                popupMessage: 'You have successfully unblocked the user!',
+              }),
+            ]),
             catchError((error) => {
               console.log(error);
               return of(

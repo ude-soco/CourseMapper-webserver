@@ -19,6 +19,8 @@ export interface GeneralState {
   subscribedCourses?: { name: string; id: string }[];
   lastTimeCourseMapperOpened: string;
   showNotificationsPanel: boolean;
+  showPopupMessage: boolean;
+  popupMessage: string;
 }
 
 const initialState: GeneralState = {
@@ -27,6 +29,8 @@ const initialState: GeneralState = {
   subscribedCourses: [],
   lastTimeCourseMapperOpened: null,
   showNotificationsPanel: false,
+  showPopupMessage: false,
+  popupMessage: null,
 };
 
 const getAppFeatureState = createFeatureSelector<GeneralState>('general');
@@ -54,6 +58,16 @@ export const getLastTimeCourseMapperOpened = createSelector(
 export const getShowNotificationsPanel = createSelector(
   getAppFeatureState,
   (state) => state.showNotificationsPanel
+);
+
+export const getShowPopupMessage = createSelector(
+  getAppFeatureState,
+  (state) => {
+    return {
+      showPopupMessage: state.showPopupMessage,
+      popupMessage: state.popupMessage,
+    };
+  }
 );
 
 export const appReducer = createReducer<GeneralState>(
@@ -98,6 +112,13 @@ export const appReducer = createReducer<GeneralState>(
     return {
       ...state,
       showNotificationsPanel: action.showNotificationsPanel,
+    };
+  }),
+  on(AppActions.setShowPopupMessage, (state, action): GeneralState => {
+    return {
+      ...state,
+      showPopupMessage: action.showPopupMessage,
+      popupMessage: action.popupMessage,
     };
   })
 );
