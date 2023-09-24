@@ -15,10 +15,8 @@ import { UserServiceService } from './user-service.service';
 import { StorageService } from './storage.service';
 import { State } from '../pages/components/notifications/state/notifications.reducer';
 import { Store } from '@ngrx/store';
-import {
-  getCurrentCourse,
-  getLastTopicMenuClickedId,
-} from '../pages/courses/state/course.reducer';
+import { getLoggedInUser } from '../state/app.reducer';
+import { combineLatest } from 'rxjs';
 import {
   BlockingNotifications,
   CourseNotificationSettings,
@@ -45,10 +43,10 @@ export class NotificationsService {
   public notificationToNavigateTo: Notification = null;
 
   //Todo: error handling
+  /* .get<UserNotification[]>('assets/data.json') */
   public getAllNotifications(): Observable<TransformedNotificationsWithBlockedUsers> {
-    return (
+    /* return (
       this.httpClient
-        /* .get<UserNotification[]>('assets/data.json') */
         .get<NotificationsWithBlockedUsers>(
           `${environment.API_URL}/notifications`
         )
@@ -65,6 +63,45 @@ export class NotificationsService {
           }),
           tap((notifications) => console.log(notifications))
         )
+    ); */
+    return combineLatest([
+      this.store.select(getLoggedInUser),
+      this.httpClient.get<NotificationsWithBlockedUsers>(
+        `${environment.API_URL}/notifications`
+      ),
+    ]).pipe(
+      map(([user, { notifications, blockingUsers }]) => {
+        let transformedNotifications = notifications.map(
+          this.transformNotification
+        );
+
+        return {
+          notifications: transformedNotifications,
+          blockingUsers,
+          user,
+        };
+      }),
+      map(({ notifications, blockingUsers, user }) => {
+        let transformedNotifications = notifications.map((notification) => {
+          if (
+            (notification.annotationAuthorId === user.id &&
+              notification.object === 'annotation') ||
+            (notification.replyAuthorId === user.id &&
+              notification.object === 'reply')
+          ) {
+            notification.object = 'your ' + notification.object;
+            notification.extraMessage = `${notification.userShortname} ${notification.action} ${notification.object} ${notification.name} in ${notification.courseName}`;
+          }
+          return notification;
+        });
+
+        return {
+          notifications: transformedNotifications,
+          blockingUsers,
+        };
+      }),
+
+      tap((notifications) => console.log(notifications))
     );
   }
 
@@ -72,15 +109,27 @@ export class NotificationsService {
     const user = this.storageService.getUser();
 
     this.socket.on(user.id, (data: UserNotification[]) => {
-      const notification = data.map(this.transformNotification);
+      let notifications = data.map(this.transformNotification);
+      notifications = notifications.map((notification) => {
+        if (
+          (notification.annotationAuthorId === user.id &&
+            notification.object === 'annotation') ||
+          (notification.replyAuthorId === user.id &&
+            notification.object === 'reply')
+        ) {
+          notification.object = 'your ' + notification.object;
+          notification.extraMessage = `${notification.userShortname} ${notification.action} ${notification.object} ${notification.name} in ${notification.courseName}`;
+          return notification;
+        } else {
+          return notification;
+        }
+      });
 
-      notification.forEach((notification) => {
+      notifications.forEach((notification) => {
         this.store.dispatch(
           NotificationActions.newNotificationArrived({ notification })
         );
       });
-
-      //TODO: Dispatch an action to add the notifications to the store.
     });
   }
 
@@ -382,8 +431,11 @@ export class NotificationsService {
   private transformNotification(notification: UserNotification): Notification {
     let lastWord =
       notification.activityId.statement.object.definition.type.slice(40);
+    let name = null;
     if (lastWord === 'annotation' || lastWord === 'reply') {
-      lastWord = '';
+      name = notification.activityId.statement.object.definition.name[
+        'en-US'
+      ].substring(lastWord.length);
     }
     const extensions = Object.values(
       notification.activityId.statement.object.definition.extensions
@@ -471,8 +523,13 @@ export class NotificationsService {
       username: notification.activityId.notificationInfo.userName,
       authorId: notification.activityId.statement.actor?.name,
       authorEmail: notification.activityId.notificationInfo.authorEmail,
-      action: notification.activityId.statement.verb.display['en-US'],
-      name: notification.activityId.statement.object.definition.name['en-US'],
+      action:
+        notification.activityId.statement.verb.display['en-US'] === 'replied'
+          ? 'replied to'
+          : notification.activityId.statement.verb.display['en-US'],
+      name: name
+        ? name
+        : notification.activityId.statement.object.definition.name['en-US'],
       object: lastWord,
       ...(notification.activityId.notificationInfo.annotation_id && {
         annotation_id: notification.activityId.notificationInfo.annotation_id,
@@ -497,6 +554,13 @@ export class NotificationsService {
       }),
       ...(reply_id && { reply_id }),
       _id: notification._id,
+      ...(notification.activityId.notificationInfo.replyAuthorId && {
+        replyAuthorId: notification.activityId.notificationInfo.replyAuthorId,
+      }),
+      ...(notification.activityId.notificationInfo.annotationAuthorId && {
+        annotationAuthorId:
+          notification.activityId.notificationInfo.annotationAuthorId,
+      }),
       extraMessage: `${notification.activityId.notificationInfo.userName} ${notification.activityId.statement.verb.display['en-US']} ${lastWord} ${notification.activityId.statement.object.definition.name['en-US']} in ${notification.activityId.notificationInfo.courseName}`,
     };
   }

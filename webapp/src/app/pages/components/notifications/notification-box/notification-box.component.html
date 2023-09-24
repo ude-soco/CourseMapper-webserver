@@ -42,12 +42,16 @@
             'userName-read': notification.isRead
           }"
         >
-          {{ notification.extraMessage }}
+          <span>{{ notification.username }}</span>
+          <span>{{ notification.action }}</span>
+          <span>{{ notification.object }}</span>
+          <span>'{{ notification.name }}'</span>
+          <span>in</span>
+          <span>'{{ notification.courseName }}'</span>
         </span>
 
         <div class="time">{{ notification.timestamp | customDate }}</div>
       </div>
-      <!-- TODO Insert date below -->
     </div>
     <p-button
       icon="pi pi-ellipsis-h"

@@ -11,6 +11,8 @@ export interface UserNotification {
       materialType?: string;
       authorEmail: string;
       annotation_id?: string;
+      annotationAuthorId?: string;
+      replyAuthorId?: string;
     };
     statement: {
       actor: {
@@ -77,6 +79,8 @@ export interface Notification {
   reply_id?: string;
   materialType?: string;
   extraMessage?: string;
+  replyAuthorId?: string;
+  annotationAuthorId?: string;
 }
 
 export interface BlockingUsers {

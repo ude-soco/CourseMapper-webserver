@@ -53,8 +53,12 @@ export const generateNotificationInfo = (req) => {
     ...(channelName && { channelName }),
     ...(materialName && { materialName }),
     ...(req.locals.materialType && { materialType: req.locals.materialType }),
-    authorEmail: req.locals.user?.email,
     ...(req.locals.annotation && { annotation_id: req.locals.annotation._id }),
+    ...(req.locals.annotation && {
+      annotationAuthorId: req.locals.annotation.author.userId,
+    }),
+    ...(req.locals.reply && { replyAuthorId: req.locals.reply.author.userId }),
+    authorEmail: req.locals.user?.email,
   };
 };
 

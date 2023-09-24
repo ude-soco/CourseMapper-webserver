@@ -395,6 +395,7 @@ export const editReply = async (req, res, next) => {
   }
   req.locals.response = { success: "Reply successfully updated" };
   req.locals.newReply = foundReply;
+  req.locals.reply = foundReply;
   req.locals.user = user;
   req.locals.category = "mentionedandreplied";
   req.locals.course = course;

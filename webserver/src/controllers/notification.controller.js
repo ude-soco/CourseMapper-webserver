@@ -29,6 +29,8 @@ export const getAllNotifications = async (req, res, next) => {
       "notificationInfo.category",
       "notificationInfo.materialType",
       "notificationInfo.authorEmail",
+      "notificationInfo.annotationAuthorId",
+      "notificationInfo.replyAuthorId",
       "statement.object.definition.extensions",
       "statement.object.id",
       "statement.object.definition.type",
@@ -258,8 +260,13 @@ export const followAnnotation = async (req, res, next) => {
       .status(500)
       .send({ message: "Error finding updated notification settings" });
   }
-
-  req.locals.response = notificationSettings[0];
+  if (req.locals) {
+    req.locals.response = notificationSettings[0];
+  } else {
+    req.locals = {
+      response: notificationSettings[0],
+    };
+  }
   next();
 
   //update the followingAnnotations array in the BlockingNotifications collection for the respective channel

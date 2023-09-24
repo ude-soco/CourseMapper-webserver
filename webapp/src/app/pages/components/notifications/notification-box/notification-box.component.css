@@ -106,7 +106,9 @@
     overflow: auto;
   }
 
-
+  .notification-message span {
+    margin-right: 5px;
+  }
 /*
   .notification-content:hover {
     background-color: whitesmoke;
@@ -154,13 +156,3 @@
   background-color: yellow;
 }
 
-
-/*   .p-button-unread::before{
-    content: '';
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    background-color: blue;
-    border-radius: 50%;
-    margin-right: 5px;
-  } */
