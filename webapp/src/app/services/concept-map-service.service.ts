@@ -16,14 +16,16 @@ export class ConceptMapService {
   // constructor(private http: HttpClient, private authenticationService: AuthenticationService) { }
   constructor(private http: HttpClient) {}
 
-  getConceptMapData(formData: any): Observable<any> {
-    this.MaterialKG = this.http.post<any>(
+  async getConceptMapData(formData: any): Promise<any> {
+    const MaterialKG$ = this.http.post<any>(
       `${this.cmEndpointURL}concept-map`,
       formData,
       // { headers: this.httpHeader }
       // { headers: this.httpHeader }
       { withCredentials: true }
     );
+    this.MaterialKG = await lastValueFrom(MaterialKG$);
+    console.log(this.MaterialKG)
     return this.MaterialKG;
     // return this.http.post<any>(`${this.cmEndpointURL}concept-map`, formData, { headers: this.authenticationService.getHTTPHeaders() }).toPromise();
   }

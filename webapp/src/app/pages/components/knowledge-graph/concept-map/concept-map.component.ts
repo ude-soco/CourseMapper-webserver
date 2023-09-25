@@ -967,28 +967,26 @@ export class ConceptMapComponent {
           this.conceptMapMaterial = materialKgMeta;
           this.conceptMapData = materialKgMeta;
         } else {
-          console.log('no kg saved, constructing a new one...');
-          this.resetFilter();
-          this.isLoading = true;
-          this.loading.emit(true);
-          const reqData = await this.getReqData();
-          this.conceptMapService.getConceptMapData(
-            reqData
-          ).subscribe({
-            next: (result) => {
-              console.log('result from python server' + result);
-              this.conceptMapData = result;
-              // capitalize nodes names
-              this.conceptMapData.nodes.forEach((node) => {
-                node.name = this.capitalizeWords(node.name);
-              });
-            },
-            error: (error) => {
-              console.log('Error:', error);
-              this.isLoading = false;
-              this.loading.emit(false);
-            },
-          });
+          try {
+            console.log('no kg saved, constructing a new one...');
+            this.resetFilter();
+            this.isLoading = true;
+            this.loading.emit(true);
+            const reqData = await this.getReqData();
+            var result = await this.conceptMapService.getConceptMapData(
+              reqData
+            );
+            console.log('result from python server' + result);
+            this.conceptMapData = result;
+            // capitalize nodes names
+            this.conceptMapData.nodes.forEach((node) => {
+              node.name = this.capitalizeWords(node.name);
+            });
+          } catch (error) {
+            console.log('Error:', error);
+            this.isLoading = false;
+            this.loading.emit(false);
+          }
         }
 
         //filter edges with no weights, or/and slide's edges
@@ -996,6 +994,7 @@ export class ConceptMapComponent {
         var counter = 1;
         while (counter) {
           var counter = 0;
+          console.log('conceptMapData edges' , this.conceptMapData);
           this.conceptMapData.edges.forEach((edge, index) => {
             if (edge.data.weight === null) {
               this.conceptMapData.edges.splice(index, 1);
