@@ -91,6 +91,9 @@
             ></p-progressSpinner>
           </button> -->
         </div>
+        <div style="text-align: center; margin-left: 2rem">
+          Click on a node to view its relations
+        </div>
       </div>
       <hr
         *ngIf="conceptMapData"
@@ -543,7 +546,7 @@
                   >
                     <span
                       id="recommendationSpan"
-                      
+
                     >
                    <!--   <button
                         pButton
@@ -568,7 +571,7 @@
                         label="Show Recommendations"
                         pTooltip="Show recommendations for not understood concepts"
                         style="font-size: 17px; max-height: 95%"
-                        
+
                         (click)="showRecommendations()"
                       >
                         <p-progressSpinner
@@ -602,7 +605,7 @@
                         label="Show Recommendations"
                         pTooltip="Select not inderstood concept(s) to get recommended"
                         style="font-size: 17px; max-height: 95%; background-color: #e0e0e0; color: #8b8b8b; cursor: auto;"
-                        
+
                         (click)="showRecommendations()"
                       ></button>
                     </span>
