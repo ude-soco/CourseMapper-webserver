@@ -710,11 +710,12 @@ export class ConceptMapComponent {
         icon: 'pi pi-check',
         command: (e) => {
           //if marked previously as Not_understood, update the list
-          this.previousConceptsObj.some((ele, index) => {
-            if (ele.cid === this.conceptFromChipObj.cid) {
-              this.previousConceptsObj.splice(index, 1);
-            }
-          });
+          this.previousConceptsObj =
+              this.previousConceptsObj.filter(
+                (concept) => concept.cid !== this.conceptFromChipObj.cid)
+          this.previousConcepts.didNotUnderstandConcepts =
+              this.previousConcepts.didNotUnderstandConcepts.filter(
+                (concept) => concept !== this.conceptFromChipObj.cid)
           this.slideConceptservice.updateUnderstoodConcepts(
             this.conceptFromChipObj
           );
@@ -725,11 +726,14 @@ export class ConceptMapComponent {
         label: 'Revert to new',
         icon: 'pi pi-replay',
         command: (e) => {
-          this.previousConceptsObj.some((ele, index) => {
-            if (ele.cid === this.conceptFromChipObj.cid) {
-              this.previousConceptsObj.splice(index, 1);
-            }
-          });
+          console.log(this.previousConceptsObj, this.previousConcepts.understoodConcepts)
+          this.previousConceptsObj =
+              this.previousConceptsObj.filter(
+                (concept) => concept.cid !== this.conceptFromChipObj.cid)
+          this.previousConcepts.didNotUnderstandConcepts =
+              this.previousConcepts.didNotUnderstandConcepts.filter(
+                (concept) => concept !== this.conceptFromChipObj.cid)
+          console.log(this.previousConceptsObj, this.previousConcepts.understoodConcepts)
           this.slideConceptservice.updateNewConcepts(this.conceptFromChipObj);
           this.conceptFromChipObj = null;
         },
@@ -740,14 +744,23 @@ export class ConceptMapComponent {
         label: 'Mark as understood',
         icon: 'pi pi-check',
         command: (e) => {
-          this.previousConcepts.didNotUnderstandConcepts.some((ele, index) => {
-            if (ele === this.previousConceptFromChipObj.cid) {
-              this.previousConceptsObj.splice(index, 1);
-            }
-          });
+          this.previousConcepts.didNotUnderstandConcepts =
+              this.previousConcepts.didNotUnderstandConcepts.filter(
+                (concept) => concept !== this.previousConceptFromChipObj.cid)
           this.slideConceptservice.updateUnderstoodConcepts(
             this.previousConceptFromChipObj
           );
+          this.previousConceptFromChipObj = null;
+        },
+      },
+      {
+        label: 'Revert to new',
+        icon: 'pi pi-replay',
+        command: (e) => {
+          this.previousConcepts.didNotUnderstandConcepts =
+              this.previousConcepts.didNotUnderstandConcepts.filter(
+                (concept) => concept !== this.previousConceptFromChipObj.cid)
+          this.slideConceptservice.updateNewConcepts(this.previousConceptFromChipObj);
           this.previousConceptFromChipObj = null;
         },
       },
@@ -1929,6 +1942,8 @@ export class ConceptMapComponent {
           // end of clean properties
 
           console.log('hello before mongoDB');
+          console.log(this.previousConcepts.understoodConcepts)
+          console.log(this.previousConcepts.didNotUnderstandConcepts)
           //send to mongoDB
           this.userConceptsService.updateUserConcepts(
             this.userid,
