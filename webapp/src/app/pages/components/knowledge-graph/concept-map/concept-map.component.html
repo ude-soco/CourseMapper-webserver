@@ -114,7 +114,7 @@
                 ></p-progressSpinner>
               </div>
             </div>
-            <div class="sidebarHidden">
+            <div class="sidebarHidden" *ngIf="!isLoading">
               <app-graph
                 [conceptMapData]="filteredMapData"
                 [selectedFilterValues]="selectedFilterValues"
