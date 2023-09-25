@@ -590,7 +590,7 @@
                         *ngIf="disableShowRecommendationsButton"
                         class="p-button-sm showRecommendations p-button-rounded"
                         label="Show Recommendations"
-                        pTooltip="Select not inderstood concept(s) to get recommended"
+                        pTooltip="Select not understood concept(s) to get recommended"
                         style="font-size: 17px; max-height: 95%; background-color: #e0e0e0; color: #8b8b8b; cursor: auto;"
                         pStyleClass="showRecoomendationsButton"
                         (click)="showRecommendations()"
@@ -603,7 +603,7 @@
                         *ngIf="disableShowRecommendationsButton"
                         class="p-button-sm showRecommendations p-button-rounded"
                         label="Show Recommendations"
-                        pTooltip="Select not inderstood concept(s) to get recommended"
+                        pTooltip="Select not understood concept(s) to get recommended"
                         style="font-size: 17px; max-height: 95%; background-color: #e0e0e0; color: #8b8b8b; cursor: auto;"
 
                         (click)="showRecommendations()"
@@ -677,7 +677,7 @@
                 </div>
               </div>
               <div *ngIf="recommendedMaterialsTab" class="tab mainConcepts">
-                
+
               <div
               class="profile-main-loader"
             >
@@ -696,9 +696,9 @@
             *ngIf="this.resultMaterials!=null"
                   [concepts1]="concepts1"
                   [results1]="resultMaterials"
-                  
+
                 >
-              
+
               </app-result-view>
                 <!-- [concepts2]="concepts2"
                 [results2]="resultMaterials2"
