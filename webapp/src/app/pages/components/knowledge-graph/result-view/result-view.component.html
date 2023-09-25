@@ -1,6 +1,6 @@
 <p-tabView>
     <span class="flex flex-row">
-  
+
       <h4 class="text-[#0277BD] mr-3">
         Recommendation based on the following concepts:
       </h4>
@@ -48,7 +48,7 @@
           ></p-menu>
         </button>
       </button>
-  
+
       <!-- <div
         id="materialModelDropdown"
         class="p-field-dropdown"
@@ -63,7 +63,7 @@
         ></p-dropdown>
       </div> -->
     </span>
-  
+
     <p-tabPanel *ngIf="!recievedVideoResultIsEmpty" [cache]="true" header="Videos" leftIcon="pi pi-video">
       <app-card-video-list
         [notUnderstoodConcepts]="concepts"
@@ -83,3 +83,4 @@
       <h4>No Recommended articles for the selected Concepts</h4>
     </p-tabPanel>
   </p-tabView>
+  <p-toast position="bottom-left" key="rating"></p-toast>
