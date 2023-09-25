@@ -126,7 +126,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       });
   }
   ngAfterViewChecked(): void {
-    let inkBar = document.getElementsByClassName('p-tabview-ink-bar')[0] as HTMLElement;
+    let inkBar = document.getElementById('sByClassName') as HTMLElement;
     let currentTab = document.getElementsByClassName('p-highlight')[0] as HTMLElement;
     if(inkBar && currentTab){
       inkBar.style.width = currentTab.clientWidth + 'px';
@@ -359,7 +359,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     let selectedMat = <HTMLInputElement>(
       document.getElementById(`${this.selectedMaterial._id}`)
     );
-   
+
     this.selectedId = this.selectedMaterial._id;
     selectedMat.contentEditable = 'true';
     this.previousMaterial = this.selectedMaterial;
@@ -410,11 +410,11 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
         .subscribe();
     } else if (this.escapeKey === true) {
       //ESC pressed
-   
+
       let MaterialName = this.previousMaterial.name;
       const MaterialDescription = this.previousMaterial.description;
       const curseId = this.previousMaterial.courseId;
- 
+
       const matId = this.previousMaterial._id;
       const matUrl = this.previousMaterial.url;
       const mattype = this.previousMaterial.type;

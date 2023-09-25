@@ -14,6 +14,7 @@
   </div>
 
   <p-tabView
+    id="material-tabview"
     (onChange)="onTabChange($event)"
     (onClose)="deleteMaterial($event)"
     *ngIf="selectedChannel?.materials"
