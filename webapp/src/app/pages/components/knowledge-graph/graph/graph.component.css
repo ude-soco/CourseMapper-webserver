@@ -58,6 +58,9 @@ app-cytoscape {
   position: relative;
   z-index: 11;
 }
+:host ::ng-deep .p-sidebar-header {
+  z-index: 12;
+}
 :host ::ng-deep .p-toast {
   width:350px;
   font-size: 15px;

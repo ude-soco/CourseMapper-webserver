@@ -58,8 +58,11 @@ export class CytoscapeComponent {
   constructor(private renderer: Renderer2, private abstractStatus: ConceptStatusService){
     this.abstractStatusSubscription=abstractStatus.abstractStatusObserver().subscribe(()=>{
       console.log('closed')
-      document.getElementById('cy').style.width = 100 + '%';
-      console.log(document.getElementById('cy').style.width = 100 + '%')
+      let cyElement = document.getElementById('cy')
+
+      if (cyElement) {
+        cyElement.style.width = 100 + '%';
+      }
     })
     this.layout = {
       name: 'spread',
@@ -191,7 +194,7 @@ export class CytoscapeComponent {
       'abstractBlockContainer'
     )
     if (abstractContainer) {
-      
+
         document.getElementById('cy').style.width = 100 + '%';
         let currentWidth = document.getElementById('cy').clientWidth;
         document.getElementById('cy').style.width =
@@ -243,7 +246,7 @@ export class CytoscapeComponent {
         this.categoriesNodes = this.elements.nodes.filter(
           (n) => n.data.type === 'category'
         );
-  
+
         this.selectTopXNodes();
         this.cy = cytoscape({
           container: cy_container,
@@ -276,7 +279,7 @@ export class CytoscapeComponent {
           });
         }
       }
-      
+
     // function filterData(cy: any, types: string[]) {
     //   var nodes = cy
     //     .nodes()
