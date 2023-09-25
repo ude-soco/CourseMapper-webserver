@@ -69,5 +69,15 @@
   white-space: nowrap; /* Prevents text from wrapping to the next line */
   overflow: hidden;    /* Hides the overflowed content */
   text-overflow: ellipsis; /* Displays an ellipsis (...) at the end of the truncated text */
-  max-width: 21ch;
+  max-width: 19ch;
 }
+
+
+.following-annotation-setting-button{
+  display: none;
+}
+
+.following-annotation-container:hover .following-annotation-setting-button{
+  display : block;
+}
+

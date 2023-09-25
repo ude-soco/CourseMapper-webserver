@@ -192,38 +192,65 @@
             "
           >
             <div
-              class="flex flex-row items-center pl-10 py-1 hover:bg-white transition-all"
+              class="flex flex-row justify-between items-center pl-8 py-1 hover:bg-white transition-all following-annotation-container"
               (click)="onFollowingAnnotationClicked(followingAnnotation)"
             >
-              <svg
-                class="spine-29OFwR"
-                width="12"
-                height="11"
-                viewBox="0 0 12 11"
-                fill="none"
-                aria-hidden="true"
-              >
-                <path
-                  d="M11 9H4C2.89543 9 2 8.10457 2 7V1C2 0.447715 1.55228 0 1 0C0.447715 0 0 0.447715 0 1V7C0 9.20914 1.79086 11 4 11H11C11.5523 11 12 10.5523 12 10C12 9.44771 11.5523 9 11 9Z"
-                  fill="currentColor"
-                ></path>
-              </svg>
-              <div class="truncate-text">
-                {{ followingAnnotation.content }}
+              <div class="flex flex-row justify-center items-center">
+                <svg
+                  class="spine-29OFwR"
+                  width="12"
+                  height="11"
+                  viewBox="0 0 12 11"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M11 9H4C2.89543 9 2 8.10457 2 7V1C2 0.447715 1.55228 0 1 0C0.447715 0 0 0.447715 0 1V7C0 9.20914 1.79086 11 4 11H11C11.5523 11 12 10.5523 12 10C12 9.44771 11.5523 9 11 9Z"
+                    fill="currentColor"
+                  ></path>
+                </svg>
+                <div class="truncate-text">
+                  {{ followingAnnotation.content }}
+                </div>
+                <!--                 <span
+                  class="bg-orange-600 text-[white] text-base p-[0.1rem] w-8 text-center rounded-[15px] font-semibold text-[0.8rem]"
+                  *ngIf="
+                    (getNumUnreadNotificationsForAnnotation(
+                      followingAnnotation.annotationId
+                    ) | async) > 0
+                  "
+                  >{{
+                    getNumUnreadNotificationsForAnnotation(
+                      followingAnnotation.annotationId
+                    ) | async
+                  }}</span -->
+                >
               </div>
-              <span
-                class="bg-orange-600 text-[white] text-base p-[0.1rem] w-8 text-center rounded-[15px] font-semibold text-[0.8rem]"
-                *ngIf="
-                  (getNumUnreadNotificationsForAnnotation(
-                    followingAnnotation.annotationId
-                  ) | async) > 0
-                "
-                >{{
-                  getNumUnreadNotificationsForAnnotation(
-                    followingAnnotation.annotationId
-                  ) | async
-                }}</span
-              >
+              <div>
+                <p-overlayPanel #menu styleClass="settingsContextMenu">
+                  <ng-template pTemplate="content">
+                    <div class="settings-context-menu-container">
+                      <p-button
+                        label="Unfollow Annotation"
+                        styleClass="contextMenuButton"
+                        (onClick)="
+                          onUnfollowAnnotationClicked(
+                            $event,
+                            followingAnnotation.annotationId
+                          )
+                        "
+                      >
+                      </p-button>
+                    </div>
+                  </ng-template>
+                </p-overlayPanel>
+                <app-iconbutton
+                  icon="bx-dots-vertical-rounded"
+                  color="text-black"
+                  (click)="onFollowingAnnotationSettingsClicked($event, menu)"
+                  class="following-annotation-setting-button"
+                ></app-iconbutton>
+              </div>
             </div>
           </li>
         </ul>

@@ -197,7 +197,6 @@ export class TopicDropdownComponent implements OnInit {
     //loop over the notification options and make a form control
     this.notificationSettingsOfLastTopicMenuClicked$.subscribe(
       (notificationSettings) => {
-
         if (!notificationSettings) return;
         //delete all the controls in the form Group
         this.checkBoxesGroup = this.fb.group({});
@@ -215,7 +214,6 @@ export class TopicDropdownComponent implements OnInit {
     );
     this.notificationSettingsOfLastChannelMenuClicked$.subscribe(
       (notificationSettings) => {
-
         if (!notificationSettings) return;
         //delete all the controls in the form Group
         this.channelCheckBoxesGroup = this.fb.group({});
@@ -232,8 +230,6 @@ export class TopicDropdownComponent implements OnInit {
           });
           this.channelCheckBoxesGroup.addControl(o.label, control);
         });
-
-
       }
     );
 
@@ -294,8 +290,15 @@ export class TopicDropdownComponent implements OnInit {
     );
   }
 
-  onFollowingAnnotationClicked(followingAnnotation: Annotation) {
+  onUnfollowAnnotationClicked($event, annotationId: string) {
+    this.store.dispatch(
+      CourseActions.unfollowAnnotation({
+        annotationId: annotationId,
+      })
+    );
+  }
 
+  onFollowingAnnotationClicked(followingAnnotation: Annotation) {
     /* this.router.navigate(['/course', notification.course_id]); */
     if (followingAnnotation.annotationId) {
       //if website is already on the same material, then just scroll to the annotation
@@ -345,6 +348,11 @@ export class TopicDropdownComponent implements OnInit {
           `#annotation-${followingAnnotation.annotationId}`
       );
     }
+  }
+
+  onFollowingAnnotationSettingsClicked($event, menu) {
+    $event.stopPropagation();
+    menu.toggle($event);
   }
 
   ngOnDestroy() {
@@ -872,11 +880,9 @@ export class TopicDropdownComponent implements OnInit {
         lastTopicMenuClickedId: topic._id,
       })
     );
-
   }
 
   channelMenuButtonClicked($event, channel: Channel) {
-
     this.selectedChannel = channel;
     this.channelMenu.toggle($event);
     this.channelIdOfChannelMenuClicked = channel._id;
@@ -885,16 +891,12 @@ export class TopicDropdownComponent implements OnInit {
         lastChannelMenuClickedId: channel._id,
       })
     );
-
   }
 
   onTopicNotificationSettingsClicked(notificationOption: {
     label: string;
     control: FormControl<boolean>;
   }): void {
-
-
-
     //toggle the value of the control
     /*      notificationOption.control.setValue(!notificationOption.control.value); */
     const labelClicked: string = notificationOption.label;
@@ -937,9 +939,6 @@ export class TopicDropdownComponent implements OnInit {
     label: string;
     control: FormControl<boolean>;
   }): void {
-
-
-
     const labelClicked: string = notificationOption.label;
     let objToSend = {
       channelId: this.channelIdOfChannelMenuClicked,
@@ -977,7 +976,6 @@ export class TopicDropdownComponent implements OnInit {
   }
 
   onResetTopicNotificationsClicked() {
-
     this.store.dispatch(
       CourseActions.unsetTopicNotificationSettings({
         settings: {
