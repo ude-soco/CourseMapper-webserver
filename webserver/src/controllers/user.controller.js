@@ -304,8 +304,11 @@ export const getUser = async (req, res) => {
   let userId = req.params.userId;
 
   let foundUser;
+  let results = [];
+  let my_object = {};
   try {
     foundUser = await User.findById(userId).populate("courses", "-__v");
+    
     if (!foundUser) {
       return res.status(404).send({
         error: `User with id ${userId} doesn't exist!`,
@@ -314,7 +317,10 @@ export const getUser = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: "Error finding user" });
   }
-  return res.status(200).send(foundUser);
+  my_object.firstname =foundUser.firstname;
+  my_object.lastname =foundUser.lastname;
+  results.push(my_object);
+  return res.status(200).send(my_object);
 };
 
 export const getUserConcepts = async (req, res) => {
