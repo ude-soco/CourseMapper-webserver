@@ -101,10 +101,26 @@
     margin-right: 1.5rem;
   }
 
-  .notification-message-container {
+  .following-annotation-message{
+    position: relative;
+    margin-left: 5px;
+    padding-left: 19px;
+    color: #00000091;
 
-    overflow: auto;
+
   }
+
+  .following-annotation-message::before{
+    content: '\2022'; /* Unicode character for a bullet, you can change it to any other character */
+    color: #00000091; /* Color of the dot */
+    font-size: 24px; /* Adjust the size of the dot */
+    position: absolute;
+    left: 0px; /* Adjust the distance from the left edge */
+    top: 50%; /* Position the dot vertically in the middle */
+    transform: translateY(-50%);
+  }
+
+
 
   .notification-message span {
     margin-right: 5px;

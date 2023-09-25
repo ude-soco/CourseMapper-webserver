@@ -561,6 +561,11 @@ export class NotificationsService {
         annotationAuthorId:
           notification.activityId.notificationInfo.annotationAuthorId,
       }),
+      ...(notification.activityId.notificationInfo.isFollowingAnnotation && {
+        isFollowingAnnotation:
+          notification.activityId.notificationInfo.isFollowingAnnotation,
+      }),
+
       extraMessage: `${notification.activityId.notificationInfo.userName} ${notification.activityId.statement.verb.display['en-US']} ${lastWord} ${notification.activityId.statement.object.definition.name['en-US']} in ${notification.activityId.notificationInfo.courseName}`,
     };
   }

@@ -13,6 +13,7 @@ export interface UserNotification {
       annotation_id?: string;
       annotationAuthorId?: string;
       replyAuthorId?: string;
+      isFollowingAnnotation?: boolean;
     };
     statement: {
       actor: {
@@ -81,6 +82,7 @@ export interface Notification {
   extraMessage?: string;
   replyAuthorId?: string;
   annotationAuthorId?: string;
+  isFollowingAnnotation?: boolean;
 }
 
 export interface BlockingUsers {

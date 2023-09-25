@@ -56,7 +56,17 @@
           >
         </span>
 
-        <div class="time">{{ notification.timestamp | customDate }}</div>
+        <div class="time">
+          <span>
+            {{ notification.timestamp | customDate }}
+          </span>
+          <span
+            class="following-annotation-message"
+            *ngIf="notification.isFollowingAnnotation"
+          >
+            Following annotation: {{ notification.name }}
+          </span>
+        </div>
       </div>
     </div>
     <p-button

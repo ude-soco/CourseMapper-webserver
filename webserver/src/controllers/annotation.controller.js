@@ -251,6 +251,7 @@ export const deleteAnnotation = async (req, res, next) => {
     course: courseForGeneratingNotifications,
     category: "annotations",
     annotationId: foundAnnotation._id,
+    isFollowingAnnotation: true,
   };
 
   next();
@@ -372,6 +373,7 @@ export const editAnnotation = async (req, res, next) => {
   req.locals.materialType = foundMaterial.type;
   req.locals.course = courseForGeneratingNotifications;
   req.locals.annotationId = foundAnnotation._id;
+  req.locals.isFollowingAnnotation = true;
   socketio.getIO().emit(foundAnnotation.materialId, {
     eventType: "annotationEdited",
     annotation: foundAnnotation,

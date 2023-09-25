@@ -58,6 +58,9 @@ export const generateNotificationInfo = (req) => {
       annotationAuthorId: req.locals.annotation.author.userId,
     }),
     ...(req.locals.reply && { replyAuthorId: req.locals.reply.author.userId }),
+    ...(req.locals.isFollowingAnnotation && {
+      isFollowingAnnotation: req.locals.isFollowingAnnotation,
+    }),
     authorEmail: req.locals.user?.email,
   };
 };

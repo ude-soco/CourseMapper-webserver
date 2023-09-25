@@ -31,6 +31,7 @@ export const getAllNotifications = async (req, res, next) => {
       "notificationInfo.authorEmail",
       "notificationInfo.annotationAuthorId",
       "notificationInfo.replyAuthorId",
+      "notificationInfo.isFollowingAnnotation",
       "statement.object.definition.extensions",
       "statement.object.id",
       "statement.object.definition.type",

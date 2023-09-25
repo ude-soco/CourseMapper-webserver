@@ -182,6 +182,7 @@ export const newReply = async (req, res, next) => {
     annotationId: foundAnnotation._id,
     isMentionedUsersPresent: mentionedUsers.length > 0,
     material: foundMaterial,
+    isFollowingAnnotation: true,
   };
   socketio.getIO().emit(annotationId, {
     eventType: "replyCreated",
@@ -281,6 +282,7 @@ export const deleteReply = async (req, res, next) => {
     materialType: foundMaterial.type,
     annotationId: foundAnnotation._id,
     annotation: foundAnnotation,
+    isFollowingAnnotation: true,
   };
   socketio.getIO().emit(foundAnnotation._id, {
     eventType: "replyDeleted",
@@ -402,6 +404,7 @@ export const editReply = async (req, res, next) => {
   req.locals.annotationId = foundAnnotation._id;
   req.locals.materialType = foundMaterial.type;
   req.locals.annotation = foundAnnotation;
+  req.locals.isFollowingAnnotation = true;
   socketio.getIO().emit(foundAnnotation._id, {
     eventType: "replyEdited",
     annotation: foundAnnotation,
