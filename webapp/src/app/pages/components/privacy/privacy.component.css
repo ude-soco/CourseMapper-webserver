@@ -1,0 +1,11 @@
+.container{
+    width: 1000px;
+    margin-left: 25%;
+    margin-top: 1%;
+    border-style: solid;
+    border-width: 2px;
+    border-color: 323232;
+    align:justify;
+    padding: 2%;
+    border-radius: 20px;
+}

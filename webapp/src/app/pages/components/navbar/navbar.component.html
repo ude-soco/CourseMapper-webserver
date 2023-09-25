@@ -5,7 +5,7 @@
   <a [routerLink]="[LandingPage]"> 
     <img src="../../../assets/logo.svg" alt="logo" class="w-72"/></a>
     <div class="flex flex-wrap my-1">
-      <button
+    <!-- <button
       pButton
       [ngStyle]="{
         
@@ -16,7 +16,7 @@
       type="button"
       label="Privacy"
       (click)="privacy()"
-    ></button>
+    ></button>  -->
       
      
       <span *ngIf="!this.storageService.loggedIn">
