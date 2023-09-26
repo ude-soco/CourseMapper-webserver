@@ -515,6 +515,21 @@ export const channelCourseUpdateNotificationUsers = async (req, res, next) => {
 
   if (req.locals.isDeletingChannel) {
     await deleteChannelNotifications(req.locals.channel._id);
+    await removeFollowingAnnotationDocuments(req);
+    await BlockingNotifications.updateMany(
+      {
+        $or: [
+          { "materials.channelId": req.locals.channel._id },
+          { "channels.channelId": req.locals.channel._id },
+        ],
+      },
+      {
+        $pull: {
+          channels: { channelId: req.locals.channel._id },
+          materials: { channelId: req.locals.channel._id },
+        },
+      }
+    );
   }
   next();
 };
@@ -1112,6 +1127,16 @@ export const removeFollowingAnnotationDocuments = async (req) => {
   if (req.locals.isDeletingMaterial) {
     await FollowAnnotation.deleteMany({
       materialId: req.locals.material._id,
+    });
+  }
+  if (req.locals.isDeletingChannel) {
+    await FollowAnnotation.deleteMany({
+      channelId: req.locals.channel._id,
+    });
+  }
+  if (req.locals.isDeletingTopic) {
+    await FollowAnnotation.deleteMany({
+      topicId: req.locals.topic._id,
     });
   }
 };
