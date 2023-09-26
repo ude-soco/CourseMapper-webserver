@@ -9,6 +9,8 @@ import { UserServiceService } from 'src/app/services/user-service.service';
 import { getCurrentCourse, getCurrentCourseId, State } from '../../courses/state/course.reducer';
 import * as  CourseActions from 'src/app/pages/courses/state/course.actions'
 
+
+
 @Component({
   selector: 'app-course-description',
   templateUrl: './course-description.component.html',
@@ -23,6 +25,7 @@ export class CourseDescriptionComponent {
   lastName:string;
   Enrolled:boolean=false;
   Users: any;
+  course_enroll:Course;
   
   constructor(private storageService: StorageService, 
     private store: Store<State>, 
@@ -58,12 +61,8 @@ export class CourseDescriptionComponent {
   }
   ngOnInit(): void {
     this.isloggedin = this.storageService.isLoggedIn();
-   
-//       this.store.select(getCurrentCourse).subscribe((data) => {
-//   console.log("channel name observable called")
-//   this.Course=data
-//   console.log(this.Course)
-// })
+ 
+
 
 
   }
@@ -89,13 +88,38 @@ let Name=firstName+" "+lastName
       this.router.navigate(['login']);
     }
     else if (this.isloggedin== true) {
-    this.courseService.EnrollToCOurse(this.course.id).subscribe(
-       (data) => {
-        this.Enrolled= true
-        
-        this.router.navigate(['course', this.course.id]);
-         
-       })
+      
+      console.log("this.course.id", this.course.id)
+      this.store.select(getCurrentCourse).subscribe((data) => {
+        console.log("channel name observable called")
+        this.course_enroll=data
+        console.log(this.course_enroll, "data from ongoninit before")
+      })
+      console.log(this.course_enroll, "data from ongoninit after")
+      if(this.course.id == null )
+      {
+        console.log("entered")
+        this.courseService.EnrollToCOurse(this.course_enroll._id).subscribe(
+          (data) => {
+           this.Enrolled= true
+           console.log( "data", data)
+           
+           this.router.navigate(['course', this.course_enroll._id]);
+            
+          })
+      }
+      else{
+        this.courseService.EnrollToCOurse(this.course.id).subscribe(
+          (data) => {
+           this.Enrolled= true
+           console.log( "data", data)
+           
+           this.router.navigate(['course', this.course.id]);
+            
+          })
+      }
+      
+ 
       }
   }
   GoToCOurse(){
