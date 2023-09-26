@@ -963,5 +963,39 @@ export const courseReducer = createReducer<CourseState>(
         }
       }
     }
+  ),
+
+  on(
+    CourseAction.updateFOllowingAnnotationsOnDeletion,
+    (state, action): CourseState => {
+      if (action.payload.isDeletingMaterial) {
+        let id = action.payload.id;
+        //for all the followingAnnotations that have the materialId === id, they should be removed
+        let updatedChannelsNotificationSettings = [
+          ...state.channelsNotificationSettings,
+        ];
+        updatedChannelsNotificationSettings.forEach(
+          (channelNotificationSetting, index) => {
+            let followingAnnotations = [
+              ...channelNotificationSetting.followingAnnotations,
+            ];
+            followingAnnotations.forEach((followingAnnotation, index) => {
+              if (followingAnnotation.materialId === id) {
+                followingAnnotations.splice(index, 1);
+              }
+            });
+            updatedChannelsNotificationSettings[index] = {
+              ...channelNotificationSetting,
+              followingAnnotations: followingAnnotations,
+            };
+          }
+        );
+        return {
+          ...state,
+          channelsNotificationSettings: updatedChannelsNotificationSettings,
+        };
+      }
+      return state;
+    }
   )
 );

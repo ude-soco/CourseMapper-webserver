@@ -467,3 +467,13 @@ export const updateFollowingAnnotationsOnSocketEmit = createAction(
   '[Notification] Update Following Annotations On Socket Emit',
   props<{ payload: any }>()
 );
+
+export const updateFOllowingAnnotationsOnDeletion = createAction(
+  '[Notification] Update Following Annotations On Deletion',
+  props<{
+    payload: {
+      isDeletingMaterial?: boolean;
+      id: string;
+    };
+  }>()
+);

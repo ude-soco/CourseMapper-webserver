@@ -28,6 +28,7 @@ import {
   materialNotificationSettingLabels,
   courseNotificationSettingLabels,
 } from 'src/app/models/Notification';
+import * as CourseActions from '../pages/courses/state/course.actions';
 @Injectable({
   providedIn: 'root',
 })
@@ -124,6 +125,14 @@ export class NotificationsService {
         this.store.dispatch(
           NotificationActions.isDeletingMaterial({
             materialId: notifications[0].material_id,
+          })
+        );
+        this.store.dispatch(
+          CourseActions.updateFOllowingAnnotationsOnDeletion({
+            payload: {
+              isDeletingMaterial: true,
+              id: notifications[0].material_id,
+            },
           })
         );
       }

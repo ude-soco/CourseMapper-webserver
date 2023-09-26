@@ -252,7 +252,7 @@ export const calculateUsersFollowingAnnotation = async (req, res, next) => {
   );
   req.locals.usersToBeNotified = finalListOfUsersToNotify;
   if (req.locals.isDeletingAnnotation) {
-    await removeFollowingAnnotationDocuments(annotationId);
+    await removeFollowingAnnotationDocuments(req);
     await deleteAnnotationNotifications(annotationId);
   }
   if (req.locals.isDeletingReply) {
@@ -454,6 +454,14 @@ export const materialCourseUpdateNotificationsUsers = async (
   );
   req.locals.usersToBeNotified = finalListOfUsersToNotify;
 
+  if (req.locals.isDeletingMaterial) {
+    await deleteMaterialNotifications(req.locals.material._id);
+    await BlockingNotifications.updateMany(
+      { "materials.materialId": req.locals.material._id },
+      { $pull: { materials: { materialId: req.locals.material._id } } }
+    );
+    await removeFollowingAnnotationDocuments(req);
+  }
   next();
 };
 
@@ -504,6 +512,10 @@ export const channelCourseUpdateNotificationUsers = async (req, res, next) => {
     new ObjectId(userId)
   );
   req.locals.usersToBeNotified = finalListOfUsersToNotify;
+
+  if (req.locals.isDeletingChannel) {
+    await deleteChannelNotifications(req.locals.channel._id);
+  }
   next();
 };
 
@@ -1091,10 +1103,17 @@ export const getNotificationSettingsWithFollowingAnnotations = async (
   return notificationSettings;
 };
 
-export const removeFollowingAnnotationDocuments = async (annotationId) => {
-  await FollowAnnotation.deleteMany({
-    annotationId: annotationId,
-  });
+export const removeFollowingAnnotationDocuments = async (req) => {
+  if (req.locals.isDeletingAnnotation) {
+    await FollowAnnotation.deleteMany({
+      annotationId: annotationId,
+    });
+  }
+  if (req.locals.isDeletingMaterial) {
+    await FollowAnnotation.deleteMany({
+      materialId: req.locals.material._id,
+    });
+  }
 };
 
 export const deleteAnnotationNotifications = async (annotationId) => {

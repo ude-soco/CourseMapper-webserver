@@ -415,6 +415,14 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.materialService.deleteMaterial(this.selectedMaterial).subscribe({
         next: (data) => {
           this.topicChannelService.selectChannel(this.selectedChannel);
+          this.store.dispatch(
+            CourseActions.updateFOllowingAnnotationsOnDeletion({
+              payload: {
+                id: this.selectedMaterial._id,
+                isDeletingMaterial: true,
+              },
+            })
+          );
           this.router.navigate([
             'course',
             this.selectedMaterial['courseId'],
@@ -432,7 +440,16 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       (this.selectedMaterial.type == 'video' && this.selectedMaterial.url == '')
     ) {
       this.materialService.deleteFile(this.selectedMaterial).subscribe({
-        next: (res) => {},
+        next: (res) => {
+          this.store.dispatch(
+            CourseActions.updateFOllowingAnnotationsOnDeletion({
+              payload: {
+                id: this.selectedMaterial._id,
+                isDeletingMaterial: true,
+              },
+            })
+          );
+        },
       });
     }
 

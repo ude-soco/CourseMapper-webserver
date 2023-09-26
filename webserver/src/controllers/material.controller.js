@@ -244,6 +244,7 @@ export const deleteMaterial = async (req, res, next) => {
     user: user,
     category: "courseupdates",
     course: course,
+    isDeletingMaterial: true,
   };
   return next();
 };
@@ -332,7 +333,6 @@ export const editMaterial = async (req, res, next) => {
   req.locals.category = "courseupdates";
   req.locals.course = course;
   req.locals.materialType = materialType;
-  req.locals.isDeletingMaterial = true;
 
   return next();
 };
