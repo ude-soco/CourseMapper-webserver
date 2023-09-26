@@ -1,4 +1,10 @@
-import { Component, EventEmitter, Input, Output, Renderer2 } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  Renderer2,
+} from '@angular/core';
 
 import cytoscape from 'cytoscape';
 import dagre from 'cytoscape-dagre';
@@ -24,7 +30,7 @@ cytoscape.use(popper);
 @Component({
   selector: 'app-cytoscape',
   templateUrl: './cytoscape.component.html',
-  styleUrls: ['./cytoscape.component.css']
+  styleUrls: ['./cytoscape.component.css'],
 })
 export class CytoscapeComponent {
   @Input() elements: any;
@@ -41,7 +47,6 @@ export class CytoscapeComponent {
 
   @Output() selectedNodeEvent: EventEmitter<object> = new EventEmitter();
 
-
   public cy: any;
 
   public selectedTriggered: boolean = false;
@@ -53,17 +58,22 @@ export class CytoscapeComponent {
   categoriesNodes: any[];
   nodeSelected: boolean;
 
-  abstractStatusSubscription: Subscription
+  abstractStatusSubscription: Subscription;
 
-  constructor(private renderer: Renderer2, private abstractStatus: ConceptStatusService){
-    this.abstractStatusSubscription=abstractStatus.abstractStatusObserver().subscribe(()=>{
-      console.log('closed')
-      let cyElement = document.getElementById('cy')
-
-      if (cyElement) {
-        cyElement.style.width = 100 + '%';
-      }
-    })
+  constructor(
+    private renderer: Renderer2,
+    private abstractStatus: ConceptStatusService
+  ) {
+    this.abstractStatusSubscription = abstractStatus
+      .abstractStatusObserver()
+      .subscribe(() => {
+        console.log('closed');
+        let cyElement = document.getElementById('cy');
+        //console.log("document.getElementById('cy')",document.getElementById('cy'))
+        if (cyElement) {
+          cyElement.style.width = 100 + '%';
+        }
+      });
     this.layout = {
       name: 'spread',
       minDist: 70,
@@ -176,8 +186,8 @@ export class CytoscapeComponent {
   ngOnInit() {}
 
   ngOnChanges() {
-    if(!this.showMaterialKg){
-      this.selectedFilterValues=['annotation']
+    if (!this.showMaterialKg) {
+      this.selectedFilterValues = ['annotation'];
     }
     this.init();
     this.render();
@@ -190,17 +200,13 @@ export class CytoscapeComponent {
   // }
 
   onResize(e) {
-    let abstractContainer =document.getElementById(
-      'abstractBlockContainer'
-    )
+    let abstractContainer = document.getElementById('abstractBlockContainer');
     if (abstractContainer) {
-
-        document.getElementById('cy').style.width = 100 + '%';
-        let currentWidth = document.getElementById('cy').clientWidth;
-        document.getElementById('cy').style.width =
-          currentWidth - abstractContainer.clientWidth - 20 + 'px';
-        this.nodeSelected = true;
-
+      document.getElementById('cy').style.width = 100 + '%';
+      let currentWidth = document.getElementById('cy').clientWidth;
+      document.getElementById('cy').style.width =
+        currentWidth - abstractContainer.clientWidth - 20 + 'px';
+      this.nodeSelected = true;
     } else {
       document.getElementById('cy').style.width = 100 + '%';
     }
@@ -230,23 +236,24 @@ export class CytoscapeComponent {
     } else {
       this._elements = this.elements;
     }
-    console.log(this._elements.nodes)
+    console.log(this._elements.nodes);
   }
 
   init() {
-    let cy_container = this.renderer.selectRootElement('#cy');
-      if (this.elements) {
-        console.log(this.elements)
-        this.annotationsNodes = this.elements.nodes.filter(
-          (n) => n.data.type === 'annotation'
-        );
-        this.propertiesNodes = this.elements.nodes.filter(
-          (n) => n.data.type === 'property'
-        );
-        this.categoriesNodes = this.elements.nodes.filter(
-          (n) => n.data.type === 'category'
-        );
+    if (this.elements) {
+      this.annotationsNodes = this.elements.nodes.filter(
+        (n) => n.data.type === 'annotation'
+      );
+      this.propertiesNodes = this.elements.nodes.filter(
+        (n) => n.data.type === 'property'
+      );
+      this.categoriesNodes = this.elements.nodes.filter(
+        (n) => n.data.type === 'category'
+      );
 
+      if (this.renderer.selectRootElement('#cy')) {
+        let cy_container = this.renderer.selectRootElement('#cy');
+        console.log(cy_container, 'cy_container');
         this.selectTopXNodes();
         this.cy = cytoscape({
           container: cy_container,
@@ -257,28 +264,30 @@ export class CytoscapeComponent {
           elements: this._elements,
           autounselectify: true,
         });
-        if (this._elements !== undefined) {
-          let nodes = this._elements.nodes;
-          this.cy.ready(() => {
-            let initialNodes = nodes.filter(function (e: any) {
-              return e.data.type === 'annotation';
-            });
-            for (var i = 0; i < initialNodes.length; i++) {
-              this.cy
-                .$(`#${initialNodes[i].data.id}`)
-                .successors()
-                .targets()
-                .style('display', 'none');
-            }
-            let nodesToHide = nodes.filter(function (e: any) {
-              return e.data.type === 'property' || e.data.type === 'category';
-            });
-            for (var i = 0; i < nodesToHide.length; i++) {
-              this.cy.$(`#${nodesToHide[i].data.id}`).style('display', 'none');
-            }
-          });
-        }
       }
+
+      if (this._elements !== undefined) {
+        let nodes = this._elements.nodes;
+        this.cy.ready(() => {
+          let initialNodes = nodes.filter(function (e: any) {
+            return e.data.type === 'annotation';
+          });
+          for (var i = 0; i < initialNodes.length; i++) {
+            this.cy
+              .$(`#${initialNodes[i].data.id}`)
+              .successors()
+              .targets()
+              .style('display', 'none');
+          }
+          let nodesToHide = nodes.filter(function (e: any) {
+            return e.data.type === 'property' || e.data.type === 'category';
+          });
+          for (var i = 0; i < nodesToHide.length; i++) {
+            this.cy.$(`#${nodesToHide[i].data.id}`).style('display', 'none');
+          }
+        });
+      }
+    }
 
     // function filterData(cy: any, types: string[]) {
     //   var nodes = cy
@@ -332,15 +341,25 @@ export class CytoscapeComponent {
     // }
     if (this.elements) {
       // document.getElementById('cy').style.height=520+'px'
+
       document.getElementById('cy').style.height = this.cyHeight - 75 + 'px';
     } else {
+      if (!document.getElementById('cy')) {
+        //console.log("not exist")
+      } else {
+        console.log(
+          "document.getElementById('cy')",
+          document.getElementById('cy')
+        );
+
+        document.getElementById('cy').style.height = this.cyHeight + 'px';
+      }
       // document.getElementById('cy').style.height=575+'px'
-      document.getElementById('cy').style.height = this.cyHeight + 'px';
     }
     this.nodeSelected = false;
 
-    console.log(this.showCourseKg)
-    console.log(this.showMaterialKg)
+    console.log(this.showCourseKg);
+    console.log(this.showMaterialKg);
   }
 
   render() {
