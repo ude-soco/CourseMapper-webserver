@@ -7,9 +7,7 @@ const User = db.user;
 const Annotation = db.annotation;
 const Reply = db.reply;
 const Tag = db.tag;
-const UserTopicSubscriber = db.userTopicSubscriber;
-const UserChannelSubscriber = db.userChannelSubscriber;
-const UserCourseSubscriber = db.userCourseSubscriber;
+
 const BlockingNotifications = db.blockingNotifications;
 const ObjectId = require("mongoose").Types.ObjectId;
 
@@ -267,33 +265,6 @@ export const newChannel = async (req, res, next) => {
     updateCourse = await updateCourse.save();
   } catch (err) {
     return res.status(500).send({ error: "Error saving course" });
-  }
-
-  let userCourseSubscribers;
-  try {
-    userCourseSubscribers = await UserCourseSubscriber.find({
-      courseId: updateCourse._id,
-    });
-  } catch (err) {
-    return res
-      .status(500)
-      .send({ error: "Error finding user course subscribers" });
-  }
-
-  const userChannelSubscriber = userCourseSubscribers.map((subscriber) => {
-    return new UserChannelSubscriber({
-      userId: subscriber.userId,
-      channelId: savedChannel._id,
-      courseId: updateCourse._id,
-    });
-  });
-
-  try {
-    await UserChannelSubscriber.insertMany(userChannelSubscriber);
-  } catch (err) {
-    return res
-      .status(500)
-      .send({ error: "Error saving user channel subscribers" });
   }
 
   req.locals = {

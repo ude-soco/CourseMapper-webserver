@@ -519,5 +519,13 @@ export const notificationReducer = createReducer<NotificationState>(
         (notification) => notification.topic_id !== action.topicId
       ),
     };
+  }),
+  on(NotificationActions.isDeletingCourse, (state, action) => {
+    return {
+      ...state,
+      notifications: state.notifications.filter(
+        (notification) => notification.course_id !== action.courseId
+      ),
+    };
   })
 );

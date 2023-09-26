@@ -204,3 +204,8 @@ export const isDeletingChannel = createAction(
   '[Notification] Is Deleting Channel',
   props<{ channelId: string }>()
 );
+
+export const isDeletingCourse = createAction(
+  '[Notification] Is Deleting Course',
+  props<{ courseId: string }>()
+);

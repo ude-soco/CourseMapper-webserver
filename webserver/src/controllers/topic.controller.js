@@ -7,9 +7,6 @@ const Annotation = db.annotation;
 const Reply = db.reply;
 const Tag = db.tag;
 const Material = db.material;
-const UserTopicSubscriber = db.userTopicSubscriber;
-const UserChannelSubscriber = db.userChannelSubscriber;
-const UserCourseSubscriber = db.userCourseSubscriber;
 
 /**
  * @function getTopic
@@ -117,34 +114,6 @@ export const newTopic = async (req, res, next) => {
     return res.status(500).send({ error: "Error saving course" });
   }
 
-  //for all the ussers who are subscribed to the course. i.e. all the users who have userID and foundCourse._id document in the UserCourseSubscriber table should be added to the UserTopicSubscriber table
-  let userCourseSubscribers;
-  try {
-    userCourseSubscribers = await UserCourseSubscriber.find({
-      courseId: foundCourse._id,
-    });
-  } catch (err) {
-    return res
-      .status(500)
-      .send({ error: "Error finding user course subscribers" });
-  }
-
-  const userTopicSubscribers = userCourseSubscribers.map((subscriber) => {
-    return new UserTopicSubscriber({
-      userId: subscriber.userId,
-      topicId: savedTopic._id,
-      courseId: foundCourse._id,
-    });
-  });
-
-  try {
-    await UserTopicSubscriber.insertMany(userTopicSubscribers);
-  } catch (err) {
-    return res
-      .status(500)
-      .send({ error: "Error saving user topic subscribers" });
-  }
-
   req.locals = {
     response: {
       id: topic._id,
@@ -206,9 +175,7 @@ export const deleteTopic = async (req, res, next) => {
     return res.status(500).send({ error: "Error finding and removing topic" });
   }
 
-  //delete the UserChannelSubscriber documents for all the channels in the topic
   let channels = foundTopic.channels.map((channel) => channel._id);
-  UserChannelSubscriber.deleteMany({ channelId: { $in: channels } });
 
   try {
     await Channel.deleteMany({ topicId: { $in: topicId } });
@@ -248,15 +215,6 @@ export const deleteTopic = async (req, res, next) => {
     await foundCourse.save();
   } catch (err) {
     return res.status(500).send({ error: "Error saving course" });
-  }
-
-  //delete all the user topic subscribers for this topic
-  try {
-    await UserTopicSubscriber.deleteMany({ topicId: topicId });
-  } catch (err) {
-    return res
-      .status(500)
-      .send({ error: "Error deleting user topic subscribers" });
   }
 
   req.locals = {

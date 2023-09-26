@@ -98,7 +98,7 @@ export class CourseService {
         }),
         tap((res) => {
           if (!('errorMsg' in res)) {
-            this.courses.push(res.courseSaved);
+            this.courses = [...this.courses, res.courseSaved];
             //this.sendToOldBackend(res.courseSaved);
             this.onUpdateCourses$.next(this.courses);
           }
@@ -146,8 +146,10 @@ export class CourseService {
       return course._id === courseTD._id;
     });
     if (index !== -1) {
-      this.courses.splice(index, 1);
-      this.onUpdateCourses$.next(this.courses);
+      let tempCourses = [...this.courses];
+      tempCourses.splice(index, 1);
+      this.courses = tempCourses;
+      this.onUpdateCourses$.next(tempCourses);
       this.selectCourse(new CourseImp('', ''));
     }
   }

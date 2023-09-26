@@ -91,6 +91,14 @@ export class NotificationsService {
     const user = this.storageService.getUser();
 
     this.socket.on(user.id, (data: UserNotification[]) => {
+      if (data[0].isDeletingCourse) {
+        this.store.dispatch(
+          NotificationActions.isDeletingCourse({
+            courseId: data[0].courseId,
+          })
+        );
+        return;
+      }
       let notifications = data.map(this.transformNotification);
       notifications = notifications.map((notification) => {
         if (

@@ -16,6 +16,7 @@ import { getChannelSelected } from '../pages/courses/state/course.reducer';
 import { TopicChannelService } from 'src/app/services/topic-channel.service';
 import { UserServiceService } from '../services/user-service.service';
 import * as AppActions from '../state/app.actions';
+import * as NotificationActions from '../pages/components/notifications/state/notifications.actions';
 @Component({
   selector: 'app-course-welcome',
   templateUrl: './course-welcome.component.html',
@@ -135,6 +136,9 @@ export class CourseWelcomeComponent {
           CourseAction.setCurrentCourse({ selcetedCourse: course })
         );
         this.store.dispatch(CourseAction.setCourseId({ courseId: course._id }));
+        this.store.dispatch(
+          NotificationActions.isDeletingCourse({ courseId: course._id })
+        );
         this.router.navigate(['course-description', course._id]);
       }
       (er) => {

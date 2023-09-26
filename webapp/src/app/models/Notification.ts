@@ -1,4 +1,7 @@
 export interface UserNotification {
+  //the below 2 attrbiutes are only present when we are deleting a course.
+  courseId?: string;
+  isDeletingCourse?: boolean;
   _id: string;
   activityId: {
     notificationInfo: {
@@ -19,6 +22,7 @@ export interface UserNotification {
       isDeletingMaterial?: boolean;
       isDeletingTopic?: boolean;
       isDeletingChannel?: boolean;
+      isDeletingCourse?: boolean;
     };
     statement: {
       actor: {

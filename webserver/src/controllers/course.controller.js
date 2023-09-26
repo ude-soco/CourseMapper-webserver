@@ -11,9 +11,9 @@ const Reply = db.reply;
 const Tag = db.tag;
 const Activity = db.activity;
 const UserNotification = db.userNotifications;
-const UserCourseSubscriber = db.userCourseSubscriber;
-const UserTopicSubscriber = db.userTopicSubscriber;
-const UserChannelSubscriber = db.userChannelSubscriber;
+const BlockingNotifications = db.blockingNotifications;
+const FollowAnnotation = db.followAnnotation;
+const socketio = require("../socketio");
 const BlockingNotification = db.blockingNotifications;
 const helpers = require("../helpers/helpers");
 const {
@@ -508,40 +508,30 @@ export const withdrawCourse = async (req, res, next) => {
     return res.status(500).send({ error: "Error saving user" });
   }
 
-  //delete the UserCourseSubscriber document
   try {
-    await UserCourseSubscriber.deleteOne({
-      userId: foundUser._id,
-      courseId: foundCourse._id,
+    await BlockingNotifications.deleteMany({
+      courseId: courseId,
     });
   } catch (err) {
     return res
       .status(500)
-      .send({ error: "Error deleting userCourseSubscriber" });
+      .send({ error: "Error deleting blocking notifications" });
   }
 
-  //delete the UserTopicSubscriber documents
   try {
-    await UserTopicSubscriber.deleteMany({
-      userId: foundUser._id,
-      courseId: foundCourse._id,
+    await FollowAnnotation.deleteMany({
+      courseId: courseId,
     });
   } catch (err) {
-    return res
-      .status(500)
-      .send({ error: "Error deleting userTopicSubscribers" });
+    return res.status(500).send({ error: "Error deleting follow annotations" });
   }
 
-  //delete the UserChannelSubscriber documents
   try {
-    await UserChannelSubscriber.deleteMany({
-      userId: foundUser._id,
+    await UserNotification.deleteMany({
       courseId: foundCourse._id,
     });
-  } catch (err) {
-    return res
-      .status(500)
-      .send({ error: "Error deleting userChannelSubscribers" });
+  } catch (error) {
+    return res.status(500).send({ error: "Error deleting user notification" });
   }
 
   req.locals = {
@@ -648,20 +638,6 @@ export const newCourse = async (req, res, next) => {
     success: `New course '${courseSaved.name}' added!`,
   };
 
-  //Add the admin to the UserCourseSubscriberTable
-  let adminCourseSubscriber = new UserCourseSubscriber({
-    userId: foundUser._id,
-    courseId: courseSaved._id,
-  });
-
-  try {
-    await adminCourseSubscriber.save();
-  } catch (err) {
-    return res
-      .status(500)
-      .send({ error: "Error saving userCourseSubscriber for admin!" });
-  }
-
   req.locals = {
     course: courseSaved,
     user: foundUser,
@@ -688,44 +664,6 @@ export const deleteCourse = async (req, res, next) => {
   }
 
   try {
-    //delete the UserCourseSubscriber document
-    try {
-      await UserCourseSubscriber.deleteMany({
-        courseId: foundCourse._id,
-      });
-    } catch (err) {
-      return res
-        .status(500)
-        .send({ error: "Error deleting userCourseSubscribers" });
-    }
-
-    //delete the UserTopicSubscriber documents
-    try {
-      await UserTopicSubscriber.deleteMany({
-        courseId: foundCourse._id,
-      });
-    } catch (err) {
-      return res
-        .status(500)
-        .send({ error: "Error deleting userTopicSubscribers" });
-    }
-
-    //delete the UserChannelSubscriber documents
-    try {
-      await UserChannelSubscriber.deleteMany({
-        courseId: foundCourse._id,
-      });
-    } catch (err) {
-      return res
-        .status(500)
-        .send({ error: "Error deleting userChannelSubscribers" });
-    }
-
-    if (!foundCourse) {
-      return res.status(404).send({
-        error: `Course with id ${courseId} doesn't exist!`,
-      });
-    }
     try {
       await Topic.deleteMany({ _id: { $in: foundCourse.topics } });
     } catch (err) {
@@ -757,6 +695,7 @@ export const deleteCourse = async (req, res, next) => {
       return res.status(500).send({ error: "Error deleting tag" });
     }
     let activitiesToBeDeleted;
+    let activitiesToBeDeletedIds;
     try {
       activitiesToBeDeleted = await Activity.aggregate([
         {
@@ -780,7 +719,7 @@ export const deleteCourse = async (req, res, next) => {
           $project: { _id: 1 },
         },
       ]);
-      let activitiesToBeDeletedIds = activitiesToBeDeleted.map(
+      activitiesToBeDeletedIds = activitiesToBeDeleted.map(
         (actvity) => actvity._id
       );
       await Activity.deleteMany({ _id: { $in: activitiesToBeDeletedIds } });
@@ -792,13 +731,55 @@ export const deleteCourse = async (req, res, next) => {
     //TODO: Test the below method
     try {
       await UserNotification.deleteMany({
-        activityId: { $in: activitiesToBeDeleted },
+        courseId: foundCourse._id,
       });
     } catch (error) {
       return res
         .status(500)
         .send({ error: "Error deleting user notification" });
     }
+
+    //find all blockingNotifications where courseId is courseId
+    let usersSubscribedToCourse = [];
+    try {
+      let blockingNotificationDocuments = await BlockingNotification.find({
+        courseId: courseId,
+      });
+
+      usersSubscribedToCourse = blockingNotificationDocuments.map(
+        (blockingNotification) => blockingNotification.userId
+      );
+    } catch (err) {
+      return res.status(500).send({
+        error: "Error finding blocking Notifications!",
+      });
+    }
+
+    try {
+      await BlockingNotifications.deleteMany({
+        courseId: courseId,
+      });
+    } catch (err) {
+      return res
+        .status(500)
+        .send({ error: "Error deleting blocking notifications" });
+    }
+
+    try {
+      await FollowAnnotation.deleteMany({
+        courseId: courseId,
+      });
+    } catch (err) {
+      return res
+        .status(500)
+        .send({ error: "Error deleting follow annotations" });
+    }
+
+    usersSubscribedToCourse.forEach((userId) => {
+      socketio
+        .getIO()
+        .emit(userId, [{ courseId: courseId, isDeletingCourse: true }]);
+    });
   } catch (err) {
     return res.status(500).send({ error: "Error finding and removing course" });
   }
@@ -821,11 +802,13 @@ export const deleteCourse = async (req, res, next) => {
     }
   });
   let foundUser;
+
   try {
     foundUser = await User.findById(req.userId);
   } catch (err) {
     return res.status(500).send({ error: "Error finding user" });
   }
+
   const response = {
     success: `Course '${foundCourse.name}' successfully deleted!`,
   };
