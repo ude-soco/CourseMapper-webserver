@@ -576,6 +576,26 @@ export const topicCourseUpdateNotificationUsers = async (req, res, next) => {
     new ObjectId(userId)
   );
   req.locals.usersToBeNotified = finalListOfUsersToNotify;
+  if (req.locals.isDeletingTopic) {
+    await deleteTopicNotifications(req.locals.topic._id);
+    await removeFollowingAnnotationDocuments(req);
+    await BlockingNotifications.updateMany(
+      {
+        $or: [
+          { "materials.topicId": req.locals.topic._id },
+          { "channels.topicId": req.locals.topic._id },
+          { "topics.topicId": req.locals.topic._id },
+        ],
+      },
+      {
+        $pull: {
+          channels: { topicId: req.locals.topic._id },
+          materials: { topicId: req.locals.topic._id },
+          topics: { topicId: req.locals.topic._id },
+        },
+      }
+    );
+  }
 
   next();
 };
