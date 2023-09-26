@@ -417,6 +417,7 @@ export const deleteChannel = async (req, res, next) => {
     topic: foundTopic,
     course: course,
     category: "courseupdates",
+    isDeletingChannel: true,
   };
   return next();
 };

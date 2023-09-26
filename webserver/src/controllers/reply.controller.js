@@ -283,6 +283,7 @@ export const deleteReply = async (req, res, next) => {
     annotationId: foundAnnotation._id,
     annotation: foundAnnotation,
     isFollowingAnnotation: true,
+    isDeletingReply: true,
   };
   socketio.getIO().emit(foundAnnotation._id, {
     eventType: "replyDeleted",

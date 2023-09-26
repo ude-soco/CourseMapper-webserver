@@ -179,3 +179,28 @@ export const unsetCourseNotificationSettingsSuccess = createAction(
     updatedDoc: BlockingNotifications;
   }>()
 );
+
+export const isDeletingReply = createAction(
+  '[Notification] Is Deleting Reply',
+  props<{ replyId: string }>()
+);
+
+export const isDeletingAnnotation = createAction(
+  '[Notification] Is Deleting Annotation',
+  props<{ annotationId: string }>()
+);
+
+export const isDeletingMaterial = createAction(
+  '[Notification] Is Deleting Material',
+  props<{ materialId: string }>()
+);
+
+export const isDeletingTopic = createAction(
+  '[Notification] Is Deleting Topic',
+  props<{ topicId: string }>()
+);
+
+export const isDeletingChannel = createAction(
+  '[Notification] Is Deleting Channel',
+  props<{ channelId: string }>()
+);

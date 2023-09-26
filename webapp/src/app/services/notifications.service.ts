@@ -45,25 +45,6 @@ export class NotificationsService {
   //Todo: error handling
   /* .get<UserNotification[]>('assets/data.json') */
   public getAllNotifications(): Observable<TransformedNotificationsWithBlockedUsers> {
-    /* return (
-      this.httpClient
-        .get<NotificationsWithBlockedUsers>(
-          `${environment.API_URL}/notifications`
-        )
-        .pipe(
-          map(({ notifications, blockingUsers }) => {
-            let transformedNotifications = notifications.map(
-              this.transformNotification
-            );
-
-            return {
-              notifications: transformedNotifications,
-              blockingUsers,
-            };
-          }),
-          tap((notifications) => console.log(notifications))
-        )
-    ); */
     return combineLatest([
       this.store.select(getLoggedInUser),
       this.httpClient.get<NotificationsWithBlockedUsers>(
@@ -124,6 +105,42 @@ export class NotificationsService {
           return notification;
         }
       });
+
+      if (notifications[0].isDeletingAnnotation) {
+        this.store.dispatch(
+          NotificationActions.isDeletingAnnotation({
+            annotationId: notifications[0].annotation_id,
+          })
+        );
+      }
+      if (notifications[0].isDeletingReply) {
+        this.store.dispatch(
+          NotificationActions.isDeletingReply({
+            replyId: notifications[0].reply_id,
+          })
+        );
+      }
+      if (notifications[0].isDeletingMaterial) {
+        this.store.dispatch(
+          NotificationActions.isDeletingMaterial({
+            materialId: notifications[0].material_id,
+          })
+        );
+      }
+      if (notifications[0].isDeletingTopic) {
+        this.store.dispatch(
+          NotificationActions.isDeletingTopic({
+            topicId: notifications[0].topic_id,
+          })
+        );
+      }
+      if (notifications[0].isDeletingChannel) {
+        this.store.dispatch(
+          NotificationActions.isDeletingChannel({
+            channelId: notifications[0].channel_id,
+          })
+        );
+      }
 
       notifications.forEach((notification) => {
         this.store.dispatch(
@@ -565,7 +582,26 @@ export class NotificationsService {
         isFollowingAnnotation:
           notification.activityId.notificationInfo.isFollowingAnnotation,
       }),
-
+      ...(notification.activityId.notificationInfo.isDeletingReply && {
+        isDeletingReply:
+          notification.activityId.notificationInfo.isDeletingReply,
+      }),
+      ...(notification.activityId.notificationInfo.isDeletingAnnotation && {
+        isDeletingAnnotation:
+          notification.activityId.notificationInfo.isDeletingAnnotation,
+      }),
+      ...(notification.activityId.notificationInfo.isDeletingMaterial && {
+        isDeletingMaterial:
+          notification.activityId.notificationInfo.isDeletingMaterial,
+      }),
+      ...(notification.activityId.notificationInfo.isDeletingChannel && {
+        isDeletingChannel:
+          notification.activityId.notificationInfo.isDeletingChannel,
+      }),
+      ...(notification.activityId.notificationInfo.isDeletingTopic && {
+        isDeletingTopic:
+          notification.activityId.notificationInfo.isDeletingTopic,
+      }),
       extraMessage: `${notification.activityId.notificationInfo.userName} ${notification.activityId.statement.verb.display['en-US']} ${lastWord} ${notification.activityId.statement.object.definition.name['en-US']} in ${notification.activityId.notificationInfo.courseName}`,
     };
   }

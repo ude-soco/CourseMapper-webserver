@@ -267,6 +267,7 @@ export const deleteTopic = async (req, res, next) => {
     user: user,
     category: "courseupdates",
     course: foundCourse,
+    isDeletingTopic: true,
   };
   return next();
 };

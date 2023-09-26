@@ -62,6 +62,11 @@ export const generateNotificationInfo = (req) => {
       isFollowingAnnotation: req.locals.isFollowingAnnotation,
     }),
     authorEmail: req.locals.user?.email,
+    ...(req.locals.isDeletingAnnotation && { isDeletingAnnotation: true }),
+    ...(req.locals.isDeletingMaterial && { isDeletingMaterial: true }),
+    ...(req.locals.isDeletingChannel && { isDeletingChannel: true }),
+    ...(req.locals.isDeletingTopic && { isDeletingTopic: true }),
+    ...(req.locals.isDeletingReply && { isDeletingReply: true }),
   };
 };
 
@@ -93,6 +98,32 @@ export const populateUserNotification = async (req, res, next) => {
       activityId: activity._id,
       isStar: false,
       isRead: false,
+      ...(req.locals.reply && { replyId: req.locals.reply._id }),
+      ...(req.locals.reply && { annotationId: req.locals.reply.annotationId }),
+      ...(req.locals.reply && { materialId: req.locals.reply.materialId }),
+      ...(req.locals.reply && { channelId: req.locals.reply.channelId }),
+      ...(req.locals.reply && { topicId: req.locals.reply.topicId }),
+      ...(req.locals.reply && { courseId: req.locals.reply.courseId }),
+      ...(req.locals.annotation && { annotationId: req.locals.annotation._id }),
+      ...(req.locals.annotation && {
+        materialId: req.locals.annotation.materialId,
+      }),
+      ...(req.locals.annotation && {
+        channelId: req.locals.annotation.channelId,
+      }),
+      ...(req.locals.annotation && { topicId: req.locals.annotation.topicId }),
+      ...(req.locals.annotation && {
+        courseId: req.locals.annotation.courseId,
+      }),
+      ...(req.locals.material && { materialId: req.locals.material._id }),
+      ...(req.locals.material && { channelId: req.locals.material.channelId }),
+      ...(req.locals.material && { topicId: req.locals.material.topicId }),
+      ...(req.locals.material && { courseId: req.locals.material.courseId }),
+      ...(req.locals.channel && { channelId: req.locals.channel._id }),
+      ...(req.locals.channel && { topicId: req.locals.channel.topicId }),
+      ...(req.locals.channel && { courseId: req.locals.channel.courseId }),
+      ...(req.locals.topic && { topicId: req.locals.topic._id }),
+      ...(req.locals.topic && { courseId: req.locals.topic.courseId }),
     });
     arrUserNotification.push(userNotification);
   });
@@ -220,6 +251,14 @@ export const calculateUsersFollowingAnnotation = async (req, res, next) => {
     new ObjectId(userId)
   );
   req.locals.usersToBeNotified = finalListOfUsersToNotify;
+  if (req.locals.isDeletingAnnotation) {
+    await removeFollowingAnnotationDocuments(annotationId);
+    await deleteAnnotationNotifications(annotationId);
+  }
+  if (req.locals.isDeletingReply) {
+    await deleteReplyNotifications(req.locals.reply._id);
+  }
+
   next();
 };
 
@@ -1052,6 +1091,42 @@ export const getNotificationSettingsWithFollowingAnnotations = async (
   return notificationSettings;
 };
 
+export const removeFollowingAnnotationDocuments = async (annotationId) => {
+  await FollowAnnotation.deleteMany({
+    annotationId: annotationId,
+  });
+};
+
+export const deleteAnnotationNotifications = async (annotationId) => {
+  await UserNotification.deleteMany({
+    annotationId: annotationId,
+  });
+};
+
+export const deleteMaterialNotifications = async (materialId) => {
+  await UserNotification.deleteMany({
+    materialId: materialId,
+  });
+};
+
+export const deleteChannelNotifications = async (channelId) => {
+  await UserNotification.deleteMany({
+    channelId: channelId,
+  });
+};
+
+export const deleteTopicNotifications = async (topicId) => {
+  await UserNotification.deleteMany({
+    topicId: topicId,
+  });
+};
+
+export const deleteReplyNotifications = async (replyId) => {
+  await UserNotification.deleteMany({
+    replyId: replyId,
+  });
+};
+
 let notifications = {
   populateUserNotification,
   generateNotificationInfo,
@@ -1067,5 +1142,6 @@ let notifications = {
   getNotificationSettingsWithFollowingAnnotations,
   newMentionNotificationUsersCalculate,
   LikesDislikesAnnotationNotificationUsers,
+  removeFollowingAnnotationDocuments,
 };
 module.exports = notifications;

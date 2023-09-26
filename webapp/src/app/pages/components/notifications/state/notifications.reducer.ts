@@ -478,5 +478,46 @@ export const notificationReducer = createReducer<NotificationState>(
         coursesSettings: updatedCourseNotificationSettings,
       };
     }
-  )
+  ),
+  on(NotificationActions.isDeletingAnnotation, (state, action) => {
+    return {
+      ...state,
+      notifications: state.notifications.filter(
+        (notification) => notification.annotation_id !== action.annotationId
+      ),
+    };
+  }),
+  on(NotificationActions.isDeletingReply, (state, action) => {
+    return {
+      ...state,
+      notifications: state.notifications.filter(
+        (notification) => notification.reply_id !== action.replyId
+      ),
+    };
+  }),
+  on(NotificationActions.isDeletingMaterial, (state, action) => {
+    return {
+      ...state,
+      notifications: state.notifications.filter(
+        (notification) => notification.material_id !== action.materialId
+      ),
+    };
+  }),
+  on(NotificationActions.isDeletingChannel, (state, action) => {
+    return {
+      ...state,
+      notifications: state.notifications.filter(
+        (notification) => notification.channel_id !== action.channelId
+      ),
+    };
+  }),
+
+  on(NotificationActions.isDeletingTopic, (state, action) => {
+    return {
+      ...state,
+      notifications: state.notifications.filter(
+        (notification) => notification.topic_id !== action.topicId
+      ),
+    };
+  })
 );

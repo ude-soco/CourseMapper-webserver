@@ -245,13 +245,16 @@ export const deleteAnnotation = async (req, res, next) => {
     reply: null,
   });
   req.locals = {
-    response: { success: "Annotation successfully deleted" },
+    response: {
+      success: "Annotation successfully deleted",
+    },
     annotation: foundAnnotation,
     user: user,
     course: courseForGeneratingNotifications,
     category: "annotations",
     annotationId: foundAnnotation._id,
     isFollowingAnnotation: true,
+    isDeletingAnnotation: true,
   };
 
   next();

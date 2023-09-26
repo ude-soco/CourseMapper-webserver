@@ -14,6 +14,11 @@ export interface UserNotification {
       annotationAuthorId?: string;
       replyAuthorId?: string;
       isFollowingAnnotation?: boolean;
+      isDeletingAnnotation?: boolean;
+      isDeletingReply?: boolean;
+      isDeletingMaterial?: boolean;
+      isDeletingTopic?: boolean;
+      isDeletingChannel?: boolean;
     };
     statement: {
       actor: {
@@ -83,6 +88,11 @@ export interface Notification {
   replyAuthorId?: string;
   annotationAuthorId?: string;
   isFollowingAnnotation?: boolean;
+  isDeletingAnnotation?: boolean;
+  isDeletingReply?: boolean;
+  isDeletingMaterial?: boolean;
+  isDeletingTopic?: boolean;
+  isDeletingChannel?: boolean;
 }
 
 export interface BlockingUsers {
