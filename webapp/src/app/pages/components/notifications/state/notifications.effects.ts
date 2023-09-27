@@ -20,7 +20,7 @@ export class NotificationEffects {
     (): Observable<Action> =>
       this.actions$.pipe(
         ofType(NotificationActions.loadNotifications),
-        tap(() => console.log('In Effect: Fetching notifications')),
+
         mergeMap(() =>
           this.notificationService.getAllNotifications().pipe(
             map((transformedNotificationsWithBlockedUsers) =>

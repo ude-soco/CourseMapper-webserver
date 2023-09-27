@@ -18,7 +18,6 @@ export class AuthGuardService implements CanActivate {
   constructor(private router: Router, private store: Store<State>) {}
 
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    console.log(state.url);
     if (localStorage.getItem(USER_KEY)) {
       const userJson = localStorage.getItem(USER_KEY);
       const user = userJson ? (JSON.parse(userJson) as User) : null;

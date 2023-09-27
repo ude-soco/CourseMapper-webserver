@@ -1,6 +1,14 @@
 import { Injectable } from '@angular/core';
 import * as NotificationActions from '../pages/components/notifications/state/notifications.actions';
-import { BehaviorSubject, Observable, map, switchMap, take, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  map,
+  switchMap,
+  take,
+  tap,
+  withLatestFrom,
+} from 'rxjs';
 import {
   UserNotification,
   Notification,
@@ -46,45 +54,45 @@ export class NotificationsService {
   //Todo: error handling
   /* .get<UserNotification[]>('assets/data.json') */
   public getAllNotifications(): Observable<TransformedNotificationsWithBlockedUsers> {
-    return combineLatest([
-      this.store.select(getLoggedInUser),
-      this.httpClient.get<NotificationsWithBlockedUsers>(
+    return this.httpClient
+      .get<NotificationsWithBlockedUsers>(
         `${environment.API_URL}/notifications`
-      ),
-    ]).pipe(
-      map(([user, { notifications, blockingUsers }]) => {
-        let transformedNotifications = notifications.map(
-          this.transformNotification
-        );
+      )
+      .pipe(
+        withLatestFrom(this.store.select(getLoggedInUser)),
+        map(([notifications, user]) => {
+          let transformedNotifications = notifications.notifications.map(
+            this.transformNotification
+          );
 
-        return {
-          notifications: transformedNotifications,
-          blockingUsers,
-          user,
-        };
-      }),
-      map(({ notifications, blockingUsers, user }) => {
-        let transformedNotifications = notifications.map((notification) => {
-          if (
-            (notification.annotationAuthorId === user.id &&
-              notification.object === 'annotation') ||
-            (notification.replyAuthorId === user.id &&
-              notification.object === 'reply')
-          ) {
-            notification.object = 'your ' + notification.object;
-            notification.extraMessage = `${notification.userShortname} ${notification.action} ${notification.object} ${notification.name} in ${notification.courseName}`;
-          }
-          return notification;
-        });
+          return {
+            notifications: transformedNotifications,
+            blockingUsers: notifications.blockingUsers,
+            user,
+          };
+        }),
+        map(({ notifications, blockingUsers, user }) => {
+          let transformedNotifications = notifications.map((notification) => {
+            if (
+              (notification.annotationAuthorId === user.id &&
+                notification.object === 'annotation') ||
+              (notification.replyAuthorId === user.id &&
+                notification.object === 'reply')
+            ) {
+              notification.object = 'your ' + notification.object;
+              notification.extraMessage = `${notification.userShortname} ${notification.action} ${notification.object} ${notification.name} in ${notification.courseName}`;
+            }
+            return notification;
+          });
 
-        return {
-          notifications: transformedNotifications,
-          blockingUsers,
-        };
-      }),
+          return {
+            notifications: transformedNotifications,
+            blockingUsers,
+          };
+        }),
 
-      tap((notifications) => console.log(notifications))
-    );
+        tap((notifications) => console.log(notifications))
+      );
   }
 
   public initialiseSocketConnection() {

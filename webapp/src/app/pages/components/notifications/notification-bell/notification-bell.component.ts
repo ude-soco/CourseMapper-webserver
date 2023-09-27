@@ -28,8 +28,6 @@ export class NotificationBellComponent {
   ngOnInit(): void {
     this.showNotificationsPanel$ = this.store.select(getShowNotificationsPanel);
     this.showNotificationsPanel$.subscribe((showNotificationsPanel) => {
-      console.log('showNotificationsPanel', showNotificationsPanel);
-      console.log('SUBSCRIPTION RUNNING!!!!');
       if (showNotificationsPanel === false && this.notificationPanel) {
         this.notificationPanel.hide();
       }

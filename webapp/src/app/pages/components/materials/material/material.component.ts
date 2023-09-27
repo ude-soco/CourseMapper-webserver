@@ -135,9 +135,6 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     //attempt to refresh the component:
     this.activatedRoute.params.subscribe((params) => {
-      console.log(
-        'RUNNING METHOD IN MATERIAL COMPONENT WHENEVER THE ROUTE CHANGES!'
-      );
       /* this.reloadCurrentRoute(); */
     });
   }

@@ -8,7 +8,6 @@ const UserNotification = new Schema({
     type: Schema.Types.ObjectId,
     ref: "user",
     required: true,
-
     index: true,
   },
   courseId: {
