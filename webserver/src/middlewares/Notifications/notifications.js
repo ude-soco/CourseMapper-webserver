@@ -1141,7 +1141,7 @@ export const getNotificationSettingsWithFollowingAnnotations = async (
 export const removeFollowingAnnotationDocuments = async (req) => {
   if (req.locals.isDeletingAnnotation) {
     await FollowAnnotation.deleteMany({
-      annotationId: annotationId,
+      annotationId: req.locals.annotation._id,
     });
   }
   if (req.locals.isDeletingMaterial) {
