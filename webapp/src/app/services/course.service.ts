@@ -99,6 +99,11 @@ export class CourseService {
         tap((res) => {
           if (!('errorMsg' in res)) {
             this.courses = [...this.courses, res.courseSaved];
+            this.store.dispatch(
+              CourseActions.setCourseNotificationSettingsSuccess({
+                updatedDoc: res.updatedNotificationSettings,
+              })
+            );
             //this.sendToOldBackend(res.courseSaved);
             this.onUpdateCourses$.next(this.courses);
           }

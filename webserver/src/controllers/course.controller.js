@@ -16,6 +16,7 @@ const FollowAnnotation = db.followAnnotation;
 const socketio = require("../socketio");
 const BlockingNotification = db.blockingNotifications;
 const helpers = require("../helpers/helpers");
+const notifications = require("../middlewares/Notifications/notifications");
 const {
   getNotificationSettingsWithFollowingAnnotations,
 } = require("../middlewares/Notifications/notifications");
@@ -643,6 +644,21 @@ export const newCourse = async (req, res, next) => {
     user: foundUser,
     response: response,
   };
+
+  let notificationSettings;
+  try {
+    notificationSettings =
+      await notifications.getNotificationSettingsWithFollowingAnnotations(
+        courseSaved._id,
+        userId
+      );
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ message: "Error finding updated notification settings" });
+  }
+
+  req.locals.response.updatedNotificationSettings = notificationSettings[0];
   return next();
 };
 
