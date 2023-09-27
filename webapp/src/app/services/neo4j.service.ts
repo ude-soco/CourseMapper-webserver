@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { environment_Neo4j } from 'src/environments/environment';
 var neo4j = require('neo4j-driver');
 
@@ -17,7 +18,7 @@ export class Neo4jService {
   );
   session = this.neo4jDriver.session();
 
-  constructor() { }
+  constructor(public router:Router) { }
   async checkSlide(slideId: string) {
     return this.session
       .run('MATCH(s:Slide)  WHERE s.sid = $sid RETURN s', { sid: slideId })
@@ -51,10 +52,24 @@ export class Neo4jService {
         return res;
       })
       .catch((err) => {
+        window.location.reload()
         console.log(err);
+   
       });
   }
-
+  reloadComponent(self:boolean,urlToNavigateTo ?:string){
+    //skipLocationChange:true means dont update the url to / when navigating
+   console.log("Current route I am on:",this.router.url);
+   const url=self ? this.router.url :urlToNavigateTo;
+   this.router.navigateByUrl('/',{skipLocationChange:true}).then(()=>{
+     this.router.navigate([`/${url}`]).then(()=>{
+       console.log(`After navigation I am on:${this.router.url}`)
+     })
+   })
+ }
+  reloadCurrent(){
+    this.reloadComponent(true);
+  }
   async getMaterial(materialId: string) {
     return this.session
       .run(
