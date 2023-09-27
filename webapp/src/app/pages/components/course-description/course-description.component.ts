@@ -8,6 +8,7 @@ import { StorageService } from 'src/app/services/storage.service';
 import { UserServiceService } from 'src/app/services/user-service.service';
 import { getCurrentCourse, getCurrentCourseId, State } from '../../courses/state/course.reducer';
 import * as  CourseActions from 'src/app/pages/courses/state/course.actions'
+import { MessageService } from 'primeng/api';
 
 
 
@@ -31,7 +32,8 @@ export class CourseDescriptionComponent {
     private store: Store<State>, 
     private userService:UserServiceService, 
     private courseService: CourseService,
-    private router: Router
+    private router: Router,
+    private messageService: MessageService,
     )
   {
     
@@ -102,9 +104,18 @@ let Name=firstName+" "+lastName
         this.courseService.EnrollToCOurse(this.course_enroll._id).subscribe(
           (data) => {
            this.Enrolled= true
-           console.log( "data", data)
+           console.log( "response after calling the service", data)
+           if ('success' in data) {
+            console.log("entered success msg")
+            // this.showInfo(res.success);
+            this.showInfo('You are successfully enrolled to the course');
+          } else {
+            this.showError(data.errorMsg);
+          }
+          setTimeout(() => {
+            this.router.navigate(['course', this.course_enroll._id]);
+          }, 850);
            
-           this.router.navigate(['course', this.course_enroll._id]);
             
           })
       }
@@ -113,8 +124,19 @@ let Name=firstName+" "+lastName
           (data) => {
            this.Enrolled= true
            console.log( "data", data)
-           
-           this.router.navigate(['course', this.course.id]);
+           //if ( "write something here".indexOf("write som") > -1 )  { alert( "found it" );  } 
+          
+           if ('success' in data) {
+            console.log("entered success msg")
+            // this.showInfo(res.success);
+            this.showInfo('You are successfully enrolled to the course');
+          } else {
+            this.showError(data.errorMsg);
+          }
+          setTimeout(() => {
+            this.router.navigate(['course', this.course.id]);
+          }, 850);
+        
             
           })
       }
@@ -130,5 +152,20 @@ let Name=firstName+" "+lastName
   {
     this.router.navigate(['login']);
   }
+}
+showInfo(msg) {
+  this.messageService.add({
+    severity: 'info',
+    summary: 'Success',
+    detail: msg,
+  });
+}
+
+showError(msg) {
+  this.messageService.add({
+    severity: 'error',
+    summary: 'Error',
+    detail: msg,
+  });
 }
 }
