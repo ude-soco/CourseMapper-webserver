@@ -29,6 +29,7 @@ import {
   getPdfTotalNumberOfPages,
 } from './annotation.reducer';
 import { getCurrentCourseId } from 'src/app/pages/courses/state/course.reducer';
+import { BlockingNotifications } from 'src/app/models/BlockingNotification';
 
 @Injectable()
 export class AnnotationEffects {
@@ -40,7 +41,7 @@ export class AnnotationEffects {
           mergeMap((postedAnnotaion) => [
             AnnotationActions.postAnnotationSuccess(),
             CourseActions.followAnnotationSuccess({
-              updatedDoc: postedAnnotaion.response,
+              updatedDoc: postedAnnotaion as unknown as BlockingNotifications,
             }),
             /* AnnotationActions.loadAnnotations(), */
           ]),
