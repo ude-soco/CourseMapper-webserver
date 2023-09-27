@@ -452,6 +452,21 @@ export const enrolCourse = async (req, res, next) => {
       user: foundUser,
       course: foundCourse,
     };
+
+    let notificationSettings;
+    try {
+      notificationSettings =
+        await notifications.getNotificationSettingsWithFollowingAnnotations(
+          foundCourse._id,
+          userId
+        );
+    } catch (err) {
+      return res
+        .status(500)
+        .send({ message: "Error finding updated notification settings" });
+    }
+
+    req.locals.response.updatedNotificationSettings = notificationSettings[0];
     return next();
   } else {
     return res

@@ -195,9 +195,15 @@ export class CourseService {
   }
 
   EnrollToCOurse(courseID: string): any {
-    return this.http
-      .post<any>(`${this.API_URL}/enrol/${courseID}`, {})
-      .pipe(tap((Enrolcourses) => {}));
+    return this.http.post<any>(`${this.API_URL}/enrol/${courseID}`, {}).pipe(
+      tap((Enrolcourses) => {
+        this.store.dispatch(
+          CourseActions.setCourseNotificationSettingsSuccess({
+            updatedDoc: Enrolcourses.updatedNotificationSettings,
+          })
+        );
+      })
+    );
   }
   WithdrawFromCourse(course: Course): any {
     return this.http
