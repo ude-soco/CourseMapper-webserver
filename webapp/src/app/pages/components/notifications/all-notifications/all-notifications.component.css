@@ -57,6 +57,10 @@ h2{
   align-items: center;
 }
 
+:host ::ng-deep .p-multiselect{
+  width: 250px;
+}
+
 :host ::ng-deep .p-input-icon-left > .p-inputtext {
   padding-left: 3rem;
   height: 45px;
@@ -115,3 +119,4 @@ h2{
   background-color: yellow;
   font-weight: bold;
 }
+
