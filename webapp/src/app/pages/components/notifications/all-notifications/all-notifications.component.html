@@ -10,15 +10,15 @@
 >
 </app-tab-menu>
 
-<div class="flex justify-between items-center">
+<div class="flex justify-between items-center mb-2">
   <span class="p-float-label">
     <p-multiSelect
+      class="w-1/3"
       [options]="courseOptions"
       [(ngModel)]="selectedCourses"
       optionLabel="name"
       optionValue="id"
       (onChange)="onCourseFilterChanged($event)"
-      [showClear]="true"
       display="chip"
     >
     </p-multiSelect>

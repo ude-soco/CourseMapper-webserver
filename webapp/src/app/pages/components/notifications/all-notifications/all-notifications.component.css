@@ -49,9 +49,6 @@ h2{
 }
 
 
-:host ::ng-deep p-multiselect.p-multiselect-clearable .p-multiselect {
-  width: 100%;
-}
 
 :host ::ng-deep p-multiselect.p-multiselect-clearable .p-multiselect-label-container {
   padding-right: 2rem;
@@ -66,7 +63,7 @@ h2{
 
 :host ::ng-deep .p-input-icon-left > .p-inputtext {
   padding-left: 3rem;
-  height: 45px;
+  height:  57px;
 }
 
 :host ::ng-deep .p-multiselect-panel .p-multiselect-header .p-multiselect-close {
@@ -74,7 +71,7 @@ h2{
 }
 
 :host ::ng-deep .p-dropdown .p-inputtext {
-  height: 45px;
+  height: 57px;
   /* text-align: center; */
   display: flex;
   justify-content: center;
