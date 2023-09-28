@@ -11,19 +11,33 @@
 </app-tab-menu>
 
 <div class="flex justify-between items-center">
+<<<<<<< HEAD
   <span class="p-float-label">
+=======
+
+  <div id="course-select" class="w-1/3">
+>>>>>>> ca505b3e7bdaa15a3a5bd82c8e9d93c543108db4
     <p-multiSelect
       [options]="courseOptions"
       [(ngModel)]="selectedCourses"
       optionLabel="name"
       optionValue="id"
       (onChange)="onCourseFilterChanged($event)"
+<<<<<<< HEAD
       [showClear]="true"
       display="chip"
     >
     </p-multiSelect>
     <label for="ms-cities">Select Courses</label>
   </span>
+=======
+      placeholder="Select Courses"
+      defaultLabel="Select Courses"
+      [showClear]="true"
+    >
+    </p-multiSelect>
+  </div>
+>>>>>>> ca505b3e7bdaa15a3a5bd82c8e9d93c543108db4
   <span class="p-input-icon-left">
     <i class="pi pi-search"></i>
     <input
@@ -31,10 +45,20 @@
       type="text"
       pInputText
       [(ngModel)]="searchValue"
+<<<<<<< HEAD
     />
     <span class="p-input-icon-right" style="bottom: 6px">
       <i class="pi pi-times cursor-pointer" (click)="searchValue = ''"></i>
     </span>
+=======
+
+    />
+    <span class="p-input-icon-right" style="bottom: 6px">
+    <i class="pi pi-times cursor-pointer "  (click)="searchValue = ''"></i>
+  </span>
+
+
+>>>>>>> ca505b3e7bdaa15a3a5bd82c8e9d93c543108db4
   </span>
   <div>
     <p-dropdown
