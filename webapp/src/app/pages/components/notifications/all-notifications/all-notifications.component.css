@@ -49,11 +49,14 @@ h2{
 }
 
 
+:host ::ng-deep p-multiselect.p-multiselect-clearable .p-multiselect {
+  width: 100%;
+}
+
 :host ::ng-deep p-multiselect.p-multiselect-clearable .p-multiselect-label-container {
   padding-right: 2rem;
   height: 45px;
   display: flex;
-  justify-content: center;
   align-items: center;
 }
 
