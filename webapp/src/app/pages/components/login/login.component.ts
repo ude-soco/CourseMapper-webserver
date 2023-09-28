@@ -74,21 +74,22 @@ export class LoginComponent implements OnInit {
             // })()
             //solve the problem of Async/awit problem in angular 14
             const data = await lastValueFrom(this.courseService.fetchCourses());
+            const courseId = this.course.id || this.course._id
 
             let varcc = data.find(
-              (myCourse) => this.course.id === myCourse._id
+              (myCourse) => courseId === myCourse._id
             );
 
             if (varcc) {
-              this.router.navigate(['course', this.course.id]);
+              this.router.navigate(['course', courseId]);
             } else {
               this.store.dispatch(
                 CourseAction.setCurrentCourse({ selcetedCourse: this.course })
               );
               this.store.dispatch(
-                CourseAction.setCourseId({ courseId: this.course.id })
+                CourseAction.setCourseId({ courseId: courseId })
               );
-              this.router.navigate(['course-description', this.course.id]);
+              this.router.navigate(['course-description', courseId]);
 
               //console.log(selcetedCourse)
             }
