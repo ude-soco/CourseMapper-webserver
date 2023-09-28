@@ -1,30 +1,61 @@
 <p-toast position="bottom-left"></p-toast>
 
-<p-dialog header="Create course" [(visible)]="displayAddCourseDialogue" [modal]="true" [draggable]="false"
-          [closable]="false" [style]="{maxWidth: '500px', width: '100%'}" (keydown)="preventEnterKey($event)">
-  <form [formGroup]="createCourseForm" [style]="{ paddingTop: '8px'}">
+<p-dialog
+  header="Create course"
+  [(visible)]="displayAddCourseDialogue"
+  [modal]="true"
+  [draggable]="false"
+  [closable]="false"
+  [style]="{ maxWidth: '500px', width: '100%' }"
+  (keydown)="preventEnterKey($event)"
+>
+  <form [formGroup]="createCourseForm" [style]="{ paddingTop: '8px' }">
     <span class="p-float-label">
-      <input id="name" type="text" formControlName="name" pInputText [style]="{ width: '100%'}">
-      <label for="name">
-        Course name
-      </label>
+      <input
+        id="name"
+        type="text"
+        formControlName="name"
+        pInputText
+        [style]="{ width: '100%' }"
+      />
+      <label for="name"> Course name </label>
     </span>
-    <div [style]="{height: '24px'}">
-      <small *ngIf="createCourseForm.get('name').invalid" class="p-error block">Please give a course name</small>
+    <div [style]="{ height: '24px' }">
+      <small *ngIf="createCourseForm.get('name').invalid" class="p-error block"
+        >Please give a course name</small
+      >
     </div>
 
     <span class="p-float-label">
-        <input id="description" type="text" formControlName="description" pInputText [style]="{ width: '100%'}">
-        <label for="description">(Optional) Course description</label>
-      </span>
+      <input
+        id="description"
+        type="text"
+        formControlName="description"
+        pInputText
+        [style]="{ width: '100%' }"
+      />
+      <label for="description">(Optional) Course description</label>
+    </span>
 
-    <br>
+    <br />
     <div>
-      <button pButton icon="pi pi-times" (click)="toggleAddCourseDialogue()"
-              label="Cancel" class="p-button-outlined"></button>
-      <button id="addCourseConfirm" pButton icon="pi pi-check" class="float-right" (click)="onSubmit()" label="Confirm"
-              [disabled]="createCourseForm.get('name').invalid"></button>
+      <button
+        pButton
+        icon="pi pi-times"
+        (click)="toggleAddCourseDialogue()"
+        label="Cancel"
+        class="p-button-outlined"
+      ></button>
+
+      <button
+        id="addCourseConfirm"
+        pButton
+        icon="pi pi-check"
+        class="float-right"
+        (click)="onSubmit()"
+        label="Confirm"
+        [disabled]="createCourseForm.get('name').invalid"
+      ></button>
     </div>
   </form>
-
 </p-dialog>
