@@ -96,7 +96,6 @@ require("./routes/videodelete.routes")(app);
 require("./routes/test.routes")(app);
 require("./routes/debug.routes")(app);
 require("./routes/notifications.routes")(app);
-require("./routes/notificationBaohui.routes")(app);
 
 // Listen on provided port, on all network interfaces
 server.listen(port);

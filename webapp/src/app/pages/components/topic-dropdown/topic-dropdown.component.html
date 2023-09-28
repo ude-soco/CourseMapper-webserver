@@ -28,7 +28,7 @@
               #{{topic._id}}
             >
               <span>{{ topic.name }} </span>
-              <span
+              <!-- <span
                 class="bg-orange-600 text-[white] text-base p-[0.1rem] w-[1.7rem] text-center rounded-[15px]"
                 *ngIf="
                   (getNumUnreadNotificationsForTopic(topic._id) | async) > 0
@@ -36,7 +36,7 @@
                 >{{
                   getNumUnreadNotificationsForTopic(topic._id) | async
                 }}</span
-              >
+              > -->
             </div>
           </div>
           <!--           <div class="bell-icon-container">
@@ -93,7 +93,7 @@
             >
               #{{ channel.name }}
             </p>
-            <span
+            <!-- <span
               class="bg-orange-600 text-[white] text-base p-[0.1rem] w-8 text-center rounded-[15px] font-semibold text-[0.8rem]"
               *ngIf="
                 (getNumUnreadNotificationsForChannel(channel._id) | async) > 0
@@ -101,7 +101,7 @@
               >{{
                 getNumUnreadNotificationsForChannel(channel._id) | async
               }}</span
-            >
+            > -->
             <app-iconbutton
               icon="bx-dots-vertical-rounded"
               color="text-black"
@@ -140,7 +140,7 @@
             >
               #{{ channel.name }}
             </p>
-            <span
+            <!-- <span
               class="bg-orange-600 text-[white] text-base p-[0.1rem] w-8 text-center rounded-[15px] font-semibold text-[0.8rem]"
               *ngIf="
                 (getNumUnreadNotificationsForChannel(channel._id) | async) > 0
@@ -148,7 +148,7 @@
               >{{
                 getNumUnreadNotificationsForChannel(channel._id) | async
               }}</span
-            >
+            > -->
             <app-iconbutton
               icon="bx-dots-vertical-rounded"
               color="text-black"
@@ -284,7 +284,7 @@
               #{{topic._id}}
             >
               <span class="mr-2">{{ topic.name }} </span>
-              <span
+              <!-- <span
                 class="bg-orange-600 text-[white] text-base p-[0.25rem] w-8 text-center rounded-[15px] text-[0.8rem]"
                 *ngIf="
                   (getNumUnreadNotificationsForTopic(topic._id) | async) > 0
@@ -292,7 +292,7 @@
                 >{{
                   getNumUnreadNotificationsForTopic(topic._id) | async
                 }}</span
-              >
+              > -->
             </div>
           </div>
 

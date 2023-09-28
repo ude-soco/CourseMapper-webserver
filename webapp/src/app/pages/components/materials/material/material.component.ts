@@ -32,6 +32,7 @@ import * as CourseActions from 'src/app/pages/courses/state/course.actions';
 import { getNotificationSettingsOfLastMaterialMenuClicked } from 'src/app/pages/courses/state/course.reducer';
 import { materialNotificationSettingLabels } from 'src/app/models/Notification';
 import { getNotifications } from '../../notifications/state/notifications.reducer';
+import * as NotificationActions from '../../notifications/state/notifications.actions';
 @Component({
   selector: 'app-material',
   templateUrl: './material.component.html',
@@ -420,6 +421,13 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
               },
             })
           );
+          if ('success' in data) {
+            this.store.dispatch(
+              NotificationActions.isDeletingMaterial({
+                materialId: this.selectedMaterial._id,
+              })
+            );
+          }
           this.router.navigate([
             'course',
             this.selectedMaterial['courseId'],
@@ -444,6 +452,12 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
                 id: this.selectedMaterial._id,
                 isDeletingMaterial: true,
               },
+            })
+          );
+
+          this.store.dispatch(
+            NotificationActions.isDeletingMaterial({
+              materialId: this.selectedMaterial._id,
             })
           );
         },

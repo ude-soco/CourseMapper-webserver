@@ -24,6 +24,7 @@ import * as VideoActions from 'src/app/pages/components/annotations/video-annota
 import { Annotation } from 'src/app/models/Annotations';
 import { LoggerService } from 'src/app/services/logger.service';
 import { getCurrentTime } from '../../video-annotation/state/video.reducer';
+import * as NotificationActions from 'src/app/pages/components/notifications/state/notifications.actions';
 import {
   getCurrentPdfPage,
   getPdfTotalNumberOfPages,
@@ -202,6 +203,9 @@ export class AnnotationEffects {
         this.annotationService.deleteReply(reply).pipe(
           mergeMap(() => [
             AnnotationActions.deleteReplySuccess(),
+            NotificationActions.isDeletingReply({
+              replyId: reply._id,
+            }),
             /* AnnotationActions.loadAnnotations(), */
           ]),
           catchError((error) =>
@@ -235,6 +239,9 @@ export class AnnotationEffects {
           mergeMap(() => [
             AnnotationActions.deleteAnnotationSuccess(),
             /* AnnotationActions.loadAnnotations(), */
+            NotificationActions.isDeletingAnnotation({
+              annotationId: annotation._id,
+            }),
           ]),
           catchError((error) =>
             of(AnnotationActions.deleteAnnotationFail({ error }))
