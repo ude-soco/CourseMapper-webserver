@@ -92,18 +92,24 @@ export class PdfReplyItemComponent
       const replyId = url.match(/#reply-(.+)/)[1];
       if (replyId === this.reply._id) {
         const elementToScrollTo = document.getElementById(`reply-${replyId}`);
-        elementToScrollTo.scrollIntoView();
+        
         // Scroll to the element
         window.location.hash = '#reply-' + replyId;
+        //elementToScrollTo.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'start' });
+        
+        console.log(" window.location.hash ",  window.location.hash)
+        console.log("i am here ")
+        
         setTimeout(function () {
+          elementToScrollTo.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'start' });
           $(window.location.hash).css(
             'box-shadow',
             '0 0 25px rgba(83, 83, 255, 1)'
           );
           setTimeout(function () {
             $(window.location.hash).css('box-shadow', 'none');
-          }, 5000);
-        }, 100);
+          }, 4000);
+        }, 1000);
       }
     }
   }
