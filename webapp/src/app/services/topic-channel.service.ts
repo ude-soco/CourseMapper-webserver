@@ -93,8 +93,8 @@ export class TopicChannelService {
         tap((res) => {
           if (!('errorMsg' in res)) {
             this.topics.push(res.savedTopic);
-            this.sendTopicToOldBackend(res.savedTopic, course._id);
-            this.onUpdateTopics$.next(this.topics);
+            /*             this.sendTopicToOldBackend(res.savedTopic, course._id);
+            this.onUpdateTopics$.next(this.topics); */
             this.store.dispatch(
               CourseActions.setTopicNotificationSettingsSuccess({
                 updatedDoc: res.updatedNotificationSettings,
@@ -212,7 +212,7 @@ export class TopicChannelService {
                 this.topics[index] = newTopic;
               }
             });
-            this.sendChannelToOldBackend(res.savedChannel);
+            /*             this.sendChannelToOldBackend(res.savedChannel); */
             this.onUpdateTopics$.next(this.topics);
             this.store.dispatch(
               CourseActions.setChannelNotificationSettingsSuccess({

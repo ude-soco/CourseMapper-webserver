@@ -73,7 +73,7 @@ export class VideoMainAnnotationComponent
   videoIsPlaying$: Observable<boolean>;
   videoIsPaused$: Observable<boolean>;
   cursorisInsideVideo: boolean;
-
+  private socketSubscription: Subscription;
   constructor(
     private store: Store<State>,
     private pdfViewService: PdfviewService,
@@ -99,6 +99,9 @@ export class VideoMainAnnotationComponent
 
   ngOnDestroy(): void {
     this.subscriptions.forEach((sub) => sub.unsubscribe());
+    if (this.socketSubscription) {
+      this.socketSubscription.unsubscribe();
+    }
   }
 
   ngOnInit(): void {
@@ -134,23 +137,26 @@ export class VideoMainAnnotationComponent
           this.getVideoUrl();
         }
       });
-    this.socket.on(
-      this.material._id,
-      (payload: {
-        eventType: string;
-        annotation: Annotation;
-        reply: Reply;
-      }) => {
-        this.store.dispatch(
-          AnnotationActions.updateAnnotationsOnSocketEmit({ payload: payload })
-        );
-        this.store.dispatch(
-          CourseActions.updateFollowingAnnotationsOnSocketEmit({
-            payload: payload,
-          })
-        );
-      }
-    );
+    this.socketSubscription = this.socket
+      .fromEvent(this.material._id)
+      .subscribe(
+        (payload: {
+          eventType: string;
+          annotation: Annotation;
+          reply: Reply;
+        }) => {
+          this.store.dispatch(
+            AnnotationActions.updateAnnotationsOnSocketEmit({
+              payload: payload,
+            })
+          );
+          this.store.dispatch(
+            CourseActions.updateFollowingAnnotationsOnSocketEmit({
+              payload: payload,
+            })
+          );
+        }
+      );
     this.subscriptions.push(materialSubscriper);
     if (!this.apiLoaded) {
       const tag = document.createElement('script');

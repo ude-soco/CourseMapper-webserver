@@ -126,6 +126,8 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   cursorMode: string = 'default';
   drawBoxObjectList: RectangleObject[] = [];
   annotations: Annotation[] = [];
+  private socketSubscription: Subscription;
+
   ngOnInit(): void {
     this.store.select(getHideAnnotationValue).subscribe((isHideAnnotations) => {
       this.hideAnnotations(isHideAnnotations);
@@ -137,7 +139,11 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void {
+    if (this.socketSubscription) {
+      this.socketSubscription.unsubscribe();
+    }
+  }
 
   constructor(
     private pdfViewService: PdfviewService,
@@ -198,7 +204,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
     this.isAnnotationCanceled$ = this.store.select(getIsAnnotationCanceled);
     this.isAnnotationPosted$ = this.store.select(getIsAnnotationPosted);
 
-    this.socket.on(
+    /*  this.socket.on(
       this.materialId,
       (payload: {
         eventType: string;
@@ -217,7 +223,27 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
           })
         );
       }
-    );
+    ); */
+    this.socketSubscription = this.socket
+      .fromEvent(this.materialId)
+      .subscribe(
+        (payload: {
+          eventType: string;
+          annotation: Annotation;
+          reply: Reply;
+        }) => {
+          this.store.dispatch(
+            AnnotationActions.updateAnnotationsOnSocketEmit({
+              payload: payload,
+            })
+          );
+          this.store.dispatch(
+            CourseActions.updateFollowingAnnotationsOnSocketEmit({
+              payload: payload,
+            })
+          );
+        }
+      );
   }
 
   ngAfterViewChecked(): void {
