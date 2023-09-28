@@ -11,6 +11,7 @@
 </app-tab-menu>
 
 <div class="flex justify-between items-center">
+  
   <p-multiSelect
     [options]="courseOptions"
     [(ngModel)]="selectedCourses"
@@ -21,7 +22,8 @@
     placeholder="Select Courses"
     defaultLabel="Select Courses"
     [showClear]="true"
-  ></p-multiSelect>
+  >
+</p-multiSelect>
   <span class="p-input-icon-left">
     <i class="pi pi-search"></i>
     <input
@@ -29,7 +31,13 @@
       type="text"
       pInputText
       [(ngModel)]="searchValue"
+      
     />
+    <span class="p-input-icon-right" style="bottom: 6px">
+    <i class="pi pi-times cursor-pointer "  (click)="searchValue = ''"></i>
+  </span>
+     
+   
   </span>
   <div>
     <p-dropdown
