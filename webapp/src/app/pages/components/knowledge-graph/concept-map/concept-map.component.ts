@@ -177,6 +177,7 @@ export class ConceptMapComponent {
   kgTitle: string;
   courseKgActivated: boolean = false;
   materialKgActivated: boolean = false;
+  courseIsEmpty?: boolean = undefined;
 
   tabs = [
     {
@@ -1059,6 +1060,7 @@ export class ConceptMapComponent {
         this.loading.emit(false);
       }
     } else if (this.showCourseKg) {
+      this.courseIsEmpty = undefined;
       //get top-50 concepts for all coures's materials
       try {
         var avgWeight: Number;
@@ -1078,6 +1080,11 @@ export class ConceptMapComponent {
             });
         });
         setTimeout(async () => {
+          this.courseIsEmpty = materialsIds.length === 0;
+          if (this.courseIsEmpty) {
+            return;
+          }
+
           //wait 100 ms before executing next commands to assure recieving materialIDs form previous subscription
           var query = 'MATCH (c:Concept) WHERE (c.mid = "';
           materialsIds.forEach((id, index) => {
