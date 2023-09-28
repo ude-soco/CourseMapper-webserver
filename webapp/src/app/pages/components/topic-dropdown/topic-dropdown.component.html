@@ -138,7 +138,7 @@
               (keyup)="afterTextInsertedChennel(selectedChannel._id, $event)"
               class="cursor-pointer w-full"
             >
-              {{ channel.name }}
+              #{{ channel.name }}
             </p>
             <span
               class="bg-orange-600 text-[white] text-base p-[0.1rem] w-8 text-center rounded-[15px] font-semibold text-[0.8rem]"
@@ -154,13 +154,6 @@
               color="text-black"
               (click)="channelMenuButtonClicked($event, channel)"
             ></app-iconbutton>
-            <!--            <p-menu
-              #menu
-              id="config_menu"
-              [model]="channelsOptions"
-              [popup]="true"
-              appendTo="body"
-            ></p-menu> -->
             <p-overlayPanel #channelMenu styleClass="settingsContextMenu">
               <ng-template pTemplate="content">
                 <app-context-menu
