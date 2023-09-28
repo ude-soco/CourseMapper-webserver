@@ -212,6 +212,8 @@ export class PdfCreateAnnotationComponent
         mentionedUsers: this.mentionedUsers,
       })
     );
+    this.content = null;
+    this.mentionedUsers = [];
 
     this.sendButtonDisabled = true;
   }

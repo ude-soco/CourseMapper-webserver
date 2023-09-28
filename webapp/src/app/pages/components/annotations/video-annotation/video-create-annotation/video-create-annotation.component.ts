@@ -390,6 +390,7 @@ export class VideoCreateAnnotationComponent
     );
     this.content = null;
     this.sendButtonDisabled = true;
+    this.mentionedUsers = [];
   }
 
   cancelCreateAnnotation() {
