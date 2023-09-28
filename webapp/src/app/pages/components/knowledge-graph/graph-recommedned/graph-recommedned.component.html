@@ -24,11 +24,23 @@
     >
     <!-- style="max-width: 35.85%; max-height: 75%" -->
     <p-accordion styleClass="pAccRec" id="accordionComponent">
-      <p-accordionTab header="{{ node_name }}" [selected]="true" id="accordionHeader">
+      <p-accordionTab [selected]="true" id="accordionHeader">
         <div
           class="innerAbstractBlock"
           style="display: inline-block; max-height: 75.5%"
         >
+          <div class="flex items-start justify-between">
+            <h2 class="font-medium leading-tight text-4xl mt-0 mb-2 ml-0.5">
+              {{ node_name }}
+            </h2>
+            <i
+              id="abstractCloseButton"
+              (click)="closeAbstractPanel()"
+              type="button"
+              class="pi pi-times"
+              ></i>
+          </div>
+          <hr style="margin: 0 5px; padding: 0; width: 95%" />
           <div *ngIf="node_abstract">
             <div style="display: inline-block; margin: 2px">
               <div>
