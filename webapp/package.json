@@ -42,7 +42,7 @@
     "@angular/cli": "^16.2.2",
     "@angular/compiler-cli": "^15.2.8",
     "@types/jasmine": "~4.3.6",
-    "@types/jquery": "^3.5.19",
+    "@types/jquery": "^3.5.20",
     "autoprefixer": "^10.4.16",
     "jasmine-core": "~5.1.1",
     "karma": "~6.4.2",
