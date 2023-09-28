@@ -4,10 +4,10 @@
 .img-div {
     position: relative;
     font-family: Arial;
-    margin-left:10rem ; width: 103rem; border-radius:14px;
+     border-radius:14px;
     top: 2rem;
     margin-bottom: 5rem;
-   
+   width: 110%;
    
   }
 .img{
@@ -97,12 +97,12 @@ search-results hr{
 left:1rem;
 width: 22rem;;
 margin: 1REM;
-height: 20rem;
+
     }
     .course-div{
       margin-left:9rem;
          
-      overflow-y: scroll;
+      /* overflow-y: scroll; */
     }
 .wrapper:not(:empty) + .default {
     display: none;

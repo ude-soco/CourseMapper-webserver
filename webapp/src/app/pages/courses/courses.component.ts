@@ -155,10 +155,14 @@ this.courseService.WithdrawFromCourse(course).subscribe(
   (res) => {
    if ('success' in res)
    {
-    this.showInfo('You have been  withdrewed successfully ');
+    this.showInfo('You are successfully un-enrolled from the course ');
   
     this.store.dispatch(CourseAction.setCurrentCourse({ selcetedCourse:course }));
-    this.router.navigate(['course-description', course._id]);
+  
+   
+    setTimeout(() => {
+      this.router.navigate(['course-description', course._id]);
+    }, 850);
    }
    (er) => {
     console.log(er);

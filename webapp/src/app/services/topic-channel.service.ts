@@ -81,7 +81,7 @@ export class TopicChannelService {
         tap((res) => {
           if (!("errorMsg" in res)) {
             this.topics.push(res.savedTopic);
-            this.sendTopicToOldBackend(res.savedTopic, course._id);
+          //  this.sendTopicToOldBackend(res.savedTopic, course._id);
             this.onUpdateTopics$.next(this.topics);
           }
         })
@@ -195,7 +195,7 @@ export class TopicChannelService {
                 this.topics[index] = newTopic;
               }
             });
-            this.sendChannelToOldBackend(res.savedChannel);
+            //this.sendChannelToOldBackend(res.savedChannel);
             this.onUpdateTopics$.next(this.topics);
           }
         })
@@ -273,31 +273,31 @@ export class TopicChannelService {
     return this.selectedTopic;
   }
 
-  sendTopicToOldBackend(topic, courseId) {
-    // userId should be taken from the coockies. for the time being it is hard coded
-    this.http
-      .post<any>("http://localhost:8090/new/topic", {
-        _id: topic._id,
-        topic: topic.name,
-        courseID: courseId,
-        userID: this.user.id,
-      })
-      .subscribe();
-  }
+  // sendTopicToOldBackend(topic, courseId) {
+  //   // userId should be taken from the coockies. for the time being it is hard coded
+  //   this.http
+  //     .post<any>("http://localhost:8090/new/topic", {
+  //       _id: topic._id,
+  //       topic: topic.name,
+  //       courseID: courseId,
+  //       userID: this.user.id,
+  //     })
+  //     .subscribe();
+  // }
 
-  sendChannelToOldBackend(channel) {
-    // userId should be taken from the coockies. for the time being it is hard coded
-    this.http
-      .post<any>("http://localhost:8090/new/channel", {
-        _id: channel._id,
-        courseID: channel.courseId,
-        topicID: channel.topicId,
-        name: channel.name,
-        description: channel.description,
-        userID: this.user.id,
-      })
-      .subscribe();
-  }
+  // sendChannelToOldBackend(channel) {
+  //   // userId should be taken from the coockies. for the time being it is hard coded
+  //   this.http
+  //     .post<any>("http://localhost:8090/new/channel", {
+  //       _id: channel._id,
+  //       courseID: channel.courseId,
+  //       topicID: channel.topicId,
+  //       name: channel.name,
+  //       description: channel.description,
+  //       userID: this.user.id,
+  //     })
+  //     .subscribe();
+  // }
   selectChannel(channel: Channel) {
     // if there is no selected course then no need to update the topics.
     /*if (this.getSelectedCourse()._id && course._id){      

@@ -5,9 +5,10 @@
 left:1rem;
 width: 22rem;;
 margin: 1REM;
-height: 20rem;
+
     }
     .course-div{
-      margin-left:9rem;
-      overflow-y: scroll;
+      top: 2rem;
+      margin-bottom: 5rem;
+     width: 110%;
     }

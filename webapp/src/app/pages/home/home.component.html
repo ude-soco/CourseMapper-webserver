@@ -4,7 +4,7 @@
     <app-sidebar></app-sidebar>
   </div>
 
-<div style="width: 100%;">
+<div class="md:container md:mx-auto">
   <div  *ngIf="this.courses.length == 0">
      
      
@@ -12,14 +12,14 @@
     <p class="text-5xl leading-normal font-bold text-center mt-6">Currently you have no courses enrolled. </p>
     <p class="text-4xl leading-normal text-center mt-6"> <a href="landingPage" style="color: #0277BD;"> Click here</a>  to search for courses to start learning!</p>
   </div>
-  <div *ngIf="this.courses.length > 0">
+  <div class=" md:w-auto" *ngIf="this.courses.length > 0">
   <p  class=" text-5xl leading-normal font-bold text-center mt-6" style="color: #0277BD;"> My Courses  </p>
     <p class="text-4xl leading-normal text-center mt-6">Welcome back!  Pick a course from your list to start learning</p>
 
     
     
     
-    <div  class="course-div cursor-pointer overscroll-y-auto h-1/2" >
+    <div  class=" cursor-pointer overscroll-y-auto h-1/2 flex flex-wrap" >
     <div *ngFor="let course of userArray"  (click)="onSelectCourse(course)">
     
     
@@ -27,7 +27,7 @@
      <p-card  styleClass="p-card-shadow" class="course-card">
         <hr style="margin-bottom: 0.75rem ; margin-top: 0%;">
         <ng-template pTemplate="header">
-            <img alt="Card" src="https://primefaces.org/cdn/primeng/images/usercard.png">
+            <img alt="Card" src="/assets/img/courseCard.png">
         </ng-template>
        
         <ng-template pTemplate="content-center" style="float: left; "> 
