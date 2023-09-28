@@ -198,9 +198,11 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
       getIsAnnotationDialogVisible
     );
 
-    this.store
-      .select(getLoggedInUser)
-      .subscribe((user) => (this.currentUserId = user.id));
+    this.store.select(getLoggedInUser).subscribe((user) => {
+      if (user) {
+        this.currentUserId = user.id;
+      }
+    });
     this.isAnnotationCanceled$ = this.store.select(getIsAnnotationCanceled);
     this.isAnnotationPosted$ = this.store.select(getIsAnnotationPosted);
 
