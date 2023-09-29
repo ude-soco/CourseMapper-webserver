@@ -137,11 +137,11 @@ export class AllNotificationsComponent {
       this.courseFilterUpdated$,
     ]).pipe(
       map(([notifications, selectedCourses]) => {
-        if (selectedCourses.length === 0) {
+        /*         if (selectedCourses.length === 0) {
           return notifications;
         } else if (selectedCourses.length === 1) {
           notifications;
-        }
+        } */
         return notifications.filter((notification) =>
           selectedCourses.includes(notification?.course_id)
         );
