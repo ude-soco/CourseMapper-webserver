@@ -500,6 +500,15 @@ export class NotificationsService {
     let material_id = null;
     let annotation_id = null;
     let reply_id = null;
+    let topic_id = null;
+    if (
+      notification.activityId.statement.object.definition.type ===
+      'http://www.CourseMapper.de/activityType/topic'
+    ) {
+      topic_id = extensions.id;
+    } else if (extensions.topic_id) {
+      topic_id = extensions.topic_id;
+    }
 
     if (
       notification.activityId.statement.object.definition.type ===
@@ -584,7 +593,7 @@ export class NotificationsService {
       isRead: notification.isRead,
       timestamp: notification.activityId.statement.timestamp,
       ...(extensions.course_id && { course_id: extensions.course_id }),
-      ...(extensions.topic_id && { topic_id: extensions.topic_id }),
+      ...((extensions.topic_id || topic_id) && { topic_id }),
       ...((extensions.channel_id || channel_id) && {
         channel_id,
       }),

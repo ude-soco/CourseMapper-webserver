@@ -37,6 +37,8 @@ import { map, tap } from 'rxjs';
 import { getNotifications } from '../notifications/state/notifications.reducer';
 import { Annotation } from 'src/app/models/BlockingNotification';
 import * as $ from 'jquery';
+import * as NotificationActions from '../notifications/state/notifications.actions';
+
 @Component({
   selector: 'app-topic-dropdown',
   templateUrl: './topic-dropdown.component.html',
@@ -501,16 +503,23 @@ export class TopicDropdownComponent implements OnInit {
         if ('success' in res) {
           // this.showInfo(res['success']);
           this.showInfo('Topic successfully deleted!');
-          this.router.navigate([
-            'course',
-            this.courseService.getSelectedCourse()._id,
-          ]);
+          this.store.dispatch(
+            NotificationActions.isDeletingTopic({
+              topicId: this.selectedTopic._id,
+            })
+          );
+
           this.store.dispatch(
             CourseActions.SetSelectedChannel({ selectedChannel: null })
           );
           this.store.dispatch(
             CourseActions.toggleChannelSelected({ channelSelected: false })
           );
+
+          this.router.navigate([
+            'course',
+            this.courseService.getSelectedCourse()._id,
+          ]);
         } else {
           this.showError(res['errorMsg']);
         }
@@ -684,16 +693,21 @@ export class TopicDropdownComponent implements OnInit {
         if ('success' in res) {
           // this.showInfo(res['success']);
           this.showInfo('Channel successfully deleted!');
-          this.router.navigate([
-            'course',
-            this.courseService.getSelectedCourse()._id,
-          ]);
+          this.store.dispatch(
+            NotificationActions.isDeletingChannel({
+              channelId: this.selectedChannel._id,
+            })
+          );
           this.store.dispatch(
             CourseActions.SetSelectedChannel({ selectedChannel: null })
           );
           this.store.dispatch(
             CourseActions.toggleChannelSelected({ channelSelected: false })
           );
+          this.router.navigate([
+            'course',
+            this.courseService.getSelectedCourse()._id,
+          ]);
         } else {
           this.showError(res['errorMsg']);
         }
