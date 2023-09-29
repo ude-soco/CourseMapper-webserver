@@ -1,3 +1,5 @@
+
+
 .confirm-button {
   background-color: lightblue;
   color: white;
@@ -14,3 +16,67 @@
   display: none;
   padding: 5px;
 }
+
+.bell-icon-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.bell-icon{
+  background-color: black;
+  height: 20px;
+  width: 20px;
+  display: block;
+}
+
+
+:host ::ng-deep .p-button:enabled:hover {
+  background: rgb(214 215 223 / 92%);
+  color: #090909;
+  border-color: transparent;
+}
+
+/* :host ::ng-deep .p-button {
+  color: #000000;
+  background: #ffffff;
+  border: 0 none;
+  padding: 0.714rem 1rem;
+  font-size: 1rem;
+  border-radius: 4px;
+}
+ */
+/* .spine-29OFwR, .spineBorder-1-F4s1 {
+  left: 22px;
+  position: absolute;
+} */
+.spineBorder-1-F4s1 {
+/*   background: hsl( 210 calc( 1 *9.3%) 78.8% /1);
+  border-radius: 2px;
+
+  top: 10px;
+  width: 2px; */
+  cursor: pointer;
+}
+.spine-29OFwR {
+  color: hsl( 210 calc( 1 *9.3%) 78.8% /1);
+  margin-right: 5px;
+}
+
+.truncate-text{
+  white-space: nowrap; /* Prevents text from wrapping to the next line */
+  overflow: hidden;    /* Hides the overflowed content */
+  text-overflow: ellipsis; /* Displays an ellipsis (...) at the end of the truncated text */
+  max-width: 19ch;
+}
+
+
+.following-annotation-setting-button{
+  display: none;
+}
+
+.following-annotation-container:hover .following-annotation-setting-button{
+  display : block;
+}
+

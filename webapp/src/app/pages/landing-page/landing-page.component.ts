@@ -21,7 +21,7 @@ import { toggleShowHideAnnotation } from '../components/annotations/pdf-annotati
 export class LandingPageComponent {
   ids: Array<number> = [1, 2, 3];
 
-  courses=[];
+  courses = [];
   i: number;
   value1 = '';
   course1: any;
@@ -38,12 +38,12 @@ export class LandingPageComponent {
 
   firstName: string = '';
   lastName: string = '';
-activateUpdaeCourse:boolean =false;
+  activateUpdaeCourse: boolean = false;
   Users: any;
   user = this.storageService.getUser();
   Moderarors: User;
-  userArray =  [];
-  courseTriggered: boolean=false;
+  userArray = [];
+  courseTriggered: boolean = false;
   constructor(
     private storageService: StorageService,
     private courseService: CourseService,
@@ -56,7 +56,6 @@ activateUpdaeCourse:boolean =false;
     // const user = this.storageService.getUser();
 
     // this.username = user.username;
-    
   }
 
   ngOnInit() {
@@ -66,20 +65,17 @@ activateUpdaeCourse:boolean =false;
       this.myCourses = courses1;
     });
     //console.log(this.userArray.length, "userArray ngOnInit" )
-//this.userArray =  []
-this.getAllCourses();
-   // console.log(this.userArray.length, "userArray ngOnInit after" )
-    
- 
+    //this.userArray =  []
+    this.getAllCourses();
+    // console.log(this.userArray.length, "userArray ngOnInit after" )
   }
 
   getAllCourses() {
     // console.log("getAllCourses triggered")
     // console.log(this.userArray.length, "userArray getAllCourses begining" )
-          this.courseService.GetAllCourses().subscribe({
-
-      next:  (courses) => {
-       //console.log("courseService.GetAllCourses triggered")
+    this.courseService.GetAllCourses().subscribe({
+      next: (courses) => {
+        //console.log("courseService.GetAllCourses triggered")
         this.courses = courses;
 
         for (var course of this.courses) {
@@ -91,49 +87,39 @@ this.getAllCourses();
             (user) => user.role.name === 'moderator'
           );
           //this.userArray =  []
-         
-         // console.log(this.userArray.length, "userArray befre build card")
-        // console.log("buildCardInfo go")
+
+          // console.log(this.userArray.length, "userArray befre build card")
+          // console.log("buildCardInfo go")
           this.buildCardInfo(userModerator.userId, course);
           //console.log(this.userArray.length, "userArray after build card")
-         // this.userArray =  []
+          // this.userArray =  []
         }
-       // this.userArray =  []
-       // console.log(this.userArray, "userArray after build card func" )
-       //console.log(this.courses, "GetAllCourses")
+        // this.userArray =  []
+        // console.log(this.userArray, "userArray after build card func" )
+        //console.log(this.courses, "GetAllCourses")
       },
     });
-    if(this.courseTriggered==false)
-    {
-    this.courseService.onUpdateCourses$.subscribe(
-      {next: (courses1) => {(
-        // this.courses .push(courses1[courses1.length-1]),
-       
-        
-        // console.log(this.userArray, "userArray onUpdateCourses" ),
-        
-        // console.log(this.courses, "after"),  
-       // this.courses = courses1,
-       this.courseTriggered=true,
-        this.ngOnInit()
-        
-        )}
-      
-    } 
-    
-    );
-  }
-  
-}
+    if (this.courseTriggered == false) {
+      this.courseService.onUpdateCourses$.subscribe({
+        next: (courses1) => {
+          // this.courses .push(courses1[courses1.length-1]),
 
+          // console.log(this.userArray, "userArray onUpdateCourses" ),
+
+          // console.log(this.courses, "after"),
+          // this.courses = courses1,
+          (this.courseTriggered = true), this.ngOnInit();
+        },
+      });
+    }
+  }
 
   buildCardInfo(userModeratorID: string, course: Course) {
-   // console.log("buildCardInfo triggered")
+    // console.log("buildCardInfo triggered")
     //this.userArray.length=0
-    this.userArray =  []
+    this.userArray = [];
     //console.log(this.userArray, "userArray inside build card func" )
     this.userService.GetUserName(userModeratorID).subscribe((user) => {
-     
       this.firstName = user.firstname;
       this.lastName = user.lastname;
 
@@ -147,59 +133,53 @@ this.getAllCourses();
         createdAt: this.createdAt,
         firstName: this.firstName,
         lastName: this.lastName,
-        description:course.description
+        description: course.description,
       };
       this.userArray.push(ingoPush);
-      
-     
-      
     });
-   // console.log(this.userArray, "userArray")
-   this.userArray =  []
-   // console.log(this.userArray, "userArray end of building card func" )
-    
+    // console.log(this.userArray, "userArray")
+    this.userArray = [];
+    // console.log(this.userArray, "userArray end of building card func" )
   }
   //   Search(){
 
   //  this.updatedCourses = this.courses.find(obj => obj.name === this.value1);
   //   //updatedCourses=coursesList
   //     //this.hideImg=true
-  //     console.log(this.updatedCourses);
+  //
 
   //   }
   onSelectCourse(selcetedCourse: any) {
-
     // let selcetedCourse = this.courses.find(
     //   (course) => course._id == selcetedCourseId
     // );
 
     if (this.loggedInUser) {
-
-let varcc = this.myCourses.find(
-  (course) => selcetedCourse.id === course._id
-);
+      let varcc = this.myCourses.find(
+        (course) => selcetedCourse.id === course._id
+      );
 
       //  if(this.user.role.name==='admin')
       //  {
       //   let adminCourse = this.courses.find(
       //     (course) => selcetedCourse.id === course._id
       //    );
-        
+
       //      this.Enrolled = true;
       //      console.log(selcetedCourse, 'selcetedCourse.id landingpage admin role')
       //    this.router.navigate(['course', selcetedCourse.id]);
-        
 
       //  }
-      
-        if(varcc ) {
+
+      if (varcc) {
         this.Enrolled = true;
-        
+
         this.router.navigate(['course', selcetedCourse.id]);
-      }
-       else  {
+      } else {
         this.Enrolled = false;
-        this.store.dispatch(CourseAction.setCurrentCourse({ selcetedCourse: selcetedCourse }));
+        this.store.dispatch(
+          CourseAction.setCurrentCourse({ selcetedCourse: selcetedCourse })
+        );
         this.store.dispatch(
           CourseAction.setCourseId({ courseId: selcetedCourse.id })
         );
@@ -207,10 +187,10 @@ let varcc = this.myCourses.find(
 
         //console.log(selcetedCourse)
       }
-
-    } 
-    else {
-      this.store.dispatch(CourseAction.setCurrentCourse({ selcetedCourse: selcetedCourse }));
+    } else {
+      this.store.dispatch(
+        CourseAction.setCurrentCourse({ selcetedCourse: selcetedCourse })
+      );
       this.store.dispatch(
         CourseAction.setCourseId({ courseId: selcetedCourse.id })
       );

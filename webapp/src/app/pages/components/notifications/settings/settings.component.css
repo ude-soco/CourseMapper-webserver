@@ -1,0 +1,19 @@
+.sidebar-container{
+  position: absolute;
+  left: 0;
+  height: 100%;
+}
+
+:host ::ng-deep .p-button.p-button-success {
+  background: #0369a1;
+}
+
+
+:host ::ng-deep .p-button.p-button-success:enabled:hover, .p-buttonset.p-button-success > .p-button:enabled:hover, .p-splitbutton.p-button-success > .p-button:enabled:hover {
+  background: #045582;
+  color: #ffffff;
+  border-color: transparent;
+}
+
+
+

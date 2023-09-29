@@ -2,23 +2,14 @@
   <div
     class="flex flex-wrap justify-between content-center items-center px-4 h-16 bg-white text-white shadow-lg"
   >
-  <a [routerLink]="[LandingPage]"> 
-    <img src="../../../assets/logo.svg" alt="logo" class="w-72"/></a>
+    <a [routerLink]="[LandingPage]">
+      <img src="../../../assets/logo.svg" alt="logo" class="w-72"
+    /></a>
     <div class="flex flex-wrap my-1">
-    <!-- <button
-      pButton
-      [ngStyle]="{
-        
-        backgroundColor: 'white',
-        color: '#0277BD',
-        marginRight: '8px'
-      }"
-      type="button"
-      label="Privacy"
-      (click)="privacy()"
-    ></button>  -->
-      
-     
+      <app-notification-bell
+        *ngIf="loggedInUser$ | async"
+      ></app-notification-bell>
+
       <span *ngIf="!this.storageService.loggedIn">
         <button
           pButton
@@ -32,7 +23,7 @@
           label="Login"
           (click)="handleLogin()"
         ></button>
-       
+
         <button
           pButton
           [ngStyle]="{ backgroundColor: '#EA580C' }"
@@ -57,34 +48,41 @@
         ></button>
 
         <p-avatar
-          label="{{getIntitials(loggedInUser?.name)}}"
+          label="{{ getIntitials(loggedInUser?.name) }}"
           shape="circle"
           size="large"
-          [style]="{ 'background-color': '#EA580C', color: '#ffffff', cursor: 'pointer' }"
+          [style]="{
+            'background-color': '#EA580C',
+            color: '#ffffff',
+            cursor: 'pointer'
+          }"
           (click)="op.toggle($event)"
         ></p-avatar>
-        <p-overlayPanel #op [style]="{width: '400px'}">
+        <p-overlayPanel #op [style]="{ width: '400px' }">
           <ng-template pTemplate>
-              <div class="flex-col">
-                <div class="font-medium text-2xl w-full">
-                  {{loggedInUser.name}}
+            <div class="flex-col">
+              <div class="font-medium text-2xl w-full">
+                {{ loggedInUser.name }}
+              </div>
+              <div class="flex flex-row w-full">
+                <div
+                  class="text-blue-500 dark:text-blue-500 hover:underline mt-2 mr-2"
+                >
+                  {{ loggedInUser.id }}
                 </div>
-                <div class="flex flex-row w-full">
-                  <div class=" text-blue-500 dark:text-blue-500 hover:underline mt-2 mr-2">
-                    {{loggedInUser.id}}
-                  </div>
-                  <div class="flex w-full">
-                    <app-iconbutton
+                <div class="flex w-full">
+                  <app-iconbutton
                     icon="bx-copy"
                     color="text-black"
                     (onClick)="copyUserId(loggedInUser.id)"
-                    pTooltip="Copy" tooltipPosition="top"
+                    pTooltip="Copy"
+                    tooltipPosition="top"
                   ></app-iconbutton>
-                  </div>
                 </div>
               </div>
+            </div>
           </ng-template>
-      </p-overlayPanel>
+        </p-overlayPanel>
       </span>
     </div>
   </div>

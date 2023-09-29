@@ -52,12 +52,20 @@ module.exports = function (app) {
     [authJwt.verifyToken],
     controller.reorderIndicators
   );
-  app.get("/api/users",  controller.getAllUsers);
+  app.get("/api/users", controller.getAllUsers);
+
+  app.get("/api/users/:userId", controller.getUser);
 
   app.get(
-    "/api/users/:userId",
-    
-    controller.getUser
+    "/api/user/lastTimeCourseMapperOpened",
+    [authJwt.verifyToken],
+    controller.getLastTimeCourseMapperOpened
+  );
+
+  app.put(
+    "/api/user/lastTimeCourseMapperOpened",
+    [authJwt.verifyToken],
+    controller.updateLastTimeCourseMapperOpened
   );
 
   app.get(

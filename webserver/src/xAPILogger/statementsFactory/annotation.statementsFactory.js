@@ -837,3 +837,51 @@ export const getCommentEditStatement = (
     },
   };
 };
+
+export const getNewMentionCreationStatement = (user, annotation, origin) => {
+  let userId = user._id.toString();
+  const fullname = `${user.firstname} ${user.lastname}`;
+  return {
+    id: uuidv4(),
+    timestamp: new Date(),
+    actor: {
+      objectType: "Agent",
+      name: userId,
+      account: {
+        homePage: origin,
+        name: userId,
+      },
+    },
+    verb: {
+      id: "http://id.tincanapi.com/verb/mentioned",
+      display: {
+        "en-US": "mentioned",
+      },
+    },
+    object: {
+      objectType: "User",
+
+      definition: {
+        type: "http://www.CourseMapper.de/activityType/you",
+        name: {
+          "en-US": "",
+        },
+        extensions: {
+          "http://www.CourseMapper.de/extensions/annotation": {
+            id: annotation._id,
+            material_id: annotation.materialId,
+            channel_id: annotation.channelId,
+            topic_id: annotation.topicId,
+            course_id: annotation.courseId,
+            content: annotation.content,
+          },
+        },
+      },
+    },
+
+    context: {
+      platform: "CourseMapper",
+      language: "en-US",
+    },
+  };
+};

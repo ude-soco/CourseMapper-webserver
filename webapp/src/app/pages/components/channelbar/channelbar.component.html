@@ -9,7 +9,7 @@
       *ngIf="selectedCourse._id"
     >
       <div class="h-max m-0 flex flex-col bg-gray-100">
-        <div class="flex items-start justify-between py-4 pl-3 bg-gray-200">
+        <div class="flex justify-between py-4 pl-3 bg-gray-200">
           <p
             id="{{ selectedCourse._id }}"
             (keydown)="onTextInserted(selectedCourse._id, $event)"
@@ -17,7 +17,14 @@
             class="flex w-56 text-xl font-semibold"
             #selectedCourse._id
           >
-            {{ selectedCourse.name }}
+            <span class="mr-4">
+              {{ selectedCourse.name }}
+            </span>
+            <!-- <span
+              *ngIf="(numOfUnreadNotificationsInSelectedCourse$ | async) > 0"
+              class="bg-orange-600 text-[white] text-base p-[0.1rem] w-[1.7rem] text-center rounded-[15px]"
+              >{{ numOfUnreadNotificationsInSelectedCourse$ | async }}</span
+            > -->
           </p>
 
           <p-menu
@@ -28,17 +35,28 @@
             appendTo="body"
           ></p-menu>
           <app-iconbutton
-            icon="bx-network-chart" 
+            icon="bx-network-chart"
             color="text-orange-500"
             (click)="onConceptMapButtonClicked(true)"
             pTooltip="View course knowledge graph"
             ></app-iconbutton>
-          <app-iconbutton *ngIf="showModeratorPrivileges"
+          <app-iconbutton
             icon="bx-dots-vertical-rounded"
             color="text-black"
             (click)="menu.toggle($event)"
           ></app-iconbutton>
         </div>
+
+        <p-menu
+          #menu
+          id="config_menu"
+          [model]="
+            showModeratorPrivileges ? moderatorUserOptions : normalUserOptions
+          "
+          [popup]="true"
+          appendTo="body"
+          styleClass="course-context-menu"
+        ></p-menu>
 
         <app-topic-dropdown
           [showModeratorPrivileges]="showModeratorPrivileges"
@@ -76,3 +94,8 @@
     </app-concept-map>
   </div>
 </div>
+
+<p-overlayPanel #notificationSettingsPanel>
+  <ng-template pTemplate="content"> HEYYYYY </ng-template>
+</p-overlayPanel>
+```

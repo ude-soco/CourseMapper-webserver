@@ -1,0 +1,122 @@
+/*
+.filter-container{
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: 2rem 1rem 1rem 1rem;
+}
+:host ::ng-deep .p-multiselect,
+:host ::ng-deep .p-dropdown{
+  flex-grow: 1;
+  max-width: 400px;
+  min-width:300px;
+}
+
+:host ::ng-deep .p-multiselect-panel .p-multiselect-header {
+  padding: 0.25rem 1rem 0 1rem;
+}
+
+:host ::ng-deep .p-multiselect-panel .p-multiselect-header .p-multiselect-close{
+  width: 1rem;
+}
+
+:host ::ng-deep .p-multiselect-panel .p-multiselect-header .p-multiselect-filter-container .p-inputtext {
+  padding-right: 0rem;
+}
+
+:host ::ng-deep .p-multiselect-panel .p-multiselect-header .p-multiselect-filter-container .p-inputtext {
+  height: 2rem;
+}
+
+h2{
+  text-align: center;
+  font-size: 2rem;
+  margin: 1rem;
+}
+
+
+ */
+ :host{
+    display: block;
+    margin: 0 auto;
+    width: 900px;
+ }
+
+
+:host ::ng-deep.p-checkbox .p-checkbox-box.p-highlight{
+  border-color: #0369a1 ;
+  background: #0369a1;
+}
+
+
+
+:host ::ng-deep p-multiselect.p-multiselect-clearable .p-multiselect-label-container {
+  padding-right: 2rem;
+  height: 45px;
+  display: flex;
+  align-items: center;
+}
+
+:host ::ng-deep .p-multiselect{
+  width: 250px;
+}
+
+:host ::ng-deep .p-input-icon-left > .p-inputtext {
+  padding-left: 3rem;
+  height:  57px;
+}
+
+:host ::ng-deep .p-multiselect-panel .p-multiselect-header .p-multiselect-close {
+  display: none;
+}
+
+:host ::ng-deep .p-dropdown .p-inputtext {
+  height: 57px;
+  /* text-align: center; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 0 none;
+}
+
+:host ::ng-deep.p-checkbox:not(.p-checkbox-disabled) .p-checkbox-box.p-highlight:hover  {
+ border-color: #ea580c;
+ background: #ea580c;
+ color: #ffffff!;
+}
+
+.notification-unread{
+  background-color: #f0f8ff;
+}
+
+.notification-read{
+  background-color: #ffffff;
+}
+
+.notification-unread, .notification-read{
+  display: flex;
+  padding-left: 1rem;
+  width: 100%;
+ }
+
+ .notification:hover, .notification-read:hover{
+    box-shadow: inset 1px 0 0 #dadce0,inset -1px 0 0 #dadce0,0 1px 2px 0 rgba(60,64,67,.3),0 1px 3px 1px rgba(60,64,67,.15);
+
+};
+
+.container{
+  max-width: 740px;
+}
+
+.sidebar-container{
+  position: absolute;
+  left: 0;
+  height: 100%;
+}
+
+
+.highlight {
+  background-color: yellow;
+  font-weight: bold;
+}
+

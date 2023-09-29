@@ -15,7 +15,6 @@ export const healthz = (req, res) => {
 };
 
 export const generteTestdata = async (req, res, next) => {
-  console.log("generate Data");
   const userId = req.userId;
   const courseName = "Course_Test_" + req.params.courseNr;
   const topicName = "Topic Test " + req.params.courseNr;
@@ -59,10 +58,8 @@ export const generteTestdata = async (req, res, next) => {
 
   let course = await newCourse(courseName, courseName, userId);
   if (course) {
-    console.log("course", course);
     let topic = await newTopic(course._id, topicName, userId);
     if (topic) {
-      console.log("topic", topic);
       let channel = await newChannel(
         topic._id,
         channelName,
@@ -70,7 +67,6 @@ export const generteTestdata = async (req, res, next) => {
         userId
       );
       if (channel) {
-        console.log("channel", channel);
         let pdf = await newMaterial(
           course._id,
           channel._id,
@@ -91,8 +87,6 @@ export const generteTestdata = async (req, res, next) => {
         );
 
         if (pdf && vid) {
-          console.log("vid", vid);
-          console.log("pdf", pdf);
           let annotation = await newAnnotation(
             course._id,
             pdf._id,
@@ -103,7 +97,6 @@ export const generteTestdata = async (req, res, next) => {
             tool
           );
           if (annotation) {
-            console.log("annotation", annotation);
             let reply = await newReply(
               course._id,
               annotation._id,
@@ -112,7 +105,6 @@ export const generteTestdata = async (req, res, next) => {
             );
 
             if (reply) {
-              console.log("reply", reply);
               for (let i = 0; i < 700; i++) {
                 const username = userPrefix + i;
                 let user = await createUser(
@@ -122,28 +114,21 @@ export const generteTestdata = async (req, res, next) => {
                   username + "@" + courseName + ".de"
                 );
                 if (user) {
-                  console.log(`"${user.username}","hashedPassword"`);
                   await enrolCourse(course._id, user._id);
                 }
               }
               res.send({});
             } else {
-              console.log("reply problem");
             }
           } else {
-            console.log("annotation problem");
           }
         } else {
-          console.log("material problem");
         }
       } else {
-        console.log("channel problem");
       }
     } else {
-      console.log("topic problem");
     }
   } else {
-    console.log("course problem");
   }
 };
 
@@ -161,13 +146,10 @@ export const newCourse = async (courseName, courseDesc, userId) => {
   let foundCourse;
   try {
     foundCourse = await Course.findOne({ name: courseName });
-    console.log(foundCourse);
     if (foundCourse) {
-      console.log("course found");
       return false;
     }
   } catch (err) {
-    console.log(err);
     return false;
   }
 
@@ -232,7 +214,6 @@ export const enrolCourse = async (courseId, userId) => {
       return false;
     }
   } catch (err) {
-    console.log(err);
     return false;
   }
 
@@ -243,7 +224,6 @@ export const enrolCourse = async (courseId, userId) => {
       return false;
     }
   } catch (err) {
-    console.log(err);
     return false;
   }
 
@@ -256,7 +236,6 @@ export const enrolCourse = async (courseId, userId) => {
     try {
       role = await Role.findOne({ name: "moderator" });
     } catch (err) {
-      console.log(err);
       return false;
     }
 
@@ -268,7 +247,6 @@ export const enrolCourse = async (courseId, userId) => {
     try {
       await foundUser.save();
     } catch (err) {
-      console.log(err);
       return false;
     }
 
@@ -280,7 +258,6 @@ export const enrolCourse = async (courseId, userId) => {
     try {
       await foundCourse.save();
     } catch (err) {
-      console.log(err);
       return false;
     }
     return true;
@@ -323,8 +300,6 @@ export const newTopic = async (courseId, topicName, userId) => {
       return false;
     }
   } catch (err) {
-    console.log(err);
-
     return false;
   }
 
@@ -340,8 +315,6 @@ export const newTopic = async (courseId, topicName, userId) => {
   try {
     savedTopic = await topic.save();
   } catch (err) {
-    console.log(err);
-
     return false;
   }
 
@@ -350,8 +323,6 @@ export const newTopic = async (courseId, topicName, userId) => {
   try {
     await foundCourse.save();
   } catch (err) {
-    console.log(err);
-
     return false;
   }
 
@@ -366,7 +337,6 @@ export const newChannel = async (topicId, channelName, channelDesc, userId) => {
       return false;
     }
   } catch (err) {
-    console.log(err);
     return false;
   }
 
@@ -384,7 +354,6 @@ export const newChannel = async (topicId, channelName, channelDesc, userId) => {
   try {
     savedChannel = await channel.save();
   } catch (err) {
-    console.log(err);
     return false;
   }
 
@@ -394,7 +363,6 @@ export const newChannel = async (topicId, channelName, channelDesc, userId) => {
   try {
     savedTopic = await foundTopic.save();
   } catch (err) {
-    console.log(err);
     return false;
   }
 
@@ -402,7 +370,6 @@ export const newChannel = async (topicId, channelName, channelDesc, userId) => {
   try {
     updateCourse = await Course.findOne({ _id: savedTopic.courseId });
   } catch (err) {
-    console.log(err);
     return false;
   }
 
@@ -410,7 +377,6 @@ export const newChannel = async (topicId, channelName, channelDesc, userId) => {
   try {
     await updateCourse.save();
   } catch (err) {
-    console.log(err);
     return false;
   }
 
@@ -436,8 +402,6 @@ export const newMaterial = async (
       return false;
     }
   } catch (err) {
-    console.log(err);
-
     return false;
   }
 
@@ -458,7 +422,6 @@ export const newMaterial = async (
   try {
     savedMaterial = await material.save();
   } catch (err) {
-    console.log(err);
     return false;
   }
 
@@ -466,7 +429,6 @@ export const newMaterial = async (
   try {
     await foundChannel.save();
   } catch (err) {
-    console.log(err);
     return false;
   }
 
@@ -492,7 +454,6 @@ export const newAnnotation = async (
       return false;
     }
   } catch (err) {
-    console.log(err);
     return false;
   }
 
@@ -500,7 +461,6 @@ export const newAnnotation = async (
   try {
     foundUser = await User.findById({ _id: userId });
   } catch (err) {
-    console.log(err);
     return false;
   }
 
@@ -527,7 +487,6 @@ export const newAnnotation = async (
   try {
     newAnnotation = await annotation.save();
   } catch (err) {
-    console.log(err);
     return false;
   }
 
@@ -536,7 +495,6 @@ export const newAnnotation = async (
   try {
     await foundMaterial.save();
   } catch (err) {
-    console.log(err);
     return false;
   }
 
@@ -562,7 +520,6 @@ export const newAnnotation = async (
     try {
       await Tag.insertMany(foundTagsSchema);
     } catch (err) {
-      console.log(err);
       return false;
     }
   }
@@ -584,7 +541,6 @@ export const newReply = async (
       return false;
     }
   } catch (error) {
-    console.log(err);
     return false;
   }
 
@@ -598,7 +554,6 @@ export const newReply = async (
       return false;
     }
   } catch (err) {
-    console.log(err);
     return false;
   }
 
@@ -606,7 +561,6 @@ export const newReply = async (
   try {
     foundUser = await User.findOne({ _id: userId });
   } catch (err) {
-    console.log(err);
     return false;
   }
 
@@ -631,7 +585,6 @@ export const newReply = async (
   try {
     newReply = await reply.save();
   } catch (err) {
-    console.log(err);
     return false;
   }
 
@@ -640,7 +593,6 @@ export const newReply = async (
   try {
     await foundAnnotation.save();
   } catch (err) {
-    console.log(err);
     return false;
   }
 
@@ -666,7 +618,6 @@ export const newReply = async (
     try {
       await Tag.insertMany(foundTagsSchema);
     } catch (err) {
-      console.log(err);
       return false;
     }
   }

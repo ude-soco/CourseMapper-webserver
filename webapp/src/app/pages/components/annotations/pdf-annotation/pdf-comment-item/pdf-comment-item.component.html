@@ -69,14 +69,61 @@
           {{ printTime(VideoAnnotationLocation[0]) }} -
           {{ printTime(VideoAnnotationLocation[1]) }}
         </h1>
-        <div *ngIf="this.loggedInUser?.id == this.annotation?.author?.userId">
-          <p-menu
+        <div>
+          <p-overlayPanel #menu styleClass="settingsContextMenu">
+            <ng-template pTemplate="content">
+              <div class="settings-context-menu-container">
+                <p-button
+                  *ngIf="
+                    this.loggedInUser?.id == this.annotation?.author?.userId
+                  "
+                  label="Edit"
+                  icon="pi pi-pencil"
+                  styleClass="contextMenuButton"
+                  (onClick)="onEditAnnotation()"
+                  [disabled]="
+                    this.loggedInUser?.id !== this.annotation?.author?.userId &&
+                    !this.isEditing
+                  "
+                ></p-button>
+                <p-button
+                  *ngIf="
+                    this.loggedInUser?.id == this.annotation?.author?.userId
+                  "
+                  label="Delete"
+                  icon="pi pi-times"
+                  styleClass="contextMenuButton"
+                  (onClick)="onDeleteAnnotation()"
+                  [disabled]="
+                    this.loggedInUser?.id !== this.annotation?.author?.userId &&
+                    !this.isEditing
+                  "
+                ></p-button>
+                <p-button
+                  *ngIf="isAnnotationBeingFollowed$ | async"
+                  label="Unfollow Annotation"
+                  styleClass="contextMenuButton"
+                  (onClick)="onUnfollowAnnotationClicked()"
+                >
+                </p-button>
+                <p-button
+                  *ngIf="!(isAnnotationBeingFollowed$ | async)"
+                  label="Follow Annotation"
+                  styleClass="contextMenuButton"
+                  (onClick)="onFollowAnnotationClicked()"
+                >
+                </p-button>
+              </div>
+            </ng-template>
+          </p-overlayPanel>
+          <!--           <p-menu
             #menu
             id="config_menu"
             [model]="annotationOptions"
             [popup]="true"
             appendTo="body"
-          ></p-menu>
+          ></p-menu> -->
+
           <app-iconbutton
             icon="bx-dots-vertical-rounded"
             color="text-black"
@@ -156,22 +203,37 @@
     </div>
     <div class="flex flex-col">
       <app-pdf-reply-panel [annotation]="annotation"></app-pdf-reply-panel>
-      <div class="flex flex-row space-x-3 mx-7 my-2">
-        <input
-          type="text"
-          placeholder="Reply"
-          [(ngModel)]="replyContent"
-          (ngModelChange)="onReplyContentChange()"
-          class="p-inputtext-sm w-11/12 h-2/3"
-          pInputText
-        />
-        <app-iconbutton
-          icon="bx-send"
-          color="text-slate-500"
-          class="mt-3 flex-1 justify-end"
-          (onClick)="sendReply()"
-          [disabled]="sendButtonDisabled"
-        ></app-iconbutton>
+      <div class="input-container">
+        <div class="flex flex-row space-x-3 mx-7 my-2">
+          <input
+            type="text"
+            placeholder="Reply"
+            (input)="onReplyContentChange($event)"
+            class="p-inputtext-sm w-11/12 h-2/3"
+            [mention]="filteredUserNames$ | async"
+            [mentionConfig]="{
+              triggerChar: '@',
+              labelKey: 'name',
+              allowSpace: true
+            }"
+            (searchTerm)="searchUserNames($event)"
+            [mentionListTemplate]="mentionListTemplate"
+            (itemSelected)="selectName($event)"
+            pInputText
+          />
+          <ng-template #mentionListTemplate let-item="item">
+            <span class="cursor-pointer"
+              >{{ item.name }} ({{ item.email }})</span
+            >
+          </ng-template>
+          <app-iconbutton
+            icon="bx-send"
+            color="text-slate-500"
+            class="mt-3 flex-1 justify-end"
+            (onClick)="sendReply()"
+            [disabled]="sendButtonDisabled"
+          ></app-iconbutton>
+        </div>
       </div>
     </div>
   </div>

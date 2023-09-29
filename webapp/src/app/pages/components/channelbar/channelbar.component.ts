@@ -1,31 +1,37 @@
-import { TopicChannelService } from '../../../services/topic-channel.service';
 import { CourseService } from '../../../services/course.service';
-import { Component, EventEmitter, OnInit, HostListener, Renderer2, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  OnInit,
+  HostListener,
+  Renderer2,
+  ViewChild,
+  Output,
+} from '@angular/core';
 import { Course } from 'src/app/models/Course';
 import { CourseImp } from 'src/app/models/CourseImp';
 import { Channel } from 'src/app/models/Channel';
-import { Topic } from 'src/app/models/Topic';
 import { MenuItem } from 'primeng/api';
 import { environment } from 'src/environments/environment';
-import { catchError, of } from 'rxjs';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { ActivatedRoute, Router } from '@angular/router';
 import { State } from 'src/app/state/app.state';
 import { Store } from '@ngrx/store';
-import * as AppActions from 'src/app/state/app.actions'
+import * as AppActions from 'src/app/state/app.actions';
 import { ModeratorPrivilegesService } from 'src/app/services/moderator-privileges.service';
-import * as  MaterialActions from 'src/app/pages/components/materials/state/materials.actions'
-import * as  CourseActions from 'src/app/pages/courses/state/course.actions'
-import { getSelectedChannel, getTagsForChannel } from '../../courses/state/course.reducer';
-import { Tag } from 'src/app/models/Tag';
+import * as CourseActions from 'src/app/pages/courses/state/course.actions';
 import { StorageService } from 'src/app/services/storage.service';
 import { MaterialKgOrderedService } from 'src/app/services/material-kg-ordered.service';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { CourseLevelNotificationSettingsComponent } from 'src/app/components/course-level-notification-settings/course-level-notification-settings.component';
+import { getNotifications } from '../notifications/state/notifications.reducer';
+import { Observable, map } from 'rxjs';
 
 @Component({
   selector: 'app-channelbar',
   templateUrl: './channelbar.component.html',
-  styleUrls: ['./channelbar.component.css'],
-  providers: [MessageService,ConfirmationService,],
+  styleUrls: ['./channelbar.component.scss'],
+  providers: [MessageService, ConfirmationService, DialogService],
 })
 export class ChannelbarComponent implements OnInit {
   showConceptMapEvent: boolean = false;
@@ -46,37 +52,52 @@ export class ChannelbarComponent implements OnInit {
     private renderer: Renderer2,
     private storageService: StorageService,
     private materialKgService: MaterialKgOrderedService,
+    private dialogService: DialogService,
   ) {
-      this.route.params.subscribe(params => {
-        
-      if(params['courseID']){
-//         if(this.user.role.name==='admin')
-//         {
-          
-//           this.courseService.GetAllCourses().subscribe((courses) => {
-//             this.selectedCourse = courses.find((course) => course._id == params['courseID']);
-//             this.courseService.selectCourse(this.selectedCourse);
-//             console.log(this.selectedCourse,"this.selectedCourse admin channel bar")
-//             this.store.dispatch(AppActions.toggleCourseSelected({courseSelected: true}));
-//             this.store.dispatch(CourseActions.setCurrentCourse({selcetedCourse: this.selectedCourse}));
-//             this.store.dispatch(CourseActions.toggleChannelSelected({ channelSelected: false }));
-//             this.store.dispatch(CourseActions.SetSelectedChannel({ selectedChannel: null }));
-//             console.log(params['courseID'], "params['courseID'] admin channel bar")
-//           });
-//         }
-// else{
-  this.courseService.fetchCourses().subscribe((courses) => {
-    this.selectedCourse = courses.find((course) => course._id == params['courseID']);
-    this.courseService.selectCourse(this.selectedCourse);
-    
-    this.store.dispatch(AppActions.toggleCourseSelected({courseSelected: true}));
-    this.store.dispatch(CourseActions.setCurrentCourse({selcetedCourse: this.selectedCourse}));
-    this.store.dispatch(CourseActions.toggleChannelSelected({ channelSelected: false }));
-    this.store.dispatch(CourseActions.SetSelectedChannel({ selectedChannel: null }));
-  });
-//}
+    this.route.params.subscribe((params) => {
+      if (params['courseID']) {
+        //         if(this.user.role.name==='admin')
+        //         {
+
+        //           this.courseService.GetAllCourses().subscribe((courses) => {
+        //             this.selectedCourse = courses.find((course) => course._id == params['courseID']);
+        //             this.courseService.selectCourse(this.selectedCourse);
+        //             console.log(this.selectedCourse,"this.selectedCourse admin channel bar")
+        //             this.store.dispatch(AppActions.toggleCourseSelected({courseSelected: true}));
+        //             this.store.dispatch(CourseActions.setCurrentCourse({selcetedCourse: this.selectedCourse}));
+        //             this.store.dispatch(CourseActions.toggleChannelSelected({ channelSelected: false }));
+        //             this.store.dispatch(CourseActions.SetSelectedChannel({ selectedChannel: null }));
+        //             console.log(params['courseID'], "params['courseID'] admin channel bar")
+        //           });
+        //         }
+        // else{
+        this.courseService.fetchCourses().subscribe((courses) => {
+          this.selectedCourse = courses.find(
+            (course) => course._id == params['courseID']
+          );
+          this.courseService.selectCourse(this.selectedCourse);
+
+          this.store.dispatch(
+            AppActions.toggleCourseSelected({ courseSelected: true })
+          );
+          this.store.dispatch(
+            CourseActions.setCurrentCourse({
+              selcetedCourse: this.selectedCourse,
+            })
+          );
+          this.store.dispatch(
+            CourseActions.setCourseId({ courseId: this.selectedCourse._id })
+          );
+          this.store.dispatch(
+            CourseActions.toggleChannelSelected({ channelSelected: false })
+          );
+          this.store.dispatch(
+            CourseActions.SetSelectedChannel({ selectedChannel: null })
+          );
+        });
+        //}
       }
-    })
+    });
   }
 
   private API_URL = environment.API_URL;
@@ -88,10 +109,10 @@ export class ChannelbarComponent implements OnInit {
   previousCourse: Course = new CourseImp('', '');
   insertedText: string = '';
   selectedId: string = '';
-  showModeratorPrivileges=false;
+  showModeratorPrivileges = false;
   selectedChannel: Channel;
-   user = this.storageService.getUser();
-  options: MenuItem[] = [
+  user = this.storageService.getUser();
+  moderatorUserOptions: MenuItem[] = [
     {
       label: 'Rename',
       icon: 'pi pi-refresh',
@@ -101,28 +122,82 @@ export class ChannelbarComponent implements OnInit {
       label: 'Delete',
       icon: 'pi pi-times',
       command: () => this.onDeleteCourse(),
-    }
+    },
+    {
+      label: 'Notification Settings',
+      icon: 'pi pi-bell',
+      command: ($event) => this.onNotificationSettingsClicked($event),
+    },
   ];
 
-  ngOnInit(): void {
-      this.selectedCourse = this.courseService.getSelectedCourse();
-      
+  normalUserOptions: MenuItem[] = [
+    {
+      label: 'Notification Settings',
+      icon: 'pi pi-bell',
+      command: ($event) => this.onNotificationSettingsClicked($event),
+    },
+  ];
+  /*   @ViewChild('notificationSettingsPanel') notificationSettingsPanel: any; */
+  ref: DynamicDialogRef | undefined;
+  numOfUnreadNotificationsInSelectedCourse$: Observable<number>;
 
-      //3
-      this.courseService.onSelectCourse.subscribe((course) => {
-        this.selectedCourse = course;
-        
-        if(this.selectedCourse.role==='moderator' || this.user.role.name==='admin'){
-          this.moderatorPrivilegesService.showModeratorPrivileges=true
-          this.showModeratorPrivileges=true
-          this.moderatorPrivilegesService.setPrivilegesValue(this.showModeratorPrivileges)
-        }else{
-          this.moderatorPrivilegesService.showModeratorPrivileges=false
-          this.showModeratorPrivileges=false
-          this.moderatorPrivilegesService.setPrivilegesValue(this.showModeratorPrivileges)
-        }
-      });
-      
+  ngOnInit(): void {
+    this.selectedCourse = this.courseService.getSelectedCourse();
+    this.numOfUnreadNotificationsInSelectedCourse$ = this.store
+      .select(getNotifications)
+      .pipe(
+        map((notifications) => {
+          return notifications.filter((notification) => {
+            return (
+              notification.course_id === this.selectedCourse._id &&
+              !notification.isRead
+            );
+          }).length;
+        })
+      );
+    //3
+    this.courseService.onSelectCourse.subscribe((course) => {
+      this.selectedCourse = course;
+      this.numOfUnreadNotificationsInSelectedCourse$ = this.store
+        .select(getNotifications)
+        .pipe(
+          map((notifications) => {
+            return notifications.filter((notification) => {
+              return (
+                notification.course_id === this.selectedCourse._id &&
+                !notification.isRead
+              );
+            }).length;
+          })
+        );
+
+      if (
+        this.selectedCourse.role === 'moderator' ||
+        this.user.role.name === 'admin'
+      ) {
+        this.moderatorPrivilegesService.showModeratorPrivileges = true;
+        this.showModeratorPrivileges = true;
+        this.moderatorPrivilegesService.setPrivilegesValue(
+          this.showModeratorPrivileges
+        );
+      } else {
+        this.moderatorPrivilegesService.showModeratorPrivileges = false;
+        this.showModeratorPrivileges = false;
+        this.moderatorPrivilegesService.setPrivilegesValue(
+          this.showModeratorPrivileges
+        );
+      }
+    });
+  }
+
+  onNotificationSettingsClicked($event) {
+    /*  this.notificationSettingsPanel.show($event); */
+    this.ref = this.dialogService.open(
+      CourseLevelNotificationSettingsComponent,
+      {
+        header: 'Notification Settings',
+      }
+    );
   }
 
   @HostListener('document:click', ['$event'])
@@ -130,7 +205,7 @@ export class ChannelbarComponent implements OnInit {
     // to confirm rename when mouse clicked anywhere
     if (this.editable) {
       //course name <p> has been changed to editable
-      
+
       this.enterKey = false;
       this.onRenameCourseConfirm(this.selectedId);
     }
@@ -182,7 +257,7 @@ export class ChannelbarComponent implements OnInit {
       this.courseService.renameCourse(this.previousCourse, body).subscribe();
     } else if (this.escapeKey === true) {
       //ESC pressed
-      //console.log('ESC Pressed');
+      //
       let CourseName = this.previousCourse.name;
       const courseDescription = this.previousCourse.description;
       let body = { name: CourseName, description: courseDescription };
@@ -190,7 +265,7 @@ export class ChannelbarComponent implements OnInit {
       this.courseService.renameCourse(this.selectedCourse, body).subscribe();
     } else {
       //confirmed by mouse click
-      //console.log('logged from mouse');
+      //
       let CourseName = this.previousCourse.name;
       const courseDescription = this.previousCourse.description;
       let body = { name: CourseName, description: courseDescription };
@@ -357,22 +432,23 @@ export class ChannelbarComponent implements OnInit {
       accept: () => this.confirmDeletion(),
       reject: () => {
         // this.informUser('info', 'Cancelled', 'Deletion cancelled')
-      }
-      ,
+      },
     });
     setTimeout(() => {
-      const rejectButton = document.getElementsByClassName("p-confirm-dialog-reject") as HTMLCollectionOf<HTMLElement>;
-      for (var i=0; i<rejectButton.length;i++){
+      const rejectButton = document.getElementsByClassName(
+        'p-confirm-dialog-reject'
+      ) as HTMLCollectionOf<HTMLElement>;
+      for (var i = 0; i < rejectButton.length; i++) {
         this.renderer.addClass(rejectButton[i], 'p-button-outlined');
       }
     }, 0);
   }
 
-  onDashBoard(){
+  onDashBoard() {
     this.router.navigate([
       'course',
       this.courseService.getSelectedCourse()._id,
-      'dashboard'
+      'dashboard',
     ]);
   }
   preventEnterKey(e) {

@@ -42,7 +42,7 @@ export class UserServiceService {
       )
       .pipe(
         tap((res: { id?: string; success?: string }) => {
-         // console.log(res.id);
+          //
           this.resu = res.id;
 
           this.register_2(this.resu, username, email, password);
@@ -54,18 +54,30 @@ export class UserServiceService {
     this.http
       .post<any>(AUTH_API_2 + 'signup', { _id, username, email, password })
       .subscribe((res) => {
-       // console.log(res);
+        //
       });
   }
 
   logout(): Observable<any> {
+    this.setlastTimeCourseMapperOpened().subscribe();
     return this.http.post(AUTH_API_2 + 'signout', {}, HTTPOptions);
   }
 
-  GetUserName(_id:string): Observable<any> {
-    return this.http.get<any>(`${this.API_URL}/users/${_id}`).pipe(tap( user => {
-this.user=user
-console.log(user, "user")
-    }))
+  GetUserName(_id: string): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/users/${_id}`).pipe(
+      tap((user) => {
+        this.user = user;
+      })
+    );
+  }
+
+  setlastTimeCourseMapperOpened() {
+    return this.http.put(`${this.API_URL}/user/lastTimeCourseMapperOpened`, {});
+  }
+
+  getlastTimeCourseMapperOpened() {
+    return this.http.get<{ lastTimeCourseMapperOpened: string }>(
+      `${this.API_URL}/user/lastTimeCourseMapperOpened`
+    );
   }
 }

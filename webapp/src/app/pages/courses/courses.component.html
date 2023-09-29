@@ -5,50 +5,71 @@
     <app-sidebar></app-sidebar>
   </div>
   <app-channelbar style="width: 15%" (click)="NowClicked()"></app-channelbar>
-  <div class="flex flex-col w-full items-center mt-6   " *ngIf="(channelSelected$ | async) == false && (tagSelected$ | async) == false">
-    <div > <p class="text-5xl leading-normal font-bold">Welcome to</p> </div>
-    <div > 
-      <p class="text-5xl leading-normal font-bold">{{selectedCourse.name}}</p>
+  <!--   <div
+    class="flex flex-col w-full items-center mt-6"
+    *ngIf="
+      (channelSelected$ | async) == false && (tagSelected$ | async) == false
+    "
+  >
+    <div><p class="text-5xl leading-normal font-bold">Welcome to</p></div>
+    <div>
+      <p class="text-5xl leading-normal font-bold">{{ selectedCourse.name }}</p>
     </div>
-    <div>  <button  
-      pButton 
-      [ngStyle]="{ 'background-color': '#ffffff', color: '#EA580C' ,    'border': '2px solid #EA580C'}"
-      type="button"
-      label= 'Un-enroll Course'
-      (click)="deEnrole()"
-      [disabled]="moderator"
-     
-    ></button>
-  </div>
-  <div > <p class="text-sm mt-6">This is the welcome page of the course</p> </div>
-  <div > 
-    <p class="text-sm mb-8"> You have now access to all the learning materials.</p>
-  </div>
-  <hr class="solid ">
-  <div class="flex items-center mt-6">
-    <p-avatar
-  label="{{getName(this.firstName, this.lastName)}}"
-  shape="circle"
-  size="large"
-  [style]="{ 'background-color': '#0277BD', color: '#ffffff' ,  }"
- 
-></p-avatar>
-  <div class="flex flex-col " >
-    <strong> Course created by: <span class="font-medium">{{ this.firstName }} {{this.lastName}}</span> </strong>
-    <strong>
-      <span> 
-        Created on: <span class="font-medium">{{createdAt}}</span>
-      </span>
-    </strong>
-   
-  </div>
-</div>
-<div class=" w-80 grid justify-items-stretch content-center ml-8 mt-6">
-  <div class="justify-self-start " ><strong>Course Description:</strong>  </div>
-  <div *ngIf="selectedCourse.description.length==0" class="justify-self-start " >No discription given...  </div>
-  <div class="justify-self-start " >{{ selectedCourse.description }}</div>
-</div>
-  </div>
+    <div>
+      <button
+        pButton
+        [ngStyle]="{
+          'background-color': '#ffffff',
+          color: '#EA580C',
+          border: '2px solid #EA580C'
+        }"
+        type="button"
+        label="Un-enroll Course"
+        (click)="deEnrole()"
+        [disabled]="moderator"
+      ></button>
+    </div>
+    <div>
+      <p class="text-sm mt-6">This is the welcome page of the course</p>
+    </div>
+    <div>
+      <p class="text-sm mb-8">
+        You have now access to all the learning materials.
+      </p>
+    </div>
+    <hr class="solid" />
+    <div class="flex items-center mt-6">
+      <p-avatar
+        label="{{ getName(this.firstName, this.lastName) }}"
+        shape="circle"
+        size="large"
+        [style]="{ 'background-color': '#0277BD', color: '#ffffff' ,  }"
+      ></p-avatar>
+      <div class="flex flex-col">
+        <strong>
+          Course created by:
+          <span class="font-medium"
+            >{{ this.firstName }} {{ this.lastName }}</span
+          >
+        </strong>
+        <strong>
+          <span>
+            Created on: <span class="font-medium">{{ createdAt }}</span>
+          </span>
+        </strong>
+      </div>
+    </div>
+    <div class="w-80 grid justify-items-stretch content-center ml-8 mt-6">
+      <div class="justify-self-start"><strong>Course Description:</strong></div>
+      <div
+        *ngIf="selectedCourse.description.length == 0"
+        class="justify-self-start"
+      >
+        No discription given...
+      </div>
+      <div class="justify-self-start">{{ selectedCourse.description }}</div>
+    </div>
+  </div> -->
   <div class="grow">
     <router-outlet></router-outlet>
   </div>

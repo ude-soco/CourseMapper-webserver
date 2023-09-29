@@ -4,7 +4,7 @@ const controller = require("../controller.xAPILogger");
 const ORIGIN = process.env.ORIGIN;
 
 export const newCourse = async (req, res) => {
-  const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
+  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
   const statement = statementFactory.getCourseCreationStatement(
     req.locals.user,
     req.locals.course,
@@ -16,7 +16,7 @@ export const newCourse = async (req, res) => {
 };
 
 export const deleteCourse = async (req, res) => {
-  const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
+  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
   const statement = statementFactory.getCourseDeletionStatement(
     req.locals.user,
     req.locals.course,
@@ -28,7 +28,7 @@ export const deleteCourse = async (req, res) => {
 };
 
 export const getCourse = async (req, res) => {
-  const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
+  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
   const statement = statementFactory.getCourseAccessStatement(
     req.locals.user,
     req.locals.course,
@@ -40,7 +40,7 @@ export const getCourse = async (req, res) => {
 };
 
 export const enrolCourse = async (req, res) => {
-  const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
+  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
   const statement = statementFactory.getCourseEnrollmentStatement(
     req.locals.user,
     req.locals.course,
@@ -52,7 +52,7 @@ export const enrolCourse = async (req, res) => {
 };
 
 export const withdrawCourse = async (req, res) => {
-  const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
+  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
   const statement = statementFactory.getCourseWithdrawStatement(
     req.locals.user,
     req.locals.course,
@@ -64,7 +64,7 @@ export const withdrawCourse = async (req, res) => {
 };
 
 export const editCourse = async (req, res) => {
-  const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
+  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
   const statement = statementFactory.getCourseEditStatement(
     req.locals.user,
     req.locals.newCourse,

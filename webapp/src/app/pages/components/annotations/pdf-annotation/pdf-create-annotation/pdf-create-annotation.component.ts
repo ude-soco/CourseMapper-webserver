@@ -1,4 +1,9 @@
-import { AfterViewChecked, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  AfterViewChecked,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+} from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
   Annotation,
@@ -16,17 +21,20 @@ import {
 } from '../state/annotation.reducer';
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
 import { Observable } from 'rxjs';
-import {
-  getCurrentMaterialId,
-} from '../../../materials/state/materials.reducer';
+import { getCurrentMaterialId } from '../../../materials/state/materials.reducer';
 import { getCurrentCourseId } from 'src/app/pages/courses/state/course.reducer';
+import { MentionsComponent } from '../../../../../components/mentions/mentions.component';
+import { NotificationsService } from 'src/app/services/notifications.service';
 
 @Component({
   selector: 'app-pdf-create-annotation',
   templateUrl: './pdf-create-annotation.component.html',
   styleUrls: ['./pdf-create-annotation.component.css'],
 })
-export class PdfCreateAnnotationComponent implements OnInit, AfterViewChecked {
+export class PdfCreateAnnotationComponent
+  extends MentionsComponent
+  implements OnInit, AfterViewChecked
+{
   selectedAnnotationType: AnnotationType;
   annotationTypesArray: string[];
   annotationLocationsArray: string[];
@@ -34,9 +42,7 @@ export class PdfCreateAnnotationComponent implements OnInit, AfterViewChecked {
   createAnnotationFromPanel: boolean;
   showCancelButton: boolean = false;
   disableSlidesDropDown: boolean = false;
-  text: string;
   annotation: Annotation;
-  courseId: string;
   materialId: string;
   postAnnotationLocation: PdfGeneralAnnotationLocation;
   currentPage: number;
@@ -51,11 +57,27 @@ export class PdfCreateAnnotationComponent implements OnInit, AfterViewChecked {
   showCancelButton$: Observable<boolean>;
   sendButtonDisabled: boolean = true;
 
-  constructor(private store: Store<State>, private changeDetectorRef: ChangeDetectorRef) {
-    this.annotationTypesArray = ['Note', 'Question', 'External Resource'];
-    this.annotationLocationsArray = ['Current Slide', 'All Slides', 'Slide Range'];
+  constructor(
+    override store: Store<State>,
+    override notificationService: NotificationsService,
+    private changeDetectorRef: ChangeDetectorRef
+  ) {
+    super(store, notificationService);
+  }
+  ngAfterViewChecked(): void {
+    this.changeDetectorRef.detectChanges();
+  }
 
-    store.select(getCreateAnnotationFromPanel).subscribe((isFromPanel) => {
+  override ngOnInit(): void {
+    super.ngOnInit();
+    this.annotationTypesArray = ['Note', 'Question', 'External Resource'];
+    this.annotationLocationsArray = [
+      'Current Slide',
+      'All Slides',
+      'Slide Range',
+    ];
+
+    this.store.select(getCreateAnnotationFromPanel).subscribe((isFromPanel) => {
       if (isFromPanel) {
         this.createAnnotationFromPanel = isFromPanel;
         this.showCancelButton = false;
@@ -85,18 +107,17 @@ export class PdfCreateAnnotationComponent implements OnInit, AfterViewChecked {
 
     this.store.select(getPdfTotalNumberOfPages).subscribe((total) => {
       this.totalPages = total;
-      this.fromPageArray = Array.from({length: this.totalPages}, (_, i) => i + 1);
+      this.fromPageArray = Array.from(
+        { length: this.totalPages },
+        (_, i) => i + 1
+      );
       this.selectedFromPage = 1;
-      this.toPageArray = Array.from({length: this.totalPages - this.selectedFromPage + 1}, (_, i) => i + this.selectedFromPage);
+      this.toPageArray = Array.from(
+        { length: this.totalPages - this.selectedFromPage + 1 },
+        (_, i) => i + this.selectedFromPage
+      );
       this.selectedToPage = 1;
-
     });
-  }
-  ngAfterViewChecked(): void {
-    this.changeDetectorRef.detectChanges();
-  }
-
-  ngOnInit(): void {
     this.selectedAnnotationType = 'Note';
     this.selectedAnnotationLocation = 'Current Slide';
     this.annotationColor = '#70b85e';
@@ -109,105 +130,118 @@ export class PdfCreateAnnotationComponent implements OnInit, AfterViewChecked {
         case 'Current Slide':
           this.annotation = {
             type: this.selectedAnnotationType,
-            content: this.text,
+            content: this.content,
             courseId: this.courseId,
             materialId: this.materialId,
             location: {
               type: this.selectedAnnotationLocation,
               startPage: this.currentPage,
-              lastPage: this.currentPage
+              lastPage: this.currentPage,
             },
             tool: {
               type: PdfToolType.Annotation,
-              _id: ''
-            }
+              _id: '',
+            },
           };
           this.dispatchAnnotation();
           this.selectedAnnotationLocation = null;
           this.selectedAnnotationType = null;
-          this.text = null;
+          this.content = null;
           break;
 
         case 'All Slides':
           this.annotation = {
             type: this.selectedAnnotationType,
-            content: this.text,
+            content: this.content,
             courseId: this.courseId,
             materialId: this.materialId,
             location: {
               type: this.selectedAnnotationLocation,
               startPage: 1,
-              lastPage: this.totalPages
+              lastPage: this.totalPages,
             },
             tool: {
               type: PdfToolType.Annotation,
-              _id: ''
-            }
+              _id: '',
+            },
           };
           this.dispatchAnnotation();
           this.selectedAnnotationLocation = null;
           this.selectedAnnotationType = null;
-          this.text = null;
+          this.content = null;
           break;
 
         case 'Slide Range':
           this.annotation = {
             type: this.selectedAnnotationType,
-            content: this.text,
+            content: this.content,
             courseId: this.courseId,
             materialId: this.materialId,
             location: {
               type: this.selectedAnnotationLocation,
               startPage: this.selectedFromPage,
-              lastPage: this.selectedToPage
+              lastPage: this.selectedToPage,
             },
             tool: {
               type: PdfToolType.Annotation,
-              _id: ''
-            }
+              _id: '',
+            },
           };
           this.dispatchAnnotation();
           this.selectedAnnotationLocation = null;
           this.selectedAnnotationType = null;
-          this.text = null;
+          this.content = null;
           break;
       }
     } else {
       this.annotation = {
         ...this.annotation,
         type: this.selectedAnnotationType,
-        content: this.text
+        content: this.content,
       };
 
       this.dispatchAnnotation();
-
     }
   }
 
-  dispatchAnnotation(){
-    this.store.dispatch(AnnotationActions.postAnnotation({ annotation: this.annotation }));
-    
+  dispatchAnnotation() {
+    this.removeRepeatedUsersFromMentionsArray();
+    this.store.dispatch(
+      AnnotationActions.postAnnotation({
+        annotation: this.annotation,
+        mentionedUsers: this.mentionedUsers,
+      })
+    );
+    this.content = null;
+    this.mentionedUsers = [];
+
     this.sendButtonDisabled = true;
   }
 
-  onSelectedFromPage(){
-    if(this.selectedFromPage === null){
-      this.isFromSelected = false
-    }else{
-      this.toPageArray = Array.from({length: this.totalPages - this.selectedFromPage + 1}, (_, i) => i + this.selectedFromPage);
+  onSelectedFromPage() {
+    if (this.selectedFromPage === null) {
+      this.isFromSelected = false;
+    } else {
+      this.toPageArray = Array.from(
+        { length: this.totalPages - this.selectedFromPage + 1 },
+        (_, i) => i + this.selectedFromPage
+      );
       this.isFromSelected = true;
     }
   }
 
-  onShowOfSelectedFromPageDropDpown(){
-    this.toPageArray = Array.from({length: this.totalPages - this.selectedFromPage + 1}, (_, i) => i + this.selectedFromPage);
+  onShowOfSelectedFromPageDropDpown() {
+    this.toPageArray = Array.from(
+      { length: this.totalPages - this.selectedFromPage + 1 },
+      (_, i) => i + this.selectedFromPage
+    );
     this.isFromSelected = true;
   }
 
-  onTextChange(){
-    if(this.text.replace(/<\/?[^>]+(>|$)/g, "") == ""){
+  onTextChange() {
+    if (this.content.replace(/<\/?[^>]+(>|$)/g, '') == '') {
       this.sendButtonDisabled = true;
-    }else{
+    } else {
       this.sendButtonDisabled = false;
     }
   }
@@ -218,23 +252,23 @@ export class PdfCreateAnnotationComponent implements OnInit, AfterViewChecked {
     );
   }
 
-  onAnnotationTypeChange(){
+  onAnnotationTypeChange() {
     switch (this.selectedAnnotationType) {
       case 'Note':
         this.annotationColor = '#70b85e';
-        this.sendButtonColor ='text-green-600';
+        this.sendButtonColor = 'text-green-600';
         break;
       case 'Question':
         this.annotationColor = '#FFAB5E';
-        this.sendButtonColor ='text-amber-500';
+        this.sendButtonColor = 'text-amber-500';
         break;
       case 'External Resource':
         this.annotationColor = '#B85E94';
-        this.sendButtonColor ='text-pink-700';
+        this.sendButtonColor = 'text-pink-700';
         break;
       case null:
         this.annotationColor = '#70b85e';
-        this.sendButtonColor ='text-green-600';
+        this.sendButtonColor = 'text-green-600';
         break;
     }
   }

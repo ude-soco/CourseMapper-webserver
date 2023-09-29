@@ -1,0 +1,90 @@
+<!--TODO change the options that are occuring in the menu -->
+<div class="notification-content">
+  <div class="item">
+    <!--     <i
+      (click)="onStarNotification($event)"
+      *ngIf="!notification.isStar"
+      class="pi pi-star star-icon"
+      ></i> -->
+    <div class="star-container" *ngIf="!notification.isStar">
+      <app-svg-icon
+        (click)="onStarNotification($event)"
+        class="pi pi-star star-icon"
+      ></app-svg-icon>
+    </div>
+
+    <div class="star-container" *ngIf="notification.isStar">
+      <app-svg-icon
+        (click)="onUnstarNotification($event)"
+        [path]="'assets/black-star-icon.svg'"
+        class="black-star-icon"
+      ></app-svg-icon>
+    </div>
+
+    <div class="left" (click)="onNotificationClicked()">
+      <p-avatar
+        label="{{ notification.userShortname }}"
+        styleClass="mr-5"
+        [style]="{
+          'background-color':
+            'rgba(3,105,161,255)
+  ',
+          color: '#ffffff',
+          'margin-top': '5px'
+        }"
+        shape="circle"
+      ></p-avatar>
+      <div class="notification-message-container">
+        <span class="notification-message">
+          <span class="userName-unread">{{ notification.username }}</span>
+          <span>{{ notification.action }}</span>
+          <span>{{ notification.object }}</span>
+          <span
+            [ngClass]="{
+              'userName-unread': !notification.isRead,
+              'userName-read': notification.isRead
+            }"
+            >{{ notification.name }}</span
+          >
+          <span>in</span>
+          <span
+            [ngClass]="{
+              'userName-unread': !notification.isRead,
+              'userName-read': notification.isRead
+            }"
+            >'{{ notification.courseName }}'</span
+          >
+        </span>
+
+        <div class="time">
+          <span>
+            {{ notification.timestamp | customDate }}
+          </span>
+          <span
+            class="following-annotation-message"
+            *ngIf="notification.isFollowingAnnotation"
+          >
+            Following annotation: {{ notification.name }}
+          </span>
+        </div>
+      </div>
+    </div>
+    <p-button
+      icon="pi pi-ellipsis-h"
+      styleClass="p-button-rounded p-button-text"
+      [ngClass]="{
+        'p-button-unread': !notification.isRead
+      }"
+      (click)="toggleMenuOptions($event, menu)"
+      #navSettingsButton
+    ></p-button>
+  </div>
+  <p-divider class="divider"></p-divider>
+</div>
+
+<p-menu
+  #menu
+  [model]="menuOptions$ | async"
+  [popup]="true"
+  appendTo="body"
+></p-menu>

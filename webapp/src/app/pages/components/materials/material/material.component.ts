@@ -15,22 +15,24 @@ import {
 import { Channel } from 'src/app/models/Channel';
 import { TopicChannelService } from 'src/app/services/topic-channel.service';
 import { ElementRef, ViewChild } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormBuilder, FormControl } from '@angular/forms';
 import { Material } from 'src/app/models/Material';
 import { PdfviewService } from 'src/app/services/pdfview.service';
 import { MaterilasService } from 'src/app/services/materials.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import {
-  State,
-} from 'src/app/pages/components/materials/state/materials.reducer';
+import { State } from 'src/app/pages/components/materials/state/materials.reducer';
 import * as MaterialActions from 'src/app/pages/components/materials/state/materials.actions';
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
 import { Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { ModeratorPrivilegesService } from 'src/app/services/moderator-privileges.service';
-import * as  CourseActions from 'src/app/pages/courses/state/course.actions'
+import * as CourseActions from 'src/app/pages/courses/state/course.actions';
+import { getNotificationSettingsOfLastMaterialMenuClicked } from 'src/app/pages/courses/state/course.reducer';
+import { materialNotificationSettingLabels } from 'src/app/models/Notification';
+import { getNotifications } from '../../notifications/state/notifications.reducer';
+import * as NotificationActions from '../../notifications/state/notifications.actions';
 import { MaterialKgOrderedService } from 'src/app/services/material-kg-ordered.service';
 @Component({
   selector: 'app-material',
@@ -73,19 +75,35 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   showModeratorPrivileges: boolean;
   privilegesSubscription: Subscription;
+  @ViewChild('materialMenu') materialMenu: any;
+  materialIdOfMaterialMenuClicked: string;
+  /*   protected checkBoxesGroup = this.fb.group({});
+  checkBoxesArray: { label: string; control: FormControl<boolean> }[] = []; */
+  protected materialCheckBoxesGroup = this.fb.group({});
+  materialCheckBoxesArray: { label: string; control: FormControl<boolean> }[] =
+    [];
+  notificationSettingsOfLastMaterialMenuClicked$: Observable<
+    {
+      label: string;
+      value: boolean;
+    }[]
+  > = null;
+  isResetMaterialNotificationsButtonEnabled: boolean;
+  lastMaterialClickedNotificationSettingSubscription: Subscription;
   constructor(
     private topicChannelService: TopicChannelService,
     private pdfViewService: PdfviewService,
     private materialService: MaterilasService,
     private router: Router,
     private store: Store<State>,
-    private route: ActivatedRoute,
+    private activatedRoute: ActivatedRoute,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private moderatorPrivilegesService: ModeratorPrivilegesService,
     private renderer: Renderer2,
     private changeDetectorRef: ChangeDetectorRef,
     private materialKgService: MaterialKgOrderedService,
+    protected fb: FormBuilder
   ) {
     const url = this.router.url;
     if (url.includes('course') && url.includes('channel')) {
@@ -124,29 +142,27 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.showModeratorPrivileges =
           moderatorPrivilegesService.showModeratorPrivileges;
       });
+
+    //attempt to refresh the component:
+    this.activatedRoute.params.subscribe((params) => {
+      /* this.reloadCurrentRoute(); */
+    });
   }
   ngAfterViewChecked(): void {
     let inkBar = document.getElementById('material-tabview') as HTMLElement;
-    let currentTab = document.getElementsByClassName('p-highlight')[0] as HTMLElement;
-    if(inkBar && currentTab){
+    let currentTab = document.getElementsByClassName(
+      'p-highlight'
+    )[0] as HTMLElement;
+    if (inkBar && currentTab) {
       inkBar.style.width = currentTab.clientWidth + 'px';
       this.changeDetectorRef.detectChanges();
     }
-
   }
-  materialOptions: MenuItem[] = [
-    {
-      label: 'Rename',
-      icon: 'pi pi-refresh',
-      command: () => this.onRenameMaterial(),
-    },
-    {
-      label: 'Delete',
-      icon: 'pi pi-times',
-      command: () => this.onDeleteMaterial(),
-    },
-  ];
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void {
+    if (this.lastMaterialClickedNotificationSettingSubscription) {
+      this.lastMaterialClickedNotificationSettingSubscription.unsubscribe();
+    }
+  }
 
   ngOnInit() {
     this.topicChannelService.onSelectChannel.subscribe((channel) => {
@@ -177,6 +193,96 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.moderatorPrivilegesService.showModeratorPrivileges;
 
     this.selectedToolEvent.emit('none');
+
+    this.notificationSettingsOfLastMaterialMenuClicked$ = this.store.select(
+      getNotificationSettingsOfLastMaterialMenuClicked
+    );
+
+    this.lastMaterialClickedNotificationSettingSubscription =
+      this.notificationSettingsOfLastMaterialMenuClicked$.subscribe(
+        (notificationSettings) => {
+          if (!notificationSettings) return;
+          //delete all the controls in the form Group
+          this.materialCheckBoxesGroup = this.fb.group({});
+          this.materialCheckBoxesArray = [];
+          notificationSettings.forEach((o, index) => {
+            if (index === 0) {
+              this.isResetMaterialNotificationsButtonEnabled = o.value;
+              return;
+            }
+            const control = new FormControl<boolean>(o.value);
+            this.materialCheckBoxesArray.push({
+              label: o.label,
+              control: control,
+            });
+            this.materialCheckBoxesGroup.addControl(o.label, control);
+          });
+        }
+      );
+  }
+
+  getNumUnreadNotificationsForMaterial(materialId: string) {
+    return this.store.select(getNotifications).pipe(
+      map((notifications) => {
+        if (!notifications) {
+          return 0;
+        }
+        return notifications.filter(
+          (notification) =>
+            notification.material_id === materialId && !notification.isRead
+        ).length;
+      })
+    );
+  }
+  onMaterialNotificationSettingsClicked(notificationOption: {
+    label: string;
+    control: FormControl<boolean>;
+  }): void {
+    const labelClicked: string = notificationOption.label;
+    let objToSend = {
+      materialId: this.materialIdOfMaterialMenuClicked,
+      courseId: this.courseID,
+
+      [materialNotificationSettingLabels.annotations]:
+        labelClicked === materialNotificationSettingLabels.annotations
+          ? !this.materialCheckBoxesGroup.value[
+              materialNotificationSettingLabels.annotations
+            ]
+          : this.materialCheckBoxesGroup.value[
+              materialNotificationSettingLabels.annotations
+            ],
+      [materialNotificationSettingLabels.commentsAndMentioned]:
+        labelClicked === materialNotificationSettingLabels.commentsAndMentioned
+          ? !this.materialCheckBoxesGroup.value[
+              materialNotificationSettingLabels.commentsAndMentioned
+            ]
+          : this.materialCheckBoxesGroup.value[
+              materialNotificationSettingLabels.commentsAndMentioned
+            ],
+      [materialNotificationSettingLabels.materialUpdates]:
+        labelClicked === materialNotificationSettingLabels.materialUpdates
+          ? !this.materialCheckBoxesGroup.value[
+              materialNotificationSettingLabels.materialUpdates
+            ]
+          : this.materialCheckBoxesGroup.value[
+              materialNotificationSettingLabels.materialUpdates
+            ],
+    };
+
+    this.store.dispatch(
+      CourseActions.setMaterialNotificationSettings({ settings: objToSend })
+    );
+  }
+
+  onResetMaterialNotificationsClicked() {
+    this.store.dispatch(
+      CourseActions.unsetMaterialNotificationSettings({
+        settings: {
+          materialId: this.materialIdOfMaterialMenuClicked,
+          courseId: this.courseID,
+        },
+      })
+    );
   }
 
   onTabChange(e) {
@@ -280,6 +386,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     );
     this.store.dispatch(AnnotationActions.loadAnnotations());
   }
+
   onDeleteMaterial() {
     this.confirmationService.confirm({
       message:
@@ -308,13 +415,28 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.materialService.deleteMaterial(this.selectedMaterial).subscribe({
         next: (data) => {
           this.topicChannelService.selectChannel(this.selectedChannel);
+          this.store.dispatch(
+            CourseActions.updateFOllowingAnnotationsOnDeletion({
+              payload: {
+                id: this.selectedMaterial._id,
+                isDeletingMaterial: true,
+              },
+            })
+          );
+          if ('success' in data) {
+            this.store.dispatch(
+              NotificationActions.isDeletingMaterial({
+                materialId: this.selectedMaterial._id,
+              })
+            );
+          }
           this.router.navigate([
             'course',
             this.selectedMaterial['courseId'],
             'channel',
             this.selectedMaterial['channelId'],
           ]);
-          e.index = 1;
+          /*  e.index = 1; */
         },
         error: (err) => {
           this.errorMessage = err.error.message;
@@ -325,7 +447,22 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       (this.selectedMaterial.type == 'video' && this.selectedMaterial.url == '')
     ) {
       this.materialService.deleteFile(this.selectedMaterial).subscribe({
-        next: (res) => {},
+        next: (res) => {
+          this.store.dispatch(
+            CourseActions.updateFOllowingAnnotationsOnDeletion({
+              payload: {
+                id: this.selectedMaterial._id,
+                isDeletingMaterial: true,
+              },
+            })
+          );
+
+          this.store.dispatch(
+            NotificationActions.isDeletingMaterial({
+              materialId: this.selectedMaterial._id,
+            })
+          );
+        },
       });
     }
 
@@ -432,7 +569,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
         .subscribe();
     } else {
       //confirmed by mouse click
-     // console.log('logged from mouse');
+      //
       let MaterialName = this.previousMaterial.name;
       const MaterialDescription = this.previousMaterial.description;
       const curseId = this.previousMaterial.courseId;
@@ -475,7 +612,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     // to confirm rename when mouse clicked anywhere
     if (this.editable) {
       //course name <p> has been changed to editable
-      //console.log('logged to mouse event');
+      //
       this.enterKey = false;
       this.onRenameMaterialConfirm(this.selectedId);
     }
@@ -567,6 +704,18 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.cmSelected = show;
     this.selectedToolEvent.emit('none');
     this.materialKgService.materialKgOrdered(this.selectedMaterial);
+  }
+
+  materialMenuButtonClicked($event, material: Material) {
+    this.selectedMaterial = material;
+    this.materialMenu.toggle($event);
+    this.materialIdOfMaterialMenuClicked = material._id;
+    this.courseID = material.courseId;
+    this.store.dispatch(
+      CourseActions.setLastMaterialMenuClicked({
+        lastMaterialMenuClickedId: material._id,
+      })
+    );
   }
 
   /**

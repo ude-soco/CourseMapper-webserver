@@ -1,0 +1,121 @@
+<app-tab-menu
+  [tabOptions]="tabOptions"
+  [activeItem]="activeItem"
+  (onTabChange)="onTabSwitched($event)"
+  #menu
+>
+</app-tab-menu>
+<div class="flex items-center gap-8 mt-4 ml-4 mb-4">
+  <div>
+    <app-switch-input
+      [isChecked]="isUnreadChecked"
+      (onSwitchToggled)="unreadSwitchToggled($event)"
+    ></app-switch-input>
+    <span class="ml-4">Unread only</span>
+  </div>
+  <div class="flex gap-8 cursor-pointer" *ngIf="showBulkOperations">
+    <div (click)="markSelectedAsRead($event)">
+      <!--  <i class="pi pi-check" style="font-size: 2rem"></i> -->Mark as read
+    </div>
+    <div (click)="markSelectedAsUnread($event)">Mark as unread</div>
+    <div (click)="removeSelected($event)">Delete</div>
+  </div>
+</div>
+<div>
+  <ng-container *ngIf="loading$ | async; else notificationsArrived">
+    Loading....
+  </ng-container>
+
+  <ng-template #notificationsArrived>
+    <ng-container *ngIf="notifications$ | async as notifications">
+      <ng-container *ngIf="notifications.length > 0; else noNotifications">
+        <div class="flex flex-row justify-between m-4">
+          <div>
+            <span class="flex items-center">
+              <p-checkbox
+                [formControl]="masterCheckBox"
+                class="mr-4"
+                [binary]="true"
+                checked
+              ></p-checkbox>
+              <span>Select all</span>
+            </span>
+          </div>
+          <span
+            (click)="onSeeAllClicked($event)"
+            class="text-blue-600 hover:underline cursor-pointer"
+            >See all</span
+          >
+        </div>
+        <ng-container [formGroup]="checkBoxesGroup">
+          <ng-container
+            *ngIf="
+              (newerNotifications$ | async) &&
+              (newerNotifications$ | async).length > 0
+            "
+          >
+            <div class="text-2xl font-medium pl-4">New</div>
+            <ng-container
+              *ngFor="let newerNotification of newerNotifications$ | async"
+            >
+              <div
+                [ngClass]="{
+                  'notification-read': newerNotification.isRead,
+                  'notification-unread': !newerNotification.isRead
+                }"
+              >
+                <p-checkbox
+                  [value]="newerNotification"
+                  [formControlName]="newerNotification._id"
+                  [binary]="true"
+                ></p-checkbox>
+                <app-notification-box
+                  [notification]="newerNotification"
+                  (notificationClicked)="
+                    onNotificationClicked(newerNotification)
+                  "
+                ></app-notification-box>
+                <!-- (click)="onNotificationClicked($event, notification)" -->
+              </div>
+            </ng-container>
+          </ng-container>
+          <ng-container
+            *ngIf="
+              (earlierNotifications$ | async) &&
+              (earlierNotifications$ | async).length > 0
+            "
+          >
+            <div class="text-2xl font-medium pl-4 pt-4">Earlier</div>
+            <ng-container
+              *ngFor="let earlierNotification of earlierNotifications$ | async"
+            >
+              <div
+                [ngClass]="{
+                  'notification-read': earlierNotification.isRead,
+                  'notification-unread': !earlierNotification.isRead
+                }"
+              >
+                <p-checkbox
+                  [value]="earlierNotification"
+                  [formControlName]="earlierNotification._id"
+                  [binary]="true"
+                ></p-checkbox>
+                <app-notification-box
+                  [notification]="earlierNotification"
+                  (notificationClicked)="
+                    onNotificationClicked(earlierNotification)
+                  "
+                ></app-notification-box>
+                <!-- (click)="onNotificationClicked($event, notification)" -->
+              </div>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+
+      <ng-template #noNotifications>
+        <app-no-data [message]="'There are no notifications'"></app-no-data>
+      </ng-template>
+    </ng-container>
+  </ng-template>
+</div>
