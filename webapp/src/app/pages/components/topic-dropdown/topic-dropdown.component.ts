@@ -33,7 +33,7 @@ import {
   topicNotificationSettingLabels,
   channelNotificationSettingLabels,
 } from 'src/app/models/Notification';
-import { map, tap } from 'rxjs';
+import { Subscription, map, tap } from 'rxjs';
 import { getNotifications } from '../notifications/state/notifications.reducer';
 import { Annotation } from 'src/app/models/BlockingNotification';
 import * as $ from 'jquery';
@@ -107,6 +107,8 @@ export class TopicDropdownComponent implements OnInit {
     [];
   channelIdOfChannelMenuClicked: string;
   topicIdOfTopicMenuClicked: string = null;
+  lastTopicClickedNotificationSettingsSubscription: Subscription;
+  lastChannelClickedNotificationSettingsSubscription: Subscription;
 
   notificationSettingsOfLastTopicMenuClicked$: Observable<
     {
@@ -197,43 +199,45 @@ export class TopicDropdownComponent implements OnInit {
       getNotificationSettingsOfLastChannelMenuClicked
     );
     //loop over the notification options and make a form control
-    this.notificationSettingsOfLastTopicMenuClicked$.subscribe(
-      (notificationSettings) => {
-        if (!notificationSettings) return;
-        //delete all the controls in the form Group
-        this.checkBoxesGroup = this.fb.group({});
-        this.checkBoxesArray = [];
-        notificationSettings.forEach((o, index) => {
-          if (index === 0) {
-            this.isResetTopicNotificationsButtonEnabled = o.value;
-            return;
-          }
-          const control = new FormControl<boolean>(o.value);
-          this.checkBoxesArray.push({ label: o.label, control: control });
-          this.checkBoxesGroup.addControl(o.label, control);
-        });
-      }
-    );
-    this.notificationSettingsOfLastChannelMenuClicked$.subscribe(
-      (notificationSettings) => {
-        if (!notificationSettings) return;
-        //delete all the controls in the form Group
-        this.channelCheckBoxesGroup = this.fb.group({});
-        this.channelCheckBoxesArray = [];
-        notificationSettings.forEach((o, index) => {
-          if (index === 0) {
-            this.isResetChannelNotificationsButtonEnabled = o.value;
-            return;
-          }
-          const control = new FormControl<boolean>(o.value);
-          this.channelCheckBoxesArray.push({
-            label: o.label,
-            control: control,
+    this.lastTopicClickedNotificationSettingsSubscription =
+      this.notificationSettingsOfLastTopicMenuClicked$.subscribe(
+        (notificationSettings) => {
+          if (!notificationSettings) return;
+          //delete all the controls in the form Group
+          this.checkBoxesGroup = this.fb.group({});
+          this.checkBoxesArray = [];
+          notificationSettings.forEach((o, index) => {
+            if (index === 0) {
+              this.isResetTopicNotificationsButtonEnabled = o.value;
+              return;
+            }
+            const control = new FormControl<boolean>(o.value);
+            this.checkBoxesArray.push({ label: o.label, control: control });
+            this.checkBoxesGroup.addControl(o.label, control);
           });
-          this.channelCheckBoxesGroup.addControl(o.label, control);
-        });
-      }
-    );
+        }
+      );
+    this.lastChannelClickedNotificationSettingsSubscription =
+      this.notificationSettingsOfLastChannelMenuClicked$.subscribe(
+        (notificationSettings) => {
+          if (!notificationSettings) return;
+          //delete all the controls in the form Group
+          this.channelCheckBoxesGroup = this.fb.group({});
+          this.channelCheckBoxesArray = [];
+          notificationSettings.forEach((o, index) => {
+            if (index === 0) {
+              this.isResetChannelNotificationsButtonEnabled = o.value;
+              return;
+            }
+            const control = new FormControl<boolean>(o.value);
+            this.channelCheckBoxesArray.push({
+              label: o.label,
+              control: control,
+            });
+            this.channelCheckBoxesGroup.addControl(o.label, control);
+          });
+        }
+      );
 
     this.followingAnnotationsOfDisplayedChannels$ = this.store.select(
       getFollowingAnnotationsOfDisplayedChannels
@@ -360,6 +364,8 @@ export class TopicDropdownComponent implements OnInit {
   ngOnDestroy() {
     this.expandTopic = null;
     this.selectedChannelId = null;
+    this.lastChannelClickedNotificationSettingsSubscription.unsubscribe();
+    this.lastTopicClickedNotificationSettingsSubscription.unsubscribe();
   }
 
   ngAfterViewChecked() {

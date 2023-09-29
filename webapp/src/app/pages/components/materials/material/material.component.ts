@@ -82,6 +82,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     }[]
   > = null;
   isResetMaterialNotificationsButtonEnabled: boolean;
+  lastMaterialClickedNotificationSettingSubscription: Subscription;
   constructor(
     private topicChannelService: TopicChannelService,
     private pdfViewService: PdfviewService,
@@ -163,7 +164,9 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       command: () => this.onDeleteMaterial(),
     },
   ];
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void {
+    this.lastMaterialClickedNotificationSettingSubscription.unsubscribe();
+  }
 
   ngOnInit() {
     this.topicChannelService.onSelectChannel.subscribe((channel) => {
@@ -197,26 +200,27 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       getNotificationSettingsOfLastMaterialMenuClicked
     );
 
-    this.notificationSettingsOfLastMaterialMenuClicked$.subscribe(
-      (notificationSettings) => {
-        if (!notificationSettings) return;
-        //delete all the controls in the form Group
-        this.materialCheckBoxesGroup = this.fb.group({});
-        this.materialCheckBoxesArray = [];
-        notificationSettings.forEach((o, index) => {
-          if (index === 0) {
-            this.isResetMaterialNotificationsButtonEnabled = o.value;
-            return;
-          }
-          const control = new FormControl<boolean>(o.value);
-          this.materialCheckBoxesArray.push({
-            label: o.label,
-            control: control,
+    this.lastMaterialClickedNotificationSettingSubscription =
+      this.notificationSettingsOfLastMaterialMenuClicked$.subscribe(
+        (notificationSettings) => {
+          if (!notificationSettings) return;
+          //delete all the controls in the form Group
+          this.materialCheckBoxesGroup = this.fb.group({});
+          this.materialCheckBoxesArray = [];
+          notificationSettings.forEach((o, index) => {
+            if (index === 0) {
+              this.isResetMaterialNotificationsButtonEnabled = o.value;
+              return;
+            }
+            const control = new FormControl<boolean>(o.value);
+            this.materialCheckBoxesArray.push({
+              label: o.label,
+              control: control,
+            });
+            this.materialCheckBoxesGroup.addControl(o.label, control);
           });
-          this.materialCheckBoxesGroup.addControl(o.label, control);
-        });
-      }
-    );
+        }
+      );
   }
 
   getNumUnreadNotificationsForMaterial(materialId: string) {
