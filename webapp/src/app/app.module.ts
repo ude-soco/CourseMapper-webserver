@@ -32,9 +32,6 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 import { ByPassUrlSanitizationPipe } from './pipes/by-pass-url-sanitization.pipe';
 import { CustomDatePipe } from './pipes/date.pipe';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { httpInterceptorProviders } from './_helpers/http.interceptor';
-import { SocketIoModule } from 'ngx-socket-io';
 
 
 
@@ -42,12 +39,11 @@ import { AppComponent } from "./app.component";
 import { TopicDropdownComponent } from "./pages/components/topic-dropdown/topic-dropdown.component";
 import { DashboardComponent } from "./pages/components/dashboard/dashboard.component";
 import { RegistrationComponent } from "./pages/components/registration/registration.component";
-import { SidebarComponent } from "./pages/components/sidebar/sidebar.component";
 import { NavbarComponent } from "./pages/components/navbar/navbar.component";
 import { ChannelbarComponent } from "./pages/components/channelbar/channelbar.component";
 import { CoursesComponent } from "./pages/courses/courses.component";
 import { EditorComponent } from "./pages/components/editor/editor.component";
-import { AddCourseComponent } from "./pages/components/add-course/add-course.component";
+import { AddCourseComponent } from "./components/add-course/add-course.component";
 import { AddTopicComponent } from "./pages/components/add-topic/add-topic.component";
 import { AddChannelComponent } from "./pages/components/add-channel/add-channel.component";
 import { SidebarTagsComponent } from "./pages/components/tags/sidebar-tags/sidebar-tags.component";
@@ -85,7 +81,6 @@ import { CourseWelcomeComponent } from './course-welcome/course-welcome.componen
 export const metaReducers: MetaReducer[] = [hydrationMetaReducer];
 registerLocaleData(en);
 import { DividerModule } from 'primeng/divider';
-import { ContextMenuComponent } from './components/context-menu/context-menu.component';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { SettingsComponent } from './pages/components/notifications/settings/settings.component';
 import { NoDataComponent } from './components/no-data/no-data.component';
@@ -126,7 +121,6 @@ import { MessageService } from 'primeng/api';
     DynamicDialogModule,
     MenuModule,
     BrowserModule,
-    ContextMenuModule,
     AppRoutingModule,
     PrimengModule,
     HttpClientModule,

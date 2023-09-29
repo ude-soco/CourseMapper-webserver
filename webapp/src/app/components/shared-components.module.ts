@@ -38,6 +38,7 @@ import { MentionModule } from 'angular-mentions';
     MentionModule,
   ],
   exports: [
+    CommonModule,
     ButtonComponent,
     IconbuttonComponent,
     AvatarComponent,

@@ -26,6 +26,7 @@ import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { CourseLevelNotificationSettingsComponent } from 'src/app/components/course-level-notification-settings/course-level-notification-settings.component';
 import { getNotifications } from '../notifications/state/notifications.reducer';
 import { Observable, map } from 'rxjs';
+import { TopicChannelService } from 'src/app/services/topic-channel.service';
 
 @Component({
   selector: 'app-channelbar',
