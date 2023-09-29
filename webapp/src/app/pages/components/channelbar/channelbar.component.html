@@ -9,7 +9,7 @@
       *ngIf="selectedCourse._id"
     >
       <div class="h-max m-0 flex flex-col bg-gray-100">
-        <div class="flex items-start justify-between py-4 pl-3 bg-gray-200">
+        <div class="flex justify-between py-4 pl-3 bg-gray-200">
           <p
             id="{{ selectedCourse._id }}"
             (keydown)="onTextInserted(selectedCourse._id, $event)"
@@ -26,23 +26,25 @@
               >{{ numOfUnreadNotificationsInSelectedCourse$ | async }}</span
             > -->
           </p>
-
-          <app-iconbutton
-            icon="bx-dots-vertical-rounded"
-            color="text-black"
-            (click)="menu.toggle($event)"
-          ></app-iconbutton>
-          <p-menu
-            #menu
-            id="config_menu"
-            [model]="
-              showModeratorPrivileges ? moderatorUserOptions : normalUserOptions
-            "
-            [popup]="true"
-            appendTo="body"
-            styleClass="course-context-menu"
-          ></p-menu>
+          <div>
+            <app-iconbutton
+              icon="bx-dots-vertical-rounded"
+              color="text-black"
+              (click)="menu.toggle($event)"
+            ></app-iconbutton>
+          </div>
         </div>
+
+        <p-menu
+          #menu
+          id="config_menu"
+          [model]="
+            showModeratorPrivileges ? moderatorUserOptions : normalUserOptions
+          "
+          [popup]="true"
+          appendTo="body"
+          styleClass="course-context-menu"
+        ></p-menu>
 
         <app-topic-dropdown
           [showModeratorPrivileges]="showModeratorPrivileges"
