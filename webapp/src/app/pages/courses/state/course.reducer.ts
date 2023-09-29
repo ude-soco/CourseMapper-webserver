@@ -141,25 +141,29 @@ export const getNotificationSettingsOfLastTopicMenuClicked = createSelector(
       (topic) => topic.topicId === state.lastTopicMenuClickedId
     );
 
-    const notificationSettings = [
-      {
-        label: topicNotificationSettingLabels.courseDefault,
-        value: topic.isTopicLevelOverride,
-      },
-      {
-        label: topicNotificationSettingLabels.topicUpdates,
-        value: topic.isCourseUpdateNotificationsEnabled,
-      },
-      {
-        label: topicNotificationSettingLabels.commentsAndMentioned,
-        value: topic.isReplyAndMentionedNotificationsEnabled,
-      },
-      {
-        label: topicNotificationSettingLabels.annotations,
-        value: topic.isAnnotationNotificationsEnabled,
-      },
-    ];
-    return notificationSettings;
+    if (topic) {
+      const notificationSettings = [
+        {
+          label: topicNotificationSettingLabels.courseDefault,
+          value: topic.isTopicLevelOverride,
+        },
+        {
+          label: topicNotificationSettingLabels.topicUpdates,
+          value: topic.isCourseUpdateNotificationsEnabled,
+        },
+        {
+          label: topicNotificationSettingLabels.commentsAndMentioned,
+          value: topic.isReplyAndMentionedNotificationsEnabled,
+        },
+        {
+          label: topicNotificationSettingLabels.annotations,
+          value: topic.isAnnotationNotificationsEnabled,
+        },
+      ];
+      return notificationSettings;
+    } else {
+      return null;
+    }
   }
 );
 export const getNotificationSettingsOfLastChannelMenuClicked = createSelector(
@@ -174,25 +178,29 @@ export const getNotificationSettingsOfLastChannelMenuClicked = createSelector(
     const channel = state.channelsNotificationSettings.find(
       (channel) => channel.channelId === state.lastChannelMenuClickedId
     );
-    const notificationSettings = [
-      {
-        label: channelNotificationSettingLabels.topicDefault,
-        value: channel.isChannelLevelOverride,
-      },
-      {
-        label: channelNotificationSettingLabels.channelUpdates,
-        value: channel.isCourseUpdateNotificationsEnabled,
-      },
-      {
-        label: channelNotificationSettingLabels.commentsAndMentioned,
-        value: channel.isReplyAndMentionedNotificationsEnabled,
-      },
-      {
-        label: channelNotificationSettingLabels.annotations,
-        value: channel.isAnnotationNotificationsEnabled,
-      },
-    ];
-    return notificationSettings;
+    if (channel) {
+      const notificationSettings = [
+        {
+          label: channelNotificationSettingLabels.topicDefault,
+          value: channel.isChannelLevelOverride,
+        },
+        {
+          label: channelNotificationSettingLabels.channelUpdates,
+          value: channel.isCourseUpdateNotificationsEnabled,
+        },
+        {
+          label: channelNotificationSettingLabels.commentsAndMentioned,
+          value: channel.isReplyAndMentionedNotificationsEnabled,
+        },
+        {
+          label: channelNotificationSettingLabels.annotations,
+          value: channel.isAnnotationNotificationsEnabled,
+        },
+      ];
+      return notificationSettings;
+    } else {
+      return null;
+    }
   }
 );
 
@@ -208,25 +216,29 @@ export const getNotificationSettingsOfLastMaterialMenuClicked = createSelector(
     const material = state.materialsNotificationSettings.find(
       (material) => material.materialId === state.lastMaterialMenuClickedId
     );
-    const notificationSettings = [
-      {
-        label: materialNotificationSettingLabels.channelDefault,
-        value: material.isMaterialLevelOverride,
-      },
-      {
-        label: materialNotificationSettingLabels.materialUpdates,
-        value: material.isCourseUpdateNotificationsEnabled,
-      },
-      {
-        label: materialNotificationSettingLabels.commentsAndMentioned,
-        value: material.isReplyAndMentionedNotificationsEnabled,
-      },
-      {
-        label: materialNotificationSettingLabels.annotations,
-        value: material.isAnnotationNotificationsEnabled,
-      },
-    ];
-    return notificationSettings;
+    if (material) {
+      const notificationSettings = [
+        {
+          label: materialNotificationSettingLabels.channelDefault,
+          value: material.isMaterialLevelOverride,
+        },
+        {
+          label: materialNotificationSettingLabels.materialUpdates,
+          value: material.isCourseUpdateNotificationsEnabled,
+        },
+        {
+          label: materialNotificationSettingLabels.commentsAndMentioned,
+          value: material.isReplyAndMentionedNotificationsEnabled,
+        },
+        {
+          label: materialNotificationSettingLabels.annotations,
+          value: material.isAnnotationNotificationsEnabled,
+        },
+      ];
+      return notificationSettings;
+    } else {
+      return null;
+    }
   }
 );
 
