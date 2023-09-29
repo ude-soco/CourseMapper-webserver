@@ -6,7 +6,7 @@ import { catchError, map, Observable, of, tap } from 'rxjs';
 import * as CourseActions from '../pages/courses/state/course.actions';
 import { Store } from '@ngrx/store';
 import { State } from '../pages/courses/state/course.reducer';
-
+import * as NotificationActions from '../pages/components/notifications/state/notifications.actions';
 @Injectable({
   providedIn: 'root',
 })
@@ -84,11 +84,7 @@ export class MaterilasService {
       .delete(
         `${this.API_URL}/courses/${material['courseId']}/materials/${material._id}`
       )
-      .pipe(
-        tap((res) => {
-          //console.log(res)
-        })
-      );
+      .pipe(tap((res) => {}));
   }
   deleteFile(material: Material) {
     if (material.type == 'pdf') {

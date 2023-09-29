@@ -100,6 +100,7 @@ export class TopicChannelService {
                 updatedDoc: res.updatedNotificationSettings,
               })
             );
+            this.onUpdateTopics$.next(this.topics);
           }
         })
       );
