@@ -11,6 +11,7 @@ import { State } from 'src/app/pages/components/materials/state/materials.reduce
 import * as MaterialActions from 'src/app/pages/components/materials/state/materials.actions';
 import * as CourseActions from 'src/app/pages/courses/state/course.actions';
 import { Notification } from '../models/Notification';
+import * as NotificationActions from '../pages/components/notifications/state/notifications.actions';
 
 @Injectable({
   providedIn: 'root',
@@ -133,6 +134,11 @@ export class CourseService {
         }),
         tap((res) => {
           if (!('errorMsg' in res)) {
+            this.store.dispatch(
+              NotificationActions.isDeletingCourse({
+                courseId: courseTD._id,
+              })
+            );
             this.removeCourse(courseTD);
           }
         })

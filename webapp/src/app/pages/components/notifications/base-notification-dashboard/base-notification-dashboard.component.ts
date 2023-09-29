@@ -318,6 +318,16 @@ export class BaseNotificationDashboardComponent {
             showNotificationsPanel: false,
           })
         );
+        //if the notification is for a deleted Material, navigate to the channel
+        if (notification.isDeletingMaterial) {
+          this.router.navigateByUrl(
+            '/course/' +
+              notification.course_id +
+              '/channel/' +
+              notification.channel_id
+          );
+          return;
+        }
         this.router.navigateByUrl(
           '/course/' +
             notification.course_id +
@@ -338,6 +348,13 @@ export class BaseNotificationDashboardComponent {
           })
         );
 
+        if (notification.isDeletingChannel) {
+          this.router.navigateByUrl(
+            '/course/' + notification.course_id + '/welcome'
+          );
+          return;
+        }
+
         this.router.navigate([
           '/course',
           notification.course_id,
@@ -345,6 +362,7 @@ export class BaseNotificationDashboardComponent {
           notification.channel_id,
         ]);
       } else {
+        //WIll run below code if its a topic update notification
         this.courseService.Notification = notification;
         this.courseService.navigatingToMaterial = true;
         this.store.dispatch(
@@ -365,6 +383,7 @@ export class BaseNotificationDashboardComponent {
       this.store.dispatch(
         courseActions.setCourseId({ courseId: notification.course_id })
       );
+
       if (notification.reply_id) {
         this.courseService.navigatingToMaterial = true;
         this.store.dispatch(
@@ -372,6 +391,20 @@ export class BaseNotificationDashboardComponent {
             showNotificationsPanel: false,
           })
         );
+        if (notification.isDeletingReply) {
+          this.router.navigateByUrl(
+            '/course/' +
+              notification.course_id +
+              '/channel/' +
+              notification.channel_id +
+              '/material/' +
+              '(material:' +
+              notification.material_id +
+              `/${notification.materialType})` +
+              `#annotation-${notification.annotation_id}`
+          );
+          return;
+        }
 
         this.router.navigateByUrl(
           '/course/' +
@@ -387,6 +420,20 @@ export class BaseNotificationDashboardComponent {
         return;
       }
       if (notification.annotation_id) {
+        if (notification.isDeletingAnnotation) {
+          this.router.navigateByUrl(
+            '/course/' +
+              notification.course_id +
+              '/channel/' +
+              notification.channel_id +
+              '/material/' +
+              '(material:' +
+              notification.material_id +
+              `/${notification.materialType})`
+          );
+          return;
+        }
+
         //if website is already on the same material, then just scroll to the annotation
 
         if (
@@ -427,6 +474,8 @@ export class BaseNotificationDashboardComponent {
           }, 100);
           return;
         }
+
+        //if we are not on the material where annotation is present, then we will need to navigate to it.
         this.courseService.navigatingToMaterial = true;
         this.store.dispatch(
           AppActions.setShowNotificationsPanel({

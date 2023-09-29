@@ -184,6 +184,7 @@ export const deleteAnnotation = async (req, res, next) => {
   } catch (error) {
     return res.status(500).send({ error: "Error finding user" });
   }
+
   let foundAnnotation;
   try {
     foundAnnotation = await Annotation.findById(annotationId);
@@ -255,6 +256,7 @@ export const deleteAnnotation = async (req, res, next) => {
     annotationId: foundAnnotation._id,
     isFollowingAnnotation: true,
     isDeletingAnnotation: true,
+    materialType: foundMaterial.type,
   };
 
   next();
