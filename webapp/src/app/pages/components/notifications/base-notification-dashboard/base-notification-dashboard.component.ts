@@ -363,6 +363,7 @@ export class BaseNotificationDashboardComponent {
         ]);
       } else {
         //WIll run below code if its a topic update notification
+        //here we are not checking if it is a topic delete notification since in both normal notification and topic delete notification we are navigating to the same page
         this.courseService.Notification = notification;
         this.courseService.navigatingToMaterial = true;
         this.store.dispatch(
@@ -421,6 +422,11 @@ export class BaseNotificationDashboardComponent {
       }
       if (notification.annotation_id) {
         if (notification.isDeletingAnnotation) {
+          this.store.dispatch(
+            AppActions.setShowNotificationsPanel({
+              showNotificationsPanel: false,
+            })
+          );
           this.router.navigateByUrl(
             '/course/' +
               notification.course_id +
