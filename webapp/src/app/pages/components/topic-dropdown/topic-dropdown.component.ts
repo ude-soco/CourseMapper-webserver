@@ -364,8 +364,12 @@ export class TopicDropdownComponent implements OnInit {
   ngOnDestroy() {
     this.expandTopic = null;
     this.selectedChannelId = null;
-    this.lastChannelClickedNotificationSettingsSubscription.unsubscribe();
-    this.lastTopicClickedNotificationSettingsSubscription.unsubscribe();
+    if (this.lastChannelClickedNotificationSettingsSubscription) {
+      this.lastChannelClickedNotificationSettingsSubscription.unsubscribe();
+    }
+    if (this.lastTopicClickedNotificationSettingsSubscription) {
+      this.lastTopicClickedNotificationSettingsSubscription.unsubscribe();
+    }
   }
 
   ngAfterViewChecked() {

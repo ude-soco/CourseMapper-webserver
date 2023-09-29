@@ -165,7 +165,9 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     },
   ];
   ngOnDestroy(): void {
-    this.lastMaterialClickedNotificationSettingSubscription.unsubscribe();
+    if (this.lastMaterialClickedNotificationSettingSubscription) {
+      this.lastMaterialClickedNotificationSettingSubscription.unsubscribe();
+    }
   }
 
   ngOnInit() {
