@@ -38,6 +38,9 @@
           </h2>
         </div>
         <hr style="margin: 0 5px; padding: 0; width: 95%" />
+        <div *ngIf="node_type === 'category'" style="margin: 4px" class="abstractParagraph italic">
+          This is a category to which a concept belongs in Dbpedia and does not have an associated article on Wikipedia
+        </div>
         <div *ngIf="node_abstract">
           <div style="display: inline-block; margin: 2px">
             <div>
