@@ -1,4 +1,10 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ChangeDetectorRef,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { HttpClient } from '@angular/common/http';
 import { FormArray, FormControl } from '@angular/forms';
@@ -577,5 +583,28 @@ export class BaseNotificationDashboardComponent {
   protected unreadSwitchToggled($event) {
     this.isUnreadChecked = $event;
     this.unreadSwitchBehaviourSubject.next($event);
+  }
+
+  onScroll() {
+    console.log('scrolled!!!');
+  }
+
+  @ViewChild('p-overlaypanel', { static: false }) overLayPanel: ElementRef;
+
+  ngAfterViewInit() {
+    const pOverlayPanel = document.querySelector('.p-overlaypanel-content');
+    console.log(pOverlayPanel);
+
+    pOverlayPanel.addEventListener('scroll', ($event) => {
+      const scrollTop = pOverlayPanel.scrollTop;
+      const scrollHeight = pOverlayPanel.scrollHeight;
+      const clientHeight = pOverlayPanel.clientHeight;
+      let totalSpaceAvailableToScroll = scrollHeight - clientHeight;
+      if (scrollTop / totalSpaceAvailableToScroll > 0.9) {
+        console.log('scrolled!');
+      }
+
+      //here we need to call the backend
+    });
   }
 }

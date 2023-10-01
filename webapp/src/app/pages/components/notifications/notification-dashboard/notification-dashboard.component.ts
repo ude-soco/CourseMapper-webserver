@@ -1,4 +1,10 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ChangeDetectorRef,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { HttpClient } from '@angular/common/http';
 import {
@@ -49,9 +55,7 @@ export class NotificationDashboardComponent extends BaseNotificationDashboardCom
     super.ngOnInit();
   }
 
-  ngOnDestroy(): void {
-
-  }
+  ngOnDestroy(): void {}
 
   /*   tabOptions: MenuItem[];
   menuOptions: MenuItem[];
