@@ -1,13 +1,13 @@
   <div class="z-0 w-20 bg-white  min-h-screen  text-white shadow-lg" >
     <div class="h-max w-20 flex flex-col" >
       <div class="sidebar-icon group">
-        <a [routerLink]="[HomePage]"> 
+        <a [routerLink]="[HomePage]">
         <i class="bx bx-home bx-md bx-tada-hover"></i>
         <span class="sidebar-tooltip group-hover:scale-100"> Home </span></a>
       </div>
-  
+
       <hr class="sidebar-hr"/>
-  
+
       <div *ngFor="let course of courses; let i = index" (click)="onSelectCourse(course)" [attr.data-index]="i">
         <div class="sidebar-icon group">
           <button class="text-xl">{{ course.shortName }}</button>
@@ -15,16 +15,16 @@
           <span class="sidebar-tooltip group-hover:scale-100">{{course.name}}</span>
         </div>
       </div>
-  
+
       <hr class="sidebar-hr"/>
-  
+
       <div (click)="onAddCourseDialogueClicked()" class="sidebar-icon group">
         <i class="bx bx-plus bx-md bx-tada-hover"></i>
         <span class="sidebar-tooltip group-hover:scale-100"> Add new course </span>
       </div>
-  
+
       <div class="sidebar-icon group">
-        <a href="/landingPage"> 
+        <a href="/landingPage">
         <i class="bx bx-search bx-md bx-tada-hover"></i>
         <span class="sidebar-tooltip group-hover:scale-100">
           Search for courses

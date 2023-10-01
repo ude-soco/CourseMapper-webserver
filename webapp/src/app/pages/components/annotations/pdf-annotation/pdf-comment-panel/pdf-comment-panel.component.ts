@@ -100,6 +100,8 @@ export class PdfCommentPanelComponent implements OnInit {
         annotationPanel.clientHeight -
         (createAnnotationPanel.clientHeight + filterPanel.clientHeight + 60) +
         'px';
+      console.log(annotationPanel.clientHeight -
+        (createAnnotationPanel.clientHeight + filterPanel.clientHeight + 60))
       commentPanel.style.overflow = 'auto';
       this.changeDetectorRef.detectChanges();
     }

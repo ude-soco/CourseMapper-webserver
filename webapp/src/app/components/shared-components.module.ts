@@ -15,6 +15,7 @@ import { TabMenuModule } from 'primeng/tabmenu';
 import { NoDataComponent } from './no-data/no-data.component';
 import { MentionsComponent } from './mentions/mentions.component';
 import { MentionModule } from 'angular-mentions';
+import { FooterComponent } from './footer/footer.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { MentionModule } from 'angular-mentions';
     TabMenuComponent,
     NoDataComponent,
     MentionsComponent,
+    FooterComponent,
   ],
   imports: [
     CommonModule,
@@ -49,6 +51,7 @@ import { MentionModule } from 'angular-mentions';
     TabMenuComponent,
     NoDataComponent,
     MentionsComponent,
+    FooterComponent,
   ],
 })
 export class SharedComponentsModule {}
