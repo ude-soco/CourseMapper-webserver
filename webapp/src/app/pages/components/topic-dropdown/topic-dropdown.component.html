@@ -84,6 +84,7 @@
             *ngIf="channel._id !== selectedChannelId"
             class="flex flex-row items-center justify-between"
           >
+            #
             <p
               id="{{ channel._id }}"
               (click)="onSelectChannel(channel)"
@@ -91,7 +92,7 @@
               (keyup)="afterTextInsertedChennel(selectedChannel._id, $event)"
               class="cursor-pointer w-full"
             >
-              #{{ channel.name }}
+              {{ channel.name }}
             </p>
             <app-iconbutton
               icon="bx-dots-vertical-rounded"
@@ -122,6 +123,7 @@
             *ngIf="channel._id === selectedChannelId"
             class="flex flex-row items-center justify-between bg-white"
           >
+            #
             <p
               id="{{ channel._id }}"
               (click)="onSelectChannel(channel)"
@@ -129,7 +131,7 @@
               (keyup)="afterTextInsertedChennel(selectedChannel._id, $event)"
               class="cursor-pointer w-full"
             >
-              #{{ channel.name }}
+              {{ channel.name }}
             </p>
             <app-iconbutton
               icon="bx-dots-vertical-rounded"
