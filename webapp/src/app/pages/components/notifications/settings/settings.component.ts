@@ -24,23 +24,23 @@ export class SettingsComponent {
   ngOnInit() {
     this.tabOptions = [
       {
-        label: 'Blocked Users',
-        icon: 'pi pi-user',
-        command: (event) => {
-          this.componentToShow = 'blocked-users';
-        },
-      },
-      {
         label: 'Global notification settings',
         icon: 'pi pi-globe',
         command: (event) => {
           this.componentToShow = 'notification-settings-panel';
         },
       },
+      {
+        label: 'Blocked Users',
+        icon: 'pi pi-user',
+        command: (event) => {
+          this.componentToShow = 'blocked-users';
+        },
+      },
     ];
 
     this.activeItem = this.tabOptions[0];
-    this.componentToShow = 'blocked-users';
+    this.componentToShow = 'notification-settings-panel';
 
     this.blockingUsers$ = this.store
       .select(getBlockingUsers)
