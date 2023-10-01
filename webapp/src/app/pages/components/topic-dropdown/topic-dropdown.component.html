@@ -84,7 +84,7 @@
             *ngIf="channel._id !== selectedChannelId"
             class="flex flex-row items-center justify-between"
           >
-            #
+            <span>#</span>
             <p
               id="{{ channel._id }}"
               (click)="onSelectChannel(channel)"
@@ -123,7 +123,7 @@
             *ngIf="channel._id === selectedChannelId"
             class="flex flex-row items-center justify-between bg-white"
           >
-            #
+            <span>#</span>
             <p
               id="{{ channel._id }}"
               (click)="onSelectChannel(channel)"

@@ -738,6 +738,7 @@ export class TopicDropdownComponent implements OnInit {
     const channelId = id;
     this.textFromChannel = false;
     if (this.enterKey) {
+      this.channelMenu.hide();
       //confirmed by keyboard
       let ChannelName = this.previousChannel.name;
       const channelDescription = this.previousChannel.description;
