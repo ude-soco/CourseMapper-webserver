@@ -12,6 +12,8 @@ import { TopicDropdownComponent } from './pages/components/topic-dropdown/topic-
 import { PdfMainAnnotationComponent } from './pages/components/annotations/pdf-annotation/pdf-main-annotation/pdf-main-annotation.component';
 import { DashboardComponent } from './pages/components/dashboard/dashboard.component';
 import { LandingPageComponent } from './pages/landing-page/landing-page.component';
+import { AboutComponent } from './pages/about/about.component';
+import { TeamComponent } from './pages/team/team.component';
 import { PrivacyComponent } from './pages/components/privacy/privacy.component';
 import { CourseDescriptionComponent } from './pages/components/course-description/course-description.component';
 import { TagsPageComponent } from './pages/components/tags/tags-page/tags-page.component';
@@ -38,6 +40,14 @@ const routes: Routes = [
     path: 'home',
     component: HomeComponent,
     canActivate: [AuthGuardService],
+  },
+  {
+    path: 'about',
+    component: AboutComponent,
+  },
+  {
+    path: 'team',
+    component: TeamComponent,
   },
   {
     path: 'privacy',

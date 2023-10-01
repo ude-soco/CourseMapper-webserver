@@ -87,6 +87,8 @@ import { NoDataComponent } from './components/no-data/no-data.component';
 import { AppEffects } from './state/app.effects';
 import { MentionModule } from 'angular-mentions';
 import { MessageService } from 'primeng/api';
+import { TeamComponent } from './pages/team/team.component';
+import { AboutComponent } from './pages/about/about.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -115,6 +117,8 @@ import { MessageService } from 'primeng/api';
     DateAgoPipe,
     LinkifyPipe,
     CourseWelcomeComponent,
+    TeamComponent,
+    AboutComponent,
   ],
   imports: [
     MentionModule,
