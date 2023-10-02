@@ -585,15 +585,12 @@ export class BaseNotificationDashboardComponent {
     this.unreadSwitchBehaviourSubject.next($event);
   }
 
-  onScroll() {
-    console.log('scrolled!!!');
-  }
+  onScroll() {}
 
   @ViewChild('p-overlaypanel', { static: false }) overLayPanel: ElementRef;
 
   ngAfterViewInit() {
     const pOverlayPanel = document.querySelector('.p-overlaypanel-content');
-    console.log(pOverlayPanel);
 
     pOverlayPanel.addEventListener('scroll', ($event) => {
       const scrollTop = pOverlayPanel.scrollTop;
@@ -601,7 +598,6 @@ export class BaseNotificationDashboardComponent {
       const clientHeight = pOverlayPanel.clientHeight;
       let totalSpaceAvailableToScroll = scrollHeight - clientHeight;
       if (scrollTop / totalSpaceAvailableToScroll > 0.9) {
-        console.log('scrolled!');
       }
 
       //here we need to call the backend

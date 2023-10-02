@@ -38,7 +38,7 @@ export class NotificationEffects {
     (): Observable<Action> =>
       this.actions$.pipe(
         ofType(NotificationActions.notificationsMarkedAsRead),
-        tap(() => console.log('In Effect: Marking notification as read')),
+
         mergeMap((action) =>
           this.notificationService
             .markNotificationAsRead(action.notifications)
@@ -64,7 +64,7 @@ export class NotificationEffects {
     (): Observable<Action> =>
       this.actions$.pipe(
         ofType(NotificationActions.notificationsMarkedAsUnread),
-        tap(() => console.log('In Effect: Marking notification as unread')),
+
         mergeMap((action) =>
           this.notificationService
             .markNotificationAsUnread(action.notifications)
@@ -90,7 +90,7 @@ export class NotificationEffects {
     (): Observable<Action> =>
       this.actions$.pipe(
         ofType(NotificationActions.starNotifications),
-        tap(() => console.log('In Effect: Starring notification')),
+
         mergeMap((action) =>
           this.notificationService.starNotification(action.notifications).pipe(
             map((successMsg: { message: string }) =>
@@ -114,7 +114,7 @@ export class NotificationEffects {
     (): Observable<Action> =>
       this.actions$.pipe(
         ofType(NotificationActions.unstarNotifications),
-        tap(() => console.log('In Effect: Unstarring notification')),
+
         mergeMap((action) =>
           this.notificationService
             .unstarNotification(action.notifications)
@@ -140,7 +140,7 @@ export class NotificationEffects {
     (): Observable<Action> =>
       this.actions$.pipe(
         ofType(NotificationActions.notificationsRemoved),
-        tap(() => console.log('In Effect: Removing notification')),
+
         mergeMap((action) =>
           this.notificationService
             .removeNotification(
@@ -168,7 +168,7 @@ export class NotificationEffects {
     (): Observable<Action> =>
       this.actions$.pipe(
         ofType(NotificationActions.blockUser),
-        tap(() => console.log('In Effect: Blocking user')),
+
         mergeMap((action) =>
           this.notificationService.blockUser(action.userId).pipe(
             mergeMap((blockingUsers) => [
@@ -195,7 +195,7 @@ export class NotificationEffects {
     (): Observable<Action> =>
       this.actions$.pipe(
         ofType(NotificationActions.unblockUser),
-        tap(() => console.log('In Effect: Unblocking user')),
+
         mergeMap((action) =>
           this.notificationService.unblockUser(action.userId).pipe(
             mergeMap((blockingUsers) => [
@@ -222,9 +222,7 @@ export class NotificationEffects {
     (): Observable<Action> =>
       this.actions$.pipe(
         ofType(NotificationActions.loadGlobalAndCoursesNotificationSettings),
-        tap(() =>
-          console.log('In Effect: Fetching global and courses notification')
-        ),
+
         mergeMap(() =>
           this.notificationService
             .getCourseNotificationSettings()
@@ -243,7 +241,7 @@ export class NotificationEffects {
     (): Observable<Action> =>
       this.actions$.pipe(
         ofType(NotificationActions.setGlobalNotificationSettings),
-        tap(() => console.log('In Effect: Setting global notification')),
+
         mergeMap((action) =>
           this.notificationService
             .setGlobalNotificationSettings(action)

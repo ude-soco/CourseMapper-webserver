@@ -56,7 +56,6 @@ export class MaterilasService {
           };
         }),
         tap((res) => {
-          console.log(res);
           this.store.dispatch(
             CourseActions.setMaterialNotificationSettingsSuccess({
               updatedDoc: res.updatedNotificationSettings,

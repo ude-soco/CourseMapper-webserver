@@ -21,7 +21,6 @@ export class TabMenuComponent {
   }
 
   onSettingsClick(event$) {
-    console.log('settings button clicked!!');
     this.store.dispatch(
       AppActions.setShowNotificationsPanel({ showNotificationsPanel: false })
     );

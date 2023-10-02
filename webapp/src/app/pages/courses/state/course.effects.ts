@@ -292,7 +292,7 @@ export class CourseEffects {
   setCourseLevelNotification$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(CourseActions.setCourseNotificationSettings),
-      tap(() => console.log('In Effect: Setting course level notification')),
+
       mergeMap((action) =>
         this.notificationService
           .setCourseNotificationSettings(action.settings)
@@ -321,7 +321,7 @@ export class CourseEffects {
   unsetCourseLevelNotification$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(CourseActions.unsetCourseNotificationSettings),
-      tap(() => console.log('In Effect: Unsetting course level notification')),
+
       mergeMap((action) =>
         this.notificationService
           .unsetCourseNotificationSettings(action.settings)
@@ -350,7 +350,7 @@ export class CourseEffects {
   setTopicLevelNotification$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(CourseActions.setTopicNotificationSettings),
-      tap(() => console.log('In Effect: Setting topic level notification')),
+
       mergeMap((action) =>
         this.notificationService
           .setTopicNotificationSettings(action.settings)
@@ -375,7 +375,7 @@ export class CourseEffects {
   setChannelLevelNotification$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(CourseActions.setChannelNotificationSettings),
-      tap(() => console.log('In Effect: Setting channel level notification')),
+
       mergeMap((action) =>
         this.notificationService
           .setChannelNotificationSettings(action.settings)
@@ -401,7 +401,7 @@ export class CourseEffects {
   setMaterialLevelNotification$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(CourseActions.setMaterialNotificationSettings),
-      tap(() => console.log('In Effect: Setting material level notification')),
+
       mergeMap((action) =>
         this.notificationService
           .setMaterialNotificationSettings(action.settings)
@@ -427,7 +427,7 @@ export class CourseEffects {
   unsetTopicLevelNotification$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(CourseActions.unsetTopicNotificationSettings),
-      tap(() => console.log('In Effect: Unsetting topic level notification')),
+
       mergeMap((action) =>
         this.notificationService
           .unsetTopicNotificationSettings(action.settings)
@@ -453,7 +453,7 @@ export class CourseEffects {
   unsetChannelLevelNotification$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(CourseActions.unsetChannelNotificationSettings),
-      tap(() => console.log('In Effect: Unsetting Channel Level notification')),
+
       mergeMap((action) =>
         this.notificationService
           .unsetChannelNotificationSettings(action.settings)
@@ -478,9 +478,7 @@ export class CourseEffects {
   unsetMaterialLevelNotification$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(CourseActions.unsetMaterialNotificationSettings),
-      tap(() =>
-        console.log('In Effect: Unsetting Material Level notification')
-      ),
+
       mergeMap((action) =>
         this.notificationService
           .unsetMaterialNotificationSettings(action.settings)
@@ -505,7 +503,7 @@ export class CourseEffects {
   followAnnotation$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(CourseActions.followAnnotation),
-      tap(() => console.log('In Effect: Following Annotation')),
+
       mergeMap((action) =>
         this.notificationService.followAnnotation(action.annotationId).pipe(
           mergeMap((updatedDoc: BlockingNotifications) => [
@@ -534,7 +532,7 @@ export class CourseEffects {
   unfollowAnnotation$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(CourseActions.unfollowAnnotation),
-      tap(() => console.log('In Effect: Unfollowing Annotation')),
+
       mergeMap((action) =>
         this.notificationService.unfollowAnnotation(action.annotationId).pipe(
           mergeMap((updatedDoc: BlockingNotifications) => [
