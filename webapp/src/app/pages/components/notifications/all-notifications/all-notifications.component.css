@@ -40,9 +40,14 @@ h2{
     display: block;
     margin: 0 auto;
     width: 900px;
-    height: 100vh;
+/*     height: 100vh;
     overflow-y: scroll;
-    padding: 0.5rem;
+    padding: 0.5rem; */
+ }
+
+ .notification-box-container{
+  height: calc(100vh - 210px);
+  overflow-y: scroll;
  }
 
 
