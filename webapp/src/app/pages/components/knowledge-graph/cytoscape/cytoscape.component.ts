@@ -285,6 +285,9 @@ export class CytoscapeComponent {
           for (var i = 0; i < nodesToHide.length; i++) {
             this.cy.$(`#${nodesToHide[i].data.id}`).style('display', 'none');
           }
+          for (var i = 0; i < this.annotationsNodes.length; i++) {
+            this.cy.$(`#${this.annotationsNodes[i].data.id}`).style('display', 'element');
+          }
         });
       }
     }
