@@ -2,7 +2,7 @@
     position: relative;
     height: 100%;
   }
-  
+
   .profile-main-loader {
     left: 50% !important;
     margin-left: -100px;
@@ -12,7 +12,7 @@
     width: 45px;
     z-index: 7000 !important;
   }
-  
+
   .profile-main-loader .loader {
     position: relative;
     margin: 0px auto;
@@ -24,7 +24,7 @@
     display: block;
     padding-top: 100%;
   }
-  
+
   .circular-loader {
     -webkit-animation: rotate 2s linear infinite;
     animation: rotate 2s linear infinite;
@@ -38,7 +38,7 @@
     left: 0;
     margin: auto;
   }
-  
+
   .loader-path {
     stroke-dasharray: 150, 200;
     stroke-dashoffset: -10;
@@ -47,14 +47,14 @@
     animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite;
     stroke-linecap: round;
   }
-  
+
   @-webkit-keyframes rotate {
     100% {
       -webkit-transform: rotate(360deg);
       transform: rotate(360deg);
     }
   }
-  
+
   @keyframes rotate {
     100% {
       -webkit-transform: rotate(360deg);
@@ -119,7 +119,7 @@
       stroke: #0277bd;
     }
   }
-  
+
   .legend-circle-concept {
     width: 1em;
     height: 1em;
@@ -196,7 +196,7 @@
   #tabMaterial:checked ~ .tab.materials {
     display: block;
   }
-  
+
   .recommenderTabs:enabled + .recommenderLabel {
     /* box with rounded corner */
     border: 1px solid #2196f3;
@@ -261,7 +261,7 @@
     height: 50px;
     max-height: 50px;
   }
-  
+
   #kgPanelContainer {
     background-color: red;
   }
@@ -312,7 +312,7 @@
     padding-right: 0.125rem;
     font-size: 2px;
   }
-  
+
   #showNonUnderstoodPanel {
     position: absolute;
     background-color: #ffffff;
@@ -360,11 +360,11 @@
     margin-left: 35%;
     margin-bottom: 0;
   }
-  
+
   :host ::ng-deep .p-radiobutton-icon {
     background-color: #0284c7 !important;
   }
-  
+
   :host ::ng-deep .p-sidebar {
     width: 400px;
     height: 90%;
@@ -453,7 +453,7 @@
     color: #eb590d;
     background-color: #eb590d;
   }
-  
+
   .sidebarShown {
     margin-left: 1rem;
   }
@@ -464,7 +464,7 @@
     font-size: 15 px;
     color: red;
   }
-  
+
   :host ::ng-deep .checkLabel {
     margin-left: 0.1rem;
     margin-top:5.5rem;
@@ -472,7 +472,7 @@
   :host ::ng-deep .p-checkbox-box{
     margin-top:-5px;
   }
-  
+
   :host ::ng-deep #didNotUnderstandButton{
     color: #ffffff;
     background: #EB590D;
@@ -492,3 +492,8 @@
     border-radius: 8px;
     border: 1px solid #b3b3b3;
   }
+
+.p-dialog-content {
+  display: flex;
+  flex-direction: column;
+}

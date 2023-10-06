@@ -112,6 +112,7 @@ export class ConceptMapComponent {
   manuallyAddedConcept = null;
   retrievedConcepts = [];
   kgSlideReceivedResponse = false;
+  kgSlideResponseEmpty = false;
   mainConceptsTab = true;
   recommendedConceptsTab = false;
   recommendedMaterialsTab = false;
@@ -1377,6 +1378,7 @@ export class ConceptMapComponent {
             };
             this.conceptMapData = slideKgMeta;
           } else {
+            this.conceptMapData = { nodes: [] };
             try {
               // if kg isn't saved in neo4j, send a request to python to construct a kg
               console.log('no kg saved, constructing a new one...');
@@ -1464,14 +1466,16 @@ export class ConceptMapComponent {
             // emit kg to cytoscape
             this.dataReceivedEvent.emit(this.conceptMapData);
             this.filteredMapData = this.conceptMapData;
-            this.kgSlideReceivedResponse = true;
+            this.kgSlideResponseEmpty = false;
             console.log(
               'ConceptMapComponent:::getConceptMapData',
               this.conceptMapData
             );
           } else {
+            this.kgSlideResponseEmpty = true;
             console.log('No KG received for this slide!!');
           }
+          this.kgSlideReceivedResponse = true;
           var endTime = performance.now();
           console.log(
             `Call to show Slide_KG took ${endTime - startTime} milliseconds`
@@ -1972,6 +1976,7 @@ export class ConceptMapComponent {
     this.showSlideKg = false; //hide slide_KG
     this.showMaterialKg = false;
     this.showCourseKg = false;
+    this.kgSlideResponseEmpty = false;
     this.kgSlideReceivedResponse = false;
     this.allConceptsObj = []; //all KG_concaptes
     this.newConceptsObj = []; // kg_concepts with status new
