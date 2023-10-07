@@ -133,7 +133,7 @@ export const starNotification = async (req, res, next) => {
     //User notifications with the id's in the variable notificationIds are updated to have the isRead field set to true
     await UserNotification.updateMany(
       { _id: { $in: notificationIds } },
-      { isStar: true }
+      { $set: { isStar: true }, $unset: { createdAt: 1 } }
     );
   } catch (error) {
     return res
@@ -152,7 +152,7 @@ export const unstarNotification = async (req, res, next) => {
     //User notifications with the id's in the variable notificationIds are updated to have the isRead field set to true
     await UserNotification.updateMany(
       { _id: { $in: notificationIds } },
-      { isStar: false }
+      { $set: { isStar: false, createdAt: new Date() } }
     );
   } catch (error) {
     return res
