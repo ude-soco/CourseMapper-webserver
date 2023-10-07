@@ -42,6 +42,7 @@ app.use(
   cookieSession({
     name: "coursemapper-session",
     secret: process.env.COOKIE_SECRET,
+    keys: [process.env.COOKIE_SECRET],
     httpOnly: true,
   })
 );
