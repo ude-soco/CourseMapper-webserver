@@ -1,0 +1,10 @@
+#cyRoads {
+    /* height: 400px;this must be 100% to avoid hiding graph after rendering */
+    width: 100%;
+    position: relative;
+    left: 0;
+    top: 0;
+    z-index: 12;
+    border: 1px solid  #b3b3b3;
+    border-radius: 8px;
+  }

@@ -1,0 +1,86 @@
+<p-tabView (activeIndexChange)="tabChanged($event)">
+    <span class="flex flex-row">
+
+      <h4 class="text-[#0277BD] mr-3">
+        Recommendation based on the following concepts:
+      </h4>
+      <button
+        *ngFor="let concept of allConceptsObj"
+        class="dislike-button {{concept.status === 'understood' ? 'bg-[#689F38]' : concept.status === 'notUnderstood' ? 'bg-[#D32F2F]' : 'bg-[#2196F3]'}}
+        text-white px-2 mx-1 border border-transparent rounded-full"
+      >
+        {{ concept.name }}
+        <button
+          #notUnderstoodConcept
+          class="bg-transparent hover focus:outline-none cursor-pointer"
+          (click)="setChipConcept(concept); menu.toggle($event)"
+        >
+          <svg class="w-1 h-1 mt-0.5 ml-1.5">
+            <circle
+              cx="2.5"
+              cy="2.5"
+              r="2"
+              style="fill: white; stroke: #495057; stroke: width 0.5px"
+            />
+          </svg>
+          <svg class="w-1 h-1 mt-0.5 ml-1.5">
+            <circle
+              cx="2.5"
+              cy="2.5"
+              r="2"
+              style="fill: white; stroke: #495057; stroke: width 0.5px"
+            />
+          </svg>
+          <svg class="w-1 h-1 mt-0.5 ml-1.5">
+            <circle
+              cx="2.5"
+              cy="2.5"
+              r="2"
+              style="fill: white; stroke: #495057; stroke: width 0.5px"
+            />
+          </svg>
+          <p-menu
+            #menu
+            id="notUnderstood_menu"
+            [model]="concept.status === 'notUnderstood' ? chipMenuU : concept.status === 'understood' ? chipMenuDNU : chipMenuNew"
+            [popup]="true"
+            appendTo="body"
+          ></p-menu>
+        </button>
+      </button>
+
+      <!-- <div
+        id="materialModelDropdown"
+        class="p-field-dropdown"
+        style="display: block;margin-left: auto;margin-right: 0;"
+      >
+        <p-dropdown
+          [options]="materialModels"
+          [(ngModel)]="selectedMaterialModel"
+          optionLabel="name"
+          optionValue="code"
+          (onChange)="loadResultForSelectedModel(selectedMaterialModel)"
+        ></p-dropdown>
+      </div> -->
+    </span>
+
+    <p-tabPanel *ngIf="!recievedVideoResultIsEmpty" [cache]="true" header="Videos" leftIcon="pi pi-video">
+      <app-card-video-list
+        [notUnderstoodConcepts]="concepts"
+        [videoElements]="videos"
+      ></app-card-video-list>
+    </p-tabPanel>
+    <p-tabPanel *ngIf="recievedVideoResultIsEmpty" header="Videos" leftIcon="pi pi-video">
+      <h4>No Recommended videos for the selected Concepts</h4>
+    </p-tabPanel>
+    <p-tabPanel [cache]="true" *ngIf="!recievedArticleResultIsEmpty" header="Articles" leftIcon="pi pi-book">
+      <app-card-article-list
+        [notUnderstoodConcepts]="concepts"
+        [articleElements]="articles"
+      ></app-card-article-list>
+    </p-tabPanel>
+    <p-tabPanel *ngIf="recievedArticleResultIsEmpty" header="Articles" leftIcon="pi pi-book">
+      <h4>No Recommended articles for the selected Concepts</h4>
+    </p-tabPanel>
+  </p-tabView>
+  <p-toast position="bottom-left" key="rating"></p-toast>

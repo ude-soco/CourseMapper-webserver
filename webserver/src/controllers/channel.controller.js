@@ -8,6 +8,9 @@ const Annotation = db.annotation;
 const Reply = db.reply;
 const Tag = db.tag;
 
+const BlockingNotifications = db.blockingNotifications;
+const ObjectId = require("mongoose").Types.ObjectId;
+
 /**
  * @function getChannel
  * Get details of a channel controller
@@ -35,6 +38,130 @@ export const getChannel = async (req, res, next) => {
       "materials",
       "-__v"
     );
+    /*     foundChannel = await BlockingNotifications.aggregate([
+      {
+        $match: {
+          courseId: ObjectId(courseId),
+          userId: ObjectId(userId),
+        },
+      },
+      {
+        $project: {
+          courseId: 0,
+          isAnnotationNotificationsEnabled: 0,
+          isReplyAndMentionedNotificationsEnabled: 0,
+          isCourseUpdateNotificationsEnabled: 0,
+          userId: 0,
+          topics: 0,
+        },
+      },
+      {
+        $set: {
+          channel: {
+            $first: {
+              $filter: {
+                input: "$channels",
+                cond: {
+                  $eq: ["$$this.channelId", ObjectId(channelId)],
+                },
+              },
+            },
+          },
+        },
+      },
+      {
+        $set: {
+          materials: {
+            $filter: {
+              input: "$materials",
+              cond: {
+                $eq: ["$$this.channelId", ObjectId(channelId)],
+              },
+            },
+          },
+        },
+      },
+      {
+        $unset: "channels",
+      },
+      {
+        $lookup: {
+          from: "channels",
+          localField: "channel.channelId",
+          foreignField: "_id",
+          as: "lookedUpChannel",
+        },
+      },
+      {
+        $set: {
+          lookedUpChannel: {
+            $first: "$lookedUpChannel",
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "materials",
+          localField: "materials.materialId",
+          foreignField: "_id",
+          as: "lookedUpMaterials",
+        },
+      },
+      {
+        $addFields: {
+          lookUpMaterialIds: {
+            $map: {
+              input: "$lookedUpMaterials",
+              in: "$$this._id",
+            },
+          },
+        },
+      },
+
+      {
+        $addFields: {
+          materials: {
+            $map: {
+              input: "$materials",
+              in: {
+                $mergeObjects: [
+                  "$$this",
+                  {
+                    $arrayElemAt: [
+                      "$lookedUpMaterials",
+                      {
+                        $indexOfArray: [
+                          "$lookUpMaterialIds",
+                          "$$this.materialId",
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          lookedUpMaterials: 0,
+          lookUpMaterialIds: 0,
+        },
+      },
+      {
+        $set: {
+          "lookedUpChannel.materials": "$materials",
+        },
+      },
+      {
+        $replaceRoot: {
+          newRoot: {
+            $mergeObjects: ["$channel", "$lookedUpChannel"],
+          },
+        },
+      },
+    ]); */
     if (!foundChannel) {
       return res.status(404).send({
         error: `Channel with id ${channelId} doesn't exist!`,
@@ -46,10 +173,23 @@ export const getChannel = async (req, res, next) => {
       });
     }
   } catch (err) {
-    return res.status(500).send({ message: "Error finding channel" });
+    return res.status(500).send({ message: "Error finding channel", err });
   }
+
+  let notificationSettings;
+  try {
+    notificationSettings = await BlockingNotifications.findOne({
+      userId: userId,
+      courseId: courseId,
+    });
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ message: "Error finding notification settings" });
+  }
+
   req.locals = {
-    response: foundChannel,
+    response: { channel: foundChannel, notificationSettings },
     channel: foundChannel,
     user: user,
   };
@@ -122,10 +262,11 @@ export const newChannel = async (req, res, next) => {
   }
   updateCourse.channels.push(savedChannel._id);
   try {
-    await updateCourse.save();
+    updateCourse = await updateCourse.save();
   } catch (err) {
     return res.status(500).send({ error: "Error saving course" });
   }
+
   req.locals = {
     response: {
       id: savedChannel._id,
@@ -133,11 +274,16 @@ export const newChannel = async (req, res, next) => {
       success: `New channel '${savedChannel.name}' added!`,
     },
     channel: savedChannel,
+    course: updateCourse,
+    topic: savedTopic,
     user: user,
+    category: "courseupdates",
   };
   return next();
 };
 
+//TODO - update the course after the channel has been deleted
+//in the below method
 /**
  * @function deleteChannel
  * Delete a channel controller
@@ -149,6 +295,12 @@ export const deleteChannel = async (req, res, next) => {
   const channelId = req.params.channelId;
   const courseId = req.params.courseId;
   const userId = req.userId;
+  let courseDoc;
+  try {
+    courseDoc = await Course.findById(courseId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding course" });
+  }
 
   let user;
   try {
@@ -215,16 +367,28 @@ export const deleteChannel = async (req, res, next) => {
     foundTopic["channels"].splice(topicIndex, 1);
   }
   try {
-    await foundTopic.save();
+    foundTopic = await foundTopic.save();
   } catch (err) {
     res.status(500).send({ error: "Error saving topic" });
   }
+
+  let course;
+  try {
+    course = await Course.findById(courseId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding course" });
+  }
+
   req.locals = {
     response: {
       success: `Channel '${foundChannel.name}' successfully deleted!`,
     },
     user: user,
     channel: foundChannel,
+    topic: foundTopic,
+    course: course,
+    category: "courseupdates",
+    isDeletingChannel: true,
   };
   return next();
 };
@@ -284,10 +448,18 @@ export const editChannel = async (req, res, next) => {
   foundChannel.updatedAt = Date.now();
   foundChannel.description = channelDesc;
   try {
-    await foundChannel.save();
+    foundChannel = await foundChannel.save();
   } catch (err) {
     return res.status(500).send({ error: "Error saving channel" });
   }
+
+  let course;
+  try {
+    course = await Course.findById(courseId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding course" });
+  }
+
   req.locals.response = {
     id: foundChannel._id,
     courseId: courseId,
@@ -295,5 +467,8 @@ export const editChannel = async (req, res, next) => {
   };
   req.locals.newChannel = foundChannel;
   req.locals.user = user;
+  req.locals.category = "courseupdates";
+  req.locals.course = course;
+  req.locals.channel = foundChannel;
   return next();
 };

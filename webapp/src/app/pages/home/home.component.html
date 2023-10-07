@@ -1,54 +1,63 @@
 
-<div class="flex flex-row">
+<div class="flex flex-row min-h-screen">
   <div class="flex-col">
     <app-sidebar></app-sidebar>
   </div>
 
-<div style="width: 100%;">
+<div class="md:container md:mx-auto">
   <div  *ngIf="this.courses.length == 0">
-     
-     
-    
+
+
+
     <p class="text-5xl leading-normal font-bold text-center mt-6">Currently you have no courses enrolled. </p>
     <p class="text-4xl leading-normal text-center mt-6"> <a href="landingPage" style="color: #0277BD;"> Click here</a>  to search for courses to start learning!</p>
   </div>
-  <div *ngIf="this.courses.length > 0">
+  <div class=" md:w-auto" *ngIf="this.courses.length > 0">
   <p  class=" text-5xl leading-normal font-bold text-center mt-6" style="color: #0277BD;"> My Courses  </p>
     <p class="text-4xl leading-normal text-center mt-6">Welcome back!  Pick a course from your list to start learning</p>
 
-    
-    
-    
-    <div  class="course-div cursor-pointer" >
+
+
+
+    <div  class=" cursor-pointer overscroll-y-auto h-1/2 flex flex-wrap" >
     <div *ngFor="let course of userArray"  (click)="onSelectCourse(course)">
-    
-    
-      
+
+
+
      <p-card  styleClass="p-card-shadow" class="course-card">
         <hr style="margin-bottom: 0.75rem ; margin-top: 0%;">
         <ng-template pTemplate="header">
-            <img alt="Card" src="https://primefaces.org/cdn/primeng/images/usercard.png">
+            <img alt="Card" src="/assets/img/courseCard.png">
         </ng-template>
-       
-        <ng-template pTemplate="content-center" style="float: left; "> 
-       
-        <p-avatar
-        label="{{course.shortName}}"
-        shape="circle"
-        size="large"
-        [style]="{ 'background-color': '#0277BD', color: '#ffffff' , float: 'left', top_margin:'0.5rem' }"
-      ></p-avatar>
-      <button> <p style="margin: 1rem; font-weight: bold;"> {{course.name}}</p></button>
-       
-      <p class="p" > 
+
+        <ng-template pTemplate="content-center" style="float: left; ">
+
+                     <div class="w-full h-14">
+              <p-avatar
+                label="{{ course.shortName }}"
+                shape="circle"
+                size="large"
+                [style]="{
+                  'background-color': '#0277BD',
+                  color: '#ffffff',
+                  float: 'left',
+                  top_margin: '0.5rem'
+                }"
+              ></p-avatar>
+
+
+                <p class="font-bold pt-2 pl-51" style="padding-left: 60px;">{{ course.name }}</p>
+              </div>
+
+      <p class="p" >
         <svg
         xmlns="http://www.w3.org/2000/svg"
         width="22"
         height="22"
-        
+
         viewBox="0 0 22 22"
         style="fill: #EA580C; transform: msFilter ; float: left; margin-right:2px;"
-        
+
       >
         <path d="M2 7v1l11 4 9-4V7L11 4z"></path>
         <path
@@ -59,15 +68,16 @@
 
       <p class="p" style=" margin-left: 4px;"> <i class="pi pi-calendar"  style="font-size: 1rem ; color: #EA580C"></i> Created On: {{course.createdAt}}</p>
     </ng-template>
-       
-    
-    </p-card> 
-    
+
+
+    </p-card>
+
     </div>
     </div>
   </div>
     </div>
   </div>
+<app-footer></app-footer>
     <!-- <div class="row">
         <div class="column" style="background-color:#aaa;">
           <h2>Column 1</h2>

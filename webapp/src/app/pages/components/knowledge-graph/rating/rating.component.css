@@ -1,0 +1,17 @@
+.like-button.active {
+    color: #FFFFFF;
+    background-color: #0377bd;
+  }
+  .dislike-button.active {
+    color: #FFFFFF;
+    background-color: #ff0000;
+    border: white;
+  }
+  button {
+    display: inline-block;
+  }
+  button svg {
+    display: inline-block;
+    vertical-align: baseline;
+  }
+  

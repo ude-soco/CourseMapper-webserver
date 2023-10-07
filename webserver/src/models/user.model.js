@@ -10,12 +10,15 @@ const User = new Schema({
   password: { type: String, required: true },
   role: { type: Schema.Types.ObjectId, ref: "role" },
   createdAt: { type: Date, default: Date.now() },
+  //TODO: later remove the below boolean attrbiutes if not being used anywhere in front end later.
   courses: [
     {
       courseId: { type: Schema.Types.ObjectId, ref: "course", required: true },
       role: { type: Schema.Types.ObjectId, ref: "role" },
     },
   ],
+  understoodConcepts: [],//saves ids for concepts that user understand
+  didNotUnderstandConcepts: [],//saves ids for concepts that user did not understand
   indicators: [
     {
       _id: Schema.Types.ObjectId,
@@ -25,6 +28,16 @@ const User = new Schema({
       frameborder: String,
     },
   ],
+  blockedByUser: [
+    { type: Schema.Types.ObjectId, ref: "user", required: true, default: [] },
+  ],
+  blockingUsers: [
+    { type: Schema.Types.ObjectId, ref: "user", required: true, default: [] },
+  ],
+  isAnnotationNotificationsEnabled: { type: Boolean, default: true },
+  isReplyAndMentionedNotificationsEnabled: { type: Boolean, default: true },
+  isCourseUpdateNotificationsEnabled: { type: Boolean, default: true },
+  lastTimeCourseMapperOpened: { type: Date, default: Date.now() },
 });
 
 module.exports = mongoose.model("user", User);

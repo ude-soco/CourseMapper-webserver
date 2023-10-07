@@ -1,0 +1,174 @@
+
+:host{
+  flex-grow: 1;
+}
+
+  .time {
+    color: #00000091;
+}
+
+  .left {
+    display: flex;
+    align-items: center;
+    width: 90%
+  }
+
+  .left-container {
+    display: block;
+    position: relative;
+
+  }
+
+  .userName-unread{
+    font-weight: bold;
+  }
+  .userName-read, .userName-unread{
+    margin: 0 1px;
+    margin-right: 4px;
+  }
+
+  .msg-location-unread{
+    font-weight: bold;
+  }
+
+  .msg-location-read, .msg-location-unread{
+    margin: 0 1px;
+    margin-left: 2px;
+  }
+
+  .in {
+    margin-left: 3px;
+    margin-right: 2px;
+  }
+  .action {
+    margin-right: 2px;
+  }
+  .action-object {
+  }
+
+  ::ng-deep .p-divider.p-divider-horizontal {
+    margin: 0;
+  }
+
+
+
+  /* setting panel right control */
+
+  .right {
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
+  .middle {
+    display: flex;
+    align-items: center;
+    position: relative;
+    top: -10px;
+  }
+
+  .pi-circle-fill {
+    font-size: 0.3rem;
+    color: rgba(3, 105, 161, 255);
+    margin-right: 1.5rem;
+  }
+
+  .context-menu {
+    position: relative;
+    top: -2px;
+    color: rgba(3, 105, 161, 255);
+    margin-right: 2rem;
+    left: 1rem;
+  }
+  .context-menu-container {
+    display: flex;
+  }
+
+
+  .context-menu-container:hover {
+    background-color: #c4c4c4;
+    align-items: center;
+    position: relative;
+    justify-content: center;
+    border-radius: 8px;
+    height: 30px;
+    display: flex;
+  }
+
+  /* recent one */
+  .recent {
+    font-size: 0.3rem;
+    color: rgba(3, 105, 161, 255);
+    margin-right: 1.5rem;
+  }
+
+  .following-annotation-message{
+    position: relative;
+    margin-left: 5px;
+    padding-left: 19px;
+    color: #00000091;
+
+
+  }
+
+  .following-annotation-message::before{
+    content: '\2022'; /* Unicode character for a bullet, you can change it to any other character */
+    color: #00000091; /* Color of the dot */
+    font-size: 24px; /* Adjust the size of the dot */
+    position: absolute;
+    left: 0px; /* Adjust the distance from the left edge */
+    top: 50%; /* Position the dot vertically in the middle */
+    transform: translateY(-50%);
+  }
+
+
+
+  .notification-message span {
+    margin-right: 5px;
+  }
+/*
+  .notification-content:hover {
+    background-color: whitesmoke;
+  } */
+
+  .item{
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 0 1rem 1rem;
+    align-items: center;
+  }
+
+
+  .star-icon {
+    font-size: 24px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+  .star-icon:hover {
+    color: #0202025b;; /* Set the filled color when hovered */
+  }
+
+
+  .black-star-icon{
+    background-color: #f7ca4c;
+    height: 23px;
+    width: 24px;
+    display: block;
+}
+
+  .black-star-icon:hover{
+    background-color: #f7c94c88;
+  }
+
+  .star-container{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 1rem;
+  }
+
+
+.highlight {
+  background-color: yellow;
+}
+

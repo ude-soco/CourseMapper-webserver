@@ -14,12 +14,12 @@
     ]
   },
   "scripts": {
-    "start": "npm run prod",
-    "build": "npm-run-all clean transpile",
+    "start": "npm run dev",
+    "build": "npm-run-all  --sequential clean transpile server",
     "server": "node ./dist-server/server.js",
-    "dev": "NODE_ENV=development npm-run-all build server",
+    "dev": "NODE_ENV=development npm-run-all build",
     "prod": "NODE_ENV=production npm-run-all build server",
-    "transpile": "babel ./src --out-dir dist-server",
+    "transpile": "babel ./src  --out-dir dist-server --source-maps",
     "clean": "rimraf dist-server",
     "watch:dev": "nodemon"
   },

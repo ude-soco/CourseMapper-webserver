@@ -37,7 +37,6 @@ export interface AnnotationState {
   selectedLineHeight: number;
   showDrawBoxTools: boolean;
   showAllPDFAnnotations: boolean;
-
 }
 
 const initialState: AnnotationState = {
@@ -63,7 +62,7 @@ const initialState: AnnotationState = {
   selectedDrawingTool: null,
   selectedLineHeight: 2,
   showDrawBoxTools: false,
-  showAllPDFAnnotations: false
+  showAllPDFAnnotations: false,
 };
 
 const getAnnotationFeatureState =
@@ -149,6 +148,59 @@ export const getshowAllPDFAnnotations = createSelector(
   (state) => state.showAllPDFAnnotations
 );
 
+const getUsernameOfReplyAuthors = createSelector(
+  getAnnotationFeatureState,
+  (state) => {
+    let idAndEmailAndNamesMap: Map<string, { name: string; email: string }> =
+      new Map<string, { name: string; email: string }>();
+    state.annotationsForMaterial.forEach((annotation) => {
+      annotation.replies.forEach((reply) => {
+        idAndEmailAndNamesMap.set(reply.author?.userId, {
+          name: reply.author?.name,
+          email: reply.author?.email,
+        });
+      });
+    });
+    return idAndEmailAndNamesMap;
+  }
+);
+
+const getUsernameOfAnnotationAuthors = createSelector(
+  getAnnotationFeatureState,
+  (state) => {
+    let emailAndNamesMap: Map<string, { name: string; email: string }> =
+      new Map<string, { name: string; email: string }>();
+    state.annotationsForMaterial.forEach((annotation) => {
+      emailAndNamesMap.set(annotation.author.userId, {
+        name: annotation.author.name,
+        email: annotation.author.email,
+      });
+    });
+    return emailAndNamesMap;
+  }
+);
+
+export const getUnionOfAnnotationAndReplyAuthors = createSelector(
+  getUsernameOfReplyAuthors,
+  getUsernameOfAnnotationAuthors,
+  (replyAuthors, annotationAuthors) => {
+    let unionOfAuthors = new Map<string, { name: string; email: string }>();
+    replyAuthors.forEach((value, key) => {
+      unionOfAuthors.set(key, value);
+    });
+    annotationAuthors.forEach((value, key) => {
+      unionOfAuthors.set(key, value);
+    });
+    let arr: { userId: string; name: string; email: string }[];
+    arr = Array.from(unionOfAuthors, ([userId, userData]) => ({
+      userId,
+      name: userData.name,
+      email: userData.email,
+    }));
+    return arr;
+  }
+);
+
 export const annotationReducer = createReducer<AnnotationState>(
   initialState,
 
@@ -197,7 +249,7 @@ export const annotationReducer = createReducer<AnnotationState>(
         isAnnotationCanceled: false,
         createAnnotationFromPanel: true,
         selectedTool: PdfToolType.None,
-        showDrawBoxTools: false
+        showDrawBoxTools: false,
       };
     }
   ),
@@ -360,21 +412,20 @@ export const annotationReducer = createReducer<AnnotationState>(
   on(
     AnnotationActions.setShowDrawBoxTools,
     (state, action): AnnotationState => {
-      if(action.show){
+      if (action.show) {
         return {
           ...state,
           showDrawBoxTools: action.show,
-          selectedTool: PdfToolType.DrawBox
+          selectedTool: PdfToolType.DrawBox,
         };
-      }
-      else{
+      } else {
         return {
           ...state,
           showDrawBoxTools: action.show,
-          selectedTool: PdfToolType.None
+          selectedTool: PdfToolType.None,
         };
       }
-      }
+    }
   ),
 
   on(
@@ -395,14 +446,14 @@ export const annotationReducer = createReducer<AnnotationState>(
           let index = state.annotationsForMaterial.findIndex(
             (annotation) => annotation._id == action.payload.annotation._id
           );
-          let updatedLikes = [...annotations[index].likes]
-          let updatedDislikes = [...annotations[index].dislikes]
+          let updatedLikes = [...annotations[index].likes];
+          let updatedDislikes = [...annotations[index].dislikes];
           updatedLikes = action.payload.annotation.likes;
           updatedDislikes = action.payload.annotation.dislikes;
           let updatedAnnotation = {
             ...annotations[index],
             likes: updatedLikes,
-            dislikes: updatedDislikes
+            dislikes: updatedDislikes,
           } as Annotation;
           annotations[index] = updatedAnnotation;
           return {
@@ -415,14 +466,14 @@ export const annotationReducer = createReducer<AnnotationState>(
           let index = state.annotationsForMaterial.findIndex(
             (annotation) => annotation._id == action.payload.annotation._id
           );
-          let updatedLikes = [...annotations[index].likes]
-          let updatedDislikes = [...annotations[index].dislikes]
+          let updatedLikes = [...annotations[index].likes];
+          let updatedDislikes = [...annotations[index].dislikes];
           updatedLikes = action.payload.annotation.likes;
           updatedDislikes = action.payload.annotation.dislikes;
           let updatedAnnotation = {
             ...annotations[index],
             likes: updatedLikes,
-            dislikes: updatedDislikes
+            dislikes: updatedDislikes,
           } as Annotation;
           annotations[index] = updatedAnnotation;
           return {
@@ -435,14 +486,14 @@ export const annotationReducer = createReducer<AnnotationState>(
           let index = state.annotationsForMaterial.findIndex(
             (annotation) => annotation._id == action.payload.annotation._id
           );
-          let updatedLikes = [...annotations[index].likes]
-          let updatedDislikes = [...annotations[index].dislikes]
+          let updatedLikes = [...annotations[index].likes];
+          let updatedDislikes = [...annotations[index].dislikes];
           updatedLikes = action.payload.annotation.likes;
           updatedDislikes = action.payload.annotation.dislikes;
           let updatedAnnotation = {
             ...annotations[index],
             likes: updatedLikes,
-            dislikes: updatedDislikes
+            dislikes: updatedDislikes,
           } as Annotation;
           annotations[index] = updatedAnnotation;
           return {
@@ -455,14 +506,14 @@ export const annotationReducer = createReducer<AnnotationState>(
           let index = state.annotationsForMaterial.findIndex(
             (annotation) => annotation._id == action.payload.annotation._id
           );
-          let updatedLikes = [...annotations[index].likes]
-          let updatedDislikes = [...annotations[index].dislikes]
+          let updatedLikes = [...annotations[index].likes];
+          let updatedDislikes = [...annotations[index].dislikes];
           updatedLikes = action.payload.annotation.likes;
           updatedDislikes = action.payload.annotation.dislikes;
           let updatedAnnotation = {
             ...annotations[index],
             likes: updatedLikes,
-            dislikes: updatedDislikes
+            dislikes: updatedDislikes,
           } as Annotation;
           annotations[index] = updatedAnnotation;
           return {
@@ -510,7 +561,10 @@ export const annotationReducer = createReducer<AnnotationState>(
             (reply) => reply._id === action.payload.reply._id
           );
           if (exists) {
-            replies.forEach((reply, index) => {if(reply._id === action.payload.reply._id) replies.splice(index, 1)});
+            replies.forEach((reply, index) => {
+              if (reply._id === action.payload.reply._id)
+                replies.splice(index, 1);
+            });
             let updatedReplies = [...replies];
             let updatedAnnotation = {
               ...annotation,
@@ -552,7 +606,10 @@ export const annotationReducer = createReducer<AnnotationState>(
         }
         case 'annotationDeleted': {
           let annotations = [...state.annotationsForMaterial];
-          annotations.forEach((anno, index) => {if(anno._id === action.payload.annotation._id) annotations.splice(index, 1)});
+          annotations.forEach((anno, index) => {
+            if (anno._id === action.payload.annotation._id)
+              annotations.splice(index, 1);
+          });
           return {
             ...state,
             annotationsForMaterial: annotations,
@@ -560,11 +617,13 @@ export const annotationReducer = createReducer<AnnotationState>(
         }
         case 'annotationEdited': {
           let annotations = [...state.annotationsForMaterial];
-          let index = annotations.findIndex((anno) => anno._id == action.payload.annotation._id)
+          let index = annotations.findIndex(
+            (anno) => anno._id == action.payload.annotation._id
+          );
           annotations[index] = {
             ...annotations[index],
-            content: action.payload.annotation.content
-          }
+            content: action.payload.annotation.content,
+          };
           return {
             ...state,
             annotationsForMaterial: annotations,

@@ -4,51 +4,63 @@
     <div class="flex w-full justify-end" *ngIf="showCancelButton">
       <app-iconbutton
         icon="bx-x"
-        color="{{sendButtonColor}}"
+        color="{{ sendButtonColor }}"
         (click)="cancel()"
       ></app-iconbutton>
     </div>
   </div>
-  <div [ngStyle]="{'border': '2px solid' + annotationColor}" class="rounded-lg p-3 mt-2">
+  <div
+    [ngStyle]="{ border: '2px solid' + annotationColor }"
+    class="rounded-lg p-3 mt-2"
+  >
     <div class="flex flex-col justify-evenly space-y-2">
       <div class="flex flex-row justify-start space-x-3 w-full">
         <div class="flex-col">
           <span>Annotation Type</span>
           <p-dropdown
-          [options]="annotationTypesArray"
-          [(ngModel)]="selectedAnnotationType"
-          autoWidth="false"
-          appendTo="body"
-          [style]="{ minWidth: '100%', maxWidth: '50px', 'border': '1px solid' + annotationColor, height: '55px' }"
-          class="mr-6"
-          (ngModelChange)="onAnnotationTypeChange()"
-        ></p-dropdown>
+            [options]="annotationTypesArray"
+            [(ngModel)]="selectedAnnotationType"
+            autoWidth="false"
+            appendTo="body"
+            [style]="{
+              minWidth: '100%',
+              maxWidth: '50px',
+              border: '1px solid' + annotationColor,
+              height: '55px'
+            }"
+            class="mr-6"
+            (ngModelChange)="onAnnotationTypeChange()"
+          ></p-dropdown>
         </div>
 
         <div class="flex-col" *ngIf="!disableSlidesDropDown">
           <span>Slide</span>
           <p-dropdown
-          [options]="annotationLocationsArray"
-          [(ngModel)]="selectedAnnotationLocation"
-          autoWidth="false"
-          appendTo="body"
-          [appUpdateBorderColor]="annotationColor"
-          [style]="{ minWidth: '100%', height: '55px'}"
-        ></p-dropdown>
+            [options]="annotationLocationsArray"
+            [(ngModel)]="selectedAnnotationLocation"
+            autoWidth="false"
+            appendTo="body"
+            [appUpdateBorderColor]="annotationColor"
+            [style]="{ minWidth: '100%', height: '55px' }"
+          ></p-dropdown>
         </div>
 
         <div *ngIf="selectedAnnotationLocation === 'Slide Range'">
           <span>From</span>
           <p-dropdown
-          [options]="fromPageArray"
-          [(ngModel)]="selectedFromPage"
-          autoWidth="false"
-          [disabled]="disableSlidesDropDown"
-          appendTo="body"
-          [style]="{ minWidth: '100%', 'border': '1px solid' + annotationColor, height: '55px' }"
-          (onChange)="onSelectedFromPage()"
-          (onShow)="onShowOfSelectedFromPageDropDpown()"
-        ></p-dropdown>
+            [options]="fromPageArray"
+            [(ngModel)]="selectedFromPage"
+            autoWidth="false"
+            [disabled]="disableSlidesDropDown"
+            appendTo="body"
+            [style]="{
+              minWidth: '100%',
+              border: '1px solid' + annotationColor,
+              height: '55px'
+            }"
+            (onChange)="onSelectedFromPage()"
+            (onShow)="onShowOfSelectedFromPageDropDpown()"
+          ></p-dropdown>
         </div>
 
         <div *ngIf="selectedAnnotationLocation === 'Slide Range'">
@@ -58,42 +70,69 @@
             [(ngModel)]="selectedToPage"
             autoWidth="false"
             appendTo="body"
-            [style]="{ minWidth: '100%', 'border': '1px solid' + annotationColor, height: '55px' }"
+            [style]="{
+              minWidth: '100%',
+              border: '1px solid' + annotationColor,
+              height: '55px'
+            }"
           ></p-dropdown>
         </div>
       </div>
       <div class="flex flex-row space-x-3">
-
-        <textarea *ngIf="disableSlidesDropDown"
+        <textarea
+          *ngIf="disableSlidesDropDown"
           pInputTextarea
-          [(ngModel)]="text"
+          [(ngModel)]="content"
           (ngModelChange)="onTextChange()"
           [autoResize]="true"
-          rows="2" cols="60"
+          rows="2"
+          cols="60"
           class="w-full"
-          [style]="{'border': '1px solid' + annotationColor}"
+          [style]="{ border: '1px solid' + annotationColor }"
           placeholder="Add an annotation with the selected tool"
+          [mention]="filteredUserNames$ | async"
+          [mentionConfig]="{
+            triggerChar: '@',
+            labelKey: 'name',
+            allowSpace: true
+          }"
+          (searchTerm)="searchUserNames($event)"
+          [mentionListTemplate]="mentionListTemplate"
+          (itemSelected)="selectName($event)"
         ></textarea>
-        <textarea *ngIf="!disableSlidesDropDown"
-        pInputTextarea
-        [(ngModel)]="text"
-        (ngModelChange)="onTextChange()"
-        [autoResize]="true"
-        rows="2" cols="60"
-        class="w-full"
-        [style]="{'border': '1px solid' + annotationColor}"
-        placeholder="Add a general annotation without a tool"
-      ></textarea>
+        <textarea
+          *ngIf="!disableSlidesDropDown"
+          pInputTextarea
+          [(ngModel)]="content"
+          (ngModelChange)="onTextChange()"
+          [autoResize]="true"
+          rows="2"
+          cols="60"
+          class="w-full"
+          [style]="{ border: '1px solid' + annotationColor }"
+          placeholder="Add a general annotation without a tool"
+          [mention]="filteredUserNames$ | async"
+          [mentionConfig]="{
+            triggerChar: '@',
+            labelKey: 'name',
+            allowSpace: true
+          }"
+          (searchTerm)="searchUserNames($event)"
+          [mentionListTemplate]="mentionListTemplate"
+          (itemSelected)="selectName($event)"
+        ></textarea>
+        <ng-template #mentionListTemplate let-item="item">
+          <span class="cursor-pointer">{{ item.name }} ({{ item.email }})</span>
+        </ng-template>
         <app-iconbutton
           icon="bx-send"
-          color="{{sendButtonColor}}"
+          color="{{ sendButtonColor }}"
           (onClick)="postAnnotation()"
           class="mb-0 mt-12 flex-1 justify-end"
-          [ngStyle]="{'color': annotationColor }"
+          [ngStyle]="{ color: annotationColor }"
           [disabled]="sendButtonDisabled"
         ></app-iconbutton>
       </div>
     </div>
+  </div>
 </div>
-</div>
-

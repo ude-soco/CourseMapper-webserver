@@ -304,8 +304,11 @@ export const getUser = async (req, res) => {
   let userId = req.params.userId;
 
   let foundUser;
+  let results = [];
+  let my_object = {};
   try {
     foundUser = await User.findById(userId).populate("courses", "-__v");
+    
     if (!foundUser) {
       return res.status(404).send({
         error: `User with id ${userId} doesn't exist!`,
@@ -314,5 +317,101 @@ export const getUser = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: "Error finding user" });
   }
-  return res.status(200).send(foundUser);
+  my_object.firstname =foundUser.firstname;
+  my_object.lastname =foundUser.lastname;
+  results.push(my_object);
+  return res.status(200).send(my_object);
+};
+
+export const getUserConcepts = async (req, res) => {
+
+  let userId =  req.params.userId;
+
+  let foundUser;
+  let results;
+  console.log('userId is:')
+  console.log(userId)
+  console.log(typeof(userId))
+  try {
+    foundUser = await User.findOne({ _id: userId })
+    .populate("courses", "-__v");
+    if (!foundUser) {
+      return res.status(404).send({
+        error: `User with id ${userId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+  results={
+    understoodConcepts: foundUser.understoodConcepts,
+    didNotUnderstandConcepts: foundUser.didNotUnderstandConcepts,
+  }
+  return res.status(200).send(results);
+};
+
+export async function updateUserConcepts(props) {
+  let userId= props.body.userId
+  let foundUser
+  const updatedDocument={$set: {
+    understoodConcepts: props.body.understoodConcepts,
+    didNotUnderstandConcepts: props.body.didNotUnderstandConcepts,
+  },}
+  try {
+    foundUser = await User.findOne({ _id: props.body.userId })
+    .populate("courses", "-__v");
+    if (!foundUser) {
+      return res.status(404).send({
+        error: `User with id ${userId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+  // console.log(updatedDocument)
+  await foundUser.updateOne(updatedDocument);
+}
+
+export const getLastTimeCourseMapperOpened = async (req, res) => {
+  let userId = req.userId;
+
+  let foundUser;
+  try {
+    foundUser = await User.findById(userId);
+    if (!foundUser) {
+      return res.status(404).send({
+        error: `User with id ${userId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding user" });
+  }
+  return res
+    .status(200)
+    .send({ lastTimeCourseMapperOpened: foundUser.lastTimeCourseMapperOpened });
+};
+
+export const updateLastTimeCourseMapperOpened = async (req, res) => {
+  let userId = req.userId;
+
+  let foundUser;
+  try {
+    foundUser = await User.findById(userId);
+    if (!foundUser) {
+      return res.status(404).send({
+        error: `User with id ${userId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding user" });
+  }
+  foundUser.lastTimeCourseMapperOpened = new Date();
+  try {
+    foundUser = await foundUser.save();
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+  return res
+    .status(200)
+    .send({ lastTimeCourseMapperOpened: foundUser.lastTimeCourseMapperOpened });
 };

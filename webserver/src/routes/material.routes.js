@@ -1,4 +1,4 @@
-const { authJwt } = require("../middlewares");
+const { authJwt, notifications } = require("../middlewares");
 const controller = require("../controllers/material.controller");
 const logger = require("../xAPILogger/logger/material.logger");
 
@@ -23,7 +23,10 @@ module.exports = function (app) {
     "/api/courses/:courseId/channels/:channelId/material",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.newMaterial,
-    logger.newMaterial
+    logger.newMaterial,
+    notifications.updateBlockingNotificationsNewMaterial,
+    notifications.materialCourseUpdateNotificationsUsers,
+    notifications.populateUserNotification
   );
 
   // Delete a material
@@ -32,7 +35,9 @@ module.exports = function (app) {
     "/api/courses/:courseId/materials/:materialId",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.deleteMaterial,
-    logger.deleteMaterial
+    logger.deleteMaterial,
+    notifications.materialCourseUpdateNotificationsUsers,
+    notifications.populateUserNotification
   );
 
   // Edit a material
@@ -41,7 +46,9 @@ module.exports = function (app) {
     "/api/courses/:courseId/materials/:materialId",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.editMaterial,
-    logger.editMaterial
+    logger.editMaterial,
+    notifications.materialCourseUpdateNotificationsUsers,
+    notifications.populateUserNotification
   );
 
   app.get(

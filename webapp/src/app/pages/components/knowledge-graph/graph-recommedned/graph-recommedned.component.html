@@ -1,0 +1,145 @@
+<p-toast position="bottom-left" key="statusUpdatedRecommended"></p-toast>
+
+<div
+  class="graphDiv"
+  *ngIf="slideKnowledgeGraph && recommenderKnowledgeGraph"
+  style="display: flex"
+>
+  <div class="graphAbstract" style="width: 100%">
+    <app-cytoscape-recommended
+      [elements]="conceptMapRecData"
+      [selectedFilterValues]="selectedFilterValues"
+      [topNConcepts]="topNConcepts"
+      [filterUpdated]="filterUpdated"
+      (selectedNodeEvent)="nodeChange($event)"
+      [cyHeight]="cyHeight"
+    >
+    </app-cytoscape-recommended>
+  </div>
+  <div
+    *ngIf="node_name && node_type !== 'user'"
+    id="recommenderAbstractBlock"
+    class="abstractBlock"
+    style="max-width: 35.85%;"
+    >
+    <!-- style="max-width: 35.85%; max-height: 75%" -->
+    <p-accordion styleClass="pAccRec" id="accordionComponent">
+      <p-accordionTab [selected]="true" id="accordionHeader">
+        <div
+          class="innerAbstractBlock"
+          style="display: inline-block; max-height: 75.5%"
+        >
+          <div class="flex items-start justify-between">
+            <h2 class="font-medium leading-tight text-4xl mt-0 mb-2 ml-0.5">
+              {{ node_name }}
+            </h2>
+            <i
+              id="abstractCloseButton"
+              (click)="closeAbstractPanel()"
+              type="button"
+              class="pi pi-times"
+              ></i>
+          </div>
+          <hr style="margin: 0 5px; padding: 0; width: 95%" />
+          <div *ngIf="node_abstract">
+            <div style="display: inline-block; margin: 2px">
+              <div>
+                <span id="abstractSpan" class="abstractParagraph">
+                  {{ node_abstract }} ...
+                  <a
+                    class="no-underline text-[#2196F3] hover: hover:underline mb-4 transition duration-300 ease-in-out"
+                    id="clampedAnchorTag"
+                    *ngIf="node_wikipedia"
+                    href="javascript:void(0);"
+                    (click)="goToWikipediaPage(node_wikipedia)"
+                    >Read full article on wikipedia
+                    <i id="clampedAnchorTagIcon" class="pi pi-link"></i></a
+                ></span>
+                <a
+                  *ngIf="node_wikipedia && clamped"
+                  class="no-underline text-[#2196F3] hover: hover:underline mb-4 transition duration-300 ease-in-out"
+                  href="javascript:void(0);"
+                  (click)="goToWikipediaPage(node_wikipedia)"
+                  style="margin-left: 5px; margin-top: 0; margin-bottom: 2px"
+                  >Read full article on wikipedia <i class="pi pi-link"></i
+                ></a>
+              </div>
+            </div>
+          </div>
+          <div
+            *ngIf="node_abstract == '' && node_wikipedia"
+            style="display: inline-block; margin: 2px"
+          >
+            <div style="display: inline-block; margin: 2px">
+              <div class="abstractParagraph">
+                No abstract available ...
+                <a
+                  class="no-underline text-[#2196F3] hover: hover:underline mb-4 transition duration-300 ease-in-out"
+                  *ngIf="node_wikipedia"
+                  href="javascript:void(0);"
+                  (click)="goToWikipediaPage(node_wikipedia)"
+                  >Read full article on wikipedia<i class="pi pi-link"></i
+                ></a>
+              </div>
+            </div>
+          </div>
+          <div
+            class="UnderstandButtons"
+            style="text-align: center; margin-bottom: 7px; margin-top: 5px"
+          >
+            <button
+              pButton
+              id="abstractButtons"
+              type="button"
+              label="MARK AS UNDERSTOOD"
+              class="p-button-outlined p-button-sm"
+              (click)="markAsUnderstood(node_id, node_cid, node_name)"
+              icon="pi pi-check"
+              style=" margin-bottom: 7px; margin-right: 7px"
+            ></button>
+            <button
+              pButton
+              id="abstractButtons"
+              type="button"
+              label="MARK AS NOT UNDERSTOOD"
+              class="p-button-outlined p-button-sm"
+              (click)="markAsDidNotUnderstand(node_id, node_cid, node_name)"
+              icon="pi pi-times"
+              style=" margin-bottom: 7px; margin-left: 7px"
+            ></button>
+          </div>
+        </div>
+      </p-accordionTab>
+      <p-accordionTab header="Why is '{{ node_name }}' recommended?" id="accordionHeaderReason" >
+        <div id="abstract_reason_Block" *ngIf="showVisual && node_roads">
+          <app-cytoscape-roads [elements]="node_roads" [cyHeight]="cyHeightRec"> </app-cytoscape-roads>
+        </div>
+        <div id="abstract_reason_Block_Text" *ngIf="showTextual" style="overflow-y: scroll;" >
+          <h4>Reading the Wikipedia article for the concept: <b>'{{node_name}}'</b> is recommended to help you understand the concept(s): <b><span *ngFor="let concept of unclearConcepts">{{concept}}</span></b></h4>
+          <br>
+          <p>This concept has been recommended due to the reason(s):</p>
+          <br>
+
+        <li *ngFor="let reason of reasonsList">{{reason}}</li>
+
+        </div>
+        <p-divider></p-divider>
+        <div
+          *ngFor="let explanation of explanations"
+          class="p-field-checkbox"
+          style="display: inline-block; margin-top: 0px; height: 100%;"
+        >
+          <p-radioButton
+            [inputId]="explanation.key"
+            name="explanation"
+            [value]="explanation"
+            [(ngModel)]="selectedExplanation"
+            (onClick)="chosenRB(explanation.key)"
+            [style]="{'margin-right': '2px'}"
+          ></p-radioButton>
+          <label [for]="explanation.key" style="margin-right: 7px;">{{ explanation.name }}</label>
+        </div>
+      </p-accordionTab>
+    </p-accordion>
+  </div>
+</div>

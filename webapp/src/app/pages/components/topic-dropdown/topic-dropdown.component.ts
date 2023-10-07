@@ -6,6 +6,8 @@ import {
   Input,
   Renderer2,
   ChangeDetectorRef,
+  ViewChild,
+  ElementRef,
 } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { Channel } from 'src/app/models/Channel';
@@ -19,7 +21,23 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import * as MaterialActions from 'src/app/pages/components/materials/state/materials.actions';
 import { State } from '../materials/state/materials.reducer';
-import * as  CourseActions from 'src/app/pages/courses/state/course.actions'
+import * as CourseActions from 'src/app/pages/courses/state/course.actions';
+import { FormBuilder, FormControl } from '@angular/forms';
+import { Observable } from 'rxjs/internal/Observable';
+import {
+  getNotificationSettingsOfLastChannelMenuClicked,
+  getNotificationSettingsOfLastTopicMenuClicked,
+  getFollowingAnnotationsOfDisplayedChannels,
+} from '../../courses/state/course.reducer';
+import {
+  topicNotificationSettingLabels,
+  channelNotificationSettingLabels,
+} from 'src/app/models/Notification';
+import { Subscription, map, tap } from 'rxjs';
+import { getNotifications } from '../notifications/state/notifications.reducer';
+import { Annotation } from 'src/app/models/BlockingNotification';
+import * as $ from 'jquery';
+import * as NotificationActions from '../notifications/state/notifications.actions';
 
 @Component({
   selector: 'app-topic-dropdown',
@@ -38,7 +56,8 @@ export class TopicDropdownComponent implements OnInit {
     private store: Store<State>,
     private route: ActivatedRoute,
     private renderer: Renderer2,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    protected fb: FormBuilder
   ) {
     const url = this.router.url;
     if (url.includes('course') && url.includes('channel')) {
@@ -47,21 +66,24 @@ export class TopicDropdownComponent implements OnInit {
       const courseId = courseRegex.exec(url)[1];
       const channelId = channelRegex.exec(url)[1];
       const materialId = url.match(/material:(.*?)\/(pdf|video)/)?.[1];
-      this.topicChannelService.fetchTopics(courseId).subscribe((course) => {
-        this.selectedTopic = course.topics.find((topic) => topic.channels.find((channel) => channel._id === channelId));
+      this.topicChannelService.fetchTopics(courseId).subscribe((res) => {
+        this.selectedTopic = res.course.topics.find((topic) =>
+          topic.channels.find((channel) => channel._id === channelId)
+        );
         this.onSelectTopic(this.selectedTopic);
         this.selectedChannelId = channelId;
-      })
-    }else{
+      });
+    } else {
       this.selectedChannelId = null;
       this.selectedChannel = null;
     }
   }
   @Input() showModeratorPrivileges: boolean;
-
+  @ViewChild('topicMenu') topicMenu: any;
+  @ViewChild('channelMenu') channelMenu: any;
   topics: Topic[] = [];
   displayAddChannelDialogue: boolean = false;
-  selectedTopic : Topic = null;
+  selectedTopic: Topic = null;
   prevSelectedTopic = null;
   selectedChannel = null;
   selectedChannelId = null;
@@ -78,6 +100,31 @@ export class TopicDropdownComponent implements OnInit {
   expandTopic = [];
   selectedCourseId = null;
   prevSelectedCourseId = null;
+  protected checkBoxesGroup = this.fb.group({});
+  checkBoxesArray: { label: string; control: FormControl<boolean> }[] = [];
+  protected channelCheckBoxesGroup = this.fb.group({});
+  channelCheckBoxesArray: { label: string; control: FormControl<boolean> }[] =
+    [];
+  channelIdOfChannelMenuClicked: string;
+  topicIdOfTopicMenuClicked: string = null;
+  lastTopicClickedNotificationSettingsSubscription: Subscription;
+  lastChannelClickedNotificationSettingsSubscription: Subscription;
+
+  notificationSettingsOfLastTopicMenuClicked$: Observable<
+    {
+      label: string;
+      value: boolean;
+    }[]
+  > = null;
+  notificationSettingsOfLastChannelMenuClicked$: Observable<
+    {
+      label: string;
+      value: boolean;
+    }[]
+  > = null;
+  isResetTopicNotificationsButtonEnabled: boolean;
+  isResetChannelNotificationsButtonEnabled: boolean;
+  followingAnnotationsOfDisplayedChannels$: Observable<any> = null;
 
   topicOptions: MenuItem[] = [
     {
@@ -89,6 +136,11 @@ export class TopicDropdownComponent implements OnInit {
       label: 'Delete',
       icon: 'pi pi-times',
       command: () => this.onDeleteTopic(),
+    },
+    {
+      label: 'Notification Settings',
+      icon: 'pi pi-bell',
+      /* command: () => this.onTopicNotificationSettingsClicked(), */
     },
   ];
   channelsOptions: MenuItem[] = [
@@ -103,19 +155,221 @@ export class TopicDropdownComponent implements OnInit {
       command: () => this.onDeleteChannel(),
     },
   ];
+  //TODO Remove the null default values. not needed. form controls supply the values.
+  notificationOptions = [
+    {
+      label: topicNotificationSettingLabels.courseDefault,
+      value: null,
+    },
+    {
+      label: topicNotificationSettingLabels.topicUpdates,
+      value: null,
+    },
+    {
+      label: topicNotificationSettingLabels.commentsAndMentioned,
+      value: null,
+    },
+    {
+      label: topicNotificationSettingLabels.annotations,
+      value: null,
+    },
+  ];
 
   ngOnInit(): void {
     this.topicChannelService
       .fetchTopics(this.courseService.getSelectedCourse()._id)
-      .subscribe((course) => (this.topics = course.topics));
+      .subscribe((res) => {
+        this.topics = res.course.topics;
+
+        this.store.dispatch(
+          CourseActions.initialiseNotificationSettings({
+            notificationSettings: res.notificationSettings,
+          })
+        );
+      });
+
     this.topicChannelService.onUpdateTopics$.subscribe(
       (topics) => (this.topics = topics)
     );
+
+    this.notificationSettingsOfLastTopicMenuClicked$ = this.store.select(
+      getNotificationSettingsOfLastTopicMenuClicked
+    );
+    this.notificationSettingsOfLastChannelMenuClicked$ = this.store.select(
+      getNotificationSettingsOfLastChannelMenuClicked
+    );
+    //loop over the notification options and make a form control
+    this.lastTopicClickedNotificationSettingsSubscription =
+      this.notificationSettingsOfLastTopicMenuClicked$.subscribe(
+        (notificationSettings) => {
+          if (!notificationSettings) return;
+          //delete all the controls in the form Group
+          this.checkBoxesGroup = this.fb.group({});
+          this.checkBoxesArray = [];
+          notificationSettings.forEach((o, index) => {
+            if (index === 0) {
+              this.isResetTopicNotificationsButtonEnabled = o.value;
+              return;
+            }
+            const control = new FormControl<boolean>(o.value);
+            this.checkBoxesArray.push({ label: o.label, control: control });
+            this.checkBoxesGroup.addControl(o.label, control);
+          });
+        }
+      );
+    this.lastChannelClickedNotificationSettingsSubscription =
+      this.notificationSettingsOfLastChannelMenuClicked$.subscribe(
+        (notificationSettings) => {
+          if (!notificationSettings) return;
+          //delete all the controls in the form Group
+          this.channelCheckBoxesGroup = this.fb.group({});
+          this.channelCheckBoxesArray = [];
+          notificationSettings.forEach((o, index) => {
+            if (index === 0) {
+              this.isResetChannelNotificationsButtonEnabled = o.value;
+              return;
+            }
+            const control = new FormControl<boolean>(o.value);
+            this.channelCheckBoxesArray.push({
+              label: o.label,
+              control: control,
+            });
+            this.channelCheckBoxesGroup.addControl(o.label, control);
+          });
+        }
+      );
+
+    this.followingAnnotationsOfDisplayedChannels$ = this.store.select(
+      getFollowingAnnotationsOfDisplayedChannels
+    );
+  }
+
+  getNumUnreadNotificationsForTopic(topicId: string) {
+    return this.store.select(getNotifications).pipe(
+      map((notifications) => {
+        if (!notifications) {
+          return 0;
+        }
+        return notifications.filter(
+          (notification) =>
+            notification.topic_id === topicId && !notification.isRead
+        ).length;
+      })
+    );
+  }
+
+  getNumUnreadNotificationsForChannel(channelId: string) {
+    return this.store.select(getNotifications).pipe(
+      map((notifications) => {
+        if (!notifications) {
+          return 0;
+        }
+        return notifications.filter(
+          (notification) =>
+            notification.channel_id === channelId && !notification.isRead
+        ).length;
+      })
+    );
+  }
+  getNumUnreadNotificationsForAnnotation(annotationlId: string) {
+    return this.store.select(getNotifications).pipe(
+      map((notifications) => {
+        if (!notifications) {
+          return 0;
+        }
+        return notifications.filter(
+          (notification) =>
+            notification.annotation_id === annotationlId && !notification.isRead
+        ).length;
+      })
+    );
+  }
+
+  getFollowingAnnotationsOfDisplayedChannels(channelId: string) {
+    return this.followingAnnotationsOfDisplayedChannels$.pipe(
+      map((followingAnnotations) => {
+        if (!followingAnnotations) {
+          return [];
+        }
+        return followingAnnotations[channelId];
+      })
+    );
+  }
+
+  onUnfollowAnnotationClicked($event, annotationId: string) {
+    this.store.dispatch(
+      CourseActions.unfollowAnnotation({
+        annotationId: annotationId,
+      })
+    );
+  }
+
+  onFollowingAnnotationClicked(followingAnnotation: Annotation) {
+    /* this.router.navigate(['/course', notification.course_id]); */
+    if (followingAnnotation.annotationId) {
+      //if website is already on the same material, then just scroll to the annotation
+      if (
+        this.router.url.includes(
+          '/course/' +
+            followingAnnotation.courseId +
+            '/channel/' +
+            followingAnnotation.channelId +
+            '/material/' +
+            '(material:' +
+            followingAnnotation.materialId +
+            `/${followingAnnotation.materialType})`
+        )
+      ) {
+        this.courseService.navigatingToMaterial = false;
+        const url = window.location.href;
+
+        const elementToScrollTo = document.getElementById(
+          `annotation-${followingAnnotation.annotationId}`
+        );
+        elementToScrollTo.scrollIntoView();
+        // Scroll to the element
+        window.location.hash =
+          '#annotation-' + followingAnnotation.annotationId;
+        setTimeout(function () {
+          $(window.location.hash).css(
+            'box-shadow',
+            '0 0 25px rgba(83, 83, 255, 1)'
+          );
+          setTimeout(function () {
+            $(window.location.hash).css('box-shadow', 'none');
+          }, 5000);
+        }, 100);
+        return;
+      }
+      this.courseService.navigatingToMaterial = true;
+      this.router.navigateByUrl(
+        '/course/' +
+          followingAnnotation.courseId +
+          '/channel/' +
+          followingAnnotation.channelId +
+          '/material/' +
+          '(material:' +
+          followingAnnotation.materialId +
+          `/${followingAnnotation.materialType})` +
+          `#annotation-${followingAnnotation.annotationId}`
+      );
+    }
+  }
+
+  onFollowingAnnotationSettingsClicked($event, menu) {
+    $event.stopPropagation();
+    menu.toggle($event);
   }
 
   ngOnDestroy() {
     this.expandTopic = null;
     this.selectedChannelId = null;
+    if (this.lastChannelClickedNotificationSettingsSubscription) {
+      this.lastChannelClickedNotificationSettingsSubscription.unsubscribe();
+    }
+    if (this.lastTopicClickedNotificationSettingsSubscription) {
+      this.lastTopicClickedNotificationSettingsSubscription.unsubscribe();
+    }
   }
 
   ngAfterViewChecked() {
@@ -147,9 +401,7 @@ export class TopicDropdownComponent implements OnInit {
     }
   }
 
-  showMenu() {
-   
-  }
+  showMenu() {}
 
   onSelectTopic(topic: Topic) {
     // console.log(this.selectedTopic)
@@ -159,11 +411,15 @@ export class TopicDropdownComponent implements OnInit {
           this.expandTopic.splice(index, 1);
         }
       });
-      this.store.dispatch(CourseActions.setCurrentTopic({selcetedTopic: null}));
+      this.store.dispatch(
+        CourseActions.setCurrentTopic({ selcetedTopic: null })
+      );
     } else {
       this.expandTopic = [];
       this.expandTopic.push(topic._id);
-      this.store.dispatch(CourseActions.setCurrentTopic({selcetedTopic: topic}));
+      this.store.dispatch(
+        CourseActions.setCurrentTopic({ selcetedTopic: topic })
+      );
       // wait until expanded topic rendered
       setTimeout(() => {
         // if exists channel previously selected --> make channel container bg=white
@@ -176,17 +432,6 @@ export class TopicDropdownComponent implements OnInit {
           );
           channelNameContainer.style.backgroundColor = 'white';
         }
-        //     else{
-        //       // make all channels' container background Null
-        // this.topics.forEach((topic) => {
-        //   topic.channels.forEach((channelEle) => {
-        //     var nonSelectedChannels = document.getElementById(
-        //       channelEle._id + '-container'
-        //     );
-        //     nonSelectedChannels.style.backgroundColor = null;
-        //   });
-        // });
-        //     }
       }, 2);
     }
   }
@@ -219,8 +464,9 @@ export class TopicDropdownComponent implements OnInit {
         var nonSelectedChannels = document.getElementById(
           channelEle._id + '-container'
         );
-        if(nonSelectedChannels){
-        nonSelectedChannels.style.backgroundColor = null;}
+        if (nonSelectedChannels) {
+          nonSelectedChannels.style.backgroundColor = null;
+        }
       });
     });
     // make selected channel's container background white
@@ -267,12 +513,23 @@ export class TopicDropdownComponent implements OnInit {
         if ('success' in res) {
           // this.showInfo(res['success']);
           this.showInfo('Topic successfully deleted!');
+          this.store.dispatch(
+            NotificationActions.isDeletingTopic({
+              topicId: this.selectedTopic._id,
+            })
+          );
+
+          this.store.dispatch(
+            CourseActions.SetSelectedChannel({ selectedChannel: null })
+          );
+          this.store.dispatch(
+            CourseActions.toggleChannelSelected({ channelSelected: false })
+          );
+
           this.router.navigate([
             'course',
             this.courseService.getSelectedCourse()._id,
           ]);
-          this.store.dispatch(CourseActions.SetSelectedChannel({selectedChannel: null}));
-          this.store.dispatch(CourseActions.toggleChannelSelected({channelSelected: false}));
         } else {
           this.showError(res['errorMsg']);
         }
@@ -309,7 +566,7 @@ export class TopicDropdownComponent implements OnInit {
       this.selectedTopic.name = body.name;
     } else if (this.escapeKey === true) {
       //ESC pressed
-      //console.log('ESC Pressed');
+      //
       this.escapeKey = false;
     } else {
       //confirmed by mouse click
@@ -341,8 +598,8 @@ export class TopicDropdownComponent implements OnInit {
     //Prevent Special keys
     this.editable = true;
     this.textFromTopic = true;
-    // console.log(e.keyCode);
-    // console.log(e);
+    //
+    //
     if (
       window.getSelection().toString() ==
       (<HTMLInputElement>document.getElementById(id)).innerText
@@ -446,12 +703,21 @@ export class TopicDropdownComponent implements OnInit {
         if ('success' in res) {
           // this.showInfo(res['success']);
           this.showInfo('Channel successfully deleted!');
+          this.store.dispatch(
+            NotificationActions.isDeletingChannel({
+              channelId: this.selectedChannel._id,
+            })
+          );
+          this.store.dispatch(
+            CourseActions.SetSelectedChannel({ selectedChannel: null })
+          );
+          this.store.dispatch(
+            CourseActions.toggleChannelSelected({ channelSelected: false })
+          );
           this.router.navigate([
             'course',
             this.courseService.getSelectedCourse()._id,
           ]);
-          this.store.dispatch(CourseActions.SetSelectedChannel({selectedChannel: null}));
-          this.store.dispatch(CourseActions.toggleChannelSelected({channelSelected: false}));
         } else {
           this.showError(res['errorMsg']);
         }
@@ -472,6 +738,7 @@ export class TopicDropdownComponent implements OnInit {
     const channelId = id;
     this.textFromChannel = false;
     if (this.enterKey) {
+      this.channelMenu.hide();
       //confirmed by keyboard
       let ChannelName = this.previousChannel.name;
       const channelDescription = this.previousChannel.description;
@@ -481,7 +748,7 @@ export class TopicDropdownComponent implements OnInit {
         newChannelName = newChannelName.substring(1); // to remove the additional hash
       }
       newChannelName = newChannelName.replace(/(\r\n|\n|\r)/gm, ''); //remove newlines
-      //console.log(newChannelName);
+      //
       if (newChannelName && newChannelName !== '') {
         body = {
           name: newChannelName,
@@ -496,11 +763,11 @@ export class TopicDropdownComponent implements OnInit {
       this.selectedChannel.description = body.description;
     } else if (this.escapeKey === true) {
       //ESC pressed
-    //  console.log('ESC Pressed');
+      //
       this.escapeKey = false;
     } else {
       //confirmed by mouse click
-      //console.log('logged from mouse');
+      //
       let ChannelName = this.previousChannel.name;
       const channelDescription = this.previousChannel.description;
       let body = { name: ChannelName, description: channelDescription };
@@ -509,7 +776,7 @@ export class TopicDropdownComponent implements OnInit {
         newChannelName = newChannelName.substring(1); // to remove the additional hash
       }
       newChannelName = newChannelName.replace(/(\r\n|\n|\r)/gm, ''); //remove newlines
-      //console.log(newChannelName);
+      //
       if (
         newChannelName &&
         newChannelName !== '' &&
@@ -627,6 +894,131 @@ export class TopicDropdownComponent implements OnInit {
     var sel = window.getSelection();
     sel.removeAllRanges();
     sel.addRange(range);
+  }
+
+  topicMenuButtonClicked($event, topic: Topic) {
+    this.selectedTopic = topic;
+    this.topicMenu.toggle($event);
+    this.topicIdOfTopicMenuClicked = topic._id;
+    this.store.dispatch(
+      CourseActions.setLastTopicMenuClicked({
+        lastTopicMenuClickedId: topic._id,
+      })
+    );
+  }
+
+  channelMenuButtonClicked($event, channel: Channel) {
+    this.selectedChannel = channel;
+    this.channelMenu.toggle($event);
+    this.channelIdOfChannelMenuClicked = channel._id;
+    this.store.dispatch(
+      CourseActions.setLastChannelMenuClicked({
+        lastChannelMenuClickedId: channel._id,
+      })
+    );
+  }
+
+  onTopicNotificationSettingsClicked(notificationOption: {
+    label: string;
+    control: FormControl<boolean>;
+  }): void {
+    //toggle the value of the control
+    /*      notificationOption.control.setValue(!notificationOption.control.value); */
+    const labelClicked: string = notificationOption.label;
+    let objToSend = {
+      topicId: this.topicIdOfTopicMenuClicked,
+      courseId: this.selectedCourseId,
+
+      [topicNotificationSettingLabels.annotations]:
+        labelClicked === topicNotificationSettingLabels.annotations
+          ? !this.checkBoxesGroup.value[
+              topicNotificationSettingLabels.annotations
+            ]
+          : this.checkBoxesGroup.value[
+              topicNotificationSettingLabels.annotations
+            ],
+      [topicNotificationSettingLabels.commentsAndMentioned]:
+        labelClicked === topicNotificationSettingLabels.commentsAndMentioned
+          ? !this.checkBoxesGroup.value[
+              topicNotificationSettingLabels.commentsAndMentioned
+            ]
+          : this.checkBoxesGroup.value[
+              topicNotificationSettingLabels.commentsAndMentioned
+            ],
+      [topicNotificationSettingLabels.topicUpdates]:
+        labelClicked === topicNotificationSettingLabels.topicUpdates
+          ? !this.checkBoxesGroup.value[
+              topicNotificationSettingLabels.topicUpdates
+            ]
+          : this.checkBoxesGroup.value[
+              topicNotificationSettingLabels.topicUpdates
+            ],
+    };
+
+    this.store.dispatch(
+      CourseActions.setTopicNotificationSettings({ settings: objToSend })
+    );
+  }
+
+  onChannelNotificationSettingsClicked(notificationOption: {
+    label: string;
+    control: FormControl<boolean>;
+  }): void {
+    const labelClicked: string = notificationOption.label;
+    let objToSend = {
+      channelId: this.channelIdOfChannelMenuClicked,
+      courseId: this.selectedCourseId,
+
+      [channelNotificationSettingLabels.annotations]:
+        labelClicked === channelNotificationSettingLabels.annotations
+          ? !this.channelCheckBoxesGroup.value[
+              channelNotificationSettingLabels.annotations
+            ]
+          : this.channelCheckBoxesGroup.value[
+              channelNotificationSettingLabels.annotations
+            ],
+      [channelNotificationSettingLabels.commentsAndMentioned]:
+        labelClicked === channelNotificationSettingLabels.commentsAndMentioned
+          ? !this.channelCheckBoxesGroup.value[
+              channelNotificationSettingLabels.commentsAndMentioned
+            ]
+          : this.channelCheckBoxesGroup.value[
+              channelNotificationSettingLabels.commentsAndMentioned
+            ],
+      [channelNotificationSettingLabels.channelUpdates]:
+        labelClicked === channelNotificationSettingLabels.channelUpdates
+          ? !this.channelCheckBoxesGroup.value[
+              channelNotificationSettingLabels.channelUpdates
+            ]
+          : this.channelCheckBoxesGroup.value[
+              channelNotificationSettingLabels.channelUpdates
+            ],
+    };
+
+    this.store.dispatch(
+      CourseActions.setChannelNotificationSettings({ settings: objToSend })
+    );
+  }
+
+  onResetTopicNotificationsClicked() {
+    this.store.dispatch(
+      CourseActions.unsetTopicNotificationSettings({
+        settings: {
+          topicId: this.topicIdOfTopicMenuClicked,
+          courseId: this.selectedCourseId,
+        },
+      })
+    );
+  }
+  onResetChannelNotificationsClicked() {
+    this.store.dispatch(
+      CourseActions.unsetChannelNotificationSettings({
+        settings: {
+          channelId: this.channelIdOfChannelMenuClicked,
+          courseId: this.selectedCourseId,
+        },
+      })
+    );
   }
 
   /**

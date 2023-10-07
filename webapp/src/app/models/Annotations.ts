@@ -1,5 +1,5 @@
-import { Reply } from "./Reply";
-import { DrawingData } from "./Drawing";
+import { Reply } from './Reply';
+import { DrawingData } from './Drawing';
 
 export type AnnotationType = 'Note' | 'Question' | 'External Resource';
 
@@ -21,16 +21,16 @@ export interface PdfAnnotationTool {
 }
 
 export interface VideoAnnotationTool extends AnnotationTool {
-  type: "annotation";
+  type: 'annotation';
 }
 
 export interface VideoBrushTool extends AnnotationTool {
-  type: "brush";
+  type: 'brush';
   data: DrawingData;
 }
 
 export interface VideoPinTool extends AnnotationTool {
-  type: "pin";
+  type: 'pin';
   x: number;
   y: number;
 }
@@ -50,7 +50,7 @@ export interface PdfGeneralAnnotationLocation {
 }
 
 export interface VideoAnnotationLocation {
-  type: "time";
+  type: 'time';
   from: number;
   to: number;
 }
@@ -63,23 +63,34 @@ export interface Annotation {
   _id?: string;
   type?: AnnotationType;
   content?: string;
+  mentionedUsers?: {
+    userId: string;
+    name: string;
+    email: string;
+  }[];
   location: VideoAnnotationLocation | PdfGeneralAnnotationLocation;
-  tool?: VideoAnnotationTool | VideoBrushTool | VideoPinTool | PdfAnnotationTool;
+  tool?:
+    | VideoAnnotationTool
+    | VideoBrushTool
+    | VideoPinTool
+    | PdfAnnotationTool;
   materialId?: string;
   courseId?: string;
   channelId?: string;
-  author?:{
+  author?: {
     userId?: string;
     name?: string;
+    username?: string;
+    email?: string;
     role?: {
-      _id?: string,
-      name?: string
-    }
+      _id?: string;
+      name?: string;
+    };
   };
   likes?: string[];
   dislikes?: string[];
   replies?: Reply[];
-  createdAt?: number
+  createdAt?: number;
   commentCount?: number;
   tags?: string[];
 }

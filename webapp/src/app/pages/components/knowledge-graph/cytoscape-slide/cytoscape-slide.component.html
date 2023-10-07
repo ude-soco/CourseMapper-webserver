@@ -1,0 +1,50 @@
+<div #cySlide id="cySlide"></div>
+<div id="slideLegends" style="text-align: left">
+  <div>
+    <span>
+      <div class="legend-circle-concept-slide"></div>
+      New
+    </span>
+    <span>
+      <div class="legend-circle-understood-concept-slide"></div>
+      Understood
+    </span>
+    <span>
+      <div class="legend-circle-not-understood-slide"></div>
+      Not Understood
+    </span>
+    <button
+    *ngIf="moreThanFive && showLessActivated"
+      id="moreConcepts"
+      pButton
+      type="button"
+      label="More Concepts"
+      pTooltip="View all main concepts"
+      class="p-button-secondary p-button-rounded"
+      (click)="showMoreElements()"
+      style="margin-top: 5px; float: right; font-size: 17px; max-height: 95%; color: #ffffff; background: #EB590D; border: #EB590D;"
+      ></button>
+    <button
+    *ngIf="!moreThanFive"
+      id="moreConcepts"
+      pButton
+      type="button"
+      label="More Concepts"
+      pTooltip="No more concepts available"
+      disabled="true"
+      class="p-button-secondary p-button-rounded"
+      style="margin-top: 5px; float: right; font-size: 17px; max-height: 95%;"
+      ></button>
+    <button
+    *ngIf="moreThanFive && showMoreActivated"
+      id="lessConcepts"
+      pButton
+      type="button"
+      label="Less Concepts"
+      pTooltip="View only top-5 main concepts"
+      class="p-button-secondary p-button-rounded"
+      (click)="showLessElements()"
+      style="margin-top: 5px; float: right; font-size: 17px; max-height: 95%; color: #ffffff; background: #EB590D; border: #EB590D;"
+      ></button>
+  </div>
+</div>

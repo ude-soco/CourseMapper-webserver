@@ -10,7 +10,16 @@ const Material = db.material;
 const Reply = db.reply;
 const Tag = db.tag;
 const Activity = db.activity;
-
+const UserNotification = db.userNotifications;
+const BlockingNotifications = db.blockingNotifications;
+const FollowAnnotation = db.followAnnotation;
+const socketio = require("../socketio");
+const BlockingNotification = db.blockingNotifications;
+const helpers = require("../helpers/helpers");
+const notifications = require("../middlewares/Notifications/notifications");
+const {
+  getNotificationSettingsWithFollowingAnnotations,
+} = require("../middlewares/Notifications/notifications");
 /**
  * @function getAllCourses
  * Get all courses controller
@@ -59,19 +68,20 @@ export const getMyCourses = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ message: "Error finding user" });
   }
-  user.courses.forEach((object) => {
+
+  user.courses?.forEach((object) => {
     let course = {
-      _id: object.courseId._id,
-      name: object.courseId.name,
-      shortName: object.courseId.shortName,
-      description: object.courseId.description,
-      numberTopics: object.courseId.topics.length,
-      numberChannels: object.courseId.channels.length,
-      numberUsers: object.courseId.users.length,
-      role: object.role.name,
-      channels: object.courseId.channels,
-      createdAt: object.courseId.createdAt,
-      users: object.courseId.users,
+      _id: object?.courseId?._id,
+      name: object?.courseId.name,
+      shortName: object?.courseId.shortName,
+      description: object?.courseId.description,
+      numberTopics: object?.courseId.topics?.length,
+      numberChannels: object?.courseId.channels?.length,
+      numberUsers: object?.courseId.users?.length,
+      role: object?.role?.name,
+      channels: object?.courseId?.channels,
+      createdAt: object?.courseId?.createdAt,
+      users: object?.courseId?.users,
     };
     results.push(course);
   });
@@ -125,8 +135,194 @@ export const getCourse = async (req, res) => {
   }
 
   let foundCourse;
-  let results = [];
   try {
+    /*     foundCourse = await Course.aggregate([
+      {
+        $match: {
+          _id: new ObjectId(courseId),
+        },
+      },
+      {
+        $lookup: {
+          from: "roles",
+          localField: "users.role",
+          foreignField: "_id",
+          as: "result",
+        },
+      },
+      {
+        $addFields: {
+          users: {
+            $map: {
+              input: "$users",
+              as: "user",
+              in: {
+                userId: "$$user.userId",
+                _id: "$$user._id",
+                role: {
+                  $arrayElemAt: [
+                    "$result",
+                    {
+                      $indexOfArray: ["$result._id", "$$user.role"],
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        },
+      },
+      {
+        $unset: "result",
+      },
+      {
+        $lookup: {
+          from: "channels",
+          localField: "channels",
+          foreignField: "_id",
+          as: "result",
+        },
+      },
+      {
+        $lookup: {
+          from: "followannotations",
+          let: {
+            cId: "$_id",
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    {
+                      $eq: ["$$cId", "$courseId"],
+                    },
+                    {
+                      $eq: ["$userId", new ObjectId(userId)],
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+          as: "followannotations",
+        },
+      },
+      {
+        $lookup: {
+          from: "annotations",
+          localField: "followannotations.annotationId",
+          foreignField: "_id",
+          as: "annotations",
+        },
+      },
+      {
+        $addFields: {
+          mergedObjects: {
+            $map: {
+              input: "$annotations",
+              in: {
+                $mergeObjects: [
+                  {
+                    materialType: "$$this.materialType",
+                    content: "$$this.content",
+                  },
+                  {
+                    $arrayElemAt: [
+                      "$followannotations",
+                      {
+                        $indexOfArray: [
+                          "$followannotations.annotationId",
+                          "$$this._id",
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+      {
+        $unset: "annotations",
+      },
+      {
+        $unset: "followannotations",
+      },
+      {
+        $addFields: {
+          channels: {
+            $map: {
+              input: "$result",
+              as: "channel",
+              in: {
+                $mergeObjects: [
+                  "$$channel",
+                  {
+                    followingAnnotations: {
+                      $filter: {
+                        input: "$mergedObjects",
+                        as: "mergedObj",
+                        cond: {
+                          $eq: ["$$mergedObj.channelId", "$$channel._id"],
+                        },
+                      },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+      {
+        $unset: "mergedObjects",
+      },
+      {
+        $unset: "result",
+      },
+      {
+        $lookup: {
+          from: "topics",
+          localField: "topics",
+          foreignField: "_id",
+          as: "result",
+        },
+      },
+      {
+        $addFields: {
+          topics: {
+            $map: {
+              input: "$result",
+              as: "topic",
+              in: {
+                $mergeObjects: [
+                  "$$topic",
+                  {
+                    channels: {
+                      $filter: {
+                        input: "$channels",
+                        as: "channel",
+                        cond: {
+                          $eq: ["$$channel.topicId", "$$topic._id"],
+                        },
+                      },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+      {
+        $unset: "result",
+      },
+      {
+        $unset: "channels",
+      },
+    ]); */
     foundCourse = await Course.findById(courseId)
       .populate("topics", "-__v")
       .populate({ path: "users", populate: { path: "role" } })
@@ -139,7 +335,26 @@ export const getCourse = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ message: "Error finding a course" });
   }
-  return res.status(200).send(foundCourse);
+
+  let notificationSettings;
+  try {
+    /*     notificationSettings = await BlockingNotification.findOne({
+      userId: userId,
+      courseId: courseId,
+    }); */
+
+    notificationSettings =
+      await getNotificationSettingsWithFollowingAnnotations(courseId, userId);
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ message: "Error finding notification settings" });
+  }
+
+  return res.status(200).send({
+    course: foundCourse,
+    notificationSettings: notificationSettings[0],
+  });
 
   // TODO: Uncomment these code when logger is added
   // results = foundCourse.topics.map((topic) => {
@@ -210,12 +425,13 @@ export const enrolCourse = async (req, res, next) => {
       return res.status(500).send({ error: "Error finding role" });
     }
 
+    //the default notification settings are to be found in the User Model
     foundUser.courses.push({
       courseId: foundCourse._id,
       role: role._id,
     });
     try {
-      await foundUser.save();
+      foundUser = await foundUser.save();
     } catch (err) {
       return res.status(500).send({ error: "Error savinguser" });
     }
@@ -224,15 +440,33 @@ export const enrolCourse = async (req, res, next) => {
       role: role._id,
     });
     try {
-      await foundCourse.save();
+      foundCourse = await foundCourse.save();
     } catch (err) {
       return res.status(500).send({ error: "Error saving course" });
     }
+
+    await helpers.initialiseNotificationSettings(foundCourse, foundUser);
+
     req.locals = {
       response: { success: `User enrolled to course ${foundCourse.name}` },
       user: foundUser,
       course: foundCourse,
     };
+
+    let notificationSettings;
+    try {
+      notificationSettings =
+        await notifications.getNotificationSettingsWithFollowingAnnotations(
+          foundCourse._id,
+          userId
+        );
+    } catch (err) {
+      return res
+        .status(500)
+        .send({ message: "Error finding updated notification settings" });
+    }
+
+    req.locals.response.updatedNotificationSettings = notificationSettings[0];
     return next();
   } else {
     return res
@@ -289,6 +523,33 @@ export const withdrawCourse = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: "Error saving user" });
   }
+
+  try {
+    await BlockingNotifications.deleteMany({
+      courseId: courseId,
+    });
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ error: "Error deleting blocking notifications" });
+  }
+
+  try {
+    await FollowAnnotation.deleteMany({
+      courseId: courseId,
+    });
+  } catch (err) {
+    return res.status(500).send({ error: "Error deleting follow annotations" });
+  }
+
+  try {
+    await UserNotification.deleteMany({
+      courseId: foundCourse._id,
+    });
+  } catch (error) {
+    return res.status(500).send({ error: "Error deleting user notification" });
+  }
+
   req.locals = {
     response: { success: `User withdrew from course ${foundCourse.name}` },
     user: foundUser,
@@ -377,6 +638,8 @@ export const newCourse = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: "Error saving user" });
   }
+
+  await helpers.initialiseNotificationSettings(courseSaved, foundUser);
   const response = {
     courseSaved: {
       _id: courseSaved._id,
@@ -390,11 +653,27 @@ export const newCourse = async (req, res, next) => {
     },
     success: `New course '${courseSaved.name}' added!`,
   };
+
   req.locals = {
     course: courseSaved,
     user: foundUser,
     response: response,
   };
+
+  let notificationSettings;
+  try {
+    notificationSettings =
+      await notifications.getNotificationSettingsWithFollowingAnnotations(
+        courseSaved._id,
+        userId
+      );
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ message: "Error finding updated notification settings" });
+  }
+
+  req.locals.response.updatedNotificationSettings = notificationSettings[0];
   return next();
 };
 
@@ -411,11 +690,11 @@ export const deleteCourse = async (req, res, next) => {
   let foundCourse;
   try {
     foundCourse = await Course.findByIdAndRemove(courseId);
-    if (!foundCourse) {
-      return res.status(404).send({
-        error: `Course with id ${courseId} doesn't exist!`,
-      });
-    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding course" });
+  }
+
+  try {
     try {
       await Topic.deleteMany({ _id: { $in: foundCourse.topics } });
     } catch (err) {
@@ -447,6 +726,7 @@ export const deleteCourse = async (req, res, next) => {
       return res.status(500).send({ error: "Error deleting tag" });
     }
     let activitiesToBeDeleted;
+    let activitiesToBeDeletedIds;
     try {
       activitiesToBeDeleted = await Activity.aggregate([
         {
@@ -470,13 +750,67 @@ export const deleteCourse = async (req, res, next) => {
           $project: { _id: 1 },
         },
       ]);
-      let activitiesToBeDeletedIds = activitiesToBeDeleted.map(
+      activitiesToBeDeletedIds = activitiesToBeDeleted.map(
         (actvity) => actvity._id
       );
       await Activity.deleteMany({ _id: { $in: activitiesToBeDeletedIds } });
     } catch (error) {
       return res.status(500).send({ error: "Error deleting activity" });
     }
+
+    //delete all entries from UserNotification where acitivityId is in activitiesToBeDeleted array
+    //TODO: Test the below method
+    try {
+      await UserNotification.deleteMany({
+        courseId: foundCourse._id,
+      });
+    } catch (error) {
+      return res
+        .status(500)
+        .send({ error: "Error deleting user notification" });
+    }
+
+    //find all blockingNotifications where courseId is courseId
+    let usersSubscribedToCourse = [];
+    try {
+      let blockingNotificationDocuments = await BlockingNotification.find({
+        courseId: courseId,
+      });
+
+      usersSubscribedToCourse = blockingNotificationDocuments.map(
+        (blockingNotification) => blockingNotification.userId
+      );
+    } catch (err) {
+      return res.status(500).send({
+        error: "Error finding blocking Notifications!",
+      });
+    }
+
+    try {
+      await BlockingNotifications.deleteMany({
+        courseId: courseId,
+      });
+    } catch (err) {
+      return res
+        .status(500)
+        .send({ error: "Error deleting blocking notifications" });
+    }
+
+    try {
+      await FollowAnnotation.deleteMany({
+        courseId: courseId,
+      });
+    } catch (err) {
+      return res
+        .status(500)
+        .send({ error: "Error deleting follow annotations" });
+    }
+
+    usersSubscribedToCourse.forEach((userId) => {
+      socketio
+        .getIO()
+        .emit(userId, [{ courseId: courseId, isDeletingCourse: true }]);
+    });
   } catch (err) {
     return res.status(500).send({ error: "Error finding and removing course" });
   }
@@ -499,11 +833,13 @@ export const deleteCourse = async (req, res, next) => {
     }
   });
   let foundUser;
+
   try {
     foundUser = await User.findById(req.userId);
   } catch (err) {
     return res.status(500).send({ error: "Error finding user" });
   }
+
   const response = {
     success: `Course '${foundCourse.name}' successfully deleted!`,
   };
@@ -512,6 +848,7 @@ export const deleteCourse = async (req, res, next) => {
     course: foundCourse,
     user: foundUser,
   };
+
   return next();
 };
 
@@ -601,7 +938,7 @@ export const newIndicator = async (req, res, next) => {
   }
 
   const indicator = {
-    _id: ObjectId(),
+    _id: new ObjectId(),
     src: req.body.src,
     width: req.body.width,
     height: req.body.height,
@@ -787,4 +1124,237 @@ export const reorderIndicators = async (req, res, next) => {
     success: `indicators have been updated successfully!`,
     indicators: foundCourse.indicators,
   });
+};
+
+export const getCourseTest = async (req, res) => {
+  const courseId = req.params.courseId;
+  const userId = req.userId; //"63387f529dd66f86548d3537"
+
+  let foundUser;
+  try {
+    foundUser = await User.findById(userId);
+    if (!foundUser) {
+      return res.status(404).send({
+        error: `User not found!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding user" });
+  }
+
+  let foundCourse;
+  let results = [];
+  foundCourse = await BlockingNotification.aggregate([
+    {
+      $match: {
+        courseId: new ObjectId(courseId),
+        userId: new ObjectId(userId),
+      },
+    },
+    {
+      $unset: "materials",
+    },
+
+    {
+      $lookup: {
+        from: "topics",
+        localField: "topics.topicId",
+        foreignField: "_id",
+        as: "result",
+      },
+    },
+
+    {
+      $addFields: {
+        topics: {
+          $map: {
+            input: "$topics",
+            as: "topic",
+            in: {
+              $mergeObjects: [
+                "$$topic",
+                {
+                  $arrayElemAt: [
+                    "$result",
+                    {
+                      $indexOfArray: ["$result._id", "$$topic.topicId"],
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        },
+      },
+    },
+    {
+      $project: {
+        result: 0,
+      },
+    },
+    /* 
+    {
+      $project: {
+        topics: {
+          $map: {
+            input: "$topics",
+            as: "topic",
+            in: {
+              $arrayToObject: {
+                $filter: {
+                  input: {
+                    $objectToArray: "$$topic"
+                  },
+                  cond: {
+                    $ne: ["$$this.k", "channels"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        courseId: 1,
+        userId: 1,
+        materials: 1,
+        channels: 1,
+        __v: 1
+      }
+    }, */
+
+    {
+      $lookup: {
+        from: "channels",
+        localField: "channels.channelId",
+        foreignField: "_id",
+        as: "result",
+      },
+    },
+    {
+      $addFields: {
+        channels: {
+          $map: {
+            input: "$channels",
+            as: "channel",
+            in: {
+              $mergeObjects: [
+                "$$channel",
+                {
+                  $arrayElemAt: [
+                    "$result",
+                    {
+                      $indexOfArray: ["$result._id", "$$channel.channelId"],
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        },
+      },
+    },
+    {
+      $addFields: {
+        topics: {
+          $map: {
+            input: "$topics",
+            as: "topic",
+            in: {
+              $mergeObjects: [
+                "$$topic",
+                {
+                  channels: {
+                    $filter: {
+                      input: "$channels",
+                      as: "channel",
+                      cond: {
+                        $eq: ["$$channel.topicId", "$$topic.topicId"],
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        },
+      },
+    },
+    {
+      $unset: "result",
+    },
+    {
+      $lookup: {
+        from: "courses",
+        localField: "courseId",
+        foreignField: "_id",
+        as: "course",
+      },
+    },
+    {
+      $replaceRoot: {
+        newRoot: {
+          $mergeObjects: [{ $arrayElemAt: ["$course", 0] }, "$$ROOT"],
+        },
+      },
+    },
+    {
+      $unset: "course",
+    },
+
+    {
+      $set: {
+        _id: "$courseId",
+      },
+    },
+    {
+      $unset: ["courseId", "userId"],
+    },
+    {
+      $lookup: {
+        from: "roles",
+        localField: "users.role",
+        foreignField: "_id",
+        as: "result",
+      },
+    },
+    {
+      $addFields: {
+        users: {
+          $map: {
+            input: "$users",
+            as: "user",
+            in: {
+              $mergeObjects: [
+                "$$user",
+                {
+                  role: {
+                    $first: {
+                      $filter: {
+                        input: "$result",
+                        as: "result",
+                        cond: {
+                          $eq: ["$$user.role", "$$result._id"],
+                        },
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        },
+      },
+    },
+    {
+      $unset: "result",
+    },
+  ]);
+  if (!foundCourse) {
+    return res.status(404).send({
+      error: `Course with id ${courseId} doesn't exist!`,
+    });
+  }
+  /* catch (err) {
+    return res.status(500).send({ message: "Error finding a course", err });
+  } */
+  return res.status(200).send(foundCourse[0]);
 };

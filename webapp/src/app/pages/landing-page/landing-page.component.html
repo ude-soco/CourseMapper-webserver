@@ -1,14 +1,14 @@
-<div class="flex flex-row">
+<div class="flex flex-row min-h-screen">
   <div class="flex-col" *ngIf="loggedInUser">
     <app-sidebar></app-sidebar>
   </div>
 
-  <div>
-    <div class="img-div">
+  <div class="md:container md:mx-auto">
+    <div class="img-div md:w-auto">
       <div *ngIf="value1 == ''">
         <img
           alt="Card"
-          src="https://source.unsplash.com/user/c_v_r/1900x800"
+          src="/assets/img/landingPage.jpg"
           class="img"
         />
 
@@ -40,7 +40,7 @@
       </div>
     </div>
 
-    <div class="course-div cursor-pointer">
+    <div class=" cursor-pointer overscroll-y-auto h-1/2 flex flex-wrap">
       <div *ngFor="let course of userArray" (click)="onSelectCourse(course)">
         <div
           *ngIf="value1 === '' || course.name.toLowerCase().includes(value1)"
@@ -50,7 +50,7 @@
             <ng-template pTemplate="header">
               <img
                 alt="Card"
-                src="https://primefaces.org/cdn/primeng/images/usercard.png"
+                src="/assets/img/courseCard.png"
               />
             </ng-template>
 
@@ -68,7 +68,7 @@
                 }"
               ></p-avatar>
 
-             
+
                 <p class="font-bold pt-2 pl-51" style="padding-left: 60px;">{{ course.name }}</p>
               </div>
 
@@ -107,6 +107,7 @@
     </div>
   </div>
 </div>
+<app-footer></app-footer>
 
 <!-- <div class="row">
         <div class="column" style="background-color:#aaa;">

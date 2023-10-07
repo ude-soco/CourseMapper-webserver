@@ -1,9 +1,6 @@
 <p-toast position="bottom-left"></p-toast>
 <p-confirmDialog></p-confirmDialog>
-<div
-  class="relative contain bg-gray-100"
-  *ngIf="selectedChannel?.materials"
->
+<div class="relative contain bg-gray-100" *ngIf="selectedChannel?.materials">
   <div class="h-max m-0 flex flex-col bg-gray-100">
     <div class="flex items-start justify-between py-4 pl-3 bg-gray-200">
       <p
@@ -17,13 +14,14 @@
   </div>
 
   <p-tabView
+    id="material-tabview"
     (onChange)="onTabChange($event)"
     (onClose)="deleteMaterial($event)"
     *ngIf="selectedChannel?.materials"
     [(activeIndex)]="tabIndex"
   >
-  <!-- *ngIf="showModeratorPrivileges" -->
-    <p-tabPanel >
+    <!-- *ngIf="showModeratorPrivileges" -->
+    <p-tabPanel>
       <ng-template pTemplate="header">
         <app-iconbutton
           icon="bxs-folder-plus"
@@ -50,12 +48,12 @@
         *ngFor="let material of materials; let i = index"
         [closable]="false"
       >
-        <ng-template pTemplate="header" *ngIf="material.type == 'pdf'">
+        <ng-template pTemplate="header" *ngIf="material.type === 'pdf'">
           <app-iconbutton
             icon="bxs-file-pdf"
             color="text-blue-500"
           ></app-iconbutton>
-          <span *ngIf="selectedMaterial">
+          <span *ngIf="selectedMaterial" class="mr-2">
             <p
               id="{{ material._id }}"
               (keydown)="onTextInserted(selectedMaterial._id, $event)"
@@ -65,29 +63,56 @@
               {{ material.name }}
             </p></span
           >
-          <span *ngIf="!selectedMaterial">{{ material.name }}</span>
-          <p-menu
-            #materialMenu
-            id="material_menu"
-            [model]="materialOptions"
-            [popup]="true"
-            appendTo="body"
-          ></p-menu>
+          <span *ngIf="!selectedMaterial" class="mr-2">{{
+            material.name
+          }}</span>
+          <!--   <span
+            class="bg-orange-600 text-[white] text-base p-[0.1rem] w-[1.5rem] text-center rounded-[15px] font-semibold text-[0.8rem]"
+            *ngIf="getNumUnreadNotificationsForMaterial(material._id) | async"
+            >{{
+              getNumUnreadNotificationsForMaterial(material._id) | async
+            }}</span
+          > -->
+          <app-iconbutton
+            style="z-index: 10; padding: 0"
+            icon="bx-network-chart"
+            color="text-orange-500"
+            (click)="selectedMaterial = material; onConceptMapButtonClicked(true)"
+            pTooltip="View material knowledge graph"
+          ></app-iconbutton>
+          <p-overlayPanel #materialMenu styleClass="settingsContextMenu">
+            <ng-template pTemplate="content">
+              <app-context-menu
+                [showModeratorPrivileges]="showModeratorPrivileges"
+                [checkBoxesGroup]="materialCheckBoxesGroup"
+                [checkBoxesArray]="materialCheckBoxesArray"
+                [isResetButtonEnabled]="
+                  isResetMaterialNotificationsButtonEnabled
+                "
+                resetTo="channel"
+                (renameClicked)="onRenameMaterial()"
+                (deleteClicked)="onDeleteMaterial()"
+                (resetButtonClicked)="onResetMaterialNotificationsClicked()"
+                (notificationSettingClicked)="
+                  onMaterialNotificationSettingsClicked($event)
+                "
+              ></app-context-menu>
+            </ng-template>
+          </p-overlayPanel>
           <app-iconbutton
             style="z-index: 1"
-            *ngIf="showModeratorPrivileges"
             icon="bx-dots-vertical-rounded"
             color="text-blue-500"
-            (click)="selectedMaterial = material; materialMenu.toggle($event)"
+            (click)="materialMenuButtonClicked($event, material)"
           ></app-iconbutton>
         </ng-template>
 
-        <ng-template pTemplate="header" *ngIf="material.type == 'video'">
+        <ng-template pTemplate="header" *ngIf="material.type === 'video'">
           <app-iconbutton
             icon="bxs-videos"
             color="text-blue-500"
           ></app-iconbutton>
-          <span *ngIf="selectedMaterial">
+          <span *ngIf="selectedMaterial" class="mr-2">
             <p
               id="{{ material._id }}"
               (keydown)="onTextInserted(selectedMaterial._id, $event)"
@@ -95,22 +120,42 @@
               #selectedMaterial._id
             >
               {{ material.name }}
-            </p></span
-          >
-          <span *ngIf="!selectedMaterial">{{ material.name }}</span>
-          <p-menu
-            #materialMenu
-            id="material_menu"
-            [model]="materialOptions"
-            [popup]="true"
-            appendTo="body"
-          ></p-menu>
+            </p>
+          </span>
+          <span *ngIf="!selectedMaterial" class="mr-2">{{
+            material.name
+          }}</span>
+          <!--  <span
+            class="bg-orange-600 text-[white] text-base p-[0.1rem] w-[1.5rem] text-center rounded-[15px] font-semibold text-[0.8rem]"
+            *ngIf="getNumUnreadNotificationsForMaterial(material._id) | async"
+            >{{
+              getNumUnreadNotificationsForMaterial(material._id) | async
+            }}</span
+          > -->
+          <p-overlayPanel #materialMenu styleClass="settingsContextMenu">
+            <ng-template pTemplate="content">
+              <app-context-menu
+                [showModeratorPrivileges]="showModeratorPrivileges"
+                [checkBoxesGroup]="materialCheckBoxesGroup"
+                [checkBoxesArray]="materialCheckBoxesArray"
+                [isResetButtonEnabled]="
+                  isResetMaterialNotificationsButtonEnabled
+                "
+                resetTo="channel"
+                (renameClicked)="onRenameMaterial()"
+                (deleteClicked)="onDeleteMaterial()"
+                (resetButtonClicked)="onResetMaterialNotificationsClicked()"
+                (notificationSettingClicked)="
+                  onMaterialNotificationSettingsClicked($event)
+                "
+              ></app-context-menu>
+            </ng-template>
+          </p-overlayPanel>
           <app-iconbutton
             style="z-index: 1"
-            *ngIf="showModeratorPrivileges"
             icon="bx-dots-vertical-rounded"
             color="text-blue-500"
-            (click)="selectedMaterial = material; materialMenu.toggle($event)"
+            (click)="materialMenuButtonClicked($event, material)"
           ></app-iconbutton>
         </ng-template>
       </p-tabPanel>
@@ -119,3 +164,8 @@
     </ng-container>
   </p-tabView>
 </div>
+<ng-container>
+  <!-- <app-concept-map #conceptMap [material]="selectedMaterial">
+  </app-concept-map> -->
+  <!-- (loading)="passLoadingStatus($event)" -->
+</ng-container>
