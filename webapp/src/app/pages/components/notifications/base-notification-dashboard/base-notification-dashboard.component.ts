@@ -80,6 +80,12 @@ export class BaseNotificationDashboardComponent {
   protected lastTimeCourseMapperOpened$: Observable<string>;
   protected earlierNotifications$: Observable<Notification[]>;
   protected newerNotifications$: Observable<Notification[]>;
+  protected numOfTimesScrolledToEndBehaviourSubject =
+    new BehaviorSubject<number>(1);
+  protected numOfTimesScrolledToEnd$ =
+    this.numOfTimesScrolledToEndBehaviourSubject.asObservable();
+  protected numOfTimesScrolledToEnd = 1;
+  protected numOfNotificationsToLoad = 15;
 
   constructor(
     protected store: Store<State>,
@@ -187,19 +193,30 @@ export class BaseNotificationDashboardComponent {
     this.earlierNotifications$ = combineLatest([
       this.notifications$,
       this.lastTimeCourseMapperOpened$,
+      this.numOfTimesScrolledToEnd$,
     ]).pipe(
-      map(([notifications, lastTimeCourseMapperOpened]) => {
-        const lastTimeCourseMapperOpenedConverted = new Date(
-          lastTimeCourseMapperOpened
-        );
-        return notifications.filter((notification) => {
-          const notificationDate = new Date(notification.timestamp);
-          if (notificationDate < lastTimeCourseMapperOpenedConverted) {
-            return true;
-          }
-          return false;
-        });
-      })
+      map(
+        ([
+          notifications,
+          lastTimeCourseMapperOpened,
+          numOfTimesScrolledToEnd,
+        ]) => {
+          const lastTimeCourseMapperOpenedConverted = new Date(
+            lastTimeCourseMapperOpened
+          );
+          let totalNotifications = notifications.filter((notification) => {
+            const notificationDate = new Date(notification.timestamp);
+            if (notificationDate < lastTimeCourseMapperOpenedConverted) {
+              return true;
+            }
+            return false;
+          });
+          return totalNotifications.slice(
+            0,
+            this.numOfNotificationsToLoad * numOfTimesScrolledToEnd
+          );
+        }
+      )
     );
 
     this.newerNotifications$ = combineLatest([
@@ -597,7 +614,10 @@ export class BaseNotificationDashboardComponent {
       const scrollHeight = pOverlayPanel.scrollHeight;
       const clientHeight = pOverlayPanel.clientHeight;
       let totalSpaceAvailableToScroll = scrollHeight - clientHeight;
-      if (scrollTop / totalSpaceAvailableToScroll > 0.9) {
+      if (scrollTop / totalSpaceAvailableToScroll > 0.99) {
+        this.numOfTimesScrolledToEndBehaviourSubject.next(
+          ++this.numOfTimesScrolledToEnd
+        );
       }
 
       //here we need to call the backend
