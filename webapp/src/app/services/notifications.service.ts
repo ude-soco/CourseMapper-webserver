@@ -37,6 +37,7 @@ import {
   courseNotificationSettingLabels,
 } from 'src/app/models/Notification';
 import * as CourseActions from '../pages/courses/state/course.actions';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -98,16 +99,30 @@ export class NotificationsService {
   public initialiseSocketConnection() {
     const user = this.storageService.getUser();
 
+    /*     this.socket.on(user.id, (data: UserNotificationWithIndicators) => {
+      this.store.dispatch(
+        CourseActions.setTopicNotificationSettingsSuccess({
+          updatedDoc: data.activityIndicator,
+        })
+      );
+      this.store.dispatch(
+        NotificationActions.setCourseNotificationSettingsSuccess({
+          updatedDoc: data.activityIndicator,
+        })
+      );
+      if (data.userNotification[0].isDeletingCourse) { */
     this.socket.on(user.id, (data: UserNotification[]) => {
       if (data[0].isDeletingCourse) {
         this.store.dispatch(
           NotificationActions.isDeletingCourse({
             courseId: data[0].courseId,
+            /* courseId: data.userNotification[0].courseId, */
           })
         );
         return;
       }
       let notifications = data.map(this.transformNotification);
+      /*  let notifications = data.userNotification.map(this.transformNotification); */
       notifications = notifications.map((notification) => {
         if (
           (notification.annotationAuthorId === user.id &&

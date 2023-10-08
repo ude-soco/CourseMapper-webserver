@@ -33,12 +33,13 @@ import {
   topicNotificationSettingLabels,
   channelNotificationSettingLabels,
 } from 'src/app/models/Notification';
-import { Subscription, map, tap } from 'rxjs';
+import { Subscription, combineLatest, map, tap } from 'rxjs';
 import { getNotifications } from '../notifications/state/notifications.reducer';
 import { Annotation } from 'src/app/models/BlockingNotification';
 import * as $ from 'jquery';
 import * as NotificationActions from '../notifications/state/notifications.actions';
-
+import { Notification } from 'src/app/models/Notification';
+import { getLastTimeCourseMapperOpened } from 'src/app/state/app.reducer';
 @Component({
   selector: 'app-topic-dropdown',
   templateUrl: './topic-dropdown.component.html',
@@ -125,6 +126,8 @@ export class TopicDropdownComponent implements OnInit {
   isResetTopicNotificationsButtonEnabled: boolean;
   isResetChannelNotificationsButtonEnabled: boolean;
   followingAnnotationsOfDisplayedChannels$: Observable<any> = null;
+  allNotifications$: Observable<Notification[]>;
+  lastTimeCourseMapperOpened$: Observable<string>;
 
   topicOptions: MenuItem[] = [
     {
@@ -241,6 +244,53 @@ export class TopicDropdownComponent implements OnInit {
 
     this.followingAnnotationsOfDisplayedChannels$ = this.store.select(
       getFollowingAnnotationsOfDisplayedChannels
+    );
+
+    this.allNotifications$ = this.store.select(getNotifications);
+
+    this.lastTimeCourseMapperOpened$ = this.store.select(
+      getLastTimeCourseMapperOpened
+    );
+  }
+
+  getTopicActivityIndicator(topicId: string) {
+    return combineLatest([
+      this.allNotifications$,
+      this.lastTimeCourseMapperOpened$,
+    ]).pipe(
+      map(([notifications, lastTimeCourseMapperOpened]) => {
+        const lastTimeCourseMapperOpenedConverted = new Date(
+          lastTimeCourseMapperOpened
+        );
+        const notificationsForTopic = notifications.filter(
+          (notification) =>
+            notification.topic_id === topicId &&
+            new Date(notification.timestamp) >
+              lastTimeCourseMapperOpenedConverted &&
+            !notification.isRead
+        );
+        return notificationsForTopic.length > 0;
+      })
+    );
+  }
+  getChannelActivityIndicator(channelId: string) {
+    return combineLatest([
+      this.allNotifications$,
+      this.lastTimeCourseMapperOpened$,
+    ]).pipe(
+      map(([notifications, lastTimeCourseMapperOpened]) => {
+        const lastTimeCourseMapperOpenedConverted = new Date(
+          lastTimeCourseMapperOpened
+        );
+        const notificationsForChannel = notifications.filter(
+          (notification) =>
+            notification.channel_id === channelId &&
+            new Date(notification.timestamp) >
+              lastTimeCourseMapperOpenedConverted &&
+            !notification.isRead
+        );
+        return notificationsForChannel.length > 0;
+      })
     );
   }
 
@@ -550,6 +600,7 @@ export class TopicDropdownComponent implements OnInit {
     this.textFromTopic = false;
     if (this.enterKey) {
       //confirmed by keyboard
+      this.topicMenu.hide();
       let topicName = this.previousTopic.name;
       let body = { name: topicName };
       let newTopicName = this.insertedText;

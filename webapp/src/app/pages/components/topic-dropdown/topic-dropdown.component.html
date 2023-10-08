@@ -14,7 +14,7 @@
     >
       <div class="flex flex-row items-center justify-between mx-0 my-1.5">
         <div class="flex flex-row items-center grow justify-between pr-2">
-          <div class="flex flex-row">
+          <div class="flex flex-row relative">
             <app-iconbutton
               icon="bx-chevron-down"
               color="text-black"
@@ -23,6 +23,9 @@
             <div
               id="{{ topic._id }}"
               class="text-lg font-semibold"
+              [class.activity-indicator]="
+                getTopicActivityIndicator(topic._id) | async
+              "
               (keydown)="onTextInsertedTopic(selectedTopic._id, $event)"
               (keyup)="afterTextInsertedTopic(selectedTopic._id, $event)"
               #{{topic._id}}
@@ -78,22 +81,27 @@
       >
         <div
           id="{{ channel._id }}-container"
-          class="pl-7 py-1 hover:bg-white transition-all"
+          class="pl-7 py-1 hover:bg-white transition-all relative"
         >
           <div
             *ngIf="channel._id !== selectedChannelId"
-            class="flex flex-row items-center justify-between"
+            class="flex flex-row items-center justify-between relative"
           >
-            <span>#</span>
-            <p
-              id="{{ channel._id }}"
-              (click)="onSelectChannel(channel)"
-              (keydown)="onTextInsertedChannel(selectedChannel._id, $event)"
-              (keyup)="afterTextInsertedChennel(selectedChannel._id, $event)"
-              class="cursor-pointer w-full"
-            >
-              {{ channel.name }}
-            </p>
+            <div class="relative">
+              <span>#</span>
+              <p
+                id="{{ channel._id }}"
+                (click)="onSelectChannel(channel)"
+                (keydown)="onTextInsertedChannel(selectedChannel._id, $event)"
+                (keyup)="afterTextInsertedChennel(selectedChannel._id, $event)"
+                class="cursor-pointer w-full"
+                [class.activity-indicator]="
+                  getChannelActivityIndicator(channel._id) | async
+                "
+              >
+                {{ channel.name }}
+              </p>
+            </div>
             <app-iconbutton
               icon="bx-dots-vertical-rounded"
               color="text-black"
@@ -123,41 +131,48 @@
             *ngIf="channel._id === selectedChannelId"
             class="flex flex-row items-center justify-between bg-white"
           >
-            <span>#</span>
-            <p
-              id="{{ channel._id }}"
-              (click)="onSelectChannel(channel)"
-              (keydown)="onTextInsertedChannel(selectedChannel._id, $event)"
-              (keyup)="afterTextInsertedChennel(selectedChannel._id, $event)"
-              class="cursor-pointer w-full"
-            >
-              {{ channel.name }}
-            </p>
-            <app-iconbutton
-              icon="bx-dots-vertical-rounded"
-              color="text-black"
-              (click)="channelMenuButtonClicked($event, channel)"
-            ></app-iconbutton>
-            <p-overlayPanel #channelMenu styleClass="settingsContextMenu">
-              <ng-template pTemplate="content">
-                <app-context-menu
-                  [showModeratorPrivileges]="showModeratorPrivileges"
-                  [checkBoxesGroup]="channelCheckBoxesGroup"
-                  [checkBoxesArray]="channelCheckBoxesArray"
-                  [isResetButtonEnabled]="
-                    isResetChannelNotificationsButtonEnabled
-                  "
-                  resetTo="topic"
-                  (renameClicked)="onRenameChannel()"
-                  (deleteClicked)="onDeleteChannel()"
-                  (resetButtonClicked)="onResetChannelNotificationsClicked()"
-                  (notificationSettingClicked)="
-                    onChannelNotificationSettingsClicked($event)
-                  "
-                ></app-context-menu>
-              </ng-template>
-            </p-overlayPanel>
+            <div class="relative flex">
+              <span>#</span>
+              <p
+                id="{{ channel._id }}"
+                (click)="onSelectChannel(channel)"
+                (keydown)="onTextInsertedChannel(selectedChannel._id, $event)"
+                (keyup)="afterTextInsertedChennel(selectedChannel._id, $event)"
+                class="cursor-pointer w-full"
+                [class.activity-indicator]="
+                  getChannelActivityIndicator(channel._id) | async
+                "
+              >
+                {{ channel.name }}
+              </p>
+            </div>
+            <div>
+              <app-iconbutton
+                icon="bx-dots-vertical-rounded"
+                color="text-black"
+                (click)="channelMenuButtonClicked($event, channel)"
+              ></app-iconbutton>
+            </div>
           </div>
+          <p-overlayPanel #channelMenu styleClass="settingsContextMenu">
+            <ng-template pTemplate="content">
+              <app-context-menu
+                [showModeratorPrivileges]="showModeratorPrivileges"
+                [checkBoxesGroup]="channelCheckBoxesGroup"
+                [checkBoxesArray]="channelCheckBoxesArray"
+                [isResetButtonEnabled]="
+                  isResetChannelNotificationsButtonEnabled
+                "
+                resetTo="topic"
+                (renameClicked)="onRenameChannel()"
+                (deleteClicked)="onDeleteChannel()"
+                (resetButtonClicked)="onResetChannelNotificationsClicked()"
+                (notificationSettingClicked)="
+                  onChannelNotificationSettingsClicked($event)
+                "
+              ></app-context-menu>
+            </ng-template>
+          </p-overlayPanel>
         </div>
 
         <ul class="spineBorder-1-F4s1">
@@ -254,7 +269,7 @@
     >
       <div class="flex flex-row items-center justify-between mx-0 my-1.5">
         <div class="flex flex-row items-center grow justify-between pr-2">
-          <div class="flex flex-row">
+          <div class="flex flex-row relative">
             <app-iconbutton
               icon="bx-chevron-right"
               color="text-black"
@@ -263,6 +278,9 @@
             <div
               id="{{ topic._id }}"
               class="text-lg font-semibold"
+              [class.activity-indicator]="
+                getTopicActivityIndicator(topic._id) | async
+              "
               (keydown)="onTextInsertedTopic(selectedTopic._id, $event)"
               (keyup)="afterTextInsertedTopic(selectedTopic._id, $event)"
               #{{topic._id}}

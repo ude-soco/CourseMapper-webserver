@@ -1145,6 +1145,7 @@ export const getAllCourseNotificationSettings = async (req, res, next) => {
           isReplyAndMentionedNotificationsEnabled: 1,
           isCourseUpdateNotificationsEnabled: 1,
           isCourseLevelOverride: 1,
+          /*   showCourseActivityIndicator: 1, */
         },
       },
       {

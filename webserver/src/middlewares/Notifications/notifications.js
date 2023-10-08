@@ -75,11 +75,18 @@ const emitNotificationsToSubscribedUsers = async (
   userToBeNotified,
   insertedUserNotifications
 ) => {
+  /* let activityIndicators = req.locals.activityIndicators; */
   for (let i = 0; i < insertedUserNotifications.length; i++) {
     const userNotification = insertedUserNotifications[i];
     const socketId = userNotification.userId;
     userNotification.activityId = req.locals.activity;
     socketio.getIO().emit(socketId, [userNotification]);
+    /*     const notificationData = {
+      userNotification: [userNotification],
+      activityIndicator: activityIndicators[userNotification.userId.toString()],
+    };
+
+    socketio.getIO().emit(socketId, notificationData); */
   }
 };
 
@@ -576,6 +583,7 @@ export const topicCourseUpdateNotificationUsers = async (req, res, next) => {
     new ObjectId(userId)
   );
   req.locals.usersToBeNotified = finalListOfUsersToNotify;
+
   if (req.locals.isDeletingTopic) {
     await deleteTopicNotifications(req.locals.topic._id);
     await removeFollowingAnnotationDocuments(req);
@@ -596,6 +604,11 @@ export const topicCourseUpdateNotificationUsers = async (req, res, next) => {
       }
     );
   }
+
+  /*   req.locals.activityIndicators = await updateTopicLevelActivityIndicators(
+    finalListOfUsersToNotify,
+    req
+  ); */
 
   next();
 };
@@ -1191,6 +1204,60 @@ export const deleteReplyNotifications = async (replyId) => {
   });
 };
 
+/* export const updateTopicLevelActivityIndicators = async (
+  finalListOfUsersToNotify,
+  req
+) => {
+  let userIds = finalListOfUsersToNotify.map((userId) => new ObjectId(userId));
+  const courseId = req.locals.course._id;
+  const topicId = req.locals.topic._id;
+  if (req.locals.isDeletingTopic) {
+    const updatedDocs = await BlockingNotifications.updateMany(
+      {
+        userId: { $in: userIds },
+        courseId: courseId,
+      },
+      {
+        $set: {
+          showCourseActivityIndicator: true,
+        },
+      }
+    );
+  } else {
+    const updatedDocs = await BlockingNotifications.updateMany(
+      {
+        userId: { $in: userIds },
+        courseId: courseId,
+      },
+      {
+        $set: {
+          showCourseActivityIndicator: true,
+          "topics.$[topicElem].showTopicActivityIndicator": true,
+        },
+      },
+      {
+        arrayFilters: [
+          {
+            "topicElem.topicId": topicId,
+          },
+        ],
+      }
+    );
+  }
+
+  let modifiedDocuments = await BlockingNotifications.find({
+    userId: { $in: userIds },
+    courseId: courseId,
+  });
+
+  let documentsToReturn = {};
+  modifiedDocuments.forEach((doc) => {
+    documentsToReturn[doc.userId] = doc;
+  });
+
+  return documentsToReturn;
+};
+ */
 let notifications = {
   populateUserNotification,
   generateNotificationInfo,

@@ -80,3 +80,14 @@
   display : block;
 }
 
+
+.activity-indicator::after{
+  content: '';
+  position: absolute;
+  bottom: 40%;
+  right: -20px;
+  width: 8px;
+  height: 8px;
+  background-color: #ea580c;
+  border-radius: 50%;
+}

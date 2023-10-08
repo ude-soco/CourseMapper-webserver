@@ -26,3 +26,14 @@
     @apply absolute top-10 right-[-6px] w-6 h-6 flex justify-center bg-orange-600 text-white rounded-full shadow-lg;
   }
 }
+
+.sidebar-icon.show-activity-indicator::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 8px;
+  height: 8px;
+  background-color: #ea580c;
+  border-radius: 50%;
+}

@@ -1,3 +1,5 @@
+import { BlockingNotifications } from './BlockingNotification';
+
 export interface UserNotification {
   //the below 2 attrbiutes are only present when we are deleting a course.
   courseId?: string;
@@ -115,6 +117,11 @@ export interface TransformedNotificationsWithBlockedUsers {
   notifications: Notification[];
   blockingUsers: BlockingUsers[];
 }
+
+/* export interface UserNotificationWithIndicators {
+  activityIndicator: BlockingNotifications;
+  userNotification: UserNotification[];
+} */
 
 export enum NotificationCategory {
   CourseUpdate = 'courseupdates',
