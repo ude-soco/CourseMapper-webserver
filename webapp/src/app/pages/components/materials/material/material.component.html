@@ -49,37 +49,49 @@
         [closable]="false"
       >
         <ng-template pTemplate="header" *ngIf="material.type === 'pdf'">
-          <app-iconbutton
-            icon="bxs-file-pdf"
-            color="text-blue-500"
-          ></app-iconbutton>
-          <span *ngIf="selectedMaterial" class="mr-2">
-            <p
-              id="{{ material._id }}"
-              (keydown)="onTextInserted(selectedMaterial._id, $event)"
-              (keyup)="afterTextInserted(selectedMaterial._id, $event)"
-              #selectedMaterial._id
+          <div class="flex relative">
+            <div
+              [class.activity-indicator]="
+                getMaterialActivityIndicator(material._id) | async
+              "
             >
-              {{ material.name }}
-            </p></span
-          >
-          <span *ngIf="!selectedMaterial" class="mr-2">{{
-            material.name
-          }}</span>
-          <!--   <span
-            class="bg-orange-600 text-[white] text-base p-[0.1rem] w-[1.5rem] text-center rounded-[15px] font-semibold text-[0.8rem]"
-            *ngIf="getNumUnreadNotificationsForMaterial(material._id) | async"
-            >{{
-              getNumUnreadNotificationsForMaterial(material._id) | async
-            }}</span
-          > -->
-          <app-iconbutton
-            style="z-index: 10; padding: 0"
-            icon="bx-network-chart"
-            color="text-orange-500"
-            (click)="selectedMaterial = material; onConceptMapButtonClicked(true)"
-            pTooltip="View material knowledge graph"
-          ></app-iconbutton>
+              <app-iconbutton
+                icon="bxs-file-pdf"
+                color="text-blue-500"
+              ></app-iconbutton>
+            </div>
+            <!-- <div class="relative"> -->
+            <span *ngIf="selectedMaterial" class="mr-2">
+              <p
+                id="{{ material._id }}"
+                (keydown)="onTextInserted(selectedMaterial._id, $event)"
+                (keyup)="afterTextInserted(selectedMaterial._id, $event)"
+                #selectedMaterial._id
+              >
+                {{ material.name }}
+              </p></span
+            >
+            <span *ngIf="!selectedMaterial" class="mr-2">{{
+              material.name
+            }}</span>
+            <!--  </div> -->
+            <!--   <span
+              class="bg-orange-600 text-[white] text-base p-[0.1rem] w-[1.5rem] text-center rounded-[15px] font-semibold text-[0.8rem]"
+              *ngIf="getNumUnreadNotificationsForMaterial(material._id) | async"
+              >{{
+                getNumUnreadNotificationsForMaterial(material._id) | async
+              }}</span
+            > -->
+            <app-iconbutton
+              style="z-index: 10; padding: 0"
+              icon="bx-network-chart"
+              color="text-orange-500"
+              (click)="
+                selectedMaterial = material; onConceptMapButtonClicked(true)
+              "
+              pTooltip="View material knowledge graph"
+            ></app-iconbutton>
+          </div>
           <p-overlayPanel #materialMenu styleClass="settingsContextMenu">
             <ng-template pTemplate="content">
               <app-context-menu
@@ -108,23 +120,31 @@
         </ng-template>
 
         <ng-template pTemplate="header" *ngIf="material.type === 'video'">
-          <app-iconbutton
-            icon="bxs-videos"
-            color="text-blue-500"
-          ></app-iconbutton>
-          <span *ngIf="selectedMaterial" class="mr-2">
-            <p
-              id="{{ material._id }}"
-              (keydown)="onTextInserted(selectedMaterial._id, $event)"
-              (keyup)="afterTextInserted(selectedMaterial._id, $event)"
-              #selectedMaterial._id
+          <div class="flex relative">
+            <div
+              [class.activity-indicator]="
+                getMaterialActivityIndicator(material._id) | async
+              "
             >
-              {{ material.name }}
-            </p>
-          </span>
-          <span *ngIf="!selectedMaterial" class="mr-2">{{
-            material.name
-          }}</span>
+              <app-iconbutton
+                icon="bxs-videos"
+                color="text-blue-500"
+              ></app-iconbutton>
+            </div>
+            <span *ngIf="selectedMaterial" class="mr-2">
+              <p
+                id="{{ material._id }}"
+                (keydown)="onTextInserted(selectedMaterial._id, $event)"
+                (keyup)="afterTextInserted(selectedMaterial._id, $event)"
+                #selectedMaterial._id
+              >
+                {{ material.name }}
+              </p>
+            </span>
+            <span *ngIf="!selectedMaterial" class="mr-2">{{
+              material.name
+            }}</span>
+          </div>
           <!--  <span
             class="bg-orange-600 text-[white] text-base p-[0.1rem] w-[1.5rem] text-center rounded-[15px] font-semibold text-[0.8rem]"
             *ngIf="getNumUnreadNotificationsForMaterial(material._id) | async"

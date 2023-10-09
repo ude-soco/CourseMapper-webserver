@@ -87,7 +87,7 @@
             *ngIf="channel._id !== selectedChannelId"
             class="flex flex-row items-center justify-between relative"
           >
-            <div class="relative">
+            <div class="relative flex">
               <span>#</span>
               <p
                 id="{{ channel._id }}"
@@ -107,26 +107,26 @@
               color="text-black"
               (click)="channelMenuButtonClicked($event, channel)"
             ></app-iconbutton>
-            <p-overlayPanel #channelMenu styleClass="settingsContextMenu">
-              <ng-template pTemplate="content">
-                <app-context-menu
-                  [showModeratorPrivileges]="showModeratorPrivileges"
-                  [checkBoxesGroup]="channelCheckBoxesGroup"
-                  [checkBoxesArray]="channelCheckBoxesArray"
-                  [isResetButtonEnabled]="
-                    isResetChannelNotificationsButtonEnabled
-                  "
-                  resetTo="topic"
-                  (renameClicked)="onRenameChannel()"
-                  (deleteClicked)="onDeleteChannel()"
-                  (resetButtonClicked)="onResetChannelNotificationsClicked()"
-                  (notificationSettingClicked)="
-                    onChannelNotificationSettingsClicked($event)
-                  "
-                ></app-context-menu>
-              </ng-template>
-            </p-overlayPanel>
           </div>
+          <p-overlayPanel #channelMenu styleClass="settingsContextMenu">
+            <ng-template pTemplate="content">
+              <app-context-menu
+                [showModeratorPrivileges]="showModeratorPrivileges"
+                [checkBoxesGroup]="channelCheckBoxesGroup"
+                [checkBoxesArray]="channelCheckBoxesArray"
+                [isResetButtonEnabled]="
+                  isResetChannelNotificationsButtonEnabled
+                "
+                resetTo="topic"
+                (renameClicked)="onRenameChannel()"
+                (deleteClicked)="onDeleteChannel()"
+                (resetButtonClicked)="onResetChannelNotificationsClicked()"
+                (notificationSettingClicked)="
+                  onChannelNotificationSettingsClicked($event)
+                "
+              ></app-context-menu>
+            </ng-template>
+          </p-overlayPanel>
           <div
             *ngIf="channel._id === selectedChannelId"
             class="flex flex-row items-center justify-between bg-white"
@@ -187,7 +187,7 @@
               class="flex flex-row justify-between items-center pl-8 py-1 hover:bg-white transition-all following-annotation-container"
               (click)="onFollowingAnnotationClicked(followingAnnotation)"
             >
-              <div class="flex flex-row justify-center items-center">
+              <div class="flex flex-row justify-center items-center relative">
                 <svg
                   class="spine-29OFwR"
                   width="12"
@@ -201,7 +201,14 @@
                     fill="currentColor"
                   ></path>
                 </svg>
-                <div class="truncate-text">
+                <div
+                  class="truncate-text"
+                  [class.activity-indicator]="
+                    getAnnotationActivityIndicator(
+                      followingAnnotation.annotationId
+                    ) | async
+                  "
+                >
                   {{ followingAnnotation.content }}
                 </div>
                 <!--                 <span

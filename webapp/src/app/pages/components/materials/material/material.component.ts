@@ -24,7 +24,7 @@ import { Store } from '@ngrx/store';
 import { State } from 'src/app/pages/components/materials/state/materials.reducer';
 import * as MaterialActions from 'src/app/pages/components/materials/state/materials.actions';
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { ModeratorPrivilegesService } from 'src/app/services/moderator-privileges.service';
@@ -34,6 +34,9 @@ import { materialNotificationSettingLabels } from 'src/app/models/Notification';
 import { getNotifications } from '../../notifications/state/notifications.reducer';
 import * as NotificationActions from '../../notifications/state/notifications.actions';
 import { MaterialKgOrderedService } from 'src/app/services/material-kg-ordered.service';
+
+import { Notification } from 'src/app/models/Notification';
+import { getLastTimeCourseMapperOpened } from 'src/app/state/app.reducer';
 @Component({
   selector: 'app-material',
   templateUrl: './material.component.html',
@@ -68,7 +71,8 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
   isNewMaterialModalVisible: boolean = false;
   errorMessage: any;
   showConceptMapEvent: boolean = false;
-
+  allNotifications$: Observable<Notification[]>;
+  lastTimeCourseMapperOpened$: Observable<string>;
   @Output() conceptMapEvent: EventEmitter<boolean> = new EventEmitter();
   @Output() selectedToolEvent: EventEmitter<string> = new EventEmitter();
   cmSelected = false;
@@ -219,6 +223,33 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
           });
         }
       );
+
+    this.allNotifications$ = this.store.select(getNotifications);
+
+    this.lastTimeCourseMapperOpened$ = this.store.select(
+      getLastTimeCourseMapperOpened
+    );
+  }
+
+  getMaterialActivityIndicator(materialId: string) {
+    return combineLatest([
+      this.allNotifications$,
+      this.lastTimeCourseMapperOpened$,
+    ]).pipe(
+      map(([notifications, lastTimeCourseMapperOpened]) => {
+        const lastTimeCourseMapperOpenedConverted = new Date(
+          lastTimeCourseMapperOpened
+        );
+        const notificationsForTopic = notifications.filter(
+          (notification) =>
+            notification.material_id === materialId &&
+            new Date(notification.timestamp) >
+              lastTimeCourseMapperOpenedConverted &&
+            !notification.isRead
+        );
+        return notificationsForTopic.length > 0;
+      })
+    );
   }
 
   getNumUnreadNotificationsForMaterial(materialId: string) {
@@ -699,7 +730,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
   //   this.showConceptMapEvent=show
   // }
   onConceptMapButtonClicked(show: boolean) {
-    console.log('clicked')
+    console.log('clicked');
     this.conceptMapEvent.emit(show);
     this.cmSelected = show;
     this.selectedToolEvent.emit('none');

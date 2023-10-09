@@ -294,6 +294,27 @@ export class TopicDropdownComponent implements OnInit {
     );
   }
 
+  getAnnotationActivityIndicator(annotationId: string) {
+    return combineLatest([
+      this.allNotifications$,
+      this.lastTimeCourseMapperOpened$,
+    ]).pipe(
+      map(([notifications, lastTimeCourseMapperOpened]) => {
+        const lastTimeCourseMapperOpenedConverted = new Date(
+          lastTimeCourseMapperOpened
+        );
+        const notificationsForAnnotation = notifications.filter(
+          (notification) =>
+            notification.annotation_id === annotationId &&
+            new Date(notification.timestamp) >
+              lastTimeCourseMapperOpenedConverted &&
+            !notification.isRead
+        );
+        return notificationsForAnnotation.length > 0;
+      })
+    );
+  }
+
   getNumUnreadNotificationsForTopic(topicId: string) {
     return this.store.select(getNotifications).pipe(
       map((notifications) => {
