@@ -1,8 +1,8 @@
 import { CourseService } from 'src/app/services/course.service';
 import { IndicatorService } from './../../../services/indicator.service';
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { iframeValidator } from '../../../validators/iframe.validators';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { IFrameValidators } from '../../../validators/iframe.validators';
 import { parse } from 'angular-html-parser';
 import { Course } from 'src/app/models/Course';
 import { Indicator } from 'src/app/models/Indicator';
@@ -17,7 +17,9 @@ import {ConfirmationService} from 'primeng/api';
   providers: [MessageService, ConfirmationService],
 })
 export class DashboardComponent implements OnInit {
-  indicatorForm?: FormGroup;
+  indicatorForm?: FormGroup = new FormGroup({
+    indicatorIframe: new FormControl(''),
+  })
   indicators: Indicator[] = [];
   selectedCourse: Course;
   private iframeTextarea: ElementRef;
@@ -32,6 +34,7 @@ export class DashboardComponent implements OnInit {
   }
 
   constructor(
+    private formBuilder: FormBuilder,
     private indicatorService: IndicatorService,
     private courseService: CourseService,
     private messageService: MessageService,
@@ -57,18 +60,29 @@ export class DashboardComponent implements OnInit {
     this.selectedCourse = this.courseService.getSelectedCourse();
     this.courseService.onSelectCourse.subscribe((course) => {
       this.selectedCourse = course;
+    })
       this.focusOnIframeTextarea();
       this.getIndicators();
+      console.log(this.indicators)
       
-      this.indicatorForm = new FormGroup({
+      this.indicatorForm = this.formBuilder.group({
+        indicatorIframe: [
+          null, 
+          [Validators.required, IFrameValidators.notOnlyWhitespace, IFrameValidators.iframeValidator]],
+      })
+      /* this.indicatorForm = new FormGroup({
         indicatorIframe: new FormControl(null, iframeValidator()),
-      });
-    });
+      }) */;
+   
   }
 
-  // ngOnDestroy() {
-  //   this.dragulaService.destroy("INDICATORS");
-  // }
+  get indicatorIframe() {
+    return this.indicatorForm?.get('indicatorIframe')
+  }
+
+   ngOnDestroy() {
+    this.dragulaService.destroy("INDICATORS");
+  }
 
   getIndicators() {
     this.indicatorService.fetchIndicators().subscribe((indicators) => {
@@ -80,13 +94,17 @@ export class DashboardComponent implements OnInit {
   }
 
   onAddIndicator() {
+    if(this.indicatorForm.invalid){
+      this.indicatorForm.markAllAsTouched();
+      return
+    }
     const neededAttributes = ['src', 'width', 'height', 'frameborder'];
     let newIndicator = {};
-    if (this.indicatorForm.valid) {
+    
       const { rootNodes, errors } = parse(
-        this.indicatorForm.value.indicatorIframe
+        this.indicatorIframe.value
       );
-
+     
       rootNodes.forEach((node) => {
         if (node['name'] === 'iframe') {
           node['attrs'].forEach((attr) => {
@@ -97,7 +115,7 @@ export class DashboardComponent implements OnInit {
         }
       });
       this.clearFormInput();
-    }
+    
     this.indicatorService
       .addNewIndicator(newIndicator)
       .subscribe((res: any) => {

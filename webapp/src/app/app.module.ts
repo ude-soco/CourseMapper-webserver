@@ -89,6 +89,7 @@ import { MentionModule } from 'angular-mentions';
 import { MessageService } from 'primeng/api';
 import { TeamComponent } from './pages/team/team.component';
 import { AboutComponent } from './pages/about/about.component';
+import { PersonalDashboardComponent } from './pages/personal-dashboard/personal-dashboard.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -119,6 +120,7 @@ import { AboutComponent } from './pages/about/about.component';
     CourseWelcomeComponent,
     TeamComponent,
     AboutComponent,
+    PersonalDashboardComponent,
   ],
   imports: [
     MentionModule,

@@ -6,7 +6,7 @@ import {
   ElementRef,
 } from '@angular/core';
 import { parse } from 'angular-html-parser';
-import { iframeValidator } from '../../../validators/iframe.validators';
+import {IFrameValidators } from '../../../validators/iframe.validators';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
@@ -24,7 +24,7 @@ export class EditorComponent implements OnInit {
     this.renderIndicatorForm = new FormGroup({
       indicatorIframe: new FormControl(null, [
         Validators.required,
-        iframeValidator(),
+        IFrameValidators.iframeValidator,
       ]),
     });
   }

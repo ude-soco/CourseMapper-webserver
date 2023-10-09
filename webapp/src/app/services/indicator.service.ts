@@ -11,7 +11,9 @@ import { CourseService } from './course.service';
 export class IndicatorService {
   private API_URL = environment.API_URL;
   private indicators: Indicator[] = [];
+  private userIndicators: Indicator[] = [];
   onUpdateIndicators$ = new Subject<Indicator[]>();
+  onUpdateUserIndicators$ = new Subject<Indicator[]>();
 
   constructor(private http: HttpClient, private courseService: CourseService) {}
 
@@ -131,4 +133,91 @@ export class IndicatorService {
         })
       );
   }
+
+  fetchUserIndicators(): Observable<Indicator[]> {
+      const url = `${this.API_URL}/user/indicators`
+      return this.http
+        .get<Indicator[]>(url)
+         .pipe(
+          tap((indicators) => {
+            this.userIndicators = indicators;
+          })
+        ); 
+    }
+
+    addNewUserIndicator(indicator): Observable<Indicator> {
+      const url = `${this.API_URL}/user/indicator`;
+      return this.http
+        .post<any>(url, indicator)
+        .pipe(
+          catchError((err, sourceObservable) => {
+            if (err.status === 404) {
+              return of({ errorMsg: err.error.error });
+            } else {
+              return of({
+                errorMsg: 'Error in connection: Please reload the application',
+              });
+            }
+          }),
+          tap((res) => {
+            if (!('errorMsg' in res)) {
+              this.userIndicators.push(res.indicator);
+              this.onUpdateUserIndicators$.next(this.userIndicators);
+            }
+          })
+        );
+    }
+
+    // "/api/user/indicator/:indicatorId",
+    deleteUserIndicator(indicatorId: string) {
+      const url = `${this.API_URL}/user/indicator/${indicatorId}`
+      return this.http
+        .delete<any>(url)
+        .pipe(
+          catchError((errResponse, sourceObservable) => {
+            if (errResponse.status === 404) {
+              return of({ errorMsg: errResponse.error.error });
+            } else {
+              return of({
+                errorMsg: 'Error in connection: Please reload the application',
+              });
+            }
+          }),
+          tap((res) => {
+            if (!('errorMsg' in res)) {
+              this.userIndicators = this.userIndicators.filter(
+                (indicator) =>
+                  indicator._id.toString() !== indicatorId.toString()
+              );
+              this.onUpdateUserIndicators$.next(this.userIndicators);
+            }
+          })
+        );
+    }
+
+    reorderUserIndicators(sourseIndex, targetIndex,){
+      const url =  `${this.API_URL}/user/reorder/${targetIndex}/${sourseIndex}`
+      return this.http
+      .put<any>(
+        url,
+        {}
+      )
+      .pipe(
+        catchError((errResponse, sourceObservable) => {
+          if (errResponse.status === 404) {
+            return of({ errorMsg: errResponse.error.error });
+          } else {
+            return of({
+              errorMsg: 'Error in connection: Please reload the application',
+            });
+          }
+        }),
+        tap((res) => {
+          if (!('errorMsg' in res)) {
+            this.userIndicators = res.indicators;
+            this.onUpdateUserIndicators$.next(this.userIndicators);
+          }
+        })
+      );
+    }
 }

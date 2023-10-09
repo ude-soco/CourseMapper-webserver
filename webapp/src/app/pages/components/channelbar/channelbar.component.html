@@ -28,6 +28,12 @@
           </p>
 
           <app-iconbutton
+            icon="bx-bar-chart-alt-2"
+            color="text-orange-500"
+            (click)="onDashBoard()"
+            pTooltip="View course dashboard"
+            ></app-iconbutton>
+            <app-iconbutton
             icon="bx-network-chart"
             color="text-orange-500"
             (click)="onConceptMapButtonClicked(true)"
@@ -85,6 +91,7 @@
     ></app-add-topic>
     <app-concept-map #conceptMap [course]="selectedCourse">
     </app-concept-map>
+    
   </div>
 </div>
 

@@ -20,9 +20,11 @@ import { TagsPageComponent } from './pages/components/tags/tags-page/tags-page.c
 import { CourseWelcomeComponent } from './course-welcome/course-welcome.component';
 import { AllNotificationsComponent } from './pages/components/notifications/all-notifications/all-notifications.component';
 import { SettingsComponent } from './pages/components/notifications/settings/settings.component';
+import { PersonalDashboardComponent } from './pages/personal-dashboard/personal-dashboard.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'landingPage', pathMatch: 'full' },
+  {path: 'personalDashboard', component:  PersonalDashboardComponent, canActivate: [AuthGuardService]},
   {
     path: 'landingPage',
     component: LandingPageComponent,

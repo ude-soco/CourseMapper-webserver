@@ -1,0 +1,100 @@
+<p-toast position="bottom-left"></p-toast>
+<p-confirmDialog [style]="{width: '40vw'}" ></p-confirmDialog>
+
+
+<div class="flex flex-row min-h-screen">
+  <div class="flex-col" *ngIf="loggedInUser">
+    <app-sidebar></app-sidebar>
+  </div>
+  <div class="md:container md:mx-auto mt-10">
+    <div>
+      <p class="mb-2 text-lg font-semibold">Add new Indicator:</p>
+      <form
+        id="indicatorForm"
+        [formGroup]="indicatorForm"
+        (ngSubmit)="onAddIndicator()"
+      >
+        <div class="flex flex-row">
+          <div class="mt-2">
+            <span class="p-float-label">
+              <textarea
+                id="float-input"
+                cols="100"
+                rows="1"
+                pInputTextarea
+                formControlName="indicatorIframe"
+                #iframeTextarea
+              ></textarea>
+              <label for="float-input">paste the iframe</label>
+              <small
+                *ngIf="indicatorIframe.invalid && indicatorIframe.dirty"
+                class="p-error block"
+                >Invalid Input: Please check your iframe code.</small
+              >
+            </span>
+          </div>
+          <div class="mt-2 ml-2">
+            <button
+              type="submit"
+              id="addIndicatorButton"
+              pButton
+              icon="pi pi-check"
+              label="Add to Dashboard"
+              pTooltip="Add new Indicator"
+              [disabled]="indicatorIframe.invalid"
+            ></button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div 
+    class="cursor-pointer overscroll-y-auto h-1/2 flex flex-wrap gap-10 "
+    
+    dragula="PERSONALINDICATORS" 
+    [(dragulaModel)]="indicators">
+
+      <div
+        class="flex flex-column mt-3 mb-3"
+        *ngFor="let indicator of indicators; let i = index"
+      >
+
+        <p-card class="resizer border-1"
+        (mouseup)="onUpdateIndicator($event, indicator)"
+        >
+         <iframe
+         [src]="indicator.src | byPassUrlSanitization"
+         width="{{ indicator.width }}"
+         height="{{ indicator.height }}"
+         class="resized mt-4 mb-4 ml-4 mr-4"
+       ></iframe>
+        </p-card>
+        <div class="flex flex-col gap-1">
+          <div>
+            <button
+              pButton
+              type="button"
+              icon="pi pi-times"
+              iconPos="left"
+              class="p-button p-button-danger"
+              pTooltip="Delete Indicator"
+              (click)="onDeleteIndicator(indicator)"
+            ></button>
+          </div>
+          <div>
+            <button
+              pButton
+              type="button"
+              icon="bx bx-move"
+              iconPos="left"
+              class="p-button"
+              pTooltip="Change Order"
+              id="dragger"
+            ></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>
+
