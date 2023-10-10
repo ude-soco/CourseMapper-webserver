@@ -168,7 +168,6 @@ export class IndicatorService {
         );
     }
 
-    // "/api/user/indicator/:indicatorId",
     deleteUserIndicator(indicatorId: string) {
       const url = `${this.API_URL}/user/indicator/${indicatorId}`
       return this.http
@@ -220,4 +219,38 @@ export class IndicatorService {
         })
       );
     }
+
+
+   // "/api/user/indicator/:indicatorId/resize/:width/:height",
+   updateUserIndicator(updatedindicator) {
+    const url =  `${this.API_URL}/user/indicator/${updatedindicator._id}/resize/${updatedindicator.width}/${updatedindicator.height}`
+    return this.http
+      .put<any>(
+        url,
+        {}
+      )
+      .pipe(
+        catchError((errResponse, sourceObservable) => {
+          if (errResponse.status === 404) {
+            return of({ errorMsg: errResponse.error.error });
+          } else {
+            return of({
+              errorMsg: 'Error in connection: Please reload the application',
+            });
+          }
+        }),
+        tap((res) => {
+          if (!('errorMsg' in res)) {
+            this.userIndicators.forEach((indicator) => {
+              if (
+                indicator._id.toString() === updatedindicator._id.toString()
+              ) {
+                indicator = updatedindicator;
+              }
+            });
+            this.onUpdateUserIndicators$.next(this.userIndicators);
+          }
+        })
+      );
+  }
 }

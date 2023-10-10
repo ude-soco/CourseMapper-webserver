@@ -1,6 +1,5 @@
 <p-toast position="bottom-left"></p-toast>
-<p-confirmDialog [style]="{width: '40vw'}" ></p-confirmDialog>
-
+<p-confirmDialog [style]="{ width: '40vw' }"></p-confirmDialog>
 
 <div class="flex flex-row min-h-screen">
   <div class="flex-col" *ngIf="loggedInUser">
@@ -47,35 +46,37 @@
         </div>
       </form>
     </div>
-    <div 
-    class="cursor-pointer overscroll-y-auto h-1/2 flex flex-wrap gap-10 "
-    
-    dragula="PERSONALINDICATORS" 
-    [(dragulaModel)]="indicators">
-
+    <div
+      class="mt-5 mb-10 cursor-pointer overscroll-y-auto h-1/2 flex flex-wrap gap-10"
+      dragula="PERSONALINDICATORS"
+      [(dragulaModel)]="indicators"
+    >
       <div
-        class="flex flex-column mt-3 mb-3"
+        class="flex flex-column"
         *ngFor="let indicator of indicators; let i = index"
       >
-
-        <p-card class="resizer border-1"
+      <div
+        class="mr-3 resizer "
+        style="border-radius: 12px; box-shadow: 0 0px 2px 0 rgba(0, 0, 0, 0.1), 0 2px 5px 0 rgba(0, 0, 0, 0.10);"
+        border-radius="7px"
+       
         (mouseup)="onUpdateIndicator($event, indicator)"
-        >
-         <iframe
-         [src]="indicator.src | byPassUrlSanitization"
-         width="{{ indicator.width }}"
-         height="{{ indicator.height }}"
-         class="resized mt-4 mb-4 ml-4 mr-4"
-       ></iframe>
-        </p-card>
-        <div class="flex flex-col gap-1">
+      >
+        <iframe
+          [src]="indicator.src | byPassUrlSanitization"
+          width="{{ indicator.width }}"
+          height="{{ indicator.height }}"
+          class="resized mt-4 mb-4 ml-4 mr-4"
+        ></iframe>
+      </div>
+        <div class="flex flex-col gap-0.5">
           <div>
             <button
               pButton
               type="button"
               icon="pi pi-times"
               iconPos="left"
-              class="p-button p-button-danger"
+              class="p-button p-button-raised p-button-danger"
               pTooltip="Delete Indicator"
               (click)="onDeleteIndicator(indicator)"
             ></button>
@@ -86,7 +87,7 @@
               type="button"
               icon="bx bx-move"
               iconPos="left"
-              class="p-button"
+              class="p-button p-button-raised"
               pTooltip="Change Order"
               id="dragger"
             ></button>
@@ -97,4 +98,3 @@
   </div>
 </div>
 <app-footer></app-footer>
-

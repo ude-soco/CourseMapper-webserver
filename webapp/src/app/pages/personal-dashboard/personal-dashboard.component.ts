@@ -150,7 +150,29 @@ export class PersonalDashboardComponent implements OnInit {
   }
 
 
-  onUpdateIndicator(event: MouseEvent, indicator: Indicator) {}
+  onUpdateIndicator(event: MouseEvent, indicator: Indicator) {
+     if (event.composedPath()[0]['attributes']['style']) {
+      const dimensions =
+        event.composedPath()[0]['attributes']['style']['nodeValue'];
+      indicator.width = dimensions.slice(7, dimensions.indexOf(';'));
+      indicator.height = dimensions.slice(
+        dimensions.lastIndexOf(':') + 2,
+        dimensions.lastIndexOf(';')
+      ); 
+        this.indicatorService
+        .updateUserIndicator(indicator)
+        .subscribe((res: any) => {
+          if ('success' in res) {
+            this.showInfo(res.success);
+          } else {
+            this.showError(res.errorMsg);
+          }
+        });
+    }
+  }
+
+
+
   clearFormInput() {
     this.indicatorForm.reset();
   }
