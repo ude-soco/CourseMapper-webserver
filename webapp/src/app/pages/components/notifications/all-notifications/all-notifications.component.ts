@@ -1,5 +1,5 @@
 import { Component, ElementRef, Renderer2 } from '@angular/core';
-import { BaseNotificationDashboardComponent } from '../base-notification-dashboard/base-notification-dashboard.component';
+
 import { Store } from '@ngrx/store';
 import * as courseActions from '../../../courses/state/course.actions';
 import {

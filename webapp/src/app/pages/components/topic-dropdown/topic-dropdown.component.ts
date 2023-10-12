@@ -129,55 +129,6 @@ export class TopicDropdownComponent implements OnInit {
   allNotifications$: Observable<Notification[]>;
   lastTimeCourseMapperOpened$: Observable<string>;
 
-  topicOptions: MenuItem[] = [
-    {
-      label: 'Rename',
-      icon: 'pi pi-refresh',
-      command: () => this.onRenameTopic(),
-    },
-    {
-      label: 'Delete',
-      icon: 'pi pi-times',
-      command: () => this.onDeleteTopic(),
-    },
-    {
-      label: 'Notification Settings',
-      icon: 'pi pi-bell',
-      /* command: () => this.onTopicNotificationSettingsClicked(), */
-    },
-  ];
-  channelsOptions: MenuItem[] = [
-    {
-      label: 'Rename',
-      icon: 'pi pi-refresh',
-      command: () => this.onRenameChannel(),
-    },
-    {
-      label: 'Delete',
-      icon: 'pi pi-times',
-      command: () => this.onDeleteChannel(),
-    },
-  ];
-  //TODO Remove the null default values. not needed. form controls supply the values.
-  notificationOptions = [
-    {
-      label: topicNotificationSettingLabels.courseDefault,
-      value: null,
-    },
-    {
-      label: topicNotificationSettingLabels.topicUpdates,
-      value: null,
-    },
-    {
-      label: topicNotificationSettingLabels.commentsAndMentioned,
-      value: null,
-    },
-    {
-      label: topicNotificationSettingLabels.annotations,
-      value: null,
-    },
-  ];
-
   ngOnInit(): void {
     this.topicChannelService
       .fetchTopics(this.courseService.getSelectedCourse()._id)
