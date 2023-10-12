@@ -17,8 +17,8 @@ export class IndicatorService {
 
   constructor(private http: HttpClient, private courseService: CourseService) {}
 
-  fetchIndicators(): Observable<Indicator[]> {
-    const courseId = this.courseService.getSelectedCourse()._id;
+  fetchIndicators(courseId): Observable<Indicator[]> {
+    console.log(courseId)
     return this.http
       .get<Indicator[]>(`${this.API_URL}/courses/${courseId}/indicators`)
       .pipe(

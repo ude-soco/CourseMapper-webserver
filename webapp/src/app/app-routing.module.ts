@@ -79,9 +79,13 @@ const routes: Routes = [
         path: 'welcome',
         component: CourseWelcomeComponent,
       },
+      {
+        path: 'dashboard',
+        component: DashboardComponent 
+      }
     ],
   },
-  { path: 'course/:courseID/dashboard', component: DashboardComponent },
+  //{ path: 'course/:courseID/dashboard', component: DashboardComponent },
   {
     path: 'notification/all',
     component: AllNotificationsComponent,

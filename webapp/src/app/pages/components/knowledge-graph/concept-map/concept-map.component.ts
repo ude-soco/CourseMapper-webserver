@@ -698,9 +698,7 @@ export class ConceptMapComponent {
     // }
   }
   ngOnInit() {
-    console.log(this.currentMaterial);
     if (this.loggedInUser) {
-      console.log(this.loggedInUser);
       this.userid = this.loggedInUser.id;
       this.username = this.loggedInUser.username;
       this.userEmail = this.loggedInUser.email;

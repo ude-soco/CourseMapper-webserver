@@ -91,7 +91,6 @@ export class NotificationsService {
           };
         }),
 
-        tap((notifications) => console.log(notifications))
       );
   }
 

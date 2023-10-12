@@ -12,6 +12,7 @@ import { DragulaService } from 'ng2-dragula';
 import { IndicatorService } from 'src/app/services/indicator.service';
 import { StorageService } from 'src/app/services/storage.service';
 import { IFrameValidators } from 'src/app/validators/iframe.validators';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-personal-dashboard',
@@ -33,6 +34,7 @@ export class PersonalDashboardComponent implements OnInit {
   }
 
   constructor(
+    private route: ActivatedRoute,
     private indicatorService: IndicatorService,
     private storageService: StorageService,
     private messageService: MessageService,
@@ -61,6 +63,10 @@ export class PersonalDashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.route.paramMap.subscribe((params): any => {
+      console.log(params)
+    })
+
     this.focusOnIframeTextarea();
     this.getIndicators();
     this.indicatorForm = this.formBuilder.group({
