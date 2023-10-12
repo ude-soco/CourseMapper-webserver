@@ -30,10 +30,11 @@
 .sidebar-icon.show-activity-indicator::after {
   content: '';
   position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 8px;
-  height: 8px;
+  width: 17px;
+  height: 17px;
   background-color: #ea580c;
   border-radius: 50%;
+  top: 0;
+  left: 0;
 }
+

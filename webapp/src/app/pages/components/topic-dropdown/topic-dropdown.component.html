@@ -12,9 +12,16 @@
       class="m-0 w-full mx-2 pb-2 transition duration-300 ease-in-out"
       *ngIf="expandTopic.includes(topic._id)"
     >
-      <div class="flex flex-row items-center justify-between mx-0 my-1.5">
-        <div class="flex flex-row items-center grow justify-between pr-2">
-          <div class="flex flex-row relative">
+      <div
+        class="flex flex-row items-center justify-between mx-0 my-1.5 relative"
+      >
+        <div
+          class="flex flex-row items-center grow justify-between pr-2"
+          [class.activity-indicator]="
+            getTopicActivityIndicator(topic._id) | async
+          "
+        >
+          <div class="flex flex-row">
             <app-iconbutton
               icon="bx-chevron-down"
               color="text-black"
@@ -23,9 +30,6 @@
             <div
               id="{{ topic._id }}"
               class="text-lg font-semibold"
-              [class.activity-indicator]="
-                getTopicActivityIndicator(topic._id) | async
-              "
               (keydown)="onTextInsertedTopic(selectedTopic._id, $event)"
               (keyup)="afterTextInsertedTopic(selectedTopic._id, $event)"
               #{{topic._id}}
@@ -85,9 +89,12 @@
         >
           <div
             *ngIf="channel._id !== selectedChannelId"
-            class="flex flex-row items-center justify-between relative"
+            class="flex flex-row items-center justify-between"
+            [class.activity-indicator]="
+              getChannelActivityIndicator(channel._id) | async
+            "
           >
-            <div class="relative flex">
+            <div class="flex">
               <span>#</span>
               <p
                 id="{{ channel._id }}"
@@ -95,9 +102,6 @@
                 (keydown)="onTextInsertedChannel(selectedChannel._id, $event)"
                 (keyup)="afterTextInsertedChennel(selectedChannel._id, $event)"
                 class="cursor-pointer w-full"
-                [class.activity-indicator]="
-                  getChannelActivityIndicator(channel._id) | async
-                "
               >
                 {{ channel.name }}
               </p>
@@ -131,7 +135,12 @@
             *ngIf="channel._id === selectedChannelId"
             class="flex flex-row items-center justify-between bg-white"
           >
-            <div class="relative flex">
+            <div
+              class="flex"
+              [class.activity-indicator]="
+                getChannelActivityIndicator(channel._id) | async
+              "
+            >
               <span>#</span>
               <p
                 id="{{ channel._id }}"
@@ -139,9 +148,6 @@
                 (keydown)="onTextInsertedChannel(selectedChannel._id, $event)"
                 (keyup)="afterTextInsertedChennel(selectedChannel._id, $event)"
                 class="cursor-pointer w-full"
-                [class.activity-indicator]="
-                  getChannelActivityIndicator(channel._id) | async
-                "
               >
                 {{ channel.name }}
               </p>
@@ -184,10 +190,17 @@
             "
           >
             <div
-              class="flex flex-row justify-between items-center pl-8 py-1 hover:bg-white transition-all following-annotation-container"
+              class="flex flex-row justify-between items-center pl-8 py-1 hover:bg-white transition-all following-annotation-container relative"
               (click)="onFollowingAnnotationClicked(followingAnnotation)"
             >
-              <div class="flex flex-row justify-center items-center relative">
+              <div
+                class="flex flex-row justify-center items-center"
+                [class.activity-indicator]="
+                  getAnnotationActivityIndicator(
+                    followingAnnotation.annotationId
+                  ) | async
+                "
+              >
                 <svg
                   class="spine-29OFwR"
                   width="12"
@@ -201,14 +214,7 @@
                     fill="currentColor"
                   ></path>
                 </svg>
-                <div
-                  class="truncate-text"
-                  [class.activity-indicator]="
-                    getAnnotationActivityIndicator(
-                      followingAnnotation.annotationId
-                    ) | async
-                  "
-                >
+                <div class="truncate-text">
                   {{ followingAnnotation.content }}
                 </div>
                 <!--                 <span
@@ -274,9 +280,16 @@
       class="m-0 w-full mx-2 pb-2 transition duration-300 ease-in-out"
       *ngIf="!expandTopic.includes(topic._id)"
     >
-      <div class="flex flex-row items-center justify-between mx-0 my-1.5">
-        <div class="flex flex-row items-center grow justify-between pr-2">
-          <div class="flex flex-row relative">
+      <div
+        class="flex flex-row items-center justify-between mx-0 my-1.5 relative"
+      >
+        <div
+          class="flex flex-row items-center grow justify-between pr-2"
+          [class.activity-indicator]="
+            getTopicActivityIndicator(topic._id) | async
+          "
+        >
+          <div class="flex flex-row">
             <app-iconbutton
               icon="bx-chevron-right"
               color="text-black"
