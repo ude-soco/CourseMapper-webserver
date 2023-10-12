@@ -149,7 +149,13 @@ import { AboutComponent } from './pages/about/about.component';
     EffectsModule.forFeature([AppEffects]),
     InputTextareaModule,
     DragulaModule.forRoot(),
-    SocketIoModule.forRoot(environment.socketConfig),
+    SocketIoModule.forRoot({
+      url: `${environment.apiUrl}`,
+      options: {
+        path: '/api/socket.io',
+        // transports: ['websocket'],
+      },
+    }),
     CourseModule,
     KnowledgeGraphModule,
     TabMenuModule,
