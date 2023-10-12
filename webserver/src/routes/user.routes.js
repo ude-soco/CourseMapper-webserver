@@ -69,11 +69,11 @@ module.exports = function (app) {
   );
 
   app.get(
-    "/users/user-concepts/:userId",
+    "/api/users/user-concepts/:userId",
     controller.getUserConcepts
   );
   app.post(
-    "/users/user-concepts",
+    "/api/users/user-concepts",
     // [authJwt.verifyToken],
     controller.updateUserConcepts
   );
