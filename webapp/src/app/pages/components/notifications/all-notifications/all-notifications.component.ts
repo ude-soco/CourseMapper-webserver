@@ -124,13 +124,6 @@ export class AllNotificationsComponent {
 
     this.activeItem = this.tabOptions[0];
 
-    this.menuOptions = [
-      {
-        label: 'Settings',
-        icon: 'pi pi-cog',
-        command: () => {},
-      },
-    ];
     this.store.select(getSubscribedCourses).subscribe((courses) => {
       this.courseOptions = courses;
       //by default all courses are selected
