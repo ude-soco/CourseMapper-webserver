@@ -1,7 +1,7 @@
 help:
 	@cat $(MAKEFILE_LIST) | docker run --rm -i --platform linux/amd64 xanders/make-help
 
-compose = docker compose -f docker-compose.yml
+compose = docker compose -f compose.yaml
 
 all: clean build run
 
@@ -28,7 +28,7 @@ cleanall:
 
 # Build all container images
 build:
-	@docker buildx bake --progress=plain
+	@$(compose) build
 
 # Push container images to remote registry
 push:

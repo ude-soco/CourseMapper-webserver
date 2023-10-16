@@ -1,0 +1,31 @@
+services:
+  mongo:
+    image: mongo:6.0
+    command: mongod --wiredTigerCacheSizeGB 0.25 --quiet --logpath /dev/null
+    volumes:
+    - mongo:/data/db
+    healthcheck:
+      test: "mongosh --nodb --eval 'disableTelemetry()'; echo 'db.runCommand({ping: 1}).ok' | mongosh localhost:27017/test --quiet"
+      start_period: 2s
+      interval: 10s
+
+  webserver:
+    image: ${IMAGE_NAME_PREFIX:-socialcomputing/}coursemapper-webserver-webserver:${IMAGE_TAG:-latest}
+    build: .
+    environment:
+    - PORT=8080
+    - COOKIE_SECRET=secret
+    - JWT_SECRET=secret
+    - PASS=adminpassword
+    - MONGO_DB=mongodb://mongo:27017/coursemapper
+    volumes:
+    - webserver-uploads-pdfs:/app/public/uploads/pdfs
+    - webserver-uploads-videos:/app/public/uploads/videos
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+volumes:
+  mongo:
+  webserver-uploads-pdfs:
+  webserver-uploads-videos:

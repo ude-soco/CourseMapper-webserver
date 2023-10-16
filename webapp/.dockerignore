@@ -1,5 +1,7 @@
 .editorconfig
 .gitignore
+*Dockerfile*
+compose.yaml
 node_modules
 npm-debug.log
 README*

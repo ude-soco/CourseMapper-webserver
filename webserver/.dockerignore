@@ -1,5 +1,7 @@
 .gitignore
+*Dockerfile*
 /public
+compose.yaml
 example*
 node_modules
 npm-debug.log
