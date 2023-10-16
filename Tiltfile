@@ -1,4 +1,4 @@
-docker_compose(["./docker-compose.yml"])
+docker_compose(["./compose.yaml"])
 
 dc_resource("proxy", labels = ["Proxy"])
 dc_resource("webapp", labels = ["Frontend"])
