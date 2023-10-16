@@ -2,7 +2,7 @@ import { EventEmitter, Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { Material, CreateMaterial } from '../models/Material';
 import { HttpClient } from '@angular/common/http';
-import { catchError, map, Observable, of, tap } from 'rxjs';
+import { BehaviorSubject, catchError, map, Observable, of, tap } from 'rxjs';
 import * as CourseActions from '../pages/courses/state/course.actions';
 import { Store } from '@ngrx/store';
 import { State } from '../pages/courses/state/course.reducer';
@@ -14,10 +14,15 @@ export class MaterilasService {
   private API_URL = environment.API_URL;
 
   onSelectMaterial = new EventEmitter<CreateMaterial>();
+  isMaterialSelected = new BehaviorSubject<boolean>(false);
 
-  private selectedMaterial: CreateMaterial;
+  selectedMaterial: CreateMaterial;
   constructor(private http: HttpClient, private store: Store<State>) {}
 
+
+  getSelectedMaterial(): CreateMaterial{
+    return this.selectedMaterial
+  }
   selectMaterial(material: CreateMaterial) {
     // if there is no selected course then no need to update the topics.
     /*if (this.getSelectedCourse()._id && course._id){

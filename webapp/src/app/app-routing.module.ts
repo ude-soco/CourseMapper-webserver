@@ -10,7 +10,6 @@ import { ChannelbarComponent } from './pages/components/channelbar/channelbar.co
 import { CoursesComponent } from './pages/courses/courses.component';
 import { TopicDropdownComponent } from './pages/components/topic-dropdown/topic-dropdown.component';
 import { PdfMainAnnotationComponent } from './pages/components/annotations/pdf-annotation/pdf-main-annotation/pdf-main-annotation.component';
-import { DashboardComponent } from './pages/components/dashboard/dashboard.component';
 import { LandingPageComponent } from './pages/landing-page/landing-page.component';
 import { AboutComponent } from './pages/about/about.component';
 import { TeamComponent } from './pages/team/team.component';
@@ -21,6 +20,7 @@ import { CourseWelcomeComponent } from './course-welcome/course-welcome.componen
 import { AllNotificationsComponent } from './pages/components/notifications/all-notifications/all-notifications.component';
 import { SettingsComponent } from './pages/components/notifications/settings/settings.component';
 import { PersonalDashboardComponent } from './pages/personal-dashboard/personal-dashboard.component';
+import { TopicDashboardComponent } from './pages/components/topic-dashboard/topic-dashboard.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'landingPage', pathMatch: 'full' },
@@ -65,6 +65,11 @@ const routes: Routes = [
     canActivate: [AuthGuardService],
     children: [
       {
+        path: 'topic/:topicId',
+        component: TopicDashboardComponent
+
+      },
+      {
         path: 'channel/:channelId',
         loadChildren: () =>
           import('./pages/components/materials/materials.module').then(
@@ -79,10 +84,7 @@ const routes: Routes = [
         path: 'welcome',
         component: CourseWelcomeComponent,
       },
-      {
-        path: 'dashboard',
-        component: DashboardComponent 
-      }
+      
     ],
   },
   //{ path: 'course/:courseID/dashboard', component: DashboardComponent },

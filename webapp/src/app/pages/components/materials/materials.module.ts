@@ -17,6 +17,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MaterialEffects } from './state/material.effects';
 import { EffectsModule } from '@ngrx/effects';
 import { KnowledgeGraphModule } from '../knowledge-graph/knowledge-graph.module';
+import { AppModule } from 'src/app/app.module';
 
 @NgModule({
   declarations: [MaterialComponent, AddMaterialComponent],

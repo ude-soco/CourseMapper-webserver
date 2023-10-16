@@ -445,14 +445,7 @@ export class ChannelbarComponent implements OnInit {
     }, 0);
   }
 
-  onDashBoard() {   
-    this.router.navigate([
-      'course',
-      this.courseService.getSelectedCourse()._id,
-      'dashboard',
-    ]);
-    this.moderatorPrivilegesService.setPrivilegesValue(this.showModeratorPrivileges);
-  }
+ 
   preventEnterKey(e) {
     let confirmButton = document.getElementById('addChannelConfirm');
     if (e.keyCode === 13) {

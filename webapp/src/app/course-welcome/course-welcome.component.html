@@ -1,62 +1,70 @@
-<div class="flex flex-col w-full items-center mt-6">
-  <div><p class="text-5xl leading-normal font-bold">Welcome to</p></div>
+<div class="w-full items-center p-5">
   <div>
-    <p class="text-5xl leading-normal font-bold">{{ selectedCourse.name }}</p>
+    <p class="text-4xl leading-normal font-medium">{{ selectedCourse.name }}</p>
   </div>
-  <div>
-    <button
-      pButton
-      [ngStyle]="{
-        'background-color': '#ffffff',
-        color: '#EA580C',
-        border: '2px solid #EA580C'
-      }"
-      type="button"
-      label="Un-enroll Course"
-      (click)="deEnrole()"
-      [disabled]="moderator"
-    ></button>
-  </div>
-  <div>
-    <p class="text-sm mt-6">This is the welcome page of the course</p>
-  </div>
-  <div>
-    <p class="text-sm mb-8">
-      You have now access to all the learning materials.
-    </p>
-  </div>
-  <hr class="solid" />
-  <div class="flex items-center mt-6">
-    <p-avatar
-      label="{{ getName(this.firstName, this.lastName) }}"
-      shape="circle"
-      size="large"
-      [style]="{ 'background-color': '#0277BD', color: '#ffffff' ,  }"
-    ></p-avatar>
-    <div class="flex flex-col">
-      <strong>
-        Course created by:
-        <span class="font-medium"
-          >{{ this.firstName }} {{ this.lastName }}</span
-        >
-      </strong>
-      <strong>
-        <span>
-          Created on: <span class="font-medium">{{ createdAt }}</span>
-        </span>
-      </strong>
+  <div class="flex flex-wrap justify-between">
+    <div>
+      <div>
+        <div>
+          <strong class="text-lg font-semibold">Course Description:</strong>
+        </div>
+        <div class="w-80">
+          <div
+            *ngIf="selectedCourse.description.length == 0"
+            class="justify-self-start"
+          >
+            No discription given.
+          </div>
+          <div class="justify-self-start">{{ selectedCourse.description }}</div>
+        </div>
+        <div class="mt-4 mb-4">
+          <div class="flex flex-wrap gap-5">
+            <p-avatar
+              label="{{ getName(this.firstName, this.lastName) }}"
+              shape="circle"
+              size="medium"
+              [style]="{ 'background-color': '#0277BD', color: '#ffffff' ,  }"
+            ></p-avatar>
+
+            <div>
+              <div>
+                <p class="text-l leading-normal font-medium">
+                  {{ this.firstName }}
+                </p>
+              </div>
+              <div>
+                <p>{{ role }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div>
+        <button
+          pButton
+          class="button p-button-raised"
+          type="button"
+          label="Un-enroll Course"
+          (click)="deEnrole()"
+          [disabled]="moderator"
+        ></button>
+      </div>
     </div>
   </div>
-  <div class="w-80 grid justify-items-stretch content-center ml-8 mt-6">
-    <div class="justify-self-start"><strong>Course Description:</strong></div>
-    <div
-      *ngIf="selectedCourse.description.length == 0"
-      class="justify-self-start"
-    >
-      No discription given...
-    </div>
-    <div class="justify-self-start">{{ selectedCourse.description }}</div>
+
+  <hr />
+  <div>
+    <p class="text-lg font-semibold mt-3">Course Dashboard</p>
+    <app-populate-dashboard
+      [selectedCourseId]="selectedCourseId"
+      [indicators]="indicators"
+      [role]="role"
+      [forCourseDashboard]="forCourseDashboard"
+    ></app-populate-dashboard>
   </div>
 </div>
+
 <p-toast position="bottom-left"></p-toast>
 <p-confirmDialog #cd></p-confirmDialog>

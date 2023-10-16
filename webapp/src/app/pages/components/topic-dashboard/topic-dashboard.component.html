@@ -1,0 +1,18 @@
+<p-toast position="bottom-left"></p-toast>
+<p-confirmDialog></p-confirmDialog>
+<div class="relative bg-gray-100 shadow-lg min-h-screen">
+  <div class="h-max m-0 flex flex-col bg-gray-100">
+    <div class="flex items-start py-4 pl-3 bg-gray-200">
+      <p class="flex w-full text-xl font-semibold">Topic Dashboard</p>
+    </div>
+    <hr />
+        <div class="p-5">
+          <app-populate-dashboard
+            [indicators]="indicators"
+            [forTopicDashboard]="true"
+              [topicId]="topicId"
+            [role]="this.courseService.getSelectedCourse().role"
+          ></app-populate-dashboard>
+        </div>
+  </div>
+</div>

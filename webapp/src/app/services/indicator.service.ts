@@ -4,6 +4,8 @@ import { environment } from './../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { catchError, Observable, of, Subject, tap } from 'rxjs';
 import { CourseService } from './course.service';
+import { MaterilasService } from './materials.service';
+import { TopicChannelService } from './topic-channel.service';
 
 @Injectable({
   providedIn: 'root',
@@ -12,13 +14,22 @@ export class IndicatorService {
   private API_URL = environment.API_URL;
   private indicators: Indicator[] = [];
   private userIndicators: Indicator[] = [];
+  private materialIndicators: Indicator[] = [];
+  private channelIndicators: Indicator[] = [];
+  private topicIndicators: Indicator[] = [];
   onUpdateIndicators$ = new Subject<Indicator[]>();
   onUpdateUserIndicators$ = new Subject<Indicator[]>();
+  onUpdateMaterialIndicators$ = new Subject<Indicator[]>();
+  onUpdateChannelIndicators$ = new Subject<Indicator[]>();
+  onUpdateTopicIndicators$ = new Subject<Indicator[]>();
 
-  constructor(private http: HttpClient, private courseService: CourseService) {}
+
+  constructor(private http: HttpClient,
+     private courseService: CourseService,
+     private topicService: TopicChannelService,
+     private materialService: MaterilasService) {}
 
   fetchIndicators(courseId): Observable<Indicator[]> {
-    console.log(courseId)
     return this.http
       .get<Indicator[]>(`${this.API_URL}/courses/${courseId}/indicators`)
       .pipe(
@@ -78,29 +89,29 @@ export class IndicatorService {
       );
   }
 
-  reorderIndicators(sourseIndex, targetIndex, courseId){
+  reorderIndicators(sourseIndex, targetIndex, courseId) {
     return this.http
-    .put<any>(
-      `${this.API_URL}/courses/${courseId}/reorder/${targetIndex}/${sourseIndex}`,
-      {}
-    )
-    .pipe(
-      catchError((errResponse, sourceObservable) => {
-        if (errResponse.status === 404) {
-          return of({ errorMsg: errResponse.error.error });
-        } else {
-          return of({
-            errorMsg: 'Error in connection: Please reload the application',
-          });
-        }
-      }),
-      tap((res) => {
-        if (!('errorMsg' in res)) {
-          this.indicators = res.indicators;
-          this.onUpdateIndicators$.next(this.indicators);
-        }
-      })
-    );
+      .put<any>(
+        `${this.API_URL}/courses/${courseId}/reorder/${targetIndex}/${sourseIndex}`,
+        {}
+      )
+      .pipe(
+        catchError((errResponse, sourceObservable) => {
+          if (errResponse.status === 404) {
+            return of({ errorMsg: errResponse.error.error });
+          } else {
+            return of({
+              errorMsg: 'Error in connection: Please reload the application',
+            });
+          }
+        }),
+        tap((res) => {
+          if (!('errorMsg' in res)) {
+            this.indicators = res.indicators;
+            this.onUpdateIndicators$.next(this.indicators);
+          }
+        })
+      );
   }
 
   updateIndicator(updatedindicator, courseId) {
@@ -135,99 +146,144 @@ export class IndicatorService {
   }
 
   fetchUserIndicators(): Observable<Indicator[]> {
-      const url = `${this.API_URL}/user/indicators`
-      return this.http
-        .get<Indicator[]>(url)
-         .pipe(
-          tap((indicators) => {
-            this.userIndicators = indicators;
-          })
-        ); 
-    }
+    const url = `${this.API_URL}/user/indicators`;
+    return this.http.get<Indicator[]>(url).pipe(
+      tap((indicators) => {
+        this.userIndicators = indicators;
+      })
+    );
+  }
 
-    addNewUserIndicator(indicator): Observable<Indicator> {
-      const url = `${this.API_URL}/user/indicator`;
-      return this.http
-        .post<any>(url, indicator)
-        .pipe(
-          catchError((err, sourceObservable) => {
-            if (err.status === 404) {
-              return of({ errorMsg: err.error.error });
-            } else {
-              return of({
-                errorMsg: 'Error in connection: Please reload the application',
-              });
+  addNewUserIndicator(indicator): Observable<Indicator> {
+    const url = `${this.API_URL}/user/indicator`;
+    return this.http.post<any>(url, indicator).pipe(
+      catchError((err, sourceObservable) => {
+        if (err.status === 404) {
+          return of({ errorMsg: err.error.error });
+        } else {
+          return of({
+            errorMsg: 'Error in connection: Please reload the application',
+          });
+        }
+      }),
+      tap((res) => {
+        if (!('errorMsg' in res)) {
+          this.userIndicators.push(res.indicator);
+          this.onUpdateUserIndicators$.next(this.userIndicators);
+        }
+      })
+    );
+  }
+
+  deleteUserIndicator(indicatorId: string) {
+    const url = `${this.API_URL}/user/indicator/${indicatorId}`;
+    return this.http.delete<any>(url).pipe(
+      catchError((errResponse, sourceObservable) => {
+        if (errResponse.status === 404) {
+          return of({ errorMsg: errResponse.error.error });
+        } else {
+          return of({
+            errorMsg: 'Error in connection: Please reload the application',
+          });
+        }
+      }),
+      tap((res) => {
+        if (!('errorMsg' in res)) {
+          this.userIndicators = this.userIndicators.filter(
+            (indicator) => indicator._id.toString() !== indicatorId.toString()
+          );
+          this.onUpdateUserIndicators$.next(this.userIndicators);
+        }
+      })
+    );
+  }
+
+  reorderUserIndicators(sourseIndex, targetIndex) {
+    const url = `${this.API_URL}/user/reorder/${targetIndex}/${sourseIndex}`;
+    return this.http.put<any>(url, {}).pipe(
+      catchError((errResponse, sourceObservable) => {
+        if (errResponse.status === 404) {
+          return of({ errorMsg: errResponse.error.error });
+        } else {
+          return of({
+            errorMsg: 'Error in connection: Please reload the application',
+          });
+        }
+      }),
+      tap((res) => {
+        if (!('errorMsg' in res)) {
+          this.userIndicators = res.indicators;
+          this.onUpdateUserIndicators$.next(this.userIndicators);
+        }
+      })
+    );
+  }
+
+  // "/api/user/indicator/:indicatorId/resize/:width/:height",
+  updateUserIndicator(updatedindicator) {
+    const url = `${this.API_URL}/user/indicator/${updatedindicator._id}/resize/${updatedindicator.width}/${updatedindicator.height}`;
+    return this.http.put<any>(url, {}).pipe(
+      catchError((errResponse, sourceObservable) => {
+        if (errResponse.status === 404) {
+          return of({ errorMsg: errResponse.error.error });
+        } else {
+          return of({
+            errorMsg: 'Error in connection: Please reload the application',
+          });
+        }
+      }),
+      tap((res) => {
+        if (!('errorMsg' in res)) {
+          this.userIndicators.forEach((indicator) => {
+            if (indicator._id.toString() === updatedindicator._id.toString()) {
+              indicator = updatedindicator;
             }
-          }),
-          tap((res) => {
-            if (!('errorMsg' in res)) {
-              this.userIndicators.push(res.indicator);
-              this.onUpdateUserIndicators$.next(this.userIndicators);
-            }
-          })
-        );
-    }
+          });
+          this.onUpdateUserIndicators$.next(this.userIndicators);
+        }
+      })
+    );
+  }
 
-    deleteUserIndicator(indicatorId: string) {
-      const url = `${this.API_URL}/user/indicator/${indicatorId}`
-      return this.http
-        .delete<any>(url)
-        .pipe(
-          catchError((errResponse, sourceObservable) => {
-            if (errResponse.status === 404) {
-              return of({ errorMsg: errResponse.error.error });
-            } else {
-              return of({
-                errorMsg: 'Error in connection: Please reload the application',
-              });
-            }
-          }),
-          tap((res) => {
-            if (!('errorMsg' in res)) {
-              this.userIndicators = this.userIndicators.filter(
-                (indicator) =>
-                  indicator._id.toString() !== indicatorId.toString()
-              );
-              this.onUpdateUserIndicators$.next(this.userIndicators);
-            }
-          })
-        );
-    }
+  addNewMaterialIndicator(materialId, indicator): Observable<Indicator> {
+    const courseId = this.courseService.getSelectedCourse()._id;
+    const url = `${this.API_URL}/courses/${courseId}/materials/${materialId}/indicator`;
+    console.log(url);
+    return this.http.post<any>(url, indicator).pipe(
+      catchError((err, sourceObservable) => {
+        if (err.status === 404) {
+          return of({ errorMsg: err.error.error });
+        } else {
+          return of({
+            errorMsg: 'Error in connection: Please reload the application',
+          });
+        }
+      }),
+      tap((res) => {
+        if (!('errorMsg' in res)) {
+          this.materialIndicators.push(res.indicator);
+          this.onUpdateMaterialIndicators$.next(this.materialIndicators);
+        }
+      })
+    );
+  }
 
-    reorderUserIndicators(sourseIndex, targetIndex,){
-      const url =  `${this.API_URL}/user/reorder/${targetIndex}/${sourseIndex}`
-      return this.http
-      .put<any>(
-        url,
-        {}
-      )
-      .pipe(
-        catchError((errResponse, sourceObservable) => {
-          if (errResponse.status === 404) {
-            return of({ errorMsg: errResponse.error.error });
-          } else {
-            return of({
-              errorMsg: 'Error in connection: Please reload the application',
-            });
-          }
-        }),
-        tap((res) => {
-          if (!('errorMsg' in res)) {
-            this.userIndicators = res.indicators;
-            this.onUpdateUserIndicators$.next(this.userIndicators);
-          }
-        })
-      );
-    }
+  fetchMaterialIndicators(materialId): Observable<Indicator[]> {
+    const courseId = this.courseService.getSelectedCourse()._id;
+    const url = `${this.API_URL}/courses/${courseId}/materials/${materialId}/indicator`;
+    return this.http.get<Indicator[]>(url).pipe(
+      tap((indicators) => {
+        this.materialIndicators = indicators;
+      })
+    );
+  }
 
-
-   // "/api/user/indicator/:indicatorId/resize/:width/:height",
-   updateUserIndicator(updatedindicator) {
-    const url =  `${this.API_URL}/user/indicator/${updatedindicator._id}/resize/${updatedindicator.width}/${updatedindicator.height}`
+  deleteMaterialIndicator(indicatorId: string, materialId: string) {
+    const courseId = this.courseService.getSelectedCourse()._id;
+    const url = `${this.API_URL}/courses/${courseId}/materials/${materialId}/indicator/${indicatorId}`;
     return this.http
-      .put<any>(
-        url,
-        {}
+      .delete<any>(
+       url
       )
       .pipe(
         catchError((errResponse, sourceObservable) => {
@@ -241,16 +297,312 @@ export class IndicatorService {
         }),
         tap((res) => {
           if (!('errorMsg' in res)) {
-            this.userIndicators.forEach((indicator) => {
-              if (
-                indicator._id.toString() === updatedindicator._id.toString()
-              ) {
-                indicator = updatedindicator;
-              }
-            });
-            this.onUpdateUserIndicators$.next(this.userIndicators);
+            this.materialIndicators = this.materialIndicators.filter(
+              (indicator) =>
+                indicator._id.toString() !== indicatorId.toString()
+            );
+            this.onUpdateMaterialIndicators$.next(this.materialIndicators);
           }
         })
       );
   }
+
+  //"/api/courses/:courseId/materials/:materialId/indicator/:indicatorId/resize/:width/:height",
+  updateMaterialIndicator(updatedindicator: Indicator, materialId) {
+    const courseId = this.courseService.getSelectedCourse()._id;
+    this.courseService.getSelectedCourse().role;
+    const indicatorId = updatedindicator._id;
+    const width = updatedindicator.width;
+    const height = updatedindicator.height;
+  
+    const url = `${this.API_URL}/courses/${courseId}/materials/${materialId}/indicator/${indicatorId}/resize/${width}/${height}`;
+    return this.http.put<any>(url, {}).pipe(
+      catchError((errResponse, sourceObservable) => {
+        if (errResponse.status === 404) {
+          return of({ errorMsg: errResponse.error.error });
+        } else {
+          return of({
+            errorMsg: 'Error in connection: Please reload the application',
+          });
+        }
+      }),
+      tap((res) => {
+        if (!('errorMsg' in res)) {
+          this.materialIndicators.forEach((indicator) => {
+            if (indicator._id.toString() === updatedindicator._id.toString()) {
+              indicator = updatedindicator;
+            }
+          });
+          this.onUpdateMaterialIndicators$.next(this.materialIndicators);
+        }
+      })
+    );
+  }
+
+  //"/api/courses/:courseId/materials/:materialId/reorder/:newIndex/:oldIndex"
+  reorderMaterialIndicators(sourseIndex, targetIndex, materialId) {
+    const courseId = this.courseService.getSelectedCourse()._id;
+    const url = `${this.API_URL}/courses/${courseId}/materials/${materialId}/reorder/${targetIndex}/${sourseIndex}`;
+    return this.http.put<any>(url, {}).pipe(
+      catchError((errResponse, sourceObservable) => {
+        if (errResponse.status === 404) {
+          return of({ errorMsg: errResponse.error.error });
+        } else {
+          return of({
+            errorMsg: 'Error in connection: Please reload the application',
+          });
+        }
+      }),
+      tap((res) => {
+        if (!('errorMsg' in res)) {
+          this.materialIndicators = res.indicators;
+          this.onUpdateMaterialIndicators$.next(this.materialIndicators);
+        }
+      })
+    );
+  }
+
+ // "/api/courses/:courseId/channels/:channelId/indicator",
+  addNewChannelIndicator(channelId, indicator): Observable<Indicator> {
+    const courseId = this.courseService.getSelectedCourse()._id;
+    const url = `${this.API_URL}/courses/${courseId}/channels/${channelId}/indicator`;
+    console.log(url);
+    return this.http.post<any>(url, indicator).pipe(
+      catchError((err, sourceObservable) => {
+        if (err.status === 404) {
+          return of({ errorMsg: err.error.error });
+        } else {
+          return of({
+            errorMsg: 'Error in connection: Please reload the application',
+          });
+        }
+      }),
+      tap((res) => {
+        if (!('errorMsg' in res)) {
+          this.channelIndicators.push(res.indicator);
+          this.onUpdateChannelIndicators$.next(this.channelIndicators);
+        }
+      })
+    );
+  }
+
+  fetchChannelIndicators(channelId): Observable<Indicator[]> {
+    const courseId = this.courseService.getSelectedCourse()._id;
+    const url = `${this.API_URL}/courses/${courseId}/channels/${channelId}/indicator`;
+    return this.http.get<Indicator[]>(url).pipe(
+      tap((indicators) => {
+        this.channelIndicators = indicators;
+      })
+    );
+  }
+ // "/api/courses/:courseId/channels/:channelId/indicator/:indicatorId",
+  deleteChannelIndicator(indicatorId: string, channelId: string) {
+    const courseId = this.courseService.getSelectedCourse()._id;
+    const url = `${this.API_URL}/courses/${courseId}/channels/${channelId}/indicator/${indicatorId}`;
+    return this.http
+      .delete<any>(
+       url
+      )
+      .pipe(
+        catchError((errResponse, sourceObservable) => {
+          if (errResponse.status === 404) {
+            return of({ errorMsg: errResponse.error.error });
+          } else {
+            return of({
+              errorMsg: 'Error in connection: Please reload the application',
+            });
+          }
+        }),
+        tap((res) => {
+          if (!('errorMsg' in res)) {
+            this.channelIndicators = this.channelIndicators.filter(
+              (indicator) =>
+                indicator._id.toString() !== indicatorId.toString()
+            );
+            this.onUpdateChannelIndicators$.next(this.channelIndicators);
+          }
+        })
+      );
+  }
+
+  //"/api/courses/:courseId/channels/:channelId/indicator/:indicatorId/resize/:width/:height",
+  updateChannelIndicator(updatedindicator: Indicator, channelId) {
+    const courseId = this.courseService.getSelectedCourse()._id;
+    this.courseService.getSelectedCourse().role;
+    const indicatorId = updatedindicator._id;
+    const width = updatedindicator.width;
+    const height = updatedindicator.height;
+  
+    const url = `${this.API_URL}/courses/${courseId}/channels/${channelId}/indicator/${indicatorId}/resize/${width}/${height}`;
+    return this.http.put<any>(url, {}).pipe(
+      catchError((errResponse, sourceObservable) => {
+        if (errResponse.status === 404) {
+          return of({ errorMsg: errResponse.error.error });
+        } else {
+          return of({
+            errorMsg: 'Error in connection: Please reload the application',
+          });
+        }
+      }),
+      tap((res) => {
+        if (!('errorMsg' in res)) {
+          this.channelIndicators.forEach((indicator) => {
+            if (indicator._id.toString() === indicatorId.toString()) {
+              indicator = updatedindicator;
+            }
+          });
+          this.onUpdateChannelIndicators$.next(this.channelIndicators);
+        }
+      })
+    );
+
+  }
+
+  //"/api/courses/:courseId/channels/:channelId/reorder/:newIndex/:oldIndex",
+  reorderChannelIndicators(sourseIndex, targetIndex, channelId) {
+    const courseId = this.courseService.getSelectedCourse()._id;
+    const url = `${this.API_URL}/courses/${courseId}/channels/${channelId}/reorder/${targetIndex}/${sourseIndex}`;
+    return this.http.put<any>(url, {}).pipe(
+      catchError((errResponse, sourceObservable) => {
+        if (errResponse.status === 404) {
+          return of({ errorMsg: errResponse.error.error });
+        } else {
+          return of({
+            errorMsg: 'Error in connection: Please reload the application',
+          });
+        }
+      }),
+      tap((res) => {
+        if (!('errorMsg' in res)) {
+          this.channelIndicators = res.indicators;
+          this.onUpdateChannelIndicators$.next(this.channelIndicators);
+        }
+      })
+    );
+  }
+
+  //"/api/courses/:courseId/topics/:topicId/indicator",
+  addNewTopicIndicator( topicId, indicator): Observable<Indicator> {
+    const courseId = this.courseService.getSelectedCourse()._id;
+    const url = `${this.API_URL}/courses/${courseId}/topics/${topicId}/indicator`;
+    console.log(url);
+    return this.http.post<any>(url, indicator).pipe(
+      catchError((err, sourceObservable) => {
+        if (err.status === 404) {
+          return of({ errorMsg: err.error.error });
+        } else {
+          return of({
+            errorMsg: 'Error in connection: Please reload the application',
+          });
+        }
+      }),
+      tap((res) => {
+        if (!('errorMsg' in res)) {
+          this.topicIndicators.push(res.indicator);
+          this.onUpdateTopicIndicators$.next(this.topicIndicators);
+        }
+      })
+    );
+  }
+
+
+  fetchTopicIndicators(courseId, topicId): Observable<Indicator[]> {
+    const url = `${this.API_URL}/courses/${courseId}/topics/${topicId}/indicator`;
+    return this.http.get<Indicator[]>(url).pipe(
+      tap((indicators) => {
+        this.topicIndicators = indicators;
+      })
+    );
+  }
+
+  //"/api/courses/:courseId/topics/:topicId/indicator/:indicatorId",
+  deleteTopicIndicator(indicatorId: string, courseId: string, topicId: string) {
+    //const courseId = this.courseService.getSelectedCourse()._id;
+    const url = `${this.API_URL}/courses/${courseId}/topics/${topicId}/indicator/${indicatorId}`;
+    return this.http
+      .delete<any>(
+       url
+      )
+      .pipe(
+        catchError((errResponse, sourceObservable) => {
+          if (errResponse.status === 404) {
+            return of({ errorMsg: errResponse.error.error });
+          } else {
+            return of({
+              errorMsg: 'Error in connection: Please reload the application',
+            });
+          }
+        }),
+        tap((res) => {
+          if (!('errorMsg' in res)) {
+            this.topicIndicators = this.topicIndicators.filter(
+              (indicator) =>
+                indicator._id.toString() !== indicatorId.toString()
+            );
+            this.onUpdateTopicIndicators$.next(this.topicIndicators);
+          }
+        })
+      );
+  }
+
+  //"/api/courses/:courseId/topics/:topicId/indicator/:indicatorId/resize/:width/:height",
+  updateTopicIndicator(updatedindicator: Indicator, topicId: string) {
+    const courseId = this.courseService.getSelectedCourse()._id;
+    this.courseService.getSelectedCourse().role;
+    const indicatorId = updatedindicator._id;
+    const width = updatedindicator.width;
+    const height = updatedindicator.height;
+  
+    const url = `${this.API_URL}/courses/${courseId}/topics/${topicId}/indicator/${indicatorId}/resize/${width}/${height}`;
+    return this.http.put<any>(url, {}).pipe(
+      catchError((errResponse, sourceObservable) => {
+        if (errResponse.status === 404) {
+          return of({ errorMsg: errResponse.error.error });
+        } else {
+          return of({
+            errorMsg: 'Error in connection: Please reload the application',
+          });
+        }
+      }),
+      tap((res) => {
+        if (!('errorMsg' in res)) {
+          this.topicIndicators.forEach((indicator) => {
+            if (indicator._id.toString() === indicatorId.toString()) {
+              indicator = updatedindicator;
+            }
+          });
+          this.onUpdateTopicIndicators$.next(this.topicIndicators);
+        }
+      })
+    );
+
+  }
+
+ // "/api/courses/:courseId/topics/:topicId/reorder/:newIndex/:oldIndex",
+  reorderTopicIndicators(sourseIndex, targetIndex, topicId) {
+    const courseId = this.courseService.getSelectedCourse()._id;
+    const url = `${this.API_URL}/courses/${courseId}/topics/${topicId}/reorder/${targetIndex}/${sourseIndex}`;
+    return this.http.put<any>(url, {}).pipe(
+      catchError((errResponse, sourceObservable) => {
+        if (errResponse.status === 404) {
+          return of({ errorMsg: errResponse.error.error });
+        } else {
+          return of({
+            errorMsg: 'Error in connection: Please reload the application',
+          });
+        }
+      }),
+      tap((res) => {
+        if (!('errorMsg' in res)) {
+          this.topicIndicators = res.indicators;
+          this.onUpdateTopicIndicators$.next(this.topicIndicators);
+        }
+      })
+    );
+  }
+
+
+
+
+
 }

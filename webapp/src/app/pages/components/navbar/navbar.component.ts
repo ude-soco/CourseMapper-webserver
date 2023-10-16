@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 
-import { PrimeNGConfig } from 'primeng/api';
+import { MenuItem, PrimeNGConfig } from 'primeng/api';
 import { USER_KEY } from 'src/app/config/config';
 import { User } from 'src/app/models/User';
 import { StorageService } from 'src/app/services/storage.service';
@@ -17,6 +17,8 @@ import { getInitials } from 'src/app/_helpers/format';
   styleUrls: ['./navbar.component.css'],
 })
 export class NavbarComponent implements OnInit {
+  onLogout: any;
+  
   isLoggedIn: boolean = false;
 
   showAdminBoard = false;
@@ -25,6 +27,21 @@ export class NavbarComponent implements OnInit {
   loggedInUser: User;
   public LandingPage = '/landingPage';
   protected loggedInUser$;
+
+
+  userOptions: MenuItem[] = [
+    {
+      label: 'Personal Dashboard',
+      icon: 'pi pi-chart-bar',
+      styleClass: 'navbar-tooltip',
+      command: () => this.onViewPersonalDashboard(),
+    },
+    {
+      label: 'Signout',
+      icon: 'pi pi-sign-out',
+      command: ($event) => this. handleLogout(),
+    },
+  ];
 
   constructor(
     private primengConfig: PrimeNGConfig,
@@ -88,5 +105,11 @@ export class NavbarComponent implements OnInit {
 
   copyUserId(userId) {
     navigator.clipboard.writeText(userId);
+  }
+
+  onViewPersonalDashboard(): void {
+
+    this.router.navigate([
+      'personalDashboard']);
   }
 }

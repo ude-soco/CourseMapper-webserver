@@ -7,6 +7,7 @@ const Annotation = db.annotation;
 const Reply = db.reply;
 const Tag = db.tag;
 const Material = db.material;
+const ObjectId = require("mongoose").Types.ObjectId;
 
 /**
  * @function getTopic
@@ -312,3 +313,222 @@ export const editTopic = async (req, res, next) => {
 
   return next();
 };
+
+/**
+ * @function newIndicator
+ * add new indicator controller
+ *
+ * @param {string} req.params.topicId The id of the topic
+ * @param {string} req.body.src The sourse of the iframe
+ * @param {string} req.body.width The width of the iframe
+ * @param {string} req.body.height The height of the iframe
+ * @param {string} req.body.frameborder The frameborder of the iframe
+ */
+export const newIndicator = async (req, res, next) => {
+  const topicId = req.params.topicId;
+
+  let foundTopic;
+  try {
+    foundTopic = await Topic.findById(topicId);
+    if (!foundTopic) {
+      return res.status(404).send({
+        error: `Course with id ${topicId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding topic" });
+  }
+
+  const indicator = {
+    _id: new ObjectId(),
+    src: req.body.src,
+    width: req.body.width,
+    height: req.body.height,
+    frameborder: req.body.frameborder,
+  };
+
+  foundTopic.indicators.push(indicator);
+
+  try {
+    foundTopic.save();
+  } catch (err) {
+    return res.status(500).send({ error: "Error saving topic" });
+  }
+
+  return res.status(200).send({
+    success: `indicator with id = '${indicator._id}' has been added successfully!`,
+    indicator: indicator,
+  });
+};
+
+/**
+ * @function deleteIndicator
+ * delete indicator controller
+ *
+ * @param {string} req.params.topicId The id of the topic
+ * @param {string} req.params.indicatorId The id of the indicator
+ */
+export const deleteIndicator = async (req, res, next) => {
+  const topicId = req.params.topicId;
+  const indicatorId = req.params.indicatorId;
+
+  let foundTopic;
+  try {
+    foundTopic = await Topic.findOne({ "indicators._id": indicatorId });
+    if (!foundTopic) {
+      return res.status(404).send({
+        error: `indicator with id ${indicatorId} doesn't exist!`,
+      });
+    }
+
+    if (foundTopic._id.toString() !== topicId) {
+      return res.status(404).send({
+        error: `indicator with id ${indicatorId} doesn't belong to topic with id ${topicId}!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding topic" });
+  }
+
+  foundTopic.indicators = foundTopic.indicators.filter(
+    (indicator) => indicator._id.toString() !== indicatorId
+  );
+
+  try {
+    foundTopic.save();
+  } catch (err) {
+    return res.status(500).send({ error: "Error saving topic" });
+  }
+
+  return res.status(200).send({
+    success: `indicator with id = '${indicatorId}' has been deleted successfully!`,
+  });
+};
+
+/**
+ * @function getIndicators
+ * get indicators controller
+ *
+ * @param {string} req.params.topicId The id of the topic
+ */
+export const getIndicators = async (req, res, next) => {
+  const topicId = req.params.topicId;
+
+  let foundTopic;
+  try {
+    foundTopic = await Topic.findById(topicId);
+    if (!foundTopic) {
+      return res.status(404).send({
+        error: `Topic with id ${topicId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  const response = foundTopic.indicators ? foundTopic.indicators : [];
+
+  return res.status(200).send(response);
+};
+
+/**
+ * @function resizeIndicator
+ * resize indicator controller
+ *
+ * @param {string} req.params.topicId The id of the topic
+ * @param {string} req.params.indicatorId The id of the indicator
+ * @param {string} req.params.width The width of the indicator
+ * @param {string} req.params.height The height of the indicator
+ */
+export const resizeIndicator = async (req, res, next) => {
+  const topicId = req.params.topicId;
+  const indicatorId = req.params.indicatorId;
+  const width = req.params.width;
+  const height = req.params.height;
+
+  let foundTopic;
+  try {
+    foundTopic = await Topic.findOne({ "indicators._id": indicatorId });
+    if (!foundTopic) {
+      return res.status(404).send({
+        error: `indicator with id ${indicatorId} doesn't exist!`,
+      });
+    }
+
+    if (foundTopic._id.toString() !== topicId) {
+      return res.status(404).send({
+        error: `indicator with id ${indicatorId} doesn't belong to topic with id ${topicId}!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding topic" });
+  }
+
+  foundTopic.indicators.forEach((indicator) => {
+    if (indicator._id.toString() === indicatorId.toString()) {
+      indicator.width = width;
+      indicator.height = height;
+    }
+  });
+
+  try {
+    foundTopic.save();
+  } catch (err) {
+    return res.status(500).send({ error: "Error saving topic" });
+  }
+
+  return res.status(200).send({
+    success: `indicator with id = '${indicatorId}' has been updated successfully!`,
+  });
+};
+
+/**
+ * @function reorderIndicators
+ * reorder indicators controller
+ *
+ * @param {string} req.params.topicId The id of the topic
+ * @param {string} req.params.newIndex The newIndex of the reordered indicator
+ * @param {string} req.params.oldIndex The oldIndex of the reordered indicator
+ */
+export const reorderIndicators = async (req, res, next) => {
+  const topicId = req.params.topicId;
+  const newIndex = parseInt(req.params.newIndex);
+  const oldIndex = parseInt(req.params.oldIndex);
+
+  let foundTopic;
+  try {
+    foundTopic = await Topic.findById(topicId);
+    if (!foundTopic) {
+      return res.status(404).send({
+        error: `Topic with id ${topicId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding topic" });
+  }
+  let indicator = foundTopic.indicators[oldIndex];
+  if (oldIndex < newIndex) {
+    for (let i = oldIndex; i < newIndex; i++) {
+      foundTopic.indicators[i] = foundTopic.indicators[i + 1];
+    }
+  } else {
+    for (let i = oldIndex; i > newIndex; i--) {
+      foundTopic.indicators[i] = foundTopic.indicators[i - 1];
+    }
+  }
+  foundTopic.indicators[newIndex] = indicator;
+  try {
+    foundTopic.save();
+  } catch (err) {
+    return res.status(500).send({ error: "Error saving topic" });
+  }
+  return res.status(200).send({
+    success: `indicators have been updated successfully!`,
+    indicators: foundTopic.indicators,
+  });
+};
+
+
+
+
+

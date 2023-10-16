@@ -16,6 +16,11 @@ import { NoDataComponent } from './no-data/no-data.component';
 import { MentionsComponent } from './mentions/mentions.component';
 import { MentionModule } from 'angular-mentions';
 import { FooterComponent } from './footer/footer.component';
+import { AddIndicatorComponent } from './add-indicator/add-indicator.component';
+import { PopulateDashboardComponent } from '../pages/populate-dashboard/populate-dashboard.component';
+import { ByPassUrlSanitizationPipe } from '../pipes/by-pass-url-sanitization.pipe';
+import { DragulaModule } from 'ng2-dragula';
+
 
 @NgModule({
   declarations: [
@@ -31,11 +36,16 @@ import { FooterComponent } from './footer/footer.component';
     NoDataComponent,
     MentionsComponent,
     FooterComponent,
+    AddIndicatorComponent,
+    PopulateDashboardComponent,
+    ByPassUrlSanitizationPipe,
+    
   ],
   imports: [
     CommonModule,
     PrimengModule,
     ReactiveFormsModule,
+    DragulaModule.forRoot(),
     TabMenuModule,
     MentionModule,
   ],
@@ -52,6 +62,9 @@ import { FooterComponent } from './footer/footer.component';
     NoDataComponent,
     MentionsComponent,
     FooterComponent,
+    AddIndicatorComponent,
+    PopulateDashboardComponent,
+    ByPassUrlSanitizationPipe,
   ],
 })
 export class SharedComponentsModule {}

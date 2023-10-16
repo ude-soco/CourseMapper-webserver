@@ -1,4 +1,4 @@
-import { Component, Renderer2 } from '@angular/core';
+import { Component, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Course } from '../models/Course';
 import { CourseImp } from '../models/CourseImp';
@@ -12,18 +12,21 @@ import {
 } from 'src/app/state/app.reducer';
 import * as CourseAction from 'src/app/pages/courses/state/course.actions';
 import { Router } from '@angular/router';
-import { getChannelSelected } from '../pages/courses/state/course.reducer';
+import { getChannelSelected, getCurrentCourseId } from '../pages/courses/state/course.reducer';
 import { TopicChannelService } from 'src/app/services/topic-channel.service';
 import { UserServiceService } from '../services/user-service.service';
 import * as AppActions from '../state/app.actions';
 import * as NotificationActions from '../pages/components/notifications/state/notifications.actions';
+import { IndicatorService } from '../services/indicator.service';
+import { Indicator } from '../models/Indicator';
+import { ShowInfoError } from '../_helpers/show-info-error';
 @Component({
   selector: 'app-course-welcome',
   templateUrl: './course-welcome.component.html',
   styleUrls: ['./course-welcome.component.css'],
   providers: [MessageService, ConfirmationService],
 })
-export class CourseWelcomeComponent {
+export class CourseWelcomeComponent implements OnInit, OnDestroy {
   selectedCourse: Course = new CourseImp('', '');
   courseSelected$: Observable<boolean>;
   channelSelected$: Observable<boolean>;
@@ -34,6 +37,11 @@ export class CourseWelcomeComponent {
   firstName: string;
   lastName: string;
   Users: any;
+  role: string;
+  selectedCourseId: string = "";
+  indicators: Indicator[] = [];
+  forCourseDashboard: boolean = false;
+  showInfoError:  ShowInfoError;
 
   constructor(
     private confirmationService: ConfirmationService,
@@ -41,6 +49,7 @@ export class CourseWelcomeComponent {
     protected courseService: CourseService,
     private store: Store<State>,
     private router: Router,
+    private indicatorService: IndicatorService,
     private messageService: MessageService,
     private topicChannelService: TopicChannelService,
     private userService: UserServiceService
@@ -48,36 +57,50 @@ export class CourseWelcomeComponent {
     this.courseSelected$ = store.select(getCourseSelected);
     this.channelSelected$ = this.store.select(getChannelSelected);
   }
+  ngOnDestroy(): void {
+    this.indicatorService.onUpdateIndicators$.unsubscribe();
+  }
 
   ngOnInit(): void {
+    this.forCourseDashboard = true;
     this.selectedCourse = this.courseService.getSelectedCourse();
-
     this.Users = [];
     this.courseService.onSelectCourse.subscribe((course) => {
-      this.selectedCourse = course;
+      this.selectedCourse = course; 
+      this.selectedCourseId = course._id;
+      this.getIndicators(course._id);    
       this.topicChannelService.fetchTopics(course._id).subscribe((res) => {
         this.selectedCourse = res.course;
         this.Users = course.users;
-        /*         let userModerator = this.Users.find(
-          (user) => user.role.name === 'moderator'
-        );
-
-        this.buildCardInfo(userModerator.userId, course);
- */
         this.buildCardInfo(course.users[0].userId, course);
       });
+     
+      
       if (this.selectedCourse.role === 'moderator') {
         this.moderator = true;
       } else {
         this.moderator = false;
       }
     });
+
+    
   }
+
+  getIndicators(courseId) {
+    this.indicatorService.fetchIndicators(courseId).subscribe((indicators) => {
+      this.indicators = indicators;
+    });
+    this.indicatorService.onUpdateIndicators$.subscribe(
+      (indicators) => (this.indicators = indicators)
+    );
+  }
+
 
   buildCardInfo(userModeratorID: string, course: Course) {
     this.userService.GetUserName(userModeratorID).subscribe((user) => {
       this.firstName = user.firstname;
       this.lastName = user.lastname;
+      this.role = course.role
 
       var index = course.createdAt.indexOf('T');
       (this.createdAt = course.createdAt.slice(0, index)),
@@ -129,8 +152,9 @@ export class CourseWelcomeComponent {
 
   unEnrolleCourse(course: Course) {
     this.courseService.WithdrawFromCourse(course).subscribe((res) => {
+      let showInfoError = new ShowInfoError(this.messageService)
       if ('success' in res) {
-        this.showInfo('You have been  withdrewed successfully ');
+        this.showInfoError.showInfo('You have been  withdrewed successfully ');
 
         this.store.dispatch(
           CourseAction.setCurrentCourse({ selcetedCourse: course })
@@ -144,24 +168,12 @@ export class CourseWelcomeComponent {
       (er) => {
         console.log(er);
         alert(er.error.error);
-        this.showError('Please make sure to add a valid data!');
+        this.showInfoError.showError('Please make sure to add a valid data!');
       };
     });
   }
 
-  showInfo(msg) {
-    this.messageService.add({
-      severity: 'info',
-      summary: 'Success',
-      detail: msg,
-    });
-  }
+  
 
-  showError(msg) {
-    this.messageService.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: msg,
-    });
-  }
+  
 }

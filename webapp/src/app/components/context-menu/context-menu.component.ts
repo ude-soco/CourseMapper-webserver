@@ -9,11 +9,13 @@ export class ContextMenuComponent {
   @Input() showModeratorPrivileges: boolean;
   @Input() checkBoxesGroup: FormGroup<{}>;
   @Input() isResetButtonEnabled: boolean;
+  @Input() topicSettingChosen: boolean = false;
   @Input() checkBoxesArray: { label: string; control: FormControl<boolean> }[];
   @Input() resetTo: string;
   @Output() renameClicked = new EventEmitter();
   @Output() deleteClicked = new EventEmitter();
   @Output() resetButtonClicked = new EventEmitter();
+  @Output() viewTopicDashboardClicked = new EventEmitter();
   @Output() notificationSettingClicked = new EventEmitter<{
     label: string;
     control: FormControl<boolean>;
@@ -35,5 +37,8 @@ export class ContextMenuComponent {
 
   onSettingsClicked(item: { label: string; control: FormControl<boolean> }) {
     this.notificationSettingClicked.emit(item);
+  }
+  onViewDashboardClicked(){
+    this.viewTopicDashboardClicked.emit();
   }
 }

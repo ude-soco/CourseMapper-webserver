@@ -77,7 +77,9 @@
             style="z-index: 10; padding: 0"
             icon="bx-network-chart"
             color="text-orange-500"
-            (click)="selectedMaterial = material; onConceptMapButtonClicked(true)"
+            (click)="
+              selectedMaterial = material; onConceptMapButtonClicked(true)
+            "
             pTooltip="View material knowledge graph"
           ></app-iconbutton>
           <p-overlayPanel #materialMenu styleClass="settingsContextMenu">
@@ -164,6 +166,39 @@
     </ng-container>
   </p-tabView>
 </div>
+
+<hr>
+
+<div class="px-4" *ngIf="selectedChannel?.materials">
+  <ng-container>
+    <div *ngIf="this.isMaterialSelected">
+      <p class="text-lg font-semibold mt-3">Material Dashboard</p>
+    <app-populate-dashboard 
+      [forMaterialDashboard]="true"
+      [materialId]="materialID"
+      [indicators]="indicators"
+      [role] = "this.courseService.getSelectedCourse().role"
+    ></app-populate-dashboard>
+  </div>
+  </ng-container>
+</div>
+<div class="px-4" *ngIf="!this.isMaterialSelected">
+  <ng-container>
+    <div *ngIf="!this.isMaterialSelected">
+      <p class="text-lg font-semibold mt-3">Channel Dashboard</p>
+    <app-populate-dashboard 
+      [forChannelDashboard]="true"
+      [channelId]="channelID"
+      [role] = "this.courseService.getSelectedCourse().role"
+      [indicators]="indicators"
+    ></app-populate-dashboard>
+  </div>
+  </ng-container>
+</div>
+
+
+
+
 <ng-container>
   <!-- <app-concept-map #conceptMap [material]="selectedMaterial">
   </app-concept-map> -->

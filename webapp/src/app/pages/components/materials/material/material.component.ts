@@ -19,12 +19,18 @@ import { FormBuilder, FormControl } from '@angular/forms';
 import { Material } from 'src/app/models/Material';
 import { PdfviewService } from 'src/app/services/pdfview.service';
 import { MaterilasService } from 'src/app/services/materials.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import {
+  ActivatedRoute,
+  Router,
+  RouterState,
+  UrlSegment,
+  UrlSegmentGroup,
+} from '@angular/router';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/pages/components/materials/state/materials.reducer';
 import * as MaterialActions from 'src/app/pages/components/materials/state/materials.actions';
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
-import { Observable, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { ModeratorPrivilegesService } from 'src/app/services/moderator-privileges.service';
@@ -34,6 +40,9 @@ import { materialNotificationSettingLabels } from 'src/app/models/Notification';
 import { getNotifications } from '../../notifications/state/notifications.reducer';
 import * as NotificationActions from '../../notifications/state/notifications.actions';
 import { MaterialKgOrderedService } from 'src/app/services/material-kg-ordered.service';
+import { Indicator } from 'src/app/models/Indicator';
+import { IndicatorService } from 'src/app/services/indicator.service';
+import { CourseService } from 'src/app/services/course.service';
 @Component({
   selector: 'app-material',
   templateUrl: './material.component.html',
@@ -52,8 +61,10 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
   @Input() topicID?: string;
   @Input() initialMaterial?: Material;
   @Output() materialCreated: EventEmitter<void> = new EventEmitter();
+
   private channels: Channel[] = [];
   materials: Material[] = [];
+  indicators: Indicator[] = [];
   materialType?: string;
   tabIndex: number = -1;
   isMaterialSelected: boolean = false;
@@ -68,6 +79,10 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
   isNewMaterialModalVisible: boolean = false;
   errorMessage: any;
   showConceptMapEvent: boolean = false;
+  forMaterialDashboard: boolean = false;
+  materialID: string = '';
+  channelID: string = '';
+  routeSubscription: Subscription;
 
   @Output() conceptMapEvent: EventEmitter<boolean> = new EventEmitter();
   @Output() selectedToolEvent: EventEmitter<string> = new EventEmitter();
@@ -91,6 +106,8 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
   isResetMaterialNotificationsButtonEnabled: boolean;
   lastMaterialClickedNotificationSettingSubscription: Subscription;
   constructor(
+    private indicatorService: IndicatorService,
+    public courseService: CourseService,
     private topicChannelService: TopicChannelService,
     private pdfViewService: PdfviewService,
     private materialService: MaterilasService,
@@ -112,10 +129,13 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       const courseId = courseRegex.exec(url)[1];
       const channelId = channelRegex.exec(url)[1];
       const materialId = url.match(/material:(.*?)\/(pdf|video)/)?.[1];
+
+     
       this.topicChannelService
         .getChannel(courseId, channelId)
         .subscribe((foundChannel) => {
           this.selectedChannel = foundChannel;
+          this.channelID = this.selectedChannel._id;      
           this.materials = foundChannel.materials;
           this.channels.push(this.selectedChannel);
           this.selectedMaterial = foundChannel.materials.find(
@@ -165,6 +185,8 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   ngOnInit() {
+  
+
     this.topicChannelService.onSelectChannel.subscribe((channel) => {
       this.selectedChannel = channel;
       this.channelEmitted.emit(this.selectedChannel);
@@ -219,6 +241,22 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
           });
         }
       );
+      const routerState: RouterState =
+      this.activatedRoute.snapshot['_routerState'];
+      const url = routerState['url'];
+      // Check if the outlet information is present
+      const outletInfoActive = url.includes('material:');
+      if (outletInfoActive) {
+        this.isMaterialSelected = true;
+      } else {
+        this.isMaterialSelected = false;
+      
+      }
+
+      this.doFetchChannelIndicators(this.channelID);
+
+
+      
   }
 
   getNumUnreadNotificationsForMaterial(materialId: string) {
@@ -290,14 +328,18 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     // if (this.tabIndex == -1 && this.showModeratorPrivileges) {
     if (this.tabIndex == -1) {
       this.isMaterialSelected = false;
+
       this.router.navigate([
         'course',
         this.selectedChannel.courseId,
         'channel',
         this.selectedChannel._id,
       ]);
+      this.channelID = this.selectedChannel._id
+      this.doFetchChannelIndicators(this.channelID);
     } else {
       this.isMaterialSelected = true;
+
       // if(!this.showModeratorPrivileges){
       //   this.tabIndex = e.index
       // }
@@ -352,6 +394,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.updateSelectedMaterial();
   }
   updateSelectedMaterial() {
+   
     // if(this.selectedChannel.materials && !this.selectedMaterial){
     //   this.tabIndex=0
     //   this.selectedMaterial=this.selectedChannel.materials[0]
@@ -384,7 +427,38 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.store.dispatch(
       MaterialActions.setMaterialId({ materialId: this.selectedMaterial._id })
     );
+    this.materialID = this.selectedMaterial._id
+    console.log("material selected with id", this.materialID)
+    this.doFetchMaterialIndicators(this.materialID)
+   
     this.store.dispatch(AnnotationActions.loadAnnotations());
+  }
+
+  doFetchMaterialIndicators(materialId){
+    this.indicatorService.onUpdateMaterialIndicators$.subscribe(
+      (indicators) => {
+        this.indicators = indicators
+      }
+    )
+    this.indicatorService.fetchMaterialIndicators(materialId).subscribe(
+      (indicators) => {
+        this.indicators = indicators
+      }
+    )
+    
+  }
+  doFetchChannelIndicators(channelId){
+    this.indicatorService.onUpdateChannelIndicators$.subscribe(
+      (indicators) => {
+        this.indicators = indicators
+      }
+    )
+    this.indicatorService.fetchChannelIndicators(channelId).subscribe(
+      (indicators) => {
+        this.indicators = indicators
+      }
+    )
+
   }
 
   onDeleteMaterial() {
@@ -699,7 +773,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
   //   this.showConceptMapEvent=show
   // }
   onConceptMapButtonClicked(show: boolean) {
-    console.log('clicked')
+    console.log('clicked');
     this.conceptMapEvent.emit(show);
     this.cmSelected = show;
     this.selectedToolEvent.emit('none');
@@ -743,4 +817,5 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       detail: detail,
     });
   }
+  
 }

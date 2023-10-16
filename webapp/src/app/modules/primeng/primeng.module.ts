@@ -27,6 +27,7 @@ import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {ToastModule} from 'primeng/toast';
 import {MessageService} from 'primeng/api';
 import {OverlayPanelModule} from 'primeng/overlaypanel';
+import { MenuModule } from 'primeng/menu';
 
 const PrimeNgComponents = [
   AvatarModule,
@@ -55,7 +56,8 @@ const PrimeNgComponents = [
   ColorPickerModule,
   ConfirmDialogModule,
   ToastModule,
-  OverlayPanelModule
+  OverlayPanelModule,
+  MenuModule
   
 ];
 

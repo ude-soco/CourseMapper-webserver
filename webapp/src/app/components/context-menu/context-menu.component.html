@@ -7,6 +7,13 @@
     (onClick)="onRenameClicked()"
   ></p-button>
   <p-button
+  *ngIf="topicSettingChosen"
+    label="View topic dashboard"
+    icon="pi pi-chart-bar"
+    styleClass="contextMenuButton"
+    (onClick)="onViewDashboardClicked()"
+  ></p-button>
+  <p-button
     *ngIf="showModeratorPrivileges"
     label="Delete"
     icon="pi pi-times"

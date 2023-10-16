@@ -34,19 +34,7 @@
       </span>
 
       <span *ngIf="this.storageService.loggedIn">
-        <button
-          pButton
-          [ngStyle]="{
-            border: '1px solid #EA580C',
-            backgroundColor: 'white',
-            color: '#EA580C',
-            marginRight: '8px'
-          }"
-          type="button"
-          label="Logout"
-          (click)="handleLogout()"
-        ></button>
-
+      
         <p-avatar
           label="{{ getIntitials(loggedInUser?.name) }}"
           shape="circle"
@@ -56,33 +44,17 @@
             color: '#ffffff',
             cursor: 'pointer'
           }"
-          (click)="op.toggle($event)"
+          (click)="menu.toggle($event)"
         ></p-avatar>
-        <p-overlayPanel #op [style]="{ width: '400px' }">
-          <ng-template pTemplate>
-            <div class="flex-col">
-              <div class="font-medium text-2xl w-full">
-                {{ loggedInUser.name }}
-              </div>
-              <div class="flex flex-row w-full">
-                <div
-                  class="text-blue-500 dark:text-blue-500 hover:underline mt-2 mr-2"
-                >
-                  {{ loggedInUser.id }}
-                </div>
-                <div class="flex w-full">
-                  <app-iconbutton
-                    icon="bx-copy"
-                    color="text-black"
-                    (onClick)="copyUserId(loggedInUser.id)"
-                    pTooltip="Copy"
-                    tooltipPosition="top"
-                  ></app-iconbutton>
-                </div>
-              </div>
-            </div>
-          </ng-template>
-        </p-overlayPanel>
+        <p-menu
+                  #menu
+                  id="config_menu"
+                  [popup]="true"
+                  appendTo="body"
+                  styleClass="course-context-menu"
+                  [model]="userOptions"
+                  pTooltip="Delete Indicator"
+                ></p-menu>
       </span>
     </div>
   </div>
