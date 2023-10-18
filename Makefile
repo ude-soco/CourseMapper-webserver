@@ -41,7 +41,7 @@ tilt:
 
 # Start all services with processes in containers, but mounted source files on host
 mounted: down
-	@$(compose) -f docker-compose-mounted.yml up --force-recreate --build
+	@$(compose) -f compose-mounts.yaml up --force-recreate --build
 
 dev:
 	@echo 'Please switch to using new target: ${MAKE} mounted'

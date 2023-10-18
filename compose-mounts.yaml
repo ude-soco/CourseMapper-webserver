@@ -1,4 +1,7 @@
 services:
+  coursemapper-kg:
+    image: coursemapper-webserver-coursemapper-kg-web
+
   proxy:
     image: coursemapper-webserver-proxy
 
