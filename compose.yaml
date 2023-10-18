@@ -1,5 +1,6 @@
 name: coursemapper-webserver
 include:
+- ./coursemapper-kg/compose.yaml
 - ./proxy/compose.yaml
 - ./webapp/compose.yaml
 - ./webserver/compose.yaml

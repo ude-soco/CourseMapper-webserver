@@ -1,0 +1,7 @@
+services:
+  coursemapper-kg:
+    image: ${IMAGE_NAME_PREFIX:-socialcomputing/}coursemapper-webserver-coursemapper-kg:${IMAGE_TAG:-latest}
+    build: .
+    ports:
+    - 8001:8001
+    restart: always
