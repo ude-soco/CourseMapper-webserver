@@ -8,7 +8,7 @@ COPY debian/sources.list /etc/apt/sources.list
 
 # Install dependencies
 ENV BUILD_DEPS "build-essential pkg-config libc-dev"
-ENV RUNTIME_DEPS "curl"
+ENV RUNTIME_DEPS "gunicorn"
 RUN --mount=type=cache,sharing=private,target=/var/cache/apt \
     --mount=type=cache,sharing=private,target=/var/lib/apt <<EOF
   rm -f /etc/apt/apt.conf.d/docker-clean
@@ -36,8 +36,8 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 COPY --chown=app:app Pipfile* .
 RUN  --mount=type=cache,sharing=private,target=/home/app/.cache/pip,uid=1000 \
      --mount=type=cache,sharing=private,target=/home/app/.cache/pipenv,uid=1000 <<EOF
+  pip install --no-color pip==23.2.1 pipenv==2023.9.8
   pipenv install --deploy
-  pip install --no-color pip==23.2.1 pipenv==2023.9.8 gunicorn==21.2.0 &&
 EOF
 
 # Clean up build dependencies
