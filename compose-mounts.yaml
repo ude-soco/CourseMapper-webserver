@@ -7,7 +7,7 @@ services:
     build:
       dockerfile: dev.Dockerfile
     ports:
-      - 4200:4200
+    - 4200:4200
     volumes:
     - ./webapp:/app
 
@@ -16,7 +16,7 @@ services:
     build:
       dockerfile: dev.Dockerfile
     ports:
-      - 8080:8080
+    - 8080:8080
     volumes:
     - ./webserver:/app
     - ./webserver/public/uploads:/app/public/uploads
