@@ -47,6 +47,11 @@
     padding: 0
   }
 
+  .p-menu .p-menuitem-link .p-menuitem-icon.red-menu-icon{
+    color: rgb(242, 66, 66);
+}
+
+
   .contextMenuButton.p-button:enabled:hover {
     background: rgb(214 215 223 / 92%);
     color: #090909;

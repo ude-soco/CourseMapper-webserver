@@ -117,6 +117,8 @@
                   (notificationSettingClicked)="
                     onChannelNotificationSettingsClicked($event)
                   "
+                   [channelSettingChosen]="true"
+                  (viewChannelDashboardClicked)="viewChannelDashboardClicked()"
                 ></app-context-menu>
               </ng-template>
             </p-overlayPanel>
@@ -156,6 +158,8 @@
                   (notificationSettingClicked)="
                     onChannelNotificationSettingsClicked($event)
                   "
+                  [channelSettingChosen]="true"
+                  (viewChannelDashboardClicked)="viewChannelDashboardClicked()"
                 ></app-context-menu>
               </ng-template>
             </p-overlayPanel>
@@ -300,6 +304,8 @@
               resetTo="course"
               (renameClicked)="onRenameTopic()"
               (deleteClicked)="onDeleteTopic()"
+              (viewTopicDashboardClicked)="viewDashboardClicked()"
+              [topicSettingChosen]="true"
               (resetButtonClicked)="onResetTopicNotificationsClicked()"
               (notificationSettingClicked)="
                 onTopicNotificationSettingsClicked($event)

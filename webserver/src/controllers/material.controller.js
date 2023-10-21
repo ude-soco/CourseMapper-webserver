@@ -379,7 +379,7 @@ export const newIndicator = async (req, res, next) => {
   }
 
   return res.status(200).send({
-    success: `indicator with id = '${indicator._id}' has been added successfully!`,
+    success: `Indicator added successfully!`,
     indicator: indicator,
   });
 };
@@ -422,7 +422,7 @@ export const deleteIndicator = async (req, res, next) => {
     return res.status(500).send({ error: "Error saving material" });
   }
   return res.status(200).send({
-    success: `indicator with id = '${indicatorId}' has been deleted successfully!`,
+    success: `Indicator deleted successfully!`,
   });
 };
 
@@ -496,9 +496,7 @@ export const resizeIndicator = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: "Error saving material" });
   }
-  return res.status(200).send({
-    success: `indicator with id = '${indicatorId}' has been updated successfully!`,
-  });
+  return res.status(200).send();
 
 }
 
@@ -544,7 +542,7 @@ export const reorderIndicators = async (req, res, next) => {
     return res.status(500).send({ error: "Error saving material" });
   }
   return res.status(200).send({
-    success: `indicators have been updated successfully!`,
+    success: `Indicators updated successfully!`,
     indicators: foundMaterial.indicators,
   });
 

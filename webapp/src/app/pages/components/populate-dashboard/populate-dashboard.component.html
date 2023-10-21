@@ -6,14 +6,15 @@
         role === 'moderator' || forPersonalDashboard 
       "
     >
-      <div></div>
+      <div> <p class="font-medium text-xl" *ngIf="indicators?.length === 0"
+        >There are no indicators created yet in this dashboard!</p></div>
       <div>
         <div class="">
           <button
             id="addCourseConfirm"
             pButton
             icon="pi pi-plus"
-            class="button p-button-raised float-right"
+            class="button p-button-raised float-right btn-add"
             color="text-blue-500"
             (click)="onAddIndicatorDialogueClicked()"
             label="Add Indicator"
@@ -23,10 +24,6 @@
     </div>
   </div>
 
-  
-    <span class="font-medium text-xl" *ngIf="indicators?.length === 0"
-    >There are no indicators created yet in this dashboard!</span
-  >
   
   <div
     class="flex flex-wrap justify-self-start cursor-pointer"
@@ -126,4 +123,12 @@
 </div>
 
 <p-toast position="bottom-left"></p-toast>
-<p-confirmDialog #cd></p-confirmDialog>
+<p-confirmDialog [baseZIndex]="10000" #cd>
+  
+  <p-footer class="flex flex-wrap justify-end">
+    <button class="p-button p-button-raised btn btn-bg" type="button" pButton icon="pi pi-times" label="No" (click)="cd.reject()"></button>
+    <button class="p-button p-button-raised p-button-danger btn" type="button" pButton icon="pi pi-check" label="Yes" (click)="cd.accept()"></button>
+   
+</p-footer>
+
+</p-confirmDialog>

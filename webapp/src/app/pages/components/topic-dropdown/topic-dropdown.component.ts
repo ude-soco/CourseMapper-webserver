@@ -38,6 +38,7 @@ import { getNotifications } from '../notifications/state/notifications.reducer';
 import { Annotation } from 'src/app/models/BlockingNotification';
 import * as $ from 'jquery';
 import * as NotificationActions from '../notifications/state/notifications.actions';
+import { Console } from 'console';
 
 @Component({
   selector: 'app-topic-dropdown',
@@ -1065,10 +1066,17 @@ export class TopicDropdownComponent implements OnInit {
       'course',
       this.courseService.getSelectedCourse()._id,
       'topic',
-      this.selectedTopic._id
+      this.selectedTopic._id,'dashboard'
           
     ]);
-    console.log("Navigated to topic")
+   
 
+  }
+  viewChannelDashboardClicked(){
+     this.router.navigate([
+      'course',
+      this.courseService.getSelectedCourse()._id,
+      'channel',
+      this.selectedChannelId,'dashboard']);     
   }
 }

@@ -39,8 +39,7 @@ export class CourseWelcomeComponent implements OnInit, OnDestroy {
   Users: any;
   role: string;
   selectedCourseId: string = "";
-  indicators: Indicator[] = [];
-  forCourseDashboard: boolean = false;
+
   showInfoError:  ShowInfoError;
 
   constructor(
@@ -62,13 +61,11 @@ export class CourseWelcomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.forCourseDashboard = true;
     this.selectedCourse = this.courseService.getSelectedCourse();
     this.Users = [];
     this.courseService.onSelectCourse.subscribe((course) => {
       this.selectedCourse = course; 
-      this.selectedCourseId = course._id;
-      this.getIndicators(course._id);    
+      this.selectedCourseId = course._id;  
       this.topicChannelService.fetchTopics(course._id).subscribe((res) => {
         this.selectedCourse = res.course;
         this.Users = course.users;
@@ -84,15 +81,6 @@ export class CourseWelcomeComponent implements OnInit, OnDestroy {
     });
 
     
-  }
-
-  getIndicators(courseId) {
-    this.indicatorService.fetchIndicators(courseId).subscribe((indicators) => {
-      this.indicators = indicators;
-    });
-    this.indicatorService.onUpdateIndicators$.subscribe(
-      (indicators) => (this.indicators = indicators)
-    );
   }
 
 

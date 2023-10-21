@@ -90,9 +90,14 @@ import { MentionModule } from 'angular-mentions';
 import { MessageService } from 'primeng/api';
 import { TeamComponent } from './pages/team/team.component';
 import { AboutComponent } from './pages/about/about.component';
-import { PersonalDashboardComponent } from './pages/personal-dashboard/personal-dashboard.component';
-import { PopulateDashboardComponent } from './pages/populate-dashboard/populate-dashboard.component';
-import { TopicDashboardComponent } from './pages/components/topic-dashboard/topic-dashboard.component';
+import { PersonalDashboardComponent } from './pages/components/Dashboards/personal-dashboard/personal-dashboard.component';
+import { PopulateDashboardComponent } from './pages/components/populate-dashboard/populate-dashboard.component';
+import { TopicDashboardComponent } from './pages/components/Dashboards/topic-dashboard/topic-dashboard.component';
+import { CourseDashboardComponent } from './pages/components/Dashboards/course-dashboard/course-dashboard.component';
+import { ChannelDashboardComponent } from './pages/components/Dashboards/channel-dashboard/channel-dashboard.component';
+import { MaterialDashboardComponent } from './pages/components/Dashboards/material-dashboard/material-dashboard.component';
+import { BackButtonComponent } from './pages/components/back-button/back-button.component';
+import { indicatorReducer } from './pages/components/Dashboards/state/dashboard.reducer';
 @NgModule({
   declarations: [
     AppComponent,
@@ -124,7 +129,11 @@ import { TopicDashboardComponent } from './pages/components/topic-dashboard/topi
     AboutComponent,
     PersonalDashboardComponent,
     TopicDashboardComponent,
-   // PopulateDashboardComponent
+    CourseDashboardComponent,
+    ChannelDashboardComponent,
+   PopulateDashboardComponent,
+   MaterialDashboardComponent, 
+   BackButtonComponent
   ],
   imports: [
     MentionModule,
@@ -152,6 +161,7 @@ import { TopicDashboardComponent } from './pages/components/topic-dashboard/topi
     }),
     SharedComponentsModule,
     StoreModule.forFeature('general', appReducer),
+    StoreModule.forRoot({indicators : indicatorReducer}),
     EffectsModule.forFeature([AppEffects]),
     InputTextareaModule,
     DragulaModule.forRoot(),

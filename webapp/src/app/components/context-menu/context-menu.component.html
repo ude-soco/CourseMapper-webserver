@@ -11,7 +11,21 @@
     label="View topic dashboard"
     icon="pi pi-chart-bar"
     styleClass="contextMenuButton"
-    (onClick)="onViewDashboardClicked()"
+    (onClick)="onViewTopicDashboardClicked()"
+  ></p-button>
+  <p-button
+  *ngIf="channelSettingChosen"
+    label="View Channel dashboard"
+    icon="pi pi-chart-bar"
+    styleClass="contextMenuButton"
+    (onClick)="onViewChannelDashboardClicked()"
+  ></p-button>
+  <p-button
+  *ngIf="MaterialSettingChosen"
+    label="View Channel dashboard"
+    icon="pi pi-chart-bar"
+    styleClass="contextMenuButton"
+    (onClick)="onViewMaterialDashboardClicked()"
   ></p-button>
   <p-button
     *ngIf="showModeratorPrivileges"

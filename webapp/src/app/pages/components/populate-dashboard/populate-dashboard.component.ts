@@ -1,7 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { DragulaService } from 'ng2-dragula';
 import { MenuItem, ConfirmationService, MessageService } from 'primeng/api';
-import { MenuModule } from 'primeng/menu';
 import { ShowInfoError } from 'src/app/_helpers/show-info-error';
 import { Indicator } from 'src/app/models/Indicator';
 import { Store } from '@ngrx/store';
@@ -10,8 +9,9 @@ import { IndicatorService } from 'src/app/services/indicator.service';
 import {
   State,
   getCurrentMaterialId,
-} from '../components/materials/state/materials.reducer';
+} from '../materials/state/materials.reducer';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-populate-dashboard',
@@ -42,13 +42,17 @@ export class PopulateDashboardComponent {
   moderatorUserOptions: MenuItem[] = [
     {
       label: 'Delete',
-      icon: 'pi pi-times',
+      icon: 'pi pi-trash ',
+      iconClass: 'red-menu-icon',
       command: () => this.onDeleteIndicator(this.indicator),
     },
   ];
 
+  indicators2: Observable<{indicators2: Indicator[]}>;
+
   constructor(
-    private store: Store<State>,
+   
+    private store: Store<{indicators: {indicators2: Indicator[]}}>,
     private confirmationService: ConfirmationService,
     private indicatorService: IndicatorService,
     private messageService: MessageService,
@@ -58,6 +62,7 @@ export class PopulateDashboardComponent {
     this.dashboardDragger();
   }
   ngOnInit(): void {
+    this.indicators2 = this.store.select('indicators')
 
   }
 
@@ -90,7 +95,7 @@ export class PopulateDashboardComponent {
         this.forMaterialDashboard = false;
         this.forMaterialDashboard = false;
         this.forTopicDashboard = false;
-        this.updateCourseIndicator(indicator, this.selectedCourseId);
+        this.updateCourseIndicator(indicator);
       }
       if (this.forMaterialDashboard) {
         this.forPersonalDashboard = false;
@@ -187,7 +192,6 @@ export class PopulateDashboardComponent {
   }
 
   onConfirmDeleteIndicator(indicator) {
-    this.UpdateIdsFromUrl();
 
     if (this.forCourseDashboard) {
       this.forPersonalDashboard = false;
@@ -227,7 +231,7 @@ export class PopulateDashboardComponent {
   }
   confirmCourseIndicatorDeletion(indicator) {
     this.indicatorService
-      .deleteIndicator(indicator, this.selectedCourseId)
+      .deleteIndicator(indicator, this.courseId)
       .subscribe((res: any) => {
         let showInfoError = new ShowInfoError(this.messageService);
         if ('success' in res) {
@@ -292,7 +296,7 @@ export class PopulateDashboardComponent {
 
   onReorderCourseIndicators(sourceIndex, targetIndex) {
     this.indicatorService
-      .reorderUserIndicators(sourceIndex, targetIndex)
+      .reorderIndicators(sourceIndex, targetIndex, this.courseId)
       .subscribe((res: any) => {
         if ('success' in res) {
           this.showInfoError = new ShowInfoError(this.messageService);
@@ -316,6 +320,8 @@ export class PopulateDashboardComponent {
   }
 
   onReorderMaterialIndicators(sourceIndex, targetIndex) {
+    console.log(this.materialId)
+    
     this.indicatorService
       .reorderMaterialIndicators(sourceIndex, targetIndex, this.materialId)
       .subscribe((res: any) => {
@@ -358,9 +364,9 @@ export class PopulateDashboardComponent {
 
  
 
-  updateCourseIndicator(indicator: Indicator, courseId) {
+  updateCourseIndicator(indicator: Indicator) {
     this.indicatorService
-      .updateIndicator(indicator, courseId)
+      .updateIndicator(indicator,this.courseId)
       .subscribe((res: any) => {
         let showInfoError = new ShowInfoError(this.messageService);
         if ('success' in res) {
@@ -441,6 +447,18 @@ export class PopulateDashboardComponent {
       this.channelId = channelId;
       this.courseId = courseId; 
       this.materialId = materialId 
+    }
+
+    if (url.includes('course') && url.includes('channel') && url.includes('materialDashboard')) {
+      const courseRegex = /\/course\/(\w+)/;
+      const channelRegex  = /\/channel\/(\w+)/;
+      const materialRegex =  /\/materialDashboard\/(\w+)/;
+      const courseId = courseRegex.exec(url)[1];
+      const channelId = channelRegex.exec(url)[1];
+      const materialId = materialRegex.exec(url)[1];
+      this.courseId = courseId
+      this.channelId = channelId
+      this.materialId = materialId      
     }
     
   }

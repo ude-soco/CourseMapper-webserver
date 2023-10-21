@@ -13,10 +13,6 @@ import { TopicChannelService } from './topic-channel.service';
 export class IndicatorService {
   private API_URL = environment.API_URL;
   private indicators: Indicator[] = [];
-  private userIndicators: Indicator[] = [];
-  private materialIndicators: Indicator[] = [];
-  private channelIndicators: Indicator[] = [];
-  private topicIndicators: Indicator[] = [];
   onUpdateIndicators$ = new Subject<Indicator[]>();
   onUpdateUserIndicators$ = new Subject<Indicator[]>();
   onUpdateMaterialIndicators$ = new Subject<Indicator[]>();
@@ -149,7 +145,7 @@ export class IndicatorService {
     const url = `${this.API_URL}/user/indicators`;
     return this.http.get<Indicator[]>(url).pipe(
       tap((indicators) => {
-        this.userIndicators = indicators;
+        this.indicators = indicators;
       })
     );
   }
@@ -168,8 +164,8 @@ export class IndicatorService {
       }),
       tap((res) => {
         if (!('errorMsg' in res)) {
-          this.userIndicators.push(res.indicator);
-          this.onUpdateUserIndicators$.next(this.userIndicators);
+          this.indicators.push(res.indicator);
+          this.onUpdateUserIndicators$.next(this.indicators);
         }
       })
     );
@@ -189,10 +185,10 @@ export class IndicatorService {
       }),
       tap((res) => {
         if (!('errorMsg' in res)) {
-          this.userIndicators = this.userIndicators.filter(
+          this.indicators = this.indicators.filter(
             (indicator) => indicator._id.toString() !== indicatorId.toString()
           );
-          this.onUpdateUserIndicators$.next(this.userIndicators);
+          this.onUpdateUserIndicators$.next(this.indicators);
         }
       })
     );
@@ -212,8 +208,8 @@ export class IndicatorService {
       }),
       tap((res) => {
         if (!('errorMsg' in res)) {
-          this.userIndicators = res.indicators;
-          this.onUpdateUserIndicators$.next(this.userIndicators);
+          this.indicators = res.indicators;
+          this.onUpdateUserIndicators$.next(this.indicators);
         }
       })
     );
@@ -234,12 +230,12 @@ export class IndicatorService {
       }),
       tap((res) => {
         if (!('errorMsg' in res)) {
-          this.userIndicators.forEach((indicator) => {
+          this.indicators.forEach((indicator) => {
             if (indicator._id.toString() === updatedindicator._id.toString()) {
               indicator = updatedindicator;
             }
           });
-          this.onUpdateUserIndicators$.next(this.userIndicators);
+          this.onUpdateUserIndicators$.next(this.indicators);
         }
       })
     );
@@ -261,19 +257,18 @@ export class IndicatorService {
       }),
       tap((res) => {
         if (!('errorMsg' in res)) {
-          this.materialIndicators.push(res.indicator);
-          this.onUpdateMaterialIndicators$.next(this.materialIndicators);
+          this.indicators.push(res.indicator);
+          this.onUpdateMaterialIndicators$.next(this.indicators);
         }
       })
     );
   }
 
-  fetchMaterialIndicators(materialId): Observable<Indicator[]> {
-    const courseId = this.courseService.getSelectedCourse()._id;
+  fetchMaterialIndicators(materialId, courseId): Observable<Indicator[]> {
     const url = `${this.API_URL}/courses/${courseId}/materials/${materialId}/indicator`;
     return this.http.get<Indicator[]>(url).pipe(
       tap((indicators) => {
-        this.materialIndicators = indicators;
+        this.indicators = indicators;
       })
     );
   }
@@ -297,11 +292,11 @@ export class IndicatorService {
         }),
         tap((res) => {
           if (!('errorMsg' in res)) {
-            this.materialIndicators = this.materialIndicators.filter(
+            this.indicators = this.indicators.filter(
               (indicator) =>
                 indicator._id.toString() !== indicatorId.toString()
             );
-            this.onUpdateMaterialIndicators$.next(this.materialIndicators);
+            this.onUpdateMaterialIndicators$.next(this.indicators);
           }
         })
       );
@@ -328,12 +323,12 @@ export class IndicatorService {
       }),
       tap((res) => {
         if (!('errorMsg' in res)) {
-          this.materialIndicators.forEach((indicator) => {
+          this.indicators.forEach((indicator) => {
             if (indicator._id.toString() === updatedindicator._id.toString()) {
               indicator = updatedindicator;
             }
           });
-          this.onUpdateMaterialIndicators$.next(this.materialIndicators);
+          this.onUpdateMaterialIndicators$.next(this.indicators);
         }
       })
     );
@@ -355,8 +350,8 @@ export class IndicatorService {
       }),
       tap((res) => {
         if (!('errorMsg' in res)) {
-          this.materialIndicators = res.indicators;
-          this.onUpdateMaterialIndicators$.next(this.materialIndicators);
+          this.indicators = res.indicators;
+          this.onUpdateMaterialIndicators$.next(this.indicators);
         }
       })
     );
@@ -379,19 +374,19 @@ export class IndicatorService {
       }),
       tap((res) => {
         if (!('errorMsg' in res)) {
-          this.channelIndicators.push(res.indicator);
-          this.onUpdateChannelIndicators$.next(this.channelIndicators);
+          this.indicators.push(res.indicator);
+          this.onUpdateChannelIndicators$.next(this.indicators);
         }
       })
     );
   }
 
-  fetchChannelIndicators(channelId): Observable<Indicator[]> {
-    const courseId = this.courseService.getSelectedCourse()._id;
+  fetchChannelIndicators(courseId, channelId): Observable<Indicator[]> {
+    //const courseId = this.courseService.getSelectedCourse()._id;
     const url = `${this.API_URL}/courses/${courseId}/channels/${channelId}/indicator`;
     return this.http.get<Indicator[]>(url).pipe(
       tap((indicators) => {
-        this.channelIndicators = indicators;
+        this.indicators = indicators;
       })
     );
   }
@@ -415,11 +410,11 @@ export class IndicatorService {
         }),
         tap((res) => {
           if (!('errorMsg' in res)) {
-            this.channelIndicators = this.channelIndicators.filter(
+            this.indicators = this.indicators.filter(
               (indicator) =>
                 indicator._id.toString() !== indicatorId.toString()
             );
-            this.onUpdateChannelIndicators$.next(this.channelIndicators);
+            this.onUpdateChannelIndicators$.next(this.indicators);
           }
         })
       );
@@ -446,12 +441,12 @@ export class IndicatorService {
       }),
       tap((res) => {
         if (!('errorMsg' in res)) {
-          this.channelIndicators.forEach((indicator) => {
+          this.indicators.forEach((indicator) => {
             if (indicator._id.toString() === indicatorId.toString()) {
               indicator = updatedindicator;
             }
           });
-          this.onUpdateChannelIndicators$.next(this.channelIndicators);
+          this.onUpdateChannelIndicators$.next(this.indicators);
         }
       })
     );
@@ -474,8 +469,8 @@ export class IndicatorService {
       }),
       tap((res) => {
         if (!('errorMsg' in res)) {
-          this.channelIndicators = res.indicators;
-          this.onUpdateChannelIndicators$.next(this.channelIndicators);
+          this.indicators = res.indicators;
+          this.onUpdateChannelIndicators$.next(this.indicators);
         }
       })
     );
@@ -498,8 +493,8 @@ export class IndicatorService {
       }),
       tap((res) => {
         if (!('errorMsg' in res)) {
-          this.topicIndicators.push(res.indicator);
-          this.onUpdateTopicIndicators$.next(this.topicIndicators);
+          this.indicators.push(res.indicator);
+          this.onUpdateTopicIndicators$.next(this.indicators);
         }
       })
     );
@@ -510,7 +505,7 @@ export class IndicatorService {
     const url = `${this.API_URL}/courses/${courseId}/topics/${topicId}/indicator`;
     return this.http.get<Indicator[]>(url).pipe(
       tap((indicators) => {
-        this.topicIndicators = indicators;
+        this.indicators = indicators;
       })
     );
   }
@@ -535,11 +530,11 @@ export class IndicatorService {
         }),
         tap((res) => {
           if (!('errorMsg' in res)) {
-            this.topicIndicators = this.topicIndicators.filter(
+            this.indicators = this.indicators.filter(
               (indicator) =>
                 indicator._id.toString() !== indicatorId.toString()
             );
-            this.onUpdateTopicIndicators$.next(this.topicIndicators);
+            this.onUpdateTopicIndicators$.next(this.indicators);
           }
         })
       );
@@ -566,12 +561,12 @@ export class IndicatorService {
       }),
       tap((res) => {
         if (!('errorMsg' in res)) {
-          this.topicIndicators.forEach((indicator) => {
+          this.indicators.forEach((indicator) => {
             if (indicator._id.toString() === indicatorId.toString()) {
               indicator = updatedindicator;
             }
           });
-          this.onUpdateTopicIndicators$.next(this.topicIndicators);
+          this.onUpdateTopicIndicators$.next(this.indicators);
         }
       })
     );
@@ -594,8 +589,8 @@ export class IndicatorService {
       }),
       tap((res) => {
         if (!('errorMsg' in res)) {
-          this.topicIndicators = res.indicators;
-          this.onUpdateTopicIndicators$.next(this.topicIndicators);
+          this.indicators = res.indicators;
+          this.onUpdateTopicIndicators$.next(this.indicators);
         }
       })
     );

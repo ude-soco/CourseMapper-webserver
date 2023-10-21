@@ -35,6 +35,7 @@ import { TopicChannelService } from 'src/app/services/topic-channel.service';
   providers: [MessageService, ConfirmationService, DialogService],
 })
 export class ChannelbarComponent implements OnInit {
+ 
   showConceptMapEvent: boolean = false;
 
   @Output() conceptMapEvent: EventEmitter<boolean> = new EventEmitter();
@@ -125,6 +126,13 @@ export class ChannelbarComponent implements OnInit {
       command: () => this.onDeleteCourse(),
     },
     {
+      label: "View topic dashboard",
+      icon: "pi pi-chart-bar",
+      styleClass: "contextMenuButton",
+      command: () => this.onViewDashboardClicked(),
+      
+    },
+    {
       label: 'Notification Settings',
       icon: 'pi pi-bell',
       command: ($event) => this.onNotificationSettingsClicked($event),
@@ -132,6 +140,13 @@ export class ChannelbarComponent implements OnInit {
   ];
 
   normalUserOptions: MenuItem[] = [
+    {
+      label: "View topic dashboard",
+      icon: "pi pi-chart-bar",
+      styleClass: "contextMenuButton",
+      command: () => this.onViewDashboardClicked(),
+      
+    },
     {
       label: 'Notification Settings',
       icon: 'pi pi-bell',
@@ -461,5 +476,13 @@ export class ChannelbarComponent implements OnInit {
     // this.cmSelected = show;
     // this.selectedToolEvent.emit('none');
     this.materialKgService.courseKgOrdered(this.selectedCourse);
+  }
+  onViewDashboardClicked(): void {
+    this.router.navigate([
+      'course',
+      this.courseService.getSelectedCourse()._id,
+      'dashboard'
+          
+    ]);
   }
 }

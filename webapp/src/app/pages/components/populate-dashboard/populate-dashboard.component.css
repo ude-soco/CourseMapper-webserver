@@ -1,3 +1,5 @@
+
+
 #addIndicatorButton {
     height: 70%;
   }
@@ -65,5 +67,37 @@
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
     filter: alpha(opacity=20);
   }
+
+  .btn-add  {
+   transform: scaleY(0.9);
+    background-color: var(--course-mapper-blue); /* Reduce the size to half */
+    
+  }
+
+.btn-add:hover{
+background-color:#0f557a;
+  }
+
+  .btn{
+    transform: scale(0.8);
+    width: 70px;
+    
+   
+    
+  }
+  .btn-bg{
+    background-color: var(--course-mapper-blue); /* Reduce the size to half */
+  }
+
+  .btn:hover{
+    background-color:#14577a;
+  }
+
+  .p-menu .p-menuitem-icon.red-menu-icon{
+    background-color: rgb(242, 66, 66);
+}
+  
+
+ 
   
   

@@ -15,7 +15,7 @@
           >
             No discription given.
           </div>
-          <div class="justify-self-start">{{ selectedCourse.description }}</div>
+          <div class="justify-self-start" style="width: 750px;">{{ selectedCourse.description }}</div>
         </div>
         <div class="mt-4 mb-4">
           <div class="flex flex-wrap gap-5">
@@ -55,15 +55,6 @@
   </div>
 
   <hr />
-  <div>
-    <p class="text-lg font-semibold mt-3">Course Dashboard</p>
-    <app-populate-dashboard
-      [selectedCourseId]="selectedCourseId"
-      [indicators]="indicators"
-      [role]="role"
-      [forCourseDashboard]="forCourseDashboard"
-    ></app-populate-dashboard>
-  </div>
 </div>
 
 <p-toast position="bottom-left"></p-toast>

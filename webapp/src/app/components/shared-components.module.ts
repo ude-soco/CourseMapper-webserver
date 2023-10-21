@@ -17,9 +17,10 @@ import { MentionsComponent } from './mentions/mentions.component';
 import { MentionModule } from 'angular-mentions';
 import { FooterComponent } from './footer/footer.component';
 import { AddIndicatorComponent } from './add-indicator/add-indicator.component';
-import { PopulateDashboardComponent } from '../pages/populate-dashboard/populate-dashboard.component';
+import { PopulateDashboardComponent } from '../pages/components/populate-dashboard/populate-dashboard.component';
 import { ByPassUrlSanitizationPipe } from '../pipes/by-pass-url-sanitization.pipe';
 import { DragulaModule } from 'ng2-dragula';
+import { BackButtonComponent } from '../pages/components/back-button/back-button.component';
 
 
 @NgModule({
@@ -37,8 +38,9 @@ import { DragulaModule } from 'ng2-dragula';
     MentionsComponent,
     FooterComponent,
     AddIndicatorComponent,
-    PopulateDashboardComponent,
+   // PopulateDashboardComponent,
     ByPassUrlSanitizationPipe,
+   
     
   ],
   imports: [
@@ -63,7 +65,7 @@ import { DragulaModule } from 'ng2-dragula';
     MentionsComponent,
     FooterComponent,
     AddIndicatorComponent,
-    PopulateDashboardComponent,
+   // PopulateDashboardComponent,
     ByPassUrlSanitizationPipe,
   ],
 })

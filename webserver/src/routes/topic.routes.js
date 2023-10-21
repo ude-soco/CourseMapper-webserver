@@ -54,13 +54,15 @@ module.exports = function (app) {
   app.post(
     "/api/courses/:courseId/topics/:topicId/indicator",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.newIndicator
+    controller.newIndicator,
+  
   );
 
   app.delete(
     "/api/courses/:courseId/topics/:topicId/indicator/:indicatorId",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.deleteIndicator
+    controller.deleteIndicator,
+    
   );
 
   app.get(

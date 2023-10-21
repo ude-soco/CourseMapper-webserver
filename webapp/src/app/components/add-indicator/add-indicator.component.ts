@@ -41,7 +41,7 @@ export class AddIndicatorComponent implements OnInit {
   });
 
   constructor(
-    private store: Store<State>,
+    private store: Store<{indicators: {indicators2: Indicator[]}}>,
     private messageService: MessageService,
     private formBuilder: FormBuilder,
     private indicatorService: IndicatorService,
@@ -114,6 +114,7 @@ export class AddIndicatorComponent implements OnInit {
       this.forChannelDashboard = false;
       this.forTopicDashboard = false;
       this.addNewCourseIndicator(newIndicator)
+      
     }
     if(this.forMaterialDashboard){
       this.forPersonalDashboard = false
