@@ -48,11 +48,9 @@ export class PopulateDashboardComponent {
     },
   ];
 
-  indicators2: Observable<{indicators2: Indicator[]}>;
 
   constructor(
-   
-    private store: Store<{indicators: {indicators2: Indicator[]}}>,
+     
     private confirmationService: ConfirmationService,
     private indicatorService: IndicatorService,
     private messageService: MessageService,
@@ -62,7 +60,7 @@ export class PopulateDashboardComponent {
     this.dashboardDragger();
   }
   ngOnInit(): void {
-    this.indicators2 = this.store.select('indicators')
+
 
   }
 

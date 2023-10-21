@@ -5,9 +5,9 @@ import { parse } from 'angular-html-parser';
 import { MessageService } from 'primeng/api';
 import { ShowInfoError } from 'src/app/_helpers/show-info-error';
 import { Indicator } from 'src/app/models/Indicator';
-import { State, getCurrentMaterialId } from 'src/app/pages/components/materials/state/materials.reducer';
 import { IndicatorService } from 'src/app/services/indicator.service';
 import { IFrameValidators } from 'src/app/validators/iframe.validators';
+
 
 @Component({
   selector: 'app-add-indicator',
@@ -114,7 +114,7 @@ export class AddIndicatorComponent implements OnInit {
       this.forChannelDashboard = false;
       this.forTopicDashboard = false;
       this.addNewCourseIndicator(newIndicator)
-      
+     
     }
     if(this.forMaterialDashboard){
       this.forPersonalDashboard = false

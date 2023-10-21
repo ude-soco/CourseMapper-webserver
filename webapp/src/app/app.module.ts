@@ -97,7 +97,6 @@ import { CourseDashboardComponent } from './pages/components/Dashboards/course-d
 import { ChannelDashboardComponent } from './pages/components/Dashboards/channel-dashboard/channel-dashboard.component';
 import { MaterialDashboardComponent } from './pages/components/Dashboards/material-dashboard/material-dashboard.component';
 import { BackButtonComponent } from './pages/components/back-button/back-button.component';
-import { indicatorReducer } from './pages/components/Dashboards/state/dashboard.reducer';
 @NgModule({
   declarations: [
     AppComponent,
@@ -161,7 +160,6 @@ import { indicatorReducer } from './pages/components/Dashboards/state/dashboard.
     }),
     SharedComponentsModule,
     StoreModule.forFeature('general', appReducer),
-    StoreModule.forRoot({indicators : indicatorReducer}),
     EffectsModule.forFeature([AppEffects]),
     InputTextareaModule,
     DragulaModule.forRoot(),
@@ -169,7 +167,6 @@ import { indicatorReducer } from './pages/components/Dashboards/state/dashboard.
       url: `${environment.apiUrl}`,
       options: {
         path: '/api/socket.io',
-        // transports: ['websocket'],
       },
     }),
     CourseModule,
