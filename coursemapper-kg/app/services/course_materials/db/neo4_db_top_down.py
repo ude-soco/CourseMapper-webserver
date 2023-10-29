@@ -1,7 +1,6 @@
 from ..kwp_extraction.dbpedia.concept_tagging import DBpediaSpotlight
 from neo4j import GraphDatabase
 import numpy as np
-from py2neo import Graph
 import re
 import logging
 from log import LOG
@@ -705,7 +704,6 @@ class NeoDataBase:
                                            auth=(user, password),
                                            encrypted=False)
 
-        self.graph = Graph(uri, auth=(user, password))
         self.DBpediaSpotlight = DBpediaSpotlight()
 
     def close(self):
