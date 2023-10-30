@@ -16,11 +16,6 @@ export const environment = {
 export const environment_Python = {
   PYTHON_SERVER: 'http://localhost:5000/',
 };
-export const environment_Neo4j = {
-  neo4j_url: 'bolt://localhost:7687',
-  neo4j_name: 'neo4j',
-  neo4j_pass: '1234qwer!',
-};
 
 /*
  * For easier debugging in development mode, you can import the following file
