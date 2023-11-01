@@ -35,7 +35,7 @@ export class TopicDashboardComponent implements OnInit {
 
   }
   ngOnInit(): void {
-    this.indicatorService.onUpdateTopicIndicators$.subscribe(indicators => {
+    this.indicatorService.onUpdateIndicators$.subscribe(indicators => {
       this.indicators = indicators;
     })
 

@@ -3,13 +3,7 @@ import { DragulaService } from 'ng2-dragula';
 import { MenuItem, ConfirmationService, MessageService } from 'primeng/api';
 import { ShowInfoError } from 'src/app/_helpers/show-info-error';
 import { Indicator } from 'src/app/models/Indicator';
-import { Store } from '@ngrx/store';
-
 import { IndicatorService } from 'src/app/services/indicator.service';
-import {
-  State,
-  getCurrentMaterialId,
-} from '../materials/state/materials.reducer';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
@@ -82,42 +76,58 @@ export class PopulateDashboardComponent {
       );
       this.UpdateIdsFromUrl();
       if (this.forPersonalDashboard) {
-        this.forCourseDashboard = false;
-        this.forMaterialDashboard = false;
-        this.forMaterialDashboard = false;
-        this.forTopicDashboard = false;
+        this.negateOtherAttributesForPersonal();
         this.updatePersonalIndicator(indicator);
       }
       if (this.forCourseDashboard) {
-        this.forPersonalDashboard = false;
-        this.forMaterialDashboard = false;
-        this.forMaterialDashboard = false;
-        this.forTopicDashboard = false;
+       this.negateOtherAttributesForCourse();
         this.updateCourseIndicator(indicator);
       }
       if (this.forMaterialDashboard) {
-        this.forPersonalDashboard = false;
-        this.forCourseDashboard = false;
-        this.forMaterialDashboard = false;
-        this.forTopicDashboard = false;
+       this.negateOtherAttributesForMaterial();
         this.updateMaterialIndicator(indicator);
       }
       if(this.forChannelDashboard){
-        this.forPersonalDashboard = false;
-        this.forCourseDashboard = false;
-        this.forMaterialDashboard = false;
-        this.forTopicDashboard = false;
+        this.negateOtherAttributesForChannel();
         this.updateChannelIndicator(indicator);
       }
       if(this.forTopicDashboard){
-        this.forPersonalDashboard = false;
-        this.forCourseDashboard = false;
-        this.forMaterialDashboard = false;
-        this.forChannelDashboard = false;
+        this.negateOtherAttributesForTopic();
         this.updateTopicIndicator(indicator)
 
       }
     }
+  }
+
+ private negateOtherAttributesForPersonal(){
+    this.forCourseDashboard = false;
+    this.forMaterialDashboard = false;
+    this.forChannelDashboard= false;
+    this.forTopicDashboard = false;
+  }
+  private negateOtherAttributesForCourse(){
+    this.forPersonalDashboard = false;
+    this.forMaterialDashboard = false;
+    this.forChannelDashboard= false;
+    this.forTopicDashboard = false;
+  }
+  private negateOtherAttributesForMaterial(){
+    this.forPersonalDashboard = false;
+    this.forCourseDashboard = false;
+    this.forChannelDashboard= false;
+    this.forTopicDashboard = false;
+  }
+  private negateOtherAttributesForChannel(){
+    this.forPersonalDashboard = false;
+    this.forCourseDashboard = false;
+    this.forMaterialDashboard = false;
+    this.forTopicDashboard = false;
+  }
+  private negateOtherAttributesForTopic(){
+    this.forPersonalDashboard = false;
+    this.forCourseDashboard = false;
+    this.forMaterialDashboard = false;
+    this.forChannelDashboard = false;
   }
 
   dashboardDragger() {
@@ -138,38 +148,23 @@ export class PopulateDashboardComponent {
       this.UpdateIdsFromUrl();
 
       if (this.forPersonalDashboard) {
-        this.forCourseDashboard = false;
-        this.forMaterialDashboard = false;
-        this.forChannelDashboard = false;
-        this.forTopicDashboard = false;
+       this.negateOtherAttributesForPersonal();
         this.onReorderPersonalIndicators(args.sourceIndex, args.targetIndex);
       }
       if (this.forCourseDashboard) {
-        this.forPersonalDashboard = false;
-        this.forMaterialDashboard = false;
-        this.forChannelDashboard = false;
-        this.forTopicDashboard = false;
+        this.negateOtherAttributesForCourse();
         this.onReorderCourseIndicators(args.sourceIndex, args.targetIndex);
       }
       if(this.forMaterialDashboard){
-        this.forCourseDashboard = false;
-        this.forPersonalDashboard = false;
-        this.forChannelDashboard = false;
-        this.forTopicDashboard = false;
+       this.negateOtherAttributesForMaterial();
         this.onReorderMaterialIndicators(args.sourceIndex, args.targetIndex);
       }
       if(this.forChannelDashboard){
-        this.forCourseDashboard = false;
-        this.forPersonalDashboard = false;
-        this.forMaterialDashboard = false;
-        this.forTopicDashboard = false;
+        this.negateOtherAttributesForChannel();
         this.onReorderChannelIndicators(args.sourceIndex, args.targetIndex);
       }
       if(this.forTopicDashboard){
-        this.forCourseDashboard = false;
-        this.forPersonalDashboard = false;
-        this.forMaterialDashboard = false;
-        this.forChannelDashboard = false;
+        this.negateOtherAttributesForTopic();
         this.onReorderTopicIndicators(args.sourceIndex, args.targetIndex);
         
       }
@@ -192,41 +187,27 @@ export class PopulateDashboardComponent {
   onConfirmDeleteIndicator(indicator) {
 
     if (this.forCourseDashboard) {
-      this.forPersonalDashboard = false;
-      this.forMaterialDashboard = false;
-      this.forChannelDashboard = false;
-      this.forTopicDashboard = false;
+      this.negateOtherAttributesForCourse();
       this.confirmCourseIndicatorDeletion(indicator);
     }
     if (this.forPersonalDashboard) {
-      this.forCourseDashboard = false;
-      this.forMaterialDashboard = false;
-      this.forChannelDashboard = false;
-      this.forTopicDashboard = false
+      this.negateOtherAttributesForPersonal();
       this.confirmPersonalIndicatorDeletion(indicator);
     }
     if (this.forMaterialDashboard) {
-      this.forPersonalDashboard = false;
-      this.forCourseDashboard = false;
-      this.forChannelDashboard = false;
-      this.forTopicDashboard = false
+     this.negateOtherAttributesForMaterial();
       this.confirmMaterialIndicatorDeletion(indicator);
     }
     if(this.forChannelDashboard){
-      this.forPersonalDashboard = false;
-      this.forCourseDashboard = false;
-      this.forMaterialDashboard =  false;
-      this.forTopicDashboard = false
+     this.negateOtherAttributesForChannel();
       this.confirmChannelIndicatorDeletion(indicator)
     }
     if(this.forTopicDashboard){
-      this.forPersonalDashboard = false;
-      this.forCourseDashboard = false;
-      this.forMaterialDashboard =  false;
-      this.forChannelDashboard = false
+      this.negateOtherAttributesForTopic();
       this.confirmTopicIndicatorDeletion(indicator)
     }
   }
+  
   confirmCourseIndicatorDeletion(indicator) {
     this.indicatorService
       .deleteIndicator(indicator, this.courseId)

@@ -4,8 +4,7 @@ import { environment } from './../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { catchError, Observable, of, Subject, tap } from 'rxjs';
 import { CourseService } from './course.service';
-import { MaterilasService } from './materials.service';
-import { TopicChannelService } from './topic-channel.service';
+
 
 @Injectable({
   providedIn: 'root',
@@ -14,16 +13,12 @@ export class IndicatorService {
   private API_URL = environment.API_URL;
   private indicators: Indicator[] = [];
   onUpdateIndicators$ = new Subject<Indicator[]>();
-  onUpdateUserIndicators$ = new Subject<Indicator[]>();
-  onUpdateMaterialIndicators$ = new Subject<Indicator[]>();
-  onUpdateChannelIndicators$ = new Subject<Indicator[]>();
-  onUpdateTopicIndicators$ = new Subject<Indicator[]>();
+  
 
 
   constructor(private http: HttpClient,
      private courseService: CourseService,
-     private topicService: TopicChannelService,
-     private materialService: MaterilasService) {}
+     ) {}
 
   fetchIndicators(courseId): Observable<Indicator[]> {
     return this.http
@@ -52,7 +47,7 @@ export class IndicatorService {
         tap((res) => {
           if (!('errorMsg' in res)) {
             this.indicators.push(res.indicator);
-            this.onUpdateIndicators$.next(this.indicators);
+           this.onUpdateIndicators$.next(this.indicators);
           }
         })
       );
@@ -139,6 +134,7 @@ export class IndicatorService {
           }
         })
       );
+
   }
 
   fetchUserIndicators(): Observable<Indicator[]> {
@@ -165,7 +161,7 @@ export class IndicatorService {
       tap((res) => {
         if (!('errorMsg' in res)) {
           this.indicators.push(res.indicator);
-          this.onUpdateUserIndicators$.next(this.indicators);
+          this.onUpdateIndicators$.next(this.indicators);
         }
       })
     );
@@ -188,7 +184,7 @@ export class IndicatorService {
           this.indicators = this.indicators.filter(
             (indicator) => indicator._id.toString() !== indicatorId.toString()
           );
-          this.onUpdateUserIndicators$.next(this.indicators);
+          this.onUpdateIndicators$.next(this.indicators);
         }
       })
     );
@@ -209,7 +205,7 @@ export class IndicatorService {
       tap((res) => {
         if (!('errorMsg' in res)) {
           this.indicators = res.indicators;
-          this.onUpdateUserIndicators$.next(this.indicators);
+          this.onUpdateIndicators$.next(this.indicators);
         }
       })
     );
@@ -235,7 +231,7 @@ export class IndicatorService {
               indicator = updatedindicator;
             }
           });
-          this.onUpdateUserIndicators$.next(this.indicators);
+          this.onUpdateIndicators$.next(this.indicators);
         }
       })
     );
@@ -258,7 +254,7 @@ export class IndicatorService {
       tap((res) => {
         if (!('errorMsg' in res)) {
           this.indicators.push(res.indicator);
-          this.onUpdateMaterialIndicators$.next(this.indicators);
+          this.onUpdateIndicators$.next(this.indicators);
         }
       })
     );
@@ -296,7 +292,7 @@ export class IndicatorService {
               (indicator) =>
                 indicator._id.toString() !== indicatorId.toString()
             );
-            this.onUpdateMaterialIndicators$.next(this.indicators);
+            this.onUpdateIndicators$.next(this.indicators);
           }
         })
       );
@@ -328,7 +324,7 @@ export class IndicatorService {
               indicator = updatedindicator;
             }
           });
-          this.onUpdateMaterialIndicators$.next(this.indicators);
+          this.onUpdateIndicators$.next(this.indicators);
         }
       })
     );
@@ -351,7 +347,7 @@ export class IndicatorService {
       tap((res) => {
         if (!('errorMsg' in res)) {
           this.indicators = res.indicators;
-          this.onUpdateMaterialIndicators$.next(this.indicators);
+          this.onUpdateIndicators$.next(this.indicators);
         }
       })
     );
@@ -375,7 +371,7 @@ export class IndicatorService {
       tap((res) => {
         if (!('errorMsg' in res)) {
           this.indicators.push(res.indicator);
-          this.onUpdateChannelIndicators$.next(this.indicators);
+          this.onUpdateIndicators$.next(this.indicators);
         }
       })
     );
@@ -414,7 +410,7 @@ export class IndicatorService {
               (indicator) =>
                 indicator._id.toString() !== indicatorId.toString()
             );
-            this.onUpdateChannelIndicators$.next(this.indicators);
+            this.onUpdateIndicators$.next(this.indicators);
           }
         })
       );
@@ -446,7 +442,7 @@ export class IndicatorService {
               indicator = updatedindicator;
             }
           });
-          this.onUpdateChannelIndicators$.next(this.indicators);
+          this.onUpdateIndicators$.next(this.indicators);
         }
       })
     );
@@ -470,7 +466,7 @@ export class IndicatorService {
       tap((res) => {
         if (!('errorMsg' in res)) {
           this.indicators = res.indicators;
-          this.onUpdateChannelIndicators$.next(this.indicators);
+          this.onUpdateIndicators$.next(this.indicators);
         }
       })
     );
@@ -494,7 +490,7 @@ export class IndicatorService {
       tap((res) => {
         if (!('errorMsg' in res)) {
           this.indicators.push(res.indicator);
-          this.onUpdateTopicIndicators$.next(this.indicators);
+          this.onUpdateIndicators$.next(this.indicators);
         }
       })
     );
@@ -534,7 +530,7 @@ export class IndicatorService {
               (indicator) =>
                 indicator._id.toString() !== indicatorId.toString()
             );
-            this.onUpdateTopicIndicators$.next(this.indicators);
+            this.onUpdateIndicators$.next(this.indicators);
           }
         })
       );
@@ -566,7 +562,7 @@ export class IndicatorService {
               indicator = updatedindicator;
             }
           });
-          this.onUpdateTopicIndicators$.next(this.indicators);
+          this.onUpdateIndicators$.next(this.indicators);
         }
       })
     );
@@ -590,7 +586,7 @@ export class IndicatorService {
       tap((res) => {
         if (!('errorMsg' in res)) {
           this.indicators = res.indicators;
-          this.onUpdateTopicIndicators$.next(this.indicators);
+          this.onUpdateIndicators$.next(this.indicators);
         }
       })
     );

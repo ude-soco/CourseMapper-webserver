@@ -26,7 +26,7 @@ import { ShowInfoError } from '../_helpers/show-info-error';
   styleUrls: ['./course-welcome.component.css'],
   providers: [MessageService, ConfirmationService],
 })
-export class CourseWelcomeComponent implements OnInit, OnDestroy {
+export class CourseWelcomeComponent implements OnInit {
   selectedCourse: Course = new CourseImp('', '');
   courseSelected$: Observable<boolean>;
   channelSelected$: Observable<boolean>;
@@ -56,9 +56,7 @@ export class CourseWelcomeComponent implements OnInit, OnDestroy {
     this.courseSelected$ = store.select(getCourseSelected);
     this.channelSelected$ = this.store.select(getChannelSelected);
   }
-  ngOnDestroy(): void {
-    this.indicatorService.onUpdateIndicators$.unsubscribe();
-  }
+ 
 
   ngOnInit(): void {
     this.selectedCourse = this.courseService.getSelectedCourse();

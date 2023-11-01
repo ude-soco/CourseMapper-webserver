@@ -36,7 +36,7 @@ export class ChannelDashboardComponent implements OnInit {
 
   }
   ngOnInit(): void {
-    this.indicatorService.onUpdateChannelIndicators$.subscribe(indicators => {
+    this.indicatorService.onUpdateIndicators$.subscribe(indicators => {
       this.indicators = indicators;
     })
 

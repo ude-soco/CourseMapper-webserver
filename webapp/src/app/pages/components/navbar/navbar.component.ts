@@ -108,8 +108,7 @@ export class NavbarComponent implements OnInit {
   }
 
   onViewPersonalDashboard(): void {
-
     this.router.navigate([
-      'personalDashboard']);
+      'user/dashboard']);
   }
 }

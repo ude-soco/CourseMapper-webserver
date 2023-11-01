@@ -61,7 +61,7 @@ export class PersonalDashboardComponent implements OnInit {
     this.indicatorService.fetchUserIndicators().subscribe((indicators) => {
       this.indicators = indicators;
     });
-    this.indicatorService.onUpdateUserIndicators$.subscribe(
+    this.indicatorService.onUpdateIndicators$.subscribe(
       (indicators) => (this.indicators = indicators)
     );
   }

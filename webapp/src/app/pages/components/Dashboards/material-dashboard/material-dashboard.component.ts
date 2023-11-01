@@ -42,7 +42,7 @@ export class MaterialDashboardComponent implements OnInit {
 
   }
   ngOnInit(): void {
-    this.indicatorService.onUpdateMaterialIndicators$.subscribe(indicators => {
+    this.indicatorService.onUpdateIndicators$.subscribe(indicators => {
       this.indicators = indicators;
     })
 

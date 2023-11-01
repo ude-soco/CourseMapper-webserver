@@ -126,7 +126,7 @@ export class ChannelbarComponent implements OnInit {
       command: () => this.onDeleteCourse(),
     },
     {
-      label: "View topic dashboard",
+      label: "View course dashboard",
       icon: "pi pi-chart-bar",
       styleClass: "contextMenuButton",
       command: () => this.onViewDashboardClicked(),
@@ -141,7 +141,7 @@ export class ChannelbarComponent implements OnInit {
 
   normalUserOptions: MenuItem[] = [
     {
-      label: "View topic dashboard",
+      label: "View course dashboard",
       icon: "pi pi-chart-bar",
       styleClass: "contextMenuButton",
       command: () => this.onViewDashboardClicked(),

@@ -25,7 +25,11 @@ import { CourseDashboardComponent } from './pages/components/Dashboards/course-d
 
 const routes: Routes = [
   { path: '', redirectTo: 'landingPage', pathMatch: 'full' },
-  {path: 'personalDashboard', component:  PersonalDashboardComponent, canActivate: [AuthGuardService]},
+  {
+    path: 'user/dashboard',
+    component: PersonalDashboardComponent,
+    canActivate: [AuthGuardService],
+  },
   {
     path: 'landingPage',
     component: LandingPageComponent,
@@ -66,14 +70,12 @@ const routes: Routes = [
     canActivate: [AuthGuardService],
     children: [
       {
-
         path: 'dashboard',
-        component: CourseDashboardComponent
+        component: CourseDashboardComponent,
       },
       {
         path: 'topic/:topicId/dashboard',
-        component: TopicDashboardComponent
-
+        component: TopicDashboardComponent,
       },
       {
         path: 'channel/:channelId',
@@ -90,7 +92,6 @@ const routes: Routes = [
         path: 'welcome',
         component: CourseWelcomeComponent,
       },
-      
     ],
   },
   //{ path: 'course/:courseID/dashboard', component: DashboardComponent },
