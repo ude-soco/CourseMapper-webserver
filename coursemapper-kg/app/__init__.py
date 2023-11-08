@@ -3,8 +3,10 @@ from flask import Blueprint, Flask
 from flask_cors import CORS
 
 from app.views.course_materials import course_materials
+from app.views.backend import backend
 from app.views.views import view
 from config import Config
+from app.extensions import neo4j
 
 load_dotenv()
 
@@ -26,9 +28,12 @@ def create_app(config_class=Config):
     app.config['CORS_HEADERS'] = { 'Content-Type': 'application/json' }
 
     app.config.from_object(config_class)
+    
+    neo4j.init_app(config_class)
 
     app.register_blueprint(view)
     app.register_blueprint(course_materials)
+    app.register_blueprint(backend)
 
 
  

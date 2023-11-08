@@ -1,6 +1,5 @@
 from neo4j import GraphDatabase, Result, Record
 import numpy as np
-from py2neo import Graph
 import re
 import logging
 from log import LOG
@@ -705,7 +704,6 @@ class NeoDataBase:
                                            auth=(user, password),
                                            encrypted=False)
 
-        self.graph = Graph(uri, auth=(user, password))
 
     def close(self):
         self.driver.close()

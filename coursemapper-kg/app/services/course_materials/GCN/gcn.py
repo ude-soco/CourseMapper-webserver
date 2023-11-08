@@ -1,4 +1,5 @@
 # from turtle import end_fill
+from neo4j import GraphDatabase
 import numpy as np
 import scipy.sparse as sp
 from flask import current_app
@@ -8,7 +9,6 @@ from flask import current_app
 import os
 import logging
 from log import LOG
-from py2neo import Graph
 
 logger = LOG(name=__name__, level=logging.DEBUG)
 
@@ -19,7 +19,9 @@ class GCN:
         neo4j_user = current_app.config.get("NEO4J_USER")  # type: ignore
         neo4j_pass = current_app.config.get("NEO4J_PASSWORD")  # type: ignore
 
-        self.graph = Graph(neo4j_uri, auth=(neo4j_user, neo4j_pass))
+        self.driver = GraphDatabase.driver(neo4j_uri,
+                                           auth=(neo4j_user, neo4j_pass),
+                                           encrypted=False)
         # NEO4J_URI = os.environ.get("NEO4J_URI")
         # NEO4J_URI = "bolt://localhost:7687"
         # NEO4J_USER = os.environ.get("NEO4J_USER")
@@ -81,16 +83,16 @@ class GCN:
 
         # Extract original ids of nodes
         idx = np.array(idx_features[:, 1], dtype=np.dtype(str))
-        for i in range(final_embeddings.shape[0]):
-            id = idx[i]
-            f_embedding = final_embeddings[i]
-            embedding = ",".join(str(i) for i in f_embedding)
-            # Find a node in neo4j by its original id and save its final embedding into its "final_embedding" property
-            cql = """MATCH (n) WHERE n.cid= '{id}' or n.sid= '{id}'
-                    set n.final_embedding = '{embedding}'""".format(
-                id=id, embedding=embedding
-            )
-            self.graph.run(cql)
+        with self.driver.session() as session:
+            for i in range(final_embeddings.shape[0]):
+                id = idx[i]
+                f_embedding = final_embeddings[i]
+                embedding = ",".join(str(i) for i in f_embedding)
+                # Find a node in neo4j by its original id and save its final embedding into its "final_embedding" property
+                result = session.run("""MATCH (n) WHERE n.cid= $id or n.sid= $id
+                        set n.final_embedding = $embedding RETURN n""",
+                    id=id,
+                    embedding=embedding)
         logger.info("end")
 
         # features = normalize(features)
