@@ -3,7 +3,17 @@ import { BlockingNotifications } from './BlockingNotification';
 export interface UserNotification {
   //the below 2 attrbiutes are only present when we are deleting a course.
   courseId?: string;
+  annotationId?: string;
+  replyId?: string;
+  materialId?: string;
+  topicId?: string;
+  channelId?: string;
   isDeletingCourse?: boolean;
+  isDeletingAnnotation?: boolean;
+  isDeletingReply?: boolean;
+  isDeletingMaterial?: boolean;
+  isDeletingTopic?: boolean;
+  isDeletingChannel?: boolean;
   _id: string;
   activityId: {
     notificationInfo: {

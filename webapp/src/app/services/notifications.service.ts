@@ -98,31 +98,65 @@ export class NotificationsService {
 
   public initialiseSocketConnection() {
     const user = this.storageService.getUser();
-
-    /*     this.socket.on(user.id, (data: UserNotificationWithIndicators) => {
-      this.store.dispatch(
-        CourseActions.setTopicNotificationSettingsSuccess({
-          updatedDoc: data.activityIndicator,
-        })
-      );
-      this.store.dispatch(
-        NotificationActions.setCourseNotificationSettingsSuccess({
-          updatedDoc: data.activityIndicator,
-        })
-      );
-      if (data.userNotification[0].isDeletingCourse) { */
     this.socket.on(user.id, (data: UserNotification[]) => {
       if (data[0].isDeletingCourse) {
         this.store.dispatch(
           NotificationActions.isDeletingCourse({
             courseId: data[0].courseId,
-            /* courseId: data.userNotification[0].courseId, */
+          })
+        );
+        return;
+      }
+
+      if (data[0].isDeletingAnnotation) {
+        this.store.dispatch(
+          NotificationActions.isDeletingAnnotation({
+            annotationId: data[0].annotationId,
+          })
+        );
+        return;
+      }
+      if (data[0].isDeletingReply) {
+        this.store.dispatch(
+          NotificationActions.isDeletingReply({
+            replyId: data[0].replyId,
+          })
+        );
+        return;
+      }
+      if (data[0].isDeletingMaterial) {
+        this.store.dispatch(
+          NotificationActions.isDeletingMaterial({
+            materialId: data[0].materialId,
+          })
+        );
+        this.store.dispatch(
+          CourseActions.updateFOllowingAnnotationsOnDeletion({
+            payload: {
+              isDeletingMaterial: true,
+              id: data[0].materialId,
+            },
+          })
+        );
+        return;
+      }
+      if (data[0].isDeletingTopic) {
+        this.store.dispatch(
+          NotificationActions.isDeletingTopic({
+            topicId: data[0].topicId,
+          })
+        );
+        return;
+      }
+      if (data[0].isDeletingChannel) {
+        this.store.dispatch(
+          NotificationActions.isDeletingChannel({
+            channelId: data[0].channelId,
           })
         );
         return;
       }
       let notifications = data.map(this.transformNotification);
-      /*  let notifications = data.userNotification.map(this.transformNotification); */
       notifications = notifications.map((notification) => {
         if (
           (notification.annotationAuthorId === user.id &&
@@ -137,50 +171,6 @@ export class NotificationsService {
           return notification;
         }
       });
-
-      if (notifications[0].isDeletingAnnotation) {
-        this.store.dispatch(
-          NotificationActions.isDeletingAnnotation({
-            annotationId: notifications[0].annotation_id,
-          })
-        );
-      }
-      if (notifications[0].isDeletingReply) {
-        this.store.dispatch(
-          NotificationActions.isDeletingReply({
-            replyId: notifications[0].reply_id,
-          })
-        );
-      }
-      if (notifications[0].isDeletingMaterial) {
-        this.store.dispatch(
-          NotificationActions.isDeletingMaterial({
-            materialId: notifications[0].material_id,
-          })
-        );
-        this.store.dispatch(
-          CourseActions.updateFOllowingAnnotationsOnDeletion({
-            payload: {
-              isDeletingMaterial: true,
-              id: notifications[0].material_id,
-            },
-          })
-        );
-      }
-      if (notifications[0].isDeletingTopic) {
-        this.store.dispatch(
-          NotificationActions.isDeletingTopic({
-            topicId: notifications[0].topic_id,
-          })
-        );
-      }
-      if (notifications[0].isDeletingChannel) {
-        this.store.dispatch(
-          NotificationActions.isDeletingChannel({
-            channelId: notifications[0].channel_id,
-          })
-        );
-      }
 
       notifications.forEach((notification) => {
         this.store.dispatch(
