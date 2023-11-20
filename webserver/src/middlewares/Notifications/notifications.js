@@ -260,13 +260,107 @@ export const calculateUsersFollowingAnnotation = async (req, res, next) => {
   req.locals.usersToBeNotified = finalListOfUsersToNotify;
   if (req.locals.isDeletingAnnotation) {
     await removeFollowingAnnotationDocuments(req);
+    await emitAnnotationDeleted(annotationId);
     await deleteAnnotationNotifications(annotationId);
   }
   if (req.locals.isDeletingReply) {
+    await emitReplyDeleted(req.locals.reply._id);
     await deleteReplyNotifications(req.locals.reply._id);
   }
 
   next();
+};
+
+export const emitAnnotationDeleted = async (annotationId) => {
+  const userNotifications = await UserNotification.find({
+    annotationId: annotationId,
+  });
+  const userIds = userNotifications.map(
+    (userNotification) => userNotification.userId
+  );
+
+  userIds.forEach((userId) => {
+    socketio.getIO().emit(userId, [
+      {
+        annotationId: annotationId,
+        isDeletingAnnotation: true,
+      },
+    ]);
+  });
+};
+
+export const emitReplyDeleted = async (replyId) => {
+  const userNotifications = await UserNotification.find({
+    replyId: replyId,
+  });
+  const userIds = userNotifications.map(
+    (userNotification) => userNotification.userId
+  );
+
+  userIds.forEach((userId) => {
+    socketio.getIO().emit(userId, [
+      {
+        replyId: replyId,
+        isDeletingReply: true,
+      },
+    ]);
+  });
+};
+
+export const emitMaterialDeleted = async (materialId) => {
+  const userNotifications = await UserNotification.find({
+    materialId: materialId,
+  });
+  const userIds = userNotifications.map(
+    (userNotification) => userNotification.userId
+  );
+
+  userIds.forEach((userId) => {
+    socketio.getIO().emit(userId, [
+      {
+        materialId: materialId,
+        isDeletingMaterial: true,
+      },
+    ]);
+  });
+};
+
+export const emitChannelDeleted = async (channelId) => {
+  const userNotifications = await UserNotification.find({
+    channelId: channelId,
+  });
+
+  const userIds = userNotifications.map(
+    (userNotification) => userNotification.userId
+  );
+
+  userIds.forEach((userId) => {
+    socketio.getIO().emit(userId, [
+      {
+        channelId: channelId,
+        isDeletingChannel: true,
+      },
+    ]);
+  });
+};
+
+export const emitTopicDeleted = async (topicId) => {
+  const userNotifications = await UserNotification.find({
+    topicId: topicId,
+  });
+
+  const userIds = userNotifications.map(
+    (userNotification) => userNotification.userId
+  );
+
+  userIds.forEach((userId) => {
+    socketio.getIO().emit(userId, [
+      {
+        topicId: topicId,
+        isDeletingTopic: true,
+      },
+    ]);
+  });
 };
 
 export const LikesDislikesMentionedNotificationUsers = async (
@@ -462,6 +556,7 @@ export const materialCourseUpdateNotificationsUsers = async (
   req.locals.usersToBeNotified = finalListOfUsersToNotify;
 
   if (req.locals.isDeletingMaterial) {
+    await emitMaterialDeleted(req.locals.material._id);
     await deleteMaterialNotifications(req.locals.material._id);
     await BlockingNotifications.updateMany(
       { "materials.materialId": req.locals.material._id },
@@ -521,6 +616,7 @@ export const channelCourseUpdateNotificationUsers = async (req, res, next) => {
   req.locals.usersToBeNotified = finalListOfUsersToNotify;
 
   if (req.locals.isDeletingChannel) {
+    await emitChannelDeleted(req.locals.channel._id);
     await deleteChannelNotifications(req.locals.channel._id);
     await removeFollowingAnnotationDocuments(req);
     await BlockingNotifications.updateMany(
@@ -585,6 +681,7 @@ export const topicCourseUpdateNotificationUsers = async (req, res, next) => {
   req.locals.usersToBeNotified = finalListOfUsersToNotify;
 
   if (req.locals.isDeletingTopic) {
+    await emitTopicDeleted(req.locals.topic._id);
     await deleteTopicNotifications(req.locals.topic._id);
     await removeFollowingAnnotationDocuments(req);
     await BlockingNotifications.updateMany(
@@ -1204,60 +1301,6 @@ export const deleteReplyNotifications = async (replyId) => {
   });
 };
 
-/* export const updateTopicLevelActivityIndicators = async (
-  finalListOfUsersToNotify,
-  req
-) => {
-  let userIds = finalListOfUsersToNotify.map((userId) => new ObjectId(userId));
-  const courseId = req.locals.course._id;
-  const topicId = req.locals.topic._id;
-  if (req.locals.isDeletingTopic) {
-    const updatedDocs = await BlockingNotifications.updateMany(
-      {
-        userId: { $in: userIds },
-        courseId: courseId,
-      },
-      {
-        $set: {
-          showCourseActivityIndicator: true,
-        },
-      }
-    );
-  } else {
-    const updatedDocs = await BlockingNotifications.updateMany(
-      {
-        userId: { $in: userIds },
-        courseId: courseId,
-      },
-      {
-        $set: {
-          showCourseActivityIndicator: true,
-          "topics.$[topicElem].showTopicActivityIndicator": true,
-        },
-      },
-      {
-        arrayFilters: [
-          {
-            "topicElem.topicId": topicId,
-          },
-        ],
-      }
-    );
-  }
-
-  let modifiedDocuments = await BlockingNotifications.find({
-    userId: { $in: userIds },
-    courseId: courseId,
-  });
-
-  let documentsToReturn = {};
-  modifiedDocuments.forEach((doc) => {
-    documentsToReturn[doc.userId] = doc;
-  });
-
-  return documentsToReturn;
-};
- */
 let notifications = {
   populateUserNotification,
   generateNotificationInfo,
