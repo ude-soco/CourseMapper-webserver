@@ -215,6 +215,13 @@ export const getOverriddenCourses = createSelector(
   }
 );
 
+export const getAllCourseNotificationSettings = createSelector(
+  getNotificationFeatureState,
+  (state) => {
+    return state.coursesSettings;
+  }
+);
+
 //Reducer
 export const notificationReducer = createReducer<NotificationState>(
   initialState,
@@ -452,6 +459,8 @@ export const notificationReducer = createReducer<NotificationState>(
                 action.updatedDoc.isReplyAndMentionedNotificationsEnabled,
               isCourseUpdateNotificationsEnabled:
                 action.updatedDoc.isCourseUpdateNotificationsEnabled,
+              /*               showCourseActivityIndicator:
+                action.updatedDoc.showCourseActivityIndicator, */
             };
           }
           return courseSetting;
