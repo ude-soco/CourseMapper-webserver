@@ -1,7 +1,7 @@
 help:
 	@cat $(MAKEFILE_LIST) | docker run --rm -i --platform linux/amd64 xanders/make-help
 
-compose = docker compose -f docker-compose.yml
+compose = docker compose -f compose.yaml
 
 all: clean build run
 
@@ -28,7 +28,7 @@ cleanall:
 
 # Build all container images
 build:
-	@docker buildx bake --progress=plain
+	@$(compose) build
 
 # Push container images to remote registry
 push:
@@ -41,7 +41,7 @@ tilt:
 
 # Start all services with processes in containers, but mounted source files on host
 mounted: down
-	@$(compose) -f docker-compose-mounted.yml up --force-recreate --build
+	@$(compose) -f compose-mounts.yaml up --force-recreate --build
 
 dev:
 	@echo 'Please switch to using new target: ${MAKE} mounted'

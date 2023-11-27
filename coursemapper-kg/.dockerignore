@@ -1,0 +1,5 @@
+.gitignore
+*example*
+compose.yaml
+Dockerfile
+README*
