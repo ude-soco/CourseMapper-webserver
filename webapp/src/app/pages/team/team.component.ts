@@ -23,19 +23,19 @@ export class TeamComponent {
       image: '/assets/people/mohamed_chatti.jpg',
     },
     {
-      name: 'Msc. Qurat Ul Ain',
+      name: 'M. Sc. Qurat Ul Ain',
       url: 'https://www.uni-due.de/soco/people/qurat-ain.php',
       email: 'qurat.ain@stud.uni-due.de',
       image: '/assets/people/qurat_ain.jpg',
     },
     {
-      name: 'Msc. Rawaa Alatrash',
+      name: 'M. Sc. Rawaa Alatrash',
       url: 'https://www.uni-due.de/soco/people/rawaa-alatrash.php',
       email: 'rawaa.alatrash@stud.uni-due.de',
       image: '/assets/people/rawaa_alatrash.jpg',
     },
     {
-      name: 'Msc. Shoeb Joarder',
+      name: 'M. Sc. Shoeb Joarder',
       url: 'https://www.uni-due.de/soco/people/shoeb-joarder.php',
       image: '/assets/people/shoeb_joarder.jpg',
     },

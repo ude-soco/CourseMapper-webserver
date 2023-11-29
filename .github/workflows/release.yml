@@ -11,7 +11,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Check for stable semver
       id:   semver
@@ -26,8 +26,9 @@ jobs:
       with:
         tag: ${{ github.ref_name }}
         name: Release ${{ github.ref_name }}
-        draft: false
+        draft: true
         allowUpdates: true
         updateOnlyUnreleased: true
         skipIfReleaseExists: true
         generateReleaseNotes: true
+        discussionCategory: Release

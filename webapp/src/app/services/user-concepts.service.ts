@@ -9,7 +9,7 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root',
 })
 export class UserConceptsService {
-  backendEndpointURL = environment.apiUrl;
+  backendEndpointURL = environment.API_URL;
   httpHeader = HTTPOptions.headers;
   userConcepts: any;
   userUpdateConcepts: any;

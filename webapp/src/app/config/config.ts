@@ -1,5 +1,5 @@
 import { HttpHeaders } from '@angular/common/http';
-import { environment, environment_2 } from '../../environments/environment';
+import { environment } from '../../environments/environment';
 
 export const USER_KEY = 'coursemapper-user';
 
