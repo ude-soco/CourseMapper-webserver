@@ -11,6 +11,9 @@ services:
     ports:
     - 8001:8001
     restart: always
+    depends_on:
+      coursemapper-kg-neo4j:
+        condition: service_healthy
 
   coursemapper-kg-neo4j:
     image: neo4j:5.12.0
