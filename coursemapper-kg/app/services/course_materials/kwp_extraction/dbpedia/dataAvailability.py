@@ -203,7 +203,7 @@ class FoundAtDBpediaSpotlight:
                             "label": resource['@surfaceForm'],
                             "uri": resource['@URI'],
                             "sim_score": resource['@similarityScore'],
-                            "type": "annotation",
+                            "type": "main_concept",
                             "mid": materialId,
                             "to": [],
                         }
@@ -258,7 +258,7 @@ class FoundAtDBpediaSpotlight:
                         "id": node['id'],
                         "name": node['name'],
                         "weight": edge_weight,
-                        "rel_type": "BELONGS_TO"
+                        "rel_type": "HAS_CATEGORY"
                     })
                     if not self._exists(annotation, all_annotations):
                         all_annotations.append(annotation)

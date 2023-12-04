@@ -230,7 +230,7 @@ class DBpediaSpotlight:
         elif node_a['type'] == "category" and node_b['type'] == "category":
             rel_type = "PARENT_OF"
         elif node_a['type'] != "category" and node_b['type'] == "category":
-            rel_type = "BELONGS_TO"
+            rel_type = "HAS_CATEGORY"
 
         return rel_type
 
@@ -309,7 +309,7 @@ class DBpediaSpotlight:
                         "id": annotation['id'],
                         "name": annotation['name'],
                         "weight": edge_weight,
-                        "rel_type": "BELONGS_TO"
+                        "rel_type": "HAS_CATEGORY"
                     })
                     if not self._exists(node, concepts):
                         concepts.append(node)
@@ -556,7 +556,7 @@ class DBpediaSpotlight:
                             "id": annotation['id'],
                             "name": annotation['name'],
                             "weight": edge_weight,
-                            "rel_type": "BELONGS_TO"
+                            "rel_type": "HAS_CATEGORY"
                         })
                         # logger.info("category name:%s,type:%s, relation:%s" % (item2["name"],item2["type"],item2['to']))
 
@@ -655,7 +655,7 @@ class DBpediaSpotlight:
                             "id": annotation['id'],
                             "name": annotation['name'],
                             "weight": edge_weight,
-                            "rel_type": "BELONGS_TO"
+                            "rel_type": "HAS_CATEGORY"
                         })
                         break
 
