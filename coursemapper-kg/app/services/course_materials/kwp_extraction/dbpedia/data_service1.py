@@ -64,7 +64,7 @@ class RecService:
         for recommend_concept in recommend_concepts:
             cid = recommend_concept["n"]["cid"]
             ctype = recommend_concept["n"]["type"]
-            if ctype == "annotation":
+            if ctype == "main_concept":
                 # road: user - concept - related concept - concept
                 road1 = self.db.get_road_user_c_related_concept(uid, cid)
                 # to avoid too many road, select the max weight path
@@ -168,7 +168,7 @@ def get_serialized_concepts_data(concepts):
                 reasons[4]["name"] = road["p"][4]["name"]
                 if road["p"][2]["name"] not in reasons[4]["dnu"]:
                     reasons[4]["dnu"].append(road["p"][2]["name"])
-            elif road["p"][4]["type"] == "annotation":
+            elif road["p"][4]["type"] == "main_concept":
                 reasons[3]["name"] = road["p"][4]["name"]
                 if road["p"][2]["name"] not in reasons[3]["dnu"]:
                     reasons[3]["dnu"].append(road["p"][2]["name"])

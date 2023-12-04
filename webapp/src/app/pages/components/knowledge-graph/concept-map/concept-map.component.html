@@ -51,7 +51,7 @@
                 [value]="option"
                 [(ngModel)]="selectedOption"
                 [inputId]="option.key"
-                *ngIf="option.key !== 'annotation'"
+                *ngIf="option.key !== 'main_concept'"
                 (onChange)="updateSingleChecked(option.key)"
               ></p-checkbox>
               <p-checkbox
@@ -60,7 +60,7 @@
                 [value]="option"
                 [(ngModel)]="selectedOption"
                 [inputId]="option.key"
-                *ngIf="option.key === 'annotation'"
+                *ngIf="option.key === 'main_concept'"
                 [readonly]="true"
                 (onChange)="updateSingleChecked(option.key)"
               ></p-checkbox>

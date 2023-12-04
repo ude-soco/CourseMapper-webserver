@@ -99,7 +99,7 @@ class FoundAtDBpediaSpotlight:
             if with_doc_sim:
                 doc_embeddings = self._get_embeddings(text)
                 for node in concepts:
-                    if node["type"] == "annotation" or node[
+                    if node["type"] == "main_concept" or node[
                             "type"] == "property":
                         ann_text = self.wiki_api.page(
                             node['uri'].split("/")[-1]).text
@@ -468,7 +468,7 @@ class FoundAtDBpediaSpotlight:
             countInText = 0
             countInExpansion = 0
 
-            if node["type"] == "annotation":
+            if node["type"] == "main_concept":
                 countInText = text.lower().count(
                     node["label"].split(":")[-1].lower())
             else:

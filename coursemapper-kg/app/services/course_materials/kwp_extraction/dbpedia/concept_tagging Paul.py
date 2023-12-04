@@ -82,7 +82,7 @@ class DBpediaSpotlight:
                             "label": resource['@surfaceForm'],
                             "uri": resource['@URI'],
                             "sim_score": resource['@similarityScore'],
-                            "type": "annotation",
+                            "type": "main_concept",
                             "mid": materialId,
                             "to": [],
                         }
@@ -132,7 +132,7 @@ class DBpediaSpotlight:
                 lm_embeddings=self._get_embeddings(lm_text)
                 doc_embeddings = self._get_embeddings(text)
                 for node in concepts:
-                    if node["type"] == "annotation":
+                    if node["type"] == "main_concept":
                         ann_text = self.wiki_api.page(
                             node['uri'].split("/")[-1]).text
                         # print(self.wiki_api.page(
@@ -164,7 +164,7 @@ class DBpediaSpotlight:
                 doc_embeddings = self._get_embeddings(text)
                 # node weights
                 for node in concepts:
-                    if node["type"] == "annotation":
+                    if node["type"] == "main_concept":
                         node["weight"] = self._get_node_weight_cf(
                             node, text, concepts)
                     elif node["type"] == "property":
@@ -482,7 +482,7 @@ class DBpediaSpotlight:
 
                     logger.debug("5______________Concept Weighting End")
                 for node in all_annotations:
-                    if node["type"] == "annotation":
+                    if node["type"] == "main_concept":
                         continue
                     self._get_wikipedia_page(node)
                     self._get_wikipedia_abstract(node)
@@ -891,7 +891,7 @@ class DBpediaSpotlight:
             countInText = 0
             countInExpansion = 0
 
-            if node["type"] == "annotation":
+            if node["type"] == "main_concept":
                 countInText = text.lower().count(
                     node["label"].split(":")[-1].lower())
             else:

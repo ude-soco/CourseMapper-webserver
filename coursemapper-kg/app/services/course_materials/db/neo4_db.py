@@ -1194,7 +1194,7 @@ class NeoDataBase:
                 result = session.run(
                     "MATCH (c:Concept) WHERE c.cid = $cid RETURN c",
                     cid=node["id"])
-            elif node["type"] == "annotation":
+            elif node["type"] == "main_concept":
                 return True
 
             if list(result):
@@ -1458,7 +1458,7 @@ class NeoDataBase:
         logger.info("retrieve all main concepts %s" % mid)
         with self.driver.session() as session:
             nodes = session.run("""MATCH (n:Concept)
-                WHERE n.mid = $mid and n.type="annotation"
+                WHERE n.mid = $mid and n.type="main_concept"
                 RETURN n.name as label, n.cid as id, n.uri as uri, n.type as type, n.mid as mid, n.initial_embedding as initial_embedding, n.weight as weight""",
                                 mid=mid).data()
         annotations = []

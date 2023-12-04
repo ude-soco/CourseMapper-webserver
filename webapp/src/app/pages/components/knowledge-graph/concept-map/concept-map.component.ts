@@ -257,7 +257,7 @@ export class ConceptMapComponent {
   tabIndex = 0;
 
   selectedCheckOptions: any[] = [
-    { name: 'Main Concepts', key: 'annotation' },
+    { name: 'Main Concepts', key: 'main_concept' },
     { name: 'Related Concepts', key: 'property' },
     { name: 'Categories', key: 'category' },
   ];
@@ -1032,7 +1032,7 @@ export class ConceptMapComponent {
           node.data.minWeight = minWeight;
         });
 
-        this.selectedFilterValues = ['annotation'];
+        this.selectedFilterValues = ['main_concept'];
         this.filteredMapData = this.conceptMapData;
         this.dataReceivedEvent.emit(this.conceptMapData);
         this.isLoading = false;

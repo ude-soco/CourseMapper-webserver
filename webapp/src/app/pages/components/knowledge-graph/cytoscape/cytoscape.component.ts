@@ -187,7 +187,7 @@ export class CytoscapeComponent {
 
   ngOnChanges() {
     if (!this.showMaterialKg) {
-      this.selectedFilterValues = ['annotation'];
+      this.selectedFilterValues = ['main_concept'];
     }
     this.init();
     this.render();
@@ -242,7 +242,7 @@ export class CytoscapeComponent {
   init() {
     if (this.elements) {
       this.annotationsNodes = this.elements.nodes.filter(
-        (n) => n.data.type === 'annotation'
+        (n) => n.data.type === 'main_concept'
       );
       this.propertiesNodes = this.elements.nodes.filter(
         (n) => n.data.type === 'property'
@@ -270,7 +270,7 @@ export class CytoscapeComponent {
         let nodes = this._elements.nodes;
         this.cy.ready(() => {
           let initialNodes = nodes.filter(function (e: any) {
-            return e.data.type === 'annotation';
+            return e.data.type === 'main_concept';
           });
           for (var i = 0; i < initialNodes.length; i++) {
             this.cy

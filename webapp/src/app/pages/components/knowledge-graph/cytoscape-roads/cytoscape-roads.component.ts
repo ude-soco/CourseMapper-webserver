@@ -64,7 +64,7 @@ export class CytoscapeRoadsComponent {
         'background-color': function (elm) {
           if (elm.data().lastNode) return '#689F38';
           else if (elm.data().type === 'user') return '#FBC02D';
-          else if (elm.data().type === 'annotation') return '#2196F3';
+          else if (elm.data().type === 'main_concept') return '#2196F3';
           else if (elm.data().type === 'property') return '#0288D1';
           else if (elm.data().type === 'category') return '#9C27B0';
           else if (elm.data().type === 'Slide') return '#607D8B';
