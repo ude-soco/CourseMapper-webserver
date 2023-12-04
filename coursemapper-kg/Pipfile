@@ -40,6 +40,7 @@ spacy = "*"
 allennlp = "==0.9.0"
 flask-restplus = "*"
 python-dotenv = "*"
+gunicorn = "*"
 
 [dev-packages]
 

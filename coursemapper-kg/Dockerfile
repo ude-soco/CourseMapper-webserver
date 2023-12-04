@@ -8,7 +8,7 @@ COPY debian/sources.list /etc/apt/sources.list
 
 # Install dependencies
 ENV BUILD_DEPS "build-essential pkg-config libc-dev"
-ENV RUNTIME_DEPS "gunicorn"
+ENV RUNTIME_DEPS ""
 RUN --mount=type=cache,sharing=private,target=/var/cache/apt \
     --mount=type=cache,sharing=private,target=/var/lib/apt <<EOF
   rm -f /etc/apt/apt.conf.d/docker-clean
