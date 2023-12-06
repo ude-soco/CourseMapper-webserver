@@ -10,7 +10,6 @@ services:
       NEO4J_PW: password
     ports:
     - 8001:8001
-    restart: always
     depends_on:
       coursemapper-kg-neo4j:
         condition: service_healthy
