@@ -4,6 +4,13 @@ const Schema = mongoose.Schema;
 
 const UserNotification = new Schema({
   activityId: { type: Schema.Types.ObjectId, required: true, ref: "activity" },
+  //below field being used to create a Time to live index to remove the document after 30 days
+  createdAt: {
+    type: Date,
+    required: true,
+    default: Date.now,
+    expires: 2592000,
+  },
   userId: {
     type: Schema.Types.ObjectId,
     ref: "user",
