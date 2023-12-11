@@ -61,7 +61,7 @@ RUN  apt-get purge -y --auto-remove $BUILD_DEPS
 USER 1000
 
 # Add model files
-COPY --from=MODELS /download/* app/algorithms/
+COPY --from=MODELS --chown=app /download/* app/algorithms/
 
 # Add source code
 COPY . .
