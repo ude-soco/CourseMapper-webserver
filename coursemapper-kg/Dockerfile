@@ -40,6 +40,19 @@ RUN  --mount=type=cache,sharing=private,target=/home/app/.cache/pip,uid=1000 \
   pipenv install --deploy
 EOF
 
+RUN <<EOF
+  oldwd=`pwd`
+  mkdir -p /home/app/app/algorithms
+  cd /home/app/app/algorithms
+  curl -o elmo_2x4096_512_2048cnn_2xhighway_weights.hdf5 https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x4096_512_2048cnn_2xhighway/elmo_2x4096_512_2048cnn_2xhighway_weights.hdf5
+  curl -o elmo_2x4096_512_2048cnn_2xhighway_options.json https://uni-duisburg-essen.sciebo.de/s/r4bNsDrkuAkPSfo/download
+  curl -o stanford-corenlp-full-2018-02-27.zip https://uni-duisburg-essen.sciebo.de/s/nO06q2wY0t5h8SO/download
+  unzip stanford-corenlp-full-2018-02-27.zip
+  rm stanford-corenlp-full-2018-02-27.zip
+  cd $oldwd
+  pipenv run python -c "import nltk;nltk.download('stopwords'); nltk.download('punkt'); nltk.download('wordnet'); import spacy; spacy.cli.download('en_core_web_sm'); from sentence_transformers import SentenceTransformer; SentenceTransformer('all-mpnet-base-v2'); from flair.embeddings import TransformerDocumentEmbeddings;  TransformerDocumentEmbeddings('sentence-transformers/msmarco-distilbert-base-tas-b');"
+EOF
+
 # Clean up build dependencies
 USER root
 RUN  apt-get purge -y --auto-remove $BUILD_DEPS
