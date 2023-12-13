@@ -269,20 +269,21 @@ def create_or_replace_user_resource_relationships(tx, rid, uid, relation_type, c
         "voted": relation_type if relation_type not in r_types else None
     }
 
-
+#1
 def create_lr_relationships(tx, mid, node):
     """
     """
     # logger.info(
     #     "Creating concepts relationships to learning material '%s'" % mid)
+    # MERGE (m)-[r:CONTAINS {weight: $weight}]->(c)""",
     tx.run("""MATCH (m:LearningMaterial) WHERE m.mid = $mid 
             OPTIONAL MATCH (c:Concept) WHERE c.cid = $cid and c.mid = $mid
-            MERGE (m)-[r:CONTAINS {weight: $weight}]->(c)""",
+            MERGE (m)-[r:LM_CONSISTS_OF {weight: $weight}]->(c)""",
            weight=node["weight"],
            cid=node["id"],
            mid=mid)
 
-
+#2
 def create_slide_concept_relationships(tx, sid, node):
     """
     """
@@ -290,21 +291,21 @@ def create_slide_concept_relationships(tx, sid, node):
     #     "Creating slide relationships to concepts '%s'" % node["id"])
     tx.run("""MATCH (s:Slide) WHERE s.sid = $sid 
             OPTIONAL MATCH (c:Concept) WHERE c.cid = $cid and c.mid = $mid
-            MERGE (s)-[r:CONTAINS {weight: $weight}]->(c)""",
+            MERGE (s)-[r:CONSISTS_OF {weight: $weight}]->(c)""",
            sid=sid,
            cid=node["id"],
            mid=node["mid"],
            weight=node["slide_weight"])
 
-
+#3
 def create_lm_slide_relationships(tx, mid, sid):
     """
     """
     logger.info(
         "Creating learning material relationships to slide '%s'" % sid)
-    tx.run("""MATCH (m:LearningMaterial) WHERE m.mid = $mid 
-            OPTIONAL MATCH (s:Slide) WHERE s.sid = $sid
-            MERGE (s)-[r:BELONGS_TO]->(m)""",
+    tx.run("""MATCH (s:Slide) WHERE s.sid = $sid
+            OPTIONAL MATCH (m:LearningMaterial) WHERE m.mid = $mid 
+            MERGE (m)-[r:CONTAINS]->(s)""",
            mid=mid,
            sid=sid)
 
@@ -474,14 +475,14 @@ def retrieve_concept_resources(tx, mid, cid):
                             cid=cid, mid=mid).data()
     return list(result_video) + list(result_article)
 
-
+#4
 def retrieve_relationships(tx, mid):
     """
     """
     logger.info("Geting the relationships of learning material '%s'" % mid)
     result = tx.run("""
         MATCH p=(a)-[r]->(b) 
-        WHERE TYPE(r) <> 'CONTAINS'
+        WHERE TYPE(r) <> 'LM_CONSISTS_OF'
         AND a.mid = $mid 
         AND b.mid = $mid 
         RETURN TYPE(r) as type, ID(a) as source, ID(b) as target, r.weight as weight""",
@@ -625,7 +626,7 @@ def connect_user_dnu_concept(tx, user, non_understood):
                uid=user["id"],
                cid=id)
 
-
+# MUSNT BE WEIGHT = 0
 def connect_user_u_concept(tx, user, understood):
     """
     """
@@ -815,7 +816,7 @@ class NeoDataBase:
         logger.info("Geting the relationships of learning material '%s'" % mid)
         result = tx.run("""
             MATCH p=(a)-[r]->(b) 
-            WHERE TYPE(r) <> 'CONTAINS'
+            WHERE TYPE(r) <> 'LM_CONSISTS_OF'
             AND a.mid = $mid 
             AND b.mid = $mid 
             RETURN TYPE(r) as type, ID(a) as source, ID(b) as target, r.weight as weight""",
@@ -871,14 +872,14 @@ class NeoDataBase:
         #     MATCH p=(a)-[r]->(b) WHERE a.mid = $mid AND b.mid = $mid RETURN p""",
         #     mid=mid)
         rel1 = tx.run("""
-            MATCH p=(a:Slide)-[r:BELONGS_TO]->(b:LearningMaterial)
+            MATCH p=(a:Slide)-[r:CONSISTS_OF]->(b:LearningMaterial)
             WHERE a.mid = $mid 
             AND b.mid = $mid 
             RETURN TYPE(r) as type, ID(a) as source, ID(b) as target""",
                       mid=mid)
         rel2 = tx.run("""
             MATCH p=(a)-[r]->(b) 
-            WHERE NOT EXISTS {MATCH (a:Slide)-[r:BELONGS_TO]->(b:LearningMaterial)}
+            WHERE NOT EXISTS {MATCH (a:Slide)-[r:CONSISTS_OF]->(b:LearningMaterial)}
             AND a.mid = $mid 
             AND b.mid = $mid 
             RETURN TYPE(r) as type, ID(a) as source, ID(b) as target, r.weight as weight""",
@@ -1184,7 +1185,7 @@ class NeoDataBase:
         # logger.info(
         #     "Check if concept '%s' exists" % cid)
         with self.driver.session() as session:
-            if node["type"] == "property":
+            if node["type"] == "related_concept":
                 result = session.run(
                     "MATCH (c:Concept) WHERE c.name = $name and c.mid=$mid RETURN c",
                     name=node["name"],
@@ -1193,7 +1194,7 @@ class NeoDataBase:
                 result = session.run(
                     "MATCH (c:Concept) WHERE c.cid = $cid RETURN c",
                     cid=node["id"])
-            elif node["type"] == "annotation":
+            elif node["type"] == "main_concept":
                 return True
 
             if list(result):
@@ -1264,26 +1265,26 @@ class NeoDataBase:
                 name=name).data()
 
         return result
-
+# to be changed
     def get_top_n_concept_by_name(self, name):
         """
         """
         with self.driver.session() as session:
             logger.info("Get concept id for '%s'" % name)
             concepts = session.run(
-                """MATCH p=(s: Slide)-[r: CONTAINS]->(c: Concept) 
+                """MATCH p=(s: Slide)-[r: CONSISTS_OF]->(c: Concept) 
                 WHERE c.name = $name RETURN ID(c) as id, c.cid as cid, c.name as name, c.weight as weight""",
                 name=name).data()
 
         return concepts
-
+# to be changed
     def retrieve_lm_concepts(self, mid):
         """
         """
         with self.driver.session() as session:
             print("Getting the concepts of slide '%s'" % mid)
         concepts = session.run(
-            """MATCH p=(s: LearningMaterial)-[r: CONTAINS]->(c: Concept) WHERE s.mid = $mid RETURN c.cid as cid, c.name AS name""",
+            """MATCH p=(s: LearningMaterial)-[r: LM_CONSISTS_OF]->(c: Concept) WHERE s.mid = $mid RETURN c.cid as cid, c.name AS name""",
             mid=mid).data()
 
         if len(concepts) != 0:
@@ -1331,7 +1332,7 @@ class NeoDataBase:
                 return True
             else:
                 return False
-
+# why not final embeddings
     def get_concept_has_not_read(self, user_id, mid):
         logger.info("Get concept")
         with self.driver.session() as session:
@@ -1424,7 +1425,7 @@ class NeoDataBase:
             # Determine if concept already have related concepts and categories. If yes, skip
             with self.driver.session() as session:
                 node = session.run("""MATCH (n:Concept)
-                    WHERE NOT EXISTS {MATCH (n:Concept)-[r:BELONGS_TO]->(c:Concept)}
+                    WHERE NOT EXISTS {MATCH (n:Concept)-[r:HAS_CATEGORY]->(c:Concept)}
                     And n.cid = $cid RETURN n.name as label , n.cid as id, n.uri as uri, n.type as type, n.mid as mid, n.initial_embedding as initial_embedding""",
                                    cid=cid).data()
                 if node == []:
@@ -1457,7 +1458,7 @@ class NeoDataBase:
         logger.info("retrieve all main concepts %s" % mid)
         with self.driver.session() as session:
             nodes = session.run("""MATCH (n:Concept)
-                WHERE n.mid = $mid and n.type="annotation"
+                WHERE n.mid = $mid and n.type="main_concept"
                 RETURN n.name as label, n.cid as id, n.uri as uri, n.type as type, n.mid as mid, n.initial_embedding as initial_embedding, n.weight as weight""",
                                 mid=mid).data()
         annotations = []
@@ -1518,7 +1519,7 @@ class NeoDataBase:
             main_concept["category"],main_concept["related"]=[],[]
             with self.driver.session() as session:
                 categories = session.run("""MATCH (n:Concept) WHERE n.mid = $mid and n.cid = $cid
-                                        OPTIONAL MATCH p=(n)-[r:BELONGS_TO]->(m)
+                                        OPTIONAL MATCH p=(n)-[r:HAS_CATEGORY]->(m)
                                         RETURN m.name as neighbor""",
                                         mid=mid,
                                         cid=main_concept["id"]).data()
@@ -1534,11 +1535,11 @@ class NeoDataBase:
         return main_concepts
 
 
-
+# to be changed
     def find_concept_for_each_slide(self, mid, name):
         logger.info("find concept from %s" % name)
         with self.driver.session() as session:
-            nodes = session.run("""MATCH p=(s:Slide)-[r:CONTAINS]->(n:Concept) 
+            nodes = session.run("""MATCH p=(s:Slide)-[r:CONSISTS_OF]->(n:Concept) 
                 WHERE s.mid = $mid and s.name = $name and NOT EXISTS {MATCH (n:Concept)-[d:RELATED_TO]->(c:Concept)}
                 RETURN n.name as label , n.cid as id, n.uri as uri, n.type as type, n.mid as mid, n.initial_embedding as initial_embedding""",
                                 mid=mid,
@@ -1620,6 +1621,7 @@ class NeoDataBase:
         tx = session.begin_transaction()
         try:
             for node in data:
+                logger.info("data complmemet",data)
                 create_concept_relationships(tx, node)
             tx.commit()
 
@@ -1737,11 +1739,11 @@ class NeoDataBase:
                 """MATCH (s:Slide) where s.sid =$sid RETURN s.concepts as concepts, s.name as name""",
                 sid=sid).data()
         return list(concept_list)
-
+# to be changed
     def get_concepts_of_LM(self, mid):
         with self.driver.session() as session:
             concept_list = session.run(
-                """MATCH p=(l:LearningMaterial)-[r:CONTAINS]->(n:Concept) where l.mid =$mid RETURN n.name as name""",
+                """MATCH p=(l:LearningMaterial)-[r:LM_CONSISTS_OF]->(n:Concept) where l.mid =$mid RETURN n.name as name""",
                 mid=mid).data()
         return list(concept_list)
     

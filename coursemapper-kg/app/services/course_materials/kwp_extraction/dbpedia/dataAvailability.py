@@ -99,8 +99,8 @@ class FoundAtDBpediaSpotlight:
             if with_doc_sim:
                 doc_embeddings = self._get_embeddings(text)
                 for node in concepts:
-                    if node["type"] == "annotation" or node[
-                            "type"] == "property":
+                    if node["type"] == "main_concept" or node[
+                            "type"] == "related_concept":
                         ann_text = self.wiki_api.page(
                             node['uri'].split("/")[-1]).text
                         ann_text = self._preprocess(ann_text)
@@ -121,7 +121,7 @@ class FoundAtDBpediaSpotlight:
                     if node["type"] == "annotation":
                         node["weight"] = self._get_node_weight_cf(
                             node, text, concepts)
-                    elif node["type"] == "property":
+                    elif node["type"] == "related_concept":
                         node["weight"] = self._assign_property_weight(
                             node, text, concepts)
                     elif node["type"] == "category":
@@ -203,7 +203,7 @@ class FoundAtDBpediaSpotlight:
                             "label": resource['@surfaceForm'],
                             "uri": resource['@URI'],
                             "sim_score": resource['@similarityScore'],
-                            "type": "annotation",
+                            "type": "main_concept",
                             "mid": materialId,
                             "to": [],
                         }
@@ -258,7 +258,7 @@ class FoundAtDBpediaSpotlight:
                         "id": node['id'],
                         "name": node['name'],
                         "weight": edge_weight,
-                        "rel_type": "BELONGS_TO"
+                        "rel_type": "HAS_CATEGORY"
                     })
                     if not self._exists(annotation, all_annotations):
                         all_annotations.append(annotation)
@@ -295,7 +295,7 @@ class FoundAtDBpediaSpotlight:
                     "id": abs(hash(result['property']['value'])),
                     "name": result['propertyLabel']['value'],
                     "uri": result['property']['value'],
-                    "type": "property",
+                    "type": "related_concept",
                     "expanded": True,
                     "mid": annotation["mid"],
                     "to": []
@@ -468,7 +468,7 @@ class FoundAtDBpediaSpotlight:
             countInText = 0
             countInExpansion = 0
 
-            if node["type"] == "annotation":
+            if node["type"] == "main_concept":
                 countInText = text.lower().count(
                     node["label"].split(":")[-1].lower())
             else:

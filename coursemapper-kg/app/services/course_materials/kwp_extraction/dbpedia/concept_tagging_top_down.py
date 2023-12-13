@@ -80,7 +80,7 @@ class DBpediaSpotlight:
                             "label": resource['@surfaceForm'],
                             "uri": resource['@URI'],
                             "sim_score": resource['@similarityScore'],
-                            "type": "annotation",
+                            "type": "main_concept",
                             "mid": materialId,
                             "to": [],
                         }
@@ -158,7 +158,7 @@ class DBpediaSpotlight:
                     if node["type"] == "annotation":
                         node["weight"] = self._get_node_weight_cf(
                             node, text, concepts)
-                    elif node["type"] == "property":
+                    elif node["type"] == "related_concept":
                         node["weight"] = self._assign_property_weight(
                             node, text, concepts)
                     elif node["type"] == "category":
@@ -241,7 +241,7 @@ class DBpediaSpotlight:
                     if node["type"] == "annotation":
                         node["weight"] = self._get_node_weight_cf(
                             node, text, concepts)
-                    elif node["type"] == "property":
+                    elif node["type"] == "related_concept":
                         node["weight"] = self._assign_property_weight(
                             node, text, concepts)
                     elif node["type"] == "category":
@@ -304,7 +304,7 @@ class DBpediaSpotlight:
         elif node_a['type'] == "category" and node_b['type'] == "category":
             rel_type = "PARENT_OF"
         elif node_a['type'] != "category" and node_b['type'] == "category":
-            rel_type = "BELONGS_TO"
+            rel_type = "HAS_CATEGORY"
 
         return rel_type
 
@@ -383,7 +383,7 @@ class DBpediaSpotlight:
                         "id": annotation['id'],
                         "name": annotation['name'],
                         "weight": edge_weight,
-                        "rel_type": "BELONGS_TO"
+                        "rel_type": "HAS_CATEGORY"
                     })
                     if not self._exists(node, concepts):
                         concepts.append(node)
@@ -448,7 +448,7 @@ class DBpediaSpotlight:
                     "id": str(abs(hash(result['property']['value']))),
                     "name": result['propertyLabel']['value'],
                     "uri": result['property']['value'],
-                    "type": "property",
+                    "type": "related_concept",
                     "expanded": True,
                     "mid": annotation["mid"],
                     "to": []
@@ -605,7 +605,7 @@ class DBpediaSpotlight:
                             "id": annotation['id'],
                             "name": annotation['name'],
                             "weight": edge_weight,
-                            "rel_type": "BELONGS_TO"
+                            "rel_type": "HAS_CATEGORY"
                         })
                         break
 
@@ -641,7 +641,7 @@ class DBpediaSpotlight:
                     "id": str(abs(hash(result['property']['value']))),
                     "name": result['propertyLabel']['value'],
                     "uri": result['property']['value'],
-                    "type": "property",
+                    "type": "related_concept",
                     "expanded": True,
                     "mid": annotation["mid"],
                     "to": []

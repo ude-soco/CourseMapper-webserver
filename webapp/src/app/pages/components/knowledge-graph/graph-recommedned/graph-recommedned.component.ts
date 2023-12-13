@@ -185,7 +185,7 @@ export class GraphRecommednedComponent {
                 ' have the same category: "' +
                 reason.name +
                 '"';
-            } else if (reason.type === 'property') {
+            } else if (reason.type === 'related_concept') {
               // text= reason.dnu + ' & '+this.node_name+' have same related concept ' +reason.name
               text =
                 dnuText +

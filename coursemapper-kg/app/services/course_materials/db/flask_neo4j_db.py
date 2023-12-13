@@ -79,7 +79,7 @@ class Neo4j:
         # f"""MATCH (c:Concept) WHERE (c.mid = "{'" or c.mid = "'.join(material_ids)}") and c.rank<51 and c.type="annotation" RETURN LABELS(c) as labels,ID(c) AS id, c.cid as cid, c.name AS name, c.uri as uri, c.type as type, c.weight as weight, c.wikipedia as wikipedia, c.abstract as abstract, c.rank as rank, c.mid as mid"""
         with self.get_db().session() as session:
             result = session.run(
-                """MATCH (c:Concept) WHERE (c.mid IN $mids) and c.rank<51 and c.type="annotation" RETURN LABELS(c) as labels,ID(c) AS id, c.cid as cid, c.name AS name, c.uri as uri, c.type as type, c.weight as weight, c.wikipedia as wikipedia, c.abstract as abstract, c.rank as rank, c.mid as mid""",
+                """MATCH (c:Concept) WHERE (c.mid IN $mids) and c.rank<51 and c.type="main_concept" RETURN LABELS(c) as labels,ID(c) AS id, c.cid as cid, c.name AS name, c.uri as uri, c.type as type, c.weight as weight, c.wikipedia as wikipedia, c.abstract as abstract, c.rank as rank, c.mid as mid""",
                 mids=material_ids
             ).data()
 

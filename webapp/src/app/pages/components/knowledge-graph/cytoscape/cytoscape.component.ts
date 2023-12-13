@@ -116,13 +116,14 @@ export class CytoscapeComponent {
         'text-valign': 'center',
         'text-outline-width': 0.2,
         'background-color': function (elm) {
-          if (elm.data().type === 'property') return '#689F38';
+          
+          if (elm.data().type === 'related_concept') return '#ce6f34';
           else if (elm.data().type === 'category') return '#FBC02D';
           else if (elm.data().type === 'course') return '#689F38';
           else if (elm.data().type === 'topic') return '#607D8B';
           else if (elm.data().type === 'channel') return '#9C27B0';
-          else if (elm.data().type === 'material') return '#607D8B';
-          // "annotation"
+          else if (elm.data().type === 'material') return '#2196F3';
+          // "annotation // main concept"
           else return '#2196F3';
         },
         color: '#000',
@@ -187,7 +188,7 @@ export class CytoscapeComponent {
 
   ngOnChanges() {
     if (!this.showMaterialKg) {
-      this.selectedFilterValues = ['annotation'];
+      this.selectedFilterValues = ['main_concept'];
     }
     this.init();
     this.render();
@@ -242,10 +243,10 @@ export class CytoscapeComponent {
   init() {
     if (this.elements) {
       this.annotationsNodes = this.elements.nodes.filter(
-        (n) => n.data.type === 'annotation'
+        (n) => n.data.type === 'main_concept'
       );
       this.propertiesNodes = this.elements.nodes.filter(
-        (n) => n.data.type === 'property'
+        (n) => n.data.type === 'related_concept'
       );
       this.categoriesNodes = this.elements.nodes.filter(
         (n) => n.data.type === 'category'
@@ -270,7 +271,7 @@ export class CytoscapeComponent {
         let nodes = this._elements.nodes;
         this.cy.ready(() => {
           let initialNodes = nodes.filter(function (e: any) {
-            return e.data.type === 'annotation';
+            return e.data.type === 'main_concept';
           });
           for (var i = 0; i < initialNodes.length; i++) {
             this.cy
@@ -280,7 +281,7 @@ export class CytoscapeComponent {
               .style('display', 'none');
           }
           let nodesToHide = nodes.filter(function (e: any) {
-            return e.data.type === 'property' || e.data.type === 'category';
+            return e.data.type === 'related_concept' || e.data.type === 'category';
           });
           for (var i = 0; i < nodesToHide.length; i++) {
             this.cy.$(`#${nodesToHide[i].data.id}`).style('display', 'none');

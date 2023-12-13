@@ -325,7 +325,7 @@ def create_lm_slide_relationships(tx, mid, sid):
         "Creating learning material relationships to slide '%s'" % sid)
     tx.run("""MATCH (m:LearningMaterial) WHERE m.mid = $mid 
             OPTIONAL MATCH (s:Slide) WHERE s.sid = $sid
-            MERGE (s)-[r:BELONGS_TO]->(m)""",
+            MERGE (m)-[r:CONTAINS]->(s)""",
            mid=mid,
            sid=sid)
 
@@ -887,14 +887,14 @@ class NeoDataBase:
         #     MATCH p=(a)-[r]->(b) WHERE a.mid = $mid AND b.mid = $mid RETURN p""",
         #     mid=mid)
         rel1 = tx.run("""
-            MATCH p=(a:Slide)-[r:BELONGS_TO]->(b:LearningMaterial)
+            MATCH p=(a:Slide)-[r:CONTAINS]->(b:LearningMaterial)
             WHERE a.mid = $mid 
             AND b.mid = $mid 
             RETURN TYPE(r) as type, ID(a) as source, ID(b) as target""",
                         mid=mid)
         rel2 = tx.run("""
             MATCH p=(a)-[r]->(b) 
-            WHERE NOT EXISTS {MATCH (a:Slide)-[r:BELONGS_TO]->(b:LearningMaterial)}
+            WHERE NOT EXISTS {MATCH (a:Slide)-[r:CONTAINS]->(b:LearningMaterial)}
             AND a.mid = $mid 
             AND b.mid = $mid 
             RETURN TYPE(r) as type, ID(a) as source, ID(b) as target, r.weight as weight""",
@@ -1287,7 +1287,7 @@ class NeoDataBase:
                 RETURN r1.weight+r2.weight as weight,f.name as name,p,c.name as dnu,f.type as type""",
                 uid=uid,
                 cid=cid,
-                type="property").data()
+                type="related_concept").data()
 
         return list(result)
 
@@ -1374,7 +1374,7 @@ class NeoDataBase:
         logger.info("retrieve all main concepts %s" % mid)
         with self.driver.session() as session:
             nodes = session.run("""MATCH (n:Concept)
-                WHERE n.mid = $mid and n.type="annotation"
+                WHERE n.mid = $mid and n.type="main_concept"
                 RETURN n.name as label, n.cid as id, n.uri as uri, n.type as type, n.mid as mid, n.initial_embedding as initial_embedding, n.weight as weight""",
                 mid = mid).data()
         annotations=[]
