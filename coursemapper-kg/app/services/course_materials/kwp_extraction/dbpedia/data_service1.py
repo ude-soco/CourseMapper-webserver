@@ -156,7 +156,7 @@ def get_serialized_concepts_data(concepts):
             {"dnu": []},
             {"name": "", "type": "Slide", "dnu": []},
             {"name": "", "type": "category", "dnu": []},
-            {"name": "", "type": "property", "dnu": []},
+            {"name": "", "type": "related_concept", "dnu": []},
             {"name": "", "type": "Related", "dnu": []},
         ]
         for road in concept["n"]["roads"]:

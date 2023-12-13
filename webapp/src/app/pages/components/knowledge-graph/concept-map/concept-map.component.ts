@@ -258,7 +258,7 @@ export class ConceptMapComponent {
 
   selectedCheckOptions: any[] = [
     { name: 'Main Concepts', key: 'main_concept' },
-    { name: 'Related Concepts', key: 'property' },
+    { name: 'Related Concepts', key: 'related_concept' },
     { name: 'Categories', key: 'category' },
   ];
 

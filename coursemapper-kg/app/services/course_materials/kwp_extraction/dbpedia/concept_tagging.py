@@ -177,7 +177,7 @@ class DBpediaSpotlight:
                 for node in concepts:
                     if node["type"] == "main_concept":
                         node["weight"] = self._get_node_weight_cf(node, text, concepts)
-                    elif node["type"] == "property":
+                    elif node["type"] == "related_concept":
                         node["weight"] = self._assign_property_weight(
                             node, text, concepts
                         )
@@ -399,7 +399,7 @@ class DBpediaSpotlight:
                     "id": str(abs(hash(result["property"]["value"]))),
                     "name": result["propertyLabel"]["value"],
                     "uri": result["property"]["value"],
-                    "type": "property",
+                    "type": "related_concept",
                     "expanded": True,
                     "mid": annotation["mid"],
                     "to": [],
@@ -751,7 +751,7 @@ class DBpediaSpotlight:
                     "id": str(abs(hash(result["property"]["value"]))),
                     "name": result["propertyLabel"]["value"],
                     "uri": result["property"]["value"],
-                    "type": "property",
+                    "type": "related_concept",
                     "expanded": True,
                     "mid": annotation["mid"],
                     "to": [],

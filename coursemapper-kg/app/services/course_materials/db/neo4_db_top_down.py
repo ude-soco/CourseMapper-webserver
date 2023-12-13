@@ -1287,7 +1287,7 @@ class NeoDataBase:
                 RETURN r1.weight+r2.weight as weight,f.name as name,p,c.name as dnu,f.type as type""",
                 uid=uid,
                 cid=cid,
-                type="property").data()
+                type="related_concept").data()
 
         return list(result)
 

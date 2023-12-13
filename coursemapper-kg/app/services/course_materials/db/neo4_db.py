@@ -1185,7 +1185,7 @@ class NeoDataBase:
         # logger.info(
         #     "Check if concept '%s' exists" % cid)
         with self.driver.session() as session:
-            if node["type"] == "property":
+            if node["type"] == "related_concept":
                 result = session.run(
                     "MATCH (c:Concept) WHERE c.name = $name and c.mid=$mid RETURN c",
                     name=node["name"],
@@ -1621,6 +1621,7 @@ class NeoDataBase:
         tx = session.begin_transaction()
         try:
             for node in data:
+                logger.info("data complmemet",data)
                 create_concept_relationships(tx, node)
             tx.commit()
 

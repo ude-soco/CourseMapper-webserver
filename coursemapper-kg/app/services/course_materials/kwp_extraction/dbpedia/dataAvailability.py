@@ -100,7 +100,7 @@ class FoundAtDBpediaSpotlight:
                 doc_embeddings = self._get_embeddings(text)
                 for node in concepts:
                     if node["type"] == "main_concept" or node[
-                            "type"] == "property":
+                            "type"] == "related_concept":
                         ann_text = self.wiki_api.page(
                             node['uri'].split("/")[-1]).text
                         ann_text = self._preprocess(ann_text)
@@ -121,7 +121,7 @@ class FoundAtDBpediaSpotlight:
                     if node["type"] == "annotation":
                         node["weight"] = self._get_node_weight_cf(
                             node, text, concepts)
-                    elif node["type"] == "property":
+                    elif node["type"] == "related_concept":
                         node["weight"] = self._assign_property_weight(
                             node, text, concepts)
                     elif node["type"] == "category":
@@ -295,7 +295,7 @@ class FoundAtDBpediaSpotlight:
                     "id": abs(hash(result['property']['value'])),
                     "name": result['propertyLabel']['value'],
                     "uri": result['property']['value'],
-                    "type": "property",
+                    "type": "related_concept",
                     "expanded": True,
                     "mid": annotation["mid"],
                     "to": []
