@@ -52,9 +52,8 @@ updates:
       patterns:
       - "@angular/*"
       - "@angular-devkit/*"
-    ngrx:
-      patterns:
       - "@ngrx/*"
+      - "primeng"
 
 - package-ecosystem: "npm"
   directory: "/webserver"
