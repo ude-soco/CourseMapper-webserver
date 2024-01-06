@@ -8,3 +8,4 @@ services:
     depends_on:
     - webapp
     - webserver
+    - coursemapper-kg-web
