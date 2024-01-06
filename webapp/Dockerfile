@@ -13,7 +13,7 @@ RUN  --mount=type=cache,target=/app/.npm,rw \
 
 COPY . .
 RUN  --mount=type=cache,target=/app/node_modules/.cache,rw \
-     ng build
+     ng build --configuration production
 
 
 
