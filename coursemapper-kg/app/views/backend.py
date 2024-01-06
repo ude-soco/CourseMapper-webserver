@@ -3,7 +3,7 @@ from flask import Blueprint, request, make_response
 from app.extensions import neo4j
 
 
-backend = Blueprint("backend", __name__)
+backend = Blueprint("backend", __name__, url_prefix="/kg-api")
 
 @backend.route("/check_slide/<slide_id>", methods=["GET"])
 def check_slide(slide_id: str):

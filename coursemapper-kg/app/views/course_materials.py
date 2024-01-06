@@ -18,7 +18,7 @@ from ..services.course_materials.GCN.lightGCN import LightGCN
 
 logger = LOG(name=__name__, level=logging.DEBUG)
 
-course_materials = Blueprint("course_materials", __name__)
+course_materials = Blueprint("course_materials", __name__, url_prefix="/kg-api")
 
 
 @course_materials.route("/get_resources", methods=["POST"])
