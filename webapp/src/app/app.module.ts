@@ -61,8 +61,7 @@ import { AnnotationModule } from './pages/components/annotations/annotation.modu
 // import { MaterialsModule } from './pages/components/materils/materials.module';
 import { environment } from '../environments/environment';
 import { appReducer } from './state/app.reducer';
-import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
-const config: SocketIoConfig = { url: 'http://localhost:8080', options: {} };
+import { SocketIoModule } from 'ngx-socket-io';
 import { hydrationMetaReducer } from './state/hydration.reducer';
 import { LandingPageComponent } from './pages/landing-page/landing-page.component';
 import { PrivacyComponent } from './pages/components/privacy/privacy.component';
