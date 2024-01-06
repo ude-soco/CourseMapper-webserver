@@ -7,7 +7,7 @@ exec gunicorn 'app:create_app()' \
   --preload \
   --workers=1 \
   -k sync \
-  --timeout 1800 \
-  --graceful-timeout 1800 \
+  --timeout 36000 \
+  --graceful-timeout 36000 \
   --log-level $GUNICORN_LOG_LEVEL \
   --access-logfile -
