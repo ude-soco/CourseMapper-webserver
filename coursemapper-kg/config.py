@@ -32,9 +32,9 @@ class Config(object):
     DEBUG = False
     TESTING = False
     SECRET_KEY = "secret"
-    NEO4J_URI = "bolt://localhost:7687"
-    NEO4J_USER = "neo4j"
-    NEO4J_PASSWORD = "1234qwer!"
+    NEO4J_URI = os.environ.get("NEO4J_URI", "bolt://localhost:7687")
+    NEO4J_USER = os.environ.get("NEO4J_USER", "neo4j")
+    NEO4J_PASSWORD = os.environ.get("NEO4J_PASSWORD", "1234qwer!")
     STANFORDCORENLP = STANFORDCORENLP
     ELMO_OPTIONS_FILE = ELMO_OPTIONS_FILE
     ELMO_WEIGHT_FILE = ELMO_WEIGHT_FILE
