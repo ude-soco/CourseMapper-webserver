@@ -123,9 +123,13 @@ export const newTopic = async (req, res, next) => {
     },
     topic: savedTopic,
     user: user,
+    course: foundCourse,
+    category: "courseupdates",
   };
   return next();
 };
+
+//TODO: Perhaps delete topic notifications when topic is deleted even though the activities related to the topic are not being deleted
 
 /**
  * @function deleteTopic
@@ -170,6 +174,9 @@ export const deleteTopic = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: "Error finding and removing topic" });
   }
+
+  let channels = foundTopic.channels.map((channel) => channel._id);
+
   try {
     await Channel.deleteMany({ topicId: { $in: topicId } });
   } catch (err) {
@@ -209,16 +216,21 @@ export const deleteTopic = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: "Error saving course" });
   }
+
   req.locals = {
     response: {
       success: `Topic '${foundTopic.name}' successfully deleted!`,
     },
     topic: foundTopic,
     user: user,
+    category: "courseupdates",
+    course: foundCourse,
+    isDeletingTopic: true,
   };
   return next();
 };
 
+//TODO: Maybe the extraMessage can be changed for topic being edited. from "<newTopicName> was edited" to <"old topic name> was renamed to <newTopicName>"
 /**
  * @function editTopic
  * Edit a topic controller
@@ -232,6 +244,18 @@ export const editTopic = async (req, res, next) => {
   const courseId = req.params.courseId;
   const topicName = req.body.name;
   const userId = req.userId;
+
+  let foundCourse;
+  try {
+    foundCourse = await Course.findById(courseId);
+    if (!foundCourse) {
+      return res.status(404).send({
+        error: `Course with id ${courseId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding course" });
+  }
 
   let user;
   try {
@@ -281,6 +305,10 @@ export const editTopic = async (req, res, next) => {
   };
   req.locals.user = user;
   req.locals.newTopic = foundTopic;
+  req.locals.category = "courseupdates";
+  req.locals.user = user;
+  req.locals.course = foundCourse;
+  req.locals.topic = foundTopic;
 
   return next();
 };

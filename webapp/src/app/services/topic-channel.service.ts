@@ -1,21 +1,25 @@
-import { TopicImp } from "../models/TopicImp";
-import { environment } from "../../environments/environment";
-import { EventEmitter, Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { catchError, Observable, of, Subject, tap } from "rxjs";
-import { Topic } from "../models/Topic";
-import { Channel } from "../models/Channel";
-import { Course } from "../models/Course";
-import { StorageService } from "./storage.service";
+import { TopicImp } from '../models/TopicImp';
+import { environment } from '../../environments/environment';
+import { EventEmitter, Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { catchError, map, Observable, of, Subject, tap } from 'rxjs';
+import { Topic } from '../models/Topic';
+import { Channel } from '../models/Channel';
+import { Course } from '../models/Course';
+import { StorageService } from './storage.service';
+import { BlockingNotifications } from '../models/BlockingNotification';
+import { Store } from '@ngrx/store';
+import { State } from '../pages/courses/state/course.reducer';
+import * as CourseActions from '../pages/courses/state/course.actions';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class TopicChannelService {
   private API_URL = environment.API_URL;
   private topics: Topic[] = [];
   // the selectedTopic is used only to identify the Topic we add a channel to.
-  private selectedTopic: Topic = new TopicImp("", "", "", []);
+  private selectedTopic: Topic = new TopicImp('', '', '', []);
   onUpdateTopics$ = new Subject<Topic[]>();
   private user = this.storageService.getUser();
   onSelectChannel = new EventEmitter<Channel>();
@@ -24,7 +28,8 @@ export class TopicChannelService {
 
   constructor(
     private http: HttpClient,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private store: Store<State>
   ) {}
 
   /**
@@ -34,12 +39,19 @@ export class TopicChannelService {
    * @param {string} courseId the id of a course, the topics belongs to
    *
    */
-  fetchTopics(courseId: string): Observable<Course> {
-    return this.http.get<Course>(`${this.API_URL}/courses/${courseId}`).pipe(
-      tap((course) => {
-        this.topics = course.topics;
-      })
-    );
+  fetchTopics(courseId: string): Observable<{
+    course: Course;
+    notificationSettings: BlockingNotifications;
+  }> {
+    return this.http
+      .get<{ course: Course; notificationSettings: BlockingNotifications }>(
+        `${this.API_URL}/courses/${courseId}`
+      )
+      .pipe(
+        tap((res) => {
+          this.topics = res.course?.topics;
+        })
+      );
   }
 
   /**
@@ -50,8 +62,8 @@ export class TopicChannelService {
    *
    */
   updateTopics(courseId: string) {
-    this.fetchTopics(courseId).subscribe((course) => {
-      this.topics = course.topics;
+    this.fetchTopics(courseId).subscribe((res) => {
+      this.topics = res.course.topics;
       this.onUpdateTopics$.next(this.topics);
     });
   }
@@ -74,14 +86,18 @@ export class TopicChannelService {
             return of({ errorMsg: errResponse.error.error });
           } else {
             return of({
-              errorMsg: "Error in connection: Please reload the application",
+              errorMsg: 'Error in connection: Please reload the application',
             });
           }
         }),
         tap((res) => {
-          if (!("errorMsg" in res)) {
+          if (!('errorMsg' in res)) {
             this.topics.push(res.savedTopic);
-            this.sendTopicToOldBackend(res.savedTopic, course._id);
+            this.store.dispatch(
+              CourseActions.setTopicNotificationSettingsSuccess({
+                updatedDoc: res.updatedNotificationSettings,
+              })
+            );
             this.onUpdateTopics$.next(this.topics);
           }
         })
@@ -106,12 +122,12 @@ export class TopicChannelService {
             return of({ errorMsg: errResponse.error.error });
           } else {
             return of({
-              errorMsg: "Error in connection: Please reload the application",
+              errorMsg: 'Error in connection: Please reload the application',
             });
           }
         }),
         tap((res) => {
-          if (!("errorMsg" in res)) {
+          if (!('errorMsg' in res)) {
             this.removeTopic(topicTD);
           }
         })
@@ -180,12 +196,12 @@ export class TopicChannelService {
             return of({ errorMsg: errResponse.error.error });
           } else {
             return of({
-              errorMsg: "Error in connection: Please reload the application",
+              errorMsg: 'Error in connection: Please reload the application',
             });
           }
         }),
         tap((res) => {
-          if (!("errorMsg" in res)) {
+          if (!('errorMsg' in res)) {
             this.topics.forEach((topic, index) => {
               if (
                 topic._id.toString() === res.savedChannel.topicId.toString()
@@ -195,8 +211,12 @@ export class TopicChannelService {
                 this.topics[index] = newTopic;
               }
             });
-            this.sendChannelToOldBackend(res.savedChannel);
             this.onUpdateTopics$.next(this.topics);
+            this.store.dispatch(
+              CourseActions.setChannelNotificationSettingsSuccess({
+                updatedDoc: res.updatedNotificationSettings,
+              })
+            );
           }
         })
       );
@@ -220,12 +240,12 @@ export class TopicChannelService {
             return of({ errorMsg: errResponse.error.error });
           } else {
             return of({
-              errorMsg: "Error in connection: Please reload the application",
+              errorMsg: 'Error in connection: Please reload the application',
             });
           }
         }),
         tap((res) => {
-          if (!("errorMsg" in res)) {
+          if (!('errorMsg' in res)) {
             this.removeChannlFromTopic(channelTD);
           }
         })
@@ -276,7 +296,7 @@ export class TopicChannelService {
   sendTopicToOldBackend(topic, courseId) {
     // userId should be taken from the coockies. for the time being it is hard coded
     this.http
-      .post<any>("http://localhost:8090/new/topic", {
+      .post<any>('http://localhost:8090/new/topic', {
         _id: topic._id,
         topic: topic.name,
         courseID: courseId,
@@ -288,7 +308,7 @@ export class TopicChannelService {
   sendChannelToOldBackend(channel) {
     // userId should be taken from the coockies. for the time being it is hard coded
     this.http
-      .post<any>("http://localhost:8090/new/channel", {
+      .post<any>('http://localhost:8090/new/channel', {
         _id: channel._id,
         courseID: channel.courseId,
         topicID: channel.topicId,
@@ -298,9 +318,10 @@ export class TopicChannelService {
       })
       .subscribe();
   }
+
   selectChannel(channel: Channel) {
     // if there is no selected course then no need to update the topics.
-    /*if (this.getSelectedCourse()._id && course._id){      
+    /*if (this.getSelectedCourse()._id && course._id){
       this.topicChannelService.updateTopics(course._id);
     }*/
     this.selectedChannel = channel;
@@ -311,10 +332,12 @@ export class TopicChannelService {
 
   getChannelDetails(channel): Observable<Channel[]> {
     return this.http
-      .get<Channel[]>(
-        `${this.API_URL}/courses/${channel.courseId}/channels/${channel._id}`
-      )
+      .get<{
+        channel: Channel[];
+        notificationSettings: BlockingNotifications;
+      }>(`${this.API_URL}/courses/${channel.courseId}/channels/${channel._id}`)
       .pipe(
+        map((res) => res.channel),
         tap((channels) => {
           this.channels = channels;
         })
@@ -322,8 +345,11 @@ export class TopicChannelService {
   }
 
   getChannel(courseId: string, channelId: string): Observable<Channel> {
-    return this.http.get<Channel>(
-      `${this.API_URL}/courses/${courseId}/channels/${channelId}`
-    );
+    return this.http
+      .get<{
+        channel: Channel;
+        notificationSettings: BlockingNotifications;
+      }>(`${this.API_URL}/courses/${courseId}/channels/${channelId}`)
+      .pipe(map((res) => res.channel));
   }
 }

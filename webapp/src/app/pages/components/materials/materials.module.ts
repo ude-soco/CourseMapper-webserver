@@ -16,6 +16,7 @@ import { MenuModule } from 'primeng/menu';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MaterialEffects } from './state/material.effects';
 import { EffectsModule } from '@ngrx/effects';
+import { KnowledgeGraphModule } from '../knowledge-graph/knowledge-graph.module';
 
 @NgModule({
   declarations: [MaterialComponent, AddMaterialComponent],
@@ -29,6 +30,7 @@ import { EffectsModule } from '@ngrx/effects';
     SharedComponentsModule,
     MenuModule,
     ConfirmDialogModule,
+    KnowledgeGraphModule,
     StoreModule.forFeature('material', materialReducer),
     EffectsModule.forFeature([MaterialEffects]),
     RouterModule.forChild([

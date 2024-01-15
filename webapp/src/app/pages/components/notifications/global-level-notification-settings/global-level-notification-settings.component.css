@@ -1,0 +1,85 @@
+
+.grid{
+  display: grid;
+  grid-template-columns: 1fr 200px 300px 200px;
+   /* Responsive column takes up remaining space */
+  /* gap: 10px; */ /* Adjust the gap between columns as needed */
+  margin-bottom: 1rem;
+}
+
+.override-parent{
+  position: relative;
+  margin: 10px;
+}
+
+.override-parent:hover .overlay{
+  display: block;
+  opacity: 1;
+}
+
+.overlay {
+  position: absolute;
+  top: -16px;
+  right: -15px;
+  display: none;
+  background-color: #00000016;
+  cursor: pointer;
+  opacity: 0;
+  border-radius: 50%;
+  box-shadow: (196, 201, 206, 0.3) 0px 0px 0px 1px, rgba(0, 0, 0, 0.2) 0px 1px 5px 0px;
+  transition: opacity 0.3s ease;
+}
+
+.close-icon {
+  font-size: 20px;
+  color: red;
+  padding: 6px;
+}
+
+/* Style for the first responsive column */
+.column1 {
+  padding: 10px;
+  justify-self: center;
+
+}
+
+/* Styles for the fixed-width columns */
+.column2,
+.column3,
+.column4,
+.column5 {
+  padding: 10px;
+  justify-self: center;
+}
+
+.checked{
+  display: block;
+  width: 25px;
+  height: 25px;
+  background-color: #3f51b5;
+}
+
+.unchecked{
+  width: 22px;
+  height: 22px;
+  border: 2px solid black;
+  border-radius: 5px;
+}
+
+.name{
+  justify-self: left;
+  padding: 0.5rem;
+  cursor: default;
+}
+
+.override{
+  background-color:#f9f9f9;
+    border: 1px solid #00000014;
+    border-radius: 5px;
+}
+
+h2{
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+  font-weight: 500;
+}

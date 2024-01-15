@@ -1,0 +1,38 @@
+
+:host ::ng-deep.p-tabmenu .p-tabmenu-nav {
+  background: #ffffff;
+  border: solid rgba(0, 0, 0, 0);
+  border-width: 0 0 1px 0;
+}
+
+
+:host ::ng-deep.p-checkbox .p-checkbox-box.p-highlight{
+  border-color: #0369a1 ;
+  background: #0369a1;
+}
+
+:host ::ng-deep.p-checkbox:not(.p-checkbox-disabled) .p-checkbox-box.p-highlight:hover  {
+ border-color: #ea580c;
+ background: #ea580c;
+ color: #ffffff!;
+}
+
+.notification-unread{
+  background-color: #f0f8ff;
+}
+
+.notification-read{
+  background-color: #ffffff;
+}
+
+.notification-unread, .notification-read{
+  display: flex;
+  padding-left: 1rem;
+  width: 100%;
+ }
+
+ .notification:hover, .notification-read:hover{
+    box-shadow: inset 1px 0 0 #dadce0,inset -1px 0 0 #dadce0,0 1px 2px 0 rgba(60,64,67,.3),0 1px 3px 1px rgba(60,64,67,.15);
+
+};
+

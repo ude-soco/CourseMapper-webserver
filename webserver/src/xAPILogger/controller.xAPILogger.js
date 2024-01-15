@@ -3,17 +3,24 @@ const Activity = db.activity;
 const SEND_STATEMENT_IN_REALTIME =
   process.env.SEND_STATEMENT_IN_REALTIME === "true";
 
-export const saveStatementToMongo = async (statement, sent) => {
+export const saveStatementToMongo = async (
+  statement,
+  sent,
+  notificationInfo
+) => {
   let activity = new Activity({
     statement: statement,
     sent: sent,
+    notificationInfo: notificationInfo,
   });
 
   let savedStatement;
   try {
     savedStatement = await activity.save();
+    return savedStatement;
   } catch (err) {
     console.log("Error in saving statement to mongo");
+    throw err;
   }
 };
 

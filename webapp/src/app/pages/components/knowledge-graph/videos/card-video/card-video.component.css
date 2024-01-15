@@ -1,0 +1,35 @@
+.image-video {
+  cursor: pointer;
+}
+.title-video.active {
+  color: #0377bd;
+  cursor: pointer;
+}
+.title-video:hover {
+  color: #0377bd;
+  cursor: pointer;
+}
+.like-button.active {
+  color: #ffffff;
+  background-color: #0377bd;
+}
+.dislike-button.active {
+  color: #ffffff;
+  background-color: #ff0000;
+  border: white;
+}
+
+.p-checkbox-label-focus {
+  color: green;
+}
+
+.p-checkbox-label-active {
+  color: #0377bd;
+}
+
+.line-clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 10;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+}

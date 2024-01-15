@@ -9,20 +9,113 @@
 ::-webkit-scrollbar {
     width: 15px;
   }
-  
+
   /* Track */
   ::-webkit-scrollbar-track {
-    box-shadow: inset 0 0 5px grey; 
+    box-shadow: inset 0 0 5px grey;
     border-radius: 10px;
   }
-   
+
   /* Handle */
   ::-webkit-scrollbar-thumb {
-    background: rgb(187, 181, 181); 
+    background: rgb(187, 181, 181);
     border-radius: 10px;
   }
-  
+
   /* Handle on hover */
   ::-webkit-scrollbar-thumb:hover {
-    background: #686060; 
+    background: #686060;
   }
+
+  :root {
+    --course-mapper-blue: #0369a1;
+  }
+
+  .p-menu.p-menu-overlay.course-context-menu{
+    width: fit-content;
+  }
+
+  .p-menu.p-menu-overlay.settingsContextMenu{
+    width: fit-content;
+  }
+
+  .p-overlaypanel.settingsContextMenu .p-overlaypanel-content {
+    padding: 0;
+  }
+
+ .p-overlaypanel.settingsContextMenu{
+    padding: 0
+  }
+
+  .contextMenuButton.p-button:enabled:hover {
+    background: rgb(214 215 223 / 92%);
+    color: #090909;
+    border-color: transparent;
+  }
+
+  .contextMenuButton.p-button {
+    color: #000000;
+    background: #ffffff;
+    border: 0 none;
+    padding: 0.714rem 1rem;
+    font-size: 1rem;
+    border-radius: 4px;
+    width: 100%;
+    text-align: left;
+    font-weight: 300
+  }
+
+  .contextMenuButton.p-button:enabled:active {
+    background: rgb(214 215 223 / 92%);
+    color: #090909;
+    border-color: transparent;
+}
+
+.contextMenuButton.p-button:enabled:focus {
+  background: rgb(214 215 223 / 92%);
+  color: #090909;
+  border-color: transparent;
+}
+
+.contextMenuButton.p-button .p-checkbox {
+  margin-right: 10px;
+}
+
+
+.checkbox-button.p-button:enabled:hover {
+  background: rgb(214 215 223 / 92%);
+  color: #090909;
+  border-color: transparent;
+}
+
+.checkbox-button.p-button {
+  color: #000000;
+  background: #f9f9f9;
+  border: 0 none;
+  font-size: 1rem;
+  border-radius: 4px;
+  width: 100%;
+  display: flex;
+    justify-content: center;
+}
+
+.checkbox-button.p-button:enabled:active {
+  background: rgb(214 215 223 / 92%);
+  color: #090909;
+  border-color: transparent;
+}
+
+.checkbox-button.p-button:enabled:focus {
+background: rgb(214 215 223 / 92%);
+color: #090909;
+border-color: transparent;
+}
+
+.p-overlaypanel.notifications-dashboard .p-overlaypanel-content {
+  padding: 0;
+  width: 740px;
+  width: 767px;
+  height: 80vh;
+  overflow-x: hidden;
+    overflow-y: scroll;
+}

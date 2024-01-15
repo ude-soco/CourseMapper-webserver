@@ -12,100 +12,252 @@
       class="m-0 w-full mx-2 pb-2 transition duration-300 ease-in-out"
       *ngIf="expandTopic.includes(topic._id)"
     >
-      <div class="flex flex-row items-center justify-between mx-0 my-1.5">
-        <div class="flex flex-row items-center">
-          <app-iconbutton
-            icon="bx-chevron-down"
-            color="text-black"
-            (click)="selectedTopic=topic;onSelectTopic(topic)"
-          ></app-iconbutton>
-          <p
-            id="{{ topic._id }}"
-            class="text-lg font-semibold"
-            (keydown)="onTextInsertedTopic(selectedTopic._id, $event)"
-            (keyup)="afterTextInsertedTopic(selectedTopic._id, $event)"
-            #{{topic._id}}
-          >
-            {{ topic.name }}
-          </p>
+      <div
+        class="flex flex-row items-center justify-between mx-0 my-1.5 relative"
+      >
+        <div
+          class="flex flex-row items-center grow justify-between pr-2"
+          [class.activity-indicator]="
+            getTopicActivityIndicator(topic._id) | async
+          "
+        >
+          <div class="flex flex-row">
+            <app-iconbutton
+              icon="bx-chevron-down"
+              color="text-black"
+              (click)="selectedTopic = topic; onSelectTopic(topic)"
+            ></app-iconbutton>
+            <div
+              id="{{ topic._id }}"
+              class="text-lg font-semibold"
+              (keydown)="onTextInsertedTopic(selectedTopic._id, $event)"
+              (keyup)="afterTextInsertedTopic(selectedTopic._id, $event)"
+              #{{topic._id}}
+            >
+              <span>{{ topic.name }} </span>
+              <!-- <span
+                class="bg-orange-600 text-[white] text-base p-[0.1rem] w-[1.7rem] text-center rounded-[15px]"
+                *ngIf="
+                  (getNumUnreadNotificationsForTopic(topic._id) | async) > 0
+                "
+                >{{
+                  getNumUnreadNotificationsForTopic(topic._id) | async
+                }}</span
+              > -->
+            </div>
+          </div>
+          <!--           <div class="bell-icon-container">
+            <app-svg-icon
+              [path]="'assets/cancel-bell-notification-icon.svg'"
+              class="bell-icon"
+            ></app-svg-icon>
+          </div> -->
         </div>
-        <p-menu
-          #menu
-          id="config_menu"
-          [model]="topicOptions"
-          [popup]="true"
-          appendTo="body"
-        ></p-menu>
+        <p-overlayPanel #topicMenu styleClass="settingsContextMenu">
+          <ng-template pTemplate="content">
+            <app-context-menu
+              [showModeratorPrivileges]="showModeratorPrivileges"
+              [checkBoxesGroup]="checkBoxesGroup"
+              [checkBoxesArray]="checkBoxesArray"
+              [isResetButtonEnabled]="isResetTopicNotificationsButtonEnabled"
+              resetTo="course"
+              [checkBoxesArray]="checkBoxesArray"
+              (renameClicked)="onRenameTopic()"
+              (deleteClicked)="onDeleteTopic()"
+              (resetButtonClicked)="onResetTopicNotificationsClicked()"
+              (notificationSettingClicked)="
+                onTopicNotificationSettingsClicked($event)
+              "
+            ></app-context-menu>
+          </ng-template>
+        </p-overlayPanel>
         <app-iconbutton
-          *ngIf="showModeratorPrivileges"
+          #menuBtn
           icon="bx-dots-vertical-rounded"
           color="text-black"
-          (click)="selectedTopic = topic; menu.toggle($event)"
+          (click)="topicMenuButtonClicked($event, topic)"
         ></app-iconbutton>
       </div>
+
       <div
         *ngFor="let channel of topic.channels; let i = index"
         [attr.data-index]="i"
       >
         <div
           id="{{ channel._id }}-container"
-          class="pl-7 py-1 hover:bg-white transition-all"
+          class="pl-7 py-1 hover:bg-white transition-all relative"
         >
           <div
             *ngIf="channel._id !== selectedChannelId"
             class="flex flex-row items-center justify-between"
+            [class.activity-indicator]="
+              getChannelActivityIndicator(channel._id) | async
+            "
           >
-            <p
-              id="{{ channel._id }}"
-              (click)="onSelectChannel(channel)"
-              (keydown)="onTextInsertedChannel(selectedChannel._id, $event)"
-              (keyup)="afterTextInsertedChennel(selectedChannel._id, $event)"
-              class="cursor-pointer w-full"
-            >
-              #{{ channel.name }}
-            </p>
+            <div class="flex">
+              <span>#</span>
+              <p
+                id="{{ channel._id }}"
+                (click)="onSelectChannel(channel)"
+                (keydown)="onTextInsertedChannel(selectedChannel._id, $event)"
+                (keyup)="afterTextInsertedChennel(selectedChannel._id, $event)"
+                class="cursor-pointer w-full"
+              >
+                {{ channel.name }}
+              </p>
+            </div>
             <app-iconbutton
-              *ngIf="showModeratorPrivileges"
               icon="bx-dots-vertical-rounded"
               color="text-black"
-              (click)="selectedChannel = channel; menu.toggle($event)"
+              (click)="channelMenuButtonClicked($event, channel)"
             ></app-iconbutton>
-            <p-menu
-              #menu
-              id="config_menu"
-              [model]="channelsOptions"
-              [popup]="true"
-              appendTo="body"
-            ></p-menu>
           </div>
+          <p-overlayPanel #channelMenu styleClass="settingsContextMenu">
+            <ng-template pTemplate="content">
+              <app-context-menu
+                [showModeratorPrivileges]="showModeratorPrivileges"
+                [checkBoxesGroup]="channelCheckBoxesGroup"
+                [checkBoxesArray]="channelCheckBoxesArray"
+                [isResetButtonEnabled]="
+                  isResetChannelNotificationsButtonEnabled
+                "
+                resetTo="topic"
+                (renameClicked)="onRenameChannel()"
+                (deleteClicked)="onDeleteChannel()"
+                (resetButtonClicked)="onResetChannelNotificationsClicked()"
+                (notificationSettingClicked)="
+                  onChannelNotificationSettingsClicked($event)
+                "
+              ></app-context-menu>
+            </ng-template>
+          </p-overlayPanel>
           <div
             *ngIf="channel._id === selectedChannelId"
             class="flex flex-row items-center justify-between bg-white"
           >
-            <p
-              id="{{ channel._id }}"
-              (click)="onSelectChannel(channel)"
-              (keydown)="onTextInsertedChannel(selectedChannel._id, $event)"
-              (keyup)="afterTextInsertedChennel(selectedChannel._id, $event)"
-              class="cursor-pointer w-full"
+            <div
+              class="flex"
+              [class.activity-indicator]="
+                getChannelActivityIndicator(channel._id) | async
+              "
             >
-              #{{ channel.name }}
-            </p>
-            <app-iconbutton
-              *ngIf="showModeratorPrivileges"
-              icon="bx-dots-vertical-rounded"
-              color="text-black"
-              (click)="selectedChannel = channel; menu.toggle($event)"
-            ></app-iconbutton>
-            <p-menu
-              #menu
-              id="config_menu"
-              [model]="channelsOptions"
-              [popup]="true"
-              appendTo="body"
-            ></p-menu>
+              <span>#</span>
+              <p
+                id="{{ channel._id }}"
+                (click)="onSelectChannel(channel)"
+                (keydown)="onTextInsertedChannel(selectedChannel._id, $event)"
+                (keyup)="afterTextInsertedChennel(selectedChannel._id, $event)"
+                class="cursor-pointer w-full"
+              >
+                {{ channel.name }}
+              </p>
+            </div>
+            <div>
+              <app-iconbutton
+                icon="bx-dots-vertical-rounded"
+                color="text-black"
+                (click)="channelMenuButtonClicked($event, channel)"
+              ></app-iconbutton>
+            </div>
           </div>
+          <p-overlayPanel #channelMenu styleClass="settingsContextMenu">
+            <ng-template pTemplate="content">
+              <app-context-menu
+                [showModeratorPrivileges]="showModeratorPrivileges"
+                [checkBoxesGroup]="channelCheckBoxesGroup"
+                [checkBoxesArray]="channelCheckBoxesArray"
+                [isResetButtonEnabled]="
+                  isResetChannelNotificationsButtonEnabled
+                "
+                resetTo="topic"
+                (renameClicked)="onRenameChannel()"
+                (deleteClicked)="onDeleteChannel()"
+                (resetButtonClicked)="onResetChannelNotificationsClicked()"
+                (notificationSettingClicked)="
+                  onChannelNotificationSettingsClicked($event)
+                "
+              ></app-context-menu>
+            </ng-template>
+          </p-overlayPanel>
         </div>
+
+        <ul class="spineBorder-1-F4s1">
+          <li
+            *ngFor="
+              let followingAnnotation of getFollowingAnnotationsOfDisplayedChannels(
+                channel._id
+              ) | async
+            "
+          >
+            <div
+              class="flex flex-row justify-between items-center pl-8 py-1 hover:bg-white transition-all following-annotation-container relative"
+              (click)="onFollowingAnnotationClicked(followingAnnotation)"
+            >
+              <div
+                class="flex flex-row justify-center items-center"
+                [class.activity-indicator]="
+                  getAnnotationActivityIndicator(
+                    followingAnnotation.annotationId
+                  ) | async
+                "
+              >
+                <svg
+                  class="spine-29OFwR"
+                  width="12"
+                  height="11"
+                  viewBox="0 0 12 11"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M11 9H4C2.89543 9 2 8.10457 2 7V1C2 0.447715 1.55228 0 1 0C0.447715 0 0 0.447715 0 1V7C0 9.20914 1.79086 11 4 11H11C11.5523 11 12 10.5523 12 10C12 9.44771 11.5523 9 11 9Z"
+                    fill="currentColor"
+                  ></path>
+                </svg>
+                <div class="truncate-text">
+                  {{ followingAnnotation.content }}
+                </div>
+                <!--                 <span
+                  class="bg-orange-600 text-[white] text-base p-[0.1rem] w-8 text-center rounded-[15px] font-semibold text-[0.8rem]"
+                  *ngIf="
+                    (getNumUnreadNotificationsForAnnotation(
+                      followingAnnotation.annotationId
+                    ) | async) > 0
+                  "
+                  >{{
+                    getNumUnreadNotificationsForAnnotation(
+                      followingAnnotation.annotationId
+                    ) | async
+                  }}</span -->
+              </div>
+              <div>
+                <p-overlayPanel #menu styleClass="settingsContextMenu">
+                  <ng-template pTemplate="content">
+                    <div class="settings-context-menu-container">
+                      <p-button
+                        label="Unfollow Annotation"
+                        styleClass="contextMenuButton"
+                        (onClick)="
+                          onUnfollowAnnotationClicked(
+                            $event,
+                            followingAnnotation.annotationId
+                          )
+                        "
+                      >
+                      </p-button>
+                    </div>
+                  </ng-template>
+                </p-overlayPanel>
+                <app-iconbutton
+                  icon="bx-dots-vertical-rounded"
+                  color="text-black"
+                  (click)="onFollowingAnnotationSettingsClicked($event, menu)"
+                  class="following-annotation-setting-button"
+                ></app-iconbutton>
+              </div>
+            </div>
+          </li>
+        </ul>
       </div>
 
       <div
@@ -128,35 +280,74 @@
       class="m-0 w-full mx-2 pb-2 transition duration-300 ease-in-out"
       *ngIf="!expandTopic.includes(topic._id)"
     >
-      <div class="flex flex-row items-center justify-between mx-0 my-1.5">
-        <div class="flex flex-row items-center">
-          <app-iconbutton
-            icon="bx-chevron-right"
-            color="text-black"
-            (click)="selectedTopic=topic;onSelectTopic(topic)"
-          ></app-iconbutton>
-          <p
-            id="{{ topic._id }}"
-            class="text-lg font-semibold"
-            (keydown)="onTextInsertedTopic(selectedTopic._id, $event)"
-            (keyup)="afterTextInsertedTopic(selectedTopic._id, $event)"
-            #{{topic._id}}
-          >
-            {{ topic.name }}
-          </p>
+      <div
+        class="flex flex-row items-center justify-between mx-0 my-1.5 relative"
+      >
+        <div
+          class="flex flex-row items-center grow justify-between pr-2"
+          [class.activity-indicator]="
+            getTopicActivityIndicator(topic._id) | async
+          "
+        >
+          <div class="flex flex-row">
+            <app-iconbutton
+              icon="bx-chevron-right"
+              color="text-black"
+              (click)="selectedTopic = topic; onSelectTopic(topic)"
+            ></app-iconbutton>
+            <div
+              id="{{ topic._id }}"
+              class="text-lg font-semibold"
+              [class.activity-indicator]="
+                getTopicActivityIndicator(topic._id) | async
+              "
+              (keydown)="onTextInsertedTopic(selectedTopic._id, $event)"
+              (keyup)="afterTextInsertedTopic(selectedTopic._id, $event)"
+              #{{topic._id}}
+            >
+              <span class="mr-2">{{ topic.name }} </span>
+              <!-- <span
+                class="bg-orange-600 text-[white] text-base p-[0.25rem] w-8 text-center rounded-[15px] text-[0.8rem]"
+                *ngIf="
+                  (getNumUnreadNotificationsForTopic(topic._id) | async) > 0
+                "
+                >{{
+                  getNumUnreadNotificationsForTopic(topic._id) | async
+                }}</span
+              > -->
+            </div>
+          </div>
+
+          <!--           <div class="bell-icon-container">
+            <app-svg-icon
+              [path]="'assets/cancel-bell-notification-icon.svg'"
+              class="bell-icon"
+            ></app-svg-icon>
+          </div> -->
         </div>
-        <p-menu
-          #menu
-          id="config_menu"
-          [model]="topicOptions"
-          [popup]="true"
-          appendTo="body"
-        ></p-menu>
+        <p-overlayPanel #topicMenu styleClass="settingsContextMenu">
+          <ng-template pTemplate="content">
+            <app-context-menu
+              [showModeratorPrivileges]="showModeratorPrivileges"
+              [checkBoxesGroup]="checkBoxesGroup"
+              [checkBoxesArray]="checkBoxesArray"
+              [isResetButtonEnabled]="isResetTopicNotificationsButtonEnabled"
+              [checkBoxesArray]="checkBoxesArray"
+              resetTo="course"
+              (renameClicked)="onRenameTopic()"
+              (deleteClicked)="onDeleteTopic()"
+              (resetButtonClicked)="onResetTopicNotificationsClicked()"
+              (notificationSettingClicked)="
+                onTopicNotificationSettingsClicked($event)
+              "
+            ></app-context-menu>
+          </ng-template>
+        </p-overlayPanel>
         <app-iconbutton
-          *ngIf="showModeratorPrivileges"
+          #menuBtn
           icon="bx-dots-vertical-rounded"
           color="text-black"
-          (click)="selectedTopic = topic; menu.toggle($event)"
+          (click)="topicMenuButtonClicked($event, topic)"
         ></app-iconbutton>
       </div>
     </div>

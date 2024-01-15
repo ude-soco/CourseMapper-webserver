@@ -3,6 +3,6 @@ services:
     image: ${IMAGE_NAME_PREFIX:-socialcomputing/}coursemapper-webserver-webapp:${IMAGE_TAG:-latest}
     build: .
     environment:
-      BASE_URL: http://localhost:8000/api
+      BASE_URL: http://localhost:8000
     depends_on:
     - webserver

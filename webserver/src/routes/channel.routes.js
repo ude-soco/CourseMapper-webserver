@@ -1,4 +1,4 @@
-const { authJwt } = require("../middlewares");
+const { authJwt, notifications } = require("../middlewares");
 const controller = require("../controllers/channel.controller");
 const logger = require("../xAPILogger/logger/channel.logger");
 
@@ -23,7 +23,10 @@ module.exports = function (app) {
     "/api/courses/:courseId/topics/:topicId/channel",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.newChannel,
-    logger.newChannel
+    logger.newChannel,
+    notifications.updateBlockingNotificationsNewChannel,
+    notifications.channelCourseUpdateNotificationUsers,
+    notifications.populateUserNotification
   );
 
   // Delete a channel
@@ -32,7 +35,9 @@ module.exports = function (app) {
     "/api/courses/:courseId/channels/:channelId",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.deleteChannel,
-    logger.deleteChannel
+    logger.deleteChannel,
+    notifications.channelCourseUpdateNotificationUsers,
+    notifications.populateUserNotification
   );
 
   // Edit a channel
@@ -41,6 +46,8 @@ module.exports = function (app) {
     "/api/courses/:courseId/channels/:channelId",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.editChannel,
-    logger.editChannel
+    logger.editChannel,
+    notifications.channelCourseUpdateNotificationUsers,
+    notifications.populateUserNotification
   );
 };

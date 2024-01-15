@@ -1,0 +1,106 @@
+<div class="course-notifications-settings-container">
+  <div>
+    <div class="settings-context-menu-container" [formGroup]="checkBoxesGroup">
+      <p-button
+        styleClass="contextMenuButton"
+        *ngFor="let item of checkBoxesArray"
+        (click)="onGlobalSettingClicked(item)"
+      >
+        <div>
+          <p-checkbox
+            [formControlName]="item.label"
+            [binary]="true"
+          ></p-checkbox>
+          <span>{{ item.label }}</span>
+        </div>
+      </p-button>
+    </div>
+  </div>
+
+  <h2>NOTIFICATION OVERRIDES</h2>
+  <div
+    class="overrides-container"
+    *ngIf="overriddenCourses | async as overrides"
+  >
+    <div class="grid">
+      <div class="column1">Course</div>
+      <div class="column2">Course Updates</div>
+      <div class="column3">Replies & Mentions</div>
+      <div class="column4">Annotations</div>
+    </div>
+
+    <ng-container *ngIf="overrides.length > 0; else noOverrides">
+      <div class="override-parent" *ngFor="let override of overrides">
+        <div class="grid override">
+          <div class="name">{{ override.courseName }}</div>
+
+          <p-button
+            styleClass="checkbox-button"
+            (onClick)="
+              onCourseSettingClicked(
+                override,
+                courseNotificationSettingLabels.courseUpdates
+              )
+            "
+          >
+            <div *ngIf="override.isCourseUpdateNotificationsEnabled">
+              <app-svg-icon
+                [path]="'assets/checkbox-checked.svg'"
+                class="checked"
+              ></app-svg-icon>
+            </div>
+            <div *ngIf="!override.isCourseUpdateNotificationsEnabled">
+              <!-- make a div with a 2px black border and height and width 25px -->
+              <div class="unchecked"></div>
+            </div>
+          </p-button>
+          <p-button
+            styleClass="checkbox-button"
+            (onClick)="
+              onCourseSettingClicked(
+                override,
+                courseNotificationSettingLabels.commentsAndMentioned
+              )
+            "
+          >
+            <div *ngIf="override.isReplyAndMentionedNotificationsEnabled">
+              <app-svg-icon
+                [path]="'assets/checkbox-checked.svg'"
+                class="checked"
+              ></app-svg-icon>
+            </div>
+            <div *ngIf="!override.isReplyAndMentionedNotificationsEnabled">
+              <div class="unchecked"></div>
+            </div>
+          </p-button>
+          <p-button
+            styleClass="checkbox-button"
+            (onClick)="
+              onCourseSettingClicked(
+                override,
+                courseNotificationSettingLabels.annotations
+              )
+            "
+          >
+            <div *ngIf="override.isAnnotationNotificationsEnabled">
+              <app-svg-icon
+                [path]="'assets/checkbox-checked.svg'"
+                class="checked"
+              ></app-svg-icon>
+            </div>
+            <div *ngIf="!override.isAnnotationNotificationsEnabled">
+              <div class="unchecked"></div>
+            </div>
+          </p-button>
+        </div>
+
+        <div class="overlay">
+          <span class="close-icon" (click)="onRemoveCourse(override)">✕</span>
+        </div>
+      </div>
+    </ng-container>
+    <ng-template #noOverrides>
+      <app-no-data [message]="'There are no overrides'"></app-no-data>
+    </ng-template>
+  </div>
+</div>

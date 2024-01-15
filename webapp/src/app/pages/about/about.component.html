@@ -1,0 +1,37 @@
+<div class="flex flex-row min-h-screen">
+  <div class="flex-col" *ngIf="loggedInUser">
+    <app-sidebar></app-sidebar>
+  </div>
+
+  <div class="md:container md:mx-auto">
+    <div class="img-div md:w-auto">
+      <div>
+        <img
+          alt="Card"
+          src="/assets/img/landingPage.jpg"
+          class="img"
+          />
+
+        <div class="transbox">
+          <h1>CourseMapper</h1>
+          <p>Learning. Collaboration. Annotation. Recommendation. Analytics</p>
+        </div>
+      </div>
+    </div>
+
+    <h1 class="text-5xl text-sky-600 font-bold text-center">Product Features</h1>
+
+    <div class="w-full grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 my-16 px-8">
+      <div *ngFor="let feature of features" class="flex flex-col gap-2 items-center">
+        <div class="p-2 aspect-[4/3] w-full flex items-center justify-center">
+          <img [src]="feature.image" class="object-contain">
+        </div>
+        <h2 class="text-3xl text-sky-600 font-bold text-center min-h-[5rem]">
+          {{feature.title}}
+        </h2>
+        <p class="text-justify flex-1">{{feature.description}}</p>
+      </div>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>

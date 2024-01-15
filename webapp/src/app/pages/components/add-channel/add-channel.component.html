@@ -1,26 +1,59 @@
 <p-toast position="bottom-left"></p-toast>
 
-<p-dialog header="Create New Channel" [(visible)]="displayAddChannelDialogue" [modal]="true" [draggable]="false"
-          [closable]="false" [style]="{maxWidth: '500px', width: '100%'}" (keydown)="preventEnterKey($event)">
-  <form [formGroup]="createChannelForm" [style]="{ paddingTop: '8px'}">
+<p-dialog
+  header="Create New Channel"
+  [(visible)]="displayAddChannelDialogue"
+  [modal]="true"
+  [draggable]="false"
+  [closable]="false"
+  [style]="{ maxWidth: '500px', width: '100%' }"
+  (keydown)="preventEnterKey($event)"
+>
+  <form [formGroup]="createChannelForm" [style]="{ paddingTop: '8px' }">
     <span class="p-float-label">
-      <input id="name" type="text" formControlName="name" pInputText [style]="{ width: '100%'}">
+      <input
+        id="name"
+        type="text"
+        formControlName="name"
+        pInputText
+        [style]="{ width: '100%' }"
+      />
       <label for="name">Name</label>
     </span>
-    <div [style]="{height: '24px'}">
-      <small *ngIf="createChannelForm.get('name').invalid" class="p-error block">Please give a channel name</small>
+    <div [style]="{ height: '24px' }">
+      <small *ngIf="createChannelForm.get('name').invalid" class="p-error block"
+        >Please give a channel name</small
+      >
     </div>
     <span class="p-float-label">
-      <input id="description" type="text" formControlName="description" pInputText [style]="{ width: '100%'}">
+      <input
+        id="description"
+        type="text"
+        formControlName="description"
+        pInputText
+        [style]="{ width: '100%' }"
+      />
       <label for="description">Description</label>
     </span>
 
-    <br>
+    <br />
     <div>
-      <button pButton icon="pi pi-times" (click)="toggleAddChannelDialogue()"
-              label="Cancel" class="p-button-outlined"></button>
-      <button id="addChannelConfirm" pButton icon="pi pi-check" class="float-right" (click)="onSubmit()" label="Confirm"
-              [disabled]="createChannelForm.get('name').invalid"></button>
+      <button
+        pButton
+        icon="pi pi-times"
+        (click)="toggleAddChannelDialogue()"
+        label="Cancel"
+        class="p-button-outlined"
+      ></button>
+      <button
+        id="addChannelConfirm"
+        pButton
+        icon="pi pi-check"
+        class="float-right"
+        (click)="onSubmit()"
+        label="Confirm"
+        [disabled]="createChannelForm.get('name').invalid"
+      ></button>
     </div>
   </form>
 </p-dialog>

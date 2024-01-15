@@ -1,0 +1,87 @@
+/* Tab Menu Styling */
+.badge {
+  background: var(--course-mapper-blue);
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  min-width: 1.5rem;
+  height: 1.5rem;
+  line-height: 1.5rem;
+  border-radius: 50%;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  position:absolute;
+  top: -15px;
+  right:-25px;
+}
+
+:host ::ng-deep .p-ripple .p-element .p-menuitem-link {
+  overflow: visible
+}
+
+:host ::ng-deep .p-tabmenu-nav a{
+  overflow: visible
+}
+
+
+
+:host ::ng-deep .p-tabmenu .p-tabmenu-nav .p-tabmenuitem.p-highlight .p-menuitem-link {
+  background: #ea580c;
+  border-color: rgba(0, 0, 0, 0.12);
+  color: #000000;
+  height: 1rem;
+  border-radius: 20px;
+}
+
+:host ::ng-deep .p-tabmenu .p-tabmenu-nav .p-tabmenuitem {
+
+  display: flex;
+  align-items: center;
+  margin-right: 0.55rem;
+}
+
+
+:host ::ng-deep .p-tabmenu .p-tabmenu-nav .p-tabmenuitem:not(.p-highlight):not(.p-disabled):hover .p-menuitem-link {
+  background: rgb(37 52 139 / 7%);
+    border-color: rgba(0, 0, 0, 0.12);
+    color: rgba(0, 0, 0, 0.6);
+    border-radius: 20px;
+    height: 1.5rem;
+
+}
+
+:host ::ng-deep .p-tabmenu .p-tabmenu-nav .p-tabmenu-ink-bar{
+  display: none;
+
+}
+
+:host ::ng-deep .p-tabmenu .p-tabmenu-nav .p-tabmenuitem .p-menuitem-link {
+   border: solid rgba(0, 0, 0, 0);
+   border-width: 0 0 0 0;
+   border-color: transparent transparent rgba(255, 255, 255, 0) transparent;
+  background: #ffffff;
+  color: rgba(0, 0, 0, 0.6);
+  padding: 1rem 1.5rem;
+  font-weight: 500;
+  border-top-right-radius: 4px;
+  border-top-left-radius: 4px;
+  transition: none;
+  margin: 0 0 0 0;
+}
+
+.tab{
+  color: #000000;
+}
+
+.tab-selected {
+  color: white;
+}
+
+:host ::ng-deep .pi {
+  font-size: 1.5rem;
+}
+
+
+:host ::ng-deep .p-button.p-button-text {
+  color: #0369a1;
+}

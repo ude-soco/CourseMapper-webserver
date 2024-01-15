@@ -1,0 +1,109 @@
+
+
+
+.img-div {
+    position: relative;
+    font-family: Arial;
+     border-radius:14px;
+    top: 2rem;
+    margin-bottom: 5rem;
+   width: 110%;
+
+  }
+.img{
+    border-radius: 14px;
+    height: 20rem;
+    width: 90%;
+  }
+  .text-block {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color:white
+
+
+
+  }
+  .centered {
+    bottom: 20px;
+right: 20px;
+background-color: black;
+color: white;
+padding-left: 20px;
+padding-right: 20px;
+
+    position: absolute;
+
+  }
+  div.transbox {
+    width: 50%;
+    background-color: rgba(9, 0, 0, 0.589);
+    border: 1px solid black;
+
+    position: absolute;
+    top: 5rem;
+    left: 20%;
+    color: white;
+    text-align: center;
+    height: 10rem;
+  }
+  div.transbox h1 {
+
+    font-weight: bold;
+    color: white;
+    font-size: 60px;
+
+  }
+  div.transbox p {
+
+    font-weight: bold;
+    color: white;
+  }
+
+  div.bottom-right {
+    position: absolute;
+    bottom: -1.75rem;
+    right: 40%;
+
+  }
+  div.bottom-right1 {
+
+    bottom: -1.75rem;
+    right: 40%;
+
+  }
+  .search{
+    width:30rem;
+  }
+  .search-results{
+    max-width: 600px;
+    width:65%;
+    margin:20px auto 0 auto;
+
+  }
+search-results hr{
+        border: none;
+        height: 1px;
+        background-color:lightgray;
+
+
+    }
+    search-results p{
+        margin:5px 0px
+    }
+.course-card{
+      float: left;
+left:1rem;
+width: 22rem;;
+margin: 1REM;
+
+    }
+    .course-div{
+      margin-left:9rem;
+
+      /* overflow-y: scroll; */
+    }
+.wrapper:not(:empty) + .default {
+    display: none;
+}

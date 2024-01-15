@@ -6,6 +6,9 @@ const Reply = db.reply;
 const Tag = db.tag;
 const User = db.user;
 const Role = db.role;
+const Course = db.course;
+
+const ObjectId = require("mongoose").Types.ObjectId;
 
 /**
  * @function newAnnotation
@@ -23,10 +26,18 @@ const Role = db.role;
 export const newAnnotation = async (req, res, next) => {
   const courseId = req.params.courseId;
   const materialId = req.params.materialId;
-  const annotationContent = req.body.content;
-  const annotationType = req.body.type;
-  const annotationLocation = req.body.location;
-  const annotationTool = req.body.tool;
+  const annotationContent = req.body.annotation.content;
+  const annotationType = req.body.annotation.type;
+  const annotationLocation = req.body.annotation.location;
+  const annotationTool = req.body.annotation.tool;
+  const mentionedUsers = req.body.mentionedUsers;
+
+  let courseForGeneratingNotifications;
+  try {
+    courseForGeneratingNotifications = await Course.findById(courseId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding course" });
+  }
 
   let foundMaterial;
   try {
@@ -59,7 +70,6 @@ export const newAnnotation = async (req, res, next) => {
   let foundRole;
   try {
     foundRole = await Role.findById(foundCourse.role);
-   
   } catch (err) {
     res.status(500).send({ error: "Error finding role" });
   }
@@ -70,6 +80,7 @@ export const newAnnotation = async (req, res, next) => {
       userId: req.userId,
       name: authorName,
       role: foundRole,
+      username: foundUser.username,
     },
     location: annotationLocation,
     tool: annotationTool,
@@ -79,6 +90,8 @@ export const newAnnotation = async (req, res, next) => {
     materialId: foundMaterial._id,
     createdAt: Date.now(),
     updatedAt: Date.now(),
+    materialType: foundMaterial.type,
+    mentionedUsers: mentionedUsers,
   });
 
   let newAnnotation;
@@ -95,10 +108,8 @@ export const newAnnotation = async (req, res, next) => {
   }
   // Checks for hashtags in content
   let foundTags = annotationContent
-  .split(" ")
-  .filter((v) => /^#[A-Za-z0-9]+$/.test(v));
-
-console.log(foundTags);
+    .split(" ")
+    .filter((v) => /^#[A-Za-z0-9]+$/.test(v));
 
   if (foundTags.length !== 0) {
     let foundTagsSchema = [];
@@ -121,11 +132,18 @@ console.log(foundTags);
       return res.status(500).send({ error: "Error saving tags" });
     }
   }
+
+  req.params.annotationId = newAnnotation._id;
+  //when user makes a new annotation, make the user automatically start following it
   req.locals = {
+    user: foundUser,
+    category: "annotations",
+    course: courseForGeneratingNotifications,
     response: newAnnotation,
     material: foundMaterial,
-    user: foundUser,
     annotation: newAnnotation,
+    isMentionedUsersPresent: mentionedUsers.length > 0,
+    materialType: foundMaterial.type,
   };
   socketio.getIO().emit(materialId, {
     eventType: "annotationCreated",
@@ -149,6 +167,13 @@ export const deleteAnnotation = async (req, res, next) => {
   const annotationId = req.params.annotationId;
   const userId = req.userId;
 
+  let courseForGeneratingNotifications;
+  try {
+    courseForGeneratingNotifications = await Course.findById(courseId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding course" });
+  }
+
   let user;
   try {
     user = await User.findById(userId);
@@ -159,6 +184,7 @@ export const deleteAnnotation = async (req, res, next) => {
   } catch (error) {
     return res.status(500).send({ error: "Error finding user" });
   }
+
   let foundAnnotation;
   try {
     foundAnnotation = await Annotation.findById(annotationId);
@@ -220,12 +246,20 @@ export const deleteAnnotation = async (req, res, next) => {
     reply: null,
   });
   req.locals = {
-    response: { success: "Annotation successfully deleted" },
+    response: {
+      success: "Annotation successfully deleted",
+    },
     annotation: foundAnnotation,
     user: user,
+    course: courseForGeneratingNotifications,
+    category: "annotations",
+    annotationId: foundAnnotation._id,
+    isFollowingAnnotation: true,
+    isDeletingAnnotation: true,
+    materialType: foundMaterial.type,
   };
 
-  return next();
+  next();
 };
 
 /**
@@ -248,6 +282,13 @@ export const editAnnotation = async (req, res, next) => {
   const annotationLocation = req.body.location;
   const annotationTool = req.body.tool;
   const userId = req.userId;
+
+  let courseForGeneratingNotifications;
+  try {
+    courseForGeneratingNotifications = await Course.findById(courseId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding course" });
+  }
 
   let user;
   try {
@@ -279,6 +320,14 @@ export const editAnnotation = async (req, res, next) => {
   } catch (err) {
     res.status(500).send({ error: "Error finding annotation" });
   }
+
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(foundAnnotation.materialId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
   req.locals = {
     oldAnnotation: JSON.parse(JSON.stringify(foundAnnotation)),
   };
@@ -323,7 +372,13 @@ export const editAnnotation = async (req, res, next) => {
   }
   req.locals.response = { success: "Annotation successfully updated" };
   req.locals.newAnnotation = foundAnnotation;
+  req.locals.annotation = foundAnnotation;
   req.locals.user = user;
+  req.locals.category = "annotations";
+  req.locals.materialType = foundMaterial.type;
+  req.locals.course = courseForGeneratingNotifications;
+  req.locals.annotationId = foundAnnotation._id;
+  req.locals.isFollowingAnnotation = true;
   socketio.getIO().emit(foundAnnotation.materialId, {
     eventType: "annotationEdited",
     annotation: foundAnnotation,
@@ -345,6 +400,13 @@ export const likeAnnotation = async (req, res, next) => {
   const courseId = req.params.courseId;
   const annotationId = req.params.annotationId;
   const userId = req.userId;
+
+  let courseForGeneratingNotifications;
+  try {
+    courseForGeneratingNotifications = await Course.findById(courseId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding course" });
+  }
 
   let user;
   try {
@@ -374,9 +436,21 @@ export const likeAnnotation = async (req, res, next) => {
     return res.status(500).send({ error: "Error finding annotation" });
   }
 
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(foundAnnotation.materialId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
   req.locals = {
     annotation: foundAnnotation,
     user: user,
+    course: courseForGeneratingNotifications,
+    category: "annotations",
+    materialType: foundMaterial.type,
+    annotationAuthorId: foundAnnotation.author.userId,
+    materialId: foundMaterial._id,
   };
 
   if (foundAnnotation.likes.includes(req.userId)) {
@@ -401,7 +475,7 @@ export const likeAnnotation = async (req, res, next) => {
       annotation: savedAnnotation,
       reply: null,
     });
-    return next();
+    next();
   } else if (foundAnnotation.dislikes.includes(req.userId)) {
     return res
       .status(404)
@@ -427,7 +501,7 @@ export const likeAnnotation = async (req, res, next) => {
       annotation: savedAnnotation,
       reply: null,
     });
-    return next();
+    next();
   }
 };
 
@@ -443,6 +517,12 @@ export const dislikeAnnotation = async (req, res, next) => {
   const courseId = req.params.courseId;
   const annotationId = req.params.annotationId;
   const userId = req.userId;
+  let courseForGeneratingNotifications;
+  try {
+    courseForGeneratingNotifications = await Course.findById(courseId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding course" });
+  }
 
   let user;
   try {
@@ -473,9 +553,21 @@ export const dislikeAnnotation = async (req, res, next) => {
     return res.status(500).send({ error: "Error finding annotation" });
   }
 
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(foundAnnotation.materialId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
   req.locals = {
     annotation: foundAnnotation,
     user: user,
+    course: courseForGeneratingNotifications,
+    category: "annotations",
+    materialType: foundMaterial.type,
+    annotationAuthorId: foundAnnotation.author.userId,
+    materialId: foundMaterial._id,
   };
 
   if (foundAnnotation.dislikes.includes(req.userId)) {
@@ -497,6 +589,7 @@ export const dislikeAnnotation = async (req, res, next) => {
       success: "Annotation successfully un-disliked!",
     };
     req.locals.dislike = false;
+
     socketio.getIO().emit(annotationId, {
       eventType: "annotationUndisliked",
       annotation: savedAnnotation,
@@ -544,13 +637,63 @@ export const dislikeAnnotation = async (req, res, next) => {
 export const getAllAnnotations = async (req, res) => {
   const courseId = req.params.courseId;
   const materialId = req.params.materialId;
+  const userId = req.userId;
 
   let foundAnnotations;
   try {
-    foundAnnotations = await Annotation.find({
+    /*     foundAnnotations = await Annotation.find({
       materialId: materialId,
       courseId: courseId,
-    });
+    }); */
+    foundAnnotations = await Annotation.aggregate([
+      {
+        $match: {
+          materialId: new ObjectId(materialId),
+        },
+      },
+      {
+        $lookup: {
+          from: "followannotations",
+          localField: "_id",
+          foreignField: "annotationId",
+          as: "followStatus",
+          pipeline: [
+            {
+              $match: {
+                userId: new ObjectId(userId),
+              },
+            },
+            {
+              $project: {
+                isFollowing: 1,
+                _id: 0,
+              },
+            },
+            {
+              $unset: "followStatus",
+            },
+          ],
+        },
+      },
+      {
+        $addFields: {
+          isFollowing: {
+            $cond: {
+              if: {
+                $eq: [
+                  {
+                    $size: "$followStatus",
+                  },
+                  0,
+                ],
+              },
+              then: false,
+              else: true,
+            },
+          },
+        },
+      },
+    ]);
     if (!foundAnnotations) {
       return res.status(404).send({
         error: `Annotations with materialId ${materialId} doesn't exist!`,
@@ -586,7 +729,7 @@ export const getAllAnnotationsForSpecificTag = async (req, res) => {
 
   let foundTags;
   try {
-    foundTags = await Tag.find({ courseId: courseId, name: tagName});
+    foundTags = await Tag.find({ courseId: courseId, name: tagName });
     if (!foundTags) {
       return res.status(404).send({
         error: `Course with id ${courseId} doesn't exist!`,
@@ -605,7 +748,8 @@ export const getAllAnnotationsForSpecificTag = async (req, res) => {
       }
     }
 
-    if (!foundAnnotations.length) { // check if the array is empty
+    if (!foundAnnotations.length) {
+      // check if the array is empty
       return res.status(404).send({
         error: `Annotations with courseId ${courseId} doesn't exist!`,
       });
@@ -618,4 +762,3 @@ export const getAllAnnotationsForSpecificTag = async (req, res) => {
   );
   return res.status(200).send(foundAnnotations);
 };
-

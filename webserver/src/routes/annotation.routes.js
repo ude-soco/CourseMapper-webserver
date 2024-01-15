@@ -1,6 +1,7 @@
-const { authJwt } = require("../middlewares");
+const { authJwt, notifications } = require("../middlewares");
 const controller = require("../controllers/annotation.controller");
 const logger = require("../xAPILogger/logger/annotation.logger");
+const notificationsController = require("../controllers/notification.controller");
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -14,7 +15,13 @@ module.exports = function (app) {
     "/api/courses/:courseId/materials/:materialId/annotation",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.newAnnotation,
-    logger.newAnnotation
+    logger.newAnnotation,
+    notificationsController.followAnnotation,
+    notifications.newAnnotationNotificationUsersCalculate,
+    notifications.populateUserNotification,
+    logger.newMention,
+    notifications.newMentionNotificationUsersCalculate,
+    notifications.populateUserNotification
   );
 
   // Delete an annotation
@@ -23,7 +30,9 @@ module.exports = function (app) {
     "/api/courses/:courseId/annotations/:annotationId",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.deleteAnnotation,
-    logger.deleteAnnotation
+    logger.deleteAnnotation,
+    notifications.calculateUsersFollowingAnnotation,
+    notifications.populateUserNotification
   );
 
   // Edit an annotation
@@ -32,7 +41,9 @@ module.exports = function (app) {
     "/api/courses/:courseId/annotations/:annotationId",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.editAnnotation,
-    logger.editAnnotation
+    logger.editAnnotation,
+    notifications.calculateUsersFollowingAnnotation,
+    notifications.populateUserNotification
   );
 
   // Like an annotation
@@ -42,7 +53,9 @@ module.exports = function (app) {
     "/api/courses/:courseId/annotations/:annotationId/like",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.likeAnnotation,
-    logger.likeAnnotation
+    logger.likeAnnotation,
+    notifications.LikesDislikesAnnotationNotificationUsers,
+    notifications.populateUserNotification
   );
 
   // Dislike an annotation
@@ -52,7 +65,9 @@ module.exports = function (app) {
     "/api/courses/:courseId/annotations/:annotationId/dislike",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.dislikeAnnotation,
-    logger.dislikeAnnotation
+    logger.dislikeAnnotation,
+    notifications.LikesDislikesAnnotationNotificationUsers,
+    notifications.populateUserNotification
   );
 
   // TODO: Change the getAnnotations to get-all-annotations
@@ -63,7 +78,6 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getAllAnnotations
   );
-
 
   // get annotations for specific tag
   // Only enrolled users/moderator/admin

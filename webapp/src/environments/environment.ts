@@ -5,7 +5,16 @@
 export const environment = {
   production: false,
   API_URL: 'http://localhost:8080/api',
-  apiUrl: 'http://localhost:8080/api',
+  socketConfig: {
+    url: 'http://localhost:8080',
+    options: {
+      path: '/api/socket.io',
+    },
+  },
+};
+
+export const environment_Python = {
+  PYTHON_SERVER: 'http://localhost:5000/',
 };
 
 /*

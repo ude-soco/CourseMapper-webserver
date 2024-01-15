@@ -1,0 +1,40 @@
+#cy {
+    height: 575px;
+    width: 100%;
+    position: relative;
+    left: 0;
+    top: 0;
+    z-index: 10;
+    border: 1px solid #b3b3b3;
+    border-radius: 8px;
+    padding-bottom: 0;
+  }
+  #Legends{
+      height: 60px;
+      margin: 0;
+      padding: 0;
+    }
+    .legend-circle-main-concept {
+      width: 1em;
+      height: 1em;
+      background: #2196F3;
+      border-radius: 50%;
+      display: inline-block;
+      font-weight: 300;
+    }
+    .legend-circle-related-concept {
+      width: 1em;
+      height: 1em;
+      background: #ce6f34;
+      border-radius: 50%;
+      display: inline-block;
+      font-weight: 300;
+    }
+    .legend-circle-category {
+      width: 1em;
+      height: 1em;
+      background: #FBC02D;
+      border-radius: 50%;
+      display: inline-block;
+      font-weight: 300;
+    }

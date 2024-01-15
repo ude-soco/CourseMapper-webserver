@@ -7,4 +7,5 @@ export interface User{
     role: string,
     email: string,
     courses: Course[],
+    jwt:string,
 }

@@ -8,34 +8,69 @@
       (click)="mouseEventHandler($event)"
       class="relative pdfViewerContainer"
     >
-
       <app-pdf-drawbox></app-pdf-drawbox>
 
       <pdf-viewer
-      [src]="docURL"
-      [render-text]="true"
-      [render-text-mode]="2"
-      [fit-to-page]="true"
-      [original-size]="true"
-      (after-load-complete)="handlePdfLoaded($event)"
-      (page-rendered)="pageRendered($event)"
-      [show-all]="false"
-      [(page)]="currentPage"
-      [zoom]="pdfZoom$ | async"
-      (after-load-complete)="afterLoadComplete($event)"
-    >
-    </pdf-viewer>
-    <app-pdf-annotation-summary #annotationSummary [annotationId] = "selectedNoteId"></app-pdf-annotation-summary>
+        [src]="docURL"
+        [render-text]="true"
+        [render-text-mode]="2"
+        [fit-to-page]="true"
+        [original-size]="true"
+        (after-load-complete)="handlePdfLoaded($event)"
+        (page-rendered)="pageRendered($event)"
+        [show-all]="false"
+        [(page)]="currentPage"
+        [zoom]="pdfZoom$ | async"
+        (after-load-complete)="afterLoadComplete($event)"
+      >
+      </pdf-viewer>
+      <app-pdf-annotation-summary
+        #annotationSummary
+        [annotationId]="selectedNoteId"
+      ></app-pdf-annotation-summary>
     </div>
-    <div style="border: 1px solid #0000004D;">
+    <div style="border: 1px solid #0000004d; display: inline-flex; text-align: center; z-index: 8;">
+      <!-- style="margin: auto;" -->
+      <!-- style="margin-left: auto" -->
       <p-paginator
+        id="p_paginator"
         [rows]="1"
         [showJumpToPageDropdown]="true"
         [showPageLinks]="false"
         [totalRecords]="totalPages"
         [first]="currentPage - 1"
         (onPageChange)="pagechanging($event)"
-      ></p-paginator>
+      >
+      </p-paginator>
+      <span
+        style="
+          position: relative;
+          margin-top: auto;
+          margin-bottom: auto;
+          margin-right: 5px;
+          margin-left: 0;
+        "
+      >
+        <button
+          pButton
+          pRipple
+          id="didNotUnderstandButton"
+          type="button"
+          label="Did Not Understand"
+          class="p-button-rounded p-button-sm p-button-info"
+          icon="pi pi-question-circle"
+          iconPos="right"
+          pTooltip="View slide knowledge graph"
+          style="position: relative"
+          styleClass="dnuSlideButton"
+          (click)="onConceptMapButtonClicked(true);"
+        >
+          <app-iconbutton
+            icon="bx-network-chart"
+            color="text-white"
+          ></app-iconbutton>
+        </button>
+      </span>
     </div>
   </div>
 
@@ -48,10 +83,9 @@
       [closable]="false"
       [showHeader]="false"
     >
-    <div class="mt-5">
-      <app-pdf-create-annotation appendTo="body"></app-pdf-create-annotation>
-    </div>
-
+      <div class="mt-5">
+        <app-pdf-create-annotation appendTo="body"></app-pdf-create-annotation>
+      </div>
     </p-dialog>
     <div class="create-annotation">
       <app-pdf-create-annotation></app-pdf-create-annotation>

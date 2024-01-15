@@ -3,11 +3,11 @@
     border-collapse: collapse;
     width: 100%;
   }
-  
+
   .td {
-    
+
     text-align: left;
-   
+
     padding: 10px 20px 30px;
   }
   :host ::ng-deep .p-toast {
@@ -17,3 +17,22 @@
   :host ::ng-deep .p-toast .p-toast-message-icon{
     font-size: 2em !important;
   }
+  :host ::ng-deep #showMaterialKG{
+    /* position: absolute; */
+    font-size: 14px;
+    /* color: #ffffff; */
+    color: #EB590D;
+    /* background: #EB590D; */
+    border: #EB590D;
+}
+
+.activity-indicator::after{
+  content: '';
+  position: absolute;
+  bottom: 40%;
+  left: -10px;
+  width: 8px;
+  height: 8px;
+  background-color: #ea580c;
+  border-radius: 50%;
+}

@@ -1,0 +1,74 @@
+app-cytoscape {
+  height: 100%;
+  float: left;
+  width: 100%;
+  position: relative;
+}
+.legend-circle-concept {
+  width: 1em;
+  height: 1em;
+  background: #32a856;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.legend-circle-related-concept {
+  width: 1em;
+  height: 1em;
+  background: #328ea8;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.legend-circle-category {
+  width: 1em;
+  height: 1em;
+  background: #a8a832;
+  border-radius: 50%;
+  display: inline-block;
+}
+.abstractBlock {
+  position: absolute;
+  margin-right: 1.2rem;
+  margin-top: 0.2rem;
+  border: 1px solid #b3b3b3;
+  stroke: #b3b3b3;
+  /* box-shadow: -2px 2px #d1d1d1; */
+  /* border-radius: 20px 20px 20px 20px; */
+  border-radius: 8px;
+  right: 0.5rem;
+  float: right;
+  background:#fefefe;
+  z-index: 11;
+  margin-top: 0;
+}
+.abstractParagraph {
+  display: -webkit-box;
+  /* -webkit-line-clamp: 10; */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 5px;
+  margin-bottom: 0;
+}
+:host ::ng-deep .p-sidebar.abstractSidebar {
+  /* border: 1px solid #d1d1d1; */
+  /* stroke: #d1d1d1; */
+  box-shadow: none;
+  border-radius: 20px 20px 20px 20px;
+  position: relative;
+  z-index: 11;
+}
+:host ::ng-deep .p-sidebar-header {
+  z-index: 12;
+}
+:host ::ng-deep .p-toast {
+  width:350px;
+  font-size: 15px;
+}
+#abstractButtons{
+  color:#EB590D;
+  border: #EB590D;
+  /* font-size: 12px; */
+}
+#clampedAnchorTag{
+}

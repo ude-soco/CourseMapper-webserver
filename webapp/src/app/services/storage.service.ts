@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { USER_KEY } from '../config/config';
-
+import * as ApplicationActions from '../state/app.actions';
+import { Store } from '@ngrx/store';
+import { State } from '../state/app.state';
 @Injectable({
   providedIn: 'root',
 })
@@ -10,14 +12,14 @@ export class StorageService {
 
   navBarChange: Subject<boolean> = new Subject<boolean>();
 
-  constructor() {
+  constructor(private store: Store<State>) {
     this.navBarChange.subscribe((value) => (this.loggedIn = value));
   }
 
   public clean(): void {
-
     window.localStorage.removeItem(USER_KEY);
     this.navBarChange.next(false);
+    this.store.dispatch(ApplicationActions.setLoggedInUser(null));
   }
 
   public saveUser(user: any): void {
