@@ -41,7 +41,7 @@
     "jquery": "^3.7.1",
     "ng2-dragula": "^2.1.1",
     "ng2-pdf-viewer": "^9.1.5",
-    "ngx-infinite-scroll": "^15.0.0",
+    "ngx-infinite-scroll": "^17.0.0",
     "ngx-socket-io": "^4.6.1",
     "openai": "^3.2.1",
     "primeicons": "^6.0.1",
