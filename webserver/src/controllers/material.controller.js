@@ -196,7 +196,7 @@ export const deleteMaterial = async (req, res, next) => {
     res.status(500).send({ error: "Error finding material" });
   }
   try {
-    await Material.findByIdAndRemove(materialId);
+    await Material.findByIdAndDelete(materialId);
   } catch (err) {
     return res
       .status(500)

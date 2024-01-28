@@ -170,7 +170,7 @@ export const deleteTopic = async (req, res, next) => {
     return res.status(500).send({ error: "Error finding topic" });
   }
   try {
-    await Topic.findByIdAndRemove(topicId);
+    await Topic.findByIdAndDelete(topicId);
   } catch (err) {
     return res.status(500).send({ error: "Error finding and removing topic" });
   }
