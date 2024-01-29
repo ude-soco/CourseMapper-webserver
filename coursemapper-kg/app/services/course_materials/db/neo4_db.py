@@ -635,7 +635,7 @@ def connect_user_u_concept(tx, user, understood):
         # user understand the concept, the relationship is "u"
         tx.run("""MATCH (u:User) WHERE u.uid = $uid 
             OPTIONAL MATCH (c:Concept) WHERE c.cid = $cid
-            MERGE (u)-[r:u {weight: 1}]->(c)""",
+            MERGE (u)-[r:u {weight: 0}]->(c)""",
                uid=user["id"],
                cid=id)
 
@@ -1371,7 +1371,8 @@ class NeoDataBase:
                 RETURN r1.weight+r2.weight as weight,f.name as name,p,c.name as dnu,f.type as type""",
                                  uid=uid,
                                  cid=cid,
-                                 type="category").data()
+                                 type="	category").data()
+           # print("get_road_user_c_related_concept", result)
         return list(result)
 
     def get_road_user_c_category_concept(self, uid, cid):
@@ -1386,6 +1387,7 @@ class NeoDataBase:
                                  uid=uid,
                                  cid=cid,
                                  type="category").data()
+            #print("get_road_user_c_category_concept", result)
 
         return list(result)
 
@@ -1401,6 +1403,7 @@ class NeoDataBase:
                                  uid=uid,
                                  mid=mid,
                                  cid=cid).data()
+          #  print("get_road_user_c_slide_concept", result)
 
         return list(result)
 
@@ -1409,13 +1412,15 @@ class NeoDataBase:
         """
         # logger.info("get_road_user_concept_relatedconcept %s" % uid)
         # logger.info("get_road_user_concept_relatedconcept %s" % cid)
+        logger.info("get_road_user_concept_relatedconcept")
         with self.driver.session() as session:
             result = session.run("""
                 MATCH p = (u:User)-[r:dnu]->(c:Concept)-[r1]->(d:Concept) 
                 where u.uid=$uid and d.cid=$cid
-                RETURN r1.weight,p,c.name as dnu""",
+                RETURN r1.weight as weight,p,c.name as dnu""",
                                  uid=uid,
                                  cid=cid).data()
+           # print("get_road_user_concept_relatedconcept", result)
 
         return list(result)
 

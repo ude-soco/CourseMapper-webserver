@@ -77,6 +77,7 @@ class RecService:
                 road3 = self.get_max_weight_path(road3)
                 # road: user - concept - related concept
                 road4 = self.db.get_road_user_concept_relatedconcept(uid, cid)
+                road4 = self.get_max_weight_path(road4)
                 roads = road1 + road2 + road3 + road4
             else:
                 # road: user - concept - related concept - concept
@@ -89,9 +90,11 @@ class RecService:
                 # road: user - concept - related concept
                 road3 = self.db.get_road_user_concept_relatedconcept(uid, cid)
                 roads = road1 + road2 + road3
+            #print("roads", roads )
 
             # Save these roads to "roads" property
             recommend_concept["n"]["roads"] = roads
+   
         # logger.info("roads: %s" % recommend_concepts[0]["n"]["roads"])
         return recommend_concepts
 
