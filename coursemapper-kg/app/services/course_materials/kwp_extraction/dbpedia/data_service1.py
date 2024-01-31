@@ -77,8 +77,9 @@ class RecService:
                 road3 = self.get_max_weight_path(road3)
                 # road: user - concept - related concept
                 road4 = self.db.get_road_user_concept_relatedconcept(uid, cid)
-                road4 = self.get_max_weight_path(road4)
+                road4 = self.get_max_weight_path4(road4)
                 roads = road1 + road2 + road3 + road4
+
             else:
                 # road: user - concept - related concept - concept
                 road1 = self.db.get_road_user_c_related_concept(uid, cid)
@@ -89,8 +90,8 @@ class RecService:
                 road2 = self.get_max_weight_path(road2)
                 # road: user - concept - related concept
                 road3 = self.db.get_road_user_concept_relatedconcept(uid, cid)
+                road3 = self.get_max_weight_path4(road3)
                 roads = road1 + road2 + road3
-            #print("roads", roads )
 
             # Save these roads to "roads" property
             recommend_concept["n"]["roads"] = roads
@@ -101,20 +102,85 @@ class RecService:
     def get_max_weight_path(self, road):
         weights, max_weight, names, list = 0, 0, [], []
         for i in range(len(road)):
+            # print("len(road)",len(road))
+            # print("names",names)
             if road[i]["name"] not in names:
                 names.append(road[i]["name"])
         for name in names:
             for i in range(len(road)):
+                print("len(road)",len(road))
+                print("name",name)
                 if road[i]["name"] == name:
-                    weights = weights + road[i]["weight"]
-            if max_weight <= weights:
-                max_weight = weights
-                optimum_name = name
+                    weights = road[i]["weight"]
+                if max_weight <= weights:
+                    max_weight = weights
+                    optimum_name = name
             weights = 0
         for i in range(len(road)):
-            if road[i]["name"] == optimum_name:
+            if road[i]["name"] == optimum_name and max_weight==road[i]["weight"] :
                 list.append(road[i])
         return list
+    def get_max_weight_path4(self, road):
+        weights, max_weight, names, list = 0, 0, [], []
+        for i in range(len(road)):
+            # print("len(road)",len(road))
+            # print("names",names)
+            if road[i]["dnu"] not in names:
+                names.append(road[i]["dnu"])
+        for name in names:
+            for i in range(len(road)):
+                if road[i]["dnu"] == name:
+                    weights = road[i]["weight"]
+                if max_weight <= weights:
+                    max_weight = weights
+                    optimum_name = name
+            weights = 0
+        for i in range(len(road)):
+            if road[i]["dnu"] == optimum_name:
+                list.append(road[i])
+        return list    
+    
+    # def get_max_weight_path(self, road):
+    #     weights, max_weight, names, list = 0, 0, [], []
+    #     for i in range(len(road)):
+    #         # print("len(road)",len(road))
+    #         # print("names",names)
+    #         if road[i]["name"] not in names:
+    #             names.append(road[i]["name"])
+    #     for name in names:
+    #         for i in range(len(road)):
+    #             # print("len(road)",len(road))
+    #             # print("name",name)
+    #             if road[i]["name"] == name:
+    #                 weights = weights + road[i]["weight"]
+    #         if max_weight <= weights:
+    #             max_weight = weights
+    #             optimum_name = name
+    #         weights = 0
+    #     for i in range(len(road)):
+    #         if road[i]["name"] == optimum_name:
+    #             list.append(road[i])
+    #     return list
+
+    # def get_max_weight_path4(self, road):
+    #     weights, max_weight, names, list = 0, 0, [], []
+    #     for i in range(len(road)):
+    #         print("len(road)",len(road))
+    #         print("names",names)
+    #         if road[i]["dnu"] not in names:
+    #             names.append(road[i]["dnu"])
+    #     for name in names:
+    #         for i in range(len(road)):
+    #             if road[i]["dnu"] == name:
+    #                 weights = weights + road[i]["weight"]
+    #         if max_weight <= weights:
+    #             max_weight = weights
+    #             optimum_name = name
+    #         weights = 0
+    #     for i in range(len(road)):
+    #         if road[i]["dnu"] == optimum_name:
+    #             list.append(road[i])
+    #     return list    
 
     def _get_related_category(self, ids, mid):
         # find these dnu concepts in neo4j

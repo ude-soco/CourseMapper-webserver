@@ -1373,6 +1373,7 @@ class NeoDataBase:
                                  cid=cid,
                                  type="	category").data()
            # print("get_road_user_c_related_concept", result)
+       # print("road same rc",result )
         return list(result)
 
     def get_road_user_c_category_concept(self, uid, cid):
@@ -1388,7 +1389,7 @@ class NeoDataBase:
                                  cid=cid,
                                  type="category").data()
             #print("get_road_user_c_category_concept", result)
-
+        #print("road same cat",result )
         return list(result)
 
     def get_road_user_c_slide_concept(self, uid, cid, mid):
@@ -1404,7 +1405,7 @@ class NeoDataBase:
                                  mid=mid,
                                  cid=cid).data()
           #  print("get_road_user_c_slide_concept", result)
-
+        #print("road same slide",result )
         return list(result)
 
     def get_road_user_concept_relatedconcept(self, uid, cid):
@@ -1420,8 +1421,11 @@ class NeoDataBase:
                 RETURN r1.weight as weight,p,c.name as dnu""",
                                  uid=uid,
                                  cid=cid).data()
+            # for x in result:
+            #     print("road related", x)
            # print("get_road_user_concept_relatedconcept", result)
-
+        #print("road related",result)
+        
         return list(result)
 
     def find_concept(self, ids):
