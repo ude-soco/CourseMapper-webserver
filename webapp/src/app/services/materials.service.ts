@@ -7,6 +7,7 @@ import * as CourseActions from '../pages/courses/state/course.actions';
 import { Store } from '@ngrx/store';
 import { State } from '../pages/courses/state/course.reducer';
 import * as NotificationActions from '../pages/components/notifications/state/notifications.actions';
+import { Neo4jService } from './neo4j.service';
 @Injectable({
   providedIn: 'root',
 })
@@ -16,7 +17,7 @@ export class MaterilasService {
   onSelectMaterial = new EventEmitter<CreateMaterial>();
 
   private selectedMaterial: CreateMaterial;
-  constructor(private http: HttpClient, private store: Store<State>) {}
+  constructor(private http: HttpClient, private store: Store<State>, private neo4jservice: Neo4jService) {}
 
   selectMaterial(material: CreateMaterial) {
     // if there is no selected course then no need to update the topics.
@@ -83,7 +84,11 @@ export class MaterilasService {
       .delete(
         `${this.API_URL}/courses/${material['courseId']}/materials/${material._id}`
       )
-      .pipe(tap((res) => {}));
+      .pipe(tap((res) => {
+        this.neo4jservice.deleteMaterial(material._id)
+        // console.log("delete material from material service")
+      }));
+
   }
   deleteFile(material: Material) {
     if (material.type == 'pdf') {

@@ -54,8 +54,16 @@ class Neo4j:
                 'MATCH (c:Concept) WHERE c.mid = $mid RETURN LABELS(c) as labels,ID(c) AS id, c.cid as cid, c.name AS name, c.uri as uri, c.type as type, c.weight as weight, c.wikipedia as wikipedia, c.abstract as abstract, c.rank as rank',
                 mid=material_id
             ).data()
-
         return list(result)
+
+
+    def delete_material(self, material_id):
+        with self.get_db().session() as session:
+             
+             result = session.run('MATCH (m:LearningMaterial) WHERE m.mid = $mid DETACH DELETE m',
+                mid=material_id).data()
+        #print("delete material from neo4j flask")    
+        return result
 
     def get_material_edges(self, material_id):
         with self.get_db().session() as session:
