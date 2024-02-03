@@ -9,19 +9,23 @@ const User = db.user;
  *
  */
 export const collectActivities = async (req, res) => {
-  let activities;
-  let jsonStream;
   try {
-    activities = await Activity.find({});
-    jsonStream = new Readable({
-      objectMode: true,
-      read() {
-        this.push(JSON.stringify(activities));
-        this.push(null);
-      },
-    });
+    let from = req.query.from;
+    let to = req.query.to;
+    let filters = {};
+    if (from) {
+      filters['statement.timestamp'] = { $gte: new Date(from) };
+    }
+    if (to) {
+      if (filters['statement.timestamp']) {
+        filters['statement.timestamp'].$lte = new Date(to);
+      } else {
+        filters['statement.timestamp'] = { $lte: new Date(to) };
+      }
+    }
+    let activities = await Activity.find(filters);
+    return res.status(200).send(activities);
   } catch (err) {
     return res.status(500).send({ message: err });
   }
-  return jsonStream.pipe(res.status(200));
 };
