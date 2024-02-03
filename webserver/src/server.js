@@ -81,8 +81,7 @@ socketio.getIO().on("connection", () => {
 });
 
 // Routes
-let apiURL = "/api";
-app.use(apiURL, require("./routes/activity.routes"));
+require("./routes/activity.routes")(app);
 require("./routes/auth.routes")(app);
 require("./routes/user.routes")(app);
 require("./routes/course.routes")(app);
