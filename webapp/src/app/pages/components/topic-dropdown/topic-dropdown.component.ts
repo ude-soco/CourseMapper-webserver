@@ -33,13 +33,13 @@ import {
   topicNotificationSettingLabels,
   channelNotificationSettingLabels,
 } from 'src/app/models/Notification';
-import { Subscription, map, tap } from 'rxjs';
+import { Subscription, combineLatest, map, tap } from 'rxjs';
 import { getNotifications } from '../notifications/state/notifications.reducer';
 import { Annotation } from 'src/app/models/BlockingNotification';
 import * as $ from 'jquery';
 import * as NotificationActions from '../notifications/state/notifications.actions';
-import { Console } from 'console';
-
+import { Notification } from 'src/app/models/Notification';
+import { getLastTimeCourseMapperOpened } from 'src/app/state/app.reducer';
 @Component({
   selector: 'app-topic-dropdown',
   templateUrl: './topic-dropdown.component.html',
@@ -126,55 +126,8 @@ export class TopicDropdownComponent implements OnInit {
   isResetTopicNotificationsButtonEnabled: boolean;
   isResetChannelNotificationsButtonEnabled: boolean;
   followingAnnotationsOfDisplayedChannels$: Observable<any> = null;
-
-  topicOptions: MenuItem[] = [
-    {
-      label: 'Rename',
-      icon: 'pi pi-refresh',
-      command: () => this.onRenameTopic(),
-    },
-    {
-      label: 'Delete',
-      icon: 'pi pi-times',
-      command: () => this.onDeleteTopic(),
-    },
-    {
-      label: 'Notification Settings',
-      icon: 'pi pi-bell',
-      /* command: () => this.onTopicNotificationSettingsClicked(), */
-    },
-  ];
-  channelsOptions: MenuItem[] = [
-    {
-      label: 'Rename',
-      icon: 'pi pi-refresh',
-      command: () => this.onRenameChannel(),
-    },
-    {
-      label: 'Delete',
-      icon: 'pi pi-times',
-      command: () => this.onDeleteChannel(),
-    },
-  ];
-  //TODO Remove the null default values. not needed. form controls supply the values.
-  notificationOptions = [
-    {
-      label: topicNotificationSettingLabels.courseDefault,
-      value: null,
-    },
-    {
-      label: topicNotificationSettingLabels.topicUpdates,
-      value: null,
-    },
-    {
-      label: topicNotificationSettingLabels.commentsAndMentioned,
-      value: null,
-    },
-    {
-      label: topicNotificationSettingLabels.annotations,
-      value: null,
-    },
-  ];
+  allNotifications$: Observable<Notification[]>;
+  lastTimeCourseMapperOpened$: Observable<string>;
 
   ngOnInit(): void {
     this.topicChannelService
@@ -242,6 +195,74 @@ export class TopicDropdownComponent implements OnInit {
 
     this.followingAnnotationsOfDisplayedChannels$ = this.store.select(
       getFollowingAnnotationsOfDisplayedChannels
+    );
+
+    this.allNotifications$ = this.store.select(getNotifications);
+
+    this.lastTimeCourseMapperOpened$ = this.store.select(
+      getLastTimeCourseMapperOpened
+    );
+  }
+
+  getTopicActivityIndicator(topicId: string) {
+    return combineLatest([
+      this.allNotifications$,
+      this.lastTimeCourseMapperOpened$,
+    ]).pipe(
+      map(([notifications, lastTimeCourseMapperOpened]) => {
+        const lastTimeCourseMapperOpenedConverted = new Date(
+          lastTimeCourseMapperOpened
+        );
+        const notificationsForTopic = notifications.filter(
+          (notification) =>
+            notification.topic_id === topicId &&
+            new Date(notification.timestamp) >
+              lastTimeCourseMapperOpenedConverted &&
+            !notification.isRead
+        );
+        return notificationsForTopic.length > 0;
+      })
+    );
+  }
+  getChannelActivityIndicator(channelId: string) {
+    return combineLatest([
+      this.allNotifications$,
+      this.lastTimeCourseMapperOpened$,
+    ]).pipe(
+      map(([notifications, lastTimeCourseMapperOpened]) => {
+        const lastTimeCourseMapperOpenedConverted = new Date(
+          lastTimeCourseMapperOpened
+        );
+        const notificationsForChannel = notifications.filter(
+          (notification) =>
+            notification.channel_id === channelId &&
+            new Date(notification.timestamp) >
+              lastTimeCourseMapperOpenedConverted &&
+            !notification.isRead
+        );
+        return notificationsForChannel.length > 0;
+      })
+    );
+  }
+
+  getAnnotationActivityIndicator(annotationId: string) {
+    return combineLatest([
+      this.allNotifications$,
+      this.lastTimeCourseMapperOpened$,
+    ]).pipe(
+      map(([notifications, lastTimeCourseMapperOpened]) => {
+        const lastTimeCourseMapperOpenedConverted = new Date(
+          lastTimeCourseMapperOpened
+        );
+        const notificationsForAnnotation = notifications.filter(
+          (notification) =>
+            notification.annotation_id === annotationId &&
+            new Date(notification.timestamp) >
+              lastTimeCourseMapperOpenedConverted &&
+            !notification.isRead
+        );
+        return notificationsForAnnotation.length > 0;
+      })
     );
   }
 
@@ -552,6 +573,7 @@ export class TopicDropdownComponent implements OnInit {
     this.textFromTopic = false;
     if (this.enterKey) {
       //confirmed by keyboard
+      this.topicMenu.hide();
       let topicName = this.previousTopic.name;
       let body = { name: topicName };
       let newTopicName = this.insertedText;

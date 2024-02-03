@@ -689,7 +689,7 @@ export const deleteCourse = async (req, res, next) => {
 
   let foundCourse;
   try {
-    foundCourse = await Course.findByIdAndRemove(courseId);
+    foundCourse = await Course.findByIdAndDelete(courseId);
   } catch (err) {
     return res.status(500).send({ error: "Error finding course" });
   }

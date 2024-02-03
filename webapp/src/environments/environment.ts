@@ -5,21 +5,17 @@
 export const environment = {
   production: false,
   API_URL: 'http://localhost:8080/api',
-  apiUrl: 'http://localhost:8080',
-};
-export const environment_2 = {
-  production: false,
-  apiUrl: 'http://localhost:8090/api',
+  socketConfig: {
+    url: 'http://localhost:8080',
+    options: {
+      path: '/api/socket.io',
+    },
+  },
 };
 
-export const environment_Python = {  
-  PYTHON_SERVER:"http://localhost:5000/"
-  }
-export const environment_Neo4j = {  
-  neo4j_url : 'bolt://localhost:7687',
-  neo4j_name : 'neo4j',
-  neo4j_pass : '1234qwer!',
-  }
+export const environment_Python = {
+  PYTHON_SERVER: 'http://localhost:5000/',
+};
 
 /*
  * For easier debugging in development mode, you can import the following file

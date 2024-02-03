@@ -9,6 +9,7 @@ export interface BlockingNotifications {
   channels: ChannelNotificationSettings[];
   materials: MaterialNotificationSettings[];
   isCourseLevelOverride: boolean;
+  /* showCourseActivityIndicator?: boolean; */
 }
 
 export interface TopicNotificationSettings {
@@ -20,6 +21,7 @@ export interface TopicNotificationSettings {
   _id: string;
   name: string;
   type?: string;
+  /*  showTopicActivityIndicator?: true; */
 }
 
 export interface ChannelNotificationSettings {
@@ -34,6 +36,7 @@ export interface ChannelNotificationSettings {
   _id: string;
   name: string;
   type?: string;
+  /*  showChannelActivityIndicator?: boolean; */
 }
 
 export interface MaterialNotificationSettings {
@@ -49,6 +52,14 @@ export interface MaterialNotificationSettings {
   isTopicLevelOverride: boolean;
   _id: string;
   type?: string;
+  /* showMaterialActivityIndicator: boolean; */
+}
+
+export interface GlobalAndCourseNotificationSettings {
+  coursesSettings: CourseNotificationSettings[];
+  isAnnotationNotificationsEnabled: boolean;
+  isReplyAndMentionedNotificationsEnabled: boolean;
+  isCourseUpdateNotificationsEnabled: boolean;
 }
 
 export interface CourseNotificationSettings {
@@ -58,14 +69,8 @@ export interface CourseNotificationSettings {
   isCourseUpdateNotificationsEnabled: boolean;
   isCourseLevelOverride: boolean;
   courseName: string;
+  /*   showCourseActivityIndicator: boolean; */
   _id: string;
-}
-
-export interface GlobalAndCourseNotificationSettings {
-  coursesSettings: CourseNotificationSettings[];
-  isAnnotationNotificationsEnabled: boolean;
-  isReplyAndMentionedNotificationsEnabled: boolean;
-  isCourseUpdateNotificationsEnabled: boolean;
 }
 
 export interface Annotation {

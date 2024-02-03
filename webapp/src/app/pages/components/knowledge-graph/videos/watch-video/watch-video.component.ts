@@ -14,6 +14,9 @@ export class WatchVideoComponent {
   public safeURL: SafeResourceUrl;
   constructor(private sanitizer: DomSanitizer) {}
   ngOnInit(): void {
-    this.safeURL = this.sanitizer.bypassSecurityTrustResourceUrl(this.video.uri);
+    // Enable jsapi. This allows us to control the video through the iframe
+    let newUri = new URL(this.video.uri)
+    newUri.searchParams.append('enablejsapi', '1')
+    this.safeURL = this.sanitizer.bypassSecurityTrustResourceUrl(newUri.href);
   }
 }

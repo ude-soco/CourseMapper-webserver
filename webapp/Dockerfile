@@ -13,11 +13,11 @@ RUN  --mount=type=cache,target=/app/.npm,rw \
 
 COPY . .
 RUN  --mount=type=cache,target=/app/node_modules/.cache,rw \
-     ng build
+     ng build --configuration production
 
 
 
-FROM nginxinc/nginx-unprivileged:1.23.4-alpine
+FROM nginxinc/nginx-unprivileged:1.25.3-alpine
 
 USER root
 WORKDIR /usr/share/nginx/html
@@ -26,7 +26,7 @@ RUN chown -R nginx:nginx .
 USER 101
 COPY --link --from=build --chown=101 /app/dist/webapp/ ./
 COPY --link ./nginx/conf.d/* /etc/nginx/conf.d/
-COPY --link ./nginx/docker-entrypoint.d/* /docker-entrypoint.d/
+COPY --link --chmod=0755 ./nginx/docker-entrypoint.d/* /docker-entrypoint.d/
 
 ENV NGINX_ENTRYPOINT_QUIET_LOGS 1
 EXPOSE 4200

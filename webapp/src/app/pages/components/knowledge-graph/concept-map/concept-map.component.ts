@@ -112,6 +112,7 @@ export class ConceptMapComponent {
   manuallyAddedConcept = null;
   retrievedConcepts = [];
   kgSlideReceivedResponse = false;
+  kgSlideResponseEmpty = false;
   mainConceptsTab = true;
   recommendedConceptsTab = false;
   recommendedMaterialsTab = false;
@@ -256,8 +257,8 @@ export class ConceptMapComponent {
   tabIndex = 0;
 
   selectedCheckOptions: any[] = [
-    { name: 'Main Concepts', key: 'annotation' },
-    { name: 'Related Concepts', key: 'property' },
+    { name: 'Main Concepts', key: 'main_concept' },
+    { name: 'Related Concepts', key: 'related_concept' },
     { name: 'Categories', key: 'category' },
   ];
 
@@ -933,32 +934,29 @@ export class ConceptMapComponent {
             materialId
           );
           materialNodes.records.forEach((data) => {
-            var type = data._fields[5];
-            var conceptName = this.capitalizeWords(data._fields[3]);
+            var type = data.type;
+            var conceptName = this.capitalizeWords(data.name);
             var nodeEle;
-            var rank = data._fields[9];
+            var rank = data.rank;
             nodeEle = {
-              // label:data._fields[0][0],
-              id: data._fields[1].low,
-              cid: data._fields[2],
-              // name: data._fields[3],
-              // name: rank+'\n '+conceptName,
+              id: data.id,
+              cid: data.cid,
               name: conceptName,
-              uri: data._fields[4],
+              uri: data.uri,
               type: type,
-              weight: data._fields[6],
-              wikipedia: data._fields[7],
-              abstract: data._fields[8],
+              weight: data.weight,
+              wikipedia: data.wikipedia,
+              abstract: data.abstract,
             };
             // }
             kgNodes.push(nodeEle);
           });
           materialEdges.records.forEach((data) => {
             let edgeEle = {
-              type: data._fields[0],
-              source: data._fields[1].low,
-              target: data._fields[2].low,
-              weight: data._fields[3],
+              type: data.type,
+              source: data.source,
+              target: data.target,
+              weight: data.weight,
             };
             kgEdges.push(edgeEle);
           });
@@ -1032,7 +1030,7 @@ export class ConceptMapComponent {
           node.data.minWeight = minWeight;
         });
 
-        this.selectedFilterValues = ['annotation'];
+        this.selectedFilterValues = ['main_concept'];
         this.filteredMapData = this.conceptMapData;
         this.dataReceivedEvent.emit(this.conceptMapData);
         this.isLoading = false;
@@ -1084,75 +1082,34 @@ export class ConceptMapComponent {
           }
 
           //wait 100 ms before executing next commands to assure recieving materialIDs form previous subscription
-          var query = 'MATCH (c:Concept) WHERE (c.mid = "';
-          materialsIds.forEach((id, index) => {
-            if (index === 0) {
-              query = query + id.toString() + '" ';
-            } else {
-              query = query + 'or c.mid = "' + id.toString() + '" ';
-            }
-          });
-          query =
-            // query +
-            // ')  RETURN LABELS(c) as labels,ID(c) AS id, c.cid as cid, c.name AS name, c.uri as uri, c.type as type, c.weight as weight, c.wikipedia as wikipedia, c.abstract as abstract, c.rank as rank, c.mid as mid';
-            query =
-            query +
-            ') and c.rank<51 and c.type="annotation" RETURN LABELS(c) as labels,ID(c) AS id, c.cid as cid, c.name AS name, c.uri as uri, c.type as type, c.weight as weight, c.wikipedia as wikipedia, c.abstract as abstract, c.rank as rank, c.mid as mid';
           const courseMaterialsNodes =
-            await this.neo4jService.getHigherLevelsNodes(query);
+            await this.neo4jService.getHigherLevelsNodes(materialsIds);
 
-          var queryEdges =
-            'MATCH p=(a)-[r]->(b) WHERE TYPE(r) <> "CONTAINS" and (a.mid = "';
-          materialsIds.forEach((id, index) => {
-            // console.log(index)
-            if (index === 0) {
-              queryEdges =
-                queryEdges +
-                id.toString() +
-                '" and b.mid ="' +
-                id.toString() +
-                '" ';
-            } else {
-              queryEdges =
-                queryEdges +
-                'or (a.mid = "' +
-                id.toString() +
-                '" and b.mid ="' +
-                id.toString() +
-                '") ';
-            }
-          });
-          queryEdges =
-            queryEdges +
-            ') and a.rank<51 and b.rank<51 RETURN TYPE(r) as type, ID(a) as source, ID(b) as target, r.weight as weight';
           // queryEdges = queryEdges + ') RETURN TYPE(r) as type, ID(a) as source, ID(b) as target, r.weight as weight'
 
           // // const courseMaterialsEdges = await this.neo4jService.getHigherLevelsEdges(
           // //   materialsIds
           // // );
           const courseMaterialsEdges =
-            await this.neo4jService.getHigherLevelsEdges(queryEdges);
+            await this.neo4jService.getHigherLevelsEdges(materialsIds);
           console.log(courseMaterialsEdges);
           let kgNodes = [];
           let kgEdges = [];
           courseMaterialsNodes.records.forEach((data) => {
-            var type = data._fields[5];
+            var type = data.type;
             var nodeEle;
-            var conceptName = data._fields[3];
+            var conceptName = data.name;
             nodeEle = {
-              // label:data._fields[0][0],
-              id: data._fields[1].low,
-              cid: data._fields[2],
-              // name: data._fields[3],
+              id: data.id,
+              cid: data.cid,
               name: this.capitalizeWords(conceptName),
-              uri: data._fields[4],
+              uri: data.uri,
               type: type,
-              weight: data._fields[6],
-              wikipedia: data._fields[7],
-              abstract: data._fields[8],
-              // rank: data._fields[9].low,
-              rank: data._fields[9],
-              mid: data._fields[10],
+              weight: data.weight,
+              wikipedia: data.wikipedia,
+              abstract: data.abstract,
+              rank: data.rank,
+              mid: data.mid,
             };
             kgNodes.push(nodeEle);
           });
@@ -1170,10 +1127,10 @@ export class ConceptMapComponent {
           if (courseMaterialsEdges.records) {
             courseMaterialsEdges.records.forEach((data) => {
               let edgeEle = {
-                type: data._fields[0],
-                source: data._fields[1].low,
-                target: data._fields[2].low,
-                weight: data._fields[3],
+                type: data.type,
+                source: data.source,
+                target: data.target,
+                weight: data.weight,
               };
               kgEdges.push(edgeEle);
             });
@@ -1315,9 +1272,8 @@ export class ConceptMapComponent {
             //Prepare kgNodes to contain [cid & name] for all concepts of "CurrentMaterial"
             materialNodes.records.forEach((data) => {
               let nodeObj = {
-                // id:data._fields[0].low.toString(),
-                cid: data._fields[0].toString(),
-                name: data._fields[1],
+                cid: data.id.toString(),
+                name: data.name,
               };
               this.kgNodes.push(nodeObj);
             });
@@ -1349,18 +1305,16 @@ export class ConceptMapComponent {
             let slideKgNodes = [];
             const slideNodes = await this.neo4jService.getSlide(slideId);
             slideNodes.records.forEach((data) => {
-              let conceptName = this.capitalizeWords(data._fields[3]);
+              let conceptName = this.capitalizeWords(data.name);
               let nodeEle = {
-                // label:data._fields[0][0],
-                id: data._fields[1].low,
-                cid: data._fields[2],
-                // name: data._fields[3],
+                id: data.id,
+                cid: data.cid,
                 name: conceptName,
-                uri: data._fields[4],
-                type: data._fields[5],
-                weight: data._fields[6],
-                wikipedia: data._fields[7],
-                abstract: data._fields[8],
+                uri: data.uri,
+                type: data.type,
+                weight: data.weight,
+                wikipedia: data.wikipedia,
+                abstract: data.abstract,
               };
               slideKgNodes.push(nodeEle);
             });
@@ -1375,6 +1329,7 @@ export class ConceptMapComponent {
             };
             this.conceptMapData = slideKgMeta;
           } else {
+            this.conceptMapData = { nodes: [] };
             try {
               // if kg isn't saved in neo4j, send a request to python to construct a kg
               console.log('no kg saved, constructing a new one...');
@@ -1462,14 +1417,16 @@ export class ConceptMapComponent {
             // emit kg to cytoscape
             this.dataReceivedEvent.emit(this.conceptMapData);
             this.filteredMapData = this.conceptMapData;
-            this.kgSlideReceivedResponse = true;
+            this.kgSlideResponseEmpty = false;
             console.log(
               'ConceptMapComponent:::getConceptMapData',
               this.conceptMapData
             );
           } else {
+            this.kgSlideResponseEmpty = true;
             console.log('No KG received for this slide!!');
           }
+          this.kgSlideReceivedResponse = true;
           var endTime = performance.now();
           console.log(
             `Call to show Slide_KG took ${endTime - startTime} milliseconds`
@@ -1970,6 +1927,7 @@ export class ConceptMapComponent {
     this.showSlideKg = false; //hide slide_KG
     this.showMaterialKg = false;
     this.showCourseKg = false;
+    this.kgSlideResponseEmpty = false;
     this.kgSlideReceivedResponse = false;
     this.allConceptsObj = []; //all KG_concaptes
     this.newConceptsObj = []; // kg_concepts with status new

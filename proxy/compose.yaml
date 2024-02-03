@@ -1,0 +1,11 @@
+services:
+  proxy:
+    image: ${IMAGE_NAME_PREFIX:-socialcomputing/}coursemapper-webserver-proxy:${IMAGE_TAG:-latest}
+    build: .
+    ports:
+    - 8000:8000
+    restart: always
+    depends_on:
+    - webapp
+    - webserver
+    - coursemapper-kg-web

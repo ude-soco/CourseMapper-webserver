@@ -37,6 +37,7 @@ import {
   courseNotificationSettingLabels,
 } from 'src/app/models/Notification';
 import * as CourseActions from '../pages/courses/state/course.actions';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -96,12 +97,60 @@ export class NotificationsService {
 
   public initialiseSocketConnection() {
     const user = this.storageService.getUser();
-
     this.socket.on(user.id, (data: UserNotification[]) => {
       if (data[0].isDeletingCourse) {
         this.store.dispatch(
           NotificationActions.isDeletingCourse({
             courseId: data[0].courseId,
+          })
+        );
+        return;
+      }
+
+      if (data[0].isDeletingAnnotation) {
+        this.store.dispatch(
+          NotificationActions.isDeletingAnnotation({
+            annotationId: data[0].annotationId,
+          })
+        );
+        return;
+      }
+      if (data[0].isDeletingReply) {
+        this.store.dispatch(
+          NotificationActions.isDeletingReply({
+            replyId: data[0].replyId,
+          })
+        );
+        return;
+      }
+      if (data[0].isDeletingMaterial) {
+        this.store.dispatch(
+          NotificationActions.isDeletingMaterial({
+            materialId: data[0].materialId,
+          })
+        );
+        this.store.dispatch(
+          CourseActions.updateFOllowingAnnotationsOnDeletion({
+            payload: {
+              isDeletingMaterial: true,
+              id: data[0].materialId,
+            },
+          })
+        );
+        return;
+      }
+      if (data[0].isDeletingTopic) {
+        this.store.dispatch(
+          NotificationActions.isDeletingTopic({
+            topicId: data[0].topicId,
+          })
+        );
+        return;
+      }
+      if (data[0].isDeletingChannel) {
+        this.store.dispatch(
+          NotificationActions.isDeletingChannel({
+            channelId: data[0].channelId,
           })
         );
         return;
@@ -121,50 +170,6 @@ export class NotificationsService {
           return notification;
         }
       });
-
-      if (notifications[0].isDeletingAnnotation) {
-        this.store.dispatch(
-          NotificationActions.isDeletingAnnotation({
-            annotationId: notifications[0].annotation_id,
-          })
-        );
-      }
-      if (notifications[0].isDeletingReply) {
-        this.store.dispatch(
-          NotificationActions.isDeletingReply({
-            replyId: notifications[0].reply_id,
-          })
-        );
-      }
-      if (notifications[0].isDeletingMaterial) {
-        this.store.dispatch(
-          NotificationActions.isDeletingMaterial({
-            materialId: notifications[0].material_id,
-          })
-        );
-        this.store.dispatch(
-          CourseActions.updateFOllowingAnnotationsOnDeletion({
-            payload: {
-              isDeletingMaterial: true,
-              id: notifications[0].material_id,
-            },
-          })
-        );
-      }
-      if (notifications[0].isDeletingTopic) {
-        this.store.dispatch(
-          NotificationActions.isDeletingTopic({
-            topicId: notifications[0].topic_id,
-          })
-        );
-      }
-      if (notifications[0].isDeletingChannel) {
-        this.store.dispatch(
-          NotificationActions.isDeletingChannel({
-            channelId: notifications[0].channel_id,
-          })
-        );
-      }
 
       notifications.forEach((notification) => {
         this.store.dispatch(

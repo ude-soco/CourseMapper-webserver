@@ -20,7 +20,7 @@ updates:
     interval: "weekly"
   ignore:
   - dependency-name: "node"
-    versions: ["17.x-slim", "19.x-slim", "21.x-slim", "23.x-slim"]
+    versions: ["21-slim", "21.x-slim", "23-slim", "23.x-slim", "25-slim", "25.x-slim"]
   labels:
   - "dependencies"
   - "docker"
@@ -32,7 +32,7 @@ updates:
     interval: "weekly"
   ignore:
   - dependency-name: "node"
-    versions: ["17.x-slim", "19.x-slim", "21.x-slim", "23.x-slim"]
+    versions: ["21-slim", "21.x-slim", "23-slim", "23.x-slim", "25-slim", "25.x-slim"]
   labels:
   - "dependencies"
   - "docker"
@@ -47,6 +47,13 @@ updates:
   - "dependencies"
   - "javascript"
   - "webapp"
+  groups:
+    angular:
+      patterns:
+      - "@angular/*"
+      - "@angular-devkit/*"
+      - "@ngrx/*"
+      - "primeng"
 
 - package-ecosystem: "npm"
   directory: "/webserver"
@@ -57,3 +64,13 @@ updates:
   - "dependencies"
   - "javascript"
   - "webserver"
+
+- package-ecosystem: "python"
+  directory: "/coursemapper-kg"
+  schedule:
+    interval: "daily"
+  open-pull-requests-limit: 10
+  labels:
+  - "dependencies"
+  - "python"
+  - "coursemapper-kg"

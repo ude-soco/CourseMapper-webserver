@@ -30,19 +30,20 @@ import { Store } from '@ngrx/store';
 import { State } from 'src/app/pages/components/materials/state/materials.reducer';
 import * as MaterialActions from 'src/app/pages/components/materials/state/materials.actions';
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
-import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { ModeratorPrivilegesService } from 'src/app/services/moderator-privileges.service';
 import * as CourseActions from 'src/app/pages/courses/state/course.actions';
 import { getNotificationSettingsOfLastMaterialMenuClicked } from 'src/app/pages/courses/state/course.reducer';
-import { materialNotificationSettingLabels } from 'src/app/models/Notification';
+import { materialNotificationSettingLabels, Notification } from 'src/app/models/Notification';
 import { getNotifications } from '../../notifications/state/notifications.reducer';
 import * as NotificationActions from '../../notifications/state/notifications.actions';
 import { MaterialKgOrderedService } from 'src/app/services/material-kg-ordered.service';
 import { Indicator } from 'src/app/models/Indicator';
 import { IndicatorService } from 'src/app/services/indicator.service';
 import { CourseService } from 'src/app/services/course.service';
+import { getLastTimeCourseMapperOpened } from 'src/app/state/app.reducer';
 @Component({
   selector: 'app-material',
   templateUrl: './material.component.html',
@@ -64,8 +65,8 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   private channels: Channel[] = [];
   materials: Material[] = [];
- 
-  
+
+
   materialType?: string;
   tabIndex: number = -1;
   isMaterialSelected: boolean = false;
@@ -85,6 +86,8 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
   channelID: string = '';
   routeSubscription: Subscription;
 
+  allNotifications$: Observable<Notification[]>;
+  lastTimeCourseMapperOpened$: Observable<string>;
   @Output() conceptMapEvent: EventEmitter<boolean> = new EventEmitter();
   @Output() selectedToolEvent: EventEmitter<string> = new EventEmitter();
   cmSelected = false;
@@ -132,12 +135,12 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       const materialId = url.match(/material:(.*?)\/(pdf|video)/)?.[1];
 
       this.courseID = courseId
-     
+
       this.topicChannelService
         .getChannel(courseId, channelId)
         .subscribe((foundChannel) => {
           this.selectedChannel = foundChannel;
-          this.channelID = this.selectedChannel._id;      
+          this.channelID = this.selectedChannel._id;
           this.materials = foundChannel.materials;
           this.channels.push(this.selectedChannel);
           this.selectedMaterial = foundChannel.materials.find(
@@ -187,7 +190,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   ngOnInit() {
-  
+
 
     this.topicChannelService.onSelectChannel.subscribe((channel) => {
       this.selectedChannel = channel;
@@ -252,9 +255,36 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.isMaterialSelected = true;
       } else {
         this.isMaterialSelected = false;
-      
+
       }
-  
+
+
+    this.allNotifications$ = this.store.select(getNotifications);
+
+    this.lastTimeCourseMapperOpened$ = this.store.select(
+      getLastTimeCourseMapperOpened
+    );
+  }
+
+  getMaterialActivityIndicator(materialId: string) {
+    return combineLatest([
+      this.allNotifications$,
+      this.lastTimeCourseMapperOpened$,
+    ]).pipe(
+      map(([notifications, lastTimeCourseMapperOpened]) => {
+        const lastTimeCourseMapperOpenedConverted = new Date(
+          lastTimeCourseMapperOpened
+        );
+        const notificationsForTopic = notifications.filter(
+          (notification) =>
+            notification.material_id === materialId &&
+            new Date(notification.timestamp) >
+              lastTimeCourseMapperOpenedConverted &&
+            !notification.isRead
+        );
+        return notificationsForTopic.length > 0;
+      })
+    );
   }
 
   getNumUnreadNotificationsForMaterial(materialId: string) {
@@ -334,8 +364,8 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
         'channel',
         this.selectedChannel._id,
       ]);
-     
-   
+
+
     } else {
       this.isMaterialSelected = true;
 
@@ -393,7 +423,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.updateSelectedMaterial();
   }
   updateSelectedMaterial() {
-   
+
     // if(this.selectedChannel.materials && !this.selectedMaterial){
     //   this.tabIndex=0
     //   this.selectedMaterial=this.selectedChannel.materials[0]
@@ -428,12 +458,12 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     );
     this.materialID = this.selectedMaterial._id
     console.log("material selected with id", this.materialID)
-  
-   
+
+
     this.store.dispatch(AnnotationActions.loadAnnotations());
   }
 
-  
+
 
   onDeleteMaterial() {
     this.confirmationService.confirm({
@@ -800,7 +830,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.selectedMaterial['channelId'],
       'materialDashboard',
       this.materialID,
-      'dashboard']);  
+      'dashboard']);
   }
-  
+
 }

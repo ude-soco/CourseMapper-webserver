@@ -62,10 +62,10 @@ export class CytoscapeRoadsComponent {
         content: 'data(name)',
         'text-outline-width': 0.2,
         'background-color': function (elm) {
-          if (elm.data().lastNode) return '#689F38';
-          else if (elm.data().type === 'user') return '#FBC02D';
-          else if (elm.data().type === 'annotation') return '#2196F3';
-          else if (elm.data().type === 'property') return '#0288D1';
+          if (elm.data().lastNode) return '#2196F3';
+          else if (elm.data().type === 'user') return '#dfbd7c';
+          else if (elm.data().type === 'main_concept') return '#D32F2F';
+          else if (elm.data().type === 'related_concept') return '#0288D1';
           else if (elm.data().type === 'category') return '#9C27B0';
           else if (elm.data().type === 'Slide') return '#607D8B';
           else return '#2196F3';
@@ -125,13 +125,19 @@ export class CytoscapeRoadsComponent {
                 prevNode = val;
               } else {
                 if (val === 'dnu') {
-                  val = 'Not Understand';
+                  val = 'DNU';
                 }
                 if (val === 'RELATED_TO') {
                   val = 'Related To';
                 }
-                if (val === 'BELONGS_TO') {
-                  val = 'Belongs To';
+                if (val === 'HAS_CATEGORY') {
+                  val = 'Has Category';
+                }
+                if (val === 'CONSISTS_OF') {
+                  val = 'Consists Of';
+                }
+                if (val === 'LM_CONSISTS_OF') {
+                  val = 'Learning Material Consists Of';
                 }
                 if (val === 'CONTAINS') {
                   val = 'Contains';
@@ -203,9 +209,9 @@ export class CytoscapeRoadsComponent {
             let nodeName = node.data('name');
             if (nodeType === 'user') {
               nodeType = 'User node';
-            } else if (nodeType === 'annotation') {
+            } else if (nodeType === 'main_concept') {
               nodeType = 'Main concept';
-            } else if (nodeType === 'property') {
+            } else if (nodeType === 'related_concept') {
               nodeType = 'Related Concept';
             } else if (nodeType === 'category') {
               nodeType = 'Category';

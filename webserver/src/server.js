@@ -42,6 +42,7 @@ app.use(
   cookieSession({
     name: "coursemapper-session",
     secret: process.env.COOKIE_SECRET,
+    keys: [process.env.COOKIE_SECRET],
     httpOnly: true,
   })
 );
@@ -72,8 +73,9 @@ xapiScheduler.runXapiScheduler();
 
 // Create HTTP server
 const server = http.createServer(app);
-socketio.init(server);
 
+// Create Socket.io server; see ./socket.io
+socketio.init(server);
 socketio.getIO().on("connection", () => {
   console.log("Socket.IO connection established");
 });

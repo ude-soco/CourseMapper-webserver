@@ -205,4 +205,11 @@ export class ResultViewComponent {
     console.log('ResultViewComponent Articles', this.articles);
 
   }
+
+  tabChanged(tab) {
+    // Pause videos (if any) when changing tabs
+    document.querySelectorAll('iframe').forEach((iframe) => {
+      const result = iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*')
+    })
+  }
 }

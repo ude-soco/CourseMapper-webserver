@@ -5,12 +5,23 @@ import { CourseService } from 'src/app/services/course.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Channel } from 'src/app/models/Channel';
 import { TopicChannelService } from 'src/app/services/topic-channel.service';
-import { State } from 'src/app/state/app.reducer';
+import {
+  State,
+  getLastTimeCourseMapperOpened,
+} from 'src/app/state/app.reducer';
 import { Store } from '@ngrx/store';
 import * as AppActions from 'src/app/state/app.actions';
 import { ModeratorPrivilegesService } from 'src/app/services/moderator-privileges.service';
 import * as MaterialActions from 'src/app/pages/components/materials/state/materials.actions';
 import * as CourseActions from 'src/app/pages/courses/state/course.actions';
+import * as NotificationActions from 'src/app/pages/components/notifications/state/notifications.actions';
+import {
+  getAllCourseNotificationSettings,
+  getNotifications,
+} from 'src/app/pages/components/notifications/state/notifications.reducer';
+import { Observable, combineLatest, map, withLatestFrom } from 'rxjs';
+import { CourseNotificationSettings } from 'src/app/models/BlockingNotification';
+import { Notification } from 'src/app/models/Notification';
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
@@ -25,6 +36,8 @@ export class SidebarComponent implements OnInit {
   selectedCourse: Course = new CourseImp('', '');
   displayAddCourseDialogue: boolean = false;
   showModeratorPrivileges: boolean;
+  allNotifications$: Observable<Notification[]>;
+  lastTimeCourseMapperOpened$: Observable<string>;
 
   constructor(
     private courseService: CourseService,
@@ -37,6 +50,15 @@ export class SidebarComponent implements OnInit {
 
   ngOnInit(): void {
     this.getCourses();
+    this.store.dispatch(
+      NotificationActions.loadGlobalAndCoursesNotificationSettings()
+    );
+
+    this.allNotifications$ = this.store.select(getNotifications);
+
+    this.lastTimeCourseMapperOpened$ = this.store.select(
+      getLastTimeCourseMapperOpened
+    );
   }
 
   getCourses() {
@@ -97,5 +119,26 @@ export class SidebarComponent implements OnInit {
       CourseActions.SetSelectedChannel({ selectedChannel: null })
     );
     this.router.navigate(['course', selectedCourse._id, 'welcome']);
+  }
+
+  getCourseActivityIndicator(courseId: string) {
+    return combineLatest([
+      this.allNotifications$,
+      this.lastTimeCourseMapperOpened$,
+    ]).pipe(
+      map(([notifications, lastTimeCourseMapperOpened]) => {
+        const lastTimeCourseMapperOpenedConverted = new Date(
+          lastTimeCourseMapperOpened
+        );
+        const notificationsForCourse = notifications.filter(
+          (notification) =>
+            notification.course_id === courseId &&
+            new Date(notification.timestamp) >
+              lastTimeCourseMapperOpenedConverted &&
+            !notification.isRead
+        );
+        return notificationsForCourse.length > 0;
+      })
+    );
   }
 }

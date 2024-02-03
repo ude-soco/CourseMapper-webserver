@@ -17,7 +17,9 @@ changelog:
       - dependencies
       exclude:
         labels:
+        - coursemapper-kg
         - webserver
+        - proxy
         - github_actions
 
     - title: 🔗 Webserver Dependencies
@@ -25,22 +27,37 @@ changelog:
       - dependencies
       exclude:
         labels:
+        - coursemapper-kg
         - webapp
+        - proxy
         - github_actions
 
-    - title: 🔗 CI/CD Dependencies
+    - title: 🔗 coursemapper-kg Dependencies
       labels:
       - dependencies
       exclude:
         labels:
         - webapp
         - webserver
+        - github_actions
+        - proxy
+
+    - title: 🔗 CI/CD Dependencies
+      labels:
+      - dependencies
+      exclude:
+        labels:
+        - coursemapper-kg
+        - webapp
+        - webserver
+        - proxy
 
     - title: 🔗 Other Dependencies
       labels:
       - dependencies
       exclude:
         labels:
+        - coursemapper-kg
         - webapp
         - webserver
         - github_actions

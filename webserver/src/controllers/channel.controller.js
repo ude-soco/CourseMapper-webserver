@@ -329,7 +329,7 @@ export const deleteChannel = async (req, res, next) => {
     return res.status(500).send({ error: "Error finding channel" });
   }
   try {
-    await Channel.findByIdAndRemove(channelId);
+    await Channel.findByIdAndDelete(channelId);
   } catch (err) {
     return res
       .status(500)

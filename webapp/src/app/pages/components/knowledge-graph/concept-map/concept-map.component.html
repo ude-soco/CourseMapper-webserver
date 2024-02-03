@@ -51,7 +51,7 @@
                 [value]="option"
                 [(ngModel)]="selectedOption"
                 [inputId]="option.key"
-                *ngIf="option.key !== 'annotation'"
+                *ngIf="option.key !== 'main_concept'"
                 (onChange)="updateSingleChecked(option.key)"
               ></p-checkbox>
               <p-checkbox
@@ -60,7 +60,7 @@
                 [value]="option"
                 [(ngModel)]="selectedOption"
                 [inputId]="option.key"
-                *ngIf="option.key === 'annotation'"
+                *ngIf="option.key === 'main_concept'"
                 [readonly]="true"
                 (onChange)="updateSingleChecked(option.key)"
               ></p-checkbox>
@@ -174,9 +174,6 @@
             (onChange)="selectedTopNodes(selectedTopN)"
           ></p-dropdown>
         </span>
-        <div style="text-align: center; margin-left: 2rem">
-          Click on a node to view its relations
-        </div>
         <div id="materialKgControlPanel" class="noContentRecieved">
           <span *ngIf="conceptMapData">
             <!-- <span
@@ -297,16 +294,16 @@
   >
     <hr style="margin-bottom: 0.25rem" />
     <!-- <ng-container class="h-full">
-  <p class="text-xl font-medium text-center h-40" >There is no content in the course to create KG.</p> 
+  <p class="text-xl font-medium text-center h-40" >There is no content in the course to create KG.</p>
 
     </ng-container> -->
       <div class="grid grid-cols-1 justify-items-center p-60">
         <div class='text-xl font-medium text-center'>There is no content in the course to create KG.</div>
       </div>
-    
+
         <!-- <p class="text-xl font-medium text-center " >There is no content in the course to create KG.</p> -->
-     
-  
+
+
   </p-dialog>
 </div>
 
@@ -329,8 +326,8 @@
       maskStyleClass="dialogMask"
     >
       <ng-container>
-        <div class="graphBody" id="slideKgDialogDiv">
-          <div class="dialogTabs">
+        <div class="graphBody w-full h-full" id="slideKgDialogDiv">
+          <div class="dialogTabs w-full">
             <span id="kgTabsArea" style="white-space: nowrap; display: inline">
               <div (click)="disabledTabClicked()">
                 <p-tabMenu
@@ -346,7 +343,7 @@
                 [activeItem]="tabs[1]"
               ></p-tabMenu>
             </span>
-            <div class="contentKgDialog" style="display: flex">
+            <div class="contentKgDialog h-full flex">
               <!-- Parent -->
               <p-badge
                 id="dnuConceptsBadge"
@@ -677,9 +674,15 @@
                 </div>
               </div>
               <div
+                class="flex-1 flex items-center justify-center"
+                *ngIf="mainConceptsTab && kgSlideReceivedResponse && kgSlideResponseEmpty"
+              >
+                <div>Please generate KG for the learning material first. Once its generated, you can view main concepts related to this slide here</div>
+              </div>
+              <div
                 id="graphSection"
                 class="dialogContents sidebarShown"
-                *ngIf="mainConceptsTab && kgSlideReceivedResponse"
+                *ngIf="mainConceptsTab && kgSlideReceivedResponse && !kgSlideResponseEmpty"
               >
                 <!--knowledge graph component-->
                 <div class="card">
