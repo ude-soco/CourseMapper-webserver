@@ -98,3 +98,17 @@ export const getHigherLevelsEdges = async (req, res, next) => {
     return res.status(500).send({ error: err.message });
   }
 }
+
+export const setRating = async (req, res, next) => {
+  const resourceId = req.body.resourceId;
+  const concepts = req.body.concepts;
+  const userId = req.userId;
+  const rating = req.body.rating;
+
+  try {
+    const result = await neo4j.setRating(resourceId, concepts, userId, rating);
+    return res.status(200).send(result);
+  } catch (err) {
+    return res.status(500).send({ error: err.message });
+  }
+}

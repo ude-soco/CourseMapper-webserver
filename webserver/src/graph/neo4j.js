@@ -93,3 +93,58 @@ export async function getHigherLevelsEdges(materialIds) {
   );
   return recordsToObjects(records);
 }
+
+export async function setRating(resourceId, concepts, userId, rating) {
+  const session = graphDb.driver.session();
+  try {
+    const result = await session.executeWrite(async tx => {
+      const rTypesRes = await tx.run(
+        `MATCH p=(a:User)-[r:HELPFUL|NOT_HELPFUL]->(b:Resource)
+        WHERE a.uid = $uid
+        AND b.rid = $rid
+        WITH r, type(r) AS r_type
+        DELETE r
+        RETURN r_type`,
+        { uid: userId, rid: resourceId }
+      );
+      const rTypes = rTypesRes.records.map(record => record.get('r_type'));
+
+      if (!rTypes.includes(rating) && ['HELPFUL', 'NOT_HELPFUL'].includes(rating)) {
+        await tx.run(
+          `MATCH (u:User) WHERE u.uid = $uid
+          OPTIONAL MATCH(b:Resource) WHERE b.rid = $rid
+          MERGE (u)-[r: ${rating} {concepts: $concepts}]->(b)
+          RETURN r`,
+          { uid: userId, rid: resourceId, concepts }
+        );
+      }
+
+      const result = await tx.run(
+        `MATCH (b1:Resource) WHERE b1.rid = $rid
+        OPTIONAL MATCH ()-[r_helpful:HELPFUL]->(b2:Resource) WHERE b2.rid = $rid
+        OPTIONAL MATCH ()-[r_not_helpful:NOT_HELPFUL]->(b3:Resource) WHERE b3.rid = $rid
+        WITH b1, count(r_helpful) AS helpful_count, count(r_not_helpful) AS not_helpful_count
+        SET b1.helpful_count = helpful_count
+        SET b1.not_helpful_count = not_helpful_count
+        RETURN helpful_count, not_helpful_count`,
+        { rid: resourceId }
+      );
+
+      if (result.records.length === 0) {
+        throw new Error('Resource not found');
+      }
+
+      return {
+        helpful_count: result.records[0].get('helpful_count'),
+        not_helpful_count: result.records[0].get('not_helpful_count'),
+        voted: rTypes.includes(rating) ? null : rating
+      };
+    });
+    return result;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  } finally {
+    await session.close();
+  }
+}

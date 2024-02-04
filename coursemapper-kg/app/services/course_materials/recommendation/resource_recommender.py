@@ -44,11 +44,6 @@ class ResourceRecommenderService:
 
         return ""
 
-    def set_rating(self, resource, user_id, rating, concepts=[]):
-        return self.db.create_or_edit_user_rating(
-            resource, user_id, rating, concepts=concepts
-        )
-
     def get_top_n_dnu_concepts(self, user, top_n):
         return self.db.get_top_n_dnu_concepts(user=user, top_n=top_n)
         # TODO: material_id is missing and the user argument is not correctly used

@@ -1,13 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject, lastValueFrom } from 'rxjs';
-import { environment_Python } from 'src/environments/environment';
+import { environment, environment_Python } from 'src/environments/environment';
 import { HTTPOptions } from '../config/config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MaterialsRecommenderService {
+  apiURL = environment.API_URL
   cmEndpointURL = environment_Python.PYTHON_SERVER
   httpHeader = HTTPOptions.headers
   recommendedConcepts: any
@@ -41,9 +42,8 @@ export class MaterialsRecommenderService {
     return this.recommendedMaterials
   }
 
-
-  async rateRecommendedMaterials(formData: any): Promise<any> {
-    const recommendedMaterialsRating$ = this.http.post<any>(`${this.cmEndpointURL}rating`, formData, { withCredentials: true });
+  async rateRecommendedMaterials(data: any): Promise<any> {
+    const recommendedMaterialsRating$ = this.http.post<any>(`${this.apiURL}/knowledge-graph/rating`, data, { withCredentials: true });
     this.recommendedMaterialsRating = await lastValueFrom(recommendedMaterialsRating$)
     return this.recommendedMaterialsRating
   }

@@ -60,4 +60,10 @@ module.exports = function (app) {
     [authJwt.verifyToken],
     controller.getHigherLevelsEdges
   );
+
+  app.post(
+    "/api/knowledge-graph/rating",
+    [authJwt.verifyToken],
+    controller.setRating
+  );
 };

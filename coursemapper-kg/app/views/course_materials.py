@@ -120,32 +120,6 @@ def get_resources():
     return make_response(resp, 200)
 
 
-@course_materials.route("/rating", methods=["POST"])
-def rating():
-    resource = json.loads(request.form.get("resource"))  # type: ignore
-    concepts = request.form.get("concepts")  # type: ignore
-    user_id = request.form.get("userId")  # type: ignore
-    rating = request.form.get("rating")  # type: ignore
-    rating_state = request.form.get("ratingState")  # type: ignore
-
-    logger.debug("resource: %s" % resource["id"])
-    logger.debug("concepts: %s" % concepts)
-    logger.debug("user_id: %s" % user_id)
-    logger.debug("rating: %s" % rating)
-    logger.debug("rating_state: %s" % rating_state)
-
-    resource_recommender_service = ResourceRecommenderService()
-    resp = resource_recommender_service.set_rating(
-        resource=resource,
-        concepts=concepts,
-        user_id=user_id,
-        rating=rating,
-    )
-    logger.info(resp)
-
-    return make_response(jsonify(resp), 200)
-
-
 @course_materials.route("/get_concepts", methods=["POST"])
 
 def get_concepts():
