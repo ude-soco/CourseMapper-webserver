@@ -223,52 +223,6 @@ def edit_resource(tx, resource, recommendation_type):
            document_embedding=str(resource["document_embedding"] if "document_embedding" in resource.index else ""))
 
 
-def create_or_replace_user_resource_relationships(tx, rid, uid, relation_type, concepts=None):
-    # Retrieve and delete all existing relationships
-    r_types = tx.run("""
-        MATCH p=(a:User)-[r:HELPFUL|NOT_HELPFUL]->(b:Resource)
-        WHERE a.uid = $uid
-        AND b.rid = $rid
-        WITH r, type(r) AS r_type
-        DELETE r
-        RETURN r_type
-        """,
-        uid=uid,
-        rid=rid)
-    r_types = [r["r_type"] for r in list(r_types)]
-
-    # Create new relationships if needed
-    if relation_type not in r_types:
-        tx.run("""
-            MATCH (u:User) WHERE u.uid = $uid
-            OPTIONAL MATCH(b:Resource) WHERE b.rid = $rid
-            MERGE (u)-[r: %s {concepts: $concepts}]->(b)
-            RETURN r
-            """ % relation_type,
-            uid=uid,
-            rid=rid,
-            concepts=concepts).data()
-
-    # Update counts
-    result: Result = tx.run("""
-        MATCH (b1:Resource) WHERE b1.rid = $rid
-        OPTIONAL MATCH ()-[r_helpful:HELPFUL]->(b2:Resource) WHERE b2.rid = $rid
-        OPTIONAL MATCH ()-[r_not_helpful:NOT_HELPFUL]->(b3:Resource) WHERE b3.rid = $rid
-        WITH b1, count(r_helpful) AS helpful_count, count(r_not_helpful) AS not_helpful_count
-        SET b1.helpful_count = helpful_count
-        SET b1.not_helpful_count = not_helpful_count
-        RETURN helpful_count, not_helpful_count
-        """,
-        rid=rid)
-
-    counts: Record = result.single()
-
-    return {
-        "helpful_count": counts["helpful_count"],
-        "not_helpful_count": counts["not_helpful_count"],
-        "voted": relation_type if relation_type not in r_types else None
-    }
-
 #1
 def create_lr_relationships(tx, mid, node):
     """
@@ -721,22 +675,6 @@ class NeoDataBase:
 
             tx.commit()
 
-        except Exception as e:
-            logger.error("Failure retrieving or creating user - concept relationship %s" % e)
-            tx.rollback()
-            session.close()
-            self.close()
-
-    def create_or_edit_user_rating(self, resource, user_id, relation_type, concepts=[]):
-        logger.info("Create_or_edit_user_rating")
-        session = self.driver.session()
-        tx = session.begin_transaction()
-        try:
-            logger.info("Check if user has relationship to resource %s" % resource['id'])
-            result = create_or_replace_user_resource_relationships(tx, rid=resource['id'], uid=user_id,             relation_type=relation_type, concepts=concepts)
-            print(result)
-            tx.commit()
-            return result
         except Exception as e:
             logger.error("Failure retrieving or creating user - concept relationship %s" % e)
             tx.rollback()

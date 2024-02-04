@@ -21,7 +21,6 @@ import { Topic } from 'src/app/models/Topic';
 import { User } from 'src/app/models/User';
 import { CallRecommendationsService } from 'src/app/services/call-recommendations.service';
 import { ConceptMapService } from 'src/app/services/concept-map-service.service';
-import { ConceptSlideService } from 'src/app/services/concept-slide.service';
 import { KgTabsActivationService } from 'src/app/services/kg-tabs-activation.service';
 import { MaterialKgOrderedService } from 'src/app/services/material-kg-ordered.service';
 import { MaterialsRecommenderService } from 'src/app/services/materials-recommender.service';
@@ -297,7 +296,6 @@ export class ConceptMapComponent {
   constructor(
     private messageService: MessageService, //show toast messages
     private conceptMapService: ConceptMapService, //Build material KG
-    private conceptSlideService: ConceptSlideService, // Build Slide KG
     private materialsRecommenderService: MaterialsRecommenderService, // Get slide's recommendations for KG
     private userService: UserServiceService, //get currentUser info
     private pdfViewService: PdfviewService,
@@ -1332,21 +1330,7 @@ export class ConceptMapComponent {
             this.conceptMapData = slideKgMeta;
           } else {
             this.conceptMapData = { nodes: [] };
-            try {
-              // if kg isn't saved in neo4j, send a request to python to construct a kg
-              console.log('no kg saved, constructing a new one...');
-              // const reqData = await this.getReqDataSlide();
-              // const result = await this.conceptSlideService.getConceptMapDataSlide(
-              //   reqData
-              // );
-              // this.conceptMapData = result;
-              // this.displaySidebarProperty = true;
-              // setInterval(() => {
-              //   this.displaySidebarProperty = false;
-              // }, 2000);
-            } catch (err) {
-              console.log(err);
-            }
+            console.log('no kg saved...');
           }
           //Start assigning status for current user [understood, not understood, new concept]
 

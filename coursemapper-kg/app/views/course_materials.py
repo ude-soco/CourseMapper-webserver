@@ -121,9 +121,7 @@ def get_resources():
 
 
 @course_materials.route("/get_concepts", methods=["POST"])
-
 def get_concepts():
-    
     material_id = request.form.get("materialId")  # type: ignore
     material_page = request.form.get("materialPage")  # type: ignore
     user_id = request.form.get("userId")  # type: ignore
@@ -132,8 +130,6 @@ def get_concepts():
     understood = request.form.get("understoodConcepts")  # type: ignore
     non_understood = request.form.get("nonUnderstoodConcepts")  # type: ignore
     new_concepts = request.form.get("newConcepts")  # type: ignore
-
-    print("not-understood from Yipeng:", non_understood, flush=True)
 
     understood = [cid for cid in understood.split(",") if understood]
     non_understood = [cid for cid in non_understood.split(",") if non_understood]
@@ -167,17 +163,20 @@ def get_concepts():
     data_service = RecService()
     end_time = time.time()
     print("Get RecService time: ", end_time - start_time, flush=True)
-    # start_time = time.time()
-    # # get related concepts and category of concepts user doesn't understand
-    # # data_service._get_related_category(ids=non_understood, mid=material_id)
-    # end_time = time.time()
-    # print('Get the related concepts and category Execution time: ', end_time - start_time, flush=True)
     # use GCN to get final embedding of each node
     start_time = time.time()
     data_service._extract_vector_relation(mid=material_id)
-#    logger.info("GCN")
     gcn = GCN()
     gcn.load_data()
+    ### ========
+    ### LightGCN Variant
+    # lightGCN = LightGCN()
+    # lightGCN.load_data(variant=True)
+    ### ========
+    ### LightGCN
+    # lightGCN = LightGCN()
+    # lightGCN.load_data(variant=False)
+    ### ========
     end_time = time.time()
     print("use gcn Execution time: ", end_time - start_time, flush=True)
 
@@ -207,329 +206,6 @@ def get_concepts():
     print("Execution time: ", end_time1 - start_time1, flush=True)
     #make_response.headers.add('Access-Control-Allow-Origin', '*')
 
-    
-
-    return make_response(resp, 200)
-
-
-@course_materials.route("/get_concepts/lightgcn_variant", methods=["POST"])
-def concepts_lightgcn_variant():
-    material_id = request.form.get("materialId")  # type: ignore
-    material_page = request.form.get("materialPage")  # type: ignore
-    user_id = request.form.get("userId")  # type: ignore
-    user_email = request.form.get("userEmail")  # type: ignore
-    username = request.form.get("username")  # type: ignore
-    understood = request.form.get("understoodConcepts")  # type: ignore
-    non_understood = request.form.get("nonUnderstoodConcepts")  # type: ignore
-    new_concepts = request.form.get("newConcepts")  # type: ignore
-
-    understood = [cid for cid in understood.split(",") if understood]
-    non_understood = [cid for cid in non_understood.split(",") if non_understood]
-    new_concepts = [cid for cid in new_concepts.split(",") if new_concepts]
-    material_id = material_id.split("-")[0]
-    slide_id = str(material_id) + "_slide_" + str(material_page)
-
-    print(
-        "material_id:",
-        material_id,
-        "page: ",
-        material_page,
-        "slide_id: ",
-        slide_id,
-        "user_id: ",
-        user_id,
-        "user_email: ",
-        user_email,
-        "username: ",
-        username,
-        "understood: ",
-        understood,
-        "nonUnderstood: ",
-        non_understood,
-        "new_concepts: ",
-        new_concepts,
-        flush=True,
-    )
-    start_time1 = time.time()
-
-    data_service = RecService()
-    # start_time = time.time()
-    # # get related concepts and category of concepts user doesn't understand
-    # data_service._get_related_category(ids=non_understood, mid=material_id)
-    # end_time = time.time()
-    # print('Get the related concepts and category Execution time: ', end_time - start_time, flush=True)
-    # use GCN to get final embedding of each node
-    start_time = time.time()
-    logger.info("LightGCN variant")
-    # data_service._extract_vector_relation(mid=material_id)
-    lightGCN = LightGCN()
-    lightGCN.load_data(variant=True)
-    end_time = time.time()
-    print("use gcn Execution time: ", end_time - start_time, flush=True)
-
-    start_time = time.time()
-    user = {"name": username, "id": user_id, "user_email": user_email}
-    data_service._construct_user(
-        user=user,
-        non_understood=non_understood,
-        understood=understood,
-        new_concepts=new_concepts,
-        mid=material_id,
-    )
-    end_time = time.time()
-    print("Get User model Execution time: ", end_time - start_time, flush=True)
-
-    start_time = time.time()
-    # Get top-5 recommendation concept and interpretability
-    resp = data_service._get_concept_recommendation(user_id=user_id, mid=material_id)
-    end_time = time.time()
-
-    print(
-        "Get top-5 recommendation concept and interpretability Execution time: ",
-        end_time - start_time,
-        flush=True,
-    )
-    end_time1 = time.time()
-    print("Execution time: ", end_time1 - start_time1, flush=True)
-
-    return make_response(resp, 200)
-
-
-@course_materials.route("/get_concepts/lightgcn", methods=["POST"])
-def concepts_lightgcn():
-    material_id = request.form.get("materialId")  # type: ignore
-    material_page = request.form.get("materialPage")  # type: ignore
-    user_id = request.form.get("userId")  # type: ignore
-    user_email = request.form.get("userEmail")  # type: ignore
-    username = request.form.get("username")  # type: ignore
-    understood = request.form.get("understoodConcepts")  # type: ignore
-    non_understood = request.form.get("nonUnderstoodConcepts")  # type: ignore
-    new_concepts = request.form.get("newConcepts")  # type: ignore
-
-    understood = [cid for cid in understood.split(",") if understood]
-    non_understood = [cid for cid in non_understood.split(",") if non_understood]
-    new_concepts = [cid for cid in new_concepts.split(",") if new_concepts]
-    material_id = material_id.split("-")[0]
-    slide_id = str(material_id) + "_slide_" + str(material_page)
-
-    print(
-        "material_id:",
-        material_id,
-        "page: ",
-        material_page,
-        "slide_id: ",
-        slide_id,
-        "user_id: ",
-        user_id,
-        "user_email: ",
-        user_email,
-        "username: ",
-        username,
-        "understood: ",
-        understood,
-        "nonUnderstood: ",
-        non_understood,
-        "new_concepts: ",
-        new_concepts,
-        flush=True,
-    )
-    start_time1 = time.time()
-
-    data_service = RecService()
-    # start_time = time.time()
-    # # get related concepts and category of concepts user doesn't understand
-    # data_service._get_related_category(ids=non_understood, mid=material_id)
-
-    # end_time = time.time()
-    # print('Get the related concepts and category Execution time: ', end_time - start_time, flush=True)
-    # use GCN to get final embedding of each node
-    start_time = time.time()
-    # data_service._extract_vector_relation(mid=material_id)
-    logger.info("LightGCN")
-    lightGCN = LightGCN()
-    lightGCN.load_data(variant=False)
-    end_time = time.time()
-    print("use gcn Execution time: ", end_time - start_time, flush=True)
-
-    start_time = time.time()
-    user = {"name": username, "id": user_id, "user_email": user_email}
-    data_service._construct_user(
-        user=user,
-        non_understood=non_understood,
-        understood=understood,
-        new_concepts=new_concepts,
-        mid=material_id,
-    )
-    end_time = time.time()
-    print("Get User model Execution time: ", end_time - start_time, flush=True)
-
-    start_time = time.time()
-    # Get top-5 recommendation concept and interpretability
-    resp = data_service._get_concept_recommendation(user_id=user_id, mid=material_id)
-    end_time = time.time()
-
-    print(
-        "Get top-5 recommendation concept and interpretability Execution time: ",
-        end_time - start_time,
-        flush=True,
-    )
-    end_time1 = time.time()
-    print("Execution time: ", end_time1 - start_time1, flush=True)
-
-    return make_response(resp, 200)
-
-
-@course_materials.route("/concept-slide", methods=["POST"])
-def concepts_slide():
-    model = request.form.get("model")  # type: ignore
-    material_id = request.form.get("materialId")  # type: ignore
-    slide_id = request.form.get("slideId")  # type: ignore
-    materialName = request.form.get("materialName")  # type: ignore
-    materialPage = request.form.get("materialPage")  # type: ignore
-    materialFile = request.files.get("materialFile")  # type: ignore
-    user_id = request.form.get("userId")  # type: ignore
-    user_email = request.form.get("userEmail")  # type: ignore
-    username = request.form.get("username")  # type: ignore
-
-    materialId = material_id.split("-", 1)[0]
-    print(
-        "model: ",
-        model,
-        "material_id:",
-        materialId,
-        "material_name:",
-        materialName,
-        "page: ",
-        materialPage,
-        "file: ",
-        materialFile,
-        "user_id: ",
-        user_id,
-        "slide_id: ",
-        slide_id,
-        "user_email: ",
-        user_email,
-        "username: ",
-        username,
-        flush=True,
-    )
-
-    startTime = time.time()
-
-    data_service = DataService()
-    resp = data_service._get_dataSlide(
-        material_id=materialId,
-        material_name=materialName,
-        file=materialFile,
-        current_page=materialPage,
-        model_name=model,
-        top_n=15,
-        user_id=user_id,
-        user_email=user_email,
-        username=username,
-        with_category=False,
-        with_property=False,  # concept expansion
-        whole_text=True,  # avoid extracting keyphrases
-    )
-
-    endTime = time.time()
-    print("Execution time: ", endTime - startTime, flush=True)
-    return make_response(resp, 200)
-
-
-@course_materials.route("/concept-map/kwp", methods=["POST"])
-def concepts_map_kwp():
-    model = request.form.get("model")  # type: ignore
-    materialId = request.form.get("materialId")  # type: ignore
-    materialName = request.form.get("materialName")  # type: ignore
-    materialFile = request.files.get("materialFile")  # type: ignore
-    userId = request.form.get("userId")  # type: ignore
-    userEmail = request.form.get("userEmail")  # type: ignore
-    username = request.form.get("username")  # type: ignore
-
-    print(
-        "model: ",
-        model,
-        "material_id:",
-        materialId,
-        "material_name:",
-        materialName,
-        "file: ",
-        materialFile,
-        "user_id: ",
-        userId,
-        "user_email: ",
-        userEmail,
-        "username: ",
-        username,
-    )
-
-    data_service1 = DataService1()
-    resp = data_service1._get_data(
-        materialId=materialId,
-        materialName=materialName,
-        file=materialFile,
-        model_name=model,
-        top_n=15,
-        #   user_id= user_id,
-        #   user_email=user_email,
-        #   username=username,
-    )
-    return make_response(resp, 200)
-
-
-@course_materials.route("/concept-map/semi", methods=["POST"])
-def concepts_map_semi():
-    model = request.form.get("model")  # type: ignore
-    materialId = request.form.get("materialId")  # type: ignore
-    materialName = request.form.get("materialName")  # type: ignore
-    materialConcepts = request.form.get("selectedConcepts")  # type: ignore
-    materialFile = request.files.get("materialFile")  # type: ignore
-    userId = request.form.get("userId")  # type: ignore
-    userEmail = request.form.get("userEmail")  # type: ignore
-    username = request.form.get("username")  # type: ignore
-
-    print(
-        "model: ",
-        model,
-        "material_id:",
-        materialId,
-        "material_name:",
-        materialName,
-        "materialConcepts: ",
-        materialConcepts,
-        "file: ",
-        materialFile,
-        "user_id: ",
-        userId,
-        "user_email: ",
-        userEmail,
-        "username: ",
-        username,
-        flush=True,
-    )
-
-    data_service1 = DataService1()
-    resp = data_service1._get_graph(
-        materialId=materialId,
-        materialName=materialName,
-        concepts=materialConcepts,
-        file=materialFile,
-        model_name=model,
-        top_n=15,
-        with_category=True,
-        with_property=True,
-        with_doc_sim=True,
-        userId=userId,
-        userEmail=userEmail,
-        username=username,
-    )
-
-    # print('This is error output', file=sys.stderr)
-    # print('This is standard output', file=sys.stdout)
-    # print('@@@@@@@@@@@@@@@@@@@@@',flush=True)
-    # print('response is:',flush=True)
-    # print(resp,flush=True)
     return make_response(resp, 200)
 
 
@@ -543,30 +219,42 @@ def concept_map():
     userEmail = request.form.get("userEmail")  # type: ignore
     username = request.form.get("username")  # type: ignore
 
-    # print(
-    #     "model: ",
-    #     model,
-    #     "material_id:",
-    #     materialId,
-    #     "material_name:",
-    #     materialName,
-    #     "file: ",
-    #     materialFile,
-    #     "user_id: ",
-    #     userId,
-    #     "user_email: ",
-    #     userEmail,
-    #     "username: ",
-    #     username,
-    # )
-    # model = "singlerank"
     startTime = time.time()
-    data_service = DataService()
+
+    ### ========
+    ### KWP
+    # data_service = DataService1()
+    # resp = data_service._get_data(
+        # materialId=materialId,
+        # materialName=materialName,
+        # file=materialFile,
+        # model_name=model,
+        # top_n=15,
+        # #   user_id= user_id,
+        # #   user_email=user_email,
+        # #   username=username,
+    # )
+    ### ========
+    ### Semi
+    # materialConcepts = request.form.get("selectedConcepts")  # type: ignore
+    # data_service = DataService1()
+    # resp = data_service._get_graph(
+        # materialId=materialId,
+        # materialName=materialName,
+        # concepts=materialConcepts,
+        # file=materialFile,
+        # model_name=model,
+        # top_n=15,
+        # with_category=True,
+        # with_property=True,
+        # with_doc_sim=True,
+        # userId=userId,
+        # userEmail=userEmail,
+        # username=username,
+    # )
+    ### ========
+    ### Top-Down
     # data_service_top_down = DataServiceTopDown()
-
-    # # # # # # Build LM KG.
-
-    ### Activate top_down
     # resp = data_service_top_down._get_data(materialId=materialId,
     #                               materialName=materialName,
     #                               file=materialFile,
@@ -581,8 +269,10 @@ def concept_map():
     #                               whole_text=False
     #                               )
     # return make_response(resp, 200)
+    ### ========
 
-    ### Activate bottom_up
+    ### Bottom-Up
+    data_service = DataService()
     resp = data_service._get_data(
         materialId=materialId,
         materialName=materialName,
