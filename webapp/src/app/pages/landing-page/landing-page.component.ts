@@ -173,8 +173,8 @@ export class LandingPageComponent {
 
       if (varcc) {
         this.Enrolled = true;
-
-        this.router.navigate(['course', selcetedCourse.id]);
+        this.router.navigate(['course', selcetedCourse.id, 'welcome']);
+        // this.router.navigate(['course', selcetedCourse.id]);
       } else {
         this.Enrolled = false;
         this.store.dispatch(
