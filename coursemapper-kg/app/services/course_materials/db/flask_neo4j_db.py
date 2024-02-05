@@ -56,6 +56,12 @@ class Neo4j:
             ).data()
 
         return list(result)
+    def delete_material(self, material_id):
+        with self.get_db().session() as session: 
+            result = session.run('MATCH (m:LearningMaterial) WHERE m.mid = $mid DETACH DELETE m', 
+            mid=material_id).data() 
+        return result
+
 
     def get_material_edges(self, material_id):
         with self.get_db().session() as session:

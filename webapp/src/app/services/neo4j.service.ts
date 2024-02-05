@@ -39,7 +39,12 @@ export class Neo4jService {
       `${environment_Python.PYTHON_SERVER}get_material/${materialId}`
     ));
   }
-
+  async deleteMaterial(materialId: string) {
+    return lastValueFrom(this.http.delete(`${environment_Python.PYTHON_SERVER}delete_material/${materialId}` 
+    )); 
+    }
+    
+    
   async getMaterialEdges(materialId: string): Promise<Neo4jResult> {
     return lastValueFrom(this.http.get<Neo4jResult>(
       `${environment_Python.PYTHON_SERVER}get_material_edges/${materialId}`
