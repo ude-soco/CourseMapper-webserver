@@ -85,7 +85,8 @@ export class LoginComponent implements OnInit {
             );
 
             if (varcc) {
-              this.router.navigate(['course', courseId]);
+              this.router.navigate(['course', courseId, 'welcome']);
+              // this.router.navigate(['course', courseId]);
             } else {
               this.store.dispatch(
                 CourseAction.setCurrentCourse({ selcetedCourse: this.course })

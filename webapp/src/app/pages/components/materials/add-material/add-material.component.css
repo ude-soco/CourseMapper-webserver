@@ -58,7 +58,7 @@ button {
   }
 
   ::ng-deep .p-card{
-    width: 150px;
+    /* width: 150px; */
     border-radius: 20px;
     border: 3px solid #0277bd;
 
@@ -70,7 +70,7 @@ button {
 
    p-card{
     display:block;
-    width: 150px;
+    /* width: 150px; */
     margin: 1rem;
   }
 
