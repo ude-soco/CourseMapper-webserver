@@ -1,0 +1,22 @@
+
+:host ::ng-deep #cro_sorting .p-panel-title {
+  color: #0277BD;
+  font-size: 14px;
+}
+
+:host ::ng-deep #cro_sorting .p-panel {
+  border: 2px solid #0288d1;
+}
+
+:host ::ng-deep .scroll_panel_list {
+  width: 100%;
+  height: 37rem;
+}
+
+/* :host ::ng-deep .p-tabview-panels {
+  position: fixed;
+} */
+
+:host ::ng-deep .p-paginator {
+  height: 3.7rem;
+}

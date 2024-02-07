@@ -1,0 +1,39 @@
+pdfminer==20191125
+flask==1.1.1
+Werkzeug==0.16.0
+flask-restplus==0.12.1
+marshmallow==3.14.1
+wikipedia==1.4.0
+Wikipedia-API==0.5.4
+pywikibot==6.6.3
+mwparserfromhell==0.6.3
+nltk==3.4.3
+stanfordcorenlp==3.9.1.1
+torch==1.10.0
+transformers==4.12.5
+numpy==1.18.5
+pandas==1.0.5
+scikit-learn==0.22.2
+flair==0.8
+allennlp==0.9.0
+# sentence-transformers==2.0.0
+neo4j==4.4.1
+# py2neo==2021.2.3
+SPARQLWrapper==1.8.5
+networkx==2.6.2
+jinja2<3.1.0
+itsdangerous==2.0.1
+youtube-transcript-api==0.4.4
+google-api-python-client==2.52.0
+setuptools==65.6.3
+tqdm==4.64.0
+requests==2.27.1
+#gensim>=4.0
+scipy
+spacy>=2.1.8
+
+## new
+python-dotenv==0.21.1
+sentence-transformers==2.2.2
+py2neo==2021.2.4
+# huggingface-hub==0.16.4

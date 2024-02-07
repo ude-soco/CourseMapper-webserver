@@ -10,10 +10,12 @@ import {
   OnDestroy,
   Renderer2,
   Inject,
+  HostListener,
+  SimpleChanges,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { MenuItem, MessageService } from 'primeng/api';
-import { Subscription, lastValueFrom } from 'rxjs';
+import { BehaviorSubject, Subject, Subscription} from 'rxjs';
 import { Channel } from 'src/app/models/Channel';
 import { Course } from 'src/app/models/Course';
 import { Material } from 'src/app/models/Material';
@@ -37,6 +39,8 @@ import { environment } from 'src/environments/environment';
 import { getCurrentMaterial } from '../../materials/state/materials.reducer';
 import { getCurrentPdfPage } from '../../annotations/pdf-annotation/state/annotation.reducer';
 import { ViewChild } from '@angular/core';
+import { ActivatorPartCRO, ResourcesPagination } from 'src/app/models/croForm';
+import { CustomRecommendationOptionComponent } from '../custom-recommendation-option/custom-recommendation-option.component';
 interface conceptModel {
   name: string;
   code: string;
@@ -51,7 +55,7 @@ interface topN {
   templateUrl: './concept-map.component.html',
   styleUrls: ['./concept-map.component.css'],
 })
-export class ConceptMapComponent {
+export class ConceptMapComponent implements OnInit, OnDestroy {
   // @Input() material?: Material;
   @Input() course?: Course;
   @Input() showConceptMap?: boolean;
@@ -294,6 +298,38 @@ export class ConceptMapComponent {
   callRecommendationsSubsciption: Subscription;
   userSubscription: Subscription;
   materialSubscription: Subscription;
+  
+  // boby024
+  activatorPartCRO: ActivatorPartCRO = { resetFormStatus: false, modelStatus: false, vennDiagramStatus: false};
+  @ViewChild('croComponent', { static: false }) croComponent: CustomRecommendationOptionComponent; //  = <CustomRecommendationOptionComponent>{};
+  // slideIdSub = new BehaviorSubject<number>(1); //  Subject<number>;
+  croPaginatorFirst: number = 0;
+  croPaginatorRows: number = 10;
+  resourcesPagination: ResourcesPagination;
+  isRecommendationButtonDisplayed = true;
+
+  croOnPageChange(event) {
+    this.croPaginatorFirst = event.first;
+    this.croPaginatorFirst = event.rows;
+  }
+
+  croUpdater(didNotUnderstandConceptsObj: any[], previousConceptsObj: any[]) {
+    // if (this.croComponent) {
+    //   if (didNotUnderstandConceptsObj !== undefined) {
+    //     this.croUpdater(didNotUnderstandConceptsObj, undefined)
+    //   } else if (previousConceptsObj !== undefined) {
+    //     this.croUpdater(undefined, previousConceptsObj)
+    //   }
+    // }
+
+    if (didNotUnderstandConceptsObj !== undefined && previousConceptsObj === undefined) {
+      this.croComponent.updateCROformAll(didNotUnderstandConceptsObj, undefined)
+    } else if (didNotUnderstandConceptsObj === undefined && previousConceptsObj !== undefined) {
+      this.croComponent.updateCROformAll(undefined, previousConceptsObj)
+    }
+  }
+
+
   constructor(
     private messageService: MessageService, //show toast messages
     private conceptMapService: ConceptMapService, //Build material KG
@@ -336,6 +372,12 @@ export class ConceptMapComponent {
                 .select(getCurrentPdfPage)
                 .subscribe((page) => {
                   this.kgCurrentPage = page;
+
+                  // boby024
+                  // if (page !== undefined) {
+                  //   this.slideIdSub.next(page);
+                  // }
+
                   console.log('current page is: ' + this.kgCurrentPage);
                 });
             }
@@ -484,6 +526,11 @@ export class ConceptMapComponent {
     );
     this.didNotUnderstandConceptsSubscription =
       slideConceptservice.didNotUnderstandConcepts.subscribe((res) => {
+
+        // boby024
+        this.croUpdater(res, undefined);
+
+
         let found = false;
         this.didNotUnderstandConceptsNames = [];
         this.didNotUnderstandConceptsObj = res;
@@ -540,6 +587,7 @@ export class ConceptMapComponent {
           }
           repeated = false;
         });
+
         this.totalNotUnderstoodList = notUnderstandConceptsIds;
         this.totalNotUnderstood = notUnderstandConceptsIds.length;
         if (notUnderstandConceptsIds.length) {
@@ -619,6 +667,7 @@ export class ConceptMapComponent {
           }
         }
       });
+
     // this.callRecommendationsSubsciption = callRecommendationsService
     //   .recommendationsObserved()
     //   .subscribe(() => {
@@ -644,6 +693,8 @@ export class ConceptMapComponent {
       { name: 'All', code: 'All' },
     ];
   }
+
+
   selectedConceptsCheckbox: string[];
   chipMenu: MenuItem[];
   chipMenuPrevious: MenuItem[];
@@ -669,8 +720,12 @@ export class ConceptMapComponent {
   ngOnDestroy(): void {
     this.conceptMapData = undefined;
     this.loading.emit(this.isLoading);
+
+    // boby024
+    // this.slideIdSub.unsubscribe();
   }
-  ngOnChanges() {
+
+  ngOnChanges(changes: SimpleChanges) {
     if (this.course) {
       this.selectedCourse = this.course;
     }
@@ -693,13 +748,10 @@ export class ConceptMapComponent {
     this.selectedTopConcepts = this.defaultTopConcepts;
     this.defaultTopConcepts = 15;
     this.resetFilter();
-
-    // if (this.showSlideKg) {
-    //   this.getConceptMapDataCurrentSlide();
-    // }
   }
+
   ngOnInit() {
-    console.log(this.currentMaterial);
+    console.log("currentMaterial ->", this.currentMaterial);
     if (this.loggedInUser) {
       console.log(this.loggedInUser);
       this.userid = this.loggedInUser.id;
@@ -722,6 +774,9 @@ export class ConceptMapComponent {
             this.conceptFromChipObj
           );
           this.conceptFromChipObj = null;
+          
+          // boby024
+          this.croUpdater(this.didNotUnderstandConceptsObj, this.previousConceptsObj);
         },
       },
       {
@@ -738,6 +793,9 @@ export class ConceptMapComponent {
           console.log(this.previousConceptsObj, this.previousConcepts.understoodConcepts)
           this.slideConceptservice.updateNewConcepts(this.conceptFromChipObj);
           this.conceptFromChipObj = null;
+
+          // boby024
+          this.croUpdater(this.didNotUnderstandConceptsObj, this.previousConceptsObj);
         },
       },
     ];
@@ -802,35 +860,35 @@ export class ConceptMapComponent {
       }
 
       let dnuPanel = document.getElementById('flexboxNotUnderstood')
-      if (dnuPanel) {
-        let sideBarComponent = dnuPanel.childNodes[0].childNodes[0].childNodes[1] as HTMLElement
-        const previousConcepts = document.getElementById('previousConcepts')
-        const currentConcepts = document.getElementById('currentConcepts')
-        if (sideBarComponent.clientHeight >= this.cyHeight - 100) {
-          if (previousConcepts) {
-            document.getElementById('previousConcepts').style.height = Number(this.cyHeight * 0.8).toString() + 'px'
-            document.getElementById('previousConcepts').style.overflowY = 'scroll'
-            if (sideBarComponent.clientHeight >= this.cyHeight - 100) {
-              document.getElementById('previousConcepts').style.height = Number(this.cyHeight * 0.18).toString() + 'px'
-            } else {
-              document.getElementById('previousConcepts').style.height = Number(this.cyHeight * 0.8).toString() + 'px'
-            }
-          }
-          if (currentConcepts) {
-            if (sideBarComponent.clientHeight >= this.cyHeight - 100) {
-              document.getElementById('currentConcepts').style.maxHeight = Number(this.cyHeight * 0.35).toString() + 'px'
-              document.getElementById('currentConcepts').style.overflowY = 'scroll'
-            } else {
-              document.getElementById('currentConcepts').style.overflowY = 'auto'
-            }
-          }
-        } else {
-          if (previousConcepts) {
-            document.getElementById('previousConcepts').style.maxHeight = Number(this.cyHeight * 0.8).toString() + 'px'
-            document.getElementById('previousConcepts').style.overflowY = 'scroll'
-          }
-        }
-      }
+      // if (dnuPanel) {
+      //   let sideBarComponent = dnuPanel.childNodes[0].childNodes[0].childNodes[1] as HTMLElement
+      //   const previousConcepts = document.getElementById('previousConcepts')
+      //   const currentConcepts = document.getElementById('currentConcepts')
+      //   if (sideBarComponent.clientHeight >= this.cyHeight - 100) {
+      //     if (previousConcepts) {
+      //       document.getElementById('previousConcepts').style.height = Number(this.cyHeight * 0.8).toString() + 'px'
+      //       document.getElementById('previousConcepts').style.overflowY = 'scroll'
+      //       if (sideBarComponent.clientHeight >= this.cyHeight - 100) {
+      //         document.getElementById('previousConcepts').style.height = Number(this.cyHeight * 0.18).toString() + 'px'
+      //       } else {
+      //         document.getElementById('previousConcepts').style.height = Number(this.cyHeight * 0.8).toString() + 'px'
+      //       }
+      //     }
+      //     if (currentConcepts) {
+      //       if (sideBarComponent.clientHeight >= this.cyHeight - 100) {
+      //         document.getElementById('currentConcepts').style.maxHeight = Number(this.cyHeight * 0.35).toString() + 'px'
+      //         document.getElementById('currentConcepts').style.overflowY = 'scroll'
+      //       } else {
+      //         document.getElementById('currentConcepts').style.overflowY = 'auto'
+      //       }
+      //     }
+      //   } else {
+      //     if (previousConcepts) {
+      //       document.getElementById('previousConcepts').style.maxHeight = Number(this.cyHeight * 0.8).toString() + 'px'
+      //       document.getElementById('previousConcepts').style.overflowY = 'scroll'
+      //     }
+      //   }
+      // }
     }
 
     if (!this.showSlideKg && this.updateUserConcepts) {
@@ -850,7 +908,11 @@ export class ConceptMapComponent {
     }
   }
 
-  onResize(e) {
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    // console.warn("resize -> hideConceptsList -> HostListener ->", event.screen);
+    // console.warn("resize -> hideConceptsList -> window.innerWidth ->", window.innerWidth);
+
     if (this.showSlideKg) {
       try {
         if (this.showConceptsListSidebar) {
@@ -862,12 +924,30 @@ export class ConceptMapComponent {
         console.log(e);
       }
     }
-    if (this.showMaterialKg) {
-      this.cyHeight = window.innerHeight * 0.9 - 270;
-      this.stopCheck = true;
-      this.changeDetectorRef.detectChanges();
-    }
-    this.cyWidth = window.innerWidth * 0.9;
+    // if (this.showMaterialKg) {
+    //   this.cyHeight = window.innerHeight * 0.9 - 270;
+    //   this.stopCheck = true;
+    //   this.changeDetectorRef.detectChanges();
+    // }
+    // this.cyWidth = window.innerWidth * 0.9;
+
+    // boby024
+    setTimeout(() => {
+      let knowledgeGraph = document.getElementById('graphSection');
+      if (this.showMaterialKg) {
+        console.warn("resize -> hideConceptsList -> HostListener event.screen ->", event.screen.width);
+        // let screenWidth = window.innerHeight;
+        let screenWidth = event.screen.width; // event.outerWidth
+
+        if (screenWidth >= 768 && screenWidth < 992) {
+          knowledgeGraph.style.width = '40em';
+        }
+        if (screenWidth > 992 && screenWidth <= 1200) {
+          knowledgeGraph.style.width = '40em';
+        }
+      }
+    }, 3);
+    
   }
 
   setChipConcept(concept: any): void {
@@ -878,6 +958,7 @@ export class ConceptMapComponent {
       status: concept.status === 'understood' ? 'notUnderstood' : 'understood',
     };
   }
+
   setPreviousChipConcept(concept: any): void {
     this.previousConceptFromChipObj = {
       cid: concept.cid,
@@ -891,33 +972,60 @@ export class ConceptMapComponent {
     this.hideChevronRightButton = true;
     this.showNotUnderstoodConceptsList = true;
 
+    // body024
     let knowledgeGraph = document.getElementById('graphSection');
-    var slideKgDialogDiv = document.getElementById('slideKgDialogDiv');
+    // var slideKgDialogDiv = document.getElementById('slideKgDialogDiv');
+    // let ipo_interact = document.getElementById('ipo_interact');
 
     setTimeout(() => {
+      // ipo_interact.style.width = '40%';
+      if (knowledgeGraph) {
+        knowledgeGraph.style.width = '72em';
+      }
+    }, 3);
+
+    // boby024
+    this.croUpdater(this.didNotUnderstandConceptsObj, this.previousConceptsObj);
+
+    /*setTimeout(() => {
       var flexboxNotUnderstood = document.getElementById(
         'flexboxNotUnderstood'
       );
       if (flexboxNotUnderstood) {
         this.slideKgWidth =
           slideKgDialogDiv.offsetWidth - flexboxNotUnderstood.offsetWidth;
-        knowledgeGraph.style.marginLeft = 1 + 'rem';
+        // knowledgeGraph.style.marginLeft = 1 + 'rem';
       } else {
         this.slideKgWidth = slideKgDialogDiv.offsetWidth;
       }
-      knowledgeGraph.style.width = this.slideKgWidth + 'px';
-    }, 2);
+      // knowledgeGraph.style.width = this.slideKgWidth + 'px';
+    }, 2);*/
   }
+
   // hide sidebar
   hideConceptsList() {
     this.showNotUnderstoodConceptsList = false;
     this.hideChevronRightButton = false;
+    // let knowledgeGraph = document.getElementById('graphSection');
+    // var slideKgDialogDiv = document.getElementById('slideKgDialogDiv');
+    // setTimeout(() => {
+    //   knowledgeGraph.style.marginLeft = 0 + 'rem';
+    //   knowledgeGraph.style.width = slideKgDialogDiv.offsetWidth + 'px';
+    // }, 2);
+
+    // boby024
+    
     let knowledgeGraph = document.getElementById('graphSection');
-    var slideKgDialogDiv = document.getElementById('slideKgDialogDiv');
-    setTimeout(() => {
-      knowledgeGraph.style.marginLeft = 0 + 'rem';
-      knowledgeGraph.style.width = slideKgDialogDiv.offsetWidth + 'px';
-    }, 2);
+    console.warn("hideConceptsList -> knowledgeGraph.offsetWidth ->", knowledgeGraph.offsetWidth)
+    console.warn("hideConceptsList -> window.innerWidth ->", window.innerWidth)
+    if (window.innerWidth <= 800) {
+      knowledgeGraph.style.width = '40em';
+    } else {
+      knowledgeGraph.style.width = '103em';
+    }
+
+    // boby024
+    this.croUpdater(this.didNotUnderstandConceptsObj, this.previousConceptsObj);
   }
 
   async getConceptMapData() {
@@ -1217,6 +1325,7 @@ export class ConceptMapComponent {
       } catch { }
     }
   }
+
   async getReqData() {
     const formData = new FormData();
     const file = await this.getMaterialFile();
@@ -1235,6 +1344,7 @@ export class ConceptMapComponent {
 
     return formData;
   }
+
   async getConceptMapDataCurrentSlide() {
     //make sure that all used properties have been cleaned
     this.allConceptsObj = []; //all KG_concaptes
@@ -1258,6 +1368,11 @@ export class ConceptMapComponent {
       .subscribe({
         next: async (val) => {
           this.previousConcepts = val;
+
+          // boby024
+          this.croUpdater(undefined, val);
+
+
           if (this.previousConcepts.understoodConcepts) {
             this.allUnderstoodConcepts = this.previousConcepts.understoodConcepts;
           }
@@ -1294,11 +1409,14 @@ export class ConceptMapComponent {
                 }
               });
             }
+
           }
           const slideId =
             this.currentMaterial!._id +
             '_slide_' +
             this.kgCurrentPage.toString();
+
+
           // Check slide_KG availability in neo4j
           const slideFound = await this.neo4jService.checkSlide(slideId);
           // get slide_kg from neo4j
@@ -1306,6 +1424,7 @@ export class ConceptMapComponent {
             // list of current slide_KG nodes
             let slideKgNodes = [];
             const slideNodes = await this.neo4jService.getSlide(slideId);
+            
             slideNodes.records.forEach((data) => {
               let conceptName = this.capitalizeWords(data.name);
               let nodeEle = {
@@ -1447,7 +1566,7 @@ export class ConceptMapComponent {
             );
             this.slideKgWidth =
               slideKgDialogDiv.offsetWidth - flexboxNotUnderstood.offsetWidth;
-            document.getElementById('graphSection').style.width =
+            // document.getElementById('graphSection').style.width =
               this.slideKgWidth + 'px';
           }, 5);
         },
@@ -1456,6 +1575,7 @@ export class ConceptMapComponent {
         }
       })
   }
+
   rankNodes(conceptsList: any) {
     //sort nodes to give rank
     conceptsList.nodes.sort((a, b) => b.data.weight - a.data.weight);
@@ -1466,7 +1586,11 @@ export class ConceptMapComponent {
     });
     this.conceptMapData = conceptsList;
   }
+
   async showRecommendations() {
+    // boby024
+    this.resourcesPagination = null;
+
     if (this.disableShowRecommendationsButton) {
       this.infoToast();
     } else {
@@ -1513,7 +1637,7 @@ export class ConceptMapComponent {
 
       const reqDataMaterial1 =
         await this.getRecommendedMaterialsPerSlideMaterial();
-
+      
       this.materialsRecommenderService.getRecommendedConcepts(
         // reqData
         reqDataMaterial1
@@ -1544,17 +1668,35 @@ export class ConceptMapComponent {
           this.recommendedMaterialsTab = false;
           //////////////////////////call material-recommender/////////////////////////
           console.log('calling material recommender');
+
+          // boby024
+          this.isRecommendationButtonDisplayed = false;
           this.materialsRecommenderService.getRecommendedMaterials(
-            reqData
+            reqData, this.croComponent.getOnlyStatusChecked()
           ).subscribe({
             next: (result) => {
               console.log('material recommender has been called');
               console.log('#################################################');
+
+              // boby024
+              this.isRecommendationButtonDisplayed = true;
+              this.resourcesPagination = result;
+              this.croComponent.croForm.recommendation_types.status = true;
+
+              console.log('tab 2 will be activated');
+              this.kgTabs.kgTabsEnable();
+              console.log('tab 2 has been activated');
+
+              console.log(
+                'getconceptMapRecommendedData:::getconceptMapRecommendedData',
+                this.conceptMapRecommendedData
+              );
+
               // // // get from local storage
               // this.resultMaterials = JSON.parse(
               //   localStorage.getItem('resultMaterials')
               // );
-              this.resultMaterials = result;
+              /*this.resultMaterials = result;
 
               console.log(this.resultMaterials);
               this.concepts1 = this.resultMaterials.concepts;
@@ -1599,15 +1741,7 @@ export class ConceptMapComponent {
               // ).nodes;
 
               this.resultMaterials = this.resultMaterials.nodes;
-
-              console.log('tab 2 will be activated');
-              this.kgTabs.kgTabsEnable();
-              console.log('tab 2 has been activated');
-
-              console.log(
-                'getconceptMapRecommendedData:::getconceptMapRecommendedData',
-                this.conceptMapRecommendedData
-              );
+              */ 
             },
             complete: () => {
               this.showRecommendationButtonClicked = false;
@@ -1642,6 +1776,7 @@ export class ConceptMapComponent {
       // this.recommendedMaterialsTab = false;
     }
   }
+
   //prepare formData for [concepts & materials] recommenders
   async getRecommendedMaterialsPerSlide(): Promise<FormData> {
     const formData = new FormData();
@@ -1700,6 +1835,7 @@ export class ConceptMapComponent {
 
     return formData;
   }
+
   async getRecommendedMaterialsPerSlideMaterial(): // model: string
     Promise<FormData> {
     const formData = new FormData();
@@ -1760,6 +1896,7 @@ export class ConceptMapComponent {
 
     return formData;
   }
+
   async getMaterialFile() {
     //Change to new approach of getting materials
     var file = fetch(
@@ -1822,9 +1959,11 @@ export class ConceptMapComponent {
   userConceptsStatus() {
     this.updateUserConcepts = true;
   }
+
   courseKgShown() {
     this.courseKgActivated = true;
   }
+
   materialKgShown() {
     this.materialKgActivated = true;
   }
@@ -1982,9 +2121,11 @@ export class ConceptMapComponent {
     this.conceptMapChannel = [];
     this.conceptMapMaterial = [];
   }
+
   selectedTopNodes(key) {
     this.selectedTopConcepts = key;
   }
+
   updateSingleChecked(key): void {
     if (this.selectedFilterValues.find((item) => item === key)) {
       this.selectedFilterValues = this.selectedFilterValues.filter(
@@ -1994,6 +2135,7 @@ export class ConceptMapComponent {
       this.selectedFilterValues.push(key);
     }
   }
+
   resetFilter() {
     // this.checkOptionsOne.forEach((item) => {
     //   item.checked = true;
@@ -2039,6 +2181,7 @@ export class ConceptMapComponent {
     }
     return words.join(' ');
   }
+
   infoToast() {
     this.messageService.add({
       key: 'emptyList',
@@ -2047,6 +2190,7 @@ export class ConceptMapComponent {
       detail: 'Select not understood concept(s) from the graph!',
     });
   }
+
   displayMessage(message: string): void {
     this.messageService.add({
       key: 'server_response',

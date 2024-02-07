@@ -273,6 +273,7 @@
   </p-dialog>
 </div>
 
+
 <div
   *ngIf="showMaterialKg === false && showCourseKg === true && courseIsEmpty === true"
   (window:resize)="onResize($event)"
@@ -310,6 +311,8 @@
   </p-dialog>
 </div>
 
+
+<!--Inputs-Process-Outputs Recommendation Section -->
 <div *ngIf="showSlideKg === true" (window:resize)="onResize($event)">
   <div class="mod-all-kg">
     <p-dialog
@@ -387,232 +390,239 @@
                 iconPos="right"
                 pTooltip="Show list of not understood concepts"
                 class="p-button-secondary p-button-rounded"
-              ></button>
+              >
+              </button>
               <div
                 id="flexboxNotUnderstood"
-                *ngIf="hideChevronRightButton && !recommendedMaterialsTab"
-                style="display: inline-block"
               >
-                <p-sidebar
-                  [(visible)]="showConceptsListSidebar"
-                  [baseZIndex]="-1"
-                  [dismissible]="false"
-                  (onHide)="hideConceptsList()"
-                  [showCloseIcon]="false"
-                  styleClass="mediumSize"
-                  [autoZIndex]="false"
+                <div class="flex flex-row"
                 >
-                <ng-template pTemplate="header">
-                  <h3 style="color: #0288d1; font-size: 1em">
-                    Not Understood Concepts Lists
-                  </h3>
-                </ng-template>
-                  <div style="position: relative">
-                    <p-accordion [multiple]="true">
-                      <p-accordionTab
-                        id="accordionTab1"
-                        header="Not understood concepts from this slide - ({{
-                          didNotUnderstandConceptsObj.length
-                        }}) concepts "
-                        [selected]="true"
-                      >
-                        <h3
-                          *ngIf="!didNotUnderstandConceptsObj.length"
-                          style="color: #0288d1"
-                        >
-                          Select not understood concept(s) from the graph
-                        </h3>
-                        <fieldset
-                          id="currentConcepts"
-                          #currentConcepts
-                          style=" overflow-y: auto"
-                          *ngIf="didNotUnderstandConceptsObj.length"
-                        >
-                          <div
-                            *ngFor="let concept of didNotUnderstandConceptsObj"
-                            style="display: inline-block"
-                          >
-                            <span
-                              class="px-1 py-1 text-[#8b8b8b] bg-[#E3F2FD] font-semibold text-xs my-1 mx-0.5 flex align-center w-max active:bg-gray-300 transition duration-300 ease"
-                            >
-                              {{ concept.name }}
-                              <button
-                                #notUnderstoodConcept
-                                class="bg-transparent hover focus:outline-none cursor-pointer"
-                                (click)="
-                                  setChipConcept(concept); menu.toggle($event)
-                                "
-                              >
-                                <svg class="w-1 h-1 mt-0.5 ml-1.5">
-                                  <circle
-                                    cx="2.5"
-                                    cy="2.5"
-                                    r="2"
-                                    style="
-                                      fill: white;
-                                      stroke: #495057;
-                                      stroke: width 0.5px;
-                                    "
-                                  />
-                                </svg>
-                                <svg class="w-1 h-1 mt-0.5 ml-1.5">
-                                  <circle
-                                    cx="2.5"
-                                    cy="2.5"
-                                    r="2"
-                                    style="
-                                      fill: white;
-                                      stroke: #495057;
-                                      stroke: width 0.5px;
-                                    "
-                                  />
-                                </svg>
-                                <svg class="w-1 h-1 mt-0.5 ml-1.5">
-                                  <circle
-                                    cx="2.5"
-                                    cy="2.5"
-                                    r="2"
-                                    style="
-                                      fill: white;
-                                      stroke: #495057;
-                                      stroke: width 0.5px;
-                                    "
-                                  />
-                                </svg>
-                                <p-menu
-                                  #menu
-                                  id="notUnderstood_menu"
-                                  [model]="chipMenu"
-                                  [popup]="true"
-                                  appendTo="body"
-                                ></p-menu>
-                              </button>
-                            </span>
-                          </div>
-                        </fieldset>
-                      </p-accordionTab>
-                      <p-accordionTab
-                        id="accordionTab2"
-                        header="Not understood concepts from other slides - ({{
-                          previousConceptsObj.length
-                        }}) concepts"
-                      >
-                        <h3
-                          *ngIf="!previousConceptsObj.length"
-                          style="color: #0288d1"
-                        >
-                          No not understood concepts so far!
-                        </h3>
-                        <fieldset
-                          id="previousConcepts"
-                          #previousConcepts
-                          style="overflow-y: auto;"
-                          *ngIf="previousConceptsObj.length"
-                        >
-                          <div
-                            *ngFor="let concept of previousConceptsObj"
-                            style="display: inline-block"
-                          >
-                            <span
-                              class="px-1 py-1 text-[#8b8b8b] bg-[#E3F2FD] font-semibold text-xs my-1 mx-0.5 flex align-center w-max active:bg-gray-300 transition duration-300 ease"
-                            >
-                              {{ concept.name }}
-                              <button
-                                #notUnderstoodConcept
-                                class="bg-transparent hover focus:outline-none cursor-pointer"
-                                (click)="
-                                  setPreviousChipConcept(concept);
-                                  menuPrevious.toggle($event)
-                                "
-                              >
-                                <svg class="w-1 h-1 mt-0.5 ml-1.5">
-                                  <circle
-                                    cx="2.5"
-                                    cy="2.5"
-                                    r="2"
-                                    style="
-                                      fill: white;
-                                      stroke: #495057;
-                                      stroke: width 0.5px;
-                                    "
-                                  />
-                                </svg>
-                                <svg class="w-1 h-1 mt-0.5 ml-1.5">
-                                  <circle
-                                    cx="2.5"
-                                    cy="2.5"
-                                    r="2"
-                                    style="
-                                      fill: white;
-                                      stroke: #495057;
-                                      stroke: width 0.5px;
-                                    "
-                                  />
-                                </svg>
-                                <svg class="w-1 h-1 mt-0.5 ml-1.5">
-                                  <circle
-                                    cx="2.5"
-                                    cy="2.5"
-                                    r="2"
-                                    style="
-                                      fill: white;
-                                      stroke: #495057;
-                                      stroke: width 0.5px;
-                                    "
-                                  />
-                                </svg>
-                                <p-menu
-                                  #menuPrevious
-                                  id="notUnderstood_menu"
-                                  [model]="chipMenuPrevious"
-                                  [popup]="true"
-                                  appendTo="body"
-                                ></p-menu>
-                              </button>
-                            </span>
-                          </div>
-                        </fieldset>
-                      </p-accordionTab>
-                    </p-accordion>
-                  </div>
-                  <ng-template pTemplate="footer">
                   <div
-                    *ngIf="
-                      showNotUnderstoodConceptsList &&
-                      mainConceptsTab &&
-                      kgSlideReceivedResponse
-                    "
-                    style="margin: 0 20%;"
+                    id="ipo_interact"
+                    class="flex flex-col gap-2 h-auto p-0 w-2/5"
+                    *ngIf="showConceptsListSidebar"
                   >
-                    <span
-                      id="recommendationSpan"
+                    <!-- title DNU -->
+                    <div>
+                      <h3 class="text-[#0288d1] text-[12px] mt-2 mb-2">
+                        Not Understood Concepts Lists
+                      </h3>
+                    </div>
+                    
+                    <!-- accordion dnu -->
+                    <div>
+                      <p-accordion [multiple]="true" [style]="{'font-size': '12px'}">
+                        <div>
+                          <p-accordionTab
+                            id="accordionTab1"
+                            header="Not understood concepts from this slide - ({{
+                              didNotUnderstandConceptsObj.length
+                            }}) concepts "
+                            [selected]="true"
+                          >
+                            <h3
+                              *ngIf="!didNotUnderstandConceptsObj.length"
+                              style="color: #0288d1"
+                            >
+                              Select not understood concept(s) from the graph
+                            </h3>
+                            <fieldset
+                              id="currentConcepts"
+                              #currentConcepts
+                              style=" overflow-y: auto"
+                              *ngIf="didNotUnderstandConceptsObj.length"
+                            >
+                              <div
+                                *ngFor="let concept of didNotUnderstandConceptsObj"
+                                style="display: inline-block"
+                              >
+                                <span
+                                  class="px-1 py-1 text-[#8b8b8b] bg-[#E3F2FD] font-semibold text-xs my-1 mx-0.5 flex align-center w-max active:bg-gray-300 transition duration-300 ease"
+                                >
+                                  {{ concept.name }}
+                                  <button
+                                    #notUnderstoodConcept
+                                    class="bg-transparent hover focus:outline-none cursor-pointer"
+                                    (click)="
+                                      setChipConcept(concept); menu.toggle($event)
+                                    "
+                                  >
+                                    <svg class="w-1 h-1 mt-0.5 ml-1.5">
+                                      <circle
+                                        cx="2.5"
+                                        cy="2.5"
+                                        r="2"
+                                        style="
+                                          fill: white;
+                                          stroke: #495057;
+                                          stroke: width 0.5px;
+                                        "
+                                      />
+                                    </svg>
+                                    <svg class="w-1 h-1 mt-0.5 ml-1.5">
+                                      <circle
+                                        cx="2.5"
+                                        cy="2.5"
+                                        r="2"
+                                        style="
+                                          fill: white;
+                                          stroke: #495057;
+                                          stroke: width 0.5px;
+                                        "
+                                      />
+                                    </svg>
+                                    <svg class="w-1 h-1 mt-0.5 ml-1.5">
+                                      <circle
+                                        cx="2.5"
+                                        cy="2.5"
+                                        r="2"
+                                        style="
+                                          fill: white;
+                                          stroke: #495057;
+                                          stroke: width 0.5px;
+                                        "
+                                      />
+                                    </svg>
+                                    <p-menu
+                                      #menu
+                                      id="notUnderstood_menu"
+                                      [model]="chipMenu"
+                                      [popup]="true"
+                                      appendTo="body"
+                                    ></p-menu>
+                                  </button>
+                                </span>
+                              </div>
+                            </fieldset>
+                          </p-accordionTab>
+                        </div>
+                        <div class="mt-1">
+                          <p-accordionTab
+                            id="accordionTab2"
+                            header="Not understood concepts from other slides - ({{
+                              previousConceptsObj.length
+                            }}) concepts"
+                          >
+                            <h3
+                              *ngIf="!previousConceptsObj.length"
+                              style="color: #0288d1"
+                            >
+                              No not understood concepts so far!
+                            </h3>
+                            <fieldset
+                              id="previousConcepts"
+                              #previousConcepts
+                              style="overflow-y: auto;"
+                              *ngIf="previousConceptsObj.length"
+                            >
+                              <div
+                                *ngFor="let concept of previousConceptsObj"
+                                style="display: inline-block"
+                              >
+                                <span
+                                  class="px-1 py-1 text-[#8b8b8b] bg-[#E3F2FD] font-semibold text-xs my-1 mx-0.5 flex align-center w-max active:bg-gray-300 transition duration-300 ease"
+                                >
+                                  {{ concept.name }}
+                                  <button
+                                    #notUnderstoodConcept
+                                    class="bg-transparent hover focus:outline-none cursor-pointer"
+                                    (click)="
+                                      setPreviousChipConcept(concept);
+                                      menuPrevious.toggle($event)
+                                    "
+                                  >
+                                    <svg class="w-1 h-1 mt-0.5 ml-1.5">
+                                      <circle
+                                        cx="2.5"
+                                        cy="2.5"
+                                        r="2"
+                                        style="
+                                          fill: white;
+                                          stroke: #495057;
+                                          stroke: width 0.5px;
+                                        "
+                                      />
+                                    </svg>
+                                    <svg class="w-1 h-1 mt-0.5 ml-1.5">
+                                      <circle
+                                        cx="2.5"
+                                        cy="2.5"
+                                        r="2"
+                                        style="
+                                          fill: white;
+                                          stroke: #495057;
+                                          stroke: width 0.5px;
+                                        "
+                                      />
+                                    </svg>
+                                    <svg class="w-1 h-1 mt-0.5 ml-1.5">
+                                      <circle
+                                        cx="2.5"
+                                        cy="2.5"
+                                        r="2"
+                                        style="
+                                          fill: white;
+                                          stroke: #495057;
+                                          stroke: width 0.5px;
+                                        "
+                                      />
+                                    </svg>
+                                    <p-menu
+                                      #menuPrevious
+                                      id="notUnderstood_menu"
+                                      [model]="chipMenuPrevious"
+                                      [popup]="true"
+                                      appendTo="body"
+                                    ></p-menu>
+                                  </button>
+                                </span>
+                              </div>
+                            </fieldset>
+                          </p-accordionTab>
+                        </div>
+                      </p-accordion>
+                    </div>
+                    
+                    <!-- custom-recommendation-option -->
+                    <div class="text-[12px]">
+                      <app-custom-recommendation-option
+                        [didNotUnderstandConceptsObj]="didNotUnderstandConceptsObj"
+                        [previousConceptsObj]="previousConceptsObj"
+                        [materialId]="currentMaterial?._id"
+                        [activatorPartCRO]="activatorPartCRO"
+                        [slideId]="kgCurrentPage"
+                        [userId]="userid"
+                        #croComponent
+                      >
+                      </app-custom-recommendation-option>
+                    </div>
 
+                    <!-- show recommendation button -->
+                    <!--
+                      <div
+                      *ngIf="
+                        showNotUnderstoodConceptsList &&
+                        mainConceptsTab &&
+                        kgSlideReceivedResponse
+                      "
+                      class="ml-auto mr-auto mb-2"
                     >
-                   <!--   <button
-                        pButton
-                        pRipple
-                        type="button"
-                        *ngIf="!disableShowRecommendationsButton"
-                        id="recommendationButton"
-                        class="p-button-sm p-button-rounded"
-                        label="Show Recommendations"
-                        pTooltip="Show recommendations for not understood concepts"
-                        style="font-size: 17px; max-height: 95%"
-                        pStyleClass="showRecoomendationsButton"
-                        (click)="showRecommendations()"
-                      >-->
+                    -->
+                    <div
+                      *ngIf="isRecommendationButtonDisplayed === true"
+                      class="ml-auto mr-auto mb-2"
+                    >
                       <button
                         pButton
                         pRipple
                         type="button"
-                        *ngIf="!disableShowRecommendationsButton"
                         id="recommendationButton"
                         class="p-button-sm p-button-rounded"
                         label="Show Recommendations"
                         pTooltip="Show recommendations for not understood concepts"
-                        style="font-size: 17px; max-height: 95%"
-
+                        style="font-size: 12px;"
                         (click)="showRecommendations()"
+                        
                       >
                         <p-progressSpinner
                           *ngIf="showRecommendationButtonClicked"
@@ -622,135 +632,126 @@
                           animationDuration=".5s"
                         ></p-progressSpinner>
                       </button>
-                  <!--    <button
-                        pButton
-                        pRipple
-                        type="button"
-                        id="recommendationButton"
-                        *ngIf="disableShowRecommendationsButton"
-                        class="p-button-sm showRecommendations p-button-rounded"
-                        label="Show Recommendations"
-                        pTooltip="Select not understood concept(s) to get recommended"
-                        style="font-size: 17px; max-height: 95%; background-color: #e0e0e0; color: #8b8b8b; cursor: auto;"
-                        pStyleClass="showRecoomendationsButton"
-                        (click)="showRecommendations()"
-                      ></button>-->
-                      <button
-                        pButton
-                        pRipple
-                        type="button"
-                        id="recommendationButton"
-                        *ngIf="disableShowRecommendationsButton"
-                        class="p-button-sm showRecommendations p-button-rounded"
-                        label="Show Recommendations"
-                        pTooltip="Select not understood concept(s) to get recommended"
-                        style="font-size: 17px; max-height: 95%; background-color: #e0e0e0; color: #8b8b8b; cursor: auto;"
-
-                        (click)="showRecommendations()"
-                      ></button>
-                    </span>
+                    </div>
                   </div>
-                </ng-template>
-                </p-sidebar>
 
-                <button
-                  id="hideNonUnderstoodPanel"
-                  (click)="showConceptsListSidebar = false; hideConceptsList()"
-                  pTooltip="Hide sidebar"
-                >
-                  <i class="pi pi-chevron-left"></i>
-                </button>
-              </div>
-
-              <div
-                class="profile-main-loader"
-                *ngIf="kgSlideReceivedResponse == false"
-              >
-                <div class="loader">
-                  <p-progressSpinner
-                    [style]="{ width: '80px', height: '80px' }"
-                    styleClass="custom-spinner"
-                    strokeWidth="8"
-                    fill="var(--surface-ground)"
-                    animationDuration=".5s"
-                  ></p-progressSpinner>
-                </div>
-              </div>
-              <div
-                class="flex-1 flex items-center justify-center"
-                *ngIf="mainConceptsTab && kgSlideReceivedResponse && kgSlideResponseEmpty"
-              >
-                <div>Please generate KG for the learning material first. Once its generated, you can view main concepts related to this slide here</div>
-              </div>
-              <div
-                id="graphSection"
-                class="dialogContents sidebarShown"
-                *ngIf="mainConceptsTab && kgSlideReceivedResponse && !kgSlideResponseEmpty"
-              >
-                <!--knowledge graph component-->
-                <div class="card">
-                  <app-graph
-                    [conceptMapData]="filteredMapData"
-                    [selectedFilterValues]="selectedFilterValues"
-                    [topNConcepts]="selectedTopConcepts"
-                    [filterUpdated]="false"
-                    [materialKnowledgeGraph]="false"
-                    [slideKnowledgeGraph]="true"
-                    [recommenderKnowledgeGraph]="false"
-                    [cyHeight]="cyHeight"
+                  <!-- sidebar chevron left -->
+                  <div
+                    *ngIf="hideChevronRightButton"
+                    class="ml-2 my-auto"
                   >
-                  </app-graph>
-                </div>
-              </div>
+                      <button
+                        id="hideNonUnderstoodPanel"
+                        (click)="showConceptsListSidebar = false; hideConceptsList()"
+                        pTooltip="Hide sidebar"
+                      >
+                      <i class="pi pi-chevron-left"></i>
+                      </button>
+                  </div>
 
-              <div
-                id="graphSection"
-                *ngIf="recommendedConceptsTab"
-                class="tab mainConcepts sidebarShown"
-              >
-                <div class="card" style="display: inline; z-index: 15">
-                  <app-graph-recommedned
-                    [conceptMapRecData]="filteredMapRecData"
-                    [selectedFilterValues]="selectedFilterValues"
-                    [topNConcepts]="selectedTopConcepts"
-                    [filterUpdated]="false"
-                    [materialKnowledgeGraph]="false"
-                    [slideKnowledgeGraph]="true"
-                    [recommenderKnowledgeGraph]="true"
-                    [cyHeight]="cyHeight"
+                  <!--knowledge graph component-->
+                  <div
+                    class="dialogContents sidebarShown"
+                    *ngIf="mainConceptsTab && kgSlideReceivedResponse && !kgSlideResponseEmpty"
                   >
-                  </app-graph-recommedned>
+                    <div class="graphSection" id="graphSection">
+                      <app-graph
+                      [conceptMapData]="filteredMapData"
+                      [selectedFilterValues]="selectedFilterValues"
+                      [topNConcepts]="selectedTopConcepts"
+                      [filterUpdated]="false"
+                      [materialKnowledgeGraph]="false"
+                      [slideKnowledgeGraph]="true"
+                      [recommenderKnowledgeGraph]="false"
+                      [cyHeight]="cyHeight"
+                      >
+                      </app-graph>
+                    </div>
+                  </div>
+
+                  <!-- recommendated concepts-->
+                  <div
+                    *ngIf="recommendedConceptsTab"
+                    class="dialogContents sidebarShown"
+                  >
+                    <div class="graphSection" id="graphSection">
+                      <app-graph-recommedned
+                        [conceptMapRecData]="filteredMapRecData"
+                        [selectedFilterValues]="selectedFilterValues"
+                        [topNConcepts]="selectedTopConcepts"
+                        [filterUpdated]="false"
+                        [materialKnowledgeGraph]="false"
+                        [slideKnowledgeGraph]="true"
+                        [recommenderKnowledgeGraph]="true"
+                        [cyHeight]="cyHeight"
+                      >
+                      </app-graph-recommedned>
+                    </div>
+                  </div>
+
+                  <!-- generate KG for the learning material first -->
+                  <div
+                    class="flex-1 flex items-center justify-center ml-2"
+                    *ngIf="mainConceptsTab && kgSlideReceivedResponse && kgSlideResponseEmpty"
+                  >
+                    <div>Please generate KG for the learning material first. Once its generated, you can view main concepts related to this slide here</div>
+                  </div>
+
+                  <!--progress spinner while loading recommendated concepts-->
+                  <div
+                    class="profile-main-loader ml-2"
+                    *ngIf="kgSlideReceivedResponse == false"
+                  >
+                    <div class="loader">
+                      <p-progressSpinner
+                        [style]="{ width: '80px', height: '80px' }"
+                        styleClass="custom-spinner"
+                        strokeWidth="8"
+                        fill="var(--surface-ground)"
+                        animationDuration=".5s"
+                      ></p-progressSpinner>
+                    </div>
+                  </div>
+
+                  <!-- result-->
+                  <div *ngIf="recommendedMaterialsTab" class="tab mainConcepts" class="ml-2">
+
+                    <!--progress spinner while loading result-->
+                    <div
+                      class="profile-main-loader"
+                    >
+                      <div class="loader">
+                        <p-progressSpinner
+                          *ngIf="this.resourcesPagination === undefined"
+                          [style]="{ width: '80px', height: '80px' }"
+                          styleClass="custom-spinner"
+                          strokeWidth="8"
+                          fill="var(--surface-ground)"
+                          animationDuration=".5s"
+                        >
+                        </p-progressSpinner>
+                      </div>
+                    </div>
+                  
+                    <!-- final recommendation result-->
+                    <div class="graphSection">
+                      <!-- <app-result-view
+                        *ngIf="this.resultMaterials!=null"
+                          [concepts1]="concepts1"
+                          [results1]="resultMaterials"
+                      >
+                      </app-result-view> -->
+
+                      <app-result-view
+                        *ngIf="resourcesPagination !== undefined"
+                          [resourcesPagination]="resourcesPagination"
+                          [croForm]="croComponent.croForm"
+                      >
+                      </app-result-view>
+                    </div>
+                  </div>
+
                 </div>
-              </div>
-              <div *ngIf="recommendedMaterialsTab" class="tab mainConcepts">
-
-              <div
-              class="profile-main-loader"
-            >
-              <div class="loader">
-                <p-progressSpinner
-                *ngIf="this.resultMaterials==null"
-                [style]="{ width: '80px', height: '80px' }"
-                styleClass="custom-spinner"
-                strokeWidth="8"
-                fill="var(--surface-ground)"
-                animationDuration=".5s"
-              ></p-progressSpinner>
-              </div>
-            </div>
-            <app-result-view
-            *ngIf="this.resultMaterials!=null"
-                  [concepts1]="concepts1"
-                  [results1]="resultMaterials"
-
-                >
-
-              </app-result-view>
-                <!-- [concepts2]="concepts2"
-                [results2]="resultMaterials2"
-                [results3]="resultMaterials3"
-                [results4]="resultMaterials4" -->
-
               </div>
             </div>
           </div>

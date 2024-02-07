@@ -164,6 +164,7 @@ class Recommender:
             end_time = time.time()
             print("Get Articles Execution time: ", end_time - start_time, flush=True)
 
+        logger.info(f"canditate_selection -> {data.shape}")
         return data
 
     def recommend(
@@ -210,6 +211,7 @@ class Recommender:
         # Without embedding Not yet supported
         if recommendation_type == RecommendationType.WITHOUT_EMBEDDING:
             return data
+        
         # if Model 4
         elif recommendation_type == RecommendationType.STATIC_DOCUMENT_BASED:
             start_time = time.time()
@@ -241,7 +243,7 @@ class Recommender:
             start_time = time.time()
 
             # Step 3: sort results
-            sorted_data = sort_by_similarity_type(data, recommendation_type)
+            # sorted_data = sort_by_similarity_type(data, recommendation_type)
 
             end_time = time.time()
 
@@ -251,7 +253,8 @@ class Recommender:
                 flush=True,
             )
 
-            return sorted_data.head(top_n)
+            return data # sorted_data.head(top_n)
+        
         # If Model 3
         elif recommendation_type == RecommendationType.STATIC_KEYPHRASE_BASED:
             start_time = time.time()
@@ -293,7 +296,7 @@ class Recommender:
             start_time = time.time()
 
             # Step 4: sort results by similarity score
-            sorted_data = sort_by_similarity_type(data, recommendation_type)
+            # sorted_data = sort_by_similarity_type(data, recommendation_type)
 
             end_time = time.time()
             print(
@@ -302,7 +305,7 @@ class Recommender:
                 flush=True,
             )
 
-            return sorted_data.head(top_n)
+            return data # sorted_data.head(top_n)
 
         # Model 1
         elif recommendation_type == RecommendationType.DYNAMIC_KEYPHRASE_BASED:
@@ -350,7 +353,7 @@ class Recommender:
             start_time = time.time()
 
             # Step 4: sort results by similarity score
-            sorted_data = sort_by_similarity_type(data, recommendation_type)
+            # sorted_data = sort_by_similarity_type(data, recommendation_type)
 
             end_time = time.time()
             print(
@@ -359,7 +362,8 @@ class Recommender:
                 flush=True,
             )
 
-            return sorted_data.head(top_n)
+            return data # sorted_data.head(top_n)
+        
         # If Model 2
         elif recommendation_type == RecommendationType.DYNAMIC_DOCUMENT_BASED:
             # Transform embedding to tensor
@@ -393,12 +397,14 @@ class Recommender:
             start_time = time.time()
 
             # Step 3: sort results
-            sorted_data = sort_by_similarity_type(data, recommendation_type)
+            # sorted_data = sort_by_similarity_type(data, recommendation_type)
 
             end_time = time.time()
             print("Sort result Execution time: ", end_time - start_time, flush=True)
 
-            return sorted_data.head(top_n)
+            return data # sorted_data.head(top_n)
+        
+        
         # If Combined Dynamic Model.
         # TODO this model was Ignored during the evalution. Can be considered in future works
         elif recommendation_type == RecommendationType.COMBINED_DYNAMIC:
@@ -433,7 +439,7 @@ class Recommender:
                 flush=True,
             )
 
-            return sorted_data.head(top_n)
+            return sorted_data # .head(top_n)
 
         # If Combined Static Model.
         # TODO Ignored during the evalution. Can be considered in future works
@@ -489,7 +495,7 @@ class Recommender:
         resource_document_based_embeddings = []
 
         for index, text in enumerate(data["text"]):
-            logger.info(text)
+            # logger.info(text)
             sentence = Sentence(text)
             self.embedding.embed(sentence)
 
@@ -533,11 +539,11 @@ class Recommender:
             weight_sum += keyphrase[1]
         if len(embedding_list) != 0:
             vectors = np.sum(embedding_list, axis=0)
-            print("Lenght: %s", len(embedding_list))
-            print("Weight Sum: %s", weight_sum)
+            # print("Lenght: %s", len(embedding_list))
+            # print("Weight Sum: %s", weight_sum)
             # dividing by the sum of weights
             average_embedding = vectors / weight_sum
-            print("average_embedding: %s", type(average_embedding))
+            # print("average_embedding: %s", type(average_embedding))
             return average_embedding
         else:
             return 0

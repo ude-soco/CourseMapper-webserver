@@ -1,0 +1,51 @@
+:host ::ng-deep #add_more_concept .p-ripple {
+  font-size: 0.7rem;
+  color: #0288d1;
+}
+
+:host ::ng-deep #search_concept_category_1 .p-dropdown {
+  width: 20em;
+}
+
+:host ::ng-deep #search_concept_category_1 .p-dropdown .p-dropdown-label {
+  font-size: 12px;
+}
+:host ::ng-deep #search_concept_category_1 .p-dropdown .p-dropdown-item {
+  font-size: 12px;
+}
+
+:host ::ng-deep #search_concept_category_3 .p-dropdown {
+  width: 20em;
+}
+:host ::ng-deep #search_concept_category_3 .p-dropdown .p-dropdown-label {
+  font-size: 12px;
+}
+:host ::ng-deep #search_concept_category_3 .p-dropdown .p-dropdown-item {
+  font-size: 12px;
+}
+
+
+
+/* :host ::ng-deep #cro_second .p-panel-title {
+  color: #2196F3;
+  font-size: 12px;
+}
+
+:host ::ng-deep #cro_second .p-panel {
+  border: 2px solid #0288d1;
+}
+
+:host ::ng-deep #cro_second .p-panel-content {
+  border-style: none !important;
+} */
+
+
+
+/* :host ::ng-deep #cro_sorting .p-panel-title {
+  color: #2196F3;
+  font-size: 12px;
+}
+
+:host ::ng-deep #cro_sorting .p-panel {
+  border: 2px solid #0288d1;
+} */

@@ -37,7 +37,18 @@ import { DateAgoPipe } from './videos/pipes/date-ago.pipe';
 import { LinkifyPipe } from './videos/pipes/linkify.pipe';
 import { SafeHtmlPipe } from './videos/pipes/safehtml.pipe';
 import {TabViewModule} from 'primeng/tabview';
-
+// boby024
+// import { RadioButtonModule } from 'primeng/radiobutton';
+import { TooltipModule } from 'primeng/tooltip';
+// import { CheckboxModule } from 'primeng/checkbox';
+import { SliderModule } from 'primeng/slider';
+import { CustomRecommendationOptionComponent } from './custom-recommendation-option/custom-recommendation-option.component';
+import { ReactiveFormsModule } from '@angular/forms';
+// import { DropdownModule } from 'primeng/dropdown';
+import { PaginatorModule } from 'primeng/paginator';
+import { PanelModule } from 'primeng/panel';
+import { ScrollPanelModule } from 'primeng/scrollpanel';
+import { ListboxModule } from 'primeng/listbox';
 
 
 @NgModule({
@@ -59,7 +70,8 @@ import {TabViewModule} from 'primeng/tabview';
     RatingComponent,
     DateAgoPipe,
     LinkifyPipe,
-    SafeHtmlPipe,    
+    SafeHtmlPipe,
+    CustomRecommendationOptionComponent,    
   ],
   imports: [
     FormsModule,
@@ -80,6 +92,19 @@ import {TabViewModule} from 'primeng/tabview';
     RadioButtonModule,
     OverlayPanelModule,
     TabViewModule,
+    
+    // boby024
+    RadioButtonModule,
+    TooltipModule,
+    CheckboxModule,
+    SliderModule,
+    FormsModule,
+    DropdownModule,
+    ReactiveFormsModule,
+    PaginatorModule,
+    PanelModule,
+    ScrollPanelModule,
+    ListboxModule
     ],
   exports: [
     ConceptMapComponent,

@@ -45,7 +45,7 @@ class YoutubeService:
 
     def get_videos(self, concepts, top_n=15):
         logger.info("Get Videos")
-        logger.info(concepts)
+        # logger.info(concepts)
         video_data = []
         duration_list = []
         view_list = []
@@ -124,7 +124,7 @@ class YoutubeService:
         return video_data
 
     def get_video_details(self, video_id):
-        print("get_video_details for id -------------------- ", video_id)
+        # print("get_video_details for id -------------------- ", video_id)
         r = (
             self.youtube.videos()
             .list(

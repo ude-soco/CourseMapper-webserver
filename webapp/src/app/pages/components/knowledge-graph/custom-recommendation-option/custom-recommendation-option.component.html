@@ -1,0 +1,698 @@
+
+<div style="display: none;" id="cro_second">
+  <p-panel header="Customize your recommendations" 
+    [toggleable]="true"
+    [collapsed]="true"
+    [iconPos]="'start'" 
+    [expandIcon]="'pi pi-chevron-up'" 
+    [collapseIcon]="'pi pi-chevron-down'"
+    styleClass="cro_complet"
+    >
+    <div class="w-full border-2 text-xs">
+      <div class="flex flex-col space-y-1 m-2">
+        <!-- titel with concept rec -->
+        <div class="flex flex-wrap space-x-2 text-[#0288d1]">
+          <div>Select not understood concepts for recommendation (up to 5 concepts)</div>
+          <div
+            class="mt-auto"
+            pTooltip="Only the top five concepts from the list of concepts you gave will be chosen based on their weight." 
+            tooltipPosition="top" 
+          >
+            <span class="pi pi-info-circle" style="font-size: 1.2rem"></span>
+          </div>
+        </div>
+        
+        <!-- category radio selection -->
+        <div class="flex flex-wrap justify-between gap-3">
+          <div class="flex align-items-center ml-4">
+            <div class="flex flex-row gap-1">
+              <p-radioButton name="current slide" inputId="current_slide" value="1" [(ngModel)]="croForm.category" (onClick)="setCROcategory($event)"></p-radioButton>
+              <label for="ingredient1" class="my-auto">Current Slide</label>
+              <div
+                class="mt-1"
+                pTooltip="To be completed later" 
+                tooltipPosition="bottom" 
+              >
+                <span class="pi pi-info-circle" style="font-size: 1.2rem"></span>
+              </div>
+            </div>
+          </div>
+          <div class="flex align-items-center">
+              <div class="flex flex-row gap-1">
+                <p-radioButton name="all slides" inputId="all_slides" value="2" [(ngModel)]="croForm.category" (onClick)="setCROcategory($event)"></p-radioButton>
+                <label for="ingredient1" class="my-auto">All Slides</label>
+                <div
+                  class="mt-1"
+                  pTooltip="To be completed later" 
+                  tooltipPosition="bottom" 
+                >
+                  <span class="pi pi-info-circle" style="font-size: 1.2rem"></span>
+                </div>
+              </div>
+          </div>
+          <div class="flex align-items-center mr-4">
+              <div class="flex flex-row gap-1">
+                <p-radioButton name="select manually" inputId="select_manually" value="3" [(ngModel)]="croForm.category" (onClick)="setCROcategory($event)"></p-radioButton>
+                <label for="ingredient1" class="my-auto">Select manually</label>
+                <div
+                  class="mt-1"
+                  pTooltip="To be completed later" 
+                  tooltipPosition="bottom" 
+                >
+                  <span class="pi pi-info-circle" style="font-size: 1.2rem"></span>
+                </div>
+              </div>
+          </div>
+        </div>
+  
+        <!-- case radio=3 then dropdown for selecting a concepts -->
+        <div class="flex justify-center" id="search_concept_category_3">
+          <p-dropdown
+          *ngIf="croForm.category === '3'" 
+          [options]="CROconceptsManually"
+          [(ngModel)]="cro_concept_selected"
+          optionLabel="name"
+          [filter]="true"
+          filterBy="name"
+          [showClear]="true"
+          placeholder="Search a Concept"
+          emptyFilterMessage="No Concept found"
+          (onChange)="setSelectManuallyOnChange($event)"
+          styleClass="select_manually"
+          [resetFilterOnHide]="true"
+        >
+            <ng-template pTemplate="selectedItem">
+                <div class="flex align-items-center gap-2" *ngIf="cro_concept_selected">
+                    <!-- <div><p-checkbox [(ngModel)]="cro_concept_selected.status" [binary]="true" inputId="binary"></p-checkbox></div> -->
+                    <div>{{ cro_concept_selected.name }}</div>
+                </div>
+            </ng-template>
+            <ng-template let-cro_concept pTemplate="item">
+                <div class="flex align-items-center gap-2">
+                    <div class="my-auto"><p-checkbox [(ngModel)]="cro_concept.status" [binary]="true" inputId="binary"></p-checkbox></div>
+                    <div class="my-auto">{{ cro_concept.name }}</div>
+                </div>
+            </ng-template>
+          </p-dropdown>
+        </div>
+  
+        <!-- concept presentation -->
+        <div  *ngFor="let cro of croForm?.concepts; index as i">
+          <div class="min-w-fit flex flex-row justify-between h-10 text-[12px]" id="{{'concept_body_' + i}}">
+            <div id="{{'concept_name_' + i}}" class="my-auto flex-initial w-56">Concept {{i +1}} : <span class="text-[#0288d1]">{{ cro.name }}</span></div>
+            <div id="{{'concept_weight_' + i}}" class="flex flex-wrap gap-3">
+              <div class="text-[12px] my-auto">weight</div>
+              <div class="w-24">
+                <div class="flex flex-wrap justify-between text-[10px]">
+                  <div>0</div>
+                  <div *ngIf="cro?.weight">{{cro?.weight}}</div>
+                  <div>1</div>
+                </div>
+                <div class="mt-2"><p-slider [(ngModel)]="cro.weight_updated" (onChange)="setWeight($event, cro)"></p-slider></div>
+              </div>
+            </div>
+            <div id="{{'concept_status_' + i}}" class="my-auto" 
+              >
+              <p-checkbox [binary]="true" inputId="{{'concept_' + i}}"
+                pTooltip="This concept will be included in the recommendation if you check this checkbox" 
+                tooltipPosition="right"
+                [(ngModel)]="cro.status"
+                (onChange)="setStatus($event, cro)"
+                *ngIf="croForm.category == '1' || croForm.category == '2'" 
+              >
+              </p-checkbox>
+              <span class="pi pi-minus-circle cursor-pointer active:bg-red-700" 
+                style="color: #FF0000;"
+                pTooltip="This concept will be excluded in the recommendation if you click this button" 
+                tooltipPosition="right"
+                (click)="removeSelectManuallyOnChange(i, cro?.cid)"
+                *ngIf="croForm.category == '3'" 
+              >
+              </span>
+            </div>
+          </div>
+        </div>
+  
+        <!-- show less or more concept -->
+        <div *ngIf="!(croForm?.concepts?.length < 6)" class="font-bold">
+          <div 
+            *ngIf="seeMore"
+            class="flex flex-row flex-wrap space-x-4 justify-center"
+          >
+            <div>Show Less</div>
+            <div (click)="displaySeeMore()">
+              <div class="mt-auto text-[#0288d1] cursor-pointer active:bg-blue-700">
+                <span class="pi pi-chevron-up" style="font-size: 1.2rem"></span>
+              </div>
+            </div>
+          </div>
+          
+          <div 
+            *ngIf="!seeMore"
+            class="flex flex-row flex-wrap space-x-4 justify-center"
+          >
+            <div>Show More</div>
+            <div (click)="displaySeeMore()">
+              <div class="mt-auto text-[#0288d1] cursor-pointer active:bg-blue-700">
+                <span class="pi pi-chevron-down" style="font-size: 1.2rem"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <!-- case radio=1&2 then dropdown for selecting a concepts -->
+        <div class="flex flex-col justify-center gap-2" *ngIf="croForm.category === '1' || croForm.category == '2'" >
+          <div class="flex justify-center">
+            <span 
+              pTooltip="To be completed ..." 
+              tooltipPosition="right"
+            >
+              <p-button 
+                id="add_more_concept"
+                label="Add more concepts" 
+                icon="pi pi-plus" 
+                iconPos="right" 
+                styleClass="p-button-outlined"
+                (onClick)="displayAddMoreConcept()"
+              ></p-button>
+            </span>
+          </div>
+  
+          <!-- <div class="flex flex-row flex-wrap space-x-4 justify-center">
+            <div class="text-[#757500]">Add new Concept from whole slide</div>
+            <div class="mt-auto text-[#0288d1] cursor-pointer active:bg-blue-700"><span class="pi pi-plus" style="font-size: 1.2rem"></span></div>
+            <div class="mt-auto"><p-button id="add_more_concept" icon="pi pi-plus" styleClass="p-button-rounded p-button-text p-button-raised"></p-button></div>
+          </div> -->
+  
+          <!--<div *ngIf="croForm.category === '1'">
+            <div class="flex justify-center" id="search_concept_category_1" *ngIf="isAddMoreConceptDisplayed">
+              <p-dropdown
+              [options]="CROconceptsManuallySelection1or2"
+              [(ngModel)]="cro_concept_selected"
+              optionLabel="name"
+              [filter]="true"
+              filterBy="name"
+              [showClear]="true"
+              placeholder="Search a Concept"
+              emptyFilterMessage="No Concept found"
+              (onChange)="setSelectManuallyOnChange($event)"
+            >
+                <ng-template pTemplate="selectedItem">
+                    <div class="flex align-items-center gap-2" *ngIf="cro_concept_selected">
+                        <div>{{ cro_concept_selected.name }}</div>
+                    </div>
+                </ng-template>
+                <ng-template let-cro_concept pTemplate="item">
+                    <div class="flex align-items-center gap-2">
+                        <div class="my-auto"><p-checkbox [(ngModel)]="cro_concept.status" [binary]="true" inputId="binary"></p-checkbox></div>
+                        <div class="my-auto">{{ cro_concept.name }}</div>
+                    </div>
+                </ng-template>
+              </p-dropdown>
+            </div>
+          </div>-->
+  
+          <div *ngIf="croForm.category === '1'">
+            <div class="flex justify-center" id="search_concept_category_1" *ngIf="isAddMoreConceptDisplayed">
+              <p-dropdown
+              [options]="CROconceptsManuallySelection1"
+              [(ngModel)]="cro_concept_selected"
+              optionLabel="name"
+              [filter]="true"
+              filterBy="name"
+              [showClear]="true"
+              placeholder="Search a Concept"
+              emptyFilterMessage="No Concept found"
+              (onChange)="setSelectManuallyOnChange($event)"
+            >
+                <ng-template pTemplate="selectedItem">
+                    <div class="flex align-items-center gap-2" *ngIf="cro_concept_selected">
+                        <div>{{ cro_concept_selected.name }}</div>
+                    </div>
+                </ng-template>
+                <ng-template let-cro_concept pTemplate="item">
+                    <div class="flex align-items-center gap-2">
+                        <div class="my-auto"><p-checkbox [(ngModel)]="cro_concept.status" [binary]="true" inputId="binary"></p-checkbox></div>
+                        <div class="my-auto">{{ cro_concept.name }}</div>
+                    </div>
+                </ng-template>
+              </p-dropdown>
+            </div>
+          </div>
+  
+          <div *ngIf="croForm.category === '2'">
+            <div class="flex justify-center" id="search_concept_category_1" *ngIf="isAddMoreConceptDisplayed">
+              <p-dropdown
+              [options]="CROconceptsManuallySelection2"
+              [(ngModel)]="cro_concept_selected"
+              optionLabel="name"
+              [filter]="true"
+              filterBy="name"
+              [showClear]="true"
+              placeholder="Search a Concept"
+              emptyFilterMessage="No Concept found"
+              (onChange)="setSelectManuallyOnChange($event)"
+            >
+                <ng-template pTemplate="selectedItem">
+                    <div class="flex align-items-center gap-2" *ngIf="cro_concept_selected">
+                        <div>{{ cro_concept_selected.name }}</div>
+                    </div>
+                </ng-template>
+                <ng-template let-cro_concept pTemplate="item">
+                    <div class="flex align-items-center gap-2">
+                        <div class="my-auto"><p-checkbox [(ngModel)]="cro_concept.status" [binary]="true" inputId="binary"></p-checkbox></div>
+                        <div class="my-auto">{{ cro_concept.name }}</div>
+                    </div>
+                </ng-template>
+              </p-dropdown>
+            </div>
+          </div>
+  
+        </div>
+  
+        <!-- warning add more concepts -->
+        <div class="flex justify-center text-[#757500] font-bold">
+          <!-- <div *ngIf="croForm?.concepts?.length > 0">You can add/check {{5 - croForm?.concepts?.length}} more concepts</div> -->
+          <div *ngIf="croForm?.concepts?.length > 0 && croForm?.concepts?.length <= 5 ">You can add/check {{ numberConceptsToBeChecked }} more concepts</div>
+          <div *ngIf="croForm?.concepts?.length == 0">You can add/check up to 5 concepts</div>
+          <div *ngIf="croForm?.concepts?.length > 5" class="flex justify-center text-[#cc3300]">Only 5 concepts can be processed</div>
+        </div>
+        <div *ngIf="isMoreThan5ConceptDisplayed" class="flex justify-center text-[#cc3300]" id="warningMsgTopConcept"
+        >please uncheck a concept before checking this box again
+        </div>
+          
+        <!-- models algo -->
+        <div *ngIf="croForm.recommendation_types.status">
+          <div class="text-[#0288d1]">How should be the recommendations generated:</div>
+          <div class="flex flex-col text-[14px]">
+            <div class="flex flex-row gap-2">
+              <!-- <div class="my-auto"><p-checkbox [binary]="true" inputId="cro_recommendation_type_1" class="cro_recommendation_type_1" style="background: #00C614;"></p-checkbox></div> -->
+              <!-- <div><input type="checkbox" style="accent-color: #00C614"/></div> -->
+              <div class="mt-1"><input type="checkbox" [(ngModel)]="croForm.recommendation_types.models.recommendation_type_1" class="accent-[#50d71e] w-[18px] h-[18px]"></div>
+              <div class="mt-1">Comparing whole content of articles and videos with not understood concepts</div>
+            </div>
+            <div class="flex flex-row gap-2">
+              <div class="mt-1"><input type="checkbox" [(ngModel)]="croForm.recommendation_types.models.recommendation_type_2" class="accent-[#70B85E] w-[18px] h-[18px]"></div>
+              <div class="mt-1">Comparing only Keyphrases from articles and videos with not understood concepts</div>
+            </div>
+            <div class="flex flex-row gap-2">
+              <div class="mt-1"><input type="checkbox" [(ngModel)]="croForm.recommendation_types.models.recommendation_type_3" class="accent-[#9400D3] w-[18px] h-[18px]"></div>
+              <div class="mt-1">Comparing whole content of articles and videos with whole content of slide</div>
+            </div>
+            <div class="flex flex-row gap-2">
+              <div class="mt-1"><input type="checkbox" [(ngModel)]="croForm.recommendation_types.models.recommendation_type_4" class="accent-[#EE82EE] w-[18px] h-[18px]"></div>
+              <div class="mt-1">Comparing only Keyphrases from articles and videos with main concepts from slide</div>
+            </div>
+          </div>
+        </div>
+  
+        <!-- compare models algo -->
+        <div *ngIf="croForm.vennDiagramStatus">
+          <div class="flex flex-row gap-3 text-[#0288d1]">
+            <div class="mt-1">You may want to compare the results of each system ?</div>
+            <div class="mt-1"
+              pTooltip="You must selected ..."
+              tooltipPosition="top"
+            >
+              <span class="pi pi-info-circle" style="font-size: 1.2rem"></span>
+            </div>
+            <div class="mb-2"><p-checkbox [binary]="true" inputId="cro_compare"></p-checkbox></div>
+          </div>
+  
+          <!-- display Venn diagram -->
+          <div class="flex justify-center mt-2">
+            VENN DIAGRAM
+          </div>
+        </div>
+  
+  
+        <!--Testing Dynamic Reactive Form-->
+        <!-- <form [formGroup]='croFormObj'>
+          <div formArrayName="concepts" *ngFor="let t of concepts.controls; let i = index">
+            <div [formGroupName]="i">
+              <div class="flex flex-row gap-2">
+                <div >Concept {{i+1}}: {{ t.get("cid").value }}  {{ t.get("name").value }}</div>
+                <div>
+                  <input formControlName='status' type="checkbox" id="{{'status' + i}}" name="status">
+                </div>
+              </div>
+            </div>
+          </div>
+        </form> -->
+        
+      </div>
+    </div>
+  </p-panel>
+</div>
+
+
+
+<div class="flex flex-col space-y-4 mt-1" id="cro_content">
+  <div class="flex flex-row flex-wrap space-x-4 text-[#0288d1] ml-6">
+    
+    <div class="flex flex-row my-auto cursor-pointer active:bg-blue-700" (click)="showCRO()">
+      <span class="pi pi-chevron-up" *ngIf="isCustomRecOptionDisplayed"></span>
+      <span class="pi pi-chevron-down" *ngIf="!isCustomRecOptionDisplayed"></span>
+    </div>
+
+    <span>Customize your recommendations</span>
+    
+    <!-- <span class="pi pi-chevron-up my-auto" *ngIf="isCustomRecOptionDisplayed"></span>
+    <span class="pi pi-chevron-down my-auto" *ngIf="!isCustomRecOptionDisplayed"></span> -->
+  </div>
+
+  <div class="w-full border-2 rounded-md border-[#0288d1]" *ngIf="isCustomRecOptionDisplayed">
+    <div class="flex flex-col space-y-1 m-2">
+      <!-- titel with concept rec -->
+      <div class="flex flex-wrap space-x-2 text-[#0288d1]">
+        <div>Select not understood concepts for recommendation (up to 5 concepts)</div>
+        <div
+          class="mt-auto"
+          pTooltip="Only the top five concepts from the list of concepts you gave will be chosen based on their weight." 
+          tooltipPosition="top" 
+        >
+          <span class="pi pi-info-circle" style="font-size: 1.2rem"></span>
+        </div>
+      </div>
+      
+      <!-- category radio selection -->
+      <div class="flex flex-wrap justify-between gap-3">
+        <div class="flex align-items-center ml-4">
+          <div class="flex flex-row gap-1">
+            <p-radioButton name="current slide" inputId="current_slide" value="1" [(ngModel)]="croForm.category" (onClick)="setCROcategory($event)"></p-radioButton>
+            <label for="ingredient1" class="my-auto">Current Slide</label>
+            <div
+              class="mt-1"
+              pTooltip="To be completed later" 
+              tooltipPosition="bottom" 
+            >
+              <span class="pi pi-info-circle" style="font-size: 1.2rem"></span>
+            </div>
+          </div>
+        </div>
+        <div class="flex align-items-center">
+            <div class="flex flex-row gap-1">
+              <p-radioButton name="all slides" inputId="all_slides" value="2" [(ngModel)]="croForm.category" (onClick)="setCROcategory($event)"></p-radioButton>
+              <label for="ingredient1" class="my-auto">All Slides</label>
+              <div
+                class="mt-1"
+                pTooltip="To be completed later" 
+                tooltipPosition="bottom" 
+              >
+                <span class="pi pi-info-circle" style="font-size: 1.2rem"></span>
+              </div>
+            </div>
+        </div>
+        <div class="flex align-items-center mr-4">
+            <div class="flex flex-row gap-1">
+              <p-radioButton name="select manually" inputId="select_manually" value="3" [(ngModel)]="croForm.category" (onClick)="setCROcategory($event)"></p-radioButton>
+              <label for="ingredient1" class="my-auto">Select manually</label>
+              <div
+                class="mt-1"
+                pTooltip="To be completed later" 
+                tooltipPosition="bottom" 
+              >
+                <span class="pi pi-info-circle" style="font-size: 1.2rem"></span>
+              </div>
+            </div>
+        </div>
+      </div>
+
+      <!-- case radio=3 then dropdown for selecting a concepts -->
+      <div class="flex justify-center" id="search_concept_category_3">
+        <p-dropdown
+        *ngIf="croForm.category === '3'" 
+        [options]="CROconceptsManually"
+        [(ngModel)]="cro_concept_selected"
+        optionLabel="name"
+        [filter]="true"
+        filterBy="name"
+        [showClear]="true"
+        placeholder="Search a Concept"
+        emptyFilterMessage="No Concept found"
+        (onChange)="setSelectManuallyOnChange($event)"
+        styleClass="select_manually"
+        [resetFilterOnHide]="true"
+      >
+          <ng-template pTemplate="selectedItem">
+              <div class="flex align-items-center gap-2" *ngIf="cro_concept_selected">
+                  <!-- <div><p-checkbox [(ngModel)]="cro_concept_selected.status" [binary]="true" inputId="binary"></p-checkbox></div> -->
+                  <div>{{ cro_concept_selected.name }}</div>
+              </div>
+          </ng-template>
+          <ng-template let-cro_concept pTemplate="item">
+              <div class="flex align-items-center gap-2">
+                  <div class="my-auto"><p-checkbox [(ngModel)]="cro_concept.status" [binary]="true" inputId="binary"></p-checkbox></div>
+                  <div class="my-auto">{{ cro_concept.name }}</div>
+              </div>
+          </ng-template>
+        </p-dropdown>
+      </div>
+
+      <!-- concept presentation -->
+      <div  *ngFor="let cro of croForm?.concepts; index as i">
+        <div class="min-w-fit flex flex-row justify-between h-10 text-[12px]" id="{{'concept_body_' + i}}">
+          <div id="{{'concept_name_' + i}}" class="my-auto flex-initial w-56">Concept {{i +1}} : <span class="text-[#0288d1]">{{ cro.name }}</span></div>
+          <div id="{{'concept_weight_' + i}}" class="flex flex-wrap gap-3">
+            <div class="text-[12px] my-auto">weight</div>
+            <div class="w-24">
+              <div class="flex flex-wrap justify-between text-[10px]">
+                <div>0</div>
+                <div *ngIf="cro?.weight">{{cro?.weight}}</div>
+                <div>1</div>
+              </div>
+              <div class="mt-2"><p-slider [(ngModel)]="cro.weight_updated" (onChange)="setWeight($event, cro)"></p-slider></div>
+            </div>
+          </div>
+          <div id="{{'concept_status_' + i}}" class="my-auto" 
+            >
+            <p-checkbox [binary]="true" inputId="{{'concept_' + i}}"
+              pTooltip="This concept will be included in the recommendation if you check this checkbox" 
+              tooltipPosition="right"
+              [(ngModel)]="cro.status"
+              (onChange)="setStatus($event, cro)"
+              *ngIf="croForm.category == '1' || croForm.category == '2'" 
+            >
+            </p-checkbox>
+            <span class="pi pi-minus-circle cursor-pointer active:bg-red-700" 
+              style="color: #FF0000;"
+              pTooltip="This concept will be excluded in the recommendation if you click this button" 
+              tooltipPosition="right"
+              (click)="removeSelectManuallyOnChange(i, cro?.cid)"
+              *ngIf="croForm.category == '3'" 
+            >
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- show less or more concept -->
+      <div *ngIf="!(croForm?.concepts?.length < 6)" class="font-bold">
+        <div 
+          *ngIf="seeMore"
+          class="flex flex-row flex-wrap space-x-4 justify-center"
+        >
+          <div>Show Less</div>
+          <div (click)="displaySeeMore()">
+            <div class="mt-auto text-[#0288d1] cursor-pointer active:bg-blue-700">
+              <span class="pi pi-chevron-up" style="font-size: 1.2rem"></span>
+            </div>
+          </div>
+        </div>
+        
+        <div 
+          *ngIf="!seeMore"
+          class="flex flex-row flex-wrap space-x-4 justify-center"
+        >
+          <div>Show More</div>
+          <div (click)="displaySeeMore()">
+            <div class="mt-auto text-[#0288d1] cursor-pointer active:bg-blue-700">
+              <span class="pi pi-chevron-down" style="font-size: 1.2rem"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- case radio=1&2 then dropdown for selecting a concepts -->
+      <div class="flex flex-col justify-center gap-2" *ngIf="croForm.category === '1' || croForm.category == '2'" >
+        <div class="flex justify-center">
+          <span 
+            pTooltip="To be completed ..." 
+            tooltipPosition="right"
+          >
+            <p-button 
+              id="add_more_concept"
+              label="Add more concepts" 
+              icon="pi pi-plus" 
+              iconPos="right" 
+              styleClass="p-button-outlined"
+              (onClick)="displayAddMoreConcept()"
+            ></p-button>
+          </span>
+        </div>
+
+        <!-- <div class="flex flex-row flex-wrap space-x-4 justify-center">
+          <div class="text-[#757500]">Add new Concept from whole slide</div>
+          <div class="mt-auto text-[#0288d1] cursor-pointer active:bg-blue-700"><span class="pi pi-plus" style="font-size: 1.2rem"></span></div>
+          <div class="mt-auto"><p-button id="add_more_concept" icon="pi pi-plus" styleClass="p-button-rounded p-button-text p-button-raised"></p-button></div>
+        </div> -->
+
+        <!--<div *ngIf="croForm.category === '1'">
+          <div class="flex justify-center" id="search_concept_category_1" *ngIf="isAddMoreConceptDisplayed">
+            <p-dropdown
+            [options]="CROconceptsManuallySelection1or2"
+            [(ngModel)]="cro_concept_selected"
+            optionLabel="name"
+            [filter]="true"
+            filterBy="name"
+            [showClear]="true"
+            placeholder="Search a Concept"
+            emptyFilterMessage="No Concept found"
+            (onChange)="setSelectManuallyOnChange($event)"
+          >
+              <ng-template pTemplate="selectedItem">
+                  <div class="flex align-items-center gap-2" *ngIf="cro_concept_selected">
+                      <div>{{ cro_concept_selected.name }}</div>
+                  </div>
+              </ng-template>
+              <ng-template let-cro_concept pTemplate="item">
+                  <div class="flex align-items-center gap-2">
+                      <div class="my-auto"><p-checkbox [(ngModel)]="cro_concept.status" [binary]="true" inputId="binary"></p-checkbox></div>
+                      <div class="my-auto">{{ cro_concept.name }}</div>
+                  </div>
+              </ng-template>
+            </p-dropdown>
+          </div>
+        </div>-->
+
+        <div *ngIf="croForm.category === '1'">
+          <div class="flex justify-center" id="search_concept_category_1" *ngIf="isAddMoreConceptDisplayed">
+            <p-dropdown
+            [options]="CROconceptsManuallySelection1"
+            [(ngModel)]="cro_concept_selected"
+            optionLabel="name"
+            [filter]="true"
+            filterBy="name"
+            [showClear]="true"
+            placeholder="Search a Concept"
+            emptyFilterMessage="No Concept found"
+            (onChange)="setSelectManuallyOnChange($event)"
+          >
+              <ng-template pTemplate="selectedItem">
+                  <div class="flex align-items-center gap-2" *ngIf="cro_concept_selected">
+                      <div>{{ cro_concept_selected.name }}</div>
+                  </div>
+              </ng-template>
+              <ng-template let-cro_concept pTemplate="item">
+                  <div class="flex align-items-center gap-2">
+                      <div class="my-auto"><p-checkbox [(ngModel)]="cro_concept.status" [binary]="true" inputId="binary"></p-checkbox></div>
+                      <div class="my-auto">{{ cro_concept.name }}</div>
+                  </div>
+              </ng-template>
+            </p-dropdown>
+          </div>
+        </div>
+
+        <div *ngIf="croForm.category === '2'">
+          <div class="flex justify-center" id="search_concept_category_1" *ngIf="isAddMoreConceptDisplayed">
+            <p-dropdown
+            [options]="CROconceptsManuallySelection2"
+            [(ngModel)]="cro_concept_selected"
+            optionLabel="name"
+            [filter]="true"
+            filterBy="name"
+            [showClear]="true"
+            placeholder="Search a Concept"
+            emptyFilterMessage="No Concept found"
+            (onChange)="setSelectManuallyOnChange($event)"
+          >
+              <ng-template pTemplate="selectedItem">
+                  <div class="flex align-items-center gap-2" *ngIf="cro_concept_selected">
+                      <div>{{ cro_concept_selected.name }}</div>
+                  </div>
+              </ng-template>
+              <ng-template let-cro_concept pTemplate="item">
+                  <div class="flex align-items-center gap-2">
+                      <div class="my-auto"><p-checkbox [(ngModel)]="cro_concept.status" [binary]="true" inputId="binary"></p-checkbox></div>
+                      <div class="my-auto">{{ cro_concept.name }}</div>
+                  </div>
+              </ng-template>
+            </p-dropdown>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- warning add more concepts -->
+      <div class="flex justify-center text-[#757500] font-bold">
+        <!-- <div *ngIf="croForm?.concepts?.length > 0">You can add/check {{5 - croForm?.concepts?.length}} more concepts</div> -->
+        <div *ngIf="croForm?.concepts?.length > 0 && croForm?.concepts?.length <= 5 ">You can add/check {{ numberConceptsToBeChecked }} more concepts</div>
+        <div *ngIf="croForm?.concepts?.length == 0">You can add/check up to 5 concepts</div>
+        <div *ngIf="croForm?.concepts?.length > 5" class="flex justify-center text-[#cc3300]">Only 5 concepts can be processed</div>
+      </div>
+      <div *ngIf="isMoreThan5ConceptDisplayed" class="flex justify-center text-[#cc3300]" id="warningMsgTopConcept"
+      >please uncheck a concept before checking this box again
+      </div>
+        
+      <!-- models algo -->
+      <div *ngIf="croForm?.recommendation_types?.status">
+        <div class="text-[#0288d1]">How should be the recommendations generated:</div>
+        <div class="flex flex-col text-[14px]">
+          <div class="flex flex-row gap-2">
+            <!-- <div class="my-auto"><p-checkbox [binary]="true" inputId="cro_recommendation_type_1" class="cro_recommendation_type_1" style="background: #00C614;"></p-checkbox></div> -->
+            <!-- <div><input type="checkbox" style="accent-color: #00C614"/></div> -->
+            <div class="mt-1"><input type="checkbox" [(ngModel)]="croForm?.recommendation_types?.models.recommendation_type_1" class="accent-[#50d71e] w-[18px] h-[18px]"></div>
+            <div class="mt-1">Comparing whole content of articles and videos with not understood concepts</div>
+          </div>
+          <div class="flex flex-row gap-2">
+            <div class="mt-1"><input type="checkbox" [(ngModel)]="croForm?.recommendation_types?.models.recommendation_type_2" class="accent-[#70B85E] w-[18px] h-[18px]"></div>
+            <div class="mt-1">Comparing only Keyphrases from articles and videos with not understood concepts</div>
+          </div>
+          <div class="flex flex-row gap-2">
+            <div class="mt-1"><input type="checkbox" [(ngModel)]="croForm?.recommendation_types?.models.recommendation_type_3" class="accent-[#9400D3] w-[18px] h-[18px]"></div>
+            <div class="mt-1">Comparing whole content of articles and videos with whole content of slide</div>
+          </div>
+          <div class="flex flex-row gap-2">
+            <div class="mt-1"><input type="checkbox" [(ngModel)]="croForm.recommendation_types?.models.recommendation_type_4" class="accent-[#EE82EE] w-[18px] h-[18px]"></div>
+            <div class="mt-1">Comparing only Keyphrases from articles and videos with main concepts from slide</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- compare models algo -->
+      <div *ngIf="croForm.vennDiagramStatus">
+        <div class="flex flex-row gap-3 text-[#0288d1]">
+          <div class="mt-1">You may want to compare the results of each system ?</div>
+          <div class="mt-1"
+            pTooltip="You must selected ..."
+            tooltipPosition="top"
+          >
+            <span class="pi pi-info-circle" style="font-size: 1.2rem"></span>
+          </div>
+          <div class="mb-2"><p-checkbox [binary]="true" inputId="cro_compare"></p-checkbox></div>
+        </div>
+
+        <!-- display Venn diagram -->
+        <div class="flex justify-center mt-2">
+          VENN DIAGRAM
+        </div>
+      </div>
+
+
+      <!--Testing Dynamic Reactive Form-->
+      <!-- <form [formGroup]='croFormObj'>
+        <div formArrayName="concepts" *ngFor="let t of concepts.controls; let i = index">
+          <div [formGroupName]="i">
+            <div class="flex flex-row gap-2">
+              <div >Concept {{i+1}}: {{ t.get("cid").value }}  {{ t.get("name").value }}</div>
+              <div>
+                <input formControlName='status' type="checkbox" id="{{'status' + i}}" name="status">
+              </div>
+            </div>
+          </div>
+        </div>
+      </form> -->
+      
+    </div>
+  </div>
+</div>

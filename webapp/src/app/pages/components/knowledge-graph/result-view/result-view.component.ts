@@ -1,10 +1,13 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import { VideoElementModel } from '../videos/models/video-element.model';
 import { ArticleElementModel } from '../articles/models/article-element.model';
 import { MenuItem } from 'primeng/api';
 // import { MaterialsRecommenderService } from 'src/app/services/materials-recommender.service';
 import { Subscription } from 'rxjs';
 import { SlideConceptsService } from 'src/app/services/slide-concepts.service';
+import { RecommendationNodesArticle, RecommendationNodesVideo, ResourcesPagination } from 'src/app/models/croForm';
+import { CustomRecommendationOptionComponent } from '../custom-recommendation-option/custom-recommendation-option.component';
+import { MaterialsRecommenderService } from 'src/app/services/materials-recommender.service';
 
 interface MaterialModel {
   name: string;
@@ -16,6 +19,23 @@ enum MaterialModels {
   MODEL_3 = '3',
   MODEL_4 = '4'
 }
+
+
+// interface croVideoElementModel {
+//   current_page?: number;
+//   total_pages?: number;
+//   total_items?: number;
+//   content?: VideoElementModel[];
+// }
+
+// interface croArticleElementModel {
+//   current_page?: number;
+//   total_pages?: number;
+//   total_items?: number;
+//   content?: ArticleElementModel[];
+// }
+
+
 @Component({
   selector: 'app-result-view',
   templateUrl: './result-view.component.html',
@@ -38,7 +58,56 @@ export class ResultViewComponent {
   recievedVideoResultIsEmpty = true;
   recievedArticleResultIsEmpty = true;
 
-  constructor(private slideConceptservice: SlideConceptsService) {
+  @Input()
+  public concepts1: any[] = [];
+  @Input()
+  public concepts2: any[] = [];
+
+  // @Input()
+  // public results: any[] = [];
+  @Input() public results1: any[] = [];
+  @Input() public results2: any[] = [];
+  @Input() public results3: any[] = [];
+  @Input() public results4: any[] = [];
+
+  // boby024
+  @Input() croForm: any;
+  // @Input() didNotUnderstandConceptsObjFromCROfOrm: any[];
+  // @Input() previousConceptsObj: any[];
+  @ViewChild('croComponent', { static: false }) croComponent: CustomRecommendationOptionComponent;
+  @Input() resourcesPagination: ResourcesPagination = null;;
+  recommendation_type_1_nodes = [];
+  recommendation_type_2_nodes = [];
+  recommendation_type_3_nodes = [];
+  recommendation_type_4_nodes = [];
+  recommendation_type_videos_nodes = [];
+  recommendation_type_articles_nodes = [];
+  activeIndex: number = 0; 
+  croVideos: RecommendationNodesVideo; // croVideoElementModel;
+  croArticles: RecommendationNodesArticle; // croArticleElementModel;
+  croPaginatorFirst: number = 0;
+  croPaginatorRows: number = 10;
+  croSorting = {
+    similarity_score: true,
+    most_recent: false,
+    popularity: false
+  }
+  totalRecordsDefault = 1;
+  // scrollPanelHeight = '550px';
+
+  croOnPageChange(event) {
+    this.croPaginatorFirst = event.first;
+    this.croPaginatorRows = event.rows;
+
+    // call backend api for paginate/sorting result
+    this.paginateResult()
+    // 
+  }
+
+  constructor(
+    private slideConceptservice: SlideConceptsService,
+    private materialsRecommenderService: MaterialsRecommenderService,
+  ) {
     slideConceptservice.didNotUnderstandConcepts.subscribe((res) => {
       this.didNotUnderstandConceptsObj = res;
       this.didNotUnderstandConceptsObj.forEach((el) => {
@@ -57,18 +126,7 @@ export class ResultViewComponent {
       });
     });
   }
-  @Input()
-  public concepts1: any[] = [];
-  @Input()
-  public concepts2: any[] = [];
-
-  // @Input()
-  // public results: any[] = [];
-  @Input() public results1: any[] = [];
-  @Input() public results2: any[] = [];
-  @Input() public results3: any[] = [];
-  @Input() public results4: any[] = [];
-
+  
   ngOnInit(): void {
     console.log('MaterialModels.MODEL_1', MaterialModels.MODEL_1);
     this.materialModels = [
@@ -123,8 +181,145 @@ export class ResultViewComponent {
       },
     ];
 
-    this.allConceptsObj = [...this.concepts1];
-    this.loadResultForSelectedModel(MaterialModels.MODEL_1);
+    // this.allConceptsObj = [...this.concepts1];
+    // this.loadResultForSelectedModel(MaterialModels.MODEL_1);
+    this.loadResultForSelectedModel();
+  }
+
+  setChipConcept(concept): void {
+    this.conceptFromChipObj = {
+      id: concept.id,
+      cid: concept.cid, // deal with cid instead of id 'AMR'
+      name: concept.name,
+      status: concept.status === 'understood' ? 'notUnderstood' : 'understood',
+    };
+  }
+
+  // call backend api for paginate/sorting result
+  sortResult(event) {
+    this.paginateResult();
+  }
+
+  paginateResult() {
+    // let pagination_params = {
+    //   page_number: this.croPaginatorFirst + 1,
+    //   page_size: 10,
+    //   sort_by_params: this.croSorting
+    // }
+
+    let params_articles = {
+                            page_number: 1,
+                            page_size: 10
+                        };
+    let params_videos = {
+                          page_number: 1,
+                          page_size: 10
+                        };
+    if (this.activeIndex == 0) {
+      params_articles["page_number"] = this.croPaginatorFirst + 1
+    } else if (this.activeIndex == 1) {
+      params_videos["page_number"] = this.croPaginatorFirst + 1
+    }
+
+    // let croForm = this.croComponent?.croForm; //this.croComponent?.getOnlyStatusChecked();
+    // this.croForm["pagination_params"] = pagination_params;
+    this.croForm["pagination_params"]["articles"] = params_articles;
+    this.croForm["pagination_params"]["videos"] = params_videos;
+    this.materialsRecommenderService.getRecommendedMaterials(
+      null, this.croForm
+    ).subscribe({
+      next: (result) => {
+        this.resourcesPagination = result;
+        this.loadResultForSelectedModel();
+      },
+      error: (error) => {
+          console.log('Error:', error);
+          // this.displayMessage(error.message);
+          // this.isLoading = false;
+          // this.loading.emit(false);
+        }
+      })
+  }
+
+  loadResultForSelectedModel() {
+    // let key = null; // this.croForm[""];
+    // for (const [key, value] of Object.entries(this.croForm["recommendation_types"]["models"])) {
+    //   console.log(`${key}: ${value}`);
+    // }
+
+
+    this.allConceptsObj = [...this.resourcesPagination.concepts];
+    this.concepts = [...this.resourcesPagination.concepts];
+    if (this.croComponent?.didNotUnderstandConceptsObj && this.croComponent?.previousConceptsObj) {
+      const didNotUnderstandConceptsObj = this.croComponent?.didNotUnderstandConceptsObj;
+      const previousConceptsObj = this.croComponent?.previousConceptsObj;
+      this.concepts.forEach((el, index, array) => {
+        if (
+          didNotUnderstandConceptsObj.some(
+            (concept) => concept.cid === el.cid
+          )
+        ) {
+          el.status = 'notUnderstood';
+          array[index] = el;
+        } else if (
+          previousConceptsObj.some(
+            (concept) => concept.cid === el.cid
+          )
+        ) {
+          el.status = 'notUnderstood';
+          array[index] = el;
+        } else if (
+          this.understoodConceptsObj.some(
+            (concept) => concept.cid === el.cid
+          )
+        ) {
+          el.status = 'understood';
+          array[index] = el;
+        } else {
+          el.status = 'unread';
+          array[index] = el;
+        }
+      });
+    }
+
+    if(this.resourcesPagination.recommendation_type_1) {
+      this.croVideos = this.resourcesPagination.recommendation_type_1.nodes.videos;
+      this.croArticles = this.resourcesPagination.recommendation_type_1.nodes.articles;
+      // this.recommendation_type_videos_nodes.concat(this.resourcesPagination.recommendation_type_1.nodes.videos);
+      // this.recommendation_type_articles_nodes.concat(this.resourcesPagination.recommendation_type_1.nodes.articles);
+    }
+    if(this.resourcesPagination.recommendation_type_2) {
+      this.croVideos = this.resourcesPagination.recommendation_type_1.nodes.videos;
+      this.croArticles = this.resourcesPagination.recommendation_type_1.nodes.articles;
+    }
+    if(this.resourcesPagination.recommendation_type_2) {
+      this.croVideos = this.resourcesPagination.recommendation_type_1.nodes.videos;
+      this.croArticles = this.resourcesPagination.recommendation_type_1.nodes.articles;
+    }
+    if(this.resourcesPagination.recommendation_type_2) {
+      this.croVideos = this.resourcesPagination.recommendation_type_1.nodes.videos;
+      this.croArticles = this.resourcesPagination.recommendation_type_1.nodes.articles;
+    }
+
+    // this.croVideos = this.results["videos"];
+    // this.croArticles = this.results["articles"];
+
+    this.recievedVideoResultIsEmpty = false ? this.croVideos.total_items > 0 : true;
+    this.recievedArticleResultIsEmpty = false ? this.croArticles.total_items > 0 : true;
+    // this.onResize();
+
+    console.log('pagination results', this.results);
+    console.log('recievedVideoResultIsEmpty', this.videos);
+    console.log('recievedArticleResultIsEmpty', this.articles);
+  }
+
+  tabChanged(tab) {
+    this.activeIndex = tab;
+
+    // Pause videos (if any) when changing tabs
+    document.querySelectorAll('iframe').forEach((iframe) => {
+      const result = iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*')
+    })
   }
 
   sortElements(
@@ -141,15 +336,7 @@ export class ResultViewComponent {
     }
   }
 
-  setChipConcept(concept): void {
-    this.conceptFromChipObj = {
-      id: concept.id,
-      cid: concept.cid, // deal with cid instead of id 'AMR'
-      name: concept.name,
-      status: concept.status === 'understood' ? 'notUnderstood' : 'understood',
-    };
-  }
-  loadResultForSelectedModel(key): void {
+  loadResultForSelectedModel_old(key): void {
     this.results = [];
     this.videos = [];
     this.articles = [];
@@ -197,19 +384,18 @@ export class ResultViewComponent {
       }else{
         this.recievedArticleResultIsEmpty = true;
       }
+
     }catch (e){
       console.log(e);
     }
 
     console.log('ResultViewComponent Videos', this.videos);
     console.log('ResultViewComponent Articles', this.articles);
-
   }
 
-  tabChanged(tab) {
-    // Pause videos (if any) when changing tabs
-    document.querySelectorAll('iframe').forEach((iframe) => {
-      const result = iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*')
-    })
-  }
+  // onResize() {
+  //   if (window.screen.height >= 992 && window.screen.width >= 1024) {
+  //     this.scrollPanelHeight = '550px';
+  //   }
+  // }
 }

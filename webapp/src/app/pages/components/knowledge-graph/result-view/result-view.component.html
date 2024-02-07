@@ -1,86 +1,177 @@
-<p-tabView (activeIndexChange)="tabChanged($event)">
-    <span class="flex flex-row">
+<div class="flex flex-col gap-1">
 
-      <h4 class="text-[#0277BD] mr-3">
-        Recommendation based on the following concepts:
-      </h4>
-      <button
-        *ngFor="let concept of allConceptsObj"
-        class="dislike-button {{concept.status === 'understood' ? 'bg-[#689F38]' : concept.status === 'notUnderstood' ? 'bg-[#D32F2F]' : 'bg-[#2196F3]'}}
-        text-white px-2 mx-1 border border-transparent rounded-full"
-      >
-        {{ concept.name }}
-        <button
-          #notUnderstoodConcept
-          class="bg-transparent hover focus:outline-none cursor-pointer"
-          (click)="setChipConcept(concept); menu.toggle($event)"
-        >
-          <svg class="w-1 h-1 mt-0.5 ml-1.5">
-            <circle
-              cx="2.5"
-              cy="2.5"
-              r="2"
-              style="fill: white; stroke: #495057; stroke: width 0.5px"
-            />
-          </svg>
-          <svg class="w-1 h-1 mt-0.5 ml-1.5">
-            <circle
-              cx="2.5"
-              cy="2.5"
-              r="2"
-              style="fill: white; stroke: #495057; stroke: width 0.5px"
-            />
-          </svg>
-          <svg class="w-1 h-1 mt-0.5 ml-1.5">
-            <circle
-              cx="2.5"
-              cy="2.5"
-              r="2"
-              style="fill: white; stroke: #495057; stroke: width 0.5px"
-            />
-          </svg>
-          <p-menu
-            #menu
-            id="notUnderstood_menu"
-            [model]="concept.status === 'notUnderstood' ? chipMenuU : concept.status === 'understood' ? chipMenuDNU : chipMenuNew"
-            [popup]="true"
-            appendTo="body"
-          ></p-menu>
-        </button>
-      </button>
+<div>
+  <p-tabView (activeIndexChange)="tabChanged($event)" [activeIndex]="activeIndex">
+      <div class="flex flex-row justify-between">
+        <span class="flex flex-col">
+          <h4 class="text-[#0277BD] mr-3">
+            Recommendation based on the following concepts:
+          </h4>
+          <div class="flex flex-wrap gap-1 w-9/12"> 
+            <button
+              *ngFor="let concept of allConceptsObj"
+              class="dislike-button {{concept.status === 'understood' ? 'bg-[#689F38]' : concept.status === 'notUnderstood' ? 'bg-[#D32F2F]' : 'bg-[#2196F3]'}}
+              text-white px-2 mx-1 border border-transparent rounded-full"
+            >
+              {{ concept.name }}
+              <button
+                #notUnderstoodConcept
+                class="bg-transparent hover focus:outline-none cursor-pointer"
+                (click)="setChipConcept(concept); menu.toggle($event)"
+              >
+                <svg class="w-1 h-1 mt-0.5 ml-1.5">
+                  <circle
+                    cx="2.5"
+                    cy="2.5"
+                    r="2"
+                    style="fill: white; stroke: #495057; stroke: width 0.5px"
+                  />
+                </svg>
+                <svg class="w-1 h-1 mt-0.5 ml-1.5">
+                  <circle
+                    cx="2.5"
+                    cy="2.5"
+                    r="2"
+                    style="fill: white; stroke: #495057; stroke: width 0.5px"
+                  />
+                </svg>
+                <svg class="w-1 h-1 mt-0.5 ml-1.5">
+                  <circle
+                    cx="2.5"
+                    cy="2.5"
+                    r="2"
+                    style="fill: white; stroke: #495057; stroke: width 0.5px"
+                  />
+                </svg>
+                <p-menu
+                  #menu
+                  id="notUnderstood_menu"
+                  [model]="concept.status === 'notUnderstood' ? chipMenuU : concept.status === 'understood' ? chipMenuDNU : chipMenuNew"
+                  [popup]="true"
+                  appendTo="body"
+                ></p-menu>
+              </button>
+            </button>
+          </div>
+          <!-- <div
+            id="materialModelDropdown"
+            class="p-field-dropdown"
+            style="display: block;margin-left: auto;margin-right: 0;"
+          >
+            <p-dropdown
+              [options]="materialModels"
+              [(ngModel)]="selectedMaterialModel"
+              optionLabel="name"
+              optionValue="code"
+              (onChange)="loadResultForSelectedModel(selectedMaterialModel)"
+            ></p-dropdown>
+          </div> -->
+        </span>
 
-      <!-- <div
-        id="materialModelDropdown"
-        class="p-field-dropdown"
-        style="display: block;margin-left: auto;margin-right: 0;"
-      >
-        <p-dropdown
-          [options]="materialModels"
-          [(ngModel)]="selectedMaterialModel"
-          optionLabel="name"
-          optionValue="code"
-          (onChange)="loadResultForSelectedModel(selectedMaterialModel)"
-        ></p-dropdown>
-      </div> -->
-    </span>
+        <div id="cro_sorting" class="w-3/12">
+          <p-panel 
+            header="Sort by" 
+            [toggleable]="true"
+            [collapsed]="true"
+            [expandIcon]="'pi pi-chevron-up'" 
+            [collapseIcon]="'pi pi-chevron-down'"
+          >
+            <div class="flex flex-col">
+              <div style="height: 2rem;"><p-divider></p-divider></div>
+              <div class="flex flex-row space-x-2">
+                <div><p-checkbox 
+                  [(ngModel)]="croSorting.similarity_score" 
+                  [binary]="true" 
+                  inputId="similarity_score"
+                  (onChange)="sortResult($event)"
+                  ></p-checkbox>
+                </div>
+                <div class="my-auto"><label for="similarity_score">Similarity Score</label></div>
+              </div>
 
-    <p-tabPanel *ngIf="!recievedVideoResultIsEmpty" [cache]="true" header="Videos" leftIcon="pi pi-video">
-      <app-card-video-list
-        [notUnderstoodConcepts]="concepts"
-        [videoElements]="videos"
-      ></app-card-video-list>
-    </p-tabPanel>
-    <p-tabPanel *ngIf="recievedVideoResultIsEmpty" header="Videos" leftIcon="pi pi-video">
-      <h4>No Recommended videos for the selected Concepts</h4>
-    </p-tabPanel>
-    <p-tabPanel [cache]="true" *ngIf="!recievedArticleResultIsEmpty" header="Articles" leftIcon="pi pi-book">
-      <app-card-article-list
-        [notUnderstoodConcepts]="concepts"
-        [articleElements]="articles"
-      ></app-card-article-list>
-    </p-tabPanel>
-    <p-tabPanel *ngIf="recievedArticleResultIsEmpty" header="Articles" leftIcon="pi pi-book">
-      <h4>No Recommended articles for the selected Concepts</h4>
-    </p-tabPanel>
+              <div style="height: 2rem;"><p-divider></p-divider></div>
+              <div class="flex flex-row space-x-2">
+                <div><p-checkbox [(ngModel)]="croSorting.most_recent" [binary]="true" inputId="most_recent"></p-checkbox></div>
+                <div class="my-auto"><label for="most_recent">Most recent</label></div>
+              </div>
+
+              <div style="height: 2rem;"><p-divider></p-divider></div>
+              <div class="flex flex-row space-x-2">
+                <div><p-checkbox [(ngModel)]="croSorting.popularity" [binary]="true" inputId="popularity"></p-checkbox></div>
+                <div class="my-auto"><label for="popularity">Popularity</label></div>
+              </div>
+            </div>
+          </p-panel>
+        </div>
+      </div>
+
+      <p-tabPanel *ngIf="this.croVideos.total_items > 0" [cache]="true" header="Videos" leftIcon="pi pi-video">
+        <div class="mt-1 w-full" id="cro_viedo_list">
+          <!-- <p-scrollPanel styleClass="scroll_panel_list">
+            <app-card-video-list
+              [notUnderstoodConcepts]="concepts"
+              [videoElements]="croVideos?.content"
+            ></app-card-video-list>
+          </p-scrollPanel> -->
+
+            <app-card-video-list
+              [notUnderstoodConcepts]="concepts"
+              [videoElements]="croVideos?.content"
+            ></app-card-video-list>
+        </div>
+      </p-tabPanel>
+      <p-tabPanel *ngIf="resourcesPagination === null || this.croVideos?.total_items === 0" header="Videos" leftIcon="pi pi-video">
+        <h4 class="my-auto mt-4">No Recommended videos for the selected Concepts</h4>
+      </p-tabPanel>
+      <p-tabPanel [cache]="true" *ngIf="this.croArticles?.total_items > 0" header="Articles" leftIcon="pi pi-book">
+        <div>
+          <!-- <p-scrollPanel styleClass="scroll_panel_list">
+            <app-card-article-list
+              [notUnderstoodConcepts]="concepts"
+              [articleElements]="croArticles?.content"
+            ></app-card-article-list>
+          </p-scrollPanel> -->
+
+            <app-card-article-list
+              [notUnderstoodConcepts]="concepts"
+              [articleElements]="croArticles?.content"
+            ></app-card-article-list>
+        </div>
+      </p-tabPanel>
+      <p-tabPanel *ngIf="resourcesPagination === null || this.croArticles?.total_items === 0" header="Articles" leftIcon="pi pi-book">
+        <h4 class="my-auto mt-4">No Recommended articles for the selected Concepts</h4>
+      </p-tabPanel>
   </p-tabView>
   <p-toast position="bottom-left" key="rating"></p-toast>
+</div>
+
+<div>
+  <!-- <div class="grid justify-items-end"> -->
+    <div class="flex justify-end fixed inset-x-0 bottom-0 bg-white">
+      <div class="my-auto font-bold text-xs">Recommendations per page: </div>
+      <div>
+        <p-paginator
+          *ngIf="activeIndex === 0"
+          [first]="croPaginatorFirst" 
+          [rows]="1" 
+          [totalRecords]="croVideos.total_pages" 
+          (onPageChange)="croOnPageChange($event)" 
+          [showJumpToPageDropdown]="true" 
+          [showPageLinks]="false"
+        ></p-paginator>
+
+        <p-paginator
+          *ngIf="activeIndex === 1"
+          [first]="croPaginatorFirst" 
+          [rows]="1" 
+          [totalRecords]="croArticles.total_pages" 
+          (onPageChange)="croOnPageChange($event)" 
+          [showJumpToPageDropdown]="true" 
+          [showPageLinks]="false"
+        ></p-paginator>
+      </div>
+    </div>
+  <!-- </div> -->
+</div>
+
+</div>

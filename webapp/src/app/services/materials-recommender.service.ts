@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject, lastValueFrom } from 'rxjs';
 import { environment_Python } from 'src/environments/environment';
 import { HTTPOptions } from '../config/config';
+import { ResourcesPagination } from '../models/croForm';
 
 @Injectable({
   providedIn: 'root'
@@ -36,10 +37,33 @@ export class MaterialsRecommenderService {
     return this.recommendedConcepts
   }
 
-  getRecommendedMaterials(formData: any): Observable<any> {
-    this.recommendedMaterials = this.http.post<any>(`${this.cmEndpointURL}get_resources`, formData, { withCredentials: true });
+  getRecommendedMaterials(formData: any, croForm: any): Observable<ResourcesPagination> {
+    let data = {default: {}, croForm: croForm};
+
+    if (formData !== null) {
+      for (const p of formData) {
+        data["default"][String(p[0])] = p[1]
+      }
+    } else {
+      data["default"] = null;
+    }
+    console.warn("data ->", data);
+
+    this.recommendedMaterials = this.http.post<ResourcesPagination>(`${this.cmEndpointURL}get_resources`, data, { withCredentials: true });
     return this.recommendedMaterials
   }
+
+  // getRecommendedMaterials(formData: any, croForm: any): Observable<any> {
+  //   let data = {default: {}, croForm: croForm};
+
+  //   for (const p of formData) {
+  //     data["default"][String(p[0])] = p[1]
+  //   }
+  //   console.warn("data ->", data);
+
+  //   this.recommendedMaterials = this.http.post<any>(`${this.cmEndpointURL}get_resources`, data, { withCredentials: true });
+  //   return this.recommendedMaterials
+  // }
 
 
   async rateRecommendedMaterials(formData: any): Promise<any> {
