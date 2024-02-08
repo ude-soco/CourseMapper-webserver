@@ -13,7 +13,7 @@
             *ngIf="selectedCourse.description.length == 0"
             class="justify-self-start"
           >
-            No discription given.
+            No description provided
           </div>
           <div class="justify-self-start" style="width: 750px;">{{ selectedCourse.description }}</div>
         </div>
@@ -46,7 +46,7 @@
           pButton
           class="button p-button-raised"
           type="button"
-          label="Un-enroll Course"
+          label="Unenroll from course"
           (click)="deEnrole()"
           [disabled]="moderator"
         ></button>
