@@ -31,9 +31,9 @@ class RecService:
         self.recommendation = Recommendation()
         self.dbpedia = DBpediaSpotlight()
 
-    def _construct_user(self, user, non_understood, understood, new_concepts, mid):
+    def _construct_user(self, user_id, non_understood, understood, new_concepts, mid):
         self.db.construct_user_model(
-            user, non_understood, understood, new_concepts, mid
+            user_id, non_understood, understood, new_concepts, mid
         )
 
     def _extract_vector_relation(self, mid):

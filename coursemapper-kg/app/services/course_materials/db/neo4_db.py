@@ -179,20 +179,6 @@ def create_resource_slide_relationships(tx, rid, sid, relation_type):
            t_sid=sid)
 
 
-def create_user_slide_relationships(tx, uid, sid):
-    """
-    """
-
-    logger.info(
-        "Creating user relationships to slide '%s'" % sid)
-    tx.run("""MATCH (u:User) WHERE u.uid = $uid
-            OPTIONAL MATCH(s:Slide) WHERE s.sid = $sid
-            MERGE (u)-[r:HAS_READ]->(s)
-            """,
-           uid=uid,
-           sid=sid)
-
-
 def create_user_concept_relationships(tx, uid, cid, relation_type):
     """
     """
@@ -445,15 +431,13 @@ def retrieve_relationships(tx, mid):
     return list(result)
 
 
-def create_user(tx, user):
+def create_user(tx, user_id):
     """
     """
     tx.run(
-        """MERGE (u:User {name: $name, uid: $uid, type: $type, email: $userEmail, embedding:$embedding})""",
-        name=user["name"],
-        uid=user["id"],
+        """MERGE (u:User {uid: $uid, type: $type, embedding:$embedding})""",
+        uid=user_id,
         type="user",
-        userEmail=user["user_email"],
         embedding="")
 
 
@@ -530,58 +514,21 @@ def retrieve_user_to_concept_relationships(tx, uid):
     return list(result)
 
 
-def connect_user_concept(tx, user, concepts):
-    """
-    """
-    logger.info("Connect user and concept")
-    for concept in concepts:
-        if concept[1] == 1:
-            # If user doesn't understand the concept, the relationship is "dnu"
-            tx.run("""MATCH (u:User) WHERE u.uid = $uid 
-                OPTIONAL MATCH (c:Concept) WHERE c.name = $name  And c.type <> $type
-                MERGE (u)-[r:dnu {weight: 1}]->(c)""",
-                   uid=user["id"],
-                   name=concept[0],
-                   type="category")
-
-            tx.run('''MATCH p=(u)-[r:u]->(c) where u.uid=$uid And c.name = $name  delete r''',
-                   uid=user["id"],
-                   name=concept[0])
-        else:
-            # If user understand the concept, the relationship is "u"
-            tx.run("""MATCH (u:User) WHERE u.uid = $uid 
-                OPTIONAL MATCH (c:Concept) WHERE c.name = $name  And c.type <> $type
-                MERGE (u)-[r:u {weight: 1}]->(c)""",
-                   uid=user["id"],
-                   name=concept[0],
-                   type="category")
-
-            tx.run('''MATCH p=(u)-[r:dnu]->(c) where u.uid=$uid And c.name = $name  delete r''',
-                   uid=user["id"],
-                   name=concept[0])
-
-
-def connect_user_dnu_concept(tx, user, non_understood):
+def connect_user_dnu_concept(tx, user_id, non_understood):
     """
     """
     logger.info("Connect user with concept doesn't understand")
-    uid=user["id"]
+    uid=user_id
     for id in non_understood:
         query='MATCH (u:User) WHERE u.uid = "' + str(uid) + '" OPTIONAL MATCH (c:Concept) WHERE c.cid ="'+str(id)+'"MERGE (u)-[r:dnu {weight: 1}]->(c)'
-        # user doesn't understand the concept, the relationship is "dnu"
-        # tx.run("""MATCH (u:User) WHERE u.uid = $uid 
-        #     OPTIONAL MATCH (c:Concept) WHERE c.cid = $cid
-        #     MERGE (u)-[r:dnu {weight: 1}]->(c)""",
-        #        uid=user["id"],
-        #        cid=id)
         tx.run(query)
 
         tx.run('''MATCH p=(u)-[r:u]->(c) where u.uid=$uid And c.cid = $cid  delete r''',
-               uid=user["id"],
+               uid=user_id,
                cid=id)
 
 # MUSNT BE WEIGHT = 0
-def connect_user_u_concept(tx, user, understood):
+def connect_user_u_concept(tx, user_id, understood):
     """
     """
     logger.info("Connect user with concept understand")
@@ -590,41 +537,41 @@ def connect_user_u_concept(tx, user, understood):
         tx.run("""MATCH (u:User) WHERE u.uid = $uid 
             OPTIONAL MATCH (c:Concept) WHERE c.cid = $cid
             MERGE (u)-[r:u {weight: 0}]->(c)""",
-               uid=user["id"],
+               uid=user_id,
                cid=id)
 
         tx.run('''MATCH p=(u)-[r:dnu]->(c) where u.uid=$uid And c.cid = $cid  delete r''',
-               uid=user["id"],
+               uid=user_id,
                cid=id)
 
 
-def reset_user_concept_relationships(tx, user, new_concepts):
+def reset_user_concept_relationships(tx, user_id, new_concepts):
     """
     """
     logger.info("Connect user with concept understand")
     for id in new_concepts:
         tx.run('''MATCH p=(u)-[r:dnu]->(c) where u.uid=$uid And c.cid = $cid  delete r''',
-               uid=user["id"],
+               uid=user_id,
                cid=id)
         tx.run('''MATCH p=(u)-[r:u]->(c) where u.uid=$uid And c.cid = $cid  delete r''',
-               uid=user["id"],
+               uid=user_id,
                cid=id)
 
 
-def get_user_embedding(tx, user, mid):
+def get_user_embedding(tx, user_id, mid):
     """
     """
     logger.info("Getting User embeddings")
     # Find concept embeddings that user doesn't understand
     results = tx.run(
         """MATCH p=(u)-[r:dnu]->(c) where u.uid=$uid and c.mid=$mid RETURN c.final_embedding as embedding, c.weight as weight""",
-        uid=user["id"],
+        uid=user_id,
         mid=mid)
     embeddings = list(results)
     # If the user does not have concepts that he does not understand, the list is empty
     if not embeddings:
         tx.run("""MATCH (u:User) WHERE u.uid=$uid set u.embedding=$embedding""",
-               uid=user["id"],
+               uid=user_id,
                embedding="")
         logger.info("reset user embedding")
     else:
@@ -643,7 +590,7 @@ def get_user_embedding(tx, user, mid):
         # The weighted average of final embeddings of all dnu concepts
         average = np.divide(sum_embeddings, sum_weights)
         tx.run("""MATCH (u:User) WHERE u.uid=$uid set u.embedding=$embedding""",
-               uid=user["id"],
+               uid=user_id,
                embedding=','.join(str(i) for i in average))
         logger.info("get user embedding")
 
@@ -827,7 +774,7 @@ class NeoDataBase:
         return results
 
     def get_or_create_concepts_and_relationships(self, slide_id, material_id,
-                                                 material_name, user_id, data, slide_node=[], slide_text="", lm_text="",
+                                                 material_name, data, slide_node=[], slide_text="", lm_text="",
                                                  slide_concepts=[]):
         """
         """
@@ -845,7 +792,6 @@ class NeoDataBase:
             if not self.slide_exists(slide_id):
                 create_slide(tx, slide_concepts, slide_node)
 
-                create_user_slide_relationships(tx, user_id, slide_id)
                 create_lm_slide_relationships(tx, material_id, slide_id)
 
                 # concepts
@@ -1234,22 +1180,22 @@ class NeoDataBase:
         else:
             return []
 
-    def construct_user_model(self, user, non_understood, understood, new_concepts, mid):
+    def construct_user_model(self, user_id, non_understood, understood, new_concepts, mid):
         """
         """
         session = self.driver.session()
         tx = session.begin_transaction()
 
         try:
-            if self.user_exists(user["id"]):
+            if self.user_exists(user_id):
                 logger.info("Found  user")
             else:
                 # logger.info("create  user %s" % user)
-                create_user(tx, user)
-            connect_user_dnu_concept(tx, user, non_understood)
-            connect_user_u_concept(tx, user, understood)
-            reset_user_concept_relationships(tx, user, new_concepts)
-            get_user_embedding(tx, user, mid)
+                create_user(tx, user_id)
+            connect_user_dnu_concept(tx, user_id, non_understood)
+            connect_user_u_concept(tx, user_id, understood)
+            reset_user_concept_relationships(tx, user_id, new_concepts)
+            get_user_embedding(tx, user_id, mid)
 
             tx.commit()
         except Exception as e:
@@ -1706,3 +1652,5 @@ class NeoDataBase:
             mid=node["mid"],
             rank=node["rank"])
         session.close()
+
+# TODO Issue #640: do we need create_user_slide_relationships?

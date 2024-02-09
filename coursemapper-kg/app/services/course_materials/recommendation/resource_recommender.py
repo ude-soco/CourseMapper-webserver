@@ -52,9 +52,9 @@ class ResourceRecommenderService:
     def get_slide_concepts(self, slide_id):
         return
 
-    def _construct_user(self, user, non_understood, understood, new_concepts, mid):
+    def _construct_user(self, user_id, non_understood, understood, new_concepts, mid):
         self.db.construct_user_model(
-            user, non_understood, understood, new_concepts, mid
+            user_id, non_understood, understood, new_concepts, mid
         )
 
     def _get_personalized_recommendation(
