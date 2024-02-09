@@ -37,6 +37,7 @@ spacy = "*"
 allennlp = "==0.9.0"
 python-dotenv = "*"
 gunicorn = "*"
+redis = "*"
 
 [dev-packages]
 

@@ -66,4 +66,22 @@ module.exports = function (app) {
     [authJwt.verifyToken],
     controller.setRating
   );
+
+  app.post(
+    "/api/courses/:courseId/materials/:materialId/concept-map",
+    [authJwt.verifyToken, authJwt.isModerator],
+    controller.conceptMap
+  );
+
+  app.post(
+    "/api/courses/:courseId/materials/:materialId/concept-recommendation",
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.getConcepts
+  );
+
+  app.post(
+    "/api/courses/:courseId/materials/:materialId/resource-recommendation",
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.getResources
+  );
 };

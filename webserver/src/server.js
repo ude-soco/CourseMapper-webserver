@@ -75,6 +75,15 @@ neo4j.connect(
   process.env.NEO4J_PW
 );
 
+// Create connection to Redis
+const redis = require("./graph/redis");
+redis.connect(
+  process.env.REDIS_HOST,
+  process.env.REDIS_PORT,
+  process.env.REDIS_DATABASE,
+  process.env.REDIS_PASSWORD
+);
+
 // xAPI scheduler
 const xapiScheduler = require("./xAPILogger/scheduler");
 xapiScheduler.runXapiScheduler();

@@ -1,6 +1,14 @@
-const neo4j = require("../graph/neo4j");
+const fs = require('fs').promises;
+const process = require('process');
 
-export const checkSlide = async (req, res, next) => {
+const neo4j = require("../graph/neo4j");
+const redis = require("../graph/redis");
+// TODO Issue #640: Use better file names
+
+const db = require("../models");
+const Material = db.material;
+
+export const checkSlide = async (req, res) => {
   const slideId = req.params.slideId;
 
   try {
@@ -11,7 +19,7 @@ export const checkSlide = async (req, res, next) => {
   }
 };
 
-export const getSlide = async (req, res, next) => {
+export const getSlide = async (req, res) => {
   const slideId = req.params.slideId;
 
   try {
@@ -22,7 +30,7 @@ export const getSlide = async (req, res, next) => {
   }
 };
 
-export const checkMaterial = async (req, res, next) => {
+export const checkMaterial = async (req, res) => {
   const materialId = req.params.materialId;
 
   try {
@@ -33,7 +41,7 @@ export const checkMaterial = async (req, res, next) => {
   }
 }
 
-export const getMaterial = async (req, res, next) => {
+export const getMaterial = async (req, res) => {
   const materialId = req.params.materialId;
 
   try {
@@ -44,7 +52,7 @@ export const getMaterial = async (req, res, next) => {
   }
 }
 
-export const deleteMaterial = async (req, res, next) => {
+export const deleteMaterial = async (req, res) => {
   const materialId = req.params.materialId;
 
   try {
@@ -55,7 +63,7 @@ export const deleteMaterial = async (req, res, next) => {
   }
 }
 
-export const getMaterialEdges = async (req, res, next) => {
+export const getMaterialEdges = async (req, res) => {
   const materialId = req.params.materialId;
 
   try {
@@ -66,7 +74,7 @@ export const getMaterialEdges = async (req, res, next) => {
   }
 }
 
-export const getMaterialConceptIds = async (req, res, next) => {
+export const getMaterialConceptIds = async (req, res) => {
   const materialId = req.params.materialId;
 
   try {
@@ -77,7 +85,7 @@ export const getMaterialConceptIds = async (req, res, next) => {
   }
 }
 
-export const getHigherLevelsNodes = async (req, res, next) => {
+export const getHigherLevelsNodes = async (req, res) => {
   const materialIds = req.query.material_ids;
 
   try {
@@ -88,7 +96,7 @@ export const getHigherLevelsNodes = async (req, res, next) => {
   }
 }
 
-export const getHigherLevelsEdges = async (req, res, next) => {
+export const getHigherLevelsEdges = async (req, res) => {
   const materialIds = req.query.material_ids;
 
   try {
@@ -99,7 +107,7 @@ export const getHigherLevelsEdges = async (req, res, next) => {
   }
 }
 
-export const setRating = async (req, res, next) => {
+export const setRating = async (req, res) => {
   const resourceId = req.body.resourceId;
   const concepts = req.body.concepts;
   const userId = req.userId;
@@ -111,4 +119,73 @@ export const setRating = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: err.message });
   }
+}
+
+export const conceptMap = async (req, res) => {
+  const modelName = req.body.modelName;
+  const materialId = req.params.materialId;
+
+  const material = await Material.findById(materialId);
+  if (!material) {
+    return res.status(404).send({ error: "Material not found" });
+  }
+  const materialName = material.name;
+  const materialPath = process.cwd() + material.url + material._id + '.pdf';
+  const materialData = await fs.readFile(materialPath);
+  await redis.addFile(materialId, materialData);
+
+  await redis.addJob('concept-map', {
+    modelName,
+    materialId,
+    materialName,
+  }, (result) => {
+    if (result.error) {
+      return res.status(500).send({ error: result.error });
+    }
+    return res.status(200).send(result.result);
+  });
+}
+
+export const getConcepts = async (req, res) => {
+  const materialId = req.params.materialId;
+  const userId = req.userId;
+  const understood = req.body.understoodConcepts;
+  const nonUnderstood = req.body.nonUnderstoodConcepts;
+  const newConcepts = req.body.newConcepts;
+
+  await redis.addJob('concept-recommendation', {
+    materialId,
+    userId,
+    understood,
+    nonUnderstood,
+    newConcepts
+  }, (result) => {
+    if (result.error) {
+      return res.status(500).send({ error: result.error });
+    }
+    return res.status(200).send(result.result);
+  });
+}
+
+export const getResources = async (req, res) => {
+  const materialId = req.params.materialId;
+  const userId = req.userId;
+  const slideId = req.body.slideId;
+  const understood = req.body.understoodConcepts;
+  const nonUnderstood = req.body.nonUnderstoodConcepts;
+  const newConcepts = req.body.newConcepts;
+
+  await redis.addJob('resource-recommendation', {
+    materialId,
+    userId,
+    slideId,
+    understood,
+    nonUnderstood,
+    newConcepts
+  }, (result) => {
+    if (result.error) {
+      return res.status(500).send({ error: result.error });
+    }
+    return res.status(200).send(result.result);
+  });
 }
