@@ -2,7 +2,6 @@ from ...pdfextractor.text_extractor import PDFTextExtractor
 from ...GCN.gcn import GCN
 import json
 import numpy as np
-from flask import current_app
 
 from ..singlerank_method.singlerank import SingleRank
 from .concept_tagging import DBpediaSpotlight
@@ -10,6 +9,7 @@ from ...db.neo4_db import NeoDataBase
 from ..model import KeyphraseExtractor
 from ...exceptions.exceptions import PreprocessingException
 from matplotlib import pyplot as plt
+from config import Config
 
 import pandas as pd
 import csv
@@ -47,9 +47,9 @@ ALLOWED_EXTENSIONS = {"pdf"}
 
 class DataService:
     def __init__(self):
-        neo4j_uri = current_app.config.get("NEO4J_URI")  # type: ignore
-        neo4j_user = current_app.config.get("NEO4J_USER")  # type: ignore
-        neo4j_pass = current_app.config.get("NEO4J_PASSWORD")  # type: ignore
+        neo4j_uri = Config.NEO4J_URI
+        neo4j_user = Config.NEO4J_USER
+        neo4j_pass = Config.NEO4J_PASSWORD
             
         self.db = NeoDataBase(neo4j_uri, neo4j_user, neo4j_pass)
         # start_time = time.time()

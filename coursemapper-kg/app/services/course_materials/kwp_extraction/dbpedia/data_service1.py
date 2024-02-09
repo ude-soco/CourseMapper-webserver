@@ -1,12 +1,12 @@
 from ...conceptrecommentation.recommendation import Recommendation
 from ..dbpedia.concept_tagging import DBpediaSpotlight
 from ...db.neo4_db import NeoDataBase
-from flask import current_app
 import time
 import os
 
 import logging
 from log import LOG
+from config import Config
 
 logger = LOG(name=__name__, level=logging.DEBUG)
 
@@ -22,9 +22,9 @@ class RecService:
         # NEO4J_PASSWORD = os.environ.get('NEO4J_PW')
         # # NEO4J_PASSWORD = "root"
         # self.db = NeoDataBase(NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD)
-        neo4j_uri = current_app.config.get("NEO4J_URI")  # type: ignore
-        neo4j_user = current_app.config.get("NEO4J_USER")  # type: ignore
-        neo4j_pass = current_app.config.get("NEO4J_PASSWORD")  # type: ignore
+        neo4j_uri = Config.NEO4J_URI
+        neo4j_user = Config.NEO4J_USER
+        neo4j_pass = Config.NEO4J_PASSWORD
 
         self.db = NeoDataBase(neo4j_uri, neo4j_user, neo4j_pass)
 

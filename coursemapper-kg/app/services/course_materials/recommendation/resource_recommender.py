@@ -1,17 +1,17 @@
 import concurrent.futures
-from flask import current_app
 
 from ..db.neo4_db import NeoDataBase
 
 from .recommendation_type import RecommendationType
 from .recommender import Recommender
+from config import Config
 
 
 class ResourceRecommenderService:
     def __init__(self):
-        neo4j_uri = current_app.config.get("NEO4J_URI")  # type: ignore
-        neo4j_user = current_app.config.get("NEO4J_USER")  # type: ignore
-        neo4j_pass = current_app.config.get("NEO4J_PASSWORD")  # type: ignore
+        neo4j_uri = Config.NEO4J_URI
+        neo4j_user = Config.NEO4J_USER
+        neo4j_pass = Config.NEO4J_PASSWORD
 
         self.db = NeoDataBase(neo4j_uri, neo4j_user, neo4j_pass)
 
