@@ -12,8 +12,12 @@ from app.views.course_materials import concept_map, get_concepts, get_resources
 from config import Config
 
 
+# For more information about individual redis commands, see:
+# https://redis-py.readthedocs.io/en/stable/commands.html
+
+
 logger = LOG(name=__name__, level=logging.DEBUG)
-client = Redis(host=Config.REDIS_HOST, port=Config.REDIS_PORT, db=Config.REDIS_DB, password=Config.REDIS_PASSWORD)
+redis = Redis(host=Config.REDIS_HOST, port=Config.REDIS_PORT, db=Config.REDIS_DB, password=Config.REDIS_PASSWORD)
 
 # Generate a random worker id
 random.seed()
@@ -23,11 +27,12 @@ class LockError(Exception):
     pass
 
 def check_lock(job_id):
-    lock = client.hget(f'locks', job_id)
+    lock = redis.hget(f'locks', job_id)
     assert(type(lock) == bytes)
     lock = lock.decode('utf-8')
 
     if lock != worker_id:
+        # TODO Issue #640: Find a way to stop main thread
         raise LockError()
 
 def status_updater(is_exiting, job_id):
@@ -37,7 +42,7 @@ def status_updater(is_exiting, job_id):
 
         # Update the status
         timestamp = str(int(time.time()))
-        client.hset(f'last_updates', job_id, timestamp)
+        redis.hset(f'last_updates', job_id, timestamp)
 
         # Wait a bit
         time.sleep(5)
@@ -53,24 +58,24 @@ def start_updater_thread(job_id):
 
 def send_result(data):
     # Push result to queue:done
-    client.rpush(f'queue:done', data)
+    redis.rpush(f'queue:done', data)
 
 def clean_up(pipeline, job_id, material_id):
     # Remove job from queue:processing
-    client.lrem(f'queue:{pipeline}:processing', 0, job_id)
+    redis.lrem(f'queue:{pipeline}:processing', 0, job_id)
 
     # Delete status
-    client.hdel(f'last_updates', job_id)
+    redis.hdel(f'last_updates', job_id)
 
     # Delete lock
-    client.hdel(f'locks', job_id)
+    redis.hdel(f'locks', job_id)
 
     # Delete job
-    client.hdel(f'jobs', job_id)
+    redis.hdel(f'jobs', job_id)
 
     # Delete file
     if pipeline == 'concept-map':
-        client.hdel('files', material_id)
+        redis.hdel('files', material_id)
 
 def start_worker(pipelines):
     logger.info('Starting worker...')
@@ -78,22 +83,22 @@ def start_worker(pipelines):
     while True:
         # Wait for a hash to be pushed to queue:ready
         queues = [f'queue:{pipeline}:pending' for pipeline in pipelines]
-        from_queue, job_id = client.brpop(queues, 0)
+        from_queue, job_id = redis.brpop(queues, 0)
         assert(type(job_id) == bytes and type(from_queue) == bytes)
         pipeline = from_queue.decode('utf-8').split(':')[1]
         job_id = job_id.decode('utf-8')
-        client.lpush(f'queue:{pipeline}:processing', job_id)
+        redis.lpush(f'queue:{pipeline}:processing', job_id)
 
         logger.info(f'Received {pipeline} job for {job_id}...')
 
         # Get the job arguments
-        job = client.hget(f'jobs', job_id)
+        job = redis.hget(f'jobs', job_id)
         assert(type(job) == bytes)
         job = job.decode('utf-8')
         job = json.loads(job)
 
         # Lock the job
-        client.hset(f'locks', job_id, worker_id)
+        redis.hset(f'locks', job_id, worker_id)
 
         # Spawn a thread to send status updates
         stop_thread = start_updater_thread(job_id)
@@ -103,7 +108,7 @@ def start_worker(pipelines):
         try:
             # Run the pipeline
             if pipeline == 'concept-map':
-                file = client.hget('files', job.get('materialId'))
+                file = redis.hget('files', job.get('materialId'))
                 assert(type(file) == bytes)
                 file = io.BytesIO(file)
                 result = concept_map(job, file)
@@ -124,6 +129,9 @@ def start_worker(pipelines):
             })
             send_result(data)
 
+            # Wait for alive thread to finish
+            stop_thread()
+
             # Clean up
             clean_up(pipeline, job_id, job.get('materialId'))
 
@@ -132,6 +140,10 @@ def start_worker(pipelines):
         except LockError:
             # Print the error
             logger.error(f'Lost lock for job {job_id}')
+
+            # Wait for alive thread to finish
+            # TODO what happens if thread is already stopped?
+            stop_thread()
 
             # No need to clean up, another worker will do it
         except Exception as e:
@@ -142,14 +154,17 @@ def start_worker(pipelines):
             })
             send_result(data)
 
+            # Print a message
+            logger.info(f'Error processing {pipeline} job {job_id}')
+
             # Print the error
             logger.error(e)
 
+            # Wait for alive thread to finish
+            stop_thread()
+
             # Clean up
             clean_up(pipeline, job_id, job.get('materialId'))
-
-        # Wait for alive thread to finish
-        stop_thread()
 
 if __name__ == '__main__':
     # Get the pipelines
