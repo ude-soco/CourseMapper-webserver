@@ -1216,22 +1216,13 @@ export class ConceptMapComponent {
     }
   }
   async getReqData() {
-    const formData = new FormData();
-    const file = await this.getMaterialFile();
+    const data = {};
 
-    formData.append('model', this.selectedModel!);
-    formData.append('materialId', this.currentMaterial!._id);
-    formData.append('materialName', this.currentMaterial!.name);
-    formData.append(
-      'materialURL',
-      this.currentMaterial!.url + this.currentMaterial!._id + '.pdf'
-    );
-    formData.append('materialFile', file);
-    formData.append('userId', this.userid.toString());
-    formData.append('userEmail', this.userEmail.toString());
-    formData.append('username', this.username.toString());
+    data['modelName'] = this.selectedModel!;
+    data['courseId'] = this.currentMaterial!.courseId;
+    data['materialId'] = this.currentMaterial!._id;
 
-    return formData;
+    return data;
   }
   async getConceptMapDataCurrentSlide() {
     //make sure that all used properties have been cleaned
@@ -1627,9 +1618,8 @@ export class ConceptMapComponent {
     }
   }
   //prepare formData for [concepts & materials] recommenders
-  async getRecommendedMaterialsPerSlide(): Promise<FormData> {
-    const formData = new FormData();
-    const file = await this.getMaterialFile();
+  async getRecommendedMaterialsPerSlide(): Promise<any> {
+    const data = {};
     const slideID =
       this.currentMaterial!._id + '_slide_' + this.kgCurrentPage.toString();
     const notUnderstandConceptsIds = [];
@@ -1663,31 +1653,26 @@ export class ConceptMapComponent {
 
     // formData.append('model', this.selectedModel!);
     // formData.append("materialId", this.currentMaterial!._id);
-    formData.append('materialId', this.currentMaterial!._id.toString());
-    formData.append('slideId', slideID);
-    formData.append('materialName', this.currentMaterial!.name);
-    formData.append('materialURL', this.currentMaterial!.url);
-    formData.append('materialPage', this.kgCurrentPage.toString());
-    formData.append('materialFile', file);
-    formData.append('userId', this.userid.toString());
-    formData.append('userEmail', this.userEmail.toString());
-    formData.append('username', this.username.toString());
-    formData.append(
-      'understoodConcepts',
-      this.allUnderstoodConcepts.toString()
-    );
-    formData.append(
-      'nonUnderstoodConcepts',
-      notUnderstandConceptsIds.toString()
-    );
-    formData.append('newConcepts', newConceptsIds.toString());
+    data['courseId'] = this.currentMaterial!.courseId.toString();
+    data['materialId'] = this.currentMaterial!._id.toString();
+    data['slideId'] = slideID;
+    data['materialName'] = this.currentMaterial!.name;
+    data['materialURL'] = this.currentMaterial!.url;
+    data['materialPage'] = this.kgCurrentPage.toString();
+    data['userId'] = this.userid.toString();
+    data['userEmail'] = this.userEmail.toString();
+    data['username'] = this.username.toString();
+    data['understoodConcepts'] =
+      this.allUnderstoodConcepts.toString();
+    data['nonUnderstoodConcepts'] =
+      notUnderstandConceptsIds.toString();
+    data['newConcepts'] = newConceptsIds.toString();
 
-    return formData;
+    return data;
   }
   async getRecommendedMaterialsPerSlideMaterial(): // model: string
-    Promise<FormData> {
-    const formData = new FormData();
-    const file = await this.getMaterialFile();
+    Promise<any> {
+    const data = {}
     const slideID =
       this.currentMaterial!._id + '_slide_' + this.kgCurrentPage.toString();
     const notUnderstandConceptsIds = [];
@@ -1721,28 +1706,19 @@ export class ConceptMapComponent {
     // });
 
     // formData.append('model', this.selectedModel!);
-    // formData.append("materialId", this.currentMaterial!._id);
-    formData.append('materialId', this.currentMaterial!._id.toString());
-    formData.append('slideId', slideID);
-    formData.append('materialName', this.currentMaterial!.name);
-    formData.append('materialURL', this.currentMaterial!.url);
-    formData.append('materialPage', this.kgCurrentPage.toString());
-    formData.append('materialFile', file);
-    formData.append('userId', this.userid.toString());
-    formData.append('userEmail', this.userEmail.toString());
-    formData.append('username', this.username.toString());
-    formData.append(
-      'understoodConcepts',
-      this.allUnderstoodConcepts.toString()
-    );
-    // formData.append('recommendationType', model.toString());
-    formData.append(
-      'nonUnderstoodConcepts',
-      notUnderstandConceptsIds.toString()
-    );
-    formData.append('newConcepts', newConceptsIds.toString());
+    data['courseId'] = this.currentMaterial!.courseId.toString();
+    data['materialId'] = this.currentMaterial!._id.toString();
+    data['slideId'] = slideID;
+    data['materialName'] = this.currentMaterial!.name;
+    data['materialURL'] = this.currentMaterial!.url;
+    data['materialPage'] = this.kgCurrentPage.toString();
+    data['understoodConcepts'] =
+      this.allUnderstoodConcepts.toString();
+    data['nonUnderstoodConcepts'] =
+      notUnderstandConceptsIds.toString();
+    data['newConcepts'] = newConceptsIds.toString();
 
-    return formData;
+    return data;
   }
   async getMaterialFile() {
     //Change to new approach of getting materials
