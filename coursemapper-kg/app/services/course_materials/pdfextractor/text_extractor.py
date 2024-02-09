@@ -21,64 +21,6 @@ class PDFTextExtractor:
     """ PDF Text Extractor
 
     """
-
-    # def extract_text(self, file, material_id="",use_most_font_size=False):
-    #     logger.info("Extracting text from file: %s" % file)
-
-    #     document_text = ""
-    #     font_sizes = {}
-    #     number = 1
-    #     slide_nodes = []
-
-    #     manager = PDFResourceManager()
-    #     aggregator = PDFPageAggregator(manager,
-    #                                    laparams=LAParams(detect_vertical=True))
-    #     interpreter = PDFPageInterpreter(manager, aggregator)
-
-    #     if isinstance(file, FileStorage):
-    #         infile = file.stream
-    #     else:
-    #         infile = open(file, 'rb')
-
-    #     logger.info("PDF: %s" % extension)
-        
-    #     if use_most_font_size == True:
-
-    #         for page in PDFPage.get_pages(infile, set()):
-    #             interpreter.process_page(page)
-    #             layout = aggregator.get_result()
-    #             self.count_font_sizes(layout._objs, font_sizes)
-
-    #         most_used_font_size_value = max(font_sizes.values())
-    #         most_used_font_size_keys = [
-    #             k for k, v in font_sizes.items()
-    #             if v == most_used_font_size_value
-    #         ]
-
-    #         for page in PDFPage.get_pages(infile, set()):
-    #             interpreter.process_page(page)
-    #             layout = aggregator.get_result()
-    #             document_text += self.parse_obj(layout._objs, most_used_font_size_keys)
-    #         aggregator.close()
-    #         infile.close()
-    #     else:
-    #         for page in PDFPage.get_pages(infile, set()):
-    #             interpreter.process_page(page)
-    #             layout = aggregator.get_result()
-    #             slide_id =  str(material_id) + "_slide_" + str(number)
-    #             name = "slide_" + str(number)
-    #             slide_text = self.preprocess(
-    #                 self.parse_obj(layout._objs, format=True))
-    #             slide = self.preprocess(slide_text.strip())
-    #             slide_node = {"slide_id": slide_id, "name": name, "slide_text": slide, "mid": material_id, "initial_embedding":"","type": "Slide"}
-    #             slide_nodes.append(slide_node)
-    #             document_text = document_text + slide_text
-    #             number += 1
-
-    #     # preprocessing
-    #     doc = self.preprocess(document_text.strip())
-
-    #     return doc,slide_nodes
     def extract_text(self, file, use_most_font_size=False):
         logger.info("Extracting text from file: %s" % file)
 

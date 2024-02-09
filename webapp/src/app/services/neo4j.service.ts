@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { lastValueFrom } from 'rxjs';
 import { environment } from 'src/environments/environment';
-// TODO remove neo4j from package.json
 
 type Neo4jResult = {
   records: any[]

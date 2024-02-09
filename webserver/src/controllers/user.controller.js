@@ -329,9 +329,6 @@ export const getUserConcepts = async (req, res) => {
 
   let foundUser;
   let results;
-  console.log('userId is:')
-  console.log(userId)
-  console.log(typeof(userId))
   try {
     foundUser = await User.findOne({ _id: userId })
     .populate("courses", "-__v");
