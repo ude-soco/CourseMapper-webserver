@@ -32,16 +32,11 @@ class PDFTextExtractor:
                                        laparams=LAParams(detect_vertical=True))
         interpreter = PDFPageInterpreter(manager, aggregator)
 
-        if isinstance(file, FileStorage):
-            infile = file.stream
-        else:
-            infile = open(file, 'rb')
-
         logger.info("PDF: %s" % extension)
 
         if use_most_font_size == True:
 
-            for page in PDFPage.get_pages(infile, set()):
+            for page in PDFPage.get_pages(file, set()):
                 interpreter.process_page(page)
                 layout = aggregator.get_result()
                 self.count_font_sizes(layout._objs, font_sizes)
@@ -52,15 +47,15 @@ class PDFTextExtractor:
                 if v == most_used_font_size_value
             ]
 
-            for page in PDFPage.get_pages(infile, set()):
+            for page in PDFPage.get_pages(file, set()):
                 interpreter.process_page(page)
                 layout = aggregator.get_result()
                 document_text += self.parse_obj(layout._objs,
                                                 most_used_font_size_keys)
             aggregator.close()
-            infile.close()
+            file.close()
         else:
-            for page in PDFPage.get_pages(infile, set()):
+            for page in PDFPage.get_pages(file, set()):
                 interpreter.process_page(page)
                 layout = aggregator.get_result()
                 document_text += self.preprocess(
@@ -147,17 +142,10 @@ class PDFTextExtractor:
                                        laparams=LAParams(detect_vertical=True))
         interpreter = PDFPageInterpreter(manager, aggregator)
 
-        if isinstance(file, FileStorage):
-            #print("File Storage")
-            infile = file.stream
-        else:
-            #print("Not File Storage")
-            infile = open(file, 'rb')
-
         if use_most_font_size == True:
             #print("Use most font size")
 
-            for page in PDFPage.get_pages(infile, set()):
+            for page in PDFPage.get_pages(file, set()):
                 interpreter.process_page(page)
                 layout = aggregator.get_result()
                 self.count_font_sizes(layout._objs, font_sizes)
@@ -168,17 +156,17 @@ class PDFTextExtractor:
                 if v == most_used_font_size_value
             ]
 
-            for page in PDFPage.get_pages(infile, set()):
+            for page in PDFPage.get_pages(file, set()):
                 interpreter.process_page(page)
                 layout = aggregator.get_result()
                 document_text += self.parse_obj(layout._objs,
                                            most_used_font_size_keys)
             aggregator.close()
-            infile.close()
+            file.close()
         else:
             count = 0
             #print("Don't use most font size")
-            for page in PDFPage.get_pages(infile, set()):
+            for page in PDFPage.get_pages(file, set()):
                 #print("Count: ", count)
                 count = count+1
                 #print("Count2: ", count)
@@ -197,17 +185,9 @@ class PDFTextExtractor:
         return doc
 
     def get_pagenumbers(self, file):
-
-        if isinstance(file, FileStorage):
-            #print("File Storage")
-            infile = file.stream
-        else:
-            #print("Not File Storage")
-            infile = open(file, 'rb')
-
         count = 0
         #print("Don't use most font size")
-        for page in PDFPage.get_pages(infile, set()):
+        for page in PDFPage.get_pages(file, set()):
             count = count+1
                 
         return count
