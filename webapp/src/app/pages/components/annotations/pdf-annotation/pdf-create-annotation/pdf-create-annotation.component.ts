@@ -198,6 +198,11 @@ export class PdfCreateAnnotationComponent
         ...this.annotation,
         type: this.selectedAnnotationType,
         content: this.content,
+        location: {
+          type: 'Current Slide',
+          startPage: this.currentPage,
+          lastPage: this.currentPage,
+        },
       };
 
       this.dispatchAnnotation();

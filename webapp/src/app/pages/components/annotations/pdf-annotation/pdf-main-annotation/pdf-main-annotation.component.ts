@@ -21,6 +21,7 @@ import {
   PdfGeneralAnnotationLocation,
   PdfToolType,
 } from 'src/app/models/Annotations';
+import { getCurrentlyClickedNotification } from '../../../notifications/state/notifications.reducer';
 import {
   getAnnotationsForMaterial,
   getCurrentPdfPage,
@@ -129,6 +130,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   drawBoxObjectList: RectangleObject[] = [];
   annotations: Annotation[] = [];
   showConceptMapEvent: boolean = false;
+  currentPDFPage$: Observable<number>;
   private socketSubscription: Subscription;
 
   ngOnInit(): void {
@@ -136,10 +138,24 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
       this.hideAnnotations(isHideAnnotations);
     });
 
-    this.store.select(getCurrentPdfPage).subscribe((currentPage) => {
+    this.currentPDFPage$ = this.store.select(getCurrentPdfPage);
+
+    this.currentPDFPage$.subscribe((currentPage) => {
       this.currentPage = currentPage;
       this.pageRendered(currentPage);
     });
+
+    this.store
+      .select(getCurrentlyClickedNotification)
+      .subscribe((notification) => {
+        if (notification) {
+          this.store.dispatch(
+            AnnotationActions.setCurrentPdfPage({
+              pdfCurrentPage: notification.startPage,
+            })
+          );
+        }
+      });
   }
 
   ngOnDestroy(): void {
@@ -153,7 +169,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
     private store: Store<State>,
     private socket: Socket,
     private changeDetectorRef: ChangeDetectorRef,
-    private slideKgGenerator: SlideKgOrderedService,
+    private slideKgGenerator: SlideKgOrderedService
   ) {
     this.getDocUrl();
     this.store.dispatch(AnnotationActions.loadAnnotations());
@@ -1062,7 +1078,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   }
 
   onConceptMapButtonClicked(show: boolean) {
-    this.showConceptMapEvent=show
-    this.slideKgGenerator.slideKgOrdered()
+    this.showConceptMapEvent = show;
+    this.slideKgGenerator.slideKgOrdered();
   }
 }

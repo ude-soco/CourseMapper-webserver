@@ -408,6 +408,10 @@ export class NotificationDashboardComponent {
         courseActions.setCourseId({ courseId: notification.course_id })
       );
 
+      this.store.dispatch(
+        NotificationActions.setCurrentlySelectedNotification({ notification })
+      );
+
       if (notification.reply_id) {
         this.courseService.navigatingToMaterial = true;
         this.store.dispatch(

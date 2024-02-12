@@ -15,6 +15,8 @@ import {
 import * as AppState from 'src/app/state/app.state';
 import * as NotificationActions from './notifications.actions';
 import { CourseNotificationSettings } from 'src/app/models/BlockingNotification';
+import { stat } from 'fs';
+import { state } from '@angular/animations';
 export interface State extends AppState.State {
   notifications: NotificationState;
 }
@@ -30,6 +32,7 @@ export interface NotificationState {
   isAnnotationNotificationsEnabled: boolean;
   isReplyAndMentionedNotificationsEnabled: boolean;
   isCourseUpdateNotificationsEnabled: boolean;
+  currentlyClickedNotification: Notification;
 }
 
 const initialState: NotificationState = {
@@ -43,6 +46,7 @@ const initialState: NotificationState = {
   isAnnotationNotificationsEnabled: null,
   isReplyAndMentionedNotificationsEnabled: null,
   isCourseUpdateNotificationsEnabled: null,
+  currentlyClickedNotification: null,
 };
 
 //selectors
@@ -68,6 +72,11 @@ export const getCurrentlySelectedTab = createSelector(
 export const getBlockingUsers = createSelector(
   getNotificationFeatureState,
   (state) => state.blockingUsers
+);
+
+export const getCurrentlyClickedNotification = createSelector(
+  getNotificationFeatureState,
+  (state) => state.currentlyClickedNotification
 );
 
 //the notifications being returned should be sorted according to the timestamp property of the notifications in descending order
@@ -536,5 +545,20 @@ export const notificationReducer = createReducer<NotificationState>(
         (notification) => notification.course_id !== action.courseId
       ),
     };
-  })
+  }),
+  on(NotificationActions.setCurrentlySelectedNotification, (state, action) => {
+    return {
+      ...state,
+      currentlyClickedNotification: action.notification,
+    };
+  }),
+  on(
+    NotificationActions.unsetCurrentlySelectedNotification,
+    (state, action) => {
+      return {
+        ...state,
+        currentlyClickedNotification: null,
+      };
+    }
+  )
 );

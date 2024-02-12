@@ -106,7 +106,7 @@ export class PdfCommentPanelComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.currentPage = 1;
+    /* this.currentPage = 1; */
     this.showPDFAnnotations();
   }
 

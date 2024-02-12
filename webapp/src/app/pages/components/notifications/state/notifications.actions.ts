@@ -209,3 +209,12 @@ export const isDeletingCourse = createAction(
   '[Notification] Is Deleting Course',
   props<{ courseId: string }>()
 );
+
+export const setCurrentlySelectedNotification = createAction(
+  '[Notification] Set Currently Selected Notification',
+  props<{ notification: Notification }>()
+);
+
+export const unsetCurrentlySelectedNotification = createAction(
+  '[Notification] Unset Currently Selected Notification'
+);
