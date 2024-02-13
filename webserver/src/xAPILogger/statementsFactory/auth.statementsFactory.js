@@ -20,7 +20,7 @@ export const getLoginStatement = (user, origin) => {
     verb: {
       id: "https://brindlewaye.com/xAPITerms/verbs/loggedin/",
       display: {
-        language: "logged in",
+        [language]: "logged in",
       },
     },
     object: {
@@ -29,11 +29,11 @@ export const getLoginStatement = (user, origin) => {
       definition: {
         type: "http://id.tincanapi.com/activitytype/lms",
         name: {
-          language: platform,
+          [language]: platform,
         },
         description: {
-          language: "Course Annotation and Analytics platform",
-        },
+            [language]: "Course Annotation and Analytics platform"
+        }
       },
     },
     context: {
@@ -60,7 +60,7 @@ export const getLogoutStatement = (user, origin) => {
     verb: {
       id: "https://brindlewaye.com/xAPITerms/verbs/loggedout/",
       display: {
-        language: "logged out",
+        [language]: "logged out",
       },
     },
     object: {
@@ -69,11 +69,11 @@ export const getLogoutStatement = (user, origin) => {
       definition: {
         type: "http://id.tincanapi.com/activitytype/lms",
         name: {
-          language: platform,
+          [language]: platform,
         },
         description: {
-          language: "Course Annotation and Analytics platform",
-        },
+            [language]: "Course Annotation and Analytics platform"
+        }
       },
     },
     context: {
@@ -100,7 +100,7 @@ export const getSignupStatement = (user, origin) => {
     verb: {
       id: "http://adlnet.gov/expapi/verbs/registered",
       display: {
-        language: "registered",
+        [language]: "registered",
       },
     },
     object: {
@@ -109,11 +109,11 @@ export const getSignupStatement = (user, origin) => {
       definition: {
         type: "http://id.tincanapi.com/activitytype/lms",
         name: {
-          language: platform,
+          [language]: platform,
         },
         description: {
-          language: "Course Annotation and Analytics platform",
-        },
+            [language]: "Course Annotation and Analytics platform"
+        }
       },
     },
     context: {
