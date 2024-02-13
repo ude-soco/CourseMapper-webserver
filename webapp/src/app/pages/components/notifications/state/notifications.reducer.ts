@@ -33,6 +33,7 @@ export interface NotificationState {
   isReplyAndMentionedNotificationsEnabled: boolean;
   isCourseUpdateNotificationsEnabled: boolean;
   currentlyClickedNotification: Notification;
+  currentlySelectedFollowingAnnotationId: string;
 }
 
 const initialState: NotificationState = {
@@ -47,6 +48,7 @@ const initialState: NotificationState = {
   isReplyAndMentionedNotificationsEnabled: null,
   isCourseUpdateNotificationsEnabled: null,
   currentlyClickedNotification: null,
+  currentlySelectedFollowingAnnotationId: null,
 };
 
 //selectors
@@ -77,6 +79,11 @@ export const getBlockingUsers = createSelector(
 export const getCurrentlyClickedNotification = createSelector(
   getNotificationFeatureState,
   (state) => state.currentlyClickedNotification
+);
+
+export const getCurrentlySelectedFollowingAnnotationId = createSelector(
+  getNotificationFeatureState,
+  (state) => state.currentlySelectedFollowingAnnotationId
 );
 
 //the notifications being returned should be sorted according to the timestamp property of the notifications in descending order
@@ -558,6 +565,24 @@ export const notificationReducer = createReducer<NotificationState>(
       return {
         ...state,
         currentlyClickedNotification: null,
+      };
+    }
+  ),
+  on(
+    NotificationActions.setCurrentlySelectedFollowingAnnotation,
+    (state, action) => {
+      return {
+        ...state,
+        currentlySelectedFollowingAnnotationId: action.annotationId,
+      };
+    }
+  ),
+  on(
+    NotificationActions.unsetCurrentlySelectedFollowingAnnotation,
+    (state, action) => {
+      return {
+        ...state,
+        currentlySelectedFollowingAnnotationId: null,
       };
     }
   )

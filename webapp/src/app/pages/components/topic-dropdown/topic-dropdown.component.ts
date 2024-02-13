@@ -329,7 +329,13 @@ export class TopicDropdownComponent implements OnInit {
   onFollowingAnnotationClicked(followingAnnotation: Annotation) {
     /* this.router.navigate(['/course', notification.course_id]); */
     if (followingAnnotation.annotationId) {
-      //if website is already on the same material, then just scroll to the annotation
+      this.store.dispatch(
+        NotificationActions.setCurrentlySelectedFollowingAnnotation({
+          annotationId: followingAnnotation.annotationId,
+        })
+      );
+
+      /*       //if website is already on the same material, then just scroll to the annotation
       if (
         this.router.url.includes(
           '/course/' +
@@ -362,7 +368,7 @@ export class TopicDropdownComponent implements OnInit {
           }, 5000);
         }, 100);
         return;
-      }
+      } */
       this.courseService.navigatingToMaterial = true;
       this.router.navigateByUrl(
         '/course/' +

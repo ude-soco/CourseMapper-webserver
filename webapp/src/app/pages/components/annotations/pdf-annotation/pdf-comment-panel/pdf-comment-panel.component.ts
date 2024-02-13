@@ -18,6 +18,9 @@ import { Material } from 'src/app/models/Material';
 import { getCurrentMaterial } from '../../../materials/state/materials.reducer';
 import { getCurrentTime } from '../../video-annotation/state/video.reducer';
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
+import * as NotificationActions from '../../../notifications/state/notifications.actions';
+import { getCurrentlySelectedFollowingAnnotationId } from '../../../notifications/state/notifications.reducer';
+import { combineLatest, filter, withLatestFrom } from 'rxjs';
 @Component({
   selector: 'app-pdf-comment-panel',
   templateUrl: './pdf-comment-panel.component.html',
@@ -108,6 +111,43 @@ export class PdfCommentPanelComponent implements OnInit {
   ngOnInit(): void {
     /* this.currentPage = 1; */
     this.showPDFAnnotations();
+    /*    this.store
+      .select(getCurrentlySelectedFollowingAnnotationId)
+      .pipe(withLatestFrom(this.store.select(getAnnotationsForMaterial))) */
+    combineLatest([
+      this.store.select(getCurrentlySelectedFollowingAnnotationId),
+      this.store.select(getAnnotationsForMaterial),
+    ])
+      .pipe(
+        filter(
+          ([id, annotations]) =>
+            !!id && !!annotations && annotations.some((a) => a._id === id)
+        )
+      )
+      .subscribe(([id, annotations]) => {
+        if (id && annotations) {
+          const annotation = annotations.find((a) => a._id === id);
+          if (annotation) {
+            let location = annotation.location as PdfGeneralAnnotationLocation;
+            if (location && location.startPage !== undefined) {
+              this.store.dispatch(
+                AnnotationActions.setCurrentPdfPage({
+                  pdfCurrentPage: location.startPage,
+                })
+              );
+            } else {
+              console.error('Annotation location or startPage is undefined.');
+            }
+          } else {
+            console.error('Annotation not found.');
+          }
+        } else {
+          console.error(`id: ${id}, annotations: ${annotations}`);
+        }
+        this.store.dispatch(
+          NotificationActions.unsetCurrentlySelectedFollowingAnnotation()
+        );
+      });
   }
 
   showPDFAnnotations() {

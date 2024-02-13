@@ -218,3 +218,12 @@ export const setCurrentlySelectedNotification = createAction(
 export const unsetCurrentlySelectedNotification = createAction(
   '[Notification] Unset Currently Selected Notification'
 );
+
+export const setCurrentlySelectedFollowingAnnotation = createAction(
+  '[Notification] Set Currently Selected Following Annotation',
+  props<{ annotationId: string }>()
+);
+
+export const unsetCurrentlySelectedFollowingAnnotation = createAction(
+  '[Notification] Unset Currently Selected Following Annotation'
+);
