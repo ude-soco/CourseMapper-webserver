@@ -14,6 +14,7 @@ const env = process.env.NODE_ENV || "production";
 const app = express();
 const debug = debugLib("coursemapper-webserver:src/server");
 const db = require("./models");
+const helpers = require("./helpers/helpers");
 const Role = db.role;
 const User = db.user;
 
@@ -138,13 +139,18 @@ const initializeDB = async () => {
         console.log(
           "Adding User: { name: admin, password: " + process.env.PASS + " }"
         );
+        let email = process.env.EMAIL;
+        let generateMboxAndMboxSha1Sum =
+          helpers.generateMboxAndMboxSha1Sum(email);
 
         try {
           await new User({
             firstname: "Admin",
             lastname: "User",
             username: "admin",
-            email: "admin@soco.com",
+            email: email,
+            mbox: generateMboxAndMboxSha1Sum.mbox,
+            mbox_sha1sum: generateMboxAndMboxSha1Sum.mbox_sha1sum,
             role: foundAdmin._id,
             password: password,
           }).save();
