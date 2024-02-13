@@ -20,6 +20,9 @@ import { TagsPageComponent } from './pages/components/tags/tags-page/tags-page.c
 import { CourseWelcomeComponent } from './course-welcome/course-welcome.component';
 import { AllNotificationsComponent } from './pages/components/notifications/all-notifications/all-notifications.component';
 import { SettingsComponent } from './pages/components/notifications/settings/settings.component';
+import { ForgetPasswordComponent } from './pages/components/forget-password/forget-password.component';
+import { ResetPasswordComponent } from './pages/components/forget-password/reset-password/reset-password.component';
+import { ResetPasswordRequestComponent } from './pages/components/forget-password/reset-password-request/reset-password-request.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'landingPage', pathMatch: 'full' },
@@ -35,6 +38,18 @@ const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent,
+  },
+  {
+    path: 'forgetPassword',
+    component: ForgetPasswordComponent,
+  },
+  {
+    path: 'restPassword/:token',
+    component: ResetPasswordComponent,
+  },
+  {
+    path: 'restRequest',
+    component: ResetPasswordRequestComponent,
   },
   {
     path: 'home',

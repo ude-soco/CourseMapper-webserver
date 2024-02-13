@@ -1,5 +1,10 @@
-import { sign } from "jsonwebtoken";
+import { JsonWebTokenError, sign } from "jsonwebtoken";
 import { compareSync, hashSync } from "bcryptjs";
+import nodemailer from "nodemailer";
+import RestPassSchema from "../models/resetPassword.model.js";
+import { authJwt } from "../middlewares";
+import { verify } from "jsonwebtoken";
+
 
 const config = require("../config/auth.config");
 const db = require("../models");
@@ -112,3 +117,102 @@ export const signout = async (req, res, next) => {
     this.next(err);
   }
 };
+
+export const sendEmail = async (req, res, next) => {
+  let email = req.body.email;
+
+try{ 
+  let user = await User.findOne({
+    email: { $regex: "^" + email + "$", $options: "i" },
+  });
+
+  if (!user) {
+    return res.status(404).send({ error: "User not found." });
+  } else {
+
+    let token = sign({ email: user.email }, config.secret, {
+      expiresIn: 300, // 5 min change to 300
+    });
+
+    const newToken = new RestPassSchema({
+      userId: user._id,
+      token: token,
+      email:user.email,
+    });
+    const mailTransporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: "coursemapper.soco@gmail.com",
+        pass: "gzxi ednk zaft zyow",
+      },
+    });
+
+    let mailDetails = {
+      from: "coursemapper.soco@gmail.com",
+      to: user.email,
+      subject: "Reset Password",
+      html: `<html>
+        <head>
+            <title>CourseMapper Password Reset </title> 
+        </head>
+        <body>
+  
+        <p>Dear ${user.username}, </p>
+        <p>We have just received a password reset request for your account ${user.email} with CourseMapper. Please click
+        <a href="${process.env.WEBAPP_URL}/restPassword/${token}"> here  </a> to reset your password</p>
+
+        <p>Please note that this link is only valid for a 5 mins. If you did not request a password reset, please ignore this message.</p>
+
+        <p>Regards,</p>
+
+        <p>CourseMapper Team</p>
+            
+        </body>
+    </html>`,
+    };
+   
+    mailTransporter.sendMail(mailDetails, async (err, data) => {
+      if (err) {
+        return res.status(500).send({ error: "something went wrong" });
+        //return next(CreateError(500, "something went wrong"));
+      } else {
+   
+        await newToken.save();
+        return res.status(200).send({
+          success: `Email sent successfully`,
+        });
+      }
+    });
+  }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding user" });
+  }
+};
+export const resetPassword = async (req, res, next) => {
+  let token = req.body.resetObj.token;
+  let Passowrd = req.body.resetObj.password;
+  verify(token, config.secret, async (err, data) => {
+    if (err) {
+      return res.status(500).send({ message: "Reset link is expired!" });
+    }
+    const dataResponse =data;
+    let user = await User.findOne({
+      email: { $regex: "^" + dataResponse.email + "$", $options: "i" },
+    });
+    const enryptedPassword= hashSync(Passowrd, 8)
+    user.password=enryptedPassword
+    try{
+const updatedUser= await User.findOneAndUpdate(
+  { _id:user._id },
+  { $set:user },
+  { new:true }
+)
+return res.status(200).send({
+  success: `Reset Password scussess`,
+});
+    }
+    catch(error){
+      return res.status(500).send({ error: "Some went wrong" });
+    }
+  });
+}
