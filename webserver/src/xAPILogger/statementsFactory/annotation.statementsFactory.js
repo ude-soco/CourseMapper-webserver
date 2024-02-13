@@ -878,6 +878,21 @@ export const getNewMentionCreationStatement = (user, annotation, origin) => {
         },
       },
     },
+    result: {
+      extensions: {
+        "http://www.CourseMapper.de/extensions/annotation": {
+          id: annotation._id,
+          material_id: annotation.materialId,
+          channel_id: annotation.channelId,
+          topic_id: annotation.topicId,
+          course_id: annotation.courseId,
+          content: annotation.content,
+          type: annotation.type,
+          tool: annotation.tool,
+          location: annotation.location,
+        },
+      },
+    },
 
     context: {
       platform: "CourseMapper",
