@@ -58,17 +58,18 @@
           }"
           (click)="op.toggle($event)"
         ></p-avatar>
-        <p-overlayPanel #op [style]="{ width: '400px' }">
+        <p-overlayPanel #op [style]="{ width: '450px' }">
           <ng-template pTemplate>
             <div class="flex-col">
               <div class="font-medium text-2xl w-full">
                 {{ loggedInUser.name }}
               </div>
+              <div class="font-medium w-full mt-2">mbox_sha1sum:</div>
               <div class="flex flex-row w-full">
                 <div
-                  class="text-blue-500 dark:text-blue-500 hover:underline mt-2 mr-2"
+                  class="text-blue-500 dark:text-blue-500 hover:underline mr-2"
                 >
-                  {{ loggedInUser.id }}
+                  {{ loggedInUser.mbox_sha1sum }}
                 </div>
                 <div class="flex w-full">
                   <app-iconbutton
