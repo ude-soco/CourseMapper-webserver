@@ -4,17 +4,17 @@ const platform = "CourseMapper";
 const language = "en-US";
 
 export const getLoginStatement = (user, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
-        name: userId,
+        name: userFullname,
       },
     },
     verb: {
@@ -32,8 +32,8 @@ export const getLoginStatement = (user, origin) => {
           language: platform,
         },
         description: {
-            language: "Course Annotation and Analytics platform"
-        }
+          language: "Course Annotation and Analytics platform",
+        },
       },
     },
     context: {
@@ -44,17 +44,17 @@ export const getLoginStatement = (user, origin) => {
 };
 
 export const getLogoutStatement = (user, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
-        name: userId,
+        name: userFullname,
       },
     },
     verb: {
@@ -72,8 +72,8 @@ export const getLogoutStatement = (user, origin) => {
           language: platform,
         },
         description: {
-            language: "Course Annotation and Analytics platform"
-        }
+          language: "Course Annotation and Analytics platform",
+        },
       },
     },
     context: {
@@ -84,17 +84,17 @@ export const getLogoutStatement = (user, origin) => {
 };
 
 export const getSignupStatement = (user, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
-        name: userId,
+        name: userFullname,
       },
     },
     verb: {
@@ -112,8 +112,8 @@ export const getSignupStatement = (user, origin) => {
           language: platform,
         },
         description: {
-            language: "Course Annotation and Analytics platform"
-        }
+          language: "Course Annotation and Analytics platform",
+        },
       },
     },
     context: {
