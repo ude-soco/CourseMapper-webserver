@@ -12,6 +12,8 @@ const Tag = db.tag;
 const Activity = db.activity;
 const BlockingNotifications = db.blockingNotifications;
 
+const crypto = require("crypto");
+
 //write a method to make a new document in the blockingNotification collection. The argumetns for the method will be the courseID and the userID. and according to the default notifications variables in the course document set the notifications variables for the materials, channels, topics.
 
 export const initialiseNotificationSettings = async (course, user) => {
@@ -115,6 +117,17 @@ export const initialiseNotificationSettings = async (course, user) => {
   return blockingNotification;
 };
 
+export const generateMboxAndMboxSha1Sum = (email) => {
+  let mailbox = `mailto:${email}`;
+  let hash = crypto.createHash("sha1");
+  hash.update(mailbox);
+  return {
+    mbox: mailbox,
+    mbox_sha1sum: hash.digest("hex"),
+  };
+};
+
 module.exports = {
   initialiseNotificationSettings,
+  generateMboxAndMboxSha1Sum,
 };
