@@ -6,14 +6,16 @@ export const getAnnotationCreationStatement = (
   material,
   origin
 ) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -68,20 +70,23 @@ export const getAnnotationCreationStatement = (
     },
   };
 };
+
 export const getCommentCreationStatement = (
   user,
   annotation,
   material,
   origin
 ) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -138,14 +143,16 @@ export const getCommentCreationStatement = (
 };
 
 export const getAnnotaionDeletionStatement = (user, annotation, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -192,15 +199,18 @@ export const getAnnotaionDeletionStatement = (user, annotation, origin) => {
     },
   };
 };
+
 export const getCommentDeletionStatement = (user, annotation, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -249,14 +259,16 @@ export const getCommentDeletionStatement = (user, annotation, origin) => {
 };
 
 export const getAnnotationLikeStatement = (user, annotation, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -305,14 +317,16 @@ export const getAnnotationLikeStatement = (user, annotation, origin) => {
 };
 
 export const getCommentLikeStatement = (user, annotation, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -361,14 +375,16 @@ export const getCommentLikeStatement = (user, annotation, origin) => {
 };
 
 export const getAnnotationUnlikeStatement = (user, annotation, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -417,14 +433,16 @@ export const getAnnotationUnlikeStatement = (user, annotation, origin) => {
 };
 
 export const getCommentUnlikeStatement = (user, annotation, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -473,14 +491,16 @@ export const getCommentUnlikeStatement = (user, annotation, origin) => {
 };
 
 export const getAnnotationDislikeStatement = (user, annotation, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -529,14 +549,16 @@ export const getAnnotationDislikeStatement = (user, annotation, origin) => {
 };
 
 export const getCommentDislikeStatement = (user, annotation, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -585,14 +607,16 @@ export const getCommentDislikeStatement = (user, annotation, origin) => {
 };
 
 export const getAnnotationUndislikeStatement = (user, annotation, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -641,14 +665,16 @@ export const getAnnotationUndislikeStatement = (user, annotation, origin) => {
 };
 
 export const getCommentUndislikeStatement = (user, annotation, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -702,14 +728,16 @@ export const getAnnotationEditStatement = (
   oldAnnotation,
   origin
 ) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -773,14 +801,16 @@ export const getCommentEditStatement = (
   oldAnnotation,
   origin
 ) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -839,14 +869,16 @@ export const getCommentEditStatement = (
 };
 
 export const getNewMentionCreationStatement = (user, annotation, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
