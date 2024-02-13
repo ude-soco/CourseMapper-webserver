@@ -88,6 +88,7 @@ export const signin = async (req, res, next) => {
         username: user.username,
         role: user.role,
         email: user.email,
+        mbox_sha1sum: user.mbox_sha1sum,
         courses: user.courses,
       },
     };
