@@ -1,14 +1,19 @@
 import { v4 as uuidv4 } from "uuid";
 
+const platform = "CourseMapper";
+const language = "en-US";
+
 export const getChannelCreationStatement = (user, channel, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -17,7 +22,7 @@ export const getChannelCreationStatement = (user, channel, origin) => {
     verb: {
       id: "http://activitystrea.ms/schema/1.0/create",
       display: {
-        "en-US": "created",
+        [language]: "created",
       },
     },
     object: {
@@ -26,10 +31,10 @@ export const getChannelCreationStatement = (user, channel, origin) => {
       definition: {
         type: "http://www.CourseMapper.de/activityType/channel",
         name: {
-          "en-US": channel.name,
+          [language]: channel.name,
         },
         description: {
-          "en-US": channel.description,
+          [language]: channel.description,
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/channel": {
@@ -43,21 +48,23 @@ export const getChannelCreationStatement = (user, channel, origin) => {
       },
     },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };
 
 export const getChannelDeletionStatement = (user, channel, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -66,7 +73,7 @@ export const getChannelDeletionStatement = (user, channel, origin) => {
     verb: {
       id: "http://activitystrea.ms/schema/1.0/delete",
       display: {
-        "en-US": "deleted",
+        [language]: "deleted",
       },
     },
     object: {
@@ -75,10 +82,10 @@ export const getChannelDeletionStatement = (user, channel, origin) => {
       definition: {
         type: "http://www.CourseMapper.de/activityType/channel",
         name: {
-          "en-US": channel.name,
+          [language]: channel.name,
         },
         description: {
-          "en-US": channel.description,
+          [language]: channel.description,
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/channel": {
@@ -92,21 +99,23 @@ export const getChannelDeletionStatement = (user, channel, origin) => {
       },
     },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };
 
 export const getChannelAccessStatement = (user, channel, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -115,7 +124,7 @@ export const getChannelAccessStatement = (user, channel, origin) => {
     verb: {
       id: "http://activitystrea.ms/schema/1.0/access",
       display: {
-        "en-US": "accessed",
+        [language]: "accessed",
       },
     },
     object: {
@@ -124,10 +133,10 @@ export const getChannelAccessStatement = (user, channel, origin) => {
       definition: {
         type: "http://www.CourseMapper.de/activityType/channel",
         name: {
-          "en-US": channel.name,
+          [language]: channel.name,
         },
         description: {
-          "en-US": channel.description,
+          [language]: channel.description,
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/channel": {
@@ -141,8 +150,8 @@ export const getChannelAccessStatement = (user, channel, origin) => {
       },
     },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };
@@ -153,14 +162,16 @@ export const getChannelEditStatement = (
   oldtChannel,
   origin
 ) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -169,7 +180,7 @@ export const getChannelEditStatement = (
     verb: {
       id: "http://curatr3.com/define/verb/edited",
       display: {
-        "en-US": "edited",
+        [language]: "edited",
       },
     },
     object: {
@@ -178,10 +189,10 @@ export const getChannelEditStatement = (
       definition: {
         type: "http://www.CourseMapper.de/activityType/channel",
         name: {
-          "en-US": oldtChannel.name,
+          [language]: oldtChannel.name,
         },
         description: {
-          "en-US": oldtChannel.description,
+          [language]: oldtChannel.description,
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/channel": {
@@ -203,8 +214,8 @@ export const getChannelEditStatement = (
       },
     },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };
