@@ -4,17 +4,19 @@ const platform = "CourseMapper";
 const language = "en-US";
 
 export const getLoginStatement = (user, origin) => {
+  const userId = user._id.toString();
   const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
+      name: userFullname,
       mbox: user.mbox,
       mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
-        name: userFullname,
+        name: userId,
       },
     },
     verb: {
@@ -32,8 +34,8 @@ export const getLoginStatement = (user, origin) => {
           [language]: platform,
         },
         description: {
-            [language]: "Course Annotation and Analytics platform"
-        }
+          [language]: "Course Annotation and Analytics platform",
+        },
       },
     },
     context: {
@@ -44,17 +46,19 @@ export const getLoginStatement = (user, origin) => {
 };
 
 export const getLogoutStatement = (user, origin) => {
+  const userId = user._id.toString();
   const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
+      name: userFullname,
       mbox: user.mbox,
       mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
-        name: userFullname,
+        name: userId,
       },
     },
     verb: {
@@ -72,8 +76,8 @@ export const getLogoutStatement = (user, origin) => {
           [language]: platform,
         },
         description: {
-            [language]: "Course Annotation and Analytics platform"
-        }
+          [language]: "Course Annotation and Analytics platform",
+        },
       },
     },
     context: {
@@ -84,17 +88,19 @@ export const getLogoutStatement = (user, origin) => {
 };
 
 export const getSignupStatement = (user, origin) => {
+  const userId = user._id.toString();
   const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
+      name: userFullname,
       mbox: user.mbox,
       mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
-        name: userFullname,
+        name: userId,
       },
     },
     verb: {
@@ -112,8 +118,8 @@ export const getSignupStatement = (user, origin) => {
           [language]: platform,
         },
         description: {
-            [language]: "Course Annotation and Analytics platform"
-        }
+          [language]: "Course Annotation and Analytics platform",
+        },
       },
     },
     context: {
