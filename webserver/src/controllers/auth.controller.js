@@ -3,6 +3,7 @@ import { compareSync, hashSync } from "bcryptjs";
 
 const config = require("../config/auth.config");
 const db = require("../models");
+const helpers = require("../helpers/helpers");
 const User = db.user;
 const Role = db.role;
 
@@ -24,11 +25,17 @@ export const signup = async (req, res, next) => {
     return res.status(500).send({ error: "Error finding role" });
   }
 
+  let generateMboxAndMboxSha1Sum = helpers.generateMboxAndMboxSha1Sum(
+    req.body.email
+  );
+
   let user = new User({
     firstname: req.body.firstname,
     lastname: req.body.lastname,
     username: req.body.username,
     email: req.body.email,
+    mbox: generateMboxAndMboxSha1Sum.mbox,
+    mbox_sha1sum: generateMboxAndMboxSha1Sum.mbox_sha1sum,
     role: role._id,
     password: hashSync(req.body.password, 8),
   });
