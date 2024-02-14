@@ -28,12 +28,10 @@ def get_material(material_id: str):
     result = neo4j.get_material(material_id)
     return make_response({ "records": result }, 200)
 
-@backend.route("/delete_material/<material_id>", methods=["DELETE"])
+@backend.route("/delete_material/<material_id>", methods=["DELETE"]) 
 def delete_material(material_id: str):
-    result = neo4j.delete_material(material_id)
-    #print("delete material from backend") 
-    return make_response({ "records": result }, 200)    
-
+    result = neo4j.delete_material(material_id) 
+    return make_response({ "records": result }, 200) 
 
 @backend.route("/get_material_edges/<material_id>", methods=["GET"])
 def get_material_edges(material_id: str):

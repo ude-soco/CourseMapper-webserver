@@ -86,9 +86,7 @@ export class MaterilasService {
       )
       .pipe(tap((res) => {
         this.neo4jservice.deleteMaterial(material._id)
-        // console.log("delete material from material service")
       }));
-
   }
   deleteFile(material: Material) {
     if (material.type == 'pdf') {
