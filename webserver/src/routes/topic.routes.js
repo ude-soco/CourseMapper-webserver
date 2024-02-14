@@ -50,4 +50,38 @@ module.exports = function (app) {
     notifications.topicCourseUpdateNotificationUsers,
     notifications.populateUserNotification
   );
+
+  app.post(
+    "/api/courses/:courseId/topics/:topicId/indicator",
+    [authJwt.verifyToken, authJwt.isModerator],
+    controller.newIndicator,
+  
+  );
+
+  app.delete(
+    "/api/courses/:courseId/topics/:topicId/indicator/:indicatorId",
+    [authJwt.verifyToken, authJwt.isModerator],
+    controller.deleteIndicator,
+    
+  );
+
+  app.get(
+    "/api/courses/:courseId/topics/:topicId/indicator",
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.getIndicators
+  );
+
+  app.put(
+    "/api/courses/:courseId/topics/:topicId/indicator/:indicatorId/resize/:width/:height",
+    [authJwt.verifyToken, authJwt.isModerator],
+    controller.resizeIndicator
+  );
+
+  app.put(
+    "/api/courses/:courseId/topics/:topicId/reorder/:newIndex/:oldIndex",
+    [authJwt.verifyToken, authJwt.isModerator],
+    controller.reorderIndicators
+  );
 };
+
+

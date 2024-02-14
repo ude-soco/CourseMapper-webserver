@@ -458,6 +458,7 @@ export class TopicDropdownComponent implements OnInit {
     }
   }
   onSelectChannel(channel: Channel) {
+    this.materilasService.isMaterialSelected.next(false);
     //3
     this.selectedCourseId = this.courseService.getSelectedCourse()._id;
     this.prevSelectedCourseId = this.selectedCourseId;
@@ -1080,5 +1081,24 @@ export class TopicDropdownComponent implements OnInit {
       summary: summary,
       detail: detail,
     });
+  }
+
+  viewDashboardClicked(){
+    this.router.navigate([
+      'course',
+      this.courseService.getSelectedCourse()._id,
+      'topic',
+      this.selectedTopic._id,'dashboard'
+          
+    ]);
+   
+
+  }
+  viewChannelDashboardClicked(){
+     this.router.navigate([
+      'course',
+      this.courseService.getSelectedCourse()._id,
+      'channel',
+      this.selectedChannelId,'dashboard']);     
   }
 }

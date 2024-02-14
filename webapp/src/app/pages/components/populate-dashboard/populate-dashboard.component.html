@@ -1,0 +1,144 @@
+<div class="border border-width-3 mt-2 px-2 content-center items-center">
+  <div>
+    <div
+      class="flex flex-wrap justify-between mt-2 mb-2"
+      *ngIf="role === 'moderator' || forPersonalDashboard"
+    >
+      <div>
+        <p class="font-medium text-xl" *ngIf="indicators?.length === 0">
+          There are no indicators created yet in this dashboard!
+        </p>
+      </div>
+      <div>
+        <div class="">
+          <button
+            id="addCourseConfirm"
+            pButton
+            icon="pi pi-plus"
+            class="button p-button-raised float-right btn-add"
+            color="text-blue-500"
+            (click)="onAddIndicatorDialogueClicked()"
+            label="Add Indicator"
+          ></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="flex flex-wrap justify-self-start cursor-pointer"
+    dragula="INDICATORS"
+    [(dragulaModel)]="indicators"
+    (dragulaModelChange)="indicators = $event"
+  >
+    <div
+      *ngFor="let indicator of indicators; let i = index"
+      class="mr-4 mb-4 mt-4"
+    >
+      <div style="border-width: 1px">
+        <div class="">
+          <div class="bg-gray-200">
+            <div
+              class="flex flex-wrap justify-between items-center content-center"
+              style="cursor: grab"
+              id="dragger"
+            >
+              <div pTooltip="Change Order">
+                <div></div>
+              </div>
+              <div
+                *ngIf="
+                  role === 'moderator' ||
+                  role === 'admin' ||
+                  forPersonalDashboard
+                "
+              >
+                <div>
+                  <app-iconbutton
+                    icon="bx-dots-vertical-rounded"
+                    color="text-black"
+                    (click)="
+                      menu.toggle($event); getIndicatorToDelete(indicator)
+                    "
+                  ></app-iconbutton>
+                </div>
+                <p-menu
+                  #menu
+                  id="config_menu"
+                  [popup]="true"
+                  appendTo="body"
+                  styleClass="course-context-menu"
+                  [model]="moderatorUserOptions"
+                  pTooltip="Delete Indicator"
+                ></p-menu>
+              </div>
+            </div>
+          </div>
+          <div
+            *ngIf="
+              role === 'moderator' || role === 'admin' || forPersonalDashboard
+            "
+            class="resizer"
+            (mouseup)="onUpdateIndicator($event, indicator)"
+          >
+            <iframe
+              [src]="indicator.src | byPassUrlSanitization"
+              width="{{ indicator.width }}"
+              height="{{ indicator.height }}"
+              class="resized mt-4 mb-4 ml-4 mr-4"
+            >
+            </iframe>
+          </div>
+          <div
+            *ngIf="
+              role !== 'moderator' && role !== 'admin' && !forPersonalDashboard
+            "
+          >
+            <iframe
+              [src]="indicator.src | byPassUrlSanitization"
+              width="{{ indicator.width }}"
+              height="{{ indicator.height }}"
+              class="mt-4 mb-4 ml-4 mr-4"
+            ></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <app-add-indicator
+    [displayAddIndicatorDialogue]="displayAddIndicatorDialogue"
+    [forCourseDashboard]="forCourseDashboard"
+    [forPersonalDashboard]="forPersonalDashboard"
+    [forMaterialDashboard]="forMaterialDashboard"
+    [forChannelDashboard]="forChannelDashboard"
+    [forTopicDashboard]="forTopicDashboard"
+    [materialId]="materialId"
+    [channelId]="channelId"
+    [topicId]="topicId"
+    [courseId]="courseId"
+    (onCloseAddIndicatorDialogue)="toggleAddIndicatordialogue($event)"
+  ></app-add-indicator>
+</div>
+
+<p-toast position="bottom-left"></p-toast>
+<p-confirmDialog [baseZIndex]="10000" #cd>
+  <p-footer class="flex flex-wrap justify-end">
+    <button
+      class="p-button p-button-raised btn btn-bg"
+      type="button"
+      pButton
+      icon="pi pi-times"
+      label="No"
+      (click)="cd.reject()"
+    ></button>
+    <button
+      class="p-button p-button-raised p-button-danger btn"
+      type="button"
+      pButton
+      icon="pi pi-check"
+      label="Yes"
+      (click)="cd.accept()"
+    ></button>
+  </p-footer>
+</p-confirmDialog>
