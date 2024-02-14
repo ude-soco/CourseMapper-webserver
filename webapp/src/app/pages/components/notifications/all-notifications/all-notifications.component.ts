@@ -570,6 +570,9 @@ export class AllNotificationsComponent {
       this.store.dispatch(
         courseActions.setCourseId({ courseId: notification.course_id })
       );
+      this.store.dispatch(
+        NotificationActions.setCurrentlySelectedNotification({ notification })
+      );
       if (notification.reply_id) {
         this.courseService.navigatingToMaterial = true;
         if (notification.isDeletingReply) {

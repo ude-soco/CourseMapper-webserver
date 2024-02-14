@@ -2,6 +2,7 @@ import {
   AfterViewChecked,
   ChangeDetectorRef,
   Component,
+  OnDestroy,
   OnInit,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
@@ -33,7 +34,7 @@ import { NotificationsService } from 'src/app/services/notifications.service';
 })
 export class PdfCreateAnnotationComponent
   extends MentionsComponent
-  implements OnInit, AfterViewChecked
+  implements OnInit, AfterViewChecked, OnDestroy
 {
   selectedAnnotationType: AnnotationType;
   annotationTypesArray: string[];
@@ -56,6 +57,7 @@ export class PdfCreateAnnotationComponent
   sendButtonColor: string = 'text-green-600';
   showCancelButton$: Observable<boolean>;
   sendButtonDisabled: boolean = true;
+  currentPdfPageSubscription: any;
 
   constructor(
     override store: Store<State>,
@@ -63,6 +65,9 @@ export class PdfCreateAnnotationComponent
     private changeDetectorRef: ChangeDetectorRef
   ) {
     super(store, notificationService);
+  }
+  ngOnDestroy(): void {
+    this.currentPdfPageSubscription.unsubscribe();
   }
   ngAfterViewChecked(): void {
     this.changeDetectorRef.detectChanges();
@@ -97,13 +102,17 @@ export class PdfCreateAnnotationComponent
       this.courseId = id;
     });
 
-    this.store.select(getCurrentMaterialId).subscribe((id) => {
-      this.materialId = id;
-    });
+    this.currentPdfPageSubscription = this.store
+      .select(getCurrentMaterialId)
+      .subscribe((id) => {
+        this.materialId = id;
+      });
 
-    this.store.select(getCurrentPdfPage).subscribe((page) => {
-      this.currentPage = page;
-    });
+    this.currentPdfPageSubscription = this.store
+      .select(getCurrentPdfPage)
+      .subscribe((page) => {
+        this.currentPage = page;
+      });
 
     this.store.select(getPdfTotalNumberOfPages).subscribe((total) => {
       this.totalPages = total;

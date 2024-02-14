@@ -186,6 +186,13 @@ export const getAnnotaionDeletionStatement = (user, annotation, origin) => {
         },
       },
     },
+    result: {
+      extensions: {
+        "http://www.CourseMapper.de/extensions/annotation": {
+          location: annotation.location,
+        },
+      },
+    },
     context: {
       platform: "CourseMapper",
       language: "en-US",
@@ -238,6 +245,12 @@ export const getCommentDeletionStatement = (user, annotation, origin) => {
             tool: annotation.tool,
             location: annotation.location,
           },
+        },
+      },
+    },result: {
+      extensions: {
+        "http://www.CourseMapper.de/extensions/annotation": {
+          location: annotation.location,
         },
       },
     },
@@ -297,6 +310,13 @@ export const getAnnotationLikeStatement = (user, annotation, origin) => {
         },
       },
     },
+    result: {
+      extensions: {
+        "http://www.CourseMapper.de/extensions/annotation": {
+          location: annotation.location,
+        },
+      },
+    },
     context: {
       platform: "CourseMapper",
       language: "en-US",
@@ -350,6 +370,13 @@ export const getCommentLikeStatement = (user, annotation, origin) => {
             tool: annotation.tool,
             location: annotation.location,
           },
+        },
+      },
+    },
+    result: {
+      extensions: {
+        "http://www.CourseMapper.de/extensions/annotation": {
+          location: annotation.location,
         },
       },
     },
@@ -409,6 +436,13 @@ export const getAnnotationUnlikeStatement = (user, annotation, origin) => {
         },
       },
     },
+    result: {
+      extensions: {
+        "http://www.CourseMapper.de/extensions/annotation": {
+          location: annotation.location,
+        },
+      },
+    },
     context: {
       platform: "CourseMapper",
       language: "en-US",
@@ -462,6 +496,13 @@ export const getCommentUnlikeStatement = (user, annotation, origin) => {
             tool: annotation.tool,
             location: annotation.location,
           },
+        },
+      },
+    },
+    result: {
+      extensions: {
+        "http://www.CourseMapper.de/extensions/comment": {
+          location: annotation.location,
         },
       },
     },
@@ -521,6 +562,13 @@ export const getAnnotationDislikeStatement = (user, annotation, origin) => {
         },
       },
     },
+    result: {
+      extensions: {
+        "http://www.CourseMapper.de/extensions/annotation": {
+          location: annotation.location,
+        },
+      },
+    },
     context: {
       platform: "CourseMapper",
       language: "en-US",
@@ -574,6 +622,13 @@ export const getCommentDislikeStatement = (user, annotation, origin) => {
             tool: annotation.tool,
             location: annotation.location,
           },
+        },
+      },
+    },
+    result: {
+      extensions: {
+        "http://www.CourseMapper.de/extensions/comment": {
+          location: annotation.location,
         },
       },
     },
@@ -633,6 +688,13 @@ export const getAnnotationUndislikeStatement = (user, annotation, origin) => {
         },
       },
     },
+    result: {
+      extensions: {
+        "http://www.CourseMapper.de/extensions/annotation": {
+          location: annotation.location,
+        },
+      },
+    },
     context: {
       platform: "CourseMapper",
       language: "en-US",
@@ -686,6 +748,13 @@ export const getCommentUndislikeStatement = (user, annotation, origin) => {
             tool: annotation.tool,
             location: annotation.location,
           },
+        },
+      },
+    },
+    result: {
+      extensions: {
+        "http://www.CourseMapper.de/extensions/annotation": {
+          location: annotation.location,
         },
       },
     },

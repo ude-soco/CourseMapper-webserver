@@ -43,7 +43,8 @@ export const deleteReply = async (req, res, next) => {
   const statement = statementFactory.getReplyDeletionStatement(
     req.locals.user,
     req.locals.reply,
-    origin
+    origin,
+    req.locals.annotation
   );
   const notificationInfo = notifications.generateNotificationInfo(req);
   const sent = await lrs.sendStatementToLrs(statement);
@@ -68,13 +69,15 @@ export const likeReply = async (req, res, next) => {
     statement = statementFactory.getReplyLikeStatement(
       req.locals.user,
       req.locals.reply,
-      origin
+      origin,
+      req.locals.annotation
     );
   } else {
     statement = statementFactory.getReplyUnlikeStatement(
       req.locals.user,
       req.locals.reply,
-      origin
+      origin,
+      req.locals.annotation
     );
   }
   const notificationInfo = notifications.generateNotificationInfo(req);
@@ -100,13 +103,15 @@ export const dislikeReply = async (req, res, next) => {
     statement = statementFactory.getReplyDislikeStatement(
       req.locals.user,
       req.locals.reply,
-      origin
+      origin,
+      req.locals.annotation
     );
   } else {
     statement = statementFactory.getReplyUndislikeStatement(
       req.locals.user,
       req.locals.reply,
-      origin
+      origin,
+      req.locals.annotation
     );
   }
   const notificationInfo = notifications.generateNotificationInfo(req);
@@ -130,7 +135,8 @@ export const editReply = async (req, res, next) => {
   let statement = statementFactory.getReplyEditStatement(
     req.locals.user,
     req.locals.newReply,
-    origin
+    origin,
+    req.locals.annotation
   );
   req.locals.category = "mentionedandreplied";
   const notificationInfo = notifications.generateNotificationInfo(req);
@@ -154,7 +160,8 @@ export const newMention = async (req, res, next) => {
   const statement = statementFactory.getNewMentionCreationStatement(
     req.locals.user,
     req.locals.reply,
-    origin
+    origin,
+    req.locals.annotation
   );
   const notificationInfo = notifications.generateNotificationInfo(req);
   const sent = await lrs.sendStatementToLrs(statement);

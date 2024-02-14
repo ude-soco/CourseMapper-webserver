@@ -131,6 +131,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   annotations: Annotation[] = [];
   showConceptMapEvent: boolean = false;
   currentPDFPage$: Observable<number>;
+  currentPdfPageSubscription: Subscription;
   private socketSubscription: Subscription;
 
   ngOnInit(): void {
@@ -140,10 +141,12 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
 
     this.currentPDFPage$ = this.store.select(getCurrentPdfPage);
 
-    this.currentPDFPage$.subscribe((currentPage) => {
-      this.currentPage = currentPage;
-      this.pageRendered(currentPage);
-    });
+    this.currentPdfPageSubscription = this.currentPDFPage$.subscribe(
+      (currentPage) => {
+        this.currentPage = currentPage;
+        this.pageRendered(currentPage);
+      }
+    );
 
     this.store
       .select(getCurrentlyClickedNotification)
@@ -162,6 +165,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
     if (this.socketSubscription) {
       this.socketSubscription.unsubscribe();
     }
+    this.currentPdfPageSubscription.unsubscribe();
   }
 
   constructor(

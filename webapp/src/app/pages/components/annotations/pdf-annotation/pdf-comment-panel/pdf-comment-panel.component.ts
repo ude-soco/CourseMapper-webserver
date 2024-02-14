@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import {
   Annotation,
   PdfAnnotationTool,
@@ -26,7 +26,7 @@ import { combineLatest, filter, withLatestFrom } from 'rxjs';
   templateUrl: './pdf-comment-panel.component.html',
   styleUrls: ['./pdf-comment-panel.component.css'],
 })
-export class PdfCommentPanelComponent implements OnInit {
+export class PdfCommentPanelComponent implements OnInit, OnDestroy {
   annotations: Annotation[] = [];
   searchFiltersForPDF: SelectItemGroup[];
   searchFiltersForVideo: SelectItemGroup[];
@@ -39,7 +39,8 @@ export class PdfCommentPanelComponent implements OnInit {
   disableSortFilters: boolean = false;
   currentTime: number = 0;
   currentTimeSpanSelected: boolean = false;
-
+  followingAnnotationSubscription;
+  pdfPageSubscription;
   constructor(
     private store: Store<State>,
     private changeDetectorRef: ChangeDetectorRef
@@ -59,11 +60,13 @@ export class PdfCommentPanelComponent implements OnInit {
       }
     });
 
-    this.store.select(getCurrentPdfPage).subscribe((page) => {
-      this.currentPage = page;
-      this.selectedFiltersForPDF = null;
-      this.showPDFAnnotations();
-    });
+    this.pdfPageSubscription = this.store
+      .select(getCurrentPdfPage)
+      .subscribe((page) => {
+        this.currentPage = page;
+        this.selectedFiltersForPDF = null;
+        this.showPDFAnnotations();
+      });
 
     this.store.select(getCurrentTime).subscribe((time) => {
       this.currentTime = time;
@@ -78,6 +81,10 @@ export class PdfCommentPanelComponent implements OnInit {
         );
       }
     });
+  }
+  ngOnDestroy(): void {
+    this.followingAnnotationSubscription.unsubscribe();
+    this.pdfPageSubscription.unsubscribe();
   }
 
   ngAfterViewChecked(): void {
@@ -114,7 +121,7 @@ export class PdfCommentPanelComponent implements OnInit {
     /*    this.store
       .select(getCurrentlySelectedFollowingAnnotationId)
       .pipe(withLatestFrom(this.store.select(getAnnotationsForMaterial))) */
-    combineLatest([
+    this.followingAnnotationSubscription = combineLatest([
       this.store.select(getCurrentlySelectedFollowingAnnotationId),
       this.store.select(getAnnotationsForMaterial),
     ])
