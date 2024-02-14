@@ -37,6 +37,9 @@ import { Annotation } from 'src/app/models/Annotations';
 import { Reply } from 'src/app/models/Reply';
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
 import * as CourseActions from '../../../../courses/state/course.actions';
+import { getCurrentlyClickedNotification } from '../../../notifications/state/notifications.reducer';
+import { map } from 'jquery';
+import { map as RxJSMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-video-main-annotation',
@@ -74,6 +77,7 @@ export class VideoMainAnnotationComponent
   videoIsPaused$: Observable<boolean>;
   cursorisInsideVideo: boolean;
   private socketSubscription: Subscription;
+  startYoutubeVideoAtTime$: Observable<number>;
   constructor(
     private store: Store<State>,
     private pdfViewService: PdfviewService,
@@ -128,6 +132,16 @@ export class VideoMainAnnotationComponent
         this.seekVideo(time[0]);
       }
     });
+
+    this.startYoutubeVideoAtTime$ = this.store.select(getSeekVideo).pipe(
+      RxJSMap((time) => {
+        if (time != null) {
+          return time[0];
+        }
+        return 0;
+      })
+    );
+
     let materialSubscriper = this.store
       .select(getCurrentMaterial)
       .subscribe((material) => {
@@ -281,9 +295,9 @@ export class VideoMainAnnotationComponent
   }
 
   seekVideo(time: number) {
-    if (this.youtubeactivated) {
+    if (this.youtubeactivated && this.YouTubePlayer) {
       this.YouTubePlayer.seekTo(time, true);
-    } else {
+    } else if (this.videoPlayer) {
       this.videoPlayer.nativeElement.currentTime = time;
     }
   }

@@ -8,6 +8,7 @@ import {
 } from 'src/app/models/Annotations';
 import { Store } from '@ngrx/store';
 import { computeElapsedTime, getInitials } from 'src/app/_helpers/format';
+import * as VideoActions from '../../video-annotation/state/video.action';
 import {
   getAnnotationsForMaterial,
   getCurrentPdfPage,
@@ -19,7 +20,10 @@ import { getCurrentMaterial } from '../../../materials/state/materials.reducer';
 import { getCurrentTime } from '../../video-annotation/state/video.reducer';
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
 import * as NotificationActions from '../../../notifications/state/notifications.actions';
-import { getCurrentlySelectedFollowingAnnotationId } from '../../../notifications/state/notifications.reducer';
+import {
+  getCurrentlyClickedNotification,
+  getCurrentlySelectedFollowingAnnotationId,
+} from '../../../notifications/state/notifications.reducer';
 import { combineLatest, filter, withLatestFrom } from 'rxjs';
 @Component({
   selector: 'app-pdf-comment-panel',
@@ -41,6 +45,7 @@ export class PdfCommentPanelComponent implements OnInit, OnDestroy {
   currentTimeSpanSelected: boolean = false;
   followingAnnotationSubscription;
   pdfPageSubscription;
+  videoSeekSubscription: any;
   constructor(
     private store: Store<State>,
     private changeDetectorRef: ChangeDetectorRef
@@ -83,8 +88,29 @@ export class PdfCommentPanelComponent implements OnInit, OnDestroy {
     });
   }
   ngOnDestroy(): void {
-    this.followingAnnotationSubscription.unsubscribe();
-    this.pdfPageSubscription.unsubscribe();
+    if (this.followingAnnotationSubscription) {
+      this.followingAnnotationSubscription.unsubscribe();
+    }
+    if (this.pdfPageSubscription) {
+      this.pdfPageSubscription.unsubscribe();
+    }
+    if (this.videoSeekSubscription) {
+      this.videoSeekSubscription.unsubscribe();
+    }
+  }
+
+  ngAfterViewInit(): void {
+    this.videoSeekSubscription = this.store
+      .select(getCurrentlyClickedNotification)
+      .subscribe((notification) => {
+        if (notification && notification.from) {
+          this.store.dispatch(
+            VideoActions.SetSeekVideo({
+              seekVideo: [notification.from, notification.from],
+            })
+          );
+        }
+      });
   }
 
   ngAfterViewChecked(): void {
@@ -135,25 +161,33 @@ export class PdfCommentPanelComponent implements OnInit, OnDestroy {
         if (id && annotations) {
           const annotation = annotations.find((a) => a._id === id);
           if (annotation) {
-            let location = annotation.location as PdfGeneralAnnotationLocation;
-            if (location && location.startPage !== undefined) {
-              this.store.dispatch(
-                AnnotationActions.setCurrentPdfPage({
-                  pdfCurrentPage: location.startPage,
-                })
-              );
-            } else {
-              console.error('Annotation location or startPage is undefined.');
+            if (
+              (annotation.location as PdfGeneralAnnotationLocation).startPage
+            ) {
+              let location =
+                annotation.location as PdfGeneralAnnotationLocation;
+              if (location && location.startPage !== undefined) {
+                this.store.dispatch(
+                  AnnotationActions.setCurrentPdfPage({
+                    pdfCurrentPage: location.startPage,
+                  })
+                );
+              }
+            } else if ((annotation.location as VideoAnnotationLocation).from) {
+              let location = annotation.location as VideoAnnotationLocation;
+              if (location && location.from !== undefined) {
+                this.store.dispatch(
+                  VideoActions.SetSeekVideo({
+                    seekVideo: [location.from, location.from],
+                  })
+                );
+              }
             }
-          } else {
-            console.error('Annotation not found.');
           }
-        } else {
-          console.error(`id: ${id}, annotations: ${annotations}`);
+          this.store.dispatch(
+            NotificationActions.unsetCurrentlySelectedFollowingAnnotation()
+          );
         }
-        this.store.dispatch(
-          NotificationActions.unsetCurrentlySelectedFollowingAnnotation()
-        );
       });
   }
 

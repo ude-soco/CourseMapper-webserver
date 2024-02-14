@@ -165,7 +165,9 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
     if (this.socketSubscription) {
       this.socketSubscription.unsubscribe();
     }
-    this.currentPdfPageSubscription.unsubscribe();
+    if (this.currentPdfPageSubscription) {
+      this.currentPdfPageSubscription.unsubscribe();
+    }
   }
 
   constructor(

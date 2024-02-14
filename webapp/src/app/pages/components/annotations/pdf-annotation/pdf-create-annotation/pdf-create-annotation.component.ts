@@ -67,7 +67,9 @@ export class PdfCreateAnnotationComponent
     super(store, notificationService);
   }
   ngOnDestroy(): void {
-    this.currentPdfPageSubscription.unsubscribe();
+    if (this.currentPdfPageSubscription) {
+      this.currentPdfPageSubscription.unsubscribe();
+    }
   }
   ngAfterViewChecked(): void {
     this.changeDetectorRef.detectChanges();
