@@ -30,6 +30,7 @@ export class LoginComponent implements OnInit {
   myCourses: Course[];
 
   public signup = '/signup';
+  public forgetPassword = '/forgetPassword';
   constructor(
     private userService: UserServiceService,
     private storageService: StorageService,

@@ -57,22 +57,27 @@ button {
     height:100%;
   }
 
-  ::ng-deep .p-card{
-    /*  width: 150px; */
+
+ ::ng-deep .add .p-card {
+    width: 150px;  
+    display:block;
     border-radius: 20px;
     border: 3px solid #0277bd;
+    margin: 1rem; 
 
-  }
-  ::ng-deep .p-card:hover{
+  }   
+.p-card:hover{
     border: 3px solid #022c42;
     
   }
 
-   p-card{
+   .add .p-card{
     display:block;
-    /*  width: 150px; */
+       width: 150px;
     margin: 1rem;
-  }
+    border-radius: 20px;
+    border: 3px solid #0277bd;
+  }   
 
   .card-container{
     width: 100%;
