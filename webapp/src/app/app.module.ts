@@ -14,14 +14,14 @@ import { MetaReducer, StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
-import { PrimengModule } from "./modules/primeng/primeng.module";
-import { SharedComponentsModule } from "./components/shared-components.module";
+import { PrimengModule } from './modules/primeng/primeng.module';
+import { SharedComponentsModule } from './components/shared-components.module';
 import { ButtonComponent } from './components/button/button.component';
 import { IconbuttonComponent } from './components/iconbutton/iconbutton.component';
 import { AvatarComponent } from './components/avatar/avatar.component';
 
 import { InputTextareaModule } from 'primeng/inputtextarea';
-import { DragulaModule,  DragulaService } from 'ng2-dragula';
+import { DragulaModule, DragulaService } from 'ng2-dragula';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -33,25 +33,22 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ByPassUrlSanitizationPipe } from './pipes/by-pass-url-sanitization.pipe';
 import { CustomDatePipe } from './pipes/date.pipe';
 
+import { AppComponent } from './app.component';
+import { TopicDropdownComponent } from './pages/components/topic-dropdown/topic-dropdown.component';
 
-
-import { AppComponent } from "./app.component";
-import { TopicDropdownComponent } from "./pages/components/topic-dropdown/topic-dropdown.component";
-
-import { RegistrationComponent } from "./pages/components/registration/registration.component";
-import { NavbarComponent } from "./pages/components/navbar/navbar.component";
-import { ChannelbarComponent } from "./pages/components/channelbar/channelbar.component";
-import { CoursesComponent } from "./pages/courses/courses.component";
-import { EditorComponent } from "./pages/components/editor/editor.component";
-import { AddCourseComponent } from "./components/add-course/add-course.component";
-import { AddTopicComponent } from "./pages/components/add-topic/add-topic.component";
-import { AddChannelComponent } from "./pages/components/add-channel/add-channel.component";
-import { SidebarTagsComponent } from "./pages/components/tags/sidebar-tags/sidebar-tags.component";
-import { TagsPageComponent } from "./pages/components/tags/tags-page/tags-page.component";
-import { TagCommentItemComponent } from "./pages/components/tags/tag-comment-item/tag-comment-item.component";
-import { TagReplyPanelComponent } from "./pages/components/tags/tag-reply-panel/tag-reply-panel.component";
-import { TagReplyItemComponent } from "./pages/components/tags/tag-reply-item/tag-reply-item.component";
-
+import { RegistrationComponent } from './pages/components/registration/registration.component';
+import { NavbarComponent } from './pages/components/navbar/navbar.component';
+import { ChannelbarComponent } from './pages/components/channelbar/channelbar.component';
+import { CoursesComponent } from './pages/courses/courses.component';
+import { EditorComponent } from './pages/components/editor/editor.component';
+import { AddCourseComponent } from './components/add-course/add-course.component';
+import { AddTopicComponent } from './pages/components/add-topic/add-topic.component';
+import { AddChannelComponent } from './pages/components/add-channel/add-channel.component';
+import { SidebarTagsComponent } from './pages/components/tags/sidebar-tags/sidebar-tags.component';
+import { TagsPageComponent } from './pages/components/tags/tags-page/tags-page.component';
+import { TagCommentItemComponent } from './pages/components/tags/tag-comment-item/tag-comment-item.component';
+import { TagReplyPanelComponent } from './pages/components/tags/tag-reply-panel/tag-reply-panel.component';
+import { TagReplyItemComponent } from './pages/components/tags/tag-reply-item/tag-reply-item.component';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoginComponent } from './pages/components/login/login.component';
@@ -69,11 +66,10 @@ import { PrivacyComponent } from './pages/components/privacy/privacy.component';
 import { CourseModule } from './pages/courses/course.module';
 import { CourseDescriptionComponent } from './pages/components/course-description/course-description.component';
 import { KnowledgeGraphModule } from './pages/components/knowledge-graph/knowledge-graph.module';
-import {ChatComponent} from "./components/chat/chat.component";
-import {SafeHtmlPipe} from "./pipes/safehtml.pipe";
-import {DateAgoPipe} from "./pipes/date-ago.pipe";
-import {LinkifyPipe} from "./pipes/linkify.pipe";
-
+import { ChatComponent } from './components/chat/chat.component';
+import { SafeHtmlPipe } from './pipes/safehtml.pipe';
+import { DateAgoPipe } from './pipes/date-ago.pipe';
+import { LinkifyPipe } from './pipes/linkify.pipe';
 
 import { TabMenuModule } from 'primeng/tabmenu';
 import { NotificationModule } from './pages/components/notifications/notification.module';
@@ -96,6 +92,10 @@ import { CourseDashboardComponent } from './pages/components/Dashboards/course-d
 import { ChannelDashboardComponent } from './pages/components/Dashboards/channel-dashboard/channel-dashboard.component';
 import { MaterialDashboardComponent } from './pages/components/Dashboards/material-dashboard/material-dashboard.component';
 import { BackButtonComponent } from './pages/components/back-button/back-button.component';
+import { ForgetPasswordComponent } from './pages/components/forget-password/forget-password.component';
+import { ResetPasswordComponent } from './pages/components/forget-password/reset-password/reset-password.component';
+import { ResetPasswordRequestComponent } from './pages/components/forget-password/reset-password-request/reset-password-request.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -129,9 +129,12 @@ import { BackButtonComponent } from './pages/components/back-button/back-button.
     TopicDashboardComponent,
     CourseDashboardComponent,
     ChannelDashboardComponent,
-   PopulateDashboardComponent,
-   MaterialDashboardComponent,
-   BackButtonComponent
+    PopulateDashboardComponent,
+    MaterialDashboardComponent,
+    BackButtonComponent,
+    ForgetPasswordComponent,
+    ResetPasswordComponent,
+    ResetPasswordRequestComponent,
   ],
   imports: [
     MentionModule,

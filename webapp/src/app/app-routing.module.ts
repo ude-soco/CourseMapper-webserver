@@ -22,6 +22,9 @@ import { SettingsComponent } from './pages/components/notifications/settings/set
 import { PersonalDashboardComponent } from './pages/components/Dashboards/personal-dashboard/personal-dashboard.component';
 import { TopicDashboardComponent } from './pages/components/Dashboards/topic-dashboard/topic-dashboard.component';
 import { CourseDashboardComponent } from './pages/components/Dashboards/course-dashboard/course-dashboard.component';
+import { ForgetPasswordComponent } from './pages/components/forget-password/forget-password.component';
+import { ResetPasswordComponent } from './pages/components/forget-password/reset-password/reset-password.component';
+import { ResetPasswordRequestComponent } from './pages/components/forget-password/reset-password-request/reset-password-request.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'landingPage', pathMatch: 'full' },
@@ -42,6 +45,18 @@ const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent,
+  },
+  {
+    path: 'forgetPassword',
+    component: ForgetPasswordComponent,
+  },
+  {
+    path: 'restPassword/:token',
+    component: ResetPasswordComponent,
+  },
+  {
+    path: 'restRequest',
+    component: ResetPasswordRequestComponent,
   },
   {
     path: 'home',
