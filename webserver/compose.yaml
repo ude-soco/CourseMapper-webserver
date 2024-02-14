@@ -22,7 +22,7 @@ services:
     environment:
       NEO4J_AUTH: neo4j/password
     volumes :
-    - coursemapper-kg-neo4j-data:/data
+    - neo4j-data:/data
     healthcheck:
       test: wget http://localhost:7474 || exit 1
     restart: always
@@ -52,6 +52,6 @@ services:
 
 volumes:
   mongo:
+  neo4j-data:
   webserver-uploads-pdfs:
   webserver-uploads-videos:
-  coursemapper-kg-neo4j-data:
