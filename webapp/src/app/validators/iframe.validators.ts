@@ -1,7 +1,21 @@
-import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { AbstractControl, FormControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { parse } from 'angular-html-parser';
 
-export function iframeValidator(): ValidatorFn {
+export class IFrameValidators {
+  static notOnlyWhitespace(control: FormControl) : ValidationErrors {
+    // check if string only contains whitespace
+        if ((control.value != null) && (control.value.trim().length === 0)) {
+
+            // invalid, return error object
+            return { 'notOnlyWhitespace': true };
+        }
+        else {
+            // valid, return null
+            return null;
+        }
+  }
+
+static iframeValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     let valid = false;
     let iframeCount = 0;
@@ -27,4 +41,5 @@ export function iframeValidator(): ValidatorFn {
 
     return !valid ? { invalidInput: { value: control.value } } : null;
   };
+}
 }

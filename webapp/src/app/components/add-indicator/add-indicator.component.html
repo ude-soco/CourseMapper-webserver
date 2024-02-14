@@ -1,0 +1,68 @@
+<p-toast position="bottom-left"></p-toast>
+
+<p-dialog
+  header="Add a new Indicator"
+  [(visible)]="displayAddIndicatorDialogue"
+  [modal]="true"
+  [draggable]="false"
+  [closable]="false"
+  [style]="{ maxWidth: '1000px', width: '100%' }"
+>
+<div>
+    <form
+      id="indicatorForm"
+      [formGroup]="indicatorForm"
+    >
+      <div class="flex flex-row">
+        <div class="mt-2">
+          <span class="p-float-label">
+            <textarea
+              id="float-input"
+              cols="100"
+              rows="1"
+              pInputTextarea
+              formControlName="indicatorIframe"
+              #iframeTextarea
+            ></textarea>
+            <label for="float-input">paste the iframe</label>
+            <small
+              *ngIf="indicatorIframe.invalid && indicatorIframe.dirty"
+              class="p-error block"
+              >Invalid Input: Please check your iframe code.</small
+            >
+          </span>
+        </div>        
+      </div>
+    </form>
+    <div>
+        <button
+          pButton
+          icon="pi pi-times"
+          (click)="toggleAddIndicatorDialogue()"
+          label="Cancel"
+          class="p-button-outlined"
+        ></button>
+  
+        <button
+          id="addCourseConfirm"
+          pButton
+          icon="pi pi-check"
+          class="float-right"
+          (click)="onSubmit()"
+          label="Confirm"
+          [disabled]="indicatorIframe.invalid"
+        ></button>
+    </div>
+  </div>
+
+  
+</p-dialog>
+
+
+
+
+
+
+
+
+

@@ -22,7 +22,13 @@ const Course = new Schema({
     },
   ],
   indicators: [
-    { _id : Schema.Types.ObjectId, src: String, width: String, height: String, frameborder: String },
+    {
+      _id: Schema.Types.ObjectId,
+      src: String,
+      width: String,
+      height: String,
+      frameborder: String,
+    },
   ],
   createdAt: { type: Date },
   updatedAt: { type: Date },

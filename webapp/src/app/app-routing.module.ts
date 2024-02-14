@@ -10,7 +10,6 @@ import { ChannelbarComponent } from './pages/components/channelbar/channelbar.co
 import { CoursesComponent } from './pages/courses/courses.component';
 import { TopicDropdownComponent } from './pages/components/topic-dropdown/topic-dropdown.component';
 import { PdfMainAnnotationComponent } from './pages/components/annotations/pdf-annotation/pdf-main-annotation/pdf-main-annotation.component';
-import { DashboardComponent } from './pages/components/dashboard/dashboard.component';
 import { LandingPageComponent } from './pages/landing-page/landing-page.component';
 import { AboutComponent } from './pages/about/about.component';
 import { TeamComponent } from './pages/team/team.component';
@@ -20,9 +19,17 @@ import { TagsPageComponent } from './pages/components/tags/tags-page/tags-page.c
 import { CourseWelcomeComponent } from './course-welcome/course-welcome.component';
 import { AllNotificationsComponent } from './pages/components/notifications/all-notifications/all-notifications.component';
 import { SettingsComponent } from './pages/components/notifications/settings/settings.component';
+import { PersonalDashboardComponent } from './pages/components/Dashboards/personal-dashboard/personal-dashboard.component';
+import { TopicDashboardComponent } from './pages/components/Dashboards/topic-dashboard/topic-dashboard.component';
+import { CourseDashboardComponent } from './pages/components/Dashboards/course-dashboard/course-dashboard.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'landingPage', pathMatch: 'full' },
+  {
+    path: 'user/dashboard',
+    component: PersonalDashboardComponent,
+    canActivate: [AuthGuardService],
+  },
   {
     path: 'landingPage',
     component: LandingPageComponent,
@@ -63,6 +70,14 @@ const routes: Routes = [
     canActivate: [AuthGuardService],
     children: [
       {
+        path: 'dashboard',
+        component: CourseDashboardComponent,
+      },
+      {
+        path: 'topic/:topicId/dashboard',
+        component: TopicDashboardComponent,
+      },
+      {
         path: 'channel/:channelId',
         loadChildren: () =>
           import('./pages/components/materials/materials.module').then(
@@ -79,7 +94,7 @@ const routes: Routes = [
       },
     ],
   },
-  { path: 'course/:courseID/dashboard', component: DashboardComponent },
+  //{ path: 'course/:courseID/dashboard', component: DashboardComponent },
   {
     path: 'notification/all',
     component: AllNotificationsComponent,
