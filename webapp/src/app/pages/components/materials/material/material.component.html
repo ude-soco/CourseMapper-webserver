@@ -108,6 +108,8 @@
                 (notificationSettingClicked)="
                   onMaterialNotificationSettingsClicked($event)
                 "
+                [MaterialSettingChosen]="true"
+                (viewMaterialDashboardClicked)="viewMaterialDashboardClicked()"
               ></app-context-menu>
             </ng-template>
           </p-overlayPanel>
@@ -184,6 +186,7 @@
     </ng-container>
   </p-tabView>
 </div>
+
 <ng-container>
   <!-- <app-concept-map #conceptMap [material]="selectedMaterial">
   </app-concept-map> -->

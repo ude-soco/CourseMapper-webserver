@@ -1,3 +1,4 @@
+const ObjectId = require("mongoose").Types.ObjectId;
 const db = require("../models");
 const Channel = db.channel;
 const Material = db.material;
@@ -336,3 +337,213 @@ export const editMaterial = async (req, res, next) => {
 
   return next();
 };
+
+/**
+ * @function newIndicator
+ * add new indicator controller
+ *
+ * @param {string} req.params.materialId The id of the course
+ * @param {string} req.body.src The sourse of the iframe
+ * @param {string} req.body.width The width of the iframe
+ * @param {string} req.body.height The height of the iframe
+ * @param {string} req.body.frameborder The frameborder of the iframe
+ */
+
+export const newIndicator = async (req, res, next) => {
+  const materialId = req.params.materialId;
+
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+  const indicator = {
+    _id: new ObjectId(),
+    src: req.body.src,
+    width: req.body.width,
+    height: req.body.height,
+    frameborder: req.body.frameborder,
+  };
+  foundMaterial.indicators.push(indicator);
+
+  try {
+    foundMaterial.save();
+  } catch (err) {
+    return res.status(500).send({ error: "Error saving material" });
+  }
+
+  return res.status(200).send({
+    success: `Indicator added successfully!`,
+    indicator: indicator,
+  });
+};
+
+/**
+ * @function deleteIndicator
+ * delete indicator controller
+ *
+ * @param {string} req.params.materialId The id of the course
+ * @param {string} req.params.indicatorId The id of the indicator
+ */
+export const deleteIndicator = async (req, res, next) => {
+  const materialId = req.params.materialId;
+  const indicatorId = req.params.indicatorId;
+
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findOne({ "indicators._id": indicatorId });
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `indicator with id ${indicatorId} doesn't exist!`,
+      });
+    }
+    if (foundMaterial._id.toString() !== materialId) {
+      return res.status(404).send({
+        error: `indicator with id ${indicatorId} doesn't belong to material with id ${materialId}!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
+  foundMaterial.indicators = foundMaterial.indicators.filter(
+    (indicator) => indicator._id.toString() !== indicatorId
+  );
+
+  try {
+    foundMaterial.save();
+  } catch (err) {
+    return res.status(500).send({ error: "Error saving material" });
+  }
+  return res.status(200).send({
+    success: `Indicator deleted successfully!`,
+  });
+};
+
+/**
+ * @function getIndicators
+ * get indicators controller
+ *
+ * @param {string} req.params.materialId The id of the course
+ */
+export const getIndicators = async (req, res, next) => {
+  const materialId = req.params.materialId;
+
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+  
+  const response = foundMaterial.indicators ? foundMaterial.indicators : [];
+  return res.status(200).send(response);
+};
+
+/**
+ * @function resizeIndicator
+ * resize indicator controller
+ *
+ * @param {string} req.params.materialId The id of the course
+ * @param {string} req.params.indicatorId The id of the indicator
+ * @param {string} req.params.width The width of the indicator
+ * @param {string} req.params.height The height of the indicator
+ */
+export const resizeIndicator = async (req, res, next) => {
+  const materialId = req.params.materialId;
+  const indicatorId = req.params.indicatorId;
+  const width = req.params.width;
+  const height = req.params.height;
+
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findOne({ "indicators._id": indicatorId });
+    if (! foundMaterial) {
+      return res.status(404).send({
+        error: `indicator with id ${indicatorId} doesn't exist!`,
+      });
+    }
+
+    if ( foundMaterial._id.toString() !== materialId) {
+      return res.status(404).send({
+        error: `indicator with id ${indicatorId} doesn't belong to material with id ${materialId}!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
+  foundMaterial.indicators.forEach((indicator) => {
+    if (indicator._id.toString() === indicatorId.toString()) {
+      indicator.width = width;
+      indicator.height = height;
+    }
+  });
+  
+  try {
+    foundMaterial.save();
+  } catch (err) {
+    return res.status(500).send({ error: "Error saving material" });
+  }
+  return res.status(200).send();
+
+}
+
+/**
+ * @function reorderIndicators
+ * reorder indicators controller
+ *
+ * @param {string} req.params.materialId The id of the course
+ * @param {string} req.params.newIndex The newIndex of the reordered indicator
+ * @param {string} req.params.oldIndex The oldIndex of the reordered indicator
+ */
+export const reorderIndicators = async (req, res, next) => {
+  const materialId = req.params.materialId;
+  const newIndex = parseInt(req.params.newIndex);
+  const oldIndex = parseInt(req.params.oldIndex);
+
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
+  let indicator = foundMaterial.indicators[oldIndex];
+  if (oldIndex < newIndex) {
+    for (let i = oldIndex; i < newIndex; i++) {
+      foundMaterial.indicators[i] = foundMaterial.indicators[i + 1];
+    }
+  } else {
+    for (let i = oldIndex; i > newIndex; i--) {
+      foundMaterial.indicators[i] = foundMaterial.indicators[i - 1];
+    }
+  }
+  foundMaterial.indicators[newIndex] = indicator;
+  try {
+    foundMaterial.save();
+  } catch (err) {
+    return res.status(500).send({ error: "Error saving material" });
+  }
+  return res.status(200).send({
+    success: `Indicators updated successfully!`,
+    indicators: foundMaterial.indicators,
+  });
+
+}

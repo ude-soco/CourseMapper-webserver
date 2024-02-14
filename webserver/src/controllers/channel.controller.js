@@ -472,3 +472,218 @@ export const editChannel = async (req, res, next) => {
   req.locals.channel = foundChannel;
   return next();
 };
+
+
+/**
+ * @function newIndicator
+ * add new indicator controller
+ *
+ * @param {string} req.params.channelId The id of the channel
+ * @param {string} req.body.src The sourse of the iframe
+ * @param {string} req.body.width The width of the iframe
+ * @param {string} req.body.height The height of the iframe
+ * @param {string} req.body.frameborder The frameborder of the iframe
+ */
+export const newIndicator = async (req, res, next) => {
+  const channelId = req.params.channelId;
+
+  let foundChannel;
+  try{
+    foundChannel = await Channel.findById(channelId);
+    if (!foundChannel) {
+      return res.status(404).send({
+        error: `Channel with id ${channelId} doesn't exist!`,
+      });
+    }
+
+  }catch (err) {
+    return res.status(500).send({ error: "Error finding channel" });
+  }
+
+  const indicator = {
+    _id: new ObjectId(),
+    src: req.body.src,
+    width: req.body.width,
+    height: req.body.height,
+    frameborder: req.body.frameborder,
+  };
+
+  foundChannel.indicators.push(indicator);
+  try {
+    foundChannel.save();
+  } catch (err) {
+    return res.status(500).send({ error: "Error saving channel" });
+  }
+
+  return res.status(200).send({
+    success: `Indicator added successfully!`,
+    indicator: indicator,
+  });
+}
+
+/**
+ * @function deleteIndicator
+ * delete indicator controller
+ *
+ * @param {string} req.params.channelId The id of the channel
+ * @param {string} req.params.indicatorId The id of the indicator
+ */
+export const deleteIndicator = async (req, res, next) => {
+  const channelId = req.params.channelId;
+  const indicatorId = req.params.indicatorId;
+
+  let  foundChannel;
+  try {
+    foundChannel = await Channel.findOne({ "indicators._id": indicatorId });
+    if (! foundChannel) {
+      return res.status(404).send({
+        error: `channel with id ${channelId} doesn't exist!`,
+      });
+    }
+
+    if (foundChannel._id.toString() !== channelId) {
+      return res.status(404).send({
+        error: `indicator with id ${indicatorId} doesn't belong to channel with id ${channelId}!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding channel" });
+  }
+  foundChannel.indicators =  foundChannel.indicators.filter(
+    (indicator) => indicator._id.toString() !== indicatorId
+  );
+
+  try {
+    foundChannel.save();
+  } catch (err) {
+    return res.status(500).send({ error: "Error saving channel" });
+  }
+
+  return res.status(200).send({
+    success: `Indicator deleted successfully!`,
+  });
+}
+
+/**
+ * @function getIndicators
+ * get indicators controller
+ *
+ * @param {string} req.params.channelId The id of the channel
+ */
+export const getIndicators = async (req, res, next) => {
+  const channelId = req.params.channelId;
+
+  let  foundChannel;
+  try {
+    foundChannel = await Channel.findById(channelId);
+    if (!foundChannel) {
+      return res.status(404).send({
+        error: `Channel with id ${channelId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  const response =  foundChannel.indicators ?  foundChannel.indicators : [];
+
+  return res.status(200).send(response);
+};
+
+
+/**
+ * @function resizeIndicator
+ * resize indicator controller
+ *
+ * @param {string} req.params.channelId The id of the channel
+ * @param {string} req.params.indicatorId The id of the indicator
+ * @param {string} req.params.width The width of the indicator
+ * @param {string} req.params.height The height of the indicator
+ */
+export const resizeIndicator = async (req, res, next) => {
+  const channelId = req.params.channelId;
+  const indicatorId = req.params.indicatorId;
+  const width = req.params.width;
+  const height = req.params.height;
+
+  let  foundChannel;
+  try {
+    foundChannel = await Channel.findOne({ "indicators._id": indicatorId });
+    if (!foundChannel) {
+      return res.status(404).send({
+        error: `indicator with id ${indicatorId} doesn't exist!`,
+      });
+    }
+
+    if ( foundChannel._id.toString() !== channelId) {
+      return res.status(404).send({
+        error: `indicator with id ${indicatorId} doesn't belong to channel with id ${channelId}!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding channel" });
+  }
+
+  foundChannel.indicators.forEach((indicator) => {
+    if (indicator._id.toString() === indicatorId.toString()) {
+      indicator.width = width;
+      indicator.height = height;
+    }
+  });
+
+  try {
+    foundChannel.save();
+  } catch (err) {
+    return res.status(500).send({ error: "Error saving channek" });
+  }
+
+  return res.status(200).send();
+};
+
+/**
+ * @function reorderIndicators
+ * reorder indicators controller
+ *
+ * @param {string} req.params.channelId The id of the channel
+ * @param {string} req.params.newIndex The newIndex of the reordered indicator
+ * @param {string} req.params.oldIndex The oldIndex of the reordered indicator
+ */
+export const reorderIndicators = async (req, res, next) => {
+  const channelId = req.params.channelId;
+  const newIndex = parseInt(req.params.newIndex);
+  const oldIndex = parseInt(req.params.oldIndex);
+
+  let foundChannel;
+  try {
+    foundChannel = await Channel.findById(channelId);
+    if (!foundChannel) {
+      return res.status(404).send({
+        error: `Channel with id ${channelId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding channel" });
+  }
+  let indicator =  foundChannel.indicators[oldIndex];
+  if (oldIndex < newIndex) {
+    for (let i = oldIndex; i < newIndex; i++) {
+      foundChannel.indicators[i] =  foundChannel.indicators[i + 1];
+    }
+  } else {
+    for (let i = oldIndex; i > newIndex; i--) {
+      foundChannel.indicators[i] =  foundChannel.indicators[i - 1];
+    }
+  }
+  foundChannel.indicators[newIndex] = indicator;
+  try {
+    foundChannel.save();
+  } catch (err) {
+    return res.status(500).send({ error: "Error saving channel" });
+  }
+  return res.status(200).send({
+    success: `Indicators updated successfully!`,
+    indicators:  foundChannel.indicators,
+  });
+};
+
+

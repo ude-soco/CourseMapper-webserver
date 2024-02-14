@@ -24,7 +24,6 @@ export class CourseService {
   // it is not private because it is subscribed in chnannelbar component
   onSelectCourse = new EventEmitter<Course>();
   private selectedCourse: Course = new CourseImp('', '');
-  private user = this.storageService.getUser();
   public navigatingToMaterial: boolean = false;
   public Notification: Notification = null;
 
