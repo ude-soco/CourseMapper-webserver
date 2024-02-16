@@ -66,7 +66,6 @@ export class CourseWelcomeComponent implements OnInit {
     this.selectedCourse = this.courseService.getSelectedCourse();
     this.Users = [];
     this.courseService.onSelectCourse.subscribe((course) => {
-      console.log(course);
       this.selectedCourse = course;
       this.selectedCourseId = course._id;
       this.createdAtDate = new Date(course.createdAt);
@@ -142,7 +141,13 @@ export class CourseWelcomeComponent implements OnInit {
     this.courseService.WithdrawFromCourse(course).subscribe((res) => {
       let showInfoError = new ShowInfoError(this.messageService);
       if ('success' in res) {
-        this.showInfoError.showInfo('You have been  withdrewed successfully ');
+        // this.showInfoError.showInfo('You have been  withdrewed successfully ');
+        // this.showInfo('You are successfully withdrew from the course');
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'You are successfully withdrew from the course',
+        });
 
         this.store.dispatch(
           CourseAction.setCurrentCourse({ selcetedCourse: course })
@@ -151,7 +156,10 @@ export class CourseWelcomeComponent implements OnInit {
         this.store.dispatch(
           NotificationActions.isDeletingCourse({ courseId: course._id })
         );
-        this.router.navigate(['course-description', course._id]);
+        // this.router.navigate(['course-description', course._id]);
+        setTimeout(() => {
+          this.router.navigate(['course-description', course._id]);
+        }, 850);
       }
       (er) => {
         console.log(er);
