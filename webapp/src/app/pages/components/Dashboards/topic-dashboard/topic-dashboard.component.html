@@ -1,11 +1,11 @@
 <p-toast position="bottom-left"></p-toast>
 <p-confirmDialog></p-confirmDialog>
 <div class="relative bg-gray-100 shadow-lg min-h-screen">
-  <div class="h-max m-0 flex flex-col bg-gray-100">
-    <div class="flex items-start py-4 pl-3 bg-gray-200">
+  <div class="w-full">
+    <div class="p-4 bg-gray-200">
       <div class="flex flex-wrap items-center gap-5">
-        <div >
-            <app-back-button></app-back-button>            
+        <div>
+          <app-back-button></app-back-button>
         </div>
         <div>
           <p class="flex w-full text-xl font-semibold">Topic Dashboard</p>
@@ -13,14 +13,16 @@
       </div>
     </div>
     <hr />
-        <div class="p-5">
-          <app-populate-dashboard
-            [indicators]="indicators"
-            [forTopicDashboard]="true"
-              [topicId]="topicId"
-              [courseId]="courseId"
-            [role]="this.courseService.getSelectedCourse().role"
-          ></app-populate-dashboard>
-        </div>
+    <div class="w-full max-w-screen-2xl">
+      <div class="p-4">
+        <app-populate-dashboard
+          [indicators]="indicators"
+          [forTopicDashboard]="true"
+          [topicId]="topicId"
+          [courseId]="courseId"
+          [role]="this.courseService.getSelectedCourse().role"
+        ></app-populate-dashboard>
+      </div>
+    </div>
   </div>
 </div>
