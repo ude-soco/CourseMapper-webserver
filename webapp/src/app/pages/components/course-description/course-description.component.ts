@@ -26,7 +26,6 @@ export class CourseDescriptionComponent {
   CourseId: Observable<string>;
   isloggedin: boolean = false;
   createdAt: string;
-  createdAtDate: Date;
   firstName: string;
   lastName: string;
   Enrolled: boolean = false;
@@ -56,7 +55,6 @@ export class CourseDescriptionComponent {
       this.Users = [];
       //console.log(varcc, "course found from des page")
       this.Users = varcc.users;
-      this.createdAtDate = new Date(varcc.createdAt);
       var index = varcc.createdAt.indexOf('T');
       (this.createdAt = varcc.createdAt.slice(0, index)),
         varcc.createdAt.slice(index + 1);

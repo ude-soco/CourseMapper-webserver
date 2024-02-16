@@ -38,7 +38,6 @@ export class CourseWelcomeComponent implements OnInit {
   userArray: any = new Array();
   moderator: boolean = false;
   createdAt: string;
-  createdAtDate: Date;
   firstName: string;
   lastName: string;
   Users: any;
@@ -68,7 +67,6 @@ export class CourseWelcomeComponent implements OnInit {
     this.courseService.onSelectCourse.subscribe((course) => {
       this.selectedCourse = course;
       this.selectedCourseId = course._id;
-      this.createdAtDate = new Date(course.createdAt);
       this.topicChannelService.fetchTopics(course._id).subscribe((res) => {
         this.selectedCourse = res.course;
         this.Users = course.users;
