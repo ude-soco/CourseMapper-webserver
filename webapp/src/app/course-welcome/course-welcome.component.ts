@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit, Renderer2 } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { Observable } from 'rxjs';
 import { Course } from '../models/Course';
 import { CourseImp } from '../models/CourseImp';
@@ -12,7 +13,10 @@ import {
 } from 'src/app/state/app.reducer';
 import * as CourseAction from 'src/app/pages/courses/state/course.actions';
 import { Router } from '@angular/router';
-import { getChannelSelected, getCurrentCourseId } from '../pages/courses/state/course.reducer';
+import {
+  getChannelSelected,
+  getCurrentCourseId,
+} from '../pages/courses/state/course.reducer';
 import { TopicChannelService } from 'src/app/services/topic-channel.service';
 import { UserServiceService } from '../services/user-service.service';
 import * as AppActions from '../state/app.actions';
@@ -24,7 +28,7 @@ import { ShowInfoError } from '../_helpers/show-info-error';
   selector: 'app-course-welcome',
   templateUrl: './course-welcome.component.html',
   styleUrls: ['./course-welcome.component.css'],
-  providers: [MessageService, ConfirmationService],
+  providers: [MessageService, ConfirmationService, DatePipe],
 })
 export class CourseWelcomeComponent implements OnInit {
   selectedCourse: Course = new CourseImp('', '');
@@ -34,13 +38,14 @@ export class CourseWelcomeComponent implements OnInit {
   userArray: any = new Array();
   moderator: boolean = false;
   createdAt: string;
+  createdAtDate: Date;
   firstName: string;
   lastName: string;
   Users: any;
   role: string;
-  selectedCourseId: string = "";
+  selectedCourseId: string = '';
 
-  showInfoError:  ShowInfoError;
+  showInfoError: ShowInfoError;
 
   constructor(
     private confirmationService: ConfirmationService,
@@ -56,37 +61,34 @@ export class CourseWelcomeComponent implements OnInit {
     this.courseSelected$ = store.select(getCourseSelected);
     this.channelSelected$ = this.store.select(getChannelSelected);
   }
- 
 
   ngOnInit(): void {
     this.selectedCourse = this.courseService.getSelectedCourse();
     this.Users = [];
     this.courseService.onSelectCourse.subscribe((course) => {
-      this.selectedCourse = course; 
-      this.selectedCourseId = course._id;  
+      console.log(course);
+      this.selectedCourse = course;
+      this.selectedCourseId = course._id;
+      this.createdAtDate = new Date(course.createdAt);
       this.topicChannelService.fetchTopics(course._id).subscribe((res) => {
         this.selectedCourse = res.course;
         this.Users = course.users;
         this.buildCardInfo(course.users[0].userId, course);
       });
-     
-      
+
       if (this.selectedCourse.role === 'moderator') {
         this.moderator = true;
       } else {
         this.moderator = false;
       }
     });
-
-    
   }
-
 
   buildCardInfo(userModeratorID: string, course: Course) {
     this.userService.GetUserName(userModeratorID).subscribe((user) => {
       this.firstName = user.firstname;
       this.lastName = user.lastname;
-      this.role = course.role
+      this.role = course.role;
 
       var index = course.createdAt.indexOf('T');
       (this.createdAt = course.createdAt.slice(0, index)),
@@ -138,7 +140,7 @@ export class CourseWelcomeComponent implements OnInit {
 
   unEnrolleCourse(course: Course) {
     this.courseService.WithdrawFromCourse(course).subscribe((res) => {
-      let showInfoError = new ShowInfoError(this.messageService)
+      let showInfoError = new ShowInfoError(this.messageService);
       if ('success' in res) {
         this.showInfoError.showInfo('You have been  withdrewed successfully ');
 
@@ -158,8 +160,4 @@ export class CourseWelcomeComponent implements OnInit {
       };
     });
   }
-
-  
-
-  
 }

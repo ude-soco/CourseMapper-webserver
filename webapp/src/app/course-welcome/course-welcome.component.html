@@ -5,37 +5,58 @@
   <div class="flex flex-wrap justify-between">
     <div>
       <div>
-        <div>
-          <strong class="text-lg font-semibold">Course Description:</strong>
+        <div class="mt-4 mb-4">
+          <div class="flex flex-wrap gap-5">
+            <div class="flex flex-col">
+              <strong>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="22"
+                  height="22"
+                  viewBox="0 0 22 22"
+                  style="
+                    fill: #ea580c;
+                    transform: msFilter;
+                    float: left;
+                    margin-right: 2px;
+                  "
+                >
+                  <path d="M2 7v1l11 4 9-4V7L11 4z"></path>
+                  <path
+                    d="M4 11v4.267c0 1.621 4.001 3.893 9 3.734 4-.126 6.586-1.972 7-3.467.024-.089.037-.178.037-.268V11L13 14l-5-1.667v3.213l-1-.364V12l-3-1z"
+                  ></path>
+                </svg>
+                <span class="font-medium pl-1">
+                  Created by: {{ this.firstName }} {{ this.lastName }}
+                </span>
+              </strong>
+              <strong>
+                <p class="p" style="margin-left: 4px">
+                  <i
+                    class="pi pi-calendar"
+                    style="font-size: 1rem; color: #ea580c"
+                  ></i>
+                  <span class="font-medium pl-1">
+                    Created on: {{ createdAtDate | date : "d MMMM yyyy" }}
+                  </span>
+                </p></strong
+              >
+            </div>
+          </div>
         </div>
-        <div class="w-80">
+
+        <div>
+          <strong class="text-lg font-semibold">Course Description</strong>
+        </div>
+        <div class="w-80 pb-5">
           <div
             *ngIf="selectedCourse.description.length == 0"
             class="justify-self-start"
           >
             No description provided
           </div>
-          <div class="justify-self-start" style="width: 750px;">{{ selectedCourse.description }}</div>
-        </div>
-        <div class="mt-4 mb-4">
-          <div class="flex flex-wrap gap-5">
-            <p-avatar
-              label="{{ getName(this.firstName, this.lastName) }}"
-              shape="circle"
-              size="medium"
-              [style]="{ 'background-color': '#0277BD', color: '#ffffff' ,  }"
-            ></p-avatar>
-
-            <div>
-              <div>
-                <p class="text-l leading-normal font-medium">
-                  {{ this.firstName }}
-                </p>
-              </div>
-              <div>
-                <p>{{ role }}</p>
-              </div>
-            </div>
+          <div class="justify-self-start" style="width: 750px">
+            {{ selectedCourse.description }}
           </div>
         </div>
       </div>
@@ -47,6 +68,7 @@
           class="button p-button-raised"
           type="button"
           label="Unenroll from course"
+          [style]="{ 'background-color': '#0369A1', color: '#ffffff' }"
           (click)="deEnrole()"
           [disabled]="moderator"
         ></button>
