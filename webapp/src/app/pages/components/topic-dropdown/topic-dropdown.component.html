@@ -91,12 +91,12 @@
         >
           <div
             *ngIf="channel._id !== selectedChannelId"
-            class="flex flex-row items-center justify-between"
+            class="flex flex-row items-center grow justify-between"
             [class.activity-indicator]="
               getChannelActivityIndicator(channel._id) | async
             "
           >
-            <div class="flex">
+            <div class="flex flex-row">
               <span>#</span>
               <p
                 id="{{ channel._id }}"
@@ -108,11 +108,6 @@
                 {{ channel.name }}
               </p>
             </div>
-            <app-iconbutton
-              icon="bx-dots-vertical-rounded"
-              color="text-black"
-              (click)="channelMenuButtonClicked($event, channel)"
-            ></app-iconbutton>
             <p-overlayPanel #channelMenu styleClass="settingsContextMenu">
               <ng-template pTemplate="content">
                 <app-context-menu
@@ -129,11 +124,17 @@
                   (notificationSettingClicked)="
                     onChannelNotificationSettingsClicked($event)
                   "
-                   [channelSettingChosen]="true"
+                  [channelSettingChosen]="true"
                   (viewChannelDashboardClicked)="viewChannelDashboardClicked()"
                 ></app-context-menu>
               </ng-template>
             </p-overlayPanel>
+
+            <app-iconbutton
+              icon="bx-dots-vertical-rounded"
+              color="text-black"
+              (click)="channelMenuButtonClicked($event, channel)"
+            ></app-iconbutton>
           </div>
           <p-overlayPanel #channelMenu styleClass="settingsContextMenu">
             <ng-template pTemplate="content">
