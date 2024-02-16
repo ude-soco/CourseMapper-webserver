@@ -61,7 +61,7 @@ import { getLoggedInUser } from 'src/app/state/app.reducer';
 import { getCurrentCourseId } from 'src/app/pages/courses/state/course.reducer';
 import { SlideKgOrderedService } from 'src/app/services/slide-kg-ordered.service';
 import * as CourseActions from 'src/app/pages/courses/state/course.actions';
-
+import * as NotificationActions from '../../../notifications/state/notifications.actions';
 @Component({
   selector: 'app-pdf-main-annotation',
   templateUrl: './pdf-main-annotation.component.html',
@@ -133,6 +133,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   currentPDFPage$: Observable<number>;
   currentPdfPageSubscription: Subscription;
   private socketSubscription: Subscription;
+  notificationClickedSubscription: Subscription;
 
   ngOnInit(): void {
     this.store.select(getHideAnnotationValue).subscribe((isHideAnnotations) => {
@@ -148,7 +149,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
       }
     );
 
-    this.store
+    this.notificationClickedSubscription = this.store
       .select(getCurrentlyClickedNotification)
       .subscribe((notification) => {
         if (notification) {
@@ -156,6 +157,9 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
             AnnotationActions.setCurrentPdfPage({
               pdfCurrentPage: notification.startPage,
             })
+          );
+          this.store.dispatch(
+            NotificationActions.unsetCurrentlySelectedNotification()
           );
         }
       });
@@ -167,6 +171,9 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
     }
     if (this.currentPdfPageSubscription) {
       this.currentPdfPageSubscription.unsubscribe();
+    }
+    if (this.notificationClickedSubscription) {
+      this.notificationClickedSubscription.unsubscribe();
     }
   }
 

@@ -46,6 +46,7 @@ export class PdfCommentPanelComponent implements OnInit, OnDestroy {
   followingAnnotationSubscription;
   pdfPageSubscription;
   videoSeekSubscription: any;
+  currentTimeSubscription: any;
   constructor(
     private store: Store<State>,
     private changeDetectorRef: ChangeDetectorRef
@@ -73,19 +74,21 @@ export class PdfCommentPanelComponent implements OnInit, OnDestroy {
         this.showPDFAnnotations();
       });
 
-    this.store.select(getCurrentTime).subscribe((time) => {
-      this.currentTime = time;
-      if (
-        this.selectedMaterial.type === 'video' &&
-        this.currentTimeSpanSelected
-      ) {
-        this.annotationsToShow = this.annotations.filter(
-          (a) =>
-            (a.location as VideoAnnotationLocation).from <= time &&
-            (a.location as VideoAnnotationLocation).to > time
-        );
-      }
-    });
+    this.currentTimeSubscription = this.store
+      .select(getCurrentTime)
+      .subscribe((time) => {
+        this.currentTime = time;
+        if (
+          this.selectedMaterial.type === 'video' &&
+          this.currentTimeSpanSelected
+        ) {
+          this.annotationsToShow = this.annotations.filter(
+            (a) =>
+              (a.location as VideoAnnotationLocation).from <= time &&
+              (a.location as VideoAnnotationLocation).to > time
+          );
+        }
+      });
   }
   ngOnDestroy(): void {
     if (this.followingAnnotationSubscription) {
@@ -97,6 +100,7 @@ export class PdfCommentPanelComponent implements OnInit, OnDestroy {
     if (this.videoSeekSubscription) {
       this.videoSeekSubscription.unsubscribe();
     }
+    this.currentTimeSubscription?.unsubscribe();
   }
 
   ngAfterViewInit(): void {
@@ -108,6 +112,9 @@ export class PdfCommentPanelComponent implements OnInit, OnDestroy {
             VideoActions.SetSeekVideo({
               seekVideo: [notification.from, notification.from],
             })
+          );
+          this.store.dispatch(
+            NotificationActions.unsetCurrentlySelectedNotification()
           );
         }
       });

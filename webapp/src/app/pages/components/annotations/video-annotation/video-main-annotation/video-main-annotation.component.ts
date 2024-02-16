@@ -37,7 +37,6 @@ import { Annotation } from 'src/app/models/Annotations';
 import { Reply } from 'src/app/models/Reply';
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
 import * as CourseActions from '../../../../courses/state/course.actions';
-import { getCurrentlyClickedNotification } from '../../../notifications/state/notifications.reducer';
 import { map } from 'jquery';
 import { map as RxJSMap } from 'rxjs/operators';
 
@@ -78,6 +77,7 @@ export class VideoMainAnnotationComponent
   cursorisInsideVideo: boolean;
   private socketSubscription: Subscription;
   startYoutubeVideoAtTime$: Observable<number>;
+  seekVideoSubscription: Subscription;
   constructor(
     private store: Store<State>,
     private pdfViewService: PdfviewService,
@@ -106,6 +106,9 @@ export class VideoMainAnnotationComponent
     if (this.socketSubscription) {
       this.socketSubscription.unsubscribe();
     }
+    if (this.seekVideoSubscription) {
+      this.seekVideoSubscription.unsubscribe();
+    }
   }
 
   ngOnInit(): void {
@@ -127,11 +130,13 @@ export class VideoMainAnnotationComponent
     this.showAnnotations$ = this.store.select(getShowAnnotations);
     this.videoIsPlaying$ = this.store.select(getIsVideoPlayed);
     this.videoIsPaused$ = this.store.select(getIsVideoPaused);
-    this.store.select(getSeekVideo).subscribe((time) => {
-      if (time != null) {
-        this.seekVideo(time[0]);
-      }
-    });
+    this.seekVideoSubscription = this.store
+      .select(getSeekVideo)
+      .subscribe((time) => {
+        if (time != null) {
+          this.seekVideo(time[0]);
+        }
+      });
 
     this.startYoutubeVideoAtTime$ = this.store.select(getSeekVideo).pipe(
       RxJSMap((time) => {

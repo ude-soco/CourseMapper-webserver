@@ -37,6 +37,7 @@ import { MaterialKgOrderedService } from 'src/app/services/material-kg-ordered.s
 
 import { Notification } from 'src/app/models/Notification';
 import { getLastTimeCourseMapperOpened } from 'src/app/state/app.reducer';
+import * as VideoActions from '../../annotations/video-annotation/state/video.action';
 @Component({
   selector: 'app-material',
   templateUrl: './material.component.html',
@@ -346,6 +347,9 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
             selcetedMaterial: this.selectedMaterial,
           })
         );
+        this.store.dispatch(
+          AnnotationActions.setCurrentPdfPage({ pdfCurrentPage: 1 })
+        );
         this.store.dispatch(AnnotationActions.loadAnnotations());
         this.router.navigate([
           'course',
@@ -366,6 +370,8 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
             selcetedMaterial: this.selectedMaterial,
           })
         );
+        this.store.dispatch(VideoActions.SetSeekVideo({ seekVideo: [0, 0] }));
+        this.store.dispatch(VideoActions.SetCurrentTime({ currentTime: 0 }));
         this.store.dispatch(AnnotationActions.loadAnnotations());
         this.router.navigate([
           'course',
