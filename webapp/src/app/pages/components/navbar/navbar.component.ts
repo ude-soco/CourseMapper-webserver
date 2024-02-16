@@ -2,8 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 
-import { MenuItem, PrimeNGConfig } from 'primeng/api';
-import { USER_KEY } from 'src/app/config/config';
+import { MenuItem, PrimeNGConfig, MessageService } from 'primeng/api';
 import { User } from 'src/app/models/User';
 import { StorageService } from 'src/app/services/storage.service';
 import { UserServiceService } from 'src/app/services/user-service.service';
@@ -18,37 +17,22 @@ import { getInitials } from 'src/app/_helpers/format';
 })
 export class NavbarComponent implements OnInit {
   onLogout: any;
-  
   isLoggedIn: boolean = false;
-
   showAdminBoard = false;
   showModeratorBoard = false;
   username?: string;
   loggedInUser: User;
+  userOptions: MenuItem[];
+
   public LandingPage = '/landingPage';
   protected loggedInUser$;
 
-
-  userOptions: MenuItem[] = [
-    {
-      label: 'Personal Dashboard',
-      icon: 'pi pi-chart-bar',
-      styleClass: 'navbar-tooltip',
-      command: () => this.onViewPersonalDashboard(),
-    },
-    {
-      label: 'Signout',
-      icon: 'pi pi-sign-out',
-      command: ($event) => this. handleLogout(),
-    },
-  ];
-
   constructor(
-    private primengConfig: PrimeNGConfig,
     public storageService: StorageService,
     private userService: UserServiceService,
     private router: Router,
-    private store: Store<State>
+    private store: Store<State>,
+    private messageService: MessageService
   ) {
     this.isLoggedIn = storageService.isLoggedIn();
     this.store
@@ -57,20 +41,27 @@ export class NavbarComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // this.primengConfig.ripple = true;
-    // this.isLoggedIn = this.storageService.isLoggedIn();
-    // console.log('changes');
-    // if (this.isLoggedIn) {
-    //   const user = this.storageService.getUser();
-    //   this.username = user.username;
-    // }
     this.loggedInUser = this.storageService.getUser();
     this.loggedInUser$ = this.store.select(getLoggedInUser);
-    // this.isLoggedIn = this.storageService.isLoggedIn();
-
-    // const user = this.storageService.getUser();
-
-    // this.username = user.username;
+    this.userOptions = [
+      {
+        label: `ID: ${this.loggedInUser.id}`,
+        icon: 'pi pi-copy',
+        title: 'Copy ID to clipboard',
+        command: () => this.copyUserId(this.loggedInUser.id),
+      },
+      {
+        label: 'Personal Dashboard',
+        icon: 'pi pi-chart-bar',
+        title: 'View your personal dashboard',
+        command: () => this.onViewPersonalDashboard(),
+      },
+      {
+        label: 'Sign out',
+        icon: 'pi pi-sign-out',
+        command: () => this.handleLogout(),
+      },
+    ];
   }
 
   handleLogin() {
@@ -103,12 +94,16 @@ export class NavbarComponent implements OnInit {
   }
   getIntitials = getInitials;
 
-  copyUserId(userId) {
+  copyUserId(userId: string) {
     navigator.clipboard.writeText(userId);
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: 'ID copied to clipboard!',
+    });
   }
 
   onViewPersonalDashboard(): void {
-    this.router.navigate([
-      'user/dashboard']);
+    this.router.navigate(['user/dashboard']);
   }
 }

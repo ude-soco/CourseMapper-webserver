@@ -34,7 +34,6 @@
       </span>
 
       <span *ngIf="this.storageService.loggedIn">
-      
         <p-avatar
           label="{{ getIntitials(loggedInUser?.name) }}"
           shape="circle"
@@ -47,14 +46,14 @@
           (click)="menu.toggle($event)"
         ></p-avatar>
         <p-menu
-                  #menu
-                  id="config_menu"
-                  [popup]="true"
-                  appendTo="body"
-                  styleClass="course-context-menu"
-                  [model]="userOptions"
-                  pTooltip="Delete Indicator"
-                ></p-menu>
+          #menu
+          id="config_menu"
+          [popup]="true"
+          appendTo="body"
+          styleClass="course-context-menu"
+          [model]="userOptions"
+          pTooltip="userOptions"
+        />
       </span>
     </div>
   </div>
