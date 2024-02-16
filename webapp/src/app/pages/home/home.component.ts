@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { StorageService } from 'src/app/services/storage.service';
@@ -15,6 +16,7 @@ import { UserServiceService } from 'src/app/services/user-service.service';
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
+  providers: [DatePipe],
 })
 export class HomeComponent implements OnInit {
   currentUser: {} | undefined;
@@ -113,7 +115,7 @@ export class HomeComponent implements OnInit {
         id: course._id,
         name: course.name,
         shortName: course.shortName,
-        createdAt: this.createdAt,
+        createdAt: new Date(course.createdAt),
         firstName: this.firstName,
         lastName: this.lastName,
         description: course.description,
