@@ -493,7 +493,7 @@ export class NotificationDashboardComponent {
           const elementToScrollTo = document.getElementById(
             `annotation-${notification.annotation_id}`
           );
-          elementToScrollTo.scrollIntoView();
+          elementToScrollTo?.scrollIntoView();
           // Scroll to the element
           window.location.hash = '#annotation-' + notification.annotation_id;
           setTimeout(function () {
