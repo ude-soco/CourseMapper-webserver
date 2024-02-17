@@ -1,4 +1,5 @@
 import sys
+import traceback
 from redis import Redis
 import json
 from threading import Thread
@@ -168,7 +169,7 @@ def start_worker(pipelines):
             logger.info(f'Error processing {pipeline} job {job_id}')
 
             # Print the error
-            logger.error(e)
+            logger.error(traceback.format_exc())
 
             # Wait for alive thread to finish
             stop_thread()
