@@ -77,9 +77,5 @@ See the step-by-step guide with screenshots to install the necessary softwares a
 
 - Run the worker
   ```bash
-  pipenv shell
-  ```
-
-  ```bash
-  python app/worker.py
+  pipenv run python -m app.worker
   ```

@@ -156,10 +156,8 @@ The services making up the coursemapper-webserver project use the following imag
 - Run the worker
 
   ```bash
-  python app/worker.py
+  pipenv run python -m app.worker
   ```
-
-  Note: Make sure to activate the virtual environment by typing `pipenv shell` in the terminal and then start the Flask server by typing the command above.
 
 #### Step 5: Postman configuration
 
