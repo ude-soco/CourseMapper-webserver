@@ -80,6 +80,13 @@ def clean_up(pipeline, job_id, material_id):
 def start_worker(pipelines):
     logger.info('Starting worker...')
 
+    # Make sure we are connected to Redis
+    if not redis.ping():
+        logger.error('Could not connect to Redis')
+        sys.exit(1)
+
+    logger.info('Connected to Redis and ready to accept jobs')
+
     while True:
         # Wait for a hash to be pushed to queue:ready
         queues = [f'queue:{pipeline}:pending' for pipeline in pipelines]
