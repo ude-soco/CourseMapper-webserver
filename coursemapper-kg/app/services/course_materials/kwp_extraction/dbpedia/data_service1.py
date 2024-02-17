@@ -251,7 +251,13 @@ def get_serialized_concepts_data(concepts):
             for node in road["p"]:
                 if isinstance(node, str):
                     list.append(node)
-                elif node["type"] == "user" or node["type"] == "Slide":
+                elif node["type"] == "user":
+                    n = {
+                        "id": node["uid"],
+                        "type": node["type"],
+                    }
+                    list.append(n)
+                elif node["type"] == "Slide":
                     n = {
                         "name": node["name"],
                         "type": node["type"],
