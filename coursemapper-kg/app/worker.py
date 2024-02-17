@@ -86,7 +86,7 @@ def start_worker(pipelines):
         logger.error('Could not connect to Redis')
         sys.exit(1)
 
-    logger.info('Connected to Redis and ready to accept jobs')
+    logger.info(f'Worker {worker_id} ready to accept jobs')
 
     while True:
         # Wait for a hash to be pushed to queue:ready
