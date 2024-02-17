@@ -81,7 +81,7 @@ export async function addJob(pipeline, job, onDone) {
 
   const existingJobId = await findExistingJob(job);
   if (existingJobId) {
-    console.log(`Job already exists with id ${existingJobId} in pipeline ${pipeline}`);
+    console.log(`Job exists with id ${existingJobId} in pipeline ${pipeline}`);
     onJobDone(jobId, onDone);
     return existingJobId;
   }
