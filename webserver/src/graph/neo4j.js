@@ -41,7 +41,7 @@ export async function getSlide(slideId) {
 export async function readSlide(userId, slideId) {
   // Create user node if not exists
   await graphDb.driver.executeQuery(
-    'MERGE (u:User {uid: $uid}) RETURN u',
+    'MERGE (u:User {uid: $uid, type: "user"}) RETURN u',
     { uid: userId }
   );
 
