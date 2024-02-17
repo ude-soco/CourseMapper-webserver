@@ -189,3 +189,15 @@ export const getResources = async (req, res) => {
     return res.status(200).send(result.result);
   });
 }
+
+export const readSlide = async (req, res, next) => {
+  const slideNr = req.params.slideNr;
+  const slideId = `${req.params.materialId}_slide_${slideNr}`;
+
+  try {
+    await neo4j.readSlide(req.locals.user.id, slideId);
+    next();
+  } catch (err) {
+    next();
+  }
+};

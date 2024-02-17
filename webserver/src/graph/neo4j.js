@@ -38,6 +38,22 @@ export async function getSlide(slideId) {
   return recordsToObjects(records);
 }
 
+export async function readSlide(userId, slideId) {
+  // Create user node if not exists
+  await graphDb.driver.executeQuery(
+    'MERGE (u:User {uid: $uid}) RETURN u',
+    { uid: userId }
+  );
+
+  // Create user HAS_READ slide relationship
+  await graphDb.driver.executeQuery(
+    `MATCH (u:User) WHERE u.uid = $uid
+    OPTIONAL MATCH(s:Slide) WHERE s.sid = $sid
+    MERGE (u)-[r:HAS_READ]->(s)`,
+    { uid: userId, sid: slideId }
+  );
+}
+
 export async function checkMaterial(materialId) {
   const { records, summary, keys } = await graphDb.driver.executeQuery(
     'MATCH (m:LearningMaterial) WHERE m.mid = $mid RETURN m',
