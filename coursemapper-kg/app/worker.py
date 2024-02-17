@@ -153,6 +153,9 @@ def start_worker(pipelines):
             stop_thread()
 
             # No need to clean up, another worker will do it
+        except KeyboardInterrupt:
+            # Quit
+            sys.exit()
         except Exception as e:
             # Send the error
             data = json.dumps({
