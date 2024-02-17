@@ -47,7 +47,7 @@ The services making up the coursemapper-webserver project use the following imag
 
 - Neo4j Desktop from [the official website](https://neo4j.com/download-center/#desktop), install it, start the server, and login to the server.
 
-- Redis from [the Redis releases page](https://github.com/tporadowski/redis/releases), install it and start the server
+- Redis from [the Redis releases page](https://github.com/tporadowski/redis/releases) and install it
 
 - Downlod Elmo packages: [Link 1](https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x4096_512_2048cnn_2xhighway/elmo_2x4096_512_2048cnn_2xhighway_weights.hdf5) and [Link 2](https://uni-duisburg-essen.sciebo.de/s/r4bNsDrkuAkPSfo/download), and copy it inside `coursemapper-kg/app/algorithms` folder
 

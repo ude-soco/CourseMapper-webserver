@@ -10,7 +10,7 @@ Download the following software and install them on your machine:
 
 - Neo4j Desktop from [the official website](https://neo4j.com/download-center/#desktop), install it, start the server, and login to the server.
 
-- Redis from [the Redis releases page](https://github.com/tporadowski/redis/releases), install it and start the server
+- Redis from [the Redis releases page](https://github.com/tporadowski/redis/releases) and install it
 
 - [IntelliJ Ultimate](https://www.jetbrains.com/de-de/idea/download/#section=windows) or [Visual Studio Code](https://code.visualstudio.com/download) and install one of the code editors.
 
