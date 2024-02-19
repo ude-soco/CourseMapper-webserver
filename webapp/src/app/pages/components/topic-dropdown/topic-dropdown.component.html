@@ -152,6 +152,8 @@
                 (notificationSettingClicked)="
                   onChannelNotificationSettingsClicked($event)
                 "
+                [channelSettingChosen]="true"
+                (viewChannelDashboardClicked)="viewChannelDashboardClicked()"
               ></app-context-menu>
             </ng-template>
           </p-overlayPanel>
@@ -176,13 +178,7 @@
                 {{ channel.name }}
               </p>
             </div>
-            <div>
-              <app-iconbutton
-                icon="bx-dots-vertical-rounded"
-                color="text-black"
-                (click)="channelMenuButtonClicked($event, channel)"
-              ></app-iconbutton>
-            </div>
+
             <p-overlayPanel #channelMenu styleClass="settingsContextMenu">
               <ng-template pTemplate="content">
                 <app-context-menu
@@ -204,6 +200,13 @@
                 ></app-context-menu>
               </ng-template>
             </p-overlayPanel>
+            <div>
+              <app-iconbutton
+                icon="bx-dots-vertical-rounded"
+                color="text-black"
+                (click)="channelMenuButtonClicked($event, channel)"
+              ></app-iconbutton>
+            </div>
           </div>
           <p-overlayPanel #channelMenu styleClass="settingsContextMenu">
             <ng-template pTemplate="content">
