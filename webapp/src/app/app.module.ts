@@ -88,6 +88,10 @@ import { MentionModule } from 'angular-mentions';
 import { MessageService } from 'primeng/api';
 import { TeamComponent } from './pages/team/team.component';
 import { AboutComponent } from './pages/about/about.component';
+import { ForgetPasswordComponent } from './pages/components/forget-password/forget-password.component';
+import { ResetPasswordComponent } from './pages/components/forget-password/reset-password/reset-password.component';
+import { ResetPasswordRequestComponent } from './pages/components/forget-password/reset-password-request/reset-password-request.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -118,6 +122,10 @@ import { AboutComponent } from './pages/about/about.component';
     CourseWelcomeComponent,
     TeamComponent,
     AboutComponent,
+    ForgetPasswordComponent,
+    ResetPasswordComponent,
+    ResetPasswordRequestComponent,
+
   ],
   imports: [
     MentionModule,

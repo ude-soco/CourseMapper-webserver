@@ -30,6 +30,7 @@ export class LoginComponent implements OnInit {
   myCourses: Course[];
 
   public signup = '/signup';
+  public forgetPassword = '/forgetPassword';
   constructor(
     private userService: UserServiceService,
     private storageService: StorageService,
@@ -85,7 +86,8 @@ export class LoginComponent implements OnInit {
             );
 
             if (varcc) {
-              this.router.navigate(['course', courseId]);
+              this.router.navigate(['course', courseId, 'welcome']);
+              // this.router.navigate(['course', courseId]);
             } else {
               this.store.dispatch(
                 CourseAction.setCurrentCourse({ selcetedCourse: this.course })
