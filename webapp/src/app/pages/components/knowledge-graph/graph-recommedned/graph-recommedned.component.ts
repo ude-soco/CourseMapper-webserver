@@ -3,6 +3,8 @@ import { MessageService } from 'primeng/api';
 import { Subscription } from 'rxjs';
 import { ConceptStatusService } from 'src/app/services/concept-status.service';
 import { SlideConceptsService } from 'src/app/services/slide-concepts.service';
+import { UserServiceService } from 'src/app/services/user-service.service';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-graph-recommedned',
@@ -60,7 +62,8 @@ export class GraphRecommednedComponent {
   constructor(
     private messageService: MessageService,
     private slideConceptservice: SlideConceptsService,
-    private statusServie: ConceptStatusService
+    private statusServie: ConceptStatusService,
+    private userService: UserServiceService
   ) {
     this.newConceptsSubscription = slideConceptservice.newConcepts.subscribe(
       (res) => {
@@ -82,7 +85,7 @@ export class GraphRecommednedComponent {
   }
 
   ngAfterContentChecked() {
-    
+
     let accordionTabAbstract = document.getElementById('accordionHeader');
     let accordionTabReason = document.getElementById('accordionHeaderReason');
     if(accordionTabAbstract && accordionTabReason){
@@ -90,7 +93,7 @@ export class GraphRecommednedComponent {
       accordionComponentHeader1.style.color='#212121'
       accordionComponentHeader1.style.backgroundColor='white'
       accordionComponentHeader1.style.borderBottom='solid #E5E7EB 1px'
-      
+
       let accordionComponentHeader2=accordionTabReason.childNodes[0].childNodes[0].childNodes[0] as HTMLElement;
       accordionComponentHeader2.style.color='#212121'
       accordionComponentHeader2.style.backgroundColor='white'
@@ -220,7 +223,7 @@ export class GraphRecommednedComponent {
           let abstracBlock = document.getElementById(
             'recommenderAbstractBlock'
           ) as HTMLElement;
-    
+
           if (abstracBlock) {
             abstracBlock.style.maxHeight = Number(this.cyHeight-75).toString() + 'px';
             console.log(abstracBlock)
@@ -229,10 +232,40 @@ export class GraphRecommednedComponent {
             this.cyHeightRec =Number(this.cyHeight - 75 - 3 * accordionAbstract.offsetHeight - 65).toString() + 'px';
             console.log(this.cyHeightRec)
             }
-          // setTimeout(() => {
-          //   console.log(this.cyHeightRec)
-            this.node_roads = event.roads;        
-          // }, 10);
+            // Create a set of all required users
+            let requiredUsers = new Set([]);
+            this.node_roads = event.roads.forEach((roads: any[]) => {
+              roads.forEach((road) => {
+                if (road.type === 'user') {
+                  requiredUsers.add(road.id);
+                }
+              });
+            });
+            // Retrieve users from the server and store usernames in an object
+            let users = {};
+            let promises = [];
+            requiredUsers.forEach((userId) => {
+              promises.push(
+                lastValueFrom(this.userService.GetUserName(userId)).then((user) => {
+                  users[userId] = user.firstname + ' ' + user.lastname;
+                })
+              );
+            });
+            // Assign usernames to road nodes
+            Promise.all(promises).then(() => {
+              this.node_roads = event.roads.map((roads: any[]) => {
+                return roads.map((road) => {
+                  if (road.type === 'user') {
+                    return {
+                      ...road,
+                      name: users[road.id],
+                    };
+                  } else {
+                    return road;
+                  }
+                });
+              });
+            });
         }, 1);
       }
     } else {
@@ -286,11 +319,11 @@ export class GraphRecommednedComponent {
     } else if (key === 'T') {
       this.showVisual = false;
       this.showTextual = true;
-        
+
       let accordionAbstract = document.getElementById('accordionHeader').childNodes[0].childNodes[0] as HTMLElement;
       setTimeout(() => {
         document.getElementById('abstract_reason_Block_Text').style.height= Number(this.cyHeight - 75 - 3 * accordionAbstract.offsetHeight - 20).toString() +'px';
-      }, 2);          
+      }, 2);
     }
   }
   understoodConceptMsgToast() {

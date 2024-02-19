@@ -66,10 +66,6 @@ COPY --from=MODELS --chown=app /download/* app/algorithms/
 # Add source code
 COPY . .
 
-ENV FLASK_ENV production
-ARG PORT=8001
-ENV PORT=$PORT
-ENV GUNICORN_LOG_LEVEL info
 ENV OMP_NUM_THREADS 1
 EXPOSE $PORT
-CMD [ "bin/web" ]
+CMD [ "bin/worker" ]

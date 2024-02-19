@@ -2,7 +2,8 @@
 from neo4j import GraphDatabase
 import numpy as np
 import scipy.sparse as sp
-from flask import current_app
+
+from config import Config
 
 # import torch
 import os
@@ -14,9 +15,9 @@ logger = LOG(name=__name__, level=logging.DEBUG)
 
 class LightGCN:
     def __init__(self):
-        neo4j_uri = current_app.config.get("NEO4J_URI")  # type: ignore
-        neo4j_user = current_app.config.get("NEO4J_USER")  # type: ignore
-        neo4j_pass = current_app.config.get("NEO4J_PASSWORD")  # type: ignore
+        neo4j_uri = Config.NEO4J_URI
+        neo4j_user = Config.NEO4J_USER
+        neo4j_pass = Config.NEO4J_PASSWORD
         
         self.driver = GraphDatabase.driver(neo4j_uri,
                                            auth=(neo4j_user, neo4j_pass),

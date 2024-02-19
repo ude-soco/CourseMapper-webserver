@@ -90,13 +90,13 @@ export class RatingComponent {
   }
 
   async rateRecommendedMaterials(rating: Rating): Promise<void> {
-    const formData = new FormData();
-    formData.append('userId', this.userid.toString());
-    formData.append('rating', rating.toString());
-    formData.append('resource', JSON.stringify(this.element));
-    formData.append('concepts', this.selectedConcepts.toString());
+    const data = {
+      rating: rating,
+      resourceId: this.element.id,
+      concepts: this.selectedConcepts
+    };
 
-    const result = await this.materialsRecommenderService.rateRecommendedMaterials(formData);
+    const result = await this.materialsRecommenderService.rateRecommendedMaterials(data);
     this.isLiked = result.voted === Rating.HELPFUL;
     this.isDisliked = result.voted === Rating.NOT_HELPFUL;
     this.element.helpful_counter = result.helpful_count;

@@ -4,7 +4,7 @@ from ...db.neo4_db import NeoDataBase
 from ...kwp_extraction.model import KeyphraseExtractor
 from ...exceptions.exceptions import PreprocessingException
 from ...kwp_extraction.dbpedia.dataAvailability import FoundAtDBpediaSpotlight
-from flask import current_app
+from config import Config
 
 import os
 import logging
@@ -25,9 +25,9 @@ class DataService1:
         # # NEO4J_PASSWORD = "root"
 
         # self.db = NeoDataBase(NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD)
-        neo4j_uri = current_app.config.get("NEO4J_URI")  # type: ignore
-        neo4j_user = current_app.config.get("NEO4J_USER")  # type: ignore
-        neo4j_pass = current_app.config.get("NEO4J_PASSWORD")  # type: ignore
+        neo4j_uri = Config.NEO4J_URI
+        neo4j_user = Config.NEO4J_USER
+        neo4j_pass = Config.NEO4J_PASSWORD
 
         self.db = NeoDataBase(neo4j_uri, neo4j_user, neo4j_pass)
 

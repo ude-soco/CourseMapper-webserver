@@ -47,6 +47,8 @@ The services making up the coursemapper-webserver project use the following imag
 
 - Neo4j Desktop from [the official website](https://neo4j.com/download-center/#desktop), install it, start the server, and login to the server.
 
+- Redis from [the Redis releases page](https://github.com/tporadowski/redis/releases) and install it
+
 - Downlod Elmo packages: [Link 1](https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x4096_512_2048cnn_2xhighway/elmo_2x4096_512_2048cnn_2xhighway_weights.hdf5) and [Link 2](https://uni-duisburg-essen.sciebo.de/s/r4bNsDrkuAkPSfo/download), and copy it inside `coursemapper-kg/app/algorithms` folder
 
 - Download [StanfordCoreNLP](https://uni-duisburg-essen.sciebo.de/s/nO06q2wY0t5h8SO) and extract the ZIP file inside `coursemapper-kg/app/algorithms` folder. Make sure the stanford-corenlp folder name is `stanford-corenlp-full-2018-02-27`.
@@ -109,9 +111,7 @@ The services making up the coursemapper-webserver project use the following imag
 
 - Using your file explorer, go inside the directory `coursemapper-kg`
 
-	- Copy the `example.env` file and paste it in the same folder. Rename the copied environment file to `.env`. Change the values (`NEO4J_USER` and `NEO4J_PW`) of the environment variables in the `.env` file to your own values.
-
-	- Copy the `example.flaskenv` file and paste it in the same folder. Rename the copied environment file to `.flaskenv`. Change the value of `FLASK_ENV` to `production` for deployment and `development` for local installation.
+	- Copy the `example.env` file and paste it in the same folder. Rename the copied environment file to `.env`. Change the values (`NEO4J_USER`, `NEO4J_PW`, `REDIS_PASSWORD`) of the environment variables in the `.env` file to your own values.
 
 - Open a command prompt/terminal in the `coursemapper-kg` directory (with **administration rights** for Windows)
 
@@ -153,13 +153,11 @@ The services making up the coursemapper-webserver project use the following imag
   python -c "import nltk;nltk.download('stopwords'); nltk.download('punkt'); nltk.download('wordnet'); import spacy; spacy.cli.download('en_core_web_sm'); from sentence_transformers import SentenceTransformer; SentenceTransformer('all-mpnet-base-v2'); from flair.embeddings import TransformerDocumentEmbeddings;  TransformerDocumentEmbeddings('sentence-transformers/msmarco-distilbert-base-tas-b'); from app.services.course_materials.kwp_extraction.model import KeyphraseExtractor; KeyphraseExtractor(); KeyphraseExtractor('squeezebert/squeezebert-mnli');"
   ```
 
-- Run the flask server
+- Run the worker
 
   ```bash
-  flask run
+  pipenv run python -m app.worker
   ```
-
-  Note: Make sure to activate the virtual environment by typing `pipenv shell` in the terminal and then start the Flask server by typing the command `flask run`.
 
 #### Step 5: Postman configuration
 

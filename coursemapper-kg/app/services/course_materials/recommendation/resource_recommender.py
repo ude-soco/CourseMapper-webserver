@@ -1,17 +1,17 @@
 import concurrent.futures
-from flask import current_app
 
 from ..db.neo4_db import NeoDataBase
 
 from .recommendation_type import RecommendationType
 from .recommender import Recommender
+from config import Config
 
 
 class ResourceRecommenderService:
     def __init__(self):
-        neo4j_uri = current_app.config.get("NEO4J_URI")  # type: ignore
-        neo4j_user = current_app.config.get("NEO4J_USER")  # type: ignore
-        neo4j_pass = current_app.config.get("NEO4J_PASSWORD")  # type: ignore
+        neo4j_uri = Config.NEO4J_URI
+        neo4j_user = Config.NEO4J_USER
+        neo4j_pass = Config.NEO4J_PASSWORD
 
         self.db = NeoDataBase(neo4j_uri, neo4j_user, neo4j_pass)
 
@@ -44,11 +44,6 @@ class ResourceRecommenderService:
 
         return ""
 
-    def set_rating(self, resource, user_id, rating, concepts=[]):
-        return self.db.create_or_edit_user_rating(
-            resource, user_id, rating, concepts=concepts
-        )
-
     def get_top_n_dnu_concepts(self, user, top_n):
         return self.db.get_top_n_dnu_concepts(user=user, top_n=top_n)
         # TODO: material_id is missing and the user argument is not correctly used
@@ -57,9 +52,9 @@ class ResourceRecommenderService:
     def get_slide_concepts(self, slide_id):
         return
 
-    def _construct_user(self, user, non_understood, understood, new_concepts, mid):
+    def _construct_user(self, user_id, non_understood, understood, new_concepts, mid):
         self.db.construct_user_model(
-            user, non_understood, understood, new_concepts, mid
+            user_id, non_understood, understood, new_concepts, mid
         )
 
     def _get_personalized_recommendation(

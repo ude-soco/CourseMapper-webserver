@@ -1,12 +1,12 @@
 from ...conceptrecommentation.recommendation import Recommendation
 from ..dbpedia.concept_tagging import DBpediaSpotlight
 from ...db.neo4_db import NeoDataBase
-from flask import current_app
 import time
 import os
 
 import logging
 from log import LOG
+from config import Config
 
 logger = LOG(name=__name__, level=logging.DEBUG)
 
@@ -22,18 +22,18 @@ class RecService:
         # NEO4J_PASSWORD = os.environ.get('NEO4J_PW')
         # # NEO4J_PASSWORD = "root"
         # self.db = NeoDataBase(NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD)
-        neo4j_uri = current_app.config.get("NEO4J_URI")  # type: ignore
-        neo4j_user = current_app.config.get("NEO4J_USER")  # type: ignore
-        neo4j_pass = current_app.config.get("NEO4J_PASSWORD")  # type: ignore
+        neo4j_uri = Config.NEO4J_URI
+        neo4j_user = Config.NEO4J_USER
+        neo4j_pass = Config.NEO4J_PASSWORD
 
         self.db = NeoDataBase(neo4j_uri, neo4j_user, neo4j_pass)
 
         self.recommendation = Recommendation()
         self.dbpedia = DBpediaSpotlight()
 
-    def _construct_user(self, user, non_understood, understood, new_concepts, mid):
+    def _construct_user(self, user_id, non_understood, understood, new_concepts, mid):
         self.db.construct_user_model(
-            user, non_understood, understood, new_concepts, mid
+            user_id, non_understood, understood, new_concepts, mid
         )
 
     def _extract_vector_relation(self, mid):
@@ -251,7 +251,13 @@ def get_serialized_concepts_data(concepts):
             for node in road["p"]:
                 if isinstance(node, str):
                     list.append(node)
-                elif node["type"] == "user" or node["type"] == "Slide":
+                elif node["type"] == "user":
+                    n = {
+                        "id": node["uid"],
+                        "type": node["type"],
+                    }
+                    list.append(n)
+                elif node["type"] == "Slide":
                     n = {
                         "name": node["name"],
                         "type": node["type"],
