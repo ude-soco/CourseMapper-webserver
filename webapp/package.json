@@ -37,7 +37,7 @@
     "cytoscape-fcose": "^2.1.0",
     "cytoscape-popper": "^2.0.0",
     "cytoscape-spread": "^3.0.0",
-    "dotenv": "^16.4.4",
+    "dotenv": "^16.4.5",
     "jquery": "^3.7.1",
     "ng2-dragula": "^2.1.1",
     "ng2-pdf-viewer": "^9.1.5",
