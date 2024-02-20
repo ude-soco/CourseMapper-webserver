@@ -388,6 +388,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.selectedMaterial = this.selectedChannel.materials[index];
     this.updateSelectedMaterial();
   }
+
   updateSelectedMaterial() {
     // if(this.selectedChannel.materials && !this.selectedMaterial){
     //   this.tabIndex=0

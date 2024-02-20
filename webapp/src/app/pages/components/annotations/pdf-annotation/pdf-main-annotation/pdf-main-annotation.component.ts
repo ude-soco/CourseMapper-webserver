@@ -62,6 +62,7 @@ import { getCurrentCourseId } from 'src/app/pages/courses/state/course.reducer';
 import { SlideKgOrderedService } from 'src/app/services/slide-kg-ordered.service';
 import * as CourseActions from 'src/app/pages/courses/state/course.actions';
 import * as NotificationActions from '../../../notifications/state/notifications.actions';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-pdf-main-annotation',
   templateUrl: './pdf-main-annotation.component.html',
@@ -135,54 +136,13 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   private socketSubscription: Subscription;
   notificationClickedSubscription: Subscription;
 
-  ngOnInit(): void {
-    this.store.select(getHideAnnotationValue).subscribe((isHideAnnotations) => {
-      this.hideAnnotations(isHideAnnotations);
-    });
-
-    this.currentPDFPage$ = this.store.select(getCurrentPdfPage);
-
-    this.currentPdfPageSubscription = this.currentPDFPage$.subscribe(
-      (currentPage) => {
-        this.currentPage = currentPage;
-        this.pageRendered(currentPage);
-      }
-    );
-
-    this.notificationClickedSubscription = this.store
-      .select(getCurrentlyClickedNotification)
-      .subscribe((notification) => {
-        if (notification) {
-          this.store.dispatch(
-            AnnotationActions.setCurrentPdfPage({
-              pdfCurrentPage: notification.startPage,
-            })
-          );
-          this.store.dispatch(
-            NotificationActions.unsetCurrentlySelectedNotification()
-          );
-        }
-      });
-  }
-
-  ngOnDestroy(): void {
-    if (this.socketSubscription) {
-      this.socketSubscription.unsubscribe();
-    }
-    if (this.currentPdfPageSubscription) {
-      this.currentPdfPageSubscription.unsubscribe();
-    }
-    if (this.notificationClickedSubscription) {
-      this.notificationClickedSubscription.unsubscribe();
-    }
-  }
-
   constructor(
     private pdfViewService: PdfviewService,
     private store: Store<State>,
     private socket: Socket,
     private changeDetectorRef: ChangeDetectorRef,
-    private slideKgGenerator: SlideKgOrderedService
+    private slideKgGenerator: SlideKgOrderedService,
+    protected router: Router
   ) {
     this.getDocUrl();
     this.store.dispatch(AnnotationActions.loadAnnotations());
@@ -279,6 +239,60 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
           );
         }
       );
+  }
+  ngOnInit(): void {
+    this.store.select(getHideAnnotationValue).subscribe((isHideAnnotations) => {
+      this.hideAnnotations(isHideAnnotations);
+    });
+
+    this.currentPDFPage$ = this.store.select(getCurrentPdfPage);
+
+    this.currentPdfPageSubscription = this.currentPDFPage$.subscribe(
+      (currentPage) => {
+        this.currentPage = currentPage;
+        this.pageRendered(currentPage);
+      }
+    );
+
+    this.notificationClickedSubscription = this.store
+      .select(getCurrentlyClickedNotification)
+      .subscribe((notification) => {
+        if (notification) {
+          this.store.dispatch(
+            AnnotationActions.setCurrentPdfPage({
+              pdfCurrentPage: notification.startPage,
+            })
+          );
+          if (
+            this.router.url.includes(
+              '/course/' +
+                notification.course_id +
+                '/channel/' +
+                notification.channel_id +
+                '/material/' +
+                '(material:' +
+                notification.material_id +
+                `/${notification.materialType})`
+            )
+          ) {
+            this.store.dispatch(
+              NotificationActions.unsetCurrentlySelectedNotification()
+            );
+          }
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    if (this.socketSubscription) {
+      this.socketSubscription.unsubscribe();
+    }
+    if (this.currentPdfPageSubscription) {
+      this.currentPdfPageSubscription.unsubscribe();
+    }
+    if (this.notificationClickedSubscription) {
+      this.notificationClickedSubscription.unsubscribe();
+    }
   }
 
   ngAfterViewChecked(): void {

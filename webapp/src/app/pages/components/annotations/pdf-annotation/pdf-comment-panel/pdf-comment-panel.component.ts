@@ -25,6 +25,7 @@ import {
   getCurrentlySelectedFollowingAnnotationId,
 } from '../../../notifications/state/notifications.reducer';
 import { combineLatest, filter, withLatestFrom } from 'rxjs';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-pdf-comment-panel',
   templateUrl: './pdf-comment-panel.component.html',
@@ -49,7 +50,8 @@ export class PdfCommentPanelComponent implements OnInit, OnDestroy {
   currentTimeSubscription: any;
   constructor(
     private store: Store<State>,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    protected router: Router
   ) {
     this.store
       .select(getCurrentMaterial)
@@ -113,9 +115,22 @@ export class PdfCommentPanelComponent implements OnInit, OnDestroy {
               seekVideo: [notification.from, notification.from],
             })
           );
-          this.store.dispatch(
-            NotificationActions.unsetCurrentlySelectedNotification()
-          );
+          if (
+            this.router.url.includes(
+              '/course/' +
+                notification.course_id +
+                '/channel/' +
+                notification.channel_id +
+                '/material/' +
+                '(material:' +
+                notification.material_id +
+                `/${notification.materialType})`
+            )
+          ) {
+            this.store.dispatch(
+              NotificationActions.unsetCurrentlySelectedNotification()
+            );
+          }
         }
       });
   }
