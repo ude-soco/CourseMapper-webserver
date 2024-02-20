@@ -225,7 +225,11 @@ export class VideoMainAnnotationComponent
       if (!this.YouTubePlayer?.getCurrentTime) return;
 
       const time = this.YouTubePlayer.getCurrentTime();
-      if (time != currentTime) {
+      if (time === undefined) {
+        this.store.dispatch(VideoActions.SetCurrentTime({ currentTime: 0 }));
+        currentTime = 0;
+        this.store.dispatch(VideoActions.SetSeekVideo({ seekVideo: [0, 0] }));
+      } else if (time != currentTime) {
         this.store.dispatch(
           VideoActions.SetCurrentTime({ currentTime: Math.floor(time) })
         );
