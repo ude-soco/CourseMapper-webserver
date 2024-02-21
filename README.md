@@ -139,7 +139,7 @@ The services making up the coursemapper-webserver project use the following imag
 
       (**Optional**) To check the location of your Python virtual environment, type `pipenv --venv` the following command in your command prompt
 
-- Download the spacy package
+- Download the spacy package (only first time)
 
   ```
   python -m spacy download en
@@ -149,7 +149,7 @@ The services making up the coursemapper-webserver project use the following imag
 
   Make sure that you have downloaded the models from number 7 and 8 from step 1 above.
 
-  ```
+  ``` (only first time)
   python -c "import nltk;nltk.download('stopwords'); nltk.download('punkt'); nltk.download('wordnet'); import spacy; spacy.cli.download('en_core_web_sm'); from sentence_transformers import SentenceTransformer; SentenceTransformer('all-mpnet-base-v2'); from flair.embeddings import TransformerDocumentEmbeddings;  TransformerDocumentEmbeddings('sentence-transformers/msmarco-distilbert-base-tas-b'); from app.services.course_materials.kwp_extraction.model import KeyphraseExtractor; KeyphraseExtractor(); KeyphraseExtractor('squeezebert/squeezebert-mnli');"
   ```
 
