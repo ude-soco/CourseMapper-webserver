@@ -50,13 +50,13 @@ module.exports = function (app) {
   );
 
   app.get(
-    "/api/knowledge-graph/get-higher-levels-nodes/:materialIds",
+    "/api/knowledge-graph/get-higher-levels-nodes",
     [authJwt.verifyToken],
     controller.getHigherLevelsNodes
   );
 
   app.get(
-    "/api/knowledge-graph/get-higher-levels-edges/:materialIds",
+    "/api/knowledge-graph/get-higher-levels-edges",
     [authJwt.verifyToken],
     controller.getHigherLevelsEdges
   );
