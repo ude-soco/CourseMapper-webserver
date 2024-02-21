@@ -1099,6 +1099,6 @@ export class TopicDropdownComponent implements OnInit {
       'course',
       this.courseService.getSelectedCourse()._id,
       'channel',
-      this.selectedChannelId,'dashboard']);     
+      this.selectedChannel._id,'dashboard']);     
   }
 }
