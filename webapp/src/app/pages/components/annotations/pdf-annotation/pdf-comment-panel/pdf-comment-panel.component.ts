@@ -195,6 +195,22 @@ export class PdfCommentPanelComponent implements OnInit, OnDestroy {
                   })
                 );
               }
+              if (
+                this.router.url.includes(
+                  '/course/' +
+                    annotation.courseId +
+                    '/channel/' +
+                    annotation.channelId +
+                    '/material/' +
+                    '(material:' +
+                    annotation.materialId +
+                    `/pdf)#annotation-${annotation._id})`
+                )
+              ) {
+                this.store.dispatch(
+                  NotificationActions.unsetCurrentlySelectedFollowingAnnotation()
+                );
+              }
             } else if ((annotation.location as VideoAnnotationLocation).from) {
               let location = annotation.location as VideoAnnotationLocation;
               if (location && location.from !== undefined) {
@@ -203,12 +219,25 @@ export class PdfCommentPanelComponent implements OnInit, OnDestroy {
                     seekVideo: [location.from, location.from],
                   })
                 );
+                if (
+                  this.router.url.includes(
+                    '/course/' +
+                      annotation.courseId +
+                      '/channel/' +
+                      annotation.channelId +
+                      '/material/' +
+                      '(material:' +
+                      annotation.materialId +
+                      `/video)#annotation-${annotation._id})`
+                  )
+                ) {
+                  this.store.dispatch(
+                    NotificationActions.unsetCurrentlySelectedFollowingAnnotation()
+                  );
+                }
               }
             }
           }
-          this.store.dispatch(
-            NotificationActions.unsetCurrentlySelectedFollowingAnnotation()
-          );
         }
       });
   }
