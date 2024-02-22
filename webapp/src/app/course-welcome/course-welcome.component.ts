@@ -64,12 +64,16 @@ export class CourseWelcomeComponent implements OnInit {
   ngOnInit(): void {
     this.selectedCourse = this.courseService.getSelectedCourse();
     this.Users = [];
+    if (this.selectedCourse._id !== '') {
+      this.buildCardInfo(this.selectedCourse.users[0].userId, this.selectedCourse);
+    }
     this.courseService.onSelectCourse.subscribe((course) => {
       this.selectedCourse = course;
       this.selectedCourseId = course._id;
       this.topicChannelService.fetchTopics(course._id).subscribe((res) => {
         this.selectedCourse = res.course;
         this.Users = course.users;
+        // TODO: Bad implementation to get the moderator, i.e., course.users[0].userId
         this.buildCardInfo(course.users[0].userId, course);
       });
 
