@@ -251,6 +251,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
       (currentPage) => {
         this.currentPage = currentPage;
         this.pageRendered(currentPage);
+        this.changeDetectorRef.detectChanges();
       }
     );
 
@@ -331,7 +332,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
     this.store.dispatch(
       AnnotationActions.setPdfTotalPages({ pdfTotalPages: this.totalPages })
     );
-    this.currentPage = 1;
+    /*  this.currentPage = 1; */
     this.pdfViewService.setTotalPages(this.totalPages);
     this.pdfComponent.pdfViewer.currentScaleValue = 'page-fit';
     this.pdfComponent.pdfViewer.eventBus.on(

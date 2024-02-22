@@ -11,7 +11,7 @@ export class IntervalService {
   startInterval(callback: () => void, intervalTime: number): void {
     if (this.intervalId) {
       window.clearInterval(this.intervalId);
-      return;
+      this.intervalId = null;
     }
     this.intervalId = window.setInterval(callback, intervalTime);
   }
@@ -19,6 +19,7 @@ export class IntervalService {
   stopInterval(): void {
     if (this.intervalId) {
       window.clearInterval(this.intervalId);
+      this.intervalId = null;
     }
   }
 }

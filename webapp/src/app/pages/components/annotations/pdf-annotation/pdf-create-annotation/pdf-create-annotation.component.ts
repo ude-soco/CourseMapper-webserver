@@ -104,11 +104,9 @@ export class PdfCreateAnnotationComponent
       this.courseId = id;
     });
 
-    this.currentPdfPageSubscription = this.store
-      .select(getCurrentMaterialId)
-      .subscribe((id) => {
-        this.materialId = id;
-      });
+    this.store.select(getCurrentMaterialId).subscribe((id) => {
+      this.materialId = id;
+    });
 
     this.currentPdfPageSubscription = this.store
       .select(getCurrentPdfPage)

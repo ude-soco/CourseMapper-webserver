@@ -189,6 +189,11 @@ export class PdfCommentPanelComponent implements OnInit, OnDestroy {
                     seekVideo: [location.from, location.from],
                   })
                 );
+                this.store.dispatch(
+                  VideoActions.SetCurrentTime({
+                    currentTime: location.from,
+                  })
+                );
                 if (
                   this.router.url.includes(
                     '/course/' +
