@@ -22,7 +22,7 @@ import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-ann
 import * as NotificationActions from '../../../notifications/state/notifications.actions';
 import {
   getCurrentlyClickedNotification,
-  getCurrentlySelectedFollowingAnnotationId,
+  getCurrentlySelectedFollowingAnnotation,
 } from '../../../notifications/state/notifications.reducer';
 import { combineLatest, filter, withLatestFrom } from 'rxjs';
 import { Router } from '@angular/router';
@@ -139,7 +139,7 @@ export class PdfCommentPanelComponent implements OnInit, OnDestroy {
     /*    this.store
       .select(getCurrentlySelectedFollowingAnnotationId)
       .pipe(withLatestFrom(this.store.select(getAnnotationsForMaterial))) */
-    this.followingAnnotationSubscription = combineLatest([
+    /*    this.followingAnnotationSubscription = combineLatest([
       this.store.select(getCurrentlySelectedFollowingAnnotationId),
       this.store.select(getAnnotationsForMaterial),
     ])
@@ -214,7 +214,7 @@ export class PdfCommentPanelComponent implements OnInit, OnDestroy {
             }
           }
         }
-      });
+      }); */
   }
 
   showPDFAnnotations() {

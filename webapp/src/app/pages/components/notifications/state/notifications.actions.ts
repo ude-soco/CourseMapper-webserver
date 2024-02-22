@@ -1,6 +1,7 @@
 import { createAction, props } from '@ngrx/store';
 import { BlockableUI } from 'primeng/api';
 import {
+  Annotation,
   BlockingNotifications,
   GlobalAndCourseNotificationSettings,
 } from 'src/app/models/BlockingNotification';
@@ -221,7 +222,7 @@ export const unsetCurrentlySelectedNotification = createAction(
 
 export const setCurrentlySelectedFollowingAnnotation = createAction(
   '[Notification] Set Currently Selected Following Annotation',
-  props<{ annotationId: string }>()
+  props<{ followingAnnotation: Annotation }>()
 );
 
 export const unsetCurrentlySelectedFollowingAnnotation = createAction(

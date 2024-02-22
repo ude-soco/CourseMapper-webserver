@@ -40,6 +40,7 @@ import * as $ from 'jquery';
 import * as NotificationActions from '../notifications/state/notifications.actions';
 import { Notification } from 'src/app/models/Notification';
 import { getLastTimeCourseMapperOpened } from 'src/app/state/app.reducer';
+import { IntervalService } from 'src/app/services/interval.service';
 @Component({
   selector: 'app-topic-dropdown',
   templateUrl: './topic-dropdown.component.html',
@@ -58,7 +59,8 @@ export class TopicDropdownComponent implements OnInit {
     private route: ActivatedRoute,
     private renderer: Renderer2,
     private changeDetectorRef: ChangeDetectorRef,
-    protected fb: FormBuilder
+    protected fb: FormBuilder,
+    private intervalService: IntervalService
   ) {
     const url = this.router.url;
     if (url.includes('course') && url.includes('channel')) {
@@ -329,9 +331,10 @@ export class TopicDropdownComponent implements OnInit {
   onFollowingAnnotationClicked(followingAnnotation: Annotation) {
     /* this.router.navigate(['/course', notification.course_id]); */
     if (followingAnnotation.annotationId) {
+      this.intervalService.stopInterval();
       this.store.dispatch(
         NotificationActions.setCurrentlySelectedFollowingAnnotation({
-          annotationId: followingAnnotation.annotationId,
+          followingAnnotation: followingAnnotation,
         })
       );
 

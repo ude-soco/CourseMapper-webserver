@@ -14,7 +14,10 @@ import {
 
 import * as AppState from 'src/app/state/app.state';
 import * as NotificationActions from './notifications.actions';
-import { CourseNotificationSettings } from 'src/app/models/BlockingNotification';
+import {
+  Annotation,
+  CourseNotificationSettings,
+} from 'src/app/models/BlockingNotification';
 import { stat } from 'fs';
 import { state } from '@angular/animations';
 export interface State extends AppState.State {
@@ -33,7 +36,7 @@ export interface NotificationState {
   isReplyAndMentionedNotificationsEnabled: boolean;
   isCourseUpdateNotificationsEnabled: boolean;
   currentlyClickedNotification: Notification;
-  currentlySelectedFollowingAnnotationId: string;
+  currentlySelectedFollowingAnnotation: Annotation;
 }
 
 const initialState: NotificationState = {
@@ -48,7 +51,7 @@ const initialState: NotificationState = {
   isReplyAndMentionedNotificationsEnabled: null,
   isCourseUpdateNotificationsEnabled: null,
   currentlyClickedNotification: null,
-  currentlySelectedFollowingAnnotationId: null,
+  currentlySelectedFollowingAnnotation: null,
 };
 
 //selectors
@@ -81,9 +84,9 @@ export const getCurrentlyClickedNotification = createSelector(
   (state) => state.currentlyClickedNotification
 );
 
-export const getCurrentlySelectedFollowingAnnotationId = createSelector(
+export const getCurrentlySelectedFollowingAnnotation = createSelector(
   getNotificationFeatureState,
-  (state) => state.currentlySelectedFollowingAnnotationId
+  (state) => state.currentlySelectedFollowingAnnotation
 );
 
 //the notifications being returned should be sorted according to the timestamp property of the notifications in descending order
@@ -573,7 +576,7 @@ export const notificationReducer = createReducer<NotificationState>(
     (state, action) => {
       return {
         ...state,
-        currentlySelectedFollowingAnnotationId: action.annotationId,
+        currentlySelectedFollowingAnnotation: action.followingAnnotation,
       };
     }
   ),
@@ -582,7 +585,7 @@ export const notificationReducer = createReducer<NotificationState>(
     (state, action) => {
       return {
         ...state,
-        currentlySelectedFollowingAnnotationId: null,
+        currentlySelectedFollowingAnnotation: null,
       };
     }
   )

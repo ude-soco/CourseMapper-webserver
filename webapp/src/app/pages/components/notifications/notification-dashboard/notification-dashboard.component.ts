@@ -40,6 +40,7 @@ import { CourseService } from 'src/app/services/course.service';
 import { getLastTimeCourseMapperOpened } from 'src/app/state/app.reducer';
 import * as $ from 'jquery';
 import * as AppActions from 'src/app/state/app.actions';
+import { IntervalService } from 'src/app/services/interval.service';
 @Component({
   selector: 'app-notification-dashboard',
   templateUrl: './notification-dashboard.component.html',
@@ -91,7 +92,8 @@ export class NotificationDashboardComponent {
     protected store: Store<State>,
     protected router: Router,
     protected courseService: CourseService,
-    protected fb: FormBuilder
+    protected fb: FormBuilder,
+    private intervalService: IntervalService
   ) {}
 
   protected ngOnInit(): void {
@@ -324,6 +326,7 @@ export class NotificationDashboardComponent {
   }
 
   protected onNotificationClicked(notification: Notification) {
+    this.intervalService.stopInterval();
     this.store.dispatch(
       NotificationActions.notificationsMarkedAsRead({
         notifications: [notification._id],

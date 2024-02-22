@@ -21,7 +21,10 @@ import {
   PdfGeneralAnnotationLocation,
   PdfToolType,
 } from 'src/app/models/Annotations';
-import { getCurrentlyClickedNotification } from '../../../notifications/state/notifications.reducer';
+import {
+  getCurrentlyClickedNotification,
+  getCurrentlySelectedFollowingAnnotation,
+} from '../../../notifications/state/notifications.reducer';
 import {
   getAnnotationsForMaterial,
   getCurrentPdfPage,
@@ -135,6 +138,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   currentPdfPageSubscription: Subscription;
   private socketSubscription: Subscription;
   notificationClickedSubscription: Subscription;
+  followingAnnotationClickedSubscription: any;
 
   constructor(
     private pdfViewService: PdfviewService,
@@ -278,6 +282,34 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
           ) {
             this.store.dispatch(
               NotificationActions.unsetCurrentlySelectedNotification()
+            );
+          }
+        }
+      });
+
+    this.followingAnnotationClickedSubscription = this.store
+      .select(getCurrentlySelectedFollowingAnnotation)
+      .subscribe((annotation) => {
+        if (annotation) {
+          this.store.dispatch(
+            AnnotationActions.setCurrentPdfPage({
+              pdfCurrentPage: annotation.startPage,
+            })
+          );
+          if (
+            this.router.url.includes(
+              '/course/' +
+                annotation.courseId +
+                '/channel/' +
+                annotation.channelId +
+                '/material/' +
+                '(material:' +
+                annotation.materialId +
+                `/${annotation.materialType})#annotation-${annotation.annotationId}`
+            )
+          ) {
+            this.store.dispatch(
+              NotificationActions.unsetCurrentlySelectedFollowingAnnotation()
             );
           }
         }

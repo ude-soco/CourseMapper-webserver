@@ -40,7 +40,10 @@ import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-ann
 import * as CourseActions from '../../../../courses/state/course.actions';
 import { map } from 'jquery';
 import { map as RxJSMap, take } from 'rxjs/operators';
-import { getCurrentlyClickedNotification } from '../../../notifications/state/notifications.reducer';
+import {
+  getCurrentlyClickedNotification,
+  getCurrentlySelectedFollowingAnnotation,
+} from '../../../notifications/state/notifications.reducer';
 import * as NotificationActions from '../../../notifications/state/notifications.actions';
 import { Router } from '@angular/router';
 import { IntervalService } from 'src/app/services/interval.service';
@@ -84,6 +87,7 @@ export class VideoMainAnnotationComponent
   startYoutubeVideoAtTime$: Observable<number>;
   seekVideoSubscription: Subscription;
   videoSeekSubscription: Subscription;
+  followingAnnotationClickedSubscription: Subscription;
   constructor(
     private store: Store<State>,
     private pdfViewService: PdfviewService,
@@ -116,6 +120,9 @@ export class VideoMainAnnotationComponent
     }
     if (this.seekVideoSubscription) {
       this.seekVideoSubscription.unsubscribe();
+    }
+    if (this.followingAnnotationClickedSubscription) {
+      this.followingAnnotationClickedSubscription.unsubscribe();
     }
   }
 
@@ -222,6 +229,39 @@ export class VideoMainAnnotationComponent
           ) {
             this.store.dispatch(
               NotificationActions.unsetCurrentlySelectedNotification()
+            );
+          }
+        }
+      });
+
+    this.followingAnnotationClickedSubscription = this.store
+      .select(getCurrentlySelectedFollowingAnnotation)
+      .subscribe((annotation) => {
+        if (annotation) {
+          this.store.dispatch(
+            VideoActions.SetSeekVideo({
+              seekVideo: [annotation.from, annotation.from],
+            })
+          );
+          this.store.dispatch(
+            VideoActions.SetCurrentTime({
+              currentTime: annotation.from,
+            })
+          );
+          if (
+            this.router.url.includes(
+              '/course/' +
+                annotation.courseId +
+                '/channel/' +
+                annotation.channelId +
+                '/material/' +
+                '(material:' +
+                annotation.materialId +
+                `/${annotation.materialType})#annotation-${annotation.annotationId}`
+            )
+          ) {
+            this.store.dispatch(
+              NotificationActions.unsetCurrentlySelectedFollowingAnnotation()
             );
           }
         }
