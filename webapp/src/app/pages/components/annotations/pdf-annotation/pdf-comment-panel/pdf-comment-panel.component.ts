@@ -105,36 +105,6 @@ export class PdfCommentPanelComponent implements OnInit, OnDestroy {
     this.currentTimeSubscription?.unsubscribe();
   }
 
-  ngAfterViewInit(): void {
-    this.videoSeekSubscription = this.store
-      .select(getCurrentlyClickedNotification)
-      .subscribe((notification) => {
-        if (notification && notification.from) {
-          this.store.dispatch(
-            VideoActions.SetSeekVideo({
-              seekVideo: [notification.from, notification.from],
-            })
-          );
-          if (
-            this.router.url.includes(
-              '/course/' +
-                notification.course_id +
-                '/channel/' +
-                notification.channel_id +
-                '/material/' +
-                '(material:' +
-                notification.material_id +
-                `/${notification.materialType})`
-            )
-          ) {
-            this.store.dispatch(
-              NotificationActions.unsetCurrentlySelectedNotification()
-            );
-          }
-        }
-      });
-  }
-
   ngAfterViewChecked(): void {
     let annotationPanel = document.getElementsByClassName(
       'materialContainer'

@@ -26,7 +26,6 @@
           [videoId]="videoURL"
           (ready)="saveYouTubePlayer($event)"
           (stateChange)="onYouTubePlayerStateChange($event)"
-          [startSeconds]="(startYoutubeVideoAtTime$ | async) ?? 0"
         ></youtube-player>
       </div>
       <div

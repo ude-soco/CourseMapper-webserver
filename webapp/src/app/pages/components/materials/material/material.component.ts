@@ -38,6 +38,7 @@ import { MaterialKgOrderedService } from 'src/app/services/material-kg-ordered.s
 import { Notification } from 'src/app/models/Notification';
 import { getLastTimeCourseMapperOpened } from 'src/app/state/app.reducer';
 import * as VideoActions from '../../annotations/video-annotation/state/video.action';
+import { IntervalService } from 'src/app/services/interval.service';
 @Component({
   selector: 'app-material',
   templateUrl: './material.component.html',
@@ -108,7 +109,8 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     private renderer: Renderer2,
     private changeDetectorRef: ChangeDetectorRef,
     private materialKgService: MaterialKgOrderedService,
-    protected fb: FormBuilder
+    protected fb: FormBuilder,
+    private intervalService: IntervalService
   ) {
     const url = this.router.url;
     if (url.includes('course') && url.includes('channel')) {
@@ -319,6 +321,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   onTabChange(e) {
     this.tabIndex = e.index - 1;
+    this.intervalService.stopInterval();
     // if (this.tabIndex == -1 && this.showModeratorPrivileges) {
     if (this.tabIndex == -1) {
       this.isMaterialSelected = false;
