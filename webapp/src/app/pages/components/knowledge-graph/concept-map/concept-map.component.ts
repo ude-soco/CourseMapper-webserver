@@ -668,6 +668,30 @@ export class ConceptMapComponent {
   ngOnDestroy(): void {
     this.conceptMapData = undefined;
     this.loading.emit(this.isLoading);
+
+    this.currentSubscription?.unsubscribe();
+    this.totalSubscription?.unsubscribe();
+    this.slideKgSubscription?.unsubscribe();
+    this.materialKgSubscription?.unsubscribe();
+    this.courseKgSubscription?.unsubscribe();
+    this.allConceptslist?.unsubscribe();
+    this.tabsSubscription?.unsubscribe();
+    this.allConceptsSubscription?.unsubscribe();
+    this.newConceptsSubscription?.unsubscribe();
+    this.didNotUnderstandConceptsSubscription?.unsubscribe();
+    this.understoodConceptsSubscription?.unsubscribe();
+    this.nodeClickedSubscription?.unsubscribe();
+    this.slideKgDatabase?.unsubscribe();
+    this.graphRenderedSubscription?.unsubscribe();
+    this.statusSubscription?.unsubscribe();
+    this.materialInfoSubscription?.unsubscribe();
+    this.selectedMaterialModelSubscription?.unsubscribe();
+    this.newConceptSubsciption?.unsubscribe();
+    this.understoodConceptSubsciption?.unsubscribe();
+    this.notUnderstoodConceptSubsciption?.unsubscribe();
+    this.callRecommendationsSubsciption?.unsubscribe();
+    this.userSubscription?.unsubscribe();
+    this.materialSubscription?.unsubscribe();
   }
   ngOnChanges() {
     if (this.course) {
