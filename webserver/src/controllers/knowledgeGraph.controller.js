@@ -88,7 +88,10 @@ export const getMaterialConceptIds = async (req, res) => {
 }
 
 export const getHigherLevelsNodes = async (req, res) => {
-  const materialIds = req.query.material_ids;
+  let materialIds = req.query.material_ids;
+  if (materialIds.constructor !== Array) {
+    materialIds = [materialIds];
+  }
 
   try {
     const records = await neo4j.getHigherLevelsNodes(materialIds);
@@ -99,7 +102,10 @@ export const getHigherLevelsNodes = async (req, res) => {
 }
 
 export const getHigherLevelsEdges = async (req, res) => {
-  const materialIds = req.query.material_ids;
+  let materialIds = req.query.material_ids;
+  if (materialIds.constructor !== Array) {
+    materialIds = [materialIds];
+  }
 
   try {
     const records = await neo4j.getHigherLevelsEdges(materialIds);
