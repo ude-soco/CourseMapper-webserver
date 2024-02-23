@@ -82,7 +82,7 @@ export async function addJob(pipeline, job, onDone) {
   const existingJobId = await findExistingJob(job);
   if (existingJobId) {
     console.log(`Job exists with id ${existingJobId} in pipeline ${pipeline}`);
-    onJobDone(jobId, onDone);
+    onJobDone(existingJobId, onDone);
     return existingJobId;
   }
 
@@ -93,6 +93,19 @@ export async function addJob(pipeline, job, onDone) {
   await redis.client.hSet('jobs', jobId, jobData);
   await redis.client.lPush(`queue:${pipeline}:pending`, jobId);
   return jobId;
+}
+
+export async function trackJob(pipeline, job, onDone) {
+  job.pipeline = pipeline;
+
+  const existingJobId = await findExistingJob(job);
+  if (existingJobId) {
+    console.log(`Job exists with id ${existingJobId} in pipeline ${pipeline}`);
+    onJobDone(existingJobId, onDone);
+    return existingJobId;
+  }
+
+  onDone(null);
 }
 
 async function findExistingJob(jobData) {
