@@ -168,6 +168,9 @@ export const conceptMap = async (req, res) => {
     }, async (jobId) => {
       await redis.addFile(jobId, materialData);
     }, (result) => {
+      if (res.headersSent) {
+        return;
+      }
       if (result.error) {
         return res.status(500).send({ error: result.error });
       }
@@ -179,6 +182,9 @@ export const conceptMap = async (req, res) => {
       materialId,
       materialName,
     }, (result) => {
+      if (res.headersSent) {
+        return;
+      }
       if (!result) {
         return res.status(404).send();
       }
@@ -200,7 +206,10 @@ export const getConcepts = async (req, res) => {
     understood,
     nonUnderstood,
     newConcepts
-  }, (result) => {
+  }, undefined, (result) => {
+    if (res.headersSent) {
+      return;
+    }
     if (result.error) {
       return res.status(500).send({ error: result.error });
     }
@@ -223,7 +232,10 @@ export const getResources = async (req, res) => {
     understood,
     nonUnderstood,
     newConcepts
-  }, (result) => {
+  }, undefined, (result) => {
+    if (res.headersSent) {
+      return;
+    }
     if (result.error) {
       return res.status(500).send({ error: result.error });
     }
