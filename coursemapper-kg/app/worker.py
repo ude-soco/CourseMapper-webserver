@@ -61,7 +61,7 @@ def send_result(data):
     # Push result to queue:done
     redis.rpush(f'queue:done', data)
 
-def clean_up(pipeline, job_id, material_id):
+def clean_up(pipeline, job_id):
     # Remove job from queue:processing
     redis.lrem(f'queue:{pipeline}:processing', 0, job_id)
 
@@ -76,7 +76,7 @@ def clean_up(pipeline, job_id, material_id):
 
     # Delete file
     if pipeline == 'concept-map':
-        redis.hdel('files', material_id)
+        redis.hdel('files', job_id)
 
 def start_worker(pipelines):
     logger.info('Starting worker...')
@@ -116,7 +116,7 @@ def start_worker(pipelines):
         try:
             # Run the pipeline
             if pipeline == 'concept-map':
-                file = redis.hget('files', job.get('materialId'))
+                file = redis.hget('files', job_id)
                 assert(type(file) == bytes)
                 file = io.BytesIO(file)
                 result = concept_map(job, file)
@@ -130,6 +130,9 @@ def start_worker(pipelines):
             # Make sure we still have the lock
             check_lock(job_id)
 
+            # Clean up
+            clean_up(pipeline, job_id)
+
             # Send the result
             data = json.dumps({
                 "job_id": job_id,
@@ -139,9 +142,6 @@ def start_worker(pipelines):
 
             # Wait for alive thread to finish
             stop_thread()
-
-            # Clean up
-            clean_up(pipeline, job_id, job.get('materialId'))
 
             # Print a message
             logger.info(f'Finished processing {pipeline} job {job_id}')
@@ -175,7 +175,7 @@ def start_worker(pipelines):
             stop_thread()
 
             # Clean up
-            clean_up(pipeline, job_id, job.get('materialId'))
+            clean_up(pipeline, job_id)
 
 if __name__ == '__main__':
     # Get the pipelines

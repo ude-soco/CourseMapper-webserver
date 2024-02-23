@@ -154,12 +154,13 @@ export const conceptMap = async (req, res) => {
   if (isModerator) {
     const materialPath = process.cwd() + material.url + material._id + '.pdf';
     const materialData = await fs.readFile(materialPath);
-    await redis.addFile(materialId, materialData);
 
     await redis.addJob('concept-map', {
       modelName,
       materialId,
       materialName,
+    }, async (jobId) => {
+      await redis.addFile(jobId, materialData);
     }, (result) => {
       if (result.error) {
         return res.status(500).send({ error: result.error });

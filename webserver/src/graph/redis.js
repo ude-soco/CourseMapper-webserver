@@ -1,4 +1,5 @@
 import { createClient } from 'redis';
+const crypto = require('crypto');
 
 const redis = {}
 const listeners = {};
@@ -76,21 +77,26 @@ async function runHousekeeping() {
   }
 }
 
-export async function addJob(pipeline, job, onDone) {
+export async function addJob(pipeline, job, beforeStart, onDone) {
   job.pipeline = pipeline;
 
-  const existingJobId = await findExistingJob(job);
-  if (existingJobId) {
-    console.log(`Job exists with id ${existingJobId} in pipeline ${pipeline}`);
-    onJobDone(existingJobId, onDone);
-    return existingJobId;
+  const jobId = getJobId(job);
+  const jobExists = await redis.client.hExists('jobs', jobId);
+  if (jobExists) {
+    console.log(`Job exists with id ${jobId} in pipeline ${pipeline}`);
+    onJobDone(jobId, onDone);
+    return jobId;
   }
 
-  const jobId = (await redis.client.incr('jobId')).toString();
   console.log(`Adding job ${jobId} to pipeline ${pipeline}`);
-  onJobDone(jobId, onDone);
+  if (onDone) {
+    onJobDone(jobId, onDone);
+  }
   const jobData = JSON.stringify(job);
   await redis.client.hSet('jobs', jobId, jobData);
+  if (beforeStart) {
+    beforeStart(jobId);
+  }
   await redis.client.lPush(`queue:${pipeline}:pending`, jobId);
   return jobId;
 }
@@ -98,28 +104,23 @@ export async function addJob(pipeline, job, onDone) {
 export async function trackJob(pipeline, job, onDone) {
   job.pipeline = pipeline;
 
-  const existingJobId = await findExistingJob(job);
-  if (existingJobId) {
-    console.log(`Job exists with id ${existingJobId} in pipeline ${pipeline}`);
-    onJobDone(existingJobId, onDone);
-    return existingJobId;
+  const jobId = getJobId(job);
+  const jobExists = await redis.client.hExists('jobs', jobId);
+  if (jobExists) {
+    console.log(`Job exists with id ${jobId} in pipeline ${pipeline}`);
+    onJobDone(jobId, onDone);
+    return jobId;
   }
 
   onDone(null);
 }
 
-async function findExistingJob(jobData) {
-  const jobs = await redis.client.hGetAll('jobs');
-  for (const jobId in jobs) {
-    const existingJob = JSON.parse(jobs[jobId]);
-    // FIXME Issue #640: This only works if job only contains scalar values
-    if (Object.keys(jobData).every((key) => jobData[key] === existingJob[key])) {
-      return jobId;
-    }
-  }
-  return null;
-}
-
 export function addFile(materialId, file) {
   return redis.client.hSet('files', materialId, file);
+}
+
+function getJobId(job) {
+  const hash = crypto.createHash('sha256');
+  hash.update(JSON.stringify(job));
+  return hash.digest('hex');
 }
