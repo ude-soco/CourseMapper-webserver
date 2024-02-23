@@ -69,6 +69,11 @@
               }}</label>
             </span>
           </span>
+          <div style="margin: 0.5rem; height: 1rem" *ngIf="!isNotGenerated">
+            <span *ngIf="selectedFilterValues.includes('related_concept') || selectedFilterValues.includes('category')">
+              Click on a node to view its related concepts and categories
+            </span>
+          </div>
           <!-- <button
             pButton
             pRipple
@@ -90,9 +95,6 @@
               animationDuration=".5s"
             ></p-progressSpinner>
           </button> -->
-        </div>
-        <div style="text-align: center; margin-left: 2rem" *ngIf="!isNotGenerated">
-          Click on a node to view its relations
         </div>
       </div>
       <hr
