@@ -70,7 +70,7 @@
             </span>
           </span>
           <div style="margin: 0.5rem; height: 1rem" *ngIf="!isNotGenerated">
-            <span *ngIf="selectedFilterValues.includes('related_concept') || selectedFilterValues.includes('category')">
+            <span *ngIf="selectedFilterValues && (selectedFilterValues.includes('related_concept') || selectedFilterValues.includes('category'))">
               Click on a node to view its related concepts and categories
             </span>
           </div>
