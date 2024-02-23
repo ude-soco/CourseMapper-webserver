@@ -1,4 +1,4 @@
-import { createClient } from 'redis';
+import { createClient, WatchError } from 'redis';
 const crypto = require('crypto');
 
 const redis = {}
@@ -81,23 +81,45 @@ export async function addJob(pipeline, job, beforeStart, onDone) {
   job.pipeline = pipeline;
 
   const jobId = getJobId(job);
-  const jobExists = await redis.client.hExists('jobs', jobId);
-  if (jobExists) {
-    console.log(`Job exists with id ${jobId} in pipeline ${pipeline}`);
-    onJobDone(jobId, onDone);
-    return jobId;
-  }
 
-  console.log(`Adding job ${jobId} to pipeline ${pipeline}`);
-  if (onDone) {
-    onJobDone(jobId, onDone);
+  try {
+    await redis.client.executeIsolated(async (isolatedClient) => {
+      // Watch the jobs and pending queues to ensure no other process is adding the same job
+      await isolatedClient.watch('jobs');
+      await isolatedClient.watch(`queue:${pipeline}:pending`);
+
+      // Check if the job already exists
+      const jobExists = await redis.client.hExists('jobs', jobId);
+      if (jobExists) {
+        console.log(`Job exists with id ${jobId} in pipeline ${pipeline}`);
+        onJobDone(jobId, onDone);
+        return;
+      }
+
+      console.log(`Adding job ${jobId} to pipeline ${pipeline}`);
+
+      if (onDone) {
+        onJobDone(jobId, onDone);
+      }
+      if (beforeStart) {
+        beforeStart(jobId);
+      }
+      const jobData = JSON.stringify(job);
+
+      // Add the job to the jobs hash and the pending queue
+      const multi = isolatedClient.multi();
+      await multi.hSet('jobs', jobId, jobData);
+      await multi.lPush(`queue:${pipeline}:pending`, jobId);
+
+      return multi.exec();
+    });
+  } catch (error) {
+    if (error instanceof WatchError) {
+      console.error('Failed to add job due to WatchError. Retrying...');
+      return addJob(pipeline, job, beforeStart, onDone);
+    }
+    console.error('Failed to add job', error);
   }
-  const jobData = JSON.stringify(job);
-  await redis.client.hSet('jobs', jobId, jobData);
-  if (beforeStart) {
-    beforeStart(jobId);
-  }
-  await redis.client.lPush(`queue:${pipeline}:pending`, jobId);
   return jobId;
 }
 
