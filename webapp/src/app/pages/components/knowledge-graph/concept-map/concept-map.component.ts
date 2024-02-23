@@ -94,6 +94,7 @@ export class ConceptMapComponent {
   selectedTopConcepts?: any;
   selectedModel?: string;
   isLoading?: boolean;
+  isNotGenerated?: boolean;
   showConcepts?: boolean; // to show concepts if retrieved
   username: any; //to assign current userName
   userid: any; //to assign current userID
@@ -921,6 +922,7 @@ export class ConceptMapComponent {
   async getConceptMapData() {
     if (this.showMaterialKg) {
       var startTime = performance.now();
+      this.isNotGenerated = false;
       try {
         const materialId = this.currentMaterial!._id;
         // Check availability in neo4j
@@ -993,6 +995,9 @@ export class ConceptMapComponent {
               node.name = this.capitalizeWords(node.name);
             });
           } catch (error) {
+            if (error.status === 404) {
+              this.isNotGenerated = true;
+            }
             console.log('Error:', error);
             this.isLoading = false;
             this.loading.emit(false);

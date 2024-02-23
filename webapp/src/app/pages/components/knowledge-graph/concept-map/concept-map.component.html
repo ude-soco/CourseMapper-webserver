@@ -91,7 +91,7 @@
             ></p-progressSpinner>
           </button> -->
         </div>
-        <div style="text-align: center; margin-left: 2rem">
+        <div style="text-align: center; margin-left: 2rem" *ngIf="!isNotGenerated">
           Click on a node to view its relations
         </div>
       </div>
@@ -117,7 +117,14 @@
                 ></p-progressSpinner>
               </div>
             </div>
-            <div class="sidebarHidden" *ngIf="!isLoading">
+            <div class="sidebarHidden" *ngIf="!isLoading && isNotGenerated">
+              <div class="grid grid-cols-1 justify-items-center p-60">
+                <div class="text-xl font-medium text-center">
+                  A knowledge graph for this material is being generated. Please check back in a few minutes.
+                </div>
+              </div>
+            </div>
+            <div class="sidebarHidden" *ngIf="!isLoading && !isNotGenerated">
               <app-graph
                 [conceptMapData]="filteredMapData"
                 [selectedFilterValues]="selectedFilterValues"

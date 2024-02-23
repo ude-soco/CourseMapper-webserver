@@ -1,12 +1,14 @@
 const fs = require('fs').promises;
 const process = require('process');
 
+const db = require("../models");
+const User = db.user;
+const Role = db.role;
+const Material = db.material;
+
 const neo4j = require("../graph/neo4j");
 const redis = require("../graph/redis");
 // TODO Issue #640: Use better file names
-
-const db = require("../models");
-const Material = db.material;
 
 export const checkSlide = async (req, res) => {
   const slideId = req.params.slideId;
@@ -121,29 +123,61 @@ export const setRating = async (req, res) => {
   }
 }
 
+async function checkIsModerator(userId, courseId) {
+  const user = await User.findById(userId);
+  const role = await Role.findById(user.role);
+  if (role.name === "moderator" || role.name === "admin") {
+    return true
+  }
+  const course = user.courses.find(
+    (item) => item.courseId.valueOf() === courseId
+  );
+  const courseRole = await Role.findOne({ _id: course.role });
+  if (courseRole.name === "moderator") {
+    return true
+  }
+}
+
 export const conceptMap = async (req, res) => {
   const modelName = req.body.modelName;
   const materialId = req.params.materialId;
+  const courseId = req.params.courseId;
+
+  const isModerator = await checkIsModerator(req.userId, courseId);
 
   const material = await Material.findById(materialId);
   if (!material) {
     return res.status(404).send({ error: "Material not found" });
   }
   const materialName = material.name;
-  const materialPath = process.cwd() + material.url + material._id + '.pdf';
-  const materialData = await fs.readFile(materialPath);
-  await redis.addFile(materialId, materialData);
 
-  await redis.addJob('concept-map', {
-    modelName,
-    materialId,
-    materialName,
-  }, (result) => {
-    if (result.error) {
-      return res.status(500).send({ error: result.error });
-    }
-    return res.status(200).send(result.result);
-  });
+  if (isModerator) {
+    const materialPath = process.cwd() + material.url + material._id + '.pdf';
+    const materialData = await fs.readFile(materialPath);
+    await redis.addFile(materialId, materialData);
+
+    await redis.addJob('concept-map', {
+      modelName,
+      materialId,
+      materialName,
+    }, (result) => {
+      if (result.error) {
+        return res.status(500).send({ error: result.error });
+      }
+      return res.status(200).send(result.result);
+    });
+  } else {
+    await redis.trackJob('concept-map', {
+      modelName,
+      materialId,
+      materialName,
+    }, (result) => {
+      if (!result) {
+        return res.status(404).send();
+      }
+      return res.status(200).send(result.result);
+    });
+  }
 }
 
 export const getConcepts = async (req, res) => {

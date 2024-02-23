@@ -69,7 +69,7 @@ module.exports = function (app) {
 
   app.post(
     "/api/courses/:courseId/materials/:materialId/concept-map",
-    [authJwt.verifyToken, authJwt.isModerator],
+    [authJwt.verifyToken],
     controller.conceptMap
   );
 
