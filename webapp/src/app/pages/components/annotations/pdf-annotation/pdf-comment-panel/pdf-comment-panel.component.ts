@@ -48,6 +48,7 @@ export class PdfCommentPanelComponent implements OnInit, OnDestroy {
   pdfPageSubscription;
   videoSeekSubscription: any;
   currentTimeSubscription: any;
+  annotationsSubscription: any;
   constructor(
     private store: Store<State>,
     private changeDetectorRef: ChangeDetectorRef,
@@ -57,16 +58,18 @@ export class PdfCommentPanelComponent implements OnInit, OnDestroy {
       .select(getCurrentMaterial)
       .subscribe((material) => (this.selectedMaterial = material));
 
-    this.store.select(getAnnotationsForMaterial).subscribe((annotations) => {
-      this.annotations = annotations;
-      if (this.selectedMaterial.type === 'pdf') {
-        this.updateFilterItemsforPDF();
-        this.showPDFAnnotations();
-      } else {
-        this.updateFilterItemsforVideo();
-        this.showVideoAnnotations();
-      }
-    });
+    this.annotationsSubscription = this.store
+      .select(getAnnotationsForMaterial)
+      .subscribe((annotations) => {
+        this.annotations = annotations;
+        if (this.selectedMaterial?.type === 'pdf') {
+          this.updateFilterItemsforPDF();
+          this.showPDFAnnotations();
+        } else {
+          this.updateFilterItemsforVideo();
+          this.showVideoAnnotations();
+        }
+      });
 
     this.pdfPageSubscription = this.store
       .select(getCurrentPdfPage)
@@ -81,7 +84,7 @@ export class PdfCommentPanelComponent implements OnInit, OnDestroy {
       .subscribe((time) => {
         this.currentTime = time;
         if (
-          this.selectedMaterial.type === 'video' &&
+          this.selectedMaterial?.type === 'video' &&
           this.currentTimeSpanSelected
         ) {
           this.annotationsToShow = this.annotations.filter(
@@ -103,6 +106,7 @@ export class PdfCommentPanelComponent implements OnInit, OnDestroy {
       this.videoSeekSubscription.unsubscribe();
     }
     this.currentTimeSubscription?.unsubscribe();
+    this.annotationsSubscription?.unsubscribe();
   }
 
   ngAfterViewChecked(): void {
