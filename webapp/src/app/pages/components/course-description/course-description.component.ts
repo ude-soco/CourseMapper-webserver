@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
@@ -18,6 +19,7 @@ import { MessageService } from 'primeng/api';
   selector: 'app-course-description',
   templateUrl: './course-description.component.html',
   styleUrls: ['./course-description.component.css'],
+  providers: [DatePipe],
 })
 export class CourseDescriptionComponent {
   course: any;
@@ -28,7 +30,7 @@ export class CourseDescriptionComponent {
   lastName: string;
   Enrolled: boolean = false;
   Users: any;
-  course_enroll:Course;
+  course_enroll: Course;
 
   constructor(
     private storageService: StorageService,
@@ -36,7 +38,7 @@ export class CourseDescriptionComponent {
     private userService: UserServiceService,
     private courseService: CourseService,
     private router: Router,
-    private messageService: MessageService,
+    private messageService: MessageService
   ) {
     this.store
       .select(getCurrentCourse)
@@ -89,89 +91,79 @@ export class CourseDescriptionComponent {
     });
   }
 
-  EnrollToCOurse(){
-    if (this.isloggedin== false){
-      console.log(this.course, "this.course")
-      this.store.dispatch(CourseActions.setCurrentCourse({selcetedCourse: this.course}));
+  EnrollToCOurse() {
+    if (this.isloggedin == false) {
+      console.log(this.course, 'this.course');
+      this.store.dispatch(
+        CourseActions.setCurrentCourse({ selcetedCourse: this.course })
+      );
+      this.router.navigate(['login']);
+    } else if (this.isloggedin == true) {
+      console.log('this.course.id', this.course.id);
+      this.store.select(getCurrentCourse).subscribe((data) => {
+        console.log('channel name observable called');
+        this.course_enroll = data;
+        console.log(this.course_enroll, 'data from ongoninit before');
+      });
+      console.log(this.course_enroll, 'data from ongoninit after');
+      if (this.course.id == null) {
+        console.log('entered');
+        this.courseService
+          .EnrollToCOurse(this.course_enroll._id)
+          .subscribe((data) => {
+            this.Enrolled = true;
+            console.log('response after calling the service', data);
+            if ('success' in data) {
+              console.log('entered success msg');
+              // this.showInfo(res.success);
+              this.showInfo('You are successfully enrolled to the course');
+            } else {
+              this.showError(data.errorMsg);
+            }
+            setTimeout(() => {
+              this.router.navigate(['course', this.course_enroll._id, 'welcome']);
+            }, 850);
+          });
+      } else {
+        this.courseService.EnrollToCOurse(this.course.id).subscribe((data) => {
+          this.Enrolled = true;
+          console.log('data', data);
+          //if ( "write something here".indexOf("write som") > -1 )  { alert( "found it" );  }
+
+          if ('success' in data) {
+            console.log('entered success msg');
+            // this.showInfo(res.success);
+            this.showInfo('You are successfully enrolled to the course');
+          } else {
+            this.showError(data.errorMsg);
+          }
+          setTimeout(() => {
+            this.router.navigate(['course', this.course.id, 'welcome']);
+          }, 850);
+        });
+      }
+    }
+  }
+  GoToCOurse() {
+    if (this.isloggedin == true) {
+      this.router.navigate(['course', this.course._id]);
+    } else {
       this.router.navigate(['login']);
     }
-    else if (this.isloggedin== true) {
-
-      console.log("this.course.id", this.course.id)
-      this.store.select(getCurrentCourse).subscribe((data) => {
-        console.log("channel name observable called")
-        this.course_enroll=data
-        console.log(this.course_enroll, "data from ongoninit before")
-      })
-      console.log(this.course_enroll, "data from ongoninit after")
-      if(this.course.id == null )
-      {
-        console.log("entered")
-        this.courseService.EnrollToCOurse(this.course_enroll._id).subscribe(
-          (data) => {
-           this.Enrolled= true
-           console.log( "response after calling the service", data)
-           if ('success' in data) {
-            console.log("entered success msg")
-            // this.showInfo(res.success);
-            this.showInfo('You are successfully enrolled to the course');
-          } else {
-            this.showError(data.errorMsg);
-          }
-          setTimeout(() => {
-            this.router.navigate(['course', this.course_enroll._id]);
-          }, 850);
-
-
-          })
-      }
-      else{
-        this.courseService.EnrollToCOurse(this.course.id).subscribe(
-          (data) => {
-           this.Enrolled= true
-           console.log( "data", data)
-           //if ( "write something here".indexOf("write som") > -1 )  { alert( "found it" );  }
-
-           if ('success' in data) {
-            console.log("entered success msg")
-            // this.showInfo(res.success);
-            this.showInfo('You are successfully enrolled to the course');
-          } else {
-            this.showError(data.errorMsg);
-          }
-          setTimeout(() => {
-            this.router.navigate(['course', this.course.id]);
-          }, 850);
-
-
-          })
-      }
-
-
-      }
   }
-  GoToCOurse(){
-    if (this.isloggedin== true) {
-    this.router.navigate(['course', this.course._id]);
+  showInfo(msg) {
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Success',
+      detail: msg,
+    });
   }
-  else
-  {
-    this.router.navigate(['login']);
-  }
-}
-showInfo(msg) {
-  this.messageService.add({
-    severity: 'info',
-    summary: 'Success',
-    detail: msg,
-  });
-}
 
-showError(msg) {
-  this.messageService.add({
-    severity: 'error',
-    summary: 'Error',
-    detail: msg,
-  });
-}
+  showError(msg) {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: msg,
+    });
+  }
 }

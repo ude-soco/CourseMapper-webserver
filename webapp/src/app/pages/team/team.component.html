@@ -8,30 +8,51 @@
       <div>
         <img
           alt="Card"
-          src="/assets/img/landingPage.jpg"
+          src="/assets/img/soco-background.jpg"
           class="img"
-          />
+          style="object-fit: cover"
+        />
 
         <div class="transbox">
           <h1>CourseMapper</h1>
-          <p>Learning. Collaboration. Annotation. Recommendation. Analytics</p>
+          <p>Learning. Collaboration. Annotation. Recommendation. Analytics.</p>
         </div>
       </div>
     </div>
 
     <h1 class="text-5xl text-sky-600 font-bold text-center">Our Team</h1>
 
-    <div class="w-full grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 my-16 px-8">
-      <div *ngFor="let person of people" class="flex flex-col gap-2 items-center">
+    <div
+      class="w-full grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 my-16 px-8"
+    >
+      <div
+        *ngFor="let person of people"
+        class="flex flex-col gap-2 items-center"
+      >
         <div class="p-2 relative">
-          <img [src]="person.image" class="rounded-full">
-          <p *ngIf="person.email" class="absolute right-2 bottom-2 bg-sky-600 text-white rounded-md px-2 text-sm py-1">Contact Person</p>
+          <img [src]="person.image" class="rounded-full" />
+          <p
+            *ngIf="person.email"
+            class="absolute right-2 bottom-2 bg-sky-600 text-white rounded-md px-2 text-sm py-1"
+          >
+            Contact Person
+          </p>
         </div>
         <h2 class="flex-1 text-lg text-sky-600 font-bold text-center">
-          {{person.name}}
+          {{ person.name }}
         </h2>
-        <a *ngIf="person.email" [href]="'mailto:'+person.email" class="hover:underline">Email: {{person.email}}</a>
-        <a [href]="person.url" target="_blank" class="bg-orange-600 hover:bg-orange-500 text-white rounded-md px-4 py-2 mt-2">Read More</a>
+        <a
+          *ngIf="person.email"
+          [href]="'mailto:' + person.email"
+          class="hover:underline"
+          >Email: {{ person.email }}</a
+        >
+        <a
+          [href]="person.url"
+          target="_blank"
+          class="bg-orange-600 hover:bg-orange-500 text-white rounded-md px-4 py-2 mt-2"
+          >Read More</a
+        >
       </div>
     </div>
   </div>

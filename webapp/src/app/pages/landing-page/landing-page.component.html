@@ -8,13 +8,14 @@
       <div *ngIf="value1 == ''">
         <img
           alt="Card"
-          src="/assets/img/landingPage.jpg"
+          src="/assets/img/soco-background.jpg"
           class="img"
+          style="object-fit: cover"
         />
 
-        <div class="transbox">
+        <div class="transbox" style="border-radius: 8px">
           <h1>CourseMapper</h1>
-          <p>Learning. Collaboration. Annotation. Recommendation. Analytics</p>
+          <p>Learning. Collaboration. Annotation. Recommendation. Analytics.</p>
         </div>
       </div>
 
@@ -40,7 +41,7 @@
       </div>
     </div>
 
-    <div class=" cursor-pointer overscroll-y-auto h-1/2 flex flex-wrap">
+    <div class="cursor-pointer overscroll-y-auto h-1/2 flex flex-wrap">
       <div *ngFor="let course of userArray" (click)="onSelectCourse(course)">
         <div
           *ngIf="value1 === '' || course.name.toLowerCase().includes(value1)"
@@ -48,28 +49,25 @@
           <p-card styleClass="p-card-shadow" class="course-card">
             <hr style="margin-bottom: 0.75rem; margin-top: 0%" />
             <ng-template pTemplate="header">
-              <img
-                alt="Card"
-                src="/assets/img/courseCard.png"
-              />
+              <img alt="Card" src="/assets/img/courseCard.png" />
             </ng-template>
 
             <ng-template pTemplate="content-center" style="float: left">
-              <div class="w-full h-14">
-              <p-avatar
-                label="{{ course.shortName }}"
-                shape="circle"
-                size="large"
-                [style]="{
-                  'background-color': '#0277BD',
-                  color: '#ffffff',
-                  float: 'left',
-                  top_margin: '0.5rem'
-                }"
-              ></p-avatar>
+              <div class="w-full h-14 mb-3 flex items-start">
+                <p-avatar
+                  label="{{ course.shortName }}"
+                  shape="circle"
+                  size="large"
+                  [style]="{
+                    'background-color': '#0369A1',
+                    color: '#ffffff',
+                    float: 'left',
+                  }"
+                ></p-avatar>
 
-
-                <p class="font-bold pt-2 pl-51" style="padding-left: 60px;">{{ course.name }}</p>
+                <p class="font-medium text-xl pl-3">
+                  {{ course.name }}
+                </p>
               </div>
 
               <p class="p">
@@ -90,7 +88,9 @@
                     d="M4 11v4.267c0 1.621 4.001 3.893 9 3.734 4-.126 6.586-1.972 7-3.467.024-.089.037-.178.037-.268V11L13 14l-5-1.667v3.213l-1-.364V12l-3-1z"
                   ></path>
                 </svg>
-                Created By: {{ course.firstName }} {{ course.lastName }}
+                <span class="pl-1">
+                  Created by: {{ course.firstName }} {{ course.lastName }}
+                </span>
               </p>
 
               <p class="p" style="margin-left: 4px">
@@ -98,7 +98,9 @@
                   class="pi pi-calendar"
                   style="font-size: 1rem; color: #ea580c"
                 ></i>
-                Created On: {{ course.createdAt }}
+                <span class="pl-1">
+                  Created on: {{ createdAt | date : "d MMMM yyyy" }}
+                </span>
               </p>
             </ng-template>
           </p-card>

@@ -3,30 +3,27 @@
     <div class="flex flex-row w-full">
       <div><app-sidebar></app-sidebar></div>
 
-      <div
-        style="
-          max-width: 2000px;
-          width: 100%;
-          align-self: start;
-          align-items: center;
-        "
-      >
-        <div class="flex items-start py-4 pl-3 bg-gray-200">
+      <div class="w-full">
+        <div class="p-4 bg-gray-200">
           <div class="flex flex-wrap items-center gap-5">
-            <div >
-                <app-back-button></app-back-button>            
+            <div>
+              <app-back-button></app-back-button>
             </div>
             <div>
-              <p class="flex w-full text-xl font-semibold">Personal Dashboard</p>
+              <p class="flex w-full text-xl font-semibold">
+                Personal Dashboard
+              </p>
             </div>
           </div>
         </div>
         <hr />
-        <div class="p-5">
-          <app-populate-dashboard
-            [indicators]="indicators"
-            [forPersonalDashboard]="forUserDashboard"
-          ></app-populate-dashboard>
+        <div class="w-full max-w-screen-2xl">
+          <div class="p-4">
+            <app-populate-dashboard
+              [indicators]="indicators"
+              [forPersonalDashboard]="forUserDashboard"
+            ></app-populate-dashboard>
+          </div>
         </div>
       </div>
     </div>
