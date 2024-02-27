@@ -89,7 +89,7 @@ export async function addJob(pipeline, job, beforeStart, onDone) {
       await isolatedClient.watch(`queue:${pipeline}:pending`);
 
       // Check if the job already exists
-      const jobExists = await redis.client.hExists('jobs', jobId);
+      const jobExists = await isolatedClient.hExists('jobs', jobId);
       if (jobExists) {
         console.log(`Job exists with id ${jobId} in pipeline ${pipeline}`);
         onJobDone(jobId, onDone);
