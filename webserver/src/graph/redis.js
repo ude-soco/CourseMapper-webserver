@@ -80,53 +80,31 @@ async function runHousekeeping() {
 export async function addJob(pipeline, job, beforeStart, onDone) {
   job.pipeline = pipeline;
 
-  const jobId = getJobId(job);
+  const jobData = JSON.stringify(job);
+  const jobId = getHash(jobData);
 
-  try {
-    await redis.client.executeIsolated(async (isolatedClient) => {
-      // Watch the jobs and pending queues to ensure no other process is adding the same job
-      await isolatedClient.watch('jobs');
-      await isolatedClient.watch(`queue:${pipeline}:pending`);
-
-      // Check if the job already exists
-      const jobExists = await isolatedClient.hExists('jobs', jobId);
-      if (jobExists) {
-        console.log(`Job exists with id ${jobId} in pipeline ${pipeline}`);
-        onJobDone(jobId, onDone);
-        return;
-      }
-
-      console.log(`Adding job ${jobId} to pipeline ${pipeline}`);
-
-      if (onDone) {
-        onJobDone(jobId, onDone);
-      }
-      if (beforeStart) {
-        beforeStart(jobId);
-      }
-      const jobData = JSON.stringify(job);
-
-      // Add the job to the jobs hash and the pending queue
-      const multi = isolatedClient.multi();
-      await multi.hSet('jobs', jobId, jobData);
-      await multi.lPush(`queue:${pipeline}:pending`, jobId);
-
-      return multi.exec();
-    });
-  } catch (error) {
-    if (error instanceof WatchError) {
-      console.error('Failed to add job due to WatchError. Retrying...');
-      return addJob(pipeline, job, beforeStart, onDone);
+  const jobAdded = await redis.client.hSetNX('jobs', jobId, jobData);
+  if (jobAdded) {
+    if (onDone) {
+      onJobDone(jobId, onDone);
     }
-    console.error('Failed to add job', error);
+    if (beforeStart) {
+      beforeStart(jobId);
+    }
+    await redis.client.lPush(`queue:${pipeline}:pending`, jobId);
+    console.log(`Added job ${jobId} to pipeline ${pipeline}`);
+  } else {
+    onJobDone(jobId, onDone);
+    console.log(`Job exists with id ${jobId} in pipeline ${pipeline}`);
   }
+
   return jobId;
 }
 
 export async function trackJob(pipeline, job, onDone) {
   job.pipeline = pipeline;
 
-  const jobId = getJobId(job);
+  const jobId = getHash(JSON.stringify(job));
   const jobExists = await redis.client.hExists('jobs', jobId);
   if (jobExists) {
     console.log(`Job exists with id ${jobId} in pipeline ${pipeline}`);
@@ -141,8 +119,8 @@ export function addFile(materialId, file) {
   return redis.client.hSet('files', materialId, file);
 }
 
-function getJobId(job) {
+function getHash(text) {
   const hash = crypto.createHash('sha256');
-  hash.update(JSON.stringify(job));
+  hash.update(text);
   return hash.digest('hex');
 }
