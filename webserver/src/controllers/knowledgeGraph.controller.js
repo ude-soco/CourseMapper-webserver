@@ -94,6 +94,11 @@ export const getHigherLevelsNodes = async (req, res) => {
   }
 
   try {
+    const materials = await neo4j.checkMaterials(materialIds);
+    if (materials.length === 0) {
+      return res.status(404).send();
+    }
+
     const records = await neo4j.getHigherLevelsNodes(materialIds);
     return res.status(200).send({ records });
   } catch (err) {
@@ -108,6 +113,11 @@ export const getHigherLevelsEdges = async (req, res) => {
   }
 
   try {
+    const materials = await neo4j.checkMaterials(materialIds);
+    if (materials.length === 0) {
+      return res.status(404).send();
+    }
+
     const records = await neo4j.getHigherLevelsEdges(materialIds);
     return res.status(200).send({ records });
   } catch (err) {

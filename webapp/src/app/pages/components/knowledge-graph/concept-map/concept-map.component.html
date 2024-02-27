@@ -149,7 +149,7 @@
   </p-dialog>
 </div>
 <div
-  *ngIf="showMaterialKg === false && showCourseKg === true && courseIsEmpty === false"
+  *ngIf="showMaterialKg === false && showCourseKg === true && courseIsEmpty === false && isNotGenerated === false"
   (window:resize)="onResize($event)"
   style="z-index: 99"
 >
@@ -280,7 +280,35 @@
 </div>
 
 <div
-  *ngIf="showMaterialKg === false && showCourseKg === true && courseIsEmpty === true"
+  *ngIf="showMaterialKg === false && showCourseKg === true && courseIsEmpty === false && isNotGenerated === true"
+  (window:resize)="onResize($event)"
+  style="z-index: 99"
+>
+  <p-dialog
+    id="higherLevelsKG"
+    header=" {{ kgTitle }}"
+    [(visible)]="this.showCourseKg"
+    [blockScroll]="true"
+    (onHide)="onSubmitCancel()"
+    (onShow)="courseKgShown()"
+    [style]="{
+      position: 'relative',
+      top: '0px',
+      width: '90%',
+      height: '90%',
+      padding: 0,
+      margin: 0
+    }"
+    maskStyleClass="dialogMask"
+  >
+    <hr style="margin-bottom: 0.25rem" />
+    <div class="grid grid-cols-1 justify-items-center p-60">
+      <div class='text-xl font-medium text-center'>CourseKG will be shown once KG for learning materials has been generated</div>
+    </div>
+  </p-dialog>
+</div>
+<div
+  *ngIf="showMaterialKg === false && showCourseKg === true && courseIsEmpty === true && isNotGenerated === false"
   (window:resize)="onResize($event)"
   style="z-index: 99"
 >

@@ -62,6 +62,14 @@ export async function checkMaterial(materialId) {
   return recordsToObjects(records);
 }
 
+export async function checkMaterials(materialIds) {
+  const { records, summary, keys } = await graphDb.driver.executeQuery(
+    'MATCH (m:LearningMaterial) WHERE m.mid IN $mids RETURN m',
+    { mids: materialIds }
+  );
+  return recordsToObjects(records);
+}
+
 export async function getMaterial(materialId) {
   const { records, summary, keys } = await graphDb.driver.executeQuery(
     'MATCH (c:Concept) WHERE c.mid = $mid RETURN LABELS(c) as labels,ID(c) AS id, c.cid as cid, c.name AS name, c.uri as uri, c.type as type, c.weight as weight, c.wikipedia as wikipedia, c.abstract as abstract, c.rank as rank',
