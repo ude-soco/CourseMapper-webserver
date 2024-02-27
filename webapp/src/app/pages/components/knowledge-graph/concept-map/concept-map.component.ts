@@ -1012,6 +1012,9 @@ export class ConceptMapComponent {
             var result = await this.conceptMapService.getConceptMapData(
               reqData
             );
+            if (materialId !== this.currentMaterial!._id) {
+              return;
+            }
             console.log('result from python server' + result);
             this.conceptMapData = result;
             // capitalize nodes names
