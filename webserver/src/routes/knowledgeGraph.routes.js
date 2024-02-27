@@ -50,15 +50,9 @@ module.exports = function (app) {
   );
 
   app.get(
-    "/api/knowledge-graph/get-higher-levels-nodes",
+    "/api/knowledge-graph/get-higher-levels-nodes-and-edges",
     [authJwt.verifyToken],
-    controller.getHigherLevelsNodes
-  );
-
-  app.get(
-    "/api/knowledge-graph/get-higher-levels-edges",
-    [authJwt.verifyToken],
-    controller.getHigherLevelsEdges
+    controller.getHigherLevelsNodesAndEdges
   );
 
   app.post(

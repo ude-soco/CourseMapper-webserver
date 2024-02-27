@@ -8,6 +8,11 @@ type Neo4jResult = {
   records: any[]
 }
 
+type NodesAndEdges = {
+  nodes: any[],
+  edges: any[]
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -40,13 +45,11 @@ export class Neo4jService {
   }
 
   async deleteMaterial(materialId: string) {
-    // console.log("delete material from neo4j service")
     return lastValueFrom(this.http.delete(
       `${environment.API_URL}/knowledge-graph/delete-material/${materialId}`
     ));
 
   }
-
 
   async getMaterialEdges(materialId: string): Promise<Neo4jResult> {
     return lastValueFrom(this.http.get<Neo4jResult>(
@@ -60,18 +63,11 @@ export class Neo4jService {
     ));
   }
 
-  async getHigherLevelsNodes(materialIds: string[]): Promise<Neo4jResult> {
+  async getHigherLevelsNodesAndEdges(materialIds: string[]): Promise<NodesAndEdges> {
     let params = new URLSearchParams(materialIds.map((id) => ['material_ids', id]))
-    const res = await lastValueFrom(this.http.get<Neo4jResult>(
-      `${environment.API_URL}/knowledge-graph/get-higher-levels-nodes?${params.toString()}`
+    const res = await lastValueFrom(this.http.get<NodesAndEdges>(
+      `${environment.API_URL}/knowledge-graph/get-higher-levels-nodes-and-edges?${params.toString()}`
     ));
     return res
-  }
-
-  async getHigherLevelsEdges(materialIds: string[]): Promise<Neo4jResult> {
-    let params = new URLSearchParams(materialIds.map((id) => ['material_ids', id]))
-    return lastValueFrom(this.http.get<Neo4jResult>(
-      `${environment.API_URL}/knowledge-graph/get-higher-levels-edges?${params.toString()}`
-    ));
   }
 }

@@ -87,7 +87,7 @@ export const getMaterialConceptIds = async (req, res) => {
   }
 }
 
-export const getHigherLevelsNodes = async (req, res) => {
+export const getHigherLevelsNodesAndEdges = async (req, res) => {
   let materialIds = req.query.material_ids;
   if (materialIds.constructor !== Array) {
     materialIds = [materialIds];
@@ -99,27 +99,8 @@ export const getHigherLevelsNodes = async (req, res) => {
       return res.status(404).send();
     }
 
-    const records = await neo4j.getHigherLevelsNodes(materialIds);
-    return res.status(200).send({ records });
-  } catch (err) {
-    return res.status(500).send({ error: err.message });
-  }
-}
-
-export const getHigherLevelsEdges = async (req, res) => {
-  let materialIds = req.query.material_ids;
-  if (materialIds.constructor !== Array) {
-    materialIds = [materialIds];
-  }
-
-  try {
-    const materials = await neo4j.checkMaterials(materialIds);
-    if (materials.length === 0) {
-      return res.status(404).send();
-    }
-
-    const records = await neo4j.getHigherLevelsEdges(materialIds);
-    return res.status(200).send({ records });
+    const records = await neo4j.getHigherLevelsNodesAndEdges(materialIds);
+    return res.status(200).send(records);
   } catch (err) {
     return res.status(500).send({ error: err.message });
   }

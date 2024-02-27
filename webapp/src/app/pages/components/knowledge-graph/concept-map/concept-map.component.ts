@@ -1111,27 +1111,20 @@ export class ConceptMapComponent {
             });
         });
         setTimeout(async () => {
+          //wait 100 ms before executing next commands to assure recieving materialIDs form previous subscription
+
           this.courseIsEmpty = materialsIds.length === 0;
           if (this.courseIsEmpty) {
             return;
           }
 
           try {
-            //wait 100 ms before executing next commands to assure recieving materialIDs form previous subscription
-            const courseMaterialsNodes =
-              await this.neo4jService.getHigherLevelsNodes(materialsIds);
+            const { nodes: courseMaterialsNodes, edges: courseMaterialsEdges } =
+              await this.neo4jService.getHigherLevelsNodesAndEdges(materialsIds);
 
-            // queryEdges = queryEdges + ') RETURN TYPE(r) as type, ID(a) as source, ID(b) as target, r.weight as weight'
-
-            // // const courseMaterialsEdges = await this.neo4jService.getHigherLevelsEdges(
-            // //   materialsIds
-            // // );
-            const courseMaterialsEdges =
-              await this.neo4jService.getHigherLevelsEdges(materialsIds);
-            console.log(courseMaterialsEdges);
             let kgNodes = [];
             let kgEdges = [];
-            courseMaterialsNodes.records.forEach((data) => {
+            courseMaterialsNodes.forEach((data) => {
               var type = data.type;
               var nodeEle;
               var conceptName = data.name;
@@ -1160,8 +1153,8 @@ export class ConceptMapComponent {
               }
             });
             kgNodes = uniqueNodes;
-            if (courseMaterialsEdges.records) {
-              courseMaterialsEdges.records.forEach((data) => {
+            if (courseMaterialsEdges) {
+              courseMaterialsEdges.forEach((data) => {
                 let edgeEle = {
                   type: data.type,
                   source: data.source,

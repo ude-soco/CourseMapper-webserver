@@ -102,20 +102,21 @@ export async function getMaterialConceptIds(materialId) {
   return recordsToObjects(records);
 }
 
-export async function getHigherLevelsNodes(materialIds) {
-  const { records, summary, keys } = await graphDb.driver.executeQuery(
-    `MATCH (c:Concept) WHERE (c.mid IN $mids) and c.rank<51 and c.type="main_concept" RETURN LABELS(c) as labels,ID(c) AS id, c.cid as cid, c.name AS name, c.uri as uri, c.type as type, c.weight as weight, c.wikipedia as wikipedia, c.abstract as abstract, c.rank as rank, c.mid as mid`,
+export async function getHigherLevelsNodesAndEdges(materialIds) {
+  const { records } = await graphDb.driver.executeQuery(
+    `MATCH (c:Concept) WHERE (c.mid IN $mids) and c.type="main_concept" RETURN LABELS(c) as labels,ID(c) AS id, c.cid as cid, c.name AS name, c.uri as uri, c.type as type, c.weight as weight, c.wikipedia as wikipedia, c.abstract as abstract, c.rank as rank, c.mid as mid order by c.weight limit 50`,
     { mids: materialIds }
   );
-  return recordsToObjects(records);
-}
+  const nodes = recordsToObjects(records);
 
-export async function getHigherLevelsEdges(materialIds) {
-  const { records, summary, keys } = await graphDb.driver.executeQuery(
-    `MATCH p=(a)-[r]->(b) WHERE TYPE(r) <> "CONTAINS" and a.mid = b.mid AND a.min IN $mids and a.rank<51 and b.rank<51 RETURN TYPE(r) as type, ID(a) as source, ID(b) as target, r.weight as weight`,
-    { mids: materialIds }
+  const nodeIds = nodes.map(node => node.id);
+  const { records: records2 } = await graphDb.driver.executeQuery(
+    `MATCH p=(a)-[r]->(b) WHERE TYPE(r) <> "CONTAINS" and a.mid = b.mid AND a.mid IN $mids AND a.id IN $nids AND b.id IN $nids RETURN TYPE(r) as type, ID(a) as source, ID(b) as target, r.weight as weight`,
+    { mids: materialIds, nids: nodeIds }
   );
-  return recordsToObjects(records);
+  const edges = recordsToObjects(records2);
+
+  return { nodes, edges };
 }
 
 export async function setRating(resourceId, concepts, userId, rating) {
