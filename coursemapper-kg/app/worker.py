@@ -75,8 +75,7 @@ def clean_up(pipeline, job_id):
     redis.hdel(f'jobs', job_id)
 
     # Delete file
-    if pipeline == 'concept-map':
-        redis.hdel('files', job_id)
+    redis.hdel('files', job_id)
 
 def start_worker(pipelines):
     logger.info('Starting worker...')
