@@ -123,14 +123,11 @@ export class LandingPageComponent {
       this.firstName = user.firstname;
       this.lastName = user.lastname;
 
-      var index = course.createdAt.indexOf('T');
-      (this.createdAt = course.createdAt.slice(0, index)),
-        course.createdAt.slice(index + 1);
       let ingoPush = {
         id: course._id,
         name: course.name,
         shortName: course.shortName,
-        createdAt: this.createdAt,
+        createdAt: new Date(course.createdAt),
         firstName: this.firstName,
         lastName: this.lastName,
         description: course.description,
