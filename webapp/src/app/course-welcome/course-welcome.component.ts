@@ -64,14 +64,6 @@ export class CourseWelcomeComponent implements OnInit {
   ngOnInit(): void {
     this.selectedCourse = this.courseService.getSelectedCourse();
     this.Users = [];
-    if (this.selectedCourse._id !== '') {
-      this.buildCardInfo(this.selectedCourse.users[0].userId, this.selectedCourse);
-      if (this.selectedCourse.role === 'moderator') {
-        this.moderator = true;
-      } else {
-        this.moderator = false;
-      }
-    }
     this.courseService.onSelectCourse.subscribe((course) => {
       this.selectedCourse = course;
       this.selectedCourseId = course._id;
@@ -88,6 +80,17 @@ export class CourseWelcomeComponent implements OnInit {
         this.moderator = false;
       }
     });
+    if (this.selectedCourse._id !== '') {
+      this.buildCardInfo(
+        this.selectedCourse.users[0]?.userId,
+        this.selectedCourse
+      );
+      if (this.selectedCourse.role === 'moderator') {
+        this.moderator = true;
+      } else {
+        this.moderator = false;
+      }
+    }
   }
 
   buildCardInfo(userModeratorID: string, course: Course) {
