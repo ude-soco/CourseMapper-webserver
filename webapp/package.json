@@ -25,7 +25,7 @@
     "@ngrx/store": "^15.4.0",
     "@ngrx/store-devtools": "^15.4.0",
     "@popperjs/core": "^2.11.8",
-    "@types/node": "^20.11.19",
+    "@types/node": "^20.11.21",
     "angular-html-parser": "^5.2.0",
     "angular-mentions": "^1.5.0",
     "cytoscape": "^3.28.1",
