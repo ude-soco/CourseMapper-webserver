@@ -178,8 +178,8 @@ export class PopulateDashboardComponent {
   onDeleteIndicator(indicator) {
     this.confirmationService.confirm({
       message: 'Are you sure that you want to delete the Indicator?',
-      header: 'Confirmation',
-      icon: 'pi pi-exclamation-triangle',
+      header: 'Delete Confirmation',
+      icon: 'pi pi-info-circle',
       accept: () => this.onConfirmDeleteIndicator(indicator),
     });
   }
