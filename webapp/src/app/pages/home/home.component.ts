@@ -108,9 +108,6 @@ export class HomeComponent implements OnInit {
       this.firstName = user.firstname;
       this.lastName = user.lastname;
 
-      var index = course.createdAt.indexOf('T');
-      (this.createdAt = course.createdAt.slice(0, index)),
-        course.createdAt.slice(index + 1);
       let ingoPush = {
         id: course._id,
         name: course.name,
