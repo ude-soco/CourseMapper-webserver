@@ -40,6 +40,7 @@ import { CourseService } from 'src/app/services/course.service';
 import { getLastTimeCourseMapperOpened } from 'src/app/state/app.reducer';
 import * as $ from 'jquery';
 import * as AppActions from 'src/app/state/app.actions';
+import { IntervalService } from 'src/app/services/interval.service';
 @Component({
   selector: 'app-notification-dashboard',
   templateUrl: './notification-dashboard.component.html',
@@ -91,7 +92,8 @@ export class NotificationDashboardComponent {
     protected store: Store<State>,
     protected router: Router,
     protected courseService: CourseService,
-    protected fb: FormBuilder
+    protected fb: FormBuilder,
+    private intervalService: IntervalService
   ) {}
 
   protected ngOnInit(): void {
@@ -324,6 +326,7 @@ export class NotificationDashboardComponent {
   }
 
   protected onNotificationClicked(notification: Notification) {
+    this.intervalService.stopInterval();
     this.store.dispatch(
       NotificationActions.notificationsMarkedAsRead({
         notifications: [notification._id],
@@ -408,6 +411,10 @@ export class NotificationDashboardComponent {
         courseActions.setCourseId({ courseId: notification.course_id })
       );
 
+      this.store.dispatch(
+        NotificationActions.setCurrentlySelectedNotification({ notification })
+      );
+
       if (notification.reply_id) {
         this.courseService.navigatingToMaterial = true;
         this.store.dispatch(
@@ -489,7 +496,7 @@ export class NotificationDashboardComponent {
           const elementToScrollTo = document.getElementById(
             `annotation-${notification.annotation_id}`
           );
-          elementToScrollTo.scrollIntoView();
+          elementToScrollTo?.scrollIntoView();
           // Scroll to the element
           window.location.hash = '#annotation-' + notification.annotation_id;
           setTimeout(function () {

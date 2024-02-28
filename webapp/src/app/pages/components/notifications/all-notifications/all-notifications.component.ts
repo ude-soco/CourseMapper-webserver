@@ -29,6 +29,7 @@ import { FormBuilder, FormControl } from '@angular/forms';
 import { getSubscribedCourses } from 'src/app/state/app.reducer';
 import { MenuItem } from 'primeng/api';
 import * as NotificationActions from '../state/notifications.actions';
+import { IntervalService } from 'src/app/services/interval.service';
 
 @Component({
   selector: 'app-all-notifications',
@@ -105,7 +106,8 @@ export class AllNotificationsComponent {
     protected fb: FormBuilder,
     private httpClient: HttpClient,
     private el: ElementRef,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private intervalService: IntervalService
   ) {
     /* super(store, router, courseService, fb); // Invoke the superclass constructor */
   }
@@ -511,6 +513,7 @@ export class AllNotificationsComponent {
         notifications: [notification._id],
       })
     );
+    this.intervalService.stopInterval();
     /* this.notificationService.previousURL = this.router.url; */
 
     if (notification.category === NotificationCategory.CourseUpdate) {
@@ -569,6 +572,9 @@ export class AllNotificationsComponent {
       this.courseService.Notification = notification;
       this.store.dispatch(
         courseActions.setCourseId({ courseId: notification.course_id })
+      );
+      this.store.dispatch(
+        NotificationActions.setCurrentlySelectedNotification({ notification })
       );
       if (notification.reply_id) {
         this.courseService.navigatingToMaterial = true;
