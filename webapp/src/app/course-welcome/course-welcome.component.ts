@@ -66,6 +66,11 @@ export class CourseWelcomeComponent implements OnInit {
     this.Users = [];
     if (this.selectedCourse._id !== '') {
       this.buildCardInfo(this.selectedCourse.users[0].userId, this.selectedCourse);
+      if (this.selectedCourse.role === 'moderator') {
+        this.moderator = true;
+      } else {
+        this.moderator = false;
+      }
     }
     this.courseService.onSelectCourse.subscribe((course) => {
       this.selectedCourse = course;
