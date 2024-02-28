@@ -64,13 +64,13 @@
     <div>
       <div>
         <button
+          *ngIf="!moderator"
           pButton
           class="button p-button-raised"
           type="button"
           label="Unenroll From Course"
           [style]="{ 'background-color': '#0369A1', color: '#ffffff' }"
           (click)="deEnrole()"
-          [disabled]="moderator"
         ></button>
       </div>
     </div>
