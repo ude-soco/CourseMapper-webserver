@@ -78,8 +78,8 @@ export async function getMaterial(materialId) {
   return recordsToObjects(records);
 }
 
-export function deleteMaterial(materialId) {
-  const { records, summary, keys } = graphDb.driver.executeQuery(
+export async function deleteMaterial(materialId) {
+  const { records, summary, keys } = await graphDb.driver.executeQuery(
     'MATCH (m:LearningMaterial) WHERE m.mid = $mid DETACH DELETE m',
     { mid: materialId }
   );

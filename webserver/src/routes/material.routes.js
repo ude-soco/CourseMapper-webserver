@@ -35,6 +35,7 @@ module.exports = function (app) {
   app.delete(
     "/api/courses/:courseId/materials/:materialId",
     [authJwt.verifyToken, authJwt.isModerator],
+    knowledgeGraphController.deleteMaterial,
     controller.deleteMaterial,
     logger.deleteMaterial,
     notifications.materialCourseUpdateNotificationsUsers,

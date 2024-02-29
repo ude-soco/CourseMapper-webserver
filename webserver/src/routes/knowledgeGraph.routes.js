@@ -31,12 +31,6 @@ module.exports = function (app) {
     controller.getMaterial
   );
 
-  app.delete(
-    "/api/knowledge-graph/delete-material/:materialId",
-    [authJwt.verifyToken],
-    controller.deleteMaterial
-  );
-
   app.get(
     "/api/knowledge-graph/get-material-edges/:materialId",
     [authJwt.verifyToken],

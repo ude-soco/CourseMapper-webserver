@@ -44,13 +44,6 @@ export class Neo4jService {
     ));
   }
 
-  async deleteMaterial(materialId: string) {
-    return lastValueFrom(this.http.delete(
-      `${environment.API_URL}/knowledge-graph/delete-material/${materialId}`
-    ));
-
-  }
-
   async getMaterialEdges(materialId: string): Promise<Neo4jResult> {
     return lastValueFrom(this.http.get<Neo4jResult>(
       `${environment.API_URL}/knowledge-graph/get-material-edges/${materialId}`

@@ -54,12 +54,12 @@ export const getMaterial = async (req, res) => {
   }
 }
 
-export const deleteMaterial = async (req, res) => {
+export const deleteMaterial = async (req, res, next) => {
   const materialId = req.params.materialId;
 
   try {
-    const records = await neo4j.deleteMaterial(materialId);
-    return res.status(200).send({ records });
+    await neo4j.deleteMaterial(materialId);
+    return next();
   } catch (err) {
     return res.status(500).send({ error: err.message });
   }
