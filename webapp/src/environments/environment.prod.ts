@@ -6,7 +6,3 @@ export const environment = {
     options: {},
   },
 };
-
-export const environment_Python = {
-  PYTHON_SERVER: 'DUMMY_COURSEMAPPER_BASE_URL/kg-api/',
-};
