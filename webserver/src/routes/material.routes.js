@@ -87,4 +87,33 @@ module.exports = function (app) {
     controller.getMaterial,
     logger.completePDF
   );
+
+  app.post(
+    "/api/courses/:courseId/materials/:materialId/indicator",
+    [authJwt.verifyToken, authJwt.isModerator],
+    controller.newIndicator
+  );
+
+  app.delete(
+    "/api/courses/:courseId/materials/:materialId/indicator/:indicatorId",
+    [authJwt.verifyToken, authJwt.isModerator],
+    controller.deleteIndicator
+  );
+
+  app.get(
+    "/api/courses/:courseId/materials/:materialId/indicator",
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.getIndicators
+  );
+
+  app.put(
+    "/api/courses/:courseId/materials/:materialId/indicator/:indicatorId/resize/:width/:height",
+    [authJwt.verifyToken, authJwt.isModerator],
+    controller.resizeIndicator
+  );
+  app.put(
+    "/api/courses/:courseId/materials/:materialId/reorder/:newIndex/:oldIndex",
+    [authJwt.verifyToken, authJwt.isModerator],
+    controller.reorderIndicators
+  );
 };

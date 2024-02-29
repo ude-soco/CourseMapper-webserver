@@ -21,7 +21,7 @@ import { IconbuttonComponent } from './components/iconbutton/iconbutton.componen
 import { AvatarComponent } from './components/avatar/avatar.component';
 
 import { InputTextareaModule } from 'primeng/inputtextarea';
-import { DragulaModule } from 'ng2-dragula';
+import { DragulaModule,  DragulaService } from 'ng2-dragula';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -37,7 +37,7 @@ import { CustomDatePipe } from './pipes/date.pipe';
 
 import { AppComponent } from "./app.component";
 import { TopicDropdownComponent } from "./pages/components/topic-dropdown/topic-dropdown.component";
-import { DashboardComponent } from "./pages/components/dashboard/dashboard.component";
+
 import { RegistrationComponent } from "./pages/components/registration/registration.component";
 import { NavbarComponent } from "./pages/components/navbar/navbar.component";
 import { ChannelbarComponent } from "./pages/components/channelbar/channelbar.component";
@@ -74,6 +74,7 @@ import {SafeHtmlPipe} from "./pipes/safehtml.pipe";
 import {DateAgoPipe} from "./pipes/date-ago.pipe";
 import {LinkifyPipe} from "./pipes/linkify.pipe";
 
+
 import { TabMenuModule } from 'primeng/tabmenu';
 import { NotificationModule } from './pages/components/notifications/notification.module';
 import { CourseWelcomeComponent } from './course-welcome/course-welcome.component';
@@ -92,6 +93,13 @@ import { ForgetPasswordComponent } from './pages/components/forget-password/forg
 import { ResetPasswordComponent } from './pages/components/forget-password/reset-password/reset-password.component';
 import { ResetPasswordRequestComponent } from './pages/components/forget-password/reset-password-request/reset-password-request.component';
 
+import { PersonalDashboardComponent } from './pages/components/Dashboards/personal-dashboard/personal-dashboard.component';
+import { PopulateDashboardComponent } from './pages/components/populate-dashboard/populate-dashboard.component';
+import { TopicDashboardComponent } from './pages/components/Dashboards/topic-dashboard/topic-dashboard.component';
+import { CourseDashboardComponent } from './pages/components/Dashboards/course-dashboard/course-dashboard.component';
+import { ChannelDashboardComponent } from './pages/components/Dashboards/channel-dashboard/channel-dashboard.component';
+import { MaterialDashboardComponent } from './pages/components/Dashboards/material-dashboard/material-dashboard.component';
+import { BackButtonComponent } from './pages/components/back-button/back-button.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -105,8 +113,7 @@ import { ResetPasswordRequestComponent } from './pages/components/forget-passwor
     LoginComponent,
     HomeComponent,
     EditorComponent,
-    DashboardComponent,
-    ByPassUrlSanitizationPipe,
+    //ByPassUrlSanitizationPipe,
     LandingPageComponent,
     PrivacyComponent,
     CourseDescriptionComponent,
@@ -126,6 +133,13 @@ import { ResetPasswordRequestComponent } from './pages/components/forget-passwor
     ResetPasswordComponent,
     ResetPasswordRequestComponent,
 
+    PersonalDashboardComponent,
+    TopicDashboardComponent,
+    CourseDashboardComponent,
+    ChannelDashboardComponent,
+   PopulateDashboardComponent,
+   MaterialDashboardComponent,
+   BackButtonComponent
   ],
   imports: [
     MentionModule,

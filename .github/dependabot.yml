@@ -64,3 +64,13 @@ updates:
   - "dependencies"
   - "javascript"
   - "webserver"
+
+- package-ecosystem: "python"
+  directory: "/coursemapper-kg"
+  schedule:
+    interval: "daily"
+  open-pull-requests-limit: 10
+  labels:
+  - "dependencies"
+  - "python"
+  - "coursemapper-kg"

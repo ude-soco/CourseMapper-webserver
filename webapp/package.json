@@ -25,7 +25,7 @@
     "@ngrx/store": "^15.4.0",
     "@ngrx/store-devtools": "^15.4.0",
     "@popperjs/core": "^2.11.8",
-    "@types/node": "^20.11.5",
+    "@types/node": "^20.11.19",
     "angular-html-parser": "^5.2.0",
     "angular-mentions": "^1.5.0",
     "cytoscape": "^3.28.1",
@@ -37,7 +37,7 @@
     "cytoscape-fcose": "^2.1.0",
     "cytoscape-popper": "^2.0.0",
     "cytoscape-spread": "^3.0.0",
-    "dotenv": "^16.0.3",
+    "dotenv": "^16.4.4",
     "jquery": "^3.7.1",
     "ng2-dragula": "^2.1.1",
     "ng2-pdf-viewer": "^9.1.5",
@@ -50,7 +50,7 @@
     "rxjs": "~7.8.1",
     "save": "^2.9.0",
     "tslib": "^2.6.2",
-    "zone.js": "~0.14.3"
+    "zone.js": "~0.14.4"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^15.2.7",
@@ -59,13 +59,13 @@
     "@types/jasmine": "~5.1.4",
     "@types/jquery": "^3.5.29",
     "autoprefixer": "^10.4.17",
-    "jasmine-core": "~5.1.1",
+    "jasmine-core": "~5.1.2",
     "karma": "~6.4.2",
     "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "postcss": "^8.4.33",
+    "postcss": "^8.4.35",
     "tailwindcss": "^3.4.1",
     "tailwindcss-ripple": "^0.7.1",
     "typescript": "~4.9.5"

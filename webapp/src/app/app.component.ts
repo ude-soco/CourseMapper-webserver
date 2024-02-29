@@ -28,7 +28,6 @@ export class AppComponent {
   ngOnInit() {
     this.primengConfig.ripple = true;
     this.isLoggedIn = this.storageService.isLoggedIn();
-    console.log("isLoggedIn", this.isLoggedIn)
     if (this.isLoggedIn) {
       const user = this.storageService.getUser();
 

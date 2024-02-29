@@ -1,3 +1,5 @@
+
+
 const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
@@ -19,6 +21,7 @@ const User = new Schema({
   ],
   understoodConcepts: [],//saves ids for concepts that user understand
   didNotUnderstandConcepts: [],//saves ids for concepts that user did not understand
+
   indicators: [
     {
       _id: Schema.Types.ObjectId,
@@ -27,7 +30,9 @@ const User = new Schema({
       height: String,
       frameborder: String,
     },
-  ],
+  ], //holds a list of the indicators created in this collection
+
+  
   blockedByUser: [
     { type: Schema.Types.ObjectId, ref: "user", required: true, default: [] },
   ],

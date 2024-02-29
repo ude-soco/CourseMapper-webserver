@@ -17,6 +17,9 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MaterialEffects } from './state/material.effects';
 import { EffectsModule } from '@ngrx/effects';
 import { KnowledgeGraphModule } from '../knowledge-graph/knowledge-graph.module';
+import { AppModule } from 'src/app/app.module';
+import { ChannelDashboardComponent } from '../Dashboards/channel-dashboard/channel-dashboard.component';
+import { MaterialDashboardComponent } from '../Dashboards/material-dashboard/material-dashboard.component';
 
 @NgModule({
   declarations: [MaterialComponent, AddMaterialComponent],
@@ -34,6 +37,14 @@ import { KnowledgeGraphModule } from '../knowledge-graph/knowledge-graph.module'
     StoreModule.forFeature('material', materialReducer),
     EffectsModule.forFeature([MaterialEffects]),
     RouterModule.forChild([
+      {
+        path: 'dashboard',
+        component:  ChannelDashboardComponent
+      },
+      {
+        path: 'materialDashboard/:materialId/dashboard',
+        component:  MaterialDashboardComponent
+      },
       {
         path: '',
         component: MaterialComponent,

@@ -14,7 +14,7 @@ export const environment = {
 };
 
 export const environment_Python = {
-  PYTHON_SERVER: 'http://localhost:5000/kg-api/', 
+  PYTHON_SERVER: 'http://localhost:5000/kg-api/',
 };
 
 /*

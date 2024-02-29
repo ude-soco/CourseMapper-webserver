@@ -26,13 +26,12 @@
               >{{ numOfUnreadNotificationsInSelectedCourse$ | async }}</span
             > -->
           </p>
-
           <app-iconbutton
             icon="bx-network-chart"
             color="text-orange-500"
             (click)="onConceptMapButtonClicked(true)"
             pTooltip="View course knowledge graph"
-            ></app-iconbutton>
+          ></app-iconbutton>
           <app-iconbutton
             icon="bx-dots-vertical-rounded"
             color="text-black"
@@ -83,8 +82,7 @@
       [displayAddTopicDialogue]="displayAddTopicDialogue"
       (onCloseAddTopicDialogue)="toggleAddTopicDialogueClicked($event)"
     ></app-add-topic>
-    <app-concept-map #conceptMap [course]="selectedCourse">
-    </app-concept-map>
+    <app-concept-map #conceptMap [course]="selectedCourse"> </app-concept-map>
   </div>
 </div>
 

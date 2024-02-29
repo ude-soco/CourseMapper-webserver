@@ -1,0 +1,12 @@
+
+.back-btn {
+    transform: scale(0.7);
+    background-color: var(--course-mapper-blue); /* Reduce the size to half */
+    
+  }
+
+.back-btn:hover{
+background-color:#0f557a;
+  }
+  
+  
