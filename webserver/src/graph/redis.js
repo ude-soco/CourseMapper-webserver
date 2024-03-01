@@ -83,22 +83,23 @@ export async function addJob(pipeline, job, beforeStart, onDone) {
   const jobData = JSON.stringify(job);
   const jobId = getHash(jobData);
 
+  if (onDone) {
+    onJobDone(jobId, onDone);
+  }
+
   const jobAdded = await redis.client.hSetNX('jobs', jobId, jobData);
+
   if (jobAdded) {
-    if (onDone) {
-      onJobDone(jobId, onDone);
-    }
     if (beforeStart) {
       beforeStart(jobId);
     }
     await redis.client.lPush(`queue:${pipeline}:pending`, jobId);
     console.log(`Added job ${jobId} to pipeline ${pipeline}`);
   } else {
-    onJobDone(jobId, onDone);
     console.log(`Job exists with id ${jobId} in pipeline ${pipeline}`);
   }
 
-  return jobId;
+  return { exists: !jobAdded, jobId };
 }
 
 export async function trackJob(pipeline, job, onDone) {
