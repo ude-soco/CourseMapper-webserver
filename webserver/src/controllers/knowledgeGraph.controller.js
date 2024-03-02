@@ -1,6 +1,6 @@
 const fs = require('fs').promises;
 const process = require('process');
-
+const socketio = require("../socketio");
 const db = require("../models");
 const User = db.user;
 const Role = db.role;
@@ -136,6 +136,7 @@ async function checkIsModerator(userId, courseId) {
 }
 
 export const conceptMap = async (req, res) => {
+  socketio.getIO().emit(req.userId,   {called:"conceptmap started" } );
   const modelName = req.body.modelName;
   const materialId = req.params.materialId;
   const courseId = req.params.courseId;
@@ -152,21 +153,36 @@ export const conceptMap = async (req, res) => {
     const materialPath = process.cwd() + material.url + material._id + '.pdf';
     const materialData = await fs.readFile(materialPath);
 
-    await redis.addJob('concept-map', {
-      modelName,
-      materialId,
-      materialName,
-    }, async (jobId) => {
-      await redis.addFile(jobId, materialData);
-    }, (result) => {
-      if (res.headersSent) {
-        return;
-      }
-      if (result.error) {
-        return res.status(500).send({ error: result.error });
-      }
-      return res.status(200).send(result.result);
-    });
+    
+    const result = await redis.addJob('concept-map', {
+        modelName,
+        materialId,
+        materialName,
+      }, async (jobId) => {
+        await redis.addFile(jobId, materialData);
+      }, (result) => {
+        console.log("...result",result)
+        socketio.getIO().emit(req.userId,  { result:result } );
+ 
+        if (res.headersSent) {
+          return;
+        }
+        if (result.error) {
+          return res.status(500).send({ error: result });
+        }
+        console.log("result succ",result.result)
+
+        return res.status(200).send(result.result);
+      });
+      console.log("...result concept",result)
+      socketio
+      .getIO().emit(req.userId,  { addJob:result, pipeline:'concept-map'});
+    // } catch (error) {
+    //   console.log("error",error)
+    //   socketio
+    //   .getIO().emit(req.userId,  { error } );
+    // }
+ 
   } else {
     await redis.trackJob('concept-map', {
       modelName,
@@ -185,19 +201,21 @@ export const conceptMap = async (req, res) => {
 }
 
 export const getConcepts = async (req, res) => {
+  socketio.getIO().emit(req.userId,   {called:"concept recommendation started" } );
   const materialId = req.params.materialId;
   const userId = req.userId;
   const understood = req.body.understoodConcepts;
   const nonUnderstood = req.body.nonUnderstoodConcepts;
   const newConcepts = req.body.newConcepts;
 
-  await redis.addJob('concept-recommendation', {
+  const result= await redis.addJob('concept-recommendation', {
     materialId,
     userId,
     understood,
     nonUnderstood,
     newConcepts
   }, undefined, (result) => {
+    socketio.getIO().emit(req.userId,  { result:result } );
     if (res.headersSent) {
       return;
     }
@@ -206,9 +224,12 @@ export const getConcepts = async (req, res) => {
     }
     return res.status(200).send(result.result);
   });
+  socketio
+      .getIO().emit(req.userId,  { addJob:result, pipeline:'concept-recommendation'});
 }
 
 export const getResources = async (req, res) => {
+  socketio.getIO().emit(req.userId,   {called:"recourse recommendation started" } );
   const materialId = req.params.materialId;
   const userId = req.userId;
   const slideId = req.body.slideId;
@@ -216,7 +237,7 @@ export const getResources = async (req, res) => {
   const nonUnderstood = req.body.nonUnderstoodConcepts;
   const newConcepts = req.body.newConcepts;
 
-  await redis.addJob('resource-recommendation', {
+ const result= await redis.addJob('resource-recommendation', {
     materialId,
     userId,
     slideId,
@@ -224,6 +245,7 @@ export const getResources = async (req, res) => {
     nonUnderstood,
     newConcepts
   }, undefined, (result) => {
+    socketio.getIO().emit(req.userId,  { result:result } );
     if (res.headersSent) {
       return;
     }
@@ -232,6 +254,8 @@ export const getResources = async (req, res) => {
     }
     return res.status(200).send(result.result);
   });
+  socketio
+      .getIO().emit(req.userId,  { addJob:result, pipeline:'resourse-recommendation'});
 }
 
 export const readSlide = async (req, res, next) => {
