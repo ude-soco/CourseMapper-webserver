@@ -1,28 +1,18 @@
 import sys
 import traceback
-from redis import Redis
 import json
 from threading import Thread
 import time
 import logging
 import io
 from log import LOG
-import random
 
 from app.views.course_materials import concept_map, get_concepts, get_resources
+from app.shared import redis, worker_id, set_current_job_id
 from config import Config
 
 
-# For more information about individual redis commands, see:
-# https://redis-py.readthedocs.io/en/stable/commands.html
-
-
 logger = LOG(name=__name__, level=logging.DEBUG)
-redis = Redis(host=Config.REDIS_HOST, port=Config.REDIS_PORT, db=Config.REDIS_DB, password=Config.REDIS_PASSWORD)
-
-# Generate a random worker id
-random.seed()
-worker_id = str(random.randint(0, 1000000))
 
 class LockError(Exception):
     pass
@@ -94,6 +84,7 @@ def start_worker(pipelines):
         assert(type(job_id) == bytes and type(from_queue) == bytes)
         pipeline = from_queue.decode('utf-8').split(':')[1]
         job_id = job_id.decode('utf-8')
+        set_current_job_id(job_id)
         redis.lpush(f'queue:{pipeline}:processing', job_id)
 
         logger.info(f'Received {pipeline} job for {job_id}...')

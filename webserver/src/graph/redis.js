@@ -24,6 +24,7 @@ export async function connect(host, port, database, password) {
   redis.client.connect();
 
   watchDoneQueue(host, port, database, password);
+  watchLogQueue(host, port, database, password);
 }
 
 export function onJobDone(jobId, listener) {
@@ -41,7 +42,7 @@ async function watchDoneQueue(host, port, database, password) {
     password,
   });
   queueClient.on('error', (error) => {
-    console.error('Failed to connect to Redis in watch queue', error);
+    console.error('Failed to connect to Redis in watch done queue', error);
   });
   queueClient.connect();
 
@@ -54,6 +55,24 @@ async function watchDoneQueue(host, port, database, password) {
       jobListeners.forEach((listener) => listener(element));
     }
     delete listeners[jobId];
+  }
+}
+
+async function watchLogQueue(host, port, database, password) {
+  const queueClient = createClient({
+    host,
+    port,
+    database,
+    password,
+  });
+  queueClient.on('error', (error) => {
+    console.error('Failed to connect to Redis in watch log queue', error);
+  });
+  queueClient.connect();
+
+  while (true) {
+    const result = await queueClient.brPop('log', 0);
+    // TODO store result.element
   }
 }
 
