@@ -152,7 +152,6 @@ export const conceptMap = async (req, res) => {
   if (isModerator) {
     const materialPath = process.cwd() + material.url + material._id + '.pdf';
     const materialData = await fs.readFile(materialPath);
-
     
     const result = await redis.addJob('concept-map', {
         modelName,
@@ -161,7 +160,6 @@ export const conceptMap = async (req, res) => {
       }, async (jobId) => {
         await redis.addFile(jobId, materialData);
       }, (result) => {
-        console.log("...result",result)
         socketio.getIO().emit(req.userId,  { result:result } );
  
         if (res.headersSent) {
@@ -170,19 +168,10 @@ export const conceptMap = async (req, res) => {
         if (result.error) {
           return res.status(500).send({ error: result });
         }
-        console.log("result succ",result.result)
-
         return res.status(200).send(result.result);
       });
-      console.log("...result concept",result)
       socketio
       .getIO().emit(req.userId,  { addJob:result, pipeline:'concept-map'});
-    // } catch (error) {
-    //   console.log("error",error)
-    //   socketio
-    //   .getIO().emit(req.userId,  { error } );
-    // }
- 
   } else {
     await redis.trackJob('concept-map', {
       modelName,
@@ -208,7 +197,7 @@ export const getConcepts = async (req, res) => {
   const nonUnderstood = req.body.nonUnderstoodConcepts;
   const newConcepts = req.body.newConcepts;
 
-  const result= await redis.addJob('concept-recommendation', {
+  const result = await redis.addJob('concept-recommendation', {
     materialId,
     userId,
     understood,
@@ -237,7 +226,7 @@ export const getResources = async (req, res) => {
   const nonUnderstood = req.body.nonUnderstoodConcepts;
   const newConcepts = req.body.newConcepts;
 
- const result= await redis.addJob('resource-recommendation', {
+ const result = await redis.addJob('resource-recommendation', {
     materialId,
     userId,
     slideId,
