@@ -96,8 +96,10 @@ export class NotificationsService {
   }
 
   public initialiseSocketConnection() {
+    
     const user = this.storageService.getUser();
     this.socket.on(user.id, (data: UserNotification[]) => {
+      try{
       if (data[0].isDeletingCourse) {
         this.store.dispatch(
           NotificationActions.isDeletingCourse({
@@ -176,6 +178,10 @@ export class NotificationsService {
           NotificationActions.newNotificationArrived({ notification })
         );
       });
+    }
+    catch{
+      return; 
+    }
     });
   }
 
