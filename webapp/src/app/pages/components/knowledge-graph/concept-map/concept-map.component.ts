@@ -727,29 +727,8 @@ export class ConceptMapComponent {
     // }
   }
   ngOnInit() {
-    console.log("this.loggedInUser", this.loggedInUser)
-    this.socket.on(this.loggedInUser.id, (data) => {
-       console.log("data  ",data);
-      if (data.called) {
-        console.log(data);
-      }
-      if (data.result) {
-        console.log("result",data , "  tiggred to jobID ", data.result.job_id);
-      }
-      if (data.error) {
-        console.log('error tiggred', data);
-      }
-
-      if (data.addJob) {
-        if(data.addJob.exists==false){
-          console.log(`Added job ${data.addJob.jobId} to pipeline ${data.pipeline}`);
-        }
-        else(data.addJob.exists==true)
-        {
-           console.log(`Job exists with id ${data.addJob.jobId} in pipeline ${data.pipeline}`);
-        }
-         
-      }
+    this.socket.on("log", (data) => {
+      console.log("Log message", data);
     });
 
     if (this.loggedInUser) {
