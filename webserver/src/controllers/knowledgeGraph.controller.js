@@ -136,7 +136,7 @@ async function checkIsModerator(userId, courseId) {
 }
 
 export const conceptMap = async (req, res) => {
-  socketio.getIO().emit(req.userId,   {called:"conceptmap started" } );
+  socketio.getIO().to("user:"+req.userId).emit("log", { called: "conceptmap started" } );
   const modelName = req.body.modelName;
   const materialId = req.params.materialId;
   const courseId = req.params.courseId;
@@ -160,7 +160,7 @@ export const conceptMap = async (req, res) => {
       }, async (jobId) => {
         await redis.addFile(jobId, materialData);
       }, (result) => {
-        socketio.getIO().emit(req.userId,  { result:result } );
+        socketio.getIO().to("user:"+req.userId).emit("log", { result:result } );
  
         if (res.headersSent) {
           return;
@@ -171,7 +171,7 @@ export const conceptMap = async (req, res) => {
         return res.status(200).send(result.result);
       });
       socketio
-      .getIO().emit(req.userId,  { addJob:result, pipeline:'concept-map'});
+      .getIO().to("user:"+req.userId).emit("log", { addJob:result, pipeline:'concept-map'});
   } else {
     await redis.trackJob('concept-map', {
       modelName,
@@ -190,7 +190,7 @@ export const conceptMap = async (req, res) => {
 }
 
 export const getConcepts = async (req, res) => {
-  socketio.getIO().emit(req.userId,   {called:"concept recommendation started" } );
+  socketio.getIO().to("user:"+req.userId).emit("log", { called:"concept recommendation started" } );
   const materialId = req.params.materialId;
   const userId = req.userId;
   const understood = req.body.understoodConcepts;
@@ -204,7 +204,7 @@ export const getConcepts = async (req, res) => {
     nonUnderstood,
     newConcepts
   }, undefined, (result) => {
-    socketio.getIO().emit(req.userId,  { result:result } );
+    socketio.getIO().to("user:"+req.userId).emit("log", { result:result } );
     if (res.headersSent) {
       return;
     }
@@ -214,11 +214,11 @@ export const getConcepts = async (req, res) => {
     return res.status(200).send(result.result);
   });
   socketio
-      .getIO().emit(req.userId,  { addJob:result, pipeline:'concept-recommendation'});
+      .getIO().to("user:"+req.userId).emit("log", { addJob:result, pipeline:'concept-recommendation'});
 }
 
 export const getResources = async (req, res) => {
-  socketio.getIO().emit(req.userId,   {called:"recourse recommendation started" } );
+  socketio.getIO().to("user:"+req.userId).emit("log", { called:"recourse recommendation started" } );
   const materialId = req.params.materialId;
   const userId = req.userId;
   const slideId = req.body.slideId;
@@ -234,7 +234,7 @@ export const getResources = async (req, res) => {
     nonUnderstood,
     newConcepts
   }, undefined, (result) => {
-    socketio.getIO().emit(req.userId,  { result:result } );
+    socketio.getIO().to("user:"+req.userId).emit("log", { result:result } );
     if (res.headersSent) {
       return;
     }
@@ -244,7 +244,7 @@ export const getResources = async (req, res) => {
     return res.status(200).send(result.result);
   });
   socketio
-      .getIO().emit(req.userId,  { addJob:result, pipeline:'resourse-recommendation'});
+      .getIO().to("user:"+req.userId).emit("log", { addJob:result, pipeline:'resourse-recommendation'});
 }
 
 export const readSlide = async (req, res, next) => {

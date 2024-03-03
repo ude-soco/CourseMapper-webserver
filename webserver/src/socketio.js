@@ -27,6 +27,18 @@ if (env !== "production") {
 module.exports = {
   init: (server) => {
     io = socketIO(server, socketIOConfig);
+    io.on("connection", (socket) => {
+      // TODO THIS IS A TEMPORARY FIX
+      // Users should not choose which room to join
+      // They should only be able to join rooms that they are authorized to join
+      // But that would require implementing authentication
+      socket.on("join", (room) => {
+        socket.join(room);
+      });
+      socket.on("leave", (room) => {
+        socket.leave(room);
+      });
+    });
     return io;
   },
   getIO: () => {
