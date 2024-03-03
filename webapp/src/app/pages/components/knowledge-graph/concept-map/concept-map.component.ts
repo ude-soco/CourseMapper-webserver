@@ -735,7 +735,6 @@ export class ConceptMapComponent {
       this.userid = this.loggedInUser.id;
       this.username = this.loggedInUser.username;
       this.userEmail = this.loggedInUser.email;
-      this.socket.emit("join", "user:"+this.loggedInUser.id);
     }
     this.chipMenu = [
       {
