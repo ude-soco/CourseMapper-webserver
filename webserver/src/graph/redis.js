@@ -1,5 +1,6 @@
 import { createClient, WatchError } from 'redis';
 const crypto = require('crypto');
+const socketio = require("../socketio");
 
 const redis = {}
 const listeners = {};
@@ -72,7 +73,16 @@ async function watchLogQueue(host, port, database, password) {
 
   while (true) {
     const result = await queueClient.brPop('log', 0);
-    // TODO store result.element
+    const element = JSON.parse(result.element);
+    const job = await queueClient.hGet('jobs', element.job_id);
+    if (!job) {
+      continue;
+    }
+    const jobData = JSON.parse(job);
+    if (!jobData.materialId) {
+      continue;
+    }
+    socketio.getIO().to("material:"+jobData.materialId).emit('log', element);
   }
 }
 
