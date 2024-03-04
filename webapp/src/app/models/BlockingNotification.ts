@@ -84,4 +84,6 @@ export interface Annotation {
   userId: string;
   isFollowing: boolean;
   _id: string;
+  startPage?: number;
+  from?: number;
 }

@@ -248,6 +248,10 @@ export const followAnnotation = async (req, res, next) => {
     materialId: materialId,
     topicId: topicId,
     isFollowing: true,
+    ...(annotation.location.from && { from: annotation.location.from }),
+    ...(annotation.location.startPage && {
+      startPage: annotation.location.startPage,
+    }),
   });
 
   try {

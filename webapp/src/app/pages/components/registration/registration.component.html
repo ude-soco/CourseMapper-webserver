@@ -198,18 +198,17 @@
   pButton
   [ngStyle]="{ backgroundColor: '#EA580C'}"
   type="button"
-  label="Sign Up"
+  label="Sign up"
   type="submit"
   [style]="{width:'100%' }"
  ></button>
  <div style="color: red;" *ngIf="isSignUpFailed">
-  Sign Up unsuccessful<br/>{{ errorMessage }}
+  Sign up unsuccessful<br/>{{ errorMessage }}
 </div>
 </div>
 <div style="text-align: center;
 margin: 1rem;" >
-  Already have an account?  <a [routerLink]="[login]" style="color: #0277BD;"> Login</a><br/>
+  Already have an account?  <a [routerLink]="[login]" style="color: #0277BD;"> Sign in</a><br/>
 </div>
 
   </form>
-</div>

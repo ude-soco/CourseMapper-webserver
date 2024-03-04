@@ -20,7 +20,7 @@
             marginRight: '8px'
           }"
           type="button"
-          label="Login"
+          label="Sign in"
           (click)="handleLogin()"
         ></button>
 
@@ -28,13 +28,12 @@
           pButton
           [ngStyle]="{ backgroundColor: '#EA580C' }"
           type="button"
-          label="Sign Up"
+          label="Sign up"
           (click)="handleRegistration()"
         ></button>
       </span>
 
       <span *ngIf="this.storageService.loggedIn">
-      
         <p-avatar
           label="{{ getIntitials(loggedInUser?.name) }}"
           shape="circle"
@@ -47,14 +46,14 @@
           (click)="menu.toggle($event)"
         ></p-avatar>
         <p-menu
-                  #menu
-                  id="config_menu"
-                  [popup]="true"
-                  appendTo="body"
-                  styleClass="course-context-menu"
-                  [model]="userOptions"
-                  pTooltip="Delete Indicator"
-                ></p-menu>
+          #menu
+          id="config_menu"
+          [popup]="true"
+          appendTo="body"
+          styleClass="course-context-menu"
+          [model]="userOptions"
+          pTooltip="userOptions"
+        />
       </span>
     </div>
   </div>

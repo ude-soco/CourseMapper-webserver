@@ -8,9 +8,10 @@
       <div>
         <img
           alt="Card"
-          src="/assets/img/landingPage.jpg"
+          src="/assets/img/soco-background.jpg"
           class="img"
-          />
+          style="object-fit: cover"
+        />
 
         <div class="transbox">
           <h1>CourseMapper</h1>
@@ -19,17 +20,24 @@
       </div>
     </div>
 
-    <h1 class="text-5xl text-sky-600 font-bold text-center">Product Features</h1>
+    <h1 class="text-5xl text-sky-600 font-bold text-center">
+      Product Features
+    </h1>
 
-    <div class="w-full grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-8 my-16 px-8">
-      <div *ngFor="let feature of features" class="flex flex-col gap-2 items-center">
+    <div
+      class="w-full grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 my-16 px-8"
+    >
+      <div
+        *ngFor="let feature of features"
+        class="flex flex-col gap-2 items-center"
+      >
         <div class="p-2 aspect-[4/3] w-full flex items-center justify-center">
-          <img [src]="feature.image" class="object-contain">
+          <img [src]="feature.image" class="object-contain" />
         </div>
         <h2 class="text-3xl text-sky-600 font-bold text-center min-h-[5rem]">
-          {{feature.title}}
+          {{ feature.title }}
         </h2>
-        <p class="text-justify flex-1">{{feature.description}}</p>
+        <p class="text-justify flex-1">{{ feature.description }}</p>
       </div>
     </div>
   </div>

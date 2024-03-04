@@ -69,6 +69,10 @@ export interface UserNotification {
           [key: string]: {
             id: string; // Assuming _id is of string type
             content: string; // Assuming content is of string type
+            location: {
+              startPage?: number;
+              from?: number;
+            };
           };
         };
       };
@@ -109,6 +113,8 @@ export interface Notification {
   isDeletingMaterial?: boolean;
   isDeletingTopic?: boolean;
   isDeletingChannel?: boolean;
+  from?: number;
+  startPage?: number;
 }
 
 export interface BlockingUsers {

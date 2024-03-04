@@ -30,7 +30,7 @@
       pButton
       [ngStyle]="{ backgroundColor: '#EA580C' , width: '100%',    margin: '1rem 0rem'}"
       type="button"
-      label="Login"
+      label="Sign in"
       (click)="onSubmit()"
     ></button>
 
@@ -41,9 +41,9 @@
     >
       {{ errorMessage }}
     </p>
-    <div style="text-align: center; margin: 1rem">
-      Don’t have an account?
-      <a [routerLink]="[signup]" style="color: #0277bd"> SignUp</a><br />
+    <div style="text-align: center;
+    margin: 1rem;" >
+      Don’t have an account? <br/>  <a [routerLink]="[signup]" style="color: #0277BD;"> Sign up </a><br/>
     </div>
 
   </div>
