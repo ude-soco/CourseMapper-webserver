@@ -10,10 +10,7 @@ const jobTimeout = 30;
 
 export async function connect(host, port, database, password) {
   redis.client = createClient({
-    host,
-    port,
-    database,
-    password,
+    url: `redis://:${password}@${host}:${port}/${database}`,
   });
   redis.client.on('connect', () => {
     console.log('Connected to Redis');
