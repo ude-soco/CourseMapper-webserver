@@ -9,9 +9,8 @@ const pipelines = ['concept-map', 'concept-recommendation', 'resource-recommenda
 const jobTimeout = 30;
 
 export async function connect(host, port, database, password) {
-  redis.client = createClient({
-    url: `redis://:${password}@${host}:${port}/${database}`,
-  });
+  const url = `redis://:${password}@${host}:${port}/${database}`
+  redis.client = createClient({ url });
   redis.client.on('connect', () => {
     console.log('Connected to Redis');
     setInterval(runHousekeeping, 5000);
@@ -21,8 +20,8 @@ export async function connect(host, port, database, password) {
   });
   redis.client.connect();
 
-  watchDoneQueue(host, port, database, password);
-  watchLogQueue(host, port, database, password);
+  watchDoneQueue(url);
+  watchLogQueue(url);
 }
 
 export function onJobDone(jobId, listener) {
@@ -32,13 +31,8 @@ export function onJobDone(jobId, listener) {
   listeners[jobId].push(listener);
 }
 
-async function watchDoneQueue(host, port, database, password) {
-  const queueClient = createClient({
-    host,
-    port,
-    database,
-    password,
-  });
+async function watchDoneQueue(url) {
+  const queueClient = createClient({ url });
   queueClient.on('error', (error) => {
     console.error('Failed to connect to Redis in watch done queue', error);
   });
@@ -56,13 +50,8 @@ async function watchDoneQueue(host, port, database, password) {
   }
 }
 
-async function watchLogQueue(host, port, database, password) {
-  const queueClient = createClient({
-    host,
-    port,
-    database,
-    password,
-  });
+async function watchLogQueue(url) {
+  const queueClient = createClient({ url });
   queueClient.on('error', (error) => {
     console.error('Failed to connect to Redis in watch log queue', error);
   });
