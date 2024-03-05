@@ -44,6 +44,8 @@ import { Indicator } from 'src/app/models/Indicator';
 import { IndicatorService } from 'src/app/services/indicator.service';
 import { CourseService } from 'src/app/services/course.service';
 import { getLastTimeCourseMapperOpened } from 'src/app/state/app.reducer';
+import * as VideoActions from '../../annotations/video-annotation/state/video.action';
+import { IntervalService } from 'src/app/services/interval.service';
 @Component({
   selector: 'app-material',
   templateUrl: './material.component.html',
@@ -124,7 +126,8 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     private renderer: Renderer2,
     private changeDetectorRef: ChangeDetectorRef,
     private materialKgService: MaterialKgOrderedService,
-    protected fb: FormBuilder
+    protected fb: FormBuilder,
+    private intervalService: IntervalService
   ) {
     const url = this.router.url;
     if (url.includes('course') && url.includes('channel')) {
@@ -353,6 +356,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   onTabChange(e) {
     this.tabIndex = e.index - 1;
+    this.intervalService.stopInterval();
     // if (this.tabIndex == -1 && this.showModeratorPrivileges) {
     if (this.tabIndex == -1) {
       console.log("channel id on change tab: ", this.selectedChannel._id)
@@ -386,6 +390,9 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
             selcetedMaterial: this.selectedMaterial,
           })
         );
+        this.store.dispatch(
+          AnnotationActions.setCurrentPdfPage({ pdfCurrentPage: 1 })
+        );
         this.store.dispatch(AnnotationActions.loadAnnotations());
         this.router.navigate([
           'course',
@@ -406,6 +413,8 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
             selcetedMaterial: this.selectedMaterial,
           })
         );
+        this.store.dispatch(VideoActions.SetSeekVideo({ seekVideo: [0, 0] }));
+        this.store.dispatch(VideoActions.SetCurrentTime({ currentTime: 0 }));
         this.store.dispatch(AnnotationActions.loadAnnotations());
         this.router.navigate([
           'course',
@@ -422,6 +431,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.selectedMaterial = this.selectedChannel.materials[index];
     this.updateSelectedMaterial();
   }
+
   updateSelectedMaterial() {
 
     // if(this.selectedChannel.materials && !this.selectedMaterial){

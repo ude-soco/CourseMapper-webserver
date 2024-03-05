@@ -3,6 +3,7 @@ import {
   Component,
   Input,
   OnChanges,
+  OnDestroy,
   OnInit,
   Renderer2,
   SimpleChanges,
@@ -64,7 +65,7 @@ import { MentionsComponent } from '../../../../../components/mentions/mentions.c
 })
 export class PdfCommentItemComponent
   extends MentionsComponent
-  implements OnInit, OnChanges, AfterViewInit
+  implements OnInit, OnChanges, AfterViewInit, OnDestroy
 {
   @Input() annotation: Annotation;
   reply: Reply;
@@ -89,6 +90,7 @@ export class PdfCommentItemComponent
   sendButtonDisabled: boolean = true;
   Roles = Roles;
   isAnnotationBeingFollowed$: Observable<boolean>;
+  currentPdfPageSubscription;
   constructor(
     private socket: Socket,
     private confirmationService: ConfirmationService,
@@ -98,9 +100,11 @@ export class PdfCommentItemComponent
     protected override notificationService: NotificationsService
   ) {
     super(store, notificationService);
-    this.store.select(getCurrentPdfPage).subscribe((currentPage) => {
-      this.currentPage = currentPage;
-    });
+    this.currentPdfPageSubscription = this.store
+      .select(getCurrentPdfPage)
+      .subscribe((currentPage) => {
+        this.currentPage = currentPage;
+      });
 
     this.store
       .select(getCurrentMaterial)
@@ -116,6 +120,9 @@ export class PdfCommentItemComponent
       this.loggedInUser = user;
     });
     this.showAllPDFAnnotations$ = this.store.select(getshowAllPDFAnnotations);
+  }
+  ngOnDestroy(): void {
+    this.currentPdfPageSubscription.unsubscribe();
   }
   ngAfterViewInit(): void {
     const moreSpan = document.querySelectorAll('.clickable-text');

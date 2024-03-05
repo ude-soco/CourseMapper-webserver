@@ -1,4 +1,3 @@
-from flask import current_app
 import os
 from stanfordcorenlp import StanfordCoreNLP
 
@@ -10,8 +9,6 @@ from .embeddings.word_embeddings.flair_elmo_word_emb import FlairElmoWordEmbeddi
 from .taggers.base import BasePOSTagger
 from .taggers.stanford_core_nlp_tagger import StanfordCoreNLPTagger
 from .taggers.flair_tagger import FlairTagger
-
-# from imports import STANFORDCORENLP
 
 
 stanfordcorenlp_file = os.path.abspath(

@@ -9,6 +9,24 @@ services:
       start_period: 2s
       interval: 10s
 
+  redis:
+    image: redis:7.2.4
+    healthcheck:
+      test: "redis-cli ping"
+      start_period: 2s
+      interval: 10s
+    restart: always
+
+  neo4j:
+    image: neo4j:5.12.0
+    environment:
+      NEO4J_AUTH: neo4j/password
+    volumes :
+    - neo4j-data:/data
+    healthcheck:
+      test: wget http://localhost:7474 || exit 1
+    restart: always
+
   webserver:
     image: ${IMAGE_NAME_PREFIX:-socialcomputing/}coursemapper-webserver-webserver:${IMAGE_TAG:-latest}
     build: .
@@ -18,14 +36,26 @@ services:
     - JWT_SECRET=secret
     - PASS=adminpassword
     - MONGO_DB=mongodb://mongo:27017/coursemapper
+    - NEO4J_URI="bolt://neo4j:7687"
+    - NEO4J_USER="neo4j"
+    - NEO4J_PASSWORD="password"
+    - REDIS_HOST="redis"
+    - REDIS_PORT="6379"
+    - REDIS_DATABASE="0"
+    - REDIS_PASSWORD=
     volumes:
     - webserver-uploads-pdfs:/app/public/uploads/pdfs
     - webserver-uploads-videos:/app/public/uploads/videos
     depends_on:
       mongo:
         condition: service_healthy
+      redis:
+        condition: service_healthy
+      neo4j:
+        condition: service_healthy
 
 volumes:
   mongo:
+  neo4j-data:
   webserver-uploads-pdfs:
   webserver-uploads-videos:

@@ -96,8 +96,10 @@ export class NotificationsService {
   }
 
   public initialiseSocketConnection() {
+    
     const user = this.storageService.getUser();
     this.socket.on(user.id, (data: UserNotification[]) => {
+      try{
       if (data[0].isDeletingCourse) {
         this.store.dispatch(
           NotificationActions.isDeletingCourse({
@@ -176,6 +178,10 @@ export class NotificationsService {
           NotificationActions.newNotificationArrived({ notification })
         );
       });
+    }
+    catch{
+      return; 
+    }
     });
   }
 
@@ -505,6 +511,8 @@ export class NotificationsService {
     let annotation_id = null;
     let reply_id = null;
     let topic_id = null;
+    let from = null;
+    let startPage = null;
     if (
       notification.activityId.statement.object.definition.type ===
       'http://www.CourseMapper.de/activityType/topic'
@@ -535,6 +543,8 @@ export class NotificationsService {
       'http://www.CourseMapper.de/activityType/annotation'
     ) {
       annotation_id = extensions.id;
+      from = resultExtensions?.location?.from ?? null;
+      startPage = resultExtensions?.location?.startPage ?? null;
     }
     if (
       resultExtensionFirstKey ===
@@ -542,12 +552,16 @@ export class NotificationsService {
       extensionsFirstKey === 'http://www.CourseMapper.de/extensions/material'
     ) {
       annotation_id = resultExtensions.id;
+      from = resultExtensions?.location?.from ?? null;
+      startPage = resultExtensions?.location?.startPage ?? null;
     }
     if (
       notification.activityId.statement.object.definition.type ===
       'http://www.CourseMapper.de/activityType/reply'
     ) {
       reply_id = extensions.id;
+      from = resultExtensions?.location?.from ?? null;
+      startPage = resultExtensions?.location?.startPage ?? null;
     }
     if (
       resultExtensionFirstKey ===
@@ -555,6 +569,8 @@ export class NotificationsService {
       extensionsFirstKey === 'http://www.CourseMapper.de/extensions/annotation'
     ) {
       reply_id = resultExtensions.id;
+      from = resultExtensions?.location?.from ?? null;
+      startPage = resultExtensions?.location?.startPage ?? null;
     }
     if (
       notification.activityId.statement.verb.display['en-US'] === 'mentioned'
@@ -563,12 +579,16 @@ export class NotificationsService {
         extensionsFirstKey === 'http://www.CourseMapper.de/extensions/reply'
       ) {
         reply_id = extensions.id;
+        from = resultExtensions?.location?.from ?? null;
+        startPage = resultExtensions?.location?.startPage ?? null;
       }
       if (
         extensionsFirstKey ===
         'http://www.CourseMapper.de/extensions/annotation'
       ) {
         annotation_id = extensions.id;
+        from = resultExtensions?.location?.from ?? null;
+        startPage = resultExtensions?.location?.startPage ?? null;
       }
     }
 
@@ -640,6 +660,8 @@ export class NotificationsService {
         isDeletingTopic:
           notification.activityId.notificationInfo.isDeletingTopic,
       }),
+      ...(from && { from }),
+      ...(startPage && { startPage }),
       extraMessage: `${notification.activityId.notificationInfo.userName} ${notification.activityId.statement.verb.display['en-US']} ${lastWord} ${notification.activityId.statement.object.definition.name['en-US']} in ${notification.activityId.notificationInfo.courseName}`,
     };
   }

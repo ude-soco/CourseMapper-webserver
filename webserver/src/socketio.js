@@ -27,6 +27,17 @@ if (env !== "production") {
 module.exports = {
   init: (server) => {
     io = socketIO(server, socketIOConfig);
+    io.on("connection", (socket) => {
+      socket.on("join", (room) => {
+        // Only allow joining rooms that start with "material:"
+        if (room.startsWith("material:")) {
+          socket.join(room);
+        }
+      });
+      socket.on("leave", (room) => {
+        socket.leave(room);
+      });
+    });
     return io;
   },
   getIO: () => {

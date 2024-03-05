@@ -196,6 +196,13 @@ export const getAnnotaionDeletionStatement = (user, annotation, origin) => {
         },
       },
     },
+    result: {
+      extensions: {
+        "http://www.CourseMapper.de/extensions/annotation": {
+          location: annotation.location,
+        },
+      },
+    },
     context: {
       platform: platform,
       language: language,
@@ -251,6 +258,12 @@ export const getCommentDeletionStatement = (user, annotation, origin) => {
             tool: annotation.tool,
             location: annotation.location,
           },
+        },
+      },
+    },result: {
+      extensions: {
+        "http://www.CourseMapper.de/extensions/annotation": {
+          location: annotation.location,
         },
       },
     },
@@ -312,6 +325,13 @@ export const getAnnotationLikeStatement = (user, annotation, origin) => {
         },
       },
     },
+    result: {
+      extensions: {
+        "http://www.CourseMapper.de/extensions/annotation": {
+          location: annotation.location,
+        },
+      },
+    },
     context: {
       platform: platform,
       language: language,
@@ -367,6 +387,13 @@ export const getCommentLikeStatement = (user, annotation, origin) => {
             tool: annotation.tool,
             location: annotation.location,
           },
+        },
+      },
+    },
+    result: {
+      extensions: {
+        "http://www.CourseMapper.de/extensions/annotation": {
+          location: annotation.location,
         },
       },
     },
@@ -428,6 +455,13 @@ export const getAnnotationUnlikeStatement = (user, annotation, origin) => {
         },
       },
     },
+    result: {
+      extensions: {
+        "http://www.CourseMapper.de/extensions/annotation": {
+          location: annotation.location,
+        },
+      },
+    },
     context: {
       platform: platform,
       language: language,
@@ -483,6 +517,13 @@ export const getCommentUnlikeStatement = (user, annotation, origin) => {
             tool: annotation.tool,
             location: annotation.location,
           },
+        },
+      },
+    },
+    result: {
+      extensions: {
+        "http://www.CourseMapper.de/extensions/comment": {
+          location: annotation.location,
         },
       },
     },
@@ -544,6 +585,13 @@ export const getAnnotationDislikeStatement = (user, annotation, origin) => {
         },
       },
     },
+    result: {
+      extensions: {
+        "http://www.CourseMapper.de/extensions/annotation": {
+          location: annotation.location,
+        },
+      },
+    },
     context: {
       platform: platform,
       language: language,
@@ -599,6 +647,13 @@ export const getCommentDislikeStatement = (user, annotation, origin) => {
             tool: annotation.tool,
             location: annotation.location,
           },
+        },
+      },
+    },
+    result: {
+      extensions: {
+        "http://www.CourseMapper.de/extensions/comment": {
+          location: annotation.location,
         },
       },
     },
@@ -660,6 +715,13 @@ export const getAnnotationUndislikeStatement = (user, annotation, origin) => {
         },
       },
     },
+    result: {
+      extensions: {
+        "http://www.CourseMapper.de/extensions/annotation": {
+          location: annotation.location,
+        },
+      },
+    },
     context: {
       platform: platform,
       language: language,
@@ -715,6 +777,13 @@ export const getCommentUndislikeStatement = (user, annotation, origin) => {
             tool: annotation.tool,
             location: annotation.location,
           },
+        },
+      },
+    },
+    result: {
+      extensions: {
+        "http://www.CourseMapper.de/extensions/annotation": {
+          location: annotation.location,
         },
       },
     },
@@ -910,6 +979,21 @@ export const getNewMentionCreationStatement = (user, annotation, origin) => {
             course_id: annotation.courseId,
             content: annotation.content,
           },
+        },
+      },
+    },
+    result: {
+      extensions: {
+        "http://www.CourseMapper.de/extensions/annotation": {
+          id: annotation._id,
+          material_id: annotation.materialId,
+          channel_id: annotation.channelId,
+          topic_id: annotation.topicId,
+          course_id: annotation.courseId,
+          content: annotation.content,
+          type: annotation.type,
+          tool: annotation.tool,
+          location: annotation.location,
         },
       },
     },

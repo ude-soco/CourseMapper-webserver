@@ -88,10 +88,7 @@ export class MaterilasService {
     return this.http
       .delete(
         `${this.API_URL}/courses/${material['courseId']}/materials/${material._id}`
-      )
-      .pipe(tap((res) => {
-        this.neo4jservice.deleteMaterial(material._id)
-      }));
+      );
   }
   deleteFile(material: Material) {
     if (material.type == 'pdf') {

@@ -1,7 +1,6 @@
 from .base import BaseWordEmbedder
 import os
 import numpy as np
-from flask import current_app
 from typing import List
 from flair.embeddings import ELMoEmbeddings
 

@@ -68,6 +68,23 @@ db.mongoose
     process.exit();
   });
 
+// Create connection to Neo4j
+const neo4j = require("./graph/neo4j");
+neo4j.connect(
+  process.env.NEO4J_URI,
+  process.env.NEO4J_USER,
+  process.env.NEO4J_PASSWORD
+);
+
+// Create connection to Redis
+const redis = require("./graph/redis");
+redis.connect(
+  process.env.REDIS_HOST,
+  process.env.REDIS_PORT,
+  process.env.REDIS_DATABASE,
+  process.env.REDIS_PASSWORD
+);
+
 // xAPI scheduler
 const xapiScheduler = require("./xAPILogger/scheduler");
 xapiScheduler.runXapiScheduler();
@@ -99,6 +116,7 @@ require("./routes/videodelete.routes")(app);
 require("./routes/test.routes")(app);
 require("./routes/debug.routes")(app);
 require("./routes/notifications.routes")(app);
+require("./routes/knowledgeGraph.routes")(app);
 
 // Listen on provided port, on all network interfaces
 server.listen(port);

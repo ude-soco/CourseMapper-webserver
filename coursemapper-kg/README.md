@@ -10,11 +10,11 @@ Download the following software and install them on your machine:
 
 - Neo4j Desktop from [the official website](https://neo4j.com/download-center/#desktop), install it, start the server, and login to the server.
 
+- Redis from [the Redis releases page](https://github.com/tporadowski/redis/releases) and install it
+
 - [IntelliJ Ultimate](https://www.jetbrains.com/de-de/idea/download/#section=windows) or [Visual Studio Code](https://code.visualstudio.com/download) and install one of the code editors.
 
 - [Github Desktop](https://desktop.github.com/)
-
-- [Postman](https://www.postman.com/downloads/)
 
 - Download Elmo packages: [Link 1](https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x4096_512_2048cnn_2xhighway/elmo_2x4096_512_2048cnn_2xhighway_weights.hdf5) and [Link 2](https://uni-duisburg-essen.sciebo.de/s/r4bNsDrkuAkPSfo/download), and copy it inside `coursemapper-kg/app/algorithms` folder
 
@@ -27,7 +27,7 @@ See the step-by-step guide with screenshots to install the necessary softwares a
 
 #### Step 2: Installation Guide for CourseMapper-KnowledgeGraph
 
-- Using your file explorer, go inside the project directory `coursemapper-kg`. First, copy the `example.env` file and paste it in the same folder. Rename the copied environment file to `.env`. Change the values (`NEO4J_USER` and `NEO4J_PW`) of the environment variables in the `.env` file to your own values.
+- Using your file explorer, go inside the project directory `coursemapper-kg`. First, copy the `example.env` file and paste it in the same folder. Rename the copied environment file to `.env`. Change the values (`NEO4J_USER` and `NEO4J_PASSWORD`) of the environment variables in the `.env` file to your own values.
 
 - Open a terminal in the project directory `coursemapper-kg` (with **administration rights** for Windows)
 
@@ -47,7 +47,7 @@ See the step-by-step guide with screenshots to install the necessary softwares a
       pipenv install
       ```
 
-    - Activate the virtual environment (every time when you want to start the server)
+    - Activate the virtual environment
 
       ```bash
       pipenv shell
@@ -75,18 +75,7 @@ See the step-by-step guide with screenshots to install the necessary softwares a
   python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('all-mpnet-base-v2'); from flair.embeddings import TransformerDocumentEmbeddings;  TransformerDocumentEmbeddings('sentence-transformers/msmarco-distilbert-base-tas-b');"
   ```
 
-- Run the flask server
-
+- Run the worker
   ```bash
-  flask run
-  ```
-  Note: When you want to start the server for the next time and onwards you may Activate the virtual environment (every time when you want to start the server) 
-
-  ```bash
-  pipenv shell
-  ```
-- Then run the flask server
-
-  ```bash
-  flask run
+  pipenv run python -m app.worker
   ```

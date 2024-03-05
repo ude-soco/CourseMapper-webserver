@@ -26,4 +26,8 @@ module.exports = function (app) {
     controller.signout,
     logger.signout
   );
+  
+  app.post("/api/auth/sendEmail", controller.sendEmail);
+
+  app.post("/api/auth/resetPassword", controller.resetPassword);
 };

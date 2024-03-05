@@ -116,7 +116,7 @@ export class CytoscapeComponent {
         'text-valign': 'center',
         'text-outline-width': 0.2,
         'background-color': function (elm) {
-          
+
           if (elm.data().type === 'related_concept') return '#ce6f34';
           else if (elm.data().type === 'category') return '#FBC02D';
           else if (elm.data().type === 'course') return '#689F38';
@@ -220,23 +220,19 @@ export class CytoscapeComponent {
       return b.data.weight - a.data.weight;
     });
 
-    if (this.topNConcepts !== 'All') {
-      let topXNodes = nodes.slice(0, this.topNConcepts);
-      topXNodes = topXNodes.concat(this.propertiesNodes);
-      topXNodes = topXNodes.concat(this.categoriesNodes);
-      let filteredEdges = edges.filter(
-        (e: any) =>
-          topXNodes.map((n: any) => n.data.id).includes(e.data.source) &&
-          topXNodes.map((n: any) => n.data.id).includes(e.data.target)
-      );
-      this._elements = {
-        nodes: topXNodes,
-        edges: filteredEdges,
-        button: this.elements.button,
-      };
-    } else {
-      this._elements = this.elements;
-    }
+    let topXNodes = this.topNConcepts !== 'All' ? nodes.slice(0, this.topNConcepts) : nodes;
+    topXNodes = topXNodes.concat(this.propertiesNodes);
+    topXNodes = topXNodes.concat(this.categoriesNodes);
+    let filteredEdges = edges.filter(
+      (e: any) =>
+        topXNodes.map((n: any) => n.data.id).includes(e.data.source) &&
+        topXNodes.map((n: any) => n.data.id).includes(e.data.target)
+    );
+    this._elements = {
+      nodes: topXNodes,
+      edges: filteredEdges,
+      button: this.elements.button,
+    };
     console.log(this._elements.nodes);
   }
 

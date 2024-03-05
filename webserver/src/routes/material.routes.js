@@ -1,6 +1,7 @@
 const { authJwt, notifications } = require("../middlewares");
 const controller = require("../controllers/material.controller");
 const logger = require("../xAPILogger/logger/material.logger");
+const knowledgeGraphController = require("../controllers/knowledgeGraph.controller");
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -34,6 +35,7 @@ module.exports = function (app) {
   app.delete(
     "/api/courses/:courseId/materials/:materialId",
     [authJwt.verifyToken, authJwt.isModerator],
+    knowledgeGraphController.deleteMaterial,
     controller.deleteMaterial,
     logger.deleteMaterial,
     notifications.materialCourseUpdateNotificationsUsers,
@@ -76,6 +78,7 @@ module.exports = function (app) {
     "/api/courses/:courseId/materials/:materialId/pdf/slide/:slideNr/view",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getMaterial,
+    knowledgeGraphController.readSlide,
     logger.viewSlide
   );
 

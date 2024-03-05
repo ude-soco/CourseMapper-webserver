@@ -125,20 +125,20 @@
 <p-confirmDialog [baseZIndex]="10000" #cd>
   <p-footer class="flex flex-wrap justify-end">
     <button
-      class="p-button p-button-raised btn btn-bg"
-      type="button"
       pButton
       icon="pi pi-times"
-      label="No"
       (click)="cd.reject()"
+      label="No"
+      class="p-button-outlined"
     ></button>
+
     <button
-      class="p-button p-button-raised p-button-danger btn"
-      type="button"
+      id="addCourseConfirm"
       pButton
       icon="pi pi-check"
-      label="Yes"
+      class="float-right"
       (click)="cd.accept()"
+      label="Yes"
     ></button>
   </p-footer>
 </p-confirmDialog>

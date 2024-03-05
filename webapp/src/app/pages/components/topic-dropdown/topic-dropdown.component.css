@@ -68,7 +68,7 @@
   white-space: nowrap; /* Prevents text from wrapping to the next line */
   overflow: hidden;    /* Hides the overflowed content */
   text-overflow: ellipsis; /* Displays an ellipsis (...) at the end of the truncated text */
-  max-width: 19ch;
+ /*  max-width: 19ch; */
 }
 
 

@@ -69,6 +69,11 @@
               }}</label>
             </span>
           </span>
+          <div style="margin: 0.5rem; height: 1rem" *ngIf="!isNotGenerated">
+            <span *ngIf="selectedFilterValues && (selectedFilterValues.includes('related_concept') || selectedFilterValues.includes('category'))">
+              Click on a node to view its related concepts and categories
+            </span>
+          </div>
           <!-- <button
             pButton
             pRipple
@@ -90,9 +95,6 @@
               animationDuration=".5s"
             ></p-progressSpinner>
           </button> -->
-        </div>
-        <div style="text-align: center; margin-left: 2rem">
-          Click on a node to view its relations
         </div>
       </div>
       <hr
@@ -117,7 +119,14 @@
                 ></p-progressSpinner>
               </div>
             </div>
-            <div class="sidebarHidden" *ngIf="!isLoading">
+            <div class="sidebarHidden" *ngIf="!isLoading && isNotGenerated">
+              <div class="grid grid-cols-1 justify-items-center p-60">
+                <div class="text-xl font-medium text-center">
+                  A knowledge graph for this material is being generated. Please check back in a few minutes.
+                </div>
+              </div>
+            </div>
+            <div class="sidebarHidden" *ngIf="!isLoading && !isNotGenerated">
               <app-graph
                 [conceptMapData]="filteredMapData"
                 [selectedFilterValues]="selectedFilterValues"
@@ -140,7 +149,7 @@
   </p-dialog>
 </div>
 <div
-  *ngIf="showMaterialKg === false && showCourseKg === true && courseIsEmpty === false"
+  *ngIf="showMaterialKg === false && showCourseKg === true && courseIsEmpty === false && isNotGenerated === false"
   (window:resize)="onResize($event)"
   style="z-index: 99"
 >
@@ -271,7 +280,35 @@
 </div>
 
 <div
-  *ngIf="showMaterialKg === false && showCourseKg === true && courseIsEmpty === true"
+  *ngIf="showMaterialKg === false && showCourseKg === true && courseIsEmpty === false && isNotGenerated === true"
+  (window:resize)="onResize($event)"
+  style="z-index: 99"
+>
+  <p-dialog
+    id="higherLevelsKG"
+    header=" {{ kgTitle }}"
+    [(visible)]="this.showCourseKg"
+    [blockScroll]="true"
+    (onHide)="onSubmitCancel()"
+    (onShow)="courseKgShown()"
+    [style]="{
+      position: 'relative',
+      top: '0px',
+      width: '90%',
+      height: '90%',
+      padding: 0,
+      margin: 0
+    }"
+    maskStyleClass="dialogMask"
+  >
+    <hr style="margin-bottom: 0.25rem" />
+    <div class="grid grid-cols-1 justify-items-center p-60">
+      <div class='text-xl font-medium text-center'>CourseKG will be shown once KG for learning materials has been generated</div>
+    </div>
+  </p-dialog>
+</div>
+<div
+  *ngIf="showMaterialKg === false && showCourseKg === true && courseIsEmpty === true && isNotGenerated === false"
   (window:resize)="onResize($event)"
   style="z-index: 99"
 >

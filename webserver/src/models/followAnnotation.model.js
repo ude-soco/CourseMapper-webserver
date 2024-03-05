@@ -34,6 +34,8 @@ const FollowAnnotation = new Schema({
     required: true,
   },
   isFollowing: { type: Boolean, default: true },
+  from: { type: Number, required: false },
+  startPage: { type: Number, required: false },
   createdAt: { type: Date },
   updatedAt: { type: Date },
 });

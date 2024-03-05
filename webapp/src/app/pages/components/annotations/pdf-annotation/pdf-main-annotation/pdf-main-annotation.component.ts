@@ -22,6 +22,10 @@ import {
   PdfToolType,
 } from 'src/app/models/Annotations';
 import {
+  getCurrentlyClickedNotification,
+  getCurrentlySelectedFollowingAnnotation,
+} from '../../../notifications/state/notifications.reducer';
+import {
   getAnnotationsForMaterial,
   getCurrentPdfPage,
   getHideAnnotationValue,
@@ -60,7 +64,8 @@ import { getLoggedInUser } from 'src/app/state/app.reducer';
 import { getCurrentCourseId } from 'src/app/pages/courses/state/course.reducer';
 import { SlideKgOrderedService } from 'src/app/services/slide-kg-ordered.service';
 import * as CourseActions from 'src/app/pages/courses/state/course.actions';
-
+import * as NotificationActions from '../../../notifications/state/notifications.actions';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-pdf-main-annotation',
   templateUrl: './pdf-main-annotation.component.html',
@@ -129,24 +134,11 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   drawBoxObjectList: RectangleObject[] = [];
   annotations: Annotation[] = [];
   showConceptMapEvent: boolean = false;
+  currentPDFPage$: Observable<number>;
+  currentPdfPageSubscription: Subscription;
   private socketSubscription: Subscription;
-
-  ngOnInit(): void {
-    this.store.select(getHideAnnotationValue).subscribe((isHideAnnotations) => {
-      this.hideAnnotations(isHideAnnotations);
-    });
-
-    this.store.select(getCurrentPdfPage).subscribe((currentPage) => {
-      this.currentPage = currentPage;
-      this.pageRendered(currentPage);
-    });
-  }
-
-  ngOnDestroy(): void {
-    if (this.socketSubscription) {
-      this.socketSubscription.unsubscribe();
-    }
-  }
+  notificationClickedSubscription: Subscription;
+  followingAnnotationClickedSubscription: any;
 
   constructor(
     private pdfViewService: PdfviewService,
@@ -154,6 +146,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
     private socket: Socket,
     private changeDetectorRef: ChangeDetectorRef,
     private slideKgGenerator: SlideKgOrderedService,
+    protected router: Router
   ) {
     this.getDocUrl();
     this.store.dispatch(AnnotationActions.loadAnnotations());
@@ -251,6 +244,89 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
         }
       );
   }
+  ngOnInit(): void {
+    this.store.select(getHideAnnotationValue).subscribe((isHideAnnotations) => {
+      this.hideAnnotations(isHideAnnotations);
+    });
+
+    this.currentPDFPage$ = this.store.select(getCurrentPdfPage);
+
+    this.currentPdfPageSubscription = this.currentPDFPage$.subscribe(
+      (currentPage) => {
+        this.currentPage = currentPage;
+        this.pageRendered(currentPage);
+        this.changeDetectorRef.detectChanges();
+      }
+    );
+
+    this.notificationClickedSubscription = this.store
+      .select(getCurrentlyClickedNotification)
+      .subscribe((notification) => {
+        if (notification) {
+          this.store.dispatch(
+            AnnotationActions.setCurrentPdfPage({
+              pdfCurrentPage: notification.startPage,
+            })
+          );
+          if (
+            this.router.url.includes(
+              '/course/' +
+                notification.course_id +
+                '/channel/' +
+                notification.channel_id +
+                '/material/' +
+                '(material:' +
+                notification.material_id +
+                `/${notification.materialType})`
+            )
+          ) {
+            this.store.dispatch(
+              NotificationActions.unsetCurrentlySelectedNotification()
+            );
+          }
+        }
+      });
+
+    this.followingAnnotationClickedSubscription = this.store
+      .select(getCurrentlySelectedFollowingAnnotation)
+      .subscribe((annotation) => {
+        if (annotation) {
+          this.store.dispatch(
+            AnnotationActions.setCurrentPdfPage({
+              pdfCurrentPage: annotation.startPage,
+            })
+          );
+          if (
+            this.router.url.includes(
+              '/course/' +
+                annotation.courseId +
+                '/channel/' +
+                annotation.channelId +
+                '/material/' +
+                '(material:' +
+                annotation.materialId +
+                `/${annotation.materialType})#annotation-${annotation.annotationId}`
+            )
+          ) {
+            this.store.dispatch(
+              NotificationActions.unsetCurrentlySelectedFollowingAnnotation()
+            );
+          }
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    if (this.socketSubscription) {
+      this.socketSubscription.unsubscribe();
+    }
+    if (this.currentPdfPageSubscription) {
+      this.currentPdfPageSubscription.unsubscribe();
+    }
+    if (this.notificationClickedSubscription) {
+      this.notificationClickedSubscription.unsubscribe();
+    }
+  }
 
   ngAfterViewChecked(): void {
     let container = document.getElementsByClassName(
@@ -288,7 +364,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
     this.store.dispatch(
       AnnotationActions.setPdfTotalPages({ pdfTotalPages: this.totalPages })
     );
-    this.currentPage = 1;
+    /*  this.currentPage = 1; */
     this.pdfViewService.setTotalPages(this.totalPages);
     this.pdfComponent.pdfViewer.currentScaleValue = 'page-fit';
     this.pdfComponent.pdfViewer.eventBus.on(
@@ -1062,7 +1138,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   }
 
   onConceptMapButtonClicked(show: boolean) {
-    this.showConceptMapEvent=show
-    this.slideKgGenerator.slideKgOrdered()
+    this.showConceptMapEvent = show;
+    this.slideKgGenerator.slideKgOrdered();
   }
 }
