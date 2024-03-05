@@ -19,6 +19,9 @@ import { TagsPageComponent } from './pages/components/tags/tags-page/tags-page.c
 import { CourseWelcomeComponent } from './course-welcome/course-welcome.component';
 import { AllNotificationsComponent } from './pages/components/notifications/all-notifications/all-notifications.component';
 import { SettingsComponent } from './pages/components/notifications/settings/settings.component';
+import { ForgetPasswordComponent } from './pages/components/forget-password/forget-password.component';
+import { ResetPasswordComponent } from './pages/components/forget-password/reset-password/reset-password.component';
+import { ResetPasswordRequestComponent } from './pages/components/forget-password/reset-password-request/reset-password-request.component';
 import { PersonalDashboardComponent } from './pages/components/Dashboards/personal-dashboard/personal-dashboard.component';
 import { TopicDashboardComponent } from './pages/components/Dashboards/topic-dashboard/topic-dashboard.component';
 import { CourseDashboardComponent } from './pages/components/Dashboards/course-dashboard/course-dashboard.component';
@@ -42,6 +45,18 @@ const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent,
+  },
+  {
+    path: 'forgetPassword',
+    component: ForgetPasswordComponent,
+  },
+  {
+    path: 'restPassword/:token',
+    component: ResetPasswordComponent,
+  },
+  {
+    path: 'restRequest',
+    component: ResetPasswordRequestComponent,
   },
   {
     path: 'home',

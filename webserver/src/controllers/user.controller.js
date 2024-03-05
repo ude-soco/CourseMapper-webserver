@@ -270,33 +270,6 @@ export const getAllUsers = async (req, res) => {
   return res.status(200).send(results);
 };
 
-// export const getUserName = async (req, res) => {
-//   let user;
-//   let userId =  req.userId;
-//   let results = []
-//   try {
-
-//     Founduser = await User
-//     .findById({_id: ObjectId(userId)})
-//   } catch (err) {
-//     return res.status(500).send({ message: err });
-//   }
-//   user.courses.forEach(object => {
-//     let course = {
-//       _id: object.courseId._id,
-//       name: object.courseId.name,
-//       shortName: object.courseId.shortName,
-//       description: object.courseId.description,
-//       numberTopics: object.courseId.topics.length,
-//       numberChannels: object.courseId.channels.length,
-//       numberUsers: object.courseId.users.length,
-//       role: object.role.name,
-//       channels:object.courseId.channels,
-//     };
-//     results.push(course);
-//   });
-//   return res.status(200).send(results);
-// }
 
 export const getUser = async (req, res) => {
   let userId = req.params.userId;
@@ -327,9 +300,6 @@ export const getUserConcepts = async (req, res) => {
 
   let foundUser;
   let results;
-  console.log('userId is:')
-  console.log(userId)
-  console.log(typeof(userId))
   try {
     foundUser = await User.findOne({ _id: userId })
     .populate("courses", "-__v");

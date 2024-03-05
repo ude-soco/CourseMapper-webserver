@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { Course } from 'src/app/models/Course';
 import { CourseService } from 'src/app/services/course.service';
 import { StorageService } from 'src/app/services/storage.service';
 import { UserServiceService } from 'src/app/services/user-service.service';
+import * as AppActions from 'src/app/state/app.actions';
 import {
   getCurrentCourse,
   getCurrentCourseId,
@@ -31,6 +32,8 @@ export class CourseDescriptionComponent {
   Enrolled: boolean = false;
   Users: any;
   course_enroll: Course;
+  param:any;
+  //selectedCourse: Course = new CourseImp('', '');
 
   constructor(
     private storageService: StorageService,
@@ -38,26 +41,47 @@ export class CourseDescriptionComponent {
     private userService: UserServiceService,
     private courseService: CourseService,
     private router: Router,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private route: ActivatedRoute,
+
   ) {
-    this.store
-      .select(getCurrentCourse)
-      .subscribe((course) => (this.course = course));
+
+    // this.store
+    //   .select(getCurrentCourse)
+    //   .subscribe((course) => (this.course = course));
     //console.log(this.course, "this.course course des page")
+    try{
+    this.route.params.subscribe((params) => {
+      if (params['courseID']) {
+        this.param = params['courseID']
+        // console.log(this.param, "this.course course des page param")
+      }})
+    }
+    catch{
 
+    }
     this.courseService.GetAllCourses().subscribe((courses) => {
-      //console.log("course desc All courses ", courses)
-      let varcc = courses.find(
+     // console.log("course desc All courses ", courses)
+     // console.log(this.param, "t param")
+      this.course  = courses.find(
         (course) =>
-          this.course.id === course._id || this.course._id === course._id
+        // this.course.id === course._id || this.course._id === course._id ||
+          course._id == this.param
       );
-
+      this.store.dispatch(
+        CourseActions.setCurrentCourse({
+          selcetedCourse: this.course,
+        })
+      );
+      this.store.dispatch(
+        CourseActions.setCourseId({ courseId: this.course._id })
+      );
       this.Users = [];
-      //console.log(varcc, "course found from des page")
-      this.Users = varcc.users;
-      var index = varcc.createdAt.indexOf('T');
-      (this.createdAt = varcc.createdAt.slice(0, index)),
-        varcc.createdAt.slice(index + 1);
+      //console.log(this.course, "course found from des page")
+      this.Users = this.course.users;
+      var index = this.course.createdAt.indexOf('T');
+      (this.createdAt = this.course.createdAt.slice(0, index)),
+      this.course.createdAt.slice(index + 1);
       let userModerator = this.Users.find(
         (user) => user.role.name === 'moderator'
       );
@@ -69,12 +93,7 @@ export class CourseDescriptionComponent {
   }
   ngOnInit(): void {
     this.isloggedin = this.storageService.isLoggedIn();
-
-    //       this.store.select(getCurrentCourse).subscribe((data) => {
-    //   console.log("channel name observable called")
-    //   this.Course=data
-    //   console.log(this.Course)
-    // })
+  
   }
   getName(firstName: string, lastName: string) {
     let Name = firstName + ' ' + lastName;

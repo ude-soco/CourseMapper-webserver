@@ -1,6 +1,5 @@
 import json
 import numpy as np
-from flask import current_app
 
 from ...recommendation.recommender import Recommender
 from ...recommendation.youtube_service import YoutubeService
@@ -13,6 +12,7 @@ from .concept_tagging_top_down import DBpediaSpotlight as DBpediaSpotlight1
 from ...db.neo4_db_top_down import NeoDataBase
 from ..model_top_down import KeyphraseExtractor
 from ...exceptions.exceptions import PreprocessingException
+from config import Config
 
 from matplotlib import pyplot as plt
 from threading import Thread
@@ -41,9 +41,9 @@ ALLOWED_EXTENSIONS = {'pdf'}
 class DataServiceTopDown:
 
     def __init__(self):
-        neo4j_uri = current_app.config.get("NEO4J_URI")  # type: ignore
-        neo4j_user = current_app.config.get("NEO4J_USER")  # type: ignore
-        neo4j_pass = current_app.config.get("NEO4J_PASSWORD")  # type: ignore
+        neo4j_uri = Config.NEO4J_URI
+        neo4j_user = Config.NEO4J_USER
+        neo4j_pass = Config.NEO4J_PASSWORD
 
         self.db = NeoDataBase(neo4j_uri, neo4j_user, neo4j_pass)
         # start_time = time.time()

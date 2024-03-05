@@ -497,3 +497,11 @@
   display: flex;
   flex-direction: column;
 }
+
+#materialKgControlPanel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding-right: 1rem;
+  float: right;
+}

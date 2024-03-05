@@ -89,6 +89,10 @@ import { MentionModule } from 'angular-mentions';
 import { MessageService } from 'primeng/api';
 import { TeamComponent } from './pages/team/team.component';
 import { AboutComponent } from './pages/about/about.component';
+import { ForgetPasswordComponent } from './pages/components/forget-password/forget-password.component';
+import { ResetPasswordComponent } from './pages/components/forget-password/reset-password/reset-password.component';
+import { ResetPasswordRequestComponent } from './pages/components/forget-password/reset-password-request/reset-password-request.component';
+
 import { PersonalDashboardComponent } from './pages/components/Dashboards/personal-dashboard/personal-dashboard.component';
 import { PopulateDashboardComponent } from './pages/components/populate-dashboard/populate-dashboard.component';
 import { TopicDashboardComponent } from './pages/components/Dashboards/topic-dashboard/topic-dashboard.component';
@@ -125,6 +129,10 @@ import { BackButtonComponent } from './pages/components/back-button/back-button.
     CourseWelcomeComponent,
     TeamComponent,
     AboutComponent,
+    ForgetPasswordComponent,
+    ResetPasswordComponent,
+    ResetPasswordRequestComponent,
+
     PersonalDashboardComponent,
     TopicDashboardComponent,
     CourseDashboardComponent,

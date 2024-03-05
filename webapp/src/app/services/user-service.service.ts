@@ -18,8 +18,6 @@ export class UserServiceService {
   constructor(private http: HttpClient, private router: Router) {}
 
   login(username: string, password: string): Observable<any> {
-    console.log('HTTPOptions')
-    console.log(HTTPOptions)
     return this.http.post(
       AUTH_API_2 + 'signin',
       { username, password },
@@ -45,18 +43,27 @@ export class UserServiceService {
           //
           this.resu = res.id;
 
-          this.register_2(this.resu, username, email, password);
+          
         })
       );
   }
 
-  register_2(_id: string, username: string, email: string, password: string) {
-    this.http
-      .post<any>(AUTH_API_2 + 'signup', { _id, username, email, password })
-      .subscribe((res) => {
-        //
-      });
+  forgetPassword(email: string): Observable<any> {
+    return this.http.post(
+      AUTH_API_2 + 'sendEmail',
+      { email},
+      HTTPOptions
+    );
   }
+  resetPassword(resetObj): Observable<any> {
+    return this.http.post(
+      AUTH_API_2 + 'resetPassword',
+      { resetObj},
+      HTTPOptions,
+     
+    );
+  }
+
 
   logout(): Observable<any> {
     this.setlastTimeCourseMapperOpened().subscribe();

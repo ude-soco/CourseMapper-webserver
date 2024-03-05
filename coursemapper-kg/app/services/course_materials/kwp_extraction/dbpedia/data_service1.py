@@ -1,12 +1,12 @@
 from ...conceptrecommentation.recommendation import Recommendation
 from ..dbpedia.concept_tagging import DBpediaSpotlight
 from ...db.neo4_db import NeoDataBase
-from flask import current_app
 import time
 import os
 
 import logging
 from log import LOG
+from config import Config
 
 logger = LOG(name=__name__, level=logging.DEBUG)
 
@@ -22,18 +22,18 @@ class RecService:
         # NEO4J_PASSWORD = os.environ.get('NEO4J_PW')
         # # NEO4J_PASSWORD = "root"
         # self.db = NeoDataBase(NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD)
-        neo4j_uri = current_app.config.get("NEO4J_URI")  # type: ignore
-        neo4j_user = current_app.config.get("NEO4J_USER")  # type: ignore
-        neo4j_pass = current_app.config.get("NEO4J_PASSWORD")  # type: ignore
+        neo4j_uri = Config.NEO4J_URI
+        neo4j_user = Config.NEO4J_USER
+        neo4j_pass = Config.NEO4J_PASSWORD
 
         self.db = NeoDataBase(neo4j_uri, neo4j_user, neo4j_pass)
 
         self.recommendation = Recommendation()
         self.dbpedia = DBpediaSpotlight()
 
-    def _construct_user(self, user, non_understood, understood, new_concepts, mid):
+    def _construct_user(self, user_id, non_understood, understood, new_concepts, mid):
         self.db.construct_user_model(
-            user, non_understood, understood, new_concepts, mid
+            user_id, non_understood, understood, new_concepts, mid
         )
 
     def _extract_vector_relation(self, mid):
@@ -77,7 +77,9 @@ class RecService:
                 road3 = self.get_max_weight_path(road3)
                 # road: user - concept - related concept
                 road4 = self.db.get_road_user_concept_relatedconcept(uid, cid)
+                road4 = self.get_max_weight_path4(road4)
                 roads = road1 + road2 + road3 + road4
+
             else:
                 # road: user - concept - related concept - concept
                 road1 = self.db.get_road_user_c_related_concept(uid, cid)
@@ -88,30 +90,97 @@ class RecService:
                 road2 = self.get_max_weight_path(road2)
                 # road: user - concept - related concept
                 road3 = self.db.get_road_user_concept_relatedconcept(uid, cid)
+                road3 = self.get_max_weight_path4(road3)
                 roads = road1 + road2 + road3
 
             # Save these roads to "roads" property
             recommend_concept["n"]["roads"] = roads
+   
         # logger.info("roads: %s" % recommend_concepts[0]["n"]["roads"])
         return recommend_concepts
 
     def get_max_weight_path(self, road):
         weights, max_weight, names, list = 0, 0, [], []
         for i in range(len(road)):
+            # print("len(road)",len(road))
+            # print("names",names)
             if road[i]["name"] not in names:
                 names.append(road[i]["name"])
         for name in names:
             for i in range(len(road)):
+                print("len(road)",len(road))
+                print("name",name)
                 if road[i]["name"] == name:
-                    weights = weights + road[i]["weight"]
-            if max_weight <= weights:
-                max_weight = weights
-                optimum_name = name
+                    weights = road[i]["weight"]
+                if max_weight <= weights:
+                    max_weight = weights
+                    optimum_name = name
             weights = 0
         for i in range(len(road)):
-            if road[i]["name"] == optimum_name:
+            if road[i]["name"] == optimum_name and max_weight==road[i]["weight"] :
                 list.append(road[i])
         return list
+    def get_max_weight_path4(self, road):
+        weights, max_weight, names, list = 0, 0, [], []
+        for i in range(len(road)):
+            # print("len(road)",len(road))
+            # print("names",names)
+            if road[i]["dnu"] not in names:
+                names.append(road[i]["dnu"])
+        for name in names:
+            for i in range(len(road)):
+                if road[i]["dnu"] == name:
+                    weights = road[i]["weight"]
+                if max_weight <= weights:
+                    max_weight = weights
+                    optimum_name = name
+            weights = 0
+        for i in range(len(road)):
+            if road[i]["dnu"] == optimum_name:
+                list.append(road[i])
+        return list    
+    
+    # def get_max_weight_path(self, road):
+    #     weights, max_weight, names, list = 0, 0, [], []
+    #     for i in range(len(road)):
+    #         # print("len(road)",len(road))
+    #         # print("names",names)
+    #         if road[i]["name"] not in names:
+    #             names.append(road[i]["name"])
+    #     for name in names:
+    #         for i in range(len(road)):
+    #             # print("len(road)",len(road))
+    #             # print("name",name)
+    #             if road[i]["name"] == name:
+    #                 weights = weights + road[i]["weight"]
+    #         if max_weight <= weights:
+    #             max_weight = weights
+    #             optimum_name = name
+    #         weights = 0
+    #     for i in range(len(road)):
+    #         if road[i]["name"] == optimum_name:
+    #             list.append(road[i])
+    #     return list
+
+    # def get_max_weight_path4(self, road):
+    #     weights, max_weight, names, list = 0, 0, [], []
+    #     for i in range(len(road)):
+    #         print("len(road)",len(road))
+    #         print("names",names)
+    #         if road[i]["dnu"] not in names:
+    #             names.append(road[i]["dnu"])
+    #     for name in names:
+    #         for i in range(len(road)):
+    #             if road[i]["dnu"] == name:
+    #                 weights = weights + road[i]["weight"]
+    #         if max_weight <= weights:
+    #             max_weight = weights
+    #             optimum_name = name
+    #         weights = 0
+    #     for i in range(len(road)):
+    #         if road[i]["dnu"] == optimum_name:
+    #             list.append(road[i])
+    #     return list    
 
     def _get_related_category(self, ids, mid):
         # find these dnu concepts in neo4j
@@ -182,7 +251,13 @@ def get_serialized_concepts_data(concepts):
             for node in road["p"]:
                 if isinstance(node, str):
                     list.append(node)
-                elif node["type"] == "user" or node["type"] == "Slide":
+                elif node["type"] == "user":
+                    n = {
+                        "id": node["uid"],
+                        "type": node["type"],
+                    }
+                    list.append(n)
+                elif node["type"] == "Slide":
                     n = {
                         "name": node["name"],
                         "type": node["type"],
