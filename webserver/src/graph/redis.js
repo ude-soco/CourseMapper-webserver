@@ -74,6 +74,9 @@ async function watchLogQueue(host, port, database, password) {
   while (true) {
     const result = await queueClient.brPop('log', 0);
     const element = JSON.parse(result.element);
+    if (!element.job_id) {
+      continue;
+    }
     const job = await queueClient.hGet('jobs', element.job_id);
     if (!job) {
       continue;
