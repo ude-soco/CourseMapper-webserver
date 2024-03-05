@@ -110,7 +110,7 @@ The services making up the coursemapper-webserver project use the following imag
 
 - Using your file explorer, go inside the directory `coursemapper-kg`
 
-	- Copy the `example.env` file and paste it in the same folder. Rename the copied environment file to `.env`. Change the values (`NEO4J_USER`, `NEO4J_PW`, `REDIS_PASSWORD`) of the environment variables in the `.env` file to your own values.
+	- Copy the `example.env` file and paste it in the same folder. Rename the copied environment file to `.env`. Change the values (`NEO4J_USER`, `NEO4J_PASSWORD`, `REDIS_PASSWORD`) of the environment variables in the `.env` file to your own values.
 
 - Open a command prompt/terminal in the `coursemapper-kg` directory (with **administration rights** for Windows)
 

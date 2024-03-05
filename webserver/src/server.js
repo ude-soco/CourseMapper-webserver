@@ -72,7 +72,7 @@ const neo4j = require("./graph/neo4j");
 neo4j.connect(
   process.env.NEO4J_URI,
   process.env.NEO4J_USER,
-  process.env.NEO4J_PW
+  process.env.NEO4J_PASSWORD
 );
 
 // Create connection to Redis

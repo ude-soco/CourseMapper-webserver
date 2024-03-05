@@ -27,7 +27,7 @@ See the step-by-step guide with screenshots to install the necessary softwares a
 
 #### Step 2: Installation Guide for CourseMapper-KnowledgeGraph
 
-- Using your file explorer, go inside the project directory `coursemapper-kg`. First, copy the `example.env` file and paste it in the same folder. Rename the copied environment file to `.env`. Change the values (`NEO4J_USER` and `NEO4J_PW`) of the environment variables in the `.env` file to your own values.
+- Using your file explorer, go inside the project directory `coursemapper-kg`. First, copy the `example.env` file and paste it in the same folder. Rename the copied environment file to `.env`. Change the values (`NEO4J_USER` and `NEO4J_PASSWORD`) of the environment variables in the `.env` file to your own values.
 
 - Open a terminal in the project directory `coursemapper-kg` (with **administration rights** for Windows)
 
