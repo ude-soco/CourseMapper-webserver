@@ -1,7 +1,7 @@
 import logging
 import sys
 import json
-from logging import Logger, Handler, getLevelName
+from logging import Logger, Handler
 from logging.handlers import TimedRotatingFileHandler
 
 from app.shared import redis, worker_id, current_job
@@ -60,5 +60,7 @@ class RedisHandler(Handler):
             redis.rpush('log', msg)
         except RecursionError:  # See issue 36272
             raise
+        except TypeError:
+            pass
         except Exception:
             self.handleError(record)
