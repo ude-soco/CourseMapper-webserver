@@ -670,9 +670,14 @@ export class ConceptMapComponent {
   model2 = false;
   model3 = false;
 
+  printLogMessage(data: any) {
+    console.log("Log message", data);
+  }
+
   ngOnDestroy(): void {
     this.conceptMapData = undefined;
     this.loading.emit(this.isLoading);
+    this.socket.off("log", [this.printLogMessage]);
 
     this.currentSubscription?.unsubscribe();
     this.totalSubscription?.unsubscribe();
@@ -727,9 +732,7 @@ export class ConceptMapComponent {
     // }
   }
   ngOnInit() {
-    this.socket.on("log", (data) => {
-      console.log("Log message", data);
-    });
+    this.socket.on("log", this.printLogMessage);
 
     if (this.loggedInUser) {
       this.userid = this.loggedInUser.id;
