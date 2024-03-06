@@ -4,8 +4,8 @@
     <app-sidebar></app-sidebar>
   </div>
 
-  <div class="w-full mx-auto p-5" style="width: 1280px">
-    <p class="text-4xl leading-normal font-medium">{{ course.name }}</p>
+  <div class="w-full mx-auto p-5" style="width: 1280px" *ngIf="this.isLoaded==false">
+    <p class="text-4xl leading-normal font-medium">{{ this.course_enroll.name || "" }}</p>
 
     <div class="w-full flex justify-between">
       <div>
@@ -52,13 +52,13 @@
         </div>
         <div class="w-80 pb-5">
           <div
-            *ngIf="course.description.length == 0"
+            *ngIf="this.course_enroll.description.length == 0"
             class="justify-self-start"
           >
             No description provided
           </div>
           <div class="justify-self-start" style="width: 750px">
-            {{ course.description }}
+            {{ this.course_enroll.description }}
           </div>
         </div>
       </div>
@@ -72,7 +72,7 @@
         >
         </button>
         <p class="text-sm text-center mt-2 w-60">
-          Enroll in {{ course.name }} course to gain access to the learning materials.
+          Enroll in {{ this.course_enroll.name }} course to gain access to the learning materials.
         </p>
       </div>
       
