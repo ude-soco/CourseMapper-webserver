@@ -1040,12 +1040,12 @@ export class ConceptMapComponent {
             this.resetFilter();
             this.isLoading = true;
             this.loading.emit(true);
-            this.socket.emit("join", "material:"+materialId);
+            this.socket.emit("join", "material:all");
             const reqData = await this.getReqData();
             var result = await this.conceptMapService.getConceptMapData(
               reqData
             );
-            this.socket.emit("leave", "material:"+materialId);
+            this.socket.emit("leave", "material:all");
             if (materialId !== this.currentMaterial!._id) {
               return;
             }

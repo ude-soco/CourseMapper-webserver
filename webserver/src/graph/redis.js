@@ -60,6 +60,7 @@ async function watchLogQueue(url) {
   while (true) {
     const result = await queueClient.brPop('log', 0);
     const element = JSON.parse(result.element);
+    socketio.getIO().to("material:all").emit('log', element);
     if (!element.job_id) {
       continue;
     }
@@ -72,6 +73,7 @@ async function watchLogQueue(url) {
       continue;
     }
     socketio.getIO().to("material:"+jobData.materialId).emit('log', element);
+    socketio.getIO().to("material:all").emit('log', element);
   }
 }
 
