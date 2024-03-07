@@ -40,7 +40,7 @@ def status_updater(is_exiting, job_id):
 
 def start_updater_thread(job_id):
     is_exiting = [False]
-    status_thread = Thread(target=status_updater, args=(is_exiting, job_id))
+    status_thread = Thread(target=status_updater, args=(is_exiting, job_id), daemon=True)
     status_thread.start()
     def stop_thread():
         is_exiting[0] = True
