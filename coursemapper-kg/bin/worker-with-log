@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+echo "${0}: Running application ..."
+python -m app.worker 2>&1 | tee ./worker.log
+echo "${0}: Application ended. Sending log"
+python -c "import json,time,sys,app.shared;app.shared.redis.rpush('log',json.dumps({'worker_id':None,'job_id':None,'timestamp':time.time(),'name':'log','level':'log','message':open('./worker.log','r').read()}))"
