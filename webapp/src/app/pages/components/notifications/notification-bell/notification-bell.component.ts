@@ -8,6 +8,8 @@ import { Observable } from 'rxjs';
 import { getShowNotificationsPanel } from 'src/app/state/app.reducer';
 import { OverlayPanel } from 'primeng/overlaypanel';
 import * as AppActions from 'src/app/state/app.actions';
+import { StorageService } from 'src/app/services/storage.service';
+import { Socket } from 'ngx-socket-io';
 //TODO: put this component behind an Auth guard
 @Component({
   selector: 'app-notification-bell',
@@ -17,7 +19,9 @@ import * as AppActions from 'src/app/state/app.actions';
 export class NotificationBellComponent {
   constructor(
     private notificationsService: NotificationsService,
-    private store: Store<State>
+    private store: Store<State>,
+    private storageService: StorageService,
+    private socket: Socket,
   ) {}
 
   @ViewChild('notificationPanel') notificationPanel: OverlayPanel;
@@ -32,7 +36,12 @@ export class NotificationBellComponent {
         this.notificationPanel.hide();
       }
     });
+    const user = this.storageService.getUser();
+    this.socket.emit("join", "user:"+user.id); 
+    //const user = this.storageService.getUser();
     this.store.dispatch(NotificationActions.loadNotifications());
+    
+    //this.socket.emit("join", "course:"+course._id);
     this.notificationsService.initialiseSocketConnection();
     this.totalNumUnreadNotifications$ = this.store.select(
       getAllNotificationsNumUnread
