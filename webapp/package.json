@@ -35,7 +35,7 @@
     "cytoscape-cxtmenu": "^3.4.0",
     "cytoscape-dagre": "^2.3.2",
     "cytoscape-fcose": "^2.1.0",
-    "cytoscape-popper": "^2.0.0",
+    "cytoscape-popper": "^4.0.0",
     "cytoscape-spread": "^3.0.0",
     "dotenv": "^16.4.5",
     "jquery": "^3.7.1",
