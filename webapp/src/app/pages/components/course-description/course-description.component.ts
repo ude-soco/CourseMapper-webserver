@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, SimpleChanges } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -15,6 +15,7 @@ import {
 } from '../../courses/state/course.reducer';
 import * as CourseActions from 'src/app/pages/courses/state/course.actions';
 import { MessageService } from 'primeng/api';
+import { Socket } from 'ngx-socket-io';
 
 @Component({
   selector: 'app-course-description',
@@ -32,7 +33,8 @@ export class CourseDescriptionComponent {
   Enrolled: boolean = false;
   Users: any;
   course_enroll: Course;
-  param:any;
+  param: any;
+  isLoaded: boolean = true;
   //selectedCourse: Course = new CourseImp('', '');
 
   constructor(
@@ -43,57 +45,42 @@ export class CourseDescriptionComponent {
     private router: Router,
     private messageService: MessageService,
     private route: ActivatedRoute,
-
-  ) {
-
-    // this.store
+    private socket:Socket
+  ) {}
+  ngOnInit(): void {
+    this.isloggedin = this.storageService.isLoggedIn();
+    //     this.store
     //   .select(getCurrentCourse)
-    //   .subscribe((course) => (this.course = course));
-    //console.log(this.course, "this.course course des page")
-    try{
+    //   .subscribe((course) => (this.course_enroll = course));
     this.route.params.subscribe((params) => {
       if (params['courseID']) {
-        this.param = params['courseID']
-        // console.log(this.param, "this.course course des page param")
-      }})
-    }
-    catch{
-
-    }
     this.courseService.GetAllCourses().subscribe((courses) => {
-     // console.log("course desc All courses ", courses)
-     // console.log(this.param, "t param")
-      this.course  = courses.find(
-        (course) =>
-        // this.course.id === course._id || this.course._id === course._id ||
-          course._id == this.param
-      );
+      this.course_enroll = courses.find((course) => course._id == params['courseID']);
+
       this.store.dispatch(
         CourseActions.setCurrentCourse({
-          selcetedCourse: this.course,
+          selcetedCourse: this.course_enroll,
         })
       );
       this.store.dispatch(
-        CourseActions.setCourseId({ courseId: this.course._id })
+        CourseActions.setCourseId({ courseId: this.course_enroll._id })
       );
       this.Users = [];
       //console.log(this.course, "course found from des page")
-      this.Users = this.course.users;
-      var index = this.course.createdAt.indexOf('T');
-      (this.createdAt = this.course.createdAt.slice(0, index)),
-      this.course.createdAt.slice(index + 1);
+      this.Users = this.course_enroll.users;
+      var index = this.course_enroll.createdAt.indexOf('T');
+      (this.createdAt = this.course_enroll.createdAt.slice(0, index)),
+        this.course_enroll.createdAt.slice(index + 1);
       let userModerator = this.Users.find(
         (user) => user.role.name === 'moderator'
       );
 
-      this.buildCardInfo(userModerator.userId, this.course);
+      this.buildCardInfo(userModerator.userId, this.course_enroll);
+      this.isLoaded = false;
     });
 
-    //     this.store.select(getCurrentCourseId).subscribe((id) => console.log(id));
   }
-  ngOnInit(): void {
-    this.isloggedin = this.storageService.isLoggedIn();
-  
+});
   }
   getName(firstName: string, lastName: string) {
     let Name = firstName + ' ' + lastName;
@@ -112,27 +99,30 @@ export class CourseDescriptionComponent {
 
   EnrollToCOurse() {
     if (this.isloggedin == false) {
-      console.log(this.course, 'this.course');
+      console.log(this.course_enroll, 'this.course');
       this.store.dispatch(
-        CourseActions.setCurrentCourse({ selcetedCourse: this.course })
+        CourseActions.setCurrentCourse({ selcetedCourse: this.course_enroll })
       );
       this.router.navigate(['login']);
     } else if (this.isloggedin == true) {
-      console.log('this.course.id', this.course.id);
+      
       this.store.select(getCurrentCourse).subscribe((data) => {
-        console.log('channel name observable called');
+        
         this.course_enroll = data;
-        console.log(this.course_enroll, 'data from ongoninit before');
+      
       });
-      console.log(this.course_enroll, 'data from ongoninit after');
-      if (this.course.id == null) {
+
+      if (this.course_enroll._id == null) {
         console.log('entered');
+        
+        console.log("emitted")
         this.courseService
           .EnrollToCOurse(this.course_enroll._id)
           .subscribe((data) => {
             this.Enrolled = true;
             console.log('response after calling the service', data);
             if ('success' in data) {
+              this.socket.emit("join", "course:"+this.course_enroll._id);
               console.log('entered success msg');
               // this.showInfo(res.success);
               this.showInfo('You are successfully enrolled to the course');
@@ -140,16 +130,22 @@ export class CourseDescriptionComponent {
               this.showError(data.errorMsg);
             }
             setTimeout(() => {
-              this.router.navigate(['course', this.course_enroll._id, 'welcome']);
+              this.router.navigate([
+                'course',
+                this.course_enroll._id,
+                'welcome',
+              ]);
             }, 850);
           });
       } else {
-        this.courseService.EnrollToCOurse(this.course.id).subscribe((data) => {
+        
+        this.courseService.EnrollToCOurse(this.course_enroll._id).subscribe((data) => {
           this.Enrolled = true;
           console.log('data', data);
           //if ( "write something here".indexOf("write som") > -1 )  { alert( "found it" );  }
 
           if ('success' in data) {
+            this.socket.emit("join", "course:"+this.course_enroll._id);
             console.log('entered success msg');
             // this.showInfo(res.success);
             this.showInfo('You are successfully enrolled to the course');
@@ -157,7 +153,7 @@ export class CourseDescriptionComponent {
             this.showError(data.errorMsg);
           }
           setTimeout(() => {
-            this.router.navigate(['course', this.course.id, 'welcome']);
+            this.router.navigate(['course', this.course_enroll._id, 'welcome']);
           }, 850);
         });
       }
@@ -165,7 +161,7 @@ export class CourseDescriptionComponent {
   }
   GoToCOurse() {
     if (this.isloggedin == true) {
-      this.router.navigate(['course', this.course._id]);
+      this.router.navigate(['course', this.course_enroll._id]);
     } else {
       this.router.navigate(['login']);
     }
