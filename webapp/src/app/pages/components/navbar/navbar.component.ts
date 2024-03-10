@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
+import { Socket } from 'ngx-socket-io';
 
 import { MenuItem, PrimeNGConfig, MessageService } from 'primeng/api';
 import { User } from 'src/app/models/User';
@@ -32,7 +33,8 @@ export class NavbarComponent implements OnInit {
     private userService: UserServiceService,
     private router: Router,
     private store: Store<State>,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private socket: Socket,
   ) {
     this.isLoggedIn = storageService.isLoggedIn();
     this.store
@@ -73,8 +75,10 @@ export class NavbarComponent implements OnInit {
   }
 
   handleLogout(): void {
+    this.socket.emit("leave", "user:"+this.loggedInUser.id);
     if (window.sessionStorage.length == 0) {
       this.storageService.clean();
+      
       this.router.navigate(['/landingPage']);
     }
 

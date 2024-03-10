@@ -79,8 +79,12 @@ const emitNotificationsToSubscribedUsers = async (
   for (let i = 0; i < insertedUserNotifications.length; i++) {
     const userNotification = insertedUserNotifications[i];
     const socketId = userNotification.userId;
+    console.log("socketId", socketId)
+    console.log("userNotification.userId", userNotification.userId)
+    console.log("req.userId", req.userId)
     userNotification.activityId = req.locals.activity;
-    socketio.getIO().emit(socketId, [userNotification]);
+    socketio.getIO().to("user:"+socketId).emit(socketId, [userNotification]);
+    //socketio.getIO().emit(socketId, [userNotification]);
     /*     const notificationData = {
       userNotification: [userNotification],
       activityIndicator: activityIndicators[userNotification.userId.toString()],
@@ -279,8 +283,10 @@ export const emitAnnotationDeleted = async (annotationId) => {
     (userNotification) => userNotification.userId
   );
 
+
+
   userIds.forEach((userId) => {
-    socketio.getIO().emit(userId, [
+    socketio.getIO().to("user:"+userId).emit(userId, [
       {
         annotationId: annotationId,
         isDeletingAnnotation: true,
@@ -298,7 +304,7 @@ export const emitReplyDeleted = async (replyId) => {
   );
 
   userIds.forEach((userId) => {
-    socketio.getIO().emit(userId, [
+    socketio.getIO().to("user:"+userId).emit(userId, [
       {
         replyId: replyId,
         isDeletingReply: true,
@@ -311,12 +317,14 @@ export const emitMaterialDeleted = async (materialId) => {
   const userNotifications = await UserNotification.find({
     materialId: materialId,
   });
+
+  //console.log("userNotification.userId", userNotification.userId)
   const userIds = userNotifications.map(
     (userNotification) => userNotification.userId
   );
-
+  console.log("userIds", userIds)
   userIds.forEach((userId) => {
-    socketio.getIO().emit(userId, [
+    socketio.getIO().to("user:"+userId).emit(userId, [
       {
         materialId: materialId,
         isDeletingMaterial: true,
@@ -335,7 +343,7 @@ export const emitChannelDeleted = async (channelId) => {
   );
 
   userIds.forEach((userId) => {
-    socketio.getIO().emit(userId, [
+    socketio.getIO().to("user:"+userId).emit(userId, [
       {
         channelId: channelId,
         isDeletingChannel: true,
@@ -354,7 +362,7 @@ export const emitTopicDeleted = async (topicId) => {
   );
 
   userIds.forEach((userId) => {
-    socketio.getIO().emit(userId, [
+    socketio.getIO().to("user:"+userId).emit(userId, [
       {
         topicId: topicId,
         isDeletingTopic: true,

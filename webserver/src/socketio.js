@@ -38,7 +38,7 @@ module.exports = {
           socket.join(room);
         }
         if (room.startsWith("user:")) {
-          console.log("user joined course", room)
+          console.log("user joined room", room)
           socket.join(room);
         }
       });
