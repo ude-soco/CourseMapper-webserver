@@ -10,17 +10,6 @@ const FollowAnnotation = db.followAnnotation;
 const ObjectId = require("mongoose").Types.ObjectId;
 //TODO Ask why the users objects in the course contains an _id field aside from the userID field
 
-//Removes the User who did the action itself from the users to be notified
-/* const removeUserFromList = (userToBeNotified, userId) => {
-  for (let i = 0; i < userToBeNotified.length; i++) {
-    if (userToBeNotified[i].userId.equals(userId)) {
-      userToBeNotified.splice(i, 1);
-      break;
-    }
-  }
-}; */
-
-//TODO: Maybe move the following function to a separate file
 export const generateNotificationInfo = (req) => {
   //userShortname (the first 2 initials of the user's name) being calculated here
   const firstInitial = req.locals.user.firstname.charAt(0).toUpperCase();
@@ -79,18 +68,12 @@ const emitNotificationsToSubscribedUsers = async (
   for (let i = 0; i < insertedUserNotifications.length; i++) {
     const userNotification = insertedUserNotifications[i];
     const socketId = userNotification.userId;
-    console.log("socketId", socketId)
-    console.log("userNotification.userId", userNotification.userId)
-    console.log("req.userId", req.userId)
-    userNotification.activityId = req.locals.activity;
-    socketio.getIO().to("user:"+socketId).emit(socketId, [userNotification]);
-    //socketio.getIO().emit(socketId, [userNotification]);
-    /*     const notificationData = {
-      userNotification: [userNotification],
-      activityIndicator: activityIndicators[userNotification.userId.toString()],
-    };
 
-    socketio.getIO().emit(socketId, notificationData); */
+    userNotification.activityId = req.locals.activity;
+    socketio
+      .getIO()
+      .to("user:" + socketId)
+      .emit(socketId, [userNotification]);
   }
 };
 
@@ -283,15 +266,16 @@ export const emitAnnotationDeleted = async (annotationId) => {
     (userNotification) => userNotification.userId
   );
 
-
-
   userIds.forEach((userId) => {
-    socketio.getIO().to("user:"+userId).emit(userId, [
-      {
-        annotationId: annotationId,
-        isDeletingAnnotation: true,
-      },
-    ]);
+    socketio
+      .getIO()
+      .to("user:" + userId)
+      .emit(userId, [
+        {
+          annotationId: annotationId,
+          isDeletingAnnotation: true,
+        },
+      ]);
   });
 };
 
@@ -304,12 +288,15 @@ export const emitReplyDeleted = async (replyId) => {
   );
 
   userIds.forEach((userId) => {
-    socketio.getIO().to("user:"+userId).emit(userId, [
-      {
-        replyId: replyId,
-        isDeletingReply: true,
-      },
-    ]);
+    socketio
+      .getIO()
+      .to("user:" + userId)
+      .emit(userId, [
+        {
+          replyId: replyId,
+          isDeletingReply: true,
+        },
+      ]);
   });
 };
 
@@ -318,18 +305,20 @@ export const emitMaterialDeleted = async (materialId) => {
     materialId: materialId,
   });
 
-  //console.log("userNotification.userId", userNotification.userId)
   const userIds = userNotifications.map(
     (userNotification) => userNotification.userId
   );
-  console.log("userIds", userIds)
+
   userIds.forEach((userId) => {
-    socketio.getIO().to("user:"+userId).emit(userId, [
-      {
-        materialId: materialId,
-        isDeletingMaterial: true,
-      },
-    ]);
+    socketio
+      .getIO()
+      .to("user:" + userId)
+      .emit(userId, [
+        {
+          materialId: materialId,
+          isDeletingMaterial: true,
+        },
+      ]);
   });
 };
 
@@ -343,12 +332,15 @@ export const emitChannelDeleted = async (channelId) => {
   );
 
   userIds.forEach((userId) => {
-    socketio.getIO().to("user:"+userId).emit(userId, [
-      {
-        channelId: channelId,
-        isDeletingChannel: true,
-      },
-    ]);
+    socketio
+      .getIO()
+      .to("user:" + userId)
+      .emit(userId, [
+        {
+          channelId: channelId,
+          isDeletingChannel: true,
+        },
+      ]);
   });
 };
 
@@ -362,12 +354,15 @@ export const emitTopicDeleted = async (topicId) => {
   );
 
   userIds.forEach((userId) => {
-    socketio.getIO().to("user:"+userId).emit(userId, [
-      {
-        topicId: topicId,
-        isDeletingTopic: true,
-      },
-    ]);
+    socketio
+      .getIO()
+      .to("user:" + userId)
+      .emit(userId, [
+        {
+          topicId: topicId,
+          isDeletingTopic: true,
+        },
+      ]);
   });
 };
 
