@@ -37,14 +37,6 @@ module.exports = {
           console.log("user joined course", room)
           socket.join(room);
         }
-        // if (room.startsWith("user:")) {
-        //   console.log("user joined room", room)
-        //   socket.join(room);
-        // }
-      });
-      socket.on("joinUser", (room) => {
-        // Only allow joining rooms that start with "material:"
-       
         if (room.startsWith("user:")) {
           console.log("user joined room", room)
           socket.join(room);
