@@ -65,4 +65,4 @@ COPY . .
 
 ENV OMP_NUM_THREADS 1
 EXPOSE $PORT
-CMD [ "bin/worker-with-log" ]
+CMD [ "bin/worker" ]
