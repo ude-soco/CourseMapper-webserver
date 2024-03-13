@@ -31,10 +31,12 @@ def get_word_embedder(embedding_model) -> BaseWordEmbedder:
         return embedding_model
     if "TransformerWordEmbeddings" in str(type(embedding_model)):
         return FlairTransformerWordEmbeddings(embedding_model)
+    if "ELMoEmbeddings" in str(type(embedding_model)):
+        raise Exception("ELMoEmbeddings is not supported")
     if isinstance(embedding_model, str) and embedding_model != "":
         return FlairTransformerWordEmbeddings(embedding_model)
 
-    return FlairTransformerWordEmbeddings("bert-base-uncased")
+    raise Exception("ELMoEmbeddings is not supported")
 
 
 def get_POSTagger(tagger_model) -> BasePOSTagger:
