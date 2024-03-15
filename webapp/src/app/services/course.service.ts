@@ -12,6 +12,7 @@ import * as MaterialActions from 'src/app/pages/components/materials/state/mater
 import * as CourseActions from 'src/app/pages/courses/state/course.actions';
 import { Notification } from '../models/Notification';
 import * as NotificationActions from '../pages/components/notifications/state/notifications.actions';
+import { Socket } from 'ngx-socket-io';
 
 @Injectable({
   providedIn: 'root',
@@ -31,7 +32,8 @@ export class CourseService {
     private http: HttpClient,
     private topicChannelService: TopicChannelService,
     private storageService: StorageService,
-    private store: Store<State>
+    private store: Store<State>,
+    private socket:Socket
   ) {}
 
   getSelectedCourse(): Course {
@@ -46,6 +48,9 @@ export class CourseService {
    *
    */
   selectCourse(course: Course) {
+
+    this.socket.emit("leave", "course:"+this.getSelectedCourse()._id);
+    this.socket.emit("join", "course:"+course._id);
     // if there is no selected course then no need to update the topics.
     if (this.getSelectedCourse()._id && course._id) {
       this.topicChannelService.updateTopics(course._id);

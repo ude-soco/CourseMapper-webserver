@@ -33,9 +33,25 @@ module.exports = {
         if (room.startsWith("material:")) {
           socket.join(room);
         }
+        if (room.startsWith("course:")) {
+          
+          socket.join(room);
+        }
+        if (room.startsWith("user:")) {
+         
+          socket.join(room);
+        }
       });
       socket.on("leave", (room) => {
-        socket.leave(room);
+        if (room.startsWith("material:")) {
+          socket.leave(room);
+        }
+        if (room.startsWith("course:")) {
+          socket.leave(room);
+        }
+        if (room.startsWith("user:")) {
+          socket.leave(room);
+        }
       });
     });
     return io;

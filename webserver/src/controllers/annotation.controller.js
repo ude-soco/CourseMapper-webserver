@@ -145,7 +145,7 @@ export const newAnnotation = async (req, res, next) => {
     isMentionedUsersPresent: mentionedUsers.length > 0,
     materialType: foundMaterial.type,
   };
-  socketio.getIO().emit(materialId, {
+  socketio.getIO().to("course:"+courseId).emit(materialId, {
     eventType: "annotationCreated",
     annotation: newAnnotation,
     reply: null,
@@ -240,7 +240,7 @@ export const deleteAnnotation = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: "Error deleting tag" });
   }
-  socketio.getIO().emit(foundMaterial._id, {
+  socketio.getIO().to("course:"+courseId).emit(foundMaterial._id, {
     eventType: "annotationDeleted",
     annotation: foundAnnotation,
     reply: null,
@@ -379,7 +379,7 @@ export const editAnnotation = async (req, res, next) => {
   req.locals.course = courseForGeneratingNotifications;
   req.locals.annotationId = foundAnnotation._id;
   req.locals.isFollowingAnnotation = true;
-  socketio.getIO().emit(foundAnnotation.materialId, {
+  socketio.getIO().to("course:"+courseId).emit(foundAnnotation.materialId, {
     eventType: "annotationEdited",
     annotation: foundAnnotation,
     reply: null,
@@ -470,7 +470,7 @@ export const likeAnnotation = async (req, res, next) => {
       success: "Annotation successfully unliked!",
     };
     req.locals.like = false;
-    socketio.getIO().emit(annotationId, {
+    socketio.getIO().to("course:"+courseId).emit(annotationId, {
       eventType: "annotationUnliked",
       annotation: savedAnnotation,
       reply: null,
@@ -496,7 +496,7 @@ export const likeAnnotation = async (req, res, next) => {
     };
 
     req.locals.like = true;
-    socketio.getIO().emit(annotationId, {
+    socketio.getIO().to("course:"+courseId).emit(annotationId, {
       eventType: "annotationLiked",
       annotation: savedAnnotation,
       reply: null,
@@ -590,7 +590,7 @@ export const dislikeAnnotation = async (req, res, next) => {
     };
     req.locals.dislike = false;
 
-    socketio.getIO().emit(annotationId, {
+    socketio.getIO().to("course:"+courseId).emit(annotationId, {
       eventType: "annotationUndisliked",
       annotation: savedAnnotation,
       reply: null,
@@ -617,7 +617,7 @@ export const dislikeAnnotation = async (req, res, next) => {
       success: "Annotation successfully disliked!",
     };
     req.locals.dislike = true;
-    socketio.getIO().emit(annotationId, {
+    socketio.getIO().to("course:"+courseId).emit(annotationId, {
       eventType: "annotationDisliked",
       annotation: savedAnnotation,
       reply: null,
