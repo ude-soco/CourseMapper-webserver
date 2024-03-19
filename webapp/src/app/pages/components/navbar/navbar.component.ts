@@ -17,7 +17,7 @@ import { UserServiceService } from 'src/app/services/user-service.service';
 import { getLoggedInUser } from 'src/app/state/app.reducer';
 import { State } from 'src/app/state/app.state';
 import { getInitials } from 'src/app/_helpers/format';
-
+import { getCurrentCourse } from '../../courses/state/course.reducer';
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
@@ -49,6 +49,7 @@ export class NavbarComponent implements OnInit {
     this.store
       .select(getLoggedInUser)
       .subscribe((user) => (this.loggedInUser = user));
+
   }
 
   ngOnInit(): void {
@@ -92,7 +93,14 @@ export class NavbarComponent implements OnInit {
   }
 
   handleLogout(): void {
-    this.socket.emit('leave', 'user:' + this.loggedInUser.id);
+    this.store.select(getCurrentCourse).subscribe((course) => {
+      if (course) {
+        this.socket.emit("leave", "course:"+course._id);
+      }
+    });
+
+    this.socket.emit("leave", "user:"+this.loggedInUser.id);
+
     if (window.sessionStorage.length == 0) {
       this.storageService.clean();
 
