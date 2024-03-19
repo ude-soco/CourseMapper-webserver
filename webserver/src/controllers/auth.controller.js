@@ -173,7 +173,7 @@ try{
    
     mailTransporter.sendMail(mailDetails, async (err, data) => {
       if (err) {
-        return res.status(500).send({ error: "something went wrong" });
+        return res.status(500).send({ error: "something went wrong: " + err.message });
         //return next(CreateError(500, "something went wrong"));
       } else {
    
