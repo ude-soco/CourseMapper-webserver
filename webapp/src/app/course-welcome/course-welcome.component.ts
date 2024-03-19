@@ -166,7 +166,6 @@ export class CourseWelcomeComponent implements OnInit {
         );
         this.store.dispatch(CourseAction.setCourseId({ courseId: course._id }));
         this.socket.emit("leave", "course:"+course._id);
-        this.socket.emit("join", "course:"+"");
         this.store.dispatch(
           NotificationActions.isDeletingCourse({ courseId: course._id })
         );
