@@ -4,13 +4,15 @@ import { Store } from '@ngrx/store';
 import { Socket } from 'ngx-socket-io';
 
 import { MenuItem, PrimeNGConfig, MessageService } from 'primeng/api';
+import { Course } from 'src/app/models/Course';
 import { User } from 'src/app/models/User';
+import { CourseService } from 'src/app/services/course.service';
 import { StorageService } from 'src/app/services/storage.service';
 import { UserServiceService } from 'src/app/services/user-service.service';
 import { getLoggedInUser } from 'src/app/state/app.reducer';
 import { State } from 'src/app/state/app.state';
 import { getInitials } from 'src/app/_helpers/format';
-
+import { getCurrentCourse } from '../../courses/state/course.reducer';
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
@@ -24,6 +26,7 @@ export class NavbarComponent implements OnInit {
   username?: string;
   loggedInUser: User;
   userOptions: MenuItem[];
+  course:any
 
   public LandingPage = '/landingPage';
   protected loggedInUser$;
@@ -35,11 +38,13 @@ export class NavbarComponent implements OnInit {
     private store: Store<State>,
     private messageService: MessageService,
     private socket: Socket,
+    private courseService: CourseService,
   ) {
     this.isLoggedIn = storageService.isLoggedIn();
     this.store
       .select(getLoggedInUser)
       .subscribe((user) => (this.loggedInUser = user));
+
   }
 
   ngOnInit(): void {
@@ -75,7 +80,23 @@ export class NavbarComponent implements OnInit {
   }
 
   handleLogout(): void {
+    this.store.select(getCurrentCourse).subscribe((course) => {
+      this.course = course;
+      console.log(this.course)
+    });
+
+    //  this.course= this.courseService.getSelectedCourse()
+
+    // console.log(this.course)
     this.socket.emit("leave", "user:"+this.loggedInUser.id);
+try{
+  this.socket.emit("leave", "course:"+this.course._id);
+}
+catch{
+  console.log("")
+
+}
+   // 
     if (window.sessionStorage.length == 0) {
       this.storageService.clean();
       

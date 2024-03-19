@@ -24,6 +24,7 @@ import * as NotificationActions from '../pages/components/notifications/state/no
 import { IndicatorService } from '../services/indicator.service';
 import { Indicator } from '../models/Indicator';
 import { ShowInfoError } from '../_helpers/show-info-error';
+import { Socket } from 'ngx-socket-io';
 @Component({
   selector: 'app-course-welcome',
   templateUrl: './course-welcome.component.html',
@@ -55,7 +56,8 @@ export class CourseWelcomeComponent implements OnInit {
     private indicatorService: IndicatorService,
     private messageService: MessageService,
     private topicChannelService: TopicChannelService,
-    private userService: UserServiceService
+    private userService: UserServiceService,
+    private socket: Socket,
   ) {
     this.courseSelected$ = store.select(getCourseSelected);
     this.channelSelected$ = this.store.select(getChannelSelected);
@@ -163,6 +165,8 @@ export class CourseWelcomeComponent implements OnInit {
           CourseAction.setCurrentCourse({ selcetedCourse: course })
         );
         this.store.dispatch(CourseAction.setCourseId({ courseId: course._id }));
+        this.socket.emit("leave", "course:"+course._id);
+        this.socket.emit("join", "course:"+"");
         this.store.dispatch(
           NotificationActions.isDeletingCourse({ courseId: course._id })
         );
