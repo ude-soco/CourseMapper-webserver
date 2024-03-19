@@ -1,9 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnInit,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Socket } from 'ngx-socket-io';
 
-import { MenuItem, MessageService } from 'primeng/api';
+import { MenuItem, PrimeNGConfig, MessageService } from 'primeng/api';
+import { Menu } from 'primeng/menu';
 import { User } from 'src/app/models/User';
 import { StorageService } from 'src/app/services/storage.service';
 import { UserServiceService } from 'src/app/services/user-service.service';
@@ -17,6 +24,7 @@ import { getCurrentCourse } from '../../courses/state/course.reducer';
   styleUrls: ['./navbar.component.css'],
 })
 export class NavbarComponent implements OnInit {
+  @ViewChild('menu') menu!: Menu;
   onLogout: any;
   isLoggedIn: boolean = false;
   showAdminBoard = false;
@@ -34,9 +42,10 @@ export class NavbarComponent implements OnInit {
     private router: Router,
     private store: Store<State>,
     private messageService: MessageService,
-    private socket: Socket,
+    private socket: Socket
   ) {
     this.isLoggedIn = storageService.isLoggedIn();
+
     this.store
       .select(getLoggedInUser)
       .subscribe((user) => (this.loggedInUser = user));
@@ -46,9 +55,10 @@ export class NavbarComponent implements OnInit {
   ngOnInit(): void {
     this.loggedInUser = this.storageService.getUser();
     this.loggedInUser$ = this.store.select(getLoggedInUser);
+
     this.userOptions = [
       {
-        label: `ID: ${this.loggedInUser.id}`,
+        label: `ID: ${this.loggedInUser.id} `,
         icon: 'pi pi-copy',
         title: 'Copy ID to clipboard',
         command: () => this.copyUserId(this.loggedInUser.id),
@@ -65,6 +75,13 @@ export class NavbarComponent implements OnInit {
         command: () => this.handleLogout(),
       },
     ];
+  }
+  toggleMenu(event: MouseEvent) {
+    if (this.menu) {
+      this.loggedInUser = this.storageService.getUser();
+      this.ngOnInit();
+      this.menu.toggle(event);
+    }
   }
 
   handleLogin() {
@@ -104,6 +121,7 @@ export class NavbarComponent implements OnInit {
   privacy() {
     this.router.navigate(['/privacy']);
   }
+
   getIntitials = getInitials;
 
   copyUserId(userId: string) {

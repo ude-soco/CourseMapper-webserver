@@ -43,9 +43,10 @@
             color: '#ffffff',
             cursor: 'pointer'
           }"
-          (click)="menu.toggle($event)"
+          (click)="toggleMenu($event)"
+          
         ></p-avatar>
-        <p-menu
+        <p-menu 
           #menu
           id="config_menu"
           [popup]="true"
@@ -53,6 +54,7 @@
           styleClass="course-context-menu"
           [model]="userOptions"
           pTooltip="userOptions"
+
         />
       </span>
     </div>

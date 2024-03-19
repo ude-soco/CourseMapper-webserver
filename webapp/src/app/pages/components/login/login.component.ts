@@ -56,10 +56,7 @@ export class LoginComponent implements OnInit {
       // the response from backend
       next: async (data) => {
         this.storageService.saveUser(data);
-        console.log(data)
 
-        const currUser = data as User
-        console.log(currUser.jwt)
 
         this.isLoginFailed = false;
         this.isLoggedIn = true;
