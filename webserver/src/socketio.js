@@ -1,6 +1,10 @@
 const socketIO = require("socket.io");
 import dotenv from "dotenv";
+import { verify } from "jsonwebtoken";
+//import { authJwt } from "./middlewares";
+//const { authJwt } = require("../src/middlewares");
 dotenv.config();
+const config = require("../src/config/auth.config");
 
 const env = process.env.NODE_ENV || "production";
 let io;
@@ -28,17 +32,24 @@ module.exports = {
   init: (server) => {
     io = socketIO(server, socketIOConfig);
     io.on("connection", (socket) => {
+      const session = socket.handshake.session;
+      console.log("from socket.io session", session);
+
+      socket.on("JWT", (JWT) => {
+        verify(JWT, config.secret, async (err, data) => {
+          if (err) {
+            console.log("err", err);
+          } else {
+            socket.join("user:" + data.id);
+          }
+        });
+      });
       socket.on("join", (room) => {
         // Only allow joining rooms that start with "material:"
         if (room.startsWith("material:")) {
           socket.join(room);
         }
         if (room.startsWith("course:")) {
-          
-          socket.join(room);
-        }
-        if (room.startsWith("user:")) {
-         
           socket.join(room);
         }
       });

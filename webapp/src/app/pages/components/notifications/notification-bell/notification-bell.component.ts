@@ -31,8 +31,10 @@ export class NotificationBellComponent {
   //TODO Move the loadNotifications dispatch action and the initialiseSocketConnection method to the app.component.ts or somewhere else.
   ngOnInit(): void { 
       const user = this.storageService.getUser();
-    this.socket.emit("join", "user:"+user.id);
-    console.log("bill triggered")
+
+    //this.socket.emit("join", "user:"+user.id);
+    this.socket.emit("JWT", user.token);
+    console.log("bill triggered", user.token)
     this.showNotificationsPanel$ = this.store.select(getShowNotificationsPanel);
     this.showNotificationsPanel$.subscribe((showNotificationsPanel) => {
       if (showNotificationsPanel === false && this.notificationPanel) {

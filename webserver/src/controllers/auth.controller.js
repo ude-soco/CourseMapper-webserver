@@ -77,6 +77,7 @@ export const signin = async (req, res, next) => {
       expiresIn: 86400, // 24 hours
     });
     req.session.token = token;
+    //console.log(req.session.token ,"   new  " ,token)
     const userName = `${user.firstname} ${user.lastname}`;
     req.locals = {
       user: user,
@@ -87,6 +88,7 @@ export const signin = async (req, res, next) => {
         role: user.role,
         email: user.email,
         courses: user.courses,
+        token:token
       },
     };
     return next();
