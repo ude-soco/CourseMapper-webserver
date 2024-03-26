@@ -1,0 +1,23 @@
+.carousel {
+  display: flex;
+  align-items: center;
+}
+
+.cards-container {
+  display: flex;
+  flex-wrap: wrap;
+
+}
+
+.cards-container > div {
+  flex: 0 0 calc(20% - 20px); /* Adjust the width of the cards */
+  margin: 10px; /* Adjust the margin between cards */
+}
+
+.button{
+  font-size: 30px;
+}
+
+.carousel-card {
+  margin-right: 10px; /* Adjust as needed */
+}

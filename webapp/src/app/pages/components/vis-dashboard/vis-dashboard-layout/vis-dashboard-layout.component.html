@@ -1,0 +1,15 @@
+<!-- layout.component.html -->
+<header><app-vis-header></app-vis-header></header>
+<main>
+  <div class="sidebar" *ngIf="loggedInUser">
+    <app-sidebar></app-sidebar>
+  </div>
+  <div class="content">
+    <router-outlet>
+
+    </router-outlet>
+
+    <!-- This will render the content of each page -->
+  </div>
+</main>
+<footer>Footer</footer>

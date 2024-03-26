@@ -1,0 +1,45 @@
+.title{
+  font-family: Roboto;
+  font-size: 34px;
+  font-weight: bold;
+}
+
+.sub-title{
+  font-family: Roboto;
+  font-size: 24px;
+  font-weight: bold;
+}
+.cards-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+app-course-category {
+  flex: 0 0 calc(20% - 20px); /* Adjust the width of the cards to fit 5 cards per row with margin */
+  margin: 10px; /* Adjust the margin between cards */
+}
+
+.options{
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.most-popular{
+  margin-top: 3em;
+}
+
+.highest-rated{
+  margin-top: 3em;
+  margin-bottom: 20em;
+
+}
+
+.categories{
+  margin-top: 3em;
+}
+
+.by-options{
+  margin-top: 1em;
+
+}

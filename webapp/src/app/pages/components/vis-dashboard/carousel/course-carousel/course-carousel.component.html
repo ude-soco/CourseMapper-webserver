@@ -1,0 +1,36 @@
+
+<!-- Handle platform selection -->
+<div>
+  <div *ngIf="type === 'MOST_POPULAR' || type === 'HIGHEST_RATED'">
+    <app-platform-tabs [platforms]="type === 'MOST_POPULAR' ? mostPopularPlatforms : highestRatedPlatforms" (platformSelected)="onPlatformSelected($event)"></app-platform-tabs>
+  </div>
+  <hr>
+</div>
+
+
+<div *ngIf="type === 'MOST_POPULAR'" >
+<div class="carousel">
+  <button (click)="scrollBackward()"><div class="button"><i class='bx bxs-skip-previous-circle' ></i></div></button>
+  <div class="cards-container">
+    <app-course *ngFor="let course of popularCourses.slice(currentPosition, currentPosition + cardsPerPage)"
+                (click)="onCourseClick(course.CourseId)"
+                     [courseName]="course.CourseName" [teacherName]="course.TeacherName" class="carousel-card">
+    </app-course>
+  </div>
+  <button (click)="scrollForward()"><div class="button"><i class='bx bxs-skip-next-circle'></i></div></button>
+  </div>
+</div>
+
+
+<div *ngIf="type === 'HIGHEST_RATED'" >
+  <div class="carousel">
+    <button (click)="scrollBackward()"><div class="button"><i class='bx bxs-skip-previous-circle' ></i></div></button>
+    <div class="cards-container">
+      <app-course *ngFor="let course of ratedCourses.slice(currentPosition, currentPosition + cardsPerPage)"
+                  (click)="onCourseClick(course.CourseId)"
+                  [courseName]="course.CourseName" [teacherName]="course.TeacherName" class="carousel-card"></app-course>
+    </div>
+    <button (click)="scrollForward()"><div class="button"><i class='bx bxs-skip-next-circle'></i></div></button>
+  </div>
+</div>
+

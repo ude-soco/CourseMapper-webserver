@@ -68,11 +68,19 @@ db.mongoose
   });
 
 // Create connection to Neo4j
-const neo4j = require("./graph/neo4j");
+/**const neo4j = require("./graph/neo4j");
 neo4j.connect(
   process.env.NEO4J_URI,
   process.env.NEO4J_USER,
   process.env.NEO4J_PASSWORD
+);**/
+
+// Create connection to Neo4j VisDashboard
+const neo4jVisDash = require("./vis-dashboard/services/vis-dashboard.service");
+neo4jVisDash.connect(
+    process.env.NEO4J_URI,
+    process.env.NEO4J_USER,
+    process.env.NEO4J_PASSWORD
 );
 
 // Create connection to Redis
@@ -116,6 +124,7 @@ require("./routes/test.routes")(app);
 require("./routes/debug.routes")(app);
 require("./routes/notifications.routes")(app);
 require("./routes/knowledgeGraph.routes")(app);
+require("./routes/visdashboard.routes")(app);
 
 // Listen on provided port, on all network interfaces
 server.listen(port);

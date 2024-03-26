@@ -1,0 +1,18 @@
+.custom-card {
+  width: 300px; /* Adjust the width of the card */
+  height: 150px; /* Adjust the height of the card */
+  background-color: #f0f0f0; /* Set the background color of the card */
+  border: 1px solid #ccc; /* Add a border to the card */
+  border-radius: 8px; /* Add border radius to make it rounded */
+  display: flex; /* Use flexbox for centering */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  margin: 5px; /* Adjust margin between cards */
+}
+
+.card-text {
+  text-align: center; /* Center the text */
+  color: #0277BD;
+  font-size: 24px;
+}
+

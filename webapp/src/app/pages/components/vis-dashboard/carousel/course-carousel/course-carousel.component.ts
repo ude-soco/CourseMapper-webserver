@@ -1,0 +1,103 @@
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {VisDashboardService} from "../../../../../services/vis-dashboard/vis-dashboard.service";
+import {Router} from "@angular/router";
+
+export enum CourseCarouselType{
+  MOST_POPULAR_COURSES="MOST_POPULAR",
+  HIGHEST_RATED_COURSES="HIGHEST_RATED"
+}
+
+interface CoursesByPopularity{
+  CourseId: string;
+  TeacherName:string;
+  CourseName:string;
+  NumberOfParticipants: number
+}
+
+interface CoursesByRating{
+  CourseId: string;
+  TeacherName:string;
+  CourseName:string;
+  Rating: number
+}
+
+@Component({
+  selector: 'app-course-carousel',
+  templateUrl: './course-carousel.component.html',
+  styleUrls: ['./course-carousel.component.css']
+})
+export class CourseCarouselComponent implements OnInit{
+
+  currentPosition = 0;
+  cardsPerPage = 5;
+  @Input() type: CourseCarouselType;
+
+  @Output() courseClicked = new EventEmitter<string>()
+
+
+  onCourseClick(courseId:string){
+    this.courseClicked.emit(courseId)
+    this.router.navigate(['course-detail', courseId])
+  }
+
+  mostPopularPlatforms: string[] = ['Udemy', 'Future Learn', 'Imoox'];
+  highestRatedPlatforms: string[] = ['Udemy', 'Future Learn', 'Coursera'];
+
+  popularCourses:CoursesByPopularity[]=[]
+  ratedCourses: CoursesByRating[]=[]
+  loadingPopularCourses: boolean = false;
+  loadingRatedCourses: boolean = false;
+
+
+  constructor(private visDashboardService:VisDashboardService,
+              private router: Router) {
+  }
+
+  ngOnInit() {
+    this.loadCourses();
+  }
+
+
+
+
+   loadCourses(): void {
+    this.visDashboardService.getCoursesByPopularity("udemy")
+      .then((courses) => {
+        this.popularCourses  = courses
+      })
+      .catch((error) => {
+        console.error('Error fetching courses:', error);
+      });
+
+    this.visDashboardService.getCoursesByRating("udemy")
+      .then((courses) => {
+        this.ratedCourses  = courses
+      })
+      .catch((error) => {
+        console.error('Error fetching courses:', error);
+      });
+  }
+
+  async onPlatformSelected(platform: string) {
+    this.popularCourses = await this.visDashboardService
+      .getCoursesByPopularity(platform.toLowerCase())
+
+    this.ratedCourses = await this.visDashboardService
+      .getCoursesByRating(platform.toLowerCase())
+
+  }
+
+
+  scrollForward() {
+    const nextPosition = this.currentPosition + this.cardsPerPage;
+    if (nextPosition < this.popularCourses.length) {
+      this.currentPosition = nextPosition;
+    }
+  }
+  scrollBackward() {
+    const nextPosition = this.currentPosition - this.cardsPerPage;
+    if (nextPosition >= 0) {
+      this.currentPosition = nextPosition;
+    }
+  }
+}

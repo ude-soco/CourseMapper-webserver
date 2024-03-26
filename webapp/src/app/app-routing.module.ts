@@ -25,6 +25,15 @@ import { ResetPasswordRequestComponent } from './pages/components/forget-passwor
 import { PersonalDashboardComponent } from './pages/components/Dashboards/personal-dashboard/personal-dashboard.component';
 import { TopicDashboardComponent } from './pages/components/Dashboards/topic-dashboard/topic-dashboard.component';
 import { CourseDashboardComponent } from './pages/components/Dashboards/course-dashboard/course-dashboard.component';
+import {VisLandingPageComponent} from "./pages/vis-dashboard/vis-landing-page/vis-landing-page.component";
+import {
+  VisDashboardLayoutComponent
+} from "./pages/components/vis-dashboard/vis-dashboard-layout/vis-dashboard-layout.component";
+import {VisExplorePageComponent} from "./pages/vis-dashboard/vis-explore-page/vis-explore-page.component";
+import {VisComparePageComponent} from "./pages/vis-dashboard/vis-compare-page/vis-compare-page.component";
+import {FindTopicPageComponent} from "./pages/vis-dashboard/find-topic-page/find-topic-page.component";
+import {CourseDetailsPageComponent} from "./pages/vis-dashboard/course-details-page/course-details-page.component";
+
 
 const routes: Routes = [
   { path: '', redirectTo: 'landingPage', pathMatch: 'full' },
@@ -120,6 +129,18 @@ const routes: Routes = [
     component: SettingsComponent,
     canActivate: [AuthGuardService],
   },
+  {
+    path: '',
+    component: VisDashboardLayoutComponent,
+    children:[{path:'vis-dashboard-landing-page',component: VisLandingPageComponent },
+      {path:'explore-moocs',component: VisExplorePageComponent },
+      {path:'compare-moocs',component: VisComparePageComponent },
+      {path:'find-moocs-by-topic',component: FindTopicPageComponent },
+      {path:'course-detail/:id',component: CourseDetailsPageComponent },
+
+    ],
+  },
+
 ];
 
 @NgModule({

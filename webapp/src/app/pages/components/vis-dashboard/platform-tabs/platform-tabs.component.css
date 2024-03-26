@@ -1,0 +1,17 @@
+.platform-tabs{
+display: flex;
+  color: #0277BD;
+
+}
+
+.platform-tabs div{
+margin-right: 10px;
+}
+
+
+.description{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 2em;
+}

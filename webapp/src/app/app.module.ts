@@ -100,6 +100,18 @@ import { CourseDashboardComponent } from './pages/components/Dashboards/course-d
 import { ChannelDashboardComponent } from './pages/components/Dashboards/channel-dashboard/channel-dashboard.component';
 import { MaterialDashboardComponent } from './pages/components/Dashboards/material-dashboard/material-dashboard.component';
 import { BackButtonComponent } from './pages/components/back-button/back-button.component';
+import { VisLandingPageComponent } from './pages/vis-dashboard/vis-landing-page/vis-landing-page.component';
+import { VisDashboardLayoutComponent } from './pages/components/vis-dashboard/vis-dashboard-layout/vis-dashboard-layout.component';
+import { VisHeaderComponent } from './pages/components/vis-dashboard/vis-header/vis-header.component';
+import { CourseCategoryComponent } from './pages/components/vis-dashboard/cards/course-category/course-category.component';
+import { CourseCarouselComponent } from './pages/components/vis-dashboard/carousel/course-carousel/course-carousel.component';
+import { CourseComponent } from './pages/components/vis-dashboard/cards/course/course.component';
+import { VisOptionsComponent } from './pages/components/vis-dashboard/cards/vis-options/vis-options.component';
+import { VisExplorePageComponent } from './pages/vis-dashboard/vis-explore-page/vis-explore-page.component';
+import { VisComparePageComponent } from './pages/vis-dashboard/vis-compare-page/vis-compare-page.component';
+import { FindTopicPageComponent } from './pages/vis-dashboard/find-topic-page/find-topic-page.component';
+import { CourseDetailsPageComponent } from './pages/vis-dashboard/course-details-page/course-details-page.component';
+import { PlatformTabsComponent } from './pages/components/vis-dashboard/platform-tabs/platform-tabs.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -139,7 +151,19 @@ import { BackButtonComponent } from './pages/components/back-button/back-button.
     ChannelDashboardComponent,
    PopulateDashboardComponent,
    MaterialDashboardComponent,
-   BackButtonComponent
+   BackButtonComponent,
+   VisLandingPageComponent,
+   VisDashboardLayoutComponent,
+   VisHeaderComponent,
+   CourseCategoryComponent,
+   CourseCarouselComponent,
+   CourseComponent,
+   VisOptionsComponent,
+   VisExplorePageComponent,
+   VisComparePageComponent,
+   FindTopicPageComponent,
+   CourseDetailsPageComponent,
+   PlatformTabsComponent
   ],
   imports: [
     MentionModule,

@@ -44,9 +44,19 @@
         <i class="bx bx-search bx-md bx-tada-hover"></i>
         <span class="sidebar-tooltip group-hover:scale-100">
           Search for courses
-        </span></a
-      >
+        </span></a>
     </div>
+    <hr class="sidebar-hr" />
+
+    <div class="sidebar-icon group">
+      <a [routerLink]="[VisDashLandingPage]" >
+        <i class="bx bx-bar-chart-square bx-md bx-tada-hover"></i>
+        <span class="sidebar-tooltip group-hover:scale-100">
+          MOOCENTRAL Visualization Dashboard
+        </span></a>
+    </div>
+
+
   </div>
   <app-add-course
     [displayAddCourseDialogue]="displayAddCourseDialogue"
