@@ -87,6 +87,7 @@ export const signin = async (req, res, next) => {
         role: user.role,
         email: user.email,
         courses: user.courses,
+        token:token
       },
     };
     return next();
