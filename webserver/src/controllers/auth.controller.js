@@ -123,7 +123,7 @@ export const sendEmail = async (req, res, next) => {
 
 try{ 
   let user = await User.findOne({
-    email: { $regex: "^" + email + "$", $options: "i" },
+    email: email,
   });
 
   if (!user) {
@@ -199,7 +199,7 @@ export const resetPassword = async (req, res, next) => {
     }
     const dataResponse =data;
     let user = await User.findOne({
-      email: { $regex: "^" + dataResponse.email + "$", $options: "i" },
+      email: dataResponse.email,
     });
     const enryptedPassword= hashSync(Passowrd, 8)
     user.password=enryptedPassword
