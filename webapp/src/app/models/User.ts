@@ -6,6 +6,7 @@ export interface User{
     username: string,
     role: string,
     email: string,
+    mbox_sha1sum: string,
     courses: Course[],
     jwt:string,
 }

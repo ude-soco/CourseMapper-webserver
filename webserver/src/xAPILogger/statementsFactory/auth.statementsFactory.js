@@ -1,14 +1,19 @@
 import { v4 as uuidv4 } from "uuid";
 
+const platform = "CourseMapper";
+const language = "en-US";
+
 export const getLoginStatement = (user, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -17,7 +22,7 @@ export const getLoginStatement = (user, origin) => {
     verb: {
       id: "https://brindlewaye.com/xAPITerms/verbs/loggedin/",
       display: {
-        "en-US": "logged in",
+        [language]: "logged in",
       },
     },
     object: {
@@ -26,29 +31,31 @@ export const getLoginStatement = (user, origin) => {
       definition: {
         type: "http://id.tincanapi.com/activitytype/lms",
         name: {
-          "en-US": "CourseMapper",
+          [language]: platform,
         },
         description: {
-            "en-US": "Course Annotation and Analytics platform"
-        }
+          [language]: "Course Annotation and Analytics platform",
+        },
       },
     },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };
 
 export const getLogoutStatement = (user, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -57,7 +64,7 @@ export const getLogoutStatement = (user, origin) => {
     verb: {
       id: "https://brindlewaye.com/xAPITerms/verbs/loggedout/",
       display: {
-        "en-US": "logged out",
+        [language]: "logged out",
       },
     },
     object: {
@@ -66,29 +73,31 @@ export const getLogoutStatement = (user, origin) => {
       definition: {
         type: "http://id.tincanapi.com/activitytype/lms",
         name: {
-          "en-US": "CourseMapper",
+          [language]: platform,
         },
         description: {
-            "en-US": "Course Annotation and Analytics platform"
-        }
+          [language]: "Course Annotation and Analytics platform",
+        },
       },
     },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };
 
 export const getSignupStatement = (user, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -97,7 +106,7 @@ export const getSignupStatement = (user, origin) => {
     verb: {
       id: "http://adlnet.gov/expapi/verbs/registered",
       display: {
-        "en-US": "registered",
+        [language]: "registered",
       },
     },
     object: {
@@ -106,16 +115,16 @@ export const getSignupStatement = (user, origin) => {
       definition: {
         type: "http://id.tincanapi.com/activitytype/lms",
         name: {
-          "en-US": "CourseMapper",
+          [language]: platform,
         },
         description: {
-            "en-US": "Course Annotation and Analytics platform"
-        }
+          [language]: "Course Annotation and Analytics platform",
+        },
       },
     },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };

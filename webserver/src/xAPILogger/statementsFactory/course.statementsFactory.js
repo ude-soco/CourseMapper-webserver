@@ -1,13 +1,19 @@
 import { v4 as uuidv4 } from "uuid";
+
+const platform = "CourseMapper";
+const language = "en-US";
+
 export const getCourseCreationStatement = (user, course, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -16,7 +22,7 @@ export const getCourseCreationStatement = (user, course, origin) => {
     verb: {
       id: "http://activitystrea.ms/schema/1.0/create",
       display: {
-        "en-US": "created",
+        [language]: "created",
       },
     },
     object: {
@@ -25,10 +31,10 @@ export const getCourseCreationStatement = (user, course, origin) => {
       definition: {
         type: "http://adlnet.gov/expapi/activities/course",
         name: {
-          "en-US": course.name,
+          [language]: course.name,
         },
         description: {
-          "en-US": course.description,
+          [language]: course.description,
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/course": {
@@ -41,21 +47,23 @@ export const getCourseCreationStatement = (user, course, origin) => {
       },
     },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };
 
 export const getCourseDeletionStatement = (user, course, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -64,7 +72,7 @@ export const getCourseDeletionStatement = (user, course, origin) => {
     verb: {
       id: "http://activitystrea.ms/schema/1.0/delete",
       display: {
-        "en-US": "deleted",
+        [language]: "deleted",
       },
     },
     object: {
@@ -73,10 +81,10 @@ export const getCourseDeletionStatement = (user, course, origin) => {
       definition: {
         type: "http://adlnet.gov/expapi/activities/course",
         name: {
-          "en-US": course.name,
+          [language]: course.name,
         },
         description: {
-          "en-US": course.description,
+          [language]: course.description,
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/course": {
@@ -89,21 +97,23 @@ export const getCourseDeletionStatement = (user, course, origin) => {
       },
     },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };
 
 export const getCourseAccessStatement = (user, course, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -112,7 +122,7 @@ export const getCourseAccessStatement = (user, course, origin) => {
     verb: {
       id: "http://activitystrea.ms/schema/1.0/access",
       display: {
-        "en-US": "accessed",
+        [language]: "accessed",
       },
     },
     object: {
@@ -121,10 +131,10 @@ export const getCourseAccessStatement = (user, course, origin) => {
       definition: {
         type: "http://adlnet.gov/expapi/activities/course",
         name: {
-          "en-US": course.name,
+          [language]: course.name,
         },
         description: {
-          "en-US": course.description,
+          [language]: course.description,
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/course": {
@@ -137,21 +147,23 @@ export const getCourseAccessStatement = (user, course, origin) => {
       },
     },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };
 
 export const getCourseEnrollmentStatement = (user, course, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -160,7 +172,7 @@ export const getCourseEnrollmentStatement = (user, course, origin) => {
     verb: {
       id: "http://www.tincanapi.co.uk/verbs/enrolled_onto_learning_plan",
       display: {
-        "en-US": "enrolled",
+        [language]: "enrolled",
       },
     },
     object: {
@@ -169,10 +181,10 @@ export const getCourseEnrollmentStatement = (user, course, origin) => {
       definition: {
         type: "http://adlnet.gov/expapi/activities/course",
         name: {
-          "en-US": course.name,
+          [language]: course.name,
         },
         description: {
-          "en-US": course.description,
+          [language]: course.description,
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/course": {
@@ -185,21 +197,23 @@ export const getCourseEnrollmentStatement = (user, course, origin) => {
       },
     },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };
 
 export const getCourseWithdrawStatement = (user, course, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -208,7 +222,7 @@ export const getCourseWithdrawStatement = (user, course, origin) => {
     verb: {
       id: "http://activitystrea.ms/schema/1.0/leave",
       display: {
-        "en-US": "left",
+        [language]: "left",
       },
     },
     object: {
@@ -217,10 +231,10 @@ export const getCourseWithdrawStatement = (user, course, origin) => {
       definition: {
         type: "http://adlnet.gov/expapi/activities/course",
         name: {
-          "en-US": course.name,
+          [language]: course.name,
         },
         description: {
-          "en-US": course.description,
+          [language]: course.description,
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/course": {
@@ -233,21 +247,23 @@ export const getCourseWithdrawStatement = (user, course, origin) => {
       },
     },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };
 
 export const getCourseEditStatement = (user, newCourse, oldCourse, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -256,7 +272,7 @@ export const getCourseEditStatement = (user, newCourse, oldCourse, origin) => {
     verb: {
       id: "http://curatr3.com/define/verb/edited",
       display: {
-        "en-US": "edited",
+        [language]: "edited",
       },
     },
     object: {
@@ -265,10 +281,10 @@ export const getCourseEditStatement = (user, newCourse, oldCourse, origin) => {
       definition: {
         type: "http://adlnet.gov/expapi/activities/course",
         name: {
-          "en-US": oldCourse.name,
+          [language]: oldCourse.name,
         },
         description: {
-          "en-US": oldCourse.description,
+          [language]: oldCourse.description,
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/course": {
@@ -290,8 +306,8 @@ export const getCourseEditStatement = (user, newCourse, oldCourse, origin) => {
       },
     },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };
