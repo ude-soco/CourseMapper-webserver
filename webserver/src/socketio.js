@@ -2,7 +2,7 @@ const socketIO = require("socket.io");
 import dotenv from "dotenv";
 import { verify } from "jsonwebtoken";
 dotenv.config();
-const config = require("../src/config/auth.config");
+const config = require("./config/auth.config");
 
 const env = process.env.NODE_ENV || "production";
 let io;
