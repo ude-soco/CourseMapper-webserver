@@ -92,7 +92,26 @@ class ResourceRecommenderService:
             user, non_understood, understood, new_concepts, mid
         )
     
-    # cro_store_detail_rec
+    # cro logic
+    def cro_store_rating(self, rating: dict):
+        pass
+
+    def cro_sort_result(self):
+        pass
+
+    def cro_store_logic(
+            self, 
+            cro_form: dict, 
+            top_n=5,
+            user_embedding=False,
+            is_concept_cids=False,
+            is_concept_names=False
+        ):
+        """
+            cro_form: user_id: str, mid: str, recommendation_type: int (1,2 -> dynamic and 3,4 -> static), concepts: list,
+        """
+        self.db.cro_create_concept_cro(cro_form=cro_form)
+
     def cro_store_detail_rec(
             self, 
             cro_form: dict, 
@@ -345,7 +364,6 @@ class ResourceRecommenderService:
 
         logger.info("result_exists ->") # , result_exists)
         print(cro_sdr["result_exists"])
-        return None
         if result_exists == False:
         
             self.recommender = Recommender()

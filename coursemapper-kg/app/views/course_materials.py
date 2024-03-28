@@ -25,19 +25,25 @@ course_materials = Blueprint("course_materials", __name__)
 @course_materials.route("/get_resources", methods=["POST"])
 def get_resources():
     data = request.get_json()
+    logger.info("------ CRO DATA ----^-->")
     print(data)
 
     data_default = data["default"]
     data_cro_form = data["croForm"]
     
     resource_recommender_service = ResourceRecommenderService()
-    rrs = resource_recommender_service.map_recommendation_request(data_default=data_default, data_cro_form=data_cro_form)
+    rrs = resource_recommender_service.cro_store_logic(cro_form=data_cro_form)
+    return "Ok"
+
+    ## rrs = resource_recommender_service.map_recommendation_request(data_default=data_default, data_cro_form=data_cro_form)
+    # return jsonify(rrs["result"])
+
     # await asyncio.sleep(30)
 
     # if rrs["code"] == 404:
     #     return make_response(jsonify(rrs["result"]), 404)
     
-    return jsonify(rrs["result"]) # make_response(jsonify(rrs["result"]), 200) # jsonify(rrs["result"])
+    # return jsonify(rrs["result"]) # make_response(jsonify(rrs["result"]), 200) # jsonify(rrs["result"])
     # r = cro_get_resources_pagination()
     # return make_response(jsonify(r), 200)
 

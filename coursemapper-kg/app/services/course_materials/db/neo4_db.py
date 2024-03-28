@@ -1764,70 +1764,190 @@ class NeoDataBase:
     # boby024 #
     ###########
     
-    # def cro_get_cro_dnus(self, user_id: str, mid: str): # result list
-    #     """
-    #         get cro_form list by user id and mid
-    #     """
-    #     logger.info("CRO get cro_form list by user id and mid")
-
-    #     result = None
-    #     with self.driver.session() as session:
-    #         result = session.run(
-    #             # """
-    #             # MATCH (u:CROUser)-[:CRO_DNU]->(c:CROform) WHERE u.user_id = $user_id AND c.mid = $mid
-    #             # RETURN c.abstract as abstract, c.cid as cid, c.final_embedding as final_embedding,
-    #             # c.initial_embedding as initial_embedding, c.mid as mid, c.name as name, c.rank as rank,
-    #             # c.type as type, c.uri as uri, c.weight as weight, c.wikipedia as wikipedia
-    #             # """
-    #             """
-    #             MATCH (u:CROUser)-[:CRO_DNU]->(c:CROform) WHERE u.user_id = $user_id AND c.mid = $mid
-    #             RETURN ID(c) as node_id, c.user_id as user_id, c.mid as mid, 
-    #             c.recommendation_type as recommendation_type, c.concept_cids as concept_cids,
-    #             c.concept_weights_udpated as concept_weights_udpated
-    #             """,
-    #             user_id=user_id,
-    #             mid=mid
-    #         ).data()
-
+    # def executeQueryCRO(self, query):
+    #     tx = self.driver.session.begin_transaction()
+    #     result = tx.run(query)
+    #     tx.commit()
     #     return result
+    
+    def cro_get_user(self, user_id: str, complete=False):
+        """
+            get node User
+        """
+        logger.info("CRO Getting node User")
+        if complete:
+            query = """ MATCH (c:User) WHERE c.uid = $user_id
+                        RETURN ID(c) as node_id, c.uid as user_id, c.embedding as embedding
+                    """
+        else:
+            query = """ MATCH (c:User) WHERE c.uid = $user_id
+                        RETURN ID(c) as node_id, c.uid as user_id
+                    """
 
-    # def cro_get_cro_form_by_concept_cids(self, user_id: str, mid: str, concept_cids: list):
-    #     logger.info("CRO Getting cro_form by concept cids")
+        result = None
+        with self.driver.session() as session:
+            node = session.run(
+                query,
+                user_id=user_id
+            )
 
-    #     result = None
-    #     with self.driver.session() as session:
-    #         result = session.run(
-    #             """
-    #             MATCH (c:CROform) WHERE c.user_id = $user_id AND c.mid = $mid AND c.concept_cids IN $concept_cids 
-    #             RETURN ID(c) as node_id, c.user_id as user_id, c.mid as mid,
-    #             c.recommendation_type as recommendation_type, c.concept_cids as concept_cids, c.concept_weights_udpated as concept_weights_udpated
-    #             """,
-    #             user_id=user_id,
-    #             mid=mid,
-    #             concept_cids=concept_cids
-    #         ).data() # single()
+            if node:
+                node = node.single()
+                result = {
+                    "node_id": node["node_id"],
+                    "user_id": node["user_id"]
+                }
+                
+                if complete:
+                    result["final_embedding"] = node["final_embedding"]
 
-    #     print(result)
-    #     if result: 
-    #         result = list(result)[0]
-    #     return result
+        return result
+    
+    def cro_map_concept_cro(self, node: dict = None, nodes: list = [], fetched = True):
+        logger.info("Mapping node concept: Concept_CRO")
+        if node:
+            if fetched:
+                node = node.single()
+
+            return {
+                "node_id": node["node_id"],
+                "user_id": node["user_id"],
+                "cid": node["cid"],
+                "weight": node["weight"]
+            }
+        else:
+            # to be updated
+            return []
+         
+    def cro_get_concept_cro(self, user_id: str, cid: str, weight: float):
+        logger.info("Getting node concept: Concept_CRO")
+
+        result = None
+        with self.driver.session() as session:
+            result = session.run(
+                """
+                MATCH (c:Concept_CRO)
+                WHERE c.user_id = $user_id and c.cid = $cid and c.weight = $weight
+                RETURN ID(c) as node_id, c.user_id as user_id, c.cid as cid,
+                c.weight as weight
+                """,
+                user_id=user_id,
+                cid=cid,
+                weight=weight
+            )
+            # if result:
+            #     logger.info("Getting node concept: CRO_dnu: True")
+            #     result = self.cro_map_dnu(result, fetched=True)
+
+        return result
+
+    def cro_create_concept_cro(self, user_id: str = None, mid: str = None, concepts: list = None, cro_form: dict = None):
+        """
+            creating node concept: Concept_CRO
+            concepts: list -> concept: cid, weight, rank, name(optional)
+        """
+        logger.info("Creating node concept: Concept_CRO")
+
+        if cro_form:
+            user_id = cro_form["user_id"]
+            concepts = cro_form["concepts"]
         
+        result = []
+        tx = self.driver.session()
+        for concept in concepts:
+            cid = concept["cid"]
+            weight = concept["weight"]
 
-        # if get_final_embedding:
-        #     query = """MERGE (c:CROconcept{ cid:$cid, mid:$mid, rank:$rank,
-        #         final_embedding:$final_embedding, weight:$weight, status:$status })
-        #         RETURN ID(c) as node_id, c.cid as cid, c.mid as mid,
-        #         c.mid as mid, c.rank as rank, c.final_embedding as final_embedding,
-        #         c.weight as weight, c.status as status
-        #         """
-        # else:
-        #     query = """MERGE (c:CROconcept{ cid:$cid, mid:$mid, rank:$rank,
-        #         final_embedding:$final_embedding, weight:$weight, status:$status })
-        #         RETURN ID(c) as node_id, c.cid as cid, c.mid as mid,
-        #         c.mid as mid, c.rank as rank, c.final_embedding as final_embedding,
-        #         c.weight as weight, c.status as status
-        #         """
-        
+            dnu_found = self.cro_get_concept_cro(user_id=user_id, cid=cid, weight=weight)
+            if dnu_found.single() != None:
+                node = dnu_found
+            else:
+                query =  """MERGE (c:Concept_CRO { user_id:$user_id, cid:$cid, weight:$weight })
+                    RETURN ID(c) as node_id, c.user_id as user_id, c.cid as cid,
+                    c.weight as weight
+                    """
+                node = tx.run(query,
+                        user_id=user_id,
+                        cid=cid,
+                        mid=mid,
+                        weight=weight
+                    )
+                # tx.commit()
+            if node:
+                result.append(self.cro_map_concept_cro(node))
+        tx.close()
+
+        # test
+        # print(result)
+        # self.cro_relation_btw_user_concept_cro(user_id=user_id, concept_cro=result[0])
+        return result
+
+    def cro_relationship_btw_user_concept_cro(self, user_id: str, concept_cro: dict):
+        """
+            Creating relationship between standard node user and concept_cro
+        """
+        logger.info("Creating relationship between standard node user and concept_cro")
+
+        user = self.cro_get_user(user_id=user_id)
+        if user:
+            with self.driver.session() as session: 
+                session.run(
+                    """
+                    MATCH (a:User),(b:Concept_CRO)
+                    WHERE ID(a) = $id_a AND ID(b) = $id_b
+                    MERGE (a)-[r:dnu_cro]->(b)
+                    RETURN r
+                    """,
+                    id_a=user["node_id"],
+                    id_b=concept_cro["node_id"]
+                )
+        else:
+            # user must exist
+            pass
+
+    def cro_create_rating(self, rating: dict):
+        logger.info("CRO Creating Rating")
+
+        tx = self.driver.session()
+        concepts = rating["concepts"].split()
+
+        if rating["type"] == "youtube":
+            youtube_rid = rating["resource"]
+        elif rating["type"] == "wikipedia":
+            wikipedia_rid = rating["resource"]
+
+        for concept in concepts:
+            node = tx.run(
+                        """
+                        MERGE (c:rating_CRO { user_id:$user_id, cid:$cid, value:$value, youtube_rid: $youtube_rid, wikipedia_rid: $wikipedia_rid })
+                        RETURN ID(c) as node_id, c.user_id as user_id, c.cid as cid,
+                        c.weight as weight
+                        """,
+                        user_id=rating["user_id"],
+                        cid=concept["cid"],
+                        value=rating["rating"],
+                        youtube_rid=youtube_rid,
+                        wikipedia_rid=wikipedia_rid
+                    )
+            
+            # create relationship between user and rating
+            if node:
+                rs = tx.run(
+                        """
+                        MATCH (a:User),(b:rating_CRO)
+                        WHERE ID(a) = $id_a AND ID(b) = $id_b
+                        MERGE (a)-[r:has_rated_cro]->(b)
+                        RETURN r
+                        """,
+                        id_a=rating["user_id"],
+                        id_b=node["node_id"]
+                    )
+        tx.close()
+
+        # update resource counts: helpful_count and not_helpful_count
+        ##
+
+
 
     def cro_get_cro_concept(self, concept: dict):
         """
@@ -1903,9 +2023,6 @@ class NeoDataBase:
                     result_list.append(list(result_single)[0])
             session.close()
             return result_list
-    
-
-
 
     def cro_get_top_n_dnu_concepts(self, user_id, material_id, is_limited=False, top_n=5):
         """
@@ -2208,7 +2325,6 @@ class NeoDataBase:
         
         return cro_form_result
 
-
     def cro_check_and_count_relationship_cro_user_and_cro_form(self, user_id: str):
         """
             cro_check_and_count_relationship_cro_user_and_cro_form
@@ -2229,7 +2345,6 @@ class NeoDataBase:
         if result:
             result = list(result)[0]
         return result
-
 
     def cro_create_cro_recommendation(self, cro_form: dict, resources: list): # resources: {"data": None, "concepts": None, "nodes": None, "edges": None}
         """
