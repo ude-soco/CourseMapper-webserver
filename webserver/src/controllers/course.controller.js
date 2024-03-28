@@ -527,6 +527,7 @@ export const withdrawCourse = async (req, res, next) => {
   try {
     await BlockingNotifications.deleteMany({
       courseId: courseId,
+      userId: userId
     });
   } catch (err) {
     return res
@@ -537,6 +538,7 @@ export const withdrawCourse = async (req, res, next) => {
   try {
     await FollowAnnotation.deleteMany({
       courseId: courseId,
+      userId: userId
     });
   } catch (err) {
     return res.status(500).send({ error: "Error deleting follow annotations" });
@@ -545,6 +547,7 @@ export const withdrawCourse = async (req, res, next) => {
   try {
     await UserNotification.deleteMany({
       courseId: foundCourse._id,
+      userId: userId
     });
   } catch (error) {
     return res.status(500).send({ error: "Error deleting user notification" });

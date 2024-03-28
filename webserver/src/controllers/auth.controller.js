@@ -95,6 +95,7 @@ export const signin = async (req, res, next) => {
         email: user.email,
         mbox_sha1sum: user.mbox_sha1sum,
         courses: user.courses,
+        token:token
       },
     };
     return next();
@@ -131,7 +132,7 @@ export const sendEmail = async (req, res, next) => {
 
 try{ 
   let user = await User.findOne({
-    email: { $regex: "^" + email + "$", $options: "i" },
+    email: email,
   });
 
   if (!user) {
@@ -148,7 +149,9 @@ try{
       email:user.email,
     });
     const mailTransporter = nodemailer.createTransport({
-      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false,
       auth: {
         user: "coursemapper.soco@gmail.com",
         pass: "gzxi ednk zaft zyow",
@@ -205,7 +208,7 @@ export const resetPassword = async (req, res, next) => {
     }
     const dataResponse =data;
     let user = await User.findOne({
-      email: { $regex: "^" + dataResponse.email + "$", $options: "i" },
+      email: dataResponse.email,
     });
     const enryptedPassword= hashSync(Passowrd, 8)
     user.password=enryptedPassword
