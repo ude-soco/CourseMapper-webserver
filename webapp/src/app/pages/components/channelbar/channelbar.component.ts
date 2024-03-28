@@ -131,7 +131,7 @@ export class ChannelbarComponent implements OnInit {
       label: 'Share course ',
       icon: 'pi pi-copy',
       title: 'Copy ID to clipboard',
-      command: () => this.copyCourseId(this.selectedCourse._id, this.selectedCourse.shortName),
+      command: () => this.copyCourseId(this.selectedCourse._id, this.selectedCourse.name),
     },
     {
       label: "View course dashboard",
