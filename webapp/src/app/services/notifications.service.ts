@@ -47,13 +47,17 @@ export class NotificationsService {
     private storageService: StorageService,
     private socket: Socket,
     private store: Store<State>
-  ) {}
+  ) {
+ }
 
   public previousURL: string = null;
   public notificationToNavigateTo: Notification = null;
 
   //Todo: error handling
   /* .get<UserNotification[]>('assets/data.json') */
+ 
+  //this.socket.emit("join", "course:"+course._id);
+
   public getAllNotifications(): Observable<TransformedNotificationsWithBlockedUsers> {
     return this.httpClient
       .get<NotificationsWithBlockedUsers>(

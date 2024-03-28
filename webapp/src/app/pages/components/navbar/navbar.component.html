@@ -43,7 +43,8 @@
             color: '#ffffff',
             cursor: 'pointer'
           }"
-          (click)="menu.toggle($event)"
+          (click)="toggleMenu($event)"
+          
         ></p-avatar>
         <p-overlayPanel #op [style]="{ width: '450px' }">
           <ng-template pTemplate>
@@ -79,6 +80,7 @@
           styleClass="course-context-menu"
           [model]="userOptions"
           pTooltip="userOptions"
+
         />
       </span>
     </div>

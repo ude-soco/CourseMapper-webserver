@@ -519,14 +519,54 @@ def connect_user_dnu_concept(tx, user_id, non_understood):
     """
     logger.info("Connect user with concept doesn't understand")
     uid=user_id
+    # for id in non_understood:
+    tx.run( '''MATCH (u:User {uid: $uid}), (c:Concept {cid: $cid})
+                OPTIONAL MATCH (u)-[r:dnu]->(c)
+                WITH u, c, r
+                CALL {
+                    WITH u, c, r
+                    FOREACH(ignoreMe IN CASE WHEN r IS NULL THEN [1] ELSE [] END |
+                        MERGE (u)-[new_r:dnu {weight: 1}]->(c)
+                        ON CREATE SET new_r.created_at = timestamp()
+                )
+                    RETURN 'Relationship created' AS message
+                }
+                RETURN 
+                CASE 
+                    WHEN r IS NOT NULL THEN 'Relationship already exists'
+                    ELSE message
+                END AS message;''',  uid=user_id,
+                                cid=non_understood)
+    tx.run('''MATCH p=(u)-[r:u]->(c) where u.uid=$uid And c.cid = $cid  delete r''',
+            uid=user_id,
+            cid=non_understood)
+
+def execute_query_once(tx, user_id, non_understood):
+    print("non_understood", non_understood)
+    new_non_understood=[]
+    # record=0
     for id in non_understood:
-        query='MATCH (u:User) WHERE u.uid = "' + str(uid) + '" OPTIONAL MATCH (c:Concept) WHERE c.cid ="'+str(id)+'"MERGE (u)-[r:dnu {weight: 1}]->(c)'
-        tx.run(query)
+        print("id", id)
+    # Check if the relationship already exists
+        result = relationship_already_exists(tx,user_id, id)
+        if result > 0:
+           "Relationship already exists"
+        else:
+            connect_user_dnu_concept(tx, user_id, id)
 
-        tx.run('''MATCH p=(u)-[r:u]->(c) where u.uid=$uid And c.cid = $cid  delete r''',
-               uid=user_id,
-               cid=id)
+def relationship_already_exists(tx, user_id, concept_id):
+    print("user_id, concept_id",user_id, concept_id)
+    """
+    """
+    logger.info("relationship_already_exists called")
+    uid=user_id
+    
+    result= tx.run( '''MATCH (u:User {uid: $uid})-[r:dnu]->(c:Concept {cid: $cid}) RETURN count(r) AS count''',  uid=user_id,
+                                    cid=concept_id)
 
+    # record = record["count"]
+    record = result.single()
+    return record["count"]
 # MUSNT BE WEIGHT = 0
 def connect_user_u_concept(tx, user_id, understood):
     """
@@ -534,6 +574,7 @@ def connect_user_u_concept(tx, user_id, understood):
     logger.info("Connect user with concept understand")
     for id in understood:
         # user understand the concept, the relationship is "u"
+
         tx.run("""MATCH (u:User) WHERE u.uid = $uid 
             OPTIONAL MATCH (c:Concept) WHERE c.cid = $cid
             MERGE (u)-[r:u {weight: 0}]->(c)""",
@@ -1179,7 +1220,7 @@ class NeoDataBase:
             return concept_names
         else:
             return []
-
+    
     def construct_user_model(self, user_id, non_understood, understood, new_concepts, mid):
         """
         """
@@ -1192,7 +1233,10 @@ class NeoDataBase:
             else:
                 # logger.info("create  user %s" % user)
                 create_user(tx, user_id)
-            connect_user_dnu_concept(tx, user_id, non_understood)
+                logger.info(" user created")
+            print("connect_user_dnu_concept",user_id, non_understood ) 
+            execute_query_once(tx, user_id, non_understood)   
+            # connect_user_dnu_concept(tx, user_id, non_understood)  
             connect_user_u_concept(tx, user_id, understood)
             reset_user_concept_relationships(tx, user_id, new_concepts)
             get_user_embedding(tx, user_id, mid)
@@ -1204,6 +1248,8 @@ class NeoDataBase:
             tx.rollback()
             session.close()
             self.close()
+
+    
 
     def user_exists(self, user_id):
         """

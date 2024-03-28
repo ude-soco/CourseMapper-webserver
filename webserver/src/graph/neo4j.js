@@ -40,10 +40,16 @@ export async function getSlide(slideId) {
 
 export async function readSlide(userId, slideId) {
   // Create user node if not exists
-  await graphDb.driver.executeQuery(
-    'MERGE (u:User {uid: $uid, type: "user", embedding: ""}) RETURN u',
+  const { records, summary, keys } = await graphDb.driver.executeQuery(
+    'MATCH (u:User) WHERE u.uid = $uid RETURN u',
     { uid: userId }
   );
+  if (records.length === 0) {
+    await graphDb.driver.executeQuery(
+      'MERGE (u:User {uid: $uid, type: "user", embedding: ""}) RETURN u',
+      { uid: userId }
+    );
+  }
 
   // Create user HAS_READ slide relationship
   await graphDb.driver.executeQuery(
