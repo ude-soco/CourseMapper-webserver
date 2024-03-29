@@ -112,6 +112,14 @@ import { VisComparePageComponent } from './pages/vis-dashboard/vis-compare-page/
 import { FindTopicPageComponent } from './pages/vis-dashboard/find-topic-page/find-topic-page.component';
 import { CourseDetailsPageComponent } from './pages/vis-dashboard/course-details-page/course-details-page.component';
 import { PlatformTabsComponent } from './pages/components/vis-dashboard/platform-tabs/platform-tabs.component';
+import { VisBackButtonComponent } from './pages/components/vis-dashboard/vis-back-button/vis-back-button.component';
+import { ToWebsiteButtonComponent } from './pages/components/vis-dashboard/to-website-button/to-website-button.component';
+import { CourseCategoryPageComponent } from './pages/vis-dashboard/course-category-page/course-category-page.component';
+import { CourseByCategoryComponent } from './pages/components/vis-dashboard/cards/course-by-category/course-by-category.component';
+import { CoursePaginationComponent } from './pages/components/vis-dashboard/course-pagination/course-pagination.component';
+import { FiltersForCoursesComponent } from './pages/components/vis-dashboard/filters-for-courses/filters-for-courses.component';
+import { PopularTeachersComponent } from './pages/components/vis-dashboard/cards/popular-teachers/popular-teachers.component';
+import { TeacherPageComponent } from './pages/vis-dashboard/teacher-page/teacher-page.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -163,7 +171,15 @@ import { PlatformTabsComponent } from './pages/components/vis-dashboard/platform
    VisComparePageComponent,
    FindTopicPageComponent,
    CourseDetailsPageComponent,
-   PlatformTabsComponent
+   PlatformTabsComponent,
+   VisBackButtonComponent,
+   ToWebsiteButtonComponent,
+   CourseCategoryPageComponent,
+   CourseByCategoryComponent,
+   CoursePaginationComponent,
+   FiltersForCoursesComponent,
+   PopularTeachersComponent,
+   TeacherPageComponent
   ],
   imports: [
     MentionModule,

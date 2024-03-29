@@ -1,2 +1,41 @@
 
+<div class="course-details">
+  <div class="left">
+    <!-- Left part content -->
+<app-vis-back-button></app-vis-back-button>
 
+    <div *ngFor="let c of course">
+    <h2>{{c.Name}}</h2>
+    <h3>Description</h3>
+    <p>{{c.Description}}</p>
+    <h3>Course category</h3>
+    <p>{{c.Category}}</p>
+    <h3>Level</h3>
+    <p>{{c.Level}}</p>
+    <h3>Language</h3>
+    <p>{{c.Language}}</p>
+    <h3>Number of Participants</h3>
+    <p>{{c.NumberOfParticipants}}</p>
+    <h3>Price</h3>
+    <p>{{c.Price}}</p>
+    <h3>Rating</h3>
+      <p>{{c.Rating}}</p>
+      <h3>Platform</h3>
+      <p>{{c.PlatformName}}</p>
+    </div>
+
+    <!-- Other left part content -->
+  </div>
+  <div class="right">
+    <!-- Right part content -->
+    <div *ngFor="let c of course">
+      <p  style="text-align: right">
+<app-to-website-button [link]="c.Link"></app-to-website-button>
+        </p>
+    </div>
+
+    <h2>Topics</h2>
+    //Todo
+    <!-- Other right part content -->
+  </div>
+</div>

@@ -38,4 +38,30 @@ module.exports = function (app) {
         controller.getCourseById
     );
 
+    app.get(
+        "/api/vis-dashboard/concepts/:courseId",
+        // [authJwt.verifyToken],
+        controller.getConceptsByCourseId
+    );
+
+    app.get(
+        "/api/vis-dashboard/course-by-category/:courseCategory",
+        // [authJwt.verifyToken],
+        controller.getCoursesByCourseCategory
+    );
+
+    app.get(
+        "/api/vis-dashboard/teachers-by-popularity/:platformName",
+        // [authJwt.verifyToken],
+        controller.getPopularTeachers
+    );
+
+    app.get(
+        "/api/vis-dashboard/teacher/:teacherId",
+        // [authJwt.verifyToken],
+        controller.getTeacherById
+    );
+
+
+
 }

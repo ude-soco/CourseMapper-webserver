@@ -33,7 +33,8 @@ import {VisExplorePageComponent} from "./pages/vis-dashboard/vis-explore-page/vi
 import {VisComparePageComponent} from "./pages/vis-dashboard/vis-compare-page/vis-compare-page.component";
 import {FindTopicPageComponent} from "./pages/vis-dashboard/find-topic-page/find-topic-page.component";
 import {CourseDetailsPageComponent} from "./pages/vis-dashboard/course-details-page/course-details-page.component";
-
+import {CourseCategoryPageComponent} from "./pages/vis-dashboard/course-category-page/course-category-page.component";
+import {TeacherPageComponent} from "./pages/vis-dashboard/teacher-page/teacher-page.component";
 
 const routes: Routes = [
   { path: '', redirectTo: 'landingPage', pathMatch: 'full' },
@@ -137,6 +138,10 @@ const routes: Routes = [
       {path:'compare-moocs',component: VisComparePageComponent },
       {path:'find-moocs-by-topic',component: FindTopicPageComponent },
       {path:'course-detail/:id',component: CourseDetailsPageComponent },
+      {path:'course-category',component: CourseCategoryPageComponent },
+      {path:'teacher-detail/:id',component: TeacherPageComponent },
+
+
 
     ],
   },

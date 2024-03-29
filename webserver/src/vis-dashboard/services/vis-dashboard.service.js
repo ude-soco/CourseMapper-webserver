@@ -48,7 +48,7 @@ export async function getCoursesByPopularity(platformName) {
         'WHERE toLower(platform.name) CONTAINS $platformName \n' +
         'AND course.number_of_participants IS NOT NULL AND course.number_of_participants =~ \'\\d+\' \n' +
         'MATCH (teacher:teacher)-[:TEACHES]->(course) \n' +
-        'RETURN course.course_id AS CourseId, teacher.name AS TeacherName, course.name AS CourseName, course.number_of_participants AS NumberOfParticipants \n' +
+        'RETURN course.course_id AS CourseId, teacher.name AS TeacherName, course.name AS CourseName, course.number_of_participants AS NumberOfParticipants, platform.name as PlatformName, platform.platform_id as PlatformId \n' +
         'ORDER BY course.number_of_participants DESC \n' +
         'LIMIT 40',
         { platformName: platformName }
@@ -80,13 +80,67 @@ export async function getCourseById(id){
         'course.goal AS Goal, course.keywords AS Keywords, course.language AS Language,' +
 
     ' course.level AS Level, course.link AS Link, course.name AS Name, ' +
-    'course.number_of_particpants AS NumberOfParticipants,' +
+    'course.number_of_participants AS NumberOfParticipants,' +
         'course.price AS Price, course.rating AS Rating, course.prerequisites AS Prerequisites,' +
-        'course.recommendations AS Recommendations \n'
-
-
-
+        'course.recommendations AS Recommendations, platform.name as PlatformName \n'
         , { id: id }
     );
     return serializeRecords(records)
+}
+
+export async function getConceptsByCourseId(courseId){
+    const { records, summary, keys } = await graphDb.driver.executeQuery(
+        'MATCH (course:course )-[r:CONTAINS_CONCEPT]->(concept:concept)\n' +
+        '     WHERE course.course_id = $courseId          \n' +
+        'RETURN concept.name as ConceptName'
+
+        , { courseId: courseId }
+    );
+    return serializeRecords(records)
+}
+
+export async function getCoursesByCourseCategory(courseCategory){
+    const { records, summary, keys } = await graphDb.driver.executeQuery(
+        'MATCH (teacher:teacher)-[:TEACHES]->(course:course)-[:AVAILABLE_ON]->(platform:platform) \n' +
+        '     WHERE toLower(course.course_category) = toLower($courseCategory)   OR  toLower(course.course_category) CONTAINS toLower($courseCategory)   \n' +
+        'RETURN course.course_id AS CourseId, ' +
+        'course.audience AS Audience, course.course_content AS Content,' +
+        ' course.course_category AS Category, course.description AS Description, course.duration AS Duration,' +
+        'course.goal AS Goal, course.keywords AS Keywords, course.language AS Language,' +
+
+        ' course.level AS Level, course.link AS Link, course.name AS Name, ' +
+        'course.number_of_participants AS NumberOfParticipants,' +
+        'course.price AS Price, course.rating AS Rating, course.prerequisites AS Prerequisites,' +
+        'course.recommendations AS Recommendations, platform.name as PlatformName, platform.platform_id as PlatformId, teacher.name As TeacherName \n'
+
+        , {courseCategory: courseCategory }
+    );
+    return serializeRecords(records)
+}
+
+export async function getPopularTeachers(platformName){
+    const { records, summary, keys } = await graphDb.driver.executeQuery(
+        'MATCH (platform:platform)<-[:AVAILABLE_ON]-(course:course)<-[:TEACHES]-(teacher:teacher)\n' +
+        'WHERE toLower(platform.name) CONTAINS $platformName \n' +
+        'AND course.number_of_participants IS NOT NULL AND course.number_of_participants =~ \'\\d+\' \n' +
+        'RETURN teacher.name AS TeacherName,teacher.teacher_id AS TeacherId, SUM(toInteger(course.number_of_participants)) AS TotalEnrollment, COUNT(course) as NumOfCourses\n' +
+        'ORDER BY TotalEnrollment DESC\n' +
+        'LIMIT 50'
+
+        , {platformName: platformName }
+    );
+    return serializeRecords(records)
+}
+
+export async function getTeacherById(teacherId){
+    const { records, summary, keys } = await graphDb.driver.executeQuery(
+        'MATCH (platform:platform)<-[:AVAILABLE_ON]-(course:course)<-[:TEACHES]-(teacher:teacher)\n' +
+        'WHERE teacher.teacher_id =  $teacherId \n' +
+        'RETURN teacher.name AS TeacherName,teacher.teacher_id AS TeacherId, platform.name AS PlatformName, course.course_id AS CourseId, course.name AS CourseName\n' +
+        'LIMIT 10'
+
+        , {teacherId: teacherId }
+    );
+    return serializeRecords(records)
+
 }

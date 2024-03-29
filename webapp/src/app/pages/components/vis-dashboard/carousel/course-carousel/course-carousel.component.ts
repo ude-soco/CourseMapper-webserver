@@ -1,10 +1,11 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {VisDashboardService} from "../../../../../services/vis-dashboard/vis-dashboard.service";
+import {TeacherByPopularity, VisDashboardService} from "../../../../../services/vis-dashboard/vis-dashboard.service";
 import {Router} from "@angular/router";
 
 export enum CourseCarouselType{
   MOST_POPULAR_COURSES="MOST_POPULAR",
-  HIGHEST_RATED_COURSES="HIGHEST_RATED"
+  HIGHEST_RATED_COURSES="HIGHEST_RATED",
+  MOST_POPULAR_TEACHERS = "MOST_POPULAR_TEACHERS"
 }
 
 interface CoursesByPopularity{
@@ -33,6 +34,8 @@ export class CourseCarouselComponent implements OnInit{
   @Input() type: CourseCarouselType;
 
   @Output() courseClicked = new EventEmitter<string>()
+  //@Output() teacherClicked = new EventEmitter<string>()
+
 
 
   onCourseClick(courseId:string){
@@ -40,13 +43,19 @@ export class CourseCarouselComponent implements OnInit{
     this.router.navigate(['course-detail', courseId])
   }
 
+  onTeacherClick(teacherId: string) {
+  //  this.teacherClicked.emit(teacherId)
+    this.router.navigate(['teacher-detail', teacherId])
+
+  }
+
   mostPopularPlatforms: string[] = ['Udemy', 'Future Learn', 'Imoox'];
   highestRatedPlatforms: string[] = ['Udemy', 'Future Learn', 'Coursera'];
 
   popularCourses:CoursesByPopularity[]=[]
   ratedCourses: CoursesByRating[]=[]
-  loadingPopularCourses: boolean = false;
-  loadingRatedCourses: boolean = false;
+  popularTeachers:TeacherByPopularity[]=[]
+
 
 
   constructor(private visDashboardService:VisDashboardService,
@@ -76,7 +85,17 @@ export class CourseCarouselComponent implements OnInit{
       .catch((error) => {
         console.error('Error fetching courses:', error);
       });
-  }
+
+     this.visDashboardService.getPopularTeachers("udemy")
+       .then((courses) => {
+         this.popularTeachers  = courses
+       })
+       .catch((error) => {
+         console.error('Error fetching courses:', error);
+       });
+
+
+   }
 
   async onPlatformSelected(platform: string) {
     this.popularCourses = await this.visDashboardService
@@ -84,6 +103,9 @@ export class CourseCarouselComponent implements OnInit{
 
     this.ratedCourses = await this.visDashboardService
       .getCoursesByRating(platform.toLowerCase())
+
+    this.popularTeachers = await this.visDashboardService
+      .getPopularTeachers(platform.toLowerCase())
 
   }
 
@@ -100,4 +122,6 @@ export class CourseCarouselComponent implements OnInit{
       this.currentPosition = nextPosition;
     }
   }
+
+
 }

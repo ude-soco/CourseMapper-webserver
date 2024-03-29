@@ -1,0 +1,20 @@
+.pagination{
+  margin-top: 5em;
+  display: block;
+}
+
+
+.pagination span {
+  cursor: pointer;
+}
+
+.pagination span.active {
+  font-weight: bold;
+}
+
+.page-number{
+  margin-right: 10px;
+  font-size: 24px;
+  font-family: Roboto;
+
+}

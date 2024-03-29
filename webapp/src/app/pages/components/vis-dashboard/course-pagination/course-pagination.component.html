@@ -1,0 +1,7 @@
+<div class="pagination">
+  <button (click)="previousPage()"><i class='bx bx-last-page bx-rotate-180' style='font-size: 24px;' ></i></button>
+  <ng-container *ngFor="let page of pages">
+    <button class="page-number" (click)="goToPage(page)" [class.active]="currentPage === page">{{ page }}</button>
+  </ng-container>
+  <button (click)="nextPage()"><i class='bx bx-last-page' style='font-size: 24px;'></i></button>
+</div>

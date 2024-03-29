@@ -1,0 +1,46 @@
+<div>
+<app-vis-back-button></app-vis-back-button>
+<h1 class="title">{{emittedCategory}} Courses</h1>
+<div>
+  <h3 class="sub-title">Popular courses to get you started with</h3>
+<app-course-carousel [type]="CourseCarouselType.MOST_POPULAR_COURSES"></app-course-carousel>
+</div>
+
+  <div>
+    <h3 class="sub-title">Popular teachers</h3>
+    <app-course-carousel [type]="CourseCarouselType.MOST_POPULAR_TEACHERS"></app-course-carousel>
+  </div>
+
+  <div class="all-courses">
+    <h3 class="sub-title">All {{emittedCategory}}  courses </h3>
+    <div class="container">
+      <div class="left">
+
+        <div class="toggle-sort">
+
+        <button class="filter-button" (click)="toggleFilters()"><i class='bx bxs-filter-alt'></i>FILTER</button>
+          <button class="sort" (click)="sortByPopular()"><i class='bx bx-sort-down'></i>SORT BY:MOST POPULAR</button>
+
+        </div>
+        <app-filters-for-courses *ngIf="showFilters" (filterChange)="applyFilters($event)"></app-filters-for-courses>      </div>
+      <div class="vertical-line"></div>
+
+      <div class="right">
+        <div style="text-align: right">{{loadedCoursesCount}} result(s)</div>
+        <div *ngFor="let course of displayedCourses">
+        <app-course-by-category (courseClick)="onCourseClick($event)" [course]="course"></app-course-by-category>
+        </div>
+        <p *ngIf="noFilterResults">Oops no result</p>
+        <div style="text-align: center">
+          <app-course-pagination
+            [currentPage]="currentPage"
+            [loadedCoursesCount]="loadedCoursesCount"
+            (pageChange)="changePage($event)"
+          ></app-course-pagination>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>

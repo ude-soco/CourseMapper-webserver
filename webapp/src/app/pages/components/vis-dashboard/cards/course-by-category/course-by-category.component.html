@@ -1,0 +1,17 @@
+<!-- card.component.html -->
+
+<div class="card"  (click)="navigateToCourseDetails(course.CourseId)">
+  <div class="image-card">
+    <!-- Image content goes here -->
+    <img src="https://picsum.photos/200/" alt="Image">
+  </div>
+
+  <div class="details-card bordered">
+    <!-- Details content goes here -->
+    <h2>{{course.Name.slice(0,20)}}</h2>
+    <p>{{course.Rating === 'this information is not avaliable for this course' ? 'n/a' : course.Rating}}</p>
+    <p>{{ course.PlatformName }}</p>
+    <p>{{ course.TeacherName.slice(0,20) }}</p>
+    <!-- Add more details as needed -->
+  </div>
+</div>

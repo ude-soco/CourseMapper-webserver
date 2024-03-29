@@ -1,0 +1,66 @@
+<div class="filters">
+  <!-- Rating filter -->
+  <hr>
+  <div style="display: flex; justify-content: space-between;">
+    <label for="rating" style="align-self: flex-start;">Rating:</label>
+    <div style="flex-grow: 1;">
+    <select id="rating" [(ngModel)]="selectedRating" style="width: 100%;" (change)="emitFilterChange()">
+      <option value="4"> > 4-5 stars</option>
+      <option value="3"> > 3-4 stars</option>
+      <option value="2"> 2-3 stars</option>
+      <option value="1"> 1-2 stars</option>
+      <option value="null">-------</option>
+
+      <!-- Add more rating options as needed -->
+    </select>
+    </div>
+  </div>
+  <hr>
+
+  <!-- Level filter -->
+  <div style="display: flex; justify-content: space-between;">
+    <label for="level" style="align-self: flex-start;">Level:</label>
+    <div style="flex-grow: 1;">
+    <select id="level" [(ngModel)]="selectedLevel" style="width: 100%;" (change)="emitFilterChange()">
+      <option value="Beginner">Beginner</option>
+      <option value="Intermediate">Intermediate</option>
+      <!-- Add more level options as needed -->
+    </select>
+    </div>
+  </div>
+  <hr>
+
+  <!-- Language filter -->
+  <div style="display: flex; justify-content: space-between;">
+    <label for="language" style="align-self: flex-start;">Language:</label>
+    <div style="flex-grow: 1;">
+    <select id="language" [(ngModel)]="selectedLanguage" style="width: 100%;" (change)="emitFilterChange()">
+      <option value="nothing">------</option>
+      <option value="English">English</option>
+      <option value="Spanish">Spanish</option>
+      <option value="German">German</option>
+      <option value="Deutsch">Deutsch</option>
+      <!-- Add more language options as needed -->
+    </select>
+    </div>
+  </div>
+  <hr>
+
+  <!-- Price filter -->
+  <div style="display: flex; justify-content: space-between;">
+    <label for="price" style="align-self: flex-start;">Price:</label>
+    <div style="flex-grow: 1;">
+      <select id="price" [(ngModel)]="selectedPrice" style="width: 100%;" (change)="emitFilterChange()">
+        <option value=0>-----</option>
+        <option value="Low">Low</option>
+        <option value="High">High</option>
+        <option value="Free">Free</option>
+
+        <!-- Add more language options as needed -->
+      </select>
+    </div>
+  </div>
+  <hr>
+
+  <!-- Add more filters as needed -->
+</div>

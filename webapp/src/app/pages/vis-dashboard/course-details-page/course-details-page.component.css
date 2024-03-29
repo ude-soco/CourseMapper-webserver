@@ -1,0 +1,36 @@
+.course-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Divide into two columns */
+  grid-gap: 20px; /* Add gap between columns */
+}
+
+.left {
+  margin-bottom: 10px;
+  /* Styles for the left part */
+  h2{
+    font-size: large;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: left;
+  }
+
+  h3{
+    font-size: medium;
+    font-weight: bold;
+    margin-bottom: 10px;
+
+  }
+  p{
+    margin-bottom: 10px;
+
+  }
+}
+
+.right {
+  /* Styles for the right part */
+
+}
+
+
+
+

@@ -34,3 +34,24 @@
   </div>
 </div>
 
+
+<div>
+  <div *ngIf="type === 'MOST_POPULAR_TEACHERS'">
+    <app-platform-tabs [platforms]="type === 'MOST_POPULAR_TEACHERS' ? mostPopularPlatforms : []"  (platformSelected)="onPlatformSelected($event)"></app-platform-tabs>
+  </div>
+  <hr>
+</div>
+
+<div *ngIf="type === 'MOST_POPULAR_TEACHERS'" >
+  <div class="carousel">
+    <button (click)="scrollBackward()"><div class="button"><i class='bx bxs-skip-previous-circle' ></i></div></button>
+    <div class="cards-container">
+      <app-popular-teachers *ngFor="let teacher of popularTeachers.slice(currentPosition,currentPosition + cardsPerPage)"
+                            (click)="onTeacherClick(teacher.TeacherId)"
+                            [numCourses]="teacher.NumOfCourses" [teacherName]="teacher.TeacherName" class="carousel-card"
+
+      ></app-popular-teachers>
+    </div>
+    <button (click)="scrollForward()"><div class="button"><i class='bx bxs-skip-next-circle'></i></div></button>
+  </div>
+</div>
