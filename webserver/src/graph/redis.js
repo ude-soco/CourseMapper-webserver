@@ -73,7 +73,6 @@ async function watchLogQueue(url) {
       continue;
     }
     socketio.getIO().to("material:"+jobData.materialId).emit('log', element);
-    socketio.getIO().to("material:all").emit('log', element);
   }
 }
 

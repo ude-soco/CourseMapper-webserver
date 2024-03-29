@@ -5,7 +5,6 @@ from .embeddings.word_embeddings.base import BaseWordEmbedder
 from .embeddings.word_embeddings.flair_transformers_word_emb import (
     FlairTransformerWordEmbeddings,
 )
-from .embeddings.word_embeddings.flair_elmo_word_emb import FlairElmoWordEmbeddings
 from .taggers.base import BasePOSTagger
 from .taggers.stanford_core_nlp_tagger import StanfordCoreNLPTagger
 from .taggers.flair_tagger import FlairTagger
@@ -33,11 +32,11 @@ def get_word_embedder(embedding_model) -> BaseWordEmbedder:
     if "TransformerWordEmbeddings" in str(type(embedding_model)):
         return FlairTransformerWordEmbeddings(embedding_model)
     if "ELMoEmbeddings" in str(type(embedding_model)):
-        return FlairElmoWordEmbeddings(embedding_model)
+        raise Exception("ELMoEmbeddings is not supported")
     if isinstance(embedding_model, str) and embedding_model != "":
         return FlairTransformerWordEmbeddings(embedding_model)
 
-    return FlairElmoWordEmbeddings()
+    raise Exception("ELMoEmbeddings is not supported")
 
 
 def get_POSTagger(tagger_model) -> BasePOSTagger:

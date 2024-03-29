@@ -6,7 +6,7 @@
 
 Download the following software and install them on your machine:
 
-- Python (v3.7.2) from [the official website](https://www.python.org/downloads/release/python-372/)
+- Python (v3.11) from [the official website](https://www.python.org/downloads/release/python-3117/)
 
 - Neo4j Desktop from [the official website](https://neo4j.com/download-center/#desktop), install it, start the server, and login to the server.
 
@@ -15,8 +15,6 @@ Download the following software and install them on your machine:
 - [IntelliJ Ultimate](https://www.jetbrains.com/de-de/idea/download/#section=windows) or [Visual Studio Code](https://code.visualstudio.com/download) and install one of the code editors.
 
 - [Github Desktop](https://desktop.github.com/)
-
-- Download Elmo packages: [Link 1](https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x4096_512_2048cnn_2xhighway/elmo_2x4096_512_2048cnn_2xhighway_weights.hdf5) and [Link 2](https://uni-duisburg-essen.sciebo.de/s/r4bNsDrkuAkPSfo/download), and copy it inside `coursemapper-kg/app/algorithms` folder
 
 - Download [StanfordCoreNLP](https://uni-duisburg-essen.sciebo.de/s/nO06q2wY0t5h8SO) and extract the ZIP file inside `coursemapper-kg/app/algorithms` folder. Make sure the stanford-corenlp folder name is `stanford-corenlp-full-2018-02-27`. 
 

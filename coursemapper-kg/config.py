@@ -9,24 +9,6 @@ STANFORDCORENLP = os.path.abspath(
     )
 )
 
-ELMO_WEIGHT_FILE = os.path.abspath(
-    os.path.join(
-        os.path.dirname(__file__),
-        "app",
-        "algorithm",
-        "elmo_2x4096_512_2048cnn_2xhighway_weights.hdf5",
-    )
-)
-
-ELMO_OPTIONS_FILE = os.path.abspath(
-    os.path.join(
-        os.path.dirname(__file__),
-        "app",
-        "algorithm",
-        "elmo_2x4096_512_2048cnn_2xhighway_options.json",
-    )
-)
-
 
 class Config(object):
     NEO4J_URI = os.environ.get("NEO4J_URI", "bolt://localhost:7687")
@@ -38,5 +20,3 @@ class Config(object):
     REDIS_PASSWORD = os.environ.get("REDIS_PASSWORD")
     PIPELINES = os.environ.get("PIPELINES")
     STANFORDCORENLP = STANFORDCORENLP
-    ELMO_OPTIONS_FILE = ELMO_OPTIONS_FILE
-    ELMO_WEIGHT_FILE = ELMO_WEIGHT_FILE
