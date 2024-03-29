@@ -112,10 +112,14 @@ class ResourceRecommenderService:
         self.db.cro_create_rating(rating=rating)
 
         # update resource counts: helpful_count and not_helpful_count
-        rating_counted = self.db.cro_get_rating(resource_rid=resource_rid)
-        if rating_counted and rating_counted["count"] != 0:
-            logger.info("Increment and decrement Rating")
-            self.db.cro_update_resource_count(resource_rid=resource_rid, type=rating["rating"], count=rating_counted)
+        ratings_counted = self.db.cro_count_rating(resource_rid=resource_rid)
+        print(ratings_counted)
+        
+        logger.info("Increment and decrement Rating")
+        self.db.cro_update_resource_count(resource_rid=resource_rid, 
+                                          helpful_count=ratings_counted["helpful_count"], 
+                                          not_helpful_count=ratings_counted["not_helpful_count"]
+                                        )
 
     def cro_get_result(self):
         pass
