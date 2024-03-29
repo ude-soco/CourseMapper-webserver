@@ -1907,34 +1907,29 @@ class NeoDataBase:
 
     def cro_create_rating(self, rating: dict):
         logger.info("CRO Creating Rating")
+        print(rating)
+
+        concepts = rating["concepts"].split()
+        print(concepts)
 
         tx = self.driver.session()
-        concepts = rating["concepts"].split()
-
-        if rating["type"] == "youtube":
-            youtube_rid = rating["resource"]
-        elif rating["type"] == "wikipedia":
-            wikipedia_rid = rating["resource"]
-
-        for concept in concepts:
+        for cid in concepts:
             node = tx.run(
                         """
-                        MERGE (c:rating_CRO { user_id:$user_id, cid:$cid, value:$value, youtube_rid: $youtube_rid, wikipedia_rid: $wikipedia_rid })
-                        RETURN ID(c) as node_id, c.user_id as user_id, c.cid as cid,
-                        c.weight as weight
+                        MERGE (c:Rating_CRO { user_id:$user_id, cid:$cid, value:$value, resource_rid: $resource_rid })
+                        RETURN ID(c) as node_id, c.user_id as user_id, c.cid as cid, c.value as value, resource_rid
                         """,
                         user_id=rating["user_id"],
-                        cid=concept["cid"],
+                        cid=cid,
                         value=rating["rating"],
-                        youtube_rid=youtube_rid,
-                        wikipedia_rid=wikipedia_rid
-                    )
+                        resource_rid=rating["resource"]
+                    ).single()
             
             # create relationship between user and rating
             if node:
-                rs = tx.run(
+                tx.run(
                         """
-                        MATCH (a:User),(b:rating_CRO)
+                        MATCH (a:User),(b:Rating_CRO)
                         WHERE ID(a) = $id_a AND ID(b) = $id_b
                         MERGE (a)-[r:has_rated_cro]->(b)
                         RETURN r
@@ -1943,9 +1938,55 @@ class NeoDataBase:
                         id_b=node["node_id"]
                     )
         tx.close()
+    
+    def cro_get_rating(self, resource_rid: str):
+        logger.info("CRO Getting Rating")
+        result = None
+        with self.driver.session() as session:
+            result = session.run(
+                """
+                MATCH (c:Rating_CRO)
+                WHERE c.resource_rid = $resource_rid
+                RETURN ID(c) as node_id, c.user_id as user_id, c.cid as cid, c.value as value, resource_rid
+                """,
+                resource_rid=resource_rid
+            ).data()
 
-        # update resource counts: helpful_count and not_helpful_count
-        ##
+        return result
+    
+    def cro_count_rating(self, resource_rid: str):
+        logger.info("CRO Getting Rating")
+        result = None
+        with self.driver.session() as session:
+            result = session.run(
+                """
+                MATCH (c:Rating_CRO)
+                WHERE c.resource_rid = $resource_rid
+                RETURN COUNT(c) as count
+                """,
+                resource_rid=resource_rid
+            ).single()
+
+        return result
+
+    def cro_update_resource_count(self, resource_rid: str, type: str, count: int):
+        # # type: helpful_count, not_helpful_count
+
+        logger.info("CRO Updating Resource Count")
+        result = None
+        with self.driver.session() as session:
+            if type == "helpful_count":
+                query = """MATCH (n:Resource) WHERE n.rid=$resource_rid set u.helpful_count=$count"""
+            elif type == "not_helpful_count":
+                query = """MATCH (n:Resource) WHERE n.rid=$resource_rid set u.not_helpful_count=$count"""
+
+            result = session.run(
+                query,
+                resource_rid=resource_rid,
+                count=count
+            ).single()
+
+        return result
 
 
 

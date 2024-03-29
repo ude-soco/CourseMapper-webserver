@@ -32,7 +32,7 @@ def get_resources():
     data_cro_form = data["croForm"]
     
     resource_recommender_service = ResourceRecommenderService()
-    rrs = resource_recommender_service.cro_store_logic(cro_form=data_cro_form)
+    rrs = resource_recommender_service.cro_save_logic(cro_form=data_cro_form)
     return "Ok"
 
     ## rrs = resource_recommender_service.map_recommendation_request(data_default=data_default, data_cro_form=data_cro_form)
@@ -296,6 +296,15 @@ def get_resources():
 
 @course_materials.route("/rating", methods=["POST"])
 def rating():
+    logger.info("Getting Rating Data")
+    data = request.get_json()
+    # print(data)
+
+    resource_recommender_service = ResourceRecommenderService()
+    resp = resource_recommender_service.cro_save_rating(rating=data)
+    return make_response(jsonify(resp), 200)
+
+    """
     resource = json.loads(request.form.get("resource"))  # type: ignore
     concepts = request.form.get("concepts")  # type: ignore
     user_id = request.form.get("userId")  # type: ignore
@@ -318,7 +327,7 @@ def rating():
     logger.info(resp)
 
     return make_response(jsonify(resp), 200)
-
+    """
 
 @course_materials.route("/get_concepts", methods=["POST"])
 

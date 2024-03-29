@@ -93,13 +93,7 @@ class ResourceRecommenderService:
         )
     
     # cro logic
-    def cro_store_rating(self, rating: dict):
-        pass
-
-    def cro_sort_result(self):
-        pass
-
-    def cro_store_logic(
+    def cro_save_logic(
             self, 
             cro_form: dict, 
             top_n=5,
@@ -111,6 +105,21 @@ class ResourceRecommenderService:
             cro_form: user_id: str, mid: str, recommendation_type: int (1,2 -> dynamic and 3,4 -> static), concepts: list,
         """
         self.db.cro_create_concept_cro(cro_form=cro_form)
+
+    def cro_save_rating(self, rating: dict):
+        resource_rid = rating["resource"]["rid"]
+        rating["resource"] = resource_rid
+        self.db.cro_create_rating(rating=rating)
+
+        # update resource counts: helpful_count and not_helpful_count
+        rating_counted = self.db.cro_get_rating(resource_rid=resource_rid)
+        if rating_counted and rating_counted["count"] != 0:
+            logger.info("Increment and decrement Rating")
+            self.db.cro_update_resource_count(resource_rid=resource_rid, type=rating["rating"], count=rating_counted)
+
+    def cro_get_result(self):
+        pass
+
 
     def cro_store_detail_rec(
             self, 
