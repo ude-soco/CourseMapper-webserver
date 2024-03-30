@@ -1764,12 +1764,6 @@ class NeoDataBase:
     # boby024 #
     ###########
     
-    # def executeQueryCRO(self, query):
-    #     tx = self.driver.session.begin_transaction()
-    #     result = tx.run(query)
-    #     tx.commit()
-    #     return result
-    
     def cro_get_user(self, user_id: str, complete=False):
         """
             get node User
@@ -1911,15 +1905,16 @@ class NeoDataBase:
         concepts = rating["concepts"].split()
         tx = self.driver.session()
         for cid in concepts:
-            # check whether rating exist based on user_id, resource_rid and cid (optional)
+            # check whether rating exist based on user_id, resource_rid, cid and cid (optional)
             node_checked = tx.run(
                         """
                         MATCH (r:Rating_CRO) 
-                        WHERE r.user_id = $user_id AND r.resource_rid = $resource_rid
+                        WHERE r.user_id = $user_id AND r.resource_rid = $resource_rid AND r.cid = $cid
                         RETURN ID(r) as node_id
                         """,
                         user_id=rating["user_id"],
-                        resource_rid=rating["resource"]
+                        resource_rid=rating["resource"],
+                        cid=cid
                     ).single()
             
             if node_checked is not None:
@@ -1935,7 +1930,7 @@ class NeoDataBase:
             else:
                 node = tx.run(
                             """
-                            MERGE (c:Rating_CRO { user_id:$user_id, cid:$cid, value:$value, resource_rid: $resource_rid })
+                            MERGE (c:Rating_CRO { cid:$cid, user_id:$user_id, value:$value, resource_rid: $resource_rid })
                             RETURN ID(c) as node_id, c.user_id as user_id, c.cid as cid, c.value as value, c.resource_rid as resource_rid
                             """,
                             user_id=rating["user_id"],
