@@ -2020,6 +2020,49 @@ class NeoDataBase:
 
         return result
 
+    def cro_edit_relationship_btw_concept_cro_and_resource(self, concepts_cro: list, resources: list):
+        """
+            update (create or remove) relationship btw resource and concept_cro
+            whether the list of result still contain the Resource
+            returned by the algorithm
+        """
+        logger.info("Editing Relationship between Resource and Concept_CRO")
+        tx = self.driver.session()
+        for concept in concepts_cro:
+            for resource in resources:
+                # check whether the relationship exists
+                relation_checked = tx.run(
+                                        """
+                                            MATCH p=(a:Resource)-[r:CONTAINS_CRO]->(b:Concept_CRO)
+                                            WHERE ID(a) = $resource_node_id and ID(b) = $concept_node_id
+                                            RETURN ID(r) as relationship_id
+                                        """,
+                                        resource_node_id=resource["node_id"],
+                                        concept_node_id=concept["node_id"],
+                                    )
+                if relation_checked is not None:
+                    tx.run(
+                        """
+                            MATCH p=(a:Resource)-[r:CONTAINS_CRO]->(b:Concept_CRO)
+                            WHERE ID(r)= $relationship_id 
+                            DELETE r
+                        """,
+                        relationship_id=relation_checked["relationship_id"]
+                    )
+                    break
+                else:
+                    tx.run(
+                            """
+                            MATCH (a:Resource),(b:Concept_CRO)
+                            WHERE ID(a) = $id_a AND ID(b) = $id_b
+                            MERGE (a)-[r:HAS_RATED_CRO]->(b)
+                            RETURN r
+                            """,
+                            id_a=concept["node_id"],
+                            id_b=resource["node_id"]
+                        )
+        tx.close()
+
 
 
     def cro_get_cro_concept(self, concept: dict):
