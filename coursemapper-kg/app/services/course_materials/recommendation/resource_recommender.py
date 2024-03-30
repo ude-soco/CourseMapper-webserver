@@ -119,8 +119,12 @@ class ResourceRecommenderService:
                                           not_helpful_count=ratings_counted["not_helpful_count"]
                                         )
 
-    def cro_get_result(self):
-        pass
+    def cro_get_resources_ranked_and_sorted(self, resources: list):
+        result = []
+        
+        # by: highest similarity scores
+
+        return result
 
 
     def cro_store_detail_rec(

@@ -1945,7 +1945,7 @@ class NeoDataBase:
                             """
                             MATCH (a:User),(b:Rating_CRO)
                             WHERE ID(a) = $id_a AND ID(b) = $id_b
-                            MERGE (a)-[r:has_rated_cro]->(b)
+                            MERGE (a)-[r:HAS_RATED_CRO]->(b)
                             RETURN r
                             """,
                             id_a=rating["user_id"],

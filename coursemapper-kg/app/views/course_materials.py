@@ -298,7 +298,7 @@ def get_resources():
 def rating():
     logger.info("Getting Rating Data")
     data = request.get_json()
-    # print(data)
+    logger.info(f"Rating Data: {data}")
 
     resource_recommender_service = ResourceRecommenderService()
     resp = resource_recommender_service.cro_save_rating(rating=data)
