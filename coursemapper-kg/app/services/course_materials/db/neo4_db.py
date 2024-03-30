@@ -2020,7 +2020,7 @@ class NeoDataBase:
 
         return result
 
-    def cro_edit_relationship_btw_concept_cro_and_resource(self, concepts_cro: list, resources: list):
+    def cro_edit_relationship_btw_concepts_cro_and_resources(self, concepts_cro: list, resources: list):
         """
             update (create or remove) relationship btw resource and concept_cro
             whether the list of result still contain the Resource
@@ -2062,6 +2062,68 @@ class NeoDataBase:
                             id_b=resource["node_id"]
                         )
         tx.close()
+    
+    def cro_get_resources(self, concepts_cro: list):
+        result = []
+        tx = self.driver.session()
+        for concept in concepts_cro:
+            # article
+            node_article = tx.run(
+                    """
+                        MATCH (a:Article)
+                        WHERE ID(a) = $concept_cro_node_id
+                        RETURN ID(a) as id
+                    """,
+                    concept_cro_node_id=concept["node_id"]
+                ).single()
+            
+            if node_article is not None:
+                node = tx.run(
+                    """
+                        MATCH p=(a:Resource)-[r:CONTAINS_CRO]->(b:Concept_CRO)
+                        WHERE ID(b) = $concept_cro_node_id
+                        RETURN ID(a) as id, a.rid as rid, a.title as title, a.thumbnail as thumbnail, 
+                        a.abstract as abstract, a.post_date as post_date, a.author_image_url as author_image_url, 
+                        a.author_name as author_name, a.uri as uri, a.similarity_score as similarity_score,
+                        a.helpful_count as helpful_counter, a.not_helpful_count as not_helpful_counter
+                    """,
+                    concept_cro_node_id=concept["node_id"]
+                ).single()
+
+                if node:
+                    result.append(node)
+
+
+            # video
+            node_video = tx.run(
+                    """
+                        MATCH (a:Video)
+                        WHERE ID(a) = $concept_cro_node_id
+                        RETURN ID(a) as id
+                    """,
+                    concept_cro_node_id=concept["node_id"]
+                ).single()
+
+            if node_video is not None:
+                node = tx.run(
+                    """
+                        MATCH p=(a:Resource)-[r:CONTAINS_CRO]->(b:Concept_CRO)
+                        WHERE ID(b) = $concept_cro_node_id
+                        RETURN ID(a) as id, a.rid as rid, a.title as title, a.thumbnail as thumbnail,
+                        a.keyphrases as keyphrases, a.description as description, a.description_full as description_full,
+                        a.views as views, a.publish_time as publish_time, a.uri as uri, a.similarity_score as similarity_score,
+                        a.helpful_count as helpful_counter, a.not_helpful_count as not_helpful_counter, a.duration as duration
+                    """,
+                    concept_cro_node_id=concept["node_id"]
+                ).single()
+
+                if node:
+                    result.append(node)
+           
+
+        return result
+
+
 
 
 

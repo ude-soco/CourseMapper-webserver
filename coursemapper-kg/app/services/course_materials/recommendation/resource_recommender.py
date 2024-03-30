@@ -118,9 +118,14 @@ class ResourceRecommenderService:
                                           helpful_count=ratings_counted["helpful_count"], 
                                           not_helpful_count=ratings_counted["not_helpful_count"]
                                         )
-
-    def cro_get_resources_ranked_and_sorted(self, resources: list):
-        result = []
+        
+    def cro_edit_relationship_btw_concepts_cro_and_resources(self, concepts_cro: list, resources: list):
+        self.db.cro_edit_relationship_btw_concepts_cro_and_resources(concepts_cro=concepts_cro, 
+                                                                     resources=resources
+                                                                    )
+    
+    def cro_get_resources_ranked_and_sorted(self, concepts_cro: list):
+        result = self.db.cro_get_resources(concepts_cro=concepts_cro)
         
         # by: highest similarity scores
 
