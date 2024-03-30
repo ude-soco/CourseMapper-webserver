@@ -1902,6 +1902,9 @@ class NeoDataBase:
     def cro_create_rating(self, rating: dict):
         logger.info("CRO Creating Rating")
 
+        # get user node by id
+        user = self.cro_get_user(user_id=rating["user_id"])
+
         concepts = rating["concepts"].split()
         tx = self.driver.session()
         for cid in concepts:
@@ -1948,7 +1951,7 @@ class NeoDataBase:
                             MERGE (a)-[r:HAS_RATED_CRO]->(b)
                             RETURN r
                             """,
-                            id_a=rating["user_id"],
+                            id_a=user["node_id"],
                             id_b=node["node_id"]
                         )
         tx.close()
