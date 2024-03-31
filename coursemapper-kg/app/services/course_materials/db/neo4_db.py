@@ -1763,6 +1763,17 @@ class NeoDataBase:
     ###########
     # boby024 #
     ###########
+    def cro_user_update(self, user_id: str, embedding: str):
+        """
+            CRO Writing new embedding value of the node User
+        """
+        logger.info("CRO Writing new embedding value of the node User")
+
+        with self.driver.session() as session:
+            session.run("""MATCH (u:User) WHERE u.user_id=$user_id set u.embedding=$embedding""",
+                user_id=user_id,
+                embedding=embedding
+            ).data()
     
     def cro_get_user(self, user_id: str, complete=False):
         """

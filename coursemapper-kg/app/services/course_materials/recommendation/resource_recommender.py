@@ -126,10 +126,29 @@ class ResourceRecommenderService:
         
         cro_form["concepts"] = concepts_cro
         result["cro_form"] = cro_form
-        if user_embedding:
 
+        if user_embedding:
             ## Update User Embedding
-            pass
+            sum_embeddings = 0
+            sum_weights = 0
+            # Convert string type to array type 'np.array'
+            # Sum and average these concept embeddings to get user embedding
+            for concept in concepts_cro:
+                list1 = concept["final_embedding"].split(',')
+                list2 = []
+                for j in list1:
+                    list2.append(float(j))
+                arr = np.array(list2)
+                sum_embeddings = sum_embeddings + arr * concept["weight"]
+                sum_weights = sum_weights + concept["weight"]
+
+            # The weighted average of final embeddings of all dnu concepts
+            average = np.divide(sum_embeddings, sum_weights)
+            embedding_str =','.join(str(i) for i in average)
+
+            # Writing user embedding
+            self.db.cro_user_update(user_id=cro_form["user_id"], embedding=embedding_str)
+            result["user_embedding"] = embedding_str
 
         return result
 
