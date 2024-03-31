@@ -8,6 +8,7 @@ import debugLib from "debug";
 import bodyParser from "body-parser";
 import path from "path";
 import socketio from "./socketio";
+import addErrorHandling from "./middlewares/exceptionHandling";
 
 dotenv.config();
 const env = process.env.NODE_ENV || "production";
@@ -48,6 +49,7 @@ app.use(
   })
 );
 app.use("/api/public/uploads", express.static("public/uploads"));
+addErrorHandling(app);
 
 // Get port from environment and store in Express
 const port = normalizePort(process.env.PORT || "8090");
