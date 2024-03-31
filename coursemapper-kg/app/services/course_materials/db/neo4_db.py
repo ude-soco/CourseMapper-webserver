@@ -1797,6 +1797,20 @@ class NeoDataBase:
 
         return result
     
+    def cro_get_concepts(self, cids: list):
+        logger.info("Getting node concept: Concept")
+        with self.driver.session() as session: 
+            result = session.run(
+                """
+                MATCH (c:Concept)
+                WHERE c.cid IN $cids
+                RETURN c.cid as cid, c.name as name, c.final_embedding as final_embedding
+                """,
+                cids=cids
+            ).data()
+
+        return result
+
     def cro_map_concept_cro(self, node: dict = None, nodes: list = [], fetched = True):
         logger.info("Mapping node concept: Concept_CRO")
         if node:
@@ -1812,7 +1826,7 @@ class NeoDataBase:
         else:
             # to be updated
             return []
-         
+        
     def cro_get_concept_cro(self, user_id: str, cid: str, weight: float):
         logger.info("Getting node concept: Concept_CRO")
 

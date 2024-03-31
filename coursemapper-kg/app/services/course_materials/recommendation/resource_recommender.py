@@ -94,17 +94,45 @@ class ResourceRecommenderService:
     
     # cro logic
     def cro_save_logic(
-            self, 
-            cro_form: dict, 
+            self,
+            cro_form: dict,
             top_n=5,
             user_embedding=False,
-            is_concept_cids=False,
-            is_concept_names=False
         ):
         """
             cro_form: user_id: str, mid: str, recommendation_type: int (1,2 -> dynamic and 3,4 -> static), concepts: list,
         """
-        self.db.cro_create_concept_cro(cro_form=cro_form)
+        result = {
+                "user_embedding": None,
+                "cro_form": None,
+            }
+
+        # get only top 5 dnu
+        concepts: list = cro_form["concepts"]
+        concepts.sort(key=lambda x: x["weight"], reverse=True)
+        cro_form["concepts"] = concepts[:top_n]
+
+        # create concept_cro
+        concepts_cro = self.db.cro_create_concept_cro(cro_form=cro_form)
+
+        cids = [node["cid"] for node in cro_form["concepts"]]
+        concepts = self.db.cro_get_concepts(cids=cids)
+        for node_cro in concepts_cro:
+            for node in concepts:
+                if node_cro["cid"] == node["cid"]:
+                    node_cro["name"] = node["name"]
+                    node_cro["final_embedding"] = node["final_embedding"]
+                    break
+        
+        cro_form["concepts"] = concepts_cro
+        result["cro_form"] = cro_form
+        if user_embedding:
+
+            ## Update User Embedding
+            pass
+
+        return result
+
 
     def cro_save_rating(self, rating: dict):
         resource_rid = rating["resource"]["rid"]
