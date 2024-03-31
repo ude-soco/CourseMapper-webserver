@@ -121,7 +121,8 @@ class ResourceRecommenderService:
         
     def cro_edit_relationship_btw_concepts_cro_and_resources(self, concepts_cro: list, resources: list):
         self.db.cro_edit_relationship_btw_concepts_cro_and_resources(concepts_cro=concepts_cro, 
-                                                                     resources=resources
+                                                                     resources=resources,
+                                                                     old_relationship=True
                                                                     )
     
     def cro_get_resources_ranked_and_sorted(self, concepts_cro: list):

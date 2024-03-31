@@ -2019,51 +2019,30 @@ class NeoDataBase:
             ).single()
 
         return result
-
-    def cro_edit_relationship_btw_concepts_cro_and_resources(self, concepts_cro: list, resources: list):
-        """
-            update (create or remove) relationship btw resource and concept_cro
-            whether the list of result still contain the Resource
-            returned by the algorithm
-        """
-        logger.info("Editing Relationship between Resource and Concept_CRO")
-        tx = self.driver.session()
-        for concept in concepts_cro:
-            for resource in resources:
-                # check whether the relationship exists
-                relation_checked = tx.run(
-                                        """
-                                            MATCH p=(a:Resource)-[r:CONTAINS_CRO]->(b:Concept_CRO)
-                                            WHERE ID(a) = $resource_node_id and ID(b) = $concept_node_id
-                                            RETURN ID(r) as relationship_id
-                                        """,
-                                        resource_node_id=resource["node_id"],
-                                        concept_node_id=concept["node_id"],
-                                    )
-                if relation_checked is not None:
-                    tx.run(
-                        """
-                            MATCH p=(a:Resource)-[r:CONTAINS_CRO]->(b:Concept_CRO)
-                            WHERE ID(r)= $relationship_id 
-                            DELETE r
-                        """,
-                        relationship_id=relation_checked["relationship_id"]
-                    )
-                    break
-                else:
-                    tx.run(
-                            """
-                            MATCH (a:Resource),(b:Concept_CRO)
-                            WHERE ID(a) = $id_a AND ID(b) = $id_b
-                            MERGE (a)-[r:HAS_RATED_CRO]->(b)
-                            RETURN r
-                            """,
-                            id_a=concept["node_id"],
-                            id_b=resource["node_id"]
-                        )
-        tx.close()
     
+    def cro_remove_relation_btw_resource_and_concept_cro(self, concepts_cro: list):
+        """
+            Remove Relationship between Resource and Concept_CRO
+        """
+        logger.info("Remove Relationship between Resource and Concept_CRO")
+
+        concept_ids = [node["node_id"] for node in concepts_cro]
+        with self.driver.session() as session:
+            session.run(
+                    """
+                        MATCH p=(a:Resource)-[r:CONTAINS_CRO]->(b:Concept_CRO)
+                        WHERE ID(b) IN $concept_ids
+                        DELETE r
+                    """,
+                    concept_ids=concept_ids
+                )
+            
     def cro_get_resources(self, concepts_cro: list):
+        """
+            Getting List of Resources Containing Concept_CRO
+        """
+        logger.info("Getting List of Resources Containing Concept_CRO")
+
         result = []
         tx = self.driver.session()
         for concept in concepts_cro:
@@ -2093,7 +2072,6 @@ class NeoDataBase:
                 if node:
                     result.append(node)
 
-
             # video
             node_video = tx.run(
                     """
@@ -2111,8 +2089,8 @@ class NeoDataBase:
                         WHERE ID(b) = $concept_cro_node_id
                         RETURN ID(a) as id, a.rid as rid, a.title as title, a.thumbnail as thumbnail,
                         a.keyphrases as keyphrases, a.description as description, a.description_full as description_full,
-                        a.views as views, a.publish_time as publish_time, a.uri as uri, a.similarity_score as similarity_score,
-                        a.helpful_count as helpful_counter, a.not_helpful_count as not_helpful_counter, a.duration as duration
+                        a.views as views, a.publish_time as publish_time, a.uri as uri, a.duration as duration,
+                        a.similarity_score as similarity_score, a.helpful_count as helpful_counter, a.not_helpful_count as not_helpful_counter
                     """,
                     concept_cro_node_id=concept["node_id"]
                 ).single()
@@ -2120,11 +2098,35 @@ class NeoDataBase:
                 if node:
                     result.append(node)
            
-
         return result
 
+    def cro_edit_relationship_btw_concepts_cro_and_resources(self, concepts_cro: list, resources: list, old_relationship=True):
+        """
+            update (create or remove) relationship btw resource and concept_cro
+            whether the list of result still contain the Resource
+            returned by the algorithm
+        """
+        logger.info("Editing Relationship between Resource and Concept_CRO")
+        if old_relationship:
+            self.cro_remove_relation_btw_resource_and_concept_cro()
 
+        tx = self.driver.session()
+        for concept in concepts_cro:
+            for resource in resources:
+                tx.run(
+                        """
+                        MATCH (a:Resource),(b:Concept_CRO)
+                        WHERE ID(a) = $id_a AND ID(b) = $id_b
+                        MERGE (a)-[r:HAS_RATED_CRO]->(b)
+                        RETURN r
+                        """,
+                        id_a=concept["node_id"],
+                        id_b=resource["node_id"]
+                    )
+        tx.close()
 
+    ########
+    ########
 
 
     def cro_get_cro_concept(self, concept: dict):
