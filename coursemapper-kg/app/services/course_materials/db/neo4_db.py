@@ -1763,14 +1763,14 @@ class NeoDataBase:
     ###########
     # boby024 #
     ###########
-    def cro_user_update(self, user_id: str, embedding: str):
+    def cro_update_user_embedding_value(self, user_id: str, embedding: str):
         """
             CRO Writing new embedding value of the node User
         """
         logger.info("CRO Writing new embedding value of the node User")
 
         with self.driver.session() as session:
-            session.run("""MATCH (u:User) WHERE u.user_id=$user_id set u.embedding=$embedding""",
+            session.run("""MATCH (u:User) WHERE u.uid=$user_id set u.embedding=$embedding""",
                 user_id=user_id,
                 embedding=embedding
             ).data()
@@ -2069,60 +2069,43 @@ class NeoDataBase:
         logger.info("Getting List of Resources Containing Concept_CRO")
 
         result = []
-        tx = self.driver.session()
-        for concept in concepts_cro:
-            # article
-            node_article = tx.run(
-                    """
-                        MATCH (a:Article)
-                        WHERE ID(a) = $concept_cro_node_id
-                        RETURN ID(a) as id
-                    """,
-                    concept_cro_node_id=concept["node_id"]
-                ).single()
-            
-            if node_article is not None:
-                node = tx.run(
-                    """
-                        MATCH p=(a:Resource)-[r:CONTAINS_CRO]->(b:Concept_CRO)
-                        WHERE ID(b) = $concept_cro_node_id
-                        RETURN ID(a) as id, a.rid as rid, a.title as title, a.thumbnail as thumbnail, 
-                        a.abstract as abstract, a.post_date as post_date, a.author_image_url as author_image_url, 
-                        a.author_name as author_name, a.uri as uri, a.similarity_score as similarity_score,
-                        a.helpful_count as helpful_counter, a.not_helpful_count as not_helpful_counter
-                    """,
-                    concept_cro_node_id=concept["node_id"]
-                ).single()
+        node_ids = [node["node_id"] for node in concepts_cro]
+        with self.driver.session() as session:
+            result = session.run(
+                """
+                MATCH p=(a:Resource)-[r:CONTAINS_CRO]->(b:Concept_CRO)
+                WHERE ID(b) = $node_ids
+                RETURN a
+                """,
+                node_ids=node_ids
+            ).data()
 
-                if node:
-                    result.append(node)
+            if result:
+                for resource in result:
+                    r = {
+                        "identity": resource["identity"],
+                        "title": resource["title"],
+                        "rid": resource["rid"],
+                        "uri": resource["uri"],
+                        "helpful_count": resource["helpful_count"],
+                        "not_helpful_count": resource["not_helpful_count"],
+                        "labels": resource["labels"],
+                        "similarity_score": resource["similarity_score"],
+                        "keyphrases": resource["keyphrases"],
+                        "text": resource["text"]
+                    }
 
-            # video
-            node_video = tx.run(
-                    """
-                        MATCH (a:Video)
-                        WHERE ID(a) = $concept_cro_node_id
-                        RETURN ID(a) as id
-                    """,
-                    concept_cro_node_id=concept["node_id"]
-                ).single()
+                    if "Video" in r["labels"]:
+                        r["description"] = resource["description"]
+                        r["description_full"] = resource["description_full"]
+                        r["thumbnail"] = resource["thumbnail"]
+                        r["duration"] = resource["duration"]
+                        r["views"] = resource["views"]
+                        r["publish_time"] = resource["publish_time"]
 
-            if node_video is not None:
-                node = tx.run(
-                    """
-                        MATCH p=(a:Resource)-[r:CONTAINS_CRO]->(b:Concept_CRO)
-                        WHERE ID(b) = $concept_cro_node_id
-                        RETURN ID(a) as id, a.rid as rid, a.title as title, a.thumbnail as thumbnail,
-                        a.keyphrases as keyphrases, a.description as description, a.description_full as description_full,
-                        a.views as views, a.publish_time as publish_time, a.uri as uri, a.duration as duration,
-                        a.similarity_score as similarity_score, a.helpful_count as helpful_counter, a.not_helpful_count as not_helpful_counter
-                    """,
-                    concept_cro_node_id=concept["node_id"]
-                ).single()
+                    elif "Article" in r["labels"]:
+                        r["abstract"] = resource["abstract"]
 
-                if node:
-                    result.append(node)
-           
         return result
 
     def cro_edit_relationship_btw_concepts_cro_and_resources(self, concepts_cro: list, resources: list, old_relationship=True):
