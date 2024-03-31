@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, tap } from 'rxjs';
 import { Annotation } from 'src/app/models/Annotations';
 import { environment } from 'src/environments/environment';
 import { Reply } from '../models/Reply';
@@ -10,18 +10,42 @@ import { BlockingNotifications } from '../models/BlockingNotification';
   providedIn: 'root',
 })
 export class AnnotationService {
+  private annotationSubject = new Subject<any>();
   constructor(private http: HttpClient) {}
 
+
+  // postAnnotation(
+  //   annotation: Annotation,
+  //   mentionedUsers: { userId: string; name: string; email: string }[]
+  // ): Observable<{ response: BlockingNotifications }> {
+  //   return this.http.post<{ response: BlockingNotifications }>(
+  //     `${environment.API_URL}/courses/${annotation.courseId}/materials/${annotation.materialId}/annotation`,
+  //     { annotation, mentionedUsers }
+  //   );
+  // }
   postAnnotation(
     annotation: Annotation,
     mentionedUsers: { userId: string; name: string; email: string }[]
   ): Observable<{ response: BlockingNotifications }> {
-    return this.http.post<{ response: BlockingNotifications }>(
-      `${environment.API_URL}/courses/${annotation.courseId}/materials/${annotation.materialId}/annotation`,
-      { annotation, mentionedUsers }
+    console.log("annotation service", annotation)
+    const url = `${environment.API_URL}/courses/${annotation.courseId}/materials/${annotation.materialId}/annotation`;
+
+    // Make the HTTP post request
+    return this.http.post<{ response: BlockingNotifications }>(url, { annotation, mentionedUsers }).pipe(
+      tap((response) => {
+        // Emit the posted annotation data only after a successful request
+        this.annotationSubject.next({
+          annotation,
+          mentionedUsers,
+          response
+        });
+      })
     );
   }
 
+  getPostedAnnotation(): Observable<any> {
+    return this.annotationSubject.asObservable();
+  }
   getAllAnnotations(
     materialId: string,
     courseID: string
