@@ -146,7 +146,7 @@ export const getReplyToCommentCreationStatement = (
   };
 };
 
-export const getReplyDeletionStatement = (user, reply, origin) => {
+export const getReplyDeletionStatement = (user, reply, origin, annotation) => {
   const userId = user._id.toString();
   const userFullname = `${user.firstname} ${user.lastname}`;
   return {
@@ -209,7 +209,7 @@ export const getReplyDeletionStatement = (user, reply, origin) => {
   };
 };
 
-export const getReplyLikeStatement = (user, reply, origin) => {
+export const getReplyLikeStatement = (user, reply, origin, annotation) => {
   const userId = user._id.toString();
   const userFullname = `${user.firstname} ${user.lastname}`;
   return {
@@ -274,7 +274,7 @@ export const getReplyLikeStatement = (user, reply, origin) => {
   };
 };
 
-export const getReplyUnlikeStatement = (user, reply, origin) => {
+export const getReplyUnlikeStatement = (user, reply, origin, annotation) => {
   const userId = user._id.toString();
   const userFullname = `${user.firstname} ${user.lastname}`;
   return {
@@ -337,7 +337,7 @@ export const getReplyUnlikeStatement = (user, reply, origin) => {
   };
 };
 
-export const getReplyDislikeStatement = (user, reply, origin) => {
+export const getReplyDislikeStatement = (user, reply, origin, annotation) => {
   const userId = user._id.toString();
   const userFullname = `${user.firstname} ${user.lastname}`;
   return {
@@ -400,7 +400,7 @@ export const getReplyDislikeStatement = (user, reply, origin) => {
   };
 };
 
-export const getReplyUndislikeStatement = (user, reply, origin) => {
+export const getReplyUndislikeStatement = (user, reply, origin, annotation) => {
   const userId = user._id.toString();
   const userFullname = `${user.firstname} ${user.lastname}`;
   return {
@@ -463,7 +463,7 @@ export const getReplyUndislikeStatement = (user, reply, origin) => {
   };
 };
 
-export const getReplyEditStatement = (user, oldReply, newReply, origin) => {
+export const getReplyEditStatement = (user, oldReply, newReply, origin, annotation) => {
   const userId = user._id.toString();
   const userFullname = `${user.firstname} ${user.lastname}`;
   return {
