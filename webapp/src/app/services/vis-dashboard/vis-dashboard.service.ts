@@ -73,6 +73,11 @@ export interface Concept{
   ConceptName: string
 }
 
+export interface CourseByPlatformAndConcept{
+  CourseId:string,
+  CourseName:string
+}
+
 export interface TeacherByPopularity{
   TeacherName:string,
   TeacherId: string,
@@ -85,6 +90,33 @@ export interface Teacher{
   TeacherId: string,
   CourseId: string,
   CourseName: string
+}
+
+
+export interface CoursesByPopularityForVis{
+  CourseName:string;
+  NumberOfParticipants: number
+}
+
+export interface CategoriesByPopularityForVis{
+  CourseCategory:string;
+  TotalParticipants: number
+}
+
+export interface ActiveTeachers{
+  TeacherName: string,
+  NumberOfCourses: number,
+}
+
+
+export interface ActiveInstitutions{
+  InstitutionName: string,
+  NumberOfCourses: number,
+}
+
+export interface PlatformsByTeacherCount{
+  TeacherCount:number,
+  PlatformName: string
 }
 
 @Injectable({
@@ -142,6 +174,61 @@ export class VisDashboardService {
       `${environment.API_URL}/vis-dashboard/teacher/${teacherId}`
     ));
   }
+
+  async getConceptsByPlatform(platform:string):Promise<Concept[]>{
+    return lastValueFrom(this.http.get<Concept[]>(
+      `${environment.API_URL}/vis-dashboard/concept-by-platform/${platform}`
+    ));
+  }
+
+  async getCoursesByConceptAndPlatform(platform:string,concept:string):Promise<CourseByPlatformAndConcept[]>{
+    return lastValueFrom(this.http.get<CourseByPlatformAndConcept[]>(
+      `${environment.API_URL}/vis-dashboard/courses-for-explore/${platform}/${concept}`
+    ));
+  }
+
+  async getCoursesByPopularityForVis(platform:string,datapointCount:number):Promise<CoursesByPopularityForVis[]>{
+    return lastValueFrom(this.http.get<CoursesByPopularityForVis[]>(
+      `${environment.API_URL}/vis-dashboard/courses-popular-explore/${platform}/${datapointCount}`
+    ));
+  }
+
+  async getCategoryByPopularityForVis(platform:string,datapointCount:number):Promise<CategoriesByPopularityForVis[]>{
+    return lastValueFrom(this.http.get<CategoriesByPopularityForVis[]>(
+      `${environment.API_URL}/vis-dashboard/category-popular-explore/${platform}/${datapointCount}`
+    ));
+  }
+
+  async getActiveTeachersForVis(platform:string,datapointCount:number):Promise<ActiveTeachers[]>{
+    return lastValueFrom(this.http.get<ActiveTeachers[]>(
+      `${environment.API_URL}/vis-dashboard/active-teachers/${platform}/${datapointCount}`
+    ));
+  }
+
+
+  async getActiveInstitutionsForVis(platform:string,datapointCount:number):Promise<ActiveInstitutions[]>{
+    return lastValueFrom(this.http.get<ActiveInstitutions[]>(
+      `${environment.API_URL}/vis-dashboard/active-institutions/${platform}/${datapointCount}`
+    ));
+  }
+
+
+
+
+  async PostTest(platform:string,datapointCount:number,{}):Promise<[]>{
+    return lastValueFrom(this.http.post<[]>(
+      `${environment.API_URL}/vis-dashboard/compare-platforms/${platform}/${datapointCount}`,{}
+    ));
+  }
+
+  async getPlatformsByTeacherCount(platforms:string[]):Promise<PlatformsByTeacherCount[]>{
+    console.log(platforms)
+
+    return lastValueFrom(this.http.post<PlatformsByTeacherCount[]>(
+      `${environment.API_URL}/vis-dashboard/compare-platforms-teachers`,{platforms:platforms}
+    ));
+  }
+
 
 
 

@@ -1,2 +1,14 @@
-<p>vis-explore-page works!</p>
 <app-vis-back-button></app-vis-back-button>
+
+<div style="text-align: center" >
+  <div><p class="discover">Discover a MOOC</p></div>
+  <div>
+    <select [(ngModel)]="selectedPlatform" class="custom-select" (ngModelChange)="updateButtonState()">
+      <option value="" disabled selected class="placeholder-option">Please select a platform</option>
+      <option *ngFor="let platform of platforms" [value]="platform">{{ platform }}</option>
+    </select>
+  </div>
+  <button class="button" [disabled]="isExploreButtonDisabled"  (click)="exploreCourse()">Explore</button>
+  <p>You selected: {{ selectedPlatform }}</p>
+
+</div>

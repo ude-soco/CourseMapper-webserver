@@ -112,3 +112,106 @@ export const getTeacherById= async (req, res) => {
 };
 
 
+export const getConceptsByPlatform= async (req, res) => {
+    const platform= req.params.platform;
+
+    try {
+        const records = await visDashboardServices.getConceptsByPlatform(platform)
+        return res.status(200).send(records);
+    } catch (err) {
+        return res.status(500).send({ error: err.message });
+    }
+};
+
+export const getCoursesByConceptAndPlatform= async (req, res) => {
+    const platform= req.params.platform;
+    const concept= req.params.concept;
+
+    try {
+        const records = await visDashboardServices.getCoursesByConceptAndPlatform(concept,platform)
+        return res.status(200).send(records);
+    } catch (err) {
+        return res.status(500).send({ error: err.message });
+    }
+};
+
+
+export const getCoursesByPopularityForVis = async (req, res) => {
+    const platform= req.params.platform;
+    const datapoints = req.params.datapoints;
+
+    try {
+        const records = await visDashboardServices.getCoursesByPopularityForVis(platform,datapoints)
+        return res.status(200).send(records);
+    } catch (err) {
+        return res.status(500).send({ error: err.message });
+    }
+};
+
+
+export const getCategoryByPopularityForVis = async (req, res) => {
+    const platform= req.params.platform;
+    const datapoints = req.params.datapoints;
+
+    try {
+        const records = await visDashboardServices.getCategoryByPopularityForVis(platform,datapoints)
+        return res.status(200).send(records);
+    } catch (err) {
+        return res.status(500).send({ error: err.message });
+    }
+};
+
+
+export const getActiveTeachersForVis = async (req, res) => {
+    const platform= req.params.platform;
+    const datapoints = req.params.datapoints;
+
+    try {
+        const records = await visDashboardServices.getActiveTeachersForVis(platform,datapoints)
+        return res.status(200).send(records);
+    } catch (err) {
+        return res.status(500).send({ error: err.message });
+    }
+};
+
+export const getActiveInstitutionsForVis = async (req, res) => {
+    const platform= req.params.platform;
+    const datapoints = req.params.datapoints;
+
+    try {
+        const records = await visDashboardServices.getActiveInstitutionsForVis(platform,datapoints)
+        return res.status(200).send(records);
+    } catch (err) {
+        return res.status(500).send({ error: err.message });
+    }
+};
+
+
+
+export const postTest= async (req, res) => {
+    const platform= req.params.platform;
+    const datapoints = req.params.datapoints;
+    const {platforms} = req.body
+    try{
+      console.log(platforms)
+        const records = await visDashboardServices.postTest(platforms)
+        const comparisonData = records.map(record=>({
+           // platform: record.get('PlatformName'),
+           // course: record.get('CourseName')
+        }))
+        return res.status(200).send(records);
+    }catch (e) {
+        return res.status(500).send({ error: e.message });
+    }
+};
+
+export const getNumberOfTeachersForCompare= async (req, res) => {
+    const {platforms} = req.body
+    try{
+        const records = await visDashboardServices.getNumberOfTeachersForCompare(platforms)
+        return res.status(200).send(records);
+    }catch (e) {
+        return res.status(500).send({ error: e.message });
+    }
+};
+

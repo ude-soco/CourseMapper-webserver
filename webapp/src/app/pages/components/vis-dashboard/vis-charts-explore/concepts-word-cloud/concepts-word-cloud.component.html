@@ -1,0 +1,41 @@
+<div class="by-concepts">
+  <div><p class="title">Most Important topics</p></div>
+  <div class="concepts-and-courses">
+    <div class="concepts">
+      <div *ngIf="isCloudLoading">...loading</div>
+      <angular-d3-cloud
+        (wordClick)="onWorkClick($event)"
+        [autoFill]="true"
+        [data]="data"
+        [height]="280"
+        [padding]="5"
+        [rotate]="0"
+        [width]="450"
+        font="serif"
+      >
+      </angular-d3-cloud>
+    </div>
+
+    <div class="course-list">
+      <div class="course-list-header">
+        <div class="course-name-header">Course name</div>
+        <div class="course-view-header">View Course</div>
+      </div>
+      <hr>
+      <div *ngIf="!topicClicked">
+        select a topic to view the list of courses
+      </div>
+      <div *ngFor="let course of relatedCourses">
+        <div class="course-link">
+          <div>
+            <p class="course-name">{{ course.CourseName }}</p>
+          </div>
+          <div (click)="onCourseClick(course.CourseId)" class="link">
+            <i class='bx bxs-low-vision'></i>
+          </div>
+        </div>
+        <hr>
+      </div>
+    </div>
+  </div>
+</div>

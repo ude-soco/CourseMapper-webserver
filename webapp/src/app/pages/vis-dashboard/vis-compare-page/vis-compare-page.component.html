@@ -1,2 +1,16 @@
-<p>vis-compare-page works!</p>
 <app-vis-back-button></app-vis-back-button>
+
+<div style="text-align: center">
+  <div><p class="discover">Compare MOOC Platforms</p></div>
+  <div>
+    <div *ngFor="let platform of platforms">
+      <label>
+        <input type="checkbox" [value]="platform" (change)="updateSelectedPlatforms($event)">
+        {{ platform }}
+      </label>
+    </div>
+  </div>
+  <button class="button" [disabled]="selectedPlatforms.length < 2" (click)="comparePlatforms()">Explore</button>
+  <p>You selected: {{ selectedPlatforms }}</p>
+</div>
+

@@ -1,0 +1,39 @@
+.discover{
+  font-size: 34px;
+  font-weight: bold;
+  font-family: Roboto;
+  color: #222222;
+}
+.button{
+  border: #3a95cc;
+  padding: 3px;
+  border-radius: 5px;
+  color: #3a95cc;
+}
+
+
+.custom-select {
+  width: 400px; /* Set the width of the select box */
+  padding: 10px; /* Add padding to the select box */
+  border: 2px solid #ccc; /* Set the border color */
+  border-radius: 11px; /* Set the border radius */
+  background-color: #fff; /* Set the background color */
+  font-size: 16px; /* Set the font size */
+}
+
+.custom-select:focus {
+  outline: none; /* Remove the outline when the select box is focused */
+  border-color: #0277BD; /* Change the border color when the select box is focused */
+}
+
+.placeholder-option {
+  color: white; /* Change the color of the placeholder text */
+}
+
+.custom-select::after {
+  content: '\25BC'; /* Unicode character for the dropdown arrow */
+  position: absolute;
+  top: calc(50% - 0.5em); /* Position the dropdown arrow vertically centered */
+  right: 10px; /* Adjust the space between the value and the dropdown arrow */
+  pointer-events: none; /* Ensure the arrow does not interfere with clicking on the select box */
+}

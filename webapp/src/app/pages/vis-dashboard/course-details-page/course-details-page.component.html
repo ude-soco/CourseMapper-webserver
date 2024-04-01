@@ -35,7 +35,26 @@
     </div>
 
     <h2>Topics</h2>
-    //Todo
+
+
+    <angular-d3-cloud
+      [data]="data"
+      [width]="500"
+      [height]="300"
+      [padding]="5"
+      font="serif"
+      [rotate]="0"
+      [autoFill]="true"
+      (wordClick)="onWorkClick($event)"
+
+
+
+
+    >
+    </angular-d3-cloud>
+
+    <!-- app.component.html -->
+
     <!-- Other right part content -->
   </div>
 </div>

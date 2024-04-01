@@ -1,0 +1,66 @@
+.by-concepts{
+  border: 2px solid lightgrey;
+  padding: 10px;
+  border-radius: 10px;
+  height: 100%;
+}
+
+.title{
+  font-family: Roboto;
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 3em;
+}
+
+.concepts-and-courses{
+  display: flex;
+  /***flex-wrap: wrap;*/
+  /*Todo make responsive */
+
+}
+
+.course-list-header{
+  display: flex;
+  .course-name-header{
+    flex: 3;
+
+  }
+  .course-view-header{
+   flex:1;
+    text-align: right;
+  }
+}
+
+
+.course-link{
+  display: flex;
+  .course-name{
+    font-size: 14px;
+    font-family: Roboto;
+    color: #222222;
+    flex: 3;
+
+  }
+  .link{
+    text-align: right;
+    flex: 1;
+  }
+}
+
+
+.course-list{
+  border: 2px solid lightgrey;
+  border-radius: 10px;
+  height: 18em;
+  width: 100%;
+  padding: 10px;
+}
+
+
+.concepts{
+  margin-right: 1em;
+  border: 2px solid lightgrey;
+  border-radius: 10px;
+  height: 18em;
+  width: 100%;
+}

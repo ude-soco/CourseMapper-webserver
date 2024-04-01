@@ -36,7 +36,7 @@ export class CourseCategoryPageComponent implements OnInit{
     this.route.queryParams.subscribe(params => {
       this.emittedCategory = params['category'];
     });
-    this.getCoursesByCategory(this.emittedCategory)
+    this.getCoursesByCategory(this.emittedCategory.toLowerCase())
     this.getCoursesForPage(this.currentPage);
   }
 

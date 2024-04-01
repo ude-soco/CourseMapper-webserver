@@ -13,6 +13,9 @@ export class CourseDetailsPageComponent implements OnInit{
   courseId: string;
   course: Course[];
   concepts: Concept[]
+  words: string[]
+  data : { text: string; value: number; }[]= [{"text":"me", value: 6}]
+  myData: { text: string; value: number; }[]
 
   constructor(private route: ActivatedRoute,
               private visDashboardService: VisDashboardService) {}
@@ -32,10 +35,15 @@ export class CourseDetailsPageComponent implements OnInit{
  getCourseConcepts(courseId:string){
     this.visDashboardService.getConceptsByCourseId(courseId).then((concept)=>{
       this.concepts = concept
-      console.log(this.concepts)
+      this.words = this.concepts.map(c=> c.ConceptName)
+      this.myData = this.words.map(function (d) {
+        return { text: d, value: 10 + Math.random() * 90};
+      })
+      this.data = this.myData
     })
   }
 
-
+  onWorkClick($event: any) {
+  }
 
 }

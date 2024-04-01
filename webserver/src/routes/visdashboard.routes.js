@@ -62,6 +62,61 @@ module.exports = function (app) {
         controller.getTeacherById
     );
 
+    app.get(
+        "/api/vis-dashboard/concept-by-platform/:platform",
+        // [authJwt.verifyToken],
+        controller.getConceptsByPlatform
+    );
+
+
+    app.get(
+        "/api/vis-dashboard/courses-for-explore/:platform/:concept",
+        // [authJwt.verifyToken],
+        controller.getCoursesByConceptAndPlatform
+    );
+
+    app.get(
+        "/api/vis-dashboard/courses-popular-explore/:platform/:datapoints",
+        // [authJwt.verifyToken],
+        controller.getCoursesByPopularityForVis
+    );
+
+    app.get(
+        "/api/vis-dashboard/category-popular-explore/:platform/:datapoints",
+        // [authJwt.verifyToken],
+        controller.getCategoryByPopularityForVis
+    );
+
+
+    app.get(
+        "/api/vis-dashboard/active-teachers/:platform/:datapoints",
+        // [authJwt.verifyToken],
+        controller.getActiveTeachersForVis
+    );
+
+
+    app.get(
+        "/api/vis-dashboard/active-institutions/:platform/:datapoints",
+        // [authJwt.verifyToken],
+        controller.getActiveInstitutionsForVis
+    );
+
+    app.post(
+        "/api/vis-dashboard/compare-platforms/",
+        // [authJwt.verifyToken],
+        controller.postTest
+    );
+
+    app.post(
+        "/api/vis-dashboard/compare-platforms-teachers/",
+        // [authJwt.verifyToken],
+        controller.getNumberOfTeachersForCompare
+    );
+
+
+
+
+
 
 
 }

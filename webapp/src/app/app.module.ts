@@ -120,6 +120,17 @@ import { CoursePaginationComponent } from './pages/components/vis-dashboard/cour
 import { FiltersForCoursesComponent } from './pages/components/vis-dashboard/filters-for-courses/filters-for-courses.component';
 import { PopularTeachersComponent } from './pages/components/vis-dashboard/cards/popular-teachers/popular-teachers.component';
 import { TeacherPageComponent } from './pages/vis-dashboard/teacher-page/teacher-page.component';
+import {AngularD3CloudModule} from "angular-d3-cloud";
+import { ExploreChartsPageComponent } from './pages/vis-dashboard/vis-explore-page/explore-charts-page/explore-charts-page.component';
+import { ConceptsWordCloudComponent } from './pages/components/vis-dashboard/vis-charts-explore/concepts-word-cloud/concepts-word-cloud.component';
+import { CourseCategoryChartsComponent } from './pages/components/vis-dashboard/vis-charts-explore/course-category-charts/course-category-charts.component';
+import {NgApexchartsModule} from "ng-apexcharts";
+import { MostActiveTeachersComponent } from './pages/components/vis-dashboard/vis-charts-explore/most-active-teachers/most-active-teachers.component';
+import {
+  MostActiveInstitutionsComponent
+} from "./pages/components/vis-dashboard/vis-charts-explore/most-active-institutions/most-active-institutions.component";
+import { CompareChartsPageComponent } from './pages/vis-dashboard/vis-compare-page/compare-charts-page/compare-charts-page.component';
+import { ComparePlatformsTeachersComponent } from './pages/components/vis-dashboard/vis-charts-compare/compare-platforms-teachers/compare-platforms-teachers.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -157,29 +168,37 @@ import { TeacherPageComponent } from './pages/vis-dashboard/teacher-page/teacher
     TopicDashboardComponent,
     CourseDashboardComponent,
     ChannelDashboardComponent,
-   PopulateDashboardComponent,
-   MaterialDashboardComponent,
-   BackButtonComponent,
-   VisLandingPageComponent,
-   VisDashboardLayoutComponent,
-   VisHeaderComponent,
-   CourseCategoryComponent,
-   CourseCarouselComponent,
-   CourseComponent,
-   VisOptionsComponent,
-   VisExplorePageComponent,
-   VisComparePageComponent,
-   FindTopicPageComponent,
-   CourseDetailsPageComponent,
-   PlatformTabsComponent,
-   VisBackButtonComponent,
-   ToWebsiteButtonComponent,
-   CourseCategoryPageComponent,
-   CourseByCategoryComponent,
-   CoursePaginationComponent,
-   FiltersForCoursesComponent,
-   PopularTeachersComponent,
-   TeacherPageComponent
+    PopulateDashboardComponent,
+    MaterialDashboardComponent,
+    BackButtonComponent,
+    VisLandingPageComponent,
+    VisDashboardLayoutComponent,
+    VisHeaderComponent,
+    CourseCategoryComponent,
+    CourseCarouselComponent,
+    CourseComponent,
+    VisOptionsComponent,
+    VisExplorePageComponent,
+    VisComparePageComponent,
+    FindTopicPageComponent,
+    CourseDetailsPageComponent,
+    PlatformTabsComponent,
+    VisBackButtonComponent,
+    ToWebsiteButtonComponent,
+    CourseCategoryPageComponent,
+    CourseByCategoryComponent,
+    CoursePaginationComponent,
+    FiltersForCoursesComponent,
+    PopularTeachersComponent,
+    TeacherPageComponent,
+    ExploreChartsPageComponent,
+    ConceptsWordCloudComponent,
+    CourseCategoryChartsComponent,
+    MostActiveTeachersComponent,
+    MostActiveInstitutionsComponent,
+    MostActiveInstitutionsComponent,
+    CompareChartsPageComponent,
+    ComparePlatformsTeachersComponent
   ],
   imports: [
     MentionModule,
@@ -198,6 +217,8 @@ import { TeacherPageComponent } from './pages/vis-dashboard/teacher-page/teacher
     ToastModule,
     RippleModule,
     ConfirmDialogModule,
+    AngularD3CloudModule,
+    NgApexchartsModule,
     NotificationModule,
     StoreModule.forRoot({}, {}),
     EffectsModule.forRoot([]),
