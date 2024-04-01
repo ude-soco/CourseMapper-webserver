@@ -10,42 +10,17 @@ import { BlockingNotifications } from '../models/BlockingNotification';
   providedIn: 'root',
 })
 export class AnnotationService {
-  private annotationSubject = new Subject<any>();
   constructor(private http: HttpClient) {}
 
 
-  // postAnnotation(
-  //   annotation: Annotation,
-  //   mentionedUsers: { userId: string; name: string; email: string }[]
-  // ): Observable<{ response: BlockingNotifications }> {
-  //   return this.http.post<{ response: BlockingNotifications }>(
-  //     `${environment.API_URL}/courses/${annotation.courseId}/materials/${annotation.materialId}/annotation`,
-  //     { annotation, mentionedUsers }
-  //   );
-  // }
   postAnnotation(
     annotation: Annotation,
     mentionedUsers: { userId: string; name: string; email: string }[]
   ): Observable<{ response: BlockingNotifications }> {
-    console.log("annotation service", annotation)
-    const url = `${environment.API_URL}/courses/${annotation.courseId}/materials/${annotation.materialId}/annotation`;
-
     // Make the HTTP post request
-    return this.http.post<{ response: BlockingNotifications }>(url, { annotation, mentionedUsers }).pipe(
-      tap((response) => {
-        // Emit the posted annotation data only after a successful request
-        this.annotationSubject.next({
-          annotation,
-          mentionedUsers,
-          response
-        });
-      })
-    );
+    return this.http.post<{ response: BlockingNotifications }>(`${environment.API_URL}/courses/${annotation.courseId}/materials/${annotation.materialId}/annotation`, { annotation, mentionedUsers });
   }
 
-  getPostedAnnotation(): Observable<any> {
-    return this.annotationSubject.asObservable();
-  }
   getAllAnnotations(
     materialId: string,
     courseID: string

@@ -54,7 +54,6 @@ export class PdfCommentPanelComponent implements OnInit, OnDestroy {
     private store: Store<State>,
     private changeDetectorRef: ChangeDetectorRef,
     protected router: Router,
-    private annotationService:AnnotationService,
   ) {
     this.store
       .select(getCurrentMaterial)
@@ -64,7 +63,6 @@ export class PdfCommentPanelComponent implements OnInit, OnDestroy {
       .select(getAnnotationsForMaterial)
       .subscribe((annotations) => {
         this.annotations = annotations;
-        console.log("comment panel",  this.annotations)
         if (this.selectedMaterial?.type === 'pdf') {
           this.updateFilterItemsforPDF();
           this.showPDFAnnotations();
@@ -141,9 +139,6 @@ export class PdfCommentPanelComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-        this.annotationService.getPostedAnnotation().subscribe(data => {
-      this.store.dispatch(AnnotationActions.loadAnnotations());
-    });
 
 
     /* this.currentPage = 1; */
