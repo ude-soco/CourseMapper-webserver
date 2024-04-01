@@ -1871,6 +1871,7 @@ class NeoDataBase:
             user_id = cro_form["user_id"]
             concepts = cro_form["concepts"]
         
+        user = self.cro_get_user(user_id=user_id)
         result = []
         tx = self.driver.session()
         for concept in concepts:
@@ -1892,8 +1893,20 @@ class NeoDataBase:
                         weight=weight
                     ).single()
 
-                # create relationship between concept_cro and concept
                 if node is not None:
+                    logger.info("Creating relationship between node user and concept_cro")
+                    tx.run(
+                        """
+                        MATCH (a:User),(b:Concept_CRO)
+                        WHERE ID(a) = $id_a AND ID(b) = $id_b
+                        MERGE (a)-[r:CRO_DNU]->(b)
+                        RETURN r
+                        """,
+                        id_a=user["node_id"],
+                        id_b=node["node_id"]
+                    )
+                    
+                    logger.info("Creating relationship between concept_cro and original concept")
                     concept_original = tx.run(
                             """
                             MATCH (c:Concept)
@@ -1994,7 +2007,7 @@ class NeoDataBase:
                             """
                             MATCH (a:User),(b:Rating_CRO)
                             WHERE ID(a) = $id_a AND ID(b) = $id_b
-                            MERGE (a)-[r:HAS_RATED_CRO]->(b)
+                            MERGE (a)-[r:CRO_HAS_RATED]->(b)
                             RETURN r
                             """,
                             id_a=user["node_id"],
