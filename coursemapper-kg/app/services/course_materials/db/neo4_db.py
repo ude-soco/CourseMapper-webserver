@@ -1891,7 +1891,20 @@ class NeoDataBase:
                         mid=mid,
                         weight=weight
                     )
-                # tx.commit()
+                
+                # create relationship between concept_cro and concept
+                if node is not None:
+                    tx.run(
+                            """
+                            MATCH (a:Concept_CRO),(b:Concept)
+                            WHERE ID(a) = $id_a AND ID(b) = $id_b
+                            MERGE (a)-[r:CRO_RELATES_TO]->(b)
+                            RETURN r
+                            """,
+                            id_a=node["node_id"],
+                            id_b=node["node_id"]
+                        )
+                    
             if node:
                 result.append(self.cro_map_concept_cro(node))
         tx.close()

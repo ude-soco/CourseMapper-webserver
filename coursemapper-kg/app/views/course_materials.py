@@ -32,11 +32,8 @@ def get_resources():
     data_cro_form = data["croForm"]
     
     resource_recommender_service = ResourceRecommenderService()
-    rrs = resource_recommender_service.cro_save_logic(cro_form=data_cro_form)
-    return "Ok"
-
-    ## rrs = resource_recommender_service.map_recommendation_request(data_default=data_default, data_cro_form=data_cro_form)
-    # return jsonify(rrs["result"])
+    rrs = resource_recommender_service.map_recommendation_request(data_default=data_default, data_cro_form=data_cro_form)
+    return jsonify(rrs["result"])
 
     # await asyncio.sleep(30)
 
