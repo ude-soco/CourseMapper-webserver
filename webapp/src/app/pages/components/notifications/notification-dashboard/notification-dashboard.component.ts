@@ -41,6 +41,7 @@ import { getLastTimeCourseMapperOpened } from 'src/app/state/app.reducer';
 import * as $ from 'jquery';
 import * as AppActions from 'src/app/state/app.actions';
 import { IntervalService } from 'src/app/services/interval.service';
+import { Actions } from '@ngrx/effects';
 @Component({
   selector: 'app-notification-dashboard',
   templateUrl: './notification-dashboard.component.html',
@@ -326,7 +327,7 @@ export class NotificationDashboardComponent {
   }
 
   protected onNotificationClicked(notification: Notification) {
-    console.log("onNotificationClicked",notification.action )
+
     this.intervalService.stopInterval();
     this.store.dispatch(
       NotificationActions.notificationsMarkedAsRead({
@@ -416,8 +417,8 @@ export class NotificationDashboardComponent {
         NotificationActions.setCurrentlySelectedNotification({ notification })
       );
 
-      if (notification.action=="annotated") {
-        console.log("triggered here")
+      if (notification.action === "annotated"  ) {
+      
         if (notification.isDeletingAnnotation) {
           this.store.dispatch(
             AppActions.setShowNotificationsPanel({
@@ -498,8 +499,176 @@ export class NotificationDashboardComponent {
             `#annotation-${notification.annotation_id}`
         );
       }
-      if (notification.action=="replied to" || notification.action=="mentioned" ) {
-        console.log("reply triggered here")
+      if (notification.action === "mentioned" ) {
+        if (notification.reply_id){
+      
+          if (notification.isDeletingReply) {
+            this.store.dispatch(
+              AppActions.setShowNotificationsPanel({
+                showNotificationsPanel: false,
+              })
+            );
+            this.router.navigateByUrl(
+              '/course/' +
+                notification.course_id +
+                '/channel/' +
+                notification.channel_id +
+                '/material/' +
+                '(material:' +
+                notification.material_id +
+                `/${notification.materialType})`+
+                `#annotation-${notification.annotation_id}`
+            );
+            return;
+          }
+  
+          //if website is already on the same material, then just scroll to the annotation
+  
+          if (
+            this.router.url.includes(
+              '/course/' +
+                notification.course_id +
+                '/channel/' +
+                notification.channel_id +
+                '/material/' +
+                '(material:' +
+                notification.material_id +
+                `/${notification.materialType})`
+            )
+          ) {
+            this.store.dispatch(
+              AppActions.setShowNotificationsPanel({
+                showNotificationsPanel: false,
+              })
+            );
+  
+            this.courseService.navigatingToMaterial = false;
+            const url = window.location.href;
+  
+            const elementToScrollTo = document.getElementById(
+              `reply-${notification.reply_id}`
+            );
+            elementToScrollTo?.scrollIntoView();
+            // Scroll to the element
+            window.location.hash = '#reply-' + notification.reply_id;
+            setTimeout(function () {
+              $(window.location.hash).css(
+                'box-shadow',
+                '0 0 25px rgba(83, 83, 255, 1)'
+              );
+              setTimeout(function () {
+                $(window.location.hash).css('box-shadow', 'none');
+              }, 5000);
+            }, 100);
+            return;
+          }
+  
+          //if we are not on the material where annotation is present, then we will need to navigate to it.
+          this.courseService.navigatingToMaterial = true;
+          this.store.dispatch(
+            AppActions.setShowNotificationsPanel({
+              showNotificationsPanel: false,
+            })
+          );
+  
+          this.router.navigateByUrl(
+            '/course/' +
+              notification.course_id +
+              '/channel/' +
+              notification.channel_id +
+              '/material/' +
+              '(material:' +
+              notification.material_id +
+              `/${notification.materialType})` +
+              `#reply-${notification.reply_id}`
+          );
+          return;
+        }
+        else {
+        
+          if (notification.isDeletingAnnotation) {
+            this.store.dispatch(
+              AppActions.setShowNotificationsPanel({
+                showNotificationsPanel: false,
+              })
+            );
+            this.router.navigateByUrl(
+              '/course/' +
+                notification.course_id +
+                '/channel/' +
+                notification.channel_id +
+                '/material/' +
+                '(material:' +
+                notification.material_id +
+                `/${notification.materialType})`
+            );
+            return;
+          }
+  
+          //if website is already on the same material, then just scroll to the annotation
+  
+          if (
+            this.router.url.includes(
+              '/course/' +
+                notification.course_id +
+                '/channel/' +
+                notification.channel_id +
+                '/material/' +
+                '(material:' +
+                notification.material_id +
+                `/${notification.materialType})`
+            )
+          ) {
+            this.store.dispatch(
+              AppActions.setShowNotificationsPanel({
+                showNotificationsPanel: false,
+              })
+            );
+  
+            this.courseService.navigatingToMaterial = false;
+            const url = window.location.href;
+  
+            const elementToScrollTo = document.getElementById(
+              `annotation-${notification.annotation_id}`
+            );
+            elementToScrollTo?.scrollIntoView();
+            // Scroll to the element
+            window.location.hash = '#annotation-' + notification.annotation_id;
+            setTimeout(function () {
+              $(window.location.hash).css(
+                'box-shadow',
+                '0 0 25px rgba(83, 83, 255, 1)'
+              );
+              setTimeout(function () {
+                $(window.location.hash).css('box-shadow', 'none');
+              }, 5000);
+            }, 100);
+            return;
+          }
+  
+          //if we are not on the material where annotation is present, then we will need to navigate to it.
+          this.courseService.navigatingToMaterial = true;
+          this.store.dispatch(
+            AppActions.setShowNotificationsPanel({
+              showNotificationsPanel: false,
+            })
+          );
+  
+          this.router.navigateByUrl(
+            '/course/' +
+              notification.course_id +
+              '/channel/' +
+              notification.channel_id +
+              '/material/' +
+              '(material:' +
+              notification.material_id +
+              `/${notification.materialType})` +
+              `#annotation-${notification.annotation_id}`
+          );
+        }
+       
+      }
+      if ( notification.action === "replied to" ) {
         if (notification.isDeletingReply) {
           this.store.dispatch(
             AppActions.setShowNotificationsPanel({
