@@ -40,7 +40,7 @@ import {
   State,
 } from '../state/annotation.reducer';
 import { Store } from '@ngrx/store';
-import { getCurrentMaterialId } from '../../../materials/state/materials.reducer';
+import { getCurrentMaterial, getCurrentMaterialId } from '../../../materials/state/materials.reducer';
 import { PdfviewService } from 'src/app/services/pdfview.service';
 import {
   distinctUntilChanged,
@@ -203,46 +203,35 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
     this.isAnnotationCanceled$ = this.store.select(getIsAnnotationCanceled);
     this.isAnnotationPosted$ = this.store.select(getIsAnnotationPosted);
 
-    /*  this.socket.on(
-      this.materialId,
-      (payload: {
-        eventType: string;
-        annotation: Annotation;
-        reply: Reply;
-      }) => {
-        let annotation = this.annotations.find(
-          (anno) => payload.annotation?._id == anno._id
-        );
-        this.store.dispatch(
-          AnnotationActions.updateAnnotationsOnSocketEmit({ payload: payload })
-        );
-        this.store.dispatch(
-          CourseActions.updateFollowingAnnotationsOnSocketEmit({
-            payload: payload,
-          })
-        );
-      }
-    ); */
-    this.socketSubscription = this.socket
-      .fromEvent(this.materialId)
-      .subscribe(
-        (payload: {
-          eventType: string;
-          annotation: Annotation;
-          reply: Reply;
-        }) => {
-          this.store.dispatch(
-            AnnotationActions.updateAnnotationsOnSocketEmit({
-              payload: payload,
-            })
-          );
-          this.store.dispatch(
-            CourseActions.updateFollowingAnnotationsOnSocketEmit({
-              payload: payload,
-            })
-          );
+    this.store
+      .select(getCurrentMaterial)
+      .subscribe((material) => {
+        if (material && material.type === 'pdf') {
+          if (this.socketSubscription) {
+            this.socketSubscription.unsubscribe();
+          }
+          this.socketSubscription = this.socket
+            .fromEvent(material._id)
+            .subscribe(
+              (payload: {
+                eventType: string;
+                annotation: Annotation;
+                reply: Reply;
+              }) => {
+                this.store.dispatch(
+                  AnnotationActions.updateAnnotationsOnSocketEmit({
+                    payload: payload,
+                  })
+                );
+                this.store.dispatch(
+                  CourseActions.updateFollowingAnnotationsOnSocketEmit({
+                    payload: payload,
+                  })
+                );
+              }
+            );
         }
-      );
+      });
   }
   ngOnInit(): void {
     this.store.select(getHideAnnotationValue).subscribe((isHideAnnotations) => {
