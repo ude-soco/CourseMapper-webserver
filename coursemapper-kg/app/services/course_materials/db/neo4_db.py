@@ -1890,28 +1890,36 @@ class NeoDataBase:
                         cid=cid,
                         mid=mid,
                         weight=weight
-                    )
-                
+                    ).single()
+
                 # create relationship between concept_cro and concept
                 if node is not None:
-                    tx.run(
+                    concept_original = tx.run(
                             """
-                            MATCH (a:Concept_CRO),(b:Concept)
-                            WHERE ID(a) = $id_a AND ID(b) = $id_b
-                            MERGE (a)-[r:CRO_RELATES_TO]->(b)
-                            RETURN r
+                            MATCH (c:Concept)
+                            WHERE c.cid = $cid
+                            RETURN ID(c) as node_id
                             """,
-                            id_a=node["node_id"],
-                            id_b=node["node_id"]
-                        )
+                            cid=cid
+                        ).single()
                     
-            if node:
-                result.append(self.cro_map_concept_cro(node))
+                    if concept_original is not None:
+                        tx.run(
+                                """
+                                MATCH (a:Concept_CRO),(b:Concept)
+                                WHERE ID(a) = $id_a AND ID(b) = $id_b
+                                MERGE (a)-[r:CRO_RELATES_TO]->(b)
+                                RETURN r
+                                """,
+                                id_a=node["node_id"],
+                                id_b=concept_original["node_id"]
+                            )
+                    
+            if node is not None:
+                # result.append(node)
+                result.append(self.cro_map_concept_cro(node, fetched=False))
         tx.close()
 
-        # test
-        # print(result)
-        # self.cro_relation_btw_user_concept_cro(user_id=user_id, concept_cro=result[0])
         return result
 
     def cro_relationship_btw_user_concept_cro(self, user_id: str, concept_cro: dict):
@@ -2129,7 +2137,7 @@ class NeoDataBase:
         """
         logger.info("Editing Relationship between Resource and Concept_CRO")
         if old_relationship:
-            self.cro_remove_relation_btw_resource_and_concept_cro()
+            self.cro_remove_relation_btw_resource_and_concept_cro(concepts_cro=concepts_cro)
 
         tx = self.driver.session()
         for concept in concepts_cro:

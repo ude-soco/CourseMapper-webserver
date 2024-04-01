@@ -206,10 +206,8 @@ class ResourceRecommenderService:
                                                                      old_relationship=True
                                                                     )
     
-    def cro_get_resources_ranked_and_sorted(self, cro_form: dict):
-        concepts_cro = cro_form["concepts"]
+    def cro_get_resources_ranked_and_sorted(self, resources: list):
         result = []
-        resources = self.db.cro_get_resources(concepts_cro=concepts_cro)
         positive_rated = []
         negative_rated = []
         rest = []
@@ -222,14 +220,15 @@ class ResourceRecommenderService:
                 negative_rated.append(node)
         
         # top rated
+        positive_rated.sort(key=lambda x: x["helpful_count"], reverse=True)
         result += positive_rated
                 
         # by: highest similarity scores
-        rest = rest.sort(key=lambda x: x["similarity_score"], reverse=True)
+        rest.sort(key=lambda x: x["similarity_score"], reverse=True)
         result += rest
 
         # negative rated
-        negative_rated = negative_rated.sort(key=lambda x: x["not_helpful_count"], reverse=False)
+        negative_rated.sort(key=lambda x: x["not_helpful_count"], reverse=False)
         result += negative_rated
 
         return result
@@ -403,6 +402,7 @@ class ResourceRecommenderService:
     def _get_resources(self, user_id, slide_id, material_id, recommendation_type, cro_form: dict=None, pagination_params: dict=None):
         """
             Save cro_form, Crawl Youtube and Wikipedia API and then Store Resources
+            Result: {"recommendation_type": str, "cro_form": dict(cro_form), "nodes": list(resources)}
         """
         wikipedia_articles = []
         youtube_videos = []
@@ -518,9 +518,13 @@ class ResourceRecommenderService:
             #### TO DO
             ### OPTIONAL: REMOVE RELATIONSHIP "CONTAINS" BTW "Resource" and "Concept"
         
-        self.cro_edit_relationship_btw_concepts_cro_and_resources(concepts_cro=cro_form["concepts"], resources=resources)
-        result = self.cro_get_resources_ranked_and_sorted(cro_form=cro_form)
-        return {"cro_form": cro_form, "nodes": result}
+        resources = self.db.cro_get_resources(concepts_cro=cro_form["concepts"])
+        if len(resources) > 0:
+            self.cro_edit_relationship_btw_concepts_cro_and_resources(concepts_cro=cro_form["concepts"], resources=resources)
+            result = self.cro_get_resources_ranked_and_sorted(resources=resources)
+        else:
+            result = []
+        return {"recommendation_type": recommendation_type, "cro_form": cro_form, "nodes": result}
 
         """
         result_video_ids = []
@@ -742,17 +746,24 @@ class ResourceRecommenderService:
                     cro_form=cro_form,
                     pagination_params=pagination_params
                 )
-
-
                 recommendation_type = None
+
+                """
                 result["recommendation_type_" + str(resp["recommendation_type"])] = {
                                                                                     # "cro_form": resp["cro_form"],
-                                                                                    # "concepts": resp["concepts"],
+                                                                                    # "concepts": resp["cro_form"]["concepts"],
                                                                                     "nodes": resp["nodes"]
                                                                                 }
                 cro_form = resp["cro_form"]
                 result["cro_form"] = cro_form
                 result["concepts"] = cro_form["concepts"]
+                """
+                result = {
+                    "recommendation_type": resp["recommendation_type"],
+                    "cro_form": cro_form,
+                    "concepts": resp["cro_form"]["concepts"],
+                    "nodes": resp["nodes"]
+                }
                 
         return {"result": result, "code": 404}
             
