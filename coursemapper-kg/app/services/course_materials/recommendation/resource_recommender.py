@@ -402,7 +402,7 @@ class ResourceRecommenderService:
     def _get_resources(self, user_id, slide_id, material_id, recommendation_type, cro_form: dict=None, pagination_params: dict=None):
         """
             Save cro_form, Crawl Youtube and Wikipedia API and then Store Resources
-            Result: {"recommendation_type": str, "cro_form": dict(cro_form), "nodes": list(resources)}
+            Result: {"recommendation_type": str, "concepts": list(concepts), "nodes": list(resources)}
         """
         wikipedia_articles = []
         youtube_videos = []
@@ -506,6 +506,9 @@ class ResourceRecommenderService:
             # return {}
             resources = []
         else:
+            #### TO DO -> Improving Saving Performance
+            ### ONLY SAVE Resources without Creating Relationship "CONTAINS" to "Concept"
+
             # Otherwise proceed save the results in the database
             resources, relationships = self.db.get_or_create_resoures_relationships(
                 wikipedia_articles=wikipedia_articles,
@@ -515,16 +518,17 @@ class ResourceRecommenderService:
                 concept_ids=concept_ids,
                 recommendation_type=recommendation_type,
             )
-            #### TO DO
-            ### OPTIONAL: REMOVE RELATIONSHIP "CONTAINS" BTW "Resource" and "Concept"
-        
-        resources = self.db.cro_get_resources(concepts_cro=cro_form["concepts"])
+
         if len(resources) > 0:
+            resources = [{"node_id": node["id"]} for node in resources]
             self.cro_edit_relationship_btw_concepts_cro_and_resources(concepts_cro=cro_form["concepts"], resources=resources)
+            resources = self.db.cro_get_resources(concepts_cro=cro_form["concepts"])
             result = self.cro_get_resources_ranked_and_sorted(resources=resources)
         else:
             result = []
-        return {"recommendation_type": recommendation_type.value, "cro_form": cro_form, "nodes": result}
+        
+        concepts = [{"cid": concept["cid"], "weight": concept["weight"]} for concept in cro_form["concepts"]]
+        return {"recommendation_type": recommendation_type.value, "concepts": concepts, "nodes": result} # "cro_form": cro_form
 
         """
         result_video_ids = []
@@ -628,10 +632,6 @@ class ResourceRecommenderService:
             non_understood_concept_ids = [ cid for cid in non_understood.split(",") if non_understood ]
             new_concept_ids = [cid for cid in new_concepts.split(",") if new_concepts]
 
-        # material_id = data_cro_form.get("mid")
-        # user_id = data_cro_form.get("user_id")
-        # slide_id = data_cro_form.get("slide_id")
-        # concept_cids = [concept["cid"] for concept in data_cro_form["concepts"]]
         pagination_params = data_cro_form["pagination_params"]
         logger.info("pagination_params ->", pagination_params)
 
@@ -764,8 +764,7 @@ class ResourceRecommenderService:
                 """
                 result = {
                     "recommendation_type": resp["recommendation_type"],
-                    "cro_form": cro_form,
-                    "concepts": resp["cro_form"]["concepts"],
+                    "concepts": resp["concepts"],
                     "nodes": resp["nodes"]
                 }
                 
