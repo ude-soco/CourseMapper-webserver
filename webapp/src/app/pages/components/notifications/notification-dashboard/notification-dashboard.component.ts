@@ -326,6 +326,7 @@ export class NotificationDashboardComponent {
   }
 
   protected onNotificationClicked(notification: Notification) {
+    console.log("onNotificationClicked",notification.action )
     this.intervalService.stopInterval();
     this.store.dispatch(
       NotificationActions.notificationsMarkedAsRead({
@@ -415,43 +416,8 @@ export class NotificationDashboardComponent {
         NotificationActions.setCurrentlySelectedNotification({ notification })
       );
 
-      if (notification.reply_id) {
-        this.courseService.navigatingToMaterial = true;
-        this.store.dispatch(
-          AppActions.setShowNotificationsPanel({
-            showNotificationsPanel: false,
-          })
-        );
-        if (notification.isDeletingReply) {
-          this.router.navigateByUrl(
-            '/course/' +
-              notification.course_id +
-              '/channel/' +
-              notification.channel_id +
-              '/material/' +
-              '(material:' +
-              notification.material_id +
-              `/${notification.materialType})` +
-              `#annotation-${notification.annotation_id}`
-          );
-          return;
-        }
-
-        this.router.navigateByUrl(
-          '/course/' +
-            notification.course_id +
-            '/channel/' +
-            notification.channel_id +
-            '/material/' +
-            '(material:' +
-            notification.material_id +
-            `/${notification.materialType})` +
-            `#reply-${notification.reply_id}`
-        );
-        return;
-      }
-      if (notification.annotation_id) {
-        console.log("triggered")
+      if (notification.action=="annotated") {
+        console.log("triggered here")
         if (notification.isDeletingAnnotation) {
           this.store.dispatch(
             AppActions.setShowNotificationsPanel({
@@ -532,8 +498,8 @@ export class NotificationDashboardComponent {
             `#annotation-${notification.annotation_id}`
         );
       }
-      if (notification.reply_id) {
-        console.log("reply triggered")
+      if (notification.action=="replied to" || notification.action=="mentioned" ) {
+        console.log("reply triggered here")
         if (notification.isDeletingReply) {
           this.store.dispatch(
             AppActions.setShowNotificationsPanel({
@@ -548,7 +514,8 @@ export class NotificationDashboardComponent {
               '/material/' +
               '(material:' +
               notification.material_id +
-              `/${notification.materialType})`
+              `/${notification.materialType})`+
+              `#annotation-${notification.annotation_id}`
           );
           return;
         }
@@ -613,6 +580,7 @@ export class NotificationDashboardComponent {
             `/${notification.materialType})` +
             `#reply-${notification.reply_id}`
         );
+        return;
       }
     }
   }
