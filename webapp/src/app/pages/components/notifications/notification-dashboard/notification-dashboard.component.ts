@@ -451,6 +451,7 @@ export class NotificationDashboardComponent {
         return;
       }
       if (notification.annotation_id) {
+        console.log("triggered")
         if (notification.isDeletingAnnotation) {
           this.store.dispatch(
             AppActions.setShowNotificationsPanel({
@@ -529,6 +530,88 @@ export class NotificationDashboardComponent {
             notification.material_id +
             `/${notification.materialType})` +
             `#annotation-${notification.annotation_id}`
+        );
+      }
+      if (notification.reply_id) {
+        console.log("reply triggered")
+        if (notification.isDeletingReply) {
+          this.store.dispatch(
+            AppActions.setShowNotificationsPanel({
+              showNotificationsPanel: false,
+            })
+          );
+          this.router.navigateByUrl(
+            '/course/' +
+              notification.course_id +
+              '/channel/' +
+              notification.channel_id +
+              '/material/' +
+              '(material:' +
+              notification.material_id +
+              `/${notification.materialType})`
+          );
+          return;
+        }
+
+        //if website is already on the same material, then just scroll to the annotation
+
+        if (
+          this.router.url.includes(
+            '/course/' +
+              notification.course_id +
+              '/channel/' +
+              notification.channel_id +
+              '/material/' +
+              '(material:' +
+              notification.material_id +
+              `/${notification.materialType})`
+          )
+        ) {
+          this.store.dispatch(
+            AppActions.setShowNotificationsPanel({
+              showNotificationsPanel: false,
+            })
+          );
+
+          this.courseService.navigatingToMaterial = false;
+          const url = window.location.href;
+
+          const elementToScrollTo = document.getElementById(
+            `reply-${notification.reply_id}`
+          );
+          elementToScrollTo?.scrollIntoView();
+          // Scroll to the element
+          window.location.hash = '#reply-' + notification.reply_id;
+          setTimeout(function () {
+            $(window.location.hash).css(
+              'box-shadow',
+              '0 0 25px rgba(83, 83, 255, 1)'
+            );
+            setTimeout(function () {
+              $(window.location.hash).css('box-shadow', 'none');
+            }, 5000);
+          }, 100);
+          return;
+        }
+
+        //if we are not on the material where annotation is present, then we will need to navigate to it.
+        this.courseService.navigatingToMaterial = true;
+        this.store.dispatch(
+          AppActions.setShowNotificationsPanel({
+            showNotificationsPanel: false,
+          })
+        );
+
+        this.router.navigateByUrl(
+          '/course/' +
+            notification.course_id +
+            '/channel/' +
+            notification.channel_id +
+            '/material/' +
+            '(material:' +
+            notification.material_id +
+            `/${notification.materialType})` +
+            `#reply-${notification.reply_id}`
         );
       }
     }
