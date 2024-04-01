@@ -2141,28 +2141,23 @@ class NeoDataBase:
             returned by the algorithm
         """
         logger.info("Editing Relationship between Resource and Concept_CRO")
-        print(len(resources))
-        print(resources)
-        print()
-        print([{"node_id": node["node_id"] for node in concepts_cro}])
 
         if old_relationship:
             self.cro_remove_relation_btw_resource_and_concept_cro(concepts_cro=concepts_cro)
 
-        tx = self.driver.session()
-        for resource in resources:
-            for concept in concepts_cro:
-                r = tx.run(
-                        """
-                        MATCH (a:Resource),(b:Concept_CRO)
-                        WHERE ID(a) = $id_a AND ID(b) = $id_b
-                        MERGE (a)-[r:CONTAINS_CRO]->(b)
-                        RETURN r
-                        """,
-                        id_b=resource["node_id"],
-                        id_a=concept["node_id"]
-                    )
-        tx.close()
+        resources_ids = [node["node_id"] for node in resources]
+        cids = [node["node_id"] for node in concepts_cro]
+        with self.driver.session() as session:
+            session.run(
+                """
+                MATCH (a:Resource),(b:Concept_CRO)
+                WHERE ID(a) IN $resources_ids AND ID(b) IN $cids
+                MERGE (a)-[r:CONTAINS_CRO]->(b)
+                RETURN r
+                """,
+                resources_ids=resources_ids,
+                cids=cids
+            )
 
     ########
     ########

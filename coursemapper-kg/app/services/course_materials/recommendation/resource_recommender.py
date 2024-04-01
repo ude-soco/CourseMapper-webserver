@@ -521,7 +521,7 @@ class ResourceRecommenderService:
 
         if len(resources) > 0:
             resources = [{"node_id": node["id"]} for node in resources]
-            # self.cro_edit_relationship_btw_concepts_cro_and_resources(concepts_cro=cro_form["concepts"], resources=resources)
+            self.cro_edit_relationship_btw_concepts_cro_and_resources(concepts_cro=cro_form["concepts"], resources=resources)
             resources = self.db.cro_get_resources(concepts_cro=cro_form["concepts"])
             result = self.cro_get_resources_ranked_and_sorted(resources=resources)
         else:
