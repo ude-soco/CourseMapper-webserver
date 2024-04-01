@@ -2095,8 +2095,13 @@ class NeoDataBase:
             result = session.run(
                 """
                 MATCH p=(a:Resource)-[r:CONTAINS_CRO]->(b:Concept_CRO)
-                WHERE ID(b) = $node_ids
-                RETURN a
+                WHERE ID(b) IN $node_ids
+                RETURN  LABELS(a) as labels, ID(a) as id, a.rid as rid, a.title as title, a.text as text,
+                        a.thumbnail as thumbnail, a.abstract as abstract, a.post_date as post_date, 
+                        a.author_image_url as author_image_url, a.author_name as author_name,
+                        a.keyphrases as keyphrases, a.description as description, a.description_full as description_full,
+                        a.views as views, a.publish_time as publish_time, a.uri as uri, a.duration as duration,
+                        a.similarity_score as similarity_score, a.helpful_count as helpful_count, a.not_helpful_count as not_helpful_count
                 """,
                 node_ids=node_ids
             ).data()
@@ -2104,7 +2109,7 @@ class NeoDataBase:
             if result:
                 for resource in result:
                     r = {
-                        "identity": resource["identity"],
+                        "id": resource["id"],
                         "title": resource["title"],
                         "rid": resource["rid"],
                         "uri": resource["uri"],
@@ -2157,10 +2162,6 @@ class NeoDataBase:
                         id_b=resource["node_id"],
                         id_a=concept["node_id"]
                     )
-                
-                print(r)
-                print(r.__dict__)
-
         tx.close()
 
     ########
