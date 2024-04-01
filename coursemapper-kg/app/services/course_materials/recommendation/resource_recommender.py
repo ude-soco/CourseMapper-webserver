@@ -524,7 +524,7 @@ class ResourceRecommenderService:
             result = self.cro_get_resources_ranked_and_sorted(resources=resources)
         else:
             result = []
-        return {"recommendation_type": recommendation_type, "cro_form": cro_form, "nodes": result}
+        return {"recommendation_type": recommendation_type.value, "cro_form": cro_form, "nodes": result}
 
         """
         result_video_ids = []
@@ -640,6 +640,7 @@ class ResourceRecommenderService:
         #     return self.db.cro_retrieve_concept_resources_pagination(cro_form=cro_form, concepts=concepts, pagination_params=pagination_params)
 
         # extract recommendation type
+        """
         result = {
             "cro_form": None,
             "concepts": [],
@@ -657,6 +658,9 @@ class ResourceRecommenderService:
                 "nodes": []
             }
         }
+
+        """
+        result: dict = None
         # recommendation_type = "1"
         for key, value in data_cro_form["recommendation_types"]["models"].items():
             cro_form = {
@@ -765,7 +769,7 @@ class ResourceRecommenderService:
                     "nodes": resp["nodes"]
                 }
                 
-        return {"result": result, "code": 404}
+        return result # {"result": result, "code": 404}
             
 
 def get_serialized_resource_data(resources, concepts, relations):

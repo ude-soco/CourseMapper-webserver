@@ -32,15 +32,13 @@ def get_resources():
     data_cro_form = data["croForm"]
     
     resource_recommender_service = ResourceRecommenderService()
-    rrs = resource_recommender_service.map_recommendation_request(data_default=data_default, data_cro_form=data_cro_form)
-    return jsonify(rrs["result"])
-
+    result = resource_recommender_service.map_recommendation_request(data_default=data_default, data_cro_form=data_cro_form)
     # await asyncio.sleep(30)
 
-    # if rrs["code"] == 404:
-    #     return make_response(jsonify(rrs["result"]), 404)
-    
-    # return jsonify(rrs["result"]) # make_response(jsonify(rrs["result"]), 200) # jsonify(rrs["result"])
+    if result == None:
+        return jsonify({"msg": "Internal Server Error"}), 404
+    return jsonify(result), 200
+
     # r = cro_get_resources_pagination()
     # return make_response(jsonify(r), 200)
 
