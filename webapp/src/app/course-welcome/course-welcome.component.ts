@@ -119,10 +119,10 @@ export class CourseWelcomeComponent implements OnInit {
   deEnrole() {
     this.confirmationService.confirm({
       message:
-        'Are you sure you want to Un Enroll from course"' +
+        'Are you sure you want to Unenroll from course "' +
         this.selectedCourse.name +
         '"?',
-      header: 'Un-Enroll Confirmation',
+      header: 'Unenroll Confirmation',
       icon: 'pi pi-info-circle',
       accept: (e) => this.unEnrolleCourse(this.selectedCourse),
 
