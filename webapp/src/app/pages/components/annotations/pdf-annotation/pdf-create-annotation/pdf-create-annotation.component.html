@@ -110,7 +110,7 @@
           cols="60"
           class="w-full"
           [style]="{ border: '1px solid' + annotationColor }"
-          placeholder="Add a general annotation without a tool"
+          placeholder="Add a general annotation without a tool or tag e.x #tag, mention someone e.x @someone"
           [mention]="filteredUserNames$ | async"
           [mentionConfig]="{
             triggerChar: '@',
