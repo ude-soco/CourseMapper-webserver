@@ -600,7 +600,7 @@ export class NotificationsService {
       userShortname: notification.activityId.notificationInfo.userShortname,
       courseName: notification.activityId.notificationInfo.courseName,
       username: notification.activityId.notificationInfo.userName,
-      authorId: notification.activityId.statement.actor?.name,
+      authorId: notification.activityId.statement.actor?.account.name,
       authorEmail: notification.activityId.notificationInfo.authorEmail,
       action:
         notification.activityId.statement.verb.display['en-US'] === 'replied'

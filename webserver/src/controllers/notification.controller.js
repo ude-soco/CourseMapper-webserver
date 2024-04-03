@@ -42,6 +42,8 @@ export const getAllNotifications = async (req, res, next) => {
       "statement.object.definition.type",
       "statement.object.definition.name.en-US",
       "statement.actor.name",
+      "statement.actor.account.name",
+
       "statement.verb.display.en-US",
       "statement.result.extensions",
       "statement.timestamp",

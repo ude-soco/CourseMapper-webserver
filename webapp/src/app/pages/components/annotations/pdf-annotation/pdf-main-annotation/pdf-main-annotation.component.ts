@@ -415,11 +415,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
     }
   }
 
-  afterLoadComplete(event: any) {
-    this.store.dispatch(
-      AnnotationActions.setCurrentPdfPage({ pdfCurrentPage: 1 })
-    );
-  }
+
 
   /** Is called when a page is rendered. Is used to add Pin/rectangle/ highlight/circle on the pdf when a page is rendering */
   pageRendered(event: any) {

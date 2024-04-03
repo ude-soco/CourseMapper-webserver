@@ -177,7 +177,7 @@ export class LandingPageComponent {
         }
       } catch (error) {
         this.router.navigate(['login']);
-        this.showError("Youe session has expiered Please login again");
+        this.showError("Your session has expired. Please login again");
           
       }
     } else {
