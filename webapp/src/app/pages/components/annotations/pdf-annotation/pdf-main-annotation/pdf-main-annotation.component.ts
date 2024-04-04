@@ -1000,13 +1000,6 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
       lineHeight: this.drawingRect.lineHeight,
     };
 
-    let pinCoords = {
-      left: this.pinCoords.left / page.scale,
-      top: this.pinCoords.top / page.scale,
-      width: this.pinCoords.width / page.scale,
-      height: this.pinCoords.height / page.scale,
-    };
-
     const currentRect = {
       rectangleId: ' ',
       pageNumber: this.dataPageNumber,
@@ -1031,6 +1024,12 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
         };
         break;
       case PdfToolType.Pin:
+        let pinCoords = {
+          left: this.pinCoords.left / page.scale,
+          top: this.pinCoords.top / page.scale,
+          width: this.pinCoords.width / page.scale,
+          height: this.pinCoords.height / page.scale,
+        };
         this.pdfAnnotationToolObject = {
           type: PdfToolType['Pin'],
           color: 'RGB(238,170,0, .5)',
