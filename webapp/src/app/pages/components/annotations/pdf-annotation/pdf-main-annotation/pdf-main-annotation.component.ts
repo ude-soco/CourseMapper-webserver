@@ -136,6 +136,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   showConceptMapEvent: boolean = false;
   currentPDFPage$: Observable<number>;
   currentPdfPageSubscription: Subscription;
+  private materialSubscription: Subscription;
   private socketSubscription: Subscription;
   notificationClickedSubscription: Subscription;
   followingAnnotationClickedSubscription: any;
@@ -203,7 +204,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
     this.isAnnotationCanceled$ = this.store.select(getIsAnnotationCanceled);
     this.isAnnotationPosted$ = this.store.select(getIsAnnotationPosted);
 
-    this.store
+    this.materialSubscription = this.store
       .select(getCurrentMaterial)
       .subscribe((material) => {
         if (material && material.type === 'pdf') {
@@ -306,6 +307,9 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    if (this.materialSubscription) {
+      this.materialSubscription.unsubscribe();
+    }
     if (this.socketSubscription) {
       this.socketSubscription.unsubscribe();
     }
