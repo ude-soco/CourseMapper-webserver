@@ -694,17 +694,17 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
           'style',
           'height:30px; width:30px; position: absolute;' +
             'left:' +
-            this.lastMousePosition.x +
+            (this.lastMousePosition.x - 15) +
             'px; top:' +
-            this.lastMousePosition.y +
+            (this.lastMousePosition.y - 30) +
             'px;'
         );
         this.pinElement = img;
         this.pinCoords = {
           height: 30,
           width: 30,
-          left: this.lastMousePosition.x,
-          top: this.lastMousePosition.y,
+          left: this.lastMousePosition.x - 15,
+          top: this.lastMousePosition.y - 30,
         };
 
         //add pin icon in div
