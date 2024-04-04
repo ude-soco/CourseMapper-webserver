@@ -170,7 +170,7 @@ try{
   
         <p>Dear ${user.username}, </p>
         <p>We have just received a password reset request for your account ${user.email} in CourseMapper. Please click
-        <a href="${process.env.WEBAPP_URL}/restPassword/${token}"> here  </a> to reset your password</p>
+        <a href="https://${process.env.WEBAPP_URL}/restPassword/${token}"> here  </a> to reset your password</p>
 
         <p>Please note that this link is only valid for 5 minutes. If you did not request a password reset, please ignore this email.</p>
 
