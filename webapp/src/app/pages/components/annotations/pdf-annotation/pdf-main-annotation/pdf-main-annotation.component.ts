@@ -986,10 +986,31 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
 
   save() {
     localStorage.setItem('mouseDownFlag', JSON.stringify(false));
+
+    var page = this.pdfComponent.pdfViewer.getPageView(this.dataPageNumber);
+
+    let pdfDrawingRect = {
+      x1: this.drawingRect.x1 / page.scale,
+      y1: this.drawingRect.y1 / page.scale,
+      x2: this.drawingRect.x2 / page.scale,
+      y2: this.drawingRect.y2 / page.scale,
+      width: this.drawingRect.width / page.scale,
+      height: this.drawingRect.height / page.scale,
+      borderRadius: this.drawingRect.borderRadius,
+      lineHeight: this.drawingRect.lineHeight,
+    };
+
+    let pinCoords = {
+      left: this.pinCoords.left / page.scale,
+      top: this.pinCoords.top / page.scale,
+      width: this.pinCoords.width / page.scale,
+      height: this.pinCoords.height / page.scale,
+    };
+
     const currentRect = {
       rectangleId: ' ',
       pageNumber: this.dataPageNumber,
-      coordinates: this.drawingRect,
+      coordinates: pdfDrawingRect,
       isDelete: false,
       type: this.annotationToolForm,
       lineHeight: this.selectedLineHeight,
@@ -1013,7 +1034,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
         this.pdfAnnotationToolObject = {
           type: PdfToolType['Pin'],
           color: 'RGB(238,170,0, .5)',
-          coordinates: [this.pinCoords],
+          coordinates: [pinCoords],
           page: this.dataPageNumber,
           _id: '',
         };
