@@ -987,15 +987,15 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   save() {
     localStorage.setItem('mouseDownFlag', JSON.stringify(false));
 
-    var page = this.pdfComponent.pdfViewer.getPageView(this.dataPageNumber);
+    var pageScale = this.pdfComponent.pdfViewer.getPageView(this.dataPageNumber) ?? 1.0;
 
     let pdfDrawingRect = {
-      x1: this.drawingRect.x1 / page.scale,
-      y1: this.drawingRect.y1 / page.scale,
-      x2: this.drawingRect.x2 / page.scale,
-      y2: this.drawingRect.y2 / page.scale,
-      width: this.drawingRect.width / page.scale,
-      height: this.drawingRect.height / page.scale,
+      x1: this.drawingRect.x1 / pageScale,
+      y1: this.drawingRect.y1 / pageScale,
+      x2: this.drawingRect.x2 / pageScale,
+      y2: this.drawingRect.y2 / pageScale,
+      width: this.drawingRect.width / pageScale,
+      height: this.drawingRect.height / pageScale,
       borderRadius: this.drawingRect.borderRadius,
       lineHeight: this.drawingRect.lineHeight,
     };
@@ -1025,10 +1025,10 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
         break;
       case PdfToolType.Pin:
         let pinCoords = {
-          left: this.pinCoords.left / page.scale,
-          top: this.pinCoords.top / page.scale,
-          width: this.pinCoords.width / page.scale,
-          height: this.pinCoords.height / page.scale,
+          left: this.pinCoords.left / pageScale,
+          top: this.pinCoords.top / pageScale,
+          width: this.pinCoords.width / pageScale,
+          height: this.pinCoords.height / pageScale,
         };
         this.pdfAnnotationToolObject = {
           type: PdfToolType['Pin'],
