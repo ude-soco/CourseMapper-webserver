@@ -987,7 +987,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   save() {
     localStorage.setItem('mouseDownFlag', JSON.stringify(false));
 
-    var pageScale = this.pdfComponent.pdfViewer.getPageView(this.dataPageNumber) ?? 1.0;
+    var pageScale = this.pdfComponent.pdfViewer.getPageView(this.dataPageNumber)?.scale ?? 1.0;
 
     let pdfDrawingRect = {
       x1: this.drawingRect.x1 / pageScale,
