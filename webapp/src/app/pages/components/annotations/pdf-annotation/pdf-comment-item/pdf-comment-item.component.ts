@@ -398,7 +398,7 @@ export class PdfCommentItemComponent
       setTimeout(function () {
         $(window.location.hash).css('box-shadow', 'none');
       }, 2000);
-    }, 300);
+    }, 500);
   }
 
   onDeleteAnnotation() {
