@@ -130,7 +130,7 @@ export class ChannelbarComponent implements OnInit {
     {
       label: 'Share course ',
       icon: 'pi pi-copy',
-      title: 'Copy ID to clipboard',
+      title: 'Copy Course URL',
       command: () => this.copyCourseId(this.selectedCourse._id, this.selectedCourse.name),
     },
     {
@@ -160,6 +160,12 @@ export class ChannelbarComponent implements OnInit {
       label: 'Notification Settings',
       icon: 'pi pi-bell',
       command: ($event) => this.onNotificationSettingsClicked($event),
+    },
+    {
+      label: 'Share course ',
+      icon: 'pi pi-copy',
+      title: 'Copy Course URL',
+      command: () => this.copyCourseId(this.selectedCourse._id, this.selectedCourse.name),
     },
   ];
   /*   @ViewChild('notificationSettingsPanel') notificationSettingsPanel: any; */

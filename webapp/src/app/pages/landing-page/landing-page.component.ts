@@ -61,20 +61,18 @@ export class LandingPageComponent {
   }
 
   ngOnInit() {
-    //console.log("ngOnInit triggered")
-    // this.currentUser = this.storageService.getUser();
-    this.courseService.fetchCourses().subscribe((courses1) => {
+    try {
+          this.courseService.fetchCourses().subscribe((courses1) => {
       this.myCourses = courses1;
     });
-    //console.log(this.userArray.length, "userArray ngOnInit" )
-    //this.userArray =  []
     this.getAllCourses();
-    // console.log(this.userArray.length, "userArray ngOnInit after" )
+    } catch (error) {
+      
+    }
+
   }
 
   getAllCourses() {
-    // console.log("getAllCourses triggered")
-    // console.log(this.userArray.length, "userArray getAllCourses begining" )
     this.courseService.GetAllCourses().subscribe({
       next: (courses) => {
         //console.log("courseService.GetAllCourses triggered")

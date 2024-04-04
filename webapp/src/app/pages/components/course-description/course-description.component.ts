@@ -8,6 +8,8 @@ import { CourseService } from 'src/app/services/course.service';
 import { StorageService } from 'src/app/services/storage.service';
 import { UserServiceService } from 'src/app/services/user-service.service';
 import * as AppActions from 'src/app/state/app.actions';
+import * as NotificationActions from 'src/app/pages/components/notifications/state/notifications.actions';
+
 import {
   getCurrentCourse,
   getCurrentCourseId,
@@ -16,6 +18,8 @@ import {
 import * as CourseActions from 'src/app/pages/courses/state/course.actions';
 import { MessageService } from 'primeng/api';
 import { Socket } from 'ngx-socket-io';
+import { NotificationsService } from 'src/app/services/notifications.service';
+import { getShowNotificationsPanel } from 'src/app/state/app.reducer';
 
 @Component({
   selector: 'app-course-description',
@@ -45,7 +49,8 @@ export class CourseDescriptionComponent {
     private router: Router,
     private messageService: MessageService,
     private route: ActivatedRoute,
-    private socket:Socket
+    private socket: Socket,
+    private notificationsService: NotificationsService
   ) {}
   ngOnInit(): void {
     this.isloggedin = this.storageService.isLoggedIn();
@@ -54,33 +59,33 @@ export class CourseDescriptionComponent {
     //   .subscribe((course) => (this.course_enroll = course));
     this.route.params.subscribe((params) => {
       if (params['courseID']) {
-    this.courseService.GetAllCourses().subscribe((courses) => {
-      this.course_enroll = courses.find((course) => course._id == params['courseID']);
+        this.courseService.GetAllCourses().subscribe((courses) => {
+          this.course_enroll = courses.find(
+            (course) => course._id == params['courseID']
+          );
 
-      this.store.dispatch(
-        CourseActions.setCurrentCourse({
-          selcetedCourse: this.course_enroll,
-        })
-      );
-      this.store.dispatch(
-        CourseActions.setCourseId({ courseId: this.course_enroll._id })
-      );
-      this.Users = [];
-      //console.log(this.course, "course found from des page")
-      this.Users = this.course_enroll.users;
-      var index = this.course_enroll.createdAt.indexOf('T');
-      (this.createdAt = this.course_enroll.createdAt.slice(0, index)),
-        this.course_enroll.createdAt.slice(index + 1);
-      let userModerator = this.Users.find(
-        (user) => user.role.name === 'moderator'
-      );
+          this.store.dispatch(
+            CourseActions.setCurrentCourse({
+              selcetedCourse: this.course_enroll,
+            })
+          );
+          this.store.dispatch(
+            CourseActions.setCourseId({ courseId: this.course_enroll._id })
+          );
+          this.Users = [];
+          this.Users = this.course_enroll.users;
+          var index = this.course_enroll.createdAt.indexOf('T');
+          (this.createdAt = this.course_enroll.createdAt.slice(0, index)),
+            this.course_enroll.createdAt.slice(index + 1);
+          let userModerator = this.Users.find(
+            (user) => user.role.name === 'moderator'
+          );
 
-      this.buildCardInfo(userModerator.userId, this.course_enroll);
-      this.isLoaded = false;
+          this.buildCardInfo(userModerator.userId, this.course_enroll);
+          this.isLoaded = false;
+        });
+      }
     });
-
-  }
-});
   }
   getName(firstName: string, lastName: string) {
     let Name = firstName + ' ' + lastName;
@@ -99,31 +104,22 @@ export class CourseDescriptionComponent {
 
   EnrollToCOurse() {
     if (this.isloggedin == false) {
-      console.log(this.course_enroll, 'this.course');
       this.store.dispatch(
         CourseActions.setCurrentCourse({ selcetedCourse: this.course_enroll })
       );
       this.router.navigate(['login']);
     } else if (this.isloggedin == true) {
-      
       this.store.select(getCurrentCourse).subscribe((data) => {
-        
         this.course_enroll = data;
-      
       });
 
       if (this.course_enroll._id == null) {
-        console.log('entered');
-        
-        console.log("emitted")
         this.courseService
           .EnrollToCOurse(this.course_enroll._id)
           .subscribe((data) => {
             this.Enrolled = true;
-            console.log('response after calling the service', data);
             if ('success' in data) {
-              this.socket.emit("join", "course:"+this.course_enroll._id);
-              console.log('entered success msg');
+              this.socket.emit('join', 'course:' + this.course_enroll._id);
               // this.showInfo(res.success);
               this.showInfo('You are successfully enrolled to the course');
             } else {
@@ -138,24 +134,40 @@ export class CourseDescriptionComponent {
             }, 850);
           });
       } else {
-        
-        this.courseService.EnrollToCOurse(this.course_enroll._id).subscribe((data) => {
-          this.Enrolled = true;
-          console.log('data', data);
-          //if ( "write something here".indexOf("write som") > -1 )  { alert( "found it" );  }
+        try {
+          this.courseService
+            .EnrollToCOurse(this.course_enroll._id)
+            .subscribe((data) => {
+              if ('success' in data) {
+                this.Enrolled = true;
+                this.socket.emit('join', 'course:' + this.course_enroll._id);
 
-          if ('success' in data) {
-            this.socket.emit("join", "course:"+this.course_enroll._id);
-            console.log('entered success msg');
-            // this.showInfo(res.success);
-            this.showInfo('You are successfully enrolled to the course');
-          } else {
-            this.showError(data.errorMsg);
-          }
-          setTimeout(() => {
-            this.router.navigate(['course', this.course_enroll._id, 'welcome']);
-          }, 850);
-        });
+                this.showInfo('You are successfully enrolled to the course');
+              } else {
+                this.showError(data.errorMsg);
+                if (data.errorMsg.includes('User already enrolled in course')) {
+                  const user = this.storageService.getUser();
+
+                  this.socket.emit('JWT', user.token);
+                  this.router
+                    .navigate(['course', this.course_enroll._id, 'welcome'])
+                    .then(() => {
+                      // Wait for a short period of time before refreshing the page
+                      setTimeout(() => {
+                        window.location.href = window.location.href;
+                      }, 700); // Adjust the timeout as needed
+                    });
+                }
+              }
+              setTimeout(() => {
+                this.router.navigate([
+                  'course',
+                  this.course_enroll._id,
+                  'welcome',
+                ]);
+              }, 850);
+            });
+        } catch (error) {}
       }
     }
   }

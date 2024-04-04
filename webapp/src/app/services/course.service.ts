@@ -205,8 +205,20 @@ export class CourseService {
   }
 
   EnrollToCOurse(courseID: string): any {
-    return this.http.post<any>(`${this.API_URL}/enrol/${courseID}`, {}).pipe(
+    
+try {
+      return this.http.post<any>(`${this.API_URL}/enrol/${courseID}`, {}).pipe(
+        catchError((errResponse, sourceObservable) => {
+          if (errResponse.status === 403) {
+            return of({ errorMsg: errResponse.error.error });
+          } else {
+            return of({
+              errorMsg: 'Error in connection: Please reload the application',
+            });
+          }
+        }),
       tap((Enrolcourses) => {
+        console.log(Enrolcourses)
         this.store.dispatch(
           CourseActions.setCourseNotificationSettingsSuccess({
             updatedDoc: Enrolcourses.updatedNotificationSettings,
@@ -214,6 +226,10 @@ export class CourseService {
         );
       })
     );
+} catch (error) {
+  console.log(error.error)
+}
+
   }
   WithdrawFromCourse(course: Course): any {
     return this.http
