@@ -1133,158 +1133,152 @@ export class ConceptMapComponent {
         let materialsIds = new Array();
         var channels: any;
         channels = this.selectedCourse.channels;
-        await channels.forEach((channelId) => {
-          this.topicChannelService
-            .getChannel(this.selectedCourse._id, channelId)
-            .subscribe((channelFromBackend) => {
-              channelFromBackend.materials.forEach((material) => {
-                if (material.type === 'pdf') {
-                  materialsIds.push(material._id.toString());
-                }
-              });
-            });
-        });
-        setTimeout(async () => {
-          //wait 100 ms before executing next commands to assure recieving materialIDs form previous subscription
-
-          this.courseIsEmpty = materialsIds.length === 0;
-          if (this.courseIsEmpty) {
-            return;
-          }
-
-          try {
-            const { nodes: courseMaterialsNodes, edges: courseMaterialsEdges } =
-              await this.neo4jService.getHigherLevelsNodesAndEdges(
-                materialsIds
-              );
-
-            let kgNodes = [];
-            let kgEdges = [];
-            courseMaterialsNodes.forEach((data) => {
-              var type = data.type;
-              var nodeEle;
-              var conceptName = data.name;
-              nodeEle = {
-                id: data.id,
-                cid: data.cid,
-                name: this.capitalizeWords(conceptName),
-                uri: data.uri,
-                type: type,
-                weight: data.weight,
-                wikipedia: data.wikipedia,
-                abstract: data.abstract,
-                rank: data.rank,
-                mid: data.mid,
-              };
-              kgNodes.push(nodeEle);
-            });
-
-            let uniqueNodes = [];
-            let uniqueNodesNames = [];
-            kgNodes.forEach((node) => {
-              if (uniqueNodesNames.includes(node.name)) {
-              } else {
-                uniqueNodesNames.push(node.name.toString());
-                uniqueNodes.push(node);
-              }
-            });
-            kgNodes = uniqueNodes;
-            if (courseMaterialsEdges) {
-              courseMaterialsEdges.forEach((data) => {
-                let edgeEle = {
-                  type: data.type,
-                  source: data.source,
-                  target: data.target,
-                  weight: data.weight,
-                };
-                kgEdges.push(edgeEle);
-              });
+        for (const channelId of channels) {
+          const channel = await lastValueFrom(this.topicChannelService.getChannel(this.selectedCourse._id, channelId));
+          channel.materials.forEach((material) => {
+            if (material.type === 'pdf') {
+              materialsIds.push(material._id.toString());
             }
+          });
+        }
 
-            let nodesIds = [];
-            kgNodes.forEach((node) => {
-              nodesIds.push(node.id);
-            });
-            //filter edges with no weights, or/and slide's edges
-            // the edges aren't filtered completely from the first iteration, so it will keep checking until all have been filtered
-            var counter = 1;
-            while (counter) {
-              var counter = 0;
-              kgEdges.forEach((edge, index) => {
-                if (edge.weight === null) {
-                  kgEdges.splice(index, 1);
-                  counter++;
-                } else if (
-                  !nodesIds.includes(edge.source) ||
-                  !nodesIds.includes(edge.target)
-                ) {
-                  kgEdges.splice(index, 1);
-                  counter++;
-                }
-              });
-            }
-            const nodes = [];
-            const edges = [];
-            kgNodes.forEach((data) => {
-              let node = { data };
-              nodes.push(node);
-            });
-            kgEdges.forEach((data) => {
-              let edge = { data };
-              edges.push(edge);
-            });
-            let courseKgMeta = {
-              nodes: nodes,
-              edges: edges,
+        this.courseIsEmpty = materialsIds.length === 0;
+        if (this.courseIsEmpty) {
+          return;
+        }
+
+        try {
+          const { nodes: courseMaterialsNodes, edges: courseMaterialsEdges } =
+            await this.neo4jService.getHigherLevelsNodesAndEdges(
+              materialsIds
+            );
+
+          let kgNodes = [];
+          let kgEdges = [];
+          courseMaterialsNodes.forEach((data) => {
+            var type = data.type;
+            var nodeEle;
+            var conceptName = data.name;
+            nodeEle = {
+              id: data.id,
+              cid: data.cid,
+              name: this.capitalizeWords(conceptName),
+              uri: data.uri,
+              type: type,
+              weight: data.weight,
+              wikipedia: data.wikipedia,
+              abstract: data.abstract,
+              rank: data.rank,
+              mid: data.mid,
             };
-            //filter edges with no weights, or/and slide's edges
-            // the edges aren't filtered completely from the first iteration, so it will keep checking until all have been filtered
-            var counter = 1;
-            while (counter) {
-              var counter = 0;
-              courseKgMeta.edges.forEach((edge, index) => {
-                if (edge.data.weight === null) {
-                  courseKgMeta.edges.splice(index, 1);
-                  counter++;
-                }
-              });
+            kgNodes.push(nodeEle);
+          });
+
+          let uniqueNodes = [];
+          let uniqueNodesNames = [];
+          kgNodes.forEach((node) => {
+            if (uniqueNodesNames.includes(node.name)) {
+            } else {
+              uniqueNodesNames.push(node.name.toString());
+              uniqueNodes.push(node);
             }
-            //extract node's weight & filter undefined weights
-            let weightsArray = [];
-            courseKgMeta.nodes.forEach((node) => {
-              if (node.data.weight) {
-                weightsArray.push(node.data.weight);
+          });
+          kgNodes = uniqueNodes;
+          if (courseMaterialsEdges) {
+            courseMaterialsEdges.forEach((data) => {
+              let edgeEle = {
+                type: data.type,
+                source: data.source,
+                target: data.target,
+                weight: data.weight,
+              };
+              kgEdges.push(edgeEle);
+            });
+          }
+
+          let nodesIds = [];
+          kgNodes.forEach((node) => {
+            nodesIds.push(node.id);
+          });
+          //filter edges with no weights, or/and slide's edges
+          // the edges aren't filtered completely from the first iteration, so it will keep checking until all have been filtered
+          var counter = 1;
+          while (counter) {
+            var counter = 0;
+            kgEdges.forEach((edge, index) => {
+              if (edge.weight === null) {
+                kgEdges.splice(index, 1);
+                counter++;
+              } else if (
+                !nodesIds.includes(edge.source) ||
+                !nodesIds.includes(edge.target)
+              ) {
+                kgEdges.splice(index, 1);
+                counter++;
               }
             });
-            //get min & max weight
-            var maxWeight = Math.max(...weightsArray).toString();
-            var minWeight = Math.min(...weightsArray).toString();
-
-            //assign min & max weights to each node to be normalized later
-            courseKgMeta.nodes.forEach((node) => {
-              node.data.maxWeight = maxWeight;
-              node.data.minWeight = minWeight;
-            });
-
-            this.conceptMapData = courseKgMeta;
-
-            this.filteredMapData = this.conceptMapData;
-            if (this.conceptMapData) {
-              let matKgControlPanel = document.getElementById(
-                'materialKgControlPanel'
-              );
-              this.renderer.removeClass(matKgControlPanel, 'noContentRecieved');
-              matKgControlPanel.style.float = 'right';
-            }
-          } catch (error) {
-            if (error.status === 404) {
-              this.isNotGenerated = true;
-            }
-            console.error(error);
-            this.isLoading = false;
-            this.loading.emit(false);
           }
-        }, 100);
+          const nodes = [];
+          const edges = [];
+          kgNodes.forEach((data) => {
+            let node = { data };
+            nodes.push(node);
+          });
+          kgEdges.forEach((data) => {
+            let edge = { data };
+            edges.push(edge);
+          });
+          let courseKgMeta = {
+            nodes: nodes,
+            edges: edges,
+          };
+          //filter edges with no weights, or/and slide's edges
+          // the edges aren't filtered completely from the first iteration, so it will keep checking until all have been filtered
+          var counter = 1;
+          while (counter) {
+            var counter = 0;
+            courseKgMeta.edges.forEach((edge, index) => {
+              if (edge.data.weight === null) {
+                courseKgMeta.edges.splice(index, 1);
+                counter++;
+              }
+            });
+          }
+          //extract node's weight & filter undefined weights
+          let weightsArray = [];
+          courseKgMeta.nodes.forEach((node) => {
+            if (node.data.weight) {
+              weightsArray.push(node.data.weight);
+            }
+          });
+          //get min & max weight
+          var maxWeight = Math.max(...weightsArray).toString();
+          var minWeight = Math.min(...weightsArray).toString();
+
+          //assign min & max weights to each node to be normalized later
+          courseKgMeta.nodes.forEach((node) => {
+            node.data.maxWeight = maxWeight;
+            node.data.minWeight = minWeight;
+          });
+
+          this.conceptMapData = courseKgMeta;
+
+          this.filteredMapData = this.conceptMapData;
+          if (this.conceptMapData) {
+            let matKgControlPanel = document.getElementById(
+              'materialKgControlPanel'
+            );
+            this.renderer.removeClass(matKgControlPanel, 'noContentRecieved');
+            matKgControlPanel.style.float = 'right';
+          }
+        } catch (error) {
+          if (error.status === 404) {
+            this.isNotGenerated = true;
+          }
+          console.error(error);
+          this.isLoading = false;
+          this.loading.emit(false);
+        }
       } catch {}
     }
   }
