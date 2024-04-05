@@ -855,7 +855,7 @@ export class ConceptMapComponent {
         if (sideBarComponent.clientHeight >= this.cyHeight - 100) {
           if (previousConcepts) {
             document.getElementById('previousConcepts').style.height =
-              Number(this.cyHeight * 0.3).toString() + 'px';
+              Number(this.cyHeight * 0.2).toString() + 'px';
             document.getElementById('previousConcepts').style.overflowY =
               'auto';
               document.getElementById('previousConcepts').style.maxHeight =
