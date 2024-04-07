@@ -7,6 +7,9 @@ from .recommendation_type import RecommendationType
 from .recommender import Recommender
 import numpy as np
 
+import math
+import scipy.stats as st
+
 
 from log import LOG
 import logging
@@ -125,7 +128,23 @@ class ResourceRecommenderService:
 
     ######
     ######
-    # cro logic
+    # CRO logic
+
+    def wilson_lower_bound(self, up, down, confidence=0.95):
+        """
+        Calculate lower bound of wilson score
+        :param up: No of positive ratings
+        :param down: No of negative ratings
+        :param confidence: Confidence interval, by default is 95 %
+        :return: Wilson Lower bound score
+        """
+        n = up + down
+        if n == 0:
+            return 0
+        z = st.norm.ppf(1 - (1 - confidence) / 2)
+        phat = 1.0 * up / n
+        return (phat + z * z / (2 * n) - z * math.sqrt((phat * (1 - phat) + z * z / (4 * n)) / n)) / (1 + z * z / n)
+    
     def cro_save_logic(
             self,
             cro_form: dict,
@@ -205,7 +224,33 @@ class ResourceRecommenderService:
                                                                      resources=resources,
                                                                      old_relationship=True
                                                                     )
-    
+
+
+    def cro_sort_result(self, resources: list):
+        """
+            Sort by these extra features provided by the resources such as:
+            Popularity | Views (videos) -> 0.4
+            Rating: Likes Count Dislike Count -> 0.2
+            Creation Date (content freshness) -> 0.2
+            Similarities Scores -> 0.1
+            Bookmark -> 0.1
+            Certified Account (video) -> 0.05
+
+            Resources having Rating related to DNU_modified (cid)
+        """
+        # to be removed
+        concepts_cro = [""]
+        resources = self.db.cro_get_resources(concepts_cro=concepts_cro)
+
+        # video items
+        resources_videos = [resource for resource in resources if "Video" in resource["labels"]]
+        
+        # articles items
+        resources_articles = [resource for resource in resources if "Article" in resource["labels"]]
+
+        # external sources items
+        resources_external_sources = []
+
     def cro_get_resources_ranked_and_sorted(self, resources: list):
         result = []
         positive_rated = []
