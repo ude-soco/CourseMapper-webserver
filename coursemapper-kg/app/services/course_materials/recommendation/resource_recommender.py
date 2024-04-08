@@ -9,6 +9,7 @@ import numpy as np
 
 import math
 import scipy.stats as st
+from datetime import datetime
 
 
 from log import LOG
@@ -145,6 +146,75 @@ class ResourceRecommenderService:
         phat = 1.0 * up / n
         return (phat + z * z / (2 * n) - z * math.sqrt((phat * (1 - phat) + z * z / (4 * n)) / n)) / (1 + z * z / n)
     
+    def calculate_factors_weights(self, type: int, resources: list, ratings: list = []):
+        """
+            Sort by these extra features provided by the resources such as:
+
+            Type: 1 => Video
+            Popularity | Views (videos) -> 0.4
+            Rating: Likes Count Dislike Count -> 0.2
+            Creation Date (content freshness) -> 0.2
+            Similarities Scores -> 0.1
+            Bookmark -> 0.1
+            Certified Account (video) -> 0.05 (optional)
+
+            Type: 1 => Article
+            Rating: Likes Count Dislike Count -> 0.4
+            Similarities Scores -> 0.3
+            Bookmark -> 0.3
+
+            Type: 1 => External Source
+            Rating: Likes Count Dislike Count -> 0.8
+            Bookmark -> 0.2
+
+            Resources having Rating related to DNU_modified (cid)
+        """
+        resources = []
+        if type == 1:
+            weight_views = 0.4
+            weight_rating = 0.2
+            weight_creation_date = 0.2
+            weight_similarity_score = 0.1
+            weight_bookmark = 0.1
+
+            for resource in resources:
+                rating_score = self.wilson_lower_bound(up=resource["helpful_count"], down=resource["not_helpful_count"])
+                diff_created_at_score = datetime.now() - resource["created_at"]
+
+                resource["composite_score"] = (resource["views"] * weight_views) 
+                + (rating_score * weight_rating)
+                # + (creation_date_score * weight_creation_date)
+                + (resource["similarity_score"] * weight_similarity_score) 
+                + (resource["bookmark_count"] * weight_bookmark)
+
+        elif type == 2:
+            weight_rating = 0.4
+            weight_similarity_score = 0.3
+            weight_bookmark = 0.3
+
+            for resource in resources:
+                rating_score = self.wilson_lower_bound(up=resource["helpful_count"], down=resource["not_helpful_count"])
+                resource["composite_score"] = (rating_score * weight_rating) 
+                + (resource["similarity_score"] * weight_similarity_score) 
+                + (resource["bookmark_count"] * weight_bookmark)
+
+        elif type == 3:
+            weight_rating = 0.8
+            weight_bookmark = 0.2
+
+            for resource in resources:
+                rating_score = self.wilson_lower_bound(up=resource["helpful_count"], down=resource["not_helpful_count"])
+                resource["composite_score"] = (rating_score * weight_rating) 
+                + (resource["bookmark_count"] * weight_bookmark)
+        
+        # sort by composite score value
+        resources.sort(key=lambda x: x["composite_score"], reverse=True)
+
+        # # Finally, priorities on resources having Rating related to DNU_modified (cid)
+        #
+
+        return resources
+
     def cro_save_logic(
             self,
             cro_form: dict,
@@ -228,28 +298,30 @@ class ResourceRecommenderService:
 
     def cro_sort_result(self, resources: list):
         """
-            Sort by these extra features provided by the resources such as:
-            Popularity | Views (videos) -> 0.4
-            Rating: Likes Count Dislike Count -> 0.2
-            Creation Date (content freshness) -> 0.2
-            Similarities Scores -> 0.1
-            Bookmark -> 0.1
-            Certified Account (video) -> 0.05
-
             Resources having Rating related to DNU_modified (cid)
         """
         # to be removed
         concepts_cro = [""]
         resources = self.db.cro_get_resources(concepts_cro=concepts_cro)
+        ratings = []
 
         # video items
         resources_videos = [resource for resource in resources if "Video" in resource["labels"]]
+        resources_videos = self.calculate_factors_weights(type=1, resources=resources_videos, ratings=ratings)
         
         # articles items
         resources_articles = [resource for resource in resources if "Article" in resource["labels"]]
+        resources_videos = self.calculate_factors_weights(type=2, resources=resources_videos, ratings=ratings)
 
         # external sources items
-        resources_external_sources = []
+        resources_external_sources = [resource for resource in resources if "ExternalSource" in resource["labels"]]
+        resources_videos = self.calculate_factors_weights(type=3, resources=resources_external_sources, ratings=ratings)
+
+        return {
+            "articles": resources_articles,
+            "videos": resources_videos,
+            "external_sources": resources_external_sources
+        }
 
     def cro_get_resources_ranked_and_sorted(self, resources: list):
         result = []

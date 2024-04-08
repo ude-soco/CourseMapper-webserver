@@ -71,7 +71,7 @@ def create_video_resource(tx, node, recommendation_type=''):
         description: $description, description_full: $description_full, keyphrases: $keyphrases, text: $text, document_embedding: $document_embedding, 
         keyphrase_embedding: $keyphrase_embedding, similarity_score: $similarity_score, thumbnail: $thumbnail, 
         duration: $duration, views: $views, publish_time: $pub_time, helpful_count: $helpful_count, 
-        not_helpful_count: $not_helpful_count})""",
+        not_helpful_count: $not_helpful_count, bookmark_count: $bookmark_count})""",
         rid=node["id"],
         uri="https://www.youtube.com/embed/%s?autoplay=1" % node["id"],
         title=node["title"],
@@ -87,7 +87,9 @@ def create_video_resource(tx, node, recommendation_type=''):
         keyphrase_embedding=str(node["keyphrase_embedding"] if "keyphrase_embedding" in node.index else ""),
         document_embedding=str(node["document_embedding"] if "document_embedding" in node.index else ""),
         helpful_count=0,
-        not_helpful_count=0)
+        not_helpful_count=0,
+        bookmark_count=0
+        )
 
 
 def create_wikipedia_resource(tx, node, recommendation_type=''):
@@ -99,7 +101,7 @@ def create_wikipedia_resource(tx, node, recommendation_type=''):
         """MERGE (c:Resource:Article {rid: $rid, uri: $uri, 
         title: $title, abstract:$abstract, keyphrases: $keyphrases, text: $text, document_embedding: $document_embedding, 
         keyphrase_embedding: $keyphrase_embedding, similarity_score: $similarity_score, helpful_count: $helpful_count, 
-        not_helpful_count: $not_helpful_count})""",
+        not_helpful_count: $not_helpful_count, bookmark_count: $bookmark_count})""",
         rid=node["id"],
         uri=node["id"],
         title=node["title"],
@@ -110,8 +112,29 @@ def create_wikipedia_resource(tx, node, recommendation_type=''):
         keyphrase_embedding=str(node["keyphrase_embedding"] if "keyphrase_embedding" in node.index else ""),
         document_embedding=str(node["document_embedding"] if "document_embedding" in node.index else ""),
         helpful_count=0,
-        not_helpful_count=0)
+        not_helpful_count=0,
+        bookmark_count=0
+        )
 
+def create_external_source_resource(tx, node, recommendation_type=''):
+    """
+    """
+    logger.info(
+        "Creating External Source resource '%s'" % node["id"])
+    tx.run(
+        """MERGE (c:Resource:ExternalSource {rid: $rid, uri: $uri, 
+        created_at: $created_at, cid: $cid, description: $description, helpful_count: $helpful_count,
+        not_helpful_count: $not_helpful_count, bookmark_count: $bookmark_count})""",
+        rid=node["uri"],
+        uri=node["uri"],
+        created_at=node["created_at"],
+        description=node["description"],
+        cid=node["cid"],
+        helpful_count=0,
+        not_helpful_count=0,
+        bookmark_count=0
+        )
+    
 
 def create_concept_relationships(tx, node):
     """
