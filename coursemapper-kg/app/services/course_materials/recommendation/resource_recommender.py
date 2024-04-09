@@ -9,7 +9,9 @@ import numpy as np
 
 import math
 import scipy.stats as st
+
 from datetime import datetime
+from dateutil.parser import parse as date_parse
 
 
 from log import LOG
@@ -133,11 +135,11 @@ class ResourceRecommenderService:
 
     def wilson_lower_bound(self, up, down, confidence=0.95):
         """
-        Calculate lower bound of wilson score
-        :param up: No of positive ratings
-        :param down: No of negative ratings
-        :param confidence: Confidence interval, by default is 95 %
-        :return: Wilson Lower bound score
+            Calculate lower bound of wilson score
+            :param up: No of positive ratings
+            :param down: No of negative ratings
+            :param confidence: Confidence interval, by default is 95 %
+            :return: Wilson Lower bound score
         """
         n = up + down
         if n == 0:
@@ -146,6 +148,16 @@ class ResourceRecommenderService:
         phat = 1.0 * up / n
         return (phat + z * z / (2 * n) - z * math.sqrt((phat * (1 - phat) + z * z / (4 * n)) / n)) / (1 + z * z / n)
     
+    def normalized_score_date(date_str: str, max: datetime):
+        """
+            Calculate Normalization Score of Creation Date
+        """
+        date = date_parse(date_str).replace(tzinfo=None)
+
+        # First video posted on Youtube
+        min = datetime(year=2005, month=4, day=23, hour=8, minute=31, second=52, tzinfo=None)
+        return (date - min).days / (max - min).days
+
     def calculate_factors_weights(self, type: int, resources: list, ratings: list = []):
         """
             Sort by these extra features provided by the resources such as:
@@ -171,19 +183,20 @@ class ResourceRecommenderService:
         """
         resources = []
         if type == 1:
-            weight_views = 0.4
-            weight_rating = 0.2
+            weight_views = 0.3
+            weight_rating = 0.3
             weight_creation_date = 0.2
             weight_similarity_score = 0.1
             weight_bookmark = 0.1
 
             for resource in resources:
                 rating_score = self.wilson_lower_bound(up=resource["helpful_count"], down=resource["not_helpful_count"])
-                diff_created_at_score = datetime.now() - resource["created_at"]
+                now = datetime.now() 
+                normalized_score_date = self.normalized_score_date(date_str=resource["publish_time"], max=now)
 
                 resource["composite_score"] = (resource["views"] * weight_views) 
                 + (rating_score * weight_rating)
-                # + (creation_date_score * weight_creation_date)
+                + (normalized_score_date * weight_creation_date)
                 + (resource["similarity_score"] * weight_similarity_score) 
                 + (resource["bookmark_count"] * weight_bookmark)
 
@@ -199,8 +212,9 @@ class ResourceRecommenderService:
                 + (resource["bookmark_count"] * weight_bookmark)
 
         elif type == 3:
-            weight_rating = 0.8
-            weight_bookmark = 0.2
+            weight_rating = 0.4
+            weight_bookmark = 0.3
+            weight_creation_date = 0.3
 
             for resource in resources:
                 rating_score = self.wilson_lower_bound(up=resource["helpful_count"], down=resource["not_helpful_count"])

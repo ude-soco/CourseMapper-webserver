@@ -116,18 +116,18 @@ def create_wikipedia_resource(tx, node, recommendation_type=''):
         bookmark_count=0
         )
 
-def create_external_source_resource(tx, node, recommendation_type=''):
+def create_external_source_resource(tx, node):
     """
     """
     logger.info(
         "Creating External Source resource '%s'" % node["id"])
     tx.run(
         """MERGE (c:Resource:ExternalSource {rid: $rid, uri: $uri, 
-        created_at: $created_at, cid: $cid, description: $description, helpful_count: $helpful_count,
+        publish_time: $created_at, cid: $cid, description: $description, helpful_count: $helpful_count,
         not_helpful_count: $not_helpful_count, bookmark_count: $bookmark_count})""",
         rid=node["uri"],
         uri=node["uri"],
-        created_at=node["created_at"],
+        publish_time=node["created_at"],
         description=node["description"],
         cid=node["cid"],
         helpful_count=0,
@@ -2137,7 +2137,8 @@ class NeoDataBase:
                         a.author_image_url as author_image_url, a.author_name as author_name,
                         a.keyphrases as keyphrases, a.description as description, a.description_full as description_full,
                         a.views as views, a.publish_time as publish_time, a.uri as uri, a.duration as duration,
-                        a.similarity_score as similarity_score, a.helpful_count as helpful_count, a.not_helpful_count as not_helpful_count
+                        a.similarity_score as similarity_score, a.helpful_count as helpful_count, a.not_helpful_count as not_helpful_count,
+                        a.bookmarked_count
                 """,
                 node_ids=node_ids
             ).data()
@@ -2154,7 +2155,8 @@ class NeoDataBase:
                         "labels": resource["labels"],
                         "similarity_score": resource["similarity_score"],
                         "keyphrases": resource["keyphrases"],
-                        "text": resource["text"]
+                        "text": resource["text"],
+                        "bookmarked_count": resource["bookmarked_count"]
                     }
 
                     if "Video" in r["labels"]:
@@ -2167,6 +2169,9 @@ class NeoDataBase:
 
                     elif "Article" in r["labels"]:
                         r["abstract"] = resource["abstract"]
+
+                    elif "ExtermalSource" in r["labels"]:
+                        r["description"] = resource["description"]
 
         return result
 
