@@ -118,9 +118,10 @@ def create_wikipedia_resource(tx, node, recommendation_type=''):
 
 def create_external_source_resource(tx, node):
     """
+        Create ExternalSource Node
     """
     logger.info(
-        "Creating External Source resource '%s'" % node["id"])
+        "Creating ExternalSource resource '%s'" % node["id"])
     tx.run(
         """MERGE (c:Resource:ExternalSource {rid: $rid, uri: $uri, 
         publish_time: $created_at, cid: $cid, description: $description, helpful_count: $helpful_count,
@@ -2172,6 +2173,7 @@ class NeoDataBase:
 
                     elif "ExtermalSource" in r["labels"]:
                         r["description"] = resource["description"]
+                        r["publish_time"] = resource["publish_time"]
 
         return result
 

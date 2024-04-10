@@ -312,15 +312,6 @@ class ResourceRecommenderService:
                                                                     )
 
 
-    def cro_sort_result_light(self, dnu_cids: list, params: dict, with_ratings=False):
-        """
-            dnu_cids: ["sdsds323", "23asdf23"]
-            params: {"similarity_score": True, "most_recent": False, "popularity": True}
-            most_recent: creation date
-            popularity: based on composite scores: views, ratings, bookmarked count
-        """
-
-
     def cro_sort_result(self, resources: list, with_ratings=False):
         """
             Sorting Logic for Resources 
@@ -348,6 +339,36 @@ class ResourceRecommenderService:
             "videos": resources_videos,
             "external_sources": resources_external_sources
         }
+    
+    def cro_sort_result_light(self, params: dict, with_ratings=False):
+        """
+            params: {"similarity_score": True, "most_recent": False, "popularity": True, "concepts_cids": ["sdsds323", "23asdf23"]}
+            most_recent: creation date
+            popularity: based on composite scores: views (0.4), ratings (0.4), bookmarked count (0.2)
+        """
+        resources = self.db.cro_get_resources(concepts_cro=params["concepts_cids"])
+
+        if params["similarity_score"] == False and params["most_recent"] and params["popularity"]:
+            return self.cro_sort_result(resources=resources, with_ratings=True)
+
+        if params["similarity_score"] == True:
+            resources.sort(key=lambda x: x["similarity_score"], reverse=True)
+
+        if params["most_recent"] == True:
+            resources.sort(key=lambda x: x["publish_time"], reverse=True)
+
+        if params["popularity"] == True:
+            resources.sort(key=lambda x: x["views"], reverse=True)
+        
+        resources_videos = [resource for resource in resources if "Video" in resource["labels"]]
+        resources_articles = [resource for resource in resources if "Article" in resource["labels"]]
+        resources_external_sources = [resource for resource in resources if "ExternalSource" in resource["labels"]]
+        return {
+            "articles": resources_articles,
+            "videos": resources_videos,
+            "external_sources": resources_external_sources
+        }
+
 
     def cro_get_resources_ranked_and_sorted(self, resources: list):
         result = []
