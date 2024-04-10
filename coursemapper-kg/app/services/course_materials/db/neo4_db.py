@@ -2138,7 +2138,7 @@ class NeoDataBase:
                         a.keyphrases as keyphrases, a.description as description, a.description_full as description_full,
                         a.views as views, a.publish_time as publish_time, a.uri as uri, a.duration as duration,
                         a.similarity_score as similarity_score, a.helpful_count as helpful_count, a.not_helpful_count as not_helpful_count,
-                        a.bookmarked_count
+                        a.bookmarked_count as bookmarked_count
                 """,
                 node_ids=node_ids
             ).data()
@@ -2150,13 +2150,13 @@ class NeoDataBase:
                         "title": resource["title"],
                         "rid": resource["rid"],
                         "uri": resource["uri"],
-                        "helpful_count": resource["helpful_count"],
-                        "not_helpful_count": resource["not_helpful_count"],
+                        "helpful_count": int(resource["helpful_count"]),
+                        "not_helpful_count": int(resource["not_helpful_count"]),
                         "labels": resource["labels"],
-                        "similarity_score": resource["similarity_score"],
+                        "similarity_score": float(resource["similarity_score"]),
                         "keyphrases": resource["keyphrases"],
                         "text": resource["text"],
-                        "bookmarked_count": resource["bookmarked_count"]
+                        "bookmarked_count": int(resource["bookmarked_count"])
                     }
 
                     if "Video" in r["labels"]:

@@ -143,12 +143,12 @@ class ResourceRecommenderService:
         """
         n = up + down
         if n == 0:
-            return 0
+            return 0.0
         z = st.norm.ppf(1 - (1 - confidence) / 2)
         phat = 1.0 * up / n
         return (phat + z * z / (2 * n) - z * math.sqrt((phat * (1 - phat) + z * z / (4 * n)) / n)) / (1 + z * z / n)
     
-    def normalized_score_date(date_str: str, max: datetime):
+    def normalized_score_date(self, date_str: str, max: datetime):
         """
             Calculate Normalization Score of Creation Date
         """
@@ -158,7 +158,7 @@ class ResourceRecommenderService:
         min = datetime(year=2005, month=4, day=23, hour=8, minute=31, second=52, tzinfo=None)
         return (date - min).days / (max - min).days
 
-    def calculate_factors_weights(self, type: int, resources: list, ratings: list = []):
+    def calculate_factors_weights(self, category: int, resources: list, ratings: list = []):
         """
             Sort by these extra features provided by the resources such as:
 
@@ -181,8 +181,9 @@ class ResourceRecommenderService:
 
             Resources having Rating related to DNU_modified (cid)
         """
-        resources = []
-        if type == 1:
+        now = datetime.now()
+
+        if category == 1:
             weight_views = 0.3
             weight_rating = 0.3
             weight_creation_date = 0.2
@@ -191,35 +192,36 @@ class ResourceRecommenderService:
 
             for resource in resources:
                 rating_score = self.wilson_lower_bound(up=resource["helpful_count"], down=resource["not_helpful_count"])
-                now = datetime.now() 
-                normalized_score_date = self.normalized_score_date(date_str=resource["publish_time"], max=now)
+                normalized_score = self.normalized_score_date(date_str=resource["publish_time"], max=now)
 
-                resource["composite_score"] = (resource["views"] * weight_views) 
-                + (rating_score * weight_rating)
-                + (normalized_score_date * weight_creation_date)
-                + (resource["similarity_score"] * weight_similarity_score) 
-                + (resource["bookmark_count"] * weight_bookmark)
+                resource["composite_score"] = (int(resource["views"])* weight_views) \
+                                            + (rating_score * weight_rating) \
+                                            + (normalized_score * weight_creation_date) \
+                                            + (resource["similarity_score"] * weight_similarity_score) \
+                                            + (resource["bookmarked_count"] * weight_bookmark)
 
-        elif type == 2:
+        elif category == 2:
             weight_rating = 0.4
             weight_similarity_score = 0.3
             weight_bookmark = 0.3
 
             for resource in resources:
                 rating_score = self.wilson_lower_bound(up=resource["helpful_count"], down=resource["not_helpful_count"])
-                resource["composite_score"] = (rating_score * weight_rating) 
-                + (resource["similarity_score"] * weight_similarity_score) 
-                + (resource["bookmark_count"] * weight_bookmark)
 
-        elif type == 3:
+                resource["composite_score"] = (rating_score * weight_rating) \
+                                            + (resource["similarity_score"] * weight_similarity_score) \
+                                            + (resource["bookmarked_count"] * weight_bookmark) \
+
+        elif category == 3:
             weight_rating = 0.4
             weight_bookmark = 0.3
             weight_creation_date = 0.3
 
             for resource in resources:
                 rating_score = self.wilson_lower_bound(up=resource["helpful_count"], down=resource["not_helpful_count"])
-                resource["composite_score"] = (rating_score * weight_rating) 
-                + (resource["bookmark_count"] * weight_bookmark)
+                resource["composite_score"] = (rating_score * weight_rating) \
+                                            + (resource["bookmarked_count"] * weight_bookmark) \
+                                            + (normalized_score * weight_creation_date)
         
         # sort by composite score value
         resources.sort(key=lambda x: x["composite_score"], reverse=True)
@@ -310,26 +312,36 @@ class ResourceRecommenderService:
                                                                     )
 
 
-    def cro_sort_result(self, resources: list):
+    def cro_sort_result_light(self, dnu_cids: list, params: dict, with_ratings=False):
         """
+            dnu_cids: ["sdsds323", "23asdf23"]
+            params: {"similarity_score": True, "most_recent": False, "popularity": True}
+            most_recent: creation date
+            popularity: based on composite scores: views, ratings, bookmarked count
+        """
+
+
+    def cro_sort_result(self, resources: list, with_ratings=False):
+        """
+            Sorting Logic for Resources 
             Resources having Rating related to DNU_modified (cid)
         """
         # to be removed
-        concepts_cro = [""]
-        resources = self.db.cro_get_resources(concepts_cro=concepts_cro)
         ratings = []
+        if with_ratings:
+            ratings = []
 
         # video items
         resources_videos = [resource for resource in resources if "Video" in resource["labels"]]
-        resources_videos = self.calculate_factors_weights(type=1, resources=resources_videos, ratings=ratings)
-        
+        resources_videos = self.calculate_factors_weights(category=1, resources=resources_videos, ratings=ratings)
+
         # articles items
         resources_articles = [resource for resource in resources if "Article" in resource["labels"]]
-        resources_videos = self.calculate_factors_weights(type=2, resources=resources_videos, ratings=ratings)
+        resources_articles = self.calculate_factors_weights(category=2, resources=resources_articles, ratings=ratings)
 
         # external sources items
         resources_external_sources = [resource for resource in resources if "ExternalSource" in resource["labels"]]
-        resources_videos = self.calculate_factors_weights(type=3, resources=resources_external_sources, ratings=ratings)
+        resources_external_sources = self.calculate_factors_weights(category=3, resources=resources_external_sources, ratings=ratings)
 
         return {
             "articles": resources_articles,
@@ -654,7 +666,7 @@ class ResourceRecommenderService:
             resources = [{"node_id": node["id"]} for node in resources]
             self.cro_edit_relationship_btw_concepts_cro_and_resources(concepts_cro=cro_form["concepts"], resources=resources)
             resources = self.db.cro_get_resources(concepts_cro=cro_form["concepts"])
-            result = self.cro_get_resources_ranked_and_sorted(resources=resources)
+            result = self.cro_sort_result(resources=resources, with_ratings=True)
         else:
             result = []
         
