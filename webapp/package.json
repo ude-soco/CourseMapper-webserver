@@ -39,7 +39,7 @@
     "cytoscape-spread": "^3.0.0",
     "dotenv": "^16.4.5",
     "jquery": "^3.7.1",
-    "ng2-dragula": "^2.1.1",
+    "ng2-dragula": "^5.1.0",
     "ng2-pdf-viewer": "^9.1.5",
     "ngx-infinite-scroll": "^17.0.0",
     "ngx-socket-io": "^4.6.1",
