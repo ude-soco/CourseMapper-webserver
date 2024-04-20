@@ -4,22 +4,21 @@
   <h3 class="sub-title">Search Courses by exploring platforms</h3>
 
   <div class="options">
-    <a *ngFor="let card of optionsData" [routerLink]="card.link" class="card-link">
-      <app-vis-options [text]="card.text"></app-vis-options>
+    <a *ngFor="let option of optionsData" [routerLink]="option.link" class="card-link">
+      <app-vis-options [text]="option.text"></app-vis-options>
     </a>
   </div>
 </div>
 
 <div class="categories">
   <h3 class="sub-title">Search courses by categories</h3>
-  <div class="cards-container">
+  <div class="category-container">
     <app-course-category *ngFor="let category of courseCategoryData" [category]="category"></app-course-category>
   </div>
 </div>
 
 <div class="most-popular">
   <h3 class="sub-title">Most popular courses</h3>
-
   <app-course-carousel [type]="CourseCarouselType.MOST_POPULAR_COURSES"></app-course-carousel>
 </div>
 

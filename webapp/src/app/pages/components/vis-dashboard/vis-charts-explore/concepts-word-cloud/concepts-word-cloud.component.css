@@ -39,11 +39,13 @@
     font-family: Roboto;
     color: #222222;
     flex: 3;
+    cursor: default;
 
   }
   .link{
     text-align: right;
     flex: 1;
+    cursor: pointer;
   }
 }
 

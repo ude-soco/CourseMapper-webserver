@@ -38,10 +38,10 @@ export class VisComparePageComponent implements OnInit{
 
 
   comparePlatforms() {
-
     if (this.selectedPlatforms.length> 1) {
       this.router.navigate(['compare-moocs-vis']);
     }
   }
+
 
 }

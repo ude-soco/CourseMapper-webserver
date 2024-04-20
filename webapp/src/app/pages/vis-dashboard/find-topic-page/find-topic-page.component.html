@@ -1,2 +1,13 @@
-<p>find-topic-page works!</p>
 <app-vis-back-button></app-vis-back-button>
+
+
+<div style="text-align: center" >
+  <div><p class="discover">Find by Topic</p></div>
+  <div class="search-box-container">
+    <input class="search-box" [(ngModel)]="searchQuery" type="text" placeholder="Search">
+  </div>
+  <div class="search-button-container">
+    <button class="search-button" value="" (click)="search(searchQuery)">Search</button>
+  </div>
+
+</div>

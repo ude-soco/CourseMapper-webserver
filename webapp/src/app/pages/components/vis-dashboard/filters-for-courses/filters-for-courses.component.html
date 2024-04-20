@@ -5,11 +5,9 @@
     <label for="rating" style="align-self: flex-start;">Rating:</label>
     <div style="flex-grow: 1;">
     <select id="rating" [(ngModel)]="selectedRating" style="width: 100%;" (change)="emitFilterChange()">
-      <option value="4"> > 4-5 stars</option>
-      <option value="3"> > 3-4 stars</option>
-      <option value="2"> 2-3 stars</option>
-      <option value="1"> 1-2 stars</option>
-      <option value="null">-------</option>
+
+      <option *ngFor="let rating of myRatings" [value]="rating">{{rating}} ></option>
+      <option value="nothing">-------</option>
 
       <!-- Add more rating options as needed -->
     </select>
@@ -36,10 +34,7 @@
     <div style="flex-grow: 1;">
     <select id="language" [(ngModel)]="selectedLanguage" style="width: 100%;" (change)="emitFilterChange()">
       <option value="nothing">------</option>
-      <option value="English">English</option>
-      <option value="Spanish">Spanish</option>
-      <option value="German">German</option>
-      <option value="Deutsch">Deutsch</option>
+      <option *ngFor="let language of selectLanguages" [value]="language">{{language}}</option>
       <!-- Add more language options as needed -->
     </select>
     </div>
@@ -50,10 +45,11 @@
   <div style="display: flex; justify-content: space-between;">
     <label for="price" style="align-self: flex-start;">Price:</label>
     <div style="flex-grow: 1;">
-      <select id="price" [(ngModel)]="selectedPrice" style="width: 100%;" (change)="emitFilterChange()">
+      <select id="price" [(ngModel)]="selectedPrice" style="width: 100%;" (change)="emitFilterChange()" >
         <option value=0>-----</option>
         <option value="Low">Low</option>
         <option value="High">High</option>
+        <option value="Medium">Medium</option>
         <option value="Free">Free</option>
 
         <!-- Add more language options as needed -->

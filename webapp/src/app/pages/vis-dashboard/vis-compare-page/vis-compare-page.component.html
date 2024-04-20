@@ -1,6 +1,8 @@
 <app-vis-back-button></app-vis-back-button>
 
 <div style="text-align: center">
+
+
   <div><p class="discover">Compare MOOC Platforms</p></div>
   <div>
     <div *ngFor="let platform of platforms">
@@ -10,7 +12,6 @@
       </label>
     </div>
   </div>
-  <button class="button" [disabled]="selectedPlatforms.length < 2" (click)="comparePlatforms()">Explore</button>
-  <p>You selected: {{ selectedPlatforms }}</p>
+  <button class="button" [disabled]="selectedPlatforms.length < 2" (click)="comparePlatforms()">Compare</button>
 </div>
 

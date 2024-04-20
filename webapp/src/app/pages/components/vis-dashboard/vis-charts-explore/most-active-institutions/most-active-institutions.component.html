@@ -3,6 +3,11 @@
   <div class="grid-item">
     <div>
       Title and Filter
+
+      <app-vis-filter-slider [minValue]="5" [maxValue]="20" [step]="1"
+                             (valueChange)="onDataChange2($event)"
+                             [datapointCount]="dataPointCount2"
+      ></app-vis-filter-slider>
     </div>
 
     <div class="chart">

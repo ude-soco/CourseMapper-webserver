@@ -1,17 +1,16 @@
 .platform-tabs{
 display: flex;
   color: #0277BD;
+}
 
+.platform-tab{
+  cursor: pointer;
 }
 
 .platform-tabs div{
 margin-right: 10px;
 }
 
-
-.description{
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  width: 2em;
+.platform-tab.selected {
+  border-bottom: 3px solid #0277BD;
 }

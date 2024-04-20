@@ -1,16 +1,32 @@
 <app-vis-back-button></app-vis-back-button>
 
-<div  >
+<div>
   <div class="nameDisplay">
-  <p *ngFor="let sel of selectedPlatforms" class="platformName">{{ sel }}  </p>
+
+    <p  class="platformName">   {{ selectedPlatforms.join(' - ').toUpperCase() }}
+    </p>
   </div>
   <div>
+    <div style="text-align: right">
+      <label>
+        <input type="checkbox" [(ngModel)]="showEnglishPlatforms" (change)="onCheckboxChange()"> English Platforms
+      </label>
+      <label>
+        <input type="checkbox" [(ngModel)]="showGermanPlatforms" (change)="onCheckboxChange()"> German Platforms
+      </label>
+    </div>
+
     <div class="category">By Topics</div>
-CHART
+    <app-compare-platforms-concept></app-compare-platforms-concept>
   </div>
   <div>
     <div class="category">By course</div>
 CHART
+  </div>
+
+  <div>
+    <div class="category">By Platform</div>
+    <app-compare-platforms-platforms></app-compare-platforms-platforms>
   </div>
 
   <div>
@@ -21,6 +37,6 @@ CHART
 
   <div>
     <div class="category">By Institution</div>
-Chart
+<app-compare-platforms-institutions></app-compare-platforms-institutions>
   </div>
 </div>

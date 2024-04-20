@@ -1,17 +1,15 @@
 .course-details {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* Divide into two columns */
-  grid-gap: 20px; /* Add gap between columns */
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 20px;
 }
 
 .left {
   margin-bottom: 10px;
-  /* Styles for the left part */
   h2{
     font-size: large;
     font-weight: bold;
     margin-bottom: 10px;
-    text-align: left;
   }
 
   h3{
@@ -27,8 +25,16 @@
 }
 
 .right {
-  /* Styles for the right part */
-
+  h2{
+    font-size: 24px;
+    font-weight: bold;
+    color: #222222;
+    margin-left: 3em;
+  }
+.to-course{
+  text-align: right;
+  margin-bottom: 1em;
+}
 }
 
 

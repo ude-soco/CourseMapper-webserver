@@ -31,6 +31,7 @@ export class MostActiveInstitutionsComponent implements OnInit{
   institutionNames: string[]
   numberOfCourses: number[]
   platform:string
+  dataPointCount2: number = 5
 
   constructor(private route: ActivatedRoute,private visdashboardService: VisDashboardService) {
     this.chartOptions = {
@@ -61,7 +62,7 @@ export class MostActiveInstitutionsComponent implements OnInit{
 
   ngOnInit(): void {
     this.platform = this.route.snapshot.paramMap.get('platform');
-    this.getActiveInstitutions(this.platform.toLowerCase(),15)
+    this.getActiveInstitutions(this.platform.toLowerCase(),5)
     }
 
   getActiveInstitutions(platform:string,dataPointCount:number){
@@ -78,8 +79,11 @@ export class MostActiveInstitutionsComponent implements OnInit{
         }
 
       })
-
   }
 
 
+  onDataChange2(count: number) {
+    this.dataPointCount2 = count
+    this.getActiveInstitutions(this.platform.toLowerCase(),this.dataPointCount2)
+  }
 }

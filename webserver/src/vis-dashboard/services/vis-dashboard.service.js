@@ -20,7 +20,7 @@ export async function connect(url, user, password) {
 export async function getPlatforms() {
 
     const {records, summary, keys} = await graphDb.driver.executeQuery(
-        'MATCH (n:platform) RETURN n.name as PlatformName',
+        'MATCH (n:platform) RETURN n.name as PlatformName, n.platform_id as PlatformId, n.language as PlatformLanguage',
         //{ sid: slideId }
     );
 
@@ -251,9 +251,152 @@ RETURN COUNT(teacher) AS TeacherCount, platform.name As PlatformName`,
 }
 
 
+export async function getNumberOfInstitutionsForCompare(platforms){
+
+    const {records, summary, keys} = await graphDb.driver.executeQuery(
+        `MATCH (institution:institution)<-[:BELONGS_TO]-(teacher:teacher)-[:TEACHES_ON]->(platform:platform)
+         WHERE platform.name IN $platforms                                                                           
+         RETURN COUNT(institution) AS InstitutionCount, platform.name AS PlatformName`,
+        {platforms: platforms}
+    );
+    return serializeRecords(records);
+
+}
+
+export async function getNumberOfParticipantsForCompare(platforms){
+
+    const {records, summary, keys} = await graphDb.driver.executeQuery(
+        `MATCH (course:course)-[:AVAILABLE_ON]->(platform:platform)
+WHERE toLower(course.course_category) IS NOT NULL AND platform.name IN $platforms
+WITH platform.name AS platform_name,
+     toInteger(replace(course.number_of_participants, ',', '')) AS participants
+RETURN platform_name AS PlatformName,
+       SUM(participants) AS TotalParticipants`,
+        {platforms: platforms}
+    );
+    return serializeRecords(records);
+
+}
+
+
+
+export async function getCoursesByConceptForCompare(concept, platforms) {
+    const {records, summary, keys} = await graphDb.driver.executeQuery(
+        '\n' +
+        'MATCH (platform:platform) <-[:AVAILABLE_ON]- (course:course)-[:CONTAINS_CONCEPT]->(concept:concept)\n' +
+        'WHERE platform.name IN $platforms AND course.description CONTAINS $concept\n' +
+        'RETURN DISTINCT course.course_id AS CourseId, course.name AS CourseName, platform.name AS PlatformName LIMIT 9'
+        , {platforms: platforms, concept: concept}
+    );
+    return serializeRecords(records)
+
+}
+
+export async function getConceptsByPlatforms(platforms) {
+    const {records, summary, keys} = await graphDb.driver.executeQuery(
+        'MATCH (platform:platform) <-[:AVAILABLE_ON]- (course:course)-[:CONTAINS_CONCEPT]->(concept:concept)\n' +
+        'WHERE platform.name IN $platforms       \n' +
+        'RETURN concept.name as ConceptName LIMIT 200'
+        , {platforms: platforms}
+    );
+    return serializeRecords(records)
+
+}
+
+
+export async function getCoursesByConceptsFind(concept) {
+    const {records, summary, keys} = await graphDb.driver.executeQuery(
+        'MATCH (c:concept) WHERE c.name CONTAINS $concept ' +
+        'MATCH (course:course)-[:CONTAINS_CONCEPT]->(concept:concept) ' +
+        'WHERE course.description CONTAINS $concept ' +
+        'MATCH (course:course)-[:AVAILABLE_ON]->(platform:platform) ' +
+        'WHERE course.description CONTAINS $concept' +
+        ' RETURN DISTINCT course.course_id AS CourseId, ' +
+        'course.audience AS Audience, course.course_content AS Content,' +
+        ' course.course_category AS Category, course.description AS Description, course.duration AS Duration,' +
+        'course.goal AS Goal, course.keywords AS Keywords, course.language AS Language,' +
+
+        ' course.level AS Level, course.link AS Link, course.name AS Name, ' +
+        'course.number_of_participants AS NumberOfParticipants,' +
+        'course.price AS Price, course.rating AS Rating, course.prerequisites AS Prerequisites,' +
+        'course.recommendations AS Recommendations, platform.name as PlatformName LIMIT 10'
+        , {concept: concept}
+    );
+    return serializeRecords(records)
+
+}
+
+
+
+export async function addLanguageToPlatform() {
+    try {
+        const result = await graphDb.driver.executeQuery(
+            'MATCH (p:platform) WHERE (p.language) IS NULL RETURN p'
+        );
+        const platformsWithoutLanguage = result.records.map(record => record.get('p'));
+        if(platformsWithoutLanguage.length === 0){
+            return
+        }
+        for (const platform of platformsWithoutLanguage) {
+            const name = platform.properties.name;
+            let language = '';
+            if (name === "udacity" |
+                name === "edX" |
+                name === "coursera"
+                | name === "Future Learn"
+                |name === "udemy") {
+                language = 'English';
+            } else {
+                language = 'German';
+            }
+            await graphDb.driver.executeQuery(
+                'MATCH (p:platform {name: $name}) SET p.language = $language',
+                { name, language }
+            );
+        }
+        console.log('Language attribute added to platforms successfully');
+    } catch (error) {
+        console.error('Error adding language attribute to platforms:', error);
+    }
+}
+
+
+export async function getCourseRatingsPricesForVis(platformName, datapoints) {
+    const {records, summary, keys} = await graphDb.driver.executeQuery(
+        'MATCH (course:course)-[:AVAILABLE_ON]->(platform:platform) \n' +
+        'WHERE toLower(platform.name) CONTAINS $platformName \n' +
+        ' AND course.price IS NOT NULL \n' +
+        'RETURN DISTINCT course.name AS CourseName, course.price AS CoursePrice, course.rating AS CourseRating \n' +
+        `LIMIT ${+datapoints}`,
+        {platformName: platformName, datapoints: datapoints}
+    );
+    return serializeRecords(records);
+}
 
 
 /*
+
+MATCH (platform:platform) <-[:AVAILABLE_ON]- (course:course)-[:CONTAINS_CONCEPT]->(concept:concept)
+WHERE platform.name IN $platform
+RETURN concept.name as ConceptName LIMIT 200
+
+MATCH (platform:platform) <-[:AVAILABLE_ON]- (course:course)-[:CONTAINS_CONCEPT]->(concept:concept)
+WHERE platform.name IN $platforms AND course.description CONTAINS $concept
+RETURN DISTINCT course.course_id AS CourseId, course.name AS CourseName, platform.name AS PlatformName LIMIT 9
+
+MATCH (course:course)-[:AVAILABLE_ON]->(platform:platform)
+WHERE toLower(course.course_category) IS NOT NULL AND platform.name IN ["udemy","udacity","imoox","edX","Future Learn","Open vhb"]
+WITH platform.name AS platform_name,
+     toInteger(replace(course.number_of_participants, ',', '')) AS participants
+RETURN platform_name AS PlatformName,
+       SUM(participants) AS TotalParticipants
+
+
+
+
+
+
+
 MATCH (teacher:teacher)-[:TEACHES_ON]->(platform:platform)
 WHERE platform.name IN ["udemy","imoox","udacity"]
 RETURN COUNT(teacher) AS TeacherCount, platform.name As PlatformName LIMIT 200

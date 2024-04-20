@@ -41,6 +41,9 @@ import {
 import {
   CompareChartsPageComponent
 } from "./pages/vis-dashboard/vis-compare-page/compare-charts-page/compare-charts-page.component";
+import {
+  FindByTopicMainComponent
+} from "./pages/vis-dashboard/find-topic-page/find-by-topic-main/find-by-topic-main.component";
 
 const routes: Routes = [
   { path: '', redirectTo: 'landingPage', pathMatch: 'full' },
@@ -139,6 +142,7 @@ const routes: Routes = [
   {
     path: '',
     component: VisDashboardLayoutComponent,
+    canActivate: [AuthGuardService],
     children:[{path:'vis-dashboard-landing-page',component: VisLandingPageComponent },
       {path:'explore-moocs',component: VisExplorePageComponent },
       {path:'compare-moocs',component: VisComparePageComponent },
@@ -148,6 +152,7 @@ const routes: Routes = [
       {path:'teacher-detail/:id',component: TeacherPageComponent },
       {path:'explore-moocs/:platform',component: ExploreChartsPageComponent },
       {path:'compare-moocs-vis',component: CompareChartsPageComponent},
+      {path:'find-moocs-by-topic-main',component: FindByTopicMainComponent},
 
     ],
   },

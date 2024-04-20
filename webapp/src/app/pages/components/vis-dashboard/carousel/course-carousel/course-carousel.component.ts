@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output,} from '@angular/core';
 import {TeacherByPopularity, VisDashboardService} from "../../../../../services/vis-dashboard/vis-dashboard.service";
 import {Router} from "@angular/router";
 
@@ -28,15 +28,10 @@ interface CoursesByRating{
   styleUrls: ['./course-carousel.component.css']
 })
 export class CourseCarouselComponent implements OnInit{
-
   currentPosition = 0;
   cardsPerPage = 5;
   @Input() type: CourseCarouselType;
-
   @Output() courseClicked = new EventEmitter<string>()
-  //@Output() teacherClicked = new EventEmitter<string>()
-
-
 
   onCourseClick(courseId:string){
     this.courseClicked.emit(courseId)
@@ -44,9 +39,7 @@ export class CourseCarouselComponent implements OnInit{
   }
 
   onTeacherClick(teacherId: string) {
-  //  this.teacherClicked.emit(teacherId)
     this.router.navigate(['teacher-detail', teacherId])
-
   }
 
   mostPopularPlatforms: string[] = ['Udemy', 'Future Learn', 'Imoox'];
@@ -55,8 +48,7 @@ export class CourseCarouselComponent implements OnInit{
   popularCourses:CoursesByPopularity[]=[]
   ratedCourses: CoursesByRating[]=[]
   popularTeachers:TeacherByPopularity[]=[]
-
-
+  target: HTMLDivElement;
 
   constructor(private visDashboardService:VisDashboardService,
               private router: Router) {
@@ -65,9 +57,6 @@ export class CourseCarouselComponent implements OnInit{
   ngOnInit() {
     this.loadCourses();
   }
-
-
-
 
    loadCourses(): void {
     this.visDashboardService.getCoursesByPopularity("udemy")

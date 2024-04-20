@@ -103,7 +103,7 @@ module.exports = function (app) {
 
     app.post(
         "/api/vis-dashboard/compare-platforms/",
-        // [authJwt.verifyToken],
+        // [authJwt.verifyToken],testing
         controller.postTest
     );
 
@@ -113,6 +113,55 @@ module.exports = function (app) {
         controller.getNumberOfTeachersForCompare
     );
 
+
+
+    app.post(
+        "/api/vis-dashboard/compare-platforms-institutions/",
+        // [authJwt.verifyToken],
+        controller.getNumberOfInstitutionsForCompare
+    );
+
+    app.post(
+        "/api/vis-dashboard/compare-platforms-participants/",
+        // [authJwt.verifyToken],
+        controller.getNumberOfParticipantsForCompare
+    );
+
+
+    app.post(
+        "/api/vis-dashboard/courses-concept-compare/:concept",
+        // [authJwt.verifyToken],
+        controller.getCoursesByConceptForCompare
+    );
+
+    app.post(
+        "/api/vis-dashboard/courses-concept-platforms",
+        // [authJwt.verifyToken],
+        controller.getConceptsByPlatforms
+    );
+
+
+
+    app.post(
+        "/api/vis-dashboard/add-langauge-platform",
+        // [authJwt.verifyToken],
+        controller.addLangaugeToPlatform
+    );
+
+
+    app.post(
+        "/api/vis-dashboard/courses-concept-find",
+        // [authJwt.verifyToken],
+        controller.getCoursesByConceptFind
+    );
+
+
+
+    app.get(
+        "/api/vis-dashboard/courses-ratings-prices/:platform/:datapoints",
+        // [authJwt.verifyToken],
+        controller.getCourseRatingsPricesForVis
+    );
 
 
 

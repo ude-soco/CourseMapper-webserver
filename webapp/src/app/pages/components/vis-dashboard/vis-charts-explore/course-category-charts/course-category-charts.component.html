@@ -2,10 +2,13 @@
   <div class="grid-item">
     <div>
       Title and Filter
+      <app-vis-filter-slider [minValue]="5" [maxValue]="20" [step]="1"
+           (valueChange)="onDataChange($event)"
+                             [datapointCount]="dataPointCount"
+      ></app-vis-filter-slider>
     </div>
 
     <div class="chart">
-
       <div style="text-align:center">
         <apx-chart
           [series]="chartOptions.series"
@@ -18,11 +21,27 @@
 
     </div>
 
+    <div>
+      Title and Filter
+      <app-vis-filter-slider [minValue]="5" [maxValue]="30" [step]="1"
+                             (valueChange)="onDataChange3($event)"
+                             [datapointCount]="dataPointCount3"
+      ></app-vis-filter-slider>
+    </div>
 
+    <div class="chart">
+      <div style="text-align:center">
+        <apx-chart
+          [series]="chartOptions3.series"
+          [chart]="chartOptions3.chart"
+          [xaxis]="chartOptions3.xaxis"
+          [yaxis]="chartOptions3.yaxis"
+          [title]="chartOptions3.title"
+          [plotOptions]="chartOptions3.plotOptions"
+        ></apx-chart>
+      </div>
 
-
-
-
+    </div>
 
   </div>
 
@@ -31,6 +50,10 @@
 
     <div>
       Title and Filter
+      <app-vis-filter-slider [minValue]="5" [maxValue]="20" [step]="1"
+                             (valueChange)="onDataChange2($event)"
+                             [datapointCount]="dataPointCount2"
+      ></app-vis-filter-slider>
     </div>
 
     <div class="chart">
@@ -44,8 +67,6 @@
         ></apx-chart>
       </div>
     </div>
-
-
 
   </div>
 </div>

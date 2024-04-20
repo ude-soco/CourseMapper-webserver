@@ -1,6 +1,9 @@
 <!-- platform-tabs.component.html -->
 <div class="platform-tabs">
-  <div class="platform-tab" *ngFor="let platform of platforms" (click)="selectPlatform(platform)">
-     {{ platform }}
+  <div class="platform-tab" *ngFor="let platform of platforms"
+       [ngClass]="{ 'selected': platform === selectedPlatform }"
+       (click)="selectPlatform(platform)">
+    {{ platform }}
   </div>
 </div>
+

@@ -131,6 +131,11 @@ import {
 } from "./pages/components/vis-dashboard/vis-charts-explore/most-active-institutions/most-active-institutions.component";
 import { CompareChartsPageComponent } from './pages/vis-dashboard/vis-compare-page/compare-charts-page/compare-charts-page.component';
 import { ComparePlatformsTeachersComponent } from './pages/components/vis-dashboard/vis-charts-compare/compare-platforms-teachers/compare-platforms-teachers.component';
+import { ComparePlatformsInstitutionsComponent } from './pages/components/vis-dashboard/vis-charts-compare/compare-platforms-institutions/compare-platforms-institutions.component';
+import { ComparePlatformsPlatformsComponent } from './pages/components/vis-dashboard/vis-charts-compare/compare-platforms-platforms/compare-platforms-platforms.component';
+import { ComparePlatformsConceptComponent } from './pages/components/vis-dashboard/vis-charts-compare/compare-platforms-concept/compare-platforms-concept.component';
+import { FindByTopicMainComponent } from './pages/vis-dashboard/find-topic-page/find-by-topic-main/find-by-topic-main.component';
+import { VisFilterSliderComponent } from './pages/components/vis-dashboard/vis-filter-slider/vis-filter-slider.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -198,7 +203,12 @@ import { ComparePlatformsTeachersComponent } from './pages/components/vis-dashbo
     MostActiveInstitutionsComponent,
     MostActiveInstitutionsComponent,
     CompareChartsPageComponent,
-    ComparePlatformsTeachersComponent
+    ComparePlatformsTeachersComponent,
+    ComparePlatformsInstitutionsComponent,
+    ComparePlatformsPlatformsComponent,
+    ComparePlatformsConceptComponent,
+    FindByTopicMainComponent,
+    VisFilterSliderComponent
   ],
   imports: [
     MentionModule,

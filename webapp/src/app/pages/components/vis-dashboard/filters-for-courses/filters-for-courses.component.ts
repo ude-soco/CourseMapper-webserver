@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Output} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 
 @Component({
   selector: 'app-filters-for-courses',
@@ -7,6 +7,9 @@ import {Component, EventEmitter, Output} from '@angular/core';
 })
 export class FiltersForCoursesComponent {
   @Output() filterChange: EventEmitter<any> = new EventEmitter();
+  @Input() selectLanguages: string[]=[]
+  @Input() myRatings: number[]=[]
+
 
   selectedRating: number | null = null;
   selectedLevel: string | null = null;

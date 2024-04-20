@@ -53,20 +53,19 @@ export interface CourseByCategory {
   Level: string;
   NumberOfParticipants: string;
   Link: string;
-  Rating: string;
+  Rating?: string;
   Description: string;
   Language: string;
   Recommendations: string;
   Duration: string;
   Prerequisites: string;
   Content: string;
-  Price: string | number;
+  Price: string ;
   Name: string;
   Category: string;
   PlatformName:string
   PlatformId: string
   TeacherName: string
-
 }
 
 export interface Concept{
@@ -119,12 +118,49 @@ export interface PlatformsByTeacherCount{
   PlatformName: string
 }
 
+export interface PlatformsByInstitutionCount{
+  InstitutionCount:number,
+  PlatformName: string
+}
+
+
+
+export interface PlatformsByParticipants{
+  PlatformName: string,
+  TotalParticipants: number
+}
+
+export interface CourseConceptCompare{
+  CourseId:string,
+  CourseName: string,
+  PlatformName:string
+}
+
+export interface Platform{
+  PlatformName:string,
+  PlatformId: string,
+  PlatformLanguage: string
+}
+
+export interface CoursesRatingsPricesForVis{
+  CourseName:string;
+  CoursePrice: string;
+  CourseRating: string
+}
+
+
 @Injectable({
   providedIn: 'root'
 })
 export class VisDashboardService {
 
   constructor(public http:HttpClient) { }
+
+  async getPlatforms(): Promise<Platform[]> {
+    return lastValueFrom(this.http.get<Platform[]>(
+      `${environment.API_URL}/vis-dashboard/platforms`
+    ));
+  }
 
   async getCourseCategories(): Promise<CourseCategory[]> {
     return lastValueFrom(this.http.get<CourseCategory[]>(
@@ -213,8 +249,6 @@ export class VisDashboardService {
   }
 
 
-
-
   async PostTest(platform:string,datapointCount:number,{}):Promise<[]>{
     return lastValueFrom(this.http.post<[]>(
       `${environment.API_URL}/vis-dashboard/compare-platforms/${platform}/${datapointCount}`,{}
@@ -222,10 +256,47 @@ export class VisDashboardService {
   }
 
   async getPlatformsByTeacherCount(platforms:string[]):Promise<PlatformsByTeacherCount[]>{
-    console.log(platforms)
-
     return lastValueFrom(this.http.post<PlatformsByTeacherCount[]>(
       `${environment.API_URL}/vis-dashboard/compare-platforms-teachers`,{platforms:platforms}
+    ));
+  }
+
+
+  async getPlatformsByInstitutionCount(platforms:string[]):Promise<PlatformsByInstitutionCount[]>{
+    return lastValueFrom(this.http.post<PlatformsByInstitutionCount[]>(
+      `${environment.API_URL}/vis-dashboard/compare-platforms-institutions`,{platforms:platforms}
+    ));
+  }
+
+  async getPlatformsByParticipants(platforms:string[]):Promise<PlatformsByParticipants[]>{
+    return lastValueFrom(this.http.post<PlatformsByParticipants[]>(
+      `${environment.API_URL}/vis-dashboard/compare-platforms-participants`,{platforms:platforms}
+    ));
+  }
+
+  async getCoursesByConceptForCompare(platforms:string[],concept:string):Promise<CourseConceptCompare[]>{
+    return lastValueFrom(this.http.post<CourseConceptCompare[]>(
+      `${environment.API_URL}/vis-dashboard/courses-concept-compare/${concept}`,{platforms:platforms}
+    ));
+  }
+
+
+  async getConceptsByPlatforms(platforms:string[]):Promise<Concept[]>{
+    return lastValueFrom(this.http.post<Concept[]>(
+      `${environment.API_URL}/vis-dashboard/courses-concept-platforms`,{platforms:platforms}
+    ));
+  }
+
+  async getCoursesByConceptFind(concept:string):Promise<CourseByCategory[]>{
+    return lastValueFrom(this.http.post<CourseByCategory[]>(
+      `${environment.API_URL}/vis-dashboard/courses-concept-find`,{concept:concept}
+    ));
+  }
+
+
+  async getCoursesRatingsPricesForVis(platform:string,datapointCount:number):Promise<CoursesRatingsPricesForVis[]>{
+    return lastValueFrom(this.http.get<CoursesRatingsPricesForVis[]>(
+      `${environment.API_URL}/vis-dashboard/courses-ratings-prices/${platform}/${datapointCount}`
     ));
   }
 

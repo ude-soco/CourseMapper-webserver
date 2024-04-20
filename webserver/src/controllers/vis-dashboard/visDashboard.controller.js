@@ -6,8 +6,6 @@ const visDashboardServices = require(".././../vis-dashboard/services/vis-dashboa
 
 
 export const getPlatform = async (req, res) => {
-    //const slideId = req.params.slideId;
-
     try {
         const records = await visDashboardServices.getPlatforms()
         return res.status(200).send(records );
@@ -193,12 +191,7 @@ export const postTest= async (req, res) => {
     const datapoints = req.params.datapoints;
     const {platforms} = req.body
     try{
-      console.log(platforms)
         const records = await visDashboardServices.postTest(platforms)
-        const comparisonData = records.map(record=>({
-           // platform: record.get('PlatformName'),
-           // course: record.get('CourseName')
-        }))
         return res.status(200).send(records);
     }catch (e) {
         return res.status(500).send({ error: e.message });
@@ -215,3 +208,79 @@ export const getNumberOfTeachersForCompare= async (req, res) => {
     }
 };
 
+export const getNumberOfInstitutionsForCompare= async (req, res) => {
+    const {platforms} = req.body
+    try{
+        const records = await visDashboardServices.getNumberOfInstitutionsForCompare(platforms)
+        return res.status(200).send(records);
+    }catch (e) {
+        return res.status(500).send({ error: e.message });
+    }
+};
+
+
+export const getNumberOfParticipantsForCompare= async (req, res) => {
+    const {platforms} = req.body
+    try{
+        const records = await visDashboardServices.getNumberOfParticipantsForCompare(platforms)
+        return res.status(200).send(records);
+    }catch (e) {
+        return res.status(500).send({ error: e.message });
+    }
+};
+
+
+export const getCoursesByConceptForCompare= async (req, res) => {
+    const {platforms} = req.body
+    const concept= req.params.concept;
+
+    try{
+        const records = await visDashboardServices.getCoursesByConceptForCompare(concept,platforms)
+        return res.status(200).send(records);
+    }catch (e) {
+        return res.status(500).send({ error: e.message });
+    }
+};
+
+export const getConceptsByPlatforms = async (req, res) => {
+    const {platforms} = req.body
+    try{
+        const records = await visDashboardServices.getConceptsByPlatforms(platforms)
+        return res.status(200).send(records);
+    }catch (e) {
+        return res.status(500).send({ error: e.message });
+    }
+};
+
+export const getCoursesByConceptFind = async (req, res) => {
+    const {concept} = req.body
+    try{
+        const records = await visDashboardServices.getCoursesByConceptsFind(concept)
+        return res.status(200).send(records);
+    }catch (e) {
+        return res.status(500).send({ error: e.message });
+    }
+};
+
+
+export const addLangaugeToPlatform= async (req, res) => {
+    try{
+        const records = await visDashboardServices.addLanguageToPlatform()
+        return res.status(200).send(records);
+    }catch (e) {
+        return res.status(500).send({ error: e.message });
+    }
+};
+
+
+export const getCourseRatingsPricesForVis = async (req, res) => {
+    const platform= req.params.platform;
+    const datapoints = req.params.datapoints;
+
+    try {
+        const records = await visDashboardServices.getCourseRatingsPricesForVis(platform,datapoints)
+        return res.status(200).send(records);
+    } catch (err) {
+        return res.status(500).send({ error: err.message });
+    }
+};

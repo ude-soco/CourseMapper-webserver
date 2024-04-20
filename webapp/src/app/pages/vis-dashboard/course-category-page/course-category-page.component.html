@@ -1,6 +1,7 @@
 <div>
 <app-vis-back-button></app-vis-back-button>
 <h1 class="title">{{emittedCategory}} Courses</h1>
+
 <div>
   <h3 class="sub-title">Popular courses to get you started with</h3>
 <app-course-carousel [type]="CourseCarouselType.MOST_POPULAR_COURSES"></app-course-carousel>
@@ -22,16 +23,18 @@
           <button class="sort" (click)="sortByPopular()"><i class='bx bx-sort-down'></i>SORT BY:MOST POPULAR</button>
 
         </div>
-        <app-filters-for-courses *ngIf="showFilters" (filterChange)="applyFilters($event)"></app-filters-for-courses>      </div>
+        <app-filters-for-courses [selectLanguages]="selectLanguages"
+                                 [myRatings]="myRatings"
+                                 *ngIf="showFilters" (filterChange)="applyFilters($event)"></app-filters-for-courses>      </div>
       <div class="vertical-line"></div>
 
       <div class="right">
         <div style="text-align: right">{{loadedCoursesCount}} result(s)</div>
         <div *ngFor="let course of displayedCourses">
-        <app-course-by-category (courseClick)="onCourseClick($event)" [course]="course"></app-course-by-category>
+        <app-course-by-category  (courseClick)="onCourseClick($event)" [course]="course"></app-course-by-category>
         </div>
-        <p *ngIf="noFilterResults">Oops no result</p>
-        <div style="text-align: center">
+        <p *ngIf="noFilterResults" style="text-align: center">Oops no result</p>
+        <div style="text-align: center" *ngIf="!noFilterResults">
           <app-course-pagination
             [currentPage]="currentPage"
             [loadedCoursesCount]="loadedCoursesCount"

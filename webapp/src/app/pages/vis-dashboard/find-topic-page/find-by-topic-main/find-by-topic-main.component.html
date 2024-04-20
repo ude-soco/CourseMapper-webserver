@@ -1,0 +1,36 @@
+<app-vis-back-button></app-vis-back-button>
+
+<div class="all-courses">
+  <h3 class="sub-title">All {{emittedCategory}}  courses </h3>
+  <div class="container">
+    <div class="left">
+
+      <div class="toggle-sort">
+
+        <button class="filter-button" (click)="toggleFilters()"><i class='bx bxs-filter-alt'></i>FILTER</button>
+        <button class="sort" (click)="sortByPopular()"><i class='bx bx-sort-down'></i>SORT BY:MOST POPULAR</button>
+
+      </div>
+      <app-filters-for-courses [selectLanguages]="selectLanguages"
+                               [myRatings]="myRatings"
+                               *ngIf="showFilters" (filterChange)="applyFilters($event)"></app-filters-for-courses>      </div>
+    <div class="vertical-line"></div>
+
+    <div class="right">
+      <div style="text-align: right">{{loadedCoursesCount}} result(s)</div>
+      <div *ngFor="let course of displayedCourses">
+        <app-course-by-category  (courseClick)="onCourseClick($event)" [course]="course"></app-course-by-category>
+      </div>
+      <p *ngIf="noFilterResults" style="text-align: center">Oops no result</p>
+      <div style="text-align: center" *ngIf="!noFilterResults">
+        <app-course-pagination
+          [currentPage]="currentPage"
+          [loadedCoursesCount]="loadedCoursesCount"
+          (pageChange)="changePage($event)"
+        ></app-course-pagination>
+      </div>
+
+    </div>
+  </div>
+
+</div>

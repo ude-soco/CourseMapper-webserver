@@ -1,3 +1,12 @@
 .external-link-button{
   color: #0277BD;
+  border: 2px solid #0277BD;
+  padding: 10px;
+  border-radius: 7px;
+
+}
+
+.external-link-button:hover{
+  background-color: #0277BD;
+  color: #fff;
 }

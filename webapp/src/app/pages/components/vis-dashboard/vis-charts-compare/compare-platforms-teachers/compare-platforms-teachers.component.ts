@@ -8,7 +8,7 @@ import {
   ApexTitleSubtitle,ApexPlotOptions
 } from "ng-apexcharts";
 import {VisDashboardService} from "../../../../../services/vis-dashboard/vis-dashboard.service";
-import {ActivatedRoute} from "@angular/router";
+import {PlatformFilterCompareService} from "../../../../../services/vis-dashboard/platform-filter-compare.service";
 export type ChartOptions = {
   series: ApexAxisChartSeries;
   chart: ApexChart;
@@ -30,10 +30,20 @@ export class ComparePlatformsTeachersComponent implements  OnInit{
   selectedPlatforms: string[] = [];
   platformNames: string[]
   numberOfTeachers: number[]
+  filteredPlatforms: any[] = [];
+
 
   ngOnInit(): void {
     this.loadSelectedPlatformsFromStorage();
     this.getPlatformsByTeacherCount(this.selectedPlatforms)
+    this.platformFilterCompare.getLanguageFilter().subscribe(platforms=>{
+     if(platforms.length === 0 ){
+       return
+     }
+     else{
+       this.getPlatformsByTeacherCount(platforms)
+     }
+    })
   }
   loadSelectedPlatformsFromStorage(): void {
     const storedPlatforms = localStorage.getItem('selectedPlatforms');
@@ -42,11 +52,12 @@ export class ComparePlatformsTeachersComponent implements  OnInit{
     }
   }
 
-  constructor(private visdashboardService: VisDashboardService) {
+  constructor(private visdashboardService: VisDashboardService,
+              private platformFilterCompare: PlatformFilterCompareService) {
     this.chartOptions = {
       series: [
         {
-          name: "Number of Courses",
+          name: "Number of Teachers",
           data: [10, 41, 35]
         }
       ],
@@ -60,7 +71,7 @@ export class ComparePlatformsTeachersComponent implements  OnInit{
         }
       },
       title: {
-        text: "Most Active Teachers"
+        text: "Number of Teachers in Platforms"
       },
       xaxis: {
         categories: ["Jan", "Feb", "Mar"],

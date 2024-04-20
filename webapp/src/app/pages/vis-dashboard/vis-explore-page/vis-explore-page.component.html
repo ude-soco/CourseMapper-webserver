@@ -2,10 +2,20 @@
 
 <div style="text-align: center" >
   <div><p class="discover">Discover a MOOC</p></div>
+<div style="margin-top: 10px">
+  <label>
+    <input type="checkbox" [(ngModel)]="showEnglishPlatforms" (change)="onCheckboxChange()"> English Platforms
+  </label>
+  <label>
+    <input type="checkbox" [(ngModel)]="showGermanPlatforms" (change)="onCheckboxChange()"> German Platforms
+  </label>
+
+</div>
+
   <div>
     <select [(ngModel)]="selectedPlatform" class="custom-select" (ngModelChange)="updateButtonState()">
       <option value="" disabled selected class="placeholder-option">Please select a platform</option>
-      <option *ngFor="let platform of platforms" [value]="platform">{{ platform }}</option>
+      <option *ngFor="let platform of displayedPlatforms" [value]="platform.PlatformName">{{ platform.PlatformName }}</option>
     </select>
   </div>
   <button class="button" [disabled]="isExploreButtonDisabled"  (click)="exploreCourse()">Explore</button>

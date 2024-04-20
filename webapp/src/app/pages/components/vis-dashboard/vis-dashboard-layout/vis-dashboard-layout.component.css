@@ -1,15 +1,14 @@
-/* layout.component.css */
 :host {
   display: block;
   margin-top: 10px;
   margin-left: 8em;
-  margin-right: 8em;           /* Adjust margins as needed */
+  margin-right: 8em;
 }
 
 .content {
   margin-left: 8em;
-  margin-right: 7em;
-  margin-top: 2em; /* Adjust top margin of content area */
+  margin-right: 8em;
+  margin-top: 2em;
 }
 
 .sidebar {
@@ -21,5 +20,5 @@
 }
 
 .footer{
-  margin-top: 10em;
+  margin-top: 20em;
 }

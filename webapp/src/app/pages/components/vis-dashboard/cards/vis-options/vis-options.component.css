@@ -1,17 +1,17 @@
 .custom-card {
-  width: 300px; /* Adjust the width of the card */
-  height: 150px; /* Adjust the height of the card */
-  background-color: #f0f0f0; /* Set the background color of the card */
-  border: 1px solid #ccc; /* Add a border to the card */
-  border-radius: 8px; /* Add border radius to make it rounded */
-  display: flex; /* Use flexbox for centering */
-  justify-content: center; /* Center horizontally */
-  align-items: center; /* Center vertically */
-  margin: 5px; /* Adjust margin between cards */
+  width: 300px;
+  height: 150px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 5px;
 }
 
 .card-text {
-  text-align: center; /* Center the text */
+  text-align: center;
   color: #0277BD;
   font-size: 24px;
 }
