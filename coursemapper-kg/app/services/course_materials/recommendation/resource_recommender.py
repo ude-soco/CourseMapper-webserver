@@ -369,7 +369,6 @@ class ResourceRecommenderService:
             "external_sources": resources_external_sources
         }
 
-
     def cro_get_resources_ranked_and_sorted(self, resources: list):
         result = []
         positive_rated = []
@@ -835,6 +834,7 @@ class ResourceRecommenderService:
                 "concepts": data_cro_form["concepts"],
                 # "pagination_params": data_cro_form["pagination_params"],
                 # "recommendation_type": value
+                "sorting_weights": data_cro_form["sorting_weights"]
             }
 
             if key == "recommendation_type_1" and value == True:
@@ -850,16 +850,6 @@ class ResourceRecommenderService:
                 cro_form["recommendation_type"] = int(recommendation_type)
                 if data_default != None:
                     logger.info("---CRO Starting--with--cro_form-->", cro_form)
-
-                    """
-                    # convert recommendation_type from int into string
-                    # recommendation_type = str(cro_form["recommendation_type"])
-
-                    # resource_recommender_service = ResourceRecommenderService()
-                    # TODO comment out or remove the next line if the recommendation_type is sent from the frontend
-                    # Only first model is needed ==> no model_type will be sent from frontend (other models were added for evaluation task)
-                    # recommendation_type = "1"
-                    """
 
                     # Check if parameters exist. If one doesn't exist, return not found message
                     # check_message = resource_recommender_service.check_parameters(slide_id, material_id, user_id, non_understood_concept_ids, understood_concept_ids, new_concept_ids, recommendation_type)
@@ -929,7 +919,7 @@ class ResourceRecommenderService:
                 result = {
                     "recommendation_type": resp["recommendation_type"],
                     "concepts": resp["concepts"],
-                    "nodes": resp["nodes"]
+                    "nodes": resp
                 }
                 
         return result # {"result": result, "code": 404}
