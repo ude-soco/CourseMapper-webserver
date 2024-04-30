@@ -1,80 +1,97 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {VisDashboardService} from "../../../../services/vis-dashboard/vis-dashboard.service";
 import {PlatformFilterCompareService} from "../../../../services/vis-dashboard/platform-filter-compare.service";
+import {
+  VisSelectedPlatformsCompareService
+} from "../../../../services/vis-dashboard/vis-selected-platforms-compare.service";
+import {useSelectedPlatforms} from "../../../../utils/useSelectedPlatforms";
 
 @Component({
   selector: 'app-compare-charts-page',
   templateUrl: './compare-charts-page.component.html',
   styleUrls: ['./compare-charts-page.component.css']
 })
-export class CompareChartsPageComponent implements  OnInit{
+export class CompareChartsPageComponent implements OnInit {
   selectedPlatforms: string[] = [];
   showEnglishPlatforms: boolean
   showGermanPlatforms: boolean
-  germanPlatforms : string[]
-  englishPlatforms : string[]
+  germanPlatforms: string[]
+  englishPlatforms: string[]
+  selectedPlatformsFromStorage: string[] = [];
 
 
 
   ngOnInit(): void {
-    this.loadSelectedPlatformsFromStorage();
-    for(const platform of this.selectedPlatforms){
-      if((platform === "Coursera" || platform === "Future Learn"
-        || platform === "Udacity" || platform ==="edX"
-        || platform === "udemy") ){
-        this.showEnglishPlatforms = true
-      }else if(platform === "imoox" || platform === "OPEN vhb"
-        || platform === "KI campus" || platform ==="on campus"
-        || platform === "OPEN HPI"){
-        this.showGermanPlatforms = true
-      }
-    }
+    this.loadSelectedPlatforms()
+    this.getPlatformsFromServer()
+    this.loadSelectedPlatformsFromStorage()
 
-    this.visDashboardService.getPlatforms().then((platform)=>{
-      const engPL= platform.map(platform=> platform).filter(platform=> platform.PlatformLanguage === "English")
-      this.englishPlatforms=engPL.map(p=> p.PlatformName)
-
-      const gerPL= platform.map(platform=> platform).filter(platform=> platform.PlatformLanguage === "German")
-      this.germanPlatforms= gerPL.map(p=> p.PlatformName)
-
-
-    })
   }
 
   constructor(private visDashboardService: VisDashboardService,
-              private platformFilterCompareService: PlatformFilterCompareService ) {
+              private platformFilterCompareService: PlatformFilterCompareService,
+              private visSelectedPlatformsCompare: VisSelectedPlatformsCompareService) {
   }
+
+  loadSelectedPlatforms() {
+    this.visSelectedPlatformsCompare.getSelectedPlatforms().subscribe(platforms => {
+      this.selectedPlatforms = platforms
+    })
+  }
+
+  hasSelectedEnglishPlatform(): boolean {
+    if (!this.englishPlatforms) {
+      return false
+    }
+    return this.selectedPlatforms.some(platform => this.englishPlatforms.includes(platform))
+  || this.selectedPlatformsFromStorage.some(platform => this.englishPlatforms.includes(platform))
+
+  }
+
+  hasSelectedGermanPlatform(): boolean {
+    if (!this.germanPlatforms) {
+      return false
+    }
+    return this.selectedPlatforms.some(platform => this.germanPlatforms.includes(platform))
+    || this.selectedPlatformsFromStorage.some(platform => this.germanPlatforms.includes(platform))
+    ;
+  }
+
+
+  getPlatformsFromServer() {
+    this.visDashboardService.getPlatforms().then((platform) => {
+      const engPL = platform.map(platform => platform)
+        .filter(platform => platform.PlatformLanguage === "English")
+      this.englishPlatforms = engPL.map(p => p.PlatformName)
+
+      const gerPL = platform.map(platform => platform)
+        .filter(platform => platform.PlatformLanguage === "German")
+      this.germanPlatforms = gerPL.map(p => p.PlatformName)
+    })
+
+  }
+
 
   loadSelectedPlatformsFromStorage(): void {
     const storedPlatforms = localStorage.getItem('selectedPlatforms');
     if (storedPlatforms) {
-    this.selectedPlatforms = JSON.parse(storedPlatforms);
+    this.selectedPlatformsFromStorage = JSON.parse(storedPlatforms);
     }
   }
 
-   onCheckboxChange() {
-    if(!this.showEnglishPlatforms && !this.showGermanPlatforms){
-      this.showGermanPlatforms = false
-      this.showGermanPlatforms = false
-      this.platformFilterCompareService.setLanguageFilter([""])
+
+
+  onCheckboxChange() {
+    let platformsToShow: string[] = [];
+    useSelectedPlatforms(this.selectedPlatforms,this.selectedPlatformsFromStorage).forEach(platform => {
+      if ((this.showEnglishPlatforms  && this.englishPlatforms.includes(platform)) ||
+        (this.showGermanPlatforms  && this.germanPlatforms.includes(platform))) {
+        platformsToShow.push(platform);
+      }
+    });
+    if (!this.showEnglishPlatforms && !this.showGermanPlatforms) {
+      platformsToShow = [...useSelectedPlatforms(this.selectedPlatforms,this.selectedPlatformsFromStorage)];
     }
-
-
-
-     if(!this.showGermanPlatforms){
-       this.platformFilterCompareService.setLanguageFilter(this.englishPlatforms)
-     }
-
-     if(!this.showEnglishPlatforms ){
-       this.platformFilterCompareService.setLanguageFilter(this.germanPlatforms)
-     }
-
-     if(this.showEnglishPlatforms && this.showGermanPlatforms){
-       this.platformFilterCompareService.setLanguageFilter(this.germanPlatforms.concat(this.englishPlatforms))
-     }
-
-
-   }
-
-
+    this.platformFilterCompareService.setLanguageFilter(platformsToShow);
+  }
 }

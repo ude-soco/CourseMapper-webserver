@@ -1,0 +1,22 @@
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.breadcrumb-item {
+  margin-right: 5px;
+  font-size: 14px;
+  font-family: Roboto;
+}
+
+.separator::after {
+  content: '/';
+  margin: 0 5px;
+  color: #999;
+}
+
+.active {
+  font-weight: bold;
+  color: #333;
+}

@@ -2,20 +2,24 @@
 
 <div>
   <div class="nameDisplay">
-
-    <p  class="platformName">   {{ selectedPlatforms.join(' - ').toUpperCase() }}
+    <p  class="platformName">   {{ this.selectedPlatformsFromStorage.join(' - ').toUpperCase() }}
     </p>
   </div>
-  <div>
-    <div style="text-align: right">
-      <label>
-        <input type="checkbox" [(ngModel)]="showEnglishPlatforms" (change)="onCheckboxChange()"> English Platforms
-      </label>
-      <label>
-        <input type="checkbox" [(ngModel)]="showGermanPlatforms" (change)="onCheckboxChange()"> German Platforms
-      </label>
-    </div>
 
+  <div class="language-filter">
+    <label>
+      <input type="checkbox" [(ngModel)]="showEnglishPlatforms"
+             [disabled]="!hasSelectedEnglishPlatform()"
+             (change)="onCheckboxChange()"> English Platforms
+    </label>
+    <label>
+      <input type="checkbox" [(ngModel)]="showGermanPlatforms"
+             [disabled]="!hasSelectedGermanPlatform()"
+             (change)="onCheckboxChange()"> German Platforms
+    </label>
+  </div>
+
+  <div>
     <div class="category">By Topics</div>
     <app-compare-platforms-concept></app-compare-platforms-concept>
   </div>

@@ -1,17 +1,44 @@
 <app-vis-back-button></app-vis-back-button>
 
-<div style="text-align: center">
 
 
+
+<div style="text-align: center" >
   <div><p class="discover">Compare MOOC Platforms</p></div>
-  <div>
-    <div *ngFor="let platform of platforms">
-      <label>
-        <input type="checkbox" [value]="platform" (change)="updateSelectedPlatforms($event)">
-        {{ platform }}
-      </label>
-    </div>
+
+  <div class="multi-select-wrapper">
+
+    <p-multiSelect [options]="groupedPlatforms"
+                   [group]="true"
+                   [(ngModel)]="selectedPlatforms"
+                   (ngModelChange)="onSelectChange()"
+                   placeholder="Select at least two platforms"
+                   scrollHeight="250px" display="chip"
+                   [style]="{'width':'50%'}"
+                   [panelStyle]="{'width':'50%'}">
+
+      < <ng-template let-group pTemplate="group" >
+        <div class="flex align-items-center" >
+        <span>{{ group.label }}</span>
+        </div>
+      </ng-template>
+    </p-multiSelect>
+
+
+
   </div>
-  <button class="button" [disabled]="selectedPlatforms.length < 2" (click)="comparePlatforms()">Compare</button>
+  <button style="margin-top: 3em" class="button"
+          [ngClass]="{'active': selectedPlatforms.length >= 2}"
+          [disabled]="selectedPlatforms.length < 2"
+          (click)="comparePlatforms()">Compare</button>
+
 </div>
+
+
+
+
+
+
+
+
 

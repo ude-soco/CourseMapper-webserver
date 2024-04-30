@@ -9,6 +9,10 @@ import {
 } from "ng-apexcharts";
 import {VisDashboardService} from "../../../../../services/vis-dashboard/vis-dashboard.service";
 import {PlatformFilterCompareService} from "../../../../../services/vis-dashboard/platform-filter-compare.service";
+import {
+  VisSelectedPlatformsCompareService
+} from "../../../../../services/vis-dashboard/vis-selected-platforms-compare.service";
+import {useSelectedPlatforms} from "../../../../../utils/useSelectedPlatforms";
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -29,15 +33,17 @@ export class ComparePlatformsInstitutionsComponent implements OnInit{
   @ViewChild("chart", { static: false }) chart: ChartComponent;
   public chartOptions: Partial<ChartOptions>;
   selectedPlatforms: string[] = [];
+  selectedPlatformsFromStorage: string[] = [];
+
   platformNames: string[]
   numberOfInstitution: number[]
 
 
   ngOnInit(): void {
     this.loadSelectedPlatformsFromStorage();
-    this.getPlatformsByInstitutionCount(this.selectedPlatforms)
+    this.loadSelectedPlatforms()
 
-
+    this.getPlatformsByInstitutionCount(useSelectedPlatforms(this.selectedPlatforms,this.selectedPlatformsFromStorage))
     this.platformFilterCompareService.getLanguageFilter().subscribe(platforms=>{
       if(platforms.length === 0 ){
         return
@@ -52,12 +58,15 @@ export class ComparePlatformsInstitutionsComponent implements OnInit{
   loadSelectedPlatformsFromStorage(): void {
     const storedPlatforms = localStorage.getItem('selectedPlatforms');
     if (storedPlatforms) {
-      this.selectedPlatforms = JSON.parse(storedPlatforms);
+      this.selectedPlatformsFromStorage = JSON.parse(storedPlatforms);
     }
   }
 
 
-  constructor(private visdashboardService: VisDashboardService,private platformFilterCompareService: PlatformFilterCompareService) {
+  constructor(private visdashboardService: VisDashboardService,
+              private platformFilterCompareService: PlatformFilterCompareService,
+              private readonly visSelectedPlatformsCompare: VisSelectedPlatformsCompareService
+              ) {
     this.chartOptions = {
       series: [
         {
@@ -83,7 +92,11 @@ export class ComparePlatformsInstitutionsComponent implements OnInit{
 
     }
   }
-
+  loadSelectedPlatforms(): void {
+    this.visSelectedPlatformsCompare.getSelectedPlatforms().subscribe(platforms=>{
+      this.selectedPlatforms = platforms
+    })
+  }
   getPlatformsByInstitutionCount(platforms:string[]){
     this.visdashboardService.getPlatformsByInstitutionCount(platforms)
       .then((platforms)=>{
@@ -98,7 +111,4 @@ export class ComparePlatformsInstitutionsComponent implements OnInit{
         }
       })
   }
-
-
-
 }

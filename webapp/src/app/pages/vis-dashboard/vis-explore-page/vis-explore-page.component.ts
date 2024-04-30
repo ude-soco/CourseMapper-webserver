@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import {VisDashboardService, Platform} from "../../../services/vis-dashboard/vis-dashboard.service";
-
+import {useGroupPlatforms} from "../../../utils/useGroupPlatforms";
 
 type FilteredData = {
   language: string
@@ -19,6 +19,8 @@ export class VisExplorePageComponent implements OnInit {
   isExploreButtonDisabled: boolean = true
   showEnglishPlatforms: boolean = true;
   showGermanPlatforms: boolean = true;
+  groupedCities: any[];
+  selectedCity: string | null =  '';
 
 
   constructor(private router: Router, private visDashboardService: VisDashboardService) {
@@ -30,20 +32,21 @@ export class VisExplorePageComponent implements OnInit {
 
 
   exploreCourse() {
-    if (this.selectedPlatform) {
-      this.router.navigate(['explore-moocs', this.selectedPlatform]);
+    if (this.selectedCity) {
+      this.router.navigate(['explore-moocs', this.selectedCity]);
     }
   }
 
   getPlatforms() {
-    this.visDashboardService.getPlatforms().then((platform) => {
-      this.platforms = platform
-      this.displayedPlatforms = platform
+    this.visDashboardService.getPlatforms().then((platforms) => {
+      this.platforms = platforms
+      this.displayedPlatforms = platforms
+      this.groupedCities = useGroupPlatforms(platforms)
     })
   }
 
   updateButtonState() {
-    this.isExploreButtonDisabled = !this.selectedPlatform;
+    this.isExploreButtonDisabled = !this.selectedCity;
   }
 
 

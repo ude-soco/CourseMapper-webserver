@@ -3,11 +3,13 @@ import {
   Concept,
   VisDashboardService,
   CourseConceptCompare,
-  CourseByPlatformAndConcept
 } from "../../../../../services/vis-dashboard/vis-dashboard.service";
-import {ActivatedRoute, Router} from "@angular/router";
+import { Router} from "@angular/router";
 import {PlatformFilterCompareService} from "../../../../../services/vis-dashboard/platform-filter-compare.service";
-
+import {
+  VisSelectedPlatformsCompareService
+} from "../../../../../services/vis-dashboard/vis-selected-platforms-compare.service";
+import {useSelectedPlatforms} from "../../../../../utils/useSelectedPlatforms";
 
 interface Word {
   text: string,
@@ -24,6 +26,7 @@ interface Word {
 })
 export class ComparePlatformsConceptComponent implements  OnInit{
   selectedPlatforms: string[]
+  selectedPlatforms2: string[]
   concepts: Concept[]
   data: { text: string; value: number; }[] = [{"text": "test", value: 0}]
   words: string[]
@@ -35,12 +38,15 @@ export class ComparePlatformsConceptComponent implements  OnInit{
 
   constructor(
               private visDashboardService: VisDashboardService,
-              private router: Router, private platformFilterCompare:PlatformFilterCompareService) {
+              private router: Router,
+              private readonly visSelectedPlatformsCompare: VisSelectedPlatformsCompareService,
+              private platformFilterCompare:PlatformFilterCompareService) {
   }
 
   ngOnInit(): void {
+    this.loadSelectedPlatforms()
     this.loadSelectedPlatformsFromStorage();
-   this.getConceptsByPlatforms(this.selectedPlatforms)
+   this.getConceptsByPlatforms(useSelectedPlatforms(this.selectedPlatforms,this.selectedPlatforms2))
 
     this.platformFilterCompare.getLanguageFilter().subscribe(platforms=>{
       if(platforms.length === 0 ){
@@ -60,6 +66,11 @@ export class ComparePlatformsConceptComponent implements  OnInit{
     }
   }
 
+  loadSelectedPlatforms(): void {
+    this.visSelectedPlatformsCompare.getSelectedPlatforms().subscribe(platforms=>{
+   this.selectedPlatforms2 = platforms
+    })
+  }
 
 
   getConceptsByPlatforms(platforms: string[]) {
@@ -90,7 +101,7 @@ export class ComparePlatformsConceptComponent implements  OnInit{
 
   onWorkClick(eventData: { event: MouseEvent; word: Word }) {
     this.selectedTopic = eventData.word.text
-    this.getCoursesByPlatformAndConcepts(this.selectedPlatforms, this.selectedTopic)
+    this.getCoursesByPlatformAndConcepts(this.selectedPlatforms2, this.selectedTopic)
     this.topicClicked = true
   }
 

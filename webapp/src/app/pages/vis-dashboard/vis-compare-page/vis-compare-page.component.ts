@@ -1,5 +1,12 @@
 import { Component,OnInit } from '@angular/core';
-import {Router,ActivatedRoute} from "@angular/router";
+import {Router} from "@angular/router";
+import {VisDashboardService} from "../../../services/vis-dashboard/vis-dashboard.service";
+import { useGroupPlatforms} from "../../../utils/useGroupPlatforms";
+import {Platform} from "../../../services/vis-dashboard/vis-dashboard.service";
+import {
+  VisSelectedPlatformsCompareService
+} from "../../../services/vis-dashboard/vis-selected-platforms-compare.service";
+
 
 @Component({
   selector: 'app-vis-compare-page',
@@ -7,33 +14,29 @@ import {Router,ActivatedRoute} from "@angular/router";
   styleUrls: ['./vis-compare-page.component.css']
 })
 export class VisComparePageComponent implements OnInit{
-  platforms = ['Coursera', 'Future Learn', 'imoox', 'OPEN vhb', 'KI campus', 'on Campus', 'OPEN HPI', 'Udacity', 'edX', 'udemy'];
+  platforms: Platform[] = [];
   selectedPlatforms: string[] | null = []
+  groupedPlatforms: any[];
 
-  constructor(private router:Router) {
+  constructor(private router:Router,
+              private readonly  visSelectedPlatformsCompare: VisSelectedPlatformsCompareService,
+              private visDashboardService: VisDashboardService) {
   }
 
   ngOnInit(): void {
-    }
-
-
-
-  updateSelectedPlatforms(event: any): void {
-    const platform = event.target.value;
-    if (event.target.checked) {
-      // Add platform to selectedPlatforms if it's checked
-      this.selectedPlatforms.push(platform);
-    } else {
-      // Remove platform from selectedPlatforms if it's unchecked
-      this.selectedPlatforms = this.selectedPlatforms.filter(p => p !== platform);
-    }
-    this.saveSelectedPlatformsToStorage();
+    //Todo catch error
+    this.getPlatforms().then(p=> p)
 
   }
 
-
   saveSelectedPlatformsToStorage(): void {
     localStorage.setItem('selectedPlatforms', JSON.stringify(this.selectedPlatforms));
+  }
+
+  async getPlatforms(){
+    const platforms = await this.visDashboardService.getPlatforms()
+    this.platforms = platforms
+   this.groupedPlatforms= useGroupPlatforms(platforms)
   }
 
 
@@ -44,4 +47,8 @@ export class VisComparePageComponent implements OnInit{
   }
 
 
+  onSelectChange() {
+    this.saveSelectedPlatformsToStorage();
+    this.visSelectedPlatformsCompare.setSelectedPlatforms(this.selectedPlatforms)
+  }
 }

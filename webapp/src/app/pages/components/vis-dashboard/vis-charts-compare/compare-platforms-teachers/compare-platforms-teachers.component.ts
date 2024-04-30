@@ -9,6 +9,10 @@ import {
 } from "ng-apexcharts";
 import {VisDashboardService} from "../../../../../services/vis-dashboard/vis-dashboard.service";
 import {PlatformFilterCompareService} from "../../../../../services/vis-dashboard/platform-filter-compare.service";
+import {
+  VisSelectedPlatformsCompareService
+} from "../../../../../services/vis-dashboard/vis-selected-platforms-compare.service";
+import {useSelectedPlatforms} from "../../../../../utils/useSelectedPlatforms";
 export type ChartOptions = {
   series: ApexAxisChartSeries;
   chart: ApexChart;
@@ -28,16 +32,18 @@ export class ComparePlatformsTeachersComponent implements  OnInit{
   @ViewChild("chart", { static: false }) chart: ChartComponent;
   public chartOptions: Partial<ChartOptions>;
   selectedPlatforms: string[] = [];
+  selectedPlatformsFromStorage: string[] = [];
+
   platformNames: string[]
   numberOfTeachers: number[]
-  filteredPlatforms: any[] = [];
 
 
   ngOnInit(): void {
     this.loadSelectedPlatformsFromStorage();
-    this.getPlatformsByTeacherCount(this.selectedPlatforms)
+    this.loadSelectedPlatforms()
+    this.getPlatformsByTeacherCount(useSelectedPlatforms(this.selectedPlatforms,this.selectedPlatformsFromStorage))
     this.platformFilterCompare.getLanguageFilter().subscribe(platforms=>{
-     if(platforms.length === 0 ){
+      if(platforms.length === 0 ){
        return
      }
      else{
@@ -48,12 +54,14 @@ export class ComparePlatformsTeachersComponent implements  OnInit{
   loadSelectedPlatformsFromStorage(): void {
     const storedPlatforms = localStorage.getItem('selectedPlatforms');
     if (storedPlatforms) {
-      this.selectedPlatforms = JSON.parse(storedPlatforms);
+      this.selectedPlatformsFromStorage = JSON.parse(storedPlatforms);
     }
   }
 
   constructor(private visdashboardService: VisDashboardService,
-              private platformFilterCompare: PlatformFilterCompareService) {
+              private platformFilterCompare: PlatformFilterCompareService,
+              private readonly visSelectedPlatformsCompare: VisSelectedPlatformsCompareService
+  ) {
     this.chartOptions = {
       series: [
         {
@@ -79,7 +87,11 @@ export class ComparePlatformsTeachersComponent implements  OnInit{
 
     }
   }
-
+  loadSelectedPlatforms(): void {
+    this.visSelectedPlatformsCompare.getSelectedPlatforms().subscribe(platforms=>{
+      this.selectedPlatforms = platforms
+    })
+  }
 
   getPlatformsByTeacherCount(platforms:string[]){
     this.visdashboardService.getPlatformsByTeacherCount(platforms)

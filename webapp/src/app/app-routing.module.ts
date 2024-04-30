@@ -143,17 +143,30 @@ const routes: Routes = [
     path: '',
     component: VisDashboardLayoutComponent,
     canActivate: [AuthGuardService],
-    children:[{path:'vis-dashboard-landing-page',component: VisLandingPageComponent },
-      {path:'explore-moocs',component: VisExplorePageComponent },
-      {path:'compare-moocs',component: VisComparePageComponent },
-      {path:'find-moocs-by-topic',component: FindTopicPageComponent },
-      {path:'course-detail/:id',component: CourseDetailsPageComponent },
-      {path:'course-category',component: CourseCategoryPageComponent },
-      {path:'teacher-detail/:id',component: TeacherPageComponent },
+    children:[{path:'vis-dashboard-landing-page',component: VisLandingPageComponent, data:{
+      breadcrumb: 'MOOCentral'
+      } },
+      {path:'explore-moocs',component: VisExplorePageComponent,data:{
+          breadcrumb: 'Discover a MOOC'
+        } },
+      {path:'compare-moocs',component: VisComparePageComponent,data:{
+          breadcrumb: 'Compare MOOC platforms'
+        } },
+      {path:'find-moocs-by-topic',component: FindTopicPageComponent,data:{
+          breadcrumb: 'FInd by Topics'
+        } },
+      {path:'course-detail/:id',component: CourseDetailsPageComponent, data:{
+          breadcrumb: 'Course Detail'
+        } },
+      {path:'course-category',component: CourseCategoryPageComponent,data:{
+          breadcrumb: 'Course Category'
+        }},
+      {path:'teacher-detail/:id',component: TeacherPageComponent,data:{
+          breadcrumb: 'Teacher Detail'
+        } },
       {path:'explore-moocs/:platform',component: ExploreChartsPageComponent },
       {path:'compare-moocs-vis',component: CompareChartsPageComponent},
       {path:'find-moocs-by-topic-main',component: FindByTopicMainComponent},
-
     ],
   },
 

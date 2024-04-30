@@ -2,12 +2,24 @@
 
 
 <div style="text-align: center" >
-  <div><p class="discover">Find by Topic</p></div>
-  <div class="search-box-container">
-    <input class="search-box" [(ngModel)]="searchQuery" type="text" placeholder="Search">
+  <div><p class="find-by-topic">Find by Topic</p></div>
+  <div >
+    <span class="p-input-icon-right">
+    <input type="text" pInputText
+           (ngModelChange)="onTextInput($event)"
+           placeholder="Search by Topic"
+           [(ngModel)]="searchQuery" style="width: 30em"/>
+    <i class="pi pi-search"></i>
+</span>
   </div>
-  <div class="search-button-container">
-    <button class="search-button" value="" (click)="search(searchQuery)">Search</button>
+  <div >
+    <button style="margin-top: 1em" class="button"
+            [ngClass]="{'active': hasInput}"
+            [disabled]="!hasInput"
+            (click)="search(searchQuery)">Search</button>
   </div>
+
+
+
 
 </div>

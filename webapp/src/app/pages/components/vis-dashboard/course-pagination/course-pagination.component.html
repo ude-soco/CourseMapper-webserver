@@ -1,7 +1,9 @@
 <div class="pagination" *ngIf="pages.length !== 1">
-  <button (click)="previousPage()" [disabled]="currentPage === 1"><i class='bx bx-last-page bx-rotate-180' style='font-size: 24px;' ></i></button>
-  <ng-container *ngFor="let page of pages">
+  <div class="pagination-items">
+  <div ><button (click)="previousPage()"  [disabled]="currentPage === 1"><i class='bx bxs-chevron-left' style='font-size: 30px;'></i></button></div>
+  <div><ng-container *ngFor="let page of pages">
     <button class="page-number" (click)="goToPage(page)" [ngClass]="{ 'active-page': currentPage === page }">{{ page }}</button>
-  </ng-container>
-  <button (click)="nextPage()" [disabled]="currentPage !== pages.length -1"><i class='bx bx-last-page' style='font-size: 24px;'></i></button>
+  </ng-container></div>
+  <div><button (click)="nextPage()"  [disabled]="currentPage !== pages.length -1"><i class='bx bxs-chevron-left bx-rotate-180' style='font-size: 30px;' ></i></button></div>
+  </div>
 </div>

@@ -7,6 +7,7 @@ import {Router} from "@angular/router";
 })
 export class FindTopicPageComponent implements OnInit{
   searchQuery: string = ''
+  hasInput: boolean = false
 
   constructor(private router: Router) {
   }
@@ -18,5 +19,13 @@ export class FindTopicPageComponent implements OnInit{
     this.router.navigate(['find-moocs-by-topic-main'], { queryParams: { query: query } });
   }
 
+
+  onTextInput(event: string) {
+    if (event.length > 0) {
+      this.hasInput = true
+    } else {
+      this.hasInput = false
+    }
+  }
 
 }
