@@ -1,0 +1,39 @@
+# huggingface-hub 
+# py2neo 
+# sentence-transformers 
+#gensim 
+SPARQLWrapper 
+Werkzeug 
+Wikipedia-API 
+allennlp  #
+flair 
+flask 
+flask-restplus 
+google-api-python-client 
+itsdangerous 
+marshmallow 
+matplotlib==3.8.2
+mwparserfromhell 
+neo4j 
+networkx 
+nltk 
+numpy 
+pandas 
+# pdfminer==20191125
+# psycopg2==3.1.16
+py2neo 
+python-dotenv 
+pywikibot 
+requests 
+scikit-learn 
+sentence-transformers 
+setuptools 
+# spacy 
+spacy==3.7.2
+# spacy==2.1.9
+stanfordcorenlp 
+torch 
+tqdm 
+transformers 
+wikipedia 
+youtube-transcript-api 
