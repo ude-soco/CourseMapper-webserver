@@ -50,6 +50,7 @@ class YoutubeService:
         duration_list = []
         view_list = []
         description_list = []
+        like_count_list = []
         retry_count = 3
         retry_delay = 5
 
@@ -100,13 +101,14 @@ class YoutubeService:
                 #                 "https://www.youtube.com/watch?v={} ".format(id))
 
                 try:
-                    duration, views, description = self.get_video_details(id)
+                    duration, views, description, like_count = self.get_video_details(id)
                     duration = re.findall(r"\d+", duration)
                     duration = ":".join(duration)
                     # print(id, duration, views)
                     duration_list.append(duration)
                     view_list.append(views)
                     description_list.append(description)
+                    like_count_list.append(like_count)
                 except Exception as e:
                     logger.error("Error while getting the videos details", e)
 
@@ -114,6 +116,7 @@ class YoutubeService:
             video_data["duration"] = pd.Series(duration_list)
             video_data["views"] = pd.Series(view_list)
             video_data["description_full"] = pd.Series(description_list)
+            video_data["like_count"] = pd.Series(like_count_list)
             video_data["text"] = pd.DataFrame(
                 video_data["title"] + ". " + video_data["description"]
             )
@@ -150,6 +153,11 @@ class YoutubeService:
                 if r["items"][0]["snippet"]["description"]
                 else ""
             )
+            like_count = (
+                r["items"][0]["statistics"]["likeCount"]
+                if r["items"][0]["statistics"]["likeCount"]
+                else 0
+            )
 
         except Exception as e:
             print("---------------------------------------")
@@ -169,4 +177,4 @@ class YoutubeService:
             )
 
             return duration, views, description
-        return duration, views, description
+        return duration, views, description, like_count

@@ -2054,6 +2054,25 @@ class NeoDataBase:
 
         return result
     
+    def cro_get_ratings(self, resource_rids: list):
+        """
+            Getting List of Rating Containing Resources RID
+        """
+        logger.info("Getting List of Rating Containing Resources RID")
+
+        result = []
+        with self.driver.session() as session:
+            result = session.run(
+                """
+                MATCH (r:Rating_CRO)
+                WHERE r.resource_rid IN $resource_rids
+                RETURN ID(r) as node_id, r.user_id as user_id, r.cid as cid, r.value as value, r.resource_rid as resource_rid
+                """,
+                resource_rids=resource_rids
+            ).data()
+        
+        return result
+    
     def cro_count_rating(self, resource_rid: str):
         logger.info("CRO Getting Rating")
         result = {"helpful_count": 0, "not_helpful_count": 0}
@@ -2124,7 +2143,7 @@ class NeoDataBase:
         """
             Getting List of Resources Containing Concept_CRO
         """
-        logger.info("Getting List of Resources Containing Concept_CRO")
+        # logger.info("Getting List of Resources Containing Concept_CRO")
 
         result = []
         node_ids = [node["node_id"] for node in concepts_cro]
@@ -2139,12 +2158,13 @@ class NeoDataBase:
                         a.keyphrases as keyphrases, a.description as description, a.description_full as description_full,
                         a.views as views, a.publish_time as publish_time, a.uri as uri, a.duration as duration,
                         a.similarity_score as similarity_score, a.helpful_count as helpful_count, a.not_helpful_count as not_helpful_count,
-                        a.bookmarked_count as bookmarked_count
+                        a.bookmarked_count as bookmarked_count, a.like_count as like_count
                 """,
                 node_ids=node_ids
             ).data()
 
             if result:
+                # print([key for key, value in result[0].items() ])
                 for resource in result:
                     r = {
                         "id": resource["id"],
@@ -2165,15 +2185,12 @@ class NeoDataBase:
                         r["description_full"] = resource["description_full"]
                         r["thumbnail"] = resource["thumbnail"]
                         r["duration"] = resource["duration"]
-                        r["views"] = resource["views"]
+                        r["views"] = int(resource["views"])
                         r["publish_time"] = resource["publish_time"]
+                        r["like_count"] = int(resource["like_count"])
 
                     elif "Article" in r["labels"]:
                         r["abstract"] = resource["abstract"]
-
-                    elif "ExtermalSource" in r["labels"]:
-                        r["description"] = resource["description"]
-                        r["publish_time"] = resource["publish_time"]
 
         return result
 

@@ -21,6 +21,20 @@ logger = LOG(name=__name__, level=logging.DEBUG)
 
 course_materials = Blueprint("course_materials", __name__)
 
+@course_materials.route("/get_resources/update_ranking_weights", methods=["POST"])
+def update_resources_factor_weights():
+    data = request.get_json()
+    logger.info("------ Updating Factor Weights ------>")
+    print(data)
+    rrs = ResourceRecommenderService()
+    result = {}
+    for k,v in data.items():
+        result[k] = rrs.normalize_factor_weights(  factor_weights=v, 
+                                                        method_type="l1", 
+                                                        complete=False, 
+                                                        sum_value=False
+                                                    )
+    return jsonify(result), 200
 
 @course_materials.route("/get_resources", methods=["POST"])
 def get_resources():

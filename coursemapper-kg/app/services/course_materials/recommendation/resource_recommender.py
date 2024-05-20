@@ -13,6 +13,9 @@ import scipy.stats as st
 from datetime import datetime
 from dateutil.parser import parse as date_parse
 
+import numpy as np
+from sklearn.preprocessing import normalize as normalize_sklearn, MinMaxScaler as MinMaxScaler_sklearn
+
 
 from log import LOG
 import logging
@@ -133,104 +136,6 @@ class ResourceRecommenderService:
     ######
     # CRO logic
 
-    def wilson_lower_bound(self, up, down, confidence=0.95):
-        """
-            Calculate lower bound of wilson score
-            :param up: No of positive ratings
-            :param down: No of negative ratings
-            :param confidence: Confidence interval, by default is 95 %
-            :return: Wilson Lower bound score
-        """
-        n = up + down
-        if n == 0:
-            return 0.0
-        z = st.norm.ppf(1 - (1 - confidence) / 2)
-        phat = 1.0 * up / n
-        return (phat + z * z / (2 * n) - z * math.sqrt((phat * (1 - phat) + z * z / (4 * n)) / n)) / (1 + z * z / n)
-    
-    def normalized_score_date(self, date_str: str, max: datetime):
-        """
-            Calculate Normalization Score of Creation Date
-        """
-        date = date_parse(date_str).replace(tzinfo=None)
-
-        # First video posted on Youtube
-        min = datetime(year=2005, month=4, day=23, hour=8, minute=31, second=52, tzinfo=None)
-        return (date - min).days / (max - min).days
-
-    def calculate_factors_weights(self, category: int, resources: list, ratings: list = []):
-        """
-            Sort by these extra features provided by the resources such as:
-
-            Type: 1 => Video
-            Popularity | Views (videos) -> 0.4
-            Rating: Likes Count Dislike Count -> 0.2
-            Creation Date (content freshness) -> 0.2
-            Similarities Scores -> 0.1
-            Bookmark -> 0.1
-            Certified Account (video) -> 0.05 (optional)
-
-            Type: 1 => Article
-            Rating: Likes Count Dislike Count -> 0.4
-            Similarities Scores -> 0.3
-            Bookmark -> 0.3
-
-            Type: 1 => External Source
-            Rating: Likes Count Dislike Count -> 0.8
-            Bookmark -> 0.2
-
-            Resources having Rating related to DNU_modified (cid)
-        """
-        now = datetime.now()
-
-        if category == 1:
-            weight_views = 0.3
-            weight_rating = 0.3
-            weight_creation_date = 0.2
-            weight_similarity_score = 0.1
-            weight_bookmark = 0.1
-
-            for resource in resources:
-                rating_score = self.wilson_lower_bound(up=resource["helpful_count"], down=resource["not_helpful_count"])
-                normalized_score = self.normalized_score_date(date_str=resource["publish_time"], max=now)
-
-                resource["composite_score"] = (int(resource["views"])* weight_views) \
-                                            + (rating_score * weight_rating) \
-                                            + (normalized_score * weight_creation_date) \
-                                            + (resource["similarity_score"] * weight_similarity_score) \
-                                            + (resource["bookmarked_count"] * weight_bookmark)
-
-        elif category == 2:
-            weight_rating = 0.4
-            weight_similarity_score = 0.3
-            weight_bookmark = 0.3
-
-            for resource in resources:
-                rating_score = self.wilson_lower_bound(up=resource["helpful_count"], down=resource["not_helpful_count"])
-
-                resource["composite_score"] = (rating_score * weight_rating) \
-                                            + (resource["similarity_score"] * weight_similarity_score) \
-                                            + (resource["bookmarked_count"] * weight_bookmark) \
-
-        elif category == 3:
-            weight_rating = 0.4
-            weight_bookmark = 0.3
-            weight_creation_date = 0.3
-
-            for resource in resources:
-                rating_score = self.wilson_lower_bound(up=resource["helpful_count"], down=resource["not_helpful_count"])
-                resource["composite_score"] = (rating_score * weight_rating) \
-                                            + (resource["bookmarked_count"] * weight_bookmark) \
-                                            + (normalized_score * weight_creation_date)
-        
-        # sort by composite score value
-        resources.sort(key=lambda x: x["composite_score"], reverse=True)
-
-        # # Finally, priorities on resources having Rating related to DNU_modified (cid)
-        #
-
-        return resources
-
     def cro_save_logic(
             self,
             cro_form: dict,
@@ -312,90 +217,177 @@ class ResourceRecommenderService:
                                                                     )
 
 
-    def cro_sort_result(self, resources: list, with_ratings=False):
+    def normalize_factor_weights(self, factor_weights: dict=None, values: list=[], method_type = "l1", complete=True, sum_value=True): # List[float]
         """
-            Sorting Logic for Resources 
+        method_type: normalization techniques
+            l1: L1 normalization, also known as L1 norm normalization or Manhattan normalization
+            l1: L2 normalization, also known as L2 norm normalization or Euclidean normalization
+            max: Max Normalization
+            min-max: Min-Max
+        
+        https://www.pythonprog.com/sklearn-preprocessing-normalize/#Normalization_Techniques
+        TypeScript: https://sklearn.vercel.app/guide/install
+
+        factor_weights = { 'similarity_score': 0.7, 'creation_date': 0.3, 'nbr_views': 0.3, 
+                'nbr_likes_youTube': 0.1, 'rating_courseMapper': 0.1, 'nbr_save_courseMapper': 0.1
+            }
+        """
+        normalized_values = None
+        scaled_data = None
+        
+        if factor_weights:
+            values = [value for key, value in factor_weights.items()]
+            key_names = [key for key, value in factor_weights.items()]
+
+        if method_type == "l1":
+            normalized_values = normalize_sklearn([values], norm=method_type).tolist()
+        if method_type == "l2":
+            normalized_values = normalize_sklearn([values], norm=method_type).tolist()
+        if method_type == "max":
+            normalized_values = normalize_sklearn([values], norm=method_type).tolist()
+        if method_type == "min-max":
+            data = np.array(values).reshape(-1, 1)
+            scaler = MinMaxScaler_sklearn()
+            scaler.fit(data)
+            scaled_data = scaler.transform(data)
+            scaled_data = scaled_data.tolist()
+            scaled_data = [value[0] for value in scaled_data]
+
+        if normalized_values:
+            normalized_values = normalized_values[0]
+            normalized_values = [round(value, 3) for value in normalized_values]
+        elif scaled_data:
+            normalized_values = scaled_data
+
+        if sum_value:
+            print("sun values: ", sum(normalized_values))
+
+        if complete:
+            normalized_values = dict(zip(key_names, normalized_values))
+        
+        return normalized_values
+
+    def wilson_lower_bound_score(up, down, confidence=0.95):
+        """
+            Calculate lower bound of wilson score
+            :param up: No of positive ratings
+            :param down: No of negative ratings
+            :param confidence: Confidence interval, by default is 95 %
+            :return: Wilson Lower bound score
+        """
+        n = up + down
+        if n == 0:
+            return 0.0
+        z = st.norm.ppf(1 - (1 - confidence) / 2)
+        phat = 1.0 * up / n
+        return (phat + z * z / (2 * n) - z * math.sqrt((phat * (1 - phat) + z * z / (4 * n)) / n)) / (1 + z * z / n)
+
+    def normalize_min_max_score_date(self, date_str: str, max: datetime):
+        """
+            Calculate Normalization Score of Creation Date
+        """
+        date = date_parse(date_str).replace(tzinfo=None)
+
+        # First video posted on Youtube
+        min = datetime(year=2005, month=4, day=23, hour=8, minute=31, second=52, tzinfo=None)
+        return (date - min).days / (max - min).days
+
+    def normalize_min_max_score(self, value: int, min_value: int, max_value: int):
+        if (max_value - min_value) == 0:
+            return 0
+        return (value - min_value) / (max_value - min_value)
+
+    def calculate_factors_weights(self, category: int, resources: list, weights: dict = None, light=False):
+        """
+            Sort by these extra features provided by the resources such as:
+
+            Type: 1 => Video
+            Popularity | Views (videos) -> 0.4
+            Rating: Likes Count Dislike Count -> 0.2
+            Creation Date (content freshness) -> 0.2
+            Similarities Scores -> 0.1
+            Bookmark -> 0.1
+            Certified Account (video) -> 0.05 (optional)
+
+            Type: 1 => Article
+            Rating: Likes Count Dislike Count -> 0.4
+            Similarities Scores -> 0.3
+            Bookmark -> 0.3
+
+            Resources having Rating related to DNU_modified (cid)
+
+            weights: dict containing factors weight
+            {"views": 0.2, "rating": 0.2, "creation_date": 0.2, "similarity_score": 0.2, "bookmark": 0.2, "like_count": 0.2}
+        """
+        now = datetime.now()
+        weight_views = weights.get("views")
+        weight_rating = weights.get("rating")
+        weight_creation_date = weights.get("creation_date")
+        weight_similarity_score = weights.get("similarity_score")
+        weight_bookmark = weights.get("bookmark")
+        weight_like_count = weights.get("like_count")
+
+        bookmarked_min_value = min(resources, key=lambda x: x["bookmarked_count"])["bookmarked_count"]
+        bookmarked_max_value = max(resources, key=lambda x: x["bookmarked_count"])["bookmarked_count"]
+
+        like_count_min_value = min(resources, key=lambda x: x["like_count"])["like_count"]
+        like_count_max_value = max(resources, key=lambda x: x["like_count"])["like_count"]
+        
+        if category == 1:
+            min_views = int(min(resources, key=lambda x: int(x["views"]))["views"])
+            max_views = int(max(resources, key=lambda x: int(x["views"]))["views"])
+
+            for resource in resources:
+                similarity_normalized = resource["similarity_score"]
+                rating_normalized = self.wilson_lower_bound_score(up=resource["helpful_count"], down=resource["not_helpful_count"])
+                creation_date_normalized = self.normalize_min_max_score_date(date_str=resource["publish_time"], max=now)
+                views_normalzed = self.normalize_min_max_score(value=int(resource["views"]), min_value=min_views, max_value=max_views) 
+                bookmarked_normalized = self.normalize_min_max_score(value=int(resource["bookmarked_count"]), min_value=bookmarked_min_value, max_value=bookmarked_max_value)
+                like_count_normalized = self.normalize_min_max_score(value=int(resource["like_count"]), min_value=like_count_min_value, max_value=like_count_max_value)
+
+                resource["composite_score"] = (views_normalzed * weight_views) \
+                                            + (rating_normalized * weight_rating) \
+                                            + (creation_date_normalized * weight_creation_date) \
+                                            + (similarity_normalized * weight_similarity_score) \
+                                            + (bookmarked_normalized * weight_bookmark) \
+                                            + (like_count_normalized * weight_like_count)
+                
+        elif category == 2:
+            for resource in resources:
+                rating_normalized = self.wilson_lower_bound_score(up=resource["helpful_count"], down=resource["not_helpful_count"])
+                resource["composite_score"] = (rating_normalized * weight_rating) \
+                                            + (resource["similarity_score"] * weight_similarity_score) \
+                                            + (resource["bookmarked_count"] * weight_bookmark) \
+
+
+        # sort by composite score value
+        resources.sort(key=lambda x: x["composite_score"], reverse=True)
+
+        return resources
+
+    def cro_sort_result(self, resources: list, weights: dict = None, ratings: list = None):
+        """
+            Sorting Logic for Resources
             Resources having Rating related to DNU_modified (cid)
         """
-        # to be removed
-        ratings = []
-        if with_ratings:
-            ratings = []
-
         # video items
         resources_videos = [resource for resource in resources if "Video" in resource["labels"]]
-        resources_videos = self.calculate_factors_weights(category=1, resources=resources_videos, ratings=ratings)
+        resources_videos = self.calculate_factors_weights(category=1, resources=resources_videos, weights=weights["video"])
 
         # articles items
         resources_articles = [resource for resource in resources if "Article" in resource["labels"]]
-        resources_articles = self.calculate_factors_weights(category=2, resources=resources_articles, ratings=ratings)
+        resources_articles = self.calculate_factors_weights(category=2, resources=resources_articles, weights=weights["article"])
 
-        # external sources items
-        resources_external_sources = [resource for resource in resources if "ExternalSource" in resource["labels"]]
-        resources_external_sources = self.calculate_factors_weights(category=3, resources=resources_external_sources, ratings=ratings)
+        # # Finally, priorities on resources having Rating related to DNU_modified (cid)
+        if ratings and len(ratings) > 0:
+            pass
 
         return {
             "articles": resources_articles,
-            "videos": resources_videos,
-            "external_sources": resources_external_sources
-        }
-    
-    def cro_sort_result_light(self, params: dict, with_ratings=False):
-        """
-            params: {"similarity_score": True, "most_recent": False, "popularity": True, "concepts_cids": ["sdsds323", "23asdf23"]}
-            most_recent: creation date
-            popularity: based on composite scores: views (0.4), ratings (0.4), bookmarked count (0.2)
-        """
-        resources = self.db.cro_get_resources(concepts_cro=params["concepts_cids"])
-
-        if params["similarity_score"] == False and params["most_recent"] and params["popularity"]:
-            return self.cro_sort_result(resources=resources, with_ratings=True)
-
-        if params["similarity_score"] == True:
-            resources.sort(key=lambda x: x["similarity_score"], reverse=True)
-
-        if params["most_recent"] == True:
-            resources.sort(key=lambda x: x["publish_time"], reverse=True)
-
-        if params["popularity"] == True:
-            resources.sort(key=lambda x: x["views"], reverse=True)
-        
-        resources_videos = [resource for resource in resources if "Video" in resource["labels"]]
-        resources_articles = [resource for resource in resources if "Article" in resource["labels"]]
-        resources_external_sources = [resource for resource in resources if "ExternalSource" in resource["labels"]]
-        return {
-            "articles": resources_articles,
-            "videos": resources_videos,
-            "external_sources": resources_external_sources
+            "videos": resources_videos
         }
 
-    def cro_get_resources_ranked_and_sorted(self, resources: list):
-        result = []
-        positive_rated = []
-        negative_rated = []
-        rest = []
-        for node in resources:
-            if node["helpful_count"] != 0:
-                positive_rated.append(node)
-            elif node["helpful_count"] == 0 and node["not_helpful_count"] == 0:
-                rest.append(node)
-            elif node["not_helpful_count"] > 0:
-                negative_rated.append(node)
-        
-        # top rated
-        positive_rated.sort(key=lambda x: x["helpful_count"], reverse=True)
-        result += positive_rated
-                
-        # by: highest similarity scores
-        rest.sort(key=lambda x: x["similarity_score"], reverse=True)
-        result += rest
-
-        # negative rated
-        negative_rated.sort(key=lambda x: x["not_helpful_count"], reverse=False)
-        result += negative_rated
-
-        return result
-
+    ##### 
     def cro_store_detail_rec(
             self, 
             cro_form: dict, 
@@ -686,7 +678,7 @@ class ResourceRecommenderService:
             resources = [{"node_id": node["id"]} for node in resources]
             self.cro_edit_relationship_btw_concepts_cro_and_resources(concepts_cro=cro_form["concepts"], resources=resources)
             resources = self.db.cro_get_resources(concepts_cro=cro_form["concepts"])
-            result = self.cro_sort_result(resources=resources, with_ratings=True)
+            result = self.cro_sort_result(concepts=concepts, resources=resources, with_ratings=True)
         else:
             result = []
         
