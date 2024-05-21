@@ -27,13 +27,17 @@ def update_resources_factor_weights():
     logger.info("------ Updating Factor Weights ------>")
     print(data)
     rrs = ResourceRecommenderService()
-    result = {}
+    weigths_normalized = {}
     for k,v in data.items():
-        result[k] = rrs.normalize_factor_weights(  factor_weights=v, 
+        weigths_normalized[k] = rrs.normalize_factor_weights(  factor_weights=v, 
                                                         method_type="l1", 
-                                                        complete=False, 
+                                                        complete=True, 
                                                         sum_value=False
                                                     )
+    result = {
+        "original": data,
+        "normalized": weigths_normalized
+    }
     return jsonify(result), 200
 
 @course_materials.route("/get_resources", methods=["POST"])
@@ -46,262 +50,15 @@ def get_resources():
     data_cro_form = data["croForm"]
     
     resource_recommender_service = ResourceRecommenderService()
-    result = resource_recommender_service.map_recommendation_request(data_default=data_default, data_cro_form=data_cro_form)
-    # await asyncio.sleep(30)
+    result = resource_recommender_service._get_resources2(data_default=data_default, data_cro_form=data_cro_form)
 
     if result == None:
         return jsonify({"msg": "Internal Server Error"}), 404
     return jsonify(result), 200
 
+    # await asyncio.sleep(30)
     # r = cro_get_resources_pagination()
     # return make_response(jsonify(r), 200)
-
-    """
-    material_id = data_default.get("materialId")  # type: ignore
-    material_page = data_default.get("materialPage")  # type: ignore
-    user_id = data_default.get("userId")  # type: ignore
-    user_email = data_default.get("userEmail")  # type: ignore
-    slide_id = data_default.get("slideId")  # type: ignore
-    username = data_default.get("username")  # type: ignore
-    recommendation_type = data_default.get("recommendationType")# activate if several models need to be tested & modelNumber will be sent from frontend
-    understood = data_default.get("understoodConcepts")  # type: ignore
-    non_understood = data_default.get("nonUnderstoodConcepts")  # type: ignore
-    new_concepts = data_default.get("newConcepts")
-    # return make_response([], 200)
-
-
-    # material_id = request.form.get("materialId")  # type: ignore
-    # material_page = request.form.get("materialPage")  # type: ignore
-    # user_id = request.form.get("userId")  # type: ignore
-    # user_email = request.form.get("userEmail")  # type: ignore
-    # slide_id = request.form.get("slideId")  # type: ignore
-    # username = request.form.get("username")  # type: ignore
-    # recommendation_type = request.form.get("recommendationType")# activate if several models need to be tested & modelNumber will be sent from frontend
-    # understood = request.form.get("understoodConcepts")  # type: ignore
-    # non_understood = request.form.get("nonUnderstoodConcepts")  # type: ignore
-    # new_concepts = request.form.get("newConcepts")  # type: ignore
-    #
-
-    print("not-understood from paul:", non_understood, flush=True)
-    understood_concept_ids = [cid for cid in understood.split(",") if understood]
-    non_understood_concept_ids = [
-        cid for cid in non_understood.split(",") if non_understood
-    ]
-    new_concept_ids = [cid for cid in new_concepts.split(",") if new_concepts]
-
-    print(
-        "material_id:",
-        material_id,
-        "page: ",
-        material_page,
-        "slide_id: ",
-        slide_id,
-        "user_id: ",
-        user_id,
-        "user_email: ",
-        user_email,
-        "username: ",
-        username,
-        "understood: ",
-        understood,
-        "nonUnderstood: ",
-        non_understood,
-        "new_concepts: ",
-        new_concepts,
-        flush=True,
-    )
-
-    # boby024
-    ## Check if at least one concept in the list contains status with value True 
-    ##
-
-    # extract recommendation type
-    cro_form_list = []
-    # cro_rec_algo_models = data_cro_form["recommendation_algorithm"]["models"]
-    for key, value in data_cro_form["recommendation_algorithm"]["models"].items():
-        new_cro_form = {
-            "user_id": data_cro_form["user_id"],
-            "mid": data_cro_form["mid"],
-            "category": data_cro_form["category"],
-            "concepts": data_cro_form["concepts"],
-            "pagination_params": data_cro_form["pagination_params"],
-            # "algorithm_model": value
-        }
-
-        if key == "model_1" and value == True:
-            new_cro_form["algorithm_model"] = 1
-        if key == "model_2" and value == True:
-            new_cro_form["algorithm_model"] = 2
-        if key == "model_3" and value == True:
-            new_cro_form["algorithm_model"] = 3
-        if key == "model_4" and value == True:
-            new_cro_form["algorithm_model"] = 4
-        cro_form_list.append(new_cro_form)
-
-    # return cro_get_resources_pagination()
-
-    resp_final = []
-    # for cro_form_el in cro_form_list:
-    for key, value in data_cro_form["recommendation_algorithm"]["models"].items():
-        cro_form = {
-            "user_id": data_cro_form["user_id"],
-            "mid": data_cro_form["mid"],
-            "category": data_cro_form["category"],
-            "concepts": data_cro_form["concepts"],
-            # "pagination_params": data_cro_form["pagination_params"],
-            # "algorithm_model": value
-        }
-        pagination_params = data_cro_form["pagination_params"]
-
-        # Only concepts with status=True will be processed
-        # concepts_original = []
-        # concepts = []
-        # for concept in data_cro_form["concepts"]:
-        #     if concept["status"] 
-
-
-        if key == "model_1" and value == True:
-            cro_form["algorithm_model"] = 1
-        if key == "model_2" and value == True:
-            cro_form["algorithm_model"] = 2
-        if key == "model_3" and value == True:
-            cro_form["algorithm_model"] = 3
-        if key == "model_4" and value == True:
-            cro_form["algorithm_model"] = 4
-        
-    # return cro_get_resources_pagination()
-
-        if cro_form.get("algorithm_model"):
-            print("------------------CRO------------------")
-            print("cro_form ->", cro_form)
-            print("pagination_params ->", pagination_params)
-
-
-            # convert recommendation_type from int into string
-            recommendation_type = str(cro_form["algorithm_model"])
-
-            resource_recommender_service = ResourceRecommenderService()
-            # TODO comment out or remove the next line if the recommendation_type is sent from the frontend
-            # Only first model is needed ==> no model_type will be sent from frontend (other models were added for evaluation task)
-            recommendation_type = "1"
-
-            # Check if parameters exist. If one doesn't exist, return not found message
-            # check_message = resource_recommender_service.check_parameters(slide_id, material_id, user_id, non_understood_concept_ids, understood_concept_ids, new_concept_ids, recommendation_type)
-            check_message = resource_recommender_service.check_parameters(
-                slide_id=slide_id,
-                material_id=material_id,
-                non_understood_concept_ids=non_understood_concept_ids,
-                understood_concept_ids=understood_concept_ids,
-                new_concept_ids=new_concept_ids,
-                recommendation_type=recommendation_type,
-                
-            )
-            if check_message != "":
-            # logger.info(check_message)
-                return make_response(check_message, 404)
-
-            user = {"name": username, "id": user_id, "user_email": user_email}
-
-            # Map recommendation type to enum values
-            if recommendation_type == "1":
-                recommendation_type = RecommendationType.DYNAMIC_KEYPHRASE_BASED
-            elif recommendation_type == "2":
-                recommendation_type = RecommendationType.DYNAMIC_DOCUMENT_BASED
-            elif recommendation_type == "3":
-                recommendation_type = RecommendationType.STATIC_KEYPHRASE_BASED
-            elif recommendation_type == "4":
-                recommendation_type = RecommendationType.STATIC_DOCUMENT_BASED
-        
-            # If personalized recommendtion, build user model
-            if (
-                recommendation_type != RecommendationType.WITHOUT_EMBEDDING
-                and recommendation_type != RecommendationType.COMBINED_STATIC
-                and recommendation_type != RecommendationType.STATIC_KEYPHRASE_BASED
-                and recommendation_type != RecommendationType.STATIC_DOCUMENT_BASED
-            ):
-                resource_recommender_service._construct_user(
-                    user=user,
-                    non_understood=non_understood_concept_ids,
-                    understood=understood_concept_ids,
-                    new_concepts=new_concept_ids,
-                    mid=material_id,
-                )
-
-            resp = resource_recommender_service._get_resources(
-                user_id=user_id,
-                slide_id=slide_id,
-                material_id=material_id,
-                recommendation_type=recommendation_type,
-                cro_form=cro_form,
-                pagination_params=pagination_params
-            )
-            
-            # resp_final[str("model_" + recommendation_type)] = {"recommendation_type": recommendation_type, "resp_final": resp_final}
-            resp_final.append(resp)
-    
-    return jsonify(resp_final)
-    
-
-
-
-    resource_recommender_service = ResourceRecommenderService()
-    # TODO comment out or remove the next line if the recommendation_type is sent from the frontend
-    # Only first model is needed ==> no model_type will be sent from frontend (other models were added for evaluation task)
-    recommendation_type = "1"
-
-    # Check if parameters exist. If one doesn't exist, return not found message
-    # check_message = resource_recommender_service.check_parameters(slide_id, material_id, user_id, non_understood_concept_ids, understood_concept_ids, new_concept_ids, recommendation_type)
-    check_message = resource_recommender_service.check_parameters(
-        slide_id=slide_id,
-        material_id=material_id,
-        non_understood_concept_ids=non_understood_concept_ids,
-        understood_concept_ids=understood_concept_ids,
-        new_concept_ids=new_concept_ids,
-        recommendation_type=recommendation_type,
-        
-    )
-    if check_message != "":
-       # logger.info(check_message)
-        return make_response(check_message, 404)
-
-    user = {"name": username, "id": user_id, "user_email": user_email}
-
-    # Map recommendation type to enum values
-    if recommendation_type == "1":
-        recommendation_type = RecommendationType.DYNAMIC_KEYPHRASE_BASED
-    elif recommendation_type == "2":
-        recommendation_type = RecommendationType.DYNAMIC_DOCUMENT_BASED
-    elif recommendation_type == "3":
-        recommendation_type = RecommendationType.STATIC_KEYPHRASE_BASED
-    elif recommendation_type == "4":
-        recommendation_type = RecommendationType.STATIC_DOCUMENT_BASED
-
-
-    # If personalized recommendtion, build user model
-    if (
-        recommendation_type != RecommendationType.WITHOUT_EMBEDDING
-        and recommendation_type != RecommendationType.COMBINED_STATIC
-        and recommendation_type != RecommendationType.STATIC_KEYPHRASE_BASED
-        and recommendation_type != RecommendationType.STATIC_DOCUMENT_BASED
-    ):
-        resource_recommender_service._construct_user(
-            user=user,
-            non_understood=non_understood_concept_ids,
-            understood=understood_concept_ids,
-            new_concepts=new_concept_ids,
-            mid=material_id,
-        )
-
-    resp = resource_recommender_service._get_resources(
-        user_id=user_id,
-        slide_id=slide_id,
-        material_id=material_id,
-        recommendation_type=recommendation_type,
-    )
-
-    return make_response(resp, 200)
-    """
-
 
 @course_materials.route("/rating", methods=["POST"])
 def rating():
