@@ -88,7 +88,8 @@ def create_video_resource(tx, node, recommendation_type=''):
         document_embedding=str(node["document_embedding"] if "document_embedding" in node.index else ""),
         helpful_count=0,
         not_helpful_count=0,
-        bookmark_count=0
+        bookmark_count=0,
+        like_count=node["like_count"]
         )
 
 
@@ -1828,7 +1829,7 @@ class NeoDataBase:
                 }
                 
                 if complete:
-                    result["final_embedding"] = node["final_embedding"]
+                    result["embedding"] = node["embedding"]
 
         return result
     
@@ -2146,12 +2147,12 @@ class NeoDataBase:
         # logger.info("Getting List of Resources Containing Concept_CRO")
 
         result = []
-        node_ids = [node["node_id"] for node in concepts_cro]
+        cids = [node["cid"] for node in concepts_cro]
         with self.driver.session() as session:
             result = session.run(
                 """
                 MATCH p=(a:Resource)-[r:CONTAINS_CRO]->(b:Concept_CRO)
-                WHERE ID(b) IN $node_ids
+                WHERE ID(b) IN $cids
                 RETURN  LABELS(a) as labels, ID(a) as id, a.rid as rid, a.title as title, a.text as text,
                         a.thumbnail as thumbnail, a.abstract as abstract, a.post_date as post_date, 
                         a.author_image_url as author_image_url, a.author_name as author_name,
@@ -2160,7 +2161,7 @@ class NeoDataBase:
                         a.similarity_score as similarity_score, a.helpful_count as helpful_count, a.not_helpful_count as not_helpful_count,
                         a.bookmarked_count as bookmarked_count, a.like_count as like_count
                 """,
-                node_ids=node_ids
+                cids=cids
             ).data()
 
             if result:

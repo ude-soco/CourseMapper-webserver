@@ -143,7 +143,7 @@ class ResourceRecommenderService:
             user_embedding=False,
         ):
         """
-            cro_form: user_id: str, mid: str, recommendation_type: int (1,2 -> dynamic and 3,4 -> static), concepts: list,
+            cro_form: user_id: str, concepts: list,
         """
         result = {
                 "user_embedding": None,
@@ -174,6 +174,10 @@ class ResourceRecommenderService:
 
         ## Update User Embedding
         if user_embedding:
+            # user = self.db.cro_get_user(user_id=cro_form["user_id"], complete=True)
+            # embedding_str = user["embedding"]
+            # result["user_embedding"] = embedding_str
+
             sum_embeddings = 0
             sum_weights = 0
             # Convert string type to array type 'np.array'
@@ -194,7 +198,6 @@ class ResourceRecommenderService:
             # Writing user embedding
             self.db.cro_update_user_embedding_value(user_id=cro_form["user_id"], embedding=embedding_str)
             result["user_embedding"] = embedding_str
-
         return result
 
     def cro_save_rating(self, rating: dict):
@@ -678,8 +681,20 @@ class ResourceRecommenderService:
 
         # check whether to only rank resources
         if body["croForm"]["facotr_weights"]["reload"] == True:
+            for rec_type in body["croForm"]["recommendation_types"]:
+                cro_form = {
+                    "user_id": body["croForm"]["user_id"],
+                    "concepts": body["croForm"]["concepts"],
+                }
+                resources = self.db.cro_get_resources(concepts_cro=cro_form["concepts"])
+                # ranking
+                facotr_weights = body["croForm"]["facotr_weights"]["weights"]
+                result = self.cro_sort_result(resources=resources, weights=facotr_weights)
+                result = {"recommendation_type": recommendation_type.value, "concepts": concepts, "nodes": result}
+                results.append(result)
             return results
         
+        logger.info("----new concepts----")
         for rec_type in body["croForm"]["recommendation_types"]:
             # Check if parameters exist. If one doesn't exist, return not found message
             # check_message = resource_recommender_service.check_parameters(
@@ -1162,7 +1177,6 @@ def get_serialized_resource_data(resources, concepts, relations):
     data["edges"] = ser_realations
 
     return data
-
 
 def save_data_to_file(data, file_path):
     data.to_csv(file_path, sep="\t", encoding="utf-8")
