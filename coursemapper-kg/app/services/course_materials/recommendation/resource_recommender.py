@@ -303,22 +303,6 @@ class ResourceRecommenderService:
     def calculate_factors_weights(self, category: int, resources: list, weights: dict = None, light=False):
         """
             Sort by these extra features provided by the resources such as:
-
-            Type: 1 => Video
-            Popularity | Views (videos) -> 0.4
-            Rating: Likes Count Dislike Count -> 0.2
-            Creation Date (content freshness) -> 0.2
-            Similarities Scores -> 0.1
-            Bookmark -> 0.1
-            Certified Account (video) -> 0.05 (optional)
-
-            Type: 1 => Article
-            Rating: Likes Count Dislike Count -> 0.4
-            Similarities Scores -> 0.3
-            Bookmark -> 0.3
-
-            Resources having Rating related to DNU_modified (cid)
-
             weights: dict containing factors weight
             {"views": 0.2, "rating": 0.2, "creation_date": 0.2, "similarity_score": 0.2, "bookmark": 0.2, "like_count": 0.2}
         """
@@ -333,12 +317,15 @@ class ResourceRecommenderService:
         bookmarked_min_value = min(resources, key=lambda x: x["bookmarked_count"])["bookmarked_count"]
         bookmarked_max_value = max(resources, key=lambda x: x["bookmarked_count"])["bookmarked_count"]
 
-        like_count_min_value = min(resources, key=lambda x: x["like_count"])["like_count"]
-        like_count_max_value = max(resources, key=lambda x: x["like_count"])["like_count"]
+        print("bookmarked_min_value ->", bookmarked_min_value)
+        print("bookmarked_max_value ->", bookmarked_max_value)
         
         if category == 1:
             min_views = int(min(resources, key=lambda x: int(x["views"]))["views"])
             max_views = int(max(resources, key=lambda x: int(x["views"]))["views"])
+
+            like_count_min_value = min(resources, key=lambda x: x["like_count"])["like_count"]
+            like_count_max_value = max(resources, key=lambda x: x["like_count"])["like_count"]
 
             for resource in resources:
                 similarity_normalized = resource["similarity_score"]
@@ -371,8 +358,8 @@ class ResourceRecommenderService:
     def cro_sort_result(self, resources: list, weights: dict = None, ratings: list = None):
         """
             Ranking/Sorting Logic for Resources
-            Resources having Rating related to DNU_modified (cid)
             Result Form: {"articles": list, "videos": list}
+            Last Step: Resources having Rating related to DNU_modified (cid)
         """
         # Normalize Weights
         if weights is None:
@@ -380,8 +367,8 @@ class ResourceRecommenderService:
             video_weights_normalized = {'views': 0.2, 'rating': 0.1, 'creation_date': 0.3, 'similarity_score': 0.1, 'bookmark': 0.1, 'like_count': 0.1}
             article_weights_normalized = {'rating': 0.4, 'similarity_score': 0.4, 'bookmark': 0.2}
         else:
-            video_weights_normalized = self.normalize_factor_weights(factor_weights=weights["video"], method_type="l1", complete=True, sum_value=True)
-            article_weights_normalized = self.normalize_factor_weights(factor_weights=weights["article"], method_type="l1", complete=True, sum_value=True)
+            video_weights_normalized = self.normalize_factor_weights(factor_weights=weights["video"], method_type="l1", complete=True, sum_value=False)
+            article_weights_normalized = self.normalize_factor_weights(factor_weights=weights["article"], method_type="l1", complete=True, sum_value=False)
 
         # video items
         resources_videos = [resource for resource in resources if "Video" in resource["labels"]]
@@ -681,6 +668,8 @@ class ResourceRecommenderService:
 
         # check whether to only rank resources
         if body["croForm"]["facotr_weights"]["reload"] == True:
+            logger.info("----facotr_weights concepts----")
+
             for rec_type in body["croForm"]["recommendation_types"]:
                 cro_form = {
                     "user_id": body["croForm"]["user_id"],

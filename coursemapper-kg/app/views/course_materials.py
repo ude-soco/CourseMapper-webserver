@@ -45,6 +45,7 @@ def get_resources():
     data = request.get_json()
     logger.info("------ CRO DATA ----^-->")
     print(data)
+    print()
 
     data_default = data["default"]
     data_cro_form = data["croForm"]
