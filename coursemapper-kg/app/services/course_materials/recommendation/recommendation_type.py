@@ -10,7 +10,7 @@ class RecommendationType(Enum):
     COMBINED_DYNAMIC = "combined_dynamic"
     COMBINED_STATIC = "combined_static"
 
-    def map_type(recommendation_type: str):
+    def map_type(recommendation_type: str, nbr = False):
         if recommendation_type == "1":
             result = RecommendationType.DYNAMIC_KEYPHRASE_BASED
         elif recommendation_type == "2":

@@ -2152,7 +2152,7 @@ class NeoDataBase:
             result = session.run(
                 """
                 MATCH p=(a:Resource)-[r:CONTAINS_CRO]->(b:Concept_CRO)
-                WHERE ID(b) IN $cids
+                WHERE b.cid IN $cids
                 RETURN  LABELS(a) as labels, ID(a) as id, a.rid as rid, a.title as title, a.text as text,
                         a.thumbnail as thumbnail, a.abstract as abstract, a.post_date as post_date, 
                         a.author_image_url as author_image_url, a.author_name as author_name,

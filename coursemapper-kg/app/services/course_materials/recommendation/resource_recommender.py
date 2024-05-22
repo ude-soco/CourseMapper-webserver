@@ -270,7 +270,7 @@ class ResourceRecommenderService:
         
         return normalized_values
 
-    def wilson_lower_bound_score(up, down, confidence=0.95):
+    def wilson_lower_bound_score(self, up, down, confidence=0.95):
         """
             Calculate lower bound of wilson score
             :param up: No of positive ratings
@@ -316,9 +316,6 @@ class ResourceRecommenderService:
 
         bookmarked_min_value = min(resources, key=lambda x: x["bookmarked_count"])["bookmarked_count"]
         bookmarked_max_value = max(resources, key=lambda x: x["bookmarked_count"])["bookmarked_count"]
-
-        print("bookmarked_min_value ->", bookmarked_min_value)
-        print("bookmarked_max_value ->", bookmarked_max_value)
         
         if category == 1:
             min_views = int(min(resources, key=lambda x: int(x["views"]))["views"])
@@ -675,11 +672,14 @@ class ResourceRecommenderService:
                     "user_id": body["croForm"]["user_id"],
                     "concepts": body["croForm"]["concepts"],
                 }
+                # Map recommendation type to enum values
+                recommendation_type = RecommendationType.map_type(rec_type)
+
                 resources = self.db.cro_get_resources(concepts_cro=cro_form["concepts"])
                 # ranking
                 facotr_weights = body["croForm"]["facotr_weights"]["weights"]
                 result = self.cro_sort_result(resources=resources, weights=facotr_weights)
-                result = {"recommendation_type": recommendation_type.value, "concepts": concepts, "nodes": result}
+                result = {"recommendation_type": recommendation_type.value, "concepts": cro_form["concepts"], "nodes": result}
                 results.append(result)
             return results
         
