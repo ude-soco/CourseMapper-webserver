@@ -175,6 +175,8 @@ class YoutubeService:
                 if r["items"][0]["snippet"]["description"]
                 else ""
             )
+            like_count = 0
+            pass
 
-            return duration, views, description
+            return duration, views, description, like_count
         return duration, views, description, like_count

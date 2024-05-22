@@ -557,7 +557,10 @@ class ResourceRecommenderService:
             1) Crawl content based on concept names (not_understood_concept_list)
             2) The algorithm (4 in total) processes the retrieved content
         """
+        wikipedia_articles = []
+        youtube_videos = []
         self.recommender = Recommender()
+
         # Allow parallel recommendation of videos and articles
         with concurrent.futures.ThreadPoolExecutor() as executor:
             futures = {}
@@ -665,7 +668,7 @@ class ResourceRecommenderService:
 
         # check whether to only rank resources
         if body["croForm"]["facotr_weights"]["reload"] == True:
-            logger.info("----facotr_weights concepts----")
+            logger.info("----Ranking Resourses----")
 
             for rec_type in body["croForm"]["recommendation_types"]:
                 cro_form = {
@@ -713,13 +716,13 @@ class ResourceRecommenderService:
 
             # If personalized recommendtion, build user model
             if recommendation_type in [ RecommendationType.DYNAMIC_DOCUMENT_BASED, RecommendationType.DYNAMIC_DOCUMENT_BASED ]:
-                self._construct_user(
-                    user=user,
-                    non_understood=body["non_understood_concept_ids"],
-                    understood=body["understood_concept_ids"],
-                    new_concepts=body["new_concept_ids"],
-                    mid=body["material_id"],
-                )
+                # self._construct_user(
+                #     user=user,
+                #     non_understood=body["non_understood_concept_ids"],
+                #     understood=body["understood_concept_ids"],
+                #     new_concepts=body["new_concept_ids"],
+                #     mid=body["material_id"],
+                # )
                 clu = self.cro_form_logic_updated(cro_form=cro_form, top_n=5, user_embedding=True)
                 cro_form = clu["cro_form"]
                 user_embedding = clu["user_embedding"]
