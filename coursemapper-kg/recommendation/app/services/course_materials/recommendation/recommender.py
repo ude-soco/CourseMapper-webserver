@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import time
 import logging
-from sentence_transformers import util
+from sentence_transformers import util, SentenceTransformer
 from flair.embeddings import TransformerDocumentEmbeddings
 
 from ..kwp_extraction.singlerank_method.singlerank import SingleRank
@@ -146,9 +146,11 @@ class Recommender:
         self.youtube_service = YoutubeService()
         self.wikipedia_service = WikipediaService()
         self.dbpedia = DBpediaSpotlight()
-        self.embedding = TransformerDocumentEmbeddings(
-            "sentence-transformers/msmarco-distilbert-base-tas-b"
-        )
+        # self.embedding = TransformerDocumentEmbeddings(
+            # "sentence-transformers/msmarco-distilbert-base-tas-b"
+        # )
+        self.embedding = SentenceTransformer("all-MiniLM-L6-v2")
+        # TODO get embedding model from material node
 
     def canditate_selection(self, query, video):
         data: pd.DataFrame
@@ -490,24 +492,20 @@ class Recommender:
 
         for index, text in enumerate(data["text"]):
             logger.info(text)
-            sentence = Sentence(text)
-            self.embedding.embed(sentence)
+            embedding = self.embedding.encode(text)
 
-            resource_document_based_embeddings.append(sentence.get_embedding().tolist())
+            resource_document_based_embeddings.append(embedding)
 
         data["document_embedding"] = resource_document_based_embeddings
 
         return data
 
     def compute_cosine_similarity_with_text(self, text1, text2):
-        sentence1 = Sentence(text1)
-        sentence2 = Sentence(text2)
-
-        self.embedding.embed(sentence1)
-        self.embedding.embed(sentence2)
+        sencence1_embedding = self.embedding.encode(text1)
+        sencence2_embedding = self.embedding.encode(text2)
 
         return compute_cosine_similarity_with_embeddings(
-            sentence1.get_embedding(), sentence2.get_embedding()
+            sencence1_embedding, sencence2_embedding
         )
 
     def compute_cosine_similarity_with_keyphrases(self, keyphrases1, keyphrases2):
@@ -527,9 +525,8 @@ class Recommender:
         embedding_list = []
         weight_sum = 0
         for keyphrase in keyphrase_infos:
-            sentence = Sentence(keyphrase[0])
-            self.embedding.embed(sentence)
-            embedding_list.append(sentence.get_embedding() * keyphrase[1])
+            embedding = self.embedding.encode(keyphrase[0])
+            embedding_list.append(embedding * keyphrase[1])
             weight_sum += keyphrase[1]
         if len(embedding_list) != 0:
             vectors = np.sum(embedding_list, axis=0)

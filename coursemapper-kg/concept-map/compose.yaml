@@ -1,0 +1,72 @@
+services:
+  coursemapper-kg-worker-concept-map:
+    platform: linux/x86_64
+    image: ${IMAGE_NAME_PREFIX:-socialcomputing/}coursemapper-webserver-coursemapper-kg-concept-map:${IMAGE_TAG:-latest}
+    build: .
+    environment:
+      NEO4J_URI: bolt://neo4j:7687
+      NEO4J_USER: neo4j
+      NEO4J_PASSWORD: password
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 0
+      REDIS_PASSWORD: 
+      PIPELINES: concept-map
+      WIKIPEDIA_DATABASE_CONNECTION_STRING: "postgres://postgres:HrwFaqi34iH0SA@wp-pg:5432/"
+    depends_on:
+      neo4j:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  coursemapper-kg-worker-modify-graph:
+    platform: linux/x86_64
+    image: ${IMAGE_NAME_PREFIX:-socialcomputing/}coursemapper-webserver-coursemapper-kg-modify-graph:${IMAGE_TAG:-latest}
+    build: .
+    environment:
+      NEO4J_URI: bolt://neo4j:7687
+      NEO4J_USER: neo4j
+      NEO4J_PASSWORD: password
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 0
+      REDIS_PASSWORD: 
+      PIPELINES: modify-graph
+      WIKIPEDIA_DATABASE_CONNECTION_STRING: "postgres://postgres:HrwFaqi34iH0SA@wp-pg:5432/"
+    depends_on:
+      neo4j:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  coursemapper-kg-worker-expand-material:
+    platform: linux/x86_64
+    image: ${IMAGE_NAME_PREFIX:-socialcomputing/}coursemapper-webserver-coursemapper-kg-expand-material:${IMAGE_TAG:-latest}
+    build: .
+    environment:
+      NEO4J_URI: bolt://neo4j:7687
+      NEO4J_USER: neo4j
+      NEO4J_PASSWORD: password
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 0
+      REDIS_PASSWORD: 
+      PIPELINES: expand-material
+      WIKIPEDIA_DATABASE_CONNECTION_STRING: "postgres://postgres:HrwFaqi34iH0SA@wp-pg:5432/"
+    depends_on:
+      neo4j:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  wp-pg:
+    image: postgres:16
+    ports:
+      - 5431:5432
+    environment:
+      - POSTGRES_PASSWORD=HrwFaqi34iH0SA
+    volumes:
+      - coursemapper-kg-wp-pg:/var/lib/postgresql/data
+
+volumes:
+  coursemapper-kg-wp-pg:
