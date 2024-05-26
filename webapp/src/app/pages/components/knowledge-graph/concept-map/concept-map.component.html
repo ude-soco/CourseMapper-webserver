@@ -74,27 +74,6 @@
               Click on a node to view its related concepts and categories
             </span>
           </div>
-          <!-- <button
-            pButton
-            pRipple
-            id="didNotUnderstandButton"
-            type="button"
-            (click)="getConceptMapData()"
-            label="Start"
-            icon="pi pi-play"
-            iconPos="right"
-            pTooltip="Get Knowledge Graph"
-            class="p-button-rounded"
-            style="font-size: 15px"
-          >
-            <p-progressSpinner
-              *ngIf="isLoading"
-              [style]="{ width: '20px', height: '20px' }"
-              styleClass="custom-spinner"
-              strokeWidth="8"
-              animationDuration=".5s"
-            ></p-progressSpinner>
-          </button> -->
         </div>
       </div>
       <hr
@@ -103,10 +82,6 @@
       />
       <div class="graphBody" id="slideKgDialogDiv" style="display: block">
         <div class="dialogTabs">
-          <!-- <span style="white-space: nowrap; display: inline">
-              <p-tabMenu [model]="tabsLevel" [activeItem]="tabsLevel[0]">
-              </p-tabMenu>
-            </span> -->
           <div class="contentKgDialog" style="display: flex">
             <div class="profile-main-loader" *ngIf="isLoading">
               <div>
@@ -139,8 +114,81 @@
                 [cyWidth]="cyWidth"
                 [showMaterialKg]="showMaterialKg"
                 [showCourseKg]="showCourseKg"
+                (editConcept)="editConcept($event)"
+                (conceptDeleted)="deleteConcept($event)"
               >
               </app-graph>
+            </div>
+          </div>
+          <div *ngIf="isDraft">
+            <div class="flex flex-row justify-between items-center" *ngIf="conceptMapData && !conceptInputsDisabled">
+              <div class="flex flex-col gap-4" *ngIf="conceptMapData && !conceptInputsDisabled">
+                <p *ngIf="editingConceptName">
+                  Editing concept {{editingConceptName}}
+                </p>
+                <form [formGroup]="editConceptForm" class="flex flex-row gap-2 items-center">
+                  <div class="p-float-label w-80">
+                    <p-autoComplete
+                      id="concept-name-input"
+                      formControlName="conceptName"
+                      [suggestions]="conceptSearchResults"
+                      (completeMethod)="searchConcepts($event)"
+                      field="title"
+                      styleClass="w-full"
+                      inputStyleClass="w-full"
+                    ></p-autoComplete>
+                    <label for="concept-name-input">Concept name</label>
+                  </div>
+                  <div class="w-80">
+                    <p-multiSelect
+                      id="concept-slides-input"
+                      [options]="slideOptions"
+                      formControlName="conceptSlides"
+                      defaultLabel="Slides"
+                      [filter]="false"
+                      styleClass="w-full"
+                    ></p-multiSelect>
+                  </div>
+                  <button
+                    *ngIf="!editingConceptName"
+                    pButton
+                    type="button"
+                    label="Add concept"
+                    (click)="addConcept()"
+                  ></button>
+                  <button
+                    *ngIf="editingConceptName"
+                    pButton
+                    type="button"
+                    label="Update concept"
+                    (click)="addConcept()"
+                  ></button>
+                  <button
+                    *ngIf="editingConceptName"
+                    pButton
+                    [ngStyle]="{ backgroundColor: '#EEEEEE', color: '#333333' }"
+                    type="button"
+                    label="Cancel edit"
+                    (click)="cancelEditConcept()"
+                  ></button>
+                </form>
+              </div>
+              <button
+                pButton
+                [ngStyle]="{ backgroundColor: '#EA580C' }"
+                type="button"
+                label="Expand and publish"
+                (click)="expandAndPublish()"
+              ></button>
+            </div>
+            <div *ngIf="conceptInputsDisabled">
+              <p-progressSpinner
+                [style]="{ width: '80px', height: '80px' }"
+                styleClass="custom-spinner"
+                strokeWidth="8"
+                fill="var(--surface-ground)"
+                animationDuration=".5s"
+              ></p-progressSpinner>
             </div>
           </div>
         </div>
@@ -185,57 +233,7 @@
         </span>
         <div id="materialKgControlPanel" class="noContentRecieved">
           <span *ngIf="conceptMapData">
-            <!-- <span
-                id="checkBoxes"
-                style="margin-right: 1rem"
-                *ngFor="let option of selectedCheckOptions"
-                class="p-field-checkbox"
-              >
-                <p-checkbox
-                  name="nodesType"
-                  value="option"
-                  [value]="option"
-                  [(ngModel)]="selectedOption"
-                  [inputId]="option.key"
-                  *ngIf="option.key !== 'annotation'"
-                  (onChange)="updateSingleChecked(option.key)"
-                ></p-checkbox>
-                <p-checkbox
-                  name="nodesType"
-                  value="option"
-                  [value]="option"
-                  [(ngModel)]="selectedOption"
-                  [inputId]="option.key"
-                  *ngIf="option.key === 'annotation'"
-                  [readonly]="true"
-                  (onChange)="updateSingleChecked(option.key)"
-                ></p-checkbox>
-                <label class="checkLabel" [for]="option.key">{{
-                  option.name
-                }}</label>
-              </span> -->
           </span>
-          <!-- <button
-            pButton
-            pRipple
-            id="didNotUnderstandButton"
-            type="button"
-            (click)="getConceptMapData()"
-            label="Start"
-            icon="pi pi-play"
-            iconPos="right"
-            pTooltip="Get Knowledge Graph"
-            class="p-button-rounded"
-            style="font-size: 15px"
-          >
-            <p-progressSpinner
-              *ngIf="isLoading"
-              [style]="{ width: '20px', height: '20px' }"
-              styleClass="custom-spinner"
-              strokeWidth="8"
-              animationDuration=".5s"
-            ></p-progressSpinner>
-          </button> -->
         </div>
       </div>
       <hr
@@ -269,6 +267,8 @@
                 [cyWidth]="cyWidth"
                 [showMaterialKg]="showMaterialKg"
                 [showCourseKg]="showCourseKg"
+                (editConcept)="editConcept($event)"
+                (conceptDeleted)="deleteConcept($event)"
               >
               </app-graph>
             </div>
@@ -330,17 +330,9 @@
     maskStyleClass="dialogMask"
   >
     <hr style="margin-bottom: 0.25rem" />
-    <!-- <ng-container class="h-full">
-  <p class="text-xl font-medium text-center h-40" >There is no content in the course to create KG.</p>
-
-    </ng-container> -->
-      <div class="grid grid-cols-1 justify-items-center p-60">
-        <div class='text-xl font-medium text-center'>There is no content in the course to create KG.</div>
-      </div>
-
-        <!-- <p class="text-xl font-medium text-center " >There is no content in the course to create KG.</p> -->
-
-
+    <div class="grid grid-cols-1 justify-items-center p-60">
+      <div class='text-xl font-medium text-center'>There is no content in the course to create KG.</div>
+    </div>
   </p-dialog>
 </div>
 
@@ -540,7 +532,7 @@
                         <fieldset
                           id="previousConcepts"
                           #previousConcepts
-                          
+
                           *ngIf="previousConceptsObj.length"
                         >
                           <div
@@ -622,19 +614,6 @@
                       id="recommendationSpan"
 
                     >
-                   <!--   <button
-                        pButton
-                        pRipple
-                        type="button"
-                        *ngIf="!disableShowRecommendationsButton"
-                        id="recommendationButton"
-                        class="p-button-sm p-button-rounded"
-                        label="Show Recommendations"
-                        pTooltip="Show recommendations for not understood concepts"
-                        style="font-size: 17px; max-height: 95%"
-                        pStyleClass="showRecoomendationsButton"
-                        (click)="showRecommendations()"
-                      >-->
                       <button
                         pButton
                         pRipple
@@ -656,19 +635,6 @@
                           animationDuration=".5s"
                         ></p-progressSpinner>
                       </button>
-                  <!--    <button
-                        pButton
-                        pRipple
-                        type="button"
-                        id="recommendationButton"
-                        *ngIf="disableShowRecommendationsButton"
-                        class="p-button-sm showRecommendations p-button-rounded"
-                        label="Show Recommendations"
-                        pTooltip="Select not understood concept(s) to get recommended"
-                        style="font-size: 17px; max-height: 95%; background-color: #e0e0e0; color: #8b8b8b; cursor: auto;"
-                        pStyleClass="showRecoomendationsButton"
-                        (click)="showRecommendations()"
-                      ></button>-->
                       <button
                         pButton
                         pRipple
@@ -732,6 +698,8 @@
                     [slideKnowledgeGraph]="true"
                     [recommenderKnowledgeGraph]="false"
                     [cyHeight]="cyHeight"
+                    (editConcept)="editConcept($event)"
+                    (conceptDeleted)="deleteConcept($event)"
                   >
                   </app-graph>
                 </div>
@@ -773,18 +741,12 @@
               </div>
             </div>
             <app-result-view
-            *ngIf="this.resultMaterials!=null"
-                  [concepts1]="concepts1"
-                  [results1]="resultMaterials"
+              *ngIf="this.resultMaterials!=null"
+              [concepts1]="concepts1"
+              [results1]="resultMaterials"
+              >
 
-                >
-
-              </app-result-view>
-                <!-- [concepts2]="concepts2"
-                [results2]="resultMaterials2"
-                [results3]="resultMaterials3"
-                [results4]="resultMaterials4" -->
-
+            </app-result-view>
               </div>
             </div>
           </div>

@@ -1,8 +1,12 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MessageService } from 'primeng/api';
-import { Subscription } from 'rxjs';
+import { lastValueFrom, Subscription } from 'rxjs';
+import { ConceptMapService } from 'src/app/services/concept-map-service.service';
 import { ConceptStatusService } from 'src/app/services/concept-status.service';
 import { SlideConceptsService } from 'src/app/services/slide-concepts.service';
+import { Store } from '@ngrx/store';
+import { State } from 'src/app/state/app.reducer';
+import { getCurrentMaterial } from '../../materials/state/materials.reducer';
 
 @Component({
   selector: 'app-graph',
@@ -22,6 +26,9 @@ export class GraphComponent {
   @Input() cyWidth: any;
   @Input() showMaterialKg: boolean;
   @Input() showCourseKg: boolean;
+
+  @Output() editConcept: EventEmitter<string> = new EventEmitter();
+  @Output() conceptDeleted: EventEmitter<string> = new EventEmitter();
 
   node_id: string | undefined;
   node_cid: string | undefined;
@@ -47,7 +54,9 @@ export class GraphComponent {
   constructor(
     private messageService: MessageService, // show toast msgs
     private slideConceptservice: SlideConceptsService, //Change concepts' status on slide_KG [new, understood, did not understand]
-    private statusServie: ConceptStatusService // informs this component when a status has been changed to show a toast msg in case the abstract covers the selected concept
+    private statusServie: ConceptStatusService, // informs this component when a status has been changed to show a toast msg in case the abstract covers the selected concept
+    private conceptMapService: ConceptMapService, // remove concept
+    private store: Store<State>,
   ) {
     this.newConceptsSubscription = slideConceptservice.newConcepts.subscribe(
       (res) => {
@@ -246,5 +255,15 @@ export class GraphComponent {
       summary: 'Not Understood List Updated',
       detail: 'Added to not understood concepts list!',
     });
+  }
+
+  editConcept_() {
+    this.editConcept.emit(this.node_cid);
+    this.closeAbstractPanel();
+  }
+
+  deleteConcept() {
+    this.conceptDeleted.emit(this.node_cid);
+    this.closeAbstractPanel();
   }
 }

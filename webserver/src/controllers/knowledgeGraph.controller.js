@@ -10,6 +10,27 @@ const neo4j = require("../graph/neo4j");
 const redis = require("../graph/redis");
 // TODO Issue #640: Use better file names
 
+async function checkIsModerator(req) {
+  if (!req.userId || !req.params.courseId) {
+    return false;
+  }
+  const user = await User.findById(req.userId);
+  if (!user) {
+    return false;
+  }
+  const role = await Role.findById(user.role);
+  if (role.name === "moderator" || role.name === "admin") {
+    return true
+  }
+  const course = user.courses.find(
+    (item) => item.courseId.valueOf() === req.params.courseId
+  );
+  const courseRole = await Role.findOne({ _id: course.role });
+  if (courseRole.name === "moderator") {
+    return true
+  }
+}
+
 export const checkSlide = async (req, res) => {
   const slideId = req.params.slideId;
 
@@ -60,6 +81,17 @@ export const deleteMaterial = async (req, res, next) => {
   try {
     await neo4j.deleteMaterial(materialId);
     return next();
+  } catch (err) {
+    return res.status(500).send({ error: err.message });
+  }
+}
+
+export const getMaterialSlides = async (req, res) => {
+  const materialId = req.params.materialId;
+
+  try {
+    const records = await neo4j.getMaterialSlides(materialId);
+    return res.status(200).send({ records });
   } catch (err) {
     return res.status(500).send({ error: err.message });
   }
@@ -120,28 +152,9 @@ export const setRating = async (req, res) => {
   }
 }
 
-async function checkIsModerator(userId, courseId) {
-  const user = await User.findById(userId);
-  const role = await Role.findById(user.role);
-  if (role.name === "moderator" || role.name === "admin") {
-    return true
-  }
-  const course = user.courses.find(
-    (item) => item.courseId.valueOf() === courseId
-  );
-  const courseRole = await Role.findOne({ _id: course.role });
-  if (courseRole.name === "moderator") {
-    return true
-  }
-}
-
 export const conceptMap = async (req, res) => {
-  const modelName = req.body.modelName;
   const materialId = req.params.materialId;
-  const courseId = req.params.courseId;
   socketio.getIO().to("material:"+materialId).emit("log", { called: "conceptmap started" } );
-
-  const isModerator = await checkIsModerator(req.userId, courseId);
 
   const material = await Material.findById(materialId);
   if (!material) {
@@ -149,43 +162,82 @@ export const conceptMap = async (req, res) => {
   }
   const materialName = material.name;
 
-  if (isModerator) {
-    const materialPath = process.cwd() + material.url + material._id + '.pdf';
-    const materialData = await fs.readFile(materialPath);
-    
-    const result = await redis.addJob('concept-map', {
-        modelName,
-        materialId,
-        materialName,
-      }, async (jobId) => {
-        await redis.addFile(jobId, materialData);
-      }, (result) => {
-        socketio.getIO().to("material:"+materialId).emit("log", { result:result } );
- 
-        if (res.headersSent) {
-          return;
-        }
-        if (result.error) {
-          return res.status(500).send({ error: result });
-        }
-        return res.status(200).send(result.result);
-      });
-      socketio.getIO().to("material:"+materialId).emit("log", { addJob:result, pipeline:'concept-map'});
-  } else {
-    await redis.trackJob('concept-map', {
-      modelName,
-      materialId,
-      materialName,
-    }, (result) => {
-      if (res.headersSent) {
-        return;
-      }
-      if (!result) {
-        return res.status(404).send();
-      }
-      return res.status(200).send(result.result);
-    });
-  }
+  const materialPath = process.cwd() + material.url + material._id + '.pdf';
+  const materialData = await fs.readFile(materialPath);
+  
+  const result = await redis.addJob('concept-map', {
+    materialId,
+    materialName,
+  }, async (jobId) => {
+    await redis.addFile(jobId, materialData);
+  }, (result) => {
+    socketio.getIO().to("material:"+materialId).emit("log", { result:result } );
+
+    if (res.headersSent) {
+      return;
+    }
+    if (result.error) {
+      return res.status(500).send({ error: result });
+    }
+    return res.status(200).send(result.result);
+  });
+  socketio.getIO().to("material:"+materialId).emit("log", { addJob:result, pipeline:'concept-map'});
+}
+
+export const deleteConcept = async (req, res) => {
+  const materialId = req.params.materialId;
+  const conceptId = req.params.conceptId;
+  
+  await redis.addJob('modify-graph', {
+    action: 'remove-concept',
+    materialId,
+    conceptId,
+  }, undefined, (result) => {
+    if (res.headersSent) {
+      return;
+    }
+    if (result.error) {
+      return res.status(500).send(result);
+    }
+    return res.status(200).send(result.result);
+  });
+}
+
+export const addConcept = async (req, res) => {
+  const materialId = req.params.materialId;
+  const conceptName = req.body.conceptName;
+  const slides = req.body.slides;
+  
+  await redis.addJob('modify-graph', {
+    action: 'add-concept',
+    materialId,
+    conceptName,
+    slides,
+  }, undefined, (result) => {
+    if (res.headersSent) {
+      return;
+    }
+    if (result.error) {
+      return res.status(500).send(result);
+    }
+    return res.status(200).send(result.result);
+  });
+}
+
+export const publishConceptMap = async (req, res) => {
+  const materialId = req.params.materialId;
+  
+  await redis.addJob('expand-material', {
+    materialId,
+  }, undefined, (result) => {
+    if (res.headersSent) {
+      return;
+    }
+    if (result.error) {
+      return res.status(500).send({ error: result });
+    }
+    return res.status(200).send(result.result);
+  });
 }
 
 export const getConcepts = async (req, res) => {
@@ -255,3 +307,18 @@ export const readSlide = async (req, res, next) => {
     next();
   }
 };
+
+export const searchWikipedia = async (req, res) => {
+  const query = req.query.query;
+
+  try {
+    const conceptNameEncoded = encodeURIComponent(query);
+    const url = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${conceptNameEncoded}&utf8=&format=json`;
+    const response = await fetch(url);
+    const data = await response.json();
+    const searchResults = data.query.search;
+    return res.status(200).send({ searchResults });
+  } catch (err) {
+    return res.status(500).send({ error: err.message });
+  }
+}
