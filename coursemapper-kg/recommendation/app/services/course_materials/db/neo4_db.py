@@ -1159,6 +1159,17 @@ class NeoDataBase:
                 "RETURN TYPE(r) as type, ID(a) as source, ID(b) as target""" % relation_type,
                 rid=rid, cid=cid, weight=weight)
 
+    def get_lm(self, mid):
+        """
+        """
+        logger.info("Get learning material '%s'" % mid)
+        with self.driver.session() as session:
+            result = session.run(
+                "MATCH (m:LearningMaterial) WHERE m.mid = $mid RETURN m",
+                mid=mid).data()
+
+        return list(result)
+
     def get_slide(self, sid):
         """
         """

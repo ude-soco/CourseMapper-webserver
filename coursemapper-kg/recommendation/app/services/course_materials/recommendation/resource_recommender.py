@@ -96,8 +96,13 @@ class ResourceRecommenderService:
         relationship_list = []
         not_understood_concept_list = []
         concepts = []
-        
-        self.recommender = Recommender()
+
+        material = self.db.get_lm(material_id)
+        embedding_model = None
+        if len(material) > 0 and "embedding_model" in material[0]["m"]:
+            embedding_model = material[0]["m"]["embedding_model"]
+
+        self.recommender = Recommender(embedding_model=embedding_model)
 
         # Allow parallel recommendation of videos and articles
         with concurrent.futures.ThreadPoolExecutor() as executor:

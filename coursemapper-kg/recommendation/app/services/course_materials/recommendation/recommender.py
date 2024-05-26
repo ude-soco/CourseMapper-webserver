@@ -5,7 +5,6 @@ import pandas as pd
 import time
 import logging
 from sentence_transformers import util, SentenceTransformer
-from flair.embeddings import TransformerDocumentEmbeddings
 
 from ..kwp_extraction.singlerank_method.singlerank import SingleRank
 from .recommendation_type import RecommendationType
@@ -142,15 +141,13 @@ def retrieve_keyphrases(data):
 
 
 class Recommender:
-    def __init__(self):
+    def __init__(self, embedding_model):
         self.youtube_service = YoutubeService()
         self.wikipedia_service = WikipediaService()
         self.dbpedia = DBpediaSpotlight()
-        # self.embedding = TransformerDocumentEmbeddings(
-            # "sentence-transformers/msmarco-distilbert-base-tas-b"
-        # )
-        self.embedding = SentenceTransformer("all-MiniLM-L6-v2")
-        # TODO get embedding model from material node
+        if not embedding_model:
+            embedding_model = "sentence-transformers/msmarco-distilbert-base-tas-b"
+        self.embedding = SentenceTransformer(embedding_model)
 
     def canditate_selection(self, query, video):
         data: pd.DataFrame
