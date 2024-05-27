@@ -42,7 +42,7 @@
     "ng2-dragula": "^2.1.1",
     "ng2-pdf-viewer": "^9.1.5",
     "ngx-infinite-scroll": "^17.0.0",
-    "ngx-socket-io": "^4.6.1",
+    "ngx-socket-io": "^4.7.0",
     "openai": "^3.2.1",
     "primeicons": "^7.0.0",
     "primeng": "^15.4.1",
