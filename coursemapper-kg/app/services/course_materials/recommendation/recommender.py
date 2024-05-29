@@ -164,7 +164,6 @@ class Recommender:
             end_time = time.time()
             print("Get Articles Execution time: ", end_time - start_time, flush=True)
 
-        logger.info(f"canditate_selection -> {data.shape}")
         return data
 
     def recommend(
@@ -208,105 +207,14 @@ class Recommender:
                     if len(data.index) >= 5:
                         break
                 i += 1
+        
+        if data.empty == False:
+            logger.info(f"canditate_selection -> {data.shape}")
+
         # Without embedding Not yet supported
         if recommendation_type == RecommendationType.WITHOUT_EMBEDDING:
             return data
         
-        # if Model 4
-        elif recommendation_type == RecommendationType.STATIC_DOCUMENT_BASED:
-            start_time = time.time()
-
-            # Step 1: compute document embedding for resources
-            data = self.compute_document_based_embeddings(data)
-
-            end_time = time.time()
-            print(
-                "Retrieve term-based embeddings Execution time: ",
-                end_time - start_time,
-                flush=True,
-            )
-            start_time = time.time()
-
-            # Step 2: compute similarities between slide document embeddings and resources document embeddings
-            logger.info("Compute Cosine Similarities")
-            data = compute_document_based_similarity(
-                data, slide_document_embedding, recommendation_type
-            )
-
-            end_time = time.time()
-            print(
-                "Compute term-based similarity Execution time: ",
-                end_time - start_time,
-                flush=True,
-            )
-
-            start_time = time.time()
-
-            # Step 3: sort results
-            # sorted_data = sort_by_similarity_type(data, recommendation_type)
-
-            end_time = time.time()
-
-            print(
-                "Compute term-based Sort Execution time: ",
-                end_time - start_time,
-                flush=True,
-            )
-
-            return data # sorted_data.head(top_n)
-        
-        # If Model 3
-        elif recommendation_type == RecommendationType.STATIC_KEYPHRASE_BASED:
-            start_time = time.time()
-
-            # Step 1: Retrieve Keyphrases
-            data = retrieve_keyphrases(data)
-
-            end_time = time.time()
-            print(
-                "Retrieve keyphrases Execution time: ",
-                end_time - start_time,
-                flush=True,
-            )
-
-            start_time = time.time()
-
-            # Step 2: compute keyphrase-based embedding for resources
-            data = self.compute_keyphrase_based_embeddings(data)
-            end_time = time.time()
-            print(
-                "Retrieve keyphrase-based embedding Execution time: ",
-                end_time - start_time,
-                flush=True,
-            )
-            start_time = time.time()
-
-            # Step 3: compute keyphrase-based similarity between slide weighted average keyphrase embeddings and
-            # resources weighted average keyphrase embeddings
-            logger.info("Compute Cosine Similarities")
-            data = compute_keyphrase_based_similarity(
-                data, slide_weighted_avg_embedding_of_concepts, recommendation_type
-            )
-            end_time = time.time()
-            print(
-                "Retrieve keyphrase-based embedding Execution time: ",
-                end_time - start_time,
-                flush=True,
-            )
-            start_time = time.time()
-
-            # Step 4: sort results by similarity score
-            # sorted_data = sort_by_similarity_type(data, recommendation_type)
-
-            end_time = time.time()
-            print(
-                "Retrieve keyphrase-based embeddings Execution time: ",
-                end_time - start_time,
-                flush=True,
-            )
-
-            return data # sorted_data.head(top_n)
-
         # Model 1
         elif recommendation_type == RecommendationType.DYNAMIC_KEYPHRASE_BASED:
             start_time = time.time()
@@ -403,8 +311,102 @@ class Recommender:
             print("Sort result Execution time: ", end_time - start_time, flush=True)
 
             return data # sorted_data.head(top_n)
-        
-        
+    
+        # If Model 3
+        elif recommendation_type == RecommendationType.STATIC_KEYPHRASE_BASED:
+            start_time = time.time()
+
+            # Step 1: Retrieve Keyphrases
+            data = retrieve_keyphrases(data)
+
+            end_time = time.time()
+            print(
+                "Retrieve keyphrases Execution time: ",
+                end_time - start_time,
+                flush=True,
+            )
+
+            start_time = time.time()
+
+            # Step 2: compute keyphrase-based embedding for resources
+            data = self.compute_keyphrase_based_embeddings(data)
+            end_time = time.time()
+            print(
+                "Retrieve keyphrase-based embedding Execution time: ",
+                end_time - start_time,
+                flush=True,
+            )
+            start_time = time.time()
+
+            # Step 3: compute keyphrase-based similarity between slide weighted average keyphrase embeddings and
+            # resources weighted average keyphrase embeddings
+            logger.info("Compute Cosine Similarities")
+            data = compute_keyphrase_based_similarity(
+                data, slide_weighted_avg_embedding_of_concepts, recommendation_type
+            )
+            end_time = time.time()
+            print(
+                "Retrieve keyphrase-based embedding Execution time: ",
+                end_time - start_time,
+                flush=True,
+            )
+            start_time = time.time()
+
+            # Step 4: sort results by similarity score
+            # sorted_data = sort_by_similarity_type(data, recommendation_type)
+
+            end_time = time.time()
+            print(
+                "Retrieve keyphrase-based embeddings Execution time: ",
+                end_time - start_time,
+                flush=True,
+            )
+
+            return data # sorted_data.head(top_n)
+
+        # if Model 4
+        elif recommendation_type == RecommendationType.STATIC_DOCUMENT_BASED:
+            start_time = time.time()
+
+            # Step 1: compute document embedding for resources
+            data = self.compute_document_based_embeddings(data)
+
+            end_time = time.time()
+            print(
+                "Retrieve term-based embeddings Execution time: ",
+                end_time - start_time,
+                flush=True,
+            )
+            start_time = time.time()
+
+            # Step 2: compute similarities between slide document embeddings and resources document embeddings
+            logger.info("Compute Cosine Similarities")
+            data = compute_document_based_similarity(
+                data, slide_document_embedding, recommendation_type
+            )
+
+            end_time = time.time()
+            print(
+                "Compute term-based similarity Execution time: ",
+                end_time - start_time,
+                flush=True,
+            )
+
+            start_time = time.time()
+
+            # Step 3: sort results
+            # sorted_data = sort_by_similarity_type(data, recommendation_type)
+
+            end_time = time.time()
+
+            print(
+                "Compute term-based Sort Execution time: ",
+                end_time - start_time,
+                flush=True,
+            )
+
+            return data # sorted_data.head(top_n)
+
         # If Combined Dynamic Model.
         # TODO this model was Ignored during the evalution. Can be considered in future works
         elif recommendation_type == RecommendationType.COMBINED_DYNAMIC:

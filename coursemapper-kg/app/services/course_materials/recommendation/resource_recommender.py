@@ -604,6 +604,9 @@ class ResourceRecommenderService:
                     )
                     futures[future] = resource_type
 
+            print(future.result())
+            print(future.__dict__)
+            
             # When one of the parallel operations is finish retrieve results
             # 3000s is the maximum time allowed for each operation
             for future in concurrent.futures.as_completed(futures, 3000):

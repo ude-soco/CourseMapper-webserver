@@ -21,8 +21,8 @@ class WikipediaService:
 
         for title in response:
             try:
-                page = wikipedia.page(title)
-                content = page.content
+                page = wikipedia.page(title) # auto_suggest=False
+                # content = page.content
                 abstract = page.summary
                 url = page.url
                 # thumbnail_url = page.images[0] if len(page.images) > 0 else ""
