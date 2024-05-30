@@ -51,7 +51,7 @@ def get_resources():
     data_cro_form = data["croForm"]
     
     resource_recommender_service = ResourceRecommenderService()
-    result = resource_recommender_service._get_resources2(data_default=data_default, data_cro_form=data_cro_form)
+    result = resource_recommender_service._get_resources(data_default=data_default, data_cro_form=data_cro_form)
 
     if result == None:
         return jsonify({"msg": "Internal Server Error"}), 404

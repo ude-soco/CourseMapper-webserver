@@ -2144,6 +2144,11 @@ class NeoDataBase:
         """
             Getting List of Resources Containing Concept_CRO
         """
+        def resource_replace_none_value(value):
+            if value == None:
+                return 0
+            return int(value)
+        
         # logger.info("Getting List of Resources Containing Concept_CRO")
 
         result = []
@@ -2159,11 +2164,12 @@ class NeoDataBase:
                         a.keyphrases as keyphrases, a.description as description, a.description_full as description_full,
                         a.views as views, a.publish_time as publish_time, a.uri as uri, a.duration as duration,
                         a.similarity_score as similarity_score, a.helpful_count as helpful_count, a.not_helpful_count as not_helpful_count,
-                        a.bookmarked_count as bookmarked_count, a.like_count as like_count
+                        COALESCE(a.bookmarked_count, 0) AS bookmarked_count, COALESCE(a.like_count, 0) AS like_count
                 """,
                 cids=cids
             ).data()
 
+            result_final = []
             if result:
                 # print([key for key, value in result[0].items() ])
                 for resource in result:
@@ -2178,7 +2184,7 @@ class NeoDataBase:
                         "similarity_score": float(resource["similarity_score"]),
                         "keyphrases": resource["keyphrases"],
                         "text": resource["text"],
-                        "bookmarked_count": int(resource["bookmarked_count"])
+                        "bookmarked_count": resource["bookmarked_count"]
                     }
 
                     if "Video" in r["labels"]:
@@ -2188,10 +2194,12 @@ class NeoDataBase:
                         r["duration"] = resource["duration"]
                         r["views"] = int(resource["views"])
                         r["publish_time"] = resource["publish_time"]
-                        r["like_count"] = int(resource["like_count"])
+                        r["like_count"] = resource["like_count"]
 
                     elif "Article" in r["labels"]:
                         r["abstract"] = resource["abstract"]
+
+                    result_final.append(r)
 
         return result
 

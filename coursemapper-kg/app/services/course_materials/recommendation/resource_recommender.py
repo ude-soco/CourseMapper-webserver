@@ -146,8 +146,9 @@ class ResourceRecommenderService:
             cro_form: user_id: str, concepts: list,
         """
         result = {
-                "user_embedding": None,
                 "cro_form": None,
+                "user_embedding": None,
+                "concepts": None,
                 "concept_cids": [],
                 "concept_names": []
             }
@@ -171,6 +172,7 @@ class ResourceRecommenderService:
         
         cro_form["concepts"] = concepts_cro
         result["cro_form"] = cro_form
+        # result["concept_names"] = [concept["name"] for concept in cro_form["concepts"]]
 
         ## Update User Embedding
         if user_embedding:
@@ -198,6 +200,7 @@ class ResourceRecommenderService:
             # Writing user embedding
             self.db.cro_update_user_embedding_value(user_id=cro_form["user_id"], embedding=embedding_str)
             result["user_embedding"] = embedding_str
+
         return result
 
     def cro_save_rating(self, rating: dict):
@@ -218,7 +221,6 @@ class ResourceRecommenderService:
                                                                      resources=resources,
                                                                      old_relationship=True
                                                                     )
-
 
     def normalize_factor_weights(self, factor_weights: dict=None, values: list=[], method_type = "l1", complete=True, sum_value=True): # List[float]
         """
@@ -384,173 +386,6 @@ class ResourceRecommenderService:
             "videos": resources_videos
         }
 
-    ##### 
-    def cro_store_detail_rec(
-            self, 
-            cro_form: dict, 
-            top_n=5,
-            user_embedding=False,
-            is_concept_cids=False,
-            is_concept_names=False
-        ):
-        """
-            cro_form: user_id: str, mid: str, recommendation_type: int (1,2 -> dynamic and 3,4 -> static), concepts: list,
-        """
-        msg_log_gobal = "CRO ->"
-        result_exists = False
-        result_final = {
-                "cro_form_concepts_original": [],
-                # "top_n_dnu_concepts": None,
-                "user_embedding": None,
-                "cro_form": None,
-                "concepts": [],
-                "result_exists": False
-            }
-        logger.info(f"{msg_log_gobal} Creating cro_form (if not exists) and updating User Embedding Value")
-
-        ## set the original concepts list
-        logger.info("setting the original concepts list")
-        result_final["cro_form_concepts_original"] = cro_form["concepts"]
-
-
-        ## complete the concept list with existing dnus
-        logger.info("completing the concept list with existing dnus")
-        user_dnus_conceps = self.db.cro_get_top_n_dnu_concepts( user_id=cro_form["user_id"],
-                                                                material_id=cro_form["mid"]
-                                                            )
-        user_dnus_conceps = sorted(user_dnus_conceps, key=lambda x: x["weight"], reverse=True)
-
-        concepts = []
-        """
-        # if len(cro_form["concepts"]) > 5:
-        #     concepts_sorted = sorted(cro_form["concepts"], key=lambda x: x["weight"], reverse=True)
-        #     concepts = concepts_sorted[:top_n]
-        # else:
-        #     # concepts_2 = user_dnus_conceps[:len(cro_form["concepts"]) + 1 ]
-        #     concepts_2 = []
-        #     count = 0
-        #     for concept_root in user_dnus_conceps:
-        #         if count == len(cro_form["concepts"]) + 1 :
-        #             if concept_root["cid"] not in [concept["cid"] for concept in cro_form["concepts"]]:
-        #                 concepts_2.append(concept_root)
-        #                 count += 1
-        #         else:
-        #             break
-            
-        #     concepts_1 = cro_form["concepts"]
-        #     concepts = concepts_1 + concepts_2
-        """
-        
-        ## set detail of concept
-        concepts_sorted = sorted(cro_form["concepts"], key=lambda x: x["weight"], reverse=True) # to be adapt with the logic above
-        concepts = concepts_sorted[:top_n]
-        for concept in concepts:
-            for concept_root in user_dnus_conceps:
-                if concept["cid"] == concept_root["cid"]:
-                    concept["name"] = concept_root["name"]
-                    concept["final_embedding"] = concept_root["final_embedding"]
-                    break
-                
-        # print("concepts ->", len(concepts))
-
-        ## Check if node "cro_form" exists
-        logger.info("Check if node 'cro_form' exists")
-        cro_form_node_exists = self.db.cro_check_cro_nodes_exist(cro_form=True)
-
-        cro_form_found = None
-        # cro_form_concept_cids = [concept["cid"] for concept in concepts]
-        # concept_weights_udpated = [concept["weight"] for concept in concepts]
-        if cro_form_node_exists["node_exists"] == True:
-            cro_form_found = self.db.cro_get_exact_cro_form(cro_form=cro_form)
-            # cro_form_found = self.db.cro_get_exact_cro_form(    user_id=cro_form["user_id"], 
-            #                                                                                 mid=cro_form["mid"], 
-            #                                                                                 concept_cids=cro_form_concept_cids
-            #                                                                             )
-
-            logger.info("cro_get_exact_cro_form ->")
-            # print(cro_form_found)
-            
-            if cro_form_found:
-                result_exists = True
-                # result_final["result_exists"] = True
-
-        if cro_form_found == None:
-            cro_form_result = self.db.cro_create_cro_form(
-                    user_id=cro_form["user_id"],
-                    mid=cro_form["mid"],
-                    recommendation_type=cro_form["recommendation_type"],
-                    concepts=concepts # cro_form["concepts"]
-                    # concepts_original=result_final["cro_form_concepts_original"]
-                )
-            cro_form_found = cro_form_result
-
-            # check relationship between cro_user and cro_form alreay exists
-            rsuf = self.db.cro_check_and_count_relationship_cro_user_and_cro_form(user_id=cro_form["user_id"])
-            if rsuf["count"] == 0:
-
-                ## create node cro_user
-                cro_user_result = self.db.cro_create_cro_user(user_id=cro_form["user_id"], embedding="")
-                
-                ## create relationship between cro_user and cro_concept # cro_user_result_cro_form_result_r
-                logger.info("creating relationship between cro_user and cro_concept")
-
-                r = self.db.cro_create_relationship_between_cro_user_and_cro_concept(
-                    cro_user_node_id=cro_user_result["node_id"],
-                    cro_form_node_id=cro_form_found["node_id"]
-                )
-                if r:
-                    self.db.cro_create_relationship_between_user_and_cro_user(
-                        user_id=cro_user_result["user_id"], 
-                        cro_user_node_id=cro_user_result["node_id"]
-                    )
-        
-        logger.info(f"cro_form_found -> {cro_form_found['node_id']}")
-
-        if result_exists:
-            result_final["result_exists"] = True
-
-        if cro_form_found is not None and user_embedding:
-            logger.info("Update User Embedding")
-
-            if len(cro_form_found["concept_cids"]) > 0:
-
-                ## Update User Embedding
-                sum_embeddings = 0
-                sum_weights = 0
-                # Convert string type to array type 'np.array'
-                # Sum and average these concept embeddings to get user embedding
-                for concept in concepts: # cro_form_found["concepts"]:
-                    list1 = concept["final_embedding"].split(',')
-                    list2 = []
-                    for j in list1:
-                        list2.append(float(j))
-                    arr = np.array(list2)
-                    sum_embeddings = sum_embeddings + arr * concept["weight"]
-                    sum_weights = sum_weights + concept["weight"]
-
-                # The weighted average of final embeddings of all dnu concepts
-                average = np.divide(sum_embeddings, sum_weights)
-                embedding_str =','.join(str(i) for i in average)
-
-                self.db.cro_user_update_embedding(user_id=cro_form_found["user_id"], embedding=embedding_str)
-                logger.info(f"{msg_log_gobal} getting user embedding")
-                result_final["user_embedding"] = embedding_str
-
-        # set cro_form from the database
-        logger.info("setting cro_form from the database")
-        result_final["cro_form"] = cro_form_found
-        result_final["concepts"] = concepts
-
-        if is_concept_cids:
-            result_final["concept_cids"] = [concept["cid"] for concept in concepts]
-        if is_concept_names:
-            result_final["concept_names"] = [concept["name"] for concept in concepts]
-
-        return result_final
-    
-    ######
-    ######
-
     def store_resources(self, recommendation_type, user_id, material_id, _slide, user_embedding, concepts, concept_ids, not_understood_concept_list):
         """
             Saving resources after crawling and proceeding with algorithms
@@ -574,6 +409,8 @@ class ResourceRecommenderService:
                 and recommendation_type != RecommendationType.STATIC_KEYPHRASE_BASED
                 and recommendation_type != RecommendationType.STATIC_DOCUMENT_BASED
             ):
+                logger.info("_get_personalized_recommendation")
+                
                 for resource_type in resource_types:
                     # Start the load operations and mark each future with its URL
                     future = executor.submit(
@@ -661,7 +498,7 @@ class ResourceRecommenderService:
             "croForm": data_cro_form,
         }
 
-    def _get_resources2(self, data_cro_form: dict, data_default: dict=None):
+    def _get_resources(self, data_cro_form: dict, data_default: dict=None):
         """
             Save cro_form, Crawl Youtube and Wikipedia API and then Store Resources
             Result: [ {"recommendation_type": str, "concepts": list(concepts), "nodes": list(resources)} ]
@@ -718,7 +555,9 @@ class ResourceRecommenderService:
             not_understood_concept_list = []
 
             # If personalized recommendtion, build user model
-            if recommendation_type in [ RecommendationType.DYNAMIC_DOCUMENT_BASED, RecommendationType.DYNAMIC_DOCUMENT_BASED ]:
+            if recommendation_type in [ RecommendationType.DYNAMIC_DOCUMENT_BASED, RecommendationType.DYNAMIC_KEYPHRASE_BASED ]:
+                logger.info("---------recommendation_type dyn----------")
+
                 # self._construct_user(
                 #     user=user,
                 #     non_understood=body["non_understood_concept_ids"],
@@ -727,19 +566,21 @@ class ResourceRecommenderService:
                 #     mid=body["material_id"],
                 # )
                 clu = self.cro_form_logic_updated(cro_form=cro_form, top_n=5, user_embedding=True)
-                cro_form = clu["cro_form"]
-                user_embedding = clu["user_embedding"]
-                not_understood_concept_list = [concept["name"] for concept in cro_form["concepts"]]
 
             elif recommendation_type in [ RecommendationType.STATIC_DOCUMENT_BASED, RecommendationType.STATIC_KEYPHRASE_BASED ]:
+                logger.info("---------recommendation_type statistic----------")
+
                 _slide = self.db.get_slide(body["slide_id"])
                 slide_concepts = _slide[0]["s"]["concepts"]
-                cro_form["concepts"] = slide_concepts
+                # cro_form["concepts"] = slide_concepts
                 clu = self.cro_form_logic_updated(cro_form=cro_form, top_n=5, user_embedding=False)
-                cro_form = clu["cro_form"]
-            
-            concept_ids = [concept["cid"] for concept in cro_form["concepts"]]
+                clu["concepts"] = slide_concepts
+
+            cro_form = clu["cro_form"]
+            user_embedding = clu.get("user_embedding")
             concepts = cro_form["concepts"]
+            concept_ids = [concept["cid"] for concept in cro_form["concepts"]]
+            not_understood_concept_list = [concept["name"] for concept in cro_form["concepts"]]
 
             resources = self.store_resources(   
                                 recommendation_type=recommendation_type,
@@ -766,369 +607,6 @@ class ResourceRecommenderService:
             result = {"recommendation_type": recommendation_type.value, "concepts": concepts, "nodes": result}
             results.append(result)
         return results
-
-    def _get_resources(self, user_id, slide_id, material_id, recommendation_type, cro_form: dict=None, pagination_params: dict=None):
-        """
-            Save cro_form, Crawl Youtube and Wikipedia API and then Store Resources
-            Result: {"recommendation_type": str, "concepts": list(concepts), "nodes": list(resources)}
-        """
-        wikipedia_articles = []
-        youtube_videos = []
-        resource_list = []
-        relationship_list = []
-        not_understood_concept_list = []
-        concepts = []
-
-        # to be removed
-        # sort_by_params = {"similarity_score": True, "most_recent": False, "popularity": False}
-        # pagination_params = { "current_page": 1, "total_items": 15, "content": [], "total_pages": 2, "sort_by_params": sort_by_params}
-
-        if cro_form ["recommendation_type"] in [1, 2, "1", "2"]:
-            cro_logic_result = self.cro_form_logic_updated(
-                                        cro_form=cro_form,
-                                        top_n=5,
-                                        user_embedding=True
-                                    )
-            cro_form = cro_logic_result["cro_form"]
-            user_embedding = cro_logic_result["user_embedding"]
-
-            not_understood_concept_list = [concept["name"] for concept in cro_form["concepts"]]
-            concept_ids = [concept["cid"] for concept in cro_form["concepts"]]
-            concepts = cro_form["concepts"]
-
-        elif cro_form ["recommendation_type"] in [3, 4, "3", "4"]:
-            _slide = self.db.get_slide(slide_id)
-            slide_concepts = _slide[0]["s"]["concepts"]
-            
-            cro_form["concepts"] = slide_concepts
-            cro_logic_result = self.cro_form_logic_updated(
-                                    cro_form=cro_form,
-                                    top_n=5,
-                                    user_embedding=False
-                                )
-            cro_form = cro_logic_result["cro_form"]
-            concepts = cro_form["concepts"]
-            concept_ids = [concept["cid"] for concept in cro_form["concepts"]]
-        
-        self.recommender = Recommender()
-        # Allow parallel recommendation of videos and articles
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            futures = {}
-            resource_types = ["Youtube", "Wikipedia"]
-
-            # If personalized, get user information from the database then proceed with the personalized recommendation
-            if (
-                recommendation_type != RecommendationType.WITHOUT_EMBEDDING
-                and self.db.user_exists(user_id)
-                and recommendation_type != RecommendationType.COMBINED_STATIC
-                and recommendation_type != RecommendationType.STATIC_KEYPHRASE_BASED
-                and recommendation_type != RecommendationType.STATIC_DOCUMENT_BASED
-            ):
-                for resource_type in resource_types:
-                    # Start the load operations and mark each future with its URL
-                    future = executor.submit(
-                        self._get_personalized_recommendation,
-                        not_understood_concept_list=not_understood_concept_list,
-                        user_embedding=user_embedding,
-                        resource_type=resource_type,
-                        recommendation_type=recommendation_type,
-                    )
-                    futures[future] = resource_type
-
-            # Else retrieve Slide information from the database then proceed with the static recommendation
-            else:
-                slide_document_embedding = _slide[0]["s"]["initial_embedding"]
-                slide_weighted_avg_embedding_of_concepts = _slide[0]["s"][
-                    "weighted_embedding_of_concept"
-                ]
-
-                for resource_type in resource_types:
-                    # Start the load operations and mark each future with the resource type
-                    future = executor.submit(
-                        self._get_static_recommendation,
-                        slide_document_embedding=slide_document_embedding,
-                        slide_concepts=concepts,
-                        slide_weighted_avg_embedding_of_concepts=slide_weighted_avg_embedding_of_concepts,
-                        resource_type=resource_type,
-                        recommendation_type=recommendation_type,
-                    )
-                    futures[future] = resource_type
-
-            # When one of the parallel operations is finish retrieve results
-            # 3000s is the maximum time allowed for each operation
-            for future in concurrent.futures.as_completed(futures, 3000):
-                data_type = futures[future]
-                try:
-                    if data_type == "Youtube":
-                        youtube_videos = future.result()
-                    else:
-                        wikipedia_articles = future.result()
-                except Exception as exc:
-                    print("%r generated an exception: %s" % (data_type, exc))
-
-
-        # If both results are empty return an empty object
-        if (isinstance(youtube_videos, list) or youtube_videos.empty) and (
-            isinstance(wikipedia_articles, list) or wikipedia_articles.empty
-        ):
-            # return {}
-            resources = []
-        else:
-            #### TO DO -> Improving Saving Performance
-            ### ONLY SAVE Resources without Creating Relationship "CONTAINS" to "Concept"
-
-            # Otherwise proceed save the results in the database
-            resources, relationships = self.db.get_or_create_resoures_relationships(
-                wikipedia_articles=wikipedia_articles,
-                youtube_videos=youtube_videos,
-                user_id=user_id,
-                material_id=material_id,
-                concept_ids=concept_ids,
-                recommendation_type=recommendation_type,
-            )
-
-        if len(resources) > 0:
-            resources = [{"node_id": node["id"]} for node in resources]
-            self.cro_edit_relationship_btw_concepts_cro_and_resources(concepts_cro=cro_form["concepts"], resources=resources)
-            resources = self.db.cro_get_resources(concepts_cro=cro_form["concepts"])
-            result = self.cro_sort_result(concepts=concepts, resources=resources, with_ratings=True)
-        else:
-            result = []
-        
-        concepts = [{"cid": concept["cid"], "weight": concept["weight"]} for concept in cro_form["concepts"]]
-        return {"recommendation_type": recommendation_type.value, "concepts": concepts, "nodes": result} # "cro_form": cro_form
-
-        """
-        result_video_ids = []
-        result_article_ids = []
-
-        if not isinstance(youtube_videos, list) and not youtube_videos.empty:
-            result_video_ids = youtube_videos["id"].tolist()
-
-        if not isinstance(wikipedia_articles, list) and not wikipedia_articles.empty:
-            result_article_ids = wikipedia_articles["id"].tolist()
-
-        result_ids = result_video_ids + result_article_ids
-
-        # filter the results from the database and keep only the ones generated by the Recommender
-        filtered_resources = [r for r in resources if r["rid"] in result_ids]
-        resp = get_serialized_resource_data(filtered_resources, concepts, relations=[])
-        """
-        """
-        # if not isinstance(youtube_videos, list) and (not youtube_videos.empty):
-        #     youtube_videos = youtube_videos.drop(columns=["concept_embedding", "text", 'thumbnails', 'description',
-        #     'description_full', 'id', 'title', 'channelTitle', 'liveBroadcastContent', 'kind', 'publishedAt',
-        #     'channelId', 'publishTime', 'views', 'duration'])
-        #     # file_path_youtube = "recommendation/data/video_concept_user_description_and_title_only.csv"
-        #     file_path_youtube = "recommendation/data/video_concept_subtitles_only_15.csv"
-        #     # file_path_youtube = "recommendation/data/video_document_subtitles_only_15.csv"
-        #     # file_path_youtube = "recommendation/data/video_document_user.csv"
-        #     # file_path_youtube = "recommendation/data/video_document_user_20.csv"
-        #     # file_path_youtube = "recommendation/data/video_document_user_15.csv"
-        #     # file_path_youtube = "recommendation/data/video_document_user_10.csv"
-        #     # file_path_youtube = "recommendation/data/video_concept_user_description_and_title_only_15.csv"
-        #     # file_path_youtube = "recommendation/data/video_concept_user_subtitles_only_15.csv"
-        #     # file_path_youtube = "recommendation/data/video_concept_user_description_and_title_only_10.csv"
-        #
-        #     # youtube_videos.to_csv(file_path_youtube, index=False)
-        #     youtube_videos.to_csv(file_path_youtube, mode='a', index=False, header=False)
-        #
-        # if not isinstance(wikipedia_articles, list) and (not wikipedia_articles.empty):
-        #     wikipedia_articles = wikipedia_articles.drop(columns=["concept_embedding", "text", 'abstract', 'id',
-        #     'title'])
-        #     # file_path_wikipedia = "recommendation/data/article_concept_user_abstract_and_title_only.csv"
-        #     file_path_wikipedia = "recommendation/data/article_concept_content_only_15.csv"
-        #     # file_path_wikipedia = "recommendation/data/article_document_content_only_15.csv"
-        #     # file_path_wikipedia = "recommendation/data/article_document_user.csv"
-        #     # file_path_wikipedia = "recommendation/data/article_document_user_20.csv"
-        #     # file_path_wikipedia = "recommendation/data/article_document_user_15.csv"
-        #     # file_path_wikipedia = "recommendation/data/article_document_user_10.csv"
-        #     # file_path_wikipedia = "recommendation/data/article_concept_user_abstract_and_title_only_15.csv"
-        #     # file_path_wikipedia = "recommendation/data/article_concept_user_content_only_15.csv"
-        #     # file_path_wikipedia = "recommendation/data/article_concept_user_abstract_and_title_only_10.csv"
-        #
-        #     # wikipedia_articles.to_csv(file_path_wikipedia, index=False)
-        #     wikipedia_articles.to_csv(file_path_wikipedia, mode='a', index=False, header=False)
-
-        # file_path_youtube = "recommendation/dat2/video_data_all_without_user.png"
-        # file_path_wikipedia = "recommendation/dat2/articles_data_all_without_user.png"
-        # file_path_youtube_document_based_similarity = "recommendation/data/dist2/video_document_based_similarity.png"
-        # file_path_wikipedia_document_based_similarity = "recommendation/data/dist2/articles_document_based_similarity.png"
-        # file_path_youtube_concept_based_similarity = "recommendation/data/dist2/video_concept_based_similarity.png"
-        # file_path_wikipedia_concept_based_similarity = "recommendation/data/dist2/articles_concept_based_similarity.png"
-        # file_path_youtube_user_document_based_similarity = "recommendation/data/dist2/video_user_document_based_similarity.png"
-        # file_path_wikipedia_user_document_based_similarity = "recommendation/data/dist2/articles_user_document_based_similarity.png"
-        # file_path_youtube_user_concept_based_similarity = "recommendation/data/dist2/video_user_concept_based_similarity.png"
-        # file_path_wikipedia_user_concept_based_similarity = "recommendation/data/dist2/articles_user_concept_based_similarity.png"
-        # file_path_youtube_fused_similarity = "recommendation/data/dist2/video_fused_similarity.png"
-        # file_path_wikipedia_fused_similarity = "recommendation/data/dist2/articles_fused_similarity.png"
-        # file_path_youtube_fused_user_similarity = "recommendation/data/dist2/video_fused_user_similarity.png"
-        # file_path_wikipedia_fused_user_similarity = "recommendation/data/dist2/articles_fused_user_similarity.png"
-        #
-        # save_plot_data(youtube_videos, file_path_youtube)
-        # save_plot_data(wikipedia_articles, file_path_wikipedia)
-        #
-        #
-        # plot_distribution_chart(youtube_videos, "document_based_similarity", file_path_youtube_document_based_similarity)
-        # plot_distribution_chart(wikipedia_articles, "document_based_similarity", file_path_wikipedia_document_based_similarity)
-        # plot_distribution_chart(youtube_videos, "concept_based_similarity", file_path_youtube_concept_based_similarity)
-        # plot_distribution_chart(wikipedia_articles, "concept_based_similarity", file_path_wikipedia_concept_based_similarity)
-        # plot_distribution_chart(youtube_videos, "user_document_based_similarity", file_path_youtube_user_document_based_similarity)
-        # plot_distribution_chart(wikipedia_articles, "user_document_based_similarity", file_path_wikipedia_user_document_based_similarity)
-        # plot_distribution_chart(youtube_videos, "user_concept_based_similarity", file_path_youtube_user_concept_based_similarity)
-        # plot_distribution_chart(wikipedia_articles, "user_concept_based_similarity", file_path_wikipedia_user_concept_based_similarity)
-        # plot_distribution_chart(youtube_videos, "fused_similarity", file_path_youtube_fused_similarity)
-        # plot_distribution_chart(wikipedia_articles, "fused_similarity", file_path_wikipedia_fused_similarity)
-        # plot_distribution_chart(youtube_videos, "fused_user_similarity", file_path_youtube_fused_user_similarity)
-        # plot_distribution_chart(wikipedia_articles, "fused_user_similarity", file_path_wikipedia_fused_user_similarity)
-        """
-
-    def map_recommendation_request(self, data_cro_form: dict, data_default: dict=None):
-        if data_default:
-            material_id = data_default.get("materialId")  # type: ignore
-            material_page = data_default.get("materialPage")  # type: ignore
-            user_id = data_default.get("userId")  # type: ignore
-            user_email = data_default.get("userEmail")  # type: ignore
-            slide_id = data_default.get("slideId")  # type: ignore
-            username = data_default.get("username")  # type: ignore
-            # recommendation_type = data_default.get("recommendationType")# activate if several models need to be tested & modelNumber will be sent from frontend
-            understood = data_default.get("understoodConcepts")  # type: ignore
-            non_understood = data_default.get("nonUnderstoodConcepts")  # type: ignore
-            new_concepts = data_default.get("newConcepts")
-
-            understood_concept_ids = [cid for cid in understood.split(",") if understood]
-            non_understood_concept_ids = [ cid for cid in non_understood.split(",") if non_understood ]
-            new_concept_ids = [cid for cid in new_concepts.split(",") if new_concepts]
-
-        pagination_params = data_cro_form["pagination_params"]
-        logger.info("pagination_params ->", pagination_params)
-
-        # if data_default == None and data_cro_form != None:
-        #     # get concepts
-        #     return self.db.cro_retrieve_concept_resources_pagination(cro_form=cro_form, concepts=concepts, pagination_params=pagination_params)
-
-        # extract recommendation type
-        """
-        result = {
-            "cro_form": None,
-            "concepts": [],
-            "edges": None,
-            "recommendation_type_1": {
-                "nodes": []
-            },
-            "recommendation_type_2": {
-                "nodes": []
-            },
-            "recommendation_type_3": {
-                "nodes": []
-            },
-            "recommendation_type_4": {
-                "nodes": []
-            }
-        }
-
-        """
-        result: dict = None
-        # recommendation_type = "1"
-        for key, value in data_cro_form["recommendation_types"]["models"].items():
-            cro_form = {
-                "user_id": data_cro_form["user_id"],
-                "mid": data_cro_form["mid"],
-                "slide_id": data_cro_form["slide_id"],
-                "category": data_cro_form["category"],
-                "concepts": data_cro_form["concepts"],
-                # "pagination_params": data_cro_form["pagination_params"],
-                # "recommendation_type": value
-                "sorting_weights": data_cro_form["sorting_weights"]
-            }
-
-            if key == "recommendation_type_1" and value == True:
-                recommendation_type = "1"
-            if key == "recommendation_type_2" and value == True:
-                recommendation_type = "2"
-            if key == "recommendation_type_3" and value == True:
-                recommendation_type = "3"
-            if key == "recommendation_type_4" and value == True:
-                recommendation_type = "4"
-
-            if recommendation_type and recommendation_type != None: # cro_form.get("recommendation_type"):
-                cro_form["recommendation_type"] = int(recommendation_type)
-                if data_default != None:
-                    logger.info("---CRO Starting--with--cro_form-->", cro_form)
-
-                    # Check if parameters exist. If one doesn't exist, return not found message
-                    # check_message = resource_recommender_service.check_parameters(slide_id, material_id, user_id, non_understood_concept_ids, understood_concept_ids, new_concept_ids, recommendation_type)
-                    check_message = self.check_parameters(
-                        slide_id=slide_id,
-                        material_id=material_id,
-                        non_understood_concept_ids=non_understood_concept_ids,
-                        understood_concept_ids=understood_concept_ids,
-                        new_concept_ids=new_concept_ids,
-                        recommendation_type=recommendation_type,
-                    )
-                    if check_message != "":
-                    # logger.info(check_message)
-                        # return {"msg": check_message, "code": 404} # make_response(check_message, 404)
-                        return {"result": check_message, "code": 404}
-                    
-                    user = {"name": username, "id": user_id, "user_email": user_email}
-
-                    # Map recommendation type to enum values
-                    if recommendation_type == "1":
-                        recommendation_type = RecommendationType.DYNAMIC_KEYPHRASE_BASED
-                    elif recommendation_type == "2":
-                        recommendation_type = RecommendationType.DYNAMIC_DOCUMENT_BASED
-                    elif recommendation_type == "3":
-                        recommendation_type = RecommendationType.STATIC_KEYPHRASE_BASED
-                    elif recommendation_type == "4":
-                        recommendation_type = RecommendationType.STATIC_DOCUMENT_BASED
-                
-                    # If personalized recommendtion, build user model
-                    if (
-                        recommendation_type != RecommendationType.WITHOUT_EMBEDDING
-                        and recommendation_type != RecommendationType.COMBINED_STATIC
-                        and recommendation_type != RecommendationType.STATIC_KEYPHRASE_BASED
-                        and recommendation_type != RecommendationType.STATIC_DOCUMENT_BASED
-                    ):
-                        self._construct_user(
-                            user=user,
-                            non_understood=non_understood_concept_ids,
-                            understood=understood_concept_ids,
-                            new_concepts=new_concept_ids,
-                            mid=material_id,
-                        )
-
-                user_id = cro_form["user_id"]
-                slide_id = cro_form["slide_id"]
-                material_id = cro_form["mid"]
-                resp = self._get_resources(
-                    user_id=user_id,
-                    slide_id=slide_id,
-                    material_id=material_id,
-                    recommendation_type=recommendation_type,
-                    cro_form=cro_form,
-                    pagination_params=pagination_params
-                )
-                recommendation_type = None
-
-                """
-                result["recommendation_type_" + str(resp["recommendation_type"])] = {
-                                                                                    # "cro_form": resp["cro_form"],
-                                                                                    # "concepts": resp["cro_form"]["concepts"],
-                                                                                    "nodes": resp["nodes"]
-                                                                                }
-                cro_form = resp["cro_form"]
-                result["cro_form"] = cro_form
-                result["concepts"] = cro_form["concepts"]
-                """
-                result = {
-                    "recommendation_type": resp["recommendation_type"],
-                    "concepts": resp["concepts"],
-                    "nodes": resp
-                }
-                
-        return result # {"result": result, "code": 404}
-            
 
 def get_serialized_resource_data(resources, concepts, relations):
     """ """

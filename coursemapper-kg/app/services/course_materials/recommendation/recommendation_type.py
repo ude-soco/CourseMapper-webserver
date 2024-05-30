@@ -21,3 +21,15 @@ class RecommendationType(Enum):
             result = RecommendationType.STATIC_DOCUMENT_BASED
         
         return result
+
+def map_type(recommendation_type: str, nbr = False):
+    if recommendation_type == "1":
+        result = RecommendationType.DYNAMIC_KEYPHRASE_BASED
+    elif recommendation_type == "2":
+        result = RecommendationType.DYNAMIC_DOCUMENT_BASED
+    elif recommendation_type == "3":
+        result = RecommendationType.STATIC_KEYPHRASE_BASED
+    elif recommendation_type == "4":
+        result = RecommendationType.STATIC_DOCUMENT_BASED
+    
+    return result

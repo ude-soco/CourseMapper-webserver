@@ -16,6 +16,7 @@ class WikipediaService:
         logger.info("Get Wikipedia Articles")
 
         response = wikipedia.search(concepts, top_n)
+
         data = []
         w_data = []
 

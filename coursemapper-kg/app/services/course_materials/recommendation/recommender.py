@@ -184,6 +184,8 @@ class Recommender:
             and recommendation_type != RecommendationType.STATIC_KEYPHRASE_BASED
             and recommendation_type != RecommendationType.STATIC_DOCUMENT_BASED
         ):
+            logger.info("# If personalized recommendation, use DNU concepts to query Youtube and Wikipedia")
+
             query = " ".join(not_understood_concept_list)
             data = self.canditate_selection(query=query, video=video)
             if isinstance(data, list) and data.empty:
@@ -191,6 +193,8 @@ class Recommender:
 
         # Else use top 5 concepts from slide
         else:
+            logger.info("# Else use top 5 concepts from slide")
+
             i = 0
             while i < 5:
                 top_n_concepts = 5 - i
