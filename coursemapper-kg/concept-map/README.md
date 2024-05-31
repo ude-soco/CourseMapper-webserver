@@ -67,3 +67,15 @@ Download the following software and install them on your machine:
   ```bash
   pipenv run python src/main.py
   ```
+
+## 📚 Wikipedia Dump Preprocessing
+
+In order to run the Wikipedia dump preprocessing step and use the resulting database, follow these steps:
+
+- Download and install PostgreSQL from [the official website](https://www.postgresql.org/download/)
+
+- Update the `WIKIPEDIA_DATABASE_CONNECTION_STRING` in the `.env` file to your PostgreSQL database URL. For example, if your server is running locally on port 5432 with the username `postgres` and password `password`, the connection string would be `postgres://postgres:password@localhost:5432/`
+
+- Read the instructions in the [README.md](/coursemapper-kg/concept-map/README.md) file to run the Wikipedia dump preprocessing step
+
+- Once the Wikipedia dump preprocessing step is complete, you can run the worker using the command `pipenv run python src/main.py`
