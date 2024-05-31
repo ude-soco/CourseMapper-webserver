@@ -441,8 +441,8 @@ class ResourceRecommenderService:
                     )
                     futures[future] = resource_type
 
-            print(future.result())
-            print(future.__dict__)
+            # print(future.result())
+            # print(future.__dict__)
             
             # When one of the parallel operations is finish retrieve results
             # 3000s is the maximum time allowed for each operation
@@ -551,9 +551,7 @@ class ResourceRecommenderService:
             # Map recommendation type to enum values
             recommendation_type = RecommendationType.map_type(rec_type)
 
-            user_embedding = ""
-            not_understood_concept_list = []
-
+            _slide = None
             # If personalized recommendtion, build user model
             if recommendation_type in [ RecommendationType.DYNAMIC_DOCUMENT_BASED, RecommendationType.DYNAMIC_KEYPHRASE_BASED ]:
                 logger.info("---------recommendation_type dyn----------")
@@ -586,7 +584,7 @@ class ResourceRecommenderService:
                                 recommendation_type=recommendation_type,
                                 user_id=body["user_id"],
                                 material_id=body["material_id"],
-                                _slide="",
+                                _slide=_slide,
                                 user_embedding=user_embedding,
                                 concepts=concepts,
                                 concept_ids=concept_ids,
