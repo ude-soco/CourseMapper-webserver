@@ -27,6 +27,8 @@ class WikipediaService:
 
         if Config.WIKIPEDIA_DATABASE_CONNECTION_STRING != '':
             self._conn = psycopg.connect(Config.WIKIPEDIA_DATABASE_CONNECTION_STRING, row_factory=dict_row)
+        else:
+            self._conn = None
             self._use_stored_embeddings = False
 
     def __del__(self):
