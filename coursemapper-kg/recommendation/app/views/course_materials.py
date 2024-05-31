@@ -5,89 +5,10 @@ import time
 
 from ..services.course_materials.recommendation.resource_recommender import ResourceRecommenderService
 from ..services.course_materials.recommendation.recommendation_type import RecommendationType
-from ..services.course_materials.kwp_extraction.dbpedia.data_service import DataService
 from ..services.course_materials.kwp_extraction.dbpedia.data_service1 import RecService
 from ..services.course_materials.GCN.gcn import GCN
 
 logger = LOG(name=__name__, level=logging.DEBUG)
-
-
-def concept_map(job, file):
-    model_name = job["modelName"]
-    material_id = job["materialId"]
-    material_name = job["materialName"]
-
-    start_time = time.time()
-
-    ### ========
-    ### KWP
-    # data_service = DataService1()
-    # resp = data_service._get_data(
-        # materialId=materialId,
-        # materialName=materialName,
-        # file=materialFile,
-        # model_name=model,
-        # top_n=15,
-        # #   user_id= user_id,
-        # #   user_email=user_email,
-        # #   username=username,
-    # )
-    ### ========
-    ### Semi
-    # from ..services.course_materials.kwp_extraction.dbpedia.data_serviceKWP import DataService1
-    # materialConcepts = request.form.get("selectedConcepts")  # type: ignore
-    # data_service = DataService1()
-    # resp = data_service._get_graph(
-        # materialId=materialId,
-        # materialName=materialName,
-        # concepts=materialConcepts,
-        # file=materialFile,
-        # model_name=model,
-        # top_n=15,
-        # with_category=True,
-        # with_property=True,
-        # with_doc_sim=True,
-        # userId=userId,
-        # userEmail=userEmail,
-        # username=username,
-    # )
-    ### ========
-    ### Top-Down
-    # from ..services.course_materials.kwp_extraction.dbpedia.data_service_top_down import DataServiceTopDown
-    # data_service_top_down = DataServiceTopDown()
-    # resp = data_service_top_down._get_data(materialId=materialId,
-    #                               materialName=materialName,
-    #                               file=materialFile,
-    #                               model_name=model,
-    #                               top_n=100,
-    #                               with_category=True,
-    #                               with_property=True,
-    #                               with_doc_sim=True,
-    #                               userId=userId,
-    #                               userEmail=userEmail,
-    #                               username=username,
-    #                               whole_text=False
-    #                               )
-    # return make_response(resp, 200)
-    ### ========
-
-    ### Bottom-Up
-    data_service = DataService()
-    resp = data_service._get_data(
-        materialId=material_id,
-        materialName=material_name,
-        file=file,
-        model_name=model_name,
-        top_n=15,
-        with_category=True,
-        with_property=True,
-        with_doc_sim=True,
-        whole_text=False,
-    )
-    end_time = time.time()
-    print("Execution time: ", end_time - start_time, flush=True)
-
-    return resp
 
 
 def get_concepts(job):
