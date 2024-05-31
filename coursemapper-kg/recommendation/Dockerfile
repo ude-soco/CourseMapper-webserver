@@ -1,12 +1,4 @@
 # syntax=docker/dockerfile:1.6
-FROM alpine as MODELS
-WORKDIR /download
-ADD https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x4096_512_2048cnn_2xhighway/elmo_2x4096_512_2048cnn_2xhighway_weights.hdf5 elmo_2x4096_512_2048cnn_2xhighway_weights.hdf5
-ADD https://uni-duisburg-essen.sciebo.de/s/r4bNsDrkuAkPSfo/download elmo_2x4096_512_2048cnn_2xhighway_options.json
-ADD https://uni-duisburg-essen.sciebo.de/s/nO06q2wY0t5h8SO/download stanford-corenlp-full-2018-02-27.zip
-RUN unzip stanford-corenlp-full-2018-02-27.zip -d stanford-corenlp-full-2018-02-27 && rm stanford-corenlp-full-2018-02-27.zip
-
-
 # Warning: Python 3.7.2 (Dec 2018) on Debian Stretch (2017--2020)
 FROM python:3.7.2
 
@@ -59,9 +51,6 @@ EOF
 USER root
 RUN  apt-get purge -y --auto-remove $BUILD_DEPS
 USER 1000
-
-# Add model files
-COPY --from=MODELS --chown=app /download/* app/algorithms/
 
 # Add source code
 COPY . .
