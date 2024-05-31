@@ -5,7 +5,7 @@ class Config:
 
     WIKIPEDIA_USER_AGENT = os.getenv('WIKIPEDIA_USER_AGENT', 'CourseMapper (coursemapper@example.com)')
     WIKIPEDIA_FALLBACK = os.getenv('WIKIPEDIA_FALLBACK', 'true').lower() == 'true'
-    WIKIPEDIA_DATABASE_CONNECTION_STRING = os.getenv('WIKIPEDIA_DATABASE_CONNECTION_STRING', 'postgres://postgres:HrwFaqi34iH0SA@localhost:5432/')
+    WIKIPEDIA_DATABASE_CONNECTION_STRING = os.getenv('WIKIPEDIA_DATABASE_CONNECTION_STRING', '')
     WIKIPEDIA_USE_STORED_EMBEDDINGS = os.getenv('WIKIPEDIA_USE_STORED_EMBEDDINGS', 'true').lower() == 'true'
 
     REDIS_HOST = os.getenv('REDIS_HOST', 'localhost')
