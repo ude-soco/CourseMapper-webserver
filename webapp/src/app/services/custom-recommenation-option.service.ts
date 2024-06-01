@@ -24,13 +24,13 @@ export class CustomRecommendationOptionService {
   //   ));
   // }
 
-  getConceptsBYmid(mid: string): Observable<Neo4jResult> {
-    const url = `${environment_Python.PYTHON_SERVER}cro_get_concepts_by_mid?mid=${mid}`;
+  getConceptsBYmid(mid: string, user_id: string): Observable<Neo4jResult> {
+    const url = `${environment_Python.PYTHON_SERVER}cro_get_concepts_by_user_id_and_mid?user_id=${user_id}&mid=${mid}`;
     return this.http.get<Neo4jResult>(url);
   }
 
-  getConceptsBySlideId(mid: string): Observable<Neo4jResult> {
-    const url = `${environment_Python.PYTHON_SERVER}cro_get_concepts_by_slide_id?slide_id=${mid}`;
+  getConceptsBySlideId(mid: string, user_id: string): Observable<Neo4jResult> {
+    const url = `${environment_Python.PYTHON_SERVER}cro_get_concepts_by_user_id_and_slide_id?user_id=${user_id}&slide_id=${mid}`;
     return this.http.get<Neo4jResult>(url);
   }
 

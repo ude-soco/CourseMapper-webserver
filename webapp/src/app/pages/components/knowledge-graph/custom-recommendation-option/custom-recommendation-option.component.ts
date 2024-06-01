@@ -246,7 +246,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
 
       if (this.CROconceptsManuallySelection1.length <= 0) {
         const currentSlide = `${this.materialId}_slide_${this.slideId.toString()}`;
-        this.croService.getConceptsBySlideId(currentSlide).subscribe((res: Neo4jResult) => {
+        this.croService.getConceptsBySlideId(currentSlide, this.userId).subscribe((res: Neo4jResult) => {
           this.CROconceptsManuallySelection1 = res.records;
           // this.localStorageService.saveData("CROconceptsManuallySelection1or2", res.records)
         })
@@ -257,7 +257,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
   get_concepts_manually() {
     if (this.materialId) {
       if (this.CROconceptsManually.length == 0) {
-        this.croService.getConceptsBYmid(this.materialId).subscribe((res: Neo4jResult) => {
+        this.croService.getConceptsBYmid(this.materialId, this.userId).subscribe((res: Neo4jResult) => {
           this.CROconceptsManually = res.records;
           this.CROconceptsManuallySelection2 = JSON.parse(JSON.stringify(res.records));
           // this.localStorageService.saveData("CROconceptsManually", res.records)
