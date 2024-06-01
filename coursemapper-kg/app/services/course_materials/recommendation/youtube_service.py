@@ -160,8 +160,7 @@ class YoutubeService:
             )
 
         except Exception as e:
-            print("---------------------------------------")
-            print(e)
+            # print(e)
             # The number of views are not present for some videos and this leads to an exception. For this
             # reason a default value of 0 views will be given that video.
             views = 0

@@ -35,7 +35,8 @@ class WikipediaService:
                 # print("w_data", data)
 
             except (PageError, DisambiguationError) as e:
-                logger.error("title {} raised a PageError".format(title), e)
+                # logger.error("title {} raised a PageError".format(title), e)
+                pass
             finally:
                 # w_data = pd.DataFrame(data, columns=["id", "text", "abstract", "title", "thumbnail_url"])
                 w_data = pd.DataFrame(

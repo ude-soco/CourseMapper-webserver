@@ -66,7 +66,6 @@ def adapt_concept_node(result):
         result_final = sorted(result_final, key=lambda d: d['name'])
     return result_final
 
-
 @backend.route("/cro_get_concepts_by_mid", methods=["GET"])
 def cro_get_concepts_by_mid():
     mid = request.args.get("mid")

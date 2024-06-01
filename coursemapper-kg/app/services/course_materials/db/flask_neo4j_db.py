@@ -97,6 +97,21 @@ class Neo4j:
 
 
     # boby024
+    def cro_get_concepts_modified_by_user_id(self, user_id):
+        self.get_db()
+        with self.get_db().session() as session:
+            result = session.run(
+                """
+                MATCH (c:Concept_modified)
+                WHERE c.user_id = $user_id
+                RETURN ID(c) as node_id, c.user_id as user_id, c.cid as cid,
+                c.weight as weight
+                """,
+                user_id=user_id
+            ).data()
+
+        return list(result)
+    
     def cro_get_concepts_by_mid(self, mid):
         with self.get_db().session() as session:
             result = session.run(
@@ -124,33 +139,3 @@ class Neo4j:
 
         return list(result)
 
-    def cro_save_croform(user_id: str, mid: str, crfom: dict):
-        pass
-
-    # def cro_get_concepts_by_user_id_and_mid(self, user_id, mid):
-    #     with self.get_db().session() as session:
-    #         result = session.run(
-    #             """
-    #             MATCH (u:User)-[:dnu]->(c:Concept)
-    #             WHERE u.uid = $user_id AND c.mid = $mid
-    #             RETURN c.cid as cid, c.name AS name, c.uri as uri, c.type as type, c.weight as weight, 
-    #             c.wikipedia as wikipedia, c.abstract as abstract, c.rank as rank, c.mid as mid
-    #             """,
-    #             user_id=user_id, mid=mid
-    #         ).data()
-
-    #     return list(result)
-    
-    # def get_concepts_by_cids(self, cids):
-    #     print("cids", cids)
-
-    #     with self.get_db().session() as session:
-    #         result = session.run(
-    #             """MATCH (c: Concept) WHERE ANY (c IN c.cid WHERE c IN $cids) RETURN c.cid as cid, c.name AS name, c.uri as uri, c.type as type, c.weight as weight, c.wikipedia as wikipedia, c.abstract as abstract""",
-    #             cids=cids
-    #         ).data()
-        
-    #         print("result ->", result)
-
-    #    return list(result)
-    

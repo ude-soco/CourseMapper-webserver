@@ -1848,7 +1848,7 @@ class NeoDataBase:
         return result
 
     def cro_map_concept_cro(self, node: dict = None, nodes: list = [], fetched = True):
-        logger.info("Mapping node concept: Concept_CRO")
+        logger.info("Mapping node concept: Concept_modified")
         if node:
             if fetched:
                 node = node.single()
@@ -1864,13 +1864,13 @@ class NeoDataBase:
             return []
         
     def cro_get_concept_cro(self, user_id: str, cid: str, weight: float):
-        logger.info("Getting node concept: Concept_CRO")
+        logger.info("Getting node concept: Concept_modified")
 
         result = None
         with self.driver.session() as session:
             result = session.run(
                 """
-                MATCH (c:Concept_CRO)
+                MATCH (c:Concept_modified)
                 WHERE c.user_id = $user_id and c.cid = $cid and c.weight = $weight
                 RETURN ID(c) as node_id, c.user_id as user_id, c.cid as cid,
                 c.weight as weight
@@ -1880,17 +1880,17 @@ class NeoDataBase:
                 weight=weight
             )
             # if result:
-            #     logger.info("Getting node concept: CRO_dnu: True")
+            #     logger.info("Getting node concept: DNU_NEW: True")
             #     result = self.cro_map_dnu(result, fetched=True)
 
         return result
 
     def cro_create_concept_cro(self, user_id: str = None, mid: str = None, concepts: list = None, cro_form: dict = None):
         """
-            creating node concept: Concept_CRO
+            creating node concept: Concept_modified
             concepts: list -> concept: cid, weight, rank, name(optional)
         """
-        logger.info("Creating node concept: Concept_CRO")
+        logger.info("Creating node concept: Concept_modified")
 
         if cro_form:
             user_id = cro_form["user_id"]
@@ -1907,7 +1907,7 @@ class NeoDataBase:
             if dnu_found.single() != None:
                 node = dnu_found
             else:
-                query =  """MERGE (c:Concept_CRO { user_id:$user_id, cid:$cid, weight:$weight })
+                query =  """MERGE (c:Concept_modified { user_id:$user_id, cid:$cid, weight:$weight })
                     RETURN ID(c) as node_id, c.user_id as user_id, c.cid as cid,
                     c.weight as weight
                     """
@@ -1919,19 +1919,19 @@ class NeoDataBase:
                     ).single()
 
                 if node is not None:
-                    logger.info("Creating relationship between node user and concept_cro")
+                    logger.info("Creating relationship between node User and Concept_modified")
                     tx.run(
                         """
-                        MATCH (a:User),(b:Concept_CRO)
+                        MATCH (a:User),(b:Concept_modified)
                         WHERE ID(a) = $id_a AND ID(b) = $id_b
-                        MERGE (a)-[r:CRO_DNU]->(b)
+                        MERGE (a)-[r:DNU_NEW]->(b)
                         RETURN r
                         """,
                         id_a=user["node_id"],
                         id_b=node["node_id"]
                     )
                     
-                    logger.info("Creating relationship between concept_cro and original concept")
+                    logger.info("Creating relationship between Concept_modified and original concept")
                     concept_original = tx.run(
                             """
                             MATCH (c:Concept)
@@ -1944,9 +1944,9 @@ class NeoDataBase:
                     if concept_original is not None:
                         tx.run(
                                 """
-                                MATCH (a:Concept_CRO),(b:Concept)
+                                MATCH (a:Concept_modified),(b:Concept)
                                 WHERE ID(a) = $id_a AND ID(b) = $id_b
-                                MERGE (a)-[r:CRO_RELATES_TO]->(b)
+                                MERGE (a)-[r:ORIGINATED_FROM]->(b)
                                 RETURN r
                                 """,
                                 id_a=node["node_id"],
@@ -1962,16 +1962,16 @@ class NeoDataBase:
 
     def cro_relationship_btw_user_concept_cro(self, user_id: str, concept_cro: dict):
         """
-            Creating relationship between standard node user and concept_cro
+            Creating relationship between standard node User and Concept_modified
         """
-        logger.info("Creating relationship between standard node user and concept_cro")
+        logger.info("Creating relationship between standard node User and Concept_modified")
 
         user = self.cro_get_user(user_id=user_id)
         if user:
             with self.driver.session() as session: 
                 session.run(
                     """
-                    MATCH (a:User),(b:Concept_CRO)
+                    MATCH (a:User),(b:Concept_modified)
                     WHERE ID(a) = $id_a AND ID(b) = $id_b
                     MERGE (a)-[r:dnu_cro]->(b)
                     RETURN r
@@ -1995,7 +1995,7 @@ class NeoDataBase:
             # check whether rating exist based on user_id, resource_rid, cid and cid (optional)
             node_checked = tx.run(
                         """
-                        MATCH (r:Rating_CRO) 
+                        MATCH (r:Rating) 
                         WHERE r.user_id = $user_id AND r.resource_rid = $resource_rid AND r.cid = $cid
                         RETURN ID(r) as node_id
                         """,
@@ -2007,7 +2007,7 @@ class NeoDataBase:
             if node_checked is not None:
                 tx.run(
                         """
-                            MATCH (r:Rating_CRO) 
+                            MATCH (r:Rating) 
                             WHERE ID(r) = $id
                             SET r.value=$value
                         """,
@@ -2017,7 +2017,7 @@ class NeoDataBase:
             else:
                 node = tx.run(
                             """
-                            MERGE (c:Rating_CRO { cid:$cid, user_id:$user_id, value:$value, resource_rid: $resource_rid })
+                            MERGE (c:Rating { cid:$cid, user_id:$user_id, value:$value, resource_rid: $resource_rid })
                             RETURN ID(c) as node_id, c.user_id as user_id, c.cid as cid, c.value as value, c.resource_rid as resource_rid
                             """,
                             user_id=rating["user_id"],
@@ -2030,9 +2030,9 @@ class NeoDataBase:
                 if node is not None:
                     tx.run(
                             """
-                            MATCH (a:User),(b:Rating_CRO)
+                            MATCH (a:User),(b:Rating)
                             WHERE ID(a) = $id_a AND ID(b) = $id_b
-                            MERGE (a)-[r:CRO_HAS_RATED]->(b)
+                            MERGE (a)-[r:USER_HAS_RATED]->(b)
                             RETURN r
                             """,
                             id_a=user["node_id"],
@@ -2046,7 +2046,7 @@ class NeoDataBase:
         with self.driver.session() as session:
             result = session.run(
                 """
-                MATCH (c:Rating_CRO)
+                MATCH (c:Rating)
                 WHERE c.resource_rid = $resource_rid
                 RETURN ID(c) as node_id, c.user_id as user_id, c.cid as cid, c.value as value, c.resource_rid as resource_rid
                 """,
@@ -2065,7 +2065,7 @@ class NeoDataBase:
         with self.driver.session() as session:
             result = session.run(
                 """
-                MATCH (r:Rating_CRO)
+                MATCH (r:Rating)
                 WHERE r.resource_rid IN $resource_rids
                 RETURN ID(r) as node_id, r.user_id as user_id, r.cid as cid, r.value as value, r.resource_rid as resource_rid
                 """,
@@ -2081,7 +2081,7 @@ class NeoDataBase:
 
         helpful = tx.run(
             """
-            MATCH (r:Rating_CRO)
+            MATCH (r:Rating)
             WHERE r.resource_rid = $resource_rid AND r.value = "HELPFUL"
             RETURN COUNT(r) as count
             """,
@@ -2092,7 +2092,7 @@ class NeoDataBase:
 
         not_helpful = tx.run(
             """
-            MATCH (r:Rating_CRO)
+            MATCH (r:Rating)
             WHERE r.resource_rid = $resource_rid AND r.value = "NOT_HELPFUL"
             RETURN COUNT(r) as count
             """,
@@ -2125,15 +2125,15 @@ class NeoDataBase:
     
     def cro_remove_relation_btw_resource_and_concept_cro(self, concepts_cro: list):
         """
-            Remove Relationship between Resource and Concept_CRO
+            Remove Relationship between Resource and Concept_modified
         """
-        logger.info("Remove Relationship between Resource and Concept_CRO")
+        logger.info("Remove Relationship between Resource and Concept_modified")
 
         concept_ids = [node["node_id"] for node in concepts_cro]
         with self.driver.session() as session:
             session.run(
                     """
-                        MATCH p=(a:Resource)-[r:CONTAINS_CRO]->(b:Concept_CRO)
+                        MATCH p=(a:Resource)-[r:BASED_ON]->(b:Concept_modified)
                         WHERE ID(b) IN $concept_ids
                         DELETE r
                     """,
@@ -2142,21 +2142,21 @@ class NeoDataBase:
             
     def cro_get_resources(self, concepts_cro: list):
         """
-            Getting List of Resources Containing Concept_CRO
+            Getting List of Resources Containing Concept_modified
         """
         def resource_replace_none_value(value):
             if value == None:
                 return 0
             return int(value)
         
-        # logger.info("Getting List of Resources Containing Concept_CRO")
+        # logger.info("Getting List of Resources Containing Concept_modified")
 
         result = []
         cids = [node["cid"] for node in concepts_cro]
         with self.driver.session() as session:
             result = session.run(
                 """
-                MATCH p=(a:Resource)-[r:CONTAINS_CRO]->(b:Concept_CRO)
+                MATCH p=(a:Resource)-[r:BASED_ON]->(b:Concept_modified)
                 WHERE b.cid IN $cids
                 RETURN  LABELS(a) as labels, ID(a) as id, a.rid as rid, a.title as title, a.text as text,
                         a.thumbnail as thumbnail, a.abstract as abstract, a.post_date as post_date, 
@@ -2205,11 +2205,11 @@ class NeoDataBase:
 
     def cro_edit_relationship_btw_concepts_cro_and_resources(self, concepts_cro: list, resources: list, old_relationship=True):
         """
-            update (create or remove) relationship btw resource and concept_cro
+            update (create or remove) relationship btw Resource and Concept_modified
             whether the list of result still contain the Resource
             returned by the algorithm
         """
-        logger.info("Editing Relationship between Resource and Concept_CRO")
+        logger.info("Editing Relationship between Resource and Concept_modified")
 
         if old_relationship:
             self.cro_remove_relation_btw_resource_and_concept_cro(concepts_cro=concepts_cro)
@@ -2219,9 +2219,9 @@ class NeoDataBase:
         with self.driver.session() as session:
             session.run(
                 """
-                MATCH (a:Resource),(b:Concept_CRO)
+                MATCH (a:Resource),(b:Concept_modified)
                 WHERE ID(a) IN $resources_ids AND ID(b) IN $cids
-                MERGE (a)-[r:CONTAINS_CRO]->(b)
+                MERGE (a)-[r:BASED_ON]->(b)
                 RETURN r
                 """,
                 resources_ids=resources_ids,
@@ -2230,404 +2230,6 @@ class NeoDataBase:
 
     ########
     ########
-
-
-    def cro_get_cro_concept(self, concept: dict):
-        """
-            Create node CROconcept
-        """
-        logger.info("CRO Creating node CROconcept")
-
-        result = None
-        with self.driver.session() as session:
-            result = session.run(
-                """MERGE (c:CROconcept{ cid:$cid, mid:$mid, rank:$rank,
-                final_embedding:$final_embedding, weight:$weight, status:$status })
-                RETURN ID(c) as node_id, c.cid as cid, c.mid as mid,
-                c.mid as mid, c.rank as rank, c.final_embedding as final_embedding,
-                c.weight as weight, c.status as status
-                """,
-                cid=concept["cid"],
-                mid=concept["mid"],
-                rank=concept["rank"],
-                final_embedding=concept["final_embedding"],
-                weight=concept["weight"],
-                status=concept["status"], # bool
-            ).data()
-
-        if result:
-            result = list(result)[0]
-        return result
-
-    def cro_check_cro_concepts_exits(self, concept: dict=None, concepts: list = None): # concept_detail {cid: str, weight: float}
-        """
-            get node CROconcept
-        """
-        logger.info("CRO Getting node CROconcept")
-      
-        result = None
-        if concept:
-            with self.driver.session() as session:
-                result = session.run(
-                    """
-                    MATCH (c:CROconcept)
-                    WHERE c.mid = $mid and c.cid = $cid and c.weight = $weight
-                    RETURN ID(c) as node_id, c.cid as cid, c.mid as mid, 
-                    c.rank as rank, c.final_embedding as final_embedding,
-                    c.weight as weight
-                    """,
-                    mid=concept["mid"],
-                    cid=concept["cid"],
-                    weight=concept["weight"],
-                ).data()
-
-                if result:
-                    result = list(result)[0]
-                return result
-        else:
-            result_list = []
-            session = self.driver.session()
-            for concept in concepts:
-                result_single = session.run(
-                    """
-                    MATCH (c:CROconcept)
-                    WHERE c.mid = $mid and c.cid = $cid and c.weight = $weight
-                    RETURN ID(c) as node_id, c.cid as cid, c.mid as mid, 
-                    c.rank as rank, c.final_embedding as final_embedding,
-                    c.weight as weight
-                    """,
-                    mid=concept["mid"],
-                    cid=concept["cid"],
-                    weight=concept["weight"],
-                ).data()
-                session.commit()
-
-                if result:
-                    result_list.append(list(result_single)[0])
-            session.close()
-            return result_list
-
-    def cro_get_top_n_dnu_concepts(self, user_id, material_id, is_limited=False, top_n=5):
-        """
-        """
-        logger.info("Getting User top dnu concepts")
-
-        # Find concept embeddings that user doesn't understand
-        with self.driver.session() as session:
-            concepts = session.run(
-                """
-                MATCH p=(u:User)-[r:dnu]->(c:Concept) 
-                where u.uid=$uid and c.mid=$mid 
-                RETURN c.cid as cid, c.name as name, ID(c) as id, c.weight as weight,  c.final_embedding as final_embedding
-                """,
-                uid=user_id,
-                mid=material_id).data()
-        # concepts = list(result)
-        logger.info("User dnu concepts")
-        # logger.info(concepts)
-
-        if is_limited:
-            concepts.sort(key=lambda x: x["weight"], reverse=True)
-            return concepts[:top_n]
-        return concepts
-    
-    def cro_get_concepts_root(self, user_id: str, mid: str, concept_cids: list):
-        """
-            get cro_form list by user id and mid
-        """
-        logger.info("CRO get cro_form list by user id and mid")
-
-        result = None
-        with self.driver.session() as session:
-            result = session.run(
-                """
-                MATCH (u:User)-[:dnu]->(c:Concept) 
-                WHERE u.uid = $user_id AND c.mid = $mid AND  c.cid IN $concept_cids
-                RETURN ID(c) AS node_id, c.cid as cid, c.name as name, c.weight as weight, c.final_embedding as final_embedding
-                """,
-                user_id=user_id,
-                mid=mid,
-                concept_cids=concept_cids
-            ).data()
-        
-        # print(result)
-        # if result:
-        #     result = list(result)[0]
-        return result
-
-    def cro_check_cro_nodes_exist(self, cro_user=False, cro_form=False):
-        """
-            Check if nodes "CROuser" or CROform exist
-        """
-        logger.info("Check if nodes CROuser or CROform exist")
-
-        result = []
-        if cro_user:
-            with self.driver.session() as session:
-                result = session.run(
-                    """
-                    MATCH (c:CROuser)
-                    WITH COUNT(c) > 0  as node_exists
-                    RETURN node_exists
-                    """,
-                ).data() # result form: [{'node_exists': False}]
-        
-        if cro_form:
-            with self.driver.session() as session:
-                result = session.run(
-                    """
-                    MATCH (c:CROform)
-                    WITH COUNT(c) > 0  as node_exists
-                    RETURN node_exists
-                    """,
-                ).data() # node_exists = True or False
-
-        if result:
-            result = list(result)[0]
-
-        return result
-
-    def cro_create_relationship_between_user_and_cro_user(self, user_id, cro_user_node_id):
-        """
-            create relationship between standard user and cro_user
-        """
-        logger.info("creating relationship between standard user and cro_user")
-
-        user = None
-        with self.driver.session() as session: 
-            user = session.run(
-                """
-                MATCH (u:User)
-                WHERE u.uid = $user_id
-                RETURN ID(u) as node_id, u.name, u.uid
-                """
-                ,
-                user_id=user_id
-            ).data()
-
-        if user:
-            user = user[0]
-
-            with self.driver.session() as session: 
-                session.run(
-                    """
-                    MATCH (a:User),(b:CROuser)
-                    WHERE ID(a) = $id_a AND ID(b) = $id_b
-                    MERGE (a)-[r:CRO_RELATED_TO_RAW]->(b)
-                    RETURN r
-                    """
-                    ,
-                    id_a=user["node_id"],
-                    id_b=cro_user_node_id
-                )
-    
-    def cro_create_cro_user(self, user_id: str, embedding: str):
-        """
-            create node CROuser
-        """
-        logger.info("CRO Creating node CROuser")
-
-        # cro_user_result = None
-        result = None
-        with self.driver.session() as session:
-            result = session.run(
-                """MERGE (c:CROuser { user_id:$user_id, embedding:$embedding })
-                RETURN ID(c) as node_id, c.user_id as user_id, c.embedding as embedding
-                """,
-                user_id=user_id,
-                embedding=embedding
-            ).data()
-
-        if result:
-            result = list(result)[0]
-        return result
-
-    def cro_get_cro_user(self, user_id: str):
-        """
-            get node CROuser
-        """
-        logger.info("CRO Getting node CROuser")
-
-        # cro_user_result = None
-        result = []
-        with self.driver.session() as session:
-            result = session.run(
-                """MATCH (c:CROuser) WHERE user_id = $user_id
-                RETURN ID(c) as node_id, c.user_id as user_id, c.embedding as embedding
-                """,
-                user_id=user_id,
-            ).data()
-
-        if result:
-            result = list(result)[0]
-        return result
-
-    def cro_user_update_embedding(self, user_id: str, embedding: str):
-        """
-            setting embedding value of the node CROuser
-        """
-        logger.info("CRO Setting embedding value of the node CROuser")
-
-        with self.driver.session() as session:
-            session.run("""MATCH (u:CROuser) WHERE u.user_id=$user_id set u.embedding=$embedding""",
-                user_id=user_id,
-                embedding=embedding
-            ).data()
-
-    def cro_create_cro_form(self, user_id: str, mid: str, recommendation_type: int, concepts: list, concepts_original: list = []):
-        """
-            create node CROform
-            concepts: list -> concept: cid, weight, weight_updated, final_embedding, rank, name(optional)
-        """
-        logger.info("CRO Creating node CROform")
-        
-        result = None
-        concept_cids = [concept["cid"] for concept in concepts]
-        concept_weights_udpated = [concept["weight"] for concept in concepts]
-        # concepts_mapped = { str(concept["cid"]): str(concept["weight"]) for concept in concepts}
-
-        with self.driver.session() as session:
-            result = session.run(
-                """MERGE (c:CROform { user_id:$user_id, mid:$mid, recommendation_type:$recommendation_type,
-                concept_cids:$concept_cids, concept_weights_udpated:$concept_weights_udpated })
-                RETURN ID(c) as node_id, c.user_id as user_id, c.mid as mid,
-                c.recommendation_type as recommendation_type, c.concept_cids as concept_cids,
-                c.concept_weights_udpated as concept_weights_udpated
-                """,
-                user_id=user_id,
-                mid=mid,
-                recommendation_type=recommendation_type,
-                concept_cids=concept_cids,
-                concept_weights_udpated=concept_weights_udpated
-            ).data() # single()
-        
-        print("resutl-----cro_form_result----")
-        print(result)
-
-        if result:
-            result = list(result)[0]
-        return result
-
-    def cro_create_relationship_between_cro_user_and_cro_concept(self, cro_user_node_id, cro_form_node_id):
-        """
-            create relationship between cro_user and cro_concept
-        """
-        logger.info("creating relationship between cro_user and cro_concept")
-
-        result = None
-        with self.driver.session() as session: 
-            result =  session.run(
-                """
-                MATCH (a:CROuser),(b:CROform)
-                WHERE ID(a) = $id_a AND ID(b) = $id_b
-                MERGE (a)-[r:CRO_DNU]->(b)
-                RETURN r
-                """
-                ,
-                id_a=cro_user_node_id,
-                id_b=cro_form_node_id
-            )
-
-        return result
-    
-    # cro_get_exact_cro_form_by_user_id_mid_concept_cids(user_id: str, mid: str, concept_cids: list,concept_weights_udpated: list = [])
-    def cro_get_exact_cro_form(self, cro_form: dict): # result list
-        """
-            get cro_form list by user id, mid and concept_cids
-        """
-        logger.info("CRO get cro_form list by user id, mid and concept_cids")
-
-        result = None
-        with self.driver.session() as session:
-            result = session.run(
-                """
-                MATCH (c:CROform) WHERE c.user_id = $user_id AND c.mid = $mid
-                RETURN ID(c) as node_id, c.user_id as user_id, c.mid as mid, 
-                c.recommendation_type as recommendation_type, c.concept_cids as concept_cids,
-                c.concept_weights_udpated as concept_weights_udpated
-                """,
-                user_id=cro_form["user_id"],
-                mid=cro_form["mid"]
-            ).data()
-        
-        logger.info("CRO result -> ")
-        print(result)
-
-        cro_form_result = None
-        cro_form_result_index = None
-        if result:
-            cro_form_mapped = [ f"{concept['cid']}_{concept['weight']}" for concept in cro_form["concepts"]]
-            concepts_mapped_result = []
-            for result_cro_form in result:
-                rcf_mapped = [ f"{result_cro_form['concept_cids'][i]}_{result_cro_form['concept_weights_udpated'][i]}" for i in range(len(result_cro_form["concept_cids"]))]
-                concepts_mapped_result.append(rcf_mapped)
-            
-            cro_form_result = None
-            cro_form_result_index = None
-            for i in range(len(concepts_mapped_result)):
-                cmr = concepts_mapped_result[i]
-                count = 0
-                for cmr_str in cmr:
-                    if cmr_str in cro_form_mapped:
-                        count += 1
-                if count >= 2:
-                    cro_form_result_index = i
-                    break
-            
-            if cro_form_result_index:
-                cro_form_result = result[cro_form_result_index]
-
-        """if result:
-            # concepts_mapped_original = [ {   "cid": cro_form["concept_weights_udpated"][i]["cid"], 
-            #                             "weight": cro_form["concept_weights_udpated"][i]["cid"]
-            #                         } 
-            #                         for i in range(len(cro_form["concepts"]))
-            #                     ]
-            count_found = 0
-            for cro_form_r in result:
-                concepts_mapped = [ {   "cid": cro_form_r["concept_cids"][i],
-                                        "weight": cro_form_r["concept_weights_udpated"][i]
-                                    } 
-                                    for i in range(len(cro_form_r["concept_cids"]))
-                                ]
-                
-                for cf in cro_form["concepts"]:
-                    for cm in concepts_mapped:
-                        if cf["cid"] == cm["cid"] and cf["weight"] == cm["weight"]:
-                            count_found += 1
-                            break
-                
-                if count_found == len(cro_form["concepts"]):
-                    cro_form_result = cro_form_r
-                    break
-
-                # if set(cro_form["concept_cids"]) == set(concept_cids):
-                #     cro_form_result = cro_form
-                #     break
-        """
-        
-        return cro_form_result
-
-    def cro_check_and_count_relationship_cro_user_and_cro_form(self, user_id: str):
-        """
-            cro_check_and_count_relationship_cro_user_and_cro_form
-        """
-        logger.info("cro_check_and_count_relationship_cro_user_and_cro_form")
-
-        result = None
-        with self.driver.session() as session:
-            result = session.run(
-                """
-                MATCH p=(u:CROuser)-[r:CRO_DNU]->(c:CROform)
-                WHERE u.user_id=$user_id and c.user_id=$user_id
-                RETURN COUNT(u) as count
-                """,
-                user_id=user_id
-            ).data()
-
-        if result:
-            result = list(result)[0]
-        return result
 
     def cro_create_cro_recommendation(self, cro_form: dict, resources: list): # resources: {"data": None, "concepts": None, "nodes": None, "edges": None}
         """
@@ -2904,4 +2506,3 @@ class NeoDataBase:
 
         cro_rec_result = self.cro_create_cro_recommendation(cro_form=cro_form, resources=resources)
         self.cro_create_relationship_between_cro_form_and_cro_rec(cro_form_node_id=cro_form["node_id"], cro_rec_node_id=cro_rec_result["node_id"])
-

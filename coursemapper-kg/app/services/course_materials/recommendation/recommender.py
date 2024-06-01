@@ -120,7 +120,7 @@ def retrieve_keyphrases(data):
     resource_keyphrases = []
     keyphrase_counts = []
 
-    logger.info(data)
+    # logger.info(data)
     for index, text in enumerate(data["text"]):
         pos = {"NOUN", "PROPN", "ADJ"}
         extractor = SingleRank()
@@ -345,9 +345,9 @@ class Recommender:
             # Step 3: compute keyphrase-based similarity between slide weighted average keyphrase embeddings and
             # resources weighted average keyphrase embeddings
             logger.info("Compute Cosine Similarities")
-            data = compute_keyphrase_based_similarity(
+            data = compute_dynamic_keyphrase_based_similarity(
                 data, slide_weighted_avg_embedding_of_concepts, recommendation_type
-            )
+            ) # compute_keyphrase_based_similarity
             end_time = time.time()
             print(
                 "Retrieve keyphrase-based embedding Execution time: ",

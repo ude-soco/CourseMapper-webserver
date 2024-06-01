@@ -409,8 +409,6 @@ class ResourceRecommenderService:
                 and recommendation_type != RecommendationType.STATIC_KEYPHRASE_BASED
                 and recommendation_type != RecommendationType.STATIC_DOCUMENT_BASED
             ):
-                logger.info("_get_personalized_recommendation")
-                
                 for resource_type in resource_types:
                     # Start the load operations and mark each future with its URL
                     future = executor.submit(
@@ -602,8 +600,11 @@ class ResourceRecommenderService:
             else:
                 result = {"articles": [], "videos": []}
 
-            result = {"recommendation_type": recommendation_type.value, "concepts": concepts, "nodes": result}
+            concepts = [{k: v for k, v in d.items() if k != "final_embedding"} for d in concepts]
+            recommendation_type_nbr = RecommendationType.map_type(recommendation_type, find_type="v")
+            result = {"recommendation_type": recommendation_type_nbr, "concepts": concepts, "nodes": result}
             results.append(result)
+
         return results
 
 def get_serialized_resource_data(resources, concepts, relations):
