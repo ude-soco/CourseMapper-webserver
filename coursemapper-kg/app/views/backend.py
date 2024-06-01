@@ -80,7 +80,7 @@ def update_concept_node(result, user_id=None):
 def cro_get_concepts_by_user_id_and_mid():
     mid = request.args.get("mid")
     user_id = request.args.get("user_id")
-    print("mid ->", mid)
+    # print("mid ->", mid)
 
     result = neo4j.cro_get_concepts_by_mid(mid)
     result = update_concept_node(result=result, user_id=user_id)
@@ -90,7 +90,7 @@ def cro_get_concepts_by_user_id_and_mid():
 def cro_get_concepts_by_user_id_and_slide_id():
     slide_id = request.args.get("slide_id")
     user_id = request.args.get("user_id")
-    print("slide_id ->", slide_id)
+    # print("slide_id ->", slide_id)
 
     result = neo4j.cro_get_concepts_by_slide_id(slide_id)
     result = update_concept_node(result=result, user_id=user_id)
