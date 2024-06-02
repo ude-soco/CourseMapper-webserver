@@ -271,7 +271,7 @@
         </div>
   
         <!-- warning add more concepts -->
-        <div class="flex justify-center text-[#757500] font-bold">
+        <div class="flex justify-center text-[#757500] font-bold mt-2 mb-2">
           <!-- <div *ngIf="croForm?.concepts?.length > 0">You can add/check {{5 - croForm?.concepts?.length}} more concepts</div> -->
           <div *ngIf="croForm?.concepts?.length > 0 && croForm?.concepts?.length <= 5 ">You can add/check {{ numberConceptsToBeChecked }} more concepts</div>
           <div *ngIf="croForm?.concepts?.length == 0">You can add/check up to 5 concepts</div>
@@ -284,7 +284,7 @@
         <!-- models algo -->
         <div *ngIf="croForm.recommendation_types?.status">
           <div class="text-[#0288d1]">How should be the recommendations generated:</div>
-          <div class="flex flex-col text-[14px]">
+          <div class="flex flex-col">
             <div class="flex flex-row gap-2">
               <!-- <div class="my-auto"><p-checkbox [binary]="true" inputId="cro_recommendation_type_1" class="cro_recommendation_type_1" style="background: #00C614;"></p-checkbox></div> -->
               <!-- <div><input type="checkbox" style="accent-color: #00C614"/></div> -->
@@ -630,23 +630,73 @@
         <div *ngIf="croForm?.concepts?.length == 0">You can add/check up to 5 concepts</div>
         <div *ngIf="croForm?.concepts?.length > 5" class="flex justify-center text-[#cc3300]">Only 5 concepts can be processed</div>
       </div>
-      <div *ngIf="isMoreThan5ConceptDisplayed" class="flex justify-center text-[#cc3300]" id="warningMsgTopConcept"
-      >please uncheck a concept before checking this box again
+      <div *ngIf="isMoreThan5ConceptDisplayed" 
+        class="flex justify-center text-[#cc3300]" 
+        id="warningMsgTopConcept"
+      >
+        please uncheck a concept before checking this box again
       </div>
         
       <!-- models algo -->
-      <div *ngIf="croForm?.recommendation_types?.status">
+      <div class="!mt-3" *ngIf="croForm?.recommendation_types?.status">
         <div class="text-[#0288d1]">How should be the recommendations generated:</div>
-        <div class="flex flex-col text-[14px]">
+        <div class="flex flex-col text-[11px]">
           <div class="flex flex-row gap-2">
             <!-- <div class="my-auto"><p-checkbox [binary]="true" inputId="cro_recommendation_type_1" class="cro_recommendation_type_1" style="background: #00C614;"></p-checkbox></div> -->
             <!-- <div><input type="checkbox" style="accent-color: #00C614"/></div> -->
             <div class="mt-1"><input type="checkbox" [(ngModel)]="croForm?.recommendation_types?.models.recommendation_type_1" class="accent-[#50d71e] w-[18px] h-[18px]"></div>
-            <div class="mt-1">Comparing whole content of articles and videos with not understood concepts</div>
+            <div class="mt-1">Comparing only Keyphrases from articles and videos with not understood concepts</div>
           </div>
           <div class="flex flex-row gap-2">
             <div class="mt-1"><input type="checkbox" [(ngModel)]="croForm?.recommendation_types?.models.recommendation_type_2" class="accent-[#70B85E] w-[18px] h-[18px]"></div>
-            <div class="mt-1">Comparing only Keyphrases from articles and videos with not understood concepts</div>
+            <div class="mt-1">Comparing whole content of articles and videos with not understood concepts</div>
+          </div>
+          <div class="flex flex-row gap-2">
+            <div class="mt-1"><input type="checkbox" [(ngModel)]="croForm?.recommendation_types?.models.recommendation_type_3" class="accent-[#9400D3] w-[18px] h-[18px]"></div>
+            <div class="mt-1">Comparing whole content of articles and videos with whole content of slide</div>
+          </div>
+          <div class="flex flex-row gap-2">
+            <div class="mt-1"><input type="checkbox" [(ngModel)]="croForm.recommendation_types?.models.recommendation_type_4" class="accent-[#EE82EE] w-[18px] h-[18px]"></div>
+            <div class="mt-1">Comparing only Keyphrases from articles and videos with main concepts from slide</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Ranking Factor Weights -->
+      <div class="!mt-3" *ngIf="croForm?.facotr_weights?.status">
+        <div class="flex flex-row gap-3 text-[#0288d1]">
+          <div class="mt-1">Factors impacting the ranking of recommendations</div>
+          <div class="mt-1"
+            pTooltip="Changing weights will affect the ranking of resources (Article/Video) provided"
+            tooltipPosition="top"
+          >
+            <span class="pi pi-info-circle" style="font-size: 1.2rem"></span>
+          </div>
+        </div>
+
+        <div class="flex flex-col text-[11px]">
+          <div class="flex flex-row gap-2">
+            <div class="mt-1"><input type="checkbox" [(ngModel)]="croForm?.recommendation_types?.models.recommendation_type_1" class="accent-[#50d71e] w-[18px] h-[18px]"></div>
+            
+            <div class="mt-1">Similarity Score</div>
+
+            <div class="w-24">
+              <div class="flex flex-wrap justify-between text-[10px]">
+                <div>0</div>
+                <div>{{croForm?.facotr_weights?.weights?.similarity_score}}</div>
+                <div>1</div>
+              </div>
+              <div class="mt-2"><p-slider [(ngModel)]="croForm.facotr_weights.weights.similarity_score"></p-slider></div>
+            </div>
+
+            <div>
+              ranking
+            </div>
+
+          </div>
+          <div class="flex flex-row gap-2">
+            <div class="mt-1"><input type="checkbox" [(ngModel)]="croForm?.recommendation_types?.models.recommendation_type_2" class="accent-[#70B85E] w-[18px] h-[18px]"></div>
+            <div class="mt-1">Comparing whole content of articles and videos with not understood concepts</div>
           </div>
           <div class="flex flex-row gap-2">
             <div class="mt-1"><input type="checkbox" [(ngModel)]="croForm?.recommendation_types?.models.recommendation_type_3" class="accent-[#9400D3] w-[18px] h-[18px]"></div>

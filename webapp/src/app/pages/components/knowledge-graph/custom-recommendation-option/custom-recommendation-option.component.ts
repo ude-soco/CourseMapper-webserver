@@ -38,6 +38,25 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
         recommendation_type_4: false
       }
     },
+    facotr_weights: {
+      status: false,
+      reload: false,
+      weights: {
+          video: {
+              views: 0.7,
+              rating: 0.1,
+              creation_date: 0.3,
+              similarity_score: 0.1,
+              bookmark: 0.1,
+              like_count: 0.1
+          },
+          "article": {
+              "rating": 0.4,
+              "similarity_score": 0.3,
+              "bookmark": 0.3
+          }
+      }
+    },
     vennDiagramStatus: false,
     // countOriginal: 0,
     pagination_params: {
@@ -99,61 +118,6 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     this.croFormObj.next(this.croForm);
   }
 
-  /*
-  constructor(
-    private croService: CustomRecommendationOptionService,
-    private localStorageService: LocalStorageService,
-    private fb: FormBuilder
-    // private slideConceptservice: SlideConceptsService
-  ) {
-    // this.get_concepts_manually();
-    // this.get_concepts_manually_current_slide();
-
-    // this.croFormObj = this.fb.group({
-    //     category: [null],
-    //     concepts: this.fb.array([]) // this.fb.array([this.createTicket()]) // this.fb.array([])
-    // })
-  }
-
-  createTicket(): FormGroup{
-    return this.fb.group({
-      cid: ["22"],
-      name: ["Gello"],
-      status: [false],
-      weight: [2],
-      weight_full: [20]
-    })
-  }
-
-  get concepts(): FormArray{
-    return <FormArray> this.croFormObj.get('concepts');
-  }
-
-  addTicket() {
-    this.concepts.push(this.createTicket());
-  }
-
-  addConcepts(concepts: any []): FormArray {
-    let result: FormArray;
-    for(let concept of concepts) {
-      result.push(this.fb.group({
-        cid: concept.cid,
-        name: concept.name,
-        status: concept.status,
-        // weight: [null],
-        // weight_full: [null]
-      }));
-    }
-
-    return result;
-  }
-  
-  ngOnInit(): void {
-    // const stopsArray = this.croFormObj.get('stops') as FormArray;
-    this.croFormObj.valueChanges.subscribe((selectedValue) => {console.warn("this.croFormObj -> ", selectedValue)});
-  }
-  */
-
   ngOnInit(): void {
     this.croForm["user_id"] = this.userId;
     this.croForm["mid"] = this.materialId;
@@ -166,6 +130,16 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     this.croFormObj.subscribe(data => {
       // console.warn("this.croFormObj ->", data);
     })
+  }
+  
+  showRecTypeAndFactorWeight() {
+    if (this.croForm?.concepts.length) {
+      this.croForm.recommendation_types.status = true;
+      this.croForm.facotr_weights.status = true;
+    } else {
+      this.croForm.recommendation_types.status = false;
+      this.croForm.facotr_weights.status = false;
+    }
   }
 
   showCRO() {
@@ -205,21 +179,6 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
       }
     }
   }
-
-  // mapConceptWithWeight(cids: string[]) {
-  //   let concepts = [];
-  //   for(let id of cids) {
-  //     for(let node of this.conceptsManually) {
-  //       let data = node;
-  //       if (id === data.cid) {
-  //         // data["weight_full"] = data.weight * 100
-  //         data["status"] = true;
-  //         concepts.push(data);
-  //       }
-  //     }
-  //   }
-  //   return concepts;
-  // }
 
   mapConcept(cids: string[], conceptsList: any[]) {
     let concepts = [];
@@ -346,6 +305,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     }
 
     this.updateNumberConceptsToBeChecked();
+    this.showRecTypeAndFactorWeight();
   }
 
   updateCROformAll(didNotUnderstandConceptsObj, previousConceptsObj) {
@@ -432,23 +392,6 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     sortedConcepts = this.croForm.concepts.sort((a, b) => b.weight - a.weight);
     this.croForm.concepts = sortedConcepts; // sortedConcepts.slice(0, 5);
   }
-
-  // dynamicConceptAdded() {
-  //   if (this.croForm.concepts.length > 0) {
-  //     // sort concepts based on the weight
-  //     let sortedConcepts = this.croForm.concepts.sort((a, b) => b.weight - a.weight);
-  //     this.croForm.concepts = sortedConcepts;
-
-  //     for (let i = 0; i < this.croForm.concepts.length; i++) {
-  //       let node = this.croForm.concepts[i];
-  //       if (i < 5) {
-  //         // node["status"] = true;
-  //       } else if (i >= 5) {
-  //         node["status"] = false;
-  //       }
-  //     }
-  //   }
-  // }
 
   displayAddMoreConcept() {
     this.isAddMoreConceptDisplayed = this.isAddMoreConceptDisplayed === true ? false : true;
@@ -566,5 +509,95 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
       }
       this.updateCROformAll(this.didNotUnderstandConceptsObj, this.previousConceptsObj);
     }
+    this.showRecTypeAndFactorWeight();
   }
+
+
+  // mapConceptWithWeight(cids: string[]) {
+  //   let concepts = [];
+  //   for(let id of cids) {
+  //     for(let node of this.conceptsManually) {
+  //       let data = node;
+  //       if (id === data.cid) {
+  //         // data["weight_full"] = data.weight * 100
+  //         data["status"] = true;
+  //         concepts.push(data);
+  //       }
+  //     }
+  //   }
+  //   return concepts;
+  // }
+
+  // dynamicConceptAdded() {
+  //   if (this.croForm.concepts.length > 0) {
+  //     // sort concepts based on the weight
+  //     let sortedConcepts = this.croForm.concepts.sort((a, b) => b.weight - a.weight);
+  //     this.croForm.concepts = sortedConcepts;
+
+  //     for (let i = 0; i < this.croForm.concepts.length; i++) {
+  //       let node = this.croForm.concepts[i];
+  //       if (i < 5) {
+  //         // node["status"] = true;
+  //       } else if (i >= 5) {
+  //         node["status"] = false;
+  //       }
+  //     }
+  //   }
+  // }
+
+  /*
+  constructor(
+    private croService: CustomRecommendationOptionService,
+    private localStorageService: LocalStorageService,
+    private fb: FormBuilder
+    // private slideConceptservice: SlideConceptsService
+  ) {
+    // this.get_concepts_manually();
+    // this.get_concepts_manually_current_slide();
+
+    // this.croFormObj = this.fb.group({
+    //     category: [null],
+    //     concepts: this.fb.array([]) // this.fb.array([this.createTicket()]) // this.fb.array([])
+    // })
+  }
+
+  createTicket(): FormGroup{
+    return this.fb.group({
+      cid: ["22"],
+      name: ["Gello"],
+      status: [false],
+      weight: [2],
+      weight_full: [20]
+    })
+  }
+
+  get concepts(): FormArray{
+    return <FormArray> this.croFormObj.get('concepts');
+  }
+
+  addTicket() {
+    this.concepts.push(this.createTicket());
+  }
+
+  addConcepts(concepts: any []): FormArray {
+    let result: FormArray;
+    for(let concept of concepts) {
+      result.push(this.fb.group({
+        cid: concept.cid,
+        name: concept.name,
+        status: concept.status,
+        // weight: [null],
+        // weight_full: [null]
+      }));
+    }
+
+    return result;
+  }
+  
+  ngOnInit(): void {
+    // const stopsArray = this.croFormObj.get('stops') as FormArray;
+    this.croFormObj.valueChanges.subscribe((selectedValue) => {console.warn("this.croFormObj -> ", selectedValue)});
+  }
+  */
+
 }
