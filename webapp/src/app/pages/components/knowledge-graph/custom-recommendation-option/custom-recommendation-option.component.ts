@@ -38,7 +38,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
         recommendation_type_4: false
       }
     },
-    facotr_weights: {
+    factor_weights: {
       status: false,
       reload: false,
       weights: {
@@ -50,10 +50,10 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
               bookmark: 0.1,
               like_count: 0.1
           },
-          "article": {
-              "rating": 0.4,
-              "similarity_score": 0.3,
-              "bookmark": 0.3
+          article: {
+              rating: 0.4,
+              similarity_score: 0.3,
+              bookmark: 0.3
           }
       }
     },
@@ -133,13 +133,18 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
   }
   
   showRecTypeAndFactorWeight() {
-    if (this.croForm?.concepts.length) {
+    if (this.croForm?.concepts.length > 0) {
+      this.croForm.factor_weights.status = true;
       this.croForm.recommendation_types.status = true;
-      this.croForm.facotr_weights.status = true;
     } else {
+      this.croForm.factor_weights.status = false;
       this.croForm.recommendation_types.status = false;
-      this.croForm.facotr_weights.status = false;
     }
+  }
+
+  ActivateOrNotFactorWeight(event, factor: string) {
+    console.warn(event);
+    console.warn(factor);
   }
 
   showCRO() {

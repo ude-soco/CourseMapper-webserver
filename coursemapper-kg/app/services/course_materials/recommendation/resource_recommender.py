@@ -505,7 +505,7 @@ class ResourceRecommenderService:
         results = []
 
         # check whether to only rank resources
-        if body["croForm"]["facotr_weights"]["reload"] == True:
+        if body["croForm"]["factor_weights"]["reload"] == True:
             logger.info("----Ranking Resourses----")
 
             for rec_type in body["croForm"]["recommendation_types"]:
@@ -518,8 +518,8 @@ class ResourceRecommenderService:
 
                 resources = self.db.cro_get_resources(concepts_cro=cro_form["concepts"])
                 # ranking
-                facotr_weights = body["croForm"]["facotr_weights"]["weights"]
-                result = self.cro_sort_result(resources=resources, weights=facotr_weights)
+                factor_weights = body["croForm"]["factor_weights"]["weights"]
+                result = self.cro_sort_result(resources=resources, weights=factor_weights)
                 result = {"recommendation_type": recommendation_type.value, "concepts": cro_form["concepts"], "nodes": result}
                 results.append(result)
             return results
@@ -595,8 +595,8 @@ class ResourceRecommenderService:
                 resources = self.db.cro_get_resources(concepts_cro=cro_form["concepts"])
 
                 # ranking
-                facotr_weights = body["croForm"]["facotr_weights"]["weights"]
-                result = self.cro_sort_result(resources=resources, weights=facotr_weights)
+                factor_weights = body["croForm"]["factor_weights"]["weights"]
+                result = self.cro_sort_result(resources=resources, weights=factor_weights)
             else:
                 result = {"articles": [], "videos": []}
 

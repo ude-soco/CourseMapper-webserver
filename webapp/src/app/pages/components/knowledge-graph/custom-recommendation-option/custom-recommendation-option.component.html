@@ -663,7 +663,7 @@
       </div>
       
       <!-- Ranking Factor Weights -->
-      <div class="!mt-3" *ngIf="croForm?.facotr_weights?.status">
+      <div class="!mt-3" *ngIf="croForm?.factor_weights?.status">
         <div class="flex flex-row gap-3 text-[#0288d1]">
           <div class="mt-1">Factors impacting the ranking of recommendations</div>
           <div class="mt-1"
@@ -676,17 +676,24 @@
 
         <div class="flex flex-col text-[11px]">
           <div class="flex flex-row gap-2">
-            <div class="mt-1"><input type="checkbox" [(ngModel)]="croForm?.recommendation_types?.models.recommendation_type_1" class="accent-[#50d71e] w-[18px] h-[18px]"></div>
+
+            <div class="mt-1">
+              <p-checkbox [binary]="true" inputId="binary" (onChange)="ActivateOrNotFactorWeight($event, 'similarity_score')">
+              </p-checkbox>
+            </div>
             
             <div class="mt-1">Similarity Score</div>
-
             <div class="w-24">
+              <p-slider [(ngModel)]="croForm.factor_weights.weights.similarity_score" [min]="0" [max]="1" [step]="0.01"></p-slider>
+            </div>
+
+            <div class="w-24" style="display: none;">
               <div class="flex flex-wrap justify-between text-[10px]">
                 <div>0</div>
-                <div>{{croForm?.facotr_weights?.weights?.similarity_score}}</div>
+                <div>{{croForm?.factor_weights?.weights?.similarity_score}}</div>
                 <div>1</div>
               </div>
-              <div class="mt-2"><p-slider [(ngModel)]="croForm.facotr_weights.weights.similarity_score"></p-slider></div>
+              <div class="mt-2"><p-slider [(ngModel)]="croForm.factor_weights.weights.similarity_score"></p-slider></div>
             </div>
 
             <div>
