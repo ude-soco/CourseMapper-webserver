@@ -7,9 +7,7 @@ from prerequisite_relationship import PrerequisiteRelationship as Prerequisite
 class Prerequisite:
     def __init__(self) -> None:
         pass
-    def find_prerequisite(self):
-        course_name = 'Deine mutter'
-
+    def find_prerequisite(self,course_name = 'Deine mutter'):
         mongodb = CourseMaterials(course_name=course_name)
         learning_materials = mongodb.get_list_of_materials()
 
