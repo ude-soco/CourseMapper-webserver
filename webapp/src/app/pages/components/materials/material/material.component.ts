@@ -68,7 +68,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
   private channels: Channel[] = [];
   materials: Material[] = [];
 
-
+  showFullMap: { [key: string]: boolean } = {};
   materialType?: string;
   tabIndex: number = -1;
   isMaterialSelected: boolean = false;
@@ -145,6 +145,9 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
           this.selectedChannel = foundChannel;
           this.channelID = this.selectedChannel._id;
           this.materials = foundChannel.materials;
+          this.materials.forEach(material => {
+            this.showFullMap[material._id] = false;
+          });
           this.channels.push(this.selectedChannel);
           this.selectedMaterial = foundChannel.materials.find(
             (material) => material._id == materialId
@@ -209,6 +212,9 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
 
               if (this.selectedChannel._id === this.channels['_id']) {
                 this.materials = this.channels['materials'];
+                this.materials.forEach(material => {
+                  this.showFullMap[material._id] = false;
+                });
               } else {
                 this.selectedChannel._id = this.channels['_id'];
               }
@@ -268,6 +274,18 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       getLastTimeCourseMapperOpened
     );
   }
+  toggleFullMaterialName(materialId: string, event: MouseEvent): void {
+    console.log("is triggered")
+    event.preventDefault();
+    event.stopPropagation();
+    this.showFullMap[materialId] = !this.showFullMap[materialId];
+  }
+  truncateText(text: string, limit: number): string {
+    const words = text.split(' ');
+    if (words.length <= limit) return text;
+    return words.slice(0, limit).join(' ') + '...';
+  }
+
 
   getMaterialActivityIndicator(materialId: string) {
     return combineLatest([
