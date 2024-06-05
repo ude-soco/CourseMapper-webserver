@@ -19,7 +19,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
   @Input() activatorPartCRO: ActivatorPartCRO;
   // @Output() croFormValue: any; //  = new EventEmitter<CROform>();
 
-  isCustomRecOptionDisplayed = false;
+  isCustomRecOptionDisplayed = true;
   cro_concept_weight: number;
   cro_concept_selected: any | undefined;
   // cro_concept_status_selected: boolean;
@@ -29,6 +29,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     slide_id: null,
     category: "1",
     concepts: [],
+    recommendation_type: 1,
     recommendation_types: {
       status: false,
       models: {
@@ -41,23 +42,8 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     factor_weights: {
       status: false,
       reload: false,
-      weights: {
-          video: {
-              views: 0.7,
-              rating: 0.1,
-              creation_date: 0.3,
-              similarity_score: 0.1,
-              bookmark: 0.1,
-              like_count: 0.1
-          },
-          article: {
-              rating: 0.4,
-              similarity_score: 0.3,
-              bookmark: 0.3
-          }
-      }
+      weights: null
     },
-    vennDiagramStatus: false,
     // countOriginal: 0,
     pagination_params: {
       articles: {
@@ -77,8 +63,52 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
       }
     }
   };
+
+  factor_weights = {
+    original : [
+      {
+        "title": "Similarity Score",
+        "key": "similarity_score",
+        "value": 0.1
+      },
+      {
+        "title": "Creation Date",
+        "key": "creation_date",
+        "value": 0.3
+      },
+      {
+        "title": "No. of Views",
+        "key": "views",
+        "value": 0.7
+      },
+      {
+        "title": "No. of Likes on YouTube",
+        "key": "like_count",
+        "value": 0.1
+      },
+  
+      {
+        "title": "Rating on CourseMapper",
+        "key": "rating",
+        "value": 0.1
+      },
+      {
+        "title": "No. of Saves on CourseMapper",
+        "key": "bookmark",
+        "value": 0.1
+      }
+    ],
+    normalized: {
+      "bookmark": 0.071,
+      "creation_date": 0.214,
+      "like_count": 0.071,
+      "rating": 0.071,
+      "similarity_score": 0.071,
+      "views": 0.5
+    }
+  }
+
   croFormBackup: CROform = {};
- 
   numberConceptsToBeChecked = 0;
   CROconceptsManually = []; // from the whole material
   // CROconceptsManuallySelection1or2 = []; // from the whole slide
@@ -106,7 +136,6 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     {cid:"1", name: "Information Visualization Machine", weight: 0.3, status: false, weight_full: 30}
   ];
   */
-
   croFormObj = new BehaviorSubject<CROform>(this.croForm);
 
   constructor(
@@ -131,6 +160,15 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
       // console.warn("this.croFormObj ->", data);
     })
   }
+
+  updateFactorWeight() {
+    let result = {};
+    for (let factor of this.factor_weights.original) { // let [key, value] of Object.entries(this.factor_weights)
+      result[factor.key] = factor.value
+    }
+
+    this.croForm.factor_weights.weights = result;
+  }
   
   showRecTypeAndFactorWeight() {
     if (this.croForm?.concepts.length > 0) {
@@ -142,11 +180,30 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     }
   }
 
-  ActivateOrNotFactorWeight(event, factor: string) {
+  activateOrNotFactorWeight(event, factor: string) {
     console.warn(event);
-    console.warn(factor);
+    // console.warn(this.croForm.recommendation_type);
   }
 
+
+  /*
+  setFactorWeight(event, factor) {
+    console.warn("setFactorWeight ->", event.value)
+    // factor.value = Number(event.value);
+  }
+
+  convert_percentage(value: number, small: boolean) {
+    if (value) {
+      if (small == true) {
+        return value;
+      } else {
+        return value * 100;
+      }
+    } else {
+      return value;
+    }
+  }
+*/
   showCRO() {
     this.isCustomRecOptionDisplayed = this.isCustomRecOptionDisplayed === true ? false : true;
   }
@@ -169,7 +226,6 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
       category: category,
       concepts: [],
       recommendation_algorithm: recommendation_algorithm,
-      vennDiagramStatus: false,
       // countOriginal: 0,
       pagination_params: {
         current_page: 1,
@@ -374,18 +430,20 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     this.updateStatus1or2();
   }
 
+  /*
   setWeight(event, cro) {
     for (let i = 0; i < this.croForm.concepts.length; i++) {
       let x = this.croForm.concepts[i];
       if (x.cid == cro.cid) {
         let value = Number(event.value);
         cro.weight_updated = value;
-        cro.weight = value / 100;
+        cro.weight = (value / 100); // .toFixed(2);
         break;
       }
     }
     // console.warn(this.croForm.concepts);
   }
+  */
 
   setStatus(event, cro) {
     this.deactivateSelection();
@@ -498,6 +556,9 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
       }
     }
     this.croForm.concepts = concepts;
+
+    // update factor weights
+    this.updateFactorWeight();
 
     return this.croForm;
   }

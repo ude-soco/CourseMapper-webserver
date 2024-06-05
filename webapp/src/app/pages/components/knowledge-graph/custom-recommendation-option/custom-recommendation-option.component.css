@@ -24,6 +24,10 @@
   font-size: 12px;
 }
 
+:host ::ng-deep .raning_progress_bar .p-progressbar .p-progressbar-label {
+  display: block !important;
+}
+
 
 
 /* :host ::ng-deep #cro_second .p-panel-title {

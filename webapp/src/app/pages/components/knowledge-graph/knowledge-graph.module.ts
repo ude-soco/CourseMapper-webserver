@@ -49,6 +49,7 @@ import { PaginatorModule } from 'primeng/paginator';
 import { PanelModule } from 'primeng/panel';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { ListboxModule } from 'primeng/listbox';
+import { ProgressBarModule } from 'primeng/progressbar';
 
 
 @NgModule({
@@ -104,7 +105,8 @@ import { ListboxModule } from 'primeng/listbox';
     PaginatorModule,
     PanelModule,
     ScrollPanelModule,
-    ListboxModule
+    ListboxModule,
+    ProgressBarModule
     ],
   exports: [
     ConceptMapComponent,
