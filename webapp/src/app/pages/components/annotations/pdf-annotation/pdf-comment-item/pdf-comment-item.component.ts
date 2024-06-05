@@ -500,17 +500,37 @@ export class PdfCommentItemComponent
   }
 
   linkifyText(text: string): string {
+    let limit = 180
     const linkRegex =
       /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
     const hashtagRegex = /(\s|^)(#[a-z\d-]+)/gi;
     const newlineRegex = /(\r\n|\n|\r)/gm;
-    const truncatedText = text.substring(0, 180);
-    const truncated = text.length > 180;
+    const urlRegex = /https?:\/\/[^\s]+/g;
+
+    // Find all URLs in the text
+    let match;
+    let lastUrlEnd = -1;
+  
+    while ((match = urlRegex.exec(text)) !== null) {
+      // If the URL ends after the truncation limit
+      if (match.index <= limit && match.index + match[0].length > limit) {
+        lastUrlEnd = match.index + match[0].length;
+        break;
+      }
+    }
+    const truncationPoint = lastUrlEnd > limit ? lastUrlEnd : limit;
+
+    const truncatedText = text.substring(0, truncationPoint);
+    const truncated = text.length > truncationPoint;
+    if (truncationPoint === text.length) {
+      return truncatedText; // No "show more" link needed
+    }
+
     const linkedText = truncated
       ? truncatedText +
-        '<span class=" ml-1 clickable-text show-more cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline">...show more</span>' +
+        '<span class="ml-1 clickable-text show-more cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline">...show more</span>' +
         '<span class="hidden break-all">' +
-        text.substring(180) +
+        text.substring(truncationPoint) +
         '</span>' +
         '<span class="ml-1 cursor-pointer text-blue-500 dark:text-blue-500 hover:underline clickable-text show-less hidden">show less</span>'
       : text;
