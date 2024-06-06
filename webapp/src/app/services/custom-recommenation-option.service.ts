@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, lastValueFrom } from 'rxjs';
 import { environment_Python } from 'src/environments/environment';
-import { Neo4jResult } from '../models/croForm';
+import { Neo4jResult, FactorWeight } from '../models/croForm';
 // TODO remove neo4j from package.json
 
 // type Neo4jResult = {
@@ -32,6 +32,11 @@ export class CustomRecommendationOptionService {
   getConceptsBySlideId(mid: string, user_id: string): Observable<Neo4jResult> {
     const url = `${environment_Python.PYTHON_SERVER}cro_get_concepts_by_user_id_and_slide_id?user_id=${user_id}&slide_id=${mid}`;
     return this.http.get<Neo4jResult>(url);
+  }
+
+  updateFactorWeight(data): Observable<any>{
+    const url = `${environment_Python.PYTHON_SERVER}get_resources/update_factor_weights`;
+    return this.http.post<any>(url, data);
   }
 
 

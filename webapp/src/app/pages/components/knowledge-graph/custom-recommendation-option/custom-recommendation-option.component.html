@@ -639,9 +639,8 @@
       </div>
         
       <!-- models algo -->
-      <div class="!mt-3" *ngIf="croForm?.recommendation_types?.status">
+      <div class="!mt-3" *ngIf="croForm?.concepts?.length > 0">
         <div class="text-[#0288d1]">How should be the recommendations generated:</div>
-
         <div class="flex flex-col gap-2 text-[11.5px] mt-2">
           <div class="flex flex-row">
             <p-radioButton name="model_1" value="1" [(ngModel)]="croForm.recommendation_type" inputId="model_1"></p-radioButton>
@@ -674,13 +673,16 @@
           </div>
         </div>
 
-        <div *ngFor="let factor of factor_weights?.original">
+        <div *ngFor="let factor of factor_weights?.original; index as i">
           <div class="flex flex-col text-[10px] mt-2">
             <div class="flex flex-row justify-between">
 
               <div class="flex flex-row gap-2">
                 <div class="mt-4">
-                  <p-checkbox [binary]="true" inputId="binary" (onChange)="activateOrNotFactorWeight($event, factor.key)">
+                  <p-checkbox [binary]="true" inputId="binary" 
+                  [(ngModel)]="factor.checked" 
+                  (onChange)="activateOrNotFactorWeight($event, i)"
+                  >
                   </p-checkbox>
                 </div>
 
@@ -689,7 +691,7 @@
                 </div>
               </div>
 
-              <div class="flex flex-row gap-6">
+              <div class="flex flex-row gap-6" id="{{ 'factor_weight_'+i }}">
                 <div>
                   <div class="w-28 mt-auto mb-auto">
                     <div class="flex flex-wrap justify-between text-[9px]">
@@ -697,7 +699,12 @@
                       <div>{{ factor.value }}</div>
                       <div>1</div>
                     </div>
-                    <div class="mt-2"><p-slider [(ngModel)]="factor.value" [min]="0" [step]="0.01" [max]="1"></p-slider></div>
+                    <div class="mt-2"><p-slider 
+                      [(ngModel)]="factor.value" 
+                      [min]="0" [step]="0.01" [max]="1"
+                      (onChange)="updateFactorWeight()"
+                      >
+                    </p-slider></div>
                   </div>
                 </div>
                 <div>
@@ -705,10 +712,12 @@
                     <div class="raning_progress_bar">
                       <p-progressBar 
                         [value]="factor_weights?.normalized[factor.key] * 100" 
-                        [showValue]="true" 
-                        [style]="{ height: '25px' }"
+                        [showValue]="true"
+                        [color]="'#0288d1'"
+                        [style]="{ height: '25px', borderRadius: '5px'}"
                       >
                       </p-progressBar>
+                      <!-- <div class="raning_progress_bar_value">{{ factor_weights?.normalized[factor.key] * 100 | number: '1.0-0' }}%</div> -->
                     </div>
                   </div>
                 </div>

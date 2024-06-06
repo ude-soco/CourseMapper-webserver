@@ -25,6 +25,15 @@ export interface Neo4jResult {
     records: Concept[]
 }
 
+export interface FactorWeight {
+    similarity_score?: number,
+    creation_date?: number,
+    views?: number,
+    like_count?: number
+    user_rating?: number,
+    nbr_saves?: number,
+}
+
 // export interface ResourceNodesContentVideo {
 //     node_id: number,
 // }

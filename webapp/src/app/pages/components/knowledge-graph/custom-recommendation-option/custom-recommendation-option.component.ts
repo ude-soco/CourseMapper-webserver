@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { ActivatorPartCRO, CROform, Neo4jResult } from 'src/app/models/croForm';
+import { ActivatorPartCRO, CROform, Neo4jResult, FactorWeight } from 'src/app/models/croForm';
 import { CustomRecommendationOptionService } from 'src/app/services/custom-recommenation-option.service';
 
 
@@ -30,81 +30,80 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     category: "1",
     concepts: [],
     recommendation_type: 1,
-    recommendation_types: {
-      status: false,
-      models: {
-        recommendation_type_1: true,
-        recommendation_type_2: false,
-        recommendation_type_3: false,
-        recommendation_type_4: false
-      }
-    },
     factor_weights: {
       status: false,
       reload: false,
       weights: null
     },
-    // countOriginal: 0,
-    pagination_params: {
-      articles: {
-        page_size: 10,
-        page_number: 1
-      },
-      videos: {
-          page_size: 10,
-          page_number: 1
-      },
-      // content: [],
-      // total_pages: 2,
-      sort_by_params: {
-          similarity_score: true,
-          most_recent: false,
-          popularity: false
-      }
-    }
+    pagination_params: null
   };
 
+  factor_weight_checked = true;
   factor_weights = {
     original : [
       {
         "title": "Similarity Score",
         "key": "similarity_score",
-        "value": 0.1
+        "value": 0.1,
+        "checked": true
       },
       {
         "title": "Creation Date",
         "key": "creation_date",
-        "value": 0.3
+        "value": 0.3,
+        "checked": true
       },
       {
         "title": "No. of Views",
         "key": "views",
-        "value": 0.7
+        "value": 0.7,
+        "checked": true
       },
       {
         "title": "No. of Likes on YouTube",
         "key": "like_count",
-        "value": 0.1
+        "value": 0.1,
+        "checked": true
       },
   
       {
-        "title": "Rating on CourseMapper",
-        "key": "rating",
-        "value": 0.1
+        "title": "User Rating on CourseMapper",
+        "key": "user_rating",
+        "value": 0.1,
+        "checked": true
       },
       {
         "title": "No. of Saves on CourseMapper",
-        "key": "bookmark",
-        "value": 0.1
+        "key": "nbr_saves",
+        "value": 0.1,
+        "checked": true
       }
     ],
     normalized: {
-      "bookmark": 0.071,
-      "creation_date": 0.214,
-      "like_count": 0.071,
-      "rating": 0.071,
       "similarity_score": 0.071,
-      "views": 0.5
+      "creation_date": 0.214,
+      "views": 0.071,
+      "like_count": 0.071,
+      "user_rating": 0.071,
+      "nbr_saves": 0.5
+    }
+  }
+
+  pagination_params = {
+    articles: {
+      page_size: 10,
+      page_number: 1
+    },
+    videos: {
+        page_size: 10,
+        page_number: 1
+    },
+    // content: [],
+    // total_pages: 2,
+    sort_by_params: {
+        similarity_score: true,
+        most_recent: false,
+        popularity: false
     }
   }
 
@@ -144,6 +143,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
   ) {
     // this.get_concepts_manually();
     // this.get_concepts_manually_current_slide();
+    this.croForm.pagination_params = this.pagination_params;
     this.croFormObj.next(this.croForm);
   }
 
@@ -160,50 +160,43 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
       // console.warn("this.croFormObj ->", data);
     })
   }
+  
+  // onChangeFactorWeight() {
+  // }
 
   updateFactorWeight() {
+    let data = this.getFactorWeight();
+    console.warn("updateFactorWeight");
+    console.warn(data);
+    this.croService.updateFactorWeight(data).subscribe((res) => {
+      this.factor_weights.normalized = res;
+    })
+  }
+
+  getFactorWeight() {
     let result = {};
     for (let factor of this.factor_weights.original) { // let [key, value] of Object.entries(this.factor_weights)
       result[factor.key] = factor.value
     }
 
     this.croForm.factor_weights.weights = result;
+    return result
   }
   
   showRecTypeAndFactorWeight() {
-    if (this.croForm?.concepts.length > 0) {
-      this.croForm.factor_weights.status = true;
-      this.croForm.recommendation_types.status = true;
+    this.croForm.factor_weights.status = this.croForm?.concepts.length > 0 ? true : false;
+  }
+
+  activateOrNotFactorWeight(event, factor_index: number) {
+    let factor_div = document.getElementById("factor_weight_"+factor_index);
+
+    if (event.checked === true) {
+      factor_div.classList.remove('factor_weight_disabled');
     } else {
-      this.croForm.factor_weights.status = false;
-      this.croForm.recommendation_types.status = false;
+      factor_div.classList.add('factor_weight_disabled');
     }
   }
 
-  activateOrNotFactorWeight(event, factor: string) {
-    console.warn(event);
-    // console.warn(this.croForm.recommendation_type);
-  }
-
-
-  /*
-  setFactorWeight(event, factor) {
-    console.warn("setFactorWeight ->", event.value)
-    // factor.value = Number(event.value);
-  }
-
-  convert_percentage(value: number, small: boolean) {
-    if (value) {
-      if (small == true) {
-        return value;
-      } else {
-        return value * 100;
-      }
-    } else {
-      return value;
-    }
-  }
-*/
   showCRO() {
     this.isCustomRecOptionDisplayed = this.isCustomRecOptionDisplayed === true ? false : true;
   }
@@ -218,26 +211,16 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     const user_id = this.croForm.user_id;
     const mid = this.croForm.mid;
     const category = this.croForm.category;
-    const recommendation_algorithm = this.croForm.recommendation_algorithm;
+    const slide_id = this.croForm.slide_id;
 
     this.croForm = {
       user_id: user_id,
       mid: mid,
+      slide_id: slide_id,
       category: category,
       concepts: [],
-      recommendation_algorithm: recommendation_algorithm,
-      // countOriginal: 0,
-      pagination_params: {
-        current_page: 1,
-        total_items: 15,
-        content: [],
-        total_pages: 2,
-        sort_by_params: {
-            similarity_score: true,
-            most_recent: false,
-            popularity: false
-        }
-      }
+      recommendation_type: "1",
+      pagination_params: null
     }
   }
 
@@ -558,7 +541,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     this.croForm.concepts = concepts;
 
     // update factor weights
-    this.updateFactorWeight();
+    this.getFactorWeight();
 
     return this.croForm;
   }
