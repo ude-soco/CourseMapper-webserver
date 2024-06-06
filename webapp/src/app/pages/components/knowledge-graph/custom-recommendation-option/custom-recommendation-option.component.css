@@ -25,6 +25,7 @@
 }
 :host ::ng-deep .raning_progress_bar .p-progressbar .p-progressbar-label {
   display: block !important;
+  font-size: 0.6rem;
 }
 
 /* change checkbox color */

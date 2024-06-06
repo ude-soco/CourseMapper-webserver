@@ -265,7 +265,8 @@ class ResourceRecommenderService:
             normalized_values = scaled_data
 
         if sum_value:
-            print("sun values: ", sum(normalized_values))
+            # print("sun values: ", sum(normalized_values))
+            logger.info("factor weight sum ->", sum(normalized_values))
 
         if complete:
             normalized_values = dict(zip(key_names, normalized_values))
@@ -306,15 +307,16 @@ class ResourceRecommenderService:
         """
             Sort by these extra features provided by the resources such as:
             weights: dict containing factors weight
-            {"views": 0.2, "rating": 0.2, "creation_date": 0.2, "similarity_score": 0.2, "bookmark": 0.2, "like_count": 0.2}
+            {'similarity_score': 0.2, 'creation_date': 0.2, 'views': 0.3, 'like_count': 0.1, 'user_rating': 0.1, 'nbr_saves': 0.1}
         """
         now = datetime.now()
-        weight_views = weights.get("views")
-        weight_rating = weights.get("rating")
-        weight_creation_date = weights.get("creation_date")
         weight_similarity_score = weights.get("similarity_score")
-        weight_bookmark = weights.get("bookmark")
+        weight_creation_date = weights.get("creation_date")
+        weight_views = weights.get("views")
+        weight_user_rating = weights.get("user_rating")
         weight_like_count = weights.get("like_count")
+        weight_nbr_saves = weights.get("nbr_saves")
+
 
         bookmarked_min_value = min(resources, key=lambda x: x["bookmarked_count"])["bookmarked_count"]
         bookmarked_max_value = max(resources, key=lambda x: x["bookmarked_count"])["bookmarked_count"]
@@ -335,18 +337,18 @@ class ResourceRecommenderService:
                 like_count_normalized = self.normalize_min_max_score(value=int(resource["like_count"]), min_value=like_count_min_value, max_value=like_count_max_value)
 
                 resource["composite_score"] = (views_normalzed * weight_views) \
-                                            + (rating_normalized * weight_rating) \
+                                            + (rating_normalized * weight_user_rating) \
                                             + (creation_date_normalized * weight_creation_date) \
                                             + (similarity_normalized * weight_similarity_score) \
-                                            + (bookmarked_normalized * weight_bookmark) \
+                                            + (bookmarked_normalized * weight_nbr_saves) \
                                             + (like_count_normalized * weight_like_count)
                 
         elif category == 2:
             for resource in resources:
                 rating_normalized = self.wilson_lower_bound_score(up=resource["helpful_count"], down=resource["not_helpful_count"])
-                resource["composite_score"] = (rating_normalized * weight_rating) \
+                resource["composite_score"] = (rating_normalized * weight_user_rating) \
                                             + (resource["similarity_score"] * weight_similarity_score) \
-                                            + (resource["bookmarked_count"] * weight_bookmark) \
+                                            + (resource["bookmarked_count"] * weight_nbr_saves) \
 
 
         # sort by composite score value
@@ -363,8 +365,8 @@ class ResourceRecommenderService:
         # Normalize Weights
         if weights is None:
             # to be completed
-            video_weights_normalized = {'views': 0.2, 'rating': 0.1, 'creation_date': 0.3, 'similarity_score': 0.1, 'bookmark': 0.1, 'like_count': 0.1}
-            article_weights_normalized = {'rating': 0.4, 'similarity_score': 0.4, 'bookmark': 0.2}
+            video_weights_normalized = {'similarity_score': 0.2, 'creation_date': 0.2, 'views': 0.3, 'like_count': 0.1, 'user_rating': 0.1, 'nbr_saves': 0.1}
+            article_weights_normalized = {'similarity_score': 0.4, 'creation_date': 0.4, 'user_rating': 0.2}
         else:
             video_weights_normalized = self.normalize_factor_weights(factor_weights=weights["video"], method_type="l1", complete=True, sum_value=False)
             article_weights_normalized = self.normalize_factor_weights(factor_weights=weights["article"], method_type="l1", complete=True, sum_value=False)
@@ -502,30 +504,29 @@ class ResourceRecommenderService:
             Result: [ {"recommendation_type": str, "concepts": list(concepts), "nodes": list(resources)} ]
         """
         body = self.cro_extract_meta_data(data_cro_form, data_default)
-        results = []
+        result = {}
+
+        # Map recommendation type to enum values
+        rec_type = body["croForm"]["recommendation_type"]
+        recommendation_type = RecommendationType.map_type(rec_type)
+
+        cro_form = {
+            "user_id": body["croForm"]["user_id"],
+            "concepts": body["croForm"]["concepts"],
+        }
 
         # check whether to only rank resources
         if body["croForm"]["factor_weights"]["reload"] == True:
             logger.info("----Ranking Resourses----")
+            resources = self.db.cro_get_resources(concepts_cro=cro_form["concepts"])
+            factor_weights = body["croForm"]["factor_weights"]["weights"]
+            result = self.cro_sort_result(resources=resources, weights=factor_weights)
 
-            for rec_type in body["croForm"]["recommendation_types"]:
-                cro_form = {
-                    "user_id": body["croForm"]["user_id"],
-                    "concepts": body["croForm"]["concepts"],
-                }
-                # Map recommendation type to enum values
-                recommendation_type = RecommendationType.map_type(rec_type)
-
-                resources = self.db.cro_get_resources(concepts_cro=cro_form["concepts"])
-                # ranking
-                factor_weights = body["croForm"]["factor_weights"]["weights"]
-                result = self.cro_sort_result(resources=resources, weights=factor_weights)
-                result = {"recommendation_type": recommendation_type.value, "concepts": cro_form["concepts"], "nodes": result}
-                results.append(result)
-            return results
+            # result = {"recommendation_type": recommendation_type.value, "concepts": cro_form["concepts"], "nodes": result}
+            # return result
         
-        logger.info("----new concepts----")
-        for rec_type in body["croForm"]["recommendation_types"]:
+        else:
+            logger.info("----new concepts----")
             # Check if parameters exist. If one doesn't exist, return not found message
             # check_message = resource_recommender_service.check_parameters(
             # slide_id, material_id, user_id, non_understood_concept_ids, understood_concept_ids, new_concept_ids, recommendation_type)
@@ -538,22 +539,15 @@ class ResourceRecommenderService:
                 recommendation_type=rec_type
             )
             if check_message != "":
-                break
+                return {}
             
-            cro_form = {
-                "user_id": body["croForm"]["user_id"],
-                "concepts": body["croForm"]["concepts"],
-            }
             user = {"name": body["username"], "id": body["user_id"] , "user_email": body["user_email"] }
-            
-            # Map recommendation type to enum values
-            recommendation_type = RecommendationType.map_type(rec_type)
-
             _slide = None
             # If personalized recommendtion, build user model
             if recommendation_type in [ RecommendationType.DYNAMIC_DOCUMENT_BASED, RecommendationType.DYNAMIC_KEYPHRASE_BASED ]:
                 logger.info("---------recommendation_type dyn----------")
 
+                """ 
                 # self._construct_user(
                 #     user=user,
                 #     non_understood=body["non_understood_concept_ids"],
@@ -561,6 +555,7 @@ class ResourceRecommenderService:
                 #     new_concepts=body["new_concept_ids"],
                 #     mid=body["material_id"],
                 # )
+                """
                 clu = self.cro_form_logic_updated(cro_form=cro_form, top_n=5, user_embedding=True)
 
             elif recommendation_type in [ RecommendationType.STATIC_DOCUMENT_BASED, RecommendationType.STATIC_KEYPHRASE_BASED ]:
@@ -594,18 +589,16 @@ class ResourceRecommenderService:
                 self.cro_edit_relationship_btw_concepts_cro_and_resources(concepts_cro=cro_form["concepts"], resources=resources)
                 resources = self.db.cro_get_resources(concepts_cro=cro_form["concepts"])
 
-                # ranking
                 factor_weights = body["croForm"]["factor_weights"]["weights"]
                 result = self.cro_sort_result(resources=resources, weights=factor_weights)
             else:
                 result = {"articles": [], "videos": []}
 
-            concepts = [{k: v for k, v in d.items() if k != "final_embedding"} for d in concepts]
-            recommendation_type_nbr = RecommendationType.map_type(recommendation_type, find_type="v")
-            result = {"recommendation_type": recommendation_type_nbr, "concepts": concepts, "nodes": result}
-            results.append(result)
+        concepts = [{k: v for k, v in d.items() if k != "final_embedding"} for d in concepts]
+        recommendation_type_nbr = RecommendationType.map_type(recommendation_type, find_type="v")
+        result = {"recommendation_type": recommendation_type_nbr, "concepts": concepts, "nodes": result}
 
-        return results
+        return result
 
 def get_serialized_resource_data(resources, concepts, relations):
     """ """

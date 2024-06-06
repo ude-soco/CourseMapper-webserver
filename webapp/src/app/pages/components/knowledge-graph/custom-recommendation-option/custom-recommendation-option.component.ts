@@ -29,7 +29,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     slide_id: null,
     category: "1",
     concepts: [],
-    recommendation_type: 1,
+    recommendation_type: "1",
     factor_weights: {
       status: false,
       reload: false,
@@ -44,7 +44,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
       {
         "title": "Similarity Score",
         "key": "similarity_score",
-        "value": 0.1,
+        "value": 0.7,
         "checked": true
       },
       {
@@ -56,7 +56,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
       {
         "title": "No. of Views",
         "key": "views",
-        "value": 0.7,
+        "value": 0.3,
         "checked": true
       },
       {
@@ -80,12 +80,12 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
       }
     ],
     normalized: {
-      "similarity_score": 0.071,
-      "creation_date": 0.214,
-      "views": 0.071,
-      "like_count": 0.071,
-      "user_rating": 0.071,
-      "nbr_saves": 0.5
+      "similarity_score": 0.44,
+      "creation_date": 0.19,
+      "views": 0.19,
+      "like_count": 0.06,
+      "user_rating": 0.06,
+      "nbr_saves": 0.06
     }
   }
 
@@ -161,13 +161,8 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     })
   }
   
-  // onChangeFactorWeight() {
-  // }
-
   updateFactorWeight() {
     let data = this.getFactorWeight();
-    console.warn("updateFactorWeight");
-    console.warn(data);
     this.croService.updateFactorWeight(data).subscribe((res) => {
       this.factor_weights.normalized = res;
     })
@@ -175,8 +170,10 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
 
   getFactorWeight() {
     let result = {};
-    for (let factor of this.factor_weights.original) { // let [key, value] of Object.entries(this.factor_weights)
-      result[factor.key] = factor.value
+    for (let factor of this.factor_weights.original) { 
+      if (factor.checked === true) {
+        result[factor.key] = factor.value
+      }
     }
 
     this.croForm.factor_weights.weights = result;
@@ -195,6 +192,8 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     } else {
       factor_div.classList.add('factor_weight_disabled');
     }
+
+    this.updateFactorWeight();
   }
 
   showCRO() {
