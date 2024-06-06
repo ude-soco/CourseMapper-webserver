@@ -22,12 +22,12 @@ def compute_combined_similatity(data, alpha, recommendation_type, with_user):
     logger.info("Compute Fused Cosine Similarities")
     if with_user:
         data[recommendation_type] = (1 - alpha) * data[
-            RecommendationType.DYNAMIC_DOCUMENT_BASED
-        ] + data[RecommendationType.DYNAMIC_KEYPHRASE_BASED] * alpha
+            RecommendationType.PKG_BASED_DOCUMENT__VARIANT
+        ] + data[RecommendationType.PKG_BASED_KEYPHRASE_VARIANT] * alpha
     else:
         data[recommendation_type] = (1 - alpha) * data[
-            RecommendationType.STATIC_DOCUMENT_BASED
-        ] + data[RecommendationType.STATIC_KEYPHRASE_BASED] * alpha
+            RecommendationType.CONTENT_BASED_DOCUMENT_VARIANT
+        ] + data[RecommendationType.CONTENT_BASED_KEYPHRASE_VARIANT] * alpha
     return data
 
 
@@ -181,8 +181,8 @@ class Recommender:
         if (
             recommendation_type != RecommendationType.WITHOUT_EMBEDDING
             and recommendation_type != RecommendationType.COMBINED_STATIC
-            and recommendation_type != RecommendationType.STATIC_KEYPHRASE_BASED
-            and recommendation_type != RecommendationType.STATIC_DOCUMENT_BASED
+            and recommendation_type != RecommendationType.CONTENT_BASED_KEYPHRASE_VARIANT
+            and recommendation_type != RecommendationType.CONTENT_BASED_DOCUMENT_VARIANT
         ):
             logger.info("# If personalized recommendation, use DNU concepts to query Youtube and Wikipedia")
 
@@ -220,7 +220,7 @@ class Recommender:
             return data
         
         # Model 1
-        elif recommendation_type == RecommendationType.DYNAMIC_KEYPHRASE_BASED:
+        elif recommendation_type == RecommendationType.PKG_BASED_KEYPHRASE_VARIANT:
             start_time = time.time()
 
             # Tranform embedding to tensor
@@ -277,7 +277,7 @@ class Recommender:
             return data # sorted_data.head(top_n)
         
         # If Model 2
-        elif recommendation_type == RecommendationType.DYNAMIC_DOCUMENT_BASED:
+        elif recommendation_type == RecommendationType.PKG_BASED_DOCUMENT__VARIANT:
             # Transform embedding to tensor
             user_embedding_array = user_embedding.split(",")
             user_embedding_array = [float(i) for i in user_embedding_array]
@@ -317,7 +317,7 @@ class Recommender:
             return data # sorted_data.head(top_n)
     
         # If Model 3
-        elif recommendation_type == RecommendationType.STATIC_KEYPHRASE_BASED:
+        elif recommendation_type == RecommendationType.CONTENT_BASED_KEYPHRASE_VARIANT:
             start_time = time.time()
 
             # Step 1: Retrieve Keyphrases
@@ -369,7 +369,7 @@ class Recommender:
             return data # sorted_data.head(top_n)
 
         # if Model 4
-        elif recommendation_type == RecommendationType.STATIC_DOCUMENT_BASED:
+        elif recommendation_type == RecommendationType.CONTENT_BASED_DOCUMENT_VARIANT:
             start_time = time.time()
 
             # Step 1: compute document embedding for resources

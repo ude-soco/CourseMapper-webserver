@@ -310,13 +310,14 @@ class ResourceRecommenderService:
             {'similarity_score': 0.2, 'creation_date': 0.2, 'views': 0.3, 'like_count': 0.1, 'user_rating': 0.1, 'nbr_saves': 0.1}
         """
         now = datetime.now()
-        weight_similarity_score = weights.get("similarity_score")
-        weight_creation_date = weights.get("creation_date")
-        weight_views = weights.get("views")
-        weight_user_rating = weights.get("user_rating")
-        weight_like_count = weights.get("like_count")
-        weight_nbr_saves = weights.get("nbr_saves")
+        default_weight = 0.001
 
+        weight_similarity_score = weights.get("similarity_score") if 'similarity_score' in weights else default_weight
+        weight_creation_date = weights.get("creation_date") if 'creation_date' in weights else default_weight
+        weight_views = weights.get("views") if 'views' in weights else default_weight
+        weight_user_rating = weights.get("user_rating") if 'user_rating' in weights else default_weight
+        weight_like_count = weights.get("like_count") if 'like_count' in weights else default_weight
+        weight_nbr_saves = weights.get("nbr_saves") if 'nbr_saves' in weights else default_weight
 
         bookmarked_min_value = min(resources, key=lambda x: x["bookmarked_count"])["bookmarked_count"]
         bookmarked_max_value = max(resources, key=lambda x: x["bookmarked_count"])["bookmarked_count"]
@@ -363,13 +364,13 @@ class ResourceRecommenderService:
             Last Step: Resources having Rating related to DNU_modified (cid)
         """
         # Normalize Weights
-        if weights is None:
-            # to be completed
-            video_weights_normalized = {'similarity_score': 0.2, 'creation_date': 0.2, 'views': 0.3, 'like_count': 0.1, 'user_rating': 0.1, 'nbr_saves': 0.1}
-            article_weights_normalized = {'similarity_score': 0.4, 'creation_date': 0.4, 'user_rating': 0.2}
-        else:
-            video_weights_normalized = self.normalize_factor_weights(factor_weights=weights["video"], method_type="l1", complete=True, sum_value=False)
-            article_weights_normalized = self.normalize_factor_weights(factor_weights=weights["article"], method_type="l1", complete=True, sum_value=False)
+        # if weights is None:
+        #     # to be completed
+        #     video_weights_normalized =  {} # {'similarity_score': 0.2, 'creation_date': 0.2, 'views': 0.3, 'like_count': 0.1, 'user_rating': 0.1, 'nbr_saves': 0.1}
+        #     article_weights_normalized = {} # {'similarity_score': 0.4, 'creation_date': 0.4, 'user_rating': 0.2}
+        # else:
+        video_weights_normalized = self.normalize_factor_weights(factor_weights=weights["video"], method_type="l1", complete=True, sum_value=False)
+        article_weights_normalized = self.normalize_factor_weights(factor_weights=weights["article"], method_type="l1", complete=True, sum_value=False)
 
         # video items
         resources_videos = [resource for resource in resources if "Video" in resource["labels"]]
@@ -408,8 +409,8 @@ class ResourceRecommenderService:
                 recommendation_type != RecommendationType.WITHOUT_EMBEDDING
                 and self.db.user_exists(user_id)
                 and recommendation_type != RecommendationType.COMBINED_STATIC
-                and recommendation_type != RecommendationType.STATIC_KEYPHRASE_BASED
-                and recommendation_type != RecommendationType.STATIC_DOCUMENT_BASED
+                and recommendation_type != RecommendationType.CONTENT_BASED_KEYPHRASE_VARIANT
+                and recommendation_type != RecommendationType.CONTENT_BASED_DOCUMENT_VARIANT
             ):
                 for resource_type in resource_types:
                     # Start the load operations and mark each future with its URL
@@ -498,6 +499,33 @@ class ResourceRecommenderService:
             "croForm": data_cro_form,
         }
 
+    def build_factor_weights(self, factor_weights_params: dict = None):
+        factor_weights_articles = {}
+        factor_weights_viedos = {}
+
+        if factor_weights_params:
+            factor_weights_articles = self.normalize_factor_weights(  factor_weights=factor_weights_params, 
+                                                            method_type="l1", 
+                                                            complete=True, 
+                                                            sum_value=False
+                                                        )
+            # set video weights
+            factor_weights_viedos = {}
+            for key, value in factor_weights_params.items():
+                if key in ["similarity_score", "user_rating", "nbr_saves"]:
+                    factor_weights_viedos[key] = value
+
+            factor_weights_viedos = self.normalize_factor_weights(  factor_weights=factor_weights_viedos, 
+                                                    method_type="l1", 
+                                                    complete=True, 
+                                                    sum_value=False
+                                                )
+        return {
+            "article": factor_weights_articles,
+            "video": factor_weights_viedos
+        }
+        
+    
     def _get_resources(self, data_cro_form: dict, data_default: dict=None):
         """
             Save cro_form, Crawl Youtube and Wikipedia API and then Store Resources
@@ -514,17 +542,15 @@ class ResourceRecommenderService:
             "user_id": body["croForm"]["user_id"],
             "concepts": body["croForm"]["concepts"],
         }
+        factor_weights = self.build_factor_weights(body["croForm"]["factor_weights"]["weights"])
+        concepts = cro_form["concepts"]
 
         # check whether to only rank resources
         if body["croForm"]["factor_weights"]["reload"] == True:
             logger.info("----Ranking Resourses----")
             resources = self.db.cro_get_resources(concepts_cro=cro_form["concepts"])
-            factor_weights = body["croForm"]["factor_weights"]["weights"]
             result = self.cro_sort_result(resources=resources, weights=factor_weights)
 
-            # result = {"recommendation_type": recommendation_type.value, "concepts": cro_form["concepts"], "nodes": result}
-            # return result
-        
         else:
             logger.info("----new concepts----")
             # Check if parameters exist. If one doesn't exist, return not found message
@@ -544,7 +570,7 @@ class ResourceRecommenderService:
             user = {"name": body["username"], "id": body["user_id"] , "user_email": body["user_email"] }
             _slide = None
             # If personalized recommendtion, build user model
-            if recommendation_type in [ RecommendationType.DYNAMIC_DOCUMENT_BASED, RecommendationType.DYNAMIC_KEYPHRASE_BASED ]:
+            if recommendation_type in [ RecommendationType.PKG_BASED_DOCUMENT__VARIANT, RecommendationType.PKG_BASED_KEYPHRASE_VARIANT ]:
                 logger.info("---------recommendation_type dyn----------")
 
                 """ 
@@ -558,7 +584,7 @@ class ResourceRecommenderService:
                 """
                 clu = self.cro_form_logic_updated(cro_form=cro_form, top_n=5, user_embedding=True)
 
-            elif recommendation_type in [ RecommendationType.STATIC_DOCUMENT_BASED, RecommendationType.STATIC_KEYPHRASE_BASED ]:
+            elif recommendation_type in [ RecommendationType.CONTENT_BASED_DOCUMENT_VARIANT, RecommendationType.CONTENT_BASED_KEYPHRASE_VARIANT ]:
                 logger.info("---------recommendation_type statistic----------")
 
                 _slide = self.db.get_slide(body["slide_id"])
@@ -569,7 +595,7 @@ class ResourceRecommenderService:
 
             cro_form = clu["cro_form"]
             user_embedding = clu.get("user_embedding")
-            concepts = cro_form["concepts"]
+            # concepts = cro_form["concepts"]
             concept_ids = [concept["cid"] for concept in cro_form["concepts"]]
             not_understood_concept_list = [concept["name"] for concept in cro_form["concepts"]]
 
@@ -589,15 +615,16 @@ class ResourceRecommenderService:
                 self.cro_edit_relationship_btw_concepts_cro_and_resources(concepts_cro=cro_form["concepts"], resources=resources)
                 resources = self.db.cro_get_resources(concepts_cro=cro_form["concepts"])
 
-                factor_weights = body["croForm"]["factor_weights"]["weights"]
                 result = self.cro_sort_result(resources=resources, weights=factor_weights)
             else:
                 result = {"articles": [], "videos": []}
 
         concepts = [{k: v for k, v in d.items() if k != "final_embedding"} for d in concepts]
         recommendation_type_nbr = RecommendationType.map_type(recommendation_type, find_type="v")
-        result = {"recommendation_type": recommendation_type_nbr, "concepts": concepts, "nodes": result}
 
+        result = {key: result[key][:10] for key, value in result.items()}
+        result = {"recommendation_type": recommendation_type_nbr, "concepts": concepts, "nodes": result}
+        
         return result
 
 def get_serialized_resource_data(resources, concepts, relations):
