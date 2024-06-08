@@ -11,4 +11,6 @@ export interface ArticleElementModel {
     similarity_score: number;
     helpful_counter: number;
     not_helpful_counter: number;
+    bookmarked_count?: number,
+    like_count?: number
   }

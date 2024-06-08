@@ -375,10 +375,12 @@ class ResourceRecommenderService:
         # video items
         resources_videos = [resource for resource in resources if "Video" in resource["labels"]]
         resources_videos = self.calculate_factors_weights(category=1, resources=resources_videos, weights=video_weights_normalized)
+        resources_videos = [{k: v for k, v in d.items() if k not in ["composite_score", "labels"]} for d in resources_videos]
 
         # articles items
         resources_articles = [resource for resource in resources if "Article" in resource["labels"]]
         resources_articles = self.calculate_factors_weights(category=2, resources=resources_articles, weights=article_weights_normalized)
+        resources_articles = [{k: v for k, v in d.items() if k not in ["composite_score", "labels"]} for d in resources_articles]
 
         # # Finally, priorities on resources having Rating related to DNU_modified (cid)
         if ratings and len(ratings) > 0:
@@ -573,15 +575,13 @@ class ResourceRecommenderService:
             if recommendation_type in [ RecommendationType.PKG_BASED_DOCUMENT__VARIANT, RecommendationType.PKG_BASED_KEYPHRASE_VARIANT ]:
                 logger.info("---------recommendation_type dyn----------")
 
-                """ 
-                # self._construct_user(
-                #     user=user,
-                #     non_understood=body["non_understood_concept_ids"],
-                #     understood=body["understood_concept_ids"],
-                #     new_concepts=body["new_concept_ids"],
-                #     mid=body["material_id"],
-                # )
-                """
+                self._construct_user(
+                    user=user,
+                    non_understood=body["non_understood_concept_ids"],
+                    understood=body["understood_concept_ids"],
+                    new_concepts=body["new_concept_ids"],
+                    mid=body["material_id"],
+                )
                 clu = self.cro_form_logic_updated(cro_form=cro_form, top_n=5, user_embedding=True)
 
             elif recommendation_type in [ RecommendationType.CONTENT_BASED_DOCUMENT_VARIANT, RecommendationType.CONTENT_BASED_KEYPHRASE_VARIANT ]:
@@ -624,7 +624,7 @@ class ResourceRecommenderService:
 
         result = {key: result[key][:10] for key, value in result.items()}
         result = {"recommendation_type": recommendation_type_nbr, "concepts": concepts, "nodes": result}
-        
+
         return result
 
 def get_serialized_resource_data(resources, concepts, relations):

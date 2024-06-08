@@ -105,7 +105,7 @@
         </div>
       </div>
 
-      <p-tabPanel *ngIf="this.croVideos.total_items > 0" [cache]="true" header="Videos" leftIcon="pi pi-video">
+      <p-tabPanel *ngIf="croVideos && croVideos.length > 0" [cache]="true" header="Videos" leftIcon="pi pi-video">
         <div class="mt-1 w-full" id="cro_viedo_list">
           <!-- <p-scrollPanel styleClass="scroll_panel_list">
             <app-card-video-list
@@ -116,14 +116,14 @@
 
             <app-card-video-list
               [notUnderstoodConcepts]="concepts"
-              [videoElements]="croVideos?.content"
+              [videoElements]="croVideos"
             ></app-card-video-list>
         </div>
       </p-tabPanel>
-      <p-tabPanel *ngIf="resourcesPagination === null || this.croVideos?.total_items === 0" header="Videos" leftIcon="pi pi-video">
+      <p-tabPanel *ngIf="croVideos === null && croVideos.length === 0" header="Videos" leftIcon="pi pi-video">
         <h4 class="my-auto mt-4">No Recommended videos for the selected Concepts</h4>
       </p-tabPanel>
-      <p-tabPanel [cache]="true" *ngIf="this.croArticles?.total_items > 0" header="Articles" leftIcon="pi pi-book">
+      <p-tabPanel [cache]="true" *ngIf="croArticles && croArticles.length > 0" header="Articles" leftIcon="pi pi-book">
         <div>
           <!-- <p-scrollPanel styleClass="scroll_panel_list">
             <app-card-article-list
@@ -134,19 +134,19 @@
 
             <app-card-article-list
               [notUnderstoodConcepts]="concepts"
-              [articleElements]="croArticles?.content"
+              [articleElements]="croArticles"
             ></app-card-article-list>
         </div>
       </p-tabPanel>
-      <p-tabPanel *ngIf="resourcesPagination === null || this.croArticles?.total_items === 0" header="Articles" leftIcon="pi pi-book">
+      <p-tabPanel *ngIf="croArticles === null || croArticles.length === 0" header="Articles" leftIcon="pi pi-book">
         <h4 class="my-auto mt-4">No Recommended articles for the selected Concepts</h4>
       </p-tabPanel>
   </p-tabView>
   <p-toast position="bottom-left" key="rating"></p-toast>
 </div>
 
-<div>
-  <!-- <div class="grid justify-items-end"> -->
+<!-- Pagination UI -->
+<!-- <div>
     <div class="flex justify-end fixed inset-x-0 bottom-0 bg-white">
       <div class="my-auto font-bold text-xs">Recommendations per page: </div>
       <div>
@@ -154,7 +154,7 @@
           *ngIf="activeIndex === 0"
           [first]="croPaginatorFirst" 
           [rows]="1" 
-          [totalRecords]="croVideos.total_pages" 
+          [totalRecords]="croVideos.length" 
           (onPageChange)="croOnPageChange($event)" 
           [showJumpToPageDropdown]="true" 
           [showPageLinks]="false"
@@ -171,7 +171,6 @@
         ></p-paginator>
       </div>
     </div>
-  <!-- </div> -->
-</div>
+</div> -->
 
 </div>

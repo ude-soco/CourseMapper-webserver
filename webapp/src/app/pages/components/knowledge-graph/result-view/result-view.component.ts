@@ -5,7 +5,7 @@ import { MenuItem } from 'primeng/api';
 // import { MaterialsRecommenderService } from 'src/app/services/materials-recommender.service';
 import { Subscription } from 'rxjs';
 import { SlideConceptsService } from 'src/app/services/slide-concepts.service';
-import { RecommendationNodesArticle, RecommendationNodesVideo, ResourcesPagination } from 'src/app/models/croForm';
+import { ResourcesPagination, ResourceNode } from 'src/app/models/croForm';
 import { CustomRecommendationOptionComponent } from '../custom-recommendation-option/custom-recommendation-option.component';
 import { MaterialsRecommenderService } from 'src/app/services/materials-recommender.service';
 
@@ -76,17 +76,11 @@ export class ResultViewComponent {
   // @Input() previousConceptsObj: any[];
   @ViewChild('croComponent', { static: false }) croComponent: CustomRecommendationOptionComponent;
   @Input() resourcesPagination: ResourcesPagination = null;;
-  recommendation_type_1_nodes = [];
-  recommendation_type_2_nodes = [];
-  recommendation_type_3_nodes = [];
-  recommendation_type_4_nodes = [];
-  recommendation_type_videos_nodes = [];
-  recommendation_type_articles_nodes = [];
   activeIndex: number = 0; 
-  croVideos: RecommendationNodesVideo; // croVideoElementModel;
-  croArticles: RecommendationNodesArticle; // croArticleElementModel;
-  croPaginatorFirst: number = 0;
-  croPaginatorRows: number = 10;
+  croVideos: VideoElementModel[] = []; // croVideoElementModel;
+  croArticles: ArticleElementModel[] = []; // croArticleElementModel;
+  // croPaginatorFirst: number = 0;
+  // croPaginatorRows: number = 10;
   croSorting = {
     similarity_score: true,
     most_recent: false,
@@ -95,6 +89,7 @@ export class ResultViewComponent {
   totalRecordsDefault = 1;
   // scrollPanelHeight = '550px';
 
+  /*
   croOnPageChange(event) {
     this.croPaginatorFirst = event.first;
     this.croPaginatorRows = event.rows;
@@ -103,7 +98,8 @@ export class ResultViewComponent {
     this.paginateResult()
     // 
   }
-
+  */
+  
   constructor(
     private slideConceptservice: SlideConceptsService,
     private materialsRecommenderService: MaterialsRecommenderService,
@@ -195,11 +191,12 @@ export class ResultViewComponent {
     };
   }
 
-  // call backend api for paginate/sorting result
+  // Only sort resoources on the frontend part
   sortResult(event) {
-    this.paginateResult();
+    // this.paginateResult();
   }
 
+  /*
   paginateResult() {
     // let pagination_params = {
     //   page_number: this.croPaginatorFirst + 1,
@@ -240,13 +237,13 @@ export class ResultViewComponent {
         }
       })
   }
+  */
 
   loadResultForSelectedModel() {
     // let key = null; // this.croForm[""];
     // for (const [key, value] of Object.entries(this.croForm["recommendation_types"]["models"])) {
     //   console.log(`${key}: ${value}`);
     // }
-
 
     this.allConceptsObj = [...this.resourcesPagination.concepts];
     this.concepts = [...this.resourcesPagination.concepts];
@@ -282,30 +279,11 @@ export class ResultViewComponent {
       });
     }
 
-    if(this.resourcesPagination.recommendation_type_1) {
-      this.croVideos = this.resourcesPagination.recommendation_type_1.nodes.videos;
-      this.croArticles = this.resourcesPagination.recommendation_type_1.nodes.articles;
-      // this.recommendation_type_videos_nodes.concat(this.resourcesPagination.recommendation_type_1.nodes.videos);
-      // this.recommendation_type_articles_nodes.concat(this.resourcesPagination.recommendation_type_1.nodes.articles);
-    }
-    if(this.resourcesPagination.recommendation_type_2) {
-      this.croVideos = this.resourcesPagination.recommendation_type_1.nodes.videos;
-      this.croArticles = this.resourcesPagination.recommendation_type_1.nodes.articles;
-    }
-    if(this.resourcesPagination.recommendation_type_2) {
-      this.croVideos = this.resourcesPagination.recommendation_type_1.nodes.videos;
-      this.croArticles = this.resourcesPagination.recommendation_type_1.nodes.articles;
-    }
-    if(this.resourcesPagination.recommendation_type_2) {
-      this.croVideos = this.resourcesPagination.recommendation_type_1.nodes.videos;
-      this.croArticles = this.resourcesPagination.recommendation_type_1.nodes.articles;
-    }
+    this.croVideos = this.resourcesPagination?.nodes?.vdieos;
+    this.croArticles = this.resourcesPagination?.nodes?.articles;
 
-    // this.croVideos = this.results["videos"];
-    // this.croArticles = this.results["articles"];
-
-    this.recievedVideoResultIsEmpty = false ? this.croVideos.total_items > 0 : true;
-    this.recievedArticleResultIsEmpty = false ? this.croArticles.total_items > 0 : true;
+    // this.recievedVideoResultIsEmpty = false ? this.croVideos.total_items > 0 : true;
+    // this.recievedArticleResultIsEmpty = false ? this.croArticles.total_items > 0 : true;
     // this.onResize();
 
     console.log('pagination results', this.results);

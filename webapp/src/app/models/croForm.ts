@@ -34,6 +34,42 @@ export interface FactorWeight {
     nbr_saves?: number,
 }
 
+export interface ResourceNode {
+    abstract?: string,
+    author_image_url?: string,
+    author_name?: string,
+    bookmarked_count?: number,
+    composite_score?: number, // removed
+    description?: string,
+    description_full?: string,
+    duration?: string,
+    helpful_count?: number,
+    id?: number,
+    keyphrases?: string[],
+    labels?: string[],
+    like_count?: number,
+    not_helpful_count?: number
+    post_date?: string,
+    publish_time?: string,
+    rid?: string,
+    similarity_score?: number,
+    text?: string,
+    thumbnail?: string,
+    title?: string,
+    uri?: string,
+    views?: string,
+}
+
+export interface ResourcesPagination {
+    concepts?: Concept[],
+    nodes: { articles: ArticleElementModel[], vdieos: VideoElementModel[] },
+    recommendation_type: string
+}
+
+
+
+/*
+
 // export interface ResourceNodesContentVideo {
 //     node_id: number,
 // }
@@ -85,9 +121,7 @@ export interface ResourcesPagination {
     recommendation_type_3: RecommendationTypePagination,
     recommendation_type_4: RecommendationTypePagination,
 }
-
-
-
+*/
 
 
 export interface ModelRec {

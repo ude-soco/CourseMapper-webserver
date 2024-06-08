@@ -32,7 +32,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     recommendation_type: "1",
     factor_weights: {
       status: false,
-      reload: false,
+      reload: true,
       weights: null
     },
     pagination_params: null

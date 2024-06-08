@@ -12,4 +12,6 @@ export interface VideoElementModel {
     helpful_counter: number;
     not_helpful_counter: number;
     duration: string;
+    bookmarked_count?: number,
+    like_count?: number
   }
