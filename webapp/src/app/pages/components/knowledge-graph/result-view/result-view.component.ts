@@ -75,21 +75,25 @@ export class ResultViewComponent {
   // @Input() didNotUnderstandConceptsObjFromCROfOrm: any[];
   // @Input() previousConceptsObj: any[];
   @ViewChild('croComponent', { static: false }) croComponent: CustomRecommendationOptionComponent;
-  @Input() resourcesPagination: ResourcesPagination = null;;
+  @Input() resourcesPagination: ResourcesPagination;;
   activeIndex: number = 0; 
-  croVideos: VideoElementModel[] = []; // croVideoElementModel;
-  croArticles: ArticleElementModel[] = []; // croArticleElementModel;
-  // croPaginatorFirst: number = 0;
-  // croPaginatorRows: number = 10;
+
   croSorting = {
     similarity_score: true,
     most_recent: false,
     popularity: false
   }
-  totalRecordsDefault = 1;
-  // scrollPanelHeight = '550px';
+
 
   /*
+  croVideos: VideoElementModel[]; // croVideoElementModel;
+  croArticles: ArticleElementModel[]; // croArticleElementModel;
+  // croPaginatorFirst: number = 0;
+  // croPaginatorRows: number = 10;
+  // totalRecordsDefault = 1;
+  // scrollPanelHeight = '550px';
+
+
   croOnPageChange(event) {
     this.croPaginatorFirst = event.first;
     this.croPaginatorRows = event.rows;
@@ -279,16 +283,17 @@ export class ResultViewComponent {
       });
     }
 
-    this.croVideos = this.resourcesPagination?.nodes?.vdieos;
-    this.croArticles = this.resourcesPagination?.nodes?.articles;
-
+    /*
+    // this.croVideos = this.resourcesPagination?.nodes?.vdieos;
+    // this.croArticles = this.resourcesPagination?.nodes?.articles;
     // this.recievedVideoResultIsEmpty = false ? this.croVideos.total_items > 0 : true;
     // this.recievedArticleResultIsEmpty = false ? this.croArticles.total_items > 0 : true;
     // this.onResize();
-
-    console.log('pagination results', this.results);
-    console.log('recievedVideoResultIsEmpty', this.videos);
-    console.log('recievedArticleResultIsEmpty', this.articles);
+    // console.log('recievedVideoResultIsEmpty', this.resourcesPagination.nodes.vdieos);
+    // console.log('recievedArticleResultIsEmpty', this.articles);
+    */
+    
+    console.log('pagination results', this.resourcesPagination);
   }
 
   tabChanged(tab) {

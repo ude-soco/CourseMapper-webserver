@@ -105,8 +105,9 @@
         </div>
       </div>
 
-      <p-tabPanel *ngIf="croVideos && croVideos.length > 0" [cache]="true" header="Videos" leftIcon="pi pi-video">
+      <p-tabPanel *ngIf="resourcesPagination.count.vdieos > 0" [cache]="true" header="Videos" leftIcon="pi pi-video">
         <div class="mt-1 w-full" id="cro_viedo_list">
+
           <!-- <p-scrollPanel styleClass="scroll_panel_list">
             <app-card-video-list
               [notUnderstoodConcepts]="concepts"
@@ -116,15 +117,16 @@
 
             <app-card-video-list
               [notUnderstoodConcepts]="concepts"
-              [videoElements]="croVideos"
+              [videoElements]="resourcesPagination.nodes.vdieos"
             ></app-card-video-list>
         </div>
       </p-tabPanel>
-      <p-tabPanel *ngIf="croVideos === null && croVideos.length === 0" header="Videos" leftIcon="pi pi-video">
+      <p-tabPanel *ngIf="resourcesPagination.count.vdieos === 0" header="Videos" leftIcon="pi pi-video">
         <h4 class="my-auto mt-4">No Recommended videos for the selected Concepts</h4>
       </p-tabPanel>
-      <p-tabPanel [cache]="true" *ngIf="croArticles && croArticles.length > 0" header="Articles" leftIcon="pi pi-book">
+      <p-tabPanel [cache]="true" *ngIf="resourcesPagination.nodes.articles" header="Articles" leftIcon="pi pi-book">
         <div>
+
           <!-- <p-scrollPanel styleClass="scroll_panel_list">
             <app-card-article-list
               [notUnderstoodConcepts]="concepts"
@@ -134,11 +136,11 @@
 
             <app-card-article-list
               [notUnderstoodConcepts]="concepts"
-              [articleElements]="croArticles"
+              [articleElements]="resourcesPagination.nodes.articles"
             ></app-card-article-list>
         </div>
       </p-tabPanel>
-      <p-tabPanel *ngIf="croArticles === null || croArticles.length === 0" header="Articles" leftIcon="pi pi-book">
+      <p-tabPanel *ngIf="!resourcesPagination.nodes.articles" header="Articles" leftIcon="pi pi-book">
         <h4 class="my-auto mt-4">No Recommended articles for the selected Concepts</h4>
       </p-tabPanel>
   </p-tabView>
