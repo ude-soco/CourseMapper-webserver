@@ -623,9 +623,8 @@ class ResourceRecommenderService:
         recommendation_type_nbr = RecommendationType.map_type(recommendation_type, find_type="v")
 
         result = {key: result[key][:10] for key, value in result.items()}
-        result = {"recommendation_type": recommendation_type_nbr, "concepts": concepts, "nodes": result, 
-                  "count": {"videos": len(result["videos"]), "articles": len(result["articles"])} 
-                }
+        result = {"recommendation_type": recommendation_type_nbr, "concepts": concepts, "nodes": result }
+                #   "count": {"videos": len(result["videos"]), "articles": len(result["articles"])} 
 
         return result
 

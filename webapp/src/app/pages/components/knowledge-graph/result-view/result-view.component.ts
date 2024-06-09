@@ -79,9 +79,9 @@ export class ResultViewComponent {
   activeIndex: number = 0; 
 
   croSorting = {
-    similarity_score: true,
-    most_recent: false,
-    popularity: false
+    similarity_score: { status: true, arrow: false},
+    most_recent: { status: false, arrow: false},
+    popularity: { status: false, arrow: false}
   }
 
 
@@ -196,8 +196,13 @@ export class ResultViewComponent {
   }
 
   // Only sort resoources on the frontend part
-  sortResult(event) {
-    // this.paginateResult();
+  sortResourcesByKeys(key: string) {
+    console.warn("sortResult", this.croSorting);
+    if (key !== "") {
+      this.croSorting[key].arrow = !this.croSorting[key].arrow;
+    }
+
+    // Sorting ...
   }
 
   /*

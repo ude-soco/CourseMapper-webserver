@@ -34,8 +34,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
       status: false,
       reload: true,
       weights: null
-    },
-    pagination_params: null
+    }
   };
 
   factor_weight_checked = true;
@@ -89,24 +88,6 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     }
   }
 
-  pagination_params = {
-    articles: {
-      page_size: 10,
-      page_number: 1
-    },
-    videos: {
-        page_size: 10,
-        page_number: 1
-    },
-    // content: [],
-    // total_pages: 2,
-    sort_by_params: {
-        similarity_score: true,
-        most_recent: false,
-        popularity: false
-    }
-  }
-
   croFormBackup: CROform = {};
   numberConceptsToBeChecked = 0;
   CROconceptsManually = []; // from the whole material
@@ -143,7 +124,6 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
   ) {
     // this.get_concepts_manually();
     // this.get_concepts_manually_current_slide();
-    this.croForm.pagination_params = this.pagination_params;
     this.croFormObj.next(this.croForm);
   }
 
@@ -159,6 +139,10 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     this.croFormObj.subscribe(data => {
       // console.warn("this.croFormObj ->", data);
     })
+  }
+
+  storeFactorWeight(old_factor_weights, new_factor_weights) {
+    localStorage.setItem("cro_factor_weights", "Tom");
   }
   
   updateFactorWeight() {

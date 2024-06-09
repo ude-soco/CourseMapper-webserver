@@ -62,7 +62,7 @@ export interface ResourceNode {
 
 export interface ResourcesPagination {
     concepts?: Concept[],
-    nodes: { articles: ArticleElementModel[], vdieos: VideoElementModel[] },
+    nodes: { articles: ArticleElementModel[], videos: VideoElementModel[] },
     count: { articles: number, vdieos: number },
     recommendation_type: string
 }

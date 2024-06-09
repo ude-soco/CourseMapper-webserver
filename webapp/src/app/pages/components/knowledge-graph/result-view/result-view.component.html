@@ -68,6 +68,8 @@
           </div> -->
         </span>
 
+        <div id="cro_sorting" class="w-3/12"></div>
+
         <div id="cro_sorting" class="w-3/12">
           <p-panel 
             header="Sort by" 
@@ -80,32 +82,64 @@
               <div style="height: 2rem;"><p-divider></p-divider></div>
               <div class="flex flex-row space-x-2">
                 <div><p-checkbox 
-                  [(ngModel)]="croSorting.similarity_score" 
-                  [binary]="true" 
-                  inputId="similarity_score"
-                  (onChange)="sortResult($event)"
+                  [(ngModel)]="croSorting.similarity_score.status" [binary]="true" inputId="similarity_score"
+                  (onChange)="sortResourcesByKeys('')"
                   ></p-checkbox>
                 </div>
                 <div class="my-auto"><label for="similarity_score">Similarity Score</label></div>
+                <div class="flex flex-row space-x-2 pl-4">
+                  <button (click)="sortResourcesByKeys('similarity_score')">
+                    <div *ngIf="croSorting.similarity_score.arrow === true">
+                      <span class="pi pi-arrow-up" style="font-size: 1.2rem"></span>
+                    </div>
+                    <div *ngIf="croSorting.similarity_score.arrow === false">
+                      <span class="pi pi-arrow-down" style="font-size: 1.2rem"></span>
+                    </div>
+                  </button>
+                </div>
               </div>
-
+  
               <div style="height: 2rem;"><p-divider></p-divider></div>
               <div class="flex flex-row space-x-2">
-                <div><p-checkbox [(ngModel)]="croSorting.most_recent" [binary]="true" inputId="most_recent"></p-checkbox></div>
+                <div><p-checkbox [(ngModel)]="croSorting.most_recent.status" [binary]="true" inputId="most_recent"
+                  (onChange)="sortResourcesByKeys('')"
+                  ></p-checkbox></div>
                 <div class="my-auto"><label for="most_recent">Most recent</label></div>
+                <div class="flex flex-row space-x-2 pl-11">
+                  <button (click)="sortResourcesByKeys('most_recent')">
+                    <div *ngIf="croSorting.most_recent.arrow === true">
+                      <span class="pi pi-arrow-up" style="font-size: 1.2rem"></span>
+                    </div>
+                    <div *ngIf="croSorting.most_recent.arrow === false">
+                      <span class="pi pi-arrow-down" style="font-size: 1.2rem"></span>
+                    </div>
+                  </button>
+                </div>
               </div>
-
+  
               <div style="height: 2rem;"><p-divider></p-divider></div>
               <div class="flex flex-row space-x-2">
-                <div><p-checkbox [(ngModel)]="croSorting.popularity" [binary]="true" inputId="popularity"></p-checkbox></div>
+                <div><p-checkbox [(ngModel)]="croSorting.popularity.status" [binary]="true" inputId="popularity"
+                  (onChange)="sortResourcesByKeys('')"
+                  ></p-checkbox></div>
                 <div class="my-auto"><label for="popularity">Popularity</label></div>
+                <div class="flex flex-row space-x-2 pl-12">
+                  <button (click)="sortResourcesByKeys('popularity')">
+                    <div *ngIf="croSorting.popularity.arrow === true">
+                      <span class="pi pi-arrow-up" style="font-size: 1.2rem"></span>
+                    </div>
+                    <div *ngIf="croSorting.popularity.arrow === false">
+                      <span class="pi pi-arrow-down" style="font-size: 1.2rem"></span>
+                    </div>
+                  </button>
+                </div>
               </div>
             </div>
           </p-panel>
         </div>
       </div>
 
-      <p-tabPanel *ngIf="resourcesPagination.count.vdieos > 0" [cache]="true" header="Videos" leftIcon="pi pi-video">
+      <p-tabPanel *ngIf="resourcesPagination.nodes.videos" [cache]="true" header="Videos" leftIcon="pi pi-video">
         <div class="mt-1 w-full" id="cro_viedo_list">
 
           <!-- <p-scrollPanel styleClass="scroll_panel_list">
@@ -117,14 +151,14 @@
 
             <app-card-video-list
               [notUnderstoodConcepts]="concepts"
-              [videoElements]="resourcesPagination.nodes.vdieos"
+              [videoElements]="resourcesPagination.nodes.videos"
             ></app-card-video-list>
         </div>
       </p-tabPanel>
-      <p-tabPanel *ngIf="resourcesPagination.count.vdieos === 0" header="Videos" leftIcon="pi pi-video">
+      <p-tabPanel *ngIf="!resourcesPagination.nodes.videos" header="Videos" leftIcon="pi pi-video">
         <h4 class="my-auto mt-4">No Recommended videos for the selected Concepts</h4>
       </p-tabPanel>
-      <p-tabPanel [cache]="true" *ngIf="resourcesPagination.nodes.articles" header="Articles" leftIcon="pi pi-book">
+      <p-tabPanel *ngIf="resourcesPagination.nodes.articles" [cache]="true" header="Articles" leftIcon="pi pi-book">
         <div>
 
           <!-- <p-scrollPanel styleClass="scroll_panel_list">
