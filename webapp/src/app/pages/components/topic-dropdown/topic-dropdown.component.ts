@@ -48,6 +48,9 @@ import { IntervalService } from 'src/app/services/interval.service';
   providers: [MessageService, ConfirmationService],
 })
 export class TopicDropdownComponent implements OnInit {
+  isCollapsed: boolean = true;
+  maxVisibleAnnotations: number = 5;
+  length;
   constructor(
     private courseService: CourseService,
     private topicChannelService: TopicChannelService,
@@ -309,16 +312,19 @@ export class TopicDropdownComponent implements OnInit {
     );
   }
 
-  getFollowingAnnotationsOfDisplayedChannels(channelId: string) {
+  getFollowingAnnotationsOfDisplayedChannels(channelId: string): Observable<any[]> {
+
     return this.followingAnnotationsOfDisplayedChannels$.pipe(
       map((followingAnnotations) => {
         if (!followingAnnotations) {
           return [];
         }
-        return followingAnnotations[channelId];
+        this.length= followingAnnotations[channelId].length
+        return followingAnnotations[channelId] || [];
       })
     );
   }
+  
 
   onUnfollowAnnotationClicked($event, annotationId: string) {
     this.store.dispatch(
@@ -391,7 +397,9 @@ export class TopicDropdownComponent implements OnInit {
     $event.stopPropagation();
     menu.toggle($event);
   }
-
+  toggleCollapse() {
+    this.isCollapsed = !this.isCollapsed;
+  }
   ngOnDestroy() {
     this.expandTopic = null;
     this.selectedChannelId = null;
