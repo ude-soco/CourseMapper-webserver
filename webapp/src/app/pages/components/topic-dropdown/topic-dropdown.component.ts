@@ -312,16 +312,6 @@ export class TopicDropdownComponent implements OnInit {
     );
   }
 
-  // getFollowingAnnotationsOfDisplayedChannels(channelId: string) {
-  //   return this.followingAnnotationsOfDisplayedChannels$.pipe(
-  //     map((followingAnnotations) => {
-  //       if (!followingAnnotations) {
-  //         return [];
-  //       }
-  //       return followingAnnotations[channelId];
-  //     })
-  //   );
-  // }
   getFollowingAnnotationsOfDisplayedChannels(channelId: string): Observable<any[]> {
 
     return this.followingAnnotationsOfDisplayedChannels$.pipe(
@@ -330,8 +320,6 @@ export class TopicDropdownComponent implements OnInit {
           return [];
         }
         this.length= followingAnnotations[channelId].length
-        console.log("followingAnnotations[channelId]",this.length)
-        console.log("followingAnnotations[channelId]",followingAnnotations[channelId].length)
         return followingAnnotations[channelId] || [];
       })
     );
