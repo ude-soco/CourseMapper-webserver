@@ -4,7 +4,6 @@ import { throwError , Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { catchError } from 'rxjs/operators';
 
-
 @Injectable()
 export class HttpRequestInterceptor implements HttpInterceptor {
   constructor(private router: Router) {}
@@ -16,6 +15,7 @@ export class HttpRequestInterceptor implements HttpInterceptor {
     return next.handle(req).pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401) {
+    
           // Redirect to the login page
           this.router.navigate(['/login']);
         }
