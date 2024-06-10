@@ -79,9 +79,9 @@ export class ResultViewComponent {
   activeIndex: number = 0; 
 
   croSorting = {
-    similarity_score: { status: true, arrow: false},
-    most_recent: { status: false, arrow: false},
-    popularity: { status: false, arrow: false}
+    similarity_score: { status: false, arrow: false},
+    publish_time: { status: false, arrow: false},
+    views: { status: false, arrow: false}
   }
 
 
@@ -202,7 +202,47 @@ export class ResultViewComponent {
       this.croSorting[key].arrow = !this.croSorting[key].arrow;
     }
 
+    // filter the attributes selected
+    let sortByParams = [];
+    for (let [key, value] of Object.entries(this.croSorting)) {
+      if (value.status == true && value.arrow === true) {
+        sortByParams.push({ "property": key, "order": "desc" });
+      } else if (value.status == true && value.arrow === false) {
+        sortByParams.push({ "property": key, "order": "asc" });
+      }
+    }
+
+    console.warn("sortByParams ", sortByParams)
+
     // Sorting ...
+    let resourcesSorted = {};
+    for (let [key, nodes] of Object.entries(this.resourcesPagination.nodes)) {
+      // resourcesSorted[key] = this.dynamicSortResource(nodes, sortByParams);
+      nodes = this.dynamicSortResource(nodes, sortByParams);
+    }
+  }
+
+  dynamicSortResource(array, sortBy) {
+    return array.sort((a, b) => {
+      return sortBy.reduce((result, current) => {
+        if (result !== 0) return result;
+  
+        const { property, order = 'asc' } = current;
+        let comparison = 0;
+  
+        if (a[property] > b[property]) {
+          comparison = 1;
+        } else if (a[property] < b[property]) {
+          comparison = -1;
+        }
+  
+        if (order === 'desc') {
+          comparison *= -1;
+        }
+  
+        return comparison;
+      }, 0);
+    });
   }
 
   /*
