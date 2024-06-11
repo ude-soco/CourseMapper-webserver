@@ -66,12 +66,13 @@ def create_video_resource(tx, node, recommendation_type=''):
     """
     logger.info(
         "Creating youtube resource '%s'" % node["id"])
+
     tx.run(
         """MERGE (c:Resource:Video {rid: $rid, uri: $uri, title: $title, 
         description: $description, description_full: $description_full, keyphrases: $keyphrases, text: $text, document_embedding: $document_embedding, 
         keyphrase_embedding: $keyphrase_embedding, similarity_score: $similarity_score, thumbnail: $thumbnail, 
         duration: $duration, views: $views, publish_time: $pub_time, helpful_count: $helpful_count, 
-        not_helpful_count: $not_helpful_count, bookmark_count: $bookmark_count})""",
+        not_helpful_count: $not_helpful_count, bookmark_count: $bookmark_count, like_count: $like_count, channel_title: $channel_title})""",
         rid=node["id"],
         uri="https://www.youtube.com/embed/%s?autoplay=1" % node["id"],
         title=node["title"],
@@ -89,7 +90,8 @@ def create_video_resource(tx, node, recommendation_type=''):
         helpful_count=0,
         not_helpful_count=0,
         bookmark_count=0,
-        like_count=node["like_count"]
+        like_count=node["like_count"],
+        channel_title=node["channel_title"]
         )
 
 
@@ -236,12 +238,16 @@ def edit_resource(tx, resource, recommendation_type):
     """
     logger.info(
         "Editing resource '%s'" % resource["id"])
+    
     tx.run("""
         MATCH (b: Resource)
         WHERE b.rid = $rid 
-        SET b.similarity_score = $similarity_score
+        SET b.similarity_score = $similarity_score, b.views = $views, b.like_count = $like_count, b.channel_title = $channel_title
         RETURN b
         """, rid=resource["id"],
+            views=resource["views"],
+            like_count=resource["like_count"],
+            channel_title=resource["channel_title"],
            concepts=resource["keyphrases"] if "keyphrases" in resource.index else [],
            similarity_score=resource[recommendation_type] if recommendation_type in resource.index else 0,
            keyphrase_embedding=str(resource["keyphrase_embedding"] if "keyphrase_embedding" in resource.index else ""),
@@ -2162,9 +2168,14 @@ class NeoDataBase:
                         a.thumbnail as thumbnail, a.abstract as abstract, a.post_date as post_date, 
                         a.author_image_url as author_image_url, a.author_name as author_name,
                         a.keyphrases as keyphrases, a.description as description, a.description_full as description_full,
-                        a.views as views, a.publish_time as publish_time, a.uri as uri, a.duration as duration,
-                        a.similarity_score as similarity_score, a.helpful_count as helpful_count, a.not_helpful_count as not_helpful_count,
-                        COALESCE(a.bookmarked_count, 0) AS bookmarked_count, COALESCE(a.like_count, 0) AS like_count
+                        a.publish_time as publish_time, a.uri as uri, a.duration as duration,
+                        COALESCE(toInteger(a.views), 0) AS views,
+                        COALESCE(toFloat(a.similarity_score), 0.0) AS similarity_score,
+                        COALESCE(toInteger(a.helpful_count), 0) AS helpful_count,
+                        COALESCE(toInteger(a.not_helpful_count), 0) AS not_helpful_count,
+                        COALESCE(toInteger(a.bookmarked_count), 0) AS bookmarked_count,
+                        COALESCE(toInteger(a.like_count), 0) AS like_count,
+                        a.channel_title as channel_title
                 """,
                 cids=cids
             ).data()
@@ -2178,10 +2189,10 @@ class NeoDataBase:
                         "title": resource["title"],
                         "rid": resource["rid"],
                         "uri": resource["uri"],
-                        "helpful_count": int(resource["helpful_count"]),
-                        "not_helpful_count": int(resource["not_helpful_count"]),
+                        "helpful_count": resource["helpful_count"], # int(resource["helpful_count"]),
+                        "not_helpful_count": resource["not_helpful_count"], # int(resource["not_helpful_count"]),
                         "labels": resource["labels"],
-                        "similarity_score": float(resource["similarity_score"]),
+                        "similarity_score": resource["similarity_score"], # float(resource["similarity_score"]),
                         "keyphrases": resource["keyphrases"],
                         "text": resource["text"],
                         "bookmarked_count": resource["bookmarked_count"]
@@ -2192,9 +2203,10 @@ class NeoDataBase:
                         r["description_full"] = resource["description_full"]
                         r["thumbnail"] = resource["thumbnail"]
                         r["duration"] = resource["duration"]
-                        r["views"] = int(resource["views"])
+                        r["views"] = resource["views"] # int(resource["views"])
                         r["publish_time"] = resource["publish_time"]
                         r["like_count"] = resource["like_count"]
+                        r["channel_title"] = resource["channel_title"]
 
                     elif "Article" in r["labels"]:
                         r["abstract"] = resource["abstract"]

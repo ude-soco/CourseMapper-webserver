@@ -152,15 +152,16 @@ class Recommender:
 
     def canditate_selection(self, query, video):
         data: pd.DataFrame
+        top_n = 2 # 15
 
         if video:
             start_time = time.time()
-            data = self.youtube_service.get_videos(query)
+            data = self.youtube_service.get_videos(query, top_n=top_n)
             end_time = time.time()
             print("Get Videos Execution time: ", end_time - start_time, flush=True)
         else:
             start_time = time.time()
-            data = self.wikipedia_service.get_articles(query)
+            data = self.wikipedia_service.get_articles(query, top_n=top_n)
             end_time = time.time()
             print("Get Articles Execution time: ", end_time - start_time, flush=True)
 
@@ -213,7 +214,7 @@ class Recommender:
                 i += 1
         
         if data.empty == False:
-            logger.info(f"canditate_selection -> {data.shape}")
+            logger.info(f"canditate_selection shape -> {data.shape}")
 
         # Without embedding Not yet supported
         if recommendation_type == RecommendationType.WITHOUT_EMBEDDING:

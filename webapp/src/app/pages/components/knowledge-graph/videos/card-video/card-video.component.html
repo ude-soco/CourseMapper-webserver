@@ -45,19 +45,40 @@
 
       <div class="flex flex-col gap-2">
         <div class="flex flex-row justify-between">
-          <div class="w-9/12">
+          <div class="w-8.5/12">
             <h3 class="title-video text-xl font-bold inline-block break-normal flex-wrap" 
               (click)="readVideo(videoElement)" 
               [class.active]="isActive"  
               [innerHTML] = "videoElement.title">
             </h3>
           </div>
-          <div class="w-3/12">
+          <!-- <div class="w-3/12">
             <div class="border-2 rounded-md border-[#D9D9D9] bg-[#D9D9D9]">
               <span pTooltip="Similarity between the concepts not understood and the content of this video"
                   class="text-sm flex justify-center">
                 Similarity Score: <span class="font-bold">{{videoElement.similarity_score | percent}}</span>
               </span>
+            </div>
+          </div> -->
+          <div class="w-3.5/12 text-sm">
+            <div class="text-[#0288d1] flex flex-row gap-2 mt-1">
+              <div class="my-auto opacity-75">Similarity Score:</div>
+              <div class="my-auto font-bold">{{ videoElement.similarity_score | percent }}</div>
+              <div
+                class="my-auto"
+                pTooltip="Similarity Score Value related to the how this item is closed to your Concept Selected"
+                tooltipPosition="top"
+              >
+                <span class="pi pi-info-circle" style="font-size: 1.2rem"></span>
+              </div>
+              <div>
+                <div class="my-auto" (click)="addToBookmark()" *ngIf="!isBookmarkFill">
+                  <i class="pi pi-bookmark" style="font-size: 1.5rem; color: #000000"></i>
+                </div>
+                <div class="my-auto" (click)="addToBookmark()" *ngIf="isBookmarkFill">
+                  <i class="pi pi-bookmark-fill" style="font-size: 1.5rem; color: #0277BD"></i>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -70,21 +91,18 @@
           </div>
         </div>
 
-        <div class="flex flex-row gap-2 flex-wrap">
-          <div><span class="font-bold">Autor:</span> Musterman Tech</div>
+        <div class="flex flex-row gap-2 flex-wrap gap-4">
           <div><span class="font-bold">Created at:</span> {{ videoElement.publish_time | dateAgo }}</div>
+          <div><span class="font-bold">Likes:</span> {{ videoElement.like_count | number }} </div>
           <div><span class="font-bold">Views:</span> {{ videoElement.views | number }}</div>
-          <div><span class="font-bold">Likes:</span> empty yet </div>
-          <div><span class="font-bold">Comments:</span> empty yet </div>
-          <div><span class="font-bold">Source: </span>
-            <a href="{{ videoElement.uri }}" target="_blank" rel="noreferrer noopener"><span class="text-[#0277BD]">click</span></a>
-          </div>
         </div>
+        <div><span class="font-bold">Autor:</span> {{ videoElement.channel_title}} </div>
         <div class="">
           <span class="font-semibold">Description: </span>
           <span id="video_description">
-            {{ videoDescription }}
+            {{ videoElement.description }}
           </span>
+
           <!-- <span>
             <span *ngIf="isDescriptionFullDisplayed">
               {{ videoElement.description_full }} <div (click)="showDescriptionFull()">Show less</div>
@@ -104,6 +122,7 @@
               <span class="flex flex-row my-auto cursor-pointer active:bg-blue-700" (click)="showDescriptionFull()"><span class="pi pi-chevron-down"></span></span>
             </span>
           </span> -->
+        
         </div>
 
         <!-- <div class="flex justify-end">
@@ -116,12 +135,7 @@
       <div class="text-xs">
         <app-rating [element]="videoElement" [notUnderstoodConcepts]="notUnderstoodConcepts" ></app-rating>
       </div>
-      <div class="my-auto" (click)="addToBookmark()" *ngIf="!isBookmarkFill">
-        <i class="pi pi-bookmark" style="font-size: 2rem"></i>
-      </div>
-      <div class="my-auto" (click)="addToBookmark()" *ngIf="isBookmarkFill">
-        <i class="pi pi-bookmark-fill" style="font-size: 2rem; color: #0277BD"></i>
-      </div>
+      <div></div>
     </div>
 
   </div>

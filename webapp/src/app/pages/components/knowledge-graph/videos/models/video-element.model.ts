@@ -13,5 +13,6 @@ export interface VideoElementModel {
     not_helpful_counter: number;
     duration: string;
     bookmarked_count?: number,
-    like_count?: number
+    like_count?: number,
+    channel_title?: string
   }

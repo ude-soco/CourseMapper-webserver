@@ -212,10 +212,7 @@ export class ResultViewComponent {
       }
     }
 
-    console.warn("sortByParams ", sortByParams)
-
     // Sorting ...
-    let resourcesSorted = {};
     for (let [key, nodes] of Object.entries(this.resourcesPagination.nodes)) {
       // resourcesSorted[key] = this.dynamicSortResource(nodes, sortByParams);
       nodes = this.dynamicSortResource(nodes, sortByParams);

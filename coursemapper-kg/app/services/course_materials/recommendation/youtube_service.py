@@ -51,6 +51,7 @@ class YoutubeService:
         view_list = []
         description_list = []
         like_count_list = []
+        channel_title_list = []
         retry_count = 3
         retry_delay = 5
 
@@ -101,7 +102,7 @@ class YoutubeService:
                 #                 "https://www.youtube.com/watch?v={} ".format(id))
 
                 try:
-                    duration, views, description, like_count = self.get_video_details(id)
+                    duration, views, description, like_count, channel_title = self.get_video_details(id)
                     duration = re.findall(r"\d+", duration)
                     duration = ":".join(duration)
                     # print(id, duration, views)
@@ -109,6 +110,7 @@ class YoutubeService:
                     view_list.append(views)
                     description_list.append(description)
                     like_count_list.append(like_count)
+                    channel_title_list.append(channel_title)
                 except Exception as e:
                     logger.error("Error while getting the videos details", e)
 
@@ -117,6 +119,7 @@ class YoutubeService:
             video_data["views"] = pd.Series(view_list)
             video_data["description_full"] = pd.Series(description_list)
             video_data["like_count"] = pd.Series(like_count_list)
+            video_data["channel_title"] = pd.Series(channel_title_list)
             video_data["text"] = pd.DataFrame(
                 video_data["title"] + ". " + video_data["description"]
             )
@@ -158,6 +161,11 @@ class YoutubeService:
                 if r["items"][0]["statistics"]["likeCount"]
                 else 0
             )
+            channel_title = (
+                r["items"][0]["snippet"]["channelTitle"]
+                if r["items"][0]["snippet"]["channelTitle"]
+                else ""
+            )
 
         except Exception as e:
             # print(e)
@@ -175,7 +183,7 @@ class YoutubeService:
                 else ""
             )
             like_count = 0
-            pass
+            channel_title = ""
 
-            return duration, views, description, like_count
-        return duration, views, description, like_count
+            return duration, views, description, like_count, channel_title
+        return duration, views, description, like_count, channel_title

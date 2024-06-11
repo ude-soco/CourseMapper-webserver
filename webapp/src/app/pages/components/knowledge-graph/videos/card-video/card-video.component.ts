@@ -57,10 +57,10 @@ export class CardVideoComponent {
   addToBookmark() {
     console.warn("this - rec id -> ", this.videoElement.id);
     this.isBookmarkFill = this.isBookmarkFill === true ? false : true;
-    this.saveORremoveBookmark();
+    this.saveOrRemoveBookmark();
   }
 
-  saveORremoveBookmark() {
+  saveOrRemoveBookmark() {
     // detail: 'Open your Bookmark List to find this video'
     if (this.isBookmarkFill === true) {
       this.messageService.add({ key: 'resource_bookmark', severity: 'success', summary: '', detail: 'Successfully to the bookmark added'});
