@@ -535,6 +535,9 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     // update factor weights
     this.getFactorWeight();
 
+    // check if factor weights changed
+    // this.reloadRankingLogicFactorWeight();
+
     return this.croForm;
   }
   
