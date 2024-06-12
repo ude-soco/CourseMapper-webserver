@@ -67,7 +67,11 @@ export interface ResourcesPagination {
     recommendation_type: string
 }
 
-
+export interface RatingResource {
+    voted?: string,
+    helpful_count?: number,
+    not_helpful_count?: number
+}
 
 /*
 

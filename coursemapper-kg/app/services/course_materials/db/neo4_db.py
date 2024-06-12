@@ -1995,9 +1995,9 @@ class NeoDataBase:
         # get user node by id
         user = self.cro_get_user(user_id=rating["user_id"])
 
-        concepts = rating["concepts"].split()
+        # concepts = rating["concepts"].split()
         tx = self.driver.session()
-        for cid in concepts:
+        for cid in rating["concepts"]:
             # check whether rating exist based on user_id, resource_rid, cid and cid (optional)
             node_checked = tx.run(
                         """
@@ -2126,6 +2126,33 @@ class NeoDataBase:
                 helpful_count=helpful_count,
                 not_helpful_count=not_helpful_count
             ).single()
+
+        return result
+
+    def cro_get_rating_and_resource_detail(self, user_id: str, resource_rid: str):
+        # # type: helpful_count, not_helpful_count
+        logger.info("CRO Getting Rating Resource Details")
+
+        result = None
+        with self.driver.session() as session:
+            node = session.run(
+                """
+                MATCH   (a:Rating), (b:Resource)
+                WHERE   a.user_id = $user_id  AND a.resource_rid = $resource_rid  AND a.resource_rid = b.rid
+                RETURN  a.value as value,
+                        COALESCE(toInteger(b.helpful_count), 0) AS helpful_count,
+                        COALESCE(toInteger(b.not_helpful_count), 0) AS not_helpful_count
+                """,
+                user_id=user_id,
+                resource_rid=resource_rid
+            ).single()
+
+            if node is not None:
+                result = {
+                    "voted": node["value"],
+                    "helpful_count": node["helpful_count"],
+                    "not_helpful_count": node["not_helpful_count"],
+                }
 
         return result
     

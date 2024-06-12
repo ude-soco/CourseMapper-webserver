@@ -90,16 +90,24 @@ export class RatingComponent {
   }
 
   async rateRecommendedMaterials(rating: Rating): Promise<void> {
-    const formData = new FormData();
-    formData.append('userId', this.userid.toString());
-    formData.append('rating', rating.toString());
-    formData.append('resource', JSON.stringify(this.element));
-    formData.append('concepts', this.selectedConcepts.toString());
+    // const formData = new FormData();
+    // formData.append('userId', this.userid.toString());
+    // formData.append('rating', rating.toString());
+    // formData.append('resource', JSON.stringify(this.element));
+    // formData.append('concepts', this.selectedConcepts.toString());
+    console.warn("Rating ->", this.element);
+    
+    const data = {
+      user_id: this.userid.toString(),
+      rating: rating.toString(),
+      rid: this.element.rid,
+      concepts: this.selectedConcepts
+    }
 
-    const result = await this.materialsRecommenderService.rateRecommendedMaterials(formData);
+    const result = await this.materialsRecommenderService.rateRecommendedMaterials(data);
     this.isLiked = result.voted === Rating.HELPFUL;
     this.isDisliked = result.voted === Rating.NOT_HELPFUL;
-    this.element.helpful_counter = result.helpful_count;
-    this.element.not_helpful_counter = result.not_helpful_count;
+    this.element.helpful_count = result.helpful_count;
+    this.element.not_helpful_count = result.not_helpful_count;
   }
 }

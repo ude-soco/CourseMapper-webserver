@@ -1,5 +1,5 @@
 export interface VideoElementModel {
-    id: string;
+    id: number,
     title: string;
     thumbnail: string;
     keyphrases?: string[];
@@ -9,10 +9,11 @@ export interface VideoElementModel {
     publish_time: string;
     uri: string;
     similarity_score: number;
-    helpful_counter: number;
-    not_helpful_counter: number;
+    helpful_count: number;
+    not_helpful_count: number;
     duration: string;
     bookmarked_count?: number,
     like_count?: number,
-    channel_title?: string
+    channel_title?: string,
+    rid?: string
   }

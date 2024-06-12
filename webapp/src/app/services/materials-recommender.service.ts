@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject, lastValueFrom } from 'rxjs';
 import { environment_Python } from 'src/environments/environment';
 import { HTTPOptions } from '../config/config';
-import { ResourcesPagination } from '../models/croForm';
+import { ResourcesPagination, RatingResource } from '../models/croForm';
 
 @Injectable({
   providedIn: 'root'
@@ -55,6 +55,12 @@ export class MaterialsRecommenderService {
     return this.recommendedMaterials
   }
 
+  async rateRecommendedMaterials(formData: any): Promise<RatingResource> {
+    const recommendedMaterialsRating$ = this.http.post<RatingResource>(`${this.cmEndpointURL}rating`, formData, { withCredentials: true });
+    this.recommendedMaterialsRating = await lastValueFrom(recommendedMaterialsRating$)
+    return this.recommendedMaterialsRating
+  }
+
   // getRecommendedMaterials(formData: any, croForm: any): Observable<any> {
   //   let data = {default: {}, croForm: croForm};
 
@@ -66,11 +72,4 @@ export class MaterialsRecommenderService {
   //   this.recommendedMaterials = this.http.post<any>(`${this.cmEndpointURL}get_resources`, data, { withCredentials: true });
   //   return this.recommendedMaterials
   // }
-
-
-  async rateRecommendedMaterials(formData: any): Promise<any> {
-    const recommendedMaterialsRating$ = this.http.post<any>(`${this.cmEndpointURL}rating`, formData, { withCredentials: true });
-    this.recommendedMaterialsRating = await lastValueFrom(recommendedMaterialsRating$)
-    return this.recommendedMaterialsRating
-  }
 }

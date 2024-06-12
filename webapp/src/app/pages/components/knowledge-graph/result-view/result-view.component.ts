@@ -347,6 +347,7 @@ export class ResultViewComponent {
     })
   }
 
+  /*
   sortElements(
     a: ArticleElementModel | VideoElementModel,
     b: ArticleElementModel | VideoElementModel
@@ -417,7 +418,7 @@ export class ResultViewComponent {
     console.log('ResultViewComponent Videos', this.videos);
     console.log('ResultViewComponent Articles', this.articles);
   }
-
+  */
   // onResize() {
   //   if (window.screen.height >= 992 && window.screen.width >= 1024) {
   //     this.scrollPanelHeight = '550px';

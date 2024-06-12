@@ -204,7 +204,7 @@ class ResourceRecommenderService:
         return result
 
     def cro_save_rating(self, rating: dict):
-        resource_rid = rating["resource"]["rid"]
+        resource_rid = rating["rid"] # rating["resource"]["rid"]
         rating["resource"] = resource_rid
         self.db.cro_create_rating(rating=rating)
 
@@ -215,6 +215,8 @@ class ResourceRecommenderService:
                                           helpful_count=ratings_counted["helpful_count"], 
                                           not_helpful_count=ratings_counted["not_helpful_count"]
                                         )
+        rating_resource_detail = self.db.cro_get_rating_and_resource_detail(user_id=rating["user_id"], resource_rid=resource_rid)
+        return rating_resource_detail
         
     def cro_edit_relationship_btw_concepts_cro_and_resources(self, concepts_cro: list, resources: list):
         self.db.cro_edit_relationship_btw_concepts_cro_and_resources(concepts_cro=concepts_cro, 
