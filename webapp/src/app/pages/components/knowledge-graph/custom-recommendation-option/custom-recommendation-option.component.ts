@@ -141,8 +141,17 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     })
   }
 
-  storeFactorWeight(old_factor_weights, new_factor_weights) {
-    localStorage.setItem("cro_factor_weights", "Tom");
+  reloadRankingLogicFactorWeight() {
+    let jsonString = localStorage.getItem('cro_ranking_factor_weights');
+
+    if (jsonString) {
+      if (JSON.stringify(this.croForm.factor_weights) !== JSON.stringify(JSON.parse(this.croForm.factor_weights))) {
+        localStorage.setItem('cro_ranking_factor_weights', this.croForm.factor_weights);
+      } else {
+        this.croForm.factor_weights.reload = true;
+        localStorage.setItem('cro_ranking_factor_weights', this.croForm.factor_weights);
+      }
+    }
   }
   
   updateFactorWeight() {
@@ -332,7 +341,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     }
 
     this.updateNumberConceptsToBeChecked();
-    this.showRecTypeAndFactorWeight();
+    // this.showRecTypeAndFactorWeight();
   }
 
   updateCROformAll(didNotUnderstandConceptsObj, previousConceptsObj) {
@@ -541,7 +550,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
       }
       this.updateCROformAll(this.didNotUnderstandConceptsObj, this.previousConceptsObj);
     }
-    this.showRecTypeAndFactorWeight();
+    // this.showRecTypeAndFactorWeight();
   }
 
 
