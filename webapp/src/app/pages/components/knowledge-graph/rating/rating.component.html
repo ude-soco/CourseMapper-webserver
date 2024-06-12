@@ -26,7 +26,7 @@
         <hr>
         <span class="flex flex-col grid grid-cols-2 gap-4 py-2">
           <p-checkbox *ngFor="let concept of notUnderstoodConcepts" class="pb-2" name="groupName" value="{{concept.name}}"
-                      label="{{concept.name}}" [(ngModel)]="selectedConcepts"></p-checkbox>
+                      label="{{concept.name}}" [(ngModel)]="selectedConcepts" (onChange)="onChangeConcept($event, concept?.cid)"></p-checkbox>
         </span>
         <button (click)="likeElement(element, op)" class="bg-[#0277BD] mb-3 float-right text-white rounded py-2 px-3
         uppercase button">Okay</button>

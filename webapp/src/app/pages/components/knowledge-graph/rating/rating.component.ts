@@ -41,6 +41,7 @@ export class RatingComponent {
   isLiked = false;
   isDisliked = false;
   selectedConcepts: string[] = [];
+  selectedConceptCids: string[] = [];
   loggedInUser: User;
 
   ngOnInit(): void {
@@ -89,19 +90,22 @@ export class RatingComponent {
     });
   }
 
+  onChangeConcept(event, cid: string) {
+    this.selectedConceptCids.push(cid);
+  }
+
   async rateRecommendedMaterials(rating: Rating): Promise<void> {
     // const formData = new FormData();
     // formData.append('userId', this.userid.toString());
     // formData.append('rating', rating.toString());
     // formData.append('resource', JSON.stringify(this.element));
     // formData.append('concepts', this.selectedConcepts.toString());
-    console.warn("Rating ->", this.element);
-    
+
     const data = {
       user_id: this.userid.toString(),
       rating: rating.toString(),
       rid: this.element.rid,
-      concepts: this.selectedConcepts
+      concepts: this.selectedConceptCids
     }
 
     const result = await this.materialsRecommenderService.rateRecommendedMaterials(data);
