@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import {  Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject, tap } from 'rxjs';
 import { Annotation } from 'src/app/models/Annotations';
 import { environment } from 'src/environments/environment';
@@ -12,7 +12,8 @@ import { BlockingNotifications } from '../models/BlockingNotification';
 export class AnnotationService {
   constructor(private http: HttpClient) {}
 
-
+  // public scrollToAnnotation: EventEmitter<string> = new EventEmitter<string>();
+  
   postAnnotation(
     annotation: Annotation,
     mentionedUsers: { userId: string; name: string; email: string }[]
