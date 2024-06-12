@@ -226,10 +226,21 @@ export class ResultViewComponent {
   
         const { property, order = 'asc' } = current;
         let comparison = 0;
+        
+        let valueA = null;
+        let valueB = null;
+
+        if (property === "publish_time") {
+          valueA = new Date(a[property]);
+          valueB = new Date(b[property]);
+        } else {
+          valueA = a[property];
+          valueB = b[property];
+        }
   
-        if (a[property] > b[property]) {
+        if (valueA > valueB) {
           comparison = 1;
-        } else if (a[property] < b[property]) {
+        } else if (valueA < valueB) {
           comparison = -1;
         }
   
@@ -334,8 +345,7 @@ export class ResultViewComponent {
     // console.log('recievedVideoResultIsEmpty', this.resourcesPagination.nodes.vdieos);
     // console.log('recievedArticleResultIsEmpty', this.articles);
     */
-    
-    console.log('pagination results', this.resourcesPagination);
+    // console.log('pagination results', this.resourcesPagination);
   }
 
   tabChanged(tab) {
