@@ -44,8 +44,10 @@ import {
 import {
   BehaviorSubject,
   Observable,
+  Subscription,
   combineLatest,
   debounceTime,
+  filter,
   map,
   of,
   switchMap,
@@ -56,6 +58,8 @@ import { event } from 'jquery';
 import { Roles } from 'src/app/models/Roles';
 import { NotificationsService } from 'src/app/services/notifications.service';
 import { MentionsComponent } from '../../../../../components/mentions/mentions.component';
+import { AnnotationService } from 'src/app/services/annotation.service';
+import { NavigationEnd, Router } from '@angular/router';
 
 @Component({
   selector: 'app-pdf-comment-item',
@@ -91,13 +95,16 @@ export class PdfCommentItemComponent
   Roles = Roles;
   isAnnotationBeingFollowed$: Observable<boolean>;
   currentPdfPageSubscription;
+  private annotationSubscription: Subscription;
   constructor(
     private socket: Socket,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
     private renderer: Renderer2,
     protected override store: Store<State>,
-    protected override notificationService: NotificationsService
+    protected override notificationService: NotificationsService,
+    private annotationService: AnnotationService,
+    private router: Router
   ) {
     super(store, notificationService);
     this.currentPdfPageSubscription = this.store
@@ -150,30 +157,43 @@ export class PdfCommentItemComponent
       });
     });
 
+    // this.annotationSubscription = this.annotationService.scrollToAnnotation.subscribe((annotationId: string) => {
+    //   this.scrollToAnnotationById(annotationId);
+    // });
+   // const url = window.location.href;
+
+    // if (url.includes('#annotation')) {
+    //   const annotationId = url.match(/#annotation-(.+)/)[1];
+    //   this.scrollToAnnotationById(annotationId);
+    // }
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.scrollToAnnotationIfPresent();
+      });
+  
+  }
+  scrollToAnnotationIfPresent() {
     const url = window.location.href;
 
     if (url.includes('#annotation')) {
       const annotationId = url.match(/#annotation-(.+)/)[1];
-       if (annotationId === this.annotation._id) {
-        const elementToScrollTo = document.getElementById(
-          `annotation-${annotationId}`
-        );
-        elementToScrollTo.scrollIntoView();
-        // Scroll to the element
-        window.location.hash = '#annotation-' + annotationId;
-        setTimeout(function () {
-          $(window.location.hash).css(
-            'box-shadow',
-            '0 0 25px rgba(83, 83, 255, 1)'
-          );
-          setTimeout(function () {
-            $(window.location.hash).css('box-shadow', 'none');
-          }, 5000);
-        }, 100);
-      }
+      this.scrollToAnnotationById(annotationId);
     }
   }
-
+  scrollToAnnotationById(annotationId: string) {
+    setTimeout(() => {
+      const elementToScrollTo = document.getElementById(`annotation-${annotationId}`);
+      if (elementToScrollTo) {
+        elementToScrollTo.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // Highlight the annotation
+        elementToScrollTo.style.boxShadow = '0 0 25px rgba(83, 83, 255, 1)';
+        setTimeout(() => {
+          elementToScrollTo.style.boxShadow = 'none';
+        }, 5000);
+      }
+    }, 500); // Adjust the delay as needed
+  }
   ngOnChanges(changes: SimpleChanges): void {
     if ('annotation' in changes) {
       this.annotationInitials = getInitials(this.annotation?.author?.name);

@@ -41,6 +41,7 @@ import * as NotificationActions from '../notifications/state/notifications.actio
 import { Notification } from 'src/app/models/Notification';
 import { getLastTimeCourseMapperOpened } from 'src/app/state/app.reducer';
 import { IntervalService } from 'src/app/services/interval.service';
+import { AnnotationService } from 'src/app/services/annotation.service';
 @Component({
   selector: 'app-topic-dropdown',
   templateUrl: './topic-dropdown.component.html',
@@ -60,7 +61,8 @@ export class TopicDropdownComponent implements OnInit {
     private renderer: Renderer2,
     private changeDetectorRef: ChangeDetectorRef,
     protected fb: FormBuilder,
-    private intervalService: IntervalService
+    private intervalService: IntervalService,
+    private annotationService: AnnotationService
   ) {
     const url = this.router.url;
     if (url.includes('course') && url.includes('channel')) {
@@ -373,18 +375,43 @@ export class TopicDropdownComponent implements OnInit {
         return;
       } */
       this.courseService.navigatingToMaterial = true;
-      this.router.navigateByUrl(
-        '/course/' +
-          followingAnnotation.courseId +
-          '/channel/' +
-          followingAnnotation.channelId +
-          '/material/' +
-          '(material:' +
-          followingAnnotation.materialId +
-          `/${followingAnnotation.materialType})` +
-          `#annotation-${followingAnnotation.annotationId}`
-      );
-    }
+      // this.router.navigateByUrl(
+      //   '/course/' +
+      //     followingAnnotation.courseId +
+      //     '/channel/' +
+      //     followingAnnotation.channelId +
+      //     '/material/' +
+      //     '(material:' +
+      //     followingAnnotation.materialId +
+      //     `/${followingAnnotation.materialType})` +
+      //     `#annotation-${followingAnnotation.annotationId}`
+      // );
+      const annotationUrl = 
+    `/course/${followingAnnotation.courseId}/channel/${followingAnnotation.channelId}/material/` +
+    `(material:${followingAnnotation.materialId}/${followingAnnotation.materialType})` +
+    `#annotation-${followingAnnotation.annotationId}`;
+  
+  // this.router.navigateByUrl(annotationUrl).then(() => {
+  //   // Find the annotation element after navigation
+  //   setTimeout(() => {
+  //     const elementToScrollTo = document.getElementById(`annotation-${followingAnnotation.annotationId}`);
+  //     if (elementToScrollTo) {
+  //       elementToScrollTo.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  //       // Highlight the annotation
+  //       elementToScrollTo.style.boxShadow = '0 0 25px rgba(83, 83, 255, 1)';
+  //       setTimeout(() => {
+  //         elementToScrollTo.style.boxShadow = 'none';
+  //       }, 5000);
+  //     }
+  //   }, 100); // Adjust the timeout if needed to ensure the element is rendered
+  // });
+  // this.router.navigateByUrl(annotationUrl).then(() => {
+  //   // Emit the event to trigger scrolling after navigation
+  //   this.annotationService.scrollToAnnotation.emit(followingAnnotation.annotationId);
+  // });
+  this.router.navigateByUrl(annotationUrl);
+}
+    
   }
 
   onFollowingAnnotationSettingsClicked($event, menu) {
