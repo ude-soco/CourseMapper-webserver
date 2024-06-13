@@ -20,3 +20,8 @@
 :host ::ng-deep .p-paginator {
   height: 3.7rem;
 }
+
+/* from TagMenu: move bookmarks to left corner */
+:host ::ng-deep .p-tabview-nav-content ul.p-tabview-nav > li:nth-child(3) {
+  margin-left: auto;
+}

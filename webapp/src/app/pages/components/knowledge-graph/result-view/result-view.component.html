@@ -2,7 +2,7 @@
 
 <div>
   <p-tabView (activeIndexChange)="tabChanged($event)" [activeIndex]="activeIndex">
-      <div class="flex flex-row justify-between">
+      <div class="flex flex-row justify-between" *ngIf="activeIndex !== 2">
         <span class="flex flex-col">
           <h4 class="text-[#0277BD] mr-3">
             Recommendation based on the following concepts:
@@ -177,6 +177,25 @@
       <p-tabPanel *ngIf="!resourcesPagination.nodes.articles" header="Articles" leftIcon="pi pi-book">
         <h4 class="my-auto mt-4">No Recommended articles for the selected Concepts</h4>
       </p-tabPanel>
+
+      <p-tabPanel header="Saved" leftIcon="pi pi-bookmark">
+        <div class="flex flex-col">
+          <div>Filter by:</div>
+          <div class="flex flex-row">
+            <div>main</div>
+            <div>lm</div>
+            <div>sl</div>
+          </div>
+          <div class="flex flex-row">
+            <div>Content type:</div>
+            <div>radio</div>
+          </div>
+          <div>
+            Resources List
+          </div>
+        </div>
+      </p-tabPanel>
+
   </p-tabView>
   <p-toast position="bottom-left" key="rating"></p-toast>
 </div>

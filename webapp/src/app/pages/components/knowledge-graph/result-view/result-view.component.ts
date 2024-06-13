@@ -357,6 +357,12 @@ export class ResultViewComponent {
     })
   }
 
+  filterByResources() {
+    if (this.activeIndex === 2) {
+      //
+    }
+  }
+
   /*
   sortElements(
     a: ArticleElementModel | VideoElementModel,
