@@ -84,6 +84,21 @@ export class ResultViewComponent {
     views: { status: false, arrow: false}
   }
 
+  mainConceptsSource = [ { cid: "sdsd1", name: "Data Mining", status: false }, { cid: "sdsd2", name: "Internet Suchmachnen", status: false } ];
+  learningMaterialsSource = [ { mid: "s323f", name: "Learning Analytics", status: false } ];
+  sliderNumberSource = [ { name: "slide_1", status: false } ];
+
+  mainConceptsFiltered = [];
+  mainConceptSelected: any | undefined;
+  learningMaterialsFiltered = [];
+  sliderNumberFiltered = [];
+
+  filteringParamsSavedTab = {
+    user_id: null,
+    cids: [],
+    mids: [],
+    slider_numbers: []
+  }
 
   /*
   croVideos: VideoElementModel[]; // croVideoElementModel;
@@ -354,13 +369,53 @@ export class ResultViewComponent {
     // Pause videos (if any) when changing tabs
     document.querySelectorAll('iframe').forEach((iframe) => {
       const result = iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*')
-    })
+    });
+
+    this.deactivateDnuInteraction();
   }
 
-  filterByResources() {
+  deactivateDnuInteraction() {
+    // Deactivate Left Panel while interacting with Filtering on Tab "Saved"
+
+    let leftPanelf = document.getElementById("ipo_interact");
+    // console.warn("leftPanelf");
+    // console.warn(leftPanelf);
+    // console.warn(this.activeIndex);
+
     if (this.activeIndex === 2) {
-      //
+      leftPanelf.classList.add('left_panel_interaction');
+    } else {
+      leftPanelf.classList.remove('left_panel_interaction');
     }
+  }
+  
+  selectMainConceptsOnChange(event) {
+    console.warn("selectMainConceptsOnChange ->")
+    console.warn(event.value);
+
+    // call available Main Concepts
+    if (event.value) {
+      let value = event.value;
+      const conceptFound = this.mainConceptsFiltered.find((concept) => concept.cid === value.cid);
+
+      if (conceptFound === undefined) {
+        value.status = true;
+        this.mainConceptsFiltered.push(value);
+      } else {
+        this.mainConceptsFiltered = this.mainConceptsFiltered.filter(concept => concept.id !== conceptFound.cid);
+      }
+    }
+
+    console.warn("mainConceptsFiltered ->")
+    console.warn(this.mainConceptsFiltered);
+  }
+
+  selectLearningMaterialsOnChange(event) {
+    // call available Learning materials
+  }
+
+  selectSliderNumberOnChange(event) {
+    // call available Silde / Page numbers
   }
 
   /*

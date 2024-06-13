@@ -79,7 +79,7 @@
             [collapseIcon]="'pi pi-chevron-down'"
           >
             <div class="flex flex-col">
-              <div style="height: 2rem;"><p-divider></p-divider></div>
+              <!-- <div style="height: 2rem;"><p-divider></p-divider></div> -->
               <div class="flex flex-row space-x-2">
                 <div><p-checkbox 
                   [(ngModel)]="croSorting.similarity_score.status" [binary]="true" inputId="similarity_score"
@@ -181,8 +181,36 @@
       <p-tabPanel header="Saved" leftIcon="pi pi-bookmark">
         <div class="flex flex-col">
           <div>Filter by:</div>
-          <div class="flex flex-row">
-            <div>main</div>
+          <div class="flex flex-row justify-between">
+            <div>
+
+              <p-dropdown
+              [options]="mainConceptsSource"
+              [(ngModel)]="mainConceptSelected"
+              optionLabel="name"
+              [filter]="true"
+              filterBy="name"
+              [showClear]="true"
+              placeholder="Main Concept(s)"
+              emptyFilterMessage="No Concept found"
+              (onChange)="selectMainConceptsOnChange($event)"
+              [resetFilterOnHide]="true"
+              [style]="{'width': '250px'}"
+              >
+                <ng-template pTemplate="selectedItem">
+                    <div class="flex align-items-center gap-2" *ngIf="mainConceptSelected">
+                        <div>{{ mainConceptSelected.name }}</div>
+                    </div>
+                </ng-template>
+                <ng-template let-main_concept pTemplate="item">
+                    <div class="flex align-items-center gap-2">
+                        <div class="my-auto"><p-checkbox [(ngModel)]="main_concept.status" [binary]="true" inputId="binary"></p-checkbox></div>
+                        <div class="my-auto">{{ main_concept.name }}</div>
+                    </div>
+                </ng-template>
+              </p-dropdown>
+
+            </div>
             <div>lm</div>
             <div>sl</div>
           </div>

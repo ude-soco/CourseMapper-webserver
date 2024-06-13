@@ -5,7 +5,7 @@
 }
 
 :host ::ng-deep #cro_sorting .p-panel {
-  border: 2px solid #0288d1;
+  border: 2px solid #8A8080;
 }
 
 :host ::ng-deep .scroll_panel_list {
@@ -24,4 +24,9 @@
 /* from TagMenu: move bookmarks to left corner */
 :host ::ng-deep .p-tabview-nav-content ul.p-tabview-nav > li:nth-child(3) {
   margin-left: auto;
+}
+
+.left_panel_interaction {
+  pointer-events: none;
+  opacity: 0.3;
 }
