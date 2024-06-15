@@ -1,5 +1,5 @@
-<div class="mb-8 border-b border-b-4 border-gray-300">
-    <div class="flex flex-col p-7">
+<div class="mb-6 border-b border-b-4 border-gray-300">
+    <div class="flex flex-col p-0">
       <span class="items-center">
         <h2 class="title-article text-xl font-bold truncate inline-flex mt-1" (click)="openArticle(article)" *ngIf="article.title.length <= TITLE_MAX_LENGTH" [class.active]="isActive">{{ article.title }}</h2>
         <h2 class="title-article text-xl font-bold truncate inline-flex mt-1" (click)="openArticle(article)" *ngIf="article.title.length > TITLE_MAX_LENGTH" [class.active]="isActive">{{ article.title.substring(0, TITLE_MAX_LENGTH) + "..." }}</h2>

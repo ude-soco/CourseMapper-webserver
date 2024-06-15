@@ -217,6 +217,10 @@ class ResourceRecommenderService:
                                         )
         rating_resource_detail = self.db.cro_get_rating_and_resource_detail(user_id=rating["user_id"], resource_rid=resource_rid)
         return rating_resource_detail
+    
+    def save_or_remove_user_resources(self, data: dict):
+        resource_saved = self.db.save_or_remove_user_resources(data)
+        return resource_saved
         
     def cro_edit_relationship_btw_concepts_cro_and_resources(self, concepts_cro: list, resources: list):
         self.db.cro_edit_relationship_btw_concepts_cro_and_resources(concepts_cro=concepts_cro, 
@@ -309,7 +313,7 @@ class ResourceRecommenderService:
         """
             Sort by these extra features provided by the resources such as:
             weights: dict containing factors weight
-            {'similarity_score': 0.2, 'creation_date': 0.2, 'views': 0.3, 'like_count': 0.1, 'user_rating': 0.1, 'nbr_saves': 0.1}
+            {'similarity_score': 0.2, 'creation_date': 0.2, 'views': 0.3, 'like_count': 0.1, 'user_rating': 0.1, 'saves_count': 0.1}
         """
         now = datetime.now()
         default_weight = 0.001
@@ -319,7 +323,7 @@ class ResourceRecommenderService:
         weight_views = weights.get("views") if 'views' in weights else default_weight
         weight_user_rating = weights.get("user_rating") if 'user_rating' in weights else default_weight
         weight_like_count = weights.get("like_count") if 'like_count' in weights else default_weight
-        weight_nbr_saves = weights.get("nbr_saves") if 'nbr_saves' in weights else default_weight
+        weight_saves_count = weights.get("saves_count") if 'saves_count' in weights else default_weight
 
         bookmarked_min_value = min(resources, key=lambda x: x["bookmarked_count"])["bookmarked_count"]
         bookmarked_max_value = max(resources, key=lambda x: x["bookmarked_count"])["bookmarked_count"]
@@ -343,7 +347,7 @@ class ResourceRecommenderService:
                                             + (rating_normalized * weight_user_rating) \
                                             + (creation_date_normalized * weight_creation_date) \
                                             + (similarity_normalized * weight_similarity_score) \
-                                            + (bookmarked_normalized * weight_nbr_saves) \
+                                            + (bookmarked_normalized * weight_saves_count) \
                                             + (like_count_normalized * weight_like_count)
                 
         elif category == 2:
@@ -351,7 +355,7 @@ class ResourceRecommenderService:
                 rating_normalized = self.wilson_lower_bound_score(up=resource["helpful_count"], down=resource["not_helpful_count"])
                 resource["composite_score"] = (rating_normalized * weight_user_rating) \
                                             + (resource["similarity_score"] * weight_similarity_score) \
-                                            + (resource["bookmarked_count"] * weight_nbr_saves) \
+                                            + (resource["bookmarked_count"] * weight_saves_count) \
 
 
         # sort by composite score value
@@ -368,7 +372,7 @@ class ResourceRecommenderService:
         # Normalize Weights
         # if weights is None:
         #     # to be completed
-        #     video_weights_normalized =  {} # {'similarity_score': 0.2, 'creation_date': 0.2, 'views': 0.3, 'like_count': 0.1, 'user_rating': 0.1, 'nbr_saves': 0.1}
+        #     video_weights_normalized =  {} # {'similarity_score': 0.2, 'creation_date': 0.2, 'views': 0.3, 'like_count': 0.1, 'user_rating': 0.1, 'saves_count': 0.1}
         #     article_weights_normalized = {} # {'similarity_score': 0.4, 'creation_date': 0.4, 'user_rating': 0.2}
         # else:
         video_weights_normalized = self.normalize_factor_weights(factor_weights=weights["video"], method_type="l1", complete=True, sum_value=False)
@@ -516,7 +520,7 @@ class ResourceRecommenderService:
             # set video weights
             factor_weights_viedos = {}
             for key, value in factor_weights_params.items():
-                if key in ["similarity_score", "user_rating", "nbr_saves"]:
+                if key in ["similarity_score", "user_rating", "saves_count"]:
                     factor_weights_viedos[key] = value
 
             factor_weights_viedos = self.normalize_factor_weights(  factor_weights=factor_weights_viedos, 
@@ -528,7 +532,6 @@ class ResourceRecommenderService:
             "article": factor_weights_articles,
             "video": factor_weights_viedos
         }
-        
     
     def _get_resources(self, data_cro_form: dict, data_default: dict=None):
         """
@@ -537,6 +540,9 @@ class ResourceRecommenderService:
         """
         body = self.cro_extract_meta_data(data_cro_form, data_default)
         result = {}
+
+        # check whether the DNUs have been aldready requested
+        # dnu_found = self.cro_get_concept_cro(user_id=body["croForm"]["user_id"], cid=cid, weight=weight)
 
         # Map recommendation type to enum values
         rec_type = body["croForm"]["recommendation_type"]

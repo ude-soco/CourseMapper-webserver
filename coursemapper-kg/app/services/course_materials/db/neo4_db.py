@@ -72,7 +72,7 @@ def create_video_resource(tx, node, recommendation_type=''):
         description: $description, description_full: $description_full, keyphrases: $keyphrases, text: $text, document_embedding: $document_embedding, 
         keyphrase_embedding: $keyphrase_embedding, similarity_score: $similarity_score, thumbnail: $thumbnail, 
         duration: $duration, views: $views, publish_time: $pub_time, helpful_count: $helpful_count, 
-        not_helpful_count: $not_helpful_count, bookmark_count: $bookmark_count, like_count: $like_count, channel_title: $channel_title})""",
+        not_helpful_count: $not_helpful_count, saves_count: $saves_count, like_count: $like_count, channel_title: $channel_title})""",
         rid=node["id"],
         uri="https://www.youtube.com/embed/%s?autoplay=1" % node["id"],
         title=node["title"],
@@ -89,7 +89,7 @@ def create_video_resource(tx, node, recommendation_type=''):
         document_embedding=str(node["document_embedding"] if "document_embedding" in node.index else ""),
         helpful_count=0,
         not_helpful_count=0,
-        bookmark_count=0,
+        saves_count=0,
         like_count=node["like_count"],
         channel_title=node["channel_title"]
         )
@@ -104,7 +104,7 @@ def create_wikipedia_resource(tx, node, recommendation_type=''):
         """MERGE (c:Resource:Article {rid: $rid, uri: $uri, 
         title: $title, abstract:$abstract, keyphrases: $keyphrases, text: $text, document_embedding: $document_embedding, 
         keyphrase_embedding: $keyphrase_embedding, similarity_score: $similarity_score, helpful_count: $helpful_count, 
-        not_helpful_count: $not_helpful_count, bookmark_count: $bookmark_count})""",
+        not_helpful_count: $not_helpful_count, saves_count: $saves_count})""",
         rid=node["id"],
         uri=node["id"],
         title=node["title"],
@@ -116,7 +116,7 @@ def create_wikipedia_resource(tx, node, recommendation_type=''):
         document_embedding=str(node["document_embedding"] if "document_embedding" in node.index else ""),
         helpful_count=0,
         not_helpful_count=0,
-        bookmark_count=0
+        saves_count=0
         )
 
 def create_external_source_resource(tx, node):
@@ -128,7 +128,7 @@ def create_external_source_resource(tx, node):
     tx.run(
         """MERGE (c:Resource:ExternalSource {rid: $rid, uri: $uri, 
         publish_time: $created_at, cid: $cid, description: $description, helpful_count: $helpful_count,
-        not_helpful_count: $not_helpful_count, bookmark_count: $bookmark_count})""",
+        not_helpful_count: $not_helpful_count, saves_count: $saves_count})""",
         rid=node["uri"],
         uri=node["uri"],
         publish_time=node["created_at"],
@@ -136,7 +136,7 @@ def create_external_source_resource(tx, node):
         cid=node["cid"],
         helpful_count=0,
         not_helpful_count=0,
-        bookmark_count=0
+        saves_count=0
         )
     
 
@@ -1886,7 +1886,7 @@ class NeoDataBase:
                 weight=weight
             )
             # if result:
-            #     logger.info("Getting node concept: DNU_NEW: True")
+            #     logger.info("Getting node concept: HAS_MODIFIED: True")
             #     result = self.cro_map_dnu(result, fetched=True)
 
         return result
@@ -1930,7 +1930,7 @@ class NeoDataBase:
                         """
                         MATCH (a:User),(b:Concept_modified)
                         WHERE ID(a) = $id_a AND ID(b) = $id_b
-                        MERGE (a)-[r:DNU_NEW]->(b)
+                        MERGE (a)-[r:HAS_MODIFIED]->(b)
                         RETURN r
                         """,
                         id_a=user["node_id"],
@@ -2038,7 +2038,7 @@ class NeoDataBase:
                             """
                             MATCH (a:User),(b:Rating)
                             WHERE ID(a) = $id_a AND ID(b) = $id_b
-                            MERGE (a)-[r:USER_HAS_RATED]->(b)
+                            MERGE (a)-[r:HAS_RATED]->(b)
                             RETURN r
                             """,
                             id_a=user["node_id"],
@@ -2155,6 +2155,105 @@ class NeoDataBase:
                 }
 
         return result
+    
+    def user_rates_resources(self, data: dict):
+        pass
+    
+    def save_or_remove_user_resources(self, data: dict):
+        """
+            User saves or remove Resource(s)
+        """
+        logger.info("Saving or Removing: User Resource")
+        tx = self.driver.session()
+        if data["status"] == True:
+            tx.run(
+                    """
+                    MATCH (a:User),(b:Resource)
+                    WHERE b.rid = "KpGtax2RBVY"
+                    MERGE (a)-[r:HAS_SAVED {
+                        user_id: $user_id, 
+                        mid: $mid, 
+                        slide_number: $slider_number, 
+                        cid: $cid, 
+                        rid: $rid
+                        }]->(b)
+                    RETURN r
+                    """,
+                    user_id=data["user_id"],
+                    mid=data["mid"],
+                    slider_number=data["slider_number"],
+                    cid=data["cid"],
+                    rid=data["rid"]
+                )
+        else:
+            tx.run(
+                    """
+                    MATCH (a:User)-[r:HAS_SAVED]->(b:Resource)
+                    WHERE r.user_id=$user_id AND 
+                        r.mid=$mid AND 
+                        r.slide_number=$slide_number AND 
+                        r.cid=$cid AND 
+                        r.rid=rid
+                    DELETE r
+                    """,
+                    user_id=data["user_id"],
+                    mid=data["mid"],
+                    slider_number=data["slider_number"],
+                    cid=data["cid"],
+                    rid=data["rid"]
+                )
+
+        # update "saves_count" on node "resource"
+        saves_count_result = tx.run(
+                """
+                    MATCH (a:User)-[r:HAS_SAVED]->(b:Resource)
+                    WHERE r.rid = $rid
+                    RETURN COUNT(r) AS count
+                """,
+                rid=data["rid"]
+            ).single()
+
+        tx.run(
+                """
+                    MATCH (r:Resource)
+                    WHERE r.rid=$resource_rid 
+                    SET r.saves_count=$saves_count
+                """,
+                rid=data["rid"],
+                saves_count=saves_count_result["count"]
+            )
+
+        tx.close()
+    
+    # def get_user_resources_saved(self, user_id: str, resource_rid: str):
+    #     """
+    #         Getting User Resources Saved
+    #         By filtering using: concept cid, learning material mid and silder number
+    #     """
+    #     logger.info("Getting User Resources Saved")
+
+    #     result = None
+    #     with self.driver.session() as session:
+    #         node = session.run(
+    #             """
+    #             MATCH   (a:Rating), (b:Resource)
+    #             WHERE   a.user_id = $user_id  AND a.resource_rid = $resource_rid  AND a.resource_rid = b.rid
+    #             RETURN  a.value as value,
+    #                     COALESCE(toInteger(b.helpful_count), 0) AS helpful_count,
+    #                     COALESCE(toInteger(b.not_helpful_count), 0) AS not_helpful_count
+    #             """,
+    #             user_id=user_id,
+    #             resource_rid=resource_rid
+    #         ).single()
+
+    #         if node is not None:
+    #             result = {
+    #                 "voted": node["value"],
+    #                 "helpful_count": node["helpful_count"],
+    #                 "not_helpful_count": node["not_helpful_count"],
+    #             }
+
+    #     return result
     
     def cro_remove_relation_btw_resource_and_concept_cro(self, concepts_cro: list):
         """

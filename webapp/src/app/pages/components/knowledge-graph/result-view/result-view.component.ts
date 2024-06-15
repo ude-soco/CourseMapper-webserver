@@ -84,14 +84,21 @@ export class ResultViewComponent {
     views: { status: false, arrow: false}
   }
 
-  mainConceptsSource = [ { cid: "sdsd1", name: "Data Mining", status: false }, { cid: "sdsd2", name: "Internet Suchmachnen", status: false } ];
+  mainConceptsSource = [ { cid: "sdsd1", name: "Data Mining", status: false }, { cid: "sdsd2", name: "Internet Retrieval", status: false } ];
   learningMaterialsSource = [ { mid: "s323f", name: "Learning Analytics", status: false } ];
-  sliderNumberSource = [ { name: "slide_1", status: false } ];
+  sliderNumbersSource = [ { name: "slide_1", status: false } ];
+  resourcesSved = [
+    { mid: "m1", mid_name: "Learning Analytics", slider_number: "slide_1", cid: "c1", concept_name: "Data Mining", status: false },
+    { mid: "m1", mid_name: "Learning Analytics", slider_number: "slide_1", cid: "c2", concept_name: "Internet Retrieval", status: false },
+    { mid: "m1", mid_name: "Learning Analytics", slider_number: "slide_1", cid: "c3", concept_name: "Information Mining", status: false },
+    { mid: "m1", mid_name: "Learning Analytics", slider_number: "slide_3", cid: "c4", concept_name: "Recall & Precision", status: false },
+    { mid: "m2", mid_name: "Cloud & Mobile", slider_number: "slide_1", cid: "c5", concept_name: "Https", status: false },
+  ];
 
   mainConceptsFiltered = [];
   mainConceptSelected: any | undefined;
   learningMaterialsFiltered = [];
-  sliderNumberFiltered = [];
+  sliderNumbersFiltered = [];
 
   filteringParamsSavedTab = {
     user_id: null,
@@ -389,14 +396,20 @@ export class ResultViewComponent {
     }
   }
   
-  selectMainConceptsOnChange(event) {
-    console.warn("selectMainConceptsOnChange ->")
-    console.warn(event.value);
-
+  selectMainConceptsOnChange(event, type: number) {
     // call available Main Concepts
     if (event.value) {
       let value = event.value;
       const conceptFound = this.mainConceptsFiltered.find((concept) => concept.cid === value.cid);
+
+
+      if (type === 1) {
+      } else if ( type === 2) {
+      } else if ( type === 3) {
+        const slider_node = this.sliderNumbersSource.find((slide) => slide.name === value.cid);
+      }
+
+      
 
       if (conceptFound === undefined) {
         value.status = true;
@@ -406,8 +419,8 @@ export class ResultViewComponent {
       }
     }
 
-    console.warn("mainConceptsFiltered ->")
-    console.warn(this.mainConceptsFiltered);
+    this.filteringParamsSavedTab.cids = this.mainConceptsFiltered.map(concept => concept.cid);
+    console.warn(this.filteringParamsSavedTab)
   }
 
   selectLearningMaterialsOnChange(event) {

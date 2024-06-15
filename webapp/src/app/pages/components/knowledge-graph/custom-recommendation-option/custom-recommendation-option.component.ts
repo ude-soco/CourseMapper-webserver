@@ -73,7 +73,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
       },
       {
         "title": "No. of Saves on CourseMapper",
-        "key": "nbr_saves",
+        "key": "saves_count",
         "value": 0.1,
         "checked": true
       }
@@ -84,7 +84,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
       "views": 0.19,
       "like_count": 0.06,
       "user_rating": 0.06,
-      "nbr_saves": 0.06
+      "saves_count": 0.06
     }
   }
 

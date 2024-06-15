@@ -31,7 +31,7 @@ export interface FactorWeight {
     views?: number,
     like_count?: number
     user_rating?: number,
-    nbr_saves?: number,
+    saves_count?: number,
 }
 
 export interface ResourceNode {

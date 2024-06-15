@@ -182,7 +182,7 @@
         <div class="flex flex-col">
           <div>Filter by:</div>
           <div class="flex flex-row justify-between">
-            <div>
+            <div class="w4/12">
 
               <p-dropdown
               [options]="mainConceptsSource"
@@ -193,9 +193,9 @@
               [showClear]="true"
               placeholder="Main Concept(s)"
               emptyFilterMessage="No Concept found"
-              (onChange)="selectMainConceptsOnChange($event)"
+              (onChange)="selectMainConceptsOnChange($event, 1)"
               [resetFilterOnHide]="true"
-              [style]="{'width': '250px'}"
+              [style]="{'width': '20rem'}"
               >
                 <ng-template pTemplate="selectedItem">
                     <div class="flex align-items-center gap-2" *ngIf="mainConceptSelected">
@@ -211,6 +211,7 @@
               </p-dropdown>
 
             </div>
+
             <div>lm</div>
             <div>sl</div>
           </div>

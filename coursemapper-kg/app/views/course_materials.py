@@ -103,7 +103,6 @@ def rating():
     """
 
 @course_materials.route("/get_concepts", methods=["POST"])
-
 def get_concepts():
     # return make_response([], 200)
     
@@ -125,7 +124,7 @@ def get_concepts():
     slide_id = str(material_id) + "_slide_" + str(material_page)
 
     ## boby024
-    # return CRO_TEST_get_concepts
+    return CRO_TEST_get_concepts
 
     print(
         "material_id:",
