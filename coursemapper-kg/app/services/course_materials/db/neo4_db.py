@@ -2155,9 +2155,83 @@ class NeoDataBase:
                 }
 
         return result
-    
+
     def user_rates_resources(self, data: dict):
-        pass
+        """
+            User rates Resource(s)
+        """
+        logger.info("Saving or Removing: User Resource")
+        tx = self.driver.session()
+        if data["value"] == "HELPFUL":
+            tx.run(
+                    """
+                    MATCH (a:User),(b:Resource)
+                    WHERE b.rid = "KpGtax2RBVY"
+                    MERGE (a)-[r:HAS_SAVED {
+                        user_id: $user_id, 
+                        cids: $cids, 
+                        value: $value, 
+                        rid: $rid
+                        }]->(b)
+                    RETURN r
+                    """,
+                    user_id=data["user_id"],
+                    cids=data["cids"],
+                    value=data["value"],
+                    rid=data["rid"]
+                )
+            
+
+
+
+
+
+
+
+
+
+
+            
+        else:
+            tx.run(
+                    """
+                    MATCH (a:User)-[r:HAS_SAVED]->(b:Resource)
+                    WHERE r.user_id=$user_id AND 
+                        r.mid=$mid AND 
+                        r.slide_number=$slide_number AND 
+                        r.cid=$cid AND 
+                        r.rid=rid
+                    DELETE r
+                    """,
+                    user_id=data["user_id"],
+                    mid=data["mid"],
+                    slider_number=data["slider_number"],
+                    cid=data["cid"],
+                    rid=data["rid"]
+                )
+
+        # update "saves_count" on node "resource"
+        saves_count_result = tx.run(
+                """
+                    MATCH (a:User)-[r:HAS_SAVED]->(b:Resource)
+                    WHERE r.rid = $rid
+                    RETURN COUNT(r) AS count
+                """,
+                rid=data["rid"]
+            ).single()
+
+        tx.run(
+                """
+                    MATCH (r:Resource)
+                    WHERE r.rid=$resource_rid 
+                    SET r.saves_count=$saves_count
+                """,
+                rid=data["rid"],
+                saves_count=saves_count_result["count"]
+            )
+
+        tx.close()
+    
     
     def save_or_remove_user_resources(self, data: dict):
         """
