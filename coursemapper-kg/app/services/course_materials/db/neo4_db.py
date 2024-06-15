@@ -2162,12 +2162,27 @@ class NeoDataBase:
         """
         logger.info("Saving or Removing: User Resource")
         tx = self.driver.session()
-        if data["value"] == "HELPFUL":
+
+        rating_node = tx.run(
+                    """
+                        MATCH (a:User)-[r:HAS_RATED]->(b:Resource)
+                        WHERE   r.user_id = $user_id AND
+                                r.value = $value AND
+                                r.rid = $rid AND
+                                ANY(cid IN r.cids WHERE cid IN $cids)
+                        RETURN r
+                    """,
+                    user_id=data["user_id"],
+                    value=data["value"],
+                    rid=data["rid"],
+                    cids=data["cids"]
+                ).single()
+        
+        if rating_node is None:
             tx.run(
                     """
                     MATCH (a:User),(b:Resource)
-                    WHERE b.rid = "KpGtax2RBVY"
-                    MERGE (a)-[r:HAS_SAVED {
+                    MERGE (a)-[r:HAS_RATED {
                         user_id: $user_id, 
                         cids: $cids, 
                         value: $value, 
@@ -2180,42 +2195,15 @@ class NeoDataBase:
                     value=data["value"],
                     rid=data["rid"]
                 )
-            
 
-
-
-
-
-
-
-
-
-
-            
-        else:
-            tx.run(
-                    """
-                    MATCH (a:User)-[r:HAS_SAVED]->(b:Resource)
-                    WHERE r.user_id=$user_id AND 
-                        r.mid=$mid AND 
-                        r.slide_number=$slide_number AND 
-                        r.cid=$cid AND 
-                        r.rid=rid
-                    DELETE r
-                    """,
-                    user_id=data["user_id"],
-                    mid=data["mid"],
-                    slider_number=data["slider_number"],
-                    cid=data["cid"],
-                    rid=data["rid"]
-                )
-
-        # update "saves_count" on node "resource"
-        saves_count_result = tx.run(
+        # update "helpful_count" and "not_helpful_count" on node "resource"
+        counts = tx.run(
                 """
-                    MATCH (a:User)-[r:HAS_SAVED]->(b:Resource)
+                    MATCH (a:User)-[r:HAS_RATED]->(b:Resource)
                     WHERE r.rid = $rid
-                    RETURN COUNT(r) AS count
+                    RETURN
+                    COUNT(CASE WHEN r.value = 'HELPFUL' THEN 1 ELSE NULL END) AS helpful_count,
+                    COUNT(CASE WHEN r.value = 'NOT_HELPFUL' THEN 1 ELSE NULL END) AS not_helpful_count
                 """,
                 rid=data["rid"]
             ).single()
@@ -2223,11 +2211,11 @@ class NeoDataBase:
         tx.run(
                 """
                     MATCH (r:Resource)
-                    WHERE r.rid=$resource_rid 
-                    SET r.saves_count=$saves_count
+                    WHERE r.rid=$rid 
+                    SET r.helpful_count=$helpful_count, r.not_helpful_count=$not_helpful_count
                 """,
-                rid=data["rid"],
-                saves_count=saves_count_result["count"]
+                helpful_count=counts["helpful_count"],
+                not_helpful_count=counts["not_helpful_count"]
             )
 
         tx.close()
@@ -2290,7 +2278,7 @@ class NeoDataBase:
         tx.run(
                 """
                     MATCH (r:Resource)
-                    WHERE r.rid=$resource_rid 
+                    WHERE r.rid=$rid 
                     SET r.saves_count=$saves_count
                 """,
                 rid=data["rid"],
