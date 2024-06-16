@@ -1989,146 +1989,6 @@ class NeoDataBase:
             # user must exist
             pass
 
-    def cro_create_rating(self, rating: dict):
-        logger.info("CRO Creating Rating")
-
-        # get user node by id
-        user = self.cro_get_user(user_id=rating["user_id"])
-
-        # concepts = rating["concepts"].split()
-        tx = self.driver.session()
-        for cid in rating["concepts"]:
-            # check whether rating exist based on user_id, resource_rid, cid and cid (optional)
-            node_checked = tx.run(
-                        """
-                        MATCH (r:Rating) 
-                        WHERE r.user_id = $user_id AND r.resource_rid = $resource_rid AND r.cid = $cid
-                        RETURN ID(r) as node_id
-                        """,
-                        user_id=rating["user_id"],
-                        resource_rid=rating["resource"],
-                        cid=cid
-                    ).single()
-            
-            if node_checked is not None:
-                tx.run(
-                        """
-                            MATCH (r:Rating) 
-                            WHERE ID(r) = $id
-                            SET r.value=$value
-                        """,
-                        id=node_checked["node_id"],
-                        value=rating["rating"]
-                    ).single()
-            else:
-                node = tx.run(
-                            """
-                            MERGE (c:Rating { cid:$cid, user_id:$user_id, value:$value, resource_rid: $resource_rid })
-                            RETURN ID(c) as node_id, c.user_id as user_id, c.cid as cid, c.value as value, c.resource_rid as resource_rid
-                            """,
-                            user_id=rating["user_id"],
-                            cid=cid,
-                            value=rating["rating"],
-                            resource_rid=rating["resource"]
-                        ).single()
-                
-                # create relationship between user and rating
-                if node is not None:
-                    tx.run(
-                            """
-                            MATCH (a:User),(b:Rating)
-                            WHERE ID(a) = $id_a AND ID(b) = $id_b
-                            MERGE (a)-[r:HAS_RATED]->(b)
-                            RETURN r
-                            """,
-                            id_a=user["node_id"],
-                            id_b=node["node_id"]
-                        )
-        tx.close()
-    
-    def cro_get_rating(self, resource_rid: str):
-        logger.info("CRO Getting Rating")
-        result = None
-        with self.driver.session() as session:
-            result = session.run(
-                """
-                MATCH (c:Rating)
-                WHERE c.resource_rid = $resource_rid
-                RETURN ID(c) as node_id, c.user_id as user_id, c.cid as cid, c.value as value, c.resource_rid as resource_rid
-                """,
-                resource_rid=resource_rid
-            ).data()
-
-        return result
-    
-    def cro_get_ratings(self, resource_rids: list):
-        """
-            Getting List of Rating Containing Resources RID
-        """
-        logger.info("Getting List of Rating Containing Resources RID")
-
-        result = []
-        with self.driver.session() as session:
-            result = session.run(
-                """
-                MATCH (r:Rating)
-                WHERE r.resource_rid IN $resource_rids
-                RETURN ID(r) as node_id, r.user_id as user_id, r.cid as cid, r.value as value, r.resource_rid as resource_rid
-                """,
-                resource_rids=resource_rids
-            ).data()
-        
-        return result
-    
-    def cro_count_rating(self, resource_rid: str):
-        logger.info("CRO Getting Rating")
-        result = {"helpful_count": 0, "not_helpful_count": 0}
-        tx = self.driver.session()
-
-        helpful = tx.run(
-            """
-            MATCH (r:Rating)
-            WHERE r.resource_rid = $resource_rid AND r.value = "HELPFUL"
-            RETURN COUNT(r) as count
-            """,
-            resource_rid=resource_rid
-        ).single()
-        if helpful and helpful["count"] != 0:
-            result["helpful_count"] = helpful["count"]
-
-        not_helpful = tx.run(
-            """
-            MATCH (r:Rating)
-            WHERE r.resource_rid = $resource_rid AND r.value = "NOT_HELPFUL"
-            RETURN COUNT(r) as count
-            """,
-            resource_rid=resource_rid
-        ).single()
-        if not_helpful and not_helpful["count"] != 0:
-            result["not_helpful_count"] = not_helpful["count"]
-
-        tx.close()
-        return result
-
-    def cro_update_resource_count(self, resource_rid: str, helpful_count: int, not_helpful_count: int):
-        # # type: helpful_count, not_helpful_count
-        logger.info("CRO Updating Resource Count")
-
-        result = None
-        with self.driver.session() as session:
-            result = session.run(
-                """
-                    MATCH (r:Resource) 
-                    WHERE r.rid=$resource_rid 
-                    SET r.helpful_count=$helpful_count, r.not_helpful_count=$not_helpful_count
-                """,
-                resource_rid=resource_rid,
-                helpful_count=helpful_count,
-                not_helpful_count=not_helpful_count
-            ).single()
-
-        return result
-
     def cro_get_rating_and_resource_detail(self, user_id: str, resource_rid: str):
         # # type: helpful_count, not_helpful_count
         logger.info("CRO Getting Rating Resource Details")
@@ -2156,7 +2016,40 @@ class NeoDataBase:
 
         return result
 
-    def user_rates_resources(self, data: dict):
+    def get_user_rating_detail_by(self, rating: dict):
+        """
+            Get User Rating by user_id, value, rid and cids
+        """
+        logger.info("Getting Rating Resource Details")
+        result = None
+        with self.driver.session() as session:
+            node = session.run(
+                    """
+                        MATCH (a:User)-[r:HAS_RATED]->(b:Resource)
+                        WHERE   r.user_id = $user_id AND
+                                r.value = $value AND
+                                r.rid = $rid AND
+                                ANY(cid IN r.cids WHERE cid IN $cids)
+                        RETURN  r.value as value,
+                                COALESCE(toInteger(b.helpful_count), 0) AS helpful_count,
+                                COALESCE(toInteger(b.not_helpful_count), 0) AS not_helpful_count
+                    """,
+                    user_id=rating["user_id"],
+                    value=rating["value"],
+                    rid=rating["rid"],
+                    cids=rating["cids"]
+                ).single()
+
+            if node is not None:
+                result = {
+                    "voted": node["value"],
+                    "helpful_count": node["helpful_count"],
+                    "not_helpful_count": node["not_helpful_count"],
+                }
+
+        return result
+
+    def user_rates_resources(self, rating: dict):
         """
             User rates Resource(s)
         """
@@ -2172,16 +2065,17 @@ class NeoDataBase:
                                 ANY(cid IN r.cids WHERE cid IN $cids)
                         RETURN r
                     """,
-                    user_id=data["user_id"],
-                    value=data["value"],
-                    rid=data["rid"],
-                    cids=data["cids"]
+                    user_id=rating["user_id"],
+                    value=rating["value"],
+                    rid=rating["rid"],
+                    cids=rating["cids"]
                 ).single()
         
         if rating_node is None:
             tx.run(
                     """
                     MATCH (a:User),(b:Resource)
+                    WHERE b.rid = $rid
                     MERGE (a)-[r:HAS_RATED {
                         user_id: $user_id, 
                         cids: $cids, 
@@ -2190,10 +2084,10 @@ class NeoDataBase:
                         }]->(b)
                     RETURN r
                     """,
-                    user_id=data["user_id"],
-                    cids=data["cids"],
-                    value=data["value"],
-                    rid=data["rid"]
+                    user_id=rating["user_id"],
+                    cids=rating["cids"],
+                    value=rating["value"],
+                    rid=rating["rid"]
                 )
 
         # update "helpful_count" and "not_helpful_count" on node "resource"
@@ -2205,9 +2099,10 @@ class NeoDataBase:
                     COUNT(CASE WHEN r.value = 'HELPFUL' THEN 1 ELSE NULL END) AS helpful_count,
                     COUNT(CASE WHEN r.value = 'NOT_HELPFUL' THEN 1 ELSE NULL END) AS not_helpful_count
                 """,
-                rid=data["rid"]
+                rid=rating["rid"]
             ).single()
 
+        logger.info(f"Increment Or Decrement Resource Rating Count")
         tx.run(
                 """
                     MATCH (r:Resource)
@@ -2220,7 +2115,6 @@ class NeoDataBase:
 
         tx.close()
     
-    
     def save_or_remove_user_resources(self, data: dict):
         """
             User saves or remove Resource(s)
@@ -2228,10 +2122,11 @@ class NeoDataBase:
         logger.info("Saving or Removing: User Resource")
         tx = self.driver.session()
         if data["status"] == True:
+            # MATCH (a:User),(b:Resource)
             tx.run(
                     """
-                    MATCH (a:User),(b:Resource)
-                    WHERE b.rid = "KpGtax2RBVY"
+                    MATCH (a:User)-[r:HAS_SAVED]->(b:Resource)
+                    WHERE b.rid = $rid
                     MERGE (a)-[r:HAS_SAVED {
                         user_id: $user_id, 
                         mid: $mid, 
@@ -2287,35 +2182,33 @@ class NeoDataBase:
 
         tx.close()
     
-    # def get_user_resources_saved(self, user_id: str, resource_rid: str):
-    #     """
-    #         Getting User Resources Saved
-    #         By filtering using: concept cid, learning material mid and silder number
-    #     """
-    #     logger.info("Getting User Resources Saved")
+    def get_user_resources_saved_by(self, data: dict):
+        """
+            Getting User Resources Saved
+            By filtering using: user_id, cid: concept cid, mid: learning material and slide_number: silder number, rid: resource id
+        """
+        logger.info("Filtering User Resources Saved")
 
-    #     result = None
-    #     with self.driver.session() as session:
-    #         node = session.run(
-    #             """
-    #             MATCH   (a:Rating), (b:Resource)
-    #             WHERE   a.user_id = $user_id  AND a.resource_rid = $resource_rid  AND a.resource_rid = b.rid
-    #             RETURN  a.value as value,
-    #                     COALESCE(toInteger(b.helpful_count), 0) AS helpful_count,
-    #                     COALESCE(toInteger(b.not_helpful_count), 0) AS not_helpful_count
-    #             """,
-    #             user_id=user_id,
-    #             resource_rid=resource_rid
-    #         ).single()
+        result = None
+        with self.driver.session() as session:
+            data = session.run(
+                """
+                    MATCH (a:User)-[r:HAS_SAVED]->(b:Resource)
+                    WHERE   r.user_id='65e0536db1effed771dbdbb9' AND 
+                            r.mid='6662201fec6bb9067ff71cc9' AND 
+                            r.slide_number='slide_1' AND 
+                            r.cid='2156985142238936538' AND 
+                            r.rid='KpGtax2RBVY'
+                    RETURN r
+                """,
+                user_id=data["user_id"],
+                mids=data["mids"],
+                slide_numbers=data["slide_numbers"],
+                cids=data["cids"],
+                rid=data["rid"]
+            ).data()
 
-    #         if node is not None:
-    #             result = {
-    #                 "voted": node["value"],
-    #                 "helpful_count": node["helpful_count"],
-    #                 "not_helpful_count": node["not_helpful_count"],
-    #             }
-
-    #     return result
+        return result
     
     def cro_remove_relation_btw_resource_and_concept_cro(self, concepts_cro: list):
         """
@@ -2706,3 +2599,146 @@ class NeoDataBase:
 
         cro_rec_result = self.cro_create_cro_recommendation(cro_form=cro_form, resources=resources)
         self.cro_create_relationship_between_cro_form_and_cro_rec(cro_form_node_id=cro_form["node_id"], cro_rec_node_id=cro_rec_result["node_id"])
+
+    ########################################################
+    def cro_create_rating(self, rating: dict):
+        logger.info("CRO Creating Rating")
+
+        # get user node by id
+        user = self.cro_get_user(user_id=rating["user_id"])
+
+        # concepts = rating["concepts"].split()
+        tx = self.driver.session()
+        for cid in rating["concepts"]:
+            # check whether rating exist based on user_id, resource_rid, cid and cid (optional)
+            node_checked = tx.run(
+                        """
+                        MATCH (r:Rating) 
+                        WHERE r.user_id = $user_id AND r.resource_rid = $resource_rid AND r.cid = $cid
+                        RETURN ID(r) as node_id
+                        """,
+                        user_id=rating["user_id"],
+                        resource_rid=rating["resource"],
+                        cid=cid
+                    ).single()
+            
+            if node_checked is not None:
+                tx.run(
+                        """
+                            MATCH (r:Rating) 
+                            WHERE ID(r) = $id
+                            SET r.value=$value
+                        """,
+                        id=node_checked["node_id"],
+                        value=rating["rating"]
+                    ).single()
+            else:
+                node = tx.run(
+                            """
+                            MERGE (c:Rating { cid:$cid, user_id:$user_id, value:$value, resource_rid: $resource_rid })
+                            RETURN ID(c) as node_id, c.user_id as user_id, c.cid as cid, c.value as value, c.resource_rid as resource_rid
+                            """,
+                            user_id=rating["user_id"],
+                            cid=cid,
+                            value=rating["rating"],
+                            resource_rid=rating["resource"]
+                        ).single()
+                
+                # create relationship between user and rating
+                if node is not None:
+                    tx.run(
+                            """
+                            MATCH (a:User),(b:Rating)
+                            WHERE ID(a) = $id_a AND ID(b) = $id_b
+                            MERGE (a)-[r:HAS_RATED]->(b)
+                            RETURN r
+                            """,
+                            id_a=user["node_id"],
+                            id_b=node["node_id"]
+                        )
+        tx.close()
+    
+    def cro_get_rating(self, resource_rid: str):
+        logger.info("CRO Getting Rating")
+        result = None
+        with self.driver.session() as session:
+            result = session.run(
+                """
+                MATCH (c:Rating)
+                WHERE c.resource_rid = $resource_rid
+                RETURN ID(c) as node_id, c.user_id as user_id, c.cid as cid, c.value as value, c.resource_rid as resource_rid
+                """,
+                resource_rid=resource_rid
+            ).data()
+
+        return result
+    
+    def cro_get_ratings(self, resource_rids: list):
+        """
+            Getting List of Rating Containing Resources RID
+        """
+        logger.info("Getting List of Rating Containing Resources RID")
+
+        result = []
+        with self.driver.session() as session:
+            result = session.run(
+                """
+                MATCH (r:Rating)
+                WHERE r.resource_rid IN $resource_rids
+                RETURN ID(r) as node_id, r.user_id as user_id, r.cid as cid, r.value as value, r.resource_rid as resource_rid
+                """,
+                resource_rids=resource_rids
+            ).data()
+        
+        return result
+    
+    def cro_count_rating(self, resource_rid: str):
+        logger.info("CRO Getting Rating")
+        result = {"helpful_count": 0, "not_helpful_count": 0}
+        tx = self.driver.session()
+
+        helpful = tx.run(
+            """
+            MATCH (r:Rating)
+            WHERE r.resource_rid = $resource_rid AND r.value = "HELPFUL"
+            RETURN COUNT(r) as count
+            """,
+            resource_rid=resource_rid
+        ).single()
+        if helpful and helpful["count"] != 0:
+            result["helpful_count"] = helpful["count"]
+
+        not_helpful = tx.run(
+            """
+            MATCH (r:Rating)
+            WHERE r.resource_rid = $resource_rid AND r.value = "NOT_HELPFUL"
+            RETURN COUNT(r) as count
+            """,
+            resource_rid=resource_rid
+        ).single()
+        if not_helpful and not_helpful["count"] != 0:
+            result["not_helpful_count"] = not_helpful["count"]
+
+        tx.close()
+        return result
+
+    def cro_update_resource_count(self, resource_rid: str, helpful_count: int, not_helpful_count: int):
+        # # type: helpful_count, not_helpful_count
+        logger.info("CRO Updating Resource Count")
+
+        result = None
+        with self.driver.session() as session:
+            result = session.run(
+                """
+                    MATCH (r:Resource) 
+                    WHERE r.rid=$resource_rid 
+                    SET r.helpful_count=$helpful_count, r.not_helpful_count=$not_helpful_count
+                """,
+                resource_rid=resource_rid,
+                helpful_count=helpful_count,
+                not_helpful_count=not_helpful_count
+            ).single()
+
+        return result
+
+    ########################################################

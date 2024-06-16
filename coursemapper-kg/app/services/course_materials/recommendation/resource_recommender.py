@@ -204,19 +204,9 @@ class ResourceRecommenderService:
         return result
 
     def cro_save_rating(self, rating: dict):
-        resource_rid = rating["rid"] # rating["resource"]["rid"]
-        rating["resource"] = resource_rid
-        self.db.cro_create_rating(rating=rating)
-
-        # update resource counts: helpful_count and not_helpful_count
-        ratings_counted = self.db.cro_count_rating(resource_rid=resource_rid)
-        logger.info(f"Increment and decrement Rating: {ratings_counted}")
-        self.db.cro_update_resource_count(resource_rid=resource_rid, 
-                                          helpful_count=ratings_counted["helpful_count"], 
-                                          not_helpful_count=ratings_counted["not_helpful_count"]
-                                        )
-        rating_resource_detail = self.db.cro_get_rating_and_resource_detail(user_id=rating["user_id"], resource_rid=resource_rid)
-        return rating_resource_detail
+        self.db.user_rates_resources(rating=rating)
+        rating_found = self.db.get_user_rating_detail_by(rating=rating)
+        return rating_found
     
     def save_or_remove_user_resources(self, data: dict):
         resource_saved = self.db.save_or_remove_user_resources(data)

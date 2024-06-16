@@ -103,7 +103,7 @@ export class RatingComponent {
 
     const data = {
       user_id: this.userid.toString(),
-      rating: rating.toString(),
+      value: rating.toString(),
       rid: this.element.rid,
       concepts: this.selectedConceptCids
     }
