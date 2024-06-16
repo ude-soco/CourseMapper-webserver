@@ -16,9 +16,17 @@
 }
 
 .chart{
-  border: 2px solid lightgrey;
+  /*border: 2px solid lightgrey;*/
   border-radius: 10px;
   height: 18em;
   width: 100%;
 
 }
+
+.title{
+  font-family: Roboto;
+  font-weight: bold;
+  font-size: 20px;
+  padding: 5px;
+  margin-top: 1px;
+  margin-bottom: 10px;}

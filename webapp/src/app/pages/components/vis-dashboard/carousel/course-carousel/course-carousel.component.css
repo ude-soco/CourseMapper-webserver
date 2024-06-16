@@ -1,20 +1,32 @@
 .carousel {
-  display: flex;
-  justify-content: space-between;
+  position: relative;
 }
+
 
 .cards-container {
   display: flex;
   flex-wrap: wrap;
-
+  justify-content: center;
 
 }
 
 .cards-container > div {
-  flex: 0 0 calc(20% - 20px); /* Adjust the width of the cards */
-  margin: 10px; /* Adjust the margin between cards */
+  flex: 0 0 calc(20% - 20px);
+  margin: 10px;
 }
 
-.button{
-  font-size: 50px;
+
+.prev-button,
+.next-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-65%);
+}
+
+.prev-button {
+  left: 0;
+}
+
+.next-button {
+  right: 0;
 }

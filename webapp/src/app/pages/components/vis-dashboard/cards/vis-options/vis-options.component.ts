@@ -6,7 +6,7 @@ import {Component, Input} from '@angular/core';
   styleUrls: ['./vis-options.component.css']
 })
 export class VisOptionsComponent {
-@Input() text: string
+@Input() vis_option: string
 
 
 constructor() {

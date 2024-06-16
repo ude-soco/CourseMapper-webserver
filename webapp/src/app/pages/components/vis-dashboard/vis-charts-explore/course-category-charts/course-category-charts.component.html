@@ -1,72 +1,159 @@
-<div class="grid-container">
-  <div class="grid-item">
-    <div>
-      Title and Filter
-      <app-vis-filter-slider [minValue]="5" [maxValue]="20" [step]="1"
-           (valueChange)="onDataChange($event)"
-                             [datapointCount]="dataPointCount"
-      ></app-vis-filter-slider>
-    </div>
-
-    <div class="chart">
-      <div style="text-align:center">
-        <apx-chart
-          [series]="chartOptions.series"
-          [chart]="chartOptions.chart"
-          [xaxis]="chartOptions.xaxis"
-          [title]="chartOptions.title"
-          [plotOptions]="chartOptions.plotOptions"
-        ></apx-chart>
-      </div>
-
-    </div>
-
-    <div>
-      Title and Filter
-      <app-vis-filter-slider [minValue]="5" [maxValue]="30" [step]="1"
-                             (valueChange)="onDataChange3($event)"
-                             [datapointCount]="dataPointCount3"
-      ></app-vis-filter-slider>
-    </div>
-
-    <div class="chart">
-      <div style="text-align:center">
-        <apx-chart
-          [series]="chartOptions3.series"
-          [chart]="chartOptions3.chart"
-          [xaxis]="chartOptions3.xaxis"
-          [yaxis]="chartOptions3.yaxis"
-          [title]="chartOptions3.title"
-          [plotOptions]="chartOptions3.plotOptions"
-        ></apx-chart>
-      </div>
-
-    </div>
-
-  </div>
 
 
-  <div class="grid-item">
+ <div class="grid-container">
+   <div>
 
-    <div>
-      Title and Filter
-      <app-vis-filter-slider [minValue]="5" [maxValue]="20" [step]="1"
-                             (valueChange)="onDataChange2($event)"
-                             [datapointCount]="dataPointCount2"
-      ></app-vis-filter-slider>
-    </div>
+     <div class="grid-item" *ngIf="hasCoursesEnrolledStudents">
+       <div>
+         <div class="title">
+           Distribution of the most popular courses based on the number of enrolled students
+         </div>
 
-    <div class="chart">
-      <div style="text-align:center">
-        <apx-chart
-          [series]="chartOptions2.series"
-          [chart]="chartOptions2.chart"
-          [xaxis]="chartOptions2.xaxis"
-          [title]="chartOptions2.title"
-          [plotOptions]="chartOptions2.plotOptions"
-        ></apx-chart>
-      </div>
-    </div>
+         <div >
+           <app-vis-filter-slider [minValue]="5" [maxValue]="20" [step]="1"
+                                  (valueChange)="onDataChange($event)"
+                                  [datapointCount]="dataPointCount"
+           ></app-vis-filter-slider>
+         </div>
 
-  </div>
-</div>
+
+
+       </div>
+
+       <div class="chart">
+         <div style="text-align:center">
+
+           <div *ngIf="hasCoursesEnrolledStudents">
+             <apx-chart
+               [series]="chartOptions.series"
+               [chart]="chartOptions.chart"
+               [xaxis]="chartOptions.xaxis"
+               [yaxis]="chartOptions.yaxis"
+               [title]="chartOptions.title"
+               [plotOptions]="chartOptions.plotOptions"
+             ></apx-chart>
+           </div>
+           <div *ngIf="!hasCoursesEnrolledStudents">
+             No data
+             <app-svg-icon-vis src="/webapp/src/assets/black-star-icon.svg"></app-svg-icon-vis>
+           </div>
+
+         </div>
+
+       </div>
+     </div>
+ </div>
+
+
+
+
+   <hr>
+
+
+
+
+
+
+   <div  *ngIf="hasPriceAndRatings">
+
+
+     <div >
+       <div class="title">
+         Correlation between ratings & prices of courses
+
+       </div>
+       <div *ngIf="hasPriceAndRatings">
+         <app-vis-filter-slider [minValue]="5" [maxValue]="30" [step]="1"
+                                (valueChange)="onDataChange3($event)"
+                                [datapointCount]="dataPointCount3"
+         ></app-vis-filter-slider>
+
+       </div>
+     </div>
+
+     <div class="chart" >
+       <div style="text-align:center"  *ngIf="hasPriceAndRatings">
+         <apx-chart
+           [series]="chartOptions3.series"
+           [chart]="chartOptions3.chart"
+           [xaxis]="chartOptions3.xaxis"
+           [yaxis]="chartOptions3.yaxis"
+           [title]="chartOptions3.title"
+           [plotOptions]="chartOptions3.plotOptions"
+         ></apx-chart>
+       </div>
+
+       <div *ngIf="!hasPriceAndRatings">
+         No data
+         <app-svg-icon-vis src="/webapp/src/assets/black-star-icon.svg"></app-svg-icon-vis>
+       </div>
+
+     </div>
+
+   </div>
+
+
+
+
+
+
+<hr>
+
+   <div>
+
+     <div class="grid-item" *ngIf="hasCategoriesEnrolledStudents">
+
+       <div>
+         <div class="title">
+           Distribution of the most popular categories of courses
+         </div>
+
+         <div *ngIf="hasCategoriesEnrolledStudents">
+           <app-vis-filter-slider [minValue]="5" [maxValue]="20" [step]="1"
+                                  (valueChange)="onDataChange2($event)"
+                                  [datapointCount]="dataPointCount2"
+           ></app-vis-filter-slider>
+         </div>
+
+
+       </div>
+
+       <div class="chart">
+         <div style="text-align:center">
+
+           <div *ngIf="hasCategoriesEnrolledStudents">
+             <apx-chart
+               [series]="chartOptions2.series"
+               [chart]="chartOptions2.chart"
+               [xaxis]="chartOptions2.xaxis"
+               [title]="chartOptions2.title"
+               [yaxis]="chartOptions2.yaxis"
+               [plotOptions]="chartOptions2.plotOptions"
+             ></apx-chart>
+           </div>
+
+           <div *ngIf="!hasCategoriesEnrolledStudents">
+             No data
+             <app-svg-icon-vis src="/webapp/src/assets/black-star-icon.svg"></app-svg-icon-vis>
+           </div>
+
+         </div>
+       </div>
+
+   </div>
+
+
+ </div>
+ </div>
+
+
+
+
+
+
+
+
+
+
+
+

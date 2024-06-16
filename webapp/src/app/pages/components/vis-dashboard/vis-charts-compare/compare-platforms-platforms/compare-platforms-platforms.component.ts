@@ -88,7 +88,13 @@ getNumberOfParticipantsForCompare(platforms:string[]){
     this.visDashboardServices.getPlatformsByParticipants(platforms)
       .then((platforms)=>{
         this.chartOptions.series = platforms.map(platform=> platform.TotalParticipants)
-        this.chartOptions.labels = platforms.map(platform => platform.PlatformName)
+        const j = platforms.map((platform)=>{
+          if(platform.TotalParticipants === 0){
+            return 'no data for ' + platform.PlatformName
+          }
+          return platform.PlatformName
+        })
+        this.chartOptions.labels = j
       })
 }
 

@@ -55,7 +55,15 @@ export class MostActiveInstitutionsComponent implements OnInit{
       },
       xaxis: {
         categories: ["Jan", "Feb", "Mar"],
+        title:{
+          text: 'undefined'
+        }
       },
+      yaxis: {
+        title: {
+          text: 'Sales'
+        }
+      }
 
     }
   }
@@ -72,10 +80,14 @@ export class MostActiveInstitutionsComponent implements OnInit{
         this.numberOfCourses = institutions.map((institution)=> institution.NumberOfCourses)
         this.chartOptions.series = [{
           data: this.numberOfCourses,
-          name:"Total Courses"
+          name:"Total Courses",
         }];
         this.chartOptions.xaxis ={
-          categories: this.institutionNames
+          categories: this.institutionNames,
+          title: {text: "Number of Courses Offered"}
+        };
+        this.chartOptions.yaxis ={
+          title:{text: "Institution Names",style: {fontSize:'12px'}},
         }
 
       })

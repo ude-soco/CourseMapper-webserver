@@ -1,7 +1,7 @@
 .grid-container {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* Two equal columns */
-  gap: 20px; /* Gap between grid items */
+  grid-template-columns: 1fr;
+  gap:20px;
   border: 2px solid lightgrey;
   padding: 10px;
   border-radius: 10px;
@@ -15,9 +15,17 @@
 }
 
 .chart{
-  border: 2px solid lightgrey;
-  border-radius: 10px;
   height: 18em;
   width: 100%;
+  padding: 5px
 
+}
+
+.title{
+  font-family: Roboto;
+  font-weight: bold;
+  font-size: 20px;
+  padding: 5px;
+  margin-TOP: 1px;
+  margin-bottom: 10px;
 }

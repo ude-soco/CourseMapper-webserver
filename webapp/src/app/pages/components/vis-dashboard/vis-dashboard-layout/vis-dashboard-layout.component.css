@@ -1,14 +1,17 @@
 :host {
   display: block;
   margin-top: 10px;
-  margin-left: 8em;
-  margin-right: 8em;
+  margin-left: inherit;
+  margin-right: inherit;
 }
 
 .content {
-  margin-left: 8em;
+  margin-left: calc(4em + 20px);
   margin-right: 8em;
   margin-top: 2em;
+  max-width: 1110px;
+  display: flex;
+  flex-direction: column;
 }
 
 .sidebar {
@@ -21,4 +24,13 @@
 
 .footer{
   margin-top: 20em;
+}
+
+
+/* Media query for larger screens */
+@media screen and (min-width: 1200px) {
+  .content {
+    margin-left: auto; /* Center content horizontally by setting left margin to auto */
+    margin-right: auto; /* Center content horizontally by setting right margin to auto */
+  }
 }

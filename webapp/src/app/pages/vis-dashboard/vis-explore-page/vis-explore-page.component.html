@@ -7,7 +7,7 @@
   <p-dropdown [options]="groupedCities"
               (ngModelChange)="updateButtonState()"
               [style]="{'width':'50%'}"
-              [panelStyle]="{'width':'50%'}"
+              [panelStyle]="{'width':'100%'}"
               scrollHeight="350px"
               [(ngModel)]="selectedCity" placeholder="Select a platform" [group]="true">
     <ng-template let-group pTemplate="group">
@@ -18,14 +18,9 @@
   </p-dropdown>
 
   <div>
-
-    <button style="margin-top: 3em" class="button"
+    <button class="button"
             [ngClass]="{'active': selectedCity !== null}"
             [disabled]="selectedCity==='' "
             (click)="exploreCourse()">Explore</button>
-
-
   </div>
-
-
 </div>

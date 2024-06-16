@@ -5,7 +5,7 @@ import en from '@angular/common/locales/en';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
-import { registerLocaleData, DatePipe } from '@angular/common';
+import {registerLocaleData, DatePipe, NgOptimizedImage} from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -138,6 +138,10 @@ import { FindByTopicMainComponent } from './pages/vis-dashboard/find-topic-page/
 import { VisFilterSliderComponent } from './pages/components/vis-dashboard/vis-filter-slider/vis-filter-slider.component';
 import { BreadcrumbComponent } from './pages/components/vis-dashboard/breadcrumb/breadcrumb.component';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { CarouselForwardButtonComponent } from './pages/components/vis-dashboard/carousel/chevron-buttons/carousel-forward-button/carousel-forward-button.component';
+import { CarouselBackwardButtonComponent } from './pages/components/vis-dashboard/carousel/chevron-buttons/carousel-backward-button/carousel-backward-button.component';
+import { SvgIconVisComponent } from './pages/components/vis-dashboard/svg-icon-vis/svg-icon-vis.component';
+import { PopularTopicsComponent } from './pages/components/vis-dashboard/cards/popular-topics/popular-topics.component';
 
 @NgModule({
   declarations: [
@@ -212,7 +216,11 @@ import { MultiSelectModule } from 'primeng/multiselect';
     ComparePlatformsConceptComponent,
     FindByTopicMainComponent,
     VisFilterSliderComponent,
-    BreadcrumbComponent
+    BreadcrumbComponent,
+    CarouselForwardButtonComponent,
+    CarouselBackwardButtonComponent,
+    SvgIconVisComponent,
+    PopularTopicsComponent,
   ],
     imports: [
         MentionModule,
@@ -234,7 +242,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
         AngularD3CloudModule,
         NgApexchartsModule,
         NotificationModule,
-      MultiSelectModule,
+        MultiSelectModule,
         StoreModule.forRoot({}, {}),
         EffectsModule.forRoot([]),
         StoreDevtoolsModule.instrument({
@@ -251,6 +259,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
         KnowledgeGraphModule,
         TabMenuModule,
         DividerModule,
+        NgOptimizedImage,
     ],
   exports: [],
   providers: [httpInterceptorProviders, DatePipe],

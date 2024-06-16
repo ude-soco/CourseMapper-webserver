@@ -1,16 +1,15 @@
-<!-- card.component.html -->
 
 <div class="card"  (click)="navigateToCourseDetails(course.CourseId)">
   <div class="image-card">
-    <!-- Image content goes here -->
+    <img src="https://picsum.photos/250/200">
   </div>
 
   <div class="details-card bordered">
-    <!-- Details content goes here -->
-    <h2>Name: {{course.Name.slice(0,20)}}</h2>
-    <p>Rating: {{course.Rating === 'this information is not avaliable for this course' ? 'n/a' : course.Rating}}</p>
-    <p>Platform: {{ course.PlatformName }}</p>
-    <p>Teacher: {{ course.TeacherName ?  course.TeacherName.slice(0,20) : '' }}</p>
-    <!-- Add more details as needed -->
+    <h3>{{course.Name.slice(0,40)}}</h3>
+    <p class="course-rating">{{course.Description === 'this information is not avaliable for this course' ? 'n/a' : course.Description.slice(0,40)}}</p>
+    <p class="teacher-name">{{ course.TeacherName ?  course.TeacherName.slice(0,20) : '' }}</p>
+    <p class="course-rating">{{course.Rating === 'this information is not avaliable for this course' ? 'n/a' : course.Rating}}</p>
+    <p class="course-price">{{course.Price === 'this information is not avaliable for this course' ? 'n/a' : course.Price}}</p>
+    <p class="course-platform">{{ course.PlatformName }}</p>
   </div>
 </div>

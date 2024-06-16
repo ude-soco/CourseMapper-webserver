@@ -374,6 +374,19 @@ export async function getCourseRatingsPricesForVis(platformName, datapoints) {
 }
 
 
+export async function getTopicsByCategory(course_category) {
+    const {records, summary, keys} = await graphDb.driver.executeQuery(
+        'MATCH (platform:platform) <-[:AVAILABLE_ON]- (course:course)-[:CONTAINS_CONCEPT]->(concept:concept) \n' +
+        'WHERE toLower(course.course_category) = $course_category\n' +
+        'RETURN DISTINCT concept.name AS ConceptName, platform.name AS PlatformName\n' +
+        'LIMIT 20\n'
+        , {course_category:course_category }
+    );
+    return serializeRecords(records)
+
+}
+
+
 /*
 
 MATCH (platform:platform) <-[:AVAILABLE_ON]- (course:course)-[:CONTAINS_CONCEPT]->(concept:concept)

@@ -1,4 +1,5 @@
 import {Platform} from "../services/vis-dashboard/vis-dashboard.service";
+import {useToCamelCase} from "./useToCamelCase";
 
 interface GroupedPlatform {
   label: string;
@@ -19,10 +20,10 @@ export function useGroupPlatforms(platforms: Platform[]): GroupedPlatform[] {
     const groupedPlatforms: GroupedPlatform[] = [];
     languageGroups.forEach((platforms, language) => {
         const group: GroupedPlatform = {
-            label: language,
+            label: language === "English" ? 'English Platforms' : 'German Platforms',
             value: language,
             items: platforms.map(platform => ({
-                label: platform.PlatformName.toUpperCase(),
+                label: useToCamelCase(platform.PlatformName),
                 value: platform.PlatformName
             }))
         };

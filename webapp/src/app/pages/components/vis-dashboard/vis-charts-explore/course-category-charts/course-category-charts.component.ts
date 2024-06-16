@@ -57,6 +57,9 @@ export class CourseCategoryChartsComponent implements OnInit{
   dataPointCount: number = 5;
   dataPointCount2: number = 5;
   dataPointCount3: number = 5;
+  hasPriceAndRatings: boolean =true
+  hasCategoriesEnrolledStudents: boolean = true
+  hasCoursesEnrolledStudents: boolean = true
 
 
 
@@ -84,7 +87,15 @@ export class CourseCategoryChartsComponent implements OnInit{
       },
       xaxis: {
         categories: ["Jan", "Feb",  "Mar"],
+        title:{
+          text: 'undefined'
+        }
       },
+      yaxis: {
+        title: {
+          text: '-'
+        }
+      }
 
     }
 
@@ -108,8 +119,17 @@ export class CourseCategoryChartsComponent implements OnInit{
         text: "Most Popular Categories of courses"
       },
       xaxis: {
+
         categories: ["Jan", "Feb",  "Mar"],
+        title:{
+          text: 'undefined'
+        }
       },
+      yaxis: {
+        title: {
+          text: '-'
+        }
+      }
 
     }
 
@@ -133,11 +153,15 @@ export class CourseCategoryChartsComponent implements OnInit{
           formatter: function(val) {
             return parseFloat(val).toFixed(1)
           }
+        },
+        title:{
+          text: 'Course Price'
         }
       },
       yaxis: {
         tickAmount: 7
-      }
+      },
+
     }
 
 
@@ -153,6 +177,12 @@ export class CourseCategoryChartsComponent implements OnInit{
 getPopularCourses(platform:string, dataPointCounts: number){
     this.visdashboardService.getCoursesByPopularityForVis(platform,dataPointCounts)
       .then((courses)=>{
+
+        if(courses.length=== 0  || !courses){
+          this.hasCoursesEnrolledStudents = false
+        }
+
+
         this.numberOfParticipants = courses.map(course=> +course.NumberOfParticipants)
         this.courseName = courses.map(course=> course.CourseName.slice(0,20))
         this.chartOptions.series = [{
@@ -160,7 +190,12 @@ getPopularCourses(platform:string, dataPointCounts: number){
           name:"Number of Participants"
         }];
         this.chartOptions.xaxis ={
-          categories: this.courseName
+          categories: this.courseName,
+          title: {text: "Number of Enrolled Students"}
+
+        };
+        this.chartOptions.yaxis ={
+          title:{text: "Course Name",style: {fontSize:'12px'}},
         }
       })
 }
@@ -168,14 +203,35 @@ getPopularCourses(platform:string, dataPointCounts: number){
   getPopularCategories(platform:string, dataPointCounts: number){
     this.visdashboardService.getCategoryByPopularityForVis(platform,dataPointCounts)
       .then((courses)=>{
+        if(courses.length === 0 || !courses){
+          this.hasCategoriesEnrolledStudents = false
+        }
+
         this.totalParticipants = courses.map(categories=> +categories.TotalParticipants)
+
+
         this.courseCategories = courses.map(categories=> categories.CourseCategory.slice(0,20))
         this.chartOptions2.series = [{
           data: this.totalParticipants,
           name:"Total Participants"
         }];
         this.chartOptions2.xaxis ={
-          categories: this.courseCategories
+          type:"category",
+          labels: {
+            formatter: function(val) {
+              // @ts-ignore
+              if (val >= 1000000) {
+                // @ts-ignore
+                return (val / 1000000).toFixed(1) + 'M';
+              }
+              return val.toString();
+            }
+          },
+          categories: this.courseCategories,
+          title: {text: "Number of Enrolled Students"},
+        };
+        this.chartOptions2.yaxis ={
+          title:{text: "Course Category",style: {fontSize:'12px'}},
         }
       })
   }
@@ -184,10 +240,18 @@ getPopularCourses(platform:string, dataPointCounts: number){
     this.visdashboardService.getCoursesRatingsPricesForVis(platform, dataPointCounts)
       .then((courses)=>{
       const j = processCourses(courses)
+        if(j.length === 0 || !j){
+          this.hasPriceAndRatings = false
+        }else{
+          this.hasPriceAndRatings = true
+        }
         this.chartOptions3.series = [{
         data: j,
-          name: 'me'
-        }]
+          name: 'Correlation',
+        }];
+        this.chartOptions3.yaxis ={
+          title:{text: "Course Rating",style: {fontSize:'12px'}},
+        }
       })
   }
 

@@ -8,8 +8,10 @@
 .title{
   font-family: Roboto;
   font-weight: bold;
-  font-size: 14px;
-  margin-bottom: 3em;
+  font-size: 20px;
+  padding: 5px;
+  margin-top: 1px;
+  margin-bottom: 10px;
 }
 
 .concepts-and-courses{
@@ -34,6 +36,9 @@
 
 .course-link{
   display: flex;
+
+  align-items: center; 
+
   .course-name{
     font-size: 14px;
     font-family: Roboto;
@@ -56,12 +61,13 @@
   height: 18em;
   width: 100%;
   padding: 10px;
+  overflow-y: auto;
 }
 
 
 .concepts{
   margin-right: 1em;
-  border: 2px solid lightgrey;
+  /*border: 2px solid lightgrey;*/
   border-radius: 10px;
   height: 18em;
   width: 100%;

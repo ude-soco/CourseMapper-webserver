@@ -284,3 +284,17 @@ export const getCourseRatingsPricesForVis = async (req, res) => {
         return res.status(500).send({ error: err.message });
     }
 };
+
+
+
+export const getTopicsByCategory = async (req, res) => {
+    const courseCategory = req.params.courseCategory;
+
+    try {
+        const records = await visDashboardServices.getTopicsByCategory(courseCategory)
+        return res.status(200).send(records);
+    } catch (err) {
+        return res.status(500).send({ error: err.message });
+    }
+
+};

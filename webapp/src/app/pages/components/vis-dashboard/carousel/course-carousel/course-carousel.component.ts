@@ -1,11 +1,17 @@
 import {Component, EventEmitter, Input, OnInit, Output,} from '@angular/core';
-import {TeacherByPopularity, VisDashboardService} from "../../../../../services/vis-dashboard/vis-dashboard.service";
-import {Router} from "@angular/router";
+import {
+  ConceptsByCategories,
+  TeacherByPopularity,
+  VisDashboardService
+} from "../../../../../services/vis-dashboard/vis-dashboard.service";
+import {ActivatedRoute, Router} from "@angular/router";
+import {useToCamelCase} from "../../../../../utils/useToCamelCase";
 
 export enum CourseCarouselType{
   MOST_POPULAR_COURSES="MOST_POPULAR",
   HIGHEST_RATED_COURSES="HIGHEST_RATED",
-  MOST_POPULAR_TEACHERS = "MOST_POPULAR_TEACHERS"
+  MOST_POPULAR_TEACHERS = "MOST_POPULAR_TEACHERS",
+  MOST_POPULAR_TOPICS = "MOST_POPULAR_TOPICS"
 }
 
 interface CoursesByPopularity{
@@ -42,19 +48,31 @@ export class CourseCarouselComponent implements OnInit{
     this.router.navigate(['teacher-detail', teacherId])
   }
 
-  mostPopularPlatforms: string[] = ['Udemy', 'Future Learn', 'Imoox'];
+  onTopicClick(conceptId: string) {
+    this.router.navigate(['find-moocs-by-topic-main'], { queryParams: { query: conceptId } });
+  }
+
+  mostPopularPlatforms: string[] = ['Udemy', 'Future Learn', 'Imoox',];
   highestRatedPlatforms: string[] = ['Udemy', 'Future Learn', 'Coursera'];
+  popularTopicsPlatform: string[] = []
 
   popularCourses:CoursesByPopularity[]=[]
   ratedCourses: CoursesByRating[]=[]
   popularTeachers:TeacherByPopularity[]=[]
+  popularTopics: ConceptsByCategories[]= []
+
   target: HTMLDivElement;
+  emittedCategory: string;
+
 
   constructor(private visDashboardService:VisDashboardService,
-              private router: Router) {
+              private router: Router,private route: ActivatedRoute) {
   }
 
   ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      this.emittedCategory = params['category'];
+    });
     this.loadCourses();
   }
 
@@ -78,6 +96,21 @@ export class CourseCarouselComponent implements OnInit{
      this.visDashboardService.getPopularTeachers("udemy")
        .then((courses) => {
          this.popularTeachers  = courses
+       })
+       .catch((error) => {
+         console.error('Error fetching courses:', error);
+       });
+
+
+
+     this.visDashboardService.getTopicsByCategory(this.emittedCategory.toLowerCase())
+       .then((concepts) => {
+         this.popularTopics  = concepts
+         const platforms = new Set(concepts
+           .map((platform)=> platform.PlatformName))
+         this.popularTopicsPlatform = [...platforms].map((p)=>{
+           return useToCamelCase(p)
+         })
        })
        .catch((error) => {
          console.error('Error fetching courses:', error);

@@ -2,23 +2,28 @@
 .grid-container {
   display: grid;
   grid-template-columns: 1fr ;
-  gap: 20px; /* Gap between grid items */
+  gap: 20px;
   border: 2px solid lightgrey;
   padding: 10px;
   border-radius: 10px;
   height: 100%;
-;
+
 }
 
 .grid-item {
   padding: 5px;
-
 }
 
 .chart{
-  border: 2px solid lightgrey;
   border-radius: 10px;
   height: 18em;
   width: 100%;
-
 }
+
+.title{
+  font-family: Roboto;
+  font-weight: bold;
+  font-size: 20px;
+  padding: 5px;
+  margin-top: 1px;
+  margin-bottom: 10px;}

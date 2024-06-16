@@ -4,13 +4,13 @@
   border-radius: 10px;
   height: 100%;
 }
-
 .title{
   font-family: Roboto;
   font-weight: bold;
-  font-size: 14px;
-  margin-bottom: 3em;
+  font-size: 20px;
+  margin-bottom: 10px;
 }
+
 
 .concepts-and-courses{
   display: flex;
@@ -61,8 +61,8 @@
 
 .concepts{
   margin-right: 1em;
-  border: 2px solid lightgrey;
   border-radius: 10px;
   height: 18em;
   width: 100%;
+  cursor: default;
 }

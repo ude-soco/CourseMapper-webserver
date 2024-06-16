@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {VisDashboardService, Course, CourseByCategory} from "../../../../services/vis-dashboard/vis-dashboard.service";
 import {FilteredData} from "../../course-category-page/course-category-page.component";
+import {CourseCarouselType} from "../../../components/vis-dashboard/carousel/course-carousel/course-carousel.component";
 
 
 @Component({
@@ -60,8 +61,6 @@ getCoursesByTopicSearch(searchQuery:string){
             return parseFloat(price.replace(/[^\d.]/g, ''));
           }
         });
-
-
         this.loadedCoursesCount = courses?.length
         this.displayedCourses = courses?.slice(0,5)
       })
@@ -130,4 +129,5 @@ getCoursesByTopicSearch(searchQuery:string){
   }
 
 
+    protected readonly CourseCarouselType = CourseCarouselType;
 }

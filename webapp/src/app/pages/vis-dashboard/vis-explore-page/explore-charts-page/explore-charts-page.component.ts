@@ -1,6 +1,7 @@
 import { Component,OnInit } from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {VisDashboardService} from "../../../../services/vis-dashboard/vis-dashboard.service";
+import {useToCamelCase} from "../../../../utils/useToCamelCase";
 
 @Component({
   selector: 'app-explore-charts-page',
@@ -13,7 +14,7 @@ export class ExploreChartsPageComponent implements OnInit{
   constructor(private route: ActivatedRoute,
               private visDashboardService: VisDashboardService) {}
   ngOnInit(): void {
-    this.platform = this.route.snapshot.paramMap.get('platform');
+    this.platform = useToCamelCase(this.route.snapshot.paramMap.get('platform'));
   }
 
 

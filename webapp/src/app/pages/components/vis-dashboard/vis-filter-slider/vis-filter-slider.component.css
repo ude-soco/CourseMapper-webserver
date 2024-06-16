@@ -3,35 +3,32 @@ input[type="range"] {
   width: 100%;
   height: 5px;
   background: linear-gradient(to right, #3B82F6 0%, #3B82F6 100%);
-  /*outline: none;
-  opacity: 0.7;
-  -webkit-transition: .2s;
-  transition: opacity .2s;*/
+
 }
-/*
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  background: white;
-  cursor: pointer;
-}
-*/
 
 
 .filter-button{
-
-  margin-right:10px ;
+ text-align: right;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  cursor: pointer;
 }
 
 .sort, .filter-button{
-  border:1px solid #0277BD;
-  border-radius: 5px;
   padding: 3px;
   color: #0277BD;
   margin-bottom: 10px;
   font-size: 12px;
+}
+
+.show-slider{
+  color: #0277BD;
+  border: 1px solid  #0277BD;
+  padding: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+
 }
 
 .slider-filter{
@@ -42,8 +39,9 @@ input[type="range"]::-webkit-slider-thumb {
   border: 2px solid whitesmoke;
   border-radius: 11px;
   padding: 15px;
-  width: 55%;
+  width: 50%;
   margin-bottom: 10px;
+  position: relative;
 }
 
 .slider-text{

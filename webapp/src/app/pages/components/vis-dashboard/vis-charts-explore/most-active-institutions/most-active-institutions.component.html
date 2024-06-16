@@ -2,8 +2,9 @@
 <div class="grid-container">
   <div class="grid-item">
     <div>
-      Title and Filter
-
+      <div class="title">
+        Distribution of most popular institutions based on the number of courses offered
+      </div>
       <app-vis-filter-slider [minValue]="5" [maxValue]="20" [step]="1"
                              (valueChange)="onDataChange2($event)"
                              [datapointCount]="dataPointCount2"
@@ -15,6 +16,7 @@
         [series]="chartOptions.series"
         [chart]="chartOptions.chart"
         [xaxis]="chartOptions.xaxis"
+        [yaxis]="chartOptions.yaxis"
         [title]="chartOptions.title"
         [plotOptions]="chartOptions.plotOptions"
       ></apx-chart>

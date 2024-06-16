@@ -1,10 +1,9 @@
 <div>
-<div class="card">
-  <!-- custom card content goes here -->
-
+<div class="card" [title]="courseName" style="background-color: {{imageLink}}">
+  <!-- <img ngSrc="https://api.api-ninjas.com/v1/randomimage?category=nature" alt="Girl in a jacket" width="200" height="150"> -->
 </div>
   <div class="details">
-<p class="course-name">{{ courseName | slice:0:27 }}</p>
-<p class="teacher-name">{{ teacherName  | slice:0:27}}</p>
+<p class="course-name">{{ courseName }}</p>
+<p class="teacher-name">{{ teacherName }}</p>
   </div>
 </div>

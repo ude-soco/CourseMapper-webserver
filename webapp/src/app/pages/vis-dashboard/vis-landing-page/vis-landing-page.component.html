@@ -1,11 +1,12 @@
-<h1 class="title">MOOCentral</h1>
 
+<h1 class="title">MOOCentral</h1>
 <div class="by-options">
   <h3 class="sub-title">Search courses by exploring platforms</h3>
 
   <div class="options">
     <a *ngFor="let option of optionsData" [routerLink]="option.link" class="card-link">
-      <app-vis-options [text]="option.text"></app-vis-options>
+      <app-vis-options [vis_option]="option.text"></app-vis-options>
+
     </a>
   </div>
 </div>
@@ -27,3 +28,6 @@
   <h3 class="sub-title">Highest rated courses</h3>
   <app-course-carousel [type]="CourseCarouselType.HIGHEST_RATED_COURSES"></app-course-carousel>
 </div>
+
+
+

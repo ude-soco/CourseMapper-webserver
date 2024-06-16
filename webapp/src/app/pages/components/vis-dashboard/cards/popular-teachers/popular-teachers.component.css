@@ -1,24 +1,39 @@
 .card {
-  width: 160px; /* Adjust the width of the card */
-  height: 100px; /* Adjust the height of the card */
-  background-color: #f0f0f0; /* Set the background color of the card */
-  border: 1px solid #ccc; /* Add a border to the card */
-  border-radius: 8px; /* Add border radius to make it rounded */
-  display: flex; /* Use flexbox for centering */
-  justify-content: center; /* Center horizontally */
-  align-items: center; /* Center vertically */
-  margin: 5px; /* Adjust margin between cards */
+  width: 200px;
+  height: 134px;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 5px;
+  cursor: pointer;
+
+  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.16), 0px 3px 6px rgba(0, 0, 0, 0.23);
+
+
 }
+
+.card:hover {
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+  transform: translateY(-1px);
+}
+
+
 .details{
   text-align: center;
 }
 
 .course-name{
-  font-size: 12px;
+  font-size: 10px;
   font-family: Roboto;
+  color:#0277BD
 
 }
 
 .teacher-name{
-  font-size: 10px;
+  font-size: 14px;
+  color:#0277BD
+
 }

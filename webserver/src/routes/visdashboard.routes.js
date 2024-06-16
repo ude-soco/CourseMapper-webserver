@@ -151,7 +151,8 @@ module.exports = function (app) {
 
     app.post(
         "/api/vis-dashboard/courses-concept-find",
-        // [authJwt.verifyToken],
+         // Todo check if this is needed
+         [authJwt.verifyToken],
         controller.getCoursesByConceptFind
     );
 
@@ -161,6 +162,12 @@ module.exports = function (app) {
         "/api/vis-dashboard/courses-ratings-prices/:platform/:datapoints",
         // [authJwt.verifyToken],
         controller.getCourseRatingsPricesForVis
+    );
+
+    app.get(
+        "/api/vis-dashboard/concept-categories/:courseCategory",
+        // [authJwt.verifyToken],
+        controller.getTopicsByCategory
     );
 
 

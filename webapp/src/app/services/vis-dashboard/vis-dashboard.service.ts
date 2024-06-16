@@ -148,6 +148,11 @@ export interface CoursesRatingsPricesForVis{
   CourseRating: string
 }
 
+export interface ConceptsByCategories{
+  ConceptName: string;
+  PlatformName: string;
+}
+
 
 @Injectable({
   providedIn: 'root'
@@ -297,6 +302,13 @@ export class VisDashboardService {
   async getCoursesRatingsPricesForVis(platform:string,datapointCount:number):Promise<CoursesRatingsPricesForVis[]>{
     return lastValueFrom(this.http.get<CoursesRatingsPricesForVis[]>(
       `${environment.API_URL}/vis-dashboard/courses-ratings-prices/${platform}/${datapointCount}`
+    ));
+  }
+
+
+  async getTopicsByCategory(courseCategory:string):Promise<ConceptsByCategories[]>{
+    return lastValueFrom(this.http.get<ConceptsByCategories[]>(
+      `${environment.API_URL}/vis-dashboard/concept-categories/${courseCategory}`
     ));
   }
 

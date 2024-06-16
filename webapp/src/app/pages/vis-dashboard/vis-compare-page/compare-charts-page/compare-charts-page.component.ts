@@ -5,6 +5,7 @@ import {
   VisSelectedPlatformsCompareService
 } from "../../../../services/vis-dashboard/vis-selected-platforms-compare.service";
 import {useSelectedPlatforms} from "../../../../utils/useSelectedPlatforms";
+import {useToCamelCase} from "../../../../utils/useToCamelCase";
 
 @Component({
   selector: 'app-compare-charts-page',
@@ -18,6 +19,7 @@ export class CompareChartsPageComponent implements OnInit {
   germanPlatforms: string[]
   englishPlatforms: string[]
   selectedPlatformsFromStorage: string[] = [];
+  selectedPlatforms2: string[] = []
 
 
 
@@ -76,6 +78,8 @@ export class CompareChartsPageComponent implements OnInit {
     const storedPlatforms = localStorage.getItem('selectedPlatforms');
     if (storedPlatforms) {
     this.selectedPlatformsFromStorage = JSON.parse(storedPlatforms);
+    const plats: string[] = JSON.parse(storedPlatforms);
+   this.selectedPlatforms2 = plats.map((P)=> useToCamelCase(P) )
     }
   }
 

@@ -54,8 +54,13 @@ export class MostActiveTeachersComponent implements OnInit{
       },
       xaxis: {
         categories: ["Jan", "Feb", "Mar"],
+        title: {text: "Number of Courses Offered"}
       },
-
+      yaxis: {
+        title: {
+          text: '-'
+        }
+      }
     }
   }
 
@@ -74,7 +79,11 @@ export class MostActiveTeachersComponent implements OnInit{
           name:"Total Courses"
         }];
         this.chartOptions.xaxis ={
-          categories: this.teacherNames
+          categories: this.teacherNames,
+          title: {text: "Number of Courses Offered"}
+        };
+        this.chartOptions.yaxis ={
+          title:{text: "Teachers Names",style: {fontSize:'12px'}},
         }
       })
   }

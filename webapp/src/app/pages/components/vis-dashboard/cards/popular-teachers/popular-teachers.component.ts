@@ -8,5 +8,6 @@ import {Component, Input} from '@angular/core';
 export class PopularTeachersComponent {
   @Input() numCourses: number;
   @Input() teacherName: string;
+  @Input() imageLink: string;
 
 }

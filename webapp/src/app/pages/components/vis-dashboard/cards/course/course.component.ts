@@ -8,6 +8,6 @@ import { Component,Input } from '@angular/core';
 export class CourseComponent {
   @Input() courseName: string;
   @Input() teacherName: string;
-
+  @Input() imageLink: string;
 
 }

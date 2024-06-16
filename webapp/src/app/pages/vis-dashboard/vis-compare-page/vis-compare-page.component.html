@@ -7,27 +7,23 @@
   <div><p class="discover">Compare MOOC Platforms</p></div>
 
   <div class="multi-select-wrapper">
-
     <p-multiSelect [options]="groupedPlatforms"
                    [group]="true"
                    [(ngModel)]="selectedPlatforms"
                    (ngModelChange)="onSelectChange()"
                    placeholder="Select at least two platforms"
-                   scrollHeight="250px" display="chip"
+                   scrollHeight="300px" display="chip"
                    [style]="{'width':'50%'}"
-                   [panelStyle]="{'width':'50%'}">
-
+                   [panelStyle]="{'width':'100%'}">
       < <ng-template let-group pTemplate="group" >
         <div class="flex align-items-center" >
         <span>{{ group.label }}</span>
         </div>
       </ng-template>
     </p-multiSelect>
-
-
-
   </div>
-  <button style="margin-top: 3em" class="button"
+
+  <button class="button"
           [ngClass]="{'active': selectedPlatforms.length >= 2}"
           [disabled]="selectedPlatforms.length < 2"
           (click)="comparePlatforms()">Compare</button>

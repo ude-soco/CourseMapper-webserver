@@ -1,14 +1,18 @@
 
 
 <div class="slider-filter">
-  <div>
-<button class="filter-button"  (click)="toggleFilter()"><i class='bx bxs-filter-alt'></i>FILTER</button>
-  </div>
+
 
   <div class="slider"  *ngIf="showSlider">
     <p class="slider-text" >Adjust number of Displayed Datapoints:  {{datapointCount}}</p>
+    <span class="filter-button"  (click)="toggleFilter()">hide</span>
   <input type="range" [min]="minValue" [max]="maxValue" [step]="step" [(ngModel)]="sliderValue" (input)="onSliderChange($event)">
   </div>
 
 </div>
-<!--  (click)="toggleFilters()"    [datapointCount]="datapointCount" -->
+
+<div *ngIf="!showSlider">
+
+  <span class="show-slider" (click)="toggleFilter()">Show Slider</span>
+
+</div>
