@@ -2016,9 +2016,17 @@ class NeoDataBase:
 
         return result
 
+
+
     def get_user_rating_detail_by(self, rating: dict):
         """
             Get User Rating by user_id, value, rid and cids
+            rating: {
+                "user_id": "65e0536db1effed771dbdbb9",
+                "value": "HELPFUL",
+                "rid": "KpGtax2RBVY",
+                "concepts": ["2156985142238936538", "3328549365608809871"]
+            }
         """
         logger.info("Getting Rating Resource Details")
         result = None
@@ -2052,6 +2060,12 @@ class NeoDataBase:
     def user_rates_resources(self, rating: dict):
         """
             User rates Resource(s)
+            rating: {
+                "user_id": "65e0536db1effed771dbdbb9",
+                "value": "HELPFUL",
+                "rid": "KpGtax2RBVY",
+                "concepts": ["2156985142238936538", "3328549365608809871"]
+            }
         """
         logger.info("Saving or Removing: User Resource")
         tx = self.driver.session()
@@ -2118,23 +2132,31 @@ class NeoDataBase:
     def save_or_remove_user_resources(self, data: dict):
         """
             User saves or remove Resource(s)
+            data: {
+                "user_id": "65e0536db1effed771dbdbb9",
+                "mid": "6662201fec6bb9067ff71cc9",
+                "slider_number": "slide_1",
+                "cids": "2156985142238936538",
+                "rid": "KpGtax2RBVY",
+                "status": "save" | "remove"
+            }
         """
         logger.info("Saving or Removing: User Resource")
         tx = self.driver.session()
-        if data["status"] == True:
+        if data["status"] == "save":
             # MATCH (a:User),(b:Resource)
             tx.run(
                     """
                     MATCH (a:User)-[r:HAS_SAVED]->(b:Resource)
                     WHERE b.rid = $rid
-                    MERGE (a)-[r:HAS_SAVED {
+                    MERGE (a)-[r2:HAS_SAVED {
                         user_id: $user_id, 
                         mid: $mid, 
                         slide_number: $slider_number, 
                         cid: $cid, 
                         rid: $rid
                         }]->(b)
-                    RETURN r
+                    RETURN r2
                     """,
                     user_id=data["user_id"],
                     mid=data["mid"],
@@ -2182,34 +2204,158 @@ class NeoDataBase:
 
         tx.close()
     
-    def get_user_resources_saved_by(self, data: dict):
+    def filter_user_resources_saved_by(self, data: dict):
         """
             Getting User Resources Saved
-            By filtering using: user_id, cid: concept cid, mid: learning material and slide_number: silder number, rid: resource id
+            By filtering using: user_id, cid: concept cid, mid: learning material and slide_number: silder number
+            data: {
+                "user_id": "65e0536db1effed771dbdbb9",
+                "cids": ["2156985142238936538", "3328549365608809871"],
+                "mids": ["6662201fec6bb9067ff71cc9"],
+                "slide_numbers": ["slide_1"]
+            }
         """
         logger.info("Filtering User Resources Saved")
 
-        result = None
+        result = []
         with self.driver.session() as session:
-            data = session.run(
-                """
-                    MATCH (a:User)-[r:HAS_SAVED]->(b:Resource)
-                    WHERE   r.user_id='65e0536db1effed771dbdbb9' AND 
-                            r.mid='6662201fec6bb9067ff71cc9' AND 
-                            r.slide_number='slide_1' AND 
-                            r.cid='2156985142238936538' AND 
-                            r.rid='KpGtax2RBVY'
-                    RETURN r
-                """,
-                user_id=data["user_id"],
-                mids=data["mids"],
-                slide_numbers=data["slide_numbers"],
-                cids=data["cids"],
-                rid=data["rid"]
-            ).data()
+            resource_query_form = """
+                            RETURN  DISTINCT LABELS(b) as labels, ID(b) as id, b.rid as rid, b.title as title, b.text as text,
+                                b.thumbnail as thumbnail, b.abstract as abstract, b.post_date as post_date, 
+                                b.author_image_url as author_image_url, b.author_name as author_name,
+                                b.keyphrases as keyphrases, b.description as description, b.description_full as description_full,
+                                b.publish_time as publish_time, b.uri as uri, b.duration as duration,
+                                COALESCE(toInteger(b.views), 0) AS views,
+                                COALESCE(toFloat(b.similarity_score), 0.0) AS similarity_score,
+                                COALESCE(toInteger(b.helpful_count), 0) AS helpful_count,
+                                COALESCE(toInteger(b.not_helpful_count), 0) AS not_helpful_count,
+                                COALESCE(toInteger(b.bookmarked_count), 0) AS bookmarked_count,
+                                COALESCE(toInteger(b.like_count), 0) AS like_count,
+                                b.channel_title as channel_title
+                            """
 
+            # filtering with: cids
+            if len(data["cids"]) > 0 and len(data["mids"]) == 0 and len(data["slide_numbers"]) == 0:
+                nodes = session.run(
+                    f"""
+                        MATCH (a:User)-[r:HAS_SAVED]->(b:Resource)
+                        WHERE   r.user_id=$user_id AND
+                                r.cid IN $cids
+                        {resource_query_form}
+                    """,
+                    user_id=data["user_id"],
+                    cids=data["cids"]
+                ).data()
+
+            # filtering with: cids and mids
+            if len(data["cids"]) > 0 and len(data["mids"]) == 0 and len(data["slide_numbers"]) == 0:
+                nodes = session.run(
+                    f"""
+                        MATCH (a:User)-[r:HAS_SAVED]->(b:Resource)
+                        WHERE   r.user_id=$user_id AND
+                                r.cid IN $cids AND
+                                r.mid IN $mids
+                        {resource_query_form}
+                    """,
+                    user_id=data["user_id"],
+                    cids=data["cids"],
+                    mids=data["mids"]
+                ).data()
+
+            # filtering with: cids, mids and silder_numbers
+            if len(data["cids"]) > 0 and len(data["mids"]) == 0 and len(data["slide_numbers"]) > 0:
+                nodes = session.run(
+                    f"""
+                        MATCH (a:User)-[r:HAS_SAVED]->(b:Resource)
+                        WHERE   r.user_id=$user_id AND
+                                r.cid IN $cids AND
+                                r.mid IN $mids AND
+                                r.slide_number IN $slide_numbers
+                        {resource_query_form}
+                    """,
+                    user_id=data["user_id"],
+                    cids=data["cids"],
+                    mids=data["mids"],
+                    slide_numbers=data["slide_numbers"]
+                ).data()
+
+            result = self.resources_wrapper_from_query(data=nodes)
         return result
     
+    def get_concepts_mids_sliders_numbers_for_user_resources_filtering(self, data: dict):
+        """
+            Getting Parms Data to Filtering User Resource Saved: Concepts, learning material and Slider Numbers
+            By filtering using: cids, cids and mids
+            data: {
+                "user_id": "65e0536db1effed771dbdbb9",
+                "cids": ["2156985142238936538", "3328549365608809871"],
+                "mids": ["6662201fec6bb9067ff71cc9"]
+            }
+        """
+        logger.info("Getting Parms Data to Filtering User Resource Saved")
+        result = {
+            "cids": [],
+            "mids": [],
+            "slider_numbers": []
+        }
+
+        with self.driver.session() as session:
+            if len(data["cids"]) > 0 and len(data["mids"]) == 0 and len(data["slide_numbers"]) == 0:
+                nodes = session.run(
+                    f"""
+                        MATCH   (a:User)-[r:HAS_SAVED]->(b:Resource)
+                                -[r2:BASED_ON]->(c:Concept_modified)-[r3:ORIGINATED_FROM]->(d:Concept)
+
+                        WHERE   r.user_id=$user_id
+                        RETURN DISTINCT d.cid as cid, d.name as name
+                    """,
+                    user_id=data["user_id"]
+                ).data()
+                result["cids"] = [ {"cid": node["cid"], "name": node["name"] } for node in nodes ]
+
+            # filtering with: cids
+            if len(data["cids"]) > 0 and len(data["mids"]) == 0 and len(data["slide_numbers"]) == 0:
+                nodes = session.run(
+                    f"""
+                        MATCH   (a:User)-[r:HAS_SAVED]->(b:Resource)
+                                -[r2:BASED_ON]->(c:Concept_modified)-[r3:ORIGINATED_FROM]->(d:Concept),
+                                (e:Slide)-[r5:BELONGS_TO]->(f:LearningMaterial)
+                                
+                        WHERE   r.user_id=$user_id AND
+                                r.cid IN $cids
+                        RETURN DISTINCT f.mid as mid, f.name as name
+                    """,
+                    user_id=data["user_id"],
+                    cids=data["cids"]
+                ).data()
+                result["mids"] = [ {"mid": node["mid"], "name": node["name"] } for node in nodes ]
+
+            # filtering with: cids and mids
+            if len(data["cids"]) > 0 and len(data["mids"]) == 0 and len(data["slide_numbers"]) == 0:
+                nodes = session.run(
+                    f"""
+                        MATCH   (a:User)-[r:HAS_SAVED]->(b:Resource)
+                                -[r2:BASED_ON]->(c:Concept_modified)-[r3:ORIGINATED_FROM]->(d:Concept),
+                                (e:Slide)-[r4:CONTAINS]->(d:Concept),
+                                (e:Slide)-[r5:BELONGS_TO]->(f:LearningMaterial)
+                                
+                        WHERE   r.user_id=$user_id AND
+                                r.cid IN $cids
+                                r.mid IN $mids
+
+                        RETURN DISTINCT e.name as name
+                        ORDER BY name
+                    """,
+                    user_id=data["user_id"],
+                    cids=data["cids"],
+                    mids=data["mids"]
+                ).data()
+                result["slider_numbers"] = [ {"name": node["name"] } for node in nodes ]
+
+            return result
+
+
+
     def cro_remove_relation_btw_resource_and_concept_cro(self, concepts_cro: list):
         """
             Remove Relationship between Resource and Concept_modified
@@ -2261,39 +2407,7 @@ class NeoDataBase:
                 cids=cids
             ).data()
 
-            result_final = []
-            if result:
-                # print([key for key, value in result[0].items() ])
-                for resource in result:
-                    r = {
-                        "id": resource["id"],
-                        "title": resource["title"],
-                        "rid": resource["rid"],
-                        "uri": resource["uri"],
-                        "helpful_count": resource["helpful_count"], # int(resource["helpful_count"]),
-                        "not_helpful_count": resource["not_helpful_count"], # int(resource["not_helpful_count"]),
-                        "labels": resource["labels"],
-                        "similarity_score": resource["similarity_score"], # float(resource["similarity_score"]),
-                        "keyphrases": resource["keyphrases"],
-                        "text": resource["text"],
-                        "bookmarked_count": resource["bookmarked_count"]
-                    }
-
-                    if "Video" in r["labels"]:
-                        r["description"] = resource["description"]
-                        r["description_full"] = resource["description_full"]
-                        r["thumbnail"] = resource["thumbnail"]
-                        r["duration"] = resource["duration"]
-                        r["views"] = resource["views"] # int(resource["views"])
-                        r["publish_time"] = resource["publish_time"]
-                        r["like_count"] = resource["like_count"]
-                        r["channel_title"] = resource["channel_title"]
-
-                    elif "Article" in r["labels"]:
-                        r["abstract"] = resource["abstract"]
-
-                    result_final.append(r)
-
+            result = self.resources_wrapper_from_query(data=result)
         return result
 
     def cro_edit_relationship_btw_concepts_cro_and_resources(self, concepts_cro: list, resources: list, old_relationship=True):
@@ -2321,6 +2435,44 @@ class NeoDataBase:
                 cids=cids
             )
 
+    def resources_wrapper_from_query(self, data: list):
+        resources = []
+        if data:
+            for resource in data:
+                # print([key for key, value in result[0].items() ])
+                r = {
+                    "id": resource["id"],
+                    "title": resource["title"],
+                    "rid": resource["rid"],
+                    "uri": resource["uri"],
+                    "helpful_count": resource["helpful_count"], # int(resource["helpful_count"]),
+                    "not_helpful_count": resource["not_helpful_count"], # int(resource["not_helpful_count"]),
+                    "labels": resource["labels"],
+                    "similarity_score": resource["similarity_score"], # float(resource["similarity_score"]),
+                    "keyphrases": resource["keyphrases"],
+                    "text": resource["text"],
+                    "bookmarked_count": resource["bookmarked_count"]
+                }
+
+                if "Video" in r["labels"]:
+                    r["description"] = resource["description"]
+                    r["description_full"] = resource["description_full"]
+                    r["thumbnail"] = resource["thumbnail"]
+                    r["duration"] = resource["duration"]
+                    r["views"] = resource["views"] # int(resource["views"])
+                    r["publish_time"] = resource["publish_time"]
+                    r["like_count"] = resource["like_count"]
+                    r["channel_title"] = resource["channel_title"]
+
+                elif "Article" in r["labels"]:
+                    r["abstract"] = resource["abstract"]
+
+                resources.append(r)
+        return resources
+
+
+
+    
     ########
     ########
 

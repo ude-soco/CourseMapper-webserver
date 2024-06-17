@@ -73,6 +73,21 @@ export interface RatingResource {
     not_helpful_count?: number
 }
 
+export interface UserResourceFilterParamsResult {
+    cids?: { cid: string, name: string} [],
+    mids?: { mid: string, name: string} [],
+    slider_numbers?: { name: string} []
+}
+
+export interface UserResourceFilterResult {
+    articles: ArticleElementModel[],
+    videos: VideoElementModel[]
+}
+
+
+
+
+
 /*
 
 // export interface ResourceNodesContentVideo {

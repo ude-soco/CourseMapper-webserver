@@ -203,7 +203,7 @@ class ResourceRecommenderService:
 
         return result
 
-    def cro_save_rating(self, rating: dict):
+    def user_rates_resources(self, rating: dict):
         self.db.user_rates_resources(rating=rating)
         rating_found = self.db.get_user_rating_detail_by(rating=rating)
         return rating_found
@@ -211,7 +211,19 @@ class ResourceRecommenderService:
     def save_or_remove_user_resources(self, data: dict):
         resource_saved = self.db.save_or_remove_user_resources(data)
         return resource_saved
-        
+
+    def get_concepts_mids_sliders_numbers_for_user_resources_filtering(self, data: dict):
+        result = self.db.get_concepts_mids_sliders_numbers_for_user_resources_filtering(data)
+        return result
+
+    def filter_user_resources_saved_by(self, data: dict):
+        resources = self.db.filter_user_resources_saved_by(data)
+        result = {
+                    "articles": [resource for resource in resources if "Video" in resource["labels"]],
+                    "videos": [resource for resource in resources if "Article" in resource["labels"]]
+                }
+        return result
+    
     def cro_edit_relationship_btw_concepts_cro_and_resources(self, concepts_cro: list, resources: list):
         self.db.cro_edit_relationship_btw_concepts_cro_and_resources(concepts_cro=concepts_cro, 
                                                                      resources=resources,

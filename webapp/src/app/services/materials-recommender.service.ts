@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject, lastValueFrom } from 'rxjs';
 import { environment_Python } from 'src/environments/environment';
 import { HTTPOptions } from '../config/config';
-import { ResourcesPagination, RatingResource } from '../models/croForm';
+import { ResourcesPagination, RatingResource, UserResourceFilterParamsResult, UserResourceFilterResult } from '../models/croForm';
 
 @Injectable({
   providedIn: 'root'
@@ -59,6 +59,19 @@ export class MaterialsRecommenderService {
     const recommendedMaterialsRating$ = this.http.post<RatingResource>(`${this.cmEndpointURL}rating`, formData, { withCredentials: true });
     this.recommendedMaterialsRating = await lastValueFrom(recommendedMaterialsRating$)
     return this.recommendedMaterialsRating
+  }
+
+
+  SaveOrRemoveUserResource(data: any): Observable<any> {
+    return this.http.post<any>(`${this.cmEndpointURL}user_resources/save_or_remove`, data, { withCredentials: true });
+  }
+
+  getConceptsMidsSlidernumbersForUserResourcesFiltering(data: any): Observable<UserResourceFilterParamsResult> {
+    return this.http.post<UserResourceFilterParamsResult>(`${this.cmEndpointURL}user_resources/filter/params`, data, { withCredentials: true });
+  }
+
+  filterUserResourcesSavedBy(data: any): Observable<UserResourceFilterResult> {
+    return this.http.post<UserResourceFilterResult>(`${this.cmEndpointURL}user_resources/filter`, data, { withCredentials: true });
   }
 
   // getRecommendedMaterials(formData: any, croForm: any): Observable<any> {

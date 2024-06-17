@@ -21,52 +21,39 @@ logger = LOG(name=__name__, level=logging.DEBUG)
 
 course_materials = Blueprint("course_materials", __name__)
 
-@course_materials.route("/get_resources/update_factor_weights", methods=["POST"])
-def update_resources_factor_weights():
+# Resource Saved APIs
+@course_materials.route("/user_resources/save_or_remove", methods=["POST"])
+def save_or_remove_user_resources_():
+    logger.info("Getting Resource Saved")
     data = request.get_json()
-    logger.info("------ Updating Factor Weights ------>")
-    rrs = ResourceRecommenderService()
-    """
-    weigths_normalized = {}
-    for k,v in data.items():
-        weigths_normalized[k] = rrs.normalize_factor_weights(  factor_weights=v, 
-                                                        method_type="l1", 
-                                                        complete=True, 
-                                                        sum_value=False
-                                                    )
-    result = {
-        "original": data,
-        "normalized": weigths_normalized
-    }
-    """ 
-    result = rrs.normalize_factor_weights(  factor_weights=data, 
-                                                        method_type="l1", 
-                                                        complete=True, 
-                                                        sum_value=False
-                                                    )
-    return jsonify(result), 200
+    logger.info(f"save_or_remove_user_resources ->: {data}")
 
-@course_materials.route("/get_resources", methods=["POST"])
-def get_resources():
-    data = request.get_json()
-    logger.info("------ CRO DATA ----^-->")
-    print(data)
-    print()
-
-    data_default = data["default"]
-    data_cro_form = data["croForm"]
-    
     resource_recommender_service = ResourceRecommenderService()
-    result = resource_recommender_service._get_resources(data_default=data_default, data_cro_form=data_cro_form)
+    resp = resource_recommender_service.save_or_remove_user_resources(data=data)
+    return make_response(jsonify(resp), 200)
 
-    if result == None:
-        return jsonify({"msg": "Internal Server Error"}), 404
-    return jsonify(result), 200
+@course_materials.route("/user_resources/filter/params", methods=["POST"])
+def get_concepts_mids_sliders_numbers_for_user_resources_filtering():
+    logger.info("User Resources Saved FIlter Params")
+    data = request.get_json()
+    logger.info(f"get_concepts_mids_sliders_numbers_for_user_resources_filtering ->: {data}")
 
-    # await asyncio.sleep(30)
-    # r = cro_get_resources_pagination()
-    # return make_response(jsonify(r), 200)
+    resource_recommender_service = ResourceRecommenderService()
+    resp = resource_recommender_service.get_concepts_mids_sliders_numbers_for_user_resources_filtering(data=data)
+    return make_response(jsonify(resp), 200)
 
+@course_materials.route("/user_resources/filter/params", methods=["POST"])
+def filter_user_resources_saved_by():
+    logger.info("Getting User Resources Saved FIlter")
+    data = request.get_json()
+    logger.info(f"filter_user_resources_saved_by ->: {data}")
+
+    resource_recommender_service = ResourceRecommenderService()
+    resp = resource_recommender_service.filter_user_resources_saved_by(data=data)
+    return make_response(jsonify(resp), 200)
+
+
+# Rating APIs
 @course_materials.route("/rating", methods=["POST"])
 def rating():
     logger.info("Getting Rating Data")
@@ -74,7 +61,7 @@ def rating():
     logger.info(f"Rating Data: {data}")
 
     resource_recommender_service = ResourceRecommenderService()
-    resp = resource_recommender_service.cro_save_rating(rating=data)
+    resp = resource_recommender_service.user_rates_resources(rating=data)
     return make_response(jsonify(resp), 200)
 
     """
@@ -101,6 +88,50 @@ def rating():
 
     return make_response(jsonify(resp), 200)
     """
+
+
+@course_materials.route("/get_resources/update_factor_weights", methods=["POST"])
+def update_resources_factor_weights():
+    data = request.get_json()
+    logger.info("------ Updating Factor Weights ------>")
+    rrs = ResourceRecommenderService()
+    """
+    weigths_normalized = {}
+    for k,v in data.items():
+        weigths_normalized[k] = rrs.normalize_factor_weights(  factor_weights=v, 
+                                                        method_type="l1", 
+                                                        complete=True, 
+                                                        sum_value=False
+                                                    )
+    result = {
+        "original": data,
+        "normalized": weigths_normalized
+    }
+    """ 
+    result = rrs.normalize_factor_weights(  factor_weights=data, 
+                                                        method_type="l1", 
+                                                        complete=True, 
+                                                        sum_value=False
+                                                    )
+    return jsonify(result), 200
+
+
+@course_materials.route("/get_resources", methods=["POST"])
+def get_resources():
+    data = request.get_json()
+    logger.info("------ CRO DATA ----^-->")
+    print(data)
+    print()
+
+    data_default = data["default"]
+    data_cro_form = data["croForm"]
+    
+    resource_recommender_service = ResourceRecommenderService()
+    result = resource_recommender_service._get_resources(data_default=data_default, data_cro_form=data_cro_form)
+
+    if result == None:
+        return jsonify({"msg": "Internal Server Error"}), 404
+    return jsonify(result), 200
 
 @course_materials.route("/get_concepts", methods=["POST"])
 def get_concepts():
