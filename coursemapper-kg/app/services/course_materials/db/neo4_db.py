@@ -2062,7 +2062,7 @@ class NeoDataBase:
             User rates Resource(s)
             rating: {
                 "user_id": "65e0536db1effed771dbdbb9",
-                "value": "HELPFUL",
+                "value": "HELPFUL" | "NOT_HELPFUL",
                 "rid": "KpGtax2RBVY",
                 "concepts": ["2156985142238936538", "3328549365608809871"]
             }
@@ -2123,6 +2123,7 @@ class NeoDataBase:
                     WHERE r.rid=$rid 
                     SET r.helpful_count=$helpful_count, r.not_helpful_count=$not_helpful_count
                 """,
+                rid=rating["rid"],
                 helpful_count=counts["helpful_count"],
                 not_helpful_count=counts["not_helpful_count"]
             )
@@ -2218,6 +2219,7 @@ class NeoDataBase:
         logger.info("Filtering User Resources Saved")
 
         result = []
+        nodes = []
         with self.driver.session() as session:
             resource_query_form = """
                             RETURN  DISTINCT LABELS(b) as labels, ID(b) as id, b.rid as rid, b.title as title, b.text as text,
@@ -2248,7 +2250,7 @@ class NeoDataBase:
                 ).data()
 
             # filtering with: cids and mids
-            if len(data["cids"]) > 0 and len(data["mids"]) == 0 and len(data["slide_numbers"]) == 0:
+            if len(data["cids"]) > 0 and len(data["mids"]) > 0 and len(data["slide_numbers"]) == 0:
                 nodes = session.run(
                     f"""
                         MATCH (a:User)-[r:HAS_SAVED]->(b:Resource)
@@ -2263,7 +2265,7 @@ class NeoDataBase:
                 ).data()
 
             # filtering with: cids, mids and silder_numbers
-            if len(data["cids"]) > 0 and len(data["mids"]) == 0 and len(data["slide_numbers"]) > 0:
+            if len(data["cids"]) > 0 and len(data["mids"]) > 0 and len(data["slide_numbers"]) > 0:
                 nodes = session.run(
                     f"""
                         MATCH (a:User)-[r:HAS_SAVED]->(b:Resource)
@@ -2300,7 +2302,7 @@ class NeoDataBase:
         }
 
         with self.driver.session() as session:
-            if len(data["cids"]) > 0 and len(data["mids"]) == 0 and len(data["slide_numbers"]) == 0:
+            if len(data["cids"]) == 0 and len(data["mids"]) == 0 and len(data["slide_numbers"]) == 0:
                 nodes = session.run(
                     f"""
                         MATCH   (a:User)-[r:HAS_SAVED]->(b:Resource)
@@ -2331,7 +2333,7 @@ class NeoDataBase:
                 result["mids"] = [ {"mid": node["mid"], "name": node["name"] } for node in nodes ]
 
             # filtering with: cids and mids
-            if len(data["cids"]) > 0 and len(data["mids"]) == 0 and len(data["slide_numbers"]) == 0:
+            if len(data["cids"]) > 0 and len(data["mids"]) > 0: #  and len(data["slide_numbers"]) == 0:
                 nodes = session.run(
                     f"""
                         MATCH   (a:User)-[r:HAS_SAVED]->(b:Resource)
@@ -2340,7 +2342,7 @@ class NeoDataBase:
                                 (e:Slide)-[r5:BELONGS_TO]->(f:LearningMaterial)
                                 
                         WHERE   r.user_id=$user_id AND
-                                r.cid IN $cids
+                                r.cid IN $cids AND
                                 r.mid IN $mids
 
                         RETURN DISTINCT e.name as name

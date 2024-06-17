@@ -24,9 +24,8 @@ course_materials = Blueprint("course_materials", __name__)
 # Resource Saved APIs
 @course_materials.route("/user_resources/save_or_remove", methods=["POST"])
 def save_or_remove_user_resources_():
-    logger.info("Getting Resource Saved")
     data = request.get_json()
-    logger.info(f"save_or_remove_user_resources ->: {data}")
+    logger.info(f"Getting Resource Saved -> {data}")
 
     resource_recommender_service = ResourceRecommenderService()
     resp = resource_recommender_service.save_or_remove_user_resources(data=data)
@@ -34,19 +33,17 @@ def save_or_remove_user_resources_():
 
 @course_materials.route("/user_resources/filter/params", methods=["POST"])
 def get_concepts_mids_sliders_numbers_for_user_resources_filtering():
-    logger.info("User Resources Saved FIlter Params")
     data = request.get_json()
-    logger.info(f"get_concepts_mids_sliders_numbers_for_user_resources_filtering ->: {data}")
+    logger.info(f"User Resources Saved FIlter Params -> {data}")
 
     resource_recommender_service = ResourceRecommenderService()
     resp = resource_recommender_service.get_concepts_mids_sliders_numbers_for_user_resources_filtering(data=data)
     return make_response(jsonify(resp), 200)
 
-@course_materials.route("/user_resources/filter/params", methods=["POST"])
+@course_materials.route("/user_resources/filter", methods=["POST"])
 def filter_user_resources_saved_by():
-    logger.info("Getting User Resources Saved FIlter")
     data = request.get_json()
-    logger.info(f"filter_user_resources_saved_by ->: {data}")
+    logger.info(f"Getting User Resources Saved Filter -> {data}")
 
     resource_recommender_service = ResourceRecommenderService()
     resp = resource_recommender_service.filter_user_resources_saved_by(data=data)

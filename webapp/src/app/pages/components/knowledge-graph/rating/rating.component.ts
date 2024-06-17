@@ -105,7 +105,7 @@ export class RatingComponent {
       user_id: this.userid.toString(),
       value: rating.toString(),
       rid: this.element.rid,
-      concepts: this.selectedConceptCids
+      cids: this.selectedConceptCids
     }
 
     const result = await this.materialsRecommenderService.rateRecommendedMaterials(data);
