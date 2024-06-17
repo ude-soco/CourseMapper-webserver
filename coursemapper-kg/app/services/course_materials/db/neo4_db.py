@@ -2078,7 +2078,7 @@ class NeoDataBase:
                                 r.value = $value AND
                                 r.rid = $rid AND
                                 ANY(cid IN r.cids WHERE cid IN $cids)
-                        RETURN r.value as value
+                        RETURN ID(r) as node_id, r.value as value
                     """,
                     user_id=rating["user_id"],
                     value=rating["value"],
@@ -2091,32 +2091,40 @@ class NeoDataBase:
         print(node_found)
         
         if node_found is not None:
-            # remove the count in node "Resource"
+            # update rating count in node "Resource" if exists
+            logger.info("update rating count in node 'Resource' if exists ->")
 
             if node_found["value"] != rating["value"]:
+                tx.run(
+                    """
+                        MATCH (a:User)-[r:HAS_RATED]->(b:Resource)
+                        WHERE ID(r)=$node_id
+                        SET r.value=$value
+                    """,
+                    node_id=node_found["node_id"],
+                    value=rating["value"]
+                )
+
                 if rating["value"] == "HELPFUL":
                     tx.run(
                         """
                             MATCH (r:Resource)
                             WHERE r.rid=$rid
-                            SET r.value=$value, r.helpful_count = r.helpful_count + 1, r.not_helpful_count = r.not_helpful_count - 1
-                            RETURN r
+                            SET r.helpful_count = r.helpful_count + 1, r.not_helpful_count = r.not_helpful_count - 1
                         """,
-                        rid=rating["rid"],
-                        value=rating["value"]
+                        rid=rating["rid"]
                     )
+
                 else:
                     tx.run(
                         """
                             MATCH (r:Resource)
                             WHERE r.rid=$rid
-                            SET r.value=$value, r.helpful_count = r.helpful_count - 1, r.not_helpful_count = r.not_helpful_count + 1
-                            RETURN r
+                            SET r.helpful_count = r.helpful_count - 1, r.not_helpful_count = r.not_helpful_count + 1
                         """,
-                        rid=rating["rid"],
-                        value=rating["value"]
+                        rid=rating["rid"]
                     )
-  
+
         else:
             tx.run(
                     """
@@ -2136,7 +2144,8 @@ class NeoDataBase:
                     rid=rating["rid"]
                 )
 
-            # update "helpful_count" and "not_helpful_count" on node "resource"
+            # update 'helpful_count' and 'not_helpful_count' on node 'resource'
+            logger.info("update 'helpful_count' and 'not_helpful_count' on node 'resource'")
             counts = tx.run(
                     """
                         MATCH (a:User)-[r:HAS_RATED]->(b:Resource)
