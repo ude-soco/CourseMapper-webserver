@@ -2070,14 +2070,15 @@ class NeoDataBase:
         logger.info("Saving or Removing: User Resource")
         tx = self.driver.session()
 
-        rating_node = tx.run(
+        node_found = tx.run(
+                    # (r.value = 'HELPFUL' OR r.value = 'NOT_HELPFUL')
                     """
                         MATCH (a:User)-[r:HAS_RATED]->(b:Resource)
                         WHERE   r.user_id = $user_id AND
                                 r.value = $value AND
                                 r.rid = $rid AND
                                 ANY(cid IN r.cids WHERE cid IN $cids)
-                        RETURN r
+                        RETURN r.value as value
                     """,
                     user_id=rating["user_id"],
                     value=rating["value"],
@@ -2085,7 +2086,38 @@ class NeoDataBase:
                     cids=rating["cids"]
                 ).single()
         
-        if rating_node is None:
+
+        logger.info("user_rates_resources ->")
+        print(node_found)
+        
+        if node_found is not None:
+            # remove the count in node "Resource"
+
+            if node_found["value"] != rating["value"]:
+                if rating["value"] == "HELPFUL":
+                    tx.run(
+                        """
+                            MATCH (r:Resource)
+                            WHERE r.rid=$rid
+                            SET r.value=$value, r.helpful_count = r.helpful_count + 1, r.not_helpful_count = r.not_helpful_count - 1
+                            RETURN r
+                        """,
+                        rid=rating["rid"],
+                        value=rating["value"]
+                    )
+                else:
+                    tx.run(
+                        """
+                            MATCH (r:Resource)
+                            WHERE r.rid=$rid
+                            SET r.value=$value, r.helpful_count = r.helpful_count - 1, r.not_helpful_count = r.not_helpful_count + 1
+                            RETURN r
+                        """,
+                        rid=rating["rid"],
+                        value=rating["value"]
+                    )
+  
+        else:
             tx.run(
                     """
                     MATCH (a:User),(b:Resource)
@@ -2104,30 +2136,29 @@ class NeoDataBase:
                     rid=rating["rid"]
                 )
 
-        # update "helpful_count" and "not_helpful_count" on node "resource"
-        counts = tx.run(
-                """
-                    MATCH (a:User)-[r:HAS_RATED]->(b:Resource)
-                    WHERE r.rid = $rid
-                    RETURN
-                    COUNT(CASE WHEN r.value = 'HELPFUL' THEN 1 ELSE NULL END) AS helpful_count,
-                    COUNT(CASE WHEN r.value = 'NOT_HELPFUL' THEN 1 ELSE NULL END) AS not_helpful_count
-                """,
-                rid=rating["rid"]
-            ).single()
+            # update "helpful_count" and "not_helpful_count" on node "resource"
+            counts = tx.run(
+                    """
+                        MATCH (a:User)-[r:HAS_RATED]->(b:Resource)
+                        WHERE r.rid = $rid
+                        RETURN
+                        COUNT(CASE WHEN r.value = 'HELPFUL' THEN 1 ELSE NULL END) AS helpful_count,
+                        COUNT(CASE WHEN r.value = 'NOT_HELPFUL' THEN 1 ELSE NULL END) AS not_helpful_count
+                    """,
+                    rid=rating["rid"]
+                ).single()
 
-        logger.info(f"Increment Or Decrement Resource Rating Count")
-        tx.run(
-                """
-                    MATCH (r:Resource)
-                    WHERE r.rid=$rid 
-                    SET r.helpful_count=$helpful_count, r.not_helpful_count=$not_helpful_count
-                """,
-                rid=rating["rid"],
-                helpful_count=counts["helpful_count"],
-                not_helpful_count=counts["not_helpful_count"]
-            )
-
+            logger.info(f"Increment Or Decrement Resource Rating Count")
+            tx.run(
+                    """
+                        MATCH (r:Resource)
+                        WHERE r.rid=$rid 
+                        SET r.helpful_count=$helpful_count, r.not_helpful_count=$not_helpful_count
+                    """,
+                    rid=rating["rid"],
+                    helpful_count=counts["helpful_count"],
+                    not_helpful_count=counts["not_helpful_count"]
+                )
         tx.close()
     
     def save_or_remove_user_resources(self, data: dict):
