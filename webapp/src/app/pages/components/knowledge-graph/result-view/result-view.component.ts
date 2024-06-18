@@ -5,7 +5,7 @@ import { MenuItem } from 'primeng/api';
 // import { MaterialsRecommenderService } from 'src/app/services/materials-recommender.service';
 import { Subscription } from 'rxjs';
 import { SlideConceptsService } from 'src/app/services/slide-concepts.service';
-import { ResourcesPagination, ResourceNode } from 'src/app/models/croForm';
+import { ResourcesPagination, ResourceNode, UserResourceFilterParamsResult } from 'src/app/models/croForm';
 import { CustomRecommendationOptionComponent } from '../custom-recommendation-option/custom-recommendation-option.component';
 import { MaterialsRecommenderService } from 'src/app/services/materials-recommender.service';
 
@@ -75,7 +75,8 @@ export class ResultViewComponent {
   // @Input() didNotUnderstandConceptsObjFromCROfOrm: any[];
   // @Input() previousConceptsObj: any[];
   @ViewChild('croComponent', { static: false }) croComponent: CustomRecommendationOptionComponent;
-  @Input() resourcesPagination: ResourcesPagination;;
+  @Input() resourcesPagination: ResourcesPagination;
+  @Input() userId: string;
   activeIndex: number = 0; 
 
   croSorting = {
@@ -84,7 +85,7 @@ export class ResultViewComponent {
     views: { status: false, arrow: false}
   }
 
-  mainConceptsSource = [ { cid: "sdsd1", name: "Data Mining", status: false }, { cid: "sdsd2", name: "Internet Retrieval", status: false } ];
+  /*mainConceptsSource = [ { cid: "sdsd1", name: "Data Mining", status: false }, { cid: "sdsd2", name: "Internet Retrieval", status: false } ];
   learningMaterialsSource = [ { mid: "s323f", name: "Learning Analytics", status: false } ];
   sliderNumbersSource = [ { name: "slide_1", status: false } ];
   resourcesSved = [
@@ -99,7 +100,12 @@ export class ResultViewComponent {
   mainConceptSelected: any | undefined;
   learningMaterialsFiltered = [];
   sliderNumbersFiltered = [];
+  */
 
+  mainConceptSelected: any | undefined;
+  midSelected: any | undefined;
+  sliderNberSelected: any | undefined;
+  resourcesSaved: UserResourceFilterParamsResult;
   filteringParamsSavedTab = {
     user_id: null,
     cids: [],
@@ -379,6 +385,7 @@ export class ResultViewComponent {
     });
 
     this.deactivateDnuInteraction();
+    this.getConceptsMidsSliderNumbersForUserResourcesFiltering()
   }
 
   deactivateDnuInteraction() {
@@ -396,6 +403,7 @@ export class ResultViewComponent {
     }
   }
   
+  /*
   selectMainConceptsOnChange(event, type: number) {
     // call available Main Concepts
     if (event.value) {
@@ -409,8 +417,6 @@ export class ResultViewComponent {
         const slider_node = this.sliderNumbersSource.find((slide) => slide.name === value.cid);
       }
 
-      
-
       if (conceptFound === undefined) {
         value.status = true;
         this.mainConceptsFiltered.push(value);
@@ -422,13 +428,68 @@ export class ResultViewComponent {
     this.filteringParamsSavedTab.cids = this.mainConceptsFiltered.map(concept => concept.cid);
     console.warn(this.filteringParamsSavedTab)
   }
-
-  selectLearningMaterialsOnChange(event) {
+*/
+  
+selectLearningMaterialsOnChange(event) {
     // call available Learning materials
   }
 
   selectSliderNumberOnChange(event) {
     // call available Silde / Page numbers
+  }
+
+  selectFilteringParamsOnChange(event, type: number) {
+    if (event.value) {
+      let value = event.value;
+      
+      if (type === 1) {
+        let conceptFound = this.resourcesSaved.cids.find((concept) => concept.cid === value.cid);
+
+        if (conceptFound === undefined) {
+          value.status = true;
+          this.filteringParamsSavedTab.cids.push(value);
+        } else {
+          this.filteringParamsSavedTab.cids = this.filteringParamsSavedTab.cids.filter(concept => concept.id !== conceptFound.cid);
+        }
+
+      } else if ( type === 2) {
+        let midFound = this.resourcesSaved.mids.find((lm) => lm.mid === value.mid);
+
+        if (midFound === undefined) {
+          value.status = true;
+          this.filteringParamsSavedTab.mids.push(value);
+        } else {
+          this.filteringParamsSavedTab.mids = this.filteringParamsSavedTab.mids.filter(lm => lm.mid !== midFound.mid);
+        }
+        
+      } else if ( type === 3) {
+        let sliderNumberFound = this.resourcesSaved.slider_numbers.find((sn) => sn.name === value.name);
+
+
+        if (sliderNumberFound === undefined) {
+          value.status = true;
+          this.filteringParamsSavedTab.slider_numbers.push(value);
+        } else {
+          this.filteringParamsSavedTab.slider_numbers = this.filteringParamsSavedTab.slider_numbers.filter(sn => sn.name !== sliderNumberFound.name);
+        }
+      }
+      
+      
+
+    }
+  }
+
+  getConceptsMidsSliderNumbersForUserResourcesFiltering() { // cids: string[], mids: string[], slider_numbers: string[]
+    this.filteringParamsSavedTab.user_id = this.userId;
+    // this.filteringParamsSavedTab.cids = cids;
+    // this.filteringParamsSavedTab.mids = mids;
+    // this.filteringParamsSavedTab.slider_numbers = slider_numbers;
+    this.materialsRecommenderService.getConceptsMidsSliderNumbersForUserResourcesFiltering(this.filteringParamsSavedTab)
+      .subscribe((data: UserResourceFilterParamsResult) => {
+        this.resourcesSaved = data;
+
+        // add status: true | false
+      });
   }
 
   /*

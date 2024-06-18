@@ -66,7 +66,7 @@ export class MaterialsRecommenderService {
     return this.http.post<any>(`${this.cmEndpointURL}user_resources/save_or_remove`, data, { withCredentials: true });
   }
 
-  getConceptsMidsSlidernumbersForUserResourcesFiltering(data: any): Observable<UserResourceFilterParamsResult> {
+  getConceptsMidsSliderNumbersForUserResourcesFiltering(data: any): Observable<UserResourceFilterParamsResult> {
     return this.http.post<UserResourceFilterParamsResult>(`${this.cmEndpointURL}user_resources/filter/params`, data, { withCredentials: true });
   }
 

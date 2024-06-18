@@ -185,7 +185,7 @@
             <div class="w4/12">
 
               <p-dropdown
-              [options]="mainConceptsSource"
+              [options]="resourcesSaved?.cids"
               [(ngModel)]="mainConceptSelected"
               optionLabel="name"
               [filter]="true"
@@ -193,7 +193,7 @@
               [showClear]="true"
               placeholder="Main Concept(s)"
               emptyFilterMessage="No Concept found"
-              (onChange)="selectMainConceptsOnChange($event, 1)"
+              (onChange)="selectFilteringParamsOnChange($event, 1)"
               [resetFilterOnHide]="true"
               [style]="{'width': '20rem'}"
               >
