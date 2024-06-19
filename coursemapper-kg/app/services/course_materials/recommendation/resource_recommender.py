@@ -167,10 +167,12 @@ class ResourceRecommenderService:
         """
         result = {
             "new_concept_modified": True,
-            "concepts": None,
+            "concepts": [],
             "concept_cids": [],
             "concept_names": [],
             "concepts_original": recs_params["concepts"],
+            "concepts_not_saved": [],
+            "concepts_saved": []
         }
 
         tx = self.db.driver.session()
@@ -182,25 +184,72 @@ class ResourceRecommenderService:
                cids=cids
             )
         
-        # find list of 'concept_modified' saved
+        """
+        # find list of 'concept_modified' saved from user
         user_concepts_modified = []
         for concept in recs_params["concepts"]:
             user_concept_modified = tx.run('''
                     MATCH p=(u)-[r:HAS_MODIFIED]->(c) 
-                    WHERE c.user_id = '65e0536db1effed771dbdbb9' And c.cid = $cid AND c.weight = $weight
+                    WHERE c.user_id = $user_id AND c.cid = $cid AND c.weight = $weight
                     RETURN c
                     ''',
-                uid=recs_params["user_id"],
+                user_id=recs_params["user_id"],
                 cid=concept["cid"],
                 weight=concept["weight"]
                 ).single()
             
             if user_concept_modified is not None:
                 user_concepts_modified.append(user_concept_modified)
+        """
+
+        # find list of 'concept_modified' saved from all users
+        user_concepts_modified = []
+        for concept in recs_params["concepts"]:
+            user_concept_modified = tx.run(
+                '''
+                    MATCH p=(u)-[r:HAS_MODIFIED]->(c) 
+                    WHERE c.cid = $cid
+                    RETURN c.user_id as user_id, c.cid as cid, c.weight as weight
+                ''',
+                    cid=concept["cid"]
+                ).single()
+            
+            if user_concept_modified is not None:
+                user_concepts_modified.append(user_concept_modified)
         
         # create node 'Concept_modified' with attributes: user -[r: DNU_NEW{user_id: uuid}]-> Concept_modified (user_id, cid, weight, mid, status, weight_changed)
-        user_concepts_modified_new = []
-        # for concept_a in 
+        # user_concepts_modified_new = []
+        user_concepts_saved = []
+        concepts_saved = []
+        concepts_not_saved = []
+        for concept_new_input in recs_params["concepts"]:
+            for user_concept in user_concepts_modified:
+                if user_concept["user_id"] == recs_params["user_id"]:
+                    user_concepts_saved.append(concept_new_input)
+
+                if concept_new_input["cid"] == user_concept["cid"]:
+                    concepts_saved.append(concept_new_input)
+
+                else:
+                    concepts_not_saved.append(concept_new_input)
+                
+        # check and add new weight to the node 'Concept_modified' updated by the user
+        for new_concept in recs_params["concepts"]:
+            status = ""
+            weight_changed = ""
+            node = tx.run(
+                    '''
+                        MERGE (c:Concept_modified { user_id:$user_id, cid:$cid, weight:$weight })
+                        RETURN ID(c) as node_id, c.user_id as user_id, c.cid as cid,
+                        c.weight as weight
+                    '''
+                    ,
+                    user_id=recs_params["user_id"],
+                    cid=concept["cid"],
+                    weight=concept["weight"],
+                    mid=concept["mid"],
+                    status=status
+                ).single()
 
         # upate user embedding value if 'weight_changed' have been modified
 
