@@ -136,6 +136,80 @@ class ResourceRecommenderService:
     ######
     # CRO logic
 
+    def save_and_get_concepts_modified(self, recs_params):
+        """
+            recs_params: {
+                "user_id": "65e0536db1effed771dbdbb9",
+                "mid": "6662201fec6bb9067ff71cc9",
+                "slide_id": 1,
+                "category": "1",
+                "concepts": [
+                    {
+                        "cid": "2156985142238936538",
+                        "mid": "6662201fec6bb9067ff71cc9",
+                        "weight": 0.79
+                    }
+                ],
+                "recommendation_type": "1",
+                "factor_weights": {
+                    "status": true,
+                    "reload": true,
+                    "weights": {
+                        "similarity_score": 0.7,
+                        "creation_date": 0.3,
+                        "views": 0.3,
+                        "like_count": 0.1,
+                        "user_rating": 0.1,
+                        "nbr_saves": 0.1
+                    }
+                }
+            }
+        """
+        result = {
+            "new_concept_modified": True,
+            "concepts": None,
+            "concept_cids": [],
+            "concept_names": [],
+            "concepts_original": recs_params["concepts"],
+        }
+
+        tx = self.db.driver.session()
+        cids = [node["cid"] for node in recs_params["concepts"]]
+
+        # get concepts from: user -[dnu]-> concepts
+        user_dnu_concepts = tx.run('''MATCH p=(u)-[r:dnu]->(c) WHERE u.uid=$uid And c.cid IN $cids RETURN r''',
+               uid=recs_params["user_id"],
+               cids=cids
+            )
+        
+        # find list of 'concept_modified' saved
+        user_concepts_modified = []
+        for concept in recs_params["concepts"]:
+            user_concept_modified = tx.run('''
+                    MATCH p=(u)-[r:HAS_MODIFIED]->(c) 
+                    WHERE c.user_id = '65e0536db1effed771dbdbb9' And c.cid = $cid AND c.weight = $weight
+                    RETURN c
+                    ''',
+                uid=recs_params["user_id"],
+                cid=concept["cid"],
+                weight=concept["weight"]
+                ).single()
+            
+            if user_concept_modified is not None:
+                user_concepts_modified.append(user_concept_modified)
+        
+        # create node 'Concept_modified' with attributes: user -[r: DNU_NEW{user_id: uuid}]-> Concept_modified (user_id, cid, weight, mid, status, weight_changed)
+        user_concepts_modified_new = []
+        # for concept_a in 
+
+        # upate user embedding value if 'weight_changed' have been modified
+
+        # check if the 'Concept_modified' have never used to crawling API and then crawl only them
+
+
+
+        pass
+
     def cro_form_logic_updated(
             self,
             cro_form: dict,
