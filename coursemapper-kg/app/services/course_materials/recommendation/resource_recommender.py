@@ -136,7 +136,7 @@ class ResourceRecommenderService:
     ######
     # CRO logic
 
-    def save_and_get_concepts_modified(self, recs_params):
+    def save_and_get_concepts_modified(self, recs_params, non_understood_list =[], understood_list=[]):
         """
             recs_params: {
                 "user_id": "65e0536db1effed771dbdbb9",
@@ -175,8 +175,36 @@ class ResourceRecommenderService:
             "concepts_saved": []
         }
 
+        # add attribute 'status: dnu' to the concept
+        concepts_modified_new = recs_params["concepts"]
+
+        """ 
+        if len(understood_list):
+            # concepts_new = [new_concept_modified.__setattr__('status', 'u') for new_concept_modified in concepts_new]
+            for new_concept_modified in concepts_modified_new:
+                for concpet_u in understood_list:
+                    if concpet_u["cid"] == new_concept_modified["cid"]:
+                        new_concept_modified["status"] = "u"
+                    else:
+                        new_concept_modified["status"] = "dnu"
+
+        """ 
+
+        if len(non_understood_list) > 0:
+            for new_concept_modified in concepts_modified_new:
+                for concpet_nu in non_understood_list:
+                    if concpet_nu["cid"] == new_concept_modified["cid"]:
+                        new_concept_modified["status"] = "dnu"
+                    else:
+                        new_concept_modified["status"] = "u"
+
+
         tx = self.db.driver.session()
-        cids = [node["cid"] for node in recs_params["concepts"]]
+        cids = [node["cid"] for node in concepts_modified_new]
+        
+
+        # save concept to the node 'concept_modified' with the possible new weight (changed)
+
 
         # find list of concept_modified saved and directly connected to user
         user_concepts_modified = tx.run(
