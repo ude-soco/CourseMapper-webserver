@@ -12,7 +12,7 @@ services:
       REDIS_DB: 0
       REDIS_PASSWORD: 
       PIPELINES: concept-map
-      WIKIPEDIA_DATABASE_CONNECTION_STRING: "postgres://postgres:HrwFaqi34iH0SA@wp-pg:5432/"
+      WIKIPEDIA_DATABASE_CONNECTION_STRING: "postgres://postgres:password@wp-pg:5432/"
     depends_on:
       neo4j:
         condition: service_healthy
@@ -32,7 +32,7 @@ services:
       REDIS_DB: 0
       REDIS_PASSWORD: 
       PIPELINES: modify-graph
-      WIKIPEDIA_DATABASE_CONNECTION_STRING: "postgres://postgres:HrwFaqi34iH0SA@wp-pg:5432/"
+      WIKIPEDIA_DATABASE_CONNECTION_STRING: "postgres://postgres:password@wp-pg:5432/"
     depends_on:
       neo4j:
         condition: service_healthy
@@ -52,21 +52,9 @@ services:
       REDIS_DB: 0
       REDIS_PASSWORD: 
       PIPELINES: expand-material
-      WIKIPEDIA_DATABASE_CONNECTION_STRING: "postgres://postgres:HrwFaqi34iH0SA@wp-pg:5432/"
+      WIKIPEDIA_DATABASE_CONNECTION_STRING: "postgres://postgres:password@wp-pg:5432/"
     depends_on:
       neo4j:
         condition: service_healthy
       redis:
         condition: service_healthy
-
-  wp-pg:
-    image: postgres:16
-    ports:
-      - 5431:5432
-    environment:
-      - POSTGRES_PASSWORD=HrwFaqi34iH0SA
-    volumes:
-      - coursemapper-kg-wp-pg:/var/lib/postgresql/data
-
-volumes:
-  coursemapper-kg-wp-pg:

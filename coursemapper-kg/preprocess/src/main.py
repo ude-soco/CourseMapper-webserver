@@ -62,7 +62,7 @@ def process_worker(quit_process, batch_limit: int, articles: "Queue[str]", docum
     batch = Batch(batch_limit, documents, progress)
     while True:
         try:
-            article = articles.get(timeout=2)
+            article = articles.get(timeout=10)
             batch.process_chunk(article)
         except Empty:
             batch.flush_batch()
@@ -156,9 +156,8 @@ def progress_worker(quit_process, progress: "Queue[tuple[str, int]]"):
                     pages_imported_per_second = int(
                         (pages_imported - pages_imported_last_mark) / pages_imported_time_delta.total_seconds())
                     pages_imported_last_mark = pages_imported
-            sys.stdout.write(
+            print(
                 f'\rparsed: {pages_parsed:14,} | processed: {pages_processed:14,} ({pages_processed_per_second:5} /s) | imported: {pages_imported:14,} ({pages_imported_per_second:5} /s)')
-            sys.stdout.flush()
         except Empty:
             if quit_process.get_obj().value:
                 break
@@ -189,7 +188,7 @@ if __name__ == '__main__':
     workers = args.workers
     if workers == -1:
         workers = os.cpu_count()
-        if workers is None:
+        if workers is None or workers <= 3:
             workers = 3
         else:
             workers -= 1
@@ -220,19 +219,26 @@ if __name__ == '__main__':
     print('Processing dump...')
 
     quit_process = multiprocessing.Value(ctypes.c_bool, False)
+    quit_progress = multiprocessing.Value(ctypes.c_bool, False)
 
     parse_process = Process(target=parse_worker, daemon=True, args=(filename, articles, progress))
     parse_process.start()
 
+    process_processes = []
     for i in range(workers - 1):
-        Process(target=process_worker, daemon=True, args=(
-            quit_process, args.batch, articles, documents, progress)).start()
+        process_processes.append(Process(target=process_worker, daemon=True, args=(
+            quit_process, args.batch, articles, documents, progress)))
+        process_processes[-1].start()
 
     import_process = Process(target=import_worker, daemon=True, args=(
         quit_process, args.database_connection_string, not args.no_create_tables, documents, progress))
     import_process.start()
 
-    Process(target=progress_worker, daemon=True, args=(quit_process, progress)).start()
+    Process(target=progress_worker, daemon=True, args=(quit_progress, progress)).start()
 
     parse_process.join()
     quit_process.value = True
+    for process in process_processes:
+        process.join()
+    import_process.join()
+    quit_progress.value = True

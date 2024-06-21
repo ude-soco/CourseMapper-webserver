@@ -1,0 +1,13 @@
+services:
+  wp-pg:
+    platform: linux/x86_64
+    image: ${IMAGE_NAME_PREFIX:-socialcomputing/}coursemapper-webserver-coursemapper-wp-pg:${IMAGE_TAG:-latest}
+    build: .
+    environment:
+      POSTGRES_PASSWORD: password
+      INIT_PATH: coursemapper-read:coursemapper-data/init.sql.gz
+    volumes:
+      - coursemapper-kg-wp-pg:/var/lib/postgresql/data
+
+volumes:
+  coursemapper-kg-wp-pg:

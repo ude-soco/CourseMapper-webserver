@@ -2,3 +2,4 @@ name: coursemapper-webserver-coursemapper-kg
 include:
 - ./concept-map/compose.yaml
 - ./recommendation/compose.yaml
+- ./wp-pg/compose.yaml
