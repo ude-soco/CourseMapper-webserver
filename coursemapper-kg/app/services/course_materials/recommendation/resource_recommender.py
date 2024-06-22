@@ -174,173 +174,111 @@ class ResourceRecommenderService:
             "concepts_not_saved": [],
             "concepts_saved": []
         }
-
-        # add attribute 'status: dnu' to the concept
-        concepts_modified_new = recs_params["concepts"]
-
-        """ 
-        if len(understood_list):
-            # concepts_new = [new_concept_modified.__setattr__('status', 'u') for new_concept_modified in concepts_new]
-            for new_concept_modified in concepts_modified_new:
-                for concpet_u in understood_list:
-                    if concpet_u["cid"] == new_concept_modified["cid"]:
-                        new_concept_modified["status"] = "u"
-                    else:
-                        new_concept_modified["status"] = "dnu"
-
-        """ 
-
-        if len(non_understood_list) > 0:
-            for new_concept_modified in concepts_modified_new:
-                for concpet_nu in non_understood_list:
-                    if concpet_nu["cid"] == new_concept_modified["cid"]:
-                        new_concept_modified["status"] = "dnu"
-                    else:
-                        new_concept_modified["status"] = "u"
-
-
         tx = self.db.driver.session()
-        cids = [node["cid"] for node in concepts_modified_new]
-        
+        user_id = recs_params["user_id"]
+        concepts = recs_params["concepts"]
 
-        # save concept to the node 'concept_modified' with the possible new weight (changed)
-
-
-        # find list of concept_modified saved and directly connected to user
-        user_concepts_modified = tx.run(
-            '''
-                MATCH p=(u)-[r:HAS_MODIFIED]->(c) 
-                WHERE c.cid IN $cids AND c.user_id = $user_id
-                RETURN c.user_id as user_id, c.cid as cid, c.weight as weight
-            ''',
-                cids=cids,
-                user_id=recs_params["user_id"]
-            ).data()
-
-        # find list of concept_modified saved and connected to all users
-        users_concepts_modified = tx.run(
-            '''
-                MATCH p=(u)-[r:HAS_MODIFIED]->(c) 
-                WHERE c.cid IN $cids
-                RETURN c.user_id as user_id, c.cid as cid, c.weight as weight
-            ''',
-                cids=cids
-            ).data()
-        
-        concepts_modified_not_saved_from_all_users = []
-        if len(recs_params["concepts"]) > len(users_concepts_modified):
-            for c1 in recs_params["concepts"]:
-                for c2 in users_concepts_modified:
-                    if c1["cid"] == c2["cid"]:
-                        break
-                    else:
-                        concepts_modified_not_saved_from_all_users.append(c1)
-        
-        concepts_modified_not_saved_from_users = []
-        if len(recs_params["concepts"]) > len(user_concepts_modified):
-            for c1 in recs_params["concepts"]:
-                for c2 in user_concepts_modified:
-                    if c1["cid"] == c2["cid"]:
-                        break
-                    else:
-                        concepts_modified_not_saved_from_users.append(c1)
-        
-        concepts_modified_to_save = list(set(concepts_modified_not_saved_from_all_users + concepts_modified_not_saved_from_users))
-        # concepts_modified_to_save = [c for c in concepts_modified_to_save]
-
-        # filter concepts not exisiting in the node 'concept_modified' at all
-
-        # save new concepts into node concept_modified from the user and labelled them with status 'dnu'
-            # user_dnu_concepts = tx.run('''MATCH p=(u)-[r:dnu]->(c) WHERE u.uid=$uid And c.cid IN $cids RETURN r''',
-            #        uid=recs_params["user_id"],
-            #        cids=cids
-            #     )
-
-        # update user embedding value (because weight value could be changed from the user)
-
-        # add them to the list of new concepts that will be crawl to YouTube and Wikipedia APIs
-
-
-        # # get concepts from: user -[dnu]-> concepts
-        # user_dnu_concepts = tx.run('''MATCH p=(u)-[r:dnu]->(c) WHERE u.uid=$uid And c.cid IN $cids RETURN r''',
-        #        uid=recs_params["user_id"],
-        #        cids=cids
-        #     )
-        
-        """
-        # find list of 'concept_modified' saved from user
-        user_concepts_modified = []
-        for concept in recs_params["concepts"]:
-            user_concept_modified = tx.run('''
-                    MATCH p=(u)-[r:HAS_MODIFIED]->(c) 
-                    WHERE c.user_id = $user_id AND c.cid = $cid AND c.weight = $weight
-                    RETURN c
+        # update status between understood and non-understood
+        if len(understood_list) > 0:
+            for cid in understood_list:
+                tx.run(
+                    '''
+                        MATCH p=(u)-[r:HAS_MODIFIED]->(c) 
+                        WHERE c.user_id = $user_id AND c.cid = $cid
+                        SET c.status = 'u'
                     ''',
-                user_id=recs_params["user_id"],
-                cid=concept["cid"],
+                    user_id=user_id,
+                    cid=cid
+                )
+
+        if len(concepts) > 0:
+          # get user node
+          user_node = self.db.cro_get_user(user_id=user_id)
+
+          for concept in understood_list:
+
+            # check if the node Concept_modified exist
+            concept_modified_node_exists = tx.run(
+                """
+                    MATCH (c:Concept_modified)
+                    WHERE c.user_id = $user_id and c.cid = $cid and c.weight = $weight
+                    RETURN ID(c) as node_id, c.cid as cid, c.weight as weight
+                """,
+                user_id=user_id,
+                cid=cid,
                 weight=concept["weight"]
-                ).single()
-            
-            if user_concept_modified is not None:
-                user_concepts_modified.append(user_concept_modified)
-        """
+            )
 
-        # # find list of 'concept_modified' saved from all users
-        # user_concepts_modified = []
-        # for concept in recs_params["concepts"]:
-        #     user_concept_modified = tx.run(
-        #         '''
-        #             MATCH p=(u)-[r:HAS_MODIFIED]->(c) 
-        #             WHERE c.cid = $cid
-        #             RETURN c.user_id as user_id, c.cid as cid, c.weight as weight
-        #         ''',
-        #             cid=concept["cid"]
-        #         ).single()
-            
-        #     if user_concept_modified is not None:
-        #         user_concepts_modified.append(user_concept_modified)
-        
-        # # create node 'Concept_modified' with attributes: user -[r: DNU_NEW{user_id: uuid}]-> Concept_modified (user_id, cid, weight, mid, status, weight_changed)
-        # user_concepts_modified_new = []
-        # user_concepts_saved = []
-        # concepts_saved = []
-        # concepts_not_saved = []
-        # for concept_new_input in recs_params["concepts"]:
-        #     for user_concept in user_concepts_modified:
-        #         if user_concept["user_id"] == recs_params["user_id"]:
-        #             user_concepts_saved.append(concept_new_input)
-
-        #         if concept_new_input["cid"] == user_concept["cid"]:
-        #             concepts_saved.append(concept_new_input)
-
-        #         else:
-        #             concepts_not_saved.append(concept_new_input)
+            if concept_modified_node_exists is not None:
+                tx.run(
+                    """
+                        MATCH (c:Concept_modified)
+                        WHERE c.user_id = $user_id and c.cid = $cid and c.weight = $weight
+                        SET c.weight = $weight
+                        RETURN ID(c) as node_id, c.cid as cid, c.weight as weight
+                    """,
+                    user_id=user_id,
+                    cid=cid,
+                    weight=concept["weight"]
+                )
+            else:
+                # create node Concept_modified
+                concept_modified_node = tx.run(
+                        '''
+                            MERGE (c: Concept_modified {
+                                    user_id: $user_id, 
+                                    cid: $cid, 
+                                    weight: $weight, 
+                                    mid: $mid, 
+                                    status: $status
+                                })
+                            RETURN ID(c) as node_id, c.cid as cid, c.weight as weight
+                        ''',
+                        user_id=user_id,
+                        cid=concept["cid"],
+                        weight=concept["weight"],
+                        mid=concept["mid"],
+                        status='dnu'
+                    )
                 
-        # # check and add new weight to the node 'Concept_modified' updated by the user
-        # for new_concept in recs_params["concepts"]:
-        #     status = ""
-        #     weight_changed = ""
-        #     node = tx.run(
-        #             '''
-        #                 MERGE (c:Concept_modified { user_id:$user_id, cid:$cid, weight:$weight })
-        #                 RETURN ID(c) as node_id, c.user_id as user_id, c.cid as cid,
-        #                 c.weight as weight
-        #             '''
-        #             ,
-        #             user_id=recs_params["user_id"],
-        #             cid=concept["cid"],
-        #             weight=concept["weight"],
-        #             mid=concept["mid"],
-        #             status=status
-        #         ).single()
+                if concept_modified_node is not None:
+                    logger.info("Creating relationship between node User and Concept_modified")
+                    tx.run(
+                            '''
+                                MATCH (a:User),(b:Concept_modified)
+                                WHERE ID(a) = $id_a AND ID(b) = $id_b
+                                MERGE (a)-[r:HAS_MODIFIED]->(b)
+                                RETURN r
+                            ''',
+                            id_a=user_node["node_id"],
+                            id_b=concept_modified_node["node_id"]
+                        )
 
-        # upate user embedding value if 'weight_changed' have been modified
+                    logger.info("Creating relationship between Concept_modified and original concept")
+                    concept_original = tx.run(
+                            """
+                            MATCH (c:Concept)
+                            WHERE c.cid = $cid
+                            RETURN ID(c) as node_id
+                            """,
+                            cid=cid
+                        ).single()
+                    
+                    if concept_original is not None:
+                        tx.run(
+                                """
+                                MATCH (a:Concept_modified),(b:Concept)
+                                WHERE ID(a) = $id_a AND ID(b) = $id_b
+                                MERGE (a)-[r:ORIGINATED_FROM]->(b)
+                                RETURN r
+                                """,
+                                id_a=concept_modified_node["node_id"],
+                                id_b=concept_original["node_id"]
+                            )
 
-        # check if the 'Concept_modified' have never used to crawling API and then crawl only them
+            # update user embedding value (because weight value could be changed from the user)
 
 
-
-        pass
 
     def cro_form_logic_updated(
             self,
