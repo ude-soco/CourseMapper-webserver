@@ -2018,6 +2018,169 @@ class NeoDataBase:
 
 
 
+
+    def get_concept_modified(self, user_id: str, cid: str, weight: float):
+        """
+            Getting node 'Concept_modified'
+            check if the node Concept_modified exist
+        """
+
+        logger.info("Getting node: Concept_modified")
+        result = None
+        with self.driver.session() as session:
+            result = session.run(
+                """
+                    MATCH (c:Concept_modified)
+                    WHERE c.user_id = $user_id and c.cid = $cid and c.weight = $weight
+                    RETURN ID(c) as node_id, c.cid as cid, c.weight as weight
+                """,
+                user_id=user_id,
+                cid=cid,
+                weight=weight
+            ).single()
+        return result
+    
+    def update_concept_modified_weight(self, user_id: str, cid: str, weight: float=None, status: str=None):
+        """
+            Update node 'Concept_modified' attributes
+        """
+
+        result = None
+        tx = self.driver.session()
+
+        if weight:
+            logger.info("Updating node 'Concept_modified' attribute: weight")
+
+            result = tx.run(
+                """
+                    MATCH (c:Concept_modified)
+                    WHERE c.user_id = $user_id and c.cid = $cid and c.weight = $weight
+                    RETURN ID(c) as node_id, c.cid as cid, c.weight as weight
+                """,
+                user_id=user_id,
+                cid=cid,
+                weight=weight
+            ).single()
+
+        elif status:
+            logger.info("Updating node 'Concept_modified' attribute: status")
+
+            result = tx.run(
+                '''
+                    MATCH p=(u)-[r:HAS_MODIFIED]->(c) 
+                    WHERE c.user_id = $user_id AND c.cid = $cid
+                    SET c.status = $status
+                    RETURN ID(c) as node_id, c.cid as cid, c.weight as weight
+                ''',
+                user_id=user_id,
+                cid=cid,
+                status=status
+            ).single()
+
+        return result
+    
+    def create_concept_modified(self, user_id: str, concept: dict, user_node: dict):
+        """
+            Creating node 'Concept_modified'
+        """
+
+        tx = self.driver.session()
+        concept_modified_node = tx.run(
+                '''
+                    MERGE (c: Concept_modified {
+                            user_id: $user_id, 
+                            cid: $cid, 
+                            weight: $weight, 
+                            mid: $mid, 
+                            status: $status
+                        })
+                    RETURN ID(c) as node_id, c.cid as cid, c.weight as weight
+                ''',
+                user_id=user_id,
+                cid=concept["cid"],
+                weight=concept["weight"],
+                mid=concept["mid"],
+                status='dnu'
+            ).single()
+        
+        if concept_modified_node is not None:
+            logger.info("Creating relationship between node User and Concept_modified")
+            tx.run(
+                    '''
+                        MATCH (a:User),(b:Concept_modified)
+                        WHERE ID(a) = $id_a AND ID(b) = $id_b
+                        MERGE (a)-[r:HAS_MODIFIED]->(b)
+                        RETURN r
+                    ''',
+                    id_a=user_node["node_id"],
+                    id_b=concept_modified_node["node_id"]
+                )
+
+            logger.info("Creating relationship between Concept_modified and original concept")
+            concept_original = tx.run(
+                    """
+                    MATCH (c:Concept)
+                    WHERE c.cid = $cid
+                    RETURN ID(c) as node_id
+                    """,
+                    cid=concept["cid"]
+                ).single()
+            
+            if concept_original is not None:
+                tx.run(
+                        """
+                        MATCH (a:Concept_modified),(b:Concept)
+                        WHERE ID(a) = $id_a AND ID(b) = $id_b
+                        MERGE (a)-[r:ORIGINATED_FROM]->(b)
+                        RETURN r
+                        """,
+                        id_a=concept_modified_node["node_id"],
+                        id_b=concept_original["node_id"]
+                    )
+
+        return concept_modified_node
+
+    def get_user_embedding_with_concept_modified(tx, user, mid):
+        """
+        """
+        logger.info("Getting User embeddings")
+        embedding = ""
+        
+        # Find concept embeddings that user doesn't understand
+        results = tx.run(
+            """MATCH p=(u)-[r:dnu]->(c) where u.uid=$uid and c.mid=$mid RETURN c.final_embedding as embedding, c.weight as weight""",
+            uid=user["id"],
+            mid=mid)
+        embeddings = list(results)
+        # If the user does not have concepts that he does not understand, the list is empty
+        if not embeddings:
+            tx.run("""MATCH (u:User) WHERE u.uid=$uid set u.embedding=$embedding""",
+                uid=user["id"],
+                embedding="")
+            logger.info("reset user embedding")
+        else:
+            sum_embeddings = 0
+            sum_weights = 0
+            # Convert string type to array type 'np.array'
+            # Sum and average these concept embeddings to get user embedding
+            for embedding in embeddings:
+                list1 = embedding["embedding"].split(',')
+                list2 = []
+                for j in list1:
+                    list2.append(float(j))
+                arr = np.array(list2)
+                sum_embeddings = sum_embeddings + arr * embedding["weight"]
+                sum_weights = sum_weights + embedding["weight"]
+            # The weighted average of final embeddings of all dnu concepts
+            average = np.divide(sum_embeddings, sum_weights)
+            tx.run("""MATCH (u:User) WHERE u.uid=$uid set u.embedding=$embedding""",
+                uid=user["id"],
+                embedding=','.join(str(i) for i in average))
+            logger.info("get user embedding")
+        
+        return embedding
+
+
     def get_user_rating_detail_by(self, rating: dict):
         """
             Get User Rating by user_id, value, rid and cids

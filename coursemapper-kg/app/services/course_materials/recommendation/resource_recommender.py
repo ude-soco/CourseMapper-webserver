@@ -136,7 +136,7 @@ class ResourceRecommenderService:
     ######
     # CRO logic
 
-    def save_and_get_concepts_modified(self, recs_params, non_understood_list =[], understood_list=[]):
+    def save_and_get_concepts_modified(self, recs_params, understood_list=[], non_understood_list =[]):
         """
             recs_params: {
                 "user_id": "65e0536db1effed771dbdbb9",
@@ -166,117 +166,42 @@ class ResourceRecommenderService:
             }
         """
         result = {
-            "new_concept_modified": True,
             "concepts": [],
             "concept_cids": [],
             "concept_names": [],
-            "concepts_original": recs_params["concepts"],
-            "concepts_not_saved": [],
-            "concepts_saved": []
+            "recs_params": recs_params,
+            "user_embedding": None
         }
         tx = self.db.driver.session()
         user_id = recs_params["user_id"]
         concepts = recs_params["concepts"]
+        concepts_udpated = []
 
         # update status between understood and non-understood
         if len(understood_list) > 0:
             for cid in understood_list:
-                tx.run(
-                    '''
-                        MATCH p=(u)-[r:HAS_MODIFIED]->(c) 
-                        WHERE c.user_id = $user_id AND c.cid = $cid
-                        SET c.status = 'u'
-                    ''',
-                    user_id=user_id,
-                    cid=cid
-                )
+                self.db.update_concept_modified_weight(user_id=user_id, cid=cid, status='u')
 
         if len(concepts) > 0:
+          
           # get user node
-          user_node = self.db.cro_get_user(user_id=user_id)
+            user_node = self.db.cro_get_user(user_id=user_id)
 
-          for concept in understood_list:
+            for concept in concepts:
+                concept_modified_node_exists = self.db.get_concept_modified(user_id=user_id, cid=cid, weight=concept["weight"])
 
-            # check if the node Concept_modified exist
-            concept_modified_node_exists = tx.run(
-                """
-                    MATCH (c:Concept_modified)
-                    WHERE c.user_id = $user_id and c.cid = $cid and c.weight = $weight
-                    RETURN ID(c) as node_id, c.cid as cid, c.weight as weight
-                """,
-                user_id=user_id,
-                cid=cid,
-                weight=concept["weight"]
-            )
+                if concept_modified_node_exists is not None:
+                    concept_updated = self.db.update_concept_modified_weight(user_id=user_id, cid=cid, weight=concept["weight"])
+                    concepts_udpated.append(concept_updated)
 
-            if concept_modified_node_exists is not None:
-                tx.run(
-                    """
-                        MATCH (c:Concept_modified)
-                        WHERE c.user_id = $user_id and c.cid = $cid and c.weight = $weight
-                        SET c.weight = $weight
-                        RETURN ID(c) as node_id, c.cid as cid, c.weight as weight
-                    """,
-                    user_id=user_id,
-                    cid=cid,
-                    weight=concept["weight"]
-                )
-            else:
-                # create node Concept_modified
-                concept_modified_node = tx.run(
-                        '''
-                            MERGE (c: Concept_modified {
-                                    user_id: $user_id, 
-                                    cid: $cid, 
-                                    weight: $weight, 
-                                    mid: $mid, 
-                                    status: $status
-                                })
-                            RETURN ID(c) as node_id, c.cid as cid, c.weight as weight
-                        ''',
-                        user_id=user_id,
-                        cid=concept["cid"],
-                        weight=concept["weight"],
-                        mid=concept["mid"],
-                        status='dnu'
-                    )
-                
-                if concept_modified_node is not None:
-                    logger.info("Creating relationship between node User and Concept_modified")
-                    tx.run(
-                            '''
-                                MATCH (a:User),(b:Concept_modified)
-                                WHERE ID(a) = $id_a AND ID(b) = $id_b
-                                MERGE (a)-[r:HAS_MODIFIED]->(b)
-                                RETURN r
-                            ''',
-                            id_a=user_node["node_id"],
-                            id_b=concept_modified_node["node_id"]
-                        )
-
-                    logger.info("Creating relationship between Concept_modified and original concept")
-                    concept_original = tx.run(
-                            """
-                            MATCH (c:Concept)
-                            WHERE c.cid = $cid
-                            RETURN ID(c) as node_id
-                            """,
-                            cid=cid
-                        ).single()
-                    
-                    if concept_original is not None:
-                        tx.run(
-                                """
-                                MATCH (a:Concept_modified),(b:Concept)
-                                WHERE ID(a) = $id_a AND ID(b) = $id_b
-                                MERGE (a)-[r:ORIGINATED_FROM]->(b)
-                                RETURN r
-                                """,
-                                id_a=concept_modified_node["node_id"],
-                                id_b=concept_original["node_id"]
-                            )
+                else:
+                    # create node Concept_modified
+                    concept_created = self.db.create_concept_modified(user_id=user_id, concept=concept, user_node=user_node)
+                    concepts_udpated.append(concept_created)
 
             # update user embedding value (because weight value could be changed from the user)
+            new_user_embedding = self.db.get_user_embedding_with_concept_modified(user=user_node, mid=recs_params["mid"])
+            result["user_embedding"] = new_user_embedding
 
 
 
