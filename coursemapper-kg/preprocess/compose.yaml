@@ -4,6 +4,8 @@ services:
     build: .
     environment:
       POSTGRES_PASSWORD: password
+      ACCESS_KEY_ID: ACCESS_KEY_ID
+      SECRET_ACCESS_KEY: SECRET_ACCESS_KEY
     deploy:
       resources:
         reservations:

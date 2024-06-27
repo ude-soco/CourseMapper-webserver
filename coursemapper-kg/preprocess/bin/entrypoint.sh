@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+# Replace access key id and secret access keys from environment variables
+sed -i "s/ACCESS_KEY_ID/$ACCESS_KEY_ID/g" /root/.config/rclone/rclone.conf
+sed -i "s/SECRET_ACCESS_KEY/$SECRET_ACCESS_KEY/g" /root/.config/rclone/rclone.conf
+
 echo "${0}: Downloading dump ..."
 curl -s "https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2" -o /tmp/enwiki-latest-pages-articles.xml.bz2
 

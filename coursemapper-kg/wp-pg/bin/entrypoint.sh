@@ -1,18 +1,22 @@
 #!/bin/bash
 set -e
 
+# Replace access key id and secret access keys from environment variables
+sed -i "s/ACCESS_KEY_ID/$ACCESS_KEY_ID/g" /var/lib/postgresql/.config/rclone/rclone.conf
+sed -i "s/SECRET_ACCESS_KEY/$SECRET_ACCESS_KEY/g" /var/lib/postgresql/.config/rclone/rclone.conf
+
 # Download version file
 echo "${0}: Downloading version file..."
-CHECKSUM=$(rclone cat "$INIT_PATH.sha256")
+CHECKSUM=$(rclone --config /var/lib/postgresql/.config/rclone/rclone.conf cat "$INIT_PATH.sha256")
 
 # Check if checksum file exists
 echo "${0}: Checking if checksum file exists..."
-if [ -f /var/lib/postgresql/data/init.sql.gz.sha256 ]; then
+if [ -f /var/lib/postgresql/init.sql.gz.sha256 ]; then
 		# Check if version is different
 		if [ "$CHECKSUM" != "$(cat /var/lib/postgresql/data/init.sql.gz.sha256)" ]; then
 				# Wipe the database
 				echo "${0}: Checksums are different. Wiping the database..."
-				rm -r /var/lib/postgresql/data/*
+				rm -r /var/lib/postgresql/data
 				echo "${0}: Database wiped"
 		else
 			  echo "${0}: Checksums are the same. Skipping the initialization"
@@ -20,7 +24,10 @@ if [ -f /var/lib/postgresql/data/init.sql.gz.sha256 ]; then
 fi
 
 # Save the new version
-echo "$CHECKSUM" > /var/lib/postgresql/data/init.sql.gz.sha256
+echo "$CHECKSUM" > /var/lib/postgresql/init.sql.gz.sha256
+
+# Create the data directory if it doesn't exist
+mkdir -p /var/lib/postgresql/data
 
 # Start the database
 echo "${0}: Starting the database..."
