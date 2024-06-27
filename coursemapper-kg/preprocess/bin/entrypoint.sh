@@ -13,6 +13,7 @@ rm /tmp/enwiki-latest-pages-articles.xml
 
 echo "${0}: Dumping database ..."
 echo "postgres:5432:postgres:postgres:$POSTGRES_PASSWORD" > /root/.pgpass
+chmod 600 /root/.pgpass
 pg_dump -h postgres -U postgres -d postgres -f /tmp/init.sql
 
 echo "${0}: Compressing dump ..."
