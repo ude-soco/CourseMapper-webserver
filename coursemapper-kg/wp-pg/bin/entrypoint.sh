@@ -13,7 +13,7 @@ CHECKSUM=$(rclone --config /var/lib/postgresql/.config/rclone/rclone.conf cat "$
 echo "${0}: Checking if checksum file exists..."
 if [ -f /var/lib/postgresql/init.sql.gz.sha256 ]; then
 		# Check if version is different
-		if [ "$CHECKSUM" != "$(cat /var/lib/postgresql/data/init.sql.gz.sha256)" ]; then
+		if [ "$CHECKSUM" != "$(cat /var/lib/postgresql/init.sql.gz.sha256)" ]; then
 				# Wipe the database
 				echo "${0}: Checksums are different. Wiping the database..."
 				rm -r /var/lib/postgresql/data
