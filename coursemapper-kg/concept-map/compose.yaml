@@ -13,6 +13,7 @@ services:
       REDIS_PASSWORD: 
       PIPELINES: concept-map
       WIKIPEDIA_DATABASE_CONNECTION_STRING: "postgres://postgres:password@wp-pg:5432/"
+      WIKIPEDIA_FALLBACK: false
     depends_on:
       neo4j:
         condition: service_healthy
@@ -35,6 +36,7 @@ services:
       REDIS_PASSWORD: 
       PIPELINES: modify-graph
       WIKIPEDIA_DATABASE_CONNECTION_STRING: "postgres://postgres:password@wp-pg:5432/"
+      WIKIPEDIA_FALLBACK: false
     depends_on:
       neo4j:
         condition: service_healthy
@@ -57,6 +59,7 @@ services:
       REDIS_PASSWORD: 
       PIPELINES: expand-material
       WIKIPEDIA_DATABASE_CONNECTION_STRING: "postgres://postgres:password@wp-pg:5432/"
+      WIKIPEDIA_FALLBACK: false
     depends_on:
       neo4j:
         condition: service_healthy
