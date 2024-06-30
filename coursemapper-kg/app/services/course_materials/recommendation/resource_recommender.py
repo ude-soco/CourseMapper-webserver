@@ -136,7 +136,7 @@ class ResourceRecommenderService:
     ######
     # CRO logic
 
-    def save_and_get_concepts_modified(self, recs_params, understood_list=[], non_understood_list =[]):
+    def save_and_get_concepts_modified(self, recs_params, top_n=5, user_embedding=False, understood_list=[], non_understood_list =[]):
         '''
             recs_params: {
                 "user_id": "65e0536db1effed771dbdbb9",
@@ -173,9 +173,12 @@ class ResourceRecommenderService:
             "recs_params": recs_params,
             "user_embedding": None
         }
-        user_id = recs_params["user_id"]
-        concepts = recs_params["concepts"]
         concepts_modified = []
+        user_id = recs_params["user_id"]
+
+        concepts: list = recs_params["concepts"]
+        concepts.sort(key=lambda x: x["weight"], reverse=True)
+        concepts = concepts[:top_n]
 
         # update status between understood and non-understood
         if len(understood_list) > 0:
@@ -189,8 +192,9 @@ class ResourceRecommenderService:
                 concepts_modified.append(concept_modified)
 
             # update user embedding value (because weight value could be changed from the user)
-            user_embedding = self.db.get_user_embedding_with_concept_modified(user_id=user_id, mid=recs_params["mid"], status='dnu')
-            result["user_embedding"] = user_embedding
+            if user_embedding:
+                user_embedding = self.db.get_user_embedding_with_concept_modified(user_id=user_id, mid=recs_params["mid"], status='dnu')
+                result["user_embedding"] = user_embedding
         
         result["concept_cids"]  = [concept["cid"] for concept in concepts]
         result["concept_names"] = [concept["name"] for concept in concepts]
