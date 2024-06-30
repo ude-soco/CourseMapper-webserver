@@ -176,7 +176,7 @@ class ResourceRecommenderService:
         user_id = recs_params["user_id"]
         mid = recs_params["mid"]
         concepts = recs_params["concepts"]
-        concepts_udpated = []
+        concepts_modified = []
 
         # update status between understood and non-understood
         if len(understood_list) > 0:
@@ -190,6 +190,7 @@ class ResourceRecommenderService:
 
             for concept in concepts:
                 concept_modified = self.db.update_r_btw_user_and_cm(user_id=user_id, cid=cid, weight=concept["weight"], mid=concept["mid"], status='dnu')
+                concepts_modified.append(concept_modified)
 
             # update user embedding value (because weight value could be changed from the user)
             new_user_embedding = self.db.get_user_embedding_with_concept_modified(user=user_node, mid=recs_params["mid"])

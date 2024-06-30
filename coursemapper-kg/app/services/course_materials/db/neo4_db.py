@@ -2076,7 +2076,7 @@ class NeoDataBase:
                     MERGE (a)-[r:HAS_MODIFIED]->(b)
                     ON CREATE SET r.user_id = $user_id, r.weight = $weight, r.mid = $mid, r.status = $status
                     ON MATCH SET  r.user_id = $user_id, r.weight = $weight, r.mid = $mid, r.status = $status
-                    RETURN ID(b) as cm_id, b.cid as cid, r.weight as weight, r.mid as mid, r.status as status
+                    RETURN ID(b) as cm_id, b.cid as cid, r.weight as weight, r.mid as mid
                 ''',
                 user_id=user_id,
                 cid=cid,
