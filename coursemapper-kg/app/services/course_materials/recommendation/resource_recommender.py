@@ -200,74 +200,6 @@ class ResourceRecommenderService:
         result["concept_names"] = [concept["name"] for concept in concepts]
         return result
 
-
-    def cro_form_logic_updated(
-            self,
-            cro_form: dict,
-            top_n=5,
-            user_embedding=False,
-        ):
-        """
-            cro_form: user_id: str, concepts: list,
-        """
-        result = {
-                "cro_form": None,
-                "user_embedding": None,
-                "concepts": None,
-                "concept_cids": [],
-                "concept_names": []
-            }
-
-        # get only top 5 dnu
-        concepts: list = cro_form["concepts"]
-        concepts.sort(key=lambda x: x["weight"], reverse=True)
-        cro_form["concepts"] = concepts[:top_n]
-
-        # create concept_cro
-        concepts_cro = self.db.cro_create_concept_cro(cro_form=cro_form)
-
-        cids = [node["cid"] for node in cro_form["concepts"]]
-        concepts = self.db.cro_get_concepts(cids=cids)
-        for node_cro in concepts_cro:
-            for node in concepts:
-                if node_cro["cid"] == node["cid"]:
-                    node_cro["name"] = node["name"]
-                    node_cro["final_embedding"] = node["final_embedding"]
-                    break
-        
-        cro_form["concepts"] = concepts_cro
-        result["cro_form"] = cro_form
-        # result["concept_names"] = [concept["name"] for concept in cro_form["concepts"]]
-
-        ## Update User Embedding
-        if user_embedding:
-            # user = self.db.cro_get_user(user_id=cro_form["user_id"], complete=True)
-            # embedding_str = user["embedding"]
-            # result["user_embedding"] = embedding_str
-
-            sum_embeddings = 0
-            sum_weights = 0
-            # Convert string type to array type 'np.array'
-            # Sum and average these concept embeddings to get user embedding
-            for concept in concepts_cro:
-                list1 = concept["final_embedding"].split(',')
-                list2 = []
-                for j in list1:
-                    list2.append(float(j))
-                arr = np.array(list2)
-                sum_embeddings = sum_embeddings + arr * concept["weight"]
-                sum_weights = sum_weights + concept["weight"]
-
-            # The weighted average of final embeddings of all dnu concepts
-            average = np.divide(sum_embeddings, sum_weights)
-            embedding_str =','.join(str(i) for i in average)
-
-            # Writing user embedding
-            self.db.cro_update_user_embedding_value(user_id=cro_form["user_id"], embedding=embedding_str)
-            result["user_embedding"] = embedding_str
-
-        return result
-
     def user_rates_resources(self, rating: dict):
         self.db.user_rates_resources(rating=rating)
         rating_found = self.db.get_user_rating_detail_by(rating=rating)
@@ -554,7 +486,7 @@ class ResourceRecommenderService:
         
         return resources
     
-    def cro_extract_meta_data(self, data_cro_form: dict, data_default: dict=None):
+    def cro_extract_meta_data(self, data_recs_params: dict, data_default: dict=None):
         understood = data_default.get("understoodConcepts")
         non_understood = data_default.get("nonUnderstoodConcepts")
         new_concepts = data_default.get("newConcepts")
@@ -571,7 +503,7 @@ class ResourceRecommenderService:
             "username": data_default.get("username"),
             "user_id": data_default.get("userId"),
             "user_email": data_default.get("userEmail"),
-            "croForm": data_cro_form,
+            "croForm": data_recs_params,
         }
 
     def build_factor_weights(self, factor_weights_params: dict = None):
@@ -600,12 +532,12 @@ class ResourceRecommenderService:
             "video": factor_weights_viedos
         }
     
-    def _get_resources(self, data_cro_form: dict, data_default: dict=None):
+    def _get_resources(self, data_recs_params: dict, data_default: dict=None):
         """
             Save cro_form, Crawl Youtube and Wikipedia API and then Store Resources
             Result: [ {"recommendation_type": str, "concepts": list(concepts), "nodes": list(resources)} ]
         """
-        body = self.cro_extract_meta_data(data_cro_form, data_default)
+        body = self.cro_extract_meta_data(data_recs_params, data_default)
         result = {}
 
         # check whether the DNUs have been aldready requested
@@ -615,17 +547,18 @@ class ResourceRecommenderService:
         rec_type = body["croForm"]["recommendation_type"]
         recommendation_type = RecommendationType.map_type(rec_type)
 
-        cro_form = {
+        recs_params = {
             "user_id": body["croForm"]["user_id"],
+            "mid": None,
             "concepts": body["croForm"]["concepts"],
         }
         factor_weights = self.build_factor_weights(body["croForm"]["factor_weights"]["weights"])
-        concepts = cro_form["concepts"]
+        concepts = recs_params["concepts"]
 
         # check whether to only rank resources
         if body["croForm"]["factor_weights"]["reload"] == True:
             logger.info("----Ranking Resourses----")
-            resources = self.db.cro_get_resources(concepts_cro=cro_form["concepts"])
+            resources = self.db.cro_get_resources(concepts_cro=recs_params["concepts"])
             result = self.cro_sort_result(resources=resources, weights=factor_weights)
 
         else:
@@ -657,7 +590,10 @@ class ResourceRecommenderService:
                     new_concepts=body["new_concept_ids"],
                     mid=body["material_id"],
                 )
-                clu = self.cro_form_logic_updated(cro_form=cro_form, top_n=5, user_embedding=True)
+                clu = self.save_and_get_concepts_modified(  recs_params=recs_params, top_n=5, user_embedding=True, 
+                                                            understood_list=body["understood_concept_ids"], 
+                                                            non_understood_list=body["non_understood_concept_ids"]
+                                                        )
 
             elif recommendation_type in [ RecommendationType.CONTENT_BASED_DOCUMENT_VARIANT, RecommendationType.CONTENT_BASED_KEYPHRASE_VARIANT ]:
                 logger.info("---------recommendation_type statistic----------")
@@ -665,7 +601,11 @@ class ResourceRecommenderService:
                 _slide = self.db.get_slide(body["slide_id"])
                 slide_concepts = _slide[0]["s"]["concepts"]
                 # cro_form["concepts"] = slide_concepts
-                clu = self.cro_form_logic_updated(cro_form=cro_form, top_n=5, user_embedding=False)
+                clu = self.save_and_get_concepts_modified(  recs_params=recs_params, top_n=5, user_embedding=False, 
+                                            understood_list=body["understood_concept_ids"], 
+                                            non_understood_list=body["non_understood_concept_ids"]
+                                        )
+                
                 clu["concepts"] = slide_concepts
 
             cro_form = clu["cro_form"]
