@@ -136,76 +136,6 @@ class ResourceRecommenderService:
     ######
     # CRO logic
 
-    """
-    def save_and_get_concepts_modified2(self, recs_params, understood_list=[], non_understood_list =[]):
-        '''
-            recs_params: {
-                "user_id": "65e0536db1effed771dbdbb9",
-                "mid": "6662201fec6bb9067ff71cc9",
-                "slide_id": 1,
-                "category": "1",
-                "concepts": [
-                    {
-                        "cid": "2156985142238936538",
-                        "mid": "6662201fec6bb9067ff71cc9",
-                        "weight": 0.79
-                    }
-                ],
-                "recommendation_type": "1",
-                "factor_weights": {
-                    "status": true,
-                    "reload": true,
-                    "weights": {
-                        "similarity_score": 0.7,
-                        "creation_date": 0.3,
-                        "views": 0.3,
-                        "like_count": 0.1,
-                        "user_rating": 0.1,
-                        "nbr_saves": 0.1
-                    }
-                }
-            }
-        '''
-        result = {
-            "concepts": [],
-            "concept_cids": [],
-            "concept_names": [],
-            "recs_params": recs_params,
-            "user_embedding": None
-        }
-        tx = self.db.driver.session()
-        user_id = recs_params["user_id"]
-        concepts = recs_params["concepts"]
-        concepts_udpated = []
-
-        # update status between understood and non-understood
-        if len(understood_list) > 0:
-            for cid in understood_list:
-                self.db.update_concept_modified_weight(user_id=user_id, cid=cid, status='u')
-
-        if len(concepts) > 0:
-          
-          # get user node
-            user_node = self.db.cro_get_user(user_id=user_id)
-
-            for concept in concepts:
-                concept_modified_node_exists = self.db.get_concept_modified(user_id=user_id, cid=cid, weight=concept["weight"])
-
-                if concept_modified_node_exists is not None:
-                    concept_updated = self.db.update_concept_modified_weight(user_id=user_id, cid=cid, weight=concept["weight"])
-                    concepts_udpated.append(concept_updated)
-
-                else:
-                    # create node Concept_modified
-                    concept_created = self.db.create_concept_modified2(user_id=user_id, concept=concept, user_node=user_node)
-                    concepts_udpated.append(concept_created)
-
-            # update user embedding value (because weight value could be changed from the user)
-            new_user_embedding = self.db.get_user_embedding_with_concept_modified(user=user_node, mid=recs_params["mid"])
-            result["user_embedding"] = new_user_embedding
-
-    """
-
     def save_and_get_concepts_modified(self, recs_params, understood_list=[], non_understood_list =[]):
         '''
             recs_params: {
@@ -244,13 +174,14 @@ class ResourceRecommenderService:
             "user_embedding": None
         }
         user_id = recs_params["user_id"]
+        mid = recs_params["mid"]
         concepts = recs_params["concepts"]
         concepts_udpated = []
 
         # update status between understood and non-understood
         if len(understood_list) > 0:
             for cid in understood_list:
-                self.db.update_concept_modified_weight(user_id=user_id, cid=cid, status='u')
+                self.db.update_r_btw_user_and_cm(user_id=user_id, cid=cid, weight=None, mid=None, status='u', only_status=True)
 
         if len(concepts) > 0:
           
@@ -258,16 +189,7 @@ class ResourceRecommenderService:
             user_node = self.db.cro_get_user(user_id=user_id)
 
             for concept in concepts:
-                concept_modified_node_exists = self.db.get_concept_modified(user_id=user_id, cid=cid, weight=concept["weight"])
-
-                if concept_modified_node_exists is not None:
-                    concept_updated = self.db.update_concept_modified_weight(user_id=user_id, cid=cid, weight=concept["weight"])
-                    concepts_udpated.append(concept_updated)
-
-                else:
-                    # create node Concept_modified
-                    concept_created = self.db.create_concept_modified(user_id=user_id, concept=concept, user_node=user_node)
-                    concepts_udpated.append(concept_created)
+                concept_modified = self.db.update_r_btw_user_and_cm(user_id=user_id, cid=cid, weight=concept["weight"], mid=concept["mid"], status='dnu')
 
             # update user embedding value (because weight value could be changed from the user)
             new_user_embedding = self.db.get_user_embedding_with_concept_modified(user=user_node, mid=recs_params["mid"])

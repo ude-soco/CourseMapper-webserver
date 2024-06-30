@@ -2017,6 +2017,9 @@ class NeoDataBase:
         return result
 
 
+
+    ########
+    ########
     
     def create_concept_modified(self, cid: str):
         '''
@@ -2043,168 +2046,50 @@ class NeoDataBase:
                 cid=concept_original["cid"],
                 final_embedding=concept_original["final_embedding"]
             ).single()
+            concept = {"node_id": concept["node_id"], "cid": concept["cid"]}
+
         return concept
 
-    def update_r_btw_user_and_cm(self, user_id: str, weight: float, mid: str, status: str):
+    def update_r_btw_user_and_cm(self, user_id: str, cid: str, weight: float, mid: str, status: str, only_status=False):
         '''
             Create or Update relationship between nodes 'User' and 'Concept_modified'
+            typ: remove (from understood_list)
         '''
         tx = self.driver.session()
 
-        # check if the relationship already exists
-        r_btw_user_and_cm = tx.run(
-            '''
-                MATCH p=(u)-[r:HAS_MODIFIED]->(c) 
-                WHERE u.uid = $user_id AND c.user_id = $user_id AND r.weight = $weight AND r.mid = $mid AND r.status = $status
-                RETURN ID(c) as cm_id, r.weight as weight, r.cid as cid, c.mid as mid, c.status as status
-            ''',
-            user_id=user_id,
-            weight=weight,
-            mid=mid,
-            status=status
-        ).single()
-
-        # if yes, then update the attributes
-        if r_btw_user_and_cm:
-            r_btw_user_and_cm = tx.run(
+        if only_status == True:
+            tx.run(
                 '''
-                    MATCH p=(u)-[r:HAS_MODIFIED]->(c) 
-                    WHERE u.uid = $user_id AND c.user_id = $user_id AND c.weight = $weight AND c.mid = $mid AND c.status = $status
-                    SET r.weight = $weight, r.status = $status,
-                    RETURN ID(c) as cm_id, c.weight as weight, c.cid as cid, c.mid as mid, c.status as status
+                    MATCH (a:User)-[r:HAS_MODIFIED]->(b:Concept_modified)
+                    WHERE a.uid = $user_id AND r.user_id = $user_id AND b.cid = $cid
+                    SET r.status = $status
                 ''',
                 user_id=user_id,
+                cid=cid,
+                status=status
+            ).single()
+
+        else:
+            r_detail = tx.run(
+                '''
+                    MATCH (a:User {uid: $user_id}), (b:Concept_modified {cid: $cid})
+                    MERGE (a)-[r:HAS_MODIFIED]->(b)
+                    ON CREATE SET r.user_id = $user_id, r.weight = $weight, r.mid = $mid, r.status = $status
+                    ON MATCH SET  r.user_id = $user_id, r.weight = $weight, r.mid = $mid, r.status = $status
+                    RETURN ID(b) as cm_id, b.cid as cid, r.weight as weight, r.mid as mid, r.status as status
+                ''',
+                user_id=user_id,
+                cid=cid,
                 weight=weight,
                 mid=mid,
                 status=status
             ).single()
-        else:
-            # if no, then create new relationship and add the attributes
-            pass
 
-    
-
-
-    def get_concept_modified(self, user_id: str, cid: str, weight: float):
-        '''
-            Getting node 'Concept_modified'
-            check if the node Concept_modified exist
-        '''
-
-        logger.info("Getting node: Concept_modified")
-        result = None
-        with self.driver.session() as session:
-            result = session.run(
-                '''
-                    MATCH (c:Concept_modified)
-                    WHERE c.user_id = $user_id and c.cid = $cid and c.weight = $weight
-                    RETURN ID(c) as node_id, c.cid as cid, c.weight as weight
-                ''',
-                user_id=user_id,
-                cid=cid,
-                weight=weight
-            ).single()
-        return result
-    
-    def update_concept_modified_weight(self, user_id: str, cid: str, weight: float=None, status: str=None):
-        '''
-            Update node 'Concept_modified' attributes
-        '''
-
-        result = None
-        tx = self.driver.session()
-
-        if weight:
-            logger.info("Updating node 'Concept_modified' attribute: weight")
-
-            result = tx.run(
-                '''
-                    MATCH (c:Concept_modified)
-                    WHERE c.user_id = $user_id and c.cid = $cid and c.weight = $weight
-                    RETURN ID(c) as node_id, c.cid as cid, c.weight as weight
-                ''',
-                user_id=user_id,
-                cid=cid,
-                weight=weight
-            ).single()
-
-        elif status:
-            logger.info("Updating node 'Concept_modified' attribute: status")
-
-            result = tx.run(
-                '''
-                    MATCH p=(u)-[r:HAS_MODIFIED]->(c) 
-                    WHERE c.user_id = $user_id AND c.cid = $cid
-                    SET c.status = $status
-                    RETURN ID(c) as node_id, c.cid as cid, c.weight as weight
-                ''',
-                user_id=user_id,
-                cid=cid,
-                status=status
-            ).single()
-
-        return result
-    
-    def create_concept_modified2(self, user_id: str, concept: dict, user_node: dict):
-        '''
-            Creating node 'Concept_modified'
-        '''
-
-        tx = self.driver.session()
-        concept_modified_node = tx.run(
-                '''
-                    MERGE (c: Concept_modified {
-                            user_id: $user_id, 
-                            cid: $cid, 
-                            weight: $weight, 
-                            mid: $mid, 
-                            status: $status
-                        })
-                    RETURN ID(c) as node_id, c.cid as cid, c.weight as weight
-                ''',
-                user_id=user_id,
-                cid=concept["cid"],
-                weight=concept["weight"],
-                mid=concept["mid"],
-                status='dnu'
-            ).single()
-        
-        if concept_modified_node is not None:
-            logger.info("Creating relationship between node User and Concept_modified")
-            tx.run(
-                    '''
-                        MATCH (a:User),(b:Concept_modified)
-                        WHERE ID(a) = $id_a AND ID(b) = $id_b
-                        MERGE (a)-[r:HAS_MODIFIED]->(b)
-                        RETURN r
-                    ''',
-                    id_a=user_node["node_id"],
-                    id_b=concept_modified_node["node_id"]
-                )
-
-            logger.info("Creating relationship between Concept_modified and original concept")
-            concept_original = tx.run(
-                    '''
-                    MATCH (c:Concept)
-                    WHERE c.cid = $cid
-                    RETURN ID(c) as node_id
-                    ''',
-                    cid=concept["cid"]
-                ).single()
-            
-            if concept_original is not None:
-                tx.run(
-                        '''
-                        MATCH (a:Concept_modified),(b:Concept)
-                        WHERE ID(a) = $id_a AND ID(b) = $id_b
-                        MERGE (a)-[r:ORIGINATED_FROM]->(b)
-                        RETURN r
-                        ''',
-                        id_a=concept_modified_node["node_id"],
-                        id_b=concept_original["node_id"]
-                    )
-
-        return concept_modified_node
+            r_detail = { "cm_id": r_detail["cm_id"], "cid": r_detail["cid"], 
+                        "weight": r_detail["weight"], "mid": r_detail["mid"], 
+                        "status": r_detail["status"]
+                    }
+            return r_detail
 
     def get_user_embedding_with_concept_modified(tx, user, mid):
         """
@@ -2245,10 +2130,6 @@ class NeoDataBase:
             logger.info("get user embedding")
         
         return embedding
-
-
-
-
 
     def get_user_rating_detail_by(self, rating: dict):
         """
