@@ -174,7 +174,6 @@ class ResourceRecommenderService:
             "user_embedding": None
         }
         user_id = recs_params["user_id"]
-        mid = recs_params["mid"]
         concepts = recs_params["concepts"]
         concepts_modified = []
 
@@ -185,16 +184,17 @@ class ResourceRecommenderService:
 
         if len(concepts) > 0:
           
-          # get user node
-            user_node = self.db.cro_get_user(user_id=user_id)
-
             for concept in concepts:
                 concept_modified = self.db.update_r_btw_user_and_cm(user_id=user_id, cid=cid, weight=concept["weight"], mid=concept["mid"], status='dnu')
                 concepts_modified.append(concept_modified)
 
             # update user embedding value (because weight value could be changed from the user)
-            new_user_embedding = self.db.get_user_embedding_with_concept_modified(user=user_node, mid=recs_params["mid"])
-            result["user_embedding"] = new_user_embedding
+            user_embedding = self.db.get_user_embedding_with_concept_modified(user_id=user_id, mid=recs_params["mid"], status='dnu')
+            result["user_embedding"] = user_embedding
+        
+        result["concept_cids"]  = [concept["cid"] for concept in concepts]
+        result["concept_names"] = [concept["name"] for concept in concepts]
+        return result
 
 
     def cro_form_logic_updated(

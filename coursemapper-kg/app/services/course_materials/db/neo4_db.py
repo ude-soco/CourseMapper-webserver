@@ -2091,24 +2091,36 @@ class NeoDataBase:
                     }
             return r_detail
 
-    def get_user_embedding_with_concept_modified(tx, user, mid):
+    def get_user_embedding_with_concept_modified(self, user_id: str, mid: str, status: str):
         """
+            Update User Embedding value based on nodes 'Concept_modified'
         """
-        logger.info("Getting User embeddings")
         embedding = ""
-        
+        tx = self.driver.session()
+
         # Find concept embeddings that user doesn't understand
-        results = tx.run(
-            """MATCH p=(u)-[r:dnu]->(c) where u.uid=$uid and c.mid=$mid RETURN c.final_embedding as embedding, c.weight as weight""",
-            uid=user["id"],
-            mid=mid)
-        embeddings = list(results)
+        embeddings = tx.run(
+            '''
+                MATCH (a:User)-[r:HAS_MODIFIED]->(b:Concept_modified)
+                WHERE   a.uid = $user_id AND r.user_id = $user_id AND 
+                        r.mid = $mid AND r.status = $status
+                RETURN b.final_embedding as embedding, r.weight as weight
+            ''',
+            user_id=user_id,
+            mid=mid,
+            status=status
+        ).data()
+
         # If the user does not have concepts that he does not understand, the list is empty
-        if not embeddings:
-            tx.run("""MATCH (u:User) WHERE u.uid=$uid set u.embedding=$embedding""",
-                uid=user["id"],
-                embedding="")
-            logger.info("reset user embedding")
+        if len(embeddings) == 0:
+            tx.run(
+                '''
+                MATCH (u:User) WHERE u.uid=$user_id set u.embedding=$embedding
+                ''',
+                user_id=user_id,
+                embedding=""
+            )
+            # logger.info("reset user embedding")
         else:
             sum_embeddings = 0
             sum_weights = 0
@@ -2124,12 +2136,16 @@ class NeoDataBase:
                 sum_weights = sum_weights + embedding["weight"]
             # The weighted average of final embeddings of all dnu concepts
             average = np.divide(sum_embeddings, sum_weights)
-            tx.run("""MATCH (u:User) WHERE u.uid=$uid set u.embedding=$embedding""",
-                uid=user["id"],
-                embedding=','.join(str(i) for i in average))
-            logger.info("get user embedding")
-        
+            embedding=','.join(str(i) for i in average)
+
+            tx.run("""MATCH (u:User) WHERE u.uid=$user_id set u.embedding=$embedding""",
+                user_id=user_id,
+                embedding=embedding
+            )
+            # logger.info("get user embedding")
+
         return embedding
+
 
     def get_user_rating_detail_by(self, rating: dict):
         """
