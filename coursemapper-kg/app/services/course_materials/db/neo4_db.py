@@ -2525,15 +2525,13 @@ class NeoDataBase:
 
             return result
 
-
-
-    def cro_remove_relation_btw_resource_and_concept_cro(self, concepts_cro: list):
+    def remove_relation_btw_resource_and_concepts(self, concepts: list):
         """
             Remove Relationship between Resource and Concept_modified
         """
         logger.info("Remove Relationship between Resource and Concept_modified")
 
-        concept_ids = [node["node_id"] for node in concepts_cro]
+        concept_ids = [node["node_id"] for node in concepts]
         with self.driver.session() as session:
             session.run(
                     """
@@ -2544,9 +2542,9 @@ class NeoDataBase:
                     concept_ids=concept_ids
                 )
             
-    def retrieve_resources(self, concepts_cro: list):
+    def retrieve_resources(self, concepts: list):
         """
-            Getting List of Resources Containing Concept_modified
+            Getting List of Resources connected to Concept_modified
         """
         def resource_replace_none_value(value):
             if value == None:
@@ -2556,7 +2554,7 @@ class NeoDataBase:
         # logger.info("Getting List of Resources Containing Concept_modified")
 
         result = []
-        cids = [node["cid"] for node in concepts_cro]
+        cids = [node["cid"] for node in concepts]
         with self.driver.session() as session:
             result = session.run(
                 """
@@ -2581,7 +2579,7 @@ class NeoDataBase:
             result = self.resources_wrapper_from_query(data=result)
         return result
 
-    def cro_edit_relationship_btw_concepts_cro_and_resources(self, concepts_cro: list, resources: list, old_relationship=True):
+    def edit_relationship_btw_concepts_and_resources(self, concepts: list, resources: list, old_relationship=True):
         """
             update (create or remove) relationship btw Resource and Concept_modified
             whether the list of result still contain the Resource
@@ -2590,10 +2588,10 @@ class NeoDataBase:
         logger.info("Editing Relationship between Resource and Concept_modified")
 
         if old_relationship:
-            self.cro_remove_relation_btw_resource_and_concept_cro(concepts_cro=concepts_cro)
+            self.remove_relation_btw_resource_and_concepts(concepts=concepts)
 
         resources_ids = [node["node_id"] for node in resources]
-        cids = [node["node_id"] for node in concepts_cro]
+        cids = [node["node_id"] for node in concepts]
         with self.driver.session() as session:
             session.run(
                 """

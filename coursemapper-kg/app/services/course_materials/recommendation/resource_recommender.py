@@ -232,8 +232,8 @@ class ResourceRecommenderService:
                 }
         return result
     
-    def cro_edit_relationship_btw_concepts_cro_and_resources(self, concepts_cro: list, resources: list):
-        self.db.cro_edit_relationship_btw_concepts_cro_and_resources(concepts_cro=concepts_cro, 
+    def edit_relationship_btw_concepts_and_resources(self, concepts_cro: list, resources: list):
+        self.db.edit_relationship_btw_concepts_and_resources(concepts_cro=concepts_cro, 
                                                                      resources=resources,
                                                                      old_relationship=True
                                                                     )
@@ -495,7 +495,7 @@ class ResourceRecommenderService:
                 )
             else:
                 # store resources into Database: Redis
-                key_name = f"rec_params_{user_id}"
+                key_name = f"{user_id}_recs_new"
                 self.redis_client.set(name=key_name, value=json.dumps(resources), ex=self.redis_client_expiration_time)
         
         return resources
@@ -559,7 +559,7 @@ class ResourceRecommenderService:
         user_id = rec_params["user_id"]
         concepts = rec_params["user_id"]
 
-        key_name = f"rec_params_{user_id}"
+        key_name = f"{user_id}_recs_new"
         result_temp = self.redis_client.get(key_name)
 
         if result_temp:
@@ -601,9 +601,14 @@ class ResourceRecommenderService:
         concepts = rec_params["concepts"]
 
         # check if user add or change concpet(s) to the concepts list
+        # check if resources (saved temporally: Redis) have already been recommended for the concepts given
         are_concepts_sane, resources = self.check_request_temp(data_rec_params=rec_params)
         if are_concepts_sane == False:
             result = self.rank_resources(resources=resources, weights=factor_weights)
+        
+            # get resources connected to concepts from the database (Neo4j)
+            # combine the 02 resources list and remove duplicates
+            resourse_2 = self.db.retrieve_resources(concepts=concepts)
 
         else:
             logger.info("---- concepts updated ----")
@@ -670,7 +675,7 @@ class ResourceRecommenderService:
 
             if len(resources) > 0:
                 resources = [{"node_id": node["id"]} for node in resources]
-                self.cro_edit_relationship_btw_concepts_cro_and_resources(concepts_cro=rec_params["concepts"], resources=resources)
+                self.edit_relationship_btw_concepts_and_resources(concepts_cro=rec_params["concepts"], resources=resources)
                 resources = self.db.retrieve_resources(concepts_cro=rec_params["concepts"])
 
                 result = self.rank_resources(resources=resources, weights=factor_weights)
