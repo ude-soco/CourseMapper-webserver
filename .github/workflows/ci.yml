@@ -45,7 +45,7 @@ jobs:
     needs: [ assert-branch ]
     uses: ./.github/workflows/build.yml
     with:
-      services:        '[ "coursemapper-kg", "webapp", "webserver" ]'
+      services:        '[ "webapp", "webserver", "coursemapper-kg/concept-map", "coursemapper-kg/preprocess", "coursemapper-kg/recommendation", "coursemapper-kg/wp-pg" ]'
       base_image_name: "socialcomputing/coursemapper-webserver-"
       push:            ${{ github.event_name != 'pull_request' }}
     secrets:
