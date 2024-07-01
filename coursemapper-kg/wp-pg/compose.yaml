@@ -1,6 +1,6 @@
 services:
   wp-pg:
-    image: ${IMAGE_NAME_PREFIX:-socialcomputing/}coursemapper-webserver-coursemapper-wp-pg:${IMAGE_TAG:-latest}
+    image: ${IMAGE_NAME_PREFIX:-socialcomputing/}coursemapper-webserver-coursemapper-kg-wp-pg:${IMAGE_TAG:-latest}
     build: .
     environment:
       POSTGRES_PASSWORD: password

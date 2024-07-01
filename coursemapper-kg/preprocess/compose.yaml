@@ -1,6 +1,7 @@
 services:
   preprocess:
     platform: linux/x86_64
+    image: ${IMAGE_NAME_PREFIX:-socialcomputing/}coursemapper-webserver-coursemapper-kg-preprocess:${IMAGE_TAG:-latest}
     build: .
     environment:
       POSTGRES_PASSWORD: password
