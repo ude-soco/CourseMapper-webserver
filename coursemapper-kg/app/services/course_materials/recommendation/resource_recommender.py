@@ -608,7 +608,7 @@ class ResourceRecommenderService:
         
             # get resources connected to concepts from the database (Neo4j)
             # combine the 02 resources list and remove duplicates
-            resourse_2 = self.db.retrieve_resources(concepts=concepts)
+            resourse_bg = self.db.retrieve_resources(concepts=concepts)
 
         else:
             logger.info("---- concepts updated ----")
