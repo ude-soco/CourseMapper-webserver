@@ -22,7 +22,7 @@ def compute_combined_similatity(data, alpha, recommendation_type, with_user):
     logger.info("Compute Fused Cosine Similarities")
     if with_user:
         data[recommendation_type] = (1 - alpha) * data[
-            RecommendationType.PKG_BASED_DOCUMENT__VARIANT
+            RecommendationType.PKG_BASED_DOCUMENT_VARIANT
         ] + data[RecommendationType.PKG_BASED_KEYPHRASE_VARIANT] * alpha
     else:
         data[recommendation_type] = (1 - alpha) * data[
@@ -278,7 +278,7 @@ class Recommender:
             return data # sorted_data.head(top_n)
         
         # If Model 2
-        elif recommendation_type == RecommendationType.PKG_BASED_DOCUMENT__VARIANT:
+        elif recommendation_type == RecommendationType.PKG_BASED_DOCUMENT_VARIANT:
             # Transform embedding to tensor
             user_embedding_array = user_embedding.split(",")
             user_embedding_array = [float(i) for i in user_embedding_array]

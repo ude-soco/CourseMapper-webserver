@@ -6,7 +6,7 @@ class RecommendationType(Enum):
     CONTENT_BASED_DOCUMENT_VARIANT = "static_document_based"
     CONTENT_BASED_KEYPHRASE_VARIANT = "static_keyphrase_based"
     PKG_BASED_KEYPHRASE_VARIANT = "dynamic_keyphrase_based"
-    PKG_BASED_DOCUMENT__VARIANT = "dynamic_document_based"
+    PKG_BASED_DOCUMENT_VARIANT = "dynamic_document_based"
     COMBINED_DYNAMIC = "combined_dynamic"
     COMBINED_STATIC = "combined_static"
 
@@ -18,7 +18,7 @@ class RecommendationType(Enum):
         """
         sources = {
             "1": RecommendationType.PKG_BASED_KEYPHRASE_VARIANT,
-            "2": RecommendationType.PKG_BASED_DOCUMENT__VARIANT,
+            "2": RecommendationType.PKG_BASED_DOCUMENT_VARIANT,
             "3": RecommendationType.CONTENT_BASED_KEYPHRASE_VARIANT,
             "4": RecommendationType.CONTENT_BASED_DOCUMENT_VARIANT,
         }
@@ -38,7 +38,7 @@ class RecommendationType(Enum):
         if recommendation_type == "1":
             result = RecommendationType.PKG_BASED_KEYPHRASE_VARIANT
         elif recommendation_type == "2":
-            result = RecommendationType.PKG_BASED_DOCUMENT__VARIANT
+            result = RecommendationType.PKG_BASED_DOCUMENT_VARIANT
         elif recommendation_type == "3":
             result = RecommendationType.CONTENT_BASED_KEYPHRASE_VARIANT
         elif recommendation_type == "4":

@@ -193,14 +193,18 @@ class ResourceRecommenderService:
                 self.db.update_r_btw_user_and_cm(user_id=user_id, cid=cid, weight=None, mid=None, status='u', only_status=True)
 
         if len(concepts) > 0:
+            if rec_params["recommendation_type"] in ["1", "2"]:
+                status = 'dnu'
+            else:
+                status = 'content' # for CONTENT_BASED_
           
             for concept in concepts:
-                concept_modified = self.db.update_r_btw_user_and_cm(user_id=user_id, cid=cid, weight=concept["weight"], mid=concept["mid"], status='dnu')
+                concept_modified = self.db.update_r_btw_user_and_cm(user_id=user_id, cid=cid, weight=concept["weight"], mid=concept["mid"], status=status)
                 concepts_modified.append(concept_modified)
 
             # update user embedding value (because weight value could be changed from the user)
             if user_embedding:
-                user_embedding = self.db.get_user_embedding_with_concept_modified(user_id=user_id, mid=rec_params["mid"], status='dnu')
+                user_embedding = self.db.get_user_embedding_with_concept_modified(user_id=user_id, mid=rec_params["mid"], status=status)
                 result["user_embedding"] = user_embedding
         
         result["concept_cids"]  = [concept["cid"] for concept in concepts]
@@ -369,7 +373,7 @@ class ResourceRecommenderService:
 
         return resources
 
-    def retrieve_resources(self, resources: list, weights: dict = None, ratings: list = None):
+    def rank_resources(self, resources: list, weights: dict = None, ratings: list = None):
         """
             Ranking/Sorting Logic for Resources
             Result Form: {"articles": list, "videos": list}
@@ -480,7 +484,7 @@ class ResourceRecommenderService:
             ### ONLY SAVE Resources without Creating Relationship "CONTAINS" to "Concept"
             
             if len(concept_ids) == 1:
-                # Otherwise proceed save the results in the database
+                # Otherwise proceed save the results in the database: Neo4j
                 resources, relationships = self.db.get_or_create_resoures_relationships(
                     wikipedia_articles=wikipedia_articles,
                     youtube_videos=youtube_videos,
@@ -490,8 +494,9 @@ class ResourceRecommenderService:
                     recommendation_type=recommendation_type,
                 )
             else:
-                # store resources into Redis Database
-                pass
+                # store resources into Database: Redis
+                key_name = f"rec_params_{user_id}"
+                self.redis_client.set(name=key_name, value=json.dumps(resources), ex=self.redis_client_expiration_time)
         
         return resources
     
@@ -595,19 +600,13 @@ class ResourceRecommenderService:
         factor_weights = self.build_factor_weights(body["rec_params"]["factor_weights"]["weights"])
         concepts = rec_params["concepts"]
 
-        # check if user add new concpet to the concepts list
+        # check if user add or change concpet(s) to the concepts list
         are_concepts_sane, resources = self.check_request_temp(data_rec_params=rec_params)
-
-
-
-        # check whether to only rank resources
-        if body["croForm"]["factor_weights"]["reload"] == True:
-            logger.info("----Ranking Resourses----")
-            resources = self.db.cro_get_resources(concepts_cro=rec_params["concepts"])
-            result = self.retrieve_resources(resources=resources, weights=factor_weights)
+        if are_concepts_sane == False:
+            result = self.rank_resources(resources=resources, weights=factor_weights)
 
         else:
-            logger.info("----new concepts----")
+            logger.info("---- concepts updated ----")
             # Check if parameters exist. If one doesn't exist, return not found message
             # check_message = resource_recommender_service.check_parameters(
             # slide_id, material_id, user_id, non_understood_concept_ids, understood_concept_ids, new_concept_ids, recommendation_type)
@@ -625,7 +624,7 @@ class ResourceRecommenderService:
             user = {"name": body["username"], "id": body["user_id"] , "user_email": body["user_email"] }
             _slide = None
             # If personalized recommendtion, build user model
-            if recommendation_type in [ RecommendationType.PKG_BASED_DOCUMENT__VARIANT, RecommendationType.PKG_BASED_KEYPHRASE_VARIANT ]:
+            if recommendation_type in [ RecommendationType.PKG_BASED_DOCUMENT_VARIANT, RecommendationType.PKG_BASED_KEYPHRASE_VARIANT ]:
                 logger.info("---------recommendation_type dyn----------")
 
                 self._construct_user(
@@ -655,7 +654,6 @@ class ResourceRecommenderService:
 
             rec_params_concpets = clu["cro_form"]
             user_embedding = clu.get("user_embedding")
-            # concepts = cro_form["concepts"]
             concept_ids = [concept["cid"] for concept in rec_params_concpets["concepts"]]
             not_understood_concept_list = [concept["name"] for concept in rec_params_concpets["concepts"]]
 
@@ -673,9 +671,9 @@ class ResourceRecommenderService:
             if len(resources) > 0:
                 resources = [{"node_id": node["id"]} for node in resources]
                 self.cro_edit_relationship_btw_concepts_cro_and_resources(concepts_cro=rec_params["concepts"], resources=resources)
-                resources = self.db.cro_get_resources(concepts_cro=rec_params["concepts"])
+                resources = self.db.retrieve_resources(concepts_cro=rec_params["concepts"])
 
-                result = self.retrieve_resources(resources=resources, weights=factor_weights)
+                result = self.rank_resources(resources=resources, weights=factor_weights)
             else:
                 result = {"articles": [], "videos": []}
 

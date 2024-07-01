@@ -2544,7 +2544,7 @@ class NeoDataBase:
                     concept_ids=concept_ids
                 )
             
-    def cro_get_resources(self, concepts_cro: list):
+    def retrieve_resources(self, concepts_cro: list):
         """
             Getting List of Resources Containing Concept_modified
         """
