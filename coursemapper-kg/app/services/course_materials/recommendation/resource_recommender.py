@@ -15,6 +15,8 @@ from dateutil.parser import parse as date_parse
 
 import numpy as np
 from sklearn.preprocessing import normalize as normalize_sklearn, MinMaxScaler as MinMaxScaler_sklearn
+import redis
+import json
 
 
 from log import LOG
@@ -28,6 +30,11 @@ class ResourceRecommenderService:
         neo4j_pass = current_app.config.get("NEO4J_PASSWORD")  # type: ignore
 
         self.db = NeoDataBase(neo4j_uri, neo4j_user, neo4j_pass)
+
+        # Connect to Redis
+        self.redis_client = redis.Redis(host='localhost', port=6379, db=0)
+        self.redis_client_expiration_time = 60 * 10080 # for 1 week
+
 
     def check_parameters(
         self,
@@ -136,9 +143,9 @@ class ResourceRecommenderService:
     ######
     # CRO logic
 
-    def save_and_get_concepts_modified(self, recs_params, top_n=5, user_embedding=False, understood_list=[], non_understood_list =[]):
+    def save_and_get_concepts_modified(self, rec_params, top_n=5, user_embedding=False, understood_list=[], non_understood_list =[]):
         '''
-            recs_params: {
+            rec_params: {
                 "user_id": "65e0536db1effed771dbdbb9",
                 "mid": "6662201fec6bb9067ff71cc9",
                 "slide_id": 1,
@@ -170,13 +177,13 @@ class ResourceRecommenderService:
             "concepts": [],
             "concept_cids": [],
             "concept_names": [],
-            "recs_params": recs_params,
+            "rec_params": rec_params,
             "user_embedding": None
         }
         concepts_modified = []
-        user_id = recs_params["user_id"]
+        user_id = rec_params["user_id"]
 
-        concepts: list = recs_params["concepts"]
+        concepts: list = rec_params["concepts"]
         concepts.sort(key=lambda x: x["weight"], reverse=True)
         concepts = concepts[:top_n]
 
@@ -193,7 +200,7 @@ class ResourceRecommenderService:
 
             # update user embedding value (because weight value could be changed from the user)
             if user_embedding:
-                user_embedding = self.db.get_user_embedding_with_concept_modified(user_id=user_id, mid=recs_params["mid"], status='dnu')
+                user_embedding = self.db.get_user_embedding_with_concept_modified(user_id=user_id, mid=rec_params["mid"], status='dnu')
                 result["user_embedding"] = user_embedding
         
         result["concept_cids"]  = [concept["cid"] for concept in concepts]
@@ -362,7 +369,7 @@ class ResourceRecommenderService:
 
         return resources
 
-    def cro_sort_result(self, resources: list, weights: dict = None, ratings: list = None):
+    def retrieve_resources(self, resources: list, weights: dict = None, ratings: list = None):
         """
             Ranking/Sorting Logic for Resources
             Result Form: {"articles": list, "videos": list}
@@ -449,8 +456,6 @@ class ResourceRecommenderService:
                     )
                     futures[future] = resource_type
 
-            # print(future.result())
-            # print(future.__dict__)
             
             # When one of the parallel operations is finish retrieve results
             # 3000s is the maximum time allowed for each operation
@@ -473,20 +478,24 @@ class ResourceRecommenderService:
         else:
             #### TO DO -> Improving Saving Performance
             ### ONLY SAVE Resources without Creating Relationship "CONTAINS" to "Concept"
-
-            # Otherwise proceed save the results in the database
-            resources, relationships = self.db.get_or_create_resoures_relationships(
-                wikipedia_articles=wikipedia_articles,
-                youtube_videos=youtube_videos,
-                user_id=user_id,
-                material_id=material_id,
-                concept_ids=concept_ids,
-                recommendation_type=recommendation_type,
-            )
+            
+            if len(concept_ids) == 1:
+                # Otherwise proceed save the results in the database
+                resources, relationships = self.db.get_or_create_resoures_relationships(
+                    wikipedia_articles=wikipedia_articles,
+                    youtube_videos=youtube_videos,
+                    user_id=user_id,
+                    material_id=material_id,
+                    concept_ids=concept_ids,
+                    recommendation_type=recommendation_type,
+                )
+            else:
+                # store resources into Redis Database
+                pass
         
         return resources
     
-    def cro_extract_meta_data(self, data_recs_params: dict, data_default: dict=None):
+    def rec_params_request_mapped(self, data_rec_params: dict, data_default: dict=None):
         understood = data_default.get("understoodConcepts")
         non_understood = data_default.get("nonUnderstoodConcepts")
         new_concepts = data_default.get("newConcepts")
@@ -503,7 +512,7 @@ class ResourceRecommenderService:
             "username": data_default.get("username"),
             "user_id": data_default.get("userId"),
             "user_email": data_default.get("userEmail"),
-            "croForm": data_recs_params,
+            "rec_params": data_rec_params,
         }
 
     def build_factor_weights(self, factor_weights_params: dict = None):
@@ -532,34 +541,70 @@ class ResourceRecommenderService:
             "video": factor_weights_viedos
         }
     
-    def _get_resources(self, data_recs_params: dict, data_default: dict=None):
+    def check_request_temp(self, rec_params: dict, key="cid"):
+        '''
+            key = rec_params_user_id
+            get temp result_temp : {concepts: list, resources: list}
+            get temporal rec_params_concepts
+            if there are same from those stored in the temp
+            and return resources temp stored
+        '''
+        are_concepts_sane = True
+        resources = []
+        user_id = rec_params["user_id"]
+        concepts = rec_params["user_id"]
+
+        key_name = f"rec_params_{user_id}"
+        result_temp = self.redis_client.get(key_name)
+
+        if result_temp:
+            result_temp = json.loads(result_temp)
+            concepts_temp = result_temp["concepts"]
+
+            if len(concepts) != len(concepts_temp):
+                are_concepts_sane = False
+
+            elif len(concepts) == len(concepts_temp):
+                for dict1, dict2 in zip(concepts, concepts_temp):
+                    if dict1.get(key) != dict2.get(key):
+                        are_concepts_sane = False
+
+                resources = result_temp["resources"]
+        return are_concepts_sane, resources
+        
+    def _get_resources(self, data_rec_params: dict, data_default: dict=None):
         """
             Save cro_form, Crawl Youtube and Wikipedia API and then Store Resources
             Result: [ {"recommendation_type": str, "concepts": list(concepts), "nodes": list(resources)} ]
         """
-        body = self.cro_extract_meta_data(data_recs_params, data_default)
+        body = self.rec_params_request_mapped(data_rec_params, data_default)
         result = {}
 
         # check whether the DNUs have been aldready requested
         # dnu_found = self.cro_get_concept_cro(user_id=body["croForm"]["user_id"], cid=cid, weight=weight)
 
         # Map recommendation type to enum values
-        rec_type = body["croForm"]["recommendation_type"]
+        rec_type = body["rec_params"]["recommendation_type"]
         recommendation_type = RecommendationType.map_type(rec_type)
 
-        recs_params = {
-            "user_id": body["croForm"]["user_id"],
-            "mid": None,
-            "concepts": body["croForm"]["concepts"],
+        rec_params = {
+            "user_id": body["rec_params"]["user_id"],
+            "mid": body["rec_params"]["mid"],
+            "concepts": body["rec_params"]["concepts"],
         }
-        factor_weights = self.build_factor_weights(body["croForm"]["factor_weights"]["weights"])
-        concepts = recs_params["concepts"]
+        factor_weights = self.build_factor_weights(body["rec_params"]["factor_weights"]["weights"])
+        concepts = rec_params["concepts"]
+
+        # check if user add new concpet to the concepts list
+        are_concepts_sane, resources = self.check_request_temp(data_rec_params=rec_params)
+
+
 
         # check whether to only rank resources
         if body["croForm"]["factor_weights"]["reload"] == True:
             logger.info("----Ranking Resourses----")
-            resources = self.db.cro_get_resources(concepts_cro=recs_params["concepts"])
-            result = self.cro_sort_result(resources=resources, weights=factor_weights)
+            resources = self.db.cro_get_resources(concepts_cro=rec_params["concepts"])
+            result = self.retrieve_resources(resources=resources, weights=factor_weights)
 
         else:
             logger.info("----new concepts----")
@@ -590,7 +635,7 @@ class ResourceRecommenderService:
                     new_concepts=body["new_concept_ids"],
                     mid=body["material_id"],
                 )
-                clu = self.save_and_get_concepts_modified(  recs_params=recs_params, top_n=5, user_embedding=True, 
+                clu = self.save_and_get_concepts_modified(  rec_params=rec_params, top_n=5, user_embedding=True, 
                                                             understood_list=body["understood_concept_ids"], 
                                                             non_understood_list=body["non_understood_concept_ids"]
                                                         )
@@ -601,18 +646,18 @@ class ResourceRecommenderService:
                 _slide = self.db.get_slide(body["slide_id"])
                 slide_concepts = _slide[0]["s"]["concepts"]
                 # cro_form["concepts"] = slide_concepts
-                clu = self.save_and_get_concepts_modified(  recs_params=recs_params, top_n=5, user_embedding=False, 
+                clu = self.save_and_get_concepts_modified(  rec_params=rec_params, top_n=5, user_embedding=False, 
                                             understood_list=body["understood_concept_ids"], 
                                             non_understood_list=body["non_understood_concept_ids"]
                                         )
                 
                 clu["concepts"] = slide_concepts
 
-            cro_form = clu["cro_form"]
+            rec_params_concpets = clu["cro_form"]
             user_embedding = clu.get("user_embedding")
             # concepts = cro_form["concepts"]
-            concept_ids = [concept["cid"] for concept in cro_form["concepts"]]
-            not_understood_concept_list = [concept["name"] for concept in cro_form["concepts"]]
+            concept_ids = [concept["cid"] for concept in rec_params_concpets["concepts"]]
+            not_understood_concept_list = [concept["name"] for concept in rec_params_concpets["concepts"]]
 
             resources = self.store_resources(   
                                 recommendation_type=recommendation_type,
@@ -627,10 +672,10 @@ class ResourceRecommenderService:
 
             if len(resources) > 0:
                 resources = [{"node_id": node["id"]} for node in resources]
-                self.cro_edit_relationship_btw_concepts_cro_and_resources(concepts_cro=cro_form["concepts"], resources=resources)
-                resources = self.db.cro_get_resources(concepts_cro=cro_form["concepts"])
+                self.cro_edit_relationship_btw_concepts_cro_and_resources(concepts_cro=rec_params["concepts"], resources=resources)
+                resources = self.db.cro_get_resources(concepts_cro=rec_params["concepts"])
 
-                result = self.cro_sort_result(resources=resources, weights=factor_weights)
+                result = self.retrieve_resources(resources=resources, weights=factor_weights)
             else:
                 result = {"articles": [], "videos": []}
 
