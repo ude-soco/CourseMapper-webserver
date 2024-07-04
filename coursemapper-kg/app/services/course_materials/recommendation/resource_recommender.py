@@ -632,6 +632,9 @@ class ResourceRecommenderService:
     
     def check_request_temp(self, rec_params: dict, key="cid"):
         '''
+            check if user add or change concpet(s) to the concepts list
+            check if resources (saved temporally: Redis) have already been recommended for the concepts given
+
             key = rec_params_user_id
             get temp result_temp : {concepts: list, resources: list}
             get temporal rec_params_concepts
@@ -765,6 +768,11 @@ class ResourceRecommenderService:
         return concepts, result
 
     def create_get_resources_thread(self, func, args):
+        '''
+            active threading for the function given
+            func: the function to run
+            args: arguments taken from the function func
+        '''
         thread = threading.Thread(target=func, args=args)
         thread.start()
         # self.redis_client.set(name=f"{user_id}_{self.redis_key_1}", value=status, ex=(self.redis_client_expiration_time * 10080))
@@ -790,14 +798,11 @@ class ResourceRecommenderService:
         factor_weights = self.build_factor_weights(body["rec_params"]["factor_weights"]["weights"])
         concepts = rec_params["concepts"]
 
-        # check if user add or change concpet(s) to the concepts list
-        # check if resources (saved temporally: Redis) have already been recommended for the concepts given
         are_concepts_sane, resources_temp = self.check_request_temp(data_rec_params=rec_params)
         if are_concepts_sane == False:
-            resources = resources_temp # self.rank_resources(resources=resources, weights=factor_weights)
-            # result = self.rank_resources(resources=resources, weights=factor_weights)
+            resources = resources_temp
         
-        if True:
+        elif are_concepts_sane == False:
             # get resources connected to concepts from the database (Neo4j)
             concepts_having_resources = []
             concepts_not_having_resources = []
@@ -813,12 +818,13 @@ class ResourceRecommenderService:
             # remove duplicates and rank
             resources = resourse_found # self.rank_resources(resourse_found)
 
-        if len(concepts_not_having_resources) > 0:
-            concepts_used, resources_new = self.process_new_concepts(body=body, factor_weights=factor_weights, new_concepts=concepts_not_having_resources)
-            # self.create_get_resources_thread(self.process_new_concepts, args=(body, factor_weights, concepts_not_having_resources))
-        elif len(concepts) > 0:
-            # self.process_new_concepts(body=body, factor_weights=factor_weights)
-            self.create_get_resources_thread(self.process_new_concepts, args=(body, factor_weights))
+            if len(concepts_not_having_resources) > 0:
+                # concepts_used, resources_new = self.process_new_concepts(body=body, factor_weights=factor_weights, new_concepts=concepts_not_having_resources)
+                self.create_get_resources_thread(self.process_new_concepts, args=(body, factor_weights, concepts_not_having_resources))
+
+            elif len(concepts) > 0:
+                # self.process_new_concepts(body=body, factor_weights=factor_weights)
+                self.create_get_resources_thread(self.process_new_concepts, args=(body, factor_weights))
 
         result = self.rank_resources(resources=resources, weights=factor_weights)
         concepts = [{k: v for k, v in d.items() if k != "final_embedding"} for d in concepts]
