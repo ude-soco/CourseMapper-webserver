@@ -257,11 +257,13 @@ class ResourceRecommenderService:
                 }
         return result
     
-    def edit_relationship_btw_concepts_and_resources(self, concepts_cro: list, resources: list):
-        self.db.edit_relationship_btw_concepts_and_resources(concepts_cro=concepts_cro, 
-                                                                     resources=resources,
-                                                                     old_relationship=True
-                                                                    )
+    '''
+        def edit_relationship_btw_concepts_and_resources(self, concepts_cro: list, resources: list):
+            self.db.edit_relationship_btw_concepts_and_resources(concepts_cro=concepts_cro, 
+                                                                        resources=resources,
+                                                                        old_relationship=True
+                                                                        )
+    '''
 
     def normalize_factor_weights(self, factor_weights: dict=None, values: list=[], method_type = "l1", complete=True, sum_value=True): # List[float]
         """
