@@ -2248,6 +2248,38 @@ class NeoDataBase:
                     cid=cid
                 )
 
+    def user_saves_or_removes_resource(self, data: dict):
+        '''
+            User saves or remove Resource(s)
+            data: {
+                "user_id": "65e0536db1effed771dbdbb9",
+                "mid": "6662201fec6bb9067ff71cc9",
+                "slider_number": "slide_1",
+                "cid": "2156985142238936538",
+                "rid": "KpGtax2RBVY",
+                "status": "save"
+            }
+        '''
+        logger.info("Saving or Removing from Resource Saved List")
+        tx = self.driver.session()
+
+        if data["status"] == "save":
+            tx.run(
+                    '''
+                        MATCH (a:User {uid: $user_id}), (b:Resource {rid: $rid})
+                        MERGE (a)-[r:HAS_SAVED]->(b)
+                        ON CREATE SET r.user_id = $user_id, r.mid = $mid, r.slider_number = $slider_number, r.cid = $cid, r.rid = $rid
+                        ON MATCH SET  r.user_id = $user_id, r.mid = $mid, r.slider_number = $slider_number, r.cid = $cid, r.rid = $rid
+                    ''',
+                    user_id=data["user_id"],
+                    mid=data["mid"],
+                    slider_number=data["slider_number"],
+                    cid=data["cid"],
+                    rid=data["rid"]
+                ).single()
+        else:
+            pass
+
 
     def save_or_remove_user_resources(self, data: dict):
         """
@@ -2594,6 +2626,7 @@ class NeoDataBase:
 
     """
     
+
     ########
     ########
 
