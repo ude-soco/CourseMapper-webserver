@@ -215,7 +215,7 @@ class ResourceRecommenderService:
         # update status between understood and non-understood
         if len(understood_list) > 0:
             for cid in understood_list:
-                self.db.update_r_btw_user_and_cm(user_id=user_id, cid=cid, weight=None, mid=None, status='u', only_status=True)
+                self.db.update_rs_btw_user_and_cm(user_id=user_id, cid=cid, weight=None, mid=None, status='u', only_status=True)
 
         if len(concepts) > 0:
             if rec_params["recommendation_type"] in ["1", "2"]:
@@ -224,7 +224,7 @@ class ResourceRecommenderService:
                 status = 'content' # for CONTENT_BASED_
           
             for concept in concepts:
-                concept_modified = self.db.update_r_btw_user_and_cm(user_id=user_id, cid=cid, weight=concept["weight"], mid=concept["mid"], status=status)
+                concept_modified = self.db.update_rs_btw_user_and_cm(user_id=user_id, cid=cid, weight=concept["weight"], mid=concept["mid"], status=status)
                 concepts_modified.append(concept_modified)
 
             # update user embedding value (because weight value could be changed from the user)
@@ -237,9 +237,8 @@ class ResourceRecommenderService:
         return result
 
     def user_rates_resources(self, rating: dict):
-        self.db.user_rates_resources(rating=rating)
-        rating_found = self.db.get_user_rating_detail_by(rating=rating)
-        return rating_found
+        rating_updated = self.db.user_rates_resources(rating=rating)
+        return rating_updated
     
     def save_or_remove_user_resources(self, data: dict):
         resource_saved = self.db.save_or_remove_user_resources(data)

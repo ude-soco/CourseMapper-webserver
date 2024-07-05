@@ -2050,7 +2050,7 @@ class NeoDataBase:
 
         return concept
 
-    def update_r_btw_user_and_cm(self, user_id: str, cid: str, weight: float, mid: str, status: str, only_status=False):
+    def update_rs_btw_user_and_cm(self, user_id: str, cid: str, weight: float, mid: str, status: str, only_status=False):
         '''
             Create or Update relationship between nodes 'User' and 'Concept_modified'
             typ: remove (from understood_list)
@@ -2150,10 +2150,10 @@ class NeoDataBase:
         '''
             User rates Resource(s)
             rating: {
-                "user_id": "65e0536db1effed771dbdbb9",
+                "user_id": " 43dukl8",
                 "cid": "dsfis23sd"
                 "value": "HELPFUL" | "NOT_HELPFUL",
-                "rid": "KpGtax2RBVY",
+                "rid": "bnm565j",
                 "mid": "sdddfe"
             }
         '''
@@ -2162,20 +2162,20 @@ class NeoDataBase:
 
         # Add rating
         for cid in rating["cids"]:
-            rating_detail = tx.run(
-                            '''
-                                MATCH (a:User {uid: $user_id}), (b:Resource {rid: $rid})
-                                MERGE (a)-[r:HAS_RATED]->(b)
-                                ON CREATE SET r.user_id = $user_id, r.cid = $cid, r.value = $value, r.rid = $rid, r.mid = $mid
-                                ON MATCH SET  r.user_id = $user_id, r.cid = $cid, r.value = $value, r.rid = $rid, r.mid = $mid
-                                RETURN r.value as value, b.helpful_count as helpful_count, b.not_helpful_count as not_helpful_count
-                            ''',
-                            user_id=rating["user_id"],
-                            cid=cid,
-                            value=rating["value"],
-                            rid=rating["rid"],
-                            mid=rating["mid"]
-                        ).single()
+            tx.run(
+                    '''
+                        MATCH (a:User {uid: $user_id}), (b:Resource {rid: $rid})
+                        MERGE (a)-[r:HAS_RATED]->(b)
+                        ON CREATE SET r.user_id = $user_id, r.cid = $cid, r.value = $value, r.rid = $rid, r.mid = $mid
+                        ON MATCH SET  r.user_id = $user_id, r.cid = $cid, r.value = $value, r.rid = $rid, r.mid = $mid
+                        RETURN r.value as value, b.helpful_count as helpful_count, b.not_helpful_count as not_helpful_count
+                    ''',
+                    user_id=rating["user_id"],
+                    cid=cid,
+                    value=rating["value"],
+                    rid=rating["rid"],
+                    mid=rating["mid"]
+                ).single()
 
         # Update Resources: helpful_count and not_helpful_count
         resource_has_rated_detail = tx.run(
@@ -2183,17 +2183,33 @@ class NeoDataBase:
                     MATCH (a:Resource {rid: $rid})
                     OPTIONAL MATCH (a)<-[r:HAS_RATED {value: 'HELPFUL'}]-()
                     OPTIONAL MATCH (a)<-[r2:HAS_RATED {value: 'NOT_HELPFUL'}]-()
-                    WITH a, COUNT(r) AS like_count, COUNT(r2) AS dislike_count
-                    SET a.helpful_count = like_count, a.not_helpful_count = dislike_count
+                    WITH a, COUNT(r) AS helpful_counter, COUNT(r2) AS not_helpful_counter
+                    SET a.helpful_count = helpful_counter, a.not_helpful_count = not_helpful_counter
                     RETURN a.helpful_count as helpful_count, a.not_helpful_count as not_helpful_count
                 ''',
                 rid=rating["rid"]
             ).single()
 
         # create or remove realtion between Resources and Concept_modified
-        # helpful_count count > not_helpful_count => create relationship
         # helpful_count count < not_helpful_count => delete relationship
 
+        if rating["value"] == "HELPFUL":
+            # create realtionship
+            for cid in rating["cids"]:
+                self.update_rs_btw_resource_and_cm(rid=rating["rid"], cid=cid, action=True)
+        else:
+            # delete relationship
+            resource = tx.run(
+                        '''
+                            MATCH (n:Resource) 
+                            WHERE n.rid = $rid
+                            RETURN  COALESCE(toInteger(n.helpful_count), 0) AS helpful_count,
+                                    COALESCE(toInteger(n.not_helpful_count), 0) AS not_helpful_count
+                        ''',
+                        rid=rating["rid"]
+                    ).single()
+            if resource["helpful_count"] < resource["not_helpful_count"]:
+                self.update_rs_btw_resource_and_cm(rid=rating["rid"], cid=cid, action=False)
 
         return {
                     "voted": rating["value"],
@@ -2201,164 +2217,36 @@ class NeoDataBase:
                     "not_helpful_count": resource_has_rated_detail["not_helpful_count"],
                 }
 
-
-
-
-    def get_user_rating_detail_by(self, rating: dict):
-        """
-            Get User Rating by user_id, value, rid and cids
-            rating: {
-                "user_id": "65e0536db1effed771dbdbb9",
-                "value": "HELPFUL",
-                "rid": "KpGtax2RBVY",
-                "concepts": ["2156985142238936538", "3328549365608809871"]
-            }
-        """
-        logger.info("Getting Rating Resource Details")
-        result = None
-        with self.driver.session() as session:
-            node = session.run(
-                    """
-                        MATCH (a:User)-[r:HAS_RATED]->(b:Resource)
-                        WHERE   r.user_id = $user_id AND
-                                r.value = $value AND
-                                r.rid = $rid AND
-                                ANY(cid IN r.cids WHERE cid IN $cids)
-                        RETURN  r.value as value,
-                                COALESCE(toInteger(b.helpful_count), 0) AS helpful_count,
-                                COALESCE(toInteger(b.not_helpful_count), 0) AS not_helpful_count
-                    """,
-                    user_id=rating["user_id"],
-                    value=rating["value"],
-                    rid=rating["rid"],
-                    cids=rating["cids"]
-                ).single()
-
-            if node is not None:
-                result = {
-                    "voted": node["value"],
-                    "helpful_count": node["helpful_count"],
-                    "not_helpful_count": node["not_helpful_count"],
-                }
-
-        return result
-
-    def user_rates_resources2(self, rating: dict):
+    def update_rs_btw_resource_and_cm(self, rid: str, cid: str, action=True):
         '''
-            User rates Resource(s)
-            rating: {
-                "user_id": "65e0536db1effed771dbdbb9",
-                "cid": "dsfis23sd"
-                "value": "HELPFUL" | "NOT_HELPFUL",
-                "rid": "KpGtax2RBVY",
-                "mid": "sdddfe"
-            }
+            Update by: Create and Delete Relationship
+            between Resource and Concept_modified
+            concepts: Concept list
+            cid: cid (from concepts)
+            action: True (create) | False (delete)
         '''
-        logger.info("Saving or Removing: User Resource")
+        logger.info("Updating Relationship between Resource and Concept_modified")
         tx = self.driver.session()
 
-        node_found = tx.run(
-                    # (r.value = 'HELPFUL' OR r.value = 'NOT_HELPFUL')
-                    """
-                        MATCH (a:User)-[r:HAS_RATED]->(b:Resource)
-                        WHERE   r.user_id = $user_id AND
-                                r.value = $value AND
-                                r.rid = $rid AND
-                                ANY(cid IN r.cids WHERE cid IN $cids)
-                        RETURN ID(r) as node_id, r.value as value
-                    """,
-                    user_id=rating["user_id"],
-                    value=rating["value"],
-                    rid=rating["rid"],
-                    cids=rating["cids"]
-                ).single()
-        
-
-        logger.info("user_rates_resources ->")
-        print(node_found)
-        
-        if node_found is not None:
-            # update rating count in node "Resource" if exists
-            logger.info("update rating count in node 'Resource' if exists ->")
-
-            if node_found["value"] != rating["value"]:
-                tx.run(
-                    """
-                        MATCH (a:User)-[r:HAS_RATED]->(b:Resource)
-                        WHERE ID(r)=$node_id
-                        SET r.value=$value
-                    """,
-                    node_id=node_found["node_id"],
-                    value=rating["value"]
-                )
-
-                if rating["value"] == "HELPFUL":
-                    tx.run(
-                        """
-                            MATCH (r:Resource)
-                            WHERE r.rid=$rid
-                            SET r.helpful_count = r.helpful_count + 1, r.not_helpful_count = r.not_helpful_count - 1
-                        """,
-                        rid=rating["rid"]
-                    )
-
-                else:
-                    tx.run(
-                        """
-                            MATCH (r:Resource)
-                            WHERE r.rid=$rid
-                            SET r.helpful_count = r.helpful_count - 1, r.not_helpful_count = r.not_helpful_count + 1
-                        """,
-                        rid=rating["rid"]
-                    )
-
+        if action:
+            tx.run(
+                '''
+                    MATCH (u:Resource {rid: $rid}), (a:Concept_modified {cid: $cid})
+                    MERGE (u)-[r:BASED_ON]->(a)
+                    RETURN r
+                ''',
+                rid=rid,
+                cid=cid
+            )
         else:
             tx.run(
-                    """
-                    MATCH (a:User),(b:Resource)
-                    WHERE b.rid = $rid
-                    MERGE (a)-[r:HAS_RATED {
-                        user_id: $user_id, 
-                        cids: $cids, 
-                        value: $value, 
-                        rid: $rid
-                        }]->(b)
-                    RETURN r
-                    """,
-                    user_id=rating["user_id"],
-                    cids=rating["cids"],
-                    value=rating["value"],
-                    rid=rating["rid"]
+                    '''
+                    MATCH (u:Resource {rid: $rid})-[r:BASED_ON]->(a:Concept_modified {cid: $cid})
+                    DELETE r
+                    ''',
+                    rid=rid,
+                    cid=cid
                 )
-
-            # update 'helpful_count' and 'not_helpful_count' on node 'resource'
-            logger.info("update 'helpful_count' and 'not_helpful_count' on node 'resource'")
-            counts = tx.run(
-                    """
-                        MATCH (a:User)-[r:HAS_RATED]->(b:Resource)
-                        WHERE r.rid = $rid
-                        RETURN
-                        COUNT(CASE WHEN r.value = 'HELPFUL' THEN 1 ELSE NULL END) AS helpful_count,
-                        COUNT(CASE WHEN r.value = 'NOT_HELPFUL' THEN 1 ELSE NULL END) AS not_helpful_count
-                    """,
-                    rid=rating["rid"]
-                ).single()
-
-            logger.info(f"Increment Or Decrement Resource Rating Count")
-            tx.run(
-                    """
-                        MATCH (r:Resource)
-                        WHERE r.rid=$rid 
-                        SET r.helpful_count=$helpful_count, r.not_helpful_count=$not_helpful_count
-                    """,
-                    rid=rating["rid"],
-                    helpful_count=counts["helpful_count"],
-                    not_helpful_count=counts["not_helpful_count"]
-                )
-        tx.close()
-    
-
-
 
 
     def save_or_remove_user_resources(self, data: dict):
@@ -2659,6 +2547,7 @@ class NeoDataBase:
                 resources.append(r)
         return resources
 
+    """
     def edit_relationship_btw_concepts_and_resources(self, concepts: list, resources: list, old_relationship=True):
         '''
             update (create or remove) relationship btw Resource and Concept_modified
@@ -2701,39 +2590,9 @@ class NeoDataBase:
                     ''',
                     concept_ids=concept_ids
                 )
-    
-    def update_r_btw_resource_and_cm(self, cids: list, rids: list, action=True):
-        '''
-            Update by: Create and Delete Relationship
-            between Resource and Concept_modified
-            concepts: Concept list
-            cids. list of cids (from concepts)
-            action: True (create) | False (delete)
-        '''
-        logger.info("Updating Relationship between Resource and Concept_modified")
-        tx = self.driver.session()
 
-        if action:
-            tx.run(
-                '''
-                    MATCH (a:Resource),(b:Concept_modified)
-                    WHERE ID(a) IN $rids AND ID(b) IN $cids
-                    MERGE (a)-[r:BASED_ON]->(b)
-                    RETURN r
-                ''',
-                rids=rids,
-                cids=cids
-            )
-        else:
-            tx.run(
-                    '''
-                        MATCH p=(a:Resource)-[r:BASED_ON]->(b:Concept_modified)
-                        WHERE ID(b) IN $cids
-                        DELETE r
-                    ''',
-                    cids=cids
-                )
 
+    """
     
     ########
     ########
