@@ -60,6 +60,8 @@ The services making up the coursemapper-webserver project use the following imag
 
 - Using your file explorer, go inside the directory `webserver`, copy the `example.env` file and paste it in the same folder. Rename the copied environment file to `.env`
 
+- open ubuntu command prompt and type `sudo service redis-server start`
+
 - Open a command prompt/terminal in the `webserver` directory
 
 - Type the command in the command prompt/terminal to install node packages

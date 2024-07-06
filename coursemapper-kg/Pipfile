@@ -5,7 +5,6 @@ name = "pypi"
 
 [packages]
 pdfminer = "*"
-werkzeug = "==0.16.1"
 marshmallow = "*"
 wikipedia = "*"
 wikipedia-api = "==0.5.4"
@@ -28,13 +27,12 @@ youtube-transcript-api = "*"
 google-api-python-client = "*"
 tqdm = "*"
 requests = "*"
-scipy = "*"
+scipy = "==1.10.1"
 protobuf = "*"
 install = "*"
 markupsafe = "==1.1.1"
 flair = "*"
 spacy = "*"
-allennlp = "==0.9.0"
 python-dotenv = "*"
 gunicorn = "*"
 redis = "*"
@@ -42,4 +40,4 @@ redis = "*"
 [dev-packages]
 
 [requires]
-python_version = "3.7"
+python_version = "3.11"
