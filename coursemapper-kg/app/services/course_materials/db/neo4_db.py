@@ -2252,12 +2252,12 @@ class NeoDataBase:
         '''
             User saves or remove Resource(s)
             data: {
-                "user_id": "65e0536db1effed771dbdbb9",
-                "mid": "6662201fec6bb9067ff71cc9",
+                "user_id": "vhf",
+                "mid": "dsdsd",
                 "slider_number": "slide_1",
-                "cid": "2156985142238936538",
-                "rid": "KpGtax2RBVY",
-                "status": "save"
+                "cid": "rewtg423",
+                "rid": "2gdsg",
+                "status": "save | remove" (to create or remove a resource saved from the user list)
             }
         '''
         logger.info("Saving or Removing from Resource Saved List")
@@ -2276,9 +2276,19 @@ class NeoDataBase:
                     slider_number=data["slider_number"],
                     cid=data["cid"],
                     rid=data["rid"]
-                ).single()
+                )
         else:
-            pass
+            tx.run(
+                    '''
+                        MATCH (a:User {uid: $user_id})-[r:HAS_SAVED {user_id: $user_id, mid: $mid, slider_number: $slider_number, cid: $cid, rid: $rid}]->(b:Resource {rid: $rid})
+                        DELETE r
+                    ''',
+                    user_id=data["user_id"],
+                    mid=data["mid"],
+                    slider_number=data["slider_number"],
+                    cid=data["cid"],
+                    rid=data["rid"]
+                )
 
 
     def save_or_remove_user_resources(self, data: dict):
