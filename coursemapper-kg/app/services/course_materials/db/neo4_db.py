@@ -2280,9 +2280,7 @@ class NeoDataBase:
             tx.run(
                     '''
                         MATCH (a:User {uid: $user_id}), (b:Resource {rid: $rid})
-                        MERGE (a)-[r:HAS_SAVED]->(b)
-                        ON CREATE SET r.user_id = $user_id, r.mid = $mid, r.slider_number = $slider_number, r.cid = $cid, r.rid = $rid
-                        ON MATCH SET  r.user_id = $user_id, r.mid = $mid, r.slider_number = $slider_number, r.cid = $cid, r.rid = $rid
+                        MERGE (a)-[r:HAS_SAVED {user_id: $user_id, mid: $mid, slider_number: $slider_number, cid: $cid, rid: $rid}]->(b)
                     ''',
                     user_id=data["user_id"],
                     mid=data["mid"],
@@ -2290,6 +2288,7 @@ class NeoDataBase:
                     cid=data["cid"],
                     rid=data["rid"]
                 )
+            
         else:
             tx.run(
                     '''
