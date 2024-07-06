@@ -2194,11 +2194,9 @@ class NeoDataBase:
         # helpful_count count < not_helpful_count => delete relationship
 
         if rating["value"] == "HELPFUL":
-            # create realtionship
             for cid in rating["cids"]:
                 self.update_rs_btw_resource_and_cm(rid=rating["rid"], cid=cid, action=True)
         else:
-            # delete relationship
             resource = tx.run(
                         '''
                             MATCH (n:Resource) 
@@ -2257,13 +2255,13 @@ class NeoDataBase:
                 "slider_number": "slide_1",
                 "cid": "rewtg423",
                 "rid": "2gdsg",
-                "status": "save | remove" (to create or remove a resource saved from the user list)
+                "status": True (create) | False (remove) => (to create or remove a resource saved from the user list)
             }
         '''
         logger.info("Saving or Removing from Resource Saved List")
         tx = self.driver.session()
 
-        if data["status"] == "save":
+        if data["status"] == True:
             tx.run(
                     '''
                         MATCH (a:User {uid: $user_id}), (b:Resource {rid: $rid})
@@ -2289,85 +2287,37 @@ class NeoDataBase:
                     cid=data["cid"],
                     rid=data["rid"]
                 )
-
-
-    def save_or_remove_user_resources(self, data: dict):
-        """
-            User saves or remove Resource(s)
-            data: {
-                "user_id": "65e0536db1effed771dbdbb9",
-                "mid": "6662201fec6bb9067ff71cc9",
-                "slider_number": "slide_1",
-                "cids": "2156985142238936538",
-                "rid": "KpGtax2RBVY",
-                "status": "save" | "remove"
-            }
-        """
-        logger.info("Saving or Removing: User Resource")
-        tx = self.driver.session()
-        if data["status"] == "save":
-            # MATCH (a:User),(b:Resource)
-            tx.run(
-                    """
-                    MATCH (a:User)-[r:HAS_SAVED]->(b:Resource)
-                    WHERE b.rid = $rid
-                    MERGE (a)-[r2:HAS_SAVED {
-                        user_id: $user_id, 
-                        mid: $mid, 
-                        slide_number: $slider_number, 
-                        cid: $cid, 
-                        rid: $rid
-                        }]->(b)
-                    RETURN r2
-                    """,
-                    user_id=data["user_id"],
-                    mid=data["mid"],
-                    slider_number=data["slider_number"],
-                    cid=data["cid"],
-                    rid=data["rid"]
-                )
-        else:
-            tx.run(
-                    """
-                    MATCH (a:User)-[r:HAS_SAVED]->(b:Resource)
-                    WHERE r.user_id=$user_id AND 
-                        r.mid=$mid AND 
-                        r.slide_number=$slide_number AND 
-                        r.cid=$cid AND 
-                        r.rid=rid
-                    DELETE r
-                    """,
-                    user_id=data["user_id"],
-                    mid=data["mid"],
-                    slider_number=data["slider_number"],
-                    cid=data["cid"],
-                    rid=data["rid"]
-                )
-
-        # update "saves_count" on node "resource"
-        saves_count_result = tx.run(
-                """
-                    MATCH (a:User)-[r:HAS_SAVED]->(b:Resource)
-                    WHERE r.rid = $rid
-                    RETURN COUNT(r) AS count
-                """,
-                rid=data["rid"]
-            ).single()
-
+        
+        # Update Resources: saves_count
         tx.run(
-                """
-                    MATCH (r:Resource)
-                    WHERE r.rid=$rid 
-                    SET r.saves_count=$saves_count
-                """,
-                rid=data["rid"],
-                saves_count=saves_count_result["count"]
-            )
+            '''
+                MATCH (a:Resource {rid: $rid})
+                OPTIONAL MATCH (a)<-[r:HAS_SAVED {rid: $rid}]-()
+                WITH a, COUNT(r) AS saves_counter
+                SET a.saves_count = saves_counter
+            ''',
+            rid=data["rid"]
+        )
 
-        tx.close()
+        # create or remove realtion between Resources and Concept_modified
+        if data["status"] == True:
+            self.update_rs_btw_resource_and_cm(rid=data["rid"], cid=data["rid"], action=True)
+        """
+        else:
+            resource = tx.run(
+                        '''
+                            MATCH (n:Resource) 
+                            WHERE n.rid = $rid
+                            RETURN COALESCE(toInteger(n.saves_count), 0) AS saves_count
+                        ''',
+                        rid=data["rid"]
+                    ).single()
+            if resource["saves_count"] < resource["saves_count"]:
+                self.update_rs_btw_resource_and_cm(rid=data["rid"], cid=data["rid"], action=False)
+        """
     
     def filter_user_resources_saved_by(self, data: dict):
-        """
+        '''
             Getting User Resources Saved
             By filtering using: user_id, cid: concept cid, mid: learning material and slide_number: silder number
             data: {
@@ -2376,7 +2326,7 @@ class NeoDataBase:
                 "mids": ["6662201fec6bb9067ff71cc9"],
                 "slide_numbers": ["slide_1"]
             }
-        """
+        '''
         logger.info("Filtering User Resources Saved")
 
         result = []
