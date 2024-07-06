@@ -2162,13 +2162,28 @@ class NeoDataBase:
 
         # Add rating
         for cid in rating["cids"]:
-            tx.run(
+            # check if the relationship exsts
+            # if relationship exists, then only update the value
+            # if not, then create new relationship
+
+            rs = tx.run(
+                    '''
+                        MATCH (a:User {uid: $user_id})-[r:HAS_RATED {user_id: $user_id, cid: $cid, rid: $rid, mid: $mid}]->(b:Resource {rid: $rid})
+                        SET r.value = $value
+                        RETURN r
+                    ''',
+                    user_id=rating["user_id"],
+                    cid=cid,
+                    value=rating["value"],
+                    rid=rating["rid"],
+                    mid=rating["mid"]
+                ).single()
+
+            if rs is None:
+                tx.run(
                     '''
                         MATCH (a:User {uid: $user_id}), (b:Resource {rid: $rid})
-                        MERGE (a)-[r:HAS_RATED]->(b)
-                        ON CREATE SET r.user_id = $user_id, r.cid = $cid, r.value = $value, r.rid = $rid, r.mid = $mid
-                        ON MATCH SET  r.user_id = $user_id, r.cid = $cid, r.value = $value, r.rid = $rid, r.mid = $mid
-                        RETURN r.value as value, b.helpful_count as helpful_count, b.not_helpful_count as not_helpful_count
+                        CREATE (a)-[r:HAS_RATED {user_id: $user_id, cid: $cid, value: $value, rid: $rid, mid: $mid}]->(b)
                     ''',
                     user_id=rating["user_id"],
                     cid=cid,
