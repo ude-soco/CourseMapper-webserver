@@ -39,7 +39,10 @@ class ResourceRecommenderService:
         self.redis_key_1 = "recs_resources" # i.e: user_id_recs_new
         self.redis_key_2 = "recs_resources_status"
 
-    def set_redis_key_value(self, key_name: str, value: str | dict, ex=60, set_time=True):
+    def set_redis_key_value(self, key_name: str, value, ex=60, set_time=True):
+        '''
+            value: str | dict
+        '''
         data = None
         if isinstance(value, str):
             data = value
@@ -241,7 +244,7 @@ class ResourceRecommenderService:
         return rating_updated
     
     def save_or_remove_user_resources(self, data: dict):
-        resource_saved = self.db.save_or_remove_user_resources(data)
+        resource_saved = self.db.user_saves_or_removes_resource(data)
         return resource_saved
 
     def get_concepts_mids_sliders_numbers_for_user_resources_filtering(self, data: dict):

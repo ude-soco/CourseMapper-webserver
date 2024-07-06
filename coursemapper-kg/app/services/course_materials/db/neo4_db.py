@@ -2175,7 +2175,7 @@ class NeoDataBase:
                     value=rating["value"],
                     rid=rating["rid"],
                     mid=rating["mid"]
-                ).single()
+                )
 
         # Update Resources: helpful_count and not_helpful_count
         resource_has_rated_detail = tx.run(
@@ -2419,7 +2419,7 @@ class NeoDataBase:
                         MATCH   (a:User)-[r:HAS_SAVED]->(b:Resource)
                                 -[r2:BASED_ON]->(c:Concept_modified)-[r3:ORIGINATED_FROM]->(d:Concept)
 
-                        WHERE   r.user_id=$user_id
+                        WHERE   r.user_id = $user_id
                         RETURN DISTINCT d.cid as cid, d.name as name
                     """,
                     user_id=data["user_id"]
@@ -2434,7 +2434,7 @@ class NeoDataBase:
                                 -[r2:BASED_ON]->(c:Concept_modified)-[r3:ORIGINATED_FROM]->(d:Concept),
                                 (e:Slide)-[r5:BELONGS_TO]->(f:LearningMaterial)
                                 
-                        WHERE   r.user_id=$user_id AND
+                        WHERE   r.user_id = $user_id AND
                                 r.cid IN $cids
                         RETURN DISTINCT f.mid as mid, f.name as name
                     """,
@@ -2452,7 +2452,7 @@ class NeoDataBase:
                                 (e:Slide)-[r4:CONTAINS]->(d:Concept),
                                 (e:Slide)-[r5:BELONGS_TO]->(f:LearningMaterial)
                                 
-                        WHERE   r.user_id=$user_id AND
+                        WHERE   r.user_id = $user_id AND
                                 r.cid IN $cids AND
                                 r.mid IN $mids
 
