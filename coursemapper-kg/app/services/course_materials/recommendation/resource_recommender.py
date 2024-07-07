@@ -92,31 +92,6 @@ class ResourceRecommenderService:
                 return "No User found with id: %s" % slide_id
 
         return ""
-    
-    def check_parameters_new(
-        self,
-        slide_id,
-        material_id,
-        concept_cids: list,
-        recommendation_type,
-    ):
-        if not self.db.slide_exists(slide_id):
-            return "No Slide found with id: %s" % slide_id
-
-        if not self.db.lm_exists(material_id):
-            return "No Learning Material found with id: %s" % slide_id
-
-        # if not self.db.user_exists(user_id):
-        #     return 'No User found with id: %s' % slide_id
-
-        if not recommendation_type in ["1", "2", "3", "4"]:
-            return "Recommendation type %s not supported" % recommendation_type
-
-        for cid in concept_cids:
-            if not self.db.concept_exists(cid):
-                return "No User found with id: %s" % slide_id
-
-        return ""
 
     def set_rating(self, resource, user_id, rating, concepts=[]):
         return self.db.create_or_edit_user_rating(
@@ -258,14 +233,6 @@ class ResourceRecommenderService:
                     "videos": [resource for resource in resources if "Article" in resource["labels"]]
                 }
         return result
-    
-    '''
-        def edit_relationship_btw_concepts_and_resources(self, concepts_cro: list, resources: list):
-            self.db.edit_relationship_btw_concepts_and_resources(concepts_cro=concepts_cro, 
-                                                                        resources=resources,
-                                                                        old_relationship=True
-                                                                        )
-    '''
 
     def normalize_factor_weights(self, factor_weights: dict=None, values: list=[], method_type = "l1", complete=True, sum_value=True): # List[float]
         """

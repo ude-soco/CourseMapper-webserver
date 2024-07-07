@@ -1794,233 +1794,7 @@ class NeoDataBase:
     ###########
     # boby024 #
     ###########
-    def cro_update_user_embedding_value(self, user_id: str, embedding: str):
-        """
-            CRO Writing new embedding value of the node User
-        """
-        logger.info("CRO Writing new embedding value of the node User")
 
-        with self.driver.session() as session:
-            session.run("""MATCH (u:User) WHERE u.uid=$user_id set u.embedding=$embedding""",
-                user_id=user_id,
-                embedding=embedding
-            ).data()
-    
-    def cro_get_user(self, user_id: str, complete=False):
-        """
-            get node User
-        """
-        logger.info("CRO Getting node User")
-        if complete:
-            query = """ MATCH (c:User) WHERE c.uid = $user_id
-                        RETURN ID(c) as node_id, c.uid as user_id, c.embedding as embedding
-                    """
-        else:
-            query = """ MATCH (c:User) WHERE c.uid = $user_id
-                        RETURN ID(c) as node_id, c.uid as user_id
-                    """
-
-        result = None
-        with self.driver.session() as session:
-            node = session.run(
-                query,
-                user_id=user_id
-            )
-
-            if node:
-                node = node.single()
-                result = {
-                    "node_id": node["node_id"],
-                    "user_id": node["user_id"]
-                }
-                
-                if complete:
-                    result["embedding"] = node["embedding"]
-
-        return result
-    
-    def cro_get_concepts(self, cids: list):
-        logger.info("Getting node concept: Concept")
-        with self.driver.session() as session: 
-            result = session.run(
-                """
-                MATCH (c:Concept)
-                WHERE c.cid IN $cids
-                RETURN c.cid as cid, c.name as name, c.final_embedding as final_embedding
-                """,
-                cids=cids
-            ).data()
-
-        return result
-
-    def cro_map_concept_cro(self, node: dict = None, nodes: list = [], fetched = True):
-        logger.info("Mapping node concept: Concept_modified")
-        if node:
-            if fetched:
-                node = node.single()
-
-            return {
-                "node_id": node["node_id"],
-                "user_id": node["user_id"],
-                "cid": node["cid"],
-                "weight": node["weight"]
-            }
-        else:
-            # to be updated
-            return []
-        
-    def cro_get_concept_cro(self, user_id: str, cid: str, weight: float):
-        logger.info("Getting node concept: Concept_modified")
-
-        result = None
-        with self.driver.session() as session:
-            result = session.run(
-                """
-                MATCH (c:Concept_modified)
-                WHERE c.user_id = $user_id and c.cid = $cid and c.weight = $weight
-                RETURN ID(c) as node_id, c.user_id as user_id, c.cid as cid,
-                c.weight as weight
-                """,
-                user_id=user_id,
-                cid=cid,
-                weight=weight
-            )
-            # if result:
-            #     logger.info("Getting node concept: HAS_MODIFIED: True")
-            #     result = self.cro_map_dnu(result, fetched=True)
-
-        return result
-
-    def cro_create_concept_cro(self, user_id: str = None, mid: str = None, concepts: list = None, cro_form: dict = None):
-        """
-            creating node concept: Concept_modified
-            concepts: list -> concept: cid, weight, rank, name(optional)
-        """
-        logger.info("Creating node concept: Concept_modified")
-
-        if cro_form:
-            user_id = cro_form["user_id"]
-            concepts = cro_form["concepts"]
-        
-        user = self.cro_get_user(user_id=user_id)
-        result = []
-        tx = self.driver.session()
-        for concept in concepts:
-            cid = concept["cid"]
-            weight = concept["weight"]
-
-            dnu_found = self.cro_get_concept_cro(user_id=user_id, cid=cid, weight=weight)
-            if dnu_found.single() != None:
-                node = dnu_found
-            else:
-                query =  """MERGE (c:Concept_modified { user_id:$user_id, cid:$cid, weight:$weight })
-                    RETURN ID(c) as node_id, c.user_id as user_id, c.cid as cid,
-                    c.weight as weight
-                    """
-                node = tx.run(query,
-                        user_id=user_id,
-                        cid=cid,
-                        mid=mid,
-                        weight=weight
-                    ).single()
-
-                if node is not None:
-                    logger.info("Creating relationship between node User and Concept_modified")
-                    tx.run(
-                        """
-                        MATCH (a:User),(b:Concept_modified)
-                        WHERE ID(a) = $id_a AND ID(b) = $id_b
-                        MERGE (a)-[r:HAS_MODIFIED]->(b)
-                        RETURN r
-                        """,
-                        id_a=user["node_id"],
-                        id_b=node["node_id"]
-                    )
-                    
-                    logger.info("Creating relationship between Concept_modified and original concept")
-                    concept_original = tx.run(
-                            """
-                            MATCH (c:Concept)
-                            WHERE c.cid = $cid
-                            RETURN ID(c) as node_id
-                            """,
-                            cid=cid
-                        ).single()
-                    
-                    if concept_original is not None:
-                        tx.run(
-                                """
-                                MATCH (a:Concept_modified),(b:Concept)
-                                WHERE ID(a) = $id_a AND ID(b) = $id_b
-                                MERGE (a)-[r:ORIGINATED_FROM]->(b)
-                                RETURN r
-                                """,
-                                id_a=node["node_id"],
-                                id_b=concept_original["node_id"]
-                            )
-                    
-            if node is not None:
-                # result.append(node)
-                result.append(self.cro_map_concept_cro(node, fetched=False))
-        tx.close()
-
-        return result
-
-    def cro_relationship_btw_user_concept_cro(self, user_id: str, concept_cro: dict):
-        """
-            Creating relationship between standard node User and Concept_modified
-        """
-        logger.info("Creating relationship between standard node User and Concept_modified")
-
-        user = self.cro_get_user(user_id=user_id)
-        if user:
-            with self.driver.session() as session: 
-                session.run(
-                    """
-                    MATCH (a:User),(b:Concept_modified)
-                    WHERE ID(a) = $id_a AND ID(b) = $id_b
-                    MERGE (a)-[r:dnu_cro]->(b)
-                    RETURN r
-                    """,
-                    id_a=user["node_id"],
-                    id_b=concept_cro["node_id"]
-                )
-        else:
-            # user must exist
-            pass
-
-    def cro_get_rating_and_resource_detail(self, user_id: str, resource_rid: str):
-        # # type: helpful_count, not_helpful_count
-        logger.info("CRO Getting Rating Resource Details")
-
-        result = None
-        with self.driver.session() as session:
-            node = session.run(
-                """
-                MATCH   (a:Rating), (b:Resource)
-                WHERE   a.user_id = $user_id  AND a.resource_rid = $resource_rid  AND a.resource_rid = b.rid
-                RETURN  a.value as value,
-                        COALESCE(toInteger(b.helpful_count), 0) AS helpful_count,
-                        COALESCE(toInteger(b.not_helpful_count), 0) AS not_helpful_count
-                """,
-                user_id=user_id,
-                resource_rid=resource_rid
-            ).single()
-
-            if node is not None:
-                result = {
-                    "voted": node["value"],
-                    "helpful_count": node["helpful_count"],
-                    "not_helpful_count": node["not_helpful_count"],
-                }
-
-        return result
-
-
-
-    ########
-    ########
-    
     def create_concept_modified(self, cid: str):
         '''
             Creating node 'Concept_modified'
@@ -2359,85 +2133,6 @@ class NeoDataBase:
                 self.update_rs_btw_resource_and_cm(rid=data["rid"], cid=data["rid"], action=False)
         """
     
-    def filter_user_resources_saved_by(self, data: dict):
-        '''
-            Getting User Resources Saved
-            By filtering using: user_id, cid: concept cid, mid: learning material and slide_number: silder number
-            data: {
-                "user_id": "65e0536db1effed771dbdbb9",
-                "cids": ["2156985142238936538", "3328549365608809871"],
-                "mids": ["6662201fec6bb9067ff71cc9"],
-                "slide_numbers": ["slide_1"]
-            }
-        '''
-        logger.info("Filtering User Resources Saved")
-
-        result = []
-        nodes = []
-        with self.driver.session() as session:
-            resource_query_form = """
-                            RETURN  DISTINCT LABELS(b) as labels, ID(b) as id, b.rid as rid, b.title as title, b.text as text,
-                                b.thumbnail as thumbnail, b.abstract as abstract, b.post_date as post_date, 
-                                b.author_image_url as author_image_url, b.author_name as author_name,
-                                b.keyphrases as keyphrases, b.description as description, b.description_full as description_full,
-                                b.publish_time as publish_time, b.uri as uri, b.duration as duration,
-                                COALESCE(toInteger(b.views), 0) AS views,
-                                COALESCE(toFloat(b.similarity_score), 0.0) AS similarity_score,
-                                COALESCE(toInteger(b.helpful_count), 0) AS helpful_count,
-                                COALESCE(toInteger(b.not_helpful_count), 0) AS not_helpful_count,
-                                COALESCE(toInteger(b.bookmarked_count), 0) AS bookmarked_count,
-                                COALESCE(toInteger(b.like_count), 0) AS like_count,
-                                b.channel_title as channel_title
-                            """
-
-            # filtering with: cids
-            if len(data["cids"]) > 0 and len(data["mids"]) == 0 and len(data["slide_numbers"]) == 0:
-                nodes = session.run(
-                    f"""
-                        MATCH (a:User)-[r:HAS_SAVED]->(b:Resource)
-                        WHERE   r.user_id=$user_id AND
-                                r.cid IN $cids
-                        {resource_query_form}
-                    """,
-                    user_id=data["user_id"],
-                    cids=data["cids"]
-                ).data()
-
-            # filtering with: cids and mids
-            if len(data["cids"]) > 0 and len(data["mids"]) > 0 and len(data["slide_numbers"]) == 0:
-                nodes = session.run(
-                    f"""
-                        MATCH (a:User)-[r:HAS_SAVED]->(b:Resource)
-                        WHERE   r.user_id=$user_id AND
-                                r.cid IN $cids AND
-                                r.mid IN $mids
-                        {resource_query_form}
-                    """,
-                    user_id=data["user_id"],
-                    cids=data["cids"],
-                    mids=data["mids"]
-                ).data()
-
-            # filtering with: cids, mids and silder_numbers
-            if len(data["cids"]) > 0 and len(data["mids"]) > 0 and len(data["slide_numbers"]) > 0:
-                nodes = session.run(
-                    f"""
-                        MATCH (a:User)-[r:HAS_SAVED]->(b:Resource)
-                        WHERE   r.user_id=$user_id AND
-                                r.cid IN $cids AND
-                                r.mid IN $mids AND
-                                r.slide_number IN $slide_numbers
-                        {resource_query_form}
-                    """,
-                    user_id=data["user_id"],
-                    cids=data["cids"],
-                    mids=data["mids"],
-                    slide_numbers=data["slide_numbers"]
-                ).data()
-
-            result = self.resources_wrapper_from_query(data=nodes)
-        return result
-    
     def get_concepts_mids_sliders_numbers_for_user_resources_saved(self, data: dict):
         '''
             Getting Parms Data to Filtering User Resource Saved: Concepts, learning material and Slider Numbers
@@ -2445,7 +2140,8 @@ class NeoDataBase:
             data: {
                 "user_id": "65e0536db1effed771dbdbb9",
                 "cids": ['2156985142238936538', '7075428280044039726'],
-                "mids": ["6662201fec6bb9067ff71cc9"]
+                "mids": ["6662201fec6bb9067ff71cc9"],
+                "slider_numbers": []
             }
         '''
 
@@ -2459,13 +2155,10 @@ class NeoDataBase:
         # check if query params have keys (cids, mids, slider_numbers)
         if "cids" not in data:
             data["cids"] = []
-        elif "mids" not in data:
+        if "mids" not in data:
             data["mids"] = []
-        elif "slider_numbers" not in data:
-            data["slider_numbers"] = []
-
-        print("get_concepts_mids_sliders_numbers_for_user_resources_saved")
-        print(data)
+        if "slide_numbers" not in data:
+            data["slide_numbers"] = []
 
         with self.driver.session() as session:
             if len(data["cids"]) == 0 and len(data["mids"]) == 0 and len(data["slide_numbers"]) == 0:
@@ -2520,7 +2213,86 @@ class NeoDataBase:
                 result["slider_numbers"] = [ {"name": node["name"] } for node in nodes ]
 
             return result
-  
+
+    def filter_user_resources_saved_by(self, data: dict):
+        '''
+            Getting User Resources Saved
+            By filtering using: user_id, cid: concept cid, mid: learning material and slide_number: silder number
+            data: {
+                "user_id": "65e0536db1effed771dbdbb9",
+                "cids": ["2156985142238936538", "3328549365608809871"],
+                "mids": ["6662201fec6bb9067ff71cc9"],
+                "slide_numbers": ["slide_1"]
+            }
+        '''
+        logger.info("Filtering User Resources Saved")
+
+        result = []
+        nodes = []
+        with self.driver.session() as session:
+            resource_query_form = """
+                            RETURN  DISTINCT LABELS(b) as labels, ID(b) as id, b.rid as rid, b.title as title, b.text as text,
+                                b.thumbnail as thumbnail, b.abstract as abstract, b.post_date as post_date, 
+                                b.author_image_url as author_image_url, b.author_name as author_name,
+                                b.keyphrases as keyphrases, b.description as description, b.description_full as description_full,
+                                b.publish_time as publish_time, b.uri as uri, b.duration as duration,
+                                COALESCE(toInteger(b.views), 0) AS views,
+                                COALESCE(toFloat(b.similarity_score), 0.0) AS similarity_score,
+                                COALESCE(toInteger(b.helpful_count), 0) AS helpful_count,
+                                COALESCE(toInteger(b.not_helpful_count), 0) AS not_helpful_count,
+                                COALESCE(toInteger(b.bookmarked_count), 0) AS bookmarked_count,
+                                COALESCE(toInteger(b.like_count), 0) AS like_count,
+                                b.channel_title as channel_title
+                            """
+
+            # filtering with: cids
+            if len(data["cids"]) > 0 and len(data["mids"]) == 0 and len(data["slide_numbers"]) == 0:
+                nodes = session.run(
+                    f"""
+                        MATCH (a:User)-[r:HAS_SAVED]->(b:Resource)
+                        WHERE   r.user_id = $user_id AND
+                                r.cid IN $cids
+                        {resource_query_form}
+                    """,
+                    user_id=data["user_id"],
+                    cids=data["cids"]
+                ).data()
+
+            # filtering with: cids and mids
+            if len(data["cids"]) > 0 and len(data["mids"]) > 0 and len(data["slide_numbers"]) == 0:
+                nodes = session.run(
+                    f"""
+                        MATCH (a:User)-[r:HAS_SAVED]->(b:Resource)
+                        WHERE   r.user_id = $user_id AND
+                                r.cid IN $cids AND
+                                r.mid IN $mids
+                        {resource_query_form}
+                    """,
+                    user_id=data["user_id"],
+                    cids=data["cids"],
+                    mids=data["mids"]
+                ).data()
+
+            # filtering with: cids, mids and silder_numbers
+            if len(data["cids"]) > 0 and len(data["mids"]) > 0 and len(data["slide_numbers"]) > 0:
+                nodes = session.run(
+                    f"""
+                        MATCH (a:User)-[r:HAS_SAVED]->(b:Resource)
+                        WHERE   r.user_id = $user_id AND
+                                r.cid IN $cids AND
+                                r.mid IN $mids AND
+                                r.slide_number IN $slide_numbers
+                        {resource_query_form}
+                    """,
+                    user_id=data["user_id"],
+                    cids=data["cids"],
+                    mids=data["mids"],
+                    slide_numbers=data["slide_numbers"]
+                ).data()
+
+            result = self.resources_wrapper_from_query(data=nodes)
+        return result
+    
     def retrieve_resources(self, concepts: list):
         """
             Getting List of Resources connected to Concept_modified
@@ -2594,6 +2366,12 @@ class NeoDataBase:
         return resources
 
     """
+    def edit_relationship_btw_concepts_and_resources(self, concepts_cro: list, resources: list):
+    self.db.edit_relationship_btw_concepts_and_resources(concepts_cro=concepts_cro, 
+                                                                resources=resources,
+                                                                old_relationship=True
+                                                                )
+
     def edit_relationship_btw_concepts_and_resources(self, concepts: list, resources: list, old_relationship=True):
         '''
             update (create or remove) relationship btw Resource and Concept_modified
@@ -2639,426 +2417,3 @@ class NeoDataBase:
 
 
     """
-    
-
-    ########
-    ########
-
-    def cro_create_cro_recommendation(self, cro_form: dict, resources: list): # resources: {"data": None, "concepts": None, "nodes": None, "edges": None}
-        """
-            Creating the node: CROrecommendation
-        """
-        logger.info("Creating the node: CROrecommendation")
-
-        resources_rids = [resource["rid"] for resource in resources] # [resource["rid"] for resource in resources["data"]]
-        result = None
-        with self.driver.session() as session:
-            result = session.run(
-                # """
-                # MERGE (c:CROrecommendations {recommendation_type: $recommendation_type, resources_ids: $resources_ids,
-                # concept_cids: $concept_cids, user_id: $user_id, mid: $mid })
-                # RETURN ID(n) as node_id, n.recommendation_type as recommendation_type, n.resources_ids as resources_ids,
-                # n.concept_cids as concept_cids, n.user_id as user_id, n.mid as mid
-                # """
-                """
-                MERGE (c:CROrecommendation { cro_form_node_id:$cro_form_node_id, resources_rids:$resources_rids })
-                RETURN ID(c) as node_id, c.cro_form_node_id as cro_form_node_id, c.resources_rids as resources_rids
-                """,
-                cro_form_node_id=cro_form["node_id"],
-                resources_rids=resources_rids
-            ).data()
-        if result:
-            result = list(result)[0]
-        return result
-
-    def cro_get_cro_recommendation(self, cro_form: dict):
-        """
-            Get the node: CROrecommendation
-        """
-        logger.info("CRO Getting the CROrecommendation for cro_form")
-        result = None
-        with self.driver.session() as session:
-            result = session.run(
-                """
-                MATCH (c:CROrecommendation) WHERE c.cro_form_node_id=$cro_form_node_id
-                RETURN ID(c) as node_id, c.cro_form_node_id as cro_form_node_id, c.resources_rids as resources_rids
-                """,
-                cro_form_node_id=cro_form["node_id"]
-            ).data()
-
-            if result:
-                result = result[0]
-
-        return result
-    
-    def cro_create_relationship_between_cro_form_and_cro_rec(self, cro_form_node_id, cro_rec_node_id):
-        """
-            create relationship between cro_form and cro_concept
-        """
-        logger.info("creating relationship between cro_form and cro_concept")
-
-        result = None
-        with self.driver.session() as session: 
-            result =  session.run(
-                """
-                MATCH (a:CROform),(b:CROrecommendation)
-                WHERE ID(a) = $id_a AND ID(b) = $id_b
-                MERGE (a)-[r:CRO_RECOMMENDS]->(b)
-                RETURN r
-                """,
-                id_a=cro_form_node_id,
-                id_b=cro_rec_node_id
-            ) # .data()
-
-            # if result:
-            #     result = list(result)[0]
-        return result
-
-    def valide_paginate_params(self, params: dict):
-        """
-        params: {"page_size": 10, "page_number": 1}
-        """
-        logger.info("validating paginate params")
-
-        if params.get("page_size") == 0:
-            page_size = 1
-        else:
-            page_size = params["page_size"]
-
-        if params.get("page_number") and params["page_number"] == 0:
-            page_number = 1
-        else:
-            page_number = params["page_number"]
-        
-        return {
-            "page_size": page_size,
-            "page_number": page_number
-        }
-    
-    def cro_retrieve_concept_resources_pagination(self, pagination_params: dict, cro_form: dict, concepts=[]):
-        """
-            sort_by_params: {"similarity_score": True, "most_recent": False, "popularity": False}
-            pagination_params: {    "articles": {"page_size": 10, "page_number": 1}, 
-                                    "videos": {"page_size": 10, "page_number": 1}, 
-                                    "sort_by_params": sort_by_params
-                            }
-        """
-        logger.info("CRO Getting the resources for cro_rec_result")
-        logger.info("pagination_params -> ")
-        print(pagination_params)
-
-        # logic sort_by_params
-        sort_by_params = pagination_params["sort_by_params"]
-        sort_by_params_logic_query = "ORDER BY"
-        if sort_by_params["similarity_score"] == True:
-            sort_by_params_logic_query += " a.similarity_score DESC"
-        else:
-            sort_by_params_logic_query += " a.similarity_score ASC"
-
-        if sort_by_params["most_recent"] == True:
-            sort_by_params_logic_query += ", a.most_recent DESC"
-        else:
-            sort_by_params_logic_query += ", a.most_recent ASC"
-
-        if sort_by_params["popularity"] == True:
-            sort_by_params_logic_query += ", a.popularity DESC"
-        else:
-            sort_by_params_logic_query += ", a.popularity ASC"
-
-        logger.info(f"sort_by_params_logic_query -> {sort_by_params_logic_query}")
-
-        cro_rec_result = self.cro_get_cro_recommendation(cro_form=cro_form)
-        logger.info(f"cro_rec_result -> {len(cro_rec_result)}")
-
-        concepts = [{"cid": concept["cid"], "name": concept["name"], "weight": concept["weight"]} for concept in concepts]
-        if cro_rec_result and len(cro_rec_result["resources_rids"]) > 0:
-            result_video = []
-            result_article = []
-
-            ### VIDEO
-            # logic pagination
-            # pagination_params_logic_query = "SKIP start_nber LIMIT end_nber"
-            paginate_articles = self.valide_paginate_params(params=pagination_params.get("articles"))
-            page_size_articles = paginate_articles["page_size"]
-            page_number_articles = paginate_articles["page_number"]
-            # Calculate skip count
-            skip_count_articles = page_size_articles * (page_number_articles - 1)
-            skip_limit_query_articles = f"SKIP {skip_count_articles} LIMIT {page_size_articles}"
-
-            # logger.info("skip_limit_query_articles -> ")
-            # print(skip_limit_query_articles)
-
-            with self.driver.session() as session:
-                result_video_count = session.run(
-                        """
-                            MATCH (a:Video)
-                            WHERE a.rid IN $resources_rids 
-                            RETURN COUNT(a) as count
-                        """,
-                        resources_rids=cro_rec_result["resources_rids"]
-                    ).single() #  data
-                
-                # if result_video_count:
-                #     result_video_count = result_video_count[0]
-
-            with self.driver.session() as session:
-                result_video = session.run(
-                        f"""
-                            MATCH (a:Video)
-                            WHERE a.rid IN $resources_rids 
-                            RETURN LABELS(a) as labels, ID(a) as id, a.rid as rid, a.uri as uri, a.title as title,
-                            a.description as description, a.description_full as description_full, 
-                            a.keyphrases as keyphrases, a.thumbnail as thumbnail, a.duration as duration, a.views as views, 
-                            a.publish_time as publish_time, a.similarity_score as similarity_score, a.helpful_count as helpful_count, 
-                            a.not_helpful_count as not_helpful_count
-                            {sort_by_params_logic_query} 
-                            {skip_limit_query_articles}
-                        """,
-                        resources_rids=cro_rec_result["resources_rids"]
-                    ).data()
-                
-            video_query_total_items = result_video_count["count"]
-            video_query_current_page = page_number_articles
-            # Calculate total pages
-            video_query_total_pages = (video_query_total_items + page_size_articles - 1) // page_size_articles
-
-            ### ARTICLE
-            # logic pagination
-            # pagination_params_logic_query = "SKIP start_nber LIMIT end_nber"
-            paginate_videos = self.valide_paginate_params(params=pagination_params.get("videos"))
-            page_size_videos = paginate_videos["page_size"]
-            page_number_videos = paginate_videos["page_number"]
-            # Calculate skip count
-            skip_count_videos = page_size_videos * (page_number_videos - 1)
-            skip_limit_query_videos = f"SKIP {skip_count_videos} LIMIT {page_size_videos}"
-
-            # logger.info("skip_limit_query_vidoes -> ")
-            # print(skip_limit_query_videos)
-
-            with self.driver.session() as session:
-                result_article_count = session.run(
-                        """
-                            MATCH (a:Article)
-                            WHERE a.rid IN $resources_rids 
-                            RETURN COUNT(a) as count
-                        """,
-                        resources_rids=cro_rec_result["resources_rids"]
-                    ).single()
-                
-                # if result_article_count:
-                #     result_article_count = result_article_count[0]
-                
-            with self.driver.session() as session:
-                result_article = session.run(
-                        f"""
-                            MATCH (a:Article)
-                            WHERE a.rid IN $resources_rids
-                            RETURN LABELS(a) as labels, ID(a) as id, a.rid as rid, a.uri as uri, a.title as title,
-                            a.abstract as abstract, a.keyphrases as keyphrases, a.text as text, 
-                            a.similarity_score as similarity_score, a.helpful_count as helpful_count,
-                            a.not_helpful_count as not_helpful_count
-                            {sort_by_params_logic_query} 
-                            {skip_limit_query_videos}
-                        """,
-                        resources_rids=cro_rec_result["resources_rids"]
-                    ).data()
-                
-            article_query_total_items = result_article_count["count"]
-            article_query_current_page = page_number_videos
-            article_query_total_pages = (article_query_total_items + page_size_videos - 1) // page_size_videos
-
-            # return list(result_video) + list(result_article)
-            return {
-                "recommendation_type": cro_form["recommendation_type"],
-                "cro_form": cro_form,
-                "concepts": concepts,
-                "edges": None, 
-                "nodes": {
-                    "videos": {
-                        "current_page": video_query_current_page,
-                        "total_pages": video_query_total_pages,
-                        "total_items": video_query_total_items,
-                        "content": result_video
-                    },
-                    "articles": {
-                        "current_page": article_query_current_page,
-                        "total_pages": article_query_total_pages,
-                        "total_items": article_query_total_items,
-                        "content": result_article
-                    }
-                }
-            }
-
-        else:
-            return {
-            "recommendation_type": cro_form["recommendation_type"],
-            "cro_form": cro_form,
-            "concepts": concepts,
-            "edges": None, 
-            "nodes": {
-                "videos": {
-                    "current_page": 0,
-                    "total_pages": 0,
-                    "total_items": 0,
-                    "content": []
-                },
-                "articles": {
-                    "current_page": 0,
-                    "total_pages": 0,
-                    "total_items": 0,
-                    "content": []
-                }
-            }
-        }
-
-    def cro_save_recs(self, resources: list, cro_form: dict):
-        # return 1
-        logger.info("cro_save_recs ->")
-        # print(len(resources))
-        # print(resources[0])
-
-        cro_rec_result = self.cro_create_cro_recommendation(cro_form=cro_form, resources=resources)
-        self.cro_create_relationship_between_cro_form_and_cro_rec(cro_form_node_id=cro_form["node_id"], cro_rec_node_id=cro_rec_result["node_id"])
-
-    ########################################################
-    def cro_create_rating(self, rating: dict):
-        logger.info("CRO Creating Rating")
-
-        # get user node by id
-        user = self.cro_get_user(user_id=rating["user_id"])
-
-        # concepts = rating["concepts"].split()
-        tx = self.driver.session()
-        for cid in rating["concepts"]:
-            # check whether rating exist based on user_id, resource_rid, cid and cid (optional)
-            node_checked = tx.run(
-                        """
-                        MATCH (r:Rating) 
-                        WHERE r.user_id = $user_id AND r.resource_rid = $resource_rid AND r.cid = $cid
-                        RETURN ID(r) as node_id
-                        """,
-                        user_id=rating["user_id"],
-                        resource_rid=rating["resource"],
-                        cid=cid
-                    ).single()
-            
-            if node_checked is not None:
-                tx.run(
-                        """
-                            MATCH (r:Rating) 
-                            WHERE ID(r) = $id
-                            SET r.value=$value
-                        """,
-                        id=node_checked["node_id"],
-                        value=rating["rating"]
-                    ).single()
-            else:
-                node = tx.run(
-                            """
-                            MERGE (c:Rating { cid:$cid, user_id:$user_id, value:$value, resource_rid: $resource_rid })
-                            RETURN ID(c) as node_id, c.user_id as user_id, c.cid as cid, c.value as value, c.resource_rid as resource_rid
-                            """,
-                            user_id=rating["user_id"],
-                            cid=cid,
-                            value=rating["rating"],
-                            resource_rid=rating["resource"]
-                        ).single()
-                
-                # create relationship between user and rating
-                if node is not None:
-                    tx.run(
-                            """
-                            MATCH (a:User),(b:Rating)
-                            WHERE ID(a) = $id_a AND ID(b) = $id_b
-                            MERGE (a)-[r:HAS_RATED]->(b)
-                            RETURN r
-                            """,
-                            id_a=user["node_id"],
-                            id_b=node["node_id"]
-                        )
-        tx.close()
-    
-    def cro_get_rating(self, resource_rid: str):
-        logger.info("CRO Getting Rating")
-        result = None
-        with self.driver.session() as session:
-            result = session.run(
-                """
-                MATCH (c:Rating)
-                WHERE c.resource_rid = $resource_rid
-                RETURN ID(c) as node_id, c.user_id as user_id, c.cid as cid, c.value as value, c.resource_rid as resource_rid
-                """,
-                resource_rid=resource_rid
-            ).data()
-
-        return result
-    
-    def cro_get_ratings(self, resource_rids: list):
-        """
-            Getting List of Rating Containing Resources RID
-        """
-        logger.info("Getting List of Rating Containing Resources RID")
-
-        result = []
-        with self.driver.session() as session:
-            result = session.run(
-                """
-                MATCH (r:Rating)
-                WHERE r.resource_rid IN $resource_rids
-                RETURN ID(r) as node_id, r.user_id as user_id, r.cid as cid, r.value as value, r.resource_rid as resource_rid
-                """,
-                resource_rids=resource_rids
-            ).data()
-        
-        return result
-    
-    def cro_count_rating(self, resource_rid: str):
-        logger.info("CRO Getting Rating")
-        result = {"helpful_count": 0, "not_helpful_count": 0}
-        tx = self.driver.session()
-
-        helpful = tx.run(
-            """
-            MATCH (r:Rating)
-            WHERE r.resource_rid = $resource_rid AND r.value = "HELPFUL"
-            RETURN COUNT(r) as count
-            """,
-            resource_rid=resource_rid
-        ).single()
-        if helpful and helpful["count"] != 0:
-            result["helpful_count"] = helpful["count"]
-
-        not_helpful = tx.run(
-            """
-            MATCH (r:Rating)
-            WHERE r.resource_rid = $resource_rid AND r.value = "NOT_HELPFUL"
-            RETURN COUNT(r) as count
-            """,
-            resource_rid=resource_rid
-        ).single()
-        if not_helpful and not_helpful["count"] != 0:
-            result["not_helpful_count"] = not_helpful["count"]
-
-        tx.close()
-        return result
-
-    def cro_update_resource_count(self, resource_rid: str, helpful_count: int, not_helpful_count: int):
-        # # type: helpful_count, not_helpful_count
-        logger.info("CRO Updating Resource Count")
-
-        result = None
-        with self.driver.session() as session:
-            result = session.run(
-                """
-                    MATCH (r:Resource) 
-                    WHERE r.rid=$resource_rid 
-                    SET r.helpful_count=$helpful_count, r.not_helpful_count=$not_helpful_count
-                """,
-                resource_rid=resource_rid,
-                helpful_count=helpful_count,
-                not_helpful_count=not_helpful_count
-            ).single()
-
-        return result
-
-    ########################################################
