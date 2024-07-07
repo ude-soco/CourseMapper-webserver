@@ -31,13 +31,13 @@ def save_or_remove_user_resources_():
     resp = resource_recommender_service.save_or_remove_user_resources(data=data)
     return make_response(jsonify(resp), 200)
 
-@course_materials.route("/user_resources/filter/params", methods=["POST"])
-def get_concepts_mids_sliders_numbers_for_user_resources_filtering():
+@course_materials.route("/user_resources/get_filter_params", methods=["POST"])
+def get_concepts_mids_sliders_numbers_for_user_resources_saved():
     data = request.get_json()
     logger.info(f"User Resources Saved FIlter Params -> {data}")
 
     resource_recommender_service = ResourceRecommenderService()
-    resp = resource_recommender_service.get_concepts_mids_sliders_numbers_for_user_resources_filtering(data=data)
+    resp = resource_recommender_service.get_concepts_mids_sliders_numbers_for_user_resources_saved(data=data)
     return make_response(jsonify(resp), 200)
 
 @course_materials.route("/user_resources/filter", methods=["POST"])

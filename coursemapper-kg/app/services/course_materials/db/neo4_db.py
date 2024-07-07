@@ -2193,32 +2193,32 @@ class NeoDataBase:
                 )
 
         # Update Resources: helpful_count and not_helpful_count
-            count_helpful_count = tx.run(
-                '''
-                    MATCH p=(a: User)-[r:HAS_RATED {value: 'HELPFUL'}]->(b:Resource {rid: $rid}) 
-                    RETURN COUNT(r) AS count
-                ''',
-                rid=rating["rid"]
-            ).single()
+        count_helpful_count = tx.run(
+            '''
+                MATCH p=(a: User)-[r:HAS_RATED {value: 'HELPFUL'}]->(b:Resource {rid: $rid}) 
+                RETURN COUNT(r) AS count
+            ''',
+            rid=rating["rid"]
+        ).single()
 
-            count_not_helpful_counter = tx.run(
-                '''
-                    MATCH p=(a: User)-[r:HAS_RATED {value: 'NOT_HELPFUL'}]->(b:Resource {rid: $rid}) 
-                    RETURN COUNT(r) AS count
-                ''',
-                rid=rating["rid"]
-            ).single()
+        count_not_helpful_counter = tx.run(
+            '''
+                MATCH p=(a: User)-[r:HAS_RATED {value: 'NOT_HELPFUL'}]->(b:Resource {rid: $rid}) 
+                RETURN COUNT(r) AS count
+            ''',
+            rid=rating["rid"]
+        ).single()
 
-            resource_has_rated_detail = tx.run(
-                '''
-                    MATCH (a:Resource {rid: $rid})
-                    SET a.helpful_count = $count_helpful_count, a.not_helpful_count = $count_not_helpful_counter
-                    RETURN a.helpful_count as helpful_count, a.not_helpful_count as not_helpful_count
-                ''',
-                rid=rating["rid"],
-                count_helpful_count=count_helpful_count["count"],
-                count_not_helpful_counter=count_not_helpful_counter["count"]
-            ).single()
+        resource_has_rated_detail = tx.run(
+            '''
+                MATCH (a:Resource {rid: $rid})
+                SET a.helpful_count = $count_helpful_count, a.not_helpful_count = $count_not_helpful_counter
+                RETURN a.helpful_count as helpful_count, a.not_helpful_count as not_helpful_count
+            ''',
+            rid=rating["rid"],
+            count_helpful_count=count_helpful_count["count"],
+            count_not_helpful_counter=count_not_helpful_counter["count"]
+        ).single()
 
         """
         resource_has_rated_detail = tx.run(
@@ -2233,7 +2233,6 @@ class NeoDataBase:
                 rid=rating["rid"]
             ).single()
         """
-
 
         # create or remove realtion between Resources and Concept_modified
         # helpful_count count < not_helpful_count => delete relationship
@@ -2439,33 +2438,46 @@ class NeoDataBase:
             result = self.resources_wrapper_from_query(data=nodes)
         return result
     
-    def get_concepts_mids_sliders_numbers_for_user_resources_filtering(self, data: dict):
-        """
+    def get_concepts_mids_sliders_numbers_for_user_resources_saved(self, data: dict):
+        '''
             Getting Parms Data to Filtering User Resource Saved: Concepts, learning material and Slider Numbers
             By filtering using: cids, cids and mids
             data: {
                 "user_id": "65e0536db1effed771dbdbb9",
-                "cids": ["2156985142238936538", "3328549365608809871"],
+                "cids": ['2156985142238936538', '7075428280044039726'],
                 "mids": ["6662201fec6bb9067ff71cc9"]
             }
-        """
+        '''
+
         logger.info("Getting Parms Data to Filtering User Resource Saved")
         result = {
             "cids": [],
             "mids": [],
             "slider_numbers": []
         }
+        
+        # check if query params have keys (cids, mids, slider_numbers)
+        if "cids" not in data:
+            data["cids"] = []
+        elif "mids" not in data:
+            data["mids"] = []
+        elif "slider_numbers" not in data:
+            data["slider_numbers"] = []
+
+        print("get_concepts_mids_sliders_numbers_for_user_resources_saved")
+        print(data)
 
         with self.driver.session() as session:
             if len(data["cids"]) == 0 and len(data["mids"]) == 0 and len(data["slide_numbers"]) == 0:
                 nodes = session.run(
-                    f"""
+                    '''
                         MATCH   (a:User)-[r:HAS_SAVED]->(b:Resource)
-                                -[r2:BASED_ON]->(c:Concept_modified)-[r3:ORIGINATED_FROM]->(d:Concept)
-
-                        WHERE   r.user_id = $user_id
+                                -[r2:BASED_ON]->(c:Concept_modified),
+                                (d:Concept)
+                        WHERE   r.user_id = $user_id AND
+                                c.cid = d.cid
                         RETURN DISTINCT d.cid as cid, d.name as name
-                    """,
+                    ''',
                     user_id=data["user_id"]
                 ).data()
                 result["cids"] = [ {"cid": node["cid"], "name": node["name"] } for node in nodes ]
@@ -2473,15 +2485,15 @@ class NeoDataBase:
             # filtering with: cids
             if len(data["cids"]) > 0 and len(data["mids"]) == 0 and len(data["slide_numbers"]) == 0:
                 nodes = session.run(
-                    f"""
-                        MATCH   (a:User)-[r:HAS_SAVED]->(b:Resource)
-                                -[r2:BASED_ON]->(c:Concept_modified)-[r3:ORIGINATED_FROM]->(d:Concept),
-                                (e:Slide)-[r5:BELONGS_TO]->(f:LearningMaterial)
-                                
-                        WHERE   r.user_id = $user_id AND
-                                r.cid IN $cids
-                        RETURN DISTINCT f.mid as mid, f.name as name
-                    """,
+                    '''
+                    MATCH   (a:User)-[r:HAS_SAVED]->(b:Resource)
+                            -[r2:BASED_ON]->(c:Concept_modified),
+                            (d:Concept),
+                            (e:Slide)-[r3:BELONGS_TO]->(f:LearningMaterial)
+                    WHERE   r.user_id = $user_id AND
+                            r.cid IN $cids
+                    RETURN DISTINCT f.mid as mid, f.name as name
+                    ''',
                     user_id=data["user_id"],
                     cids=data["cids"]
                 ).data()
@@ -2490,19 +2502,17 @@ class NeoDataBase:
             # filtering with: cids and mids
             if len(data["cids"]) > 0 and len(data["mids"]) > 0: #  and len(data["slide_numbers"]) == 0:
                 nodes = session.run(
-                    f"""
+                    '''
                         MATCH   (a:User)-[r:HAS_SAVED]->(b:Resource)
-                                -[r2:BASED_ON]->(c:Concept_modified)-[r3:ORIGINATED_FROM]->(d:Concept),
-                                (e:Slide)-[r4:CONTAINS]->(d:Concept),
-                                (e:Slide)-[r5:BELONGS_TO]->(f:LearningMaterial)
-                                
+                                -[r2:BASED_ON]->(c:Concept_modified),
+                                (e:Slide)-[r3:CONTAINS]->(d:Concept),
+                                (e:Slide)-[r4:BELONGS_TO]->(f:LearningMaterial)
                         WHERE   r.user_id = $user_id AND
                                 r.cid IN $cids AND
                                 r.mid IN $mids
-
                         RETURN DISTINCT e.name as name
                         ORDER BY name
-                    """,
+                    ''',
                     user_id=data["user_id"],
                     cids=data["cids"],
                     mids=data["mids"]

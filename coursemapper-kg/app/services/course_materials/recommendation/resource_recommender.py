@@ -247,8 +247,8 @@ class ResourceRecommenderService:
         resource_saved = self.db.user_saves_or_removes_resource(data)
         return resource_saved
 
-    def get_concepts_mids_sliders_numbers_for_user_resources_filtering(self, data: dict):
-        result = self.db.get_concepts_mids_sliders_numbers_for_user_resources_filtering(data)
+    def get_concepts_mids_sliders_numbers_for_user_resources_saved(self, data: dict):
+        result = self.db.get_concepts_mids_sliders_numbers_for_user_resources_saved(data)
         return result
 
     def filter_user_resources_saved_by(self, data: dict):
