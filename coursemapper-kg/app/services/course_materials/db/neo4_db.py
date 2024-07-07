@@ -2193,6 +2193,34 @@ class NeoDataBase:
                 )
 
         # Update Resources: helpful_count and not_helpful_count
+            count_helpful_count = tx.run(
+                '''
+                    MATCH p=(a: User)-[r:HAS_RATED {value: 'HELPFUL'}]->(b:Resource {rid: $rid}) 
+                    RETURN COUNT(r) AS count
+                ''',
+                rid=rating["rid"]
+            ).single()
+
+            count_not_helpful_counter = tx.run(
+                '''
+                    MATCH p=(a: User)-[r:HAS_RATED {value: 'NOT_HELPFUL'}]->(b:Resource {rid: $rid}) 
+                    RETURN COUNT(r) AS count
+                ''',
+                rid=rating["rid"]
+            ).single()
+
+            resource_has_rated_detail = tx.run(
+                '''
+                    MATCH (a:Resource {rid: $rid})
+                    SET a.helpful_count = $count_helpful_count, a.not_helpful_count = $count_not_helpful_counter
+                    RETURN a.helpful_count as helpful_count, a.not_helpful_count as not_helpful_count
+                ''',
+                rid=rating["rid"],
+                count_helpful_count=count_helpful_count["count"],
+                count_not_helpful_counter=count_not_helpful_counter["count"]
+            ).single()
+
+        """
         resource_has_rated_detail = tx.run(
                 '''
                     MATCH (a:Resource {rid: $rid})
@@ -2204,6 +2232,8 @@ class NeoDataBase:
                 ''',
                 rid=rating["rid"]
             ).single()
+        """
+
 
         # create or remove realtion between Resources and Concept_modified
         # helpful_count count < not_helpful_count => delete relationship
