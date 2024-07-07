@@ -758,6 +758,7 @@ class ResourceRecommenderService:
         result = {}
 
         # Only take 5 concepts with the higher weight
+        rec_params = body["rec_params"]
         top_n = 5
         concepts_top_n: list = body["rec_params"]["concepts"]
         concepts_top_n.sort(key=lambda x: x["weight"], reverse=True)
@@ -766,12 +767,11 @@ class ResourceRecommenderService:
         # check whether the DNUs have been aldready requested
         # dnu_found = self.cro_get_concept_cro(user_id=body["croForm"]["user_id"], cid=cid, weight=weight)
 
-        rec_params = body["rec_params"]
         factor_weights = self.build_factor_weights(body["rec_params"]["factor_weights"]["weights"])
         concepts = rec_params["concepts"]
 
-        are_concepts_sane, resources_temp = self.check_request_temp(data_rec_params=rec_params)
-        if are_concepts_sane == False:
+        are_concepts_sane, resources_temp = self.check_request_temp(rec_params=rec_params)
+        if are_concepts_sane == True:
             resources = resources_temp
         
         elif are_concepts_sane == False:

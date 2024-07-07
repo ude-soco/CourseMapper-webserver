@@ -121,10 +121,10 @@ def get_resources():
     print()
 
     data_default = data["default"]
-    data_recs_params = data["croForm"]
+    data_rec_params = data["rec_params"]
     
     resource_recommender_service = ResourceRecommenderService()
-    result = resource_recommender_service._get_resources(data_default=data_default, data_recs_params=data_recs_params)
+    result = resource_recommender_service._get_resources(data_default=data_default, data_rec_params=data_rec_params)
 
     if result == None:
         return jsonify({"msg": "Internal Server Error"}), 404
