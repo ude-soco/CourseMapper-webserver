@@ -749,10 +749,11 @@ class ResourceRecommenderService:
         # self.redis_client.set(name=f"{user_id}_{self.redis_key_1}", value=status, ex=(self.redis_client_expiration_time * 10080))
 
     def _get_resources(self, data_rec_params: dict, data_default: dict=None):
-        """
+        '''
             Save cro_form, Crawl Youtube and Wikipedia API and then Store Resources
             Result: [ {"recommendation_type": str, "concepts": list(concepts), "nodes": list(resources)} ]
-        """
+        '''
+
         body = self.rec_params_request_mapped(data_rec_params, data_default)
         result = {}
 

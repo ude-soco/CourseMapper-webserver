@@ -38,7 +38,7 @@ export class MaterialsRecommenderService {
   }
 
   getRecommendedMaterials(formData: any, croForm: any): Observable<ResourcesPagination> {
-    let data = {default: {}, croForm: croForm};
+    let data = {default: {}, rec_params: croForm};
 
     if (formData !== null) {
       for (const p of formData) {
@@ -68,7 +68,7 @@ export class MaterialsRecommenderService {
   }
 
   getConceptsMidsSliderNumbersForUserResourcesFiltering(data: any): Observable<UserResourceFilterParamsResult> {
-    return this.http.post<UserResourceFilterParamsResult>(`${this.cmEndpointURL}user_resources/filter/params`, data, { withCredentials: true });
+    return this.http.post<UserResourceFilterParamsResult>(`${this.cmEndpointURL}user_resources/get_filter_params`, data, { withCredentials: true });
   }
 
   filterUserResourcesSavedBy(data: any): Observable<UserResourceFilterResult> {
