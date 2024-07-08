@@ -1850,7 +1850,7 @@ class NeoDataBase:
                     MERGE (a)-[r:HAS_MODIFIED]->(b)
                     ON CREATE SET r.user_id = $user_id, r.weight = $weight, r.mid = $mid, r.status = $status
                     ON MATCH SET  r.user_id = $user_id, r.weight = $weight, r.mid = $mid, r.status = $status
-                    RETURN ID(b) as cm_id, b.cid as cid, r.weight as weight, r.mid as mid
+                    RETURN ID(b) as cm_id, b.cid as cid, r.weight as weight, r.mid as mid, r.status as status
                 ''',
                 user_id=user_id,
                 cid=cid,
@@ -1920,7 +1920,7 @@ class NeoDataBase:
 
         return embedding
 
-    def user_rates_resources(self, rating: dict):
+    def user_rates_resources(self, rating: dict, resource: dict):
         '''
             User rates Resource(s)
             rating: {
@@ -2064,7 +2064,7 @@ class NeoDataBase:
                     cid=cid
                 )
 
-    def user_saves_or_removes_resource(self, data: dict):
+    def user_saves_or_removes_resource(self, data: dict, resource: dict):
         '''
             User saves or remove Resource(s)
             data: {
@@ -2364,6 +2364,24 @@ class NeoDataBase:
 
                 resources.append(r)
         return resources
+
+    def update_resource_action(self, resource: dict, action=False):
+        '''
+            Save or Update Resource Node from Ne4j
+            resource: resource detail
+            action: True (adding new resource) | 
+                    False (update the resource by attributes such as: similarity_score, views, like_count, channel_title)
+        '''
+
+        tx = self.driver.session()
+        if action:
+            if "Video" in resource["labels"]:
+                create_video_resource(tx=tx, node=resource)
+            elif "Article" in resource["labels"]:
+                create_wikipedia_resource(tx=tx, node=resource)
+        else:
+            # update
+            pass
 
     """
     def edit_relationship_btw_concepts_and_resources(self, concepts_cro: list, resources: list):

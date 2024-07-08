@@ -146,6 +146,15 @@ class ResourceRecommenderService:
     ######
     # CRO logic
 
+    def get_reosurce_by_rid_from_redis(self, user_id: str, rid: str):
+        result_temp = self.get_redis_key_value(key_name=f"{user_id}_{self.redis_key_1}")
+        resource = None
+        if result_temp:
+            result_temp = json.loads(result_temp)
+            resources = result_temp["resources"]
+            resource = next((d for d in resources if d['id'] == rid ), None)
+        return resource
+    
     def save_and_get_concepts_modified(self, rec_params, top_n=5, user_embedding=False, understood_list=[], non_understood_list =[]):
         '''
             rec_params: {
@@ -180,7 +189,7 @@ class ResourceRecommenderService:
             "concepts": [],
             "concept_cids": [],
             "concept_names": [],
-            "rec_params": rec_params,
+            "rec_params": None,
             "user_embedding": None
         }
         concepts_modified = []
@@ -202,7 +211,7 @@ class ResourceRecommenderService:
                 status = 'content' # for CONTENT_BASED_
           
             for concept in concepts:
-                concept_modified = self.db.update_rs_btw_user_and_cm(user_id=user_id, cid=cid, weight=concept["weight"], mid=concept["mid"], status=status)
+                concept_modified = self.db.update_rs_btw_user_and_cm(user_id=user_id, cid=concept["cid"], weight=concept["weight"], mid=concept["mid"], status=status)
                 concepts_modified.append(concept_modified)
 
             # update user embedding value (because weight value could be changed from the user)
@@ -212,14 +221,25 @@ class ResourceRecommenderService:
         
         result["concept_cids"]  = [concept["cid"] for concept in concepts]
         result["concept_names"] = [concept["name"] for concept in concepts]
+        rec_params["concepts"] = concepts
+        result["concepts"] = concepts
+        result["rec_params"] = rec_params
         return result
 
     def user_rates_resources(self, rating: dict):
-        rating_updated = self.db.user_rates_resources(rating=rating)
+        resource = None
+        if rating["value"] == "HELPFUL":
+            resource = self.get_reosurce_by_rid_from_redis(user_id=rating["user_id"], rid=rating["rid"])
+
+        rating_updated = self.db.user_rates_resources(rating=rating, resource=resource)
         return rating_updated
     
     def save_or_remove_user_resources(self, data: dict):
-        resource_saved = self.db.user_saves_or_removes_resource(data)
+        resource = None
+        if data["status"] == True:
+            resource = self.get_reosurce_by_rid_from_redis(user_id=data["user_id"], rid=data["rid"])
+
+        resource_saved = self.db.user_saves_or_removes_resource(data=data, resource=resource)
         return resource_saved
 
     def get_concepts_mids_sliders_numbers_for_user_resources_saved(self, data: dict):
@@ -513,8 +533,8 @@ class ResourceRecommenderService:
         '''
         
         return {
-            "articles": wikipedia_articles,
-            "videos": youtube_videos,
+            "articles": wikipedia_articles.to_dict(orient='records'),
+            "videos": youtube_videos.to_dict(orient='records'),
             "user_id": user_id,
             "material_id": material_id,
             "concept_ids": concept_ids,
@@ -613,24 +633,30 @@ class ResourceRecommenderService:
             and return resources temp stored
         '''
         are_concepts_sane = True
-        resources = []
+        resources = None
         user_id = rec_params["user_id"]
-        concepts = rec_params["user_id"]
+        concepts = rec_params["concepts"]
 
         result_temp = self.get_redis_key_value(key_name=f"{user_id}_{self.redis_key_1}")
         if result_temp:
             result_temp = json.loads(result_temp)
             concepts_temp = result_temp["concepts"]
 
-            if len(concepts) != len(concepts_temp):
+            if concepts_temp is None:
+                are_concepts_sane = False
+
+            elif len(concepts) != len(concepts_temp):
                 are_concepts_sane = False
 
             elif len(concepts) == len(concepts_temp):
                 for dict1, dict2 in zip(concepts, concepts_temp):
                     if dict1.get(key) != dict2.get(key):
                         are_concepts_sane = False
+                        break
 
                 resources = result_temp["resources"]
+        else:
+                are_concepts_sane = False
         return are_concepts_sane, resources
 
     def process_new_concepts(self, body: dict, factor_weights, new_concepts: list = []):
@@ -694,7 +720,7 @@ class ResourceRecommenderService:
             
             clu["concepts"] = slide_concepts
 
-        rec_params_concpets = clu["cro_form"]
+        rec_params_concpets = clu["rec_params"]
         user_embedding = clu.get("user_embedding")
         concept_ids = [concept["cid"] for concept in rec_params_concpets["concepts"]]
         not_understood_concept_list = [concept["name"] for concept in rec_params_concpets["concepts"]]
@@ -709,12 +735,15 @@ class ResourceRecommenderService:
                             concept_ids=concept_ids,
                             not_understood_concept_list=not_understood_concept_list
                         )
-        
+
         resources_bg = resources_crawled["articles"] + resources_crawled["videos"]
+        print("resources_bg")
+        print(resources_bg)
         result = {"concepts": rec_params["concepts"], "resources": []}
+
         if len(resources_bg) > 0:
             if len(rec_params["concepts"]) != len(concepts):
-                resources_found = self.db.retrieve_resources(concepts_cro=rec_params["concepts"])
+                resources_found = self.db.retrieve_resources(concepts=rec_params["concepts"])
                 resources = resources_found + resources_bg
                 result["resources"] = self.rank_resources(resources=resources, weights=factor_weights)
             else:
@@ -729,8 +758,8 @@ class ResourceRecommenderService:
         '''
             if len(resources) > 0:
                 resources = [{"node_id": node["id"]} for node in resources]
-                self.edit_relationship_btw_concepts_and_resources(concepts_cro=rec_params["concepts"], resources=resources)
-                resources = self.db.retrieve_resources(concepts_cro=rec_params["concepts"])
+                self.edit_relationship_btw_concepts_and_resources(concepts=rec_params["concepts"], resources=resources)
+                resources = self.db.retrieve_resources(concepts=rec_params["concepts"])
                 # result = self.rank_resources(resources=resources, weights=factor_weights)
             else:
                 result = {"articles": [], "videos": []}
@@ -753,9 +782,8 @@ class ResourceRecommenderService:
             Save cro_form, Crawl Youtube and Wikipedia API and then Store Resources
             Result: [ {"recommendation_type": str, "concepts": list(concepts), "nodes": list(resources)} ]
         '''
-
         body = self.rec_params_request_mapped(data_rec_params, data_default)
-        result = {}
+        # result = {}
 
         # Only take 5 concepts with the higher weight
         rec_params = body["rec_params"]
@@ -771,6 +799,12 @@ class ResourceRecommenderService:
         concepts = rec_params["concepts"]
 
         are_concepts_sane, resources_temp = self.check_request_temp(rec_params=rec_params)
+        print("sdsd")
+        print(are_concepts_sane, resources_temp)
+        
+        # default resources value
+        resources = { "articles": [], "videos": [] }
+
         if are_concepts_sane == True:
             resources = resources_temp
         
