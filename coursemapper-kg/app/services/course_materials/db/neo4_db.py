@@ -1935,6 +1935,7 @@ class NeoDataBase:
         tx = self.driver.session()
 
         # Add rating
+        """
         for cid in rating["cids"]:
             # check if the relationship exsts
             # if relationship exists, then only update the value
@@ -1952,6 +1953,7 @@ class NeoDataBase:
                     rid=rating["rid"],
                     mid=rating["mid"]
                 ).single()
+            
 
             if rs is None:
                 tx.run(
@@ -1961,6 +1963,34 @@ class NeoDataBase:
                     ''',
                     user_id=rating["user_id"],
                     cid=cid,
+                    value=rating["value"],
+                    rid=rating["rid"],
+                    mid=rating["mid"]
+                )
+        """
+        
+        rating_found = tx.run(
+            '''
+                MATCH (a:User {uid: $user_id})-[r:HAS_RATED {user_id: $user_id, rid: $rid, mid: $mid}]->(b:Resource {rid: $rid})
+                WHERE apoc.coll.sort(n.cids) = apoc.coll.sort($cids)
+                SET r.value = $value
+                RETURN r
+            ''',
+            user_id=rating["user_id"],
+            cids=rating["cids"],
+            value=rating["value"],
+            rid=rating["rid"],
+            mid=rating["mid"]
+        )
+
+        if rating_found is None:
+            tx.run(
+                    '''
+                        MATCH (a:User {uid: $user_id}), (b:Resource {rid: $rid})
+                        CREATE (a)-[r:HAS_RATED {user_id: $user_id, cids: $cids, value: $value, rid: $rid, mid: $mid}]->(b)
+                    ''',
+                    user_id=rating["user_id"],
+                    cids=rating["cids"],
                     value=rating["value"],
                     rid=rating["rid"],
                     mid=rating["mid"]
@@ -2006,11 +2036,10 @@ class NeoDataBase:
                 ''',
                 rid=rating["rid"]
             ).single()
-        """
+        
 
         # create or remove realtion between Resources and Concept_modified
         # helpful_count count < not_helpful_count => delete relationship
-
         if rating["value"] == "HELPFUL":
             for cid in rating["cids"]:
                 self.update_rs_btw_resource_and_cm(rid=rating["rid"], cid=cid, action=True)
@@ -2026,6 +2055,7 @@ class NeoDataBase:
                     ).single()
             if resource["helpful_count"] < resource["not_helpful_count"]:
                 self.update_rs_btw_resource_and_cm(rid=rating["rid"], cid=cid, action=False)
+        """
 
         return {
                     "voted": rating["value"],
@@ -2116,10 +2146,11 @@ class NeoDataBase:
             rid=data["rid"]
         )
 
+        """
         # create or remove realtion between Resources and Concept_modified
         if data["status"] == True:
             self.update_rs_btw_resource_and_cm(rid=data["rid"], cid=data["rid"], action=True)
-        """
+        
         else:
             resource = tx.run(
                         '''
@@ -2293,6 +2324,24 @@ class NeoDataBase:
             result = self.resources_wrapper_from_query(data=nodes)
         return result
     
+    def store_resources(self, resources_dict: dict, cid: str, recommendation_type=""):
+        '''
+            Store Resources
+            Create relationshop between Resource and Concept_modified
+        '''
+        logger.info("Store Resources")
+        tx = self.driver.session()
+        for key, resources in resources_dict.items():
+            if key == "videos":
+                for resource in resources:
+                    create_video_resource(tx, resource, recommendation_type)
+                    self.update_rs_btw_resource_and_cm(rid=resource["rid"], cid=cid, action=True)
+
+            elif key == "articles":
+                for resource in resources:
+                    create_wikipedia_resource(tx, resource, recommendation_type)
+                    self.update_rs_btw_resource_and_cm(rid=resource["rid"], cid=cid, action=True)
+
     def retrieve_resources(self, concepts: list):
         """
             Getting List of Resources connected to Concept_modified

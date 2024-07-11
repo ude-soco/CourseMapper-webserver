@@ -122,13 +122,19 @@ def get_resources():
 
     data_default = data["default"]
     data_rec_params = data["rec_params"]
-    
-    resource_recommender_service = ResourceRecommenderService()
-    result = resource_recommender_service._get_resources(data_default=data_default, data_rec_params=data_rec_params)
 
-    if result == None:
-        return jsonify({"msg": "Internal Server Error"}), 404
-    return jsonify(result), 200
+    """
+        resource_recommender_service = ResourceRecommenderService()
+        result = resource_recommender_service._get_resources(data_default=data_default, data_rec_params=data_rec_params)
+
+        if result == None:
+            return jsonify({"msg": "Internal Server Error"}), 404
+        return jsonify(result), 200
+    """
+    n = cro_get_resources_pagination()["nodes"]
+    return jsonify({ "recommendation_type": "1", "concepts": data_rec_params["concepts"], 
+                     "nodes": {"articles": n["articles"]["content"], "videos": n["videos"]["content"]}
+                }), 200
 
 @course_materials.route("/get_concepts", methods=["POST"])
 def get_concepts():
@@ -1274,7 +1280,9 @@ def cro_get_resources_pagination():
   'content': [{'description': 'Abroad Education Channel : https://www.youtube.com/channel/UC9sgREj-cfZipx65BLiHGmw Company Specific HR Mock ...',
     'description_full': 'Abroad Education Channel :\nhttps://www.youtube.com/channel/UC9sgREj-cfZipx65BLiHGmw\n\nCompany Specific HR Mock Interview : \nA seasoned professional with over 18 years of experience with Product, IT Services and Agri industry of valuable experience in Human Resource Management, Extensive Experience in Talent Acquisition, Personnel Management, Compensation and Benefits, Performance Reviews, Training & Development and all facets of Human Resources will be performing mock HR Interviews and provides feedback on the session and guides with interview techniques.\n\ncontact me on gmail at : shraavyareddy810@gmail.com\n\nfollow me on instagram at : https://www.instagram.com/shraavya_katkuri/\n\nPlacement playlist: https://www.youtube.com/channel/UCHNO_Y3DskuKiw9VTvo8AMw\n\npaper presentation for semester exams :\nhttps://youtu.be/utSVdagxc7I',
     'duration': '8:34',
-    'helpful_counter': 0,
+    'helpful_count': 0,
+   'like_count': 0,
+   'channel_title': "Muster Title Name",
     'id': 'Dy9urawfXos',
     'keyphrases': ['pearson&#39;s correlation coefficient |dm|.',
      'https://www.youtube.com/channel/uc9sgrej-cfzipx65blihgmw company specific',
@@ -1282,7 +1290,7 @@ def cro_get_resources_pagination():
      'correlation analysis',
      'mock'],
     'labels': ['Resource', 'Video'],
-    'not_helpful_counter': 0,
+    'not_helpful_count': 0,
     'publish_time': '2022-02-08T13:37:22Z',
     'similarity_score': '0.90',
     'thumbnail': 'https://i.ytimg.com/vi/Dy9urawfXos/hqdefault.jpg',
@@ -1292,11 +1300,13 @@ def cro_get_resources_pagination():
    {'description': "Here, I've explained Decision Trees in great detail. You'll also learn the math behind splitting the nodes. The next video will show ...",
     'description_full': "Here, I've explained Decision Trees in great detail. You'll also learn the math behind splitting the nodes. The next video will show you how to code a decision tree classifier from scratch.\n#machinelearning #datascience\n\nFor more videos please subscribe - \nhttp://bit.ly/normalizedNERD \n\nJoin our discord - \nhttps://discord.gg/39YYU936RC\n\nFacebook - \nhttps://www.facebook.com/nerdywits/\nInstagram - \nhttps://www.instagram.com/normalizednerd/\nTwitter - \nhttps://twitter.com/normalized_nerd",
     'duration': '10:33',
-    'helpful_counter': 0,
+    'helpful_count': 0,
+   'like_count': 0,
+   'channel_title': "Muster Title Name",
     'id': 'ZVR2Way4nwQ',
     'keyphrases': [],
     'labels': ['Resource', 'Video'],
-    'not_helpful_counter': 0,
+    'not_helpful_count': 0,
     'publish_time': '2021-01-13T13:14:16Z',
     'similarity_score': '0.87',
     'thumbnail': 'https://i.ytimg.com/vi/ZVR2Way4nwQ/hqdefault.jpg',
@@ -1306,11 +1316,13 @@ def cro_get_resources_pagination():
    {'description': 'Myself Shridhar Mankar an Engineer l YouTuber l Educational Blogger l Educator l Podcaster. My Aim- To Make Engineering ...',
     'description_full': 'Myself Shridhar Mankar an Engineer l YouTuber l Educational Blogger l Educator l Podcaster. \nMy Aim- To Make Engineering Students Life EASY.\n\nWebsite\xa0\xa0 - https://5minutesengineering.com \n\n5 Minutes Engineering English YouTube Channel -\xa0 https://m.youtube.com/channel/UChTsiSbpTuSrdOHpXkKlq6Q\n\nInstagram -\xa0 https://www.instagram.com/5minutesengineering/?hl=en\n\nA small donation would mean the world to me and will help me to make AWESOME videos for you.\n• UPI ID : 5minutesengineering@apl\n\nPlaylists :\n\n• 5 Minutes Engineering Podcast :\n\xa0 https://youtube.com/playlist?list=PLYwpaL_SFmcCTAu8NRuCaD3aTEgHLeF0X\n\n• Aptitude :\n\xa0 https://youtube.com/playlist?list=PLYwpaL_SFmcBpa1jwpCbEDespCRF3UPE5\n\n• Machine Learning :\n\xa0 https://youtube.com/playlist?list=PLYwpaL_SFmcBhOEPwf5cFwqo5B-cP9G4P\n\n• Computer Graphics :\n\xa0 https://youtube.com/playlist?list=PLYwpaL_SFmcAtxMe7ahYC4ZYjQHun_b-T\n\n• C Language Tutorial for Beginners :\n\xa0 https://youtube.com/playlist?list=PLYwpaL_SFmcBqvw6QTRsA8gvZL3ao2ON-\n\n• R Tutorial for Beginners :\n\xa0 https://youtube.com/playlist?list=PLYwpaL_SFmcCRFzBkZ-b92Hdg-qCUfx48\n\n• Python Tutorial for Beginners :\n\xa0 https://youtube.com/playlist?list=PLYwpaL_SFmcCJu4i6UGMkMx1p3yYZJsbC\n\n• Embedded and Real Time Operating Systems (ERTOS) :\n\xa0 https://youtube.com/playlist?list=PLYwpaL_SFmcBpuYagx0JiSaM-Bi4dm0hG\n\n• Shridhar Live Talks :\n\xa0 https://youtube.com/playlist?list=PLYwpaL_SFmcD21x33RkmGvcZtrnWlTDdI\n\n• Welcome to 5 Minutes Engineering :\n\xa0 https://youtube.com/playlist?list=PLYwpaL_SFmcCwG02L6fm0G5zmzpyw3eyc \n\n• Human Computer Interaction (HCI) :\n\xa0 https://youtube.com/playlist?list=PLYwpaL_SFmcDz_8-pygbcNvNF0DEwKoIL\n\n• Computer Organization and Architecture :\n\xa0 https://youtube.com/playlist?list=PLYwpaL_SFmcCaiXeUEjcTzHwIfJqH1qCN\n\n• Deep Learning :\n\xa0 https://youtube.com/playlist?list=PLYwpaL_SFmcD-6P8cuX2bZAHSThF6AYvq\n\n• Genetic Algorithm :\n\xa0 https://youtube.com/playlist?list=PLYwpaL_SFmcDHUTN26NXKfjg6wFJKDO9R\n\n• Cloud Computing :\n\xa0 https://youtube.com/playlist?list=PLYwpaL_SFmcCyQH0n9GHfwviu6KeJ46BV\n\n• Information and Cyber Security :\n\xa0 https://youtube.com/playlist?list=PLYwpaL_SFmcArHtWmbs_vXX6soTK3WEJw\n\n• Soft Computing and Optimization Algorithms :\n\xa0 https://youtube.com/playlist?list=PLYwpaL_SFmcCPUl8mAnb4g1oExKd0n4Gw\n\n• Compiler Design :\n\xa0 https://youtube.com/playlist?list=PLYwpaL_SFmcC6FupM--SachxUTOiQ7XHw\n\n• Operating System :\n\xa0 https://youtube.com/playlist?list=PLYwpaL_SFmcD0LLrv7CXxSiO2gNJsoxpi\n\n• Hadoop :\n\xa0 https://youtube.com/playlist?list=PLYwpaL_SFmcAhiP6C1qVorA7HZRejRE6M\n\n• CUDA :\n\xa0 https://youtube.com/playlist?list=PLYwpaL_SFmcB73J5yO6uSFUycHJSA45O0\n\n• Discrete Mathematics :\n\xa0 https://youtube.com/playlist?list=PLYwpaL_SFmcDKuvj-wIgDnHA5JTfUwrHv\n\n• Theory of Computation (TOC) :\n\xa0 https://youtube.com/playlist?list=PLYwpaL_SFmcDXLUrW3JEq2cv8efNF6UeQ\n\n• Data Analytics :\n\xa0 https://youtube.com/playlist?list=PLYwpaL_SFmcD_agAK_MpCDJdDXFuJqS9X\n\n• Software Modeling and Design :\n\xa0 https://youtube.com/playlist?list=PLYwpaL_SFmcD1pjNSpEm2pje3zPrSiflZ\n\n• Internet Of Things (IOT) :\n\xa0 https://youtube.com/playlist?list=PLYwpaL_SFmcB8fDd64B8SkJiPpEIzpCzC\n\n• Database Management Systems (DBMS) :\n\xa0 https://youtube.com/playlist?list=PLYwpaL_SFmcBU4HS74xGTK1cAFbY0rdVY \n\n• Computer Network (CN) :\n\xa0 https://youtube.com/playlist?list=PLYwpaL_SFmcAXkWn2IR-l_WXOrr0n851a\n\n• Software Engineering and Project Management :\n\xa0 https://youtube.com/playlist?list=PLYwpaL_SFmcCB7zUM0YSDR-1mM4KoiyLM\n\n• Design and Analysis of Algorithm :\n\xa0 https://youtube.com/playlist?list=PLYwpaL_SFmcBOrMihdkd48kgs6_YP8taa\n\n• Data Mining and Warehouse :\n\xa0 https://youtube.com/playlist?list=PLYwpaL_SFmcChP0xiW3KK9elNuhfCLVVi\n\n• Mobile Communication :\n\xa0 https://youtube.com/playlist?list=PLYwpaL_SFmcAjqrKO-b9UMa2AaAlzZY7D\n\n• High Performance Computing :\n\xa0 https://youtube.com/playlist?list=PLYwpaL_SFmcA1eJbqwvjKgsnT321hXRGx\n\n• Artificial Intelligence and Robotics :\n\xa0 https://youtube.com/playlist?list=PLYwpaL_SFmcBmfMtX5wRMAtqna7pY-YtG',
     'duration': '5:15',
-    'helpful_counter': 0,
+    'helpful_count': 0,
+   'like_count': 0,
+   'channel_title': "Muster Title Name",
     'id': 'QOGhtUGqP94',
     'keyphrases': [],
     'labels': ['Resource', 'Video'],
-    'not_helpful_counter': 0,
+    'not_helpful_count': 0,
     'publish_time': '2023-01-15T12:30:10Z',
     'similarity_score': '0.84',
     'thumbnail': 'https://i.ytimg.com/vi/QOGhtUGqP94/hqdefault.jpg',
@@ -1320,7 +1332,9 @@ def cro_get_resources_pagination():
    {'description': 'Subject - Data Mining and Business Intelligence Video Name - From Association Mining to Correlation Analysis, Pattern ...',
     'description_full': 'Subject - Data Mining and Business Intelligence\n\nVideo Name - From Association Mining to Correlation Analysis, Pattern Evaluation Measures\n\nChapter - Frequent Pattern Mining\n\nFaculty - Prof. Apoorva Wani\n\nUpskill and get Placements with Ekeeda Career Tracks\nData Science - https://ekeeda.com/career-track/data-scientist\nSoftware Development Engineer - https://ekeeda.com/career-track/software-development-engineer\nEmbedded & IoT Engineer - https://ekeeda.com/career-track/embedded-and-iot-engineer\n\nGet FREE Trial for GATE 2023 Exam with Ekeeda GATE - 20000+ Lectures & Notes, strategy, updates, and notifications which will help you to crack your GATE exam.\nhttps://ekeeda.com/catalog/competitive-exam\nCoupon Code - EKGATE\n\nGet Free Notes of All Engineering Subjects & Technology\nhttps://ekeeda.com/digital-library\n\nAccess the Complete Playlist of Subject Data Mining and Business Intelligence - https://www.youtube.com/playlist?list=PLm_MSClsnwm8czfGtiBvDJkHXwixcq-ck\n\nSocial Links:\nhttps://www.instagram.com/ekeeda_official/\nhttps://in.linkedin.com/company/ekeeda.com\n\nHappy Learning!\n\n#fromassociationminingtocorrelationanalysispatternevaluationmeasures\n#frequentpatternmining\n#dataminingandbusinessintelligence',
     'duration': '12:3',
-    'helpful_counter': 0,
+    'helpful_count': 0,
+   'like_count': 0,
+   'channel_title': "Muster Title Name",
     'id': 'dlUc8PA7Gag',
     'keyphrases': ['pattern evaluation measures- frequent pattern mining',
      'association mining',
@@ -1330,7 +1344,7 @@ def cro_get_resources_pagination():
      'pattern',
      'subject'],
     'labels': ['Resource', 'Video'],
-    'not_helpful_counter': 0,
+    'not_helpful_count': 0,
     'publish_time': '2022-04-08T05:29:16Z',
     'similarity_score': '0.92',
     'thumbnail': 'https://i.ytimg.com/vi/dlUc8PA7Gag/hqdefault.jpg',
@@ -1340,7 +1354,9 @@ def cro_get_resources_pagination():
    {'description': '',
     'description_full': '',
     'duration': '5:31',
-    'helpful_counter': 0,
+    'helpful_count': 0,
+   'like_count': 0,
+   'channel_title': "Muster Title Name",
     'id': 'khZCmz3oLuI',
     'keyphrases': ['data mining',
      'pattern discovery',
@@ -1348,7 +1364,7 @@ def cro_get_resources_pagination():
      'lift',
      'χ2'],
     'labels': ['Resource', 'Video'],
-    'not_helpful_counter': 0,
+    'not_helpful_count': 0,
     'publish_time': '2016-09-01T13:25:07Z',
     'similarity_score': '0.91',
     'thumbnail': 'https://i.ytimg.com/vi/khZCmz3oLuI/hqdefault.jpg',
@@ -1358,7 +1374,9 @@ def cro_get_resources_pagination():
    {'description': 'Data Science Course for 3-8 Yrs Work Exp: https://l.linklyhq.com/l/1tx7P Data Science Course for 0-3 Yrs Work Exp: ...',
     'description_full': "🔥Data Science Course for 3-8 Yrs Work Exp: https://l.linklyhq.com/l/1tx7P\n🔥Data Science Course for 0-3 Yrs Work Exp: https://l.linklyhq.com/l/1ugC3\n🔥Data Science Course for 8+ Yrs Work Exp: https://l.linklyhq.com/l/1tx7Q\n\nIn this statistics video, you will learn what correlation is. We will discuss types of correlation, some limitations, and the real-life applications of a correlation. In the end, you will also work on an example to calculate the correlations using excel.\n\n✅Subscribe to our Channel to learn more about the top Technologies: https://bit.ly/2VT4WtH\n\n⏩ Check out the Data Science tutorial videos: https://www.youtube.com/watch?v=X3paOmcrTjQ&list=PLEiEAq2VkUUIEQ7ENKU5Gv0HpRDtOphC6\n\n#WhatIsCorrelation #TypesOfCorrelation #CorrelationCoefficient #PositiveCorrelation #NegativeCorrelation #CorrelationAndRegression #Statistics #LearnStatistics #Simplilearn\n\nWhat is Correlation?\nCorrelation is a statistic that measures the degree to which two variables move in relation to each other. It measures association, but doesn't show if x causes y or vice versa—or if the association is caused by a third factor.\n\n🔥Free Data Science Course with Completion Certificate: https://www.simplilearn.com/data-science-free-course-for-beginners-skillup?utm_campaign=WhatIsCorrelation&utm_medium=Description&utm_source=youtube\n\n➡️ About Caltech Post Graduate Program In Data Science\nThis Post Graduation in Data Science leverages the superiority of Caltech's academic eminence. The Data Science program covers critical Data Science topics like Python programming, R programming, Machine Learning, Deep Learning, and Data Visualization tools through an interactive learning model with live sessions by global practitioners and practical labs.\n\n✅ Key Features\n- Simplilearn's JobAssist helps you get noticed by top hiring companies\n- Caltech PG program in Data Science completion certificate\n- Earn up to 14 CEUs from Caltech CTME\n- Masterclasses delivered by distinguished Caltech faculty and IBM experts\n- Caltech CTME Circle membership\n- Online convocation by Caltech CTME Program Director\n- IBM certificates for IBM courses\n- Access to hackathons and Ask Me Anything sessions from IBM\n- 25+ hands-on projects from the likes of Amazon, Walmart, Uber, and many more\n- Seamless access to integrated labs\n- Capstone projects in 3 domains\n- Simplilearn’s Career Assistance to help you get noticed by top hiring companies\n- 8X higher interaction in live online classes by industry experts\n\n✅ Skills Covered\n- Exploratory Data Analysis\n- Descriptive Statistics\n- Inferential Statistics\n- Model Building and Fine Tuning\n- Supervised and Unsupervised Learning\n- Ensemble Learning\n- Deep Learning\n- Data Visualization\n\n👉 Learn More At: https://www.simplilearn.com/post-graduate-program-data-science?utm_campaign=WhatIsCorrelation-PEfQCv9nvSo&utm_medium=Description&utm_source=youtube \n🔥 Data Science Bootcamp (US Only): https://www.simplilearn.com/data-science-bootcamp\n?utm_campaign=WhatIsCorrelation-PEfQCv9nvSo&utm_medium=Description&utm_source=youtube \n\n🔥🔥 Interested in Attending Live Classes? Call Us: IN - 18002127688 / US - +18445327688",
     'duration': '4:33',
-    'helpful_counter': 0,
+    'helpful_count': 0,
+   'like_count': 0,
+   'channel_title': "Muster Title Name",
     'id': 'PEfQCv9nvSo',
     'keyphrases': ['https://l.linklyhq.com/l/1tx7p data science course',
      'data science course',
@@ -1369,7 +1387,7 @@ def cro_get_resources_pagination():
      'statistics',
      'types'],
     'labels': ['Resource', 'Video'],
-    'not_helpful_counter': 0,
+    'not_helpful_count': 0,
     'publish_time': '2022-01-22T06:30:08Z',
     'similarity_score': '0.91',
     'thumbnail': 'https://i.ytimg.com/vi/PEfQCv9nvSo/hqdefault.jpg',
@@ -1379,7 +1397,9 @@ def cro_get_resources_pagination():
    {'description': 'Linear Regression Algorithm – Solved Numerical Example in Machine Learning by Mahesh Huddar The following concepts are ...',
     'description_full': "Linear Regression Algorithm – Solved Numerical Example in Machine Learning by Mahesh Huddar\n\nThe following concepts are discussed:\n______________________________\nregression equation, \nregression analysis introduction,\nregression analysis, \nlinear regression solved example,\nlinear regression example,\n regression solved example,\nregression numerical example,\nregression numerical methods,\n\n\n********************************\n\n1. Blog / Website: https://www.vtupulse.com/\n2. Like Facebook Page: https://www.facebook.com/VTUPulse\n3. Follow us on Instagram: https://www.instagram.com/vtupulse/\n4. Like, Share, Subscribe, and Don't forget to press the bell ICON for regular updates",
     'duration': '5:30',
-    'helpful_counter': 0,
+    'helpful_count': 0,
+   'like_count': 0,
+   'channel_title': "Muster Title Name",
     'id': 'QcPycBZomac',
     'keyphrases': ['linear regression algorithm –',
      'machine learning',
@@ -1387,7 +1407,7 @@ def cro_get_resources_pagination():
      'mahesh huddar',
      'concepts'],
     'labels': ['Resource', 'Video'],
-    'not_helpful_counter': 0,
+    'not_helpful_count': 0,
     'publish_time': '2023-05-02T16:50:10Z',
     'similarity_score': '0.91',
     'thumbnail': 'https://i.ytimg.com/vi/QcPycBZomac/hqdefault.jpg',
@@ -1397,7 +1417,9 @@ def cro_get_resources_pagination():
    {'description': 'In this video, we will explore the correlation among different columns of data using Pandas Corr() function. Exploring correlations ...',
     'description_full': 'In this video, we will explore the correlation among different columns of data using Pandas Corr() function.\n\nExploring correlations in data using python is very important task in Machine Learning feature engineering..',
     'duration': '2:18',
-    'helpful_counter': 0,
+    'helpful_count': 0,
+   'like_count': 0,
+   'channel_title': "Muster Title Name",
     'id': '1jLngF4KSqE',
     'keyphrases': ['different columns',
      'pandas corr',
@@ -1407,7 +1429,7 @@ def cro_get_resources_pagination():
      'function',
      'python'],
     'labels': ['Resource', 'Video'],
-    'not_helpful_counter': 0,
+    'not_helpful_count': 0,
     'publish_time': '2022-04-14T15:56:40Z',
     'similarity_score': '0.91',
     'thumbnail': 'https://i.ytimg.com/vi/1jLngF4KSqE/hqdefault.jpg',
@@ -1417,7 +1439,9 @@ def cro_get_resources_pagination():
    {'description': 'This lecture provides the introductory concepts of Frequent pattern mining in transnational databases.',
     'description_full': 'This lecture provides the introductory concepts of Frequent pattern mining in transnational databases.',
     'duration': '19:31',
-    'helpful_counter': 0,
+    'helpful_count': 0,
+   'like_count': 0,
+   'channel_title': "Muster Title Name",
     'id': 'QN3_wxqnSlw',
     'keyphrases': ['frequent pattern mining',
      'frequent patterns',
@@ -1429,7 +1453,7 @@ def cro_get_resources_pagination():
      'confidence',
      'support'],
     'labels': ['Resource', 'Video'],
-    'not_helpful_counter': 0,
+    'not_helpful_count': 0,
     'publish_time': '2017-09-19T09:06:40Z',
     'similarity_score': '0.91',
     'thumbnail': 'https://i.ytimg.com/vi/QN3_wxqnSlw/hqdefault.jpg',
@@ -1439,7 +1463,9 @@ def cro_get_resources_pagination():
    {'description': 'Covariance is closely related to Correlation. But what it really says? This video explains covariance with visualizations.',
     'description_full': 'Covariance is closely related to Correlation. But what it really says? This video explains covariance with visualizations.\n#machinelearning #datascience\n\nLike my work? Support me -\nhttps://www.buymeacoffee.com/normalizednerd\n\nFor more videos please subscribe - \nhttp://bit.ly/normalizedNERD \n\nJoin our discord - \nhttps://discord.gg/39YYU936RC\n\nFacebook - \nhttps://www.facebook.com/nerdywits/\nInstagram - \nhttps://www.instagram.com/normalizednerd/\nTwitter - \nhttps://twitter.com/normalized_nerd',
     'duration': '7:47',
-    'helpful_counter': 0,
+    'helpful_count': 0,
+   'like_count': 0,
+   'channel_title': "Muster Title Name",
     'id': 'TPcAnExkWwQ',
     'keyphrases': ['covariance',
      'correlation',
@@ -1447,7 +1473,7 @@ def cro_get_resources_pagination():
      'related',
      'visualizations'],
     'labels': ['Resource', 'Video'],
-    'not_helpful_counter': 0,
+    'not_helpful_count': 0,
     'publish_time': '2021-06-03T14:30:07Z',
     'similarity_score': '0.89',
     'thumbnail': 'https://i.ytimg.com/vi/TPcAnExkWwQ/hqdefault.jpg',
@@ -1457,7 +1483,9 @@ def cro_get_resources_pagination():
    {'description': 'The similarity measure is the measure of how much alike two data objects are. #MachineLearning #SimilarityMeasure #Clustering ...',
     'description_full': 'The similarity measure is the measure of how much alike two data objects are.  #MachineLearning #SimilarityMeasure #Clustering\n\nMachine Learning 👉https://www.youtube.com/playlist?list=PLPN-43XehstOjGY6vM6nBpSggHoAv9hkR\n\nArtificial Intelligence 👉https://www.youtube.com/playlist?list=PLPN-43XehstNQttedytmmLPwzMCXahBRg\n\nCloud Computing 👉https://www.youtube.com/playlist?list=PLPN-43XehstNd5WsXQ9y3GFXyagkX1PC3\n\nWireless Technology 👉https://www.youtube.com/playlist?list=PLPN-43XehstMhFEXiOgJwv2Ec3vOTWpSH\n\nData Mining 👉https://www.youtube.com/playlist?list=PLPN-43XehstOe0CxcXaYeLTFpgD2IiluP\n\nSimulation Modeling 👉https://www.youtube.com/playlist?list=PLPN-43XehstPwUMDCs9zYQS-e5-0zjifX\n\nBig Data 👉https://www.youtube.com/playlist?list=PLPN-43XehstPr1D-t9X2klE--Uj4YSNwn\n\nBlockchain 👉https://www.youtube.com/playlist?list=PLPN-43XehstNgC2t_EScmj1GWv24ncugJ\n\nIOT 👉https://www.youtube.com/playlist?list=PLPN-43XehstOS_3mv9LgFWnVXQE-7PKbF\n\n\nFollow me on Instagram 👉 https://www.instagram.com/ngnieredteacher/\nVisit my Profile 👉 https://www.linkedin.com/in/reng99/\nSupport my work on Patreon 👉 https://www.patreon.com/ranjiraj',
     'duration': '10:19',
-    'helpful_counter': 0,
+    'helpful_count': 0,
+   'like_count': 0,
+   'channel_title': "Muster Title Name",
     'id': 'a8riMSeBtwY',
     'keyphrases': ['similarity measures',
      'data objects',
@@ -1467,7 +1495,7 @@ def cro_get_resources_pagination():
      'machine',
      'clustering'],
     'labels': ['Resource', 'Video'],
-    'not_helpful_counter': 0,
+    'not_helpful_count': 0,
     'publish_time': '2019-10-02T16:00:22Z',
     'similarity_score': '0.89',
     'thumbnail': 'https://i.ytimg.com/vi/a8riMSeBtwY/hqdefault.jpg',
@@ -1477,7 +1505,9 @@ def cro_get_resources_pagination():
    {'description': 'Linear Regression in 2 minutes. --------------- Credit: Manim and Python : https://github.com/3b1b/manim Blender3D: ...',
     'description_full': 'Linear Regression in 2 minutes.\n\n\n\n---------------\nCredit:\n🐍 Manim and Python : https://github.com/3b1b/manim\n🐵 Blender3D: https://www.blender.org/\n🗒️ Emacs: https://www.gnu.org/software/emacs/\nMusic/Sound: www.bensound.com\n\nThis video would not have been possible without the help of Gökçe Dayanıklı.',
     'duration': '2:34',
-    'helpful_counter': 0,
+    'helpful_count': 0,
+   'like_count': 0,
+   'channel_title': "Muster Title Name",
     'id': 'CtsRRUddV2s',
     'keyphrases': ['linear regression',
      'minutes',
@@ -1486,7 +1516,7 @@ def cro_get_resources_pagination():
      'manim',
      'python'],
     'labels': ['Resource', 'Video'],
-    'not_helpful_counter': 0,
+    'not_helpful_count': 0,
     'publish_time': '2021-11-28T07:49:01Z',
     'similarity_score': '0.90',
     'thumbnail': 'https://i.ytimg.com/vi/CtsRRUddV2s/hqdefault.jpg',
@@ -1496,7 +1526,9 @@ def cro_get_resources_pagination():
    {'description': 'With the help of correlation analysis, the linear relationship between variables can be examined. The strength of the correlation is ...',
     'description_full': 'With the help of correlation analysis, the linear relationship between variables can be examined. The strength of the correlation is determined by the correlation coefficient, which varies from -1 to +1. This means that correlation analyses can be used to make a statement about the strength and direction of the relationship between two variables.\n\nInterpret correlation\nPositive correlation\nA positive correlation exists when larger values of variable A are accompanied by larger values of variable B. Body size and shoe size, for example, correlate positively, resulting in a correlation coefficient that lies between 0 and 1, i.e. a positive value.\n\nNegative correlation\nA negative correlation exists when larger values of variable A are accompanied by smaller values of variable B. The product price and the sales volume usually have a negative correlation; the more expensive a product is, the lower the sales volume. In this case, the correlation coefficient lies between -1 and 0, i.e. it takes on a negative value.\n\nMore information on correlation analysis:\nhttps://datatab.net/tutorial/correlation\n\nAnd here is the online correlation calculator:\nhttps://datatab.net/statistics-calculator/correlation',
     'duration': '5:40',
-    'helpful_counter': 0,
+    'helpful_count': 0,
+   'like_count': 0,
+   'channel_title': "Muster Title Name",
     'id': 'qo1FVrlvW1Y',
     'keyphrases': ['correlation analysis',
      'linear relationship',
@@ -1505,7 +1537,7 @@ def cro_get_resources_pagination():
      'help',
      'strength'],
     'labels': ['Resource', 'Video'],
-    'not_helpful_counter': 0,
+    'not_helpful_count': 0,
     'publish_time': '2021-01-11T19:34:49Z',
     'similarity_score': '0.87',
     'thumbnail': 'https://i.ytimg.com/vi/qo1FVrlvW1Y/hqdefault.jpg',
@@ -1515,7 +1547,9 @@ def cro_get_resources_pagination():
    {'description': 'This video is about Simple Linear Regression which is a supervised machine learning algorithm. Watch Multiple Linear ...',
     'description_full': 'This video is about  Simple Linear Regression which is a supervised machine learning algorithm.\n\nWatch Multiple Linear Regression at https://youtu.be/m9Q6nUruqOQ. \n\n\n\n\nIf you are interested in  building cool Natural Language Processing (NLP) Apps , access our NLP APIs at https://www.firstlanguage.in/ . Also for NLP product development and consultation, please reach out to us at     info@firstlanguage.in',
     'duration': '10:11',
-    'helpful_counter': 0,
+    'helpful_count': 0,
+   'like_count': 0,
+   'channel_title': "Muster Title Name",
     'id': 'orQ-QGaOPIg',
     'keyphrases': ['simple linear regression',
      'supervised machine learning algorithm',
@@ -1523,7 +1557,7 @@ def cro_get_resources_pagination():
      'multiple linear',
      'video'],
     'labels': ['Resource', 'Video'],
-    'not_helpful_counter': 0,
+    'not_helpful_count': 0,
     'publish_time': '2018-08-06T08:41:33Z',
     'similarity_score': '0.87',
     'thumbnail': 'https://i.ytimg.com/vi/orQ-QGaOPIg/hqdefault.jpg',
@@ -1533,7 +1567,9 @@ def cro_get_resources_pagination():
    {'description': 'In this video we are going to understand about Pearson Correlation Coefficient. We will also understand the difference between ...',
     'description_full': 'In this video we are going to understand about Pearson Correlation Coefficient. We will also understand the difference between Covariance and Correlation.\n\nPlease join as a member in my channel to get additional benefits like materials in Data Science, live streaming for Members and many more \nhttps://www.youtube.com/channel/UCNU_lfiiWBdtULKOw6X0Dig/join\n\nSupport me in Patreon: https://www.patreon.com/join/2340909?\n\nBuy the Best book of Machine Learning, Deep Learning with python sklearn and tensorflow from below\namazon url:\nhttps://www.amazon.in/Hands-Machine-Learning-Scikit-Learn-Tensor/dp/9352135210/ref=as_sl_pc_qf_sp_asin_til?tag=krishnaik06-21&linkCode=w00&linkId=a706a13cecffd115aef76f33a760e197&creativeASIN=9352135210\n\n\nYou can buy my book on Finance with Machine Learning and Deep Learning from the below url\n\namazon url: https://www.amazon.in/Hands-Python-Finance-implementing-strategies/dp/1789346371/ref=as_sl_pc_qf_sp_asin_til?tag=krishnaik06-21&linkCode=w00&linkId=ac229c9a45954acc19c1b2fa2ca96e23&creativeASIN=1789346371\n\n\n\n\nConnect with me here:\nTwitter: https://twitter.com/Krishnaik06\nFacebook: https://www.facebook.com/krishnaik06\ninstagram: https://www.instagram.com/krishnaik06\n\nSubscribe my unboxing Channel\n\nhttps://www.youtube.com/channel/UCjWY5hREA6FFYrthD0rZNIw\n\n\nBelow are the various playlist created on ML,Data Science and Deep Learning. Please subscribe and support the channel. Happy Learning!\n\nDeep Learning Playlist: https://www.youtube.com/watch?v=DKSZHN7jftI&list=PLZoTAELRMXVPGU70ZGsckrMdr0FteeRUi\nData Science Projects playlist: https://www.youtube.com/watch?v=5Txi0nHIe0o&list=PLZoTAELRMXVNUcr7osiU7CCm8hcaqSzGw\n\nNLP playlist: https://www.youtube.com/watch?v=6ZVf1jnEKGI&list=PLZoTAELRMXVMdJ5sqbCK2LiM0HhQVWNzm\n\nStatistics Playlist: https://www.youtube.com/watch?v=GGZfVeZs_v4&list=PLZoTAELRMXVMhVyr3Ri9IQ-t5QPBtxzJO\n\nFeature Engineering playlist: https://www.youtube.com/watch?v=NgoLMsaZ4HU&list=PLZoTAELRMXVPwYGE2PXD3x0bfKnR0cJjN\n\nComputer Vision playlist: https://www.youtube.com/watch?v=mT34_yu5pbg&list=PLZoTAELRMXVOIBRx0andphYJ7iakSg3Lk\n\nData Science Interview Question playlist: https://www.youtube.com/watch?v=820Qr4BH0YM&list=PLZoTAELRMXVPkl7oRvzyNnyj1HS4wt2K-\n\nYou can buy my book on Finance with Machine Learning and Deep Learning from the below url\n\namazon url: https://www.amazon.in/Hands-Python-Finance-implementing-strategies/dp/1789346371/ref=sr_1_1?keywords=krish+naik&qid=1560943725&s=gateway&sr=8-1\n\n🙏🙏🙏🙏🙏🙏🙏🙏\nYOU JUST NEED TO DO \n3 THINGS to support my channel\nLIKE\nSHARE \n&\nSUBSCRIBE \nTO MY YOUTUBE CHANNEL',
     'duration': '11:17',
-    'helpful_counter': 0,
+    'helpful_count': 0,
+   'like_count': 0,
+   'channel_title': "Muster Title Name",
     'id': '6fUYt1alA1U',
     'keyphrases': ['pearson correlation coefficient',
      'correlation',
@@ -1542,7 +1578,7 @@ def cro_get_resources_pagination():
      'covariance',
      'statistics-'],
     'labels': ['Resource', 'Video'],
-    'not_helpful_counter': 0,
+    'not_helpful_count': 0,
     'publish_time': '2019-09-12T13:43:02Z',
     'similarity_score': '0.87',
     'thumbnail': 'https://i.ytimg.com/vi/6fUYt1alA1U/hqdefault.jpg',
@@ -1553,52 +1589,64 @@ def cro_get_resources_pagination():
   'total_pages': 2,
   'total_items': 15,
   'content': [{'abstract': 'In mathematics, a time series is a series of data points indexed (or listed or graphed) in time order.  Most commonly, a time series is a sequence taken at successive equally spaced points in time. Thus it is a sequence of discrete-time data. Examples of time series are heights of ocean tides, counts of sunspots, and the daily closing value of the Dow Jones Industrial Average.\nA time series is very frequently plotted via a run chart (which is a temporal line chart). Time series are used in statistics, signal processing, pattern recognition, econometrics, mathematical finance, weather forecasting, earthquake prediction, electroencephalography, control engineering, astronomy, communications engineering, and largely in any domain of applied science and engineering which involves temporal measurements.\nTime series analysis comprises methods for analyzing time series data in order to extract meaningful statistics and other characteristics of the data. Time series forecasting is the use of a model to predict future values based on previously observed values. While regression analysis is often employed in such a way as to test relationships between one or more different time series, this type of analysis is not usually called "time series analysis", which refers in particular to relationships between different points in time within a single series.\nTime series data have a natural temporal ordering.  This makes time series analysis distinct from cross-sectional studies, in which there is no natural ordering of the observations (e.g. explaining people\'s wages by reference to their respective education levels, where the individuals\' data could be entered in any order).  Time series analysis is also distinct from spatial data analysis where the observations typically relate to geographical locations (e.g. accounting for house prices by the location as well as the intrinsic characteristics of the houses). A stochastic model for a time series will generally reflect the fact that observations close together in time will be more closely related than observations further apart. In addition, time series models will often make use of the natural one-way ordering of time so that values for a given period will be expressed as deriving in some way from past values, rather than from future values (see time reversibility).\nTime series analysis can be applied to real-valued, continuous data, discrete numeric data, or discrete symbolic data (i.e. sequences of characters, such as letters and words in the English language).\n\n',
-    'helpful_counter': 0,
+    'helpful_count': 0,
+   'like_count': 0,
+   'channel_title': "Muster Title Name",
     'id': 'https://en.wikipedia.org/wiki/Time_series',
     'keyphrases': [],
     'labels': ['Resource', 'Article'],
-    'not_helpful_counter': 0,
+    'not_helpful_count': 0,
     'similarity_score': '0.83',
     'title': 'Time series',
     'uri': 'https://en.wikipedia.org/wiki/Time_series'},
    {'abstract': 'Market sentiment, also known as investor attention, is the general prevailing attitude of investors as to anticipated price development in a market. This attitude is the accumulation of a variety of fundamental and technical factors, including price history, economic reports, seasonal factors, and national and world events. If investors expect upward price movement in the stock market, the sentiment is said to be bullish. On the contrary, if the market sentiment is bearish, most investors expect downward price movement. Market participants who maintain a static sentiment, regardless of market conditions, are described as permabulls and permabears respectively. Market sentiment is usually considered as a contrarian indicator: what most people expect is a good thing to bet against. Market sentiment is used because it is believed to be a good predictor of market moves, especially when it is more extreme. Very bearish sentiment is usually followed by the market going up more than normal, and vice versa. A bull market refers to a sustained period of either realized or expected price rises, whereas a bear market is used to describe when an index or stock has fallen 20% or more from a recent high for a sustained length of time.Market sentiment is monitored with a variety of technical and statistical methods such as the number of advancing versus declining stocks and new highs versus new lows comparisons. A large share of the overall movement of an individual stock has been attributed to market sentiment. The stock market\'s demonstration of the situation is often described as all boats float or sink with the tide, in the popular Wall Street phrase "the trend is your friend". In the last decade, investors are also known to measure market sentiment through the use of news analytics, which include sentiment analysis on textual stories about companies and sectors.\n\n',
-    'helpful_counter': 0,
+    'helpful_count': 0,
+   'like_count': 0,
+   'channel_title': "Muster Title Name",
     'id': 'https://en.wikipedia.org/wiki/Market_sentiment',
     'keyphrases': [],
     'labels': ['Resource', 'Article'],
-    'not_helpful_counter': 0,
+    'not_helpful_count': 0,
     'similarity_score': '0.84',
     'title': 'Market sentiment',
     'uri': 'https://en.wikipedia.org/wiki/Market_sentiment'},
    {'abstract': 'Speech recognition is an interdisciplinary subfield of computer science and computational linguistics that develops methodologies and technologies that enable the recognition and translation of spoken language into text by computers. It is also known as automatic speech recognition (ASR), computer speech recognition or speech to text (STT). It incorporates knowledge and research in the computer science, linguistics and computer engineering fields. The reverse process is speech synthesis.\nSome speech recognition systems require "solly" (also called "enrollment") where an individual speaker reads text or isolated vocabulary into the system. The system analyzes the person\'s specific voice and uses it to fine-tune the recognition of that person\'s speech, resulting in increased accuracy. Systems that do not use training are called "speaker-independent" systems. Systems that use training are called "speaker dependent".\nSpeech recognition applications include voice user interfaces such as voice dialing (e.g. "call home"), call routing (e.g. "I would like to make a collect call"), domotic appliance control, search key words (e.g. find a podcast where particular words were spoken), simple data entry (e.g., entering a credit card number), preparation of structured documents (e.g. a radiology report), determining speaker characteristics, speech-to-text processing (e.g., word processors or emails), and aircraft (usually termed direct voice input).\nThe term voice recognition or speaker identification refers to identifying the speaker, rather than what they are saying. Recognizing the speaker can simplify the task of translating speech in systems that have been trained on a specific person\'s voice or it can be used to authenticate or verify the identity of a speaker as part of a security process.\nFrom the technology perspective, speech recognition has a long history with several waves of major innovations. Most recently, the field has benefited from advances in deep learning and big data. The advances are evidenced not only by the surge of academic papers published in the field, but more importantly by the worldwide industry adoption of a variety of deep learning methods in designing and deploying speech recognition systems.',
-    'helpful_counter': 0,
+    'helpful_count': 0,
+   'like_count': 0,
+   'channel_title': "Muster Title Name",
     'id': 'https://en.wikipedia.org/wiki/Speech_recognition',
     'keyphrases': [],
     'labels': ['Resource', 'Article'],
-    'not_helpful_counter': 0,
+    'not_helpful_count': 0,
     'similarity_score': '0.84',
     'title': 'Speech recognition',
     'uri': 'https://en.wikipedia.org/wiki/Speech_recognition'},
    {'abstract': 'Multivariate statistics is a subdivision of statistics encompassing the simultaneous observation and analysis of more than one outcome variable, i.e., multivariate random variables. \nMultivariate statistics concerns understanding the different aims and background of each of the different forms of multivariate analysis, and how they relate to each other. The practical application of multivariate statistics to a particular problem may involve several types of univariate and multivariate analyses in order to understand the relationships between variables and their relevance to the problem being studied.\nIn addition, multivariate statistics is concerned with multivariate probability distributions, in terms of both\n\nhow these can be used to represent the distributions of observed data;\nhow they can be used as part of statistical inference, particularly where several different quantities are of interest to the same analysis.Certain types of problems involving multivariate data, for example simple linear regression and multiple regression, are not usually considered to be special cases of multivariate statistics because the analysis is dealt with by considering the (univariate) conditional distribution of a single outcome variable given the other variables.',
-    'helpful_counter': 0,
+    'helpful_count': 0,
+   'like_count': 0,
+   'channel_title': "Muster Title Name",
     'id': 'https://en.wikipedia.org/wiki/Multivariate_statistics',
     'keyphrases': [],
     'labels': ['Resource', 'Article'],
-    'not_helpful_counter': 0,
+    'not_helpful_count': 0,
     'similarity_score': '0.85',
     'title': 'Multivariate statistics',
     'uri': 'https://en.wikipedia.org/wiki/Multivariate_statistics'},
    {'abstract': '',
-    'helpful_counter': 0,
+    'helpful_count': 0,
+   'like_count': 0,
+   'channel_title': "Muster Title Name",
     'id': 'https://en.wikipedia.org/wiki/List_of_statistics_articles',
     'keyphrases': [],
     'labels': ['Resource', 'Article'],
-    'not_helpful_counter': 0,
+    'not_helpful_count': 0,
     'similarity_score': '0.82',
     'title': 'List of statistics articles',
     'uri': 'https://en.wikipedia.org/wiki/List_of_statistics_articles'},
    {'abstract': 'In statistics, probability density estimation or simply density estimation is the construction of an estimate, based on observed data, of an unobservable underlying probability density function.  The unobservable density function is thought of as the density according to which a large population is distributed; the data are usually thought of as a random sample from that population.A variety of approaches to density estimation are used, including Parzen windows and a range of data clustering techniques, including vector quantization. The most basic form of density estimation is a rescaled histogram.',
-    'helpful_counter': 0,
+    'helpful_count': 0,
+   'like_count': 0,
+   'channel_title': "Muster Title Name",
     'id': 'https://en.wikipedia.org/wiki/Density_estimation',
     'keyphrases': ['unobservable underlying probability density function',
      'probability density estimation',
@@ -1616,12 +1664,14 @@ def cro_get_resources_pagination():
      'random sample',
      'rescaled histogram'],
     'labels': ['Resource', 'Article'],
-    'not_helpful_counter': 0,
+    'not_helpful_count': 0,
     'similarity_score': '0.88',
     'title': 'Density estimation',
     'uri': 'https://en.wikipedia.org/wiki/Density_estimation'},
    {'abstract': "Cross-validation, sometimes called rotation estimation or out-of-sample testing, is any of various similar model validation techniques for assessing how the results of a statistical analysis will generalize to an independent data set.\nCross-validation is a resampling method that uses different portions of the data to test and train a model on different iterations. It is mainly used in settings where the goal is prediction, and one wants to estimate how accurately a predictive model will perform in practice.  In a prediction problem, a model is usually given a dataset of known data on which training is run (training dataset), and a dataset of unknown data (or first seen data) against which the model is tested (called the validation dataset or testing set). The goal of cross-validation is to test the model's ability to predict new data that was not used in estimating it, in order to flag problems like overfitting or selection bias and to give an insight on how the model will generalize to an independent dataset (i.e., an unknown dataset, for instance from a real problem).\nOne round of cross-validation involves partitioning a sample of data into complementary subsets, performing the analysis on one subset (called the training set), and validating the analysis on the other subset (called the validation set or testing set). To reduce variability, in most methods multiple rounds of cross-validation are performed using different partitions, and the validation results are combined (e.g. averaged) over the rounds to give an estimate of the model's predictive performance.\nIn summary, cross-validation combines (averages) measures of fitness in prediction to derive a more accurate estimate of model prediction performance.\n\n",
-    'helpful_counter': 0,
+    'helpful_count': 0,
+   'like_count': 0,
+   'channel_title': "Muster Title Name",
     'id': 'https://en.wikipedia.org/wiki/Cross-validation_(statistics)',
     'keyphrases': ['cross - validation combines',
      'cross - validation',
@@ -1639,12 +1689,14 @@ def cro_get_resources_pagination():
      'cross',
      'testing set'],
     'labels': ['Resource', 'Article'],
-    'not_helpful_counter': 0,
+    'not_helpful_count': 0,
     'similarity_score': '0.89',
     'title': 'Cross-validation (statistics)',
     'uri': 'https://en.wikipedia.org/wiki/Cross-validation_(statistics)'},
    {'abstract': 'The following outline is provided as an overview of and topical guide to machine learning:\nMachine learning – subfield of soft computing within computer science that evolved from the study of pattern recognition and computational learning theory in artificial intelligence. In 1959, Arthur Samuel defined machine learning as a "field of study that gives computers the ability to learn without being explicitly programmed". Machine learning explores the study and construction of algorithms that can learn from and make predictions on data. Such algorithms operate by building a model from an example training set of input observations in order to make data-driven predictions or decisions expressed as outputs, rather than following strictly static program instructions.\n\n',
-    'helpful_counter': 0,
+    'helpful_count': 0,
+   'like_count': 0,
+   'channel_title': "Muster Title Name",
     'id': 'https://en.wikipedia.org/wiki/Outline_of_machine_learning',
     'keyphrases': ['computational learning theory',
      'machine learning',
@@ -1662,12 +1714,14 @@ def cro_get_resources_pagination():
      'study',
      'data'],
     'labels': ['Resource', 'Article'],
-    'not_helpful_counter': 0,
+    'not_helpful_count': 0,
     'similarity_score': '0.92',
     'title': 'Outline of machine learning',
     'uri': 'https://en.wikipedia.org/wiki/Outline_of_machine_learning'},
    {'abstract': 'Cognitive biases are systematic patterns of deviation from norm and/or rationality in judgment. They are often studied in psychology, sociology and behavioral economics.Although the reality of most of these biases is confirmed by reproducible research, there are often controversies about how to classify these biases or how to explain them. Several theoretical causes are known for some cognitive biases, which provides a classification of biases by their common generative mechanism (such as noisy information-processing). Gerd Gigerenzer has criticized the framing of cognitive biases as errors in judgment, and favors interpreting them as arising from rational deviations from logical thought.Explanations include information-processing rules (i.e., mental shortcuts), called heuristics, that the brain uses to produce decisions or judgments. Biases have a variety of forms and appear as cognitive ("cold") bias, such as mental noise, or motivational ("hot") bias, such as when beliefs are distorted by wishful thinking. Both effects can be present at the same time.There are also controversies over some of these biases as to whether they count as useless or irrational, or whether they result in useful attitudes or behavior. For example, when getting to know others, people tend to ask leading questions which seem biased towards confirming their assumptions about the person. However, this kind of confirmation bias has also been argued to be an example of social skill; a way to establish a connection with the other person.Although this research overwhelmingly involves human subjects, some findings that demonstrate bias have been found in non-human animals as well. For example, loss aversion has been shown in monkeys and hyperbolic discounting has been observed in rats, pigeons, and monkeys.',
-    'helpful_counter': 0,
+    'helpful_count': 0,
+   'like_count': 0,
+   'channel_title': "Muster Title Name",
     'id': 'https://en.wikipedia.org/wiki/List_of_cognitive_biases',
     'keyphrases': ['cognitive biases',
      'biases',
@@ -1685,12 +1739,14 @@ def cro_get_resources_pagination():
      'example',
      'mental noise'],
     'labels': ['Resource', 'Article'],
-    'not_helpful_counter': 0,
+    'not_helpful_count': 0,
     'similarity_score': '0.89',
     'title': 'List of cognitive biases',
     'uri': 'https://en.wikipedia.org/wiki/List_of_cognitive_biases'},
    {'abstract': 'In statistics, naive Bayes classifiers are a family of linear "probabilistic classifiers" based on applying Bayes\' theorem with strong (naive) independence assumptions between the features (see Bayes classifier). They are among the simplest Bayesian network models, but coupled with kernel density estimation, they can achieve high accuracy levels.Naive Bayes classifiers are highly scalable, requiring a number of parameters linear in the number of variables (features/predictors) in a learning problem. Maximum-likelihood training can be done by evaluating a closed-form expression,:\u200a718\u200a which takes linear time, rather than by expensive iterative approximation as used for many other types of classifiers.\nIn the statistics literature, naive Bayes models are known under a variety of names, including simple Bayes and independence Bayes. All these names reference the use of Bayes\' theorem in the classifier\'s decision rule, but naive Bayes is not (necessarily) a Bayesian method.\n\n',
-    'helpful_counter': 0,
+    'helpful_count': 0,
+   'like_count': 0,
+   'channel_title': "Muster Title Name",
     'id': 'https://en.wikipedia.org/wiki/Naive_Bayes_classifier',
     'keyphrases': ['naive bayes classifier',
      'naive bayes models',
@@ -1708,12 +1764,14 @@ def cro_get_resources_pagination():
      'high accuracy levels',
      'many other types'],
     'labels': ['Resource', 'Article'],
-    'not_helpful_counter': 0,
+    'not_helpful_count': 0,
     'similarity_score': '0.88',
     'title': 'Naive Bayes classifier',
     'uri': 'https://en.wikipedia.org/wiki/Naive_Bayes_classifier'},
    {'abstract': 'In statistics, the phi coefficient (or mean square contingency coefficient and denoted by φ or rφ) is a measure of association for two binary variables.\nIn machine learning, it is known as the Matthews correlation coefficient (MCC) and used as a measure of the quality of binary (two-class) classifications, introduced by biochemist Brian W. Matthews in 1975.Introduced by Karl Pearson, and also known as the Yule phi coefficient from its introduction by Udny Yule in 1912 this measure is similar to the Pearson correlation coefficient in its interpretation. \n\n',
-    'helpful_counter': 0,
+    'helpful_count': 0,
+   'like_count': 0,
+   'channel_title': "Muster Title Name",
     'id': 'https://en.wikipedia.org/wiki/Phi_coefficient',
     'keyphrases': ['yule phi coefficient',
      'pearson correlation coefficient',
@@ -1731,12 +1789,14 @@ def cro_get_resources_pagination():
      'similar',
      'classifications'],
     'labels': ['Resource', 'Article'],
-    'not_helpful_counter': 0,
+    'not_helpful_count': 0,
     'similarity_score': '0.90',
     'title': 'Phi coefficient',
     'uri': 'https://en.wikipedia.org/wiki/Phi_coefficient'},
    {'abstract': "In statistical analysis of binary classification, the F-score or F-measure is a measure of a test's accuracy. It is calculated from the precision and recall of the test, where the precision is the number of true positive results divided by the number of all positive results, including those not identified correctly, and the recall is the number of true positive results divided by the number of all samples that should have been identified as positive. Precision is also known as positive predictive value, and recall is also known as sensitivity in diagnostic binary classification. \nThe F1 score is the harmonic mean of the precision and recall. It thus symmetrically represents both precision and recall in one metric. The more generic \n  \n    \n      \n        \n          F\n          \n            β\n          \n        \n      \n    \n    {\\displaystyle F_{\\beta }}\n   score applies additional weights, valuing one of precision or recall more than the other.\nThe highest possible value of an F-score is 1.0, indicating perfect precision and recall, and the lowest possible value is 0, if either precision or recall are zero.\n\n",
-    'helpful_counter': 0,
+    'helpful_count': 0,
+   'like_count': 0,
+   'channel_title': "Muster Title Name",
     'id': 'https://en.wikipedia.org/wiki/F-score',
     'keyphrases': ['positive predictive value',
      'true positive results',
@@ -1754,12 +1814,14 @@ def cro_get_resources_pagination():
      'positive',
      '\\displaystyle f_{\\beta'],
     'labels': ['Resource', 'Article'],
-    'not_helpful_counter': 0,
+    'not_helpful_count': 0,
     'similarity_score': '0.89',
     'title': 'F-score',
     'uri': 'https://en.wikipedia.org/wiki/F-score'},
    {'abstract': "Principal component analysis (PCA) is a popular technique for analyzing large datasets containing a high number of dimensions/features per observation, increasing the interpretability of data while preserving the maximum amount of information, and enabling the visualization of multidimensional data. Formally, PCA is a statistical technique for reducing the dimensionality of a dataset. This is accomplished by linearly transforming the data into a new coordinate system where (most of) the variation in the data can be described with fewer dimensions than the initial data. Many studies use the first two principal components in order to plot the data in two dimensions and to visually identify clusters of closely related data points. Principal component analysis has applications in many fields such as population genetics, microbiome studies, and atmospheric science.The principal components of a collection of points in a real coordinate space are a sequence of \n  \n    \n      \n        p\n      \n    \n    {\\displaystyle p}\n   unit vectors, where the \n  \n    \n      \n        i\n      \n    \n    {\\displaystyle i}\n  -th vector is the direction of a line that best fits the data while being orthogonal to the first \n  \n    \n      \n        i\n        −\n        1\n      \n    \n    {\\displaystyle i-1}\n   vectors. Here, a best-fitting line is defined as one that minimizes the average squared perpendicular distance from the points to the line. These directions constitute an orthonormal basis in which different individual dimensions of the data are linearly uncorrelated. Principal component analysis is the process of computing the principal components and using them to perform a change of basis on the data, sometimes using only the first few principal components and ignoring the rest.\nIn data analysis, the first principal component of a set of  \n  \n    \n      \n        p\n      \n    \n    {\\displaystyle p}\n   variables, presumed to be jointly normally distributed, is the derived variable formed as a linear combination of the original variables that explains the most variance. The second principal component explains the most variance in what is left once the effect of the first component is removed, and we may proceed through  \n  \n    \n      \n        p\n      \n    \n    {\\displaystyle p}\n   iterations until all the variance is explained. PCA is most commonly used when many of the variables are highly correlated with each other and it is desirable to reduce their number to an independent set.\nPCA is used in exploratory data analysis and for making predictive models. It is commonly used for dimensionality reduction by projecting each data point onto only the first few principal components to obtain lower-dimensional data while preserving as much of the data's variation as possible. The first principal component can equivalently be defined as a direction that maximizes the variance of the projected data. The \n  \n    \n      \n        i\n      \n    \n    {\\displaystyle i}\n  -th principal component can be taken as a direction orthogonal to the first \n  \n    \n      \n        i\n        −\n        1\n      \n    \n    {\\displaystyle i-1}\n   principal components that maximizes the variance of the projected data.\nFor either objective, it can be shown that the principal components are eigenvectors of the data's covariance matrix. Thus, the principal components are often computed by eigendecomposition of the data covariance matrix or singular value decomposition of the data matrix. PCA is the simplest of the true eigenvector-based multivariate analyses and is closely related to factor analysis. Factor analysis typically incorporates more domain-specific assumptions about the underlying structure and solves eigenvectors of a slightly different matrix. PCA is also related to canonical correlation analysis (CCA). CCA defines coordinate systems that optimally describe the cross-covariance between two datasets while PCA defines a new orthogonal coordinate system that optimally describes variance in a single dataset. Robust and L1-norm-based variants of standard PCA have also been proposed.\n\n",
-    'helpful_counter': 0,
+    'helpful_count': 0,
+   'like_count': 0,
+   'channel_title': "Muster Title Name",
     'id': 'https://en.wikipedia.org/wiki/Principal_component_analysis',
     'keyphrases': ['principal component analysis',
      'first few principal components',
@@ -1777,12 +1839,14 @@ def cro_get_resources_pagination():
      'multidimensional data',
      'initial data'],
     'labels': ['Resource', 'Article'],
-    'not_helpful_counter': 0,
+    'not_helpful_count': 0,
     'similarity_score': '0.87',
     'title': 'Principal component analysis',
     'uri': 'https://en.wikipedia.org/wiki/Principal_component_analysis'},
    {'abstract': 'A receiver operating characteristic curve, or ROC curve, is a graphical plot that illustrates the performance of a binary classifier model (can be used for multi class classification as well) at varying threshold values.\nThe ROC curve is the plot of the true positive rate (TPR) against the false positive rate (FPR) at each threshold setting.\nThe ROC can also be thought of as a plot of the statistical power as a function of the Type I Error of the decision rule (when the performance is calculated from just a sample of the population, it can be thought of as estimators of these quantities). The ROC curve is thus the sensitivity or recall as a function of false positive rate. \nGiven the probability distributions for both true positive and false positive are known, the ROC curve is obtained as the cumulative distribution function (CDF, area under the probability distribution from \n  \n    \n      \n        −\n        ∞\n      \n    \n    {\\displaystyle -\\infty }\n   to the discrimination threshold) of the detection probability in the y-axis versus the CDF of the false positive probability on the x-axis.\nROC analysis provides tools to select possibly optimal models and to discard suboptimal ones independently from (and prior to specifying) the cost context or the class distribution. ROC analysis is related in a direct and natural way to cost/benefit analysis of diagnostic decision making.\n\n',
-    'helpful_counter': 0,
+    'helpful_count': 0,
+   'like_count': 0,
+   'channel_title': "Muster Title Name",
     'id': 'https://en.wikipedia.org/wiki/Receiver_operating_characteristic',
     'keyphrases': ['false positive probability',
      'false positive rate',
@@ -1800,12 +1864,14 @@ def cro_get_resources_pagination():
      'detection probability',
      'benefit analysis'],
     'labels': ['Resource', 'Article'],
-    'not_helpful_counter': 0,
+    'not_helpful_count': 0,
     'similarity_score': '0.88',
     'title': 'Receiver operating characteristic',
     'uri': 'https://en.wikipedia.org/wiki/Receiver_operating_characteristic'},
    {'abstract': 'In applied mathematics, topological data analysis (TDA) is an approach to the analysis of datasets using techniques from topology. Extraction of information from datasets that are high-dimensional, incomplete and noisy is generally challenging. TDA provides a general framework to analyze such data in a manner that is insensitive to the particular metric chosen and provides dimensionality reduction and robustness to noise.  Beyond this, it inherits functoriality, a fundamental concept of modern mathematics, from its topological nature, which allows it to adapt to new mathematical tools.The initial motivation is to study the shape of data. TDA has combined algebraic topology and other tools from pure mathematics to allow mathematically rigorous study of "shape". The main tool is persistent homology, an adaptation of homology to point cloud data. Persistent homology has been applied to many types of data across many fields. Moreover, its mathematical foundation is also of theoretical importance. The unique features of TDA make it a promising bridge between topology and geometry.',
-    'helpful_counter': 0,
+    'helpful_count': 0,
+   'like_count': 0,
+   'channel_title': "Muster Title Name",
     'id': 'https://en.wikipedia.org/wiki/Topological_data_analysis',
     'keyphrases': ['topological data analysis',
      'new mathematical tools',
@@ -1823,7 +1889,7 @@ def cro_get_resources_pagination():
      'tda',
      'other tools'],
     'labels': ['Resource', 'Article'],
-    'not_helpful_counter': 0,
+    'not_helpful_count': 0,
     'similarity_score': '0.90',
     'title': 'Topological data analysis',
     'uri': 'https://en.wikipedia.org/wiki/Topological_data_analysis'}]}}
@@ -1834,7 +1900,7 @@ def cro_get_resources_pagination():
                 "description": "Abroad Education Channel : https://www.youtube.com/channel/UC9sgREj-cfZipx65BLiHGmw Company Specific HR Mock ...",
                 "description_full": "Abroad Education Channel :\nhttps://www.youtube.com/channel/UC9sgREj-cfZipx65BLiHGmw\n\nCompany Specific HR Mock Interview : \nA seasoned professional with over 18 years of experience with Product, IT Services and Agri industry of valuable experience in Human Resource Management, Extensive Experience in Talent Acquisition, Personnel Management, Compensation and Benefits, Performance Reviews, Training & Development and all facets of Human Resources will be performing mock HR Interviews and provides feedback on the session and guides with interview techniques.\n\ncontact me on gmail at : shraavyareddy810@gmail.com\n\nfollow me on instagram at : https://www.instagram.com/shraavya_katkuri/\n\nPlacement playlist: https://www.youtube.com/channel/UCHNO_Y3DskuKiw9VTvo8AMw\n\npaper presentation for semester exams :\nhttps://youtu.be/utSVdagxc7I",
                 "duration": "8:34",
-                "helpful_counter": 0,
+                "helpful_count": 0,
                 "id": "Dy9urawfXos",
                 "keyphrases": [
                     "pearson&#39;s correlation coefficient |dm|.",
@@ -1847,7 +1913,7 @@ def cro_get_resources_pagination():
                     "Resource",
                     "Video"
                 ],
-                "not_helpful_counter": 0,
+                "not_helpful_count": 0,
                 "publish_time": "2022-02-08T13:37:22Z",
                 "similarity_score": "0.90",
                 "thumbnail": "https://i.ytimg.com/vi/Dy9urawfXos/hqdefault.jpg",
@@ -1861,14 +1927,14 @@ def cro_get_resources_pagination():
                 "description": "Here, I've explained Decision Trees in great detail. You'll also learn the math behind splitting the nodes. The next video will show ...",
                 "description_full": "Here, I've explained Decision Trees in great detail. You'll also learn the math behind splitting the nodes. The next video will show you how to code a decision tree classifier from scratch.\n#machinelearning #datascience\n\nFor more videos please subscribe - \nhttp://bit.ly/normalizedNERD \n\nJoin our discord - \nhttps://discord.gg/39YYU936RC\n\nFacebook - \nhttps://www.facebook.com/nerdywits/\nInstagram - \nhttps://www.instagram.com/normalizednerd/\nTwitter - \nhttps://twitter.com/normalized_nerd",
                 "duration": "10:33",
-                "helpful_counter": 0,
+                "helpful_count": 0,
                 "id": "ZVR2Way4nwQ",
                 "keyphrases": [],
                 "labels": [
                     "Resource",
                     "Video"
                 ],
-                "not_helpful_counter": 0,
+                "not_helpful_count": 0,
                 "publish_time": "2021-01-13T13:14:16Z",
                 "similarity_score": "0.87",
                 "thumbnail": "https://i.ytimg.com/vi/ZVR2Way4nwQ/hqdefault.jpg",
@@ -1882,14 +1948,14 @@ def cro_get_resources_pagination():
                 "description": "Myself Shridhar Mankar an Engineer l YouTuber l Educational Blogger l Educator l Podcaster. My Aim- To Make Engineering ...",
                 "description_full": "Myself Shridhar Mankar an Engineer l YouTuber l Educational Blogger l Educator l Podcaster. \nMy Aim- To Make Engineering Students Life EASY.\n\nWebsite   - https://5minutesengineering.com \n\n5 Minutes Engineering English YouTube Channel -  https://m.youtube.com/channel/UChTsiSbpTuSrdOHpXkKlq6Q\n\nInstagram -  https://www.instagram.com/5minutesengineering/?hl=en\n\nA small donation would mean the world to me and will help me to make AWESOME videos for you.\n• UPI ID : 5minutesengineering@apl\n\nPlaylists :\n\n• 5 Minutes Engineering Podcast :\n  https://youtube.com/playlist?list=PLYwpaL_SFmcCTAu8NRuCaD3aTEgHLeF0X\n\n• Aptitude :\n  https://youtube.com/playlist?list=PLYwpaL_SFmcBpa1jwpCbEDespCRF3UPE5\n\n• Machine Learning :\n  https://youtube.com/playlist?list=PLYwpaL_SFmcBhOEPwf5cFwqo5B-cP9G4P\n\n• Computer Graphics :\n  https://youtube.com/playlist?list=PLYwpaL_SFmcAtxMe7ahYC4ZYjQHun_b-T\n\n• C Language Tutorial for Beginners :\n  https://youtube.com/playlist?list=PLYwpaL_SFmcBqvw6QTRsA8gvZL3ao2ON-\n\n• R Tutorial for Beginners :\n  https://youtube.com/playlist?list=PLYwpaL_SFmcCRFzBkZ-b92Hdg-qCUfx48\n\n• Python Tutorial for Beginners :\n  https://youtube.com/playlist?list=PLYwpaL_SFmcCJu4i6UGMkMx1p3yYZJsbC\n\n• Embedded and Real Time Operating Systems (ERTOS) :\n  https://youtube.com/playlist?list=PLYwpaL_SFmcBpuYagx0JiSaM-Bi4dm0hG\n\n• Shridhar Live Talks :\n  https://youtube.com/playlist?list=PLYwpaL_SFmcD21x33RkmGvcZtrnWlTDdI\n\n• Welcome to 5 Minutes Engineering :\n  https://youtube.com/playlist?list=PLYwpaL_SFmcCwG02L6fm0G5zmzpyw3eyc \n\n• Human Computer Interaction (HCI) :\n  https://youtube.com/playlist?list=PLYwpaL_SFmcDz_8-pygbcNvNF0DEwKoIL\n\n• Computer Organization and Architecture :\n  https://youtube.com/playlist?list=PLYwpaL_SFmcCaiXeUEjcTzHwIfJqH1qCN\n\n• Deep Learning :\n  https://youtube.com/playlist?list=PLYwpaL_SFmcD-6P8cuX2bZAHSThF6AYvq\n\n• Genetic Algorithm :\n  https://youtube.com/playlist?list=PLYwpaL_SFmcDHUTN26NXKfjg6wFJKDO9R\n\n• Cloud Computing :\n  https://youtube.com/playlist?list=PLYwpaL_SFmcCyQH0n9GHfwviu6KeJ46BV\n\n• Information and Cyber Security :\n  https://youtube.com/playlist?list=PLYwpaL_SFmcArHtWmbs_vXX6soTK3WEJw\n\n• Soft Computing and Optimization Algorithms :\n  https://youtube.com/playlist?list=PLYwpaL_SFmcCPUl8mAnb4g1oExKd0n4Gw\n\n• Compiler Design :\n  https://youtube.com/playlist?list=PLYwpaL_SFmcC6FupM--SachxUTOiQ7XHw\n\n• Operating System :\n  https://youtube.com/playlist?list=PLYwpaL_SFmcD0LLrv7CXxSiO2gNJsoxpi\n\n• Hadoop :\n  https://youtube.com/playlist?list=PLYwpaL_SFmcAhiP6C1qVorA7HZRejRE6M\n\n• CUDA :\n  https://youtube.com/playlist?list=PLYwpaL_SFmcB73J5yO6uSFUycHJSA45O0\n\n• Discrete Mathematics :\n  https://youtube.com/playlist?list=PLYwpaL_SFmcDKuvj-wIgDnHA5JTfUwrHv\n\n• Theory of Computation (TOC) :\n  https://youtube.com/playlist?list=PLYwpaL_SFmcDXLUrW3JEq2cv8efNF6UeQ\n\n• Data Analytics :\n  https://youtube.com/playlist?list=PLYwpaL_SFmcD_agAK_MpCDJdDXFuJqS9X\n\n• Software Modeling and Design :\n  https://youtube.com/playlist?list=PLYwpaL_SFmcD1pjNSpEm2pje3zPrSiflZ\n\n• Internet Of Things (IOT) :\n  https://youtube.com/playlist?list=PLYwpaL_SFmcB8fDd64B8SkJiPpEIzpCzC\n\n• Database Management Systems (DBMS) :\n  https://youtube.com/playlist?list=PLYwpaL_SFmcBU4HS74xGTK1cAFbY0rdVY \n\n• Computer Network (CN) :\n  https://youtube.com/playlist?list=PLYwpaL_SFmcAXkWn2IR-l_WXOrr0n851a\n\n• Software Engineering and Project Management :\n  https://youtube.com/playlist?list=PLYwpaL_SFmcCB7zUM0YSDR-1mM4KoiyLM\n\n• Design and Analysis of Algorithm :\n  https://youtube.com/playlist?list=PLYwpaL_SFmcBOrMihdkd48kgs6_YP8taa\n\n• Data Mining and Warehouse :\n  https://youtube.com/playlist?list=PLYwpaL_SFmcChP0xiW3KK9elNuhfCLVVi\n\n• Mobile Communication :\n  https://youtube.com/playlist?list=PLYwpaL_SFmcAjqrKO-b9UMa2AaAlzZY7D\n\n• High Performance Computing :\n  https://youtube.com/playlist?list=PLYwpaL_SFmcA1eJbqwvjKgsnT321hXRGx\n\n• Artificial Intelligence and Robotics :\n  https://youtube.com/playlist?list=PLYwpaL_SFmcBmfMtX5wRMAtqna7pY-YtG",
                 "duration": "5:15",
-                "helpful_counter": 0,
+                "helpful_count": 0,
                 "id": "QOGhtUGqP94",
                 "keyphrases": [],
                 "labels": [
                     "Resource",
                     "Video"
                 ],
-                "not_helpful_counter": 0,
+                "not_helpful_count": 0,
                 "publish_time": "2023-01-15T12:30:10Z",
                 "similarity_score": "0.84",
                 "thumbnail": "https://i.ytimg.com/vi/QOGhtUGqP94/hqdefault.jpg",
@@ -1903,7 +1969,7 @@ def cro_get_resources_pagination():
                 "description": "Subject - Data Mining and Business Intelligence Video Name - From Association Mining to Correlation Analysis, Pattern ...",
                 "description_full": "Subject - Data Mining and Business Intelligence\n\nVideo Name - From Association Mining to Correlation Analysis, Pattern Evaluation Measures\n\nChapter - Frequent Pattern Mining\n\nFaculty - Prof. Apoorva Wani\n\nUpskill and get Placements with Ekeeda Career Tracks\nData Science - https://ekeeda.com/career-track/data-scientist\nSoftware Development Engineer - https://ekeeda.com/career-track/software-development-engineer\nEmbedded & IoT Engineer - https://ekeeda.com/career-track/embedded-and-iot-engineer\n\nGet FREE Trial for GATE 2023 Exam with Ekeeda GATE - 20000+ Lectures & Notes, strategy, updates, and notifications which will help you to crack your GATE exam.\nhttps://ekeeda.com/catalog/competitive-exam\nCoupon Code - EKGATE\n\nGet Free Notes of All Engineering Subjects & Technology\nhttps://ekeeda.com/digital-library\n\nAccess the Complete Playlist of Subject Data Mining and Business Intelligence - https://www.youtube.com/playlist?list=PLm_MSClsnwm8czfGtiBvDJkHXwixcq-ck\n\nSocial Links:\nhttps://www.instagram.com/ekeeda_official/\nhttps://in.linkedin.com/company/ekeeda.com\n\nHappy Learning!\n\n#fromassociationminingtocorrelationanalysispatternevaluationmeasures\n#frequentpatternmining\n#dataminingandbusinessintelligence",
                 "duration": "12:3",
-                "helpful_counter": 0,
+                "helpful_count": 0,
                 "id": "dlUc8PA7Gag",
                 "keyphrases": [
                     "pattern evaluation measures- frequent pattern mining",
@@ -1918,7 +1984,7 @@ def cro_get_resources_pagination():
                     "Resource",
                     "Video"
                 ],
-                "not_helpful_counter": 0,
+                "not_helpful_count": 0,
                 "publish_time": "2022-04-08T05:29:16Z",
                 "similarity_score": "0.92",
                 "thumbnail": "https://i.ytimg.com/vi/dlUc8PA7Gag/hqdefault.jpg",
@@ -1932,7 +1998,7 @@ def cro_get_resources_pagination():
                 "description": "",
                 "description_full": "",
                 "duration": "5:31",
-                "helpful_counter": 0,
+                "helpful_count": 0,
                 "id": "khZCmz3oLuI",
                 "keyphrases": [
                     "data mining",
@@ -1945,7 +2011,7 @@ def cro_get_resources_pagination():
                     "Resource",
                     "Video"
                 ],
-                "not_helpful_counter": 0,
+                "not_helpful_count": 0,
                 "publish_time": "2016-09-01T13:25:07Z",
                 "similarity_score": "0.91",
                 "thumbnail": "https://i.ytimg.com/vi/khZCmz3oLuI/hqdefault.jpg",
@@ -1959,7 +2025,7 @@ def cro_get_resources_pagination():
                 "description": "Data Science Course for 3-8 Yrs Work Exp: https://l.linklyhq.com/l/1tx7P Data Science Course for 0-3 Yrs Work Exp: ...",
                 "description_full": "🔥Data Science Course for 3-8 Yrs Work Exp: https://l.linklyhq.com/l/1tx7P\n🔥Data Science Course for 0-3 Yrs Work Exp: https://l.linklyhq.com/l/1ugC3\n🔥Data Science Course for 8+ Yrs Work Exp: https://l.linklyhq.com/l/1tx7Q\n\nIn this statistics video, you will learn what correlation is. We will discuss types of correlation, some limitations, and the real-life applications of a correlation. In the end, you will also work on an example to calculate the correlations using excel.\n\n✅Subscribe to our Channel to learn more about the top Technologies: https://bit.ly/2VT4WtH\n\n⏩ Check out the Data Science tutorial videos: https://www.youtube.com/watch?v=X3paOmcrTjQ&list=PLEiEAq2VkUUIEQ7ENKU5Gv0HpRDtOphC6\n\n#WhatIsCorrelation #TypesOfCorrelation #CorrelationCoefficient #PositiveCorrelation #NegativeCorrelation #CorrelationAndRegression #Statistics #LearnStatistics #Simplilearn\n\nWhat is Correlation?\nCorrelation is a statistic that measures the degree to which two variables move in relation to each other. It measures association, but doesn't show if x causes y or vice versa—or if the association is caused by a third factor.\n\n🔥Free Data Science Course with Completion Certificate: https://www.simplilearn.com/data-science-free-course-for-beginners-skillup?utm_campaign=WhatIsCorrelation&utm_medium=Description&utm_source=youtube\n\n➡️ About Caltech Post Graduate Program In Data Science\nThis Post Graduation in Data Science leverages the superiority of Caltech's academic eminence. The Data Science program covers critical Data Science topics like Python programming, R programming, Machine Learning, Deep Learning, and Data Visualization tools through an interactive learning model with live sessions by global practitioners and practical labs.\n\n✅ Key Features\n- Simplilearn's JobAssist helps you get noticed by top hiring companies\n- Caltech PG program in Data Science completion certificate\n- Earn up to 14 CEUs from Caltech CTME\n- Masterclasses delivered by distinguished Caltech faculty and IBM experts\n- Caltech CTME Circle membership\n- Online convocation by Caltech CTME Program Director\n- IBM certificates for IBM courses\n- Access to hackathons and Ask Me Anything sessions from IBM\n- 25+ hands-on projects from the likes of Amazon, Walmart, Uber, and many more\n- Seamless access to integrated labs\n- Capstone projects in 3 domains\n- Simplilearn’s Career Assistance to help you get noticed by top hiring companies\n- 8X higher interaction in live online classes by industry experts\n\n✅ Skills Covered\n- Exploratory Data Analysis\n- Descriptive Statistics\n- Inferential Statistics\n- Model Building and Fine Tuning\n- Supervised and Unsupervised Learning\n- Ensemble Learning\n- Deep Learning\n- Data Visualization\n\n👉 Learn More At: https://www.simplilearn.com/post-graduate-program-data-science?utm_campaign=WhatIsCorrelation-PEfQCv9nvSo&utm_medium=Description&utm_source=youtube \n🔥 Data Science Bootcamp (US Only): https://www.simplilearn.com/data-science-bootcamp\n?utm_campaign=WhatIsCorrelation-PEfQCv9nvSo&utm_medium=Description&utm_source=youtube \n\n🔥🔥 Interested in Attending Live Classes? Call Us: IN - 18002127688 / US - +18445327688",
                 "duration": "4:33",
-                "helpful_counter": 0,
+                "helpful_count": 0,
                 "id": "PEfQCv9nvSo",
                 "keyphrases": [
                     "https://l.linklyhq.com/l/1tx7p data science course",
@@ -1975,7 +2041,7 @@ def cro_get_resources_pagination():
                     "Resource",
                     "Video"
                 ],
-                "not_helpful_counter": 0,
+                "not_helpful_count": 0,
                 "publish_time": "2022-01-22T06:30:08Z",
                 "similarity_score": "0.91",
                 "thumbnail": "https://i.ytimg.com/vi/PEfQCv9nvSo/hqdefault.jpg",
@@ -1989,7 +2055,7 @@ def cro_get_resources_pagination():
                 "description": "Linear Regression Algorithm – Solved Numerical Example in Machine Learning by Mahesh Huddar The following concepts are ...",
                 "description_full": "Linear Regression Algorithm – Solved Numerical Example in Machine Learning by Mahesh Huddar\n\nThe following concepts are discussed:\n______________________________\nregression equation, \nregression analysis introduction,\nregression analysis, \nlinear regression solved example,\nlinear regression example,\n regression solved example,\nregression numerical example,\nregression numerical methods,\n\n\n********************************\n\n1. Blog / Website: https://www.vtupulse.com/\n2. Like Facebook Page: https://www.facebook.com/VTUPulse\n3. Follow us on Instagram: https://www.instagram.com/vtupulse/\n4. Like, Share, Subscribe, and Don't forget to press the bell ICON for regular updates",
                 "duration": "5:30",
-                "helpful_counter": 0,
+                "helpful_count": 0,
                 "id": "QcPycBZomac",
                 "keyphrases": [
                     "linear regression algorithm –",
@@ -2002,7 +2068,7 @@ def cro_get_resources_pagination():
                     "Resource",
                     "Video"
                 ],
-                "not_helpful_counter": 0,
+                "not_helpful_count": 0,
                 "publish_time": "2023-05-02T16:50:10Z",
                 "similarity_score": "0.91",
                 "thumbnail": "https://i.ytimg.com/vi/QcPycBZomac/hqdefault.jpg",
@@ -2016,7 +2082,7 @@ def cro_get_resources_pagination():
                 "description": "In this video, we will explore the correlation among different columns of data using Pandas Corr() function. Exploring correlations ...",
                 "description_full": "In this video, we will explore the correlation among different columns of data using Pandas Corr() function.\n\nExploring correlations in data using python is very important task in Machine Learning feature engineering..",
                 "duration": "2:18",
-                "helpful_counter": 0,
+                "helpful_count": 0,
                 "id": "1jLngF4KSqE",
                 "keyphrases": [
                     "different columns",
@@ -2031,7 +2097,7 @@ def cro_get_resources_pagination():
                     "Resource",
                     "Video"
                 ],
-                "not_helpful_counter": 0,
+                "not_helpful_count": 0,
                 "publish_time": "2022-04-14T15:56:40Z",
                 "similarity_score": "0.91",
                 "thumbnail": "https://i.ytimg.com/vi/1jLngF4KSqE/hqdefault.jpg",
@@ -2045,7 +2111,7 @@ def cro_get_resources_pagination():
                 "description": "This lecture provides the introductory concepts of Frequent pattern mining in transnational databases.",
                 "description_full": "This lecture provides the introductory concepts of Frequent pattern mining in transnational databases.",
                 "duration": "19:31",
-                "helpful_counter": 0,
+                "helpful_count": 0,
                 "id": "QN3_wxqnSlw",
                 "keyphrases": [
                     "frequent pattern mining",
@@ -2062,7 +2128,7 @@ def cro_get_resources_pagination():
                     "Resource",
                     "Video"
                 ],
-                "not_helpful_counter": 0,
+                "not_helpful_count": 0,
                 "publish_time": "2017-09-19T09:06:40Z",
                 "similarity_score": "0.91",
                 "thumbnail": "https://i.ytimg.com/vi/QN3_wxqnSlw/hqdefault.jpg",
@@ -2076,7 +2142,7 @@ def cro_get_resources_pagination():
                 "description": "Covariance is closely related to Correlation. But what it really says? This video explains covariance with visualizations.",
                 "description_full": "Covariance is closely related to Correlation. But what it really says? This video explains covariance with visualizations.\n#machinelearning #datascience\n\nLike my work? Support me -\nhttps://www.buymeacoffee.com/normalizednerd\n\nFor more videos please subscribe - \nhttp://bit.ly/normalizedNERD \n\nJoin our discord - \nhttps://discord.gg/39YYU936RC\n\nFacebook - \nhttps://www.facebook.com/nerdywits/\nInstagram - \nhttps://www.instagram.com/normalizednerd/\nTwitter - \nhttps://twitter.com/normalized_nerd",
                 "duration": "7:47",
-                "helpful_counter": 0,
+                "helpful_count": 0,
                 "id": "TPcAnExkWwQ",
                 "keyphrases": [
                     "covariance",
@@ -2089,7 +2155,7 @@ def cro_get_resources_pagination():
                     "Resource",
                     "Video"
                 ],
-                "not_helpful_counter": 0,
+                "not_helpful_count": 0,
                 "publish_time": "2021-06-03T14:30:07Z",
                 "similarity_score": "0.89",
                 "thumbnail": "https://i.ytimg.com/vi/TPcAnExkWwQ/hqdefault.jpg",
@@ -2103,7 +2169,7 @@ def cro_get_resources_pagination():
                 "description": "The similarity measure is the measure of how much alike two data objects are. #MachineLearning #SimilarityMeasure #Clustering ...",
                 "description_full": "The similarity measure is the measure of how much alike two data objects are.  #MachineLearning #SimilarityMeasure #Clustering\n\nMachine Learning 👉https://www.youtube.com/playlist?list=PLPN-43XehstOjGY6vM6nBpSggHoAv9hkR\n\nArtificial Intelligence 👉https://www.youtube.com/playlist?list=PLPN-43XehstNQttedytmmLPwzMCXahBRg\n\nCloud Computing 👉https://www.youtube.com/playlist?list=PLPN-43XehstNd5WsXQ9y3GFXyagkX1PC3\n\nWireless Technology 👉https://www.youtube.com/playlist?list=PLPN-43XehstMhFEXiOgJwv2Ec3vOTWpSH\n\nData Mining 👉https://www.youtube.com/playlist?list=PLPN-43XehstOe0CxcXaYeLTFpgD2IiluP\n\nSimulation Modeling 👉https://www.youtube.com/playlist?list=PLPN-43XehstPwUMDCs9zYQS-e5-0zjifX\n\nBig Data 👉https://www.youtube.com/playlist?list=PLPN-43XehstPr1D-t9X2klE--Uj4YSNwn\n\nBlockchain 👉https://www.youtube.com/playlist?list=PLPN-43XehstNgC2t_EScmj1GWv24ncugJ\n\nIOT 👉https://www.youtube.com/playlist?list=PLPN-43XehstOS_3mv9LgFWnVXQE-7PKbF\n\n\nFollow me on Instagram 👉 https://www.instagram.com/ngnieredteacher/\nVisit my Profile 👉 https://www.linkedin.com/in/reng99/\nSupport my work on Patreon 👉 https://www.patreon.com/ranjiraj",
                 "duration": "10:19",
-                "helpful_counter": 0,
+                "helpful_count": 0,
                 "id": "a8riMSeBtwY",
                 "keyphrases": [
                     "similarity measures",
@@ -2118,7 +2184,7 @@ def cro_get_resources_pagination():
                     "Resource",
                     "Video"
                 ],
-                "not_helpful_counter": 0,
+                "not_helpful_count": 0,
                 "publish_time": "2019-10-02T16:00:22Z",
                 "similarity_score": "0.89",
                 "thumbnail": "https://i.ytimg.com/vi/a8riMSeBtwY/hqdefault.jpg",
@@ -2132,7 +2198,7 @@ def cro_get_resources_pagination():
                 "description": "Linear Regression in 2 minutes. --------------- Credit: Manim and Python : https://github.com/3b1b/manim Blender3D: ...",
                 "description_full": "Linear Regression in 2 minutes.\n\n\n\n---------------\nCredit:\n🐍 Manim and Python : https://github.com/3b1b/manim\n🐵 Blender3D: https://www.blender.org/\n🗒️ Emacs: https://www.gnu.org/software/emacs/\nMusic/Sound: www.bensound.com\n\nThis video would not have been possible without the help of Gökçe Dayanıklı.",
                 "duration": "2:34",
-                "helpful_counter": 0,
+                "helpful_count": 0,
                 "id": "CtsRRUddV2s",
                 "keyphrases": [
                     "linear regression",
@@ -2146,7 +2212,7 @@ def cro_get_resources_pagination():
                     "Resource",
                     "Video"
                 ],
-                "not_helpful_counter": 0,
+                "not_helpful_count": 0,
                 "publish_time": "2021-11-28T07:49:01Z",
                 "similarity_score": "0.90",
                 "thumbnail": "https://i.ytimg.com/vi/CtsRRUddV2s/hqdefault.jpg",
@@ -2160,7 +2226,7 @@ def cro_get_resources_pagination():
                 "description": "With the help of correlation analysis, the linear relationship between variables can be examined. The strength of the correlation is ...",
                 "description_full": "With the help of correlation analysis, the linear relationship between variables can be examined. The strength of the correlation is determined by the correlation coefficient, which varies from -1 to +1. This means that correlation analyses can be used to make a statement about the strength and direction of the relationship between two variables.\n\nInterpret correlation\nPositive correlation\nA positive correlation exists when larger values of variable A are accompanied by larger values of variable B. Body size and shoe size, for example, correlate positively, resulting in a correlation coefficient that lies between 0 and 1, i.e. a positive value.\n\nNegative correlation\nA negative correlation exists when larger values of variable A are accompanied by smaller values of variable B. The product price and the sales volume usually have a negative correlation; the more expensive a product is, the lower the sales volume. In this case, the correlation coefficient lies between -1 and 0, i.e. it takes on a negative value.\n\nMore information on correlation analysis:\nhttps://datatab.net/tutorial/correlation\n\nAnd here is the online correlation calculator:\nhttps://datatab.net/statistics-calculator/correlation",
                 "duration": "5:40",
-                "helpful_counter": 0,
+                "helpful_count": 0,
                 "id": "qo1FVrlvW1Y",
                 "keyphrases": [
                     "correlation analysis",
@@ -2174,7 +2240,7 @@ def cro_get_resources_pagination():
                     "Resource",
                     "Video"
                 ],
-                "not_helpful_counter": 0,
+                "not_helpful_count": 0,
                 "publish_time": "2021-01-11T19:34:49Z",
                 "similarity_score": "0.87",
                 "thumbnail": "https://i.ytimg.com/vi/qo1FVrlvW1Y/hqdefault.jpg",
@@ -2188,7 +2254,7 @@ def cro_get_resources_pagination():
                 "description": "This video is about Simple Linear Regression which is a supervised machine learning algorithm. Watch Multiple Linear ...",
                 "description_full": "This video is about  Simple Linear Regression which is a supervised machine learning algorithm.\n\nWatch Multiple Linear Regression at https://youtu.be/m9Q6nUruqOQ. \n\n\n\n\nIf you are interested in  building cool Natural Language Processing (NLP) Apps , access our NLP APIs at https://www.firstlanguage.in/ . Also for NLP product development and consultation, please reach out to us at     info@firstlanguage.in",
                 "duration": "10:11",
-                "helpful_counter": 0,
+                "helpful_count": 0,
                 "id": "orQ-QGaOPIg",
                 "keyphrases": [
                     "simple linear regression",
@@ -2201,7 +2267,7 @@ def cro_get_resources_pagination():
                     "Resource",
                     "Video"
                 ],
-                "not_helpful_counter": 0,
+                "not_helpful_count": 0,
                 "publish_time": "2018-08-06T08:41:33Z",
                 "similarity_score": "0.87",
                 "thumbnail": "https://i.ytimg.com/vi/orQ-QGaOPIg/hqdefault.jpg",
@@ -2215,7 +2281,7 @@ def cro_get_resources_pagination():
                 "description": "In this video we are going to understand about Pearson Correlation Coefficient. We will also understand the difference between ...",
                 "description_full": "In this video we are going to understand about Pearson Correlation Coefficient. We will also understand the difference between Covariance and Correlation.\n\nPlease join as a member in my channel to get additional benefits like materials in Data Science, live streaming for Members and many more \nhttps://www.youtube.com/channel/UCNU_lfiiWBdtULKOw6X0Dig/join\n\nSupport me in Patreon: https://www.patreon.com/join/2340909?\n\nBuy the Best book of Machine Learning, Deep Learning with python sklearn and tensorflow from below\namazon url:\nhttps://www.amazon.in/Hands-Machine-Learning-Scikit-Learn-Tensor/dp/9352135210/ref=as_sl_pc_qf_sp_asin_til?tag=krishnaik06-21&linkCode=w00&linkId=a706a13cecffd115aef76f33a760e197&creativeASIN=9352135210\n\n\nYou can buy my book on Finance with Machine Learning and Deep Learning from the below url\n\namazon url: https://www.amazon.in/Hands-Python-Finance-implementing-strategies/dp/1789346371/ref=as_sl_pc_qf_sp_asin_til?tag=krishnaik06-21&linkCode=w00&linkId=ac229c9a45954acc19c1b2fa2ca96e23&creativeASIN=1789346371\n\n\n\n\nConnect with me here:\nTwitter: https://twitter.com/Krishnaik06\nFacebook: https://www.facebook.com/krishnaik06\ninstagram: https://www.instagram.com/krishnaik06\n\nSubscribe my unboxing Channel\n\nhttps://www.youtube.com/channel/UCjWY5hREA6FFYrthD0rZNIw\n\n\nBelow are the various playlist created on ML,Data Science and Deep Learning. Please subscribe and support the channel. Happy Learning!\n\nDeep Learning Playlist: https://www.youtube.com/watch?v=DKSZHN7jftI&list=PLZoTAELRMXVPGU70ZGsckrMdr0FteeRUi\nData Science Projects playlist: https://www.youtube.com/watch?v=5Txi0nHIe0o&list=PLZoTAELRMXVNUcr7osiU7CCm8hcaqSzGw\n\nNLP playlist: https://www.youtube.com/watch?v=6ZVf1jnEKGI&list=PLZoTAELRMXVMdJ5sqbCK2LiM0HhQVWNzm\n\nStatistics Playlist: https://www.youtube.com/watch?v=GGZfVeZs_v4&list=PLZoTAELRMXVMhVyr3Ri9IQ-t5QPBtxzJO\n\nFeature Engineering playlist: https://www.youtube.com/watch?v=NgoLMsaZ4HU&list=PLZoTAELRMXVPwYGE2PXD3x0bfKnR0cJjN\n\nComputer Vision playlist: https://www.youtube.com/watch?v=mT34_yu5pbg&list=PLZoTAELRMXVOIBRx0andphYJ7iakSg3Lk\n\nData Science Interview Question playlist: https://www.youtube.com/watch?v=820Qr4BH0YM&list=PLZoTAELRMXVPkl7oRvzyNnyj1HS4wt2K-\n\nYou can buy my book on Finance with Machine Learning and Deep Learning from the below url\n\namazon url: https://www.amazon.in/Hands-Python-Finance-implementing-strategies/dp/1789346371/ref=sr_1_1?keywords=krish+naik&qid=1560943725&s=gateway&sr=8-1\n\n🙏🙏🙏🙏🙏🙏🙏🙏\nYOU JUST NEED TO DO \n3 THINGS to support my channel\nLIKE\nSHARE \n&\nSUBSCRIBE \nTO MY YOUTUBE CHANNEL",
                 "duration": "11:17",
-                "helpful_counter": 0,
+                "helpful_count": 0,
                 "id": "6fUYt1alA1U",
                 "keyphrases": [
                     "pearson correlation coefficient",
@@ -2229,7 +2295,7 @@ def cro_get_resources_pagination():
                     "Resource",
                     "Video"
                 ],
-                "not_helpful_counter": 0,
+                "not_helpful_count": 0,
                 "publish_time": "2019-09-12T13:43:02Z",
                 "similarity_score": "0.87",
                 "thumbnail": "https://i.ytimg.com/vi/6fUYt1alA1U/hqdefault.jpg",
@@ -2241,14 +2307,14 @@ def cro_get_resources_pagination():
         {
             "data": {
                 "abstract": "In mathematics, a time series is a series of data points indexed (or listed or graphed) in time order.  Most commonly, a time series is a sequence taken at successive equally spaced points in time. Thus it is a sequence of discrete-time data. Examples of time series are heights of ocean tides, counts of sunspots, and the daily closing value of the Dow Jones Industrial Average.\nA time series is very frequently plotted via a run chart (which is a temporal line chart). Time series are used in statistics, signal processing, pattern recognition, econometrics, mathematical finance, weather forecasting, earthquake prediction, electroencephalography, control engineering, astronomy, communications engineering, and largely in any domain of applied science and engineering which involves temporal measurements.\nTime series analysis comprises methods for analyzing time series data in order to extract meaningful statistics and other characteristics of the data. Time series forecasting is the use of a model to predict future values based on previously observed values. While regression analysis is often employed in such a way as to test relationships between one or more different time series, this type of analysis is not usually called \"time series analysis\", which refers in particular to relationships between different points in time within a single series.\nTime series data have a natural temporal ordering.  This makes time series analysis distinct from cross-sectional studies, in which there is no natural ordering of the observations (e.g. explaining people's wages by reference to their respective education levels, where the individuals' data could be entered in any order).  Time series analysis is also distinct from spatial data analysis where the observations typically relate to geographical locations (e.g. accounting for house prices by the location as well as the intrinsic characteristics of the houses). A stochastic model for a time series will generally reflect the fact that observations close together in time will be more closely related than observations further apart. In addition, time series models will often make use of the natural one-way ordering of time so that values for a given period will be expressed as deriving in some way from past values, rather than from future values (see time reversibility).\nTime series analysis can be applied to real-valued, continuous data, discrete numeric data, or discrete symbolic data (i.e. sequences of characters, such as letters and words in the English language).\n\n",
-                "helpful_counter": 0,
+                "helpful_count": 0,
                 "id": "https://en.wikipedia.org/wiki/Time_series",
                 "keyphrases": [],
                 "labels": [
                     "Resource",
                     "Article"
                 ],
-                "not_helpful_counter": 0,
+                "not_helpful_count": 0,
                 "similarity_score": "0.83",
                 "title": "Time series",
                 "uri": "https://en.wikipedia.org/wiki/Time_series"
@@ -2257,14 +2323,14 @@ def cro_get_resources_pagination():
         {
             "data": {
                 "abstract": "Market sentiment, also known as investor attention, is the general prevailing attitude of investors as to anticipated price development in a market. This attitude is the accumulation of a variety of fundamental and technical factors, including price history, economic reports, seasonal factors, and national and world events. If investors expect upward price movement in the stock market, the sentiment is said to be bullish. On the contrary, if the market sentiment is bearish, most investors expect downward price movement. Market participants who maintain a static sentiment, regardless of market conditions, are described as permabulls and permabears respectively. Market sentiment is usually considered as a contrarian indicator: what most people expect is a good thing to bet against. Market sentiment is used because it is believed to be a good predictor of market moves, especially when it is more extreme. Very bearish sentiment is usually followed by the market going up more than normal, and vice versa. A bull market refers to a sustained period of either realized or expected price rises, whereas a bear market is used to describe when an index or stock has fallen 20% or more from a recent high for a sustained length of time.Market sentiment is monitored with a variety of technical and statistical methods such as the number of advancing versus declining stocks and new highs versus new lows comparisons. A large share of the overall movement of an individual stock has been attributed to market sentiment. The stock market's demonstration of the situation is often described as all boats float or sink with the tide, in the popular Wall Street phrase \"the trend is your friend\". In the last decade, investors are also known to measure market sentiment through the use of news analytics, which include sentiment analysis on textual stories about companies and sectors.\n\n",
-                "helpful_counter": 0,
+                "helpful_count": 0,
                 "id": "https://en.wikipedia.org/wiki/Market_sentiment",
                 "keyphrases": [],
                 "labels": [
                     "Resource",
                     "Article"
                 ],
-                "not_helpful_counter": 0,
+                "not_helpful_count": 0,
                 "similarity_score": "0.84",
                 "title": "Market sentiment",
                 "uri": "https://en.wikipedia.org/wiki/Market_sentiment"
@@ -2273,14 +2339,14 @@ def cro_get_resources_pagination():
         {
             "data": {
                 "abstract": "Speech recognition is an interdisciplinary subfield of computer science and computational linguistics that develops methodologies and technologies that enable the recognition and translation of spoken language into text by computers. It is also known as automatic speech recognition (ASR), computer speech recognition or speech to text (STT). It incorporates knowledge and research in the computer science, linguistics and computer engineering fields. The reverse process is speech synthesis.\nSome speech recognition systems require \"solly\" (also called \"enrollment\") where an individual speaker reads text or isolated vocabulary into the system. The system analyzes the person's specific voice and uses it to fine-tune the recognition of that person's speech, resulting in increased accuracy. Systems that do not use training are called \"speaker-independent\" systems. Systems that use training are called \"speaker dependent\".\nSpeech recognition applications include voice user interfaces such as voice dialing (e.g. \"call home\"), call routing (e.g. \"I would like to make a collect call\"), domotic appliance control, search key words (e.g. find a podcast where particular words were spoken), simple data entry (e.g., entering a credit card number), preparation of structured documents (e.g. a radiology report), determining speaker characteristics, speech-to-text processing (e.g., word processors or emails), and aircraft (usually termed direct voice input).\nThe term voice recognition or speaker identification refers to identifying the speaker, rather than what they are saying. Recognizing the speaker can simplify the task of translating speech in systems that have been trained on a specific person's voice or it can be used to authenticate or verify the identity of a speaker as part of a security process.\nFrom the technology perspective, speech recognition has a long history with several waves of major innovations. Most recently, the field has benefited from advances in deep learning and big data. The advances are evidenced not only by the surge of academic papers published in the field, but more importantly by the worldwide industry adoption of a variety of deep learning methods in designing and deploying speech recognition systems.",
-                "helpful_counter": 0,
+                "helpful_count": 0,
                 "id": "https://en.wikipedia.org/wiki/Speech_recognition",
                 "keyphrases": [],
                 "labels": [
                     "Resource",
                     "Article"
                 ],
-                "not_helpful_counter": 0,
+                "not_helpful_count": 0,
                 "similarity_score": "0.84",
                 "title": "Speech recognition",
                 "uri": "https://en.wikipedia.org/wiki/Speech_recognition"
@@ -2289,14 +2355,14 @@ def cro_get_resources_pagination():
         {
             "data": {
                 "abstract": "Multivariate statistics is a subdivision of statistics encompassing the simultaneous observation and analysis of more than one outcome variable, i.e., multivariate random variables. \nMultivariate statistics concerns understanding the different aims and background of each of the different forms of multivariate analysis, and how they relate to each other. The practical application of multivariate statistics to a particular problem may involve several types of univariate and multivariate analyses in order to understand the relationships between variables and their relevance to the problem being studied.\nIn addition, multivariate statistics is concerned with multivariate probability distributions, in terms of both\n\nhow these can be used to represent the distributions of observed data;\nhow they can be used as part of statistical inference, particularly where several different quantities are of interest to the same analysis.Certain types of problems involving multivariate data, for example simple linear regression and multiple regression, are not usually considered to be special cases of multivariate statistics because the analysis is dealt with by considering the (univariate) conditional distribution of a single outcome variable given the other variables.",
-                "helpful_counter": 0,
+                "helpful_count": 0,
                 "id": "https://en.wikipedia.org/wiki/Multivariate_statistics",
                 "keyphrases": [],
                 "labels": [
                     "Resource",
                     "Article"
                 ],
-                "not_helpful_counter": 0,
+                "not_helpful_count": 0,
                 "similarity_score": "0.85",
                 "title": "Multivariate statistics",
                 "uri": "https://en.wikipedia.org/wiki/Multivariate_statistics"
@@ -2305,14 +2371,14 @@ def cro_get_resources_pagination():
         {
             "data": {
                 "abstract": "",
-                "helpful_counter": 0,
+                "helpful_count": 0,
                 "id": "https://en.wikipedia.org/wiki/List_of_statistics_articles",
                 "keyphrases": [],
                 "labels": [
                     "Resource",
                     "Article"
                 ],
-                "not_helpful_counter": 0,
+                "not_helpful_count": 0,
                 "similarity_score": "0.82",
                 "title": "List of statistics articles",
                 "uri": "https://en.wikipedia.org/wiki/List_of_statistics_articles"
@@ -2321,7 +2387,7 @@ def cro_get_resources_pagination():
         {
             "data": {
                 "abstract": "In statistics, probability density estimation or simply density estimation is the construction of an estimate, based on observed data, of an unobservable underlying probability density function.  The unobservable density function is thought of as the density according to which a large population is distributed; the data are usually thought of as a random sample from that population.A variety of approaches to density estimation are used, including Parzen windows and a range of data clustering techniques, including vector quantization. The most basic form of density estimation is a rescaled histogram.",
-                "helpful_counter": 0,
+                "helpful_count": 0,
                 "id": "https://en.wikipedia.org/wiki/Density_estimation",
                 "keyphrases": [
                     "unobservable underlying probability density function",
@@ -2344,7 +2410,7 @@ def cro_get_resources_pagination():
                     "Resource",
                     "Article"
                 ],
-                "not_helpful_counter": 0,
+                "not_helpful_count": 0,
                 "similarity_score": "0.88",
                 "title": "Density estimation",
                 "uri": "https://en.wikipedia.org/wiki/Density_estimation"
@@ -2353,7 +2419,7 @@ def cro_get_resources_pagination():
         {
             "data": {
                 "abstract": "Cross-validation, sometimes called rotation estimation or out-of-sample testing, is any of various similar model validation techniques for assessing how the results of a statistical analysis will generalize to an independent data set.\nCross-validation is a resampling method that uses different portions of the data to test and train a model on different iterations. It is mainly used in settings where the goal is prediction, and one wants to estimate how accurately a predictive model will perform in practice.  In a prediction problem, a model is usually given a dataset of known data on which training is run (training dataset), and a dataset of unknown data (or first seen data) against which the model is tested (called the validation dataset or testing set). The goal of cross-validation is to test the model's ability to predict new data that was not used in estimating it, in order to flag problems like overfitting or selection bias and to give an insight on how the model will generalize to an independent dataset (i.e., an unknown dataset, for instance from a real problem).\nOne round of cross-validation involves partitioning a sample of data into complementary subsets, performing the analysis on one subset (called the training set), and validating the analysis on the other subset (called the validation set or testing set). To reduce variability, in most methods multiple rounds of cross-validation are performed using different partitions, and the validation results are combined (e.g. averaged) over the rounds to give an estimate of the model's predictive performance.\nIn summary, cross-validation combines (averages) measures of fitness in prediction to derive a more accurate estimate of model prediction performance.\n\n",
-                "helpful_counter": 0,
+                "helpful_count": 0,
                 "id": "https://en.wikipedia.org/wiki/Cross-validation_(statistics)",
                 "keyphrases": [
                     "cross - validation combines",
@@ -2376,7 +2442,7 @@ def cro_get_resources_pagination():
                     "Resource",
                     "Article"
                 ],
-                "not_helpful_counter": 0,
+                "not_helpful_count": 0,
                 "similarity_score": "0.89",
                 "title": "Cross-validation (statistics)",
                 "uri": "https://en.wikipedia.org/wiki/Cross-validation_(statistics)"
@@ -2385,7 +2451,7 @@ def cro_get_resources_pagination():
         {
             "data": {
                 "abstract": "The following outline is provided as an overview of and topical guide to machine learning:\nMachine learning – subfield of soft computing within computer science that evolved from the study of pattern recognition and computational learning theory in artificial intelligence. In 1959, Arthur Samuel defined machine learning as a \"field of study that gives computers the ability to learn without being explicitly programmed\". Machine learning explores the study and construction of algorithms that can learn from and make predictions on data. Such algorithms operate by building a model from an example training set of input observations in order to make data-driven predictions or decisions expressed as outputs, rather than following strictly static program instructions.\n\n",
-                "helpful_counter": 0,
+                "helpful_count": 0,
                 "id": "https://en.wikipedia.org/wiki/Outline_of_machine_learning",
                 "keyphrases": [
                     "computational learning theory",
@@ -2408,7 +2474,7 @@ def cro_get_resources_pagination():
                     "Resource",
                     "Article"
                 ],
-                "not_helpful_counter": 0,
+                "not_helpful_count": 0,
                 "similarity_score": "0.92",
                 "title": "Outline of machine learning",
                 "uri": "https://en.wikipedia.org/wiki/Outline_of_machine_learning"
@@ -2417,7 +2483,7 @@ def cro_get_resources_pagination():
         {
             "data": {
                 "abstract": "Cognitive biases are systematic patterns of deviation from norm and/or rationality in judgment. They are often studied in psychology, sociology and behavioral economics.Although the reality of most of these biases is confirmed by reproducible research, there are often controversies about how to classify these biases or how to explain them. Several theoretical causes are known for some cognitive biases, which provides a classification of biases by their common generative mechanism (such as noisy information-processing). Gerd Gigerenzer has criticized the framing of cognitive biases as errors in judgment, and favors interpreting them as arising from rational deviations from logical thought.Explanations include information-processing rules (i.e., mental shortcuts), called heuristics, that the brain uses to produce decisions or judgments. Biases have a variety of forms and appear as cognitive (\"cold\") bias, such as mental noise, or motivational (\"hot\") bias, such as when beliefs are distorted by wishful thinking. Both effects can be present at the same time.There are also controversies over some of these biases as to whether they count as useless or irrational, or whether they result in useful attitudes or behavior. For example, when getting to know others, people tend to ask leading questions which seem biased towards confirming their assumptions about the person. However, this kind of confirmation bias has also been argued to be an example of social skill; a way to establish a connection with the other person.Although this research overwhelmingly involves human subjects, some findings that demonstrate bias have been found in non-human animals as well. For example, loss aversion has been shown in monkeys and hyperbolic discounting has been observed in rats, pigeons, and monkeys.",
-                "helpful_counter": 0,
+                "helpful_count": 0,
                 "id": "https://en.wikipedia.org/wiki/List_of_cognitive_biases",
                 "keyphrases": [
                     "cognitive biases",
@@ -2440,7 +2506,7 @@ def cro_get_resources_pagination():
                     "Resource",
                     "Article"
                 ],
-                "not_helpful_counter": 0,
+                "not_helpful_count": 0,
                 "similarity_score": "0.89",
                 "title": "List of cognitive biases",
                 "uri": "https://en.wikipedia.org/wiki/List_of_cognitive_biases"
@@ -2449,7 +2515,7 @@ def cro_get_resources_pagination():
         {
             "data": {
                 "abstract": "In statistics, naive Bayes classifiers are a family of linear \"probabilistic classifiers\" based on applying Bayes' theorem with strong (naive) independence assumptions between the features (see Bayes classifier). They are among the simplest Bayesian network models, but coupled with kernel density estimation, they can achieve high accuracy levels.Naive Bayes classifiers are highly scalable, requiring a number of parameters linear in the number of variables (features/predictors) in a learning problem. Maximum-likelihood training can be done by evaluating a closed-form expression,: 718  which takes linear time, rather than by expensive iterative approximation as used for many other types of classifiers.\nIn the statistics literature, naive Bayes models are known under a variety of names, including simple Bayes and independence Bayes. All these names reference the use of Bayes' theorem in the classifier's decision rule, but naive Bayes is not (necessarily) a Bayesian method.\n\n",
-                "helpful_counter": 0,
+                "helpful_count": 0,
                 "id": "https://en.wikipedia.org/wiki/Naive_Bayes_classifier",
                 "keyphrases": [
                     "naive bayes classifier",
@@ -2472,7 +2538,7 @@ def cro_get_resources_pagination():
                     "Resource",
                     "Article"
                 ],
-                "not_helpful_counter": 0,
+                "not_helpful_count": 0,
                 "similarity_score": "0.88",
                 "title": "Naive Bayes classifier",
                 "uri": "https://en.wikipedia.org/wiki/Naive_Bayes_classifier"
@@ -2481,7 +2547,7 @@ def cro_get_resources_pagination():
         {
             "data": {
                 "abstract": "In statistics, the phi coefficient (or mean square contingency coefficient and denoted by φ or rφ) is a measure of association for two binary variables.\nIn machine learning, it is known as the Matthews correlation coefficient (MCC) and used as a measure of the quality of binary (two-class) classifications, introduced by biochemist Brian W. Matthews in 1975.Introduced by Karl Pearson, and also known as the Yule phi coefficient from its introduction by Udny Yule in 1912 this measure is similar to the Pearson correlation coefficient in its interpretation. \n\n",
-                "helpful_counter": 0,
+                "helpful_count": 0,
                 "id": "https://en.wikipedia.org/wiki/Phi_coefficient",
                 "keyphrases": [
                     "yule phi coefficient",
@@ -2504,7 +2570,7 @@ def cro_get_resources_pagination():
                     "Resource",
                     "Article"
                 ],
-                "not_helpful_counter": 0,
+                "not_helpful_count": 0,
                 "similarity_score": "0.90",
                 "title": "Phi coefficient",
                 "uri": "https://en.wikipedia.org/wiki/Phi_coefficient"
@@ -2513,7 +2579,7 @@ def cro_get_resources_pagination():
         {
             "data": {
                 "abstract": "In statistical analysis of binary classification, the F-score or F-measure is a measure of a test's accuracy. It is calculated from the precision and recall of the test, where the precision is the number of true positive results divided by the number of all positive results, including those not identified correctly, and the recall is the number of true positive results divided by the number of all samples that should have been identified as positive. Precision is also known as positive predictive value, and recall is also known as sensitivity in diagnostic binary classification. \nThe F1 score is the harmonic mean of the precision and recall. It thus symmetrically represents both precision and recall in one metric. The more generic \n  \n    \n      \n        \n          F\n          \n            β\n          \n        \n      \n    \n    {\\displaystyle F_{\\beta }}\n   score applies additional weights, valuing one of precision or recall more than the other.\nThe highest possible value of an F-score is 1.0, indicating perfect precision and recall, and the lowest possible value is 0, if either precision or recall are zero.\n\n",
-                "helpful_counter": 0,
+                "helpful_count": 0,
                 "id": "https://en.wikipedia.org/wiki/F-score",
                 "keyphrases": [
                     "positive predictive value",
@@ -2536,7 +2602,7 @@ def cro_get_resources_pagination():
                     "Resource",
                     "Article"
                 ],
-                "not_helpful_counter": 0,
+                "not_helpful_count": 0,
                 "similarity_score": "0.89",
                 "title": "F-score",
                 "uri": "https://en.wikipedia.org/wiki/F-score"
@@ -2545,7 +2611,7 @@ def cro_get_resources_pagination():
         {
             "data": {
                 "abstract": "Principal component analysis (PCA) is a popular technique for analyzing large datasets containing a high number of dimensions/features per observation, increasing the interpretability of data while preserving the maximum amount of information, and enabling the visualization of multidimensional data. Formally, PCA is a statistical technique for reducing the dimensionality of a dataset. This is accomplished by linearly transforming the data into a new coordinate system where (most of) the variation in the data can be described with fewer dimensions than the initial data. Many studies use the first two principal components in order to plot the data in two dimensions and to visually identify clusters of closely related data points. Principal component analysis has applications in many fields such as population genetics, microbiome studies, and atmospheric science.The principal components of a collection of points in a real coordinate space are a sequence of \n  \n    \n      \n        p\n      \n    \n    {\\displaystyle p}\n   unit vectors, where the \n  \n    \n      \n        i\n      \n    \n    {\\displaystyle i}\n  -th vector is the direction of a line that best fits the data while being orthogonal to the first \n  \n    \n      \n        i\n        −\n        1\n      \n    \n    {\\displaystyle i-1}\n   vectors. Here, a best-fitting line is defined as one that minimizes the average squared perpendicular distance from the points to the line. These directions constitute an orthonormal basis in which different individual dimensions of the data are linearly uncorrelated. Principal component analysis is the process of computing the principal components and using them to perform a change of basis on the data, sometimes using only the first few principal components and ignoring the rest.\nIn data analysis, the first principal component of a set of  \n  \n    \n      \n        p\n      \n    \n    {\\displaystyle p}\n   variables, presumed to be jointly normally distributed, is the derived variable formed as a linear combination of the original variables that explains the most variance. The second principal component explains the most variance in what is left once the effect of the first component is removed, and we may proceed through  \n  \n    \n      \n        p\n      \n    \n    {\\displaystyle p}\n   iterations until all the variance is explained. PCA is most commonly used when many of the variables are highly correlated with each other and it is desirable to reduce their number to an independent set.\nPCA is used in exploratory data analysis and for making predictive models. It is commonly used for dimensionality reduction by projecting each data point onto only the first few principal components to obtain lower-dimensional data while preserving as much of the data's variation as possible. The first principal component can equivalently be defined as a direction that maximizes the variance of the projected data. The \n  \n    \n      \n        i\n      \n    \n    {\\displaystyle i}\n  -th principal component can be taken as a direction orthogonal to the first \n  \n    \n      \n        i\n        −\n        1\n      \n    \n    {\\displaystyle i-1}\n   principal components that maximizes the variance of the projected data.\nFor either objective, it can be shown that the principal components are eigenvectors of the data's covariance matrix. Thus, the principal components are often computed by eigendecomposition of the data covariance matrix or singular value decomposition of the data matrix. PCA is the simplest of the true eigenvector-based multivariate analyses and is closely related to factor analysis. Factor analysis typically incorporates more domain-specific assumptions about the underlying structure and solves eigenvectors of a slightly different matrix. PCA is also related to canonical correlation analysis (CCA). CCA defines coordinate systems that optimally describe the cross-covariance between two datasets while PCA defines a new orthogonal coordinate system that optimally describes variance in a single dataset. Robust and L1-norm-based variants of standard PCA have also been proposed.\n\n",
-                "helpful_counter": 0,
+                "helpful_count": 0,
                 "id": "https://en.wikipedia.org/wiki/Principal_component_analysis",
                 "keyphrases": [
                     "principal component analysis",
@@ -2568,7 +2634,7 @@ def cro_get_resources_pagination():
                     "Resource",
                     "Article"
                 ],
-                "not_helpful_counter": 0,
+                "not_helpful_count": 0,
                 "similarity_score": "0.87",
                 "title": "Principal component analysis",
                 "uri": "https://en.wikipedia.org/wiki/Principal_component_analysis"
@@ -2577,7 +2643,7 @@ def cro_get_resources_pagination():
         {
             "data": {
                 "abstract": "A receiver operating characteristic curve, or ROC curve, is a graphical plot that illustrates the performance of a binary classifier model (can be used for multi class classification as well) at varying threshold values.\nThe ROC curve is the plot of the true positive rate (TPR) against the false positive rate (FPR) at each threshold setting.\nThe ROC can also be thought of as a plot of the statistical power as a function of the Type I Error of the decision rule (when the performance is calculated from just a sample of the population, it can be thought of as estimators of these quantities). The ROC curve is thus the sensitivity or recall as a function of false positive rate. \nGiven the probability distributions for both true positive and false positive are known, the ROC curve is obtained as the cumulative distribution function (CDF, area under the probability distribution from \n  \n    \n      \n        −\n        ∞\n      \n    \n    {\\displaystyle -\\infty }\n   to the discrimination threshold) of the detection probability in the y-axis versus the CDF of the false positive probability on the x-axis.\nROC analysis provides tools to select possibly optimal models and to discard suboptimal ones independently from (and prior to specifying) the cost context or the class distribution. ROC analysis is related in a direct and natural way to cost/benefit analysis of diagnostic decision making.\n\n",
-                "helpful_counter": 0,
+                "helpful_count": 0,
                 "id": "https://en.wikipedia.org/wiki/Receiver_operating_characteristic",
                 "keyphrases": [
                     "false positive probability",
@@ -2600,7 +2666,7 @@ def cro_get_resources_pagination():
                     "Resource",
                     "Article"
                 ],
-                "not_helpful_counter": 0,
+                "not_helpful_count": 0,
                 "similarity_score": "0.88",
                 "title": "Receiver operating characteristic",
                 "uri": "https://en.wikipedia.org/wiki/Receiver_operating_characteristic"
@@ -2609,7 +2675,7 @@ def cro_get_resources_pagination():
         {
             "data": {
                 "abstract": "In applied mathematics, topological data analysis (TDA) is an approach to the analysis of datasets using techniques from topology. Extraction of information from datasets that are high-dimensional, incomplete and noisy is generally challenging. TDA provides a general framework to analyze such data in a manner that is insensitive to the particular metric chosen and provides dimensionality reduction and robustness to noise.  Beyond this, it inherits functoriality, a fundamental concept of modern mathematics, from its topological nature, which allows it to adapt to new mathematical tools.The initial motivation is to study the shape of data. TDA has combined algebraic topology and other tools from pure mathematics to allow mathematically rigorous study of \"shape\". The main tool is persistent homology, an adaptation of homology to point cloud data. Persistent homology has been applied to many types of data across many fields. Moreover, its mathematical foundation is also of theoretical importance. The unique features of TDA make it a promising bridge between topology and geometry.",
-                "helpful_counter": 0,
+                "helpful_count": 0,
                 "id": "https://en.wikipedia.org/wiki/Topological_data_analysis",
                 "keyphrases": [
                     "topological data analysis",
@@ -2632,7 +2698,7 @@ def cro_get_resources_pagination():
                     "Resource",
                     "Article"
                 ],
-                "not_helpful_counter": 0,
+                "not_helpful_count": 0,
                 "similarity_score": "0.90",
                 "title": "Topological data analysis",
                 "uri": "https://en.wikipedia.org/wiki/Topological_data_analysis"

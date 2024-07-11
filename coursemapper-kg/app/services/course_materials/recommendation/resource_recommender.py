@@ -667,7 +667,8 @@ class ResourceRecommenderService:
         self.set_redis_key_value(key_name=f"{body['user_id']}_{self.redis_key_2}", value="running", set_time=False)
 
         rec_params = body["rec_params"]
-        concepts = new_concepts
+        # concepts = new_concepts
+        concepts = rec_params["concepts"]
         # factor_weights = self.build_factor_weights(body["rec_params"]["factor_weights"]["weights"])
         
         # Map recommendation type to enum values
@@ -736,6 +737,14 @@ class ResourceRecommenderService:
                             not_understood_concept_list=not_understood_concept_list
                         )
 
+        result = {"concepts": rec_params["concepts"], "resources": []}
+
+        # if concepts == 1:
+        #     self.set_redis_key_value(key_name=f"{body['user_id']}_{self.redis_key_1}", value=result, ex=(60 * 10080))
+        #     self.save
+        # else:
+        #     pass
+
         resources_bg = resources_crawled["articles"] + resources_crawled["videos"]
         print("resources_bg")
         print(resources_bg)
@@ -755,7 +764,8 @@ class ResourceRecommenderService:
         # self.set_redis_key_value(key_name=f"{body['user_id']}_{self.redis_key_2}", value="completed")
         self.remove_redis_key_value(key_name=f"{body['user_id']}_{self.redis_key_2}")
 
-        '''
+        ''' 
+            old
             if len(resources) > 0:
                 resources = [{"node_id": node["id"]} for node in resources]
                 self.edit_relationship_btw_concepts_and_resources(concepts=rec_params["concepts"], resources=resources)
@@ -807,7 +817,10 @@ class ResourceRecommenderService:
 
         if are_concepts_sane == True:
             resources = resources_temp
-        
+        else:
+            resources = self.process_new_concepts(body=body, factor_weights=factor_weights)
+
+        """
         elif are_concepts_sane == False:
             # get resources connected to concepts from the database (Neo4j)
             concepts_having_resources = []
@@ -831,6 +844,7 @@ class ResourceRecommenderService:
             elif len(concepts) > 0:
                 # self.process_new_concepts(body=body, factor_weights=factor_weights)
                 self.create_get_resources_thread(self.process_new_concepts, args=(body, factor_weights))
+        """
 
         result = self.rank_resources(resources=resources, weights=factor_weights)
         concepts = [{k: v for k, v in d.items() if k != "final_embedding"} for d in concepts]
