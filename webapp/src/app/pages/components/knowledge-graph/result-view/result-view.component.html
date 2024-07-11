@@ -178,8 +178,32 @@
         <h4 class="my-auto mt-4">No Recommended articles for the selected Concepts</h4>
       </p-tabPanel>
 
+      <!-- display resources saved and offer filtering possibility -->
       <p-tabPanel header="Saved" leftIcon="pi pi-bookmark">
-        <div class="flex flex-col">
+        <div class="flex flex-row justify-between">
+          <div class="flex flex-row">
+            <div>Content type:</div>
+            <div class="flex flex-row">
+              <div class="flex flex-row">
+                <p-radioButton name="video" value="video" [(ngModel)]="filteringParamsSavedTab.contentType" inputId="video"></p-radioButton>
+                <label for="video" class="ml-1">Video</label>
+              </div>
+              <div class="flex flex-row">
+                <p-radioButton name="article" value="article" [(ngModel)]="filteringParamsSavedTab.contentType" inputId="article"></p-radioButton>
+                <label for="article" class="ml-1">Article</label>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <span class="p-input-icon-right">
+              <i class="pi pi-search"></i>
+              <input type="text" pInputText [(ngModel)]="filteringParamsSavedTab.keyTextFiltering" />
+            </span>
+          </div>
+        </div>
+
+        <!-- <div class="flex flex-col">
           <div>Filter by:</div>
           <div class="flex flex-row justify-between">
             <div class="w4/12">
@@ -222,7 +246,7 @@
           <div>
             Resources List
           </div>
-        </div>
+        </div> -->
       </p-tabPanel>
 
   </p-tabView>

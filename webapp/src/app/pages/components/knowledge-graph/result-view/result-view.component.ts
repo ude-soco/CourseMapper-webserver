@@ -102,11 +102,16 @@ export class ResultViewComponent {
   sliderNumbersFiltered = [];
   */
 
+  filteringParamsSavedTab = {
+    keyTextFiltering: '',
+    contentType: ''
+  }
+
   mainConceptSelected: any | undefined;
   midSelected: any | undefined;
   sliderNberSelected: any | undefined;
   resourcesSaved: UserResourceFilterParamsResult;
-  filteringParamsSavedTab = {
+  filteringParamsSavedTab2 = {
     user_id: null,
     cids: [],
     mids: [],
@@ -385,7 +390,7 @@ export class ResultViewComponent {
     });
 
     this.deactivateDnuInteraction();
-    this.getConceptsMidsSliderNumbersForUserResourcesFiltering()
+    // this.getConceptsMidsSliderNumbersForUserResourcesFiltering()
   }
 
   deactivateDnuInteraction() {
@@ -428,9 +433,8 @@ export class ResultViewComponent {
     this.filteringParamsSavedTab.cids = this.mainConceptsFiltered.map(concept => concept.cid);
     console.warn(this.filteringParamsSavedTab)
   }
-*/
   
-selectLearningMaterialsOnChange(event) {
+  selectLearningMaterialsOnChange(event) {
     // call available Learning materials
   }
 
@@ -491,6 +495,9 @@ selectLearningMaterialsOnChange(event) {
         // add status: true | false
       });
   }
+
+
+  */
 
   /*
   sortElements(
