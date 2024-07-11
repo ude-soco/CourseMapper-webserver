@@ -1,0 +1,465 @@
+statistical significance	sample (statistics)	0
+statistical significance	Accuracy and precision	0
+statistical significance	Statistical population	-1
+statistical significance	standard deviation	-1
+statistical significance	data analysis	0
+statistical significance	conditional probability	0
+sensitivity and specificity	False positives and false negatives	-1
+sensitivity and specificity	statistical significance	0
+sensitivity and specificity	Confusion matrix	1
+sensitivity and specificity	statistical classification	0
+sensitivity and specificity	Accuracy and precision	0
+sensitivity and specificity	Precision and recall	-1
+Positive and negative predictive values	False positives and false negatives	1
+Positive and negative predictive values	Gain (information retrieval)	0
+Positive and negative predictive values	Confusion matrix	0
+Positive and negative predictive values	Accuracy and precision	1
+Accuracy and precision	Gain (information retrieval)	0
+Accuracy and precision	Positive and negative predictive values	-1
+Accuracy and precision	False positives and false negatives	-1
+Mutation (genetic algorithm)	machine learning	0
+Mutation (genetic algorithm)	fitness function	1
+Mutation (genetic algorithm)	genetic algorithm	1
+genetic algorithm	Mutation (genetic algorithm)	-1
+genetic algorithm	fitness function	-1
+genetic algorithm	Cluster analysis	0
+genetic algorithm	natural selection	1
+Precision and recall	null hypothesis	0
+Precision and recall	Type I and type II errors	-1
+Precision and recall	sensitivity and specificity	1
+Precision and recall	Confusion matrix	0
+Precision and recall	Receiver operating characteristic	0
+Precision and recall	Accuracy and precision	0
+Precision and recall	F1 score	1
+Precision and recall	Arithmetic mean	0
+Precision and recall	web search engine	0
+Precision and recall	Information retrieval	0
+likelihood function	Regression analysis	0
+likelihood function	Statistical model	0
+likelihood function	standard deviation	0
+likelihood function	confidence interval	0
+likelihood function	conditional probability	-1
+likelihood function	maximum likelihood	1
+likelihood function	prior probability	-1
+likelihood function	posterior probability	-1
+Regression analysis	statistical significance	0
+Regression analysis	Stepwise regression	1
+Regression analysis	statistical dispersion	0
+Regression analysis	Outlier	0
+Regression analysis	machine learning	0
+Regression analysis	standard deviation	0
+Regression analysis	least squares	0
+Regression analysis	Arithmetic mean	0
+Regression analysis	confidence interval	0
+Regression analysis	linear regression	1
+Regression analysis	Data mining	0
+Regression analysis	Poisson regression	1
+confidence interval	sample (statistics)	0
+confidence interval	statistical significance	0
+confidence interval	sensitivity and specificity	0
+confidence interval	Statistical hypothesis testing	0
+confidence interval	Median	0
+confidence interval	standard deviation	-1
+confidence interval	joint probability distribution	0
+confidence interval	maximum likelihood	0
+confidence interval	Bayes' theorem	0
+conditional probability	Bayesian network	1
+conditional probability	Decision tree	0
+conditional probability	Naive Bayes classifier	0
+conditional probability	Conditional probability distribution	1
+conditional probability	Association rule learning	0
+conditional probability	joint probability distribution	1
+conditional probability	linear regression	0
+conditional probability	Mixture model	0
+conditional probability	prior probability	1
+conditional probability	conditional independence	0
+conditional probability	posterior probability	1
+conditional probability	Bayes' theorem	1
+maximum likelihood	Bayesian network	0
+maximum likelihood	probability density function	-1
+maximum likelihood	likelihood function	-1
+maximum likelihood	Statistical model	0
+maximum likelihood	linear regression	0
+maximum likelihood	Mixture model	0
+maximum likelihood	prior probability	0
+maximum likelihood	Expectation-maximization algorithm	1
+probability density function	Conditional probability distribution	0
+probability density function	Median	0
+probability density function	likelihood function	0
+probability density function	maximum likelihood	0
+probability density function	Mixture model	0
+probability density function	joint probability distribution	0
+prior probability	Bayesian network	0
+prior probability	data analysis	0
+prior probability	likelihood function	1
+prior probability	conditional probability	0
+prior probability	Bayes' theorem	1
+Feedforward neural network	artificial neural network	-1
+Feedforward neural network	Statistical model	0
+Feedforward neural network	linearly separable	0
+Feedforward neural network	gradient descent	-1
+Feedforward neural network	machine learning	0
+linearly separable	machine learning	0
+linearly separable	Hyperplane	1
+linearly separable	statistical classification	0
+linearly separable	support vector machine	0
+gradient descent	nonlinear system	0
+gradient descent	Backpropagation	1
+gradient descent	artificial neural network	0
+gradient descent	Maxima and minima	-1
+gradient descent	hill climbing	1
+gradient descent	linear regression	0
+Minimum description length	prior probability	0
+Minimum description length	maximum likelihood	0
+Boosting (machine learning)	Decision tree	0
+Boosting (machine learning)	Cross-validation (statistics)	0
+Boosting (machine learning)	Bootstrap aggregating	0
+Boosting (machine learning)	AdaBoost	1
+Boosting (machine learning)	Random forest	1
+Boosting (machine learning)	machine learning	0
+Boosting (machine learning)	Data mining	0
+Boosting (machine learning)	gradient descent	0
+Boosting (machine learning)	Ensemble learning	-1
+Boosting (machine learning)	support vector machine	0
+support vector machine	Decision tree	0
+support vector machine	Cross-validation (statistics)	0
+support vector machine	Hyperplane separation theorem	-1
+support vector machine	Hyperplane	-1
+support vector machine	decision tree learning	0
+support vector machine	multiclass classification	0
+support vector machine	statistical classification	0
+support vector machine	machine learning	1
+support vector machine	Outlier	0
+support vector machine	Linear separability	1
+support vector machine	Classification rule	0
+support vector machine	Regression analysis	0
+support vector machine	Active learning (machine learning)	0
+support vector machine	linear regression	0
+support vector machine	linearly separable	-1
+Decision tree	AdaBoost	0
+Decision tree	Random forest	1
+Decision tree	statistical classification	-1
+Decision tree	genetic algorithm	0
+Decision tree	Pruning (decision trees)	0
+Decision tree	Classification rule	-1
+Decision tree	Association rule learning	0
+Decision tree	association rule	0
+Decision tree	decision tree learning	1
+Decision tree	Data mining	1
+Decision tree	Decision tree model	1
+Random forest	Decision tree	-1
+Random forest	Bootstrap aggregating	0
+Random forest	decision tree learning	-1
+Random forest	Bootstrapping (statistics)	0
+Random forest	statistical classification	0
+Random forest	machine learning	0
+Random forest	Regression analysis	0
+Random forest	standard deviation	0
+Random forest	expert system	0
+Random forest	Mode (statistics)	0
+Random forest	Boosting (machine learning)	-1
+Random forest	Ensemble learning	0
+Statistical hypothesis testing	null hypothesis	-1
+Statistical hypothesis testing	sample (statistics)	0
+Statistical hypothesis testing	statistical significance	0
+Statistical hypothesis testing	sensitivity and specificity	0
+Statistical hypothesis testing	Type I and type II errors	0
+Statistical hypothesis testing	Student's t-test	-1
+Statistical hypothesis testing	Model selection	0
+Statistical hypothesis testing	Statistical model	0
+Statistical hypothesis testing	standard deviation	0
+Statistical hypothesis testing	confidence interval	-1
+Statistical hypothesis testing	prior probability	0
+Statistical hypothesis testing	Data mining	0
+Statistical hypothesis testing	posterior probability	0
+Statistical hypothesis testing	Bayes' theorem	0
+central tendency	statistical dispersion	0
+central tendency	Quartile	-1
+central tendency	Median	-1
+central tendency	standard deviation	0
+central tendency	descriptive statistics	0
+central tendency	Interquartile range	-1
+central tendency	Arithmetic mean	-1
+central tendency	Mode (statistics)	0
+central tendency	level of measurement	0
+Statistical population	Student's t-test	0
+Statistical population	sample (statistics)	0
+Statistical population	Median	0
+Statistical population	statistical significance	0
+Statistical population	sampling (statistics)	0
+Principal component analysis	decision tree learning	0
+Principal component analysis	Outlier	0
+Principal component analysis	artificial neural network	0
+Principal component analysis	Correlation and dependence	0
+Principal component analysis	Regression analysis	0
+Principal component analysis	Data reduction	0
+Principal component analysis	standard deviation	0
+Principal component analysis	dimensionality reduction	-1
+Principal component analysis	linear regression	0
+Principal component analysis	Data mining	0
+Principal component analysis	Cluster analysis	0
+Principal component analysis	Signal-to-noise ratio	0
+Principal component analysis	Data matrix (multivariate statistics)	0
+Mixture model	Bayesian network	0
+Mixture model	Naive Bayes classifier	0
+Mixture model	Outlier	0
+Mixture model	Histogram	0
+Mixture model	Statistical population	0
+Mixture model	Arithmetic mean	0
+Mixture model	conditional probability	-1
+Mixture model	maximum likelihood	-1
+Mixture model	probability density function	-1
+Mixture model	Mode (statistics)	0
+Mixture model	k-means clustering	0
+Mixture model	Data mining	0
+Mixture model	Cluster analysis	0
+Mixture model	posterior probability	0
+Mixture model	Expectation-maximization algorithm	-1
+Mixture model	Bayes' theorem	0
+k-means clustering	semi-supervised learning	0
+k-means clustering	machine learning	-1
+k-means clustering	Median	0
+k-means clustering	local optimum	0
+k-means clustering	Arithmetic mean	-1
+k-means clustering	Principal component analysis	0
+k-means clustering	Data mining	-1
+k-means clustering	Cluster analysis	-1
+k-means clustering	Spectral clustering	0
+k-means clustering	k-medoids	1
+k-means clustering	Fuzzy clustering	0
+Cluster analysis	statistical classification	0
+Cluster analysis	Confusion matrix	0
+Cluster analysis	Outlier	0
+Cluster analysis	artificial neural network	0
+Cluster analysis	Biclustering	0
+Cluster analysis	Hierarchical clustering	0
+Cluster analysis	Precision and recall	0
+Cluster analysis	Correlation and dependence	0
+Cluster analysis	data analysis	0
+Cluster analysis	single-linkage clustering	1
+Cluster analysis	OPTICS algorithm	0
+Cluster analysis	Clustering high-dimensional data	0
+Cluster analysis	DBSCAN	1
+Cluster analysis	k-means clustering	0
+Cluster analysis	Data mining	0
+Cluster analysis	Information retrieval	0
+Cluster analysis	k-medoids	1
+Cluster analysis	false positives	0
+posterior probability	Conditional probability distribution	1
+posterior probability	statistical classification	0
+posterior probability	likelihood function	1
+posterior probability	conditional probability	-1
+posterior probability	probability density function	0
+posterior probability	prior probability	0
+posterior probability	Bayes' theorem	1
+Expectation-maximization algorithm	Bayesian network	0
+Expectation-maximization algorithm	Likelihood function	-1
+Expectation-maximization algorithm	missing data	0
+Expectation-maximization algorithm	maximum likelihood	-1
+Expectation-maximization algorithm	Mixture model	0
+Expectation-maximization algorithm	k-means clustering	0
+Expectation-maximization algorithm	Cluster analysis	0
+Expectation-maximization algorithm	Fuzzy clustering	0
+Likelihood function	Expectation-maximization algorithm	0
+Bayes' theorem	Bayesian network	1
+Bayes' theorem	Naive Bayes classifier	1
+Bayes' theorem	sampling (statistics)	0
+Bayes' theorem	conditional probability	-1
+Bayes' theorem	prior probability	-1
+Bayes' theorem	Data mining	0
+Bayes' theorem	posterior probability	-1
+Bayesian network	Naive Bayes classifier	-1
+Bayesian network	Conditional probability distribution	-1
+Bayesian network	machine learning	0
+Bayesian network	expert system	0
+Bayesian network	maximum likelihood	-1
+Bayesian network	likelihood function	1
+Bayesian network	standard deviation	0
+Bayesian network	conditional probability	-1
+Bayesian network	joint probability distribution	-1
+Bayesian network	probability density function	0
+Bayesian network	prior probability	-1
+Bayesian network	Bayes' theorem	-1
+Bayesian network	posterior probability	0
+Bayesian network	conditional independence	-1
+Naive Bayes classifier	Bayesian network	1
+Naive Bayes classifier	Information retrieval	0
+Naive Bayes classifier	Random forest	0
+Naive Bayes classifier	statistical classification	1
+Naive Bayes classifier	machine learning	0
+Naive Bayes classifier	Bayes' theorem	-1
+Naive Bayes classifier	Histogram	0
+Naive Bayes classifier	Discretization	0
+Naive Bayes classifier	likelihood function	0
+Naive Bayes classifier	prior probability	0
+Naive Bayes classifier	maximum likelihood	1
+Naive Bayes classifier	Correlation and dependence	0
+Naive Bayes classifier	Data mining	0
+Naive Bayes classifier	conditional independence	-1
+Naive Bayes classifier	support vector machine	0
+Conditional probability distribution	Bayesian network	0
+Conditional probability distribution	likelihood function	0
+Conditional probability distribution	conditional probability	-1
+Conditional probability distribution	linear regression	0
+Conditional probability distribution	probability density function	-1
+Conditional probability distribution	posterior probability	-1
+Conditional probability distribution	Bayes' theorem	0
+Poisson regression	Regression analysis	-1
+Poisson regression	gradient descent	0
+Poisson regression	maximum likelihood	0
+Poisson regression	linear regression	0
+Poisson regression	likelihood function	0
+multiclass classification	machine learning	0
+multiclass classification	statistical classification	-1
+statistical classification	Decision tree	1
+statistical classification	decision tree learning	0
+statistical classification	Receiver operating characteristic	0
+statistical classification	Precision and recall	0
+statistical classification	Regression analysis	0
+statistical classification	Statistical model	0
+statistical classification	data analysis	0
+statistical classification	Data mining	0
+Biclustering	Mode (statistics)	0
+Biclustering	Hierarchical clustering	-1
+Biclustering	Cluster analysis	-1
+Biclustering	Model selection	0
+Biclustering	Data mining	0
+Hierarchical clustering	Biclustering	0
+Hierarchical clustering	single-linkage clustering	1
+Hierarchical clustering	OPTICS algorithm	1
+Hierarchical clustering	Mixture model	0
+Hierarchical clustering	DBSCAN	0
+Hierarchical clustering	Data mining	1
+Hierarchical clustering	Cluster analysis	-1
+Interquartile range	statistical dispersion	0
+Interquartile range	Outlier	0
+Interquartile range	Quartile	-1
+Interquartile range	Median	-1
+Interquartile range	Histogram	0
+Interquartile range	central tendency	1
+Interquartile range	descriptive statistics	0
+Interquartile range	standard deviation	0
+Interquartile range	probability density function	0
+Decision tree model	Decision tree	-1
+Decision tree model	decision tree learning	0
+anomaly detection	Outlier	-1
+anomaly detection	statistical classification	0
+anomaly detection	association rule	0
+anomaly detection	Association rule learning	0
+anomaly detection	standard deviation	0
+anomaly detection	Data mining	0
+anomaly detection	Cluster analysis	0
+anomaly detection	Ensemble learning	0
+anomaly detection	support vector machine	0
+Association rule learning	association rule	-1
+Association rule learning	data analysis	0
+Association rule learning	Data mining	0
+Association rule learning	apriori algorithm	1
+association rule	Association rule learning	0
+association rule	Data mining	0
+association rule	conditional probability	0
+association rule	apriori algorithm	1
+joint probability distribution	Bayesian network	1
+joint probability distribution	Conditional probability distribution	0
+joint probability distribution	machine learning	0
+joint probability distribution	conditional probability	-1
+joint probability distribution	linear regression	0
+joint probability distribution	probability density function	-1
+joint probability distribution	conditional independence	0
+DBSCAN	OPTICS algorithm	0
+DBSCAN	Outlier	0
+DBSCAN	Hierarchical clustering	-1
+DBSCAN	anomaly detection	0
+DBSCAN	data type	0
+DBSCAN	Minkowski distance	0
+DBSCAN	Data mining	0
+DBSCAN	Cluster analysis	-1
+level of measurement	statistical dispersion	-1
+level of measurement	Median	-1
+level of measurement	central tendency	-1
+level of measurement	standard deviation	-1
+level of measurement	Arithmetic mean	-1
+level of measurement	Mode (statistics)	-1
+query language	Data mining	0
+query language	Data modeling	0
+Spectral clustering	dimensionality reduction	0
+Spectral clustering	Cluster analysis	1
+k-medoids	k-means clustering	-1
+k-medoids	Outlier	0
+k-medoids	Cluster analysis	-1
+k-medoids	Minkowski distance	0
+Fuzzy clustering	Cluster analysis	0
+conditional independence	Bayesian network	0
+conditional independence	Conditional probability distribution	0
+conditional independence	conditional probability	-1
+conditional independence	joint probability distribution	-1
+Hyperplane separation theorem	support vector machine	0
+Hyperplane	support vector machine	0
+decision tree learning	Decision tree	-1
+decision tree learning	Bayesian network	0
+decision tree learning	Bootstrap aggregating	0
+decision tree learning	Random forest	0
+decision tree learning	artificial neural network	0
+decision tree learning	Discretization	0
+decision tree learning	Decision tree model	-1
+decision tree learning	machine learning	0
+decision tree learning	data analysis	0
+decision tree learning	Data mining	0
+Stepwise regression	F-test	-1
+Stepwise regression	Model selection	0
+Stepwise regression	Regression analysis	-1
+Stepwise regression	Statistical model	0
+Stepwise regression	confidence interval	0
+Stepwise regression	linear regression	0
+Stepwise regression	Data mining	0
+Stepwise regression	Ensemble learning	0
+Backpropagation	nonlinear system	0
+Backpropagation	artificial neural network	0
+Backpropagation	machine learning	1
+Backpropagation	Feedforward neural network	0
+Backpropagation	linearly separable	0
+Backpropagation	gradient descent	-1
+Backpropagation	Ensemble learning	0
+artificial neural network	statistical classification	0
+artificial neural network	machine learning	0
+artificial neural network	genetic algorithm	0
+artificial neural network	Backpropagation	1
+artificial neural network	Discretization	0
+artificial neural network	Regression analysis	0
+artificial neural network	data processing	0
+artificial neural network	confidence interval	0
+artificial neural network	expert system	0
+artificial neural network	prior probability	0
+artificial neural network	Feedforward neural network	1
+artificial neural network	Data mining	0
+artificial neural network	posterior probability	0
+artificial neural network	support vector machine	0
+Maxima and minima	gradient descent	0
+F-test	Stepwise regression	0
+Pruning (decision trees)	Decision tree	-1
+Pruning (decision trees)	Cross-validation (statistics)	0
+Pruning (decision trees)	decision tree learning	0
+Pruning (decision trees)	Backpropagation	0
+Pruning (decision trees)	artificial neural network	0
+Pruning (decision trees)	Alpha-beta pruning	1
+Pruning (decision trees)	machine learning	0
+Correlation and dependence	Arithmetic mean	0
+Correlation and dependence	standard deviation	0
+Correlation and dependence	linear regression	0
+Correlation and dependence	Outlier	0
+single-linkage clustering	Cluster analysis	-1
+single-linkage clustering	Hierarchical clustering	-1
+OPTICS algorithm	Outlier	0
+OPTICS algorithm	Hierarchical clustering	-1
+OPTICS algorithm	anomaly detection	0
+OPTICS algorithm	single-linkage clustering	0
+OPTICS algorithm	DBSCAN	-1
+OPTICS algorithm	Data mining	0
+OPTICS algorithm	Cluster analysis	-1
+expert system	machine learning	0
+expert system	knowledge base	0
+web search engine	Data mining	0
+Signal-to-noise ratio	standard deviation	0
+Data matrix (multivariate statistics)	linear regression	0
+apriori algorithm	Association rule learning	-1
+apriori algorithm	association rule	-1

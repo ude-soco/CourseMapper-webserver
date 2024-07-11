@@ -1,0 +1,185 @@
+,prerequisite_concept,concept,score_weighted,score_unweighted,coursemapper_channel_1_weighted,coursemapper_channel_2_weighted,Jess,Anja,Final
+11,Amniote,Excretory system,0.05,0.111111111,0,1,0,0,0
+25,Anus,Urinary bladder,0,0,0,1,0,0,0
+88,Artificial kidney,Artificial organ,0.2,0.222222222,1,0,0,0,0
+89,Artificial kidney,Bioengineering,0.2,0.222222222,1,0,0,0,0
+90,Artificial kidney,Cell (biology),0,0,1,0,0,0,0
+91,Artificial kidney,Diabetes mellitus,0,0,1,0,0,0,0
+92,Artificial kidney,Dialysis machine,0.2,0.222222222,1,0,1,0,1
+93,Artificial kidney,Hemofiltration,0.15,0.111111111,1,0,1,0,1
+94,Artificial kidney,Home hemodialysis,0.05,0,1,0,1,0,1
+99,Artificial kidney,Kidney transplantation,0.15,0.111111111,1,0,1,0,1
+100,Artificial kidney,Renal replacement therapy,0.15,0.111111111,1,0,1,0,1
+101,Artificial kidney,Tissue engineering,0.15,0.111111111,1,0,0,0,0
+102,Artificial kidney,Willem Kolff,0,0,1,0,0,1,1
+170,Blood,Breath,0.2,0.222222222,1,0,1,1,1
+179,Blood,Filtration,0.1,0.222222222,1,0,0,0,0
+191,Blood,Organ transplantation,0.1,0.222222222,1,0,0,1,1
+331,Capillary,Lungs,0.2,0.222222222,1,0,1,1,1
+333,Capillary,Nephron,0.35,0.333333333,1,0,1,1,1
+334,Capillary,Oncotic pressure,0.15,0.111111111,1,0,0,1,1
+335,Capillary,Paracellular transport,0.15,0.111111111,1,0,1,0,1
+341,Capillary,Renal glomerulus,0.2,0.222222222,1,0,1,1,1
+345,Capillary,Veins,0.15,0.111111111,1,0,0,1,1
+388,Cartilage,Connective tissue,0.05,0.111111111,0,1,0,0,0
+393,Cell (biology),Artificial kidney,0,0,0,1,1,1,1
+416,Cellular respiration,Primary nutritional groups,0.25,0.333333333,1,0,0,1,1
+419,Cellulose,Unicellular organism,0.25,0.333333333,1,0,0,0,0
+425,Chemistry,Inorganic compound,0.05,0.111111111,0,1,0,1,1
+433,Chronic kidney disease,Artificial kidney,0.05,0.111111111,0,1,1,0,1
+438,Circulatory system,Lungs,0.2,0.222222222,1,0,1,0,1
+443,Circulatory system,Veins,0.15,0.111111111,1,0,1,1,1
+447,Connective tissue,Adipose tissue,0.05,0,1,0,1,0,1
+449,Connective tissue,Biological tissue,0.3,0.333333333,1,0,0,0,0
+451,Connective tissue,Dense connective tissue,0.15,0.111111111,1,0,1,0,1
+452,Connective tissue,Dense irregular connective tissue,0.05,0,1,0,1,0,1
+458,Connective tissue,Ground substance,0.05,0,1,0,0,0,0
+459,Connective tissue,Ligament,0.15,0.111111111,1,0,1,0,1
+460,Connective tissue,Loose connective tissue,0.05,0,1,0,1,0,1
+462,Connective tissue,Mesenchyme,0.05,0,1,0,1,0,1
+463,Connective tissue,Muscle tissue,0.05,0,1,0,0,0,0
+464,Connective tissue,Reticular cell,0.15,0.111111111,1,0,0,0,0
+465,Connective tissue,Reticular connective tissue,0.15,0.111111111,1,0,1,0,1
+466,Connective tissue,Stroma (animal tissue),0.2,0.222222222,1,0,1,1,1
+467,Connective tissue,Synovial membrane,0.2,0.222222222,1,0,1,0,1
+468,Connective tissue,Tendon,0.15,0.111111111,1,0,1,0,1
+478,Creatinine,Kidney failure,0.05,0.111111111,1,0,1,0,1
+500,Diabetes mellitus,Artificial kidney,0,0,0,1,1,0,1
+527,Earth,Water,0.05,0.111111111,0,1,1,0,1
+547,Epithelium,Biological tissue,0.2,0.222222222,1,0,1,0,1
+553,Epithelium,Cuticle,0.2,0.222222222,1,0,1,0,1
+555,Epithelium,Epidermis,0.2,0.222222222,1,0,1,0,1
+557,Epithelium,Glands,0.2,0.222222222,1,0,0,0,0
+558,Epithelium,Integument,0,0,1,0,1,0,1
+560,Epithelium,Mesothelium,0.15,0.111111111,1,0,1,0,1
+562,Epithelium,Paracellular transport,0.15,0.111111111,1,0,1,1,1
+563,Epithelium,Respiratory epithelium,0.3,0.222222222,1,0,1,1,1
+564,Epithelium,Stratified columnar epithelium,0.3,0.222222222,1,0,1,1,1
+565,Epithelium,Stratified squamous epithelium,0.35,0.333333333,1,0,1,1,1
+566,Epithelium,Transitional epithelium,0.15,0.111111111,1,0,1,1,1
+570,Evaporation,Water,0.15,0.222222222,0,1,0,0,0
+573,Excretion,Filtration,0.25,0.333333333,1,0,1,0,1
+575,Excretion,Nephron,0.25,0.333333333,1,0,0,1,1
+578,Excretory system,Lungs,0.2,0.222222222,1,0,1,0,1
+580,Excretory system,Prostate,0,0,1,0,0,1,1
+582,Excretory system,Urethra,0,0,1,0,1,1,1
+630,Filtration,Renal physiology,0.05,0,0,1,0,1,1
+637,Fluid,Fluid dynamics,0.05,0,0,1,1,1,1
+641,Fluid,Liquid,0,0,0,1,1,0,1
+654,Food,Autotroph,0.2,0.222222222,1,0,1,1,1
+674,Food,Plant,0,0,1,0,1,0,1
+678,Fuel cell,Artificial kidney,0.05,0.111111111,0,1,0,0,0
+683,Gas exchange,Circulatory system,0.15,0.222222222,0,1,1,1,1
+689,Glomerular filtration rate,Kidney failure,0.05,0.111111111,1,0,1,0,1
+692,Glucose,Plant,0.05,0.111111111,1,0,0,0,0
+693,Glucose,Primary nutritional groups,0.25,0.333333333,1,0,1,0,1
+754,Hematopoietic stem cell,Stem cell,0.05,0.111111111,1,0,1,0,1
+758,Hemodialysis,Artificial kidney,0.05,0.111111111,0,1,0,0,0
+798,Human,Organ system,0,0,0,1,1,0,1
+803,Human,Urinary system,0,0,0,1,1,0,1
+811,Hypertension,Artificial kidney,0.05,0.111111111,0,1,1,0,1
+816,Inorganic compound,Ammonium cyanate,0.15,0.111111111,1,0,1,0,1
+823,Inorganic compound,Carbonate,0.15,0.111111111,1,0,1,0,1
+824,Inorganic compound,Chemical compound,0.2,0.222222222,1,0,1,0,1
+825,Inorganic compound,Cyanide,0.15,0.111111111,1,0,1,0,1
+827,Inorganic compound,Inorganic chemistry,0.15,0.111111111,1,0,1,1,1
+828,Inorganic compound,Inorganic polymer,0.15,0.111111111,1,0,1,1,1
+829,Inorganic compound,Life,0.15,0.111111111,1,0,0,0,0
+830,Inorganic compound,Mineral acid,0.2,0.222222222,1,0,1,1,1
+831,Inorganic compound,Organic chemistry,0.15,0.111111111,1,0,1,1,1
+832,Inorganic compound,Organic compound,0.15,0.111111111,1,0,1,0,1
+833,Inorganic compound,Organism,0.15,0.111111111,1,0,0,0,0
+834,Inorganic compound,Salt (chemistry),0.2,0.222222222,1,0,1,0,1
+836,Inorganic compound,Vitalism,0.15,0.111111111,1,0,0,1,1
+837,Inorganic compound,Wöhler synthesis,0.2,0.222222222,1,0,1,1,1
+839,Integument,Epithelium,0,0,0,1,1,0,1
+850,Kidney,Glomerulonephritis,0.15,0.111111111,1,0,1,1,1
+852,Kidney,Kidney failure,0.2,0.333333333,1,0,1,1,1
+857,Kidney,Organ donation,0.2,0.333333333,1,0,1,0,1
+858,Kidney,Organ transplantation,0.2,0.333333333,1,0,0,0,0
+863,Kidney,Ureter,0.25,0.333333333,1,0,1,1,1
+871,Kidney dialysis,Kidney failure,0.05,0.111111111,1,0,0,0,0
+872,Kidney dialysis,Organ donation,0.25,0.333333333,1,0,1,0,1
+873,Kidney disease,Artificial kidney,0.05,0.111111111,0,1,1,0,1
+874,Kidney failure,Artificial kidney,0.3,0.333333333,0,1,1,0,1
+886,Kidney failure,Urinary system,0,0,0,1,0,0,0
+889,Large intestine,Urinary bladder,0,0,0,1,0,0,0
+900,Liquid,Fluid,0,0,1,0,1,0,1
+908,Liver,Organ donation,0.3,0.333333333,1,0,1,0,1
+944,Lymph,Ureter,0.35,0.444444444,1,0,0,0,0
+959,Metabolic waste,Filtration,0.05,0.111111111,1,0,1,0,1
+960,Metabolic waste,Iron bacteria,0.2,0.222222222,1,0,0,0,0
+963,Metabolic waste,Nephron,0.2,0.222222222,1,0,0,0,0
+965,Metabolic waste,Protein metabolism,0.15,0.111111111,1,0,0,1,1
+967,Metabolism,Autotroph,0.15,0.222222222,1,0,0,1,1
+972,Metabolism,Primary nutritional groups,0.25,0.333333333,1,0,0,1,1
+975,Microelectromechanical systems,Artificial kidney,0.05,0.111111111,0,1,0,0,0
+1002,Nephrectomy,Excretory system,0.15,0.222222222,0,1,0,0,0
+1006,Nephron,Excretory system,0.2,0.222222222,0,1,1,0,1
+1008,Nephron,Kidney,0.1,0.111111111,0,1,1,0,1
+1016,Nephron,Renal corpuscle,0,0,0,1,1,1,1
+1018,Nephron,Renal medulla,0,0,0,1,1,1,1
+1026,Nutrient,Autotroph,0.25,0.333333333,1,0,0,1,1
+1039,Organ (anatomy),Organ donation,0.2,0.222222222,1,0,1,1,1
+1040,Organ (anatomy),Organ transplantation,0.2,0.222222222,1,0,1,1,1
+1057,Organ system,Human,0,0,1,0,1,0,1
+1077,Organic material,Plant,0.1,0.111111111,1,0,1,0,1
+1138,Perineum,Urinary bladder,0,0,0,1,0,0,0
+1156,Phosphate,Metabolic waste,0.05,0.111111111,0,1,1,0,1
+1158,Photosynthesis,Autotroph,0.25,0.333333333,1,0,1,1,1
+1160,Photosynthesis,Heterotrophic nutrition,0.25,0.333333333,1,0,0,0,0
+1162,Photosynthesis,Phloem,0.05,0.111111111,1,0,1,1,1
+1163,Photosynthesis,Plant,0.05,0.111111111,1,0,0,0,0
+1164,Photosynthesis,Primary nutritional groups,0.25,0.333333333,1,0,0,1,1
+1181,Plant,Food,0,0,0,1,1,0,1
+1185,Plant,Nutrient,0.05,0,0,1,1,0,1
+1219,Prostate,Excretory system,0,0,0,1,0,0,0
+1220,Prostate,Urinary bladder,0,0,0,1,0,0,0
+1284,Reabsorption,Nephron,0.15,0.222222222,1,0,1,1,1
+1285,Rectum,Urinary bladder,0,0,0,1,0,0,0
+1312,Renal artery,Ureter,0,0,1,0,0,0,0
+1313,Renal corpuscle,Nephron,0,0,1,0,1,1,1
+1315,Renal function,Kidney failure,0.05,0.111111111,1,0,1,1,1
+1317,Renal medulla,Nephron,0,0,1,0,1,0,1
+1321,Renal physiology,Nephron,0.05,0.111111111,1,0,1,1,1
+1467,Ureter,Excretory system,0.25,0.222222222,0,1,0,0,0
+1469,Ureter,Renal artery,0,0,0,1,0,0,0
+1477,Urethra,Excretory system,0,0,0,1,0,0,0
+1479,Urethra,Urinary bladder,0,0,0,1,0,0,0
+1482,Urinary bladder,Anus,0,0,1,0,0,0,0
+1483,Urinary bladder,Detrusor muscle,0.2,0.222222222,1,0,1,1,1
+1485,Urinary bladder,Large intestine,0,0,1,0,0,0,0
+1486,Urinary bladder,Pelvic floor,0.2,0.222222222,1,0,0,0,0
+1487,Urinary bladder,Perineum,0,0,1,0,0,0,0
+1488,Urinary bladder,Prostate,0,0,1,0,0,1,1
+1489,Urinary bladder,Rectum,0,0,1,0,0,0,0
+1490,Urinary bladder,Trigone of urinary bladder,0.2,0.222222222,1,0,1,1,1
+1491,Urinary bladder,Ureter,0.05,0.111111111,1,0,0,1,1
+1495,Urinary bladder,Urethra,0,0,1,0,1,1,1
+1496,Urinary bladder,Urinary meatus,0,0,1,0,0,1,1
+1497,Urinary bladder,Urogenital sinus,0.2,0.222222222,1,0,1,1,1
+1498,Urinary bladder,Uterus,0,0,1,0,0,0,0
+1499,Urinary meatus,Urinary bladder,0,0,0,1,0,0,0
+1501,Urinary system,Human,0,0,1,0,1,0,1
+1502,Urinary system,Kidney failure,0,0,1,0,1,1,1
+1503,Urinary system,Nephron,0.2,0.222222222,1,0,1,1,1
+1504,Urinary system,Ureter,0.2,0.222222222,1,0,1,1,1
+1507,Urination,Ureter,0.25,0.333333333,1,0,1,1,1
+1512,Urine,Kidney failure,0.05,0.111111111,1,0,1,1,1
+1514,Urine,Nephron,0.35,0.444444444,1,0,0,1,1
+1515,Urine,Ureter,0.25,0.333333333,1,0,1,1,1
+1518,Uterus,Urinary bladder,0,0,0,1,0,0,0
+1575,Vesicle (biology and chemistry),Unicellular organism,0.2,0.222222222,1,0,0,0,0
+1586,Water,Desalination,0.05,0,1,0,1,1,1
+1587,Water,Evapotranspiration,0.05,0,1,0,1,1,1
+1588,Water,Fresh water,0.25,0.222222222,1,0,1,1,1
+1589,Water,Heat capacity of water,0.2,0.222222222,1,0,1,1,1
+1590,Water,Human body,0.2,0.222222222,1,0,1,1,1
+1591,Water,Hydrosphere,0.35,0.333333333,1,0,1,1,1
+1593,Water,Soil,0.25,0.222222222,1,0,0,0,0
+1594,Water,Transpiration,0.25,0.222222222,1,0,1,1,1
+1596,Water,Water cycle,0.35,0.333333333,1,0,1,1,1
+1597,Water,Water resources,0.3,0.222222222,1,0,1,1,1
+1598,Water,Water vapor,0.15,0.111111111,1,0,1,1,1
+1620,Willem Kolff,Artificial kidney,0,0,0,1,1,0,1
+,,,,,140,,113,73,132

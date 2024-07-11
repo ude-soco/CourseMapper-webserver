@@ -1,0 +1,877 @@
+Public finance	Macroeconomics	-1
+Public finance	Security (finance)	0
+Public finance	Government debt	1
+Public finance	Money	0
+Public finance	Economics	0
+Public finance	Tax	0
+Public finance	Currency	0
+Public finance	Seigniorage	0
+Public finance	Inflation	0
+Public finance	Government spending	0
+Public finance	Central bank	0
+Public finance	Government budget	1
+Public finance	Debt	0
+Public finance	Government budget balance	0
+Macroeconomics	Public finance	1
+Macroeconomics	Quantity theory of money	0
+Macroeconomics	Bank	0
+Macroeconomics	Aggregate supply	0
+Macroeconomics	Government budget balance	0
+Macroeconomics	Aggregate demand	0
+Macroeconomics	Stabilization policy	0
+Macroeconomics	Labour economics	1
+Macroeconomics	Labor force	0
+Macroeconomics	Fixed exchange-rate system	0
+Government debt	Public finance	-1
+Government debt	Government budget balance	1
+Money	Monetary system	1
+Money	Store of value	0
+Money	Medium of exchange	0
+Money	Government debt	0
+Money	Tax	0
+Money	Currency	1
+Money	Inflation	0
+Money	Government spending	0
+Money	Central bank	0
+Money	Government budget balance	0
+Money	Aggregate demand	0
+Money	Goods and services	0
+Money	Fractional-reserve banking	0
+Money	New Keynesian economics	0
+Money	Investment	0
+Money	Bank	0
+Money	Money multiplier	1
+Money	Money creation	1
+Money	Federal Reserve System	0
+Money	Exchange rate	0
+Money	Monetary base	1
+Money	demand shock	0
+Money	Stock	0
+Money	Hyperinflation	0
+Money	Financial market	0
+Money	Commodity money	1
+Economics	Macroeconomics	1
+Economics	Unit of account	0
+Economics	Money	0
+Economics	Real versus nominal value (economics)	0
+Economics	Cobb-Douglas production function	0
+Economics	Distribution (economics)	0
+Economics	Inflation	0
+Economics	Central bank	0
+Economics	Aggregate supply	0
+Economics	Aggregate demand	0
+Economics	Moral hazard	0
+Economics	Stabilization policy	0
+Economics	Goods and services	0
+Economics	Information asymmetry	0
+Economics	Monetary policy	0
+Economics	Quantity theory of money	0
+Economics	Economic equilibrium	0
+Economics	Tax	0
+Economics	Investment	0
+Economics	Adverse selection	0
+Economics	Exchange rate	0
+Economics	Equation of exchange	0
+Economics	Monetary base	0
+Economics	Mundell-Fleming model	0
+Economics	demand shock	0
+Economics	Economic indicator	0
+Economics	Labour economics	1
+Economics	Labor force	0
+Economics	Medium of exchange	0
+Economics	Natural rate of unemployment	0
+Economics	Financial market	0
+Economics	Commodity money	0
+Economics	Life-cycle hypothesis	0
+Economics	Factors of production	0
+Economics	Measures of national income and output	0
+Economics	Profit maximization	0
+Tax	Government debt	0
+Tax	Inflation tax	1
+Tax	Inflation	0
+Tax	Government spending	0
+Tax	Government budget balance	1
+Tax	Factors of production	0
+Currency	Monetary system	0
+Currency	Store of value	0
+Currency	Medium of exchange	0
+Currency	Exchange rate	0
+Currency	Money	-1
+Currency	Commodity money	0
+Currency	Tax	0
+Currency	Monetary base	0
+Currency	Hyperinflation	0
+Currency	Inflation	0
+Currency	Nominal interest rate	0
+Currency	Central bank	0
+Currency	Bank	1
+Currency	Money supply	0
+Currency	Federal Reserve System	0
+Currency	Financial market	0
+Currency	Stock	0
+Currency	Monetary policy	0
+Currency	Fixed exchange-rate system	0
+Currency	Aggregate demand	0
+Seigniorage	Hyperinflation	0
+Seigniorage	Government spending	0
+Seigniorage	Money	0
+Seigniorage	Commodity money	0
+Seigniorage	Tax	0
+Seigniorage	Monetary inflation	0
+Seigniorage	Inflation	-1
+Seigniorage	Inflation tax	0
+Seigniorage	Central bank	0
+Seigniorage	Fiat money	0
+Seigniorage	Money supply	0
+Seigniorage	Full-reserve banking	0
+Seigniorage	Gold standard	0
+Seigniorage	Monetary policy	0
+Inflation	Macroeconomics	0
+Inflation	Seigniorage	1
+Inflation	Central bank	0
+Inflation	Government budget balance	0
+Inflation	Relative price	1
+Inflation	Aggregate demand	0
+Inflation	Stabilization policy	0
+Inflation	Monetary policy	1
+Inflation	Fixed exchange-rate system	0
+Inflation	Nominal rigidity	0
+Inflation	Economic equilibrium	0
+Inflation	Producer price index	0
+Inflation	Personal consumption expenditures price index	0
+Inflation	Federal Reserve System	0
+Inflation	Cost of living	0
+Inflation	Exchange rate	0
+Inflation	Equation of exchange	0
+Inflation	Fisher equation	1
+Inflation	Mundell-Fleming model	1
+Inflation	Nominal interest rate	0
+Inflation	Disinflation	1
+Inflation	Quantity theory of money	0
+Inflation	Federal funds rate	0
+Inflation	Economic indicator	0
+Inflation	Labour economics	0
+Inflation	Hyperinflation	1
+Inflation	Natural rate of unemployment	0
+Inflation	Financial market	0
+Inflation	Inflation tax	1
+Inflation	Monetary inflation	1
+Inflation	Price index	0
+Inflation	Price level	-1
+Inflation	Structural unemployment	0
+Government spending	Macroeconomics	0
+Government spending	Tax revenue	0
+Government spending	Mundell-Fleming model	0
+Government spending	Government budget	1
+Government spending	Government budget balance	1
+Government spending	Consumption (economics)	0
+Government spending	Aggregate demand	0
+Government spending	Government debt	0
+Central bank	Macroeconomics	0
+Central bank	Exchange rate	0
+Central bank	Interest rate	-1
+Central bank	Bank	1
+Central bank	Government budget balance	0
+Central bank	Money supply	-1
+Central bank	Federal Reserve System	0
+Central bank	Full-reserve banking	0
+Central bank	Fixed exchange-rate system	0
+Government budget	Public finance	-1
+Government budget	Government spending	-1
+Government budget	Government budget balance	1
+Debt	Unemployment	0
+Debt	Money	0
+Government budget balance	Government spending	-1
+Government budget balance	Government debt	-1
+Government budget balance	Government budget	-1
+Government budget balance	Tax	-1
+Permanent income hypothesis	Economics	0
+Permanent income hypothesis	Real interest rate	1
+Permanent income hypothesis	Consumption (economics)	1
+Permanent income hypothesis	Aggregate demand	0
+Permanent income hypothesis	Consumption function	0
+Permanent income hypothesis	Marginal propensity to consume	1
+Real interest rate	Macroeconomics	0
+Real interest rate	Nominal interest rate	1
+Real interest rate	IS-LM model	1
+Real interest rate	GDP deflator	1
+Real interest rate	Deflation	0
+Real interest rate	Inflation	0
+Real interest rate	Inflation tax	0
+Real interest rate	Quantity theory of money	0
+Real interest rate	Interest rate	-1
+Real interest rate	Federal funds rate	0
+Real interest rate	Net capital outflow	0
+Real interest rate	Tax	0
+Real interest rate	Excess reserves	0
+Real interest rate	Real versus nominal value (economics)	-1
+Consumption (economics)	Macroeconomics	1
+Consumption (economics)	Money	0
+Consumption (economics)	Economics	1
+Consumption (economics)	Mundell-Fleming model	0
+Consumption (economics)	Aggregate demand	0
+Consumption (economics)	Consumption function	1
+Consumption (economics)	Marginal propensity to consume	0
+Consumption (economics)	Keynesian cross	0
+Consumption (economics)	Measures of national income and output	0
+Consumption (economics)	Goods and services	0
+Aggregate demand	Financial market	0
+Aggregate demand	Government budget balance	0
+Consumption function	Economics	0
+Consumption function	Consumption (economics)	-1
+Consumption function	Aggregate demand	0
+Consumption function	Marginal propensity to consume	1
+Consumption function	Keynesian cross	0
+Consumption function	Measures of national income and output	0
+Consumption function	Consumer spending	-1
+Marginal propensity to consume	Aggregate demand	0
+Marginal propensity to consume	Life-cycle hypothesis	0
+Marginal propensity to consume	Consumption function	-1
+Marginal propensity to consume	Economics	1
+Efficiency wage	Keynesian economics	0
+Efficiency wage	Market clearing	0
+Efficiency wage	Unemployment	0
+Efficiency wage	Moral hazard	0
+Keynesian economics	Quantity theory of money	1
+Keynesian economics	Economic equilibrium	0
+Keynesian economics	IS-LM model	0
+Keynesian economics	Deflation	0
+Keynesian economics	Inflation	0
+Keynesian economics	Government spending	0
+Keynesian economics	Liquidity trap	0
+Keynesian economics	Unemployment	0
+Keynesian economics	Monetary policy	0
+Market clearing	Nominal rigidity	0
+Market clearing	Economic equilibrium	0
+Unemployment	Macroeconomics	0
+Unemployment	Money	0
+Unemployment	Economics	1
+Unemployment	Inflation	0
+Unemployment	Government budget balance	0
+Unemployment	Aggregate demand	0
+Unemployment	Moral hazard	0
+Unemployment	Monetary policy	0
+Unemployment	Fixed exchange-rate system	0
+Unemployment	Unemployment benefits	1
+Unemployment	Economic equilibrium	0
+Unemployment	Deflation	0
+Unemployment	Index (economics)	0
+Unemployment	Demand deposit	0
+Unemployment	Great Depression	0
+Unemployment	Employment	1
+Unemployment	Velocity of money	0
+Unemployment	Economic indicator	0
+Unemployment	Labour economics	1
+Unemployment	Labor force	0
+Unemployment	Natural rate of unemployment	1
+Unemployment	Supply shock	0
+Unemployment	Structural unemployment	1
+Unemployment	Frictional unemployment	0
+Unemployment	Minimum wage law	0
+Unemployment	Boom and bust	0
+Unemployment	Capital accumulation	0
+Unemployment	Protectionism	0
+Floating exchange rate	Currency	0
+Floating exchange rate	Central bank	0
+Floating exchange rate	Monetary policy	0
+Floating exchange rate	Fixed exchange-rate system	1
+Monetary policy	Monetary system	1
+Monetary policy	Macroeconomics	1
+Monetary policy	Tax	0
+Monetary policy	Inflation	-1
+Monetary policy	Government spending	0
+Monetary policy	Central bank	0
+Monetary policy	Aggregate demand	0
+Monetary policy	Stabilization policy	0
+Monetary policy	Inflation targeting	-1
+Monetary policy	Fixed exchange-rate system	0
+Monetary policy	Quantity theory of money	0
+Monetary policy	Taylor rule	0
+Monetary policy	Money multiplier	-1
+Monetary policy	Money creation	-1
+Monetary policy	Money supply	-1
+Monetary policy	Federal Reserve System	0
+Monetary policy	Great Depression	0
+Monetary policy	Consumer price index	0
+Monetary policy	Exchange rate	0
+Monetary policy	Monetary base	0
+Monetary policy	Nominal interest rate	0
+Monetary policy	Mundell-Fleming model	0
+Monetary policy	Federal funds rate	0
+Monetary policy	Demand for money	-1
+Monetary policy	Hyperinflation	0
+Monetary policy	Natural rate of unemployment	0
+Monetary policy	Monetary inflation	1
+Monetary policy	Factors of production	0
+Income	Fractional-reserve banking	0
+Income	Unemployment benefits	0
+Income	Quantity theory of money	0
+Income	Import	0
+Import	Balance of trade	1
+Import	International trade	1
+Fractional-reserve banking	Macroeconomics	0
+Fractional-reserve banking	Bank run	0
+Fractional-reserve banking	Central bank	0
+Fractional-reserve banking	Medium of exchange	0
+Fractional-reserve banking	Reserve requirement	-1
+Fractional-reserve banking	Bank	0
+Fractional-reserve banking	Money creation	0
+Fractional-reserve banking	Capital requirement	0
+Fractional-reserve banking	Federal Reserve System	0
+Fractional-reserve banking	Full-reserve banking	0
+Unemployment benefits	Tax	0
+Unemployment benefits	Gross domestic product	0
+Unemployment benefits	Moral hazard	0
+Unemployment benefits	Unemployment	-1
+Unemployment benefits	Adverse selection	0
+Unemployment benefits	Great Depression	0
+Unemployment benefits	Compensation of employees	0
+Unemployment benefits	Employment	0
+Quantity theory of money	Keynesian economics	-1
+Quantity theory of money	Velocity of money	-1
+Quantity theory of money	Money supply	-1
+Quantity theory of money	Price level	-1
+Quantity theory of money	Demand for money	-1
+Microeconomics	Economic equilibrium	0
+Microeconomics	Tax	0
+Economic equilibrium	Supply and demand	1
+Economic equilibrium	Money supply	-1
+Real gross domestic product	GDP deflator	1
+Real gross domestic product	Economics	0
+Real gross domestic product	Deflation	0
+Real gross domestic product	Index (economics)	0
+Real gross domestic product	Gross domestic product	1
+Real gross domestic product	Government budget balance	0
+Real gross domestic product	Aggregate demand	0
+GDP deflator	Consumer price index	0
+GDP deflator	Exchange rate	0
+GDP deflator	Real gross domestic product	-1
+GDP deflator	Economics	0
+GDP deflator	Gross domestic product	-1
+GDP deflator	Inflation	0
+GDP deflator	Price index	0
+GDP deflator	Price level	-1
+GDP deflator	Real interest rate	-1
+GDP deflator	Aggregate demand	0
+Deflation	Fractional-reserve banking	0
+Deflation	Hyperinflation	0
+Deflation	Consumer price index	0
+Deflation	Real versus nominal value (economics)	0
+Deflation	Economics	0
+Deflation	Monetary base	0
+Deflation	Inflation	0
+Deflation	Price index	0
+Deflation	Great Depression	1
+Deflation	Federal funds rate	0
+Deflation	Federal Reserve System	0
+Deflation	Disinflation	0
+Deflation	Monetary policy	0
+Deflation	Velocity of money	0
+Deflation	Money	0
+Gross domestic product	Macroeconomics	1
+Gross domestic product	Consumer price index	0
+Gross domestic product	Financial market	0
+Gross domestic product	IS-LM model	1
+Gross domestic product	GDP deflator	1
+Gross domestic product	Tax	0
+Gross domestic product	Inventory investment	0
+Gross domestic product	Natural rate of unemployment	0
+Gross domestic product	Government budget balance	0
+Gross domestic product	Government spending	0
+Gross domestic product	Aggregate demand	0
+Gross domestic product	Economic indicator	0
+Gross domestic product	Federal Reserve System	0
+Gross domestic product	Exchange rate	0
+Gross domestic product	Stock	0
+Gross domestic product	Fixed exchange-rate system	0
+Gross domestic product	Real versus nominal value (economics)	0
+Gross domestic product	Economic equilibrium	0
+Rate of return	Inflation	0
+Rate of return	Interest rate	0
+Rate of return	Investment	0
+Rate of return	Bank	0
+Rate of return	Tax	0
+Interest rate	Macroeconomics	0
+Interest rate	Money	0
+Interest rate	Inflation	0
+Interest rate	Central bank	1
+Interest rate	Real interest rate	1
+Interest rate	Consumption (economics)	0
+Interest rate	Aggregate demand	0
+Interest rate	Unemployment	0
+Interest rate	Monetary policy	0
+Interest rate	Fractional-reserve banking	0
+Interest rate	Quantity theory of money	0
+Interest rate	Index (economics)	0
+Interest rate	Investment	0
+Interest rate	Bank	0
+Interest rate	Money supply	0
+Interest rate	Federal Reserve System	0
+Interest rate	Exchange rate	0
+Interest rate	IS-LM model	1
+Interest rate	Equation of exchange	1
+Interest rate	Fisher equation	1
+Interest rate	Monetary base	0
+Interest rate	Liquidity preference	0
+Interest rate	Velocity of money	0
+Interest rate	Nominal interest rate	1
+Interest rate	Mundell-Fleming model	0
+Interest rate	Fiat money	0
+Interest rate	Stock market	0
+Interest rate	Money market	0
+Interest rate	Saving	0
+Interest rate	Federal funds rate	1
+Interest rate	demand shock	0
+Interest rate	Economic growth	0
+Interest rate	Present value	0
+Interest rate	Economic indicator	0
+Investment	Macroeconomics	0
+Investment	Diversification (finance)	0
+Investment	IS-LM model	1
+Investment	Gross domestic product	0
+Investment	Inflation	0
+Investment	Government spending	0
+Investment	Bank	0
+Investment	Aggregate demand	0
+Investment	Measures of national income and output	0
+Investment	Stock	0
+Bank	Federal Reserve System	0
+Bank	Capital requirement	0
+Bank	Full-reserve banking	1
+Bank	Financial market	0
+Reserve requirement	Fractional-reserve banking	1
+Reserve requirement	Money	0
+Reserve requirement	Currency	0
+Reserve requirement	Interest rate	0
+Reserve requirement	Central bank	0
+Reserve requirement	Financial crisis	0
+Reserve requirement	Money multiplier	1
+Reserve requirement	Money creation	1
+Reserve requirement	Bond (finance)	0
+Reserve requirement	Money supply	1
+Reserve requirement	Capital requirement	1
+Reserve requirement	Leverage (finance)	0
+Reserve requirement	Deposit account	0
+Reserve requirement	Demand deposit	1
+Reserve requirement	Federal Reserve System	0
+Reserve requirement	Excess reserves	0
+Reserve requirement	Full-reserve banking	0
+Reserve requirement	Gold standard	0
+Reserve requirement	Monetary policy	0
+Financial crisis	Fractional-reserve banking	0
+Financial crisis	Hyperinflation	1
+Financial crisis	Economics	0
+Financial crisis	Central bank	0
+Financial crisis	Stock market	0
+Financial crisis	Capital requirement	0
+Financial crisis	Leverage (finance)	0
+Financial crisis	Stock	0
+Financial crisis	Monetary policy	0
+Financial crisis	Stock exchange	0
+Money multiplier	Fractional-reserve banking	0
+Money multiplier	Money	-1
+Money multiplier	Monetary base	1
+Money multiplier	Central bank	0
+Money multiplier	Reserve requirement	-1
+Money multiplier	Money creation	1
+Money multiplier	Money supply	-1
+Money multiplier	Capital requirement	0
+Money multiplier	Monetary policy	1
+Money multiplier	Great Depression	0
+Money creation	Money multiplier	-1
+Money creation	Money supply	-1
+Money creation	Monetary policy	1
+Money creation	Money	-1
+Money creation	Reserve requirement	-1
+Bond (finance)	Financial market	0
+Bond (finance)	Fisher equation	0
+Bond (finance)	Gross domestic product	0
+Bond (finance)	Central bank	1
+Bond (finance)	Bank	0
+Bond (finance)	Government budget balance	0
+Bond (finance)	Real interest rate	0
+Bond (finance)	Exchange rate	0
+Bond (finance)	Stock	0
+Bond (finance)	Monetary policy	0
+Bond (finance)	Investment	1
+Bond (finance)	Stock exchange	0
+Money supply	Monetary system	0
+Money supply	Store of value	0
+Money supply	Macroeconomics	1
+Money supply	Economy	0
+Money supply	Unit of account	0
+Money supply	Savings account	0
+Money supply	Economics	0
+Money supply	Inflation	0
+Money supply	Central bank	1
+Money supply	Medium of exchange	0
+Money supply	Aggregate demand	0
+Money supply	Monetary policy	1
+Money supply	Fixed exchange-rate system	0
+Money supply	Money	0
+Money supply	Fractional-reserve banking	0
+Money supply	Quantity theory of money	1
+Money supply	Economic equilibrium	1
+Money supply	Deflation	0
+Money supply	Gross domestic product	0
+Money supply	Reserve requirement	-1
+Money supply	Money multiplier	1
+Money supply	Money creation	1
+Money supply	Capital requirement	1
+Money supply	Demand deposit	1
+Money supply	Federal Reserve System	0
+Money supply	Excess reserves	0
+Money supply	Exchange rate	1
+Money supply	IS-LM model	1
+Money supply	Equation of exchange	1
+Money supply	Monetary base	0
+Money supply	Velocity of money	-1
+Money supply	Mundell-Fleming model	1
+Money supply	Fiat money	0
+Money supply	Money market	0
+Money supply	demand shock	0
+Money supply	Economic indicator	0
+Money supply	Demand for money	0
+Money supply	Hyperinflation	0
+Money supply	Monetary inflation	1
+Money supply	Price level	0
+Leverage (finance)	Investment	0
+Leverage (finance)	Capital requirement	0
+Deposit account	Fractional-reserve banking	0
+Deposit account	Money	0
+Demand deposit	Fractional-reserve banking	1
+Demand deposit	Monetary base	0
+Demand deposit	Full-reserve banking	1
+Demand deposit	Money	0
+Federal Reserve System	Financial market	0
+Excess reserves	Fractional-reserve banking	0
+Excess reserves	Monetary base	0
+Excess reserves	Central bank	0
+Excess reserves	Money multiplier	0
+Excess reserves	Federal Reserve System	0
+Excess reserves	Monetary policy	0
+Gold standard	Monetary policy	0
+Gold standard	Money	0
+Gold standard	Deflation	0
+Adverse selection	Labour economics	0
+Adverse selection	Moral hazard	0
+Great Depression	Fractional-reserve banking	0
+Great Depression	Nominal rigidity	0
+Great Depression	Government spending	0
+Great Depression	Deflation	-1
+Compensation of employees	Gross domestic product	0
+Compensation of employees	Labour economics	0
+Compensation of employees	Factors of production	0
+Compensation of employees	Measures of national income and output	0
+Employment	Labour economics	1
+Employment	Labor force	0
+Employment	Workforce	0
+Business	Government spending	0
+Business	Tax	0
+Social Security (United States)	Consumer price index	0
+Social Security (United States)	Cost of living	0
+Social Security (United States)	Government spending	0
+Cost of living	Purchasing power parity	0
+Consumer price index	Cost of living	0
+Consumer price index	Producer price index	0
+Consumer price index	Personal consumption expenditures price index	1
+Consumer price index	Inflation	0
+Consumer price index	Price index	0
+Consumer price index	Economic indicator	0
+Exchange rate	Stock exchange	0
+Exchange rate	Financial market	0
+Exchange rate	Fixed exchange-rate system	1
+Exchange rate	Bank	0
+IS-LM model	Aggregate demand	1
+IS-LM model	Nominal interest rate	0
+IS-LM model	Real versus nominal value (economics)	0
+IS-LM model	Central bank	0
+IS-LM model	Inflation	0
+IS-LM model	Demand for money	0
+IS-LM model	Price level	0
+IS-LM model	Bank	0
+IS-LM model	Interest rate	-1
+IS-LM model	Saving	-1
+IS-LM model	Real interest rate	-1
+IS-LM model	Money supply	-1
+IS-LM model	Gross domestic product	-1
+IS-LM model	Mundell-Fleming model	1
+IS-LM model	Liquidity preference	-1
+IS-LM model	Monetary policy	0
+IS-LM model	Investment	-1
+Equation of exchange	Quantity theory of money	0
+Equation of exchange	Money supply	-1
+Fisher equation	Nominal interest rate	0
+Fisher equation	Economics	0
+Fisher equation	Deflation	0
+Fisher equation	Inflation	-1
+Fisher equation	Interest rate	-1
+Fisher equation	Investment	0
+Fisher equation	Real interest rate	0
+Fisher equation	Inflation tax	1
+Monetary base	Fractional-reserve banking	0
+Monetary base	Hyperinflation	0
+Monetary base	Central bank	1
+Monetary base	Money	-1
+Liquidity preference	Macroeconomics	0
+Liquidity preference	IS-LM model	1
+Liquidity preference	Quantity theory of money	0
+Liquidity preference	Bond (finance)	0
+Liquidity preference	Market liquidity	0
+Liquidity preference	Demand for money	0
+Liquidity preference	Liquidity trap	1
+Liquidity preference	Supply and demand	0
+Liquidity preference	Stock	0
+Liquidity preference	Money	0
+Velocity of money	Hyperinflation	0
+Velocity of money	Aggregate demand	0
+Velocity of money	Quantity theory of money	1
+Velocity of money	Real versus nominal value (economics)	0
+Velocity of money	Equation of exchange	0
+Velocity of money	Monetary inflation	0
+Velocity of money	Inflation	0
+Velocity of money	Price level	0
+Velocity of money	Employment-to-population ratio	0
+Velocity of money	Money supply	1
+Velocity of money	Demand for money	0
+Velocity of money	Measures of national income and output	0
+Nominal interest rate	Real interest rate	-1
+Nominal interest rate	Inflation tax	0
+Nominal interest rate	Real versus nominal value (economics)	-1
+Nominal interest rate	Interest rate	-1
+Nominal interest rate	Demand for money	-1
+Mundell-Fleming model	Exchange rate	0
+Fiat money	Fractional-reserve banking	0
+Fiat money	Monetary system	1
+Fiat money	Medium of exchange	0
+Fiat money	Money	1
+Fiat money	Commodity money	1
+Fiat money	Currency	0
+Fiat money	Hyperinflation	0
+Fiat money	Central bank	0
+Fiat money	Demand deposit	0
+Fiat money	Monetary policy	0
+Stock market	Diversification (finance)	0
+Stock market	Financial market	1
+Stock market	Investment	0
+Stock market	Inflation	0
+Stock market	Central bank	0
+Stock market	Bank	0
+Stock market	Economic indicator	0
+Stock market	Federal Reserve System	0
+Stock market	Stock	1
+Stock market	Adverse selection	0
+Stock market	Stock exchange	0
+Saving	Money	0
+Saving	Economics	0
+Saving	Gross domestic product	1
+Saving	Gross national product	1
+Saving	Investment	0
+Saving	Bank	0
+Saving	Consumption (economics)	0
+Saving	Aggregate demand	0
+Saving	IS-LM model	1
+Federal funds rate	Interest rate	-1
+demand shock	Federal Reserve System	0
+demand shock	Government spending	0
+Economic growth	Labor force	0
+Economic growth	Inflation	0
+Economic growth	Price level	0
+Economic growth	Money	0
+Economic growth	Monetary policy	0
+Market liquidity	Money	0
+Demand for money	Store of value	0
+Demand for money	Macroeconomics	0
+Demand for money	Exchange rate	0
+Demand for money	Nominal interest rate	1
+Demand for money	Central bank	0
+Demand for money	Quantity theory of money	1
+Demand for money	Money creation	0
+Demand for money	Aggregate demand	0
+Demand for money	Monetary policy	1
+Liquidity trap	Deflation	0
+Liquidity trap	Liquidity preference	-1
+Liquidity trap	Inflation	0
+Liquidity trap	Money supply	0
+Liquidity trap	Demand for money	0
+Liquidity trap	Monetary policy	0
+Supply and demand	Inflation	0
+Supply and demand	Economic equilibrium	-1
+Stock	Financial market	0
+Stock	Bank	0
+Stock	Stock exchange	1
+Labour economics	Labor force	0
+Labour economics	Workforce	0
+Labor force	Employment-to-population ratio	1
+Workforce	Labor force	0
+Core inflation	Federal Reserve System	0
+Core inflation	Consumer price index	0
+Core inflation	Inflation	1
+Core inflation	Money supply	0
+Core inflation	Economic indicator	0
+Stock exchange	Financial market	0
+Stock exchange	Capital requirement	0
+Hyperinflation	Inflation	-1
+Hyperinflation	Central bank	0
+Hyperinflation	Inflation tax	0
+Shock (economics)	Natural rate of unemployment	0
+Shock (economics)	Unemployment	0
+Natural rate of unemployment	Unemployment	-1
+Natural rate of unemployment	Structural unemployment	0
+Natural rate of unemployment	Frictional unemployment	1
+Macroeconomic model	Monetary policy	0
+Commodity money	Inflation	0
+Commodity money	Central bank	0
+Commodity money	Money	-1
+Commodity money	Medium of exchange	0
+Inflation tax	Tax	-1
+Monetary inflation	Hyperinflation	0
+Monetary inflation	Quantity theory of money	0
+Monetary inflation	Monetary base	0
+Monetary inflation	Inflation	-1
+Monetary inflation	Central bank	0
+Monetary inflation	Bank	0
+Monetary inflation	Federal Reserve System	0
+Ex-ante	Macroeconomics	0
+Ex-ante	Fisher equation	0
+Gross national product	Gross domestic product	0
+Gross national product	Labor force	0
+Gross national product	Measures of national income and output	1
+Price index	Producer price index	1
+Price index	Macroeconomics	0
+Price index	Cost of living	0
+Price index	Equation of exchange	0
+Price index	Nominal rigidity	0
+Price level	GDP	0
+Price level	Quantity theory of money	1
+Price level	Economic equilibrium	0
+Price level	GDP deflator	1
+Price level	Equation of exchange	0
+Price level	Inflation	1
+Price level	Price index	0
+Price level	Classical dichotomy	0
+Supply shock	Hyperinflation	1
+Supply shock	Macroeconomics	0
+Supply shock	demand shock	0
+Supply shock	Aggregate supply	1
+Structural unemployment	Macroeconomics	1
+Structural unemployment	Central bank	1
+Structural unemployment	Unemployment	-1
+Structural unemployment	Economics	1
+Structural unemployment	Frictional unemployment	1
+Frictional unemployment	Central bank	0
+Balance of trade	Exchange rate	0
+Balance of trade	Inflation tax	0
+Balance of trade	Inflation	0
+Balance of trade	Fixed exchange-rate system	0
+Balance of trade	Factors of production	0
+Balance of trade	Net capital outflow	1
+Balance of trade	International trade	-1
+Balance of trade	Great Depression	0
+Balance of trade	Import	-1
+Factors of production	Factor price	1
+Factors of production	Distribution (economics)	0
+Factors of production	Government spending	0
+Factors of production	Investment	0
+Factors of production	Labour economics	0
+Factors of production	Labor force	0
+International trade	Balance of trade	1
+International trade	Import	-1
+Keynesian cross	Aggregate demand	1
+Keynesian cross	Aggregate supply	1
+Measures of national income and output	Gross domestic product	1
+Measures of national income and output	Labour economics	0
+Consumer spending	Consumption function	1
+Labor demand	Production function	0
+Labor demand	Factors of production	0
+Labor demand	Economics	0
+Labor demand	Profit maximization	1
+Production function	Macroeconomics	0
+Production function	Economics	0
+Production function	Cobb-Douglas production function	1
+Production function	Distribution (economics)	0
+Production function	Returns to scale	1
+Production function	Factors of production	0
+Production function	Profit maximization	1
+Production function	Marginal product of labor	1
+Production function	Marginal product	1
+Marginal product of labor	Production function	-1
+Marginal product of labor	Marginal product	-1
+Marginal product	Labour economics	0
+Marginal product	Production function	-1
+Marginal product	Marginal product of labor	1
+Marginal product	Economics	0
+Marginal product	marginal product of capital	1
+Monetary system	Central bank	0
+Monetary system	Money	-1
+Store of value	Hyperinflation	0
+Store of value	Full-reserve banking	0
+Store of value	Stock	0
+Store of value	Medium of exchange	0
+Medium of exchange	Bank	0
+Economy	Inflation	0
+Economy	Monetary policy	0
+Unit of account	Currency	0
+Unit of account	Store of value	0
+Unit of account	Medium of exchange	0
+Unit of account	Money	0
+Savings account	Fractional-reserve banking	0
+Savings account	Money	0
+Real versus nominal value (economics)	Hyperinflation	0
+Real versus nominal value (economics)	Quantity theory of money	0
+Real versus nominal value (economics)	Consumer price index	0
+Real versus nominal value (economics)	Economic equilibrium	0
+Real versus nominal value (economics)	Equation of exchange	0
+Real versus nominal value (economics)	Index (economics)	0
+Real versus nominal value (economics)	Inflation	0
+Real versus nominal value (economics)	Price index	0
+Real versus nominal value (economics)	Real wage	1
+Real versus nominal value (economics)	Real interest rate	1
+Real versus nominal value (economics)	Nominal interest rate	1
+Real versus nominal value (economics)	Aggregate demand	0
+Real versus nominal value (economics)	Demand for money	0
+Real versus nominal value (economics)	Classical dichotomy	0
+Cobb-Douglas production function	Macroeconomics	1
+Returns to scale	Production function	-1
+Inventory	Inventory investment	1
+Inventory investment	Macroeconomics	0
+Inventory investment	Economic equilibrium	0
+Inventory investment	Inventory	-1
+Inventory investment	Government spending	0
+Inventory investment	Investment	0
+Inventory investment	Consumption (economics)	0
+National Income and Product Accounts	Consumer price index	0
+National Income and Product Accounts	Quantity theory of money	0
+National Income and Product Accounts	Government spending	0
+National Income and Product Accounts	Real versus nominal value (economics)	0
+Aggregate supply	Aggregate demand	0
+Real wage	Inflation	0
+Real wage	Cost of living	0
+Real wage	Consumption (economics)	0
+Real wage	Real versus nominal value (economics)	-1
+Disinflation	Inflation	-1
+Employment-to-population ratio	Labor force	-1
+Real rigidity	Macroeconomics	1
+Relative price	Inflation	-1
+Relative price	Monetary policy	0
+Debtor	Creditor	0
+Creditor	Fractional-reserve banking	0
+Cost-of-living index	Real versus nominal value (economics)	0
+marginal product of capital	Marginal product	-1
+Fixed investment	Inventory investment	0
+Information asymmetry	Labour economics	0
+Information asymmetry	Adverse selection	0
+Information asymmetry	Moral hazard	0
+Inflation targeting	Monetary policy	1
+Taylor rule	Inflation	0
+Aggregate expenditure	Keynesian cross	0
+Aggregate expenditure	Labour economics	0
+Aggregate expenditure	Aggregate demand	0
+Aggregate expenditure	Factors of production	0
+Aggregate expenditure	Aggregate supply	0
+Classical dichotomy	Natural rate of unemployment	0
+Classical dichotomy	Quantity theory of money	0
+Classical dichotomy	Nominal rigidity	0
+New Keynesian economics	Nominal rigidity	0
+Personal consumption expenditures price index	Consumer price index	-1
+Small open economy	Macroeconomics	0
