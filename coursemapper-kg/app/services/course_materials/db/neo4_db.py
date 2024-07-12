@@ -2245,7 +2245,7 @@ class NeoDataBase:
 
             return result
 
-    def filter_user_resources_saved_by(self, data: dict):
+    def filter_user_resources_saved_by2(self, data: dict):
         '''
             Getting User Resources Saved
             By filtering using: user_id, cid: concept cid, mid: learning material and slide_number: silder number
@@ -2431,6 +2431,32 @@ class NeoDataBase:
         else:
             # update
             pass
+    
+    def filter_user_resources_saved_by(self, data: dict):
+        '''
+            Getting User Resources Saved
+            Filtering by: user_id, cid: concept cid, mid: learning material and slide_number: silder number
+            data: {
+                user_id: 'assad83'
+                content_type: 'video | article',
+                text: 'neo4j node'
+            }
+        '''
+        logger.info("Filtering User Resources Saved")
+        resources = []
+        result = {}
+        
+
+        if data["content_type"] == "video":
+            result["videos"] = [resource for resource in resources if "Article" in resource["labels"]]
+        elif data["content_type"] == "article":
+            result["articles"] = [resource for resource in resources if "Video" in resource["labels"]]
+        else:
+            result = {   
+                        "articles": [resource for resource in resources if "Video" in resource["labels"]],
+                        "videos": [resource for resource in resources if "Article" in resource["labels"]]
+                    }
+    
 
     """
     def edit_relationship_btw_concepts_and_resources(self, concepts_cro: list, resources: list):

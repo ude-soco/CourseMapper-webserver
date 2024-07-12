@@ -5,7 +5,7 @@ import { MenuItem } from 'primeng/api';
 // import { MaterialsRecommenderService } from 'src/app/services/materials-recommender.service';
 import { Subscription } from 'rxjs';
 import { SlideConceptsService } from 'src/app/services/slide-concepts.service';
-import { ResourcesPagination, ResourceNode, UserResourceFilterParamsResult } from 'src/app/models/croForm';
+import { ResourcesPagination, UserResourceFilterResult, ResourceNode, UserResourceFilterParamsResult } from 'src/app/models/croForm';
 import { CustomRecommendationOptionComponent } from '../custom-recommendation-option/custom-recommendation-option.component';
 import { MaterialsRecommenderService } from 'src/app/services/materials-recommender.service';
 
@@ -103,9 +103,12 @@ export class ResultViewComponent {
   */
 
   filteringParamsSavedTab = {
-    keyTextFiltering: '',
-    contentType: ''
+    user_id: '',
+    content_type: '',
+    text: ''
   }
+  showSearchIconPinner = false;
+  filteringResourcesFound: UserResourceFilterResult;
 
   mainConceptSelected: any | undefined;
   midSelected: any | undefined;
@@ -407,7 +410,26 @@ export class ResultViewComponent {
       leftPanelf.classList.remove('left_panel_interaction');
     }
   }
-  
+
+  filteringResourcesSaved() {
+    this.showSearchIconPinner = this.filteringParamsSavedTab.text.length >= 1 ? true : false;
+    if (this.filteringParamsSavedTab.text.length >= 2) {
+      this.filteringParamsSavedTab.user_id = this.userId;
+      this.materialsRecommenderService.filterUserResourcesSavedBy(this.filteringParamsSavedTab)
+        .subscribe({
+          next: (data: UserResourceFilterResult) => {
+            this.filteringResourcesFound = data;
+          },
+          error: (err) => {
+            console.log(err);
+          },
+        }
+      );
+    } else {
+      this.filteringResourcesFound = {articles: [], videos: []};
+    }
+  }
+
   /*
   selectMainConceptsOnChange(event, type: number) {
     // call available Main Concepts

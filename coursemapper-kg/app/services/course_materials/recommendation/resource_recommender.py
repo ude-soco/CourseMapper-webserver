@@ -248,11 +248,7 @@ class ResourceRecommenderService:
 
     def filter_user_resources_saved_by(self, data: dict):
         resources = self.db.filter_user_resources_saved_by(data)
-        result = {
-                    "articles": [resource for resource in resources if "Video" in resource["labels"]],
-                    "videos": [resource for resource in resources if "Article" in resource["labels"]]
-                }
-        return result
+        return resources
 
     def normalize_factor_weights(self, factor_weights: dict=None, values: list=[], method_type = "l1", complete=True, sum_value=True): # List[float]
         """
