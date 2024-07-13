@@ -17,6 +17,7 @@ html2text = "*"
 scipy = "==1.11.0"
 pdfminer-six = "*"
 python-dotenv = "*"
+torch = "*"
 
 [dev-packages]
 
