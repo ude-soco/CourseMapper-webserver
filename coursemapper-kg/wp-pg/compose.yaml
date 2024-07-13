@@ -8,7 +8,8 @@ services:
       ACCESS_KEY_ID: ACCESS_KEY_ID
       SECRET_ACCESS_KEY: SECRET_ACCESS_KEY
     volumes:
-      - coursemapper-kg-wp-pg:/var/lib/postgresql
+      - coursemapper-kg-wp-pg:/var/lib/postgresql/data
+      - coursemapper-kg-wp-pg-meta:/var/lib/postgresql/meta
     healthcheck:
       test: "pg_isready -h wp-pg -U postgres"
       start_period: 2s
@@ -18,3 +19,4 @@ services:
 
 volumes:
   coursemapper-kg-wp-pg:
+  coursemapper-kg-wp-pg-meta:
