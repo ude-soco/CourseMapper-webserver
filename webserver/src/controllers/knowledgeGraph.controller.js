@@ -1,5 +1,6 @@
 const fs = require('fs').promises;
 const process = require('process');
+const axios = require("axios");
 const socketio = require("../socketio");
 const db = require("../models");
 const User = db.user;
@@ -314,9 +315,8 @@ export const searchWikipedia = async (req, res) => {
   try {
     const conceptNameEncoded = encodeURIComponent(query);
     const url = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${conceptNameEncoded}&utf8=&format=json`;
-    const response = await fetch(url);
-    const data = await response.json();
-    const searchResults = data.query.search;
+    const response = await axios.get(url);
+    const searchResults = response.data.query.search;
     return res.status(200).send({ searchResults });
   } catch (err) {
     return res.status(500).send({ error: err.message });
