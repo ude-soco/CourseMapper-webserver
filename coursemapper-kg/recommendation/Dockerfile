@@ -1,6 +1,5 @@
 # syntax=docker/dockerfile:1.6
-# Warning: Python 3.7.2 (Dec 2018) on Debian Stretch (2017--2020)
-FROM python:3.7.2
+FROM python:3.11.5
 
 # APT requires archive URLs
 COPY debian/sources.list /etc/apt/sources.list
@@ -35,7 +34,7 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 COPY --chown=app:app Pipfile* .
 RUN  --mount=type=cache,sharing=private,target=/home/app/.cache/pip,uid=1000 \
      --mount=type=cache,sharing=private,target=/home/app/.cache/pipenv,uid=1000 <<EOF
-  pip install --no-color pip==23.2.1 pipenv==2023.9.8
+  pip install --no-color pipenv
   pipenv install --deploy
 EOF
 

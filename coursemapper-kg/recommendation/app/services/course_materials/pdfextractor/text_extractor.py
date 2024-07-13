@@ -8,7 +8,6 @@ from pdfminer.layout import LTTextBox, LTTextLine, LTChar
 from pdfminer.layout import LTFigure, LTAnno
 import os
 import re
-from werkzeug.datastructures import FileStorage
 
 import logging
 from log import LOG
