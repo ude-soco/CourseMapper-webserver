@@ -2445,7 +2445,31 @@ class NeoDataBase:
         logger.info("Filtering User Resources Saved")
         resources = []
         result = {}
-        
+
+        with self.driver.session() as session:
+            result = session.run(
+                """
+                MATCH p=(b: User {uid: $user_id})-[r:HAS_SAVED]->(a:Resource) 
+                WHERE toLower(a.text) CONTAINS toLower($text)
+                RETURN  DISTINCT LABELS(a) as labels, ID(a) as id, a.rid as rid, a.title as title, a.text as text,
+                        a.thumbnail as thumbnail, a.abstract as abstract, a.post_date as post_date, 
+                        a.author_image_url as author_image_url, a.author_name as author_name,
+                        a.keyphrases as keyphrases, a.description as description, a.description_full as description_full,
+                        a.publish_time as publish_time, a.uri as uri, a.duration as duration,
+                        COALESCE(toInteger(a.views), 0) AS views,
+                        COALESCE(toFloat(a.similarity_score), 0.0) AS similarity_score,
+                        COALESCE(toInteger(a.helpful_count), 0) AS helpful_count,
+                        COALESCE(toInteger(a.not_helpful_count), 0) AS not_helpful_count,
+                        COALESCE(toInteger(a.bookmarked_count), 0) AS bookmarked_count,
+                        COALESCE(toInteger(a.like_count), 0) AS like_count,
+                        a.channel_title as channel_title
+                """,
+                user_id=data["user_id"],
+                text=data["text"]
+            ).data()
+            resources = self.resources_wrapper_from_query(data=result)
+
+            print(resources)
 
         if data["content_type"] == "video":
             result["videos"] = [resource for resource in resources if "Article" in resource["labels"]]
@@ -2456,7 +2480,7 @@ class NeoDataBase:
                         "articles": [resource for resource in resources if "Video" in resource["labels"]],
                         "videos": [resource for resource in resources if "Article" in resource["labels"]]
                     }
-    
+        return result
 
     """
     def edit_relationship_btw_concepts_and_resources(self, concepts_cro: list, resources: list):

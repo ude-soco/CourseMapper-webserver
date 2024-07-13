@@ -185,11 +185,17 @@
             <div class="my-auto">Content type:</div>
             <div class="flex flex-row gap-4">
               <div class="flex flex-row my-auto">
-                <p-radioButton name="video" value="video" [(ngModel)]="filteringParamsSavedTab.content_type" inputId="video"></p-radioButton>
+                <p-radioButton name="video" value="video" [(ngModel)]="filteringParamsSavedTab.content_type" inputId="video"
+                (onClick)="onContentTypeChange($event)"
+                >
+                </p-radioButton>
                 <label for="video" class="ml-1">Video</label>
               </div>
               <div class="flex flex-row my-auto">
-                <p-radioButton name="article" value="article" [(ngModel)]="filteringParamsSavedTab.content_type" inputId="article"></p-radioButton>
+                <p-radioButton name="article" value="article" [(ngModel)]="filteringParamsSavedTab.content_type" inputId="article"
+                (onClick)="onContentTypeChange($event)"
+                >
+                </p-radioButton>
                 <label for="article" class="ml-1">Article</label>
               </div>
             </div>
@@ -199,7 +205,9 @@
             <span class="p-input-icon-right">
               <i class="pi pi-search" *ngIf="!showSearchIconPinner"></i>
               <i class="pi pi-spin pi-spinner" *ngIf="showSearchIconPinner"></i>
-              <input type="text" pInputText [(ngModel)]="filteringParamsSavedTab.text" (input)="filteringResourcesSaved()" />
+              <input type="text" pInputText [(ngModel)]="filteringParamsSavedTab.text" 
+                (input)="filteringResourcesSaved()"
+              />
             </span>
           </div>
         </div>

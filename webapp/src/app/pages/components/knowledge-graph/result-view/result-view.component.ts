@@ -415,20 +415,32 @@ export class ResultViewComponent {
     this.showSearchIconPinner = this.filteringParamsSavedTab.text.length >= 1 ? true : false;
     if (this.filteringParamsSavedTab.text.length >= 2) {
       this.filteringParamsSavedTab.user_id = this.userId;
-      this.materialsRecommenderService.filterUserResourcesSavedBy(this.filteringParamsSavedTab)
-        .subscribe({
-          next: (data: UserResourceFilterResult) => {
-            this.filteringResourcesFound = data;
-          },
-          error: (err) => {
-            console.log(err);
-          },
-        }
-      );
+      this.getUserResources(this.filteringParamsSavedTab);
     } else {
       this.filteringResourcesFound = {articles: [], videos: []};
     }
   }
+
+  onContentTypeChange(event: any) {
+    if (event.value) {
+      this.getUserResources(this.filteringParamsSavedTab);
+    }
+  }
+
+  getUserResources(params) {
+    this.materialsRecommenderService.filterUserResourcesSavedBy(params)
+    .subscribe({
+      next: (data: UserResourceFilterResult) => {
+        this.filteringResourcesFound = data;
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    }
+  );
+  }
+
+
 
   /*
   selectMainConceptsOnChange(event, type: number) {
