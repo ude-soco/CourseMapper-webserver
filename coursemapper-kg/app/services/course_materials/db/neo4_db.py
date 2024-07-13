@@ -2443,14 +2443,14 @@ class NeoDataBase:
             }
         '''
         logger.info("Filtering User Resources Saved")
-        resources = []
-        result = {}
+        result = { "articles": [], "videos": [] }
 
         with self.driver.session() as session:
-            result = session.run(
+            nodes = session.run(
                 """
                 MATCH p=(b: User {uid: $user_id})-[r:HAS_SAVED]->(a:Resource) 
-                WHERE toLower(a.text) CONTAINS toLower($text)
+                WHERE   toLower(b.text) CONTAINS toLower($search_text) OR
+                        ANY(keyphrase IN b.keyphrases WHERE keyphrase CONTAINS toLower($search_text))
                 RETURN  DISTINCT LABELS(a) as labels, ID(a) as id, a.rid as rid, a.title as title, a.text as text,
                         a.thumbnail as thumbnail, a.abstract as abstract, a.post_date as post_date, 
                         a.author_image_url as author_image_url, a.author_name as author_name,
@@ -2465,21 +2465,23 @@ class NeoDataBase:
                         a.channel_title as channel_title
                 """,
                 user_id=data["user_id"],
-                text=data["text"]
+                search_text=data["text"]
             ).data()
-            resources = self.resources_wrapper_from_query(data=result)
+            resources = self.resources_wrapper_from_query(data=nodes)
+            print(len(resources))
 
-            print(resources)
-
-        if data["content_type"] == "video":
-            result["videos"] = [resource for resource in resources if "Article" in resource["labels"]]
-        elif data["content_type"] == "article":
-            result["articles"] = [resource for resource in resources if "Video" in resource["labels"]]
-        else:
-            result = {   
-                        "articles": [resource for resource in resources if "Video" in resource["labels"]],
-                        "videos": [resource for resource in resources if "Article" in resource["labels"]]
-                    }
+            if len(resources) > 0:
+                if data["content_type"] == "video":
+                    result["videos"] = [resource for resource in resources if "Video" in resource["labels"]]
+                elif data["content_type"] == "article":
+                    result["articles"] = [resource for resource in resources if "Article" in resource["labels"]]
+                else:
+                    result = {   
+                                "articles": [resource for resource in resources if "Article" in resource["labels"]],
+                                "videos": [resource for resource in resources if "Video" in resource["labels"]]
+                            }
+        
+        print(result)
         return result
 
     """
