@@ -53,7 +53,7 @@ See the step-by-step guide with screenshots to install the necessary softwares a
     python -m spacy download en
     ```
 
-- Move to the directory `coursemapper-kg/recommendation`, open a terminal, copy the codes below and paste it in the terminal one at a time to download the necessary nltk and sentence transformer packages.
+- Copy the codes below and paste it in the terminal one at a time to download the necessary nltk and sentence transformer packages.
 
   ```
   python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('all-mpnet-base-v2'); from flair.embeddings import TransformerDocumentEmbeddings;  TransformerDocumentEmbeddings('sentence-transformers/msmarco-distilbert-base-tas-b');"

@@ -53,7 +53,7 @@ Download the following software and install them on your machine:
     python -m spacy download en
     ```
 
-- Move to the directory `coursemapper-kg`, open a terminal, copy the codes below and paste it in the terminal one at a time to download the necessary nltk and sentence transformer packages.
+- Copy the codes below and paste it in the terminal one at a time to download the necessary nltk and sentence transformer packages.
 
   ```
   python -c "import nltk;nltk.download('stopwords'); nltk.download('punkt'); nltk.download('wordnet'); import spacy; spacy.cli.download('en_core_web_sm'); from sentence_transformers import SentenceTransformer; SentenceTransformer('all-mpnet-base-v2'); from flair.embeddings import TransformerDocumentEmbeddings;  TransformerDocumentEmbeddings('sentence-transformers/msmarco-distilbert-base-tas-b');"
@@ -67,15 +67,3 @@ Download the following software and install them on your machine:
   ```bash
   pipenv run python src/main.py
   ```
-
-## 📚 Wikipedia Dump Preprocessing
-
-In order to run the Wikipedia dump preprocessing step and use the resulting database, follow these steps:
-
-- Download and install PostgreSQL from [the official website](https://www.postgresql.org/download/)
-
-- Update the `WIKIPEDIA_DATABASE_CONNECTION_STRING` in the `.env` file to your PostgreSQL database URL. For example, if your server is running locally on port 5432 with the username `postgres` and password `password`, the connection string would be `postgres://postgres:password@localhost:5432/`
-
-- Read the instructions in the [README.md](/coursemapper-kg/concept-map/README.md) file to run the Wikipedia dump preprocessing step
-
-- Once the Wikipedia dump preprocessing step is complete, you can run the worker using the command `pipenv run python src/main.py`
