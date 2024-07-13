@@ -53,14 +53,10 @@ Download the following software and install them on your machine:
     python -m spacy download en
     ```
 
-- Copy the codes below and paste it in the terminal one at a time to download the necessary nltk and sentence transformer packages.
+- Copy the codes below and paste it in the terminal to download the necessary nltk and sentence transformer packages.
 
   ```
-  python -c "import nltk;nltk.download('stopwords'); nltk.download('punkt'); nltk.download('wordnet'); import spacy; spacy.cli.download('en_core_web_sm'); from sentence_transformers import SentenceTransformer; SentenceTransformer('all-mpnet-base-v2'); from flair.embeddings import TransformerDocumentEmbeddings;  TransformerDocumentEmbeddings('sentence-transformers/msmarco-distilbert-base-tas-b');"
-  ```
-
-  ```
-  python -c "from app.services.course_materials.kwp_extraction.model import KeyphraseExtractor; KeyphraseExtractor(); KeyphraseExtractor('squeezebert/squeezebert-mnli');"
+  python -c "import nltk; nltk.download('stopwords'); nltk.download('punkt'); nltk.download('wordnet'); from sentence_transformers import SentenceTransformer; SentenceTransformer('all-mpnet-base-v2');"
   ```
 
 - Run the worker
