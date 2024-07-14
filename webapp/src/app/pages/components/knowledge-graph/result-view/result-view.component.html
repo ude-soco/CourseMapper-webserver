@@ -212,6 +212,22 @@
           </div>
         </div>
 
+        <!-- display resources filtered -->
+        <div>
+          <div *ngIf="filteringParamsSavedTab.content_type === 'video'">
+              <app-card-video-list
+              [notUnderstoodConcepts]="concepts"
+              [videoElements]="filteringResourcesFound?.videos"
+              ></app-card-video-list>
+          </div>
+          <div *ngIf="filteringParamsSavedTab.content_type === 'article'">
+              <app-card-article-list
+              [notUnderstoodConcepts]="concepts"
+              [articleElements]="filteringResourcesFound?.articles"
+              ></app-card-article-list>
+          </div>
+        </div>
+
         <!-- <div class="flex flex-col">
           <div>Filter by:</div>
           <div class="flex flex-row justify-between">

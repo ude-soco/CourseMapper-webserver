@@ -417,7 +417,7 @@ export class ResultViewComponent {
       this.filteringParamsSavedTab.user_id = this.userId;
       this.getUserResources(this.filteringParamsSavedTab);
     } else {
-      this.filteringResourcesFound = {articles: [], videos: []};
+      this.filteringResourcesFound = { articles: [], videos: [] };
     }
   }
 

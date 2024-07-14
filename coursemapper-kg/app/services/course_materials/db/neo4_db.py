@@ -2163,6 +2163,164 @@ class NeoDataBase:
             if resource["saves_count"] < resource["saves_count"]:
                 self.update_rs_btw_resource_and_cm(rid=data["rid"], cid=data["rid"], action=False)
         """
+
+    def store_resources(self, resources_dict: dict, cid: str, recommendation_type=""):
+        '''
+            Store Resources
+            Create relationshop between Resource and Concept_modified
+        '''
+        logger.info("Store Resources")
+        tx = self.driver.session()
+        for key, resources in resources_dict.items():
+            if key == "videos":
+                for resource in resources:
+                    create_video_resource(tx, resource, recommendation_type)
+                    self.update_rs_btw_resource_and_cm(rid=resource["rid"], cid=cid, action=True)
+
+            elif key == "articles":
+                for resource in resources:
+                    create_wikipedia_resource(tx, resource, recommendation_type)
+                    self.update_rs_btw_resource_and_cm(rid=resource["rid"], cid=cid, action=True)
+
+    def retrieve_resources(self, concepts: list):
+        """
+            Getting List of Resources connected to Concept_modified
+        """
+        def resource_replace_none_value(value):
+            if value == None:
+                return 0
+            return int(value)
+        
+        # logger.info("Getting List of Resources Containing Concept_modified")
+
+        result = []
+        cids = [node["cid"] for node in concepts]
+        with self.driver.session() as session:
+            result = session.run(
+                """
+                MATCH p=(a:Resource)-[r:BASED_ON]->(b:Concept_modified)
+                WHERE b.cid IN $cids
+                RETURN  DISTINCT LABELS(a) as labels, ID(a) as id, a.rid as rid, a.title as title, a.text as text,
+                        a.thumbnail as thumbnail, a.abstract as abstract, a.post_date as post_date, 
+                        a.author_image_url as author_image_url, a.author_name as author_name,
+                        a.keyphrases as keyphrases, a.description as description, a.description_full as description_full,
+                        a.publish_time as publish_time, a.uri as uri, a.duration as duration,
+                        COALESCE(toInteger(a.views), 0) AS views,
+                        COALESCE(toFloat(a.similarity_score), 0.0) AS similarity_score,
+                        COALESCE(toInteger(a.helpful_count), 0) AS helpful_count,
+                        COALESCE(toInteger(a.not_helpful_count), 0) AS not_helpful_count,
+                        COALESCE(toInteger(a.bookmarked_count), 0) AS bookmarked_count,
+                        COALESCE(toInteger(a.like_count), 0) AS like_count,
+                        a.channel_title as channel_title
+                """,
+                cids=cids
+            ).data()
+
+            result = self.resources_wrapper_from_query(data=result)
+        return result
+
+    def resources_wrapper_from_query(self, data: list):
+        resources = []
+        if data:
+            for resource in data:
+                # print([key for key, value in result[0].items() ])
+                r = {
+                    "id": resource["id"],
+                    "title": resource["title"],
+                    "rid": resource["rid"],
+                    "uri": resource["uri"],
+                    "helpful_count": resource["helpful_count"], # int(resource["helpful_count"]),
+                    "not_helpful_count": resource["not_helpful_count"], # int(resource["not_helpful_count"]),
+                    "labels": resource["labels"],
+                    "similarity_score": resource["similarity_score"], # float(resource["similarity_score"]),
+                    "keyphrases": resource["keyphrases"],
+                    "text": resource["text"],
+                    "bookmarked_count": resource["bookmarked_count"]
+                }
+
+                if "Video" in r["labels"]:
+                    r["description"] = resource["description"]
+                    r["description_full"] = resource["description_full"]
+                    r["thumbnail"] = resource["thumbnail"]
+                    r["duration"] = resource["duration"]
+                    r["views"] = resource["views"] # int(resource["views"])
+                    r["publish_time"] = resource["publish_time"]
+                    r["like_count"] = resource["like_count"]
+                    r["channel_title"] = resource["channel_title"]
+
+                elif "Article" in r["labels"]:
+                    r["abstract"] = resource["abstract"]
+
+                resources.append(r)
+        return resources
+
+    def update_resource_action(self, resource: dict, action=False):
+        '''
+            Save or Update Resource Node from Ne4j
+            resource: resource detail
+            action: True (adding new resource) | 
+                    False (update the resource by attributes such as: similarity_score, views, like_count, channel_title)
+        '''
+
+        tx = self.driver.session()
+        if action:
+            if "Video" in resource["labels"]:
+                create_video_resource(tx=tx, node=resource)
+            elif "Article" in resource["labels"]:
+                create_wikipedia_resource(tx=tx, node=resource)
+        else:
+            # update
+            pass
+    
+    def filter_user_resources_saved_by(self, data: dict):
+        '''
+            Getting User Resources Saved
+            Filtering by: user_id, cid: concept cid, mid: learning material and slide_number: silder number
+            data: {
+                user_id: 'assad83'
+                content_type: 'video | article',
+                text: 'neo4j node'
+            }
+        '''
+        logger.info("Filtering User Resources Saved")
+        result = { "articles": [], "videos": [] }
+
+        with self.driver.session() as session:
+            nodes = session.run(
+                """
+                MATCH p=(b: User {uid: $user_id})-[r:HAS_SAVED]->(a:Resource) 
+                WHERE   toLower(a.text) CONTAINS toLower($search_text) OR
+                        ANY(keyphrase IN a.keyphrases WHERE keyphrase CONTAINS toLower($search_text))
+                RETURN  DISTINCT LABELS(a) as labels, ID(a) as id, a.rid as rid, a.title as title, a.text as text,
+                        a.thumbnail as thumbnail, a.abstract as abstract, a.post_date as post_date, 
+                        a.author_image_url as author_image_url, a.author_name as author_name,
+                        a.keyphrases as keyphrases, a.description as description, a.description_full as description_full,
+                        a.publish_time as publish_time, a.uri as uri, a.duration as duration,
+                        COALESCE(toInteger(a.views), 0) AS views,
+                        COALESCE(toFloat(a.similarity_score), 0.0) AS similarity_score,
+                        COALESCE(toInteger(a.helpful_count), 0) AS helpful_count,
+                        COALESCE(toInteger(a.not_helpful_count), 0) AS not_helpful_count,
+                        COALESCE(toInteger(a.bookmarked_count), 0) AS bookmarked_count,
+                        COALESCE(toInteger(a.like_count), 0) AS like_count,
+                        a.channel_title as channel_title
+                """,
+                user_id=data["user_id"],
+                search_text=data["text"]
+            ).data()
+            resources = self.resources_wrapper_from_query(data=nodes)
+
+            if len(resources) > 0:
+                if data["content_type"] == "video":
+                    result["videos"] = [resource for resource in resources if "Video" in resource["labels"]]
+                elif data["content_type"] == "article":
+                    result["articles"] = [resource for resource in resources if "Article" in resource["labels"]]
+                else:
+                    result = {   
+                                "articles": [resource for resource in resources if "Article" in resource["labels"]],
+                                "videos": [resource for resource in resources if "Video" in resource["labels"]]
+                            }
+        return result
+
     
     def get_concepts_mids_sliders_numbers_for_user_resources_saved(self, data: dict):
         '''
@@ -2324,166 +2482,6 @@ class NeoDataBase:
             result = self.resources_wrapper_from_query(data=nodes)
         return result
     
-    def store_resources(self, resources_dict: dict, cid: str, recommendation_type=""):
-        '''
-            Store Resources
-            Create relationshop between Resource and Concept_modified
-        '''
-        logger.info("Store Resources")
-        tx = self.driver.session()
-        for key, resources in resources_dict.items():
-            if key == "videos":
-                for resource in resources:
-                    create_video_resource(tx, resource, recommendation_type)
-                    self.update_rs_btw_resource_and_cm(rid=resource["rid"], cid=cid, action=True)
-
-            elif key == "articles":
-                for resource in resources:
-                    create_wikipedia_resource(tx, resource, recommendation_type)
-                    self.update_rs_btw_resource_and_cm(rid=resource["rid"], cid=cid, action=True)
-
-    def retrieve_resources(self, concepts: list):
-        """
-            Getting List of Resources connected to Concept_modified
-        """
-        def resource_replace_none_value(value):
-            if value == None:
-                return 0
-            return int(value)
-        
-        # logger.info("Getting List of Resources Containing Concept_modified")
-
-        result = []
-        cids = [node["cid"] for node in concepts]
-        with self.driver.session() as session:
-            result = session.run(
-                """
-                MATCH p=(a:Resource)-[r:BASED_ON]->(b:Concept_modified)
-                WHERE b.cid IN $cids
-                RETURN  DISTINCT LABELS(a) as labels, ID(a) as id, a.rid as rid, a.title as title, a.text as text,
-                        a.thumbnail as thumbnail, a.abstract as abstract, a.post_date as post_date, 
-                        a.author_image_url as author_image_url, a.author_name as author_name,
-                        a.keyphrases as keyphrases, a.description as description, a.description_full as description_full,
-                        a.publish_time as publish_time, a.uri as uri, a.duration as duration,
-                        COALESCE(toInteger(a.views), 0) AS views,
-                        COALESCE(toFloat(a.similarity_score), 0.0) AS similarity_score,
-                        COALESCE(toInteger(a.helpful_count), 0) AS helpful_count,
-                        COALESCE(toInteger(a.not_helpful_count), 0) AS not_helpful_count,
-                        COALESCE(toInteger(a.bookmarked_count), 0) AS bookmarked_count,
-                        COALESCE(toInteger(a.like_count), 0) AS like_count,
-                        a.channel_title as channel_title
-                """,
-                cids=cids
-            ).data()
-
-            result = self.resources_wrapper_from_query(data=result)
-        return result
-
-    def resources_wrapper_from_query(self, data: list):
-        resources = []
-        if data:
-            for resource in data:
-                # print([key for key, value in result[0].items() ])
-                r = {
-                    "id": resource["id"],
-                    "title": resource["title"],
-                    "rid": resource["rid"],
-                    "uri": resource["uri"],
-                    "helpful_count": resource["helpful_count"], # int(resource["helpful_count"]),
-                    "not_helpful_count": resource["not_helpful_count"], # int(resource["not_helpful_count"]),
-                    "labels": resource["labels"],
-                    "similarity_score": resource["similarity_score"], # float(resource["similarity_score"]),
-                    "keyphrases": resource["keyphrases"],
-                    "text": resource["text"],
-                    "bookmarked_count": resource["bookmarked_count"]
-                }
-
-                if "Video" in r["labels"]:
-                    r["description"] = resource["description"]
-                    r["description_full"] = resource["description_full"]
-                    r["thumbnail"] = resource["thumbnail"]
-                    r["duration"] = resource["duration"]
-                    r["views"] = resource["views"] # int(resource["views"])
-                    r["publish_time"] = resource["publish_time"]
-                    r["like_count"] = resource["like_count"]
-                    r["channel_title"] = resource["channel_title"]
-
-                elif "Article" in r["labels"]:
-                    r["abstract"] = resource["abstract"]
-
-                resources.append(r)
-        return resources
-
-    def update_resource_action(self, resource: dict, action=False):
-        '''
-            Save or Update Resource Node from Ne4j
-            resource: resource detail
-            action: True (adding new resource) | 
-                    False (update the resource by attributes such as: similarity_score, views, like_count, channel_title)
-        '''
-
-        tx = self.driver.session()
-        if action:
-            if "Video" in resource["labels"]:
-                create_video_resource(tx=tx, node=resource)
-            elif "Article" in resource["labels"]:
-                create_wikipedia_resource(tx=tx, node=resource)
-        else:
-            # update
-            pass
-    
-    def filter_user_resources_saved_by(self, data: dict):
-        '''
-            Getting User Resources Saved
-            Filtering by: user_id, cid: concept cid, mid: learning material and slide_number: silder number
-            data: {
-                user_id: 'assad83'
-                content_type: 'video | article',
-                text: 'neo4j node'
-            }
-        '''
-        logger.info("Filtering User Resources Saved")
-        result = { "articles": [], "videos": [] }
-
-        with self.driver.session() as session:
-            nodes = session.run(
-                """
-                MATCH p=(b: User {uid: $user_id})-[r:HAS_SAVED]->(a:Resource) 
-                WHERE   toLower(b.text) CONTAINS toLower($search_text) OR
-                        ANY(keyphrase IN b.keyphrases WHERE keyphrase CONTAINS toLower($search_text))
-                RETURN  DISTINCT LABELS(a) as labels, ID(a) as id, a.rid as rid, a.title as title, a.text as text,
-                        a.thumbnail as thumbnail, a.abstract as abstract, a.post_date as post_date, 
-                        a.author_image_url as author_image_url, a.author_name as author_name,
-                        a.keyphrases as keyphrases, a.description as description, a.description_full as description_full,
-                        a.publish_time as publish_time, a.uri as uri, a.duration as duration,
-                        COALESCE(toInteger(a.views), 0) AS views,
-                        COALESCE(toFloat(a.similarity_score), 0.0) AS similarity_score,
-                        COALESCE(toInteger(a.helpful_count), 0) AS helpful_count,
-                        COALESCE(toInteger(a.not_helpful_count), 0) AS not_helpful_count,
-                        COALESCE(toInteger(a.bookmarked_count), 0) AS bookmarked_count,
-                        COALESCE(toInteger(a.like_count), 0) AS like_count,
-                        a.channel_title as channel_title
-                """,
-                user_id=data["user_id"],
-                search_text=data["text"]
-            ).data()
-            resources = self.resources_wrapper_from_query(data=nodes)
-            print(len(resources))
-
-            if len(resources) > 0:
-                if data["content_type"] == "video":
-                    result["videos"] = [resource for resource in resources if "Video" in resource["labels"]]
-                elif data["content_type"] == "article":
-                    result["articles"] = [resource for resource in resources if "Article" in resource["labels"]]
-                else:
-                    result = {   
-                                "articles": [resource for resource in resources if "Article" in resource["labels"]],
-                                "videos": [resource for resource in resources if "Video" in resource["labels"]]
-                            }
-        
-        print(result)
-        return result
-
     """
     def edit_relationship_btw_concepts_and_resources(self, concepts_cro: list, resources: list):
     self.db.edit_relationship_btw_concepts_and_resources(concepts_cro=concepts_cro, 

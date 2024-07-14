@@ -236,8 +236,8 @@ class ResourceRecommenderService:
     
     def save_or_remove_user_resources(self, data: dict):
         resource = None
-        if data["status"] == True:
-            resource = self.get_reosurce_by_rid_from_redis(user_id=data["user_id"], rid=data["rid"])
+        # if data["status"] == True:
+        #     resource = self.get_reosurce_by_rid_from_redis(user_id=data["user_id"], rid=data["rid"])
 
         resource_saved = self.db.user_saves_or_removes_resource(data=data, resource=resource)
         return resource_saved
