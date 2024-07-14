@@ -783,7 +783,7 @@ class ResourceRecommenderService:
         thread.start()
         # self.redis_client.set(name=f"{user_id}_{self.redis_key_1}", value=status, ex=(self.redis_client_expiration_time * 10080))
 
-    def _get_resources(self, data_rec_params: dict, data_default: dict=None):
+    def _get_resources2(self, data_rec_params: dict, data_default: dict=None):
         '''
             Save cro_form, Crawl Youtube and Wikipedia API and then Store Resources
             Result: [ {"recommendation_type": str, "concepts": list(concepts), "nodes": list(resources)} ]
@@ -853,6 +853,50 @@ class ResourceRecommenderService:
         # "count": {"videos": len(result["videos"]), "articles": len(result["articles"])} 
 
         return result
+
+
+    def store_resources_into_neo4j(self, resources, cid):
+        '''
+            save the results in the database: Neo4j
+        '''
+
+    def _get_resources(self, data_rec_params: dict, data_default: dict=None, top_n = 5):
+        '''
+            Save cro_form, Crawl Youtube and Wikipedia API and then Store Resources
+            Result: [ {"recommendation_type": str, "concepts": list(concepts), "nodes": list(resources)} ]
+        '''
+        body = self.rec_params_request_mapped(data_rec_params, data_default)
+        # result = {}
+
+        # Only take 5 concepts with the higher weight
+        rec_params = body["rec_params"]
+        concepts_top_n: list = body["rec_params"]["concepts"]
+        concepts_top_n.sort(key=lambda x: x["weight"], reverse=True)
+        rec_params["concepts"] = concepts_top_n[:top_n]
+
+        # check if concepts given haves resources
+        concepts_having_resources = []
+        concepts_not_having_resources = []
+        resourse_found = []
+        for concept in rec_params["concepts"]:
+            resourse_btw = self.db.retrieve_resources(concepts=[concept])
+            if len(resourse_btw) == 0:
+                concepts_not_having_resources.append(concept)
+            else:
+                resourse_found.append(resourse_btw)
+                concepts_having_resources.append(concept)
+
+        # crawl resources
+        # not_understood_concept_list = [concept["name"] for concept in rec_params["concepts"]]
+        for concept in concepts_not_having_resources:
+            recommender = Recommender()
+            query = concept["name"] # " ".join(not_understood_concept_list)
+            youtube_videos = recommender.canditate_selection(query=query, video=True)
+            wikipedia_articles = recommender.canditate_selection(query=query, video=False)
+            resources_dict = {"articles": wikipedia_articles.to_dict(orient='records'), "vidoes": youtube_videos.to_dict(orient='records')}
+            self.db.store_resources(resources_dict=resources_dict, cid=concept["cid"])
+            
+
 
 def get_serialized_resource_data(resources, concepts, relations):
     """ """

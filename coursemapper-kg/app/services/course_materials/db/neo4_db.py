@@ -2168,6 +2168,7 @@ class NeoDataBase:
         '''
             Store Resources
             Create relationshop between Resource and Concept_modified
+            resources_dict: {"articles": [], "vidoes": []}
         '''
         logger.info("Store Resources")
         tx = self.driver.session()
