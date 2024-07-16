@@ -74,6 +74,11 @@ class ResourceRecommenderService:
         new_concept_ids,
         recommendation_type,
     ):
+        '''
+            Check if parameters exist. If one doesn't exist, return not found message
+            check_message = resource_recommender_service.check_parameters(
+            slide_id, material_id, user_id, non_understood_concept_ids, understood_concept_ids, new_concept_ids, recommendation_type)
+        '''
         if not self.db.slide_exists(slide_id):
             return "No Slide found with id: %s" % slide_id
 
@@ -358,7 +363,7 @@ class ResourceRecommenderService:
                 new_concepts=body["new_concept_ids"],
                 mid=body["material_id"],
             )
-            clu = self.rrh.save_and_get_concepts_modified(  rec_params=rec_params, top_n=5, user_embedding=True, 
+            clu = rrh.save_and_get_concepts_modified(  rec_params=rec_params, top_n=5, user_embedding=True, 
                                                         understood_list=body["understood_concept_ids"], 
                                                         non_understood_list=body["non_understood_concept_ids"]
                                                     )
@@ -369,7 +374,7 @@ class ResourceRecommenderService:
             _slide = self.db.get_slide(body["slide_id"])
             slide_concepts = _slide[0]["s"]["concepts"]
             # cro_form["concepts"] = slide_concepts
-            clu = self.rrh.save_and_get_concepts_modified(  rec_params=rec_params, top_n=5, user_embedding=False, 
+            clu = rrh.save_and_get_concepts_modified(  rec_params=rec_params, top_n=5, user_embedding=False, 
                                         understood_list=body["understood_concept_ids"], 
                                         non_understood_list=body["non_understood_concept_ids"]
                                     )
@@ -454,8 +459,6 @@ class ResourceRecommenderService:
         concepts = rec_params["concepts"]
 
         are_concepts_sane, resources_temp = rrh.check_request_temp(rec_params=rec_params)
-        print("sdsd")
-        print(are_concepts_sane, resources_temp)
         
         # default resources value
         resources = { "articles": [], "videos": [] }
@@ -515,7 +518,20 @@ class ResourceRecommenderService:
             Result: [ {"recommendation_type": str, "concepts": list(concepts), "nodes": list(resources)} ]
         '''
         body = rrh.rec_params_request_mapped(data_rec_params, data_default)
-        # result = {}
+        result = { "recommendation_type": "", "concepts": [], "nodes": {"articles": [], "videos": []} }
+
+        check_message = self.check_parameters(
+                    slide_id=body["slide_id"],
+                    material_id=body["material_id"],
+                    non_understood_concept_ids=body["non_understood_concept_ids"],
+                    understood_concept_ids=body["understood_concept_ids"],
+                    new_concept_ids=body["new_concept_ids"],
+                    recommendation_type=rec_type
+                )
+        if check_message != "":
+            return result
+        user = {"name": body["username"], "id": body["user_id"] , "user_email": body["user_email"] }
+        _slide = None
 
         # Only take 5 concepts with the higher weight
         rec_params = body["rec_params"]
@@ -529,19 +545,24 @@ class ResourceRecommenderService:
         else:
             concepts_to_be_crawled = rec_params["concepts"]
         
+        # Map recommendation type to enum values
+        rec_type = body["rec_params"]["recommendation_type"]
+        recommendation_type = RecommendationType.map_type(body["rec_params"]["recommendation_type"])
+
         # Crawl resources from YouTube (from each dnu) and Wikipedia API
+        #
 
         # crawl resources
         # not_understood_concept_list = [concept["name"] for concept in rec_params["concepts"]]
-        recommender = Recommender()
-        for concept in concepts_not_having_resources:
-            # and recommendation_type != RecommendationType.CONTENT_BASED_KEYPHRASE_VARIANT
-            # and recommendation_type != RecommendationType.CONTENT_BASED_DOCUMENT_VARIANT
-            query = concept["name"] # " ".join(not_understood_concept_list)
-            youtube_videos = recommender.canditate_selection(query=query, video=True)
-            wikipedia_articles = recommender.canditate_selection(query=query, video=False)
-            resources_dict = {"articles": wikipedia_articles.to_dict(orient='records'), "vidoes": youtube_videos.to_dict(orient='records')}
-            self.db.store_resources(resources_dict=resources_dict, cid=concept["cid"])
+        # recommender = Recommender()
+        # for concept in concepts_not_having_resources:
+        #     # and recommendation_type != RecommendationType.CONTENT_BASED_KEYPHRASE_VARIANT
+        #     # and recommendation_type != RecommendationType.CONTENT_BASED_DOCUMENT_VARIANT
+        #     query = concept["name"] # " ".join(not_understood_concept_list)
+        #     youtube_videos = recommender.canditate_selection(query=query, video=True)
+        #     wikipedia_articles = recommender.canditate_selection(query=query, video=False)
+        #     resources_dict = {"articles": wikipedia_articles.to_dict(orient='records'), "vidoes": youtube_videos.to_dict(orient='records')}
+        #     self.db.store_resources(resources_dict=resources_dict, cid=concept["cid"])
 
 
 

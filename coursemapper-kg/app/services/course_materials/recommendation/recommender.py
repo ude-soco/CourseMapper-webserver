@@ -167,17 +167,7 @@ class Recommender:
 
         return data
 
-    def recommend(
-        self,
-        not_understood_concept_list,
-        slide_concepts=[],
-        slide_weighted_avg_embedding_of_concepts="",
-        slide_document_embedding="",
-        user_embedding="",
-        top_n=10,
-        video=True,
-        recommendation_type=RecommendationType.WITHOUT_EMBEDDING,
-    ):
+    def _get_data(self, recommendation_type, not_understood_concept_list, video, slide_concepts):
         # If personalized recommendation, use DNU concepts to query Youtube and Wikipedia
         if (
             recommendation_type != RecommendationType.WITHOUT_EMBEDDING
@@ -199,7 +189,56 @@ class Recommender:
             i = 0
             while i < 5:
                 top_n_concepts = 5 - i
-                logger.info(slide_concepts)
+                concepts = slide_concepts[:top_n_concepts]
+                slide_concepts_name = [concept["name"] for concept in concepts]
+                logger.info("Get top %s concepts", top_n_concepts)
+                query = " ".join(slide_concepts_name)
+                logger.info("The query is %s -----------------" % query)
+
+                data = self.canditate_selection(query=query, video=video)
+
+                if not isinstance(data, list) and not data.empty:
+                    if len(data.index) >= 5:
+                        break
+                i += 1
+
+        if data.empty == False:
+            logger.info(f"canditate_selection shape -> {data.shape}")
+        return data
+
+    def recommend(
+        self,
+        not_understood_concept_list,
+        slide_concepts=[],
+        slide_weighted_avg_embedding_of_concepts="",
+        slide_document_embedding="",
+        user_embedding="",
+        top_n=10,
+        video=True,
+        recommendation_type=RecommendationType.WITHOUT_EMBEDDING,
+    ):
+        """
+        # If personalized recommendation, use DNU concepts to query Youtube and Wikipedia
+        if (
+            recommendation_type != RecommendationType.WITHOUT_EMBEDDING
+            and recommendation_type != RecommendationType.COMBINED_STATIC
+            and recommendation_type != RecommendationType.CONTENT_BASED_KEYPHRASE_VARIANT
+            and recommendation_type != RecommendationType.CONTENT_BASED_DOCUMENT_VARIANT
+        ):
+            logger.info("# If personalized recommendation, use DNU concepts to query Youtube and Wikipedia")
+
+            query = " ".join(not_understood_concept_list)
+            data = self.canditate_selection(query=query, video=video)
+            if isinstance(data, list) and data.empty:
+                return []
+
+        # Else use top 5 concepts from slide
+        else:
+            logger.info("# Else use top 5 concepts from slide")
+
+            i = 0
+            while i < 5:
+                top_n_concepts = 5 - i
                 concepts = slide_concepts[:top_n_concepts]
                 slide_concepts_name = [concept["name"] for concept in concepts]
                 logger.info("Get top %s concepts", top_n_concepts)
@@ -215,6 +254,7 @@ class Recommender:
         
         if data.empty == False:
             logger.info(f"canditate_selection shape -> {data.shape}")
+        """
 
         # Without embedding Not yet supported
         if recommendation_type == RecommendationType.WITHOUT_EMBEDDING:
