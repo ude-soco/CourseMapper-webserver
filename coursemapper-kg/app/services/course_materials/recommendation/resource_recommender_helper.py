@@ -9,6 +9,7 @@ import time
 import math
 import scipy.stats as st
 from ..db.neo4_db import NeoDataBase
+import concurrent.futures
 
 from log import LOG
 import logging
@@ -43,6 +44,8 @@ def save_and_get_concepts_modified(db: NeoDataBase, rec_params, top_n=5, user_em
                 }
             }
         }
+        status: dnu or u (PKG_BASED_KEYPHRASE_VARIANT |  PKG_BASED_DOCUMENT_VARIANT) | 
+                content (CONTENT_BASED_DOCUMENT_VARIANT | CONTENT_BASED_KEYPHRASE_VARIANT)
     '''
     
     result = {
@@ -370,6 +373,12 @@ def get_top_n_concepts(concepts: list, top_n=5):
     return concepts_[:top_n]
 
 def check_and_get_resources_with_concepts(db: NeoDataBase, concepts: list):
+    '''
+        Check if concepts already exist and connected to any resources in Neo4j Database
+        If resources exist, check based on:
+        created_at and updated_at (it's not more than one week old) 
+        
+    '''
     concepts_having_resources = []
     concepts_not_having_resources = []
     resources_found = []
@@ -385,3 +394,8 @@ def check_and_get_resources_with_concepts(db: NeoDataBase, concepts: list):
                 concepts_having_resources.append(concept)
 
     return concepts_having_resources, concepts_not_having_resources, resources_found
+
+def fetch_all_urls(urls):
+    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+        results = list(executor.map(fetch_url, urls))
+    return results

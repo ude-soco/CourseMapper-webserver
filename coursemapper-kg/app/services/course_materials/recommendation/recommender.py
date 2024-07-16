@@ -216,6 +216,7 @@ class Recommender:
         top_n=10,
         video=True,
         recommendation_type=RecommendationType.WITHOUT_EMBEDDING,
+        _data:pd.DataFrame=None
     ):
         """
         # If personalized recommendation, use DNU concepts to query Youtube and Wikipedia

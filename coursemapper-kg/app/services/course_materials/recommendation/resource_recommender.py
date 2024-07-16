@@ -520,13 +520,17 @@ class ResourceRecommenderService:
         body = rrh.rec_params_request_mapped(data_rec_params, data_default)
         result = { "recommendation_type": "", "concepts": [], "nodes": {"articles": [], "videos": []} }
 
+        # Map recommendation type to enum values
+        recommendation_type_str = body["rec_params"]["recommendation_type"]
+        recommendation_type = RecommendationType.map_type(body["rec_params"]["recommendation_type"])
+
         check_message = self.check_parameters(
                     slide_id=body["slide_id"],
                     material_id=body["material_id"],
                     non_understood_concept_ids=body["non_understood_concept_ids"],
                     understood_concept_ids=body["understood_concept_ids"],
                     new_concept_ids=body["new_concept_ids"],
-                    recommendation_type=rec_type
+                    recommendation_type=recommendation_type_str
                 )
         if check_message != "":
             return result
@@ -537,20 +541,39 @@ class ResourceRecommenderService:
         rec_params = body["rec_params"]
         rec_params["concepts"] = rrh.get_top_n_concepts(rec_params["concepts"])
 
-        # Check if concepts already exist in Neo4j Database
+        # Check if concepts already exist and connected to any resources in Neo4j Database
         concepts_to_be_crawled = []
         concepts_having_resources, concepts_not_having_resources, resources_found = rrh.check_and_get_resources_with_concepts(db=self.db, concepts=rec_params["concepts"])
         if len(concepts_not_having_resources) > 0:
             concepts_to_be_crawled = concepts_not_having_resources
         else:
             concepts_to_be_crawled = rec_params["concepts"]
-        
-        # Map recommendation type to enum values
-        rec_type = body["rec_params"]["recommendation_type"]
-        recommendation_type = RecommendationType.map_type(body["rec_params"]["recommendation_type"])
 
         # Crawl resources from YouTube (from each dnu) and Wikipedia API
-        #
+        # add thread for request
+        resource_types = ["Youtube", "Wikipedia"]
+        slide_concepts_ = None
+        self.recommender = Recommender()
+        if recommendation_type in [ RecommendationType.PKG_BASED_DOCUMENT_VARIANT, RecommendationType.PKG_BASED_KEYPHRASE_VARIANT ]:
+            not_understood_concept_list = [concept["name"] for concept in concepts_to_be_crawled]
+            for i in range(len(not_understood_concept_list)):
+                
+            data_vdieos = self.recommender._get_data(recommendation_type=recommendation_type_str, 
+                                              not_understood_concept_list=not_understood_concept_list, 
+                                              video=True, 
+                                              slide_concepts=None
+                                            )
+
+        elif recommendation_type in [ RecommendationType.CONTENT_BASED_DOCUMENT_VARIANT, RecommendationType.CONTENT_BASED_KEYPHRASE_VARIANT ]:
+            _slide = self.db.get_slide(body["slide_id"])
+            slide_concepts_ = _slide[0]["s"]["concepts"]
+            # slide_concepts_ = [self.db.get_top_n_concept_by_name(name=name)[0] for name in slide_concepts]
+            data = self.recommender._get_data(recommendation_type=recommendation_type_str, 
+                                              not_understood_concept_list=None, 
+                                              video=True, 
+                                              slide_concepts=slide_concepts_
+                                            )
+            
 
         # crawl resources
         # not_understood_concept_list = [concept["name"] for concept in rec_params["concepts"]]
