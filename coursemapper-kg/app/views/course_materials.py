@@ -15,6 +15,7 @@ from ..services.course_materials.kwp_extraction.dbpedia.data_serviceKWP import D
 from ..services.course_materials.kwp_extraction.dbpedia.data_service_top_down import DataServiceTopDown
 from ..services.course_materials.GCN.gcn import GCN
 from ..services.course_materials.GCN.lightGCN import LightGCN
+from ..services.course_materials.recommendation import resource_recommender_helper as rrh
 # import asyncio
 
 logger = LOG(name=__name__, level=logging.DEBUG)
@@ -91,7 +92,6 @@ def rating():
 def update_resources_factor_weights():
     data = request.get_json()
     logger.info("------ Updating Factor Weights ------>")
-    rrs = ResourceRecommenderService()
     """
     weigths_normalized = {}
     for k,v in data.items():
@@ -105,7 +105,7 @@ def update_resources_factor_weights():
         "normalized": weigths_normalized
     }
     """ 
-    result = rrs.normalize_factor_weights(  factor_weights=data, 
+    result = rrh.normalize_factor_weights(  factor_weights=data, 
                                                         method_type="l1", 
                                                         complete=True, 
                                                         sum_value=False

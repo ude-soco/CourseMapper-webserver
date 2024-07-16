@@ -20,6 +20,8 @@ import json
 import threading
 import time
 
+# import resource_recommender_helper as rrh
+from ..recommendation import resource_recommender_helper as rrh
 
 from log import LOG
 import logging
@@ -32,7 +34,6 @@ class ResourceRecommenderService:
         neo4j_pass = current_app.config.get("NEO4J_PASSWORD")  # type: ignore
 
         self.db = NeoDataBase(neo4j_uri, neo4j_user, neo4j_pass)
-
         # Connect to Redis
         self.redis_client = redis.Redis(host='localhost', port=6379, db=0)
         # self.redis_client_expiration_time = 60 # for 1 week
@@ -145,7 +146,7 @@ class ResourceRecommenderService:
     ######
     ######
     # CRO logic
-
+    """
     def get_reosurce_by_rid_from_redis(self, user_id: str, rid: str):
         result_temp = self.get_redis_key_value(key_name=f"{user_id}_{self.redis_key_1}")
         resource = None
@@ -154,284 +155,60 @@ class ResourceRecommenderService:
             resources = result_temp["resources"]
             resource = next((d for d in resources if d['id'] == rid ), None)
         return resource
-    
-    def save_and_get_concepts_modified(self, rec_params, top_n=5, user_embedding=False, understood_list=[], non_understood_list =[]):
-        '''
-            rec_params: {
-                "user_id": "65e0536db1effed771dbdbb9",
-                "mid": "6662201fec6bb9067ff71cc9",
-                "slide_id": 1,
-                "category": "1",
-                "concepts": [
-                    {
-                        "cid": "2156985142238936538",
-                        "mid": "6662201fec6bb9067ff71cc9",
-                        "weight": 0.79
-                    }
-                ],
-                "recommendation_type": "1",
-                "factor_weights": {
-                    "status": true,
-                    "reload": true,
-                    "weights": {
-                        "similarity_score": 0.7,
-                        "creation_date": 0.3,
-                        "views": 0.3,
-                        "like_count": 0.1,
-                        "user_rating": 0.1,
-                        "nbr_saves": 0.1
-                    }
-                }
-            }
-        '''
         
-        result = {
-            "concepts": [],
-            "concept_cids": [],
-            "concept_names": [],
-            "rec_params": None,
-            "user_embedding": None
+    def store_resources_to_neo4j(self, resources_detail: dict):
+        '''
+            save the results in the database: Neo4j
+        '''
+        resources = []
+        wikipedia_articles = resources_detail["wikipedia_articles"]
+        youtube_videos = resources_detail["youtube_videos"]
+
+        if (isinstance(youtube_videos, list) or youtube_videos.empty) and (
+                    isinstance(wikipedia_articles, list) or wikipedia_articles.empty
+                ):
+            resources, relationships = self.db.get_or_create_resoures_relationships(
+                wikipedia_articles=wikipedia_articles,
+                youtube_videos=youtube_videos,
+                user_id=resources_detail["user_id"],
+                material_id=resources_detail["material_id"],
+                concept_ids=resources_detail["concept_ids"],
+                recommendation_type=resources_detail["recommendation_type"],
+            )
+        return resources
+
+    def store_resources_temp_to_redis(self, resources_detail: dict):
+        '''
+            save the results in the database: Redis
+        '''
+        user_id = resources_detail["user_id"]
+        resources = {
+            "articles": resources_detail["wikipedia_articles"],
+            "videos": resources_detail["youtube_videos"],
         }
-        concepts_modified = []
-        user_id = rec_params["user_id"]
+        # ex: 1 weeek
+        # self.redis_client.set(name=f"{user_id}_{self.redis_key_1}", value=resources, ex=(60 * 10080))
+        # self.set_redis_key_value(key_name=)
 
-        concepts: list = rec_params["concepts"]
-        # concepts.sort(key=lambda x: x["weight"], reverse=True)
-        # concepts = concepts[:top_n]
-
-        # update status between understood and non-understood
-        if len(understood_list) > 0:
-            for cid in understood_list:
-                self.db.update_rs_btw_user_and_cm(user_id=user_id, cid=cid, weight=None, mid=None, status='u', only_status=True)
-
-        if len(concepts) > 0:
-            if rec_params["recommendation_type"] in ["1", "2"]:
-                status = 'dnu'
-            else:
-                status = 'content' # for CONTENT_BASED_
-          
-            for concept in concepts:
-                concept_modified = self.db.update_rs_btw_user_and_cm(user_id=user_id, cid=concept["cid"], weight=concept["weight"], mid=concept["mid"], status=status)
-                concepts_modified.append(concept_modified)
-
-            # update user embedding value (because weight value could be changed from the user)
-            if user_embedding:
-                user_embedding = self.db.get_user_embedding_with_concept_modified(user_id=user_id, mid=rec_params["mid"], status=status)
-                result["user_embedding"] = user_embedding
-        
-        result["concept_cids"]  = [concept["cid"] for concept in concepts]
-        result["concept_names"] = [concept["name"] for concept in concepts]
-        rec_params["concepts"] = concepts
-        result["concepts"] = concepts
-        result["rec_params"] = rec_params
-        return result
+    """  
 
     def user_rates_resources(self, rating: dict):
+        # if rating["value"] == "HELPFUL":
+        #     resource = self.get_reosurce_by_rid_from_redis(user_id=rating["user_id"], rid=rating["rid"])
         resource = None
-        if rating["value"] == "HELPFUL":
-            resource = self.get_reosurce_by_rid_from_redis(user_id=rating["user_id"], rid=rating["rid"])
-
         rating_updated = self.db.user_rates_resources(rating=rating, resource=resource)
         return rating_updated
     
     def save_or_remove_user_resources(self, data: dict):
-        resource = None
         # if data["status"] == True:
         #     resource = self.get_reosurce_by_rid_from_redis(user_id=data["user_id"], rid=data["rid"])
-
+        resource = None
         resource_saved = self.db.user_saves_or_removes_resource(data=data, resource=resource)
         return resource_saved
-
-    def get_concepts_mids_sliders_numbers_for_user_resources_saved(self, data: dict):
-        result = self.db.get_concepts_mids_sliders_numbers_for_user_resources_saved(data)
-        return result
 
     def filter_user_resources_saved_by(self, data: dict):
         resources = self.db.filter_user_resources_saved_by(data)
         return resources
-
-    def normalize_factor_weights(self, factor_weights: dict=None, values: list=[], method_type = "l1", complete=True, sum_value=True): # List[float]
-        """
-        method_type: normalization techniques
-            l1: L1 normalization, also known as L1 norm normalization or Manhattan normalization
-            l1: L2 normalization, also known as L2 norm normalization or Euclidean normalization
-            max: Max Normalization
-            min-max: Min-Max
-        
-        https://www.pythonprog.com/sklearn-preprocessing-normalize/#Normalization_Techniques
-        TypeScript: https://sklearn.vercel.app/guide/install
-
-        factor_weights = { 'similarity_score': 0.7, 'creation_date': 0.3, 'nbr_views': 0.3, 
-                'nbr_likes_youTube': 0.1, 'rating_courseMapper': 0.1, 'nbr_save_courseMapper': 0.1
-            }
-        """
-        normalized_values = None
-        scaled_data = None
-        
-        if factor_weights:
-            values = [value for key, value in factor_weights.items()]
-            key_names = [key for key, value in factor_weights.items()]
-
-        if method_type == "l1":
-            normalized_values = normalize_sklearn([values], norm=method_type).tolist()
-        if method_type == "l2":
-            normalized_values = normalize_sklearn([values], norm=method_type).tolist()
-        if method_type == "max":
-            normalized_values = normalize_sklearn([values], norm=method_type).tolist()
-        if method_type == "min-max":
-            data = np.array(values).reshape(-1, 1)
-            scaler = MinMaxScaler_sklearn()
-            scaler.fit(data)
-            scaled_data = scaler.transform(data)
-            scaled_data = scaled_data.tolist()
-            scaled_data = [value[0] for value in scaled_data]
-
-        if normalized_values:
-            normalized_values = normalized_values[0]
-            normalized_values = [round(value, 3) for value in normalized_values]
-        elif scaled_data:
-            normalized_values = scaled_data
-
-        if sum_value:
-            # print("sun values: ", sum(normalized_values))
-            logger.info("factor weight sum ->", sum(normalized_values))
-
-        if complete:
-            normalized_values = dict(zip(key_names, normalized_values))
-        
-        return normalized_values
-
-    def wilson_lower_bound_score(self, up, down, confidence=0.95):
-        """
-            Calculate lower bound of wilson score
-            :param up: No of positive ratings
-            :param down: No of negative ratings
-            :param confidence: Confidence interval, by default is 95 %
-            :return: Wilson Lower bound score
-        """
-        n = up + down
-        if n == 0:
-            return 0.0
-        z = st.norm.ppf(1 - (1 - confidence) / 2)
-        phat = 1.0 * up / n
-        return (phat + z * z / (2 * n) - z * math.sqrt((phat * (1 - phat) + z * z / (4 * n)) / n)) / (1 + z * z / n)
-
-    def normalize_min_max_score_date(self, date_str: str, max: datetime):
-        """
-            Calculate Normalization Score of Creation Date
-        """
-        date = date_parse(date_str).replace(tzinfo=None)
-
-        # First video posted on Youtube
-        min = datetime(year=2005, month=4, day=23, hour=8, minute=31, second=52, tzinfo=None)
-        return (date - min).days / (max - min).days
-
-    def normalize_min_max_score(self, value: int, min_value: int, max_value: int):
-        if (max_value - min_value) == 0:
-            return 0
-        return (value - min_value) / (max_value - min_value)
-
-    def calculate_factors_weights(self, category: int, resources: list, weights: dict = None, light=False):
-        """
-            Sort by these extra features provided by the resources such as:
-            weights: dict containing factors weight
-            {'similarity_score': 0.2, 'creation_date': 0.2, 'views': 0.3, 'like_count': 0.1, 'user_rating': 0.1, 'saves_count': 0.1}
-        """
-        now = datetime.now()
-        default_weight = 0.001
-
-        weight_similarity_score = weights.get("similarity_score") if 'similarity_score' in weights else default_weight
-        weight_creation_date = weights.get("creation_date") if 'creation_date' in weights else default_weight
-        weight_views = weights.get("views") if 'views' in weights else default_weight
-        weight_user_rating = weights.get("user_rating") if 'user_rating' in weights else default_weight
-        weight_like_count = weights.get("like_count") if 'like_count' in weights else default_weight
-        weight_saves_count = weights.get("saves_count") if 'saves_count' in weights else default_weight
-
-        bookmarked_min_value = min(resources, key=lambda x: x["bookmarked_count"])["bookmarked_count"]
-        bookmarked_max_value = max(resources, key=lambda x: x["bookmarked_count"])["bookmarked_count"]
-        
-        if category == 1:
-            min_views = int(min(resources, key=lambda x: int(x["views"]))["views"])
-            max_views = int(max(resources, key=lambda x: int(x["views"]))["views"])
-
-            like_count_min_value = min(resources, key=lambda x: x["like_count"])["like_count"]
-            like_count_max_value = max(resources, key=lambda x: x["like_count"])["like_count"]
-
-            for resource in resources:
-                similarity_normalized = resource["similarity_score"]
-                rating_normalized = self.wilson_lower_bound_score(up=resource["helpful_count"], down=resource["not_helpful_count"])
-                creation_date_normalized = self.normalize_min_max_score_date(date_str=resource["publish_time"], max=now)
-                views_normalzed = self.normalize_min_max_score(value=int(resource["views"]), min_value=min_views, max_value=max_views) 
-                bookmarked_normalized = self.normalize_min_max_score(value=int(resource["bookmarked_count"]), min_value=bookmarked_min_value, max_value=bookmarked_max_value)
-                like_count_normalized = self.normalize_min_max_score(value=int(resource["like_count"]), min_value=like_count_min_value, max_value=like_count_max_value)
-
-                resource["composite_score"] = (views_normalzed * weight_views) \
-                                            + (rating_normalized * weight_user_rating) \
-                                            + (creation_date_normalized * weight_creation_date) \
-                                            + (similarity_normalized * weight_similarity_score) \
-                                            + (bookmarked_normalized * weight_saves_count) \
-                                            + (like_count_normalized * weight_like_count)
-                
-        elif category == 2:
-            for resource in resources:
-                rating_normalized = self.wilson_lower_bound_score(up=resource["helpful_count"], down=resource["not_helpful_count"])
-                resource["composite_score"] = (rating_normalized * weight_user_rating) \
-                                            + (resource["similarity_score"] * weight_similarity_score) \
-                                            + (resource["bookmarked_count"] * weight_saves_count) \
-
-
-        # sort by composite score value
-        resources.sort(key=lambda x: x["composite_score"], reverse=True)
-
-        return resources
-    
-    def remove_duplicates_from_resources(dict_list: list):
-        seen = set()
-        unique_dicts = []
-        for d in dict_list:
-            # Convert dictionary to a tuple of its items
-            items = tuple(sorted(d.items()))
-            if items not in seen:
-                seen.add(items)
-                unique_dicts.append(d)
-        return unique_dicts
-
-    def rank_resources(self, resources: list, weights: dict = None, ratings: list = None):
-        """
-            Step 1: Remove duplicates if exist
-            Step 2: Ranking/Sorting Logic for Resources
-            Result Form: {"articles": list, "videos": list}
-            Step 3: Last Step: Resources having Rating related to DNU_modified (cid)
-        """
-        # Normalize Weights
-        # if weights is None:
-        #     # to be completed
-        #     video_weights_normalized =  {} # {'similarity_score': 0.2, 'creation_date': 0.2, 'views': 0.3, 'like_count': 0.1, 'user_rating': 0.1, 'saves_count': 0.1}
-        #     article_weights_normalized = {} # {'similarity_score': 0.4, 'creation_date': 0.4, 'user_rating': 0.2}
-        # else:
-        video_weights_normalized = self.normalize_factor_weights(factor_weights=weights["video"], method_type="l1", complete=True, sum_value=False)
-        article_weights_normalized = self.normalize_factor_weights(factor_weights=weights["article"], method_type="l1", complete=True, sum_value=False)
-
-        # video items
-        resources_videos = [resource for resource in resources if "Video" in resource["labels"]]
-        resources_videos = self.remove_duplicates_from_resources(resources_videos)
-        resources_videos = self.calculate_factors_weights(category=1, resources=resources_videos, weights=video_weights_normalized)
-        resources_videos = [{k: v for k, v in d.items() if k not in ["composite_score", "labels"]} for d in resources_videos]
-
-        # articles items
-        resources_articles = [resource for resource in resources if "Article" in resource["labels"]]
-        resources_articles = self.remove_duplicates_from_resources(resources_articles)
-        resources_articles = self.calculate_factors_weights(category=2, resources=resources_articles, weights=article_weights_normalized)
-        resources_articles = [{k: v for k, v in d.items() if k not in ["composite_score", "labels"]} for d in resources_articles]
-
-        # # Finally, priorities on resources having Rating related to DNU_modified (cid)
-        if ratings and len(ratings) > 0:
-            pass
-
-        return {
-            "articles": resources_articles,
-            "videos": resources_videos
-        }
 
     def crawl_resources(self, recommendation_type, user_id, material_id, _slide, user_embedding, concepts, concept_ids, not_understood_concept_list):
         """
@@ -537,125 +314,7 @@ class ResourceRecommenderService:
             "recommendation_type": recommendation_type
         }
     
-    def store_resources_to_neo4j(self, resources_detail: dict):
-        '''
-            save the results in the database: Neo4j
-        '''
-        resources = []
-        wikipedia_articles = resources_detail["wikipedia_articles"]
-        youtube_videos = resources_detail["youtube_videos"]
-
-        if (isinstance(youtube_videos, list) or youtube_videos.empty) and (
-                    isinstance(wikipedia_articles, list) or wikipedia_articles.empty
-                ):
-            resources, relationships = self.db.get_or_create_resoures_relationships(
-                wikipedia_articles=wikipedia_articles,
-                youtube_videos=youtube_videos,
-                user_id=resources_detail["user_id"],
-                material_id=resources_detail["material_id"],
-                concept_ids=resources_detail["concept_ids"],
-                recommendation_type=resources_detail["recommendation_type"],
-            )
-        return resources
-
-    def store_resources_temp_to_redis(self, resources_detail: dict):
-        '''
-            save the results in the database: Redis
-        '''
-        user_id = resources_detail["user_id"]
-        resources = {
-            "articles": resources_detail["wikipedia_articles"],
-            "videos": resources_detail["youtube_videos"],
-        }
-        # ex: 1 weeek
-        # self.redis_client.set(name=f"{user_id}_{self.redis_key_1}", value=resources, ex=(60 * 10080))
-        # self.set_redis_key_value(key_name=)
-    
-    def rec_params_request_mapped(self, data_rec_params: dict, data_default: dict=None):
-        understood = data_default.get("understoodConcepts")
-        non_understood = data_default.get("nonUnderstoodConcepts")
-        new_concepts = data_default.get("newConcepts")
-
-        return {
-            "material_id": data_default.get("materialId"),
-            "slide_id": data_default.get("slideId"),
-            "understood": understood,
-            "non_understood": non_understood,
-            "new_concepts": new_concepts,
-            "understood_concept_ids": [cid for cid in understood.split(",") if understood],
-            "non_understood_concept_ids": [ cid for cid in non_understood.split(",") if non_understood ],
-            "new_concept_ids": [cid for cid in new_concepts.split(",") if new_concepts],
-            "username": data_default.get("username"),
-            "user_id": data_default.get("userId"),
-            "user_email": data_default.get("userEmail"),
-            "rec_params": data_rec_params,
-        }
-
-    def build_factor_weights(self, factor_weights_params: dict = None):
-        factor_weights_articles = {}
-        factor_weights_viedos = {}
-
-        if factor_weights_params:
-            factor_weights_articles = self.normalize_factor_weights(  factor_weights=factor_weights_params, 
-                                                            method_type="l1", 
-                                                            complete=True, 
-                                                            sum_value=False
-                                                        )
-            # set video weights
-            factor_weights_viedos = {}
-            for key, value in factor_weights_params.items():
-                if key in ["similarity_score", "user_rating", "saves_count"]:
-                    factor_weights_viedos[key] = value
-
-            factor_weights_viedos = self.normalize_factor_weights(  factor_weights=factor_weights_viedos, 
-                                                    method_type="l1", 
-                                                    complete=True, 
-                                                    sum_value=False
-                                                )
-        return {
-            "article": factor_weights_articles,
-            "video": factor_weights_viedos
-        }
-    
-    def check_request_temp(self, rec_params: dict, key="cid"):
-        '''
-            check if user add or change concpet(s) to the concepts list
-            check if resources (saved temporally: Redis) have already been recommended for the concepts given
-
-            key = rec_params_user_id
-            get temp result_temp : {concepts: list, resources: list}
-            get temporal rec_params_concepts
-            if there are same from those stored in the temp
-            and return resources temp stored
-        '''
-        are_concepts_sane = True
-        resources = None
-        user_id = rec_params["user_id"]
-        concepts = rec_params["concepts"]
-
-        result_temp = self.get_redis_key_value(key_name=f"{user_id}_{self.redis_key_1}")
-        if result_temp:
-            result_temp = json.loads(result_temp)
-            concepts_temp = result_temp["concepts"]
-
-            if concepts_temp is None:
-                are_concepts_sane = False
-
-            elif len(concepts) != len(concepts_temp):
-                are_concepts_sane = False
-
-            elif len(concepts) == len(concepts_temp):
-                for dict1, dict2 in zip(concepts, concepts_temp):
-                    if dict1.get(key) != dict2.get(key):
-                        are_concepts_sane = False
-                        break
-
-                resources = result_temp["resources"]
-        else:
-                are_concepts_sane = False
-        return are_concepts_sane, resources
-
-    def process_new_concepts(self, body: dict, factor_weights, new_concepts: list = []):
+    def process_new_concepts(self, body: dict, factor_weights, new_concepts: list = [], top_n=5):
         '''
             Process and Crawl Resources
             Inside a Threading
@@ -699,7 +358,7 @@ class ResourceRecommenderService:
                 new_concepts=body["new_concept_ids"],
                 mid=body["material_id"],
             )
-            clu = self.save_and_get_concepts_modified(  rec_params=rec_params, top_n=5, user_embedding=True, 
+            clu = self.rrh.save_and_get_concepts_modified(  rec_params=rec_params, top_n=5, user_embedding=True, 
                                                         understood_list=body["understood_concept_ids"], 
                                                         non_understood_list=body["non_understood_concept_ids"]
                                                     )
@@ -710,7 +369,7 @@ class ResourceRecommenderService:
             _slide = self.db.get_slide(body["slide_id"])
             slide_concepts = _slide[0]["s"]["concepts"]
             # cro_form["concepts"] = slide_concepts
-            clu = self.save_and_get_concepts_modified(  rec_params=rec_params, top_n=5, user_embedding=False, 
+            clu = self.rrh.save_and_get_concepts_modified(  rec_params=rec_params, top_n=5, user_embedding=False, 
                                         understood_list=body["understood_concept_ids"], 
                                         non_understood_list=body["non_understood_concept_ids"]
                                     )
@@ -750,9 +409,9 @@ class ResourceRecommenderService:
             if len(rec_params["concepts"]) != len(concepts):
                 resources_found = self.db.retrieve_resources(concepts=rec_params["concepts"])
                 resources = resources_found + resources_bg
-                result["resources"] = self.rank_resources(resources=resources, weights=factor_weights)
+                result["resources"] = self.rrh.rank_resources(resources=resources, weights=factor_weights)
             else:
-                result["resources"] = self.rank_resources(resources=resources_bg, weights=factor_weights)
+                result["resources"] = self.rrh.rank_resources(resources=resources_bg, weights=factor_weights)
             self.set_redis_key_value(key_name=f"{body['user_id']}_{self.redis_key_1}", value=result, ex=(60 * 10080))
         else:
             self.set_redis_key_value(key_name=f"{body['user_id']}_{self.redis_key_1}", value=result, ex=(60 * 10080))
@@ -766,29 +425,19 @@ class ResourceRecommenderService:
                 resources = [{"node_id": node["id"]} for node in resources]
                 self.edit_relationship_btw_concepts_and_resources(concepts=rec_params["concepts"], resources=resources)
                 resources = self.db.retrieve_resources(concepts=rec_params["concepts"])
-                # result = self.rank_resources(resources=resources, weights=factor_weights)
+                # result = self.rrh.rank_resources(resources=resources, weights=factor_weights)
             else:
                 result = {"articles": [], "videos": []}
         '''
 
         return concepts, result
 
-    def create_get_resources_thread(self, func, args):
-        '''
-            active threading for the function given
-            func: the function to run
-            args: arguments taken from the function func
-        '''
-        thread = threading.Thread(target=func, args=args)
-        thread.start()
-        # self.redis_client.set(name=f"{user_id}_{self.redis_key_1}", value=status, ex=(self.redis_client_expiration_time * 10080))
-
     def _get_resources2(self, data_rec_params: dict, data_default: dict=None):
         '''
             Save cro_form, Crawl Youtube and Wikipedia API and then Store Resources
             Result: [ {"recommendation_type": str, "concepts": list(concepts), "nodes": list(resources)} ]
         '''
-        body = self.rec_params_request_mapped(data_rec_params, data_default)
+        body = rrh.rec_params_request_mapped(data_rec_params, data_default)
         # result = {}
 
         # Only take 5 concepts with the higher weight
@@ -801,10 +450,10 @@ class ResourceRecommenderService:
         # check whether the DNUs have been aldready requested
         # dnu_found = self.cro_get_concept_cro(user_id=body["croForm"]["user_id"], cid=cid, weight=weight)
 
-        factor_weights = self.build_factor_weights(body["rec_params"]["factor_weights"]["weights"])
+        factor_weights = rrh.build_factor_weights(body["rec_params"]["factor_weights"]["weights"])
         concepts = rec_params["concepts"]
 
-        are_concepts_sane, resources_temp = self.check_request_temp(rec_params=rec_params)
+        are_concepts_sane, resources_temp = rrh.check_request_temp(rec_params=rec_params)
         print("sdsd")
         print(are_concepts_sane, resources_temp)
         
@@ -831,18 +480,18 @@ class ResourceRecommenderService:
                     concepts_having_resources.append(concept)
             
             # remove duplicates and rank
-            resources = resourse_found # self.rank_resources(resourse_found)
+            resources = resourse_found # self.rrh.rank_resources(resourse_found)
 
             if len(concepts_not_having_resources) > 0:
                 # concepts_used, resources_new = self.process_new_concepts(body=body, factor_weights=factor_weights, new_concepts=concepts_not_having_resources)
-                self.create_get_resources_thread(self.process_new_concepts, args=(body, factor_weights, concepts_not_having_resources))
+                rrh.create_get_resources_thread(self.process_new_concepts, args=(body, factor_weights, concepts_not_having_resources))
 
             elif len(concepts) > 0:
                 # self.process_new_concepts(body=body, factor_weights=factor_weights)
-                self.create_get_resources_thread(self.process_new_concepts, args=(body, factor_weights))
+                rrh.create_get_resources_thread(self.process_new_concepts, args=(body, factor_weights))
         """
 
-        result = self.rank_resources(resources=resources, weights=factor_weights)
+        result = self.rrh.rank_resources(resources=resources, weights=factor_weights)
         concepts = [{k: v for k, v in d.items() if k != "final_embedding"} for d in concepts]
 
         recommendation_type = RecommendationType.map_type(body["rec_params"]["recommendation_type"])
@@ -865,37 +514,35 @@ class ResourceRecommenderService:
             Save cro_form, Crawl Youtube and Wikipedia API and then Store Resources
             Result: [ {"recommendation_type": str, "concepts": list(concepts), "nodes": list(resources)} ]
         '''
-        body = self.rec_params_request_mapped(data_rec_params, data_default)
+        body = rrh.rec_params_request_mapped(data_rec_params, data_default)
         # result = {}
 
         # Only take 5 concepts with the higher weight
         rec_params = body["rec_params"]
-        concepts_top_n: list = body["rec_params"]["concepts"]
-        concepts_top_n.sort(key=lambda x: x["weight"], reverse=True)
-        rec_params["concepts"] = concepts_top_n[:top_n]
+        rec_params["concepts"] = rrh.get_top_n_concepts(rec_params["concepts"])
 
-        # check if concepts given haves resources
-        concepts_having_resources = []
-        concepts_not_having_resources = []
-        resourse_found = []
-        for concept in rec_params["concepts"]:
-            resourse_btw = self.db.retrieve_resources(concepts=[concept])
-            if len(resourse_btw) == 0:
-                concepts_not_having_resources.append(concept)
-            else:
-                resourse_found.append(resourse_btw)
-                concepts_having_resources.append(concept)
+        # Check if concepts already exist in Neo4j Database
+        concepts_to_be_crawled = []
+        concepts_having_resources, concepts_not_having_resources, resources_found = rrh.check_and_get_resources_with_concepts(db=self.db, concepts=rec_params["concepts"])
+        if len(concepts_not_having_resources) > 0:
+            concepts_to_be_crawled = concepts_not_having_resources
+        else:
+            concepts_to_be_crawled = rec_params["concepts"]
+        
+        # Crawl resources from YouTube (from each dnu) and Wikipedia API
 
         # crawl resources
         # not_understood_concept_list = [concept["name"] for concept in rec_params["concepts"]]
+        recommender = Recommender()
         for concept in concepts_not_having_resources:
-            recommender = Recommender()
+            # and recommendation_type != RecommendationType.CONTENT_BASED_KEYPHRASE_VARIANT
+            # and recommendation_type != RecommendationType.CONTENT_BASED_DOCUMENT_VARIANT
             query = concept["name"] # " ".join(not_understood_concept_list)
             youtube_videos = recommender.canditate_selection(query=query, video=True)
             wikipedia_articles = recommender.canditate_selection(query=query, video=False)
             resources_dict = {"articles": wikipedia_articles.to_dict(orient='records'), "vidoes": youtube_videos.to_dict(orient='records')}
             self.db.store_resources(resources_dict=resources_dict, cid=concept["cid"])
-            
+
 
 
 def get_serialized_resource_data(resources, concepts, relations):
