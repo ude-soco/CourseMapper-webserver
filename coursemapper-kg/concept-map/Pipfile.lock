@@ -231,11 +231,11 @@
         },
         "conllu": {
             "hashes": [
-                "sha256:1b1f12f85331ddba646f94ee644de640eb5cb0a85277f27cd144cc89df60b0bb",
-                "sha256:cbd560221fc33310977fe45f18b37095425ee8c83567784fc18fb12e8d3da2b3"
+                "sha256:19f46a8b61433e6ad7f06ffcafe72a18405821f8fda710f8579b95371a3cb3f9",
+                "sha256:1ce417575853c58910068ab05323ccf98135255db2afa0ff154ff29628484b6b"
             ],
             "markers": "python_version >= '3.8'",
-            "version": "==5.0.0"
+            "version": "==5.0.1"
         },
         "contourpy": {
             "hashes": [
