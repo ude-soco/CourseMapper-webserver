@@ -42,6 +42,10 @@ class Prerequisite:
         concept_dict = clean_data.get_clean_data()
         related_relationships = clean_data.get_related_relationships()
 
+        concept_dict.to_csv("clean_data_simple.csv")
+        concept_dict = pd.read_csv("clean_data_simple.csv", index_col=0)
+
+
 
         print("find prerequisite")
         prerequisite = Prerequisite(concept_dict,related_relationships)
