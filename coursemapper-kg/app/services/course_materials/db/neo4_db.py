@@ -72,7 +72,9 @@ def create_video_resource(tx, node, recommendation_type=''):
         description: $description, description_full: $description_full, keyphrases: $keyphrases, text: $text, document_embedding: $document_embedding, 
         keyphrase_embedding: $keyphrase_embedding, similarity_score: $similarity_score, thumbnail: $thumbnail, 
         duration: $duration, views: $views, publish_time: $pub_time, helpful_count: $helpful_count, 
-        not_helpful_count: $not_helpful_count, saves_count: $saves_count, like_count: $like_count, channel_title: $channel_title})""",
+        not_helpful_count: $not_helpful_count, saves_count: $saves_count, like_count: $like_count, channel_title: $channel_title
+        })
+        """,
         rid=node["id"],
         uri="https://www.youtube.com/embed/%s?autoplay=1" % node["id"],
         title=node["title"],
@@ -104,7 +106,9 @@ def create_wikipedia_resource(tx, node, recommendation_type=''):
         """MERGE (c:Resource:Article {rid: $rid, uri: $uri, 
         title: $title, abstract:$abstract, keyphrases: $keyphrases, text: $text, document_embedding: $document_embedding, 
         keyphrase_embedding: $keyphrase_embedding, similarity_score: $similarity_score, helpful_count: $helpful_count, 
-        not_helpful_count: $not_helpful_count, saves_count: $saves_count})""",
+        not_helpful_count: $not_helpful_count, saves_count: $saves_count
+        })
+        """,
         rid=node["id"],
         uri=node["id"],
         title=node["title"],
@@ -1794,6 +1798,76 @@ class NeoDataBase:
     ###########
     # boby024 #
     ###########
+
+    def create_or_update_video_resource(tx, node, recommendation_type=''):
+        '''
+            Creating Resource YouTube
+        '''
+        logger.info("Creating youtube resource '%s'" % node["id"])
+
+        tx.run(
+            """
+                MERGE (c:Resource:Video {rid: $rid, uri: $uri, title: $title, 
+                description: $description, description_full: $description_full, keyphrases: $keyphrases, text: $text, document_embedding: $document_embedding, 
+                keyphrase_embedding: $keyphrase_embedding, similarity_score: $similarity_score, thumbnail: $thumbnail, 
+                duration: $duration, views: $views, publish_time: $pub_time, helpful_count: $helpful_count, 
+                not_helpful_count: $not_helpful_count, saves_count: $saves_count, like_count: $like_count, channel_title: $channel_title,
+                created_at: $created_at, updated_at: $updated_at
+            })
+            """,
+            rid=node["id"],
+            uri="https://www.youtube.com/embed/%s?autoplay=1" % node["id"],
+            title=node["title"],
+            description=node["description"],
+            description_full=node["description_full"],
+            thumbnail="https://i.ytimg.com/vi/%s/hqdefault.jpg" % node["id"],
+            keyphrases=node["keyphrases"] if "keyphrases" in node.index else [],
+            text=node["text"],
+            duration=node["duration"],
+            views=node["views"],
+            pub_time=node["publishTime"],
+            similarity_score=node[recommendation_type] if recommendation_type in node.index else 0,
+            keyphrase_embedding=str(node["keyphrase_embedding"] if "keyphrase_embedding" in node.index else ""),
+            document_embedding=str(node["document_embedding"] if "document_embedding" in node.index else ""),
+            helpful_count=0,
+            not_helpful_count=0,
+            saves_count=0,
+            like_count=node["like_count"],
+            channel_title=node["channel_title"],
+            created_at=node["created_at"],
+            updated_at=node["updated_at"]
+        )
+
+    def create_or_update_wikipedia_resource(tx, node, recommendation_type=''):
+        """
+        """
+        logger.info(
+            "Creating wikipedia resource '%s'" % node["id"])
+        tx.run(
+            """MERGE (c:Resource:Article {rid: $rid, uri: $uri, 
+            title: $title, abstract:$abstract, keyphrases: $keyphrases, text: $text, document_embedding: $document_embedding, 
+            keyphrase_embedding: $keyphrase_embedding, similarity_score: $similarity_score, helpful_count: $helpful_count, 
+            not_helpful_count: $not_helpful_count, saves_count: $saves_count,
+            created_at: $created_at, updated_at: $updated_at
+            })
+            """,
+            rid=node["id"],
+            uri=node["id"],
+            title=node["title"],
+            abstract=node["abstract"],
+            keyphrases=node["keyphrases"] if "keyphrases" in node.index else [],
+            text=node["text"],
+            similarity_score=node[recommendation_type] if recommendation_type in node.index else 0,
+            keyphrase_embedding=str(node["keyphrase_embedding"] if "keyphrase_embedding" in node.index else ""),
+            document_embedding=str(node["document_embedding"] if "document_embedding" in node.index else ""),
+            helpful_count=0,
+            not_helpful_count=0,
+            saves_count=0,
+            created_at=node["created_at"],
+            updated_at=node["updated_at"]
+            )
+
+
     def get_top_n_concept_by_slide_id(self, slide_id: str, names: list = None, top_n=5):
         '''
             Get top n concept by slide ID and concept names

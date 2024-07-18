@@ -508,7 +508,7 @@ class ResourceRecommenderService:
     def _get_resources(self, data_rec_params: dict, data_default: dict=None, top_n = 5):
         '''
             Save cro_form, Crawl Youtube and Wikipedia API and then Store Resources
-            Result: [ {"recommendation_type": str, "concepts": list(concepts), "nodes": list(resources)} ]
+            Result: { "recommendation_type": "", "concepts": [], "nodes": {"articles": [], "videos": []} }
         '''
         body = rrh.rec_params_request_mapped(data_rec_params, data_default)
         result = { "recommendation_type": "", "concepts": [], "nodes": {"articles": [], "videos": []} }
@@ -563,6 +563,8 @@ class ResourceRecommenderService:
                 results.append(rrh.parallel_crawling_resources(self.recommender.canditate_selection, concept["name"], concept["cid"]))
 
             # Store resources into Neo4j Database (by creating connection btw Resource and Concept_modified)
+            create_at = datetime.now().isoformat()
+            updated_at = datetime.now().isoformat()
             for result in results:
                 self.db.store_resources(resources_dict=result, cid=result["cid"])
             
@@ -605,16 +607,17 @@ class ResourceRecommenderService:
             resources = self.db.retrieve_resources(concepts=slide_concepts_)
 
         # process with the recommendation algorithm selected
-        data_df = pd.DataFrame(resources)
-        resources_df = self.recommender.recommend(
-            slide_weighted_avg_embedding_of_concepts=slide_weighted_avg_embedding_of_concepts,
-            slide_document_embedding=slide_document_embedding,
-            user_embedding=user_embedding,
-            top_n=10,
-            recommendation_type=recommendation_type,
-            data=data_df
-        )
-        resources = resources_df.to_dict(orient='records')
+        if len(concepts_having_resources) != len(rec_params["concepts"]):
+            data_df = pd.DataFrame(resources)
+            resources_df = self.recommender.recommend(
+                slide_weighted_avg_embedding_of_concepts=slide_weighted_avg_embedding_of_concepts,
+                slide_document_embedding=slide_document_embedding,
+                user_embedding=user_embedding,
+                top_n=10,
+                recommendation_type=recommendation_type,
+                data=data_df
+            )
+            resources = resources_df.to_dict(orient='records')
 
         # Apply ranking algorithm on the resources
         factor_weights = rrh.build_factor_weights(body["rec_params"]["factor_weights"]["weights"])
@@ -622,6 +625,7 @@ class ResourceRecommenderService:
 
         # Provide only the top 10 of the resources
         result_final = {"recommendation_type": recommendation_type_str, "concepts": rec_params["concepts"], "nodes": result }
+        return result_final
 
 
 def get_serialized_resource_data(resources, concepts, relations):
