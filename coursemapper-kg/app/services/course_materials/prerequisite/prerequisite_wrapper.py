@@ -2,7 +2,7 @@ from course_materials import CourseMaterials
 from data_cleaning import DataCleaning
 import pandas as pd
 from neo4j_connection import DBConnection
-from prerequisite_relationship import Prerequisite
+from prerequisite_relationship import PrerequisiteRelationship
 
 class Prerequisite:
     def __init__(self,course_name = "precalc") -> None:
@@ -48,7 +48,7 @@ class Prerequisite:
 
 
         print("find prerequisite")
-        prerequisite = Prerequisite(concept_dict,related_relationships)
+        prerequisite = PrerequisiteRelationship(concept_dict,related_relationships)
         prerequisite_relationships = prerequisite.get_prerequisite_relationships()
 
 

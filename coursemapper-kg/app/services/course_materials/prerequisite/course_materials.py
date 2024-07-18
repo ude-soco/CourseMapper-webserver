@@ -1,6 +1,8 @@
 import pymongo
 import pandas as pd
 
+from config import Config
+
 class CourseMaterials:
     def __init__(self, course_name = None):
         self.materials = pd.DataFrame()
@@ -9,8 +11,8 @@ class CourseMaterials:
 
 
     def list_of_learning_materials(self):
-        myclient = pymongo.MongoClient("mongodb://localhost:27017/")
-        mydb = myclient["coursemapper_v2"]
+        myclient = pymongo.MongoClient(Config.MONGO_DB_URI)
+        mydb = myclient[Config.MONGO_DB_NAME]
         courses= mydb["courses"]
         channels_id= []
         query = {"name": self.course_name} 

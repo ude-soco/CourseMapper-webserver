@@ -3,7 +3,7 @@ import pandas as pd
 import ast
 
 
-class Prerequisite:
+class PrerequisiteRelationship:
     def __init__(self, clean_data = pd.DataFrame(), related_relationships = pd.DataFrame()):
 
         self.data = clean_data

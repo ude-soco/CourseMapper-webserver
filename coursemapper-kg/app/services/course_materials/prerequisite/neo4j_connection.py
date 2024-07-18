@@ -1,8 +1,10 @@
 from neo4j import GraphDatabase
 import pandas as pd
 
+from config import Config
+
 class DBConnection:
-    def __init__(self, uri="bolt://localhost:7687",username="neo4j",password="password",):
+    def __init__(self, uri=Config.NEO4J_URI,username=Config.NEO4J_USER,password=Config.NEO4J_PASSWORD):
         # Define the connection URI, username, and password
         self.uri = uri 
         self.username = username
