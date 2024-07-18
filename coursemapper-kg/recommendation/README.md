@@ -6,7 +6,7 @@
 
 Download the following software and install them on your machine:
 
-- Python (v3.7.2) from [the official website](https://www.python.org/downloads/release/python-372/)
+- Python (v3.11.5) from [the official website](https://www.python.org/downloads/release/python-3115/)
 
 - Neo4j Desktop from [the official website](https://neo4j.com/download-center/#desktop), install it, start the server, and login to the server.
 
@@ -21,7 +21,7 @@ See the step-by-step guide with screenshots to install the necessary softwares a
 
 - Using your file explorer, go inside the project directory `coursemapper-kg/recommendation`. First, copy the `example.env` file and paste it in the same folder. Rename the copied environment file to `.env`. Change the values (`NEO4J_USER` and `NEO4J_PASSWORD`) of the environment variables in the `.env` file to your own values.
 
-- Open a terminal in the project directory `coursemapper-kg/concept-map` (with **administration rights** for Windows)
+- Open a terminal in the project directory `coursemapper-kg/recommendation` (with **administration rights** for Windows)
 
 - Install and activate python virtual environment for Windows
 

@@ -47,12 +47,6 @@ Download the following software and install them on your machine:
 
       (**Optional**) To check the location of your Python virtual environment, type `pipenv --venv` the following command in your command prompt
 
-- Download the spacy package
-
-    ```
-    python -m spacy download en
-    ```
-
 - Copy the codes below and paste it in the terminal to download the necessary nltk and sentence transformer packages.
 
   ```
