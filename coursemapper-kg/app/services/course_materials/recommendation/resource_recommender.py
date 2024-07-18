@@ -506,12 +506,6 @@ class ResourceRecommenderService:
 
         return result
 
-
-    def store_resources_into_neo4j(self, resources, cid):
-        '''
-            save the results in the database: Neo4j
-        '''
-
     def _get_resources(self, data_rec_params: dict, data_default: dict=None, top_n = 5):
         '''
             Save cro_form, Crawl Youtube and Wikipedia API and then Store Resources
@@ -534,16 +528,22 @@ class ResourceRecommenderService:
                 )
         if check_message != "":
             return result
+        
         user = {"name": body["username"], "id": body["user_id"] , "user_email": body["user_email"] }
         _slide = None
-
-        
         self.recommender = Recommender()
+        results = []
 
         if recommendation_type in [ RecommendationType.PKG_BASED_DOCUMENT_VARIANT, RecommendationType.PKG_BASED_KEYPHRASE_VARIANT ]:
             # Only take 5 concepts with the higher weight
             rec_params = body["rec_params"]
             rec_params["concepts"] = rrh.get_top_n_concepts(rec_params["concepts"])
+
+            ##
+            clu = rrh.save_and_get_concepts_modified(  rec_params=rec_params, top_n=5, user_embedding=True, 
+                                                        understood_list=body["understood_concept_ids"], 
+                                                        non_understood_list=body["non_understood_concept_ids"]
+                                                    )
 
             # Check if concepts already exist and connected to any resources in Neo4j Database
             concepts_to_be_crawled = []
@@ -554,20 +554,16 @@ class ResourceRecommenderService:
                 concepts_to_be_crawled = rec_params["concepts"]
 
             # Crawl resources from YouTube (from each dnu) and Wikipedia API
-            # add thread for requests
-            with concurrent.futures.ThreadPoolExecutor() as executor:
-                results = list(executor.map(rrh.parallel_crawling_resources, concepts_to_be_crawled))
-
-            '''
             for concept in concepts_to_be_crawled: #i in range(len(not_understood_concept_list)):
-                concept_name = concept["name"]
-                data_vdieos = self.recommender.canditate_selection(query=concept_name, video=True)
-                data_articles = self.recommender.canditate_selection(query=concept_name, video=False)
-            
-            '''
+                results.append(rrh.parallel_crawling_resources(self.recommender.canditate_selection, concept["name"], concept["cid"]))
 
             # Store resources into Neo4j Database (by creating connection btw Resource and Concept_modified)
-            ##
+            for result in results:
+                self.db.store_resources(resources_dict=result, cid=result["cid"])
+            
+            # Gather|Retrieve all resources crawled
+            resources_new = self.db.retrieve_resources(concepts=concepts_to_be_crawled)
+            resources = resources_found + resources_new
 
         elif recommendation_type in [ RecommendationType.CONTENT_BASED_DOCUMENT_VARIANT, RecommendationType.CONTENT_BASED_KEYPHRASE_VARIANT ]:
             # _slide = self.db.get_slide(body["slide_id"])
@@ -578,15 +574,18 @@ class ResourceRecommenderService:
                 resources = resources_found
             else:
                 # Crawl resources from YouTube (from each dnu) and Wikipedia API
-                # add thread for requests
                 for slide_concept in slide_concepts_:
-                    concept_name = slide_concept["name"]
-                    data_vdieos = self.recommender.canditate_selection(query=concept_name, video=True)
-                    data_articles = self.recommender.canditate_selection(query=concept_name, video=False)
+                    results.append(rrh.parallel_crawling_resources(self.recommender.canditate_selection, slide_concept["name"], slide_concept["cid"]))
             
                 # Store resources into Neo4j Database (by creating connection btw Resource and Concept_modified)
-                ##
+                for result in results:
+                    self.db.store_resources(resources_dict=result, cid=result["cid"])
 
+            # Gather|Retrieve all resources crawled
+            resources = self.db.retrieve_resources(concepts=slide_concepts_)
+
+        # process with the recommendation algorithm selected
+        ##
 
 
 def get_serialized_resource_data(resources, concepts, relations):

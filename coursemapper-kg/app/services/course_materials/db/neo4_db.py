@@ -2205,6 +2205,10 @@ class NeoDataBase:
             Store Resources
             Create relationshop between Resource and Concept_modified
             resources_dict: {"articles": [], "vidoes": []}
+            cid: str
+            recommendation_type: str ('1' | '2' | '3' | '4')
+            algorithm_model: (str) which algorithm was used for the recommendation
+            content_type: video | article # currently not usued
         '''
         logger.info("Store Resources")
         tx = self.driver.session()
@@ -2219,9 +2223,10 @@ class NeoDataBase:
                     create_wikipedia_resource(tx, resource, recommendation_type)
                     self.update_rs_btw_resource_and_cm(rid=resource["rid"], cid=cid, action=True)
 
-    def retrieve_resources(self, concepts: list):
+    def retrieve_resources(self, concepts: dict):
         """
             Getting List of Resources connected to Concept_modified
+            algorithm_model: (str) which algorithm was used for the recommendation
         """
         def resource_replace_none_value(value):
             if value == None:

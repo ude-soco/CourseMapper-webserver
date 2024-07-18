@@ -377,7 +377,6 @@ def check_and_get_resources_with_concepts(db: NeoDataBase, concepts: list):
         Check if concepts already exist and connected to any resources in Neo4j Database
         If resources exist, check based on:
         created_at and updated_at (it's not more than one week old) 
-        
     '''
     concepts_having_resources = []
     concepts_not_having_resources = []
@@ -400,12 +399,16 @@ def check_and_get_resources_with_concepts(db: NeoDataBase, concepts: list):
 #         results = list(executor.map(fetch_url, urls))
 #     return results
 
-def parallel_crawling_resources(function, concept_name: str, cid: str):
-    result_videos = function(concept_name, True)
-    result_articles = function(concept_name, False)
-    return {"cid": cid, "videos": result_videos, "articles": result_articles}
+# def parallel_crawling_resources2(function, concept_name: str, cid: str):
+#     result_videos = function(concept_name, True)
+#     result_articles = function(concept_name, False)
+#     return {"cid": cid, "videos": result_videos, "articles": result_articles}
 
-def parallel_crawling_resources2(function, concept_name: str, cid: str):
+def parallel_crawling_resources(function, concept_name: str, cid: str):
+    '''
+        Parallel Crawling of Resources with the function 
+        canditate_selection from Class Recommender
+    '''
     with concurrent.futures.ThreadPoolExecutor() as executor:
         future_videos = executor.submit(function, concept_name, True)
         future_article = executor.submit(function, concept_name, False)
