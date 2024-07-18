@@ -12,7 +12,7 @@ flair = "*"
 nltk = "*"
 stanfordcorenlp = "*"
 psycopg = {extras = ["binary"], version = "*"}
-cm-worker = {git = "git+https://github.com/jeanqussa/cm-worker"}
+cm-worker = "*"
 html2text = "*"
 scipy = "==1.11.0"
 pdfminer-six = "*"

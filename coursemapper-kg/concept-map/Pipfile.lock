@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "5ea775e4c66b2d33b6b5eaedb1d7123a355af5582bf06729506645f69a6a95c9"
+            "sha256": "5e55b1ed8b501cd255c5f8f647e8ab702f18438ba6777d2e44cca7dd93d950cd"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -226,8 +226,13 @@
             "version": "==8.1.7"
         },
         "cm-worker": {
-            "git": "git+https://github.com/jeanqussa/cm-worker",
-            "ref": "16ca12ce0d2b4fcdeac3c525c391402787bbbc33"
+            "hashes": [
+                "sha256:6bb932c21c5af54b145a2315c2ed359907f1324d48d7c91b58087bfcef536eb7",
+                "sha256:7da52e6485d4350d83b06e5e12aed23bd94e6ad2593edf4a26b994db726c1c94"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.7'",
+            "version": "==0.0.4"
         },
         "conllu": {
             "hashes": [
@@ -467,11 +472,11 @@
         },
         "huggingface-hub": {
             "hashes": [
-                "sha256:35d99016433900e44ae7efe1c209164a5a81dbbcd53a52f99c281dcd7ce22431",
-                "sha256:3a0b957aa87150addf0cc7bd71b4d954b78e749850e1e7fb29ebbd2db64ca037"
+                "sha256:67a9caba79b71235be3752852ca27da86bd54311d2424ca8afdb8dda056edf98",
+                "sha256:d7a7d337615e11a45cc14a0ce5a605db6b038dc24af42866f731684825226e90"
             ],
             "markers": "python_full_version >= '3.8.0'",
-            "version": "==0.23.4"
+            "version": "==0.23.5"
         },
         "idna": {
             "hashes": [
@@ -1168,16 +1173,16 @@
         },
         "polars": {
             "hashes": [
-                "sha256:0fef976ff8e2c1f8a9844bc156c0639da7f87456f64983aa503495d874028df8",
-                "sha256:6fe8a2cf96fa69fb62b15737d389668a9d9e909b734715e7edfe88ebcc5bce0f",
-                "sha256:75fe824243006ada0f2dd30c8aba0ec03595d9087b29c3ca8f106ef1a975b9cb",
-                "sha256:967ee75160315e881e414bbb3198b5534d6ea4a086f06fa8fdfb4cd95a2b8e8f",
-                "sha256:9cd1e4aabf75fed5d0b2c99094a27077c409f62b59e0e8e0998e063cee93b04c",
-                "sha256:c53cfcbefeac8f31b7bab33c2d7e07dde3cd785afee6e97d217c5412b5ae31b1"
+                "sha256:4125b1c44773a30e388be734adf25b1979d7ded17801aceca3b62e85cd057364",
+                "sha256:8ebccbc9211453785c90efee8fd9407d316343492b384ce2882b431a2090613a",
+                "sha256:a6cea3aa0cb4a0cf1c4c4aa00c389d483072f347ef03c98c484d5c515da489f3",
+                "sha256:d475f60a57d48b7737ef165f1bb145a1d506f784948aad1de284f359a61cf147",
+                "sha256:df5cd43fdc6fb0b4e25987c1178633511e56dc5ee38afe0215daccf690bfe5ba",
+                "sha256:e0f5cff9d3dc96bdde914290df5f80768aaf881b4612c83ad1d9afd05c5934f2"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.8'",
-            "version": "==1.1.0"
+            "version": "==1.2.0"
         },
         "pptree": {
             "hashes": [
