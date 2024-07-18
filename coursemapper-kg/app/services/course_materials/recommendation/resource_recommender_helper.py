@@ -82,11 +82,11 @@ def save_and_get_concepts_modified(db: NeoDataBase, rec_params, top_n=5, user_em
             user_embedding = db.get_user_embedding_with_concept_modified(user_id=user_id, mid=rec_params["mid"], status=status)
             result["user_embedding"] = user_embedding
     
-    result["concept_cids"]  = [concept["cid"] for concept in concepts]
-    result["concept_names"] = [concept["name"] for concept in concepts]
-    rec_params["concepts"] = concepts
+    # result["concept_cids"]  = [concept["cid"] for concept in concepts]
+    # result["concept_names"] = [concept["name"] for concept in concepts]
+    # rec_params["concepts"] = concepts
     result["concepts"] = concepts
-    result["rec_params"] = rec_params
+    # result["rec_params"] = rec_params
     return result
 
 def normalize_factor_weights(factor_weights: dict=None, values: list=[], method_type = "l1", complete=True, sum_value=True): # List[float]
@@ -235,7 +235,7 @@ def remove_duplicates_from_resources(dict_list: list):
             unique_dicts.append(d)
     return unique_dicts
 
-def rank_resources(resources: list, weights: dict = None, ratings: list = None):
+def rank_resources(resources: list, weights: dict = None, ratings: list = None, top_n=10):
     """
         Step 1: Remove duplicates if exist
         Step 2: Ranking/Sorting Logic for Resources
@@ -268,8 +268,8 @@ def rank_resources(resources: list, weights: dict = None, ratings: list = None):
         pass
 
     return {
-        "articles": resources_articles,
-        "videos": resources_videos
+        "articles": resources_articles[: top_n],
+        "videos": resources_videos[: top_n]
     }
 
 def rec_params_request_mapped(data_rec_params: dict, data_default: dict=None):

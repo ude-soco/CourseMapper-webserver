@@ -209,7 +209,7 @@ class Recommender:
 
     def recommend(
         self,
-        not_understood_concept_list,
+        not_understood_concept_list=[],
         slide_concepts=[],
         slide_weighted_avg_embedding_of_concepts="",
         slide_document_embedding="",
@@ -219,6 +219,11 @@ class Recommender:
         recommendation_type=RecommendationType.WITHOUT_EMBEDDING,
         data:pd.DataFrame=None
     ):
+        '''
+            Apply recommendation algorithms
+            data: resources in DataFrame
+        '''
+
         """
         # If personalized recommendation, use DNU concepts to query Youtube and Wikipedia
         if (

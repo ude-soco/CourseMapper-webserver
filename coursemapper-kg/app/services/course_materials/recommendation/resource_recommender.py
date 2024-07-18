@@ -17,8 +17,7 @@ import numpy as np
 from sklearn.preprocessing import normalize as normalize_sklearn, MinMaxScaler as MinMaxScaler_sklearn
 import redis
 import json
-import threading
-import time
+import pandas as pd
 
 # import resource_recommender_helper as rrh
 from ..recommendation import resource_recommender_helper as rrh
@@ -533,17 +532,23 @@ class ResourceRecommenderService:
         _slide = None
         self.recommender = Recommender()
         results = []
+        user_embedding = ""
+        slide_document_embedding = ""
+        slide_weighted_avg_embedding_of_concepts = ""
 
         if recommendation_type in [ RecommendationType.PKG_BASED_DOCUMENT_VARIANT, RecommendationType.PKG_BASED_KEYPHRASE_VARIANT ]:
             # Only take 5 concepts with the higher weight
             rec_params = body["rec_params"]
             rec_params["concepts"] = rrh.get_top_n_concepts(rec_params["concepts"])
 
-            ##
-            clu = rrh.save_and_get_concepts_modified(  rec_params=rec_params, top_n=5, user_embedding=True, 
-                                                        understood_list=body["understood_concept_ids"], 
-                                                        non_understood_list=body["non_understood_concept_ids"]
+            # Store Concepts into Neo4j Database
+            clu = rrh.save_and_get_concepts_modified( rec_params=rec_params, top_n=5, 
+                                                      user_embedding=True, 
+                                                      understood_list=body["understood_concept_ids"], 
+                                                      non_understood_list=body["non_understood_concept_ids"]
                                                     )
+            rec_params["concepts"] = clu["concepts"]
+            user_embedding = clu("user_embedding")
 
             # Check if concepts already exist and connected to any resources in Neo4j Database
             concepts_to_be_crawled = []
@@ -566,9 +571,24 @@ class ResourceRecommenderService:
             resources = resources_found + resources_new
 
         elif recommendation_type in [ RecommendationType.CONTENT_BASED_DOCUMENT_VARIANT, RecommendationType.CONTENT_BASED_KEYPHRASE_VARIANT ]:
-            # _slide = self.db.get_slide(body["slide_id"])
+            _slide = self.db.get_slide(body["slide_id"])
+            slide_document_embedding = _slide[0]["s"]["initial_embedding"]
+            slide_weighted_avg_embedding_of_concepts = _slide[0]["s"][
+                    "weighted_embedding_of_concept"
+                ]
             # slide_concepts = _slide[0]["s"]["concepts"]
             slide_concepts_ = self.db.get_top_n_concept_by_slide_id(slide_id=body["slide_id"], top_n=5)
+
+            # Store Concepts into Neo4j Database
+            rec_params["concepts"] = slide_concepts_
+            clu = rrh.save_and_get_concepts_modified( rec_params=rec_params, top_n=len(slide_concepts_), 
+                                                      user_embedding=False, 
+                                                      understood_list=[], 
+                                                      non_understood_list=[]
+                                                    )
+            rec_params["concepts"] = clu["concepts"]
+
+            # Check if concepts already exist and connected to any resources in Neo4j Database
             concepts_having_resources, concepts_not_having_resources, resources_found = rrh.check_and_get_resources_with_concepts(db=self.db, concepts=slide_concepts_)
             if len(resources_found) > 0:
                 resources = resources_found
@@ -585,7 +605,23 @@ class ResourceRecommenderService:
             resources = self.db.retrieve_resources(concepts=slide_concepts_)
 
         # process with the recommendation algorithm selected
-        ##
+        data_df = pd.DataFrame(resources)
+        resources_df = self.recommender.recommend(
+            slide_weighted_avg_embedding_of_concepts=slide_weighted_avg_embedding_of_concepts,
+            slide_document_embedding=slide_document_embedding,
+            user_embedding=user_embedding,
+            top_n=10,
+            recommendation_type=recommendation_type,
+            data=data_df
+        )
+        resources = resources_df.to_dict(orient='records')
+
+        # Apply ranking algorithm on the resources
+        factor_weights = rrh.build_factor_weights(body["rec_params"]["factor_weights"]["weights"])
+        result = rrh.rank_resources(resources=resources, weights=factor_weights, top_n=10)
+
+        # Provide only the top 10 of the resources
+        result_final = {"recommendation_type": recommendation_type_str, "concepts": rec_params["concepts"], "nodes": result }
 
 
 def get_serialized_resource_data(resources, concepts, relations):
