@@ -167,7 +167,7 @@ class Recommender:
 
         return data
 
-    def _get_data(self, recommendation_type, not_understood_concept_list, video, slide_concepts):
+    def _get_data(self, recommendation_type, not_understood_concept_list, slide_concepts, video):
         # If personalized recommendation, use DNU concepts to query Youtube and Wikipedia
         if (
             recommendation_type != RecommendationType.WITHOUT_EMBEDDING
@@ -189,6 +189,7 @@ class Recommender:
             i = 0
             while i < 5:
                 top_n_concepts = 5 - i
+                logger.info(slide_concepts)
                 concepts = slide_concepts[:top_n_concepts]
                 slide_concepts_name = [concept["name"] for concept in concepts]
                 logger.info("Get top %s concepts", top_n_concepts)
@@ -216,7 +217,7 @@ class Recommender:
         top_n=10,
         video=True,
         recommendation_type=RecommendationType.WITHOUT_EMBEDDING,
-        _data:pd.DataFrame=None
+        data:pd.DataFrame=None
     ):
         """
         # If personalized recommendation, use DNU concepts to query Youtube and Wikipedia

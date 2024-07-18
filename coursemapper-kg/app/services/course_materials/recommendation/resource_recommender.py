@@ -537,55 +537,55 @@ class ResourceRecommenderService:
         user = {"name": body["username"], "id": body["user_id"] , "user_email": body["user_email"] }
         _slide = None
 
-        # Only take 5 concepts with the higher weight
-        rec_params = body["rec_params"]
-        rec_params["concepts"] = rrh.get_top_n_concepts(rec_params["concepts"])
-
-        # Check if concepts already exist and connected to any resources in Neo4j Database
-        concepts_to_be_crawled = []
-        concepts_having_resources, concepts_not_having_resources, resources_found = rrh.check_and_get_resources_with_concepts(db=self.db, concepts=rec_params["concepts"])
-        if len(concepts_not_having_resources) > 0:
-            concepts_to_be_crawled = concepts_not_having_resources
-        else:
-            concepts_to_be_crawled = rec_params["concepts"]
-
-        # Crawl resources from YouTube (from each dnu) and Wikipedia API
-        # add thread for request
-        resource_types = ["Youtube", "Wikipedia"]
-        slide_concepts_ = None
+        
         self.recommender = Recommender()
+
         if recommendation_type in [ RecommendationType.PKG_BASED_DOCUMENT_VARIANT, RecommendationType.PKG_BASED_KEYPHRASE_VARIANT ]:
-            not_understood_concept_list = [concept["name"] for concept in concepts_to_be_crawled]
-            for i in range(len(not_understood_concept_list)):
-                
-            data_vdieos = self.recommender._get_data(recommendation_type=recommendation_type_str, 
-                                              not_understood_concept_list=not_understood_concept_list, 
-                                              video=True, 
-                                              slide_concepts=None
-                                            )
+            # Only take 5 concepts with the higher weight
+            rec_params = body["rec_params"]
+            rec_params["concepts"] = rrh.get_top_n_concepts(rec_params["concepts"])
+
+            # Check if concepts already exist and connected to any resources in Neo4j Database
+            concepts_to_be_crawled = []
+            concepts_having_resources, concepts_not_having_resources, resources_found = rrh.check_and_get_resources_with_concepts(db=self.db, concepts=rec_params["concepts"])
+            if len(concepts_not_having_resources) > 0:
+                concepts_to_be_crawled = concepts_not_having_resources
+            else:
+                concepts_to_be_crawled = rec_params["concepts"]
+
+            # Crawl resources from YouTube (from each dnu) and Wikipedia API
+            # add thread for requests
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                results = list(executor.map(rrh.parallel_crawling_resources, concepts_to_be_crawled))
+
+            '''
+            for concept in concepts_to_be_crawled: #i in range(len(not_understood_concept_list)):
+                concept_name = concept["name"]
+                data_vdieos = self.recommender.canditate_selection(query=concept_name, video=True)
+                data_articles = self.recommender.canditate_selection(query=concept_name, video=False)
+            
+            '''
+
+            # Store resources into Neo4j Database (by creating connection btw Resource and Concept_modified)
+            ##
 
         elif recommendation_type in [ RecommendationType.CONTENT_BASED_DOCUMENT_VARIANT, RecommendationType.CONTENT_BASED_KEYPHRASE_VARIANT ]:
-            _slide = self.db.get_slide(body["slide_id"])
-            slide_concepts_ = _slide[0]["s"]["concepts"]
-            # slide_concepts_ = [self.db.get_top_n_concept_by_name(name=name)[0] for name in slide_concepts]
-            data = self.recommender._get_data(recommendation_type=recommendation_type_str, 
-                                              not_understood_concept_list=None, 
-                                              video=True, 
-                                              slide_concepts=slide_concepts_
-                                            )
+            # _slide = self.db.get_slide(body["slide_id"])
+            # slide_concepts = _slide[0]["s"]["concepts"]
+            slide_concepts_ = self.db.get_top_n_concept_by_slide_id(slide_id=body["slide_id"], top_n=5)
+            concepts_having_resources, concepts_not_having_resources, resources_found = rrh.check_and_get_resources_with_concepts(db=self.db, concepts=slide_concepts_)
+            if len(resources_found) > 0:
+                resources = resources_found
+            else:
+                # Crawl resources from YouTube (from each dnu) and Wikipedia API
+                # add thread for requests
+                for slide_concept in slide_concepts_:
+                    concept_name = slide_concept["name"]
+                    data_vdieos = self.recommender.canditate_selection(query=concept_name, video=True)
+                    data_articles = self.recommender.canditate_selection(query=concept_name, video=False)
             
-
-        # crawl resources
-        # not_understood_concept_list = [concept["name"] for concept in rec_params["concepts"]]
-        # recommender = Recommender()
-        # for concept in concepts_not_having_resources:
-        #     # and recommendation_type != RecommendationType.CONTENT_BASED_KEYPHRASE_VARIANT
-        #     # and recommendation_type != RecommendationType.CONTENT_BASED_DOCUMENT_VARIANT
-        #     query = concept["name"] # " ".join(not_understood_concept_list)
-        #     youtube_videos = recommender.canditate_selection(query=query, video=True)
-        #     wikipedia_articles = recommender.canditate_selection(query=query, video=False)
-        #     resources_dict = {"articles": wikipedia_articles.to_dict(orient='records'), "vidoes": youtube_videos.to_dict(orient='records')}
-        #     self.db.store_resources(resources_dict=resources_dict, cid=concept["cid"])
+                # Store resources into Neo4j Database (by creating connection btw Resource and Concept_modified)
+                ##
 
 
 

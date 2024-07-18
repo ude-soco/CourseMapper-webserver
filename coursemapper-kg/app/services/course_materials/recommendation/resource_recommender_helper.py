@@ -395,7 +395,20 @@ def check_and_get_resources_with_concepts(db: NeoDataBase, concepts: list):
 
     return concepts_having_resources, concepts_not_having_resources, resources_found
 
-def fetch_all_urls(urls):
-    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
-        results = list(executor.map(fetch_url, urls))
-    return results
+# def fetch_all_urls(urls):
+#     with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+#         results = list(executor.map(fetch_url, urls))
+#     return results
+
+def parallel_crawling_resources(function, concept_name: str, cid: str):
+    result_videos = function(concept_name, True)
+    result_articles = function(concept_name, False)
+    return {"cid": cid, "videos": result_videos, "articles": result_articles}
+
+def parallel_crawling_resources2(function, concept_name: str, cid: str):
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        future_videos = executor.submit(function, concept_name, True)
+        future_article = executor.submit(function, concept_name, False)
+        result_videos = future_videos.result()
+        result_articles = future_article.result()
+        return {"cid": cid, "videos": result_videos, "articles": result_articles}

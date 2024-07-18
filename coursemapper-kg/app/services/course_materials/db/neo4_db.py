@@ -1794,7 +1794,43 @@ class NeoDataBase:
     ###########
     # boby024 #
     ###########
+    def get_top_n_concept_by_slide_id(self, slide_id: str, names: list = None, top_n=5):
+        '''
+            Get top n concept by slide ID and concept names
+        '''
+        concepts = []
+        if names:
+            with self.driver.session() as session:
+                logger.info("Get top n concept by slide ID and concept names")
+                concepts = session.run(
+                    '''
+                    MATCH p=(s: Slide)-[r: CONTAINS]->(c: Concept)
+                    WHERE s.sid = $slide_id
+                    RETURN ID(c) as id, c.cid as cid, c.name as name, c.weight as weight
+                    ORDER BY c.weight DESC
+                    LIMIT $top_n
+                    ''',
+                    slide_id=slide_id,
+                    top_n=top_n
+                ).data()
+        else:
+            with self.driver.session() as session:
+                        logger.info("Get top n concept by slide ID and concept names")
+                        concepts = session.run(
+                            '''
+                            MATCH p=(s: Slide)-[r: CONTAINS]->(c: Concept)
+                            WHERE s.sid = $slide_id AND c.name IN $names
+                            RETURN ID(c) as id, c.cid as cid, c.name as name, c.weight as weight
+                            ORDER BY c.weight DESC
+                            LIMIT $top_n
+                            ''',
+                            slide_id=slide_id,
+                            names=names,
+                            top_n=top_n
+                        ).data()
 
+        return concepts
+    
     def create_concept_modified(self, cid: str):
         '''
             Creating node 'Concept_modified'
@@ -2323,6 +2359,8 @@ class NeoDataBase:
         return result
 
     
+
+
     def get_concepts_mids_sliders_numbers_for_user_resources_saved(self, data: dict):
         '''
             Getting Parms Data to Filtering User Resource Saved: Concepts, learning material and Slider Numbers
