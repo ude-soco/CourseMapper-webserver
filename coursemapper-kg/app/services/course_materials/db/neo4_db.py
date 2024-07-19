@@ -1801,13 +1801,13 @@ class NeoDataBase:
     # boby024 #
     ###########
 
-    def create_or_update_video_resource(tx, node, recommendation_type='', update=False):
+    def create_or_update_video_resource(tx, node, recommendation_type='', update_ranking_attribute=False):
         '''
             Creating Resource YouTube
             r.similarity_score = $similarity_score,
         '''
         logger.info("Creating youtube resource '%s'" % node["id"])
-        if update:
+        if update_ranking_attribute:
             query = '''
                 MERGE (r:Resource:Video {uri: $uri})
                 ON CREATE SET r.rid = $rid, 
@@ -1818,7 +1818,6 @@ class NeoDataBase:
                 r.publish_time = $pub_time, r.channel_title = $channel_title, r.like_count = $like_count,
                 r.helpful_count = $helpful_count, r.not_helpful_count = $not_helpful_count, r.saves_count = $saves_count, 
                 r.updated_at = $updated_at
-
                 ON MATCH SET 
                 r.title = $title, r.description = $description, r.description_full = $description_full, 
                 r.keyphrases = $keyphrases, r.text = $text, r.document_embedding = $document_embedding, 
@@ -1837,9 +1836,27 @@ class NeoDataBase:
                 r.keyphrase_embedding = $keyphrase_embedding, 
                 r.thumbnail = $thumbnail, r.duration = $duration, r.views = $views, 
                 r.publish_time = $pub_time, r.channel_title = $channel_title, r.like_count = $like_count,
+                r.updated_at = $updated_at
+                ON MATCH SET 
+                r.title = $title, r.description = $description, r.description_full = $description_full, 
+                r.keyphrases = $keyphrases, r.text = $text, r.document_embedding = $document_embedding, 
+                r.keyphrase_embedding = $keyphrase_embedding, 
+                r.thumbnail = $thumbnail, r.duration = $duration, r.views = $views, 
+                r.publish_time = $pub_time, r.channel_title = $channel_title, r.like_count = $like_count,
+                r.updated_at = $updated_at
+            '''
+
+        tx.run(
+            '''
+                MERGE (r:Resource:Video {uri: $uri})
+                ON CREATE SET r.rid = $rid, 
+                r.title = $title, r.description = $description, r.description_full = $description_full, 
+                r.keyphrases = $keyphrases, r.text = $text, r.document_embedding = $document_embedding, 
+                r.keyphrase_embedding = $keyphrase_embedding, 
+                r.thumbnail = $thumbnail, r.duration = $duration, r.views = $views, 
+                r.publish_time = $pub_time, r.channel_title = $channel_title, r.like_count = $like_count,
                 r.helpful_count = $helpful_count, r.not_helpful_count = $not_helpful_count, r.saves_count = $saves_count, 
                 r.updated_at = $updated_at
-
                 ON MATCH SET 
                 r.title = $title, r.description = $description, r.description_full = $description_full, 
                 r.keyphrases = $keyphrases, r.text = $text, r.document_embedding = $document_embedding, 
@@ -1848,10 +1865,7 @@ class NeoDataBase:
                 r.publish_time = $pub_time, r.channel_title = $channel_title, r.like_count = $like_count,
                 r.helpful_count = $helpful_count, r.not_helpful_count = $not_helpful_count, r.saves_count = $saves_count, 
                 r.updated_at = $updated_at
-            '''
-
-        tx.run(
-            query,
+            ''',
             rid=node["id"],
             uri="https://www.youtube.com/embed/%s?autoplay=1" % node["id"],
             title=node["title"],
@@ -1912,7 +1926,30 @@ class NeoDataBase:
             saves_count=node["saves_count"] if "saves_count" in node else 0,
             updated_at=node["updated_at"]
             )
-
+    
+    # def update_resource_node(self, resource, recommendation_type=""):
+    #     '''
+    #         Update Resource Node
+    #     '''
+    #     logger.info("Editing resource '%s'" % resource["id"])
+    #     with self.driver.session() as session:
+    #         session.run(
+    #             '''
+    #                 MATCH (b: Resource)
+    #                 WHERE b.rid = $rid 
+    #                 SET b.similarity_score = $similarity_score, b.views = $views, b.like_count = $like_count, 
+    #                     b.channel_title = $channel_title
+    #                 RETURN b
+    #             ''', 
+    #             rid=resource["id"],
+    #             views=resource["views"],
+    #             like_count=resource["like_count"],
+    #             channel_title=resource["channel_title"],
+    #             concepts=resource["keyphrases"] if "keyphrases" in resource.index else [],
+    #             similarity_score=resource[recommendation_type] if recommendation_type in resource.index else 0,
+    #             keyphrase_embedding=str(resource["keyphrase_embedding"] if "keyphrase_embedding" in resource.index else ""),
+    #             document_embedding=str(resource["document_embedding"] if "document_embedding" in resource.index else "")
+    #         )
 
     def get_top_n_concept_by_slide_id(self, slide_id: str, names: list = None, top_n=5):
         '''
