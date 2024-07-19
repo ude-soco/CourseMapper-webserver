@@ -564,7 +564,7 @@ class ResourceRecommenderService:
 
             # Store resources into Neo4j Database (by creating connection btw Resource and Concept_modified)
             for result in results:
-                self.db.store_resources(resources_dict=result, cid=result["cid"], recommendation_type=recommendation_type)
+                self.db.store_resources(resources_dict=result, cid=result["cid"], recommendation_type=recommendation_type_str)
             
             # Gather|Retrieve all resources crawled
             resources_new = self.db.retrieve_resources(concepts=concepts_to_be_crawled)
@@ -577,7 +577,7 @@ class ResourceRecommenderService:
                     "weighted_embedding_of_concept"
                 ]
             # slide_concepts = _slide[0]["s"]["concepts"]
-            slide_concepts_ = self.db.get_top_n_concept_by_slide_id(slide_id=body["slide_id"], top_n=5)
+            slide_concepts_ = self.db.get_top_n_concept_by_slide_id(slide_id=body["slide_id"]) # , top_n=5)
 
             # Store Concepts into Neo4j Database
             rec_params["concepts"] = slide_concepts_
@@ -599,7 +599,7 @@ class ResourceRecommenderService:
             
                 # Store resources into Neo4j Database (by creating connection btw Resource and Concept_modified)
                 for result in results:
-                    self.db.store_resources(resources_dict=result, cid=result["cid"], recommendation_type=recommendation_type)
+                    self.db.store_resources(resources_dict=result, cid=result["cid"], recommendation_type=recommendation_type_str)
 
             # Gather|Retrieve all resources crawled
             resources = self.db.retrieve_resources(concepts=slide_concepts_)

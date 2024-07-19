@@ -16,6 +16,11 @@ import logging
 logger = LOG(name=__name__, level=logging.DEBUG)
 
 
+def insert_dict_if_not_exists_by_id(lst: list, new_dict: dict, key: str):
+    if not any(d.get(key) == new_dict.get(key) for d in lst):
+        lst.append(new_dict)
+    return lst
+
 def save_and_get_concepts_modified(db: NeoDataBase, rec_params, top_n=5, user_embedding=False, understood_list=[], non_understood_list =[]):
     '''
         rec_params: {
