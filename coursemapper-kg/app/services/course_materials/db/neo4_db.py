@@ -12,6 +12,8 @@ import sys
 #     os.environ['PYTHONHASHSEED'] = '0'
 #     os.execv(sys.executable, [sys.executable] + sys.argv)
 
+from datetime import datetime
+
 logger = LOG(name=__name__, level=logging.DEBUG)
 
 
@@ -1806,15 +1808,18 @@ class NeoDataBase:
         logger.info("Creating youtube resource '%s'" % node["id"])
 
         tx.run(
-            """
-                MERGE (c:Resource:Video {rid: $rid, uri: $uri, title: $title, 
-                description: $description, description_full: $description_full, keyphrases: $keyphrases, text: $text, document_embedding: $document_embedding, 
-                keyphrase_embedding: $keyphrase_embedding, similarity_score: $similarity_score, thumbnail: $thumbnail, 
-                duration: $duration, views: $views, publish_time: $pub_time, helpful_count: $helpful_count, 
-                not_helpful_count: $not_helpful_count, saves_count: $saves_count, like_count: $like_count, channel_title: $channel_title,
-                created_at: $created_at, updated_at: $updated_at
-            })
-            """,
+            '''
+                MERGE (r:Resource:Video {uri: $uri})
+                ON CREATE SET r.rid = $rid, 
+                r.title = $title, r.description = $description, r.description_full = $description_full, 
+                r.keyphrases = $keyphrases, r.text = $text, r.document_embedding = $document_embedding, 
+                r.keyphrase_embedding = $keyphrase_embedding, r.similarity_score = $similarity_score, 
+                r.thumbnail = $thumbnail, r.duration = $duration, r.views = $views, 
+                r.publish_time = $pub_time, r.helpful_count = $helpful_count, 
+                r.not_helpful_count = $not_helpful_count, r.saves_count = $saves_count, 
+                r.like_count = $like_count, r.channel_title = $channel_title, 
+                r.updated_at = $updated_at
+            ''',
             rid=node["id"],
             uri="https://www.youtube.com/embed/%s?autoplay=1" % node["id"],
             title=node["title"],
@@ -1834,16 +1839,27 @@ class NeoDataBase:
             saves_count=0,
             like_count=node["like_count"],
             channel_title=node["channel_title"],
-            created_at=node["created_at"],
-            updated_at=node["updated_at"]
+            updated_at=datetime.now().isoformat()
         )
 
     def create_or_update_wikipedia_resource(tx, node, recommendation_type=''):
-        """
-        """
+        '''
+            Creating Resource Wikipedia
+        '''
         logger.info(
             "Creating wikipedia resource '%s'" % node["id"])
         tx.run(
+            '''
+                MERGE (r:Resource:Article {uri: $uri})
+                ON CREATE SET r.rid = $rid,
+                title = $title, abstract = $abstract, keyphrases = $keyphrases, 
+                text = $text, document_embedding = $document_embedding, 
+                keyphrase_embedding = $keyphrase_embedding, similarity_score = $similarity_score, 
+                helpful_count = $helpful_count, not_helpful_count = $not_helpful_count, 
+                saves_count = $saves_count,
+                updated_at = $updated_at
+            '''
+
             """MERGE (c:Resource:Article {rid: $rid, uri: $uri, 
             title: $title, abstract:$abstract, keyphrases: $keyphrases, text: $text, document_embedding: $document_embedding, 
             keyphrase_embedding: $keyphrase_embedding, similarity_score: $similarity_score, helpful_count: $helpful_count, 

@@ -376,7 +376,7 @@ def check_and_get_resources_with_concepts(db: NeoDataBase, concepts: list):
     '''
         Check if concepts already exist and connected to any resources in Neo4j Database
         If resources exist, check based on:
-        created_at and updated_at (it's not more than one week old) 
+        updated_at (it's not more than one week old) 
     '''
     concepts_having_resources = []
     concepts_not_having_resources = []

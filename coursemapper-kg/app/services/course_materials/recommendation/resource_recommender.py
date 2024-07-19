@@ -563,10 +563,8 @@ class ResourceRecommenderService:
                 results.append(rrh.parallel_crawling_resources(self.recommender.canditate_selection, concept["name"], concept["cid"]))
 
             # Store resources into Neo4j Database (by creating connection btw Resource and Concept_modified)
-            create_at = datetime.now().isoformat()
-            updated_at = datetime.now().isoformat()
             for result in results:
-                self.db.store_resources(resources_dict=result, cid=result["cid"])
+                self.db.store_resources(resources_dict=result, cid=result["cid"], recommendation_type=recommendation_type)
             
             # Gather|Retrieve all resources crawled
             resources_new = self.db.retrieve_resources(concepts=concepts_to_be_crawled)
@@ -601,7 +599,7 @@ class ResourceRecommenderService:
             
                 # Store resources into Neo4j Database (by creating connection btw Resource and Concept_modified)
                 for result in results:
-                    self.db.store_resources(resources_dict=result, cid=result["cid"])
+                    self.db.store_resources(resources_dict=result, cid=result["cid"], recommendation_type=recommendation_type)
 
             # Gather|Retrieve all resources crawled
             resources = self.db.retrieve_resources(concepts=slide_concepts_)
