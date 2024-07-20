@@ -2080,18 +2080,34 @@ class NeoDataBase:
         logger.info("Saving or Removing: User Resource")
         tx = self.driver.session()
 
-        # Add rating
-        tx.run(
-                '''
-                    MERGE (a:User {uid: $user_id})-[r:HAS_RATED {user_id: $user_id, rid: $rid, value: $value}]->(b:Resource {rid: $rid})
-                    ON CREATE SET r.cids = $cids, r.value = $value
-                    ON MATCH SET r.cids = apoc.coll.toSet(apoc.coll.union(r.cids, $cids)), r.value = $value
-                ''',
-                user_id=rating["user_id"],
-                rid=rating["rid"],
-                value=rating["value"],
-                cids=rating["cids"]
-            )
+        # Add or Update rating
+        if rating["value"] != "HELPFUL":
+            tx.run(
+                    '''
+                        MATCH (a:User {uid: $user_id}), (b:Resource {rid: $rid})
+                        MERGE (a)-[r:HAS_RATED {user_id: $user_id, rid: $rid}]->(b)
+                        ON CREATE SET r.cids = $cids
+                        ON MATCH SET r.user_id = $user_id, r.rid = $rid, r.value = $value, r.cids = $cids
+                    ''',
+                    user_id=rating["user_id"],
+                    rid=rating["rid"],
+                    value=rating["value"],
+                    cids=[]
+                )
+        else:
+            # apoc.coll.toSet(apoc.coll.union(r.cids, $cids))
+            tx.run(
+                    '''
+                        MATCH (a:User {uid: $user_id}), (b:Resource {rid: $rid})
+                        MERGE (a)-[r:HAS_RATED {user_id: $user_id, rid: $rid}]->(b)
+                        ON CREATE SET r.cids = $cids
+                        ON MATCH SET r.user_id = $user_id, r.rid = $rid, r.value = $value, r.cids = r.cids + [x IN $cids WHERE NOT x IN r.cids]
+                    ''',
+                    user_id=rating["user_id"],
+                    rid=rating["rid"],
+                    value=rating["value"],
+                    cids=rating["cids"]
+                )
 
         # Update Resources: helpful_count and not_helpful_count
         count_helpful_count = tx.run(
