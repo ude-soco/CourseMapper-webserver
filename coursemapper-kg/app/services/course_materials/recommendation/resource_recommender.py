@@ -214,6 +214,183 @@ class ResourceRecommenderService:
         resources = self.db.filter_user_resources_saved_by(data)
         return resources
 
+    def process_recommandation_steps(self, db: NeoDataBase, rec_params: dict, factor_weights: dict, user_embedding="", slide_weighted_avg_embedding_of_concepts="", slide_document_embedding=""):
+        results = []
+        # Check if concepts already exist and connected to any resources in Neo4j Database
+        concepts_to_be_crawled = []
+        concepts_having_resources, concepts_not_having_resources, resources_found = rrh.check_and_get_resources_with_concepts(db=self.db, concepts=rec_params["concepts"])
+        if len(concepts_not_having_resources) > 0:
+            concepts_to_be_crawled = concepts_not_having_resources
+        else:
+            concepts_to_be_crawled = rec_params["concepts"]
+
+        # Crawl resources from YouTube (from each dnu) and Wikipedia API
+        for concept in concepts_to_be_crawled: #i in range(len(not_understood_concept_list)):
+            results.append(rrh.parallel_crawling_resources(self.recommender.canditate_selection, concept["name"], concept["cid"]))
+
+        # Store resources into Neo4j Database (by creating connection btw Resource and Concept_modified)
+        for result in results:
+            self.db.store_resources(resources_dict=result, cid=result["cid"], recommendation_type=rec_params["recommendation_type"])
+        
+        # Gather|Retrieve all resources crawled
+        resources_new = self.db.retrieve_resources(concepts=concepts_to_be_crawled)
+        resources = resources_found + resources_new
+
+        # process with the recommendation algorithm selected
+        if len(concepts_having_resources) != len(rec_params["concepts"]):
+            data_df = pd.DataFrame(resources)
+            resources_df = self.recommender.recommend(
+                slide_weighted_avg_embedding_of_concepts=slide_weighted_avg_embedding_of_concepts,
+                slide_document_embedding=slide_document_embedding,
+                user_embedding=user_embedding,
+                top_n=10,
+                recommendation_type=rec_params["recommendation_type"],
+                data=data_df
+            )
+            resources = resources_df.to_dict(orient='records')
+
+        # Apply ranking algorithm on the resources
+        resources_dict = rrh.rank_resources(resources=resources, weights=factor_weights, top_n=10)
+
+        # Provide only the top 10 of the resources
+        result_final = {"recommendation_type": rec_params["recommendation_type"], "concepts": rec_params["concepts"], "nodes": resources_dict }
+        return result_final
+
+    def _get_resources(self, data_rec_params: dict, data_default: dict=None, top_n = 5):
+        '''
+            Save cro_form, Crawl Youtube and Wikipedia API and then Store Resources
+            Result: { "recommendation_type": "", "concepts": [], "nodes": {"articles": [], "videos": []} }
+        '''
+        body = rrh.rec_params_request_mapped(data_rec_params, data_default)
+        result = { "recommendation_type": "", "concepts": [], "nodes": {"articles": [], "videos": []} }
+
+        # Map recommendation type to enum values
+        recommendation_type_str = body["rec_params"]["recommendation_type"]
+        recommendation_type = RecommendationType.map_type(body["rec_params"]["recommendation_type"])
+
+        check_message = self.check_parameters(
+                    slide_id=body["slide_id"],
+                    material_id=body["material_id"],
+                    non_understood_concept_ids=body["non_understood_concept_ids"],
+                    understood_concept_ids=body["understood_concept_ids"],
+                    new_concept_ids=body["new_concept_ids"],
+                    recommendation_type=recommendation_type_str
+                )
+        if check_message != "":
+            return result
+        
+        user = {"name": body["username"], "id": body["user_id"] , "user_email": body["user_email"] }
+        _slide = None
+        self.recommender = Recommender()
+        results = []
+        user_embedding = ""
+        slide_document_embedding = ""
+        slide_weighted_avg_embedding_of_concepts = ""
+
+        if recommendation_type in [ RecommendationType.PKG_BASED_DOCUMENT_VARIANT, RecommendationType.PKG_BASED_KEYPHRASE_VARIANT ]:
+            # Only take 5 concepts with the higher weight
+            rec_params = body["rec_params"]
+            rec_params["concepts"] = rrh.get_top_n_concepts(rec_params["concepts"])
+
+            # Store Concepts into Neo4j Database
+            clu = rrh.save_and_get_concepts_modified( rec_params=rec_params, top_n=5, 
+                                                      user_embedding=True, 
+                                                      understood_list=body["understood_concept_ids"], 
+                                                      non_understood_list=body["non_understood_concept_ids"]
+                                                    )
+            rec_params["concepts"] = clu["concepts"]
+            user_embedding = clu("user_embedding")
+
+            # Check if concepts already exist and connected to any resources in Neo4j Database
+            concepts_to_be_crawled = []
+            concepts_having_resources, concepts_not_having_resources, resources_found = rrh.check_and_get_resources_with_concepts(db=self.db, concepts=rec_params["concepts"])
+            if len(concepts_not_having_resources) > 0:
+                concepts_to_be_crawled = concepts_not_having_resources
+            else:
+                concepts_to_be_crawled = rec_params["concepts"]
+
+            # Crawl resources from YouTube (from each dnu) and Wikipedia API
+            for concept in concepts_to_be_crawled: #i in range(len(not_understood_concept_list)):
+                results.append(rrh.parallel_crawling_resources(self.recommender.canditate_selection, concept["name"], concept["cid"]))
+
+            # Store resources into Neo4j Database (by creating connection btw Resource and Concept_modified)
+            for result in results:
+                self.db.store_resources(resources_dict=result, cid=result["cid"], recommendation_type=recommendation_type_str)
+            
+            # Gather|Retrieve all resources crawled
+            resources_new = self.db.retrieve_resources(concepts=concepts_to_be_crawled)
+            resources = resources_found + resources_new
+
+        elif recommendation_type in [ RecommendationType.CONTENT_BASED_DOCUMENT_VARIANT, RecommendationType.CONTENT_BASED_KEYPHRASE_VARIANT ]:
+            _slide = self.db.get_slide(body["slide_id"])
+            slide_document_embedding = _slide[0]["s"]["initial_embedding"]
+            slide_weighted_avg_embedding_of_concepts = _slide[0]["s"][
+                    "weighted_embedding_of_concept"
+                ]
+            # slide_concepts = _slide[0]["s"]["concepts"]
+            slide_concepts_ = self.db.get_top_n_concept_by_slide_id(slide_id=body["slide_id"]) # , top_n=5)
+
+            # Store Concepts into Neo4j Database
+            rec_params["concepts"] = slide_concepts_
+            clu = rrh.save_and_get_concepts_modified( rec_params=rec_params, top_n=len(slide_concepts_), 
+                                                      user_embedding=False, 
+                                                      understood_list=[], 
+                                                      non_understood_list=[]
+                                                    )
+            rec_params["concepts"] = clu["concepts"]
+
+            # Check if concepts already exist and connected to any resources in Neo4j Database
+            concepts_having_resources, concepts_not_having_resources, resources_found = rrh.check_and_get_resources_with_concepts(db=self.db, concepts=slide_concepts_)
+            if len(concepts_not_having_resources) > 0:
+                concepts_to_be_crawled = concepts_not_having_resources
+            else:
+                concepts_to_be_crawled = rec_params["concepts"]
+
+            # Crawl resources from YouTube (from each dnu) and Wikipedia API
+            for slide_concept in concepts_to_be_crawled:
+                results.append(rrh.parallel_crawling_resources(self.recommender.canditate_selection, slide_concept["name"], slide_concept["cid"]))
+        
+            # Store resources into Neo4j Database (by creating connection btw Resource and Concept_modified)
+            for result in results:
+                self.db.store_resources(resources_dict=result, cid=result["cid"], recommendation_type=recommendation_type_str)
+
+            # Gather|Retrieve all resources crawled
+            resources_new = self.db.retrieve_resources(concepts=concepts_to_be_crawled)
+            resources = resources_found + resources_new
+
+        # process with the recommendation algorithm selected
+        if len(concepts_having_resources) != len(rec_params["concepts"]):
+            data_df = pd.DataFrame(resources)
+            resources_df = self.recommender.recommend(
+                slide_weighted_avg_embedding_of_concepts=slide_weighted_avg_embedding_of_concepts,
+                slide_document_embedding=slide_document_embedding,
+                user_embedding=user_embedding,
+                top_n=10,
+                recommendation_type=recommendation_type,
+                data=data_df
+            )
+            resources = resources_df.to_dict(orient='records')
+
+        # Apply ranking algorithm on the resources
+        factor_weights = rrh.build_factor_weights(body["rec_params"]["factor_weights"]["weights"])
+        result = rrh.rank_resources(resources=resources, weights=factor_weights, top_n=10)
+
+        # Provide only the top 10 of the resources
+        result_final = {"recommendation_type": recommendation_type_str, "concepts": rec_params["concepts"], "nodes": result }
+
+        result = self.process_recommandation_steps(
+            db=self.db,
+            rec_params=rec_params,
+            factor_weights=factor_weights,
+            user_embedding=user_embedding,
+            slide_weighted_avg_embedding_of_concepts=slide_weighted_avg_embedding_of_concepts,
+            slide_document_embedding=slide_document_embedding,
+        )
+        return result
+
+
+
+
     def crawl_resources(self, recommendation_type, user_id, material_id, _slide, user_embedding, concepts, concept_ids, not_understood_concept_list):
         """
             Saving resources after crawling and proceeding with algorithms
@@ -504,126 +681,6 @@ class ResourceRecommenderService:
         # "count": {"videos": len(result["videos"]), "articles": len(result["articles"])} 
 
         return result
-
-    def _get_resources(self, data_rec_params: dict, data_default: dict=None, top_n = 5):
-        '''
-            Save cro_form, Crawl Youtube and Wikipedia API and then Store Resources
-            Result: { "recommendation_type": "", "concepts": [], "nodes": {"articles": [], "videos": []} }
-        '''
-        body = rrh.rec_params_request_mapped(data_rec_params, data_default)
-        result = { "recommendation_type": "", "concepts": [], "nodes": {"articles": [], "videos": []} }
-
-        # Map recommendation type to enum values
-        recommendation_type_str = body["rec_params"]["recommendation_type"]
-        recommendation_type = RecommendationType.map_type(body["rec_params"]["recommendation_type"])
-
-        check_message = self.check_parameters(
-                    slide_id=body["slide_id"],
-                    material_id=body["material_id"],
-                    non_understood_concept_ids=body["non_understood_concept_ids"],
-                    understood_concept_ids=body["understood_concept_ids"],
-                    new_concept_ids=body["new_concept_ids"],
-                    recommendation_type=recommendation_type_str
-                )
-        if check_message != "":
-            return result
-        
-        user = {"name": body["username"], "id": body["user_id"] , "user_email": body["user_email"] }
-        _slide = None
-        self.recommender = Recommender()
-        results = []
-        user_embedding = ""
-        slide_document_embedding = ""
-        slide_weighted_avg_embedding_of_concepts = ""
-
-        if recommendation_type in [ RecommendationType.PKG_BASED_DOCUMENT_VARIANT, RecommendationType.PKG_BASED_KEYPHRASE_VARIANT ]:
-            # Only take 5 concepts with the higher weight
-            rec_params = body["rec_params"]
-            rec_params["concepts"] = rrh.get_top_n_concepts(rec_params["concepts"])
-
-            # Store Concepts into Neo4j Database
-            clu = rrh.save_and_get_concepts_modified( rec_params=rec_params, top_n=5, 
-                                                      user_embedding=True, 
-                                                      understood_list=body["understood_concept_ids"], 
-                                                      non_understood_list=body["non_understood_concept_ids"]
-                                                    )
-            rec_params["concepts"] = clu["concepts"]
-            user_embedding = clu("user_embedding")
-
-            # Check if concepts already exist and connected to any resources in Neo4j Database
-            concepts_to_be_crawled = []
-            concepts_having_resources, concepts_not_having_resources, resources_found = rrh.check_and_get_resources_with_concepts(db=self.db, concepts=rec_params["concepts"])
-            if len(concepts_not_having_resources) > 0:
-                concepts_to_be_crawled = concepts_not_having_resources
-            else:
-                concepts_to_be_crawled = rec_params["concepts"]
-
-            # Crawl resources from YouTube (from each dnu) and Wikipedia API
-            for concept in concepts_to_be_crawled: #i in range(len(not_understood_concept_list)):
-                results.append(rrh.parallel_crawling_resources(self.recommender.canditate_selection, concept["name"], concept["cid"]))
-
-            # Store resources into Neo4j Database (by creating connection btw Resource and Concept_modified)
-            for result in results:
-                self.db.store_resources(resources_dict=result, cid=result["cid"], recommendation_type=recommendation_type_str)
-            
-            # Gather|Retrieve all resources crawled
-            resources_new = self.db.retrieve_resources(concepts=concepts_to_be_crawled)
-            resources = resources_found + resources_new
-
-        elif recommendation_type in [ RecommendationType.CONTENT_BASED_DOCUMENT_VARIANT, RecommendationType.CONTENT_BASED_KEYPHRASE_VARIANT ]:
-            _slide = self.db.get_slide(body["slide_id"])
-            slide_document_embedding = _slide[0]["s"]["initial_embedding"]
-            slide_weighted_avg_embedding_of_concepts = _slide[0]["s"][
-                    "weighted_embedding_of_concept"
-                ]
-            # slide_concepts = _slide[0]["s"]["concepts"]
-            slide_concepts_ = self.db.get_top_n_concept_by_slide_id(slide_id=body["slide_id"]) # , top_n=5)
-
-            # Store Concepts into Neo4j Database
-            rec_params["concepts"] = slide_concepts_
-            clu = rrh.save_and_get_concepts_modified( rec_params=rec_params, top_n=len(slide_concepts_), 
-                                                      user_embedding=False, 
-                                                      understood_list=[], 
-                                                      non_understood_list=[]
-                                                    )
-            rec_params["concepts"] = clu["concepts"]
-
-            # Check if concepts already exist and connected to any resources in Neo4j Database
-            concepts_having_resources, concepts_not_having_resources, resources_found = rrh.check_and_get_resources_with_concepts(db=self.db, concepts=slide_concepts_)
-            if len(resources_found) > 0:
-                resources = resources_found
-            else:
-                # Crawl resources from YouTube (from each dnu) and Wikipedia API
-                for slide_concept in slide_concepts_:
-                    results.append(rrh.parallel_crawling_resources(self.recommender.canditate_selection, slide_concept["name"], slide_concept["cid"]))
-            
-                # Store resources into Neo4j Database (by creating connection btw Resource and Concept_modified)
-                for result in results:
-                    self.db.store_resources(resources_dict=result, cid=result["cid"], recommendation_type=recommendation_type_str)
-
-            # Gather|Retrieve all resources crawled
-            resources = self.db.retrieve_resources(concepts=slide_concepts_)
-
-        # process with the recommendation algorithm selected
-        if len(concepts_having_resources) != len(rec_params["concepts"]):
-            data_df = pd.DataFrame(resources)
-            resources_df = self.recommender.recommend(
-                slide_weighted_avg_embedding_of_concepts=slide_weighted_avg_embedding_of_concepts,
-                slide_document_embedding=slide_document_embedding,
-                user_embedding=user_embedding,
-                top_n=10,
-                recommendation_type=recommendation_type,
-                data=data_df
-            )
-            resources = resources_df.to_dict(orient='records')
-
-        # Apply ranking algorithm on the resources
-        factor_weights = rrh.build_factor_weights(body["rec_params"]["factor_weights"]["weights"])
-        result = rrh.rank_resources(resources=resources, weights=factor_weights, top_n=10)
-
-        # Provide only the top 10 of the resources
-        result_final = {"recommendation_type": recommendation_type_str, "concepts": rec_params["concepts"], "nodes": result }
-        return result_final
 
 
 def get_serialized_resource_data(resources, concepts, relations):
