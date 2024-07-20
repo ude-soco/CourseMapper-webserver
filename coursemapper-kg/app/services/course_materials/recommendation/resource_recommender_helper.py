@@ -240,7 +240,7 @@ def remove_duplicates_from_resources(dict_list: list):
             unique_dicts.append(d)
     return unique_dicts
 
-def rank_resources(resources: list, weights: dict = None, ratings: list = None, top_n=10):
+def rank_resources(resources: list, weights: dict = None, ratings: list = None, top_n_resources=10):
     """
         Step 1: Remove duplicates if exist
         Step 2: Ranking/Sorting Logic for Resources
@@ -273,8 +273,8 @@ def rank_resources(resources: list, weights: dict = None, ratings: list = None, 
         pass
 
     return {
-        "articles": resources_articles[: top_n],
-        "videos": resources_videos[: top_n]
+        "articles": resources_articles[: top_n_resources],
+        "videos": resources_videos[: top_n_resources]
     }
 
 def rec_params_request_mapped(data_rec_params: dict, data_default: dict=None):
