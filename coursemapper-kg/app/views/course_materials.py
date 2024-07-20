@@ -122,19 +122,18 @@ def get_resources():
 
     data_default = data["default"]
     data_rec_params = data["rec_params"]
+    
+    resource_recommender_service = ResourceRecommenderService()
+    result = resource_recommender_service._get_resources(data_default=data_default, data_rec_params=data_rec_params)
 
-    """
-        resource_recommender_service = ResourceRecommenderService()
-        result = resource_recommender_service._get_resources(data_default=data_default, data_rec_params=data_rec_params)
+    if result == None:
+        return jsonify({"msg": "Internal Server Error"}), 404
+    return jsonify(result), 200
 
-        if result == None:
-            return jsonify({"msg": "Internal Server Error"}), 404
-        return jsonify(result), 200
-    """
-    n = cro_get_resources_pagination()["nodes"]
-    return jsonify({ "recommendation_type": "1", "concepts": data_rec_params["concepts"], 
-                     "nodes": {"articles": n["articles"]["content"], "videos": n["videos"]["content"]}
-                }), 200
+    # n = cro_get_resources_pagination()["nodes"]
+    # return jsonify({ "recommendation_type": "1", "concepts": data_rec_params["concepts"], 
+    #                  "nodes": {"articles": n["articles"]["content"], "videos": n["videos"]["content"]}
+    #             }), 200
 
 @course_materials.route("/get_concepts", methods=["POST"])
 def get_concepts():

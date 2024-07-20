@@ -301,7 +301,8 @@ class ResourceRecommenderService:
             rec_params["concepts"] = rrh.get_top_n_concepts(rec_params["concepts"])
 
             # Store Concepts into Neo4j Database
-            clu = rrh.save_and_get_concepts_modified( rec_params=rec_params, top_n=5, 
+            clu = rrh.save_and_get_concepts_modified( db=self.db,
+                                                      rec_params=rec_params, top_n=5, 
                                                       user_embedding=True, 
                                                       understood_list=body["understood_concept_ids"], 
                                                       non_understood_list=body["non_understood_concept_ids"]
