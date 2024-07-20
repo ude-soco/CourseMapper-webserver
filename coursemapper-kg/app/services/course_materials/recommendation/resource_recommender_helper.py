@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 from dateutil.parser import parse as date_parse
 import numpy as np
 from sklearn.preprocessing import normalize as normalize_sklearn, MinMaxScaler as MinMaxScaler_sklearn
@@ -381,8 +381,11 @@ def check_and_get_resources_with_concepts(db: NeoDataBase, concepts: list):
     '''
         Check if concepts already exist and connected to any resources in Neo4j Database
         If resources exist, check based on:
-        updated_at (it's not more than one week old) 
+        updated_at: it's not more than a given time (one week old)
+        default time = 14 days
     '''
+    current_time = datetime.now()
+
     concepts_having_resources = []
     concepts_not_having_resources = []
     resources_found = []
@@ -394,20 +397,19 @@ def check_and_get_resources_with_concepts(db: NeoDataBase, concepts: list):
             if len(resourse_btw) == 0:
                 concepts_not_having_resources.append(concept)
             else:
-                resources_found.append(resourse_btw)
+                # check the attribute 'updated_at' <= the given time
+                for resource in resourse_btw:
+                    # Parse the given ISO time string
+                    given_time = datetime.fromisoformat(resource["updated_at"])
+                    time_difference = current_time - given_time
+                    if time_difference <= timedelta(days=14):
+                        resources_found.append(resource)
+
+                # resources_found += resourse_btw
                 concepts_having_resources.append(concept)
 
     return concepts_having_resources, concepts_not_having_resources, resources_found
 
-# def fetch_all_urls(urls):
-#     with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
-#         results = list(executor.map(fetch_url, urls))
-#     return results
-
-# def parallel_crawling_resources2(function, concept_name: str, cid: str):
-#     result_videos = function(concept_name, True)
-#     result_articles = function(concept_name, False)
-#     return {"cid": cid, "videos": result_videos, "articles": result_articles}
 
 def parallel_crawling_resources(function, concept_name: str, cid: str):
     '''
@@ -420,3 +422,9 @@ def parallel_crawling_resources(function, concept_name: str, cid: str):
         result_videos = future_videos.result()
         result_articles = future_article.result()
         return {"cid": cid, "videos": result_videos, "articles": result_articles}
+
+
+# def parallel_crawling_resources2(function, concept_name: str, cid: str):
+#     result_videos = function(concept_name, True)
+#     result_articles = function(concept_name, False)
+#     return {"cid": cid, "videos": result_videos, "articles": result_articles}
