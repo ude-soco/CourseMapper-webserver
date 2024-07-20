@@ -262,7 +262,7 @@ class ResourceRecommenderService:
             resources = resources_df.to_dict(orient='records')
 
         # Apply ranking algorithm on the resources
-        resources_dict = rrh.rank_resources(resources=resources, weights=factor_weights, top_n_resources=10)
+        resources_dict = rrh.rank_resources(resources=resources, weights=factor_weights, top_n_resources=top_n_resources)
 
         # Provide only the top 10 of the resources
         result_final = {"recommendation_type": rec_params["recommendation_type"], "concepts": rec_params["concepts"], "nodes": resources_dict }

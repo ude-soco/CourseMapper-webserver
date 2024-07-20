@@ -2259,25 +2259,25 @@ class NeoDataBase:
             tx.run(
                     '''
                         MATCH (a:User {uid: $user_id}), (b:Resource {rid: $rid})
-                        MERGE (a)-[r:HAS_SAVED {user_id: $user_id, mid: $mid, slider_number: $slider_number, cid: $cid, rid: $rid}]->(b)
+                        MERGE (a)-[r:HAS_SAVED {user_id: $user_id, mid: $mid, slider_number: $slider_number, rid: $rid}]->(b)
                     ''',
                     user_id=data["user_id"],
                     mid=data["mid"],
                     slider_number=data["slider_number"],
-                    cid=data["cid"],
+                    # cid=data["cid"],
                     rid=data["rid"]
                 )
             
         else:
             tx.run(
                     '''
-                        MATCH (a:User {uid: $user_id})-[r:HAS_SAVED {user_id: $user_id, mid: $mid, slider_number: $slider_number, cid: $cid, rid: $rid}]->(b:Resource {rid: $rid})
+                        MATCH (a:User {uid: $user_id})-[r:HAS_SAVED {user_id: $user_id, mid: $mid, slider_number: $slider_number, rid: $rid}]->(b:Resource {rid: $rid})
                         DELETE r
                     ''',
                     user_id=data["user_id"],
                     mid=data["mid"],
                     slider_number=data["slider_number"],
-                    cid=data["cid"],
+                    # cid=data["cid"],
                     rid=data["rid"]
                 )
         
