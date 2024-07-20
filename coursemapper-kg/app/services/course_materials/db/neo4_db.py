@@ -1801,7 +1801,7 @@ class NeoDataBase:
     # boby024 #
     ###########
 
-    def create_or_update_video_resource(tx, node: dict, recommendation_type='', update_embedding_values=False):
+    def create_or_update_video_resource(self, tx, node: dict, recommendation_type='', update_embedding_values=False):
         '''
             Creating Resource YouTube
             r.similarity_score = $similarity_score,
@@ -1860,7 +1860,7 @@ class NeoDataBase:
                 updated_at=datetime.now().isoformat()
             )
 
-    def create_or_update_wikipedia_resource(tx, node, recommendation_type='', update_embedding_values=False):
+    def create_or_update_wikipedia_resource(self, tx, node, recommendation_type='', update_embedding_values=False):
         '''
             Creating Resource Wikipedia
         '''
@@ -2081,66 +2081,17 @@ class NeoDataBase:
         tx = self.driver.session()
 
         # Add rating
-        """
-        for cid in rating["cids"]:
-            # check if the relationship exsts
-            # if relationship exists, then only update the value
-            # if not, then create new relationship
-
-            rs = tx.run(
-                    '''
-                        MATCH (a:User {uid: $user_id})-[r:HAS_RATED {user_id: $user_id, cid: $cid, rid: $rid, mid: $mid}]->(b:Resource {rid: $rid})
-                        SET r.value = $value
-                        RETURN r
-                    ''',
-                    user_id=rating["user_id"],
-                    cid=cid,
-                    value=rating["value"],
-                    rid=rating["rid"],
-                    mid=rating["mid"]
-                ).single()
-            
-
-            if rs is None:
-                tx.run(
-                    '''
-                        MATCH (a:User {uid: $user_id}), (b:Resource {rid: $rid})
-                        CREATE (a)-[r:HAS_RATED {user_id: $user_id, cid: $cid, value: $value, rid: $rid, mid: $mid}]->(b)
-                    ''',
-                    user_id=rating["user_id"],
-                    cid=cid,
-                    value=rating["value"],
-                    rid=rating["rid"],
-                    mid=rating["mid"]
-                )
-        """
-        
-        rating_found = tx.run(
-            '''
-                MATCH (a:User {uid: $user_id})-[r:HAS_RATED {user_id: $user_id, rid: $rid, mid: $mid}]->(b:Resource {rid: $rid})
-                WHERE apoc.coll.sort(n.cids) = apoc.coll.sort($cids)
-                SET r.value = $value
-                RETURN r
-            ''',
-            user_id=rating["user_id"],
-            cids=rating["cids"],
-            value=rating["value"],
-            rid=rating["rid"],
-            mid=rating["mid"]
-        )
-
-        if rating_found is None:
-            tx.run(
-                    '''
-                        MATCH (a:User {uid: $user_id}), (b:Resource {rid: $rid})
-                        CREATE (a)-[r:HAS_RATED {user_id: $user_id, cids: $cids, value: $value, rid: $rid, mid: $mid}]->(b)
-                    ''',
-                    user_id=rating["user_id"],
-                    cids=rating["cids"],
-                    value=rating["value"],
-                    rid=rating["rid"],
-                    mid=rating["mid"]
-                )
+        tx.run(
+                '''
+                    MERGE (a:User {uid: $user_id})-[r:HAS_RATED {user_id: $user_id, rid: $rid, value: $value}]->(b:Resource {rid: $rid})
+                    ON CREATE SET r.cids = $cids, r.value = $value
+                    ON MATCH SET r.cids = apoc.coll.toSet(apoc.coll.union(r.cids, $cids)), r.value = $value
+                ''',
+                user_id=rating["user_id"],
+                rid=rating["rid"],
+                value=rating["value"],
+                cids=rating["cids"]
+            )
 
         # Update Resources: helpful_count and not_helpful_count
         count_helpful_count = tx.run(
