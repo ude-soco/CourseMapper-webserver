@@ -151,7 +151,7 @@ class Recommender:
             "sentence-transformers/msmarco-distilbert-base-tas-b"
         )
 
-    def canditate_selection(self, query, video):
+    def canditate_selection(self, query, video, form="records"):
         data: pd.DataFrame
         top_n = 2 # 15
 
@@ -166,6 +166,8 @@ class Recommender:
             end_time = time.time()
             print("Get Articles Execution time: ", end_time - start_time, flush=True)
 
+        if form == "records":
+            return data.to_dict('records')
         return data
 
     def _get_data(self, recommendation_type, not_understood_concept_list, slide_concepts, video):

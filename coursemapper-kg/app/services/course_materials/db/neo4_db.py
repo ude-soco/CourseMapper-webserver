@@ -1816,9 +1816,9 @@ class NeoDataBase:
                     SET   r.keyphrases = $keyphrases, r.keyphrase_embedding = $keyphrase_embedding, r.document_embedding = $document_embedding 
                 ''',
                 rid=node["id"],
-                keyphrases=node["keyphrases"] if "keyphrases" in node.index else [],
-                keyphrase_embedding=str(node["keyphrase_embedding"] if "keyphrase_embedding" in node.index else ""),
-                document_embedding=str(node["document_embedding"] if "document_embedding" in node.index else ""),
+                keyphrases=node["keyphrases"] if "keyphrases" in node else [],
+                keyphrase_embedding=str(node["keyphrase_embedding"] if "keyphrase_embedding" in node else ""),
+                document_embedding=str(node["document_embedding"] if "document_embedding" in node else ""),
             )
         else:
             tx.run(
@@ -1849,9 +1849,9 @@ class NeoDataBase:
                 views=node["views"],
                 pub_time=node["publishTime"],
                 # similarity_score=node[recommendation_type] if recommendation_type in node.index else 0,
-                keyphrases=node["keyphrases"] if "keyphrases" in node.index else [],
-                keyphrase_embedding=str(node["keyphrase_embedding"] if "keyphrase_embedding" in node.index else ""),
-                document_embedding=str(node["document_embedding"] if "document_embedding" in node.index else ""),
+                keyphrases=node["keyphrases"] if "keyphrases" in node else [],
+                keyphrase_embedding=str(node["keyphrase_embedding"] if "keyphrase_embedding" in node else ""),
+                document_embedding=str(node["document_embedding"] if "document_embedding" in node else ""),
                 helpful_count=node["helpful_count"] if "helpful_count" in node else 0,
                 not_helpful_count=node["not_helpful_count"] if "not_helpful_count" in node else 0,
                 saves_count=node["saves_count"] if "saves_count" in node else 0,
@@ -1873,9 +1873,9 @@ class NeoDataBase:
                     SET   r.keyphrases = $keyphrases, r.keyphrase_embedding = $keyphrase_embedding, r.document_embedding = $document_embedding 
                 ''',
                 rid=node["id"],
-                keyphrases=node["keyphrases"] if "keyphrases" in node.index else [],
-                keyphrase_embedding=str(node["keyphrase_embedding"] if "keyphrase_embedding" in node.index else ""),
-                document_embedding=str(node["document_embedding"] if "document_embedding" in node.index else ""),
+                keyphrases=node["keyphrases"] if "keyphrases" in node else [],
+                keyphrase_embedding=str(node["keyphrase_embedding"] if "keyphrase_embedding" in node else ""),
+                document_embedding=str(node["document_embedding"] if "document_embedding" in node else ""),
             )
         else:
             tx.run(
@@ -1895,11 +1895,11 @@ class NeoDataBase:
                 uri=node["id"],
                 title=node["title"],
                 abstract=node["abstract"],
-                keyphrases=node["keyphrases"] if "keyphrases" in node.index else [],
+                keyphrases=node["keyphrases"] if "keyphrases" in node else [],
                 text=node["text"],
                 # similarity_score=node[recommendation_type] if recommendation_type in node.index else 0,
-                keyphrase_embedding=str(node["keyphrase_embedding"] if "keyphrase_embedding" in node.index else ""),
-                document_embedding=str(node["document_embedding"] if "document_embedding" in node.index else ""),
+                keyphrase_embedding=str(node["keyphrase_embedding"] if "keyphrase_embedding" in node else ""),
+                document_embedding=str(node["document_embedding"] if "document_embedding" in node else ""),
                 helpful_count=node["helpful_count"] if "helpful_count" in node else 0,
                 not_helpful_count=node["not_helpful_count"] if "not_helpful_count" in node else 0,
                 saves_count=node["saves_count"] if "saves_count" in node else 0,
@@ -2287,6 +2287,10 @@ class NeoDataBase:
             algorithm_model: (str) which algorithm was used for the recommendation
             content_type: video | article # currently not usued
         '''
+
+        def get_resource_primary_key(resource: dict):
+            return resource["rid"] if "rid" in resource else resource["id"]
+            
         logger.info("Store Resources")
         result = []
 
@@ -2295,12 +2299,12 @@ class NeoDataBase:
             if key == "videos":
                 for resource in resources:
                     self.create_or_update_video_resource(tx, resource, recommendation_type)
-                    self.update_rs_btw_resource_and_cm(rid=resource["rid"], cid=cid, action=True)
+                    self.update_rs_btw_resource_and_cm(rid=get_resource_primary_key(resource), cid=cid, action=True)
 
             elif key == "articles":
                 for resource in resources:
                     self.create_or_update_wikipedia_resource(tx, resource, recommendation_type)
-                    self.update_rs_btw_resource_and_cm(rid=resource["rid"], cid=cid, action=True)
+                    self.update_rs_btw_resource_and_cm(rid=get_resource_primary_key(resource), cid=cid, action=True)
 
     def retrieve_resources(self, concepts: dict):
         '''
@@ -2332,7 +2336,8 @@ class NeoDataBase:
                             COALESCE(toInteger(a.not_helpful_count), 0) AS not_helpful_count,
                             COALESCE(toInteger(a.bookmarked_count), 0) AS bookmarked_count,
                             COALESCE(toInteger(a.like_count), 0) AS like_count,
-                            a.channel_title as channel_title
+                            a.channel_title as channel_title,
+                            a.updated_at as updated_at
                 ''',
                 cids=cids
             ).data()
@@ -2356,7 +2361,8 @@ class NeoDataBase:
                     "similarity_score": resource["similarity_score"], # float(resource["similarity_score"]),
                     "keyphrases": resource["keyphrases"],
                     "text": resource["text"],
-                    "bookmarked_count": resource["bookmarked_count"]
+                    "bookmarked_count": resource["bookmarked_count"],
+                    "updated_at": resource["updated_at"]
                 }
 
                 if "Video" in r["labels"]:

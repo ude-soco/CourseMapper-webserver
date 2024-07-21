@@ -229,15 +229,16 @@ def calculate_factors_weights(category: int, resources: list, weights: dict = No
 
     return resources
 
-def remove_duplicates_from_resources(dict_list: list):
+def remove_duplicates_from_resources(dict_list: list, key: str="rid"):
     seen = set()
     unique_dicts = []
+    
     for d in dict_list:
-        # Convert dictionary to a tuple of its items
-        items = tuple(sorted(d.items()))
-        if items not in seen:
-            seen.add(items)
+        value = d[key]
+        if value not in seen:
+            seen.add(value)
             unique_dicts.append(d)
+    
     return unique_dicts
 
 def rank_resources(resources: list, weights: dict = None, ratings: list = None, top_n_resources=10):
@@ -389,27 +390,30 @@ def check_and_get_resources_with_concepts(db: NeoDataBase, concepts: list):
     concepts_having_resources = []
     concepts_not_having_resources = []
     resources_found = []
-    if len(concepts) == 0:
-        return resources_found
-    else:
-        for concept in concepts:
-            resourse_btw = db.retrieve_resources(concepts=[concept])
-            if len(resourse_btw) == 0:
-                concepts_not_having_resources.append(concept)
-            else:
-                # check the attribute 'updated_at' <= the given time
-                for resource in resourse_btw:
-                    # Parse the given ISO time string
-                    given_time = datetime.fromisoformat(resource["updated_at"])
-                    time_difference = current_time - given_time
-                    if time_difference <= timedelta(days=14):
-                        resources_found.append(resource)
+    resourse_btw = []
 
-                # resources_found += resourse_btw
-                concepts_having_resources.append(concept)
+    # if len(concepts) == 0:
+    #     return resources_found
+    # else:
 
+    for concept in concepts:
+        resourse_btw = db.retrieve_resources(concepts=[concept])
+
+        ## at least 5 | 10 resources
+        if len(resourse_btw) == 0: # len(resourse_btw) >= 5:
+            concepts_not_having_resources.append(concept)
+        else:
+            # resources_found += resourse_btw
+            concepts_having_resources.append(concept)
+
+            # check the attribute 'updated_at' <= the given time
+            for resource in resourse_btw:
+                # Parse the given ISO time string
+                given_time = datetime.fromisoformat(resource["updated_at"])
+                time_difference = current_time - given_time
+                if time_difference <= timedelta(days=14):
+                    resources_found.append(resource)
     return concepts_having_resources, concepts_not_having_resources, resources_found
-
 
 def parallel_crawling_resources(function, concept_name: str, cid: str):
     '''
@@ -417,8 +421,8 @@ def parallel_crawling_resources(function, concept_name: str, cid: str):
         canditate_selection from Class Recommender
     '''
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        future_videos = executor.submit(function, concept_name, True)
-        future_article = executor.submit(function, concept_name, False)
+        future_videos = executor.submit(function, concept_name, True, "records")
+        future_article = executor.submit(function, concept_name, False, "records")
         result_videos = future_videos.result()
         result_articles = future_article.result()
         return {"cid": cid, "videos": result_videos, "articles": result_articles}

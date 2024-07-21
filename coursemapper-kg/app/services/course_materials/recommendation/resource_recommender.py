@@ -222,9 +222,6 @@ class ResourceRecommenderService:
         ):
         results = []
         self.recommender = Recommender()
-        user_embedding = ""
-        slide_document_embedding = ""
-        slide_weighted_avg_embedding_of_concepts = ""
 
         # Check if concepts already exist and connected to any resources in Neo4j Database
         concepts_to_be_crawled = []
@@ -246,7 +243,9 @@ class ResourceRecommenderService:
         resources_new = self.db.retrieve_resources(concepts=concepts_to_be_crawled)
         if len(resources_found) > 0:
             resources = resources_found + resources_new
-        resources = rrh.remove_duplicates_from_resources(dict_list=resources)
+            resources = rrh.remove_duplicates_from_resources(dict_list=resources)
+        else:
+            resources = resources_new
 
         # process with the recommendation algorithm selected
         if len(concepts_having_resources) != len(rec_params["concepts"]):
@@ -294,6 +293,9 @@ class ResourceRecommenderService:
         
         user = {"name": body["username"], "id": body["user_id"] , "user_email": body["user_email"] }
         # _slide = None
+        user_embedding = ""
+        slide_document_embedding = ""
+        slide_weighted_avg_embedding_of_concepts = ""
    
         if recommendation_type in [ RecommendationType.PKG_BASED_DOCUMENT_VARIANT, RecommendationType.PKG_BASED_KEYPHRASE_VARIANT ]:
             # Only take 5 concepts with the higher weight
@@ -307,8 +309,9 @@ class ResourceRecommenderService:
                                                       understood_list=body["understood_concept_ids"], 
                                                       non_understood_list=body["non_understood_concept_ids"]
                                                     )
+
             rec_params["concepts"] = clu["concepts"]
-            user_embedding = clu("user_embedding")
+            user_embedding = clu.get("user_embedding")
 
         elif recommendation_type in [ RecommendationType.CONTENT_BASED_DOCUMENT_VARIANT, RecommendationType.CONTENT_BASED_KEYPHRASE_VARIANT ]:
             _slide = self.db.get_slide(body["slide_id"])
