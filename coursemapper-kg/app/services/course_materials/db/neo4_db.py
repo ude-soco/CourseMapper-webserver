@@ -2226,7 +2226,7 @@ class NeoDataBase:
             tx.run(
                     '''
                         MATCH (a:User {uid: $user_id}), (b:Resource {rid: $rid})
-                        MERGE (a)-[r:HAS_SAVED {user_id: $user_id, mid: $mid, slider_number: $slider_number, rid: $rid}]->(b)
+                        MERGE (a)-[r:HAS_SAVED {user_id: $user_id, rid: $rid}]->(b)
                     ''',
                     user_id=data["user_id"],
                     mid=data["mid"],
@@ -2238,7 +2238,7 @@ class NeoDataBase:
         else:
             tx.run(
                     '''
-                        MATCH (a:User {uid: $user_id})-[r:HAS_SAVED {user_id: $user_id, mid: $mid, slider_number: $slider_number, rid: $rid}]->(b:Resource {rid: $rid})
+                        MATCH (a:User {uid: $user_id})-[r:HAS_SAVED {user_id: $user_id, rid: $rid}]->(b:Resource {rid: $rid})
                         DELETE r
                     ''',
                     user_id=data["user_id"],
@@ -2450,6 +2450,76 @@ class NeoDataBase:
 
     
 
+
+    def user_saves_or_removes_resource2(self, data: dict, resource: dict):
+        '''
+            User saves or remove Resource(s)
+            data: {
+                "user_id": "vhf",
+                "mid": "dsdsd",
+                "slider_number": "slide_1",
+                "cid": "rewtg423",
+                "rid": "2gdsg",
+                "status": True (create) | False (remove) => (to create or remove a resource saved from the user list)
+            }
+        '''
+        logger.info("Saving or Removing from Resource Saved List")
+        tx = self.driver.session()
+
+        if data["status"] == True:
+            tx.run(
+                    '''
+                        MATCH (a:User {uid: $user_id}), (b:Resource {rid: $rid})
+                        MERGE (a)-[r:HAS_SAVED {user_id: $user_id, mid: $mid, slider_number: $slider_number, rid: $rid}]->(b)
+                    ''',
+                    user_id=data["user_id"],
+                    mid=data["mid"],
+                    slider_number=data["slider_number"],
+                    # cid=data["cid"],
+                    rid=data["rid"]
+                )
+            
+        else:
+            tx.run(
+                    '''
+                        MATCH (a:User {uid: $user_id})-[r:HAS_SAVED {user_id: $user_id, mid: $mid, slider_number: $slider_number, rid: $rid}]->(b:Resource {rid: $rid})
+                        DELETE r
+                    ''',
+                    user_id=data["user_id"],
+                    mid=data["mid"],
+                    slider_number=data["slider_number"],
+                    # cid=data["cid"],
+                    rid=data["rid"]
+                )
+        
+        # Update Resources: saves_count
+        tx.run(
+            '''
+                MATCH (a:Resource {rid: $rid})
+                OPTIONAL MATCH (a)<-[r:HAS_SAVED {rid: $rid}]-()
+                WITH a, COUNT(r) AS saves_counter
+                SET a.saves_count = saves_counter
+            ''',
+            rid=data["rid"]
+        )
+
+        """
+        # create or remove realtion between Resources and Concept_modified
+        if data["status"] == True:
+            self.update_rs_btw_resource_and_cm(rid=data["rid"], cid=data["rid"], action=True)
+        
+        else:
+            resource = tx.run(
+                        '''
+                            MATCH (n:Resource) 
+                            WHERE n.rid = $rid
+                            RETURN COALESCE(toInteger(n.saves_count), 0) AS saves_count
+                        ''',
+                        rid=data["rid"]
+                    ).single()
+            if resource["saves_count"] < resource["saves_count"]:
+                self.update_rs_btw_resource_and_cm(rid=data["rid"], cid=data["rid"], action=False)
+        """
 
     def get_concepts_mids_sliders_numbers_for_user_resources_saved(self, data: dict):
         '''
