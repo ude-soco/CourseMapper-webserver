@@ -14,4 +14,5 @@ export interface ArticleElementModel {
     bookmarked_count?: number,
     like_count?: number,
     rid?: string,
+    updated_at?: string
   }

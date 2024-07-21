@@ -405,16 +405,18 @@ export class ResultViewComponent {
     // console.warn(this.activeIndex);
 
     if (this.activeIndex === 2) {
-      leftPanelf.classList.add('left_panel_interaction');
+      this.filteringParamsSavedTab.user_id = this.userId;
+      this.getUserResources(this.filteringParamsSavedTab);
+      // leftPanelf.classList.add('left_panel_interaction');
     } else {
-      leftPanelf.classList.remove('left_panel_interaction');
+      // leftPanelf.classList.remove('left_panel_interaction');
     }
   }
 
   filteringResourcesSaved() {
     this.showSearchIconPinner = this.filteringParamsSavedTab.text.length >= 1 ? true : false;
     if (this.filteringParamsSavedTab.text.length >= 2) {
-      this.filteringParamsSavedTab.user_id = this.userId;
+      // this.filteringParamsSavedTab.user_id = this.userId;
       this.getUserResources(this.filteringParamsSavedTab);
     } else {
       this.filteringResourcesFound = { articles: [], videos: [] };
@@ -429,15 +431,17 @@ export class ResultViewComponent {
 
   getUserResources(params) {
     this.materialsRecommenderService.filterUserResourcesSavedBy(params)
-    .subscribe({
-      next: (data: UserResourceFilterResult) => {
-        this.filteringResourcesFound = data;
-      },
-      error: (err) => {
-        console.log(err);
-      },
-    }
-  );
+      .subscribe({
+        next: (data: UserResourceFilterResult) => {
+          this.filteringResourcesFound = data;
+          console.warn("len -> ", data.videos.length)
+          console.warn("len -> ", this.filteringResourcesFound.videos.length)
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      }
+    );
   }
 
 

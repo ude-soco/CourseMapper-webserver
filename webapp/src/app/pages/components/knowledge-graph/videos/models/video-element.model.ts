@@ -15,5 +15,6 @@ export interface VideoElementModel {
     bookmarked_count?: number,
     like_count?: number,
     channel_title?: string,
-    rid?: string
+    rid?: string,
+    updated_at?: string
   }

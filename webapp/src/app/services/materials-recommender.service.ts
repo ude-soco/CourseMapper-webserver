@@ -62,18 +62,20 @@ export class MaterialsRecommenderService {
     return this.recommendedMaterialsRating
   }
 
-
   SaveOrRemoveUserResource(data: any): Observable<any> {
     return this.http.post<any>(`${this.cmEndpointURL}user_resources/save_or_remove`, data, { withCredentials: true });
-  }
-
-  getConceptsMidsSliderNumbersForUserResourcesFiltering(data: any): Observable<UserResourceFilterParamsResult> {
-    return this.http.post<UserResourceFilterParamsResult>(`${this.cmEndpointURL}user_resources/get_filter_params`, data, { withCredentials: true });
   }
 
   filterUserResourcesSavedBy(data: any): Observable<UserResourceFilterResult> {
     return this.http.post<UserResourceFilterResult>(`${this.cmEndpointURL}user_resources/filter`, data, { withCredentials: true });
   }
+
+
+  /*
+    getConceptsMidsSliderNumbersForUserResourcesFiltering(data: any): Observable<UserResourceFilterParamsResult> {
+    return this.http.post<UserResourceFilterParamsResult>(`${this.cmEndpointURL}user_resources/get_filter_params`, data, { withCredentials: true });
+  }
+  */
 
   // getRecommendedMaterials(formData: any, croForm: any): Observable<any> {
   //   let data = {default: {}, croForm: croForm};

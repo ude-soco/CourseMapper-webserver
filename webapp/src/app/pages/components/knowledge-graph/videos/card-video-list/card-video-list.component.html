@@ -1,7 +1,7 @@
 <div class="p-10">
     <ng-template [ngIf]="!showVideo" [ngIfElse]="watchvideo">
       <div class="" *ngFor="let videoElement of videoElements">
-        <app-card-video [notUnderstoodConcepts]="notUnderstoodConcepts" (onWatchVideo)="readVideo($event)" [videoElement]="videoElement"></app-card-video>
+        <app-card-video [notUnderstoodConcepts]="notUnderstoodConcepts" (onWatchVideo)="readVideo($event)" [videoElement]="videoElement" [userId]="userId"></app-card-video>
       </div>
     </ng-template>
     <ng-template #watchvideo>

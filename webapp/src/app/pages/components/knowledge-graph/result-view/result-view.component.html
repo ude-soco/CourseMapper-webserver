@@ -152,6 +152,7 @@
             <app-card-video-list
               [notUnderstoodConcepts]="concepts"
               [videoElements]="resourcesPagination.nodes.videos"
+              [userId]="userId"
             ></app-card-video-list>
         </div>
       </p-tabPanel>
@@ -214,13 +215,13 @@
 
         <!-- display resources filtered -->
         <div>
-          <div *ngIf="filteringParamsSavedTab.content_type === 'video'">
+          <div>
               <app-card-video-list
               [notUnderstoodConcepts]="concepts"
               [videoElements]="filteringResourcesFound?.videos"
               ></app-card-video-list>
           </div>
-          <div *ngIf="filteringParamsSavedTab.content_type === 'article'">
+          <div>
               <app-card-article-list
               [notUnderstoodConcepts]="concepts"
               [articleElements]="filteringResourcesFound?.articles"

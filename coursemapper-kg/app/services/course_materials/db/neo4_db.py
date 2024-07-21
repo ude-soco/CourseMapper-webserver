@@ -2229,9 +2229,6 @@ class NeoDataBase:
                         MERGE (a)-[r:HAS_SAVED {user_id: $user_id, rid: $rid}]->(b)
                     ''',
                     user_id=data["user_id"],
-                    mid=data["mid"],
-                    slider_number=data["slider_number"],
-                    # cid=data["cid"],
                     rid=data["rid"]
                 )
             
@@ -2242,9 +2239,6 @@ class NeoDataBase:
                         DELETE r
                     ''',
                     user_id=data["user_id"],
-                    mid=data["mid"],
-                    slider_number=data["slider_number"],
-                    # cid=data["cid"],
                     rid=data["rid"]
                 )
         
@@ -2429,7 +2423,8 @@ class NeoDataBase:
                         COALESCE(toInteger(a.not_helpful_count), 0) AS not_helpful_count,
                         COALESCE(toInteger(a.bookmarked_count), 0) AS bookmarked_count,
                         COALESCE(toInteger(a.like_count), 0) AS like_count,
-                        a.channel_title as channel_title
+                        a.channel_title as channel_title,
+                        a.updated_at as updated_at
                 """,
                 user_id=data["user_id"],
                 search_text=data["text"]

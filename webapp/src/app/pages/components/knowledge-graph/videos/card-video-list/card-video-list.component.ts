@@ -17,6 +17,7 @@ export class CardVideoListComponent {
   public notUnderstoodConcepts: string[];
   public showVideo = false;
   public video: VideoElementModel;
+  @Input() userId: string;
 
   constructor(private route: Router) { }
 

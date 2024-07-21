@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {VideoElementModel} from '../models/video-element.model';
 import { MessageService } from 'primeng/api';
+import { MaterialsRecommenderService } from 'src/app/services/materials-recommender.service';
 
 @Component({
   selector: 'app-card-video',
@@ -8,7 +9,10 @@ import { MessageService } from 'primeng/api';
   styleUrls: ['./card-video.component.css']
 })
 export class CardVideoComponent {
-  constructor(private messageService: MessageService) {}
+  constructor(
+    private messageService: MessageService,
+    private materialsRecommenderService: MaterialsRecommenderService,
+  ) {}
 
   DESCRIPTION_MAX_LENGTH = 450;
   isActive = false;
@@ -21,11 +25,14 @@ export class CardVideoComponent {
   public notUnderstoodConcepts: string[];
   @Output() onClick: EventEmitter<any> = new EventEmitter();
   @Output() onWatchVideo: EventEmitter<any> = new EventEmitter();
+  @Input() userId: string;
 
   // boby024
   isDescriptionFullDisplayed = false;
   isBookmarkFill = false;
   videoDescription = "";
+  saveOrRemoveParams = {"user_id": "", "rid": "", "status": false};
+  saveOrRemoveStatus = false;
 
   ngOnInit(): void {}
   public readVideo(videoElement: any): void {
@@ -57,15 +64,39 @@ export class CardVideoComponent {
   addToBookmark() {
     console.warn("this - rec id -> ", this.videoElement.id);
     this.isBookmarkFill = this.isBookmarkFill === true ? false : true;
+    this.saveOrRemoveParams = {"user_id": this.userId, "rid": this.videoElement.rid, "status": this.isBookmarkFill};
+    this.SaveOrRemoveUserResource(this.saveOrRemoveParams);
     this.saveOrRemoveBookmark();
   }
 
   saveOrRemoveBookmark() {
     // detail: 'Open your Bookmark List to find this video'
     if (this.isBookmarkFill === true) {
-      this.messageService.add({ key: 'resource_bookmark', severity: 'success', summary: '', detail: 'Successfully to the bookmark added'});
+      if (this.saveOrRemoveStatus === true) {
+        this.messageService.add({ key: 'resource_bookmark', severity: 'success', summary: '', detail: 'Successfully to the bookmark added'});
+      }
     } else {
-      this.messageService.add({key: 'resource_bookmark', severity: 'info', summary: '', detail: 'Successfully to the bookmark removed'});
+      if (this.saveOrRemoveStatus === false) {
+        this.messageService.add({key: 'resource_bookmark', severity: 'info', summary: '', detail: 'Successfully to the bookmark removed'});
+      }
     }
+  }
+
+  SaveOrRemoveUserResource(params) {
+    this.materialsRecommenderService.SaveOrRemoveUserResource(params)
+      .subscribe({
+        next: (data: any) => {
+          if (data == null) {
+            this.saveOrRemoveStatus = true;
+          } else {
+            this.saveOrRemoveStatus = false;
+          }
+        },
+        error: (err) => {
+          console.log(err);
+          this.saveOrRemoveStatus = false;
+        },
+      }
+    );
   }
 }

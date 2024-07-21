@@ -364,8 +364,9 @@
   <div class="w-full border-2 rounded-md border-[#0288d1]" *ngIf="isCustomRecOptionDisplayed">
     <div class="flex flex-col space-y-1 m-2">
       <!-- titel with concept rec -->
-      <div class="flex flex-wrap space-x-2 text-[#0288d1]">
-        <div>Select not understood concepts for recommendation (up to 5 concepts)</div>
+      <div class="flex flex-wrap space-x-2 text-[#0288d1] justify-between">
+        <div>Select not understood concepts for recommendation</div>
+        <!-- (up to 5 concepts) -->
         <div
           class="mt-auto"
           pTooltip="Only the top five concepts from the list of concepts you gave will be chosen based on their weight." 
@@ -528,6 +529,7 @@
               iconPos="right" 
               styleClass="p-button-outlined"
               (onClick)="displayAddMoreConcept()"
+              *ngIf="croForm.concepts.length <= 1"
             ></p-button>
           </span>
         </div>
@@ -625,7 +627,7 @@
       </div>
 
       <!-- warning add more concepts -->
-      <div class="flex justify-center text-[#757500] font-bold">
+      <div class="flex justify-center text-[#757500] font-bold" style="display: none;">
         <!-- <div *ngIf="croForm?.concepts?.length > 0">You can add/check {{5 - croForm?.concepts?.length}} more concepts</div> -->
         <div *ngIf="croForm?.concepts?.length > 0 && croForm?.concepts?.length <= 5 ">You can add/check {{ numberConceptsToBeChecked }} more concepts</div>
         <div *ngIf="croForm?.concepts?.length == 0">You can add/check up to 5 concepts</div>
@@ -634,6 +636,7 @@
       <div *ngIf="isMoreThan5ConceptDisplayed" 
         class="flex justify-center text-[#cc3300]" 
         id="warningMsgTopConcept"
+        style="display: none;"
       >
         please uncheck a concept before checking this box again
       </div>
