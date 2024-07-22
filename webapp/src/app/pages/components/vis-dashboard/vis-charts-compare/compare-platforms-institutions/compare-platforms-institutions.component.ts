@@ -97,6 +97,8 @@ export class ComparePlatformsInstitutionsComponent implements OnInit{
       this.selectedPlatforms = platforms
     })
   }
+
+  // Await the result and update the chart component
   getPlatformsByInstitutionCount(platforms:string[]){
     this.visdashboardService.getPlatformsByInstitutionCount(platforms)
       .then((platforms)=>{

@@ -147,7 +147,7 @@ export async function getTeacherById(teacherId) {
     return serializeRecords(records)
 
 }
-
+// Query the database for concepts for a platform: Service
 export async function getConceptsByPlatform(platform) {
     const {records, summary, keys} = await graphDb.driver.executeQuery(
         'MATCH (platform:platform) <-[:AVAILABLE_ON]- (course:course)-[:CONTAINS_CONCEPT]->(concept:concept)\n' +
@@ -157,9 +157,9 @@ export async function getConceptsByPlatform(platform) {
         , {platform: platform}
     );
     return serializeRecords(records)
-
 }
 
+// Query the database for courses on concept selection: service
 export async function getCoursesByConceptAndPlatform(concept, platform) {
     const {records, summary, keys} = await graphDb.driver.executeQuery(
         'MATCH (platform:platform) <-[:AVAILABLE_ON]- (course:course)-[:CONTAINS_CONCEPT]->(concept:concept)\n' +
@@ -171,7 +171,7 @@ export async function getCoursesByConceptAndPlatform(concept, platform) {
 
 }
 
-
+ // Get courses by popularity :services
 export async function getCoursesByPopularityForVis(platformName, datapoints) {
     const {records, summary, keys} = await graphDb.driver.executeQuery(
         'MATCH (course:course)-[:AVAILABLE_ON]->(platform:platform) \n' +
@@ -186,6 +186,8 @@ export async function getCoursesByPopularityForVis(platformName, datapoints) {
     return serializeRecords(records);
 }
 
+
+// Query the database for the most popular categories of courses
 export async function getCategoryByPopularityForVis(platformName, datapoints) {
     const {records, summary, keys} = await graphDb.driver.executeQuery(
         `MATCH (course:course)-[:AVAILABLE_ON]->(platform:platform)
@@ -203,6 +205,7 @@ LIMIT ${+datapoints}`,
     return serializeRecords(records);
 }
 
+// Query the database for the most active teachers: service
 export async function getActiveTeachersForVis(platformName, datapoints) {
     const {records, summary, keys} = await graphDb.driver.executeQuery(
         `
@@ -215,6 +218,8 @@ LIMIT ${+datapoints}`,
     return serializeRecords(records);
 }
 
+
+// Query the database for the most active institutions: service
 export async function getActiveInstitutionsForVis(platformName, datapoints) {
     const {records, summary, keys} = await graphDb.driver.executeQuery(
         `MATCH (institution:institution)-[:OFFERS]->(course:course)-[:AVAILABLE_ON]->(platform:platform) 
@@ -237,6 +242,8 @@ RETURN  COUNT(course) AS CourseCount, platform.name As PlatformName LIMIT 20`,
 
 }
 
+
+// query the database for number of teachers in compare: service
 export async function getNumberOfTeachersForCompare(platforms){
     console.log(platforms)
     const {records, summary, keys} = await graphDb.driver.executeQuery(
@@ -250,7 +257,7 @@ RETURN COUNT(teacher) AS TeacherCount, platform.name As PlatformName`,
 
 }
 
-
+// Query the database to retrieve platforms by number of institutions :service
 export async function getNumberOfInstitutionsForCompare(platforms){
 
     const {records, summary, keys} = await graphDb.driver.executeQuery(
@@ -260,9 +267,9 @@ export async function getNumberOfInstitutionsForCompare(platforms){
         {platforms: platforms}
     );
     return serializeRecords(records);
-
 }
 
+// Query the database to retrieve platforms by number of participants: service
 export async function getNumberOfParticipantsForCompare(platforms){
 
     const {records, summary, keys} = await graphDb.driver.executeQuery(
@@ -292,6 +299,8 @@ export async function getCoursesByConceptForCompare(concept, platforms) {
 
 }
 
+
+// Query the database for the concepts in compare : service
 export async function getConceptsByPlatforms(platforms) {
     const {records, summary, keys} = await graphDb.driver.executeQuery(
         'MATCH (platform:platform) <-[:AVAILABLE_ON]- (course:course)-[:CONTAINS_CONCEPT]->(concept:concept)\n' +
@@ -303,7 +312,7 @@ export async function getConceptsByPlatforms(platforms) {
 
 }
 
-
+// retrieve the courses by the query : service
 export async function getCoursesByConceptsFind(concept) {
     const {records, summary, keys} = await graphDb.driver.executeQuery(
         'MATCH (c:concept) WHERE c.name CONTAINS $concept ' +

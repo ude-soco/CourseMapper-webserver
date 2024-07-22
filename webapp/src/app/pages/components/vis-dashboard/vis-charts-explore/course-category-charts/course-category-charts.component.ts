@@ -174,14 +174,13 @@ export class CourseCategoryChartsComponent implements OnInit{
     this.getCoursesRatingsPrices(this.platform.toLowerCase(), 5)
   }
 
+  // Get results for popular courses and render the data
 getPopularCourses(platform:string, dataPointCounts: number){
     this.visdashboardService.getCoursesByPopularityForVis(platform,dataPointCounts)
       .then((courses)=>{
-
         if(courses.length=== 0  || !courses){
           this.hasCoursesEnrolledStudents = false
         }
-
 
         this.numberOfParticipants = courses.map(course=> +course.NumberOfParticipants)
         this.courseName = courses.map(course=> course.CourseName.slice(0,20))
@@ -200,6 +199,8 @@ getPopularCourses(platform:string, dataPointCounts: number){
       })
 }
 
+
+// Render most popular categories of courses: platform
   getPopularCategories(platform:string, dataPointCounts: number){
     this.visdashboardService.getCategoryByPopularityForVis(platform,dataPointCounts)
       .then((courses)=>{

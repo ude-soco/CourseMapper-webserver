@@ -5,6 +5,7 @@ import {
   CourseByPlatformAndConcept,
   VisDashboardService
 } from "../../../../../services/vis-dashboard/vis-dashboard.service";
+import {usePopularWords} from "../../../../../utils/usePopularWords";
 
 
 interface Word {
@@ -25,7 +26,6 @@ export class ConceptsWordCloudComponent implements OnInit {
   concepts: Concept[]
   data: { text: string; value: number; }[] = [{"text": "test", value: 0}]
   words: string[]
-  myData: { text: string; value: number; }[]
   selectedTopic: string
   relatedCourses: CourseByPlatformAndConcept[] = []
   topicClicked: boolean = false
@@ -47,17 +47,16 @@ export class ConceptsWordCloudComponent implements OnInit {
     this.visDashboardService.getConceptsByPlatform(platform)
       .then((concepts) => {
         this.concepts = concepts
-        //Todo get most important
         this.words = this.concepts.map(c => c.ConceptName)
-        this.myData = this.words.map(function (d) {
-          return {text: d, value: 10 + Math.random() * 90};
-        })
-        this.data = this.myData
+        const {data} = usePopularWords(this.words)
+        this.data = data
         this.isCloudLoading = false
       })
 
   }
 
+
+  // Get courses by platform and concepts
   getCoursesByPlatformAndConcepts(platform: string, concept: string) {
     this.visDashboardService.getCoursesByConceptAndPlatform(platform, concept)
       .then((courses) => {

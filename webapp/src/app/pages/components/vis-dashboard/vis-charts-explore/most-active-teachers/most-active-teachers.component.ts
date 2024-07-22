@@ -69,6 +69,8 @@ export class MostActiveTeachersComponent implements OnInit{
     this.getActiveTeachers(this.platform.toLowerCase(),5)
     }
 
+
+    // Await response and update the chart series
   getActiveTeachers(platform:string,dataPointCount:number){
     this.visdashboardService.getActiveTeachersForVis(platform,dataPointCount)
       .then((teachers)=>{

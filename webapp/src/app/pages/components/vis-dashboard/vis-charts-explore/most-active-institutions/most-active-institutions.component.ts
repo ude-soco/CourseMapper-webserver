@@ -73,6 +73,8 @@ export class MostActiveInstitutionsComponent implements OnInit{
     this.getActiveInstitutions(this.platform.toLowerCase(),5)
     }
 
+
+    // Await the results and update the chart series
   getActiveInstitutions(platform:string,dataPointCount:number){
     this.visdashboardService.getActiveInstitutionsForVis(platform,dataPointCount)
       .then((institutions)=>{

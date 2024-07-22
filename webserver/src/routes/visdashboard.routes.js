@@ -62,42 +62,48 @@ module.exports = function (app) {
         controller.getTeacherById
     );
 
+
+    // Endpoint to get concepts for a platform
     app.get(
         "/api/vis-dashboard/concept-by-platform/:platform",
-        // [authJwt.verifyToken],
+         [authJwt.verifyToken],
         controller.getConceptsByPlatform
     );
 
 
+    // Get courses for explore
     app.get(
         "/api/vis-dashboard/courses-for-explore/:platform/:concept",
-        // [authJwt.verifyToken],
+         [authJwt.verifyToken],
         controller.getCoursesByConceptAndPlatform
     );
 
+    // Get popular courses for explore: endpoint
     app.get(
         "/api/vis-dashboard/courses-popular-explore/:platform/:datapoints",
-        // [authJwt.verifyToken],
+         [authJwt.verifyToken],
         controller.getCoursesByPopularityForVis
     );
 
+    // Get popular course categories :endpoint
     app.get(
         "/api/vis-dashboard/category-popular-explore/:platform/:datapoints",
-        // [authJwt.verifyToken],
+         [authJwt.verifyToken],
         controller.getCategoryByPopularityForVis
     );
 
-
+    // Get the most active teachers :endpoint
     app.get(
         "/api/vis-dashboard/active-teachers/:platform/:datapoints",
-        // [authJwt.verifyToken],
+         [authJwt.verifyToken],
         controller.getActiveTeachersForVis
     );
 
 
+    // Get most active institutions : endpoint
     app.get(
         "/api/vis-dashboard/active-institutions/:platform/:datapoints",
-        // [authJwt.verifyToken],
+         [authJwt.verifyToken],
         controller.getActiveInstitutionsForVis
     );
 
@@ -107,36 +113,44 @@ module.exports = function (app) {
         controller.postTest
     );
 
+    // Get platforms by teacher count in compare :endpoint
     app.post(
         "/api/vis-dashboard/compare-platforms-teachers/",
-        // [authJwt.verifyToken],
+         [authJwt.verifyToken],
         controller.getNumberOfTeachersForCompare
     );
 
 
-
+   // Get platform by institution count in compare: endpoint
     app.post(
         "/api/vis-dashboard/compare-platforms-institutions/",
-        // [authJwt.verifyToken],
+         [authJwt.verifyToken],
         controller.getNumberOfInstitutionsForCompare
     );
 
+
+
+    // Get platforms by number of participants: endpoint
     app.post(
         "/api/vis-dashboard/compare-platforms-participants/",
-        // [authJwt.verifyToken],
+         [authJwt.verifyToken],
         controller.getNumberOfParticipantsForCompare
     );
 
 
+
+    // Get courses by selected concept : endpoint
     app.post(
         "/api/vis-dashboard/courses-concept-compare/:concept",
-        // [authJwt.verifyToken],
+         [authJwt.verifyToken],
         controller.getCoursesByConceptForCompare
     );
 
+
+    // Get concepts by selected platforms: endpoint
     app.post(
         "/api/vis-dashboard/courses-concept-platforms",
-        // [authJwt.verifyToken],
+         [authJwt.verifyToken],
         controller.getConceptsByPlatforms
     );
 
@@ -149,9 +163,9 @@ module.exports = function (app) {
     );
 
 
+    // Get courses by conceptin Find: endpoint
     app.post(
         "/api/vis-dashboard/courses-concept-find",
-         // Todo check if this is needed
          [authJwt.verifyToken],
         controller.getCoursesByConceptFind
     );

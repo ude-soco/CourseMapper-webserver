@@ -2,7 +2,6 @@ import { Component,OnInit} from '@angular/core';
 import {CourseCarouselType} from "../../components/vis-dashboard/carousel/course-carousel/course-carousel.component";
 import {ActivatedRoute, Router} from '@angular/router';
 import {CourseByCategory, VisDashboardService} from "../../../services/vis-dashboard/vis-dashboard.service";
-import {useFilterCourses} from "../../../utils/useFilterCourses";
 
 
 export type FilteredData = {

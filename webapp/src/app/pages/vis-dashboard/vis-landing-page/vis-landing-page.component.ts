@@ -25,7 +25,7 @@ export class VisLandingPageComponent implements  OnInit{
 ngOnInit() {
   this.optionsData =[
     { text: 'Discover a MOOC/MOOC Insights', link:'/explore-moocs' },
-    { text: 'Compare between MOOCs', link:'/compare-moocs' },
+    { text: 'Compare  MOOCs', link:'/compare-moocs' },
     { text: 'Find by Topics', link:'/find-moocs-by-topic' },]
 }
 }

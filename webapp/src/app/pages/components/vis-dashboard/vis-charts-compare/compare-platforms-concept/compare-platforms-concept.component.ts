@@ -10,6 +10,7 @@ import {
   VisSelectedPlatformsCompareService
 } from "../../../../../services/vis-dashboard/vis-selected-platforms-compare.service";
 import {useSelectedPlatforms} from "../../../../../utils/useSelectedPlatforms";
+import {usePopularWords} from "../../../../../utils/usePopularWords";
 
 interface Word {
   text: string,
@@ -30,7 +31,6 @@ export class ComparePlatformsConceptComponent implements  OnInit{
   concepts: Concept[]
   data: { text: string; value: number; }[] = [{"text": "test", value: 0}]
   words: string[]
-  myData: { text: string; value: number; }[]
   selectedTopic: string
   relatedCourses: CourseConceptCompare[] = []
   topicClicked: boolean = false
@@ -73,17 +73,15 @@ export class ComparePlatformsConceptComponent implements  OnInit{
   }
 
 
+  // await response and update the word cloud
   getConceptsByPlatforms(platforms: string[]) {
     this.isCloudLoading = true
     this.visDashboardService.getConceptsByPlatforms(platforms)
       .then((concepts) => {
         this.concepts = concepts
-        //Todo get most important
         this.words = this.concepts.map(c => c.ConceptName)
-        this.myData = this.words.map(function (d) {
-          return {text: d, value: 10 + Math.random() * 90};
-        })
-        this.data = this.myData
+        const {data}= usePopularWords(this.words)
+        this.data = data
         this.isCloudLoading = false
       })
 
@@ -94,11 +92,12 @@ export class ComparePlatformsConceptComponent implements  OnInit{
   getCoursesByPlatformAndConcepts(platforms: string[], concept: string) {
     this.visDashboardService.getCoursesByConceptForCompare(platforms,concept)
       .then((courses) => {
-        //Todo Randomnize courses
         this.relatedCourses = courses
       })
   }
 
+
+  // Get course list on concept click
   onWorkClick(eventData: { event: MouseEvent; word: Word }) {
     this.selectedTopic = eventData.word.text
     this.getCoursesByPlatformAndConcepts(this.selectedPlatforms2, this.selectedTopic)

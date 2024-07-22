@@ -1,7 +1,7 @@
 .course-details {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-gap: 20px;
+  grid-gap: 10rem;
 }
 
 .left {
@@ -29,12 +29,22 @@
     font-size: 24px;
     font-weight: bold;
     color: #222222;
-    margin-left: 3em;
+    margin-left: 5em;
   }
+
 .to-course{
-  text-align: right;
+  text-align: left;
   margin-bottom: 1em;
+  margin-top: 3em;
 }
+
+  h3{
+    font-size: medium;
+    font-weight: bold;
+    margin-bottom: 10px;
+
+  }
+
 }
 
 

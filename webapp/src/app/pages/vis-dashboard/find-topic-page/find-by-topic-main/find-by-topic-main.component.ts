@@ -40,6 +40,8 @@ export class FindByTopicMainComponent implements  OnInit {
     this.getCoursesForPage(this.currentPage)
   }
 
+
+  // await result based on the search query and update the filter options
 getCoursesByTopicSearch(searchQuery:string){
     this.visDashboardService.getCoursesByConceptFind(searchQuery)
       .then((courses)=>{

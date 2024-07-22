@@ -216,37 +216,44 @@ export class VisDashboardService {
     ));
   }
 
+
+  // Get concepts from a single platform: Fetch request
   async getConceptsByPlatform(platform:string):Promise<Concept[]>{
     return lastValueFrom(this.http.get<Concept[]>(
       `${environment.API_URL}/vis-dashboard/concept-by-platform/${platform}`
     ));
   }
 
+// Get the courses by concepts and selected platform
   async getCoursesByConceptAndPlatform(platform:string,concept:string):Promise<CourseByPlatformAndConcept[]>{
     return lastValueFrom(this.http.get<CourseByPlatformAndConcept[]>(
       `${environment.API_URL}/vis-dashboard/courses-for-explore/${platform}/${concept}`
     ));
   }
 
+  // Get courses by popularity for a platform: Fetch request
   async getCoursesByPopularityForVis(platform:string,datapointCount:number):Promise<CoursesByPopularityForVis[]>{
     return lastValueFrom(this.http.get<CoursesByPopularityForVis[]>(
       `${environment.API_URL}/vis-dashboard/courses-popular-explore/${platform}/${datapointCount}`
     ));
   }
 
+  // Get most popular categories of courses: Fetch request
   async getCategoryByPopularityForVis(platform:string,datapointCount:number):Promise<CategoriesByPopularityForVis[]>{
     return lastValueFrom(this.http.get<CategoriesByPopularityForVis[]>(
       `${environment.API_URL}/vis-dashboard/category-popular-explore/${platform}/${datapointCount}`
     ));
   }
 
+
+  // Get most active teachers by selected platform : Fetch request
   async getActiveTeachersForVis(platform:string,datapointCount:number):Promise<ActiveTeachers[]>{
     return lastValueFrom(this.http.get<ActiveTeachers[]>(
       `${environment.API_URL}/vis-dashboard/active-teachers/${platform}/${datapointCount}`
     ));
   }
 
-
+  //  Get most active institutions in a platform : Fetch request
   async getActiveInstitutionsForVis(platform:string,datapointCount:number):Promise<ActiveInstitutions[]>{
     return lastValueFrom(this.http.get<ActiveInstitutions[]>(
       `${environment.API_URL}/vis-dashboard/active-institutions/${platform}/${datapointCount}`
@@ -260,6 +267,7 @@ export class VisDashboardService {
     ));
   }
 
+  // Get platforms by teacher count for compare : Fetch request
   async getPlatformsByTeacherCount(platforms:string[]):Promise<PlatformsByTeacherCount[]>{
     return lastValueFrom(this.http.post<PlatformsByTeacherCount[]>(
       `${environment.API_URL}/vis-dashboard/compare-platforms-teachers`,{platforms:platforms}
@@ -267,18 +275,23 @@ export class VisDashboardService {
   }
 
 
+  // Get platforms by number of institutions in compare: Fetch request
   async getPlatformsByInstitutionCount(platforms:string[]):Promise<PlatformsByInstitutionCount[]>{
     return lastValueFrom(this.http.post<PlatformsByInstitutionCount[]>(
       `${environment.API_URL}/vis-dashboard/compare-platforms-institutions`,{platforms:platforms}
     ));
   }
 
+
+  // Get platforms by number of participants in compare: Fetch request
   async getPlatformsByParticipants(platforms:string[]):Promise<PlatformsByParticipants[]>{
     return lastValueFrom(this.http.post<PlatformsByParticipants[]>(
       `${environment.API_URL}/vis-dashboard/compare-platforms-participants`,{platforms:platforms}
     ));
   }
 
+
+  //  Get course on concept selection : Fetch request
   async getCoursesByConceptForCompare(platforms:string[],concept:string):Promise<CourseConceptCompare[]>{
     return lastValueFrom(this.http.post<CourseConceptCompare[]>(
       `${environment.API_URL}/vis-dashboard/courses-concept-compare/${concept}`,{platforms:platforms}
@@ -286,12 +299,16 @@ export class VisDashboardService {
   }
 
 
+
+  // Get concepts by selected platforms : fetch request
   async getConceptsByPlatforms(platforms:string[]):Promise<Concept[]>{
     return lastValueFrom(this.http.post<Concept[]>(
       `${environment.API_URL}/vis-dashboard/courses-concept-platforms`,{platforms:platforms}
     ));
   }
 
+
+  // Get courses by concept in Find : Fetch Request
   async getCoursesByConceptFind(concept:string):Promise<CourseByCategory[]>{
     return lastValueFrom(this.http.post<CourseByCategory[]>(
       `${environment.API_URL}/vis-dashboard/courses-concept-find`,{concept:concept}

@@ -109,7 +109,7 @@ export const getTeacherById= async (req, res) => {
     }
 };
 
-
+// Get concepts controller
 export const getConceptsByPlatform= async (req, res) => {
     const platform= req.params.platform;
 
@@ -121,6 +121,7 @@ export const getConceptsByPlatform= async (req, res) => {
     }
 };
 
+// Get courses by concepts and platform controller
 export const getCoursesByConceptAndPlatform= async (req, res) => {
     const platform= req.params.platform;
     const concept= req.params.concept;
@@ -134,6 +135,7 @@ export const getCoursesByConceptAndPlatform= async (req, res) => {
 };
 
 
+// Get popular courses for explore:controller
 export const getCoursesByPopularityForVis = async (req, res) => {
     const platform= req.params.platform;
     const datapoints = req.params.datapoints;
@@ -146,7 +148,7 @@ export const getCoursesByPopularityForVis = async (req, res) => {
     }
 };
 
-
+// Get most popular categories of courses: controller
 export const getCategoryByPopularityForVis = async (req, res) => {
     const platform= req.params.platform;
     const datapoints = req.params.datapoints;
@@ -159,7 +161,7 @@ export const getCategoryByPopularityForVis = async (req, res) => {
     }
 };
 
-
+// Get most active teachers : controller
 export const getActiveTeachersForVis = async (req, res) => {
     const platform= req.params.platform;
     const datapoints = req.params.datapoints;
@@ -172,6 +174,8 @@ export const getActiveTeachersForVis = async (req, res) => {
     }
 };
 
+
+// Get most active institutions : controller
 export const getActiveInstitutionsForVis = async (req, res) => {
     const platform= req.params.platform;
     const datapoints = req.params.datapoints;
@@ -198,6 +202,7 @@ export const postTest= async (req, res) => {
     }
 };
 
+// Get platforms by number of teachers : controller
 export const getNumberOfTeachersForCompare= async (req, res) => {
     const {platforms} = req.body
     try{
@@ -208,6 +213,8 @@ export const getNumberOfTeachersForCompare= async (req, res) => {
     }
 };
 
+
+// Get platforms by institution count for compare: controller
 export const getNumberOfInstitutionsForCompare= async (req, res) => {
     const {platforms} = req.body
     try{
@@ -219,6 +226,7 @@ export const getNumberOfInstitutionsForCompare= async (req, res) => {
 };
 
 
+// Get number of participants for compare : controller
 export const getNumberOfParticipantsForCompare= async (req, res) => {
     const {platforms} = req.body
     try{
@@ -229,7 +237,7 @@ export const getNumberOfParticipantsForCompare= async (req, res) => {
     }
 };
 
-
+// Get courses by selected concept in compare : controller
 export const getCoursesByConceptForCompare= async (req, res) => {
     const {platforms} = req.body
     const concept= req.params.concept;
@@ -242,6 +250,8 @@ export const getCoursesByConceptForCompare= async (req, res) => {
     }
 };
 
+
+// Get concepts by platforms compare :controller
 export const getConceptsByPlatforms = async (req, res) => {
     const {platforms} = req.body
     try{
@@ -252,6 +262,7 @@ export const getConceptsByPlatforms = async (req, res) => {
     }
 };
 
+// Get courses by concepts in Find : controller
 export const getCoursesByConceptFind = async (req, res) => {
     const {concept} = req.body
     try{

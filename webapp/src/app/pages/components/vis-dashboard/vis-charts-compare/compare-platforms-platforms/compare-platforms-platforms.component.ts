@@ -84,6 +84,7 @@ export class ComparePlatformsPlatformsComponent implements OnInit {
     })
   }
 
+  // Get response data and update the chart
 getNumberOfParticipantsForCompare(platforms:string[]){
     this.visDashboardServices.getPlatformsByParticipants(platforms)
       .then((platforms)=>{

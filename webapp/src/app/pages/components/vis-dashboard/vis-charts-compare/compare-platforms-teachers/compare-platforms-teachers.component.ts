@@ -93,6 +93,8 @@ export class ComparePlatformsTeachersComponent implements  OnInit{
     })
   }
 
+
+  // get data and update the chart component
   getPlatformsByTeacherCount(platforms:string[]){
     this.visdashboardService.getPlatformsByTeacherCount(platforms)
       .then((platforms)=>{
