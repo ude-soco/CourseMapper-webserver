@@ -28,7 +28,7 @@
     "@types/node": "^22.0.2",
     "angular-html-parser": "^5.2.0",
     "angular-mentions": "^1.5.0",
-    "cytoscape": "^3.29.2",
+    "cytoscape": "^3.30.1",
     "cytoscape-avsdf": "^1.0.0",
     "cytoscape-cola": "^2.5.1",
     "cytoscape-cose-bilkent": "^2.1.0",
