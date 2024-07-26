@@ -372,7 +372,7 @@
           pTooltip="Only the top five concepts from the list of concepts you gave will be chosen based on their weight." 
           tooltipPosition="top" 
         >
-          <span class="pi pi-info-circle" style="font-size: 1.2rem"></span>
+          <span class="pi pi-info-circle" style="font-size: 0.8rem"></span>
         </div>
       </div>
       
@@ -384,10 +384,11 @@
             <label for="ingredient1" class="my-auto">Current Slide</label>
             <div
               class="mt-1"
+              class="my-auto"
               pTooltip="To be completed later" 
               tooltipPosition="bottom" 
             >
-              <span class="pi pi-info-circle" style="font-size: 1.2rem"></span>
+              <span class="pi pi-info-circle" style="font-size: 0.8rem"></span>
             </div>
           </div>
         </div>
@@ -397,10 +398,11 @@
               <label for="ingredient1" class="my-auto">All Slides</label>
               <div
                 class="mt-1"
+                class="my-auto"
                 pTooltip="To be completed later" 
                 tooltipPosition="bottom" 
               >
-                <span class="pi pi-info-circle" style="font-size: 1.2rem"></span>
+                <span class="pi pi-info-circle" style="font-size: 0.8rem"></span>
               </div>
             </div>
         </div>
@@ -410,10 +412,11 @@
               <label for="ingredient1" class="my-auto">Select manually</label>
               <div
                 class="mt-1"
+                class="my-auto"
                 pTooltip="To be completed later" 
                 tooltipPosition="bottom" 
               >
-                <span class="pi pi-info-circle" style="font-size: 1.2rem"></span>
+                <span class="pi pi-info-circle" style="font-size: 0.8rem"></span>
               </div>
             </div>
         </div>
@@ -667,25 +670,27 @@
       <!-- Ranking Factor Weights -->
       <div class="!mt-3" *ngIf="croForm?.concepts?.length > 0">
         <div class="flex flex-row gap-3 text-[#0288d1]">
-          <div class="mt-1">Factors impacting the ranking of recommendations</div>
-          <div class="mt-1"
+          <div class="mt-1" class="my-auto">Factors impacting the ranking of recommendations</div>
+          <div 
+            class="mt-1"
+            class="my-auto"
             pTooltip="Changing weights will affect the ranking of resources (Article/Video) provided"
             tooltipPosition="top"
           >
-            <span class="pi pi-info-circle" style="font-size: 1.2rem"></span>
+            <span class="pi pi-info-circle" style="font-size: 0.8rem"></span>
           </div>
         </div>
 
         <div class="flex flex-row justify-between">
-          <div></div>
-          <div></div>
+          <div>Factors</div>
+          <div>Weights</div>
           <div>Impact on ranking</div>
         </div>
 
         <div *ngFor="let factor of factor_weights?.original; index as i">
           <div class="flex flex-col text-[10px] mt-2">
             <div class="flex flex-row justify-between">
-
+              
               <div class="flex flex-row gap-2">
                 <div class="mt-4">
                   <p-checkbox [binary]="true" inputId="binary" 

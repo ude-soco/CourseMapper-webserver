@@ -23,35 +23,13 @@ def insert_dict_if_not_exists_by_id(lst: list, new_dict: dict, key: str):
 
 def save_and_get_concepts_modified(db: NeoDataBase, rec_params, top_n=5, user_embedding=False, understood_list=[], non_understood_list =[]):
     '''
-        rec_params: {
-            "user_id": "65e0536db1effed771dbdbb9",
-            "mid": "6662201fec6bb9067ff71cc9",
-            "slide_id": 1,
-            "category": "1",
-            "concepts": [
-                {
-                    "cid": "2156985142238936538",
-                    "mid": "6662201fec6bb9067ff71cc9",
-                    "weight": 0.79
-                }
-            ],
-            "recommendation_type": "1",
-            "factor_weights": {
-                "status": true,
-                "reload": true,
-                "weights": {
-                    "similarity_score": 0.7,
-                    "creation_date": 0.3,
-                    "views": 0.3,
-                    "like_count": 0.1,
-                    "user_rating": 0.1,
-                    "nbr_saves": 0.1
-                }
-            }
-        }
+        rec_params : {'user_id': str, 'mid': str, 'slide_id': int, 'category': str, 'concepts': list, 'recommendation_type': str, 'factor_weights': dict}
         status: dnu or u (PKG_BASED_KEYPHRASE_VARIANT |  PKG_BASED_DOCUMENT_VARIANT) | 
                 content (CONTENT_BASED_DOCUMENT_VARIANT | CONTENT_BASED_KEYPHRASE_VARIANT)
     '''
+
+    print("understood_list ->", understood_list)
+    print("concepts ->", rec_params["concepts"])
     
     result = {
         "concepts": [],
@@ -95,20 +73,19 @@ def save_and_get_concepts_modified(db: NeoDataBase, rec_params, top_n=5, user_em
     return result
 
 def normalize_factor_weights(factor_weights: dict=None, values: list=[], method_type = "l1", complete=True, sum_value=True): # List[float]
-    """
-    method_type: normalization techniques
-        l1: L1 normalization, also known as L1 norm normalization or Manhattan normalization
-        l1: L2 normalization, also known as L2 norm normalization or Euclidean normalization
-        max: Max Normalization
-        min-max: Min-Max
-    
-    https://www.pythonprog.com/sklearn-preprocessing-normalize/#Normalization_Techniques
-    TypeScript: https://sklearn.vercel.app/guide/install
+    '''
+        method_type: normalization techniques
+            l1: L1 normalization, also known as L1 norm normalization or Manhattan normalization
+            l1: L2 normalization, also known as L2 norm normalization or Euclidean normalization
+            max: Max Normalization
+            min-max: Min-Max
+        
+        https://www.pythonprog.com/sklearn-preprocessing-normalize/#Normalization_Techniques
+        TypeScript: https://sklearn.vercel.app/guide/install
 
-    factor_weights = { 'similarity_score': 0.7, 'creation_date': 0.3, 'nbr_views': 0.3, 
-            'nbr_likes_youTube': 0.1, 'rating_courseMapper': 0.1, 'nbr_save_courseMapper': 0.1
-        }
-    """
+        factor_weights : {'status': False, 'reload': True, 'weights': {'similarity_score': 0.7, 'creation_date': 0.3, 'views': 0.3, 'like_count': 0.1, 'user_rating': 0.1, 'saves_count': 0.1}
+    '''
+    
     normalized_values = None
     scaled_data = None
     
@@ -279,6 +256,10 @@ def rank_resources(resources: list, weights: dict = None, ratings: list = None, 
     }
 
 def rec_params_request_mapped(data_rec_params: dict, data_default: dict=None):
+    '''
+        Map Recommandations Params
+    '''
+
     understood = data_default.get("understoodConcepts")
     non_understood = data_default.get("nonUnderstoodConcepts")
     new_concepts = data_default.get("newConcepts")
@@ -299,6 +280,10 @@ def rec_params_request_mapped(data_rec_params: dict, data_default: dict=None):
     }
 
 def build_factor_weights(factor_weights_params: dict = None):
+    '''
+        Generate Factor weights for Ranking
+    '''
+
     factor_weights_articles = {}
     factor_weights_viedos = {}
 
@@ -374,6 +359,9 @@ def create_get_resources_thread(func, args):
     # redis_client.set(name=f"{user_id}_{redis_key_1}", value=status, ex=(redis_client_expiration_time * 10080))
 
 def get_top_n_concepts(concepts: list, top_n=5):
+    '''
+        Get top n concepts from the list
+    '''
     # concepts.sort(key=lambda x: x["weight"], reverse=True)
     concepts_ = sorted(concepts, key=lambda x: x["weight"])
     return concepts_[:top_n]

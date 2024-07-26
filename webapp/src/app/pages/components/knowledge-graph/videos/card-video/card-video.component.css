@@ -33,3 +33,8 @@
   overflow: hidden;
   -webkit-box-orient: vertical;
 }
+
+/* info tooltip icon */
+.info_tool_tip {
+  font-size: 0.8rem;
+}

@@ -50,11 +50,23 @@
 }
 
 /* change radio button color */
+.p-radiobutton {
+  width: 16px !important;
+  height: 16px !important;
+}
 .p-radiobutton .p-radiobutton-box {
   border: 2px solid #0288d1;
+  width: 16px !important;
+  height: 16px !important;
+  border-radius: 50% !important;
 }
 .p-radiobutton .p-radiobutton-box .p-radiobutton-icon {
   background-color: #0288d1;
+  width: 8px !important;
+  height: 8px !important;
+  left: 50% !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%) !important;
 }
 .p-radiobutton-box:hover {
   border-color: #0288d1;
@@ -69,6 +81,10 @@
   opacity: 0.3;
 }
 
+/* info tooltip icon */
+/* :host ::ng-deep #cro_content .pi pi-info-circle {
+  font-size: 0.6rem;
+} */
 
 .raning_progress_bar_value {
   position: absolute;
