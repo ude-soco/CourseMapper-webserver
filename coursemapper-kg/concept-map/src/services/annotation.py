@@ -3,30 +3,8 @@ import json
 from threading import Thread
 from typing import List, Dict, Any, Tuple
 from services.cache import Cache
-import socket
 from services.wikipedia import WikipediaService
 from config import Config
-
-
-dns_cache = {}
-# Capture a dict of hostname and their IPs to override with
-def override_dns(domain, ip):
-    dns_cache[domain] = ip
-
-
-prv_getaddrinfo = socket.getaddrinfo
-# Override default socket.getaddrinfo() and pass ip instead of host
-# if override is detected
-def new_getaddrinfo(*args, **kwargs):
-    if args[0] in dns_cache:
-        return prv_getaddrinfo(dns_cache[args[0]], *args[1:], **kwargs)
-    else:
-        return prv_getaddrinfo(*args, **kwargs)
-
-
-socket.getaddrinfo = new_getaddrinfo
-
-override_dns('api.dbpedia-spotlight.org', '134.155.95.24')
 
 
 def make_parallel_requests(url: str, headers: Dict[str, str], params: List[Any]) -> List[Tuple[dict, requests.Response]]:
