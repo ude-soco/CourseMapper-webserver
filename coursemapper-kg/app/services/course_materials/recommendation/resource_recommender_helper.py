@@ -21,6 +21,44 @@ def insert_dict_if_not_exists_by_id(lst: list, new_dict: dict, key: str):
         lst.append(new_dict)
     return lst
 
+def remove_duplicates_from_resources(dict_list: list, key: str="rid"):
+    '''
+        Remove Duplicates from list (resource list)
+    '''
+    logger.info("Remove Duplicates from list (resource list)")
+
+    seen = set()
+    unique_dicts = []
+    
+    for d in dict_list:
+        value = d[key]
+        if value not in seen:
+            seen.add(value)
+            unique_dicts.append(d)
+    
+    return unique_dicts
+
+def remove_keys_from_resources(resources: list):
+    '''
+        Remove keys from list (resource list)
+        keys = ["keyphrase_counts", "keyphrases", "keyphrases_infos", "keyphrase_embedding", "document_embedding"]
+    '''
+    logger.info("Remove keys from list (resource list)")
+
+    keys = [    "keyphrase_counts", "keyphrases", "keyphrases_infos", "keyphrase_embedding", "document_embedding", 
+                "composite_score", "labels"
+            ]
+    resources_updated = [{k: v for k, v in d.items() if k not in keys} for d in resources]
+    return resources_updated
+
+def get_top_n_concepts(concepts: list, top_n=5):
+    '''
+        Get top n concepts from the list
+    '''
+    # concepts.sort(key=lambda x: x["weight"], reverse=True)
+    concepts_ = sorted(concepts, key=lambda x: x["weight"])
+    return concepts_[:top_n]
+
 def save_and_get_concepts_modified(db: NeoDataBase, rec_params, top_n=5, user_embedding=False, understood_list=[], non_understood_list =[]):
     '''
         rec_params : {'user_id': str, 'mid': str, 'slide_id': int, 'category': str, 'concepts': list, 'recommendation_type': str, 'factor_weights': dict}
@@ -84,6 +122,7 @@ def normalize_factor_weights(factor_weights: dict=None, values: list=[], method_
 
         factor_weights : {'status': False, 'reload': True, 'weights': {'similarity_score': 0.7, 'creation_date': 0.3, 'views': 0.3, 'like_count': 0.1, 'user_rating': 0.1, 'saves_count': 0.1}
     '''
+    logger.info("Normalization of factor weights")
     
     normalized_values = None
     scaled_data = None
@@ -205,18 +244,6 @@ def calculate_factors_weights(category: int, resources: list, weights: dict = No
 
     return resources
 
-def remove_duplicates_from_resources(dict_list: list, key: str="rid"):
-    seen = set()
-    unique_dicts = []
-    
-    for d in dict_list:
-        value = d[key]
-        if value not in seen:
-            seen.add(value)
-            unique_dicts.append(d)
-    
-    return unique_dicts
-
 def rank_resources(resources: list, weights: dict = None, ratings: list = None, top_n_resources=10):
     '''
         Step 1: Remove duplicates if exist
@@ -225,21 +252,20 @@ def rank_resources(resources: list, weights: dict = None, ratings: list = None, 
         Step 3: Last Step: Resources having Rating related to DNU_modified (cid)
     '''
     logger.info("Appliying Ranking Algorithm")
+    # resources = remove_duplicates_from_resources(resources)
 
     video_weights_normalized = normalize_factor_weights(factor_weights=weights["video"], method_type="l1", complete=True, sum_value=False)
     article_weights_normalized = normalize_factor_weights(factor_weights=weights["article"], method_type="l1", complete=True, sum_value=False)
 
     # video items
     resources_videos = [resource for resource in resources if "Video" in resource["labels"]]
-    resources_videos = remove_duplicates_from_resources(resources_videos)
     resources_videos = calculate_factors_weights(category=1, resources=resources_videos, weights=video_weights_normalized)
-    resources_videos = [{k: v for k, v in d.items() if k not in ["composite_score", "labels"]} for d in resources_videos]
+    resources_videos = remove_keys_from_resources(resources=resources_videos)
 
     # articles items
     resources_articles = [resource for resource in resources if "Article" in resource["labels"]]
-    resources_articles = remove_duplicates_from_resources(resources_articles)
     resources_articles = calculate_factors_weights(category=2, resources=resources_articles, weights=article_weights_normalized)
-    resources_articles = [{k: v for k, v in d.items() if k not in ["composite_score", "labels"]} for d in resources_articles]
+    resources_articles = remove_keys_from_resources(resources=resources_articles)
 
     # # Finally, priorities on resources having Rating related to DNU_modified (cid)
     if ratings and len(ratings) > 0:
@@ -352,14 +378,6 @@ def create_get_resources_thread(func, args):
     thread = threading.Thread(target=func, args=args)
     thread.start()
     # redis_client.set(name=f"{user_id}_{redis_key_1}", value=status, ex=(redis_client_expiration_time * 10080))
-
-def get_top_n_concepts(concepts: list, top_n=5):
-    '''
-        Get top n concepts from the list
-    '''
-    # concepts.sort(key=lambda x: x["weight"], reverse=True)
-    concepts_ = sorted(concepts, key=lambda x: x["weight"])
-    return concepts_[:top_n]
 
 def check_and_get_resources_with_concepts(db: NeoDataBase, concepts: list):
     '''

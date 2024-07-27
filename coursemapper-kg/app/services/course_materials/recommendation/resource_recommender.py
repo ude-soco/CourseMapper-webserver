@@ -251,13 +251,13 @@ class ResourceRecommenderService:
         resources_new = self.db.retrieve_resources(concepts=concepts_not_having_resources)
         if len(resources_found) > 0:
             resources = resources_found + resources_new
-            resources = rrh.remove_duplicates_from_resources(dict_list=resources)
         else:
             resources = resources_new
+        resources = rrh.remove_duplicates_from_resources(dict_list=resources)
         
         # process with the recommendation algorithm selected
-        # if len(concepts_having_resources) != len(rec_params["concepts"]):
-        if len(resources) > 0:
+        if len(concepts_having_resources) != len(rec_params["concepts"]):
+        # if len(resources) > 0:
             data_df = pd.DataFrame(resources)
             resources_df = recommender.recommend(
                 slide_weighted_avg_embedding_of_concepts=slide_weighted_avg_embedding_of_concepts,
@@ -268,8 +268,10 @@ class ResourceRecommenderService:
                 data=data_df
             )
             resources = resources_df.to_dict(orient='records')
-
+            self.db.store_resources(resources_list=resources, cid=None, resources_form="list")
+        
         # Apply ranking algorithm on the resources
+        # resources = rrh.remove_keys_from_resources(resources=resources)
         resources_dict = rrh.rank_resources(resources=resources, weights=factor_weights, top_n_resources=top_n_resources)
 
         # Provide only the top 10 of the resources

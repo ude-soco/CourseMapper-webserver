@@ -58,7 +58,8 @@ def compute_dynamic_document_based_similarity(
         )
         cosine_similarities.append(cosine_similarity)
 
-    data[recommendation_type] = cosine_similarities
+    data["similarity_score"] = cosine_similarities
+    # data["similarity_score"] = cosine_similarities
 
     return data
 
@@ -85,7 +86,8 @@ def compute_dynamic_keyphrase_based_similarity(
         )
         cosine_similarities.append(cosine_similarity)
 
-    data[recommendation_type] = cosine_similarities
+    data["similarity_score"] = cosine_similarities
+    # data["similarity_score"] = cosine_similarities
 
     return data
 
@@ -108,7 +110,7 @@ def compute_document_based_similarity(
         )
         cosine_similarities.append(cosine_similarity)
 
-    data[recommendation_type] = cosine_similarities
+    data["similarity_score"] = cosine_similarities
     # data["similarity_score"] = cosine_similarities
 
     return data

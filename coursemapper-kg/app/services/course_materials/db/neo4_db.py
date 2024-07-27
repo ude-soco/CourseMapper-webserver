@@ -2271,7 +2271,7 @@ class NeoDataBase:
                 self.update_rs_btw_resource_and_cm(rid=data["rid"], cid=data["rid"], action=False)
         """
 
-    def store_resources(self, resources_dict: dict, cid: str, recommendation_type="", result_needed=True):
+    def store_resources(self, resources_dict: dict, cid: str, recommendation_type="", resources_list: list=None, resources_form="dict"):
         '''
             Store Resources
             Create relationshop between Resource and Concept_modified
@@ -2280,6 +2280,7 @@ class NeoDataBase:
             recommendation_type: str ('1' | '2' | '3' | '4')
             algorithm_model: (str) which algorithm was used for the recommendation
             content_type: video | article # currently not usued
+            resources_form: dict | list
         '''
 
         def get_resource_primary_key(resource: dict):
@@ -2289,16 +2290,20 @@ class NeoDataBase:
         result = []
 
         tx = self.driver.session()
-        for key, resources in resources_dict.items():
-            if key == "videos":
-                for resource in resources:
-                    self.create_or_update_video_resource(tx, resource, recommendation_type)
-                    self.update_rs_btw_resource_and_cm(rid=get_resource_primary_key(resource), cid=cid, action=True)
+        if resources_form == "dict":
+            for key, resources in resources_dict.items():
+                if key == "videos":
+                    for resource in resources:
+                        self.create_or_update_video_resource(tx, resource, recommendation_type)
+                        self.update_rs_btw_resource_and_cm(rid=get_resource_primary_key(resource), cid=cid, action=True)
 
-            elif key == "articles":
-                for resource in resources:
-                    self.create_or_update_wikipedia_resource(tx, resource, recommendation_type)
-                    self.update_rs_btw_resource_and_cm(rid=get_resource_primary_key(resource), cid=cid, action=True)
+                elif key == "articles":
+                    for resource in resources:
+                        self.create_or_update_wikipedia_resource(tx, resource, recommendation_type)
+                        self.update_rs_btw_resource_and_cm(rid=get_resource_primary_key(resource), cid=cid, action=True)
+        else:
+            for resource in resources_list:
+                self.create_or_update_video_resource(tx, resource, recommendation_type)
 
     def retrieve_resources(self, concepts: dict):
         '''
