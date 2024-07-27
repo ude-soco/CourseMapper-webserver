@@ -233,6 +233,7 @@ class Recommender:
             Apply recommendation algorithms
             data: resources in DataFrame
         '''
+        logger.info("Applying the recommendation algorithm Selected")
 
         """
         # If personalized recommendation, use DNU concepts to query Youtube and Wikipedia

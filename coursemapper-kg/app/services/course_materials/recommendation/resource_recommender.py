@@ -214,27 +214,28 @@ class ResourceRecommenderService:
         resources = self.db.filter_user_resources_saved_by(data)
         return resources
 
-    def process_recommandation_steps(self, 
-                                    db: NeoDataBase, rec_params: dict, factor_weights: dict, 
-                                    user_embedding="", slide_weighted_avg_embedding_of_concepts="", 
+    def process_recommandation_pipeline(self, 
+                                    rec_params: dict, 
+                                    factor_weights: dict,
+                                    recommendation_type,
+                                    user_embedding="", 
+                                    slide_weighted_avg_embedding_of_concepts="", 
                                     slide_document_embedding="",
                                     top_n_resources=10
         ):
         results = []
-        self.recommender = Recommender()
+        resources = []
+        # self.recommender = Recommender()
+        recommender = Recommender()
 
         # Check if concepts already exist and connected to any resources in Neo4j Database
-        concepts_to_be_crawled = []
+        # concepts_to_be_crawled = []
         concepts_having_resources, concepts_not_having_resources, resources_found = rrh.check_and_get_resources_with_concepts(db=self.db, concepts=rec_params["concepts"])
-        if len(concepts_not_having_resources) > 0:
-            concepts_to_be_crawled = concepts_not_having_resources
-        else:
-            concepts_to_be_crawled = rec_params["concepts"]
 
         # Crawl resources from YouTube (from each dnu) and Wikipedia API
-        if len(concepts_to_be_crawled) > 0:
-            for concept in concepts_to_be_crawled: #i in range(len(not_understood_concept_list)):
-                results.append(rrh.parallel_crawling_resources(function=self.recommender.canditate_selection, 
+        if len(concepts_not_having_resources) > 0:
+            for concept in concepts_not_having_resources: #i in range(len(not_understood_concept_list)):
+                results.append(rrh.parallel_crawling_resources(function=recommender.canditate_selection, 
                                                                concept_name=concept["name"], 
                                                                cid= concept["cid"], 
                                                                result_type="records",
@@ -247,22 +248,23 @@ class ResourceRecommenderService:
                 self.db.store_resources(resources_dict=result, cid=result["cid"], recommendation_type=rec_params["recommendation_type"])
         
         # Gather|Retrieve all resources crawled
-        resources_new = self.db.retrieve_resources(concepts=concepts_to_be_crawled)
+        resources_new = self.db.retrieve_resources(concepts=concepts_not_having_resources)
         if len(resources_found) > 0:
             resources = resources_found + resources_new
             resources = rrh.remove_duplicates_from_resources(dict_list=resources)
         else:
             resources = resources_new
-
+        
         # process with the recommendation algorithm selected
-        if len(concepts_having_resources) != len(rec_params["concepts"]):
+        # if len(concepts_having_resources) != len(rec_params["concepts"]):
+        if len(resources) > 0:
             data_df = pd.DataFrame(resources)
-            resources_df = self.recommender.recommend(
+            resources_df = recommender.recommend(
                 slide_weighted_avg_embedding_of_concepts=slide_weighted_avg_embedding_of_concepts,
                 slide_document_embedding=slide_document_embedding,
                 user_embedding=user_embedding,
                 top_n=10,
-                recommendation_type=rec_params["recommendation_type"],
+                recommendation_type=recommendation_type,
                 data=data_df
             )
             resources = resources_df.to_dict(orient='records')
@@ -341,10 +343,10 @@ class ResourceRecommenderService:
             rec_params["concepts"] = clu["concepts"]
 
         factor_weights = rrh.build_factor_weights(body["rec_params"]["factor_weights"]["weights"])
-        result = self.process_recommandation_steps(
-            db=self.db,
+        result = self.process_recommandation_pipeline(
             rec_params=rec_params,
             factor_weights=factor_weights,
+            recommendation_type=recommendation_type,
             user_embedding=user_embedding,
             slide_weighted_avg_embedding_of_concepts=slide_weighted_avg_embedding_of_concepts,
             slide_document_embedding=slide_document_embedding,
