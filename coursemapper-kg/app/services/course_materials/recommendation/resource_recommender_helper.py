@@ -398,16 +398,19 @@ def check_and_get_resources_with_concepts(db: NeoDataBase, concepts: list):
                     resources_found.append(resource)
     return concepts_having_resources, concepts_not_having_resources, resources_found
 
-def parallel_crawling_resources(function, concept_name: str, cid: str):
+def parallel_crawling_resources(function, concept_name: str, cid: str, result_type: str, top_n_videos, top_n_articles):
     '''
         Parallel Crawling of Resources with the function 
         canditate_selection from Class Recommender
+        submit function: takes
+            function: canditate_selection (this function takes the params below)
+            query, video, result_type="records", top_n_videos=2, top_n_articles=2
     '''
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        future_videos = executor.submit(function, concept_name, True, "records")
-        future_article = executor.submit(function, concept_name, False, "records")
+        future_videos = executor.submit(function, concept_name, True, result_type, top_n_videos, top_n_articles)
+        future_articles = executor.submit(function, concept_name, False, result_type, top_n_videos, top_n_articles)
         result_videos = future_videos.result()
-        result_articles = future_article.result()
+        result_articles = future_articles.result()
         return {"cid": cid, "videos": result_videos, "articles": result_articles}
 
 

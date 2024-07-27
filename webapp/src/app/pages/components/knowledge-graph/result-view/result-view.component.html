@@ -139,7 +139,7 @@
         </div>
       </div>
 
-      <p-tabPanel *ngIf="resourcesPagination.nodes.videos" [cache]="true" header="Videos" leftIcon="pi pi-video">
+      <p-tabPanel *ngIf="resourcesPagination?.nodes?.videos" [cache]="true" header="Videos" leftIcon="pi pi-video">
         <div class="mt-1 w-full" id="cro_viedo_list">
 
           <!-- <p-scrollPanel styleClass="scroll_panel_list">
@@ -156,7 +156,7 @@
             ></app-card-video-list>
         </div>
       </p-tabPanel>
-      <p-tabPanel *ngIf="!resourcesPagination.nodes.videos" header="Videos" leftIcon="pi pi-video">
+      <p-tabPanel *ngIf="!resourcesPagination?.nodes?.videos" header="Videos" leftIcon="pi pi-video">
         <h4 class="my-auto mt-4">No Recommended videos for the selected Concepts</h4>
       </p-tabPanel>
       <p-tabPanel *ngIf="resourcesPagination.nodes.articles" [cache]="true" header="Articles" leftIcon="pi pi-book">

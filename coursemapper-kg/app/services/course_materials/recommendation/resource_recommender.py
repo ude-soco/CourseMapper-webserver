@@ -234,7 +234,13 @@ class ResourceRecommenderService:
         # Crawl resources from YouTube (from each dnu) and Wikipedia API
         if len(concepts_to_be_crawled) > 0:
             for concept in concepts_to_be_crawled: #i in range(len(not_understood_concept_list)):
-                results.append(rrh.parallel_crawling_resources(self.recommender.canditate_selection, concept["name"], concept["cid"]))
+                results.append(rrh.parallel_crawling_resources(function=self.recommender.canditate_selection, 
+                                                               concept_name=concept["name"], 
+                                                               cid= concept["cid"], 
+                                                               result_type="records",
+                                                               top_n_videos=2,
+                                                               top_n_articles=2
+                                                            ))
 
             # Store resources into Neo4j Database (by creating connection btw Resource and Concept_modified)
             for result in results:
@@ -299,16 +305,16 @@ class ResourceRecommenderService:
         slide_weighted_avg_embedding_of_concepts = ""
    
         if recommendation_type in [ RecommendationType.PKG_BASED_DOCUMENT_VARIANT, RecommendationType.PKG_BASED_KEYPHRASE_VARIANT ]:
-            # Only take 5 concepts with the higher weight
-            
-            rec_params["concepts"] = rrh.get_top_n_concepts(rec_params["concepts"])
+            # Only take n (n=5) concepts with the higher weight
+            rec_params["concepts"] = rrh.get_top_n_concepts(concepts=rec_params["concepts"], top_n=len(rec_params["concepts"]))
 
             # Store Concepts into Neo4j Database
-            clu = rrh.save_and_get_concepts_modified( db=self.db,
-                                                      rec_params=rec_params, top_n=5, 
-                                                      user_embedding=True, 
-                                                      understood_list=body["understood_concept_ids"], 
-                                                      non_understood_list=body["non_understood_concept_ids"]
+            clu = rrh.save_and_get_concepts_modified(   db=self.db,
+                                                        rec_params=rec_params, 
+                                                        top_n=5, 
+                                                        user_embedding=True, 
+                                                        understood_list=body["understood_concept_ids"], 
+                                                        non_understood_list=body["non_understood_concept_ids"]
                                                     )
 
             rec_params["concepts"] = clu["concepts"]
@@ -325,10 +331,12 @@ class ResourceRecommenderService:
 
             # Store Concepts into Neo4j Database
             rec_params["concepts"] = slide_concepts_
-            clu = rrh.save_and_get_concepts_modified( rec_params=rec_params, top_n=len(slide_concepts_), 
-                                                      user_embedding=False, 
-                                                      understood_list=[], 
-                                                      non_understood_list=[]
+            clu = rrh.save_and_get_concepts_modified(   db=self.db,
+                                                        rec_params=rec_params, 
+                                                        top_n=len(slide_concepts_), 
+                                                        user_embedding=False, 
+                                                        understood_list=[], 
+                                                        non_understood_list=[]
                                                     )
             rec_params["concepts"] = clu["concepts"]
 

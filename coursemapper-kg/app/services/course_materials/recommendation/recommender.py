@@ -151,22 +151,29 @@ class Recommender:
             "sentence-transformers/msmarco-distilbert-base-tas-b"
         )
 
-    def canditate_selection(self, query, video, form="records"):
+    def canditate_selection(self, query, video, result_type="records", top_n_videos=2, top_n_articles=2):
+        '''
+            query: string to query API content
+            video: content type with True for video and False for wikipedia content
+            result_type: which form to deliver the resources crawled: records (list of dict)
+            top_n_videos: number of content to get from YouTube API
+            top_n_articles: number of content to get from Wikipedia API
+        '''
         data: pd.DataFrame
-        top_n = 2 # 15
+        # top_n = 2 # 15
 
         if video:
             start_time = time.time()
-            data = self.youtube_service.get_videos(query, top_n=top_n)
+            data = self.youtube_service.get_videos(query, top_n=top_n_videos)
             end_time = time.time()
             print("Get Videos Execution time: ", end_time - start_time, flush=True)
         else:
             start_time = time.time()
-            data = self.wikipedia_service.get_articles(query, top_n=top_n)
+            data = self.wikipedia_service.get_articles(query, top_n=top_n_articles)
             end_time = time.time()
             print("Get Articles Execution time: ", end_time - start_time, flush=True)
 
-        if form == "records":
+        if result_type == "records":
             return data.to_dict('records')
         return data
 
