@@ -232,12 +232,13 @@ class ResourceRecommenderService:
             concepts_to_be_crawled = rec_params["concepts"]
 
         # Crawl resources from YouTube (from each dnu) and Wikipedia API
-        for concept in concepts_to_be_crawled: #i in range(len(not_understood_concept_list)):
-            results.append(rrh.parallel_crawling_resources(self.recommender.canditate_selection, concept["name"], concept["cid"]))
+        if len(concepts_to_be_crawled) > 0:
+            for concept in concepts_to_be_crawled: #i in range(len(not_understood_concept_list)):
+                results.append(rrh.parallel_crawling_resources(self.recommender.canditate_selection, concept["name"], concept["cid"]))
 
-        # Store resources into Neo4j Database (by creating connection btw Resource and Concept_modified)
-        for result in results:
-            self.db.store_resources(resources_dict=result, cid=result["cid"], recommendation_type=rec_params["recommendation_type"])
+            # Store resources into Neo4j Database (by creating connection btw Resource and Concept_modified)
+            for result in results:
+                self.db.store_resources(resources_dict=result, cid=result["cid"], recommendation_type=rec_params["recommendation_type"])
         
         # Gather|Retrieve all resources crawled
         resources_new = self.db.retrieve_resources(concepts=concepts_to_be_crawled)

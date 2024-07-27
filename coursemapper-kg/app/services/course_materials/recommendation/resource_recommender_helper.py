@@ -27,9 +27,7 @@ def save_and_get_concepts_modified(db: NeoDataBase, rec_params, top_n=5, user_em
         status: dnu or u (PKG_BASED_KEYPHRASE_VARIANT |  PKG_BASED_DOCUMENT_VARIANT) | 
                 content (CONTENT_BASED_DOCUMENT_VARIANT | CONTENT_BASED_KEYPHRASE_VARIANT)
     '''
-
-    print("understood_list ->", understood_list)
-    print("concepts ->", rec_params["concepts"])
+    logger.info("Saving Logic: Concept_modified")
     
     result = {
         "concepts": [],
@@ -57,6 +55,7 @@ def save_and_get_concepts_modified(db: NeoDataBase, rec_params, top_n=5, user_em
             status = 'content' # for CONTENT_BASED_
         
         for concept in concepts:
+            db.create_concept_modified(cid=concept["cid"])
             concept_modified = db.update_rs_btw_user_and_cm(user_id=user_id, cid=concept["cid"], weight=concept["weight"], mid=concept["mid"], status=status)
             concepts_modified.append(concept_modified)
 
@@ -219,18 +218,14 @@ def remove_duplicates_from_resources(dict_list: list, key: str="rid"):
     return unique_dicts
 
 def rank_resources(resources: list, weights: dict = None, ratings: list = None, top_n_resources=10):
-    """
+    '''
         Step 1: Remove duplicates if exist
         Step 2: Ranking/Sorting Logic for Resources
         Result Form: {"articles": list, "videos": list}
         Step 3: Last Step: Resources having Rating related to DNU_modified (cid)
-    """
-    # Normalize Weights
-    # if weights is None:
-    #     # to be completed
-    #     video_weights_normalized =  {} # {'similarity_score': 0.2, 'creation_date': 0.2, 'views': 0.3, 'like_count': 0.1, 'user_rating': 0.1, 'saves_count': 0.1}
-    #     article_weights_normalized = {} # {'similarity_score': 0.4, 'creation_date': 0.4, 'user_rating': 0.2}
-    # else:
+    '''
+    logger.info("Appliying Ranking Algorithm")
+
     video_weights_normalized = normalize_factor_weights(factor_weights=weights["video"], method_type="l1", complete=True, sum_value=False)
     article_weights_normalized = normalize_factor_weights(factor_weights=weights["article"], method_type="l1", complete=True, sum_value=False)
 

@@ -2005,10 +2005,6 @@ class NeoDataBase:
                 status=status
             ).single()
 
-            print("r_detailr_detail ->")
-            print(cid)
-            print(r_detail)
-
             r_detail = { "cm_id": r_detail["cm_id"], "cid": r_detail["cid"], 
                         "weight": r_detail["weight"], "mid": r_detail["mid"], 
                         "status": r_detail["status"]
