@@ -123,12 +123,13 @@ def get_resources():
     data_default = data["default"]
     data_rec_params = data["rec_params"]
     
-    resource_recommender_service = ResourceRecommenderService()
-    result = resource_recommender_service._get_resources(data_default=data_default, data_rec_params=data_rec_params)
-
-    if result == None:
+    try:
+        resource_recommender_service = ResourceRecommenderService()
+        result = resource_recommender_service._get_resources(data_default=data_default, data_rec_params=data_rec_params)
+        return jsonify(result), 200
+    except Exception as e:
+        print(e)
         return jsonify({"msg": "Internal Server Error"}), 404
-    return jsonify(result), 200
 
     # n = cro_get_resources_pagination()["nodes"]
     # return jsonify({ "recommendation_type": "1", "concepts": data_rec_params["concepts"], 

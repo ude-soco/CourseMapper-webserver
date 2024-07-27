@@ -1811,7 +1811,7 @@ class NeoDataBase:
         if node.get("keyphrases") != None or node.get("document_embedding") != None or node.get("keyphrase_embedding") != None:
             tx.run(
                 '''
-                    MERGE (r:Resource: Video)
+                    MATCH (r:Resource: Video)
                     WHERE r.rid = $rid
                     SET   r.keyphrases = $keyphrases, r.keyphrase_embedding = $keyphrase_embedding, r.document_embedding = $document_embedding 
                 ''',
@@ -1868,7 +1868,7 @@ class NeoDataBase:
         if node.get("keyphrases") != None or node.get("document_embedding") != None or node.get("keyphrase_embedding") != None:
             tx.run(
                 '''
-                    MERGE (r:Resource: Video)
+                    MATCH (r:Resource: Video)
                     WHERE r.rid = $rid
                     SET   r.keyphrases = $keyphrases, r.keyphrase_embedding = $keyphrase_embedding, r.document_embedding = $document_embedding 
                 ''',

@@ -26,7 +26,7 @@ export class MaterialsRecommenderService {
   private commonMaterialModelUpdate3 = []
   public materialModelUpdate4 = new Subject<any[]>();
   private commonMaterialModelUpdate4 = []
-
+  
   constructor(private http: HttpClient,) {
     this.materialModel = new Subject();
     this.materialModelUpdate1 = new Subject();
@@ -52,7 +52,7 @@ export class MaterialsRecommenderService {
     console.warn("data ->", data);
     // return null;
 
-    this.recommendedMaterials = this.http.post<ResourcesPagination>(`${this.cmEndpointURL}get_resources`, data, { withCredentials: true });
+    this.recommendedMaterials = this.http.post<ResourcesPagination>(`${this.cmEndpointURL}get_resources`, data, { withCredentials: true, responseType: 'json' });
     return this.recommendedMaterials
   }
 
