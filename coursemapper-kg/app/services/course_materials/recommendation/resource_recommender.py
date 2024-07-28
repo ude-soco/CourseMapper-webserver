@@ -254,25 +254,25 @@ class ResourceRecommenderService:
         else:
             resources = resources_new
         resources = rrh.remove_duplicates_from_resources(dict_list=resources)
+
+        # check whether some resource attributes are empty or not, such as: keyphrases, keyphrase_embedding, document_embedding
+        ##
         
         # process with the recommendation algorithm selected
-        # if len(concepts_having_resources) != len(rec_params["concepts"]):
+        if len(concepts_having_resources) != len(rec_params["concepts"]):
         # if len(resources) > 0:
-        data_df = pd.DataFrame(resources)
-        resources_df = recommender.recommend(
-            slide_weighted_avg_embedding_of_concepts=slide_weighted_avg_embedding_of_concepts,
-            slide_document_embedding=slide_document_embedding,
-            user_embedding=user_embedding,
-            top_n=10,
-            recommendation_type=recommendation_type,
-            data=data_df
-        )
-        resources = resources_df.to_dict(orient='records')
-        self.db.store_resources(resources_list=resources, resources_form="list",resources_dict=None, cid=None)
+            data_df = pd.DataFrame(resources)
+            resources_df = recommender.recommend(
+                slide_weighted_avg_embedding_of_concepts=slide_weighted_avg_embedding_of_concepts,
+                slide_document_embedding=slide_document_embedding,
+                user_embedding=user_embedding,
+                top_n=10,
+                recommendation_type=recommendation_type,
+                data=data_df
+            )
+            resources = resources_df.to_dict(orient='records')
+            self.db.store_resources(resources_list=resources, resources_form="list",resources_dict=None, cid=None)
 
-        # check if resource dict contains keys such as: keyphrases, document_embedding, keyphrase_embedding
-        #
-        
         # Apply ranking algorithm on the resources
         # resources = rrh.remove_keys_from_resources(resources=resources)
         resources_dict = rrh.rank_resources(resources=resources, weights=factor_weights, top_n_resources=top_n_resources)

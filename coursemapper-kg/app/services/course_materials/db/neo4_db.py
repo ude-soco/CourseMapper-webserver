@@ -1806,16 +1806,16 @@ class NeoDataBase:
             Creating Resource YouTube
             r.similarity_score = $similarity_score,
         '''
-        logger.info(" Creating Resource YouTube")
+        # logger.info(" Creating Resource YouTube")
 
-        if node.get("keyphrases") != None or node.get("document_embedding") != None or node.get("keyphrase_embedding") != None:
+        if update_embedding_values == True: # node.get("keyphrases") != None or node.get("document_embedding") != None or node.get("keyphrase_embedding") != None:
             tx.run(
                 '''
                     MATCH (r:Resource: Video)
                     WHERE r.rid = $rid
                     SET   r.keyphrases = $keyphrases, r.keyphrase_embedding = $keyphrase_embedding, r.document_embedding = $document_embedding 
                 ''',
-                rid=node["id"],
+                rid=node["rid"],
                 keyphrases=node["keyphrases"] if "keyphrases" in node else [],
                 keyphrase_embedding=str(node["keyphrase_embedding"] if "keyphrase_embedding" in node else ""),
                 document_embedding=str(node["document_embedding"] if "document_embedding" in node else ""),
@@ -1864,15 +1864,15 @@ class NeoDataBase:
         '''
             Creating Resource Wikipedia
         '''
-        logger.info("Creating Resource Wikipedia")
-        if node.get("keyphrases") != None or node.get("document_embedding") != None or node.get("keyphrase_embedding") != None:
+        # logger.info("Creating Resource Wikipedia")
+        if update_embedding_values == True: # node.get("keyphrases") != None or node.get("document_embedding") != None or node.get("keyphrase_embedding") != None:
             tx.run(
                 '''
-                    MATCH (r:Resource: Video)
+                    MATCH (r:Resource: Article)
                     WHERE r.rid = $rid
                     SET   r.keyphrases = $keyphrases, r.keyphrase_embedding = $keyphrase_embedding, r.document_embedding = $document_embedding 
                 ''',
-                rid=node["id"],
+                rid=node["rid"],
                 keyphrases=node["keyphrases"] if "keyphrases" in node else [],
                 keyphrase_embedding=str(node["keyphrase_embedding"] if "keyphrase_embedding" in node else ""),
                 document_embedding=str(node["document_embedding"] if "document_embedding" in node else ""),
@@ -2286,7 +2286,7 @@ class NeoDataBase:
         def get_resource_primary_key(resource: dict):
             return resource["rid"] if "rid" in resource else resource["id"]
             
-        logger.info("Store Resources")
+        logger.info("Store Resources: Videos | Articles")
         result = []
 
         tx = self.driver.session()
@@ -2301,9 +2301,13 @@ class NeoDataBase:
                     for resource in resources:
                         self.create_or_update_wikipedia_resource(tx, resource, recommendation_type)
                         self.update_rs_btw_resource_and_cm(rid=get_resource_primary_key(resource), cid=cid, action=True)
-        else:
+        
+        elif resources_form == "list":
             for resource in resources_list:
-                self.create_or_update_video_resource(tx, resource, recommendation_type)
+                if "Video" in resource["labels"]:
+                    self.create_or_update_video_resource(tx, resource, update_embedding_values=True)
+                elif "Article" in resource["labels"]:
+                    self.create_or_update_wikipedia_resource(tx, resource, update_embedding_values=True)
 
     def retrieve_resources(self, concepts: dict):
         '''
