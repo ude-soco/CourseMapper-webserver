@@ -51,6 +51,21 @@ def remove_keys_from_resources(resources: list):
     resources_updated = [{k: v for k, v in d.items() if k not in keys} for d in resources]
     return resources_updated
 
+def check_keys_not_empty_from_resources(resources: list, recommendation_type_str: str):
+    '''
+        Check whether some resource attributes are empty or not, 
+        such as: keyphrases, keyphrase_embedding, document_embedding
+        return: True (not empty) | False (empty)
+    '''
+    for resource in resources:
+        if recommendation_type_str in ["1", "3"]: # keyphrase_embedding
+            if resource.get("keyphrase_embedding") == "":
+                return False
+        elif recommendation_type_str in ["2", "4"]: # document_embedding
+            if resource.get("document_embedding") == "":
+                return False
+    return True
+
 def get_top_n_concepts(concepts: list, top_n=5):
     '''
         Get top n concepts from the list

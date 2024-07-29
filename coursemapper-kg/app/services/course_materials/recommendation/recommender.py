@@ -59,8 +59,6 @@ def compute_dynamic_document_based_similarity(
         cosine_similarities.append(cosine_similarity)
 
     data["similarity_score"] = cosine_similarities
-    # data["similarity_score"] = cosine_similarities
-
     return data
 
 
@@ -87,8 +85,6 @@ def compute_dynamic_keyphrase_based_similarity(
         cosine_similarities.append(cosine_similarity)
 
     data["similarity_score"] = cosine_similarities
-    # data["similarity_score"] = cosine_similarities
-
     return data
 
 
@@ -111,8 +107,6 @@ def compute_document_based_similarity(
         cosine_similarities.append(cosine_similarity)
 
     data["similarity_score"] = cosine_similarities
-    # data["similarity_score"] = cosine_similarities
-
     return data
 
 
@@ -229,11 +223,13 @@ class Recommender:
         top_n=10,
         video=True,
         recommendation_type=RecommendationType.WITHOUT_EMBEDDING,
-        data:pd.DataFrame=None
+        data:pd.DataFrame=None,
+        presence_embedding_values=False
     ):
         '''
             Apply recommendation algorithms
             data: resources in DataFrame
+            presence_embedding_values: True (if the resource contains key values: keyphrase_embedding | document_embedding)
         '''
         logger.info("Applying the recommendation algorithm Selected")
 

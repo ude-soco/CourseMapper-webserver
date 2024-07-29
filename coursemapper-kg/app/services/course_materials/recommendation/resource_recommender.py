@@ -256,7 +256,9 @@ class ResourceRecommenderService:
         resources = rrh.remove_duplicates_from_resources(dict_list=resources)
 
         # check whether some resource attributes are empty or not, such as: keyphrases, keyphrase_embedding, document_embedding
-        ##
+        empty_keys_status = rrh.check_keys_not_empty_from_resources(resources=resources, recommendation_type_str=rec_params["recommendation_type"])
+        if empty_keys_status == False:
+            pass
         
         # process with the recommendation algorithm selected
         if len(concepts_having_resources) != len(rec_params["concepts"]):
