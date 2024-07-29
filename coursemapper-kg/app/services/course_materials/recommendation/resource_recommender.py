@@ -255,10 +255,8 @@ class ResourceRecommenderService:
             resources = resources_new
         resources = rrh.remove_duplicates_from_resources(dict_list=resources)
 
-        # check whether some resource attributes are empty or not, such as: keyphrases, keyphrase_embedding, document_embedding
-        empty_keys_status = rrh.check_keys_not_empty_from_resources(resources=resources, recommendation_type_str=rec_params["recommendation_type"])
-        if empty_keys_status == False:
-            pass
+        # Check whether some resource attributes are empty or not, such as: keyphrases, keyphrase_embedding, document_embedding
+        are_embedding_values_present = rrh.check_keys_not_empty_from_resources(resources=resources, recommendation_type_str=rec_params["recommendation_type"])
         
         # process with the recommendation algorithm selected
         if len(concepts_having_resources) != len(rec_params["concepts"]):
@@ -270,7 +268,8 @@ class ResourceRecommenderService:
                 user_embedding=user_embedding,
                 top_n=10,
                 recommendation_type=recommendation_type,
-                data=data_df
+                data=data_df,
+                are_embedding_values_present=are_embedding_values_present
             )
             resources = resources_df.to_dict(orient='records')
             self.db.store_resources(resources_list=resources, resources_form="list",resources_dict=None, cid=None)

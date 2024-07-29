@@ -55,16 +55,18 @@ def check_keys_not_empty_from_resources(resources: list, recommendation_type_str
     '''
         Check whether some resource attributes are empty or not, 
         such as: keyphrases, keyphrase_embedding, document_embedding
-        return: True (not empty) | False (empty)
+        return: False (not empty) | True (empty)
     '''
+    logger.info("Check whether some resource attributes are empty or not, such as: keyphrases, keyphrase_embedding, document_embedding")
+    
     for resource in resources:
         if recommendation_type_str in ["1", "3"]: # keyphrase_embedding
             if resource.get("keyphrase_embedding") == "":
-                return False
+                return True
         elif recommendation_type_str in ["2", "4"]: # document_embedding
             if resource.get("document_embedding") == "":
-                return False
-    return True
+                return True
+    return False
 
 def get_top_n_concepts(concepts: list, top_n=5):
     '''
