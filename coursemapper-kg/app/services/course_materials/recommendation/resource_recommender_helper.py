@@ -415,7 +415,7 @@ def check_and_get_resources_with_concepts(db: NeoDataBase, concepts: list):
     # else:
 
     for concept in concepts:
-        resourse_btw = db.retrieve_resources(concepts=[concept])
+        resourse_btw = db.retrieve_resources(concepts=[concept], embedding_values=True)
 
         ## at least 5 | 10 resources
         if len(resourse_btw) == 0: # len(resourse_btw) >= 5:

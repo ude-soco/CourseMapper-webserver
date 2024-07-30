@@ -2309,10 +2309,11 @@ class NeoDataBase:
                 elif "Article" in resource["labels"]:
                     self.create_or_update_wikipedia_resource(tx, resource, update_embedding_values=True)
 
-    def retrieve_resources(self, concepts: dict):
+    def retrieve_resources(self, concepts: dict, embedding_values=False):
         '''
             Getting List of Resources connected to Concept_modified
             algorithm_model: (str) which algorithm was used for the recommendation
+            query_form: 
         '''
         def resource_replace_none_value(value):
             if value == None:
@@ -2321,11 +2322,29 @@ class NeoDataBase:
         
         # logger.info("Getting List of Resources Containing Concept_modified")
 
-        result = []
-        cids = [node["cid"] for node in concepts]
-        with self.driver.session() as session:
-            result = session.run(
+        if embedding_values == True:
+            query = '''
+                    MATCH p=(a:Resource)-[r:BASED_ON]->(b:Concept_modified)
+                    WHERE b.cid IN $cids
+                    RETURN  DISTINCT LABELS(a) as labels, ID(a) as id, a.rid as rid, a.title as title, a.text as text,
+                            a.thumbnail as thumbnail, a.abstract as abstract, a.post_date as post_date, 
+                            a.author_image_url as author_image_url, a.author_name as author_name,
+                            a.keyphrases as keyphrases, a.description as description, a.description_full as description_full,
+                            a.publish_time as publish_time, a.uri as uri, a.duration as duration,
+                            COALESCE(toInteger(a.views), 0) AS views,
+                            COALESCE(toFloat(a.similarity_score), 0.0) AS similarity_score,
+                            COALESCE(toInteger(a.helpful_count), 0) AS helpful_count,
+                            COALESCE(toInteger(a.not_helpful_count), 0) AS not_helpful_count,
+                            COALESCE(toInteger(a.bookmarked_count), 0) AS bookmarked_count,
+                            COALESCE(toInteger(a.like_count), 0) AS like_count,
+                            a.channel_title as channel_title,
+                            a.updated_at as updated_at,
+                            a.keyphrase_embedding as keyphrase_embedding,
+                            a.document_embedding as document_embedding
+
                 '''
+        else:
+            query = '''
                     MATCH p=(a:Resource)-[r:BASED_ON]->(b:Concept_modified)
                     WHERE b.cid IN $cids
                     RETURN  DISTINCT LABELS(a) as labels, ID(a) as id, a.rid as rid, a.title as title, a.text as text,
@@ -2341,10 +2360,15 @@ class NeoDataBase:
                             COALESCE(toInteger(a.like_count), 0) AS like_count,
                             a.channel_title as channel_title,
                             a.updated_at as updated_at
-                ''',
+                '''
+
+        result = []
+        cids = [node["cid"] for node in concepts]
+        with self.driver.session() as session:
+            result = session.run(
+                query,
                 cids=cids
             ).data()
-
             result = self.resources_wrapper_from_query(data=result)
         return result
 
@@ -2365,7 +2389,11 @@ class NeoDataBase:
                     "keyphrases": resource["keyphrases"],
                     "text": resource["text"],
                     "bookmarked_count": resource["bookmarked_count"],
-                    "updated_at": resource["updated_at"]
+                    "updated_at": resource["updated_at"],
+                    "keyphrase_embedding": resource["keyphrase_embedding"].strip("[]").replace("'", "").split(',') if "keyphrase_embedding" in resource and len(resource["keyphrase_embedding"]) > 5 else [],
+                    "document_embedding": resource["document_embedding"].strip("[]").replace("'", "").split(',') if "document_embedding" in resource and len(resource["document_embedding"]) > 5 else [],
+                    # "keyphrase_embedding": [float(value.strip()) for value in resource["keyphrase_embedding"].strip("[]").replace("'", "").split(',')] if "keyphrase_embedding" in resource and len(resource["keyphrase_embedding"]) > 5 else [],
+                    # "document_embedding": [float(value.strip()) for value in resource["document_embedding"].strip("[]").replace("'", "").split(',')] if "document_embedding" in resource and len(resource["document_embedding"]) > 5  else []
                 }
 
                 if "Video" in r["labels"]:

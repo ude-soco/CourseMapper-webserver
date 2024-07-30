@@ -57,9 +57,9 @@ def compute_dynamic_document_based_similarity(
         Compute Cosine Similarities
         Retrieve user document-based similarity
     '''
+    logger.info("Computing similarities between user embeddings and resources document embeddings")
 
     cosine_similarities = []
-
     for document_embedding in data["document_embedding"]:
         tensor = get_tensor_from_embedding(document_embedding)
 
@@ -90,6 +90,7 @@ def compute_dynamic_keyphrase_based_similarity(
         : compute keyphrase-based similarity between user embeddings and
         resources weighted average keyphrase embeddings
     '''
+    logger.info("Computing Cosine Similarities with keyphrase_embedding")
 
     cosine_similarities = []
     for keyphrase_embedding in data["keyphrase_embedding"]:
@@ -113,9 +114,9 @@ def compute_document_based_similarity(
         Compute Document-Based Cosine Similarities
         : compute similarities between slide document embeddings and resources document embeddings
     '''
-    # logger.info("Compute Document-Based Cosine Similarities")
-    cosine_similarities = []
+    logger.info("Computing Document-Based Cosine Similarities")
 
+    cosine_similarities = []
     slide_document_embedding_array = slide_document_embedding.split(",")
     slide_document_embedding_tensor = get_tensor_from_embedding(
         slide_document_embedding_array
@@ -304,6 +305,7 @@ class Recommender:
         
         # Model 1
         elif recommendation_type == RecommendationType.PKG_BASED_KEYPHRASE_VARIANT:
+            logger.info("Algorithm Model 1: Starting Processing")
             start_time = time.time()
             
             # Tranform embedding to tensor
@@ -323,7 +325,7 @@ class Recommender:
             )
 
             end_time = time.time()
-            logger.info("Algorithm Model 1 with Execution time: ", str(end_time - start_time))
+            logger.info(f"Algorithm Model 1: Execution time {end_time - start_time}")
             return data
         
         # If Model 2

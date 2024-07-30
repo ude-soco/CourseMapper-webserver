@@ -248,7 +248,8 @@ class ResourceRecommenderService:
                 self.db.store_resources(resources_dict=result, cid=result["cid"], recommendation_type=rec_params["recommendation_type"])
         
         # Gather|Retrieve all resources crawled
-        resources_new = self.db.retrieve_resources(concepts=concepts_not_having_resources)
+        # resources = self.db.retrieve_resources(concepts=rec_params["concepts"], embedding_values=True)
+        resources_new = self.db.retrieve_resources(concepts=concepts_not_having_resources, embedding_values=True)
         if len(resources_found) > 0:
             resources = resources_found + resources_new
         else:
@@ -259,20 +260,20 @@ class ResourceRecommenderService:
         are_embedding_values_present = rrh.check_keys_not_empty_from_resources(resources=resources, recommendation_type_str=rec_params["recommendation_type"])
         
         # process with the recommendation algorithm selected
-        if len(concepts_having_resources) != len(rec_params["concepts"]):
+        # if len(concepts_having_resources) != len(rec_params["concepts"]):
         # if len(resources) > 0:
-            data_df = pd.DataFrame(resources)
-            resources_df = recommender.recommend(
-                slide_weighted_avg_embedding_of_concepts=slide_weighted_avg_embedding_of_concepts,
-                slide_document_embedding=slide_document_embedding,
-                user_embedding=user_embedding,
-                top_n=10,
-                recommendation_type=recommendation_type,
-                data=data_df,
-                are_embedding_values_present=are_embedding_values_present
-            )
-            resources = resources_df.to_dict(orient='records')
-            self.db.store_resources(resources_list=resources, resources_form="list",resources_dict=None, cid=None)
+        data_df = pd.DataFrame(resources)
+        resources_df = recommender.recommend(
+            slide_weighted_avg_embedding_of_concepts=slide_weighted_avg_embedding_of_concepts,
+            slide_document_embedding=slide_document_embedding,
+            user_embedding=user_embedding,
+            top_n=10,
+            recommendation_type=recommendation_type,
+            data=data_df,
+            are_embedding_values_present=are_embedding_values_present
+        )
+        resources = resources_df.to_dict(orient='records')
+        self.db.store_resources(resources_list=resources, resources_form="list",resources_dict=None, cid=None)
 
         # Apply ranking algorithm on the resources
         # resources = rrh.remove_keys_from_resources(resources=resources)
