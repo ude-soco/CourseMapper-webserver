@@ -26,6 +26,7 @@ export class CardVideoComponent {
   @Output() onClick: EventEmitter<any> = new EventEmitter();
   @Output() onWatchVideo: EventEmitter<any> = new EventEmitter();
   @Input() userId: string;
+  @Input() TabSaved = false;
 
   // boby024
   isDescriptionFullDisplayed = false;
@@ -44,6 +45,7 @@ export class CardVideoComponent {
     this.onWatchVideo.emit(videoElement);
 
     this.showLabelMoreDescription();
+    this.isBookmarkFill = this.TabSaved === true ? true : false;
   }
 
   showLabelMoreDescription() {
@@ -62,7 +64,7 @@ export class CardVideoComponent {
   }
 
   addToBookmark() {
-    console.warn("this - rec id -> ", this.videoElement.id);
+    // console.warn("this - rec id -> ", this.videoElement.id);
     this.isBookmarkFill = this.isBookmarkFill === true ? false : true;
     this.saveOrRemoveParams = {"user_id": this.userId, "rid": this.videoElement.rid, "status": this.isBookmarkFill};
     this.SaveOrRemoveUserResource(this.saveOrRemoveParams);

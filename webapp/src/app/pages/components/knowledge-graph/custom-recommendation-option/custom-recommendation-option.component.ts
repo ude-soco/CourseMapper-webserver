@@ -101,6 +101,8 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
   seeMore = true;
   tmpCroFormConcepts = [];
 
+  tstText = ""
+
   /*didNotUnderstandConceptsObjCRO = [
     {cid:"1", name: "Information Visualization Machine", weight: 0.3, status: false, weight_full: 30},
     {cid:"2", name: "Machine Learning", weight: 0.8, status: false, weight_full: 80},

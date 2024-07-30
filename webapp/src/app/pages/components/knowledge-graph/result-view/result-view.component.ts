@@ -415,7 +415,9 @@ export class ResultViewComponent {
 
   filteringResourcesSaved() {
     this.showSearchIconPinner = this.filteringParamsSavedTab.text.length >= 1 ? true : false;
-    if (this.filteringParamsSavedTab.text.length >= 2) {
+    if (this.filteringParamsSavedTab.text.length == 0) {
+      this.getUserResources(this.filteringParamsSavedTab);
+    } else if (this.filteringParamsSavedTab.text.length >= 2) {
       // this.filteringParamsSavedTab.user_id = this.userId;
       this.getUserResources(this.filteringParamsSavedTab);
     } else {
@@ -434,8 +436,8 @@ export class ResultViewComponent {
       .subscribe({
         next: (data: UserResourceFilterResult) => {
           this.filteringResourcesFound = data;
-          console.warn("len -> ", data.videos.length)
-          console.warn("len -> ", this.filteringResourcesFound.videos.length)
+          // console.warn("len -> ", data.videos.length)
+          // console.warn("len -> ", this.filteringResourcesFound.videos.length)
         },
         error: (err) => {
           console.log(err);

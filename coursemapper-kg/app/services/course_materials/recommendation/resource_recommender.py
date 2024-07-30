@@ -248,16 +248,17 @@ class ResourceRecommenderService:
                 self.db.store_resources(resources_dict=result, cid=result["cid"], recommendation_type=rec_params["recommendation_type"])
         
         # Gather|Retrieve all resources crawled
-        # resources = self.db.retrieve_resources(concepts=rec_params["concepts"], embedding_values=True)
-        resources_new = self.db.retrieve_resources(concepts=concepts_not_having_resources, embedding_values=True)
-        if len(resources_found) > 0:
-            resources = resources_found + resources_new
-        else:
-            resources = resources_new
-        resources = rrh.remove_duplicates_from_resources(dict_list=resources)
+        resources = self.db.retrieve_resources(concepts=rec_params["concepts"], embedding_values=True)
+        
+        # resources_new = self.db.retrieve_resources(concepts=concepts_not_having_resources, embedding_values=True)
+        # if len(resources_found) > 0:
+        #     resources = resources_found + resources_new
+        # else:
+        #     resources = resources_new
+        # resources = rrh.remove_duplicates_from_resources(dict_list=resources)
 
         # Check whether some resource attributes are empty or not, such as: keyphrases, keyphrase_embedding, document_embedding
-        are_embedding_values_present = rrh.check_keys_not_empty_from_resources(resources=resources, recommendation_type_str=rec_params["recommendation_type"])
+        # are_embedding_values_present = rrh.check_keys_not_empty_from_resources(resources=resources, recommendation_type_str=rec_params["recommendation_type"])
         
         # process with the recommendation algorithm selected
         # if len(concepts_having_resources) != len(rec_params["concepts"]):
@@ -270,9 +271,9 @@ class ResourceRecommenderService:
             top_n=10,
             recommendation_type=recommendation_type,
             data=data_df,
-            are_embedding_values_present=are_embedding_values_present
+            are_embedding_values_present=True # are_embedding_values_present
         )
-        resources = resources_df.to_dict(orient='records')
+        resources = resources_df.where(resources_df.notnull(), None).to_dict(orient='records') # resources_df.to_dict(orient='records')
         self.db.store_resources(resources_list=resources, resources_form="list",resources_dict=None, cid=None)
 
         # Apply ranking algorithm on the resources

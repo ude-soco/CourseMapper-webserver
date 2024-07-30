@@ -2086,7 +2086,7 @@ class NeoDataBase:
                     '''
                         MATCH (a:User {uid: $user_id}), (b:Resource {rid: $rid})
                         MERGE (a)-[r:HAS_RATED {user_id: $user_id, rid: $rid}]->(b)
-                        ON CREATE SET r.cids = $cids
+                        ON CREATE SET r.cids = $cids, r.value = $value
                         ON MATCH SET r.user_id = $user_id, r.rid = $rid, r.value = $value, r.cids = $cids
                     ''',
                     user_id=rating["user_id"],
@@ -2100,7 +2100,7 @@ class NeoDataBase:
                     '''
                         MATCH (a:User {uid: $user_id}), (b:Resource {rid: $rid})
                         MERGE (a)-[r:HAS_RATED {user_id: $user_id, rid: $rid}]->(b)
-                        ON CREATE SET r.cids = $cids
+                        ON CREATE SET r.cids = $cids, r.value = $value
                         ON MATCH SET r.user_id = $user_id, r.rid = $rid, r.value = $value, r.cids = r.cids + [x IN $cids WHERE NOT x IN r.cids]
                     ''',
                     user_id=rating["user_id"],

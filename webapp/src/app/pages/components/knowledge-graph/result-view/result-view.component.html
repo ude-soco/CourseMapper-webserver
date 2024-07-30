@@ -151,7 +151,7 @@
 
             <app-card-video-list
               [notUnderstoodConcepts]="concepts"
-              [videoElements]="resourcesPagination.nodes.videos"
+              [videoElements]="resourcesPagination?.nodes?.videos"
               [userId]="userId"
             ></app-card-video-list>
         </div>
@@ -159,7 +159,7 @@
       <p-tabPanel *ngIf="!resourcesPagination?.nodes?.videos" header="Videos" leftIcon="pi pi-video">
         <h4 class="my-auto mt-4">No Recommended videos for the selected Concepts</h4>
       </p-tabPanel>
-      <p-tabPanel *ngIf="resourcesPagination.nodes.articles" [cache]="true" header="Articles" leftIcon="pi pi-book">
+      <p-tabPanel *ngIf="resourcesPagination?.nodes?.articles" [cache]="true" header="Articles" leftIcon="pi pi-book">
         <div>
 
           <!-- <p-scrollPanel styleClass="scroll_panel_list">
@@ -171,11 +171,11 @@
 
             <app-card-article-list
               [notUnderstoodConcepts]="concepts"
-              [articleElements]="resourcesPagination.nodes.articles"
+              [articleElements]="resourcesPagination?.nodes?.articles"
             ></app-card-article-list>
         </div>
       </p-tabPanel>
-      <p-tabPanel *ngIf="!resourcesPagination.nodes.articles" header="Articles" leftIcon="pi pi-book">
+      <p-tabPanel *ngIf="!resourcesPagination?.nodes?.articles" header="Articles" leftIcon="pi pi-book">
         <h4 class="my-auto mt-4">No Recommended articles for the selected Concepts</h4>
       </p-tabPanel>
 
@@ -204,6 +204,7 @@
 
           <div>
             <span class="p-input-icon-right">
+              <label htmlFor="search_videos_articles">Search for videos/artciles</label>
               <i class="pi pi-search" *ngIf="!showSearchIconPinner"></i>
               <i class="pi pi-spin pi-spinner" *ngIf="showSearchIconPinner"></i>
               <input type="text" pInputText [(ngModel)]="filteringParamsSavedTab.text" 
@@ -219,6 +220,7 @@
               <app-card-video-list
               [notUnderstoodConcepts]="concepts"
               [videoElements]="filteringResourcesFound?.videos"
+              [TabSaved]="true"
               ></app-card-video-list>
           </div>
           <div>
