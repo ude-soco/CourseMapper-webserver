@@ -62,17 +62,18 @@
           </div> -->
           <div class="w-3.5/12 text-sm ml-auto">
             <div class="text-[#0288d1] flex flex-row gap-2 mt-1">
-              <div *ngIf="TabSaved" class="flex flex-row gap-2 mt-1">
+              <div class="flex flex-row gap-2 mt-1">
                 <div class="my-auto opacity-75">Similarity score:</div>
                 <div class="my-auto font-bold">{{ videoElement.similarity_score | percent }}</div>
+                <div
+                  class="my-auto"
+                  pTooltip="Similarity Score Value related to the how this item is closed to your Concept Selected"
+                  tooltipPosition="top"
+                >
+                  <span class="pi pi-info-circle" style="font-size: 0.8rem"></span>
+                </div>
               </div>
-              <div
-                class="my-auto"
-                pTooltip="Similarity Score Value related to the how this item is closed to your Concept Selected"
-                tooltipPosition="top"
-              >
-                <span class="pi pi-info-circle" style="font-size: 0.8rem"></span>
-              </div>
+              
               <div>
                 <div class="my-auto" (click)="addToBookmark()" *ngIf="!isBookmarkFill">
                   <i class="pi pi-bookmark" style="font-size: 1.2rem; color: #000000"></i>

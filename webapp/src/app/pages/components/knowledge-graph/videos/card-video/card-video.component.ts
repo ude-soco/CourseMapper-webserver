@@ -26,7 +26,7 @@ export class CardVideoComponent {
   @Output() onClick: EventEmitter<any> = new EventEmitter();
   @Output() onWatchVideo: EventEmitter<any> = new EventEmitter();
   @Input() userId: string;
-  @Input() TabSaved = false;
+  @Input() TabSaved: boolean;
 
   // boby024
   isDescriptionFullDisplayed = false;
@@ -45,7 +45,7 @@ export class CardVideoComponent {
     this.onWatchVideo.emit(videoElement);
 
     this.showLabelMoreDescription();
-    this.isBookmarkFill = this.TabSaved === true ? true : false;
+    this.isBookmarkFill = this.TabSaved;
   }
 
   showLabelMoreDescription() {

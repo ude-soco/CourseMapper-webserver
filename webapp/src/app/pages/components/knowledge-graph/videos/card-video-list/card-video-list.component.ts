@@ -18,7 +18,7 @@ export class CardVideoListComponent {
   public showVideo = false;
   public video: VideoElementModel;
   @Input() userId: string;
-  @Input() TabSaved = false;
+  @Input() TabSaved: boolean;
 
   constructor(private route: Router) { }
 

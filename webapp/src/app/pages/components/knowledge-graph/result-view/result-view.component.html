@@ -202,7 +202,7 @@
             </div>
           </div>
 
-          <div>
+          <!-- <div>
             <span class="p-input-icon-right">
               <label htmlFor="search_videos_articles">Search for videos/artciles</label>
               <i class="pi pi-search" *ngIf="!showSearchIconPinner"></i>
@@ -211,7 +211,24 @@
                 (input)="filteringResourcesSaved()"
               />
             </span>
+          </div> -->
+          
+          <div class="p-field p-fluid">
+            <span class="p-float-label">
+              <input
+                id="search-input"
+                type="text"
+                pInputText
+                [(ngModel)]="filteringParamsSavedTab.text"
+                placeholder=" "
+                (input)="filteringResourcesSaved()"
+              />
+              <label for="search-input-videos-artciles">Search for videos/artciles</label>
+              <i class="pi pi-search search-icon" *ngIf="!showSearchIconPinner"></i>
+              <i class="pi pi-spin pi-spinner search-icon" *ngIf="showSearchIconPinner"></i>
+            </span>
           </div>
+
         </div>
 
         <!-- display resources filtered -->
@@ -220,7 +237,6 @@
               <app-card-video-list
               [notUnderstoodConcepts]="concepts"
               [videoElements]="filteringResourcesFound?.videos"
-              [TabSaved]="true"
               ></app-card-video-list>
           </div>
           <div>

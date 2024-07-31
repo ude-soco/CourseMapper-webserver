@@ -30,3 +30,23 @@
   pointer-events: none;
   opacity: 0.3;
 }
+
+/* search videos_articles */
+.p-float-label input {
+  width: 30rem; /* Set to desired width */
+  padding-right: 2rem;
+}
+.p-float-label {
+  position: relative;
+}
+.p-float-label input {
+  padding-right: 2rem; /* Adjust padding to fit the icon */
+}
+.search-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: gray;
+}

@@ -444,16 +444,30 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
         if (this.seeMore === false) {
           if (i >= 5) {
             let concept_body_ = document.getElementById("concept_body_" +  i)
-            if (concept_body_) {
-              concept_body_.style.display = "none";
+
+            if (concept_body_.style.display === 'none') { 
+              concept_body_.style.display = 'block';
+            } else {
+              concept_body_.style.display = 'none';
             }
+
+            // if (concept_body_) {
+            //   concept_body_.style.display = "none";
+            // }
+
           }
         } else {
           if (i >= 5) {
             let concept_body_ = document.getElementById("concept_body_" +  i)
-            if (concept_body_) {
-              concept_body_.style.display = "flex";
+            
+            if (concept_body_.style.display === 'none') { 
+              concept_body_.style.display = 'block';
+            } else {
+              concept_body_.style.display = 'none';
             }
+            // if (concept_body_) {
+            //   concept_body_.style.display = "flex";
+            // }
 
           }
         }
