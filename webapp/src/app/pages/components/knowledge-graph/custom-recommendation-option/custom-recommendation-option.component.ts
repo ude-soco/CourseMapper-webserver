@@ -227,13 +227,14 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
       for(let node of conceptsList) {
         if (id === node.cid) {
           node["status"] = true;
+          node["visible"] = true;
           concepts.push(node);
         }
       }
 
       this.croForm.concepts = concepts;
       // this.dynamicConceptAdded();
-      this.updateNumberConceptsToBeChecked();
+      // this.updateNumberConceptsToBeChecked();
     }
   }
 
@@ -342,7 +343,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
       }
     }
 
-    this.updateNumberConceptsToBeChecked();
+    // this.updateNumberConceptsToBeChecked();
     // this.showRecTypeAndFactorWeight();
   }
 
@@ -424,7 +425,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
 
   setStatus(event, cro) {
     this.deactivateSelection();
-    this.updateNumberConceptsToBeChecked();
+    // this.updateNumberConceptsToBeChecked();
   }
 
   selectTopConcept() {
@@ -439,45 +440,19 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
 
   displaySeeMore() {
     this.seeMore = this.seeMore === true ? false : true;
-    if (this.croForm.concepts.length > 5) {
-      for (let i = 0; i < this.croForm.concepts.length; i++) {
-        if (this.seeMore === false) {
-          if (i >= 5) {
-            let concept_body_ = document.getElementById("concept_body_" +  i)
+    for (let i = 5; i < this.croForm.concepts.length; i++) {
+      console.warn(this.croForm.concepts[i])
 
-            if (concept_body_.style.display === 'none') { 
-              concept_body_.style.display = 'block';
-            } else {
-              concept_body_.style.display = 'none';
-            }
-
-            // if (concept_body_) {
-            //   concept_body_.style.display = "none";
-            // }
-
-          }
-        } else {
-          if (i >= 5) {
-            let concept_body_ = document.getElementById("concept_body_" +  i)
-            
-            if (concept_body_.style.display === 'none') { 
-              concept_body_.style.display = 'block';
-            } else {
-              concept_body_.style.display = 'none';
-            }
-            // if (concept_body_) {
-            //   concept_body_.style.display = "flex";
-            // }
-
-          }
-        }
+      if (this.seeMore === false) {
+        this.croForm.concepts[i]["visible"] = false;
+      } else {
+        this.croForm.concepts[i]["visible"] = true;
       }
     }
   }
 
   deactivateSelection() {
     let conceptsWithStatusTrue = this.croForm.concepts.filter(x => x.status === true)
-    // console.warn("conceptsWithStatusTrue ->", conceptsWithStatusTrue)
 
     if (conceptsWithStatusTrue.length > 5) {
       this.isMoreThan5ConceptDisplayed = true;
@@ -495,19 +470,21 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
       const conceptFound = this.croForm.concepts.find((concept) => concept.cid === value.cid);
 
       if (conceptFound === undefined) {
-        value["status"] = true
+        value["status"] = true;
+        value["visible"] = true;
         this.croForm.concepts.push(value);
       } else {
         for(let concept of this.croForm.concepts) {
           if (value.cid === concept.cid) {
             concept.status = !value.status;
+            concept.visible = !value.status;
             break
           }
         }
       }
     }
     
-    this.updateNumberConceptsToBeChecked();
+    // this.updateNumberConceptsToBeChecked();
   }
 
   removeSelectManuallyOnChange(index: number, cid: string) {
@@ -517,26 +494,13 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
       for (let node of this.CROconceptsManually) {
         if (cid === node.cid) {
           node.status = false;
+          node.visible = false;
           break;
         }
       }
     }
 
-    // let new_concepts = [];
-    // for (let x of this.croForm.concepts) {
-    //   if (x.cid !== cro.cid) {
-    //     new_concepts.push(x);
-    //   } else {
-    //     for (let y of this.CROconceptsManually) {
-    //       if (y.cid === x.cid) {
-    //         y.status = false;
-    //         break;
-    //       }
-    //     }
-    //   }
-    // }
-    // this.croForm.concepts = new_concepts;
-    this.updateNumberConceptsToBeChecked();
+    // this.updateNumberConceptsToBeChecked();
   }
 
   getOnlyStatusChecked() {

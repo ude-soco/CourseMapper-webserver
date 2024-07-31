@@ -144,11 +144,11 @@ export class ResultViewComponent {
     private slideConceptservice: SlideConceptsService,
     private materialsRecommenderService: MaterialsRecommenderService,
   ) {
-    slideConceptservice.didNotUnderstandConcepts.subscribe((res) => {
+    slideConceptservice?.didNotUnderstandConcepts.subscribe((res) => {
       this.didNotUnderstandConceptsObj = res;
       this.didNotUnderstandConceptsObj.forEach((el) => {
         this.allConceptsObj = this.allConceptsObj.map((e) =>
-          e.id === el.id ? el : e
+          e.id === el?.id ? el : e
         );
       });
     });
