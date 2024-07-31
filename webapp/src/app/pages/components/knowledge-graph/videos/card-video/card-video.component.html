@@ -46,12 +46,17 @@
       <div class="flex flex-col gap-2">
         <div class="flex flex-row justify-between">
           <div class="w-8.5/12">
-            <h3 class="title-video text-xl font-bold inline-block break-normal flex-wrap" 
-              (click)="readVideo(videoElement)" 
-              [class.active]="isActive"  
-              [innerHTML] = "videoElement.title">
-            </h3>
+            <div>
+              <h3 class="title-video text-xl font-bold inline-block break-normal flex-wrap w-11/12" 
+                (click)="readVideo(videoElement)" 
+                [class.active]="isActive"  
+                [innerHTML] = "videoElement.title">
+              </h3>
+            </div>
           </div>
+
+          <div></div>
+          
           <!-- <div class="w-3/12">
             <div class="border-2 rounded-md border-[#D9D9D9] bg-[#D9D9D9]">
               <span pTooltip="Similarity between the concepts not understood and the content of this video"
@@ -61,7 +66,7 @@
             </div>
           </div> -->
           <div class="w-3.5/12 text-sm ml-auto">
-            <div class="text-[#0288d1] flex flex-row gap-2 mt-1">
+            <div class="text-[#0288d1] flex flex-row gap-2 mt-1 w-48">
               <div class="flex flex-row gap-2 mt-1">
                 <div class="my-auto opacity-75">Similarity score:</div>
                 <div class="my-auto font-bold">{{ videoElement.similarity_score | percent }}</div>

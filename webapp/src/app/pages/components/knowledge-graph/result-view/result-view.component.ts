@@ -120,6 +120,8 @@ export class ResultViewComponent {
     mids: [],
     slider_numbers: []
   }
+  
+  isLoadingResource = true;
 
   /*
   croVideos: VideoElementModel[]; // croVideoElementModel;
@@ -220,7 +222,17 @@ export class ResultViewComponent {
     // this.allConceptsObj = [...this.concepts1];
     // this.loadResultForSelectedModel(MaterialModels.MODEL_1);
     this.loadResultForSelectedModel();
+
+    // if (this.resourcesPagination) {
+    //   this.isLoadingResource = false;
+    // }
   }
+
+  // ngOnChanges() {
+  //   if (this.resourcesPagination) {
+  //     this.isLoadingResource = false;
+  //   }
+  // }
 
   setChipConcept(concept): void {
     this.conceptFromChipObj = {

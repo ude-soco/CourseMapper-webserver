@@ -156,9 +156,24 @@
             ></app-card-video-list>
         </div>
       </p-tabPanel>
+
+      <!-- <ng-template [ngIf]="isLoadingResource" [ngIfElse]="loading">
+        <div>
+          <p-progressSpinner></p-progressSpinner>
+        </div>
+      </ng-template>
+    
+      <ng-template #loading>
+        <p-tabPanel header="Videos" leftIcon="pi pi-video">
+          <h4 class="my-auto mt-4">No Recommended videos for the selected Concepts</h4>
+        </p-tabPanel>
+      </ng-template> -->
+
       <p-tabPanel *ngIf="!resourcesPagination?.nodes?.videos" header="Videos" leftIcon="pi pi-video">
         <h4 class="my-auto mt-4">No Recommended videos for the selected Concepts</h4>
       </p-tabPanel>
+
+      
       <p-tabPanel *ngIf="resourcesPagination?.nodes?.articles" [cache]="true" header="Articles" leftIcon="pi pi-book">
         <div>
 
