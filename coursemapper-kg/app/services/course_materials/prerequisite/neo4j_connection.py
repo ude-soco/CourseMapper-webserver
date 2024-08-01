@@ -11,7 +11,7 @@ class DBConnection:
         self.concepts = []
 
     def extract_concepts(self,learning_material= "qwer"):
-        self.learning_material = learning_material
+        self.learning_material = str(learning_material)
         main_concepts = self.extract_main_concepts()
         for concept in main_concepts:
             print(concept["name"])
@@ -30,7 +30,7 @@ class DBConnection:
 
             
     def extract_main_concepts_query(self, tx,lm):
-        result = tx.run("""MATCH (lm:LearningMaterial {name: $name})-[:LM_CONSISTS_OF]->(concept:Concept {type: 'main_concept'})RETURN concept""",name=self.learning_material)
+        result = tx.run("""MATCH (lm:LearningMaterial {mid: $name})-[:LM_CONSISTS_OF]->(concept:Concept {type: 'main_concept'})RETURN concept""",name=self.learning_material)
         return list(result)
     
     def extract_main_concepts(self):
@@ -57,7 +57,7 @@ class DBConnection:
             return None
     
     def extract_related_concepts_query(self,tx,name,lm):
-        result = tx.run("""MATCH (lm:LearningMaterial {name: $lm})-[:LM_CONSISTS_OF]->(concept:Concept {name: $name})-[:RELATED_TO]->(related:Concept) RETURN concept,related""",lm=self.learning_material,name=name)
+        result = tx.run("""MATCH (lm:LearningMaterial {mid: $lm})-[:LM_CONSISTS_OF]->(concept:Concept {name: $name})-[:RELATED_TO]->(related:Concept) RETURN concept,related""",lm=self.learning_material,name=name)
         return list(result)
 
     def extract_related_concepts(self,name):

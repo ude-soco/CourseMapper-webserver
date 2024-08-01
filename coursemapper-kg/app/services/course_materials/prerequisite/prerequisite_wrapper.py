@@ -30,7 +30,7 @@ class Prerequisite:
         self.find_prerequsite_all()
 
     def find_prerequisite_one(self,lm):
-        concepts_one = self.db.extract_concepts(learning_material=lm["name"])
+        concepts_one = self.db.extract_concepts(learning_material=lm["id"])
         concepts_one["createdAt"] = lm["createdAt"]
         self.concepts = pd.concat([self.concepts,concepts_one],ignore_index=True)
 
