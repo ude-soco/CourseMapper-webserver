@@ -27,7 +27,7 @@
     "@babel/cli": "^7.24.7",
     "@babel/core": "^7.24.9",
     "@babel/preset-env": "^7.24.7",
-    "axios": "^1.7.2",
+    "axios": "^1.7.3",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
     "cookie-session": "^2.1.0",
