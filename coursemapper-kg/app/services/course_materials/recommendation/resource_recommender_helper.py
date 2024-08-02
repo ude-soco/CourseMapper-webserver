@@ -111,7 +111,7 @@ def save_and_get_concepts_modified(db: NeoDataBase, rec_params, top_n=5, user_em
         
         for concept in concepts:
             db.create_concept_modified(cid=concept["cid"])
-            concept_modified = db.update_rs_btw_user_and_cm(user_id=user_id, cid=concept["cid"], weight=concept["weight"], mid=concept["mid"], status=status)
+            concept_modified = db.update_rs_btw_user_and_cm(user_id=user_id, cid=concept["cid"], weight=concept["weight"], mid=rec_params["mid"], status=status)
             concepts_modified.append(concept_modified)
 
         # update user embedding value (because weight value could be changed from the user)
@@ -271,27 +271,29 @@ def rank_resources(resources: list, weights: dict = None, ratings: list = None, 
     logger.info("Appliying Ranking Algorithm")
     # resources = remove_duplicates_from_resources(resources)
 
-    video_weights_normalized = normalize_factor_weights(factor_weights=weights["video"], method_type="l1", complete=True, sum_value=False)
-    article_weights_normalized = normalize_factor_weights(factor_weights=weights["article"], method_type="l1", complete=True, sum_value=False)
+    if len(resources) > 0:
+        video_weights_normalized = normalize_factor_weights(factor_weights=weights["video"], method_type="l1", complete=True, sum_value=False)
+        article_weights_normalized = normalize_factor_weights(factor_weights=weights["article"], method_type="l1", complete=True, sum_value=False)
 
-    # video items
-    resources_videos = [resource for resource in resources if "Video" in resource["labels"]]
-    resources_videos = calculate_factors_weights(category=1, resources=resources_videos, weights=video_weights_normalized)
-    resources_videos = remove_keys_from_resources(resources=resources_videos)
+        # video items
+        resources_videos = [resource for resource in resources if "Video" in resource["labels"]]
+        resources_videos = calculate_factors_weights(category=1, resources=resources_videos, weights=video_weights_normalized)
+        resources_videos = remove_keys_from_resources(resources=resources_videos)
 
-    # articles items
-    resources_articles = [resource for resource in resources if "Article" in resource["labels"]]
-    resources_articles = calculate_factors_weights(category=2, resources=resources_articles, weights=article_weights_normalized)
-    resources_articles = remove_keys_from_resources(resources=resources_articles)
+        # articles items
+        resources_articles = [resource for resource in resources if "Article" in resource["labels"]]
+        resources_articles = calculate_factors_weights(category=2, resources=resources_articles, weights=article_weights_normalized)
+        resources_articles = remove_keys_from_resources(resources=resources_articles)
 
-    # # Finally, priorities on resources having Rating related to DNU_modified (cid)
-    if ratings and len(ratings) > 0:
-        pass
+        # # Finally, priorities on resources having Rating related to DNU_modified (cid)
+        if ratings and len(ratings) > 0:
+            pass
 
-    return {
-        "articles": resources_articles[: top_n_resources],
-        "videos": resources_videos[: top_n_resources]
-    }
+        return {
+            "articles": resources_articles[: top_n_resources],
+            "videos": resources_videos[: top_n_resources]
+        }
+    return { "articles": [], "videos": [] }
 
 def rec_params_request_mapped(data_rec_params: dict, data_default: dict=None):
     '''

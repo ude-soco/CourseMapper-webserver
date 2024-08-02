@@ -323,7 +323,7 @@ export class ConceptMapComponent implements OnInit, OnDestroy {
     // }
 
     if (didNotUnderstandConceptsObj !== undefined && previousConceptsObj === undefined) {
-      this.croComponent.updateCROformAll(didNotUnderstandConceptsObj, undefined)
+      this.croComponent?.updateCROformAll(didNotUnderstandConceptsObj, undefined)
     } else if (didNotUnderstandConceptsObj === undefined && previousConceptsObj !== undefined) {
       this.croComponent.updateCROformAll(undefined, previousConceptsObj)
     }

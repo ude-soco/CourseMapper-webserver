@@ -56,6 +56,14 @@ def get_higher_levels_edges():
 
 
 # boby024
+@backend.route("/get_concepts_modified_by_user_id_and_cids", methods=["GET"])
+def get_concepts_modified_by_user_id_and_cids():
+    user_id = request.args.get("user_id")
+    cids = request.args.getlist("cids")
+    result = neo4j.get_concepts_modified_by_user_id_and_cids(user_id=user_id, cids=cids)
+    return make_response({ "records": result }, 200)
+
+
 def update_concept_node(result, user_id=None):
     result_final = []
     if result and len(result) > 0:

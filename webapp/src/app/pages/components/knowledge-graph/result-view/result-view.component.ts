@@ -122,6 +122,7 @@ export class ResultViewComponent {
   }
   
   isLoadingResource = true;
+  ridsUserSaves = [];
 
   /*
   croVideos: VideoElementModel[]; // croVideoElementModel;
@@ -149,7 +150,7 @@ export class ResultViewComponent {
     slideConceptservice?.didNotUnderstandConcepts.subscribe((res) => {
       this.didNotUnderstandConceptsObj = res;
       this.didNotUnderstandConceptsObj.forEach((el) => {
-        this.allConceptsObj = this.allConceptsObj.map((e) =>
+        this.allConceptsObj = this.allConceptsObj?.map((e) =>
           e.id === el?.id ? el : e
         );
       });
@@ -158,7 +159,7 @@ export class ResultViewComponent {
     slideConceptservice.understoodConcepts.subscribe((res) => {
       this.understoodConceptsObj = res;
       this.understoodConceptsObj.forEach((el) => {
-        this.allConceptsObj = this.allConceptsObj.map((e) =>
+        this.allConceptsObj = this.allConceptsObj?.map((e) =>
           e.id === el.id ? el : e
         );
       });
@@ -223,16 +224,16 @@ export class ResultViewComponent {
     // this.loadResultForSelectedModel(MaterialModels.MODEL_1);
     this.loadResultForSelectedModel();
 
-    // if (this.resourcesPagination) {
-    //   this.isLoadingResource = false;
-    // }
+    if (this.resourcesPagination) {
+      this.isLoadingResource = false;
+    }
   }
 
-  // ngOnChanges() {
-  //   if (this.resourcesPagination) {
-  //     this.isLoadingResource = false;
-  //   }
-  // }
+  ngOnChanges() {
+    if (this.resourcesPagination) {
+      this.isLoadingResource = false;
+    }
+  }
 
   setChipConcept(concept): void {
     this.conceptFromChipObj = {
@@ -243,9 +244,10 @@ export class ResultViewComponent {
     };
   }
 
-  // Only sort resoources on the frontend part
   sortResourcesByKeys(key: string) {
-    console.warn("sortResult", this.croSorting);
+    // Only sort resoources on the frontend part
+    // console.warn("sortResult", this.croSorting);
+
     if (key !== "") {
       this.croSorting[key].arrow = !this.croSorting[key].arrow;
     }
@@ -301,56 +303,13 @@ export class ResultViewComponent {
     });
   }
 
-  /*
-  paginateResult() {
-    // let pagination_params = {
-    //   page_number: this.croPaginatorFirst + 1,
-    //   page_size: 10,
-    //   sort_by_params: this.croSorting
-    // }
-
-    let params_articles = {
-                            page_number: 1,
-                            page_size: 10
-                        };
-    let params_videos = {
-                          page_number: 1,
-                          page_size: 10
-                        };
-    if (this.activeIndex == 0) {
-      params_articles["page_number"] = this.croPaginatorFirst + 1
-    } else if (this.activeIndex == 1) {
-      params_videos["page_number"] = this.croPaginatorFirst + 1
-    }
-
-    // let croForm = this.croComponent?.croForm; //this.croComponent?.getOnlyStatusChecked();
-    // this.croForm["pagination_params"] = pagination_params;
-    this.croForm["pagination_params"]["articles"] = params_articles;
-    this.croForm["pagination_params"]["videos"] = params_videos;
-    this.materialsRecommenderService.getRecommendedMaterials(
-      null, this.croForm
-    ).subscribe({
-      next: (result) => {
-        this.resourcesPagination = result;
-        this.loadResultForSelectedModel();
-      },
-      error: (error) => {
-          console.log('Error:', error);
-          // this.displayMessage(error.message);
-          // this.isLoading = false;
-          // this.loading.emit(false);
-        }
-      })
-  }
-  */
-
   loadResultForSelectedModel() {
     // let key = null; // this.croForm[""];
     // for (const [key, value] of Object.entries(this.croForm["recommendation_types"]["models"])) {
     //   console.log(`${key}: ${value}`);
     // }
 
-    this.allConceptsObj = [...this.resourcesPagination.concepts];
+    this.allConceptsObj = [...this.resourcesPagination?.concepts]; // this.resourcesPagination?.concepts;
     this.concepts = [...this.resourcesPagination.concepts];
     if (this.croComponent?.didNotUnderstandConceptsObj && this.croComponent?.previousConceptsObj) {
       const didNotUnderstandConceptsObj = this.croComponent?.didNotUnderstandConceptsObj;
@@ -405,6 +364,7 @@ export class ResultViewComponent {
     });
 
     this.deactivateDnuInteraction();
+    this.getRidsFromUserSaves();
     // this.getConceptsMidsSliderNumbersForUserResourcesFiltering()
   }
 
@@ -458,9 +418,64 @@ export class ResultViewComponent {
     );
   }
 
+  getRidsFromUserSaves() {
+    this.materialsRecommenderService.getRidsFromUserSaves(this.userId)
+      .subscribe({
+        next: (data: []) => {
+          this.ridsUserSaves = data;
+          this.resourcesPagination?.nodes?.videos.forEach((video: VideoElementModel) => video.is_bookmarked_fill = this.ridsUserSaves.includes(video.rid) );
+          this.resourcesPagination?.nodes?.articles.forEach((article: ArticleElementModel) => article.is_bookmarked_fill = this.ridsUserSaves.includes(article.rid) );
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      }
+    );
+  }
 
 
   /*
+  paginateResult() {
+    // let pagination_params = {
+    //   page_number: this.croPaginatorFirst + 1,
+    //   page_size: 10,
+    //   sort_by_params: this.croSorting
+    // }
+
+    let params_articles = {
+                            page_number: 1,
+                            page_size: 10
+                        };
+    let params_videos = {
+                          page_number: 1,
+                          page_size: 10
+                        };
+    if (this.activeIndex == 0) {
+      params_articles["page_number"] = this.croPaginatorFirst + 1
+    } else if (this.activeIndex == 1) {
+      params_videos["page_number"] = this.croPaginatorFirst + 1
+    }
+
+    // let croForm = this.croComponent?.croForm; //this.croComponent?.getOnlyStatusChecked();
+    // this.croForm["pagination_params"] = pagination_params;
+    this.croForm["pagination_params"]["articles"] = params_articles;
+    this.croForm["pagination_params"]["videos"] = params_videos;
+    this.materialsRecommenderService.getRecommendedMaterials(
+      null, this.croForm
+    ).subscribe({
+      next: (result) => {
+        this.resourcesPagination = result;
+        this.loadResultForSelectedModel();
+      },
+      error: (error) => {
+          console.log('Error:', error);
+          // this.displayMessage(error.message);
+          // this.isLoading = false;
+          // this.loading.emit(false);
+        }
+      })
+  }
+
   selectMainConceptsOnChange(event, type: number) {
     // call available Main Concepts
     if (event.value) {
@@ -549,9 +564,6 @@ export class ResultViewComponent {
   }
 
 
-  */
-
-  /*
   sortElements(
     a: ArticleElementModel | VideoElementModel,
     b: ArticleElementModel | VideoElementModel
@@ -628,4 +640,5 @@ export class ResultViewComponent {
   //     this.scrollPanelHeight = '550px';
   //   }
   // }
+
 }

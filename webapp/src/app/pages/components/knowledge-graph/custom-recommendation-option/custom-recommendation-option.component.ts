@@ -536,6 +536,18 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     // this.showRecTypeAndFactorWeight();
   }
 
+  getConceptsModifiedByUserIdAndCids() {
+    if (this.slideId) {
+      if (this.CROconceptsManuallySelection1.length <= 0) {
+        const currentSlide = `${this.materialId}_slide_${this.slideId.toString()}`;
+        this.croService.getConceptsBySlideId(currentSlide, this.userId).subscribe((res: Neo4jResult) => {
+          this.CROconceptsManuallySelection1 = res.records;
+          // this.localStorageService.saveData("CROconceptsManuallySelection1or2", res.records)
+        })
+      }
+    }
+  }
+
 
   // mapConceptWithWeight(cids: string[]) {
   //   let concepts = [];

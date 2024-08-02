@@ -13,4 +13,5 @@ export class CardArticleListComponent {
   @Input()
   public notUnderstoodConcepts: string[];
   public article!: ArticleElementModel;
+  @Input() userId: string;
 }

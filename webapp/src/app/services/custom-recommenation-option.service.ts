@@ -39,6 +39,11 @@ export class CustomRecommendationOptionService {
     return this.http.post<any>(url, data);
   }
 
+  getConceptsModifiedByUserIdAndCids(user_id: string, cids: []): Observable<Neo4jResult> {
+    const url = `${environment_Python.PYTHON_SERVER}get_concepts_modified_by_user_id_and_cids?user_id=${user_id}&cids=${cids}`;
+    return this.http.get<Neo4jResult>(url);
+  }
+
 
   /*getConceptsBYuserIdANDmid(userId: string, mid: string): Observable<Neo4jResult> {
     const url = `${environment_Python.PYTHON_SERVER}cro_get_concepts_by_user_id_and_mid?userId=${userId}&mid=${mid}`;

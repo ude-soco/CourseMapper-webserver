@@ -139,3 +139,20 @@ class Neo4j:
 
         return list(result)
 
+    def get_concepts_modified_by_user_id_and_cids(self, user_id: str, cids: list):
+        '''
+            Get 'Concept_modified' by user_id and cids
+        '''
+        concepts = []
+        with self.get_db().session() as session:
+            concepts = session.run(
+                '''
+                    MATCH (a:User)-[r:HAS_MODIFIED]->(b: Concept_modified)
+                    WHERE r.user_id = $user_id AND b.cid IN $cids
+                    RETURN DISTINCT b.cid as cid, r.weight as weight
+                ''',
+                user_id=user_id,
+                cids=cids
+            ).data()
+            concepts = [{"cid": concept["cid"], "weight": concept["weight"]} for concept in concepts]
+        return concepts

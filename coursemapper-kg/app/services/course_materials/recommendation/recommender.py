@@ -30,7 +30,6 @@ def compute_combined_similatity(data, alpha, recommendation_type, with_user):
         ] + data[RecommendationType.CONTENT_BASED_KEYPHRASE_VARIANT] * alpha
     return data
 
-
 def sort_by_similarity_type(data, similarity_type):
     '''
         sort results by similarity score
@@ -44,33 +43,8 @@ def sort_by_similarity_type(data, similarity_type):
 
     return sorted_data
 
-
 def compute_cosine_similarity_with_embeddings(embedding1, embedding2):
     return util.pytorch_cos_sim(embedding1, embedding2).item()
-
-
-def compute_dynamic_document_based_similarity(
-    data, recommendation_type, user_embedding
-):
-    '''
-        Compute similarities between user embeddings and resources document embeddings
-        Compute Cosine Similarities
-        Retrieve user document-based similarity
-    '''
-    logger.info("Computing similarities between user embeddings and resources document embeddings")
-
-    cosine_similarities = []
-    for document_embedding in data["document_embedding"]:
-        tensor = get_tensor_from_embedding(document_embedding)
-
-        cosine_similarity = compute_cosine_similarity_with_embeddings(
-            tensor, user_embedding
-        )
-        cosine_similarities.append(cosine_similarity)
-
-    data["similarity_score"] = cosine_similarities
-    return data
-
 
 def get_tensor_from_embedding(embedding):
     '''
@@ -80,7 +54,6 @@ def get_tensor_from_embedding(embedding):
     embedding_array = np.array(embedding_array)
     embedding_tensor = torch.from_numpy(embedding_array).float()
     return embedding_tensor
-
 
 def compute_dynamic_keyphrase_based_similarity(
     data, recommendation_type, user_embedding
@@ -106,6 +79,36 @@ def compute_dynamic_keyphrase_based_similarity(
     data["similarity_score"] = cosine_similarities
     return data
 
+def compute_dynamic_document_based_similarity(
+    data, recommendation_type, user_embedding
+):
+    '''
+        Compute similarities between user embeddings and resources document embeddings
+        Compute Cosine Similarities
+        Retrieve user document-based similarity
+    '''
+    logger.info("Computing similarities between user embeddings and resources document embeddings")
+
+    cosine_similarities = []
+    for document_embedding in data["document_embedding"]:
+        tensor = get_tensor_from_embedding(document_embedding)
+
+        cosine_similarity = compute_cosine_similarity_with_embeddings(
+            tensor, user_embedding
+        )
+        cosine_similarities.append(cosine_similarity)
+
+    data["similarity_score"] = cosine_similarities
+    return data
+
+def compute_keyphrase_based_similarity(
+        data, slide_document_embedding, recommendation_type
+):
+    '''
+        Compute Keyphrases-Based Cosine Similarities
+        : compute similarities between slide keyphrase-based embeddings and resources weighted average keyphrase embeddings
+    '''
+    logger.info("Computing Keyphrases-Based Cosine Similarities")
 
 def compute_document_based_similarity(
     data, slide_document_embedding, recommendation_type
@@ -131,7 +134,6 @@ def compute_document_based_similarity(
 
     data["similarity_score"] = cosine_similarities
     return data
-
 
 def retrieve_keyphrases(data):
     '''
@@ -350,7 +352,7 @@ class Recommender:
             )
             
             end_time = time.time()
-            logger.info("Algorithm Model 2 with Execution time: ", str(end_time - start_time))
+            logger.info("Algorithm Model 2 with Execution time: ", {end_time - start_time})
             return data 
     
         # If Model 3
@@ -366,12 +368,12 @@ class Recommender:
 
             # Step 3: compute keyphrase-based similarity between slide weighted average keyphrase embeddings and
             # resources weighted average keyphrase embeddings
-            data = compute_dynamic_keyphrase_based_similarity(
+            data = compute_keyphrase_based_similarity(
                 data, slide_weighted_avg_embedding_of_concepts, recommendation_type
             )
 
             end_time = time.time()
-            logger.info("Algorithm Model 3 with Execution time: ", str(end_time - start_time))
+            logger.info("Algorithm Model 3 with Execution time: ", {end_time - start_time})
             return data # sorted_data.head(top_n)
 
         # if Model 4
@@ -389,7 +391,7 @@ class Recommender:
             )
 
             end_time = time.time()
-            logger.info("Algorithm Model 4 with Execution time: ", str(end_time - start_time))
+            logger.info("Algorithm Model 4 with Execution time: ", {end_time - start_time})
             return data
 
         # If Combined Dynamic Model.

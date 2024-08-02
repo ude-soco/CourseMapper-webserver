@@ -32,7 +32,7 @@ export class CardVideoComponent {
   isDescriptionFullDisplayed = false;
   isBookmarkFill = false;
   videoDescription = "";
-  saveOrRemoveParams = {"user_id": "", "rid": "", "status": false};
+  saveOrRemoveParams = {"user_id": "", "rid": "", "status": this.isBookmarkFill};
   saveOrRemoveStatus = false;
 
   ngOnInit(): void {}
@@ -45,7 +45,12 @@ export class CardVideoComponent {
     this.onWatchVideo.emit(videoElement);
 
     this.showLabelMoreDescription();
-    this.isBookmarkFill = this.TabSaved;
+  }
+
+  ngOnChanges() {
+    this.isBookmarkFill = this.videoElement?.is_bookmarked_fill;
+    this.saveOrRemoveParams.user_id = this.userId;
+    this.saveOrRemoveParams.rid = this.videoElement?.rid;
   }
 
   showLabelMoreDescription() {
@@ -64,16 +69,15 @@ export class CardVideoComponent {
   }
 
   addToBookmark() {
-    // console.warn("this - rec id -> ", this.videoElement.id);
     this.isBookmarkFill = this.isBookmarkFill === true ? false : true;
-    this.saveOrRemoveParams = {"user_id": this.userId, "rid": this.videoElement.rid, "status": this.isBookmarkFill};
+    this.saveOrRemoveParams.status = this.isBookmarkFill;
     this.SaveOrRemoveUserResource(this.saveOrRemoveParams);
-    this.saveOrRemoveBookmark();
+    // this.saveOrRemoveBookmark();
   }
 
   saveOrRemoveBookmark() {
     // detail: 'Open your Bookmark List to find this video'
-    if (this.isBookmarkFill === true) {
+    if (this.isBookmarkFill) { // this.isBookmarkFill === true  // this.videoElement?.is_bookmarked_fill === true
       if (this.saveOrRemoveStatus === true) {
         this.messageService.add({ key: 'resource_bookmark', severity: 'success', summary: '', detail: 'Successfully to the bookmark added'});
       }
@@ -90,15 +94,34 @@ export class CardVideoComponent {
         next: (data: any) => {
           if (data == null) {
             this.saveOrRemoveStatus = true;
+            this.videoElement.is_bookmarked_fill = true;
           } else {
             this.saveOrRemoveStatus = false;
+            this.videoElement.is_bookmarked_fill = false;
           }
         },
         error: (err) => {
           console.log(err);
           this.saveOrRemoveStatus = false;
+          this.videoElement.is_bookmarked_fill = false;
         },
       }
     );
   }
+
+  // getRidsFromUserSaves() {
+  //   this.materialsRecommenderService.getRidsFromUserSaves(this.userId)
+  //     .subscribe({
+  //       next: (data: []) => {
+  //         this.ridsUserSaves = data;
+  //         this.resourcesPagination?.nodes?.videos.forEach((video: VideoElementModel) => video.is_bookmarked_fill = this.ridsUserSaves.includes(video.rid) );
+  //         this.resourcesPagination?.nodes?.articles.forEach((article: ArticleElementModel) => article.is_bookmarked_fill = this.ridsUserSaves.includes(article.rid) );
+  //       },
+  //       error: (err) => {
+  //         console.log(err);
+  //       },
+  //     }
+  //   );
+  // }
+
 }

@@ -157,22 +157,28 @@
         </div>
       </p-tabPanel>
 
-      <!-- <ng-template [ngIf]="isLoadingResource" [ngIfElse]="loading">
-        <div>
-          <p-progressSpinner></p-progressSpinner>
-        </div>
-      </ng-template>
-    
-      <ng-template #loading>
-        <p-tabPanel header="Videos" leftIcon="pi pi-video">
+      <p-tabPanel header="Videos" leftIcon="pi pi-video" *ngIf="!resourcesPagination?.nodes?.videos">
+        <div class="flex flex-col items-center justify-center" *ngIf="isLoadingResource">
+          <div>
+            <p-progressSpinner
+                  [style]="{ width: '80px', height: '80px' }"
+                  styleClass="custom-spinner"
+                  strokeWidth="5"
+                  fill="var(--surface-ground)"
+                  animationDuration=".5s"
+            ></p-progressSpinner>
+          </div>
+          <h4 class="my-auto mt-4">Loading Video Materials</h4>
           <h4 class="my-auto mt-4">No Recommended videos for the selected Concepts</h4>
-        </p-tabPanel>
-      </ng-template> -->
-
-      <p-tabPanel *ngIf="!resourcesPagination?.nodes?.videos" header="Videos" leftIcon="pi pi-video">
-        <h4 class="my-auto mt-4">No Recommended videos for the selected Concepts</h4>
+        </div>
+        <!-- <div *ngIf="!isLoadingResource && resourcesPagination?.nodes?.videos?.length === 0">
+          <h4 class="my-auto mt-4">No Recommended videos for the selected Concepts</h4>
+        </div> -->
       </p-tabPanel>
 
+      <!-- <p-tabPanel *ngIf="!resourcesPagination?.nodes?.videos" header="Videos" leftIcon="pi pi-video">
+        <h4 class="my-auto mt-4">No Recommended videos for the selected Concepts</h4>
+      </p-tabPanel> -->
       
       <p-tabPanel *ngIf="resourcesPagination?.nodes?.articles" [cache]="true" header="Articles" leftIcon="pi pi-book">
         <div>
@@ -190,9 +196,51 @@
             ></app-card-article-list>
         </div>
       </p-tabPanel>
-      <p-tabPanel *ngIf="!resourcesPagination?.nodes?.articles" header="Articles" leftIcon="pi pi-book">
-        <h4 class="my-auto mt-4">No Recommended articles for the selected Concepts</h4>
+
+      <p-tabPanel header="Articles" leftIcon="pi pi-book" *ngIf="!resourcesPagination?.nodes?.articles">
+        <div class="flex flex-col items-center justify-center" *ngIf="isLoadingResource">
+          <div>
+            <p-progressSpinner
+                  [style]="{ width: '80px', height: '80px' }"
+                  styleClass="custom-spinner"
+                  strokeWidth="5"
+                  fill="var(--surface-ground)"
+                  animationDuration=".5s"
+            ></p-progressSpinner>
+          </div>
+          <h4 class="my-auto mt-4">Loading article Materials</h4>
+          <h4 class="my-auto mt-4">No Recommended Article for the selected Concepts</h4>
+        </div>
+        <!-- <div *ngIf="!isLoadingResource && resourcesPagination?.nodes?.videos?.length === 0">
+          <h4 class="my-auto mt-4">No Recommended videos for the selected Concepts</h4>
+        </div> -->
       </p-tabPanel>
+
+      <!-- <ng-template [ngIf]="!resourcesPagination?.nodes?.articles" [ngIfElse]="loading">
+        <p-tabPanel header="Articles" leftIcon="pi pi-book">
+          <div class="flex flex-col items-center justify-center">
+            <div>
+              <p-progressSpinner
+                    [style]="{ width: '80px', height: '80px' }"
+                    styleClass="custom-spinner"
+                    strokeWidth="5"
+                    fill="var(--surface-ground)"
+                    animationDuration=".5s"
+              ></p-progressSpinner>
+            </div>
+            <h4 class="my-auto mt-4">Loading Articles Materials</h4>
+          </div>
+        </p-tabPanel>
+      </ng-template>
+      <ng-template #loading>
+        <p-tabPanel header="Articles" leftIcon="pi pi-book">
+          <h4 class="my-auto mt-4">No Recommended articles for the selected Concepts</h4>
+        </p-tabPanel>
+      </ng-template> -->
+
+      <!-- <p-tabPanel *ngIf="!resourcesPagination?.nodes?.articles" header="Articles" leftIcon="pi pi-book">
+        <h4 class="my-auto mt-4">No Recommended articles for the selected Concepts</h4>
+      </p-tabPanel> -->
 
       <!-- display resources saved and offer filtering possibility -->
       <p-tabPanel header="Saved" leftIcon="pi pi-bookmark">
@@ -252,12 +300,14 @@
               <app-card-video-list
               [notUnderstoodConcepts]="concepts"
               [videoElements]="filteringResourcesFound?.videos"
+              [userId]="userId"
               ></app-card-video-list>
           </div>
           <div>
               <app-card-article-list
               [notUnderstoodConcepts]="concepts"
               [articleElements]="filteringResourcesFound?.articles"
+              [userId]="userId"
               ></app-card-article-list>
           </div>
         </div>

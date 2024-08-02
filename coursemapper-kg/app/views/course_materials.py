@@ -22,6 +22,9 @@ logger = LOG(name=__name__, level=logging.DEBUG)
 
 course_materials = Blueprint("course_materials", __name__)
 
+# Concept_modified
+
+
 # Resource Saved APIs
 @course_materials.route("/user_resources/save_or_remove", methods=["POST"])
 def save_or_remove_user_resources_():
@@ -50,6 +53,14 @@ def filter_user_resources_saved_by():
     resp = resource_recommender_service.filter_user_resources_saved_by(data=data)
     return make_response(jsonify(resp), 200)
 
+@course_materials.route("/user_resources/get_rids_from_user_saves", methods=["GET"])
+def get_rids_from_user_saves():
+    user_id = request.args.get('user_id')
+    logger.info(f"Getting rids from User Resources Saved -> {user_id}")
+
+    resource_recommender_service = ResourceRecommenderService()
+    resp = resource_recommender_service.get_rids_from_user_saves(user_id=user_id)
+    return make_response(jsonify(resp), 200)
 
 # Rating APIs
 @course_materials.route("/rating", methods=["POST"])

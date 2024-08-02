@@ -213,6 +213,10 @@ class ResourceRecommenderService:
     def filter_user_resources_saved_by(self, data: dict):
         resources = self.db.filter_user_resources_saved_by(data)
         return resources
+    
+    def get_rids_from_user_saves(self, user_id: dict):
+        rids = self.db.get_rids_from_user_saves(user_id=user_id)
+        return rids
 
     def process_recommandation_pipeline(self, 
                                     rec_params: dict, 
@@ -262,19 +266,26 @@ class ResourceRecommenderService:
         
         # process with the recommendation algorithm selected
         # if len(concepts_having_resources) != len(rec_params["concepts"]):
-        # if len(resources) > 0:
-        data_df = pd.DataFrame(resources)
-        resources_df = recommender.recommend(
-            slide_weighted_avg_embedding_of_concepts=slide_weighted_avg_embedding_of_concepts,
-            slide_document_embedding=slide_document_embedding,
-            user_embedding=user_embedding,
-            top_n=10,
-            recommendation_type=recommendation_type,
-            data=data_df,
-            are_embedding_values_present=True # are_embedding_values_present
-        )
-        resources = resources_df.where(resources_df.notnull(), None).to_dict(orient='records') # resources_df.to_dict(orient='records')
-        self.db.store_resources(resources_list=resources, resources_form="list",resources_dict=None, cid=None)
+        if len(resources) > 0:
+            data_df = pd.DataFrame(resources)
+            resources_df = recommender.recommend(
+                slide_weighted_avg_embedding_of_concepts=slide_weighted_avg_embedding_of_concepts,
+                slide_document_embedding=slide_document_embedding,
+                user_embedding=user_embedding,
+                top_n=10,
+                recommendation_type=recommendation_type,
+                data=data_df,
+                are_embedding_values_present=True # are_embedding_values_present
+            )
+            # resources = resources_df.where(resources_df.notnull(), None).to_dict(orient='records')
+            # resources_df = resources_df.fillna(0, inplace=True)
+            resources_df.replace({np.nan: None}, inplace=True)
+            resources = resources_df.to_dict(orient='records') 
+            self.db.store_resources(resources_list=resources, resources_form="list",resources_dict=None, cid=None)
+
+            # insert attribute "is_bookmarked_fill" for resource saved by the user
+            rids_user_resources_saved = self.db.get_rids_from_user_saves(user_id=rec_params["user_id"])
+            resources = [{**resource, 'is_bookmarked_fill': resource['rid'] in rids_user_resources_saved} for resource in resources]
 
         # Apply ranking algorithm on the resources
         # resources = rrh.remove_keys_from_resources(resources=resources)
@@ -282,6 +293,7 @@ class ResourceRecommenderService:
 
         # Provide only the top 10 of the resources
         result_final = {"recommendation_type": rec_params["recommendation_type"], "concepts": rec_params["concepts"], "nodes": resources_dict }
+        # result_final = {"recommendation_type": rec_params["recommendation_type"], "concepts": rec_params["concepts"], "nodes": {"vidoes": [], "articles": []} }
         return result_final
 
     def _get_resources(self, data_rec_params: dict, data_default: dict=None, top_n = 5):
@@ -341,6 +353,7 @@ class ResourceRecommenderService:
 
             # Store Concepts into Neo4j Database
             rec_params["concepts"] = slide_concepts_
+            rec_params["mid"] = body["material_id"]
             clu = rrh.save_and_get_concepts_modified(   db=self.db,
                                                         rec_params=rec_params, 
                                                         top_n=len(slide_concepts_), 

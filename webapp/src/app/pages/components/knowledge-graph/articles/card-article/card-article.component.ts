@@ -16,6 +16,7 @@ export class CardArticleComponent {
   @Input()
   public notUnderstoodConcepts: string[];
   @Output() onClick: EventEmitter<any> = new EventEmitter();
+  @Input() userId: string;
 
   ABSTRACT_MAX_LENGTH = 600;
   TITLE_MAX_LENGTH = 70;

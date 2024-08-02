@@ -70,6 +70,10 @@ export class MaterialsRecommenderService {
     return this.http.post<UserResourceFilterResult>(`${this.cmEndpointURL}user_resources/filter`, data, { withCredentials: true });
   }
 
+  getRidsFromUserSaves(user_id: string): Observable<[]> {
+    return this.http.get<[]>(`${this.cmEndpointURL}user_resources/get_rids_from_user_saves?user_id=${user_id}`, { withCredentials: true });
+  }
+
 
   /*
     getConceptsMidsSliderNumbersForUserResourcesFiltering(data: any): Observable<UserResourceFilterParamsResult> {

@@ -1970,6 +1970,26 @@ class NeoDataBase:
 
         return concept
 
+    """
+    def get_concepts_modified_by_user_id_and_cids(self, user_id: str, cids: list):
+        '''
+            Get 'Concept_modified' by user_id and cids
+        '''
+        concepts = []
+        with self.driver.session() as session:
+            concepts = session.run(
+                '''
+                    MATCH (a:User)-[r:HAS_MODIFIED]->(b: Concept_modified)
+                    WHERE r.user_id = $user_id AND b.cid IN $cids
+                    RETURN DISTINCT b.cid as cid, r.weight as weight
+                ''',
+                user_id=user_id,
+                cids=cids
+            ).data()
+            concepts = [{"cid": concept["cid"], "weight": concept["weight"]} for concept in concepts]
+        return concepts
+    """
+
     def update_rs_btw_user_and_cm(self, user_id: str, cid: str, weight: float, mid: str, status: str, only_status=False):
         '''
             Create or Update relationship between nodes 'User' and 'Concept_modified'
@@ -2252,6 +2272,7 @@ class NeoDataBase:
             ''',
             rid=data["rid"]
         )
+        logger.info("Saving or Removing from Resource Saved List: Done")
 
         """
         # create or remove realtion between Resources and Concept_modified
@@ -2394,6 +2415,7 @@ class NeoDataBase:
                     "document_embedding": resource["document_embedding"].strip("[]").replace("'", "").split(',') if "document_embedding" in resource and len(resource["document_embedding"]) > 5 else [],
                     # "keyphrase_embedding": [float(value.strip()) for value in resource["keyphrase_embedding"].strip("[]").replace("'", "").split(',')] if "keyphrase_embedding" in resource and len(resource["keyphrase_embedding"]) > 5 else [],
                     # "document_embedding": [float(value.strip()) for value in resource["document_embedding"].strip("[]").replace("'", "").split(',')] if "document_embedding" in resource and len(resource["document_embedding"]) > 5  else []
+                    "is_bookmarked_fill": resource["is_bookmarked_fill"] if "is_bookmarked_fill" in resource else False
                 }
 
                 if "Video" in r["labels"]:
@@ -2439,6 +2461,7 @@ class NeoDataBase:
                 content_type: 'video | article',
                 text: 'neo4j node'
             }
+            is_bookmarked_fill: default value: True because these resources belong to the user_id given
         '''
         logger.info("Filtering User Resources Saved")
         result = { "articles": [], "videos": [] }
@@ -2446,7 +2469,7 @@ class NeoDataBase:
         with self.driver.session() as session:
             nodes = session.run(
                 """
-                MATCH p=(b: User {uid: $user_id})-[r:HAS_SAVED]->(a:Resource) 
+                MATCH p=(b: User)-[r:HAS_SAVED {user_id: $user_id}]->(a:Resource) 
                 WHERE   toLower(a.text) CONTAINS toLower($search_text) OR
                         ANY(keyphrase IN a.keyphrases WHERE keyphrase CONTAINS toLower($search_text))
                 RETURN  DISTINCT LABELS(a) as labels, ID(a) as id, a.rid as rid, a.title as title, a.text as text,
@@ -2461,7 +2484,8 @@ class NeoDataBase:
                         COALESCE(toInteger(a.bookmarked_count), 0) AS bookmarked_count,
                         COALESCE(toInteger(a.like_count), 0) AS like_count,
                         a.channel_title as channel_title,
-                        a.updated_at as updated_at
+                        a.updated_at as updated_at,
+                        true AS is_bookmarked_fill
                 """,
                 user_id=data["user_id"],
                 search_text=data["text"]
@@ -2480,7 +2504,26 @@ class NeoDataBase:
                             }
         return result
 
-    
+    def get_rids_from_user_saves(self, user_id: str):
+        '''
+            Getting rids from User Resources Saved
+        '''
+        logger.info("Getting rids from User Resources Saved")
+        nodes = []
+        with self.driver.session() as session:
+            nodes = session.run(
+                '''
+                    MATCH (b:User)-[r:HAS_SAVED {user_id: $user_id}]->(a:Resource)
+                    RETURN a.rid as rid
+                ''',
+                user_id=user_id
+            ).data()
+            nodes = [node["rid"] for node in nodes]
+        return nodes
+
+
+
+
 
 
     def user_saves_or_removes_resource2(self, data: dict, resource: dict):
