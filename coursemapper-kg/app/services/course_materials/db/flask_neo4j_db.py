@@ -97,7 +97,10 @@ class Neo4j:
 
 
     # boby024
-    def cro_get_concepts_modified_by_user_id(self, user_id):
+    def get_concepts_modified_by_user_id(self, user_id):
+        '''
+            Get List of Concept_smodified by user_id
+        '''
         self.get_db()
         with self.get_db().session() as session:
             result = session.run(
@@ -112,7 +115,10 @@ class Neo4j:
 
         return list(result)
     
-    def cro_get_concepts_by_mid(self, mid):
+    def get_concepts_modified_by_mid(self, mid):
+        '''
+            Get List of Concept by mid
+        '''
         with self.get_db().session() as session:
             result = session.run(
                 """
@@ -125,7 +131,10 @@ class Neo4j:
 
         return list(result)
     
-    def cro_get_concepts_by_slide_id(self, slide_id: str):
+    def get_concepts_modified_by_slide_id(self, slide_id: str):
+        '''
+            Get List of Concept by slide_id
+        '''
         with self.get_db().session() as session:
             result = session.run(
                 """
@@ -139,6 +148,9 @@ class Neo4j:
 
         return list(result)
 
+
+
+"""
     def get_concepts_modified_by_user_id_and_cids(self, user_id: str, cids: list):
         '''
             Get 'Concept_modified' by user_id and cids
@@ -156,3 +168,4 @@ class Neo4j:
             ).data()
             concepts = [{"cid": concept["cid"], "weight": concept["weight"]} for concept in concepts]
         return concepts
+"""
