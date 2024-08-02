@@ -60,7 +60,12 @@ def get_higher_levels_edges():
 def get_concepts_modified_by_user_id_and_cids():
     user_id = request.args.get("user_id")
     cids = request.args.getlist("cids")
+
+    print("User id:", user_id)
+    print("cids:", cids)
+
     result = neo4j.get_concepts_modified_by_user_id_and_cids(user_id=user_id, cids=cids)
+    print(result)
     return make_response({ "records": result }, 200)
 
 

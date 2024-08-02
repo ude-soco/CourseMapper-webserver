@@ -104,7 +104,7 @@ export class ResultViewComponent {
 
   filteringParamsSavedTab = {
     user_id: '',
-    content_type: '',
+    content_type: 'video',
     text: ''
   }
   showSearchIconPinner = false;

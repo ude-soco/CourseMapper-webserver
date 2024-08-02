@@ -257,7 +257,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
       if (this.CROconceptsManually.length == 0) {
         this.croService.getConceptsBYmid(this.materialId, this.userId).subscribe((res: Neo4jResult) => {
           this.CROconceptsManually = res.records;
-          this.CROconceptsManuallySelection2 = JSON.parse(JSON.stringify(res.records));
+          // this.CROconceptsManuallySelection2 = JSON.parse(JSON.stringify(res.records));
           // this.localStorageService.saveData("CROconceptsManually", res.records)
 
           // for(let node of res.records) {
@@ -399,7 +399,8 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
       this.updateCROform(this.didNotUnderstandConceptsObj, "1")
 
     } else if (this.croForm.category === "2") {
-      this.updateCROform(this.previousConceptsObj, "2");
+      // this.updateCROform(this.previousConceptsObj, "2");
+      this.updateCROform(this.previousConceptsObj, "1")
 
     } else if (this.croForm.category === "3") {
       this.updateCROform(undefined, "3");
@@ -473,6 +474,8 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
         value["status"] = true;
         value["visible"] = true;
         this.croForm.concepts.push(value);
+
+        this.getConceptsModifiedByUserIdAndCids();
       } else {
         for(let concept of this.croForm.concepts) {
           if (value.cid === concept.cid) {
@@ -499,7 +502,6 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
         }
       }
     }
-
     // this.updateNumberConceptsToBeChecked();
   }
 
@@ -532,20 +534,24 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
         this.get_concepts_manually_current_slide();
       }
       this.updateCROformAll(this.didNotUnderstandConceptsObj, this.previousConceptsObj);
+      // this.getConceptsModifiedByUserIdAndCids();
     }
     // this.showRecTypeAndFactorWeight();
   }
 
   getConceptsModifiedByUserIdAndCids() {
-    if (this.slideId) {
-      if (this.CROconceptsManuallySelection1.length <= 0) {
-        const currentSlide = `${this.materialId}_slide_${this.slideId.toString()}`;
-        this.croService.getConceptsBySlideId(currentSlide, this.userId).subscribe((res: Neo4jResult) => {
-          this.CROconceptsManuallySelection1 = res.records;
-          // this.localStorageService.saveData("CROconceptsManuallySelection1or2", res.records)
-        })
-      }
-    }
+    let cids = this.croForm?.concepts.map((concept) => concept.cid);
+    this.croService.getConceptsModifiedByUserIdAndCids(this.userId, cids.toString()).subscribe((res: Neo4jResult) => {
+      this.CROconceptsManuallySelection1 = res.records;
+      this.croForm.concepts.forEach((concept) => {
+        for(let record of res.records) {
+          if (concept.cid == record.cid) {
+            concept.weight = record.weight;
+            break
+          }
+        }
+      });
+    })
   }
 
 

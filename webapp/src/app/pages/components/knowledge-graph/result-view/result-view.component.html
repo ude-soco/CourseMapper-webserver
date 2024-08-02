@@ -86,14 +86,14 @@
                   (onChange)="sortResourcesByKeys('')"
                   ></p-checkbox>
                 </div>
-                <div class="my-auto"><label for="similarity_score">Similarity Score</label></div>
+                <div class="my-auto"><label for="similarity_score">Most similar</label></div>
                 <div class="flex flex-row space-x-2 pl-4">
                   <button (click)="sortResourcesByKeys('similarity_score')">
                     <div *ngIf="croSorting.similarity_score.arrow === true">
-                      <span class="pi pi-arrow-up" style="font-size: 1.2rem"></span>
+                      <span class="pi pi-arrow-down" style="font-size: 1.2rem"></span>
                     </div>
                     <div *ngIf="croSorting.similarity_score.arrow === false">
-                      <span class="pi pi-arrow-down" style="font-size: 1.2rem"></span>
+                      <span class="pi pi-arrow-up" style="font-size: 1.2rem"></span>
                     </div>
                   </button>
                 </div>
@@ -108,10 +108,10 @@
                 <div class="flex flex-row space-x-2 pl-11">
                   <button (click)="sortResourcesByKeys('publish_time')">
                     <div *ngIf="croSorting.publish_time.arrow === true">
-                      <span class="pi pi-arrow-up" style="font-size: 1.2rem"></span>
+                      <span class="pi pi-arrow-down" style="font-size: 1.2rem"></span>
                     </div>
                     <div *ngIf="croSorting.publish_time.arrow === false">
-                      <span class="pi pi-arrow-down" style="font-size: 1.2rem"></span>
+                      <span class="pi pi-arrow-up" style="font-size: 1.2rem"></span>
                     </div>
                   </button>
                 </div>
@@ -122,14 +122,14 @@
                 <div><p-checkbox [(ngModel)]="croSorting.views.status" [binary]="true" inputId="views"
                   (onChange)="sortResourcesByKeys('')"
                   ></p-checkbox></div>
-                <div class="my-auto"><label for="views">Popularity</label></div>
+                <div class="my-auto"><label for="views">Most viewed</label></div>
                 <div class="flex flex-row space-x-2 pl-12">
                   <button (click)="sortResourcesByKeys('views')">
                     <div *ngIf="croSorting.views.arrow === true">
-                      <span class="pi pi-arrow-up" style="font-size: 1.2rem"></span>
+                      <span class="pi pi-arrow-down" style="font-size: 1.2rem"></span>
                     </div>
                     <div *ngIf="croSorting.views.arrow === false">
-                      <span class="pi pi-arrow-down" style="font-size: 1.2rem"></span>
+                      <span class="pi pi-arrow-up" style="font-size: 1.2rem"></span>
                     </div>
                   </button>
                 </div>

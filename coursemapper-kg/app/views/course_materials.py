@@ -169,7 +169,7 @@ def get_concepts():
     slide_id = str(material_id) + "_slide_" + str(material_page)
 
     ## boby024
-    return CRO_TEST_get_concepts
+    # return CRO_TEST_get_concepts
 
     print(
         "material_id:",
