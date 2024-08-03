@@ -5,14 +5,15 @@ from neo4j_connection import DBConnection
 from prerequisite_relationship import PrerequisiteRelationship
 
 class Prerequisite:
-    def __init__(self,course_name = "precalc") -> None:
+    def __init__(self,course_name = None, course_id = None) -> None:
         self.course_name = course_name
+        self.course_id = course_id
         self.db = DBConnection()
         self.concepts = pd.DataFrame()
 
     def find_prerequisite_course(self):
         print("get list of courses")
-        mongodb = CourseMaterials(course_name=self.course_name)
+        mongodb = CourseMaterials(course_id=self.course_id,course_name=self.course_name)
         learning_materials = mongodb.get_list_of_materials()
 
 

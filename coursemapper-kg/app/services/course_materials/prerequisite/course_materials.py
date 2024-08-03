@@ -2,9 +2,10 @@ import pymongo
 import pandas as pd
 
 class CourseMaterials:
-    def __init__(self, course_name = None):
+    def __init__(self, course_name = None, course_id = None):
         self.materials = pd.DataFrame()
         self.course_name = course_name
+        self.course_id = course_id
         self.list_of_learning_materials()
 
 
@@ -13,9 +14,14 @@ class CourseMaterials:
         mydb = myclient["coursemapper_v2"]
         courses= mydb["courses"]
         channels_id= []
-        query = {"name": self.course_name} 
-        for x in courses.find(query):
-            channels_id += x["channels"]
+        try:
+            query = {"_id": self.course_id}
+            for x in courses.find(query):
+                channels_id += x["channels"] 
+        except:
+            query = {"name": self.course_name} 
+            for x in courses.find(query):
+                channels_id += x["channels"]
 
         query = {"_id": {"$in": channels_id}} 
         channels = mydb["channels"]
