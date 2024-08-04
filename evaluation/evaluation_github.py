@@ -30,20 +30,17 @@ def append_real(truth_file, result_file,domain):
     result.columns = result.columns.str.replace('_weighted', '')
     # result.to_csv("resss.csv")
     result = result.drop(columns=['prerequisite_concept', 'concept',"score_real","score"])
-    result["temporal"] = abs(result["temporal_1"]-result["temporal_2"])
-    result["article_contents"] = abs(result["article_contents_1"]-result["article_contents_2"])
-    result["abstract_contents"] = abs(result["abstract_contents_1"]-result["abstract_contents_2"])
-    result["link_on_rel_abstract"] = abs(result["link_on_rel_abstract_1"]-result["link_on_rel_abstract_2"])
-    result["refD"] = abs(result["refD_1"]-result["refD_2"])
-    result["inlink_outlink"] = abs(result["inlink_outlink_1"]-result["inlink_outlink_2"])
-    result["category"] = abs(result["category_1"]-result["category_2"])
-    result["super_category"] = abs(result["super_category_1"]-result["super_category_2"])
-    result["berttopic"] = abs(result["berttopic_1"]-result["berttopic_2"])
-    result["coursemapper_channel"] = abs(result["coursemapper_channel_1"]-result["coursemapper_channel_2"])
+    result["temporal"] = (result["temporal_1"]-result["temporal_2"])
+    result["article_contents"] = (result["article_contents_1"]-result["article_contents_2"])
+    result["abstract_contents"] = (result["abstract_contents_1"]-result["abstract_contents_2"])
+    result["link_on_rel_abstract"] = (result["link_on_rel_abstract_1"]-result["link_on_rel_abstract_2"])
+    result["refD"] = (result["refD_1"]-result["refD_2"])
+    result["inlink_outlink"] = (result["inlink_outlink_1"]-result["inlink_outlink_2"])
+    result["category"] = (result["category_1"]-result["category_2"])
+    result["super_category"] = (result["super_category_1"]-result["super_category_2"])
+    result["berttopic"] = (result["berttopic_1"]-result["berttopic_2"])
+    result["coursemapper_channel"] = (result["coursemapper_channel_1"]-result["coursemapper_channel_2"])
     result["sumall"] = result["article_contents"] + result["abstract_contents"] + result["link_on_rel_abstract"] + result["refD"] + result["inlink_outlink"] + result["category"] + result["super_category"] + result["berttopic"]
-    result ["1-to-2"] = result["article_contents_1"] + result["abstract_contents_1"] + result["link_on_rel_abstract_1"] + result["refD_1"] + result["inlink_outlink_1"] + result["category_1"] + result["super_category_1"] + result["berttopic_1"] 
-    result["sumall"] = result["sumall"].apply(lambda x: 1 if x > 3 else 0)
-    result["1-to-2"] = result["1-to-2"].apply(lambda x: 1 if x > 3 else 0)
     result = result.loc[:, ~result.columns.str.contains('_1')]
     result = result.loc[:, ~result.columns.str.contains('_2')]
     weighted_unweighted[["score_weighted", "score_unweighted"]] = weighted_unweighted.map(lambda x: 1 if x > 0.27 else 0)
@@ -79,16 +76,16 @@ def calculate_metrics(model_result, real_values,name = ""):
 def evaluate_biology():
     result = pd.read_csv("prerequisite_relationships_science.csv",index_col=0)
     result.columns = result.columns.str.replace('_weighted', '')
-    result["temporal"] = abs(result["temporal_1"]-result["temporal_2"])
-    result["article_contents"] = abs(result["article_contents_1"]-result["article_contents_2"])
-    result["abstract_contents"] = abs(result["abstract_contents_1"]-result["abstract_contents_2"])
-    result["link_on_rel_abstract"] = abs(result["link_on_rel_abstract_1"]-result["link_on_rel_abstract_2"])
-    result["refD"] = abs(result["refD_1"]-result["refD_2"])
-    result["inlink_outlink"] = abs(result["inlink_outlink_1"]-result["inlink_outlink_2"])
-    result["category"] = abs(result["category_1"]-result["category_2"])
-    result["super_category"] = abs(result["super_category_1"]-result["super_category_2"])
-    result["berttopic"] = abs(result["berttopic_1"]-result["berttopic_2"])
-    result["coursemapper_channel"] = abs(result["coursemapper_channel_1"]-result["coursemapper_channel_2"])
+    result["temporal"] = (result["temporal_1"]-result["temporal_2"])
+    result["article_contents"] = (result["article_contents_1"]-result["article_contents_2"])
+    result["abstract_contents"] = (result["abstract_contents_1"]-result["abstract_contents_2"])
+    result["link_on_rel_abstract"] = (result["link_on_rel_abstract_1"]-result["link_on_rel_abstract_2"])
+    result["refD"] = (result["refD_1"]-result["refD_2"])
+    result["inlink_outlink"] = (result["inlink_outlink_1"]-result["inlink_outlink_2"])
+    result["category"] = (result["category_1"]-result["category_2"])
+    result["super_category"] = (result["super_category_1"]-result["super_category_2"])
+    result["berttopic"] = (result["berttopic_1"]-result["berttopic_2"])
+    result["coursemapper_channel"] = (result["coursemapper_channel_1"]-result["coursemapper_channel_2"])
     result["sumall"] = result["article_contents"] + result["abstract_contents"] + result["link_on_rel_abstract"] + result["refD"] + result["inlink_outlink"] + result["category"] + result["super_category"] + result["berttopic"]
     result ["1-to-2"] = result["article_contents_1"] + result["abstract_contents_1"] + result["link_on_rel_abstract_1"] + result["refD_1"] + result["inlink_outlink_1"] + result["category_1"] + result["super_category_1"] + result["berttopic_1"] 
     result["sumall"] = result["sumall"].apply(lambda x: 1 if x > 3 else 0)
@@ -96,7 +93,7 @@ def evaluate_biology():
     result = result.loc[:, ~result.columns.str.contains('_1')]
     result = result.loc[:, ~result.columns.str.contains('_2')]
     result = result.rename(columns={"score": "score_weighted"})
-    result_jess = pd.read_csv("evaluation\\truth_files\\Interview_science.csv",index_col=0)
+    result_jess = pd.read_csv("interview_science.csv",index_col=0)
     result = pd.merge(result,result_jess,on=["prerequisite_concept","concept","score_weighted","score_unweighted"])
     result_jess = result[["Jess",  "Anja",  "Final"]]
     result = result.drop(["Jess",  "Anja",  "Final"], axis=1)
@@ -105,6 +102,8 @@ def evaluate_biology():
     final = []
     for column in result.columns:
         final.append(calculate_metrics(pd.to_numeric(result[column], errors='coerce').fillna(0), pd.to_numeric(result_jess["Final"], errors='coerce').fillna(0) ,"Final"))
+        final.append(calculate_metrics(pd.to_numeric(result[column], errors='coerce').fillna(0), pd.to_numeric(result_jess["Anja"], errors='coerce').fillna(0),"Anja"))
+        final.append(calculate_metrics(pd.to_numeric(result[column], errors='coerce').fillna(0), pd.to_numeric(result_jess["Jess"], errors='coerce').fillna(0),"Jess"))
     final = pd.DataFrame(final)
     final.to_csv("evaluation\\final_biology.csv")
 
