@@ -43,7 +43,7 @@ def append_real(truth_file, result_file,domain):
     result["sumall"] = result["article_contents"] + result["abstract_contents"] + result["link_on_rel_abstract"] + result["refD"] + result["inlink_outlink"] + result["category"] + result["super_category"] + result["berttopic"]
     result = result.loc[:, ~result.columns.str.contains('_1')]
     result = result.loc[:, ~result.columns.str.contains('_2')]
-    weighted_unweighted[["score_weighted", "score_unweighted"]] = weighted_unweighted.map(lambda x: 1 if x > 0.27 else 0)
+    weighted_unweighted[["score_weighted", "score_unweighted"]] = weighted_unweighted.map(lambda x: 1 if x > 0.22 else 0)
 
     final = []
     for column in result.columns:
@@ -97,7 +97,7 @@ def evaluate_biology():
     result = pd.merge(result,result_jess,on=["prerequisite_concept","concept","score_weighted","score_unweighted"])
     result_jess = result[["Jess",  "Anja",  "Final"]]
     result = result.drop(["Jess",  "Anja",  "Final"], axis=1)
-    result[["score_weighted", "score_unweighted"]] = result[["score_weighted", "score_unweighted"]].map(lambda x: 1 if x > 0.27 else 0)
+    result[["score_weighted", "score_unweighted"]] = result[["score_weighted", "score_unweighted"]].map(lambda x: 1 if x > 0.22 else 0)
     
     final = []
     for column in result.columns:
