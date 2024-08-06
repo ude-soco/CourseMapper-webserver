@@ -6,10 +6,10 @@
 
   <div class="details-card bordered">
     <h3>{{course.Name.slice(0,40)}}</h3>
-    <p class="course-rating">{{course.Description === 'this information is not avaliable for this course' ? 'n/a' : course.Description.slice(0,40)}}</p>
+    <div *ngIf="course.Description !== 'this information is not avaliable for this course'"><p class="course-description">{{course.Description}}</p></div>
     <p class="teacher-name">{{ course.TeacherName ?  course.TeacherName.slice(0,20) : '' }}</p>
-    <p class="course-rating">{{course.Rating === 'this information is not avaliable for this course' ? 'n/a' : course.Rating}}</p>
-    <p class="course-price">{{course.Price === 'this information is not avaliable for this course' ? 'n/a' : course.Price}}</p>
+    <div *ngIf="course.Rating !== 'this information is not avaliable for this course'"><p class="course-rating">rating: {{ course.Rating}}</p></div>
+    <div *ngIf="course.Price !== 'this information is not avaliable for this course'"><p class="course-price">{{course.Price}}</p></div>
     <p class="course-platform">{{ course.PlatformName }}</p>
   </div>
 </div>

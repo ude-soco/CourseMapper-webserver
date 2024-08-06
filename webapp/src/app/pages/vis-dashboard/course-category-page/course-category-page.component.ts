@@ -33,6 +33,7 @@ export class CourseCategoryPageComponent implements OnInit{
   price:  string[]
   selectPrices: string[]
   myPrices : number[]
+  isSortClicked: boolean
 
 
   constructor(private route: ActivatedRoute,private visDashboardService:VisDashboardService,
@@ -43,12 +44,12 @@ export class CourseCategoryPageComponent implements OnInit{
     this.route.queryParams.subscribe(params => {
       this.emittedCategory = params['category'];
     });
-    this.getCoursesByCategory(this.emittedCategory.toLowerCase())
+    this.getCoursesByCategory(this.emittedCategory.toLowerCase(),false )
     this.getCoursesForPage(this.currentPage);
   }
 
-  getCoursesByCategory(courseCategory:string){
-    this.visDashboardService.getCoursesByCourseCategory(courseCategory).then((courses)=>{
+  getCoursesByCategory(courseCategory:string,sortByPopularity:boolean){
+    this.visDashboardService.getCoursesByCourseCategory(courseCategory,sortByPopularity).then((courses)=>{
       this.loadedCoursesByCategory = courses
 
       this.languages = courses.map((course)=> course.Language)
@@ -56,6 +57,7 @@ export class CourseCategoryPageComponent implements OnInit{
 
       this.ratings = courses.map((course)=> course.Rating)
       this.selectRatings = [...new Set(this.ratings.filter((course)=> course.length < 7 && !isNaN(+course)))]
+
       this.myRatings= [...new Set((this.selectRatings.map((course)=> Math.floor(+course))))];
 
       this.price = courses.map((course)=> course.Price)
@@ -66,11 +68,14 @@ export class CourseCategoryPageComponent implements OnInit{
         } else {
           return parseFloat(price.replace(/[^\d.]/g, ''));
         }
-      });
+      })
+
 
 
       this.loadedCoursesCount = courses?.length
       this.displayedCourses = courses.slice(0,5)
+    }).catch((error)=>{
+      console.log(error)
     })
   }
   changePage(page: number) {
@@ -96,9 +101,15 @@ export class CourseCategoryPageComponent implements OnInit{
   }
 
 
-  sortByPopular() {
+   sortByPopular() {
+     if(!this.isSortClicked){
+       this.getCoursesByCategory(this.emittedCategory.toLowerCase(),true )
+     }else{
+       this.getCoursesByCategory(this.emittedCategory.toLowerCase(),false )
+     }
+     this.isSortClicked  = !this.isSortClicked
+   }
 
-  }
 
   applyFilters(filterData: FilteredData) {
     let filteredCourses = [...this.loadedCoursesByCategory];
@@ -106,7 +117,7 @@ export class CourseCategoryPageComponent implements OnInit{
     if (filterData.price) {
       switch (filterData.price) {
         case 'Free':
-          filteredCourses = filteredCourses.filter(course => parseFloat(course.Price) === 0);
+          filteredCourses = filteredCourses.filter(course => (course.Price) === "Free");
           break;
         case 'Low':
           filteredCourses = filteredCourses.filter(course => parseFloat(course.Price) < 100);

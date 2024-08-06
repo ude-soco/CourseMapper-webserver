@@ -101,7 +101,9 @@ export class CourseCarouselComponent implements OnInit{
          console.error('Error fetching courses:', error);
        });
 
-
+     if(!this.emittedCategory){
+       return
+     }
 
      this.visDashboardService.getTopicsByCategory(this.emittedCategory.toLowerCase())
        .then((concepts) => {

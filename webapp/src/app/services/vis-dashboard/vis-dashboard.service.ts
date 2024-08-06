@@ -197,9 +197,9 @@ export class VisDashboardService {
     ));
   }
 
-  async getCoursesByCourseCategory(courseCategory:string):Promise<CourseByCategory[]>{
-    return lastValueFrom(this.http.get<CourseByCategory[]>(
-      `${environment.API_URL}/vis-dashboard/course-by-category/${courseCategory}`
+  async getCoursesByCourseCategory(courseCategory:string, sortByPopularity:boolean):Promise<CourseByCategory[]>{
+    return lastValueFrom(this.http.post<CourseByCategory[]>(
+      `${environment.API_URL}/vis-dashboard/course-by-category/${courseCategory}`, {sortByPopularity: sortByPopularity}
     ));
   }
 
@@ -330,6 +330,11 @@ export class VisDashboardService {
   }
 
 
+  async addLangaugesToPlatforms():Promise<any>{
+    return lastValueFrom(this.http.post<any>(
+      `${environment.API_URL}/vis-dashboard/add-langauge-platform/`,{}
+    ));
+  }
 
 
 

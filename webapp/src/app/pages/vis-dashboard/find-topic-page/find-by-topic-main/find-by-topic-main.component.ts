@@ -100,7 +100,7 @@ getCoursesByTopicSearch(searchQuery:string){
     if (filterData.price) {
       switch (filterData.price) {
         case 'Free':
-          filteredCourses = filteredCourses.filter(course => parseFloat(course.Price) === 0);
+          filteredCourses = filteredCourses.filter(course => (course.Price) === "Free");
           break;
         case 'Low':
           filteredCourses = filteredCourses.filter(course => parseFloat(course.Price) < 100);

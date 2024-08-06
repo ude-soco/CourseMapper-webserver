@@ -27,5 +27,14 @@ ngOnInit() {
     { text: 'Discover a MOOC/MOOC Insights', link:'/explore-moocs' },
     { text: 'Compare  MOOCs', link:'/compare-moocs' },
     { text: 'Find by Topics', link:'/find-moocs-by-topic' },]
+
+  this.visDashboardService.addLangaugesToPlatforms().then(()=>{
+  }).catch((error)=>{
+    console.log(error)
+  })
 }
+
+
+
+
 }

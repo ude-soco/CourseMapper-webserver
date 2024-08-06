@@ -44,9 +44,9 @@ module.exports = function (app) {
         controller.getConceptsByCourseId
     );
 
-    app.get(
+    app.post(
         "/api/vis-dashboard/course-by-category/:courseCategory",
-        // [authJwt.verifyToken],
+         //[authJwt.verifyToken],
         controller.getCoursesByCourseCategory
     );
 
@@ -166,7 +166,7 @@ module.exports = function (app) {
     // Get courses by conceptin Find: endpoint
     app.post(
         "/api/vis-dashboard/courses-concept-find",
-         [authJwt.verifyToken],
+        // [authJwt.verifyToken],
         controller.getCoursesByConceptFind
     );
 

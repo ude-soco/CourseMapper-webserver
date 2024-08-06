@@ -25,7 +25,6 @@ export class FiltersForCoursesComponent {
       level: this.selectedLevel,
       language: this.selectedLanguage,
       price: this.selectedPrice
-      // Add more filter properties as needed
     };
     this.filterChange.emit(filterData);
   }

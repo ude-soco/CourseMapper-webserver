@@ -121,6 +121,30 @@ export async function getCoursesByCourseCategory(courseCategory) {
     return serializeRecords(records)
 }
 
+
+export async function getCoursesByCourseCategorySorted(courseCategory) {
+    const {records, summary, keys} = await graphDb.driver.executeQuery(
+        'MATCH (teacher:teacher)-[:TEACHES]->(course:course)-[:AVAILABLE_ON]->(platform:platform) \n' +
+        '     WHERE toLower(course.course_category) = toLower($courseCategory)   OR  toLower(course.course_category) CONTAINS toLower($courseCategory)   \n' +
+        'AND course.number_of_participants IS NOT NULL AND course.number_of_participants =~ \'\\d+\' \n' +
+
+        'RETURN course.course_id AS CourseId, ' +
+        'course.audience AS Audience, course.course_content AS Content,' +
+        ' course.course_category AS Category, course.description AS Description, course.duration AS Duration,' +
+        'course.goal AS Goal, course.keywords AS Keywords, course.language AS Language,' +
+
+        ' course.level AS Level, course.link AS Link, course.name AS Name, ' +
+        'course.number_of_participants AS NumberOfParticipants,' +
+        'course.price AS Price, course.rating AS Rating, course.prerequisites AS Prerequisites,' +
+        'course.recommendations AS Recommendations, platform.name as PlatformName, platform.platform_id as PlatformId, teacher.name As TeacherName \n' +
+        'ORDER BY course.number_of_participants DESC \n'
+
+
+        , {courseCategory: courseCategory}
+    );
+    return serializeRecords(records)
+}
+
 export async function getPopularTeachers(platformName) {
     const {records, summary, keys} = await graphDb.driver.executeQuery(
         'MATCH (platform:platform)<-[:AVAILABLE_ON]-(course:course)<-[:TEACHES]-(teacher:teacher)\n' +

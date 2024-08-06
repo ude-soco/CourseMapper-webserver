@@ -57,8 +57,10 @@ h3{
 }
 
 .teacher-name{
-font-size: 12px;
+font-size: 13px;
   padding: 2px;
+  font-weight: bold;
+
 
 }
 
@@ -74,4 +76,19 @@ font-size: 12px;
   padding: 2px;
   font-family: Roboto;
   font-weight: bold;
+}
+
+
+.course-description{
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  font-size: 12px;
+  padding: 2px;
+
+
+
 }

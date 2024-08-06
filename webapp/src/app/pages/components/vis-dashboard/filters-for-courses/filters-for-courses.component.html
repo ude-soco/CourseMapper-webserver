@@ -35,7 +35,6 @@
     <select id="language" [(ngModel)]="selectedLanguage" style="width: 100%;" (change)="emitFilterChange()">
       <option value="nothing">------</option>
       <option *ngFor="let language of selectLanguages" [value]="language">{{language}}</option>
-      <!-- Add more language options as needed -->
     </select>
     </div>
   </div>
