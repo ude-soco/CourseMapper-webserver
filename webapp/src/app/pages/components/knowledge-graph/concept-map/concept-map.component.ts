@@ -966,6 +966,15 @@ export class ConceptMapComponent implements OnInit, OnDestroy {
     };
   }
 
+  setHeightGraphComponent() {
+    let knowledgeGraph = document.getElementById('graphSection');
+    if (knowledgeGraph) {
+      let ipo_interact = document.getElementById('ipo_interact');
+      // console.warn("ipo_interact.offsetWidth -> ", ipo_interact.offsetWidth)
+      this.cyHeight = ipo_interact.offsetHeight - (ipo_interact.offsetHeight * 0.15);
+    }
+  }
+
   // show/hide lists of current slide concepts and\ or other slides concepts
   showConceptsList() {
     this.showConceptsListSidebar = true;
@@ -1670,6 +1679,7 @@ export class ConceptMapComponent implements OnInit, OnDestroy {
           console.log('calling material recommender');
 
           // boby024
+          this.setHeightGraphComponent();
           this.isRecommendationButtonDisplayed = false;
           let croFormData = this.croComponent.getOnlyStatusChecked();
           /*if (croFormData.factor_weights.reload === true) {

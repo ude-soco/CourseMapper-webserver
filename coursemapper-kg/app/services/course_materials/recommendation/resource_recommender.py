@@ -320,7 +320,10 @@ class ResourceRecommenderService:
         if check_message != "":
             return result
         
-        user = {"name": body["username"], "id": body["user_id"] , "user_email": body["user_email"] }
+        # user = {"name": body["username"], "id": body["user_id"] , "user_email": body["user_email"] }
+        # create user node
+        self.db.get_or_create_user(user_id=body["user_id"], username=body["username"], user_email=body["user_email"])
+                                   
         # _slide = None
         user_embedding = ""
         slide_document_embedding = ""
@@ -364,6 +367,10 @@ class ResourceRecommenderService:
             rec_params["concepts"] = clu["concepts"]
 
         factor_weights = rrh.build_factor_weights(body["rec_params"]["factor_weights"]["weights"])
+
+        print()
+        print(factor_weights)
+
         result = self.process_recommandation_pipeline(
             rec_params=rec_params,
             factor_weights=factor_weights,
@@ -374,6 +381,7 @@ class ResourceRecommenderService:
             top_n_resources=10
         )
         return result
+
 
 
 

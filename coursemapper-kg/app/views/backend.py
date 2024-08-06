@@ -76,6 +76,27 @@ def update_concept_modified_node(result, user_id=None):
 
     return result_final
 
+@backend.route("/get_concepts_by_cids", methods=["GET"])
+def get_concepts_by_cids():
+    user_id = request.args.get("user_id")
+    cids = request.args.get("cids") # request.args.getlist("cids")
+    cids = str(cids).split(",")
+    result = neo4j.get_concepts_by_cids(user_id=user_id, cids=cids)
+    return make_response({ "records": result }, 200)
+
+# @backend.route("/get_concepts_modified_by_cid", methods=["GET"])
+# def get_concepts_modified_by_cid():
+#     cid = request.args.get("cid")
+#     print("cid ->", cid)
+#     result = neo4j.get_concepts_modified_by_cid(cid=cid)
+#     return make_response({ "records": result }, 200)
+
+@backend.route("/get_concepts_modified_by_user_id", methods=["GET"])
+def get_concepts_modified_by_user_id():
+    user_id = request.args.get("user_id")
+    result = neo4j.get_concepts_modified_by_user_id(user_id=user_id)
+    return make_response({ "records": result }, 200)
+
 @backend.route("/get_concepts_modified_by_user_id_and_mid", methods=["GET"])
 def get_concepts_modified_by_user_id_and_mid():
     mid = request.args.get("mid")

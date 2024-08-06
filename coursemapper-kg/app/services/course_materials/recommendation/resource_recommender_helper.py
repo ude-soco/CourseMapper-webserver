@@ -81,6 +81,8 @@ def save_and_get_concepts_modified(db: NeoDataBase, rec_params, top_n=5, user_em
         rec_params : {'user_id': str, 'mid': str, 'slide_id': int, 'category': str, 'concepts': list, 'recommendation_type': str, 'factor_weights': dict}
         status: dnu or u (PKG_BASED_KEYPHRASE_VARIANT |  PKG_BASED_DOCUMENT_VARIANT) | 
                 content (CONTENT_BASED_DOCUMENT_VARIANT | CONTENT_BASED_KEYPHRASE_VARIANT)
+                u: for type 1, 2 (understood)
+                dnu_reset: not used for pkg recommandations 
     '''
     logger.info("Saving Logic: Concept_modified")
     
@@ -95,6 +97,7 @@ def save_and_get_concepts_modified(db: NeoDataBase, rec_params, top_n=5, user_em
     user_id = rec_params["user_id"]
 
     concepts: list = rec_params["concepts"]
+    cids = [concept["cid"] for concept in concepts]
     # concepts.sort(key=lambda x: x["weight"], reverse=True)
     # concepts = concepts[:top_n]
 
@@ -113,6 +116,10 @@ def save_and_get_concepts_modified(db: NeoDataBase, rec_params, top_n=5, user_em
             db.create_concept_modified(cid=concept["cid"])
             concept_modified = db.update_rs_btw_user_and_cm(user_id=user_id, cid=concept["cid"], weight=concept["weight"], mid=rec_params["mid"], status=status)
             concepts_modified.append(concept_modified)
+        
+        if status == "dnu":
+            db.update_rs_btw_user_and_cms(user_id=user_id, cids=cids, special_status="dnu_reset")
+
 
         # update user embedding value (because weight value could be changed from the user)
         if user_embedding:
@@ -263,6 +270,9 @@ def calculate_factors_weights(category: int, resources: list, weights: dict = No
 
 def rank_resources(resources: list, weights: dict = None, ratings: list = None, top_n_resources=10):
     '''
+        factor_weights: {   "video": dict, (default: {'like_count': 0.146, 'creation_date': 0.205, 'views': 0.146, 'similarity_score': 0.152, 'saves_count': 0.199, 'user_rating': 0.152}) 
+                            "article": dict, (default: {'similarity_score': 0.3, 'saves_count': 0.4, 'user_rating': 0.3})
+                    }
         Step 1: Remove duplicates if exist
         Step 2: Ranking/Sorting Logic for Resources
         Result Form: {"articles": list, "videos": list}

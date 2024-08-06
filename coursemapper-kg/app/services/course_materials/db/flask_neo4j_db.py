@@ -101,15 +101,14 @@ class Neo4j:
         '''
             Get List of Concept_smodified by user_id
         '''
-        self.get_db()
         with self.get_db().session() as session:
             result = session.run(
-                """
-                MATCH (c:Concept_modified)
-                WHERE c.user_id = $user_id
-                RETURN ID(c) as node_id, c.user_id as user_id, c.cid as cid,
-                c.weight as weight
-                """,
+                '''
+                    MATCH (a:User)-[r:HAS_MODIFIED]->(b:Concept_modified)
+                    WHERE r.user_id = $user_id
+                    RETURN DISTINCT r.user_id as user_id, b.cid as cid, r.weight as weight
+                '''
+                ,
                 user_id=user_id
             ).data()
 
@@ -147,6 +146,73 @@ class Neo4j:
             ).data()
 
         return list(result)
+
+    def get_concepts_by_cids(self, user_id, cids):
+        '''
+            Get List of Concept_smodified by user_id
+        '''
+        concepts = []
+        with self.get_db().session() as session:
+            """
+                nodes = session.run(
+                    '''
+                        MATCH (a:User)-[r:HAS_MODIFIED]->(b:Concept_modified)
+                        WHERE b.cid IN $cids
+                        RETURN DISTINCT b.cid as cid, r.weight as weight
+                    '''
+                    ,
+                    cids=cids
+                ).data()
+            """
+            concepts = session.run(
+                    '''
+                        MATCH (c:Concept)
+                        WHERE c.cid IN $cids
+                        RETURN DISTINCT c.name as name, c.cid as cid, c.weight as weight
+                    ''',
+                    cids=cids
+                ).data()
+
+            if concepts:
+                concepts = list(concepts)
+                concepts_modified = self.get_concepts_modified_by_user_id(user_id=user_id)
+                for concept in concepts:
+                    for concept_m in concepts_modified:
+                        if concept["cid"] == concept_m["cid"]:
+                            concept["weight"] = concept_m["weight"]
+
+        return concepts
+    
+
+
+    # def get_concepts_modified_by_cid(self, cid):
+    #     '''
+    #         Get List of Concept_smodified by user_id
+    #     '''
+    #     node = None
+    #     with self.get_db().session() as session:
+    #         node = session.run(
+    #             '''
+    #                 MATCH (a:User)-[r:HAS_MODIFIED]->(b:Concept_modified)
+    #                 WHERE b.cid = $cid
+    #                 RETURN DISTINCT b.cid as cid, r.weight as weight
+    #             '''
+    #             ,
+    #             cid=cid
+    #         ).single()
+
+    #         if node is None:
+    #             node = session.run(
+    #                 '''
+    #                     MATCH (c:Concept)
+    #                     WHERE c.cid = $cid
+    #                     RETURN DISTINCT  c.cid as cid, c.weight as weight
+    #                 '''
+    #                 ,
+    #                 cid=cid
+    #             ).single()
+    #     return node
+
 
 
 

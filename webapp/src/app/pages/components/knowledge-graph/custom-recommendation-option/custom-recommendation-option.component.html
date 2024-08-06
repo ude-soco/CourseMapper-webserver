@@ -144,8 +144,13 @@
         </div>
       </div>
 
+      <!-- <div  *ngFor="let cro of processedCustomers$ | async; index as i">
+        <div>{{ cro.name }} {{ cro.weight }}</div>
+      </div> -->
+
+
       <!-- show less or more concept -->
-      <div *ngIf="!(croForm?.concepts?.length < 2)" class="font-bold">
+      <div *ngIf="!(croForm?.concepts?.length < 3)" class="font-bold">
         <div 
           *ngIf="seeMore"
           class="flex flex-row flex-wrap space-x-4 justify-center"
@@ -335,8 +340,8 @@
 
         <div class="flex flex-row justify-between">
           <div>Factors</div>
-          <div>Weights</div>
-          <div>Impact on ranking</div>
+          <div class="ml-16">Weights</div>
+          <div class="mr-4">Impact on ranking</div>
         </div>
 
         <div *ngFor="let factor of factor_weights?.original; index as i">

@@ -18,7 +18,8 @@ export interface Concept {
     wikipedia?: string,
     type?: string,
     uri?: string,
-    cid?: string
+    cid?: string,
+    id?: string
 }
 
 export interface Neo4jResult {

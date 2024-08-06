@@ -372,9 +372,9 @@ export class ResultViewComponent {
     // Deactivate Left Panel while interacting with Filtering on Tab "Saved"
 
     let leftPanelf = document.getElementById("ipo_interact");
-    // console.warn("leftPanelf");
-    // console.warn(leftPanelf);
-    // console.warn(this.activeIndex);
+    // this.cyHeight = ipo_interact.offsetHeight - (ipo_interact.offsetHeight * 0.15);
+    // leftPanelf.style.width = "480 px"; 
+
 
     if (this.activeIndex === 2) {
       this.filteringParamsSavedTab.user_id = this.userId;
@@ -384,6 +384,14 @@ export class ResultViewComponent {
       // leftPanelf.classList.remove('left_panel_interaction');
     }
   }
+
+  // setHeightGraphComponent() {
+  //   let knowledgeGraph = document.getElementById('graphSection');
+  //   if (knowledgeGraph) {
+  //     let ipo_interact = document.getElementById('ipo_interact');
+  //     this.cyHeight = ipo_interact.offsetHeight - (ipo_interact.offsetHeight * 0.15);
+  //   }
+  // }
 
   filteringResourcesSaved() {
     this.showSearchIconPinner = this.filteringParamsSavedTab.text.length >= 1 ? true : false;

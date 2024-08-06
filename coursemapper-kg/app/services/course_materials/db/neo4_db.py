@@ -2031,6 +2031,24 @@ class NeoDataBase:
                     }
             return r_detail
 
+    def update_rs_btw_user_and_cms(self, user_id: str, cids: list, special_status):
+        '''
+            Create or Update relationship between nodes 'User' and list of cids ('Concept_modified') given
+            relationship: dnu_reset
+            for dnus that should be used for recommendations
+        '''
+        logger.info("User Concepts not used: DNU Reset")
+        with self.driver.session() as session:
+            result = session.run(
+                '''
+                    MATCH (a:User)-[r:HAS_MODIFIED]->(b:Concept_modified)
+                    WHERE r.user_id = $user_id AND NOT b.cid IN $cids
+                    SET r.status = "dnu_reset"
+                ''',
+                user_id=user_id,
+                cids=cids
+            )
+
     def get_user_embedding_with_concept_modified(self, user_id: str, mid: str, status: str):
         """
             Update User Embedding value based on nodes 'Concept_modified'

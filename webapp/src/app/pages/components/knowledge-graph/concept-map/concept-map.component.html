@@ -734,7 +734,7 @@
                     </div>
                   
                     <!-- final recommendation result-->
-                    <div class="graphSection">
+                    <div>
                       <!-- <app-result-view
                         *ngIf="this.resultMaterials!=null"
                           [concepts1]="concepts1"
@@ -743,6 +743,7 @@
                       </app-result-view> -->
 
                       <app-result-view
+                        class="graphSection"
                         *ngIf="resourcesPagination !== undefined"
                           [resourcesPagination]="resourcesPagination"
                           [croForm]="croComponent.croForm"
