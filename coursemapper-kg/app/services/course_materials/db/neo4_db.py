@@ -2258,6 +2258,7 @@ class NeoDataBase:
             }
         '''
         logger.info("Saving or Removing from Resource Saved List")
+        result = {"msg": ""}
         tx = self.driver.session()
 
         if data["status"] == True:
@@ -2269,6 +2270,7 @@ class NeoDataBase:
                     user_id=data["user_id"],
                     rid=data["rid"]
                 )
+            result["msg"] = "saved"
             
         else:
             tx.run(
@@ -2279,6 +2281,7 @@ class NeoDataBase:
                     user_id=data["user_id"],
                     rid=data["rid"]
                 )
+            result["msg"] = "removed"
         
         # Update Resources: saves_count
         tx.run(
@@ -2309,6 +2312,8 @@ class NeoDataBase:
             if resource["saves_count"] < resource["saves_count"]:
                 self.update_rs_btw_resource_and_cm(rid=data["rid"], cid=data["rid"], action=False)
         """
+        
+        return result
 
     def store_resources(self, resources_dict: dict, cid: str, recommendation_type="", resources_list: list=None, resources_form="dict"):
         '''

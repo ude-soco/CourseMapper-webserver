@@ -68,39 +68,22 @@ export class CardVideoComponent {
     this.isDescriptionFullDisplayed = this.isDescriptionFullDisplayed === true ? false : true;
   }
 
-  addToBookmark() {
-    this.messageService.add({ key: 'resource_bookmark', severity: 'success', summary: '', detail: 'Successfully to the bookmark added'});
-    
+  addToBookmark() {    
     this.isBookmarkFill = this.isBookmarkFill === true ? false : true;
     this.saveOrRemoveParams.status = this.isBookmarkFill;
-    // this.saveOrRemoveBookmark();
     this.SaveOrRemoveUserResource(this.saveOrRemoveParams);
-    // this.saveOrRemoveBookmark();
   }
 
-  // saveOrRemoveBookmark() {
-  //   console.warn("isBookmarkFill -> ", this.isBookmarkFill)
-
-  //   // detail: 'Open your Bookmark List to find this video'
-  //   if (this.isBookmarkFill == true) { // this.isBookmarkFill === true  // this.videoElement?.is_bookmarked_fill === true
-  //     if (this.saveOrRemoveStatus === true) {
-  //       this.messageService.add({ key: 'resource_bookmark', severity: 'success', summary: '', detail: 'Successfully to the bookmark added'});
-  //     }
-  //   } else {
-  //     if (this.saveOrRemoveStatus === false) {
-  //       this.messageService.add({key: 'resource_bookmark', severity: 'info', summary: '', detail: 'Successfully to the bookmark removed'});
-  //     }
-  //   }
-  // }
-
   saveOrRemoveBookmark() {
-    console.warn("isBookmarkFill -> ", this.isBookmarkFill)
-
     // detail: 'Open your Bookmark List to find this video'
     if (this.isBookmarkFill == true) { // this.isBookmarkFill === true  // this.videoElement?.is_bookmarked_fill === true
-      this.messageService.add({ key: 'resource_bookmark', severity: 'success', summary: '', detail: 'Successfully to the bookmark added'});
+      if (this.saveOrRemoveStatus === true) {
+        this.messageService.add({ key: 'resource_bookmark', severity: 'success', summary: '', detail: 'Successfully to the bookmark added'});
+      }
     } else {
-      this.messageService.add({key: 'resource_bookmark', severity: 'info', summary: '', detail: 'Successfully to the bookmark removed'});
+      if (this.saveOrRemoveStatus === false) {
+        this.messageService.add({key: 'resource_bookmark', severity: 'info', summary: '', detail: 'Successfully to the bookmark removed'});
+      }
     }
   }
 
@@ -108,17 +91,14 @@ export class CardVideoComponent {
     this.materialsRecommenderService.SaveOrRemoveUserResource(params)
       .subscribe({
         next: (data: any) => {
-          if (data == null) {
-            console.warn("action done -> ")
-            // this.messageService.add({ key: 'resource_bookmark', severity: 'success', summary: '', detail: 'Successfully to the bookmark added'});
+          if (data["msg"] == "saved") {
             this.saveOrRemoveStatus = true;
             this.videoElement.is_bookmarked_fill = true;
           } else {
-            // this.messageService.add({key: 'resource_bookmark', severity: 'info', summary: '', detail: 'Successfully to the bookmark removed'});
             this.saveOrRemoveStatus = false;
             this.videoElement.is_bookmarked_fill = false;
           }
-          // this.saveOrRemoveBookmark();
+          this.saveOrRemoveBookmark();
         },
         error: (err) => {
           console.log(err);

@@ -186,7 +186,7 @@ export class ResultViewComponent {
         },
       },
     ];
-
+    /**
     this.chipMenuNew = [
       {
         label: 'Mark as understood',
@@ -219,6 +219,7 @@ export class ResultViewComponent {
         },
       },
     ];
+    */
 
     // this.allConceptsObj = [...this.concepts1];
     // this.loadResultForSelectedModel(MaterialModels.MODEL_1);
@@ -364,7 +365,10 @@ export class ResultViewComponent {
     });
 
     this.deactivateDnuInteraction();
-    this.getRidsFromUserSaves();
+
+    if (this.activeIndex === 2) {
+      this.getRidsFromUserSaves();
+    }
     // this.getConceptsMidsSliderNumbersForUserResourcesFiltering()
   }
 
@@ -374,7 +378,7 @@ export class ResultViewComponent {
     let leftPanelf = document.getElementById("ipo_interact");
     // this.cyHeight = ipo_interact.offsetHeight - (ipo_interact.offsetHeight * 0.15);
     // leftPanelf.style.width = "480 px"; 
-
+    // console.warn("ipo_interact with -> ", leftPanelf.offsetWidth)
 
     if (this.activeIndex === 2) {
       this.filteringParamsSavedTab.user_id = this.userId;

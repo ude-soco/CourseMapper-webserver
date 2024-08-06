@@ -1,4 +1,4 @@
-<div class="mb-8 grid-cols-1 lg:flex border-b border-b-4 border-gray-300" style="display: none;">
+<div class="mb-8 grid-cols-1 lg:flex border-b border-b-4 border-gray-300 mb-6" style="display: none;">
     <div class="items-center image-video flex-col sm:w-fit sm:h-fit bg-transparent bg-cover text-center">
       <img (click)="readVideo(videoElement)" class="object-cover max-w-sm md:max-w-lg rounded" [src]=videoElement.thumbnail alt="tailwind logo" width="300px"/>
       <app-rating [element]="videoElement" [notUnderstoodConcepts]="notUnderstoodConcepts" ></app-rating>
@@ -30,6 +30,7 @@
   </div>
 
 
+<p-toast key="resource_bookmark" position="bottom-left"></p-toast>
 
 <div class="border-b-4 border-gray-300 mb-6">
   <div class="flex flex-col">

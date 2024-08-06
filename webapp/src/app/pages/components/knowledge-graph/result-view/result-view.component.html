@@ -10,7 +10,7 @@
           <div class="flex flex-wrap gap-1 w-9/12"> 
             <button
               *ngFor="let concept of allConceptsObj"
-              class="dislike-button {{concept.status === 'understood' ? 'bg-[#689F38]' : concept.status === 'notUnderstood' ? 'bg-[#D32F2F]' : 'bg-[#2196F3]'}}
+              class="dislike-button {{concept.status === 'understood' ? 'bg-[#689F38]' : concept.status === 'notUnderstood' ? 'bg-[#2196F3]' : 'bg-[#D32F2F]'}}
               text-white px-2 mx-1 border border-transparent rounded-full"
             >
               {{ concept.name }}
@@ -43,10 +43,17 @@
                     style="fill: white; stroke: #495057; stroke: width 0.5px"
                   />
                 </svg>
-                <p-menu
+                <!-- <p-menu
                   #menu
                   id="notUnderstood_menu"
                   [model]="concept.status === 'notUnderstood' ? chipMenuU : concept.status === 'understood' ? chipMenuDNU : chipMenuNew"
+                  [popup]="true"
+                  appendTo="body"
+                ></p-menu> -->
+                <p-menu
+                  #menu
+                  id="notUnderstood_menu"
+                  [model]="chipMenuU"
                   [popup]="true"
                   appendTo="body"
                 ></p-menu>
@@ -181,7 +188,7 @@
       </p-tabPanel> -->
       
       <p-tabPanel *ngIf="resourcesPagination?.nodes?.articles" [cache]="true" header="Articles" leftIcon="pi pi-book">
-        <div>
+        <div class="mt-1 w-full" id="cro_viedo_list">
 
           <!-- <p-scrollPanel styleClass="scroll_panel_list">
             <app-card-article-list

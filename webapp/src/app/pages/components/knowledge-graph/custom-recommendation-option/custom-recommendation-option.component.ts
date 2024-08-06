@@ -19,7 +19,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
   @Input() activatorPartCRO: ActivatorPartCRO;
   // @Output() croFormValue: any; //  = new EventEmitter<CROform>();
 
-  isCustomRecOptionDisplayed = true;
+  isCustomRecOptionDisplayed = false;
   cro_concept_weight: number;
   cro_concept_selected: any | undefined;
   // cro_concept_status_selected: boolean;
@@ -78,14 +78,22 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
         "checked": true
       }
     ],
-    normalized: {
+    normalized_TEST: {
       "similarity_score": 0.44,
       "creation_date": 0.19,
       "views": 0.19,
       "like_count": 0.06,
       "user_rating": 0.06,
       "saves_count": 0.06
-    }
+    },
+    normalized: {   
+    'like_count': 0.146, 
+    'creation_date': 0.205, 
+    'views': 0.146, 
+    'similarity_score': 0.152, 
+    'saves_count': 0.199, 
+    'user_rating': 0.152
+}
   }
 
   croFormBackup: CROform = {};
@@ -378,7 +386,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
 
   displaySeeMore() {
     this.seeMore = this.seeMore === true ? false : true;
-    for (let i = 2; i < this.croForm.concepts.length; i++) {
+    for (let i = 5; i < this.croForm.concepts.length; i++) {
       // console.warn(this.croForm.concepts[i])
 
       if (this.seeMore === false) {
