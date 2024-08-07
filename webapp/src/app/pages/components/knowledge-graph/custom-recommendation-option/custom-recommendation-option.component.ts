@@ -19,7 +19,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
   @Input() activatorPartCRO: ActivatorPartCRO;
   // @Output() croFormValue: any; //  = new EventEmitter<CROform>();
 
-  isCustomRecOptionDisplayed = false;
+  isCustomRecOptionDisplayed = true;
   cro_concept_weight: number;
   cro_concept_selected: any | undefined;
   // cro_concept_status_selected: boolean;

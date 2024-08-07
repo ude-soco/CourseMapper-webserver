@@ -10,6 +10,7 @@ import math
 import scipy.stats as st
 from ..db.neo4_db import NeoDataBase
 import concurrent.futures
+from .recommendation_type import RecommendationType
 
 from log import LOG
 import logging
@@ -38,16 +39,21 @@ def remove_duplicates_from_resources(dict_list: list, key: str="rid"):
     
     return unique_dicts
 
-def remove_keys_from_resources(resources: list):
+def remove_keys_from_resources(resources: list, recommendation_type=None):
     '''
         Remove keys from list (resource list)
         keys = ["keyphrase_counts", "keyphrases", "keyphrases_infos", "keyphrase_embedding", "document_embedding"]
     '''
     logger.info("Remove keys from list (resource list)")
-
-    keys = [    "keyphrase_counts", "keyphrases", "keyphrases_infos", "keyphrase_embedding", "document_embedding", 
-                "composite_score", "labels"
-            ]
+    if recommendation_type in [ RecommendationType.PKG_BASED_DOCUMENT_VARIANT, RecommendationType.PKG_BASED_KEYPHRASE_VARIANT ]:
+        keys = [    "keyphrase_counts", "keyphrases_infos", "keyphrase_embedding", "document_embedding", 
+                    "composite_score", "labels"
+                ]
+    else:
+        keys = [    "keyphrase_counts", "keyphrases_infos", "keyphrase_embedding", "document_embedding", 
+                    "composite_score", "labels", "keyphrases"
+                ]
+        
     resources_updated = [{k: v for k, v in d.items() if k not in keys} for d in resources]
     return resources_updated
 
@@ -268,7 +274,7 @@ def calculate_factors_weights(category: int, resources: list, weights: dict = No
 
     return resources
 
-def rank_resources(resources: list, weights: dict = None, ratings: list = None, top_n_resources=10):
+def rank_resources(resources: list, weights: dict = None, ratings: list = None, top_n_resources=10, recommendation_type=None):
     '''
         factor_weights: {   "video": dict, (default: {'like_count': 0.146, 'creation_date': 0.205, 'views': 0.146, 'similarity_score': 0.152, 'saves_count': 0.199, 'user_rating': 0.152}) 
                             "article": dict, (default: {'similarity_score': 0.3, 'saves_count': 0.4, 'user_rating': 0.3})
@@ -288,12 +294,12 @@ def rank_resources(resources: list, weights: dict = None, ratings: list = None, 
         # video items
         resources_videos = [resource for resource in resources if "Video" in resource["labels"]]
         resources_videos = calculate_factors_weights(category=1, resources=resources_videos, weights=video_weights_normalized)
-        resources_videos = remove_keys_from_resources(resources=resources_videos)
+        resources_videos = remove_keys_from_resources(resources=resources_videos, recommendation_type=recommendation_type)
 
         # articles items
         resources_articles = [resource for resource in resources if "Article" in resource["labels"]]
         resources_articles = calculate_factors_weights(category=2, resources=resources_articles, weights=article_weights_normalized)
-        resources_articles = remove_keys_from_resources(resources=resources_articles)
+        resources_articles = remove_keys_from_resources(resources=resources_articles, recommendation_type=recommendation_type)
 
         # # Finally, priorities on resources having Rating related to DNU_modified (cid)
         if ratings and len(ratings) > 0:

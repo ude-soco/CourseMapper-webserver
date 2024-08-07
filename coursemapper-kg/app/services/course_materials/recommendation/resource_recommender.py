@@ -289,7 +289,7 @@ class ResourceRecommenderService:
 
         # Apply ranking algorithm on the resources
         # resources = rrh.remove_keys_from_resources(resources=resources)
-        resources_dict = rrh.rank_resources(resources=resources, weights=factor_weights, top_n_resources=top_n_resources)
+        resources_dict = rrh.rank_resources(resources=resources, weights=factor_weights, top_n_resources=top_n_resources, recommendation_type=recommendation_type)
 
         # Provide only the top 10 of the resources
         result_final = {"recommendation_type": rec_params["recommendation_type"], "concepts": rec_params["concepts"], "nodes": resources_dict }

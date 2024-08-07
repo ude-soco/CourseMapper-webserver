@@ -5,7 +5,7 @@
 }
 
 :host ::ng-deep #cro_sorting .p-panel {
-  border: 2px solid #8A8080;
+  border: 2px solid #cecece;
 }
 
 :host ::ng-deep .scroll_panel_list {

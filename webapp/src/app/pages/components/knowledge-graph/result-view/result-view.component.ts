@@ -186,7 +186,7 @@ export class ResultViewComponent {
         },
       },
     ];
-    /**
+
     this.chipMenuNew = [
       {
         label: 'Mark as understood',
@@ -219,18 +219,17 @@ export class ResultViewComponent {
         },
       },
     ];
-    */
 
-    // this.allConceptsObj = [...this.concepts1];
-    // this.loadResultForSelectedModel(MaterialModels.MODEL_1);
     this.loadResultForSelectedModel();
-
-    if (this.resourcesPagination) {
-      this.isLoadingResource = false;
-    }
+    this.checkresourcesPagination();
   }
 
   ngOnChanges() {
+    this.checkresourcesPagination();
+    this.loadResultForSelectedModel();
+  }
+
+  checkresourcesPagination() {
     if (this.resourcesPagination) {
       this.isLoadingResource = false;
     }
@@ -305,55 +304,10 @@ export class ResultViewComponent {
   }
 
   loadResultForSelectedModel() {
-    // let key = null; // this.croForm[""];
-    // for (const [key, value] of Object.entries(this.croForm["recommendation_types"]["models"])) {
-    //   console.log(`${key}: ${value}`);
-    // }
-
-    this.allConceptsObj = [...this.resourcesPagination?.concepts]; // this.resourcesPagination?.concepts;
-    this.concepts = [...this.resourcesPagination.concepts];
-    if (this.croComponent?.didNotUnderstandConceptsObj && this.croComponent?.previousConceptsObj) {
-      const didNotUnderstandConceptsObj = this.croComponent?.didNotUnderstandConceptsObj;
-      const previousConceptsObj = this.croComponent?.previousConceptsObj;
-      this.concepts.forEach((el, index, array) => {
-        if (
-          didNotUnderstandConceptsObj.some(
-            (concept) => concept.cid === el.cid
-          )
-        ) {
-          el.status = 'notUnderstood';
-          array[index] = el;
-        } else if (
-          previousConceptsObj.some(
-            (concept) => concept.cid === el.cid
-          )
-        ) {
-          el.status = 'notUnderstood';
-          array[index] = el;
-        } else if (
-          this.understoodConceptsObj.some(
-            (concept) => concept.cid === el.cid
-          )
-        ) {
-          el.status = 'understood';
-          array[index] = el;
-        } else {
-          el.status = 'unread';
-          array[index] = el;
-        }
-      });
-    }
-
-    /*
-    // this.croVideos = this.resourcesPagination?.nodes?.vdieos;
-    // this.croArticles = this.resourcesPagination?.nodes?.articles;
-    // this.recievedVideoResultIsEmpty = false ? this.croVideos.total_items > 0 : true;
-    // this.recievedArticleResultIsEmpty = false ? this.croArticles.total_items > 0 : true;
-    // this.onResize();
-    // console.log('recievedVideoResultIsEmpty', this.resourcesPagination.nodes.vdieos);
-    // console.log('recievedArticleResultIsEmpty', this.articles);
-    */
-    // console.log('pagination results', this.resourcesPagination);
+    this.allConceptsObj = this.resourcesPagination?.concepts;
+    this.allConceptsObj.forEach(concept => {
+      concept["status"] = "notUnderstood"
+    });
   }
 
   tabChanged(tab) {
@@ -369,12 +323,9 @@ export class ResultViewComponent {
     if (this.activeIndex === 2) {
       this.getRidsFromUserSaves();
     }
-    // this.getConceptsMidsSliderNumbersForUserResourcesFiltering()
   }
 
   deactivateDnuInteraction() {
-    // Deactivate Left Panel while interacting with Filtering on Tab "Saved"
-
     let leftPanelf = document.getElementById("ipo_interact");
     // this.cyHeight = ipo_interact.offsetHeight - (ipo_interact.offsetHeight * 0.15);
     // leftPanelf.style.width = "480 px"; 
@@ -383,19 +334,8 @@ export class ResultViewComponent {
     if (this.activeIndex === 2) {
       this.filteringParamsSavedTab.user_id = this.userId;
       this.getUserResources(this.filteringParamsSavedTab);
-      // leftPanelf.classList.add('left_panel_interaction');
-    } else {
-      // leftPanelf.classList.remove('left_panel_interaction');
     }
   }
-
-  // setHeightGraphComponent() {
-  //   let knowledgeGraph = document.getElementById('graphSection');
-  //   if (knowledgeGraph) {
-  //     let ipo_interact = document.getElementById('ipo_interact');
-  //     this.cyHeight = ipo_interact.offsetHeight - (ipo_interact.offsetHeight * 0.15);
-  //   }
-  // }
 
   filteringResourcesSaved() {
     this.showSearchIconPinner = this.filteringParamsSavedTab.text.length >= 1 ? true : false;
@@ -447,6 +387,119 @@ export class ResultViewComponent {
 
 
   /*
+  
+  ngOnInit(): void {
+    console.log('MaterialModels.MODEL_1', MaterialModels.MODEL_1);
+    this.materialModels = [
+      { name: 'Model 1', code: MaterialModels.MODEL_1 },
+      { name: 'Model 2', code: MaterialModels.MODEL_2 },
+      { name: 'Model 3', code: MaterialModels.MODEL_3 },
+      { name: 'Model 4', code: MaterialModels.MODEL_4 },
+    ];
+
+    this.chipMenuU = [
+      {
+        label: 'Mark as understood',
+        icon: 'pi pi-check',
+        command: (e) => {
+          this.slideConceptservice.updateUnderstoodConcepts(
+            this.conceptFromChipObj
+          );
+        },
+      },
+    ];
+    this.chipMenuNew = [
+      {
+        label: 'Mark as understood',
+        icon: 'pi pi-check',
+        command: (e) => {
+          this.slideConceptservice.updateUnderstoodConcepts(
+            this.conceptFromChipObj
+          );
+        },
+      },
+      {
+        label: 'Mark as not understood',
+        icon: 'pi pi-check',
+        command: (e) => {
+          this.slideConceptservice.updateDidNotUnderstandConcepts(
+            this.conceptFromChipObj
+          );
+        },
+      }
+    ];
+
+    this.chipMenuDNU = [
+      {
+        label: 'Mark as not understood',
+        icon: 'pi pi-check',
+        command: (e) => {
+          this.slideConceptservice.updateDidNotUnderstandConcepts(
+            this.conceptFromChipObj
+          );
+        },
+      },
+    ];
+
+    // this.allConceptsObj = [...this.concepts1];
+    // this.loadResultForSelectedModel(MaterialModels.MODEL_1);
+    this.loadResultForSelectedModel();
+
+    if (this.resourcesPagination) {
+      this.isLoadingResource = false;
+    }
+  }
+
+  loadResultForSelectedModel2() {
+    this.allConceptsObj = this.resourcesPagination?.concepts;
+    this.allConceptsObj.forEach(concept => {
+      concept["status"] = "notUnderstood"
+    });
+
+    this.allConceptsObj = [...this.resourcesPagination?.concepts]; // this.resourcesPagination?.concepts;
+    this.concepts = [...this.resourcesPagination.concepts];
+    if (this.croComponent?.didNotUnderstandConceptsObj && this.croComponent?.previousConceptsObj) {
+      const didNotUnderstandConceptsObj = this.croComponent?.didNotUnderstandConceptsObj;
+      const previousConceptsObj = this.croComponent?.previousConceptsObj;
+      this.concepts.forEach((el, index, array) => {
+        if (
+          didNotUnderstandConceptsObj.some(
+            (concept) => concept.cid === el.cid
+          )
+        ) {
+          el.status = 'notUnderstood';
+          array[index] = el;
+        } else if (
+          previousConceptsObj.some(
+            (concept) => concept.cid === el.cid
+          )
+        ) {
+          el.status = 'notUnderstood';
+          array[index] = el;
+        } else if (
+          this.understoodConceptsObj.some(
+            (concept) => concept.cid === el.cid
+          )
+        ) {
+          el.status = 'understood';
+          array[index] = el;
+        } else {
+          el.status = 'unread';
+          array[index] = el;
+        }
+      });
+    }
+
+    // this.croVideos = this.resourcesPagination?.nodes?.vdieos;
+    // this.croArticles = this.resourcesPagination?.nodes?.articles;
+    // this.recievedVideoResultIsEmpty = false ? this.croVideos.total_items > 0 : true;
+    // this.recievedArticleResultIsEmpty = false ? this.croArticles.total_items > 0 : true;
+    // this.onResize();
+    // console.log('recievedVideoResultIsEmpty', this.resourcesPagination.nodes.vdieos);
+    // console.log('recievedArticleResultIsEmpty', this.articles);
+    // console.log('pagination results', this.resourcesPagination);
+  }
+
   paginateResult() {
     // let pagination_params = {
     //   page_number: this.croPaginatorFirst + 1,

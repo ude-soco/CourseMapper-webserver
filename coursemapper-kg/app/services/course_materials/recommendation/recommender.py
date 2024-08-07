@@ -326,8 +326,8 @@ class Recommender:
                 data, recommendation_type, user_embedding=user_tensor
             )
 
-            end_time = time.time()
-            logger.info(f"Algorithm Model 1: Execution time {end_time - start_time}")
+            total_time = time.time() - start_time
+            logger.info(f"Algorithm Model 1: Execution time {str(total_time)}")
             return data
         
         # If Model 2
@@ -350,9 +350,9 @@ class Recommender:
             data = compute_dynamic_document_based_similarity(
                 data, recommendation_type, user_embedding=user_tensor
             )
-            
-            end_time = time.time()
-            logger.info("Algorithm Model 2 with Execution time: ", {end_time - start_time})
+
+            total_time = time.time() - start_time
+            logger.info(f"Algorithm Model 2: Execution time {str(total_time)}")
             return data 
     
         # If Model 3
@@ -372,8 +372,8 @@ class Recommender:
                 data, slide_weighted_avg_embedding_of_concepts, recommendation_type
             )
 
-            end_time = time.time()
-            logger.info("Algorithm Model 3 with Execution time: ", {end_time - start_time})
+            total_time = time.time() - start_time
+            logger.info(f"Algorithm Model 3: Execution time {str(total_time)}")
             return data # sorted_data.head(top_n)
 
         # if Model 4
@@ -390,8 +390,8 @@ class Recommender:
                 data, slide_document_embedding, recommendation_type
             )
 
-            end_time = time.time()
-            logger.info("Algorithm Model 4 with Execution time: ", {end_time - start_time})
+            total_time = time.time() - start_time
+            logger.info(f"Algorithm Model 4: Execution time {str(total_time)}")
             return data
 
         # If Combined Dynamic Model.

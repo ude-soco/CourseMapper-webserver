@@ -1699,7 +1699,6 @@ export class ConceptMapComponent implements OnInit, OnDestroy {
               // boby024
               this.isRecommendationButtonDisplayed = true;
               this.resourcesPagination = result;
-              // this.croComponent.croForm.recommendation_types.status = true;
 
               console.log('tab 2 will be activated');
               this.kgTabs.kgTabsEnable();
