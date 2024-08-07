@@ -68,19 +68,19 @@ db.mongoose
   });
 
 // Create connection to Neo4j
-/**const neo4j = require("./graph/neo4j");
+const neo4j = require("./graph/neo4j");
 neo4j.connect(
   process.env.NEO4J_URI,
   process.env.NEO4J_USER,
   process.env.NEO4J_PASSWORD
-);**/
+);
 
 // Create connection to Neo4j VisDashboard
 const neo4jVisDash = require("./vis-dashboard/services/vis-dashboard.service");
 neo4jVisDash.connect(
-    process.env.NEO4J_URI,
-    process.env.NEO4J_USER,
-    process.env.NEO4J_PASSWORD
+    process.env.NEO4J_URI_MOOC,
+    process.env.NEO4J_USER_MOOC,
+    process.env.NEO4J_PASSWORD_MOOC
 );
 
 // Create connection to Redis

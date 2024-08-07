@@ -10,9 +10,9 @@ export async function connect(url, user, password) {
     try {
         graphDb.driver = neo4j.driver(url, neo4j.auth.basic(user, password), {disableLosslessIntegers: true});
         await graphDb.driver.verifyConnectivity();
-        console.log(`Connected to Neo4j`);
+        console.log(`Connected to Neo4j MOOC`);
     } catch (error) {
-        console.error('Failed to connect to Neo4j', error);
+        console.error('Failed to connect to Neo4j MOOC', error);
     }
 }
 
