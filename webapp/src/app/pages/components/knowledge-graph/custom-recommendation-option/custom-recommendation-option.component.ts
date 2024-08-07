@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { MenuItem } from 'primeng/api';
+import { MenuItem, MessageService } from 'primeng/api';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { ActivatorPartCRO, CROform, Neo4jResult, FactorWeight } from 'src/app/models/croForm';
 import { CustomRecommendationOptionService } from 'src/app/services/custom-recommenation-option.service';
@@ -113,6 +113,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
 
   constructor(
     private croService: CustomRecommendationOptionService,
+    private messageService: MessageService,
     // private slideConceptservice: SlideConceptsService
   ) {
     // this.getConceptsManually();
@@ -365,7 +366,6 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     } else if (this.croForm.category === "3") {
       this.updateCROform(undefined, "3");
     }
-
     // this.updateStatus1or2();
   }
 
@@ -445,6 +445,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
       }
     }
     // this.updateNumberConceptsToBeChecked();
+    this.messageService.add({ key: 'cro_concept_removed', severity: 'info', summary: '', detail: 'Concept removed'});
   }
 
   getOnlyStatusChecked() {
@@ -474,11 +475,9 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
         // this.get_concepts_manually_current_slide();
       }
       this.updateCROformAll(this.didNotUnderstandConceptsObj, this.previousConceptsObj);
-      // console.warn("previousConceptsObj > ", this.previousConceptsObj);
-      // this.getConceptsModifiedByUserIdAndCids();
     }
-    // this.showRecTypeAndFactorWeight();
   }
+
 
 
   /**

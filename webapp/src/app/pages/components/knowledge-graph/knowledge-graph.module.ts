@@ -51,6 +51,7 @@ import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { ListboxModule } from 'primeng/listbox';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { InputTextModule } from 'primeng/inputtext';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 
 @NgModule({
@@ -108,7 +109,8 @@ import { InputTextModule } from 'primeng/inputtext';
     ScrollPanelModule,
     ListboxModule,
     ProgressBarModule,
-    InputTextModule
+    InputTextModule,
+    MultiSelectModule
     ],
   exports: [
     ConceptMapComponent,

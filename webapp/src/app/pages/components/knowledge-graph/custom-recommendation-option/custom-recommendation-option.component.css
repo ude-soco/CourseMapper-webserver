@@ -3,6 +3,7 @@
   color: #0288d1;
 }
 
+
 :host ::ng-deep #search_concept_category_1 .p-dropdown {
   width: 20em;
 }
@@ -23,6 +24,16 @@
 :host ::ng-deep #search_concept_category_3 .p-dropdown .p-dropdown-item {
   font-size: 12px;
 }
+
+
+
+:host ::ng-deep #search_concept_category_3 .p-multiSelect {
+  width: 20em;
+}
+
+
+
+
 :host ::ng-deep .raning_progress_bar .p-progressbar .p-progressbar-label {
   display: block !important;
   font-size: 0.6rem;
