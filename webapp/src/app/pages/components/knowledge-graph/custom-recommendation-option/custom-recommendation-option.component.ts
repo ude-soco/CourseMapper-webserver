@@ -398,49 +398,55 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     }
   }
 
+  /*
+  setSelectManuallyOnClick(event) {
+    console.warn("Selected -> ", event);
+  }
+
   setSelectManuallyOnChange2(event) {
+    const isSelected = event.value.includes(event.itemValue);
+    console.warn("isSelected -> ", isSelected);
+
+    let concepts_selected = event.value;
     this.deactivateSelection();
 
-    console.warn("event.value -> ", event.value);
     
     if (event.value) {
-      let concepts_seleected = event.value
-      let value = concepts_seleected[concepts_seleected.length - 1]; // event.value;
-      const conceptFound = this.croForm.concepts.find((concept) => concept.cid === value.cid);
+      let concepts = [];
+      this.croForm.concepts = [];
 
-      if (conceptFound === undefined) {
-        value["status"] = true;
-        value["visible"] = true;
-        this.croForm.concepts.push(value);
+      for (let concept_selected of concepts_selected) {
+        concept_selected["status"] = true;
+        concept_selected["visible"] = true;
+        concepts.push(concept_selected);
 
-        // this.getConceptsModifiedByUserIdAndCids();
-      } else {
-        for(let concept of this.croForm.concepts) {
-          if (value.cid === concept.cid) {
-            concept.status = !value.status;
-            concept.visible = !value.status;
-            break
-          }
+      }
+      this.croForm.concepts = concepts_selected;
+      // console.warn("this.croForm.concepts -> ", this.croForm.concepts)
+    }
+    
+    // this.updateNumberConceptsToBeChecked();
+  }
+
+  removeSelectManuallyOnChange2(index: number, cid: string) {
+    if (index > -1) {
+      this.croForm.concepts.splice(index, 1);
+
+      for (let node of this.CROconceptsManually) {
+        if (cid === node.cid) {
+          node.status = false;
+          node.visible = false;
+          break;
         }
       }
     }
     // this.updateNumberConceptsToBeChecked();
-
-    // Clear the filter input after selection
-    const multiSelect = event.originalEvent.target.closest('.p-multiselect');
-    console.warn("multiSelect -> ", multiSelect);
-
-    if (multiSelect) {
-      const filterInput = multiSelect.querySelector('.p-multiselect-filter');
-      console.warn("filterInput -> ", filterInput);
-
-      if (filterInput) {
-        filterInput.value = '';
-        filterInput.dispatchEvent(new Event('input'));
-      }
-    }
+    this.messageService.add({ key: 'cro_concept_removed', severity: 'info', summary: '', detail: 'Concept removed'});
   }
 
+
+  */
+  
   setSelectManuallyOnChange(event) {
     this.deactivateSelection();
 
@@ -479,6 +485,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
         }
       }
     }
+
     // this.updateNumberConceptsToBeChecked();
     this.messageService.add({ key: 'cro_concept_removed', severity: 'info', summary: '', detail: 'Concept removed'});
   }

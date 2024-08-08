@@ -311,29 +311,32 @@ export class ResultViewComponent {
     this.allConceptsObj.forEach(concept => {
       concept["status"] = "notUnderstood"
     });
+    this.concepts = this.allConceptsObj;
   }
 
   tabChanged(tab) {
     this.activeIndex = tab;
+    this.setLeftPanelMWinWidth();
+    // this.deactivateDnuInteraction();
 
     // Pause videos (if any) when changing tabs
     document.querySelectorAll('iframe').forEach((iframe) => {
       const result = iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*')
     });
 
-    this.deactivateDnuInteraction();
-
     if (this.activeIndex === 2) {
       this.getRidsFromUserSaves();
     }
   }
 
-  deactivateDnuInteraction() {
-    let leftPanelf = document.getElementById("ipo_interact");
-    // this.cyHeight = ipo_interact.offsetHeight - (ipo_interact.offsetHeight * 0.15);
-    // leftPanelf.style.width = "480 px"; 
-    // console.warn("ipo_interact with -> ", leftPanelf.offsetWidth)
+  setLeftPanelMWinWidth() {
+    if (this.activeIndex === 0 || this.activeIndex === 1 || this.activeIndex === 2) {
+      let ipo_interact = document.getElementById('ipo_interact');
+      ipo_interact.style.minWidth = "32rem";
+    }
+  }
 
+  deactivateDnuInteraction() {
     if (this.activeIndex === 2) {
       this.filteringParamsSavedTab.user_id = this.userId;
       this.getUserResources(this.filteringParamsSavedTab);

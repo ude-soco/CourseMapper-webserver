@@ -79,19 +79,21 @@
       <!-- case radio=3 then dropdown for selecting a concepts -->
       <!-- <div class="flex justify-center" id="search_concept_category_3">
         <p-multiSelect 
-        *ngIf="croForm.category === '3'" 
+        *ngIf="croForm?.category === '3'" 
         [options]="CROconceptsManually"
         [(ngModel)]="cro_concept_selected"
         optionLabel="name"
         [filter]="true"
         filterBy="name"
-        [showClear]="true"
         placeholder="Search a Concept"
         emptyFilterMessage="No Concept found"
         (onChange)="setSelectManuallyOnChange($event)"
+        (onClick)="setSelectManuallyOnClick($event)"
         styleClass="select_manually"
         [resetFilterOnHide]="true"
         [displaySelectedLabel]="false"
+        [style]="{ minWidth: '20rem', 'border-radius': '0.5rem', maxWidth: '25rem' }"
+        [showClear]="false"
         >
         </p-multiSelect>
       </div> -->
@@ -128,8 +130,8 @@
 
       <!-- concept presentation -->
       <div  *ngFor="let cro of croForm?.concepts; index as i">
-        <div class="min-w-fit flex flex-row justify-between h-10 text-[12px]" id="{{'concept_body_' + i}}" *ngIf="cro.visible" >
-          <div id="{{'concept_name_' + i}}" class="my-auto flex-initial w-56">Concept {{i +1}} : <span class="text-[#0288d1]">{{ cro.name }}</span></div>
+        <div class="min-w-fit flex flex-row justify-between h-10 text-[12px]" id="{{'concept_body_' + i}}" *ngIf="cro?.visible" >
+          <div id="{{'concept_name_' + i}}" class="my-auto flex-initial w-56">Concept {{i +1}} : <span class="text-[#0288d1]">{{ cro?.name }}</span></div>
           <div id="{{'concept_weight_' + i}}" class="flex flex-wrap gap-3">
             <div class="text-[12px] my-auto">weight</div>
             <div class="w-24">

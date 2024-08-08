@@ -48,10 +48,6 @@ export class MaterialsRecommenderService {
       data["default"] = null;
     }
 
-    console.warn("getRecommendedMaterials ->");
-    console.warn("data ->", data);
-    // return null;
-
     this.recommendedMaterials = this.http.post<ResourcesPagination>(`${this.cmEndpointURL}get_resources`, data, { withCredentials: true, responseType: 'json' });
     return this.recommendedMaterials
   }
