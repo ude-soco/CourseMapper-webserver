@@ -1674,12 +1674,6 @@ export class ConceptMapComponent implements OnInit, OnDestroy {
           this.setHeightGraphComponent();
           this.isRecommendationButtonDisplayed = false;
           let croFormData = this.croComponent.getOnlyStatusChecked();
-          /*if (croFormData.factor_weights.reload === true) {
-            this.tabs[0].disabled = true;
-            this.tabs[1].disabled = true;
-            this.tabs[2].disabled = false;
-          }
-          */
 
           this.materialsRecommenderService.getRecommendedMaterials(
             reqData, croFormData

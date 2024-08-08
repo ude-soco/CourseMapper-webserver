@@ -151,7 +151,7 @@ def retrieve_keyphrases(data):
     '''
         Retrieve keyphrases
     '''
-    # logger.info("Add relevant columns for keyphrases")
+    logger.info("Add relevant columns for keyphrases")
 
     resource_keyphrases_infos = []
     resource_keyphrases = []
