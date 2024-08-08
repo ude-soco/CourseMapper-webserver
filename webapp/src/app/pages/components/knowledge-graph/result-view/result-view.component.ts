@@ -224,6 +224,9 @@ export class ResultViewComponent {
     this.checkresourcesPagination();
   }
 
+  ngAfterViewInit() {
+  }
+
   ngOnChanges() {
     this.checkresourcesPagination();
     this.loadResultForSelectedModel();

@@ -45,7 +45,7 @@ def remove_keys_from_resources(resources: list, recommendation_type=None):
         keys = ["keyphrase_counts", "keyphrases", "keyphrases_infos", "keyphrase_embedding", "document_embedding"]
     '''
     logger.info("Remove keys from list (resource list)")
-    if recommendation_type in [ RecommendationType.PKG_BASED_DOCUMENT_VARIANT, RecommendationType.PKG_BASED_KEYPHRASE_VARIANT ]:
+    if recommendation_type in [ RecommendationType.PKG_BASED_KEYPHRASE_VARIANT, RecommendationType.CONTENT_BASED_KEYPHRASE_VARIANT ]:
         keys = [    "keyphrase_counts", "keyphrases_infos", "keyphrase_embedding", "document_embedding", 
                     "composite_score", "labels"
                 ]
@@ -339,30 +339,28 @@ def build_factor_weights(factor_weights_params: dict = None):
     '''
         Generate Factor weights for Ranking
     '''
-
+    factor_weights_videos = {}
     factor_weights_articles = {}
-    factor_weights_viedos = {}
 
     if factor_weights_params:
-        factor_weights_articles = normalize_factor_weights(  factor_weights=factor_weights_params, 
+        factor_weights_videos = normalize_factor_weights(  factor_weights=factor_weights_params, 
                                                         method_type="l1", 
                                                         complete=True, 
                                                         sum_value=False
                                                     )
-        # set video weights
-        factor_weights_viedos = {}
+        # set article weights
         for key, value in factor_weights_params.items():
             if key in ["similarity_score", "user_rating", "saves_count"]:
-                factor_weights_viedos[key] = value
+                factor_weights_articles[key] = value
 
-        factor_weights_viedos = normalize_factor_weights(  factor_weights=factor_weights_viedos, 
+        factor_weights_articles = normalize_factor_weights(  factor_weights=factor_weights_articles, 
                                                 method_type="l1", 
                                                 complete=True, 
                                                 sum_value=False
                                             )
     return {
-        "article": factor_weights_articles,
-        "video": factor_weights_viedos
+        "video": factor_weights_videos,
+        "article": factor_weights_articles
     }
 
 def check_request_temp(rec_params: dict, key="cid"):

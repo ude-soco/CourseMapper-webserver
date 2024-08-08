@@ -305,7 +305,7 @@ export class ConceptMapComponent implements OnInit, OnDestroy {
   // slideIdSub = new BehaviorSubject<number>(1); //  Subject<number>;
   croPaginatorFirst: number = 0;
   croPaginatorRows: number = 10;
-  resourcesPagination: ResourcesPagination;
+  resourcesPagination: ResourcesPagination = undefined;
   isRecommendationButtonDisplayed = true;
 
   croOnPageChange(event) {
@@ -314,14 +314,6 @@ export class ConceptMapComponent implements OnInit, OnDestroy {
   }
 
   croUpdater(didNotUnderstandConceptsObj: any[], previousConceptsObj: any[]) {
-    // if (this.croComponent) {
-    //   if (didNotUnderstandConceptsObj !== undefined) {
-    //     this.croUpdater(didNotUnderstandConceptsObj, undefined)
-    //   } else if (previousConceptsObj !== undefined) {
-    //     this.croUpdater(undefined, previousConceptsObj)
-    //   }
-    // }
-
     if (didNotUnderstandConceptsObj !== undefined && previousConceptsObj === undefined) {
       this.croComponent?.updateCROformAll(didNotUnderstandConceptsObj, undefined)
     } else if (didNotUnderstandConceptsObj === undefined && previousConceptsObj !== undefined) {

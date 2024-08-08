@@ -43,49 +43,41 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
       {
         "title": "Similarity Score",
         "key": "similarity_score",
-        "value": 0.7,
+        "value": 0.23,
         "checked": true
       },
       {
         "title": "Creation Date",
         "key": "creation_date",
-        "value": 0.3,
+        "value": 0.31,
         "checked": true
       },
       {
         "title": "No. of Views",
         "key": "views",
-        "value": 0.3,
+        "value": 0.22,
         "checked": true
       },
       {
         "title": "No. of Likes on YouTube",
         "key": "like_count",
-        "value": 0.1,
+        "value": 0.22,
         "checked": true
       },
   
       {
         "title": "User Rating on CourseMapper",
         "key": "user_rating",
-        "value": 0.1,
+        "value": 0.23,
         "checked": true
       },
       {
         "title": "No. of Saves on CourseMapper",
         "key": "saves_count",
-        "value": 0.1,
+        "value": 0.30,
         "checked": true
       }
     ],
-    normalized_TEST: {
-      "similarity_score": 0.44,
-      "creation_date": 0.19,
-      "views": 0.19,
-      "like_count": 0.06,
-      "user_rating": 0.06,
-      "saves_count": 0.06
-    },
     normalized: {   
     'like_count': 0.146, 
     'creation_date': 0.205, 

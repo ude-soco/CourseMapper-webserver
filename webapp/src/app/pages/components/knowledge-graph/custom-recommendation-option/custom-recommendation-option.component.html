@@ -98,7 +98,7 @@
 
       <div class="flex justify-center" id="search_concept_category_3">
         <p-dropdown
-        *ngIf="croForm.category === '3'" 
+        *ngIf="croForm?.category === '3'" 
         [options]="CROconceptsManually"
         [(ngModel)]="cro_concept_selected"
         optionLabel="name"

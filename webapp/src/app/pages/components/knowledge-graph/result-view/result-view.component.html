@@ -10,14 +10,14 @@
           <div class="flex flex-wrap gap-1 w-9/12"> 
             <button
               *ngFor="let concept of allConceptsObj"
-              class="dislike-button {{concept.status === 'notUnderstood' ? 'bg-[#D32F2F]' : concept.status === 'understood' ? 'bg-[#689F38]':  'bg-[#2196F3]'}}
+              class="dislike-button {{concept?.status === 'notUnderstood' ? 'bg-[#D32F2F]' : concept?.status === 'understood' ? 'bg-[#689F38]':  'bg-[#2196F3]'}}
               text-white px-2 mx-1 border border-transparent rounded-full"
             >
             <!-- dislike-button {{concept.status === 'understood' ? 'bg-[#689F38]' : concept.status === 'notUnderstood' ? 'bg-[#2196F3]' : 'bg-[#D32F2F]'}}
               text-white px-2 mx-1 border border-transparent rounded-full"
             -->
 
-              {{ concept.name }}
+              {{ concept?.name }}
               <button
                 #notUnderstoodConcept
                 class="bg-transparent hover focus:outline-none cursor-pointer"
@@ -50,7 +50,7 @@
                 <p-menu
                   #menu
                   id="notUnderstood_menu"
-                  [model]="concept.status === 'notUnderstood' ? chipMenuU : concept.status === 'understood' ? chipMenuDNU : chipMenuNew"
+                  [model]="concept?.status === 'notUnderstood' ? chipMenuU : concept?.status === 'understood' ? chipMenuDNU : chipMenuNew"
                   [popup]="true"
                   appendTo="body"
                 ></p-menu>

@@ -329,7 +329,7 @@ class ResourceRecommenderService:
         slide_document_embedding = ""
         slide_weighted_avg_embedding_of_concepts = ""
    
-        if recommendation_type in [ RecommendationType.PKG_BASED_DOCUMENT_VARIANT, RecommendationType.PKG_BASED_KEYPHRASE_VARIANT ]:
+        if recommendation_type in [ RecommendationType.PKG_BASED_KEYPHRASE_VARIANT, RecommendationType.PKG_BASED_DOCUMENT_VARIANT ]:
             # Only take n (n=5) concepts with the higher weight
             rec_params["concepts"] = rrh.get_top_n_concepts(concepts=rec_params["concepts"], top_n=len(rec_params["concepts"]))
 
@@ -345,7 +345,7 @@ class ResourceRecommenderService:
             rec_params["concepts"] = clu["concepts"]
             user_embedding = clu.get("user_embedding")
 
-        elif recommendation_type in [ RecommendationType.CONTENT_BASED_DOCUMENT_VARIANT, RecommendationType.CONTENT_BASED_KEYPHRASE_VARIANT ]:
+        elif recommendation_type in [ RecommendationType.CONTENT_BASED_KEYPHRASE_VARIANT, RecommendationType.CONTENT_BASED_DOCUMENT_VARIANT ]:
             _slide = self.db.get_slide(body["slide_id"])
             slide_document_embedding = _slide[0]["s"]["initial_embedding"]
             slide_weighted_avg_embedding_of_concepts = _slide[0]["s"][
@@ -367,10 +367,6 @@ class ResourceRecommenderService:
             rec_params["concepts"] = clu["concepts"]
 
         factor_weights = rrh.build_factor_weights(body["rec_params"]["factor_weights"]["weights"])
-
-        print()
-        print(factor_weights)
-
         result = self.process_recommandation_pipeline(
             rec_params=rec_params,
             factor_weights=factor_weights,
