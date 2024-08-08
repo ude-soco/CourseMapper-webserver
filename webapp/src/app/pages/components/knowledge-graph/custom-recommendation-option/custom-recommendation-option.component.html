@@ -77,7 +77,7 @@
       </div>
 
       <!-- case radio=3 then dropdown for selecting a concepts -->
-      <div class="flex justify-center" id="search_concept_category_3">
+      <!-- <div class="flex justify-center" id="search_concept_category_3">
         <p-multiSelect 
         *ngIf="croForm.category === '3'" 
         [options]="CROconceptsManually"
@@ -91,21 +91,10 @@
         (onChange)="setSelectManuallyOnChange($event)"
         styleClass="select_manually"
         [resetFilterOnHide]="true"
+        [displaySelectedLabel]="false"
         >
-          <ng-template pTemplate="selectedItem">
-            <div class="flex align-items-center gap-2" *ngIf="cro_concept_selected">
-                <!-- <div><p-checkbox [(ngModel)]="cro_concept_selected.status" [binary]="true" inputId="binary"></p-checkbox></div> -->
-                <div>{{ cro_concept_selected.name }}</div>
-            </div>
-          </ng-template>
-          <ng-template let-cro_concept pTemplate="item">
-              <div class="flex align-items-center gap-2">
-                  <div class="my-auto"><p-checkbox [(ngModel)]="cro_concept.status" [binary]="true" inputId="binary"></p-checkbox></div>
-                  <div class="my-auto">{{ cro_concept.name }}</div>
-              </div>
-          </ng-template>
         </p-multiSelect>
-      </div>
+      </div> -->
 
       <div class="flex justify-center" id="search_concept_category_3">
         <p-dropdown

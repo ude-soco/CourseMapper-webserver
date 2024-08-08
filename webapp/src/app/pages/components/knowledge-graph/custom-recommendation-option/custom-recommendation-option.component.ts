@@ -406,9 +406,52 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     }
   }
 
+  setSelectManuallyOnChange2(event) {
+    this.deactivateSelection();
+
+    console.warn("event.value -> ", event.value);
+    
+    if (event.value) {
+      let concepts_seleected = event.value
+      let value = concepts_seleected[concepts_seleected.length - 1]; // event.value;
+      const conceptFound = this.croForm.concepts.find((concept) => concept.cid === value.cid);
+
+      if (conceptFound === undefined) {
+        value["status"] = true;
+        value["visible"] = true;
+        this.croForm.concepts.push(value);
+
+        // this.getConceptsModifiedByUserIdAndCids();
+      } else {
+        for(let concept of this.croForm.concepts) {
+          if (value.cid === concept.cid) {
+            concept.status = !value.status;
+            concept.visible = !value.status;
+            break
+          }
+        }
+      }
+    }
+    // this.updateNumberConceptsToBeChecked();
+
+    // Clear the filter input after selection
+    const multiSelect = event.originalEvent.target.closest('.p-multiselect');
+    console.warn("multiSelect -> ", multiSelect);
+
+    if (multiSelect) {
+      const filterInput = multiSelect.querySelector('.p-multiselect-filter');
+      console.warn("filterInput -> ", filterInput);
+
+      if (filterInput) {
+        filterInput.value = '';
+        filterInput.dispatchEvent(new Event('input'));
+      }
+    }
+  }
+
   setSelectManuallyOnChange(event) {
     this.deactivateSelection();
-   
+
     if (event.value) {
       let value = event.value;
       const conceptFound = this.croForm.concepts.find((concept) => concept.cid === value.cid);

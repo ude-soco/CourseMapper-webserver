@@ -56,21 +56,22 @@ def get_tensor_from_embedding(embedding):
     return embedding_tensor
 
 def compute_dynamic_keyphrase_based_similarity(
-    data, recommendation_type, user_embedding
+    data, user_embedding, recommendation_type=""
 ):
     '''
         Compute Cosine Similarities with keyphrase_embedding
         : compute keyphrase-based similarity between user embeddings and
         resources weighted average keyphrase embeddings
     '''
-    logger.info("Computing Cosine Similarities with keyphrase_embedding")
+    logger.info("Model 1: Computing Cosine Similarities with keyphrase_embedding")
 
     cosine_similarities = []
     for keyphrase_embedding in data["keyphrase_embedding"]:
-        embedding_array = [float(i) for i in keyphrase_embedding]
-        embedding_array = np.array(embedding_array)
-        tensor = torch.from_numpy(embedding_array).float()
+        # embedding_array = [float(i) for i in keyphrase_embedding]
+        # embedding_array = np.array(embedding_array)
+        # tensor = torch.from_numpy(embedding_array).float()
 
+        tensor = get_tensor_from_embedding(keyphrase_embedding)
         cosine_similarity = compute_cosine_similarity_with_embeddings(
             tensor, user_embedding
         )
@@ -80,14 +81,14 @@ def compute_dynamic_keyphrase_based_similarity(
     return data
 
 def compute_dynamic_document_based_similarity(
-    data, recommendation_type, user_embedding
+    data, user_embedding, recommendation_type=""
 ):
     '''
         Compute similarities between user embeddings and resources document embeddings
         Compute Cosine Similarities
         Retrieve user document-based similarity
     '''
-    logger.info("Computing similarities between user embeddings and resources document embeddings")
+    logger.info("Model 2: Computing similarities between user embeddings and resources document embeddings")
 
     cosine_similarities = []
     for document_embedding in data["document_embedding"]:
@@ -102,22 +103,33 @@ def compute_dynamic_document_based_similarity(
     return data
 
 def compute_keyphrase_based_similarity(
-        data, slide_document_embedding, recommendation_type
+        data, slide_weighted_avg_embedding_of_concepts_embedding, recommendation_type=""
 ):
     '''
         Compute Keyphrases-Based Cosine Similarities
         : compute similarities between slide keyphrase-based embeddings and resources weighted average keyphrase embeddings
     '''
-    logger.info("Computing Keyphrases-Based Cosine Similarities")
+    logger.info("Model 3: Computing Keyphrases-Based Cosine Similarities")
+    cosine_similarities = []
+    for keyphrase_embedding in data["keyphrase_embedding"]:
+        tensor = get_tensor_from_embedding(keyphrase_embedding)
+        # slide_weighted_avg_embedding_of_concepts_tensor = get_tensor_from_embedding(slide_weighted_avg_embedding_of_concepts)
+        cosine_similarity = compute_cosine_similarity_with_embeddings(
+            tensor, slide_weighted_avg_embedding_of_concepts_embedding
+        )
+        cosine_similarities.append(cosine_similarity)
+
+    data["similarity_score"] = cosine_similarity
+    return data
 
 def compute_document_based_similarity(
-    data, slide_document_embedding, recommendation_type
+    data, slide_document_embedding, recommendation_type=""
 ):
     '''
         Compute Document-Based Cosine Similarities
         : compute similarities between slide document embeddings and resources document embeddings
     '''
-    logger.info("Computing Document-Based Cosine Similarities")
+    logger.info("Model 4: Computing Document-Based Cosine Similarities")
 
     cosine_similarities = []
     slide_document_embedding_array = slide_document_embedding.split(",")
@@ -322,9 +334,7 @@ class Recommender:
             
             # Step 3: compute keyphrase-based similarity between user embeddings and
             # resources weighted average keyphrase embeddings
-            data = compute_dynamic_keyphrase_based_similarity(
-                data, recommendation_type, user_embedding=user_tensor
-            )
+            data = compute_dynamic_keyphrase_based_similarity(data=data, user_embedding=user_tensor)
 
             total_time = time.time() - start_time
             logger.info(f"Algorithm Model 1: Execution time {str(total_time)}")
@@ -347,9 +357,7 @@ class Recommender:
                 data = self.compute_document_based_embeddings(data)
                 
             # Step 2: compute similarities between user embeddings and resources document embeddings
-            data = compute_dynamic_document_based_similarity(
-                data, recommendation_type, user_embedding=user_tensor
-            )
+            data = compute_dynamic_document_based_similarity(data=data, user_embedding=user_tensor)
 
             total_time = time.time() - start_time
             logger.info(f"Algorithm Model 2: Execution time {str(total_time)}")
@@ -358,6 +366,9 @@ class Recommender:
         # If Model 3
         elif recommendation_type == RecommendationType.CONTENT_BASED_KEYPHRASE_VARIANT:
             start_time = time.time()
+
+            # Tranform embedding to tensor
+            slide_weighted_avg_embedding_of_concepts_embedding = get_tensor_from_embedding(slide_weighted_avg_embedding_of_concepts.split(","))
 
             if are_embedding_values_present:
                 # Step 1: Retrieve Keyphrases
@@ -368,9 +379,7 @@ class Recommender:
 
             # Step 3: compute keyphrase-based similarity between slide weighted average keyphrase embeddings and
             # resources weighted average keyphrase embeddings
-            data = compute_keyphrase_based_similarity(
-                data, slide_weighted_avg_embedding_of_concepts, recommendation_type
-            )
+            data = compute_keyphrase_based_similarity(data, slide_weighted_avg_embedding_of_concepts_embedding)
 
             total_time = time.time() - start_time
             logger.info(f"Algorithm Model 3: Execution time {str(total_time)}")
@@ -386,9 +395,7 @@ class Recommender:
                 data = self.compute_document_based_embeddings(data)
 
             # Step 2: compute similarities between slide document embeddings and resources document embeddings
-            data = compute_document_based_similarity(
-                data, slide_document_embedding, recommendation_type
-            )
+            data = compute_document_based_similarity(data, slide_document_embedding)
 
             total_time = time.time() - start_time
             logger.info(f"Algorithm Model 4: Execution time {str(total_time)}")
@@ -410,10 +417,10 @@ class Recommender:
 
             logger.info("Compute Cosine Similarities")
             data = compute_dynamic_keyphrase_based_similarity(
-                data, recommendation_type, user_embedding=user_tensor
+                data=data, user_embedding=user_tensor, recommendation_type=recommendation_type
             )
             data = compute_dynamic_document_based_similarity(
-                data, recommendation_type, user_embedding=user_tensor
+                data=data, user_embedding=user_tensor, recommendation_type=recommendation_type
             )
             data = compute_combined_similatity(
                 data, 0.5, recommendation_type, with_user=True

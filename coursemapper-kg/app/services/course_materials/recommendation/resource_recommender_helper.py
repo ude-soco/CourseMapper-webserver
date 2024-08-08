@@ -150,7 +150,7 @@ def normalize_factor_weights(factor_weights: dict=None, values: list=[], method_
         https://www.pythonprog.com/sklearn-preprocessing-normalize/#Normalization_Techniques
         TypeScript: https://sklearn.vercel.app/guide/install
 
-        factor_weights : {'status': False, 'reload': True, 'weights': {'similarity_score': 0.7, 'creation_date': 0.3, 'views': 0.3, 'like_count': 0.1, 'user_rating': 0.1, 'saves_count': 0.1}
+        factor_weights : {'similarity_score': 0.7, 'creation_date': 0.3, 'views': 0.3, 'like_count': 0.1, 'user_rating': 0.1, 'saves_count': 0.1}
     '''
     logger.info("Normalization of factor weights")
     
