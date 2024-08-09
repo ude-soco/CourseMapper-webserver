@@ -15,7 +15,7 @@ from dateutil.parser import parse as date_parse
 
 import numpy as np
 from sklearn.preprocessing import normalize as normalize_sklearn, MinMaxScaler as MinMaxScaler_sklearn
-import redis
+# import redis
 import json
 import pandas as pd
 
@@ -33,12 +33,15 @@ class ResourceRecommenderService:
         neo4j_pass = current_app.config.get("NEO4J_PASSWORD")  # type: ignore
 
         self.db = NeoDataBase(neo4j_uri, neo4j_user, neo4j_pass)
-        # Connect to Redis
-        self.redis_client = redis.Redis(host='localhost', port=6379, db=0)
-        # self.redis_client_expiration_time = 60 # for 1 week
-        self.redis_key_1 = "recs_resources" # i.e: user_id_recs_new
-        self.redis_key_2 = "recs_resources_status"
 
+        # # Connect to Redis
+        # self.redis_client = redis.Redis(host='localhost', port=6379, db=0)
+        # # self.redis_client_expiration_time = 60 # for 1 week
+        # self.redis_key_1 = "recs_resources" # i.e: user_id_recs_new
+        # self.redis_key_2 = "recs_resources_status"
+
+
+    """
     def set_redis_key_value(self, key_name: str, value, ex=60, set_time=True):
         '''
             value: str | dict
@@ -60,10 +63,10 @@ class ResourceRecommenderService:
         if value:
             result = json.loads(value)
         return result
-    
+
     def remove_redis_key_value(self, key_name: str):
         self.redis_client.delete(key_name)
-
+    """
     def check_parameters(
         self,
         slide_id,

@@ -78,11 +78,11 @@ export class CardVideoComponent {
     // detail: 'Open your Bookmark List to find this video'
     if (this.isBookmarkFill == true) { // this.isBookmarkFill === true  // this.videoElement?.is_bookmarked_fill === true
       if (this.saveOrRemoveStatus === true) {
-        this.messageService.add({ key: 'resource_bookmark', severity: 'success', summary: '', detail: 'Successfully to the bookmark added'});
+        this.messageService.add({ key: 'resource_bookmark', severity: 'success', summary: '', detail: 'Video saved successfully'});
       }
     } else {
       if (this.saveOrRemoveStatus === false) {
-        this.messageService.add({key: 'resource_bookmark', severity: 'info', summary: '', detail: 'Successfully to the bookmark removed'});
+        this.messageService.add({key: 'resource_bookmark', severity: 'info', summary: '', detail: 'Video removed from saved'});
       }
     }
   }
