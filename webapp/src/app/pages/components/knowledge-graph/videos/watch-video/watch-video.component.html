@@ -7,12 +7,16 @@
         <div class="title-video">
           <!-- <h2 class="text-xl font-bold truncate inline-flex" [innerHTML] = "video.title"></h2> -->
 
-          <div *ngIf="video?.title.length > 45; else videoTitlElse">
+          <div *ngIf="video?.title.length < 45; else videoTitlElse">
             <h2 class="text-xl font-bold truncate inline-flex" [innerHTML] = "video.title"></h2>
           </div>
           <ng-template #videoTitlElse>
-            <h2 class="text-xl font-bold truncate inline-flex" [innerHTML] = "video?.title.substring(0, 45)"></h2>
-            <h2 class="text-xl font-bold truncate inline-flex" [innerHTML] = "video.title.substring(45)"></h2>
+            <div>
+              <h2 class="text-xl font-bold truncate inline-flex" [innerHTML] = "video?.title.substring(0, 45)"></h2>
+            </div>
+            <div>
+              <h2 class="text-xl font-bold truncate inline-flex" [innerHTML] = "video.title.substring(45)"></h2>
+            </div>
           </ng-template>
 
 

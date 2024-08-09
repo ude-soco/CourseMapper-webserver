@@ -970,6 +970,7 @@ export class ConceptMapComponent implements OnInit, OnDestroy {
   setLeftPanelMWinWidth() {
     let ipo_interact = document.getElementById('ipo_interact');
     ipo_interact.style.minWidth = "32rem";
+    ipo_interact.style.width = "32rem";
   }
 
   // show/hide lists of current slide concepts and\ or other slides concepts

@@ -168,6 +168,8 @@ export class ResultViewComponent {
   
   ngOnInit(): void {
     console.log('MaterialModels.MODEL_1', MaterialModels.MODEL_1);
+    this.setLeftPanelMWinWidth();
+
     this.materialModels = [
       { name: 'Model 1', code: MaterialModels.MODEL_1 },
       { name: 'Model 2', code: MaterialModels.MODEL_2 },
@@ -317,7 +319,7 @@ export class ResultViewComponent {
   tabChanged(tab) {
     this.activeIndex = tab;
     this.setLeftPanelMWinWidth();
-    // this.deactivateDnuInteraction();
+    this.deactivateDnuInteraction();
 
     // Pause videos (if any) when changing tabs
     document.querySelectorAll('iframe').forEach((iframe) => {
@@ -330,10 +332,9 @@ export class ResultViewComponent {
   }
 
   setLeftPanelMWinWidth() {
-    if (this.activeIndex === 0 || this.activeIndex === 1 || this.activeIndex === 2) {
-      let ipo_interact = document.getElementById('ipo_interact');
-      ipo_interact.style.minWidth = "32rem";
-    }
+    let ipo_interact = document.getElementById('ipo_interact');
+    ipo_interact.style.minWidth = "32rem";
+    ipo_interact.style.width = "32rem";
   }
 
   deactivateDnuInteraction() {
