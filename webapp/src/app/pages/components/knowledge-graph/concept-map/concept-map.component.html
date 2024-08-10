@@ -8,7 +8,7 @@
 >
   <p-dialog
     id="higherLevelsKG"
-    header="{{ this.currentMaterial?.name }}"
+    header="{{ this.currentMaterial?.name }}{{ isDraft ? ' - Preview the EduKG' : '' }}"
     [(visible)]="this.showMaterialKg"
     [blockScroll]="true"
     (onShow)="materialKgActivated = true"
@@ -25,8 +25,8 @@
   >
     <hr style="margin-bottom: 0.25rem" />
     <ng-container>
-      <div style="position: relative">
-        <span *ngIf="conceptMapData" style="text-align: left">
+      <div style="position: relative" class="flex items-center justify-between">
+        <span *ngIf="conceptMapData">
           Top-N Main Concepts
           <p-dropdown
             [options]="top_n_nodes"
@@ -37,7 +37,10 @@
             icon="pi"
           ></p-dropdown>
         </span>
-        <div id="materialKgControlPanel" class="noContentRecieved">
+        <span *ngIf="isDraft">
+          You can edit/delete the Main Concepts (using right click) or add new concepts to KG before publishing it for all users
+        </span>
+        <div id="materialKgControlPanel" class="noContentRecieved" *ngIf="!isDraft">
           <span *ngIf="conceptMapData">
             <span
               id="checkBoxes"
