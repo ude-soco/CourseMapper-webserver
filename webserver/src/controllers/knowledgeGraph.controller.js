@@ -12,7 +12,7 @@ const redis = require("../graph/redis");
 // TODO Issue #640: Use better file names
 
 async function checkIsModerator(req) {
-  if (!req.userId || !req.params.courseId) {
+  if (!req.userId || (!req.params.courseId && !req.params.materialId)) {
     return false;
   }
   const user = await User.findById(req.userId);
@@ -21,15 +21,35 @@ async function checkIsModerator(req) {
   }
   const role = await Role.findById(user.role);
   if (role.name === "moderator" || role.name === "admin") {
-    return true
+    return true;
+  }
+  let courseId = req.params.courseId;
+  if (!courseId) {
+    const material = await Material.findById(req.params.materialId);
+    if (!material) {
+      return false;
+    }
+    courseId = material["courseId"].toString();
   }
   const course = user.courses.find(
-    (item) => item.courseId.valueOf() === req.params.courseId
+    (item) => item.courseId.valueOf() === courseId
   );
   const courseRole = await Role.findOne({ _id: course.role });
   if (courseRole.name === "moderator") {
+    return true;
+  }
+}
+
+async function isAuthorized(req) {
+  const records = await neo4j.checkMaterial(req.params.materialId);
+  if (records.length === 0) {
     return true
   }
+  const is_draft = records?.[0]?.["m"]?.properties?.["is_draft"] ?? false;
+  if (is_draft && !(await checkIsModerator(req))) {
+    return false
+  }
+  return true
 }
 
 export const checkSlide = async (req, res) => {
@@ -58,6 +78,9 @@ export const checkMaterial = async (req, res) => {
   const materialId = req.params.materialId;
 
   try {
+    if (!await isAuthorized(req)) {
+      return res.status(403).send({ error: "Unauthorized" });
+    }
     const records = await neo4j.checkMaterial(materialId);
     return res.status(200).send({ records });
   } catch (err) {
@@ -69,6 +92,9 @@ export const getMaterial = async (req, res) => {
   const materialId = req.params.materialId;
 
   try {
+    if (!await isAuthorized(req)) {
+      return res.status(403).send({ error: "Unauthorized" });
+    }
     const records = await neo4j.getMaterial(materialId);
     return res.status(200).send({ records });
   } catch (err) {
