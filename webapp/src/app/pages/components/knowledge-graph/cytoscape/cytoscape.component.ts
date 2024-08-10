@@ -44,6 +44,7 @@ export class CytoscapeComponent {
   // @Input() showConceptAbstract: boolean;
   @Input() showMaterialKg: boolean;
   @Input() showCourseKg: boolean;
+  @Input() isDraft: boolean;
 
   @Output() selectedNodeEvent: EventEmitter<object> = new EventEmitter();
   @Output() conceptDeleted?: EventEmitter<string> = new EventEmitter();
@@ -300,7 +301,7 @@ export class CytoscapeComponent {
           elements: this._elements,
           autounselectify: true,
         });
-        if (this.conceptDeleted) {
+        if (this.isDraft) {
           this.cy.cxtmenu(this.contextMenu);
         }
       }

@@ -26,6 +26,7 @@ export class GraphComponent {
   @Input() cyWidth: any;
   @Input() showMaterialKg: boolean;
   @Input() showCourseKg: boolean;
+  @Input() isDraft: boolean;
 
   @Output() editConcept: EventEmitter<string> = new EventEmitter();
   @Output() conceptDeleted: EventEmitter<string> = new EventEmitter();
@@ -152,7 +153,7 @@ export class GraphComponent {
             (
               Number(sidebarChild.offsetWidth) - sidebarHeader.offsetWidth
             ).toString() + 'px';
-          
+
           // set abstractPanel length to be equal to shown kg length
           abstractContainer.style.height =
             Number(this.cyHeight - 75).toString() + 'px';
