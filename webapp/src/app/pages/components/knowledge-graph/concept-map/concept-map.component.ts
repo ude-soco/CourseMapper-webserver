@@ -329,6 +329,7 @@ export class ConceptMapComponent {
         this.hideChevronRightButton = false;
         this.showRecommendationButtonClicked = false;
         this.displaySidebarProperty = false;
+        this.conceptInputsDisabled = false;
         this.conceptMapCourse = [];
         this.conceptMapTopic = [];
         this.conceptMapChannel = [];
@@ -360,6 +361,7 @@ export class ConceptMapComponent {
           this.showCourseKg = false;
           this.showSlideKg = false;
           this.isNotGenerated = undefined;
+          this.conceptInputsDisabled = false;
           setTimeout(() => {
             this.getConceptMapData();
             this.cancelEditConcept();
@@ -378,6 +380,7 @@ export class ConceptMapComponent {
         this.showCourseKg = true;
         this.showSlideKg = false;
         this.isNotGenerated = undefined;
+        this.conceptInputsDisabled = false;
         setTimeout(() => {
           this.kgTitle = materialKgGenerator.selectedCourseService.name;
           //reset dropdown value
