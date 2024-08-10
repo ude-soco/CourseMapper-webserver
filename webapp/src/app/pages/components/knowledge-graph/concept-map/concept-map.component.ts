@@ -914,31 +914,22 @@ export class ConceptMapComponent {
           this.conceptMapMaterial = materialKgMeta;
           this.conceptMapData = materialKgMeta;
         } else {
-          try {
-            console.log('No kg saved, constructing a new one...');
-            this.resetFilter();
-            this.isLoading = true;
-            this.loading.emit(true);
-            this.socket.emit("join", "material:all");
-            var result = await this.conceptMapService.generateConceptMap(
-              this.currentMaterial!.courseId,
-              this.currentMaterial!._id
-            );
-            this.socket.emit("leave", "material:all");
-            if (materialId !== this.currentMaterial!._id) {
-              return;
-            }
-            console.log('Result from kg construction', result);
-            this.getConceptMapData();
+          console.log('No kg saved, constructing a new one...');
+          this.resetFilter();
+          this.isLoading = true;
+          this.loading.emit(true);
+          this.socket.emit("join", "material:all");
+          var result = await this.conceptMapService.generateConceptMap(
+            this.currentMaterial!.courseId,
+            this.currentMaterial!._id
+          );
+          this.socket.emit("leave", "material:all");
+          if (materialId !== this.currentMaterial!._id) {
             return;
-          } catch (error) {
-            if (error.status === 404) {
-              this.isNotGenerated = true;
-            }
-            console.error('Error constructing kg', error);
-            this.isLoading = false;
-            this.loading.emit(false);
           }
+          console.log('Result from kg construction', result);
+          this.getConceptMapData();
+          return;
         }
 
         //filter edges with no weights, or/and slide's edges
@@ -988,7 +979,10 @@ export class ConceptMapComponent {
           `Call to show Material_KG took ${endTime - startTime} milliseconds`
         );
       } catch (error) {
-        console.error('Error retrieving kg', error);
+        if (error?.status === 404 || error?.status === 403) {
+          this.isNotGenerated = true;
+        }
+        console.error('Error constructing kg', error);
         this.isLoading = false;
         this.loading.emit(false);
       }
