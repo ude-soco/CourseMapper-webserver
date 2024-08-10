@@ -26,7 +26,8 @@ class KeyphraseService:
         ))
 
     def __del__(self):
-        self.tagger_model.close()
+        if self.tagger_model is not None:
+            self.tagger_model.close()
 
     def extract_keyphrases(self, text) -> List[str]:
         """
