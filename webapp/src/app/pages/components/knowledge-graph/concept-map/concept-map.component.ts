@@ -7,7 +7,7 @@ import {
   Renderer2,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { MenuItem, MessageService } from 'primeng/api';
+import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { Subscription, lastValueFrom } from 'rxjs';
 import { Channel } from 'src/app/models/Channel';
 import { Course } from 'src/app/models/Course';
@@ -261,6 +261,7 @@ export class ConceptMapComponent {
     private neo4jService: Neo4jService, // communicate to neo4j server
     private userConceptsService: UserConceptsService, //get current user concepts: all previousely marked as [understood, did not understand]
     private topicChannelService: TopicChannelService, // gets channels' detail
+    private confirmationService: ConfirmationService,
     private renderer: Renderer2,
     private changeDetectorRef: ChangeDetectorRef, // avoids errors when property changed after being checked
     private store: Store<State>,
@@ -1872,23 +1873,30 @@ export class ConceptMapComponent {
     });
   }
 
-  async deleteConcept(conceptId: string) {
-    try {
-      await this.conceptMapService.deleteConceptMapConcept(
-        this.currentMaterial!.courseId,
-        this.currentMaterial!._id,
-        conceptId,
-      );
-      this.getConceptMapData();
-    } catch (error) {
-      console.error(error);
-      this.messageService.add({
-        key: 'server_response',
-        severity: 'error',
-        summary: 'Cannot remove concept',
-        detail: error.error.error.toString(),
-      });
-    }
+  deleteConcept(conceptId: string) {
+    this.confirmationService.confirm({
+      message: 'Are you sure that you want to delete the concept?',
+      header: 'Delete Confirmation',
+      icon: 'pi pi-info-circle',
+      accept: async () => {
+        try {
+          await this.conceptMapService.deleteConceptMapConcept(
+            this.currentMaterial!.courseId,
+            this.currentMaterial!._id,
+            conceptId,
+          );
+          this.getConceptMapData();
+        } catch (error) {
+          console.error(error);
+          this.messageService.add({
+            key: 'server_response',
+            severity: 'error',
+            summary: 'Cannot remove concept',
+            detail: error.error.error.toString(),
+          });
+        }
+      },
+    });
   }
 
   async addConcept() {
