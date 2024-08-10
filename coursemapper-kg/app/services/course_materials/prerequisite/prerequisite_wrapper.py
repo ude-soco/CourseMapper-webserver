@@ -1,8 +1,12 @@
-from course_materials import CourseMaterials
-from data_cleaning import DataCleaning
 import pandas as pd
-from neo4j_connection import DBConnection
-from prerequisite_relationship import PrerequisiteRelationship
+import pymongo
+from bson.objectid import ObjectId
+
+from config import Config
+from .course_materials import CourseMaterials
+from .data_cleaning import DataCleaning
+from .neo4j_connection import DBConnection
+from .prerequisite_relationship import PrerequisiteRelationship
 
 class Prerequisite:
     def __init__(self,course_name = None, course_id = None) -> None:
@@ -61,3 +65,29 @@ class Prerequisite:
                 self.db.add_prerequisite_connections(r["prerequisite_concept"],r["concept"],r["score_weighted"],r["score_unweighted"])
             except Exception as e:
                 print(e)
+
+
+def run_prerequisite_material(material_id):
+    myclient = pymongo.MongoClient(Config.MONGO_DB_URI)
+    mydb = myclient[Config.MONGO_DB_NAME]
+
+    material_name = None
+    course_id = None
+    course_name = None
+
+    # Get material name and course id
+    material = mydb.materials.find_one(ObjectId(material_id))
+    if material is None:
+        raise Exception("Material not found")
+
+    material["id"] = material_id
+    course_id = material["courseId"]
+
+    # Get course name
+    course = mydb.courses.find_one(ObjectId(course_id))
+    course_name = course["name"]
+
+    myclient.close()
+
+    prerequisite = Prerequisite(course_name=course_name, course_id=course_id)
+    prerequisite.find_prerequisite_lm(material)

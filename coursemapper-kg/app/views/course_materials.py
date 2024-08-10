@@ -8,8 +8,14 @@ from ..services.course_materials.recommendation.recommendation_type import Recom
 from ..services.course_materials.kwp_extraction.dbpedia.data_service import DataService
 from ..services.course_materials.kwp_extraction.dbpedia.data_service1 import RecService
 from ..services.course_materials.GCN.gcn import GCN
+from ..services.course_materials.prerequisite.prerequisite_wrapper import run_prerequisite_material
 
 logger = LOG(name=__name__, level=logging.DEBUG)
+
+
+def prerequisite_material(job):
+    material_id = job["materialId"]
+    run_prerequisite_material(material_id)
 
 
 def concept_map(job, file):

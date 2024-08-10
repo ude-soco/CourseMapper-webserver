@@ -6,8 +6,9 @@ import time
 import logging
 import io
 from log import LOG
+import hashlib
 
-from app.views.course_materials import concept_map, get_concepts, get_resources
+from app.views.course_materials import concept_map, get_concepts, get_resources, prerequisite_material
 from app.shared import redis, worker_id, set_current_job_id
 from config import Config
 
@@ -67,6 +68,19 @@ def clean_up(pipeline, job_id):
     # Delete file
     redis.hdel('files', job_id)
 
+def add_job(pipeline, job):
+    # Convert job to JSON
+    job = json.dumps(job)
+
+    # Generate a job ID as the sha256 hash of the job
+    job_id = hashlib.sha256(job.encode('utf-8')).hexdigest()
+
+    # Add the job to the jobs hash
+    redis.hset(f'jobs', job_id, job)
+
+    # Push the job ID to the queue
+    redis.lpush(f'queue:{pipeline}:pending', job_id)
+
 def start_worker(pipelines):
     logger.info('Starting worker...')
 
@@ -110,10 +124,13 @@ def start_worker(pipelines):
                 assert(type(file) == bytes)
                 file = io.BytesIO(file)
                 result = concept_map(job, file)
+                add_job('find-prerequisite-lm', {"materialId": job["materialId"]})
             elif pipeline == 'concept-recommendation':
                 result = get_concepts(job)
             elif pipeline == 'resource-recommendation':
                 result = get_resources(job)
+            elif pipeline == 'find-prerequisite-lm':
+                result = prerequisite_material(job)
             else:
                 raise ValueError(f'Unknown pipeline: {pipeline}')
 
