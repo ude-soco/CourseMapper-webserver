@@ -7,8 +7,7 @@ ADD https://uni-duisburg-essen.sciebo.de/s/nO06q2wY0t5h8SO/download stanford-cor
 RUN unzip stanford-corenlp-full-2018-02-27.zip -d stanford-corenlp-full-2018-02-27 && rm stanford-corenlp-full-2018-02-27.zip
 
 
-# Warning: Python 3.7.2 (Dec 2018) on Debian Stretch (2017--2020)
-FROM python:3.7.2
+FROM python:3.11
 
 # APT requires archive URLs
 COPY debian/sources.list /etc/apt/sources.list
