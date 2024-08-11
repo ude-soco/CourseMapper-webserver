@@ -134,10 +134,10 @@ def get_resources():
     data_default = data["default"]
     data_rec_params = data["rec_params"]
     
-    resource_recommender_service = ResourceRecommenderService()
-    result = resource_recommender_service._get_resources(data_default=data_default, data_rec_params=data_rec_params)
-    return jsonify(result), 200
-    # return jsonify(cro_get_resources_pagination()), 200
+    # resource_recommender_service = ResourceRecommenderService()
+    # result = resource_recommender_service._get_resources(data_default=data_default, data_rec_params=data_rec_params)
+    # return jsonify(result), 200
+    return jsonify(cro_get_resources_pagination()), 200
 
     # try:
     #     resource_recommender_service = ResourceRecommenderService()

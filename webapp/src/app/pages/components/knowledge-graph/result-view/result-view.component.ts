@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, HostListener, Input, ViewChild } from '@angular/core';
 import { VideoElementModel } from '../videos/models/video-element.model';
 import { ArticleElementModel } from '../articles/models/article-element.model';
 import { MenuItem } from 'primeng/api';
@@ -84,6 +84,15 @@ export class ResultViewComponent {
     publish_time: { status: false, arrow: false},
     views: { status: false, arrow: false}
   }
+  orderUpIcon = false;
+
+  orderUP = "Top to top"
+  orderDown = "Top to botton"
+  croSorting1 = [
+    { name: 'Most similar', status: false, order: this.orderUP },
+    { name: 'Most recent', status: false, order: this.orderUP },
+    { name: 'Most viewed', status: false, order: this.orderUP }
+  ];
 
   /*mainConceptsSource = [ { cid: "sdsd1", name: "Data Mining", status: false }, { cid: "sdsd2", name: "Internet Retrieval", status: false } ];
   learningMaterialsSource = [ { mid: "s323f", name: "Learning Analytics", status: false } ];
@@ -165,6 +174,12 @@ export class ResultViewComponent {
       });
     });
   }
+
+  handleOnShowOnHide() {
+    console.log('OverlayPanel is up and down');
+    this.orderUpIcon = this.orderUpIcon === false ? true : false;
+  }
+
   
   ngOnInit(): void {
     console.log('MaterialModels.MODEL_1', MaterialModels.MODEL_1);
@@ -333,8 +348,8 @@ export class ResultViewComponent {
 
   setLeftPanelMWinWidth() {
     let ipo_interact = document.getElementById('ipo_interact');
-    ipo_interact.style.minWidth = "32rem";
-    ipo_interact.style.width = "32rem";
+    ipo_interact.style.minWidth = "34rem";
+    ipo_interact.style.width = "34rem";
   }
 
   deactivateDnuInteraction() {
@@ -367,6 +382,7 @@ export class ResultViewComponent {
       .subscribe({
         next: (data: UserResourceFilterResult) => {
           this.filteringResourcesFound = data;
+          this.showSearchIconPinner = false;
           // console.warn("len -> ", data.videos.length)
           // console.warn("len -> ", this.filteringResourcesFound.videos.length)
         },

@@ -52,6 +52,7 @@ import { ListboxModule } from 'primeng/listbox';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { CardModule } from 'primeng/card';
 
 
 @NgModule({
@@ -110,7 +111,8 @@ import { MultiSelectModule } from 'primeng/multiselect';
     ListboxModule,
     ProgressBarModule,
     InputTextModule,
-    MultiSelectModule
+    MultiSelectModule,
+    CardModule
     ],
   exports: [
     ConceptMapComponent,

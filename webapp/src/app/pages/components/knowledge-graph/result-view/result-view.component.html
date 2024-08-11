@@ -80,8 +80,99 @@
         </span>
 
         <div id="cro_sorting" class="w-3/12"></div>
+        <div id="cro_sorting" class="w-3/12" (click)="op.toggle($event, targetEl)">
+          <div #targetEl class="border-solid border-2 border-[#cecece] p-4 w-72">
+            <div  class="flex flex-row justify-between" >
+              <div>Sort by</div>
+              <div>
+                <span class="pi pi-chevron-up" *ngIf="orderUpIcon"></span>
+                <span class="pi pi-chevron-down" *ngIf="!orderUpIcon"></span>
+              </div>
+            </div>
+          </div>
 
-        <div id="cro_sorting" class="w-3/12">
+          <p-overlayPanel [style]="{'width':'18rem'}" (onShow)="handleOnShowOnHide()" (onHide)="handleOnShowOnHide()" #op>
+            <ng-template pTemplate="content">
+              <div class="flex flex-col text-sm">
+                <div class="flex flex-row space-x-2">
+                  <div>
+                    <p-checkbox 
+                    [(ngModel)]="croSorting.similarity_score.status" [binary]="true" inputId="similarity_score"
+                    (onChange)="sortResourcesByKeys('')"
+                    ></p-checkbox>
+                  </div>
+                  <div class="flex flex-row gap-2">
+                    <div class="my-auto"><label for="similarity_score">Most similar</label></div>
+                    <div class="flex flex-row space-x-2 pl-4 ml-6">
+                      <button (click)="sortResourcesByKeys('similarity_score')">
+                        <div *ngIf="croSorting.similarity_score.arrow === true">
+                          <!-- <span class="pi pi-arrow-down" style="font-size: 1.2rem"></span> -->
+                          <span>Top to bottom</span>
+                        </div>
+                        <div *ngIf="croSorting.similarity_score.arrow === false">
+                          <!-- <span class="pi pi-arrow-up" style="font-size: 1.2rem"></span> -->
+                          <span>Bottom to top</span>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+    
+                <div style="height: 2rem;"><p-divider></p-divider></div>
+                <div class="flex flex-row space-x-2">
+                  <div>
+                    <p-checkbox [(ngModel)]="croSorting.publish_time.status" [binary]="true" inputId="publish_time"
+                    (onChange)="sortResourcesByKeys('')"
+                    ></p-checkbox>
+                  </div>
+                  <div class="flex flex-row gap-2">
+                    <div class="my-auto"><label for="publish_time">Most recent</label></div>
+                    <div class="flex flex-row space-x-2 pl-4 ml-6">
+                      <button (click)="sortResourcesByKeys('publish_time')">
+                        <div *ngIf="croSorting.publish_time.arrow === true">
+                          <!-- <span class="pi pi-arrow-down" style="font-size: 1.2rem"></span> -->
+                          <span>Top to bottom</span>
+                        </div>
+                        <div *ngIf="croSorting.publish_time.arrow === false">
+                          <!-- <span class="pi pi-arrow-up" style="font-size: 1.2rem"></span> -->
+                          <span>Bottom to top</span>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+    
+                <div style="height: 2rem;"><p-divider></p-divider></div>
+                <div class="flex flex-row space-x-2">
+                  <div>
+                    <p-checkbox [(ngModel)]="croSorting.views.status" [binary]="true" inputId="views"
+                    (onChange)="sortResourcesByKeys('')"
+                    ></p-checkbox>
+                  </div>
+                  <div class="flex flex-row gap-2">
+                    <div class="my-auto"><label for="views">Most viewed</label></div>
+                    <div class="flex flex-row space-x-2 pl-4 ml-5">
+                      <button (click)="sortResourcesByKeys('views')">
+                        <div *ngIf="croSorting.views.arrow === true">
+                          <!-- <span class="pi pi-arrow-down" style="font-size: 1.2rem"></span> -->
+                          <span>Top to bottom</span>
+                        </div>
+                        <div *ngIf="croSorting.views.arrow === false">
+                          <!-- <span class="pi pi-arrow-up" style="font-size: 1.2rem"></span> -->
+                          <span>Bottom to top</span>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </p-overlayPanel>
+          <!-- <p-button (click)="op.toggle($event)" icon="pi pi-image" label="Show"></p-button> -->
+
+        </div>
+
+        <div id="cro_sorting" class="w-3/12" *ngIf="false">
           <p-panel 
             header="Sort by" 
             [toggleable]="true"
@@ -287,6 +378,7 @@
             </span>
           </div> -->
           
+          <!-- <div>&nbsp;</div> -->
           <div class="p-field p-fluid" class="ml-auto">
             <span class="p-float-label">
               <input
@@ -297,7 +389,7 @@
                 placeholder=" "
                 (input)="filteringResourcesSaved()"
               />
-              <label for="search-input-videos-artciles">Search for videos/artciles</label>
+              <label for="search-input-videos-articles">Search for videos/articles</label>
               <i class="pi pi-search search-icon" *ngIf="!showSearchIconPinner"></i>
               <i class="pi pi-spin pi-spinner search-icon" *ngIf="showSearchIconPinner"></i>
             </span>
@@ -306,15 +398,23 @@
         </div>
 
         <!-- display resources filtered -->
+        <div class="flex flex-col items-center justify-center">
+          <div *ngIf="filteringParamsSavedTab?.content_type === 'video' && filteringResourcesFound?.videos.length === 0">
+            No videos saved or found
+          </div>
+          <div *ngIf="filteringParamsSavedTab?.content_type === 'article' && filteringResourcesFound?.articles.length === 0">
+            No articles saved or found
+          </div>
+        </div>
         <div>
-          <div>
+          <div *ngIf="filteringResourcesFound?.videos.length > 0">
               <app-card-video-list
               [notUnderstoodConcepts]="concepts"
               [videoElements]="filteringResourcesFound?.videos"
               [userId]="userId"
               ></app-card-video-list>
           </div>
-          <div>
+          <div *ngIf="filteringResourcesFound?.articles.length > 0">
               <app-card-article-list
               [notUnderstoodConcepts]="concepts"
               [articleElements]="filteringResourcesFound?.articles"
