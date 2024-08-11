@@ -131,7 +131,9 @@
       <!-- concept presentation -->
       <div  *ngFor="let cro of croForm?.concepts; index as i">
         <div class="min-w-fit flex flex-row justify-between h-10 text-[12px]" id="{{'concept_body_' + i}}" *ngIf="cro?.visible" >
-          <div id="{{'concept_name_' + i}}" class="my-auto flex-initial w-56">Concept {{i +1}} : <span class="text-[#0288d1]">{{ cro?.name }}</span></div>
+          <div id="{{'concept_name_' + i}}" class="my-auto flex-initial w-56">
+            Concept {{i +1}} : <span class="text-[#0288d1]">{{ cro?.name }}</span>
+          </div>
           <div id="{{'concept_weight_' + i}}" class="flex flex-wrap gap-3">
             <div class="text-[12px] my-auto">weight</div>
             <div class="w-24">

@@ -1,7 +1,7 @@
 <div class="flex flex-col gap-1">
 
 <div>
-  <p-tabView (activeIndexChange)="tabChanged($event)" [activeIndex]="activeIndex">
+  <p-tabView (activeIndexChange)="tabChanged($event)" [activeIndex]="activeIndex" [style]="{'minWidth':'65rem'}">
       <div class="flex flex-row justify-between" *ngIf="activeIndex !== 2">
         <span class="flex flex-col">
           <h4 class="text-[#0277BD] mr-3">
@@ -295,6 +295,7 @@
             <app-card-article-list
               [notUnderstoodConcepts]="concepts"
               [articleElements]="resourcesPagination?.nodes?.articles"
+              [userId]="userId"
             ></app-card-article-list>
         </div>
       </p-tabPanel>
@@ -379,6 +380,8 @@
           </div> -->
           
           <!-- <div>&nbsp;</div> -->
+          <div class="flex-grow"></div>
+          
           <div class="p-field p-fluid" class="ml-auto">
             <span class="p-float-label">
               <input
@@ -394,11 +397,10 @@
               <i class="pi pi-spin pi-spinner search-icon" *ngIf="showSearchIconPinner"></i>
             </span>
           </div>
-
         </div>
 
         <!-- display resources filtered -->
-        <div class="flex flex-col items-center justify-center">
+        <div class="flex flex-col items-center justify-center mt-6">
           <div *ngIf="filteringParamsSavedTab?.content_type === 'video' && filteringResourcesFound?.videos.length === 0">
             No videos saved or found
           </div>
