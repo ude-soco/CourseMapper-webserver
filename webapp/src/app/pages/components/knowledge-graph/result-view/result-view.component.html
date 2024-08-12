@@ -107,11 +107,12 @@
                       <button (click)="sortResourcesByKeys('similarity_score')">
                         <div *ngIf="croSorting.similarity_score.arrow === true">
                           <!-- <span class="pi pi-arrow-down" style="font-size: 1.2rem"></span> -->
-                          <span>Top to bottom</span>
+                          <span>Bottom to top</span>
                         </div>
                         <div *ngIf="croSorting.similarity_score.arrow === false">
                           <!-- <span class="pi pi-arrow-up" style="font-size: 1.2rem"></span> -->
-                          <span>Bottom to top</span>
+                          <span>Top to bottom</span>
+
                         </div>
                       </button>
                     </div>
@@ -131,11 +132,11 @@
                       <button (click)="sortResourcesByKeys('publish_time')">
                         <div *ngIf="croSorting.publish_time.arrow === true">
                           <!-- <span class="pi pi-arrow-down" style="font-size: 1.2rem"></span> -->
-                          <span>Top to bottom</span>
+                          <span>Bottom to top</span>
                         </div>
                         <div *ngIf="croSorting.publish_time.arrow === false">
                           <!-- <span class="pi pi-arrow-up" style="font-size: 1.2rem"></span> -->
-                          <span>Bottom to top</span>
+                          <span>Top to bottom</span>
                         </div>
                       </button>
                     </div>
@@ -155,11 +156,11 @@
                       <button (click)="sortResourcesByKeys('views')">
                         <div *ngIf="croSorting.views.arrow === true">
                           <!-- <span class="pi pi-arrow-down" style="font-size: 1.2rem"></span> -->
-                          <span>Top to bottom</span>
+                          <span>Bottom to top</span>
                         </div>
                         <div *ngIf="croSorting.views.arrow === false">
                           <!-- <span class="pi pi-arrow-up" style="font-size: 1.2rem"></span> -->
-                          <span>Bottom to top</span>
+                          <span>Top to bottom</span>
                         </div>
                       </button>
                     </div>
@@ -402,10 +403,10 @@
         <!-- display resources filtered -->
         <div class="flex flex-col items-center justify-center mt-6">
           <div *ngIf="filteringParamsSavedTab?.content_type === 'video' && filteringResourcesFound?.videos.length === 0">
-            No videos saved or found
+            No videos found
           </div>
           <div *ngIf="filteringParamsSavedTab?.content_type === 'article' && filteringResourcesFound?.articles.length === 0">
-            No articles saved or found
+            No articles found
           </div>
         </div>
         <div>

@@ -86,12 +86,12 @@ export class ResultViewComponent {
   }
   orderUpIcon = false;
 
-  orderUP = "Top to top"
+  orderUP = "Top to botton"
   orderDown = "Top to botton"
   croSorting1 = [
-    { name: 'Most similar', status: false, order: this.orderUP },
-    { name: 'Most recent', status: false, order: this.orderUP },
-    { name: 'Most viewed', status: false, order: this.orderUP }
+    { name: 'Most similar', status: false, order: this.orderDown },
+    { name: 'Most recent', status: false, order: this.orderDown },
+    { name: 'Most viewed', status: false, order: this.orderDown }
   ];
 
   /*mainConceptsSource = [ { cid: "sdsd1", name: "Data Mining", status: false }, { cid: "sdsd2", name: "Internet Retrieval", status: false } ];
@@ -344,6 +344,7 @@ export class ResultViewComponent {
     if (this.activeIndex === 2) {
       this.getRidsFromUserSaves();
     }
+    this.closeVideoFrame();
   }
 
   setLeftPanelMWinWidth() {
@@ -408,6 +409,12 @@ export class ResultViewComponent {
     );
   }
 
+  closeVideoFrame() {
+    let button = document.getElementById('backToList');
+    if (button) {
+        button.click();
+    }
+  }
 
   /*
   

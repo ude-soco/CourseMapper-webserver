@@ -48,10 +48,10 @@
         <div class="flex flex-row justify-between">
           <div class="w-full">
             <div>
-              <h3 class="title-video text-xl font-bold inline-block break-normal flex-wrap w-11/12" 
+              <h3 class="title-video text-lg font-bold inline-block break-normal flex-wrap w-11/12" 
                 (click)="readVideo(videoElement)" 
                 [class.active]="isActive"  
-                [innerHTML] = "videoElement.title">
+                [innerHTML] = padStringToLength(videoElement?.title)>
               </h3>
             </div>
           </div>

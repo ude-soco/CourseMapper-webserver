@@ -86,7 +86,7 @@ export class CardVideoComponent {
 
   saveOrRemoveBookmark() {
     // detail: 'Open your Bookmark List to find this video'
-    if (this.videoElement.is_bookmarked_fill === true) { // this.isBookmarkFill == tru // this.isBookmarkFill === true  // this.videoElement?.is_bookmarked_fill === true
+    if (this.videoElement.is_bookmarked_fill === true) { // this.isBookmarkFill == true
       if (this.saveOrRemoveStatus === true) {
         this.messageService.add({ key: 'resource_bookmark_video', severity: 'success', summary: '', detail: 'Video saved successfully'});
       }
@@ -124,6 +124,19 @@ export class CardVideoComponent {
       this.resourceRemovedEvent.emit(this.videoElement.rid);
     }
   }
+
+  padStringToLength(str) {
+    const targetLength = 30;
+  
+    if (str.length < targetLength) {
+      // Pad the string with spaces until it reaches the target length
+      return str.padEnd(targetLength, ' ');
+    } else {
+      // Return the string as is if it's already 50 characters or longer
+      return str;
+    }
+  }
+  
 
   // getRidsFromUserSaves() {
   //   this.materialsRecommenderService.getRidsFromUserSaves(this.userId)
