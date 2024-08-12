@@ -82,10 +82,10 @@
               </div>
               
               <div>
-                <div class="my-auto" (click)="addToBookmark()" *ngIf="!isBookmarkFill">
+                <div class="my-auto" (click)="addToBookmark()" *ngIf="!videoElement?.is_bookmarked_fill">
                   <i class="pi pi-bookmark" style="font-size: 1.2rem; color: #000000"></i>
                 </div>
-                <div class="my-auto" (click)="addToBookmark()" *ngIf="isBookmarkFill">
+                <div class="my-auto" (click)="addToBookmark()" *ngIf="videoElement?.is_bookmarked_fill">
                   <i class="pi pi-bookmark-fill" style="font-size: 1.2rem; color: #0277BD"></i>
                 </div>
               </div>

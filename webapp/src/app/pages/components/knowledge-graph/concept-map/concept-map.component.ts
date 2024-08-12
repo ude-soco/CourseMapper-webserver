@@ -1719,7 +1719,7 @@ export class ConceptMapComponent implements OnInit, OnDestroy {
           // this.mainConceptsTab = false;
           // this.recommendedConceptsTab = false;
           // this.tabs[1].disabled = true;
-          // this.recommendedMaterialsTab = false;
+          this.recommendedMaterialsTab = false;
           // this.kgTabsActivated = false;
           // this.tabs[2].disabled = false;
           // this.resourcesPagination = ResourcesPagination;

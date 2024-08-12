@@ -130,19 +130,13 @@ def get_resources():
     logger.info("------ CRO DATA ----^-->")
     print(data)
     print()
-
-    data_default = data["default"]
-    data_rec_params = data["rec_params"]
     
-    # resource_recommender_service = ResourceRecommenderService()
-    # result = resource_recommender_service._get_resources(data_default=data_default, data_rec_params=data_rec_params)
-    # return jsonify(result), 200
-
+    # TEST SAMPLE
     # return jsonify(cro_get_resources_pagination()), 200
 
     try:
         resource_recommender_service = ResourceRecommenderService()
-        result = resource_recommender_service._get_resources(data_default=data_default, data_rec_params=data_rec_params)
+        result = resource_recommender_service._get_resources(data_default=data["default"], data_rec_params=data["rec_params"])
         return jsonify(result), 200
     except Exception as e:
         print(e)

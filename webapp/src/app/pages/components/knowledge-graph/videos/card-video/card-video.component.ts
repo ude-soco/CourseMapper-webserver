@@ -32,7 +32,8 @@ export class CardVideoComponent {
   isDescriptionFullDisplayed = false;
   isBookmarkFill = false;
   videoDescription = "";
-  saveOrRemoveParams = {"user_id": "", "rid": "", "status": this.isBookmarkFill};
+  // saveOrRemoveParams = {"user_id": "", "rid": "", "status": this.isBookmarkFill};
+  saveOrRemoveParams = {"user_id": "", "rid": "", "status": false};
   saveOrRemoveStatus = false;
   @Input() resultTabType: string = "";
   @Output() resourceRemovedEvent = new EventEmitter<string>(); // take rid
@@ -50,7 +51,9 @@ export class CardVideoComponent {
   }
 
   ngOnChanges() {
-    this.isBookmarkFill = this.videoElement?.is_bookmarked_fill;
+    // this.isBookmarkFill = this.videoElement?.is_bookmarked_fill;
+    this.saveOrRemoveParams.status = this.videoElement?.is_bookmarked_fill;
+
     this.saveOrRemoveParams.user_id = this.userId;
     this.saveOrRemoveParams.rid = this.videoElement?.rid;
   }
@@ -71,15 +74,19 @@ export class CardVideoComponent {
   }
 
   addToBookmark() {    
-    this.isBookmarkFill = this.isBookmarkFill === true ? false : true;
-    this.saveOrRemoveParams.status = this.isBookmarkFill;
+    // this.isBookmarkFill = this.isBookmarkFill === true ? false : true;
+    // this.saveOrRemoveParams.status = this.isBookmarkFill;
+
+    this.videoElement.is_bookmarked_fill = this.videoElement?.is_bookmarked_fill === true ? false : true;
+    this.saveOrRemoveParams.status = this.videoElement?.is_bookmarked_fill;
+
     this.SaveOrRemoveUserResource(this.saveOrRemoveParams);
     this.onResourceRemovedEvent();
   }
 
   saveOrRemoveBookmark() {
     // detail: 'Open your Bookmark List to find this video'
-    if (this.isBookmarkFill == true) { // this.isBookmarkFill === true  // this.videoElement?.is_bookmarked_fill === true
+    if (this.videoElement.is_bookmarked_fill === true) { // this.isBookmarkFill == tru // this.isBookmarkFill === true  // this.videoElement?.is_bookmarked_fill === true
       if (this.saveOrRemoveStatus === true) {
         this.messageService.add({ key: 'resource_bookmark_video', severity: 'success', summary: '', detail: 'Video saved successfully'});
       }
@@ -113,7 +120,7 @@ export class CardVideoComponent {
   }
 
   onResourceRemovedEvent() {
-    if (this.isBookmarkFill === false && this.resultTabType === "saved") {
+    if (this.videoElement.is_bookmarked_fill === false && this.resultTabType === "saved") { // this.isBookmarkFill === false 
       this.resourceRemovedEvent.emit(this.videoElement.rid);
     }
   }
