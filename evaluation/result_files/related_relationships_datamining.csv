@@ -1,0 +1,2036 @@
+,name,related_to
+0,Probability theory,Conditional independence
+1,Random variable,Conditional independence
+2,Indicator function,Conditional independence
+3,Law of total probability,Conditional independence
+4,Cumulative distribution function,Conditional independence
+5,Conditional probability distribution,Conditional independence
+6,Sigma-algebra,Conditional independence
+7,Conditional dependence,Conditional independence
+8,Frequency probability,Conditional independence
+9,Joint probability distribution,Conditional independence
+10,Statistical inference,Conditional independence
+11,Conditional expectation,Conditional independence
+12,Conditional probability,Conditional independence
+13,Probability distribution,Conditional independence
+14,Graphoid,Conditional independence
+15,Bayesian inference,Conditional independence
+16,Event (probability theory),Conditional independence
+17,Random vector,Conditional independence
+18,De Finetti's theorem,Conditional independence
+19,Statistical independence,Conditional independence
+20,Conditional independence,
+21,Sufficient dimension reduction,Dimensionality reduction
+22,Multilinear subspace learning,Dimensionality reduction
+23,Maximally informative dimensions,Dimensionality reduction
+24,Multidimensional scaling,Dimensionality reduction
+25,Feature selection,Dimensionality reduction
+26,Data transformation (statistics),Dimensionality reduction
+27,Curse of dimensionality,Dimensionality reduction
+28,Feature extraction,Dimensionality reduction
+29,Kernel principal component analysis,Dimensionality reduction
+30,Principal component analysis,Dimensionality reduction
+31,Feature vector,Dimensionality reduction
+32,Nonlinear dimensionality reduction,Dimensionality reduction
+33,Regression analysis,Dimensionality reduction
+34,Random projection,Dimensionality reduction
+35,Cluster analysis,Dimensionality reduction
+36,Multifactor dimensionality reduction,Dimensionality reduction
+37,Support-vector machine,Dimensionality reduction
+38,Diffusion map,Dimensionality reduction
+39,Statistical classification,Dimensionality reduction
+40,Kernel methods,Dimensionality reduction
+41,Dimensionality reduction,
+42,Decision tree,AdaBoost
+43,Least squares,AdaBoost
+44,Statistical classification,AdaBoost
+45,BrownBoost,AdaBoost
+46,Boosting (machine learning),AdaBoost
+47,Early stopping,AdaBoost
+48,LPBoost,AdaBoost
+49,Boosted trees,AdaBoost
+50,Gradient descent,AdaBoost
+51,Loss functions for classification,AdaBoost
+52,Logistic regression,AdaBoost
+53,CoBoosting,AdaBoost
+54,Overfitting,AdaBoost
+55,Decision tree learning,AdaBoost
+56,Binary classification,AdaBoost
+57,Decision stump,AdaBoost
+58,Metaheuristic,AdaBoost
+59,Numerical instability,AdaBoost
+60,Bootstrap aggregating,AdaBoost
+61,Regression analysis,AdaBoost
+62,AdaBoost,
+63,Standard error (statistics),Statistics
+64,Statistical theory,Statistics
+65,Bias (statistics),Statistics
+66,Estimation theory,Statistics
+67,Nonlinear regression,Statistics
+68,Descriptive statistics,Statistics
+69,Statistical model,Statistics
+70,Regression analysis,Statistics
+71,History of statistics,Statistics
+72,Least squares,Statistics
+73,Survey sampling,Statistics
+74,Variance,Statistics
+75,Mathematical statistics,Statistics
+76,Statistical population,Statistics
+77,Statistical inference,Statistics
+78,Glossary of probability and statistics,Statistics
+79,Sample size determination,Statistics
+80,Standard deviation,Statistics
+81,Test statistic,Statistics
+82,Sample (statistics),Statistics
+83,Statistics,
+84,Binary variable,Data type
+85,Abstract data type,Data type
+86,Type constructor,Data type
+87,Set (abstract data type),Data type
+88,Enumerated type,Data type
+89,Variable (computer science),Data type
+90,Count data,Data type
+91,Algebraic specification,Data type
+92,Kind (type theory),Data type
+93,List (abstract data type),Data type
+94,C data types,Data type
+95,Primitive data type,Data type
+96,Statistical data type,Data type
+97,Algebraic data type,Data type
+98,Integer (computer science),Data type
+99,Boolean data type,Data type
+100,String (computer science),Data type
+101,Type system,Data type
+102,Array data type,Data type
+103,Data structure,Data type
+104,Data type,
+105,Hermann Minkowski,Minkowski distance
+106,Distance function,Minkowski distance
+107,Chebyshev distance,Minkowski distance
+108,F-space,Minkowski distance
+109,Minkowski inequality,Minkowski distance
+110,Normed vector space,Minkowski distance
+111,Euclidean distance,Minkowski distance
+112,Manhattan distance,Minkowski distance
+113,Triangle inequality,Minkowski distance
+114,Minkowski metric,Minkowski distance
+115,Level set,Minkowski distance
+116,Power mean,Minkowski distance
+117,Minkowski distance,
+118,Search algorithm,Alpha–beta pruning
+119,Transposition table,Alpha–beta pruning
+120,Negamax,Alpha–beta pruning
+121,MTD(f),Alpha–beta pruning
+122,Best first search,Alpha–beta pruning
+123,Heuristic,Alpha–beta pruning
+124,Killer heuristic,Alpha–beta pruning
+125,Alexander Brudno,Alpha–beta pruning
+126,Expectiminimax,Alpha–beta pruning
+127,Depth-first search,Alpha–beta pruning
+128,Game tree,Alpha–beta pruning
+129,Combinatorial optimization,Alpha–beta pruning
+130,Principal variation,Alpha–beta pruning
+131,Minimax,Alpha–beta pruning
+132,Branching factor,Alpha–beta pruning
+133,Branch and bound,Alpha–beta pruning
+134,Subtrees,Alpha–beta pruning
+135,SSS*,Alpha–beta pruning
+136,Pruning (algorithm),Alpha–beta pruning
+137,Principal variation search,Alpha–beta pruning
+138,Alpha–beta pruning,
+139,Student's t-distribution,Student\'s t-test
+140,Fisher's method,Student\'s t-test
+141,Hotelling's t-squared statistic,Student\'s t-test
+142,Variance,Student\'s t-test
+143,One-tailed test,Student\'s t-test
+144,Z-test,Student\'s t-test
+145,Student's t-statistic,Student\'s t-test
+146,Noncentral t-distribution,Student\'s t-test
+147,Statistical hypothesis testing,Student\'s t-test
+148,Welch's t-test,Student\'s t-test
+149,Nonparametric statistics,Student\'s t-test
+150,Pearson distribution,Student\'s t-test
+151,Nuisance parameter,Student\'s t-test
+152,Degrees of freedom (statistics),Student\'s t-test
+153,Normal distribution,Student\'s t-test
+154,P-value,Student\'s t-test
+155,Null hypothesis,Student\'s t-test
+156,Statistics,Student\'s t-test
+157,Test statistic,Student\'s t-test
+158,F-test,Student\'s t-test
+159,Student's t-test,
+160,Statistical assumptions,Statistical inference
+161,Nonparametric statistics,Statistical inference
+162,Frequentist inference,Statistical inference
+163,Informal inferential reasoning,Statistical inference
+164,Estimation theory,Statistical inference
+165,Estimator,Statistical inference
+166,Interval estimation,Statistical inference
+167,Descriptive statistics,Statistical inference
+168,Prediction interval,Statistical inference
+169,Survey sampling,Statistical inference
+170,Algorithmic inference,Statistical inference
+171,Model selection,Statistical inference
+172,Statistical population,Statistical inference
+173,Regression analysis,Statistical inference
+174,Statistical model,Statistical inference
+175,Fiducial inference,Statistical inference
+176,Prediction,Statistical inference
+177,Test statistic,Statistical inference
+178,Bayesian inference,Statistical inference
+179,Statistical inference,
+180,Correlation and dependence,Descriptive statistics
+181,Prediction,Descriptive statistics
+182,Sample size determination,Descriptive statistics
+183,Kurtosis,Descriptive statistics
+184,Mean,Descriptive statistics
+185,Statistical inference,Descriptive statistics
+186,Statistical population,Descriptive statistics
+187,Variance,Descriptive statistics
+188,Mode (statistics),Descriptive statistics
+189,Standard deviation,Descriptive statistics
+190,Conditional probability distribution,Descriptive statistics
+191,Sample (statistics),Descriptive statistics
+192,Summary statistics,Descriptive statistics
+193,Univariate analysis,Descriptive statistics
+194,Probability theory,Descriptive statistics
+195,Central tendency,Descriptive statistics
+196,Nonparametric statistics,Descriptive statistics
+197,Covariance,Descriptive statistics
+198,Statistics,Descriptive statistics
+199,Normal distribution,Descriptive statistics
+200,Descriptive statistics,
+201,T-distributed stochastic neighbor embedding,Clustering high-dimensional data
+202,Association rule learning,Clustering high-dimensional data
+203,K-medoids,Clustering high-dimensional data
+204,Curse of dimensionality,Clustering high-dimensional data
+205,Heuristic,Clustering high-dimensional data
+206,Affine subspace,Clustering high-dimensional data
+207,ELKI,Clustering high-dimensional data
+208,DBSCAN,Clustering high-dimensional data
+209,SUBCLU,Clustering high-dimensional data
+210,Dijkstra's algorithm,Clustering high-dimensional data
+211,Dimension,Clustering high-dimensional data
+212,Biclustering,Clustering high-dimensional data
+213,Distance function,Clustering high-dimensional data
+214,Correlation clustering,Clustering high-dimensional data
+215,Bioinformatics,Clustering high-dimensional data
+216,Variance,Clustering high-dimensional data
+217,Correlation and dependence,Clustering high-dimensional data
+218,Heaps' law,Clustering high-dimensional data
+219,DNA microarray,Clustering high-dimensional data
+220,Cluster analysis,Clustering high-dimensional data
+221,Clustering high-dimensional data,
+222,Statistical inference,Data processing
+223,Information system,Data processing
+224,Computation,Data processing
+225,SPSS,Data processing
+226,Information processing,Data processing
+227,Data analysis,Data processing
+228,SAS (software),Data processing
+229,Information technology,Data processing
+230,DAP (software),Data processing
+231,Automatic summarization,Data processing
+232,Data classification (business intelligence),Data processing
+233,Algorithm,Data processing
+234,Sorting,Data processing
+235,Summary statistics,Data processing
+236,Big data,Data processing
+237,Computer science,Data processing
+238,Data collection,Data processing
+239,Data validation,Data processing
+240,Statistics,Data processing
+241,Data processing,
+242,Inquisitive learning,Active learning
+243,Student-centered,Active learning
+244,Learning styles,Active learning
+245,Cooperative learning,Active learning
+246,Design-based learning,Active learning
+247,Intrinsic motivation,Active learning
+248,Role-playing,Active learning
+249,School organizational models,Active learning
+250,Problem-based learning,Active learning
+251,Experiential learning,Active learning
+252,Just-in-time teaching,Active learning
+253,Learning environment,Active learning
+254,Gallery walk,Active learning
+255,Action teaching,Active learning
+256,Learning space,Active learning
+257,Case study,Active learning
+258,Learning by teaching,Active learning
+259,Passive learning,Active learning
+260,Organizational learning,Active learning
+261,Learning cell,Active learning
+262,Active learning,
+263,Semi-supervised learning,
+264,Probit,Histogram
+265,Interquartile range,Histogram
+266,Binomial distribution,Histogram
+267,Image histogram,Histogram
+268,Standard deviation,Histogram
+269,Data binning,Histogram
+270,Color histogram,Histogram
+271,Entropy estimation,Histogram
+272,Kernel density estimation,Histogram
+273,Kernel (statistics),Histogram
+274,Categorical data,Histogram
+275,Pearson's chi-squared test,Histogram
+276,Frequency distribution,Histogram
+277,Probability distribution,Histogram
+278,Normalization (statistics),Histogram
+279,Probability density function,Histogram
+280,Freedman–Diaconis rule,Histogram
+281,Relative frequency,Histogram
+282,Density estimation,Histogram
+283,V-optimal histograms,Histogram
+284,Histogram,
+285,Domain of a function,Local optimum
+286,Neighbourhood (mathematics),Local optimum
+287,Applied mathematics,Local optimum
+288,First derivative test,Local optimum
+289,Computer science,Local optimum
+290,Necessary and sufficient conditions,Local optimum
+291,Bounded set,Local optimum
+292,Optimization problem,Local optimum
+293,Calculus,Local optimum
+294,Iterated local search,Local optimum
+295,Basin of attraction,Local optimum
+296,Simulated annealing,Local optimum
+297,Tabu search,Local optimum
+298,Hill climbing,Local optimum
+299,Plateau (mathematics),Local optimum
+300,Continuous function,Local optimum
+301,Solution space,Local optimum
+302,Local search (optimization),Local optimum
+303,Local optimum,
+304,Bootstrapping (business),Bootstrapping
+305,Rudolf Erich Raspe,Bootstrapping
+306,Statistical classification,Bootstrapping
+307,Bootstrapping (finance),Bootstrapping
+308,Compiler,Bootstrapping
+309,Boot jack,Bootstrapping
+310,Intelligence explosion,Bootstrapping
+311,Econometric,Bootstrapping
+312,Baron Munchausen,Bootstrapping
+313,High-level programming language,Bootstrapping
+314,Pseudorandom number generator,Bootstrapping
+315,Language acquisition,Bootstrapping
+316,Resampling (statistics),Bootstrapping
+317,Phylogenetic tree,Bootstrapping
+318,Integrated development environment,Bootstrapping
+319,Idiom,Bootstrapping
+320,AI,Bootstrapping
+321,Computer simulation,Bootstrapping
+322,Computer technology,Bootstrapping
+323,Boot,Bootstrapping
+324,Bootstrapping,
+325,Optimal design,Model selection
+326,Robust statistics,Model selection
+327,Curve fitting,Model selection
+328,Statistical model,Model selection
+329,Bias-variance dilemma,Model selection
+330,Consistency (statistics),Model selection
+331,Decision theory,Model selection
+332,Estimator,Model selection
+333,Automated machine learning,Model selection
+334,Efficient estimator,Model selection
+335,Statistical inference,Model selection
+336,Statistical model validation,Model selection
+337,Feature selection,Model selection
+338,Identifiability Analysis,Model selection
+339,Grid search,Model selection
+340,Cross-validation (statistics),Model selection
+341,Focused information criterion,Model selection
+342,Akaike information criterion,Model selection
+343,Stepwise regression,Model selection
+344,Statistical model specification,Model selection
+345,Model selection,
+346,Binary variable,Discretization
+347,Discrete mathematics,Discretization
+348,Numerical analysis,Discretization
+349,Finite difference method,Discretization
+350,Smoothness,Discretization
+351,Bandlimiting,Discretization
+352,State space (controls),Discretization
+353,White noise,Discretization
+354,Granular computing,Discretization
+355,Euler's method,Discretization
+356,Discretization error,Discretization
+357,Discrete time and continuous time,Discretization
+358,Distribution (mathematics),Discretization
+359,Quantization (signal processing),Discretization
+360,Smoothing,Discretization
+361,Binary classification,Discretization
+362,Statistics,Discretization
+363,Continuous function,Discretization
+364,Time-scale calculus,Discretization
+365,Stochastic simulation,Discretization
+366,Discretization,
+367,Probability distribution,Quartile
+368,Interquartile range,Quartile
+369,Summary statistics,Quartile
+370,Statistics,Quartile
+371,Robust statistics,Quartile
+372,Quantile function,Quartile
+373,Range (statistics),Quartile
+374,Midhinge,Quartile
+375,Sample maximum,Quartile
+376,Order statistic,Quartile
+377,Outlier,Quartile
+378,Percentiles,Quartile
+379,Quantile,Quartile
+380,Five-number summary,Quartile
+381,Descriptive statistics,Quartile
+382,Median,Quartile
+383,Standard deviation,Quartile
+384,Statistical dispersion,Quartile
+385,Random variable,Quartile
+386,Box plot,Quartile
+387,Quartile,
+388,Euclidean plane,Linear separability
+389,Support-vector machine,Linear separability
+390,Hyperplane,Linear separability
+391,Hyperplane separation theorem,Linear separability
+392,Linear classifier,Linear separability
+393,Normal (geometry),Linear separability
+394,Boolean function,Linear separability
+395,Collinear,Linear separability
+396,Statistical classification,Linear separability
+397,Margin classifier,Linear separability
+398,Real number,Linear separability
+399,Kirchberger's theorem,Linear separability
+400,Vapnik–Chervonenkis dimension,Linear separability
+401,Point (geometry),Linear separability
+402,Line (geometry),Linear separability
+403,Euclidean geometry,Linear separability
+404,Disjoint sets,Linear separability
+405,Hypercube,Linear separability
+406,Statistics,Linear separability
+407,Convex hull,Linear separability
+408,Linear separability,
+409,Database,Knowledge base
+410,Knowledge graph,Knowledge base
+411,Vadalog,Knowledge base
+412,Semantic network,Knowledge base
+413,Knowledge management,Knowledge base
+414,AI,Knowledge base
+415,Attribute–value system,Knowledge base
+416,Relational databases,Knowledge base
+417,Information technology,Knowledge base
+418,Data model,Knowledge base
+419,Object database,Knowledge base
+420,Text mining,Knowledge base
+421,Symbolic artificial intelligence,Knowledge base
+422,Reasoning system,Knowledge base
+423,Ontology engineering,Knowledge base
+424,Hierarchical database model,Knowledge base
+425,Expert system,Knowledge base
+426,Knowledge-based systems,Knowledge base
+427,Data,Knowledge base
+428,Ontology (information science),Knowledge base
+429,Knowledge base,
+430,Data wrangling,Data reduction
+431,Dimensionality reduction,Data reduction
+432,Data pre-processing,Data reduction
+433,Experimental data,Data reduction
+434,Digital information,Data reduction
+435,Systematic error,Data reduction
+436,Conditionality principle,Data reduction
+437,Log-linear model,Data reduction
+438,Image compression,Data reduction
+439,Data editing,Data reduction
+440,Data cleansing,Data reduction
+441,Encoding,Data reduction
+442,Scaling (geometry),Data reduction
+443,Likelihood principle,Data reduction
+444,Interpolation,Data reduction
+445,Epilepsy,Data reduction
+446,Smoothing,Data reduction
+447,Sufficient statistic,Data reduction
+448,Sorting,Data reduction
+449,Digitization,Data reduction
+450,Data reduction,
+451,Database model,Data modeling
+452,Data Vault Modeling,Data modeling
+453,Semantic data model,Data modeling
+454,Entity–relationship model,Data modeling
+455,Three schema approach,Data modeling
+456,Conceptual modeling,Data modeling
+457,Business process,Data modeling
+458,Information system,Data modeling
+459,Data model,Data modeling
+460,Metadata modeling,Data modeling
+461,Requirements analysis,Data modeling
+462,Conceptual schema,Data modeling
+463,IDEF1X,Data modeling
+464,Information model,Data modeling
+465,Enterprise data modeling,Data modeling
+466,Business process modeling,Data modeling
+467,Data,Data modeling
+468,Physical schema,Data modeling
+469,Systems analysis,Data modeling
+470,Logical schema,Data modeling
+471,Data modeling,
+472,Dendrogram,Single-linkage clustering
+473,Ultrametricity,Single-linkage clustering
+474,Weissella,Single-linkage clustering
+475,Kruskal's algorithm,Single-linkage clustering
+476,Prim's algorithm,Single-linkage clustering
+477,UPGMA,Single-linkage clustering
+478,Complete-linkage clustering,Single-linkage clustering
+479,Statistics,Single-linkage clustering
+480,Bacillus subtilis,Single-linkage clustering
+481,5S ribosomal RNA,Single-linkage clustering
+482,Hierarchical clustering,Single-linkage clustering
+483,Neighbor-joining,Single-linkage clustering
+484,Acholeplasma,Single-linkage clustering
+485,Minimum spanning tree,Single-linkage clustering
+486,Ward's method,Single-linkage clustering
+487,Micrococcus luteus,Single-linkage clustering
+488,Models of DNA evolution,Single-linkage clustering
+489,WPGMA,Single-linkage clustering
+490,Cluster analysis,Single-linkage clustering
+491,Molecular clock,Single-linkage clustering
+492,Single-linkage clustering,
+493,Weka (machine learning),OPTICS algorithm
+494,Scikit-learn,OPTICS algorithm
+495,Spatial index,OPTICS algorithm
+496,Cluster analysis,OPTICS algorithm
+497,Spanning tree,OPTICS algorithm
+498,R (programming language),OPTICS algorithm
+499,Fixed-radius near neighbors,OPTICS algorithm
+500,Priority queue,OPTICS algorithm
+501,Dendrogram,OPTICS algorithm
+502,Anomaly detection,OPTICS algorithm
+503,Hierarchical clustering,OPTICS algorithm
+504,Hans-Peter Kriegel,OPTICS algorithm
+505,Correlation clustering,OPTICS algorithm
+506,Heap (data structure),OPTICS algorithm
+507,Local outlier factor,OPTICS algorithm
+508,K-d tree,OPTICS algorithm
+509,ELKI,OPTICS algorithm
+510,DBSCAN,OPTICS algorithm
+511,Single-linkage clustering,OPTICS algorithm
+512,Clustering high-dimensional data,OPTICS algorithm
+513,OPTICS algorithm,
+514,Estimator,Outlier
+515,Set estimation,Outlier
+516,Systematic error,Outlier
+517,Robust regression,Outlier
+518,Statistical population,Outlier
+519,Mixture model,Outlier
+520,Chauvenet's criterion,Outlier
+521,Studentized residual,Outlier
+522,Statistics,Outlier
+523,Grubbs's test for outliers,Outlier
+524,Data set,Outlier
+525,Regression analysis,Outlier
+526,Normal probability plot,Outlier
+527,Random sample consensus,Outlier
+528,Sample maximum,Outlier
+529,Standard deviation,Outlier
+530,Probability distribution,Outlier
+531,Robust statistics,Outlier
+532,Central tendency,Outlier
+533,Sample (statistics),Outlier
+534,Outlier,
+535,Delta rule,Backpropagation
+536,Supervised learning,Backpropagation
+537,Gradient method,Backpropagation
+538,Gradient descent,Backpropagation
+539,Backpropagation through time,Backpropagation
+540,Monte Carlo tree search,Backpropagation
+541,Overfitting,Backpropagation
+542,Activation function,Backpropagation
+543,Statistical classification,Backpropagation
+544,Algorithm,Backpropagation
+545,AdaBoost,Backpropagation
+546,Feedforward neural network,Backpropagation
+547,Ensemble learning,Backpropagation
+548,Regression analysis,Backpropagation
+549,Fisher information,Backpropagation
+550,Training set,Backpropagation
+551,Dynamic programming,Backpropagation
+552,Automatic differentiation,Backpropagation
+553,Stochastic gradient descent,Backpropagation
+554,Loss function,Backpropagation
+555,Backpropagation,
+556,Statistical assumptions,Statistical model
+557,Statistical population,Statistical model
+558,Semiparametric model,Statistical model
+559,Statistical inference,Statistical model
+560,Parametric model,Statistical model
+561,Probability distribution,Statistical model
+562,Random variable,Statistical model
+563,Statistical hypothesis testing,Statistical model
+564,Deterministic system,Statistical model
+565,Independent identically distributed,Statistical model
+566,Linear regression,Statistical model
+567,R-squared,Statistical model
+568,Bayes factor,Statistical model
+569,Statistical theory,Statistical model
+570,Statistical model specification,Statistical model
+571,Nonparametric statistics,Statistical model
+572,Predictive modelling,Statistical model
+573,Statistical model validation,Statistical model
+574,Estimator,Statistical model
+575,Mathematical model,Statistical model
+576,Statistical model,
+577,Sample size determination,Stepwise regression
+578,Cross-validation (statistics),Stepwise regression
+579,R-squared,Stepwise regression
+580,Mallows's Cp,Stepwise regression
+581,Regression validation,Stepwise regression
+582,Ensemble learning,Stepwise regression
+583,Akaike information criterion,Stepwise regression
+584,Training set,Stepwise regression
+585,PRESS statistic,Stepwise regression
+586,Logistic regression,Stepwise regression
+587,Residual sum of squares,Stepwise regression
+588,Freedman's paradox,Stepwise regression
+589,Statistics,Stepwise regression
+590,Least-angle regression,Stepwise regression
+591,Overfitting,Stepwise regression
+592,Lasso (statistics),Stepwise regression
+593,F-test,Stepwise regression
+594,Model selection,Stepwise regression
+595,Regression analysis,Stepwise regression
+596,Efficient estimator,Stepwise regression
+597,Stepwise regression,
+598,Expectation–maximization algorithm,Fuzzy clustering
+599,Determining the number of clusters in a data set,Fuzzy clustering
+600,HSL and HSV,Fuzzy clustering
+601,Transcription factor,Fuzzy clustering
+602,Fuzzy set,Fuzzy clustering
+603,HCL color space,Fuzzy clustering
+604,K-means clustering,Fuzzy clustering
+605,Pattern recognition,Fuzzy clustering
+606,Cluster analysis,Fuzzy clustering
+607,FLAME Clustering,Fuzzy clustering
+608,Fuzzy logic,Fuzzy clustering
+609,Data point,Fuzzy clustering
+610,Image segmentation,Fuzzy clustering
+611,RGB color space,Fuzzy clustering
+612,Fuzzy clustering,
+613,Universal Darwinism,Natural selection
+614,Frequency-dependent selection,Natural selection
+615,Ecological selection,Natural selection
+616,Group selection,Natural selection
+617,Genetic diversity,Natural selection
+618,Reinforcement (speciation),Natural selection
+619,Evolution,Natural selection
+620,Evolutionary biology,Natural selection
+621,Sexual selection,Natural selection
+622,Genetic algorithm,Natural selection
+623,Microevolution,Natural selection
+624,Evolutionary psychology,Natural selection
+625,Disruptive selection,Natural selection
+626,Evolutionary Computation,Natural selection
+627,Stabilizing selection,Natural selection
+628,Kin selection,Natural selection
+629,The Genetical Theory of Natural Selection,Natural selection
+630,Adaptation,Natural selection
+631,Heritability,Natural selection
+632,Natural selection,
+633,Contextual Query Language,Query language
+634,SPARQL,Query language
+635,RDQL,Query language
+636,Data manipulation language,Query language
+637,Database,Query language
+638,Datalog,Query language
+639,Jaql,Query language
+640,XML database,Query language
+641,.QL,Query language
+642,Data mining,Query language
+643,SQL,Query language
+644,Computer language,Query language
+645,Object Query Language,Query language
+646,Controlled natural language,Query language
+647,JSONiq,Query language
+648,QUEL query languages,Query language
+649,Cypher Query Language,Query language
+650,Deductive database,Query language
+651,XQuery,Query language
+652,Information retrieval,Query language
+653,Query language,
+654,Low-noise amplifier,Signal-to-noise ratio
+655,Noise power,Signal-to-noise ratio
+656,Shannon–Hartley theorem,Signal-to-noise ratio
+657,Signal (electrical engineering),Signal-to-noise ratio
+658,Contrast-to-noise ratio,Signal-to-noise ratio
+659,Standard deviation,Signal-to-noise ratio
+660,Peak signal-to-noise ratio,Signal-to-noise ratio
+661,Signal-to-noise statistic,Signal-to-noise ratio
+662,Video quality,Signal-to-noise ratio
+663,Signal averaging,Signal-to-noise ratio
+664,Decibel,Signal-to-noise ratio
+665,Distortion,Signal-to-noise ratio
+666,Sensitivity index,Signal-to-noise ratio
+667,Variance,Signal-to-noise ratio
+668,Noise (electronic),Signal-to-noise ratio
+669,Matched filter,Signal-to-noise ratio
+670,Signal-to-interference-plus-noise ratio,Signal-to-noise ratio
+671,Signal-to-noise ratio (imaging),Signal-to-noise ratio
+672,SINAD,Signal-to-noise ratio
+673,Noise (signal processing),Signal-to-noise ratio
+674,Signal-to-noise ratio,
+675,Multivariate analysis of covariance,Multivariate statistics
+676,Cluster analysis,Multivariate statistics
+677,Wishart distribution,Multivariate statistics
+678,Statistical classification,Multivariate statistics
+679,Bivariate analysis,Multivariate statistics
+680,Statistics,Multivariate statistics
+681,Bayesian multivariate linear regression,Multivariate statistics
+682,Univariate analysis,Multivariate statistics
+683,Canonical correlation analysis,Multivariate statistics
+684,Estimation of covariance matrices,Multivariate statistics
+685,Factor analysis,Multivariate statistics
+686,Regression analysis,Multivariate statistics
+687,Bayesian inference,Multivariate statistics
+688,Bivariate normal distribution,Multivariate statistics
+689,Partial least squares regression,Multivariate statistics
+690,Simple linear regression,Multivariate statistics
+691,Statistical inference,Multivariate statistics
+692,Multivariate analysis of variance,Multivariate statistics
+693,General linear model,Multivariate statistics
+694,Multivariate Student distribution,Multivariate statistics
+695,Multivariate statistics,
+696,F-score,Confusion matrix
+697,Whistled language,Confusion matrix
+698,False negative,Confusion matrix
+699,Machine learning,Confusion matrix
+700,Contingency table,Confusion matrix
+701,Unsupervised learning,Confusion matrix
+702,Supervised learning,Confusion matrix
+703,Predictive analytics,Confusion matrix
+704,Matrix (mathematics),Confusion matrix
+705,Sensitivity and specificity,Confusion matrix
+706,Informedness,Confusion matrix
+707,Positive and negative predictive values,Confusion matrix
+708,Matthews correlation coefficient,Confusion matrix
+709,Statistical population,Confusion matrix
+710,Statistical classification,Confusion matrix
+711,Confusion matrix,
+712,Local search (Internet),Search engine
+713,YaCy,Search engine
+714,Algorithm,Search engine
+715,Search engine indexing,Search engine
+716,Ranking (information retrieval),Search engine
+717,Web query,Search engine
+718,Search engine results page,Search engine
+719,Yebol,Search engine
+720,Comparison of web search engines,Search engine
+721,Inverted index,Search engine
+722,Keyword (Internet search),Search engine
+723,Google Search,Search engine
+724,Link analysis,Search engine
+725,Relevance (information retrieval),Search engine
+726,Content-based image retrieval,Search engine
+727,Yandex Search,Search engine
+728,Computer science,Search engine
+729,PageRank,Search engine
+730,Information retrieval,Search engine
+731,Data mining,Search engine
+732,Search engine,
+733,Matthews correlation coefficient,F-score
+734,Accuracy,F-score
+735,Type I and type II errors,F-score
+736,Sensitivity and specificity,F-score
+737,Harmonic mean,F-score
+738,METEOR,F-score
+739,P4-metric,F-score
+740,Receiver operating characteristic,F-score
+741,Geometric mean,F-score
+742,Word error rate,F-score
+743,Precision and recall,F-score
+744,Evaluation of binary classifiers,F-score
+745,Fowlkes–Mallows index,F-score
+746,Multiclass classification,F-score
+747,Positive and negative predictive values,F-score
+748,LEPOR,F-score
+749,Binary classification,F-score
+750,Confusion matrix,F-score
+751,Informedness,F-score
+752,Uncertainty coefficient,F-score
+753,F-score,
+754,Dependent and independent variables,Design matrix
+755,ANOVA,Design matrix
+756,Continuous or discrete variable,Design matrix
+757,Scatter matrix,Design matrix
+758,Projection matrix,Design matrix
+759,Linear regression,Design matrix
+760,Feature vector,Design matrix
+761,Regression analysis,Design matrix
+762,Data,Design matrix
+763,General linear model,Design matrix
+764,Column vector,Design matrix
+765,ANCOVA,Design matrix
+766,Jacobian matrix and determinant,Design matrix
+767,Statistics,Design matrix
+768,Simple linear regression,Design matrix
+769,Matrix (mathematics),Design matrix
+770,Indicator variable,Design matrix
+771,Moment matrix,Design matrix
+772,Experimental design,Design matrix
+773,Statistical model,Design matrix
+774,Design matrix,
+775,Normal distribution,Variance
+776,Random variable,Variance
+777,Covariance matrix,Variance
+778,Statistics,Variance
+779,Squared deviations from the mean,Variance
+780,Statistical inference,Variance
+781,Covariance,Variance
+782,Standard error (statistics),Variance
+783,Deviation (statistics),Variance
+784,Standard deviation,Variance
+785,Estimation theory,Variance
+786,Variance-stabilizing transformation,Variance
+787,Conditional variance,Variance
+788,Robust statistics,Variance
+789,Pooled variance,Variance
+790,Sample mean,Variance
+791,Unbiased estimation of standard deviation,Variance
+792,Estimator,Variance
+793,U-statistic,Variance
+794,Probability distribution,Variance
+795,Variance,
+796,IP address,Apriori algorithm
+797,Database,Apriori algorithm
+798,MIT license,Apriori algorithm
+799,Multiset,Apriori algorithm
+800,Breadth-first search,Apriori algorithm
+801,Relational databases,Apriori algorithm
+802,Frequent pattern mining,Apriori algorithm
+803,Stock-keeping unit,Apriori algorithm
+804,Winepi,Apriori algorithm
+805,Market basket analysis,Apriori algorithm
+806,Hash tree (persistent data structure),Apriori algorithm
+807,R (programming language),Apriori algorithm
+808,Association rule learning,Apriori algorithm
+809,Algorithm,Apriori algorithm
+810,Apriori algorithm,
+811,Decision boundary,Hyperplane
+812,Affine geometry,Hyperplane
+813,Projective geometry,Hyperplane
+814,Hyperplane separation theorem,Hyperplane
+815,Supporting hyperplane theorem,Hyperplane
+816,Convex geometry,Hyperplane
+817,Normal (geometry),Hyperplane
+818,Arrangement of hyperplanes,Hyperplane
+819,Hypersurface,Hyperplane
+820,Linear subspace,Hyperplane
+821,Affine subspace,Hyperplane
+822,Reflection (mathematics),Hyperplane
+823,Ambient space,Hyperplane
+824,Convex set,Hyperplane
+825,Euclidean subspace,Hyperplane
+826,Vector space,Hyperplane
+827,Projective space,Hyperplane
+828,Half-space (geometry),Hyperplane
+829,Dimension,Hyperplane
+830,Codimension,Hyperplane
+831,Hyperplane,
+832,Text mining,Data analysis
+833,Descriptive statistics,Data analysis
+834,Analytics,Data analysis
+835,Data model,Data analysis
+836,Statistical model validation,Data analysis
+837,Data science,Data analysis
+838,Big data,Data analysis
+839,Data mining,Data analysis
+840,Nonlinear system identification,Data analysis
+841,Statistical inference,Data analysis
+842,Predictive analytics,Data analysis
+843,Sensitivity analysis,Data analysis
+844,Regression analysis,Data analysis
+845,Structured data analysis (statistics),Data analysis
+846,Test method,Data analysis
+847,Data,Data analysis
+848,Randomization,Data analysis
+849,Exploratory data analysis,Data analysis
+850,Cross-validation (statistics),Data analysis
+851,Data modeling,Data analysis
+852,Data analysis,
+853,Standard deviation,Pearson correlation coefficient
+854,Correlation and dependence,Pearson correlation coefficient
+855,Concordance correlation coefficient,Pearson correlation coefficient
+856,Partial correlation,Pearson correlation coefficient
+857,Robust statistics,Pearson correlation coefficient
+858,Fisher transformation,Pearson correlation coefficient
+859,R-squared,Pearson correlation coefficient
+860,Bivariate normal distribution,Pearson correlation coefficient
+861,Maximum likelihood estimation,Pearson correlation coefficient
+862,Normal distribution,Pearson correlation coefficient
+863,Multiple correlation,Pearson correlation coefficient
+864,Standard error (statistics),Pearson correlation coefficient
+865,Random variable,Pearson correlation coefficient
+866,Covariance,Pearson correlation coefficient
+867,Student's t-distribution,Pearson correlation coefficient
+868,Correlation ratio,Pearson correlation coefficient
+869,Simple linear regression,Pearson correlation coefficient
+870,RV coefficient,Pearson correlation coefficient
+871,Variance,Pearson correlation coefficient
+872,Distance correlation,Pearson correlation coefficient
+873,Pearson correlation coefficient,
+874,Variance,Sample size determination
+875,Margin of error,Sample size determination
+876,Statistical population,Sample size determination
+877,Sample (statistics),Sample size determination
+878,Accuracy,Sample size determination
+879,Estimation theory,Sample size determination
+880,Effect size,Sample size determination
+881,Statistical inference,Sample size determination
+882,Stratified sampling,Sample size determination
+883,Decision rule,Sample size determination
+884,Systematic error,Sample size determination
+885,Statistical power,Sample size determination
+886,Stepwise regression,Sample size determination
+887,Survey sampling,Sample size determination
+888,Standard error (statistics),Sample size determination
+889,Statistical hypothesis testing,Sample size determination
+890,Null hypothesis,Sample size determination
+891,Confidence interval,Sample size determination
+892,Estimator,Sample size determination
+893,Standard deviation,Sample size determination
+894,Sample size determination,
+895,Precision and recall,Type I and type II errors
+896,Neyman–Pearson lemma,Type I and type II errors
+897,Statistical significance,Type I and type II errors
+898,Sensitivity and specificity,Type I and type II errors
+899,Family-wise error rate,Type I and type II errors
+900,Type III error,Type I and type II errors
+901,Bayes' theorem,Type I and type II errors
+902,Statistical power,Type I and type II errors
+903,Alternative hypothesis,Type I and type II errors
+904,Testing hypotheses suggested by the data,Type I and type II errors
+905,Errors and residuals,Type I and type II errors
+906,Detection theory,Type I and type II errors
+907,False positive paradox,Type I and type II errors
+908,Positive and negative predictive values,Type I and type II errors
+909,P-value,Type I and type II errors
+910,Hypothesis,Type I and type II errors
+911,Binary classification,Type I and type II errors
+912,Statistical hypothesis testing,Type I and type II errors
+913,Null hypothesis,Type I and type II errors
+914,Bayesian inference,Type I and type II errors
+915,Type I and type II errors,
+916,Fuzzy logic,Expert system
+917,Reasoning system,Expert system
+918,Speech recognition,Expert system
+919,MYCIN,Expert system
+920,Machine learning,Expert system
+921,Prolog,Expert system
+922,Knowledge acquisition,Expert system
+923,Inference engine,Expert system
+924,Automated reasoning,Expert system
+925,Learning classifier system,Expert system
+926,Knowledge representation,Expert system
+927,AI,Expert system
+928,Knowledge engineering,Expert system
+929,Deductive classifier,Expert system
+930,Rule-based machine learning,Expert system
+931,CADUCEUS (expert system),Expert system
+932,Rule-based system,Expert system
+933,Knowledge-based systems,Expert system
+934,Knowledge base,Expert system
+935,Data mining,Expert system
+936,Expert system,
+937,Proportionality (mathematics),Nonlinear system
+938,Hamiltonian system,Nonlinear system
+939,Superposition principle,Nonlinear system
+940,Nonlinear system identification,Nonlinear system
+941,Linear system,Nonlinear system
+942,Polynomial,Nonlinear system
+943,Initial condition,Nonlinear system
+944,Chaos theory,Nonlinear system
+945,Differential equation,Nonlinear system
+946,Logistic map,Nonlinear system
+947,System of linear equations,Nonlinear system
+948,Ordinary differential equation,Nonlinear system
+949,Root-finding algorithm,Nonlinear system
+950,Systems of polynomial equations,Nonlinear system
+951,Partial differential equation,Nonlinear system
+952,Linear combination,Nonlinear system
+953,Simultaneous equations,Nonlinear system
+954,Randomness,Nonlinear system
+955,Linearization,Nonlinear system
+956,Dynamical system,Nonlinear system
+957,Nonlinear system,
+958,Averages,Arithmetic mean
+959,Geometric mean,Arithmetic mean
+960,Statistics,Arithmetic mean
+961,Robust statistics,Arithmetic mean
+962,Sample (statistics),Arithmetic mean
+963,Data set,Arithmetic mean
+964,Probability,Arithmetic mean
+965,Standard error (statistics),Arithmetic mean
+966,Statistical population,Arithmetic mean
+967,Statistical dispersion,Arithmetic mean
+968,Probability distribution,Arithmetic mean
+969,Median,Arithmetic mean
+970,Sample mean,Arithmetic mean
+971,Central tendency,Arithmetic mean
+972,Outlier,Arithmetic mean
+973,Standard deviation,Arithmetic mean
+974,Fréchet mean,Arithmetic mean
+975,Summary statistics,Arithmetic mean
+976,Mean,Arithmetic mean
+977,Normal distribution,Arithmetic mean
+978,Arithmetic mean,
+979,Enterprise search,Information retrieval
+980,Probabilistic relevance model (BM25),Information retrieval
+981,Geographic information retrieval,Information retrieval
+982,Relevance (information retrieval),Information retrieval
+983,Cross-language information retrieval,Information retrieval
+984,Probabilistic relevance model,Information retrieval
+985,Music information retrieval,Information retrieval
+986,Uncertain inference,Information retrieval
+987,Standard Boolean model,Information retrieval
+988,Legal information retrieval,Information retrieval
+989,3D retrieval,Information retrieval
+990,Information system,Information retrieval
+991,Learning to rank,Information retrieval
+992,Precision and recall,Information retrieval
+993,Ranking (information retrieval),Information retrieval
+994,Information science,Information retrieval
+995,Image retrieval,Information retrieval
+996,Information filtering,Information retrieval
+997,Full-text search,Information retrieval
+998,Information retrieval,
+999,PRESS statistic,Cross-validation (statistics)
+1000,Bootstrap aggregating,Cross-validation (statistics)
+1001,Feature selection,Cross-validation (statistics)
+1002,Regularization (mathematics),Cross-validation (statistics)
+1003,Least squares,Cross-validation (statistics)
+1004,Training set,Cross-validation (statistics)
+1005,Statistical model validation,Cross-validation (statistics)
+1006,Stationary bootstrap,Cross-validation (statistics)
+1007,Sample (statistics),Cross-validation (statistics)
+1008,Statistical model,Cross-validation (statistics)
+1009,Statistics,Cross-validation (statistics)
+1010,Resampling (statistics),Cross-validation (statistics)
+1011,Generalization error,Cross-validation (statistics)
+1012,Overfitting,Cross-validation (statistics)
+1013,Hyperparameter (machine learning),Cross-validation (statistics)
+1014,Binary classification,Cross-validation (statistics)
+1015,Bayesian linear regression,Cross-validation (statistics)
+1016,Model selection,Cross-validation (statistics)
+1017,Linear regression,Cross-validation (statistics)
+1018,Predictive modelling,Cross-validation (statistics)
+1019,Cross-validation (statistics),
+1020,Median absolute deviation,Statistical dispersion
+1021,Count data,Statistical dispersion
+1022,Variance,Statistical dispersion
+1023,Statistics,Statistical dispersion
+1024,Mean absolute difference,Statistical dispersion
+1025,Interquartile range,Statistical dispersion
+1026,Standard deviation,Statistical dispersion
+1027,Accuracy,Statistical dispersion
+1028,Measurement uncertainty,Statistical dispersion
+1029,Coefficient of variation,Statistical dispersion
+1030,Central tendency,Statistical dispersion
+1031,Random variable,Statistical dispersion
+1032,Summary statistics,Statistical dispersion
+1033,Range (statistics),Statistical dispersion
+1034,Quartile coefficient of dispersion,Statistical dispersion
+1035,Average absolute deviation,Statistical dispersion
+1036,Regression analysis,Statistical dispersion
+1037,Qualitative variation,Statistical dispersion
+1038,Robust measures of scale,Statistical dispersion
+1039,R-squared,Statistical dispersion
+1040,Statistical dispersion,
+1041,Count data,Poisson regression
+1042,Overdispersion,Poisson regression
+1043,Quasi-likelihood,Poisson regression
+1044,Expected value,Poisson regression
+1045,Likelihood function,Poisson regression
+1046,Overfitting,Poisson regression
+1047,Probability mass function,Poisson regression
+1048,Maximum likelihood estimation,Poisson regression
+1049,Generalized linear models,Poisson regression
+1050,Statistics,Poisson regression
+1051,Gradient descent,Poisson regression
+1052,Log-linear model,Poisson regression
+1053,Variance,Poisson regression
+1054,Negative binomial distribution,Poisson regression
+1055,Iteratively reweighted least squares,Poisson regression
+1056,Zero-inflated model,Poisson regression
+1057,Ridge regression,Poisson regression
+1058,Fixed-effect Poisson model,Poisson regression
+1059,Regression analysis,Poisson regression
+1060,Poisson distribution,Poisson regression
+1061,Poisson regression,
+1062,Mlpack,K-means clustering
+1063,Variance,K-means clustering
+1064,Cluster analysis,K-means clustering
+1065,Medoids,K-means clustering
+1066,Vector quantization,K-means clustering
+1067,Semi-supervised learning,K-means clustering
+1068,Mean shift,K-means clustering
+1069,K-medians clustering,K-means clustering
+1070,Determining the number of clusters in a data set,K-means clustering
+1071,K-nearest neighbor,K-means clustering
+1072,K-medoids,K-means clustering
+1073,Silhouette (clustering),K-means clustering
+1074,Unsupervised learning,K-means clustering
+1075,Mixture model,K-means clustering
+1076,Bayesian inference,K-means clustering
+1077,Fuzzy clustering,K-means clustering
+1078,Hierarchical clustering,K-means clustering
+1079,K q-flats,K-means clustering
+1080,Lloyd's algorithm,K-means clustering
+1081,K-means++,K-means clustering
+1082,K-means clustering,
+1083,Truncated mean,Central tendency
+1084,Statistical population,Central tendency
+1085,Central moment,Central tendency
+1086,Midrange,Central tendency
+1087,Statistical dispersion,Central tendency
+1088,Mode (statistics),Central tendency
+1089,Deviation (statistics),Central tendency
+1090,Winsorized mean,Central tendency
+1091,Statistics,Central tendency
+1092,Mean,Central tendency
+1093,Median,Central tendency
+1094,Geometric mean,Central tendency
+1095,Least squares,Central tendency
+1096,K-means clustering,Central tendency
+1097,Empirical measure,Central tendency
+1098,Averages,Central tendency
+1099,Interquartile range,Central tendency
+1100,Normal distribution,Central tendency
+1101,Standard deviation,Central tendency
+1102,Arithmetic mean,Central tendency
+1103,Central tendency,
+1104,Memetic algorithm,Genetic algorithm
+1105,Mutation (genetic algorithm),Genetic algorithm
+1106,Gaussian adaptation,Genetic algorithm
+1107,Genetic representation,Genetic algorithm
+1108,Genetic operator,Genetic algorithm
+1109,Metaheuristic,Genetic algorithm
+1110,Estimation of distribution algorithm,Genetic algorithm
+1111,Evolutionary algorithms,Genetic algorithm
+1112,Algorithm,Genetic algorithm
+1113,Evolutionary Computation,Genetic algorithm
+1114,Cultural algorithm,Genetic algorithm
+1115,Heuristic,Genetic algorithm
+1116,Differential evolution,Genetic algorithm
+1117,Selection (genetic algorithm),Genetic algorithm
+1118,Decision tree learning,Genetic algorithm
+1119,List of genetic algorithm applications,Genetic algorithm
+1120,Search algorithm,Genetic algorithm
+1121,Stochastic optimization,Genetic algorithm
+1122,Genetic programming,Genetic algorithm
+1123,Cluster analysis,Genetic algorithm
+1124,Genetic algorithm,
+1125,Estimation theory,Minimum description length
+1126,Computational learning theory,Minimum description length
+1127,Kolmogorov complexity,Minimum description length
+1128,Statistical model,Minimum description length
+1129,Statistics,Minimum description length
+1130,Entropy (information theory),Minimum description length
+1131,Model selection,Minimum description length
+1132,Marginal likelihood,Minimum description length
+1133,Universal code (data compression),Minimum description length
+1134,Inductive inference,Minimum description length
+1135,Algorithmic probability,Minimum description length
+1136,Solomonoff's theory of inductive inference,Minimum description length
+1137,Inductive probability,Minimum description length
+1138,Kolmogorov structure function,Minimum description length
+1139,Bayesian inference,Minimum description length
+1140,Minimum message length,Minimum description length
+1141,Algorithmic information theory,Minimum description length
+1142,Information-theoretic,Minimum description length
+1143,Bayesian Information Criterion,Minimum description length
+1144,Bayesianism,Minimum description length
+1145,Minimum description length,
+1146,Probability,Conditional probability
+1147,Conditioning (probability),Conditional probability
+1148,Posterior probability,Conditional probability
+1149,Probability measure,Conditional probability
+1150,Conditional independence,Conditional probability
+1151,Regular conditional probability,Conditional probability
+1152,Marginal distribution,Conditional probability
+1153,Goodman–Nguyen–Van Fraassen algebra,Conditional probability
+1154,Conditional probability table,Conditional probability
+1155,Probability theory,Conditional probability
+1156,Law of total probability,Conditional probability
+1157,Probability interpretations,Conditional probability
+1158,False negative,Conditional probability
+1159,Joint probability distribution,Conditional probability
+1160,Elementary event,Conditional probability
+1161,Conditional expectation,Conditional probability
+1162,Statistical inference,Conditional probability
+1163,Probability axioms,Conditional probability
+1164,Bayesianism,Conditional probability
+1165,Conditional probability distribution,Conditional probability
+1166,Conditional probability,
+1167,Bayesian optimization,Machine learning
+1168,Supervised learning,Machine learning
+1169,Unsupervised learning,Machine learning
+1170,Meta-learning (computer science),Machine learning
+1171,Statistical inference,Machine learning
+1172,Data mining,Machine learning
+1173,Kernel methods,Machine learning
+1174,Training set,Machine learning
+1175,Regularization (mathematics),Machine learning
+1176,Computational statistics,Machine learning
+1177,Feature learning,Machine learning
+1178,Symbolic artificial intelligence,Machine learning
+1179,Computational learning theory,Machine learning
+1180,Machine learning control,Machine learning
+1181,Natural language processing,Machine learning
+1182,Regression analysis,Machine learning
+1183,Semi-supervised learning,Machine learning
+1184,Pattern recognition,Machine learning
+1185,Cluster analysis,Machine learning
+1186,Statistical classification,Machine learning
+1187,Machine learning,
+1188,Sparse PCA,Principal component analysis
+1189,Dimensionality reduction,Principal component analysis
+1190,Covariance matrix,Principal component analysis
+1191,Robust statistics,Principal component analysis
+1192,Low-rank approximation,Principal component analysis
+1193,Empirical orthogonal functions,Principal component analysis
+1194,Partial least squares regression,Principal component analysis
+1195,Robust principal component analysis,Principal component analysis
+1196,Kernel principal component analysis,Principal component analysis
+1197,Multilinear subspace learning,Principal component analysis
+1198,Regression analysis,Principal component analysis
+1199,Functional principal component analysis,Principal component analysis
+1200,Principal component regression,Principal component analysis
+1201,L1-norm principal component analysis,Principal component analysis
+1202,Correspondence analysis,Principal component analysis
+1203,Canonical correlation analysis,Principal component analysis
+1204,Weighted least squares,Principal component analysis
+1205,High dimensional data,Principal component analysis
+1206,Cluster analysis,Principal component analysis
+1207,Principal component analysis,
+1208,Generalization error,Random forest
+1209,Ensemble learning,Random forest
+1210,Independent identically distributed,Random forest
+1211,Cross-validation (statistics),Random forest
+1212,Bootstrap aggregating,Random forest
+1213,Random subspace method,Random forest
+1214,Overfitting,Random forest
+1215,K-nearest neighbor,Random forest
+1216,Kernel methods,Random forest
+1217,Training set,Random forest
+1218,Sample (statistics),Random forest
+1219,Out-of-bag error,Random forest
+1220,Bias-variance dilemma,Random forest
+1221,Regression analysis,Random forest
+1222,Decision tree learning,Random forest
+1223,Decision tree,Random forest
+1224,Multinomial logistic regression,Random forest
+1225,Naive Bayes classifier,Random forest
+1226,Feature vector,Random forest
+1227,Statistical classification,Random forest
+1228,Random forest,
+1229,Gradient,Gradient descent
+1230,Learning rate,Gradient descent
+1231,Proximal gradient method,Gradient descent
+1232,Backpropagation,Gradient descent
+1233,Broyden–Fletcher–Goldfarb–Shanno algorithm,Gradient descent
+1234,Mirror descent,Gradient descent
+1235,Convex programming,Gradient descent
+1236,Delta rule,Gradient descent
+1237,Euler's method,Gradient descent
+1238,Stochastic gradient descent,Gradient descent
+1239,Line search,Gradient descent
+1240,Limited-memory BFGS,Gradient descent
+1241,Mathematical optimization,Gradient descent
+1242,Iterative method,Gradient descent
+1243,Hill climbing,Gradient descent
+1244,Preconditioner,Gradient descent
+1245,Backtracking line search,Gradient descent
+1246,Forward–backward algorithm,Gradient descent
+1247,Algorithm,Gradient descent
+1248,Conjugate gradient method,Gradient descent
+1249,Gradient descent,
+1250,Generative model,Decision tree
+1251,Influence diagram,Decision tree
+1252,Boosting (machine learning),Decision tree
+1253,Algorithm,Decision tree
+1254,Probability,Decision tree
+1255,Decision analysis,Decision tree
+1256,"Behavior tree (artificial intelligence, robotics and control)",Decision tree
+1257,Decision table,Decision tree
+1258,Decision matrix,Decision tree
+1259,Information gain in decision trees,Decision tree
+1260,Ordinal priority approach,Decision tree
+1261,Classification,Decision tree
+1262,Random forest,Decision tree
+1263,Decision support system,Decision tree
+1264,Operations research,Decision tree
+1265,Odds algorithm,Decision tree
+1266,Decision tree model,Decision tree
+1267,Decision cycle,Decision tree
+1268,Decision list,Decision tree
+1269,Decision tree learning,Decision tree
+1270,Decision tree,
+1271,Universal approximation theorem,Feedforward neural network
+1272,Early stopping,Feedforward neural network
+1273,Computational learning theory,Feedforward neural network
+1274,Delta rule,Feedforward neural network
+1275,Convolutional neural network,Feedforward neural network
+1276,Gradient descent,Feedforward neural network
+1277,Artificial neural network,Feedforward neural network
+1278,Rprop,Feedforward neural network
+1279,Backpropagation,Feedforward neural network
+1280,Recurrent neural network,Feedforward neural network
+1281,Vanishing gradient problem,Feedforward neural network
+1282,Hopfield network,Feedforward neural network
+1283,Feed forward (control),Feedforward neural network
+1284,Artificial neurons,Feedforward neural network
+1285,Neural network,Feedforward neural network
+1286,Machine learning,Feedforward neural network
+1287,Activation function,Feedforward neural network
+1288,Radial basis function network,Feedforward neural network
+1289,Heuristic,Feedforward neural network
+1290,Perceptron,Feedforward neural network
+1291,Feedforward neural network,
+1292,Unsupervised learning,Biclustering
+1293,Information-theoretic,Biclustering
+1294,Heuristic,Biclustering
+1295,Kullback–Leibler divergence,Biclustering
+1296,Cluster analysis,Biclustering
+1297,Hierarchical clustering,Biclustering
+1298,Bioinformatics,Biclustering
+1299,Data type,Biclustering
+1300,Information content,Biclustering
+1301,Correlation clustering,Biclustering
+1302,Data mining,Biclustering
+1303,Algorithm,Biclustering
+1304,Variance,Biclustering
+1305,Iterative,Biclustering
+1306,Suffix tree,Biclustering
+1307,Text mining,Biclustering
+1308,Mutual information,Biclustering
+1309,Matrix (mathematics),Biclustering
+1310,Bayesianism,Biclustering
+1311,Biclustering,
+1312,Bayes classifier,Naive Bayes classifier
+1313,AODE,Naive Bayes classifier
+1314,Nonparametric statistics,Naive Bayes classifier
+1315,Logistic regression,Naive Bayes classifier
+1316,Bayesianism,Naive Bayes classifier
+1317,Support-vector machine,Naive Bayes classifier
+1318,Likelihood function,Naive Bayes classifier
+1319,Class membership probabilities,Naive Bayes classifier
+1320,Regularization (mathematics),Naive Bayes classifier
+1321,Maximum likelihood estimation,Naive Bayes classifier
+1322,Statistical classification,Naive Bayes classifier
+1323,Kernel density estimation,Naive Bayes classifier
+1324,Statistical model,Naive Bayes classifier
+1325,Boosted trees,Naive Bayes classifier
+1326,Bayesian spam filtering,Naive Bayes classifier
+1327,Mixture model,Naive Bayes classifier
+1328,Feature vector,Naive Bayes classifier
+1329,Maximum a posteriori estimation,Naive Bayes classifier
+1330,Bayesian network,Naive Bayes classifier
+1331,Bayes' theorem,Naive Bayes classifier
+1332,Naive Bayes classifier,
+1333,Multinomial distribution,Joint probability distribution
+1334,Random variable,Joint probability distribution
+1335,Random vector,Joint probability distribution
+1336,Marginal distribution,Joint probability distribution
+1337,Probability distribution,Joint probability distribution
+1338,Multivariate hypergeometric distribution,Joint probability distribution
+1339,Probability mass function,Joint probability distribution
+1340,Bivariate normal distribution,Joint probability distribution
+1341,Probability measure,Joint probability distribution
+1342,Negative multinomial distribution,Joint probability distribution
+1343,Copula (statistics),Joint probability distribution
+1344,Conditional probability distribution,Joint probability distribution
+1345,Chain rule (probability),Joint probability distribution
+1346,Pairwise independence,Joint probability distribution
+1347,Elliptical distribution,Joint probability distribution
+1348,Bernoulli distribution,Joint probability distribution
+1349,Cumulative distribution function,Joint probability distribution
+1350,Covariance,Joint probability distribution
+1351,Multivariate statistics,Joint probability distribution
+1352,Multivariate stable distribution,Joint probability distribution
+1353,Joint probability distribution,
+1354,Independent identically distributed,Mixture model
+1355,Concentration parameter,Mixture model
+1356,Variance,Mixture model
+1357,Bivariate normal distribution,Mixture model
+1358,Statistical population,Mixture model
+1359,Copula (statistics),Mixture model
+1360,Statistical model,Mixture model
+1361,Categorical distribution,Mixture model
+1362,Bayesian inference,Mixture model
+1363,Mixture (probability),Mixture model
+1364,K-means clustering,Mixture model
+1365,Mixture distribution,Mixture model
+1366,Gibbs sampling,Mixture model
+1367,Graphical model,Mixture model
+1368,Probability distribution,Mixture model
+1369,Statistical inference,Mixture model
+1370,Maximum likelihood estimation,Mixture model
+1371,Normal distribution,Mixture model
+1372,Statistics,Mixture model
+1373,Mixture model,
+1374,Precision and recall,Statistical classification
+1375,Pattern recognition,Statistical classification
+1376,Linear classifier,Statistical classification
+1377,Statistical inference,Statistical classification
+1378,Statistics,Statistical classification
+1379,Regression analysis,Statistical classification
+1380,Class membership probabilities,Statistical classification
+1381,Binary classification,Statistical classification
+1382,Multiclass classification,Statistical classification
+1383,Feature vector,Statistical classification
+1384,Accuracy,Statistical classification
+1385,Linear predictor function,Statistical classification
+1386,Categorical data,Statistical classification
+1387,Dependent and independent variables,Statistical classification
+1388,Logistic regression,Statistical classification
+1389,Algorithm,Statistical classification
+1390,Cluster analysis,Statistical classification
+1391,Ordinal data,Statistical classification
+1392,Classification,Statistical classification
+1393,Sequence labeling,Statistical classification
+1394,Statistical classification,
+1395,Probability distribution,Likelihood function
+1396,Bayesianism,Likelihood function
+1397,Sufficient statistic,Likelihood function
+1398,Likelihoodism,Likelihood function
+1399,Probability mass function,Likelihood function
+1400,Marginal likelihood,Likelihood function
+1401,Frequentist inference,Likelihood function
+1402,Interval estimation,Likelihood function
+1403,Likelihood principle,Likelihood function
+1404,Conditional probability distribution,Likelihood function
+1405,Bayesian inference,Likelihood function
+1406,Bayesian statistics,Likelihood function
+1407,Empirical likelihood,Likelihood function
+1408,Pseudolikelihood,Likelihood function
+1409,Maximum likelihood estimation,Likelihood function
+1410,Score (statistics),Likelihood function
+1411,Credible interval,Likelihood function
+1412,Fisher information,Likelihood function
+1413,Posterior probability,Likelihood function
+1414,Gamma distribution,Likelihood function
+1415,Likelihood function,
+1416,Binomial proportion confidence interval,Sensitivity and specificity
+1417,Confusion matrix,Sensitivity and specificity
+1418,Sensitivity index,Sensitivity and specificity
+1419,Evaluation of binary classifiers,Sensitivity and specificity
+1420,Statistical power,Sensitivity and specificity
+1421,False positive rate,Sensitivity and specificity
+1422,Type I and type II errors,Sensitivity and specificity
+1423,Cumulative accuracy profile,Sensitivity and specificity
+1424,Statistical hypothesis testing,Sensitivity and specificity
+1425,False positive paradox,Sensitivity and specificity
+1426,Statistical significance,Sensitivity and specificity
+1427,Detection theory,Sensitivity and specificity
+1428,Gold standard (test),Sensitivity and specificity
+1429,Brier score,Sensitivity and specificity
+1430,Informedness,Sensitivity and specificity
+1431,Positive and negative predictive values,Sensitivity and specificity
+1432,Receiver operating characteristic,Sensitivity and specificity
+1433,Precision and recall,Sensitivity and specificity
+1434,Normal distribution,Sensitivity and specificity
+1435,F-score,Sensitivity and specificity
+1436,Sensitivity and specificity,
+1437,Foundational crisis of mathematics,Theorem
+1438,Model theory,Theorem
+1439,Theory (mathematical logic),Theorem
+1440,Gödel's completeness theorem,Theorem
+1441,Mathematical proof,Theorem
+1442,Non-classical logic,Theorem
+1443,Consistency,Theorem
+1444,Peano arithmetic,Theorem
+1445,Compactness theorem,Theorem
+1446,Mathematical logic,Theorem
+1447,Probability theory,Theorem
+1448,Logically,Theorem
+1449,Mathematics,Theorem
+1450,Fundamental theorem,Theorem
+1451,Scientific law,Theorem
+1452,Probability distribution,Theorem
+1453,Gödel's incompleteness theorems,Theorem
+1454,Axiom,Theorem
+1455,Inference,Theorem
+1456,Proof theory,Theorem
+1457,Theorem,
+1458,Statistics,Expectation–maximization algorithm
+1459,Marginal likelihood,Expectation–maximization algorithm
+1460,Iterative method,Expectation–maximization algorithm
+1461,Newton's method,Expectation–maximization algorithm
+1462,Inside-outside algorithm,Expectation–maximization algorithm
+1463,Maximum a posteriori estimation,Expectation–maximization algorithm
+1464,Statistical model,Expectation–maximization algorithm
+1465,Expected value,Expectation–maximization algorithm
+1466,Baum–Welch algorithm,Expectation–maximization algorithm
+1467,Variational Bayesian methods,Expectation–maximization algorithm
+1468,Maximum likelihood estimation,Expectation–maximization algorithm
+1469,Probability distribution,Expectation–maximization algorithm
+1470,Viterbi algorithm,Expectation–maximization algorithm
+1471,Likelihood function,Expectation–maximization algorithm
+1472,Gradient descent,Expectation–maximization algorithm
+1473,Cluster analysis,Expectation–maximization algorithm
+1474,Conditional probability distribution,Expectation–maximization algorithm
+1475,Kalman filter,Expectation–maximization algorithm
+1476,Ordered subset expectation maximization,Expectation–maximization algorithm
+1477,Bayesian inference,Expectation–maximization algorithm
+1478,Expectation–maximization algorithm,
+1479,Likelihood function,Maximum likelihood estimation
+1480,Estimator,Maximum likelihood estimation
+1481,Statistical inference,Maximum likelihood estimation
+1482,Generalized method of moments,Maximum likelihood estimation
+1483,Least squares,Maximum likelihood estimation
+1484,Maximum spacing estimation,Maximum likelihood estimation
+1485,Bayesian inference,Maximum likelihood estimation
+1486,Quasi-maximum likelihood,Maximum likelihood estimation
+1487,Bayesian estimator,Maximum likelihood estimation
+1488,Fisher information,Maximum likelihood estimation
+1489,Minimum-distance estimation,Maximum likelihood estimation
+1490,Maximum a posteriori estimation,Maximum likelihood estimation
+1491,M-estimator,Maximum likelihood estimation
+1492,Generalized linear models,Maximum likelihood estimation
+1493,Estimation theory,Maximum likelihood estimation
+1494,Efficient estimator,Maximum likelihood estimation
+1495,Stochastic equicontinuity,Maximum likelihood estimation
+1496,Local asymptotic normality,Maximum likelihood estimation
+1497,Uniform distribution (continuous),Maximum likelihood estimation
+1498,Maximum likelihood estimation,
+1499,Clustering high-dimensional data,DBSCAN
+1500,Weka (machine learning),DBSCAN
+1501,K-means clustering,DBSCAN
+1502,Spectral clustering,DBSCAN
+1503,R* tree,DBSCAN
+1504,Ball tree,DBSCAN
+1505,ELKI,DBSCAN
+1506,Mlpack,DBSCAN
+1507,Nearest neighbor graph,DBSCAN
+1508,Fixed-radius near neighbors,DBSCAN
+1509,Curse of dimensionality,DBSCAN
+1510,Anomaly detection,DBSCAN
+1511,Cluster analysis,DBSCAN
+1512,Hans-Peter Kriegel,DBSCAN
+1513,OPTICS algorithm,DBSCAN
+1514,SUBCLU,DBSCAN
+1515,Spatial index,DBSCAN
+1516,Hierarchical clustering,DBSCAN
+1517,R (programming language),DBSCAN
+1518,PostGIS,DBSCAN
+1519,DBSCAN,
+1520,Kernel density estimation,Cluster analysis
+1521,Birch (data clustering),Cluster analysis
+1522,Human genetic clustering,Cluster analysis
+1523,Anomaly detection,Cluster analysis
+1524,Consensus clustering,Cluster analysis
+1525,Determining the number of clusters in a data set,Cluster analysis
+1526,K-means clustering,Cluster analysis
+1527,Clustering high-dimensional data,Cluster analysis
+1528,K-means++,Cluster analysis
+1529,Automatic clustering algorithms,Cluster analysis
+1530,Hierarchical clustering,Cluster analysis
+1531,Conceptual clustering,Cluster analysis
+1532,Fuzzy clustering,Cluster analysis
+1533,DBSCAN,Cluster analysis
+1534,Statistics,Cluster analysis
+1535,Statistical classification,Cluster analysis
+1536,Cluster-weighted modeling,Cluster analysis
+1537,Canopy clustering algorithm,Cluster analysis
+1538,Correlation clustering,Cluster analysis
+1539,Data stream clustering,Cluster analysis
+1540,Cluster analysis,
+1541,Perceptron,Multiclass classification
+1542,Multi-label classification,Multiclass classification
+1543,Hierarchical classification,Multiclass classification
+1544,Online machine learning,Multiclass classification
+1545,Support-vector machine,Multiclass classification
+1546,Statistical classification,Multiclass classification
+1547,Softmax function,Multiclass classification
+1548,Multi-task learning,Multiclass classification
+1549,One-class classification,Multiclass classification
+1550,Multinomial logistic regression,Multiclass classification
+1551,K-nearest neighbor,Multiclass classification
+1552,Conditional independence,Multiclass classification
+1553,Naive Bayes classifier,Multiclass classification
+1554,Decision tree learning,Multiclass classification
+1555,Multi expression programming,Multiclass classification
+1556,Machine learning,Multiclass classification
+1557,Binary classification,Multiclass classification
+1558,Decision tree,Multiclass classification
+1559,Heuristic,Multiclass classification
+1560,Extreme learning machine,Multiclass classification
+1561,Multiclass classification,
+1562,Normal distribution,Interquartile range
+1563,Box plot,Interquartile range
+1564,Standard deviation,Interquartile range
+1565,Midhinge,Interquartile range
+1566,Range (statistics),Interquartile range
+1567,Interdecile range,Interquartile range
+1568,Median absolute deviation,Interquartile range
+1569,Robust statistics,Interquartile range
+1570,Percentiles,Interquartile range
+1571,Robust measures of scale,Interquartile range
+1572,Five-number summary,Interquartile range
+1573,Q–Q plot,Interquartile range
+1574,Median,Interquartile range
+1575,Trimmed estimator,Interquartile range
+1576,Descriptive statistics,Interquartile range
+1577,Statistical dispersion,Interquartile range
+1578,Central tendency,Interquartile range
+1579,Probability distribution,Interquartile range
+1580,Outlier,Interquartile range
+1581,Probable error,Interquartile range
+1582,Interquartile range,
+1583,Support-vector machine,
+1584,Bayesianism,Bayesian network
+1585,Decision tree learning,Bayesian network
+1586,Causal graph,Bayesian network
+1587,Variable elimination,Bayesian network
+1588,Bayesian statistics,Bayesian network
+1589,Variable-order Bayesian network,Bayesian network
+1590,Influence diagram,Bayesian network
+1591,Likelihood function,Bayesian network
+1592,Naive Bayes classifier,Bayesian network
+1593,Graphical model,Bayesian network
+1594,Dynamic Bayesian network,Bayesian network
+1595,Markov network,Bayesian network
+1596,Loopy belief propagation,Bayesian network
+1597,PyMC3,Bayesian network
+1598,Prior probability,Bayesian network
+1599,Bayes' theorem,Bayesian network
+1600,Bayesian programming,Bayesian network
+1601,Variational Bayesian methods,Bayesian network
+1602,Posterior probability,Bayesian network
+1603,Bayesian hierarchical modeling,Bayesian network
+1604,Bayesian network,
+1605,Cumulative distribution function,Probability density function
+1606,Law of the unconscious statistician,Probability density function
+1607,Density estimation,Probability density function
+1608,Likelihood function,Probability density function
+1609,Kurtosis,Probability density function
+1610,Probability amplitude,Probability density function
+1611,Continuous or discrete variable,Probability density function
+1612,Kernel (statistics),Probability density function
+1613,List of probability distributions,Probability density function
+1614,Normalizing constant,Probability density function
+1615,Normal distribution,Probability density function
+1616,Cauchy distribution,Probability density function
+1617,Random variable,Probability density function
+1618,Univariate distribution,Probability density function
+1619,Variance,Probability density function
+1620,Kernel density estimation,Probability density function
+1621,Probability theory,Probability density function
+1622,Probability mass function,Probability density function
+1623,Probability distribution,Probability density function
+1624,Marginal distribution,Probability density function
+1625,Probability density function,
+1626,Contrast set learning,Association rule learning
+1627,Data mining,Association rule learning
+1628,Lift (data mining),Association rule learning
+1629,Sequential pattern mining,Association rule learning
+1630,Intrusion detection,Association rule learning
+1631,Production system (computer science),Association rule learning
+1632,Rule-based machine learning,Association rule learning
+1633,Apriori algorithm,Association rule learning
+1634,K-optimal pattern discovery,Association rule learning
+1635,Statistical independence,Association rule learning
+1636,Backtracking,Association rule learning
+1637,Market basket analysis,Association rule learning
+1638,Conditional probability,Association rule learning
+1639,Learning classifier system,Association rule learning
+1640,Bioinformatics,Association rule learning
+1641,Breadth-first search,Association rule learning
+1642,Clustering high-dimensional data,Association rule learning
+1643,Depth-first search,Association rule learning
+1644,Trie,Association rule learning
+1645,Bitstring,Association rule learning
+1646,Association rule learning,
+1647,Informedness,Precision and recall
+1648,Markedness,Precision and recall
+1649,Statistics,Precision and recall
+1650,Type I and type II errors,Precision and recall
+1651,Accuracy,Precision and recall
+1652,Bayes' theorem,Precision and recall
+1653,F-score,Precision and recall
+1654,Null hypothesis,Precision and recall
+1655,Information retrieval,Precision and recall
+1656,Sensitivity and specificity,Precision and recall
+1657,Positive and negative predictive values,Precision and recall
+1658,Uncertainty coefficient,Precision and recall
+1659,Receiver operating characteristic,Precision and recall
+1660,Confusion matrix,Precision and recall
+1661,Statistical classification,Precision and recall
+1662,Object detection,Precision and recall
+1663,Relevance (information retrieval),Precision and recall
+1664,Linear regression,Precision and recall
+1665,Contingency table,Precision and recall
+1666,Pattern recognition,Precision and recall
+1667,Precision and recall,
+1668,Case-control study,Positive and negative predictive values
+1669,Information retrieval,Positive and negative predictive values
+1670,Bayes' theorem,Positive and negative predictive values
+1671,Gold standard (test),Positive and negative predictive values
+1672,Precision and recall,Positive and negative predictive values
+1673,Prevalence,Positive and negative predictive values
+1674,Diagnostic test,Positive and negative predictive values
+1675,Sensitivity index,Positive and negative predictive values
+1676,Fecal occult blood,Positive and negative predictive values
+1677,Likelihood ratios in diagnostic testing,Positive and negative predictive values
+1678,Cross-sectional study,Positive and negative predictive values
+1679,False discovery rate,Positive and negative predictive values
+1680,Relevance (information retrieval),Positive and negative predictive values
+1681,Pre- and post-test probability,Positive and negative predictive values
+1682,Receiver operating characteristic,Positive and negative predictive values
+1683,False negative,Positive and negative predictive values
+1684,Binary classification,Positive and negative predictive values
+1685,Diagnostic odds ratio,Positive and negative predictive values
+1686,Predictive value of tests,Positive and negative predictive values
+1687,Sensitivity and specificity,Positive and negative predictive values
+1688,Positive and negative predictive values,
+1689,P-value,Statistical significance
+1690,Likelihood function,Statistical significance
+1691,Sample size determination,Statistical significance
+1692,Null hypothesis,Statistical significance
+1693,Fisher's method,Statistical significance
+1694,Alternative hypothesis,Statistical significance
+1695,Data dredging,Statistical significance
+1696,Statistical hypothesis testing,Statistical significance
+1697,Multiple comparisons problem,Statistical significance
+1698,Clinical significance,Statistical significance
+1699,Bayes factor,Statistical significance
+1700,Effect size,Statistical significance
+1701,Estimation statistics,Statistical significance
+1702,R-squared,Statistical significance
+1703,Bayesian statistics,Statistical significance
+1704,Statistical power,Statistical significance
+1705,One-tailed test,Statistical significance
+1706,Statistical Methods for Research Workers,Statistical significance
+1707,Type I and type II errors,Statistical significance
+1708,Statistical population,Statistical significance
+1709,Statistical significance,
+1710,Statistical significance,Statistical hypothesis testing
+1711,Statistics,Statistical hypothesis testing
+1712,Chi squared test,Statistical hypothesis testing
+1713,Nonparametric statistics,Statistical hypothesis testing
+1714,Alternative hypothesis,Statistical hypothesis testing
+1715,P-value,Statistical hypothesis testing
+1716,Test statistic,Statistical hypothesis testing
+1717,Estimation statistics,Statistical hypothesis testing
+1718,Frequentist inference,Statistical hypothesis testing
+1719,Fisher's method,Statistical hypothesis testing
+1720,Statistical inference,Statistical hypothesis testing
+1721,Exact test,Statistical hypothesis testing
+1722,Almost sure hypothesis testing,Statistical hypothesis testing
+1723,Fiducial inference,Statistical hypothesis testing
+1724,Bayesian statistics,Statistical hypothesis testing
+1725,Pearson's chi-squared test,Statistical hypothesis testing
+1726,Null hypothesis,Statistical hypothesis testing
+1727,Bayesian inference,Statistical hypothesis testing
+1728,Statistical power,Statistical hypothesis testing
+1729,Statistical population,Statistical hypothesis testing
+1730,Statistical hypothesis testing,
+1731,Recursion (computer science),Gene expression programming
+1732,Linear genetic programming,Gene expression programming
+1733,Expression tree,Gene expression programming
+1734,Genetic programming,Gene expression programming
+1735,Genetic operator,Gene expression programming
+1736,Fitness function,Gene expression programming
+1737,Multi expression programming,Gene expression programming
+1738,Parse tree,Gene expression programming
+1739,Decision tree,Gene expression programming
+1740,Evolutionary algorithms,Gene expression programming
+1741,Evolution strategies,Gene expression programming
+1742,Combinatorial optimization,Gene expression programming
+1743,Statistical classification,Gene expression programming
+1744,Genetic algorithm,Gene expression programming
+1745,Logistic regression,Gene expression programming
+1746,Symbolic Regression,Gene expression programming
+1747,Grammatical evolution,Gene expression programming
+1748,Mutation (genetic algorithm),Gene expression programming
+1749,Regression analysis,Gene expression programming
+1750,Gene expression programming,
+1751,Confidence band,Confidence interval
+1752,Normal distribution,Confidence interval
+1753,Credible interval,Confidence interval
+1754,Uniform distribution (continuous),Confidence interval
+1755,Pivotal quantity,Confidence interval
+1756,Probability distribution,Confidence interval
+1757,Margin of error,Confidence interval
+1758,Prediction interval,Confidence interval
+1759,Point estimate,Confidence interval
+1760,Bayesian inference,Confidence interval
+1761,Variance,Confidence interval
+1762,Maximum likelihood estimation,Confidence interval
+1763,Random variable,Confidence interval
+1764,68–95–99.7 rule,Confidence interval
+1765,Binomial proportion confidence interval,Confidence interval
+1766,Frequentist inference,Confidence interval
+1767,Neyman construction,Confidence interval
+1768,Sample size determination,Confidence interval
+1769,Method of moments (statistics),Confidence interval
+1770,Coverage probability,Confidence interval
+1771,Confidence interval,
+1772,Bernstein–von Mises theorem,Posterior probability
+1773,Interval estimation,Posterior probability
+1774,Prediction interval,Posterior probability
+1775,Bayes' theorem,Posterior probability
+1776,Variational Bayesian methods,Posterior probability
+1777,Credible interval,Posterior probability
+1778,Maximum a posteriori estimation,Posterior probability
+1779,Bayesian epistemology,Posterior probability
+1780,Prior probability,Posterior probability
+1781,Class membership probabilities,Posterior probability
+1782,Bayesian statistics,Posterior probability
+1783,Statistical parameter,Posterior probability
+1784,Probability of success,Posterior probability
+1785,Law of total probability,Posterior probability
+1786,Likelihood function,Posterior probability
+1787,Random variable,Posterior probability
+1788,Bayesian inference,Posterior probability
+1789,Normalizing constant,Posterior probability
+1790,Conditional probability,Posterior probability
+1791,Point estimate,Posterior probability
+1792,Posterior probability,
+1793,Logistic regression,Regression analysis
+1794,F-test,Regression analysis
+1795,Linear regression,Regression analysis
+1796,Probit model,Regression analysis
+1797,Stepwise regression,Regression analysis
+1798,Ordered logit,Regression analysis
+1799,Poisson regression,Regression analysis
+1800,Statistical model,Regression analysis
+1801,Bayesian linear regression,Regression analysis
+1802,Least squares,Regression analysis
+1803,Simple linear regression,Regression analysis
+1804,Local regression,Regression analysis
+1805,Regression validation,Regression analysis
+1806,Prediction,Regression analysis
+1807,Robust regression,Regression analysis
+1808,Kriging,Regression analysis
+1809,Quantile regression,Regression analysis
+1810,Ordinary least squares,Regression analysis
+1811,Nonparametric regression,Regression analysis
+1812,R-squared,Regression analysis
+1813,Regression analysis,
+1814,Kurtosis,Statistical population
+1815,Unbiased estimator,Statistical population
+1816,Statistical inference,Statistical population
+1817,Horvitz–Thompson estimator,Statistical population
+1818,Overdispersion,Statistical population
+1819,Stratified sampling,Statistical population
+1820,Expected value,Statistical population
+1821,Mixture model,Statistical population
+1822,Sample mean,Statistical population
+1823,Sampling fraction,Statistical population
+1824,Cauchy distribution,Statistical population
+1825,Statistics,Statistical population
+1826,Sample (statistics),Statistical population
+1827,Sample statistics,Statistical population
+1828,Accuracy,Statistical population
+1829,Estimation theory,Statistical population
+1830,Central tendency,Statistical population
+1831,Probability distribution,Statistical population
+1832,Random variable,Statistical population
+1833,Statistical parameter,Statistical population
+1834,Statistical population,
+1835,Normal distribution,Prior probability
+1836,Conjugate prior,Prior probability
+1837,Beta distribution,Prior probability
+1838,Principle of maximum entropy,Prior probability
+1839,Frequentist inference,Prior probability
+1840,Uniform distribution (continuous),Prior probability
+1841,Regularization (mathematics),Prior probability
+1842,Bayes' theorem,Prior probability
+1843,Hyperprior,Prior probability
+1844,Likelihood function,Prior probability
+1845,Bernstein–von Mises theorem,Prior probability
+1846,Probability distribution,Prior probability
+1847,Posterior probability,Prior probability
+1848,Jeffreys prior,Prior probability
+1849,Statistical inference,Prior probability
+1850,Hyperparameter,Prior probability
+1851,Bayesianism,Prior probability
+1852,Marginal distribution,Prior probability
+1853,Algorithmic probability,Prior probability
+1854,Prior probability,
+1855,Activation function,Artificial neural network
+1856,Neural gas,Artificial neural network
+1857,Spiking neural network,Artificial neural network
+1858,Regularization (mathematics),Artificial neural network
+1859,Large width limits of neural networks,Artificial neural network
+1860,Neuroevolution,Artificial neural network
+1861,Feedforward neural network,Artificial neural network
+1862,Hybrid neural network,Artificial neural network
+1863,List of machine learning concepts,Artificial neural network
+1864,Convolutional neural network,Artificial neural network
+1865,Biological neural network,Artificial neural network
+1866,Vanishing gradient problem,Artificial neural network
+1867,Unsupervised learning,Artificial neural network
+1868,Supervised learning,Artificial neural network
+1869,Neural network,Artificial neural network
+1870,Neural network software,Artificial neural network
+1871,Artificial neurons,Artificial neural network
+1872,Extreme learning machine,Artificial neural network
+1873,Deep learning,Artificial neural network
+1874,Backpropagation,Artificial neural network
+1875,Artificial neural network,
+1876,Probability theory,Conditional probability distribution
+1877,Statistical independence,Conditional probability distribution
+1878,Random variable,Conditional probability distribution
+1879,Joint probability distribution,Conditional probability distribution
+1880,Marginal distribution,Conditional probability distribution
+1881,Probability distribution,Conditional probability distribution
+1882,Conditional probability,Conditional probability distribution
+1883,Conditional variance,Conditional probability distribution
+1884,Likelihood function,Conditional probability distribution
+1885,Statistics,Conditional probability distribution
+1886,Conditional probability table,Conditional probability distribution
+1887,Conditioning (probability),Conditional probability distribution
+1888,Bayes' theorem,Conditional probability distribution
+1889,Categorical data,Conditional probability distribution
+1890,Probability density function,Conditional probability distribution
+1891,Probability measure,Conditional probability distribution
+1892,Regular conditional probability,Conditional probability distribution
+1893,Moment (mathematics),Conditional probability distribution
+1894,Bivariate normal distribution,Conditional probability distribution
+1895,Conditional expectation,Conditional probability distribution
+1896,Conditional probability distribution,
+1897,Radio noise,Radio receiver
+1898,Carrier signal,Radio receiver
+1899,Radio,Radio receiver
+1900,Transmitter,Radio receiver
+1901,Digital audio broadcasting,Radio receiver
+1902,Single-sideband modulation,Radio receiver
+1903,Demodulation,Radio receiver
+1904,Frequency modulation,Radio receiver
+1905,Digital signal,Radio receiver
+1906,Digital signal processing,Radio receiver
+1907,Radar,Radio receiver
+1908,Modulation,Radio receiver
+1909,Measuring receiver,Radio receiver
+1910,Detector (radio),Radio receiver
+1911,Amplitude modulation,Radio receiver
+1912,Transceiver,Radio receiver
+1913,Passband,Radio receiver
+1914,Base station,Radio receiver
+1915,Communications receiver,Radio receiver
+1916,Radio receiver,
+1917,Feature vector,Dependent and independent variables
+1918,Covariance,Dependent and independent variables
+1919,Statistics,Dependent and independent variables
+1920,Regression analysis,Dependent and independent variables
+1921,Linear regression,Dependent and independent variables
+1922,Linear model,Dependent and independent variables
+1923,Goodness of fit,Dependent and independent variables
+1924,Multivariate statistics,Dependent and independent variables
+1925,Experimental design,Dependent and independent variables
+1926,Omitted variable bias,Dependent and independent variables
+1927,Supervised learning,Dependent and independent variables
+1928,Control variable,Dependent and independent variables
+1929,Vector-valued functions,Dependent and independent variables
+1930,Latent variable,Dependent and independent variables
+1931,Statistical model,Dependent and independent variables
+1932,Continuous or discrete variable,Dependent and independent variables
+1933,Mathematical model,Dependent and independent variables
+1934,Stochastic,Dependent and independent variables
+1935,Categorical data,Dependent and independent variables
+1936,Dependent and independent variables,
+1937,Evolutionary robotics,Fitness function
+1938,Figure of merit,Fitness function
+1939,Genetic programming,Fitness function
+1940,Co-evolution,Fitness function
+1941,Interactive genetic algorithms,Fitness function
+1942,Evolutionary Computation,Fitness function
+1943,Genetic algorithm,Fitness function
+1944,Fitness landscape,Fitness function
+1945,Loss function,Fitness function
+1946,Test functions for optimization,Fitness function
+1947,PDF,Fitness function
+1948,Fitness approximation,Fitness function
+1949,Crossover (genetic algorithm),Fitness function
+1950,Niche differentiation,Fitness function
+1951,Chromosome (genetic algorithm),Fitness function
+1952,Inferential programming,Fitness function
+1953,Fitness function,
+1954,P-value,Null hypothesis
+1955,Bayes factor,Null hypothesis
+1956,Model selection,Null hypothesis
+1957,Statistical significance,Null hypothesis
+1958,Bias (statistics),Null hypothesis
+1959,Homogeneity (statistics),Null hypothesis
+1960,Statistical inference,Null hypothesis
+1961,Statistical model,Null hypothesis
+1962,Probability distribution,Null hypothesis
+1963,Statistical population,Null hypothesis
+1964,The Design of Experiments,Null hypothesis
+1965,Hypothesis,Null hypothesis
+1966,Alternative hypothesis,Null hypothesis
+1967,Estimation statistics,Null hypothesis
+1968,Testing hypotheses suggested by the data,Null hypothesis
+1969,Likelihood-ratio test,Null hypothesis
+1970,Statistical hypothesis testing,Null hypothesis
+1971,One-tailed test,Null hypothesis
+1972,Test statistic,Null hypothesis
+1973,Counternull,Null hypothesis
+1974,Null hypothesis,
+1975,LOBPCG,Spectral clustering
+1976,Segmentation-based object categorization,Spectral clustering
+1977,Hierarchical clustering,Spectral clustering
+1978,Dimensionality reduction,Spectral clustering
+1979,Sparse matrix,Spectral clustering
+1980,Preconditioner,Spectral clustering
+1981,Nearest neighbor search,Spectral clustering
+1982,Similarity matrix,Spectral clustering
+1983,DBSCAN,Spectral clustering
+1984,Multivariate statistics,Spectral clustering
+1985,Affinity propagation,Spectral clustering
+1986,Power iteration,Spectral clustering
+1987,Cluster analysis,Spectral clustering
+1988,Nonlinear dimensionality reduction,Spectral clustering
+1989,Kernel principal component analysis,Spectral clustering
+1990,Fiedler vector,Spectral clustering
+1991,Spectral graph theory,Spectral clustering
+1992,Spectrum of a matrix,Spectral clustering
+1993,K-means clustering,Spectral clustering
+1994,Laplacian matrix,Spectral clustering
+1995,Spectral clustering,
+1996,Farkas's lemma,Hyperplane separation theorem
+1997,Theorem,Hyperplane separation theorem
+1998,Convex geometry,Hyperplane separation theorem
+1999,Dual cone,Hyperplane separation theorem
+2000,Cauchy sequence,Hyperplane separation theorem
+2001,Disjoint sets,Hyperplane separation theorem
+2002,Compact set,Hyperplane separation theorem
+2003,Affine subspace,Hyperplane separation theorem
+2004,Projection (set theory),Hyperplane separation theorem
+2005,Supporting hyperplane theorem,Hyperplane separation theorem
+2006,Convex set,Hyperplane separation theorem
+2007,Kirchberger's theorem,Hyperplane separation theorem
+2008,Hahn–Banach theorem,Hyperplane separation theorem
+2009,Geometry,Hyperplane separation theorem
+2010,Minkowski sum,Hyperplane separation theorem
+2011,Topological vector spaces,Hyperplane separation theorem
+2012,Collision detection,Hyperplane separation theorem
+2013,Convex hull,Hyperplane separation theorem
+2014,Support-vector machine,Hyperplane separation theorem
+2015,Hyperplane,Hyperplane separation theorem
+2016,Hyperplane separation theorem,
+2017,ELKI,K-medoids
+2018,KNIME,K-medoids
+2019,K-means clustering,K-medoids
+2020,Greedy algorithm,K-medoids
+2021,R (programming language),K-medoids
+2022,RapidMiner,K-medoids
+2023,Julia language,K-medoids
+2024,Euclidean distance,K-medoids
+2025,Peter Rousseeuw,K-medoids
+2026,Rust (programming language),K-medoids
+2027,Python (programming language),K-medoids
+2028,Silhouette (clustering),K-medoids
+2029,MATLAB,K-medoids
+2030,Lloyd's algorithm,K-medoids
+2031,Medoids,K-medoids
+2032,Cluster analysis,K-medoids
+2033,Hierarchical clustering,K-medoids
+2034,K-medoids,
