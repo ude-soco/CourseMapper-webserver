@@ -18,6 +18,7 @@ export class CardVideoListComponent {
   public showVideo = false;
   public video: VideoElementModel;
   @Input() userId: string;
+  @Input() resultTabType: string = "";
 
   constructor(private route: Router) { }
 
@@ -29,5 +30,9 @@ export class CardVideoListComponent {
 
   goBack(): void {
     this.showVideo = !this.showVideo;
+  }
+
+  onResourceRemovedEvent(rid: string) {
+    this.videoElements = this.videoElements.filter(video => video.rid !== rid);
   }
 }

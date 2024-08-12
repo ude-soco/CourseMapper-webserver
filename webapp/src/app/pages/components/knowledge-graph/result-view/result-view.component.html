@@ -414,6 +414,7 @@
               [notUnderstoodConcepts]="concepts"
               [videoElements]="filteringResourcesFound?.videos"
               [userId]="userId"
+              [resultTabType]="'saved'"
               ></app-card-video-list>
           </div>
           <div *ngIf="filteringResourcesFound?.articles.length > 0">
@@ -421,6 +422,7 @@
               [notUnderstoodConcepts]="concepts"
               [articleElements]="filteringResourcesFound?.articles"
               [userId]="userId"
+              [resultTabType]="'saved'"
               ></app-card-article-list>
           </div>
         </div>

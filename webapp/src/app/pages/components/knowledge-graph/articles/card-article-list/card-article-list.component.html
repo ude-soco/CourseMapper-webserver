@@ -5,6 +5,8 @@
       [article]="article" 
       (onClick)="article.id" 
       [userId]="userId"
+      [resultTabType]="resultTabType"
+      (resourceRemovedEvent)="onResourceRemovedEvent($event)"
     >
     </app-card-article>
   </div>

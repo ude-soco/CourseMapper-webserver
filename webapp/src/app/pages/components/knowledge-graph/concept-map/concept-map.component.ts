@@ -1708,20 +1708,20 @@ export class ConceptMapComponent implements OnInit, OnDestroy {
 
           console.log('recommended concepts are:');
           console.log(this.filteredMapRecData);
-          // this.kgTabs.kgTabsEnable();
-          // this.mainConceptsTab = false;
-          // this.recommendedConceptsTab = true;
-          // // this.tabs[2].disabled = true;
-          // this.recommendedMaterialsTab = false;
+          this.kgTabs.kgTabsEnable();
+          this.mainConceptsTab = false;
+          this.recommendedConceptsTab = true;
+          // this.tabs[2].disabled = true;
+          this.recommendedMaterialsTab = false;
 
           // boby024
           // this.kgTabs.kgTabsEnable();
-          this.mainConceptsTab = false;
-          this.recommendedConceptsTab = false;
-          this.tabs[1].disabled = true;
-          this.recommendedMaterialsTab = false;
-          this.kgTabsActivated = false;
-          this.tabs[2].disabled = false;
+          // this.mainConceptsTab = false;
+          // this.recommendedConceptsTab = false;
+          // this.tabs[1].disabled = true;
+          // this.recommendedMaterialsTab = false;
+          // this.kgTabsActivated = false;
+          // this.tabs[2].disabled = false;
           // this.resourcesPagination = ResourcesPagination;
 
           //////////////////////////call material-recommender/////////////////////////

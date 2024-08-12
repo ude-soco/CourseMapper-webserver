@@ -14,4 +14,9 @@ export class CardArticleListComponent {
   public notUnderstoodConcepts: string[];
   public article!: ArticleElementModel;
   @Input() userId: string;
+  @Input() resultTabType: string = "";
+
+  onResourceRemovedEvent(rid: string) {
+    this.articleElements = this.articleElements.filter(article => article.rid !== rid);
+  }
 }

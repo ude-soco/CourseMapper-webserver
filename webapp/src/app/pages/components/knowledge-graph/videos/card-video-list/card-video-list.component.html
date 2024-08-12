@@ -6,6 +6,8 @@
           (onWatchVideo)="readVideo($event)" 
           [videoElement]="videoElement" 
           [userId]="userId"
+          [resultTabType]="resultTabType"
+          (resourceRemovedEvent)="onResourceRemovedEvent($event)"
         >
         </app-card-video>
       </div>

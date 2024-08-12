@@ -37,6 +37,8 @@ export class CardArticleComponent {
    articleDescription = "";
    saveOrRemoveParams = {"user_id": "", "rid": "", "status": this.isBookmarkFill};
    saveOrRemoveStatus = false;
+   @Input() resultTabType: string = "";
+   @Output() resourceRemovedEvent = new EventEmitter<string>(); // take rid
 
   ngOnInit(): void {}
 
@@ -66,6 +68,7 @@ export class CardArticleComponent {
     this.isBookmarkFill = this.isBookmarkFill === true ? false : true;
     this.saveOrRemoveParams.status = this.isBookmarkFill;
     this.SaveOrRemoveUserResource(this.saveOrRemoveParams);
+    this.onResourceRemovedEvent();
   }
 
   saveOrRemoveBookmark() {
@@ -102,4 +105,11 @@ export class CardArticleComponent {
       }
     );
   }
+
+  onResourceRemovedEvent() {
+    if (this.isBookmarkFill === false && this.resultTabType === "saved") {
+      this.resourceRemovedEvent.emit(this.article.rid);
+    }
+  }
+
 }
