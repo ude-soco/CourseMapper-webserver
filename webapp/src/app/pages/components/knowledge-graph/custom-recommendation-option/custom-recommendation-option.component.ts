@@ -251,6 +251,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
   }
 
   mapConcept(cids: string[], conceptsList: any[]) {
+    console.warn("cids -> ", cids)
     this.croService.getConceptsByCids(this.userId, cids.toString()).subscribe((res: Neo4jResult) => {
       this.croForm.concepts = res.records;
       for(let concept of this.croForm.concepts) {
@@ -306,7 +307,8 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
       this.updateCROform(didNotUnderstandConceptsObj, "1");
 
     } else if (this.croForm.category === "2") {
-      this.updateCROform(previousConceptsObj, "2");
+      // this.updateCROform(previousConceptsObj, "2");
+      this.updateCROform([...didNotUnderstandConceptsObj, ...previousConceptsObj], "2");
 
     } else if (this.croForm.category === "3") {
       this.updateCROform(undefined, "3");
@@ -317,6 +319,16 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     }
 
     // this.updateStatus1or2();
+  }
+
+  combine2ConceptsList(arrayA, arrayB) {
+    arrayA.forEach(itemA => {
+      const existsInB = arrayB.some(itemB => itemB.cid === itemA.cid);
+      if (!existsInB) {
+        arrayB.push(itemA);
+      }
+    });
+    return arrayA;
   }
 
   updateStatus1or2() {
@@ -352,8 +364,8 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
       this.updateCROform(this.didNotUnderstandConceptsObj, "1")
 
     } else if (this.croForm.category === "2") {
-      // console.warn("previousConceptsObj ->", this.previousConceptsObj);
-      this.updateCROform(this.previousConceptsObj, "2");
+      // this.updateCROform(this.previousConceptsObj, "2");
+      this.updateCROform([...this.didNotUnderstandConceptsObj, ...this.previousConceptsObj], "2");
 
     } else if (this.croForm.category === "3") {
       this.updateCROform(undefined, "3");
@@ -508,7 +520,8 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     return this.croForm;
   }
   
-  ngOnChanges(changes: SimpleChanges) {    
+  ngOnChanges(changes: SimpleChanges) {
+    console.warn("changes > ", changes) 
     for (const propName in changes) {
       if (propName === "materialId") {
         this.getConceptsManually();

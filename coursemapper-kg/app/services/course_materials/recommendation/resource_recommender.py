@@ -246,8 +246,8 @@ class ResourceRecommenderService:
                                                                concept_name=concept["name"], 
                                                                cid= concept["cid"], 
                                                                result_type="records",
-                                                               top_n_videos=5,
-                                                               top_n_articles=5
+                                                               top_n_videos=15,
+                                                               top_n_articles=15
                                                             ))
 
             # Store resources into Neo4j Database (by creating connection btw Resource and Concept_modified)

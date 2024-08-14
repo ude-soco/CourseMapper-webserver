@@ -314,11 +314,16 @@ export class ConceptMapComponent implements OnInit, OnDestroy {
   }
 
   croUpdater(didNotUnderstandConceptsObj: any[], previousConceptsObj: any[]) {
-    if (didNotUnderstandConceptsObj !== undefined && previousConceptsObj === undefined) {
-      this.croComponent?.updateCROformAll(didNotUnderstandConceptsObj, undefined)
-    } else if (didNotUnderstandConceptsObj === undefined && previousConceptsObj !== undefined) {
-      this.croComponent.updateCROformAll(undefined, previousConceptsObj)
-    }
+    // if (didNotUnderstandConceptsObj !== undefined && previousConceptsObj === undefined) {
+    //   this.croComponent?.updateCROformAll(didNotUnderstandConceptsObj, undefined)
+    // } else if (didNotUnderstandConceptsObj === undefined && previousConceptsObj !== undefined) {
+    //   this.croComponent.updateCROformAll(undefined, previousConceptsObj)
+    // }
+
+    this.croComponent?.updateCROformAll(didNotUnderstandConceptsObj, previousConceptsObj);
+    console.warn("didNotUnderstandConceptsObj -> ", didNotUnderstandConceptsObj)
+    console.warn("previousConceptsObj -> ", previousConceptsObj)
+    console.warn("-------------------")
   }
 
 
@@ -803,6 +808,9 @@ export class ConceptMapComponent implements OnInit, OnDestroy {
             this.previousConceptFromChipObj
           );
           this.previousConceptFromChipObj = null;
+          
+          // boby024
+          this.croUpdater(this.didNotUnderstandConceptsObj, this.previousConceptsObj);
         },
       },
       {
@@ -814,6 +822,9 @@ export class ConceptMapComponent implements OnInit, OnDestroy {
                 (concept) => concept !== this.previousConceptFromChipObj.cid)
           this.slideConceptservice.updateNewConcepts(this.previousConceptFromChipObj);
           this.previousConceptFromChipObj = null;
+
+          // boby024
+          this.croUpdater(this.didNotUnderstandConceptsObj, this.previousConceptsObj);
         },
       },
     ];
@@ -1600,8 +1611,9 @@ export class ConceptMapComponent implements OnInit, OnDestroy {
    * 
    * by boby024
    */
-  getResourcesRecommendated(data) {
-    let reqData = data
+  async getResourcesRecommendated() {
+    const reqData = await this.getRecommendedMaterialsPerSlide();
+    // let reqData = data
     this.setHeightGraphComponent();
     this.isRecommendationButtonDisplayed = false;
     let croFormData = this.croComponent.getOnlyStatusChecked();
@@ -1640,6 +1652,8 @@ export class ConceptMapComponent implements OnInit, OnDestroy {
     if (this.disableShowRecommendationsButton) {
       this.infoToast();
     } else {
+      // this.getResourcesRecommendated()
+      // return 
       //prepare a list of all understood concepts
       try {
         this.recommendedConcepts = null;
@@ -1717,11 +1731,11 @@ export class ConceptMapComponent implements OnInit, OnDestroy {
           // boby024
           // this.kgTabs.kgTabsEnable();
           // this.mainConceptsTab = false;
-          // this.recommendedConceptsTab = false;
+          this.recommendedConceptsTab = false;
+          this.tabs[1].disabled = true;
           // this.tabs[1].disabled = true;
-          this.recommendedMaterialsTab = false;
+          // this.recommendedMaterialsTab = false;
           // this.kgTabsActivated = false;
-          // this.tabs[2].disabled = false;
           // this.resourcesPagination = ResourcesPagination;
 
           //////////////////////////call material-recommender/////////////////////////

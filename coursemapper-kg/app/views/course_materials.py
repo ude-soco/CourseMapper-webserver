@@ -132,7 +132,7 @@ def get_resources():
     print()
     
     # TEST SAMPLE
-    return jsonify(cro_get_resources_pagination()), 200
+    # return jsonify(cro_get_resources_pagination()), 200
 
     try:
         resource_recommender_service = ResourceRecommenderService()
