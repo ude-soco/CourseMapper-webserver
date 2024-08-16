@@ -26,7 +26,7 @@ export class CardVideoComponent {
   @Output() onClick: EventEmitter<any> = new EventEmitter();
   @Output() onWatchVideo: EventEmitter<any> = new EventEmitter();
   @Input() userId: string;
-  @Input() TabSaved: boolean;
+  @Input() TabSaved: boolean = false;
 
   // boby024
   isDescriptionFullDisplayed = false;

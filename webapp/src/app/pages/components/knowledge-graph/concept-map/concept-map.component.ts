@@ -41,6 +41,7 @@ import { getCurrentPdfPage } from '../../annotations/pdf-annotation/state/annota
 import { ViewChild } from '@angular/core';
 import { ActivatorPartCRO, ResourcesPagination } from 'src/app/models/croForm';
 import { CustomRecommendationOptionComponent } from '../custom-recommendation-option/custom-recommendation-option.component';
+
 interface conceptModel {
   name: string;
   code: string;
@@ -321,9 +322,7 @@ export class ConceptMapComponent implements OnInit, OnDestroy {
     // }
 
     this.croComponent?.updateCROformAll(didNotUnderstandConceptsObj, previousConceptsObj);
-    console.warn("didNotUnderstandConceptsObj -> ", didNotUnderstandConceptsObj)
-    console.warn("previousConceptsObj -> ", previousConceptsObj)
-    console.warn("-------------------")
+    // this.croComponent?.updateCROformAll(this.didNotUnderstandConceptsObj, this.previousConceptsObj);
   }
 
 
@@ -832,6 +831,12 @@ export class ConceptMapComponent implements OnInit, OnDestroy {
 
     this.selectedRecModel = this.recModels[0];
     this.selectedOption = this.selectedCheckOptions.slice(0, 1);
+
+    // this.didNotUnderstandConceptsObj = this.didNotUnderstandConceptsObj.filter((item, index, self) =>
+    //   index === self.findIndex((t) => (
+    //     t.cid === item.cid
+    //   ))
+    // );
   }
 
   ngAfterViewChecked() {
@@ -1662,7 +1667,7 @@ export class ConceptMapComponent implements OnInit, OnDestroy {
         this.tabs[1].disabled = true;
         this.tabs[2].disabled = true;
         this.kgTabsActivated = false;
-
+      
         this.understoodConceptsObj.forEach((concept) => {
           this.allUnderstoodConcepts.push(concept.cid);
         });
@@ -1729,14 +1734,8 @@ export class ConceptMapComponent implements OnInit, OnDestroy {
           this.recommendedMaterialsTab = false;
 
           // boby024
-          // this.kgTabs.kgTabsEnable();
-          // this.mainConceptsTab = false;
-          this.recommendedConceptsTab = false;
-          this.tabs[1].disabled = true;
-          // this.tabs[1].disabled = true;
-          // this.recommendedMaterialsTab = false;
-          // this.kgTabsActivated = false;
-          // this.resourcesPagination = ResourcesPagination;
+          // this.recommendedMaterialsTab = true;
+
 
           //////////////////////////call material-recommender/////////////////////////
           console.log('calling material recommender');

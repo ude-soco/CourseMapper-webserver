@@ -124,12 +124,13 @@
                   <div>
                     <p-checkbox [(ngModel)]="croSorting.publish_time.status" [binary]="true" inputId="publish_time"
                     (onChange)="sortResourcesByKeys('')"
+                    [disabled]="disabledSortingKeys"
                     ></p-checkbox>
                   </div>
                   <div class="flex flex-row gap-2">
                     <div class="my-auto"><label for="publish_time">Most recent</label></div>
                     <div class="flex flex-row space-x-2 pl-4 ml-6">
-                      <button (click)="sortResourcesByKeys('publish_time')">
+                      <button (click)="sortResourcesByKeys('publish_time')" [disabled]="disabledSortingKeys">
                         <div *ngIf="croSorting.publish_time.arrow === true">
                           <!-- <span class="pi pi-arrow-down" style="font-size: 1.2rem"></span> -->
                           <span>Bottom to top</span>
@@ -148,12 +149,13 @@
                   <div>
                     <p-checkbox [(ngModel)]="croSorting.views.status" [binary]="true" inputId="views"
                     (onChange)="sortResourcesByKeys('')"
+                    [disabled]="disabledSortingKeys"
                     ></p-checkbox>
                   </div>
                   <div class="flex flex-row gap-2">
                     <div class="my-auto"><label for="views">Most viewed</label></div>
                     <div class="flex flex-row space-x-2 pl-4 ml-5">
-                      <button (click)="sortResourcesByKeys('views')">
+                      <button (click)="sortResourcesByKeys('views')" [disabled]="disabledSortingKeys">
                         <div *ngIf="croSorting.views.arrow === true">
                           <!-- <span class="pi pi-arrow-down" style="font-size: 1.2rem"></span> -->
                           <span>Bottom to top</span>

@@ -19,7 +19,9 @@ export interface Concept {
     type?: string,
     uri?: string,
     cid?: string,
-    id?: string
+    id?: string,
+    status?: string,
+    visible?: string
 }
 
 export interface Neo4jResult {

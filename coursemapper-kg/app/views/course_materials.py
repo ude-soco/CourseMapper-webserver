@@ -134,13 +134,10 @@ def get_resources():
     # TEST SAMPLE
     # return jsonify(cro_get_resources_pagination()), 200
 
-    try:
-        resource_recommender_service = ResourceRecommenderService()
-        result = resource_recommender_service._get_resources(data_default=data["default"], data_rec_params=data["rec_params"])
-        return jsonify(result), 200
-    except Exception as e:
-        print(e)
-        return jsonify({"msg": "Internal Server Error"}), 404
+    resource_recommender_service = ResourceRecommenderService()
+    result = resource_recommender_service._get_resources(data_default=data["default"], data_rec_params=data["rec_params"])
+    return jsonify(result), 200
+    # jsonify({"msg": "Internal Server Error"}), 404
 
 
 @course_materials.route("/get_concepts", methods=["POST"])

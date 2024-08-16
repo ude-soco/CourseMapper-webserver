@@ -1,8 +1,10 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { MenuItem, MessageService } from 'primeng/api';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, lastValueFrom } from 'rxjs';
 import { ActivatorPartCRO, CROform, Neo4jResult, FactorWeight } from 'src/app/models/croForm';
 import { CustomRecommendationOptionService } from 'src/app/services/custom-recommenation-option.service';
+import { SlideConceptsService } from 'src/app/services/slide-concepts.service';
+import { last, takeLast } from 'rxjs/operators';
 
 
 @Component({
@@ -19,7 +21,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
   @Input() activatorPartCRO: ActivatorPartCRO;
   // @Output() croFormValue: any; //  = new EventEmitter<CROform>();
 
-  isCustomRecOptionDisplayed = true;
+  isCustomRecOptionDisplayed = false;
   cro_concept_weight: number;
   cro_concept_selected: any | undefined;
   // cro_concept_status_selected: boolean;
@@ -106,7 +108,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
   constructor(
     private croService: CustomRecommendationOptionService,
     private messageService: MessageService,
-    // private slideConceptservice: SlideConceptsService
+    private slideConceptservice: SlideConceptsService
   ) {
     // this.getConceptsManually();
     // this.get_concepts_manually_current_slide();
@@ -117,6 +119,25 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     this.croForm["user_id"] = this.userId;
     this.croForm["mid"] = this.materialId;
     this.croForm["slide_id"] = this.slideId;
+
+    // this.slideConceptservice.didNotUnderstandConcepts.subscribe((res) => {
+    //   console.warn('dnu values      -> ', res)
+    // });
+    // this.slideConceptservice.newConcepts.subscribe((res) => {
+    //   console.warn("previous values -> ", res)
+    // });
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    for (const propName in changes) {
+      if (propName === "materialId") {
+        this.getConceptsManually();
+      }
+      if (propName === "slideId") {
+        // this.get_concepts_manually_current_slide();
+      }
+      this.updateCROformAll(this.didNotUnderstandConceptsObj, this.previousConceptsObj);
+    }
   }
 
   showCRO() {
@@ -250,8 +271,19 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     */
   }
 
+
+  addDictsIfNotExists(newDictsArray) {
+    newDictsArray.forEach(newDict => {
+        const exists = this.croForm.concepts.some(dict => dict.cid === newDict.cid);
+        if (!exists) {
+          newDict["status"] = true;
+          newDict["visible"] = true;
+          this.croForm.concepts.push(newDict);
+        }
+    });
+  }
+
   mapConcept(cids: string[], conceptsList: any[]) {
-    console.warn("cids -> ", cids)
     this.croService.getConceptsByCids(this.userId, cids.toString()).subscribe((res: Neo4jResult) => {
       this.croForm.concepts = res.records;
       for(let concept of this.croForm.concepts) {
@@ -520,19 +552,6 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     return this.croForm;
   }
   
-  ngOnChanges(changes: SimpleChanges) {
-    console.warn("changes > ", changes) 
-    for (const propName in changes) {
-      if (propName === "materialId") {
-        this.getConceptsManually();
-      }
-      if (propName === "slideId") {
-        // this.get_concepts_manually_current_slide();
-      }
-      this.updateCROformAll(this.didNotUnderstandConceptsObj, this.previousConceptsObj);
-    }
-  }
-
 
 
   /**

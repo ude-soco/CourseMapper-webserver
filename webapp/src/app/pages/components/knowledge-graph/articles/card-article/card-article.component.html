@@ -10,7 +10,30 @@
           Similarity Score: {{article.similarity_score | percent}}
         </span> -->
         <div>
-          <div class="text-[#0288d1] flex flex-row gap-2 mt-1 w-48 text-sm">
+          <div class="text-[#0288d1] flex flex-row gap-2 mt-1 w-48 text-sm" *ngIf="resultTabType !== 'saved'">
+            <div class="flex flex-row gap-2 m-auto mb-2" *ngIf="resultTabType !== 'saved'">
+              <div class="my-auto opacity-75">Similarity score:</div>
+              <div class="my-auto font-bold">{{ article?.similarity_score | percent }}</div>
+              <div
+                class="my-auto"
+                pTooltip="This score refers to how similar is this article with the concepts used to get recommendations"
+                tooltipPosition="top"
+              >
+                <span class="pi pi-info-circle" style="font-size: 0.8rem"></span>
+              </div>
+            </div>
+            
+            <div>
+              <div class="my-auto" (click)="addToBookmark()" *ngIf="!isBookmarkFill">
+                <i class="pi pi-bookmark" style="font-size: 1.2rem; color: #000000"></i>
+              </div>
+              <div class="my-auto" (click)="addToBookmark()" *ngIf="isBookmarkFill">
+                <i class="pi pi-bookmark-fill" style="font-size: 1.2rem; color: #0277BD"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-[#0288d1] flex flex-row gap-2 mt-1 text-sm" *ngIf="resultTabType === 'saved'">
             <div class="flex flex-row gap-2 m-auto mb-2" *ngIf="resultTabType !== 'saved'">
               <div class="my-auto opacity-75">Similarity score:</div>
               <div class="my-auto font-bold">{{ article?.similarity_score | percent }}</div>

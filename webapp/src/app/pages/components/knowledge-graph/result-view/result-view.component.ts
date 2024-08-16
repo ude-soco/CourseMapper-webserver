@@ -84,10 +84,11 @@ export class ResultViewComponent {
     publish_time: { status: false, arrow: false},
     views: { status: false, arrow: false}
   }
+  disabledSortingKeys = false;
   orderUpIcon = false;
 
   orderUP = "Top to botton"
-  orderDown = "Top to botton"
+  orderDown = "Botton to top"
   croSorting1 = [
     { name: 'Most similar', status: false, order: this.orderDown },
     { name: 'Most recent', status: false, order: this.orderDown },
@@ -345,6 +346,15 @@ export class ResultViewComponent {
       this.getRidsFromUserSaves();
     }
     this.closeVideoFrame();
+    this.deactivateSortingKeys();
+  }
+
+  deactivateSortingKeys() {
+    if (this.activeIndex === 1 ) {
+      this.disabledSortingKeys = true;
+    } else {
+      this.disabledSortingKeys = false;
+    }
   }
 
   setLeftPanelMWinWidth() {

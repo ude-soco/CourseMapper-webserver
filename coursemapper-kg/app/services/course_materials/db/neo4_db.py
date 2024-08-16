@@ -435,9 +435,21 @@ def get_user(tx, uid):
         "Get user '%s'" % uid)
     result = tx.run(
         "MATCH (u:User) WHERE u.uid = $uid RETURN u",
-        uid=uid).data()
+        uid=uid).single()
 
     return list(result)
+
+
+# def get_user_v2(tx, uid):
+#     """
+#     """
+#     logger.info(
+#         "Get user '%s'" % uid)
+#     result = tx.run(
+#         "MATCH (u:User) WHERE u.uid = $uid RETURN u.uid as uid",
+#         uid=uid).single()
+
+#     return result
 
 
 def retrieve_all_concepts(tx, mid):
@@ -538,6 +550,18 @@ def create_user(tx, user):
         userEmail=user["user_email"],
         embedding="")
 
+def create_user_v2(tx, user):
+    """
+    """
+    user_id = tx.run(
+        """MERGE (u:User {name: $name, uid: $uid, type: $type, email: $userEmail, embedding:$embedding}) RETURN u.uid""",
+        name=user["name"],
+        uid=user["id"],
+        type="user",
+        userEmail=user["user_email"],
+        embedding="").single()
+    return user_id
+    
 
 def retrieve_user_concept_relationships(tx, uid, relation_type):
     """
@@ -813,6 +837,24 @@ class NeoDataBase:
             tx.rollback()
             session.close()
             self.close()
+
+    # def get_or_create_user_v2(self, user):
+    #     """
+    #     """
+    #     session = self.driver.session()
+    #     tx = session.begin_transaction()
+    #     user = None
+        
+    #     # _uid = get_user(tx, user_id)
+    #     user = get_user_v2(tx, user["id"])
+    #     print("get_user_v2 -> ->", user)
+
+    #     if user == None:
+    #         user = create_user_v2(tx, user)
+    #         # create_user(tx, user)
+    #     print("user -> ->", user)
+
+    #     return user
 
     def get_concepts_and_relationships(self, materialId):
         """
@@ -1800,6 +1842,27 @@ class NeoDataBase:
     ###########
     # boby024 #
     ###########
+
+    def get_or_create_user_v2(self, user):
+        """
+        """
+        tx = self.driver.session()
+        user_node = tx.run(
+            "MATCH (u:User) WHERE u.uid = $uid RETURN u.uid as uid",
+            uid=user["user_id"]
+        ).single()
+
+        if user_node is None:
+            user_node = tx.run(
+                    """MERGE (u:User {name: $name, uid: $uid, type: $type, email: $userEmail, embedding:$embedding}) RETURN u.uid""",
+                    name=user["name"],
+                    uid=user["user_id"],
+                    type="user",
+                    userEmail=user["user_email"],
+                    embedding=""
+                ).single()
+            
+        return user_node
 
     def create_or_update_video_resource(self, tx, node: dict, recommendation_type='', update_embedding_values=False):
         '''

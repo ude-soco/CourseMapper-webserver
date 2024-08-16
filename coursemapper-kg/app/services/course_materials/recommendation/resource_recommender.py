@@ -323,9 +323,9 @@ class ResourceRecommenderService:
         if check_message != "":
             return result
         
-        # user = {"name": body["username"], "id": body["user_id"] , "user_email": body["user_email"] }
-        # create user node
-        self.db.get_or_create_user(user_id=body["user_id"], username=body["username"], user_email=body["user_email"])
+        user = {"user_id": body["user_id"], "name": body["username"], "user_email": body["user_email"] }
+        # create user node if not existed
+        user_ = self.db.get_or_create_user_v2(user)
                                    
         # _slide = None
         user_embedding = ""
