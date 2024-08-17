@@ -130,45 +130,7 @@ class AnnotationService:
                     annotation = [resource['@URI'].split("/resource/")[1] for resource in res['Resources']]
                     annotations.extend([(keyphrase, annotation_) for annotation_ in annotation])
                     self.set_annotation_in_cache(keyphrase, annotation)
-
-        return annotations
-
-    def annotate_keyphrases_dict(self, keyphrases: List[str]) -> Dict[str, Any]:
-        """
-        Annotate a list of keyphrases using DBpedia Spotlight.
-
-        Args:
-        keyphrases (List[str]): A list of keyphrases to annotate.
-
-        Returns:
-        Dict[str, Any]: A dictionary mapping keyphrases to their Wikipedia article title.
-        """
-        annotations = {}
-        url = "https://api.dbpedia-spotlight.org/en/annotate"  # URL for the English language API
-
-        headers = {
-            'Accept': 'application/json'
-        }
-
-        for phrase in keyphrases:
-            cached_annotation = self.get_annotation_from_cache(phrase)
-            if cached_annotation is not None:
-                annotations[phrase] = cached_annotation
-                continue
-
-            params = {
-                'text': phrase,
-                'confidence': 0.35,
-                'support': 5
-            }
-            response = requests.get(url, headers=headers, params=params)
-
-            if response.status_code == 200:
-                res = response.json()
-                if 'Resources' in res:
-                    annotations[phrase] = [resource['@URI'].split("/resource/")[1] for resource in res['Resources']]
-                    self.set_annotation_in_cache(phrase, annotations[phrase])
             else:
-                annotations[phrase] = None
+                raise Exception(f"Failed to annotate keyphrase: {response[1].status_code}")
 
         return annotations
