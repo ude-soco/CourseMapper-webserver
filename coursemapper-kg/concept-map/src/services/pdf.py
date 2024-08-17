@@ -115,8 +115,8 @@ def extract_text_from_pdf(file) -> List[str]:
         for part in parts:
             part_freq = slice_freq[part]
 
-            # Exclude slices that appear on more than min(5, number of pages / 2) pages
-            if part_freq > min(5, len(page_parts) / 2):
+            # Exclude slices that appear on more than min(5, number of pages) pages
+            if part_freq > min(5, max(len(page_parts) - 1, 1)):
                 continue
 
             final_part = re.sub(r'\s+', ' ', part.text)
