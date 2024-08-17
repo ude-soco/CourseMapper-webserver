@@ -9,6 +9,7 @@ from typing import Callable
 import math
 import numpy as np
 import scipy.sparse as sp
+import tempfile
 
 class ExpandMaterialPipeline:
     def __init__(self):
@@ -171,7 +172,7 @@ class ExpandMaterialPipeline:
         # TODO Normalize weights
         return graph
 
-    def idfeature(self, mid: str, graph_db: GraphDB):
+    def idfeature(self, mid: str, graph_db: GraphDB, fp: tempfile._TemporaryFileWrapper):
         # Get ids, initial embeddings and types of nodes (concept, related concept, category)
         with graph_db.driver.session() as session:
             concept_result = session.run(
@@ -195,12 +196,11 @@ class ExpandMaterialPipeline:
             idx_features.append(c)
         # Save ids and initial embeddings of nodes in text
         # The first column is the new id, the second column is the original id, and the rest is the initial embedding
-        with open("idfeature.txt", "w") as f:
-            for idx_feature in idx_features:
-                con = list(idx_feature["embedding"].split(","))
-                f.write(str(idx_feature["newid"]) + " " + str(idx_feature["id"]) + " " + " ".join(con) + "\n")
+        for idx_feature in idx_features:
+            con = list(idx_feature["embedding"].split(","))
+            fp.write(str(idx_feature["newid"]) + " " + str(idx_feature["id"]) + " " + " ".join(con) + "\n")
 
-    def relation(self, mid: str, graph_db: GraphDB):
+    def relation(self, mid: str, graph_db: GraphDB, fp: tempfile._TemporaryFileWrapper):
         # Get relationships between nodes (concept-related concept, concept-category)
         with graph_db.driver.session() as session:
             concept_result = session.run(
@@ -221,14 +221,19 @@ class ExpandMaterialPipeline:
             relationships.append(r)
         # Save relationships between nodes in text
         # first column is source node, second column is weight of relationship, third column is target node
-        with open("relation.txt", "w") as f:
-            for relationship in relationships:
-                f.write(str(relationship["source"]) + " " + str(relationship["weight"])
-                        + " " + str(relationship["target"]) + "\n")
+        for relationship in relationships:
+            fp.write(str(relationship["source"]) + " " + str(relationship["weight"])
+                    + " " + str(relationship["target"]) + "\n")
 
     def gcn(self, mid: str, graph_db: GraphDB):
-        self.idfeature(mid, graph_db)
-        self.relation(mid, graph_db)
+        idfeature_fp = tempfile.NamedTemporaryFile(delete=False)
+        relation_fp = tempfile.NamedTemporaryFile(delete=False)
+
+        self.idfeature(mid, graph_db, idfeature_fp)
+        self.relation(mid, graph_db, relation_fp)
+
+        idfeature_fp.close()
+        relation_fp.close()
 
         def normalize(mx):
             rowsum = np.array(mx.sum(1))
@@ -241,7 +246,7 @@ class ExpandMaterialPipeline:
 
         # Read ids and initial embeddings of nodes from idfeature.text
         # The structure of text: first column is new id of node(type:int), the second column is the original id (type:string), and the rest is the initial embedding
-        idx_features = np.genfromtxt("idfeature.txt", dtype=np.dtype(str))
+        idx_features = np.genfromtxt(idfeature_fp.name, dtype=np.dtype(str))
         # Construct initial embedding matrix
         # Extract initial embedding starts from the third column
         features = sp.csr_matrix(idx_features[:, 2:], dtype=np.float32)
@@ -249,7 +254,7 @@ class ExpandMaterialPipeline:
         # Construct Adjacency matrix
 
         # Read relationships of nodes from relation.text
-        edges1 = np.genfromtxt("relation.txt", dtype=np.float32)
+        edges1 = np.genfromtxt(relation_fp.name, dtype=np.float32)
         # Extract new id of node
         idx = np.array(idx_features[:, 0], dtype=np.float32)
         # Replace id with row number
