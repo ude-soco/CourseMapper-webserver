@@ -226,8 +226,8 @@ class ExpandMaterialPipeline:
                     + " " + str(relationship["target"]) + "\n")
 
     def gcn(self, mid: str, graph_db: GraphDB):
-        idfeature_fp = tempfile.NamedTemporaryFile(delete=False)
-        relation_fp = tempfile.NamedTemporaryFile(delete=False)
+        idfeature_fp = tempfile.NamedTemporaryFile(mode="w", delete=False)
+        relation_fp = tempfile.NamedTemporaryFile(mode="w", delete=False)
 
         self.idfeature(mid, graph_db, idfeature_fp)
         self.relation(mid, graph_db, relation_fp)
