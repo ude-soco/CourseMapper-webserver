@@ -248,6 +248,8 @@ export class ConceptMapComponent {
   editingConceptName?: string;
   isDraft: boolean = false;
   materialSlides: any;
+  docURL: string;
+  currentPDFPage: number;
 
   private subscriptions: Subscription[] = [];
   constructor(
@@ -285,6 +287,7 @@ export class ConceptMapComponent {
           .select(getCurrentMaterial)
           .subscribe((material) => {
             this.currentMaterial = material;
+            this.docURL = undefined;
             if (this.currentMaterial) {
               // get current page number to extend kg on slide level
               this.subscriptions.push(
@@ -356,6 +359,7 @@ export class ConceptMapComponent {
           this.selectedOption = this.selectedCheckOptions.slice(0, 1);
           //get current material's data
           this.currentMaterial = materialKgGenerator.selectedMaterialService;
+          this.docURL = undefined;
           //activate material kg & ensure that other views are deactivated
           this.showMaterialKg = true;
           this.showCourseKg = false;
@@ -1977,5 +1981,16 @@ export class ConceptMapComponent {
   async searchConcepts(event: any) {
     const results = await this.conceptMapService.searchWikipedia(event.query);
     this.conceptSearchResults = results.searchResults;
+  }
+
+  async previewSlide(event, slideId: Object) {
+    this.docURL = `${this.cmEndpointURL}${this.currentMaterial?.url}${this.currentMaterial?._id}.pdf`
+    this.currentPDFPage = parseInt(slideId["value"]);
+    event.stopPropagation();
+    return false;
+  }
+
+  selectAllSlides() {
+    this.editConceptForm.controls["conceptSlides"].setValue(this.materialSlides.records.map((slide) => slide.sid.split('_').pop()));
   }
 }

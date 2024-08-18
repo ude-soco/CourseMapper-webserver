@@ -150,8 +150,49 @@
                       formControlName="conceptSlides"
                       defaultLabel="Slides"
                       [filter]="false"
+                      filterPlaceholder="All slides"
                       styleClass="w-full"
-                    ></p-multiSelect>
+                    >
+                      <ng-template let-slide pTemplate="filter">
+                        <div class="flex flex-col w-full">
+                          <p>
+                            Slide preview
+                            <span *ngIf="docURL !== undefined">({{currentPDFPage}})</span>
+                            <span *ngIf="docURL === undefined">(click eye icon)</span>
+                          </p>
+                          <pdf-viewer
+                            [src]="docURL"
+                            [render-text]="true"
+                            [render-text-mode]="2"
+                            [fit-to-page]="true"
+                            [original-size]="true"
+                            [show-all]="false"
+                            [page]="currentPDFPage"
+                            style="width: 100%; height: 200px;"
+                          >
+                          </pdf-viewer>
+                          <div class="flex justify-end">
+                            <p-button
+                              label="Select all slides"
+                              (click)="selectAllSlides()"
+                              styleClass="p-button-outlined"
+                            ></p-button>
+                          </div>
+                        </div>
+                      </ng-template>
+                      <ng-template let-slide pTemplate="item">
+                        <div class="w-full flex flex-row items-center justify-between">
+                          Slide {{slide.label}}
+                          <p-button
+                            icon="pi pi-eye"
+                            (mouseup)="previewSlide($event, slide)"
+                            (mousedown)="previewSlide($event, slide)"
+                            (click)="previewSlide($event, slide)"
+                            styleClass="p-button-outlined"
+                          ></p-button>
+                        </div>
+                      </ng-template>
+                    </p-multiSelect>
                   </div>
                   <button
                     *ngIf="!editingConceptName"

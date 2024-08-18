@@ -40,6 +40,7 @@ import {TabViewModule} from 'primeng/tabview';
 import { InputTextModule } from 'primeng/inputtext';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { PdfViewerModule } from 'ng2-pdf-viewer';
 
 
 
@@ -87,6 +88,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
     ReactiveFormsModule,
     AutoCompleteModule,
     MultiSelectModule,
+    PdfViewerModule,
     ],
   exports: [
     ConceptMapComponent,
