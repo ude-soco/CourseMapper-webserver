@@ -153,28 +153,40 @@ def retrieve_keyphrases(data):
     '''
     logger.info("Add relevant columns for keyphrases")
 
-    resource_keyphrases_infos = []
-    resource_keyphrases = []
-    keyphrase_counts = []
-
+    # resource_keyphrases_infos = []
+    # resource_keyphrases = []
+    # keyphrase_counts = []
     # logger.info(data)
-    for index, text in enumerate(data["text"]):
-        pos = {"NOUN", "PROPN", "ADJ"}
-        extractor = SingleRank()
-        extractor.load_document(input=text, language="en")
-        extractor.candidate_selection(pos=pos)
-        extractor.candidate_weighting(window=10, pos=pos)
-        keyphrases_infos = extractor.get_n_best(n=15)
-        keyphrases = [keyphrase[0] for keyphrase in keyphrases_infos]
+    # for index, text in enumerate(data["text"]):
+    #     pos = {"NOUN", "PROPN", "ADJ"}
+    #     extractor = SingleRank()
+    #     extractor.load_document(input=text, language="en")
+    #     extractor.candidate_selection(pos=pos)
+    #     extractor.candidate_weighting(window=10, pos=pos)
+    #     keyphrases_infos = extractor.get_n_best(n=15)
+    #     keyphrases = [keyphrase[0] for keyphrase in keyphrases_infos]
 
-        keyphrase_counts.append(len(keyphrases))
-        resource_keyphrases.append(keyphrases)
-        resource_keyphrases_infos.append(keyphrases_infos)
-        index += 1
-    data["keyphrase_counts"] = keyphrase_counts
-    data["keyphrases"] = resource_keyphrases
-    data["keyphrases_infos"] = resource_keyphrases_infos
+    #     keyphrase_counts.append(len(keyphrases))
+    #     resource_keyphrases.append(keyphrases)
+    #     resource_keyphrases_infos.append(keyphrases_infos)
+    #     index += 1
+    # data["keyphrase_counts"] = keyphrase_counts
+    # data["keyphrases"] = resource_keyphrases
+    # data["keyphrases_infos"] = resource_keyphrases_infos
 
+    data['keyphrases_infos'] = None
+    for index, row in data.iterrows():
+        if "keyphrase_embedding" not in row or len(row["keyphrase_embedding"]) <= 2:
+            text = row["text"]
+            pos = {"NOUN", "PROPN", "ADJ"}
+            extractor = SingleRank()
+            extractor.load_document(input=text, language="en")
+            extractor.candidate_selection(pos=pos)
+            extractor.candidate_weighting(window=10, pos=pos)
+            keyphrases_infos = extractor.get_n_best(n=15)
+            data.at[index, 'keyphrases_infos'] = keyphrases_infos
+
+    # columns = data.columns
     return data
 
 
@@ -472,19 +484,29 @@ class Recommender:
         '''
             Compute keyphrase-based embedding for resources
         '''
-        # logger.info("Add relevant Columns for keyphrase-based embeddings")
+        def do(row):
+            if "keyphrase_embedding" not in row or len(row["keyphrase_embedding"]) <= 2:
+                keyphrase_infos = row["keyphrases_infos"]
+                keyphrases_avg_embedding = (
+                    self.compute_weighted_avg_embedding_of_keyphrases(
+                        keyphrase_infos
+                    ).tolist()
+                )
+                return keyphrases_avg_embedding
+            else:
+                return row["keyphrase_embedding"]
+        data['keyphrase_embedding'] = data.apply(do, axis=1)
 
-        resource_keyphrase_embeddings = []
-        for index, keyphrase_infos in enumerate(data["keyphrases_infos"]):
-            keyphrases_avg_embedding = (
-                self.compute_weighted_avg_embedding_of_keyphrases(
-                    keyphrase_infos
-                ).tolist()
-            )
-
-            resource_keyphrase_embeddings.append(keyphrases_avg_embedding)
-
-        data["keyphrase_embedding"] = resource_keyphrase_embeddings
+        # # logger.info("Add relevant Columns for keyphrase-based embeddings")
+        # resource_keyphrase_embeddings = []
+        # for index, keyphrase_infos in enumerate(data["keyphrases_infos"]):
+        #     keyphrases_avg_embedding = (
+        #         self.compute_weighted_avg_embedding_of_keyphrases(
+        #             keyphrase_infos
+        #         ).tolist()
+        #     )
+        #     resource_keyphrase_embeddings.append(keyphrases_avg_embedding)
+        # data["keyphrase_embedding"] = resource_keyphrase_embeddings
 
         return data
 
@@ -494,16 +516,24 @@ class Recommender:
             Retrieve term-based embeddings
         '''
         # logger.info("Add relevant Columns for document embeddings")
-        resource_document_based_embeddings = []
+        def do(row):
+            if "document_embedding" not in row or len(row["document_embedding"]) <= 2:
+                text = row["text"]
+                sentence = Sentence(text)
+                self.embedding.embed(sentence)
+                value = sentence.get_embedding().tolist()
+                return value
+            else:
+                return row["document_embedding"]
+        data['document_embedding'] = data.apply(do, axis=1)
 
-        for index, text in enumerate(data["text"]):
-            # logger.info(text)
-            sentence = Sentence(text)
-            self.embedding.embed(sentence)
-
-            resource_document_based_embeddings.append(sentence.get_embedding().tolist())
-
-        data["document_embedding"] = resource_document_based_embeddings
+        # resource_document_based_embeddings = []
+        # for index, text in enumerate(data["text"]):
+        #     # logger.info(text)
+        #     sentence = Sentence(text)
+        #     self.embedding.embed(sentence)
+        #     resource_document_based_embeddings.append(sentence.get_embedding().tolist())
+        # data["document_embedding"] = resource_document_based_embeddings
 
         return data
 
