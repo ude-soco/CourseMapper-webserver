@@ -38,7 +38,7 @@ class GCN:
         # Construct initial embedding matrix
         # Extract initial embedding starts from the third column
         features = sp.csr_matrix(idx_features[:, 2:], dtype=np.float32)
-        logger.info(features.A)
+        # logger.info(features.A)
 
         # Construct Adjacency matrix
 
@@ -79,7 +79,7 @@ class GCN:
         # The final embedding of a node is obtained by aggregating the embeddings of its first and second hop neighbours
         output = np.dot(adj, output)
         final_embeddings = output.A
-        logger.info(final_embeddings)
+        # logger.info(final_embeddings)
 
         # Extract original ids of nodes
         idx = np.array(idx_features[:, 1], dtype=np.dtype(str))

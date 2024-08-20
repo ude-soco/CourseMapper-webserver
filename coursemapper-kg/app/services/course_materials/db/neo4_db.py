@@ -2285,28 +2285,33 @@ class NeoDataBase:
             cid: cid (from concepts)
             action: True (create) | False (delete)
         '''
-        logger.info("Updating Relationship between Resource and Concept_modified")
-        tx = self.driver.session()
-
-        if action:
-            tx.run(
-                '''
-                    MATCH (u:Resource {rid: $rid}), (a:Concept_modified {cid: $cid})
-                    MERGE (u)-[r:BASED_ON]->(a)
-                    RETURN r
-                ''',
-                rid=rid,
-                cid=cid
-            )
-        else:
-            tx.run(
+        # logger.info("Updating Relationship between Resource and Concept_modified")
+        # print(rid, cid)
+        try:
+            tx = self.driver.session()
+            if action:
+                tx.run(
                     '''
-                    MATCH (u:Resource {rid: $rid})-[r:BASED_ON]->(a:Concept_modified {cid: $cid})
-                    DELETE r
+                        MATCH (u:Resource {rid: $rid}), (a:Concept_modified {cid: $cid})
+                        MERGE (u)-[r:BASED_ON]->(a)
+                        RETURN r
                     ''',
                     rid=rid,
                     cid=cid
                 )
+            else:
+                tx.run(
+                        '''
+                        MATCH (u:Resource {rid: $rid})-[r:BASED_ON]->(a:Concept_modified {cid: $cid})
+                        DELETE r
+                        ''',
+                        rid=rid,
+                        cid=cid
+                    )
+        except Exception as e:
+            print("update_rs_btw_resource_and_cm: Issue on this function either with rid or cid is None value")
+            print(e)
+            pass
 
     def user_saves_or_removes_resource(self, data: dict, resource: dict):
         '''
@@ -2400,14 +2405,22 @@ class NeoDataBase:
         if resources_form == "dict":
             for key, resources in resources_dict.items():
                 if key == "videos":
-                    for resource in resources:
-                        self.create_or_update_video_resource(tx, resource, recommendation_type)
-                        self.update_rs_btw_resource_and_cm(rid=get_resource_primary_key(resource), cid=cid, action=True)
+                    
+                    if len(resources) > 0:
+                        logger.info(f"Creating Resources YouTube AND Updating Relationship between Resource and Concept_modified: {len(resources)} Resources")
+                        for resource in resources:
+                            self.create_or_update_video_resource(tx, resource, recommendation_type)
+                            rid=get_resource_primary_key(resource)
+                            self.update_rs_btw_resource_and_cm(rid=rid, cid=cid, action=True)
 
                 elif key == "articles":
-                    for resource in resources:
-                        self.create_or_update_wikipedia_resource(tx, resource, recommendation_type)
-                        self.update_rs_btw_resource_and_cm(rid=get_resource_primary_key(resource), cid=cid, action=True)
+
+                    if len(resources) > 0:
+                        logger.info(f"Creating Resources Article AND Updating Relationship between Resource and Concept_modified {len(resources)} Resources")
+                        for resource in resources:
+                            self.create_or_update_wikipedia_resource(tx, resource, recommendation_type)
+                            rid=get_resource_primary_key(resource)
+                            self.update_rs_btw_resource_and_cm(rid=rid, cid=cid, action=True)
         
         elif resources_form == "list":
             for resource in resources_list:

@@ -103,6 +103,7 @@ def rating():
 def update_resources_factor_weights():
     data = request.get_json()
     logger.info("------ Updating Factor Weights ------>")
+    print(data)
     """
     weigths_normalized = {}
     for k,v in data.items():
@@ -116,11 +117,14 @@ def update_resources_factor_weights():
         "normalized": weigths_normalized
     }
     """ 
+    # if len(data) > 0:
     result = rrh.normalize_factor_weights(  factor_weights=data, 
                                                         method_type="l1", 
                                                         complete=True, 
                                                         sum_value=False
                                                     )
+    # else:
+    #     result = {}
     return jsonify(result), 200
 
 

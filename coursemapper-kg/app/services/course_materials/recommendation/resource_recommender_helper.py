@@ -153,6 +153,8 @@ def normalize_factor_weights(factor_weights: dict=None, values: list=[], method_
         factor_weights : {'similarity_score': 0.7, 'creation_date': 0.3, 'views': 0.3, 'like_count': 0.1, 'user_rating': 0.1, 'saves_count': 0.1}
     '''
     logger.info("Normalization of factor weights")
+    if len(factor_weights) == 0:
+        return {}
     
     normalized_values = None
     scaled_data = None
@@ -293,12 +295,14 @@ def rank_resources(resources: list, weights: dict = None, ratings: list = None, 
 
         # video items
         resources_videos = [resource for resource in resources if "Video" in resource["labels"]]
-        resources_videos = calculate_factors_weights(category=1, resources=resources_videos, weights=video_weights_normalized)
+        if len(video_weights_normalized) > 0:
+            resources_videos = calculate_factors_weights(category=1, resources=resources_videos, weights=video_weights_normalized)
         resources_videos = remove_keys_from_resources(resources=resources_videos, recommendation_type=recommendation_type)
 
         # articles items
         resources_articles = [resource for resource in resources if "Article" in resource["labels"]]
-        resources_articles = calculate_factors_weights(category=2, resources=resources_articles, weights=article_weights_normalized)
+        if len(article_weights_normalized) > 0:
+            resources_articles = calculate_factors_weights(category=2, resources=resources_articles, weights=article_weights_normalized)
         resources_articles = remove_keys_from_resources(resources=resources_articles, recommendation_type=recommendation_type)
 
         # # Finally, priorities on resources having Rating related to DNU_modified (cid)
