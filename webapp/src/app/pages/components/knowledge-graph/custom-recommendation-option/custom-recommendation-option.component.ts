@@ -542,6 +542,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
       }
     }
     this.croForm.concepts = concepts;
+    // this.croForm.concepts = this.CROconceptsManually;
 
     // update factor weights
     this.getFactorWeight();

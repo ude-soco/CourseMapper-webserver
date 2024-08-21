@@ -50,3 +50,15 @@
   pointer-events: none;
   color: gray;
 }
+
+/* change checkbox color */
+:host ::ng-deep .p-checkbox .p-checkbox-box {
+  border: 2px solid #0288d1; 
+}
+:host ::ng-deep .p-checkbox-box:hover {
+  border-color: #0288d1;
+}
+:host ::ng-deep .p-checkbox-box.p-highlight {
+  background: #0288d1;
+  border-color: #0288d1;
+}

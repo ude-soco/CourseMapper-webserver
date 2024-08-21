@@ -277,9 +277,9 @@ export class ResultViewComponent {
     let sortByParams = [];
     for (let [key, value] of Object.entries(this.croSorting)) {
       if (value.status == true && value.arrow === true) {
-        sortByParams.push({ "property": key, "order": "desc" });
-      } else if (value.status == true && value.arrow === false) {
         sortByParams.push({ "property": key, "order": "asc" });
+      } else if (value.status == true && value.arrow === false) {
+        sortByParams.push({ "property": key, "order": "desc" });
       }
     }
 
@@ -359,8 +359,8 @@ export class ResultViewComponent {
 
   setLeftPanelMWinWidth() {
     let ipo_interact = document.getElementById('ipo_interact');
-    ipo_interact.style.minWidth = "34rem";
-    ipo_interact.style.width = "34rem";
+    ipo_interact.style.minWidth = "30rem";
+    ipo_interact.style.width = "30rem";
   }
 
   deactivateDnuInteraction() {

@@ -1870,104 +1870,111 @@ class NeoDataBase:
             r.similarity_score = $similarity_score,
         '''
         # logger.info(" Creating Resource YouTube")
-
-        if update_embedding_values == True: # node.get("keyphrases") != None or node.get("document_embedding") != None or node.get("keyphrase_embedding") != None:
-            tx.run(
-                '''
-                    MATCH (r:Resource: Video)
-                    WHERE r.rid = $rid
-                    SET   r.keyphrases = $keyphrases, r.keyphrase_embedding = $keyphrase_embedding, r.document_embedding = $document_embedding 
-                ''',
-                rid=node["rid"],
-                keyphrases=node["keyphrases"] if "keyphrases" in node else [],
-                keyphrase_embedding=str(node["keyphrase_embedding"] if "keyphrase_embedding" in node else ""),
-                document_embedding=str(node["document_embedding"] if "document_embedding" in node else ""),
-            )
-        else:
-            tx.run(
-                '''
-                    MERGE (r:Resource:Video {rid: $rid})
-                    ON CREATE SET 
-                    r.uri = $uri, r.title = $title, r.description = $description, r.description_full = $description_full, r.text = $text, 
-                    r.keyphrases = $keyphrases, r.document_embedding = $document_embedding, r.keyphrase_embedding = $keyphrase_embedding, 
-                    r.thumbnail = $thumbnail, r.duration = $duration, r.views = $views, 
-                    r.publish_time = $pub_time, r.channel_title = $channel_title, r.like_count = $like_count,
-                    r.helpful_count = $helpful_count, r.not_helpful_count = $not_helpful_count, r.saves_count = $saves_count, 
-                    r.updated_at = $updated_at
-                    ON MATCH SET 
-                    r.title = $title, r.description = $description, r.description_full = $description_full, r.text = $text, 
-                    r.keyphrases = $keyphrases, r.document_embedding = $document_embedding, r.keyphrase_embedding = $keyphrase_embedding, 
-                    r.thumbnail = $thumbnail, r.duration = $duration, r.views = $views, 
-                    r.publish_time = $pub_time, r.channel_title = $channel_title, r.like_count = $like_count,
-                    r.updated_at = $updated_at
-                ''',
-                rid=node["id"],
-                uri="https://www.youtube.com/embed/%s?autoplay=1" % node["id"],
-                title=node["title"],
-                description=node["description"],
-                description_full=node["description_full"],
-                thumbnail="https://i.ytimg.com/vi/%s/hqdefault.jpg" % node["id"],
-                text=node["text"],
-                duration=node["duration"],
-                views=node["views"],
-                pub_time=node["publishTime"],
-                # similarity_score=node[recommendation_type] if recommendation_type in node.index else 0,
-                keyphrases=node["keyphrases"] if "keyphrases" in node else [],
-                keyphrase_embedding=str(node["keyphrase_embedding"] if "keyphrase_embedding" in node else ""),
-                document_embedding=str(node["document_embedding"] if "document_embedding" in node else ""),
-                helpful_count=node["helpful_count"] if "helpful_count" in node else 0,
-                not_helpful_count=node["not_helpful_count"] if "not_helpful_count" in node else 0,
-                saves_count=node["saves_count"] if "saves_count" in node else 0,
-                like_count=node["like_count"],
-                channel_title=node["channel_title"],
-                updated_at=datetime.now().isoformat()
-            )
+        try:
+            if update_embedding_values == True: # node.get("keyphrases") != None or node.get("document_embedding") != None or node.get("keyphrase_embedding") != None:
+                tx.run(
+                    '''
+                        MATCH (r:Resource: Video)
+                        WHERE r.rid = $rid
+                        SET   r.keyphrases = $keyphrases, r.keyphrase_embedding = $keyphrase_embedding, r.document_embedding = $document_embedding 
+                    ''',
+                    rid=node["rid"],
+                    keyphrases=node["keyphrases"] if "keyphrases" in node else [],
+                    keyphrase_embedding=str(node["keyphrase_embedding"] if "keyphrase_embedding" in node else ""),
+                    document_embedding=str(node["document_embedding"] if "document_embedding" in node else ""),
+                )
+            else:
+                tx.run(
+                    '''
+                        MERGE (r:Resource:Video {rid: $rid})
+                        ON CREATE SET 
+                        r.uri = $uri, r.title = $title, r.description = $description, r.description_full = $description_full, r.text = $text, 
+                        r.keyphrases = $keyphrases, r.document_embedding = $document_embedding, r.keyphrase_embedding = $keyphrase_embedding, 
+                        r.thumbnail = $thumbnail, r.duration = $duration, r.views = $views, 
+                        r.publish_time = $pub_time, r.channel_title = $channel_title, r.like_count = $like_count,
+                        r.helpful_count = $helpful_count, r.not_helpful_count = $not_helpful_count, r.saves_count = $saves_count, 
+                        r.updated_at = $updated_at
+                        ON MATCH SET 
+                        r.title = $title, r.description = $description, r.description_full = $description_full, r.text = $text, 
+                        r.keyphrases = $keyphrases, r.document_embedding = $document_embedding, r.keyphrase_embedding = $keyphrase_embedding, 
+                        r.thumbnail = $thumbnail, r.duration = $duration, r.views = $views, 
+                        r.publish_time = $pub_time, r.channel_title = $channel_title, r.like_count = $like_count,
+                        r.updated_at = $updated_at
+                    ''',
+                    rid=node["id"],
+                    uri="https://www.youtube.com/embed/%s?autoplay=1" % node["id"],
+                    title=node["title"],
+                    description=node["description"],
+                    description_full=node["description_full"],
+                    thumbnail="https://i.ytimg.com/vi/%s/hqdefault.jpg" % node["id"],
+                    text=node["text"],
+                    duration=node["duration"],
+                    views=node["views"],
+                    pub_time=node["publishTime"],
+                    # similarity_score=node[recommendation_type] if recommendation_type in node.index else 0,
+                    keyphrases=node["keyphrases"] if "keyphrases" in node else [],
+                    keyphrase_embedding=str(node["keyphrase_embedding"] if "keyphrase_embedding" in node else ""),
+                    document_embedding=str(node["document_embedding"] if "document_embedding" in node else ""),
+                    helpful_count=node["helpful_count"] if "helpful_count" in node else 0,
+                    not_helpful_count=node["not_helpful_count"] if "not_helpful_count" in node else 0,
+                    saves_count=node["saves_count"] if "saves_count" in node else 0,
+                    like_count=node["like_count"],
+                    channel_title=node["channel_title"],
+                    updated_at=datetime.now().isoformat()
+                )
+        except Exception as e:
+            print(e)
+            pass
 
     def create_or_update_wikipedia_resource(self, tx, node, recommendation_type='', update_embedding_values=False):
         '''
             Creating Resource Wikipedia
         '''
         # logger.info("Creating Resource Wikipedia")
-        if update_embedding_values == True: # node.get("keyphrases") != None or node.get("document_embedding") != None or node.get("keyphrase_embedding") != None:
-            tx.run(
-                '''
-                    MATCH (r:Resource: Article)
-                    WHERE r.rid = $rid
-                    SET   r.keyphrases = $keyphrases, r.keyphrase_embedding = $keyphrase_embedding, r.document_embedding = $document_embedding 
-                ''',
-                rid=node["rid"],
-                keyphrases=node["keyphrases"] if "keyphrases" in node else [],
-                keyphrase_embedding=str(node["keyphrase_embedding"] if "keyphrase_embedding" in node else ""),
-                document_embedding=str(node["document_embedding"] if "document_embedding" in node else ""),
-            )
-        else:
-            tx.run(
-                '''
-                    MERGE (r:Resource:Article {rid: $rid})
-                    ON CREATE SET 
-                    r.uri = $uri, r.title = $title, r.abstract = $abstract, r.text = $text, 
-                    r.keyphrases = $keyphrases, r.document_embedding = $document_embedding, r.keyphrase_embedding = $keyphrase_embedding, 
-                    r.helpful_count = $helpful_count, r.not_helpful_count = $not_helpful_count, r.saves_count = $saves_count,
-                    r.updated_at = $updated_at
-                    ON MATCH SET 
-                    r.uri = $uri, r.title = $title, r.abstract = $abstract, r.text = $text, 
-                    r.keyphrases = $keyphrases, r.document_embedding = $document_embedding, r.keyphrase_embedding = $keyphrase_embedding, 
-                    r.updated_at = $updated_at
-                ''',
-                rid=node["id"],
-                uri=node["id"],
-                title=node["title"],
-                abstract=node["abstract"],
-                keyphrases=node["keyphrases"] if "keyphrases" in node else [],
-                text=node["text"],
-                # similarity_score=node[recommendation_type] if recommendation_type in node.index else 0,
-                keyphrase_embedding=str(node["keyphrase_embedding"] if "keyphrase_embedding" in node else ""),
-                document_embedding=str(node["document_embedding"] if "document_embedding" in node else ""),
-                helpful_count=node["helpful_count"] if "helpful_count" in node else 0,
-                not_helpful_count=node["not_helpful_count"] if "not_helpful_count" in node else 0,
-                saves_count=node["saves_count"] if "saves_count" in node else 0,
-                updated_at=datetime.now().isoformat()
-            )
+        try:
+            if update_embedding_values == True: # node.get("keyphrases") != None or node.get("document_embedding") != None or node.get("keyphrase_embedding") != None:
+                tx.run(
+                    '''
+                        MATCH (r:Resource: Article)
+                        WHERE r.rid = $rid
+                        SET   r.keyphrases = $keyphrases, r.keyphrase_embedding = $keyphrase_embedding, r.document_embedding = $document_embedding 
+                    ''',
+                    rid=node["rid"],
+                    keyphrases=node["keyphrases"] if "keyphrases" in node else [],
+                    keyphrase_embedding=str(node["keyphrase_embedding"] if "keyphrase_embedding" in node else ""),
+                    document_embedding=str(node["document_embedding"] if "document_embedding" in node else ""),
+                )
+            else:
+                tx.run(
+                    '''
+                        MERGE (r:Resource:Article {rid: $rid})
+                        ON CREATE SET 
+                        r.uri = $uri, r.title = $title, r.abstract = $abstract, r.text = $text, 
+                        r.keyphrases = $keyphrases, r.document_embedding = $document_embedding, r.keyphrase_embedding = $keyphrase_embedding, 
+                        r.helpful_count = $helpful_count, r.not_helpful_count = $not_helpful_count, r.saves_count = $saves_count,
+                        r.updated_at = $updated_at
+                        ON MATCH SET 
+                        r.uri = $uri, r.title = $title, r.abstract = $abstract, r.text = $text, 
+                        r.keyphrases = $keyphrases, r.document_embedding = $document_embedding, r.keyphrase_embedding = $keyphrase_embedding, 
+                        r.updated_at = $updated_at
+                    ''',
+                    rid=node["id"],
+                    uri=node["id"],
+                    title=node["title"],
+                    abstract=node["abstract"],
+                    keyphrases=node["keyphrases"] if "keyphrases" in node else [],
+                    text=node["text"],
+                    # similarity_score=node[recommendation_type] if recommendation_type in node.index else 0,
+                    keyphrase_embedding=str(node["keyphrase_embedding"] if "keyphrase_embedding" in node else ""),
+                    document_embedding=str(node["document_embedding"] if "document_embedding" in node else ""),
+                    helpful_count=node["helpful_count"] if "helpful_count" in node else 0,
+                    not_helpful_count=node["not_helpful_count"] if "not_helpful_count" in node else 0,
+                    saves_count=node["saves_count"] if "saves_count" in node else 0,
+                    updated_at=datetime.now().isoformat()
+                )
+        except Exception as e:
+            print(e)
+            pass
 
     def get_top_n_concept_by_slide_id(self, slide_id: str, names: list = None, top_n=5):
         '''

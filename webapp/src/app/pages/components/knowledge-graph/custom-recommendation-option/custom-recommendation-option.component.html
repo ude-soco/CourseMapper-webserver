@@ -2,9 +2,9 @@
 
 
 <div class="flex flex-col space-y-4 mt-1" id="cro_content">
-  <div class="flex flex-row flex-wrap space-x-4 text-[#0288d1] ml-6">
+  <div class="flex flex-row flex-wrap space-x-4 text-[#0288d1] ml-6" (click)="showCRO()">
     
-    <div class="flex flex-row my-auto cursor-pointer active:bg-blue-700" (click)="showCRO()">
+    <div class="flex flex-row my-auto cursor-pointer active:bg-blue-700">
       <span class="pi pi-chevron-up" *ngIf="isCustomRecOptionDisplayed"></span>
       <span class="pi pi-chevron-down" *ngIf="!isCustomRecOptionDisplayed"></span>
     </div>
