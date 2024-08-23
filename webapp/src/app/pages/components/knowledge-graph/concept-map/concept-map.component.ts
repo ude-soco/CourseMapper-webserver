@@ -1735,6 +1735,7 @@ export class ConceptMapComponent implements OnInit, OnDestroy {
 
           // boby024
           // this.recommendedMaterialsTab = true;
+          // this.recommendedConceptsTab = false;
 
 
           //////////////////////////call material-recommender/////////////////////////
@@ -1744,6 +1745,7 @@ export class ConceptMapComponent implements OnInit, OnDestroy {
           this.setHeightGraphComponent();
           this.isRecommendationButtonDisplayed = false;
           let croFormData = this.croComponent.getOnlyStatusChecked();
+          // this.croComponent.croForm.requested = true;
 
           this.materialsRecommenderService.getRecommendedMaterials(
             reqData, croFormData
@@ -1755,6 +1757,12 @@ export class ConceptMapComponent implements OnInit, OnDestroy {
               // boby024
               this.isRecommendationButtonDisplayed = true;
               this.resourcesPagination = result;
+              // this.croComponent.croForm.requested = false;
+              // this.croComponent.croForm.concepts = result.nodes;
+              // for (const concept of this.croComponent.croForm?.concepts) {
+              //   concept["status"] = true;
+              //   concept["visible"] = true;
+              // }
 
               console.log('tab 2 will be activated');
               this.kgTabs.kgTabsEnable();

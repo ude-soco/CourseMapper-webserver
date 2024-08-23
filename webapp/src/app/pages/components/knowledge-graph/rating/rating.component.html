@@ -22,7 +22,7 @@
   <p-overlayPanel class="rounded" #op [style]="{width: '500px'}" appendTo="body">
     <ng-template pTemplate>
       <div class="">
-        <p class="break-words">Which of the following concepts did this article help you to understand?</p>
+        <p class="break-words">Which of the following concepts did this video/article help you to understand?</p>
         <hr>
         <span class="flex flex-col grid grid-cols-2 gap-4 py-2">
           <p-checkbox *ngFor="let concept of notUnderstoodConcepts" class="pb-2" name="groupName" value="{{concept.name}}"

@@ -176,7 +176,7 @@
 
 
       <!-- show less or more concept -->
-      <div *ngIf="!(croForm?.concepts?.length < 6)" class="font-bold">
+      <div *ngIf="!(croForm?.concepts.length < 6)" class="font-bold">
         <div 
           *ngIf="seeMore"
           class="flex flex-row flex-wrap space-x-4 justify-center"
@@ -346,7 +346,7 @@
           </div>
           <div class="flex flex-row">
             <p-radioButton name="model_4" value="4" [(ngModel)]="croForm.recommendation_type" inputId="model_4"></p-radioButton>
-            <label for="model_4" class="ml-1">Comparing whole content of articles and videos with whole content of slide</label>
+            <label for="model_4" class="ml-1">Comparing whole content of articles and videos with whole content of the current slide</label>
           </div>
         </div>
       </div>

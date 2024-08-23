@@ -133,7 +133,7 @@ def get_resources():
     data = request.get_json()
     logger.info("------ CRO DATA ----^-->")
     print(data)
-    print()
+    print("Number of Concepts -> ", len(data["rec_params"]["concepts"]))
     
     # TEST SAMPLE
     # return jsonify(cro_get_resources_pagination()), 200

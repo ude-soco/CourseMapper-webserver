@@ -36,7 +36,8 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
       status: false,
       reload: true,
       weights: null
-    }
+    },
+    requested: false
   };
 
   factor_weight_checked = true;
@@ -55,7 +56,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
         "checked": true
       },
       {
-        "title": "No. of Views",
+        "title": "No. of Views on YouTube",
         "key": "views",
         "value": 0.22,
         "checked": true
@@ -130,6 +131,8 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
 
   ngOnChanges(changes: SimpleChanges) {
     for (const propName in changes) {
+      console.warn("propName -> ", propName)
+
       if (propName === "materialId") {
         this.getConceptsManually();
       }
@@ -200,7 +203,8 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
       concepts: [],
       recommendation_type: "1",
       factor_weights: this.factor_weights,
-      pagination_params: null
+      pagination_params: null,
+      requested: false
     }
   }
 
@@ -311,7 +315,38 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     */
   }
 
+  areArraysEqualById(array1, array2) {
+    // Check if arrays have the same length
+    if (array1.length !== array2.length) {
+      return false;
+    }
+  
+    // Create Sets of IDs from both arrays
+    const idSet1 = new Set(array1.map(item => item.id));
+    const idSet2 = new Set(array2.map(item => item.id));
+  
+    // Check if the Sets have the same size
+    if (idSet1.size !== idSet2.size) {
+      return false;
+    }
+  
+    // Check if every ID in idSet1 is also in idSet2
+    for (let id of idSet1) {
+      if (!idSet2.has(id)) {
+        return false;
+      }
+    }
+  
+    // If we've made it this far, the arrays are equal
+    return true;
+  }
+  
   updateCROform(conceptsObj: any[], category: string) {
+    console.warn("this.croForm?.requested -> ", this.croForm?.requested);
+
+    // let concepts_changed = this.areArraysEqualById(this.croForm.concepts, conceptsObj);
+    if (this.croForm?.requested === false) {}
+
     if (this.materialId) {
       this.croForm.concepts = [];
       let cids = [];
@@ -332,8 +367,10 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     }
     // this.updateNumberConceptsToBeChecked();
     // this.showRecTypeAndFactorWeight();
-  }
 
+
+  }
+  
   updateCROformAll(didNotUnderstandConceptsObj, previousConceptsObj) {
     if (this.croForm.category === "1") {
       this.updateCROform(didNotUnderstandConceptsObj, "1");

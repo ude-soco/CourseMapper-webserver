@@ -34,6 +34,22 @@ enum MaterialModels {
 //   total_items?: number;
 //   content?: ArticleElementModel[];
 // }
+  /*mainConceptsSource = [ { cid: "sdsd1", name: "Data Mining", status: false }, { cid: "sdsd2", name: "Internet Retrieval", status: false } ];
+  learningMaterialsSource = [ { mid: "s323f", name: "Learning Analytics", status: false } ];
+  sliderNumbersSource = [ { name: "slide_1", status: false } ];
+  resourcesSved = [
+    { mid: "m1", mid_name: "Learning Analytics", slider_number: "slide_1", cid: "c1", concept_name: "Data Mining", status: false },
+    { mid: "m1", mid_name: "Learning Analytics", slider_number: "slide_1", cid: "c2", concept_name: "Internet Retrieval", status: false },
+    { mid: "m1", mid_name: "Learning Analytics", slider_number: "slide_1", cid: "c3", concept_name: "Information Mining", status: false },
+    { mid: "m1", mid_name: "Learning Analytics", slider_number: "slide_3", cid: "c4", concept_name: "Recall & Precision", status: false },
+    { mid: "m2", mid_name: "Cloud & Mobile", slider_number: "slide_1", cid: "c5", concept_name: "Https", status: false },
+  ];
+
+  mainConceptsFiltered = [];
+  mainConceptSelected: any | undefined;
+  learningMaterialsFiltered = [];
+  sliderNumbersFiltered = [];
+  */
 
 
 @Component({
@@ -90,27 +106,10 @@ export class ResultViewComponent {
   orderUP = "Top to botton"
   orderDown = "Botton to top"
   croSorting1 = [
-    { name: 'Most similar', status: false, order: this.orderDown },
-    { name: 'Most recent', status: false, order: this.orderDown },
-    { name: 'Most viewed', status: false, order: this.orderDown }
+    { name: 'Most similar',status: false, arrow: true, orderText: this.orderUP },
+    { name: 'Most recent', status: false, arrow: true, orderText: this.orderUP },
+    { name: 'Most viewed', status: false, arrow: true, orderText: this.orderUP }
   ];
-
-  /*mainConceptsSource = [ { cid: "sdsd1", name: "Data Mining", status: false }, { cid: "sdsd2", name: "Internet Retrieval", status: false } ];
-  learningMaterialsSource = [ { mid: "s323f", name: "Learning Analytics", status: false } ];
-  sliderNumbersSource = [ { name: "slide_1", status: false } ];
-  resourcesSved = [
-    { mid: "m1", mid_name: "Learning Analytics", slider_number: "slide_1", cid: "c1", concept_name: "Data Mining", status: false },
-    { mid: "m1", mid_name: "Learning Analytics", slider_number: "slide_1", cid: "c2", concept_name: "Internet Retrieval", status: false },
-    { mid: "m1", mid_name: "Learning Analytics", slider_number: "slide_1", cid: "c3", concept_name: "Information Mining", status: false },
-    { mid: "m1", mid_name: "Learning Analytics", slider_number: "slide_3", cid: "c4", concept_name: "Recall & Precision", status: false },
-    { mid: "m2", mid_name: "Cloud & Mobile", slider_number: "slide_1", cid: "c5", concept_name: "Https", status: false },
-  ];
-
-  mainConceptsFiltered = [];
-  mainConceptSelected: any | undefined;
-  learningMaterialsFiltered = [];
-  sliderNumbersFiltered = [];
-  */
 
   filteringParamsSavedTab = {
     user_id: '',
@@ -326,9 +325,12 @@ export class ResultViewComponent {
 
   loadResultForSelectedModel() {
     this.allConceptsObj = this.resourcesPagination?.concepts;
-    this.allConceptsObj.forEach(concept => {
+    // this.allConceptsObj.forEach(concept => {
+    //   concept["status"] = "notUnderstood"
+    // });
+    for (const concept of this.allConceptsObj) {
       concept["status"] = "notUnderstood"
-    });
+    }
     this.concepts = this.allConceptsObj;
   }
 

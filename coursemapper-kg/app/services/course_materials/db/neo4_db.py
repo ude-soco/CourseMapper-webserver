@@ -2319,6 +2319,35 @@ class NeoDataBase:
             print("update_rs_btw_resource_and_cm: Issue on this function either with rid or cid is None value")
             print(e)
             pass
+    
+    def update_rs_btw_resources_and_cm(self, rids: str, cid: str, action=True):
+        '''
+            Update by: Create and Delete Relationship
+            between Resources and Concept_modified
+            concepts: Concept list
+            cid: cid (from concepts)
+            action: True (create) | False (delete)
+        '''
+        # logger.info("Updating Relationship between Resource and Concept_modified")
+        # print(rid, cid)
+        try:
+            tx = self.driver.session()
+            if action:
+                tx.run(
+                    '''
+                        MATCH (a:Concept_modified {cid: $cid})
+                        WITH a
+                        MATCH (b:Resource)
+                        WHERE b.rid IN $rids
+                        MERGE (b)-[:BASED_ON]->(a)
+                    ''',
+                    rids=rids,
+                    cid=cid
+                )
+        except Exception as e:
+            print("update_rs_btw_resource_and_cm: Issue on this function either with rid or cid is None value")
+            print(e)
+            pass
 
     def user_saves_or_removes_resource(self, data: dict, resource: dict):
         '''
@@ -2417,8 +2446,11 @@ class NeoDataBase:
                         logger.info(f"Creating Resources YouTube AND Updating Relationship between Resource and Concept_modified: {len(resources)} Resources")
                         for resource in resources:
                             self.create_or_update_video_resource(tx, resource, recommendation_type)
-                            rid=get_resource_primary_key(resource)
-                            self.update_rs_btw_resource_and_cm(rid=rid, cid=cid, action=True)
+                            # rid=get_resource_primary_key(resource)
+                            # self.update_rs_btw_resource_and_cm(rid=rid, cid=cid, action=True)
+                        
+                        rids = [get_resource_primary_key(resource) for resource in resources]
+                        self.update_rs_btw_resources_and_cm(rids=rids, cid=cid, action=True)
 
                 elif key == "articles":
 
@@ -2426,8 +2458,11 @@ class NeoDataBase:
                         logger.info(f"Creating Resources Article AND Updating Relationship between Resource and Concept_modified {len(resources)} Resources")
                         for resource in resources:
                             self.create_or_update_wikipedia_resource(tx, resource, recommendation_type)
-                            rid=get_resource_primary_key(resource)
-                            self.update_rs_btw_resource_and_cm(rid=rid, cid=cid, action=True)
+                            # rid=get_resource_primary_key(resource)
+                            # self.update_rs_btw_resource_and_cm(rid=rid, cid=cid, action=True)
+
+                        rids = [get_resource_primary_key(resource) for resource in resources]
+                        self.update_rs_btw_resources_and_cm(rids=rids, cid=cid, action=True)
         
         elif resources_form == "list":
             for resource in resources_list:

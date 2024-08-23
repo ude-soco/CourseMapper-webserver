@@ -240,6 +240,9 @@ def calculate_factors_weights(category: int, resources: list, weights: dict = No
 
     bookmarked_min_value = min(resources, key=lambda x: x["bookmarked_count"])["bookmarked_count"]
     bookmarked_max_value = max(resources, key=lambda x: x["bookmarked_count"])["bookmarked_count"]
+
+    similarity_score_min_value = min(resources, key=lambda x: x["similarity_score"])["similarity_score"]
+    similarity_score_max_value = max(resources, key=lambda x: x["similarity_score"])["similarity_score"]
     
     if category == 1:
         min_views = int(min(resources, key=lambda x: int(x["views"]))["views"])
@@ -249,7 +252,7 @@ def calculate_factors_weights(category: int, resources: list, weights: dict = No
         like_count_max_value = max(resources, key=lambda x: x["like_count"])["like_count"]
 
         for resource in resources:
-            similarity_normalized = resource["similarity_score"]
+            similarity_normalized = normalize_min_max_score(value=int(resource["similarity_score"]), min_value=similarity_score_min_value, max_value=similarity_score_max_value) # resource["similarity_score"]
             rating_normalized = wilson_lower_bound_score(up=resource["helpful_count"], down=resource["not_helpful_count"])
             creation_date_normalized = normalize_min_max_score_date(date_str=resource["publish_time"], max=now)
             views_normalzed = normalize_min_max_score(value=int(resource["views"]), min_value=min_views, max_value=max_views) 
@@ -266,9 +269,14 @@ def calculate_factors_weights(category: int, resources: list, weights: dict = No
     elif category == 2:
         for resource in resources:
             rating_normalized = wilson_lower_bound_score(up=resource["helpful_count"], down=resource["not_helpful_count"])
+            bookmarked_normalized = normalize_min_max_score(value=int(resource["bookmarked_count"]), min_value=bookmarked_min_value, max_value=bookmarked_max_value)
+            similarity_normalized = normalize_min_max_score(value=int(resource["similarity_score"]), min_value=similarity_score_min_value, max_value=similarity_score_max_value) 
+
             resource["composite_score"] = (rating_normalized * weight_user_rating) \
-                                        + (resource["similarity_score"] * weight_similarity_score) \
-                                        + (resource["bookmarked_count"] * weight_saves_count) \
+                                        + (bookmarked_normalized * weight_saves_count) \
+                                        + (similarity_normalized * weight_similarity_score)
+                                        # + (resource["bookmarked_count"] * weight_saves_count) \
+                                        # + (resource["similarity_score"] * weight_similarity_score) 
 
 
     # sort by composite score value

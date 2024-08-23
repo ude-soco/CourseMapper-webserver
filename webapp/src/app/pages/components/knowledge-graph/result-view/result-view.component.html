@@ -90,6 +90,38 @@
               </div>
             </div>
           </div>
+          
+          <!-- with dynamic list -->
+          <p-overlayPanel [style]="{'width':'18rem'}" (onShow)="handleOnShowOnHide()" (onHide)="handleOnShowOnHide()" *ngIf="false"  #op>
+            <ng-template pTemplate="content">
+              <div class="flex flex-col text-sm">
+                <ng-template ngFor let-sort_factor [ngForOf]="croSorting1" let-i="index">
+                  <div class="flex flex-row space-x-2">
+                    <div>
+                      <p-checkbox 
+                      [(ngModel)]="sort_factor.status" [binary]="true" inputId="similarity_score" inputId="{{sort_factor.name}}"
+                      (onChange)="sortResourcesByKeys('')"
+                      ></p-checkbox>
+                    </div>
+                    <div class="flex flex-row gap-2">
+                      <div class="my-auto"><label for="similarity_score">{{ sort_factor.name }}</label></div>
+                      <div class="flex flex-row space-x-2 pl-4 ml-6">
+                        <button (click)="sortResourcesByKeys('similarity_score')"
+                        class="bg-blue-300 hover:bg-blue-400 text-white font-bold rounded cursor-pointer py-1"
+                        >
+                          <div>
+                            <span>{{ sort_factor.orderText }}</span>
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </ng-template>
+              </div>
+
+              <div style="height: 2rem;"><p-divider></p-divider></div>
+            </ng-template>
+          </p-overlayPanel>
 
           <p-overlayPanel [style]="{'width':'18rem'}" (onShow)="handleOnShowOnHide()" (onHide)="handleOnShowOnHide()" #op>
             <ng-template pTemplate="content">
@@ -155,6 +187,94 @@
                     (onChange)="sortResourcesByKeys('')"
                     [disabled]="disabledSortingKeys"
                     ></p-checkbox>
+                  </div>
+                  <div class="flex flex-row gap-2">
+                    <div class="my-auto"><label for="views">Most viewed</label></div>
+                    <div class="flex flex-row space-x-2 pl-4 ml-5">
+                      <button (click)="sortResourcesByKeys('views')" [disabled]="disabledSortingKeys"
+                      class="bg-blue-300 hover:bg-blue-400 text-white font-bold rounded cursor-pointer py-1"
+                      >
+                        <div *ngIf="croSorting.views.arrow === true">
+                          <!-- <span class="pi pi-arrow-down" style="font-size: 1.2rem"></span> -->
+                          <span>Bottom to top</span>
+                        </div>
+                        <div *ngIf="croSorting.views.arrow === false">
+                          <!-- <span class="pi pi-arrow-up" style="font-size: 1.2rem"></span> -->
+                          <span>Top to bottom</span>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </p-overlayPanel>
+          
+          <!-- with radio button -->
+          <p-overlayPanel [style]="{'width':'18rem'}" (onShow)="handleOnShowOnHide()" (onHide)="handleOnShowOnHide()" *ngIf="false" #op>
+            <ng-template pTemplate="content">
+              <div class="flex flex-col text-sm">
+                <div class="flex flex-row space-x-2">
+                  <div>
+                    <p-radioButton 
+                    [(ngModel)]="croSorting.similarity_score.status" inputId="similarity_score"
+                    (onChange)="sortResourcesByKeys('')"
+                    ></p-radioButton>
+                  </div>
+                  <div class="flex flex-row gap-2">
+                    <div class="my-auto"><label for="similarity_score">Most similar</label></div>
+                    <div class="flex flex-row space-x-2 pl-4 ml-6">
+                      <button (click)="sortResourcesByKeys('similarity_score')"
+                      class="bg-blue-300 hover:bg-blue-400 text-white font-bold rounded cursor-pointer py-1"
+                      >
+                        <div *ngIf="croSorting.similarity_score.arrow === true">
+                          <!-- <span class="pi pi-arrow-down" style="font-size: 1.2rem"></span> -->
+                          <span>Bottom to top</span>
+                        </div>
+                        <div *ngIf="croSorting.similarity_score.arrow === false">
+                          <!-- <span class="pi pi-arrow-up" style="font-size: 1.2rem"></span> -->
+                          <span>Top to bottom</span>
+
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+    
+                <div style="height: 2rem;"><p-divider></p-divider></div>
+                <div class="flex flex-row space-x-2">
+                  <div>
+                    <p-radioButton [(ngModel)]="croSorting.publish_time.status" inputId="publish_time"
+                    (onChange)="sortResourcesByKeys('')"
+                    [disabled]="disabledSortingKeys"
+                    ></p-radioButton>
+                  </div>
+                  <div class="flex flex-row gap-2">
+                    <div class="my-auto"><label for="publish_time">Most recent</label></div>
+                    <div class="flex flex-row space-x-2 pl-4 ml-6">
+                      <button (click)="sortResourcesByKeys('publish_time')" [disabled]="disabledSortingKeys"
+                      class="bg-blue-300 hover:bg-blue-400 text-white font-bold rounded cursor-pointer py-1"
+                      >
+                        <div *ngIf="croSorting.publish_time.arrow === true">
+                          <!-- <span class="pi pi-arrow-down" style="font-size: 1.2rem"></span> -->
+                          <span>Bottom to top</span>
+                        </div>
+                        <div *ngIf="croSorting.publish_time.arrow === false">
+                          <!-- <span class="pi pi-arrow-up" style="font-size: 1.2rem"></span> -->
+                          <span>Top to bottom</span>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+    
+                <div style="height: 2rem;"><p-divider></p-divider></div>
+                <div class="flex flex-row space-x-2">
+                  <div>
+                    <p-radioButton [(ngModel)]="croSorting.views.status"  inputId="views"
+                    (onChange)="sortResourcesByKeys('')"
+                    [disabled]="disabledSortingKeys"
+                    ></p-radioButton>
                   </div>
                   <div class="flex flex-row gap-2">
                     <div class="my-auto"><label for="views">Most viewed</label></div>
