@@ -308,6 +308,7 @@ export class ConceptMapComponent implements OnInit, OnDestroy {
   croPaginatorRows: number = 10;
   resourcesPagination: ResourcesPagination = undefined;
   isRecommendationButtonDisplayed = true;
+  conceptsUpdatedCRO: any;
 
   croOnPageChange(event) {
     this.croPaginatorFirst = event.first;
@@ -1757,6 +1758,7 @@ export class ConceptMapComponent implements OnInit, OnDestroy {
               // boby024
               this.isRecommendationButtonDisplayed = true;
               this.resourcesPagination = result;
+              // this.conceptsUpdatedCRO = result.concepts;
               // this.croComponent.croForm.requested = false;
               // this.croComponent.croForm.concepts = result.nodes;
               // for (const concept of this.croComponent.croForm?.concepts) {

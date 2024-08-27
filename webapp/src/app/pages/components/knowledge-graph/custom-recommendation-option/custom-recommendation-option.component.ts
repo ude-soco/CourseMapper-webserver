@@ -20,6 +20,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
   @Input() previousConceptsObj: any [] = [];
   @Input() activatorPartCRO: ActivatorPartCRO;
   // @Output() croFormValue: any; //  = new EventEmitter<CROform>();
+  @Input() conceptsUpdated: any;
 
   isCustomRecOptionDisplayed = false;
   cro_concept_weight: number;
@@ -129,6 +130,22 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     // });
   }
 
+  updateConcpetAfterRecommandation() {
+    // this.croForm.concepts = this.conceptsUpdated;
+    console.warn("conceptsUpdated -> ", this.conceptsUpdated)
+    console.warn("croForm.concepts ->", this.conceptsUpdated)
+
+    for (let conceptU of this.conceptsUpdated) {
+      for (let concept of this.croForm.concepts) {
+        if (conceptU.cid === concept.cid) {
+          concept.weight = conceptU.weight;
+        } else {
+          concept.status = false;
+        }
+      }
+    }
+  }
+
   ngOnChanges(changes: SimpleChanges) {
     for (const propName in changes) {
       console.warn("propName -> ", propName)
@@ -140,6 +157,11 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
         // this.get_concepts_manually_current_slide();
       }
       this.updateCROformAll(this.didNotUnderstandConceptsObj, this.previousConceptsObj);
+
+      // if (propName === "conceptsUpdated") {
+      //   // this.croForm.concepts = this.conceptsUpdated;
+      //   this.updateConcpetAfterRecommandation()
+      // }
     }
   }
 
