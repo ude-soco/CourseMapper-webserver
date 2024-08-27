@@ -124,7 +124,11 @@ def start_worker(pipelines):
                 assert(type(file) == bytes)
                 file = io.BytesIO(file)
                 result = concept_map(job, file)
-                add_job('find-prerequisite-lm', {"materialId": job["materialId"]})
+                if result:
+                    print("sign", job["materialId"], job)
+                    add_job('find-prerequisite-lm', {"materialId": job["materialId"]})
+                    prerequisite_material(job)
+                # add_job('find-prerequisite-lm', {"materialId": job["materialId"]})
             elif pipeline == 'concept-recommendation':
                 result = get_concepts(job)
             elif pipeline == 'resource-recommendation':

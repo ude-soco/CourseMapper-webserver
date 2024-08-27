@@ -12,7 +12,7 @@ class DBConnection:
         
         self.concepts = []
 
-    def extract_concepts(self,learning_material= "qwer"):
+    def extract_concepts(self,learning_material):
         self.learning_material = str(learning_material)
         main_concepts = self.extract_main_concepts()
         for concept in main_concepts:

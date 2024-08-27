@@ -3,6 +3,7 @@ from nltk.corpus import stopwords
 from nltk import RegexpParser
 from ..taggers.base import BasePOSTagger
 from typing import Tuple, List
+nltk.download('omw-1.4')
 
 stopword_dict = set(stopwords.words('english'))
 
