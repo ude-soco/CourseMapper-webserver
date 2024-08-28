@@ -25,7 +25,7 @@ export const newAnnotation = async (req, res, next) => {
   const notificationInfo = notifications.generateNotificationInfo(req);
   const sent = await lrs.sendStatementToLrs(statement);
   try {
-    const activity = await controller.saveStatementToMongo(
+    const activity = await controller.createActivityOld(
       statement,
       sent,
       notificationInfo,
@@ -57,7 +57,7 @@ export const deleteAnnotation = async (req, res, next) => {
   const notificationInfo = notifications.generateNotificationInfo(req);
   const sent = await lrs.sendStatementToLrs(statement);
   try {
-    const activity = await controller.saveStatementToMongo(
+    const activity = await controller.createActivityOld(
       statement,
       sent,
       notificationInfo,
@@ -105,7 +105,7 @@ export const likeAnnotation = async (req, res, next) => {
   const notificationInfo = notifications.generateNotificationInfo(req);
   const sent = await lrs.sendStatementToLrs(statement);
   try {
-    const activity = await controller.saveStatementToMongo(
+    const activity = await controller.createActivityOld(
       statement,
       sent,
       notificationInfo,
@@ -153,7 +153,7 @@ export const dislikeAnnotation = async (req, res, next) => {
   const notificationInfo = notifications.generateNotificationInfo(req);
   const sent = await lrs.sendStatementToLrs(statement);
   try {
-    const activity = await controller.saveStatementToMongo(
+    const activity = await controller.createActivityOld(
       statement,
       sent,
       notificationInfo,
@@ -187,7 +187,7 @@ export const editAnnotation = async (req, res, next) => {
   const notificationInfo = notifications.generateNotificationInfo(req);
   const sent = await lrs.sendStatementToLrs(statement);
   try {
-    const activity = await controller.saveStatementToMongo(
+    const activity = await controller.createActivityOld(
       statement,
       sent,
       notificationInfo,
@@ -211,7 +211,7 @@ export const newMention = async (req, res, next) => {
   const notificationInfo = notifications.generateNotificationInfo(req);
   const sent = await lrs.sendStatementToLrs(statement);
   try {
-    const activity = await controller.saveStatementToMongo(
+    const activity = await controller.createActivityOld(
       statement,
       sent,
       notificationInfo,

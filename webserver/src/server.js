@@ -89,7 +89,7 @@ redis.connect(
 
 // xAPI scheduler
 const xapiScheduler = require("./activity-logger/scheduler/scheduler");
-xapiScheduler.runXapiScheduler();
+xapiScheduler.ActivityScheduler();
 
 // Create HTTP server
 const server = http.createServer(app);

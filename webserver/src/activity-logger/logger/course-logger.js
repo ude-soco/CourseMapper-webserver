@@ -11,7 +11,7 @@ export const newCourse = async (req, res) => {
     origin,
   );
   const sent = await lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement, sent);
+  controller.createActivityOld(statement, sent);
   res.send(req.locals.response);
 };
 
@@ -23,7 +23,7 @@ export const deleteCourse = async (req, res) => {
     origin,
   );
   const sent = await lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement, sent);
+  controller.createActivityOld(statement, sent);
   res.send(req.locals.response);
 };
 
@@ -35,7 +35,7 @@ export const getCourse = async (req, res) => {
     origin,
   );
   const sent = await lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement, sent);
+  controller.createActivityOld(statement, sent);
   res.status(200).send(req.locals.response);
 };
 
@@ -47,7 +47,7 @@ export const enrolCourse = async (req, res) => {
     origin,
   );
   const sent = await lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement, sent);
+  controller.createActivityOld(statement, sent);
   res.status(200).send(req.locals.response);
 };
 
@@ -59,7 +59,7 @@ export const withdrawCourse = async (req, res) => {
     origin,
   );
   const sent = await lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement, sent);
+  controller.createActivityOld(statement, sent);
   res.status(200).send(req.locals.response);
 };
 
@@ -72,6 +72,6 @@ export const editCourse = async (req, res) => {
     origin,
   );
   const sent = await lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement, sent);
+  controller.createActivityOld(statement, sent);
   res.status(200).send(req.locals.response);
 };

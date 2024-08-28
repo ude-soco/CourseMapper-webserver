@@ -15,7 +15,7 @@ export const newMaterial = async (req, res, next) => {
   const notificationInfo = notifications.generateNotificationInfo(req);
   const sent = await lrs.sendStatementToLrs(statement);
   try {
-    const activity = await controller.saveStatementToMongo(
+    const activity = await controller.createActivityOld(
       statement,
       sent,
       notificationInfo,
@@ -39,7 +39,7 @@ export const deleteMaterial = async (req, res, next) => {
   const notificationInfo = notifications.generateNotificationInfo(req);
   const sent = await lrs.sendStatementToLrs(statement);
   try {
-    const activity = await controller.saveStatementToMongo(
+    const activity = await controller.createActivityOld(
       statement,
       sent,
       notificationInfo,
@@ -61,7 +61,7 @@ export const getMaterial = async (req, res) => {
     origin,
   );
   const sent = await lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement, sent);
+  controller.createActivityOld(statement, sent);
   res.status(200).send(req.locals.response);
 };
 
@@ -76,7 +76,7 @@ export const editMaterial = async (req, res, next) => {
   const notificationInfo = notifications.generateNotificationInfo(req);
   const sent = await lrs.sendStatementToLrs(statement);
   try {
-    const activity = await controller.saveStatementToMongo(
+    const activity = await controller.createActivityOld(
       statement,
       sent,
       notificationInfo,
@@ -105,7 +105,7 @@ export const playVideo = async (req, res) => {
       origin,
     );
     const sent = await lrs.sendStatementToLrs(statement);
-    controller.saveStatementToMongo(statement, sent);
+    controller.createActivityOld(statement, sent);
     return res.status(204).send();
   }
 
@@ -129,7 +129,7 @@ export const pauseVideo = async (req, res) => {
       origin,
     );
     const sent = await lrs.sendStatementToLrs(statement);
-    controller.saveStatementToMongo(statement, sent);
+    controller.createActivityOld(statement, sent);
     return res.status(204).send();
   }
 
@@ -147,7 +147,7 @@ export const completeVideo = async (req, res) => {
       origin,
     );
     const sent = await lrs.sendStatementToLrs(statement);
-    controller.saveStatementToMongo(statement, sent);
+    controller.createActivityOld(statement, sent);
     return res.status(204).send();
   }
 
@@ -167,7 +167,7 @@ export const viewSlide = async (req, res) => {
       origin,
     );
     const sent = await lrs.sendStatementToLrs(statement);
-    controller.saveStatementToMongo(statement, sent);
+    controller.createActivityOld(statement, sent);
     return res.status(204).send();
   }
 
@@ -185,7 +185,7 @@ export const completePDF = async (req, res) => {
       origin,
     );
     const sent = await lrs.sendStatementToLrs(statement);
-    controller.saveStatementToMongo(statement, sent);
+    controller.createActivityOld(statement, sent);
     return res.status(204).send();
   }
 

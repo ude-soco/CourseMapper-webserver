@@ -15,7 +15,7 @@ export const newChannel = async (req, res, next) => {
   const notificationInfo = notifications.generateNotificationInfo(req);
   const sent = await lrs.sendStatementToLrs(statement);
   try {
-    const activity = await controller.saveStatementToMongo(
+    const activity = await controller.createActivityOld(
       statement,
       sent,
       notificationInfo,
@@ -38,7 +38,7 @@ export const deleteChannel = async (req, res, next) => {
   const notificationInfo = notifications.generateNotificationInfo(req);
   const sent = await lrs.sendStatementToLrs(statement);
   try {
-    const activity = await controller.saveStatementToMongo(
+    const activity = await controller.createActivityOld(
       statement,
       sent,
       notificationInfo,
@@ -62,7 +62,7 @@ export const editChannel = async (req, res, next) => {
   const notificationInfo = notifications.generateNotificationInfo(req);
   const sent = await lrs.sendStatementToLrs(statement);
   try {
-    const activity = await controller.saveStatementToMongo(
+    const activity = await controller.createActivityOld(
       statement,
       sent,
       notificationInfo,
@@ -84,6 +84,6 @@ export const getChannel = async (req, res) => {
   );
 
   const sent = await lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement, sent);
+  controller.createActivityOld(statement, sent);
   res.status(200).send(req.locals.response);
 };

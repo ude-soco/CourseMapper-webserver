@@ -15,7 +15,7 @@ export const newTopic = async (req, res, next) => {
   const notificationInfo = notifications.generateNotificationInfo(req);
   const sent = await lrs.sendStatementToLrs(statement);
   try {
-    const activity = await controller.saveStatementToMongo(
+    const activity = await controller.createActivityOld(
       statement,
       sent,
       notificationInfo,
@@ -39,7 +39,7 @@ export const deleteTopic = async (req, res, next) => {
   const sent = await lrs.sendStatementToLrs(statement);
 
   try {
-    const activity = await controller.saveStatementToMongo(
+    const activity = await controller.createActivityOld(
       statement,
       sent,
       notificationInfo,
@@ -59,7 +59,7 @@ export const getTopic = async (req, res) => {
     origin,
   );
   const sent = await lrs.sendStatementToLrs(statement);
-  controller.saveStatementToMongo(statement, sent);
+  controller.createActivityOld(statement, sent);
   res.status(200).send(req.locals.response);
 };
 
@@ -75,7 +75,7 @@ export const editTopic = async (req, res, next) => {
   const notificationInfo = notifications.generateNotificationInfo(req);
   const sent = await lrs.sendStatementToLrs(statement);
   try {
-    const activity = await controller.saveStatementToMongo(
+    const activity = await controller.createActivityOld(
       statement,
       sent,
       notificationInfo,

@@ -1,45 +1,47 @@
 const db = require("../../models");
 const Activity = db.activity;
-const SEND_STATEMENT_IN_REALTIME =
-  process.env.SEND_STATEMENT_IN_REALTIME === "true";
 
-export const saveStatementToMongo = async (
-  statement,
-  sent,
-  notificationInfo,
-) => {
+export const createActivityOld = async (statement, sent, notificationInfo) => {
   let activity = new Activity({
     statement: statement,
-    sent: sent,
+    sent: false,
     notificationInfo: notificationInfo,
   });
 
-  let savedStatement;
   try {
-    savedStatement = await activity.save();
-    return savedStatement;
+    return await activity.save();
   } catch (err) {
     console.log("Error in saving statement to mongo");
     throw err;
   }
 };
 
-export const fetchUnsentStatements = async () => {
+export const createActivity = async (statement, notificationInfo) => {
+  try {
+    return await new Activity({
+      statement: statement,
+      sent: false,
+      notificationInfo: notificationInfo,
+    }).save();
+  } catch (error) {
+    console.error("Error creating activity:", error);
+    throw error;
+  }
+};
+
+export const getActivities = async () => {
   try {
     const unsentActivities = await Activity.find(
       { sent: false },
       { statement: 1, _id: 0 },
     );
-    const unsentStatements = unsentActivities.map(
-      (activity) => activity.statement,
-    );
-    return unsentStatements;
+    return unsentActivities.map((activity) => activity.statement);
   } catch (err) {
     console.log("Error in fetching unsent statements");
   }
 };
 
-export const updateSentStatements = async (sentStatementsIds) => {
+export const updateActivities = async (sentStatementsIds) => {
   try {
     sentStatementsIds = sentStatementsIds ? sentStatementsIds : [];
     const dbRes = await Activity.updateMany(

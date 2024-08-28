@@ -5,7 +5,6 @@ import RestPassSchema from "../models/resetPassword.model.js";
 import { authJwt } from "../middlewares";
 import { verify } from "jsonwebtoken";
 
-
 const config = require("../config/auth.config");
 const db = require("../models");
 const helpers = require("../helpers/helpers");
@@ -13,7 +12,7 @@ const User = db.user;
 const Role = db.role;
 
 /**
- * @function signup
+ * @function register
  * User registration controller
  *
  * @param {string} req.body.firstname The username
@@ -22,7 +21,7 @@ const Role = db.role;
  * @param {string} req.body.email The email
  * @param {string} req.body.password The new password
  */
-export const signup = async (req, res, next) => {
+export const register = async (req, res, next) => {
   let role;
   try {
     role = await Role.findOne({ name: "user" });
@@ -31,7 +30,7 @@ export const signup = async (req, res, next) => {
   }
 
   let generateMboxAndMboxSha1Sum = helpers.generateMboxAndMboxSha1Sum(
-    req.body.email
+    req.body.email,
   );
 
   let user = new User({
@@ -58,20 +57,20 @@ export const signup = async (req, res, next) => {
 };
 
 /**
- * @function signin
+ * @function signIn
  * User login controller
  *
  * @param {string} req.body.username The username
  * @param {string} req.body.password The new password
  */
-export const signin = async (req, res, next) => {
+export const signIn = async (req, res, next) => {
   let username = req.body.username;
   let password = req.body.password;
 
   try {
     let user = await User.findOne({ username: username }).populate(
       "role",
-      "-__v"
+      "-__v",
     );
     if (!user) {
       return res.status(404).send({ error: "User not found." });
@@ -95,7 +94,7 @@ export const signin = async (req, res, next) => {
         email: user.email,
         mbox_sha1sum: user.mbox_sha1sum,
         courses: user.courses,
-        token:token
+        token: token,
       },
     };
     return next();
@@ -105,11 +104,11 @@ export const signin = async (req, res, next) => {
 };
 
 /**
- * @function signout
+ * @function signOut
  * User logout controller
  *
  */
-export const signout = async (req, res, next) => {
+export const signOut = async (req, res, next) => {
   const userId = req.userId;
   try {
     let user = await User.findById(userId);
@@ -130,39 +129,38 @@ export const signout = async (req, res, next) => {
 export const sendEmail = async (req, res, next) => {
   let email = req.body.email;
 
-try{ 
-  let user = await User.findOne({
-    email: email,
-  });
-
-  if (!user) {
-    return res.status(404).send({ error: "User not found." });
-  } else {
-
-    let token = sign({ email: user.email }, config.secret, {
-      expiresIn: 300, // 5 min change to 300
+  try {
+    let user = await User.findOne({
+      email: email,
     });
 
-    const newToken = new RestPassSchema({
-      userId: user._id,
-      token: token,
-      email:user.email,
-    });
-    const mailTransporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 587,
-      secure: false,
-      auth: {
-        user: "coursemapper.soco@gmail.com",
-        pass: "gzxi ednk zaft zyow",
-      },
-    });
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    } else {
+      let token = sign({ email: user.email }, config.secret, {
+        expiresIn: 300, // 5 min change to 300
+      });
 
-    let mailDetails = {
-      from: "coursemapper.soco@gmail.com",
-      to: user.email,
-      subject: "Reset Password",
-      html: `<html>
+      const newToken = new RestPassSchema({
+        userId: user._id,
+        token: token,
+        email: user.email,
+      });
+      const mailTransporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false,
+        auth: {
+          user: "coursemapper.soco@gmail.com",
+          pass: "gzxi ednk zaft zyow",
+        },
+      });
+
+      let mailDetails = {
+        from: "coursemapper.soco@gmail.com",
+        to: user.email,
+        subject: "Reset Password",
+        html: `<html>
         <head>
             <title>CourseMapper Password Reset </title> 
         </head>
@@ -180,21 +178,22 @@ try{
             
         </body>
     </html>`,
-    };
-   
-    mailTransporter.sendMail(mailDetails, async (err, data) => {
-      if (err) {
-        return res.status(500).send({ error: "something went wrong: " + err.message });
-        //return next(CreateError(500, "something went wrong"));
-      } else {
-   
-        await newToken.save();
-        return res.status(200).send({
-          success: `Email sent successfully`,
-        });
-      }
-    });
-  }
+      };
+
+      mailTransporter.sendMail(mailDetails, async (err, data) => {
+        if (err) {
+          return res
+            .status(500)
+            .send({ error: "something went wrong: " + err.message });
+          //return next(CreateError(500, "something went wrong"));
+        } else {
+          await newToken.save();
+          return res.status(200).send({
+            success: `Email sent successfully`,
+          });
+        }
+      });
+    }
   } catch (err) {
     return res.status(500).send({ error: "Error finding user" });
   }
@@ -206,24 +205,23 @@ export const resetPassword = async (req, res, next) => {
     if (err) {
       return res.status(500).send({ message: "Reset link is expired!" });
     }
-    const dataResponse =data;
+    const dataResponse = data;
     let user = await User.findOne({
       email: dataResponse.email,
     });
-    const enryptedPassword= hashSync(Passowrd, 8)
-    user.password=enryptedPassword
-    try{
-const updatedUser= await User.findOneAndUpdate(
-  { _id:user._id },
-  { $set:user },
-  { new:true }
-)
-return res.status(200).send({
-  success: `Reset Password scussess`,
-});
-    }
-    catch(error){
+    const enryptedPassword = hashSync(Passowrd, 8);
+    user.password = enryptedPassword;
+    try {
+      const updatedUser = await User.findOneAndUpdate(
+        { _id: user._id },
+        { $set: user },
+        { new: true },
+      );
+      return res.status(200).send({
+        success: `Reset Password scussess`,
+      });
+    } catch (error) {
       return res.status(500).send({ error: "Some went wrong" });
     }
   });
-}
+};

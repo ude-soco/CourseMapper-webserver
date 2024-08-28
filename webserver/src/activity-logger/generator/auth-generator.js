@@ -1,130 +1,81 @@
-import { v4 as uuidv4 } from "uuid";
+import {
+  createContext,
+  createUserActivity,
+  createVerb,
+} from "./util/generator-util";
+import config from "./util/config";
 
-const platform = "CourseMapper";
-const language = "en-US";
-
-export const getLoginStatement = (user, origin) => {
-  const userId = user._id.toString();
-  const userFullname = `${user.firstname} ${user.lastname}`;
+export const generateSignInActivity = (req) => {
+  const userActivity = createUserActivity(req);
   return {
-    id: uuidv4(),
-    timestamp: new Date(),
-    actor: {
-      objectType: "Agent",
-      name: userFullname,
-      mbox: user.mbox,
-      mbox_sha1sum: user.mbox_sha1sum,
-      account: {
-        homePage: origin,
-        name: userId,
-      },
-    },
-    verb: {
-      id: "https://brindlewaye.com/xAPITerms/verbs/loggedin/",
-      display: {
-        [language]: "logged in",
-      },
-    },
+    ...userActivity,
+    verb: createVerb(
+      "https://brindlewaye.com/xAPITerms/verbs/loggedin",
+      "logged in",
+    ),
     object: {
-      objectType: "Activity",
-      id: `${origin}/activity/CourseMapper`,
+      objectType: config.activity,
+      id: `${req.get("origin")}/activity/CourseMapper`,
       definition: {
         type: "http://id.tincanapi.com/activitytype/lms",
         name: {
-          [language]: platform,
+          [config.language]: config.platform,
         },
         description: {
-          [language]: "Course Annotation and Analytics platform",
+          [config.language]: "Course Annotation and Analytics platform",
         },
       },
     },
-    context: {
-      platform: platform,
-      language: language,
-    },
+    context: createContext(),
   };
 };
 
-export const getLogoutStatement = (user, origin) => {
-  const userId = user._id.toString();
-  const userFullname = `${user.firstname} ${user.lastname}`;
+export const generateSignOutActivity = (req) => {
+  const userActivity = createUserActivity(req);
   return {
-    id: uuidv4(),
-    timestamp: new Date(),
-    actor: {
-      objectType: "Agent",
-      name: userFullname,
-      mbox: user.mbox,
-      mbox_sha1sum: user.mbox_sha1sum,
-      account: {
-        homePage: origin,
-        name: userId,
-      },
-    },
-    verb: {
-      id: "https://brindlewaye.com/xAPITerms/verbs/loggedout/",
-      display: {
-        [language]: "logged out",
-      },
-    },
+    ...userActivity,
+    verb: createVerb(
+      "https://brindlewaye.com/xAPITerms/verbs/loggedout",
+      "logged out",
+    ),
     object: {
-      objectType: "Activity",
-      id: `${origin}/activity/CourseMapper`,
+      objectType: config.activity,
+      id: `${req.get("origin")}/activity/CourseMapper`,
       definition: {
-        type: "http://id.tincanapi.com/activitytype/lms",
+        type: "https://id.tincanapi.com/activitytype/lms",
         name: {
-          [language]: platform,
+          [config.language]: config.platform,
         },
         description: {
-          [language]: "Course Annotation and Analytics platform",
+          [config.language]: "Course Annotation and Analytics platform",
         },
       },
     },
-    context: {
-      platform: platform,
-      language: language,
-    },
+    context: createContext(),
   };
 };
 
-export const getSignupStatement = (user, origin) => {
-  const userId = user._id.toString();
-  const userFullname = `${user.firstname} ${user.lastname}`;
+export const generateRegisterActivity = (req) => {
+  const userActivity = createUserActivity(req);
   return {
-    id: uuidv4(),
-    timestamp: new Date(),
-    actor: {
-      objectType: "Agent",
-      name: userFullname,
-      mbox: user.mbox,
-      mbox_sha1sum: user.mbox_sha1sum,
-      account: {
-        homePage: origin,
-        name: userId,
-      },
-    },
-    verb: {
-      id: "http://adlnet.gov/expapi/verbs/registered",
-      display: {
-        [language]: "registered",
-      },
-    },
+    ...userActivity,
+    verb: createVerb(
+      "https://adlnet.gov/expapi/verbs/registered",
+      "registered",
+    ),
     object: {
-      objectType: "Activity",
-      id: `${origin}/activity/CourseMapper`,
+      objectType: config.activity,
+      id: `${req.get("origin")}/activity/CourseMapper`,
       definition: {
-        type: "http://id.tincanapi.com/activitytype/lms",
+        type: "https://id.tincanapi.com/activitytype/lms",
         name: {
-          [language]: platform,
+          [config.language]: config.platform,
         },
         description: {
-          [language]: "Course Annotation and Analytics platform",
+          [config.language]: "Course Annotation and Analytics platform",
         },
       },
     },
-    context: {
-      platform: platform,
-      language: language,
-    },
+    context: createContext(),
   };
 };
