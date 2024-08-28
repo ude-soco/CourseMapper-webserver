@@ -1,6 +1,6 @@
-const statementFactory = require("../statementsFactory/material.statementsFactory");
+const statementFactory = require("../generator/material-generator");
 const lrs = require("../lrs/lrs");
-const controller = require("../controller.xAPILogger");
+const controller = require("../controller/activity-controller");
 const ORIGIN = process.env.ORIGIN;
 const notifications = require("../../middlewares/Notifications/notifications");
 
@@ -9,7 +9,7 @@ export const newMaterial = async (req, res, next) => {
   const statement = statementFactory.getMaterialUploadStatement(
     req.locals.user,
     req.locals.material,
-    origin
+    origin,
   );
 
   const notificationInfo = notifications.generateNotificationInfo(req);
@@ -18,7 +18,7 @@ export const newMaterial = async (req, res, next) => {
     const activity = await controller.saveStatementToMongo(
       statement,
       sent,
-      notificationInfo
+      notificationInfo,
     );
     //Add activity to req.locals so it can be used in the notification
     req.locals.activity = activity;
@@ -34,7 +34,7 @@ export const deleteMaterial = async (req, res, next) => {
   const statement = statementFactory.getMaterialDeletionStatement(
     req.locals.user,
     req.locals.material,
-    origin
+    origin,
   );
   const notificationInfo = notifications.generateNotificationInfo(req);
   const sent = await lrs.sendStatementToLrs(statement);
@@ -42,7 +42,7 @@ export const deleteMaterial = async (req, res, next) => {
     const activity = await controller.saveStatementToMongo(
       statement,
       sent,
-      notificationInfo
+      notificationInfo,
     );
     //Add activity to req.locals so it can be used in the notification
     req.locals.activity = activity;
@@ -58,7 +58,7 @@ export const getMaterial = async (req, res) => {
   const statement = statementFactory.getMaterialAccessStatement(
     req.locals.user,
     req.locals.material,
-    origin
+    origin,
   );
   const sent = await lrs.sendStatementToLrs(statement);
   controller.saveStatementToMongo(statement, sent);
@@ -71,7 +71,7 @@ export const editMaterial = async (req, res, next) => {
     req.locals.user,
     req.locals.newMaterial,
     req.locals.oldMaterial,
-    origin
+    origin,
   );
   const notificationInfo = notifications.generateNotificationInfo(req);
   const sent = await lrs.sendStatementToLrs(statement);
@@ -79,7 +79,7 @@ export const editMaterial = async (req, res, next) => {
     const activity = await controller.saveStatementToMongo(
       statement,
       sent,
-      notificationInfo
+      notificationInfo,
     );
     //Add activity to req.locals so it can be used in the notification
     req.locals.activity = activity;
@@ -102,7 +102,7 @@ export const playVideo = async (req, res) => {
       hours,
       minutes,
       seconds,
-      origin
+      origin,
     );
     const sent = await lrs.sendStatementToLrs(statement);
     controller.saveStatementToMongo(statement, sent);
@@ -126,7 +126,7 @@ export const pauseVideo = async (req, res) => {
       hours,
       minutes,
       seconds,
-      origin
+      origin,
     );
     const sent = await lrs.sendStatementToLrs(statement);
     controller.saveStatementToMongo(statement, sent);
@@ -144,7 +144,7 @@ export const completeVideo = async (req, res) => {
     const statement = statementFactory.getVideoEndStatement(
       req.locals.user,
       req.locals.material,
-      origin
+      origin,
     );
     const sent = await lrs.sendStatementToLrs(statement);
     controller.saveStatementToMongo(statement, sent);
@@ -164,7 +164,7 @@ export const viewSlide = async (req, res) => {
       req.locals.user,
       req.locals.material,
       slideNr,
-      origin
+      origin,
     );
     const sent = await lrs.sendStatementToLrs(statement);
     controller.saveStatementToMongo(statement, sent);
@@ -182,7 +182,7 @@ export const completePDF = async (req, res) => {
     const statement = statementFactory.getPdfCompleteStatement(
       req.locals.user,
       req.locals.material,
-      origin
+      origin,
     );
     const sent = await lrs.sendStatementToLrs(statement);
     controller.saveStatementToMongo(statement, sent);

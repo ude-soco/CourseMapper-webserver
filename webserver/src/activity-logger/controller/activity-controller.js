@@ -1,4 +1,4 @@
-const db = require("../models");
+const db = require("../../models");
 const Activity = db.activity;
 const SEND_STATEMENT_IN_REALTIME =
   process.env.SEND_STATEMENT_IN_REALTIME === "true";
@@ -6,7 +6,7 @@ const SEND_STATEMENT_IN_REALTIME =
 export const saveStatementToMongo = async (
   statement,
   sent,
-  notificationInfo
+  notificationInfo,
 ) => {
   let activity = new Activity({
     statement: statement,
@@ -28,10 +28,10 @@ export const fetchUnsentStatements = async () => {
   try {
     const unsentActivities = await Activity.find(
       { sent: false },
-      { statement: 1, _id: 0 }
+      { statement: 1, _id: 0 },
     );
     const unsentStatements = unsentActivities.map(
-      (activity) => activity.statement
+      (activity) => activity.statement,
     );
     return unsentStatements;
   } catch (err) {
@@ -46,10 +46,10 @@ export const updateSentStatements = async (sentStatementsIds) => {
       {
         "statement.id": { $in: sentStatementsIds },
       },
-      { $set: { sent: true } }
+      { $set: { sent: true } },
     );
     console.log(
-      `updateSentStatements: ${dbRes.modifiedCount} statements are updated`
+      `updateSentStatements: ${dbRes.modifiedCount} statements are updated`,
     );
   } catch (err) {
     console.log("Error in updating sent statements");

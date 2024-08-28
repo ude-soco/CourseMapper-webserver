@@ -31,7 +31,7 @@ env !== "production"
           "http://127.0.0.1:8081 ",
           process.env.WEBAPP_URL,
         ],
-      })
+      }),
     )
   : "";
 
@@ -46,7 +46,7 @@ app.use(
     secret: process.env.COOKIE_SECRET,
     keys: [process.env.COOKIE_SECRET],
     httpOnly: true,
-  })
+  }),
 );
 app.use("/api/public/uploads", express.static("public/uploads"));
 addErrorHandling(app);
@@ -75,7 +75,7 @@ const neo4j = require("./graph/neo4j");
 neo4j.connect(
   process.env.NEO4J_URI,
   process.env.NEO4J_USER,
-  process.env.NEO4J_PASSWORD
+  process.env.NEO4J_PASSWORD,
 );
 
 // Create connection to Redis
@@ -84,11 +84,11 @@ redis.connect(
   process.env.REDIS_HOST,
   process.env.REDIS_PORT,
   process.env.REDIS_DATABASE,
-  process.env.REDIS_PASSWORD
+  process.env.REDIS_PASSWORD,
 );
 
 // xAPI scheduler
-const xapiScheduler = require("./xAPILogger/scheduler");
+const xapiScheduler = require("./activity-logger/scheduler/scheduler");
 xapiScheduler.runXapiScheduler();
 
 // Create HTTP server
@@ -157,7 +157,7 @@ const initializeDB = async () => {
       } else {
         let password = hashSync(process.env.PASS, 10);
         console.log(
-          "Adding User: { name: admin, password: " + process.env.PASS + " }"
+          "Adding User: { name: admin, password: " + process.env.PASS + " }",
         );
         let email = process.env.EMAIL;
         let generateMboxAndMboxSha1Sum =

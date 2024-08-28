@@ -1,18 +1,21 @@
-const statementFactory = require("../statementsFactory/auth.statementsFactory");
+const statementFactory = require("../generator/auth-generator");
 const lrs = require("../lrs/lrs");
-const controller = require("../controller.xAPILogger");
+const controller = require("../controller/activity-controller");
 const ORIGIN = process.env.ORIGIN;
 
 export const signup = async (req, res) => {
-  const origin = req.get('origin') ? req.get('origin') : ORIGIN ;
-  const statement = statementFactory.getSignupStatement(req.locals.user, origin);
+  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
+  const statement = statementFactory.getSignupStatement(
+    req.locals.user,
+    origin,
+  );
   const sent = await lrs.sendStatementToLrs(statement);
   controller.saveStatementToMongo(statement, sent);
   res.status(200).send(req.locals.response);
 };
 
 export const signin = async (req, res) => {
-  const origin = req.get('origin') ? req.get('origin') : ORIGIN;
+  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
   const statement = statementFactory.getLoginStatement(req.locals.user, origin);
   const sent = await lrs.sendStatementToLrs(statement);
   controller.saveStatementToMongo(statement, sent);
@@ -20,8 +23,11 @@ export const signin = async (req, res) => {
 };
 
 export const signout = async (req, res) => {
-  const origin = req.get('origin') ? req.get('origin') : ORIGIN;
-  const statement = statementFactory.getLogoutStatement(req.locals.user, origin);
+  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
+  const statement = statementFactory.getLogoutStatement(
+    req.locals.user,
+    origin,
+  );
   const sent = await lrs.sendStatementToLrs(statement);
   controller.saveStatementToMongo(statement, sent);
   res.status(200).send(req.locals.response);

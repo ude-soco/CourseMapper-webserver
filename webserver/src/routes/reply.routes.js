@@ -1,6 +1,6 @@
 const { authJwt } = require("../middlewares");
 const controller = require("../controllers/reply.controller");
-const logger = require("../xAPILogger/logger/reply.logger");
+const logger = require("../activity-logger/logger/reply-logger");
 const { notifications } = require("../middlewares");
 
 module.exports = function (app) {
@@ -14,7 +14,7 @@ module.exports = function (app) {
   app.get(
     "/api/courses/:courseId/annotations/:annotationId/replies",
     [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.getReplies
+    controller.getReplies,
   );
 
   // Add a new reply
@@ -28,7 +28,7 @@ module.exports = function (app) {
     notifications.populateUserNotification,
     logger.newMention,
     notifications.newMentionNotificationUsersCalculate,
-    notifications.populateUserNotification
+    notifications.populateUserNotification,
   );
 
   // Delete a reply
@@ -39,7 +39,7 @@ module.exports = function (app) {
     controller.deleteReply,
     logger.deleteReply,
     notifications.calculateUsersFollowingAnnotation,
-    notifications.populateUserNotification
+    notifications.populateUserNotification,
   );
 
   // Edit a reply
@@ -50,7 +50,7 @@ module.exports = function (app) {
     controller.editReply,
     logger.editReply,
     notifications.calculateUsersFollowingAnnotation,
-    notifications.populateUserNotification
+    notifications.populateUserNotification,
   );
 
   // Like a reply
@@ -62,7 +62,7 @@ module.exports = function (app) {
     controller.likeReply,
     logger.likeReply,
     notifications.LikesDislikesMentionedNotificationUsers,
-    notifications.populateUserNotification
+    notifications.populateUserNotification,
   );
 
   // Dislike a reply
@@ -74,6 +74,6 @@ module.exports = function (app) {
     controller.dislikeReply,
     logger.dislikeReply,
     notifications.LikesDislikesMentionedNotificationUsers,
-    notifications.populateUserNotification
+    notifications.populateUserNotification,
   );
 };

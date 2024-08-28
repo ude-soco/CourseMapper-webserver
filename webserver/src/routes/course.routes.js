@@ -1,6 +1,6 @@
 const { authJwt } = require("../middlewares");
 const controller = require("../controllers/course.controller");
-const logger = require("../xAPILogger/logger/course.logger");
+const logger = require("../activity-logger/logger/course-logger");
 // const controller2 = require("../controllers/user.controller");
 
 module.exports = function (app) {
@@ -23,13 +23,13 @@ module.exports = function (app) {
   app.get(
     "/api/courses/:courseId",
     [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.getCourse
+    controller.getCourse,
     // TODO: Probably we need to provide the getCourse logger
   );
   app.get(
     "/api/coursesTest/:courseId",
     [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.getCourseTest
+    controller.getCourseTest,
     // TODO: Probably we need to provide the getCourse logger
   );
   // app.get("/courses/:courseId", controller.getCourse);
@@ -39,7 +39,7 @@ module.exports = function (app) {
     "/api/course",
     [authJwt.verifyToken],
     controller.newCourse,
-    logger.newCourse
+    logger.newCourse,
   );
 
   // Enrol in a course
@@ -47,7 +47,7 @@ module.exports = function (app) {
     "/api/enrol/:courseId",
     [authJwt.verifyToken],
     controller.enrolCourse,
-    logger.enrolCourse
+    logger.enrolCourse,
   );
 
   // Withdraw from a course
@@ -56,7 +56,7 @@ module.exports = function (app) {
     "/api/withdraw/:courseId",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.withdrawCourse,
-    logger.withdrawCourse
+    logger.withdrawCourse,
   );
 
   // Delete a course
@@ -65,7 +65,7 @@ module.exports = function (app) {
     "/api/courses/:courseId",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.deleteCourse,
-    logger.deleteCourse
+    logger.deleteCourse,
     // controller2.moderatorBoard
   );
 
@@ -75,36 +75,36 @@ module.exports = function (app) {
     "/api/courses/:courseId",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.editCourse,
-    logger.editCourse
+    logger.editCourse,
   );
 
   app.post(
     "/api/courses/:courseId/indicator",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.newIndicator
+    controller.newIndicator,
   );
 
   app.delete(
     "/api/courses/:courseId/indicator/:indicatorId",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.deleteIndicator
+    controller.deleteIndicator,
   );
 
   app.get(
     "/api/courses/:courseId/indicators",
     [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.getIndicators
+    controller.getIndicators,
   );
 
   app.put(
     "/api/courses/:courseId/indicator/:indicatorId/resize/:width/:height",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.resizeIndicator
+    controller.resizeIndicator,
   );
 
   app.put(
     "/api/courses/:courseId/reorder/:newIndex/:oldIndex",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.reorderIndicators
+    controller.reorderIndicators,
   );
 };

@@ -1,6 +1,6 @@
-const statementFactory = require("../statementsFactory/course.statementsFactory");
+const statementFactory = require("../generator/course-generator");
 const lrs = require("../lrs/lrs");
-const controller = require("../controller.xAPILogger");
+const controller = require("../controller/activity-controller");
 const ORIGIN = process.env.ORIGIN;
 
 export const newCourse = async (req, res) => {
@@ -8,7 +8,7 @@ export const newCourse = async (req, res) => {
   const statement = statementFactory.getCourseCreationStatement(
     req.locals.user,
     req.locals.course,
-    origin
+    origin,
   );
   const sent = await lrs.sendStatementToLrs(statement);
   controller.saveStatementToMongo(statement, sent);
@@ -20,7 +20,7 @@ export const deleteCourse = async (req, res) => {
   const statement = statementFactory.getCourseDeletionStatement(
     req.locals.user,
     req.locals.course,
-    origin
+    origin,
   );
   const sent = await lrs.sendStatementToLrs(statement);
   controller.saveStatementToMongo(statement, sent);
@@ -32,7 +32,7 @@ export const getCourse = async (req, res) => {
   const statement = statementFactory.getCourseAccessStatement(
     req.locals.user,
     req.locals.course,
-    origin
+    origin,
   );
   const sent = await lrs.sendStatementToLrs(statement);
   controller.saveStatementToMongo(statement, sent);
@@ -44,7 +44,7 @@ export const enrolCourse = async (req, res) => {
   const statement = statementFactory.getCourseEnrollmentStatement(
     req.locals.user,
     req.locals.course,
-    origin
+    origin,
   );
   const sent = await lrs.sendStatementToLrs(statement);
   controller.saveStatementToMongo(statement, sent);
@@ -56,7 +56,7 @@ export const withdrawCourse = async (req, res) => {
   const statement = statementFactory.getCourseWithdrawStatement(
     req.locals.user,
     req.locals.course,
-    origin
+    origin,
   );
   const sent = await lrs.sendStatementToLrs(statement);
   controller.saveStatementToMongo(statement, sent);
@@ -69,7 +69,7 @@ export const editCourse = async (req, res) => {
     req.locals.user,
     req.locals.newCourse,
     req.locals.oldCourse,
-    origin
+    origin,
   );
   const sent = await lrs.sendStatementToLrs(statement);
   controller.saveStatementToMongo(statement, sent);

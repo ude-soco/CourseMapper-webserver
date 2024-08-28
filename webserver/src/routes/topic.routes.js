@@ -1,6 +1,6 @@
 const { authJwt, notifications } = require("../middlewares");
 const controller = require("../controllers/topic.controller");
-const logger = require("../xAPILogger/logger/topic.logger");
+const logger = require("../activity-logger/logger/topic-logger");
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -14,7 +14,7 @@ module.exports = function (app) {
     "/api/courses/:courseId/topics/:topicId",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getTopic,
-    logger.getTopic
+    logger.getTopic,
   );
 
   // Create a new topic
@@ -26,7 +26,7 @@ module.exports = function (app) {
     logger.newTopic,
     notifications.updateBlockingNotificationsNewTopic,
     notifications.topicCourseUpdateNotificationUsers,
-    notifications.populateUserNotification
+    notifications.populateUserNotification,
   );
 
   // Delete a topic
@@ -37,7 +37,7 @@ module.exports = function (app) {
     controller.deleteTopic,
     logger.deleteTopic,
     notifications.topicCourseUpdateNotificationUsers,
-    notifications.populateUserNotification
+    notifications.populateUserNotification,
   );
 
   // Edit a topic
@@ -48,40 +48,36 @@ module.exports = function (app) {
     controller.editTopic,
     logger.editTopic,
     notifications.topicCourseUpdateNotificationUsers,
-    notifications.populateUserNotification
+    notifications.populateUserNotification,
   );
 
   app.post(
     "/api/courses/:courseId/topics/:topicId/indicator",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.newIndicator,
-  
   );
 
   app.delete(
     "/api/courses/:courseId/topics/:topicId/indicator/:indicatorId",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.deleteIndicator,
-    
   );
 
   app.get(
     "/api/courses/:courseId/topics/:topicId/indicator",
     [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.getIndicators
+    controller.getIndicators,
   );
 
   app.put(
     "/api/courses/:courseId/topics/:topicId/indicator/:indicatorId/resize/:width/:height",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.resizeIndicator
+    controller.resizeIndicator,
   );
 
   app.put(
     "/api/courses/:courseId/topics/:topicId/reorder/:newIndex/:oldIndex",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.reorderIndicators
+    controller.reorderIndicators,
   );
 };
-
-

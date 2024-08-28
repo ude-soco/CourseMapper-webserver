@@ -1,25 +1,25 @@
-const statementFactory = require("../statementsFactory/reply.statementsFactory");
+const statementFactory = require("../generator/annotation-generator");
 const lrs = require("../lrs/lrs");
-const controller = require("../controller.xAPILogger");
+const controller = require("../controller/activity-controller");
 const ORIGIN = process.env.ORIGIN;
 const notifications = require("../../middlewares/Notifications/notifications");
 
-export const newReply = async (req, res, next) => {
+export const newAnnotation = async (req, res, next) => {
   const origin = req.get("origin") ? req.get("origin") : ORIGIN;
   let statement;
   if (!req.locals.annotation.tool) {
-    statement = statementFactory.getReplyToCommentCreationStatement(
+    statement = statementFactory.getCommentCreationStatement(
       req.locals.user,
       req.locals.annotation,
-      req.locals.reply,
-      origin
+      req.locals.material,
+      origin,
     );
   } else {
-    statement = statementFactory.getReplyToAnnotationCreationStatement(
+    statement = statementFactory.getAnnotationCreationStatement(
       req.locals.user,
       req.locals.annotation,
-      req.locals.reply,
-      origin
+      req.locals.material,
+      origin,
     );
   }
   const notificationInfo = notifications.generateNotificationInfo(req);
@@ -28,7 +28,7 @@ export const newReply = async (req, res, next) => {
     const activity = await controller.saveStatementToMongo(
       statement,
       sent,
-      notificationInfo
+      notificationInfo,
     );
     //Add activity to req.locals so it can be used in the notification
     req.locals.activity = activity;
@@ -38,21 +38,29 @@ export const newReply = async (req, res, next) => {
   next();
 };
 
-export const deleteReply = async (req, res, next) => {
+export const deleteAnnotation = async (req, res, next) => {
   const origin = req.get("origin") ? req.get("origin") : ORIGIN;
-  const statement = statementFactory.getReplyDeletionStatement(
-    req.locals.user,
-    req.locals.reply,
-    origin,
-    req.locals.annotation
-  );
+  let statement;
+  if (!req.locals.annotation.tool) {
+    statement = statementFactory.getCommentDeletionStatement(
+      req.locals.user,
+      req.locals.annotation,
+      origin,
+    );
+  } else {
+    statement = statementFactory.getAnnotaionDeletionStatement(
+      req.locals.user,
+      req.locals.annotation,
+      origin,
+    );
+  }
   const notificationInfo = notifications.generateNotificationInfo(req);
   const sent = await lrs.sendStatementToLrs(statement);
   try {
     const activity = await controller.saveStatementToMongo(
       statement,
       sent,
-      notificationInfo
+      notificationInfo,
     );
     //Add activity to req.locals so it can be used in the notification
     req.locals.activity = activity;
@@ -62,23 +70,37 @@ export const deleteReply = async (req, res, next) => {
   next();
 };
 
-export const likeReply = async (req, res, next) => {
+export const likeAnnotation = async (req, res, next) => {
   const origin = req.get("origin") ? req.get("origin") : ORIGIN;
   let statement;
   if (req.locals.like) {
-    statement = statementFactory.getReplyLikeStatement(
-      req.locals.user,
-      req.locals.reply,
-      origin,
-      req.locals.annotation
-    );
+    if (!req.locals.annotation.tool) {
+      statement = statementFactory.getCommentLikeStatement(
+        req.locals.user,
+        req.locals.annotation,
+        origin,
+      );
+    } else {
+      statement = statementFactory.getAnnotationLikeStatement(
+        req.locals.user,
+        req.locals.annotation,
+        origin,
+      );
+    }
   } else {
-    statement = statementFactory.getReplyUnlikeStatement(
-      req.locals.user,
-      req.locals.reply,
-      origin,
-      req.locals.annotation
-    );
+    if (!req.locals.annotation.tool) {
+      statement = statementFactory.getCommentUnlikeStatement(
+        req.locals.user,
+        req.locals.annotation,
+        origin,
+      );
+    } else {
+      statement = statementFactory.getAnnotationUnlikeStatement(
+        req.locals.user,
+        req.locals.annotation,
+        origin,
+      );
+    }
   }
   const notificationInfo = notifications.generateNotificationInfo(req);
   const sent = await lrs.sendStatementToLrs(statement);
@@ -86,7 +108,7 @@ export const likeReply = async (req, res, next) => {
     const activity = await controller.saveStatementToMongo(
       statement,
       sent,
-      notificationInfo
+      notificationInfo,
     );
     //Add activity to req.locals so it can be used in the notification
     req.locals.activity = activity;
@@ -96,23 +118,37 @@ export const likeReply = async (req, res, next) => {
   next();
 };
 
-export const dislikeReply = async (req, res, next) => {
+export const dislikeAnnotation = async (req, res, next) => {
   const origin = req.get("origin") ? req.get("origin") : ORIGIN;
   let statement;
   if (req.locals.dislike) {
-    statement = statementFactory.getReplyDislikeStatement(
-      req.locals.user,
-      req.locals.reply,
-      origin,
-      req.locals.annotation
-    );
+    if (!req.locals.annotation.tool) {
+      statement = statementFactory.getCommentDislikeStatement(
+        req.locals.user,
+        req.locals.annotation,
+        origin,
+      );
+    } else {
+      statement = statementFactory.getAnnotationDislikeStatement(
+        req.locals.user,
+        req.locals.annotation,
+        origin,
+      );
+    }
   } else {
-    statement = statementFactory.getReplyUndislikeStatement(
-      req.locals.user,
-      req.locals.reply,
-      origin,
-      req.locals.annotation
-    );
+    if (!req.locals.annotation.tool) {
+      statement = statementFactory.getCommentUndislikeStatement(
+        req.locals.user,
+        req.locals.annotation,
+        origin,
+      );
+    } else {
+      statement = statementFactory.getAnnotationUndislikeStatement(
+        req.locals.user,
+        req.locals.annotation,
+        origin,
+      );
+    }
   }
   const notificationInfo = notifications.generateNotificationInfo(req);
   const sent = await lrs.sendStatementToLrs(statement);
@@ -120,7 +156,7 @@ export const dislikeReply = async (req, res, next) => {
     const activity = await controller.saveStatementToMongo(
       statement,
       sent,
-      notificationInfo
+      notificationInfo,
     );
     //Add activity to req.locals so it can be used in the notification
     req.locals.activity = activity;
@@ -130,22 +166,31 @@ export const dislikeReply = async (req, res, next) => {
   next();
 };
 
-export const editReply = async (req, res, next) => {
+export const editAnnotation = async (req, res, next) => {
   const origin = req.get("origin") ? req.get("origin") : ORIGIN;
-  let statement = statementFactory.getReplyEditStatement(
-    req.locals.user,
-    req.locals.newReply,
-    origin,
-    req.locals.annotation
-  );
-  req.locals.category = "mentionedandreplied";
+  let statement;
+  if (!req.locals.oldAnnotation.tool) {
+    statement = statementFactory.getCommentEditStatement(
+      req.locals.user,
+      req.locals.newAnnotation,
+      req.locals.oldAnnotation,
+      origin,
+    );
+  } else {
+    statement = statementFactory.getAnnotationEditStatement(
+      req.locals.user,
+      req.locals.newAnnotation,
+      req.locals.oldAnnotation,
+      origin,
+    );
+  }
   const notificationInfo = notifications.generateNotificationInfo(req);
   const sent = await lrs.sendStatementToLrs(statement);
   try {
     const activity = await controller.saveStatementToMongo(
       statement,
       sent,
-      notificationInfo
+      notificationInfo,
     );
     //Add activity to req.locals so it can be used in the notification
     req.locals.activity = activity;
@@ -157,11 +202,11 @@ export const editReply = async (req, res, next) => {
 
 export const newMention = async (req, res, next) => {
   const origin = req.get("origin") ? req.get("origin") : ORIGIN;
+  req.locals.category = "mentionedandreplied";
   const statement = statementFactory.getNewMentionCreationStatement(
     req.locals.user,
-    req.locals.reply,
+    req.locals.annotation,
     origin,
-    req.locals.annotation
   );
   const notificationInfo = notifications.generateNotificationInfo(req);
   const sent = await lrs.sendStatementToLrs(statement);
@@ -169,7 +214,7 @@ export const newMention = async (req, res, next) => {
     const activity = await controller.saveStatementToMongo(
       statement,
       sent,
-      notificationInfo
+      notificationInfo,
     );
     //Add activity to req.locals so it can be used in the notification
     req.locals.activity = activity;
