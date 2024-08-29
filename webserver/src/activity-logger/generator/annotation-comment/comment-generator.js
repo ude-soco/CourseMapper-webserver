@@ -11,6 +11,7 @@ import {
   createAnnotationCommentMaterialResultObject,
   createAnnotationCommentResultObject,
 } from "./utils";
+import config from "../util/config";
 
 const platform = "CourseMapper";
 const language = "en-US";
@@ -39,309 +40,76 @@ export const generateDeleteCommentActivity = (req) => {
   };
 };
 
-export const generateLikeCommentActivity = (user, annotation, origin) => {
-  const userId = user._id.toString();
-  const userFullname = `${user.firstname} ${user.lastname}`;
+export const generateLikeCommentActivity = (req) => {
+  const metadata = createMetadata();
   return {
-    id: uuidv4(),
-    timestamp: new Date(),
-    actor: {
-      objectType: "Agent",
-      name: userFullname,
-      mbox: user.mbox,
-      mbox_sha1sum: user.mbox_sha1sum,
-      account: {
-        homePage: origin,
-        name: userId,
-      },
-    },
-    verb: {
-      id: "http://activitystrea.ms/schema/1.0/like",
-      display: {
-        [language]: "liked",
-      },
-    },
-    object: {
-      objectType: "Activity",
-      id: `${origin}/activity/course/${annotation.courseId}/topic/${annotation.topicId}/channel/${annotation.channelId}/material/${annotation.materialId}/comment/${annotation._id}`,
-      definition: {
-        type: "http://activitystrea.ms/schema/1.0/comment",
-        name: {
-          [language]:
-            "Comment:" +
-            annotation.content.slice(0, 50) +
-            (annotation.content.length > 50 ? " ..." : ""),
-        },
-        description: {
-          [language]: annotation.content,
-        },
-        extensions: {
-          "http://www.CourseMapper.de/extensions/comment": {
-            id: annotation._id,
-            material_id: annotation.materialId,
-            channel_id: annotation.channelId,
-            topic_id: annotation.topicId,
-            course_id: annotation.courseId,
-            content: annotation.content,
-            type: annotation.type,
-            tool: annotation.tool,
-            location: annotation.location,
-          },
-        },
-      },
-    },
-    result: {
-      extensions: {
-        "http://www.CourseMapper.de/extensions/annotation": {
-          location: annotation.location,
-        },
-      },
-    },
-    context: {
-      platform: platform,
-      language: language,
-    },
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://activitystrea.ms/schema/1.0/like", "liked"),
+    object: createAnnotationCommentObject(req, "comment"),
+    result: createAnnotationCommentResultObject(req, "comment"),
+    context: createContext(),
   };
 };
 
-export const generateUnlikeCommentActivity = (user, annotation, origin) => {
-  const userId = user._id.toString();
-  const userFullname = `${user.firstname} ${user.lastname}`;
+export const generateUnlikeCommentActivity = (req) => {
+  const metadata = createMetadata();
   return {
-    id: uuidv4(),
-    timestamp: new Date(),
-    actor: {
-      objectType: "Agent",
-      name: userFullname,
-      mbox: user.mbox,
-      mbox_sha1sum: user.mbox_sha1sum,
-      account: {
-        homePage: origin,
-        name: userId,
-      },
-    },
-    verb: {
-      id: "http://activitystrea.ms/schema/1.0/unlike",
-      display: {
-        [language]: "unliked",
-      },
-    },
-    object: {
-      objectType: "Activity",
-      id: `${origin}/activity/course/${annotation.courseId}/topic/${annotation.topicId}/channel/${annotation.channelId}/material/${annotation.materialId}/comment/${annotation._id}`,
-      definition: {
-        type: "http://activitystrea.ms/schema/1.0/comment",
-        name: {
-          [language]:
-            "Comment:" +
-            annotation.content.slice(0, 50) +
-            (annotation.content.length > 50 ? " ..." : ""),
-        },
-        description: {
-          [language]: annotation.content,
-        },
-        extensions: {
-          "http://www.CourseMapper.de/extensions/comment": {
-            id: annotation._id,
-            material_id: annotation.materialId,
-            channel_id: annotation.channelId,
-            topic_id: annotation.topicId,
-            course_id: annotation.courseId,
-            content: annotation.content,
-            type: annotation.type,
-            tool: annotation.tool,
-            location: annotation.location,
-          },
-        },
-      },
-    },
-    result: {
-      extensions: {
-        "http://www.CourseMapper.de/extensions/comment": {
-          location: annotation.location,
-        },
-      },
-    },
-    context: {
-      platform: platform,
-      language: language,
-    },
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://activitystrea.ms/schema/1.0/unlike", "unliked"),
+    object: createAnnotationCommentObject(req, "comment"),
+    result: createAnnotationCommentResultObject(req, "comment"),
+    context: createContext(),
   };
 };
 
-export const generateDislikeCommentActivity = (user, annotation, origin) => {
-  const userId = user._id.toString();
-  const userFullname = `${user.firstname} ${user.lastname}`;
+export const generateDislikeCommentActivity = (req) => {
+  const metadata = createMetadata();
   return {
-    id: uuidv4(),
-    timestamp: new Date(),
-    actor: {
-      objectType: "Agent",
-      name: userFullname,
-      mbox: user.mbox,
-      mbox_sha1sum: user.mbox_sha1sum,
-      account: {
-        homePage: origin,
-        name: userId,
-      },
-    },
-    verb: {
-      id: "http://activitystrea.ms/schema/1.0/dislike",
-      display: {
-        [language]: "disliked",
-      },
-    },
-    object: {
-      objectType: "Activity",
-      id: `${origin}/activity/course/${annotation.courseId}/topic/${annotation.topicId}/channel/${annotation.channelId}/material/${annotation.materialId}/comment/${annotation._id}`,
-      definition: {
-        type: "http://activitystrea.ms/schema/1.0/comment",
-        name: {
-          [language]:
-            "Comment:" +
-            annotation.content.slice(0, 50) +
-            (annotation.content.length > 50 ? " ..." : ""),
-        },
-        description: {
-          [language]: annotation.content,
-        },
-        extensions: {
-          "http://www.CourseMapper.de/extensions/comment": {
-            id: annotation._id,
-            material_id: annotation.materialId,
-            channel_id: annotation.channelId,
-            topic_id: annotation.topicId,
-            course_id: annotation.courseId,
-            content: annotation.content,
-            type: annotation.type,
-            tool: annotation.tool,
-            location: annotation.location,
-          },
-        },
-      },
-    },
-    result: {
-      extensions: {
-        "http://www.CourseMapper.de/extensions/comment": {
-          location: annotation.location,
-        },
-      },
-    },
-    context: {
-      platform: platform,
-      language: language,
-    },
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://activitystrea.ms/schema/1.0/dislike", "disliked"),
+    object: createAnnotationCommentObject(req, "comment"),
+    result: createAnnotationCommentResultObject(req, "comment"),
+    context: createContext(),
   };
 };
 
-export const generateUndislikeCommentActivity = (user, annotation, origin) => {
-  const userId = user._id.toString();
-  const userFullname = `${user.firstname} ${user.lastname}`;
+export const generateUndislikeCommentActivity = (req) => {
+  const metadata = createMetadata();
   return {
-    id: uuidv4(),
-    timestamp: new Date(),
-    actor: {
-      objectType: "Agent",
-      name: userFullname,
-      mbox: user.mbox,
-      mbox_sha1sum: user.mbox_sha1sum,
-      account: {
-        homePage: origin,
-        name: userId,
-      },
-    },
-    verb: {
-      id: "http://www.CourseMapper.de/verbs/undisliked",
-      display: {
-        [language]: "un-disliked",
-      },
-    },
-    object: {
-      objectType: "Activity",
-      id: `${origin}/activity/course/${annotation.courseId}/topic/${annotation.topicId}/channel/${annotation.channelId}/material/${annotation.materialId}/comment/${annotation._id}`,
-      definition: {
-        type: "http://activitystrea.ms/schema/1.0/comment",
-        name: {
-          [language]:
-            "Comment:" +
-            annotation.content.slice(0, 50) +
-            (annotation.content.length > 50 ? " ..." : ""),
-        },
-        description: {
-          [language]: annotation.content,
-        },
-        extensions: {
-          "http://www.CourseMapper.de/extensions/comment": {
-            id: annotation._id,
-            material_id: annotation.materialId,
-            channel_id: annotation.channelId,
-            topic_id: annotation.topicId,
-            course_id: annotation.courseId,
-            content: annotation.content,
-            type: annotation.type,
-            tool: annotation.tool,
-            location: annotation.location,
-          },
-        },
-      },
-    },
-    result: {
-      extensions: {
-        "http://www.CourseMapper.de/extensions/annotation": {
-          location: annotation.location,
-        },
-      },
-    },
-    context: {
-      platform: platform,
-      language: language,
-    },
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb(`${req.get("origin")}/verbs/undisliked`, "un-disliked"),
+    object: createAnnotationCommentObject(req, "comment"),
+    result: createAnnotationCommentResultObject(req, "comment"),
+    context: createContext(),
   };
 };
 
-export const generateEditCommentActivity = (
-  user,
-  newAnnotation,
-  oldAnnotation,
-  origin,
-) => {
-  const userId = user._id.toString();
-  const userFullname = `${user.firstname} ${user.lastname}`;
+export const generateEditCommentActivity = (req) => {
+  const metadata = createMetadata();
+  let newAnnotation = req.locals.newAnnotation;
+  let oldAnnotation = req.locals.oldAnnotation;
+  let origin = req.get("origin");
   return {
-    id: uuidv4(),
-    timestamp: new Date(),
-    actor: {
-      objectType: "Agent",
-      name: userFullname,
-      mbox: user.mbox,
-      mbox_sha1sum: user.mbox_sha1sum,
-      account: {
-        homePage: origin,
-        name: userId,
-      },
-    },
-    verb: {
-      id: "http://curatr3.com/define/verb/edited",
-      display: {
-        [language]: "edited",
-      },
-    },
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://curatr3.com/define/verb/edited", "edited"),
     object: {
-      objectType: "Activity",
+      objectType: config.activity,
       id: `${origin}/activity/course/${oldAnnotation.courseId}/topic/${oldAnnotation.topicId}/channel/${oldAnnotation.channelId}/material/${oldAnnotation.materialId}/comment/${oldAnnotation._id}`,
       definition: {
         type: "http://activitystrea.ms/schema/1.0/comment",
         name: {
-          [language]:
-            "Comment:" +
-            oldAnnotation.content.slice(0, 50) +
-            (oldAnnotation.content.length > 50 ? " ..." : ""),
+          [config.language]: `${oldAnnotation.content.slice(0, 50)} ${oldAnnotation.content.length > 50 ? " ..." : ""}`,
         },
         description: {
-          [language]: oldAnnotation.content,
+          [config.language]: oldAnnotation.content,
         },
         extensions: {
-          "http://www.CourseMapper.de/extensions/comment": {
+          [`${origin}/extensions/comment`]: {
             id: oldAnnotation._id,
             material_id: oldAnnotation.materialId,
             channel_id: oldAnnotation.channelId,
@@ -357,7 +125,7 @@ export const generateEditCommentActivity = (
     },
     result: {
       extensions: {
-        "http://www.CourseMapper.de/extensions/comment": {
+        [`${origin}/extensions/comment`]: {
           content: newAnnotation.content,
           type: newAnnotation.type,
           tool: newAnnotation.tool,
@@ -365,9 +133,6 @@ export const generateEditCommentActivity = (
         },
       },
     },
-    context: {
-      platform: platform,
-      language: language,
-    },
+    context: createContext(),
   };
 };

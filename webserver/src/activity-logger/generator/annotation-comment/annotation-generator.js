@@ -11,6 +11,7 @@ import {
   createAnnotationCommentMaterialResultObject,
   createAnnotationCommentResultObject,
 } from "./utils";
+import config from "../util/config";
 
 const platform = "CourseMapper";
 const language = "en-US";
@@ -42,313 +43,76 @@ export const generateDeleteAnnotationActivity = (req) => {
   };
 };
 
-export const generateLikeAnnotationActivity = (user, annotation, origin) => {
-  const userId = user._id.toString();
-  const userFullname = `${user.firstname} ${user.lastname}`;
+export const generateLikeAnnotationActivity = (req) => {
+  const metadata = createMetadata();
   return {
-    id: uuidv4(),
-    timestamp: new Date(),
-    actor: {
-      objectType: "Agent",
-      name: userFullname,
-      mbox: user.mbox,
-      mbox_sha1sum: user.mbox_sha1sum,
-      account: {
-        homePage: origin,
-        name: userId,
-      },
-    },
-    verb: {
-      id: "http://activitystrea.ms/schema/1.0/like",
-      display: {
-        [language]: "liked",
-      },
-    },
-    object: {
-      objectType: "Activity",
-      id: `${origin}/activity/course/${annotation.courseId}/topic/${annotation.topicId}/channel/${annotation.channelId}/material/${annotation.materialId}/annotation/${annotation._id}`,
-      definition: {
-        type: "http://www.CourseMapper.de/activityType/annotation",
-        name: {
-          [language]:
-            "Annotation:" +
-            annotation.content.slice(0, 50) +
-            (annotation.content.length > 50 ? " ..." : ""),
-        },
-        description: {
-          [language]: annotation.content,
-        },
-        extensions: {
-          "http://www.CourseMapper.de/extensions/annotation": {
-            id: annotation._id,
-            material_id: annotation.materialId,
-            channel_id: annotation.channelId,
-            topic_id: annotation.topicId,
-            course_id: annotation.courseId,
-            content: annotation.content,
-            type: annotation.type,
-            tool: annotation.tool,
-            location: annotation.location,
-          },
-        },
-      },
-    },
-    result: {
-      extensions: {
-        "http://www.CourseMapper.de/extensions/annotation": {
-          location: annotation.location,
-        },
-      },
-    },
-    context: {
-      platform: platform,
-      language: language,
-    },
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://activitystrea.ms/schema/1.0/like", "liked"),
+    object: createAnnotationCommentObject(req, "annotation"),
+    result: createAnnotationCommentResultObject(req, "annotation"),
+    context: createContext(),
   };
 };
 
-export const getAnnotationUnlikeStatement = (user, annotation, origin) => {
-  const userId = user._id.toString();
-  const userFullname = `${user.firstname} ${user.lastname}`;
+export const getAnnotationUnlikeStatement = (req) => {
+  const metadata = createMetadata();
   return {
-    id: uuidv4(),
-    timestamp: new Date(),
-    actor: {
-      objectType: "Agent",
-      name: userFullname,
-      mbox: user.mbox,
-      mbox_sha1sum: user.mbox_sha1sum,
-      account: {
-        homePage: origin,
-        name: userId,
-      },
-    },
-    verb: {
-      id: "http://activitystrea.ms/schema/1.0/unlike",
-      display: {
-        [language]: "unliked",
-      },
-    },
-    object: {
-      objectType: "Activity",
-      id: `${origin}/activity/course/${annotation.courseId}/topic/${annotation.topicId}/channel/${annotation.channelId}/material/${annotation.materialId}/annotation/${annotation._id}`,
-      definition: {
-        type: "http://www.CourseMapper.de/activityType/annotation",
-        name: {
-          [language]:
-            "Annotation:" +
-            annotation.content.slice(0, 50) +
-            (annotation.content.length > 50 ? " ..." : ""),
-        },
-        description: {
-          [language]: annotation.content,
-        },
-        extensions: {
-          "http://www.CourseMapper.de/extensions/annotation": {
-            id: annotation._id,
-            material_id: annotation.materialId,
-            channel_id: annotation.channelId,
-            topic_id: annotation.topicId,
-            course_id: annotation.courseId,
-            content: annotation.content,
-            type: annotation.type,
-            tool: annotation.tool,
-            location: annotation.location,
-          },
-        },
-      },
-    },
-    result: {
-      extensions: {
-        "http://www.CourseMapper.de/extensions/annotation": {
-          location: annotation.location,
-        },
-      },
-    },
-    context: {
-      platform: platform,
-      language: language,
-    },
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://activitystrea.ms/schema/1.0/unlike", "unliked"),
+    object: createAnnotationCommentObject(req, "annotation"),
+    result: createAnnotationCommentResultObject(req, "annotation"),
+    context: createContext(),
   };
 };
 
-export const generateDislikeAnnotationActivity = (user, annotation, origin) => {
-  const userId = user._id.toString();
-  const userFullname = `${user.firstname} ${user.lastname}`;
+export const generateDislikeAnnotationActivity = (req) => {
+  const metadata = createMetadata();
   return {
-    id: uuidv4(),
-    timestamp: new Date(),
-    actor: {
-      objectType: "Agent",
-      name: userFullname,
-      mbox: user.mbox,
-      mbox_sha1sum: user.mbox_sha1sum,
-      account: {
-        homePage: origin,
-        name: userId,
-      },
-    },
-    verb: {
-      id: "http://activitystrea.ms/schema/1.0/dislike",
-      display: {
-        [language]: "disliked",
-      },
-    },
-    object: {
-      objectType: "Activity",
-      id: `${origin}/activity/course/${annotation.courseId}/topic/${annotation.topicId}/channel/${annotation.channelId}/material/${annotation.materialId}/annotation/${annotation._id}`,
-      definition: {
-        type: "http://www.CourseMapper.de/activityType/annotation",
-        name: {
-          [language]:
-            "Annotation:" +
-            annotation.content.slice(0, 50) +
-            (annotation.content.length > 50 ? " ..." : ""),
-        },
-        description: {
-          [language]: annotation.content,
-        },
-        extensions: {
-          "http://www.CourseMapper.de/extensions/annotation": {
-            id: annotation._id,
-            material_id: annotation.materialId,
-            channel_id: annotation.channelId,
-            topic_id: annotation.topicId,
-            course_id: annotation.courseId,
-            content: annotation.content,
-            type: annotation.type,
-            tool: annotation.tool,
-            location: annotation.location,
-          },
-        },
-      },
-    },
-    result: {
-      extensions: {
-        "http://www.CourseMapper.de/extensions/annotation": {
-          location: annotation.location,
-        },
-      },
-    },
-    context: {
-      platform: platform,
-      language: language,
-    },
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://activitystrea.ms/schema/1.0/dislike", "disliked"),
+    object: createAnnotationCommentObject(req, "annotation"),
+    result: createAnnotationCommentResultObject(req, "annotation"),
+    context: createContext(),
   };
 };
 
-export const generateUndislikeAnnotationActivity = (
-  user,
-  annotation,
-  origin,
-) => {
-  const userId = user._id.toString();
-  const userFullname = `${user.firstname} ${user.lastname}`;
+export const generateUndislikeAnnotationActivity = (req) => {
+  const metadata = createMetadata();
   return {
-    id: uuidv4(),
-    timestamp: new Date(),
-    actor: {
-      objectType: "Agent",
-      name: userFullname,
-      mbox: user.mbox,
-      mbox_sha1sum: user.mbox_sha1sum,
-      account: {
-        homePage: origin,
-        name: userId,
-      },
-    },
-    verb: {
-      id: "http://www.CourseMapper.de/verbs/undisliked",
-      display: {
-        [language]: "un-disliked",
-      },
-    },
-    object: {
-      objectType: "Activity",
-      id: `${origin}/activity/course/${annotation.courseId}/topic/${annotation.topicId}/channel/${annotation.channelId}/material/${annotation.materialId}/annotation/${annotation._id}`,
-      definition: {
-        type: "http://www.CourseMapper.de/activityType/annotation",
-        name: {
-          [language]:
-            "Annotation:" +
-            annotation.content.slice(0, 50) +
-            (annotation.content.length > 50 ? " ..." : ""),
-        },
-        description: {
-          [language]: annotation.content,
-        },
-        extensions: {
-          "http://www.CourseMapper.de/extensions/annotation": {
-            id: annotation._id,
-            material_id: annotation.materialId,
-            channel_id: annotation.channelId,
-            topic_id: annotation.topicId,
-            course_id: annotation.courseId,
-            content: annotation.content,
-            type: annotation.type,
-            tool: annotation.tool,
-            location: annotation.location,
-          },
-        },
-      },
-    },
-    result: {
-      extensions: {
-        "http://www.CourseMapper.de/extensions/annotation": {
-          location: annotation.location,
-        },
-      },
-    },
-    context: {
-      platform: platform,
-      language: language,
-    },
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb(`${req.get("origin")}/verbs/undisliked`, "un-disliked"),
+    object: createAnnotationCommentObject(req, "annotation"),
+    result: createAnnotationCommentResultObject(req, "annotation"),
+    context: createContext(),
   };
 };
 
-export const generateEditAnnotationActivity = (
-  user,
-  newAnnotation,
-  oldAnnotation,
-  origin,
-) => {
-  const userId = user._id.toString();
-  const userFullname = `${user.firstname} ${user.lastname}`;
+export const generateEditAnnotationActivity = (req) => {
+  const metadata = createMetadata();
+  let newAnnotation = req.locals.newAnnotation;
+  let oldAnnotation = req.locals.oldAnnotation;
+  let origin = req.get("origin");
   return {
-    id: uuidv4(),
-    timestamp: new Date(),
-    actor: {
-      objectType: "Agent",
-      name: userFullname,
-      mbox: user.mbox,
-      mbox_sha1sum: user.mbox_sha1sum,
-      account: {
-        homePage: origin,
-        name: userId,
-      },
-    },
-    verb: {
-      id: "http://curatr3.com/define/verb/edited",
-      display: {
-        [language]: "edited",
-      },
-    },
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://curatr3.com/define/verb/edited", "edited"),
     object: {
       objectType: "Activity",
       id: `${origin}/activity/course/${oldAnnotation.courseId}/topic/${oldAnnotation.topicId}/channel/${oldAnnotation.channelId}/material/${oldAnnotation.materialId}/annotation/${oldAnnotation._id}`,
       definition: {
-        type: "http://www.CourseMapper.de/activityType/annotation",
+        type: `${origin}/activityType/annotation`,
         name: {
-          [language]:
-            "Annotation:" +
-            oldAnnotation.content.slice(0, 50) +
-            (oldAnnotation.content.length > 50 ? " ..." : ""),
+          [config.language]: `${oldAnnotation.content.slice(0, 50)} ${oldAnnotation.content.length > 50 ? " ..." : ""}`,
         },
         description: {
-          [language]: oldAnnotation.content,
+          [config.language]: oldAnnotation.content,
         },
         extensions: {
-          "http://www.CourseMapper.de/extensions/annotation": {
+          [`${origin}/extensions/annotation`]: {
             id: oldAnnotation._id,
             material_id: oldAnnotation.materialId,
             channel_id: oldAnnotation.channelId,
@@ -364,7 +128,7 @@ export const generateEditAnnotationActivity = (
     },
     result: {
       extensions: {
-        "http://www.CourseMapper.de/extensions/annotation": {
+        [`${origin}/extensions/annotation`]: {
           content: newAnnotation.content,
           type: newAnnotation.type,
           tool: newAnnotation.tool,
@@ -372,74 +136,19 @@ export const generateEditAnnotationActivity = (
         },
       },
     },
-    context: {
-      platform: platform,
-      language: language,
-    },
+    context: createContext(),
   };
 };
 
-export const generateAddMentionStatement = (user, annotation, origin) => {
-  const userId = user._id.toString();
-  const userFullname = `${user.firstname} ${user.lastname}`;
+// TODO: Update to the mentioned generator is needed, important info "who is mentioned" is missing
+export const generateAddMentionStatement = (req) => {
+  const metadata = createMetadata();
   return {
-    id: uuidv4(),
-    timestamp: new Date(),
-    actor: {
-      objectType: "Agent",
-      name: userFullname,
-      mbox: user.mbox,
-      mbox_sha1sum: user.mbox_sha1sum,
-      account: {
-        homePage: origin,
-        name: userId,
-      },
-    },
-    verb: {
-      id: "http://id.tincanapi.com/verb/mentioned",
-      display: {
-        [language]: "mentioned",
-      },
-    },
-    object: {
-      objectType: "User",
-
-      definition: {
-        type: "http://www.CourseMapper.de/activityType/you",
-        name: {
-          [language]: "",
-        },
-        extensions: {
-          "http://www.CourseMapper.de/extensions/annotation": {
-            id: annotation._id,
-            material_id: annotation.materialId,
-            channel_id: annotation.channelId,
-            topic_id: annotation.topicId,
-            course_id: annotation.courseId,
-            content: annotation.content,
-          },
-        },
-      },
-    },
-    result: {
-      extensions: {
-        "http://www.CourseMapper.de/extensions/annotation": {
-          id: annotation._id,
-          material_id: annotation.materialId,
-          channel_id: annotation.channelId,
-          topic_id: annotation.topicId,
-          course_id: annotation.courseId,
-          content: annotation.content,
-          type: annotation.type,
-          tool: annotation.tool,
-          location: annotation.location,
-        },
-      },
-    },
-
-    context: {
-      platform: platform,
-      language: language,
-    },
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://id.tincanapi.com/verb/mentioned", "mentioned"),
+    object: createAnnotationCommentObject(req, "annotation"),
+    result: createAnnotationCommentResultObject(req, "annotation"),
+    context: createContext(),
   };
 };
