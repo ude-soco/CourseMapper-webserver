@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from "uuid";
 import {
   createContext,
   createMetadata,
@@ -12,9 +11,6 @@ import {
   createAnnotationCommentResultObject,
 } from "./utils";
 import config from "../util/config";
-
-const platform = "CourseMapper";
-const language = "en-US";
 
 export const generateCreateAnnotationActivity = (req) => {
   const metadata = createMetadata();

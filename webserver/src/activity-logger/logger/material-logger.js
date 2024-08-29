@@ -1,7 +1,5 @@
 const materialActivityGenerator = require("../generator/material-generator");
-const lrs = require("../lrs/lrs");
 const activityController = require("../controller/activity-controller");
-const ORIGIN = process.env.ORIGIN;
 const notifications = require("../../middlewares/Notifications/notifications");
 
 export const addMaterialLogger = async (req, res, next) => {

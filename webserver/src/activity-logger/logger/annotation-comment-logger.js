@@ -87,7 +87,7 @@ export const editAnnotation = async (req, res, next) => {
 
 // TODO: Does it require to check whether someone mentioned in the annotation/comment?
 export const addMentionLogger = async (req, res, next) => {
-  // ? possible remove? // req.locals.category = "mentionedandreplied";
+  req.locals.category = "mentionedandreplied";
   let mentioned = req.locals.isMentionedUsersPresent;
   if (mentioned > 0) {
     try {

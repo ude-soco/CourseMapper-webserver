@@ -1,180 +1,83 @@
-const statementFactory = require("../generator/reply-generator");
-const lrs = require("../lrs/lrs");
-const controller = require("../controller/activity-controller");
+const replyActivityGenerator = require("../generator/reply-generator");
+const activityController = require("../controller/activity-controller");
 const ORIGIN = process.env.ORIGIN;
 const notifications = require("../../middlewares/Notifications/notifications");
 
-export const newReply = async (req, res, next) => {
-  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
-  let statement;
-  if (!req.locals.annotation.tool) {
-    statement = statementFactory.getReplyToCommentCreationStatement(
-      req.locals.user,
-      req.locals.annotation,
-      req.locals.reply,
-      origin,
-    );
-  } else {
-    statement = statementFactory.getReplyToAnnotationCreationStatement(
-      req.locals.user,
-      req.locals.annotation,
-      req.locals.reply,
-      origin,
-    );
-  }
-  const notificationInfo = notifications.generateNotificationInfo(req);
-  const sent = await lrs.sendStatementToLrs(statement);
+export const createReplyLogger = async (req, res, next) => {
   try {
-    const activity = await controller.createActivityOld(
-      statement,
-      sent,
-      notificationInfo,
+    req.locals.activity = await activityController.createActivity(
+      req.locals.annotation.tool
+        ? replyActivityGenerator.generateReplyToAnnotationActivity(req)
+        : replyActivityGenerator.generateReplyToCommentActivity(req),
+      notifications.generateNotificationInfo(req),
     );
-    //Add activity to req.locals so it can be used in the notification
-    req.locals.activity = activity;
+    next();
   } catch (err) {
-    res.status(500).send({ error: "Error saving statement to mongo", err });
+    res.status(400).send({ error: "Error saving statement to mongo", err });
   }
-  next();
 };
 
-export const deleteReply = async (req, res, next) => {
-  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
-  const statement = statementFactory.getReplyDeletionStatement(
-    req.locals.user,
-    req.locals.reply,
-    origin,
-    req.locals.annotation,
-  );
-  const notificationInfo = notifications.generateNotificationInfo(req);
-  const sent = await lrs.sendStatementToLrs(statement);
+export const deleteReplyLogger = async (req, res, next) => {
   try {
-    const activity = await controller.createActivityOld(
-      statement,
-      sent,
-      notificationInfo,
+    req.locals.activity = await activityController.createActivity(
+      replyActivityGenerator.generateDeleteReplyActivity(req),
+      notifications.generateNotificationInfo(req),
     );
-    //Add activity to req.locals so it can be used in the notification
-    req.locals.activity = activity;
+    next();
   } catch (err) {
-    res.status(500).send({ error: "Error saving statement to mongo", err });
+    res.status(400).send({ error: "Error saving statement to mongo", err });
   }
-  next();
 };
 
-export const likeReply = async (req, res, next) => {
-  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
-  let statement;
-  if (req.locals.like) {
-    statement = statementFactory.getReplyLikeStatement(
-      req.locals.user,
-      req.locals.reply,
-      origin,
-      req.locals.annotation,
-    );
-  } else {
-    statement = statementFactory.getReplyUnlikeStatement(
-      req.locals.user,
-      req.locals.reply,
-      origin,
-      req.locals.annotation,
-    );
-  }
-  const notificationInfo = notifications.generateNotificationInfo(req);
-  const sent = await lrs.sendStatementToLrs(statement);
+export const likeReplyLogger = async (req, res, next) => {
   try {
-    const activity = await controller.createActivityOld(
-      statement,
-      sent,
-      notificationInfo,
+    req.locals.activity = await activityController.createActivity(
+      req.locals.like
+        ? replyActivityGenerator.generateLikeReplyActivity(req)
+        : replyActivityGenerator.generateUnlikeReplyActivity(req),
+      notifications.generateNotificationInfo(req),
     );
-    //Add activity to req.locals so it can be used in the notification
-    req.locals.activity = activity;
+    next();
   } catch (err) {
-    res.status(500).send({ error: "Error saving statement to mongo", err });
+    res.status(400).send({ error: "Error saving statement to mongo", err });
   }
-  next();
 };
 
-export const dislikeReply = async (req, res, next) => {
-  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
-  let statement;
-  if (req.locals.dislike) {
-    statement = statementFactory.getReplyDislikeStatement(
-      req.locals.user,
-      req.locals.reply,
-      origin,
-      req.locals.annotation,
-    );
-  } else {
-    statement = statementFactory.getReplyUndislikeStatement(
-      req.locals.user,
-      req.locals.reply,
-      origin,
-      req.locals.annotation,
-    );
-  }
-  const notificationInfo = notifications.generateNotificationInfo(req);
-  const sent = await lrs.sendStatementToLrs(statement);
+export const dislikeReplyLogger = async (req, res, next) => {
   try {
-    const activity = await controller.createActivityOld(
-      statement,
-      sent,
-      notificationInfo,
+    req.locals.activity = await activityController.createActivity(
+      req.locals.dislike
+        ? replyActivityGenerator.generateDislikeReplyActivity(req)
+        : replyActivityGenerator.generateUndislikeReplyActivity(req),
+      notifications.generateNotificationInfo(req),
     );
-    //Add activity to req.locals so it can be used in the notification
-    req.locals.activity = activity;
+    next();
   } catch (err) {
-    res.status(500).send({ error: "Error saving statement to mongo", err });
+    res.status(400).send({ error: "Error saving statement to mongo", err });
   }
-  next();
 };
 
-export const editReply = async (req, res, next) => {
-  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
-  let statement = statementFactory.getReplyEditStatement(
-    req.locals.user,
-    req.locals.newReply,
-    origin,
-    req.locals.annotation,
-  );
+export const editReplyLogger = async (req, res, next) => {
   req.locals.category = "mentionedandreplied";
-  const notificationInfo = notifications.generateNotificationInfo(req);
-  const sent = await lrs.sendStatementToLrs(statement);
   try {
-    const activity = await controller.createActivityOld(
-      statement,
-      sent,
-      notificationInfo,
+    req.locals.activity = await activityController.createActivity(
+      replyActivityGenerator.generateEditReplyActivity(req),
+      notifications.generateNotificationInfo(req),
     );
-    //Add activity to req.locals so it can be used in the notification
-    req.locals.activity = activity;
+    next();
   } catch (err) {
-    res.status(500).send({ error: "Error saving statement to mongo", err });
+    res.status(400).send({ error: "Error saving statement to mongo", err });
   }
-  next();
 };
 
-export const newMention = async (req, res, next) => {
-  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
-  const statement = statementFactory.getNewMentionCreationStatement(
-    req.locals.user,
-    req.locals.reply,
-    origin,
-    req.locals.annotation,
-  );
-  const notificationInfo = notifications.generateNotificationInfo(req);
-  const sent = await lrs.sendStatementToLrs(statement);
+export const newMentionLogger = async (req, res, next) => {
   try {
-    const activity = await controller.createActivityOld(
-      statement,
-      sent,
-      notificationInfo,
+    req.locals.activity = await activityController.createActivity(
+      replyActivityGenerator.getNewMentionCreationStatement(req),
+      notifications.generateNotificationInfo(req),
     );
-    //Add activity to req.locals so it can be used in the notification
-    req.locals.activity = activity;
+    next();
   } catch (err) {
-    res.status(500).send({ error: "Error saving statement to mongo", err });
+    res.status(400).send({ error: "Error saving statement to mongo", err });
   }
-  next();
 };
