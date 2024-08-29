@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from "uuid";
 import {
   createContext,
   createMetadata,
@@ -7,9 +6,6 @@ import {
 } from "./util/generator-util";
 import { createAnnotationCommentObject } from "./annotation-comment/utils";
 import config from "./util/config";
-
-const platform = "CourseMapper";
-const language = "en-US";
 
 const createReplyAnnotationResultObject = (req) => {
   let reply = req.locals.reply;

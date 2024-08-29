@@ -1,6 +1,5 @@
 const replyActivityGenerator = require("../generator/reply-generator");
 const activityController = require("../controller/activity-controller");
-const ORIGIN = process.env.ORIGIN;
 const notifications = require("../../middlewares/Notifications/notifications");
 
 export const createReplyLogger = async (req, res, next) => {

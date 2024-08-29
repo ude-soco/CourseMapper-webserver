@@ -6,8 +6,8 @@ import {
 } from "../util/generator-util";
 import {
   createAnnotationCommentMaterialObject,
-  createAnnotationCommentObject,
   createAnnotationCommentMaterialResultObject,
+  createAnnotationCommentObject,
   createAnnotationCommentResultObject,
 } from "./utils";
 import config from "../util/config";

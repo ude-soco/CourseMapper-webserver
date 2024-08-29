@@ -92,7 +92,7 @@ export const addMentionLogger = async (req, res, next) => {
   if (mentioned > 0) {
     try {
       req.locals.activity = await activityController.createActivity(
-        annotationActivityGenerator.generateAddMentionStatement(req),
+        annotationActivityGenerator.generateAddMentiownStatement(req),
         notifications.generateNotificationInfo(req),
       );
     } catch (err) {

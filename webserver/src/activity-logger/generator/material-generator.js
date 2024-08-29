@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from "uuid";
 import {
   createContext,
   createMetadata,
@@ -6,9 +5,6 @@ import {
   createVerb,
 } from "./util/generator-util";
 import config from "./util/config";
-
-const platform = "CourseMapper";
-const language = "en-US";
 
 const createMaterialObject = (req, typeURI) => {
   let material = req.locals.material;
@@ -165,10 +161,7 @@ export const generatePlayVideoActivity = (req) => {
     actor: createUser(req),
     verb: createVerb("http://activitystrea.ms/schema/1.0/play", "played"),
     object: createVideoMaterialWithDurationObject(req),
-    context: {
-      platform: platform,
-      language: language,
-    },
+    context: createContext(),
   };
 };
 
@@ -179,10 +172,7 @@ export const generatePauseVideoActivity = (req) => {
     actor: createUser(req),
     verb: createVerb("http://id.tincanapi.com/verb/paused", "paused"),
     object: createVideoMaterialWithDurationObject(req),
-    context: {
-      platform: platform,
-      language: language,
-    },
+    context: createContext(),
   };
 };
 

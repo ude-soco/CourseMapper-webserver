@@ -28,7 +28,7 @@ export const ActivityScheduler = () => {
         }
       }
     } catch (err) {
-      console.log("Error in running xapi scheduler");
+      console.log("Error in running xAPI scheduler");
     }
   });
 };

@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from "uuid";
 import {
   createContext,
   createMetadata,
@@ -7,14 +6,11 @@ import {
 } from "../util/generator-util";
 import {
   createAnnotationCommentMaterialObject,
-  createAnnotationCommentObject,
   createAnnotationCommentMaterialResultObject,
+  createAnnotationCommentObject,
   createAnnotationCommentResultObject,
 } from "./utils";
 import config from "../util/config";
-
-const platform = "CourseMapper";
-const language = "en-US";
 
 export const generateCommentActivity = (req) => {
   const metadata = createMetadata();

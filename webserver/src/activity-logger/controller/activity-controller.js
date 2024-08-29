@@ -1,21 +1,6 @@
 const db = require("../../models");
 const Activity = db.activity;
 
-export const createActivityOld = async (statement, sent, notificationInfo) => {
-  let activity = new Activity({
-    statement: statement,
-    sent: false,
-    notificationInfo: notificationInfo,
-  });
-
-  try {
-    return await activity.save();
-  } catch (err) {
-    console.log("Error in saving statement to mongo");
-    throw err;
-  }
-};
-
 export const createActivity = async (statement, notificationInfo) => {
   try {
     return await new Activity({
