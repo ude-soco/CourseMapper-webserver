@@ -91,38 +91,27 @@ export const completeVideoLogger = async (req, res) => {
 };
 
 export const viewSlideLogger = async (req, res) => {
-  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
-  const slideNr = req.params.slideNr;
   if (req.locals.material.type === "pdf") {
-    const statement = materialActivityGenerator.generateViewSlideActivity(
-      req.locals.user,
-      req.locals.material,
-      slideNr,
-      origin,
+    await activityController.createActivity(
+      materialActivityGenerator.generateViewSlideActivity(req),
     );
-    const sent = await lrs.sendStatementToLrs(statement);
-    await activityController.createActivityOld(statement, sent);
-    return res.status(204).send();
+    res.status(204).send();
+  } else {
+    res.status(406).send({
+      error: `Material with id ${req.locals.material._id} is not a pdf`,
+    });
   }
-  return res.status(406).send({
-    error: `Material with id ${req.locals.material._id} is not a pdf`,
-  });
 };
 
 export const completePDFLogger = async (req, res) => {
-  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
   if (req.locals.material.type === "pdf") {
-    const statement = materialActivityGenerator.generateCompletePdfActivity(
-      req.locals.user,
-      req.locals.material,
-      origin,
+    await activityController.createActivity(
+      materialActivityGenerator.generateCompletePdfActivity(req),
     );
-    const sent = await lrs.sendStatementToLrs(statement);
-    await activityController.createActivityOld(statement, sent);
-    return res.status(204).send();
+    res.status(204).send();
+  } else {
+    res.status(406).send({
+      error: `Material with id ${req.locals.material._id} is not a pdf`,
+    });
   }
-
-  return res.status(406).send({
-    error: `Material with id ${req.locals.material._id} is not a pdf`,
-  });
 };

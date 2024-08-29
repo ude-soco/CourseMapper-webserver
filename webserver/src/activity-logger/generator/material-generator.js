@@ -13,7 +13,7 @@ const language = "en-US";
 const createMaterialObject = (req, typeURI) => {
   let material = req.locals.material;
   let origin = req.get("origin");
-  let type = typeURI ? typeURI : [`${origin}/activityType/material`];
+  let type = typeURI ? typeURI : `${origin}/activityType/material`;
   return {
     objectType: config.activity,
     id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`,
@@ -52,7 +52,7 @@ export const generateAddMaterialActivity = (req) => {
   };
 };
 
-export const generateAccessMaterialActivity = (req, user, material, origin) => {
+export const generateAccessMaterialActivity = (req) => {
   const metadata = createMetadata();
   return {
     ...metadata,
@@ -63,7 +63,7 @@ export const generateAccessMaterialActivity = (req, user, material, origin) => {
   };
 };
 
-export const generateDeleteMaterialActivity = (req, user, material, origin) => {
+export const generateDeleteMaterialActivity = (req) => {
   const metadata = createMetadata();
   return {
     ...metadata,
@@ -203,111 +203,59 @@ export const generateCompleteVideoActivity = (req, user, material, origin) => {
   };
 };
 
-export const generateViewSlideActivity = (user, material, slideNr, origin) => {
-  const userId = user._id.toString();
-  const userFullname = `${user.firstname} ${user.lastname}`;
+const createPDFMaterialWithSlideObject = (req) => {
+  const slideNr = req.params.slideNr;
+  const material = req.params.material;
+  const origin = req.get("origin");
   return {
-    id: uuidv4(),
-    timestamp: new Date(),
-    actor: {
-      objectType: "Agent",
-      name: userFullname,
-      mbox: user.mbox,
-      mbox_sha1sum: user.mbox_sha1sum,
-      account: {
-        homePage: origin,
-        name: userId,
+    objectType: config.activity,
+    id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slide/${slideNr}`,
+    definition: {
+      type: `http://id.tincanapi.com/activitytype/slide`,
+      name: {
+        [config.language]: material.name,
       },
-    },
-    verb: {
-      id: "http://id.tincanapi.com/verb/viewed",
-      display: {
-        [language]: "viewed",
+      description: {
+        [config.language]: material.description,
       },
-    },
-    object: {
-      objectType: "Activity",
-      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slide/${slideNr}`,
-      definition: {
-        type: `http://id.tincanapi.com/activitytype/slide`,
-        name: {
-          [language]: material.name,
-        },
-        description: {
-          [language]: material.description,
-        },
-        extensions: {
-          "http://www.CourseMapper.de/extensions/material": {
-            id: material._id,
-            name: material.name,
-            pageNr: slideNr,
-            description: material.description,
-            type: material.type,
-            url: material.url,
-            channel_id: material.channelId,
-            topic_id: material.topicId,
-            course_id: material.courseId,
-          },
+      extensions: {
+        [`${origin}/extensions/material`]: {
+          id: material._id,
+          name: material.name,
+          pageNr: slideNr,
+          description: material.description,
+          type: material.type,
+          url: material.url,
+          channel_id: material.channelId,
+          topic_id: material.topicId,
+          course_id: material.courseId,
         },
       },
-    },
-    context: {
-      platform: platform,
-      language: language,
     },
   };
 };
 
-export const generateCompletePdfActivity = (user, material, origin) => {
-  const userId = user._id.toString();
-  const userFullname = `${user.firstname} ${user.lastname}`;
+export const generateViewSlideActivity = (req, user, material) => {
+  const metadata = createMetadata();
   return {
-    id: uuidv4(),
-    timestamp: new Date(),
-    actor: {
-      objectType: "Agent",
-      name: userFullname,
-      mbox: user.mbox,
-      mbox_sha1sum: user.mbox_sha1sum,
-      account: {
-        homePage: origin,
-        name: userId,
-      },
-    },
-    verb: {
-      id: "http://activitystrea.ms/schema/1.0/complete",
-      display: {
-        [language]: "completed",
-      },
-    },
-    object: {
-      objectType: "Activity",
-      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`,
-      definition: {
-        type: `http://www.CourseMapper.de/activityType/pdf`,
-        name: {
-          [language]: material.name,
-        },
-        description: {
-          [language]: material.description,
-        },
-        extensions: {
-          "http://www.CourseMapper.de/extensions/material": {
-            id: material._id,
-            name: material.name,
-            description: material.description,
-            type: material.type,
-            url: material.url,
-            channel_id: material.channelId,
-            topic_id: material.topicId,
-            course_id: material.courseId,
-          },
-        },
-      },
-    },
-    context: {
-      platform: platform,
-      language: language,
-    },
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
+    object: createPDFMaterialWithSlideObject(req),
+    context: createContext(),
+  };
+};
+
+export const generateCompletePdfActivity = (req) => {
+  const metadata = createMetadata();
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb(
+      "http://activitystrea.ms/schema/1.0/complete",
+      "completed",
+    ),
+    object: createMaterialObject(req, `${req.get("origin")}/activityType/pdf`),
+    context: createContext(),
   };
 };
