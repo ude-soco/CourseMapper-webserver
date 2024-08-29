@@ -23,7 +23,7 @@ module.exports = function (app) {
     "/api/courses/:courseId/topic",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.newTopic,
-    logger.newTopic,
+    logger.createTopicLogger,
     notifications.updateBlockingNotificationsNewTopic,
     notifications.topicCourseUpdateNotificationUsers,
     notifications.populateUserNotification,
