@@ -15,7 +15,7 @@ module.exports = function (app) {
     "/api/courses/:courseId/materials/:materialId",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getMaterial,
-    logger.getMaterial,
+    logger.accessMaterialLogger,
   );
 
   // Create a new material
@@ -24,7 +24,7 @@ module.exports = function (app) {
     "/api/courses/:courseId/channels/:channelId/material",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.newMaterial,
-    logger.newMaterial,
+    logger.addMaterialLogger,
     notifications.updateBlockingNotificationsNewMaterial,
     notifications.materialCourseUpdateNotificationsUsers,
     notifications.populateUserNotification,
@@ -37,7 +37,7 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isModerator],
     knowledgeGraphController.deleteMaterial,
     controller.deleteMaterial,
-    logger.deleteMaterial,
+    logger.deleteMaterialLogger,
     notifications.materialCourseUpdateNotificationsUsers,
     notifications.populateUserNotification,
   );
@@ -48,7 +48,7 @@ module.exports = function (app) {
     "/api/courses/:courseId/materials/:materialId",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.editMaterial,
-    logger.editMaterial,
+    logger.editMaterialLogger,
     notifications.materialCourseUpdateNotificationsUsers,
     notifications.populateUserNotification,
   );
@@ -57,21 +57,21 @@ module.exports = function (app) {
     "/api/courses/:courseId/materials/:materialId/:hours/:minutes/:seconds/video/play",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getMaterial,
-    logger.playVideo,
+    logger.playVideoLogger,
   );
 
   app.get(
     "/api/courses/:courseId/materials/:materialId/:hours/:minutes/:seconds/video/pause",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getMaterial,
-    logger.pauseVideo,
+    logger.pauseVideoLogger,
   );
 
   app.get(
     "/api/courses/:courseId/materials/:materialId/video/complete",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getMaterial,
-    logger.completeVideo,
+    logger.completeVideoLogger,
   );
 
   app.get(
@@ -79,14 +79,14 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getMaterial,
     knowledgeGraphController.readSlide,
-    logger.viewSlide,
+    logger.viewSlideLogger,
   );
 
   app.get(
     "/api/courses/:courseId/materials/:materialId/pdf/complete",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getMaterial,
-    logger.completePDF,
+    logger.completePDFLogger,
   );
 
   app.post(

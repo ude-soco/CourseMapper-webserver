@@ -1,191 +1,124 @@
-const statementFactory = require("../generator/material-generator");
+const materialActivityGenerator = require("../generator/material-generator");
 const lrs = require("../lrs/lrs");
-const controller = require("../controller/activity-controller");
+const activityController = require("../controller/activity-controller");
 const ORIGIN = process.env.ORIGIN;
 const notifications = require("../../middlewares/Notifications/notifications");
 
-export const newMaterial = async (req, res, next) => {
-  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
-  const statement = statementFactory.getMaterialUploadStatement(
-    req.locals.user,
-    req.locals.material,
-    origin,
-  );
-
-  const notificationInfo = notifications.generateNotificationInfo(req);
-  const sent = await lrs.sendStatementToLrs(statement);
+export const addMaterialLogger = async (req, res, next) => {
   try {
-    const activity = await controller.createActivityOld(
-      statement,
-      sent,
-      notificationInfo,
+    req.locals.activity = await activityController.createActivity(
+      materialActivityGenerator.generateAddMaterialActivity(req),
+      notifications.generateNotificationInfo(req),
     );
-    //Add activity to req.locals so it can be used in the notification
-    req.locals.activity = activity;
+    next();
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
+  }
+};
+
+export const accessMaterialLogger = async (req, res) => {
+  try {
+    await activityController.createActivity(
+      materialActivityGenerator.generateAccessMaterialActivity(req),
+    );
+    res.status(200).send(req.locals.response);
+  } catch (error) {
+    res.status(400).send("Something went wrong");
+  }
+};
+
+export const deleteMaterialLogger = async (req, res, next) => {
+  try {
+    req.locals.activity = await activityController.createActivity(
+      materialActivityGenerator.generateDeleteMaterialActivity(req),
+      notifications.generateNotificationInfo(req),
+    );
+    next();
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
+  }
+};
+
+export const editMaterialLogger = async (req, res, next) => {
+  try {
+    req.locals.activity = await activityController.createActivity(
+      materialActivityGenerator.generateEditMaterialActivity(req),
+      notifications.generateNotificationInfo(req),
+    );
+    next();
   } catch (err) {
     res.status(500).send({ error: "Error saving statement to mongo", err });
   }
-
-  next();
 };
 
-export const deleteMaterial = async (req, res, next) => {
-  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
-  const statement = statementFactory.getMaterialDeletionStatement(
-    req.locals.user,
-    req.locals.material,
-    origin,
-  );
-  const notificationInfo = notifications.generateNotificationInfo(req);
-  const sent = await lrs.sendStatementToLrs(statement);
-  try {
-    const activity = await controller.createActivityOld(
-      statement,
-      sent,
-      notificationInfo,
-    );
-    //Add activity to req.locals so it can be used in the notification
-    req.locals.activity = activity;
-  } catch (err) {
-    res.status(500).send({ error: "Error saving statement to mongo", err });
-  }
-
-  next();
-};
-
-export const getMaterial = async (req, res) => {
-  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
-  const statement = statementFactory.getMaterialAccessStatement(
-    req.locals.user,
-    req.locals.material,
-    origin,
-  );
-  const sent = await lrs.sendStatementToLrs(statement);
-  controller.createActivityOld(statement, sent);
-  res.status(200).send(req.locals.response);
-};
-
-export const editMaterial = async (req, res, next) => {
-  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
-  const statement = statementFactory.getMaterialEditStatement(
-    req.locals.user,
-    req.locals.newMaterial,
-    req.locals.oldMaterial,
-    origin,
-  );
-  const notificationInfo = notifications.generateNotificationInfo(req);
-  const sent = await lrs.sendStatementToLrs(statement);
-  try {
-    const activity = await controller.createActivityOld(
-      statement,
-      sent,
-      notificationInfo,
-    );
-    //Add activity to req.locals so it can be used in the notification
-    req.locals.activity = activity;
-  } catch (err) {
-    res.status(500).send({ error: "Error saving statement to mongo", err });
-  }
-
-  next();
-};
-
-export const playVideo = async (req, res) => {
-  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
-  const hours = req.params.hours;
-  const minutes = req.params.minutes;
-  const seconds = req.params.seconds;
+export const playVideoLogger = async (req, res) => {
   if (req.locals.material.type === "video") {
-    const statement = statementFactory.getVideoPlayStatement(
-      req.locals.user,
-      req.locals.material,
-      hours,
-      minutes,
-      seconds,
-      origin,
+    await activityController.createActivity(
+      materialActivityGenerator.generatePlayVideoActivity(req),
     );
-    const sent = await lrs.sendStatementToLrs(statement);
-    controller.createActivityOld(statement, sent);
-    return res.status(204).send();
+    res.status(204).send();
+  } else {
+    res.status(406).send({
+      error: `Material with id ${req.locals.material._id} is not a video`,
+    });
   }
-
-  return res.status(406).send({
-    error: `Material with id ${req.locals.material._id} is not a Video`,
-  });
 };
 
-export const pauseVideo = async (req, res) => {
-  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
-  const hours = req.params.hours;
-  const minutes = req.params.minutes;
-  const seconds = req.params.seconds;
+export const pauseVideoLogger = async (req, res) => {
   if (req.locals.material.type === "video") {
-    const statement = statementFactory.getVideoPauseStatement(
-      req.locals.user,
-      req.locals.material,
-      hours,
-      minutes,
-      seconds,
-      origin,
+    await activityController.createActivity(
+      materialActivityGenerator.generatePauseVideoActivity(req),
     );
-    const sent = await lrs.sendStatementToLrs(statement);
-    controller.createActivityOld(statement, sent);
-    return res.status(204).send();
+    res.status(204).send();
+  } else {
+    res.status(406).send({
+      error: `Material with id ${req.locals.material._id} is not a Video`,
+    });
   }
-
-  return res.status(406).send({
-    error: `Material with id ${req.locals.material._id} is not a Video`,
-  });
 };
 
-export const completeVideo = async (req, res) => {
-  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
+export const completeVideoLogger = async (req, res) => {
   if (req.locals.material.type === "video") {
-    const statement = statementFactory.getVideoEndStatement(
-      req.locals.user,
-      req.locals.material,
-      origin,
+    await activityController.createActivity(
+      materialActivityGenerator.generateCompleteVideoActivity(req),
     );
-    const sent = await lrs.sendStatementToLrs(statement);
-    controller.createActivityOld(statement, sent);
-    return res.status(204).send();
+    res.status(204).send();
+  } else {
+    res.status(406).send({
+      error: `Material with id ${req.locals.material._id} is not a Video`,
+    });
   }
-
-  return res.status(406).send({
-    error: `Material with id ${req.locals.material._id} is not a Video`,
-  });
 };
 
-export const viewSlide = async (req, res) => {
+export const viewSlideLogger = async (req, res) => {
   const origin = req.get("origin") ? req.get("origin") : ORIGIN;
   const slideNr = req.params.slideNr;
   if (req.locals.material.type === "pdf") {
-    const statement = statementFactory.getSlideViewStatement(
+    const statement = materialActivityGenerator.generateViewSlideActivity(
       req.locals.user,
       req.locals.material,
       slideNr,
       origin,
     );
     const sent = await lrs.sendStatementToLrs(statement);
-    controller.createActivityOld(statement, sent);
+    await activityController.createActivityOld(statement, sent);
     return res.status(204).send();
   }
-
   return res.status(406).send({
     error: `Material with id ${req.locals.material._id} is not a pdf`,
   });
 };
 
-export const completePDF = async (req, res) => {
+export const completePDFLogger = async (req, res) => {
   const origin = req.get("origin") ? req.get("origin") : ORIGIN;
   if (req.locals.material.type === "pdf") {
-    const statement = statementFactory.getPdfCompleteStatement(
+    const statement = materialActivityGenerator.generateCompletePdfActivity(
       req.locals.user,
       req.locals.material,
       origin,
     );
     const sent = await lrs.sendStatementToLrs(statement);
-    controller.createActivityOld(statement, sent);
+    await activityController.createActivityOld(statement, sent);
     return res.status(204).send();
   }
 
