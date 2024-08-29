@@ -1,288 +1,134 @@
-import { v4 as uuidv4 } from "uuid";
 import {
   createContext,
-  createUserActivity,
+  createMetadata,
+  createUser,
   createVerb,
 } from "./util/generator-util";
 import config from "./util/config";
 
-const platform = "CourseMapper";
-const language = "en-US";
-
-export const generateCreateCourseActivity = (req) => {
-  const userActivity = createUserActivity(req);
+const createCourseObject = (req) => {
   let course = req.locals.course;
   let origin = req.get("origin");
   return {
-    ...userActivity,
-    verb: createVerb("http://activitystrea.ms/schema/1.0/create", "created"),
-    object: {
-      objectType: config.activity,
-      id: `${origin}/activity/course/${course._id}`,
-      definition: {
-        type: "http://adlnet.gov/expapi/activities/course",
-        name: {
-          [config.language]: course.name,
-        },
-        description: {
-          [config.language]: course.description,
-        },
-        extensions: {
-          [`${origin}/extensions/course`]: {
-            id: course._id,
-            name: course.name,
-            shortname: course.shortName,
-            description: course.description,
-          },
+    objectType: config.activity,
+    id: `${origin}/activity/course/${course._id}`,
+    definition: {
+      type: "http://adlnet.gov/expapi/activities/course",
+      name: {
+        [config.language]: course.name,
+      },
+      description: {
+        [config.language]: course.description,
+      },
+      extensions: {
+        [`${origin}/extensions/course`]: {
+          id: course._id,
+          name: course.name,
+          shortname: course.shortName,
+          description: course.description,
         },
       },
     },
+  };
+};
+
+export const generateCreateCourseActivity = (req) => {
+  const metadata = createMetadata();
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://activitystrea.ms/schema/1.0/create", "created"),
+    object: createCourseObject(req),
     context: createContext(),
   };
 };
 
 export const generateDeleteCourseActivity = (req) => {
-  const userActivity = createUserActivity(req);
-  let course = req.locals.course;
-  let origin = req.get("origin");
+  const metadata = createMetadata();
   return {
-    ...userActivity,
-    verb: {
-      id: "http://activitystrea.ms/schema/1.0/delete",
-      display: {
-        [config.language]: "deleted",
-      },
-    },
-    object: {
-      objectType: "Activity",
-      id: `${origin}/activity/course/${course._id}`,
-      definition: {
-        type: "http://adlnet.gov/expapi/activities/course",
-        name: {
-          [config.language]: course.name,
-        },
-        description: {
-          [config.language]: course.description,
-        },
-        extensions: {
-          [`${origin}/extensions/course`]: {
-            id: course._id,
-            name: course.name,
-            shortname: course.shortName,
-            description: course.description,
-          },
-        },
-      },
-    },
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://activitystrea.ms/schema/1.0/delete", "deleted"),
+    object: createCourseObject(req),
     context: createContext(),
   };
 };
 
-export const getCourseAccessStatement = (user, course, origin) => {
-  const userId = user._id.toString();
-  const userFullname = `${user.firstname} ${user.lastname}`;
+export const generateCourseAccessActivity = (req) => {
+  const metadata = createMetadata();
   return {
-    id: uuidv4(),
-    timestamp: new Date(),
-    actor: {
-      objectType: "Agent",
-      name: userFullname,
-      mbox: user.mbox,
-      mbox_sha1sum: user.mbox_sha1sum,
-      account: {
-        homePage: origin,
-        name: userId,
-      },
-    },
-    verb: {
-      id: "http://activitystrea.ms/schema/1.0/access",
-      display: {
-        [language]: "accessed",
-      },
-    },
-    object: {
-      objectType: "Activity",
-      id: `${origin}/activity/course/${course._id}`,
-      definition: {
-        type: "http://adlnet.gov/expapi/activities/course",
-        name: {
-          [language]: course.name,
-        },
-        description: {
-          [language]: course.description,
-        },
-        extensions: {
-          "http://www.CourseMapper.de/extensions/course": {
-            id: course._id,
-            name: course.name,
-            shortname: course.shortName,
-            description: course.description,
-          },
-        },
-      },
-    },
-    context: {
-      platform: platform,
-      language: language,
-    },
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://activitystrea.ms/schema/1.0/access", "accessed"),
+    object: createCourseObject(req),
+    context: createContext(),
   };
 };
 
-export const getCourseEnrollmentStatement = (user, course, origin) => {
-  const userId = user._id.toString();
-  const userFullname = `${user.firstname} ${user.lastname}`;
+export const generateEnrolToCourseActivity = (req) => {
+  const metadata = createMetadata();
   return {
-    id: uuidv4(),
-    timestamp: new Date(),
-    actor: {
-      objectType: "Agent",
-      name: userFullname,
-      mbox: user.mbox,
-      mbox_sha1sum: user.mbox_sha1sum,
-      account: {
-        homePage: origin,
-        name: userId,
-      },
-    },
-    verb: {
-      id: "http://www.tincanapi.co.uk/verbs/enrolled_onto_learning_plan",
-      display: {
-        [language]: "enrolled",
-      },
-    },
-    object: {
-      objectType: "Activity",
-      id: `${origin}/activity/course/${course._id}`,
-      definition: {
-        type: "http://adlnet.gov/expapi/activities/course",
-        name: {
-          [language]: course.name,
-        },
-        description: {
-          [language]: course.description,
-        },
-        extensions: {
-          "http://www.CourseMapper.de/extensions/course": {
-            id: course._id,
-            name: course.name,
-            shortname: course.shortName,
-            description: course.description,
-          },
-        },
-      },
-    },
-    context: {
-      platform: platform,
-      language: language,
-    },
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb(
+      "http://www.tincanapi.co.uk/verbs/enrolled_onto_learning_plan",
+      "enrolled",
+    ),
+    object: createCourseObject(req),
+    context: createContext(),
   };
 };
 
-export const getCourseWithdrawStatement = (user, course, origin) => {
-  const userId = user._id.toString();
-  const userFullname = `${user.firstname} ${user.lastname}`;
+export const generateWithdrawFromCourseActivity = (req) => {
+  const metadata = createMetadata();
   return {
-    id: uuidv4(),
-    timestamp: new Date(),
-    actor: {
-      objectType: "Agent",
-      name: userFullname,
-      mbox: user.mbox,
-      mbox_sha1sum: user.mbox_sha1sum,
-      account: {
-        homePage: origin,
-        name: userId,
-      },
-    },
-    verb: {
-      id: "http://activitystrea.ms/schema/1.0/leave",
-      display: {
-        [language]: "left",
-      },
-    },
-    object: {
-      objectType: "Activity",
-      id: `${origin}/activity/course/${course._id}`,
-      definition: {
-        type: "http://adlnet.gov/expapi/activities/course",
-        name: {
-          [language]: course.name,
-        },
-        description: {
-          [language]: course.description,
-        },
-        extensions: {
-          "http://www.CourseMapper.de/extensions/course": {
-            id: course._id,
-            name: course.name,
-            shortname: course.shortName,
-            description: course.description,
-          },
-        },
-      },
-    },
-    context: {
-      platform: platform,
-      language: language,
-    },
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://activitystrea.ms/schema/1.0/leave", "left"),
+    object: createCourseObject(req),
+    context: createContext(),
   };
 };
 
-export const getCourseEditStatement = (user, newCourse, oldCourse, origin) => {
-  const userId = user._id.toString();
-  const userFullname = `${user.firstname} ${user.lastname}`;
+export const generateEditCourseLogger = (req) => {
+  const metadata = createMetadata();
+  let updatedCourse = req.locals.newCourse;
+  let courseToEdit = req.locals.oldCourse;
+  let origin = req.get("origin");
   return {
-    id: uuidv4(),
-    timestamp: new Date(),
-    actor: {
-      objectType: "Agent",
-      name: userFullname,
-      mbox: user.mbox,
-      mbox_sha1sum: user.mbox_sha1sum,
-      account: {
-        homePage: origin,
-        name: userId,
-      },
-    },
-    verb: {
-      id: "http://curatr3.com/define/verb/edited",
-      display: {
-        [language]: "edited",
-      },
-    },
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://curatr3.com/define/verb/edited", "edited"),
     object: {
-      objectType: "Activity",
-      id: `${origin}/activity/course/${oldCourse._id}`,
+      objectType: config.activity,
+      id: `${origin}/activity/course/${courseToEdit._id}`,
       definition: {
         type: "http://adlnet.gov/expapi/activities/course",
         name: {
-          [language]: oldCourse.name,
+          [config.language]: courseToEdit.name,
         },
         description: {
-          [language]: oldCourse.description,
+          [config.language]: courseToEdit.description,
         },
         extensions: {
-          "http://www.CourseMapper.de/extensions/course": {
-            id: oldCourse._id,
-            name: oldCourse.name,
-            shortname: oldCourse.shortName,
-            description: oldCourse.description,
+          [`${origin}/extensions/course`]: {
+            id: courseToEdit._id,
+            name: courseToEdit.name,
+            shortname: courseToEdit.shortName,
+            description: courseToEdit.description,
           },
         },
       },
     },
     result: {
       extensions: {
-        "http://www.CourseMapper.de/extensions/course": {
-          name: newCourse.name,
-          shortname: newCourse.shortName,
-          description: newCourse.description,
+        [`${origin}/extensions/course`]: {
+          name: updatedCourse.name,
+          shortname: updatedCourse.shortName,
+          description: updatedCourse.description,
         },
       },
     },
-    context: {
-      platform: platform,
-      language: language,
-    },
+    context: createContext(),
   };
 };

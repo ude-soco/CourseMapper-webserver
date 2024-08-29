@@ -18,6 +18,26 @@ const createUserActivity = (req) => {
   };
 };
 
+const createMetadata = () => {
+  return {
+    id: uuidV4(),
+    timestamp: new Date(),
+  };
+};
+
+const createUser = (req) => {
+  return {
+    objectType: "Agent",
+    name: `${req.locals.user.firstname} ${req.locals.user.lastname}`,
+    mbox: req.locals.user.mbox,
+    mbox_sha1sum: req.locals.user.mbox_sha1sum,
+    account: {
+      homePage: req.get("origin"),
+      name: req.locals.user._id.toString(),
+    },
+  };
+};
+
 const createContext = () => {
   return {
     platform: config.platform,
@@ -34,4 +54,10 @@ const createVerb = (verbIRI, verb) => {
   };
 };
 
-export { createUserActivity, createContext, createVerb };
+export {
+  createUserActivity,
+  createMetadata,
+  createUser,
+  createContext,
+  createVerb,
+};
