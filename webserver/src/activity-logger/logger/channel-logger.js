@@ -1,89 +1,50 @@
-const statementFactory = require("../generator/channel-generator");
-const lrs = require("../lrs/lrs");
-const controller = require("../controller/activity-controller");
-const ORIGIN = process.env.ORIGIN;
+const channelActivityGenerator = require("../generator/channel-generator");
+const activityController = require("../controller/activity-controller");
 const notifications = require("../../middlewares/Notifications/notifications");
 
-export const newChannel = async (req, res, next) => {
-  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
-  const statement = statementFactory.getChannelCreationStatement(
-    req.locals.user,
-    req.locals.channel,
-    origin,
-  );
-
-  const notificationInfo = notifications.generateNotificationInfo(req);
-  const sent = await lrs.sendStatementToLrs(statement);
+export const createChannelLogger = async (req, res, next) => {
   try {
-    const activity = await controller.createActivityOld(
-      statement,
-      sent,
-      notificationInfo,
+    req.locals.activity = await activityController.createActivity(
+      channelActivityGenerator.generateCreateChannelActivity(req),
+      notifications.generateNotificationInfo(req),
     );
-    //Add activity to req.locals so it can be used in the notification
-    req.locals.activity = activity;
+    next();
   } catch (err) {
-    res.status(500).send({ error: "Error saving statement to mongo", err });
+    res.status(400).send({ error: "Error saving statement to mongo", err });
   }
-  next();
 };
 
-export const deleteChannel = async (req, res, next) => {
-  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
-  const statement = statementFactory.getChannelDeletionStatement(
-    req.locals.user,
-    req.locals.channel,
-    origin,
-  );
-  const notificationInfo = notifications.generateNotificationInfo(req);
-  const sent = await lrs.sendStatementToLrs(statement);
+export const deleteChannelLogger = async (req, res, next) => {
   try {
-    const activity = await controller.createActivityOld(
-      statement,
-      sent,
-      notificationInfo,
+    req.locals.activity = await activityController.createActivity(
+      channelActivityGenerator.generateDeleteChannelActivity(req),
+      notifications.generateNotificationInfo(req),
     );
-    //Add activity to req.locals so it can be used in the notification
-    req.locals.activity = activity;
+    next();
   } catch (err) {
-    res.status(500).send({ error: "Error saving statement to mongo", err });
+    res.status(400).send({ error: "Error saving statement to mongo", err });
   }
-  next();
 };
 
-export const editChannel = async (req, res, next) => {
-  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
-  const statement = statementFactory.getChannelEditStatement(
-    req.locals.user,
-    req.locals.newChannel,
-    req.locals.oldChannel,
-    origin,
-  );
-  const notificationInfo = notifications.generateNotificationInfo(req);
-  const sent = await lrs.sendStatementToLrs(statement);
+export const accessChannelLogger = async (req, res) => {
   try {
-    const activity = await controller.createActivityOld(
-      statement,
-      sent,
-      notificationInfo,
+    await activityController.createActivity(
+      channelActivityGenerator.generateAccessChannelActivity(req),
     );
-    //Add activity to req.locals so it can be used in the notification
-    req.locals.activity = activity;
-  } catch (err) {
-    res.status(500).send({ error: "Error saving statement to mongo", err });
+    res.status(200).send(req.locals.response);
+  } catch (error) {
+    res.status(400).send("Something went wrong");
   }
-  next();
 };
 
-export const getChannel = async (req, res) => {
-  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
-  const statement = statementFactory.getChannelAccessStatement(
-    req.locals.user,
-    req.locals.channel,
-    origin,
-  );
-
-  const sent = await lrs.sendStatementToLrs(statement);
-  controller.createActivityOld(statement, sent);
-  res.status(200).send(req.locals.response);
+export const editChannelLogger = async (req, res, next) => {
+  try {
+    req.locals.activity = await activityController.createActivity(
+      channelActivityGenerator.generateEditChannelActivity(req),
+      notifications.generateNotificationInfo(req),
+    );
+    next();
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
+  }
 };

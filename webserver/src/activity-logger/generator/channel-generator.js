@@ -1,221 +1,109 @@
-import { v4 as uuidv4 } from "uuid";
+import config from "./util/config";
+import {
+  createContext,
+  createMetadata,
+  createUser,
+  createVerb,
+} from "./util/generator-util";
 
-const platform = "CourseMapper";
-const language = "en-US";
-
-export const getChannelCreationStatement = (user, channel, origin) => {
-  const userId = user._id.toString();
-  const userFullname = `${user.firstname} ${user.lastname}`;
+const createChannelObject = (req) => {
+  let channel = req.locals.channel;
+  let origin = req.get("origin");
   return {
-    id: uuidv4(),
-    timestamp: new Date(),
-    actor: {
-      objectType: "Agent",
-      name: userFullname,
-      mbox: user.mbox,
-      mbox_sha1sum: user.mbox_sha1sum,
-      account: {
-        homePage: origin,
-        name: userId,
+    objectType: config.activity,
+    id: `${origin}/activity/course/${channel.courseId}/topic/${channel.topicId}/channel/${channel._id}`,
+    definition: {
+      type: [`${origin}/activityType/channel`],
+      name: {
+        [config.language]: channel.name,
       },
-    },
-    verb: {
-      id: "http://activitystrea.ms/schema/1.0/create",
-      display: {
-        [language]: "created",
+      description: {
+        [config.language]: channel.description,
       },
-    },
-    object: {
-      objectType: "Activity",
-      id: `${origin}/activity/course/${channel.courseId}/topic/${channel.topicId}/channel/${channel._id}`,
-      definition: {
-        type: "http://www.CourseMapper.de/activityType/channel",
-        name: {
-          [language]: channel.name,
-        },
-        description: {
-          [language]: channel.description,
-        },
-        extensions: {
-          "http://www.CourseMapper.de/extensions/channel": {
-            id: channel._id,
-            course_id: channel.courseId,
-            topic_id: channel.topicId,
-            name: channel.name,
-            description: channel.description,
-          },
+      extensions: {
+        [`${origin}/extensions/channel`]: {
+          id: channel._id,
+          course_id: channel.courseId,
+          topic_id: channel.topicId,
+          name: channel.name,
+          description: channel.description,
         },
       },
-    },
-    context: {
-      platform: platform,
-      language: language,
     },
   };
 };
-
-export const getChannelDeletionStatement = (user, channel, origin) => {
-  const userId = user._id.toString();
-  const userFullname = `${user.firstname} ${user.lastname}`;
+export const generateCreateChannelActivity = (req) => {
+  const metadata = createMetadata();
   return {
-    id: uuidv4(),
-    timestamp: new Date(),
-    actor: {
-      objectType: "Agent",
-      name: userFullname,
-      mbox: user.mbox,
-      mbox_sha1sum: user.mbox_sha1sum,
-      account: {
-        homePage: origin,
-        name: userId,
-      },
-    },
-    verb: {
-      id: "http://activitystrea.ms/schema/1.0/delete",
-      display: {
-        [language]: "deleted",
-      },
-    },
-    object: {
-      objectType: "Activity",
-      id: `${origin}/activity/course/${channel.courseId}/topic/${channel.topicId}/channel/${channel._id}`,
-      definition: {
-        type: "http://www.CourseMapper.de/activityType/channel",
-        name: {
-          [language]: channel.name,
-        },
-        description: {
-          [language]: channel.description,
-        },
-        extensions: {
-          "http://www.CourseMapper.de/extensions/channel": {
-            id: channel._id,
-            course_id: channel.courseId,
-            topic_id: channel.topicId,
-            name: channel.name,
-            description: channel.description,
-          },
-        },
-      },
-    },
-    context: {
-      platform: platform,
-      language: language,
-    },
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://activitystrea.ms/schema/1.0/create", "created"),
+    object: createChannelObject(req),
+    context: createContext(),
   };
 };
 
-export const getChannelAccessStatement = (user, channel, origin) => {
-  const userId = user._id.toString();
-  const userFullname = `${user.firstname} ${user.lastname}`;
+export const generateDeleteChannelActivity = (req) => {
+  const metadata = createMetadata();
   return {
-    id: uuidv4(),
-    timestamp: new Date(),
-    actor: {
-      objectType: "Agent",
-      name: userFullname,
-      mbox: user.mbox,
-      mbox_sha1sum: user.mbox_sha1sum,
-      account: {
-        homePage: origin,
-        name: userId,
-      },
-    },
-    verb: {
-      id: "http://activitystrea.ms/schema/1.0/access",
-      display: {
-        [language]: "accessed",
-      },
-    },
-    object: {
-      objectType: "Activity",
-      id: `${origin}/activity/course/${channel.courseId}/topic/${channel.topicId}/channel/${channel._id}`,
-      definition: {
-        type: "http://www.CourseMapper.de/activityType/channel",
-        name: {
-          [language]: channel.name,
-        },
-        description: {
-          [language]: channel.description,
-        },
-        extensions: {
-          "http://www.CourseMapper.de/extensions/channel": {
-            id: channel._id,
-            course_id: channel.courseId,
-            topic_id: channel.topicId,
-            name: channel.name,
-            description: channel.description,
-          },
-        },
-      },
-    },
-    context: {
-      platform: platform,
-      language: language,
-    },
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://activitystrea.ms/schema/1.0/delete", "deleted"),
+    object: createChannelObject(req),
+    context: createContext(),
   };
 };
 
-export const getChannelEditStatement = (
-  user,
-  newChannel,
-  oldtChannel,
-  origin
-) => {
-  const userId = user._id.toString();
-  const userFullname = `${user.firstname} ${user.lastname}`;
+export const generateAccessChannelActivity = (req) => {
+  const metadata = createMetadata();
   return {
-    id: uuidv4(),
-    timestamp: new Date(),
-    actor: {
-      objectType: "Agent",
-      name: userFullname,
-      mbox: user.mbox,
-      mbox_sha1sum: user.mbox_sha1sum,
-      account: {
-        homePage: origin,
-        name: userId,
-      },
-    },
-    verb: {
-      id: "http://curatr3.com/define/verb/edited",
-      display: {
-        [language]: "edited",
-      },
-    },
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://activitystrea.ms/schema/1.0/access", "accessed"),
+    object: createChannelObject(req),
+    context: createContext(),
+  };
+};
+
+export const generateEditChannelActivity = (req) => {
+  const metadata = createMetadata();
+  let updatedChannel = req.locals.newChannel;
+  let channelToEdit = req.locals.oldChannel;
+  let origin = req.get("origin");
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://curatr3.com/define/verb/edited", "edited"),
     object: {
-      objectType: "Activity",
-      id: `${origin}/activity/course/${oldtChannel.courseId}/topic/${oldtChannel.topicId}/channel/${oldtChannel._id}`,
+      objectType: config.activity,
+      id: `${origin}/activity/course/${channelToEdit.courseId}/topic/${channelToEdit.topicId}/channel/${channelToEdit._id}`,
       definition: {
-        type: "http://www.CourseMapper.de/activityType/channel",
+        type: [`${origin}/activityType/channel`],
         name: {
-          [language]: oldtChannel.name,
+          [config.language]: channelToEdit.name,
         },
         description: {
-          [language]: oldtChannel.description,
+          [config.language]: channelToEdit.description,
         },
         extensions: {
-          "http://www.CourseMapper.de/extensions/channel": {
-            id: oldtChannel._id,
-            course_id: oldtChannel.courseId,
-            topic_id: oldtChannel.topicId,
-            name: oldtChannel.name,
-            description: oldtChannel.description,
+          [`${origin}/extensions/channel`]: {
+            id: channelToEdit._id,
+            course_id: channelToEdit.courseId,
+            topic_id: channelToEdit.topicId,
+            name: channelToEdit.name,
+            description: channelToEdit.description,
           },
         },
       },
     },
     result: {
       extensions: {
-        "http://www.CourseMapper.de/extensions/channel": {
-          name: newChannel.name,
-          description: newChannel.description,
+        [`${origin}/extensions/channel`]: {
+          name: updatedChannel.name,
+          description: updatedChannel.description,
         },
       },
     },
-    context: {
-      platform: platform,
-      language: language,
-    },
+    context: createContext(),
   };
 };

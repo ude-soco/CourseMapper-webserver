@@ -14,7 +14,7 @@ module.exports = function (app) {
     "/api/courses/:courseId/channels/:channelId",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getChannel,
-    logger.getChannel,
+    logger.accessChannelLogger,
   );
 
   // Create a new channel
@@ -23,7 +23,7 @@ module.exports = function (app) {
     "/api/courses/:courseId/topics/:topicId/channel",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.newChannel,
-    logger.newChannel,
+    logger.createChannelLogger,
     notifications.updateBlockingNotificationsNewChannel,
     notifications.channelCourseUpdateNotificationUsers,
     notifications.populateUserNotification,
@@ -35,7 +35,7 @@ module.exports = function (app) {
     "/api/courses/:courseId/channels/:channelId",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.deleteChannel,
-    logger.deleteChannel,
+    logger.deleteChannelLogger,
     notifications.channelCourseUpdateNotificationUsers,
     notifications.populateUserNotification,
   );
@@ -46,7 +46,7 @@ module.exports = function (app) {
     "/api/courses/:courseId/channels/:channelId",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.editChannel,
-    logger.editChannel,
+    logger.editChannelLogger,
     notifications.channelCourseUpdateNotificationUsers,
     notifications.populateUserNotification,
   );
