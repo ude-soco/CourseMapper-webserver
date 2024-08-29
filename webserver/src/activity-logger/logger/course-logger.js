@@ -23,6 +23,7 @@ export const deleteCourseLogger = async (req, res) => {
   }
 };
 
+// TODO: Not logged, update the getCourse controller function
 export const accessCourseLogger = async (req, res) => {
   try {
     await activityController.createActivity(

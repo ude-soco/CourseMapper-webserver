@@ -14,7 +14,7 @@ module.exports = function (app) {
     "/api/courses/:courseId/topics/:topicId",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getTopic,
-    logger.getTopic,
+    logger.accessTopicLogger,
   );
 
   // Create a new topic
@@ -35,7 +35,7 @@ module.exports = function (app) {
     "/api/courses/:courseId/topics/:topicId",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.deleteTopic,
-    logger.deleteTopic,
+    logger.deleteTopicLogger,
     notifications.topicCourseUpdateNotificationUsers,
     notifications.populateUserNotification,
   );
@@ -46,7 +46,7 @@ module.exports = function (app) {
     "/api/courses/:courseId/topics/:topicId",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.editTopic,
-    logger.editTopic,
+    logger.editTopicLogger,
     notifications.topicCourseUpdateNotificationUsers,
     notifications.populateUserNotification,
   );

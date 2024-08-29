@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from "uuid";
 import {
   createContext,
   createMetadata,
@@ -6,9 +5,6 @@ import {
   createVerb,
 } from "./util/generator-util";
 import config from "./util/config";
-
-const platform = "CourseMapper";
-const language = "en-US";
 
 const createTopicObject = (req) => {
   let topic = req.locals.topic;
@@ -43,147 +39,61 @@ export const generateCreateTopicActivity = (req) => {
   };
 };
 
-export const getTopicDeletionStatement = (user, topic, origin) => {
-  const userId = user._id.toString();
-  const userFullname = `${user.firstname} ${user.lastname}`;
+export const generateDeleteTopicActivity = (req) => {
+  const metadata = createMetadata();
   return {
-    id: uuidv4(),
-    timestamp: new Date(),
-    actor: {
-      objectType: "Agent",
-      name: userFullname,
-      mbox: user.mbox,
-      mbox_sha1sum: user.mbox_sha1sum,
-      account: {
-        homePage: origin,
-        name: userId,
-      },
-    },
-    verb: {
-      id: "http://activitystrea.ms/schema/1.0/delete",
-      display: {
-        [language]: "deleted",
-      },
-    },
-    object: {
-      objectType: "Activity",
-      id: `${origin}/activity/course/${topic.courseId}/topic/${topic._id}`,
-      definition: {
-        type: "http://www.CourseMapper.de/activityType/topic",
-        name: {
-          [language]: topic.name,
-        },
-        extensions: {
-          "http://www.CourseMapper.de/extensions/topic": {
-            id: topic._id,
-            course_id: topic.courseId,
-            name: topic.name,
-          },
-        },
-      },
-    },
-    context: {
-      platform: platform,
-      language: language,
-    },
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://activitystrea.ms/schema/1.0/delete", "deleted"),
+    object: createTopicObject(req),
+    context: createContext(),
   };
 };
 
-export const getTopicAccessStatement = (user, topic, origin) => {
-  const userId = user._id.toString();
-  const userFullname = `${user.firstname} ${user.lastname}`;
+export const generateAccessTopicActivity = (req) => {
+  const metadata = createMetadata();
   return {
-    id: uuidv4(),
-    timestamp: new Date(),
-    actor: {
-      objectType: "Agent",
-      name: userFullname,
-      mbox: user.mbox,
-      mbox_sha1sum: user.mbox_sha1sum,
-      account: {
-        homePage: origin,
-        name: userId,
-      },
-    },
-    verb: {
-      id: "http://activitystrea.ms/schema/1.0/access",
-      display: {
-        [language]: "accessed",
-      },
-    },
-    object: {
-      objectType: "Activity",
-      id: `${origin}/activity/course/${topic.courseId}/topic/${topic._id}`,
-      definition: {
-        type: "http://www.CourseMapper.de/activityType/topic",
-        name: {
-          [language]: topic.name,
-        },
-        extensions: {
-          "http://www.CourseMapper.de/extensions/topic": {
-            id: topic._id,
-            course_id: topic.courseId,
-            name: topic.name,
-          },
-        },
-      },
-    },
-    context: {
-      platform: platform,
-      language: language,
-    },
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://activitystrea.ms/schema/1.0/access", "accessed"),
+    object: createTopicObject(req),
+    context: createContext(),
   };
 };
 
-export const getTopicEditStatement = (user, newTopic, oldtTopic, origin) => {
-  const userId = user._id.toString();
-  const userFullname = `${user.firstname} ${user.lastname}`;
+export const generateEditTopicActivity = (req) => {
+  const metadata = createMetadata();
+  let updatedTopic = req.locals.newTopic;
+  let topicToEdit = req.locals.oldTopic;
+  let origin = req.get("origin");
   return {
-    id: uuidv4(),
-    timestamp: new Date(),
-    actor: {
-      objectType: "Agent",
-      name: userFullname,
-      mbox: user.mbox,
-      mbox_sha1sum: user.mbox_sha1sum,
-      account: {
-        homePage: origin,
-        name: userId,
-      },
-    },
-    verb: {
-      id: "http://curatr3.com/define/verb/edited",
-      display: {
-        [language]: "edited",
-      },
-    },
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://curatr3.com/define/verb/edited", "edited"),
     object: {
-      objectType: "Activity",
-      id: `${origin}/activity/course/${oldtTopic.courseId}/topic/${oldtTopic._id}`,
+      objectType: config.activity,
+      id: `${origin}/activity/course/${topicToEdit.courseId}/topic/${topicToEdit._id}`,
       definition: {
-        type: "http://www.CourseMapper.de/activityType/topic",
+        type: [`${origin}/activityType/topic`],
         name: {
-          [language]: oldtTopic.name,
+          [config.language]: topicToEdit.name,
         },
         extensions: {
-          "http://www.CourseMapper.de/extensions/topic": {
-            id: oldtTopic._id,
-            course_id: oldtTopic.courseId,
-            name: oldtTopic.name,
+          [`${origin}/extensions/topic`]: {
+            id: topicToEdit._id,
+            course_id: topicToEdit.courseId,
+            name: topicToEdit.name,
           },
         },
       },
     },
     result: {
       extensions: {
-        "http://www.CourseMapper.de/extensions/topic": {
-          name: newTopic.name,
+        [`${origin}/extensions/topic`]: {
+          name: updatedTopic.name,
         },
       },
     },
-    context: {
-      platform: platform,
-      language: language,
-    },
+    context: createContext(),
   };
 };
