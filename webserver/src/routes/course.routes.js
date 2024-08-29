@@ -39,7 +39,7 @@ module.exports = function (app) {
     "/api/course",
     [authJwt.verifyToken],
     controller.newCourse,
-    logger.newCourse,
+    logger.createCourseLogger,
   );
 
   // Enrol in a course
@@ -47,7 +47,7 @@ module.exports = function (app) {
     "/api/enrol/:courseId",
     [authJwt.verifyToken],
     controller.enrolCourse,
-    logger.enrolCourse,
+    logger.enrolToCourseLogger,
   );
 
   // Withdraw from a course
@@ -56,7 +56,7 @@ module.exports = function (app) {
     "/api/withdraw/:courseId",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.withdrawCourse,
-    logger.withdrawCourse,
+    logger.withdrawFromCourseLogger,
   );
 
   // Delete a course
@@ -65,7 +65,7 @@ module.exports = function (app) {
     "/api/courses/:courseId",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.deleteCourse,
-    logger.deleteCourse,
+    logger.deleteCourseLogger,
     // controller2.moderatorBoard
   );
 
@@ -75,7 +75,7 @@ module.exports = function (app) {
     "/api/courses/:courseId",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.editCourse,
-    logger.editCourse,
+    logger.editCourseLogger,
   );
 
   app.post(

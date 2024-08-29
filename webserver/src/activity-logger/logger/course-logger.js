@@ -1,77 +1,76 @@
-const statementFactory = require("../generator/course-generator");
+const courseActivityGenerator = require("../generator/course-generator");
 const lrs = require("../lrs/lrs");
-const controller = require("../controller/activity-controller");
+const activityController = require("../controller/activity-controller");
 const ORIGIN = process.env.ORIGIN;
 
-export const newCourse = async (req, res) => {
+export const createCourseLogger = async (req, res) => {
+  try {
+    await activityController.createActivity(
+      courseActivityGenerator.generateCreateCourseActivity(req),
+    );
+    res.status(201).send(req.locals.response);
+  } catch (error) {
+    res.status(400).send("Something went wrong");
+  }
+};
+
+export const deleteCourseLogger = async (req, res) => {
   const origin = req.get("origin") ? req.get("origin") : ORIGIN;
-  const statement = statementFactory.getCourseCreationStatement(
+  const statement = courseActivityGenerator.getCourseDeletionStatement(
     req.locals.user,
     req.locals.course,
     origin,
   );
   const sent = await lrs.sendStatementToLrs(statement);
-  controller.createActivityOld(statement, sent);
+  activityController.createActivityOld(statement, sent);
   res.send(req.locals.response);
 };
 
-export const deleteCourse = async (req, res) => {
+export const getCourseLogger = async (req, res) => {
   const origin = req.get("origin") ? req.get("origin") : ORIGIN;
-  const statement = statementFactory.getCourseDeletionStatement(
+  const statement = courseActivityGenerator.getCourseAccessStatement(
     req.locals.user,
     req.locals.course,
     origin,
   );
   const sent = await lrs.sendStatementToLrs(statement);
-  controller.createActivityOld(statement, sent);
-  res.send(req.locals.response);
-};
-
-export const getCourse = async (req, res) => {
-  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
-  const statement = statementFactory.getCourseAccessStatement(
-    req.locals.user,
-    req.locals.course,
-    origin,
-  );
-  const sent = await lrs.sendStatementToLrs(statement);
-  controller.createActivityOld(statement, sent);
+  activityController.createActivityOld(statement, sent);
   res.status(200).send(req.locals.response);
 };
 
-export const enrolCourse = async (req, res) => {
+export const enrolToCourseLogger = async (req, res) => {
   const origin = req.get("origin") ? req.get("origin") : ORIGIN;
-  const statement = statementFactory.getCourseEnrollmentStatement(
+  const statement = courseActivityGenerator.getCourseEnrollmentStatement(
     req.locals.user,
     req.locals.course,
     origin,
   );
   const sent = await lrs.sendStatementToLrs(statement);
-  controller.createActivityOld(statement, sent);
+  activityController.createActivityOld(statement, sent);
   res.status(200).send(req.locals.response);
 };
 
-export const withdrawCourse = async (req, res) => {
+export const withdrawFromCourseLogger = async (req, res) => {
   const origin = req.get("origin") ? req.get("origin") : ORIGIN;
-  const statement = statementFactory.getCourseWithdrawStatement(
+  const statement = courseActivityGenerator.getCourseWithdrawStatement(
     req.locals.user,
     req.locals.course,
     origin,
   );
   const sent = await lrs.sendStatementToLrs(statement);
-  controller.createActivityOld(statement, sent);
+  activityController.createActivityOld(statement, sent);
   res.status(200).send(req.locals.response);
 };
 
-export const editCourse = async (req, res) => {
+export const editCourseLogger = async (req, res) => {
   const origin = req.get("origin") ? req.get("origin") : ORIGIN;
-  const statement = statementFactory.getCourseEditStatement(
+  const statement = courseActivityGenerator.getCourseEditStatement(
     req.locals.user,
     req.locals.newCourse,
     req.locals.oldCourse,
     origin,
   );
   const sent = await lrs.sendStatementToLrs(statement);
-  controller.createActivityOld(statement, sent);
+  activityController.createActivityOld(statement, sent);
   res.status(200).send(req.locals.response);
 };
