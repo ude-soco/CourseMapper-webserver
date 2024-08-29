@@ -15,15 +15,14 @@ export const createCourseLogger = async (req, res) => {
 };
 
 export const deleteCourseLogger = async (req, res) => {
-  const origin = req.get("origin") ? req.get("origin") : ORIGIN;
-  const statement = courseActivityGenerator.getCourseDeletionStatement(
-    req.locals.user,
-    req.locals.course,
-    origin,
-  );
-  const sent = await lrs.sendStatementToLrs(statement);
-  activityController.createActivityOld(statement, sent);
-  res.send(req.locals.response);
+  try {
+    await activityController.createActivity(
+      courseActivityGenerator.generateDeleteCourseActivity(req),
+    );
+    res.status(200).send(req.locals.response);
+  } catch (error) {
+    res.status(400).send("Something went wrong");
+  }
 };
 
 export const getCourseLogger = async (req, res) => {

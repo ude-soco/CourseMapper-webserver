@@ -41,26 +41,16 @@ export const generateCreateCourseActivity = (req) => {
   };
 };
 
-export const getCourseDeletionStatement = (user, course, origin) => {
-  const userId = user._id.toString();
-  const userFullname = `${user.firstname} ${user.lastname}`;
+export const generateDeleteCourseActivity = (req) => {
+  const userActivity = createUserActivity(req);
+  let course = req.locals.course;
+  let origin = req.get("origin");
   return {
-    id: uuidv4(),
-    timestamp: new Date(),
-    actor: {
-      objectType: "Agent",
-      name: userFullname,
-      mbox: user.mbox,
-      mbox_sha1sum: user.mbox_sha1sum,
-      account: {
-        homePage: origin,
-        name: userId,
-      },
-    },
+    ...userActivity,
     verb: {
       id: "http://activitystrea.ms/schema/1.0/delete",
       display: {
-        [language]: "deleted",
+        [config.language]: "deleted",
       },
     },
     object: {
@@ -69,13 +59,13 @@ export const getCourseDeletionStatement = (user, course, origin) => {
       definition: {
         type: "http://adlnet.gov/expapi/activities/course",
         name: {
-          [language]: course.name,
+          [config.language]: course.name,
         },
         description: {
-          [language]: course.description,
+          [config.language]: course.description,
         },
         extensions: {
-          "http://www.CourseMapper.de/extensions/course": {
+          [`${origin}/extensions/course`]: {
             id: course._id,
             name: course.name,
             shortname: course.shortName,
@@ -84,10 +74,7 @@ export const getCourseDeletionStatement = (user, course, origin) => {
         },
       },
     },
-    context: {
-      platform: platform,
-      language: language,
-    },
+    context: createContext(),
   };
 };
 
