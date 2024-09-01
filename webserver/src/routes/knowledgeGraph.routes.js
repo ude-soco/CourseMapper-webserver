@@ -32,6 +32,12 @@ module.exports = function (app) {
   );
 
   app.get(
+    "/api/knowledge-graph/get-material-slides/:materialId",
+    [authJwt.verifyToken],
+    controller.getMaterialSlides
+  );
+
+  app.get(
     "/api/knowledge-graph/get-material-edges/:materialId",
     [authJwt.verifyToken],
     controller.getMaterialEdges
@@ -57,8 +63,26 @@ module.exports = function (app) {
 
   app.post(
     "/api/courses/:courseId/materials/:materialId/concept-map",
-    [authJwt.verifyToken],
+    [authJwt.verifyToken, authJwt.isModerator],
     controller.conceptMap
+  );
+
+  app.delete(
+    "/api/courses/:courseId/materials/:materialId/concept-map/concepts/:conceptId",
+    [authJwt.verifyToken, authJwt.isModerator],
+    controller.deleteConcept
+  );
+
+  app.post(
+    "/api/courses/:courseId/materials/:materialId/concept-map/concepts",
+    [authJwt.verifyToken, authJwt.isModerator],
+    controller.addConcept
+  );
+
+  app.post(
+    "/api/courses/:courseId/materials/:materialId/concept-map/publish",
+    [authJwt.verifyToken, authJwt.isModerator],
+    controller.publishConceptMap
   );
 
   app.post(
@@ -71,5 +95,11 @@ module.exports = function (app) {
     "/api/courses/:courseId/materials/:materialId/resource-recommendation",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getResources
+  );
+
+  app.get(
+    "/api/wikipedia/search",
+    [authJwt.verifyToken],
+    controller.searchWikipedia
   );
 };
