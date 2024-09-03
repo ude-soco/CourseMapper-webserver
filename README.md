@@ -37,15 +37,10 @@ The services making up the coursemapper-webserver project use the following imag
 #### Step 1: Pre-requisites
 
 - Download NodeJS (v16.14.2) from [the official website](https://nodejs.org/en/blog/release/v16.14.2)
-
 - Download [MongoDB Community Server](https://www.mongodb.com/try/download/community) and [MongoDB Compass](https://www.mongodb.com/try/download/compass) and install them
-
 - Neo4j Desktop from [the official website](https://neo4j.com/download-center/#desktop), install it, start the server, and login to the server.
-
 - Redis from [the Redis releases page](https://github.com/tporadowski/redis/releases) and install it
-
 - Download [Postman](https://www.postman.com/downloads/) and install it
-
 - Download and install Github Desktop [official website](https://desktop.github.com/)
 
 #### Step 2: Installation Guide for CourseMapper webserver
