@@ -29,7 +29,7 @@ The services making up the coursemapper-webserver project use the following imag
 - webserver: [socialcomputing/coursemapper-webserver-webserver](https://hub.docker.com/repository/docker/socialcomputing/coursemapper-webserver-webserver/general)
 - coursemapper-kg: [socialcomputing/coursemapper-webserver-coursemapper-kg](https://hub.docker.com/repository/docker/socialcomputing/coursemapper-webserver-coursemapper-kg/general)
 - coursemapper-kg-recommendation: [socialcomputing/coursemapper-webserver-coursemapper-kg-recommendation](https://hub.docker.com/repository/docker/socialcomputing/coursemapper-webserver-coursemapper-kg-recommendation/general)
-- coursemapper-kg-wp: [socialcomputing/coursemapper-webserver-coursemapper-kg-wp](https://hub.docker.com/repository/docker/socialcomputing/coursemapper-webserver-coursemapper-kg-wp/general)
+- coursemapper-kg-wp-pg: [socialcomputing/coursemapper-webserver-coursemapper-kg-wp](https://hub.docker.com/repository/docker/socialcomputing/coursemapper-webserver-coursemapper-kg-wp-pg/general)
 - MongoDB: [mongo (official image)](https://hub.docker.com/_/mongo)
 
 ## 🔨 Development Setup Guide
