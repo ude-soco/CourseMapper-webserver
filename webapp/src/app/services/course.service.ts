@@ -62,6 +62,9 @@ export class CourseService {
     this.onSelectCourse.emit(course);
   }
 
+  logCourses(courseId: string): Observable<any> {
+    return this.http.get<Course>(`${this.API_URL}/courses/${courseId}/log`)
+  }
   /**
    * @function fetchCourses
    * GET user's courses from the server

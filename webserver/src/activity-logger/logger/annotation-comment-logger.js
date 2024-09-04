@@ -1,3 +1,5 @@
+import {generateAddMentionStatement} from "../generator/annotation-comment/annotation-generator";
+
 const annotationActivityGenerator = require("../generator/annotation-comment/annotation-generator");
 const commentActivityGenerator = require("../generator/annotation-comment/comment-generator");
 const activityController = require("../controller/activity-controller");
@@ -92,7 +94,7 @@ export const addMentionLogger = async (req, res, next) => {
   if (mentioned > 0) {
     try {
       req.locals.activity = await activityController.createActivity(
-        annotationActivityGenerator.generateAddMentiownStatement(req),
+        annotationActivityGenerator.generateAddMentionStatement(req),
         notifications.generateNotificationInfo(req),
       );
     } catch (err) {

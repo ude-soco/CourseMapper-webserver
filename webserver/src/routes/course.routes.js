@@ -1,6 +1,7 @@
 const { authJwt } = require("../middlewares");
 const controller = require("../controllers/course.controller");
 const logger = require("../activity-logger/logger/course-logger");
+const { getCourseOriginal } = require("../controllers/course.controller");
 // const controller2 = require("../controllers/user.controller");
 
 module.exports = function (app) {
@@ -106,5 +107,12 @@ module.exports = function (app) {
     "/api/courses/:courseId/reorder/:newIndex/:oldIndex",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.reorderIndicators,
+  );
+
+  app.get(
+    "/api/courses/:courseId/log",
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.getCourseOriginal,
+    logger.accessCourseLogger,
   );
 };
