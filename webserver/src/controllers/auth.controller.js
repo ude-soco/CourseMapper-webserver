@@ -5,7 +5,6 @@ import RestPassSchema from "../models/resetPassword.model.js";
 import { authJwt } from "../middlewares";
 import { verify } from "jsonwebtoken";
 
-
 const config = require("../config/auth.config");
 const db = require("../models");
 const helpers = require("../helpers/helpers");
@@ -33,7 +32,7 @@ export const signup = async (req, res, next) => {
   let generateMboxAndMboxSha1Sum = helpers.generateMboxAndMboxSha1Sum(
     req.body.email
   );
-
+ 
   let user = new User({
     firstname: req.body.firstname,
     lastname: req.body.lastname,
@@ -43,19 +42,68 @@ export const signup = async (req, res, next) => {
     mbox_sha1sum: generateMboxAndMboxSha1Sum.mbox_sha1sum,
     role: role._id,
     password: hashSync(req.body.password, 8),
+    verified: false, // Mark user as unverified initially
   });
 
   try {
     await user.save();
+    let token = sign({ email: user.email }, config.secret, {
+      expiresIn: 3000, // 5 min change to 300
+    });
+
+    // Email details
+    let mailDetails = {
+      from: "coursemapper.soco@gmail.com",
+      to: user.email,
+      subject: "Verify Your Email",
+      html: `<html>
+            <head>
+                <title>CourseMapper Email Verification</title> 
+            </head>
+            <body>
+            <p>Dear ${user.username},</p>
+            <p>Thank you for registering with CourseMapper. Please click <a href="https://${process.env.WEBAPP_URL}/verify/${token}">here</a> to verify your email address. If the above link doesn't work, copy and paste this link into your browser: https://${process.env.WEBAPP_URL}/verify/${token}</p>
+            <p>Please note that this link is only valid for 24 hours. If you did not register, please ignore this email.</p>
+            <p>Regards,</p>
+            <p>The CourseMapper Team</p>
+            </body>
+        </html>`,
+    };
+    mailTransporter.sendMail(mailDetails, async (err, data) => {
+      if (err) {
+        return res
+          .status(500)
+          .send({ error: "Error sending verification email: " + err.message });
+        //return next(CreateError(500, "something went wrong"));
+      } else {
+        req.session.token = token;
+        return res.status(200).send({
+          user: user,
+          token:token,
+          success: `Registration successful! Please verify your email.`,
+        });
+      }
+    });
+    
     req.locals = {
       user: user,
+      
       response: { success: "User is successfully registered!" },
     };
-    return next();
+    // return next();
   } catch (err) {
     return res.status(500).send({ error: "Error saving user" });
   }
 };
+const mailTransporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false,
+  auth: {
+    user: "coursemapper.soco@gmail.com",
+    pass: "gzxi ednk zaft zyow",
+  },
+});
 
 /**
  * @function signin
@@ -76,13 +124,51 @@ export const signin = async (req, res, next) => {
     if (!user) {
       return res.status(404).send({ error: "User not found." });
     }
+    //check if the email is verified or not ahhs i have it in email vervication just the flag
+    let token = sign({ id: user.id }, config.secret, {
+      expiresIn: 86400, // 24 hours
+    });
+    // If the flag is missing (undefined) or false, send verification email
+    if (!user.verified) {
+      // Send the verification email using nodemailer
+
+      let mailDetails = {
+        from: "coursemapper.soco@gmail.com",
+        to: user.email,
+        subject: "Verify Your Email",
+        html: `<html>
+          <head>
+              <title>CourseMapper Email Verification</title> 
+          </head>
+          <body>
+          <p>Dear ${user.username},</p>
+          <p>Thank you for registering with CourseMapper. Please click <a href="https://${process.env.WEBAPP_URL}/verify/${token}">here</a> to verify your email address. If the above link doesn't work, copy and paste this link into your browser: https://${process.env.WEBAPP_URL}/verify/${token}</p>
+          <p>Please note that this link is only valid for 24 hours. If you did not register, please ignore this email.</p>
+          <p>Regards,</p>
+          <p>The CourseMapper Team</p>
+          </body>
+      </html>`,
+      };
+      try {
+        user.verified = false;
+        await user.save();
+        await mailTransporter.sendMail(mailDetails);
+        return res.status(403).send({
+          error:
+            "Email not verified. A verification link has been sent to your email.",
+        });
+      } catch (emailError) {
+        return res.status(500).send({
+          error: "Failed to send verification email. Please try again later.",
+        });
+      }
+    }
+
     let passwordIsValid = await compareSync(password, user.password);
     if (!passwordIsValid) {
       return res.status(401).send({ error: "Invalid Password!" });
     }
-    let token = sign({ id: user.id }, config.secret, {
-      expiresIn: 86400, // 24 hours
-    });
+
     req.session.token = token;
     const userName = `${user.firstname} ${user.lastname}`;
     req.locals = {
@@ -95,7 +181,8 @@ export const signin = async (req, res, next) => {
         email: user.email,
         mbox_sha1sum: user.mbox_sha1sum,
         courses: user.courses,
-        token:token
+        token: token,
+        verified: user.verified,
       },
     };
     return next();
@@ -130,39 +217,38 @@ export const signout = async (req, res, next) => {
 export const sendEmail = async (req, res, next) => {
   let email = req.body.email;
 
-try{ 
-  let user = await User.findOne({
-    email: email,
-  });
-
-  if (!user) {
-    return res.status(404).send({ error: "User not found." });
-  } else {
-
-    let token = sign({ email: user.email }, config.secret, {
-      expiresIn: 300, // 5 min change to 300
+  try {
+    let user = await User.findOne({
+      email: email,
     });
 
-    const newToken = new RestPassSchema({
-      userId: user._id,
-      token: token,
-      email:user.email,
-    });
-    const mailTransporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 587,
-      secure: false,
-      auth: {
-        user: "coursemapper.soco@gmail.com",
-        pass: "gzxi ednk zaft zyow",
-      },
-    });
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    } else {
+      let token = sign({ email: user.email }, config.secret, {
+        expiresIn: 300, // 5 min change to 300
+      });
 
-    let mailDetails = {
-      from: "coursemapper.soco@gmail.com",
-      to: user.email,
-      subject: "Reset Password",
-      html: `<html>
+      const newToken = new RestPassSchema({
+        userId: user._id,
+        token: token,
+        email: user.email,
+      });
+      // const mailTransporter = nodemailer.createTransport({
+      //   host: "smtp.gmail.com",
+      //   port: 587,
+      //   secure: false,
+      //   auth: {
+      //     user: "coursemapper.soco@gmail.com",
+      //     pass: "gzxi ednk zaft zyow",
+      //   },
+      // });
+
+      let mailDetails = {
+        from: "coursemapper.soco@gmail.com",
+        to: user.email,
+        subject: "Reset Password",
+        html: `<html>
         <head>
             <title>CourseMapper Password Reset </title> 
         </head>
@@ -180,21 +266,22 @@ try{
             
         </body>
     </html>`,
-    };
-   
-    mailTransporter.sendMail(mailDetails, async (err, data) => {
-      if (err) {
-        return res.status(500).send({ error: "something went wrong: " + err.message });
-        //return next(CreateError(500, "something went wrong"));
-      } else {
-   
-        await newToken.save();
-        return res.status(200).send({
-          success: `Email sent successfully`,
-        });
-      }
-    });
-  }
+      };
+
+      mailTransporter.sendMail(mailDetails, async (err, data) => {
+        if (err) {
+          return res
+            .status(500)
+            .send({ error: "something went wrong: " + err.message });
+          //return next(CreateError(500, "something went wrong"));
+        } else {
+          await newToken.save();
+          return res.status(200).send({
+            success: `Email sent successfully`,
+          });
+        }
+      });
+    }
   } catch (err) {
     return res.status(500).send({ error: "Error finding user" });
   }
@@ -206,24 +293,132 @@ export const resetPassword = async (req, res, next) => {
     if (err) {
       return res.status(500).send({ message: "Reset link is expired!" });
     }
-    const dataResponse =data;
+    const dataResponse = data;
     let user = await User.findOne({
       email: dataResponse.email,
     });
-    const enryptedPassword= hashSync(Passowrd, 8)
-    user.password=enryptedPassword
-    try{
-const updatedUser= await User.findOneAndUpdate(
-  { _id:user._id },
-  { $set:user },
-  { new:true }
-)
-return res.status(200).send({
-  success: `Reset Password scussess`,
-});
-    }
-    catch(error){
+    const enryptedPassword = hashSync(Passowrd, 8);
+    user.password = enryptedPassword;
+    try {
+      const updatedUser = await User.findOneAndUpdate(
+        { _id: user._id },
+        { $set: user },
+        { new: true }
+      );
+      return res.status(200).send({
+        success: `Reset Password scussess`,
+      });
+    } catch (error) {
       return res.status(500).send({ error: "Some went wrong" });
     }
   });
-}
+};
+
+export const verifyEmail = async (req, res, next) => {
+  let token = req.body.token;
+
+  try {
+    verify(token, config.secret, async (err, data) => {
+      if (err) {
+        return res.status(500).send({ message: "Reset link is expired!" });
+      }
+
+      let user = await User.findOne({
+        $or: [
+          { email: data.email },
+          { _id: data.id }, // Assuming 'data.id' holds the user ID when email is not present
+        ],
+      });
+
+      if (!user || user.verified) {
+        return res.status(500).send({ message: "Invalid or already verified" });
+      }
+      user.verified = true;
+
+      req.locals = {
+        user: await user.save(),
+        response: { message: "Email verified successfully" },
+      };
+      return next();
+      //return res.status(200).send({ message: 'Email verified successfully' });
+    });
+  } catch (error) {
+    return res.status(500).send({ error: "Some went wrong" });
+  }
+};
+
+
+export const resendVerifyEmail = async (req, res, next) => {
+  let token = req.body.token;
+
+
+
+
+    verify(token, config.secret, async (err, data) => {
+      if (err) {
+        return res.status(500).send({ message: "Reset link is expired!" });
+      }
+
+      let user = await User.findOne({
+        $or: [
+          { email: data.email },
+          { _id: data.id }, // Assuming 'data.id' holds the user ID when email is not present
+        ],
+      });
+
+      if (!user) {
+        return res.status(404).send({ error: "User not found." });
+    }
+
+    if (user.verified) {
+        return res.status(400).send({ message: "Email is already verified." });
+    }
+    
+       // Send verification email
+    let mailDetails = {
+      from: "coursemapper.soco@gmail.com",
+      to: user.email,
+      subject: "Verify Your Email",
+      html: `<html>
+        <head>
+            <title>CourseMapper Email Verification</title> 
+        </head>
+        <body>
+        <p>Dear ${user.username},</p>
+        <p>Thank you for registering with CourseMapper. Please click <a href="https://${process.env.WEBAPP_URL}/verify/${token}">here</a> to verify your email address. If the above link doesn't work, copy and paste this link into your browser: https://${process.env.WEBAPP_URL}/verify/${token}</p>
+        <p>Please note that this link is only valid for 24 hours. If you did not register, please ignore this email.</p>
+        <p>Regards,</p>
+        <p>The CourseMapper Team</p>
+        </body>
+    </html>`,
+    };
+
+
+    try {
+     
+      await mailTransporter.sendMail(mailDetails);
+      return res.status(200).send({
+        message:
+          "A verification link has been sent to your email.",
+      });
+    } catch (emailError) {
+      return res.status(500).send({
+        error: "Failed to send verification email. Please try again later.",
+      });
+    }
+    });
+
+
+    // const userId = req.params.userId;
+    // const user = await User.findById(userId);
+
+
+    // Generate a new verification token
+    // let token = sign({ id: user.id }, config.secret, {
+    //   expiresIn: 86400, // 24 hours
+    // });
+    
+
+   
+
+};
