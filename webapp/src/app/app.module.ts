@@ -100,6 +100,9 @@ import { CourseDashboardComponent } from './pages/components/Dashboards/course-d
 import { ChannelDashboardComponent } from './pages/components/Dashboards/channel-dashboard/channel-dashboard.component';
 import { MaterialDashboardComponent } from './pages/components/Dashboards/material-dashboard/material-dashboard.component';
 import { BackButtonComponent } from './pages/components/back-button/back-button.component';
+import { EmailValidationComponent } from './pages/components/email-validation/email-validation.component';
+import { RequestEmailValidationComponent } from './pages/components/email-validation/request-email-validation/request-email-validation.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -139,7 +142,10 @@ import { BackButtonComponent } from './pages/components/back-button/back-button.
     ChannelDashboardComponent,
    PopulateDashboardComponent,
    MaterialDashboardComponent,
-   BackButtonComponent
+   BackButtonComponent,
+   EmailValidationComponent,
+   RequestEmailValidationComponent,
+
   ],
   imports: [
     MentionModule,
