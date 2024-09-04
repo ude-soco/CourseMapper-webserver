@@ -481,6 +481,7 @@ export class TopicDropdownComponent implements OnInit {
         CourseActions.setCurrentTopic({ selcetedTopic: null })
       );
     } else {
+      this.topicChannelService.logTopic(this.selectedCourseId, this.selectedTopic._id).subscribe();
       this.expandTopic = [];
       this.expandTopic.push(topic._id);
       this.store.dispatch(

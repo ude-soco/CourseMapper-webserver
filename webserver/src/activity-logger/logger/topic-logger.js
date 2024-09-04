@@ -26,7 +26,6 @@ export const deleteTopicLogger = async (req, res, next) => {
   }
 };
 
-// TODO: Not logged from frontend
 export const accessTopicLogger = async (req, res) => {
   try {
     await activityController.createActivity(
