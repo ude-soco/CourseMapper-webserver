@@ -195,7 +195,7 @@ export const generateCompleteVideoActivity = (req, user, material, origin) => {
 
 const createPDFMaterialWithSlideObject = (req) => {
   const slideNr = req.params.slideNr;
-  const material = req.params.material;
+  const material = req.locals.material;
   const origin = req.get("origin");
   return {
     objectType: config.activity,
@@ -225,7 +225,7 @@ const createPDFMaterialWithSlideObject = (req) => {
   };
 };
 
-export const generateViewSlideActivity = (req, user, material) => {
+export const generateViewSlideActivity = (req) => {
   const metadata = createMetadata();
   return {
     ...metadata,

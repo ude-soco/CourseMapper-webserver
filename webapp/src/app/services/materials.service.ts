@@ -72,6 +72,10 @@ export class MaterilasService {
       );
   }
 
+  logMaterial(courseId: string, materialId: string): Observable<any> {
+    return this.http.get<CreateMaterial>(`${this.API_URL}/courses/${courseId}/materials/${materialId}`)
+  }
+
   uploadFile(formData: any, materialType: string = 'pdf'): any {
     if (materialType == 'video') {
       return this.http
