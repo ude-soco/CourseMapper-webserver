@@ -485,7 +485,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       MaterialActions.setMaterialId({ materialId: this.selectedMaterial._id })
     );
     this.materialID = this.selectedMaterial._id
-    console.log("material selected with id", this.materialID)
+    // console.log("material selected with id", this.materialID)
 
 
     this.store.dispatch(AnnotationActions.loadAnnotations());

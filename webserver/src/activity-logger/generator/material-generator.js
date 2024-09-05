@@ -122,7 +122,7 @@ const createVideoMaterialWithDurationObject = (req) => {
   const hours = req.params.hours;
   const minutes = req.params.minutes;
   const seconds = req.params.seconds;
-  const material = req.params.material;
+  const material = req.locals.material;
   const origin = req.get("origin");
   const duration =
     parseInt(hours) * 60 * 60 + parseInt(minutes) * 60 + parseInt(seconds);
