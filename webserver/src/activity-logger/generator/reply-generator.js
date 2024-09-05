@@ -52,6 +52,7 @@ const createReplyObject = (req) => {
 };
 
 const createReplyResultObject = (req) => {
+  let origin = req.get("origin");
   let annotation = req.locals.annotation;
   return {
     extensions: {
@@ -98,7 +99,7 @@ export const generateDeleteReplyActivity = (req) => {
   };
 };
 
-export const generateLikeReplyActivity = (req, reply, origin, annotation) => {
+export const generateLikeReplyActivity = (req) => {
   const metadata = createMetadata();
   return {
     ...metadata,
@@ -134,13 +135,13 @@ export const generateDislikeReplyActivity = (req) => {
   };
 };
 
-export const generateUndislikeReplyActivity = (req, reply, annotation) => {
+export const generateUndislikeReplyActivity = (req) => {
   const metadata = createMetadata();
   let origin = req.get("origin");
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb(`${origin}/verbs/undisliked`, "disliked"),
+    verb: createVerb(`${origin}/verbs/undisliked`, "undisliked"),
     object: createReplyObject(req),
     result: createReplyResultObject(req),
     context: createContext(),
