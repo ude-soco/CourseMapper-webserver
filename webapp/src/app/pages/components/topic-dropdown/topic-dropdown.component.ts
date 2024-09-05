@@ -508,6 +508,7 @@ export class TopicDropdownComponent implements OnInit {
     this.selectedCourseId = this.courseService.getSelectedCourse()._id;
     this.prevSelectedCourseId = this.selectedCourseId;
     this.topicChannelService.selectChannel(channel);
+    this.topicChannelService.logChannel(this.selectedCourseId, channel._id).subscribe();
     this.router.navigate([
       'course',
       this.courseService.getSelectedCourse()._id,

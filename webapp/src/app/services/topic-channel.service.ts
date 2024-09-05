@@ -355,4 +355,8 @@ export class TopicChannelService {
       }>(`${this.API_URL}/courses/${courseId}/channels/${channelId}`)
       .pipe(map((res) => res.channel));
   }
+
+  logChannel(courseId: string, channelId: string): Observable<any> {
+    return this.http.get<Course>(`${this.API_URL}/courses/${courseId}/channels/${channelId}/log`)
+  }
 }

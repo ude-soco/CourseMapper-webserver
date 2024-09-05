@@ -13,8 +13,7 @@ module.exports = function (app) {
   app.get(
     "/api/courses/:courseId/channels/:channelId",
     [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.getChannel,
-    logger.accessChannelLogger,
+    controller.getChannel
   );
 
   // Create a new channel
@@ -79,5 +78,12 @@ module.exports = function (app) {
     "/api/courses/:courseId/channels/:channelId/reorder/:newIndex/:oldIndex",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.reorderIndicators,
+  );
+
+  app.get(
+    "/api/courses/:courseId/channels/:channelId/log",
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.getChannelLog,
+    logger.accessChannelLogger,
   );
 };
