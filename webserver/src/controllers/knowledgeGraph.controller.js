@@ -250,8 +250,8 @@ export const readSlide = async (req, res, next) => {
 
   try {
     await neo4j.readSlide(req.locals.user.id, slideId);
-    next();
   } catch (err) {
-    next();
+    console.log(err);
   }
+  return next();
 };

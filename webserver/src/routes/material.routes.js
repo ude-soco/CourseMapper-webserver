@@ -78,7 +78,7 @@ module.exports = function (app) {
     "/api/courses/:courseId/materials/:materialId/pdf/slide/:slideNr/view",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getMaterial,
-    knowledgeGraphController.readSlide,
+    // knowledgeGraphController.readSlide,
     logger.viewSlideLogger,
   );
 
