@@ -1,6 +1,6 @@
 const { authJwt } = require("../middlewares");
 const controller = require("../controllers/course.controller");
-const logger = require("../activity-logger/logger/course-logger");
+const logger = require("../activity-logger/logger-middlewares/course-logger");
 const { getCourseOriginal } = require("../controllers/course.controller");
 // const controller2 = require("../controllers/user.controller");
 

@@ -1,6 +1,6 @@
 const { authJwt, notifications } = require("../middlewares");
 const controller = require("../controllers/channel.controller");
-const logger = require("../activity-logger/logger/channel-logger");
+const logger = require("../activity-logger/logger-middlewares/channel-logger");
 
 module.exports = function (app) {
   app.use(function (req, res, next) {

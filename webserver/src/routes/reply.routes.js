@@ -1,6 +1,6 @@
 const { authJwt } = require("../middlewares");
 const controller = require("../controllers/reply.controller");
-const logger = require("../activity-logger/logger/reply-logger");
+const logger = require("../activity-logger/logger-middlewares/reply-logger");
 const { notifications } = require("../middlewares");
 
 module.exports = function (app) {

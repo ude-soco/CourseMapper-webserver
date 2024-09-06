@@ -1,6 +1,6 @@
 const { authJwt, notifications } = require("../middlewares");
 const controller = require("../controllers/material.controller");
-const logger = require("../activity-logger/logger/material-logger");
+const logger = require("../activity-logger/logger-middlewares/material-logger");
 const knowledgeGraphController = require("../controllers/knowledgeGraph.controller");
 
 module.exports = function (app) {

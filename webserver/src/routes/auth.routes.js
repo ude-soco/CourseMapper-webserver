@@ -1,6 +1,6 @@
 const { verifySignUp, authJwt } = require("../middlewares");
 const controller = require("../controllers/auth.controller");
-const logger = require("../activity-logger/logger/authentication-logger");
+const logger = require("../activity-logger/logger-middlewares/authentication-logger");
 
 module.exports = function (app) {
   app.use(function (req, res, next) {

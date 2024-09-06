@@ -1,6 +1,6 @@
 const { authJwt, notifications } = require("../middlewares");
 const controller = require("../controllers/annotation.controller");
-const logger = require("../activity-logger/logger/annotation-comment-logger");
+const logger = require("../activity-logger/logger-middlewares/annotation-comment-logger");
 const notificationsController = require("../controllers/notification.controller");
 
 module.exports = function (app) {
