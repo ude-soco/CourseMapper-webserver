@@ -1,0 +1,26 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+wikipedia-api = "*"
+sentence-transformers = "*"
+polars = "*"
+neo4j = "*"
+flair = "*"
+nltk = "*"
+stanfordcorenlp = "*"
+psycopg = {extras = ["binary"], version = "*"}
+cm-worker = "*"
+html2text = "*"
+scipy = "==1.11.0"
+pdfminer-six = "*"
+python-dotenv = "*"
+torch = "==2.2"
+
+[dev-packages]
+
+[requires]
+python_version = "3.11"
+python_full_version = "3.11.5"
