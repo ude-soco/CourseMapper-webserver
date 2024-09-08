@@ -231,12 +231,9 @@
 
         <ul class="spineBorder-1-F4s1">
           <li
-            *ngFor="
-              let followingAnnotation of getFollowingAnnotationsOfDisplayedChannels(
-                channel._id
-              ) | async
-            "
-          >
+          *ngFor="let followingAnnotation of getFollowingAnnotationsOfDisplayedChannels(channel._id) | async; let i = index"
+          [class.hidden]="isCollapsed && i >= maxVisibleAnnotations"
+        >
             <div
               class="flex flex-row justify-between items-center pl-8 py-1 hover:bg-white transition-all following-annotation-container relative"
               (click)="onFollowingAnnotationClicked(followingAnnotation)"
@@ -305,6 +302,15 @@
               </div>
             </div>
           </li>
+           <li
+    *ngIf="length > maxVisibleAnnotations"
+    (click)="toggleCollapse()"
+    class="collapse-toggle"
+  >
+    <div class="flex justify-center items-center py-2 cursor-pointer text-blue-500 hover:underline">
+      {{ isCollapsed ? 'Show more' : 'Show less' }}
+    </div>
+  </li>
         </ul>
       </div>
 
