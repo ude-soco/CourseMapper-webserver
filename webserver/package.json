@@ -33,7 +33,7 @@
     "cookie-session": "^2.1.0",
     "debug": "~4.3.6",
     "dotenv": "^16.4.5",
-    "express": "^4.19.2",
+    "express": "^4.20.0",
     "file-extension": "^4.0.5",
     "install": "^0.13.0",
     "jsonwebtoken": "^9.0.2",
