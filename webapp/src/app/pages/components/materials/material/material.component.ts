@@ -281,6 +281,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.showFullMap[materialId] = !this.showFullMap[materialId];
   }
   truncateText(text: string, limit: number): string {
+
     const words = text.split(' ');
     if (words.length <= limit) return text;
     return words.slice(0, limit).join(' ') + '...';
@@ -599,17 +600,42 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   onRenameMaterial() {
+
+    console.log('onRenameMaterial');
+    console.log(" this.insertedText rename",  this.insertedText)
+
     let selectedMat = <HTMLInputElement>(
       document.getElementById(`${this.selectedMaterial._id}`)
     );
+    console.log('selectedMat', selectedMat);
 
     this.selectedId = this.selectedMaterial._id;
+    console.log('selectedId', this.selectedId);
+
     selectedMat.contentEditable = 'true';
     this.previousMaterial = this.selectedMaterial;
-    this.previousMaterial = this.selectedMaterial;
+    console.log('this.previousMaterial', this.selectedMaterial);
+    
+ if(selectedMat.textContent === ""){
+  selectedMat.textContent = this.previousMaterial.name;
+  console.log('textContent',selectedMat.textContent);
+ 
+  
+ }
+
+
+        
+
+    // this.previousMaterial = this.selectedMaterial;
     this.selectElementContents(selectedMat);
+ 
+
   }
   selectElementContents(el) {
+    console.log('selectElementContents', el);
+    console.log('this.previousMaterial', this.selectedMaterial);
+
+
     // select text on rename
     var range = document.createRange();
     range.selectNodeContents(el);
@@ -618,9 +644,12 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     sel.addRange(range);
   }
   onRenameMaterialConfirm(id) {
-    const selectedMat = <HTMLInputElement>document.getElementById(id);
+    console.log('onRenameMaterialConfirm');
+    //const selectedMat = <HTMLInputElement>document.getElementById(id);
     if (this.enterKey) {
       //confirmed by keyboard
+    console.log('case 1');
+
       let MaterialName = this.previousMaterial.name;
       const materialDescription = this.previousMaterial.description;
       const curseId = this.previousMaterial.courseId;
@@ -636,6 +665,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
         type: mattype,
       };
       let newMaterialName = this.insertedText;
+      console.log(" this.insertedText1",  this.insertedText)
       newMaterialName = newMaterialName.replace(/(\r\n|\n|\r)/gm, ''); //remove newlines
       if (newMaterialName && newMaterialName !== '') {
         body = {
@@ -651,8 +681,11 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.materialService
         .renameMaterial(curseId, this.previousMaterial, body)
         .subscribe();
+        this.editable = false;
+        
     } else if (this.escapeKey === true) {
       //ESC pressed
+      console.log('case 2');
 
       let MaterialName = this.previousMaterial.name;
       const MaterialDescription = this.previousMaterial.description;
@@ -673,9 +706,11 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.materialService
         .renameMaterial(curseId, this.selectedMaterial, body)
         .subscribe();
+        this.editable = false;
     } else {
       //confirmed by mouse click
-      //
+      console.log('case 3');
+    
       let MaterialName = this.previousMaterial.name;
       const MaterialDescription = this.previousMaterial.description;
       const curseId = this.previousMaterial.courseId;
@@ -691,6 +726,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
         type: mattype,
       };
       let newMaterialName = this.insertedText;
+      console.log(" this.insertedText2",  this.insertedText)
       newMaterialName = newMaterialName.replace(/(\r\n|\n|\r)/gm, ''); //remove newlines
       if (
         newMaterialName &&
@@ -716,6 +752,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
   @HostListener('document:click', ['$event'])
   documentClick(event: MouseEvent) {
     // to confirm rename when mouse clicked anywhere
+    console.log(" triggered")
     if (this.editable) {
       //course name <p> has been changed to editable
       //
@@ -755,6 +792,8 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
         (<HTMLInputElement>document.getElementById(id)).contentEditable =
           'false';
         this.insertedText = this.selectedMaterial.name;
+      console.log(" this.insertedText3",  this.insertedText)
+
         window.getSelection().removeAllRanges(); // deselect text on confirm
         // (<HTMLInputElement>document.getElementById(id)).innerText=this.insertedText
         this.escapeKey = true;
@@ -772,6 +811,8 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       // on ESC pressed
       (<HTMLInputElement>document.getElementById(id)).contentEditable = 'false';
       this.insertedText = this.selectedMaterial.name;
+      console.log(" this.insertedText4",  this.insertedText)
+
       window.getSelection().removeAllRanges(); // deselect text on confirm
       this.escapeKey = true;
       // (<HTMLInputElement>document.getElementById(id)).innerHTML=this.insertedText;
@@ -793,6 +834,8 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.insertedText = (<HTMLInputElement>(
         document.getElementById(id)
       )).innerText;
+      console.log(" this.insertedText5",  this.insertedText)
+
     } else if (e.keyCode !== 32 && e.keyCode !== 27) {
       //not (enter, esc)
       this.insertedText = (<HTMLInputElement>(

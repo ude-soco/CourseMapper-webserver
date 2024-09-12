@@ -170,33 +170,33 @@
               
               </p>
               <span class="flex-grow">
-                <span *ngIf="!showFullMap[material._id]" class="material-name">
-                  {{ truncateText(material.name, 2) }}
+                <span *ngIf="!showFullMap[selectedMaterial._id]" class="material-name">
+                  {{ truncateText(selectedMaterial.name, 2) }}
                 </span>
-                <span *ngIf="showFullMap[material._id]" class="material-full-name">
-                  {{ material.name }}
+                <span *ngIf="showFullMap[selectedMaterial._id]" class="material-full-name">
+                  {{ selectedMaterial.name }}
                 </span>
               </span>
               <span class="collapse-arrow"  *ngIf="material.name.split(' ').length > 2" (click)="toggleFullMaterialName(material._id, $event)">
                 <i pTooltip="Long press on the arrow to Expand/Collapse Material Name" 
                
-               class="pi" [ngClass]="showFullMap[material._id] ? 'pi-angle-up' : 'pi-angle-down'"></i>
+               class="pi" [ngClass]="showFullMap[selectedMaterial._id] ? 'pi-angle-up' : 'pi-angle-down'"></i>
               </span>
             
             </span>
             <span *ngIf="!selectedMaterial" class="mr-2">
               <span class="flex-grow">
-                <span *ngIf="!showFullMap[material._id]" class="material-name">
-                  {{ truncateText(material.name, 2) }}
+                <span *ngIf="!showFullMap[selectedMaterial._id]" class="material-name">
+                  {{ truncateText(selectedMaterial.name, 2) }}
                 </span>
-                <span *ngIf="showFullMap[material._id]" class="material-full-name">
-                  {{ material.name }}
+                <span *ngIf="showFullMap[selectedMaterial._id]" class="material-full-name">
+                  {{ selectedMaterial.name }}
                 </span>
               </span>
-              <span class="collapse-arrow"  *ngIf="material.name.split(' ').length > 2" (click)="toggleFullMaterialName(material._id, $event)">
+              <span class="collapse-arrow"  *ngIf="material.name.split(' ').length > 2" (click)="toggleFullMaterialName(selectedMaterial._id, $event)">
                 <i pTooltip="Long press on the arrow to Expand/Collapse Material Name" 
                
-               class="pi" [ngClass]="showFullMap[material._id] ? 'pi-angle-up' : 'pi-angle-down'"></i>
+               class="pi" [ngClass]="showFullMap[selectedMaterial._id] ? 'pi-angle-up' : 'pi-angle-down'"></i>
               </span>
             </span>
           </div>
