@@ -20,7 +20,7 @@ class PrerequisiteRelationship:
                 if main_concepts[j] == None:
                     continue
                 try:
-                    self.prerequisite_criteria(r["name"],r["related_to"],0.27)
+                    self.prerequisite_criteria(main_concepts[i],main_concepts[j],0.27)
                 except Exception as e:
                     print(e)
             counter +=1
