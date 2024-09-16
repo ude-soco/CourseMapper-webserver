@@ -55,6 +55,8 @@ class Prerequisite:
         print("find prerequisite")
         prerequisite = PrerequisiteRelationship(concept_dict,related_relationships)
         prerequisite_relationships = prerequisite.get_prerequisite_relationships()
+        #results 
+        # prerequisite_relationships.to_csv("prerequisite_relationships_geometry.csv")
 
 
         print("Add relationships to graph")
