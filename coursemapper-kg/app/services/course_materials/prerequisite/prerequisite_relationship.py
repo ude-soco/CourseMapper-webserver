@@ -35,7 +35,14 @@ class PrerequisiteRelationship:
         
         self.prereq_weighted = pd.DataFrame(self.prereq_weighted)
         self.prereq_unweighted = pd.DataFrame(self.prereq_unweighted)
-        self.prereq = self.prereq_weighted.merge(self.prereq_unweighted, how="outer",on=["prerequisite_concept","concept"],suffixes=('_weighted', '_unweighted'))
+        if self.prereq_weighted.empty and self.prereq_unweighted.empty:
+            self.prereq = pd.DataFrame(columns=['prerequisite_concept', 'concept', 'score_weighted', 'temporal_1_weighted', 'article_contents_1_weighted', 'abstract_contents_1_weighted', 'link_on_rel_abstract_1_weighted', 'refD_1_weighted', 'inlink_outlink_1_weighted', 'category_1_weighted', 'super_category_1_weighted', 'berttopic_1_weighted', 'coursemapper_channel_1_weighted', 'temporal_2_weighted', 'article_contents_2_weighted', 'abstract_contents_2_weighted', 'link_on_rel_abstract_2_weighted', 'refD_2_weighted', 'inlink_outlink_2_weighted', 'category_2_weighted', 'super_category_2_weighted', 'berttopic_2_weighted', 'coursemapper_channel_2_weighted', 'score_unweighted', 'temporal_1_unweighted', 'article_contents_1_unweighted', 'abstract_contents_1_unweighted', 'link_on_rel_abstract_1_unweighted', 'refD_1_unweighted', 'inlink_outlink_1_unweighted', 'category_1_unweighted', 'super_category_1_unweighted', 'berttopic_1_unweighted', 'coursemapper_channel_1_unweighted', 'temporal_2_unweighted', 'article_contents_2_unweighted', 'abstract_contents_2_unweighted', 'link_on_rel_abstract_2_unweighted', 'refD_2_unweighted', 'inlink_outlink_2_unweighted', 'category_2_unweighted', 'super_category_2_unweighted', 'berttopic_2_unweighted', 'coursemapper_channel_2_unweighted','weight_weighted', 'weight_unweighted'])
+        elif self.prereq_weighted.empty:
+            self.prereq = self.prereq_unweighted
+        elif self.prereq_unweighted.empty:
+            self.prereq = self.prereq_weighted
+        else:
+            self.prereq = self.prereq_weighted.merge(self.prereq_unweighted, how="outer",on=["prerequisite_concept","concept"],suffixes=('_weighted', '_unweighted'))
         self.prereq.drop(columns=['weight_weighted', 'weight_unweighted'],inplace=True)
         self.prereq = self.prereq.fillna(0)
         self.prereq = self.prereq.drop_duplicates()
@@ -43,12 +50,12 @@ class PrerequisiteRelationship:
     def unweighted_voting(self,c1,c2,c1_to_c2,c2_to_c1,c1_to_c2_real,c2_to_c1_real,theta, weighted = False):
         if weighted:
             #change this to 5.5 with coursemapper
-            c1_to_c2_sum = np.sum(c1_to_c2)/5
-            c2_to_c1_sum = np.sum(c2_to_c1)/5
+            c1_to_c2_sum = np.sum(c1_to_c2)/5.5
+            c2_to_c1_sum = np.sum(c2_to_c1)/5.5
         else:
             #change this to 10 with coursemapper
-            c1_to_c2_sum = np.sum(c1_to_c2)/9
-            c2_to_c1_sum = np.sum(c2_to_c1)/9
+            c1_to_c2_sum = np.sum(c1_to_c2)/10
+            c2_to_c1_sum = np.sum(c2_to_c1)/10
         delta = c1_to_c2_sum - c2_to_c1_sum
         if delta >= theta:
             preq_rel = {"prerequisite_concept":c1, "concept":c2, "weight": weighted, "score" : abs(delta),"temporal_1":c1_to_c2_real[0],"article_contents_1":c1_to_c2_real[1],"abstract_contents_1":c1_to_c2_real[2],"link_on_rel_abstract_1":c1_to_c2_real[3],"refD_1":c1_to_c2_real[4],"inlink_outlink_1":c1_to_c2_real[5],"category_1":c1_to_c2_real[6],"super_category_1":c1_to_c2_real[7],"berttopic_1":c1_to_c2_real[8],"coursemapper_channel_1":c1_to_c2_real[9],"temporal_2":c2_to_c1_real[0],"article_contents_2":c2_to_c1_real[1],"abstract_contents_2":c2_to_c1_real[2],"link_on_rel_abstract_2":c2_to_c1_real[3],"refD_2":c2_to_c1_real[4],"inlink_outlink_2":c2_to_c1_real[5],"category_2":c2_to_c1_real[6],"super_category_2":c2_to_c1_real[7],"berttopic_2":c2_to_c1_real[8],"coursemapper_channel_2":c2_to_c1_real[9]}
