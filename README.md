@@ -22,15 +22,20 @@ Visit the [proxy service on port 8000](http://localhost:8000/) to use the applic
 
 ## 🖥️ Application stack
 
-The services making up the coursemapper-webserver project use the following images, hosted on Docker Hub:
+The services making up the coursemapper-webserver application use the following images, hosted on Docker Hub:
 
 - proxy: not published, only required for environments without built-in HTTP routing
 - webapp: [socialcomputing/coursemapper-webserver-webapp](https://hub.docker.com/repository/docker/socialcomputing/coursemapper-webserver-webapp/general)
 - webserver: [socialcomputing/coursemapper-webserver-webserver](https://hub.docker.com/repository/docker/socialcomputing/coursemapper-webserver-webserver/general)
-- coursemapper-kg: [socialcomputing/coursemapper-webserver-coursemapper-kg](https://hub.docker.com/repository/docker/socialcomputing/coursemapper-webserver-coursemapper-kg/general)
+- coursemapper-kg-concept-map: [socialcomputing/coursemapper-webserver-coursemapper-kg-concept-map](https://hub.docker.com/repository/docker/socialcomputing/coursemapper-webserver-coursemapper-kg-concept-map/general)
 - coursemapper-kg-recommendation: [socialcomputing/coursemapper-webserver-coursemapper-kg-recommendation](https://hub.docker.com/repository/docker/socialcomputing/coursemapper-webserver-coursemapper-kg-recommendation/general)
-- coursemapper-kg-wp-pg: [socialcomputing/coursemapper-webserver-coursemapper-kg-wp](https://hub.docker.com/repository/docker/socialcomputing/coursemapper-webserver-coursemapper-kg-wp-pg/general)
+- coursemapper-kg-wp-pg: [socialcomputing/coursemapper-webserver-coursemapper-kg-wp-pg](https://hub.docker.com/repository/docker/socialcomputing/coursemapper-webserver-coursemapper-kg-wp-pg/general)
 - MongoDB: [mongo (official image)](https://hub.docker.com/_/mongo)
+
+Additional tooling, that is not part of the application stack:
+
+- coursemapper-kg-preprocess: [socialcomputing/coursemapper-webserver-coursemapper-kg-preprocess](https://hub.docker.com/repository/docker/socialcomputing/coursemapper-webserver-coursemapper-kg-preprocess/general)
+
 
 ## 🔨 Development Setup Guide
 
