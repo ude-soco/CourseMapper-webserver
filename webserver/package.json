@@ -29,7 +29,7 @@
     "@babel/preset-env": "^7.25.4",
     "axios": "^1.7.7",
     "bcryptjs": "^2.4.3",
-    "body-parser": "^1.20.2",
+    "body-parser": "^1.20.3",
     "cookie-session": "^2.1.0",
     "debug": "~4.3.6",
     "dotenv": "^16.4.5",
