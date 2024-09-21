@@ -14,8 +14,7 @@ module.exports = function (app) {
       verifySignUp.checkDuplicateUsernameOrEmail,
       verifySignUp.checkRolesExisted,
     ],
-    controller.register,
-    logger.registerLogger,
+    controller.register
   );
 
   app.post("/api/auth/signin", controller.signIn, logger.signInLogger);
@@ -24,13 +23,12 @@ module.exports = function (app) {
     "/api/auth/signout",
     [authJwt.verifyToken],
     controller.signOut,
-    logger.signOutLogger,
+    logger.signOutLogger
   );
 
   app.post("/api/auth/sendEmail", controller.sendEmail);
 
   app.post("/api/auth/resetPassword", controller.resetPassword);
-  app.post("/api/auth/verify", controller.verifyEmail, logger.signup);
+  app.post("/api/auth/verify", controller.verifyEmail, logger.registerLogger);
   app.post("/api/auth/resendVerifyEmail", controller.resendVerifyEmail);
-
 };
