@@ -33,7 +33,10 @@ class WikipediaService:
 
     def __del__(self):
         if self._conn is not None:
-            self._conn.close()
+            try:
+                self._conn.close()
+            except Exception:
+                pass
 
     def get_page(self, title: str) -> WikipediaPage | None:
         # Normalize title
