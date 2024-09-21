@@ -12,18 +12,30 @@ class PrerequisiteRelationship:
         self.prereq_unweighted = []
         self.prereq_weighted = []
         counter = 0
-        for i in range(len(main_concepts)):
-            print(counter)
-            if main_concepts[i] == None:
+        for _,r in self.related_relationships.iterrows():
+            # print(counter)
+            if r["name"] == None or r["related_to"] == None:
                 continue
-            for j in range(i+1, len(main_concepts)):
-                if main_concepts[j] == None:
-                    continue
+            else:
+                # self.prerequisite_criteria(r["name"],r["related_to"],0)
                 try:
-                    self.prerequisite_criteria(main_concepts[i],main_concepts[j],0.27)
+                    print("relation",r["name"],r["related_to"])
+                    self.prerequisite_criteria(r["name"],r["related_to"],0.27)
                 except Exception as e:
                     print(e)
             counter +=1
+        # for i in range(len(main_concepts)):
+        #     print(counter)
+        #     if main_concepts[i] == None:
+        #         continue
+        #     for j in range(i+1, len(main_concepts)):
+        #         if main_concepts[j] == None:
+        #             continue
+        #         try:
+        #             self.prerequisite_criteria(main_concepts[i],main_concepts[j],0.27)
+        #         except Exception as e:
+        #             print(e)
+        #     counter +=1
 
         # for _,r in self.related_relationships.iterrows():
         #     print(counter)
