@@ -116,7 +116,9 @@ export class RegistrationComponent implements OnInit {
           this.isSuccessful = true;
           this.isSignUpFailed = false;
           this.submitted = true;
-          this.router.navigate(['login']);
+          console.log("token from signup page", data.token)
+          // this.router.navigate(['login']);
+           this.router.navigate(['validateEmail'], { queryParams: { token: data.token }});
         },
         error: (err) => {
           this.errorMessage = err.error.message;

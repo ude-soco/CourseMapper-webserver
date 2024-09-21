@@ -1,0 +1,22 @@
+services:
+  wp-pg:
+    image: ${IMAGE_NAME_PREFIX:-socialcomputing/}coursemapper-webserver-coursemapper-kg-wp-pg:${IMAGE_TAG:-latest}
+    build: .
+    environment:
+      POSTGRES_PASSWORD: password
+      INIT_PATH: coursemapper-read:coursemapper-data/init.sql.gz
+      ACCESS_KEY_ID: ACCESS_KEY_ID
+      SECRET_ACCESS_KEY: SECRET_ACCESS_KEY
+    volumes:
+      - coursemapper-kg-wp-pg:/var/lib/postgresql/data
+      - coursemapper-kg-wp-pg-meta:/var/lib/postgresql/meta
+    healthcheck:
+      test: "pg_isready -h wp-pg -U postgres"
+      start_period: 2s
+      interval: 10s
+      retries: 100000
+    restart: always
+
+volumes:
+  coursemapper-kg-wp-pg:
+  coursemapper-kg-wp-pg-meta:

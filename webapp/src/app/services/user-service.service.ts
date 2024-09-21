@@ -63,8 +63,22 @@ export class UserServiceService {
      
     );
   }
-
-
+  emailVerification(token: string): Observable<any> {
+    return this.http.post(
+      AUTH_API_2 + 'verify',
+      { token},
+      HTTPOptions,
+     
+    );
+  }
+  resendEmailVerification(token: string): Observable<any> {
+    return this.http.post(
+      AUTH_API_2 + 'resendVerifyEmail',
+      { token},
+      HTTPOptions,
+     
+    );
+  }
   logout(): Observable<any> {
     this.setlastTimeCourseMapperOpened().subscribe();
     return this.http.post(AUTH_API_2 + 'signout', {}, HTTPOptions);

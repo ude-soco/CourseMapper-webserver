@@ -36,7 +36,10 @@ import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { ModeratorPrivilegesService } from 'src/app/services/moderator-privileges.service';
 import * as CourseActions from 'src/app/pages/courses/state/course.actions';
 import { getNotificationSettingsOfLastMaterialMenuClicked } from 'src/app/pages/courses/state/course.reducer';
-import { materialNotificationSettingLabels, Notification } from 'src/app/models/Notification';
+import {
+  materialNotificationSettingLabels,
+  Notification,
+} from 'src/app/models/Notification';
 import { getNotifications } from '../../notifications/state/notifications.reducer';
 import * as NotificationActions from '../../notifications/state/notifications.actions';
 import { MaterialKgOrderedService } from 'src/app/services/material-kg-ordered.service';
@@ -87,7 +90,6 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
   materialID: string = '';
   channelID: string = '';
   routeSubscription: Subscription;
-
   allNotifications$: Observable<Notification[]>;
   lastTimeCourseMapperOpened$: Observable<string>;
   @Output() conceptMapEvent: EventEmitter<boolean> = new EventEmitter();
@@ -137,7 +139,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       const channelId = channelRegex.exec(url)[1];
       const materialId = url.match(/material:(.*?)\/(pdf|video)/)?.[1];
 
-      this.courseID = courseId
+      this.courseID = courseId;
 
       this.topicChannelService
         .getChannel(courseId, channelId)
@@ -145,7 +147,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
           this.selectedChannel = foundChannel;
           this.channelID = this.selectedChannel._id;
           this.materials = foundChannel.materials;
-          this.materials.forEach(material => {
+          this.materials.forEach((material) => {
             this.showFullMap[material._id] = false;
           });
           this.channels.push(this.selectedChannel);
@@ -196,8 +198,6 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   ngOnInit() {
-
-
     this.topicChannelService.onSelectChannel.subscribe((channel) => {
       this.selectedChannel = channel;
       this.channelEmitted.emit(this.selectedChannel);
@@ -212,7 +212,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
 
               if (this.selectedChannel._id === this.channels['_id']) {
                 this.materials = this.channels['materials'];
-                this.materials.forEach(material => {
+                this.materials.forEach((material) => {
                   this.showFullMap[material._id] = false;
                 });
               } else {
@@ -255,18 +255,16 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
           });
         }
       );
-      const routerState: RouterState =
+    const routerState: RouterState =
       this.activatedRoute.snapshot['_routerState'];
-      const url = routerState['url'];
-      // Check if the outlet information is present
-      const outletInfoActive = url.includes('material:');
-      if (outletInfoActive) {
-        this.isMaterialSelected = true;
-      } else {
-        this.isMaterialSelected = false;
-
-      }
-
+    const url = routerState['url'];
+    // Check if the outlet information is present
+    const outletInfoActive = url.includes('material:');
+    if (outletInfoActive) {
+      this.isMaterialSelected = true;
+    } else {
+      this.isMaterialSelected = false;
+    }
 
     this.allNotifications$ = this.store.select(getNotifications);
 
@@ -275,7 +273,6 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     );
   }
   toggleFullMaterialName(materialId: string, event: MouseEvent): void {
-    console.log("is triggered")
     event.preventDefault();
     event.stopPropagation();
     this.showFullMap[materialId] = !this.showFullMap[materialId];
@@ -285,7 +282,6 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     if (words.length <= limit) return text;
     return words.slice(0, limit).join(' ') + '...';
   }
-
 
   getMaterialActivityIndicator(materialId: string) {
     return combineLatest([
@@ -377,7 +373,6 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.intervalService.stopInterval();
     // if (this.tabIndex == -1 && this.showModeratorPrivileges) {
     if (this.tabIndex == -1) {
-      console.log("channel id on change tab: ", this.selectedChannel._id)
       this.isMaterialSelected = false;
 
       this.router.navigate([
@@ -386,8 +381,6 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
         'channel',
         this.selectedChannel._id,
       ]);
-
-
     } else {
       this.isMaterialSelected = true;
 
@@ -451,7 +444,6 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   updateSelectedMaterial() {
-
     // if(this.selectedChannel.materials && !this.selectedMaterial){
     //   this.tabIndex=0
     //   this.selectedMaterial=this.selectedChannel.materials[0]
@@ -484,14 +476,10 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.store.dispatch(
       MaterialActions.setMaterialId({ materialId: this.selectedMaterial._id })
     );
-    this.materialID = this.selectedMaterial._id
-    // console.log("material selected with id", this.materialID)
-
+    this.materialID = this.selectedMaterial._id;
 
     this.store.dispatch(AnnotationActions.loadAnnotations());
   }
-
-
 
   onDeleteMaterial() {
     this.confirmationService.confirm({
@@ -604,9 +592,16 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     );
 
     this.selectedId = this.selectedMaterial._id;
+
+    this.editable = true;
     selectedMat.contentEditable = 'true';
     this.previousMaterial = this.selectedMaterial;
-    this.previousMaterial = this.selectedMaterial;
+
+    if (selectedMat.textContent === '') {
+      selectedMat.textContent = this.previousMaterial.name;
+    }
+
+    // this.previousMaterial = this.selectedMaterial;
     this.selectElementContents(selectedMat);
   }
   selectElementContents(el) {
@@ -618,9 +613,15 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     sel.addRange(range);
   }
   onRenameMaterialConfirm(id) {
-    const selectedMat = <HTMLInputElement>document.getElementById(id);
+    let selectedMat = <HTMLElement>document.getElementById(`${id}`);
+
+    //const selectedMat = <HTMLInputElement>document.getElementById(id);
+
+    selectedMat.contentEditable = 'true'; // Disable editing after rename
+
     if (this.enterKey) {
       //confirmed by keyboard
+
       let MaterialName = this.previousMaterial.name;
       const materialDescription = this.previousMaterial.description;
       const curseId = this.previousMaterial.courseId;
@@ -635,9 +636,15 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
         url: matUrl,
         type: mattype,
       };
-      let newMaterialName = this.insertedText;
-      newMaterialName = newMaterialName.replace(/(\r\n|\n|\r)/gm, ''); //remove newlines
-      if (newMaterialName && newMaterialName !== '') {
+
+      if (
+        this.insertedText &&
+        this.insertedText.trim() !== this.previousMaterial.name
+      ) {
+        let newMaterialName = this.insertedText.trim();
+
+        newMaterialName = newMaterialName.replace(/(\r\n|\n|\r)/gm, ''); //remove newlines
+
         body = {
           name: newMaterialName,
           description: materialDescription, //keep description value
@@ -646,11 +653,19 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
           url: matUrl,
           type: mattype,
         };
+
+        this.enterKey = false;
+        this.materialService
+          .renameMaterial(curseId, this.previousMaterial, body)
+          .subscribe(() => {
+            // Only disable editing after renaming is confirmed
+            if (selectedMat) {
+              selectedMat.contentEditable = 'false'; // Disable editing after rename
+            }
+            this.editable = false; // Exit edit mode
+          });
+        this.insertedText = '';
       }
-      this.enterKey = false;
-      this.materialService
-        .renameMaterial(curseId, this.previousMaterial, body)
-        .subscribe();
     } else if (this.escapeKey === true) {
       //ESC pressed
 
@@ -661,6 +676,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       const matId = this.previousMaterial._id;
       const matUrl = this.previousMaterial.url;
       const mattype = this.previousMaterial.type;
+
       let body = {
         name: MaterialName,
         description: MaterialDescription,
@@ -672,16 +688,24 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.escapeKey = false;
       this.materialService
         .renameMaterial(curseId, this.selectedMaterial, body)
-        .subscribe();
+        .subscribe(() => {
+          // Only disable editing after renaming is confirmed
+          if (selectedMat) {
+            selectedMat.contentEditable = 'false'; // Disable editing after rename
+          }
+          this.editable = false; // Exit edit mode
+        });
+      this.insertedText = '';
     } else {
       //confirmed by mouse click
-      //
+
       let MaterialName = this.previousMaterial.name;
       const MaterialDescription = this.previousMaterial.description;
       const curseId = this.previousMaterial.courseId;
       const matId = this.previousMaterial._id;
       const matUrl = this.previousMaterial.url;
       const mattype = this.previousMaterial.type;
+
       let body = {
         name: MaterialName,
         description: MaterialDescription,
@@ -690,37 +714,64 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
         url: matUrl,
         type: mattype,
       };
-      let newMaterialName = this.insertedText;
-      newMaterialName = newMaterialName.replace(/(\r\n|\n|\r)/gm, ''); //remove newlines
       if (
-        newMaterialName &&
-        newMaterialName !== '' &&
-        newMaterialName !== this.previousMaterial.name
+        this.insertedText &&
+        this.insertedText.trim() !== this.previousMaterial.name
       ) {
-        body = {
-          name: newMaterialName,
-          description: MaterialDescription, //keep description value
-          courseId: curseId,
-          materialId: matId,
-          url: matUrl,
-          type: mattype,
-        };
+        let newMaterialName = this.insertedText.trim();
+
+        newMaterialName = newMaterialName.replace(/(\r\n|\n|\r)/gm, ''); //remove newlines
+
+        if (newMaterialName === '') {
+          this.insertedText = this.previousMaterial.name;
+          selectedMat.textContent = this.previousMaterial.name;
+          selectedMat.contentEditable = 'false'; // Disable editing after rename
+          this.editable = false; // Exit edit mode
+          this.insertedText = '';
+        }
+        if (newMaterialName && newMaterialName !== '') {
+          body = {
+            name: newMaterialName,
+            description: MaterialDescription, //keep description value
+            courseId: curseId,
+            materialId: matId,
+            url: matUrl,
+            type: mattype,
+          };
+
+          this.materialService
+            .renameMaterial(curseId, this.previousMaterial, body)
+            .subscribe(() => {
+              // Only disable editing after renaming is confirmed
+              if (selectedMat) {
+                selectedMat.contentEditable = 'false'; // Disable editing after rename
+              }
+              this.editable = false; // Exit edit mode
+            });
+          this.insertedText = '';
+        }
       }
-      this.editable = false;
-      this.materialService
-        .renameMaterial(curseId, this.previousMaterial, body)
-        .subscribe();
     }
   }
 
   @HostListener('document:click', ['$event'])
   documentClick(event: MouseEvent) {
     // to confirm rename when mouse clicked anywhere
-    if (this.editable) {
-      //course name <p> has been changed to editable
-      //
+
+    // if (this.editable) {
+    //   //course name <p> has been changed to editable
+    //   //
+    //   this.enterKey = false;
+    //   this.onRenameMaterialConfirm(this.selectedId);
+    // }
+    const clickedElement = event.target as HTMLElement;
+
+    // If the click was outside the material element, confirm the rename
+    if (this.editable && clickedElement.id !== this.selectedId) {
       this.enterKey = false;
       this.onRenameMaterialConfirm(this.selectedId);
+
+      this.editable = false; // Disable editing mode
     }
   }
 
@@ -755,6 +806,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
         (<HTMLInputElement>document.getElementById(id)).contentEditable =
           'false';
         this.insertedText = this.selectedMaterial.name;
+
         window.getSelection().removeAllRanges(); // deselect text on confirm
         // (<HTMLInputElement>document.getElementById(id)).innerText=this.insertedText
         this.escapeKey = true;
@@ -772,6 +824,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       // on ESC pressed
       (<HTMLInputElement>document.getElementById(id)).contentEditable = 'false';
       this.insertedText = this.selectedMaterial.name;
+
       window.getSelection().removeAllRanges(); // deselect text on confirm
       this.escapeKey = true;
       // (<HTMLInputElement>document.getElementById(id)).innerHTML=this.insertedText;
@@ -805,7 +858,6 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
   //   this.showConceptMapEvent=show
   // }
   onConceptMapButtonClicked(show: boolean) {
-    console.log('clicked');
     this.conceptMapEvent.emit(show);
     this.cmSelected = show;
     this.selectedToolEvent.emit('none');
@@ -849,8 +901,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       detail: detail,
     });
   }
-  viewMaterialDashboardClicked(){
-
+  viewMaterialDashboardClicked() {
     this.router.navigate([
       'course',
       this.courseService.getSelectedCourse()._id,
@@ -858,7 +909,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.selectedMaterial['channelId'],
       'materialDashboard',
       this.materialID,
-      'dashboard']);
+      'dashboard',
+    ]);
   }
-
 }

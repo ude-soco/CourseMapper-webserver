@@ -30,4 +30,7 @@ module.exports = function (app) {
   app.post("/api/auth/sendEmail", controller.sendEmail);
 
   app.post("/api/auth/resetPassword", controller.resetPassword);
+  app.post("/api/auth/verify", controller.verifyEmail, logger.signup);
+  app.post("/api/auth/resendVerifyEmail", controller.resendVerifyEmail);
+
 };

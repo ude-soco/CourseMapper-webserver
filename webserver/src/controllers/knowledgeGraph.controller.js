@@ -1,5 +1,6 @@
 const fs = require('fs').promises;
 const process = require('process');
+const axios = require("axios");
 const socketio = require("../socketio");
 const db = require("../models");
 const User = db.user;
@@ -9,6 +10,47 @@ const Material = db.material;
 const neo4j = require("../graph/neo4j");
 const redis = require("../graph/redis");
 // TODO Issue #640: Use better file names
+
+async function checkIsModerator(req) {
+  if (!req.userId || (!req.params.courseId && !req.params.materialId)) {
+    return false;
+  }
+  const user = await User.findById(req.userId);
+  if (!user) {
+    return false;
+  }
+  const role = await Role.findById(user.role);
+  if (role.name === "moderator" || role.name === "admin") {
+    return true;
+  }
+  let courseId = req.params.courseId;
+  if (!courseId) {
+    const material = await Material.findById(req.params.materialId);
+    if (!material) {
+      return false;
+    }
+    courseId = material["courseId"].toString();
+  }
+  const course = user.courses.find(
+    (item) => item.courseId.valueOf() === courseId
+  );
+  const courseRole = await Role.findOne({ _id: course.role });
+  if (courseRole.name === "moderator") {
+    return true;
+  }
+}
+
+async function isAuthorized(req) {
+  const records = await neo4j.checkMaterial(req.params.materialId);
+  if (records.length === 0) {
+    return true
+  }
+  const is_draft = records?.[0]?.["m"]?.properties?.["is_draft"] ?? false;
+  if (is_draft && !(await checkIsModerator(req))) {
+    return false
+  }
+  return true
+}
 
 export const checkSlide = async (req, res) => {
   const slideId = req.params.slideId;
@@ -36,6 +78,9 @@ export const checkMaterial = async (req, res) => {
   const materialId = req.params.materialId;
 
   try {
+    if (!await isAuthorized(req)) {
+      return res.status(403).send({ error: "Unauthorized" });
+    }
     const records = await neo4j.checkMaterial(materialId);
     return res.status(200).send({ records });
   } catch (err) {
@@ -47,6 +92,9 @@ export const getMaterial = async (req, res) => {
   const materialId = req.params.materialId;
 
   try {
+    if (!await isAuthorized(req)) {
+      return res.status(403).send({ error: "Unauthorized" });
+    }
     const records = await neo4j.getMaterial(materialId);
     return res.status(200).send({ records });
   } catch (err) {
@@ -60,6 +108,17 @@ export const deleteMaterial = async (req, res, next) => {
   try {
     await neo4j.deleteMaterial(materialId);
     return next();
+  } catch (err) {
+    return res.status(500).send({ error: err.message });
+  }
+}
+
+export const getMaterialSlides = async (req, res) => {
+  const materialId = req.params.materialId;
+
+  try {
+    const records = await neo4j.getMaterialSlides(materialId);
+    return res.status(200).send({ records });
   } catch (err) {
     return res.status(500).send({ error: err.message });
   }
@@ -120,28 +179,9 @@ export const setRating = async (req, res) => {
   }
 }
 
-async function checkIsModerator(userId, courseId) {
-  const user = await User.findById(userId);
-  const role = await Role.findById(user.role);
-  if (role.name === "moderator" || role.name === "admin") {
-    return true
-  }
-  const course = user.courses.find(
-    (item) => item.courseId.valueOf() === courseId
-  );
-  const courseRole = await Role.findOne({ _id: course.role });
-  if (courseRole.name === "moderator") {
-    return true
-  }
-}
-
 export const conceptMap = async (req, res) => {
-  const modelName = req.body.modelName;
   const materialId = req.params.materialId;
-  const courseId = req.params.courseId;
   socketio.getIO().to("material:"+materialId).emit("log", { called: "conceptmap started" } );
-
-  const isModerator = await checkIsModerator(req.userId, courseId);
 
   const material = await Material.findById(materialId);
   if (!material) {
@@ -149,43 +189,82 @@ export const conceptMap = async (req, res) => {
   }
   const materialName = material.name;
 
-  if (isModerator) {
-    const materialPath = process.cwd() + material.url + material._id + '.pdf';
-    const materialData = await fs.readFile(materialPath);
-    
-    const result = await redis.addJob('concept-map', {
-        modelName,
-        materialId,
-        materialName,
-      }, async (jobId) => {
-        await redis.addFile(jobId, materialData);
-      }, (result) => {
-        socketio.getIO().to("material:"+materialId).emit("log", { result:result } );
- 
-        if (res.headersSent) {
-          return;
-        }
-        if (result.error) {
-          return res.status(500).send({ error: result });
-        }
-        return res.status(200).send(result.result);
-      });
-      socketio.getIO().to("material:"+materialId).emit("log", { addJob:result, pipeline:'concept-map'});
-  } else {
-    await redis.trackJob('concept-map', {
-      modelName,
-      materialId,
-      materialName,
-    }, (result) => {
-      if (res.headersSent) {
-        return;
-      }
-      if (!result) {
-        return res.status(404).send();
-      }
-      return res.status(200).send(result.result);
-    });
-  }
+  const materialPath = process.cwd() + material.url + material._id + '.pdf';
+  const materialData = await fs.readFile(materialPath);
+  
+  const result = await redis.addJob('concept-map', {
+    materialId,
+    materialName,
+  }, async (jobId) => {
+    await redis.addFile(jobId, materialData);
+  }, (result) => {
+    socketio.getIO().to("material:"+materialId).emit("log", { result:result } );
+
+    if (res.headersSent) {
+      return;
+    }
+    if (result.error) {
+      return res.status(500).send({ error: result });
+    }
+    return res.status(200).send(result.result);
+  });
+  socketio.getIO().to("material:"+materialId).emit("log", { addJob:result, pipeline:'concept-map'});
+}
+
+export const deleteConcept = async (req, res) => {
+  const materialId = req.params.materialId;
+  const conceptId = req.params.conceptId;
+  
+  await redis.addJob('modify-graph', {
+    action: 'remove-concept',
+    materialId,
+    conceptId,
+  }, undefined, (result) => {
+    if (res.headersSent) {
+      return;
+    }
+    if (result.error) {
+      return res.status(500).send(result);
+    }
+    return res.status(200).send(result.result);
+  });
+}
+
+export const addConcept = async (req, res) => {
+  const materialId = req.params.materialId;
+  const conceptName = req.body.conceptName;
+  const slides = req.body.slides;
+  
+  await redis.addJob('modify-graph', {
+    action: 'add-concept',
+    materialId,
+    conceptName,
+    slides,
+  }, undefined, (result) => {
+    if (res.headersSent) {
+      return;
+    }
+    if (result.error) {
+      return res.status(500).send(result);
+    }
+    return res.status(200).send(result.result);
+  });
+}
+
+export const publishConceptMap = async (req, res) => {
+  const materialId = req.params.materialId;
+  
+  await redis.addJob('expand-material', {
+    materialId,
+  }, undefined, (result) => {
+    if (res.headersSent) {
+      return;
+    }
+    if (result.error) {
+      return res.status(500).send({ error: result });
+    }
+    return res.status(200).send(result.result);
+  });
 }
 
 export const getConcepts = async (req, res) => {
@@ -255,3 +334,17 @@ export const readSlide = async (req, res, next) => {
   }
   return next();
 };
+
+export const searchWikipedia = async (req, res) => {
+  const query = req.query.query;
+
+  try {
+    const conceptNameEncoded = encodeURIComponent(query);
+    const url = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${conceptNameEncoded}&utf8=&format=json`;
+    const response = await axios.get(url);
+    const searchResults = response.data.query.search;
+    return res.status(200).send({ searchResults });
+  } catch (err) {
+    return res.status(500).send({ error: err.message });
+  }
+}
