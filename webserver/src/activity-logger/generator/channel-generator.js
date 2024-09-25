@@ -6,6 +6,8 @@ import {
   createVerb,
 } from "./util/generator-util";
 
+let DOMAIN = "http://www.CourseMapper.de" // TODO: Hardcoded due to frontend implementation
+
 const createChannelObject = (req) => {
   let channel = req.locals.channel;
   let origin = req.get("origin");
@@ -13,7 +15,7 @@ const createChannelObject = (req) => {
     objectType: config.activity,
     id: `${origin}/activity/course/${channel.courseId}/topic/${channel.topicId}/channel/${channel._id}`,
     definition: {
-      type: [`${origin}/activityType/channel`],
+      type: [`${DOMAIN}/activityType/channel`],
       name: {
         [config.language]: channel.name,
       },
@@ -21,7 +23,7 @@ const createChannelObject = (req) => {
         [config.language]: channel.description,
       },
       extensions: {
-        [`${origin}/extensions/channel`]: {
+        [`${DOMAIN}/extensions/channel`]: {
           id: channel._id,
           course_id: channel.courseId,
           topic_id: channel.topicId,
@@ -78,7 +80,7 @@ export const generateEditChannelActivity = (req) => {
       objectType: config.activity,
       id: `${origin}/activity/course/${channelToEdit.courseId}/topic/${channelToEdit.topicId}/channel/${channelToEdit._id}`,
       definition: {
-        type: [`${origin}/activityType/channel`],
+        type: [`${DOMAIN}/activityType/channel`],
         name: {
           [config.language]: channelToEdit.name,
         },
@@ -86,7 +88,7 @@ export const generateEditChannelActivity = (req) => {
           [config.language]: channelToEdit.description,
         },
         extensions: {
-          [`${origin}/extensions/channel`]: {
+          [`${DOMAIN}/extensions/channel`]: {
             id: channelToEdit._id,
             course_id: channelToEdit.courseId,
             topic_id: channelToEdit.topicId,
@@ -98,7 +100,7 @@ export const generateEditChannelActivity = (req) => {
     },
     result: {
       extensions: {
-        [`${origin}/extensions/channel`]: {
+        [`${DOMAIN}/extensions/channel`]: {
           name: updatedChannel.name,
           description: updatedChannel.description,
         },
