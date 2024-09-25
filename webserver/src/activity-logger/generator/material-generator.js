@@ -6,10 +6,12 @@ import {
 } from "./util/generator-util";
 import config from "./util/config";
 
+let DOMAIN = "http://www.CourseMapper.de" // TODO: Hardcoded due to frontend implementation
+
 const createMaterialObject = (req, typeURI) => {
   let material = req.locals.material;
   let origin = req.get("origin");
-  let type = typeURI ? typeURI : `${origin}/activityType/material`;
+  let type = typeURI ? typeURI : `${DOMAIN}/activityType/material`;
   return {
     objectType: config.activity,
     id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`,
@@ -22,7 +24,7 @@ const createMaterialObject = (req, typeURI) => {
         [config.language]: material.description,
       },
       extensions: {
-        [`${origin}/extensions/material`]: {
+        [`${DOMAIN}/extensions/material`]: {
           id: material._id,
           name: material.name,
           description: material.description,
@@ -83,7 +85,7 @@ export const generateEditMaterialActivity = (req) => {
       objectType: config.activity,
       id: `${origin}/activity/course/${materialToEdit.courseId}/topic/${materialToEdit.topicId}/channel/${materialToEdit.channelId}/material/${materialToEdit._id}`,
       definition: {
-        type: [`${origin}/activityType/material`],
+        type: [`${DOMAIN}/activityType/material`],
         name: {
           [config.language]: materialToEdit.name,
         },
@@ -91,7 +93,7 @@ export const generateEditMaterialActivity = (req) => {
           [config.language]: materialToEdit.description,
         },
         extensions: {
-          [`${origin}/extensions/material`]: {
+          [`${DOMAIN}/extensions/material`]: {
             id: materialToEdit._id,
             name: materialToEdit.name,
             description: materialToEdit.description,
@@ -106,7 +108,7 @@ export const generateEditMaterialActivity = (req) => {
     },
     result: {
       extensions: {
-        [`${origin}/extensions/material`]: {
+        [`${DOMAIN}/extensions/material`]: {
           name: updatedMaterial.name,
           description: updatedMaterial.description,
           url: updatedMaterial.url,
@@ -138,7 +140,7 @@ const createVideoMaterialWithDurationObject = (req) => {
         [config.language]: material.description,
       },
       extensions: {
-        [`${origin}/extensions/material`]: {
+        [`${DOMAIN}/extensions/material`]: {
           id: material._id,
           name: material.name,
           description: material.description,
@@ -209,7 +211,7 @@ const createPDFMaterialWithSlideObject = (req) => {
         [config.language]: material.description,
       },
       extensions: {
-        [`${origin}/extensions/material`]: {
+        [`${DOMAIN}/extensions/material`]: {
           id: material._id,
           name: material.name,
           pageNr: slideNr,
@@ -245,7 +247,7 @@ export const generateCompletePdfActivity = (req) => {
       "http://activitystrea.ms/schema/1.0/complete",
       "completed",
     ),
-    object: createMaterialObject(req, `${req.get("origin")}/activityType/pdf`),
+    object: createMaterialObject(req, `${DOMAIN}/activityType/pdf`),
     context: createContext(),
   };
 };

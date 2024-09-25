@@ -7,13 +7,14 @@ import {
 import { createAnnotationCommentObject } from "./annotation-comment/utils";
 import config from "./util/config";
 
+let DOMAIN = "http://www.CourseMapper.de" // TODO: Hardcoded due to frontend implementation
+
 const createReplyAnnotationResultObject = (req) => {
   let reply = req.locals.reply;
   let annotation = req.locals.annotation;
-  let origin = req.get("origin");
   return {
     extensions: {
-      [`${origin}/extensions/reply`]: {
+      [`${DOMAIN}/extensions/reply`]: {
         id: reply._id,
         content: reply.content,
         location: annotation.location,
@@ -29,7 +30,7 @@ const createReplyObject = (req) => {
     objectType: config.activity,
     id: `${origin}/activity/course/${reply.courseId}/topic/${reply.topicId}/channel/${reply.channelId}/material/${reply.materialId}/annotation/${reply.annotationId}/reply/${reply._id}`,
     definition: {
-      type: `${origin}/activityType/reply`,
+      type: `${DOMAIN}/activityType/reply`,
       name: {
         [config.language]: `${reply.content.slice(0, 50)} ${reply.content.length > 50 ? " ..." : ""}`,
       },
@@ -37,7 +38,7 @@ const createReplyObject = (req) => {
         [config.language]: reply.content,
       },
       extensions: {
-        [`${origin}/extensions/reply`]: {
+        [`${DOMAIN}/extensions/reply`]: {
           id: reply._id,
           annotation_id: reply.annotationId,
           material_id: reply.materialId,
@@ -52,11 +53,10 @@ const createReplyObject = (req) => {
 };
 
 const createReplyResultObject = (req) => {
-  let origin = req.get("origin");
   let annotation = req.locals.annotation;
   return {
     extensions: {
-      [`${origin}/extensions/reply`]: {
+      [`${DOMAIN}/extensions/reply`]: {
         location: annotation.location,
       },
     },
@@ -162,7 +162,7 @@ export const generateEditReplyActivity = (req) => {
       objectType: config.activity,
       id: `${origin}/activity/course/${updatedReply.courseId}/topic/${updatedReply.topicId}/channel/${updatedReply.channelId}/material/${updatedReply.materialId}/annotation/${updatedReply.annotationId}/reply/${updatedReply._id}`,
       definition: {
-        type: `${origin}/activityType/reply`,
+        type: `${DOMAIN}/activityType/reply`,
         name: {
           [config.language]:
             updatedReply.content.slice(0, 50) +
@@ -172,7 +172,7 @@ export const generateEditReplyActivity = (req) => {
           [config.language]: replyToEdit.content,
         },
         extensions: {
-          [`${origin}/extensions/reply`]: {
+          [`${DOMAIN}/extensions/reply`]: {
             id: updatedReply._id,
             annotation_id: updatedReply.annotationId,
             material_id: updatedReply.materialId,
@@ -186,7 +186,7 @@ export const generateEditReplyActivity = (req) => {
     },
     result: {
       extensions: {
-        [`${origin}/extensions/reply`]: {
+        [`${DOMAIN}/extensions/reply`]: {
           location: annotation.location,
           content: updatedReply.content,
         },

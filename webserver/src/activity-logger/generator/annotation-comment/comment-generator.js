@@ -12,6 +12,8 @@ import {
 } from "./utils";
 import config from "../util/config";
 
+let DOMAIN = "http://www.CourseMapper.de" // TODO: Hardcoded due to frontend implementation
+
 export const generateCommentActivity = (req) => {
   const metadata = createMetadata();
   return {
@@ -105,7 +107,7 @@ export const generateEditCommentActivity = (req) => {
           [config.language]: oldAnnotation.content,
         },
         extensions: {
-          [`${origin}/extensions/comment`]: {
+          [`${DOMAIN}/extensions/comment`]: {
             id: oldAnnotation._id,
             material_id: oldAnnotation.materialId,
             channel_id: oldAnnotation.channelId,
@@ -121,7 +123,7 @@ export const generateEditCommentActivity = (req) => {
     },
     result: {
       extensions: {
-        [`${origin}/extensions/comment`]: {
+        [`${DOMAIN}/extensions/comment`]: {
           content: newAnnotation.content,
           type: newAnnotation.type,
           tool: newAnnotation.tool,

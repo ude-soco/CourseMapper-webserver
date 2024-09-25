@@ -6,6 +6,8 @@ import {
 } from "./util/generator-util";
 import config from "./util/config";
 
+let DOMAIN = "http://www.CourseMapper.de" // TODO: Hardcoded due to frontend implementation
+
 const createTopicObject = (req) => {
   let topic = req.locals.topic;
   let origin = req.get("origin");
@@ -13,12 +15,12 @@ const createTopicObject = (req) => {
     objectType: config.activity,
     id: `${origin}/activity/course/${topic.courseId}/topic/${topic._id}`,
     definition: {
-      type: [`${origin}/activityType/topic`],
+      type: [`${DOMAIN}/activityType/topic`],
       name: {
         [config.language]: topic.name,
       },
       extensions: {
-        [`${origin}/extensions/topic`]: {
+        [`${DOMAIN}/extensions/topic`]: {
           id: topic._id,
           course_id: topic.courseId,
           name: topic.name,
@@ -74,12 +76,12 @@ export const generateEditTopicActivity = (req) => {
       objectType: config.activity,
       id: `${origin}/activity/course/${topicToEdit.courseId}/topic/${topicToEdit._id}`,
       definition: {
-        type: [`${origin}/activityType/topic`],
+        type: [`${DOMAIN}/activityType/topic`],
         name: {
           [config.language]: topicToEdit.name,
         },
         extensions: {
-          [`${origin}/extensions/topic`]: {
+          [`${DOMAIN}/extensions/topic`]: {
             id: topicToEdit._id,
             course_id: topicToEdit.courseId,
             name: topicToEdit.name,
@@ -89,7 +91,7 @@ export const generateEditTopicActivity = (req) => {
     },
     result: {
       extensions: {
-        [`${origin}/extensions/topic`]: {
+        [`${DOMAIN}/extensions/topic`]: {
           name: updatedTopic.name,
         },
       },

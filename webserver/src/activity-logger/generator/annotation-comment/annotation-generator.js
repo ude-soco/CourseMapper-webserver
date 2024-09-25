@@ -12,6 +12,8 @@ import {
 } from "./utils";
 import config from "../util/config";
 
+let DOMAIN = "http://www.CourseMapper.de" // TODO: Hardcoded due to frontend implementation
+
 export const generateCreateAnnotationActivity = (req) => {
   const metadata = createMetadata();
   return {
@@ -100,7 +102,7 @@ export const generateEditAnnotationActivity = (req) => {
       objectType: "Activity",
       id: `${origin}/activity/course/${oldAnnotation.courseId}/topic/${oldAnnotation.topicId}/channel/${oldAnnotation.channelId}/material/${oldAnnotation.materialId}/annotation/${oldAnnotation._id}`,
       definition: {
-        type: `${origin}/activityType/annotation`,
+        type: `${DOMAIN}/activityType/annotation`,
         name: {
           [config.language]: `${oldAnnotation.content.slice(0, 50)} ${oldAnnotation.content.length > 50 ? " ..." : ""}`,
         },
@@ -108,7 +110,7 @@ export const generateEditAnnotationActivity = (req) => {
           [config.language]: oldAnnotation.content,
         },
         extensions: {
-          [`${origin}/extensions/annotation`]: {
+          [`${DOMAIN}/extensions/annotation`]: {
             id: oldAnnotation._id,
             material_id: oldAnnotation.materialId,
             channel_id: oldAnnotation.channelId,
@@ -124,7 +126,7 @@ export const generateEditAnnotationActivity = (req) => {
     },
     result: {
       extensions: {
-        [`${origin}/extensions/annotation`]: {
+        [`${DOMAIN}/extensions/annotation`]: {
           content: newAnnotation.content,
           type: newAnnotation.type,
           tool: newAnnotation.tool,
