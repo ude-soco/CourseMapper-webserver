@@ -166,7 +166,7 @@ class ConceptMapPipeline:
 
             for keyphrase, annotation, page_title, page_categories, page_summary, page_embedding, weight, material_weight in disambiguated_df.iter_rows():
                 # Add concept node to graph
-                concept_node = Node(str(abs(hash(str(page_embedding)))), page_title, '', 'main_concept', (material_weight + 1) / 2, f'https://en.wikipedia.org/wiki/{page_title}', page_summary, False, page_embedding)
+                concept_node = Node(f'{material_id}_concept_{str(abs(hash(str(page_embedding))))}', page_title, '', 'main_concept', (material_weight + 1) / 2, f'https://en.wikipedia.org/wiki/{page_title}', page_summary, False, page_embedding)
                 graph.add_node(concept_node)
                 graph.add_edge(Edge(page_node.id, concept_node.id, 'CONSISTS_OF', (float(weight) + 1) / 2))
                 graph.add_edge(Edge(material_node.id, concept_node.id, 'LM_CONSISTS_OF', (float(material_weight) + 1) / 2))
