@@ -1,5 +1,7 @@
 import config from "../util/config";
 
+let DOMAIN = "http://www.CourseMapper.de" // TODO: Hardcoded due to frontend implementation
+
 // TODO: Clear differentiation of type of material annotated or commented
 const createAnnotationCommentMaterialObject = (req) => {
   let material = req.locals.material;
@@ -8,7 +10,7 @@ const createAnnotationCommentMaterialObject = (req) => {
     objectType: config.activity,
     id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`,
     definition: {
-      type: `${origin}/activityType/material`,
+      type: `${DOMAIN}/activityType/material`,
       name: {
         [config.language]: material.name,
       },
@@ -16,7 +18,7 @@ const createAnnotationCommentMaterialObject = (req) => {
         [config.language]: material.description,
       },
       extensions: {
-        [`${origin}/extensions/material`]: {
+        [`${DOMAIN}/extensions/material`]: {
           id: material._id,
           type: material.type,
           channel_id: material.channelId,
@@ -34,7 +36,7 @@ const createAnnotationCommentObject = (req, type) => {
   let activityType =
     type === "comment"
       ? "http://activitystrea.ms/schema/1.0/comment"
-      : `${origin}/activityType/${type}`;
+      : `${DOMAIN}/activityType/${type}`;
   return {
     objectType: config.activity,
     id: `${origin}/activity/course/${annotation.courseId}/topic/${annotation.topicId}/channel/${annotation.channelId}/material/${annotation.materialId}/${type}/${annotation._id}`,
@@ -47,7 +49,7 @@ const createAnnotationCommentObject = (req, type) => {
         [config.language]: annotation.content,
       },
       extensions: {
-        [`${origin}/extensions/${type}`]: {
+        [`${DOMAIN}/extensions/${type}`]: {
           id: annotation._id,
           material_id: annotation.materialId,
           channel_id: annotation.channelId,
@@ -65,10 +67,9 @@ const createAnnotationCommentObject = (req, type) => {
 
 const createAnnotationCommentResultObject = (req, type) => {
   let annotation = req.locals.annotation;
-  let origin = req.get("origin");
   return {
     extensions: {
-      [`${origin}/extensions/${type}`]: {
+      [`${DOMAIN}/extensions/${type}`]: {
         location: annotation.location,
       },
     },
@@ -77,10 +78,9 @@ const createAnnotationCommentResultObject = (req, type) => {
 
 const createAnnotationCommentMaterialResultObject = (req, type) => {
   let annotation = req.locals.annotation;
-  let origin = req.get("origin");
   return {
     extensions: {
-      [`${origin}/extensions/${type}`]: {
+      [`${DOMAIN}/extensions/${type}`]: {
         id: annotation._id,
         material_id: annotation.materialId,
         channel_id: annotation.channelId,
