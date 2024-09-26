@@ -16,7 +16,7 @@ class DBConnection:
         self.learning_material = str(learning_material)
         main_concepts = self.extract_main_concepts()
         for concept in main_concepts:
-            print(concept["name"])
+            
             self.extract_related_concepts(concept["name"])
             self.concepts.append(concept)
 

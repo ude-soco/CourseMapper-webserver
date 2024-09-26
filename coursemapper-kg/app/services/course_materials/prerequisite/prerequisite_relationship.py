@@ -1,41 +1,59 @@
 import numpy as np
 import pandas as pd
 import ast
+import logging
 
-
+# Setup logging configuration
+logging.basicConfig(filename='relationship.log', level=logging.INFO)
 class PrerequisiteRelationship:
+   
+
     def __init__(self, clean_data = pd.DataFrame(), related_relationships = pd.DataFrame()):
 
         self.data = clean_data
         self.related_relationships = related_relationships.drop_duplicates()
+        self.related_relationships.to_csv("self.related_relationships.csv")
         main_concepts = self.related_relationships["name"].unique()
         self.prereq_unweighted = []
         self.prereq_weighted = []
         counter = 0
-        for _,r in self.related_relationships.iterrows():
-            # print(counter)
-            if r["name"] == None or r["related_to"] == None:
+        # for _,r in self.related_relationships.iterrows():
+        #     logging.info(f'Processing relationship: {counter}')
+        #     if pd.isnull(r["name"]) or pd.isnull(r["related_to"]):
+        #         continue
+        #     else:
+        #         # self.prerequisite_criteria(r["name"],r["related_to"],0)
+        #         try:
+        #             # Log instead of writing to CSV every time
+        #             logging.info(f'Relation: {r["name"]}, Related to: {r["related_to"]}')
+                    
+        #             self.prerequisite_criteria(r["name"],r["related_to"],0.0)
+        #         except Exception as e:
+        #             logging.error(f"Error: {str(e)}")
+        #     counter +=1
+        for i in range(len(main_concepts)):
+            print(counter)
+            if main_concepts[i] == None:
                 continue
-            else:
-                # self.prerequisite_criteria(r["name"],r["related_to"],0)
+            for j in range(i+1, len(main_concepts)):
+                if main_concepts[j] == None:
+                    continue
                 try:
-                    print("relation",r["name"],r["related_to"])
-                    self.prerequisite_criteria(r["name"],r["related_to"],0.27)
+                    self.prerequisite_criteria(main_concepts[i],main_concepts[j],0.0)
                 except Exception as e:
                     print(e)
             counter +=1
-        # for i in range(len(main_concepts)):
-        #     print(counter)
-        #     if main_concepts[i] == None:
-        #         continue
-        #     for j in range(i+1, len(main_concepts)):
-        #         if main_concepts[j] == None:
-        #             continue
-        #         try:
-        #             self.prerequisite_criteria(main_concepts[i],main_concepts[j],0.27)
-        #         except Exception as e:
-        #             print(e)
-        #     counter +=1
+
+    #     for i, concept_i in enumerate(main_concepts):
+    # if pd.isnull(concept_i):
+    #     continue
+    # for concept_j in main_concepts[i+1:]:  # Compare only with next concepts
+    #     if pd.isnull(concept_j):
+    #         continue
+    #     try:
+    #         self.prerequisite_criteria(concept_i, concept_j, 0.27)
+    #     except Exception as e:
+    #         logging.error(f"Error processing concepts: {str(e)}")
 
         # for _,r in self.related_relationships.iterrows():
         #     print(counter)
@@ -51,7 +69,9 @@ class PrerequisiteRelationship:
                 
         
         self.prereq_weighted = pd.DataFrame(self.prereq_weighted)
+        print("self.prereq_weighted",self.prereq_weighted)
         self.prereq_unweighted = pd.DataFrame(self.prereq_unweighted)
+        print("self.prereq_unweighted",self.prereq_unweighted)
         if self.prereq_weighted.empty and self.prereq_unweighted.empty:
             self.prereq = pd.DataFrame(columns=['prerequisite_concept', 'concept', 'score_weighted', 'temporal_1_weighted', 'article_contents_1_weighted', 'abstract_contents_1_weighted', 'link_on_rel_abstract_1_weighted', 'refD_1_weighted', 'inlink_outlink_1_weighted', 'category_1_weighted', 'super_category_1_weighted', 'berttopic_1_weighted', 'coursemapper_channel_1_weighted', 'temporal_2_weighted', 'article_contents_2_weighted', 'abstract_contents_2_weighted', 'link_on_rel_abstract_2_weighted', 'refD_2_weighted', 'inlink_outlink_2_weighted', 'category_2_weighted', 'super_category_2_weighted', 'berttopic_2_weighted', 'coursemapper_channel_2_weighted', 'score_unweighted', 'temporal_1_unweighted', 'article_contents_1_unweighted', 'abstract_contents_1_unweighted', 'link_on_rel_abstract_1_unweighted', 'refD_1_unweighted', 'inlink_outlink_1_unweighted', 'category_1_unweighted', 'super_category_1_unweighted', 'berttopic_1_unweighted', 'coursemapper_channel_1_unweighted', 'temporal_2_unweighted', 'article_contents_2_unweighted', 'abstract_contents_2_unweighted', 'link_on_rel_abstract_2_unweighted', 'refD_2_unweighted', 'inlink_outlink_2_unweighted', 'category_2_unweighted', 'super_category_2_unweighted', 'berttopic_2_unweighted', 'coursemapper_channel_2_unweighted','weight_weighted', 'weight_unweighted'])
         elif self.prereq_weighted.empty:
@@ -60,11 +80,16 @@ class PrerequisiteRelationship:
             self.prereq = self.prereq_weighted
         else:
             self.prereq = self.prereq_weighted.merge(self.prereq_unweighted, how="outer",on=["prerequisite_concept","concept"],suffixes=('_weighted', '_unweighted'))
+            self.prereq .to_csv("self.prereqFromElse.csv")
         self.prereq.drop(columns=['weight_weighted', 'weight_unweighted'],inplace=True)
         self.prereq = self.prereq.fillna(0)
+        self.prereq .to_csv("beforeDuplicationself.prereq .csv")
         self.prereq = self.prereq.drop_duplicates()
+        self.prereq .to_csv("afterDuplicationself.prereq .csv")
+
 
     def unweighted_voting(self,c1,c2,c1_to_c2,c2_to_c1,c1_to_c2_real,c2_to_c1_real,theta, weighted = False):
+        print("unweighted_voting called")
         if weighted:
             #change this to 5.5 with coursemapper
             c1_to_c2_sum = np.sum(c1_to_c2)/5.5
@@ -88,6 +113,7 @@ class PrerequisiteRelationship:
                 self.prereq_weighted.append(preq_rel)
 
     def weighted_voting(self,c1,c2,c1_to_c2,c2_to_c1,theta):
+        print("weighted_voting called")
         weights = np.array([0.75, 0.5, 0.5, 0.25, 0.5, 0.5, 0.75, 0.75, 0.5, 0.5])
         c1_to_c2_new = np.multiply(c1_to_c2,weights)
         c2_to_c1_new = np.multiply(c2_to_c1,weights)
@@ -95,6 +121,7 @@ class PrerequisiteRelationship:
                 
 
     def prerequisite_criteria(self,c1,c2,theta):
+        print("prerequisite_criteria called")
         c1_to_c2 = np.zeros(10)
         c2_to_c1 = np.zeros(10)
         c1_to_c2[0], c2_to_c1[0] = self.temporal_order(c1,c2) # temporal order

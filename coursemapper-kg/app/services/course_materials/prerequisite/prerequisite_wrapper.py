@@ -35,23 +35,27 @@ class Prerequisite:
         self.find_prerequsite_all()
 
     def find_prerequisite_one(self,lm):
+        # this will extarct the main concepts from all learning materials in the course
         concepts_one = self.db.extract_concepts(learning_material=lm["id"])
         concepts_one["createdAt"] = lm["createdAt"]
+        # create a matrix from the entire list of concepts of all material available in the course
         self.concepts = pd.concat([self.concepts,concepts_one],ignore_index=True)
-        print("concepts", self.concepts)
+        self.concepts.to_csv("cself.concepts.csv")
+        
 
     
     def find_prerequsite_all(self):
 
         print("clean data")
         clean_data = DataCleaning(self.concepts)
-        print("clean_data= concepts", clean_data)
+        
         concept_dict = clean_data.get_clean_data()
-        print("concept_dict", concept_dict)
+        
         related_relationships = clean_data.get_related_relationships()
-        print("related_relationships", related_relationships)
+        
 
         concept_dict.to_csv("clean_data_simple.csv")
+        related_relationships.to_csv("related_relationshipsBeforeDeleteDuplication.csv")
         concept_dict = pd.read_csv("clean_data_simple.csv", index_col=0)
 
 

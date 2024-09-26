@@ -21,9 +21,11 @@ class DataCleaning():
         np.set_printoptions(threshold = np.inf)
         self.clean_data = concepts
         self.related_relationships = self.clean_data[["name","related_to"]]
+        #why delete duplicates?
         self.clean_data.drop_duplicates(subset= ["name"],keep="last",inplace=True)
         self.concepts = concepts.name.array
-        print(len(self.concepts))
+        
+        print("len of concepts",len(self.concepts))
         wiki = wikipediaapi.Wikipedia('CoolBot/0.0 (https://example.org/coolbot/; coolbot@example.org) generic-library/0.0')
         print("getting articles' abstracts...")
         self.clean_data["abstract_contents"] = self.clean_data.apply(lambda x: self.get_abstract(x),axis=1)
@@ -48,24 +50,39 @@ class DataCleaning():
         
     def parse_data(self, url):
             def worker(url, result):
-                g = Graph()
-                g.parse(url)
-
-                data = []
-
-                for _, p, o in g:
-                    data.append({"P": str(p), "O": str(o)})
-
-                raw_data = pd.DataFrame(data)
-
                 try:
-                    raw_data["P"] = raw_data["P"].str.replace('http://dbpedia.org/ontology/', '', regex=False)
-                    raw_data["O"] = raw_data["O"].str.replace('http://dbpedia.org/resource/', '', regex=False)
-                    raw_data = raw_data.loc[raw_data["P"] == "wikiPageWikiLink"]
-                except Exception as e:
-                    print(f"An error occurred while processing data: {e}")
+                    g = Graph()
+                    g.parse(url)
 
-                result.append(raw_data)
+                    data = []
+
+                    for _, p, o in g:
+                        data.append({"P": str(p), "O": str(o)})
+
+                    raw_data = pd.DataFrame(data)
+                 # Check if DataFrame is empty after parsing
+                    if raw_data.empty:
+                        print(f"No data found for URL: {url}")
+                        result.append(pd.DataFrame())  # Append an empty DataFrame
+                        return
+
+                    try:
+                        raw_data["P"] = raw_data["P"].str.replace('http://dbpedia.org/ontology/', '', regex=False)
+                        raw_data["O"] = raw_data["O"].str.replace('http://dbpedia.org/resource/', '', regex=False)
+                        raw_data = raw_data.loc[raw_data["P"] == "wikiPageWikiLink"]
+                    # Check if DataFrame is empty after filtering
+                        if raw_data.empty:
+                            print(f"No wikiPageWikiLink found for URL: {url}")
+                            result.append(pd.DataFrame())  # Append an empty DataFrame
+                            return
+                    except Exception as e:
+                        print(f"An error occurred while processing data: {e}")
+                        result.append(pd.DataFrame())  # Append an empty DataFrame
+
+                    result.append(raw_data)
+                except Exception as e:
+                    print(f"An error occurred while fetching/parsing URL: {url}, Error: {e}")
+                    result.append(pd.DataFrame())  # Append an empty DataFrame if any error occurs    
 
             result = []
             thread = threading.Thread(target=worker, args=(url, result))
@@ -147,25 +164,39 @@ class DataCleaning():
         supercats = []
         counter = 0
         for url in url_list:
-            print(counter)
+            print(f"Processing URL #{counter}: {url}")
             try:
                 rel_con = self.parse_data(url)
+                # Get the initial category set
                 category = set(self.get_category(rel_con))
                 supercat = []
                 
                 for word in category:
-                    url ="http://dbpedia.org/resource/" + word
+                    word_url  ="http://dbpedia.org/resource/" + word
                     try:
-                        rel_con_2 = self.parse_data(url)
-                        supercat = supercat + self.get_category(rel_con_2)
+                        rel_con_2 = self.parse_data(word_url)
+                        supercat += self.get_category(rel_con_2)
                     except Exception as e:
-                        print(e)
-                category = set(self.get_concepts_mentioned(category))
-                supercat = set(list(dict.fromkeys(supercat)))
+                        print(f"Error fetching super category for {word}: {e}")
+                # category = set(self.get_concepts_mentioned(category))
+                if category:
+                    category = set(self.get_concepts_mentioned(category))
+                else:
+                    category = set()
+                # supercat = set(list(dict.fromkeys(supercat)))
+                if supercat:
+                    supercat = set(list(dict.fromkeys(supercat)))
+                else:
+                    supercat = set()
+
+                 # Debugging: Print the shapes or lengths of category and supercat
+                print(f"Category size: {len(category)}")
+                print(f"Supercat size: {len(supercat)}")
                 cats.append(category)
                 supercats.append(supercat)
                 counter +=1
-            except:
+            except Exception as e:
+                print(f"Error processing URL {url}: {e}")
                 cats.append(set())
                 supercats.append(set())
 

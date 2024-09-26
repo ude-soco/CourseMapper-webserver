@@ -127,7 +127,7 @@ def start_worker(pipelines):
                 if result:
                     print("sign", job["materialId"], job)
                     add_job('find-prerequisite-lm', {"materialId": job["materialId"]})
-                    prerequisite_material(job)
+                    # prerequisite_material(job)
                 # add_job('find-prerequisite-lm', {"materialId": job["materialId"]})
             elif pipeline == 'concept-recommendation':
                 result = get_concepts(job)
