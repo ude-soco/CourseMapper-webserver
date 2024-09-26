@@ -63,7 +63,7 @@ class ModifyGraphPipeline:
         graph.nodes.append(material_node)
 
         # Add concept node
-        concept_node = Node(str(abs(hash(str(wikipedia_page_embedding)))), concept_name, '', 'main_concept', (concept_material_weight + 1) / 2, f'https://en.wikipedia.org/wiki/{concept_name}', wikipedia_page.summary, False, wikipedia_page_embedding, [])
+        concept_node = Node(f'{material_id}_concept_{str(abs(hash(str(wikipedia_page_embedding))))}', concept_name, '', 'main_concept', (concept_material_weight + 1) / 2, f'https://en.wikipedia.org/wiki/{concept_name}', wikipedia_page.summary, False, wikipedia_page_embedding, [])
         graph.nodes.append(concept_node)
 
         # Add material-concept edge
