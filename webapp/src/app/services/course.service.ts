@@ -2,8 +2,8 @@ import { CourseImp } from 'src/app/models/CourseImp';
 import { Course } from 'src/app/models/Course';
 import { environment } from '../../environments/environment';
 import { EventEmitter, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { catchError, Observable, of, Subject, tap } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { catchError, Observable, of, Subject, tap, throwError } from 'rxjs';
 import { TopicChannelService } from './topic-channel.service';
 import { StorageService } from './storage.service';
 import { Store } from '@ngrx/store';
@@ -68,13 +68,25 @@ export class CourseService {
    *
    *
    */
+
+
   fetchCourses(): Observable<Course[]> {
     return this.http.get<Course[]>(`${this.API_URL}/my-courses`).pipe(
       tap((courses) => {
-        this.courses = courses;
+        this.courses = courses; // Store fetched courses
+      }),
+      catchError((error: HttpErrorResponse) => {
+        if (error.status === 401) {
+          console.warn("User is not authenticated. Token expired or not provided."); 
+          return of([]); // Return empty array so app continues
+        }
+        return throwError(error); // Rethrow other errors
       })
     );
   }
+  
+
+  
 
   /**
    * @function addCourse

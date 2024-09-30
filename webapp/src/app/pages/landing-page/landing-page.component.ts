@@ -61,17 +61,25 @@ export class LandingPageComponent {
   }
 
   ngOnInit() {
-    try {
-          this.courseService.fetchCourses().subscribe((courses1) => {
-      this.myCourses = courses1;
-    });
-    this.getAllCourses();
-    } catch (error) {
-      
-    }
+    this.getAllCourses(); // Fetch all available courses
+    this.fetchUserCourses(); // Fetch courses the user is enrolled in
 
   }
-
+  fetchUserCourses(): void {
+    this.courseService.fetchCourses().subscribe({
+      next: (courses) => {
+        this.myCourses = courses; // Save user's enrolled courses
+      },
+      error: (err) => {
+        if (err.status === 401) {
+          console.warn("User session expired or not authenticated.");
+          this.showError("Your session has expired. Please log in again.");
+        } else {
+          console.error("Error fetching user courses:", err);
+        }
+      }
+    });
+  }
   getAllCourses() {
     this.courseService.GetAllCourses().subscribe({
       next: (courses) => {
@@ -115,7 +123,7 @@ export class LandingPageComponent {
   }
 
   buildCardInfo(userModeratorID: string, course: Course) {
-    // console.log("buildCardInfo triggered")
+    // console.log("buildCardInfo triggered course", course)
     //this.userArray.length=0
     this.userArray = [];
     //console.log(this.userArray, "userArray inside build card func" )
@@ -133,6 +141,7 @@ export class LandingPageComponent {
         description: course.description,
       };
       this.userArray.push(ingoPush);
+      // console.log(this.userArray, "userArray inside build card func");
     });
     // console.log(this.userArray, "userArray")
     this.userArray = [];
@@ -147,17 +156,19 @@ export class LandingPageComponent {
 
   //   }
   onSelectCourse(selcetedCourse: any) {
-    console.log(selcetedCourse)
+    console.log("course 125487",selcetedCourse)
     // let selcetedCourse = this.courses.find(
     //   (course) => course._id == selcetedCourseId
     // );
 
     if (this.loggedInUser) {
+      console.log("loggeduser")
       try {
-        let varcc = this.myCourses.find(
+        
+        let enrolledCourse = this.myCourses.find(
           (course) => selcetedCourse.id === course._id
         );
-        if (varcc) {
+        if (enrolledCourse) {
           this.Enrolled = true;
           this.router.navigate(['course', selcetedCourse.id, 'welcome']);
           // this.router.navigate(['course', selcetedCourse.id]);
@@ -179,6 +190,7 @@ export class LandingPageComponent {
           
       }
     } else {
+      console.log("here", selcetedCourse)
       this.store.dispatch(
         CourseAction.setCurrentCourse({ selcetedCourse: selcetedCourse })
       );

@@ -1,23 +1,28 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { AUTH_API, AUTH_API_2, HTTPOptions } from '../config/config';
 
 import { User } from '../models/User';
 import { environment } from 'src/environments/environment';
+import { StorageService } from './storage.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserServiceService {
+  // private loggedIn = new BehaviorSubject<boolean>(false); // Initial state is logged out
+  // public isLoggedIn$ = this.loggedIn.asObservable(); // Observable for components to subscribe
   public resu: any;
   firstname!: string;
   user: User;
   private API_URL = environment.API_URL;
-  constructor(private http: HttpClient, private router: Router) {}
+
+  constructor(private http: HttpClient, private router: Router,  public storageService: StorageService,) {}
 
   login(username: string, password: string): Observable<any> {
+    // this.loggedIn.next(true); // Set loggedIn state to true
     return this.http.post(
       AUTH_API_2 + 'signin',
       { username, password },
@@ -80,8 +85,16 @@ export class UserServiceService {
     );
   }
   logout(): Observable<any> {
+    // this.loggedIn.next(false); // Set loggedIn state to false
     this.setlastTimeCourseMapperOpened().subscribe();
-    return this.http.post(AUTH_API_2 + 'signout', {}, HTTPOptions);
+    
+    // return this.http.post(AUTH_API_2 + 'signout', {}, HTTPOptions);
+    return this.http.post(AUTH_API_2 + 'signout', {}, HTTPOptions).pipe(
+      tap(() => {
+        // Clean up storage and notify the navbar component
+        this.storageService.clean();
+      })
+    );
   }
 
   GetUserName(_id: string): Observable<any> {
