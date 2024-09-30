@@ -85,7 +85,7 @@ export const generateEditMaterialActivity = (req) => {
       objectType: config.activity,
       id: `${origin}/activity/course/${materialToEdit.courseId}/topic/${materialToEdit.topicId}/channel/${materialToEdit.channelId}/material/${materialToEdit._id}`,
       definition: {
-        type: [`${DOMAIN}/activityType/material`],
+        type: `${DOMAIN}/activityType/material`,
         name: {
           [config.language]: materialToEdit.name,
         },
