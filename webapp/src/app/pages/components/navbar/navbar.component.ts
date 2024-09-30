@@ -49,17 +49,16 @@ export class NavbarComponent implements OnInit {
     this.store
       .select(getLoggedInUser)
       .subscribe((user) => (this.loggedInUser = user));
-
   }
 
   ngOnInit(): void {
-      // Subscribe to navBarChange to update login state
-  this.storageService.navBarChange.subscribe((loggedIn) => {
-    this.isLoggedIn = loggedIn; // Update login status
-  });
+    // Subscribe to navBarChange to update login state
+    this.storageService.navBarChange.subscribe((loggedIn) => {
+      this.isLoggedIn = loggedIn; // Update login status
+    });
 
-  // Initialize the state on component load
-  this.isLoggedIn = this.storageService.isLoggedIn();
+    // Initialize the state on component load
+    this.isLoggedIn = this.storageService.isLoggedIn();
     this.loggedInUser = this.storageService.getUser();
     this.loggedInUser$ = this.store.select(getLoggedInUser);
 
@@ -102,11 +101,11 @@ export class NavbarComponent implements OnInit {
   handleLogout(): void {
     this.store.select(getCurrentCourse).subscribe((course) => {
       if (course) {
-        this.socket.emit("leave", "course:"+course._id);
+        this.socket.emit('leave', 'course:' + course._id);
       }
     });
 
-    this.socket.emit("leave", "user:"+this.loggedInUser.id);
+    this.socket.emit('leave', 'user:' + this.loggedInUser.id);
 
     if (window.sessionStorage.length == 0) {
       this.storageService.clean();
@@ -120,7 +119,7 @@ export class NavbarComponent implements OnInit {
         this.router.navigate(['/landingPage']);
       },
       error: (err) => {
-        console.log(err);
+        // console.log(err);
       },
     });
   }

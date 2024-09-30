@@ -46,7 +46,8 @@ app.use(
     secret: process.env.COOKIE_SECRET,
     keys: [process.env.COOKIE_SECRET],
     httpOnly: true,
-    maxAge: 30 * 1000,
+    maxAge: 24 * 60 * 60 * 1000,
+    //24 * 60 * 60 * 1000
     secure: process.env.NODE_ENV === 'production'
   })
 );

@@ -59,17 +59,14 @@ export class CourseEffects {
           ]),
           catchError((error) => {
             if (error.status === 401) {
-              console.warn("User session expired or not authenticated.");
+              // console.warn("User session expired or not authenticated.");
               //this.showError("Your session has expired. Please log in again.");
               // Handle additional logic here if needed (like navigating to the login page)
             } else {
-              console.error("Error fetching tags:", error);
+              // console.error("Error fetching tags:", error);
             }
-            return of(CourseActions.LoadTagsFail({ error }))}
-          
-          
-          
-          )
+            return of(CourseActions.LoadTagsFail({ error }));
+          })
         )
       )
     )

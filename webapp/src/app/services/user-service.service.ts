@@ -19,7 +19,11 @@ export class UserServiceService {
   user: User;
   private API_URL = environment.API_URL;
 
-  constructor(private http: HttpClient, private router: Router,  public storageService: StorageService,) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    public storageService: StorageService
+  ) {}
 
   login(username: string, password: string): Observable<any> {
     // this.loggedIn.next(true); // Set loggedIn state to true
@@ -47,47 +51,34 @@ export class UserServiceService {
         tap((res: { id?: string; success?: string }) => {
           //
           this.resu = res.id;
-
-          
         })
       );
   }
 
   forgetPassword(email: string): Observable<any> {
-    return this.http.post(
-      AUTH_API_2 + 'sendEmail',
-      { email},
-      HTTPOptions
-    );
+    return this.http.post(AUTH_API_2 + 'sendEmail', { email }, HTTPOptions);
   }
   resetPassword(resetObj): Observable<any> {
     return this.http.post(
       AUTH_API_2 + 'resetPassword',
-      { resetObj},
-      HTTPOptions,
-     
+      { resetObj },
+      HTTPOptions
     );
   }
   emailVerification(token: string): Observable<any> {
-    return this.http.post(
-      AUTH_API_2 + 'verify',
-      { token},
-      HTTPOptions,
-     
-    );
+    return this.http.post(AUTH_API_2 + 'verify', { token }, HTTPOptions);
   }
   resendEmailVerification(token: string): Observable<any> {
     return this.http.post(
       AUTH_API_2 + 'resendVerifyEmail',
-      { token},
-      HTTPOptions,
-     
+      { token },
+      HTTPOptions
     );
   }
   logout(): Observable<any> {
     // this.loggedIn.next(false); // Set loggedIn state to false
     this.setlastTimeCourseMapperOpened().subscribe();
-    
+
     // return this.http.post(AUTH_API_2 + 'signout', {}, HTTPOptions);
     return this.http.post(AUTH_API_2 + 'signout', {}, HTTPOptions).pipe(
       tap(() => {

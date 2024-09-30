@@ -33,7 +33,7 @@ export class CourseService {
     private topicChannelService: TopicChannelService,
     private storageService: StorageService,
     private store: Store<State>,
-    private socket:Socket
+    private socket: Socket
   ) {}
 
   getSelectedCourse(): Course {
@@ -48,9 +48,8 @@ export class CourseService {
    *
    */
   selectCourse(course: Course) {
-
-    this.socket.emit("leave", "course:"+this.getSelectedCourse()._id);
-    this.socket.emit("join", "course:"+course._id);
+    this.socket.emit('leave', 'course:' + this.getSelectedCourse()._id);
+    this.socket.emit('join', 'course:' + course._id);
     // if there is no selected course then no need to update the topics.
     if (this.getSelectedCourse()._id && course._id) {
       this.topicChannelService.updateTopics(course._id);
@@ -69,7 +68,6 @@ export class CourseService {
    *
    */
 
-
   fetchCourses(): Observable<Course[]> {
     return this.http.get<Course[]>(`${this.API_URL}/my-courses`).pipe(
       tap((courses) => {
@@ -77,16 +75,13 @@ export class CourseService {
       }),
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401) {
-          console.warn("User is not authenticated. Token expired or not provided."); 
+          // console.warn("User is not authenticated. Token expired or not provided.");
           return of([]); // Return empty array so app continues
         }
         return throwError(error); // Rethrow other errors
       })
     );
   }
-  
-
-  
 
   /**
    * @function addCourse
@@ -217,8 +212,7 @@ export class CourseService {
   }
 
   EnrollToCOurse(courseID: string): any {
-    
-try {
+    try {
       return this.http.post<any>(`${this.API_URL}/enrol/${courseID}`, {}).pipe(
         catchError((errResponse, sourceObservable) => {
           if (errResponse.status === 403) {
@@ -229,19 +223,18 @@ try {
             });
           }
         }),
-      tap((Enrolcourses) => {
-        console.log(Enrolcourses)
-        this.store.dispatch(
-          CourseActions.setCourseNotificationSettingsSuccess({
-            updatedDoc: Enrolcourses.updatedNotificationSettings,
-          })
-        );
-      })
-    );
-} catch (error) {
-  console.log(error.error)
-}
-
+        tap((Enrolcourses) => {
+          console.log(Enrolcourses);
+          this.store.dispatch(
+            CourseActions.setCourseNotificationSettingsSuccess({
+              updatedDoc: Enrolcourses.updatedNotificationSettings,
+            })
+          );
+        })
+      );
+    } catch (error) {
+      console.log(error.error);
+    }
   }
   WithdrawFromCourse(course: Course): any {
     return this.http

@@ -10,7 +10,7 @@ const verifyToken = (req, res, next) => {
   let token = req.session.token;
 
   if (!token) {
-    return res.status(402).send({ message: "No token provided!" });
+    return res.status(401).send({ message: "No token provided!" });
   }
 
   verify(token, config.secret, (err, decoded) => {
