@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { catchError, Observable, of, Subject, tap, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Channel } from '../models/Channel';
 import { Tag } from '../models/Tag';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Topic } from '../models/Topic';
 import { Material } from '../models/Material';
 import { Course } from '../models/Course';
@@ -16,9 +16,18 @@ export class TagService {
   constructor(private http: HttpClient) {}
 
   getAllTagsForCurrentCourse(course: Course): Observable<Tag[]> {
-    return this.http.get<Tag[]>(
-      `${environment.API_URL}/courses/${course._id}/tags`
-    );
+    return this.http
+      .get<Tag[]>(`${environment.API_URL}/courses/${course._id}/tags`)
+      .pipe(
+        tap((tags) => {}),
+        catchError((error: HttpErrorResponse) => {
+          if (error.status === 401) {
+            // console.warn("User is not authenticated. Token expired or not provided.");
+            return of([]); // Return empty array so app continues
+          }
+          return throwError(error); // Rethrow other errors
+        })
+      );
   }
 
   getAllTagsForCurrentTopic(topic: Topic): Observable<Tag[]> {
