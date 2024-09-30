@@ -1,6 +1,6 @@
 import config from "../util/config";
 
-let DOMAIN = "http://www.CourseMapper.de" // TODO: Hardcoded due to frontend implementation
+let DOMAIN = "http://www.CourseMapper.de"; // TODO: Hardcoded due to frontend implementation
 
 // TODO: Clear differentiation of type of material annotated or commented
 const createAnnotationCommentMaterialObject = (req) => {
@@ -30,11 +30,12 @@ const createAnnotationCommentMaterialObject = (req) => {
   };
 };
 
-const createAnnotationCommentObject = (req, type) => {
+const createAnnotationCommentObject = (req, type, mentioned = false) => {
   let annotation = req.locals.annotation;
   let origin = req.get("origin");
-  let activityType =
-    type === "comment"
+  let activityType = mentioned
+    ? `${DOMAIN}/activityType/you`
+    : type === "comment"
       ? "http://activitystrea.ms/schema/1.0/comment"
       : `${DOMAIN}/activityType/${type}`;
   return {

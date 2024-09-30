@@ -12,7 +12,7 @@ import {
 } from "./utils";
 import config from "../util/config";
 
-let DOMAIN = "http://www.CourseMapper.de" // TODO: Hardcoded due to frontend implementation
+let DOMAIN = "http://www.CourseMapper.de"; // TODO: Hardcoded due to frontend implementation
 
 export const generateCreateAnnotationActivity = (req) => {
   const metadata = createMetadata();
@@ -138,14 +138,13 @@ export const generateEditAnnotationActivity = (req) => {
   };
 };
 
-// TODO: Update to the mentioned generator is needed, important info "who is mentioned" is missing
 export const generateAddMentionStatement = (req) => {
   const metadata = createMetadata();
   return {
     ...metadata,
     actor: createUser(req),
     verb: createVerb("http://id.tincanapi.com/verb/mentioned", "mentioned"),
-    object: createAnnotationCommentObject(req, "annotation"),
+    object: createAnnotationCommentObject(req, "annotation", true),
     result: createAnnotationCommentResultObject(req, "annotation"),
     context: createContext(),
   };
