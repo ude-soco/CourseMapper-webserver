@@ -15,7 +15,7 @@ const createTopicObject = (req) => {
     objectType: config.activity,
     id: `${origin}/activity/course/${topic.courseId}/topic/${topic._id}`,
     definition: {
-      type: [`${DOMAIN}/activityType/topic`],
+      type: `${DOMAIN}/activityType/topic`,
       name: {
         [config.language]: topic.name,
       },
@@ -76,7 +76,7 @@ export const generateEditTopicActivity = (req) => {
       objectType: config.activity,
       id: `${origin}/activity/course/${topicToEdit.courseId}/topic/${topicToEdit._id}`,
       definition: {
-        type: [`${DOMAIN}/activityType/topic`],
+        type: `${DOMAIN}/activityType/topic`,
         name: {
           [config.language]: topicToEdit.name,
         },

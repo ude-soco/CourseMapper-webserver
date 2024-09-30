@@ -15,7 +15,7 @@ const createChannelObject = (req) => {
     objectType: config.activity,
     id: `${origin}/activity/course/${channel.courseId}/topic/${channel.topicId}/channel/${channel._id}`,
     definition: {
-      type: [`${DOMAIN}/activityType/channel`],
+      type: `${DOMAIN}/activityType/channel`,
       name: {
         [config.language]: channel.name,
       },
@@ -80,7 +80,7 @@ export const generateEditChannelActivity = (req) => {
       objectType: config.activity,
       id: `${origin}/activity/course/${channelToEdit.courseId}/topic/${channelToEdit.topicId}/channel/${channelToEdit._id}`,
       definition: {
-        type: [`${DOMAIN}/activityType/channel`],
+        type: `${DOMAIN}/activityType/channel`,
         name: {
           [config.language]: channelToEdit.name,
         },
