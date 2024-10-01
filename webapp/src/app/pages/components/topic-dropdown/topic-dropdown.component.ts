@@ -315,14 +315,21 @@ export class TopicDropdownComponent implements OnInit {
   }
 
   getFollowingAnnotationsOfDisplayedChannels(channelId: string): Observable<any[]> {
-
+console.log("getFollowingAnnotationsOfDisplayedChannels", channelId)
     return this.followingAnnotationsOfDisplayedChannels$.pipe(
       map((followingAnnotations) => {
-        if (!followingAnnotations) {
+        if (!followingAnnotations || !followingAnnotations[channelId]) {
           return [];
         }
-        this.length= followingAnnotations[channelId].length
-        return followingAnnotations[channelId] || [];
+        
+        // Ensure followingAnnotations[channelId] is an array
+      const annotations = followingAnnotations[channelId] || [];
+      
+      // Only access length if annotations is a valid array
+      this.length = Array.isArray(annotations) ? annotations.length : 0;
+      
+
+      return annotations;
       })
     );
   }
