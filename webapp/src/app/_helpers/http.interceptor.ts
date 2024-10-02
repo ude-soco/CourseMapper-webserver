@@ -30,18 +30,18 @@ export class HttpRequestInterceptor implements HttpInterceptor {
 
     return next.handle(req).pipe(
       catchError((error: HttpErrorResponse) => {
-        // Skip interceptor logic for specific URLs
-        if (this.isExcludedUrl(req.url)) {
-          //  console.log("Skipping interceptor logic for excluded URL:", req.url);
-          return throwError(error); // Let the error propagate without redirection
-        }
+        // // Skip interceptor logic for specific URLs
+        // if (this.isExcludedUrl(req.url)) {
+        //   //  console.log("Skipping interceptor logic for excluded URL:", req.url);
+        //   return throwError(error); // Let the error propagate without redirection
+        // }
 
-        if (error.status === 401) {
-          // Handle 401 Unauthorized: clear session and redirect to landing page
-          console.warn('401 Unauthorized - Redirecting to landing page.');
-          // this.storageService.clean(); // Clear user session
-          // this.router.navigate(['/landingPage']); // Redirect to landing page
-        }
+        // if (error.status === 401) {
+        //   // Handle 401 Unauthorized: clear session and redirect to landing page
+        //   console.warn('401 Unauthorized - Redirecting to landing page.');
+        //   // this.storageService.clean(); // Clear user session
+        //   // this.router.navigate(['/landingPage']); // Redirect to landing page
+        // }
         return throwError(error);
       })
     );

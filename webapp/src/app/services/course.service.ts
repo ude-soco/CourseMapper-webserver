@@ -74,11 +74,11 @@ export class CourseService {
         this.courses = courses; // Store fetched courses
       }),
       catchError((error: HttpErrorResponse) => {
-        if (error.status === 401) {
-          // console.warn("User is not authenticated. Token expired or not provided.");
-          return of([]); // Return empty array so app continues
-        }
-        return throwError(error); // Rethrow other errors
+        // if (error.status === 401) {
+        //   // console.warn("User is not authenticated. Token expired or not provided.");
+        //   return of([]); // Return empty array so app continues
+        // }
+         return throwError(error); // Rethrow other errors
       })
     );
   }

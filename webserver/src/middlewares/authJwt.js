@@ -15,11 +15,11 @@ const verifyToken = (req, res, next) => {
 
   verify(token, config.secret, (err, decoded) => {
     if (err) {
-      if (err instanceof TokenExpiredError) {
-        // Token has expired, clear the session and log the user out
-        req.session = null;  // Clear session to log the user out
-        return res.status(401).send({ message: "Token has expired. You have been logged out." });
-      }
+      // if (err instanceof TokenExpiredError) {
+      //   // Token has expired, clear the session and log the user out
+      //   req.session = null;  // Clear session to log the user out
+      //   return res.status(401).send({ message: "Token has expired. You have been logged out." });
+      // }
       return res.status(401).send({ message: "Unauthorized!" });
     }
     req.userId = decoded.id;

@@ -79,13 +79,13 @@ export class UserServiceService {
     // this.loggedIn.next(false); // Set loggedIn state to false
     this.setlastTimeCourseMapperOpened().subscribe();
 
-    // return this.http.post(AUTH_API_2 + 'signout', {}, HTTPOptions);
-    return this.http.post(AUTH_API_2 + 'signout', {}, HTTPOptions).pipe(
-      tap(() => {
-        // Clean up storage and notify the navbar component
-        this.storageService.clean();
-      })
-    );
+     return this.http.post(AUTH_API_2 + 'signout', {}, HTTPOptions);
+    // return this.http.post(AUTH_API_2 + 'signout', {}, HTTPOptions).pipe(
+    //   tap(() => {
+    //     // Clean up storage and notify the navbar component
+    //     this.storageService.clean();
+    //   })
+    // );
   }
 
   GetUserName(_id: string): Observable<any> {
