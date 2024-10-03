@@ -129,15 +129,18 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     private changeDetectorRef: ChangeDetectorRef,
     private materialKgService: MaterialKgOrderedService,
     protected fb: FormBuilder,
-    private intervalService: IntervalService
+    private intervalService: IntervalService,
+    private cdr: ChangeDetectorRef
   ) {
     const url = this.router.url;
+
     if (url.includes('course') && url.includes('channel')) {
       const courseRegex = /\/course\/(\w+)/;
       const channelRegex = /\/channel\/(\w+)/;
       const courseId = courseRegex.exec(url)[1];
       const channelId = channelRegex.exec(url)[1];
       const materialId = url.match(/material:(.*?)\/(pdf|video)/)?.[1];
+
 
       this.courseID = courseId;
 
@@ -147,13 +150,17 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
           this.selectedChannel = foundChannel;
           this.channelID = this.selectedChannel._id;
           this.materials = foundChannel.materials;
+
           this.materials.forEach((material) => {
             this.showFullMap[material._id] = false;
+            
           });
+
           this.channels.push(this.selectedChannel);
           this.selectedMaterial = foundChannel.materials.find(
             (material) => material._id == materialId
           );
+
           this.tabIndex =
             foundChannel.materials.findIndex(
               (material) => material._id == materialId
@@ -275,8 +282,17 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
   toggleFullMaterialName(materialId: string, event: MouseEvent): void {
     event.preventDefault();
     event.stopPropagation();
-    this.showFullMap[materialId] = !this.showFullMap[materialId];
+    // Toggle the state for the specific material's full name
+    if (this.showFullMap.hasOwnProperty(materialId)) {
+      this.showFullMap[materialId] = !this.showFullMap[materialId];
+    } else {
+      this.showFullMap[materialId] = true;
+    }
+    // this.showFullMap[materialId] = !this.showFullMap[materialId];
+    // Trigger change detection to update the view
+    this.cdr.detectChanges();
   }
+
   truncateText(text: string, limit: number): string {
     const words = text.split(' ');
     if (words.length <= limit) return text;
@@ -628,24 +644,14 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       const matId = this.previousMaterial._id;
       const matUrl = this.previousMaterial.url;
       const mattype = this.previousMaterial.type;
-      let body = {
-        name: MaterialName,
-        description: materialDescription,
-        courseId: curseId,
-        materialId: matId,
-        url: matUrl,
-        type: mattype,
-      };
-
+  
       if (
         this.insertedText &&
-        this.insertedText.trim() !== this.previousMaterial.name
+        this.insertedText.trim() !== MaterialName
       ) {
-        let newMaterialName = this.insertedText.trim();
+        let newMaterialName = this.insertedText.trim().replace(/(\r\n|\n|\r)/gm, '');
 
-        newMaterialName = newMaterialName.replace(/(\r\n|\n|\r)/gm, ''); //remove newlines
-
-        body = {
+       let body = {
           name: newMaterialName,
           description: materialDescription, //keep description value
           courseId: curseId,
@@ -658,13 +664,27 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.materialService
           .renameMaterial(curseId, this.previousMaterial, body)
           .subscribe(() => {
-            // Only disable editing after renaming is confirmed
-            if (selectedMat) {
-              selectedMat.contentEditable = 'false'; // Disable editing after rename
-            }
-            this.editable = false; // Exit edit mode
+
+            // Find and update the corresponding material in the materials array
+            // const existingMaterial = this.materials.find(mat => mat._id === this.previousMaterial._id);
+            // if (existingMaterial) {
+            //   existingMaterial.name = newMaterialName; // Update the name
+            // }
+ // Create a copy of previousMaterial and selectedMaterial and update the name
+ this.previousMaterial = { ...this.previousMaterial, name: newMaterialName };
+ this.selectedMaterial = { ...this.selectedMaterial, name: newMaterialName };
+ this.materials = this.materials.map(mat => 
+  mat._id === this.selectedMaterial._id 
+       ? { ...mat, name: newMaterialName } 
+ : mat
+     );
+         // Force change detection to update the view
+         this.cdr.detectChanges();
+         this.editable = false; // Exit edit mode
+         selectedMat.contentEditable = 'false'; // Disable editing after rename
+           
           });
-        this.insertedText = '';
+          this.insertedText = '';
       }
     } else if (this.escapeKey === true) {
       //ESC pressed
@@ -723,6 +743,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
         newMaterialName = newMaterialName.replace(/(\r\n|\n|\r)/gm, ''); //remove newlines
 
         if (newMaterialName === '') {
+       
           this.insertedText = this.previousMaterial.name;
           selectedMat.textContent = this.previousMaterial.name;
           selectedMat.contentEditable = 'false'; // Disable editing after rename
@@ -730,6 +751,8 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
           this.insertedText = '';
         }
         if (newMaterialName && newMaterialName !== '') {
+          
+
           body = {
             name: newMaterialName,
             description: MaterialDescription, //keep description value
@@ -738,10 +761,23 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
             url: matUrl,
             type: mattype,
           };
+         
 
           this.materialService
             .renameMaterial(curseId, this.previousMaterial, body)
             .subscribe(() => {
+              
+              this.previousMaterial = { ...this.previousMaterial, name: newMaterialName };
+              this.selectedMaterial = { ...this.selectedMaterial, name: newMaterialName };
+
+              this.materials = this.materials.map(mat => 
+                   mat._id === this.selectedMaterial._id 
+                        ? { ...mat, name: newMaterialName } 
+                  : mat
+                      );
+
+              // Force change detection to update the view
+              this.cdr.detectChanges();
               // Only disable editing after renaming is confirmed
               if (selectedMat) {
                 selectedMat.contentEditable = 'false'; // Disable editing after rename
@@ -749,6 +785,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
               this.editable = false; // Exit edit mode
             });
           this.insertedText = '';
+         
         }
       }
     }
@@ -865,6 +902,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   materialMenuButtonClicked($event, material: Material) {
+
     this.selectedMaterial = material;
     this.materialMenu.toggle($event);
     this.materialIdOfMaterialMenuClicked = material._id;
