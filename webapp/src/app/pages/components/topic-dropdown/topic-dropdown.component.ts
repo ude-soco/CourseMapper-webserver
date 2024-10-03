@@ -28,12 +28,13 @@ import {
   getNotificationSettingsOfLastChannelMenuClicked,
   getNotificationSettingsOfLastTopicMenuClicked,
   getFollowingAnnotationsOfDisplayedChannels,
+  getSelectedTopic
 } from '../../courses/state/course.reducer';
 import {
   topicNotificationSettingLabels,
   channelNotificationSettingLabels,
 } from 'src/app/models/Notification';
-import { Subscription, combineLatest, map, tap } from 'rxjs';
+import { Subscription, combineLatest, map, tap, BehaviorSubject, switchMap, of, distinctUntilChanged } from 'rxjs';
 import { getNotifications } from '../notifications/state/notifications.reducer';
 import { Annotation } from 'src/app/models/BlockingNotification';
 import * as $ from 'jquery';
@@ -51,6 +52,7 @@ import { AnnotationService } from 'src/app/services/annotation.service';
 export class TopicDropdownComponent implements OnInit {
   isCollapsed: boolean = true;
   maxVisibleAnnotations: number = 5;
+  
   length;
   constructor(
     private courseService: CourseService,
@@ -89,6 +91,7 @@ export class TopicDropdownComponent implements OnInit {
   @Input() showModeratorPrivileges: boolean;
   @ViewChild('topicMenu') topicMenu: any;
   @ViewChild('channelMenu') channelMenu: any;
+  followingAnnotations: Annotation[] = [];
   topics: Topic[] = [];
   displayAddChannelDialogue: boolean = false;
   selectedTopic: Topic = null;
@@ -137,21 +140,37 @@ export class TopicDropdownComponent implements OnInit {
   lastTimeCourseMapperOpened$: Observable<string>;
 
   ngOnInit(): void {
-    this.topicChannelService
-      .fetchTopics(this.courseService.getSelectedCourse()._id)
-      .subscribe((res) => {
-        this.topics = res.course.topics;
 
-        this.store.dispatch(
-          CourseActions.initialiseNotificationSettings({
-            notificationSettings: res.notificationSettings,
-          })
-        );
-      });
+    this.loadTopics();
+      this.topicChannelService.onUpdateTopics$.subscribe(
+        (topics) => (this.topics = topics)
+      );
+  // // Handle topic and channel-specific subscriptions
+  // this.store.select(getSelectedTopic).pipe(
+  //   distinctUntilChanged(), // Ensure we react only to changes in the selected topic
+  //   switchMap((selectedTopic) => {
+  //     if (!selectedTopic) {
+  //       return of(null); // If no topic is selected, return null
+  //     }
 
-    this.topicChannelService.onUpdateTopics$.subscribe(
-      (topics) => (this.topics = topics)
-    );
+  //     // Fetch the annotations for the selected channel when the topic changes
+  //     return this.store.select(getFollowingAnnotationsOfDisplayedChannels).pipe(
+  //       map((followingAnnotations) => {
+  //         if (this.selectedChannelId) {
+  //           const annotations = followingAnnotations[this.selectedChannelId] || [];
+  //           this.length = annotations.length;
+  //           return annotations;
+  //         }
+  //         return [];
+  //       })
+  //     );
+  //   })
+  // ).subscribe(
+  //   (annotations) => {
+  //     this.followingAnnotations = annotations;
+  //   },
+  //   (error) => console.error(error)
+  // );
 
     this.notificationSettingsOfLastTopicMenuClicked$ = this.store.select(
       getNotificationSettingsOfLastTopicMenuClicked
@@ -209,8 +228,17 @@ export class TopicDropdownComponent implements OnInit {
     this.lastTimeCourseMapperOpened$ = this.store.select(
       getLastTimeCourseMapperOpened
     );
+    
   }
-
+  loadTopics() {
+    this.topicChannelService.fetchTopics(this.courseService.getSelectedCourse()._id)
+      .subscribe((res) => {
+        this.topics = res.course.topics;
+        this.store.dispatch(CourseActions.initialiseNotificationSettings({
+          notificationSettings: res.notificationSettings,
+        }));
+      });
+  }
   getTopicActivityIndicator(topicId: string) {
     return combineLatest([
       this.allNotifications$,
@@ -314,26 +342,46 @@ export class TopicDropdownComponent implements OnInit {
     );
   }
 
+  // getFollowingAnnotationsOfDisplayedChannels(channelId: string): Observable<any[]> {
+    
+    
+  //   // this.selectedChannelId$.next(channelId);
+
+  //   return this.selectedChannelId$.pipe(
+  //     switchMap((channelId) => {
+  //       if (!channelId) return of([]); // If no channel selected, return empty array
+  
+  //       return this.store.select(getFollowingAnnotationsOfDisplayedChannels).pipe(
+  //         map((followingAnnotations) => {
+  //           if (!followingAnnotations || !followingAnnotations[channelId]) {
+  //             return [];
+  //           }
+  
+  //           const annotations = followingAnnotations[channelId] || [];
+  //           this.length = Array.isArray(annotations) ? annotations.length : 0;
+  //           return annotations;
+  //         })
+  //       );
+  //     })
+  //   );
+  // }
   getFollowingAnnotationsOfDisplayedChannels(channelId: string): Observable<any[]> {
-console.log("getFollowingAnnotationsOfDisplayedChannels", channelId)
-    return this.followingAnnotationsOfDisplayedChannels$.pipe(
+
+    // return this.store.select(getFollowingAnnotationsOfDisplayedChannels).pipe(
+      return this.followingAnnotationsOfDisplayedChannels$.pipe(
       map((followingAnnotations) => {
         if (!followingAnnotations || !followingAnnotations[channelId]) {
           return [];
         }
-        
-        // Ensure followingAnnotations[channelId] is an array
-      const annotations = followingAnnotations[channelId] || [];
-      
-      // Only access length if annotations is a valid array
-      this.length = Array.isArray(annotations) ? annotations.length : 0;
-      
-
-      return annotations;
+   
+  
+        const annotations = followingAnnotations[channelId] || [];
+        this.length = Array.isArray(annotations) ? annotations.length : 0;
+  
+        return annotations;
       })
     );
   }
-  
 
   onUnfollowAnnotationClicked($event, annotationId: string) {
     this.store.dispatch(
@@ -477,7 +525,8 @@ console.log("getFollowingAnnotationsOfDisplayedChannels", channelId)
   showMenu() {}
 
   onSelectTopic(topic: Topic) {
-    // console.log(this.selectedTopic)
+    this.loadTopics(); // Call it when a new topic is selected
+
     if (this.expandTopic.includes(topic._id)) {
       this.expandTopic.some((topicId, index) => {
         if (topicId === topic._id) {
@@ -493,6 +542,12 @@ console.log("getFollowingAnnotationsOfDisplayedChannels", channelId)
       this.store.dispatch(
         CourseActions.setCurrentTopic({ selcetedTopic: topic })
       );
+  //       // New: Fetch following annotations for the selected topic
+  // if (this.selectedChannelId) {
+  //   this.getFollowingAnnotationsOfDisplayedChannels(this.selectedChannelId).subscribe((annotations) => {
+  //     this.followingAnnotations = annotations; // Store the annotations locally if necessary
+  //   });
+  // }
       // wait until expanded topic rendered
       setTimeout(() => {
         // if exists channel previously selected --> make channel container bg=white
@@ -520,6 +575,11 @@ console.log("getFollowingAnnotationsOfDisplayedChannels", channelId)
       'channel',
       channel._id,
     ]);
+
+    // this.getFollowingAnnotationsOfDisplayedChannels(channel._id).subscribe((annotations) => {
+    //   // This block ensures the annotations are updated when a new channel is selected
+    //   this.followingAnnotations = annotations;  // Store the annotations locally if necessary
+    // });
     this.store.dispatch(
       CourseActions.toggleChannelSelected({ channelSelected: true })
     );
@@ -531,7 +591,10 @@ console.log("getFollowingAnnotationsOfDisplayedChannels", channelId)
     );
     // make selected channel's background white
     this.selectedChannelId = channel._id;
-
+    // this.getFollowingAnnotationsOfDisplayedChannels(this.selectedChannelId).subscribe((annotations) => {
+    //   this.followingAnnotations = annotations; // Update followingAnnotations for display
+  
+    // });
     // make all channels' container background Null
     this.topics.forEach((topic) => {
       topic.channels.forEach((channelEle) => {
@@ -548,6 +611,7 @@ console.log("getFollowingAnnotationsOfDisplayedChannels", channelId)
       channel._id + '-container'
     );
     channelNameContainer.style.backgroundColor = 'white';
+    
   }
 
   /**
@@ -972,6 +1036,7 @@ console.log("getFollowingAnnotationsOfDisplayedChannels", channelId)
   }
 
   topicMenuButtonClicked($event, topic: Topic) {
+    
     this.selectedTopic = topic;
     this.topicMenu.toggle($event);
     this.topicIdOfTopicMenuClicked = topic._id;

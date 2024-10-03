@@ -36,12 +36,12 @@ export class HttpRequestInterceptor implements HttpInterceptor {
         //   return throwError(error); // Let the error propagate without redirection
         // }
 
-        // if (error.status === 401) {
-        //   // Handle 401 Unauthorized: clear session and redirect to landing page
-        //   console.warn('401 Unauthorized - Redirecting to landing page.');
-        //   // this.storageService.clean(); // Clear user session
-        //   // this.router.navigate(['/landingPage']); // Redirect to landing page
-        // }
+        if (error.status === 401) {
+          // Handle 401 Unauthorized: clear session and redirect to landing page
+          console.warn('401 Unauthorized - Redirecting to landing page.');
+          this.storageService.clean(); // Clear user session
+          this.router.navigate(['/landingPage']); // Redirect to landing page
+        }
         return throwError(error);
       })
     );

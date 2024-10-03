@@ -8,19 +8,27 @@ import { Topic } from '../models/Topic';
 import { Material } from '../models/Material';
 import { Course } from '../models/Course';
 import { Annotation } from '../models/Annotations';
+import { StorageService } from './storage.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TagService {
-  constructor(private http: HttpClient) {}
+ 
+
+  constructor(private http: HttpClient,  public storageService: StorageService,) {}
+  
 
   getAllTagsForCurrentCourse(course: Course): Observable<Tag[]> {
+   if(this.storageService.isLoggedIn() === false){
+      return of([]);
+   }
     return this.http
       .get<Tag[]>(`${environment.API_URL}/courses/${course._id}/tags`)
       .pipe(
         tap((tags) => {}),
         catchError((error: HttpErrorResponse) => {
+
           if (error.status === 401) {
             // console.warn("User is not authenticated. Token expired or not provided.");
             return of([]); // Return empty array so app continues

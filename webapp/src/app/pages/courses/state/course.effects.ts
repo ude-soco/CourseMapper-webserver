@@ -510,6 +510,7 @@ export class CourseEffects {
     );
   });
   followAnnotation$ = createEffect(() => {
+    
     return this.actions$.pipe(
       ofType(CourseActions.followAnnotation),
 

@@ -62,7 +62,10 @@ export class LandingPageComponent {
 
   ngOnInit() {
     this.getAllCourses(); // Fetch all available courses
-    this.fetchUserCourses(); // Fetch courses the user is enrolled in
+    if(this.loggedInUser){
+      this.fetchUserCourses(); // Fetch courses the user is enrolled in
+    }
+    
   }
   fetchUserCourses(): void {
     this.courseService.fetchCourses().subscribe({
@@ -70,12 +73,9 @@ export class LandingPageComponent {
         this.myCourses = courses; // Save user's enrolled courses
       },
       error: (err) => {
-        if (err.status === 401) {
-          //  console.warn("User session expired or not authenticated.");
-          this.showError('Your session has expired. Please log in again.');
-        } else {
+        if (err) {
           console.error('Error fetching user courses:', err);
-        }
+} 
       },
     });
   }
