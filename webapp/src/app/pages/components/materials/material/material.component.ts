@@ -49,6 +49,7 @@ import { CourseService } from 'src/app/services/course.service';
 import { getLastTimeCourseMapperOpened } from 'src/app/state/app.reducer';
 import * as VideoActions from '../../annotations/video-annotation/state/video.action';
 import { IntervalService } from 'src/app/services/interval.service';
+
 @Component({
   selector: 'app-material',
   templateUrl: './material.component.html',
@@ -129,6 +130,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     private changeDetectorRef: ChangeDetectorRef,
     private materialKgService: MaterialKgOrderedService,
     protected fb: FormBuilder,
+
     private intervalService: IntervalService,
     private cdr: ChangeDetectorRef
   ) {
@@ -141,7 +143,6 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       const channelId = channelRegex.exec(url)[1];
       const materialId = url.match(/material:(.*?)\/(pdf|video)/)?.[1];
 
-
       this.courseID = courseId;
 
       this.topicChannelService
@@ -153,7 +154,6 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
 
           this.materials.forEach((material) => {
             this.showFullMap[material._id] = false;
-            
           });
 
           this.channels.push(this.selectedChannel);
@@ -280,7 +280,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     );
   }
   toggleFullMaterialName(materialId: string, event: MouseEvent): void {
-    event.preventDefault();
+    // event.preventDefault();
     event.stopPropagation();
     // Toggle the state for the specific material's full name
     if (this.showFullMap.hasOwnProperty(materialId)) {
@@ -292,7 +292,6 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     // Trigger change detection to update the view
     this.cdr.detectChanges();
   }
-
   truncateText(text: string, limit: number): string {
     const words = text.split(' ');
     if (words.length <= limit) return text;
@@ -644,14 +643,13 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       const matId = this.previousMaterial._id;
       const matUrl = this.previousMaterial.url;
       const mattype = this.previousMaterial.type;
-  
-      if (
-        this.insertedText &&
-        this.insertedText.trim() !== MaterialName
-      ) {
-        let newMaterialName = this.insertedText.trim().replace(/(\r\n|\n|\r)/gm, '');
 
-       let body = {
+      if (this.insertedText && this.insertedText.trim() !== MaterialName) {
+        let newMaterialName = this.insertedText
+          .trim()
+          .replace(/(\r\n|\n|\r)/gm, '');
+
+        let body = {
           name: newMaterialName,
           description: materialDescription, //keep description value
           courseId: curseId,
@@ -664,27 +662,39 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.materialService
           .renameMaterial(curseId, this.previousMaterial, body)
           .subscribe(() => {
-
             // Find and update the corresponding material in the materials array
             // const existingMaterial = this.materials.find(mat => mat._id === this.previousMaterial._id);
             // if (existingMaterial) {
             //   existingMaterial.name = newMaterialName; // Update the name
             // }
- // Create a copy of previousMaterial and selectedMaterial and update the name
- this.previousMaterial = { ...this.previousMaterial, name: newMaterialName };
- this.selectedMaterial = { ...this.selectedMaterial, name: newMaterialName };
- this.materials = this.materials.map(mat => 
-  mat._id === this.selectedMaterial._id 
-       ? { ...mat, name: newMaterialName } 
- : mat
-     );
-         // Force change detection to update the view
-         this.cdr.detectChanges();
-         this.editable = false; // Exit edit mode
-         selectedMat.contentEditable = 'false'; // Disable editing after rename
-           
+            // Create a copy of previousMaterial and selectedMaterial and update the name
+            this.previousMaterial = {
+              ...this.previousMaterial,
+              name: newMaterialName,
+            };
+            this.selectedMaterial = {
+              ...this.selectedMaterial,
+              name: newMaterialName,
+            };
+            // Update the materials array and keep the tab open
+            this.materials = this.materials.map((mat, index) => {
+              if (mat._id === this.selectedMaterial._id) {
+                // Update the material name
+                const updatedMaterial = { ...mat, name: newMaterialName };
+
+                // Keep the material tab open by maintaining tabIndex
+                this.tabIndex = index + 1; // Since tabIndex starts from 1, add 1 to the index
+
+                return updatedMaterial; // Return the updated material
+              }
+              return mat; // Return unchanged materials
+            });
+            // Force change detection to update the view
+            this.cdr.detectChanges();
+            this.editable = false; // Exit edit mode
+            selectedMat.contentEditable = 'false'; // Disable editing after rename
           });
-          this.insertedText = '';
+        this.insertedText = '';
       }
     } else if (this.escapeKey === true) {
       //ESC pressed
@@ -743,7 +753,6 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
         newMaterialName = newMaterialName.replace(/(\r\n|\n|\r)/gm, ''); //remove newlines
 
         if (newMaterialName === '') {
-       
           this.insertedText = this.previousMaterial.name;
           selectedMat.textContent = this.previousMaterial.name;
           selectedMat.contentEditable = 'false'; // Disable editing after rename
@@ -751,8 +760,6 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
           this.insertedText = '';
         }
         if (newMaterialName && newMaterialName !== '') {
-          
-
           body = {
             name: newMaterialName,
             description: MaterialDescription, //keep description value
@@ -761,20 +768,32 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
             url: matUrl,
             type: mattype,
           };
-         
 
           this.materialService
             .renameMaterial(curseId, this.previousMaterial, body)
             .subscribe(() => {
-              
-              this.previousMaterial = { ...this.previousMaterial, name: newMaterialName };
-              this.selectedMaterial = { ...this.selectedMaterial, name: newMaterialName };
+              this.previousMaterial = {
+                ...this.previousMaterial,
+                name: newMaterialName,
+              };
+              this.selectedMaterial = {
+                ...this.selectedMaterial,
+                name: newMaterialName,
+              };
 
-              this.materials = this.materials.map(mat => 
-                   mat._id === this.selectedMaterial._id 
-                        ? { ...mat, name: newMaterialName } 
-                  : mat
-                      );
+              // Update the materials array and keep the tab open
+              this.materials = this.materials.map((mat, index) => {
+                if (mat._id === this.selectedMaterial._id) {
+                  // Update the material name
+                  const updatedMaterial = { ...mat, name: newMaterialName };
+
+                  // Keep the material tab open by maintaining tabIndex
+                  this.tabIndex = index + 1; // Since tabIndex starts from 1, add 1 to the index
+
+                  return updatedMaterial; // Return the updated material
+                }
+                return mat; // Return unchanged materials
+              });
 
               // Force change detection to update the view
               this.cdr.detectChanges();
@@ -785,7 +804,6 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
               this.editable = false; // Exit edit mode
             });
           this.insertedText = '';
-         
         }
       }
     }
@@ -902,7 +920,6 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   materialMenuButtonClicked($event, material: Material) {
-
     this.selectedMaterial = material;
     this.materialMenu.toggle($event);
     this.materialIdOfMaterialMenuClicked = material._id;
