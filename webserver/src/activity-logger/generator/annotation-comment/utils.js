@@ -30,7 +30,12 @@ const createAnnotationCommentMaterialObject = (req) => {
   };
 };
 
-const createAnnotationCommentObject = (req, type, mentioned = false) => {
+const createAnnotationCommentObject = (
+  req,
+  type,
+  special = false,
+  mentioned = false,
+) => {
   let annotation = req.locals.annotation;
   let origin = req.get("origin");
   let activityType = mentioned
@@ -44,7 +49,10 @@ const createAnnotationCommentObject = (req, type, mentioned = false) => {
     definition: {
       type: activityType,
       name: {
-        [config.language]: `${annotation.content.slice(0, 50)} ${annotation.content.length > 50 ? " ..." : ""}`,
+        [config.language]:
+          `${special ? "Annotation:" : ""}` +
+          annotation.content.slice(0, 50) +
+          (annotation.content.length > 50 ? " ..." : ""),
       },
       description: {
         [config.language]: annotation.content,

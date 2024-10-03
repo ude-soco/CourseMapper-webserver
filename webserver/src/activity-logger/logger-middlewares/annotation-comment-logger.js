@@ -77,7 +77,7 @@ export const editAnnotation = async (req, res, next) => {
   try {
     req.locals.activity = await activityController.createActivity(
       req.locals.oldAnnotation.tool
-        ? annotationActivityGenerator.generateEditAnnotationActivity(req)
+        ? annotationActivityGenerator.generateEditAnnotationActivity(req, true)
         : commentActivityGenerator.generateEditCommentActivity(req),
       notifications.generateNotificationInfo(req),
     );
