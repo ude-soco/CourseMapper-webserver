@@ -24,7 +24,7 @@ if [ -f /var/lib/postgresql/meta/init.sql.gz.sha256 ]; then
 fi
 
 # Save the new version
-echo "$CHECKSUM" > /var/lib/postgresql/meta/init.sql.gz.sha256
+echo "$CHECKSUM" > /var/lib/postgresql/meta/init.tmp.sql.gz.sha256
 
 # Start the database
 echo "${0}: Starting the database..."
