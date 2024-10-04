@@ -1,7 +1,7 @@
 import {generateAddMentionStatement} from "../generator/annotation-comment/annotation-generator";
 
 const annotationActivityGenerator = require("../generator/annotation-comment/annotation-generator");
-const commentActivityGenerator = require("../generator/annotation-comment/comment-generator");
+const commentActivityGenerator = require("../generator/comment/comment-generator");
 const activityController = require("../controller/activity-controller");
 const notifications = require("../../middlewares/Notifications/notifications");
 

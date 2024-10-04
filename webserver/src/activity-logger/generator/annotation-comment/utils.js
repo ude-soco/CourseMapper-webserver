@@ -2,34 +2,6 @@ import config from "../util/config";
 
 let DOMAIN = "http://www.CourseMapper.de"; // TODO: Hardcoded due to frontend implementation
 
-// TODO: Clear differentiation of type of material annotated or commented
-const createAnnotationCommentMaterialObject = (req) => {
-  let material = req.locals.material;
-  let origin = req.get("origin");
-  return {
-    objectType: config.activity,
-    id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`,
-    definition: {
-      type: `${DOMAIN}/activityType/material`,
-      name: {
-        [config.language]: material.name,
-      },
-      description: {
-        [config.language]: material.description,
-      },
-      extensions: {
-        [`${DOMAIN}/extensions/material`]: {
-          id: material._id,
-          type: material.type,
-          channel_id: material.channelId,
-          topic_id: material.topicId,
-          course_id: material.courseId,
-        },
-      },
-    },
-  };
-};
-
 const createAnnotationCommentObject = (
   req,
   type,
@@ -105,7 +77,6 @@ const createAnnotationCommentMaterialResultObject = (req, type) => {
 };
 
 export {
-  createAnnotationCommentMaterialObject,
   createAnnotationCommentObject,
   createAnnotationCommentMaterialResultObject,
   createAnnotationCommentResultObject,

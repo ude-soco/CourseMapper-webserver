@@ -1,4 +1,4 @@
-const replyActivityGenerator = require("../generator/reply-generator");
+const replyActivityGenerator = require("../generator/reply/reply-generator");
 const activityController = require("../controller/activity-controller");
 const notifications = require("../../middlewares/Notifications/notifications");
 

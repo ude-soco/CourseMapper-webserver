@@ -5,12 +5,14 @@ import {
   createVerb,
 } from "../util/generator-util";
 import {
-  createAnnotationCommentMaterialObject,
   createAnnotationCommentMaterialResultObject,
-  createAnnotationCommentObject,
   createAnnotationCommentResultObject,
 } from "./utils";
 import config from "../util/config";
+import {
+  createAnnotationMaterialObject,
+  createAnnotationObject,
+} from "./annotation-utils";
 
 let DOMAIN = "http://www.CourseMapper.de"; // TODO: Hardcoded due to frontend implementation
 
@@ -23,7 +25,7 @@ export const generateCreateAnnotationActivity = (req) => {
       "http://risc-inc.com/annotator/verbs/annotated",
       "annotated",
     ),
-    object: createAnnotationCommentMaterialObject(req),
+    object: createAnnotationMaterialObject(req),
     result: createAnnotationCommentMaterialResultObject(req, "annotation"),
     context: createContext(),
   };
@@ -35,7 +37,7 @@ export const generateDeleteAnnotationActivity = (req) => {
     ...metadata,
     actor: createUser(req),
     verb: createVerb("http://activitystrea.ms/schema/1.0/delete", "deleted"),
-    object: createAnnotationCommentObject(req, "annotation", true),
+    object: createAnnotationObject(req),
     result: createAnnotationCommentResultObject(req, "annotation"),
     context: createContext(),
   };
@@ -47,7 +49,7 @@ export const generateLikeAnnotationActivity = (req) => {
     ...metadata,
     actor: createUser(req),
     verb: createVerb("http://activitystrea.ms/schema/1.0/like", "liked"),
-    object: createAnnotationCommentObject(req, "annotation", true),
+    object: createAnnotationObject(req),
     result: createAnnotationCommentResultObject(req, "annotation"),
     context: createContext(),
   };
@@ -59,7 +61,7 @@ export const getAnnotationUnlikeStatement = (req) => {
     ...metadata,
     actor: createUser(req),
     verb: createVerb("http://activitystrea.ms/schema/1.0/unlike", "unliked"),
-    object: createAnnotationCommentObject(req, "annotation", true),
+    object: createAnnotationObject(req),
     result: createAnnotationCommentResultObject(req, "annotation"),
     context: createContext(),
   };
@@ -71,7 +73,7 @@ export const generateDislikeAnnotationActivity = (req) => {
     ...metadata,
     actor: createUser(req),
     verb: createVerb("http://activitystrea.ms/schema/1.0/dislike", "disliked"),
-    object: createAnnotationCommentObject(req, "annotation", true),
+    object: createAnnotationObject(req),
     result: createAnnotationCommentResultObject(req, "annotation"),
     context: createContext(),
   };
@@ -82,14 +84,14 @@ export const generateUndislikeAnnotationActivity = (req) => {
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb(`${req.get("origin")}/verbs/undisliked`, "un-disliked"),
-    object: createAnnotationCommentObject(req, "annotation", true),
+    verb: createVerb(`${DOMAIN}/verbs/undisliked`, "un-disliked"),
+    object: createAnnotationObject(req),
     result: createAnnotationCommentResultObject(req, "annotation"),
     context: createContext(),
   };
 };
 
-export const generateEditAnnotationActivity = (req, special) => {
+export const generateEditAnnotationActivity = (req) => {
   const metadata = createMetadata();
   let newAnnotation = req.locals.newAnnotation;
   let oldAnnotation = req.locals.oldAnnotation;
@@ -105,9 +107,9 @@ export const generateEditAnnotationActivity = (req, special) => {
         type: `${DOMAIN}/activityType/annotation`,
         name: {
           [config.language]:
-          `${special ? "Annotation:" : ""}` +
-          oldAnnotation.content.slice(0, 50) +
-          (oldAnnotation.content.length > 50 ? " ..." : ""),
+            "Annotation:" +
+            oldAnnotation.content.slice(0, 50) +
+            (oldAnnotation.content.length > 50 ? " ..." : ""),
         },
         description: {
           [config.language]: oldAnnotation.content,
@@ -143,11 +145,33 @@ export const generateEditAnnotationActivity = (req, special) => {
 
 export const generateAddMentionStatement = (req) => {
   const metadata = createMetadata();
+  let annotation = req.locals.annotation;
   return {
     ...metadata,
     actor: createUser(req),
     verb: createVerb("http://id.tincanapi.com/verb/mentioned", "mentioned"),
-    object: createAnnotationCommentObject(req, "annotation", undefined, true),
+    object: {
+      objectType: "User",
+      definition: {
+        type: `${DOMAIN}/activityType/you`,
+        name: {
+          // TODO: Possible reset to "" if problem occurs
+          [config.language]:
+            annotation.content.slice(0, 50) +
+            (annotation.content.length > 50 ? " ..." : ""),
+        },
+        extensions: {
+          [`${DOMAIN}/extensions/annotation`]: {
+            id: annotation._id,
+            material_id: annotation.materialId,
+            channel_id: annotation.channelId,
+            topic_id: annotation.topicId,
+            course_id: annotation.courseId,
+            content: annotation.content,
+          },
+        },
+      },
+    },
     result: createAnnotationCommentResultObject(req, "annotation"),
     context: createContext(),
   };

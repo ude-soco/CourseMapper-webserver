@@ -5,14 +5,16 @@ import {
   createVerb,
 } from "../util/generator-util";
 import {
-  createAnnotationCommentMaterialObject,
   createAnnotationCommentMaterialResultObject,
-  createAnnotationCommentObject,
   createAnnotationCommentResultObject,
-} from "./utils";
+} from "../annotation-comment/utils";
 import config from "../util/config";
+import {
+  createCommentMaterialObject,
+  createCommentObject,
+} from "./comment-utils";
 
-let DOMAIN = "http://www.CourseMapper.de" // TODO: Hardcoded due to frontend implementation
+let DOMAIN = "http://www.CourseMapper.de"; // TODO: Hardcoded due to frontend implementation
 
 export const generateCommentActivity = (req) => {
   const metadata = createMetadata();
@@ -20,7 +22,7 @@ export const generateCommentActivity = (req) => {
     ...metadata,
     actor: createUser(req),
     verb: createVerb("http://adlnet.gov/expapi/verbs/commented", "commented"),
-    object: createAnnotationCommentMaterialObject(req),
+    object: createCommentMaterialObject(req),
     result: createAnnotationCommentMaterialResultObject(req, "comment"),
     context: createContext(),
   };
@@ -32,7 +34,7 @@ export const generateDeleteCommentActivity = (req) => {
     ...metadata,
     actor: createUser(req),
     verb: createVerb("http://activitystrea.ms/schema/1.0/delete", "deleted"),
-    object: createAnnotationCommentObject(req, "comment"),
+    object: createCommentObject(req),
     result: createAnnotationCommentResultObject(req, "comment"),
     context: createContext(),
   };
@@ -44,7 +46,7 @@ export const generateLikeCommentActivity = (req) => {
     ...metadata,
     actor: createUser(req),
     verb: createVerb("http://activitystrea.ms/schema/1.0/like", "liked"),
-    object: createAnnotationCommentObject(req, "comment"),
+    object: createCommentObject(req),
     result: createAnnotationCommentResultObject(req, "comment"),
     context: createContext(),
   };
@@ -56,7 +58,7 @@ export const generateUnlikeCommentActivity = (req) => {
     ...metadata,
     actor: createUser(req),
     verb: createVerb("http://activitystrea.ms/schema/1.0/unlike", "unliked"),
-    object: createAnnotationCommentObject(req, "comment"),
+    object: createCommentObject(req),
     result: createAnnotationCommentResultObject(req, "comment"),
     context: createContext(),
   };
@@ -68,7 +70,7 @@ export const generateDislikeCommentActivity = (req) => {
     ...metadata,
     actor: createUser(req),
     verb: createVerb("http://activitystrea.ms/schema/1.0/dislike", "disliked"),
-    object: createAnnotationCommentObject(req, "comment"),
+    object: createCommentObject(req),
     result: createAnnotationCommentResultObject(req, "comment"),
     context: createContext(),
   };
@@ -79,8 +81,8 @@ export const generateUndislikeCommentActivity = (req) => {
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb(`${req.get("origin")}/verbs/undisliked`, "un-disliked"),
-    object: createAnnotationCommentObject(req, "comment"),
+    verb: createVerb(`${DOMAIN}/verbs/undisliked`, "un-disliked"),
+    object: createCommentObject(req),
     result: createAnnotationCommentResultObject(req, "comment"),
     context: createContext(),
   };
@@ -101,7 +103,10 @@ export const generateEditCommentActivity = (req) => {
       definition: {
         type: "http://activitystrea.ms/schema/1.0/comment",
         name: {
-          [config.language]: `${oldAnnotation.content.slice(0, 50)} ${oldAnnotation.content.length > 50 ? " ..." : ""}`,
+          [config.language]:
+            "Comment:" +
+            oldAnnotation.content.slice(0, 50) +
+            (oldAnnotation.content.length > 50 ? " ..." : ""),
         },
         description: {
           [config.language]: oldAnnotation.content,
