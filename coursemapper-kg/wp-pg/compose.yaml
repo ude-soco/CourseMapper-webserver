@@ -1,6 +1,19 @@
 services:
   wp-pg:
-    image: ${IMAGE_NAME_PREFIX:-socialcomputing/}coursemapper-webserver-coursemapper-kg-wp-pg:${IMAGE_TAG:-latest}
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: password
+    volumes:
+      - coursemapper-kg-wp-pg:/var/lib/postgresql/data
+    healthcheck:
+      test: "pg_isready -h wp-pg -U postgres"
+      start_period: 2s
+      interval: 10s
+      retries: 100000
+    restart: always
+
+  wp-pg-init:
+    image: ${IMAGE_NAME_PREFIX:-socialcomputing/}coursemapper-webserver-coursemapper-kg-wp-pg-init:${IMAGE_TAG:-latest}
     build: .
     environment:
       POSTGRES_PASSWORD: password
@@ -15,7 +28,6 @@ services:
       start_period: 2s
       interval: 10s
       retries: 100000
-    restart: always
 
 volumes:
   coursemapper-kg-wp-pg:
