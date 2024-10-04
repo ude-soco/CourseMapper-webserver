@@ -169,6 +169,7 @@ export const getNotificationSettingsOfLastTopicMenuClicked = createSelector(
 export const getNotificationSettingsOfLastChannelMenuClicked = createSelector(
   getCourseFeatureState,
   (state) => {
+   
     if (
       !state.channelsNotificationSettings ||
       !state.lastChannelMenuClickedId
@@ -287,14 +288,19 @@ export const getFollowingAnnotationsOfDisplayedChannels = createSelector(
   getSelectTopic,
   getChannelsNotificationSettings,
   (selectedTopic, channelNotificationSettings) => {
+
+ 
     //in the state, we have the channelsNotificationSettings array
     //in the channelNotificationSettignsArray, for all the channels that have topicId equal to the topicId of the selected topic, for them return an object where they key is the id of the channel and the value is an array that contains the following annotations of that channel
     if (!channelNotificationSettings || !selectedTopic) {
       return null;
     }
+    
+
     const channels = channelNotificationSettings.filter(
       (channel) => channel.topicId === selectedTopic._id
     );
+
     const followingAnnotationsOfDisplayedChannels = {};
     channels.forEach((channel) => {
       followingAnnotationsOfDisplayedChannels[channel.channelId] =

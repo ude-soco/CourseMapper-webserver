@@ -437,6 +437,7 @@ export class NotificationsService {
   }
 
   followAnnotation(annotationId: string) {
+  
     return this.httpClient.post<BlockingNotifications>(
       `${environment.API_URL}/notifications/followAnnotation/${annotationId}`,
       {}
