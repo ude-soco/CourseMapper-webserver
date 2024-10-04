@@ -155,10 +155,7 @@ export const generateAddMentionStatement = (req) => {
       definition: {
         type: `${DOMAIN}/activityType/you`,
         name: {
-          // TODO: Possible reset to "" if problem occurs
-          [config.language]:
-            annotation.content.slice(0, 50) +
-            (annotation.content.length > 50 ? " ..." : ""),
+          [config.language]: `${annotation.content.slice(0, 50)}${annotation.content.length > 50 ? " ..." : ""}`,
         },
         extensions: {
           [`${DOMAIN}/extensions/annotation`]: {

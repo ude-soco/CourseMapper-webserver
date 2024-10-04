@@ -161,10 +161,7 @@ export const getNewMentionCreationStatement = (req) => {
       definition: {
         type: `${DOMAIN}/activityType/you`,
         name: {
-          // TODO: Possible reset to "" if problem occurs
-          [config.language]:
-            reply.content.slice(0, 50) +
-            (reply.content.length > 50 ? " ..." : ""),
+          [config.language]: `${reply.content.slice(0, 50)}${reply.content.length > 50 ? " ..." : ""}`,
         },
         extensions: {
           [`${DOMAIN}/extensions/reply`]: {
