@@ -31,7 +31,7 @@ echo "${0}: Database wiped"
 # Initialize the database
 echo "${0}: Initializing database..."
 # Create the database
-su postgres -c "initdb -D /var/lib/postgresql/data"
+/usr/local/bin/docker-ensure-initdb.sh
 # Start the server in the background
 su postgres -c "pg_ctl -D /var/lib/postgresql/data -l /var/lib/postgresql/logfile start"
 # Initialize the database
