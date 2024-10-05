@@ -23,6 +23,8 @@ services:
     volumes:
       - coursemapper-kg-wp-pg:/var/lib/postgresql/data
       - coursemapper-kg-wp-pg-meta:/var/lib/postgresql/meta
+    profiles:
+      - init
 
 volumes:
   coursemapper-kg-wp-pg:
