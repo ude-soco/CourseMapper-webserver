@@ -23,11 +23,6 @@ services:
     volumes:
       - coursemapper-kg-wp-pg:/var/lib/postgresql/data
       - coursemapper-kg-wp-pg-meta:/var/lib/postgresql/meta
-    healthcheck:
-      test: "pg_isready -h wp-pg -U postgres"
-      start_period: 2s
-      interval: 10s
-      retries: 100000
 
 volumes:
   coursemapper-kg-wp-pg:
