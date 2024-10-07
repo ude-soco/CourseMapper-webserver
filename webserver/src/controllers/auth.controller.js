@@ -166,7 +166,7 @@ export const signin = async (req, res, next) => {
 
     let passwordIsValid = await compareSync(password, user.password);
     if (!passwordIsValid) {
-      return res.status(401).send({ error: "Invalid Password!" });
+      return res.status(500).send({ error: "Invalid Password!" });
     }
 
     req.session.token = token;
