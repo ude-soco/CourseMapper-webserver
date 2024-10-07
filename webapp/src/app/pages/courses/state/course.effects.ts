@@ -46,6 +46,9 @@ export class CourseEffects {
           action.type === AnnotationActions.postReplySuccess.type ||
           action.type === AnnotationActions.deleteAnnotationSuccess.type ||
           action.type === AnnotationActions.deleteReplySuccess.type ||
+          action.type === AnnotationActions.editAnnotationSuccess.type ||
+          action.type === AnnotationActions.editReplySuccess.type ||
+          action.type === AnnotationActions.editReplyFail.type ||
           action.type === CourseActions.postReplySuccess.type ||
           action.type === CourseActions.deleteAnnotationSuccess.type ||
           action.type === CourseActions.deleteReplySuccess.type
@@ -80,6 +83,9 @@ export class CourseEffects {
           action.type === AnnotationActions.postAnnotationSuccess.type ||
           action.type === AnnotationActions.postReplySuccess.type ||
           action.type === AnnotationActions.deleteAnnotationSuccess.type ||
+          action.type === AnnotationActions.editAnnotationSuccess.type ||
+          action.type === AnnotationActions.editReplySuccess.type ||
+          action.type === AnnotationActions.editReplyFail.type ||
           action.type === AnnotationActions.deleteReplySuccess.type ||
           action.type === CourseActions.postReplySuccess.type ||
           action.type === CourseActions.deleteAnnotationSuccess.type ||
@@ -106,6 +112,9 @@ export class CourseEffects {
           action.type === AnnotationActions.postAnnotationSuccess.type ||
           action.type === AnnotationActions.postReplySuccess.type ||
           action.type === AnnotationActions.deleteAnnotationSuccess.type ||
+          action.type === AnnotationActions.editAnnotationSuccess.type ||
+          action.type === AnnotationActions.editReplySuccess.type ||
+          action.type === AnnotationActions.editReplyFail.type ||
           action.type === AnnotationActions.deleteReplySuccess.type ||
           action.type === CourseActions.postReplySuccess.type ||
           action.type === CourseActions.deleteAnnotationSuccess.type ||
@@ -510,7 +519,6 @@ export class CourseEffects {
     );
   });
   followAnnotation$ = createEffect(() => {
-    
     return this.actions$.pipe(
       ofType(CourseActions.followAnnotation),
 
