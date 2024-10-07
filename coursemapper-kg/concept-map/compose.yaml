@@ -1,69 +1,47 @@
+x-common-env: &common-env
+  NEO4J_URI: bolt://neo4j:7687
+  NEO4J_USER: neo4j
+  NEO4J_PASSWORD: password
+  REDIS_HOST: redis
+  REDIS_PORT: 6379
+  REDIS_DB: 0
+  REDIS_PASSWORD: 
+  WIKIPEDIA_DATABASE_CONNECTION_STRING: "postgres://postgres:password@wp-pg:5432/"
+  WIKIPEDIA_FALLBACK: false
+
+x-common-dependencies: &common-dependencies
+  neo4j:
+    condition: service_healthy
+  redis:
+    condition: service_healthy
+  coursemapper-kg-wp-pg:
+    condition: service_healthy
+
 services:
-  coursemapper-kg-worker-concept-map:
+  coursemapper-kg-concept-map-concept-map:
     platform: linux/x86_64
     image: ${IMAGE_NAME_PREFIX:-socialcomputing/}coursemapper-webserver-coursemapper-kg-concept-map:${IMAGE_TAG:-latest}
     build: .
     environment:
-      NEO4J_URI: bolt://neo4j:7687
-      NEO4J_USER: neo4j
-      NEO4J_PASSWORD: password
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-      REDIS_DB: 0
-      REDIS_PASSWORD: 
+      <<: *common-env
       PIPELINES: concept-map
-      WIKIPEDIA_DATABASE_CONNECTION_STRING: "postgres://postgres:password@wp-pg:5432/"
-      WIKIPEDIA_FALLBACK: false
     depends_on:
-      neo4j:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-      wp-pg:
-        condition: service_healthy
+      <<: *common-dependencies
 
-  coursemapper-kg-worker-modify-graph:
+  coursemapper-kg-concept-map-modify-graph:
     platform: linux/x86_64
-    image: ${IMAGE_NAME_PREFIX:-socialcomputing/}coursemapper-webserver-coursemapper-kg-modify-graph:${IMAGE_TAG:-latest}
-    build: .
+    image: ${IMAGE_NAME_PREFIX:-socialcomputing/}coursemapper-webserver-coursemapper-kg-concept-map:${IMAGE_TAG:-latest}
     environment:
-      NEO4J_URI: bolt://neo4j:7687
-      NEO4J_USER: neo4j
-      NEO4J_PASSWORD: password
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-      REDIS_DB: 0
-      REDIS_PASSWORD: 
+      <<: *common-env
       PIPELINES: modify-graph
-      WIKIPEDIA_DATABASE_CONNECTION_STRING: "postgres://postgres:password@wp-pg:5432/"
-      WIKIPEDIA_FALLBACK: false
     depends_on:
-      neo4j:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-      wp-pg:
-        condition: service_healthy
+      <<: *common-dependencies
 
-  coursemapper-kg-worker-expand-material:
+  coursemapper-kg-concept-map-expand-material:
     platform: linux/x86_64
-    image: ${IMAGE_NAME_PREFIX:-socialcomputing/}coursemapper-webserver-coursemapper-kg-expand-material:${IMAGE_TAG:-latest}
-    build: .
+    image: ${IMAGE_NAME_PREFIX:-socialcomputing/}coursemapper-webserver-coursemapper-kg-concept-map:${IMAGE_TAG:-latest}
     environment:
-      NEO4J_URI: bolt://neo4j:7687
-      NEO4J_USER: neo4j
-      NEO4J_PASSWORD: password
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-      REDIS_DB: 0
-      REDIS_PASSWORD: 
+      <<: *common-env
       PIPELINES: expand-material
-      WIKIPEDIA_DATABASE_CONNECTION_STRING: "postgres://postgres:password@wp-pg:5432/"
-      WIKIPEDIA_FALLBACK: false
     depends_on:
-      neo4j:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-      wp-pg:
-        condition: service_healthy
+      <<: *common-dependencies
