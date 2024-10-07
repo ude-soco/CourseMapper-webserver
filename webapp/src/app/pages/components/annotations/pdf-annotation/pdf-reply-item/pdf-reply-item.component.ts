@@ -205,7 +205,7 @@ export class PdfReplyItemComponent
         this.onDeleteReply(),
         this.messageService.add({
           key: 'annotation-toast',
-          severity: 'info',
+          severity: 'success',
           summary: 'Success',
           detail: 'Reply successfully deleted',
         })
