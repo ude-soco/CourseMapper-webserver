@@ -432,7 +432,7 @@ export class PdfCommentItemComponent
         ),
         this.messageService.add({
           key: 'annotation-toast',
-          severity: 'info',
+          severity: 'success',
           summary: 'Success',
           detail: 'Annotation successfully deleted!',
         })
