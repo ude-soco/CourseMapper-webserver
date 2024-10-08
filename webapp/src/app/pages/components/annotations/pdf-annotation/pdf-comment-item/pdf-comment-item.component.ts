@@ -537,11 +537,12 @@ export class PdfCommentItemComponent
     let lastUrlEnd = -1;
     if (text.length <= limit) {
         
-      return text.replace(linkRegex, '<a target="_blank" class="text-blue-500">$&</a>');
+      return text.replace(linkRegex, '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="$1" target="_blank">$1</a>');
     }
     while ((match = linkRegex.exec(text)) !== null) {
       // If the URL ends after the truncation limit
       if (match.index <= limit && match.index + match[0].length > limit) {
+      console.log("match.index", match.index, )  
        
         lastUrlEnd = match.index + match[0].length;
         break;
@@ -554,8 +555,8 @@ export class PdfCommentItemComponent
   
     if (!truncated) {
   
-
-      return text.replace(linkRegex, '<a  target="_blank" class="text-blue-500">$&</a>');
+console.log("now here")
+      return text.replace(linkRegex, '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="$1" target="_blank">$1</a>');
     }
   
     const linkedText = truncatedText.replace(linkRegex, '<a  target="_blank" class="text-blue-500">$&</a>') +
