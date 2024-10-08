@@ -449,7 +449,7 @@ export class TagCommentItemComponent {
         ),
         this.messageService.add({
           key: 'annotation-toast',
-          severity: 'info',
+          severity: 'Success',
           summary: 'Success',
           detail: 'Annotation successfully deleted!',
         })

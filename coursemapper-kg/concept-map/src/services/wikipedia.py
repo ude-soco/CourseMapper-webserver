@@ -25,6 +25,7 @@ class WikipediaService:
         self._wiki = wikipediaapi.Wikipedia(Config.WIKIPEDIA_USER_AGENT, 'en')
         self._use_stored_embeddings = Config.WIKIPEDIA_USE_STORED_EMBEDDINGS
         self._conn = None
+        self.wikipedia_fallback = Config.WIKIPEDIA_FALLBACK
 
     def __del__(self):
         if self._conn is not None and not self._conn.closed:
@@ -53,7 +54,7 @@ class WikipediaService:
                     category_rows = cur.execute('SELECT * FROM page_categories WHERE page_title = %s', (rows[0]['title'],)).fetchall()
                     return WikipediaPage(rows[0]['title'], rows[0]['abstract'], [row['category_name'] for row in category_rows], rows[0]['links'])
 
-        if not Config.WIKIPEDIA_FALLBACK:
+        if not self.wikipedia_fallback:
             return None
 
         # Check if page exists in Wikipedia
