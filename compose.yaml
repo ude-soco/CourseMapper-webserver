@@ -1,6 +1,40 @@
 name: coursemapper-webserver
+
 include:
 - ./coursemapper-kg/compose.yaml
 - ./proxy/compose.yaml
 - ./webapp/compose.yaml
 - ./webserver/compose.yaml
+
+services:
+  mongodb:
+    image: mongo:6.0
+    command: mongod --wiredTigerCacheSizeGB 0.25 --quiet --logpath /dev/null
+    volumes:
+    - mongo:/data/db
+    healthcheck:
+      test: "mongosh --nodb --eval 'disableTelemetry()'; echo 'db.runCommand({ping: 1}).ok' | mongosh localhost:27017/test --quiet"
+      start_period: 2s
+      interval: 10s
+
+  redis:
+    image: redis:7.2.4
+    healthcheck:
+      test: "redis-cli ping"
+      start_period: 2s
+      interval: 10s
+    restart: always
+
+  neo4j:
+    image: neo4j:5.12.0
+    environment:
+      NEO4J_AUTH: neo4j/password
+    volumes :
+    - neo4j-data:/data
+    healthcheck:
+      test: wget http://localhost:7474 || exit 1
+    restart: always
+
+volumes:
+  mongo:
+  neo4j-data:
