@@ -1,5 +1,5 @@
 services:
-  mongo:
+  webserver-mongodb:
     image: mongo:6.0
     command: mongod --wiredTigerCacheSizeGB 0.25 --quiet --logpath /dev/null
     volumes:
@@ -9,7 +9,7 @@ services:
       start_period: 2s
       interval: 10s
 
-  redis:
+  webserver-redis:
     image: redis:7.2.4
     healthcheck:
       test: "redis-cli ping"
@@ -17,7 +17,7 @@ services:
       interval: 10s
     restart: always
 
-  neo4j:
+  webserver-neo4j:
     image: neo4j:5.12.0
     environment:
       NEO4J_AUTH: neo4j/password
@@ -27,7 +27,7 @@ services:
       test: wget http://localhost:7474 || exit 1
     restart: always
 
-  webserver:
+  webserver-web:
     image: ${IMAGE_NAME_PREFIX:-socialcomputing/}coursemapper-webserver-webserver:${IMAGE_TAG:-latest}
     build: .
     environment:
@@ -49,11 +49,11 @@ services:
     - webserver-uploads-pdfs:/app/public/uploads/pdfs
     - webserver-uploads-videos:/app/public/uploads/videos
     depends_on:
-      mongo:
+      webserver-mongodb:
         condition: service_healthy
-      redis:
+      webserver-redis:
         condition: service_healthy
-      neo4j:
+      webserver-neo4j:
         condition: service_healthy
 
 volumes:
