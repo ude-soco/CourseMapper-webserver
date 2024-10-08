@@ -11,6 +11,9 @@ services:
       interval: 10s
       retries: 100000
     restart: always
+    depends_on:
+      wp-pg-init:
+        condition: service_completed_successfully
 
   wp-pg-init:
     image: ${IMAGE_NAME_PREFIX:-socialcomputing/}coursemapper-webserver-coursemapper-kg-wp-pg-init:${IMAGE_TAG:-latest}
@@ -18,13 +21,11 @@ services:
     environment:
       POSTGRES_PASSWORD: password
       INIT_PATH: coursemapper-read:coursemapper-data/init.sql.gz
-      ACCESS_KEY_ID: ACCESS_KEY_ID
-      SECRET_ACCESS_KEY: SECRET_ACCESS_KEY
+      ACCESS_KEY_ID: ${ACCESS_KEY_ID}
+      SECRET_ACCESS_KEY: ${SECRET_ACCESS_KEY}
     volumes:
       - coursemapper-kg-wp-pg:/var/lib/postgresql/data
       - coursemapper-kg-wp-pg-meta:/var/lib/postgresql/meta
-    profiles:
-      - init
 
 volumes:
   coursemapper-kg-wp-pg:
