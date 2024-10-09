@@ -1170,7 +1170,7 @@ export class TopicDropdownComponent implements OnInit {
    */
   showInfo(msg) {
     this.messageService.add({
-      severity: 'Success',
+      severity: 'success',
       summary: 'Success',
       detail: msg,
     });
