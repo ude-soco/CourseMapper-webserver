@@ -524,41 +524,109 @@ export class PdfCommentItemComponent
   }
 
   linkifyText(text: string): string {
+    if (!text) {
+      return '';
+    }
     let limit = 180
     const linkRegex =
       /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
 
     const hashtagRegex = /(\s|^)(#[a-z\d-]+)/gi;
     const newlineRegex = /(\r\n|\n|\r)/gm;
-    // const urlRegex = /https?:\/\/[^\s]+/g;
 
-    // Find all URLs in the text
-    let match;
+    // Match URL regex
+let linkMatch = null;
+// Match hashtag regex
+let hashtagMatch = null;
+// Initialize an index for @mentionedUser.name matches
+let mentionMatchIndex = -1;
     let lastUrlEnd = -1;
+    let linkedHtml
+    // If the text is shorter than the limit, return the text 
     if (text.length <= limit) {
-        
-      return text.replace(linkRegex, '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="$1" target="_blank">$1</a>');
+      
+
+       linkedHtml = text
+       .replace(
+         linkRegex,
+         '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="$1" target="_blank">$1</a>'
+       )
+       .replace(hashtagRegex, (match, before, hashtag) => {
+         
+         const tagLink = `/course/${
+           this.annotation?.courseId
+         }/tag/${encodeURIComponent(hashtag)}`;
+         const tagHtml = `<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="${tagLink}" onClick="handleTagClick(event, '${hashtag}')"><strong>${hashtag}</strong></a>`;
+         return `${before}${tagHtml}`;
+       })
+       .replace(newlineRegex, '<br>');
+ 
+     let mentionedUsers = this.annotation.mentionedUsers;
+     if (mentionedUsers) {
+       mentionedUsers.forEach((mentionedUser) => {
+         //check if the name of the mentioned user is in the linkedHtml, if so, make the name blue
+         if (linkedHtml.includes(`@${mentionedUser.name}`)) {
+           const userHtml = `<span class="cursor-auto font-medium text-blue-500 dark:text-blue-500  break-all" ><strong>${mentionedUser.name}</strong></span>`;
+           linkedHtml = linkedHtml.replace(`@${mentionedUser.name}`, userHtml);
+         }
+       });
+     }
+       return linkedHtml;
+
     }
-    while ((match = linkRegex.exec(text)) !== null) {
+    while ((linkMatch = linkRegex.exec(text)) !== null || 
+    (hashtagMatch = hashtagRegex.exec(text)) !== null ) {
       // If the URL ends after the truncation limit
-      if (match.index <= limit && match.index + match[0].length > limit) {
-      console.log("match.index", match.index, )  
-       
-        lastUrlEnd = match.index + match[0].length;
-        break;
-      }
+  // Handle link regex match
+  if (linkMatch && linkMatch.index <= limit && linkMatch.index + linkMatch[0].length > limit) {
+    console.log("linkMatch.index", linkMatch.index);
+    lastUrlEnd = linkMatch.index + linkMatch[0].length;
+    break;
+  }
+
+  // Handle hashtag regex match
+  if (hashtagMatch && hashtagMatch.index <= limit && hashtagMatch.index + hashtagMatch[0].length > limit) {
+    console.log("hashtagMatch.index", hashtagMatch.index);
+    lastUrlEnd = hashtagMatch.index + hashtagMatch[0].length;
+    break;
+  }
     }
+    // calculate the new truncation point
     const truncationPoint = lastUrlEnd > limit ? lastUrlEnd : limit;
     const truncatedText = text.substring(0, truncationPoint);
     const remainingText = text.substring(truncationPoint);
     const truncated = text.length > truncationPoint;
-  
+  //  if text length is more than the new truncation point with url , return the text
     if (!truncated) {
-  
-console.log("now here")
-      return text.replace(linkRegex, '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="$1" target="_blank">$1</a>');
+
+       linkedHtml = text
+       .replace(
+         linkRegex,
+         '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="$1" target="_blank">$1</a>'
+       )
+       .replace(hashtagRegex, (match, before, hashtag) => {
+         
+         const tagLink = `/course/${
+           this.annotation?.courseId
+         }/tag/${encodeURIComponent(hashtag)}`;
+         const tagHtml = `<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="${tagLink}" onClick="handleTagClick(event, '${hashtag}')"><strong>${hashtag}</strong></a>`;
+         return `${before}${tagHtml}`;
+       })
+       .replace(newlineRegex, '<br>');
+ 
+     let mentionedUsers = this.annotation.mentionedUsers;
+     if (mentionedUsers) {
+       mentionedUsers.forEach((mentionedUser) => {
+         //check if the name of the mentioned user is in the linkedHtml, if so, make the name blue
+         if (linkedHtml.includes(`@${mentionedUser.name}`)) {
+           const userHtml = `<span class="cursor-auto font-medium text-blue-500 dark:text-blue-500  break-all" ><strong>${mentionedUser.name}</strong></span>`;
+           linkedHtml = linkedHtml.replace(`@${mentionedUser.name}`, userHtml);
+         }
+       });
+     }
+       return linkedHtml;
     }
-  
+  // If no URL ends after the truncation limit, use the new truncation point
     const linkedText = truncatedText.replace(linkRegex, '<a  target="_blank" class="text-blue-500">$&</a>') +
       '<span class="ml-1 clickable-text show-more cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline">...show more</span>' +
       '<span class="hidden break-all">' +
@@ -566,13 +634,14 @@ console.log("now here")
       '</span>' +
       '<span class="ml-1 cursor-pointer text-blue-500 dark:text-blue-500 hover:underline clickable-text show-less hidden">show less</span>';
 
-
-    let linkedHtml = linkedText
+console.log("linkedText", linkedText)
+     linkedHtml = linkedText
       .replace(
         linkRegex,
         '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="$1" target="_blank">$1</a>'
       )
       .replace(hashtagRegex, (match, before, hashtag) => {
+        
         const tagLink = `/course/${
           this.annotation?.courseId
         }/tag/${encodeURIComponent(hashtag)}`;

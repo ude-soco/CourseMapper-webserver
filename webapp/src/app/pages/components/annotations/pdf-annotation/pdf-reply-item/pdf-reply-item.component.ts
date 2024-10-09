@@ -273,50 +273,131 @@ export class PdfReplyItemComponent
     }, 0);
   }
 
+
   linkifyText(text: string): string {
-    if (text) {
-      const linkRegex =
-        /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
-      const hashtagRegex = /(^|\s)(#[a-z\d-]+)/gi;
-      const newlineRegex = /(\r\n|\n|\r)/gm;
-      const truncatedText = text?.substring(0, 180);
-      const truncated = text?.length > 180;
-      const linkedText = truncated
-        ? truncatedText +
-          '<span class=" ml-1 clickable-text show-more cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline">...show more</span>' +
-          '<span class="hidden break-all">' +
-          text.substring(180) +
-          '</span>' +
-          '<span class="ml-1 cursor-pointer text-blue-500 dark:text-blue-500 hover:underline clickable-text show-less hidden">show less</span>'
-        : text;
+    if (!text) {
+      return '';
+    }
+    let limit = 180
+    const linkRegex =
+      /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
 
-      let linkedHtml = linkedText
-        .replace(
-          linkRegex,
-          '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="$1" target="_blank">$1</a>'
-        )
-        .replace(hashtagRegex, (match, before, hashtag) => {
-          const tagLink = `/course/${
-            this.reply?.courseId
-          }/tag/${encodeURIComponent(hashtag)}`;
-          const tagHtml = `<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="${tagLink}" onClick="handleTagClick(event, '${hashtag}')"><strong>${hashtag}</strong></a>`;
-          return `${before}${tagHtml}`;
-        })
-        .replace(newlineRegex, '<br>');
+    const hashtagRegex = /(\s|^)(#[a-z\d-]+)/gi;
+    const newlineRegex = /(\r\n|\n|\r)/gm;
 
-      let mentionedUsers = this.reply?.mentionedUsers;
-      if (mentionedUsers) {
-        mentionedUsers.forEach((mentionedUser) => {
-          //check if the name of the mentioned user is in the linkedHtml, if so, make the name blue
-          if (linkedHtml.includes(`@${mentionedUser.name}`)) {
-            const userHtml = `<span class="cursor-auto font-medium text-blue-500 dark:text-blue-500  break-all" ><strong>${mentionedUser.name}</strong></span>`;
-            linkedHtml = linkedHtml.replace(`@${mentionedUser.name}`, userHtml);
-          }
-        });
+    let match;
+    let lastUrlEnd = -1;
+    let linkedHtml
+    // If the text is shorter than the limit, return the text 
+    if (text.length <= limit) {
+      
+
+       linkedHtml = text
+       .replace(
+         linkRegex,
+         '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="$1" target="_blank">$1</a>'
+       )
+       .replace(hashtagRegex, (match, before, hashtag) => {
+         
+         const tagLink = `/course/${
+           this.reply?.courseId
+         }/tag/${encodeURIComponent(hashtag)}`;
+         const tagHtml = `<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="${tagLink}" onClick="handleTagClick(event, '${hashtag}')"><strong>${hashtag}</strong></a>`;
+         return `${before}${tagHtml}`;
+       })
+       .replace(newlineRegex, '<br>');
+ 
+     let mentionedUsers = this.reply.mentionedUsers;
+     if (mentionedUsers) {
+       mentionedUsers.forEach((mentionedUser) => {
+         //check if the name of the mentioned user is in the linkedHtml, if so, make the name blue
+         if (linkedHtml.includes(`@${mentionedUser.name}`)) {
+           const userHtml = `<span class="cursor-auto font-medium text-blue-500 dark:text-blue-500  break-all" ><strong>${mentionedUser.name}</strong></span>`;
+           linkedHtml = linkedHtml.replace(`@${mentionedUser.name}`, userHtml);
+         }
+       });
+     }
+       return linkedHtml;
+
+    }
+    while ((match = linkRegex.exec(text)) !== null) {
+      // If the URL ends after the truncation limit
+      if (match.index <= limit && match.index + match[0].length > limit) {
+      console.log("match.index", match.index, )  
+       
+        lastUrlEnd = match.index + match[0].length;
+        break;
       }
+    }
+    // calculate the new truncation point
+    const truncationPoint = lastUrlEnd > limit ? lastUrlEnd : limit;
+    const truncatedText = text.substring(0, truncationPoint);
+    const remainingText = text.substring(truncationPoint);
+    const truncated = text.length > truncationPoint;
+  //  if text length is more than the new truncation point with url , return the text
+    if (!truncated) {
 
+       linkedHtml = text
+       .replace(
+         linkRegex,
+         '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="$1" target="_blank">$1</a>'
+       )
+       .replace(hashtagRegex, (match, before, hashtag) => {
+         
+         const tagLink = `/course/${
+           this.reply?.courseId
+         }/tag/${encodeURIComponent(hashtag)}`;
+         const tagHtml = `<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="${tagLink}" onClick="handleTagClick(event, '${hashtag}')"><strong>${hashtag}</strong></a>`;
+         return `${before}${tagHtml}`;
+       })
+       .replace(newlineRegex, '<br>');
+ 
+     let mentionedUsers = this.reply.mentionedUsers;
+     if (mentionedUsers) {
+       mentionedUsers.forEach((mentionedUser) => {
+         //check if the name of the mentioned user is in the linkedHtml, if so, make the name blue
+         if (linkedHtml.includes(`@${mentionedUser.name}`)) {
+           const userHtml = `<span class="cursor-auto font-medium text-blue-500 dark:text-blue-500  break-all" ><strong>${mentionedUser.name}</strong></span>`;
+           linkedHtml = linkedHtml.replace(`@${mentionedUser.name}`, userHtml);
+         }
+       });
+     }
+       return linkedHtml;
+    }
+  // If no URL ends after the truncation limit, use the new truncation point
+    const linkedText = truncatedText.replace(linkRegex, '<a  target="_blank" class="text-blue-500">$&</a>') +
+      '<span class="ml-1 clickable-text show-more cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline">...show more</span>' +
+      '<span class="hidden break-all">' +
+      remainingText.replace(linkRegex, '<a  target="_blank" class="text-blue-500">$&</a>') +
+      '</span>' +
+      '<span class="ml-1 cursor-pointer text-blue-500 dark:text-blue-500 hover:underline clickable-text show-less hidden">show less</span>';
+
+console.log("linkedText", linkedText)
+     linkedHtml = linkedText
+      .replace(
+        linkRegex,
+        '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="$1" target="_blank">$1</a>'
+      )
+      .replace(hashtagRegex, (match, before, hashtag) => {
+        
+        const tagLink = `/course/${
+          this.reply?.courseId
+        }/tag/${encodeURIComponent(hashtag)}`;
+        const tagHtml = `<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="${tagLink}" onClick="handleTagClick(event, '${hashtag}')"><strong>${hashtag}</strong></a>`;
+        return `${before}${tagHtml}`;
+      })
+      .replace(newlineRegex, '<br>');
+
+    let mentionedUsers = this.reply.mentionedUsers;
+    if (mentionedUsers) {
+      mentionedUsers.forEach((mentionedUser) => {
+        //check if the name of the mentioned user is in the linkedHtml, if so, make the name blue
+        if (linkedHtml.includes(`@${mentionedUser.name}`)) {
+          const userHtml = `<span class="cursor-auto font-medium text-blue-500 dark:text-blue-500  break-all" ><strong>${mentionedUser.name}</strong></span>`;
+          linkedHtml = linkedHtml.replace(`@${mentionedUser.name}`, userHtml);
+        }
+      });
+    }
       return linkedHtml;
     }
-    return '';
-  }
 }
