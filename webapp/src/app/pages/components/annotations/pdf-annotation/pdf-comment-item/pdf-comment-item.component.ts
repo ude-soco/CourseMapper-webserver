@@ -579,14 +579,14 @@ let mentionMatchIndex = -1;
       // If the URL ends after the truncation limit
   // Handle link regex match
   if (linkMatch && linkMatch.index <= limit && linkMatch.index + linkMatch[0].length > limit) {
-    console.log("linkMatch.index", linkMatch.index);
+   
     lastUrlEnd = linkMatch.index + linkMatch[0].length;
     break;
   }
 
   // Handle hashtag regex match
   if (hashtagMatch && hashtagMatch.index <= limit && hashtagMatch.index + hashtagMatch[0].length > limit) {
-    console.log("hashtagMatch.index", hashtagMatch.index);
+    
     lastUrlEnd = hashtagMatch.index + hashtagMatch[0].length;
     break;
   }
@@ -634,7 +634,7 @@ let mentionMatchIndex = -1;
       '</span>' +
       '<span class="ml-1 cursor-pointer text-blue-500 dark:text-blue-500 hover:underline clickable-text show-less hidden">show less</span>';
 
-console.log("linkedText", linkedText)
+
      linkedHtml = linkedText
       .replace(
         linkRegex,

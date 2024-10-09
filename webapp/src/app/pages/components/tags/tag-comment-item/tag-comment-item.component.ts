@@ -70,15 +70,15 @@ export class TagCommentItemComponent {
   onUserInput: BehaviorSubject<string> = new BehaviorSubject<string>('');
   onUserInput$ = this.onUserInput.asObservable();
   filteredUsernamesFromAnnotationAndRepliesAuthors$: Observable<
-    { name: string; email: string; userId: string }[]
+    { name: string; username: string; userId: string }[]
   >;
   filteredEnrolledUsernames$: Observable<
-    { name: string; email: string; userId: string }[]
+    { name: string; username: string; userId: string }[]
   >;
   filteredUserNames$: Observable<
-    { name: string; email: string; userId: string }[]
+    { name: string; username: string; userId: string }[]
   >;
-  mentionedUsers: { name: string; email: string; userId: string }[] = [];
+  mentionedUsers: { name: string; username: string; userId: string }[] = [];
   courseId: string;
 
   constructor(
@@ -188,6 +188,7 @@ export class TagCommentItemComponent {
         /*     if (input.replace(/<\/?[^>]+(>|$)/g, '') == '') {
           return [];
         } */
+       
         return this.notificationService.getUserNames({
           partialString: input,
           courseId: this.courseId,

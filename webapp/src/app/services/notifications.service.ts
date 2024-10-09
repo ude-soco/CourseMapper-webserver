@@ -479,7 +479,7 @@ export class NotificationsService {
     courseId: string;
   }) {
     return this.httpClient.get<
-      { name: string; email: string; userId: string }[]
+      { name: string; username: string; userId: string }[]
     >(
       `${environment.API_URL}/notifications/searchUsers?partialString=${partialString}&courseId=${courseId}`
     );

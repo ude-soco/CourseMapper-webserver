@@ -13,7 +13,7 @@ export const postAnnotation = createAction(
   '[Annotation] Post Annotation Action',
   props<{
     annotation: Annotation;
-    mentionedUsers: { userId: string; name: string; email: string }[];
+    mentionedUsers: { userId: string; name: string; username: string }[];
   }>()
 );
 
@@ -129,7 +129,7 @@ export const postReply = createAction(
   props<{
     annotation: Annotation;
     reply: Reply;
-    mentionedUsers: { userId: string; name: string; email: string }[];
+    mentionedUsers: { userId: string; name: string; username: string }[];
   }>()
 );
 
