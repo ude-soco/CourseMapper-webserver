@@ -938,7 +938,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
    */
   showInfo(msg) {
     this.messageService.add({
-      severity: 'info',
+      severity: 'success',
       summary: 'Success',
       detail: msg,
     });

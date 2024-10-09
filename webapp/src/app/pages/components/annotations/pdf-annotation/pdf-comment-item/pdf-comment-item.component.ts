@@ -432,7 +432,7 @@ export class PdfCommentItemComponent
         ),
         this.messageService.add({
           key: 'annotation-toast',
-          severity: 'info',
+          severity: 'success',
           summary: 'Success',
           detail: 'Annotation successfully deleted!',
         })
@@ -468,7 +468,11 @@ export class PdfCommentItemComponent
     );
     this.isEditing = false;
   }
-
+  adjustTextarea(event: any): void {
+    const textarea = event.target;
+    textarea.style.height = 'auto';  // Reset the height to auto
+    textarea.style.height = textarea.scrollHeight + 'px';  // Set the height to fit the content
+  }
   cancelEditing() {
     this.confirmationService.confirm({
       message: `Are you sure you want to discard this draft`,
@@ -523,19 +527,23 @@ export class PdfCommentItemComponent
     let limit = 180
     const linkRegex =
       /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
+
     const hashtagRegex = /(\s|^)(#[a-z\d-]+)/gi;
     const newlineRegex = /(\r\n|\n|\r)/gm;
-    const urlRegex = /https?:\/\/[^\s]+/g;
+    // const urlRegex = /https?:\/\/[^\s]+/g;
 
     // Find all URLs in the text
     let match;
     let lastUrlEnd = -1;
     if (text.length <= limit) {
-      return text.replace(urlRegex, '<a href="$&" target="_blank" class="text-blue-500">$&</a>');
+        
+      return text.replace(linkRegex, '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="$1" target="_blank">$1</a>');
     }
-    while ((match = urlRegex.exec(text)) !== null) {
+    while ((match = linkRegex.exec(text)) !== null) {
       // If the URL ends after the truncation limit
       if (match.index <= limit && match.index + match[0].length > limit) {
+      console.log("match.index", match.index, )  
+       
         lastUrlEnd = match.index + match[0].length;
         break;
       }
@@ -546,15 +554,18 @@ export class PdfCommentItemComponent
     const truncated = text.length > truncationPoint;
   
     if (!truncated) {
-      return text.replace(urlRegex, '<a href="$&" target="_blank" class="text-blue-500">$&</a>');
+  
+console.log("now here")
+      return text.replace(linkRegex, '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="$1" target="_blank">$1</a>');
     }
   
-    const linkedText = truncatedText.replace(urlRegex, '<a href="$&" target="_blank" class="text-blue-500">$&</a>') +
+    const linkedText = truncatedText.replace(linkRegex, '<a  target="_blank" class="text-blue-500">$&</a>') +
       '<span class="ml-1 clickable-text show-more cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline">...show more</span>' +
       '<span class="hidden break-all">' +
-      remainingText.replace(urlRegex, '<a href="$&" target="_blank" class="text-blue-500">$&</a>') +
+      remainingText.replace(linkRegex, '<a  target="_blank" class="text-blue-500">$&</a>') +
       '</span>' +
       '<span class="ml-1 cursor-pointer text-blue-500 dark:text-blue-500 hover:underline clickable-text show-less hidden">show less</span>';
+
 
     let linkedHtml = linkedText
       .replace(

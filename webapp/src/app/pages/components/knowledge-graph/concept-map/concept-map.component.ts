@@ -1942,6 +1942,8 @@ export class ConceptMapComponent {
         conceptName: '',
         conceptSlides: '',
       });
+      this.editingConceptId = undefined;
+      this.editingConceptName = undefined;
     } catch (error) {
       console.error(error);
       this.messageService.add({
@@ -1952,8 +1954,6 @@ export class ConceptMapComponent {
       });
     } finally {
       this.conceptInputsDisabled = false;
-      this.editingConceptId = undefined;
-      this.editingConceptName = undefined;
     }
   }
 

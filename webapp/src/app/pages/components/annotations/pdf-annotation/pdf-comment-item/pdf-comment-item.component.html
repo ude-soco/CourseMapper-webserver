@@ -134,19 +134,27 @@
     </div>
     <div class="mb-0 mt-0">
       <p
-        style="font-family: Roboto"
+      style="font-family: Roboto; word-break: break-all; overflow-wrap: break-word;"
         *ngIf="!isEditing"
         class="text-lg"
         [innerHTML]="linkifyText(annotation?.content)"
       ></p>
       <div class="flex flex-row space-x-3 mx-7 my-3" *ngIf="isEditing">
-        <input
+        <!-- <input
           type="text"
           placeholder="Edit Annotation"
           [(ngModel)]="updatedAnnotation"
           class="p-inputtext-sm w-11/12 h-2/3"
           pInputText
-        />
+        /> -->
+        <textarea
+  placeholder="Edit Annotation"
+  [(ngModel)]="updatedAnnotation"
+  class="p-inputtext-sm w-11/12 h-auto"
+  rows="1"
+  pInputTextarea
+  (input)="adjustTextarea($event)">
+</textarea>
         <app-iconbutton
           icon="bxs-check-circle"
           color="text-slate-500"

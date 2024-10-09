@@ -9,6 +9,7 @@ class ModifyGraphPipeline:
         self._graph_db = GraphDB(Config.NEO4J_URI, Config.NEO4J_USER, Config.NEO4J_PASSWORD)
         self._embedding_service = EmbeddingService(Config.EMBEDDING_MODEL)
         self._wikipedia_service = WikipediaService()
+        self._wikipedia_service.wikipedia_fallback = True
 
     def remove_concept(self, material_id: str, concept_id: str):
         self._graph_db.remove_node(material_id, concept_id)
@@ -19,7 +20,6 @@ class ModifyGraphPipeline:
     def add_concept(self, material_id: str, concept_name: str, slides: list[int] | None):
         # Check if the concept already exists
         existing_concept = self._graph_db.get_concept_by_name(material_id, concept_name)
-        print(existing_concept)
         if existing_concept is not None:
             raise ValueError(f'Concept "{concept_name}" already exists in the graph')
 
