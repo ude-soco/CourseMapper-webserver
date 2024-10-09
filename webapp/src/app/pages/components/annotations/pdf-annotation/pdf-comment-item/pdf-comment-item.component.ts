@@ -171,7 +171,7 @@ export class PdfCommentItemComponent
       .subscribe(() => {
         this.scrollToAnnotationIfPresent();
       });
-  
+
   }
   scrollToAnnotationIfPresent() {
     const url = window.location.href;
@@ -591,8 +591,9 @@ console.log("now here")
         }
       });
     }
-
-    return linkedHtml;
+      return linkedHtml;
+    }
+    return '';
   }
 
   onReplyContentChange($event) {

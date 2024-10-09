@@ -148,7 +148,10 @@ export const newReply = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: "Error saving annotation" });
   }
-  let foundTags = replyContent.split(" ").filter((v) => v.startsWith("#"));
+  let foundTags = replyContent
+                  .split(/\s+/) // Split on any whitespace (spaces, newlines, etc.)
+                  .filter((v) => /^#[A-Za-z0-9]+$/.test(v)); // Check if it matches the hashtag pattern
+
   let foundTagsSchema = [];
   if (foundTags.length !== 0) {
     foundTags.forEach((tag) => {
@@ -367,7 +370,10 @@ export const editReply = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: "Error deleting tags" });
   }
-  let foundTags = replyContent.split(" ").filter((v) => v.startsWith("#"));
+  let foundTags = replyContent
+                  .split(/\s+/) // Split on any whitespace (spaces, newlines, etc.)
+                  .filter((v) => /^#[A-Za-z0-9]+$/.test(v)); // Check if it matches the hashtag pattern
+                  
   let foundTagsSchema = [];
   if (foundTags.length !== 0) {
     foundTags.forEach((tag) => {
