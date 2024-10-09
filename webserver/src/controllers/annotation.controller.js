@@ -65,7 +65,7 @@ export const newAnnotation = async (req, res, next) => {
 
   let authorName = `${foundUser.firstname} ${foundUser.lastname}`;
   let foundCourse = foundUser.courses.find(
-    (course) => course.courseId.toString() == courseId
+    (course) => course.courseId.toString() == courseId,
   );
   let foundRole;
   try {
@@ -146,11 +146,14 @@ export const newAnnotation = async (req, res, next) => {
     isMentionedUsersPresent: mentionedUsers.length > 0,
     materialType: foundMaterial.type,
   };
-  socketio.getIO().to("course:"+courseId).emit(materialId, {
-    eventType: "annotationCreated",
-    annotation: newAnnotation,
-    reply: null,
-  });
+  socketio
+    .getIO()
+    .to("course:" + courseId)
+    .emit(materialId, {
+      eventType: "annotationCreated",
+      annotation: newAnnotation,
+      reply: null,
+    });
 
   return next();
 };
@@ -224,7 +227,7 @@ export const deleteAnnotation = async (req, res, next) => {
     return res.status(500).send({ error: "Error finding material" });
   }
   foundMaterial.annotations = foundMaterial.annotations.filter(
-    (annotation) => annotation.valueOf() !== annotationId
+    (annotation) => annotation.valueOf() !== annotationId,
   );
   try {
     await foundMaterial.save();
@@ -241,11 +244,14 @@ export const deleteAnnotation = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: "Error deleting tag" });
   }
-  socketio.getIO().to("course:"+courseId).emit(foundMaterial._id, {
-    eventType: "annotationDeleted",
-    annotation: foundAnnotation,
-    reply: null,
-  });
+  socketio
+    .getIO()
+    .to("course:" + courseId)
+    .emit(foundMaterial._id, {
+      eventType: "annotationDeleted",
+      annotation: foundAnnotation,
+      reply: null,
+    });
   req.locals = {
     response: {
       success: "Annotation successfully deleted",
@@ -385,11 +391,14 @@ export const editAnnotation = async (req, res, next) => {
   req.locals.course = courseForGeneratingNotifications;
   req.locals.annotationId = foundAnnotation._id;
   req.locals.isFollowingAnnotation = true;
-  socketio.getIO().to("course:"+courseId).emit(foundAnnotation.materialId, {
-    eventType: "annotationEdited",
-    annotation: foundAnnotation,
-    reply: null,
-  });
+  socketio
+    .getIO()
+    .to("course:" + courseId)
+    .emit(foundAnnotation.materialId, {
+      eventType: "annotationEdited",
+      annotation: foundAnnotation,
+      reply: null,
+    });
 
   return next();
 };
@@ -461,7 +470,7 @@ export const likeAnnotation = async (req, res, next) => {
 
   if (foundAnnotation.likes.includes(req.userId)) {
     foundAnnotation.likes = foundAnnotation.likes.filter(
-      (user) => user.valueOf() !== req.userId
+      (user) => user.valueOf() !== req.userId,
     );
     let savedAnnotation;
     try {
@@ -476,11 +485,14 @@ export const likeAnnotation = async (req, res, next) => {
       success: "Annotation successfully unliked!",
     };
     req.locals.like = false;
-    socketio.getIO().to("course:"+courseId).emit(annotationId, {
-      eventType: "annotationUnliked",
-      annotation: savedAnnotation,
-      reply: null,
-    });
+    socketio
+      .getIO()
+      .to("course:" + courseId)
+      .emit(annotationId, {
+        eventType: "annotationUnliked",
+        annotation: savedAnnotation,
+        reply: null,
+      });
     next();
   } else if (foundAnnotation.dislikes.includes(req.userId)) {
     return res
@@ -502,11 +514,14 @@ export const likeAnnotation = async (req, res, next) => {
     };
 
     req.locals.like = true;
-    socketio.getIO().to("course:"+courseId).emit(annotationId, {
-      eventType: "annotationLiked",
-      annotation: savedAnnotation,
-      reply: null,
-    });
+    socketio
+      .getIO()
+      .to("course:" + courseId)
+      .emit(annotationId, {
+        eventType: "annotationLiked",
+        annotation: savedAnnotation,
+        reply: null,
+      });
     next();
   }
 };
@@ -578,7 +593,7 @@ export const dislikeAnnotation = async (req, res, next) => {
 
   if (foundAnnotation.dislikes.includes(req.userId)) {
     foundAnnotation.dislikes = foundAnnotation.dislikes.filter(
-      (user) => user.valueOf() !== req.userId
+      (user) => user.valueOf() !== req.userId,
     );
     let savedAnnotation;
     try {
@@ -596,11 +611,14 @@ export const dislikeAnnotation = async (req, res, next) => {
     };
     req.locals.dislike = false;
 
-    socketio.getIO().to("course:"+courseId).emit(annotationId, {
-      eventType: "annotationUndisliked",
-      annotation: savedAnnotation,
-      reply: null,
-    });
+    socketio
+      .getIO()
+      .to("course:" + courseId)
+      .emit(annotationId, {
+        eventType: "annotationUndisliked",
+        annotation: savedAnnotation,
+        reply: null,
+      });
     return next();
   } else if (foundAnnotation.likes.includes(req.userId)) {
     return res
@@ -623,11 +641,14 @@ export const dislikeAnnotation = async (req, res, next) => {
       success: "Annotation successfully disliked!",
     };
     req.locals.dislike = true;
-    socketio.getIO().to("course:"+courseId).emit(annotationId, {
-      eventType: "annotationDisliked",
-      annotation: savedAnnotation,
-      reply: null,
-    });
+    socketio
+      .getIO()
+      .to("course:" + courseId)
+      .emit(annotationId, {
+        eventType: "annotationDisliked",
+        annotation: savedAnnotation,
+        reply: null,
+      });
     return next();
   }
 };
@@ -716,7 +737,7 @@ export const getAllAnnotations = async (req, res) => {
     return res.status(500).send({ error: "Error finding annotation" });
   }
   foundAnnotations.sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   );
   return res.status(200).send(foundAnnotations);
 };
@@ -764,7 +785,7 @@ export const getAllAnnotationsForSpecificTag = async (req, res) => {
     return res.status(500).send({ error: "Error finding annotation" });
   }
   foundAnnotations.sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   );
   return res.status(200).send(foundAnnotations);
 };

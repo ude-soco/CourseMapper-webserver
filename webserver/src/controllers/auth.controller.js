@@ -12,7 +12,7 @@ const User = db.user;
 const Role = db.role;
 
 /**
- * @function signup
+ * @function register
  * User registration controller
  *
  * @param {string} req.body.firstname The username
@@ -21,7 +21,7 @@ const Role = db.role;
  * @param {string} req.body.email The email
  * @param {string} req.body.password The new password
  */
-export const signup = async (req, res, next) => {
+export const register = async (req, res, next) => {
   let role;
   try {
     role = await Role.findOne({ name: "user" });
@@ -30,7 +30,7 @@ export const signup = async (req, res, next) => {
   }
 
   let generateMboxAndMboxSha1Sum = helpers.generateMboxAndMboxSha1Sum(
-    req.body.email
+    req.body.email,
   );
  
   let user = new User({
@@ -106,20 +106,20 @@ const mailTransporter = nodemailer.createTransport({
 });
 
 /**
- * @function signin
+ * @function signIn
  * User login controller
  *
  * @param {string} req.body.username The username
  * @param {string} req.body.password The new password
  */
-export const signin = async (req, res, next) => {
+export const signIn = async (req, res, next) => {
   let username = req.body.username;
   let password = req.body.password;
 
   try {
     let user = await User.findOne({ username: username }).populate(
       "role",
-      "-__v"
+      "-__v",
     );
     if (!user) {
       return res.status(404).send({ error: "User not found." });
@@ -192,11 +192,11 @@ export const signin = async (req, res, next) => {
 };
 
 /**
- * @function signout
+ * @function signOut
  * User logout controller
  *
  */
-export const signout = async (req, res, next) => {
+export const signOut = async (req, res, next) => {
   const userId = req.userId;
   try {
     let user = await User.findById(userId);

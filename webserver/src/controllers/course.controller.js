@@ -474,6 +474,60 @@ export const enrolCourse = async (req, res, next) => {
       .send({ error: `User already enrolled in course ${foundCourse.name}` });
   }
 };
+
+export const getCourseOriginal = async (req, res, next) => {
+  const courseId = req.params.courseId;
+  const userId = req.userId;
+  let foundUser;
+  try {
+    foundUser = await User.findById(userId);
+    if (!foundUser) {
+      return res.status(404).send({
+        error: `User not found!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding user" });
+  }
+  let foundCourse;
+  try {
+    foundCourse = await Course.findById(courseId)
+      .populate("topics", "-__v")
+      .populate({ path: "users", populate: { path: "role" } })
+      .populate({ path: "topics", populate: { path: "channels" } });
+    if (!foundCourse) {
+      return res.status(404).send({
+        error: `Course with id ${courseId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ message: "Error finding a course" });
+  }
+
+  let results = foundCourse.topics.map((topic) => {
+    let channels = topic.channels.map((channel) => {
+      return {
+        _id: channel._id,
+        name: channel.name,
+        topic_id: channel.topicId,
+        course_id: channel.courseId,
+      };
+    });
+    return {
+      _id: topic._id,
+      name: topic.name,
+      course_id: topic.courseId,
+      channels: channels,
+    };
+  });
+  req.locals = {
+    response: results,
+    course: foundCourse,
+    user: foundUser,
+  };
+  return next();
+};
+
 /**
  * @function withdrawCourse
  * Leave a course controller
