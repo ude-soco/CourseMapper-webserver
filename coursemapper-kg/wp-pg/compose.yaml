@@ -1,5 +1,5 @@
 services:
-  wp-pg:
+  coursemapper-kg-wp-pg:
     image: ${IMAGE_NAME_PREFIX:-socialcomputing/}coursemapper-webserver-coursemapper-kg-wp-pg:${IMAGE_TAG:-latest}
     build: .
     environment:

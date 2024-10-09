@@ -1,5 +1,5 @@
 services:
-  coursemapper-kg-worker-recommendation:
+  coursemapper-kg-recommendation:
     platform: linux/x86_64
     image: ${IMAGE_NAME_PREFIX:-socialcomputing/}coursemapper-webserver-coursemapper-kg-recommendation:${IMAGE_TAG:-latest}
     build: .
