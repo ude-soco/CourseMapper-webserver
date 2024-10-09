@@ -98,8 +98,13 @@ export const newAnnotation = async (req, res, next) => {
   try {
     newAnnotation = await annotation.save();
   } catch (err) {
-    res.status(500).send({ error: "Error saving annotation" });
+    // Append the error details to the response
+    res.status(500).send({
+      error: "newAnnotation function: Error saving annotation",
+      details: err.message || err, // Send the error message or the entire error object
+    });
   }
+  
   foundMaterial.annotations.push(newAnnotation._id);
   try {
     await foundMaterial.save();

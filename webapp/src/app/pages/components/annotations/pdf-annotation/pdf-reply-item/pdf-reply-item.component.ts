@@ -288,9 +288,9 @@ export class PdfReplyItemComponent
     let match;
     let lastUrlEnd = -1;
     let linkedHtml
-    // If the text is shorter than the limit, return the text 
+    // If the text is shorter than the limit, return the text
     if (text.length <= limit) {
-      
+
 
        linkedHtml = text
        .replace(
@@ -298,7 +298,7 @@ export class PdfReplyItemComponent
          '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="$1" target="_blank">$1</a>'
        )
        .replace(hashtagRegex, (match, before, hashtag) => {
-         
+
          const tagLink = `/course/${
            this.reply?.courseId
          }/tag/${encodeURIComponent(hashtag)}`;
@@ -306,7 +306,7 @@ export class PdfReplyItemComponent
          return `${before}${tagHtml}`;
        })
        .replace(newlineRegex, '<br>');
- 
+
      let mentionedUsers = this.reply.mentionedUsers;
      if (mentionedUsers) {
        mentionedUsers.forEach((mentionedUser) => {
@@ -323,8 +323,8 @@ export class PdfReplyItemComponent
     while ((match = linkRegex.exec(text)) !== null) {
       // If the URL ends after the truncation limit
       if (match.index <= limit && match.index + match[0].length > limit) {
-      console.log("match.index", match.index, )  
-       
+      console.log("match.index", match.index, )
+
         lastUrlEnd = match.index + match[0].length;
         break;
       }
@@ -343,7 +343,7 @@ export class PdfReplyItemComponent
          '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="$1" target="_blank">$1</a>'
        )
        .replace(hashtagRegex, (match, before, hashtag) => {
-         
+
          const tagLink = `/course/${
            this.reply?.courseId
          }/tag/${encodeURIComponent(hashtag)}`;
@@ -351,7 +351,7 @@ export class PdfReplyItemComponent
          return `${before}${tagHtml}`;
        })
        .replace(newlineRegex, '<br>');
- 
+
      let mentionedUsers = this.reply.mentionedUsers;
      if (mentionedUsers) {
        mentionedUsers.forEach((mentionedUser) => {
@@ -372,14 +372,13 @@ export class PdfReplyItemComponent
       '</span>' +
       '<span class="ml-1 cursor-pointer text-blue-500 dark:text-blue-500 hover:underline clickable-text show-less hidden">show less</span>';
 
-console.log("linkedText", linkedText)
      linkedHtml = linkedText
       .replace(
         linkRegex,
         '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="$1" target="_blank">$1</a>'
       )
       .replace(hashtagRegex, (match, before, hashtag) => {
-        
+
         const tagLink = `/course/${
           this.reply?.courseId
         }/tag/${encodeURIComponent(hashtag)}`;
