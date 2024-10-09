@@ -593,8 +593,7 @@ console.log("now here")
     }
       return linkedHtml;
     }
-    return '';
-  }
+  
 
   onReplyContentChange($event) {
     this.content = $event.target.value;
