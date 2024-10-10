@@ -162,10 +162,10 @@ export class PdfCommentItemComponent
     // });
    // const url = window.location.href;
 
-    // if (url.includes('#annotation')) {
-    //   const annotationId = url.match(/#annotation-(.+)/)[1];
-    //   this.scrollToAnnotationById(annotationId);
-    // }
+     if (this.router.url.includes('#annotation')) {
+       const annotationId = this.router.url.match(/#annotation-(.+)/)[1];
+       this.scrollToAnnotationById(annotationId);
+     }
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe(() => {
@@ -542,9 +542,9 @@ let hashtagMatch = null;
 let mentionMatchIndex = -1;
     let lastUrlEnd = -1;
     let linkedHtml
-    // If the text is shorter than the limit, return the text 
+    // If the text is shorter than the limit, return the text
     if (text.length <= limit) {
-      
+
 
        linkedHtml = text
        .replace(
@@ -552,7 +552,7 @@ let mentionMatchIndex = -1;
          '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="$1" target="_blank">$1</a>'
        )
        .replace(hashtagRegex, (match, before, hashtag) => {
-         
+
          const tagLink = `/course/${
            this.annotation?.courseId
          }/tag/${encodeURIComponent(hashtag)}`;
@@ -560,7 +560,7 @@ let mentionMatchIndex = -1;
          return `${before}${tagHtml}`;
        })
        .replace(newlineRegex, '<br>');
- 
+
      let mentionedUsers = this.annotation.mentionedUsers;
      if (mentionedUsers) {
        mentionedUsers.forEach((mentionedUser) => {
@@ -574,19 +574,19 @@ let mentionMatchIndex = -1;
        return linkedHtml;
 
     }
-    while ((linkMatch = linkRegex.exec(text)) !== null || 
+    while ((linkMatch = linkRegex.exec(text)) !== null ||
     (hashtagMatch = hashtagRegex.exec(text)) !== null ) {
       // If the URL ends after the truncation limit
   // Handle link regex match
   if (linkMatch && linkMatch.index <= limit && linkMatch.index + linkMatch[0].length > limit) {
-   
+
     lastUrlEnd = linkMatch.index + linkMatch[0].length;
     break;
   }
 
   // Handle hashtag regex match
   if (hashtagMatch && hashtagMatch.index <= limit && hashtagMatch.index + hashtagMatch[0].length > limit) {
-    
+
     lastUrlEnd = hashtagMatch.index + hashtagMatch[0].length;
     break;
   }
@@ -605,7 +605,7 @@ let mentionMatchIndex = -1;
          '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="$1" target="_blank">$1</a>'
        )
        .replace(hashtagRegex, (match, before, hashtag) => {
-         
+
          const tagLink = `/course/${
            this.annotation?.courseId
          }/tag/${encodeURIComponent(hashtag)}`;
@@ -613,7 +613,7 @@ let mentionMatchIndex = -1;
          return `${before}${tagHtml}`;
        })
        .replace(newlineRegex, '<br>');
- 
+
      let mentionedUsers = this.annotation.mentionedUsers;
      if (mentionedUsers) {
        mentionedUsers.forEach((mentionedUser) => {
@@ -641,7 +641,7 @@ let mentionMatchIndex = -1;
         '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="$1" target="_blank">$1</a>'
       )
       .replace(hashtagRegex, (match, before, hashtag) => {
-        
+
         const tagLink = `/course/${
           this.annotation?.courseId
         }/tag/${encodeURIComponent(hashtag)}`;
@@ -662,7 +662,7 @@ let mentionMatchIndex = -1;
     }
       return linkedHtml;
     }
-  
+
 
 
   onReplyContentChange($event) {
