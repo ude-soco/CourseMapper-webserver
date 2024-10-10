@@ -664,6 +664,7 @@ let mentionMatchIndex = -1;
     }
   
 
+
   onReplyContentChange($event) {
     this.content = $event.target.value;
     if (this.content.replace(/<\/?[^>]+(>|$)/g, '') == '') {
