@@ -187,7 +187,11 @@ export class PdfReplyItemComponent
     this.subscription.unsubscribe();
     this.socket.removeAllListeners(this.reply?._id);
   }
-
+  adjustTextarea(event: any): void {
+    const textarea = event.target;
+    textarea.style.height = 'auto';  // Reset the height to auto
+    textarea.style.height = textarea.scrollHeight + 'px';  // Set the height to fit the content
+  }
   likeReply() {
     this.store.dispatch(AnnotationActions.likeReply({ reply: this.reply }));
   }
