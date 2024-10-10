@@ -186,7 +186,7 @@ export const searchUsers = async (req, res, next) => {
     const users = await User.find({
       "courses.courseId": courseId,
       $or: [
-        { email: { $regex: searchQuery, $options: "i" } },
+        { username: { $regex: searchQuery, $options: "i" } },
         { firstname: { $regex: searchQuery, $options: "i" } },
         { lastname: { $regex: searchQuery, $options: "i" } },
       ],
@@ -197,10 +197,10 @@ export const searchUsers = async (req, res, next) => {
     }
     const suggestions = users.map((user) => ({
       name: user.firstname + " " + user.lastname,
-      email: user.email,
+      username: user.username,
       userId: user._id,
     }));
-
+console.log("suggestions", suggestions)
     res.json(suggestions);
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });

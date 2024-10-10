@@ -27,7 +27,7 @@ const Annotation = new Schema({
     {
       userId: { type: Schema.Types.ObjectId, ref: "user", required: true },
       name: { type: String, required: true },
-      email: { type: String, required: true },
+      username: { type: String, required: true },
     },
   ],
   createdAt: { type: Date },

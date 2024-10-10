@@ -19,19 +19,19 @@ import { getCurrentCourseId } from 'src/app/pages/courses/state/course.reducer';
   styleUrls: ['./mentions.component.css'],
 })
 export class MentionsComponent implements OnInit {
-  nameWithEmail$: Observable<{ name: string; email: string; userId: string }[]>;
+  nameWithEmail$: Observable<{ name: string; username: string; userId: string }[]>;
   onUserInput: BehaviorSubject<string> = new BehaviorSubject<string>('');
   onUserInput$ = this.onUserInput.asObservable();
   filteredUsernamesFromAnnotationAndRepliesAuthors$: Observable<
-    { name: string; email: string; userId: string }[]
+    { name: string; username: string; userId: string }[]
   >;
   filteredEnrolledUsernames$: Observable<
-    { name: string; email: string; userId: string }[]
+    { name: string; username: string; userId: string }[]
   >;
   filteredUserNames$: Observable<
-    { name: string; email: string; userId: string }[]
+    { name: string; username: string; userId: string }[]
   >;
-  mentionedUsers: { name: string; email: string; userId: string }[] = [];
+  mentionedUsers: { name: string; username: string; userId: string }[] = [];
   courseId: string;
   content: string = '';
 
@@ -55,7 +55,7 @@ export class MentionsComponent implements OnInit {
     ]).pipe(
       map(([nameWithEmails, onUserInput]) => {
         return nameWithEmails.filter((nameWithEmail) =>
-          (nameWithEmail.name + ' ' + nameWithEmail.email)
+          (nameWithEmail.name + ' ' + nameWithEmail.username)
             .toLowerCase()
             .includes(onUserInput.toLowerCase())
         );
@@ -70,7 +70,13 @@ export class MentionsComponent implements OnInit {
         return this.notificationService.getUserNames({
           partialString: input,
           courseId: this.courseId,
-        });
+        }).pipe(
+          map(users => users.map(user => ({
+            name: user.name,
+            username: user.username, // Assuming you want to map email to username
+            userId: user.userId
+          })))
+        );
       })
     );
 
@@ -79,32 +85,37 @@ export class MentionsComponent implements OnInit {
       this.filteredEnrolledUsernames$,
     ]).pipe(
       map(([frontend, backend]) => {
-        let namesWithEmails: Map<string, { name: string; email: string }> =
-          new Map<string, { name: string; email: string }>();
+        let namesWithEmails: Map<string, { name: string; username: string }> =
+          new Map<string, { name: string; username: string }>();
+         
         frontend.forEach((user) => {
+
           namesWithEmails.set(user.userId, {
             name: user.name,
-            email: user.email,
+            username: user.username,
           });
         });
         backend.forEach((user) => {
           namesWithEmails.set(user.userId, {
             name: user.name,
-            email: user.email,
+            username: user.username,
           });
+         
         });
-        let arr: { name: string; email: string; userId: string }[];
+        let arr: { name: string; username: string; userId: string }[];
 
         arr = Array.from(namesWithEmails, ([userId, userData]) => ({
           userId,
           ...userData,
         }));
+     
         return arr;
       })
     );
   }
 
   protected removeRepeatedUsersFromMentionsArray() {
+    console.log("this.mentionedUsers", this.mentionedUsers);
     this.mentionedUsers.forEach((user) => {
       if (!this.content.includes(user.name)) {
         this.mentionedUsers.splice(this.mentionedUsers.indexOf(user), 1);

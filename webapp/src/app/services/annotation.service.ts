@@ -16,7 +16,7 @@ export class AnnotationService {
   
   postAnnotation(
     annotation: Annotation,
-    mentionedUsers: { userId: string; name: string; email: string }[]
+    mentionedUsers: { userId: string; name: string; username: string }[]
   ): Observable<{ response: BlockingNotifications }> {
     // Make the HTTP post request
     return this.http.post<{ response: BlockingNotifications }>(`${environment.API_URL}/courses/${annotation.courseId}/materials/${annotation.materialId}/annotation`, { annotation, mentionedUsers });
@@ -34,7 +34,7 @@ export class AnnotationService {
   postReply(
     annotation: Annotation,
     reply: Reply,
-    mentionedUsers: { userId: string; name: string; email: string }[]
+    mentionedUsers: { userId: string; name: string; username: string }[]
   ): Observable<Reply> {
     return this.http.post<Reply>(
       `${environment.API_URL}/courses/${annotation.courseId}/annotations/${annotation._id}/reply`,
