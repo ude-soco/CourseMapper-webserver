@@ -66,7 +66,7 @@ export class TagCommentItemComponent {
   sendButtonDisabled: boolean = true;
   Roles = Roles;
 
-  nameWithEmail$: Observable<{ name: string; email: string; userId: string }[]>;
+  nameWithEmail$: Observable<{ name: string; username: string; userId: string }[]>;
   onUserInput: BehaviorSubject<string> = new BehaviorSubject<string>('');
   onUserInput$ = this.onUserInput.asObservable();
   filteredUsernamesFromAnnotationAndRepliesAuthors$: Observable<

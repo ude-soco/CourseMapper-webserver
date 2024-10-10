@@ -272,8 +272,8 @@ export class CourseEffects {
   editReplyForTag$ = createEffect(() =>
     this.actions$.pipe(
       ofType(CourseActions.editReply),
-      mergeMap(({ reply, updatedReply }) =>
-        this.annotationService.editReply(reply, updatedReply).pipe(
+      mergeMap(({ reply, updatedReply, mentionedUsers }) =>
+        this.annotationService.editReply(reply, updatedReply, mentionedUsers).pipe(
           mergeMap(() => [CourseActions.editReplySuccess()]),
           catchError((error) => of(CourseActions.editReplyFail({ error })))
         )

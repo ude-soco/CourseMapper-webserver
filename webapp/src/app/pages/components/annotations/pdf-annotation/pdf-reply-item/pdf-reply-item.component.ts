@@ -23,6 +23,8 @@ import { Subscription } from 'rxjs';
 import { Roles } from 'src/app/models/Roles';
 import { ConfirmationService } from 'primeng/api';
 import * as $ from 'jquery';
+import { MentionsComponent } from '../../../../../components/mentions/mentions.component';
+import { NotificationsService } from 'src/app/services/notifications.service';
 
 @Component({
   selector: 'app-pdf-reply-item',
@@ -31,6 +33,7 @@ import * as $ from 'jquery';
   providers: [ConfirmationService],
 })
 export class PdfReplyItemComponent
+extends MentionsComponent
   implements OnInit, OnChanges, OnDestroy, AfterViewInit
 {
   @Input() reply: Reply;
@@ -49,12 +52,15 @@ export class PdfReplyItemComponent
   msgs: Message[] = [];
 
   constructor(
-    private store: Store<State>,
+    // private store: Store<State>,
+    protected override store: Store<State>,
+    protected override notificationService: NotificationsService,
     private socket: Socket,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
     private renderer: Renderer2
   ) {
+    super(store, notificationService);
     this.subscription = this.store
       .select(getLoggedInUser)
       .subscribe((user) => (this.loggedInUser = user));
@@ -181,7 +187,9 @@ export class PdfReplyItemComponent
     }
   }
 
-  ngOnInit(): void {}
+  override ngOnInit(): void {
+    super.ngOnInit();
+  }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
@@ -234,18 +242,29 @@ export class PdfReplyItemComponent
   }
 
   onEditReply() {
+    
+  
     this.isEditing = true;
     this.updatedReply = this.reply.content;
+    
   }
 
   dispatchUpdatedReply() {
+    
+    console.log("this.mentionedUsers", this.mentionedUsers)
+    console.log("this.reply.mentionedUsers", this.reply.mentionedUsers)
+        this.removeRepeatedUsersFromMentionsArray();
     this.store.dispatch(
       AnnotationActions.editReply({
         reply: this.reply,
         updatedReply: this.updatedReply,
+        mentionedUsers: this.reply?.mentionedUsers,
       })
     );
     this.isEditing = false;
+     this.reply = null;
+    this.content = null;
+    this.mentionedUsers = [];
   }
 
   cancelEditing() {
@@ -282,6 +301,7 @@ export class PdfReplyItemComponent
     if (!text) {
       return '';
     }
+    console.log('text', text);
     let limit = 180
     const linkRegex =
       /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
@@ -312,10 +332,14 @@ export class PdfReplyItemComponent
        .replace(newlineRegex, '<br>');
 
      let mentionedUsers = this.reply.mentionedUsers;
+     console.log("mentionedUsers121", mentionedUsers)
+     
      if (mentionedUsers) {
        mentionedUsers.forEach((mentionedUser) => {
          //check if the name of the mentioned user is in the linkedHtml, if so, make the name blue
          if (linkedHtml.includes(`@${mentionedUser.name}`)) {
+          console.log("mentionedUsers", mentionedUsers)
+          console.log("linkedHtml", linkedHtml)
            const userHtml = `<span class="cursor-auto font-medium text-blue-500 dark:text-blue-500  break-all" ><strong>${mentionedUser.name}</strong></span>`;
            linkedHtml = linkedHtml.replace(`@${mentionedUser.name}`, userHtml);
          }

@@ -137,6 +137,8 @@ export class MentionsComponent implements OnInit {
   }
 
   selectName(mentionedUser) {
+    console.log("mentionedUser", mentionedUser);
     this.mentionedUsers = [...this.mentionedUsers, mentionedUser];
+    console.log("this.mentionedUsers", this.mentionedUsers);
   }
 }

@@ -219,8 +219,8 @@ export class AnnotationEffects {
   editReply$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AnnotationActions.editReply),
-      mergeMap(({ reply, updatedReply }) =>
-        this.annotationService.editReply(reply, updatedReply).pipe(
+      mergeMap(({ reply, updatedReply, mentionedUsers }) =>
+        this.annotationService.editReply(reply, updatedReply, mentionedUsers).pipe(
           mergeMap(() => [
             AnnotationActions.editReplySuccess(),
             /* AnnotationActions.loadAnnotations(), */

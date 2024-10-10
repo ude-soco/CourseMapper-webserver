@@ -201,6 +201,7 @@ export class TagReplyItemComponent {
       CourseActions.editReply({
         reply: this.reply,
         updatedReply: this.updatedReply,
+        mentionedUsers: this.reply?.mentionedUsers,
       })
     );
     this.isEditing = false;

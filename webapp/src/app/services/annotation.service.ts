@@ -83,10 +83,11 @@ export class AnnotationService {
     );
   }
 
-  editReply(reply: Reply, content: string): Observable<any> {
+  editReply(reply: Reply, content: string,mentionedUsers: { userId: string; name: string; username: string }[] ): Observable<any> {
+    console.log("mentionedUsers from annotation service",mentionedUsers)
     return this.http.put<any>(
       `${environment.API_URL}/courses/${reply.courseId}/replies/${reply._id}`,
-      { content }
+      { content, mentionedUsers }
     );
   }
 

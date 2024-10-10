@@ -81,15 +81,15 @@
         pInputText
       /> -->
 
-      <textarea
+      <!-- <textarea
   placeholder="Edit Reply"
   [(ngModel)]="updatedReply"
   class="p-inputtext-sm w-11/12 h-auto"
   rows="1"
   pInputTextarea
   (input)="adjustTextarea($event)">
-</textarea>
- <!-- <textarea
+</textarea> -->
+ <textarea
   placeholder="Edit Reply"
   [(ngModel)]="updatedReply"
   class="p-inputtext-sm w-11/12 h-auto"
@@ -111,7 +111,7 @@
   <span class="cursor-pointer"
     >{{ item.name }} ({{ item.username }})</span
   >
-    </ng-template> -->
+    </ng-template>
       <app-iconbutton
         icon="bxs-check-circle"
         color="text-slate-500"

@@ -300,6 +300,8 @@ export class PdfCommentItemComponent
   }
 
   sendReply() {
+    
+
     if (this.content?.replace(/<\/?[^>]+(>|$)/g, '') == '') {
       this.sendButtonDisabled = true;
       window.alert('Cannot Send Empty Reply');
@@ -525,8 +527,10 @@ export class PdfCommentItemComponent
 
   linkifyText(text: string): string {
     if (!text) {
+
       return '';
     }
+    
     let limit = 180
     const linkRegex =
       /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
@@ -545,7 +549,7 @@ let mentionMatchIndex = -1;
     // If the text is shorter than the limit, return the text 
     if (text.length <= limit) {
       
-
+console.log('text inside if', text)
        linkedHtml = text
        .replace(
          linkRegex,

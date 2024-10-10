@@ -220,7 +220,7 @@ export const deleteReplyFail = createAction(
 
 export const editReply = createAction(
   '[Reply] Edit Reply',
-  props<{ reply: Reply; updatedReply: string }>()
+  props<{ reply: Reply; updatedReply: string;  mentionedUsers: { userId: string; name: string; username: string }[] }>()
 );
 
 export const editReplySuccess = createAction(
