@@ -111,8 +111,10 @@ export const newAnnotation = async (req, res, next) => {
     .split(/\s+/) // Split on any whitespace (spaces, newlines, etc.)
     .filter((v) => /^#[A-Za-z0-9]+$/.test(v)); // Check if it matches the hashtag pattern
 
-
   if (foundTags.length !== 0) {
+    // Ensure the tags are unique by converting to a Set and back to an array
+    foundTags = [...new Set(foundTags)];
+
     let foundTagsSchema = [];
     foundTags.forEach((tag) => {
       let newTag = new Tag({
@@ -357,6 +359,10 @@ export const editAnnotation = async (req, res, next) => {
   
   let foundTagsSchema = [];
   if (foundTags.length !== 0) {
+
+    // Ensure the tags are unique by converting to a Set and back to an array
+    foundTags = [...new Set(foundTags)];
+    
     foundTags.forEach((tag) => {
       let newTag = new Tag({
         name: tag,
