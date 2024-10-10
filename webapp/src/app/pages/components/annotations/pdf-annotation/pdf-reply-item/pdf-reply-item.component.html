@@ -73,13 +73,45 @@
       [innerHTML]="linkifyText(reply?.content)"
     ></p>
     <div class="flex flex-row space-x-3 mx-7 my-3" *ngIf="isEditing">
-      <input
+      <!-- <input
         type="text"
         placeholder="Edit Reply"
         [(ngModel)]="updatedReply"
         class="p-inputtext-sm w-11/12 h-2/3"
         pInputText
-      />
+      /> -->
+
+      <textarea
+  placeholder="Edit Reply"
+  [(ngModel)]="updatedReply"
+  class="p-inputtext-sm w-11/12 h-auto"
+  rows="1"
+  pInputTextarea
+  (input)="adjustTextarea($event)">
+</textarea>
+ <!-- <textarea
+  placeholder="Edit Reply"
+  [(ngModel)]="updatedReply"
+  class="p-inputtext-sm w-11/12 h-auto"
+  rows="1"
+  pInputTextarea
+  (input)="adjustTextarea($event)"
+  [mention]="filteredUserNames$ | async"
+            [mentionConfig]="{
+              triggerChar: '@',
+              labelKey: 'name',
+              allowSpace: true
+            }"
+            (searchTerm)="searchUserNames($event)"
+            [mentionListTemplate]="mentionListTemplate"
+            (itemSelected)="selectName($event)">
+  
+</textarea>
+<ng-template #mentionListTemplate let-item="item">
+  <span class="cursor-pointer"
+    >{{ item.name }} ({{ item.username }})</span
+  >
+    </ng-template> -->
       <app-iconbutton
         icon="bxs-check-circle"
         color="text-slate-500"

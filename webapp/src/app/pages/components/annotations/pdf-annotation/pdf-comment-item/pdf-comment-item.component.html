@@ -134,7 +134,7 @@
     </div>
     <div class="mb-0 mt-0">
       <p
-        style="font-family: Roboto"
+      style="font-family: Roboto; word-break: break-all; overflow-wrap: break-word;"
         *ngIf="!isEditing"
         class="text-lg"
         [innerHTML]="linkifyText(annotation?.content)"
@@ -213,8 +213,7 @@
       <app-pdf-reply-panel [annotation]="annotation"></app-pdf-reply-panel>
       <div class="input-container">
         <div class="flex flex-row space-x-3 mx-7 my-2">
-          <input
-            type="text"
+          <textarea
             placeholder="Reply"
             (input)="onReplyContentChange($event)"
             class="p-inputtext-sm w-11/12 h-2/3"
@@ -227,11 +226,12 @@
             (searchTerm)="searchUserNames($event)"
             [mentionListTemplate]="mentionListTemplate"
             (itemSelected)="selectName($event)"
-            pInputText
-          />
+            pInputTextarea
+          > </textarea>
+          
           <ng-template #mentionListTemplate let-item="item">
             <span class="cursor-pointer"
-              >{{ item.name }} ({{ item.email }})</span
+              >{{ item.name }} ({{ item.username }})</span
             >
           </ng-template>
           <app-iconbutton

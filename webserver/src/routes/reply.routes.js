@@ -1,6 +1,6 @@
 const { authJwt } = require("../middlewares");
 const controller = require("../controllers/reply.controller");
-const logger = require("../xAPILogger/logger/reply.logger");
+const logger = require("../activity-logger/logger-middlewares/reply-logger");
 const { notifications } = require("../middlewares");
 
 module.exports = function (app) {
@@ -14,7 +14,7 @@ module.exports = function (app) {
   app.get(
     "/api/courses/:courseId/annotations/:annotationId/replies",
     [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.getReplies
+    controller.getReplies,
   );
 
   // Add a new reply
@@ -23,12 +23,12 @@ module.exports = function (app) {
     "/api/courses/:courseId/annotations/:annotationId/reply",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.newReply,
-    logger.newReply,
+    logger.createReplyLogger,
     notifications.calculateUsersFollowingAnnotation,
     notifications.populateUserNotification,
-    logger.newMention,
+    logger.newMentionLogger,
     notifications.newMentionNotificationUsersCalculate,
-    notifications.populateUserNotification
+    notifications.populateUserNotification,
   );
 
   // Delete a reply
@@ -37,9 +37,9 @@ module.exports = function (app) {
     "/api/courses/:courseId/replies/:replyId",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.deleteReply,
-    logger.deleteReply,
+    logger.deleteReplyLogger,
     notifications.calculateUsersFollowingAnnotation,
-    notifications.populateUserNotification
+    notifications.populateUserNotification,
   );
 
   // Edit a reply
@@ -48,9 +48,9 @@ module.exports = function (app) {
     "/api/courses/:courseId/replies/:replyId",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.editReply,
-    logger.editReply,
+    logger.editReplyLogger,
     notifications.calculateUsersFollowingAnnotation,
-    notifications.populateUserNotification
+    notifications.populateUserNotification,
   );
 
   // Like a reply
@@ -60,9 +60,9 @@ module.exports = function (app) {
     "/api/courses/:courseId/replies/:replyId/like",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.likeReply,
-    logger.likeReply,
+    logger.likeReplyLogger,
     notifications.LikesDislikesMentionedNotificationUsers,
-    notifications.populateUserNotification
+    notifications.populateUserNotification,
   );
 
   // Dislike a reply
@@ -72,8 +72,8 @@ module.exports = function (app) {
     "/api/courses/:courseId/replies/:replyId/dislike",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.dislikeReply,
-    logger.dislikeReply,
+    logger.dislikeReplyLogger,
     notifications.LikesDislikesMentionedNotificationUsers,
-    notifications.populateUserNotification
+    notifications.populateUserNotification,
   );
 };

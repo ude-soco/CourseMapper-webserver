@@ -404,7 +404,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       // }
       this.selectedMaterial = this.materials[this.tabIndex];
       this.updateSelectedMaterial();
-
+      this.materialService.logMaterial(this.courseID, this.selectedMaterial._id).subscribe();
       if (this.selectedMaterial.type == 'pdf') {
         this.store.dispatch(
           MaterialActions.setMaterialId({

@@ -537,6 +537,7 @@ export class TopicDropdownComponent implements OnInit {
         CourseActions.setCurrentTopic({ selcetedTopic: null })
       );
     } else {
+      this.topicChannelService.logTopic(this.selectedCourseId, this.selectedTopic._id).subscribe();
       this.expandTopic = [];
       this.expandTopic.push(topic._id);
       this.store.dispatch(
@@ -569,6 +570,7 @@ export class TopicDropdownComponent implements OnInit {
     this.selectedCourseId = this.courseService.getSelectedCourse()._id;
     this.prevSelectedCourseId = this.selectedCourseId;
     this.topicChannelService.selectChannel(channel);
+    this.topicChannelService.logChannel(this.selectedCourseId, channel._id).subscribe();
     this.router.navigate([
       'course',
       this.courseService.getSelectedCourse()._id,
@@ -1168,7 +1170,7 @@ export class TopicDropdownComponent implements OnInit {
    */
   showInfo(msg) {
     this.messageService.add({
-      severity: 'Success',
+      severity: 'success',
       summary: 'Success',
       detail: msg,
     });
