@@ -18,6 +18,6 @@ EOF
 COPY bin/entrypoint.sh /usr/local/bin/custom-entrypoint.sh
 
 # Copy config files
-COPY config/rclone.conf /var/lib/postgresql/meta/rclone.conf
+COPY config/rclone.conf.orig /root
 
 ENTRYPOINT ["/usr/local/bin/custom-entrypoint.sh"]

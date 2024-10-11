@@ -2,8 +2,8 @@
 set -e
 
 # Copy the rclone config file
-echo "${0}: Copying rclone config file to $HOME..."
-cp /var/lib/postgresql/meta/rclone.conf "$HOME/rclone.conf"
+echo "${0}: Copying rclone.conf.orig to rclone.conf ..."
+cp "$HOME/rclone.conf.orig" "$HOME/rclone.conf"
 
 # Replace access key id and secret access keys from environment variables
 sed -i "s/ACCESS_KEY_ID/$ACCESS_KEY_ID/g" "$HOME/rclone.conf"
