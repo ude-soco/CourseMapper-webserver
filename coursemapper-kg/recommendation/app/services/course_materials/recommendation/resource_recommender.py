@@ -195,17 +195,12 @@ class ResourceRecommenderService:
     """  
 
     def user_rates_resources(self, rating: dict):
-        # if rating["value"] == "HELPFUL":
-        #     resource = self.get_reosurce_by_rid_from_redis(user_id=rating["user_id"], rid=rating["rid"])
-        resource = None
-        rating_updated = self.db.user_rates_resources(rating=rating, resource=resource)
+        rating_updated = self.db.user_rates_resources(rating=rating)
+        print("rating_updated ", rating_updated)
         return rating_updated
     
     def save_or_remove_user_resources(self, data: dict):
-        # if data["status"] == True:
-        #     resource = self.get_reosurce_by_rid_from_redis(user_id=data["user_id"], rid=data["rid"])
-        resource = None
-        resource_saved = self.db.user_saves_or_removes_resource(data=data, resource=resource)
+        resource_saved = self.db.user_saves_or_removes_resource(data=data)
         return resource_saved
 
     def filter_user_resources_saved_by(self, data: dict):
@@ -228,7 +223,7 @@ class ResourceRecommenderService:
         results = []
         resources = []
         # self.recommender = Recommender()
-        recommender = Recommender()
+        recommender = Recommender(embedding_model=None)
 
         # Check if concepts already exist and connected to any resources in Neo4j Database
         # concepts_to_be_crawled = []
@@ -286,12 +281,14 @@ class ResourceRecommenderService:
             resources = [{**resource, 'is_bookmarked_fill': resource['rid'] in rids_user_resources_saved} for resource in resources]
 
         # Apply ranking algorithm on the resources
-        # resources = rrh.remove_keys_from_resources(resources=resources)
         resources_dict = rrh.rank_resources(resources=resources, weights=factor_weights, top_n_resources=top_n_resources, recommendation_type=recommendation_type)
 
         # Provide only the top 10 of the resources
-        result_final = {"recommendation_type": rec_params["recommendation_type"], "concepts": rec_params["concepts"], "nodes": resources_dict }
-        # result_final = {"recommendation_type": rec_params["recommendation_type"], "concepts": rec_params["concepts"], "nodes": {"vidoes": [], "articles": []} }
+        result_final = {    
+                            "recommendation_type": rec_params["recommendation_type"], 
+                            "concepts": rec_params["concepts"], 
+                            "nodes": resources_dict
+                        }
         return result_final
 
     def _get_resources(self, data_rec_params: dict, data_default: dict=None, top_n = 5):

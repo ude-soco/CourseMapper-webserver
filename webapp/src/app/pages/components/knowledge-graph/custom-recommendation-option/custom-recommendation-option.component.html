@@ -77,7 +77,7 @@
       </div>
 
       <!-- case radio=3 then dropdown for selecting a concepts -->
-      <!-- <div class="flex justify-center" id="search_concept_category_3">
+      <div class="flex justify-center text-xs" id="search_concept_category_3">
         <p-multiSelect 
         *ngIf="croForm?.category === '3'" 
         [options]="CROconceptsManually"
@@ -87,18 +87,17 @@
         filterBy="name"
         placeholder="Search a Concept"
         emptyFilterMessage="No Concept found"
-        (onChange)="setSelectManuallyOnChange($event)"
-        (onClick)="setSelectManuallyOnClick($event)"
+        (onChange)="setSelectManuallyOnChangeMultiSelect($event)"
         styleClass="select_manually"
         [resetFilterOnHide]="true"
         [displaySelectedLabel]="false"
-        [style]="{ minWidth: '20rem', 'border-radius': '0.5rem', maxWidth: '25rem' }"
+        [style]="{ minWidth: '24rem', 'border-radius': '0.5rem', maxWidth: '25rem', 'font-size': '12px' }"
         [showClear]="false"
         >
         </p-multiSelect>
-      </div> -->
+      </div>
 
-      <div class="flex justify-center" id="search_concept_category_3">
+      <!-- <div class="flex justify-center" id="search_concept_category_3">
         <p-dropdown
         *ngIf="croForm?.category === '3'" 
         [options]="CROconceptsManually"
@@ -115,7 +114,6 @@
       >
           <ng-template pTemplate="selectedItem">
               <div class="flex align-items-center gap-2" *ngIf="cro_concept_selected">
-                  <!-- <div><p-checkbox [(ngModel)]="cro_concept_selected.status" [binary]="true" inputId="binary"></p-checkbox></div> -->
                   <div>{{ cro_concept_selected.name }}</div>
               </div>
           </ng-template>
@@ -126,7 +124,7 @@
               </div>
           </ng-template>
         </p-dropdown>
-      </div>
+      </div> -->
 
       <!-- concept presentation -->
       <div  *ngFor="let cro of croForm?.concepts; index as i">
@@ -202,133 +200,7 @@
         </div>
       </div>
 
-      <!-- case radio=1&2 then dropdown for selecting a concepts -->
-      <!-- <div class="flex flex-col justify-center gap-2" *ngIf="croForm.category === '1' || croForm.category == '2'" >
-        <div class="flex justify-center">
-          <span 
-            pTooltip="To be completed ..." 
-            tooltipPosition="right"
-          >
-            <p-button 
-              id="add_more_concept"
-              label="Add more concepts" 
-              icon="pi pi-plus" 
-              iconPos="right" 
-              styleClass="p-button-outlined"
-              (onClick)="displayAddMoreConcept()"
-              *ngIf="croForm.concepts.length <= 1"
-            ></p-button>
-          </span>
-        </div>
-
-        <div class="flex flex-row flex-wrap space-x-4 justify-center">
-          <div class="text-[#757500]">Add new Concept from whole slide</div>
-          <div class="mt-auto text-[#0288d1] cursor-pointer active:bg-blue-700"><span class="pi pi-plus" style="font-size: 1.2rem"></span></div>
-          <div class="mt-auto"><p-button id="add_more_concept" icon="pi pi-plus" styleClass="p-button-rounded p-button-text p-button-raised"></p-button></div>
-        </div>
-
-        <div *ngIf="croForm.category === '1'">
-          <div class="flex justify-center" id="search_concept_category_1" *ngIf="isAddMoreConceptDisplayed">
-            <p-dropdown
-            [options]="CROconceptsManuallySelection1or2"
-            [(ngModel)]="cro_concept_selected"
-            optionLabel="name"
-            [filter]="true"
-            filterBy="name"
-            [showClear]="true"
-            placeholder="Search a Concept"
-            emptyFilterMessage="No Concept found"
-            (onChange)="setSelectManuallyOnChange($event)"
-          >
-              <ng-template pTemplate="selectedItem">
-                  <div class="flex align-items-center gap-2" *ngIf="cro_concept_selected">
-                      <div>{{ cro_concept_selected.name }}</div>
-                  </div>
-              </ng-template>
-              <ng-template let-cro_concept pTemplate="item">
-                  <div class="flex align-items-center gap-2">
-                      <div class="my-auto"><p-checkbox [(ngModel)]="cro_concept.status" [binary]="true" inputId="binary"></p-checkbox></div>
-                      <div class="my-auto">{{ cro_concept.name }}</div>
-                  </div>
-              </ng-template>
-            </p-dropdown>
-          </div>
-        </div>
-
-        <div *ngIf="croForm.category === '1'">
-          <div class="flex justify-center" id="search_concept_category_1" *ngIf="isAddMoreConceptDisplayed">
-            <p-dropdown
-            [options]="CROconceptsManuallySelection1"
-            [(ngModel)]="cro_concept_selected"
-            optionLabel="name"
-            [filter]="true"
-            filterBy="name"
-            [showClear]="true"
-            placeholder="Search a Concept"
-            emptyFilterMessage="No Concept found"
-            (onChange)="setSelectManuallyOnChange($event)"
-          >
-              <ng-template pTemplate="selectedItem">
-                  <div class="flex align-items-center gap-2" *ngIf="cro_concept_selected">
-                      <div>{{ cro_concept_selected.name }}</div>
-                  </div>
-              </ng-template>
-              <ng-template let-cro_concept pTemplate="item">
-                  <div class="flex align-items-center gap-2">
-                      <div class="my-auto"><p-checkbox [(ngModel)]="cro_concept.status" [binary]="true" inputId="binary"></p-checkbox></div>
-                      <div class="my-auto">{{ cro_concept.name }}</div>
-                  </div>
-              </ng-template>
-            </p-dropdown>
-          </div>
-        </div>
-
-        <div *ngIf="croForm.category === '2'">
-          <div class="flex justify-center" id="search_concept_category_1" *ngIf="isAddMoreConceptDisplayed">
-            <p-dropdown
-            [options]="CROconceptsManuallySelection2"
-            [(ngModel)]="cro_concept_selected"
-            optionLabel="name"
-            [filter]="true"
-            filterBy="name"
-            [showClear]="true"
-            placeholder="Search a Concept"
-            emptyFilterMessage="No Concept found"
-            (onChange)="setSelectManuallyOnChange($event)"
-          >
-              <ng-template pTemplate="selectedItem">
-                  <div class="flex align-items-center gap-2" *ngIf="cro_concept_selected">
-                      <div>{{ cro_concept_selected.name }}</div>
-                  </div>
-              </ng-template>
-              <ng-template let-cro_concept pTemplate="item">
-                  <div class="flex align-items-center gap-2">
-                      <div class="my-auto"><p-checkbox [(ngModel)]="cro_concept.status" [binary]="true" inputId="binary"></p-checkbox></div>
-                      <div class="my-auto">{{ cro_concept.name }}</div>
-                  </div>
-              </ng-template>
-            </p-dropdown>
-          </div>
-        </div>
-
-      </div> -->
-
-      <!-- warning add more concepts -->
-      <!-- <div class="flex justify-center text-[#757500] font-bold" style="display: none;">
-        <div *ngIf="croForm?.concepts?.length > 0 && croForm?.concepts?.length <= 5 ">You can add/check {{ numberConceptsToBeChecked }} more concepts</div>
-        <div *ngIf="croForm?.concepts?.length == 0">You can add/check up to 5 concepts</div>
-        <div *ngIf="croForm?.concepts?.length > 5" class="flex justify-center text-[#cc3300]">Only 5 concepts can be processed</div>
-      </div>
-      <div *ngIf="isMoreThan5ConceptDisplayed" 
-        class="flex justify-center text-[#cc3300]" 
-        id="warningMsgTopConcept"
-        style="display: none;"
-      >
-        please uncheck a concept before checking this box again
-      </div> -->
-        
       <!-- models algo -->
-      <!-- *ngIf="croForm?.concepts?.length > 0" -->
       <div class="!mt-3">
         <div class="text-[#0288d1]">How should be the recommendations generated:</div>
         <div class="flex flex-col gap-2 text-[11.5px] mt-2">
@@ -372,7 +244,11 @@
         </div>
 
         <div *ngFor="let factor of factor_weights?.original; index as i">
-          <div class="flex flex-col text-[10px] mt-2">
+          <div class="flex flex-col text-[10px] mt-2"
+            [style.pointer-events]="checkResultTabSelected(factor.key)  ? 'none' : 'auto'"
+            [style.opacity]="checkResultTabSelected(factor.key) ? 0.3 : 1"
+            [style.cursor]="checkResultTabSelected(factor.key) ? 'not-allowed' : 'pointer'"
+          >
             <div class="flex flex-row justify-between">
               
               <div class="flex flex-row gap-2">
@@ -394,7 +270,7 @@
                   <div class="w-28 mt-auto mb-auto">
                     <div class="flex flex-wrap justify-between text-[9px]">
                       <div>0</div>
-                      <div>{{ factor.value }}</div>
+                      <div>{{ factor.value | number:'1.2-2' }}</div>
                       <div>1</div>
                     </div>
                     <div class="mt-2"><p-slider 

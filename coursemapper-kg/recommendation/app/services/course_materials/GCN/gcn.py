@@ -34,7 +34,7 @@ class GCN:
         # Read ids and initial embeddings of nodes from idfeature.text
         # The structure of text: first column is new id of node(type:int), the second column is the original id (type:string), and the rest is the initial embedding
         idx_features = np.genfromtxt("idfeature.txt", dtype=np.dtype(str))
-        logger.info(idx_features.shape[0])
+        # logger.info(idx_features.shape[0])
         # Construct initial embedding matrix
         # Extract initial embedding starts from the third column
         features = sp.csr_matrix(idx_features[:, 2:], dtype=np.float32)
@@ -70,7 +70,7 @@ class GCN:
         adj = adj + adj.T.multiply(adj.T > adj) - adj.multiply(adj.T > adj)
 
         adj = self.normalize(adj) + sp.eye(adj.shape[0])
-        logger.info(adj.A)
+        # logger.info(adj.A)
         # GCN Multiply Adjacency matrix and initial embedding matrix
         # mutiply Adjacency matrix and initial embedding matrix, output is new embedding matrix
         # The new embedding of a node is obtained by aggregating the embeddings of its first hop neighbours

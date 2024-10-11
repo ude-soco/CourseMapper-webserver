@@ -1,455 +1,179 @@
 <div class="flex flex-col gap-1">
 
-<div>
-  <p-tabView (activeIndexChange)="tabChanged($event)" [activeIndex]="activeIndex" [style]="{'minWidth':'65rem'}">
-      <div class="flex flex-row justify-between" *ngIf="activeIndex !== 2">
-        <span class="flex flex-col">
-          <h4 class="text-[#0277BD] mr-3">
-            Recommendation based on the following concepts:
-          </h4>
-          <div class="flex flex-wrap gap-1 w-9/12"> 
-            <button
-              *ngFor="let concept of allConceptsObj"
-              class="dislike-button {{concept?.status === 'notUnderstood' ? 'bg-[#D32F2F]' : concept?.status === 'understood' ? 'bg-[#689F38]':  'bg-[#2196F3]'}}
-              text-white px-2 mx-1 border border-transparent rounded-full"
-            >
-            <!-- dislike-button {{concept.status === 'understood' ? 'bg-[#689F38]' : concept.status === 'notUnderstood' ? 'bg-[#2196F3]' : 'bg-[#D32F2F]'}}
-              text-white px-2 mx-1 border border-transparent rounded-full"
-            -->
-
-              {{ concept?.name }}
+  <div>
+    <p-tabView (activeIndexChange)="tabChanged($event)" [activeIndex]="activeIndex" [style]="{'minWidth':'65rem'}">
+        <div class="flex flex-row justify-between" *ngIf="activeIndex !== 2">
+          <span class="flex flex-col">
+            <h4 class="text-[#0277BD] mr-3">
+              Recommendation based on the following concepts:
+            </h4>
+            <div class="flex flex-wrap gap-1 w-9/12"> 
               <button
-                #notUnderstoodConcept
-                class="bg-transparent hover focus:outline-none cursor-pointer"
-                (click)="setChipConcept(concept); menu.toggle($event)"
+                *ngFor="let concept of allConceptsObj"
+                class="dislike-button {{concept?.status === 'notUnderstood' ? 'bg-[#D32F2F]' : concept?.status === 'understood' ? 'bg-[#689F38]':  'bg-[#2196F3]'}}
+                text-white px-2 mx-1 border border-transparent rounded-full"
               >
-                <svg class="w-1 h-1 mt-0.5 ml-1.5">
-                  <circle
-                    cx="2.5"
-                    cy="2.5"
-                    r="2"
-                    style="fill: white; stroke: #495057; stroke: width 0.5px"
-                  />
-                </svg>
-                <svg class="w-1 h-1 mt-0.5 ml-1.5">
-                  <circle
-                    cx="2.5"
-                    cy="2.5"
-                    r="2"
-                    style="fill: white; stroke: #495057; stroke: width 0.5px"
-                  />
-                </svg>
-                <svg class="w-1 h-1 mt-0.5 ml-1.5">
-                  <circle
-                    cx="2.5"
-                    cy="2.5"
-                    r="2"
-                    style="fill: white; stroke: #495057; stroke: width 0.5px"
-                  />
-                </svg>
-                <p-menu
-                  #menu
-                  id="notUnderstood_menu"
-                  [model]="concept?.status === 'notUnderstood' ? chipMenuU : concept?.status === 'understood' ? chipMenuDNU : chipMenuNew"
-                  [popup]="true"
-                  appendTo="body"
-                ></p-menu>
-                <!-- <p-menu
-                  #menu
-                  id="notUnderstood_menu"
-                  [model]="chipMenuU"
-                  [popup]="true"
-                  appendTo="body"
-                ></p-menu> -->
-              </button>
-            </button>
-          </div>
-          <!-- <div
-            id="materialModelDropdown"
-            class="p-field-dropdown"
-            style="display: block;margin-left: auto;margin-right: 0;"
-          >
-            <p-dropdown
-              [options]="materialModels"
-              [(ngModel)]="selectedMaterialModel"
-              optionLabel="name"
-              optionValue="code"
-              (onChange)="loadResultForSelectedModel(selectedMaterialModel)"
-            ></p-dropdown>
-          </div> -->
-        </span>
+              <!-- dislike-button {{concept.status === 'understood' ? 'bg-[#689F38]' : concept.status === 'notUnderstood' ? 'bg-[#2196F3]' : 'bg-[#D32F2F]'}}
+                text-white px-2 mx-1 border border-transparent rounded-full"
+              -->
 
-        <div id="cro_sorting" class="w-3/12"></div>
-        <div id="cro_sorting" class="w-3/12" (click)="op.toggle($event, targetEl)">
-          <div #targetEl class="border-solid border-2 border-[#cecece] p-4 w-72">
-            <div  class="flex flex-row justify-between" >
-              <div>Sort by</div>
-              <div>
-                <span class="pi pi-chevron-up" *ngIf="orderUpIcon"></span>
-                <span class="pi pi-chevron-down" *ngIf="!orderUpIcon"></span>
+                {{ concept?.name }}
+                <button
+                  #notUnderstoodConcept
+                  class="bg-transparent hover focus:outline-none cursor-pointer"
+                  (click)="setChipConcept(concept); menu.toggle($event)"
+                >
+                  <svg class="w-1 h-1 mt-0.5 ml-1.5">
+                    <circle
+                      cx="2.5"
+                      cy="2.5"
+                      r="2"
+                      style="fill: white; stroke: #495057; stroke: width 0.5px"
+                    />
+                  </svg>
+                  <svg class="w-1 h-1 mt-0.5 ml-1.5">
+                    <circle
+                      cx="2.5"
+                      cy="2.5"
+                      r="2"
+                      style="fill: white; stroke: #495057; stroke: width 0.5px"
+                    />
+                  </svg>
+                  <svg class="w-1 h-1 mt-0.5 ml-1.5">
+                    <circle
+                      cx="2.5"
+                      cy="2.5"
+                      r="2"
+                      style="fill: white; stroke: #495057; stroke: width 0.5px"
+                    />
+                  </svg>
+                  <p-menu
+                    #menu
+                    id="notUnderstood_menu"
+                    [model]="concept?.status === 'notUnderstood' ? chipMenuU : concept?.status === 'understood' ? chipMenuDNU : chipMenuNew"
+                    [popup]="true"
+                    appendTo="body"
+                  ></p-menu>
+                </button>
+              </button>
+            </div>
+            <!-- <div
+              id="materialModelDropdown"
+              class="p-field-dropdown"
+              style="display: block;margin-left: auto;margin-right: 0;"
+            >
+              <p-dropdown
+                [options]="materialModels"
+                [(ngModel)]="selectedMaterialModel"
+                optionLabel="name"
+                optionValue="code"
+                (onChange)="loadResultForSelectedModel(selectedMaterialModel)"
+              ></p-dropdown>
+            </div> -->
+          </span>
+
+          <div id="cro_sorting" class="w-3/12"></div>
+          
+          <div id="cro_sorting" class="w-3/12" (click)="op.toggle($event, targetEl)">
+            <div #targetEl class="border-solid border-2 border-[#cecece] p-4 w-72">
+              <div  class="flex flex-row justify-between" >
+                <div>Sort by</div>
+                <div>
+                  <span class="pi pi-chevron-up" *ngIf="orderUpIcon"></span>
+                  <span class="pi pi-chevron-down" *ngIf="!orderUpIcon"></span>
+                </div>
               </div>
             </div>
-          </div>
-          
-          <!-- with dynamic list -->
-          <p-overlayPanel [style]="{'width':'18rem'}" (onShow)="handleOnShowOnHide()" (onHide)="handleOnShowOnHide()" *ngIf="false"  #op>
-            <ng-template pTemplate="content">
-              <div class="flex flex-col text-sm">
-                <ng-template ngFor let-sort_factor [ngForOf]="croSorting1" let-i="index">
-                  <div class="flex flex-row space-x-2">
-                    <div>
-                      <p-checkbox 
-                      [(ngModel)]="sort_factor.status" [binary]="true" inputId="similarity_score" inputId="{{sort_factor.name}}"
-                      (onChange)="sortResourcesByKeys('')"
-                      ></p-checkbox>
-                    </div>
-                    <div class="flex flex-row gap-2">
-                      <div class="my-auto"><label for="similarity_score">{{ sort_factor.name }}</label></div>
-                      <div class="flex flex-row space-x-2 pl-4 ml-6">
-                        <button (click)="sortResourcesByKeys('similarity_score')"
-                        class="bg-blue-300 hover:bg-blue-400 text-white font-bold rounded cursor-pointer py-1"
-                        >
-                          <div>
-                            <span>{{ sort_factor.orderText }}</span>
-                          </div>
-                        </button>
+            
+            <!-- with dynamic list -->
+            <p-overlayPanel [style]="{'width':'18rem'}" (onShow)="handleOnShowOnHide()" (onHide)="handleOnShowOnHide()" #op>
+              <ng-template pTemplate="content">
+                <div class="flex flex-col text-sm">
+                  <ng-template ngFor let-sort_factor [ngForOf]="factorSortingKeys" let-i="index">
+                    <div class="flex flex-row space-x-2"
+                    [style.pointer-events]="activeIndex === 1 && !factorsTabArticle.includes(sort_factor.key)  ? 'none' : 'auto'"
+                    [style.opacity]="activeIndex === 1 && !factorsTabArticle.includes(sort_factor.key) ? 0.3 : 1"
+                    [style.cursor]="activeIndex === 1 && !factorsTabArticle.includes(sort_factor.key) ? 'not-allowed' : 'pointer'"
+                    >
+                      <div>
+                        <p-radioButton 
+                        [inputId]="sort_factor.key" 
+                        name="sort_factor" 
+                        value="{{ sort_factor.key }}" 
+                        [(ngModel)]="selectedFactorSortingKeys"
+                        (onClick)="sortResourcesByKeys(sort_factor, true, false)"
+                        ></p-radioButton>
+                      </div>
+                      <div class="flex flex-row gap-2">
+                        <div class="my-auto"><label for="factor_radio">{{ sort_factor.name }}</label></div>
+                        <div class="flex flex-row space-x-2 pl-4 ml-6">
+                          <button (click)="sortResourcesByKeys(sort_factor, false, true)"
+                          class="bg-blue-300 hover:bg-blue-400 text-white font-bold rounded cursor-pointer py-1"
+                          >
+                            <div>
+                              <span>{{ sort_factor.orderText }}</span>
+                            </div>
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </ng-template>
-              </div>
-
-              <div style="height: 2rem;"><p-divider></p-divider></div>
-            </ng-template>
-          </p-overlayPanel>
-
-          <p-overlayPanel [style]="{'width':'18rem'}" (onShow)="handleOnShowOnHide()" (onHide)="handleOnShowOnHide()" #op>
-            <ng-template pTemplate="content">
-              <div class="flex flex-col text-sm">
-                <div class="flex flex-row space-x-2">
-                  <div>
-                    <p-checkbox 
-                    [(ngModel)]="croSorting.similarity_score.status" [binary]="true" inputId="similarity_score"
-                    (onChange)="sortResourcesByKeys('')"
-                    ></p-checkbox>
-                  </div>
-                  <div class="flex flex-row gap-2">
-                    <div class="my-auto"><label for="similarity_score">Most similar</label></div>
-                    <div class="flex flex-row space-x-2 pl-4 ml-6">
-                      <button (click)="sortResourcesByKeys('similarity_score')"
-                      class="bg-blue-300 hover:bg-blue-400 text-white font-bold rounded cursor-pointer py-1"
-                      >
-                        <div *ngIf="croSorting.similarity_score.arrow === true">
-                          <!-- <span class="pi pi-arrow-down" style="font-size: 1.2rem"></span> -->
-                          <span>Bottom to top</span>
-                        </div>
-                        <div *ngIf="croSorting.similarity_score.arrow === false">
-                          <!-- <span class="pi pi-arrow-up" style="font-size: 1.2rem"></span> -->
-                          <span>Top to bottom</span>
-
-                        </div>
-                      </button>
-                    </div>
-                  </div>
+                    <div style="height: 2rem;"><p-divider></p-divider></div>
+                  </ng-template>
                 </div>
-    
-                <div style="height: 2rem;"><p-divider></p-divider></div>
-                <div class="flex flex-row space-x-2">
-                  <div>
-                    <p-checkbox [(ngModel)]="croSorting.publish_time.status" [binary]="true" inputId="publish_time"
-                    (onChange)="sortResourcesByKeys('')"
-                    [disabled]="disabledSortingKeys"
-                    ></p-checkbox>
-                  </div>
-                  <div class="flex flex-row gap-2">
-                    <div class="my-auto"><label for="publish_time">Most recent</label></div>
-                    <div class="flex flex-row space-x-2 pl-4 ml-6">
-                      <button (click)="sortResourcesByKeys('publish_time')" [disabled]="disabledSortingKeys"
-                      class="bg-blue-300 hover:bg-blue-400 text-white font-bold rounded cursor-pointer py-1"
-                      >
-                        <div *ngIf="croSorting.publish_time.arrow === true">
-                          <!-- <span class="pi pi-arrow-down" style="font-size: 1.2rem"></span> -->
-                          <span>Bottom to top</span>
-                        </div>
-                        <div *ngIf="croSorting.publish_time.arrow === false">
-                          <!-- <span class="pi pi-arrow-up" style="font-size: 1.2rem"></span> -->
-                          <span>Top to bottom</span>
-                        </div>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-    
-                <div style="height: 2rem;"><p-divider></p-divider></div>
-                <div class="flex flex-row space-x-2">
-                  <div>
-                    <p-checkbox [(ngModel)]="croSorting.views.status" [binary]="true" inputId="views"
-                    (onChange)="sortResourcesByKeys('')"
-                    [disabled]="disabledSortingKeys"
-                    ></p-checkbox>
-                  </div>
-                  <div class="flex flex-row gap-2">
-                    <div class="my-auto"><label for="views">Most viewed</label></div>
-                    <div class="flex flex-row space-x-2 pl-4 ml-5">
-                      <button (click)="sortResourcesByKeys('views')" [disabled]="disabledSortingKeys"
-                      class="bg-blue-300 hover:bg-blue-400 text-white font-bold rounded cursor-pointer py-1"
-                      >
-                        <div *ngIf="croSorting.views.arrow === true">
-                          <!-- <span class="pi pi-arrow-down" style="font-size: 1.2rem"></span> -->
-                          <span>Bottom to top</span>
-                        </div>
-                        <div *ngIf="croSorting.views.arrow === false">
-                          <!-- <span class="pi pi-arrow-up" style="font-size: 1.2rem"></span> -->
-                          <span>Top to bottom</span>
-                        </div>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </ng-template>
-          </p-overlayPanel>
-          
-          <!-- with radio button -->
-          <p-overlayPanel [style]="{'width':'18rem'}" (onShow)="handleOnShowOnHide()" (onHide)="handleOnShowOnHide()" *ngIf="false" #op>
-            <ng-template pTemplate="content">
-              <div class="flex flex-col text-sm">
-                <div class="flex flex-row space-x-2">
-                  <div>
-                    <p-radioButton 
-                    [(ngModel)]="croSorting.similarity_score.status" inputId="similarity_score"
-                    (onChange)="sortResourcesByKeys('')"
-                    ></p-radioButton>
-                  </div>
-                  <div class="flex flex-row gap-2">
-                    <div class="my-auto"><label for="similarity_score">Most similar</label></div>
-                    <div class="flex flex-row space-x-2 pl-4 ml-6">
-                      <button (click)="sortResourcesByKeys('similarity_score')"
-                      class="bg-blue-300 hover:bg-blue-400 text-white font-bold rounded cursor-pointer py-1"
-                      >
-                        <div *ngIf="croSorting.similarity_score.arrow === true">
-                          <!-- <span class="pi pi-arrow-down" style="font-size: 1.2rem"></span> -->
-                          <span>Bottom to top</span>
-                        </div>
-                        <div *ngIf="croSorting.similarity_score.arrow === false">
-                          <!-- <span class="pi pi-arrow-up" style="font-size: 1.2rem"></span> -->
-                          <span>Top to bottom</span>
-
-                        </div>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-    
-                <div style="height: 2rem;"><p-divider></p-divider></div>
-                <div class="flex flex-row space-x-2">
-                  <div>
-                    <p-radioButton [(ngModel)]="croSorting.publish_time.status" inputId="publish_time"
-                    (onChange)="sortResourcesByKeys('')"
-                    [disabled]="disabledSortingKeys"
-                    ></p-radioButton>
-                  </div>
-                  <div class="flex flex-row gap-2">
-                    <div class="my-auto"><label for="publish_time">Most recent</label></div>
-                    <div class="flex flex-row space-x-2 pl-4 ml-6">
-                      <button (click)="sortResourcesByKeys('publish_time')" [disabled]="disabledSortingKeys"
-                      class="bg-blue-300 hover:bg-blue-400 text-white font-bold rounded cursor-pointer py-1"
-                      >
-                        <div *ngIf="croSorting.publish_time.arrow === true">
-                          <!-- <span class="pi pi-arrow-down" style="font-size: 1.2rem"></span> -->
-                          <span>Bottom to top</span>
-                        </div>
-                        <div *ngIf="croSorting.publish_time.arrow === false">
-                          <!-- <span class="pi pi-arrow-up" style="font-size: 1.2rem"></span> -->
-                          <span>Top to bottom</span>
-                        </div>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-    
-                <div style="height: 2rem;"><p-divider></p-divider></div>
-                <div class="flex flex-row space-x-2">
-                  <div>
-                    <p-radioButton [(ngModel)]="croSorting.views.status"  inputId="views"
-                    (onChange)="sortResourcesByKeys('')"
-                    [disabled]="disabledSortingKeys"
-                    ></p-radioButton>
-                  </div>
-                  <div class="flex flex-row gap-2">
-                    <div class="my-auto"><label for="views">Most viewed</label></div>
-                    <div class="flex flex-row space-x-2 pl-4 ml-5">
-                      <button (click)="sortResourcesByKeys('views')" [disabled]="disabledSortingKeys"
-                      class="bg-blue-300 hover:bg-blue-400 text-white font-bold rounded cursor-pointer py-1"
-                      >
-                        <div *ngIf="croSorting.views.arrow === true">
-                          <!-- <span class="pi pi-arrow-down" style="font-size: 1.2rem"></span> -->
-                          <span>Bottom to top</span>
-                        </div>
-                        <div *ngIf="croSorting.views.arrow === false">
-                          <!-- <span class="pi pi-arrow-up" style="font-size: 1.2rem"></span> -->
-                          <span>Top to bottom</span>
-                        </div>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </ng-template>
-          </p-overlayPanel>
-          <!-- <p-button (click)="op.toggle($event)" icon="pi pi-image" label="Show"></p-button> -->
-
+              </ng-template>
+            </p-overlayPanel>
+          </div>
         </div>
 
-        <div id="cro_sorting" class="w-3/12" *ngIf="false">
-          <p-panel 
-            header="Sort by" 
-            [toggleable]="true"
-            [collapsed]="true"
-            [expandIcon]="'pi pi-chevron-up'" 
-            [collapseIcon]="'pi pi-chevron-down'"
-          >
-            <div class="flex flex-col">
-              <!-- <div style="height: 2rem;"><p-divider></p-divider></div> -->
-              <div class="flex flex-row space-x-2">
-                <div><p-checkbox 
-                  [(ngModel)]="croSorting.similarity_score.status" [binary]="true" inputId="similarity_score"
-                  (onChange)="sortResourcesByKeys('')"
-                  ></p-checkbox>
-                </div>
-                <div class="my-auto"><label for="similarity_score">Most similar</label></div>
-                <div class="flex flex-row space-x-2 pl-4">
-                  <button (click)="sortResourcesByKeys('similarity_score')">
-                    <div *ngIf="croSorting.similarity_score.arrow === true">
-                      <span class="pi pi-arrow-down" style="font-size: 1.2rem"></span>
-                    </div>
-                    <div *ngIf="croSorting.similarity_score.arrow === false">
-                      <span class="pi pi-arrow-up" style="font-size: 1.2rem"></span>
-                    </div>
-                  </button>
-                </div>
-              </div>
-  
-              <div style="height: 2rem;"><p-divider></p-divider></div>
-              <div class="flex flex-row space-x-2">
-                <div><p-checkbox [(ngModel)]="croSorting.publish_time.status" [binary]="true" inputId="publish_time"
-                  (onChange)="sortResourcesByKeys('')"
-                  ></p-checkbox></div>
-                <div class="my-auto"><label for="publish_time">Most recent</label></div>
-                <div class="flex flex-row space-x-2 pl-11">
-                  <button (click)="sortResourcesByKeys('publish_time')">
-                    <div *ngIf="croSorting.publish_time.arrow === true">
-                      <span class="pi pi-arrow-down" style="font-size: 1.2rem"></span>
-                    </div>
-                    <div *ngIf="croSorting.publish_time.arrow === false">
-                      <span class="pi pi-arrow-up" style="font-size: 1.2rem"></span>
-                    </div>
-                  </button>
-                </div>
-              </div>
-  
-              <div style="height: 2rem;"><p-divider></p-divider></div>
-              <div class="flex flex-row space-x-2">
-                <div><p-checkbox [(ngModel)]="croSorting.views.status" [binary]="true" inputId="views"
-                  (onChange)="sortResourcesByKeys('')"
-                  ></p-checkbox></div>
-                <div class="my-auto"><label for="views">Most viewed</label></div>
-                <div class="flex flex-row space-x-2 pl-12">
-                  <button (click)="sortResourcesByKeys('views')">
-                    <div *ngIf="croSorting.views.arrow === true">
-                      <span class="pi pi-arrow-down" style="font-size: 1.2rem"></span>
-                    </div>
-                    <div *ngIf="croSorting.views.arrow === false">
-                      <span class="pi pi-arrow-up" style="font-size: 1.2rem"></span>
-                    </div>
-                  </button>
-                </div>
-              </div>
+        <p-tabPanel 
+          [cache]="true" header="Videos" leftIcon="pi pi-video"
+        >
+          <div class="mt-1 w-full" id="cro_viedo_list">
+            <div
+              *ngIf="resourcesPagination?.nodes?.videos?.total_items > 0, else elseBlockRsVideos"
+            >
             </div>
-          </p-panel>
-        </div>
-      </div>
-
-      <p-tabPanel *ngIf="resourcesPagination?.nodes?.videos" [cache]="true" header="Videos" leftIcon="pi pi-video">
-        <div class="mt-1 w-full" id="cro_viedo_list">
-
-          <!-- <p-scrollPanel styleClass="scroll_panel_list">
-            <app-card-video-list
-              [notUnderstoodConcepts]="concepts"
-              [videoElements]="croVideos?.content"
-            ></app-card-video-list>
-          </p-scrollPanel> -->
-
-            <app-card-video-list
-              [notUnderstoodConcepts]="concepts"
-              [videoElements]="resourcesPagination?.nodes?.videos"
-              [userId]="userId"
-            ></app-card-video-list>
-        </div>
-      </p-tabPanel>
-
-      <p-tabPanel header="Videos" leftIcon="pi pi-video" *ngIf="!resourcesPagination?.nodes?.videos">
-        <div class="flex flex-col items-center justify-center" *ngIf="isLoadingResource">
-          <div>
-            <p-progressSpinner
-                  [style]="{ width: '80px', height: '80px' }"
-                  styleClass="custom-spinner"
-                  strokeWidth="5"
-                  fill="var(--surface-ground)"
-                  animationDuration=".5s"
-            ></p-progressSpinner>
+              <p-scrollPanel styleClass="scroll_panel_list">
+                <app-card-video-list
+                  [notUnderstoodConcepts]="concepts"
+                  [videoElements]="resourcesPagination?.nodes?.videos?.content"
+                  [userId]="userId"
+                ></app-card-video-list>
+              </p-scrollPanel>
           </div>
-          <h4 class="my-auto mt-4">Loading Video Materials</h4>
-          <!-- <h4 class="my-auto mt-4">No Recommended videos for the selected Concepts</h4> -->
-        </div>
-        <!-- <div *ngIf="!isLoadingResource && resourcesPagination?.nodes?.videos?.length === 0">
-          <h4 class="my-auto mt-4">No Recommended videos for the selected Concepts</h4>
-        </div> -->
-      </p-tabPanel>
+          <ng-template #elseBlockRsVideos>
+            <div class="flex flex-col items-center justify-center">
+              <div>
+                <p-progressSpinner
+                      [style]="{ width: '80px', height: '80px' }"
+                      styleClass="custom-spinner"
+                      strokeWidth="5"
+                      fill="var(--surface-ground)"
+                      animationDuration=".5s"
+                ></p-progressSpinner>
+              </div>
+              <h4 class="my-auto mt-4">Loading Video Materials</h4>
+            </div>
+          </ng-template>
+        </p-tabPanel>
 
-      <!-- <p-tabPanel *ngIf="!resourcesPagination?.nodes?.videos" header="Videos" leftIcon="pi pi-video">
-        <h4 class="my-auto mt-4">No Recommended videos for the selected Concepts</h4>
-      </p-tabPanel> -->
-      
-      <p-tabPanel *ngIf="resourcesPagination?.nodes?.articles" [cache]="true" header="Articles" leftIcon="pi pi-book">
+        <p-tabPanel 
+          [cache]="true" header="Articles" leftIcon="pi pi-book"
+        >
         <div class="mt-1 w-full" id="cro_viedo_list">
-
-          <!-- <p-scrollPanel styleClass="scroll_panel_list">
-            <app-card-article-list
-              [notUnderstoodConcepts]="concepts"
-              [articleElements]="croArticles?.content"
-            ></app-card-article-list>
-          </p-scrollPanel> -->
-
-            <app-card-article-list
-              [notUnderstoodConcepts]="concepts"
-              [articleElements]="resourcesPagination?.nodes?.articles"
-              [userId]="userId"
-            ></app-card-article-list>
-        </div>
-      </p-tabPanel>
-
-      <p-tabPanel header="Articles" leftIcon="pi pi-book" *ngIf="!resourcesPagination?.nodes?.articles">
-        <div class="flex flex-col items-center justify-center" *ngIf="isLoadingResource">
-          <div>
-            <p-progressSpinner
-                  [style]="{ width: '80px', height: '80px' }"
-                  styleClass="custom-spinner"
-                  strokeWidth="5"
-                  fill="var(--surface-ground)"
-                  animationDuration=".5s"
-            ></p-progressSpinner>
+          <div
+            *ngIf="resourcesPagination?.nodes?.articles?.total_items > 0, else elseBlockRsArticles"
+          >
           </div>
-          <h4 class="my-auto mt-4">Loading article Materials</h4>
-          <!-- <h4 class="my-auto mt-4">No Recommended Article for the selected Concepts</h4> -->
+            <p-scrollPanel styleClass="scroll_panel_list">
+              <app-card-article-list
+                [notUnderstoodConcepts]="concepts"
+                [articleElements]="resourcesPagination?.nodes?.articles?.content"
+                [userId]="userId"
+              ></app-card-article-list>
+            </p-scrollPanel>
         </div>
-        <!-- <div *ngIf="!isLoadingResource && resourcesPagination?.nodes?.videos?.length === 0">
-          <h4 class="my-auto mt-4">No Recommended videos for the selected Concepts</h4>
-        </div> -->
-      </p-tabPanel>
-
-      <!-- <ng-template [ngIf]="!resourcesPagination?.nodes?.articles" [ngIfElse]="loading">
-        <p-tabPanel header="Articles" leftIcon="pi pi-book">
+        <ng-template #elseBlockRsArticles>
           <div class="flex flex-col items-center justify-center">
             <div>
               <p-progressSpinner
@@ -460,19 +184,10 @@
                     animationDuration=".5s"
               ></p-progressSpinner>
             </div>
-            <h4 class="my-auto mt-4">Loading Articles Materials</h4>
+            <h4 class="my-auto mt-4">Loading Article Materials</h4>
           </div>
-        </p-tabPanel>
-      </ng-template>
-      <ng-template #loading>
-        <p-tabPanel header="Articles" leftIcon="pi pi-book">
-          <h4 class="my-auto mt-4">No Recommended articles for the selected Concepts</h4>
-        </p-tabPanel>
-      </ng-template> -->
-
-      <!-- <p-tabPanel *ngIf="!resourcesPagination?.nodes?.articles" header="Articles" leftIcon="pi pi-book">
-        <h4 class="my-auto mt-4">No Recommended articles for the selected Concepts</h4>
-      </p-tabPanel> -->
+        </ng-template>
+      </p-tabPanel>
 
       <!-- display resources saved and offer filtering possibility -->
       <p-tabPanel header="Saved" leftIcon="pi pi-bookmark">
@@ -497,19 +212,26 @@
             </div>
           </div>
 
-          <!-- <div>
-            <span class="p-input-icon-right">
-              <label htmlFor="search_videos_articles">Search for videos/artciles</label>
-              <i class="pi pi-search" *ngIf="!showSearchIconPinner"></i>
-              <i class="pi pi-spin pi-spinner" *ngIf="showSearchIconPinner"></i>
-              <input type="text" pInputText [(ngModel)]="filteringParamsSavedTab.text" 
-                (input)="filteringResourcesSaved()"
-              />
-            </span>
-          </div> -->
-          
+          <div class="flex justify-center text-xs ml-8" id="result_concepts_modified">
+            <p-multiSelect 
+            [options]="conceptsModifiedByUser"
+            [(ngModel)]="conceptModifiedByUserSelected"
+            optionLabel="name"
+            [filter]="true"
+            filterBy="name"
+            placeholder="Search a Concept"
+            emptyFilterMessage="No Concept found"
+            (onChange)="onChangeConceptsModifiedByUser($event)"
+            [resetFilterOnHide]="true"
+            [displaySelectedLabel]="false"
+            [style]="{ width: '16rem', 'border-radius': '0.5rem', 'font-size': '12px' }"
+            [showClear]="false"
+            >
+            </p-multiSelect>
+          </div>
+
           <!-- <div>&nbsp;</div> -->
-          <div class="flex-grow"></div>
+          <!-- <div class="flex-grow"></div> -->
           
           <div class="p-field p-fluid" class="ml-auto">
             <span class="p-float-label">
@@ -555,83 +277,36 @@
               ></app-card-article-list>
           </div>
         </div>
-
-        <!-- <div class="flex flex-col">
-          <div>Filter by:</div>
-          <div class="flex flex-row justify-between">
-            <div class="w4/12">
-
-              <p-dropdown
-              [options]="resourcesSaved?.cids"
-              [(ngModel)]="mainConceptSelected"
-              optionLabel="name"
-              [filter]="true"
-              filterBy="name"
-              [showClear]="true"
-              placeholder="Main Concept(s)"
-              emptyFilterMessage="No Concept found"
-              (onChange)="selectFilteringParamsOnChange($event, 1)"
-              [resetFilterOnHide]="true"
-              [style]="{'width': '20rem'}"
-              >
-                <ng-template pTemplate="selectedItem">
-                    <div class="flex align-items-center gap-2" *ngIf="mainConceptSelected">
-                        <div>{{ mainConceptSelected.name }}</div>
-                    </div>
-                </ng-template>
-                <ng-template let-main_concept pTemplate="item">
-                    <div class="flex align-items-center gap-2">
-                        <div class="my-auto"><p-checkbox [(ngModel)]="main_concept.status" [binary]="true" inputId="binary"></p-checkbox></div>
-                        <div class="my-auto">{{ main_concept.name }}</div>
-                    </div>
-                </ng-template>
-              </p-dropdown>
-
-            </div>
-
-            <div>lm</div>
-            <div>sl</div>
-          </div>
-          <div class="flex flex-row">
-            <div>Content type:</div>
-            <div>radio</div>
-          </div>
-          <div>
-            Resources List
-          </div>
-        </div> -->
       </p-tabPanel>
 
-  </p-tabView>
-  <p-toast position="bottom-left" key="rating"></p-toast>
-</div>
+    </p-tabView>
+    <p-toast position="bottom-left" key="rating"></p-toast>
+  </div>
 
-<!-- Pagination UI -->
-<!-- <div>
-    <div class="flex justify-end fixed inset-x-0 bottom-0 bg-white">
-      <div class="my-auto font-bold text-xs">Recommendations per page: </div>
-      <div>
-        <p-paginator
-          *ngIf="activeIndex === 0"
-          [first]="croPaginatorFirst" 
-          [rows]="1" 
-          [totalRecords]="croVideos.length" 
-          (onPageChange)="croOnPageChange($event)" 
-          [showJumpToPageDropdown]="true" 
-          [showPageLinks]="false"
-        ></p-paginator>
+  <!-- Pagination UI -->
+  <div>
+      <div class="flex justify-end fixed inset-x-0 bottom-0 bg-white">
+        <!-- <div class="my-auto font-bold text-xs mt-6">Recommendations per page: </div> -->
+        <div>
+          <!-- [showJumpToPageDropdown]="true" 
+          [showPageLinks]="false" -->
+          <p-paginator
+            *ngIf="activeIndex === 0"
+            [rows]="paginatorRows" 
+            [totalRecords]="resourcesPagination?.nodes?.videos?.total_items" 
+            (onPageChange)="onPageChangeResourcesPaginator($event)" 
+            [rowsPerPageOptions]="rowsPerPageOptions"
+          ></p-paginator>
 
-        <p-paginator
-          *ngIf="activeIndex === 1"
-          [first]="croPaginatorFirst" 
-          [rows]="1" 
-          [totalRecords]="croArticles.total_pages" 
-          (onPageChange)="croOnPageChange($event)" 
-          [showJumpToPageDropdown]="true" 
-          [showPageLinks]="false"
-        ></p-paginator>
+          <p-paginator
+            *ngIf="activeIndex === 1"
+            [rows]="paginatorRows" 
+            [totalRecords]="resourcesPagination?.nodes?.articles?.total_items" 
+            (onPageChange)="onPageChangeResourcesPaginator($event)"
+            [rowsPerPageOptions]="rowsPerPageOptions"
+          ></p-paginator>
+        </div>
       </div>
-    </div>
-</div> -->
+  </div>
 
 </div>

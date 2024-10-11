@@ -2126,7 +2126,7 @@ class NeoDataBase:
 
         return embedding
 
-    def user_rates_resources(self, rating: dict, resource: dict):
+    def user_rates_resources(self, rating: dict):
         '''
             User rates Resource(s)
             rating: {
@@ -2134,14 +2134,35 @@ class NeoDataBase:
                 "cid": "dsfis23sd"
                 "value": "HELPFUL" | "NOT_HELPFUL",
                 "rid": "bnm565j",
-                "mid": "sdddfe"
+                "mid": "sdddfe",
+                "reset": True # to undo any rating
             }
         '''
         logger.info("Saving or Removing: User Resource")
         tx = self.driver.session()
+        
+        reset_status = False
+        if rating.get("reset") != None and rating["reset"] == True:
+            tx.run(
+                #  '''
+                #         WITH $cids AS elementsToRemove
+                #         MATCH (a:User)-[r:HAS_RATED]->(b:Resource)
+                #         WHERE r.user_id = $user_id AND r.rid = $rid AND r.value = $value
+                #         SET r.cids = [e IN r.elements WHERE NOT e IN elementsToRemove]
+                #     ''',
+                    '''
+                        MATCH (a:User)-[r:HAS_RATED]->(b:Resource)
+                        WHERE r.user_id = $user_id AND r.rid = $rid AND r.value = $value
+                        DELETE r
+                    ''',
+                    user_id=rating["user_id"],
+                    rid=rating["rid"],
+                    value=rating["value"]
+                )
+            reset_status = True
 
         # Add or Update rating
-        if rating["value"] != "HELPFUL":
+        elif rating["value"] != "HELPFUL":
             tx.run(
                     '''
                         MATCH (a:User {uid: $user_id}), (b:Resource {rid: $rid})
@@ -2154,6 +2175,7 @@ class NeoDataBase:
                     value=rating["value"],
                     cids=[]
                 )
+            
         else:
             # apoc.coll.toSet(apoc.coll.union(r.cids, $cids))
             tx.run(
@@ -2166,13 +2188,14 @@ class NeoDataBase:
                     user_id=rating["user_id"],
                     rid=rating["rid"],
                     value=rating["value"],
-                    cids=rating["cids"]
+                    cids=list(set(rating["cids"]))
                 )
 
         # Update Resources: helpful_count and not_helpful_count
+        # WHERE size(r.cids) > 0
         count_helpful_count = tx.run(
             '''
-                MATCH p=(a: User)-[r:HAS_RATED {value: 'HELPFUL'}]->(b:Resource {rid: $rid}) 
+                MATCH p=(a: User)-[r:HAS_RATED {value: 'HELPFUL'}]->(b:Resource {rid: $rid})
                 RETURN COUNT(r) AS count
             ''',
             rid=rating["rid"]
@@ -2180,7 +2203,7 @@ class NeoDataBase:
 
         count_not_helpful_counter = tx.run(
             '''
-                MATCH p=(a: User)-[r:HAS_RATED {value: 'NOT_HELPFUL'}]->(b:Resource {rid: $rid}) 
+                MATCH p=(a: User)-[r:HAS_RATED {value: 'NOT_HELPFUL'}]->(b:Resource {rid: $rid})
                 RETURN COUNT(r) AS count
             ''',
             rid=rating["rid"]
@@ -2197,44 +2220,13 @@ class NeoDataBase:
             count_not_helpful_counter=count_not_helpful_counter["count"]
         ).single()
 
-        """
-        resource_has_rated_detail = tx.run(
-                '''
-                    MATCH (a:Resource {rid: $rid})
-                    OPTIONAL MATCH (a)<-[r:HAS_RATED {value: 'HELPFUL'}]-()
-                    OPTIONAL MATCH (a)<-[r2:HAS_RATED {value: 'NOT_HELPFUL'}]-()
-                    WITH a, COUNT(r) AS helpful_counter, COUNT(r2) AS not_helpful_counter
-                    SET a.helpful_count = helpful_counter, a.not_helpful_count = not_helpful_counter
-                    RETURN a.helpful_count as helpful_count, a.not_helpful_count as not_helpful_count
-                ''',
-                rid=rating["rid"]
-            ).single()
-        
-
-        # create or remove realtion between Resources and Concept_modified
-        # helpful_count count < not_helpful_count => delete relationship
-        if rating["value"] == "HELPFUL":
-            for cid in rating["cids"]:
-                self.update_rs_btw_resource_and_cm(rid=rating["rid"], cid=cid, action=True)
-        else:
-            resource = tx.run(
-                        '''
-                            MATCH (n:Resource) 
-                            WHERE n.rid = $rid
-                            RETURN  COALESCE(toInteger(n.helpful_count), 0) AS helpful_count,
-                                    COALESCE(toInteger(n.not_helpful_count), 0) AS not_helpful_count
-                        ''',
-                        rid=rating["rid"]
-                    ).single()
-            if resource["helpful_count"] < resource["not_helpful_count"]:
-                self.update_rs_btw_resource_and_cm(rid=rating["rid"], cid=cid, action=False)
-        """
-
-        return {
+        result = {
                     "voted": rating["value"],
                     "helpful_count": resource_has_rated_detail["helpful_count"],
                     "not_helpful_count": resource_has_rated_detail["not_helpful_count"],
+                    "reset_status": reset_status
                 }
+        return result
 
     def update_rs_btw_resource_and_cm(self, rid: str, cid: str, action=True):
         '''
@@ -2301,7 +2293,7 @@ class NeoDataBase:
             print(e)
             pass
 
-    def user_saves_or_removes_resource(self, data: dict, resource: dict):
+    def user_saves_or_removes_resource(self, data: dict):
         '''
             User saves or remove Resource(s)
             data: {
@@ -2454,7 +2446,8 @@ class NeoDataBase:
                             a.channel_title as channel_title,
                             a.updated_at as updated_at,
                             a.keyphrase_embedding as keyphrase_embedding,
-                            a.document_embedding as document_embedding
+                            a.document_embedding as document_embedding,
+                            a.saves_count as saves_count, b.cid as concept_cid
 
                 '''
         else:
@@ -2473,7 +2466,8 @@ class NeoDataBase:
                             COALESCE(toInteger(a.bookmarked_count), 0) AS bookmarked_count,
                             COALESCE(toInteger(a.like_count), 0) AS like_count,
                             a.channel_title as channel_title,
-                            a.updated_at as updated_at
+                            a.updated_at as updated_at,
+                            a.saves_count as saves_count, b.cid as concept_cid
                 '''
 
         result = []
@@ -2496,19 +2490,19 @@ class NeoDataBase:
                     "title": resource["title"],
                     "rid": resource["rid"],
                     "uri": resource["uri"],
-                    "helpful_count": resource["helpful_count"], # int(resource["helpful_count"]),
-                    "not_helpful_count": resource["not_helpful_count"], # int(resource["not_helpful_count"]),
+                    "helpful_count": resource["helpful_count"],
+                    "not_helpful_count": resource["not_helpful_count"],
                     "labels": resource["labels"],
-                    "similarity_score": resource["similarity_score"], # float(resource["similarity_score"]),
+                    "similarity_score": resource["similarity_score"],
                     "keyphrases": resource["keyphrases"],
                     "text": resource["text"],
                     "bookmarked_count": resource["bookmarked_count"],
                     "updated_at": resource["updated_at"],
                     "keyphrase_embedding": resource["keyphrase_embedding"].strip("[]").replace("'", "").split(',') if "keyphrase_embedding" in resource and len(resource["keyphrase_embedding"]) > 5 else [],
                     "document_embedding": resource["document_embedding"].strip("[]").replace("'", "").split(',') if "document_embedding" in resource and len(resource["document_embedding"]) > 5 else [],
-                    # "keyphrase_embedding": [float(value.strip()) for value in resource["keyphrase_embedding"].strip("[]").replace("'", "").split(',')] if "keyphrase_embedding" in resource and len(resource["keyphrase_embedding"]) > 5 else [],
-                    # "document_embedding": [float(value.strip()) for value in resource["document_embedding"].strip("[]").replace("'", "").split(',')] if "document_embedding" in resource and len(resource["document_embedding"]) > 5  else []
-                    "is_bookmarked_fill": resource["is_bookmarked_fill"] if "is_bookmarked_fill" in resource else False
+                    "is_bookmarked_fill": resource["is_bookmarked_fill"] if "is_bookmarked_fill" in resource else False,
+                    "saves_count": resource["saves_count"] if "saves_count" in resource else 0,
+                    "concept_cid": resource["concept_cid"] if "concept_cid" in resource else 0,
                 }
 
                 if "Video" in r["labels"]:
@@ -2516,7 +2510,7 @@ class NeoDataBase:
                     r["description_full"] = resource["description_full"]
                     r["thumbnail"] = resource["thumbnail"]
                     r["duration"] = resource["duration"]
-                    r["views"] = resource["views"] # int(resource["views"])
+                    r["views"] = resource["views"]
                     r["publish_time"] = resource["publish_time"]
                     r["like_count"] = resource["like_count"]
                     r["channel_title"] = resource["channel_title"]
@@ -2550,7 +2544,8 @@ class NeoDataBase:
             Getting User Resources Saved
             Filtering by: user_id, cid: concept cid, mid: learning material and slide_number: silder number
             data: {
-                user_id: 'assad83'
+                cids: [],
+                user_id: 'assad83',
                 content_type: 'video | article',
                 text: 'neo4j node'
             }
@@ -2558,13 +2553,22 @@ class NeoDataBase:
         '''
         logger.info("Filtering User Resources Saved")
         result = { "articles": [], "videos": [] }
-
+        query_where = """
+                        toLower(a.text) CONTAINS toLower($search_text) OR
+                        ANY(keyphrase IN a.keyphrases WHERE keyphrase CONTAINS toLower($search_text))
+                    """
+        
+        if len(data["cids"]) > 0:
+            query_where = """
+                            c.cid IN $cids AND ( toLower(a.text) CONTAINS toLower($search_text) OR
+                            ANY(keyphrase IN a.keyphrases WHERE keyphrase CONTAINS toLower($search_text)) )
+                        """
+            
         with self.driver.session() as session:
             nodes = session.run(
-                """
-                MATCH p=(b: User)-[r:HAS_SAVED {user_id: $user_id}]->(a:Resource) 
-                WHERE   toLower(a.text) CONTAINS toLower($search_text) OR
-                        ANY(keyphrase IN a.keyphrases WHERE keyphrase CONTAINS toLower($search_text))
+                f"""
+                MATCH (c: Concept_modified)<-[m:HAS_MODIFIED]-(b: User)-[r:HAS_SAVED]->(a:Resource) 
+                WHERE  r.user_id = $user_id AND ({query_where})
                 RETURN  DISTINCT LABELS(a) as labels, ID(a) as id, a.rid as rid, a.title as title, a.text as text,
                         a.thumbnail as thumbnail, a.abstract as abstract, a.post_date as post_date, 
                         a.author_image_url as author_image_url, a.author_name as author_name,
@@ -2581,7 +2585,8 @@ class NeoDataBase:
                         true AS is_bookmarked_fill
                 """,
                 user_id=data["user_id"],
-                search_text=data["text"]
+                search_text=data["text"],
+                cids=data["cids"]
             ).data()
             resources = self.resources_wrapper_from_query(data=nodes)
 
@@ -2614,291 +2619,4 @@ class NeoDataBase:
             nodes = [node["rid"] for node in nodes]
         return nodes
 
-
-
-
-
-
-    def user_saves_or_removes_resource2(self, data: dict, resource: dict):
-        '''
-            User saves or remove Resource(s)
-            data: {
-                "user_id": "vhf",
-                "mid": "dsdsd",
-                "slider_number": "slide_1",
-                "cid": "rewtg423",
-                "rid": "2gdsg",
-                "status": True (create) | False (remove) => (to create or remove a resource saved from the user list)
-            }
-        '''
-        logger.info("Saving or Removing from Resource Saved List")
-        tx = self.driver.session()
-
-        if data["status"] == True:
-            tx.run(
-                    '''
-                        MATCH (a:User {uid: $user_id}), (b:Resource {rid: $rid})
-                        MERGE (a)-[r:HAS_SAVED {user_id: $user_id, mid: $mid, slider_number: $slider_number, rid: $rid}]->(b)
-                    ''',
-                    user_id=data["user_id"],
-                    mid=data["mid"],
-                    slider_number=data["slider_number"],
-                    # cid=data["cid"],
-                    rid=data["rid"]
-                )
-            
-        else:
-            tx.run(
-                    '''
-                        MATCH (a:User {uid: $user_id})-[r:HAS_SAVED {user_id: $user_id, mid: $mid, slider_number: $slider_number, rid: $rid}]->(b:Resource {rid: $rid})
-                        DELETE r
-                    ''',
-                    user_id=data["user_id"],
-                    mid=data["mid"],
-                    slider_number=data["slider_number"],
-                    # cid=data["cid"],
-                    rid=data["rid"]
-                )
-        
-        # Update Resources: saves_count
-        tx.run(
-            '''
-                MATCH (a:Resource {rid: $rid})
-                OPTIONAL MATCH (a)<-[r:HAS_SAVED {rid: $rid}]-()
-                WITH a, COUNT(r) AS saves_counter
-                SET a.saves_count = saves_counter
-            ''',
-            rid=data["rid"]
-        )
-
-        """
-        # create or remove realtion between Resources and Concept_modified
-        if data["status"] == True:
-            self.update_rs_btw_resource_and_cm(rid=data["rid"], cid=data["rid"], action=True)
-        
-        else:
-            resource = tx.run(
-                        '''
-                            MATCH (n:Resource) 
-                            WHERE n.rid = $rid
-                            RETURN COALESCE(toInteger(n.saves_count), 0) AS saves_count
-                        ''',
-                        rid=data["rid"]
-                    ).single()
-            if resource["saves_count"] < resource["saves_count"]:
-                self.update_rs_btw_resource_and_cm(rid=data["rid"], cid=data["rid"], action=False)
-        """
-
-    def get_concepts_mids_sliders_numbers_for_user_resources_saved(self, data: dict):
-        '''
-            Getting Parms Data to Filtering User Resource Saved: Concepts, learning material and Slider Numbers
-            By filtering using: cids, cids and mids
-            data: {
-                "user_id": "65e0536db1effed771dbdbb9",
-                "cids": ['2156985142238936538', '7075428280044039726'],
-                "mids": ["6662201fec6bb9067ff71cc9"],
-                "slider_numbers": []
-            }
-        '''
-
-        logger.info("Getting Parms Data to Filtering User Resource Saved")
-        result = {
-            "cids": [],
-            "mids": [],
-            "slider_numbers": []
-        }
-        
-        # check if query params have keys (cids, mids, slider_numbers)
-        if "cids" not in data:
-            data["cids"] = []
-        if "mids" not in data:
-            data["mids"] = []
-        if "slide_numbers" not in data:
-            data["slide_numbers"] = []
-
-        with self.driver.session() as session:
-            if len(data["cids"]) == 0 and len(data["mids"]) == 0 and len(data["slide_numbers"]) == 0:
-                nodes = session.run(
-                    '''
-                        MATCH   (a:User)-[r:HAS_SAVED]->(b:Resource)
-                                -[r2:BASED_ON]->(c:Concept_modified),
-                                (d:Concept)
-                        WHERE   r.user_id = $user_id AND
-                                c.cid = d.cid
-                        RETURN DISTINCT d.cid as cid, d.name as name
-                    ''',
-                    user_id=data["user_id"]
-                ).data()
-                result["cids"] = [ {"cid": node["cid"], "name": node["name"] } for node in nodes ]
-
-            # filtering with: cids
-            if len(data["cids"]) > 0 and len(data["mids"]) == 0 and len(data["slide_numbers"]) == 0:
-                nodes = session.run(
-                    '''
-                    MATCH   (a:User)-[r:HAS_SAVED]->(b:Resource)
-                            -[r2:BASED_ON]->(c:Concept_modified),
-                            (d:Concept),
-                            (e:Slide)-[r3:BELONGS_TO]->(f:LearningMaterial)
-                    WHERE   r.user_id = $user_id AND
-                            r.cid IN $cids
-                    RETURN DISTINCT f.mid as mid, f.name as name
-                    ''',
-                    user_id=data["user_id"],
-                    cids=data["cids"]
-                ).data()
-                result["mids"] = [ {"mid": node["mid"], "name": node["name"] } for node in nodes ]
-
-            # filtering with: cids and mids
-            if len(data["cids"]) > 0 and len(data["mids"]) > 0: #  and len(data["slide_numbers"]) == 0:
-                nodes = session.run(
-                    '''
-                        MATCH   (a:User)-[r:HAS_SAVED]->(b:Resource)
-                                -[r2:BASED_ON]->(c:Concept_modified),
-                                (e:Slide)-[r3:CONTAINS]->(d:Concept),
-                                (e:Slide)-[r4:BELONGS_TO]->(f:LearningMaterial)
-                        WHERE   r.user_id = $user_id AND
-                                r.cid IN $cids AND
-                                r.mid IN $mids
-                        RETURN DISTINCT e.name as name
-                        ORDER BY name
-                    ''',
-                    user_id=data["user_id"],
-                    cids=data["cids"],
-                    mids=data["mids"]
-                ).data()
-                result["slider_numbers"] = [ {"name": node["name"] } for node in nodes ]
-
-            return result
-
-    def filter_user_resources_saved_by2(self, data: dict):
-        '''
-            Getting User Resources Saved
-            By filtering using: user_id, cid: concept cid, mid: learning material and slide_number: silder number
-            data: {
-                "user_id": "65e0536db1effed771dbdbb9",
-                "cids": ["2156985142238936538", "3328549365608809871"],
-                "mids": ["6662201fec6bb9067ff71cc9"],
-                "slide_numbers": ["slide_1"]
-            }
-        '''
-        logger.info("Filtering User Resources Saved")
-
-        result = []
-        nodes = []
-        with self.driver.session() as session:
-            resource_query_form = """
-                            RETURN  DISTINCT LABELS(b) as labels, ID(b) as id, b.rid as rid, b.title as title, b.text as text,
-                                b.thumbnail as thumbnail, b.abstract as abstract, b.post_date as post_date, 
-                                b.author_image_url as author_image_url, b.author_name as author_name,
-                                b.keyphrases as keyphrases, b.description as description, b.description_full as description_full,
-                                b.publish_time as publish_time, b.uri as uri, b.duration as duration,
-                                COALESCE(toInteger(b.views), 0) AS views,
-                                COALESCE(toFloat(b.similarity_score), 0.0) AS similarity_score,
-                                COALESCE(toInteger(b.helpful_count), 0) AS helpful_count,
-                                COALESCE(toInteger(b.not_helpful_count), 0) AS not_helpful_count,
-                                COALESCE(toInteger(b.bookmarked_count), 0) AS bookmarked_count,
-                                COALESCE(toInteger(b.like_count), 0) AS like_count,
-                                b.channel_title as channel_title
-                            """
-
-            # filtering with: cids
-            if len(data["cids"]) > 0 and len(data["mids"]) == 0 and len(data["slide_numbers"]) == 0:
-                nodes = session.run(
-                    f"""
-                        MATCH (a:User)-[r:HAS_SAVED]->(b:Resource)
-                        WHERE   r.user_id = $user_id AND
-                                r.cid IN $cids
-                        {resource_query_form}
-                    """,
-                    user_id=data["user_id"],
-                    cids=data["cids"]
-                ).data()
-
-            # filtering with: cids and mids
-            if len(data["cids"]) > 0 and len(data["mids"]) > 0 and len(data["slide_numbers"]) == 0:
-                nodes = session.run(
-                    f"""
-                        MATCH (a:User)-[r:HAS_SAVED]->(b:Resource)
-                        WHERE   r.user_id = $user_id AND
-                                r.cid IN $cids AND
-                                r.mid IN $mids
-                        {resource_query_form}
-                    """,
-                    user_id=data["user_id"],
-                    cids=data["cids"],
-                    mids=data["mids"]
-                ).data()
-
-            # filtering with: cids, mids and silder_numbers
-            if len(data["cids"]) > 0 and len(data["mids"]) > 0 and len(data["slide_numbers"]) > 0:
-                nodes = session.run(
-                    f"""
-                        MATCH (a:User)-[r:HAS_SAVED]->(b:Resource)
-                        WHERE   r.user_id = $user_id AND
-                                r.cid IN $cids AND
-                                r.mid IN $mids AND
-                                r.slide_number IN $slide_numbers
-                        {resource_query_form}
-                    """,
-                    user_id=data["user_id"],
-                    cids=data["cids"],
-                    mids=data["mids"],
-                    slide_numbers=data["slide_numbers"]
-                ).data()
-
-            result = self.resources_wrapper_from_query(data=nodes)
-        return result
-    
-    """
-    def edit_relationship_btw_concepts_and_resources(self, concepts_cro: list, resources: list):
-    self.db.edit_relationship_btw_concepts_and_resources(concepts_cro=concepts_cro, 
-                                                                resources=resources,
-                                                                old_relationship=True
-                                                                )
-
-    def edit_relationship_btw_concepts_and_resources(self, concepts: list, resources: list, old_relationship=True):
-        '''
-            update (create or remove) relationship btw Resource and Concept_modified
-            whether the list of result still contain the Resource
-            returned by the algorithm
-        '''
-        logger.info("Editing Relationship between Resource and Concept_modified")
-
-        if old_relationship:
-            self.remove_relation_btw_resource_and_concepts(concepts=concepts)
-
-        resources_ids = [node["node_id"] for node in resources]
-        cids = [node["node_id"] for node in concepts]
-        with self.driver.session() as session:
-            session.run(
-                '''
-                    MATCH (a:Resource),(b:Concept_modified)
-                    WHERE ID(a) IN $resources_ids AND ID(b) IN $cids
-                    MERGE (a)-[r:BASED_ON]->(b)
-                    RETURN r
-                ''',
-                resources_ids=resources_ids,
-                cids=cids
-            )
-
-    def remove_relation_btw_resource_and_concepts(self, concepts: list):
-        '''
-            Remove Relationship between Resource and Concept_modified
-        '''
-
-        logger.info("Remove Relationship between Resource and Concept_modified")
-
-        concept_ids = [node["node_id"] for node in concepts]
-        with self.driver.session() as session:
-            session.run(
-                    '''
-                            MATCH p=(a:Resource)-[r:BASED_ON]->(b:Concept_modified)
-                            WHERE ID(b) IN $concept_ids
-                            DELETE r
-                    ''',
-                    concept_ids=concept_ids
-                )
-
-
-    """
 # TODO Issue #640: do we need create_user_slide_relationships?

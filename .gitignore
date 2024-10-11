@@ -268,3 +268,5 @@ coursemapper-kg/app/algorithms/elmo_2x4096_512_2048cnn_2xhighway_weights.hdf5
 coursemapper-kg/=2.2.2
 venv*
 .DS_Store
+
+coursemapper-kg/app

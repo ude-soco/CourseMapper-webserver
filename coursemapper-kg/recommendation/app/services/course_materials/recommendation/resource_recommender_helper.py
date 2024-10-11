@@ -11,6 +11,7 @@ import scipy.stats as st
 from ..db.neo4_db import NeoDataBase
 import concurrent.futures
 from .recommendation_type import RecommendationType
+from collections import defaultdict
 
 from log import LOG
 import logging
@@ -47,11 +48,11 @@ def remove_keys_from_resources(resources: list, recommendation_type=None):
     logger.info("Remove keys from list (resource list)")
     if recommendation_type in [ RecommendationType.PKG_BASED_KEYPHRASE_VARIANT, RecommendationType.CONTENT_BASED_KEYPHRASE_VARIANT ]:
         keys = [    "keyphrase_counts", "keyphrases_infos", "keyphrase_embedding", "document_embedding", 
-                    "composite_score", "labels"
+                    "composite_score", "labels", "concept_cid"
                 ]
     else:
         keys = [    "keyphrase_counts", "keyphrases_infos", "keyphrase_embedding", "document_embedding", 
-                    "composite_score", "labels", "keyphrases"
+                    "composite_score", "labels", "keyphrases", "concept_cid"
                 ]
         
     resources_updated = [{k: v for k, v in d.items() if k not in keys} for d in resources]
@@ -284,6 +285,41 @@ def calculate_factors_weights(category: int, resources: list, weights: dict = No
 
     return resources
 
+def rank_resources_proportional_top_n_with_remainder_by_concept_cid(dict_list, top_n=10):
+    # Group dictionaries by their 'concept_cid'
+    grouped_by_id = defaultdict(list)
+    for item in dict_list:
+        grouped_by_id[item['concept_cid']].append(item)
+    
+    # Calculate the proportional selection count for each group
+    total_items = sum(len(group) for group in grouped_by_id.values())
+    proportions = {k: math.ceil((len(v) / total_items) * top_n) for k, v in grouped_by_id.items()}
+    
+    # Adjust the proportions so their sum equals `top_n`
+    while sum(proportions.values()) > top_n:
+        for key in proportions:
+            if proportions[key] > 0:
+                proportions[key] -= 1
+                if sum(proportions.values()) == top_n:
+                    break
+    
+    
+    # Collect top items based on calculated proportions and the remainder
+    top_items = []
+    remainder_items = []
+    
+    for key, group in grouped_by_id.items():
+        # Sort the group if necessary and separate top and remaining items
+        top_count = proportions[key]
+        top_items.extend(group[:top_count])
+        remainder_items.extend(group[top_count:])
+    
+    # Combine top 10 items with the remainder items
+    final_result = top_items + remainder_items
+    final_result = remove_duplicates_from_resources(final_result)
+    return final_result
+
+
 def rank_resources(resources: list, weights: dict = None, ratings: list = None, top_n_resources=10, recommendation_type=None):
     '''
         factor_weights: {   "video": dict, (default: {'like_count': 0.146, 'creation_date': 0.205, 'views': 0.146, 'similarity_score': 0.152, 'saves_count': 0.199, 'user_rating': 0.152}) 
@@ -295,7 +331,6 @@ def rank_resources(resources: list, weights: dict = None, ratings: list = None, 
         Step 3: Last Step: Resources having Rating related to DNU_modified (cid)
     '''
     logger.info("Appliying Ranking Algorithm")
-    # resources = remove_duplicates_from_resources(resources)
 
     if len(resources) > 0:
         video_weights_normalized = normalize_factor_weights(factor_weights=weights["video"], method_type="l1", complete=True, sum_value=False)
@@ -305,12 +340,16 @@ def rank_resources(resources: list, weights: dict = None, ratings: list = None, 
         resources_videos = [resource for resource in resources if "Video" in resource["labels"]]
         if len(video_weights_normalized) > 0:
             resources_videos = calculate_factors_weights(category=1, resources=resources_videos, weights=video_weights_normalized)
+        
+        resources_videos = rank_resources_proportional_top_n_with_remainder_by_concept_cid(resources_videos)
         resources_videos = remove_keys_from_resources(resources=resources_videos, recommendation_type=recommendation_type)
 
         # articles items
         resources_articles = [resource for resource in resources if "Article" in resource["labels"]]
         if len(article_weights_normalized) > 0:
             resources_articles = calculate_factors_weights(category=2, resources=resources_articles, weights=article_weights_normalized)
+        
+        resources_articles = rank_resources_proportional_top_n_with_remainder_by_concept_cid(resources_articles)
         resources_articles = remove_keys_from_resources(resources=resources_articles, recommendation_type=recommendation_type)
 
         # # Finally, priorities on resources having Rating related to DNU_modified (cid)
@@ -318,10 +357,27 @@ def rank_resources(resources: list, weights: dict = None, ratings: list = None, 
             pass
 
         return {
-            "articles": resources_articles[: top_n_resources],
-            "videos": resources_videos[: top_n_resources]
+            "articles": get_paginated_resources(resources_articles), # resources_articles[: top_n_resources],
+            "videos": get_paginated_resources(resources_videos) # resources_videos[: top_n_resources]
         }
     return { "articles": [], "videos": [] }
+
+def get_paginated_resources(resources: list, page_number=1, page_size=10):
+    '''
+        Simulate Pagination Logic with Resource List
+    '''
+    total_items = len(resources)
+    total_pages = -(-total_items // page_size)
+    start_index = (page_number - 1) * page_size
+    end_index = min(start_index + page_size, total_items)
+
+    return {
+                "current_page": page_number,
+                "total_pages": total_pages,
+                "total_items": total_items,
+                "content": resources # [start_index:end_index]
+            }
+
 
 def rec_params_request_mapped(data_rec_params: dict, data_default: dict=None):
     '''
@@ -424,12 +480,12 @@ def create_get_resources_thread(func, args):
     thread.start()
     # redis_client.set(name=f"{user_id}_{redis_key_1}", value=status, ex=(redis_client_expiration_time * 10080))
 
-def check_and_get_resources_with_concepts(db: NeoDataBase, concepts: list):
+def check_and_get_resources_with_concepts(db: NeoDataBase, concepts: list, default_time_days=30):
     '''
         Check if concepts already exist and connected to any resources in Neo4j Database
         If resources exist, check based on:
         updated_at: it's not more than a given time (one week old)
-        default time = 14 days
+        default_time_days: default time = 30 days
     '''
     current_time = datetime.now()
 
@@ -457,7 +513,7 @@ def check_and_get_resources_with_concepts(db: NeoDataBase, concepts: list):
                 # Parse the given ISO time string
                 given_time = datetime.fromisoformat(resource["updated_at"])
                 time_difference = current_time - given_time
-                if time_difference <= timedelta(days=14):
+                if time_difference <= timedelta(days=default_time_days):
                     resources_found.append(resource)
     return concepts_having_resources, concepts_not_having_resources, resources_found
 
@@ -475,9 +531,3 @@ def parallel_crawling_resources(function, concept_name: str, cid: str, result_ty
         result_videos = future_videos.result()
         result_articles = future_articles.result()
         return {"cid": cid, "videos": result_videos, "articles": result_articles}
-
-
-# def parallel_crawling_resources2(function, concept_name: str, cid: str):
-#     result_videos = function(concept_name, True)
-#     result_articles = function(concept_name, False)
-#     return {"cid": cid, "videos": result_videos, "articles": result_articles}

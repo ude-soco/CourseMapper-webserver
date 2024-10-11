@@ -10,7 +10,7 @@
 
 :host ::ng-deep .scroll_panel_list {
   width: 100%;
-  height: 37rem;
+  height: 55rem;
 }
 
 /* :host ::ng-deep .p-tabview-panels {
@@ -61,4 +61,16 @@
 :host ::ng-deep .p-checkbox-box.p-highlight {
   background: #0288d1;
   border-color: #0288d1;
+}
+
+:host ::ng-deep #result_concepts_modified .p-multiSelect {
+  width: 16rem;
+}
+
+:host ::ng-deep .p-multiSelect .p-multiselect-panel {
+  width: 16rem;
+}
+
+.p-multiselect-panel {
+  width: 16rem;
 }

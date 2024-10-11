@@ -15,7 +15,7 @@
   font-size: 12px;
 }
 
-:host ::ng-deep #search_concept_category_3 .p-dropdown {
+/* :host ::ng-deep #search_concept_category_3 .p-dropdown {
   width: 20em;
 }
 :host ::ng-deep #search_concept_category_3 .p-dropdown .p-dropdown-label {
@@ -23,14 +23,12 @@
 }
 :host ::ng-deep #search_concept_category_3 .p-dropdown .p-dropdown-item {
   font-size: 12px;
-}
-
+} */
 
 
 :host ::ng-deep #search_concept_category_3 .p-multiSelect {
   width: 20em;
 }
-
 
 
 

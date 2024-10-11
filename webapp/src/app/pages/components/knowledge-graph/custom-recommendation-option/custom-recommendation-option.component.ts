@@ -1,10 +1,8 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { MenuItem, MessageService } from 'primeng/api';
-import { BehaviorSubject, Observable, Subject, lastValueFrom } from 'rxjs';
-import { ActivatorPartCRO, CROform, Neo4jResult, FactorWeight } from 'src/app/models/croForm';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { MessageService } from 'primeng/api';
+import { BehaviorSubject } from 'rxjs';
+import { ActivatorPartCRO, CROform, Neo4jResult } from 'src/app/models/croForm';
 import { CustomRecommendationOptionService } from 'src/app/services/custom-recommenation-option.service';
-import { SlideConceptsService } from 'src/app/services/slide-concepts.service';
-import { last, takeLast } from 'rxjs/operators';
 
 
 @Component({
@@ -19,13 +17,11 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
   @Input() didNotUnderstandConceptsObj: any [] = [];
   @Input() previousConceptsObj: any [] = [];
   @Input() activatorPartCRO: ActivatorPartCRO;
-  // @Output() croFormValue: any; //  = new EventEmitter<CROform>();
   @Input() conceptsUpdated: any;
 
-  isCustomRecOptionDisplayed = false;
+  isCustomRecOptionDisplayed = true;
   cro_concept_weight: number;
   cro_concept_selected: any | undefined;
-  // cro_concept_status_selected: boolean;
   croForm: any = {
     user_id: null,
     mid: null,
@@ -47,55 +43,54 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
       {
         "title": "Similarity Score",
         "key": "similarity_score",
-        "value": 0.23,
+        "value": 0.169000934,
         "checked": true
       },
       {
-        "title": "Creation Date",
+        "title": "Creation Date on YouTube",
         "key": "creation_date",
-        "value": 0.31,
+        "value": 0.141456583,
         "checked": true
       },
       {
         "title": "No. of Views on YouTube",
         "key": "views",
-        "value": 0.22,
+        "value": 0.186741363,
         "checked": true
       },
       {
         "title": "No. of Likes on YouTube",
         "key": "like_count",
-        "value": 0.22,
+        "value": 0.177404295,
         "checked": true
       },
   
       {
         "title": "User Rating on CourseMapper",
         "key": "user_rating",
-        "value": 0.23,
+        "value": 0.18627451,
         "checked": true
       },
       {
         "title": "No. of Saves on CourseMapper",
         "key": "saves_count",
-        "value": 0.30,
+        "value": 0.139122316,
         "checked": true
       }
     ],
     normalized: {   
-    'like_count': 0.146, 
-    'creation_date': 0.205, 
-    'views': 0.146, 
-    'similarity_score': 0.152, 
-    'saves_count': 0.199, 
-    'user_rating': 0.152
-}
+    'like_count': 0.177404295, 
+    'creation_date': 0.141456583, 
+    'views': 0.186741363, 
+    'similarity_score': 0.169000934, 
+    'saves_count': 0.139122316, 
+    'user_rating': 0.18627451
+    }
   }
 
   croFormBackup: CROform = {};
   numberConceptsToBeChecked = 0;
   CROconceptsManually = []; // from the whole material
-  // CROconceptsManuallySelection1or2 = []; // from the whole slide
   
   CROconceptsManuallySelection1 = []; // from the whole slide
   CROconceptsManuallySelection2 = []; // from the whole material
@@ -107,34 +102,30 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
 
   croFormObj = new BehaviorSubject<CROform>(this.croForm);
 
+  // result component
+  resultTabSelected: number = 1;
+  factorsTabArticle = ["similarity_score", "saves_count", "user_rating"];
+
+  @Input() data: any[] = [];
+  @Input() DNUCurrent: any[] = [];
+  @Input() DNUPrevious: any[] = [];
+
   constructor(
     private croService: CustomRecommendationOptionService,
-    private messageService: MessageService,
-    private slideConceptservice: SlideConceptsService
+    private messageService: MessageService
   ) {
-    // this.getConceptsManually();
-    // this.get_concepts_manually_current_slide();
     this.croFormObj.next(this.croForm);
   }
 
   ngOnInit(): void {
+    localStorage.removeItem('resultTabSelected');
     this.croForm["user_id"] = this.userId;
     this.croForm["mid"] = this.materialId;
     this.croForm["slide_id"] = this.slideId;
-
-    // this.slideConceptservice.didNotUnderstandConcepts.subscribe((res) => {
-    //   console.warn('dnu values      -> ', res)
-    // });
-    // this.slideConceptservice.newConcepts.subscribe((res) => {
-    //   console.warn("previous values -> ", res)
-    // });
   }
 
   updateConcpetAfterRecommandation() {
     // this.croForm.concepts = this.conceptsUpdated;
-    console.warn("conceptsUpdated -> ", this.conceptsUpdated)
-    console.warn("croForm.concepts ->", this.conceptsUpdated)
-
     for (let conceptU of this.conceptsUpdated) {
       for (let concept of this.croForm.concepts) {
         if (conceptU.cid === concept.cid) {
@@ -148,20 +139,12 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
 
   ngOnChanges(changes: SimpleChanges) {
     for (const propName in changes) {
-      console.warn("propName -> ", propName)
-
       if (propName === "materialId") {
         this.getConceptsManually();
       }
       if (propName === "slideId") {
-        // this.get_concepts_manually_current_slide();
       }
       this.updateCROformAll(this.didNotUnderstandConceptsObj, this.previousConceptsObj);
-
-      // if (propName === "conceptsUpdated") {
-      //   // this.croForm.concepts = this.conceptsUpdated;
-      //   this.updateConcpetAfterRecommandation()
-      // }
     }
   }
 
@@ -297,7 +280,6 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     */
   }
 
-
   addDictsIfNotExists(newDictsArray) {
     newDictsArray.forEach(newDict => {
         const exists = this.croForm.concepts.some(dict => dict.cid === newDict.cid);
@@ -364,8 +346,6 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
   }
   
   updateCROform(conceptsObj: any[], category: string) {
-    console.warn("this.croForm?.requested -> ", this.croForm?.requested);
-
     // let concepts_changed = this.areArraysEqualById(this.croForm.concepts, conceptsObj);
     if (this.croForm?.requested === false) {}
 
@@ -387,19 +367,23 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
         this.getConceptsManually();
       }
     }
-    // this.updateNumberConceptsToBeChecked();
-    // this.showRecTypeAndFactorWeight();
-
-
   }
   
   updateCROformAll(didNotUnderstandConceptsObj, previousConceptsObj) {
+    console.warn("didNotUnderstandConceptsObj -> ", didNotUnderstandConceptsObj)
+    console.warn("previousConceptsObj -> ", previousConceptsObj)
+
     if (this.croForm.category === "1") {
       this.updateCROform(didNotUnderstandConceptsObj, "1");
 
     } else if (this.croForm.category === "2") {
-      // this.updateCROform(previousConceptsObj, "2");
-      this.updateCROform([...didNotUnderstandConceptsObj, ...previousConceptsObj], "2");
+      let previousDNU;
+      if (previousConceptsObj) {
+        previousDNU = previousConceptsObj;
+      } else {
+        previousDNU = this.previousConceptsObj;
+      }
+      this.updateCROform([...didNotUnderstandConceptsObj, ...previousDNU], "2");
 
     } else if (this.croForm.category === "3") {
       this.updateCROform(undefined, "3");
@@ -408,8 +392,6 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
       this.croForm.category === "1"
       this.updateCROform(didNotUnderstandConceptsObj, "1");
     }
-
-    // this.updateStatus1or2();
   }
 
   combine2ConceptsList(arrayA, arrayB) {
@@ -501,55 +483,39 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     }
   }
 
-  /*
-  setSelectManuallyOnClick(event) {
-    console.warn("Selected -> ", event);
-  }
+  setSelectManuallyOnChangeMultiSelect(event) {
+    let concept_selected = event.itemValue;
+    if (concept_selected) {
+      const index = this.croForm.concepts.findIndex(concept => concept.cid === concept_selected.cid);
 
-  setSelectManuallyOnChange2(event) {
-    const isSelected = event.value.includes(event.itemValue);
-    console.warn("isSelected -> ", isSelected);
-
-    let concepts_selected = event.value;
-    this.deactivateSelection();
-
-    
-    if (event.value) {
-      let concepts = [];
-      this.croForm.concepts = [];
-
-      for (let concept_selected of concepts_selected) {
+      if (index !== -1) {
+        this.croForm.concepts.splice(index, 1);
+      } else {
         concept_selected["status"] = true;
         concept_selected["visible"] = true;
-        concepts.push(concept_selected);
-
+        this.croForm.concepts.push(concept_selected);
       }
-      this.croForm.concepts = concepts_selected;
-      // console.warn("this.croForm.concepts -> ", this.croForm.concepts)
-    }
-    
-    // this.updateNumberConceptsToBeChecked();
-  }
-
-  removeSelectManuallyOnChange2(index: number, cid: string) {
-    if (index > -1) {
-      this.croForm.concepts.splice(index, 1);
-
-      for (let node of this.CROconceptsManually) {
-        if (cid === node.cid) {
-          node.status = false;
-          node.visible = false;
-          break;
-        }
+    } else {
+      if (event.value.length === this.CROconceptsManually.length) {
+        this.croForm.concepts = event.value;
+        this.croForm.concepts.forEach((concept) => {concept["status"]; concept["status"]});
+      } else if (event.value.length === 0) {
+        this.croForm.concepts = [];
       }
     }
-    // this.updateNumberConceptsToBeChecked();
-    this.messageService.add({ key: 'cro_concept_removed', severity: 'info', summary: '', detail: 'Concept removed'});
+
+    this.croForm.concepts.sort((a, b) => {
+      if (a.name < b.name) {
+        return -1;
+      }
+      if (a.name > b.name) {
+        return 1;
+      }
+      return 0;
+    });
+    this.deactivateSelection();
   }
 
-
-  */
-  
   setSelectManuallyOnChange(event) {
     this.deactivateSelection();
 
@@ -593,81 +559,45 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     this.messageService.add({ key: 'cro_concept_removed', severity: 'info', summary: '', detail: 'Concept removed'});
   }
 
-  getOnlyStatusChecked() {
+  buildFinalRequestRecMaterial(reqData) {
     let concepts = [];
     for(let concept of this.croForm.concepts) {
       if (concept.status === true) {
         concepts.push(concept);
       }
     }
-    this.croForm.concepts = concepts;
-    // this.croForm.concepts = this.CROconceptsManually;
 
     // update factor weights
+    // this.croForm.concepts = this.CROconceptsManually;
     this.getFactorWeight();
 
-    // check if factor weights changed
-    // this.reloadRankingLogicFactorWeight();
-
-    return this.croForm;
+    let croFormRequest = {
+      default: reqData,
+      rec_params: JSON.parse(JSON.stringify(this.croForm))  // this.getOnlyStatusChecked()
+    }
+    croFormRequest.rec_params.concepts = concepts;
+    return croFormRequest;
   }
-  
 
-
-  /**
-
-  get_concepts_manually_current_slide() {
-    if (this.slideId) {
-      if (this.CROconceptsManuallySelection1.length <= 0) {
-        const currentSlide = `${this.materialId}_slide_${this.slideId.toString()}`;
-        this.croService.getConceptsBySlideId(currentSlide, this.userId).subscribe((res: Neo4jResult) => {
-          this.CROconceptsManuallySelection1 = res.records;
-        })
+  checkResultTabSelected(factorKey) {
+    const resultTabSelected = localStorage.getItem('resultTabSelected');
+    if (resultTabSelected) {
+      if (resultTabSelected === '1' && !this.factorsTabArticle.includes(factorKey) === true ) {
+        for (let factor of this.factor_weights.original) {
+          if (factor.key === factorKey) {
+            factor.checked = false;
+            break;
+          }
+        }
+        return true;
       }
     }
-  }
-
-  setWeight(event, cro) {
-    for (let i = 0; i < this.croForm.concepts.length; i++) {
-      let x = this.croForm.concepts[i];
-      if (x.cid == cro.cid) {
-        let value = Number(event.value);
-        cro.weight_updated = value;
-        cro.weight = (value / 100); // .toFixed(2);
+    for (let factor of this.factor_weights.original) {
+      if (factor.key === factorKey) {
+        factor.checked = true;
         break;
       }
     }
-    // console.warn(this.croForm.concepts);
+    return false;
   }
-
-  getConceptsModifiedByUserIdAndCids() {
-    let cids = this.croForm?.concepts.map((concept) => concept.cid);
-    this.croService.getConceptsModifiedByUserIdAndCids(this.userId, cids.toString()).subscribe((res: Neo4jResult) => {
-      this.CROconceptsManuallySelection1 = res.records;
-      this.croForm.concepts.forEach((concept) => {
-        for(let record of res.records) {
-          if (concept.cid == record.cid) {
-            concept.weight = record.weight;
-            break
-          }
-        }
-      });
-    })
-  }
-
-
-  reloadRankingLogicFactorWeight() {
-    let jsonString = localStorage.getItem('cro_ranking_factor_weights');
-
-    if (jsonString) {
-      if (JSON.stringify(this.croForm.factor_weights) !== JSON.stringify(JSON.parse(this.croForm.factor_weights))) {
-        localStorage.setItem('cro_ranking_factor_weights', this.croForm.factor_weights);
-      } else {
-        this.croForm.factor_weights.reload = true;
-        localStorage.setItem('cro_ranking_factor_weights', this.croForm.factor_weights);
-      }
-    }
-  }
-   */
-
 }

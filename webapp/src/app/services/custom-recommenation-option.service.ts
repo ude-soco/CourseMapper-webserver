@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, lastValueFrom } from 'rxjs';
-import { environment_Python } from 'src/environments/environment';
+import { environment } from 'src/environments/environment';
 import { Neo4jResult, FactorWeight } from '../models/croForm';
 // TODO remove neo4j from package.json
 
@@ -14,6 +14,7 @@ import { Neo4jResult, FactorWeight } from '../models/croForm';
   providedIn: 'root'
 })
 export class CustomRecommendationOptionService {
+  api_PYTHON_SERVER_RS = environment.PYTHON_SERVER_RS;
 
   constructor(public router: Router, private http: HttpClient) { }
 
@@ -25,49 +26,22 @@ export class CustomRecommendationOptionService {
   // }
 
   updateFactorWeight(data): Observable<any>{
-    const url = `${environment_Python.PYTHON_SERVER}get_resources/update_factor_weights`;
+    const url = `${this.api_PYTHON_SERVER_RS}/setting/update_factor_weights`;
     return this.http.post<any>(url, data);
   }
 
   getConceptsModifiedByUserIdAndMid(mid: string, user_id: string): Observable<Neo4jResult> {
-    const url = `${environment_Python.PYTHON_SERVER}get_concepts_modified_by_user_id_and_mid?user_id=${user_id}&mid=${mid}`;
+    const url = `${this.api_PYTHON_SERVER_RS}/setting/get_concepts_modified_by_user_id_and_mid?user_id=${user_id}&mid=${mid}`;
     return this.http.get<Neo4jResult>(url);
   }
 
   getConceptsModifiedByUserId(user_id: string): Observable<Neo4jResult> {
-    const url = `${environment_Python.PYTHON_SERVER}get_concepts_modified_by_user_id?user_id=${user_id}`;
+    const url = `${this.api_PYTHON_SERVER_RS}/setting/get_concepts_modified_by_user_id?user_id=${user_id}`;
     return this.http.get<Neo4jResult>(url);
   }
 
   getConceptsByCids(user_id: string, cids: string): Observable<Neo4jResult> {
-    const url = `${environment_Python.PYTHON_SERVER}get_concepts_by_cids?user_id=${user_id}&cids=${cids}`;
+    const url = `${this.api_PYTHON_SERVER_RS}/setting/get_concepts_by_cids?user_id=${user_id}&cids=${cids}`;
     return this.http.get<Neo4jResult>(url);
   }
-
-
-  /*
-
-  getConceptsBySlideId(mid: string, user_id: string): Observable<Neo4jResult> {
-    const url = `${environment_Python.PYTHON_SERVER}get_concepts_modified_by_user_id_and_slide_id?user_id=${user_id}&slide_id=${mid}`;
-    return this.http.get<Neo4jResult>(url);
-  }
-  
-  getConceptsModifiedByUserIdAndCids(user_id: string, cids: []): Observable<Neo4jResult> {
-    const url = `${environment_Python.PYTHON_SERVER}get_concepts_modified_by_user_id_and_cids?user_id=${user_id}&cids=${cids}`;
-    return this.http.get<Neo4jResult>(url);
-  }
-
-  getConceptsBYuserIdANDmid(userId: string, mid: string): Observable<Neo4jResult> {
-    const url = `${environment_Python.PYTHON_SERVER}get_concepts_modified_by_user_id_and_mid?userId=${userId}&mid=${mid}`;
-    return this.http.get<Neo4jResult>(url);
-  }
-
-
-  getConceptsByCids(cIds: string[]): Observable<Neo4jResult> {
-    let params = new HttpParams();
-    params = params.append('cids', cIds.join(', '));
-
-    const url = `${environment_Python.PYTHON_SERVER}get_concepts_by_cids?${cIds.toString()}`;
-    return this.http.get<Neo4jResult>(url, { params: params }); // , { observe: 'response' })
-  }*/
 }

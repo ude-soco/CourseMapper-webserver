@@ -65,8 +65,10 @@ export interface ResourceNode {
 
 export interface ResourcesPagination {
     concepts?: Concept[],
-    nodes: { articles: ArticleElementModel[], videos: VideoElementModel[] },
-    // count?: { articles: number, vdieos: number },
+    nodes: { 
+        articles: paginatorArticleDetail, 
+        videos: paginatorVideoDetail 
+    },
     recommendation_type: string
 }
 
@@ -85,6 +87,20 @@ export interface UserResourceFilterParamsResult {
 export interface UserResourceFilterResult {
     articles: ArticleElementModel[],
     videos: VideoElementModel[]
+}
+
+export interface paginatorVideoDetail {
+    current_page: number,
+    total_pages: number,
+    total_items: number,
+    content: VideoElementModel[]
+}
+
+export interface paginatorArticleDetail {
+    current_page: number,
+    total_pages: number,
+    total_items: number,
+    content: ArticleElementModel[]
 }
 
 

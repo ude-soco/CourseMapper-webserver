@@ -11,6 +11,7 @@ export const environment = {
       path: '/api/socket.io',
     },
   },
+  PYTHON_SERVER_RS: 'http://localhost:5000/recommendation',
 };
 
 /*
