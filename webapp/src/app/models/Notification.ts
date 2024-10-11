@@ -1,7 +1,19 @@
+import { BlockingNotifications } from './BlockingNotification';
+
 export interface UserNotification {
   //the below 2 attrbiutes are only present when we are deleting a course.
   courseId?: string;
+  annotationId?: string;
+  replyId?: string;
+  materialId?: string;
+  topicId?: string;
+  channelId?: string;
   isDeletingCourse?: boolean;
+  isDeletingAnnotation?: boolean;
+  isDeletingReply?: boolean;
+  isDeletingMaterial?: boolean;
+  isDeletingTopic?: boolean;
+  isDeletingChannel?: boolean;
   _id: string;
   activityId: {
     notificationInfo: {
@@ -26,6 +38,10 @@ export interface UserNotification {
     };
     statement: {
       actor: {
+        account:{
+          name:string;
+        }
+        
         name: string;
       };
       object: {
@@ -57,6 +73,10 @@ export interface UserNotification {
           [key: string]: {
             id: string; // Assuming _id is of string type
             content: string; // Assuming content is of string type
+            location: {
+              startPage?: number;
+              from?: number;
+            };
           };
         };
       };
@@ -97,6 +117,8 @@ export interface Notification {
   isDeletingMaterial?: boolean;
   isDeletingTopic?: boolean;
   isDeletingChannel?: boolean;
+  from?: number;
+  startPage?: number;
 }
 
 export interface BlockingUsers {
@@ -115,6 +137,11 @@ export interface TransformedNotificationsWithBlockedUsers {
   notifications: Notification[];
   blockingUsers: BlockingUsers[];
 }
+
+/* export interface UserNotificationWithIndicators {
+  activityIndicator: BlockingNotifications;
+  userNotification: UserNotification[];
+} */
 
 export enum NotificationCategory {
   CourseUpdate = 'courseupdates',

@@ -8,12 +8,14 @@ import debugLib from "debug";
 import bodyParser from "body-parser";
 import path from "path";
 import socketio from "./socketio";
+import addErrorHandling from "./middlewares/exceptionHandling";
 
 dotenv.config();
 const env = process.env.NODE_ENV || "production";
 const app = express();
 const debug = debugLib("coursemapper-webserver:src/server");
 const db = require("./models");
+const helpers = require("./helpers/helpers");
 const Role = db.role;
 const User = db.user;
 
@@ -47,6 +49,7 @@ app.use(
   })
 );
 app.use("/api/public/uploads", express.static("public/uploads"));
+addErrorHandling(app);
 
 // Get port from environment and store in Express
 const port = normalizePort(process.env.PORT || "8090");
@@ -66,6 +69,23 @@ db.mongoose
     console.error("Error connecting to MongoDB.", err);
     process.exit();
   });
+
+// Create connection to Neo4j
+const neo4j = require("./graph/neo4j");
+neo4j.connect(
+  process.env.NEO4J_URI,
+  process.env.NEO4J_USER,
+  process.env.NEO4J_PASSWORD
+);
+
+// Create connection to Redis
+const redis = require("./graph/redis");
+redis.connect(
+  process.env.REDIS_HOST,
+  process.env.REDIS_PORT,
+  process.env.REDIS_DATABASE,
+  process.env.REDIS_PASSWORD
+);
 
 // xAPI scheduler
 const xapiScheduler = require("./xAPILogger/scheduler");
@@ -98,6 +118,7 @@ require("./routes/videodelete.routes")(app);
 require("./routes/test.routes")(app);
 require("./routes/debug.routes")(app);
 require("./routes/notifications.routes")(app);
+require("./routes/knowledgeGraph.routes")(app);
 
 // Listen on provided port, on all network interfaces
 server.listen(port);
@@ -138,13 +159,18 @@ const initializeDB = async () => {
         console.log(
           "Adding User: { name: admin, password: " + process.env.PASS + " }"
         );
+        let email = process.env.EMAIL;
+        let generateMboxAndMboxSha1Sum =
+          helpers.generateMboxAndMboxSha1Sum(email);
 
         try {
           await new User({
             firstname: "Admin",
             lastname: "User",
             username: "admin",
-            email: "admin@soco.com",
+            email: email,
+            mbox: generateMboxAndMboxSha1Sum.mbox,
+            mbox_sha1sum: generateMboxAndMboxSha1Sum.mbox_sha1sum,
             role: foundAdmin._id,
             password: password,
           }).save();

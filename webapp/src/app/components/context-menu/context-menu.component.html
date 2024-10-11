@@ -7,6 +7,27 @@
     (onClick)="onRenameClicked()"
   ></p-button>
   <p-button
+    *ngIf="topicSettingChosen"
+    label="View topic dashboard"
+    icon="pi pi-chart-bar"
+    styleClass="contextMenuButton"
+    (onClick)="onViewTopicDashboardClicked()"
+  ></p-button>
+  <p-button
+    *ngIf="channelSettingChosen"
+    label="View channel dashboard"
+    icon="pi pi-chart-bar"
+    styleClass="contextMenuButton"
+    (onClick)="onViewChannelDashboardClicked()"
+  ></p-button>
+  <p-button
+    *ngIf="MaterialSettingChosen"
+    label="View material dashboard"
+    icon="pi pi-chart-bar"
+    styleClass="contextMenuButton"
+    (onClick)="onViewMaterialDashboardClicked()"
+  ></p-button>
+  <p-button
     *ngIf="showModeratorPrivileges"
     label="Delete"
     icon="pi pi-times"

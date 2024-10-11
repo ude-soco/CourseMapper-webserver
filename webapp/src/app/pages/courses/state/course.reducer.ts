@@ -727,13 +727,15 @@ export const courseReducer = createReducer<CourseState>(
     (state, action): CourseState => {
       //update the topics and the channels in the state, and add/update the material array
       let updatedDoc = action.updatedDoc;
-      /*  let infoSentToBackend = action.infoSentToBackend; */
-      return {
-        ...state,
-        topicsNotificationSettings: updatedDoc.topics,
-        channelsNotificationSettings: updatedDoc.channels,
-        materialsNotificationSettings: updatedDoc.materials,
-      };
+      if (action.updatedDoc.courseId === state.courseId) {
+        return {
+          ...state,
+          topicsNotificationSettings: updatedDoc.topics,
+          channelsNotificationSettings: updatedDoc.channels,
+          materialsNotificationSettings: updatedDoc.materials,
+        };
+      }
+      return state;
     }
   ),
   on(

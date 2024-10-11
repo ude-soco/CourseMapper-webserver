@@ -527,6 +527,7 @@ export const withdrawCourse = async (req, res, next) => {
   try {
     await BlockingNotifications.deleteMany({
       courseId: courseId,
+      userId: userId
     });
   } catch (err) {
     return res
@@ -537,6 +538,7 @@ export const withdrawCourse = async (req, res, next) => {
   try {
     await FollowAnnotation.deleteMany({
       courseId: courseId,
+      userId: userId
     });
   } catch (err) {
     return res.status(500).send({ error: "Error deleting follow annotations" });
@@ -545,6 +547,7 @@ export const withdrawCourse = async (req, res, next) => {
   try {
     await UserNotification.deleteMany({
       courseId: foundCourse._id,
+      userId: userId
     });
   } catch (error) {
     return res.status(500).send({ error: "Error deleting user notification" });
@@ -689,7 +692,7 @@ export const deleteCourse = async (req, res, next) => {
 
   let foundCourse;
   try {
-    foundCourse = await Course.findByIdAndRemove(courseId);
+    foundCourse = await Course.findByIdAndDelete(courseId);
   } catch (err) {
     return res.status(500).send({ error: "Error finding course" });
   }
@@ -954,7 +957,7 @@ export const newIndicator = async (req, res, next) => {
   }
 
   return res.status(200).send({
-    success: `indicator with id = '${indicator._id}' has been added successfully!`,
+    success: `Indicator added successfully!`,
     indicator: indicator,
   });
 };
@@ -999,7 +1002,7 @@ export const deleteIndicator = async (req, res, next) => {
   }
 
   return res.status(200).send({
-    success: `indicator with id = '${indicatorId}' has been deleted successfully!`,
+    success: `Indicator deleted successfully!`,
   });
 };
 
@@ -1075,9 +1078,7 @@ export const resizeIndicator = async (req, res, next) => {
     return res.status(500).send({ error: "Error saving course" });
   }
 
-  return res.status(200).send({
-    success: `indicator with id = '${indicatorId}' has been updated successfully!`,
-  });
+  return res.status(200).send();
 };
 
 /**
@@ -1121,7 +1122,7 @@ export const reorderIndicators = async (req, res, next) => {
     return res.status(500).send({ error: "Error saving course" });
   }
   return res.status(200).send({
-    success: `indicators have been updated successfully!`,
+    success: `Indicators updated successfully!`,
     indicators: foundCourse.indicators,
   });
 };

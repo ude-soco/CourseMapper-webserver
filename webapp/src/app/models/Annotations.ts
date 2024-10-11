@@ -44,9 +44,10 @@ export enum PdfToolType {
 }
 
 export interface PdfGeneralAnnotationLocation {
+startPage?: number;
+  lastPage?: number;
   type: 'Current Slide' | 'All Slides' | 'Slide Range';
-  startPage: number;
-  lastPage: number;
+
 }
 
 export interface VideoAnnotationLocation {
@@ -60,6 +61,7 @@ export interface AnnotationTool {
 }
 
 export interface Annotation {
+materialType?: string;
   _id?: string;
   type?: AnnotationType;
   content?: string;

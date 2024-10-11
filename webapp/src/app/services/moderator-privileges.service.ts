@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -7,7 +7,7 @@ import { Observable, Subject } from 'rxjs';
 export class ModeratorPrivilegesService {
 
   constructor() { }
-  private subject = new Subject<any>();
+  subject = new BehaviorSubject<any>(false);
   showModeratorPrivileges=false
 
   setPrivilegesValue(val:boolean){

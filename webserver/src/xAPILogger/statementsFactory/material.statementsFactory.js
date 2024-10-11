@@ -1,13 +1,19 @@
 import { v4 as uuidv4 } from "uuid";
+
+const platform = "CourseMapper";
+const language = "en-US";
+
 export const getMaterialUploadStatement = (user, material, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -16,7 +22,7 @@ export const getMaterialUploadStatement = (user, material, origin) => {
     verb: {
       id: "http://activitystrea.ms/schema/1.0/share",
       display: {
-        "en-US": "shared",
+        [language]: "shared",
       },
     },
     object: {
@@ -25,10 +31,10 @@ export const getMaterialUploadStatement = (user, material, origin) => {
       definition: {
         type: `http://www.CourseMapper.de/activityType/material`,
         name: {
-          "en-US": material.name,
+          [language]: material.name,
         },
         description: {
-          "en-US": material.description,
+          [language]: material.description,
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/material": {
@@ -45,21 +51,23 @@ export const getMaterialUploadStatement = (user, material, origin) => {
       },
     },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };
 
 export const getMaterialAccessStatement = (user, material, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -68,7 +76,7 @@ export const getMaterialAccessStatement = (user, material, origin) => {
     verb: {
       id: "http://activitystrea.ms/schema/1.0/access",
       display: {
-        "en-US": "accessed",
+        [language]: "accessed",
       },
     },
     object: {
@@ -77,10 +85,10 @@ export const getMaterialAccessStatement = (user, material, origin) => {
       definition: {
         type: `http://www.CourseMapper.de/activityType/material`,
         name: {
-          "en-US": material.name,
+          [language]: material.name,
         },
         description: {
-          "en-US": material.description,
+          [language]: material.description,
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/material": {
@@ -97,21 +105,23 @@ export const getMaterialAccessStatement = (user, material, origin) => {
       },
     },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };
 
 export const getMaterialDeletionStatement = (user, material, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -120,7 +130,7 @@ export const getMaterialDeletionStatement = (user, material, origin) => {
     verb: {
       id: "http://activitystrea.ms/schema/1.0/delete",
       display: {
-        "en-US": "deleted",
+        [language]: "deleted",
       },
     },
     object: {
@@ -129,10 +139,10 @@ export const getMaterialDeletionStatement = (user, material, origin) => {
       definition: {
         type: `http://www.CourseMapper.de/activityType/material`,
         name: {
-          "en-US": material.name,
+          [language]: material.name,
         },
         description: {
-          "en-US": material.description,
+          [language]: material.description,
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/material": {
@@ -149,8 +159,8 @@ export const getMaterialDeletionStatement = (user, material, origin) => {
       },
     },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };
@@ -161,14 +171,16 @@ export const getMaterialEditStatement = (
   oldMaterial,
   origin
 ) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -177,7 +189,7 @@ export const getMaterialEditStatement = (
     verb: {
       id: "http://curatr3.com/define/verb/edited",
       display: {
-        "en-US": "edited",
+        [language]: "edited",
       },
     },
     object: {
@@ -186,10 +198,10 @@ export const getMaterialEditStatement = (
       definition: {
         type: `http://www.CourseMapper.de/activityType/material`,
         name: {
-          "en-US": oldMaterial.name,
+          [language]: oldMaterial.name,
         },
         description: {
-          "en-US": oldMaterial.description,
+          [language]: oldMaterial.description,
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/material": {
@@ -216,8 +228,8 @@ export const getMaterialEditStatement = (
       },
     },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };
@@ -230,16 +242,18 @@ export const getVideoPlayStatement = (
   seconds,
   origin
 ) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
   const duration =
     parseInt(hours) * 60 * 60 + parseInt(minutes) * 60 + parseInt(seconds);
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -248,7 +262,7 @@ export const getVideoPlayStatement = (
     verb: {
       id: "http://activitystrea.ms/schema/1.0/play",
       display: {
-        "en-US": "played",
+        [language]: "played",
       },
     },
     object: {
@@ -257,10 +271,10 @@ export const getVideoPlayStatement = (
       definition: {
         type: `http://activitystrea.ms/schema/1.0/video`,
         name: {
-          "en-US": material.name,
+          [language]: material.name,
         },
         description: {
-          "en-US": material.description,
+          [language]: material.description,
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/material": {
@@ -278,8 +292,8 @@ export const getVideoPlayStatement = (
       },
     },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };
@@ -292,16 +306,18 @@ export const getVideoPauseStatement = (
   seconds,
   origin
 ) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
   const duration =
     parseInt(hours) * 60 * 60 + parseInt(minutes) * 60 + parseInt(seconds);
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -310,7 +326,7 @@ export const getVideoPauseStatement = (
     verb: {
       id: "http://id.tincanapi.com/verb/paused",
       display: {
-        "en-US": "paused",
+        [language]: "paused",
       },
     },
     object: {
@@ -319,10 +335,10 @@ export const getVideoPauseStatement = (
       definition: {
         type: `http://activitystrea.ms/schema/1.0/video`,
         name: {
-          "en-US": material.name,
+          [language]: material.name,
         },
         description: {
-          "en-US": material.description,
+          [language]: material.description,
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/material": {
@@ -340,21 +356,23 @@ export const getVideoPauseStatement = (
       },
     },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };
 
 export const getVideoEndStatement = (user, material, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -363,7 +381,7 @@ export const getVideoEndStatement = (user, material, origin) => {
     verb: {
       id: "http://activitystrea.ms/schema/1.0/complete",
       display: {
-        "en-US": "completed",
+        [language]: "completed",
       },
     },
     object: {
@@ -372,10 +390,10 @@ export const getVideoEndStatement = (user, material, origin) => {
       definition: {
         type: `http://activitystrea.ms/schema/1.0/video`,
         name: {
-          "en-US": material.name,
+          [language]: material.name,
         },
         description: {
-          "en-US": material.description,
+          [language]: material.description,
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/material": {
@@ -392,21 +410,23 @@ export const getVideoEndStatement = (user, material, origin) => {
       },
     },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };
 
 export const getSlideViewStatement = (user, material, slideNr, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -415,7 +435,7 @@ export const getSlideViewStatement = (user, material, slideNr, origin) => {
     verb: {
       id: "http://id.tincanapi.com/verb/viewed",
       display: {
-        "en-US": "viewed",
+        [language]: "viewed",
       },
     },
     object: {
@@ -424,10 +444,10 @@ export const getSlideViewStatement = (user, material, slideNr, origin) => {
       definition: {
         type: `http://id.tincanapi.com/activitytype/slide`,
         name: {
-          "en-US": material.name,
+          [language]: material.name,
         },
         description: {
-          "en-US": material.description,
+          [language]: material.description,
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/material": {
@@ -445,21 +465,23 @@ export const getSlideViewStatement = (user, material, slideNr, origin) => {
       },
     },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };
 
 export const getPdfCompleteStatement = (user, material, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -468,7 +490,7 @@ export const getPdfCompleteStatement = (user, material, origin) => {
     verb: {
       id: "http://activitystrea.ms/schema/1.0/complete",
       display: {
-        "en-US": "completed",
+        [language]: "completed",
       },
     },
     object: {
@@ -477,10 +499,10 @@ export const getPdfCompleteStatement = (user, material, origin) => {
       definition: {
         type: `http://www.CourseMapper.de/activityType/pdf`,
         name: {
-          "en-US": material.name,
+          [language]: material.name,
         },
         description: {
-          "en-US": material.description,
+          [language]: material.description,
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/material": {
@@ -497,8 +519,8 @@ export const getPdfCompleteStatement = (user, material, origin) => {
       },
     },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };

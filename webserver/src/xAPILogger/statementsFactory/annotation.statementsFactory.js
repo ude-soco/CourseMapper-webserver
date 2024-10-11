@@ -1,19 +1,24 @@
 import { v4 as uuidv4 } from "uuid";
 
+const platform = "CourseMapper";
+const language = "en-US";
+
 export const getAnnotationCreationStatement = (
   user,
   annotation,
   material,
   origin
 ) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -22,7 +27,7 @@ export const getAnnotationCreationStatement = (
     verb: {
       id: "http://risc-inc.com/annotator/verbs/annotated",
       display: {
-        "en-US": "annotated",
+        [language]: "annotated",
       },
     },
     object: {
@@ -31,10 +36,10 @@ export const getAnnotationCreationStatement = (
       definition: {
         type: "http://www.CourseMapper.de/activityType/material",
         name: {
-          "en-US": material.name,
+          [language]: material.name,
         },
         description: {
-          "en-US": material.description,
+          [language]: material.description,
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/material": {
@@ -63,25 +68,28 @@ export const getAnnotationCreationStatement = (
       },
     },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };
+
 export const getCommentCreationStatement = (
   user,
   annotation,
   material,
   origin
 ) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -90,7 +98,7 @@ export const getCommentCreationStatement = (
     verb: {
       id: "http://adlnet.gov/expapi/verbs/commented",
       display: {
-        "en-US": "commented",
+        [language]: "commented",
       },
     },
     object: {
@@ -99,10 +107,10 @@ export const getCommentCreationStatement = (
       definition: {
         type: "http://www.CourseMapper.de/activityType/material",
         name: {
-          "en-US": material.name,
+          [language]: material.name,
         },
         description: {
-          "en-US": material.description,
+          [language]: material.description,
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/material": {
@@ -131,21 +139,23 @@ export const getCommentCreationStatement = (
       },
     },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };
 
 export const getAnnotaionDeletionStatement = (user, annotation, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -154,7 +164,7 @@ export const getAnnotaionDeletionStatement = (user, annotation, origin) => {
     verb: {
       id: "http://activitystrea.ms/schema/1.0/delete",
       display: {
-        "en-US": "deleted",
+        [language]: "deleted",
       },
     },
     object: {
@@ -163,13 +173,13 @@ export const getAnnotaionDeletionStatement = (user, annotation, origin) => {
       definition: {
         type: "http://www.CourseMapper.de/activityType/annotation",
         name: {
-          "en-US":
+          [language]:
             "Annotation:" +
             annotation.content.slice(0, 50) +
             (annotation.content.length > 50 ? " ..." : ""),
         },
         description: {
-          "en-US": annotation.content,
+          [language]: annotation.content,
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/annotation": {
@@ -186,21 +196,31 @@ export const getAnnotaionDeletionStatement = (user, annotation, origin) => {
         },
       },
     },
+    result: {
+      extensions: {
+        "http://www.CourseMapper.de/extensions/annotation": {
+          location: annotation.location,
+        },
+      },
+    },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };
+
 export const getCommentDeletionStatement = (user, annotation, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -209,7 +229,7 @@ export const getCommentDeletionStatement = (user, annotation, origin) => {
     verb: {
       id: "http://activitystrea.ms/schema/1.0/delete",
       display: {
-        "en-US": "deleted",
+        [language]: "deleted",
       },
     },
     object: {
@@ -218,13 +238,13 @@ export const getCommentDeletionStatement = (user, annotation, origin) => {
       definition: {
         type: "http://activitystrea.ms/schema/1.0/comment",
         name: {
-          "en-US":
+          [language]:
             "Comment:" +
             annotation.content.slice(0, 50) +
             (annotation.content.length > 50 ? " ..." : ""),
         },
         description: {
-          "en-US": annotation.content,
+          [language]: annotation.content,
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/comment": {
@@ -240,23 +260,31 @@ export const getCommentDeletionStatement = (user, annotation, origin) => {
           },
         },
       },
+    },result: {
+      extensions: {
+        "http://www.CourseMapper.de/extensions/annotation": {
+          location: annotation.location,
+        },
+      },
     },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };
 
 export const getAnnotationLikeStatement = (user, annotation, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -265,7 +293,7 @@ export const getAnnotationLikeStatement = (user, annotation, origin) => {
     verb: {
       id: "http://activitystrea.ms/schema/1.0/like",
       display: {
-        "en-US": "liked",
+        [language]: "liked",
       },
     },
     object: {
@@ -274,13 +302,13 @@ export const getAnnotationLikeStatement = (user, annotation, origin) => {
       definition: {
         type: "http://www.CourseMapper.de/activityType/annotation",
         name: {
-          "en-US":
+          [language]:
             "Annotation:" +
             annotation.content.slice(0, 50) +
             (annotation.content.length > 50 ? " ..." : ""),
         },
         description: {
-          "en-US": annotation.content,
+          [language]: annotation.content,
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/annotation": {
@@ -297,22 +325,31 @@ export const getAnnotationLikeStatement = (user, annotation, origin) => {
         },
       },
     },
+    result: {
+      extensions: {
+        "http://www.CourseMapper.de/extensions/annotation": {
+          location: annotation.location,
+        },
+      },
+    },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };
 
 export const getCommentLikeStatement = (user, annotation, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -321,7 +358,7 @@ export const getCommentLikeStatement = (user, annotation, origin) => {
     verb: {
       id: "http://activitystrea.ms/schema/1.0/like",
       display: {
-        "en-US": "liked",
+        [language]: "liked",
       },
     },
     object: {
@@ -330,13 +367,13 @@ export const getCommentLikeStatement = (user, annotation, origin) => {
       definition: {
         type: "http://activitystrea.ms/schema/1.0/comment",
         name: {
-          "en-US":
+          [language]:
             "Comment:" +
             annotation.content.slice(0, 50) +
             (annotation.content.length > 50 ? " ..." : ""),
         },
         description: {
-          "en-US": annotation.content,
+          [language]: annotation.content,
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/comment": {
@@ -353,22 +390,31 @@ export const getCommentLikeStatement = (user, annotation, origin) => {
         },
       },
     },
+    result: {
+      extensions: {
+        "http://www.CourseMapper.de/extensions/annotation": {
+          location: annotation.location,
+        },
+      },
+    },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };
 
 export const getAnnotationUnlikeStatement = (user, annotation, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -377,7 +423,7 @@ export const getAnnotationUnlikeStatement = (user, annotation, origin) => {
     verb: {
       id: "http://activitystrea.ms/schema/1.0/unlike",
       display: {
-        "en-US": "unliked",
+        [language]: "unliked",
       },
     },
     object: {
@@ -386,13 +432,13 @@ export const getAnnotationUnlikeStatement = (user, annotation, origin) => {
       definition: {
         type: "http://www.CourseMapper.de/activityType/annotation",
         name: {
-          "en-US":
+          [language]:
             "Annotation:" +
             annotation.content.slice(0, 50) +
             (annotation.content.length > 50 ? " ..." : ""),
         },
         description: {
-          "en-US": annotation.content,
+          [language]: annotation.content,
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/annotation": {
@@ -409,22 +455,31 @@ export const getAnnotationUnlikeStatement = (user, annotation, origin) => {
         },
       },
     },
+    result: {
+      extensions: {
+        "http://www.CourseMapper.de/extensions/annotation": {
+          location: annotation.location,
+        },
+      },
+    },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };
 
 export const getCommentUnlikeStatement = (user, annotation, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -433,7 +488,7 @@ export const getCommentUnlikeStatement = (user, annotation, origin) => {
     verb: {
       id: "http://activitystrea.ms/schema/1.0/unlike",
       display: {
-        "en-US": "unliked",
+        [language]: "unliked",
       },
     },
     object: {
@@ -442,13 +497,13 @@ export const getCommentUnlikeStatement = (user, annotation, origin) => {
       definition: {
         type: "http://activitystrea.ms/schema/1.0/comment",
         name: {
-          "en-US":
+          [language]:
             "Comment:" +
             annotation.content.slice(0, 50) +
             (annotation.content.length > 50 ? " ..." : ""),
         },
         description: {
-          "en-US": annotation.content,
+          [language]: annotation.content,
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/comment": {
@@ -465,22 +520,31 @@ export const getCommentUnlikeStatement = (user, annotation, origin) => {
         },
       },
     },
+    result: {
+      extensions: {
+        "http://www.CourseMapper.de/extensions/comment": {
+          location: annotation.location,
+        },
+      },
+    },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };
 
 export const getAnnotationDislikeStatement = (user, annotation, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -489,7 +553,7 @@ export const getAnnotationDislikeStatement = (user, annotation, origin) => {
     verb: {
       id: "http://activitystrea.ms/schema/1.0/dislike",
       display: {
-        "en-US": "disliked",
+        [language]: "disliked",
       },
     },
     object: {
@@ -498,13 +562,13 @@ export const getAnnotationDislikeStatement = (user, annotation, origin) => {
       definition: {
         type: "http://www.CourseMapper.de/activityType/annotation",
         name: {
-          "en-US":
+          [language]:
             "Annotation:" +
             annotation.content.slice(0, 50) +
             (annotation.content.length > 50 ? " ..." : ""),
         },
         description: {
-          "en-US": annotation.content,
+          [language]: annotation.content,
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/annotation": {
@@ -521,22 +585,31 @@ export const getAnnotationDislikeStatement = (user, annotation, origin) => {
         },
       },
     },
+    result: {
+      extensions: {
+        "http://www.CourseMapper.de/extensions/annotation": {
+          location: annotation.location,
+        },
+      },
+    },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };
 
 export const getCommentDislikeStatement = (user, annotation, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -545,7 +618,7 @@ export const getCommentDislikeStatement = (user, annotation, origin) => {
     verb: {
       id: "http://activitystrea.ms/schema/1.0/dislike",
       display: {
-        "en-US": "disliked",
+        [language]: "disliked",
       },
     },
     object: {
@@ -554,13 +627,13 @@ export const getCommentDislikeStatement = (user, annotation, origin) => {
       definition: {
         type: "http://activitystrea.ms/schema/1.0/comment",
         name: {
-          "en-US":
+          [language]:
             "Comment:" +
             annotation.content.slice(0, 50) +
             (annotation.content.length > 50 ? " ..." : ""),
         },
         description: {
-          "en-US": annotation.content,
+          [language]: annotation.content,
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/comment": {
@@ -577,22 +650,31 @@ export const getCommentDislikeStatement = (user, annotation, origin) => {
         },
       },
     },
+    result: {
+      extensions: {
+        "http://www.CourseMapper.de/extensions/comment": {
+          location: annotation.location,
+        },
+      },
+    },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };
 
 export const getAnnotationUndislikeStatement = (user, annotation, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -601,7 +683,7 @@ export const getAnnotationUndislikeStatement = (user, annotation, origin) => {
     verb: {
       id: "http://www.CourseMapper.de/verbs/undisliked",
       display: {
-        "en-US": "un-disliked",
+        [language]: "un-disliked",
       },
     },
     object: {
@@ -610,13 +692,13 @@ export const getAnnotationUndislikeStatement = (user, annotation, origin) => {
       definition: {
         type: "http://www.CourseMapper.de/activityType/annotation",
         name: {
-          "en-US":
+          [language]:
             "Annotation:" +
             annotation.content.slice(0, 50) +
             (annotation.content.length > 50 ? " ..." : ""),
         },
         description: {
-          "en-US": annotation.content,
+          [language]: annotation.content,
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/annotation": {
@@ -633,22 +715,31 @@ export const getAnnotationUndislikeStatement = (user, annotation, origin) => {
         },
       },
     },
+    result: {
+      extensions: {
+        "http://www.CourseMapper.de/extensions/annotation": {
+          location: annotation.location,
+        },
+      },
+    },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };
 
 export const getCommentUndislikeStatement = (user, annotation, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -657,7 +748,7 @@ export const getCommentUndislikeStatement = (user, annotation, origin) => {
     verb: {
       id: "http://www.CourseMapper.de/verbs/undisliked",
       display: {
-        "en-US": "un-disliked",
+        [language]: "un-disliked",
       },
     },
     object: {
@@ -666,13 +757,13 @@ export const getCommentUndislikeStatement = (user, annotation, origin) => {
       definition: {
         type: "http://activitystrea.ms/schema/1.0/comment",
         name: {
-          "en-US":
+          [language]:
             "Comment:" +
             annotation.content.slice(0, 50) +
             (annotation.content.length > 50 ? " ..." : ""),
         },
         description: {
-          "en-US": annotation.content,
+          [language]: annotation.content,
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/comment": {
@@ -689,9 +780,16 @@ export const getCommentUndislikeStatement = (user, annotation, origin) => {
         },
       },
     },
+    result: {
+      extensions: {
+        "http://www.CourseMapper.de/extensions/annotation": {
+          location: annotation.location,
+        },
+      },
+    },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };
@@ -702,14 +800,16 @@ export const getAnnotationEditStatement = (
   oldAnnotation,
   origin
 ) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -718,7 +818,7 @@ export const getAnnotationEditStatement = (
     verb: {
       id: "http://curatr3.com/define/verb/edited",
       display: {
-        "en-US": "edited",
+        [language]: "edited",
       },
     },
     object: {
@@ -727,13 +827,13 @@ export const getAnnotationEditStatement = (
       definition: {
         type: "http://www.CourseMapper.de/activityType/annotation",
         name: {
-          "en-US":
+          [language]:
             "Annotation:" +
             oldAnnotation.content.slice(0, 50) +
             (oldAnnotation.content.length > 50 ? " ..." : ""),
         },
         description: {
-          "en-US": oldAnnotation.content,
+          [language]: oldAnnotation.content,
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/annotation": {
@@ -761,8 +861,8 @@ export const getAnnotationEditStatement = (
       },
     },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };
@@ -773,14 +873,16 @@ export const getCommentEditStatement = (
   oldAnnotation,
   origin
 ) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -789,7 +891,7 @@ export const getCommentEditStatement = (
     verb: {
       id: "http://curatr3.com/define/verb/edited",
       display: {
-        "en-US": "edited",
+        [language]: "edited",
       },
     },
     object: {
@@ -798,13 +900,13 @@ export const getCommentEditStatement = (
       definition: {
         type: "http://activitystrea.ms/schema/1.0/comment",
         name: {
-          "en-US":
+          [language]:
             "Comment:" +
             oldAnnotation.content.slice(0, 50) +
             (oldAnnotation.content.length > 50 ? " ..." : ""),
         },
         description: {
-          "en-US": oldAnnotation.content,
+          [language]: oldAnnotation.content,
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/comment": {
@@ -832,21 +934,23 @@ export const getCommentEditStatement = (
       },
     },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };
 
 export const getNewMentionCreationStatement = (user, annotation, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -855,7 +959,7 @@ export const getNewMentionCreationStatement = (user, annotation, origin) => {
     verb: {
       id: "http://id.tincanapi.com/verb/mentioned",
       display: {
-        "en-US": "mentioned",
+        [language]: "mentioned",
       },
     },
     object: {
@@ -864,7 +968,7 @@ export const getNewMentionCreationStatement = (user, annotation, origin) => {
       definition: {
         type: "http://www.CourseMapper.de/activityType/you",
         name: {
-          "en-US": "",
+          [language]: "",
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/annotation": {
@@ -878,10 +982,25 @@ export const getNewMentionCreationStatement = (user, annotation, origin) => {
         },
       },
     },
+    result: {
+      extensions: {
+        "http://www.CourseMapper.de/extensions/annotation": {
+          id: annotation._id,
+          material_id: annotation.materialId,
+          channel_id: annotation.channelId,
+          topic_id: annotation.topicId,
+          course_id: annotation.courseId,
+          content: annotation.content,
+          type: annotation.type,
+          tool: annotation.tool,
+          location: annotation.location,
+        },
+      },
+    },
 
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };

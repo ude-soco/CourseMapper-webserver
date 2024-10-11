@@ -1,5 +1,5 @@
 import { Component, ElementRef, Renderer2 } from '@angular/core';
-import { BaseNotificationDashboardComponent } from '../base-notification-dashboard/base-notification-dashboard.component';
+
 import { Store } from '@ngrx/store';
 import * as courseActions from '../../../courses/state/course.actions';
 import {
@@ -29,6 +29,7 @@ import { FormBuilder, FormControl } from '@angular/forms';
 import { getSubscribedCourses } from 'src/app/state/app.reducer';
 import { MenuItem } from 'primeng/api';
 import * as NotificationActions from '../state/notifications.actions';
+import { IntervalService } from 'src/app/services/interval.service';
 
 @Component({
   selector: 'app-all-notifications',
@@ -91,6 +92,12 @@ export class AllNotificationsComponent {
     Notification[]
   >;
   protected showBulkOperations = false;
+  protected numOfTimesScrolledToEndBehaviourSubject =
+    new BehaviorSubject<number>(1);
+  protected numOfTimesScrolledToEnd$ =
+    this.numOfTimesScrolledToEndBehaviourSubject.asObservable();
+  protected numOfTimesScrolledToEnd = 1;
+  protected numOfNotificationsToLoad = 15;
 
   constructor(
     protected store: Store<State>,
@@ -99,7 +106,8 @@ export class AllNotificationsComponent {
     protected fb: FormBuilder,
     private httpClient: HttpClient,
     private el: ElementRef,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private intervalService: IntervalService
   ) {
     /* super(store, router, courseService, fb); // Invoke the superclass constructor */
   }
@@ -118,13 +126,6 @@ export class AllNotificationsComponent {
 
     this.activeItem = this.tabOptions[0];
 
-    this.menuOptions = [
-      {
-        label: 'Settings',
-        icon: 'pi pi-cog',
-        command: () => {},
-      },
-    ];
     this.store.select(getSubscribedCourses).subscribe((courses) => {
       this.courseOptions = courses;
       //by default all courses are selected
@@ -207,8 +208,9 @@ export class AllNotificationsComponent {
       combineLatest([
         this.notificationsFilteredByCourseAndTabAndUnreadAndStarred$,
         this.dateSorting$,
+        this.numOfTimesScrolledToEnd$,
       ]).pipe(
-        map(([notifications, dateSorting]) => {
+        map(([notifications, dateSorting, numOfTimesScrolledToEnd]) => {
           // Create a new array to hold the sorted notifications
           const sortedNotifications = [...notifications]; // Use the spread operator to clone the array
 
@@ -228,7 +230,10 @@ export class AllNotificationsComponent {
             });
           }
 
-          return sortedNotifications; // Return the new sorted array
+          return sortedNotifications.slice(
+            0,
+            this.numOfNotificationsToLoad * numOfTimesScrolledToEnd
+          ); // Return the new sorted array
         })
       );
 
@@ -343,6 +348,26 @@ export class AllNotificationsComponent {
 
     //everytime the tab is opened, we want to show the all notifications tab
     this.onTabSwitched(this.tabOptions[0]);
+  }
+
+  ngAfterViewInit() {
+    const notificationBoxContainer = document.querySelector(
+      '.notification-box-container'
+    );
+
+    notificationBoxContainer.addEventListener('scroll', ($event) => {
+      const scrollTop = notificationBoxContainer.scrollTop;
+      const scrollHeight = notificationBoxContainer.scrollHeight;
+      const clientHeight = notificationBoxContainer.clientHeight;
+      let totalSpaceAvailableToScroll = scrollHeight - clientHeight;
+      if (scrollTop / totalSpaceAvailableToScroll > 0.99) {
+        this.numOfTimesScrolledToEndBehaviourSubject.next(
+          ++this.numOfTimesScrolledToEnd
+        );
+      }
+
+      //here we need to call the backend
+    });
   }
 
   onCourseFilterChanged($event) {
@@ -488,6 +513,7 @@ export class AllNotificationsComponent {
         notifications: [notification._id],
       })
     );
+    this.intervalService.stopInterval();
     /* this.notificationService.previousURL = this.router.url; */
 
     if (notification.category === NotificationCategory.CourseUpdate) {
@@ -546,6 +572,9 @@ export class AllNotificationsComponent {
       this.courseService.Notification = notification;
       this.store.dispatch(
         courseActions.setCourseId({ courseId: notification.course_id })
+      );
+      this.store.dispatch(
+        NotificationActions.setCurrentlySelectedNotification({ notification })
       );
       if (notification.reply_id) {
         this.courseService.navigatingToMaterial = true;

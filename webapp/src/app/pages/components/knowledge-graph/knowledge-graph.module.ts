@@ -8,13 +8,13 @@ import { GraphComponent } from './graph/graph.component';
 import { GraphRecommednedComponent } from './graph-recommedned/graph-recommedned.component';
 // import { PrimengModule } from '../../../modules/primeng/primeng.module';
 import {AccordionModule} from 'primeng/accordion';
-import {MenuItem} from 'primeng/api'; 
+import {MenuItem} from 'primeng/api';
 import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
 import { CheckboxModule } from 'primeng/checkbox';
 import { TabMenuModule } from 'primeng/tabmenu';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { StyleClassModule } from 'primeng/styleclass';
 import { SidebarModule } from 'primeng/sidebar';
@@ -43,16 +43,21 @@ import { TooltipModule } from 'primeng/tooltip';
 // import { CheckboxModule } from 'primeng/checkbox';
 import { SliderModule } from 'primeng/slider';
 import { CustomRecommendationOptionComponent } from './custom-recommendation-option/custom-recommendation-option.component';
-import { ReactiveFormsModule } from '@angular/forms';
+// import { ReactiveFormsModule } from '@angular/forms';
 // import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule } from 'primeng/paginator';
 import { PanelModule } from 'primeng/panel';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { ListboxModule } from 'primeng/listbox';
 import { ProgressBarModule } from 'primeng/progressbar';
-import { InputTextModule } from 'primeng/inputtext';
-import { MultiSelectModule } from 'primeng/multiselect';
+// import { InputTextModule } from 'primeng/inputtext';
+// import { MultiSelectModule } from 'primeng/multiselect';
 import { CardModule } from 'primeng/card';
+import { InputTextModule } from 'primeng/inputtext';
+import { AutoCompleteModule } from 'primeng/autocomplete';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { PdfViewerModule } from 'ng2-pdf-viewer';
+
 
 
 @NgModule({
@@ -78,6 +83,7 @@ import { CardModule } from 'primeng/card';
     CustomRecommendationOptionComponent,    
   ],
   imports: [
+    InputTextModule,
     FormsModule,
     CommonModule,
     DialogModule,
@@ -112,7 +118,11 @@ import { CardModule } from 'primeng/card';
     ProgressBarModule,
     InputTextModule,
     MultiSelectModule,
-    CardModule
+    CardModule,
+    // ReactiveFormsModule,
+    AutoCompleteModule,
+    MultiSelectModule,
+    PdfViewerModule,
     ],
   exports: [
     ConceptMapComponent,
@@ -122,6 +132,6 @@ import { CardModule } from 'primeng/card';
     GraphComponent,
     GraphRecommednedComponent,
   ],
-  
+
 })
 export class KnowledgeGraphModule {}

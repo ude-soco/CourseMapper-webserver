@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import {
   Annotation,
   PdfAnnotationTool,
@@ -8,6 +8,7 @@ import {
 } from 'src/app/models/Annotations';
 import { Store } from '@ngrx/store';
 import { computeElapsedTime, getInitials } from 'src/app/_helpers/format';
+import * as VideoActions from '../../video-annotation/state/video.action';
 import {
   getAnnotationsForMaterial,
   getCurrentPdfPage,
@@ -18,12 +19,20 @@ import { Material } from 'src/app/models/Material';
 import { getCurrentMaterial } from '../../../materials/state/materials.reducer';
 import { getCurrentTime } from '../../video-annotation/state/video.reducer';
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
+import * as NotificationActions from '../../../notifications/state/notifications.actions';
+import {
+  getCurrentlyClickedNotification,
+  getCurrentlySelectedFollowingAnnotation,
+} from '../../../notifications/state/notifications.reducer';
+import { combineLatest, filter, withLatestFrom } from 'rxjs';
+import { Router } from '@angular/router';
+import { AnnotationService } from 'src/app/services/annotation.service';
 @Component({
   selector: 'app-pdf-comment-panel',
   templateUrl: './pdf-comment-panel.component.html',
   styleUrls: ['./pdf-comment-panel.component.css'],
 })
-export class PdfCommentPanelComponent implements OnInit {
+export class PdfCommentPanelComponent implements OnInit, OnDestroy {
   annotations: Annotation[] = [];
   searchFiltersForPDF: SelectItemGroup[];
   searchFiltersForVideo: SelectItemGroup[];
@@ -36,45 +45,69 @@ export class PdfCommentPanelComponent implements OnInit {
   disableSortFilters: boolean = false;
   currentTime: number = 0;
   currentTimeSpanSelected: boolean = false;
-
+  followingAnnotationSubscription;
+  pdfPageSubscription;
+  videoSeekSubscription: any;
+  currentTimeSubscription: any;
+  annotationsSubscription: any;
   constructor(
     private store: Store<State>,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    protected router: Router,
   ) {
     this.store
       .select(getCurrentMaterial)
       .subscribe((material) => (this.selectedMaterial = material));
 
-    this.store.select(getAnnotationsForMaterial).subscribe((annotations) => {
-      this.annotations = annotations;
-      if (this.selectedMaterial.type === 'pdf') {
-        this.updateFilterItemsforPDF();
+    this.annotationsSubscription = this.store
+      .select(getAnnotationsForMaterial)
+      .subscribe((annotations) => {
+        this.annotations = annotations;
+        if (this.selectedMaterial?.type === 'pdf') {
+          this.updateFilterItemsforPDF();
+          this.showPDFAnnotations();
+        } else {
+          this.updateFilterItemsforVideo();
+          this.showVideoAnnotations();
+        }
+      });
+
+    this.pdfPageSubscription = this.store
+      .select(getCurrentPdfPage)
+      .subscribe((page) => {
+        this.currentPage = page;
+        this.selectedFiltersForPDF = null;
         this.showPDFAnnotations();
-      } else {
-        this.updateFilterItemsforVideo();
-        this.showVideoAnnotations();
-      }
-    });
+      });
 
-    this.store.select(getCurrentPdfPage).subscribe((page) => {
-      this.currentPage = page;
-      this.selectedFiltersForPDF = null;
-      this.showPDFAnnotations();
-    });
-
-    this.store.select(getCurrentTime).subscribe((time) => {
-      this.currentTime = time;
-      if (
-        this.selectedMaterial.type === 'video' &&
-        this.currentTimeSpanSelected
-      ) {
-        this.annotationsToShow = this.annotations.filter(
-          (a) =>
-            (a.location as VideoAnnotationLocation).from <= time &&
-            (a.location as VideoAnnotationLocation).to > time
-        );
-      }
-    });
+    this.currentTimeSubscription = this.store
+      .select(getCurrentTime)
+      .subscribe((time) => {
+        this.currentTime = time;
+        if (
+          this.selectedMaterial?.type === 'video' &&
+          this.currentTimeSpanSelected
+        ) {
+          this.annotationsToShow = this.annotations.filter(
+            (a) =>
+              (a.location as VideoAnnotationLocation).from <= time &&
+              (a.location as VideoAnnotationLocation).to > time
+          );
+        }
+      });
+  }
+  ngOnDestroy(): void {
+    if (this.followingAnnotationSubscription) {
+      this.followingAnnotationSubscription.unsubscribe();
+    }
+    if (this.pdfPageSubscription) {
+      this.pdfPageSubscription.unsubscribe();
+    }
+    if (this.videoSeekSubscription) {
+      this.videoSeekSubscription.unsubscribe();
+    }
+    this.currentTimeSubscription?.unsubscribe();
+    this.annotationsSubscription?.unsubscribe();
   }
 
   ngAfterViewChecked(): void {
@@ -106,11 +139,93 @@ export class PdfCommentPanelComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.currentPage = 1;
+
+
+    /* this.currentPage = 1; */
     this.showPDFAnnotations();
+    /*    this.store
+      .select(getCurrentlySelectedFollowingAnnotationId)
+      .pipe(withLatestFrom(this.store.select(getAnnotationsForMaterial))) */
+    /*    this.followingAnnotationSubscription = combineLatest([
+      this.store.select(getCurrentlySelectedFollowingAnnotationId),
+      this.store.select(getAnnotationsForMaterial),
+    ])
+      .pipe(
+        filter(
+          ([id, annotations]) =>
+            !!id && !!annotations && annotations.some((a) => a._id === id)
+        )
+      )
+      .subscribe(([id, annotations]) => {
+        if (id && annotations) {
+          const annotation = annotations.find((a) => a._id === id);
+          if (annotation) {
+            if (
+              (annotation.location as PdfGeneralAnnotationLocation).startPage
+            ) {
+              let location =
+                annotation.location as PdfGeneralAnnotationLocation;
+              if (location && location.startPage !== undefined) {
+                this.store.dispatch(
+                  AnnotationActions.setCurrentPdfPage({
+                    pdfCurrentPage: location.startPage,
+                  })
+                );
+              }
+              if (
+                this.router.url.includes(
+                  '/course/' +
+                    annotation.courseId +
+                    '/channel/' +
+                    annotation.channelId +
+                    '/material/' +
+                    '(material:' +
+                    annotation.materialId +
+                    `/pdf)#annotation-${annotation._id})`
+                )
+              ) {
+                this.store.dispatch(
+                  NotificationActions.unsetCurrentlySelectedFollowingAnnotation()
+                );
+              }
+            } else if ((annotation.location as VideoAnnotationLocation).from) {
+              let location = annotation.location as VideoAnnotationLocation;
+              if (location && location.from !== undefined) {
+                this.store.dispatch(
+                  VideoActions.SetSeekVideo({
+                    seekVideo: [location.from, location.from],
+                  })
+                );
+                this.store.dispatch(
+                  VideoActions.SetCurrentTime({
+                    currentTime: location.from,
+                  })
+                );
+                if (
+                  this.router.url.includes(
+                    '/course/' +
+                      annotation.courseId +
+                      '/channel/' +
+                      annotation.channelId +
+                      '/material/' +
+                      '(material:' +
+                      annotation.materialId +
+                      `/video)#annotation-${annotation._id})`
+                  )
+                ) {
+                  this.store.dispatch(
+                    NotificationActions.unsetCurrentlySelectedFollowingAnnotation()
+                  );
+                }
+              }
+            }
+          }
+        }
+      }); */
   }
 
   showPDFAnnotations() {
+
     this.annotationOnCurrentPage = this.annotations.filter(
       (anno) =>
         this.currentPage >=

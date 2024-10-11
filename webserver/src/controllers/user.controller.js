@@ -62,7 +62,7 @@ export const newIndicator = async (req, res, next) => {
   }
 
   const indicator = {
-    _id: ObjectId(),
+    _id: new ObjectId(),
     src: req.body.src,
     width: req.body.width,
     height: req.body.height,
@@ -78,7 +78,7 @@ export const newIndicator = async (req, res, next) => {
   }
 
   return res.status(200).send({
-    success: `indicator with id = '${indicator._id}' has been added successfully!`,
+    success: `Indicator added successfully!`,
     indicator: indicator,
   });
 };
@@ -123,7 +123,7 @@ export const deleteIndicator = async (req, res, next) => {
   }
 
   return res.status(200).send({
-    success: `indicator with id = '${indicatorId}' has been deleted successfully!`,
+    success: `Indicator deleted successfully!`,
   });
 };
 
@@ -198,9 +198,7 @@ export const resizeIndicator = async (req, res, next) => {
     return res.status(500).send({ error: err });
   }
 
-  return res.status(200).send({
-    success: `indicator with id = '${indicatorId}' has been updated successfully!`,
-  });
+  return res.status(200).send();
 };
 
 /**
@@ -248,7 +246,7 @@ export const reorderIndicators = async (req, res, next) => {
   }
 
   return res.status(200).send({
-    success: `indicators have been updated successfully!`,
+    success: `Indicators updated successfully!`,
     indicators: user.indicators,
   });
 };
@@ -272,33 +270,6 @@ export const getAllUsers = async (req, res) => {
   return res.status(200).send(results);
 };
 
-// export const getUserName = async (req, res) => {
-//   let user;
-//   let userId =  req.userId;
-//   let results = []
-//   try {
-
-//     Founduser = await User
-//     .findById({_id: ObjectId(userId)})
-//   } catch (err) {
-//     return res.status(500).send({ message: err });
-//   }
-//   user.courses.forEach(object => {
-//     let course = {
-//       _id: object.courseId._id,
-//       name: object.courseId.name,
-//       shortName: object.courseId.shortName,
-//       description: object.courseId.description,
-//       numberTopics: object.courseId.topics.length,
-//       numberChannels: object.courseId.channels.length,
-//       numberUsers: object.courseId.users.length,
-//       role: object.role.name,
-//       channels:object.courseId.channels,
-//     };
-//     results.push(course);
-//   });
-//   return res.status(200).send(results);
-// }
 
 export const getUser = async (req, res) => {
   let userId = req.params.userId;
@@ -329,9 +300,6 @@ export const getUserConcepts = async (req, res) => {
 
   let foundUser;
   let results;
-  console.log('userId is:')
-  console.log(userId)
-  console.log(typeof(userId))
   try {
     foundUser = await User.findOne({ _id: userId })
     .populate("courses", "-__v");

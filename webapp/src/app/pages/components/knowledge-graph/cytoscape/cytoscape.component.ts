@@ -44,8 +44,11 @@ export class CytoscapeComponent {
   // @Input() showConceptAbstract: boolean;
   @Input() showMaterialKg: boolean;
   @Input() showCourseKg: boolean;
+  @Input() isDraft: boolean;
 
   @Output() selectedNodeEvent: EventEmitter<object> = new EventEmitter();
+  @Output() conceptDeleted?: EventEmitter<string> = new EventEmitter();
+  @Output() editConcept?: EventEmitter<string> = new EventEmitter();
 
   public cy: any;
 
@@ -116,13 +119,14 @@ export class CytoscapeComponent {
         'text-valign': 'center',
         'text-outline-width': 0.2,
         'background-color': function (elm) {
-          if (elm.data().type === 'property') return '#689F38';
+
+          if (elm.data().type === 'related_concept') return '#ce6f34';
           else if (elm.data().type === 'category') return '#FBC02D';
           else if (elm.data().type === 'course') return '#689F38';
           else if (elm.data().type === 'topic') return '#607D8B';
           else if (elm.data().type === 'channel') return '#9C27B0';
-          else if (elm.data().type === 'material') return '#607D8B';
-          // "annotation"
+          else if (elm.data().type === 'material') return '#2196F3';
+          // "annotation // main concept"
           else return '#2196F3';
         },
         color: '#000',
@@ -182,12 +186,49 @@ export class CytoscapeComponent {
       },
     },
   ];
+  public contextMenu = {
+    menuRadius: function (ele) {
+      return 100;
+    },
+    selector: 'node[?wikipedia]',
+    commands: [
+      {
+        content:
+          '<span style="font-size:15px;">Edit</span> <br> <i class="pi pi-file-edit" style="color:#689F38;"></i>',
+        select: (ele) => {
+          this.editConcept?.emit(ele.data().cid);
+        },
+      },
+      {
+        content:
+          '<span style="font-size:15px;">Delete</span> <br> <i class="pi pi-trash" style="color:#D32F2F;"></i>',
+        select: (ele) => {
+          this.conceptDeleted?.emit(ele.data().cid);
+        },
+      },
+    ],
+    fillColor: 'rgba(0, 0, 0, 0.75)', // the background colour of the menu
+    activeFillColor: 'rgba(1, 105, 217, 0.75)', // the colour used to indicate the selected command
+    activePadding: 20, // additional size in pixels for the active command
+    indicatorSize: 24, // the size in pixels of the pointer to the active command, will default to the node size if the node size is smaller than the indicator size,
+    separatorWidth: 3, // the empty spacing in pixels between successive commands
+    spotlightPadding: 4, // extra spacing in pixels between the element and the spotlight
+    adaptativeNodeSpotlightRadius: false, // specify whether the spotlight radius should adapt to the node size
+    minSpotlightRadius: 24, // the minimum radius in pixels of the spotlight (ignored for the node if adaptativeNodeSpotlightRadius is enabled but still used for the edge & background)
+    maxSpotlightRadius: 38, // the maximum radius in pixels of the spotlight (ignored for the node if adaptativeNodeSpotlightRadius is enabled but still used for the edge & background)
+    openMenuEvents: 'cxttapstart', // space-separated cytoscape events that will open the menu; only `cxttapstart` and/or `taphold` work here
+    itemColor: 'white', // the colour of text in the command's content
+    itemTextShadowColor: 'transparent', // the text shadow colour of the command's content
+    zIndex: 9999, // the z-index of the ui div
+    atMouse: false, // draw menu at mouse position
+    outsideMenuCancel: false, // if set to a number, this will cancel the command if the pointer is released outside of the spotlight, padded by the number given
+  }
 
   ngOnInit() {}
 
   ngOnChanges() {
     if (!this.showMaterialKg) {
-      this.selectedFilterValues = ['annotation'];
+      this.selectedFilterValues = ['main_concept'];
     }
     this.init();
     this.render();
@@ -219,33 +260,29 @@ export class CytoscapeComponent {
       return b.data.weight - a.data.weight;
     });
 
-    if (this.topNConcepts !== 'All') {
-      let topXNodes = nodes.slice(0, this.topNConcepts);
-      topXNodes = topXNodes.concat(this.propertiesNodes);
-      topXNodes = topXNodes.concat(this.categoriesNodes);
-      let filteredEdges = edges.filter(
-        (e: any) =>
-          topXNodes.map((n: any) => n.data.id).includes(e.data.source) &&
-          topXNodes.map((n: any) => n.data.id).includes(e.data.target)
-      );
-      this._elements = {
-        nodes: topXNodes,
-        edges: filteredEdges,
-        button: this.elements.button,
-      };
-    } else {
-      this._elements = this.elements;
-    }
+    let topXNodes = this.topNConcepts !== 'All' ? nodes.slice(0, this.topNConcepts) : nodes;
+    topXNodes = topXNodes.concat(this.propertiesNodes);
+    topXNodes = topXNodes.concat(this.categoriesNodes);
+    let filteredEdges = edges.filter(
+      (e: any) =>
+        topXNodes.map((n: any) => n.data.id).includes(e.data.source) &&
+        topXNodes.map((n: any) => n.data.id).includes(e.data.target)
+    );
+    this._elements = {
+      nodes: topXNodes,
+      edges: filteredEdges,
+      button: this.elements.button,
+    };
     console.log(this._elements.nodes);
   }
 
   init() {
     if (this.elements) {
       this.annotationsNodes = this.elements.nodes.filter(
-        (n) => n.data.type === 'annotation'
+        (n) => n.data.type === 'main_concept'
       );
       this.propertiesNodes = this.elements.nodes.filter(
-        (n) => n.data.type === 'property'
+        (n) => n.data.type === 'related_concept'
       );
       this.categoriesNodes = this.elements.nodes.filter(
         (n) => n.data.type === 'category'
@@ -264,13 +301,16 @@ export class CytoscapeComponent {
           elements: this._elements,
           autounselectify: true,
         });
+        if (this.isDraft) {
+          this.cy.cxtmenu(this.contextMenu);
+        }
       }
 
       if (this._elements !== undefined) {
         let nodes = this._elements.nodes;
         this.cy.ready(() => {
           let initialNodes = nodes.filter(function (e: any) {
-            return e.data.type === 'annotation';
+            return e.data.type === 'main_concept';
           });
           for (var i = 0; i < initialNodes.length; i++) {
             this.cy
@@ -280,7 +320,7 @@ export class CytoscapeComponent {
               .style('display', 'none');
           }
           let nodesToHide = nodes.filter(function (e: any) {
-            return e.data.type === 'property' || e.data.type === 'category';
+            return e.data.type === 'related_concept' || e.data.type === 'category';
           });
           for (var i = 0; i < nodesToHide.length; i++) {
             this.cy.$(`#${nodesToHide[i].data.id}`).style('display', 'none');
@@ -382,6 +422,8 @@ export class CytoscapeComponent {
             console.log('weight: ' + eventTarget.data('weight'));
             prevNode = eventTarget.data().id;
             selectedNode = {
+              id: eventTarget.data('id'),
+              cid: eventTarget.data('cid'),
               name: eventTarget.data('name'),
               type: eventTarget.data('type'),
               abstract: eventTarget.data('abstract'),

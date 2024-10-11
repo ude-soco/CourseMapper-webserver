@@ -1,13 +1,19 @@
 import { v4 as uuidv4 } from "uuid";
+
+const platform = "CourseMapper";
+const language = "en-US";
+
 export const getTopicCreationStatement = (user, topic, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -16,7 +22,7 @@ export const getTopicCreationStatement = (user, topic, origin) => {
     verb: {
       id: "http://activitystrea.ms/schema/1.0/create",
       display: {
-        "en-US": "created",
+        [language]: "created",
       },
     },
     object: {
@@ -25,7 +31,7 @@ export const getTopicCreationStatement = (user, topic, origin) => {
       definition: {
         type: "http://www.CourseMapper.de/activityType/topic",
         name: {
-          "en-US": topic.name,
+          [language]: topic.name,
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/topic": {
@@ -37,21 +43,23 @@ export const getTopicCreationStatement = (user, topic, origin) => {
       },
     },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };
 
 export const getTopicDeletionStatement = (user, topic, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -60,7 +68,7 @@ export const getTopicDeletionStatement = (user, topic, origin) => {
     verb: {
       id: "http://activitystrea.ms/schema/1.0/delete",
       display: {
-        "en-US": "deleted",
+        [language]: "deleted",
       },
     },
     object: {
@@ -69,7 +77,7 @@ export const getTopicDeletionStatement = (user, topic, origin) => {
       definition: {
         type: "http://www.CourseMapper.de/activityType/topic",
         name: {
-          "en-US": topic.name,
+          [language]: topic.name,
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/topic": {
@@ -81,21 +89,23 @@ export const getTopicDeletionStatement = (user, topic, origin) => {
       },
     },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };
 
 export const getTopicAccessStatement = (user, topic, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -104,7 +114,7 @@ export const getTopicAccessStatement = (user, topic, origin) => {
     verb: {
       id: "http://activitystrea.ms/schema/1.0/access",
       display: {
-        "en-US": "accessed",
+        [language]: "accessed",
       },
     },
     object: {
@@ -113,7 +123,7 @@ export const getTopicAccessStatement = (user, topic, origin) => {
       definition: {
         type: "http://www.CourseMapper.de/activityType/topic",
         name: {
-          "en-US": topic.name,
+          [language]: topic.name,
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/topic": {
@@ -125,21 +135,23 @@ export const getTopicAccessStatement = (user, topic, origin) => {
       },
     },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };
 
 export const getTopicEditStatement = (user, newTopic, oldtTopic, origin) => {
-  let userId = user._id.toString();
-  const fullname = `${user.firstname} ${user.lastname}`;
+  const userId = user._id.toString();
+  const userFullname = `${user.firstname} ${user.lastname}`;
   return {
     id: uuidv4(),
     timestamp: new Date(),
     actor: {
       objectType: "Agent",
-      name: userId,
+      name: userFullname,
+      mbox: user.mbox,
+      mbox_sha1sum: user.mbox_sha1sum,
       account: {
         homePage: origin,
         name: userId,
@@ -148,7 +160,7 @@ export const getTopicEditStatement = (user, newTopic, oldtTopic, origin) => {
     verb: {
       id: "http://curatr3.com/define/verb/edited",
       display: {
-        "en-US": "edited",
+        [language]: "edited",
       },
     },
     object: {
@@ -157,7 +169,7 @@ export const getTopicEditStatement = (user, newTopic, oldtTopic, origin) => {
       definition: {
         type: "http://www.CourseMapper.de/activityType/topic",
         name: {
-          "en-US": oldtTopic.name,
+          [language]: oldtTopic.name,
         },
         extensions: {
           "http://www.CourseMapper.de/extensions/topic": {
@@ -176,8 +188,8 @@ export const getTopicEditStatement = (user, newTopic, oldtTopic, origin) => {
       },
     },
     context: {
-      platform: "CourseMapper",
-      language: "en-US",
+      platform: platform,
+      language: language,
     },
   };
 };

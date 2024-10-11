@@ -13,9 +13,9 @@ export class SlideConceptsService {
 
   
   public didNotUnderstandAllConcepts=[]
-  private commonDidNotUnderstandConcepts=[]
-  private commonUnderstoodConcepts=[]
-  private commonNewConcepts=[]
+  public commonDidNotUnderstandConcepts=[]
+  public commonUnderstoodConcepts=[]
+  public commonNewConcepts=[]
   constructor() {
     this.newConcepts = new Subject();
     this.didNotUnderstandConcepts = new Subject();

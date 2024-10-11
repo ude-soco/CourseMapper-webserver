@@ -12,6 +12,7 @@ import { User } from 'src/app/modules/primeng/UserModule';
 import { Roles } from 'src/app/models/Roles';
 import { ThisReceiver } from '@angular/compiler';
 import { toggleShowHideAnnotation } from '../components/annotations/pdf-annotation/state/annotation.actions';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-landing-page',
@@ -49,7 +50,8 @@ export class LandingPageComponent {
     private courseService: CourseService,
     private userService: UserServiceService,
     private router: Router,
-    private store: Store<State>
+    private store: Store<State>,
+    private messageService: MessageService,
   ) {
     this.loggedInUser = this.storageService.isLoggedIn();
 
@@ -59,20 +61,18 @@ export class LandingPageComponent {
   }
 
   ngOnInit() {
-    //console.log("ngOnInit triggered")
-    // this.currentUser = this.storageService.getUser();
-    this.courseService.fetchCourses().subscribe((courses1) => {
+    try {
+          this.courseService.fetchCourses().subscribe((courses1) => {
       this.myCourses = courses1;
     });
-    //console.log(this.userArray.length, "userArray ngOnInit" )
-    //this.userArray =  []
     this.getAllCourses();
-    // console.log(this.userArray.length, "userArray ngOnInit after" )
+    } catch (error) {
+      
+    }
+
   }
 
   getAllCourses() {
-    // console.log("getAllCourses triggered")
-    // console.log(this.userArray.length, "userArray getAllCourses begining" )
     this.courseService.GetAllCourses().subscribe({
       next: (courses) => {
         //console.log("courseService.GetAllCourses triggered")
@@ -123,14 +123,11 @@ export class LandingPageComponent {
       this.firstName = user.firstname;
       this.lastName = user.lastname;
 
-      var index = course.createdAt.indexOf('T');
-      (this.createdAt = course.createdAt.slice(0, index)),
-        course.createdAt.slice(index + 1);
       let ingoPush = {
         id: course._id,
         name: course.name,
         shortName: course.shortName,
-        createdAt: this.createdAt,
+        createdAt: new Date(course.createdAt),
         firstName: this.firstName,
         lastName: this.lastName,
         description: course.description,
@@ -150,42 +147,36 @@ export class LandingPageComponent {
 
   //   }
   onSelectCourse(selcetedCourse: any) {
+    console.log(selcetedCourse)
     // let selcetedCourse = this.courses.find(
     //   (course) => course._id == selcetedCourseId
     // );
 
     if (this.loggedInUser) {
-      let varcc = this.myCourses.find(
-        (course) => selcetedCourse.id === course._id
-      );
-
-      //  if(this.user.role.name==='admin')
-      //  {
-      //   let adminCourse = this.courses.find(
-      //     (course) => selcetedCourse.id === course._id
-      //    );
-
-      //      this.Enrolled = true;
-      //      console.log(selcetedCourse, 'selcetedCourse.id landingpage admin role')
-      //    this.router.navigate(['course', selcetedCourse.id]);
-
-      //  }
-
-      if (varcc) {
-        this.Enrolled = true;
-
-        this.router.navigate(['course', selcetedCourse.id]);
-      } else {
-        this.Enrolled = false;
-        this.store.dispatch(
-          CourseAction.setCurrentCourse({ selcetedCourse: selcetedCourse })
+      try {
+        let varcc = this.myCourses.find(
+          (course) => selcetedCourse.id === course._id
         );
-        this.store.dispatch(
-          CourseAction.setCourseId({ courseId: selcetedCourse.id })
-        );
-        this.router.navigate(['course-description', selcetedCourse.id]);
-
-        //console.log(selcetedCourse)
+        if (varcc) {
+          this.Enrolled = true;
+          this.router.navigate(['course', selcetedCourse.id, 'welcome']);
+          // this.router.navigate(['course', selcetedCourse.id]);
+        } else {
+          this.Enrolled = false;
+          this.store.dispatch(
+            CourseAction.setCurrentCourse({ selcetedCourse: selcetedCourse })
+          );
+          this.store.dispatch(
+            CourseAction.setCourseId({ courseId: selcetedCourse.id })
+          );
+          this.router.navigate(['course-description', selcetedCourse.id]);
+  
+          //console.log(selcetedCourse)
+        }
+      } catch (error) {
+        this.router.navigate(['login']);
+        this.showError("Your session has expired. Please login again");
+          
       }
     } else {
       this.store.dispatch(
@@ -196,5 +187,12 @@ export class LandingPageComponent {
       );
       this.router.navigate(['course-description', selcetedCourse.id]);
     }
+  }
+  showError(msg) {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: msg,
+    });
   }
 }

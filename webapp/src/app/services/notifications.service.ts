@@ -37,6 +37,7 @@ import {
   courseNotificationSettingLabels,
 } from 'src/app/models/Notification';
 import * as CourseActions from '../pages/courses/state/course.actions';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -46,13 +47,17 @@ export class NotificationsService {
     private storageService: StorageService,
     private socket: Socket,
     private store: Store<State>
-  ) {}
+  ) {
+ }
 
   public previousURL: string = null;
   public notificationToNavigateTo: Notification = null;
 
   //Todo: error handling
   /* .get<UserNotification[]>('assets/data.json') */
+ 
+  //this.socket.emit("join", "course:"+course._id);
+
   public getAllNotifications(): Observable<TransformedNotificationsWithBlockedUsers> {
     return this.httpClient
       .get<NotificationsWithBlockedUsers>(
@@ -91,18 +96,67 @@ export class NotificationsService {
           };
         }),
 
-        tap((notifications) => console.log(notifications))
       );
   }
 
   public initialiseSocketConnection() {
+    
     const user = this.storageService.getUser();
-
     this.socket.on(user.id, (data: UserNotification[]) => {
+      try{
       if (data[0].isDeletingCourse) {
         this.store.dispatch(
           NotificationActions.isDeletingCourse({
             courseId: data[0].courseId,
+          })
+        );
+        return;
+      }
+
+      if (data[0].isDeletingAnnotation) {
+        this.store.dispatch(
+          NotificationActions.isDeletingAnnotation({
+            annotationId: data[0].annotationId,
+          })
+        );
+        return;
+      }
+      if (data[0].isDeletingReply) {
+        this.store.dispatch(
+          NotificationActions.isDeletingReply({
+            replyId: data[0].replyId,
+          })
+        );
+        return;
+      }
+      if (data[0].isDeletingMaterial) {
+        this.store.dispatch(
+          NotificationActions.isDeletingMaterial({
+            materialId: data[0].materialId,
+          })
+        );
+        this.store.dispatch(
+          CourseActions.updateFOllowingAnnotationsOnDeletion({
+            payload: {
+              isDeletingMaterial: true,
+              id: data[0].materialId,
+            },
+          })
+        );
+        return;
+      }
+      if (data[0].isDeletingTopic) {
+        this.store.dispatch(
+          NotificationActions.isDeletingTopic({
+            topicId: data[0].topicId,
+          })
+        );
+        return;
+      }
+      if (data[0].isDeletingChannel) {
+        this.store.dispatch(
+          NotificationActions.isDeletingChannel({
+            channelId: data[0].channelId,
           })
         );
         return;
@@ -123,55 +177,15 @@ export class NotificationsService {
         }
       });
 
-      if (notifications[0].isDeletingAnnotation) {
-        this.store.dispatch(
-          NotificationActions.isDeletingAnnotation({
-            annotationId: notifications[0].annotation_id,
-          })
-        );
-      }
-      if (notifications[0].isDeletingReply) {
-        this.store.dispatch(
-          NotificationActions.isDeletingReply({
-            replyId: notifications[0].reply_id,
-          })
-        );
-      }
-      if (notifications[0].isDeletingMaterial) {
-        this.store.dispatch(
-          NotificationActions.isDeletingMaterial({
-            materialId: notifications[0].material_id,
-          })
-        );
-        this.store.dispatch(
-          CourseActions.updateFOllowingAnnotationsOnDeletion({
-            payload: {
-              isDeletingMaterial: true,
-              id: notifications[0].material_id,
-            },
-          })
-        );
-      }
-      if (notifications[0].isDeletingTopic) {
-        this.store.dispatch(
-          NotificationActions.isDeletingTopic({
-            topicId: notifications[0].topic_id,
-          })
-        );
-      }
-      if (notifications[0].isDeletingChannel) {
-        this.store.dispatch(
-          NotificationActions.isDeletingChannel({
-            channelId: notifications[0].channel_id,
-          })
-        );
-      }
-
       notifications.forEach((notification) => {
         this.store.dispatch(
           NotificationActions.newNotificationArrived({ notification })
         );
       });
+    }
+    catch{
+      return; 
+    }
     });
   }
 
@@ -501,6 +515,8 @@ export class NotificationsService {
     let annotation_id = null;
     let reply_id = null;
     let topic_id = null;
+    let from = null;
+    let startPage = null;
     if (
       notification.activityId.statement.object.definition.type ===
       'http://www.CourseMapper.de/activityType/topic'
@@ -531,6 +547,8 @@ export class NotificationsService {
       'http://www.CourseMapper.de/activityType/annotation'
     ) {
       annotation_id = extensions.id;
+      from = resultExtensions?.location?.from ?? null;
+      startPage = resultExtensions?.location?.startPage ?? null;
     }
     if (
       resultExtensionFirstKey ===
@@ -538,12 +556,16 @@ export class NotificationsService {
       extensionsFirstKey === 'http://www.CourseMapper.de/extensions/material'
     ) {
       annotation_id = resultExtensions.id;
+      from = resultExtensions?.location?.from ?? null;
+      startPage = resultExtensions?.location?.startPage ?? null;
     }
     if (
       notification.activityId.statement.object.definition.type ===
       'http://www.CourseMapper.de/activityType/reply'
     ) {
       reply_id = extensions.id;
+      from = resultExtensions?.location?.from ?? null;
+      startPage = resultExtensions?.location?.startPage ?? null;
     }
     if (
       resultExtensionFirstKey ===
@@ -551,6 +573,8 @@ export class NotificationsService {
       extensionsFirstKey === 'http://www.CourseMapper.de/extensions/annotation'
     ) {
       reply_id = resultExtensions.id;
+      from = resultExtensions?.location?.from ?? null;
+      startPage = resultExtensions?.location?.startPage ?? null;
     }
     if (
       notification.activityId.statement.verb.display['en-US'] === 'mentioned'
@@ -559,12 +583,16 @@ export class NotificationsService {
         extensionsFirstKey === 'http://www.CourseMapper.de/extensions/reply'
       ) {
         reply_id = extensions.id;
+        from = resultExtensions?.location?.from ?? null;
+        startPage = resultExtensions?.location?.startPage ?? null;
       }
       if (
         extensionsFirstKey ===
         'http://www.CourseMapper.de/extensions/annotation'
       ) {
         annotation_id = extensions.id;
+        from = resultExtensions?.location?.from ?? null;
+        startPage = resultExtensions?.location?.startPage ?? null;
       }
     }
 
@@ -572,7 +600,7 @@ export class NotificationsService {
       userShortname: notification.activityId.notificationInfo.userShortname,
       courseName: notification.activityId.notificationInfo.courseName,
       username: notification.activityId.notificationInfo.userName,
-      authorId: notification.activityId.statement.actor?.name,
+      authorId: notification.activityId.statement.actor?.account.name,
       authorEmail: notification.activityId.notificationInfo.authorEmail,
       action:
         notification.activityId.statement.verb.display['en-US'] === 'replied'
@@ -636,6 +664,8 @@ export class NotificationsService {
         isDeletingTopic:
           notification.activityId.notificationInfo.isDeletingTopic,
       }),
+      ...(from && { from }),
+      ...(startPage && { startPage }),
       extraMessage: `${notification.activityId.notificationInfo.userName} ${notification.activityId.statement.verb.display['en-US']} ${lastWord} ${notification.activityId.statement.object.definition.name['en-US']} in ${notification.activityId.notificationInfo.courseName}`,
     };
   }

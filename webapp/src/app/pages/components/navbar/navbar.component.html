@@ -20,7 +20,7 @@
             marginRight: '8px'
           }"
           type="button"
-          label="Login"
+          label="Sign in"
           (click)="handleLogin()"
         ></button>
 
@@ -28,25 +28,12 @@
           pButton
           [ngStyle]="{ backgroundColor: '#EA580C' }"
           type="button"
-          label="Sign Up"
+          label="Sign up"
           (click)="handleRegistration()"
         ></button>
       </span>
 
       <span *ngIf="this.storageService.loggedIn">
-        <button
-          pButton
-          [ngStyle]="{
-            border: '1px solid #EA580C',
-            backgroundColor: 'white',
-            color: '#EA580C',
-            marginRight: '8px'
-          }"
-          type="button"
-          label="Logout"
-          (click)="handleLogout()"
-        ></button>
-
         <p-avatar
           label="{{ getIntitials(loggedInUser?.name) }}"
           shape="circle"
@@ -56,19 +43,21 @@
             color: '#ffffff',
             cursor: 'pointer'
           }"
-          (click)="op.toggle($event)"
+          (click)="toggleMenu($event)"
+          
         ></p-avatar>
-        <p-overlayPanel #op [style]="{ width: '400px' }">
+        <p-overlayPanel #op [style]="{ width: '450px' }">
           <ng-template pTemplate>
             <div class="flex-col">
               <div class="font-medium text-2xl w-full">
                 {{ loggedInUser.name }}
               </div>
+              <div class="font-medium w-full mt-2">mbox_sha1sum:</div>
               <div class="flex flex-row w-full">
                 <div
-                  class="text-blue-500 dark:text-blue-500 hover:underline mt-2 mr-2"
+                  class="text-blue-500 dark:text-blue-500 hover:underline mr-2"
                 >
-                  {{ loggedInUser.id }}
+                  {{ loggedInUser.mbox_sha1sum }}
                 </div>
                 <div class="flex w-full">
                   <app-iconbutton
@@ -83,6 +72,16 @@
             </div>
           </ng-template>
         </p-overlayPanel>
+        <p-menu
+          #menu
+          id="config_menu"
+          [popup]="true"
+          appendTo="body"
+          styleClass="course-context-menu"
+          [model]="userOptions"
+          pTooltip="userOptions"
+
+        />
       </span>
     </div>
   </div>

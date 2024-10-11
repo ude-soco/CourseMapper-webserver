@@ -1,91 +1,68 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, Subject, lastValueFrom } from 'rxjs';
-import { environment_Python } from 'src/environments/environment';
+import { Observable, lastValueFrom } from 'rxjs';
+import { environment } from 'src/environments/environment';
 import { HTTPOptions } from '../config/config';
-import { ResourcesPagination, RatingResource, UserResourceFilterParamsResult, UserResourceFilterResult } from '../models/croForm';
+import { ResourcesPagination, RatingResource, UserResourceFilterParamsResult, UserResourceFilterResult, Concept } from '../models/croForm';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MaterialsRecommenderService {
-  cmEndpointURL = environment_Python.PYTHON_SERVER
-  httpHeader = HTTPOptions.headers
+  apiURL = environment.API_URL
+  api_PYTHON_SERVER_RS = environment.PYTHON_SERVER_RS
   recommendedConcepts: any
   recommendedMaterials: any
   recommendedMaterialsRating: any
 
-  public materialModel = new Subject<string>();
-  private commonMaterialModel = ''
+  constructor(private http: HttpClient) {}
 
-  public materialModelUpdate1 = new Subject<any[]>();
-  private commonMaterialModelUpdate1 = []
-  public materialModelUpdate2 = new Subject<any[]>();
-  private commonMaterialModelUpdate2 = []
-  public materialModelUpdate3 = new Subject<any[]>();
-  private commonMaterialModelUpdate3 = []
-  public materialModelUpdate4 = new Subject<any[]>();
-  private commonMaterialModelUpdate4 = []
-  
-  constructor(private http: HttpClient,) {
-    this.materialModel = new Subject();
-    this.materialModelUpdate1 = new Subject();
-  }
+  // getRecommendedConcepts(data: any): Observable<any> {
+  //   this.recommendedConcepts = this.http.post<any>(`${this.api_PYTHON_SERVER_RS}/courses/${data.courseId}/materials/${data.materialId}/concept-recommendation`, data, HTTPOptions);
+  //   return this.recommendedConcepts
+  // }
 
-  getRecommendedConcepts(formData: any): Observable<any> {
-    this.recommendedConcepts = this.http.post<any>(`${this.cmEndpointURL}get_concepts`, formData, { withCredentials: true });
+  // getRecommendedMaterials(data: any): Observable<any> {
+  //   this.recommendedMaterials = this.http.post<any>(`${this.api_PYTHON_SERVER_RS}/courses/${data.courseId}/materials/${data.materialId}/resource-recommendation`, data, HTTPOptions);
+  //   return this.recommendedMaterials
+  // }
+
+  // async rateRecommendedMaterials2(data: any): Promise<any> {
+  //   const recommendedMaterialsRating$ = this.http.post<any>(`${this.apiURL}/knowledge-graph/rating`, data, HTTPOptions);
+  //   this.recommendedMaterialsRating = await lastValueFrom(recommendedMaterialsRating$)
+  //   return this.recommendedMaterialsRating
+  // }
+
+  getRecommendedConcepts(data: any): Observable<any> {
+    this.recommendedConcepts = this.http.post<any>(`${this.api_PYTHON_SERVER_RS}/get_concepts`, data, HTTPOptions);
     return this.recommendedConcepts
   }
 
-  getRecommendedMaterials(formData: any, croForm: any): Observable<ResourcesPagination> {
-    let data = {default: {}, rec_params: croForm};
-
-    if (formData !== null) {
-      for (const p of formData) {
-        data["default"][String(p[0])] = p[1]
-      }
-    } else {
-      data["default"] = null;
-    }
-
-    this.recommendedMaterials = this.http.post<ResourcesPagination>(`${this.cmEndpointURL}get_resources`, data, { withCredentials: true, responseType: 'json' });
+  getRecommendedMaterials(data: any): Observable<any> {
+    this.recommendedMaterials = this.http.post<any>(`${this.api_PYTHON_SERVER_RS}/get_resources`, data, HTTPOptions);
     return this.recommendedMaterials
   }
 
   async rateRecommendedMaterials(formData: any): Promise<RatingResource> {
-    const recommendedMaterialsRating$ = this.http.post<RatingResource>(`${this.cmEndpointURL}rating`, formData, { withCredentials: true });
+    const recommendedMaterialsRating$ = this.http.post<RatingResource>(`${this.api_PYTHON_SERVER_RS}/rating/resource`, formData, { withCredentials: true });
     this.recommendedMaterialsRating = await lastValueFrom(recommendedMaterialsRating$)
     return this.recommendedMaterialsRating
   }
 
   SaveOrRemoveUserResource(data: any): Observable<any> {
-    return this.http.post<any>(`${this.cmEndpointURL}user_resources/save_or_remove`, data, { withCredentials: true });
+    return this.http.post<any>(`${this.api_PYTHON_SERVER_RS}/user_resources/save_or_remove`, data, { withCredentials: true });
   }
 
   filterUserResourcesSavedBy(data: any): Observable<UserResourceFilterResult> {
-    return this.http.post<UserResourceFilterResult>(`${this.cmEndpointURL}user_resources/filter`, data, { withCredentials: true });
+    return this.http.post<UserResourceFilterResult>(`${this.api_PYTHON_SERVER_RS}/user_resources/filter`, data, { withCredentials: true });
   }
 
   getRidsFromUserSaves(user_id: string): Observable<[]> {
-    return this.http.get<[]>(`${this.cmEndpointURL}user_resources/get_rids_from_user_saves?user_id=${user_id}`, { withCredentials: true });
+    return this.http.get<[]>(`${this.api_PYTHON_SERVER_RS}/user_resources/get_rids_from_user_saves?user_id=${user_id}`, { withCredentials: true });
   }
 
-
-  /*
-    getConceptsMidsSliderNumbersForUserResourcesFiltering(data: any): Observable<UserResourceFilterParamsResult> {
-    return this.http.post<UserResourceFilterParamsResult>(`${this.cmEndpointURL}user_resources/get_filter_params`, data, { withCredentials: true });
+  getConceptsModifiedByUserFromSaves(user_id: string): Observable<Concept[]> {
+    const url = `${this.api_PYTHON_SERVER_RS}/setting/get_concepts_modified_by_user_from_saves?user_id=${user_id}`;
+    return this.http.get<Concept[]>(url);
   }
-  */
-
-  // getRecommendedMaterials(formData: any, croForm: any): Observable<any> {
-  //   let data = {default: {}, croForm: croForm};
-
-  //   for (const p of formData) {
-  //     data["default"][String(p[0])] = p[1]
-  //   }
-  //   console.warn("data ->", data);
-
-  //   this.recommendedMaterials = this.http.post<any>(`${this.cmEndpointURL}get_resources`, data, { withCredentials: true });
-  //   return this.recommendedMaterials
-  // }
 }

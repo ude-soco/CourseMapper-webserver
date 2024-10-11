@@ -1,36 +1,55 @@
-  <div class="z-0 w-20 bg-white  min-h-screen  text-white shadow-lg" >
-    <div class="h-max w-20 flex flex-col" >
-      <div class="sidebar-icon group">
-        <a [routerLink]="[HomePage]">
+<div class="z-0 w-20 bg-white min-h-screen text-white shadow-lg">
+  <div class="h-max w-20 flex flex-col">
+    <div class="sidebar-icon group">
+      <a [routerLink]="[HomePage]">
         <i class="bx bx-home bx-md bx-tada-hover"></i>
-        <span class="sidebar-tooltip group-hover:scale-100"> Home </span></a>
+        <span class="sidebar-tooltip group-hover:scale-100"> Home </span></a
+      >
+    </div>
+
+    <hr class="sidebar-hr" />
+
+    <div
+      *ngFor="let course of courses; let i = index"
+      (click)="onSelectCourse(course)"
+      [attr.data-index]="i"
+    >
+      <div
+        class="sidebar-icon group"
+        [class.show-activity-indicator]="
+          getCourseActivityIndicator(course._id) | async
+        "
+      >
+        <button class="text-xl">{{ course.shortName }}</button>
+        <span class="icon-button-badge" *ngIf="course.notification">{{
+          course.notification
+        }}</span>
+        <span class="sidebar-tooltip group-hover:scale-100">{{
+          course.name
+        }}</span>
       </div>
+    </div>
 
-      <hr class="sidebar-hr"/>
+    <hr class="sidebar-hr" />
 
-      <div *ngFor="let course of courses; let i = index" (click)="onSelectCourse(course)" [attr.data-index]="i">
-        <div class="sidebar-icon group">
-          <button class="text-xl">{{ course.shortName }}</button>
-          <span class="icon-button-badge" *ngIf="course.notification">{{ course.notification }}</span>
-          <span class="sidebar-tooltip group-hover:scale-100">{{course.name}}</span>
-        </div>
-      </div>
+    <div (click)="onAddCourseDialogueClicked()" class="sidebar-icon group">
+      <i class="bx bx-plus bx-md bx-tada-hover"></i>
+      <span class="sidebar-tooltip group-hover:scale-100">
+        Add new course
+      </span>
+    </div>
 
-      <hr class="sidebar-hr"/>
-
-      <div (click)="onAddCourseDialogueClicked()" class="sidebar-icon group">
-        <i class="bx bx-plus bx-md bx-tada-hover"></i>
-        <span class="sidebar-tooltip group-hover:scale-100"> Add new course </span>
-      </div>
-
-      <div class="sidebar-icon group">
-        <a href="/landingPage">
+    <div class="sidebar-icon group">
+      <a [routerLink]="[LandingPage]" >
         <i class="bx bx-search bx-md bx-tada-hover"></i>
         <span class="sidebar-tooltip group-hover:scale-100">
           Search for courses
-        </span></a>
-      </div>
+        </span></a
+      >
     </div>
-    <app-add-course [displayAddCourseDialogue]="displayAddCourseDialogue"
-                    (onCloseAddCourseDialogue)="toggleAddCoursedialogue($event)"></app-add-course>
   </div>
+  <app-add-course
+    [displayAddCourseDialogue]="displayAddCourseDialogue"
+    (onCloseAddCourseDialogue)="toggleAddCoursedialogue($event)"
+  ></app-add-course>
+</div>

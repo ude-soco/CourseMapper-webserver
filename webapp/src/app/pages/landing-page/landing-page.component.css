@@ -92,13 +92,13 @@ search-results hr{
     search-results p{
         margin:5px 0px
     }
-.course-card{
+/* .course-card{
       float: left;
 left:1rem;
 width: 22rem;;
 margin: 1REM;
 
-    }
+    } */
     .course-div{
       margin-left:9rem;
          
@@ -107,3 +107,31 @@ margin: 1REM;
 .wrapper:not(:empty) + .default {
     display: none;
 }
+::ng-deep .p-card {
+  display:block;
+  width: 22rem;
+  /* width: 150px; */
+  margin: 1rem;
+  border: 3px solid #f8f8f8;
+  float: left;
+  left:1rem;
+
+
+
+}
+::ng-deep .p-card:hover{
+  border: 3px solid #fdfefe;
+  
+}
+
+ /* p-card{
+  display:block;
+  width: 22rem;
+ width: 150px; 
+  margin: 1rem;
+  border: 3px solid #f8f8f8;
+  float: left;
+  left:1rem;
+  margin: 1REM;
+  border: 3px solid #f8f8f8;
+} */

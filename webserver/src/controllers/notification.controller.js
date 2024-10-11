@@ -42,6 +42,8 @@ export const getAllNotifications = async (req, res, next) => {
       "statement.object.definition.type",
       "statement.object.definition.name.en-US",
       "statement.actor.name",
+      "statement.actor.account.name",
+
       "statement.verb.display.en-US",
       "statement.result.extensions",
       "statement.timestamp",
@@ -133,7 +135,7 @@ export const starNotification = async (req, res, next) => {
     //User notifications with the id's in the variable notificationIds are updated to have the isRead field set to true
     await UserNotification.updateMany(
       { _id: { $in: notificationIds } },
-      { isStar: true }
+      { $set: { isStar: true }, $unset: { createdAt: 1 } }
     );
   } catch (error) {
     return res
@@ -152,7 +154,7 @@ export const unstarNotification = async (req, res, next) => {
     //User notifications with the id's in the variable notificationIds are updated to have the isRead field set to true
     await UserNotification.updateMany(
       { _id: { $in: notificationIds } },
-      { isStar: false }
+      { $set: { isStar: false, createdAt: new Date() } }
     );
   } catch (error) {
     return res
@@ -248,6 +250,10 @@ export const followAnnotation = async (req, res, next) => {
     materialId: materialId,
     topicId: topicId,
     isFollowing: true,
+    ...(annotation.location.from && { from: annotation.location.from }),
+    ...(annotation.location.startPage && {
+      startPage: annotation.location.startPage,
+    }),
   });
 
   try {
@@ -1145,6 +1151,7 @@ export const getAllCourseNotificationSettings = async (req, res, next) => {
           isReplyAndMentionedNotificationsEnabled: 1,
           isCourseUpdateNotificationsEnabled: 1,
           isCourseLevelOverride: 1,
+          /*   showCourseActivityIndicator: 1, */
         },
       },
       {

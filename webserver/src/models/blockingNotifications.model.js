@@ -16,6 +16,7 @@ const BlockingNotifications = new Schema({
   isReplyAndMentionedNotificationsEnabled: { type: Boolean },
   isCourseUpdateNotificationsEnabled: { type: Boolean },
   isCourseLevelOverride: { type: Boolean, default: false },
+  /*   showCourseActivityIndicator: { type: Boolean, default: false }, */
   userId: {
     type: Schema.Types.ObjectId,
     ref: "user",
@@ -33,6 +34,7 @@ const BlockingNotifications = new Schema({
       isCourseUpdateNotificationsEnabled: { type: Boolean },
       isTopicLevelOverride: { type: Boolean, default: false },
       isCourseLevelOverride: { type: Boolean, default: false },
+      /*       showTopicActivityIndicator: { type: Boolean, default: false }, */
     },
   ],
   channels: [

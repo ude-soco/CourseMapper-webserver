@@ -5,7 +5,7 @@ import en from '@angular/common/locales/en';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
-import { registerLocaleData } from '@angular/common';
+import { registerLocaleData, DatePipe } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -21,7 +21,7 @@ import { IconbuttonComponent } from './components/iconbutton/iconbutton.componen
 import { AvatarComponent } from './components/avatar/avatar.component';
 
 import { InputTextareaModule } from 'primeng/inputtextarea';
-import { DragulaModule } from 'ng2-dragula';
+import { DragulaModule,  DragulaService } from 'ng2-dragula';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -37,7 +37,7 @@ import { CustomDatePipe } from './pipes/date.pipe';
 
 import { AppComponent } from "./app.component";
 import { TopicDropdownComponent } from "./pages/components/topic-dropdown/topic-dropdown.component";
-import { DashboardComponent } from "./pages/components/dashboard/dashboard.component";
+
 import { RegistrationComponent } from "./pages/components/registration/registration.component";
 import { NavbarComponent } from "./pages/components/navbar/navbar.component";
 import { ChannelbarComponent } from "./pages/components/channelbar/channelbar.component";
@@ -61,8 +61,7 @@ import { AnnotationModule } from './pages/components/annotations/annotation.modu
 // import { MaterialsModule } from './pages/components/materils/materials.module';
 import { environment } from '../environments/environment';
 import { appReducer } from './state/app.reducer';
-import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
-const config: SocketIoConfig = { url: 'http://localhost:8080', options: {} };
+import { SocketIoModule } from 'ngx-socket-io';
 import { hydrationMetaReducer } from './state/hydration.reducer';
 import { LandingPageComponent } from './pages/landing-page/landing-page.component';
 import { PrivacyComponent } from './pages/components/privacy/privacy.component';
@@ -74,6 +73,7 @@ import {ChatComponent} from "./components/chat/chat.component";
 import {SafeHtmlPipe} from "./pipes/safehtml.pipe";
 import {DateAgoPipe} from "./pipes/date-ago.pipe";
 import {LinkifyPipe} from "./pipes/linkify.pipe";
+
 
 import { TabMenuModule } from 'primeng/tabmenu';
 import { NotificationModule } from './pages/components/notifications/notification.module';
@@ -89,6 +89,20 @@ import { MentionModule } from 'angular-mentions';
 import { MessageService } from 'primeng/api';
 import { TeamComponent } from './pages/team/team.component';
 import { AboutComponent } from './pages/about/about.component';
+import { ForgetPasswordComponent } from './pages/components/forget-password/forget-password.component';
+import { ResetPasswordComponent } from './pages/components/forget-password/reset-password/reset-password.component';
+import { ResetPasswordRequestComponent } from './pages/components/forget-password/reset-password-request/reset-password-request.component';
+
+import { PersonalDashboardComponent } from './pages/components/Dashboards/personal-dashboard/personal-dashboard.component';
+import { PopulateDashboardComponent } from './pages/components/populate-dashboard/populate-dashboard.component';
+import { TopicDashboardComponent } from './pages/components/Dashboards/topic-dashboard/topic-dashboard.component';
+import { CourseDashboardComponent } from './pages/components/Dashboards/course-dashboard/course-dashboard.component';
+import { ChannelDashboardComponent } from './pages/components/Dashboards/channel-dashboard/channel-dashboard.component';
+import { MaterialDashboardComponent } from './pages/components/Dashboards/material-dashboard/material-dashboard.component';
+import { BackButtonComponent } from './pages/components/back-button/back-button.component';
+import { EmailValidationComponent } from './pages/components/email-validation/email-validation.component';
+import { RequestEmailValidationComponent } from './pages/components/email-validation/request-email-validation/request-email-validation.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -102,8 +116,7 @@ import { AboutComponent } from './pages/about/about.component';
     LoginComponent,
     HomeComponent,
     EditorComponent,
-    DashboardComponent,
-    ByPassUrlSanitizationPipe,
+    //ByPassUrlSanitizationPipe,
     LandingPageComponent,
     PrivacyComponent,
     CourseDescriptionComponent,
@@ -119,6 +132,20 @@ import { AboutComponent } from './pages/about/about.component';
     CourseWelcomeComponent,
     TeamComponent,
     AboutComponent,
+    ForgetPasswordComponent,
+    ResetPasswordComponent,
+    ResetPasswordRequestComponent,
+
+    PersonalDashboardComponent,
+    TopicDashboardComponent,
+    CourseDashboardComponent,
+    ChannelDashboardComponent,
+   PopulateDashboardComponent,
+   MaterialDashboardComponent,
+   BackButtonComponent,
+   EmailValidationComponent,
+   RequestEmailValidationComponent,
+
   ],
   imports: [
     MentionModule,
@@ -156,7 +183,7 @@ import { AboutComponent } from './pages/about/about.component';
     DividerModule,
   ],
   exports: [],
-  providers: [httpInterceptorProviders],
+  providers: [httpInterceptorProviders, DatePipe],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

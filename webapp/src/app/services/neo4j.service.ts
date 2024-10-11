@@ -2,11 +2,15 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { lastValueFrom } from 'rxjs';
-import { environment_Python } from 'src/environments/environment';
-// TODO remove neo4j from package.json
+import { environment } from 'src/environments/environment';
 
 type Neo4jResult = {
   records: any[]
+}
+
+type NodesAndEdges = {
+  nodes: any[],
+  edges: any[]
 }
 
 @Injectable({
@@ -18,53 +22,51 @@ export class Neo4jService {
 
   async checkSlide(slideId: string): Promise<Neo4jResult> {
     return lastValueFrom(this.http.get<Neo4jResult>(
-      `${environment_Python.PYTHON_SERVER}check_slide/${slideId}`
+      `${environment.API_URL}/knowledge-graph/check-slide/${slideId}`
     ));
   }
 
   async getSlide(slideId: string): Promise<Neo4jResult> {
     return lastValueFrom(this.http.get<Neo4jResult>(
-      `${environment_Python.PYTHON_SERVER}get_slide/${slideId}`
+      `${environment.API_URL}/knowledge-graph/get-slide/${slideId}`
     ));
   }
 
   async checkMaterial(materialId: string): Promise<Neo4jResult> {
     return lastValueFrom(this.http.get<Neo4jResult>(
-      `${environment_Python.PYTHON_SERVER}check_material/${materialId}`
+      `${environment.API_URL}/knowledge-graph/check-material/${materialId}`
     ));
   }
 
   async getMaterial(materialId: string): Promise<Neo4jResult> {
     return lastValueFrom(this.http.get<Neo4jResult>(
-      `${environment_Python.PYTHON_SERVER}get_material/${materialId}`
+      `${environment.API_URL}/knowledge-graph/get-material/${materialId}`
+    ));
+  }
+
+  async getMaterialSlides(materialId: string): Promise<Neo4jResult> {
+    return lastValueFrom(this.http.get<Neo4jResult>(
+      `${environment.API_URL}/knowledge-graph/get-material-slides/${materialId}`
     ));
   }
 
   async getMaterialEdges(materialId: string): Promise<Neo4jResult> {
     return lastValueFrom(this.http.get<Neo4jResult>(
-      `${environment_Python.PYTHON_SERVER}get_material_edges/${materialId}`
+      `${environment.API_URL}/knowledge-graph/get-material-edges/${materialId}`
     ));
   }
 
   async getMaterialConceptsIds(materialId: string): Promise<Neo4jResult> {
     return lastValueFrom(this.http.get<Neo4jResult>(
-      `${environment_Python.PYTHON_SERVER}get_material_concept_ids/${materialId}`
+      `${environment.API_URL}/knowledge-graph/get-material-concept-ids/${materialId}`
     ));
   }
 
-  async getHigherLevelsNodes(materialIds: string[]): Promise<Neo4jResult> {
+  async getHigherLevelsNodesAndEdges(materialIds: string[]): Promise<NodesAndEdges> {
     let params = new URLSearchParams(materialIds.map((id) => ['material_ids', id]))
-    const res = await lastValueFrom(this.http.get<Neo4jResult>(
-      `${environment_Python.PYTHON_SERVER}get_higher_levels_nodes?${params.toString()}`
+    const res = await lastValueFrom(this.http.get<NodesAndEdges>(
+      `${environment.API_URL}/knowledge-graph/get-higher-levels-nodes-and-edges?${params.toString()}`
     ));
-    console.log('------', res)
     return res
-  }
-
-  async getHigherLevelsEdges(materialIds: string[]): Promise<Neo4jResult> {
-    let params = new URLSearchParams(materialIds.map((id) => ['material_ids', id]))
-    return lastValueFrom(this.http.get<Neo4jResult>(
-      `${environment_Python.PYTHON_SERVER}get_higher_levels_edges?${params.toString()}`
-    ));
   }
 }

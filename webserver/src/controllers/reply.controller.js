@@ -184,11 +184,14 @@ export const newReply = async (req, res, next) => {
     material: foundMaterial,
     isFollowingAnnotation: true,
   };
-  socketio.getIO().emit(annotationId, {
-    eventType: "replyCreated",
-    annotation: foundAnnotation,
-    reply: newReply,
-  });
+  socketio
+    .getIO()
+    .to("course:" + courseId)
+    .emit(annotationId, {
+      eventType: "replyCreated",
+      annotation: foundAnnotation,
+      reply: newReply,
+    });
 
   return next();
 };
@@ -285,11 +288,14 @@ export const deleteReply = async (req, res, next) => {
     isFollowingAnnotation: true,
     isDeletingReply: true,
   };
-  socketio.getIO().emit(foundAnnotation._id, {
-    eventType: "replyDeleted",
-    annotation: foundAnnotation,
-    reply: foundReply,
-  });
+  socketio
+    .getIO()
+    .to("course:" + courseId)
+    .emit(foundAnnotation._id, {
+      eventType: "replyDeleted",
+      annotation: foundAnnotation,
+      reply: foundReply,
+    });
 
   return next();
 };
@@ -406,11 +412,14 @@ export const editReply = async (req, res, next) => {
   req.locals.materialType = foundMaterial.type;
   req.locals.annotation = foundAnnotation;
   req.locals.isFollowingAnnotation = true;
-  socketio.getIO().emit(foundAnnotation._id, {
-    eventType: "replyEdited",
-    annotation: foundAnnotation,
-    reply: foundReply,
-  });
+  socketio
+    .getIO()
+    .to("course:" + courseId)
+    .emit(foundAnnotation._id, {
+      eventType: "replyEdited",
+      annotation: foundAnnotation,
+      reply: foundReply,
+    });
 
   return next();
 };
@@ -506,12 +515,15 @@ export const likeReply = async (req, res, next) => {
       success: "Reply successfully unliked!",
     };
     req.locals.like = false;
-    socketio.getIO().emit(replyId, {
-      eventType: "replyUnliked",
-      likes: countLikes,
-      dislikes: countDislikes,
-      reply: savedReply,
-    });
+    socketio
+      .getIO()
+      .to("course:" + courseId)
+      .emit(replyId, {
+        eventType: "replyUnliked",
+        likes: countLikes,
+        dislikes: countDislikes,
+        reply: savedReply,
+      });
     return next();
   } else if (foundReply.dislikes.includes(req.userId)) {
     return res
@@ -535,12 +547,15 @@ export const likeReply = async (req, res, next) => {
     };
     req.locals.like = true;
 
-    socketio.getIO().emit(replyId, {
-      eventType: "replyLiked",
-      likes: countLikes,
-      dislikes: countDislikes,
-      reply: savedReply,
-    });
+    socketio
+      .getIO()
+      .to("course:" + courseId)
+      .emit(replyId, {
+        eventType: "replyLiked",
+        likes: countLikes,
+        dislikes: countDislikes,
+        reply: savedReply,
+      });
 
     return next();
   }
@@ -635,12 +650,15 @@ export const dislikeReply = async (req, res, next) => {
       success: "Reply successfully un-disliked!",
     };
     req.locals.dislike = false;
-    socketio.getIO().emit(replyId, {
-      eventType: "replyUndisliked",
-      likes: countLikes,
-      dislikes: countDislikes,
-      reply: savedReply,
-    });
+    socketio
+      .getIO()
+      .to("course:" + courseId)
+      .emit(replyId, {
+        eventType: "replyUndisliked",
+        likes: countLikes,
+        dislikes: countDislikes,
+        reply: savedReply,
+      });
     return next();
   } else if (foundReply.likes.includes(req.userId)) {
     return res
@@ -662,12 +680,15 @@ export const dislikeReply = async (req, res, next) => {
       success: "Reply successfully disliked!",
     };
     req.locals.dislike = true;
-    socketio.getIO().emit(replyId, {
-      eventType: "replyDisliked",
-      likes: countLikes,
-      dislikes: countDislikes,
-      reply: savedReply,
-    });
+    socketio
+      .getIO()
+      .to("course:" + courseId)
+      .emit(replyId, {
+        eventType: "replyDisliked",
+        likes: countLikes,
+        dislikes: countDislikes,
+        reply: savedReply,
+      });
     return next();
   }
 };

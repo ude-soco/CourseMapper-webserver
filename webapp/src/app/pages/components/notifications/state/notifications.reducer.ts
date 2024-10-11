@@ -14,7 +14,12 @@ import {
 
 import * as AppState from 'src/app/state/app.state';
 import * as NotificationActions from './notifications.actions';
-import { CourseNotificationSettings } from 'src/app/models/BlockingNotification';
+import {
+  Annotation,
+  CourseNotificationSettings,
+} from 'src/app/models/BlockingNotification';
+import { stat } from 'fs';
+import { state } from '@angular/animations';
 export interface State extends AppState.State {
   notifications: NotificationState;
 }
@@ -30,6 +35,8 @@ export interface NotificationState {
   isAnnotationNotificationsEnabled: boolean;
   isReplyAndMentionedNotificationsEnabled: boolean;
   isCourseUpdateNotificationsEnabled: boolean;
+  currentlyClickedNotification: Notification;
+  currentlySelectedFollowingAnnotation: Annotation;
 }
 
 const initialState: NotificationState = {
@@ -43,6 +50,8 @@ const initialState: NotificationState = {
   isAnnotationNotificationsEnabled: null,
   isReplyAndMentionedNotificationsEnabled: null,
   isCourseUpdateNotificationsEnabled: null,
+  currentlyClickedNotification: null,
+  currentlySelectedFollowingAnnotation: null,
 };
 
 //selectors
@@ -68,6 +77,16 @@ export const getCurrentlySelectedTab = createSelector(
 export const getBlockingUsers = createSelector(
   getNotificationFeatureState,
   (state) => state.blockingUsers
+);
+
+export const getCurrentlyClickedNotification = createSelector(
+  getNotificationFeatureState,
+  (state) => state.currentlyClickedNotification
+);
+
+export const getCurrentlySelectedFollowingAnnotation = createSelector(
+  getNotificationFeatureState,
+  (state) => state.currentlySelectedFollowingAnnotation
 );
 
 //the notifications being returned should be sorted according to the timestamp property of the notifications in descending order
@@ -212,6 +231,13 @@ export const getOverriddenCourses = createSelector(
     });
 
     return overriddenCourses;
+  }
+);
+
+export const getAllCourseNotificationSettings = createSelector(
+  getNotificationFeatureState,
+  (state) => {
+    return state.coursesSettings;
   }
 );
 
@@ -452,6 +478,8 @@ export const notificationReducer = createReducer<NotificationState>(
                 action.updatedDoc.isReplyAndMentionedNotificationsEnabled,
               isCourseUpdateNotificationsEnabled:
                 action.updatedDoc.isCourseUpdateNotificationsEnabled,
+              /*               showCourseActivityIndicator:
+                action.updatedDoc.showCourseActivityIndicator, */
             };
           }
           return courseSetting;
@@ -527,5 +555,38 @@ export const notificationReducer = createReducer<NotificationState>(
         (notification) => notification.course_id !== action.courseId
       ),
     };
-  })
+  }),
+  on(NotificationActions.setCurrentlySelectedNotification, (state, action) => {
+    return {
+      ...state,
+      currentlyClickedNotification: action.notification,
+    };
+  }),
+  on(
+    NotificationActions.unsetCurrentlySelectedNotification,
+    (state, action) => {
+      return {
+        ...state,
+        currentlyClickedNotification: null,
+      };
+    }
+  ),
+  on(
+    NotificationActions.setCurrentlySelectedFollowingAnnotation,
+    (state, action) => {
+      return {
+        ...state,
+        currentlySelectedFollowingAnnotation: action.followingAnnotation,
+      };
+    }
+  ),
+  on(
+    NotificationActions.unsetCurrentlySelectedFollowingAnnotation,
+    (state, action) => {
+      return {
+        ...state,
+        currentlySelectedFollowingAnnotation: null,
+      };
+    }
+  )
 );

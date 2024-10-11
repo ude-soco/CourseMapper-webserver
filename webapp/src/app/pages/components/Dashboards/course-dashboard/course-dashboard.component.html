@@ -1,0 +1,29 @@
+<p-toast position="bottom-left"></p-toast>
+<p-confirmDialog></p-confirmDialog>
+<div class="relative bg-gray-100 shadow-lg min-h-screen">
+  <div class="w-full">
+    <div class="p-4 bg-gray-200">
+      <div class="flex flex-wrap items-center gap-5">
+        <div>
+          <app-back-button></app-back-button>
+        </div>
+        <div>
+          <p class="flex w-full text-xl font-semibold">
+            Course Dashboard
+          </p>
+        </div>
+      </div>
+    </div>
+    <hr />
+    <div class="w-full max-w-screen-2xl">
+      <div class="p-4">
+        <app-populate-dashboard
+        [indicators]="indicators"
+        [courseId]="courseId"
+        [forCourseDashboard]="true"
+        [role]="this.courseService.getSelectedCourse().role"
+        ></app-populate-dashboard>
+      </div>
+    </div>
+  </div>
+</div>

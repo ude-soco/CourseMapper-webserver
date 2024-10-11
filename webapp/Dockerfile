@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1.5
-FROM node:20.1-slim as build
+FROM node:22.1-slim as build
 
 WORKDIR /app
 ENV PATH "$PATH:/app/node_modules/.bin"
@@ -13,11 +13,11 @@ RUN  --mount=type=cache,target=/app/.npm,rw \
 
 COPY . .
 RUN  --mount=type=cache,target=/app/node_modules/.cache,rw \
-     ng build
+     ng build --configuration production
 
 
 
-FROM nginxinc/nginx-unprivileged:1.25.2-alpine
+FROM nginxinc/nginx-unprivileged:1.27.1-alpine
 
 USER root
 WORKDIR /usr/share/nginx/html

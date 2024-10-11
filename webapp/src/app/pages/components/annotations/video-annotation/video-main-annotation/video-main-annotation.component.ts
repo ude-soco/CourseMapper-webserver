@@ -20,6 +20,7 @@ import {
   getCurrentMaterialId,
 } from '../../../materials/state/materials.reducer';
 import {
+  getCurrentTime,
   getIsAnnotationCreationCanceled,
   getIsAnnotationDialogVisible,
   getIsBrushSelectionActive,
@@ -37,6 +38,15 @@ import { Annotation } from 'src/app/models/Annotations';
 import { Reply } from 'src/app/models/Reply';
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
 import * as CourseActions from '../../../../courses/state/course.actions';
+import { map } from 'jquery';
+import { map as RxJSMap, take } from 'rxjs/operators';
+import {
+  getCurrentlyClickedNotification,
+  getCurrentlySelectedFollowingAnnotation,
+} from '../../../notifications/state/notifications.reducer';
+import * as NotificationActions from '../../../notifications/state/notifications.actions';
+import { Router } from '@angular/router';
+import { IntervalService } from 'src/app/services/interval.service';
 
 @Component({
   selector: 'app-video-main-annotation',
@@ -74,11 +84,17 @@ export class VideoMainAnnotationComponent
   videoIsPaused$: Observable<boolean>;
   cursorisInsideVideo: boolean;
   private socketSubscription: Subscription;
+  startYoutubeVideoAtTime$: Observable<number>;
+  seekVideoSubscription: Subscription;
+  videoSeekSubscription: Subscription;
+  followingAnnotationClickedSubscription: Subscription;
   constructor(
     private store: Store<State>,
     private pdfViewService: PdfviewService,
     private changeDetectorRef: ChangeDetectorRef,
-    private socket: Socket
+    private socket: Socket,
+    private router: Router,
+    private intervalService: IntervalService
   ) {}
 
   ngAfterViewChecked(): void {
@@ -102,6 +118,12 @@ export class VideoMainAnnotationComponent
     if (this.socketSubscription) {
       this.socketSubscription.unsubscribe();
     }
+    if (this.seekVideoSubscription) {
+      this.seekVideoSubscription.unsubscribe();
+    }
+    if (this.followingAnnotationClickedSubscription) {
+      this.followingAnnotationClickedSubscription.unsubscribe();
+    }
   }
 
   ngOnInit(): void {
@@ -123,11 +145,23 @@ export class VideoMainAnnotationComponent
     this.showAnnotations$ = this.store.select(getShowAnnotations);
     this.videoIsPlaying$ = this.store.select(getIsVideoPlayed);
     this.videoIsPaused$ = this.store.select(getIsVideoPaused);
-    this.store.select(getSeekVideo).subscribe((time) => {
-      if (time != null) {
-        this.seekVideo(time[0]);
-      }
-    });
+    this.seekVideoSubscription = this.store
+      .select(getSeekVideo)
+      .subscribe((time) => {
+        if (time != null) {
+          this.seekVideo(time[0]);
+        }
+      });
+
+    this.startYoutubeVideoAtTime$ = this.store.select(getSeekVideo).pipe(
+      RxJSMap((time) => {
+        if (time != null) {
+          return time[0];
+        }
+        return 0;
+      })
+    );
+
     let materialSubscriper = this.store
       .select(getCurrentMaterial)
       .subscribe((material) => {
@@ -135,28 +169,31 @@ export class VideoMainAnnotationComponent
           this.material = material;
           this.materilaId = material._id;
           this.getVideoUrl();
+          if (this.socketSubscription) {
+            this.socketSubscription.unsubscribe();
+          }
+          this.socketSubscription = this.socket
+            .fromEvent(material._id)
+            .subscribe(
+              (payload: {
+                eventType: string;
+                annotation: Annotation;
+                reply: Reply;
+              }) => {
+                this.store.dispatch(
+                  AnnotationActions.updateAnnotationsOnSocketEmit({
+                    payload: payload,
+                  })
+                );
+                this.store.dispatch(
+                  CourseActions.updateFollowingAnnotationsOnSocketEmit({
+                    payload: payload,
+                  })
+                );
+              }
+            );
         }
       });
-    this.socketSubscription = this.socket
-      .fromEvent(this.material._id)
-      .subscribe(
-        (payload: {
-          eventType: string;
-          annotation: Annotation;
-          reply: Reply;
-        }) => {
-          this.store.dispatch(
-            AnnotationActions.updateAnnotationsOnSocketEmit({
-              payload: payload,
-            })
-          );
-          this.store.dispatch(
-            CourseActions.updateFollowingAnnotationsOnSocketEmit({
-              payload: payload,
-            })
-          );
-        }
-      );
     this.subscriptions.push(materialSubscriper);
     if (!this.apiLoaded) {
       const tag = document.createElement('script');
@@ -166,6 +203,73 @@ export class VideoMainAnnotationComponent
     }
   }
 
+  ngAfterViewInit(): void {
+    this.videoSeekSubscription = this.store
+      .select(getCurrentlyClickedNotification)
+      .subscribe((notification) => {
+        if (notification && notification.from) {
+          this.store.dispatch(
+            VideoActions.SetSeekVideo({
+              seekVideo: [notification.from, notification.from],
+            })
+          );
+          this.store.dispatch(
+            VideoActions.SetCurrentTime({ currentTime: notification.from })
+          );
+          if (
+            this.router.url.includes(
+              '/course/' +
+                notification.course_id +
+                '/channel/' +
+                notification.channel_id +
+                '/material/' +
+                '(material:' +
+                notification.material_id +
+                `/${notification.materialType}))#annotation-` +
+                notification.annotation_id +
+                `)`
+            )
+          ) {
+            this.store.dispatch(
+              NotificationActions.unsetCurrentlySelectedNotification()
+            );
+          }
+        }
+      });
+
+    this.followingAnnotationClickedSubscription = this.store
+      .select(getCurrentlySelectedFollowingAnnotation)
+      .subscribe((annotation) => {
+        if (annotation) {
+          this.store.dispatch(
+            VideoActions.SetSeekVideo({
+              seekVideo: [annotation.from, annotation.from],
+            })
+          );
+          this.store.dispatch(
+            VideoActions.SetCurrentTime({
+              currentTime: annotation.from,
+            })
+          );
+          if (
+            this.router.url.includes(
+              '/course/' +
+                annotation.courseId +
+                '/channel/' +
+                annotation.channelId +
+                '/material/' +
+                '(material:' +
+                annotation.materialId +
+                `/${annotation.materialType})#annotation-${annotation.annotationId}`
+            )
+          ) {
+            this.store.dispatch(
+              NotificationActions.unsetCurrentlySelectedFollowingAnnotation()
+            );
+          }
+        }
+      });
+  }
   getVideoUrl() {
     let urlSubscriper = this.pdfViewService.currentDocURL.subscribe((url) => {
       if (this.material.url) {
@@ -202,17 +306,21 @@ export class VideoMainAnnotationComponent
 
     let currentTime = -1;
 
-    this.YouTubeTimeUpdateInterval = window.setInterval(() => {
+    /*     this.YouTubeTimeUpdateInterval = window.setInterval(() => {
       if (!this.YouTubePlayer?.getCurrentTime) return;
 
       const time = this.YouTubePlayer.getCurrentTime();
-      if (time != currentTime) {
+      if (time === undefined) {
+        this.store.dispatch(VideoActions.SetCurrentTime({ currentTime: 0 }));
+        currentTime = 0;
+        this.store.dispatch(VideoActions.SetSeekVideo({ seekVideo: [0, 0] }));
+      } else if (time != currentTime) {
         this.store.dispatch(
           VideoActions.SetCurrentTime({ currentTime: Math.floor(time) })
         );
         currentTime = time;
       }
-    }, 1000);
+    }, 1000); */
 
     this.addMouseMoveEventListener();
   }
@@ -239,7 +347,45 @@ export class VideoMainAnnotationComponent
     );
   }
 
-  onYouTubePlayerStateChange(event) {
+  async onYouTubePlayerStateChange(event) {
+    if (event.data === -1) {
+      let currentTime = -1;
+
+      let YouTubeTimeUpdateInterval = () => {
+        if (!this.YouTubePlayer?.getCurrentTime) return;
+        if (currentTime === -1) {
+          //we just arrived on the youtube player right now.
+          //then the get the time from the store
+          this.store
+            .select(getCurrentTime)
+            .pipe(take(1))
+            .subscribe((time) => {
+              currentTime = time;
+              /*           this.store.dispatch(
+                VideoActions.SetCurrentTime({ currentTime: Math.floor(time) })
+              );
+              this.store.dispatch(
+                VideoActions.SetSeekVideo({ seekVideo: [time, time] })
+              ); */
+              this.YouTubePlayer.seekTo(time, true);
+            });
+          return;
+        }
+
+        const time = this.YouTubePlayer.getCurrentTime();
+        if (time === undefined) {
+          this.store.dispatch(VideoActions.SetCurrentTime({ currentTime: 0 }));
+          currentTime = 0;
+          this.store.dispatch(VideoActions.SetSeekVideo({ seekVideo: [0, 0] }));
+        } else if (time != currentTime) {
+          this.store.dispatch(
+            VideoActions.SetCurrentTime({ currentTime: Math.floor(time) })
+          );
+          currentTime = time;
+        }
+      };
+      this.intervalService.startInterval(YouTubeTimeUpdateInterval, 1000);
+    }
     if (event.data === 1) {
       this.store.dispatch(VideoActions.PlayVideo());
     } else if (event.data === 2) {
@@ -281,9 +427,9 @@ export class VideoMainAnnotationComponent
   }
 
   seekVideo(time: number) {
-    if (this.youtubeactivated) {
+    if (this.youtubeactivated && this.YouTubePlayer) {
       this.YouTubePlayer.seekTo(time, true);
-    } else {
+    } else if (this.videoPlayer) {
       this.videoPlayer.nativeElement.currentTime = time;
     }
   }

@@ -1,32 +1,63 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, lastValueFrom } from 'rxjs';
-import { environment_Python } from 'src/environments/environment';
+import { lastValueFrom } from 'rxjs';
+import { environment } from 'src/environments/environment';
 import { HTTPOptions } from '../config/config';
+
 @Injectable({
   providedIn: 'root',
 })
 export class ConceptMapService {
-  cmEndpointURL = environment_Python.PYTHON_SERVER;
-  MaterialKG: any;
-  // httpHeader={headers: new HttpHeaders({"Authorization": `Bearer ${this.jwt}`})}
-  // httpHeader = HTTPOptions.headers;
-  httpHeader : {"Access-Control-Allow-Credentials", true};
-
-  // constructor(private http: HttpClient, private authenticationService: AuthenticationService) { }
   constructor(private http: HttpClient) {}
 
-  async getConceptMapData(formData: any): Promise<any> {
-    const MaterialKG$ = this.http.post<any>(
-      `${this.cmEndpointURL}concept-map`,
-      formData,
-      // { headers: this.httpHeader }
-      // { headers: this.httpHeader }
-      { withCredentials: true }
+  async generateConceptMap(courseId: string, materialId: string): Promise<any> {
+    const response$ = this.http.post<any>(
+      `${environment.API_URL}/courses/${courseId}/materials/${materialId}/concept-map`,
+      HTTPOptions
     );
-    this.MaterialKG = await lastValueFrom(MaterialKG$);
-    console.log(this.MaterialKG)
-    return this.MaterialKG;
-    // return this.http.post<any>(`${this.cmEndpointURL}concept-map`, formData, { headers: this.authenticationService.getHTTPHeaders() }).toPromise();
+    const response = await lastValueFrom(response$);
+    return response;
+  }
+
+  async deleteConceptMapConcept(courseId: string, materialId: string, conceptId: string): Promise<any> {
+    const response$ = this.http.delete<any>(
+      `${environment.API_URL}/courses/${courseId}/materials/${materialId}/concept-map/concepts/${conceptId}`,
+      HTTPOptions
+    );
+    const response = await lastValueFrom(response$);
+    return response;
+  }
+
+  async addConceptMapConcept(courseId: string, materialId: string, conceptName: string, slides: number[]): Promise<any> {
+    const response$ = this.http.post<any>(
+      `${environment.API_URL}/courses/${courseId}/materials/${materialId}/concept-map/concepts`,
+      { conceptName, slides },
+      HTTPOptions
+    );
+    const response = await lastValueFrom(response$);
+    return response;
+  }
+
+  async expandAndPublishConceptMap(courseId: string, materialId: string): Promise<any> {
+    const response$ = this.http.post<any>(
+      `${environment.API_URL}/courses/${courseId}/materials/${materialId}/concept-map/publish`,
+      HTTPOptions
+    );
+    const response = await lastValueFrom(response$);
+    return response;
+  }
+
+  async searchWikipedia(query: string): Promise<any> {
+    const response$ = this.http.get<any>(
+      `${environment.API_URL}/wikipedia/search`,
+      {
+        params: {
+          query,
+        },
+        ...HTTPOptions,
+      },
+    );
+    const response = await lastValueFrom(response$);
+    return response;
   }
 }

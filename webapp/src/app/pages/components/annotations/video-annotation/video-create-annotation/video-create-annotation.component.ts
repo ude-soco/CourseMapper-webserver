@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
   Annotation,
@@ -34,7 +34,7 @@ import { NotificationsService } from 'src/app/services/notifications.service';
 })
 export class VideoCreateAnnotationComponent
   extends MentionsComponent
-  implements OnInit
+  implements OnInit, OnDestroy
 {
   annotationColor: string = '#70b85e';
   rangeValues: number[];
@@ -56,6 +56,7 @@ export class VideoCreateAnnotationComponent
   isPinpointSelectionActive: boolean;
   sendButtonColor: string = 'text-green-600';
   sendButtonDisabled: boolean = true;
+  currentTimeSubscription: any;
 
   constructor(
     private videoStore: Store<State>,
@@ -63,6 +64,9 @@ export class VideoCreateAnnotationComponent
     override notificationService: NotificationsService
   ) {
     super(annotationStore, notificationService);
+  }
+  ngOnDestroy(): void {
+    this.currentTimeSubscription?.unsubscribe();
   }
 
   override ngOnInit(): void {
@@ -81,7 +85,7 @@ export class VideoCreateAnnotationComponent
     this.videoStore
       .select(getVideoDuration)
       .subscribe((duration) => (this.maxTime = duration));
-    this.videoStore
+    this.currentTimeSubscription = this.videoStore
       .select(getCurrentTime)
       .subscribe((currentTime) => (this.currentTime = currentTime));
     this.videoStore

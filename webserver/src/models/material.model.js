@@ -27,6 +27,15 @@ const Material = new Schema({
     ref: "channel",
     required: true,
   },
+  indicators: [
+    {
+      _id: Schema.Types.ObjectId,
+      src: String,
+      width: String,
+      height: String,
+      frameborder: String,
+    },
+  ],
   annotations: [
     {
       type: Schema.Types.ObjectId,

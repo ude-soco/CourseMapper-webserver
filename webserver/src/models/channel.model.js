@@ -27,6 +27,15 @@ const Channel = new Schema({
       default: [],
     },
   ],
+  indicators: [
+    {
+      _id: Schema.Types.ObjectId,
+      src: String,
+      width: String,
+      height: String,
+      frameborder: String,
+    },
+  ],
   createdAt: { type: Date },
   updatedAt: { type: Date },
 });

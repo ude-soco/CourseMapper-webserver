@@ -14,7 +14,10 @@ import {
   computeElapsedTime,
   printTime,
 } from 'src/app/_helpers/format';
-import { Annotation } from 'src/app/models/Annotations';
+import {
+  Annotation,
+  PdfGeneralAnnotationLocation,
+} from 'src/app/models/Annotations';
 import { Material } from 'src/app/models/Material';
 import { Reply } from 'src/app/models/Reply';
 import { Roles } from 'src/app/models/Roles';
@@ -25,6 +28,12 @@ import * as CourseActions from 'src/app/pages/courses/state/course.actions';
 import { Router } from '@angular/router';
 import { getCurrentCourseId } from 'src/app/pages/courses/state/course.reducer';
 import { NotificationsService } from 'src/app/services/notifications.service';
+import { CourseService } from 'src/app/services/course.service';
+import * as pdfjsLib from 'pdfjs-dist/build/pdf';
+import { PdfviewService } from 'src/app/services/pdfview.service';
+import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
+import * as NotificationActions from 'src/app/pages/components/notifications/state/notifications.actions';
+import * as VideoActions from 'src/app/pages/components/annotations/video-annotation/state/video.action';
 
 @Component({
   selector: 'app-tag-comment-item',
@@ -79,7 +88,9 @@ export class TagCommentItemComponent {
     private messageService: MessageService,
     private renderer: Renderer2,
     private router: Router,
-    private notificationService: NotificationsService
+    private notificationService: NotificationsService,
+    private courseService: CourseService,
+    private pdfviewService: PdfviewService
   ) {
     this.store.select(getLoggedInUser).subscribe((user) => {
       this.loggedInUser = user;
@@ -258,42 +269,173 @@ export class TagCommentItemComponent {
   printTime = printTime;
 
   showAnnotationOnMaterial(annotation: Annotation) {
-    if (annotation.location.type == 'time') {
-      this.router.navigate([
-        'course',
-        this.annotation?.courseId,
-        'channel',
-        this.annotation?.channelId,
-        'material',
-        { outlets: { material: [this.annotation?.materialId, 'video'] } },
-      ]);
-    } else {
-      this.router.navigate([
-        'course',
-        this.annotation?.courseId,
-        'channel',
-        this.annotation?.channelId,
-        'material',
-        { outlets: { material: [this.annotation?.materialId, 'pdf'] } },
-      ]);
+    console.log(annotation);
+    if (
+      annotation.location.type == 'Current Slide' ||
+      annotation.location.type == 'All Slides' ||
+      annotation.location.type == 'Slide Range'
+    ) {
+      console.log(annotation.materialType);
+      this.courseService.navigatingToMaterial = true;
+      if (
+        this.router.url.includes(
+          '/course/' +
+            annotation.courseId +
+            '/channel/' +
+            annotation.channelId +
+            '/material/' +
+            '(material:' +
+            annotation.materialId +
+            `/${annotation.materialType}`
+        )
+      ) {
+        // We are already on the page containing the material and annotation
+        // Scroll to the annotation
+        const elementToScrollTo = document.getElementById(
+          `annotation-${annotation._id}`
+        );
+        if (elementToScrollTo) {
+          elementToScrollTo.scrollIntoView();
+          // Scroll may take some time, so set the hash after a delay
+          setTimeout(() => {
+            window.location.hash = `#annotation-${annotation._id}`;
+            console.log('1', window.location.hash);
+            // Apply CSS styling to the annotation
+            $(window.location.hash).css(
+              'box-shadow',
+              '0 0 25px rgba(83, 83, 255, 1)'
+            );
+            // Remove CSS styling after 5 seconds
+            setTimeout(() => {
+              $(window.location.hash).css('box-shadow', 'none');
+            }, 5000);
+          }, 100);
+        }
+      } else {
+        // We need to navigate to the page containing the material and annotation
+
+        // const targetURL = `/course/${annotation.courseId}/channel/${annotation.channelId}/material/(material:${annotation.materialId}/${annotation.materialType}?page=${annotation.location.startPage || 1})#annotation-${annotation._id}`;
+
+        this.router.navigateByUrl(
+          '/course/' +
+            annotation.courseId +
+            '/channel/' +
+            annotation.channelId +
+            '/material/(material:' +
+            annotation.materialId +
+            '/' +
+            annotation.materialType +
+            ')' +
+            '#annotation-' +
+            annotation._id
+        );
+        this.store.dispatch(
+          NotificationActions.setCurrentlySelectedFollowingAnnotation({
+            followingAnnotation: {
+              annotationId: annotation._id,
+              materialId: annotation.materialId,
+              materialType: 'pdf',
+              content: annotation.content,
+              topicId: '',
+              channelId: annotation.channelId,
+              courseId: annotation.courseId,
+              userId: annotation.author.userId,
+              isFollowing: false,
+              _id: annotation._id,
+              startPage: annotation.location.startPage,
+            },
+          })
+        );
+        return;
+      }
     }
-  }
+    if (
+      annotation.location.type == 'time' 
+    ) {
+      console.log(annotation.materialType);
+      this.courseService.navigatingToMaterial = true;
+      if (
+        this.router.url.includes(
+          '/course/' +
+            annotation.courseId +
+            '/channel/' +
+            annotation.channelId +
+            '/material/' +
+            '(material:' +
+            annotation.materialId +
+            `/${annotation.materialType}`
+        )
+      ) {
+        // We are already on the page containing the material and annotation
+        // Scroll to the annotation
+        const elementToScrollTo = document.getElementById(
+          `annotation-${annotation._id}`
+        );
+        if (elementToScrollTo) {
+          elementToScrollTo.scrollIntoView();
+          // Scroll may take some time, so set the hash after a delay
+          setTimeout(() => {
+            window.location.hash = `#annotation-${annotation._id}`;
+            // Apply CSS styling to the annotation
+            $(window.location.hash).css(
+              'box-shadow',
+              '0 0 25px rgba(83, 83, 255, 1)'
+            );
+            // Remove CSS styling after 5 seconds
+            setTimeout(() => {
+              $(window.location.hash).css('box-shadow', 'none');
+            }, 5000);
+          }, 100);
+        }
+      } else {
+        // We need to navigate to the page containing the material and annotation
 
-  highlightAnnotation() {
-    var noHashURL = window.location.href.replace(/#.*$/, '');
-    window.history.replaceState('', document.title, noHashURL);
-    if (!this.annotation._id) return;
+        // const targetURL = `/course/${annotation.courseId}/channel/${annotation.channelId}/material/(material:${annotation.materialId}/${annotation.materialType}?page=${annotation.location.startPage || 1})#annotation-${annotation._id}`;
 
-    window.location.hash = '#pdfAnnotation-' + this.annotation._id;
-    setTimeout(function () {
-      $(window.location.hash).css(
-        'box-shadow',
-        '0 0 25px rgba(83, 83, 255, 1)'
-      );
-      setTimeout(function () {
-        $(window.location.hash).css('box-shadow', 'none');
-      }, 2000);
-    }, 100);
+        this.router.navigateByUrl(
+          '/course/' +
+            annotation.courseId +
+            '/channel/' +
+            annotation.channelId +
+            '/material/(material:' +
+            annotation.materialId +
+            '/' +
+            annotation.materialType +
+            ')' +
+            '#annotation-' +
+            annotation._id
+        );
+        this.store.dispatch(
+          NotificationActions.setCurrentlySelectedFollowingAnnotation({
+            followingAnnotation: {
+              annotationId: annotation._id,
+              materialId: annotation.materialId,
+              materialType: 'video',
+              content: annotation.content,
+              topicId: '',
+              channelId: annotation.channelId,
+              courseId: annotation.courseId,
+              userId: annotation.author.userId,
+              isFollowing: false,
+              _id: annotation._id,
+              from: annotation.location.from,
+              
+            },
+          })
+        );
+        this.store.dispatch(
+          VideoActions.SetSeekVideo({
+            seekVideo: [annotation.location.from,annotation.location.from],
+          })
+        );
+        this.store.dispatch(
+          VideoActions.SetCurrentTime({
+            currentTime: annotation.location.from,
+          })
+        );
+        return;
+      }
+    }
   }
 
   onDeleteAnnotation() {

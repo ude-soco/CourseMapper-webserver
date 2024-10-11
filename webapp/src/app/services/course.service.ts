@@ -12,6 +12,7 @@ import * as MaterialActions from 'src/app/pages/components/materials/state/mater
 import * as CourseActions from 'src/app/pages/courses/state/course.actions';
 import { Notification } from '../models/Notification';
 import * as NotificationActions from '../pages/components/notifications/state/notifications.actions';
+import { Socket } from 'ngx-socket-io';
 
 @Injectable({
   providedIn: 'root',
@@ -24,7 +25,6 @@ export class CourseService {
   // it is not private because it is subscribed in chnannelbar component
   onSelectCourse = new EventEmitter<Course>();
   private selectedCourse: Course = new CourseImp('', '');
-  private user = this.storageService.getUser();
   public navigatingToMaterial: boolean = false;
   public Notification: Notification = null;
 
@@ -32,7 +32,8 @@ export class CourseService {
     private http: HttpClient,
     private topicChannelService: TopicChannelService,
     private storageService: StorageService,
-    private store: Store<State>
+    private store: Store<State>,
+    private socket:Socket
   ) {}
 
   getSelectedCourse(): Course {
@@ -47,6 +48,9 @@ export class CourseService {
    *
    */
   selectCourse(course: Course) {
+
+    this.socket.emit("leave", "course:"+this.getSelectedCourse()._id);
+    this.socket.emit("join", "course:"+course._id);
     // if there is no selected course then no need to update the topics.
     if (this.getSelectedCourse()._id && course._id) {
       this.topicChannelService.updateTopics(course._id);
@@ -201,8 +205,20 @@ export class CourseService {
   }
 
   EnrollToCOurse(courseID: string): any {
-    return this.http.post<any>(`${this.API_URL}/enrol/${courseID}`, {}).pipe(
+    
+try {
+      return this.http.post<any>(`${this.API_URL}/enrol/${courseID}`, {}).pipe(
+        catchError((errResponse, sourceObservable) => {
+          if (errResponse.status === 403) {
+            return of({ errorMsg: errResponse.error.error });
+          } else {
+            return of({
+              errorMsg: 'Error in connection: Please reload the application',
+            });
+          }
+        }),
       tap((Enrolcourses) => {
+        console.log(Enrolcourses)
         this.store.dispatch(
           CourseActions.setCourseNotificationSettingsSuccess({
             updatedDoc: Enrolcourses.updatedNotificationSettings,
@@ -210,6 +226,10 @@ export class CourseService {
         );
       })
     );
+} catch (error) {
+  console.log(error.error)
+}
+
   }
   WithdrawFromCourse(course: Course): any {
     return this.http

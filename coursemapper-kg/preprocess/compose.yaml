@@ -1,0 +1,21 @@
+services:
+  preprocess:
+    platform: linux/x86_64
+    image: ${IMAGE_NAME_PREFIX:-socialcomputing/}coursemapper-webserver-coursemapper-kg-preprocess:${IMAGE_TAG:-latest}
+    build: .
+    environment:
+      POSTGRES_PASSWORD: password
+      ACCESS_KEY_ID: ACCESS_KEY_ID
+      SECRET_ACCESS_KEY: SECRET_ACCESS_KEY
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: password
