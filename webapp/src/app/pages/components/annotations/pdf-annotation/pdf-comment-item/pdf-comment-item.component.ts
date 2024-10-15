@@ -95,6 +95,7 @@ export class PdfCommentItemComponent
   Roles = Roles;
   isAnnotationBeingFollowed$: Observable<boolean>;
   currentPdfPageSubscription;
+  shouldScroll = false;
   private annotationSubscription: Subscription;
   constructor(
     private socket: Socket,
@@ -160,39 +161,66 @@ export class PdfCommentItemComponent
     // this.annotationSubscription = this.annotationService.scrollToAnnotation.subscribe((annotationId: string) => {
     //   this.scrollToAnnotationById(annotationId);
     // });
-   // const url = window.location.href;
+    // const url = window.location.href;
+    this.shouldScroll = true;
+    const url = window.location.href;
 
-     if (this.router.url.includes('#annotation')) {
-       const annotationId = this.router.url.match(/#annotation-(.+)/)[1];
-       this.scrollToAnnotationById(annotationId);
-     }
-    this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe(() => {
-        this.scrollToAnnotationIfPresent();
-      });
-
+    if (url.includes('#annotation') && this.shouldScroll) {
+      let annotationId = this.router.url.match(/#annotation-(.+)/)[1];
+      this.scrollToAnnotationById(annotationId);
+      // Truncate the URL after scrolling
+      // this.removeAnnotationFromUrl();
+    } else {
+      this.router.events
+        .pipe(filter((event) => event instanceof NavigationEnd))
+        .subscribe(() => {
+          this.scrollToAnnotationIfPresent();
+        });
+    }
   }
   scrollToAnnotationIfPresent() {
     const url = window.location.href;
-
-    if (url.includes('#annotation')) {
+    this.shouldScroll = true;
+    if (url.includes('#annotation') && this.shouldScroll) {
       const annotationId = url.match(/#annotation-(.+)/)[1];
       this.scrollToAnnotationById(annotationId);
+      // Truncate the URL after scrolling
+      //  this.removeAnnotationFromUrl();
     }
   }
+  // Function to truncate the annotation from the URL
+  removeAnnotationFromUrl() {
+    window.history.replaceState(
+      {},
+      document.title,
+      this.router.url.split('#')[0]
+    );
+  }
   scrollToAnnotationById(annotationId: string) {
+    this.shouldScroll = false;
     setTimeout(() => {
-      const elementToScrollTo = document.getElementById(`annotation-${annotationId}`);
+      let elementToScrollTo = document.getElementById(
+        `annotation-${annotationId}`
+      );
       if (elementToScrollTo) {
-        elementToScrollTo.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        elementToScrollTo.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
         // Highlight the annotation
         elementToScrollTo.style.boxShadow = '0 0 25px rgba(83, 83, 255, 1)';
+        // elementToScrollTo.scrollIntoView=null;
         setTimeout(() => {
+          //  elementToScrollTo.scrollIntoView=null;
+          window.history.replaceState(
+            {},
+            document.title,
+            this.router.url.split('#')[0]
+          );
           elementToScrollTo.style.boxShadow = 'none';
-        }, 5000);
+        }, 4000);
       }
-    }, 500); // Adjust the delay as needed
+    }, 1500); // Adjust the delay as needed
   }
   ngOnChanges(changes: SimpleChanges): void {
     if ('annotation' in changes) {
@@ -470,8 +498,8 @@ export class PdfCommentItemComponent
   }
   adjustTextarea(event: any): void {
     const textarea = event.target;
-    textarea.style.height = 'auto';  // Reset the height to auto
-    textarea.style.height = textarea.scrollHeight + 'px';  // Set the height to fit the content
+    textarea.style.height = 'auto'; // Reset the height to auto
+    textarea.style.height = textarea.scrollHeight + 'px'; // Set the height to fit the content
   }
   cancelEditing() {
     this.confirmationService.confirm({
@@ -527,7 +555,7 @@ export class PdfCommentItemComponent
     if (!text) {
       return '';
     }
-    let limit = 180
+    let limit = 180;
     const linkRegex =
       /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
 
@@ -535,113 +563,120 @@ export class PdfCommentItemComponent
     const newlineRegex = /(\r\n|\n|\r)/gm;
 
     // Match URL regex
-let linkMatch = null;
-// Match hashtag regex
-let hashtagMatch = null;
-// Initialize an index for @mentionedUser.name matches
-let mentionMatchIndex = -1;
+    let linkMatch = null;
+    // Match hashtag regex
+    let hashtagMatch = null;
+    // Initialize an index for @mentionedUser.name matches
+    let mentionMatchIndex = -1;
     let lastUrlEnd = -1;
-    let linkedHtml
+    let linkedHtml;
     // If the text is shorter than the limit, return the text
     if (text.length <= limit) {
+      linkedHtml = text
+        .replace(
+          linkRegex,
+          '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="$1" target="_blank">$1</a>'
+        )
+        .replace(hashtagRegex, (match, before, hashtag) => {
+          const tagLink = `/course/${
+            this.annotation?.courseId
+          }/tag/${encodeURIComponent(hashtag)}`;
+          const tagHtml = `<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="${tagLink}" onClick="handleTagClick(event, '${hashtag}')"><strong>${hashtag}</strong></a>`;
+          return `${before}${tagHtml}`;
+        })
+        .replace(newlineRegex, '<br>');
 
-
-       linkedHtml = text
-       .replace(
-         linkRegex,
-         '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="$1" target="_blank">$1</a>'
-       )
-       .replace(hashtagRegex, (match, before, hashtag) => {
-
-         const tagLink = `/course/${
-           this.annotation?.courseId
-         }/tag/${encodeURIComponent(hashtag)}`;
-         const tagHtml = `<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="${tagLink}" onClick="handleTagClick(event, '${hashtag}')"><strong>${hashtag}</strong></a>`;
-         return `${before}${tagHtml}`;
-       })
-       .replace(newlineRegex, '<br>');
-
-     let mentionedUsers = this.annotation.mentionedUsers;
-     if (mentionedUsers) {
-       mentionedUsers.forEach((mentionedUser) => {
-         //check if the name of the mentioned user is in the linkedHtml, if so, make the name blue
-         if (linkedHtml.includes(`@${mentionedUser.name}`)) {
-           const userHtml = `<span class="cursor-auto font-medium text-blue-500 dark:text-blue-500  break-all" ><strong>${mentionedUser.name}</strong></span>`;
-           linkedHtml = linkedHtml.replace(`@${mentionedUser.name}`, userHtml);
-         }
-       });
-     }
-       return linkedHtml;
-
+      let mentionedUsers = this.annotation.mentionedUsers;
+      if (mentionedUsers) {
+        mentionedUsers.forEach((mentionedUser) => {
+          //check if the name of the mentioned user is in the linkedHtml, if so, make the name blue
+          if (linkedHtml.includes(`@${mentionedUser.name}`)) {
+            const userHtml = `<span class="cursor-auto font-medium text-blue-500 dark:text-blue-500  break-all" ><strong>${mentionedUser.name}</strong></span>`;
+            linkedHtml = linkedHtml.replace(`@${mentionedUser.name}`, userHtml);
+          }
+        });
+      }
+      return linkedHtml;
     }
-    while ((linkMatch = linkRegex.exec(text)) !== null ||
-    (hashtagMatch = hashtagRegex.exec(text)) !== null ) {
+    while (
+      (linkMatch = linkRegex.exec(text)) !== null ||
+      (hashtagMatch = hashtagRegex.exec(text)) !== null
+    ) {
       // If the URL ends after the truncation limit
-  // Handle link regex match
-  if (linkMatch && linkMatch.index <= limit && linkMatch.index + linkMatch[0].length > limit) {
+      // Handle link regex match
+      if (
+        linkMatch &&
+        linkMatch.index <= limit &&
+        linkMatch.index + linkMatch[0].length > limit
+      ) {
+        lastUrlEnd = linkMatch.index + linkMatch[0].length;
+        break;
+      }
 
-    lastUrlEnd = linkMatch.index + linkMatch[0].length;
-    break;
-  }
-
-  // Handle hashtag regex match
-  if (hashtagMatch && hashtagMatch.index <= limit && hashtagMatch.index + hashtagMatch[0].length > limit) {
-
-    lastUrlEnd = hashtagMatch.index + hashtagMatch[0].length;
-    break;
-  }
+      // Handle hashtag regex match
+      if (
+        hashtagMatch &&
+        hashtagMatch.index <= limit &&
+        hashtagMatch.index + hashtagMatch[0].length > limit
+      ) {
+        lastUrlEnd = hashtagMatch.index + hashtagMatch[0].length;
+        break;
+      }
     }
     // calculate the new truncation point
     const truncationPoint = lastUrlEnd > limit ? lastUrlEnd : limit;
     const truncatedText = text.substring(0, truncationPoint);
     const remainingText = text.substring(truncationPoint);
     const truncated = text.length > truncationPoint;
-  //  if text length is more than the new truncation point with url , return the text
+    //  if text length is more than the new truncation point with url , return the text
     if (!truncated) {
+      linkedHtml = text
+        .replace(
+          linkRegex,
+          '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="$1" target="_blank">$1</a>'
+        )
+        .replace(hashtagRegex, (match, before, hashtag) => {
+          const tagLink = `/course/${
+            this.annotation?.courseId
+          }/tag/${encodeURIComponent(hashtag)}`;
+          const tagHtml = `<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="${tagLink}" onClick="handleTagClick(event, '${hashtag}')"><strong>${hashtag}</strong></a>`;
+          return `${before}${tagHtml}`;
+        })
+        .replace(newlineRegex, '<br>');
 
-       linkedHtml = text
-       .replace(
-         linkRegex,
-         '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="$1" target="_blank">$1</a>'
-       )
-       .replace(hashtagRegex, (match, before, hashtag) => {
-
-         const tagLink = `/course/${
-           this.annotation?.courseId
-         }/tag/${encodeURIComponent(hashtag)}`;
-         const tagHtml = `<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="${tagLink}" onClick="handleTagClick(event, '${hashtag}')"><strong>${hashtag}</strong></a>`;
-         return `${before}${tagHtml}`;
-       })
-       .replace(newlineRegex, '<br>');
-
-     let mentionedUsers = this.annotation.mentionedUsers;
-     if (mentionedUsers) {
-       mentionedUsers.forEach((mentionedUser) => {
-         //check if the name of the mentioned user is in the linkedHtml, if so, make the name blue
-         if (linkedHtml.includes(`@${mentionedUser.name}`)) {
-           const userHtml = `<span class="cursor-auto font-medium text-blue-500 dark:text-blue-500  break-all" ><strong>${mentionedUser.name}</strong></span>`;
-           linkedHtml = linkedHtml.replace(`@${mentionedUser.name}`, userHtml);
-         }
-       });
-     }
-       return linkedHtml;
+      let mentionedUsers = this.annotation.mentionedUsers;
+      if (mentionedUsers) {
+        mentionedUsers.forEach((mentionedUser) => {
+          //check if the name of the mentioned user is in the linkedHtml, if so, make the name blue
+          if (linkedHtml.includes(`@${mentionedUser.name}`)) {
+            const userHtml = `<span class="cursor-auto font-medium text-blue-500 dark:text-blue-500  break-all" ><strong>${mentionedUser.name}</strong></span>`;
+            linkedHtml = linkedHtml.replace(`@${mentionedUser.name}`, userHtml);
+          }
+        });
+      }
+      return linkedHtml;
     }
-  // If no URL ends after the truncation limit, use the new truncation point
-    const linkedText = truncatedText.replace(linkRegex, '<a  target="_blank" class="text-blue-500">$&</a>') +
+    // If no URL ends after the truncation limit, use the new truncation point
+    const linkedText =
+      truncatedText.replace(
+        linkRegex,
+        '<a  target="_blank" class="text-blue-500">$&</a>'
+      ) +
       '<span class="ml-1 clickable-text show-more cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline">...show more</span>' +
       '<span class="hidden break-all">' +
-      remainingText.replace(linkRegex, '<a  target="_blank" class="text-blue-500">$&</a>') +
+      remainingText.replace(
+        linkRegex,
+        '<a  target="_blank" class="text-blue-500">$&</a>'
+      ) +
       '</span>' +
       '<span class="ml-1 cursor-pointer text-blue-500 dark:text-blue-500 hover:underline clickable-text show-less hidden">show less</span>';
 
-
-     linkedHtml = linkedText
+    linkedHtml = linkedText
       .replace(
         linkRegex,
         '<a class="cursor-pointer font-medium text-blue-500 dark:text-blue-500 hover:underline break-all" href="$1" target="_blank">$1</a>'
       )
       .replace(hashtagRegex, (match, before, hashtag) => {
-
         const tagLink = `/course/${
           this.annotation?.courseId
         }/tag/${encodeURIComponent(hashtag)}`;
@@ -660,10 +695,8 @@ let mentionMatchIndex = -1;
         }
       });
     }
-      return linkedHtml;
-    }
-
-
+    return linkedHtml;
+  }
 
   onReplyContentChange($event) {
     this.content = $event.target.value;
