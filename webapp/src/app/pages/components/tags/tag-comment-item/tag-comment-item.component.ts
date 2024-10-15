@@ -253,6 +253,7 @@ export class TagCommentItemComponent {
     );
     this.reply = null;
     this.replyContent = null;
+    this.mentionedUsers = [];
   }
 
   likeAnnotation() {
