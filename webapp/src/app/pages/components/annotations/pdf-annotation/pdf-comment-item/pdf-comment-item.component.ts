@@ -218,7 +218,7 @@ export class PdfCommentItemComponent
             this.router.url.split('#')[0]
           );
           elementToScrollTo.style.boxShadow = 'none';
-        }, 4000);
+        }, 3000);
       }
     }, 1500); // Adjust the delay as needed
   }

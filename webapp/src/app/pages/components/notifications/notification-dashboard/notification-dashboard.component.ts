@@ -576,7 +576,7 @@ export class NotificationDashboardComponent {
               $(elementToScrollTo).css('box-shadow', 'none');
               // this.shouldScroll = false;
             }, 4000);
-          }, 1500);
+          }, 1000);
 
           // else {
           //   console.error('Element not found for ID:', `annotation-${notification.annotation_id}`);
