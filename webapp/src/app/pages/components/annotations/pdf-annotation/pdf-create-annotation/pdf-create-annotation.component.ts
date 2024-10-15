@@ -219,7 +219,7 @@ export class PdfCreateAnnotationComponent
   }
 
   dispatchAnnotation() {
-    console.log('this.mentionedUsers121', this.mentionedUsers);
+   
     this.removeRepeatedUsersFromMentionsArray();
     this.store.dispatch(
       AnnotationActions.postAnnotation({
