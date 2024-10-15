@@ -63,7 +63,7 @@ export class LandingPageComponent {
   ngOnInit() {
     this.getAllCourses(); // Fetch all available courses
     if(this.loggedInUser){
-      console.log('User is logged in');
+      console.log('User is logged in new test');
       this.fetchUserCourses(); // Fetch courses the user is enrolled in
     }
     
