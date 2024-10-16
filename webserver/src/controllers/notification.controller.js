@@ -200,7 +200,7 @@ export const searchUsers = async (req, res, next) => {
       username: user.username,
       userId: user._id,
     }));
-console.log("suggestions", suggestions)
+
     res.json(suggestions);
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
