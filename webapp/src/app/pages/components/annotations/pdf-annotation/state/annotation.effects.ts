@@ -120,9 +120,10 @@ export class AnnotationEffects {
           .pipe(
             mergeMap(() => [
               AnnotationActions.postReplySuccess(),
-              /* AnnotationActions.loadAnnotations(), */
+              AnnotationActions.loadAnnotations(),
             ]),
             catchError((error) =>
+
               of(AnnotationActions.postReplyFail({ error }))
             )
           )
