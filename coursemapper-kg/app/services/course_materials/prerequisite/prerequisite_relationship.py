@@ -64,6 +64,12 @@ class PrerequisiteRelationship:
         self.prereq = self.prereq.fillna(0)
         self.prereq = self.prereq.drop_duplicates()
 
+
+
+
+
+
+
     def unweighted_voting(self,c1,c2,c1_to_c2,c2_to_c1,c1_to_c2_real,c2_to_c1_real,theta, weighted = False):
         if weighted:
             #change this to 5.5 with coursemapper
@@ -110,8 +116,6 @@ class PrerequisiteRelationship:
         self.unweighted_voting(c1,c2,c1_to_c2,c2_to_c1,c1_to_c2,c2_to_c1,theta)
         self.weighted_voting(c1,c2,c1_to_c2,c2_to_c1,theta)
         
-        
-    
     def temporal_order(self,c1,c2):
         #if c1 is mentioned before c2, c1 is a prerequisite of c2
         try:
@@ -158,8 +162,6 @@ class PrerequisiteRelationship:
                 c2_preq = 1
                 break
         return c1_preq,c2_preq
-    
-
 
     def refD(self,c1,c2,theta):
         w_c_a = self.data["article_contents"].loc[self.data['name'] == c1].iloc[0]
