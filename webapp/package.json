@@ -40,7 +40,7 @@
     "dotenv": "^16.4.5",
     "jquery": "^3.7.1",
     "ng2-dragula": "^4.0.0",
-    "ng2-pdf-viewer": "^9.1.5",
+    "ng2-pdf-viewer": "^10.3.3",
     "ngx-infinite-scroll": "^18.0.0",
     "ngx-socket-io": "^4.7.0",
     "openai": "^3.2.1",
