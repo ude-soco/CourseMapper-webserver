@@ -8,7 +8,9 @@
 >
   <p-dialog
     id="higherLevelsKG"
-    header="{{ this.currentMaterial?.name }}{{ isDraft ? ' - Preview the EduKG' : '' }}"
+    header="{{ this.currentMaterial?.name }}{{
+      isDraft ? ' - Preview the educational knowledge graph' : ''
+    }}"
     [(visible)]="this.showMaterialKg"
     [blockScroll]="true"
     (onShow)="materialKgActivated = true"
@@ -38,9 +40,14 @@
           ></p-dropdown>
         </span>
         <span *ngIf="isDraft">
-          You can edit/delete the Main Concepts (using right click) or add new concepts to KG before publishing it for all users
+          You can edit/delete the Main Concepts (using right click) or add new
+          concepts to the knowledge graph before publishing it for all users
         </span>
-        <div id="materialKgControlPanel" class="noContentRecieved" *ngIf="!isDraft">
+        <div
+          id="materialKgControlPanel"
+          class="noContentRecieved"
+          *ngIf="!isDraft"
+        >
           <span *ngIf="conceptMapData">
             <span
               id="checkBoxes"
@@ -73,7 +80,13 @@
             </span>
           </span>
           <div style="margin: 0.5rem; height: 1rem" *ngIf="!isNotGenerated">
-            <span *ngIf="selectedFilterValues && (selectedFilterValues.includes('related_concept') || selectedFilterValues.includes('category'))">
+            <span
+              *ngIf="
+                selectedFilterValues &&
+                (selectedFilterValues.includes('related_concept') ||
+                  selectedFilterValues.includes('category'))
+              "
+            >
               Click on a node to view its related concepts and categories
             </span>
           </div>
@@ -86,21 +99,31 @@
       <div class="graphBody" id="slideKgDialogDiv" style="display: block">
         <div class="dialogTabs">
           <div class="contentKgDialog" style="display: flex">
-            <div class="profile-main-loader" *ngIf="isLoading">
-              <div>
-                <p-progressSpinner
-                  [style]="{ width: '80px', height: '80px' }"
-                  styleClass="custom-spinner"
-                  strokeWidth="5"
-                  fill="var(--surface-ground)"
-                  animationDuration=".5s"
-                ></p-progressSpinner>
+            <div class="loading-text" *ngIf="isLoading">
+              <div class="profile-main-loader" style="width: 100%">
+                <div>
+                  <p-progressSpinner
+                    [style]="{ width: '80px', height: '80px' }"
+                    styleClass="custom-spinner"
+                    strokeWidth="5"
+                    fill="var(--surface-ground)"
+                    animationDuration=".5s"
+                  ></p-progressSpinner>
+                </div>
               </div>
+              <p *ngIf="isLoading" style="margin-top: 20px">
+                <b
+                  >The Knowledge graph for
+                  {{ this.currentMaterial?.name }} material is being generated,
+                  just wait and the results will be displayed here</b
+                >
+              </p>
             </div>
             <div class="sidebarHidden" *ngIf="!isLoading && isNotGenerated">
               <div class="grid grid-cols-1 justify-items-center p-60">
                 <div class="text-xl font-medium text-center">
-                  A knowledge graph for this material is being generated. Please check back in a few minutes.
+                  A knowledge graph for this material is being generated. Please
+                  check back in a few minutes.
                 </div>
               </div>
             </div>
@@ -125,12 +148,21 @@
             </div>
           </div>
           <div *ngIf="isDraft">
-            <div class="flex flex-row justify-between items-center" *ngIf="conceptMapData && !conceptInputsDisabled">
-              <div class="flex flex-col gap-4" *ngIf="conceptMapData && !conceptInputsDisabled">
+            <div
+              class="flex flex-row justify-between items-center"
+              *ngIf="conceptMapData && !conceptInputsDisabled"
+            >
+              <div
+                class="flex flex-col gap-4"
+                *ngIf="conceptMapData && !conceptInputsDisabled"
+              >
                 <p *ngIf="editingConceptName">
-                  Editing concept {{editingConceptName}}
+                  Editing concept {{ editingConceptName }}
                 </p>
-                <form [formGroup]="editConceptForm" class="flex flex-row gap-2 items-center">
+                <form
+                  [formGroup]="editConceptForm"
+                  class="flex flex-row gap-2 items-center"
+                >
                   <div class="p-float-label w-80">
                     <p-autoComplete
                       id="concept-name-input"
@@ -143,7 +175,7 @@
                     ></p-autoComplete>
                     <label for="concept-name-input">Concept name</label>
                   </div>
-                  <div class="w-80">
+                  <div class="w-80" style="width: 700px">
                     <p-multiSelect
                       id="concept-slides-input"
                       [options]="slideOptions"
@@ -157,8 +189,12 @@
                         <div class="flex flex-col w-full">
                           <p>
                             Slide preview
-                            <span *ngIf="docURL !== undefined">({{currentPDFPage}})</span>
-                            <span *ngIf="docURL === undefined">(click eye icon)</span>
+                            <span *ngIf="docURL !== undefined"
+                              >({{ currentPDFPage }})</span
+                            >
+                            <span *ngIf="docURL === undefined"
+                              >(click eye icon)</span
+                            >
                           </p>
                           <pdf-viewer
                             [src]="docURL"
@@ -168,7 +204,7 @@
                             [original-size]="true"
                             [show-all]="false"
                             [page]="currentPDFPage"
-                            style="width: 100%; height: 200px;"
+                            style="width: 100%; height: 500px"
                           >
                           </pdf-viewer>
                           <div class="flex justify-end">
@@ -181,8 +217,10 @@
                         </div>
                       </ng-template>
                       <ng-template let-slide pTemplate="item">
-                        <div class="w-full flex flex-row items-center justify-between">
-                          Slide {{slide.label}}
+                        <div
+                          class="w-full flex flex-row items-center justify-between"
+                        >
+                          Slide {{ slide.label }}
                           <p-button
                             icon="pi pi-eye"
                             (mouseup)="previewSlide($event, slide)"
@@ -194,6 +232,7 @@
                       </ng-template>
                     </p-multiSelect>
                   </div>
+
                   <button
                     *ngIf="!editingConceptName"
                     pButton
@@ -222,6 +261,7 @@
                 pButton
                 [ngStyle]="{ backgroundColor: '#EA580C' }"
                 type="button"
+                pTooltip="When clicking on this button, the relative cocept to this cocept will be shown in the graph in addition to the top 3 categories of this concept"
                 label="Expand and publish"
                 (click)="expandAndPublish()"
               ></button>
@@ -242,7 +282,12 @@
   </p-dialog>
 </div>
 <div
-  *ngIf="showMaterialKg === false && showCourseKg === true && courseIsEmpty === false && isNotGenerated === false"
+  *ngIf="
+    showMaterialKg === false &&
+    showCourseKg === true &&
+    courseIsEmpty === false &&
+    isNotGenerated === false
+  "
   (window:resize)="onResize($event)"
   style="z-index: 99"
 >
@@ -277,8 +322,7 @@
           ></p-dropdown>
         </span>
         <div id="materialKgControlPanel" class="noContentRecieved">
-          <span *ngIf="conceptMapData">
-          </span>
+          <span *ngIf="conceptMapData"> </span>
         </div>
       </div>
       <hr
@@ -326,7 +370,12 @@
 </div>
 
 <div
-  *ngIf="showMaterialKg === false && showCourseKg === true && courseIsEmpty === false && isNotGenerated === true"
+  *ngIf="
+    showMaterialKg === false &&
+    showCourseKg === true &&
+    courseIsEmpty === false &&
+    isNotGenerated === true
+  "
   (window:resize)="onResize($event)"
   style="z-index: 99"
 >
@@ -349,12 +398,19 @@
   >
     <hr style="margin-bottom: 0.25rem" />
     <div class="grid grid-cols-1 justify-items-center p-60">
-      <div class='text-xl font-medium text-center'>CourseKG will be shown once KG for learning materials has been generated</div>
+      <div class="text-xl font-medium text-center">
+        CourseKG will be shown once KG for learning materials has been generated
+      </div>
     </div>
   </p-dialog>
 </div>
 <div
-  *ngIf="showMaterialKg === false && showCourseKg === true && courseIsEmpty === true && isNotGenerated === false"
+  *ngIf="
+    showMaterialKg === false &&
+    showCourseKg === true &&
+    courseIsEmpty === true &&
+    isNotGenerated === false
+  "
   (window:resize)="onResize($event)"
   style="z-index: 99"
 >
@@ -377,7 +433,9 @@
   >
     <hr style="margin-bottom: 0.25rem" />
     <div class="grid grid-cols-1 justify-items-center p-60">
-      <div class='text-xl font-medium text-center'>There is no content in the course to create KG.</div>
+      <div class="text-xl font-medium text-center">
+        There is no content in the course to create KG.
+      </div>
     </div>
   </p-dialog>
 </div>
@@ -474,11 +532,11 @@
                   styleClass="mediumSize"
                   [autoZIndex]="false"
                 >
-                <ng-template pTemplate="header">
-                  <h3 style="color: #0288d1; font-size: 1em">
-                    Not Understood Concepts Lists
-                  </h3>
-                </ng-template>
+                  <ng-template pTemplate="header">
+                    <h3 style="color: #0288d1; font-size: 1em">
+                      Not Understood Concepts Lists
+                    </h3>
+                  </ng-template>
                   <div style="position: relative">
                     <p-accordion [multiple]="true">
                       <p-accordionTab
@@ -497,7 +555,7 @@
                         <fieldset
                           id="currentConcepts"
                           #currentConcepts
-                          style=" overflow-y: auto"
+                          style="overflow-y: auto"
                           *ngIf="didNotUnderstandConceptsObj.length"
                         >
                           <div
@@ -578,7 +636,6 @@
                         <fieldset
                           id="previousConcepts"
                           #previousConcepts
-
                           *ngIf="previousConceptsObj.length"
                         >
                           <div
@@ -648,55 +705,56 @@
                     </p-accordion>
                   </div>
                   <ng-template pTemplate="footer">
-                  <div
-                    *ngIf="
-                      showNotUnderstoodConceptsList &&
-                      mainConceptsTab &&
-                      kgSlideReceivedResponse
-                    "
-                    style="margin: 0 20%;"
-                  >
-                    <span
-                      id="recommendationSpan"
-
+                    <div
+                      *ngIf="
+                        showNotUnderstoodConceptsList &&
+                        mainConceptsTab &&
+                        kgSlideReceivedResponse
+                      "
+                      style="margin: 0 20%"
                     >
-                      <button
-                        pButton
-                        pRipple
-                        type="button"
-                        *ngIf="!disableShowRecommendationsButton"
-                        id="recommendationButton"
-                        class="p-button-sm p-button-rounded"
-                        label="Show Recommendations"
-                        pTooltip="Show recommendations for not understood concepts"
-                        style="font-size: 17px; max-height: 95%"
-
-                        (click)="showRecommendations()"
-                      >
-                        <p-progressSpinner
-                          *ngIf="showRecommendationButtonClicked"
-                          [style]="{ width: '20px', height: '20px' }"
-                          styleClass="custom-spinner"
-                          strokeWidth="8"
-                          animationDuration=".5s"
-                        ></p-progressSpinner>
-                      </button>
-                      <button
-                        pButton
-                        pRipple
-                        type="button"
-                        id="recommendationButton"
-                        *ngIf="disableShowRecommendationsButton"
-                        class="p-button-sm showRecommendations p-button-rounded"
-                        label="Show Recommendations"
-                        pTooltip="Select not understood concept(s) to get recommended"
-                        style="font-size: 17px; max-height: 95%; background-color: #e0e0e0; color: #8b8b8b; cursor: auto;"
-
-                        (click)="showRecommendations()"
-                      ></button>
-                    </span>
-                  </div>
-                </ng-template>
+                      <span id="recommendationSpan">
+                        <button
+                          pButton
+                          pRipple
+                          type="button"
+                          *ngIf="!disableShowRecommendationsButton"
+                          id="recommendationButton"
+                          class="p-button-sm p-button-rounded"
+                          label="Show Recommendations"
+                          pTooltip="Show recommendations for not understood concepts"
+                          style="font-size: 17px; max-height: 95%"
+                          (click)="showRecommendations()"
+                        >
+                          <p-progressSpinner
+                            *ngIf="showRecommendationButtonClicked"
+                            [style]="{ width: '20px', height: '20px' }"
+                            styleClass="custom-spinner"
+                            strokeWidth="8"
+                            animationDuration=".5s"
+                          ></p-progressSpinner>
+                        </button>
+                        <button
+                          pButton
+                          pRipple
+                          type="button"
+                          id="recommendationButton"
+                          *ngIf="disableShowRecommendationsButton"
+                          class="p-button-sm showRecommendations p-button-rounded"
+                          label="Show Recommendations"
+                          pTooltip="Select not understood concept(s) to get recommended"
+                          style="
+                            font-size: 17px;
+                            max-height: 95%;
+                            background-color: #e0e0e0;
+                            color: #8b8b8b;
+                            cursor: auto;
+                          "
+                          (click)="showRecommendations()"
+                        ></button>
+                      </span>
+                    </div>
+                  </ng-template>
                 </p-sidebar>
 
                 <button
@@ -724,14 +782,26 @@
               </div>
               <div
                 class="flex-1 flex items-center justify-center"
-                *ngIf="mainConceptsTab && kgSlideReceivedResponse && kgSlideResponseEmpty"
+                *ngIf="
+                  mainConceptsTab &&
+                  kgSlideReceivedResponse &&
+                  kgSlideResponseEmpty
+                "
               >
-                <div>Please generate KG for the learning material first. Once its generated, you can view main concepts related to this slide here</div>
+                <div>
+                  Please generate KG for the learning material first. Once its
+                  generated, you can view main concepts related to this slide
+                  here
+                </div>
               </div>
               <div
                 id="graphSection"
                 class="dialogContents sidebarShown"
-                *ngIf="mainConceptsTab && kgSlideReceivedResponse && !kgSlideResponseEmpty"
+                *ngIf="
+                  mainConceptsTab &&
+                  kgSlideReceivedResponse &&
+                  !kgSlideResponseEmpty
+                "
               >
                 <!--knowledge graph component-->
                 <div class="card">
@@ -771,28 +841,24 @@
                 </div>
               </div>
               <div *ngIf="recommendedMaterialsTab" class="tab mainConcepts">
-
-              <div
-              class="profile-main-loader"
-            >
-              <div class="loader">
-                <p-progressSpinner
-                *ngIf="this.resultMaterials==null"
-                [style]="{ width: '80px', height: '80px' }"
-                styleClass="custom-spinner"
-                strokeWidth="8"
-                fill="var(--surface-ground)"
-                animationDuration=".5s"
-              ></p-progressSpinner>
-              </div>
-            </div>
-            <app-result-view
-              *ngIf="this.resultMaterials!=null"
-              [concepts1]="concepts1"
-              [results1]="resultMaterials"
-              >
-
-            </app-result-view>
+                <div class="profile-main-loader">
+                  <div class="loader">
+                    <p-progressSpinner
+                      *ngIf="this.resultMaterials == null"
+                      [style]="{ width: '80px', height: '80px' }"
+                      styleClass="custom-spinner"
+                      strokeWidth="8"
+                      fill="var(--surface-ground)"
+                      animationDuration=".5s"
+                    ></p-progressSpinner>
+                  </div>
+                </div>
+                <app-result-view
+                  *ngIf="this.resultMaterials != null"
+                  [concepts1]="concepts1"
+                  [results1]="resultMaterials"
+                >
+                </app-result-view>
               </div>
             </div>
           </div>
