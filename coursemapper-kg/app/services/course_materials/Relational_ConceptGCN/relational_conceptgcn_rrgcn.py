@@ -67,9 +67,18 @@ class RRGCN:
         """ 
             Construct prerequisite matrix
         """
-        self.prerequisite_matrix = glorot_seed((self.embedding_matrix.shape[0],  self.embedding_matrix.shape[0])).numpy()
+        # self.prerequisite_matrix = glorot_seed((self.embedding_matrix.shape[0],  self.embedding_matrix.shape[0])).numpy()
+        # self.prerequisite_matrix = np.around(self.prerequisite_matrix, 2)
+        relation2 = np.genfromtxt("prerequisite.txt", dtype=np.float32)
+        prerequisite_row = np.array(list(map(idx_map.get, relation2[:, 0].flatten())))
+        prerequisite_column = np.array(list(map(idx_map.get, relation2[:, 2].flatten())))
+        self.prerequisite_matrix = sp.coo_matrix(
+        (relation2[:, 1], (prerequisite_row[:], prerequisite_column[:])),
+        shape=( self.embedding_matrix.shape[0],  self.embedding_matrix.shape[0]),
+        dtype=np.float32,
+        )
         self.prerequisite_matrix = np.around(self.prerequisite_matrix, 2)
-
+        self.prerequisite_matrix =self.prerequisite_matrix.toarray()
         """ 
             generate relationships weight for every type of relationships
         """

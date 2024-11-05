@@ -34,7 +34,7 @@ class relational_conceptgcn_compgcn:
         self.embedding_matrix = self.embedding_matrix.toarray()
 
         """ 
-            construct adjacency matrix
+            construct adjacency matrix only related concepts
         """
         # Read normal relationships of nodes from relation.text
         relation1 = np.genfromtxt("relation.txt", dtype=np.float32)        
@@ -49,7 +49,7 @@ class relational_conceptgcn_compgcn:
             dtype=np.float32,
         )
 
-        self.adj_matrix = np.around(self.adj_matrix, 2)        
+        self.adj_matrix = np.around(self.adj_matrix, 2)  
         self.adj_matrix = self.adj_matrix + self.adj_matrix.T.multiply(self.adj_matrix.T > self.adj_matrix) - self.adj_matrix.multiply(self.adj_matrix.T > self.adj_matrix)
         self.adj_matrix= normalize(self.adj_matrix) + sp.eye(self.adj_matrix.shape[0])
         self.adj_matrix = self.adj_matrix.toarray()
@@ -58,13 +58,24 @@ class relational_conceptgcn_compgcn:
         """ 
             Construct prerequisite matrix
         """
-        self.prerequisite_matrix = np.zeros((self.embedding_matrix.shape[0], self.embedding_matrix.shape[0]))
-        num_values = 100
-        rows = np.random.choice(1274, num_values, replace=True)
-        cols = np.random.choice(1274, num_values, replace=True)
-        for i in range(num_values):
-            self.prerequisite_matrix[rows[i], cols[i]] = round(np.random.uniform(0, 1), 2)
+        # self.prerequisite_matrix = np.zeros((self.embedding_matrix.shape[0], self.embedding_matrix.shape[0]))
+        # num_values = 100
+        # rows = np.random.choice(1274, num_values, replace=True)
+        # cols = np.random.choice(1274, num_values, replace=True)
+        # for i in range(num_values):
+        #     self.prerequisite_matrix[rows[i], cols[i]] = round(np.random.uniform(0, 1), 2)
         
+        # self.prerequisite_matrix_inverse = self.prerequisite_matrix.T
+        relation2 = np.genfromtxt("prerequisite.txt", dtype=np.float32)
+        prerequisite_row = np.array(list(map(idx_map.get, relation2[:, 0].flatten())))
+        prerequisite_column = np.array(list(map(idx_map.get, relation2[:, 2].flatten())))
+        self.prerequisite_matrix = sp.coo_matrix(
+        (relation2[:, 1], (prerequisite_row[:], prerequisite_column[:])),
+        shape=( self.embedding_matrix.shape[0],  self.embedding_matrix.shape[0]),
+        dtype=np.float32,
+        )
+        self.prerequisite_matrix = np.around(self.prerequisite_matrix, 2)
+        self.prerequisite_matrix =self.prerequisite_matrix.toarray()
         self.prerequisite_matrix_inverse = self.prerequisite_matrix.T
         """ 
             generate relationships weight for every type of relationships
@@ -85,8 +96,8 @@ class relational_conceptgcn_compgcn:
 
     def compgcn_direction_weight (self, rel_transform_mode = 'sub'):
         """ 
-            initialize variable
-        """        
+            initialize variable with direction weight slide 12
+        """         
 
         adj_matrix = self.adj_matrix
         prerequisite_matrix = self.prerequisite_matrix
@@ -401,7 +412,6 @@ class relational_conceptgcn_compgcn:
         return embedding_matrix
     
     def rel_transform(self, ent_embed, rel_embed,rel_transform_mode = 'sub'):
-        print(rel_transform_mode)
         if   rel_transform_mode == 'corr': 	trans_embed  = self.ccorr(ent_embed, rel_embed)
         elif rel_transform_mode == 'sub': 	trans_embed  = ent_embed - rel_embed
         elif rel_transform_mode == 'mult': 	trans_embed  = ent_embed * rel_embed

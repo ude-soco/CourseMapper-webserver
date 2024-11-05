@@ -1,165 +1,81 @@
+from neo4j import GraphDatabase
 import numpy as np
-# def compgcn_direction_weight_sub (self):
-#     """ 
-#         initialize variable
-#     """        
-#     final_embedding = None
-#     adj_matrix = self.adj_matrix
-#     prerequisite_matrix = self.prerequisite_matrix
-#     weight_relation_initialize = self.weight_relation_initialize
-#     weight_relation_layer_1 = self.weight_relation_layer_1
-#     prerequisite_matrix_inverse = self.prerequisite_matrix_inverse
-#     adj_matrix_inverse = self.adj_matrix_inverse
-#     embedding_matrix = self.embedding_matrix
+import scipy.sparse as sp
+import os
+from util import *
 
-#     weight_matrix_input_layer_1=self.weight_matrix_input_layer_1
-#     weight_matrix_output_layer_1=self.weight_matrix_output_layer_1
-#     weight_matrix_selfloop_layer_1=self.weight_matrix_selfloop_layer_1
+os.chdir("D:/study/Master_thesis/project/nave_dev/CourseMapper-webserver/coursemapper-kg")
+def test():
+    """ 
+    construct embedding matrix
+    """
 
-#     weight_matrix_input_layer_2=self.weight_matrix_input_layer_2
-#     weight_matrix_output_layer_2=self.weight_matrix_output_layer_2
-#     weight_matrix_selfloop_layer_2=self.weight_matrix_selfloop_layer_2
+    # Read ids and initial embeddings of nodes from idfeature.text
+    # The structure of text: first column is new id of node(type:int), the second column is the original id (type:string), and the rest is the initial embedding
+    idx_features = np.genfromtxt("idfeature.txt", dtype=np.dtype(str))
+    # Extract new id of node
+    idx = np.array(idx_features[:, 0], dtype=np.float32)
+    # Replace id with row number
+    # row0: id1 initial_embedding1  -> 0 initial_embedding1
+    # row1: id2 initial_embedding2  -> 1 initial_embedding2
+    # row2: id3 initial_embedding3  -> 2 initial_embedding3
+    idx_map = {j: i for i, j in enumerate(idx)} 
+    # Construct initial embedding matrix
+    # Extract initial embedding starts from the third column
+    embedding_matrix = sp.csr_matrix(idx_features[:, 2:], dtype=np.float32)
+    embedding_matrix = embedding_matrix.toarray()
 
-#     """ 
-#         Step 1: initialize the representation of each edges
-#     """
-#     # Construct relation embedding dict to store the embedding of each edges
-#     relation_embedding_matrix_adj = {}
-#     relation_embedding_matrix_prerequisite = {}
+    """ 
+    construct adjacency matrix only related concepts
+    """
+    # Read normal relationships of nodes from relation.text
+    relation1 = np.genfromtxt("relation.txt", dtype=np.float32)        
+    adj_row = np.array(list(map(idx_map.get, relation1[:, 0].flatten())))
+    adj_column = np.array(list(map(idx_map.get, relation1[:, 2].flatten())))
 
-#     # Iterate over the adjacency matrix and compute the embedding for each edge in rc relationtype
-#     for i in range(adj_matrix.shape[0]):
-#         for j in range(adj_matrix.shape[1]):
-#             weight = adj_matrix[i,j]
-#             if weight != 0:
-#                 relation_embedding_matrix_adj[(i,j)]= np.dot(weight,weight_relation_initialize)
-    
-#     # Iterate over the prerequisite matrix and compute the embedding for each edge in prerequisite relationtype
-#     for i in range(prerequisite_matrix.shape[0]):
-#         for j in range(prerequisite_matrix.shape[1]):
-#             weight = prerequisite_matrix[i,j]
-#             if weight != 0:
-#                 relation_embedding_matrix_prerequisite[(i,j)] = np.dot(weight,weight_relation_initialize)        
-    
-#     """ 
-#         Step 2: update the embedding of all nodes at the 1st. layer
-#     """
-#     #Iterate each row of embedding matrix
-#     for v in range(embedding_matrix.shape[0]):
-#         new_embedding_v = np.zeros((1, embedding_matrix.shape[1]))
-#         #Iterate each column of embedding matrix
-#         for u in range(embedding_matrix.shape[0]):
-#             #initialize variable
-#             adj_out = None # out direction of adj
-#             adj_in = None # In direction of adj
-#             pre_out = None # out direction of pre
-#             pre_in = None # In direction of pre
-#             self_loop = None # self loop direction
+    #coo_matrix((data, (row, col)), shape=(m, n))
+    #relation1[:, 1] the value
+    adj_matrix = sp.coo_matrix(
+    (relation1[:, 1], (adj_row[:], adj_column[:])),
+    shape=( embedding_matrix.shape[0],  embedding_matrix.shape[0]),
+    dtype=np.float32,
+    )
 
-#             # get the embedding of node v
-#             embedding_v = embedding_matrix [v]
+    adj_matrix = np.around(adj_matrix, 2)  
+    adj_matrix = adj_matrix + adj_matrix.T.multiply(adj_matrix.T > adj_matrix) - adj_matrix.multiply(adj_matrix.T > adj_matrix)
+    adj_matrix= normalize(adj_matrix) + sp.eye(adj_matrix.shape[0])
+    adj_matrix = adj_matrix.toarray()
+    adj_matrix_inverse = adj_matrix.T
 
-#             # if there is a adj edge between node v and it's neighbor and this edge is in OUT direction
-#             if v!=u and adj_matrix[v,u] != 0 :
-#                 relation_embedding = relation_embedding_matrix_adj[(v,u)]
-#                 adj_out = self.rel_transform(embedding_v,relation_embedding)
+    """ 
+    Construct prerequisite matrix
+    """
+    relation2 = np.genfromtxt("prerequisite.txt", dtype=np.float32)
+    prerequisite_row = np.array(list(map(idx_map.get, relation2[:, 0].flatten())))
+    prerequisite_column = np.array(list(map(idx_map.get, relation2[:, 2].flatten())))
+    prerequisite_matrix = sp.coo_matrix(
+    (relation2[:, 1], (prerequisite_row[:], prerequisite_column[:])),
+    shape=( embedding_matrix.shape[0],  embedding_matrix.shape[0]),
+    dtype=np.float32,
+    )
+    prerequisite_matrix = np.around(prerequisite_matrix, 2)
+    prerequisite_matrix =prerequisite_matrix.toarray()
+    prerequisite_matrix_inverse = prerequisite_matrix.T
 
-#             # if there is a adj edge between node v and it's neighbor and this edge is in IN direction
-#             if v!=u and adj_matrix_inverse[v,u] != 0:
-#                 relation_embedding = relation_embedding_matrix_adj[(u,v)]
-#                 adj_in = self.rel_transform(embedding_v,relation_embedding)
-            
-#             # if there is a pre edge between node v and it's neighbor and this edge is in OUT direction
-#             if v!=u and prerequisite_matrix[v,u] !=0:
-#                 relation_embedding = relation_embedding_matrix_prerequisite[(v,u)]
-#                 pre_out = self.rel_transform(embedding_v,relation_embedding)
+    # id_map = {row[1]: int(row[0]) for row in idx_features}
 
-#             # if there is a pre edge between node v and it's neighbor and this edge is in IN direction           
-#             if v!=u and prerequisite_matrix_inverse[v,u]!=0:                
-#                 relation_embedding = relation_embedding_matrix_prerequisite[(u,v)]
-#                 pre_in = self.rel_transform(embedding_v,relation_embedding)
-            
-#             # if there is a self loop edge of node v      
-#             if v==u:
-#                 relation_embedding = relation_embedding_matrix_adj[(v,v)]
-#                 self_loop = self.rel_transform(embedding_v,relation_embedding)
+    # prereq_converted = [
+    # [id_map[row[0]], row[1], id_map[row[2]]] 
+    # for row in relation2 
+    # if row[0] in id_map and row[2] in id_map 
+    # ]
+
+    # with open("prerequisite.txt", "w") as f:
+    #     for row in prereq_converted:
+    #         absolute_path = os.path.abspath(f.name)
+    #         print("absolute path of file:", absolute_path)
+    #         f.write(str(row[0]) + " " + str(row[1]) 
+    #                 + " " + str(row[2])+ "\n")
 
 
-#             if adj_out is not None:
-#                 new_embedding_v = new_embedding_v + np.dot(adj_out,weight_matrix_output_layer_1)
-#             if adj_in is not None:
-#                 new_embedding_v = new_embedding_v + np.dot(adj_in,weight_matrix_input_layer_1)
-#             if pre_out is not None:
-#                 new_embedding_v = new_embedding_v + np.dot(pre_out,weight_matrix_output_layer_1)
-#             if pre_in is not None:
-#                 new_embedding_v = new_embedding_v + np.dot(pre_in,weight_matrix_input_layer_1)
-#             if self_loop is not None:
-#                 new_embedding_v = new_embedding_v + np.dot(self_loop,weight_matrix_selfloop_layer_1)
-
-#         embedding_matrix [v] = new_embedding_v           
-
-
-#     """  
-#         Step 3: update the representation of edges        
-#     """
-#     # update the embedding of adj edges
-#     for edge in relation_embedding_matrix_adj:
-#         relation_embedding_matrix_adj [edge] = np.dot(relation_embedding_matrix_adj[edge], weight_relation_layer_1)
-
-#     # update the embedding of prerequisite edges      
-#     for edge in relation_embedding_matrix_prerequisite:
-#         relation_embedding_matrix_prerequisite [edge] = np.dot(relation_embedding_matrix_prerequisite[edge], weight_relation_layer_1)
-
-#     """  
-#         Step 4: update the representation of each nodes at layer 2      
-#     """        
-#     for v in range(embedding_matrix.shape[0]):
-#         new_embedding_v = np.zeros((1, embedding_matrix.shape[1]))
-#         for u in range(embedding_matrix.shape[0]):
-#             adj_out = None
-#             adj_in = None
-#             pre_out = None
-#             pre_in = None
-#             self_loop = None
-#             embedding_v = embedding_matrix [v]
-
-#             if v!=u and adj_matrix[v,u] != 0 :
-#                 relation_embedding = relation_embedding_matrix_adj[(v,u)]
-#                 adj_out = self.rel_transform(embedding_v,relation_embedding)
-#             if v!=u and adj_matrix_inverse[v,u] != 0:
-#                 relation_embedding = relation_embedding_matrix_adj[(u,v)]
-#                 adj_in = self.rel_transform(embedding_v,relation_embedding)
-#             if v!=u and prerequisite_matrix[v,u] !=0:
-#                 relation_embedding = relation_embedding_matrix_prerequisite[(v,u)]
-#                 pre_out = self.rel_transform(embedding_v,relation_embedding)     
-#             if v!=u and prerequisite_matrix_inverse[v,u]!=0:                
-#                 relation_embedding = relation_embedding_matrix_prerequisite[(u,v)]
-#                 pre_in = self.rel_transform(embedding_v,relation_embedding)
-#             if v==u:
-#                 relation_embedding = relation_embedding_matrix_adj[(v,v)]
-#                 self_loop = self.rel_transform(embedding_v,relation_embedding)
-
-#             if adj_out is not None:
-#                 new_embedding_v = new_embedding_v + np.dot(adj_out,weight_matrix_output_layer_2)
-#             if adj_in is not None:
-#                 new_embedding_v = new_embedding_v + np.dot(adj_in,weight_matrix_input_layer_2)
-#             if pre_out is not None:
-#                 new_embedding_v = new_embedding_v + np.dot(pre_out,weight_matrix_output_layer_2)
-#             if pre_in is not None:
-#                 new_embedding_v = new_embedding_v + np.dot(pre_in,weight_matrix_input_layer_2)
-#             if self_loop is not None:
-#                 new_embedding_v = new_embedding_v + np.dot(self_loop,weight_matrix_selfloop_layer_2)
-
-#         embedding_matrix [v] = new_embedding_v           
-
-#     return final_embedding
-
-# 创建一些测试用的ndarray数组
-all_zero_array = np.array([0, 0, 0, 0])
-not_all_zero_array = np.array([0, 1, 0, 0])
-
-# 使用np.all()方法进行测试
-is_all_zero_1 = np.all(all_zero_array == 0)  # 期望结果为True
-is_all_zero_2 = np.all(not_all_zero_array == 0)  # 期望结果为False
-
-print(is_all_zero_1, is_all_zero_2)
+def eva_data_process():
