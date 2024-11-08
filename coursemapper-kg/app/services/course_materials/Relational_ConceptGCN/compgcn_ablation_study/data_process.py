@@ -23,7 +23,7 @@ class data_process:
     def data_load(self):
         model = SentenceTransformer('paraphrase-MiniLM-L6-v2')  # You may choose a different SBERT model.
         # Read the data file
-        data_path = os.path.join(current_dir, 'eva_data.txt')
+        data_path = os.path.join(current_dir, 'modified_eva_data.txt')
         data = pd.read_csv(data_path, sep='\t', header=None, names=['node1', 'relation', 'node2'])
 
         # get all unique nodes
@@ -45,51 +45,51 @@ class data_process:
         num_nodes = embedding_matrix.shape[0]
 
         # The data format of a sparse matrix
-        row_indices = []
-        col_indices = []
-        data_values = []
+        # row_indices = []
+        # col_indices = []
+        # data_values = []
         
 
-        # Calculate the weighted values (cosine similarity) for pairs of nodes with edges.
-        for _, row in data.iterrows():
-            node1, node2 = row['node1'], row['node2']
-            idx1, idx2 = node_index[node1], node_index[node2]
+        # # Calculate the weighted values (cosine similarity) for pairs of nodes with edges.
+        # for _, row in data.iterrows():
+        #     node1, node2 = row['node1'], row['node2']
+        #     idx1, idx2 = node_index[node1], node_index[node2]
 
-            # Calculate only the lower triangular part
-            if idx1 > idx2:
-                # Calculate the cosine similarity for node pairs
-                embedding1 = node_embeddings[node1]
-                embedding2 = node_embeddings[node2]
-                cosine_similarity = np.dot(embedding1, embedding2) / (np.linalg.norm(embedding1) * np.linalg.norm(embedding2))
-                # Add the similarity values to the lower triangular part of the sparse matrix.
-                row_indices.append(idx1)
-                col_indices.append(idx2)
-                data_values.append(cosine_similarity)
+        #     # Calculate only the lower triangular part
+        #     if idx1 > idx2:
+        #         # Calculate the cosine similarity for node pairs
+        #         embedding1 = node_embeddings[node1]
+        #         embedding2 = node_embeddings[node2]
+        #         cosine_similarity = np.dot(embedding1, embedding2) / (np.linalg.norm(embedding1) * np.linalg.norm(embedding2))
+        #         # Add the similarity values to the lower triangular part of the sparse matrix.
+        #         row_indices.append(idx1)
+        #         col_indices.append(idx2)
+        #         data_values.append(cosine_similarity)
 
-        # Construct the sparse matrix in COO format.
-        adjacency_matrix = csr_matrix((data_values, (row_indices, col_indices)), shape=(num_nodes, num_nodes))
-        # Symmetrically populate the uper triangular part
-        adjacency_matrix = np.around(adjacency_matrix, 2)  
-        adjacency_matrix = adjacency_matrix + adjacency_matrix.T.multiply(adjacency_matrix.T > adjacency_matrix) - adjacency_matrix.multiply(adjacency_matrix.T > adjacency_matrix)
-        adjacency_matrix= self.normalize(adjacency_matrix) + sp.eye(adjacency_matrix.shape[0])
-        adjacency_matrix = adjacency_matrix.toarray()
-        self.adj_matrix = adjacency_matrix
-        self.adj_matrix_inverse = self.adj_matrix.T
+        # # Construct the sparse matrix in COO format.
+        # adjacency_matrix = csr_matrix((data_values, (row_indices, col_indices)), shape=(num_nodes, num_nodes))
+        # # Symmetrically populate the uper triangular part
+        # adjacency_matrix = np.around(adjacency_matrix, 2)  
+        # adjacency_matrix = adjacency_matrix + adjacency_matrix.T.multiply(adjacency_matrix.T > adjacency_matrix) - adjacency_matrix.multiply(adjacency_matrix.T > adjacency_matrix)
+        # adjacency_matrix= self.normalize(adjacency_matrix) + sp.eye(adjacency_matrix.shape[0])
+        # adjacency_matrix = adjacency_matrix.toarray()
+        # self.adj_matrix = adjacency_matrix
+        # self.adj_matrix_inverse = self.adj_matrix.T
 
-        """ 
-            Construct prerequisite matrix
-        """
-        matrix_size = self.embedding_matrix.shape[0]
-        num_values = 100
-        # Randomly select row and column indices.
-        rows = np.random.choice(matrix_size, num_values, replace=True)
-        cols = np.random.choice(matrix_size, num_values, replace=True)
-        # Generate random values, rounded to two decimal places
-        data = np.round(np.random.uniform(0, 1, num_values), 2)
+        # """ 
+        #     Construct prerequisite matrix
+        # """
+        # matrix_size = self.embedding_matrix.shape[0]
+        # num_values = 100
+        # # Randomly select row and column indices.
+        # rows = np.random.choice(matrix_size, num_values, replace=True)
+        # cols = np.random.choice(matrix_size, num_values, replace=True)
+        # # Generate random values, rounded to two decimal places
+        # data = np.round(np.random.uniform(0, 1, num_values), 2)
 
-        prerequisite_matrix = csr_matrix((data, (rows, cols)), shape=(matrix_size, matrix_size))
-        self.prerequisite_matrix = prerequisite_matrix.toarray()
-        self.prerequisite_matrix_inverse = self.prerequisite_matrix.T
+        # prerequisite_matrix = csr_matrix((data, (rows, cols)), shape=(matrix_size, matrix_size))
+        # self.prerequisite_matrix = prerequisite_matrix.toarray()
+        # self.prerequisite_matrix_inverse = self.prerequisite_matrix.T
 
         """ 
             generate relationships weight for every type of relationships
