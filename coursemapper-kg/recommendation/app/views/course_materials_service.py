@@ -111,9 +111,9 @@ def get_concepts():
 def get_resources():
     data = request.get_json()
 
-    return jsonify(cro_get_resources_pagination()), 200
-
-    # time.sleep(60*2) 
+    # return jsonify(cro_get_resources_pagination()), 200
+    # time.sleep(60*2)
+    
     resource_recommender_service = ResourceRecommenderService()
     result = resource_recommender_service._get_resources(data_default=data["default"], data_rec_params=data["rec_params"])
     

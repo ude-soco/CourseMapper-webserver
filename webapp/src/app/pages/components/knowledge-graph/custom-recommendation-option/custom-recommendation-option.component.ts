@@ -227,7 +227,6 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     });
   }
 
-
   getConceptsManually() {
     if (this.materialId) {
       if (this.CROconceptsManually.length == 0) {
@@ -346,7 +345,6 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
   }
   
   updateCROform(conceptsObj: any[], category: string) {
-    // let concepts_changed = this.areArraysEqualById(this.croForm.concepts, conceptsObj);
     if (this.croForm?.requested === false) {}
 
     if (this.materialId) {
@@ -370,9 +368,6 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
   }
   
   updateCROformAll(didNotUnderstandConceptsObj, previousConceptsObj) {
-    console.warn("didNotUnderstandConceptsObj -> ", didNotUnderstandConceptsObj)
-    console.warn("previousConceptsObj -> ", previousConceptsObj)
-
     if (this.croForm.category === "1") {
       this.updateCROform(didNotUnderstandConceptsObj, "1");
 

@@ -85,7 +85,7 @@
               </div>
             </div>
             
-            <!-- with dynamic list -->
+            <!-- sort factor keys -->
             <p-overlayPanel [style]="{'width':'18rem'}" (onShow)="handleOnShowOnHide()" (onHide)="handleOnShowOnHide()" #op>
               <ng-template pTemplate="content">
                 <div class="flex flex-col text-sm">
@@ -225,6 +225,7 @@
             [resetFilterOnHide]="true"
             [displaySelectedLabel]="false"
             [style]="{ width: '16rem', 'border-radius': '0.5rem', 'font-size': '12px' }"
+            [panelStyle]="{ width: '16rem' }"
             [showClear]="false"
             >
             </p-multiSelect>

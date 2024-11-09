@@ -480,12 +480,92 @@ def create_get_resources_thread(func, args):
     thread.start()
     # redis_client.set(name=f"{user_id}_{redis_key_1}", value=status, ex=(redis_client_expiration_time * 10080))
 
-def check_and_get_resources_with_concepts(db: NeoDataBase, concepts: list, default_time_days=30):
+def check_and_validate_resources(db: NeoDataBase, concepts: list ):
     '''
         Check if concepts already exist and connected to any resources in Neo4j Database
         If resources exist, check based on:
         updated_at: it's not more than a given time (one week old)
-        default_time_days: default time = 30 days
+        Video: default time = 30 days
+        Article: default time = 365 days
+    '''
+    concepts_not_having_resources = []
+    for concept in concepts:
+        cid = concept["cid"]
+        concept_updated = { "cid": cid, "name": concept["name"], "weight": concept["weight"],
+                            "is_video_too_old": False, "is_article_too_old": False,
+                            "resources_video_exist": False, "resources_article_exist": False
+                        }
+
+        # content type: Video
+        count_resourses_videos_only_exist = db.retrieve_resources_by_updated_at_exist_or_counts(cids=[cid], content_type="Video", only_exist=True) # ["count"]
+        count_resourses_videos = db.retrieve_resources_by_updated_at_exist_or_counts(cids=[cid], content_type="Video", days=30) # ["count"]
+        
+        # content type: Article
+        count_resourses_articles_only_exist = db.retrieve_resources_by_updated_at_exist_or_counts(cids=[cid], content_type="Article", only_exist=True) # ["count"]
+        count_resourses_articles = db.retrieve_resources_by_updated_at_exist_or_counts(cids=[cid], content_type="Article", days=365) # ["count"]
+
+        # print("count_resourses_videos_only_exist ->", count_resourses_videos_only_exist)
+        # print("count_resourses_videos ->", count_resourses_videos)
+
+        # print("count_resourses_articles_only_exist ->", count_resourses_articles_only_exist)
+        # print("count_resourses_articles ->", count_resourses_articles)
+        # print("---------------------")
+        # print()
+
+        if count_resourses_videos < 1:
+            concept_updated["is_video_too_old"] = True
+        if count_resourses_articles < 1:
+            concept_updated["is_article_too_old"] = True
+        
+        if count_resourses_videos_only_exist > 0:
+            concept_updated["resources_video_exist"] = True
+        if count_resourses_articles_only_exist > 0:
+            concept_updated["resources_article_exist"] = True
+        
+        concepts_not_having_resources.append(concept_updated)
+    return concepts_not_having_resources
+
+from concurrent.futures import Future
+def parallel_crawling_resources2(function, concept_updated: str, result_type: str, top_n_videos, top_n_articles):
+    '''
+        Parallel Crawling of Resources with the function 
+        canditate_selection from Class Recommender
+        submit function: takes
+            function: canditate_selection (this function takes the params below)
+            query, video, result_type="records", top_n_videos=2, top_n_articles=2
+        concept_updated: dict{} | cid, 
+    '''
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        future_videos = Future().set_result([])
+        if concept_updated["is_video_too_old"] == True:
+            future_videos = executor.submit(function, concept_updated["name"], True, result_type, top_n_videos, top_n_articles)
+        if concept_updated["resources_video_exist"] == False:
+            future_videos = executor.submit(function, concept_updated["name"], True, result_type, top_n_videos, top_n_articles)
+        
+        future_articles = Future().set_result([])
+        if concept_updated["is_article_too_old"] == False:
+            future_articles = executor.submit(function, concept_updated["name"], False, result_type, top_n_videos, top_n_articles)
+        if concept_updated["resources_article_exist"] == False:
+            future_articles = executor.submit(function, concept_updated["name"], False, result_type, top_n_videos, top_n_articles)
+
+        result_videos = future_videos.result()
+        result_articles = future_articles.result()
+        return {    "cid": concept_updated["cid"], 
+                    "videos": result_videos, 
+                    "articles": result_articles,
+                    "resources_video_exist": concept_updated["resources_video_exist"], 
+                    "resources_article_exist": concept_updated["resources_article_exist"],
+                    "is_video_too_old": concept_updated["is_video_too_old"], 
+                    "is_article_too_old": concept_updated["is_video_too_old"],
+            }
+
+
+def check_and_get_resources_with_concepts(db: NeoDataBase, concepts: list):
+    '''
+        Check if concepts already exist and connected to any resources in Neo4j Database
+        If resources exist, check based on:
+        updated_at: it's not more than a given time (one week old)
+        default time = 14 days
     '''
     current_time = datetime.now()
 
@@ -513,7 +593,7 @@ def check_and_get_resources_with_concepts(db: NeoDataBase, concepts: list, defau
                 # Parse the given ISO time string
                 given_time = datetime.fromisoformat(resource["updated_at"])
                 time_difference = current_time - given_time
-                if time_difference <= timedelta(days=default_time_days):
+                if time_difference <= timedelta(days=14):
                     resources_found.append(resource)
     return concepts_having_resources, concepts_not_having_resources, resources_found
 

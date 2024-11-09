@@ -125,7 +125,7 @@ def get_concepts_modified_by_user_from_saves(user_id: str):
                 MATCH (a:User)-[r:HAS_SAVED]->(b:Resource)
                 -[r2:BASED_ON]->(c:Concept_modified),
                 (d:Concept)
-                WHERE r.user_id = $user_id
+                WHERE r.user_id = $user_id AND c.cid = d.cid
                 RETURN DISTINCT d.cid as cid, d.name as name
             """,
             user_id=user_id,

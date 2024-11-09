@@ -1816,14 +1816,43 @@ class NeoDataBase:
             
         return user_node
 
-    def create_or_update_video_resource(self, tx, node: dict, recommendation_type='', update_embedding_values=False):
+    def create_or_update_video_resource(self, tx, node: dict, 
+                                        recommendation_type='', 
+                                        update_embedding_values=False,
+                                        update_detail_found=False
+                                    ):
         '''
             Creating Resource YouTube
             r.similarity_score = $similarity_score,
         '''
         # logger.info(" Creating Resource YouTube")
         try:
-            if update_embedding_values == True: # node.get("keyphrases") != None or node.get("document_embedding") != None or node.get("keyphrase_embedding") != None:
+            if update_detail_found == True:
+                tx.run(
+                    '''
+                        MATCH (r:Resource: Video)
+                        WHERE r.rid = $rid
+                        SET r.title = $title, r.description = $description, r.description_full = $description_full,
+                            r.text = $text, r.duration = $duration, r.views = $views, like_count = $like_count,
+                            r.channel_title = $channel_title, r.updated_at = $updated_at,
+                            r.keyphrases = $keyphrases, r.keyphrase_embedding = $keyphrase_embedding, 
+                            r.document_embedding = $document_embedding 
+                    ''',
+                    rid=node["rid"],
+                    title=node["title"],
+                    description=node["description"],
+                    description_full=node["description_full"],
+                    text=node["text"],
+                    duration=node["duration"],
+                    views=node["views"],
+                    like_count=node["like_count"],
+                    channel_title=node["channel_title"],
+                    updated_at=datetime.now().isoformat(),
+                    keyphrases=[],
+                    keyphrase_embedding="",
+                    document_embedding=""
+                )
+            elif update_embedding_values == True: # node.get("keyphrases") != None or node.get("document_embedding") != None or node.get("keyphrase_embedding") != None:
                 tx.run(
                     '''
                         MATCH (r:Resource: Video)
@@ -1878,13 +1907,34 @@ class NeoDataBase:
             print(e)
             pass
 
-    def create_or_update_wikipedia_resource(self, tx, node, recommendation_type='', update_embedding_values=False):
+    def create_or_update_wikipedia_resource(self, tx, node, recommendation_type='', 
+                                            update_embedding_values=False,
+                                            update_detail_found=False
+                                        ):
         '''
             Creating Resource Wikipedia
         '''
         # logger.info("Creating Resource Wikipedia")
         try:
-            if update_embedding_values == True: # node.get("keyphrases") != None or node.get("document_embedding") != None or node.get("keyphrase_embedding") != None:
+            if update_detail_found == True:
+                tx.run(
+                    '''
+                        MATCH (r:Resource: Article)
+                        WHERE r.rid = $rid
+                        SET r.title = $title, r.abstract = $abstract, r.text = $text, updated_at = $updated_at,
+                            r.keyphrases = $keyphrases, r.keyphrase_embedding = $keyphrase_embedding, 
+                            r.document_embedding = $document_embedding 
+                    ''',
+                    rid=node["rid"],
+                    title=node["title"],
+                    abstract=node["abstract"],
+                    text=node["text"],
+                    updated_at=datetime.now().isoformat(),
+                    keyphrases=node["keyphrases"] if "keyphrases" in node else [],
+                    keyphrase_embedding=str(node["keyphrase_embedding"] if "keyphrase_embedding" in node else ""),
+                    document_embedding=str(node["document_embedding"] if "document_embedding" in node else ""),
+                )
+            elif update_embedding_values == True: # node.get("keyphrases") != None or node.get("document_embedding") != None or node.get("keyphrase_embedding") != None:
                 tx.run(
                     '''
                         MATCH (r:Resource: Article)
@@ -1991,26 +2041,6 @@ class NeoDataBase:
             concept = {"node_id": concept["node_id"], "cid": concept["cid"]}
 
         return concept
-
-    """
-    def get_concepts_modified_by_user_id_and_cids(self, user_id: str, cids: list):
-        '''
-            Get 'Concept_modified' by user_id and cids
-        '''
-        concepts = []
-        with self.driver.session() as session:
-            concepts = session.run(
-                '''
-                    MATCH (a:User)-[r:HAS_MODIFIED]->(b: Concept_modified)
-                    WHERE r.user_id = $user_id AND b.cid IN $cids
-                    RETURN DISTINCT b.cid as cid, r.weight as weight
-                ''',
-                user_id=user_id,
-                cids=cids
-            ).data()
-            concepts = [{"cid": concept["cid"], "weight": concept["weight"]} for concept in concepts]
-        return concepts
-    """
 
     def update_rs_btw_user_and_cm(self, user_id: str, cid: str, weight: float, mid: str, status: str, only_status=False):
         '''
@@ -2273,7 +2303,6 @@ class NeoDataBase:
             action: True (create) | False (delete)
         '''
         # logger.info("Updating Relationship between Resource and Concept_modified")
-        # print(rid, cid)
         try:
             tx = self.driver.session()
             if action:
@@ -2363,7 +2392,10 @@ class NeoDataBase:
         
         return result
 
-    def store_resources(self, resources_dict: dict, cid: str, recommendation_type="", resources_list: list=None, resources_form="dict"):
+    def store_resources(self, cid: str, resources_dict: dict=None, recommendation_type="", 
+                        resources_list: list=None, resources_form="dict",
+                        resources_updated: list=None, resources_updated_type=""
+                    ):
         '''
             Store Resources
             Create relationshop between Resource and Concept_modified
@@ -2372,7 +2404,8 @@ class NeoDataBase:
             recommendation_type: str ('1' | '2' | '3' | '4')
             algorithm_model: (str) which algorithm was used for the recommendation
             content_type: video | article # currently not usued
-            resources_form: dict | list
+            resources_form: dict | list | found (update_detail_found => only update too old Resource)
+            resources_updated_type: video | article
         '''
 
         def get_resource_primary_key(resource: dict):
@@ -2385,7 +2418,6 @@ class NeoDataBase:
         if resources_form == "dict":
             for key, resources in resources_dict.items():
                 if key == "videos":
-                    
                     if len(resources) > 0:
                         logger.info(f"Creating Resources YouTube AND Updating Relationship between Resource and Concept_modified: {len(resources)} Resources")
                         for resource in resources:
@@ -2397,7 +2429,6 @@ class NeoDataBase:
                         self.update_rs_btw_resources_and_cm(rids=rids, cid=cid, action=True)
 
                 elif key == "articles":
-
                     if len(resources) > 0:
                         logger.info(f"Creating Resources Article AND Updating Relationship between Resource and Concept_modified {len(resources)} Resources")
                         for resource in resources:
@@ -2414,6 +2445,14 @@ class NeoDataBase:
                     self.create_or_update_video_resource(tx, resource, update_embedding_values=True)
                 elif "Article" in resource["labels"]:
                     self.create_or_update_wikipedia_resource(tx, resource, update_embedding_values=True)
+        
+        elif resources_form == "found":
+            if resources_updated_type == "videos":
+                for resource in resources_updated:
+                    self.create_or_update_video_resource(tx, resource, update_detail_found=True)
+            if resources_updated_type == "articles":
+                for resource in resources_updated:
+                    self.create_or_update_wikipedia_resource(tx, resource, update_detail_found=True)
 
     def retrieve_resources(self, concepts: dict, embedding_values=False):
         '''
@@ -2479,6 +2518,41 @@ class NeoDataBase:
             ).data()
             result = self.resources_wrapper_from_query(data=result)
         return result
+
+    def retrieve_resources_by_updated_at_exist_or_counts(self, cids, content_type: str, only_exist=True, days=30):
+        '''
+            Validate Resource by checking whether it is too old or depending on the "days" given
+            cids: List[str] of concept_modified cid
+            content_type: Video | Article
+            days: 30 (Video) | 365 (Article)
+        '''
+        
+        if content_type == "Article":
+            days = 365
+        
+        if only_exist == True:
+            query = '''
+                    MATCH (a:Resource)-[r:BASED_ON]->(b:Concept_modified)
+                    WHERE $content_type IN LABELS(a) AND b.cid IN $cids
+                    RETURN COUNT(DISTINCT a) as count
+                '''
+        else:
+            query = '''
+                    MATCH (a:Resource)-[r:BASED_ON]->(b:Concept_modified)
+                    WHERE $content_type IN LABELS(a) AND b.cid IN $cids AND ( datetime(a.updated_at) > (datetime() - duration({days: $days})) )
+                    RETURN COUNT(DISTINCT a) as count
+                '''
+        
+        count = 0
+        with self.driver.session() as session:
+            result = session.run(
+                query,
+                cids=cids,
+                content_type=content_type,
+                days=days
+            ).single()
+            count = result["count"]
+        return count
 
     def resources_wrapper_from_query(self, data: list):
         resources = []
@@ -2568,7 +2642,7 @@ class NeoDataBase:
             nodes = session.run(
                 f"""
                 MATCH (c: Concept_modified)<-[m:HAS_MODIFIED]-(b: User)-[r:HAS_SAVED]->(a:Resource) 
-                WHERE  r.user_id = $user_id AND ({query_where})
+                WHERE  r.user_id = $user_id AND $content_type IN LABELS(a) AND ({query_where})
                 RETURN  DISTINCT LABELS(a) as labels, ID(a) as id, a.rid as rid, a.title as title, a.text as text,
                         a.thumbnail as thumbnail, a.abstract as abstract, a.post_date as post_date, 
                         a.author_image_url as author_image_url, a.author_name as author_name,
@@ -2586,15 +2660,18 @@ class NeoDataBase:
                 """,
                 user_id=data["user_id"],
                 search_text=data["text"],
-                cids=data["cids"]
+                cids=data["cids"],
+                content_type= "Video" if data["content_type"] == "video" else "Article",
             ).data()
             resources = self.resources_wrapper_from_query(data=nodes)
 
             if len(resources) > 0:
                 if data["content_type"] == "video":
-                    result["videos"] = [resource for resource in resources if "Video" in resource["labels"]]
+                    result["videos"] = resources
+                    # result["videos"] = [resource for resource in resources if "Video" in resource["labels"]]
                 elif data["content_type"] == "article":
-                    result["articles"] = [resource for resource in resources if "Article" in resource["labels"]]
+                    result["articles"] = resources
+                    # result["articles"] = [resource for resource in resources if "Article" in resource["labels"]]
                 else:
                     result = {   
                                 "articles": [resource for resource in resources if "Article" in resource["labels"]],

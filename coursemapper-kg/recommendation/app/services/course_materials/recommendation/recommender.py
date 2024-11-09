@@ -266,16 +266,15 @@ class Recommender:
 
     def recommend(
         self,
-        not_understood_concept_list=[],
-        slide_concepts=[],
+        recommendation_type=RecommendationType.WITHOUT_EMBEDDING,
+        data:pd.DataFrame=None,
         slide_weighted_avg_embedding_of_concepts="",
         slide_document_embedding="",
         user_embedding="",
         top_n=10,
         video=True,
-        recommendation_type=RecommendationType.WITHOUT_EMBEDDING,
-        data:pd.DataFrame=None,
-        are_embedding_values_present=True
+        not_understood_concept_list=[],
+        slide_concepts=[],
     ):
         '''
             Apply recommendation algorithms
@@ -284,45 +283,6 @@ class Recommender:
                 if the resource contains key values: keyphrase_embedding | document_embedding)
         '''
         logger.info("Applying the recommendation algorithm Selected")
-
-        """
-        # If personalized recommendation, use DNU concepts to query Youtube and Wikipedia
-        if (
-            recommendation_type != RecommendationType.WITHOUT_EMBEDDING
-            and recommendation_type != RecommendationType.COMBINED_STATIC
-            and recommendation_type != RecommendationType.CONTENT_BASED_KEYPHRASE_VARIANT
-            and recommendation_type != RecommendationType.CONTENT_BASED_DOCUMENT_VARIANT
-        ):
-            logger.info("# If personalized recommendation, use DNU concepts to query Youtube and Wikipedia")
-
-            query = " ".join(not_understood_concept_list)
-            data = self.canditate_selection(query=query, video=video)
-            if isinstance(data, list) and data.empty:
-                return []
-
-        # Else use top 5 concepts from slide
-        else:
-            logger.info("# Else use top 5 concepts from slide")
-
-            i = 0
-            while i < 5:
-                top_n_concepts = 5 - i
-                concepts = slide_concepts[:top_n_concepts]
-                slide_concepts_name = [concept["name"] for concept in concepts]
-                logger.info("Get top %s concepts", top_n_concepts)
-                query = " ".join(slide_concepts_name)
-                logger.info("The query is %s -----------------" % query)
-
-                data = self.canditate_selection(query=query, video=video)
-
-                if not isinstance(data, list) and not data.empty:
-                    if len(data.index) >= 5:
-                        break
-                i += 1
-        
-        if data.empty == False:
-            logger.info(f"canditate_selection shape -> {data.shape}")
-        """
 
         # Without embedding Not yet supported
         if recommendation_type == RecommendationType.WITHOUT_EMBEDDING:
@@ -336,12 +296,11 @@ class Recommender:
             # Tranform embedding to tensor
             user_tensor = get_tensor_from_embedding(user_embedding.split(","))
 
-            if are_embedding_values_present:
-                # Step 1: Retrieve Keyphrases
-                data = retrieve_keyphrases(data)
+            # Step 1: Retrieve Keyphrases
+            data = retrieve_keyphrases(data)
 
-                # Step 2: compute keyphrase-based embedding for resources
-                data = self.compute_keyphrase_based_embeddings(data)
+            # Step 2: compute keyphrase-based embedding for resources
+            data = self.compute_keyphrase_based_embeddings(data)
             
             # Step 3: compute keyphrase-based similarity between user embeddings and
             # resources weighted average keyphrase embeddings
@@ -358,14 +317,8 @@ class Recommender:
             # Transform embedding to tensor
             user_tensor = get_tensor_from_embedding(user_embedding.split(","))
             
-            # user_embedding_array = user_embedding.split(",")
-            # user_embedding_array = [float(i) for i in user_embedding_array]
-            # user_embedding_array = np.array(user_embedding_array)
-            # user_tensor = torch.from_numpy(user_embedding_array).float()
-
-            if are_embedding_values_present:
-                # Step 1: compute document embedding for resources
-                data = self.compute_document_based_embeddings(data)
+            # Step 1: compute document embedding for resources
+            data = self.compute_document_based_embeddings(data)
                 
             # Step 2: compute similarities between user embeddings and resources document embeddings
             data = compute_dynamic_document_based_similarity(data=data, user_embedding=user_tensor)
@@ -381,12 +334,11 @@ class Recommender:
             # Tranform embedding to tensor
             slide_weighted_avg_embedding_of_concepts_embedding = get_tensor_from_embedding(slide_weighted_avg_embedding_of_concepts.split(","))
 
-            if are_embedding_values_present:
-                # Step 1: Retrieve Keyphrases
-                data = retrieve_keyphrases(data)
+            # Step 1: Retrieve Keyphrases
+            data = retrieve_keyphrases(data)
 
-                # Step 2: compute keyphrase-based embedding for resources
-                data = self.compute_keyphrase_based_embeddings(data)
+            # Step 2: compute keyphrase-based embedding for resources
+            data = self.compute_keyphrase_based_embeddings(data)
 
             # Step 3: compute keyphrase-based similarity between slide weighted average keyphrase embeddings and
             # resources weighted average keyphrase embeddings
@@ -401,9 +353,8 @@ class Recommender:
             # Compute term-based
             start_time = time.time()
 
-            if are_embedding_values_present:
-                # Step 1: compute document embedding for resources
-                data = self.compute_document_based_embeddings(data)
+            # Step 1: compute document embedding for resources
+            data = self.compute_document_based_embeddings(data)
 
             # Step 2: compute similarities between slide document embeddings and resources document embeddings
             data = compute_document_based_similarity(data, slide_document_embedding)
