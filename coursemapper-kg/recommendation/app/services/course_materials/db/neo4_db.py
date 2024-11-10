@@ -598,7 +598,8 @@ def reset_user_concept_relationships(tx, user_id, new_concepts):
                uid=user_id,
                cid=id)
 
-
+# get user embedding but saving in the database!!
+# the name of the function must be adjusted then!!
 def get_user_embedding(tx, user_id, mid):
     """
     """
