@@ -15,6 +15,7 @@ class RRGCN:
         self.embedding_matrix = None
         self.adj_matrix = None
         self.prerequisite_matrix = None
+        
         self.weight_matrix_rc_1 = None
         self.weight_matrix_pr_1 = None
         self.weight_matrix_self_1 = None
@@ -429,7 +430,7 @@ class RRGCN:
 
  
 test_object = RRGCN()
-embedding=test_object.rrgcn_1_1()
+embedding=test_object.rrgcn_1_2()
 print("+++++++++++++++++++++++++original embedding++++++++++++++++++++++++++++++")
 print(test_object.embedding_matrix.toarray())
 print("+++++++++++++++++++++++++new embedding++++++++++++++++++++++++++++++")
