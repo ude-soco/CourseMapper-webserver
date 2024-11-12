@@ -53,11 +53,13 @@ export class HomeComponent implements OnInit {
 
   getMenuItems(courseItem: any): any {
     this.menuItems = [
-      { label: 'Delete Course', icon: 'pi pi-trash', restrictTo: ['user'], onlyAccess:'can_delete_course', command: () => this.onDeleteCourse(courseItem) },
-      { label: 'Manage participants', restrictTo: ['user'], icon: 'pi pi-users', command: () => this.onManageParticipants(courseItem) },
+     
+      { label: 'Manage Participants', restrictTo: ['user'], icon: 'pi pi-users', command: () => this.onManageParticipants(courseItem) },
       { label: 'Edit Course', restrictTo: ['user', 'co_teacher', 'non_editing_teacher'], icon: 'pi pi-cog', command: () => this.onManageParticipants(courseItem) },
-      { label: 'View participants', icon: 'pi pi-eye', restrictTo: ['teacher', 'co_teacher', 'non_editing_teacher'], command: () => this.onViewParticipants(courseItem) },
+      { label: 'View Participants', icon: 'pi pi-eye', restrictTo: ['teacher', 'co_teacher', 'non_editing_teacher'], command: () => this.onViewParticipants(courseItem) },
+
       { label: 'Unenroll from Course', icon: 'pi pi-user-minus', restrictTo: ['teacher'], command: () => { } },
+      { label: 'Delete Course', icon: 'pi pi-trash', restrictTo: ['user'], onlyAccess:'can_delete_course', command: () => this.onDeleteCourse(courseItem) },
       // { label: 'Add Member', icon: 'pi pi-plus', command: () => { } },
       // { label: 'Add Channel', icon: 'pi pi-file-edit', command: () => { } },
       // { label: 'Manage Tags', icon: 'pi pi-tag', command: () => { } },

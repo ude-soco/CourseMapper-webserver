@@ -24,28 +24,28 @@ export class PermissionsComponent implements OnInit {
       name: 'co_teacher',
       data: [
         {
-          role: { title: 'Create', checked: false },
+          role: { title: 'Creation Permissions', checked: false },
           list: [
             { label: 'Allow member to create channel', name: 'can_create_channel', checked: false },
             { label: 'Allow member to create topic', name: 'can_create_topic', checked: false },
-            { label: 'Allow member to upload PDF material', name: 'can_upload_pdf_material', checked: false },
-            { label: 'Allow member to video topic', name: 'can_video_topic', checked: false }
+            { label: 'Allow member to create PDF material', name: 'can_upload_pdf_material', checked: false },
+            { label: 'Allow member to create video ', name: 'can_video_topic', checked: false }
           ]
         },
         {
-          role: { title: 'Edit', checked: false },
+          role: { title: 'Edit Permissions', checked: false },
           list: [
-            { label: 'Allow member to edit course name', name: 'can_edit_course_name', checked: false },
-            { label: 'Allow member to edit course description', name: 'can_edit_course_description', checked: false },
+            { label: 'Allow member to rename course name', name: 'can_edit_course_name', checked: false },
+            { label: 'Allow member to rename course description', name: 'can_edit_course_description', checked: false },
             { label: 'Allow member to rename topics', name: 'can_rename_topics', checked: false },
             { label: 'Allow member to rename channels', name: 'can_rename_channels', checked: false },
             { label: 'Allow member to rename materials', name: 'can_rename_materials', checked: false }
           ]
         },
         {
-          role: { title: 'Delete', checked: false },
+          role: { title: 'Delete Permissions', checked: false },
           list: [
-            { label: 'Allow member to delete course', name: 'can_delete_course', checked: false },
+           
             { label: 'Allow member to delete course description', name: 'can_delete_course_description', checked: false },
             { label: 'Allow member to delete topics', name: 'can_delete_topics', checked: false },
             { label: 'Allow member to delete channels', name: 'can_delete_channels', checked: false },
@@ -59,19 +59,19 @@ export class PermissionsComponent implements OnInit {
       name: 'non_editing_teacher',
       data: [
         {
-          role: { title: 'Enable topic & channel creation', checked: false },
+          role: { title: 'Creation Permissions', checked: false },
           list: [
             { label: 'Allow member to create channel', name: 'can_create_channel', checked: false },
             { label: 'Allow member to create topic', name: 'can_create_topic', checked: false },
-            { label: 'Allow member to upload PDF material', name: 'can_upload_pdf_material', checked: false },
-            { label: 'Allow member to video topic', name: 'can_video_topic', checked: false }
+            { label: 'Allow member to create PDF material', name: 'can_upload_pdf_material', checked: false },
+            { label: 'Allow member to create video ', name: 'can_video_topic', checked: false }
           ]
         },
         {
           role: { title: 'Edit Permissions', checked: false },
           list: [
-            { label: 'Allow member to edit course name', name: 'can_edit_course_name', checked: false },
-            { label: 'Allow member to edit course description', name: 'can_edit_course_description', checked: false },
+            { label: 'Allow member to rename course name', name: 'can_edit_course_name', checked: false },
+            { label: 'Allow member to rename course description', name: 'can_edit_course_description', checked: false },
             { label: 'Allow member to rename topics', name: 'can_rename_topics', checked: false },
             { label: 'Allow member to rename channels', name: 'can_rename_channels', checked: false },
             { label: 'Allow member to rename materials', name: 'can_rename_materials', checked: false }
@@ -80,7 +80,7 @@ export class PermissionsComponent implements OnInit {
         {
           role: { title: 'Delete Permissions', checked: false },
           list: [
-            { label: 'Allow member to delete course', name: 'can_delete_course', checked: false },
+           
             { label: 'Allow member to delete course description', name: 'can_delete_course_description', checked: false },
             { label: 'Allow member to delete topics', name: 'can_delete_topics', checked: false },
             { label: 'Allow member to delete channels', name: 'can_delete_channels', checked: false },

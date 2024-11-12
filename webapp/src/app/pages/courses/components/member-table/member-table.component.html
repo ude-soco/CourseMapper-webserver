@@ -5,7 +5,7 @@
         <th>Full-Name</th>
         <th>User-name</th>
         <th *ngIf="viewOnly">Current Role</th>
-        <th *ngIf="!viewOnly && course.role !== 'co_teacher'">Change Role</th>
+        <th *ngIf="!viewOnly && course.role !== 'co_teacher'&& course.role !== 'non_editing_teacher'">Change Role</th>
         <th>Block</th>
       </tr>
     </ng-template>
@@ -32,7 +32,7 @@
             [severity]="getSeverity(member.isBlocked)"
           />
         </td> -->
-        <td *ngIf="!viewOnly && course.role !== 'co_teacher'">
+        <td *ngIf="!viewOnly && course.role !== 'co_teacher'&& course.role !== 'non_editing_teacher'">
           <p-dropdown
             [options]="roles"
             [(ngModel)]="member?.role.name"
