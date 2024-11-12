@@ -5,8 +5,11 @@ const config = require("../config/auth.config.js");
 const db = require("../models");
 const User = db.user;
 const Role = db.role;
+import catchAsync from "../helpers/catchAsync";
+import courseModel from "../models/course.model.js";
 
-const verifyToken = (req, res, next) => {
+
+const verifyToken = catchAsync(async (req, res, next) => {
   let token = req.session.token;
 
   if (!token) {
@@ -25,7 +28,7 @@ const verifyToken = (req, res, next) => {
     req.userId = decoded.id;
     next();
   });
-};
+});
 
 /**
  * @function isAdmin
@@ -33,7 +36,7 @@ const verifyToken = (req, res, next) => {
  *
  * @param {string} req.userId The id of the user
  */
-const isAdmin = async (req, res, next) => {
+const isAdmin = catchAsync(async (req, res, next) => {
   req.isAdmin = false;
 
   let user;
@@ -53,7 +56,7 @@ const isAdmin = async (req, res, next) => {
     return next();
   }
   return res.status(403).send({ message: "Require Admin Role!" });
-};
+});
 
 /**
  * @function isModerator
@@ -63,7 +66,7 @@ const isAdmin = async (req, res, next) => {
  * @param {string} req.params.courseId The id of the course
  * @param {string} req.userId The id of the user
  */
-const isModerator = async (req, res, next) => {
+const isModerator = catchAsync(async (req, res, next) => {
   const courseId = req.params.courseId;
   req.isAdmin = false;
   req.isModerator = false;
@@ -102,7 +105,7 @@ const isModerator = async (req, res, next) => {
         return res.status(500).send({ error: "Error finding role" });
       }
 
-      if (role.name === "moderator") {
+      if (role.name === "teacher") {
         req.isModerator = true;
         return next();
       }
@@ -111,7 +114,59 @@ const isModerator = async (req, res, next) => {
       return res.status(403).send({ message: "Require Moderator Role!" });
     }
   }
-};
+});
+/**
+ * @function isModeratorOrCo
+ * Validates if a user is the moderator a course
+ * Validates if a user is admin
+ *
+ * @param {string} req.params.courseId The id of the course
+ * @param {string} req.userId The id of the user
+ */
+const isModeratorOrCo = catchAsync(async (req, res, next) => {
+  const courseId = req.params.courseId;
+  req.isAdmin = false;
+  req.isModerator = false;
+
+  let user = await User.findById(req.userId);
+  if (!user) {
+    return res.status(404).send({ error: `User not found!` });
+  }
+
+  let role = await Role.findOne({ _id: user.role });
+
+  if (role.name === "admin") {
+    req.isAdmin = true;
+    return next();
+  } else {
+    let foundCourse = user.courses.find(
+      (item) => item.courseId.valueOf() === courseId
+    );
+
+    if (foundCourse) {
+      role = await Role.findOne({ _id: foundCourse.role });
+
+      if (role.name === "teacher") {
+        req.isModerator = true;
+        return next();
+      }
+
+      if (['co_teacher', 'non_editing_teacher'].includes(role.name)) {
+        const course = await courseModel.findById(foundCourse.courseId);
+        if (role.name === 'co_teacher') {
+          req.allowedPermissions = course?.co_teacher_permissions;
+        } else {
+          req.allowedPermissions = course?.non_editing_teacher_permissions;
+        }
+        return next();
+      }
+
+      return res.status(403).send({ message: "Require Moderator Role!" });
+    } else {
+      return res.status(403).send({ message: "Require Moderator Role!" });
+    }
+  }
+});
 
 /**
  * @function isEnrolled
@@ -120,10 +175,11 @@ const isModerator = async (req, res, next) => {
  * @param {string} req.params.courseId The id of the course
  * @param {string} req.userId The id of the user
  */
-const isEnrolled = async (req, res, next) => {
+const isEnrolled = catchAsync(async (req, res, next) => {
   const courseId = req.params.courseId;
   req.isAdmin = false;
   req.isModerator = false;
+
 
   let user;
   try {
@@ -153,7 +209,7 @@ const isEnrolled = async (req, res, next) => {
     );
 
     if (foundCourse) {
-      if (role.name === "moderator") {
+      if (role.name === "teacher") {
         req.isModerator = true;
       }
       return next();
@@ -163,12 +219,13 @@ const isEnrolled = async (req, res, next) => {
         .send({ message: "Access denied! User need to be enrolled!" });
     }
   }
-};
+});
 
 const authJwt = {
   verifyToken,
   isAdmin,
   isModerator,
   isEnrolled,
+  isModeratorOrCo
 };
 module.exports = authJwt;

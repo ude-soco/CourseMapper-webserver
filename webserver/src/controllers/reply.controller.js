@@ -7,6 +7,8 @@ const User = db.user;
 const Role = db.role;
 const Course = db.course;
 const Material = db.material;
+import catchAsync from "../helpers/catchAsync";
+
 
 /**
  * @function getReplies
@@ -15,7 +17,7 @@ const Material = db.material;
  * @param {string} req.params.courseId The id of the course
  * @param {string} req.params.annotationId The id of the annotation
  */
-export const getReplies = async (req, res) => {
+export const getReplies = catchAsync(async (req, res) => {
   const courseId = req.params.courseId;
   const annotationId = req.params.annotationId;
   let foundAnnotation;
@@ -41,7 +43,7 @@ export const getReplies = async (req, res) => {
     return res.status(500).send({ error: "Error finding reply" });
   }
   return res.status(200).send(foundReplies);
-};
+});
 
 /**
  * @function newReply
@@ -52,7 +54,7 @@ export const getReplies = async (req, res) => {
  * @param {string} req.body.content The content of the reply
  * @param {string} req.userId The author of the reply. Anyone can create a reply
  */
-export const newReply = async (req, res, next) => {
+export const newReply = catchAsync(async (req, res, next) => {
   const courseId = req.params.courseId;
   const annotationId = req.params.annotationId;
   const replyContent = req.body.reply.content;
@@ -201,7 +203,7 @@ export const newReply = async (req, res, next) => {
     });
 
   return next();
-};
+});
 
 /**
  * @function deleteReply
@@ -211,7 +213,7 @@ export const newReply = async (req, res, next) => {
  * @param {string} req.params.replyId The id of the reply
  * @param {string} req.userId The id of the user. Only author/admin can delete
  */
-export const deleteReply = async (req, res, next) => {
+export const deleteReply = catchAsync(async (req, res, next) => {
   const courseId = req.params.courseId;
   const replyId = req.params.replyId;
   const userId = req.userId;
@@ -305,7 +307,7 @@ export const deleteReply = async (req, res, next) => {
     });
 
   return next();
-};
+});
 
 /**
  * @function editReply
@@ -316,7 +318,7 @@ export const deleteReply = async (req, res, next) => {
  * @param {string} req.body.content The content of the reply
  * @param {string} req.userId The id of the user. Only author of the reply can edit
  */
-export const editReply = async (req, res, next) => {
+export const editReply = catchAsync(async (req, res, next) => {
   const courseId = req.params.courseId;
   const replyId = req.params.replyId;
   const replyContent = req.body.content;
@@ -436,7 +438,7 @@ export const editReply = async (req, res, next) => {
     });
 
   return next();
-};
+});
 
 /**
  * @function likeReply
@@ -446,7 +448,7 @@ export const editReply = async (req, res, next) => {
  * @param {string} req.params.replyId The id of the reply
  * @param {string} req.userId The id of the user
  */
-export const likeReply = async (req, res, next) => {
+export const likeReply = catchAsync(async (req, res, next) => {
   const courseId = req.params.courseId;
   const replyId = req.params.replyId;
   const userId = req.userId;
@@ -573,7 +575,7 @@ export const likeReply = async (req, res, next) => {
 
     return next();
   }
-};
+});
 
 /**
  * @function dislikeReply
@@ -583,7 +585,7 @@ export const likeReply = async (req, res, next) => {
  * @param {string} req.params.replyId The id of the reply
  * @param {string} req.userId The id of the user. Only author of the annotation can edit
  */
-export const dislikeReply = async (req, res, next) => {
+export const dislikeReply = catchAsync(async (req, res, next) => {
   const courseId = req.params.courseId;
   const replyId = req.params.replyId;
   const userId = req.userId;
@@ -705,4 +707,4 @@ export const dislikeReply = async (req, res, next) => {
       });
     return next();
   }
-};
+});

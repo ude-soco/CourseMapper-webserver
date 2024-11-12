@@ -11,43 +11,79 @@ import { Course } from 'src/app/models/Course';
 import * as CourseAction from 'src/app/pages/courses/state/course.actions';
 import * as CourseActions from 'src/app/pages/courses/state/course.actions';
 import { UserServiceService } from 'src/app/services/user-service.service';
+import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
+import { User } from 'src/app/models/User';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
-  providers: [DatePipe],
+  providers: [DatePipe, ConfirmationService],
 })
 export class HomeComponent implements OnInit {
-  currentUser: {} | undefined;
+  currentUser: {} | any;
   isloggedin: boolean = false;
   username?: string;
+  loggedInUser: User;
   courses: Course[] = [];
-  Allcourses: Course[] = [];
-  Users: any;
   userArray: any = new Array();
+  menuItems: MenuItem[] = [];
   createdAt: string;
-
   firstName: string = '';
   lastName: string = '';
   courseTriggered: boolean = false;
+  sections = ['teaching', 'enrolled'];
+
+  hasCoursesForRole(role: string): boolean {
+    if(role === 'enrolled'){
+      return this.courses.some((course) => course.role === 'user');
+    }else{
+      return this.courses.some((course) => course.role !== 'user');
+    }
+  }
+  
+  getCoursesByRole(role: string) {
+    if(role === 'enrolled'){
+      return this.userArray.filter((course) => course.role === 'user');
+    }else{
+      return this.userArray.filter((course) => course.role !== 'user');
+    }
+  }
+
+
+  getMenuItems(courseItem: any): any {
+    this.menuItems = [
+      { label: 'Delete Course', icon: 'pi pi-trash', restrictTo: ['user'], onlyAccess:'can_delete_course', command: () => this.onDeleteCourse(courseItem) },
+      { label: 'Manage participants', restrictTo: ['user'], icon: 'pi pi-users', command: () => this.onManageParticipants(courseItem) },
+      { label: 'Edit Course', restrictTo: ['user', 'co_teacher', 'non_editing_teacher'], icon: 'pi pi-cog', command: () => this.onManageParticipants(courseItem) },
+      { label: 'View participants', icon: 'pi pi-eye', restrictTo: ['teacher', 'co_teacher', 'non_editing_teacher'], command: () => this.onViewParticipants(courseItem) },
+      { label: 'Unenroll from Course', icon: 'pi pi-user-minus', restrictTo: ['teacher'], command: () => { } },
+      // { label: 'Add Member', icon: 'pi pi-plus', command: () => { } },
+      // { label: 'Add Channel', icon: 'pi pi-file-edit', command: () => { } },
+      // { label: 'Manage Tags', icon: 'pi pi-tag', command: () => { } },
+    ].filter(item => {
+      const roleCheck = !item?.restrictTo?.includes(courseItem?.role) || this.currentUser?.role?.name === 'admin'
+      const permissionCheck = item?.onlyAccess ? this.canAccess(item.onlyAccess, courseItem) : true;
+      return roleCheck && permissionCheck;
+    });
+    return this.menuItems;
+  }
+
   constructor(
     private storageService: StorageService,
     private router: Router,
     private store: Store<State>,
     private courseService: CourseService,
-    private userService: UserServiceService
-  ) {
-    this.courseService.GetAllCourses().subscribe({
-      next: async (courses) => {
-        this.Allcourses = courses;
-      },
-    });
-  }
+    private userService: UserServiceService,
+    private confirmationService: ConfirmationService,
+    private messageService: MessageService,
+  ) { }
 
   ngOnInit(): void {
     this.currentUser = this.storageService.getUser();
     this.isloggedin = this.storageService.isLoggedIn();
+    this.loggedInUser = this.storageService.getUser();
+
 
     this.store.dispatch(
       AppActions.toggleCourseSelected({ courseSelected: false })
@@ -74,20 +110,31 @@ export class HomeComponent implements OnInit {
 
     this.getMyCourses();
   }
+
+
+  canAccess(perm: string, courseItem: any): boolean {
+    const isAdminOrTeacher = courseItem?.role === 'teacher' || this.currentUser?.role?.name === 'admin';
+    if (isAdminOrTeacher) {
+      return true;
+    } else if (['co_teacher', 'non_editing_teacher'].includes(courseItem.role)) {
+      const permissions = courseItem.role === 'co_teacher' ? courseItem.co_teacher_permissions : courseItem.non_editing_teacher_permissions
+      if (permissions?.[perm]) {
+        return true;
+      };
+      return false;
+    }
+    return false;
+  }
+
+
   getMyCourses() {
-    this.courseService.fetchCourses().subscribe((courses) => {
-      this.courses = courses;
+    this.courseService.fetchCourses().subscribe((courses: any) => {
+      this.courses = courses.map(ele => { return { ...ele, menuItems: this.getMenuItems(ele) } });
 
       for (var course of this.courses) {
-        this.Users = [];
-
-        this.Users = course.users;
-        // console.log(course.users[0].role.name)
-        //       let userModerator = this.Users.find(
-        //         (user) => user.role.id === 'moderator'
-        //       );
-
-        this.buildCardInfo(course.users[0].userId, course);
+        if (course?.users?.length > 0) {
+          this.buildCardInfo(course.users[0].userId, course);
+        }
       }
     });
     if (this.courseTriggered == false) {
@@ -115,7 +162,10 @@ export class HomeComponent implements OnInit {
         createdAt: new Date(course.createdAt),
         firstName: this.firstName,
         lastName: this.lastName,
+        moderator: userModeratorID,
         description: course.description,
+        role: course?.role,
+        menuItems: course?.menuItems,
       };
       this.userArray.push(ingoPush);
     });
@@ -131,5 +181,41 @@ export class HomeComponent implements OnInit {
         CourseActions.setCourseId({ courseId: selcetedCourse.id })
       );
     });
+  }
+  onManageParticipants(selcetedCourse: any) {
+    this.router.navigate(['course', selcetedCourse._id, 'details']);
+  }
+
+  onViewParticipants(selcetedCourse: any) {
+    this.router.navigate(['course', selcetedCourse._id, 'view']);
+  }
+
+
+  editCourse() {
+    console.log('Edit course');
+    // Implement the edit functionality here
+  }
+
+  deleteCourse(id): void {
+    this.courseService.deleteCourse({ _id: id }).subscribe(res => {
+      if (res?.errorMsg) {
+        this.messageService.add({ severity: 'error', detail: res?.errorMsg });
+      } else {
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Course has been deleted!' });
+      }
+    })
+  };
+
+
+  onDeleteCourse(item) {
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to Delete this course "' + item.name + '"?',
+      header: 'Delete Confirmation',
+      icon: 'pi pi-info-circle',
+      accept: (e) => this.deleteCourse(item._id),
+      reject: () => { },
+    });
+    this.courseService.deleteCourse(item._id)
+    // Implement the delete functionality here
   }
 }

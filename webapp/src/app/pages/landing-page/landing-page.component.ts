@@ -33,7 +33,7 @@ export class LandingPageComponent {
   hideImg: boolean = false;
   username?: string;
   CourseDes: string;
-  myCourses: Course[];
+  myCourses: Course[]= [];
   Enrolled: boolean = false;
   createdAt: string;
 
@@ -91,10 +91,12 @@ export class LandingPageComponent {
           this.Users = course.users;
 
           let userModerator = this.Users.find(
-            (user) => user.role.name === 'moderator'
+            (user) => user?.role?.name === 'teacher'
           );
 
-          this.buildCardInfo(userModerator.userId, course);
+          if(userModerator){
+            this.buildCardInfo(userModerator.userId, course);
+          }
         }
       },
     });
@@ -122,6 +124,7 @@ export class LandingPageComponent {
         firstName: this.firstName,
         lastName: this.lastName,
         description: course.description,
+        totalEnrolled: course?.users?.length,
       };
       this.userArray.push(ingoPush);
     });

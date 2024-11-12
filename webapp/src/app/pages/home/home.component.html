@@ -4,92 +4,105 @@
   </div>
 
   <div class="md:container md:mx-auto">
-    <div *ngIf="this.courses.length == 0">
+    <ng-container *ngIf="courses && courses.length">
+      <!-- Section for each role -->
+      <ng-container *ngFor="let role of sections">
+        <div *ngIf="hasCoursesForRole(role)">
+          <p class="leading-normal mt-6 px-4" style="display: flex; align-items: center; cursor: pointer;">
+            <i class="pi pi-angle-down" style="margin-right: 8px;"></i>
+            <img *ngIf="role === 'teaching'" src="../../../assets/icons/teacher-icon-black.png" alt="" width="25px">
+            <i *ngIf="role === 'enrolled'" class="pi pi-graduation-cap" style="margin-right: 8px;"></i>
+            {{ role === 'enrolled' ? 'Enrolled' : 'Teaching' | titlecase }}
+          </p>
+          <div class="overscroll-y-auto h-1/2 flex flex-wrap">
+            <!-- Get courses by current role -->
+            <div *ngFor="let course of getCoursesByRole(role)">
+              <p-card styleClass="p-card-shadow" class="course-card relative">
+                <span class="badge">{{course?.role?.split('_')?.join(' ')}}</span>
+                <hr style="margin-bottom: 0.75rem; margin-top: 0%" />
+                <ng-template pTemplate="header">
+                  <img
+                    alt="Card"
+                    class="cursor-pointer"
+                    src="/assets/img/courseCard.png"
+                    (click)="onSelectCourse(course)"
+                  />
+                </ng-template>
+
+                <ng-template pTemplate="content-center" style="float: left">
+                  <div class="w-full h-14 mb-3 flex items-start justify-between">
+                    <div class="flex items-center">
+                      <p-avatar
+                        label="{{ course.shortName }}"
+                        shape="circle"
+                        size="large"
+                        [style]="{
+                          'background-color': '#0369A1',
+                          color: '#ffffff',
+                          float: 'left'
+                        }"
+                      ></p-avatar>
+
+                      <p class="font-medium text-xl pl-3">
+                        {{ course.name }}
+                      </p>
+                    </div>
+
+                    <!-- 3-Dot Menu -->
+                    <div class="card flex justify-content-center">
+                      <p-menu
+                        #menu
+                        [model]="course.menuItems || []"
+                        [popup]="true"
+                        appendTo="body"
+                  />
+                      <p-button
+                        (onClick)="menu.toggle($event)"
+                        icon="pi pi-ellipsis-v"
+                        styleClass="p-button-text"
+                  />
+                    </div>
+                  </div>
+
+                  <p class="p" style="display: flex;">
+                    <img src="../../../assets/icons/teacher-icon.png" alt="" width="25px">
+                    <span class="pl-1">
+                      Created by: {{ course.firstName }} {{ course.lastName }}
+                    </span>
+                  </p>
+
+                  <p class="p" style="margin-left: 4px">
+                    <i
+                      class="pi pi-calendar"
+                      style="font-size: 1rem; color: #ea580c"
+                    ></i>
+                    <span class="pl-1">
+                      Created on: {{ course.createdAt | date : "d MMMM yyyy" }}
+                    </span>
+                  </p>
+                </ng-template>
+              </p-card>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+
+    <!-- Message when no courses are enrolled -->
+    <div *ngIf="!courses || courses.length === 0">
       <p class="text-5xl leading-normal font-bold text-center mt-6">
-        There are currently no courses you are enrolled in.
+        Currently you have no courses enrolled.
       </p>
       <p class="text-4xl leading-normal text-center mt-6">
         <a href="landingPage" style="color: #0277bd"> Click here</a> to search
         for courses to start learning!
       </p>
     </div>
-    <div class="md:w-auto" *ngIf="this.courses.length > 0">
-      <p
-        class="text-5xl leading-normal font-bold text-center mt-6"
-        style="color: #0277bd"
-      >
-        My Courses
-      </p>
-      <p class="text-4xl leading-normal text-center mt-6">
-        Welcome back! Pick a course from your list to start learning
-      </p>
-
-      <div class="cursor-pointer overscroll-y-auto h-1/2 flex flex-wrap">
-        <div *ngFor="let course of userArray" (click)="onSelectCourse(course)">
-          <p-card styleClass="p-card-shadow" class="course-card">
-            <hr style="margin-bottom: 0.75rem; margin-top: 0%" />
-            <ng-template pTemplate="header">
-              <img alt="Card" src="/assets/img/courseCard.png" />
-            </ng-template>
-
-            <ng-template pTemplate="content-center" style="float: left">
-              <div class="w-full h-14 mb-3 flex items-start">
-                <p-avatar
-                  label="{{ course.shortName }}"
-                  shape="circle"
-                  size="large"
-                  [style]="{
-                    'background-color': '#0369A1',
-                    color: '#ffffff',
-                    float: 'left',
-                  }"
-                ></p-avatar>
-
-                <p class="font-medium text-xl pl-3">
-                  {{ course.name }}
-                </p>
-              </div>
-
-              <p class="p">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="22"
-                  height="22"
-                  viewBox="0 0 22 22"
-                  style="
-                    fill: #ea580c;
-                    transform: msFilter;
-                    float: left;
-                    margin-right: 2px;
-                  "
-                >
-                  <path d="M2 7v1l11 4 9-4V7L11 4z"></path>
-                  <path
-                    d="M4 11v4.267c0 1.621 4.001 3.893 9 3.734 4-.126 6.586-1.972 7-3.467.024-.089.037-.178.037-.268V11L13 14l-5-1.667v3.213l-1-.364V12l-3-1z"
-                  ></path>
-                </svg>
-                <span class="pl-1">
-                  Created by: {{ course.firstName }} {{ course.lastName }}
-                </span>
-              </p>
-
-              <p class="p" style="margin-left: 4px">
-                <i
-                  class="pi pi-calendar"
-                  style="font-size: 1rem; color: #ea580c"
-                ></i>
-                <span class="pl-1">
-                  Created on: {{ course.createdAt | date : "d MMMM yyyy" }}
-                </span>
-              </p>
-            </ng-template>
-          </p-card>
-        </div>
-      </div>
-    </div>
   </div>
 </div>
+
 <app-footer></app-footer>
+<p-confirmDialog></p-confirmDialog>
 <!-- <div class="row">
         <div class="column" style="background-color:#aaa;">
           <h2>Column 1</h2>

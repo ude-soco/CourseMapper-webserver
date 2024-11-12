@@ -49,7 +49,7 @@ import { CourseService } from 'src/app/services/course.service';
 import { getLastTimeCourseMapperOpened } from 'src/app/state/app.reducer';
 import * as VideoActions from '../../annotations/video-annotation/state/video.action';
 import { IntervalService } from 'src/app/services/interval.service';
-
+import { StorageService } from 'src/app/services/storage.service';
 @Component({
   selector: 'app-material',
   templateUrl: './material.component.html',
@@ -68,6 +68,9 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
   @Input() topicID?: string;
   @Input() initialMaterial?: Material;
   @Output() materialCreated: EventEmitter<void> = new EventEmitter();
+  selectedCourse: any = {};
+  permissions: any = {};
+
 
   private channels: Channel[] = [];
   materials: Material[] = [];
@@ -91,6 +94,9 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
   materialID: string = '';
   channelID: string = '';
   routeSubscription: Subscription;
+  user = this.storageService.getUser();
+
+
   allNotifications$: Observable<Notification[]>;
   lastTimeCourseMapperOpened$: Observable<string>;
   @Output() conceptMapEvent: EventEmitter<boolean> = new EventEmitter();
@@ -132,7 +138,8 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     protected fb: FormBuilder,
 
     private intervalService: IntervalService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private storageService: StorageService,
   ) {
     const url = this.router.url;
 
@@ -203,8 +210,17 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.lastMaterialClickedNotificationSettingSubscription.unsubscribe();
     }
   }
-
+  
   ngOnInit() {
+    this.selectedCourse = this.courseService.getSelectedCourse();
+    this.updatePermissions(this.selectedCourse);
+
+    this.courseService.onSelectCourse.subscribe((course: any) => {
+      this.selectedCourse = course;
+      this.updatePermissions(this.selectedCourse);
+    });
+
+
     this.topicChannelService.onSelectChannel.subscribe((channel) => {
       this.selectedChannel = channel;
       this.channelEmitted.emit(this.selectedChannel);
@@ -297,6 +313,26 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     if (words.length <= limit) return text;
     return words.slice(0, limit).join(' ') + '...';
   }
+
+  updatePermissions(course: any){
+    // Permissions
+    if (course.role === 'co_teacher') {
+      this.permissions = { ...course.co_teacher_permissions };
+    } else if (course.role === 'non_editing_teacher') {
+      this.permissions = { ...course.non_editing_teacher_permissions };
+    }
+  }
+
+  canAccess(perm: string): boolean {
+    const isAdminOrTeacher = this.selectedCourse?.role === 'teacher' || this.user?.role?.name === 'admin';
+    if (isAdminOrTeacher) {
+      return true;
+    } else if (this.showModeratorPrivileges && this.permissions?.[perm]) {
+      return true;
+    }
+    return false;
+  }
+
 
   getMaterialActivityIndicator(materialId: string) {
     return combineLatest([

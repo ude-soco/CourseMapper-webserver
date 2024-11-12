@@ -16,5 +16,7 @@ export interface Course {
   createdAt?:string;
   users?:User;
   topics?:Topic[];
-  
+  menuItems?: [],
+  non_editing_teacher_permissions?: {},
+  co_teacher_permissions?: {},
 }

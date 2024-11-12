@@ -1,6 +1,23 @@
 <div class="w-full items-center p-5">
   <div>
     <p class="text-4xl leading-normal font-medium">{{ selectedCourse.name }}</p>
+
+    <div class="flex items-center justify-between mb-5 w-fit">
+      <p 
+        class="mx-2"
+        (dblclick)="onRenameCourseDescription()"
+        [id]="'des_' + selectedCourse._id"
+        (keydown)="handleKeyEvents('des_' + selectedCourse._id, $event)">
+        {{selectedCourse.description || 'N/A'}}
+      </p>
+      <button 
+        *ngIf="canAccess('can_delete_course_description')"
+        (click)="onDeleteCourseDescription()"
+        class="bg-white text-white rounded p-2">
+        <i class="pi pi-trash text-[#0369a1]"></i>
+      </button>
+    </div>
+
   </div>
   <div class="flex flex-wrap justify-between">
     <div>
@@ -8,24 +25,8 @@
         <div class="mt-4 mb-4">
           <div class="flex flex-wrap gap-5">
             <div class="flex flex-col">
-              <strong>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="22"
-                  height="22"
-                  viewBox="0 0 22 22"
-                  style="
-                    fill: #ea580c;
-                    transform: msFilter;
-                    float: left;
-                    margin-right: 2px;
-                  "
-                >
-                  <path d="M2 7v1l11 4 9-4V7L11 4z"></path>
-                  <path
-                    d="M4 11v4.267c0 1.621 4.001 3.893 9 3.734 4-.126 6.586-1.972 7-3.467.024-.089.037-.178.037-.268V11L13 14l-5-1.667v3.213l-1-.364V12l-3-1z"
-                  ></path>
-                </svg>
+              <strong class="flex">
+                <img src="../../../assets/icons/teacher-icon.png" alt="" width="25px">
                 <span class="font-medium pl-1">
                   Created by: {{ this.firstName }} {{ this.lastName }}
                 </span>

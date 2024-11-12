@@ -1,4 +1,4 @@
-const { authJwt, notifications } = require("../middlewares");
+const { authJwt, notifications, utili } = require("../middlewares");
 const controller = require("../controllers/topic.controller");
 const logger = require("../activity-logger/logger-middlewares/topic-logger");
 
@@ -18,10 +18,10 @@ module.exports = function (app) {
   );
 
   // Create a new topic
-  // Only moderator/admin
+  // Only moderators and Allowed custom/Co teachers
   app.post(
     "/api/courses/:courseId/topic",
-    [authJwt.verifyToken, authJwt.isModerator],
+    [authJwt.verifyToken, authJwt.isModeratorOrCo, utili.isPermissionAllowed("can_create_topic")],
     controller.newTopic,
     logger.createTopicLogger,
     notifications.updateBlockingNotificationsNewTopic,
@@ -30,10 +30,10 @@ module.exports = function (app) {
   );
 
   // Delete a topic
-  // Only moderator/admin
+  // Only moderators and Allowed custom/Co teachers
   app.delete(
     "/api/courses/:courseId/topics/:topicId",
-    [authJwt.verifyToken, authJwt.isModerator],
+    [authJwt.verifyToken, authJwt.isModeratorOrCo, utili.isPermissionAllowed("can_delete_topics")],
     controller.deleteTopic,
     logger.deleteTopicLogger,
     notifications.topicCourseUpdateNotificationUsers,
@@ -41,10 +41,10 @@ module.exports = function (app) {
   );
 
   // Edit a topic
-  // Only moderator/admin
+  // Only moderators and Allowed custom/Co teachers
   app.put(
     "/api/courses/:courseId/topics/:topicId",
-    [authJwt.verifyToken, authJwt.isModerator],
+    [authJwt.verifyToken, authJwt.isModeratorOrCo, utili.isPermissionAllowed("can_rename_topics")],
     controller.editTopic,
     logger.editTopicLogger,
     notifications.topicCourseUpdateNotificationUsers,
@@ -53,13 +53,13 @@ module.exports = function (app) {
 
   app.post(
     "/api/courses/:courseId/topics/:topicId/indicator",
-    [authJwt.verifyToken, authJwt.isModerator],
+    [authJwt.verifyToken, authJwt.isModeratorOrCo],
     controller.newIndicator,
   );
 
   app.delete(
     "/api/courses/:courseId/topics/:topicId/indicator/:indicatorId",
-    [authJwt.verifyToken, authJwt.isModerator],
+    [authJwt.verifyToken, authJwt.isModeratorOrCo],
     controller.deleteIndicator,
   );
 
@@ -71,13 +71,13 @@ module.exports = function (app) {
 
   app.put(
     "/api/courses/:courseId/topics/:topicId/indicator/:indicatorId/resize/:width/:height",
-    [authJwt.verifyToken, authJwt.isModerator],
+    [authJwt.verifyToken, authJwt.isModeratorOrCo],
     controller.resizeIndicator,
   );
 
   app.put(
     "/api/courses/:courseId/topics/:topicId/reorder/:newIndex/:oldIndex",
-    [authJwt.verifyToken, authJwt.isModerator],
+    [authJwt.verifyToken, authJwt.isModeratorOrCo],
     controller.reorderIndicators,
   );
 };

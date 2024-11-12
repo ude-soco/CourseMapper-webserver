@@ -1,6 +1,7 @@
 const fs = require("fs");
+import catchAsync from "../helpers/catchAsync";
 
-const remove = (req, res) => {
+const remove = catchAsync(async (req, res) => {
   const fileName = req.params.name;
   const directoryPath = "public/uploads/pdfs/";
 
@@ -14,9 +15,9 @@ const remove = (req, res) => {
       message: "File is deleted.",
     });
   });
-};
+});
 
-const removeSync = (req, res) => {
+const removeSync = catchAsync(async (req, res) => {
   const fileName = req.params.name;
   const directoryPath = "public/uploads/pdfs/";
   try {
@@ -29,9 +30,9 @@ const removeSync = (req, res) => {
       message: "Could not delete the file. " + err,
     });
   }
-};
+});
 
-const removeVideo = (req, res) => {
+const removeVideo = catchAsync(async (req, res) => {
   const fileName = req.params.name;
   const directoryPath = "public/uploads/videos/";
   fs.unlink(directoryPath + fileName, (err) => {
@@ -44,9 +45,9 @@ const removeVideo = (req, res) => {
       message: "Video is deleted.",
     });
   });
-};
+});
 
-const removeSyncVideo = (req, res) => {
+const removeSyncVideo = catchAsync(async (req, res) => {
   const fileName = req.params.name;
   const directoryPath = "public/uploads/videos/";
   try {
@@ -59,7 +60,7 @@ const removeSyncVideo = (req, res) => {
       message: "Could not delete the Video. " + err,
     });
   }
-};
+});
 
 module.exports = {
   remove,

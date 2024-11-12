@@ -133,14 +133,14 @@ export class PopulateDashboardComponent {
   dashboardDragger() {
     this.dragulaService?.destroy('INDICATORS');
     this.dragulaService?.createGroup('INDICATORS', {
-      removeOnSpill: false,
-      revertOnSpill: true,
-      moves: function (el: any, container: any, handle: any): any {
-        if (handle.id === 'dragger') {
-          return true;
-        }
-        return false;
-      },
+      //removeOnSpill: false,
+      //revertOnSpill: true,
+      //moves: function (el: any, container: any, handle: any): any {
+       // if (handle.id === 'dragger') {
+       //   return true;
+       // }
+      //  return false;
+      //},
     });
 
     this.dragulaService?.dropModel('INDICATORS').subscribe((args) => {

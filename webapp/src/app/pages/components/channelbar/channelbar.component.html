@@ -9,6 +9,8 @@
       *ngIf="selectedCourse._id"
     >
       <div class="h-max m-0 flex flex-col bg-gray-100">
+        ({{ selectedCourse.role }})
+
         <div class="flex justify-between py-4 pl-3 bg-gray-200">
           <p
             id="{{ selectedCourse._id }}"
@@ -42,9 +44,7 @@
         <p-menu
           #menu
           id="config_menu"
-          [model]="
-            showModeratorPrivileges ? moderatorUserOptions : normalUserOptions
-          "
+          [model]="menuItems"
           [popup]="true"
           appendTo="body"
           styleClass="course-context-menu"
@@ -52,6 +52,8 @@
 
         <app-topic-dropdown
           [showModeratorPrivileges]="showModeratorPrivileges"
+          [permissions]="permissions"
+          [userRole]="selectedCourse.role"
         ></app-topic-dropdown>
 
         <div
@@ -63,7 +65,7 @@
           >
             <div
               class="flex flex-row items-center justify-between mx-0 my-1.5"
-              *ngIf="showModeratorPrivileges"
+              *ngIf="canAccess('can_create_topic')"
             >
               <div class="flex flex-row items-center">
                 <app-iconbutton

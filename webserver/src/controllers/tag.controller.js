@@ -1,5 +1,7 @@
 const db = require("../models");
 const Tag = db.tag;
+import catchAsync from "../helpers/catchAsync";
+
 
 /**
  * @function courseTags
@@ -7,7 +9,7 @@ const Tag = db.tag;
  *
  * @param {string} req.params.courseId The id of the course
  */
-export const courseTags = async (req, res) => {
+export const courseTags = catchAsync(async (req, res) => {
   const courseId = req.params.courseId;
   let foundTags;
   try {
@@ -37,7 +39,7 @@ export const courseTags = async (req, res) => {
   return res.status(200).send(
     newFoundTags,
   );
-};
+});
 
 /**
  * @function topicTags
@@ -45,7 +47,7 @@ export const courseTags = async (req, res) => {
  *
  * @param {string} req.params.topicId The id of the topic
  */
-export const topicTags = async (req, res) => {
+export const topicTags = catchAsync(async (req, res) => {
   const topicId = req.params.topicId;
   let foundTags;
   try {
@@ -75,7 +77,7 @@ export const topicTags = async (req, res) => {
   return res.status(200).send(
     newFoundTags,
   );
-};
+});
 
 /**
  * @function channelTags
@@ -83,7 +85,7 @@ export const topicTags = async (req, res) => {
  *
  * @param {string} req.params.channelId The id of the channel
  */
-export const channelTags = async (req, res) => {
+export const channelTags = catchAsync(async (req, res) => {
   const channelId = req.params.channelId;
   let foundTags;
   try {
@@ -113,7 +115,7 @@ export const channelTags = async (req, res) => {
   return res.status(200).send(
     newFoundTags,
   );
-};
+});
 
 /**
  * @function materialTags
@@ -121,7 +123,7 @@ export const channelTags = async (req, res) => {
  *
  * @param {string} req.params.materialId The id of the material
  */
-export const materialTags = async (req, res) => {
+export const materialTags = catchAsync(async (req, res) => {
   const materialId = req.params.materialId;
   let foundTags;
   try {
@@ -151,4 +153,4 @@ export const materialTags = async (req, res) => {
   return res.status(200).send(
     newFoundTags,
   );
-};
+});

@@ -48,8 +48,8 @@ export class CourseService {
    *
    */
   selectCourse(course: Course) {
-    this.socket.emit('leave', 'course:' + this.getSelectedCourse()._id);
-    this.socket.emit('join', 'course:' + course._id);
+    this.socket.emit("leave", "course:" + this.getSelectedCourse()._id);
+    this.socket.emit("join", "course:" + course._id);
     // if there is no selected course then no need to update the topics.
     if (this.getSelectedCourse()._id && course._id) {
       this.topicChannelService.updateTopics(course._id);
@@ -70,7 +70,7 @@ export class CourseService {
    *
    *
    */
-
+  
   fetchCourses(): Observable<Course[]> {
     return this.http.get<Course[]>(`${this.API_URL}/my-courses`).pipe(
       tap((courses) => {
@@ -87,6 +87,40 @@ export class CourseService {
   }
 
   /**
+ * @function getCourse
+ * GET courses details
+ */
+
+  getCourse(id: number | string): Observable<Course[]> {
+    return this.http.get<Course[]>(`${this.API_URL}/courses/${id}`)
+  }
+  /**
+ * @function ToggleBlockUser
+ * POST Block User
+ */
+
+  ToggleBlockUser(id: number | string, data: any) {
+    return this.http.post<any>(`${this.API_URL}/course/${id}/edit-block-user`, data);
+  }
+
+  /**
+ * @function updateUserRole
+ * POST update User/Student Role
+ */
+
+  updateUserRole(courseId: string, data: Object): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/course/${courseId}/update-user-role`, data);
+  }
+  /**
+ * @function updatePermissions
+ * POST update Course Permissions
+ */
+
+  updatePermissions(courseId: string, data: Object): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/course/${courseId}/update-user-permissions`, data);
+  }
+
+  /**
    * @function addCourse
    * Add new course in the backend and if the communication was
    * successfull it adds the course in the frontend
@@ -97,8 +131,8 @@ export class CourseService {
   addCourse(course: Course): any {
     return this.http
       .post<any>(`${this.API_URL}/course`, {
-        name: course.name,
-        description: course.description,
+        courseName: course.name,
+        courseDesc: course.description,
         shortname: course.shortName,
       })
       .pipe(
@@ -133,7 +167,7 @@ export class CourseService {
    * @param {Course} courseTD the course to be deleted
    *
    */
-  deleteCourse(courseTD: Course) {
+  deleteCourse(courseTD: any): Observable<any> {
     return this.http
       .delete<any>(`${this.API_URL}/courses/${courseTD._id}`)
       .pipe(
@@ -142,7 +176,7 @@ export class CourseService {
             return of({ errorMsg: errResponse.error.error });
           } else {
             return of({
-              errorMsg: 'Error in connection: Please reload the application',
+              errorMsg: errResponse?.error?.message || 'Error in connection: Please reload the application',
             });
           }
         }),
@@ -188,7 +222,7 @@ export class CourseService {
         }),
         tap((res) => {
           if (!('errorMsg' in res)) {
-            this.renameCourseSuccess(courseTD, body.name);
+            // this.renameCourseSuccess(courseTD, body.name);
           }
         })
       );

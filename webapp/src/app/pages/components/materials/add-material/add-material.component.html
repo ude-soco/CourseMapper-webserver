@@ -3,12 +3,12 @@
 </h2>
 
 <div class="card-container">
-  <p-card class="add" (click)="showPdfAddModel()">
+  <p-card class="add" (click)="showPdfAddModel()" *ngIf="canAddPdf">
     <div class="header-container">
       <span class="card-header"> Add a PDF </span>
     </div>
   </p-card>
-  <p-card class="add" (click)="showVideoAddModel()">
+  <p-card class="add" (click)="showVideoAddModel()" *ngIf="canAddVideo">
     <div class="header-container">
       <span class="card-header"> Add a Video </span>
     </div>

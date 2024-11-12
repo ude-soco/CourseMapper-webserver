@@ -78,10 +78,12 @@ export class CourseDescriptionComponent {
           (this.createdAt = this.course_enroll.createdAt.slice(0, index)),
             this.course_enroll.createdAt.slice(index + 1);
           let userModerator = this.Users.find(
-            (user) => user.role.name === 'moderator'
+            (user) => user.role.name === 'teacher'
           );
 
-          this.buildCardInfo(userModerator.userId, this.course_enroll);
+          if(userModerator){
+            this.buildCardInfo(userModerator.userId, this.course_enroll);
+          }
           this.isLoaded = false;
         });
       }
@@ -180,7 +182,7 @@ export class CourseDescriptionComponent {
   }
   showInfo(msg) {
     this.messageService.add({
-      severity: 'success',
+      severity: 'info',
       summary: 'Success',
       detail: msg,
     });

@@ -2,7 +2,7 @@
   <div>
     <div
       class="flex flex-wrap justify-between mt-2 mb-2"
-      *ngIf="role === 'moderator' || forPersonalDashboard"
+      *ngIf="role === 'teacher' || forPersonalDashboard"
     >
       <div>
         <p class="font-medium text-xl" *ngIf="indicators?.length === 0">
@@ -48,7 +48,7 @@
               </div>
               <div
                 *ngIf="
-                  role === 'moderator' ||
+                  role === 'teacher' ||
                   role === 'admin' ||
                   forPersonalDashboard
                 "
@@ -76,7 +76,7 @@
           </div>
           <div
             *ngIf="
-              role === 'moderator' || role === 'admin' || forPersonalDashboard
+              role === 'teacher' || role === 'admin' || forPersonalDashboard
             "
             class="resizer"
             (mouseup)="onUpdateIndicator($event, indicator)"
@@ -91,7 +91,7 @@
           </div>
           <div
             *ngIf="
-              role !== 'moderator' && role !== 'admin' && !forPersonalDashboard
+              role !== 'teacher' && role !== 'admin' && !forPersonalDashboard
             "
           >
             <iframe

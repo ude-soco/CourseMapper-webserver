@@ -27,6 +27,8 @@ import { TopicDashboardComponent } from './pages/components/Dashboards/topic-das
 import { CourseDashboardComponent } from './pages/components/Dashboards/course-dashboard/course-dashboard.component';
 import { EmailValidationComponent } from './pages/components/email-validation/email-validation.component';
 import { RequestEmailValidationComponent } from './pages/components/email-validation/request-email-validation/request-email-validation.component';
+import { CourseDetailsComponent } from './pages/courses/course-details/course-details.component';
+import { RolesComponent } from './pages/courses/components/roles/roles.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'landingPage', pathMatch: 'full' },
@@ -116,6 +118,19 @@ const routes: Routes = [
       {
         path: 'welcome',
         component: CourseWelcomeComponent,
+      },
+      {
+        path: 'details',
+        component: CourseDetailsComponent,
+      },
+      {
+        path: 'roles',
+        component: RolesComponent,
+      },
+      {
+        path: 'view',
+        component: CourseDetailsComponent,
+        data: { viewOnly: true }
       },
     ],
   },

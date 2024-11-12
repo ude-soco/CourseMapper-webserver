@@ -12,8 +12,10 @@ export class CourseImp implements Course {
   numberChannels?: number;
   numberUsers?: number;
   createdAt?:string;
-  users?:User
-  
+  users?:User;
+  non_editing_teacher_permissions?: Object;
+  co_teacher_permissions?: Object;
+
 
   constructor(
     _id: string,
@@ -25,9 +27,11 @@ export class CourseImp implements Course {
     notification?: number,
     numberChannels?: number,
     numberUsers?: number,
-    createdAt?:string,
-    users?:User
-    
+    createdAt?: string,
+    users?: User,
+    non_editing_teacher_permissions?: Object,
+    co_teacher_permissions?: Object,
+
 
   ) {
     this.set_id(_id);

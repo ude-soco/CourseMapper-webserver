@@ -151,3 +151,10 @@ border-color: transparent;
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
   filter: alpha(opacity=20);
 }
+
+.p-menu{
+  width: 13rem !important;
+}
+.p-datatable-wrapper{
+  overflow: unset !important;
+}

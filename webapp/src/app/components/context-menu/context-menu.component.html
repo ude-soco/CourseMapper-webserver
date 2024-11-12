@@ -1,6 +1,6 @@
 <div class="settings-context-menu-container">
   <p-button
-    *ngIf="showModeratorPrivileges"
+    *ngIf="showModeratorPrivileges && canRename"
     label="Rename"
     icon="pi pi-refresh"
     styleClass="contextMenuButton"
@@ -28,7 +28,7 @@
     (onClick)="onViewMaterialDashboardClicked()"
   ></p-button>
   <p-button
-    *ngIf="showModeratorPrivileges"
+    *ngIf="showModeratorPrivileges && canDelete"
     label="Delete"
     icon="pi pi-times"
     styleClass="contextMenuButton"

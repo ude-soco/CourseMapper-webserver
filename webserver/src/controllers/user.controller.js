@@ -1,6 +1,9 @@
 const ObjectId = require("mongoose").Types.ObjectId;
 const db = require("../models");
+const helpers = require("../helpers/helpers");
+import catchAsync from "../helpers/catchAsync";
 const User = db.user;
+const Role = db.role;
 
 /**
  * @function allAccess
@@ -47,7 +50,7 @@ export const adminBoard = (req, res) => {
  * @param {string} req.body.height The height of the iframe
  * @param {string} req.userId The id of the user.
  */
-export const newIndicator = async (req, res, next) => {
+export const newIndicator = catchAsync(async (req, res, next) => {
   const userId = req.userId;
 
   let user;
@@ -81,7 +84,7 @@ export const newIndicator = async (req, res, next) => {
     success: `Indicator added successfully!`,
     indicator: indicator,
   });
-};
+});
 
 /**
  * @function deleteIndicator
@@ -90,7 +93,7 @@ export const newIndicator = async (req, res, next) => {
  * @param {string} req.params.indicatorId The id of the indicator
  * @param {string} req.userId The id of the user. Only owner of the indicator can delete
  */
-export const deleteIndicator = async (req, res, next) => {
+export const deleteIndicator = catchAsync(async (req, res, next) => {
   const indicatorId = req.params.indicatorId;
   const userId = req.userId;
 
@@ -125,7 +128,7 @@ export const deleteIndicator = async (req, res, next) => {
   return res.status(200).send({
     success: `Indicator deleted successfully!`,
   });
-};
+});
 
 /**
  * @function getIndicators
@@ -133,7 +136,7 @@ export const deleteIndicator = async (req, res, next) => {
  *
  * @param {string} req.userId The id of the user
  */
-export const getIndicators = async (req, res, next) => {
+export const getIndicators = catchAsync(async (req, res, next) => {
   const userId = req.userId;
 
   let user;
@@ -150,7 +153,7 @@ export const getIndicators = async (req, res, next) => {
   const response = user.indicators ? user.indicators : [];
 
   return res.status(200).send(response);
-};
+});
 
 /**
  * @function resizeIndicator
@@ -161,7 +164,7 @@ export const getIndicators = async (req, res, next) => {
  * @param {string} req.params.height The height of the indicator
  * @param {string} req.userId The id of the user
  */
-export const resizeIndicator = async (req, res, next) => {
+export const resizeIndicator = catchAsync(async (req, res, next) => {
   const indicatorId = req.params.indicatorId;
   const width = req.params.width;
   const height = req.params.height;
@@ -199,7 +202,7 @@ export const resizeIndicator = async (req, res, next) => {
   }
 
   return res.status(200).send();
-};
+});
 
 /**
  * @function reorderIndicators
@@ -209,7 +212,7 @@ export const resizeIndicator = async (req, res, next) => {
  * @param {string} req.params.oldIndex The oldIndex of the reordered indicator
  * @param {string} req.userId The id of the user
  */
-export const reorderIndicators = async (req, res, next) => {
+export const reorderIndicators = catchAsync(async (req, res, next) => {
   const newIndex = parseInt(req.params.newIndex);
   const oldIndex = parseInt(req.params.oldIndex);
   const userId = req.userId;
@@ -249,9 +252,9 @@ export const reorderIndicators = async (req, res, next) => {
     success: `Indicators updated successfully!`,
     indicators: user.indicators,
   });
-};
+});
 
-export const getAllUsers = async (req, res) => {
+export const getAllUsers = catchAsync(async (req, res) => {
   let users;
   try {
     users = await User.find({}).populate("courses", "-__v");
@@ -268,10 +271,10 @@ export const getAllUsers = async (req, res) => {
     results.push(user);
   });
   return res.status(200).send(results);
-};
+});
 
 
-export const getUser = async (req, res) => {
+export const getUser = catchAsync(async (req, res) => {
   let userId = req.params.userId;
 
   let foundUser;
@@ -279,7 +282,7 @@ export const getUser = async (req, res) => {
   let my_object = {};
   try {
     foundUser = await User.findById(userId).populate("courses", "-__v");
-    
+
     if (!foundUser) {
       return res.status(404).send({
         error: `User with id ${userId} doesn't exist!`,
@@ -288,13 +291,13 @@ export const getUser = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: "Error finding user" });
   }
-  my_object.firstname =foundUser.firstname;
-  my_object.lastname =foundUser.lastname;
+  my_object.firstname = foundUser.firstname;
+  my_object.lastname = foundUser.lastname;
   results.push(my_object);
   return res.status(200).send(my_object);
-};
+});
 
-export const getUserConcepts = async (req, res) => {
+export const getUserConcepts = catchAsync(async (req, res) => {
 
   let userId =  req.params.userId;
 
@@ -302,7 +305,7 @@ export const getUserConcepts = async (req, res) => {
   let results;
   try {
     foundUser = await User.findOne({ _id: userId })
-    .populate("courses", "-__v");
+      .populate("courses", "-__v");
     if (!foundUser) {
       return res.status(404).send({
         error: `User with id ${userId} doesn't exist!`,
@@ -311,23 +314,25 @@ export const getUserConcepts = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  results={
+  results = {
     understoodConcepts: foundUser.understoodConcepts,
     didNotUnderstandConcepts: foundUser.didNotUnderstandConcepts,
   }
   return res.status(200).send(results);
-};
+});
 
-export async function updateUserConcepts(props) {
-  let userId= props.body.userId
+export const updateUserConcepts = catchAsync(async (props) => {
+  let userId = props.body.userId
   let foundUser
-  const updatedDocument={$set: {
-    understoodConcepts: props.body.understoodConcepts,
-    didNotUnderstandConcepts: props.body.didNotUnderstandConcepts,
-  },}
+  const updatedDocument = {
+    $set: {
+      understoodConcepts: props.body.understoodConcepts,
+      didNotUnderstandConcepts: props.body.didNotUnderstandConcepts,
+    },
+  }
   try {
     foundUser = await User.findOne({ _id: props.body.userId })
-    .populate("courses", "-__v");
+      .populate("courses", "-__v");
     if (!foundUser) {
       return res.status(404).send({
         error: `User with id ${userId} doesn't exist!`,
@@ -338,28 +343,22 @@ export async function updateUserConcepts(props) {
   }
   // console.log(updatedDocument)
   await foundUser.updateOne(updatedDocument);
-}
+})
 
-export const getLastTimeCourseMapperOpened = async (req, res) => {
+export const getLastTimeCourseMapperOpened = catchAsync(async (req, res, next) => {
   let userId = req.userId;
 
-  let foundUser;
-  try {
-    foundUser = await User.findById(userId);
-    if (!foundUser) {
-      return res.status(404).send({
-        error: `User with id ${userId} doesn't exist!`,
-      });
-    }
-  } catch (err) {
-    return res.status(500).send({ error: "Error finding user" });
+  let foundUser = await User.findById(userId);
+  if (!foundUser) {
+    return res.status(404).send({
+      error: `User with id ${userId} doesn't exist!`,
+    });
   }
-  return res
-    .status(200)
-    .send({ lastTimeCourseMapperOpened: foundUser.lastTimeCourseMapperOpened });
-};
 
-export const updateLastTimeCourseMapperOpened = async (req, res) => {
+  return res.status(200).send({ lastTimeCourseMapperOpened: foundUser.lastTimeCourseMapperOpened });
+});
+
+export const updateLastTimeCourseMapperOpened = catchAsync(async (req, res) => {
   let userId = req.userId;
 
   let foundUser;
@@ -382,4 +381,4 @@ export const updateLastTimeCourseMapperOpened = async (req, res) => {
   return res
     .status(200)
     .send({ lastTimeCourseMapperOpened: foundUser.lastTimeCourseMapperOpened });
-};
+});

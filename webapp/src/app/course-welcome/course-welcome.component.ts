@@ -25,6 +25,7 @@ import { IndicatorService } from '../services/indicator.service';
 import { Indicator } from '../models/Indicator';
 import { ShowInfoError } from '../_helpers/show-info-error';
 import { Socket } from 'ngx-socket-io';
+import { StorageService } from '../services/storage.service';
 @Component({
   selector: 'app-course-welcome',
   templateUrl: './course-welcome.component.html',
@@ -44,6 +45,10 @@ export class CourseWelcomeComponent implements OnInit {
   Users: any;
   role: string;
   selectedCourseId: string = '';
+  showModeratorPrivileges:boolean = true;
+  permissions: {} = {};
+  user = this.storageService.getUser();
+
 
   showInfoError: ShowInfoError;
 
@@ -57,6 +62,7 @@ export class CourseWelcomeComponent implements OnInit {
     private messageService: MessageService,
     private topicChannelService: TopicChannelService,
     private userService: UserServiceService,
+    private storageService: StorageService,
     private socket: Socket,
   ) {
     this.courseSelected$ = store.select(getCourseSelected);
@@ -67,6 +73,14 @@ export class CourseWelcomeComponent implements OnInit {
     this.selectedCourse = this.courseService.getSelectedCourse();
     this.Users = [];
     this.courseService.onSelectCourse.subscribe((course) => {
+      if (['teacher', 'co_teacher', 'non_editing_teacher'].includes(course?.role) || this.user.role.name === 'admin') {
+        this.showModeratorPrivileges = true;
+      };
+      if (course?.role === 'co_teacher') {
+        this.permissions = { ...course.co_teacher_permissions };
+      } else if (course?.role === 'non_editing_teacher') {
+        this.permissions = { ...course.non_editing_teacher_permissions };
+      }
       this.selectedCourse = course;
       this.selectedCourseId = course._id;
       this.topicChannelService.fetchTopics(course._id).subscribe((res) => {
@@ -76,7 +90,7 @@ export class CourseWelcomeComponent implements OnInit {
         this.buildCardInfo(course.users[0].userId, course);
       });
 
-      if (this.selectedCourse.role === 'moderator') {
+      if (this.selectedCourse.role === 'teacher') {
         this.moderator = true;
       } else {
         this.moderator = false;
@@ -87,7 +101,7 @@ export class CourseWelcomeComponent implements OnInit {
         this.selectedCourse.users[0]?.userId,
         this.selectedCourse
       );
-      if (this.selectedCourse.role === 'moderator') {
+      if (this.selectedCourse.role === 'teacher') {
         this.moderator = true;
       } else {
         this.moderator = false;
@@ -115,6 +129,74 @@ export class CourseWelcomeComponent implements OnInit {
       this.userArray.push(ingoPush);
     });
   }
+
+
+  canAccess(perm: string): boolean {
+    const isAdminOrTeacher = this.selectedCourse.role === 'teacher' || this.user.role.name === 'admin';
+
+    if (isAdminOrTeacher) {
+      return true;
+    } else if (this.showModeratorPrivileges && this.permissions?.[perm]) {
+      return true;
+    }
+    return false;
+  }
+
+  onRenameCourseDescription() {
+    if (this.canAccess('can_edit_course_description')){
+      const selectedCurs = <HTMLInputElement>document.getElementById(`des_${this.selectedCourse._id}`);
+      this.selectedCourseId = this.selectedCourse._id;
+      selectedCurs.contentEditable = 'true';
+      this.selectElementContents(selectedCurs);
+    }
+  }
+
+  handleKeyEvents(id: string, e: KeyboardEvent) {
+    const selectedCurs = <HTMLInputElement>document.getElementById(id);
+
+    if (e.key === "Enter") {
+      e.preventDefault();
+      this.confirmCourseDescription(id);
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      selectedCurs.innerText = this.selectedCourse.description;
+      this.cancelCourseDescription(id);
+    }
+  }
+
+  
+  selectElementContents(el: HTMLElement) {
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+
+  confirmCourseDescription(id: string) {
+    const selectedCurs = <HTMLInputElement>document.getElementById(id);
+    selectedCurs.contentEditable = 'false';
+    const updatedText = selectedCurs.innerText.trim();
+
+    if (updatedText && updatedText !== this.selectedCourse.description) {
+      const body = { description: updatedText };
+      this.courseService.renameCourse(this.selectedCourse, body).subscribe();
+    }
+  }
+
+  cancelCourseDescription(id: string) {
+    const selectedCurs = <HTMLInputElement>document.getElementById(id);
+    selectedCurs.contentEditable = 'false';
+    window.getSelection().removeAllRanges(); // Deselect text
+  }
+
+  onDeleteCourseDescription() {
+    const body = { description: 'N/A' };
+    this.courseService.renameCourse(this.selectedCourse, body).subscribe(() => {
+      this.selectedCourse.description = '';
+    });
+  }
+
 
   deEnrole() {
     this.confirmationService.confirm({

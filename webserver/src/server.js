@@ -9,6 +9,7 @@ import bodyParser from "body-parser";
 import path from "path";
 import socketio from "./socketio";
 import addErrorHandling from "./middlewares/exceptionHandling";
+import mongoose from "mongoose";
 
 dotenv.config();
 const env = process.env.NODE_ENV || "production";
@@ -23,16 +24,16 @@ global.__basedir = __dirname;
 
 env !== "production"
   ? app.use(
-      cors({
-        credentials: true,
-        origin: [
-          "http://localhost:4200",
-          "https://www.youtube.com/watch?v=",
-          "http://127.0.0.1:8081 ",
-          process.env.WEBAPP_URL,
-        ],
-      }),
-    )
+    cors({
+      credentials: true,
+      origin: [
+        "http://localhost:4200",
+        "https://www.youtube.com/watch?v=",
+        "http://127.0.0.1:8081 ",
+        process.env.WEBAPP_URL,
+      ],
+    }),
+  )
   : "";
 
 // Middlewares
@@ -40,6 +41,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use("/", express.static(path.join(__dirname, "public")));
+
+// Error-handling middleware
+const errorHandler = (err, req, res, next) => {
+  console.error(err.stack);
+  res.status(err.statusCode || 500).send({
+    message: err.message || 'Internal Server Error',
+  });
+};
+app.use(errorHandler);
+
 app.use(
   cookieSession({
     name: "coursemapper-session",
@@ -129,19 +140,43 @@ server.on("error", onError);
 server.on("listening", onListening);
 
 const initializeDB = async () => {
+  let newRole;
   let foundAdmin;
-  let countRole;
+  let roles;
   let countUser;
-
   try {
-    // Check if roles are already present
-    countRole = await Role.countDocuments({});
-    if (countRole > 0) {
-      console.log(countRole + " Roles present, skipping role initialization");
+    roles = await Role.find({});
+    if (roles?.length > 0) {
+      console.log(roles.length + " Roles present, checking Co-Teacher and Non-Editing Teacher exist or not...");
+
+      // Check if 'co_teacher' and 'non_editing_teacher' roles already exist
+      const isCoTeacher = roles.some((role) => role.name === "co_teacher");
+      const isNonEditingTeacher = roles.some((role) => role.name === "non_editing_teacher");
+
+      // Find if the 'moderator' role exists
+      const replacedModerator = roles.find((role) => role.name === "moderator");
+
+      // If 'moderator' exists, update its name to 'teacher'
+      if (replacedModerator) {
+        await Role.updateOne(
+          { _id: replacedModerator._id },
+          { $set: { name: "teacher" } }
+        );
+        console.log("'moderator' role updated to 'teacher'.");
+      }
+
+      // If either 'co_teacher' or 'non_editing_teacher' doesn't exist, create both
+      if (!isCoTeacher || !isNonEditingTeacher) {
+        const newRoles = [];
+        if (!isCoTeacher) newRoles.push({ name: "co_teacher" });
+        if (!isNonEditingTeacher) newRoles.push({ name: "non_editing_teacher" });
+
+        await Role.insertMany(newRoles);
+        console.log("Roles added: " + newRoles.map((role) => role.name).join(", "));
+      }
+
     } else {
-      // Create roles synchronously and ensure admin role is saved
-      console.log("Creating roles: user, moderator, admin");
-      ["user", "moderator", "admin"].forEach(async (userName) => {
+      [...db.ROLES].forEach(async (userName) => {
         console.log("Adding Role: { name: " + userName + " }");
         newRole = new Role({ name: userName });
         if (userName === "admin") {
@@ -154,71 +189,16 @@ const initializeDB = async () => {
           return;
         }
       });
-    
     }
 
-    // Try-catch before checking if admin role exists
-    try {
-      foundAdmin = await Role.findOne({ name: "admin" });
-      if (!foundAdmin) {
-        console.log("Admin role not found, creating admin role");
-        foundAdmin = new Role({ name: "admin" });
-        await foundAdmin.save();
-        console.log("Admin role created successfully.");
-      } else {
-        console.log("Admin role found.");
-      }
-    } catch (err) {
-      console.log(err.message || err, "Error in checking or creating admin role");
-    }
-
-    // Add try-catch for counting users
     try {
       countUser = await User.countDocuments({});
       if (countUser > 0) {
-        foundAdmin = await Role.findOne({ name: "admin" });
-        
-        console.log(countUser + " Users present, checking if admin user exists");
-
-        // Try to find the admin user
-        try {
-          const adminUser = await User.findOne({ username: "admin" });
-          if (adminUser) {
-            console.log("Admin user already exists, skipping admin creation");
-          } else {
-            // If admin user doesn't exist, create the admin user
-            console.log("Admin user not found, creating admin user");
-            let password = hashSync(process.env.PASS, 10);
-            let email = process.env.EMAIL;
-            let generateMboxAndMboxSha1Sum =
-              helpers.generateMboxAndMboxSha1Sum(email);
-
-            try {
-              await new User({
-                firstname: "Admin",
-                lastname: "User",
-                username: "admin",
-                email: email,
-                mbox: generateMboxAndMboxSha1Sum.mbox,
-                mbox_sha1sum: generateMboxAndMboxSha1Sum.mbox_sha1sum,
-                role: foundAdmin._id, // Ensure admin role ID is available
-                password: password,
-              }).save();
-              console.log("Admin user created successfully.");
-            } catch (err) {
-              console.log(err, "Error in creating admin user");
-            }
-          }
-        } catch (err) {
-          console.log(err.message || err, "Error in finding admin user");
-        }
+        console.log(countUser + " Users present, skipping initialization");
       } else {
-        // If no users exist, create the admin user directly
         let password = hashSync(process.env.PASS, 10);
         console.log(
-          "No users found, creating admin user: { name: admin, password: " +
-            process.env.PASS +
-            " }",
+          "Adding User: { name: admin, password: " + process.env.PASS + " }"
         );
         let email = process.env.EMAIL;
         let generateMboxAndMboxSha1Sum =
@@ -232,12 +212,13 @@ const initializeDB = async () => {
             email: email,
             mbox: generateMboxAndMboxSha1Sum.mbox,
             mbox_sha1sum: generateMboxAndMboxSha1Sum.mbox_sha1sum,
-            role: foundAdmin._id, // Ensure admin role ID is available
+            role: foundAdmin._id instanceof mongoose.Types.ObjectId ? foundAdmin._id : mongoose.Types.ObjectId(foundAdmin._id),
             password: password,
           }).save();
           console.log("Admin user created successfully.");
         } catch (err) {
           console.log(err, "Error in creating admin user");
+          return;
         }
       }
     } catch (err) {

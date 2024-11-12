@@ -70,24 +70,8 @@
                 </p>
               </div>
 
-              <p class="p">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="22"
-                  height="22"
-                  viewBox="0 0 22 22"
-                  style="
-                    fill: #ea580c;
-                    transform: msFilter;
-                    float: left;
-                    margin-right: 2px;
-                  "
-                >
-                  <path d="M2 7v1l11 4 9-4V7L11 4z"></path>
-                  <path
-                    d="M4 11v4.267c0 1.621 4.001 3.893 9 3.734 4-.126 6.586-1.972 7-3.467.024-.089.037-.178.037-.268V11L13 14l-5-1.667v3.213l-1-.364V12l-3-1z"
-                  ></path>
-                </svg>
+              <p class="p" style="display: flex;">
+                <img src="../../../assets/icons/teacher-icon.png" alt="" width="25px">
                 <span class="pl-1">
                   Created by: {{ course.firstName }} {{ course.lastName }}
                 </span>
@@ -100,6 +84,16 @@
                 ></i>
                 <span class="pl-1">
                   Created on: {{ course.createdAt | date : "d MMMM yyyy" }}
+                </span>
+              </p>
+
+              <p class="p" style="margin-left: 4px">
+                <i
+                  class="pi pi-users"
+                  style="font-size: 1rem; color: #ea580c"
+                ></i>
+                <span class="pl-1">
+                  {{ course.totalEnrolled | number }} user{{course?.totalEnrolled > 1 ? 's' : ''}} enrolled
                 </span>
               </p>
             </ng-template>

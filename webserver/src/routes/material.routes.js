@@ -1,4 +1,4 @@
-const { authJwt, notifications } = require("../middlewares");
+const { authJwt, notifications, utili } = require("../middlewares");
 const controller = require("../controllers/material.controller");
 const logger = require("../activity-logger/logger-middlewares/material-logger");
 const knowledgeGraphController = require("../controllers/knowledgeGraph.controller");
@@ -19,10 +19,10 @@ module.exports = function (app) {
   );
 
   // Create a new material
-  // Only moderator/admin
+  // Only admin/teacher/Co & Custom Teachers
   app.post(
     "/api/courses/:courseId/channels/:channelId/material",
-    [authJwt.verifyToken, authJwt.isModerator],
+    [authJwt.verifyToken, authJwt.isModeratorOrCo],
     controller.newMaterial,
     logger.addMaterialLogger,
     notifications.updateBlockingNotificationsNewMaterial,
@@ -31,10 +31,10 @@ module.exports = function (app) {
   );
 
   // Delete a material
-  // Only moderator/admin
+  // Only admin/teacher/Co & Custom Teachers
   app.delete(
     "/api/courses/:courseId/materials/:materialId",
-    [authJwt.verifyToken, authJwt.isModerator],
+    [authJwt.verifyToken, authJwt.isModeratorOrCo, utili.isPermissionAllowed('can_delete_materials')],
     knowledgeGraphController.deleteMaterial,
     controller.deleteMaterial,
     logger.deleteMaterialLogger,
@@ -43,10 +43,10 @@ module.exports = function (app) {
   );
 
   // Edit a material
-  // Only moderator/admin
+  // Only admin/teacher/Co & Custom Teachers
   app.put(
     "/api/courses/:courseId/materials/:materialId",
-    [authJwt.verifyToken, authJwt.isModerator],
+    [authJwt.verifyToken, authJwt.isModeratorOrCo],
     controller.editMaterial,
     logger.editMaterialLogger,
     notifications.materialCourseUpdateNotificationsUsers,
@@ -91,13 +91,13 @@ module.exports = function (app) {
 
   app.post(
     "/api/courses/:courseId/materials/:materialId/indicator",
-    [authJwt.verifyToken, authJwt.isModerator],
+    [authJwt.verifyToken, authJwt.isModeratorOrCo],
     controller.newIndicator,
   );
 
   app.delete(
     "/api/courses/:courseId/materials/:materialId/indicator/:indicatorId",
-    [authJwt.verifyToken, authJwt.isModerator],
+    [authJwt.verifyToken, authJwt.isModeratorOrCo],
     controller.deleteIndicator,
   );
 
@@ -109,12 +109,12 @@ module.exports = function (app) {
 
   app.put(
     "/api/courses/:courseId/materials/:materialId/indicator/:indicatorId/resize/:width/:height",
-    [authJwt.verifyToken, authJwt.isModerator],
+    [authJwt.verifyToken, authJwt.isModeratorOrCo],
     controller.resizeIndicator,
   );
   app.put(
     "/api/courses/:courseId/materials/:materialId/reorder/:newIndex/:oldIndex",
-    [authJwt.verifyToken, authJwt.isModerator],
+    [authJwt.verifyToken, authJwt.isModeratorOrCo],
     controller.reorderIndicators,
   );
 };

@@ -1,8 +1,9 @@
 const db = require("../models");
 const ROLES = db.ROLES;
 const User = db.user;
+import catchAsync from "../helpers/catchAsync";
 
-const checkDuplicateUsernameOrEmail = async (req, res, next) => {
+const checkDuplicateUsernameOrEmail = catchAsync(async (req, res, next) => {
   let user;
   try {
     user = await User.findOne({ username: req.body.username });
@@ -24,7 +25,7 @@ const checkDuplicateUsernameOrEmail = async (req, res, next) => {
     return res.status(500).send({ error: "Error finding user" });
   }
   return next();
-};
+});
 
 const checkRolesExisted = (req, res, next) => {
   if (req.body.roles) {

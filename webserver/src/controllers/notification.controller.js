@@ -11,8 +11,9 @@ const Material = db.material;
 const {
   getNotificationSettingsWithFollowingAnnotations,
 } = require("../middlewares/Notifications/notifications");
+import catchAsync from "../helpers/catchAsync";
 
-export const getAllNotifications = async (req, res, next) => {
+export const getAllNotifications = catchAsync(async (req, res, next) => {
   const userId = req.userId;
 
   // Get all notifications for user by populating the activityId
@@ -71,10 +72,10 @@ export const getAllNotifications = async (req, res, next) => {
 
   return res
     .status(200)
-    .send({ notifications, blockingUsers: blockingUsers.blockingUsers });
-};
+    .send({ notifications, blockingUsers: blockingUsers?.blockingUsers });
+});
 
-export const deleteAllNotifications = async (req, res, next) => {
+export const deleteAllNotifications = catchAsync(async (req, res, next) => {
   const userId = req.userId;
 
   // Delete all notifications for user
@@ -87,9 +88,9 @@ export const deleteAllNotifications = async (req, res, next) => {
   }
 
   return res.status(200).send({ message: "Notifications deleted" });
-};
+});
 
-export const markNotificationsAsRead = async (req, res, next) => {
+export const markNotificationsAsRead = catchAsync(async (req, res, next) => {
   //request body contains an array of strings of the notification ids
   const notificationIds = req.body.notificationIds;
 
@@ -106,9 +107,9 @@ export const markNotificationsAsRead = async (req, res, next) => {
   }
 
   return res.status(200).send({ message: "Notifications marked as read!" });
-};
+});
 
-export const markNotificationsAsUnread = async (req, res, next) => {
+export const markNotificationsAsUnread = catchAsync(async (req, res, next) => {
   //request body contains an array of strings of the notification ids
   const notificationIds = req.body.notificationIds;
 
@@ -125,9 +126,9 @@ export const markNotificationsAsUnread = async (req, res, next) => {
   }
 
   return res.status(200).send({ message: "Notification/s marked as unread!" });
-};
+});
 
-export const starNotification = async (req, res, next) => {
+export const starNotification = catchAsync(async (req, res, next) => {
   //request body contains an array of strings of the notification ids
   const notificationIds = req.body.notificationIds;
 
@@ -144,9 +145,9 @@ export const starNotification = async (req, res, next) => {
   }
 
   return res.status(200).send({ message: "Notification/s starred!" });
-};
+});
 
-export const unstarNotification = async (req, res, next) => {
+export const unstarNotification = catchAsync(async (req, res, next) => {
   //request body contains an array of strings of the notification ids
   const notificationIds = req.body.notificationIds;
 
@@ -164,10 +165,10 @@ export const unstarNotification = async (req, res, next) => {
   }
 
   return res.status(200).send({ message: "Notification/s unstarred!" });
-};
+});
 
 //the below function deletes the rows from the userNotifications table
-export const removeNotification = async (req, res, next) => {
+export const removeNotification = catchAsync(async (req, res, next) => {
   const notificationIds = req.body.notificationIds;
 
   try {
@@ -177,16 +178,16 @@ export const removeNotification = async (req, res, next) => {
       .status(500)
       .send({ error: "Error deleting notifications", error });
   }
-};
+});
 
-export const searchUsers = async (req, res, next) => {
+export const searchUsers = catchAsync(async (req, res, next) => {
   const { courseId, partialString } = req.query;
   const searchQuery = partialString ? partialString : "";
   try {
     const users = await User.find({
       "courses.courseId": courseId,
       $or: [
-        { username: { $regex: searchQuery, $options: "i" } },
+        { email: { $regex: searchQuery, $options: "i" } },
         { firstname: { $regex: searchQuery, $options: "i" } },
         { lastname: { $regex: searchQuery, $options: "i" } },
       ],
@@ -205,9 +206,9 @@ export const searchUsers = async (req, res, next) => {
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }
-};
+});
 
-export const followAnnotation = async (req, res, next) => {
+export const followAnnotation = catchAsync(async (req, res, next) => {
   const annotationId = req.params.annotationId;
   const userId = req.userId;
 
@@ -321,9 +322,9 @@ export const followAnnotation = async (req, res, next) => {
   } catch (error) {
     res.status(500).json({ error: "Could not Follow the Annotation!" });
   } */
-};
+});
 
-export const unfollowAnnotation = async (req, res, next) => {
+export const unfollowAnnotation = catchAsync(async (req, res, next) => {
   const annotationId = req.params.annotationId;
   const userId = req.userId;
 
@@ -373,9 +374,9 @@ export const unfollowAnnotation = async (req, res, next) => {
   }
 
   res.status(200).send(notificationSettings[0]);
-};
+});
 
-export const setMaterialNotificationSettings = async (req, res, next) => {
+export const setMaterialNotificationSettings = catchAsync(async (req, res, next) => {
   const userId = req.userId;
   const courseId = req.body.courseId;
   const materialId = req.body.materialId;
@@ -430,9 +431,9 @@ export const setMaterialNotificationSettings = async (req, res, next) => {
   }
 
   return res.status(200).json(notificationSettings[0]);
-};
+});
 
-export const unsetMaterialNotificationSettings = async (req, res, next) => {
+export const unsetMaterialNotificationSettings = catchAsync(async (req, res, next) => {
   const userId = req.userId;
   const courseId = req.body.courseId;
   const materialId = req.body.materialId;
@@ -503,9 +504,9 @@ export const unsetMaterialNotificationSettings = async (req, res, next) => {
   }
 
   return res.status(200).json(notificationSettings[0]);
-};
+});
 
-export const setChannelNotificationSettings = async (req, res, next) => {
+export const setChannelNotificationSettings = catchAsync(async (req, res, next) => {
   const userId = req.userId;
   const courseId = req.body.courseId;
   const channelId = req.body.channelId;
@@ -573,9 +574,9 @@ export const setChannelNotificationSettings = async (req, res, next) => {
   }
 
   return res.status(200).json(notificationSettings[0]);
-};
+});
 
-export const unsetChannelNotificationSettings = async (req, res, next) => {
+export const unsetChannelNotificationSettings = catchAsync(async (req, res, next) => {
   const userId = req.userId;
   const courseId = req.body.courseId;
   const channelId = req.body.channelId;
@@ -663,9 +664,9 @@ export const unsetChannelNotificationSettings = async (req, res, next) => {
   }
 
   return res.status(200).json(notificationSettings[0]);
-};
+});
 
-export const setTopicNotificationSettings = async (req, res, next) => {
+export const setTopicNotificationSettings = catchAsync(async (req, res, next) => {
   const userId = req.userId;
   const courseId = req.body.courseId;
   const topicId = req.body.topicId;
@@ -748,9 +749,9 @@ export const setTopicNotificationSettings = async (req, res, next) => {
   }
 
   return res.status(200).json(notificationSettings[0]);
-};
+});
 
-export const unsetTopicNotificationSettings = async (req, res, next) => {
+export const unsetTopicNotificationSettings = catchAsync(async (req, res, next) => {
   const userId = req.userId;
   const courseId = req.body.courseId;
   const topicId = req.body.topicId;
@@ -845,9 +846,9 @@ export const unsetTopicNotificationSettings = async (req, res, next) => {
   }
 
   return res.status(200).json(notificationSettings[0]);
-};
+});
 
-export const setCourseNotificationSettings = async (req, res, next) => {
+export const setCourseNotificationSettings = catchAsync(async (req, res, next) => {
   const userId = req.userId;
   const courseId = req.body.courseId;
   const isAnnotationNotificationsEnabled =
@@ -925,9 +926,9 @@ export const setCourseNotificationSettings = async (req, res, next) => {
   }
 
   return res.status(200).json(notificationSettings[0]);
-};
+});
 
-export const unsetCourseNotificationSettings = async (req, res, next) => {
+export const unsetCourseNotificationSettings = catchAsync(async (req, res, next) => {
   const userId = req.userId;
   const courseId = req.body.courseId;
 
@@ -1023,9 +1024,9 @@ export const unsetCourseNotificationSettings = async (req, res, next) => {
   }
 
   return res.status(200).json(notificationSettings[0]);
-};
+});
 
-export const setGlobalNotificationSettings = async (req, res, next) => {
+export const setGlobalNotificationSettings = catchAsync(async (req, res, next) => {
   const userId = req.userId;
   const isAnnotationNotificationsEnabled =
     req.body.isAnnotationNotificationsEnabled;
@@ -1121,18 +1122,14 @@ export const setGlobalNotificationSettings = async (req, res, next) => {
   }
 
   return res.status(200).json(updatedUser);
-};
+});
 
-export const getAllCourseNotificationSettings = async (req, res, next) => {
+export const getAllCourseNotificationSettings = catchAsync(async (req, res, next) => {
   const userId = req.userId;
 
   //fetch the User
-  let user;
-  try {
-    user = await User.findOne({
-      _id: userId,
-    });
-  } catch (err) {
+  let user = await User.findOne({ _id: userId });
+  if (!user) {
     return res.status(500).json({ error: "Error finding user" });
   }
 
@@ -1189,9 +1186,9 @@ export const getAllCourseNotificationSettings = async (req, res, next) => {
       user.isReplyAndMentionedNotificationsEnabled,
     isCourseUpdateNotificationsEnabled: user.isCourseUpdateNotificationsEnabled,
   });
-};
+});
 
-export const blockUser = async (req, res, next) => {
+export const blockUser = catchAsync(async (req, res, next) => {
   const userId = req.userId;
   const userToBlockId = req.body.userToBlockId;
   let user;
@@ -1241,10 +1238,10 @@ export const blockUser = async (req, res, next) => {
       .send({ error: "Error finding blocking users", error });
   }
 
-  return res.status(200).json(blockingUsers.blockingUsers);
-};
+  return res.status(200).json(blockingUsers?.blockingUsers);
+});
 
-export const unblockUser = async (req, res, next) => {
+export const unblockUser = catchAsync(async (req, res, next) => {
   const userId = req.userId;
   const userToUnblockId = req.body.userToUnblockId;
   let user;
@@ -1294,8 +1291,8 @@ export const unblockUser = async (req, res, next) => {
       .send({ error: "Error finding blocking users", error });
   }
 
-  return res.status(200).json(blockingUsers.blockingUsers);
-};
+  return res.status(200).json(blockingUsers?.blockingUsers);
+});
 
 export const followAnnotationSuccess = async (req, res, next) => {
   res.status(200).json(req.locals.response);

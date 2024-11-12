@@ -41,6 +41,10 @@ export class AddMaterialComponent implements OnInit {
   @Input() courseID?: string;
   @Input() topicID?: string;
   @Input() channelID?: string;
+  @Input() canAddPdf?: boolean;
+  @Input() canAddVideo?: boolean;
+  @Input() canDeletePdf?: boolean;
+  @Input() canDeleteVideo?: boolean;
 
   materialType: string = '';
   materialId: Material;
@@ -234,6 +238,10 @@ export class AddMaterialComponent implements OnInit {
             /* this.validateForm['url'].setValue = ''; */
           }
         },
+        error: (err) => {
+          console.error(err);
+          alert('An error occurred while adding the material.');
+        },
       });
     if (result != null) {
     }
@@ -281,7 +289,7 @@ export class AddMaterialComponent implements OnInit {
    */
   showInfo(msg) {
     this.messageService.add({
-      severity: 'success',
+      severity: 'info',
       summary: 'Success',
       detail: msg,
     });

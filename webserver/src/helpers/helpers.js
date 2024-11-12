@@ -11,12 +11,14 @@ const Reply = db.reply;
 const Tag = db.tag;
 const Activity = db.activity;
 const BlockingNotifications = db.blockingNotifications;
+import catchAsync from "./catchAsync";
+
 
 const crypto = require("crypto");
 
 //write a method to make a new document in the blockingNotification collection. The argumetns for the method will be the courseID and the userID. and according to the default notifications variables in the course document set the notifications variables for the materials, channels, topics.
 
-export const initialiseNotificationSettings = async (course, user) => {
+export const initialiseNotificationSettings = catchAsync(async (course, user) => {
   let userCourses = user.courses;
   let courseUserEnrolledTo = userCourses.find((userCourse) => {
     return userCourse.courseId.equals(course._id);
@@ -115,7 +117,7 @@ export const initialiseNotificationSettings = async (course, user) => {
 
   blockingNotification = await blockingNotification.save();
   return blockingNotification;
-};
+});
 
 export const generateMboxAndMboxSha1Sum = (email) => {
   let mailbox = `mailto:${email}`;

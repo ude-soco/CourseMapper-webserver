@@ -17,6 +17,10 @@ const socketio = require("../socketio");
 const BlockingNotification = db.blockingNotifications;
 const helpers = require("../helpers/helpers");
 const notifications = require("../middlewares/Notifications/notifications");
+import catchAsync from "../helpers/catchAsync";
+import { utili } from "../middlewares";
+
+
 const {
   getNotificationSettingsWithFollowingAnnotations,
 } = require("../middlewares/Notifications/notifications");
@@ -25,68 +29,72 @@ const {
  * Get all courses controller
  *
  */
-export const getAllCourses = async (req, res) => {
-  let courses;
-  try {
-    courses = await Course.find({})
-      .populate("topics", "-__v")
-      .populate({ path: "users", populate: { path: "role" } });
-  } catch (err) {
-    return res.status(500).send({ message: err });
-  }
+export const getAllCourses = catchAsync(async (req, res, next) => {
+  let courses = await Course.find({})
+    .populate("topics", "-__v")
+    .populate({ path: "users", populate: { path: "role" } });
+
+
   let results = [];
-  courses.forEach((c) => {
-    let course = {
-      _id: c.id,
-      name: c.name,
-      shortName: c.shortName,
-      description: c.description,
-      numberTopics: c.topics.length,
-      numberChannels: c.channels.length,
-      numberUsers: c.users.length,
-      channels: c.channels,
-      createdAt: c.createdAt,
-      users: c.users,
-    };
-    results.push(course);
-  });
+  if (courses.length > 0) {
+    courses.forEach((c) => {
+      let course = {
+        _id: c.id,
+        name: c.name,
+        shortName: c.shortName,
+        description: c.description,
+        numberTopics: c.topics.length,
+        numberChannels: c.channels.length,
+        numberUsers: c.users.length,
+        channels: c.channels,
+        createdAt: c.createdAt,
+        users: c.users,
+      };
+      results.push(course);
+    });
+  }
   return res.status(200).send(results);
-};
+});
+
 /**
  * @function getMyCourses
  * Get all courses the logged in user is enrolled in controller
  *
  */
-export const getMyCourses = async (req, res) => {
-  let user;
+export const getMyCourses = catchAsync(async (req, res, next) => {
   let userId = req.userId;
   let results = [];
-  try {
-    user = await User.findById(userId)
-      .populate({ path: "courses", populate: { path: "role" } })
-      .populate({ path: "courses", populate: { path: "courseId" } });
-  } catch (err) {
+
+
+  let user = await User.findById(userId)
+    .populate({ path: "courses", populate: { path: "role" } })
+    .populate({ path: "courses", populate: { path: "courseId" } });
+
+  if (!user) {
     return res.status(500).send({ message: "Error finding user" });
   }
 
   user.courses?.forEach((object) => {
     let course = {
       _id: object?.courseId?._id,
-      name: object?.courseId.name,
-      shortName: object?.courseId.shortName,
-      description: object?.courseId.description,
-      numberTopics: object?.courseId.topics?.length,
-      numberChannels: object?.courseId.channels?.length,
-      numberUsers: object?.courseId.users?.length,
+      name: object?.courseId?.name,
+      shortName: object?.courseId?.shortName,
+      description: object?.courseId?.description,
+      numberTopics: object?.courseId?.topics?.length,
+      numberChannels: object?.courseId?.channels?.length,
+      numberUsers: object?.courseId?.users?.length,
       role: object?.role?.name,
       channels: object?.courseId?.channels,
       createdAt: object?.courseId?.createdAt,
       users: object?.courseId?.users,
+      co_teacher_permissions: object?.courseId?.co_teacher_permissions,
+      blockedUsers: object?.courseId?.blockedUsers,
+      non_editing_teacher_permissions: object?.courseId?.non_editing_teacher_permissions,
     };
     results.push(course);
   });
   return res.status(200).send(results);
-};
+});
 
 /**
  * @function getCourse
@@ -118,20 +126,13 @@ export const getMyCourses = async (req, res) => {
  *
  * @param {string} req.params.courseId The id of the course
  */
-export const getCourse = async (req, res) => {
+export const getCourse = catchAsync(async (req, res, next) => {
   const courseId = req.params.courseId;
   const userId = req.userId; //"63387f529dd66f86548d3537"
 
-  let foundUser;
-  try {
-    foundUser = await User.findById(userId);
-    if (!foundUser) {
-      return res.status(404).send({
-        error: `User not found!`,
-      });
-    }
-  } catch (err) {
-    return res.status(500).send({ error: "Error finding user" });
+  let foundUser = await User.findById(userId);
+  if (!foundUser) {
+    return res.status(404).send({ error: `User not found!` });
   }
 
   let foundCourse;
@@ -325,16 +326,39 @@ export const getCourse = async (req, res) => {
     ]); */
     foundCourse = await Course.findById(courseId)
       .populate("topics", "-__v")
-      .populate({ path: "users", populate: { path: "role" } })
+      .populate({ path: "users", populate: [{ path: "role" }, { path: "userId" }] })
       .populate({ path: "topics", populate: { path: "channels" } });
+
     if (!foundCourse) {
-      return res.status(404).send({
-        error: `Course with id ${courseId} doesn't exist!`,
-      });
+      return res.status(404).send({ error: `Course with id ${courseId} doesn't exist!` });
     }
   } catch (err) {
     return res.status(500).send({ message: "Error finding a course" });
   }
+
+
+  // Check if the current user is blocked from the course
+  const isUserBlocked = foundCourse.blockedUsers.some(
+    (blockedUserId) => blockedUserId.toString() === userId.toString()
+  );
+
+
+  // add user role in this course
+  const userRole = foundCourse.users.find(
+    (ele) => ele?.userId?._id.toString() === userId.toString()
+  );
+  if (userRole) {
+    foundCourse.role = userRole.role.name;
+  }
+
+
+  if (isUserBlocked) {
+    return res.status(403).send({
+      error: "You are blocked from accessing this course.",
+    });
+  }
+
+
 
   let notificationSettings;
   try {
@@ -343,16 +367,33 @@ export const getCourse = async (req, res) => {
       courseId: courseId,
     }); */
 
-    notificationSettings =
-      await getNotificationSettingsWithFollowingAnnotations(courseId, userId);
+    notificationSettings = 
+    await getNotificationSettingsWithFollowingAnnotations(courseId, userId);
   } catch (err) {
     return res
       .status(500)
       .send({ message: "Error finding notification settings" });
   }
 
+  const course = {
+    _id: foundCourse?._id,
+    blockedUsers: foundCourse?.blockedUsers,
+    channels: foundCourse?.channels,
+    description: foundCourse?.description,
+    indicators: foundCourse?.indicators,
+    name: foundCourse?.name,
+    shortName: foundCourse?.shortName,
+    topics: foundCourse?.topics,
+    users: foundCourse?.users,
+    role: userRole.role.name,
+    createdAt: foundCourse?.createdAt,
+    updatedAt: foundCourse?.updatedAt,
+    co_teacher_permissions: foundCourse?.co_teacher_permissions,
+    non_editing_teacher_permissions: foundCourse?.non_editing_teacher_permissions,
+  }
+
   return res.status(200).send({
-    course: foundCourse,
+    course,
     notificationSettings: notificationSettings[0],
   });
 
@@ -379,7 +420,7 @@ export const getCourse = async (req, res) => {
   //   user: foundUser,
   // };
   // return next();
-};
+});
 
 /**
  * @function enrolCourse
@@ -388,7 +429,7 @@ export const getCourse = async (req, res) => {
  * @param {string} req.params.courseId The id of the course
  * @param {string} req.userId The user enrolling in the course
  */
-export const enrolCourse = async (req, res, next) => {
+export const enrolCourse = catchAsync(async (req, res, next) => {
   const courseId = req.params.courseId;
   const userId = req.userId;
 
@@ -473,7 +514,7 @@ export const enrolCourse = async (req, res, next) => {
       .status(403)
       .send({ error: `User already enrolled in course ${foundCourse.name}` });
   }
-};
+});
 
 export const getCourseOriginal = async (req, res, next) => {
   const courseId = req.params.courseId;
@@ -535,7 +576,7 @@ export const getCourseOriginal = async (req, res, next) => {
  * @param {string} req.params.courseId The id of the course
  * @param {string} req.userId The user enrolling in the course
  */
-export const withdrawCourse = async (req, res, next) => {
+export const withdrawCourse = catchAsync(async (req, res, next) => {
   const courseId = req.params.courseId;
   const userId = req.userId;
 
@@ -613,7 +654,7 @@ export const withdrawCourse = async (req, res, next) => {
     course: foundCourse,
   };
   return next();
-};
+});
 
 /**
  * @function newCourse
@@ -623,15 +664,14 @@ export const withdrawCourse = async (req, res, next) => {
  * @param {string} req.body.description The description of the course, e.g., Teaching students about modern web technologies
  * @param {string} req.userId The owner of the course
  */
-export const newCourse = async (req, res, next) => {
-  const courseName = req.body.name;
-  const courseDesc = req.body.description;
+export const newCourse = catchAsync(async (req, res, next) => {
+  const { courseName, courseDesc } = req.body;
   let shortName = req.body.shortname;
   const userId = req.userId;
 
   let foundUser;
   try {
-    foundUser = await User.findById(userId);
+    foundUser = await User.findById(userId).populate("role", "-__v");
     if (!foundUser) {
       return res.status(404).send({
         error: `User not found!`,
@@ -658,13 +698,10 @@ export const newCourse = async (req, res, next) => {
         }
       })
       .join("");
-  }
-  let foundRole;
-  try {
-    foundRole = await Role.findOne({ name: "moderator" });
-  } catch (err) {
-    return res.status(500).send({ error: "Error finding role" });
-  }
+  };
+
+  let foundRole = await Role.findOne({ name: "teacher" });
+
   let userList = [];
   let newUser = {
     userId: foundUser._id,
@@ -732,7 +769,247 @@ export const newCourse = async (req, res, next) => {
 
   req.locals.response.updatedNotificationSettings = notificationSettings[0];
   return next();
-};
+});
+
+
+/**
+ * @function updateUserRole
+ * Update a user's role in a course
+ *
+ * @param {string} req.params.courseId id of the course
+ * @param {string} req.body.user_id id of the user
+ * @param {string} req.body.role Role to assign ( 'co_teacher' || 'non_editing_teacher')
+ */
+export const updateUserRole = catchAsync(async (req, res, next) => {
+  const { user_id, role } = req.body;
+  const courseId = req.params.courseId;
+
+  if (!ObjectId.isValid(user_id) || !ObjectId.isValid(courseId)) {
+    return res.status(400).send({ error: "Invalid course or user ID!" });
+  }
+
+  const foundCourse = await Course.findById(courseId);
+  if (!foundCourse) {
+    return res.status(404).send({ error: "Course not found!" });
+  }
+
+  const foundUser = await User.findById(user_id);
+  if (!foundUser) {
+    return res.status(404).send({ error: "User not found!" });
+  }
+
+  if (!["co_teacher", "non_editing_teacher", "user"].includes(role)) {
+    return res.status(400).send({ error: "Invalid role!" });
+  }
+
+  const userRole = await Role.findOne({ name: role });
+  if (!userRole) {
+    return res.status(400).send({ error: "Invalid role!" });
+  }
+
+  const existingUserInCourse = foundCourse.users.find((user) => user.userId.toString() === user_id.toString());
+  const existingUserInUserCourses = foundUser.courses.find((course) => course.courseId.toString() === courseId.toString());
+
+  if (existingUserInCourse && existingUserInUserCourses) {
+    if (existingUserInCourse.role.toString() !== userRole._id.toString()) {
+      // Update the role
+      existingUserInCourse.role = userRole._id;
+      existingUserInUserCourses.role = userRole._id;
+    } else {
+      return res.status(403).send({ error: `User has already assigned the role of ${role} for this course!` });
+    }
+  } else {
+    foundCourse.users.push({
+      userId: user_id,
+      role: userRole._id,
+    });
+
+    foundUser.courses.push({
+      courseId: foundCourse._id,
+      role: userRole._id,
+    });
+  }
+
+  await Promise.all([foundCourse.save(), foundUser.save()]);
+
+  await helpers.initialiseNotificationSettings(foundCourse, foundUser);
+
+  const response = {
+    success: `User '${foundUser.username}' added as a ${role} to course '${foundCourse.name}'!`,
+    course: foundCourse,
+  };
+
+  req.locals = {
+    course: foundCourse,
+    user: foundUser,
+    response: response,
+    role
+  };
+
+  const notificationSettings = await notifications.getNotificationSettingsWithFollowingAnnotations(
+    foundCourse._id,
+    req.userId
+  );
+
+  req.locals.response.updatedNotificationSettings = notificationSettings[0];
+  return next();
+});
+
+
+/**
+ * @function updateUserPermissions
+ * Delete a course controller
+ *
+ * @param {string} req.params.courseId The id of the course
+ * @param {string} req.body.user_id id of the user
+ */
+
+export const updateUserPermissions = catchAsync(async (req, res) => {
+  const { permissions, role } = req.body;
+  const courseId = req.params.courseId;
+
+  if (!ObjectId.isValid(courseId)) {
+    return res.status(400).send({ error: "Invalid course!" });
+  }
+
+  if (typeof permissions !== 'object') {
+    return res.status(400).send({ error: "Invalid permissions format!" });
+  }
+
+  if (!["co_teacher", "non_editing_teacher"].includes(role)) {
+    return res.status(400).send({ error: "Invalid role!" });
+  }
+
+  const foundCourse = await Course.findById(courseId);
+  if (!foundCourse) {
+    return res.status(404).send({ error: "Course not found!" });
+  }
+
+  // Update the permissions
+  if (role === "co_teacher") {
+    foundCourse.co_teacher_permissions = permissions;
+  } else if (role === "non_editing_teacher") {
+    foundCourse.non_editing_teacher_permissions = permissions;
+  }
+
+  await foundCourse.save();
+
+  // Send response
+  return res.status(200).json({
+    success: `Permissions updated for course '${foundCourse.name}'!`,
+    course: foundCourse,
+  });
+
+});
+
+
+/**
+ * @function blockUserFromCourse
+ * block User from course
+ *
+ * @param {string} req.params.courseId The id of the course
+ * @param {string} req.body.userIdToBlock The id of the user to block
+ * @param {string} req.userId The owner of the course
+ */
+export const updateUserBlockStatus = catchAsync(async (req, res, next) => {
+  const { targetUserId, status } = req.body;
+  const courseId = req.params.courseId;
+  const currentUserId = req.userId;
+
+  const course = await Course.findById(courseId);
+  if (!course) {
+    return res.status(404).send({ error: "Course not found!" });
+  }
+
+  const targetUser = await User.findById(targetUserId);
+  if (!targetUser) {
+    return res.status(404).send({ error: "User not found!" });
+  }
+
+  // Verify the roles
+  const teacherRole = await Role.findOne({ name: "teacher" });
+  const coTeacherRole = await Role.findOne({ name: "co_teacher" });
+
+  // Checking whether the current user has the role of teacher or co_teacher
+  const isModerator = course.users.some(
+    (user) =>
+      user.userId.toString() === currentUserId.toString() &&
+      (user.role.toString() === teacherRole._id.toString() ||
+        user.role.toString() === coTeacherRole._id.toString())
+  );
+
+  if (isModerator) {
+    const isAlreadyBlocked = course.blockedUsers.some(
+      (user) => user.toString() === targetUserId.toString()
+    );
+
+    if (status) {
+      // Block user if not already blocked
+      if (isAlreadyBlocked) {
+        return res.status(403).send({ error: "User is already blocked from this course!" });
+      }
+      course.blockedUsers.push(targetUserId);
+      await course.save();
+
+      return res.send({
+        success: `'${targetUser.username}' has been blocked from accessing the course '${course.name}'.`,
+      });
+    } else {
+      // Unblock user
+      if (!isAlreadyBlocked) {
+        return res.status(403).send({ error: "User is not blocked from this course!" });
+      }
+      course.blockedUsers = course.blockedUsers.filter(
+        (user) => user.toString() !== targetUserId.toString()
+      );
+      await course.save();
+
+      return res.send({
+        success: `'${targetUser.username}' has been unblocked from accessing the course '${course.name}'.`,
+      });
+    }
+  } else {
+    // For users managing their personal block lists
+    const isBlockedByCurrentUser = targetUser.blockedByUser.includes(currentUserId);
+
+    if (status) {
+      // Block user
+      if (isBlockedByCurrentUser) {
+        return res.status(403).send({ error: "User is already blocked!" });
+      }
+      targetUser.blockedByUser.push(currentUserId);
+      await targetUser.save();
+
+      await db.user.findByIdAndUpdate(
+        currentUserId, { $push: { blockingUsers: targetUser._id } } // Use $push to add to the array
+      );
+
+      return res.send({
+        success: `'${targetUser.username}' has been blocked.`,
+      });
+    } else {
+      // Unblock user
+      if (!isBlockedByCurrentUser) {
+        return res.status(403).send({ error: "User is not blocked!" });
+      }
+      targetUser.blockedByUser = targetUser.blockedByUser.filter(
+        (blockedId) => blockedId.toString() !== currentUserId.toString()
+      );
+      await targetUser.save();
+
+      await db.user.findByIdAndUpdate(
+        currentUserId, { $pull: { blockingUsers: targetUser._id } }
+      );
+
+      return res.send({
+        success: `'${targetUser.username}' has been unblocked.`,
+      });
+    }
+  }
+});
+
+
+
 
 /**
  * @function deleteCourse
@@ -741,7 +1018,7 @@ export const newCourse = async (req, res, next) => {
  * @param {string} req.params.courseId The id of the course
  * @param {string} req.userId The owner of the course
  */
-export const deleteCourse = async (req, res, next) => {
+export const deleteCourse = catchAsync(async (req, res, next) => {
   const courseId = req.params.courseId;
 
   let foundCourse;
@@ -907,7 +1184,7 @@ export const deleteCourse = async (req, res, next) => {
   };
 
   return next();
-};
+});
 
 /**
  * @function editCourse
@@ -917,57 +1194,46 @@ export const deleteCourse = async (req, res, next) => {
  * @param {string} req.body.name The edited name of the course
  * @param {string} req.body.description The edited description of the course
  */
-export const editCourse = async (req, res, next) => {
-  const courseId = req.params.courseId;
-  const courseName = req.body.name;
-  const courseDesc = req.body.description;
-  const userId = req.userId;
+export const editCourse = catchAsync(async (req, res, next) => {
+  const { courseId } = req.params;
+  const { name: courseName, description: courseDesc } = req.body;
+  const { userId } = req;
 
-  let foundCourse;
-  try {
-    foundCourse = await Course.findById(courseId);
-    if (!foundCourse) {
-      return res.status(404).send({
-        error: `Course with id ${courseId} doesn't exist!`,
-      });
-    }
-  } catch (err) {
-    return res.status(500).send({ error: "Error finding course" });
-  }
-  req.locals = {};
-  req.locals.oldCourse = JSON.parse(JSON.stringify(foundCourse));
-  let shortName = courseName
-    .split(" ")
-    .map((word, index) => {
-      if (index < 3) {
-        return word[0];
-      }
-    })
-    .join("");
-  foundCourse.name = courseName;
-  foundCourse.shortName = shortName;
-  foundCourse.description = courseDesc;
-  foundCourse.updatedAt = Date.now();
-  let foundUser;
-  try {
-    foundUser = await User.findById(userId);
-  } catch (err) {
-    return res.status(500).send({ error: "Error finding user" });
-  }
+  let foundCourse = await Course.findById(courseId);
+  const foundUser = await User.findById(userId);
 
-  try {
-    await foundCourse.save();
-  } catch (err) {
-    return res.status(500).send({ error: "Error saving course" });
-  }
-
-  req.locals.response = {
-    success: `Course '${courseName}' has been updated successfully!`,
+  if (!foundCourse) {
+    return res.status(404).send({ error: `Course with id ${courseId} doesn't exist!` });
   };
-  req.locals.user = foundUser;
+
+  req.locals = {
+    oldCourse: JSON.parse(JSON.stringify(foundCourse)),
+    user: foundUser,
+  };
+
+  // Update course name
+  if (courseName && utili.permissionsChecker(req, "can_edit_course_name")) {
+    foundCourse.shortName = courseName.split(" ").slice(0, 3).map(word => word[0]).join("");
+    foundCourse.name = courseName;
+    req.locals.response = { success: `${foundCourse.name}'s name has been updated!` };
+  } 
+  // Update course description
+  else if (courseDesc && utili.permissionsChecker(req, "can_edit_course_description")) {
+    foundCourse.description = courseDesc;
+    req.locals.response = { success: `${foundCourse.name}'s description has been updated!` };
+  } 
+  // No updates made
+  else {
+    return res.status(400).json({ error: 'No valid update fields provided or insufficient permissions.' });
+  }
+
+  // Save updates and proceed
+  foundCourse.updatedAt = Date.now();
+  await foundCourse.save();
   req.locals.newCourse = foundCourse;
+
   return next();
-};
+});
 
 /**
  * @function newIndicator
@@ -979,7 +1245,7 @@ export const editCourse = async (req, res, next) => {
  * @param {string} req.body.height The height of the iframe
  * @param {string} req.body.frameborder The frameborder of the iframe
  */
-export const newIndicator = async (req, res, next) => {
+export const newIndicator = catchAsync(async (req, res, next) => {
   const courseId = req.params.courseId;
 
   let foundCourse;
@@ -1014,7 +1280,7 @@ export const newIndicator = async (req, res, next) => {
     success: `Indicator added successfully!`,
     indicator: indicator,
   });
-};
+});
 
 /**
  * @function deleteIndicator
@@ -1023,7 +1289,7 @@ export const newIndicator = async (req, res, next) => {
  * @param {string} req.params.courseId The id of the course
  * @param {string} req.params.indicatorId The id of the indicator
  */
-export const deleteIndicator = async (req, res, next) => {
+export const deleteIndicator = catchAsync(async (req, res, next) => {
   const courseId = req.params.courseId;
   const indicatorId = req.params.indicatorId;
 
@@ -1058,7 +1324,7 @@ export const deleteIndicator = async (req, res, next) => {
   return res.status(200).send({
     success: `Indicator deleted successfully!`,
   });
-};
+});
 
 /**
  * @function getIndicators
@@ -1066,7 +1332,7 @@ export const deleteIndicator = async (req, res, next) => {
  *
  * @param {string} req.params.courseId The id of the course
  */
-export const getIndicators = async (req, res, next) => {
+export const getIndicators = catchAsync(async (req, res, next) => {
   const courseId = req.params.courseId;
 
   let foundCourse;
@@ -1084,7 +1350,7 @@ export const getIndicators = async (req, res, next) => {
   const response = foundCourse.indicators ? foundCourse.indicators : [];
 
   return res.status(200).send(response);
-};
+});
 
 /**
  * @function resizeIndicator
@@ -1095,7 +1361,7 @@ export const getIndicators = async (req, res, next) => {
  * @param {string} req.params.width The width of the indicator
  * @param {string} req.params.height The height of the indicator
  */
-export const resizeIndicator = async (req, res, next) => {
+export const resizeIndicator = catchAsync(async (req, res, next) => {
   const courseId = req.params.courseId;
   const indicatorId = req.params.indicatorId;
   const width = req.params.width;
@@ -1133,7 +1399,7 @@ export const resizeIndicator = async (req, res, next) => {
   }
 
   return res.status(200).send();
-};
+});
 
 /**
  * @function reorderIndicators
@@ -1143,7 +1409,7 @@ export const resizeIndicator = async (req, res, next) => {
  * @param {string} req.params.newIndex The newIndex of the reordered indicator
  * @param {string} req.params.oldIndex The oldIndex of the reordered indicator
  */
-export const reorderIndicators = async (req, res, next) => {
+export const reorderIndicators = catchAsync(async (req, res, next) => {
   const courseId = req.params.courseId;
   const newIndex = parseInt(req.params.newIndex);
   const oldIndex = parseInt(req.params.oldIndex);
@@ -1179,9 +1445,10 @@ export const reorderIndicators = async (req, res, next) => {
     success: `Indicators updated successfully!`,
     indicators: foundCourse.indicators,
   });
-};
+});
 
-export const getCourseTest = async (req, res) => {
+
+export const getCourseTest = catchAsync(async (req, res, next) => {
   const courseId = req.params.courseId;
   const userId = req.userId; //"63387f529dd66f86548d3537"
 
@@ -1412,4 +1679,4 @@ export const getCourseTest = async (req, res) => {
     return res.status(500).send({ message: "Error finding a course", err });
   } */
   return res.status(200).send(foundCourse[0]);
-};
+});

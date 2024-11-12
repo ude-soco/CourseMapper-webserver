@@ -1,7 +1,8 @@
-const { authJwt } = require("../middlewares");
+const { authJwt, utili } = require("../middlewares");
 const controller = require("../controllers/course.controller");
 const logger = require("../activity-logger/logger-middlewares/course-logger");
 const { getCourseOriginal } = require("../controllers/course.controller");
+const { emailRoleAssignmentMiddleware } = require("../middlewares/email.middlewares");
 // const controller2 = require("../controllers/user.controller");
 
 module.exports = function (app) {
@@ -40,8 +41,33 @@ module.exports = function (app) {
     "/api/course",
     [authJwt.verifyToken],
     controller.newCourse,
-    logger.createCourseLogger,
+    logger.createCourseLogger
   );
+
+
+  // Update Student Role
+  app.post(
+    "/api/course/:courseId/update-user-role",
+    [authJwt.verifyToken, authJwt.isModerator],
+    controller.updateUserRole,
+    emailRoleAssignmentMiddleware,
+  );
+
+  // Update Co Teacher Permissions
+  app.post(
+    "/api/course/:courseId/update-user-permissions",
+    [authJwt.verifyToken, authJwt.isModerator],
+    controller.updateUserPermissions,
+  );
+
+
+  // Block/Unblock Users from course
+  app.post(
+    "/api/course/:courseId/edit-block-user",
+    [authJwt.verifyToken],
+    controller.updateUserBlockStatus
+  );
+
 
   // Enrol in a course
   app.post(
@@ -64,7 +90,7 @@ module.exports = function (app) {
   // Only moderator/admin
   app.delete(
     "/api/courses/:courseId",
-    [authJwt.verifyToken, authJwt.isModerator],
+    [authJwt.verifyToken, authJwt.isModeratorOrCo, utili.isPermissionAllowed('can_delete_course')],
     controller.deleteCourse,
     logger.deleteCourseLogger,
     // controller2.moderatorBoard
@@ -74,7 +100,7 @@ module.exports = function (app) {
   // Only moderator/admin
   app.put(
     "/api/courses/:courseId",
-    [authJwt.verifyToken, authJwt.isModerator],
+    [authJwt.verifyToken, authJwt.isModeratorOrCo],
     controller.editCourse,
     logger.editCourseLogger,
   );

@@ -43,6 +43,7 @@ import { Notification } from 'src/app/models/Notification';
 import { getLastTimeCourseMapperOpened } from 'src/app/state/app.reducer';
 import { IntervalService } from 'src/app/services/interval.service';
 import { AnnotationService } from 'src/app/services/annotation.service';
+import { StorageService } from 'src/app/services/storage.service';
 @Component({
   selector: 'app-topic-dropdown',
   templateUrl: './topic-dropdown.component.html',
@@ -67,7 +68,9 @@ export class TopicDropdownComponent implements OnInit {
     private changeDetectorRef: ChangeDetectorRef,
     protected fb: FormBuilder,
     private intervalService: IntervalService,
-    private annotationService: AnnotationService
+    private annotationService: AnnotationService,
+    private storageService: StorageService,
+
   ) {
     const url = this.router.url;
     if (url.includes('course') && url.includes('channel')) {
@@ -89,6 +92,8 @@ export class TopicDropdownComponent implements OnInit {
     }
   }
   @Input() showModeratorPrivileges: boolean;
+  @Input() permissions: object;
+  @Input() userRole: string;
   @ViewChild('topicMenu') topicMenu: any;
   @ViewChild('channelMenu') channelMenu: any;
   followingAnnotations: Annotation[] = [];
@@ -120,6 +125,8 @@ export class TopicDropdownComponent implements OnInit {
   topicIdOfTopicMenuClicked: string = null;
   lastTopicClickedNotificationSettingsSubscription: Subscription;
   lastChannelClickedNotificationSettingsSubscription: Subscription;
+  user = this.storageService.getUser();
+
 
   notificationSettingsOfLastTopicMenuClicked$: Observable<
     {
@@ -239,6 +246,18 @@ export class TopicDropdownComponent implements OnInit {
         }));
       });
   }
+  
+  canAccess(perm: string): boolean {
+    const isAdminOrTeacher = this.userRole === 'teacher' || this.user?.role?.name === 'admin';
+
+    if (isAdminOrTeacher) {
+      return true;
+    } else if (this.showModeratorPrivileges && this.permissions?.[perm]) {
+      return true;
+    }
+    return false;
+  }
+
   getTopicActivityIndicator(topicId: string) {
     return combineLatest([
       this.allNotifications$,

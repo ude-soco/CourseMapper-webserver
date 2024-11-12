@@ -7,6 +7,8 @@ const User = db.user;
 const Annotation = db.annotation;
 const Reply = db.reply;
 const Tag = db.tag;
+import catchAsync from "../helpers/catchAsync";
+
 
 const BlockingNotifications = db.blockingNotifications;
 const ObjectId = require("mongoose").Types.ObjectId;
@@ -18,7 +20,7 @@ const ObjectId = require("mongoose").Types.ObjectId;
  * @param {string} req.params.courseId The id of the course
  * @param {string} req.params.channelId The id of the channel
  */
-export const getChannel = async (req, res) => {
+export const getChannel = catchAsync(async (req, res, next) => {
   const channelId = req.params.channelId;
   const courseId = req.params.courseId;
   const userId = req.userId;
@@ -189,7 +191,7 @@ export const getChannel = async (req, res) => {
   }
 
   return res.status(200).send({ channel: foundChannel, notificationSettings });
-};
+});
 
 export const getChannelLog = async (req, res, next) => {
   const channelId = req.params.channelId;
@@ -242,7 +244,7 @@ export const getChannelLog = async (req, res, next) => {
  * @param {string} req.body.description The description of the channel, e.g., Teaching about React
  * @param {string} req.userId The owner of the channel
  */
-export const newChannel = async (req, res, next) => {
+export const newChannel = catchAsync(async (req, res, next) => {
   const topicId = req.params.topicId;
   const channelName = req.body.name;
   const channelDesc = req.body.description;
@@ -317,7 +319,7 @@ export const newChannel = async (req, res, next) => {
     category: "courseupdates",
   };
   return next();
-};
+});
 
 //TODO - update the course after the channel has been deleted
 //in the below method
@@ -328,7 +330,7 @@ export const newChannel = async (req, res, next) => {
  * @param {string} req.params.courseId The id of the course
  * @param {string} req.params.channelId The id of the channel
  */
-export const deleteChannel = async (req, res, next) => {
+export const deleteChannel = catchAsync(async (req, res, next) => {
   const channelId = req.params.channelId;
   const courseId = req.params.courseId;
   const userId = req.userId;
@@ -428,7 +430,7 @@ export const deleteChannel = async (req, res, next) => {
     isDeletingChannel: true,
   };
   return next();
-};
+});
 
 /**
  * @function editChannel
@@ -439,7 +441,7 @@ export const deleteChannel = async (req, res, next) => {
  * @param {string} req.body.name The new name of the channel
  * @param {string} req.body.description The new description of the channel
  */
-export const editChannel = async (req, res, next) => {
+export const editChannel = catchAsync(async (req, res, next) => {
   const channelId = req.params.channelId;
   const courseId = req.params.courseId;
   const channelName = req.body.name;
@@ -508,7 +510,7 @@ export const editChannel = async (req, res, next) => {
   req.locals.course = course;
   req.locals.channel = foundChannel;
   return next();
-};
+});
 
 
 /**
@@ -521,7 +523,7 @@ export const editChannel = async (req, res, next) => {
  * @param {string} req.body.height The height of the iframe
  * @param {string} req.body.frameborder The frameborder of the iframe
  */
-export const newIndicator = async (req, res, next) => {
+export const newIndicator = catchAsync(async (req, res, next) => {
   const channelId = req.params.channelId;
 
   let foundChannel;
@@ -556,7 +558,7 @@ export const newIndicator = async (req, res, next) => {
     success: `Indicator added successfully!`,
     indicator: indicator,
   });
-}
+});
 
 /**
  * @function deleteIndicator
@@ -565,14 +567,14 @@ export const newIndicator = async (req, res, next) => {
  * @param {string} req.params.channelId The id of the channel
  * @param {string} req.params.indicatorId The id of the indicator
  */
-export const deleteIndicator = async (req, res, next) => {
+export const deleteIndicator = catchAsync(async (req, res, next) => {
   const channelId = req.params.channelId;
   const indicatorId = req.params.indicatorId;
 
   let  foundChannel;
   try {
     foundChannel = await Channel.findOne({ "indicators._id": indicatorId });
-    if (! foundChannel) {
+    if (!foundChannel) {
       return res.status(404).send({
         error: `channel with id ${channelId} doesn't exist!`,
       });
@@ -599,7 +601,7 @@ export const deleteIndicator = async (req, res, next) => {
   return res.status(200).send({
     success: `Indicator deleted successfully!`,
   });
-}
+});
 
 /**
  * @function getIndicators
@@ -607,10 +609,10 @@ export const deleteIndicator = async (req, res, next) => {
  *
  * @param {string} req.params.channelId The id of the channel
  */
-export const getIndicators = async (req, res, next) => {
+export const getIndicators = catchAsync(async (req, res, next) => {
   const channelId = req.params.channelId;
 
-  let  foundChannel;
+  let foundChannel;
   try {
     foundChannel = await Channel.findById(channelId);
     if (!foundChannel) {
@@ -625,7 +627,7 @@ export const getIndicators = async (req, res, next) => {
   const response =  foundChannel.indicators ?  foundChannel.indicators : [];
 
   return res.status(200).send(response);
-};
+});
 
 
 /**
@@ -637,7 +639,7 @@ export const getIndicators = async (req, res, next) => {
  * @param {string} req.params.width The width of the indicator
  * @param {string} req.params.height The height of the indicator
  */
-export const resizeIndicator = async (req, res, next) => {
+export const resizeIndicator = catchAsync(async (req, res, next) => {
   const channelId = req.params.channelId;
   const indicatorId = req.params.indicatorId;
   const width = req.params.width;
@@ -675,7 +677,7 @@ export const resizeIndicator = async (req, res, next) => {
   }
 
   return res.status(200).send();
-};
+});
 
 /**
  * @function reorderIndicators
@@ -685,7 +687,7 @@ export const resizeIndicator = async (req, res, next) => {
  * @param {string} req.params.newIndex The newIndex of the reordered indicator
  * @param {string} req.params.oldIndex The oldIndex of the reordered indicator
  */
-export const reorderIndicators = async (req, res, next) => {
+export const reorderIndicators = catchAsync(async (req, res, next) => {
   const channelId = req.params.channelId;
   const newIndex = parseInt(req.params.newIndex);
   const oldIndex = parseInt(req.params.oldIndex);
@@ -701,14 +703,14 @@ export const reorderIndicators = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: "Error finding channel" });
   }
-  let indicator =  foundChannel.indicators[oldIndex];
+  let indicator = foundChannel.indicators[oldIndex];
   if (oldIndex < newIndex) {
     for (let i = oldIndex; i < newIndex; i++) {
-      foundChannel.indicators[i] =  foundChannel.indicators[i + 1];
+      foundChannel.indicators[i] = foundChannel.indicators[i + 1];
     }
   } else {
     for (let i = oldIndex; i > newIndex; i--) {
-      foundChannel.indicators[i] =  foundChannel.indicators[i - 1];
+      foundChannel.indicators[i] = foundChannel.indicators[i - 1];
     }
   }
   foundChannel.indicators[newIndex] = indicator;
@@ -719,8 +721,8 @@ export const reorderIndicators = async (req, res, next) => {
   }
   return res.status(200).send({
     success: `Indicators updated successfully!`,
-    indicators:  foundChannel.indicators,
+    indicators: foundChannel.indicators,
   });
-};
+});
 
 

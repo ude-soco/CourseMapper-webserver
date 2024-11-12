@@ -64,6 +64,8 @@
               [checkBoxesArray]="checkBoxesArray"
               (renameClicked)="onRenameTopic()"
               (deleteClicked)="onDeleteTopic()"
+              [canRename]="canAccess('can_rename_topics')"
+              [canDelete]="canAccess('can_delete_topics')"
               (viewTopicDashboardClicked)="viewDashboardClicked()"
               [topicSettingChosen]="true"
               (resetButtonClicked)="onResetTopicNotificationsClicked()"
@@ -148,6 +150,8 @@
                 resetTo="topic"
                 (renameClicked)="onRenameChannel()"
                 (deleteClicked)="onDeleteChannel()"
+                [canRename]="canAccess('can_rename_channels')"
+                [canDelete]="canAccess('can_delete_channels')"
                 (resetButtonClicked)="onResetChannelNotificationsClicked()"
                 (notificationSettingClicked)="
                   onChannelNotificationSettingsClicked($event)
@@ -191,6 +195,8 @@
                   resetTo="topic"
                   (renameClicked)="onRenameChannel()"
                   (deleteClicked)="onDeleteChannel()"
+                  [canRename]="canAccess('can_rename_channels')"
+                  [canDelete]="canAccess('can_delete_channels')"
                   (resetButtonClicked)="onResetChannelNotificationsClicked()"
                   (notificationSettingClicked)="
                     onChannelNotificationSettingsClicked($event)
@@ -317,7 +323,7 @@
       <div
         class="pl-5 py-1 hover:bg-white transition-all"
         (click)="onAddNewChannelClicked(topic)"
-        *ngIf="showModeratorPrivileges"
+        *ngIf="canAccess('can_create_channel')"
       >
         <div class="flex flex-row items-center">
           <app-iconbutton
@@ -390,6 +396,8 @@
               resetTo="course"
               (renameClicked)="onRenameTopic()"
               (deleteClicked)="onDeleteTopic()"
+              [canRename]="canAccess('can_rename_topics')"
+              [canDelete]="canAccess('can_delete_topics')"
               (viewTopicDashboardClicked)="viewDashboardClicked()"
               [topicSettingChosen]="true"
               (resetButtonClicked)="onResetTopicNotificationsClicked()"

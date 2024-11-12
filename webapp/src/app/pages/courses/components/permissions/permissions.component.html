@@ -1,0 +1,54 @@
+<p-accordion [activeIndex]="0">
+  <p-accordionTab
+    *ngFor="let item of permissions"
+    [header]="item.name.split('_').join(' ')"
+    style="text-transform: capitalize"
+  >
+    <div class="permissions-form" *ngFor="let data of item.data">
+      <div class="permission-category">
+        <div class="flex mb-3">
+          <p-checkbox
+            [(ngModel)]="data.role.checked"
+            [inputId]="item.name + data.role.title"
+            [binary]="true"
+            (onChange)="toggleAllPermissions(data, $event)"
+          ></p-checkbox>
+          <label [for]="item.name + data.role.title" class="ml-2">{{
+            data.role.title
+          }}</label>
+        </div>
+      </div>
+
+      <div class="permission-category">
+        <div
+          class="permission-item ml-4"
+          *ngFor="let ele of data.list; let i = index"
+        >
+          <p-checkbox
+            [(ngModel)]="ele.checked"
+            [inputId]="item.name + data.role.title + i + ele.name"
+            [binary]="true"
+            (onChange)="uncheckParent(data)"
+          ></p-checkbox>
+          <label [for]="item.name + data.role.title + i + ele.name">{{
+            formatPermissionLabel(ele.label)
+          }}</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="w-100 text-end">
+      <button
+        pButton
+        pRipple
+        label="Save Permissions"
+        (click)="savePermissions(item)"
+      ></button>
+    </div>
+  </p-accordionTab>
+</p-accordion>
+
+<!-- Loading Overlay -->
+<div *ngIf="isLoading" class="loading-overlay">
+  <p-progressSpinner ariaLabel="loading" />
+</div>

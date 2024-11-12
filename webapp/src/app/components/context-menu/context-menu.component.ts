@@ -7,6 +7,8 @@ import { FormControl, FormGroup } from '@angular/forms';
 })
 export class ContextMenuComponent {
   @Input() showModeratorPrivileges: boolean;
+  @Input() canRename: boolean = true;
+  @Input() canDelete: boolean = true;
   @Input() checkBoxesGroup: FormGroup<{}>;
   @Input() isResetButtonEnabled: boolean;
   @Input() topicSettingChosen: boolean = false;

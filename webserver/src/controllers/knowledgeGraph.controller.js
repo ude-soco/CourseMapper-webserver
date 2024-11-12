@@ -1,11 +1,12 @@
 const fs = require('fs').promises;
 const process = require('process');
-const axios = require("axios");
 const socketio = require("../socketio");
 const db = require("../models");
 const User = db.user;
 const Role = db.role;
 const Material = db.material;
+import catchAsync from "../helpers/catchAsync";
+
 
 const neo4j = require("../graph/neo4j");
 const redis = require("../graph/redis");
@@ -20,23 +21,23 @@ async function checkIsModerator(req) {
     return false;
   }
   const role = await Role.findById(user.role);
-  if (role.name === "moderator" || role.name === "admin") {
-    return true;
-  }
-  let courseId = req.params.courseId;
-  if (!courseId) {
-    const material = await Material.findById(req.params.materialId);
-    if (!material) {
-      return false;
+  if (role.name === "teacher" || role.name === "admin") {
+      return true;
     }
-    courseId = material["courseId"].toString();
-  }
+    let courseId = req.params.courseId;
+    if (!courseId) {
+      const material = await Material.findById(req.params.materialId);
+      if (!material) {
+        return false;
+      }
+      courseId = material["courseId"].toString();
+    }
   const course = user.courses.find(
     (item) => item.courseId.valueOf() === courseId
   );
   const courseRole = await Role.findOne({ _id: course.role });
-  if (courseRole.name === "moderator") {
-    return true;
+  if (courseRole.name === "teacher") {
+    return true
   }
 }
 
@@ -52,7 +53,7 @@ async function isAuthorized(req) {
   return true
 }
 
-export const checkSlide = async (req, res) => {
+export const checkSlide = catchAsync(async (req, res) => {
   const slideId = req.params.slideId;
 
   try {
@@ -61,9 +62,9 @@ export const checkSlide = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err.message });
   }
-};
+});
 
-export const getSlide = async (req, res) => {
+export const getSlide = catchAsync(async (req, res, next) => {
   const slideId = req.params.slideId;
 
   try {
@@ -72,9 +73,9 @@ export const getSlide = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err.message });
   }
-};
+});
 
-export const checkMaterial = async (req, res) => {
+export const checkMaterial = catchAsync(async (req, res, next) => {
   const materialId = req.params.materialId;
 
   try {
@@ -86,9 +87,9 @@ export const checkMaterial = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err.message });
   }
-}
+});
 
-export const getMaterial = async (req, res) => {
+export const getMaterial = catchAsync(async (req, res, next) => {
   const materialId = req.params.materialId;
 
   try {
@@ -100,9 +101,9 @@ export const getMaterial = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err.message });
   }
-}
+});
 
-export const deleteMaterial = async (req, res, next) => {
+export const deleteMaterial = catchAsync(async (req, res, next) => {
   const materialId = req.params.materialId;
 
   try {
@@ -111,9 +112,9 @@ export const deleteMaterial = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: err.message });
   }
-}
+});
 
-export const getMaterialSlides = async (req, res) => {
+export const getMaterialSlides = catchAsync(async  (req, res) => {
   const materialId = req.params.materialId;
 
   try {
@@ -122,9 +123,9 @@ export const getMaterialSlides = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err.message });
   }
-}
+});
 
-export const getMaterialEdges = async (req, res) => {
+export const getMaterialEdges = catchAsync(async (req, res, next) => {
   const materialId = req.params.materialId;
 
   try {
@@ -133,9 +134,9 @@ export const getMaterialEdges = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err.message });
   }
-}
+});
 
-export const getMaterialConceptIds = async (req, res) => {
+export const getMaterialConceptIds = catchAsync(async (req, res) => {
   const materialId = req.params.materialId;
 
   try {
@@ -144,9 +145,9 @@ export const getMaterialConceptIds = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err.message });
   }
-}
+});
 
-export const getHigherLevelsNodesAndEdges = async (req, res) => {
+export const getHigherLevelsNodesAndEdges = catchAsync(async (req, res) => {
   let materialIds = req.query.material_ids;
   if (materialIds.constructor !== Array) {
     materialIds = [materialIds];
@@ -163,9 +164,9 @@ export const getHigherLevelsNodesAndEdges = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err.message });
   }
-}
+});
 
-export const setRating = async (req, res) => {
+export const setRating = catchAsync(async (req, res) => {
   const resourceId = req.body.resourceId;
   const concepts = req.body.concepts;
   const userId = req.userId;
@@ -177,7 +178,7 @@ export const setRating = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err.message });
   }
-}
+});
 
 export const conceptMap = async (req, res) => {
   const materialId = req.params.materialId;
@@ -189,25 +190,25 @@ export const conceptMap = async (req, res) => {
   }
   const materialName = material.name;
 
-  const materialPath = process.cwd() + material.url + material._id + '.pdf';
-  const materialData = await fs.readFile(materialPath);
-  
-  const result = await redis.addJob('concept-map', {
-    materialId,
-    materialName,
-  }, async (jobId) => {
-    await redis.addFile(jobId, materialData);
-  }, (result) => {
+    const materialPath = process.cwd() + material.url + material._id + '.pdf';
+    const materialData = await fs.readFile(materialPath);
+
+    const result = await redis.addJob('concept-map', {
+      materialId,
+      materialName,
+    }, async (jobId) => {
+      await redis.addFile(jobId, materialData);
+    }, (result) => {
     socketio.getIO().to("material:"+materialId).emit("log", { result:result } );
 
-    if (res.headersSent) {
-      return;
-    }
-    if (result.error) {
-      return res.status(500).send({ error: result });
-    }
-    return res.status(200).send(result.result);
-  });
+      if (res.headersSent) {
+        return;
+      }
+      if (result.error) {
+        return res.status(500).send({ error: result });
+      }
+      return res.status(200).send(result.result);
+    });
   socketio.getIO().to("material:"+materialId).emit("log", { addJob:result, pipeline:'concept-map'});
 }
 
@@ -217,18 +218,18 @@ export const deleteConcept = async (req, res) => {
   
   await redis.addJob('modify-graph', {
     action: 'remove-concept',
-    materialId,
+      materialId,
     conceptId,
   }, undefined, (result) => {
-    if (res.headersSent) {
-      return;
-    }
+      if (res.headersSent) {
+        return;
+      }
     if (result.error) {
       return res.status(500).send(result);
-    }
-    return res.status(200).send(result.result);
-  });
-}
+      }
+      return res.status(200).send(result.result);
+    });
+  }
 
 export const addConcept = async (req, res) => {
   const materialId = req.params.materialId;
@@ -294,7 +295,7 @@ export const getConcepts = async (req, res) => {
   socketio.getIO().to("material:"+materialId).emit("log", { addJob:result, pipeline:'concept-recommendation'});
 }
 
-export const getResources = async (req, res) => {
+export const getResources = catchAsync(async (req, res) => {
   const materialId = req.params.materialId;
   const userId = req.userId;
   const slideId = req.body.slideId;
@@ -303,7 +304,7 @@ export const getResources = async (req, res) => {
   const newConcepts = req.body.newConcepts;
   socketio.getIO().to("material:"+materialId).emit("log", { called:"recourse recommendation started" } );
 
- const result = await redis.addJob('resource-recommendation', {
+  const result = await redis.addJob('resource-recommendation', {
     materialId,
     userId,
     slideId,
@@ -321,7 +322,7 @@ export const getResources = async (req, res) => {
     return res.status(200).send(result.result);
   });
   socketio.getIO().to("material:"+materialId).emit("log", { addJob:result, pipeline:'resourse-recommendation'});
-}
+});
 
 export const readSlide = async (req, res, next) => {
   const slideNr = req.params.slideNr;

@@ -1,0 +1,74 @@
+<div class="table">
+  <p-table [value]="members" class="w-full mt-10 overflow-visible">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Full-Name</th>
+        <th>User-name</th>
+        <th *ngIf="viewOnly">Current Role</th>
+        <th *ngIf="!viewOnly && course.role !== 'co_teacher'">Change Role</th>
+        <th>Block</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-member>
+      <tr>
+        <td>
+          <div class="flex items-center space-x-2">
+            <p-avatar
+              label="{{ member?.userId.firstname.charAt(0) }}"
+              shape="circle"
+            ></p-avatar>
+            <span>{{
+              member?.userId?.firstname + " " + member?.userId?.lastname || "-"
+            }}</span>
+          </div>
+        </td>
+        <td>{{ member?.userId?.username }}</td>
+        <td *ngIf="viewOnly">
+          {{ member?.role?.name?.split("_")?.join(" ") || "N/A" }}
+        </td>
+        <!-- <td>
+          <p-tag
+            [value]="member.isBlocked ? 'Blocked' : 'Active'"
+            [severity]="getSeverity(member.isBlocked)"
+          />
+        </td> -->
+        <td *ngIf="!viewOnly && course.role !== 'co_teacher'">
+          <p-dropdown
+            [options]="roles"
+            [(ngModel)]="member?.role.name"
+            placeholder="Select Role"
+            (onChange)="onRoleChange($event, member?.userId._id)"
+            [disabled]="canChangeRole(member)"
+          >
+          </p-dropdown>
+        </td>
+        <td>
+          <div class="flex items-center space-x-2">
+            <!-- <label for="block-user-{{ member?.userId._id }}">Block</label> -->
+            <p-checkbox
+              inputId="block-user-{{ member?.userId._id }}"
+              [binary]="true"
+              [(ngModel)]="member.isBlocked"
+              (onChange)="toggleBlockUser(member?.userId._id, $event.checked)"
+              [disabled]="member.isDisabled"
+            ></p-checkbox>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <!-- Message for No Data Found -->
+  <div *ngIf="!members || members.length === 0" class="text-center py-3">
+    <p-messages
+      [value]="[{ severity: 'info', detail: 'No Data Found' }]"
+      [enableService]="false"
+      [closable]="false"
+    />
+  </div>
+
+  <!-- Loading Overlay -->
+  <div *ngIf="isLoading" class="loading-overlay">
+    <p-progressSpinner ariaLabel="loading" />
+  </div>
+</div>

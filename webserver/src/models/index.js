@@ -17,7 +17,7 @@ db.activity = require("./activity.model");
 db.userNotifications = require("./userNotifications.model");
 
 db.blockingNotifications = require("./blockingNotifications.model");
-db.ROLES = ["user", "admin", "moderator"];
+db.ROLES = ["admin", "teacher", "co_teacher", "non_editing_teacher", "user"];
 db.followAnnotation = require("./followAnnotation.model");
 
 module.exports = db;

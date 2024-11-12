@@ -1,28 +1,45 @@
 const multer = require("multer");
 const fileExtension = require("file-extension");
+const fs = require("fs");
+const path = require("path");
+
+
+
+// Function to ensure directory exists
+const ensureDirectoryExistence = (dirPath) => {
+
+  if (fs.existsSync(dirPath)) {
+    return true;
+  }
+  try {
+    fs.mkdirSync(dirPath, { recursive: true });
+    return true;
+  } catch (err) {
+    return false;
+  }
+};
 
 const fileName = (req, file, cb) => {
   cb(
     null,
-    `${
-      file.originalname
-      /* .split(".")
-      .slice(0, -1)
-    .join(".")}-${Date.now()}.${fileExtension(file.originalname)*/
-    }`
+    `${file.originalname}`
   );
 };
 
 const pdfStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "public/uploads/pdfs");
+    const dir = "public/uploads/pdfs";
+    ensureDirectoryExistence(dir);
+    cb(null, dir);
   },
   filename: fileName,
 });
 
 const videoStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "public/uploads/videos");
+    const dir = "public/uploads/videos";
+    ensureDirectoryExistence(dir);
+    cb(null, dir);
   },
   filename: fileName,
 });

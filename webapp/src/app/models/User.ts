@@ -1,6 +1,6 @@
 import { Course } from "./Course";
 
-export interface User{
+export interface User {
     id: string,
     name: string,
     username: string,
@@ -8,5 +8,6 @@ export interface User{
     email: string,
     mbox_sha1sum: string,
     courses: Course[],
-    jwt:string,
+    jwt: string,
+    length: number
 }

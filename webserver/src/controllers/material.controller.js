@@ -7,6 +7,8 @@ const Annotation = db.annotation;
 const Reply = db.reply;
 const Tag = db.tag;
 const Course = db.course;
+import catchAsync from "../helpers/catchAsync";
+import { utili } from "../middlewares";
 
 /**
  * @function getMaterial
@@ -15,7 +17,7 @@ const Course = db.course;
  * @param {string} req.params.materialId The id of the material
  * @param {string} req.params.courseId The id of the course
  */
-export const getMaterial = async (req, res, next) => {
+export const getMaterial = catchAsync(async (req, res, next) => {
   const materialId = req.params.materialId;
   const courseId = req.params.courseId;
   const userId = req.userId;
@@ -54,7 +56,7 @@ export const getMaterial = async (req, res, next) => {
     user: user,
   };
   return next();
-};
+});
 
 /**
  * @function newMaterial
@@ -68,7 +70,7 @@ export const getMaterial = async (req, res, next) => {
  * @param {string} req.body.description The description of the material, e.g., Lecture material of Angular for course Advanced Web Technologies
  * @param {string} req.userId The owner of the material
  */
-export const newMaterial = async (req, res, next) => {
+export const newMaterial = catchAsync(async (req, res, next) => {
   const courseId = req.params.courseId;
   const channelId = req.params.channelId;
   const materialType = req.body.type;
@@ -90,7 +92,20 @@ export const newMaterial = async (req, res, next) => {
 
     if (!user) {
       return res.status(404).send({ error: "User not found." });
+    };
+
+    if(!['pdf', 'video'].includes(materialType)){
+      return res.status(403).send({ error: `${materialType} is not a valid material type` });
     }
+
+    // Permission check for material type
+    if (materialType === 'pdf' && !utili.permissionsChecker(req, "can_upload_pdf_material")) {
+      return res.status(403).send({ error: "You don't have permission to upload PDF materials." });
+    }
+    if (materialType === 'video' && !utili.permissionsChecker(req, "can_video_topic")) {
+      return res.status(403).send({ error: "You don't have permission to upload video materials." });
+    }
+    
   } catch (error) {
     return res.status(500).send({ error: "Error finding user" });
   }
@@ -149,7 +164,7 @@ export const newMaterial = async (req, res, next) => {
     channel: foundChannel,
   };
   next();
-};
+});
 
 /**
  * @function deleteMaterial
@@ -158,7 +173,7 @@ export const newMaterial = async (req, res, next) => {
  * @param {string} req.params.courseId The id of the course
  * @param {string} req.params.materialId The id of the material
  */
-export const deleteMaterial = async (req, res, next) => {
+export const deleteMaterial = catchAsync(async (req, res, next) => {
   let materialId = req.params.materialId;
   console.log("materialId", materialId)
   let courseId = req.params.courseId;
@@ -251,7 +266,7 @@ export const deleteMaterial = async (req, res, next) => {
     isDeletingMaterial: true,
   };
   return next();
-};
+});
 
 /**
  * @function editMaterial
@@ -264,7 +279,7 @@ export const deleteMaterial = async (req, res, next) => {
  * @param {string} req.body.description The new description of the material
  * @param {string} req.body.url The new url of the material
  */
-export const editMaterial = async (req, res, next) => {
+export const editMaterial = catchAsync(async (req, res, next) => {
   const courseId = req.params.courseId;
   const materialId = req.params.materialId;
   const materialName = req.body.name;
@@ -272,7 +287,7 @@ export const editMaterial = async (req, res, next) => {
   const materialType = req.body.type;
   const userId = req.userId;
   const materialDesc = req.body.description;
-console.log("called")
+
   let course;
   try {
     course = await Course.findById(courseId);
@@ -314,12 +329,21 @@ console.log("called")
   }
   req.locals = {};
   req.locals.oldMaterial = JSON.parse(JSON.stringify(foundMaterial));
-  foundMaterial.name = materialName;
-  foundMaterial.url = materialUrl;
-  foundMaterial.type = materialType;
+
+  // Checking permission for renaming material
+  if (materialName && foundMaterial.name !== materialName) {
+    if (!utili.permissionsChecker(req, 'can_rename_materials')) {
+      return res.status(403).send({ error: "You don't have permission to rename materials!" });
+    }
+    foundMaterial.name = materialName;
+  };
+
+  
   if (materialDesc) {
     foundMaterial.description = materialDesc;
   }
+  foundMaterial.url = materialUrl;
+  foundMaterial.type = materialType;
   foundMaterial.updatedAt = Date.now();
   foundMaterial = await foundMaterial.save();
   /*  try {
@@ -339,7 +363,7 @@ console.log("called")
   req.locals.materialType = materialType;
 
   return next();
-};
+});
 
 /**
  * @function newIndicator
@@ -352,7 +376,7 @@ console.log("called")
  * @param {string} req.body.frameborder The frameborder of the iframe
  */
 
-export const newIndicator = async (req, res, next) => {
+export const newIndicator = catchAsync(async (req, res, next) => {
   const materialId = req.params.materialId;
 
   let foundMaterial;
@@ -385,7 +409,7 @@ export const newIndicator = async (req, res, next) => {
     success: `Indicator added successfully!`,
     indicator: indicator,
   });
-};
+});
 
 /**
  * @function deleteIndicator
@@ -394,7 +418,7 @@ export const newIndicator = async (req, res, next) => {
  * @param {string} req.params.materialId The id of the course
  * @param {string} req.params.indicatorId The id of the indicator
  */
-export const deleteIndicator = async (req, res, next) => {
+export const deleteIndicator = catchAsync(async (req, res, next) => {
   const materialId = req.params.materialId;
   const indicatorId = req.params.indicatorId;
 
@@ -427,7 +451,7 @@ export const deleteIndicator = async (req, res, next) => {
   return res.status(200).send({
     success: `Indicator deleted successfully!`,
   });
-};
+});
 
 /**
  * @function getIndicators
@@ -435,7 +459,7 @@ export const deleteIndicator = async (req, res, next) => {
  *
  * @param {string} req.params.materialId The id of the course
  */
-export const getIndicators = async (req, res, next) => {
+export const getIndicators = catchAsync(async (req, res, next) => {
   const materialId = req.params.materialId;
 
   let foundMaterial;
@@ -449,10 +473,10 @@ export const getIndicators = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  
+
   const response = foundMaterial.indicators ? foundMaterial.indicators : [];
   return res.status(200).send(response);
-};
+});
 
 /**
  * @function resizeIndicator
@@ -463,7 +487,7 @@ export const getIndicators = async (req, res, next) => {
  * @param {string} req.params.width The width of the indicator
  * @param {string} req.params.height The height of the indicator
  */
-export const resizeIndicator = async (req, res, next) => {
+export const resizeIndicator = catchAsync(async (req, res, next) => {
   const materialId = req.params.materialId;
   const indicatorId = req.params.indicatorId;
   const width = req.params.width;
@@ -472,7 +496,7 @@ export const resizeIndicator = async (req, res, next) => {
   let foundMaterial;
   try {
     foundMaterial = await Material.findOne({ "indicators._id": indicatorId });
-    if (! foundMaterial) {
+    if (!foundMaterial) {
       return res.status(404).send({
         error: `indicator with id ${indicatorId} doesn't exist!`,
       });
@@ -493,7 +517,7 @@ export const resizeIndicator = async (req, res, next) => {
       indicator.height = height;
     }
   });
-  
+
   try {
     foundMaterial.save();
   } catch (err) {
@@ -501,7 +525,7 @@ export const resizeIndicator = async (req, res, next) => {
   }
   return res.status(200).send();
 
-}
+});
 
 /**
  * @function reorderIndicators
@@ -511,7 +535,7 @@ export const resizeIndicator = async (req, res, next) => {
  * @param {string} req.params.newIndex The newIndex of the reordered indicator
  * @param {string} req.params.oldIndex The oldIndex of the reordered indicator
  */
-export const reorderIndicators = async (req, res, next) => {
+export const reorderIndicators = catchAsync(async (req, res, next) => {
   const materialId = req.params.materialId;
   const newIndex = parseInt(req.params.newIndex);
   const oldIndex = parseInt(req.params.oldIndex);
@@ -549,4 +573,4 @@ export const reorderIndicators = async (req, res, next) => {
     indicators: foundMaterial.indicators,
   });
 
-}
+});

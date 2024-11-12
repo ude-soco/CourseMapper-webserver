@@ -14,8 +14,22 @@ import { CourseEffects } from './state/course.effects';
 import { TagsPageComponent } from '../components/tags/tags-page/tags-page.component';
 import { AnnotationModule } from '../components/annotations/annotation.module';
 import { PdfCommentItemComponent } from '../components/annotations/pdf-annotation/pdf-comment-item/pdf-comment-item.component';
+import { MemberTableComponent } from './components/member-table/member-table.component';
+import { CourseDetailsComponent } from './course-details/course-details.component';
+import { TableModule } from 'primeng/table';
+import { TagModule } from 'primeng/tag';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { PermissionsComponent } from './components/permissions/permissions.component';
+import { AccordionModule } from 'primeng/accordion';
+import { RolesComponent } from './components/roles/roles.component';
+
 @NgModule({
-  declarations: [],
+  declarations: [
+    MemberTableComponent,
+    CourseDetailsComponent,
+    PermissionsComponent,
+    RolesComponent
+  ],
   exports: [],
   imports: [
     CommonModule,
@@ -24,6 +38,11 @@ import { PdfCommentItemComponent } from '../components/annotations/pdf-annotatio
     ConfirmDialogModule,
     PrimengModule,
     ToastModule,
+    TableModule,
+    PrimengModule,
+    AccordionModule,
+    TagModule,
+    ProgressSpinnerModule
   ],
 })
 export class CourseModule {}

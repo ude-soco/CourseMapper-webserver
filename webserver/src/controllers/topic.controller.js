@@ -8,6 +8,8 @@ const Reply = db.reply;
 const Tag = db.tag;
 const Material = db.material;
 const ObjectId = require("mongoose").Types.ObjectId;
+import catchAsync from "../helpers/catchAsync";
+
 
 /**
  * @function getTopic
@@ -16,7 +18,7 @@ const ObjectId = require("mongoose").Types.ObjectId;
  * @param {string} req.params.courseId The id of the course
  * @param {string} req.params.topicId The id of the topic
  */
-export const getTopic = async (req, res, next) => {
+export const getTopic = catchAsync(async (req, res, next) => {
   const topicId = req.params.topicId;
   const courseId = req.params.courseId;
   const userId = req.userId;
@@ -54,7 +56,7 @@ export const getTopic = async (req, res, next) => {
   };
 
   return next();
-};
+});
 
 /**
  * @function newTopic
@@ -64,7 +66,7 @@ export const getTopic = async (req, res, next) => {
  * @param {string} req.body.name The name of the topic, e.g., React Crash Course
  * @param {string} req.userId The owner of the topic
  */
-export const newTopic = async (req, res, next) => {
+export const newTopic = catchAsync(async (req, res, next) => {
   let courseId = req.params.courseId;
   let topicName = req.body.name;
   let userId = req.userId;
@@ -128,7 +130,7 @@ export const newTopic = async (req, res, next) => {
     category: "courseupdates",
   };
   return next();
-};
+});
 
 //TODO: Perhaps delete topic notifications when topic is deleted even though the activities related to the topic are not being deleted
 
@@ -139,7 +141,7 @@ export const newTopic = async (req, res, next) => {
  * @param {string} req.params.topicId The id of the topic
  * @param {string} req.params.courseId The id of the course
  */
-export const deleteTopic = async (req, res, next) => {
+export const deleteTopic = catchAsync(async (req, res, next) => {
   const topicId = req.params.topicId;
   const courseId = req.params.courseId;
   const userId = req.userId;
@@ -229,7 +231,7 @@ export const deleteTopic = async (req, res, next) => {
     isDeletingTopic: true,
   };
   return next();
-};
+});
 
 //TODO: Maybe the extraMessage can be changed for topic being edited. from "<newTopicName> was edited" to <"old topic name> was renamed to <newTopicName>"
 /**
@@ -240,7 +242,7 @@ export const deleteTopic = async (req, res, next) => {
  * @param {string} req.params.topicId The id of the topic
  * @param {string} req.body.name The name of the topic, e.g., React Crash Course
  */
-export const editTopic = async (req, res, next) => {
+export const editTopic = catchAsync(async (req, res, next) => {
   const topicId = req.params.topicId;
   const courseId = req.params.courseId;
   const topicName = req.body.name;
@@ -312,7 +314,7 @@ export const editTopic = async (req, res, next) => {
   req.locals.topic = foundTopic;
 
   return next();
-};
+});
 
 /**
  * @function newIndicator
@@ -324,7 +326,7 @@ export const editTopic = async (req, res, next) => {
  * @param {string} req.body.height The height of the iframe
  * @param {string} req.body.frameborder The frameborder of the iframe
  */
-export const newIndicator = async (req, res, next) => {
+export const newIndicator = catchAsync(async (req, res, next) => {
   const topicId = req.params.topicId;
 
   let foundTopic;
@@ -359,7 +361,7 @@ export const newIndicator = async (req, res, next) => {
     success: `Indicator added successfully!`,
     indicator: indicator,
   });
-};
+});
 
 /**
  * @function deleteIndicator
@@ -368,7 +370,7 @@ export const newIndicator = async (req, res, next) => {
  * @param {string} req.params.topicId The id of the topic
  * @param {string} req.params.indicatorId The id of the indicator
  */
-export const deleteIndicator = async (req, res, next) => {
+export const deleteIndicator = catchAsync(async (req, res, next) => {
   const topicId = req.params.topicId;
   const indicatorId = req.params.indicatorId;
 
@@ -403,7 +405,7 @@ export const deleteIndicator = async (req, res, next) => {
   return res.status(200).send({
     success: `Indicator deleted successfully!`,
   });
-};
+});
 
 /**
  * @function getIndicators
@@ -411,7 +413,7 @@ export const deleteIndicator = async (req, res, next) => {
  *
  * @param {string} req.params.topicId The id of the topic
  */
-export const getIndicators = async (req, res, next) => {
+export const getIndicators = catchAsync(async (req, res, next) => {
   const topicId = req.params.topicId;
 
   let foundTopic;
@@ -429,7 +431,7 @@ export const getIndicators = async (req, res, next) => {
   const response = foundTopic.indicators ? foundTopic.indicators : [];
 
   return res.status(200).send(response);
-};
+});
 
 /**
  * @function resizeIndicator
@@ -440,7 +442,7 @@ export const getIndicators = async (req, res, next) => {
  * @param {string} req.params.width The width of the indicator
  * @param {string} req.params.height The height of the indicator
  */
-export const resizeIndicator = async (req, res, next) => {
+export const resizeIndicator = catchAsync(async (req, res, next) => {
   const topicId = req.params.topicId;
   const indicatorId = req.params.indicatorId;
   const width = req.params.width;
@@ -478,7 +480,7 @@ export const resizeIndicator = async (req, res, next) => {
   }
 
   return res.status(200).send();
-};
+});
 
 /**
  * @function reorderIndicators
@@ -488,7 +490,7 @@ export const resizeIndicator = async (req, res, next) => {
  * @param {string} req.params.newIndex The newIndex of the reordered indicator
  * @param {string} req.params.oldIndex The oldIndex of the reordered indicator
  */
-export const reorderIndicators = async (req, res, next) => {
+export const reorderIndicators = catchAsync(async (req, res, next) => {
   const topicId = req.params.topicId;
   const newIndex = parseInt(req.params.newIndex);
   const oldIndex = parseInt(req.params.oldIndex);
@@ -524,7 +526,7 @@ export const reorderIndicators = async (req, res, next) => {
     success: `Indicators updated successfully!`,
     indicators: foundTopic.indicators,
   });
-};
+});
 
 
 

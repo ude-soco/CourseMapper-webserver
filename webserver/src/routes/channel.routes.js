@@ -1,4 +1,4 @@
-const { authJwt, notifications } = require("../middlewares");
+const { authJwt, notifications, utili } = require("../middlewares");
 const controller = require("../controllers/channel.controller");
 const logger = require("../activity-logger/logger-middlewares/channel-logger");
 
@@ -20,7 +20,8 @@ module.exports = function (app) {
   // Only moderator/admin
   app.post(
     "/api/courses/:courseId/topics/:topicId/channel",
-    [authJwt.verifyToken, authJwt.isModerator],
+    [authJwt.verifyToken, authJwt.isModeratorOrCo,
+    utili.isPermissionAllowed("can_create_channel")],
     controller.newChannel,
     logger.createChannelLogger,
     notifications.updateBlockingNotificationsNewChannel,
@@ -32,7 +33,7 @@ module.exports = function (app) {
   // Only moderator/admin
   app.delete(
     "/api/courses/:courseId/channels/:channelId",
-    [authJwt.verifyToken, authJwt.isModerator],
+    [authJwt.verifyToken, authJwt.isModeratorOrCo, utili.isPermissionAllowed("can_delete_channels")],
     controller.deleteChannel,
     logger.deleteChannelLogger,
     notifications.channelCourseUpdateNotificationUsers,
@@ -43,7 +44,7 @@ module.exports = function (app) {
   // Only moderator/admin
   app.put(
     "/api/courses/:courseId/channels/:channelId",
-    [authJwt.verifyToken, authJwt.isModerator],
+    [authJwt.verifyToken, authJwt.isModeratorOrCo, utili.isPermissionAllowed("can_rename_channels")],
     controller.editChannel,
     logger.editChannelLogger,
     notifications.channelCourseUpdateNotificationUsers,
@@ -52,13 +53,13 @@ module.exports = function (app) {
 
   app.post(
     "/api/courses/:courseId/channels/:channelId/indicator",
-    [authJwt.verifyToken, authJwt.isModerator],
+    [authJwt.verifyToken, authJwt.isModeratorOrCo],
     controller.newIndicator,
   );
 
   app.delete(
     "/api/courses/:courseId/channels/:channelId/indicator/:indicatorId",
-    [authJwt.verifyToken, authJwt.isModerator],
+    [authJwt.verifyToken, authJwt.isModeratorOrCo],
     controller.deleteIndicator,
   );
 
@@ -70,20 +71,14 @@ module.exports = function (app) {
 
   app.put(
     "/api/courses/:courseId/channels/:channelId/indicator/:indicatorId/resize/:width/:height",
-    [authJwt.verifyToken, authJwt.isModerator],
+    [authJwt.verifyToken, authJwt.isModeratorOrCo],
     controller.resizeIndicator,
   );
 
   app.put(
     "/api/courses/:courseId/channels/:channelId/reorder/:newIndex/:oldIndex",
-    [authJwt.verifyToken, authJwt.isModerator],
+    [authJwt.verifyToken, authJwt.isModeratorOrCo],
     controller.reorderIndicators,
   );
 
-  app.get(
-    "/api/courses/:courseId/channels/:channelId/log",
-    [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.getChannelLog,
-    logger.accessChannelLogger,
-  );
 };

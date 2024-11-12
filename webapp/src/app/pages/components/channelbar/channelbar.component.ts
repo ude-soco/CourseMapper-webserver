@@ -36,12 +36,12 @@ import { Location } from '@angular/common';
   providers: [MessageService, ConfirmationService, DialogService],
 })
 export class ChannelbarComponent implements OnInit {
- 
   showConceptMapEvent: boolean = false;
 
   @Output() conceptMapEvent: EventEmitter<boolean> = new EventEmitter();
   @Output() selectedToolEvent: EventEmitter<string> = new EventEmitter();
   cmSelected = false;
+  permissions: object = {};
 
   constructor(
     private courseService: CourseService,
@@ -81,6 +81,14 @@ export class ChannelbarComponent implements OnInit {
           );
           this.courseService.selectCourse(this.selectedCourse);
 
+          // Permissions
+          if (this.selectedCourse.role === 'co_teacher') {
+            this.permissions = { ...this.selectedCourse.co_teacher_permissions };
+          } else if (this.selectedCourse.role === 'non_editing_teacher') {
+            this.permissions = { ...this.selectedCourse.non_editing_teacher_permissions };
+          }
+          this.getOptions(this.selectedCourse.role);
+
           this.store.dispatch(
             AppActions.toggleCourseSelected({ courseSelected: true })
           );
@@ -116,58 +124,28 @@ export class ChannelbarComponent implements OnInit {
   showModeratorPrivileges = false;
   selectedChannel: Channel;
   user = this.storageService.getUser();
-  moderatorUserOptions: MenuItem[] = [
-    {
-      label: 'Rename',
-      icon: 'pi pi-refresh',
-      command: () => this.onRenameCourse(),
-    },
-    {
-      label: 'Delete',
-      icon: 'pi pi-times',
-      command: () => this.onDeleteCourse(),
-    },
-    {
-      label: 'Share course ',
-      icon: 'pi pi-copy',
-      title: 'Copy Course URL',
-      command: () => this.copyCourseId(this.selectedCourse._id, this.selectedCourse.name),
-    },
-    {
-      label: "View course dashboard",
-      icon: "pi pi-chart-bar",
-      styleClass: "contextMenuButton",
-      command: () => this.onViewDashboardClicked(),
-      
-    },
-    {
-      label: 'Notification Settings',
-      icon: 'pi pi-bell',
-      command: ($event) => this.onNotificationSettingsClicked($event),
-    },
+  menuItems: any[] = [];
 
-  ];
 
-  normalUserOptions: MenuItem[] = [
-    {
-      label: "View course dashboard",
-      icon: "pi pi-chart-bar",
-      styleClass: "contextMenuButton",
-      command: () => this.onViewDashboardClicked(),
-      
-    },
-    {
-      label: 'Notification Settings',
-      icon: 'pi pi-bell',
-      command: ($event) => this.onNotificationSettingsClicked($event),
-    },
-    {
-      label: 'Share course ',
-      icon: 'pi pi-copy',
-      title: 'Copy Course URL',
-      command: () => this.copyCourseId(this.selectedCourse._id, this.selectedCourse.name),
-    },
-  ];
+
+  getOptions(role: string): any {
+    this.menuItems = [
+      { label: 'Rename', icon: 'pi pi-refresh', restrictTo: ['user'], onlyAccess: 'can_edit_course_name', command: () => this.onRenameCourse() },
+      { label: 'Delete', icon: 'pi pi-times', restrictTo: ['user'], onlyAccess: 'can_delete_course', command: () => this.onDeleteCourse() },
+      { label: 'Share course ', icon: 'pi pi-copy', title: 'Copy Course URL', command: () => this.copyCourseId(this.selectedCourse._id, this.selectedCourse.name) },
+      { label: "View course dashboard", icon: "pi pi-chart-bar", styleClass: "contextMenuButton", command: () => this.onViewDashboardClicked() },
+      { label: 'Notification Settings', icon: 'pi pi-bell', command: ($event) => this.onNotificationSettingsClicked($event) },
+    ]
+    this.menuItems = this.menuItems.filter((item: any) => {
+      const roleCheck = !item?.restrictTo?.includes(role) || this.user?.role?.name === 'admin';
+      const permissionCheck = item?.onlyAccess ? this.canAccess(item.onlyAccess) : true;
+      return roleCheck && permissionCheck;
+    });
+
+    return this.menuItems;
+  }
+
+
   /*   @ViewChild('notificationSettingsPanel') notificationSettingsPanel: any; */
   ref: DynamicDialogRef | undefined;
   numOfUnreadNotificationsInSelectedCourse$: Observable<number>;
@@ -202,10 +180,7 @@ export class ChannelbarComponent implements OnInit {
           })
         );
 
-      if (
-        this.selectedCourse.role === 'moderator' ||
-        this.user.role.name === 'admin'
-      ) {
+      if (['teacher', 'co_teacher', 'non_editing_teacher'].includes(this.selectedCourse.role) || this.user.role.name === 'admin') {
         this.moderatorPrivilegesService.showModeratorPrivileges = true;
         this.showModeratorPrivileges = true;
         this.moderatorPrivilegesService.setPrivilegesValue(
@@ -259,6 +234,17 @@ export class ChannelbarComponent implements OnInit {
     }
   }
 
+
+
+  canAccess(perm: string): boolean {
+    const isAdminOrTeacher = this.selectedCourse?.role === 'teacher' || this.user?.role?.name === 'admin';
+    if (isAdminOrTeacher) {
+      return true;
+    } else if (this.showModeratorPrivileges && this.permissions?.[perm]) {
+      return true;
+    }
+    return false;
+  }
   /**
    * @function confirmDeletion
    * triggered from the ui when user confirms on deletetion
@@ -291,14 +277,14 @@ export class ChannelbarComponent implements OnInit {
     if (this.enterKey) {
       //confirmed by keyboard
       let CourseName = this.previousCourse.name;
-      const courseDescription = this.previousCourse.description;
-      let body = { name: CourseName, description: courseDescription };
+      // const courseDescription = this.previousCourse.description;
+      let body = { name: CourseName };
       let newCourseName = this.insertedText;
       newCourseName = newCourseName.replace(/(\r\n|\n|\r)/gm, ''); //remove newlines
       if (newCourseName && newCourseName !== '') {
         body = {
           name: newCourseName,
-          description: courseDescription, //keep description value
+          // description: courseDescription, //keep description value
         };
       }
       this.enterKey = false;

@@ -1,13 +1,15 @@
 const { Readable } = require("stream");
 const db = require("../models");
 const Activity = db.activity;
+import catchAsync from "../helpers/catchAsync";
+
 
 /**
  * @function collectActivities
  * Collect all the activities performed in an array
  *
  */
-export const collectActivities = async (req, res) => {
+export const collectActivities = catchAsync(async (req, res) => {
   let since = req.query.since;
   let until = req.query.until;
   let activities;
@@ -51,4 +53,4 @@ export const collectActivities = async (req, res) => {
     return res.status(500).send({ message: err });
   }
   return jsonStream.pipe(res.status(200));
-};
+});

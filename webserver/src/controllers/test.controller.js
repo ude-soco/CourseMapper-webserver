@@ -9,12 +9,13 @@ const Material = db.material;
 const Reply = db.reply;
 
 import { hashSync } from "bcryptjs";
+import catchAsync from "../helpers/catchAsync";
 
 export const healthz = (req, res) => {
   res.status(200).send("Server is up and running.");
 };
 
-export const generteTestdata = async (req, res, next) => {
+export const generteTestdata = catchAsync(async (req, res, next) => {
   const userId = req.userId;
   const courseName = "Course_Test_" + req.params.courseNr;
   const topicName = "Topic Test " + req.params.courseNr;
@@ -130,9 +131,9 @@ export const generteTestdata = async (req, res, next) => {
     }
   } else {
   }
-};
+});
 
-export const newCourse = async (courseName, courseDesc, userId) => {
+export const newCourse = catchAsync(async (courseName, courseDesc, userId) => {
   let foundUser;
   try {
     foundUser = await User.findById(userId);
@@ -164,7 +165,7 @@ export const newCourse = async (courseName, courseDesc, userId) => {
 
   let foundRole;
   try {
-    foundRole = await Role.findOne({ name: "moderator" });
+    foundRole = await Role.findOne({ name: "teacher" });
   } catch (err) {
     return false;
   }
@@ -204,9 +205,9 @@ export const newCourse = async (courseName, courseDesc, userId) => {
     return false;
   }
   return courseSaved;
-};
+});
 
-export const enrolCourse = async (courseId, userId) => {
+export const enrolCourse = catchAsync(async (courseId, userId) => {
   let foundCourse;
   try {
     foundCourse = await Course.findById(courseId);
@@ -234,7 +235,7 @@ export const enrolCourse = async (courseId, userId) => {
   if (!alreadyEnrolled) {
     let role;
     try {
-      role = await Role.findOne({ name: "moderator" });
+      role = await Role.findOne({ name: "teacher" });
     } catch (err) {
       return false;
     }
@@ -264,9 +265,9 @@ export const enrolCourse = async (courseId, userId) => {
   } else {
     return false;
   }
-};
+});
 
-export const createUser = async (firstname, lastname, username, email) => {
+export const createUser = catchAsync(async (firstname, lastname, username, email) => {
   let role;
   try {
     role = await Role.findOne({ name: "user" });
@@ -290,9 +291,9 @@ export const createUser = async (firstname, lastname, username, email) => {
   } catch (err) {
     return false;
   }
-};
+});
 
-export const newTopic = async (courseId, topicName, userId) => {
+export const newTopic = catchAsync(async (courseId, topicName, userId) => {
   let foundCourse;
   try {
     foundCourse = await Course.findOne({ _id: courseId });
@@ -327,9 +328,9 @@ export const newTopic = async (courseId, topicName, userId) => {
   }
 
   return savedTopic;
-};
+});
 
-export const newChannel = async (topicId, channelName, channelDesc, userId) => {
+export const newChannel = catchAsync(async (topicId, channelName, channelDesc, userId) => {
   let foundTopic;
   try {
     foundTopic = await Topic.findOne({ _id: topicId });
@@ -381,9 +382,9 @@ export const newChannel = async (topicId, channelName, channelDesc, userId) => {
   }
 
   return savedChannel;
-};
+});
 
-export const newMaterial = async (
+export const newMaterial = catchAsync(async (
   courseId,
   channelId,
   materialType,
@@ -433,9 +434,9 @@ export const newMaterial = async (
   }
 
   return savedMaterial;
-};
+});
 
-export const newAnnotation = async (
+export const newAnnotation = catchAsync(async (
   courseId,
   materialId,
   userId,
@@ -525,9 +526,9 @@ export const newAnnotation = async (
   }
 
   return newAnnotation;
-};
+});
 
-export const newReply = async (
+export const newReply = catchAsync(async (
   courseId,
   annotationId,
   replyContent,
@@ -623,4 +624,4 @@ export const newReply = async (
   }
 
   return newReply;
-};
+});
