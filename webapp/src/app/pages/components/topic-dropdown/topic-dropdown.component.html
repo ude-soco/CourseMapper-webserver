@@ -122,6 +122,8 @@
                   resetTo="topic"
                   (renameClicked)="onRenameChannel()"
                   (deleteClicked)="onDeleteChannel()"
+                  [canRename]="canAccess('can_rename_Channels')"
+                  [canDelete]="canAccess('can_delete_Channels')"
                   (resetButtonClicked)="onResetChannelNotificationsClicked()"
                   (notificationSettingClicked)="
                     onChannelNotificationSettingsClicked($event)
