@@ -835,7 +835,7 @@ export const updateUserRole = catchAsync(async (req, res, next) => {
   await helpers.initialiseNotificationSettings(foundCourse, foundUser);
 
   const response = {
-    success: `User '${foundUser.username}' added as a ${role} to course '${foundCourse.name}'!`,
+    success: `User '${foundUser.username}' added as a ${role} to course '${foundCourse.name}'`,
     course: foundCourse,
   };
 
@@ -896,7 +896,7 @@ export const updateUserPermissions = catchAsync(async (req, res) => {
 
   // Send response
   return res.status(200).json({
-    success: `Permissions updated for course '${foundCourse.name}'!`,
+    success: `Permissions updated for course '${foundCourse.name}'`,
     course: foundCourse,
   });
 
