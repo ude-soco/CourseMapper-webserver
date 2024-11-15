@@ -34,7 +34,7 @@ class ablation_study_rrgcn:
         model = SentenceTransformer('paraphrase-MiniLM-L12-v2') 
 
         # load the eva data 
-        data_path = os.path.join(current_dir, '.\data\eva_data_version_1.txt')
+        data_path = os.path.join(current_dir, '.\data\eva_data_short.txt')
         data = pd.read_csv(data_path, sep='\t', header=None, names=['node1', 'relation','node2'])
         self.data = data
         # get all unique nodes and relation

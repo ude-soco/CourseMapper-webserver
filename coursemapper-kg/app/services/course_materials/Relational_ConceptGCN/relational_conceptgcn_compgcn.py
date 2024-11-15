@@ -2,18 +2,34 @@ from neo4j import GraphDatabase
 import numpy as np
 import scipy.sparse as sp
 import os
-from util import *
+from .util import *
+from config import Config
 
-os.chdir("D:/study/Master_thesis/project/nave_dev/CourseMapper-webserver/coursemapper-kg")
+# os.chdir("D:/study/Master_thesis/project/nave_dev/CourseMapper-webserver/coursemapper-kg")
+import logging
+from log import LOG
+
+logger = LOG(name=__name__, level=logging.DEBUG)
 
 class relational_conceptgcn_compgcn:
     def __init__(self):
+        neo4j_uri = Config.NEO4J_URI
+        neo4j_user = Config.NEO4J_USER
+        neo4j_pass = Config.NEO4J_PASSWORD
+        # neo4j_uri = 'bolt://localhost:7687'
+        # neo4j_user = 'neo4j'
+        # neo4j_pass = '1234qwer!'
+    
+        self.driver = GraphDatabase.driver(neo4j_uri,
+                                           auth=(neo4j_user, neo4j_pass),
+                                           encrypted=False)
         # initialize global variant
         self.embedding_matrix = None
         self.adj_matrix = None
         self.prerequisite_matrix = None
         self.adj_matrix_inverse = None
         self.prerequisite_matrix_inverse = None
+        self.idx_features = None
         """ 
           construct embedding matrix
         """
@@ -21,6 +37,7 @@ class relational_conceptgcn_compgcn:
         # Read ids and initial embeddings of nodes from idfeature.text
         # The structure of text: first column is new id of node(type:int), the second column is the original id (type:string), and the rest is the initial embedding
         idx_features = np.genfromtxt("idfeature.txt", dtype=np.dtype(str))
+        self.idx_features = idx_features
         # Extract new id of node
         idx = np.array(idx_features[:, 0], dtype=np.float32)
         # Replace id with row number
@@ -58,14 +75,6 @@ class relational_conceptgcn_compgcn:
         """ 
             Construct prerequisite matrix
         """
-        # self.prerequisite_matrix = np.zeros((self.embedding_matrix.shape[0], self.embedding_matrix.shape[0]))
-        # num_values = 100
-        # rows = np.random.choice(1274, num_values, replace=True)
-        # cols = np.random.choice(1274, num_values, replace=True)
-        # for i in range(num_values):
-        #     self.prerequisite_matrix[rows[i], cols[i]] = round(np.random.uniform(0, 1), 2)
-        
-        # self.prerequisite_matrix_inverse = self.prerequisite_matrix.T
         relation2 = np.genfromtxt("prerequisite.txt", dtype=np.float32)
         prerequisite_row = np.array(list(map(idx_map.get, relation2[:, 0].flatten())))
         prerequisite_column = np.array(list(map(idx_map.get, relation2[:, 2].flatten())))
@@ -74,9 +83,16 @@ class relational_conceptgcn_compgcn:
         shape=( self.embedding_matrix.shape[0],  self.embedding_matrix.shape[0]),
         dtype=np.float32,
         )
-        self.prerequisite_matrix = np.around(self.prerequisite_matrix, 2)
         self.prerequisite_matrix =self.prerequisite_matrix.toarray()
+        self.prerequisite_matrix = np.around(self.prerequisite_matrix, 2)
+        neighbor_counts =np.sum(self.prerequisite_matrix != 0, axis=1) 
+        # 避免除以零，处理孤立节点
+        neighbor_counts[neighbor_counts == 0] = 1
+        # 归一化邻接矩阵
+        normalized_adj_matrix = self.prerequisite_matrix / neighbor_counts[:, None]
+        self.prerequisite_matrix = normalized_adj_matrix
         self.prerequisite_matrix_inverse = self.prerequisite_matrix.T
+
         """ 
             generate relationships weight for every type of relationships
         """
@@ -258,6 +274,7 @@ class relational_conceptgcn_compgcn:
         return embedding_matrix 
 
     def compgcn_without_direction_weight (self, rel_transform_mode = 'sub'):
+        logger.info("Hong_compgcn_model start")
         """ 
             initialize variable
         """        
@@ -408,8 +425,21 @@ class relational_conceptgcn_compgcn:
                 pass
             else:
                 embedding_matrix [v] = new_embedding_v           
-
-        return embedding_matrix
+        final_embeddings = embedding_matrix
+        # Extract original ids of nodes
+        idx_features = self.idx_features
+        idx = np.array(idx_features[:, 1], dtype=np.dtype(str))
+        with self.driver.session() as session:
+            for i in range(final_embeddings.shape[0]):
+                id = idx[i]
+                f_embedding = final_embeddings[i]
+                embedding = ",".join(str(i) for i in f_embedding)
+                # Find a node in neo4j by its original id and save its final embedding into its "final_embedding" property
+                result = session.run("""MATCH (n) WHERE n.cid= $id or n.sid= $id
+                        set n.final_embedding = $embedding RETURN n""",
+                    id=id,
+                    embedding=embedding)
+        logger.info("Hong_compgcn_model END")
     
     def rel_transform(self, ent_embed, rel_embed,rel_transform_mode = 'sub'):
         if   rel_transform_mode == 'corr': 	trans_embed  = self.ccorr(ent_embed, rel_embed)
@@ -434,12 +464,3 @@ class relational_conceptgcn_compgcn:
         correlation = torch.fft.ifft(ent_embed * rel_embed_conj)  # Perform inverse FFT after multiplication
         return correlation.real
 
-test_object = relational_conceptgcn_compgcn()
-final_embedding = test_object.compgcn_direction_weight('sub')
-print("+++++++++++++++++++final embedding size++++++++++++++++++++++++++++++")
-print(final_embedding.shape)
-print("+++++++++++++++++++final embedding type++++++++++++++++++++++++++++++")
-print(type(final_embedding))
-print("+++++++++++++++++++final embedding++++++++++++++++++++++++++++++")
-print(final_embedding)
-#test_object.test()

@@ -7,7 +7,11 @@ from ..services.course_materials.recommendation.resource_recommender import Reso
 from ..services.course_materials.recommendation.recommendation_type import RecommendationType
 from ..services.course_materials.kwp_extraction.dbpedia.data_service import DataService
 from ..services.course_materials.kwp_extraction.dbpedia.data_service1 import RecService
+from ..services.course_materials.Relational_ConceptGCN.relational_conceptgcn_rrgcn import RRGCN
+from ..services.course_materials.Relational_ConceptGCN.relational_conceptgcn_compgcn import relational_conceptgcn_compgcn
 from ..services.course_materials.GCN.gcn import GCN
+#from ..services.course_materials.Relational_ConceptGCN.relational_conceptgcn_compgcn import relational_conceptgcn_compgcn
+#from ..services.course_materials.Relational_ConceptGCN.relational_conceptgcn_rrgcn import RRGCN
 from ..services.course_materials.prerequisite.prerequisite_wrapper import run_prerequisite_material
 
 logger = LOG(name=__name__, level=logging.DEBUG)
@@ -129,9 +133,12 @@ def get_concepts(job):
     # use GCN to get final embedding of each node
     start_time = time.time()
     data_service._extract_vector_relation(mid=material_id)
-    gcn = GCN()
-    gcn.load_data()
-
+    # gcn = GCN()
+    # gcn.load_data()
+    gcn = RRGCN()
+    gcn.rrgcn_1_2()
+    # gcn = relational_conceptgcn_compgcn()
+    # gcn.compgcn_without_direction_weight('mult')
     ### ========
     ### LightGCN Variant
     # from ..services.course_materials.GCN.lightGCN import LightGCN

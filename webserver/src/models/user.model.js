@@ -1,5 +1,3 @@
-
-
 const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
@@ -10,7 +8,7 @@ const User = new Schema({
   username: { type: String, required: true },
   email: { type: String, required: true },
   mbox: { type: String, required: true },
-  mbox_sha1sum : { type: String, required: true },
+  mbox_sha1sum: { type: String, required: true },
   password: { type: String, required: true },
   role: { type: Schema.Types.ObjectId, ref: "role" },
   createdAt: { type: Date, default: Date.now() },
@@ -21,8 +19,15 @@ const User = new Schema({
       role: { type: Schema.Types.ObjectId, ref: "role" },
     },
   ],
-  understoodConcepts: [],//saves ids for concepts that user understand
-  didNotUnderstandConcepts: [],//saves ids for concepts that user did not understand
+  understoodConcepts: [], //saves ids for concepts that user understand
+  didNotUnderstandConcepts: [], //saves ids for concepts that user did not understand
+  
+  // Map to store concept IDs and their respective timestamps
+  conceptTimestamps: {
+    type: Map,
+    of: Date,
+    default: {}
+  },
 
   indicators: [
     {
@@ -33,7 +38,6 @@ const User = new Schema({
       frameborder: String,
     },
   ], //holds a list of the indicators created in this collection
-
   
   blockedByUser: [
     { type: Schema.Types.ObjectId, ref: "user", required: true, default: [] },

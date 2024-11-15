@@ -1,5 +1,6 @@
 from ...pdfextractor.text_extractor import PDFTextExtractor
 from ...GCN.gcn import GCN
+from ...Relational_ConceptGCN.relational_conceptgcn_rrgcn import RRGCN
 import json
 import numpy as np
 
@@ -221,10 +222,10 @@ class DataService:
                 self._extract_vector_relation(materialId)
                 print("End extraction")
                 print("initiate GCN class")
-                gcn = GCN()
+                gcn = RRGCN()
                 print("done initiate GCN class")
                 print("load gcn data")
-                gcn.load_data()
+                gcn.rrgcn_1_2()
                 print("done load gcn data")
                 end_time = time.time()
                 print("use gcn Execution time: ", end_time - start_time, flush=True)

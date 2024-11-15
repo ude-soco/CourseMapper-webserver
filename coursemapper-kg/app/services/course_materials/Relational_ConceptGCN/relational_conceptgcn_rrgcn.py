@@ -2,14 +2,27 @@ from neo4j import GraphDatabase
 import numpy as np
 import scipy.sparse as sp
 import os
-from util import *
+from .util import *
+from config import Config
+import logging
+from log import LOG
 
-
-os.chdir("D:/study/Master_thesis/project/nave_dev/CourseMapper-webserver/coursemapper-kg")
+logger = LOG(name=__name__, level=logging.DEBUG)
+# os.chdir("D:/study/Master_thesis/project/nave_dev/CourseMapper-webserver/coursemapper-kg")
 
 class RRGCN:
 
     def __init__(self):
+        neo4j_uri = Config.NEO4J_URI
+        neo4j_user = Config.NEO4J_USER
+        neo4j_pass = Config.NEO4J_PASSWORD
+        # neo4j_uri = 'bolt://localhost:7687'
+        # neo4j_user = 'neo4j'
+        # neo4j_pass = '1234qwer!'
+    
+        self.driver = GraphDatabase.driver(neo4j_uri,
+                                           auth=(neo4j_user, neo4j_pass),
+                                           encrypted=False)
 
         # initialize global variant
         self.embedding_matrix = None
@@ -22,7 +35,7 @@ class RRGCN:
         self.weight_matrix_rc_2 = None
         self.weight_matrix_pr_2 = None
         self.weight_matrix_self_2 = None
-
+        self.idx_features=None
         """ 
           loadding data
         """
@@ -30,6 +43,7 @@ class RRGCN:
         # Read ids and initial embeddings of nodes from idfeature.text
         # The structure of text: first column is new id of node(type:int), the second column is the original id (type:string), and the rest is the initial embedding
         idx_features = np.genfromtxt("idfeature.txt", dtype=np.dtype(str))
+        self.idx_features=idx_features
         # Extract new id of node
         idx = np.array(idx_features[:, 0], dtype=np.float32)
         # Replace id with row number
@@ -63,7 +77,7 @@ class RRGCN:
         self.adj_matrix = self.adj_matrix + self.adj_matrix.T.multiply(self.adj_matrix.T > self.adj_matrix) - self.adj_matrix.multiply(self.adj_matrix.T > self.adj_matrix)
         self.adj_matrix= normalize(self.adj_matrix)
         self.adj_matrix = self.adj_matrix.toarray()
-        #the size of adj_matrix is (1274,1274)
+
 
         """ 
             Construct prerequisite matrix
@@ -74,12 +88,19 @@ class RRGCN:
         prerequisite_row = np.array(list(map(idx_map.get, relation2[:, 0].flatten())))
         prerequisite_column = np.array(list(map(idx_map.get, relation2[:, 2].flatten())))
         self.prerequisite_matrix = sp.coo_matrix(
-        (relation2[:, 1], (prerequisite_row[:], prerequisite_column[:])),
-        shape=( self.embedding_matrix.shape[0],  self.embedding_matrix.shape[0]),
-        dtype=np.float32,
+            (relation2[:, 1], (prerequisite_row[:], prerequisite_column[:])),
+            shape=( self.embedding_matrix.shape[0],  self.embedding_matrix.shape[0]),
+            dtype=np.float32,
         )
-        self.prerequisite_matrix = np.around(self.prerequisite_matrix, 2)
         self.prerequisite_matrix =self.prerequisite_matrix.toarray()
+        self.prerequisite_matrix = np.around(self.prerequisite_matrix, 2)
+        neighbor_counts =np.sum(self.prerequisite_matrix != 0, axis=1) 
+        # 避免除以零，处理孤立节点
+        neighbor_counts[neighbor_counts == 0] = 1
+        # 归一化邻接矩阵
+        normalized_adj_matrix = self.prerequisite_matrix / neighbor_counts[:, None]
+        self.prerequisite_matrix = normalized_adj_matrix
+
         """ 
             generate relationships weight for every type of relationships
         """
@@ -92,6 +113,7 @@ class RRGCN:
         self.weight_matrix_rc_2 = glorot_seed((weight_size,weight_size)).numpy()
         self.weight_matrix_pr_2 = glorot_seed((weight_size,weight_size)).numpy()
         self.weight_matrix_self_2 = glorot_seed((weight_size,weight_size)).numpy()
+
 
     #embedding matri, adj_matrix and prerequisite_matrix
     def load_data(self):
@@ -118,15 +140,15 @@ class RRGCN:
         #print(embedding_matrix.toarray().shape)
 
 
-        # Construct Adjacency matrix
+        """
+            Construct adjacency matrix
+        """
         # Read normal relationships of nodes from relation.text
         relation1 = np.genfromtxt("relation.txt", dtype=np.float32)
         #print("normal relationships")
         #print(relation1)    
-
         adj_row = np.array(list(map(idx_map.get, relation1[:, 0].flatten())))
         adj_column = np.array(list(map(idx_map.get, relation1[:, 2].flatten())))
-
         #coo_matrix((data, (row, col)), shape=(m, n))
         #relation1[:, 1] the value
         self.adj_matrix = sp.coo_matrix(
@@ -135,8 +157,21 @@ class RRGCN:
             dtype=np.float32,
         )
 
+        """
+            Construct prerequisite matrix
+        """
         #Construct prerequisite matrix
-        self.prerequisite_matrix = glorot_seed((self.embedding_matrix.shape[0],  self.embedding_matrix.shape[0])).numpy()
+        relation2 = np.genfromtxt("prerequisite.txt", dtype=np.float32)
+        prerequisite_row = np.array(list(map(idx_map.get, relation2[:, 0].flatten())))
+        prerequisite_column = np.array(list(map(idx_map.get, relation2[:, 2].flatten())))
+        self.prerequisite_matrix = sp.coo_matrix(
+        (relation2[:, 1], (prerequisite_row[:], prerequisite_column[:])),
+        shape=( self.embedding_matrix.shape[0],  self.embedding_matrix.shape[0]),
+        dtype=np.float32,
+        )
+        self.prerequisite_matrix = np.around(self.prerequisite_matrix, 2)
+        self.prerequisite_matrix =self.prerequisite_matrix.toarray()
+        self.prerequisite_matrix_inverse = self.prerequisite_matrix.T
 
         #the size of adj_matrix is (1274,1274)
         #print(self.adj_matrix.toarray().shape)
@@ -215,8 +250,7 @@ class RRGCN:
         return new_final_embedding
     #self_loop + adj or pre matrix
     def rrgcn_1_2(self):
-
-        #self.load_data()
+        logger.info("Hong_rrgcn_model START")
         """ 
             embedding_matrix
         """
@@ -226,16 +260,16 @@ class RRGCN:
             adj_matrix
         """
         adj_matrix = self.adj_matrix
-        adj_matrix = np.around(adj_matrix, 2)
-        adj_matrix = adj_matrix + adj_matrix.T.multiply(adj_matrix.T > adj_matrix) - adj_matrix.multiply(adj_matrix.T > adj_matrix)
-        adj_matrix= normalize(adj_matrix)+ sp.eye(adj_matrix.shape[0])
-        adj_matrix = adj_matrix.toarray()
+        # adj_matrix = np.around(adj_matrix, 2)
+        # adj_matrix = adj_matrix + adj_matrix.T.multiply(adj_matrix.T > adj_matrix) - adj_matrix.multiply(adj_matrix.T > adj_matrix)
+        # adj_matrix= normalize(adj_matrix)+ sp.eye(adj_matrix.shape[0])
+        # adj_matrix = adj_matrix.toarray()
 
         """ 
             prerequsite_matrix
         """
         prerequsite_matrix = self.prerequisite_matrix
-        prerequsite_matrix = np.around(prerequsite_matrix,2)
+        # prerequsite_matrix = np.around(prerequsite_matrix,2)
         """  
             the first layer
         """
@@ -255,9 +289,21 @@ class RRGCN:
         rc_part_2 = np.dot(adj_matrix,embedding_of_firstLayer)
         pr_part_2 = np.dot(prerequsite_matrix,embedding_of_firstLayer)
 
-        final_embedding = rc_part_2 + pr_part_2
-
-        return final_embedding
+        final_embeddings = rc_part_2 + pr_part_2
+        # Extract original ids of nodes
+        idx_features = self.idx_features
+        idx = np.array(idx_features[:, 1], dtype=np.dtype(str))
+        with self.driver.session() as session:
+            for i in range(final_embeddings.shape[0]):
+                id = idx[i]
+                f_embedding = final_embeddings[i]
+                embedding = ",".join(str(i) for i in f_embedding)
+                # Find a node in neo4j by its original id and save its final embedding into its "final_embedding" property
+                result = session.run("""MATCH (n) WHERE n.cid= $id or n.sid= $id
+                        set n.final_embedding = $embedding RETURN n""",
+                    id=id,
+                    embedding=embedding)
+        logger.info("Hong_rrgcn_model END")
     def rrgcn_1_3(self):
         """ 
             embedding_matrix
@@ -429,11 +475,3 @@ class RRGCN:
     #     self_loop = self_loop.toarray()
 
  
-test_object = RRGCN()
-embedding=test_object.rrgcn_1_2()
-print("+++++++++++++++++++++++++original embedding++++++++++++++++++++++++++++++")
-print(test_object.embedding_matrix.toarray())
-print("+++++++++++++++++++++++++new embedding++++++++++++++++++++++++++++++")
-print(embedding)
-#test_object.self_loop_test()
-
