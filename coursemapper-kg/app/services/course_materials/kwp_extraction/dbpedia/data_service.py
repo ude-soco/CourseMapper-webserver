@@ -1,3 +1,5 @@
+from app.services.course_materials.prerequisite.prerequisite_wrapper import run_prerequisite_material
+# from app.views.course_materials import prerequisite_material
 from ...pdfextractor.text_extractor import PDFTextExtractor
 from ...GCN.gcn import GCN
 from ...Relational_ConceptGCN.relational_conceptgcn_rrgcn import RRGCN
@@ -211,6 +213,15 @@ class DataService:
                 end_time = time.time()
                 print(
                     "get_related_category Execution time: ",
+                    end_time - start_time,
+                    flush=True,
+                )
+                logger.info("Prerequisite")
+                start_time = time.time()
+                run_prerequisite_material(materialId)
+                end_time = time.time()
+                print(
+                    "get_Prerequisite Execution time: ",
                     end_time - start_time,
                     flush=True,
                 )

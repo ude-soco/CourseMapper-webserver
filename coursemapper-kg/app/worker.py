@@ -126,15 +126,15 @@ def start_worker(pipelines):
                 result = concept_map(job, file)
                 if result:
                     print("sign", job["materialId"], job)
-                    add_job('find-prerequisite-lm', {"materialId": job["materialId"]})
-                    prerequisite_material(job)
+                    # add_job('find-prerequisite-lm', {"materialId": job["materialId"]})
+                    # prerequisite_material(job)
                 # add_job('find-prerequisite-lm', {"materialId": job["materialId"]})
             elif pipeline == 'concept-recommendation':
                 result = get_concepts(job)
             elif pipeline == 'resource-recommendation':
                 result = get_resources(job)
-            elif pipeline == 'find-prerequisite-lm':
-                result = prerequisite_material(job)
+            # elif pipeline == 'find-prerequisite-lm':
+            #     result = prerequisite_material(job)
             else:
                 raise ValueError(f'Unknown pipeline: {pipeline}')
 
