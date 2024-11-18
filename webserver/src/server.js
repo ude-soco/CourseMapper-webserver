@@ -140,19 +140,26 @@ const initializeDB = async () => {
     } else {
       // Create roles synchronously and ensure admin role is saved
       console.log("Creating roles: user, moderator, admin");
-      ["user", "moderator", "admin"].forEach(async (userName) => {
-        console.log("Adding Role: { name: " + userName + " }");
-        newRole = new Role({ name: userName });
-        if (userName === "admin") {
-          foundAdmin = newRole;
-        }
-        try {
-          await newRole.save();
-        } catch (err) {
-          console.log(err, "Error in creating role");
-          return;
-        }
-      });
+      const roles = ["user", "moderator", "admin"];
+      let foundAdmin;
+      
+      try {
+        await Promise.all(
+          roles.map(async (userName) => {
+            console.log("Adding Role: { name: " + userName + " }");
+            const newRole = new Role({ name: userName });
+      
+            if (userName === "admin") {
+              foundAdmin = newRole;
+            }
+      
+            await newRole.save();
+            console.log(`Role '${userName}' created successfully.`);
+          })
+        );
+      } catch (err) {
+        console.log(err, "Error in creating roles");
+      }
     }
 
     // Try-catch before checking if admin role exists
