@@ -11,7 +11,7 @@
 
     <div
       *ngFor="let course of courses; let i = index"
-      (click)="onSelectCourse(course)"
+      (click)="selectedCourse._id != course._id ? onSelectCourse(course) : undefined"
       [attr.data-index]="i"
     >
       <div

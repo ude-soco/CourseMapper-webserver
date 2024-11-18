@@ -246,6 +246,9 @@
     padding: 5px;
     vertical-align: top;
     font-size: 13px;
+    overflow-y: scroll;
+    height: max-content;
+    max-height: max-content;
   }
   #currentConcepts {
     border: 1px solid #2196f3;

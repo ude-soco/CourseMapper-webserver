@@ -169,28 +169,31 @@ export class VideoMainAnnotationComponent
           this.material = material;
           this.materilaId = material._id;
           this.getVideoUrl();
+          if (this.socketSubscription) {
+            this.socketSubscription.unsubscribe();
+          }
+          this.socketSubscription = this.socket
+            .fromEvent(material._id)
+            .subscribe(
+              (payload: {
+                eventType: string;
+                annotation: Annotation;
+                reply: Reply;
+              }) => {
+                this.store.dispatch(
+                  AnnotationActions.updateAnnotationsOnSocketEmit({
+                    payload: payload,
+                  })
+                );
+                this.store.dispatch(
+                  CourseActions.updateFollowingAnnotationsOnSocketEmit({
+                    payload: payload,
+                  })
+                );
+              }
+            );
         }
       });
-    this.socketSubscription = this.socket
-      .fromEvent(this.material._id)
-      .subscribe(
-        (payload: {
-          eventType: string;
-          annotation: Annotation;
-          reply: Reply;
-        }) => {
-          this.store.dispatch(
-            AnnotationActions.updateAnnotationsOnSocketEmit({
-              payload: payload,
-            })
-          );
-          this.store.dispatch(
-            CourseActions.updateFollowingAnnotationsOnSocketEmit({
-              payload: payload,
-            })
-          );
-        }
-      );
     this.subscriptions.push(materialSubscriper);
     if (!this.apiLoaded) {
       const tag = document.createElement('script');

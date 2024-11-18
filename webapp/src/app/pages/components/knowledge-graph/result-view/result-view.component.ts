@@ -123,8 +123,21 @@ export class ResultViewComponent {
       },
     ];
 
-    this.allConceptsObj = [...this.concepts1];
     this.loadResultForSelectedModel(MaterialModels.MODEL_1);
+
+    this.didNotUnderstandConceptsObj = this.slideConceptservice.commonDidNotUnderstandConcepts;
+    this.didNotUnderstandConceptsObj.forEach((el) => {
+      this.allConceptsObj = this.allConceptsObj.map((e) =>
+        e.id === el.id ? el : e
+      );
+    });
+
+    this.understoodConceptsObj = this.slideConceptservice.commonUnderstoodConcepts;
+    this.understoodConceptsObj.forEach((el) => {
+      this.allConceptsObj = this.allConceptsObj.map((e) =>
+        e.id === el.id ? el : e
+      );
+    });
   }
 
   sortElements(

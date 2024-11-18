@@ -62,7 +62,7 @@ export const generateNotificationInfo = (req) => {
 const emitNotificationsToSubscribedUsers = async (
   req,
   userToBeNotified,
-  insertedUserNotifications
+  insertedUserNotifications,
 ) => {
   /* let activityIndicators = req.locals.activityIndicators; */
   for (let i = 0; i < insertedUserNotifications.length; i++) {
@@ -123,9 +123,8 @@ export const populateUserNotification = async (req, res, next) => {
   });
 
   try {
-    insertedUserNotifications = await UserNotification.insertMany(
-      arrUserNotification
-    );
+    insertedUserNotifications =
+      await UserNotification.insertMany(arrUserNotification);
   } catch (err) {
     return res.status(500).send({
       error: "Operation successful but Error populating UserNotification",
@@ -137,7 +136,7 @@ export const populateUserNotification = async (req, res, next) => {
     await emitNotificationsToSubscribedUsers(
       req,
       userToBeNotified,
-      insertedUserNotifications
+      insertedUserNotifications,
     );
   } catch (err) {
     return res.status(500).send({
@@ -165,7 +164,7 @@ const removeUserFromList = (userToBeNotified, userId) => {
 export const newAnnotationNotificationUsersCalculate = async (
   req,
   res,
-  next
+  next,
 ) => {
   //get the users blocked by the user doing the action
   const userId = req.userId;
@@ -175,7 +174,7 @@ export const newAnnotationNotificationUsersCalculate = async (
 
   let foundUser = await User.findById(userId);
   let blockedByUsers = foundUser.blockedByUser.map((userId) =>
-    userId.toString()
+    userId.toString(),
   );
 
   const usersAllowingAnnotationNotifications =
@@ -201,7 +200,7 @@ export const newAnnotationNotificationUsersCalculate = async (
   if (blockedByUsers.length > 0) {
     const blockedByUserSet = new Set(blockedByUsers);
     resultingUsers = userIdsOfUsersAllowingAnnotationNotifications.filter(
-      (userId) => !blockedByUserSet.has(userId.toString())
+      (userId) => !blockedByUserSet.has(userId.toString()),
     );
   } else {
     resultingUsers = userIdsOfUsersAllowingAnnotationNotifications;
@@ -209,7 +208,7 @@ export const newAnnotationNotificationUsersCalculate = async (
 
   let finalListOfUsersToNotify = removeUserFromList(
     resultingUsers,
-    new ObjectId(userId)
+    new ObjectId(userId),
   );
   req.locals.usersToBeNotified = finalListOfUsersToNotify;
   next();
@@ -221,20 +220,20 @@ export const calculateUsersFollowingAnnotation = async (req, res, next) => {
   const userId = req.userId;
   let foundUser = await User.findById(userId);
   let blockedByUsers = foundUser.blockedByUser.map((userId) =>
-    userId.toString()
+    userId.toString(),
   );
   const followingAnnotations = await FollowAnnotation.find({
     annotationId: annotationId,
   });
   const userIdsOfUsersFollowingAnnotation = followingAnnotations.map(
-    (user) => user.userId
+    (user) => user.userId,
   );
 
   let resultingUsers;
   if (blockedByUsers.length > 0) {
     const blockedByUserSet = new Set(blockedByUsers);
     resultingUsers = userIdsOfUsersFollowingAnnotation.filter(
-      (userId) => !blockedByUserSet.has(userId.toString())
+      (userId) => !blockedByUserSet.has(userId.toString()),
     );
   } else {
     resultingUsers = userIdsOfUsersFollowingAnnotation;
@@ -242,7 +241,7 @@ export const calculateUsersFollowingAnnotation = async (req, res, next) => {
 
   let finalListOfUsersToNotify = removeUserFromList(
     resultingUsers,
-    new ObjectId(userId)
+    new ObjectId(userId),
   );
   req.locals.usersToBeNotified = finalListOfUsersToNotify;
   if (req.locals.isDeletingAnnotation) {
@@ -263,7 +262,7 @@ export const emitAnnotationDeleted = async (annotationId) => {
     annotationId: annotationId,
   });
   const userIds = userNotifications.map(
-    (userNotification) => userNotification.userId
+    (userNotification) => userNotification.userId,
   );
 
   userIds.forEach((userId) => {
@@ -284,7 +283,7 @@ export const emitReplyDeleted = async (replyId) => {
     replyId: replyId,
   });
   const userIds = userNotifications.map(
-    (userNotification) => userNotification.userId
+    (userNotification) => userNotification.userId,
   );
 
   userIds.forEach((userId) => {
@@ -306,7 +305,7 @@ export const emitMaterialDeleted = async (materialId) => {
   });
 
   const userIds = userNotifications.map(
-    (userNotification) => userNotification.userId
+    (userNotification) => userNotification.userId,
   );
 
   userIds.forEach((userId) => {
@@ -328,7 +327,7 @@ export const emitChannelDeleted = async (channelId) => {
   });
 
   const userIds = userNotifications.map(
-    (userNotification) => userNotification.userId
+    (userNotification) => userNotification.userId,
   );
 
   userIds.forEach((userId) => {
@@ -350,7 +349,7 @@ export const emitTopicDeleted = async (topicId) => {
   });
 
   const userIds = userNotifications.map(
-    (userNotification) => userNotification.userId
+    (userNotification) => userNotification.userId,
   );
 
   userIds.forEach((userId) => {
@@ -369,12 +368,12 @@ export const emitTopicDeleted = async (topicId) => {
 export const LikesDislikesMentionedNotificationUsers = async (
   req,
   res,
-  next
+  next,
 ) => {
   const userId = req.userId;
   let foundUser = await User.findById(userId);
   let blockedByUsers = foundUser.blockedByUser.map((userId) =>
-    userId.toString()
+    userId.toString(),
   );
   const courseId = req.locals.course._id;
 
@@ -399,7 +398,7 @@ export const LikesDislikesMentionedNotificationUsers = async (
   if (blockedByUsers.length > 0) {
     const blockedByUserSet = new Set(blockedByUsers);
     resultingUsers = annotationAuthorId.filter(
-      (userId) => !blockedByUserSet.has(userId.toString())
+      (userId) => !blockedByUserSet.has(userId.toString()),
     );
   } else {
     resultingUsers = annotationAuthorId;
@@ -407,7 +406,7 @@ export const LikesDislikesMentionedNotificationUsers = async (
 
   let finalListOfUsersToNotify = removeUserFromList(
     resultingUsers,
-    new ObjectId(userId)
+    new ObjectId(userId),
   );
   req.locals.usersToBeNotified = finalListOfUsersToNotify;
   next();
@@ -415,12 +414,12 @@ export const LikesDislikesMentionedNotificationUsers = async (
 export const LikesDislikesAnnotationNotificationUsers = async (
   req,
   res,
-  next
+  next,
 ) => {
   const userId = req.userId;
   let foundUser = await User.findById(userId);
   let blockedByUsers = foundUser.blockedByUser.map((userId) =>
-    userId.toString()
+    userId.toString(),
   );
   const courseId = req.locals.course._id;
 
@@ -445,7 +444,7 @@ export const LikesDislikesAnnotationNotificationUsers = async (
   if (blockedByUsers.length > 0) {
     const blockedByUserSet = new Set(blockedByUsers);
     resultingUsers = annotationAuthorId.filter(
-      (userId) => !blockedByUserSet.has(userId.toString())
+      (userId) => !blockedByUserSet.has(userId.toString()),
     );
   } else {
     resultingUsers = annotationAuthorId;
@@ -453,7 +452,7 @@ export const LikesDislikesAnnotationNotificationUsers = async (
 
   let finalListOfUsersToNotify = removeUserFromList(
     resultingUsers,
-    new ObjectId(userId)
+    new ObjectId(userId),
   );
   req.locals.usersToBeNotified = finalListOfUsersToNotify;
   next();
@@ -470,7 +469,7 @@ export const newMentionNotificationUsersCalculate = async (req, res, next) => {
   let foundUser = await User.findById(userId);
   //fetch the users who have blocked the user doing the action
   let blockedByUsers = foundUser.blockedByUser.map((userId) =>
-    userId.toString()
+    userId.toString(),
   );
 
   const usersAllowingMentionNotifications =
@@ -498,7 +497,7 @@ export const newMentionNotificationUsersCalculate = async (req, res, next) => {
   if (blockedByUsers.length > 0) {
     const blockedByUserSet = new Set(blockedByUsers);
     resultingUsers = userIdsOfUsersAllowingMentionNotifications.filter(
-      (userId) => !blockedByUserSet.has(userId.toString())
+      (userId) => !blockedByUserSet.has(userId.toString()),
     );
   } else {
     resultingUsers = userIdsOfUsersAllowingMentionNotifications;
@@ -515,14 +514,14 @@ export const newMentionNotificationUsersCalculate = async (req, res, next) => {
 export const materialCourseUpdateNotificationsUsers = async (
   req,
   res,
-  next
+  next,
 ) => {
   const userId = req.userId;
   const course = req.locals.course;
   const material = req.locals.material;
   let foundUser = await User.findById(userId);
   let blockedByUsers = foundUser.blockedByUser.map((userId) =>
-    userId.toString()
+    userId.toString(),
   );
   const usersAllowingCourseUpdatesMaterialLevel =
     await BlockingNotifications.aggregate([
@@ -546,7 +545,7 @@ export const materialCourseUpdateNotificationsUsers = async (
   if (blockedByUsers.length > 0) {
     const blockedByUserSet = new Set(blockedByUsers);
     resultingUsers = userIdsOfUsersAllowingCourseUpdatesMaterialLevel.filter(
-      (userId) => !blockedByUserSet.has(userId.toString())
+      (userId) => !blockedByUserSet.has(userId.toString()),
     );
   } else {
     resultingUsers = userIdsOfUsersAllowingCourseUpdatesMaterialLevel;
@@ -554,7 +553,7 @@ export const materialCourseUpdateNotificationsUsers = async (
 
   let finalListOfUsersToNotify = removeUserFromList(
     resultingUsers,
-    new ObjectId(userId)
+    new ObjectId(userId),
   );
   req.locals.usersToBeNotified = finalListOfUsersToNotify;
 
@@ -563,7 +562,7 @@ export const materialCourseUpdateNotificationsUsers = async (
     await deleteMaterialNotifications(req.locals.material._id);
     await BlockingNotifications.updateMany(
       { "materials.materialId": req.locals.material._id },
-      { $pull: { materials: { materialId: req.locals.material._id } } }
+      { $pull: { materials: { materialId: req.locals.material._id } } },
     );
     await removeFollowingAnnotationDocuments(req);
   }
@@ -576,7 +575,7 @@ export const channelCourseUpdateNotificationUsers = async (req, res, next) => {
   const channel = req.locals.channel;
   let foundUser = await User.findById(userId);
   let blockedByUsers = foundUser.blockedByUser.map((userId) =>
-    userId.toString()
+    userId.toString(),
   );
 
   const usersAllowingCourseUpdatesChannelLevel =
@@ -606,7 +605,7 @@ export const channelCourseUpdateNotificationUsers = async (req, res, next) => {
   if (blockedByUsers.length > 0) {
     const blockedByUserSet = new Set(blockedByUsers);
     resultingUsers = userIdsOfUsersAllowingCourseUpdatesChannelLevel.filter(
-      (userId) => !blockedByUserSet.has(userId.toString())
+      (userId) => !blockedByUserSet.has(userId.toString()),
     );
   } else {
     resultingUsers = userIdsOfUsersAllowingCourseUpdatesChannelLevel;
@@ -614,7 +613,7 @@ export const channelCourseUpdateNotificationUsers = async (req, res, next) => {
 
   let finalListOfUsersToNotify = removeUserFromList(
     resultingUsers,
-    new ObjectId(userId)
+    new ObjectId(userId),
   );
   req.locals.usersToBeNotified = finalListOfUsersToNotify;
 
@@ -634,7 +633,7 @@ export const channelCourseUpdateNotificationUsers = async (req, res, next) => {
           channels: { channelId: req.locals.channel._id },
           materials: { channelId: req.locals.channel._id },
         },
-      }
+      },
     );
   }
   next();
@@ -647,7 +646,7 @@ export const topicCourseUpdateNotificationUsers = async (req, res, next) => {
 
   let foundUser = await User.findById(userId);
   let blockedByUsers = foundUser.blockedByUser.map((userId) =>
-    userId.toString()
+    userId.toString(),
   );
   const usersAllowingCourseUpdatesTopicLevel =
     await BlockingNotifications.aggregate([
@@ -671,7 +670,7 @@ export const topicCourseUpdateNotificationUsers = async (req, res, next) => {
   if (blockedByUsers.length > 0) {
     const blockedByUserSet = new Set(blockedByUsers);
     resultingUsers = userIdsOfUsersAllowingCourseUpdatesTopicLevel.filter(
-      (userId) => !blockedByUserSet.has(userId.toString())
+      (userId) => !blockedByUserSet.has(userId.toString()),
     );
   } else {
     resultingUsers = userIdsOfUsersAllowingCourseUpdatesTopicLevel;
@@ -679,7 +678,7 @@ export const topicCourseUpdateNotificationUsers = async (req, res, next) => {
 
   let finalListOfUsersToNotify = removeUserFromList(
     resultingUsers,
-    new ObjectId(userId)
+    new ObjectId(userId),
   );
   req.locals.usersToBeNotified = finalListOfUsersToNotify;
 
@@ -701,7 +700,7 @@ export const topicCourseUpdateNotificationUsers = async (req, res, next) => {
           materials: { topicId: req.locals.topic._id },
           topics: { topicId: req.locals.topic._id },
         },
-      }
+      },
     );
   }
 
@@ -716,7 +715,7 @@ export const topicCourseUpdateNotificationUsers = async (req, res, next) => {
 export const updateBlockingNotificationsNewMaterial = async (
   req,
   res,
-  next
+  next,
 ) => {
   const userId = req.userId;
   const course = req.locals.course;
@@ -800,7 +799,7 @@ export const updateBlockingNotificationsNewMaterial = async (
         $push: {
           materials: newObj,
         },
-      }
+      },
     );
   });
 
@@ -863,7 +862,7 @@ export const updateBlockingNotificationsNewTopic = async (req, res, next) => {
         $push: {
           topics: newObj,
         },
-      }
+      },
     );
   });
 
@@ -965,7 +964,7 @@ export const updateBlockingNotificationsNewChannel = async (req, res, next) => {
         $push: {
           channels: newObj,
         },
-      }
+      },
     );
   });
 
@@ -988,7 +987,7 @@ export const updateBlockingNotificationsNewChannel = async (req, res, next) => {
 
 export const getNotificationSettingsWithFollowingAnnotations = async (
   courseId,
-  userId
+  userId,
 ) => {
   const notificationSettings = await BlockingNotifications.aggregate([
     {

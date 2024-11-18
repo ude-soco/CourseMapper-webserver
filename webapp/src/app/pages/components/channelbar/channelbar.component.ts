@@ -27,6 +27,7 @@ import { CourseLevelNotificationSettingsComponent } from 'src/app/components/cou
 import { getNotifications } from '../notifications/state/notifications.reducer';
 import { Observable, map } from 'rxjs';
 import { TopicChannelService } from 'src/app/services/topic-channel.service';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-channelbar',
@@ -55,6 +56,7 @@ export class ChannelbarComponent implements OnInit {
     private storageService: StorageService,
     private materialKgService: MaterialKgOrderedService,
     private dialogService: DialogService,
+    private location: Location
   ) {
     this.route.params.subscribe((params) => {
       if (params['courseID']) {
@@ -126,6 +128,12 @@ export class ChannelbarComponent implements OnInit {
       command: () => this.onDeleteCourse(),
     },
     {
+      label: 'Share course ',
+      icon: 'pi pi-copy',
+      title: 'Copy Course URL',
+      command: () => this.copyCourseId(this.selectedCourse._id, this.selectedCourse.name),
+    },
+    {
       label: "View course dashboard",
       icon: "pi pi-chart-bar",
       styleClass: "contextMenuButton",
@@ -137,6 +145,7 @@ export class ChannelbarComponent implements OnInit {
       icon: 'pi pi-bell',
       command: ($event) => this.onNotificationSettingsClicked($event),
     },
+
   ];
 
   normalUserOptions: MenuItem[] = [
@@ -151,6 +160,12 @@ export class ChannelbarComponent implements OnInit {
       label: 'Notification Settings',
       icon: 'pi pi-bell',
       command: ($event) => this.onNotificationSettingsClicked($event),
+    },
+    {
+      label: 'Share course ',
+      icon: 'pi pi-copy',
+      title: 'Copy Course URL',
+      command: () => this.copyCourseId(this.selectedCourse._id, this.selectedCourse.name),
     },
   ];
   /*   @ViewChild('notificationSettingsPanel') notificationSettingsPanel: any; */
@@ -205,7 +220,24 @@ export class ChannelbarComponent implements OnInit {
       }
     });
   }
-
+  copyCourseId(courseId: string, name:string) {
+    // const urlTree = this.router.createUrlTree(['course-description', courseId]);
+    
+    // // Serializing the URL tree into a string
+    // const url = this.router.serializeUrl(urlTree);
+    const protocol = window.location.protocol;
+    const host = window.location.host;
+    const baseUrl = `${protocol}//${host}`;
+    const url = `${baseUrl}/course-description/${courseId}`;
+    // Now you can use 'url' for sharing
+    console.log(url);
+    navigator.clipboard.writeText(url);
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: `Course URL: ${name} copied to clipboard! `,
+    });
+  }
   onNotificationSettingsClicked($event) {
     /*  this.notificationSettingsPanel.show($event); */
     this.ref = this.dialogService.open(

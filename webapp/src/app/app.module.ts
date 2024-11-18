@@ -142,6 +142,8 @@ import { CarouselForwardButtonComponent } from './pages/components/vis-dashboard
 import { CarouselBackwardButtonComponent } from './pages/components/vis-dashboard/carousel/chevron-buttons/carousel-backward-button/carousel-backward-button.component';
 import { SvgIconVisComponent } from './pages/components/vis-dashboard/svg-icon-vis/svg-icon-vis.component';
 import { PopularTopicsComponent } from './pages/components/vis-dashboard/cards/popular-topics/popular-topics.component';
+import { EmailValidationComponent } from './pages/components/email-validation/email-validation.component';
+import { RequestEmailValidationComponent } from './pages/components/email-validation/request-email-validation/request-email-validation.component';
 
 @NgModule({
   declarations: [
@@ -183,6 +185,8 @@ import { PopularTopicsComponent } from './pages/components/vis-dashboard/cards/p
     PopulateDashboardComponent,
     MaterialDashboardComponent,
     BackButtonComponent,
+    EmailValidationComponent,
+   RequestEmailValidationComponent,
     VisLandingPageComponent,
     VisDashboardLayoutComponent,
     VisHeaderComponent,
@@ -221,6 +225,7 @@ import { PopularTopicsComponent } from './pages/components/vis-dashboard/cards/p
     CarouselBackwardButtonComponent,
     SvgIconVisComponent,
     PopularTopicsComponent,
+
   ],
     imports: [
         MentionModule,

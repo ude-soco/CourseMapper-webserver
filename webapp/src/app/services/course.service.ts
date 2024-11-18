@@ -2,8 +2,8 @@ import { CourseImp } from 'src/app/models/CourseImp';
 import { Course } from 'src/app/models/Course';
 import { environment } from '../../environments/environment';
 import { EventEmitter, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { catchError, Observable, of, Subject, tap } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { catchError, Observable, of, Subject, tap, throwError } from 'rxjs';
 import { TopicChannelService } from './topic-channel.service';
 import { StorageService } from './storage.service';
 import { Store } from '@ngrx/store';
@@ -33,7 +33,7 @@ export class CourseService {
     private topicChannelService: TopicChannelService,
     private storageService: StorageService,
     private store: Store<State>,
-    private socket:Socket
+    private socket: Socket
   ) {}
 
   getSelectedCourse(): Course {
@@ -48,9 +48,8 @@ export class CourseService {
    *
    */
   selectCourse(course: Course) {
-
-    this.socket.emit("leave", "course:"+this.getSelectedCourse()._id);
-    this.socket.emit("join", "course:"+course._id);
+    this.socket.emit('leave', 'course:' + this.getSelectedCourse()._id);
+    this.socket.emit('join', 'course:' + course._id);
     // if there is no selected course then no need to update the topics.
     if (this.getSelectedCourse()._id && course._id) {
       this.topicChannelService.updateTopics(course._id);
@@ -62,16 +61,27 @@ export class CourseService {
     this.onSelectCourse.emit(course);
   }
 
+  logCourses(courseId: string): Observable<any> {
+    return this.http.get<Course>(`${this.API_URL}/courses/${courseId}/log`)
+  }
   /**
    * @function fetchCourses
    * GET user's courses from the server
    *
    *
    */
+
   fetchCourses(): Observable<Course[]> {
     return this.http.get<Course[]>(`${this.API_URL}/my-courses`).pipe(
       tap((courses) => {
-        this.courses = courses;
+        this.courses = courses; // Store fetched courses
+      }),
+      catchError((error: HttpErrorResponse) => {
+        // if (error.status === 401) {
+        //   // console.warn("User is not authenticated. Token expired or not provided.");
+        //   return of([]); // Return empty array so app continues
+        // }
+         return throwError(error); // Rethrow other errors
       })
     );
   }
@@ -205,15 +215,29 @@ export class CourseService {
   }
 
   EnrollToCOurse(courseID: string): any {
-    return this.http.post<any>(`${this.API_URL}/enrol/${courseID}`, {}).pipe(
-      tap((Enrolcourses) => {
-        this.store.dispatch(
-          CourseActions.setCourseNotificationSettingsSuccess({
-            updatedDoc: Enrolcourses.updatedNotificationSettings,
-          })
-        );
-      })
-    );
+    try {
+      return this.http.post<any>(`${this.API_URL}/enrol/${courseID}`, {}).pipe(
+        catchError((errResponse, sourceObservable) => {
+          if (errResponse.status === 403) {
+            return of({ errorMsg: errResponse.error.error });
+          } else {
+            return of({
+              errorMsg: 'Error in connection: Please reload the application',
+            });
+          }
+        }),
+        tap((Enrolcourses) => {
+          console.log(Enrolcourses);
+          this.store.dispatch(
+            CourseActions.setCourseNotificationSettingsSuccess({
+              updatedDoc: Enrolcourses.updatedNotificationSettings,
+            })
+          );
+        })
+      );
+    } catch (error) {
+      console.log(error.error);
+    }
   }
   WithdrawFromCourse(course: Course): any {
     return this.http

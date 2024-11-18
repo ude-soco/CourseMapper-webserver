@@ -26,6 +26,7 @@ import {
 } from '../../../notifications/state/notifications.reducer';
 import { combineLatest, filter, withLatestFrom } from 'rxjs';
 import { Router } from '@angular/router';
+import { AnnotationService } from 'src/app/services/annotation.service';
 @Component({
   selector: 'app-pdf-comment-panel',
   templateUrl: './pdf-comment-panel.component.html',
@@ -52,7 +53,7 @@ export class PdfCommentPanelComponent implements OnInit, OnDestroy {
   constructor(
     private store: Store<State>,
     private changeDetectorRef: ChangeDetectorRef,
-    protected router: Router
+    protected router: Router,
   ) {
     this.store
       .select(getCurrentMaterial)
@@ -138,6 +139,8 @@ export class PdfCommentPanelComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+
+
     /* this.currentPage = 1; */
     this.showPDFAnnotations();
     /*    this.store
@@ -222,6 +225,7 @@ export class PdfCommentPanelComponent implements OnInit, OnDestroy {
   }
 
   showPDFAnnotations() {
+
     this.annotationOnCurrentPage = this.annotations.filter(
       (anno) =>
         this.currentPage >=

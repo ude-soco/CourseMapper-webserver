@@ -437,6 +437,7 @@ export class NotificationsService {
   }
 
   followAnnotation(annotationId: string) {
+  
     return this.httpClient.post<BlockingNotifications>(
       `${environment.API_URL}/notifications/followAnnotation/${annotationId}`,
       {}
@@ -478,7 +479,7 @@ export class NotificationsService {
     courseId: string;
   }) {
     return this.httpClient.get<
-      { name: string; email: string; userId: string }[]
+      { name: string; username: string; userId: string }[]
     >(
       `${environment.API_URL}/notifications/searchUsers?partialString=${partialString}&courseId=${courseId}`
     );
@@ -600,7 +601,7 @@ export class NotificationsService {
       userShortname: notification.activityId.notificationInfo.userShortname,
       courseName: notification.activityId.notificationInfo.courseName,
       username: notification.activityId.notificationInfo.userName,
-      authorId: notification.activityId.statement.actor?.name,
+      authorId: notification.activityId.statement.actor?.account.name,
       authorEmail: notification.activityId.notificationInfo.authorEmail,
       action:
         notification.activityId.statement.verb.display['en-US'] === 'replied'

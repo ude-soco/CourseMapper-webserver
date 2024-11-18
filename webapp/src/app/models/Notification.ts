@@ -38,6 +38,10 @@ export interface UserNotification {
     };
     statement: {
       actor: {
+        account:{
+          name:string;
+        }
+        
         name: string;
       };
       object: {

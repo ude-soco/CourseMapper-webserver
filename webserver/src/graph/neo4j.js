@@ -84,6 +84,14 @@ export async function getMaterial(materialId) {
   return recordsToObjects(records);
 }
 
+export async function getMaterialSlides(materialId) {
+  const { records, summary, keys } = await graphDb.driver.executeQuery(
+    'MATCH (c:Slide) WHERE c.mid = $mid RETURN LABELS(c) as labels,ID(c) AS id, c.cid as cid, c.sid as sid',
+    { mid: materialId }
+  );
+  return recordsToObjects(records);
+}
+
 export async function deleteMaterial(materialId) {
   const { records, summary, keys } = await graphDb.driver.executeQuery(
     'MATCH (m:LearningMaterial) WHERE m.mid = $mid DETACH DELETE m',

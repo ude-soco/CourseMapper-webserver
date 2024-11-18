@@ -42,6 +42,8 @@ export const getAllNotifications = async (req, res, next) => {
       "statement.object.definition.type",
       "statement.object.definition.name.en-US",
       "statement.actor.name",
+      "statement.actor.account.name",
+
       "statement.verb.display.en-US",
       "statement.result.extensions",
       "statement.timestamp",
@@ -184,7 +186,7 @@ export const searchUsers = async (req, res, next) => {
     const users = await User.find({
       "courses.courseId": courseId,
       $or: [
-        { email: { $regex: searchQuery, $options: "i" } },
+        { username: { $regex: searchQuery, $options: "i" } },
         { firstname: { $regex: searchQuery, $options: "i" } },
         { lastname: { $regex: searchQuery, $options: "i" } },
       ],
@@ -195,7 +197,7 @@ export const searchUsers = async (req, res, next) => {
     }
     const suggestions = users.map((user) => ({
       name: user.firstname + " " + user.lastname,
-      email: user.email,
+      username: user.username,
       userId: user._id,
     }));
 

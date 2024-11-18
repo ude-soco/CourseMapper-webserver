@@ -44,6 +44,8 @@ import {
 import {
   FindByTopicMainComponent
 } from "./pages/vis-dashboard/find-topic-page/find-by-topic-main/find-by-topic-main.component";
+import { EmailValidationComponent } from './pages/components/email-validation/email-validation.component';
+import { RequestEmailValidationComponent } from './pages/components/email-validation/request-email-validation/request-email-validation.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'landingPage', pathMatch: 'full' },
@@ -72,10 +74,18 @@ const routes: Routes = [
   {
     path: 'restPassword/:token',
     component: ResetPasswordComponent,
-  },
-  {
+  }, {
     path: 'restRequest',
     component: ResetPasswordRequestComponent,
+  },
+  {
+  path: 'verify/:token',
+  component: RequestEmailValidationComponent,
+},
+ 
+  {
+    path: 'validateEmail',
+    component: EmailValidationComponent,
   },
   {
     path: 'home',
