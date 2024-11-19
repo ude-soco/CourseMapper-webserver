@@ -8,7 +8,6 @@ import logging
 from log import LOG
 
 logger = LOG(name=__name__, level=logging.DEBUG)
-# os.chdir("D:/study/Master_thesis/project/nave_dev/CourseMapper-webserver/coursemapper-kg")
 
 class RRGCN:
 
@@ -85,19 +84,26 @@ class RRGCN:
         # self.prerequisite_matrix = glorot_seed((self.embedding_matrix.shape[0],  self.embedding_matrix.shape[0])).numpy()
         # self.prerequisite_matrix = np.around(self.prerequisite_matrix, 2)
         relation2 = np.genfromtxt("prerequisite.txt", dtype=np.float32)
-        prerequisite_row = np.array(list(map(idx_map.get, relation2[:, 0].flatten())))
-        prerequisite_column = np.array(list(map(idx_map.get, relation2[:, 2].flatten())))
-        self.prerequisite_matrix = sp.coo_matrix(
-            (relation2[:, 1], (prerequisite_row[:], prerequisite_column[:])),
-            shape=( self.embedding_matrix.shape[0],  self.embedding_matrix.shape[0]),
-            dtype=np.float32,
-        )
+        if relation2.size == 0:
+            logger.info("prerequisite.txt is empty")
+            self.prerequisite_matrix = sp.coo_matrix(
+                (self.embedding_matrix.shape[0], self.embedding_matrix.shape[0]),
+                dtype=np.float32
+            )
+        else:
+            prerequisite_row = np.array(list(map(idx_map.get, relation2[:, 0].flatten())))
+            prerequisite_column = np.array(list(map(idx_map.get, relation2[:, 2].flatten())))
+            self.prerequisite_matrix = sp.coo_matrix(
+                (relation2[:, 1], (prerequisite_row[:], prerequisite_column[:])),
+                shape=( self.embedding_matrix.shape[0],  self.embedding_matrix.shape[0]),
+                dtype=np.float32,
+            )
         self.prerequisite_matrix =self.prerequisite_matrix.toarray()
         self.prerequisite_matrix = np.around(self.prerequisite_matrix, 2)
         neighbor_counts =np.sum(self.prerequisite_matrix != 0, axis=1) 
-        # 避免除以零，处理孤立节点
+        # Avoid dividing by zero and deal with isolated nodes
         neighbor_counts[neighbor_counts == 0] = 1
-        # 归一化邻接矩阵
+        # Normalized adjacency matrix
         normalized_adj_matrix = self.prerequisite_matrix / neighbor_counts[:, None]
         self.prerequisite_matrix = normalized_adj_matrix
 
@@ -177,7 +183,7 @@ class RRGCN:
         #print(self.adj_matrix.toarray().shape)
         self.adj_matrix = np.around(self.adj_matrix, 2)
 
-    #第一种形态
+    # rrgcn_A_B, A=1 means with self loop, A=2 means without self loop; B=1
     def rrgcn_1_1(self):
 
         #self.load_data()
@@ -304,6 +310,7 @@ class RRGCN:
                     id=id,
                     embedding=embedding)
         logger.info("Hong_rrgcn_model END")
+    
     def rrgcn_1_3(self):
         """ 
             embedding_matrix

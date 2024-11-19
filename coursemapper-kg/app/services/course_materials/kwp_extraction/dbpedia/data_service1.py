@@ -1,4 +1,5 @@
 from ...conceptrecommentation.recommendation import Recommendation
+from ...conceptrecommentation.sequence_recommendation import Sequence_recommendation
 from ..dbpedia.concept_tagging import DBpediaSpotlight
 from ...db.neo4_db import NeoDataBase
 import time
@@ -29,6 +30,7 @@ class RecService:
         self.db = NeoDataBase(neo4j_uri, neo4j_user, neo4j_pass)
 
         self.recommendation = Recommendation()
+        self.sequence_recommendation = Sequence_recommendation()
         self.dbpedia = DBpediaSpotlight()
 
     def _construct_user(self, user_id, non_understood, understood, new_concepts, mid):
@@ -44,7 +46,7 @@ class RecService:
             concept_id, user_id, relation_type
         )
 
-    def _get_concept_recommendation(self, user_id, mid):
+    def _get_concept_recommendation_bak(self, user_id, mid):
         # Get concepts that doesn't interact with user
         concept_list = self.db.get_concept_has_not_read(user_id, mid)
         user = self.db.get_user(user_id)
@@ -60,6 +62,30 @@ class RecService:
         resp = get_serialized_concepts_data(recommend_concepts)
         return resp
 
+    def _get_concept_recommendation(self, user_id, mid):
+        # Get concepts that doesn't interact with user
+        # only related to candidate concept
+        concept_list = self.db.get_concept_has_not_read(user_id, mid)
+
+        #only sequence recommendation candidate concept set
+        sequence_concept_list = self.db.get_prerequisite_concept_has_not_read(user_id, mid)
+
+        #get user ids
+        user = self.db.get_user(user_id)
+
+        # compute the similarity between user and concepts with cos-similarity and select top-5 recommendation concept
+        recommend_concepts = self.recommendation.recommend(concept_list, user, top_n=5)
+        for i in recommend_concepts:
+            info = i["n"]["name"] + " : " + str(i["n"]["score"])
+            logger.info(info)
+        # Use paths for interpretability
+        recommend_concepts = self._get_road(recommend_concepts, user_id, mid)
+        # get related to top-5 recommended concept and interpretability path
+        resp = get_serialized_concepts_data(recommend_concepts)
+
+        #get seqence recommendation
+        sequence_path = self.sequence_recommendation.sequence_recommend(sequence_concept_list, user, top_n=5)
+        return resp,sequence_path
     def _get_road(self, recommend_concepts, uid, mid):
         for recommend_concept in recommend_concepts:
             cid = recommend_concept["n"]["cid"]
@@ -110,8 +136,10 @@ class RecService:
             for i in range(len(road)):
                 print("len(road)",len(road))
                 print("name",name)
-                if road[i]["name"] == name:
+                if road[i]["name"] == name and road[i]["weight"] is not None:
                     weights = road[i]["weight"]
+                else:
+                    weights = 0
                 if max_weight <= weights:
                     max_weight = weights
                     optimum_name = name

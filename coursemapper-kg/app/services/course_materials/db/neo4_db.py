@@ -5,7 +5,7 @@ import logging
 from log import LOG
 from pymongo import MongoClient
 from bson import ObjectId
-
+from config import Config
 #set pythonHashSeed to zero to have same hashed value if same input has been given
 import os
 import sys
@@ -641,8 +641,8 @@ def get_user_embedding_bak(tx, user_id, mid):
 def get_user_embedding(tx,user_id, mid):
 
     # connect to MongoDB
-    client = MongoClient("mongodb://localhost:27017/")
-    db = client["coursemapper_v2"]  # the name of database
+    client = MongoClient(Config.MONGO_DB_URI)
+    db = client[Config.MONGO_DB_NAME]  # the name of database
     users_collection = db["users"]  # the name of table
     user_doc = users_collection.find_one({"_id": ObjectId(user_id)}) #query the information belongs to user (user_id)
 
@@ -790,7 +790,7 @@ def get_user_embedding(tx,user_id, mid):
             # calculate W_pos
             W_pos = dnu_positions[i] / (num_nodes - 1)  
             # calculate W_c
-            w_c = 0.5 * (W_cos + W_pos)  # 权重公式
+            w_c = 0.5 * (W_cos + W_pos)
             w_c_list.append(w_c)
         # Step 2: get W_sum
         W_sum = sum(w_c_list)
@@ -1443,7 +1443,7 @@ class NeoDataBase:
             else:
                 return False
 # why not final embeddings
-    def get_concept_has_not_read(self, user_id, mid):
+    def get_concept_has_not_read_bak(self, user_id, mid):
         logger.info("Get concept")
         with self.driver.session() as session:
             result = session.run(
@@ -1458,9 +1458,51 @@ class NeoDataBase:
                 mid=mid,
                 type="category"
             ).data()
+        return list(result)
+    
+    def get_concept_has_not_read(self, user_id, mid):
+        logger.info("Get only ordinary candidate concept")
+        with self.driver.session() as session:
+            result = session.run(
+                """MATCH (n:Concept)
+                    WHERE NOT EXISTS {MATCH (u:User)-[r]->(n:Concept) where u.uid = $uid}
+                    AND NOT EXISTS {MATCH (u:User)-[r]->(m:Concept) where u.uid =$uid and n.initial_embedding =m.initial_embedding}
+                    AND n.mid =$mid 
+                    AND n.type <> $type
+                    AND NOT EXISTS {
+                        MATCH (p1:Concept)-[:PREREQUISITE_TO]-(p2:Concept)
+                        WHERE n = p1 OR n = p2
+                    }
+                    return n
+                    """,
+                uid=user_id,
+                mid=mid,
+                type="category"
+            ).data()
 
         return list(result)
-
+    def get_prerequisite_concept_has_not_read(self, user_id, mid):
+        logger.info("Get only prerequisite candidate concept")
+        with self.driver.session() as session:
+            result = session.run(
+                """
+                MATCH (n:Concept)
+                WHERE NOT EXISTS {MATCH (u:User)-[r]->(n:Concept) where u.uid = $uid}
+                AND NOT EXISTS {MATCH (u:User)-[r]->(m:Concept) where u.uid =$uid and n.initial_embedding =m.initial_embedding} 
+                AND n.type <> $type
+                AND n.mid = $mid
+                AND EXISTS {
+                    MATCH (p1:Concept)-[:PREREQUISITE_TO]-(p2:Concept)
+                    WHERE n = p1 OR n = p2
+                }
+                return n
+                """,
+                uid=user_id,
+                mid = mid,
+                type="category"
+            ).data()
+        return list(result)
+    
     def get_user(self, user_id):
         logger.info("Get user")
         with self.driver.session() as session:
@@ -1826,9 +1868,6 @@ class NeoDataBase:
                 con = list(idx_feature["embedding"].split(","))
                 f.write(str(idx_feature["newid"]) + " " + str(idx_feature["id"]) + " " + " ".join(con) + "\n")
 
-    """ 
-    MATCH p=(u:Concept)-[r]->(c:Concept) where u.mid = $mid and c.mid =$mid AND NOT r:PREREQUISITE_TO RETURN u.cid as source, u.type as stype, r.weight as weight, c.cid as target, c.type as ttype
-    """
     def relation(self,mid):
         # Get relationships between nodes (concept-related concept, concept-category)
         with self.driver.session() as session:

@@ -230,6 +230,7 @@ class DataService:
                 start_time = time.time()
                 logger.info("GCN")
                 print("start extraction")
+                
                 self._extract_vector_relation(materialId)
                 print("End extraction")
                 print("initiate GCN class")

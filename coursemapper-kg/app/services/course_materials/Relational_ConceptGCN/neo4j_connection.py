@@ -5,6 +5,7 @@ import numpy as np
 from bson import ObjectId
 from pymongo import MongoClient
 from sentence_transformers import util
+from collections import defaultdict, deque
 class DBConnection:
     def __init__(self, uri='bolt://localhost:7687', username='neo4j', password='1234qwer!'):
         self.driver = GraphDatabase.driver(uri,
@@ -45,7 +46,6 @@ class DBConnection:
         #         f.write(str(relationship["source"]) + " " + str(relationship["weight"]) 
         #                 + " " + str(relationship["target"])+ "\n")
                 
-
     def relation(self, mid='66e997b58ea301d5fbfbd91c'):
         # Get relationships between nodes (concept-related concept, concept-category)
         print("+++++++++++++++++++++++++++++++++++mid = "+str(mid))
@@ -75,7 +75,6 @@ class DBConnection:
             for relationship in relationships:
                 f.write(str(relationship["source"]) + " " + str(relationship["weight"])
                         + " " + str(relationship["target"]) + "\n")
-
 
     def relation_prerequisite(self,mid='66e997b58ea301d5fbfbd91c'):
         # Get relationships between nodes (concept-related concept, concept-category)
@@ -123,7 +122,6 @@ class DBConnection:
             for prerequisite_relationship in prerequisite_relationships:
                 f.write(str(prerequisite_relationship["source"]) + " " + str(prerequisite_relationship["weight"])
                         + " " + str(prerequisite_relationship["target"]) + "\n")
-
 
     def get_user_embedding_bak(self,user_id, mid):
         # connect to Neo4j
@@ -295,8 +293,6 @@ class DBConnection:
                 uid=user_id,
                 embedding=','.join(str(i) for i in e_L))
 
-    
-    
     def get_user_embedding(self, user_id='66e07565733de02be8699540', mid='66e997b58ea301d5fbfbd91c'):
         """
         """
@@ -367,23 +363,25 @@ class DBConnection:
             ).data()
 
         return list(result)
+    
     def get_prerequisite_concept_has_not_read(self, user_id, mid):
         print("Get concept")
         with self.driver.session() as session:
             result = session.run(
-                """MATCH (n:Concept)
-                    WHERE NOT EXISTS {MATCH (u:User)-[r]->(n:Concept) where u.uid = $uid}
-                    AND NOT EXISTS {MATCH (u:User)-[r]->(m:Concept) where u.uid =$uid and n.initial_embedding =m.initial_embedding}
-                    AND n.mid =$mid 
-                    AND n.type <> $type
-                    AND EXISTS {
-                        MATCH (p1:Concept)-[:PREREQUISITE_TO]-(p2:Concept)
-                        WHERE n = p1 OR n = p2
-                    }
-                    return n
-                    """,
+                """
+                MATCH (n:Concept)
+                WHERE NOT EXISTS {MATCH (u:User)-[r]->(n:Concept) where u.uid = $uid}
+                AND NOT EXISTS {MATCH (u:User)-[r]->(m:Concept) where u.uid =$uid and n.initial_embedding =m.initial_embedding} 
+                AND n.type <> $type
+                AND n.mid = $mid
+                AND EXISTS {
+                    MATCH (p1:Concept)-[:PREREQUISITE_TO]-(p2:Concept)
+                    WHERE n = p1 OR n = p2
+                }
+                return n
+                """,
                 uid=user_id,
-                mid=mid,
+                mid = mid,
                 type="category"
             ).data()
 
@@ -406,26 +404,258 @@ class DBConnection:
 
         return util.cos_sim(embedding1, embedding2).item()
     
-    def sequence_recommend(self,sequence_concept_list,user,top_n):
+    def build_adjacency_matrix(self,list_of_cids):
+        # 创建数据库连接
+        driver = self.driver
         
+        query = """
+        MATCH p=(u:Concept)-[r:PREREQUISITE_TO]->(c:Concept) 
+        WHERE u.cid IN $cids AND c.cid IN $cids
+        RETURN u.cid AS source, c.cid AS target, r.weighted_weight AS weight
+        """
+
+        # 查询节点之间的关系
+        def fetch_relationships(tx, cids):
+            result = tx.run(query, cids=cids)
+            return [(record["source"], record["target"], record["weight"]) for record in result]
+
+        relationships = []
+        with driver.session() as session:
+            relationships = session.read_transaction(fetch_relationships, list_of_cids)
+
+        #print(len(relationships))
+
+        # 关闭连接
+        driver.close()
+
+        # 创建 cid 到索引的映射
+        cid_to_index = {cid: idx for idx, cid in enumerate(list_of_cids)}
+        n = len(list_of_cids)
+        
+        # 初始化邻接矩阵
+        adjacency_matrix = np.zeros((n, n))
+
+        # 填充邻接矩阵
+        for source, target, weight in relationships:
+            if source in cid_to_index and target in cid_to_index:
+                i, j = cid_to_index[source], cid_to_index[target]
+                adjacency_matrix[i][j] = 1
+
+        rows, cols = np.where(adjacency_matrix == 1)
+        for row, col in zip(rows, cols):
+            source_cid = list_of_cids[row]
+            target_cid = list_of_cids[col]
+            #print(f"{source_cid} 和 {target_cid} 之间有连接")
+        
+        return adjacency_matrix, cid_to_index
+    
+    def find_disjoint_paths(self, adj_matrix, cid_list, cid_to_index):
+        # Generate `cid` from `cidtoindex` to ensure mapping from indices to IDs
+        cid = list(cid_to_index.keys())
+
+        # Initialize variables
+        visited = set()
+        connected_components = []
+        explanations = []
+
+        # Helper function for DFS
+        def dfs(node, component, path):
+            visited.add(node)
+            component.append(node)
+            for neighbor, is_connected in enumerate(adj_matrix[node]):
+                if is_connected and neighbor not in visited:
+                    path.append(f"{cid[node]} -> {cid[neighbor]}")
+                    dfs(neighbor, component, path)
+
+        # Convert cid_list to indices
+        indices = [cid_to_index[c] for c in cid_list]
+
+        # Find connected components
+        for idx in indices:
+            if idx not in visited:
+                component = []
+                path = []
+                dfs(idx, component, path)
+                connected_components.append(component)
+                explanations.append(path)
+
+        # Filter components to include only nodes in `cid_list`
+        filtered_components = []
+        filtered_explanations = []
+
+        for component, explanation in zip(connected_components, explanations):
+            # Convert indices to cids
+            filtered_component = [cid[i] for i in component if cid[i] in cid_list]
+            if filtered_component:  # Only add non-empty components
+                filtered_components.append(filtered_component)
+
+                # Filter explanation to include only paths within `cid_list`
+                filtered_explanation = [path for path in explanation if all(node in cid_list for node in path.split(" -> "))]
+                filtered_explanations.append(filtered_explanation)
+
+        return filtered_components, filtered_explanations
+    
+    def find_paths_from_node(self,adj_matrix, start_node):
+        """
+        Find all paths starting from a given node using DFS.
+        """
+        num_nodes = adj_matrix.shape[0]
+        paths = []  # Store all paths
+
+        def dfs(current_node, path):
+            path.append(current_node)
+            has_next = False
+            for neighbor, is_connected in enumerate(adj_matrix[current_node]):
+                if is_connected and neighbor not in path:  # Prevent cycles
+                    has_next = True
+                    dfs(neighbor, path.copy())  # Recursive search
+            if not has_next:  # If no further nodes, this is a valid path
+                paths.append(path)
+
+        dfs(start_node, [])
+        return paths
+
+    def find_paths_to_node(self,adj_matrix, end_node):
+        """
+        Find all paths ending at a given node by transposing the matrix and using DFS.
+        """
+        # Transpose the adjacency matrix to reverse the direction of edges
+        adj_matrix_transposed = adj_matrix.T
+        return self.find_paths_from_node(adj_matrix_transposed, end_node)
+    
+    def get_road(self,cid_to_name,cid_list):
+        """
+        """
+        print("get_groupedPaths_and_isolatedNodes")
+        with self.driver.session() as session:
+            result = session.run(
+                """
+                WITH $cid AS targetCIDs
+
+                // Find the starting node
+                MATCH (startNode)
+                WHERE startNode.cid IN targetCIDs
+
+                // Find all paths connected by PREREQUISITE_TO
+                OPTIONAL MATCH path = (startNode)-[:PREREQUISITE_TO*]->(midNode)-[:RELATED_TO*0..1]-(midNode2)-[:PREREQUISITE_TO*]->(endNode)
+                WHERE endNode.cid IN targetCIDs
+
+                // Collect the target node CID in the path
+                WITH collect([node IN nodes(path) WHERE node.cid IN targetCIDs | node.cid]) AS groupedPaths, targetCIDs
+                // Remove duplicate paths
+                WITH apoc.coll.toSet(groupedPaths) AS groupedPaths, targetCIDs
+                //calculate the isolated nodes
+                WITH groupedPaths, apoc.coll.flatten(groupedPaths) AS connectedCIDs, targetCIDs
+                WITH groupedPaths, apoc.coll.subtract(targetCIDs, connectedCIDs) AS isolatedNodes
+
+                // Returns the result with the CIDs in the path and the CIDs of the isolated nodes
+                RETURN groupedPaths, isolatedNodes
+                """,
+                cid=cid_list,
+        ).data()
+           # print("get_road_user_c_related_concept", result)
+        # print("road same rc",result )
+        result = list(result)
+        groupedPaths = result[0]['groupedPaths']
+        isolatedNodes = result[0]['isolatedNodes']
+        with self.driver.session() as session:
+            isolated_result = session.run(
+                """
+                WITH $isolatedNodes_list AS isolatedNodeCID
+
+                // 找到孤立节点
+                MATCH (isoNode)
+                WHERE isoNode.cid IN isolatedNodeCID
+
+                // 前向路径和后向路径
+                OPTIONAL MATCH forwardPath = (isoNode)-[:PREREQUISITE_TO*]->(forwardNode)
+                OPTIONAL MATCH backwardPath = (backwardNode)-[:PREREQUISITE_TO*]->(isoNode)
+
+                // 先收集路径中的节点信息
+                WITH isoNode, 
+                    [node IN nodes(forwardPath) | {cid: node.cid, name: node.name}] AS forwardPathsNodes,
+                    [node IN nodes(backwardPath) | {cid: node.cid, name: node.name}] AS backwardPathsNodes
+
+                // 对前向路径和后向路径分别进行聚合
+                WITH isoNode, 
+                    collect(forwardPathsNodes) AS forwardPaths,
+                    collect(backwardPathsNodes) AS backwardPaths
+
+                // 将前向路径和后向路径合并
+                WITH isoNode, forwardPaths + backwardPaths AS allPaths
+
+                // 处理没有路径的孤立节点
+                RETURN isoNode.cid AS isolatedNodeCID, 
+                    isoNode.name AS isolatedNodeName, 
+                    CASE WHEN size(allPaths) > 0 THEN allPaths ELSE [[{cid: isoNode.cid, name: isoNode.name}]] END AS allPaths
+                """,
+                isolatedNodes_list=isolatedNodes,
+            ).data()
+        isolated_sequence = []  
+        for i in range(len(isolated_result)):
+            isolated_path=isolated_result[i]['allPaths']
+            isolated_path = self.deduplicate_by_name(isolated_path)
+            isolated_sequence = isolated_sequence+isolated_path
+        grouped_sequence = []
+        for path in groupedPaths:
+            transformed_path = []
+            for cid in path:
+                transformed_path.append({'name': cid_to_name.get(cid),'cid': cid})
+            grouped_sequence.append(transformed_path)
+        grouped_sequence = self.deduplicate_by_name(grouped_sequence)
+        final_sequence = grouped_sequence+isolated_sequence
+        return final_sequence
+
+    def deduplicate_by_name(self,data):
+        seen = set()  # 用于存储已经出现过的名字组合
+        result = []
+        
+        for path in data:
+            # 提取当前路径的名字组合，转为集合
+            names = frozenset(node['name'] for node in path)
+            if names not in seen:
+                seen.add(names)  # 标记为已处理
+                result.append(path)  # 保留原始子列表
+                
+        return result
+    def sequence_recommend(self,sequence_concept_list,user,top_n):
+        #get user_id
+        user_id = user[0]["u"]["uid"]
+
+        #get_user_embedding and convert str to array
         user_embedding_str = user[0]["u"]["embedding"].split(',')
         list2 = []
         for j in user_embedding_str:
             list2.append(float(j))
         user_embedding = np.array(list2)
-        print(type(sequence_concept_list))
+
+        #get the sequence candidate concept list 
+        list_of_cids = []
         for concept in sequence_concept_list:
              concept_embedding_str = concept["n"]["final_embedding"].split(',')
+             list_of_cids.append(concept["n"]["cid"])
              list2 = []
              for j in concept_embedding_str:
-                 list2.append(float(j))
+                list2.append(float(j))
              concept_embedding= np.array(list2)
              concept["n"]["score"] = self.compute_cos_sim_score(concept_embedding, user_embedding)
-        top_n_concept = sorted(sequence_concept_list, key=lambda x: x["n"]["score"], reverse=True)[0:top_n]
-        print(top_n_concept)
-        # return sorted(concept_list, key=lambda x: x["n"]["score"], reverse=True)[0:top_n]
+        
+        #get the top-n sequence recommended concept
+        top_n_concepts = sorted(sequence_concept_list, key=lambda x: x["n"]["score"], reverse=True)[0:top_n]
+        
+        top_n_cid_list = []
+        top_cid_to_name_dict = {}
+        for topn_concept in top_n_concepts:
+            cid = topn_concept["n"]["cid"]
+            name = topn_concept["n"]["name"]
+            top_n_cid_list.append(cid)
+            top_cid_to_name_dict[cid]=name
+        # get path 
+        print(top_n_cid_list)         
+        sequence_recommended=self.get_road(top_cid_to_name_dict,top_n_cid_list)
+        return sequence_recommended
     
-    def _get_concept_recommendation(self, user_id='66e07565733de02be8699540', mid='66eee5b2d002dc3075b6c37d'):
+    def _get_concept_recommendation(self, user_id='66e07565733de02be8699540', mid='673885ff3947b4186d3cf1a3'):
         # Get concepts that doesn't interact with user
         # related to candidate concept
         concept_list = self.get_concept_has_not_read(user_id, mid)
@@ -434,17 +664,18 @@ class DBConnection:
         user = self.get_user(user_id)
 
         # compute the similarity between user and concepts with cos-similarity and select top-5 recommendation concept
-        # recommend_concepts = self.recommendation.recommend(concept_list, user, top_n=5)
-        sequence_recommend_concepts = self.sequence_recommend(sequence_concept_list, user, top_n=5)
-        # for i in recommend_concepts:
-        #     info = i["n"]["name"] + " : " + str(i["n"]["score"])
-        #     logger.info(info)
+        recommend_concepts = self.recommendation.recommend(concept_list, user, top_n=5)
+        sequence_path = self.sequence_recommend(sequence_concept_list, user, top_n=5)
+
+        for i in recommend_concepts:
+            info = i["n"]["name"] + " : " + str(i["n"]["score"])
+            logger.info(info)
 
         # # Use paths for interpretability
-        # recommend_concepts = self._get_road(recommend_concepts, user_id, mid)
+        recommend_concepts = self._get_road(recommend_concepts, user_id, mid)
 
-        # resp = get_serialized_concepts_data(recommend_concepts)
-        # return resp
+        resp = get_serialized_concepts_data(recommend_concepts)
+        return resp,sequence_path
 
 test = DBConnection()
 test._get_concept_recommendation()

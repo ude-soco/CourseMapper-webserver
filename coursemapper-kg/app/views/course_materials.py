@@ -135,8 +135,8 @@ def get_concepts(job):
     data_service._extract_vector_relation(mid=material_id)
     # gcn = GCN()
     # gcn.load_data()
-    gcn = RRGCN()
-    gcn.rrgcn_1_2()
+    # gcn = RRGCN()
+    # gcn.rrgcn_1_2()
     # gcn = relational_conceptgcn_compgcn()
     # gcn.compgcn_without_direction_weight('mult')
     ### ========
@@ -167,9 +167,10 @@ def get_concepts(job):
 
     start_time = time.time()
     # Get top-5 recommendation concept and interpretability
-    resp = data_service._get_concept_recommendation(user_id=user_id, mid=material_id)
+    resp,sequence_path = data_service._get_concept_recommendation(user_id=user_id, mid=material_id)
     end_time = time.time()
-
+    logger.info(sequence_path)
+    
     print(
         "Get top-5 recommendation concept and interpretability Execution time: ",
         end_time - start_time,
