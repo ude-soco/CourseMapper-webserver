@@ -79,7 +79,7 @@ class Sequence_recommendation:
                 WHERE startNode.cid IN targetCIDs
 
                 // Find all paths connected by PREREQUISITE_TO
-                OPTIONAL MATCH path = (startNode)-[:PREREQUISITE_TO*]->(midNode)-[:RELATED_TO*0..1]-(midNode2)-[:PREREQUISITE_TO*]->(endNode)
+                OPTIONAL MATCH path = (startNode)-[:PREREQUISITE_TO*]->(endNode)
                 WHERE endNode.cid IN targetCIDs
 
                 // Collect the target node CID in the path
@@ -101,45 +101,44 @@ class Sequence_recommendation:
         groupedPaths = result[0]['groupedPaths']
         # The nodes in the isolated nodes are part of the recommended top_n nodes, but they are not connected to other top_n nodes and need to be processed separately.
         isolatedNodes = result[0]['isolatedNodes']
-        with self.driver.session() as session:
-            isolated_result = session.run(
-                """
-                WITH $isolatedNodes_list AS isolatedNodeCID
+        # with self.driver.session() as session:
+        #     isolated_result = session.run(
+        #         """
+        #         WITH $isolatedNodes_list AS isolatedNodeCID
 
-                // Find isolated nodes
-                MATCH (isoNode)
-                WHERE isoNode.cid IN isolatedNodeCID
+        #         // Find isolated nodes
+        #         MATCH (isoNode)
+        #         WHERE isoNode.cid IN isolatedNodeCID
 
-                // Forward and backward paths
-                OPTIONAL MATCH forwardPath = (isoNode)-[:PREREQUISITE_TO*]->(forwardNode)
-                OPTIONAL MATCH backwardPath = (backwardNode)-[:PREREQUISITE_TO*]->(isoNode)
+        #         // Forward and backward paths
+        #         OPTIONAL MATCH forwardPath = (isoNode)-[:PREREQUISITE_TO*]->(forwardNode)
+        #         OPTIONAL MATCH backwardPath = (backwardNode)-[:PREREQUISITE_TO*]->(isoNode)
 
-                // First collect information about the nodes in the path
-                WITH isoNode, 
-                    [node IN nodes(forwardPath) | {cid: node.cid, name: node.name}] AS forwardPathsNodes,
-                    [node IN nodes(backwardPath) | {cid: node.cid, name: node.name}] AS backwardPathsNodes
+        #         // First collect information about the nodes in the path
+        #         WITH isoNode, 
+        #             [node IN nodes(forwardPath) | {cid: node.cid, name: node.name}] AS forwardPathsNodes,
+        #             [node IN nodes(backwardPath) | {cid: node.cid, name: node.name}] AS backwardPathsNodes
 
-                // Aggregate forward paths and backward paths separately
-                WITH isoNode, 
-                    collect(forwardPathsNodes) AS forwardPaths,
-                    collect(backwardPathsNodes) AS backwardPaths
+        #         // Aggregate forward paths and backward paths separately
+        #         WITH isoNode, 
+        #             collect(forwardPathsNodes) AS forwardPaths,
+        #             collect(backwardPathsNodes) AS backwardPaths
 
-                // Combining forward and backward paths
-                WITH isoNode, forwardPaths + backwardPaths AS allPaths
+        #         // Combining forward and backward paths
+        #         WITH isoNode, forwardPaths + backwardPaths AS allPaths
 
-                // Handling isolated nodes without paths
-                RETURN isoNode.cid AS isolatedNodeCID, 
-                    isoNode.name AS isolatedNodeName, 
-                    CASE WHEN size(allPaths) > 0 THEN allPaths ELSE [[{cid: isoNode.cid, name: isoNode.name}]] END AS allPaths
-                """,
-                isolatedNodes_list=isolatedNodes,
-            ).data()
+        #         // Handling isolated nodes without paths
+        #         RETURN isoNode.cid AS isolatedNodeCID, 
+        #             isoNode.name AS isolatedNodeName, 
+        #             CASE WHEN size(allPaths) > 0 THEN allPaths ELSE [[{cid: isoNode.cid, name: isoNode.name}]] END AS allPaths
+        #         """,
+        #         isolatedNodes_list=isolatedNodes,
+        #     ).data()
 
         isolated_sequence = []  
-        for i in range(len(isolated_result)):
-            isolated_path=isolated_result[i]['allPaths']
-            isolated_path = self.deduplicate_by_name(isolated_path)
-            isolated_sequence = isolated_sequence+isolated_path
+        for cid in isolatedNodes:
+            if cid in cid_to_name:
+                isolated_sequence.append([{'name': cid_to_name.get(cid),'cid': cid}])
 
         grouped_sequence = []
         for path in groupedPaths:
@@ -147,8 +146,6 @@ class Sequence_recommendation:
             for cid in path:
                 transformed_path.append({'name': cid_to_name.get(cid),'cid': cid})
             grouped_sequence.append(transformed_path)
-        
-
         grouped_sequence = self.deduplicate_by_name(grouped_sequence)
 
         final_sequence = grouped_sequence+isolated_sequence

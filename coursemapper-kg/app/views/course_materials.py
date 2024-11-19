@@ -180,7 +180,7 @@ def get_concepts(job):
     print("Execution time: ", end_time1 - start_time1, flush=True)
     #make_response.headers.add('Access-Control-Allow-Origin', '*')
 
-    return resp
+    return resp,sequence_path
 
 
 def get_resources(job):

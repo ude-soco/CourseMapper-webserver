@@ -84,7 +84,7 @@ class RecService:
         resp = get_serialized_concepts_data(recommend_concepts)
 
         #get seqence recommendation
-        sequence_path = self.sequence_recommendation.sequence_recommend(sequence_concept_list, user, top_n=5)
+        sequence_path = self.sequence_recommendation.sequence_recommend(sequence_concept_list, user, top_n=10)
         return resp,sequence_path
     def _get_road(self, recommend_concepts, uid, mid):
         for recommend_concept in recommend_concepts:

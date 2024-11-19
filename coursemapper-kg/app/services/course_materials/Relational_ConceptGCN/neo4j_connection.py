@@ -537,7 +537,7 @@ class DBConnection:
                 WHERE startNode.cid IN targetCIDs
 
                 // Find all paths connected by PREREQUISITE_TO
-                OPTIONAL MATCH path = (startNode)-[:PREREQUISITE_TO*]->(midNode)-[:RELATED_TO*0..1]-(midNode2)-[:PREREQUISITE_TO*]->(endNode)
+                OPTIONAL MATCH path = (startNode)-[:PREREQUISITE_TO*]->(endNode)
                 WHERE endNode.cid IN targetCIDs
 
                 // Collect the target node CID in the path
@@ -558,44 +558,45 @@ class DBConnection:
         result = list(result)
         groupedPaths = result[0]['groupedPaths']
         isolatedNodes = result[0]['isolatedNodes']
-        with self.driver.session() as session:
-            isolated_result = session.run(
-                """
-                WITH $isolatedNodes_list AS isolatedNodeCID
+        # with self.driver.session() as session:
+        #     isolated_result = session.run(
+        #         """
+        #         WITH $isolatedNodes_list AS isolatedNodeCID
 
-                // 找到孤立节点
-                MATCH (isoNode)
-                WHERE isoNode.cid IN isolatedNodeCID
+        #         // 找到孤立节点
+        #         MATCH (isoNode)
+        #         WHERE isoNode.cid IN isolatedNodeCID
 
-                // 前向路径和后向路径
-                OPTIONAL MATCH forwardPath = (isoNode)-[:PREREQUISITE_TO*]->(forwardNode)
-                OPTIONAL MATCH backwardPath = (backwardNode)-[:PREREQUISITE_TO*]->(isoNode)
+        #         // 前向路径和后向路径
+        #         OPTIONAL MATCH forwardPath = (isoNode)-[:PREREQUISITE_TO*]->(forwardNode)
+        #         OPTIONAL MATCH backwardPath = (backwardNode)-[:PREREQUISITE_TO*]->(isoNode)
 
-                // 先收集路径中的节点信息
-                WITH isoNode, 
-                    [node IN nodes(forwardPath) | {cid: node.cid, name: node.name}] AS forwardPathsNodes,
-                    [node IN nodes(backwardPath) | {cid: node.cid, name: node.name}] AS backwardPathsNodes
+        #         // 先收集路径中的节点信息
+        #         WITH isoNode, 
+        #             [node IN nodes(forwardPath) | {cid: node.cid, name: node.name}] AS forwardPathsNodes,
+        #             [node IN nodes(backwardPath) | {cid: node.cid, name: node.name}] AS backwardPathsNodes
 
-                // 对前向路径和后向路径分别进行聚合
-                WITH isoNode, 
-                    collect(forwardPathsNodes) AS forwardPaths,
-                    collect(backwardPathsNodes) AS backwardPaths
+        #         // 对前向路径和后向路径分别进行聚合
+        #         WITH isoNode, 
+        #             collect(forwardPathsNodes) AS forwardPaths,
+        #             collect(backwardPathsNodes) AS backwardPaths
 
-                // 将前向路径和后向路径合并
-                WITH isoNode, forwardPaths + backwardPaths AS allPaths
+        #         // 将前向路径和后向路径合并
+        #         WITH isoNode, forwardPaths + backwardPaths AS allPaths
 
-                // 处理没有路径的孤立节点
-                RETURN isoNode.cid AS isolatedNodeCID, 
-                    isoNode.name AS isolatedNodeName, 
-                    CASE WHEN size(allPaths) > 0 THEN allPaths ELSE [[{cid: isoNode.cid, name: isoNode.name}]] END AS allPaths
-                """,
-                isolatedNodes_list=isolatedNodes,
-            ).data()
+        #         // 处理没有路径的孤立节点
+        #         RETURN isoNode.cid AS isolatedNodeCID, 
+        #             isoNode.name AS isolatedNodeName, 
+        #             CASE WHEN size(allPaths) > 0 THEN allPaths ELSE [[{cid: isoNode.cid, name: isoNode.name}]] END AS allPaths
+        #         """,
+        #         isolatedNodes_list=isolatedNodes,
+        #     ).data()
         isolated_sequence = []  
-        for i in range(len(isolated_result)):
-            isolated_path=isolated_result[i]['allPaths']
-            isolated_path = self.deduplicate_by_name(isolated_path)
-            isolated_sequence = isolated_sequence+isolated_path
+        for cid in isolatedNodes:
+            if cid in cid_to_name:
+                isolated_sequence.append([{'name': cid_to_name.get(cid),'cid': cid}])
+        isolated_sequence = self.deduplicate_by_name(isolated_sequence)
+
         grouped_sequence = []
         for path in groupedPaths:
             transformed_path = []
@@ -603,6 +604,7 @@ class DBConnection:
                 transformed_path.append({'name': cid_to_name.get(cid),'cid': cid})
             grouped_sequence.append(transformed_path)
         grouped_sequence = self.deduplicate_by_name(grouped_sequence)
+        
         final_sequence = grouped_sequence+isolated_sequence
         return final_sequence
 
@@ -619,8 +621,6 @@ class DBConnection:
                 
         return result
     def sequence_recommend(self,sequence_concept_list,user,top_n):
-        #get user_id
-        user_id = user[0]["u"]["uid"]
 
         #get_user_embedding and convert str to array
         user_embedding_str = user[0]["u"]["embedding"].split(',')
@@ -664,18 +664,18 @@ class DBConnection:
         user = self.get_user(user_id)
 
         # compute the similarity between user and concepts with cos-similarity and select top-5 recommendation concept
-        recommend_concepts = self.recommendation.recommend(concept_list, user, top_n=5)
-        sequence_path = self.sequence_recommend(sequence_concept_list, user, top_n=5)
+        # recommend_concepts = self.recommendation.recommend(concept_list, user, top_n=5)
+        sequence_path = self.sequence_recommend(sequence_concept_list, user, top_n=10)
+        print(sequence_path)
+        # for i in recommend_concepts:
+        #     info = i["n"]["name"] + " : " + str(i["n"]["score"])
+        #     logger.info(info)
 
-        for i in recommend_concepts:
-            info = i["n"]["name"] + " : " + str(i["n"]["score"])
-            logger.info(info)
+        # # # Use paths for interpretability
+        # recommend_concepts = self._get_road(recommend_concepts, user_id, mid)
 
-        # # Use paths for interpretability
-        recommend_concepts = self._get_road(recommend_concepts, user_id, mid)
-
-        resp = get_serialized_concepts_data(recommend_concepts)
-        return resp,sequence_path
+        # resp = get_serialized_concepts_data(recommend_concepts)
+        # return resp,sequence_path
 
 test = DBConnection()
 test._get_concept_recommendation()

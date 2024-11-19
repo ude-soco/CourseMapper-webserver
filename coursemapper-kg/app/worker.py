@@ -130,7 +130,7 @@ def start_worker(pipelines):
                     # prerequisite_material(job)
                 # add_job('find-prerequisite-lm', {"materialId": job["materialId"]})
             elif pipeline == 'concept-recommendation':
-                result = get_concepts(job)
+                result,sequence_path = get_concepts(job)
             elif pipeline == 'resource-recommendation':
                 result = get_resources(job)
             # elif pipeline == 'find-prerequisite-lm':
@@ -147,7 +147,8 @@ def start_worker(pipelines):
             # Send the result
             data = json.dumps({
                 "job_id": job_id,
-                "result": result
+                "result": result,
+                "sequence_path":sequence_path
             })
             send_result(data)
 
