@@ -323,6 +323,20 @@ export const getResources = async (req, res) => {
   socketio.getIO().to("material:"+materialId).emit("log", { addJob:result, pipeline:'resourse-recommendation'});
 }
 
+export const recommendationRating = async (req, res) => {
+  const data = req.body;
+
+ await redis.addJob('recommendation/rating', data, undefined, (result) => {
+    if (res.headersSent) {
+      return;
+    }
+    if (result.error) {
+      return res.status(500).send({ error: result.error });
+    }
+    return res.status(200).send(result.result);
+  });
+}
+
 export const readSlide = async (req, res, next) => {
   const slideNr = req.params.slideNr;
   const slideId = `${req.params.materialId}_slide_${slideNr}`;

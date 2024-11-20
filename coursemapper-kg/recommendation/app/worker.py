@@ -10,6 +10,7 @@ from log import LOG
 from app.views.course_materials import get_concepts, get_resources
 from app.shared import redis, worker_id, set_current_job_id
 from config import Config
+from app.services.course_materials.recommendation.resource_recommender import ResourceRecommenderService
 
 
 logger = LOG(name=__name__, level=logging.DEBUG)
@@ -109,6 +110,9 @@ def start_worker(pipelines):
                 result = get_concepts(job)
             elif pipeline == 'resource-recommendation':
                 result = get_resources(job)
+            elif pipeline == 'recommendation/rating':
+                resource_recommender_service = ResourceRecommenderService()
+                result = resource_recommender_service.user_rates_resources(rating=job)
             else:
                 raise ValueError(f'Unknown pipeline: {pipeline}')
 

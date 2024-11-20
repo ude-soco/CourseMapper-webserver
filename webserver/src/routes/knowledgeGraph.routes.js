@@ -97,6 +97,12 @@ module.exports = function (app) {
     controller.getResources
   );
 
+  app.post(
+    "/api/recommendation/rating",
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.recommendationRating
+  );
+
   app.get(
     "/api/wikipedia/search",
     [authJwt.verifyToken],

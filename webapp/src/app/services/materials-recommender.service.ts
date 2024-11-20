@@ -50,7 +50,13 @@ export class MaterialsRecommenderService {
   }
 
   SaveOrRemoveUserResource(data: any): Observable<any> {
-    return this.http.post<any>(`${this.api_PYTHON_SERVER_RS}/user_resources/save_or_remove`, data, { withCredentials: true });
+    //return this.http.post<any>(`${this.api_PYTHON_SERVER_RS}/user_resources/save_or_remove`, data, { withCredentials: true });
+    const response$ = this.http.post<any>(
+      `${environment.API_URL}/recommendation/rating`,
+      data,
+      HTTPOptions
+    );
+    return response$;
   }
 
   filterUserResourcesSavedBy(data: any): Observable<UserResourceFilterResult> {
