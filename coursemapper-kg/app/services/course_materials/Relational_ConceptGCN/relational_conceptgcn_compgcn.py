@@ -76,13 +76,21 @@ class relational_conceptgcn_compgcn:
             Construct prerequisite matrix
         """
         relation2 = np.genfromtxt("prerequisite.txt", dtype=np.float32)
-        prerequisite_row = np.array(list(map(idx_map.get, relation2[:, 0].flatten())))
-        prerequisite_column = np.array(list(map(idx_map.get, relation2[:, 2].flatten())))
-        self.prerequisite_matrix = sp.coo_matrix(
-        (relation2[:, 1], (prerequisite_row[:], prerequisite_column[:])),
-        shape=( self.embedding_matrix.shape[0],  self.embedding_matrix.shape[0]),
-        dtype=np.float32,
-        )
+                
+        if relation2.size == 0:
+            logger.info("prerequisite.txt is empty")
+            self.prerequisite_matrix = sp.coo_matrix(
+                (self.embedding_matrix.shape[0], self.embedding_matrix.shape[0]),
+                dtype=np.float32
+            )
+        else:
+            prerequisite_row = np.array(list(map(idx_map.get, relation2[:, 0].flatten())))
+            prerequisite_column = np.array(list(map(idx_map.get, relation2[:, 2].flatten())))
+            self.prerequisite_matrix = sp.coo_matrix(
+            (relation2[:, 1], (prerequisite_row[:], prerequisite_column[:])),
+            shape=( self.embedding_matrix.shape[0],  self.embedding_matrix.shape[0]),
+            dtype=np.float32,
+            )
         self.prerequisite_matrix =self.prerequisite_matrix.toarray()
         self.prerequisite_matrix = np.around(self.prerequisite_matrix, 2)
         neighbor_counts =np.sum(self.prerequisite_matrix != 0, axis=1) 

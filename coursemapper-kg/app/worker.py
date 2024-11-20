@@ -8,7 +8,7 @@ import io
 from log import LOG
 import hashlib
 
-from app.views.course_materials import concept_map, get_concepts, get_resources, prerequisite_material
+from app.views.course_materials import concept_map, get_concepts,get_sequence_concepts, get_resources, prerequisite_material
 from app.shared import redis, worker_id, set_current_job_id
 from config import Config
 
@@ -130,7 +130,9 @@ def start_worker(pipelines):
                     # prerequisite_material(job)
                 # add_job('find-prerequisite-lm', {"materialId": job["materialId"]})
             elif pipeline == 'concept-recommendation':
-                result,sequence_path = get_concepts(job)
+                result = get_concepts(job)
+            elif pipeline == 'sequence-recommendation':
+                result = get_sequence_concepts(job)
             elif pipeline == 'resource-recommendation':
                 result = get_resources(job)
             # elif pipeline == 'find-prerequisite-lm':
@@ -147,8 +149,7 @@ def start_worker(pipelines):
             # Send the result
             data = json.dumps({
                 "job_id": job_id,
-                "result": result,
-                "sequence_path":sequence_path
+                "result": result
             })
             send_result(data)
 
