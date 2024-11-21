@@ -929,12 +929,14 @@ export const updateUserBlockStatus = catchAsync(async (req, res, next) => {
   // Verify the roles
   const teacherRole = await Role.findOne({ name: "teacher" });
   const coTeacherRole = await Role.findOne({ name: "co_teacher" });
+  const nonEditingTeacherRole = await Role.findOne({ name: "non_editing_teacher" });
 
   // Checking whether the current user has the role of teacher or co_teacher
   const isModerator = course.users.some(
     (user) =>
       user.userId.toString() === currentUserId.toString() &&
       (user.role.toString() === teacherRole._id.toString() ||
+        user.role.toString() === coTeacherRole._id.toString()||
         user.role.toString() === coTeacherRole._id.toString())
   );
 
