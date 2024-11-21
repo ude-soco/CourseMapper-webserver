@@ -937,7 +937,7 @@ export const updateUserBlockStatus = catchAsync(async (req, res, next) => {
       user.userId.toString() === currentUserId.toString() &&
       (user.role.toString() === teacherRole._id.toString() ||
         user.role.toString() === coTeacherRole._id.toString()||
-        user.role.toString() === coTeacherRole._id.toString())
+        user.role.toString() === nonEditingTeacherRole._id.toString())
   );
 
   if (isModerator) {
