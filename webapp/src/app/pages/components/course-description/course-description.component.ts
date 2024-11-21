@@ -115,7 +115,7 @@ export class CourseDescriptionComponent {
         this.course_enroll = data;
       });
 
-      if (this.course_enroll._id == null) {
+      if (this.course_enroll._id == null && this.course_enroll._id) {
         this.courseService
           .EnrollToCOurse(this.course_enroll._id)
           .subscribe((data) => {
