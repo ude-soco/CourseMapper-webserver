@@ -1,9 +1,10 @@
+<p-confirmDialog></p-confirmDialog>
 <div class="table">
   <p-table [value]="members" class="w-full mt-10 overflow-visible">
     <ng-template pTemplate="header">
       <tr>
-        <th>Full-Name</th>
-        <th>User-name</th>
+        <th>FullName</th>
+        <th>UserName</th>
         <th *ngIf="viewOnly">Current Role</th>
         <th *ngIf="!viewOnly && course.role !== 'co_teacher'&& course.role !== 'non_editing_teacher'">Change Role</th>
         <th>Block</th>
@@ -37,7 +38,7 @@
             [options]="roles"
             [(ngModel)]="member?.role.name"
             placeholder="Select Role"
-            (onChange)="onRoleChange($event, member?.userId._id)"
+            (onChange)="onRoleChange($event, member)"
             [disabled]="canChangeRole(member)"
           >
           </p-dropdown>

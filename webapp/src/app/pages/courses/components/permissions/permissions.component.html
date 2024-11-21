@@ -2,7 +2,7 @@
   <p-accordionTab
     *ngFor="let item of permissions"
     [header]="item.name.split('_').join(' ')"
-    style="text-transform: capitalize"
+  
   >
     <div class="permissions-form" *ngFor="let data of item.data">
       <div class="permission-category">
@@ -30,7 +30,7 @@
             [binary]="true"
             (onChange)="uncheckParent(data)"
           ></p-checkbox>
-          <label [for]="item.name + data.role.title + i + ele.name">{{
+          <label [for]="item.name + data.role.title + i + ele.name">  {{
             ele.label
           }}</label>
         </div>

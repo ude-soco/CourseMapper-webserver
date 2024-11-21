@@ -33,7 +33,20 @@ export class HomeComponent implements OnInit {
   lastName: string = '';
   courseTriggered: boolean = false;
   sections = ['teaching', 'enrolled'];
+  collapsedSections: { [key: string]: boolean } = {};
+  showAll: { [key: string]: boolean } = {};
+  limit: number = 4;
 
+
+  toggleCollapse(role: string): void {
+    this.collapsedSections[role] = !this.collapsedSections[role];
+  }
+  
+  showAllCourses(role: string): void {
+    this.showAll[role] = !this.showAll[role];
+  }
+
+  
   hasCoursesForRole(role: string): boolean {
     if(role === 'enrolled'){
       return this.courses.some((course) => course.role === 'user');
@@ -43,11 +56,18 @@ export class HomeComponent implements OnInit {
   }
   
   getCoursesByRole(role: string) {
-    if(role === 'enrolled'){
-      return this.userArray.filter((course) => course.role === 'user');
-    }else{
-      return this.userArray.filter((course) => course.role !== 'user');
-    }
+    const filteredCourses = role === 'enrolled' 
+      ? this.userArray.filter((course) => course.role === 'user')
+      : this.userArray.filter((course) => course.role !== 'user');
+    
+    return this.showAll[role] ? filteredCourses : filteredCourses.slice(0, this.limit);
+  }
+
+  getCoursesCount(role: string) {
+    const filteredCourses = role === 'enrolled' 
+    ? this.userArray.filter((course) => course.role === 'user')
+    : this.userArray.filter((course) => course.role !== 'user');
+    return filteredCourses?.length > this.limit
   }
 
 
@@ -55,7 +75,7 @@ export class HomeComponent implements OnInit {
     this.menuItems = [
      
       { label: 'Manage Participants', restrictTo: ['user'], icon: 'pi pi-users', command: () => this.onManageParticipants(courseItem) },
-      { label: 'Edit Course', restrictTo: ['user', 'co_teacher', 'non_editing_teacher'], icon: 'pi pi-cog', command: () => this.onManageParticipants(courseItem) },
+      { label: 'Rename Course', restrictTo: ['user', 'co_teacher', 'non_editing_teacher'], icon: 'pi pi-cog', command: () => this.onManageParticipants(courseItem) },
       { label: 'View Participants', icon: 'pi pi-eye', restrictTo: ['teacher', 'co_teacher', 'non_editing_teacher'], command: () => this.onViewParticipants(courseItem) },
 
       { label: 'Unenroll from Course', icon: 'pi pi-user-minus', restrictTo: ['teacher'], command: () => { } },

@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { CourseService } from 'src/app/services/course.service';
 import { StorageService } from 'src/app/services/storage.service';
 
@@ -16,6 +16,7 @@ export class MemberTableComponent {
   members: any = [];
   isLoading: boolean = false;
   currentUser: any = {};
+  selectedRoles: { [key: string]: string } = {};
 
 
   constructor(
@@ -23,6 +24,7 @@ export class MemberTableComponent {
     protected courseService: CourseService,
     private messageService: MessageService,
     public storageService: StorageService,
+    private confirmationService: ConfirmationService,
   ) { };
 
 
@@ -35,7 +37,8 @@ export class MemberTableComponent {
       ele.isBlocked = this.isUserBlocked(ele?.userId._id);
       if (['teacher', 'co_teacher', 'non_editing_teacher'].includes(ele.role.name) || this.currentUser?.userId?._id === ele?.userId?._id) {
         ele.isDisabled = true;
-      }
+      };
+      this.selectedRoles[ele.userId._id] = ele.role.name;
     });
   }
 
@@ -88,18 +91,52 @@ export class MemberTableComponent {
     })
   }
 
+  getUserRole(user_id: any): any {
+    const user = this.course?.users?.find(user => {
+      return user?.userId?._id === user_id
+    })
+    return user ? user?.role?.name : null;
+  }
 
 
-  onRoleChange(event: any, user_id: any): void {
-    this.isLoading = true;
-    const data = { user_id, role: event.value };
-
-    this.courseService.updateUserRole(this.course._id, data).subscribe(res => {
-      this.isLoading = false;
-      this.showInfo(res?.success || "Role updated successfully!");
-    }, error => {
-      console.log(error);
-      this.isLoading = false;
+  onRoleChange(event: any, member: any): void {
+    const originalRole = this.selectedRoles[member.userId._id];
+  
+    this.confirmationService.confirm({
+      message: `Are you sure you want to assign "${member?.userId?.username}" the role "${event?.value}" in this course?
+      <br />If you continue, an email will be sent to notify this role assignment?`,
+      header: 'Role Change Confirmation',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.confirmationService.close();
+        this.isLoading = true;
+        const data = { user_id: member?.userId._id, role: event.value };
+    
+        this.courseService.updateUserRole(this.course._id, data).subscribe(
+          res => {
+            this.isLoading = false;
+            this.showInfo(res?.success || 'Role updated successfully!');
+            this.selectedRoles[member.userId._id] = event.value;
+          },
+          error => {
+            console.log(error);
+            this.isLoading = false;
+          }
+        );
+      },
+      reject: () => {
+        this.confirmationService.close();
+        this.selectedRoles[member.userId._id] = originalRole;
+        
+        this.members.map(ele => {
+          if (ele?.userId?._id === member?.userId._id) {
+            ele.role.name = originalRole;
+          }
+          return { ...ele };
+        });     
+      }
     });
   }
+  
+  
 }

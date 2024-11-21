@@ -37,4 +37,5 @@
   text-transform: capitalize;
   font-weight: bold; /* Font weight */
   z-index: 10; /* Make sure it appears on top */
+  width: max-content;
 }

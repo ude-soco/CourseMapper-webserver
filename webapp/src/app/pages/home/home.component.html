@@ -7,82 +7,92 @@
     <ng-container *ngIf="courses && courses.length">
       <!-- Section for each role -->
       <ng-container *ngFor="let role of sections">
-        <div *ngIf="hasCoursesForRole(role)">
-          <p class="leading-normal mt-6 px-4" style="display: flex; align-items: center; cursor: pointer;">
-            <i class="pi pi-angle-down" style="margin-right: 8px;"></i>
+        <div>
+          <p class="leading-normal mt-6 px-4" style="display: flex; align-items: center; cursor: pointer;" (click)="toggleCollapse(role)">
+            <i [ngClass]="!collapsedSections[role] ? 'pi pi-angle-up': 'pi pi-angle-down'" 
+              style="margin-right: 8px;">
+            </i>
+
             <img *ngIf="role === 'teaching'" src="../../../assets/icons/teacher-icon-black.png" alt="" width="25px">
             <i *ngIf="role === 'enrolled'" class="pi pi-graduation-cap" style="margin-right: 8px;"></i>
             {{ role === 'enrolled' ? 'Enrolled' : 'Teaching' | titlecase }}
           </p>
-          <div class="overscroll-y-auto h-1/2 flex flex-wrap">
-            <!-- Get courses by current role -->
-            <div *ngFor="let course of getCoursesByRole(role)">
-              <p-card styleClass="p-card-shadow" class="course-card relative">
-                <span class="badge">{{course?.role?.split('_')?.join(' ')}}</span>
-                <hr style="margin-bottom: 0.75rem; margin-top: 0%" />
-                <ng-template pTemplate="header">
-                  <img
-                    alt="Card"
-                    class="cursor-pointer"
-                    src="/assets/img/courseCard.png"
-                    (click)="onSelectCourse(course)"
-                  />
-                </ng-template>
 
-                <ng-template pTemplate="content-center" style="float: left">
-                  <div class="w-full h-14 mb-3 flex items-start justify-between">
-                    <div class="flex items-center">
-                      <p-avatar
-                        label="{{ course.shortName }}"
-                        shape="circle"
-                        size="large"
-                        [style]="{
-                          'background-color': '#0369A1',
-                          color: '#ffffff',
-                          float: 'left'
-                        }"
-                      ></p-avatar>
-
-                      <p class="font-medium text-xl pl-3">
-                        {{ course.name }}
-                      </p>
+          <div *ngIf="!collapsedSections[role]">
+            <div *ngIf="hasCoursesForRole(role); else noCoursesFound" class="overscroll-y-auto h-1/2 flex flex-wrap">
+              <!-- Get courses by current role -->
+              <div *ngFor="let course of getCoursesByRole(role)" class="course-card-container">
+                <p-card styleClass="p-card-shadow" class="course-card relative">
+                  <span class="badge" *ngIf="role!=='enrolled'">{{ course?.role?.split('_')?.join(' ') }}</span>
+                  <hr style="margin-bottom: 0.75rem; margin-top: 0%" />
+                  <ng-template pTemplate="header">
+                    <img
+                      alt="Card"
+                      class="cursor-pointer"
+                      src="/assets/img/courseCard.png"
+                      (click)="onSelectCourse(course)"
+                    />
+                  </ng-template>
+  
+                  <ng-template pTemplate="content-center" style="float: left">
+                    <div class="w-full h-14 mb-3 flex items-start justify-between">
+                      <div class="flex items-center">
+                        <p-avatar
+                          label="{{ course.shortName }}"
+                          shape="circle"
+                          size="large"
+                          [style]="{
+                            'background-color': '#0369A1',
+                            color: '#ffffff',
+                            float: 'left'
+                          }"
+                        ></p-avatar>
+                        <p class="font-medium text-xl pl-3">{{ course.name }}</p>
+                      </div>
+  
+                      <!-- 3-Dot Menu -->
+                      <div class="card flex justify-content-center">
+                        <p-menu
+                          #menu
+                          [model]="course.menuItems || []"
+                          [popup]="true"
+                          appendTo="body"
+                        ></p-menu>
+                        <p-button
+                          (onClick)="menu.toggle($event)"
+                          icon="pi pi-ellipsis-v"
+                          styleClass="p-button-text"
+                        ></p-button>
+                      </div>
                     </div>
-
-                    <!-- 3-Dot Menu -->
-                    <div class="card flex justify-content-center">
-                      <p-menu
-                        #menu
-                        [model]="course.menuItems || []"
-                        [popup]="true"
-                        appendTo="body"
-                  />
-                      <p-button
-                        (onClick)="menu.toggle($event)"
-                        icon="pi pi-ellipsis-v"
-                        styleClass="p-button-text"
-                  />
-                    </div>
-                  </div>
-
-                  <p class="p" style="display: flex;">
-                    <img src="../../../assets/icons/teacher-icon.png" alt="" width="25px">
-                    <span class="pl-1">
-                      Created by: {{ course.firstName }} {{ course.lastName }}
-                    </span>
-                  </p>
-
-                  <p class="p" style="margin-left: 4px">
-                    <i
-                      class="pi pi-calendar"
-                      style="font-size: 1rem; color: #ea580c"
-                    ></i>
-                    <span class="pl-1">
-                      Created on: {{ course.createdAt | date : "d MMMM yyyy" }}
-                    </span>
-                  </p>
-                </ng-template>
-              </p-card>
+  
+                    <p class="p" style="display: flex;">
+                      <img src="../../../assets/icons/teacher-icon.png" alt="" width="25px">
+                      <span class="pl-1">
+                        Created by: {{ course.firstName }} {{ course.lastName }}
+                      </span>
+                    </p>
+  
+                    <p class="p" style="margin-left: 4px">
+                      <i class="pi pi-calendar" style="font-size: 1rem; color: #ea580c"></i>
+                      <span class="pl-1">
+                        Created on: {{ course.createdAt | date : "d MMMM yyyy" }}
+                      </span>
+                    </p>
+                  </ng-template>
+                </p-card>
+              </div>
+  
+              <div *ngIf="getCoursesCount(role)" class="w-full text-center mt-4">
+                <button pButton label="Show More" (click)="showAllCourses(role)" *ngIf="!showAll[role]"></button>
+                <button pButton label="Show Less" (click)="showAllCourses(role)" *ngIf="showAll[role]"></button>
+              </div>
             </div>
+            <ng-template #noCoursesFound>
+              <div class="w-full text-center mt-4">
+                <p>No courses were found.</p>
+              </div>
+            </ng-template>
           </div>
         </div>
       </ng-container>
@@ -94,8 +104,7 @@
         Currently you have no courses enrolled.
       </p>
       <p class="text-4xl leading-normal text-center mt-6">
-        <a href="landingPage" style="color: #0277bd"> Click here</a> to search
-        for courses to start learning!
+        <a href="landingPage" style="color: #0277bd"> Click here</a> to search for courses to start learning!
       </p>
     </div>
   </div>
@@ -103,18 +112,3 @@
 
 <app-footer></app-footer>
 <p-confirmDialog></p-confirmDialog>
-<!-- <div class="row">
-        <div class="column" style="background-color:#aaa;">
-          <h2>Column 1</h2>
-          <p>Some text..</p>
-        </div>
-        <div class="column" style="background-color:#bbb;">
-          <h2>Column 2</h2>
-          <p>Some text..</p>
-        </div>
-        <div class="column" style="background-color:#ccc;">
-          <h2>Column 3</h2>
-          <p>Some text..</p>
-        </div>
-      </div>
-       -->
