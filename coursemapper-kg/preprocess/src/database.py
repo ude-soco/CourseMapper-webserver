@@ -36,16 +36,16 @@ class Database:
 
     def make_indexes(self):
         with self.conn.cursor() as cur:
-            cur.execute('CREATE INDEX pages_title ON pages (title)')
-            cur.execute('CREATE INDEX pages_links ON pages USING GIN (links)')
-            cur.execute('CREATE INDEX redirects_title ON redirects (title)')
+            cur.execute('CREATE INDEX CONCURRENTLY pages_title ON pages (title)')
+            cur.execute('CREATE INDEX CONCURRENTLY pages_links ON pages USING GIN (links)')
+            cur.execute('CREATE INDEX CONCURRENTLY redirects_title ON redirects (title)')
             cur.execute(
-                'CREATE INDEX disambiguations_title ON disambiguations (title)')
+                'CREATE INDEX CONCURRENTLY disambiguations_title ON disambiguations (title)')
             cur.execute(
-                'CREATE INDEX page_categories_page_title ON page_categories (page_title)')
+                'CREATE INDEX CONCURRENTLY page_categories_page_title ON page_categories (page_title)')
             cur.execute(
-                'CREATE INDEX page_categories_category_name ON page_categories (category_name)')
-            cur.execute('CREATE INDEX embeddings_title ON embeddings (title)')
+                'CREATE INDEX CONCURRENTLY page_categories_category_name ON page_categories (category_name)')
+            cur.execute('CREATE INDEX CONCURRENTLY embeddings_title ON embeddings (title)')
             self.conn.commit()
 
     def insert_pages(self, pages, redirects, disambiguations, page_categories, embeddings):
