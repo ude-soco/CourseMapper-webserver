@@ -9,9 +9,10 @@ import time
 import math
 import scipy.stats as st
 from ..db.neo4_db import NeoDataBase
-import concurrent.futures
 from .recommendation_type import RecommendationType
 from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor, Future
+
 
 from log import LOG
 import logging
@@ -488,7 +489,7 @@ def check_and_validate_resources(db: NeoDataBase, concepts: list ):
         Video: default time = 30 days
         Article: default time = 365 days
     '''
-    concepts_not_having_resources = []
+    concepts_db_checked = []
     for concept in concepts:
         cid = concept["cid"]
         concept_updated = { "cid": cid, "name": concept["name"], "weight": concept["weight"],
@@ -497,20 +498,12 @@ def check_and_validate_resources(db: NeoDataBase, concepts: list ):
                         }
 
         # content type: Video
-        count_resourses_videos_only_exist = db.retrieve_resources_by_updated_at_exist_or_counts(cids=[cid], content_type="Video", only_exist=True) # ["count"]
-        count_resourses_videos = db.retrieve_resources_by_updated_at_exist_or_counts(cids=[cid], content_type="Video", days=30) # ["count"]
+        count_resourses_videos_only_exist = db.retrieve_resources_by_updated_at_exist_or_counts(cids=[cid], content_type="Video", only_exist=True)
+        count_resourses_videos = db.retrieve_resources_by_updated_at_exist_or_counts(cids=[cid], content_type="Video", only_exist=False, days=30)
         
         # content type: Article
-        count_resourses_articles_only_exist = db.retrieve_resources_by_updated_at_exist_or_counts(cids=[cid], content_type="Article", only_exist=True) # ["count"]
-        count_resourses_articles = db.retrieve_resources_by_updated_at_exist_or_counts(cids=[cid], content_type="Article", days=365) # ["count"]
-
-        # print("count_resourses_videos_only_exist ->", count_resourses_videos_only_exist)
-        # print("count_resourses_videos ->", count_resourses_videos)
-
-        # print("count_resourses_articles_only_exist ->", count_resourses_articles_only_exist)
-        # print("count_resourses_articles ->", count_resourses_articles)
-        # print("---------------------")
-        # print()
+        count_resourses_articles_only_exist = db.retrieve_resources_by_updated_at_exist_or_counts(cids=[cid], content_type="Article", only_exist=True)
+        count_resourses_articles = db.retrieve_resources_by_updated_at_exist_or_counts(cids=[cid], content_type="Article", only_exist=False, days=365)
 
         if count_resourses_videos < 1:
             concept_updated["is_video_too_old"] = True
@@ -522,11 +515,10 @@ def check_and_validate_resources(db: NeoDataBase, concepts: list ):
         if count_resourses_articles_only_exist > 0:
             concept_updated["resources_article_exist"] = True
         
-        concepts_not_having_resources.append(concept_updated)
-    return concepts_not_having_resources
+        concepts_db_checked.append(concept_updated)
+    return concepts_db_checked
 
-from concurrent.futures import Future
-def parallel_crawling_resources2(function, concept_updated: str, result_type: str, top_n_videos, top_n_articles):
+def parallel_crawling_resources2(function, concept_updated, result_type: str, top_n_videos, top_n_articles):
     '''
         Parallel Crawling of Resources with the function 
         canditate_selection from Class Recommender
@@ -535,7 +527,7 @@ def parallel_crawling_resources2(function, concept_updated: str, result_type: st
             query, video, result_type="records", top_n_videos=2, top_n_articles=2
         concept_updated: dict{} | cid, 
     '''
-    with concurrent.futures.ThreadPoolExecutor() as executor:
+    with ThreadPoolExecutor() as executor:
         future_videos = Future().set_result([])
         if concept_updated["is_video_too_old"] == True:
             future_videos = executor.submit(function, concept_updated["name"], True, result_type, top_n_videos, top_n_articles)
@@ -543,13 +535,14 @@ def parallel_crawling_resources2(function, concept_updated: str, result_type: st
             future_videos = executor.submit(function, concept_updated["name"], True, result_type, top_n_videos, top_n_articles)
         
         future_articles = Future().set_result([])
-        if concept_updated["is_article_too_old"] == False:
+        if concept_updated["is_article_too_old"] == True:
             future_articles = executor.submit(function, concept_updated["name"], False, result_type, top_n_videos, top_n_articles)
         if concept_updated["resources_article_exist"] == False:
             future_articles = executor.submit(function, concept_updated["name"], False, result_type, top_n_videos, top_n_articles)
 
-        result_videos = future_videos.result()
-        result_articles = future_articles.result()
+        result_videos = future_videos.result() if future_videos is not None else []
+        result_articles = future_articles.result() if future_articles is not None else []
+
         return {    "cid": concept_updated["cid"], 
                     "videos": result_videos, 
                     "articles": result_articles,
@@ -557,7 +550,7 @@ def parallel_crawling_resources2(function, concept_updated: str, result_type: st
                     "resources_article_exist": concept_updated["resources_article_exist"],
                     "is_video_too_old": concept_updated["is_video_too_old"], 
                     "is_article_too_old": concept_updated["is_video_too_old"],
-            }
+                }
 
 
 def check_and_get_resources_with_concepts(db: NeoDataBase, concepts: list):
@@ -605,7 +598,7 @@ def parallel_crawling_resources(function, concept_name: str, cid: str, result_ty
             function: canditate_selection (this function takes the params below)
             query, video, result_type="records", top_n_videos=2, top_n_articles=2
     '''
-    with concurrent.futures.ThreadPoolExecutor() as executor:
+    with ThreadPoolExecutor() as executor:
         future_videos = executor.submit(function, concept_name, True, result_type, top_n_videos, top_n_articles)
         future_articles = executor.submit(function, concept_name, False, result_type, top_n_videos, top_n_articles)
         result_videos = future_videos.result()

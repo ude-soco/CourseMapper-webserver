@@ -29,11 +29,12 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     category: "1",
     concepts: [],
     recommendation_type: "1",
-    factor_weights: {
-      status: false,
-      reload: true,
-      weights: null
-    },
+    factor_weights: null,
+    // factor_weights: {
+    //   status: false,
+    //   reload: true,
+    //   weights: null
+    // },
     requested: false
   };
 
@@ -167,13 +168,14 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
       }
     }
 
-    this.croForm.factor_weights.weights = result;
+    this.croForm.factor_weights = result;
+    // this.croForm.factor_weights.weights = result;
     return result
   }
   
-  showRecTypeAndFactorWeight() {
-    this.croForm.factor_weights.status = this.croForm?.concepts.length > 0 ? true : false;
-  }
+  // showRecTypeAndFactorWeight() {
+  //   this.croForm.factor_weights.status = this.croForm?.concepts.length > 0 ? true : false;
+  // }
 
   activateOrNotFactorWeight(event, factor_index: number) {
     let factor_div = document.getElementById("factor_weight_"+factor_index);
@@ -565,12 +567,15 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     // update factor weights
     // this.croForm.concepts = this.CROconceptsManually;
     this.getFactorWeight();
+    // let croFormTmp = JSON.parse(JSON.stringify(this.croForm));
+    // croFormTmp.factor_weight = this.croForm
 
     let croFormRequest = {
       default: reqData,
       rec_params: JSON.parse(JSON.stringify(this.croForm))  // this.getOnlyStatusChecked()
     }
     croFormRequest.rec_params.concepts = concepts;
+    console.warn("croFormRequest -> ", croFormRequest)
     return croFormRequest;
   }
 

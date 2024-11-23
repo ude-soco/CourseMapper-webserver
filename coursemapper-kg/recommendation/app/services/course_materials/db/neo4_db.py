@@ -1827,6 +1827,7 @@ class NeoDataBase:
         '''
         # logger.info(" Creating Resource YouTube")
         try:
+            """
             if update_detail_found == True:
                 tx.run(
                     '''
@@ -1852,7 +1853,9 @@ class NeoDataBase:
                     keyphrase_embedding="",
                     document_embedding=""
                 )
-            elif update_embedding_values == True: # node.get("keyphrases") != None or node.get("document_embedding") != None or node.get("keyphrase_embedding") != None:
+            """
+            
+            if update_embedding_values == True: # node.get("keyphrases") != None or node.get("document_embedding") != None or node.get("keyphrase_embedding") != None:
                 tx.run(
                     '''
                         MATCH (r:Resource: Video)
@@ -1916,6 +1919,7 @@ class NeoDataBase:
         '''
         # logger.info("Creating Resource Wikipedia")
         try:
+            """
             if update_detail_found == True:
                 tx.run(
                     '''
@@ -1934,7 +1938,9 @@ class NeoDataBase:
                     keyphrase_embedding=str(node["keyphrase_embedding"] if "keyphrase_embedding" in node else ""),
                     document_embedding=str(node["document_embedding"] if "document_embedding" in node else ""),
                 )
-            elif update_embedding_values == True: # node.get("keyphrases") != None or node.get("document_embedding") != None or node.get("keyphrase_embedding") != None:
+            """
+            
+            if update_embedding_values == True: # node.get("keyphrases") != None or node.get("document_embedding") != None or node.get("keyphrase_embedding") != None:
                 tx.run(
                     '''
                         MATCH (r:Resource: Article)
@@ -2412,7 +2418,7 @@ class NeoDataBase:
             return resource["rid"] if "rid" in resource else resource["id"]
             
         logger.info("Store Resources: Videos | Articles")
-        result = []
+        # result = []
 
         tx = self.driver.session()
         if resources_form == "dict":
@@ -2445,7 +2451,8 @@ class NeoDataBase:
                     self.create_or_update_video_resource(tx, resource, update_embedding_values=True)
                 elif "Article" in resource["labels"]:
                     self.create_or_update_wikipedia_resource(tx, resource, update_embedding_values=True)
-        
+
+        """
         elif resources_form == "found":
             if resources_updated_type == "videos":
                 for resource in resources_updated:
@@ -2453,6 +2460,8 @@ class NeoDataBase:
             if resources_updated_type == "articles":
                 for resource in resources_updated:
                     self.create_or_update_wikipedia_resource(tx, resource, update_detail_found=True)
+        """
+
 
     def retrieve_resources(self, concepts: dict, embedding_values=False):
         '''
