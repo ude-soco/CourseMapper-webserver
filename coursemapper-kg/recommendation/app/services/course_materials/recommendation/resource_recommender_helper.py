@@ -321,7 +321,7 @@ def rank_resources_proportional_top_n_with_remainder_by_concept_cid(dict_list, t
     return final_result
 
 
-def rank_resources(resources: list, weights: dict = None, ratings: list = None, top_n_resources=10, recommendation_type=None):
+def rank_resources(resources: list, weights: dict = None, recommendation_type=None, pagination_params: dict = None, top_n_resources=10):
     '''
         factor_weights: {   "video": dict, (default: {'like_count': 0.146, 'creation_date': 0.205, 'views': 0.146, 'similarity_score': 0.152, 'saves_count': 0.199, 'user_rating': 0.152}) 
                             "article": dict, (default: {'similarity_score': 0.3, 'saves_count': 0.4, 'user_rating': 0.3})
@@ -353,20 +353,26 @@ def rank_resources(resources: list, weights: dict = None, ratings: list = None, 
         resources_articles = rank_resources_proportional_top_n_with_remainder_by_concept_cid(resources_articles)
         resources_articles = remove_keys_from_resources(resources=resources_articles, recommendation_type=recommendation_type)
 
-        # # Finally, priorities on resources having Rating related to DNU_modified (cid)
-        if ratings and len(ratings) > 0:
-            pass
-
         return {
-            "articles": get_paginated_resources(resources_articles), # resources_articles[: top_n_resources],
-            "videos": get_paginated_resources(resources_videos) # resources_videos[: top_n_resources]
+            "articles": get_paginated_resources(resources_articles, pagination_params), # resources_articles[: top_n_resources],
+            "videos": get_paginated_resources(resources_videos, pagination_params) # resources_videos[: top_n_resources]
         }
     return { "articles": [], "videos": [] }
 
-def get_paginated_resources(resources: list, page_number=1, page_size=10):
+def get_paginated_resources(resources: list, pagination_params: dict=None):
     '''
         Simulate Pagination Logic with Resource List
+        pagination_params: {
+            "page_number": 1,
+            "page_size": 10
+        }
     '''
+    page_number =  1
+    page_size = 10
+    if pagination_params:
+        page_number =  pagination_params["page_number"]
+        page_size = pagination_params["page_size"]
+    
     total_items = len(resources)
     total_pages = -(-total_items // page_size)
     start_index = (page_number - 1) * page_size
@@ -376,7 +382,7 @@ def get_paginated_resources(resources: list, page_number=1, page_size=10):
                 "current_page": page_number,
                 "total_pages": total_pages,
                 "total_items": total_items,
-                "content": resources # [start_index:end_index]
+                "content": resources[start_index:end_index]
             }
 
 
@@ -518,7 +524,7 @@ def check_and_validate_resources(db: NeoDataBase, concepts: list ):
         concepts_db_checked.append(concept_updated)
     return concepts_db_checked
 
-def parallel_crawling_resources2(function, concept_updated, result_type: str, top_n_videos, top_n_articles):
+def parallel_crawling_resources(function, concept_updated, result_type: str, top_n_videos, top_n_articles):
     '''
         Parallel Crawling of Resources with the function 
         canditate_selection from Class Recommender
@@ -551,56 +557,3 @@ def parallel_crawling_resources2(function, concept_updated, result_type: str, to
                     "is_video_too_old": concept_updated["is_video_too_old"], 
                     "is_article_too_old": concept_updated["is_video_too_old"],
                 }
-
-
-def check_and_get_resources_with_concepts(db: NeoDataBase, concepts: list):
-    '''
-        Check if concepts already exist and connected to any resources in Neo4j Database
-        If resources exist, check based on:
-        updated_at: it's not more than a given time (one week old)
-        default time = 14 days
-    '''
-    current_time = datetime.now()
-
-    concepts_having_resources = []
-    concepts_not_having_resources = []
-    resources_found = []
-    resourse_btw = []
-
-    # if len(concepts) == 0:
-    #     return resources_found
-    # else:
-
-    for concept in concepts:
-        resourse_btw = db.retrieve_resources(concepts=[concept], embedding_values=True)
-
-        ## at least 5 | 10 resources
-        if len(resourse_btw) == 0: # len(resourse_btw) >= 5:
-            concepts_not_having_resources.append(concept)
-        else:
-            # resources_found += resourse_btw
-            concepts_having_resources.append(concept)
-
-            # check the attribute 'updated_at' <= the given time
-            for resource in resourse_btw:
-                # Parse the given ISO time string
-                given_time = datetime.fromisoformat(resource["updated_at"])
-                time_difference = current_time - given_time
-                if time_difference <= timedelta(days=14):
-                    resources_found.append(resource)
-    return concepts_having_resources, concepts_not_having_resources, resources_found
-
-def parallel_crawling_resources(function, concept_name: str, cid: str, result_type: str, top_n_videos, top_n_articles):
-    '''
-        Parallel Crawling of Resources with the function 
-        canditate_selection from Class Recommender
-        submit function: takes
-            function: canditate_selection (this function takes the params below)
-            query, video, result_type="records", top_n_videos=2, top_n_articles=2
-    '''
-    with ThreadPoolExecutor() as executor:
-        future_videos = executor.submit(function, concept_name, True, result_type, top_n_videos, top_n_articles)
-        future_articles = executor.submit(function, concept_name, False, result_type, top_n_videos, top_n_articles)
-        result_videos = future_videos.result()
-        result_articles = future_articles.result()
-        return {"cid": cid, "videos": result_videos, "articles": result_articles}

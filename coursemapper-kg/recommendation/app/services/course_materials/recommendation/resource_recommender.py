@@ -140,80 +140,32 @@ class ResourceRecommenderService:
         ):
         results = []
         resources = []
-        # self.recommender = Recommender()
         recommender = Recommender(embedding_model=None)
-
-        """ 
-        # concepts_to_be_crawled = []
-        concepts_having_resources, concepts_not_having_resources, resources_found = rrh.check_and_get_resources_with_concepts(db=self.db, concepts=rec_params["concepts"])
-
-        # Crawl resources from YouTube (from each dnu) and Wikipedia API
-        if len(concepts_not_having_resources) > 0:
-            for concept in concepts_not_having_resources: #i in range(len(not_understood_concept_list)):
-                results.append(rrh.parallel_crawling_resources(function=recommender.canditate_selection, 
-                                                            concept_name=concept["name"], 
-                                                            cid= concept["cid"], 
-                                                            result_type="records",
-                                                            top_n_videos=15,
-                                                            top_n_articles=15
-                                                            ))
-
-            # Store resources into Neo4j Database (by creating connection btw Resource and Concept_modified)
-            for result in results:
-                self.db.store_resources(resources_dict=result, cid=result["cid"], recommendation_type=rec_params["recommendation_type"])
-        """     
 
         # Check if concepts already exist and connected to any resources in Neo4j Database
         concepts_db_checked = rrh.check_and_validate_resources(db=self.db, concepts=rec_params["concepts"])
+        
         print("----------------------")
         for rs in concepts_db_checked:
             print(rs)
         print()
-        # return
     
         # Crawl resources from YouTube (from each dnu) and Wikipedia API
         for concept_updated in concepts_db_checked: #i in range(len(not_understood_concept_list)):
-            results.append(rrh.parallel_crawling_resources2(function=recommender.canditate_selection, 
+            results.append(rrh.parallel_crawling_resources(function=recommender.canditate_selection, 
                                                             concept_updated=concept_updated,
                                                             result_type="records",
                                                             top_n_videos=5,
                                                             top_n_articles=15
                                                         ))
         
-        print(" len(results) -> ", len(results))
-        
         # Store resources into Neo4j Database (by creating connection btw Resource and Concept_modified)
         for result in results:
-            print("len videos", len(result["videos"]))
-            print("len articles", len(result["articles"]))
-
             self.db.store_resources(resources_dict=result, cid=result["cid"],
                                     recommendation_type=rec_params["recommendation_type"],
                                     resources_form="dict"
                                 )
 
-            """ 
-            if result["resources_video_exist"] == True or result["resources_article_exist"] == True:
-                if result["resources_video_exist"] == True and result["is_video_too_old"] == True:
-                    self.db.store_resources(resources_dict=None, cid=result["cid"],
-                                            recommendation_type=rec_params["recommendation_type"],
-                                            resources_form="dict", #"found",
-                                            resources_updated_type="videos",
-                                            resources_updated=result["videos"]
-                                        )
-                elif result["resources_article_exist"] == True and result["is_article_too_old"] == True:
-                    self.db.store_resources(resources_dict=None, cid=result["cid"],
-                                            recommendation_type=rec_params["recommendation_type"],
-                                            resources_form="dict", #"found",
-                                            resources_updated_type="articles",
-                                            resources_updated=result["articles"]
-                                        )
-            else:
-                self.db.store_resources(resources_dict=result, cid=result["cid"],
-                                        recommendation_type=rec_params["recommendation_type"],
-                                        resources_form="dict"
-                                    )
-            """
 
         # Gather|Retrieve all resources crawled
         resources = self.db.retrieve_resources(concepts=rec_params["concepts"], embedding_values=True)
@@ -239,9 +191,12 @@ class ResourceRecommenderService:
             resources = [{**resource, 'is_bookmarked_fill': resource['rid'] in rids_user_resources_saved} for resource in resources]
 
         # Apply ranking algorithm on the resources
-        resources_dict = rrh.rank_resources(resources=resources, weights=factor_weights, top_n_resources=top_n_resources, recommendation_type=recommendation_type)
+        resources_dict = rrh.rank_resources(resources=resources, weights=factor_weights, 
+                                            top_n_resources=top_n_resources, recommendation_type=recommendation_type,
+                                            pagination_params=rec_params["pagination_params"]
+                                        )
         result_final = {    
-                            "recommendation_type": rec_params["recommendation_type"], 
+                            "recommendation_type": rec_params["recommendation_type"],
                             "concepts": rec_params["concepts"], 
                             "nodes": resources_dict
                         }
