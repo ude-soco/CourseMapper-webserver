@@ -93,7 +93,7 @@ export interface paginatorVideoDetail {
     current_page: number,
     total_pages: number,
     total_items: number,
-    content: VideoElementModel[]
+    content: VideoElementModel[],
 }
 
 export interface paginatorArticleDetail {

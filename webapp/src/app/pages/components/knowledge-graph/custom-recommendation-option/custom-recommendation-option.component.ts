@@ -30,12 +30,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     concepts: [],
     recommendation_type: "1",
     factor_weights: null,
-    // factor_weights: {
-    //   status: false,
-    //   reload: true,
-    //   weights: null
-    // },
-    requested: false
+    pagination_params: { "page_number": 1, "page_size": 10 }
   };
 
   factor_weight_checked = true;
@@ -210,8 +205,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
       concepts: [],
       recommendation_type: "1",
       factor_weights: this.factor_weights,
-      pagination_params: null,
-      requested: false
+      pagination_params: null
     }
   }
 
@@ -347,8 +341,6 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
   }
   
   updateCROform(conceptsObj: any[], category: string) {
-    if (this.croForm?.requested === false) {}
-
     if (this.materialId) {
       this.croForm.concepts = [];
       let cids = [];
@@ -567,15 +559,17 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     // update factor weights
     // this.croForm.concepts = this.CROconceptsManually;
     this.getFactorWeight();
-    // let croFormTmp = JSON.parse(JSON.stringify(this.croForm));
-    // croFormTmp.factor_weight = this.croForm
 
     let croFormRequest = {
       default: reqData,
-      rec_params: JSON.parse(JSON.stringify(this.croForm))  // this.getOnlyStatusChecked()
+      rec_params: JSON.parse(JSON.stringify(this.croForm))
     }
     croFormRequest.rec_params.concepts = concepts;
-    console.warn("croFormRequest -> ", croFormRequest)
+
+    // Store CRO Request Params
+    localStorage.removeItem('resourcesPaginationParams');
+    localStorage.setItem('resourcesPaginationParams', JSON.stringify(croFormRequest));
+    
     return croFormRequest;
   }
 

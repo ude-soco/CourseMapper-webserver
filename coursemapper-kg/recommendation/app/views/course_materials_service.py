@@ -36,7 +36,7 @@ def get_concepts():
     material_id = material_id.split("-")[0]
     slide_id = str(material_id) + "_slide_" + str(material_page)
 
-    return CRO_TEST_get_concepts
+    # return CRO_TEST_get_concepts
 
     print(
         "material_id:",

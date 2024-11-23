@@ -368,17 +368,35 @@ export class ResultViewComponent {
   }
 
   onPageChangeResourcesPaginator(event) {
-    const startIndex = event.first;
-    const endIndex = startIndex + event.rows;
-    this.fetchResourcesPaginated(startIndex, endIndex)
+    const page_number = event.page + 1;
+    const page_size = event.rows;
+
+    let reqDataFinal = JSON.parse(localStorage.getItem('resourcesPaginationParams'));
+    reqDataFinal.rec_params.pagination_params = {page_number: page_number, page_size: page_size};
+    localStorage.setItem('resourcesPaginationParams', JSON.stringify(reqDataFinal));
+
+    this.resourcesPagination = null;
+    this.materialsRecommenderService
+    .getRecommendedMaterials(reqDataFinal)
+    .subscribe({
+      next: (result) => {
+          this.resourcesPagination = result;
+        },
+        complete: () => {
+        },
+      });
   }
 
-  fetchResourcesPaginated(startIndex: number, endIndex: number) {
-    const storedResources = JSON.parse(localStorage.getItem('resourcesPagination'));
+  onPageChangeResourcesPaginatorV2(event) {
+    const startIndex = event.first;
+    const endIndex = startIndex + event.rows;
+
+    const storedResources = JSON.parse(localStorage.getItem('resourcesPaginationParams'));
     if (this.activeIndex === 0) {
       this.resourcesPagination.nodes.videos.content = storedResources.nodes.videos.content.slice(startIndex, endIndex);
     } else if (this.activeIndex === 1) {
       this.resourcesPagination.nodes.articles.content  = storedResources.nodes.articles.content.slice(startIndex, endIndex);
-    }    
+    }
   }
+  
 }

@@ -1466,45 +1466,7 @@ export class ConceptMapComponent {
             next: (result) => {
               this.isRecommendationButtonDisplayed = true;
               this.resourcesPagination = result;
-              localStorage.removeItem('resourcesPagination');
-              localStorage.setItem('resourcesPagination', JSON.stringify(result));
 
-              /*
-              this.resultMaterials = result;
-
-              this.concepts1 = this.resultMaterials.concepts;
-              this.concepts1.forEach((el, index, array) => {
-                if (
-                  this.didNotUnderstandConceptsObj.some(
-                    (concept) => concept.id.toString() === el.id.toString()
-                  )
-                ) {
-                  el.status = 'notUnderstood';
-                  array[index] = el;
-                } else if (
-                  this.previousConceptsObj.some(
-                    (concept) =>
-                      concept.cid.toString() === el.cid.toString()
-                  )
-                ) {
-                  el.status = 'notUnderstood';
-                  array[index] = el;
-                } else if (
-                  this.understoodConceptsObj.some(
-                    (concept) => concept.id.toString() === el.id.toString()
-                  )
-                ) {
-                  el.status = 'understood';
-                  array[index] = el;
-                } else {
-                  el.status = 'unread';
-                  array[index] = el;
-                }
-              });
-
-              this.resultMaterials = this.resultMaterials.nodes;
-              */
-              
               this.kgTabs.kgTabsEnable();
             },
             complete: () => {
