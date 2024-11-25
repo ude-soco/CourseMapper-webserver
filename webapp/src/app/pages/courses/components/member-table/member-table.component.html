@@ -3,49 +3,50 @@
   <p-table [value]="members" class="w-full mt-10 overflow-visible">
     <ng-template pTemplate="header">
       <tr>
-        <th>FullName</th>
-        <th>UserName</th>
-        <th *ngIf="viewOnly">Current Role</th>
-        <th *ngIf="!viewOnly && course.role !== 'co_teacher'&& course.role !== 'non_editing_teacher'">Change Role</th>
-        <th>Block</th>
+        <th  class="fixed-width-column">Full name</th>
+        <th class="fixed-width-column">Username</th>
+        <th *ngIf="viewOnly  || course.role== 'co_teacher' || course.role == 'non_editing_teacher' " class="fixed-width-column">Role</th>
+        <th *ngIf="!viewOnly && course.role !== 'co_teacher' && course.role !== 'non_editing_teacher'" class="fixed-width-column">Role</th>
+        <th class="fixed-width-column">Block</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-member>
       <tr>
-        <td>
+        <td  class="fixed-width-column">
           <div class="flex items-center space-x-2">
             <p-avatar
-              label="{{ member?.userId.firstname.charAt(0) }}"
+              label="{{ member?.userId.firstname.charAt(0).toUpperCase() }}{{ member?.userId.lastname.charAt(0).toUpperCase() }}"
               shape="circle"
+              [style]="{
+                'background-color': '#EA580C',
+                color: '#ffffff'
+              }"
             ></p-avatar>
-            <span>{{
-              member?.userId?.firstname + " " + member?.userId?.lastname || "-"
-            }}</span>
+            <span>{{ member?.userId?.firstname + " " + member?.userId?.lastname || "-" }}</span>
           </div>
         </td>
-        <td>{{ member?.userId?.username }}</td>
-        <td *ngIf="viewOnly">
-          {{ member?.role?.name?.split("_")?.join(" ") || "N/A" }}
+        <td class="fixed-width-column">{{ member?.userId?.username }}</td>
+        
+        <td *ngIf="viewOnly  || course.role== 'co_teacher' || course.role == 'non_editing_teacher'" class="fixed-width-column">
+          {{ member?.role?.name === 'non_editing_teacher' ? 'Co-Teacher with custom rights' : member?.role?.name?.split('_')?.join(' ') || 'N/A' }}
         </td>
-        <!-- <td>
-          <p-tag
-            [value]="member.isBlocked ? 'Blocked' : 'Active'"
-            [severity]="getSeverity(member.isBlocked)"
-          />
-        </td> -->
-        <td *ngIf="!viewOnly && course.role !== 'co_teacher'&& course.role !== 'non_editing_teacher'">
-          <p-dropdown
-            [options]="roles"
-            [(ngModel)]="member?.role.name"
-            placeholder="Select Role"
-            (onChange)="onRoleChange($event, member)"
-            [disabled]="canChangeRole(member)"
-          >
-          </p-dropdown>
+
+        <td *ngIf="!viewOnly && course.role !== 'co_teacher' && course.role !== 'non_editing_teacher'" class="fixed-width-column">
+          <ng-container *ngIf="!canChangeRole(member); else teacherText">
+            <p-dropdown
+              [options]="roles"
+              [(ngModel)]="member?.role.name"
+              placeholder="Select Role"
+              (onChange)="onRoleChange($event, member)"
+            ></p-dropdown>
+          </ng-container>
+          <ng-template #teacherText>
+            <span class="role-text">Teacher</span>
+          </ng-template>
         </td>
-        <td>
+
+        <td class="fixed-width-column">
           <div class="flex items-center space-x-2">
-            <!-- <label for="block-user-{{ member?.userId._id }}">Block</label> -->
             <p-checkbox
               inputId="block-user-{{ member?.userId._id }}"
               [binary]="true"
@@ -65,7 +66,7 @@
       [value]="[{ severity: 'info', detail: 'No Data Found' }]"
       [enableService]="false"
       [closable]="false"
-    />
+    ></p-messages>
   </div>
 
   <!-- Loading Overlay -->

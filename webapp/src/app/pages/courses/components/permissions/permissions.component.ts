@@ -153,7 +153,17 @@ export class PermissionsComponent implements OnInit {
     const isAllSelected = Object.values(data.list).every((e: any) => e.checked === true);
     data.role.checked = isAllSelected;
   }
-
+     
+  formatRoleName(role: string): string {
+        switch (role) {
+          case 'non_editing_teacher':
+            return 'Co-Teacher with custom rights';
+          case 'co_teacher':
+            return 'Co-Teacher';
+          default:
+            return role.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+        }
+      }
 
   formatPermissionLabel(perm: string): string {
     return perm

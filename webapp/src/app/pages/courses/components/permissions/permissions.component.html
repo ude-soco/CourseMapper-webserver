@@ -1,7 +1,7 @@
 <p-accordion [activeIndex]="0">
   <p-accordionTab
     *ngFor="let item of permissions"
-    [header]="item.name.split('_').join(' ')"
+    [header]="formatRoleName(item.name)"
   
   >
     <div class="permissions-form" *ngFor="let data of item.data">

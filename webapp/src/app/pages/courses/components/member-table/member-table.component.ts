@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Renderer2 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { CourseService } from 'src/app/services/course.service';
@@ -25,6 +25,7 @@ export class MemberTableComponent {
     private messageService: MessageService,
     public storageService: StorageService,
     private confirmationService: ConfirmationService,
+    private renderer: Renderer2,
   ) { };
 
 
@@ -45,8 +46,8 @@ export class MemberTableComponent {
 
   roles = [
     { label: 'Student', value: 'user' },
-    { label: 'Co Teacher', value: 'co_teacher' },
-    { label: 'Non Editing Teacher', value: 'non_editing_teacher' },
+    { label: 'Co-Teacher', value: 'co_teacher' },
+    { label: 'Co-Teacher with custom rights', value: 'non_editing_teacher' },
   ];
 
 
@@ -98,15 +99,23 @@ export class MemberTableComponent {
     return user ? user?.role?.name : null;
   }
 
-
+  private mapRoleToLabel(role: string): string {
+    const roleMap = {
+      'user': 'Student',
+      'co_teacher': 'Co-Teacher',
+      'non_editing_teacher': 'Co-Teacher with custom rights'
+    };
+    return roleMap[role] || role; // Return the mapped label or the original if not found
+  }
   onRoleChange(event: any, member: any): void {
     const originalRole = this.selectedRoles[member.userId._id];
-  
+    const newRoleLabel = this.mapRoleToLabel(event.value);
+
     this.confirmationService.confirm({
-      message: `Are you sure you want to assign "${member?.userId?.username}" the role "${event?.value}" in this course?
-      <br />If you continue, an email will be sent to notify this role assignment?`,
+      message: `Are you sure you want to assign "${member?.userId?.username}" the role "${newRoleLabel}" in this course?
+      <br />If you continue, an email will be sent to notify them about this role assignment`,
       header: 'Role Change Confirmation',
-      icon: 'pi pi-exclamation-triangle',
+      icon: 'pi pi-info-circle',
       accept: () => {
         this.confirmationService.close();
         this.isLoading = true;
@@ -136,6 +145,16 @@ export class MemberTableComponent {
         });     
       }
     });
+    setTimeout(() => {
+
+      const rejectButton = document.getElementsByClassName(
+        'p-confirm-dialog-reject'
+      ) as HTMLCollectionOf<HTMLElement>;
+      for (var i = 0; i < rejectButton.length; i++) {
+        this.renderer.addClass(rejectButton[i], 'p-button-outlined');
+      }
+    }, 0);
+    
   }
   
   

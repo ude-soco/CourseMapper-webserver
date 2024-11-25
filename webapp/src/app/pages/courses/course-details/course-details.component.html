@@ -18,15 +18,15 @@
   <div *ngIf="!loading">
     <div class="flex justify-between items-center mr-2">
       <div>
-        <p class="text-4xl leading-normal font-medium mb-2">{{ course.name }}</p>
+       
       </div>
 
       <p
         *ngIf="course.role === 'teacher' || user?.role?.name === 'admin'"
-        class="text-sm leading-normal font-medium mb-5 cursor-pointer"
+        class="common-text-style  mb-4"
         (click)="onManageRoles()"
-      >
-        Manage Permissions <i class="pi pi-cog"></i>
+      >    <i class="pi pi-cog"></i>
+        Manage Permissions
       </p>
     </div>
     <nav class="flex space-x-4 border-b">
