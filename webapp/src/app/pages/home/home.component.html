@@ -23,7 +23,12 @@
               <!-- Get courses by current role -->
               <div *ngFor="let course of getCoursesByRole(role)" class="course-card-container">
                 <p-card styleClass="p-card-shadow" class="course-card relative">
-                  <span class="badge" *ngIf="role!=='enrolled'">{{ course?.role?.split('_')?.join(' ') }}</span>
+                  
+                  <span class="badge" *ngIf="role!=='enrolled'">
+                    {{ course?.role === 'non_editing_teacher' ? 'Co-Teacher with custom rights' : course?.role?.split('_')?.join(' ') }}
+                 
+                  
+                  </span>
                   <hr style="margin-bottom: 0.75rem; margin-top: 0%" />
                   <ng-template pTemplate="header">
                     <img
