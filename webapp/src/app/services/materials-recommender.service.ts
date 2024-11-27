@@ -10,6 +10,7 @@ import { HTTPOptions } from '../config/config';
 export class MaterialsRecommenderService {
   apiURL = environment.API_URL
   recommendedConcepts: any
+  recommendedSequenceConcepts: any
   recommendedMaterials: any
   recommendedMaterialsRating: any
 
@@ -18,6 +19,10 @@ export class MaterialsRecommenderService {
   getRecommendedConcepts(data: any): Observable<any> {
     this.recommendedConcepts = this.http.post<any>(`${this.apiURL}/courses/${data.courseId}/materials/${data.materialId}/concept-recommendation`, data, HTTPOptions);
     return this.recommendedConcepts
+  }
+  getRecommendedSequenceConcepts(data: any): Observable<any> {
+    this.recommendedSequenceConcepts = this.http.post<any>(`${this.apiURL}/courses/${data.courseId}/materials/${data.materialId}/sequence-recommendation`, data, HTTPOptions);
+    return this.recommendedSequenceConcepts
   }
 
   getRecommendedMaterials(data: any): Observable<any> {

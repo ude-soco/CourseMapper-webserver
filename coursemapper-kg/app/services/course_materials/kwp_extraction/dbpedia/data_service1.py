@@ -46,7 +46,7 @@ class RecService:
             concept_id, user_id, relation_type
         )
 
-    def _get_concept_recommendation_bak(self, user_id, mid):
+    def _get_concept_recommendation(self, user_id, mid):
         # Get concepts that doesn't interact with user
         concept_list = self.db.get_concept_has_not_read(user_id, mid)
         user = self.db.get_user(user_id)
@@ -62,10 +62,10 @@ class RecService:
         resp = get_serialized_concepts_data(recommend_concepts)
         return resp
 
-    def _get_concept_recommendation(self, user_id, mid):
+    def _get_concept_sequence_recommendation(self, user_id, mid):
         # Get concepts that doesn't interact with user
         # only related to candidate concept
-        concept_list = self.db.get_concept_has_not_read(user_id, mid)
+        # concept_list = self.db.get_concept_has_not_read(user_id, mid)
 
         #only sequence recommendation candidate concept set
         sequence_concept_list = self.db.get_prerequisite_concept_has_not_read(user_id, mid)
@@ -74,18 +74,18 @@ class RecService:
         user = self.db.get_user(user_id)
 
         # compute the similarity between user and concepts with cos-similarity and select top-5 recommendation concept
-        recommend_concepts = self.recommendation.recommend(concept_list, user, top_n=5)
-        for i in recommend_concepts:
-            info = i["n"]["name"] + " : " + str(i["n"]["score"])
-            logger.info(info)
+        # recommend_concepts = self.recommendation.recommend(concept_list, user, top_n=5)
+        # for i in recommend_concepts:
+        #     info = i["n"]["name"] + " : " + str(i["n"]["score"])
+        #     logger.info(info)
         # Use paths for interpretability
-        recommend_concepts = self._get_road(recommend_concepts, user_id, mid)
+        # recommend_concepts = self._get_road(recommend_concepts, user_id, mid)
         # get related to top-5 recommended concept and interpretability path
-        resp = get_serialized_concepts_data(recommend_concepts)
+        # resp = get_serialized_concepts_data(recommend_concepts)
 
         #get seqence recommendation
         sequence_path = self.sequence_recommendation.sequence_recommend(sequence_concept_list, user, top_n=10)
-        return resp,sequence_path
+        return sequence_path
     def _get_road(self, recommend_concepts, uid, mid):
         for recommend_concept in recommend_concepts:
             cid = recommend_concept["n"]["cid"]
