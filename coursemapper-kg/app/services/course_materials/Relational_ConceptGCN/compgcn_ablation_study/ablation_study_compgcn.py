@@ -49,7 +49,7 @@ class eva_compgcn:
         model = SentenceTransformer('paraphrase-MiniLM-L12-v2') 
 
         # load the eva data 
-        data_path = os.path.join(current_dir, 'eva_data_short.txt')
+        data_path = os.path.join(current_dir, 'eva_data_version_1.txt')
         data = pd.read_csv(data_path, sep='\t', header=None, names=['node1', 'relation', 'node2'])
         # get all unique nodes and relation
         all_nodes = pd.concat([data['node1'], data['node2']]).unique()
@@ -552,7 +552,7 @@ eva.edges = list(set(eva.edges))
 
 # step2: generate the embedding by using our model
 # compGCN with direction weight and corr, mult or sub
-eva.compgcn_without_direction_weight('sub')
+eva.compgcn_without_direction_weight('mult')
 
 # compGCN without direction weight and corr, mult or sub
 # eva.compgcn_without_direction_weight('sub')
@@ -563,5 +563,5 @@ test_triples =set(eva.edges)
 
 # step3 and step4 compute the score and evaluate
 # params: embedding matrix, relation_embedding_matrix, test_triples(h,r,t), scoring_function(transE, distmult, cosine_score, Hit@n)
-mr, mrr, hit_n = evaluate_link_prediction(embedding_matrix, relation_embedding_matrix, test_triples,scoring_function=distmult_score,n=10)
+mr, mrr, hit_n = evaluate_link_prediction(embedding_matrix, relation_embedding_matrix, test_triples,scoring_function=transE_score,n=10)
 print(f"MR: {mr}, MRR: {mrr}, Hit@10: {hit_n}")

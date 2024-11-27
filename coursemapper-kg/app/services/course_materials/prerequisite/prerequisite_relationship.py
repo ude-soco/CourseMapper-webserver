@@ -20,7 +20,7 @@ class PrerequisiteRelationship:
                 # self.prerequisite_criteria(r["name"],r["related_to"],0)
                 try:
                     print("relation",r["name"],r["related_to"])
-                    self.prerequisite_criteria(r["name"],r["related_to"],0.22)
+                    self.prerequisite_criteria(r["name"],r["related_to"],0.27)
                 except Exception as e:
                     print(e)
             counter +=1

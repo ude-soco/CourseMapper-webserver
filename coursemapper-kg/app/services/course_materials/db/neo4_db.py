@@ -694,7 +694,6 @@ def get_user_embedding(tx,user_id, mid):
     # If the number of dnu concept is more than one dnu, we will consider the order of dnu
     else:
 
-        #"id1": {"embedding": [0.1, 0.2, 0.3], "weight": 0.5}
         dnu_concept_mid={}
         dnu_concept_ids_list=[]
 
@@ -732,7 +731,7 @@ def get_user_embedding(tx,user_id, mid):
         """
             1. update dnu embeddings
         """
-        # step 1: Calculate sequential weight matrix
+        # step 1: Calculate correlation matrix
 
         embeddings = [np.array(dnu_concept_mid[node]["embedding"]) for node in dnu_concept_ids_list]
         num_nodes = len(dnu_concept_ids_list)

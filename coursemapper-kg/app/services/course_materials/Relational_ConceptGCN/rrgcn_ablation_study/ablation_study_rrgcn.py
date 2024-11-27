@@ -34,7 +34,7 @@ class ablation_study_rrgcn:
         model = SentenceTransformer('paraphrase-MiniLM-L12-v2') 
 
         # load the eva data 
-        data_path = os.path.join(current_dir, '.\data\eva_data_short.txt')
+        data_path = os.path.join(current_dir, '.\data\eva_data_version_1.txt')
         data = pd.read_csv(data_path, sep='\t', header=None, names=['node1', 'relation','node2'])
         self.data = data
         # get all unique nodes and relation
@@ -97,22 +97,24 @@ class ablation_study_rrgcn:
             # 在relation这个关系类型当中，有idx1到idx2是这中关系类型，并且cos_sim是..
             relation_data[relation] = list(set(edges_with_similarity))
 
-        # 初始化一个字典，存储每种关系类型的稀疏邻接矩阵
+        # Initialize a dictionary to store the sparse adjacency matrix for each relationship type
         adj_matrices = {}
         for relation_type, edges in relation_data.items():
-            # 分解为行、列和数据列表
+            # Explode into rows, columns, and lists of data
             rows = [edge[0] for edge in edges]
             cols = [edge[1] for edge in edges]
             data = [edge[2] for edge in edges]
             data = np.around(data, 2)
-            # 构造稀疏邻接矩阵
+            # Constructing a sparse adjacency matrix
             adj_matrix = sp.coo_matrix((data, (rows, cols)), shape=(len(all_nodes), len(all_nodes)))
             adj_matrix = adj_matrix.toarray()
-            neighbor_counts =np.sum(adj_matrix != 0, axis=1) 
-            # 避免除以零，处理孤立节点
+            neighbor_counts =np.sum(adj_matrix != 0, axis=1)
+            # neighbor_counts = np.array(adj_matrix.sum(axis=1)).flatten()
+            # Avoid division by zero and handle isolated nodes
             neighbor_counts[neighbor_counts == 0] = 1
-            # 归一化邻接矩阵
+            # Normalize adjacency matrix
             normalized_adj_matrix = adj_matrix / neighbor_counts[:, None]
+            # normalized_adj_matrix = adj_matrix.multiply(1 / neighbor_counts[:, None])
             # normalized_adj_matrix=self.normalize_adj_matrix(adj_matrix)
             adj_matrices[relation_type] = normalized_adj_matrix
         self.adj_matrix = adj_matrices
@@ -133,8 +135,9 @@ class ablation_study_rrgcn:
         weight_matrices = {}
         
         for relation in relation_list:
+            seed = hash(relation) % (2**32)
             # 创建一个大小为 (x, y) 的随机权重矩阵
-            weight_matrix = self.glorot_seed((weight_size,weight_size)).numpy()
+            weight_matrix = self.glorot_seed((weight_size,weight_size),seed).numpy()
             # 将矩阵添加到字典中，以 relation 作为 key
             weight_matrices[relation] = weight_matrix
         
@@ -366,8 +369,8 @@ class ablation_study_rrgcn:
         for relation in self.relations:
             relation_adj_matrix = adj_matrix[relation]
             Wr_layer_1 = weight_matrix[relation]
-            relatin_part_1 = np.dot(relation_adj_matrix,embedding_matrix)
-            relation_part = np.dot(relatin_part_1, Wr_layer_1)
+            relatin_part_1 = relation_adj_matrix @ embedding_matrix
+            relation_part = relatin_part_1 @ Wr_layer_1
             embedding_first_layer=embedding_first_layer+relation_part
         embedding_first_layer = embedding_first_layer
         """  
@@ -386,8 +389,17 @@ class ablation_study_rrgcn:
             else:
                 print("矩阵不包含非零值。")
             Wr_layer_2 = weight_matrix_layer_2[relation]
-            relatin_part_1 = np.dot(relation_adj_matrix,embedding_first_layer)
-            relation_part = np.dot(relatin_part_1, Wr_layer_2)
+            print(type(relation_adj_matrix))
+            print(type(embedding_first_layer))
+            relatin_part_1 = relation_adj_matrix@embedding_first_layer
+            if np.any(relatin_part_1 != 0):
+                print("矩阵包含非零值。")
+                # 提取并打印所有非零值
+                non_zero_values = relatin_part_1[relatin_part_1 != 0]
+                print("非零值:", non_zero_values)
+            else:
+                print("矩阵不包含非零值。")
+            relation_part = relatin_part_1@ Wr_layer_2
             final_embedding=final_embedding+relation_part
         #final_embedding = final_embedding / np.linalg.norm(final_embedding, axis=1, keepdims=True)
         return final_embedding
@@ -560,7 +572,7 @@ print(rrgcn.embedding_matrix[468].shape)
 score = cosine_similarity([rrgcn.embedding_matrix[12]], [rrgcn.embedding_matrix[468]])[0][0]
 print("++++++++++++++++++++++++"+str(score)+"++++++++++++++++++++++++++++++")
 # step2: generate the embedding by using our model
-embedding_matrix = rrgcn.rrgcn_1_3()
+embedding_matrix = rrgcn.rrgcn_2_1()
 print(type(embedding_matrix))
 print(embedding_matrix.shape)
 print(embedding_matrix[12].shape)
@@ -574,7 +586,7 @@ test_triples =set(rrgcn.edges)
 
 # step3 and step4 compute the score and evaluate
 # params: embedding matrix, relation_embedding_matrix, test_triples(h,r,t), scoring_function(transE, distmult, cosine_score, Hit@n)
-mr, mrr, hit_n = evaluate_link_prediction(embedding_matrix, relation_embedding_matrix, test_triples,scoring_function=cosine_score,n=10)
+mr, mrr, hit_n = evaluate_link_prediction(embedding_matrix, relation_embedding_matrix, test_triples,scoring_function=transE_score,n=10)
 print(f"MR: {mr}, MRR: {mrr}, Hit@10: {hit_n}")
 
 def normalize_adjacency_matrix(adj_matrix):

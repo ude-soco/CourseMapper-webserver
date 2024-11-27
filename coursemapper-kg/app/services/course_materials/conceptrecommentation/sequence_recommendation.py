@@ -84,13 +84,16 @@ class Sequence_recommendation:
 
                 // Collect the target node CID in the path
                 WITH collect([node IN nodes(path) WHERE node.cid IN targetCIDs | node.cid]) AS groupedPaths, targetCIDs
-                // Remove duplicate paths
-                WITH apoc.coll.toSet(groupedPaths) AS groupedPaths, targetCIDs
-                //calculate the isolated nodes
-                WITH groupedPaths, apoc.coll.flatten(groupedPaths) AS connectedCIDs, targetCIDs
-                WITH groupedPaths, apoc.coll.subtract(targetCIDs, connectedCIDs) AS isolatedNodes
 
-                // Returns the result with the CIDs in the path and the CIDs of the isolated nodes
+                // Remove duplicate paths (mimic apoc.coll.toSet using DISTINCT)
+                UNWIND groupedPaths AS path
+                WITH DISTINCT path AS uniquePaths, targetCIDs
+                WITH collect(uniquePaths) AS groupedPaths, targetCIDs
+
+                // Flatten groupedPaths and calculate the isolated nodes
+                WITH groupedPaths, [cid IN targetCIDs WHERE NOT cid IN REDUCE(flat=[], x IN groupedPaths | flat + x)] AS isolatedNodes
+
+                // Return the result with the CIDs in the path and the CIDs of the isolated nodes
                 RETURN groupedPaths, isolatedNodes
                 """,
                 cid=cid_list,
@@ -101,39 +104,6 @@ class Sequence_recommendation:
         groupedPaths = result[0]['groupedPaths']
         # The nodes in the isolated nodes are part of the recommended top_n nodes, but they are not connected to other top_n nodes and need to be processed separately.
         isolatedNodes = result[0]['isolatedNodes']
-        # with self.driver.session() as session:
-        #     isolated_result = session.run(
-        #         """
-        #         WITH $isolatedNodes_list AS isolatedNodeCID
-
-        #         // Find isolated nodes
-        #         MATCH (isoNode)
-        #         WHERE isoNode.cid IN isolatedNodeCID
-
-        #         // Forward and backward paths
-        #         OPTIONAL MATCH forwardPath = (isoNode)-[:PREREQUISITE_TO*]->(forwardNode)
-        #         OPTIONAL MATCH backwardPath = (backwardNode)-[:PREREQUISITE_TO*]->(isoNode)
-
-        #         // First collect information about the nodes in the path
-        #         WITH isoNode, 
-        #             [node IN nodes(forwardPath) | {cid: node.cid, name: node.name}] AS forwardPathsNodes,
-        #             [node IN nodes(backwardPath) | {cid: node.cid, name: node.name}] AS backwardPathsNodes
-
-        #         // Aggregate forward paths and backward paths separately
-        #         WITH isoNode, 
-        #             collect(forwardPathsNodes) AS forwardPaths,
-        #             collect(backwardPathsNodes) AS backwardPaths
-
-        #         // Combining forward and backward paths
-        #         WITH isoNode, forwardPaths + backwardPaths AS allPaths
-
-        #         // Handling isolated nodes without paths
-        #         RETURN isoNode.cid AS isolatedNodeCID, 
-        #             isoNode.name AS isolatedNodeName, 
-        #             CASE WHEN size(allPaths) > 0 THEN allPaths ELSE [[{cid: isoNode.cid, name: isoNode.name}]] END AS allPaths
-        #         """,
-        #         isolatedNodes_list=isolatedNodes,
-        #     ).data()
 
         isolated_sequence = []  
         for cid in isolatedNodes:
