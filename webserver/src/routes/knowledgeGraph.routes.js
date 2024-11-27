@@ -68,6 +68,12 @@ module.exports = function (app) {
   );
 
   app.post(
+    "/api/courses/:courseId/materials/:materialId/sequence-recommendation",
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.getSequence
+  );
+
+  app.post(
     "/api/courses/:courseId/materials/:materialId/resource-recommendation",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getResources

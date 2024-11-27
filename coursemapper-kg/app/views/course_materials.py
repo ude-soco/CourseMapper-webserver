@@ -167,10 +167,8 @@ def get_concepts(job):
 
     start_time = time.time()
     # Get top-5 recommendation concept and interpretability
-    resp,sequence_path = data_service._get_concept_recommendation(user_id=user_id, mid=material_id)
+    resp = data_service._get_concept_recommendation(user_id=user_id, mid=material_id)
     end_time = time.time()
-    logger.info(sequence_path)
-    
     print(
         "Get top-5 recommendation concept and interpretability Execution time: ",
         end_time - start_time,
@@ -249,7 +247,7 @@ def get_sequence_concepts(job):
 
     start_time = time.time()
     # Get top-5 recommendation concept and interpretability
-    resp,sequence_path = data_service._get_concept_recommendation(user_id=user_id, mid=material_id)
+    sequence_path = data_service._get_concept_sequence_recommendation(user_id=user_id, mid=material_id)
     end_time = time.time()
     logger.info(sequence_path)
     

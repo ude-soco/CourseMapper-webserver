@@ -1553,12 +1553,14 @@ export class ConceptMapComponent {
         await this.getRecommendedMaterialsPerSlideMaterial();
 
       this.materialsRecommenderService
-        .getRecommendedConcepts(
+      // .getRecommendedConcepts(
+        .getRecommendedSequenceConcepts(
           // reqData
           reqDataMaterial1
         )
         .subscribe({
           next: async (resultConcepts) => {
+            //the start of the recommended concepts
             this.recommendedConcepts = resultConcepts;
 
             this.conceptMapRecommendedData = this.recommendedConcepts;
@@ -1582,6 +1584,7 @@ export class ConceptMapComponent {
             this.recommendedConceptsTab = true;
             // this.tabs[2].disabled = true;
             this.recommendedMaterialsTab = false;
+            //the end of recommended concepts
             //////////////////////////call material-recommender/////////////////////////
             console.log('calling material recommender');
             this.materialsRecommenderService
