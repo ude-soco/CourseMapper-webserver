@@ -14,11 +14,7 @@ class RRGCN:
     def __init__(self):
         neo4j_uri = Config.NEO4J_URI
         neo4j_user = Config.NEO4J_USER
-        neo4j_pass = Config.NEO4J_PASSWORD
-        # neo4j_uri = 'bolt://localhost:7687'
-        # neo4j_user = 'neo4j'
-        # neo4j_pass = '1234qwer!'
-    
+        neo4j_pass = Config.NEO4J_PASSWORD    
         self.driver = GraphDatabase.driver(neo4j_uri,
                                            auth=(neo4j_user, neo4j_pass),
                                            encrypted=False)
@@ -81,8 +77,6 @@ class RRGCN:
         """ 
             Construct prerequisite matrix
         """
-        # self.prerequisite_matrix = glorot_seed((self.embedding_matrix.shape[0],  self.embedding_matrix.shape[0])).numpy()
-        # self.prerequisite_matrix = np.around(self.prerequisite_matrix, 2)
         relation2 = np.genfromtxt("prerequisite.txt", dtype=np.float32)
         if relation2.size == 0:
             logger.info("prerequisite.txt is empty")

@@ -57,9 +57,6 @@ class relational_conceptgcn_compgcn:
         relation1 = np.genfromtxt("relation.txt", dtype=np.float32)        
         adj_row = np.array(list(map(idx_map.get, relation1[:, 0].flatten())))
         adj_column = np.array(list(map(idx_map.get, relation1[:, 2].flatten())))
-
-        #coo_matrix((data, (row, col)), shape=(m, n))
-        #relation1[:, 1] the value
         self.adj_matrix = sp.coo_matrix(
             (relation1[:, 1], (adj_row[:], adj_column[:])),
             shape=( self.embedding_matrix.shape[0],  self.embedding_matrix.shape[0]),
@@ -71,6 +68,7 @@ class relational_conceptgcn_compgcn:
         self.adj_matrix= normalize(self.adj_matrix) + sp.eye(self.adj_matrix.shape[0])
         self.adj_matrix = self.adj_matrix.toarray()
         self.adj_matrix_inverse = self.adj_matrix.T
+    
     
         """ 
             Construct prerequisite matrix
@@ -94,9 +92,9 @@ class relational_conceptgcn_compgcn:
         self.prerequisite_matrix =self.prerequisite_matrix.toarray()
         self.prerequisite_matrix = np.around(self.prerequisite_matrix, 2)
         neighbor_counts =np.sum(self.prerequisite_matrix != 0, axis=1) 
-        # 避免除以零，处理孤立节点
+        # Avoid division by zero and handle isolated nodes
         neighbor_counts[neighbor_counts == 0] = 1
-        # 归一化邻接矩阵
+        # Normalize the adjacency matrix
         normalized_adj_matrix = self.prerequisite_matrix / neighbor_counts[:, None]
         self.prerequisite_matrix = normalized_adj_matrix
         self.prerequisite_matrix_inverse = self.prerequisite_matrix.T
@@ -104,7 +102,7 @@ class relational_conceptgcn_compgcn:
         """ 
             generate relationships weight for every type of relationships
         """
-        #the size of weight_matrix is the size of embedding (768,768)
+        # the size of weight_matrix is the size of embedding (768,768)
         weight_size = self.embedding_matrix.shape[1]
         self.weight_matrix_input_layer_1 = glorot_seed((weight_size,weight_size)).numpy()
         self.weight_matrix_output_layer_1 = glorot_seed((weight_size,weight_size)).numpy()
