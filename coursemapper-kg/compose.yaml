@@ -32,7 +32,7 @@ services:
       REDIS_PORT: 6379
       REDIS_DB: 0
       REDIS_PASSWORD: 
-      PIPELINES: concept-recommendation,resource-recommendation,sequence-recommendation
+      PIPELINES: sequence-recommendation,concept-recommendation,resource-recommendation
     depends_on:
       neo4j:
         condition: service_healthy
