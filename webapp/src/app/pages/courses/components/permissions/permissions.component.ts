@@ -157,7 +157,7 @@ export class PermissionsComponent implements OnInit {
   formatRoleName(role: string): string {
         switch (role) {
           case 'non_editing_teacher':
-            return 'Co-Teacher with custom rights';
+            return 'Teaching Assitant';
           case 'co_teacher':
             return 'Co-Teacher';
           default:

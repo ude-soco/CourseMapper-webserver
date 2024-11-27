@@ -6,7 +6,15 @@
         <th  class="fixed-width-column">Full name</th>
         <th class="fixed-width-column">Username</th>
         <th *ngIf="viewOnly  || course.role== 'co_teacher' || course.role == 'non_editing_teacher' " class="fixed-width-column">Role</th>
-        <th *ngIf="!viewOnly && course.role !== 'co_teacher' && course.role !== 'non_editing_teacher'" class="fixed-width-column">Role</th>
+        <th *ngIf="!viewOnly && course.role !== 'co_teacher' && course.role !== 'non_editing_teacher'" class="fixed-width-column">
+          Role
+          <i
+          class="pi pi-info-circle"
+          pTooltip="You can change the permissions assigned to these roles using 'Manage permissions' option"
+          tooltipPosition="top"
+          style="margin-left: 5px; cursor: pointer; "
+        ></i>
+        </th>
         <th class="fixed-width-column">Block</th>
       </tr>
     </ng-template>
@@ -28,7 +36,7 @@
         <td class="fixed-width-column">{{ member?.userId?.username }}</td>
         
         <td *ngIf="viewOnly  || course.role== 'co_teacher' || course.role == 'non_editing_teacher'" class="fixed-width-column">
-          {{ member?.role?.name === 'non_editing_teacher' ? 'Co-Teacher with custom rights' : member?.role?.name?.split('_')?.join(' ') || 'N/A' }}
+          {{ member?.role?.name === 'non_editing_teacher' ? 'Teaching Assistant' : member?.role?.name?.split('_')?.join(' ') || 'N/A' }}
         </td>
 
         <td *ngIf="!viewOnly && course.role !== 'co_teacher' && course.role !== 'non_editing_teacher'" class="fixed-width-column">

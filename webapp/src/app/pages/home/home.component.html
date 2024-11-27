@@ -25,7 +25,7 @@
                 <p-card styleClass="p-card-shadow" class="course-card relative">
                   
                   <span class="badge" *ngIf="role!=='enrolled'">
-                    {{ course?.role === 'non_editing_teacher' ? 'Co-Teacher with custom rights' : course?.role?.split('_')?.join(' ') }}
+                    {{ getFormattedRole(course?.role) }}
                  
                   
                   </span>

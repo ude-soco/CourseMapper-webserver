@@ -69,3 +69,27 @@
   font-size: 16px; 
   line-height: 1.5;
 }
+
+
+
+::ng-deep .p-tooltip {
+  background-color: white !important; 
+  border: 1px solid #000000 !important; 
+  border-radius: 8px !important; 
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+::ng-deep .p-tooltip .p-tooltip-text {
+  color: black !important; 
+  background-color: transparent !important;
+}
+
+/* Change background color on hover for table rows */
+.table tr:hover {
+  background-color: #f0f0f0; /* A light grey shade for the hover effect */
+}
+
+/* Optional: You can also make the text color darker on hover */
+.table tr:hover td {
+  color: #000; /* Makes text black on hover; adjust as needed */
+}

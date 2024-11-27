@@ -47,7 +47,7 @@ export class MemberTableComponent {
   roles = [
     { label: 'Student', value: 'user' },
     { label: 'Co-Teacher', value: 'co_teacher' },
-    { label: 'Co-Teacher with custom rights', value: 'non_editing_teacher' },
+    { label: 'Teaching Assistant', value: 'non_editing_teacher' },
   ];
 
 
@@ -103,7 +103,7 @@ export class MemberTableComponent {
     const roleMap = {
       'user': 'Student',
       'co_teacher': 'Co-Teacher',
-      'non_editing_teacher': 'Co-Teacher with custom rights'
+      'non_editing_teacher': 'Teaching Assistant'
     };
     return roleMap[role] || role; // Return the mapped label or the original if not found
   }

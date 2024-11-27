@@ -834,8 +834,12 @@ export const updateUserRole = catchAsync(async (req, res, next) => {
 
   await helpers.initialiseNotificationSettings(foundCourse, foundUser);
 
+  const responseMessage = role === 'non_editing_teacher' 
+  ? `User '${foundUser.username}' added as a Teaching Assistant to course '${foundCourse.name}'` 
+  : `User '${foundUser.username}' added as a ${role} to course '${foundCourse.name}'`;
+ 
   const response = {
-    success: `User '${foundUser.username}' added as a ${role} to course '${foundCourse.name}'`,
+    success: responseMessage,
     course: foundCourse,
   };
 

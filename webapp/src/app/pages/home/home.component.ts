@@ -133,7 +133,12 @@ export class HomeComponent implements OnInit {
     this.getMyCourses();
   }
 
-
+  getFormattedRole(role: string): string {
+    if (role === 'non_editing_teacher') {
+      return 'Teaching Assistant';
+    }
+    return role ? role.replace(/_/g, '-') : 'N/A';
+  }
   canAccess(perm: string, courseItem: any): boolean {
     const isAdminOrTeacher = courseItem?.role === 'teacher' || this.currentUser?.role?.name === 'admin';
     if (isAdminOrTeacher) {

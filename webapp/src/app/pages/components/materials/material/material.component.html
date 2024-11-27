@@ -264,6 +264,7 @@
                 resetTo="channel"
                 [canRename]="canAccess('can_rename_materials')"
                 [canDelete]="canAccess(material?.type === 'video' ? 'can_delete_materials': 'can_delete_pdfs')"
+               
                 (renameClicked)="onRenameMaterial()"
                 (deleteClicked)="onDeleteMaterial()"
                 (resetButtonClicked)="onResetMaterialNotificationsClicked()"
