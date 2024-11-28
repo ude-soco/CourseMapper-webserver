@@ -84,12 +84,12 @@
   background-color: transparent !important;
 }
 
-/* Change background color on hover for table rows */
+
 .table tr:hover {
-  background-color: #f0f0f0; /* A light grey shade for the hover effect */
+  background-color: #f0f0f0; 
 }
 
-/* Optional: You can also make the text color darker on hover */
+
 .table tr:hover td {
-  color: #000; /* Makes text black on hover; adjust as needed */
+  color: #000; 
 }
