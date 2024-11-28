@@ -100,10 +100,16 @@ class Sequence_recommendation:
         ).data()
 
         result = list(result)
-        # get groupedPaths,the concept in groupedPaths are all in top_n_recommended_concepts
-        groupedPaths = result[0]['groupedPaths']
-        # The nodes in the isolated nodes are part of the recommended top_n nodes, but they are not connected to other top_n nodes and need to be processed separately.
-        isolatedNodes = result[0]['isolatedNodes']
+        print(result)
+        if not result:
+            print("No data returned from the query.")
+            groupedPaths = []
+            isolatedNodes = cid_list
+        else:
+            # get groupedPaths,the concept in groupedPaths are all in top_n_recommended_concepts
+            groupedPaths = result[0]['groupedPaths']
+            # The nodes in the isolated nodes are part of the recommended top_n nodes, but they are not connected to other top_n nodes and need to be processed separately.
+            isolatedNodes = result[0]['isolatedNodes']
 
         isolated_sequence = []  
         for cid in isolatedNodes:
@@ -119,7 +125,11 @@ class Sequence_recommendation:
         grouped_sequence = self.deduplicate_by_name(grouped_sequence)
 
         final_sequence = grouped_sequence+isolated_sequence
-        return final_sequence
+        output = {"nodes": {}}
+        for idx, group in enumerate(final_sequence):
+            output["nodes"][str(idx)] = group
+        print(output)
+        return output
     
     def deduplicate_by_name(self,data):
         # seen = set()  # Used to store combinations of names that have already appeared
