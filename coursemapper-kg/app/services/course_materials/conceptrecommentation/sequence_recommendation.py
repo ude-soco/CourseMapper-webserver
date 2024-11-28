@@ -125,9 +125,10 @@ class Sequence_recommendation:
         grouped_sequence = self.deduplicate_by_name(grouped_sequence)
 
         final_sequence = grouped_sequence+isolated_sequence
-        output = {"nodes": {}}
-        for idx, group in enumerate(final_sequence):
-            output["nodes"][str(idx)] = group
+        output = {"nodes": []}
+        for group in final_sequence:
+            node_data = {"data": [{"cid": item["cid"], "name": item["name"]} for item in group]}
+            output["nodes"].append(node_data)
         print(output)
         return output
     
