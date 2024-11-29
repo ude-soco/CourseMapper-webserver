@@ -102,6 +102,8 @@ import { MaterialDashboardComponent } from './pages/components/Dashboards/materi
 import { BackButtonComponent } from './pages/components/back-button/back-button.component';
 import { EmailValidationComponent } from './pages/components/email-validation/email-validation.component';
 import { RequestEmailValidationComponent } from './pages/components/email-validation/request-email-validation/request-email-validation.component';
+import { ProfileComponent } from './pages/profile/profile.component';
+import { AvatarModule } from 'primeng/avatar'; // Import the AvatarModule
 
 @NgModule({
   declarations: [
@@ -145,9 +147,11 @@ import { RequestEmailValidationComponent } from './pages/components/email-valida
    BackButtonComponent,
    EmailValidationComponent,
    RequestEmailValidationComponent,
+   ProfileComponent,
 
   ],
   imports: [
+    
     MentionModule,
     DynamicDialogModule,
     MenuModule,

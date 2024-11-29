@@ -64,10 +64,10 @@ export class NavbarComponent implements OnInit {
 
     this.userOptions = [
       {
-        label: `ID: ${this.loggedInUser.id} `,
-        icon: 'pi pi-copy',
-        title: 'Copy ID to clipboard',
-        command: () => this.copyUserId(this.loggedInUser.id),
+        label: 'Account Settings', // New menu item
+        icon: 'pi pi-cog', // icon for settings can be modified as per your requirement
+        title: 'Manage account settings',
+        command: () => this.navigateToProfile(), // Call navigate method
       },
       {
         label: 'Personal Dashboard',
@@ -82,6 +82,14 @@ export class NavbarComponent implements OnInit {
       },
     ];
   }
+  
+  
+  navigateToProfile(): void {
+    this.router.navigate(['/profile']);
+  }
+
+
+
   toggleMenu(event: MouseEvent) {
     if (this.menu) {
       this.loggedInUser = this.storageService.getUser();

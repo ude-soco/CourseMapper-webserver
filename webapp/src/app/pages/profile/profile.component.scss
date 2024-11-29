@@ -1,0 +1,169 @@
+.profile-container {
+  flex: 1;
+  max-width: 800px;
+  margin: auto;
+  // padding: 20px;
+  height: calc(100vh - 65px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: calc(100vh - 65px);
+
+  h2 {
+    margin-bottom: 0.8rem;
+    color: var(--course-mapper-blue) ;
+    font-size: 40px;
+    font-weight: 500;
+  }
+  p{
+    margin-bottom: 1rem;
+    font-size: 30px;
+    color: #666666;
+      i{
+        font-size: 30px;
+      }
+  }
+
+  .photo-section {
+    text-align: left;
+    margin-bottom: 20px;
+
+    .photo-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 50px;
+      
+      .profile-photo {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #ccc;
+      }
+
+      .profile-placeholder {
+        font-size: 5rem;
+        color: #8C8D87;
+        background-color: #989791ab;
+        border-radius: 50%;
+        padding: 30px;
+        display: inline-block;
+
+      }
+    }
+      :host ::ng-deep .p-fileupload   .p-fileupload-buttonbar  {
+      background-color: rgb(250, 238, 238); // Set background color for the upload button
+      color: grey; // Set uploaded button text color
+      border: 1px solid #ccc; // Add a light border
+      padding: 10px 20px; // Add padding for a consistent look
+      font-size: 16px; // Ensure font size is consistent
+      border-radius: 4px; // Rounded corners
+
+    
+    }
+
+
+
+  }
+  .p-inputgroup {
+    display: flex;                  // Use flexbox for layout
+    align-items: center;            // Center items vertically
+    border: 2px solid rgb(146, 145, 145);        // Add a unified border
+    border-radius: 4px;             // Rounded corners
+    overflow: hidden;               // Ensure no extra margins show
+    background-color: white;        // Set background color of the entire group
+  
+    input {
+      flex: 1;                      // Allow input to take full space
+      padding: 10px 12px;           // Consistent padding
+      font-size: 16px;               // Font size of text
+      border: none;                  // No border for input
+      height: 40px;                  // Set height to match addon
+      outline: none;                 // Remove outline on focus
+    }
+  
+    
+  
+    .p-inputgroup-addon {
+      display: flex;                // Flexbox for vertical center alignment
+      justify-content: center;      // Center icon horizontally
+      align-items: center;          // Center icon vertically
+      padding: 0 12px;             // Padding for the addon
+      cursor: pointer;              // Pointer cursor on hover
+      background-color: white;      // Ensure background matches input
+      border: none;                  // Remove the border from the icon area
+      height: 100%;                  // Match height of the input
+  
+      i {
+        font-size: 20px;           // Set icon size
+        color: grey;               // Icon color
+      }
+    }
+  }
+  .field {
+    &.col-12 {
+      margin-bottom: 2rem; // Vertical spacing
+    }
+
+    input {
+      padding: 6px 12px; // Reduce vertical padding for compact height
+      font-size: 16px; // Ensure font size is adjusted
+      line-height: 1.2; // Adjust line height for better fit
+      height: 45px; // Set a specific height if needed (optional)
+    }
+  }
+  
+  .p-float-label {
+    margin-bottom: 2rem;
+
+    label {
+      color: #6b7280;
+      line-height: 1;
+    }
+  }
+
+  .button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+
+    button {
+      width: 110px; // Set a fixed width for the buttons (adjust as needed)
+      height: 45px; // Set a consistent height
+      padding: 10px; // Use the same padding for both buttons
+      font-size: 16px; // Ensure font size is consistent
+      display: flex; // Use flexbox to control layout
+      align-items: center; // Center items vertically
+      justify-content: center; // Center items horizontally
+      
+       // Override space between icon and label
+     .p-button-icon {
+      margin-right: 0; // Remove default margin to eliminate space
+      font-size: 20px; // Maintain icon size
+      color: grey; // Icon color
+      } 
+      .p-button-label {
+        margin-left: 5px; // Adjust this slightly to control space if needed
+        color: grey; // Ensure the label color matches your design
+      }
+  
+      &.p-button-primary {
+        // Styles for the Save button
+        background-color: rgb(63, 81, 181); // Maintain the background color for Save button
+        color: white; // White text color for Save button
+      }
+  
+      &:hover {
+        // Adjust hover effects
+        background-color: darken(rgb(63, 81, 181), 10%); // Darken background for Save on hover
+        color: white; // Ensure text remains white
+      }
+    }
+  }
+  
+  .border-container {
+    border: 2px solid rgb(187, 185, 185);
+    border-radius: 8px;
+    padding: 40px;
+   }
+}

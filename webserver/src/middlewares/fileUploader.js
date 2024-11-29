@@ -35,6 +35,15 @@ const pdfStorage = multer.diskStorage({
   filename: fileName,
 });
 
+const imageStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const dir = "public/uploads/images";
+    ensureDirectoryExistence(dir);
+    cb(null, dir);
+  },
+  filename: fileName,
+});
+
 const videoStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     const dir = "public/uploads/videos";
@@ -51,6 +60,13 @@ const pdfFileFilter = (req, file, cb) => {
   cb(undefined, true);
 };
 
+const imageFileFilter = (req, file, cb) => {
+  if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+    return cb(new Error("Please upload image files only (jpg, jpeg, png, gif)!"));
+  }
+  cb(null, true);
+};
+
 const videoFileFilter = (req, file, cb) => {
   if (!file.originalname.match(/\.(mp4)$/)) {
     cb(new Error("Please upload mp4 files only!"));
@@ -58,6 +74,10 @@ const videoFileFilter = (req, file, cb) => {
   cb(undefined, true);
 };
 
+const uploadImageFile = multer({
+  storage: imageStorage,
+  fileFilter: imageFileFilter,
+});
 const uploadPDFFile = multer({
   storage: pdfStorage,
   fileFilter: pdfFileFilter,
@@ -67,4 +87,4 @@ const uploadVideoFile = multer({
   fileFilter: videoFileFilter,
 });
 
-module.exports = { uploadPDFFile, uploadVideoFile };
+module.exports = { uploadPDFFile, uploadVideoFile, uploadImageFile };

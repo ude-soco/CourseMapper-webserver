@@ -29,6 +29,7 @@ import { EmailValidationComponent } from './pages/components/email-validation/em
 import { RequestEmailValidationComponent } from './pages/components/email-validation/request-email-validation/request-email-validation.component';
 import { CourseDetailsComponent } from './pages/courses/course-details/course-details.component';
 import { RolesComponent } from './pages/courses/components/roles/roles.component';
+import { ProfileComponent } from './pages/profile/profile.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'landingPage', pathMatch: 'full' },
@@ -64,7 +65,7 @@ const routes: Routes = [
   {
   path: 'verify/:token',
   component: RequestEmailValidationComponent,
-},
+  },
  
   {
     path: 'validateEmail',
@@ -138,6 +139,11 @@ const routes: Routes = [
   {
     path: 'notification/all',
     component: AllNotificationsComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'profile',
+    component: ProfileComponent,
     canActivate: [AuthGuardService],
   },
   {

@@ -94,6 +94,21 @@ export class UserServiceService {
         this.user = user;
       })
     );
+  };
+
+  updateProfile(data: any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/user/update-profile`, data).pipe(
+      tap((user) => {
+        this.user = user;
+      })
+    );
+  }
+  getProfile(): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/user/get-profile`).pipe(
+      tap((user) => {
+        this.user = user;
+      })
+    );
   }
 
   setlastTimeCourseMapperOpened() {

@@ -1,0 +1,76 @@
+<div class="flex flex-row min-h-screen">
+  <!-- Sidebar -->
+  <div class="flex-col">
+    <app-sidebar></app-sidebar>
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="md:container md:mx-auto">
+    <div class="profile-container">
+      <div class="shadow-2xl p-8 border-container">
+        <h2>My Account Settings</h2>
+        <p>User ID: {{loggedInUser?._id}} 
+          <i class="pi pi-copy copy-icon fs-2 cursor-pointer" 
+            (click)="copyToClipboard(loggedInUser?._id)">
+          </i>
+        </p>
+
+        <!-- Photo Upload Section -->
+        <div class="photo-section">
+          <div class="photo-wrapper">
+            <div>
+              <img *ngIf="imageUrl; else placeholder" [src]="imageUrl" alt="Profile Photo" class="profile-photo" />
+              <ng-template #placeholder>
+                <i class="pi pi-camera profile-placeholder"></i>
+              </ng-template>
+            </div>
+            <p-fileUpload
+              mode="basic"
+              [chooseLabel]="'Choose photo'"
+              name="photo"
+              (onSelect)="onFileSelect($event)"
+              [auto]="false"
+              class="profile-upload-btn"
+            ></p-fileUpload>
+          </div>
+        </div>
+
+        <!-- Form Section -->
+        <form [formGroup]="accountForm" (ngSubmit)="saveForm()" class="form-section pt-5">
+          <div class="p-fluid grid pb-5">
+            <div class="flex gap-4">
+              <div class="field col-12 md:col-6 p-float-label w-full">
+                <input id="firstname" pInputText type="text" formControlName="firstname" />
+                <label for="firstname">First Name</label>
+              </div>
+              <div class="field col-12 md:col-6 p-float-label w-full">
+                <input id="lastname" pInputText type="text" formControlName="lastname" />
+                <label for="lastname">Last Name</label>
+              </div>
+            </div>
+
+            <div class="field col-12 p-float-label">
+              <input id="email" pInputText type="email" formControlName="email" />
+              <label for="email">Email Address</label>
+            </div>
+            <div class="field col-12 p-float-label">
+          
+              <div class="p-inputgroup">
+                <input id="username" pInputText type="text" disabled [value]="loggedInUser?.username"/>
+                <label for="username">Username</label>
+                <span class="p-inputgroup-addon cursor-pointer" (click)="copyToClipboard(loggedInUser?.username)">
+                  <i class="pi pi-copy"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="button-group pt-5">
+            <button pButton type="button" icon="pi pi-times" label="Cancel" class="p-button-outlined" (click)="cancel()"></button>
+            <button pButton type="submit" icon="pi pi-check" label="Save" class="p-button-primary"></button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

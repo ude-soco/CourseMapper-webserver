@@ -77,4 +77,15 @@ module.exports = function (app) {
     // [authJwt.verifyToken],
     controller.updateUserConcepts
   );
+  app.post(
+    "/api/user/update-profile",
+    [authJwt.verifyToken],
+    controller.updateUserProfile
+  );
+
+  app.get(
+    "/api/user/get-profile",
+    [authJwt.verifyToken],
+    controller.getUserProfile
+  );
 };

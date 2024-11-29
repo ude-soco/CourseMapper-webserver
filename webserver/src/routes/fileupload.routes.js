@@ -1,10 +1,12 @@
 const {
   uploadPDFFile,
   uploadVideoFile,
+  uploadImageFile,
 } = require("../middlewares/fileUploader");
 const {
   pdfFileUploader,
   videoFileUpload,
+  imageUpload,
 } = require("../controllers/fileUpload.controller");
 
 module.exports = function (app) {
@@ -15,6 +17,9 @@ module.exports = function (app) {
 
   // Upload PDF file
   app.post("/api/upload/pdf", uploadPDFFile.single("file"), pdfFileUploader);
+
+  // Upload Image
+  app.post("/api/upload/image", uploadImageFile.single("file"), imageUpload);
 
   // Upload video file
   app.post(

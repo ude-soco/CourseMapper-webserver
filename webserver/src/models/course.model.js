@@ -18,7 +18,7 @@ const Permissions = {
     can_rename_materials: true,
   },
   delete: {
-    can_delete_course: true,
+    can_delete_course: false,
     can_delete_course_description: true,
     can_delete_topics: true,
     can_delete_channels: true,

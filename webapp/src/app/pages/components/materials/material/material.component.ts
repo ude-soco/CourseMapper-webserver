@@ -322,7 +322,8 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.permissions = { ...course.non_editing_teacher_permissions };
     }
   }
-
+  
+  
   canAccess(perm: string): boolean {
     const isAdminOrTeacher = this.selectedCourse?.role === 'teacher' || this.user?.role?.name === 'admin';
     if (isAdminOrTeacher) {

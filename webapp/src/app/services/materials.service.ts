@@ -82,6 +82,11 @@ export class MaterilasService {
         .post<any>(`${this.API_URL}/upload/video`, formData)
         .pipe(tap((res) => console.log(res)));
     }
+    else if (materialType == 'image') {
+      return this.http
+        .post<any>(`${this.API_URL}/upload/image`, formData)
+        .pipe(tap((res) => console.log(res)));
+    }
 
     return this.http
       .post<any>(`${this.API_URL}/upload/pdf`, formData)

@@ -9,6 +9,7 @@ const User = new Schema({
   email: { type: String, required: true },
   mbox: { type: String, required: true },
   mbox_sha1sum: { type: String, required: true },
+  photo: { type: String },
   password: { type: String, required: true },
   role: { type: Schema.Types.ObjectId, ref: "role" },
   createdAt: { type: Date, default: Date.now() },

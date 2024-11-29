@@ -139,6 +139,22 @@ export class HomeComponent implements OnInit {
     }
     return role ? role.replace(/_/g, '-') : 'N/A';
   }
+
+  getBadgeColor(role: string): string {
+    switch (role) {
+        case 'teacher':
+            return '#FF5733';    // Red for teachers
+        case 'co_teacher':
+            return '#FFC300'; // Yellow for co-teachers
+        case 'non_editing_teacher':
+            return '#28A745';  // Green for non-editing teachers
+        case 'user':
+            return '#007BFF';   // Blue for students
+        default:
+            return '#6c757d';   // Default color
+    }
+}
+
   canAccess(perm: string, courseItem: any): boolean {
     const isAdminOrTeacher = courseItem?.role === 'teacher' || this.currentUser?.role?.name === 'admin';
     if (isAdminOrTeacher) {
@@ -157,7 +173,7 @@ export class HomeComponent implements OnInit {
   getMyCourses() {
     this.courseService.fetchCourses().subscribe((courses: any) => {
       this.courses = courses.map(ele => { return { ...ele, menuItems: this.getMenuItems(ele) } });
-
+      this.userArray = []; // Initialize the array
       for (var course of this.courses) {
         if (course?.users?.length > 0) {
           this.buildCardInfo(course.users[0].userId, course);
@@ -191,10 +207,11 @@ export class HomeComponent implements OnInit {
         lastName: this.lastName,
         moderator: userModeratorID,
         description: course.description,
-        role: course?.role,
+        role: course?.role|| 'student',
         menuItems: course?.menuItems,
       };
       this.userArray.push(ingoPush);
+      console.log(this.userArray); // Log to confirm what is being pushed
     });
   }
   onSelectCourse(selcetedCourse: any) {

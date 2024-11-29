@@ -345,6 +345,71 @@ export const updateUserConcepts = catchAsync(async (props) => {
   await foundUser.updateOne(updatedDocument);
 })
 
+
+export const updateUserProfile = catchAsync(async (req, res) => {
+
+  const {firstname, lastname, email, photo } = req.body;
+  const userId = req.userId
+  // Check if all required fields are present
+  if (!firstname || !lastname || !email) {
+    return res.status(400).send({
+      error: 'All fields (firstname, lastname, email) are required!',
+    });
+  }
+
+  // Find the user by ID
+  const foundUser = await User.findById(userId);
+
+  if (!foundUser) {
+    return res.status(404).send({ error: `User not found!` });
+  }
+
+  if (!validateEmail(email)) {
+    return res.status(400).send({ error: 'Invalid email format!' });
+  }
+
+  // updated document
+  const updatedDocument = {
+    firstname: firstname.trim(),
+    lastname: lastname.trim(),
+    email: email.trim().toLowerCase(),
+    ...(photo && { photo }), // Only include if provided
+  };
+
+  if(updatedDocument.email !== foundUser.email){
+    updatedDocument.verified = false;
+  }
+
+  await foundUser.updateOne({ $set: updatedDocument });
+
+  res.status(200).send({
+    message: 'User profile updated successfully!',
+    data: updatedDocument,
+  });
+});
+
+export const getUserProfile = catchAsync(async (req, res) => {
+
+  const userId = req.userId
+
+  // Find the user by ID
+  const foundUser = await User.findById(userId);
+
+  if (!foundUser) {
+    return res.status(404).send({ error: `User not found!` });
+  }
+
+  res.status(200).send({
+    sucess: true,
+    data: foundUser,
+  });
+});
+
+const validateEmail = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
 export const getLastTimeCourseMapperOpened = catchAsync(async (req, res, next) => {
   let userId = req.userId;
 

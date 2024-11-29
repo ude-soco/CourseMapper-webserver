@@ -4,31 +4,39 @@
   </div>
 
   <div class="md:container md:mx-auto">
+    <div *ngIf="this.courses.length == 0">
+      <p class="text-5xl leading-normal font-bold text-center mt-6">
+        Currently you have no courses enrolled.
+      </p>
+      <p class="text-4xl leading-normal text-center mt-6">
+        <a href="landingPage" style="color: #0277bd"> Click here</a> to search
+        for courses to start learning!
+      </p>
+    </div>
+    <div class="md:w-auto" *ngIf="this.courses.length > 0">
+      <p
+        class="text-5xl leading-normal font-bold text-center mt-6"
+        style="color: #0277bd"
+      >
+        My Courses
+      </p>
+      <p class="text-4xl leading-normal text-center mt-6">
+        Welcome back! Pick a course from your list to start learning
+      </p>
+  </div>
+
+  <div class="md:container md:mx-auto">
     <ng-container *ngIf="courses && courses.length">
       <!-- Section for each role -->
       <ng-container *ngFor="let role of sections">
         <div>
-          <p class="leading-normal mt-6 px-4" style="display: flex; align-items: center; cursor: pointer;" (click)="toggleCollapse(role)">
-            <i [ngClass]="!collapsedSections[role] ? 'pi pi-angle-up': 'pi pi-angle-down'" 
-              style="margin-right: 8px;">
-            </i>
+         
 
-            <img *ngIf="role === 'teaching'" src="../../../assets/icons/teacher-icon-black.png" alt="" width="25px">
-            <i *ngIf="role === 'enrolled'" class="pi pi-graduation-cap" style="margin-right: 8px;"></i>
-            {{ role === 'enrolled' ? 'Enrolled' : 'Teaching' | titlecase }}
-          </p>
-
-          <div *ngIf="!collapsedSections[role]">
             <div *ngIf="hasCoursesForRole(role); else noCoursesFound" class="overscroll-y-auto h-1/2 flex flex-wrap">
               <!-- Get courses by current role -->
               <div *ngFor="let course of getCoursesByRole(role)" class="course-card-container">
                 <p-card styleClass="p-card-shadow" class="course-card relative">
-                  
-                  <span class="badge" *ngIf="role!=='enrolled'">
-                    {{ getFormattedRole(course?.role) }}
-                 
-                  
-                  </span>
+                  <span class="badge" >{{ course?.role?.split('_')?.join(' ') }}</span>
                   <hr style="margin-bottom: 0.75rem; margin-top: 0%" />
                   <ng-template pTemplate="header">
                     <img
@@ -98,7 +106,7 @@
                 <p>No courses were found.</p>
               </div>
             </ng-template>
-          </div>
+          
         </div>
       </ng-container>
     </ng-container>
@@ -115,5 +123,21 @@
   </div>
 </div>
 
+</div>
 <app-footer></app-footer>
+<!-- <div class="row">
+        <div class="column" style="background-color:#aaa;">
+          <h2>Column 1</h2>
+          <p>Some text..</p>
+        </div>
+        <div class="column" style="background-color:#bbb;">
+          <h2>Column 2</h2>
+          <p>Some text..</p>
+        </div>
+        <div class="column" style="background-color:#ccc;">
+          <h2>Column 3</h2>
+          <p>Some text..</p>
+        </div>
+      </div>
+       -->
 <p-confirmDialog></p-confirmDialog>
