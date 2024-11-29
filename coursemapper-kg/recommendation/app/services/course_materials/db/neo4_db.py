@@ -2377,25 +2377,6 @@ class NeoDataBase:
             rid=data["rid"]
         )
         logger.info("Saving or Removing from Resource Saved List: Done")
-
-        """
-        # create or remove realtion between Resources and Concept_modified
-        if data["status"] == True:
-            self.update_rs_btw_resource_and_cm(rid=data["rid"], cid=data["rid"], action=True)
-        
-        else:
-            resource = tx.run(
-                        '''
-                            MATCH (n:Resource) 
-                            WHERE n.rid = $rid
-                            RETURN COALESCE(toInteger(n.saves_count), 0) AS saves_count
-                        ''',
-                        rid=data["rid"]
-                    ).single()
-            if resource["saves_count"] < resource["saves_count"]:
-                self.update_rs_btw_resource_and_cm(rid=data["rid"], cid=data["rid"], action=False)
-        """
-        
         return result
 
     def store_resources(self, cid: str, resources_dict: dict=None, recommendation_type="", 
@@ -2703,6 +2684,25 @@ class NeoDataBase:
                 user_id=user_id
             ).data()
             nodes = [node["rid"] for node in nodes]
+        return nodes
+
+    def get_main_concepts_by_mid(self, mid: str):
+        '''
+            Getting main concepts by mid
+        '''
+        logger.info("Getting main concepts by mid")
+        nodes = []
+        with self.driver.session() as session:
+            nodes = session.run(
+                '''
+                    MATCH (c:Concept) 
+                    WHERE c.mid = $mid AND c.type = "main_concept" 
+                    RETURN  ID(c) AS id, c.cid AS cid, c.name AS name, 
+                            c.type AS type, c.weight AS weight, c.mid AS mid
+                            ORDER BY c.name
+                ''',
+                mid=mid
+            ).data()
         return nodes
 
 # TODO Issue #640: do we need create_user_slide_relationships?

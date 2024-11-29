@@ -557,3 +557,20 @@ def parallel_crawling_resources(function, concept_updated, result_type: str, top
                     "is_video_too_old": concept_updated["is_video_too_old"], 
                     "is_article_too_old": concept_updated["is_video_too_old"],
                 }
+
+
+def parallel_crawling_resources_v2(function, concept_name: str, cid: str, result_type: str, top_n_videos, top_n_articles):
+    '''
+        Parallel Crawling of Resources with the function 
+        canditate_selection from Class Recommender
+        submit function: takes
+            function: canditate_selection (this function takes the params below)
+            query, video, result_type="records", top_n_videos=2, top_n_articles=2
+    '''
+    with ThreadPoolExecutor() as executor:
+        future_videos = executor.submit(function, concept_name, True, result_type, top_n_videos, top_n_articles)
+        future_articles = executor.submit(function, concept_name, False, result_type, top_n_videos, top_n_articles)
+        result_videos = future_videos.result()
+        result_articles = future_articles.result()
+        return {"cid": cid, "videos": result_videos, "articles": result_articles}
+    

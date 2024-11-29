@@ -4,6 +4,23 @@ import { BehaviorSubject } from 'rxjs';
 import { ActivatorPartCRO, CROform, Neo4jResult } from 'src/app/models/croForm';
 import { CustomRecommendationOptionService } from 'src/app/services/custom-recommenation-option.service';
 
+// import { MinMaxScaler, Normalizer } from 'scikitjs';
+// const { normalize } = require('scikit.js'); // For L1, L2, Max normalization
+// const { MinMaxScaler } = require('ml-scaler'); // For Min-Max scaling
+// import * as tf from '@tensorflow/tfjs';
+
+export interface factorWeights {
+  original: any[],
+  normalized: {
+    like_count?: number;
+    creation_date?: number;
+    views?: number;
+    similarity_score?: number;
+    saves_count?: number;
+    user_rating?: number;
+  }
+};
+
 
 @Component({
   selector: 'app-custom-recommendation-option',
@@ -34,8 +51,40 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
   };
 
   factor_weight_checked = true;
-  factor_weights = {
-    original : [
+  factor_weights: factorWeights = {
+    original : null,
+    normalized: null
+  }
+
+  croFormBackup: CROform = {};
+  numberConceptsToBeChecked = 0;
+  CROconceptsManually = []; // from the whole material
+  
+  CROconceptsManuallySelection1 = []; // from the whole slide
+  CROconceptsManuallySelection2 = []; // from the whole material
+
+  isAddMoreConceptDisplayed = false;
+  isMoreThan5ConceptDisplayed = false;
+  seeMore = true;
+  tmpCroFormConcepts = [];
+
+  croFormObj = new BehaviorSubject<CROform>(this.croForm);
+
+  // result component
+  resultTabSelected: number = 1;
+  factorsTabArticle = ["similarity_score", "saves_count", "user_rating"];
+
+  @Input() data: any[] = [];
+  @Input() DNUCurrent: any[] = [];
+  @Input() DNUPrevious: any[] = [];
+
+  constructor(
+    private croService: CustomRecommendationOptionService,
+    private messageService: MessageService
+  ) {
+    this.croFormObj.next(this.croForm);
+
+    this.factor_weights.original = [
       {
         "title": "Similarity Score",
         "key": "similarity_score",
@@ -73,44 +122,15 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
         "value": 0.139122316,
         "checked": true
       }
-    ],
-    normalized: {   
-    'like_count': 0.177404295, 
-    'creation_date': 0.141456583, 
-    'views': 0.186741363, 
-    'similarity_score': 0.169000934, 
-    'saves_count': 0.139122316, 
-    'user_rating': 0.18627451
+    ];
+    this.factor_weights.normalized = {   
+      'like_count': 0.177404295, 
+      'creation_date': 0.141456583, 
+      'views': 0.186741363, 
+      'similarity_score': 0.169000934, 
+      'saves_count': 0.139122316, 
+      'user_rating': 0.18627451
     }
-  }
-
-  croFormBackup: CROform = {};
-  numberConceptsToBeChecked = 0;
-  CROconceptsManually = []; // from the whole material
-  
-  CROconceptsManuallySelection1 = []; // from the whole slide
-  CROconceptsManuallySelection2 = []; // from the whole material
-
-  isAddMoreConceptDisplayed = false;
-  isMoreThan5ConceptDisplayed = false;
-  seeMore = true;
-  tmpCroFormConcepts = [];
-
-  croFormObj = new BehaviorSubject<CROform>(this.croForm);
-
-  // result component
-  resultTabSelected: number = 1;
-  factorsTabArticle = ["similarity_score", "saves_count", "user_rating"];
-
-  @Input() data: any[] = [];
-  @Input() DNUCurrent: any[] = [];
-  @Input() DNUPrevious: any[] = [];
-
-  constructor(
-    private croService: CustomRecommendationOptionService,
-    private messageService: MessageService
-  ) {
-    this.croFormObj.next(this.croForm);
   }
 
   ngOnInit(): void {
@@ -150,9 +170,17 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
   
   updateFactorWeight() {
     let data = this.getFactorWeight();
-    this.croService.updateFactorWeight(data).subscribe((res) => {
-      this.factor_weights.normalized = res;
-    })
+
+    console.warn("normalizeFactorWeights -----------------", data)
+    // this.normalizeFactor(data, [], 'l2', true, true);
+    // this.normalizeFactorWeights(data, "l1", true, true)
+    // console.warn(this.normalizeFactorWeights(data, [], "l1", true, true))
+    this.factor_weights.normalized = this.normalizeFactorWeights(data, [], "l1", true, true) as {   like_count?: number;   creation_date: number;   views: number;   similarity_score: number;   saves_count: number;   user_rating: number; };;
+    console.warn("-----------------> ")
+
+    // this.croService.updateFactorWeight(data).subscribe((res) => {
+    //   this.factor_weights.normalized = res;
+    // })
   }
 
   getFactorWeight() {
@@ -351,11 +379,11 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
 
       if (category === "1") {
         this.mapConcept(cids, this.CROconceptsManuallySelection1);
-
       } else if (category === "2") {
         this.mapConcept(cids, this.CROconceptsManuallySelection2);
+      } 
 
-      } else if (category === "3") {
+      else if (category === "3") {
         this.getConceptsManually();
       }
     }
@@ -391,28 +419,6 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
       }
     });
     return arrayA;
-  }
-
-  updateStatus1or2() {
-    if (this.croForm.category === "1") { 
-      for (let concept of this.croForm.concepts) {
-        for (let node of this.CROconceptsManuallySelection1) {
-          if (concept.cid === node.cid) {
-            node["status"] = concept["status"]
-            break;
-          }
-        }
-      }
-    } else if (this.croForm.category === "2") { 
-      for (let concept of this.croForm.concepts) {
-        for (let node of this.CROconceptsManuallySelection2) {
-          if (concept.cid === node.cid) {
-            node["status"] = concept["status"]
-            break;
-          }
-        }
-      }
-    }
   }
 
   setCROcategory(event) {
@@ -565,6 +571,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
       rec_params: JSON.parse(JSON.stringify(this.croForm))
     }
     croFormRequest.rec_params.concepts = concepts;
+    // console.warn("---", croFormRequest)
 
     // Store CRO Request Params
     localStorage.removeItem('resourcesPaginationParams');
@@ -593,5 +600,74 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
       }
     }
     return false;
+  }
+
+
+  normalizeFactorWeights(
+    factorWeights: any, // Record<string, number> = {},
+    values: number[] = [],
+    methodType: string = 'l1',
+    complete: boolean = true,
+    sumValue: boolean = true
+  ) // : Record<string, number> | number[] | {} 
+  {
+    // console.info('Normalization of factor weights');
+    if (!factorWeights || Object.keys(factorWeights).length === 0) {
+      return {};
+    }
+
+    let normalizedValues: number[] | null = null;
+    let scaledData: number[] | null = null;
+
+    if (factorWeights) {
+      values = Object.values(factorWeights);
+    }
+
+    switch (methodType) {
+      case 'l1':
+        const l1Sum = values.reduce((acc, val) => acc + Math.abs(val), 0);
+        normalizedValues = values.map((val) => +(val / l1Sum).toFixed(3));
+        break;
+
+      case 'l2':
+        const l2Sum = Math.sqrt(values.reduce((acc, val) => acc + val * val, 0));
+        normalizedValues = values.map((val) => +(val / l2Sum).toFixed(3));
+        break;
+
+      case 'max':
+        const maxValue = Math.max(...values);
+        normalizedValues = values.map((val) => +(val / maxValue).toFixed(3));
+        break;
+
+      case 'min-max':
+        const minValue = Math.min(...values);
+        const range = Math.max(...values) - minValue;
+        scaledData = values.map((val) => +((val - minValue) / range).toFixed(3));
+        normalizedValues = scaledData;
+        break;
+    }
+
+    if (sumValue && normalizedValues) {
+      // console.info('Factor weight sum ->', normalizedValues.reduce((acc, curr) => acc + curr, 0));
+    }
+
+    if (complete && normalizedValues) {
+
+
+      const keyNames = Object.keys(factorWeights);
+      const res = keyNames.reduce((acc, key, index) => {
+        acc[key] = normalizedValues![index];
+        return acc;
+      }, {} as Record<string, number>);
+
+      // Convert Record to normal object
+      // const dict = { ...res };
+      // const dict = Object.assign({}, res);
+
+      console.warn("--> ", res)
+      return res;
+    }
+
+    return normalizedValues || {};
   }
 }

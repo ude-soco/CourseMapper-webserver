@@ -283,3 +283,26 @@ class ResourceRecommenderService:
             top_n_resources=10
         )
         return result
+
+
+    def _get_resources_by_main_concepts(self, mid: str): #, slide_id: str):
+        # list of main concepts
+        main_concepts = self.db.get_main_concepts_by_mid(mid=mid)
+        results = []
+        recommender = Recommender(embedding_model=None)
+        try:
+            # Crawl resources from YouTube (from each dnu) and Wikipedia API
+            for concepts in main_concepts:
+                results.append(rrh.parallel_crawling_resources(function=recommender.canditate_selection, 
+                                                                concept_updated=concepts,
+                                                                result_type="records",
+                                                                top_n_videos=5,
+                                                                top_n_articles=15
+                                                            ))
+            for result in results:
+                    self.db.store_resources(resources_dict=result, cid=result["cid"], recommendation_type=None)
+            return {"msg": True}
+        except Exception as e:
+            print(e)
+            pass
+        return {"msg": False}

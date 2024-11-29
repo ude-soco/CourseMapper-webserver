@@ -1,5 +1,6 @@
 const { authJwt } = require("../middlewares");
 const controller = require("../controllers/knowledgeGraph.controller");
+const recommendationController = require("../controllers/recommendation.controller"); 
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -102,4 +103,82 @@ module.exports = function (app) {
     [authJwt.verifyToken],
     controller.searchWikipedia
   );
+
+
+  /// recommendations
+  app.post(
+    "/api/recommendation/user_resources/filter",
+    [authJwt.verifyToken],
+    recommendationController.filterUserResourcesSavedBy
+  );
+
+  app.get(
+    "/api/recommendation/user_resources/get_rids_from_user_saves",
+    [authJwt.verifyToken],
+    recommendationController.getRidsFromUserResourcesSaved
+  );
+
+
+  app.get(
+    "/api/recommendation/setting/get_concepts_by_cids",
+    [authJwt.verifyToken],
+    recommendationController.getConceptsByCids
+  );
+
+  app.get(
+    "/api/recommendation/setting/get_concepts_modified_by_user_id",
+    [authJwt.verifyToken],
+    recommendationController.getConceptsModifiedByUserId
+  );
+
+  app.get(
+    "/api/recommendation/setting/get_concepts_modified_by_user_id_and_mid",
+    [authJwt.verifyToken],
+    recommendationController.getConceptsModifiedByUserIdAndMid
+  );
+
+  app.get(
+    "/api/recommendation/setting/get_concepts_modified_by_user_id_and_slide_id",
+    [authJwt.verifyToken],
+    recommendationController.getConceptsModifiedByUserIdAndSlideId
+  );
+
+  app.get(
+    "/api/recommendation/setting/get_concepts_modified_by_user_from_saves",
+    [authJwt.verifyToken],
+    recommendationController.getConceptsModifiedByUserFromSaves
+  );
+
+  app.post(
+    "/api/recommendation/save_or_remove_resources",
+    [authJwt.verifyToken],
+    recommendationController.SaveOrRemveUserResources
+  );
+
+  app.post(
+    "/api/recommendation/rating_resource",
+    [authJwt.verifyToken],
+    recommendationController.ratingResource
+  );
+
+  app.post(
+    "/api/recommendation/get_concepts",
+    [authJwt.verifyToken],
+    recommendationController.getConcepts
+  );
+
+  app.post(
+    "/api/recommendation/get_resources",
+    [authJwt.verifyToken],
+    recommendationController.getResources
+  );
+
+  app.get(
+    "/api/recommendation/get_resources_by_main_concepts",
+    [authJwt.verifyToken],
+    recommendationController.getResourcesByMainConcepts
+  );
+
+  ///
+
 };

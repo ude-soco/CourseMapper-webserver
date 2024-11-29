@@ -17,6 +17,8 @@ def save_or_remove_user_resources_():
     resp = resource_recommender_service.save_or_remove_user_resources(data=data)
     return make_response(jsonify(resp), 200)
 
+
+"""
 @user_resources.route("/get_filter_params", methods=["POST"])
 def get_concepts_mids_sliders_numbers_for_user_resources_saved():
     data = request.get_json()
@@ -25,8 +27,10 @@ def get_concepts_mids_sliders_numbers_for_user_resources_saved():
     resource_recommender_service = ResourceRecommenderService()
     resp = resource_recommender_service.get_concepts_mids_sliders_numbers_for_user_resources_saved(data=data)
     return make_response(jsonify(resp), 200)
+"""
 
-@user_resources.route("/filter", methods=["POST"])
+
+# @user_resources.route("/filter", methods=["POST"])
 def filter_user_resources_saved_by():
     data = request.get_json()
     logger.info(f"Getting User Resources Saved Filter -> {data}")
@@ -35,7 +39,7 @@ def filter_user_resources_saved_by():
     resp = resource_recommender_service.filter_user_resources_saved_by(data=data)
     return make_response(jsonify(resp), 200)
 
-@user_resources.route("/get_rids_from_user_saves", methods=["GET"])
+# @user_resources.route("/get_rids_from_user_saves", methods=["GET"])
 def get_rids_from_user_saves():
     user_id = request.args.get('user_id')
     logger.info(f"Getting rids from User Resources Saved -> {user_id}")
