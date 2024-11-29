@@ -44,17 +44,29 @@ class Sequence_recommendation:
         
         # get top_n_concept cid list and cid_to_name dict
         top_n_cid_list = []
-        top_cid_to_name_dict = {}
+        top_cid_info = {}
         for topn_concept in top_n_concepts:
             cid = topn_concept["n"]["cid"]
             name = topn_concept["n"]["name"]
+            score = topn_concept["n"]["score"]
+            type = topn_concept["n"]["type"]
+            uri = topn_concept["n"]["uri"]
+            wiki = topn_concept["n"]["wikipedia"]
+            abstract = topn_concept["n"]["abstract"]
             top_n_cid_list.append(cid)
-            top_cid_to_name_dict[cid]=name
+            top_cid_info[cid]={
+                "name":name,
+                "score":score,
+                "type":type,
+                "uri":uri,
+                "wiki":wiki,
+                "abstract":abstract
+            }
         
         # get path 
         logger.info(top_n_cid_list)       
         logger.info("Star sequence recommendation")
-        sequence_recommended=self.get_road(top_cid_to_name_dict,top_n_cid_list)
+        sequence_recommended=self.get_road(top_cid_info,top_n_cid_list)
         return sequence_recommended
 
     def compute_cos_sim_score(self, embedding1, embedding2):
@@ -65,7 +77,7 @@ class Sequence_recommendation:
 
         return util.cos_sim(embedding1, embedding2).item()
     
-    def get_road(self,cid_to_name,cid_list):
+    def get_road(self,top_cid_info,cid_list):
         """
         """
         logger.info("get_groupedPaths_and_isolatedNodes")
@@ -113,21 +125,21 @@ class Sequence_recommendation:
 
         isolated_sequence = []  
         for cid in isolatedNodes:
-            if cid in cid_to_name:
-                isolated_sequence.append([{'name': cid_to_name.get(cid),'cid': cid}])
+            if cid in top_cid_info:
+                isolated_sequence.append([{'name': top_cid_info[cid].get("name"),'cid': cid,'score':top_cid_info[cid].get("score"),'type':top_cid_info[cid].get("type"),'uri':top_cid_info[cid].get("uri"),'wiki':top_cid_info[cid].get("wikipedia"),"abstract": top_cid_info[cid].get("abstract")}])
 
         grouped_sequence = []
         for path in groupedPaths:
             transformed_path = []
             for cid in path:
-                transformed_path.append({'name': cid_to_name.get(cid),'cid': cid})
+                transformed_path.append({'name': top_cid_info[cid].get("name"),'cid': cid,'score':top_cid_info[cid].get("score"),'type':top_cid_info[cid].get("type"),'uri':top_cid_info[cid].get("uri"),'wiki':top_cid_info[cid].get("wikipedia"),"abstract": top_cid_info[cid].get("abstract")})
             grouped_sequence.append(transformed_path)
         grouped_sequence = self.deduplicate_by_name(grouped_sequence)
 
         final_sequence = grouped_sequence+isolated_sequence
         output = {"nodes": []}
         for group in final_sequence:
-            node_data = {"data": [{"cid": item["cid"], "name": item["name"]} for item in group]}
+            node_data = {"data": [{"cid": item["cid"], "name": item["name"],"score": item["score"],"type": item["type"],"uri": item["uri"],"wikipedia": item["wiki"],"abstract": item["abstract"]} for item in group]}
             output["nodes"].append(node_data)
         print(output)
         return output
