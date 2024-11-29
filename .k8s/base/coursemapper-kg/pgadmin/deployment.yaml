@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pgadmin
+spec:
+  template:
+    spec:
+      containers:
+      - name: pgadmin
+        image: dpage/pgadmin4:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: PGADMIN_DEFAULT_EMAIL
+          value: social.computing.ude@gmail.com
+        - name: PGADMIN_DEFAULT_PASSWORD
+          value: udesococmwadminpass1!
+        readinessProbe:
+          httpGet:
+            path: /misc/ping
+            port: 80
+        volumeMounts:
+        - name: config
+          mountPath: /pgadmin4/servers.json
+          subPath: servers.json
+        - name: config
+          mountPath: /pgadmin4/passwords.txt
+          subPath: passwords.txt          
+      volumes:
+      - name: config
+        configMap:
+          name: config
+          items:
+          - key: servers.json
+            path: servers.json
+          - key: passwords.txt
+            path: passwords.txt
