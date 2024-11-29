@@ -61,6 +61,7 @@ export class NavbarComponent implements OnInit {
     this.isLoggedIn = this.storageService.isLoggedIn();
     this.loggedInUser = this.storageService.getUser();
     this.loggedInUser$ = this.store.select(getLoggedInUser);
+    console.log("🚀 ~ NavbarComponent ~ ngOnInit ~ this.loggedInUser:", this.loggedInUser)
 
     this.userOptions = [
       {
@@ -82,13 +83,9 @@ export class NavbarComponent implements OnInit {
       },
     ];
   }
-  
-  
   navigateToProfile(): void {
     this.router.navigate(['/profile']);
   }
-
-
 
   toggleMenu(event: MouseEvent) {
     if (this.menu) {
@@ -150,4 +147,6 @@ export class NavbarComponent implements OnInit {
   onViewPersonalDashboard(): void {
     this.router.navigate(['user/dashboard']);
   }
+
+  
 }
