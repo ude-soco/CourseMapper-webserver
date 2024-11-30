@@ -6,7 +6,7 @@ const redis = {}
 const listeners = {};
 
 const pipelines = ['concept-map', 'modify-graph', 'expand-material', 'concept-recommendation', 'resource-recommendation',
-  'recs_get_concepts', 'recs_get_resources', 'get_resources_by_main_concepts'
+  , 'get_resources_by_main_concepts'
 ];
 const jobTimeout = 30;
 

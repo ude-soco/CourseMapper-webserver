@@ -152,7 +152,7 @@ export const getConceptsModifiedByUserFromSaves = async (req, res, next) => {
 
 export const getConcepts = async (req, res) => {
     const body = req.body;
-    await redis.addJob("recs_get_concepts", {"data": body}, undefined, (result) => {
+    await redis.addJob("concept-recommendation", {"data": body}, undefined, (result) => {
         // socketio.getIO().to("recs :").emit("log", result );
         if (res.headersSent) {
         return;
@@ -167,7 +167,7 @@ export const getConcepts = async (req, res) => {
 
 export const getResources = async (req, res) => {
     const body = req.body;
-    await redis.addJob("recs_get_resources", {"data": body}, undefined, (result) => {
+    await redis.addJob("resource-recommendation", {"data": body}, undefined, (result) => {
         if (res.headersSent) {
         return;
         }

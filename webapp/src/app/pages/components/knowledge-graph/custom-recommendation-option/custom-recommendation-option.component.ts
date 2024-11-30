@@ -168,17 +168,24 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     this.isCustomRecOptionDisplayed = this.isCustomRecOptionDisplayed === true ? false : true;
   }
   
+  sortDictBykey(data) {
+    const sorted = Object.keys(data)
+    .sort()
+    .reduce((acc, key) => {
+      acc[key] = data[key];
+      return acc;
+    }, {});
+
+    return sorted;
+  }
+
+
   updateFactorWeight() {
     let data = this.getFactorWeight();
-
-    console.warn("normalizeFactorWeights -----------------", data)
-    // this.normalizeFactor(data, [], 'l2', true, true);
-    // this.normalizeFactorWeights(data, "l1", true, true)
-    // console.warn(this.normalizeFactorWeights(data, [], "l1", true, true))
     this.factor_weights.normalized = this.normalizeFactorWeights(data, [], "l1", true, true) as {   like_count?: number;   creation_date: number;   views: number;   similarity_score: number;   saves_count: number;   user_rating: number; };;
-    console.warn("-----------------> ")
 
     // this.croService.updateFactorWeight(data).subscribe((res) => {
+    //   console.warn("--- 2 > ", this.sortDictBykey(res))
     //   this.factor_weights.normalized = res;
     // })
   }
@@ -664,10 +671,11 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
       // const dict = { ...res };
       // const dict = Object.assign({}, res);
 
-      console.warn("--> ", res)
+      // console.warn("--> ", res)
       return res;
     }
 
     return normalizedValues || {};
   }
+
 }

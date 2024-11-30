@@ -86,17 +86,17 @@ module.exports = function (app) {
     controller.publishConceptMap
   );
 
-  app.post(
-    "/api/courses/:courseId/materials/:materialId/concept-recommendation",
-    [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.getConcepts
-  );
+  // app.post(
+  //   "/api/courses/:courseId/materials/:materialId/concept-recommendation",
+  //   [authJwt.verifyToken, authJwt.isEnrolled],
+  //   controller.getConcepts
+  // );
 
-  app.post(
-    "/api/courses/:courseId/materials/:materialId/resource-recommendation",
-    [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.getResources
-  );
+  // app.post(
+  //   "/api/courses/:courseId/materials/:materialId/resource-recommendation",
+  //   [authJwt.verifyToken, authJwt.isEnrolled],
+  //   controller.getResources
+  // );
 
   app.get(
     "/api/wikipedia/search",

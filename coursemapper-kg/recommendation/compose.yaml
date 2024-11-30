@@ -11,7 +11,7 @@ services:
       REDIS_PORT: 6379
       REDIS_DB: 0
       REDIS_PASSWORD: 
-      PIPELINES: concept-recommendation,resource-recommendation,recs_get_concepts,recs_get_resources,get_resources_by_main_concepts
+      PIPELINES: concept-recommendation,resource-recommendation,get_resources_by_main_concepts
     depends_on:
       neo4j:
         condition: service_healthy

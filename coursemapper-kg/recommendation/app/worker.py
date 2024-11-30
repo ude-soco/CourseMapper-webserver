@@ -7,10 +7,9 @@ import logging
 import io
 from log import LOG
 
-from app.views.course_materials import get_concepts, get_resources
+from app.views import course_materials as recs
 from app.shared import redis, worker_id, set_current_job_id
 from config import Config
-from app.views import course_materials_service_v2 as recs
 
 
 logger = LOG(name=__name__, level=logging.DEBUG)
@@ -107,13 +106,8 @@ def start_worker(pipelines):
         try:
             # Run the pipeline
             if pipeline == 'concept-recommendation':
-                result = get_concepts(job)
-            elif pipeline == 'resource-recommendation':
-                result = get_resources(job)
-
-            if pipeline == 'recs_get_concepts':
                 result = recs.get_concepts(job)
-            elif pipeline == 'recs_get_resources':
+            elif pipeline == 'resource-recommendation':
                 result = recs.get_resources(job)
             elif pipeline == 'get_resources_by_main_concepts':
                 result = recs.get_resources_by_main_concepts(job)

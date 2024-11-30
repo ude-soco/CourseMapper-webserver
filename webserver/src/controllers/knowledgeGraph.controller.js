@@ -267,6 +267,7 @@ export const publishConceptMap = async (req, res) => {
   });
 }
 
+/*
 export const getConcepts = async (req, res) => {
   const materialId = req.params.materialId;
   const userId = req.userId;
@@ -322,6 +323,7 @@ export const getResources = async (req, res) => {
   });
   socketio.getIO().to("material:"+materialId).emit("log", { addJob:result, pipeline:'resourse-recommendation'});
 }
+*/
 
 export const readSlide = async (req, res, next) => {
   const slideNr = req.params.slideNr;
