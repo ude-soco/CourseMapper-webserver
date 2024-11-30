@@ -14,7 +14,7 @@ export interface Reply {
   mentionedUsers?: {
     userId: string;
     name: string;
-    email: string;
+    username: string;
   }[];
   courseId?: string;
   topicId?: string;

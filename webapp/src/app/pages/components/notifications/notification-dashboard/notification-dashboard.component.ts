@@ -88,7 +88,8 @@ export class NotificationDashboardComponent {
     this.numOfTimesScrolledToEndBehaviourSubject.asObservable();
   protected numOfTimesScrolledToEnd = 1;
   protected numOfNotificationsToLoad = 15;
-
+  // Define a flag to control whether scrolling should happen
+  protected shouldScroll = false;
   constructor(
     protected store: Store<State>,
     protected router: Router,
@@ -416,8 +417,6 @@ export class NotificationDashboardComponent {
         NotificationActions.setCurrentlySelectedNotification({ notification })
       );
 
-
-      
       if ('reply_id' in notification) {
         if (notification.isDeletingReply) {
           this.store.dispatch(
@@ -433,7 +432,7 @@ export class NotificationDashboardComponent {
               '/material/' +
               '(material:' +
               notification.material_id +
-              `/${notification.materialType})`+
+              `/${notification.materialType})` +
               `#annotation-${notification.annotation_id}`
           );
           return;
@@ -474,6 +473,12 @@ export class NotificationDashboardComponent {
               '0 0 25px rgba(83, 83, 255, 1)'
             );
             setTimeout(function () {
+              // elementToScrollTo.scrollIntoView=null
+              window.history.replaceState(
+                {},
+                document.title,
+                url.split('#')[0]
+              );
               $(window.location.hash).css('box-shadow', 'none');
             }, 5000);
           }, 100);
@@ -500,9 +505,7 @@ export class NotificationDashboardComponent {
             `#reply-${notification.reply_id}`
         );
         return;
-      }
-      else  {
-      
+      } else {
         if (notification.isDeletingAnnotation) {
           this.store.dispatch(
             AppActions.setShowNotificationsPanel({
@@ -548,18 +551,37 @@ export class NotificationDashboardComponent {
           const elementToScrollTo = document.getElementById(
             `annotation-${notification.annotation_id}`
           );
-          elementToScrollTo?.scrollIntoView();
-          // Scroll to the element
-          window.location.hash = '#annotation-' + notification.annotation_id;
+
           setTimeout(function () {
-            $(window.location.hash).css(
+            // if (elementToScrollTo  && !this.shouldScroll) {
+
+            elementToScrollTo?.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start',
+            });
+            // Set the flag to false to prevent future scrolling
+            // this.shouldScroll = true;
+            // Scroll to the element
+            window.location.hash = '#annotation-' + notification.annotation_id;
+            $(elementToScrollTo).css(
               'box-shadow',
               '0 0 25px rgba(83, 83, 255, 1)'
             );
             setTimeout(function () {
-              $(window.location.hash).css('box-shadow', 'none');
-            }, 5000);
-          }, 100);
+              window.history.replaceState(
+                {},
+                document.title,
+                url.split('#')[0]
+              );
+              $(elementToScrollTo).css('box-shadow', 'none');
+              // this.shouldScroll = false;
+            }, 4000);
+          }, 1000);
+
+          // else {
+          //   console.error('Element not found for ID:', `annotation-${notification.annotation_id}`);
+          // }
+
           return;
         }
 

@@ -68,7 +68,7 @@ materialType?: string;
   mentionedUsers?: {
     userId: string;
     name: string;
-    email: string;
+    username: string;
   }[];
   location: VideoAnnotationLocation | PdfGeneralAnnotationLocation;
   tool?:

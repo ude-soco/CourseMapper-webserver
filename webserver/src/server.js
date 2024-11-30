@@ -46,6 +46,8 @@ app.use(
     secret: process.env.COOKIE_SECRET,
     keys: [process.env.COOKIE_SECRET],
     httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000,
+    //24 * 60 * 60 * 1000
   })
 );
 app.use("/api/public/uploads", express.static("public/uploads"));
@@ -96,8 +98,8 @@ redis.connect(
 );
 
 // xAPI scheduler
-const xapiScheduler = require("./xAPILogger/scheduler");
-xapiScheduler.runXapiScheduler();
+const xapiScheduler = require("./activity-logger/scheduler/scheduler");
+xapiScheduler.ActivityScheduler();
 
 // Create HTTP server
 const server = http.createServer(app);
@@ -134,64 +136,92 @@ server.on("error", onError);
 server.on("listening", onListening);
 
 const initializeDB = async () => {
-  let newRole;
   let foundAdmin;
   let countRole;
   let countUser;
+
   try {
+    // Check if roles are already present
     countRole = await Role.countDocuments({});
     if (countRole > 0) {
-      console.log(countRole + " Roles present, skipping initialization");
+      console.log(countRole + " Roles present, skipping role initialization");
     } else {
-      ["user", "moderator", "admin"].forEach(async (userName) => {
-        console.log("Adding Role: { name: " + userName + " }");
-        newRole = new Role({ name: userName });
-        if (userName === "admin") {
-          foundAdmin = newRole;
-        }
-        try {
-          await newRole.save();
-        } catch (err) {
-          console.log(err, "Error in creating role");
-          return;
-        }
-      });
+      // Create roles synchronously and ensure admin role is saved
+      console.log("Creating roles: user, moderator, admin");
+      const roles = ["user", "moderator", "admin"];
+      let foundAdmin;
+      
+      try {
+        await Promise.all(
+          roles.map(async (userName) => {
+            console.log("Adding Role: { name: " + userName + " }");
+            const newRole = new Role({ name: userName });
+      
+            if (userName === "admin") {
+              foundAdmin = newRole;
+            }
+      
+            await newRole.save();
+            console.log(`Role '${userName}' created successfully.`);
+          })
+        );
+      } catch (err) {
+        console.log(err, "Error in creating roles");
+      }
     }
 
+    // Try-catch before checking if admin role exists
+    // try {
+    //   foundAdmin = await Role.findOne({ name: "admin" });
+    //   if (!foundAdmin) {
+    //     console.log("Admin role not found, creating admin role");
+    //     foundAdmin = new Role({ name: "admin" });
+    //     await foundAdmin.save();
+    //     console.log("Admin role created successfully.");
+    //   } else {
+    //     console.log("Admin role found.");
+    //   }
+    // } catch (err) {
+    //   console.log(err.message || err, "Error in checking or creating admin role");
+    // }
+
+    // Add try-catch for counting users
     try {
-      countUser = await User.countDocuments({});
-      if (countUser > 0) {
-        console.log(countUser + " Users present, skipping initialization");
+      // Try to find the admin user
+      const adminUser = await User.findOne({ username: "admin" });
+      if (adminUser) {
+        adminUser.email= "social.computing.ude@gmail.com";
+        
+        adminUser.save();
+        console.log("Admin user already exists, skipping admin creation");
       } else {
+        console.log("Admin user not found, creating admin user");
+        // If admin user doesn't exist, create the admin user
+        foundAdmin = await Role.findOne({ name: "admin" });
+
         let password = hashSync(process.env.PASS, 10);
-        console.log(
-          "Adding User: { name: admin, password: " + process.env.PASS + " }"
-        );
         let email = process.env.EMAIL;
         let generateMboxAndMboxSha1Sum =
           helpers.generateMboxAndMboxSha1Sum(email);
 
-        try {
-          await new User({
-            firstname: "Admin",
-            lastname: "User",
-            username: "admin",
-            email: email,
-            mbox: generateMboxAndMboxSha1Sum.mbox,
-            mbox_sha1sum: generateMboxAndMboxSha1Sum.mbox_sha1sum,
-            role: foundAdmin._id,
-            password: password,
-          }).save();
-        } catch (err) {
-          console.log(err, "Error in creating user");
-          return;
-        }
+        await new User({
+          firstname: "Admin",
+          lastname: "User",
+          username: "admin",
+          email: email,
+          mbox: generateMboxAndMboxSha1Sum.mbox,
+          mbox_sha1sum: generateMboxAndMboxSha1Sum.mbox_sha1sum,
+          role: foundAdmin._id, // Ensure admin role ID is available
+          password: password,
+          
+        }).save();
+        console.log("Admin user created successfully.");
       }
     } catch (err) {
-      console.log(err, "Error in counting number of users");
+      console.log(err.message || err, "Error in creating admin user");
     }
   } catch (err) {
-    console.log(err, "Error in counting number of roles");
+    console.log(err.message || err, "Error in counting roles or users");
   }
 };
 

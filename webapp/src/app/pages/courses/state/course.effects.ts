@@ -46,6 +46,9 @@ export class CourseEffects {
           action.type === AnnotationActions.postReplySuccess.type ||
           action.type === AnnotationActions.deleteAnnotationSuccess.type ||
           action.type === AnnotationActions.deleteReplySuccess.type ||
+          action.type === AnnotationActions.editAnnotationSuccess.type ||
+          action.type === AnnotationActions.editReplySuccess.type ||
+          action.type === AnnotationActions.editReplyFail.type ||
           action.type === CourseActions.postReplySuccess.type ||
           action.type === CourseActions.deleteAnnotationSuccess.type ||
           action.type === CourseActions.deleteReplySuccess.type
@@ -57,7 +60,16 @@ export class CourseEffects {
           mergeMap((tags) => [
             CourseActions.LoadTagsSuccess({ tags: tags, tagsFor: 'course' }),
           ]),
-          catchError((error) => of(CourseActions.LoadTagsFail({ error })))
+          catchError((error) => {
+            if (error.status === 401) {
+              // console.warn("User session expired or not authenticated.");
+              //this.showError("Your session has expired. Please log in again.");
+              // Handle additional logic here if needed (like navigating to the login page)
+            } else {
+              // console.error("Error fetching tags:", error);
+            }
+            return of(CourseActions.LoadTagsFail({ error }));
+          })
         )
       )
     )
@@ -71,6 +83,9 @@ export class CourseEffects {
           action.type === AnnotationActions.postAnnotationSuccess.type ||
           action.type === AnnotationActions.postReplySuccess.type ||
           action.type === AnnotationActions.deleteAnnotationSuccess.type ||
+          action.type === AnnotationActions.editAnnotationSuccess.type ||
+          action.type === AnnotationActions.editReplySuccess.type ||
+          action.type === AnnotationActions.editReplyFail.type ||
           action.type === AnnotationActions.deleteReplySuccess.type ||
           action.type === CourseActions.postReplySuccess.type ||
           action.type === CourseActions.deleteAnnotationSuccess.type ||
@@ -97,6 +112,9 @@ export class CourseEffects {
           action.type === AnnotationActions.postAnnotationSuccess.type ||
           action.type === AnnotationActions.postReplySuccess.type ||
           action.type === AnnotationActions.deleteAnnotationSuccess.type ||
+          action.type === AnnotationActions.editAnnotationSuccess.type ||
+          action.type === AnnotationActions.editReplySuccess.type ||
+          action.type === AnnotationActions.editReplyFail.type ||
           action.type === AnnotationActions.deleteReplySuccess.type ||
           action.type === CourseActions.postReplySuccess.type ||
           action.type === CourseActions.deleteAnnotationSuccess.type ||

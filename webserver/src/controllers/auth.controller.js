@@ -12,7 +12,7 @@ const User = db.user;
 const Role = db.role;
 
 /**
- * @function signup
+ * @function register
  * User registration controller
  *
  * @param {string} req.body.firstname The username
@@ -21,7 +21,7 @@ const Role = db.role;
  * @param {string} req.body.email The email
  * @param {string} req.body.password The new password
  */
-export const signup = async (req, res, next) => {
+export const register = async (req, res, next) => {
   let role;
   try {
     role = await Role.findOne({ name: "user" });
@@ -30,7 +30,7 @@ export const signup = async (req, res, next) => {
   }
 
   let generateMboxAndMboxSha1Sum = helpers.generateMboxAndMboxSha1Sum(
-    req.body.email
+    req.body.email,
   );
  
   let user = new User({
@@ -62,7 +62,7 @@ export const signup = async (req, res, next) => {
             </head>
             <body>
             <p>Dear ${user.username},</p>
-            <p>Thank you for registering with CourseMapper. Please click <a href="https://${process.env.WEBAPP_URL}/verify/${token}">here</a> to verify your email address. If the above link doesn't work, copy and paste this link into your browser: https://${process.env.WEBAPP_URL}/verify/${token}</p>
+            <p>Thank you for registering with CourseMapper. Please click <a href="${process.env.WEBAPP_URL}/verify/${token}">here</a> to verify your email address. If the above link doesn't work, copy and paste this link into your browser: ${process.env.WEBAPP_URL}/verify/${token}</p>
             <p>Please note that this link is only valid for 24 hours. If you did not register, please ignore this email.</p>
             <p>Regards,</p>
             <p>The CourseMapper Team</p>
@@ -106,20 +106,20 @@ const mailTransporter = nodemailer.createTransport({
 });
 
 /**
- * @function signin
+ * @function signIn
  * User login controller
  *
  * @param {string} req.body.username The username
  * @param {string} req.body.password The new password
  */
-export const signin = async (req, res, next) => {
+export const signIn = async (req, res, next) => {
   let username = req.body.username;
   let password = req.body.password;
 
   try {
     let user = await User.findOne({ username: username }).populate(
       "role",
-      "-__v"
+      "-__v",
     );
     if (!user) {
       return res.status(404).send({ error: "User not found." });
@@ -142,7 +142,7 @@ export const signin = async (req, res, next) => {
           </head>
           <body>
           <p>Dear ${user.username},</p>
-          <p>Thank you for registering with CourseMapper. Please click <a href="https://${process.env.WEBAPP_URL}/verify/${token}">here</a> to verify your email address. If the above link doesn't work, copy and paste this link into your browser: https://${process.env.WEBAPP_URL}/verify/${token}</p>
+          <p>Thank you for registering with CourseMapper. Please click <a href="${process.env.WEBAPP_URL}/verify/${token}">here</a> to verify your email address. If the above link doesn't work, copy and paste this link into your browser: ${process.env.WEBAPP_URL}/verify/${token}</p>
           <p>Please note that this link is only valid for 24 hours. If you did not register, please ignore this email.</p>
           <p>Regards,</p>
           <p>The CourseMapper Team</p>
@@ -166,7 +166,7 @@ export const signin = async (req, res, next) => {
 
     let passwordIsValid = await compareSync(password, user.password);
     if (!passwordIsValid) {
-      return res.status(401).send({ error: "Invalid Password!" });
+      return res.status(500).send({ error: "Invalid Password!" });
     }
 
     req.session.token = token;
@@ -192,11 +192,11 @@ export const signin = async (req, res, next) => {
 };
 
 /**
- * @function signout
+ * @function signOut
  * User logout controller
  *
  */
-export const signout = async (req, res, next) => {
+export const signOut = async (req, res, next) => {
   const userId = req.userId;
   try {
     let user = await User.findById(userId);
@@ -256,7 +256,7 @@ export const sendEmail = async (req, res, next) => {
   
         <p>Dear ${user.username}, </p>
         <p>We have just received a password reset request for your account ${user.email} in CourseMapper. Please click
-        <a href="https://${process.env.WEBAPP_URL}/restPassword/${token}"> here  </a> to reset your password. If the abve link dosent work copy and past this link into your browser: https://${process.env.WEBAPP_URL}/restPassword/${token}</p>
+        <a href="${process.env.WEBAPP_URL}/restPassword/${token}"> here  </a> to reset your password. If the above link does not work copy and paste this link into your browser:${process.env.WEBAPP_URL}/restPassword/${token}</p>
 
         <p>Please note that this link is only valid for 5 minutes. If you did not request a password reset, please ignore this email.</p>
 
@@ -385,7 +385,7 @@ export const resendVerifyEmail = async (req, res, next) => {
         </head>
         <body>
         <p>Dear ${user.username},</p>
-        <p>Thank you for registering with CourseMapper. Please click <a href="https://${process.env.WEBAPP_URL}/verify/${token}">here</a> to verify your email address. If the above link doesn't work, copy and paste this link into your browser: https://${process.env.WEBAPP_URL}/verify/${token}</p>
+        <p>Thank you for registering with CourseMapper. Please click <a href="${process.env.WEBAPP_URL}/verify/${token}">here</a> to verify your email address. If the above link doesn't work, copy and paste this link into your browser: ${process.env.WEBAPP_URL}/verify/${token}</p>
         <p>Please note that this link is only valid for 24 hours. If you did not register, please ignore this email.</p>
         <p>Regards,</p>
         <p>The CourseMapper Team</p>

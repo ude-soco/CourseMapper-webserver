@@ -68,6 +68,9 @@ export class TopicChannelService {
     });
   }
 
+  logTopic(courseId: string, topicId: string): Observable<any> {
+    return this.http.get<Course>(`${this.API_URL}/courses/${courseId}/topics/${topicId}`)
+  }
   /**
    * @function addTopic
    * Add new topic to a course in the backend and if the communication was
@@ -351,5 +354,9 @@ export class TopicChannelService {
         notificationSettings: BlockingNotifications;
       }>(`${this.API_URL}/courses/${courseId}/channels/${channelId}`)
       .pipe(map((res) => res.channel));
+  }
+
+  logChannel(courseId: string, channelId: string): Observable<any> {
+    return this.http.get<Course>(`${this.API_URL}/courses/${courseId}/channels/${channelId}/log`)
   }
 }

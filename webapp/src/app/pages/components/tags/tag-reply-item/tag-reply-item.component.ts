@@ -167,7 +167,7 @@ export class TagReplyItemComponent {
         this.onDeleteReply(),
         this.messageService.add({
           key: 'annotation-toast',
-          severity: 'info',
+          severity: 'Success',
           summary: 'Success',
           detail: 'Reply successfully deleted',
         })

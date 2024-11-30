@@ -65,7 +65,7 @@ class ExpandMaterialPipeline:
             # Add categories to expand
             for category_title in concept_categories:
                 expanded_category_titles.add(category_title)
-                graph.add_edge(Edge(concept_node.id, str(abs(hash(category_title))), 'HAS_CATEGORY', 1.0))
+                graph.add_edge(Edge(concept_node.id, f'{material_id}_category_{str(abs(hash(category_title)))}', 'HAS_CATEGORY', 1.0))
 
         push_log_message(f'Expanding material with {concept_count} concepts')
 
@@ -73,7 +73,7 @@ class ExpandMaterialPipeline:
         # Calculate category embeddings and weights
         category_embeddings = self._wikipedia_service.get_or_create_page_embeddings(self._embedding_service, list(expanded_category_titles))
         category_df = pl.DataFrame({
-            'node_id': [str(abs(hash(title))) for title, _ in category_embeddings],
+            'node_id': [f'{material_id}_category_{str(abs(hash(title)))}' for title, _ in category_embeddings],
             'title': [title for title, _ in category_embeddings],
             'embedding': [embedding for _, embedding in category_embeddings],
         })
@@ -152,7 +152,7 @@ class ExpandMaterialPipeline:
 
             # Add expanded concepts
             for expanded_concept_title, expanded_concept_summary, expanded_concept_embedding, expanded_concept_weight in expansion_df.iter_rows():
-                expanded_concept_node = Node(str(abs(hash(str(expanded_concept_embedding)))), expanded_concept_title, '', 'related_concept', expanded_concept_weight, f'https://en.wikipedia.org/wiki/{expanded_concept_title}', expanded_concept_summary, False, expanded_concept_embedding)
+                expanded_concept_node = Node(f'{material_id}_concept_{str(abs(hash(str(expanded_concept_embedding))))}', expanded_concept_title, '', 'related_concept', expanded_concept_weight, f'https://en.wikipedia.org/wiki/{expanded_concept_title}', expanded_concept_summary, False, expanded_concept_embedding)
                 graph.add_node(expanded_concept_node)
                 graph.add_edge(Edge(concept_node.id, expanded_concept_node.id, 'RELATED_TO', 1.0))
 

@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wp-pg
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    spec:
+      initContainers:
+      - name: init
+        image: coursemapper-kg-wp-pg
+        env:
+        - name: PGPORT
+          value: "5432"
+        - name: POSTGRES_PASSWORD
+          value: password
+        - name: INIT_PATH
+          value: coursemapper-read:coursemapper-data/init.sql.gz
+        - name: ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: coursemapper-kg-wp-pg
+              key: ACCESS_KEY_ID
+        - name: SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: coursemapper-kg-wp-pg
+              key: SECRET_ACCESS_KEY
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: data
+        - mountPath: /var/lib/postgresql/meta
+          name: meta
+      containers:
+      - name: postgres
+        image: postgres
+        args:
+        - -c
+        - shared_preload_libraries=auto_explain,pg_stat_statements
+        - -c
+        - pg_stat_statements.track=all
+        ports:
+        - containerPort: 5432
+        startupProbe:
+          exec:
+            command:
+            - pg_isready
+            - --host=localhost
+            - --port=5432
+            - --username=postgres
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        livenessProbe:
+          exec:
+            command:
+            - pg_isready
+            - --host=localhost
+            - --port=5432
+            - --username=postgres
+          periodSeconds: 20
+          timeoutSeconds: 5
+        resources:
+          requests:
+            cpu: 50m
+            memory: 180Mi
+          limits:
+            cpu: 1
+            memory: 512Mi
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: data
+        - mountPath: /var/lib/postgresql/meta
+          name: meta
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: wp-pg-data
+      - name: meta
+        persistentVolumeClaim:
+          claimName: wp-pg-meta

@@ -18,7 +18,7 @@ const ObjectId = require("mongoose").Types.ObjectId;
  * @param {string} req.params.courseId The id of the course
  * @param {string} req.params.channelId The id of the channel
  */
-export const getChannel = async (req, res, next) => {
+export const getChannel = async (req, res) => {
   const channelId = req.params.channelId;
   const courseId = req.params.courseId;
   const userId = req.userId;
@@ -188,8 +188,45 @@ export const getChannel = async (req, res, next) => {
       .send({ message: "Error finding notification settings" });
   }
 
+  return res.status(200).send({ channel: foundChannel, notificationSettings });
+};
+
+export const getChannelLog = async (req, res, next) => {
+  const channelId = req.params.channelId;
+  const courseId = req.params.courseId;
+  const userId = req.userId;
+
+  let user;
+  try {
+    user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+  } catch (error) {
+    return res.status(500).send({ error: "Error finding user" });
+  }
+  let foundChannel;
+  try {
+    foundChannel = await Channel.findById(channelId).populate(
+      "materials",
+      "-__v"
+    );
+    if (!foundChannel) {
+      return res.status(404).send({
+        error: `Channel with id ${channelId} doesn't exist!`,
+      });
+    }
+    if (foundChannel.courseId.valueOf() !== courseId) {
+      return res.status(404).send({
+        error: `Channel doesn't belong to course with id ${courseId}!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ message: "Error finding channel", err });
+  }
+
   req.locals = {
-    response: { channel: foundChannel, notificationSettings },
+    response: { channel: foundChannel },
     channel: foundChannel,
     user: user,
   };

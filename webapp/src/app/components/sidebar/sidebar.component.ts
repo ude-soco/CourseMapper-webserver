@@ -83,6 +83,7 @@ export class SidebarComponent implements OnInit {
   }
 
   onSelectCourse(selectedCourse: Course) {
+    this.courseService.logCourses(selectedCourse._id).subscribe();
     if (
       this.courseService.getSelectedCourse()._id.toString() !==
       selectedCourse._id.toString()

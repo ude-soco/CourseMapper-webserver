@@ -9,6 +9,7 @@ class ModifyGraphPipeline:
         self._graph_db = GraphDB(Config.NEO4J_URI, Config.NEO4J_USER, Config.NEO4J_PASSWORD)
         self._embedding_service = EmbeddingService(Config.EMBEDDING_MODEL)
         self._wikipedia_service = WikipediaService()
+        self._wikipedia_service.wikipedia_fallback = True
 
     def remove_concept(self, material_id: str, concept_id: str):
         self._graph_db.remove_node(material_id, concept_id)
@@ -19,7 +20,6 @@ class ModifyGraphPipeline:
     def add_concept(self, material_id: str, concept_name: str, slides: list[int] | None):
         # Check if the concept already exists
         existing_concept = self._graph_db.get_concept_by_name(material_id, concept_name)
-        print(existing_concept)
         if existing_concept is not None:
             raise ValueError(f'Concept "{concept_name}" already exists in the graph')
 
@@ -63,7 +63,7 @@ class ModifyGraphPipeline:
         graph.nodes.append(material_node)
 
         # Add concept node
-        concept_node = Node(str(abs(hash(str(wikipedia_page_embedding)))), concept_name, '', 'main_concept', (concept_material_weight + 1) / 2, f'https://en.wikipedia.org/wiki/{concept_name}', wikipedia_page.summary, False, wikipedia_page_embedding, [])
+        concept_node = Node(f'{material_id}_concept_{str(abs(hash(str(wikipedia_page_embedding))))}', concept_name, '', 'main_concept', (concept_material_weight + 1) / 2, f'https://en.wikipedia.org/wiki/{concept_name}', wikipedia_page.summary, False, wikipedia_page_embedding, [])
         graph.nodes.append(concept_node)
 
         # Add material-concept edge

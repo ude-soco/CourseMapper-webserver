@@ -59,7 +59,7 @@ export class EmailValidationComponent {
   }
   showInfo(msg) {
     this.messageService.add({
-      severity: 'info',
+      severity: 'success',
       summary: 'Success',
       detail: msg,
     });

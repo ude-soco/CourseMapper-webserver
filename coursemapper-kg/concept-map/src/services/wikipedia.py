@@ -24,16 +24,17 @@ class WikipediaService:
     def __init__(self):
         self._wiki = wikipediaapi.Wikipedia(Config.WIKIPEDIA_USER_AGENT, 'en')
         self._use_stored_embeddings = Config.WIKIPEDIA_USE_STORED_EMBEDDINGS
-
-        if Config.WIKIPEDIA_DATABASE_CONNECTION_STRING != '':
-            self._conn = psycopg.connect(Config.WIKIPEDIA_DATABASE_CONNECTION_STRING, row_factory=dict_row)
-        else:
-            self._conn = None
-            self._use_stored_embeddings = False
+        self._conn = None
+        self.wikipedia_fallback = Config.WIKIPEDIA_FALLBACK
 
     def __del__(self):
-        if self._conn is not None:
+        if self._conn is not None and not self._conn.closed:
             self._conn.close()
+
+    def get_conn(self):
+        if Config.WIKIPEDIA_DATABASE_CONNECTION_STRING != '' and (self._conn is None or self._conn.closed):
+            self._conn = psycopg.connect(Config.WIKIPEDIA_DATABASE_CONNECTION_STRING, row_factory=dict_row)
+        return self._conn
 
     def get_page(self, title: str) -> WikipediaPage | None:
         # Normalize title
@@ -42,8 +43,9 @@ class WikipediaService:
         title = title.strip()
 
         # Check if page exists in cache
-        if self._conn is not None:
-            with self._conn.cursor() as cur:
+        conn = self.get_conn()
+        if conn is not None:
+            with conn.cursor() as cur:
                 rows = cur.execute('SELECT title, abstract, links FROM pages WHERE title = %s', (title,)).fetchall()
                 if len(rows) == 0:
                     rows = cur.execute('SELECT pages.title, pages.abstract, pages.links FROM pages JOIN redirects ON pages.title = redirects.redirect_to WHERE redirects.title = %s', (title,)).fetchall()
@@ -52,7 +54,7 @@ class WikipediaService:
                     category_rows = cur.execute('SELECT * FROM page_categories WHERE page_title = %s', (rows[0]['title'],)).fetchall()
                     return WikipediaPage(rows[0]['title'], rows[0]['abstract'], [row['category_name'] for row in category_rows], rows[0]['links'])
 
-        if not Config.WIKIPEDIA_FALLBACK:
+        if not self.wikipedia_fallback:
             return None
 
         # Check if page exists in Wikipedia
@@ -74,8 +76,9 @@ class WikipediaService:
 
         res = []
 
-        if self._conn is not None:
-            with self._conn.cursor() as cur:
+        conn = self.get_conn()
+        if conn is not None:
+            with conn.cursor() as cur:
                 pages = cur.execute('SELECT refers_to FROM disambiguations WHERE title = %s', (title,)).fetchall()
                 if len(pages) > 0:
                     res += [self.get_page(row['refers_to']) for row in pages]
@@ -91,8 +94,9 @@ class WikipediaService:
         return res
 
     def get_or_create_page_embeddings(self, embedding_service: EmbeddingService, page_titles: List[str]) -> List[Tuple[str, np.ndarray]]:
-        if self._conn is not None and self._use_stored_embeddings:
-            with self._conn.cursor() as cur:
+        conn = self.get_conn()
+        if conn is not None and self._use_stored_embeddings:
+            with conn.cursor() as cur:
                 embeddings = cur.execute("SELECT title, embedding FROM embeddings WHERE title = ANY(%s)", (page_titles,)).fetchall()
         else:
             embeddings = []
@@ -114,8 +118,9 @@ class WikipediaService:
         return res
 
     def get_page_embeddings(self, embedding_service: EmbeddingService, page_titles: List[str], type: str) -> List[Tuple[str, np.ndarray]]:
-        if self._conn is not None:
-            with self._conn.cursor() as cur:
+        conn = self.get_conn()
+        if conn is not None:
+            with conn.cursor() as cur:
                 embeddings = cur.execute("SELECT title, embedding FROM embeddings WHERE type = %s AND title = ANY(%s)", (type, page_titles)).fetchall()
 
             found_titles = [row['title'].lower() for row in embeddings]
