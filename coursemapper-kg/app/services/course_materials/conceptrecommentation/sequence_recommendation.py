@@ -112,7 +112,7 @@ class Sequence_recommendation:
         ).data()
 
         result = list(result)
-        print(result)
+        print (result)
         if not result:
             print("No data returned from the query.")
             groupedPaths = []

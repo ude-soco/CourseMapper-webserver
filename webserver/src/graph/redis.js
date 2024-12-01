@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { createClient, WatchError } from 'redis';
 const crypto = require('crypto');
 const socketio = require("../socketio");
