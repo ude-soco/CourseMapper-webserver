@@ -55,6 +55,7 @@ export class NavbarComponent implements OnInit {
     // Subscribe to navBarChange to update login state
     this.storageService.navBarChange.subscribe((loggedIn) => {
       this.isLoggedIn = loggedIn; // Update login status
+      this.loggedInUser = this.storageService.getUser(); 
     });
 
     // Initialize the state on component load

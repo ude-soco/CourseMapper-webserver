@@ -56,27 +56,32 @@ export class ProfileComponent {
       this.materialService.uploadFile(formData, 'image').subscribe(res => {
         this.imageUrl = `${environment.API_URL}/${res.url}`;
         this.accountForm.patchValue({ photo: this.imageUrl });
+        this.loggedInUser.photo = this.imageUrl;
+        this.storageService.saveUser(this.loggedInUser); // This 
       })
     };
   }
-
   saveForm(): void {
     if (this.accountForm.valid) {
-      this.userService.updateProfile(this.accountForm.value).subscribe(res => {
-        console.log("🚀 ~ ProfileComponent ~ this.userService.updateProfile ~ res:", res)
-        this.showInfo("Profile updated successfully!");
+        this.userService.updateProfile(this.accountForm.value).subscribe(res => {
+            console.log("🚀 ~ ProfileComponent ~ this.userService.updateProfile ~ res:", res);
+            this.showInfo("Profile updated successfully!");
 
-        const data = this.storageService.getUser();
-        console.log("🚀 ~ ProfileComponent ~ this.userService.getProfile ~ data:", {...data, ...res?.data })
-        this.lastSavedUserData = res.data;
-        this.storageService.saveUser({...data, ...res?.data, name: res?.data.firstname + ' ' + res?.data?.lastname });
+            // Update loggedInUser with new data
+            this.loggedInUser = { ...this.loggedInUser, ...res.data };
 
-      })
+            // If you have just uploaded a new image, ensure to update the photo
+            if (this.imageUrl) {
+                this.loggedInUser.photo = this.imageUrl; // Update the logged in user's photo
+            }
+
+            // Call storage service to save updated user data
+            this.storageService.saveUser(this.loggedInUser); // Save updated user with changes
+        });
     } else {
-      console.log('Form is invalid');
+        console.log('Form is invalid');
     }
-  }
-
+   }
   showInfo(msg) {
     this.messageService.add({
       severity: 'info',
