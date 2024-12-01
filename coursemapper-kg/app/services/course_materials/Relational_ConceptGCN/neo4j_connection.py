@@ -36,7 +36,6 @@ class DBConnection:
                     }
                 prerequisite_relationships.append(r)
 
-        print(prerequisite_relationships)
         #Save relationships between nodes in text
         #first column is source node, second column is weight of prerequisite, third column is target node
         # with open("./coursemapper-kg/prerequisite.txt", "w") as f:
@@ -326,7 +325,6 @@ class DBConnection:
                 sum_weights = sum_weights + embedding["weight"]
             # The weighted average of final embeddings of all dnu concepts
             average = np.divide(sum_embeddings, sum_weights)
-            print(average.shape)
             embedding=','.join(str(i) for i in average)
             tx.run("""MATCH (u:User) WHERE u.uid=$uid set u.embedding=$embedding""",
                 uid=user_id,
@@ -523,7 +521,7 @@ class DBConnection:
         adj_matrix_transposed = adj_matrix.T
         return self.find_paths_from_node(adj_matrix_transposed, end_node)
     
-    def get_road(self,cid_to_name,cid_list):
+    def get_road(self,top_cid_info,cid_list):
         """
         """
         print("get_groupedPaths_and_isolatedNodes")
@@ -542,70 +540,47 @@ class DBConnection:
 
                 // Collect the target node CID in the path
                 WITH collect([node IN nodes(path) WHERE node.cid IN targetCIDs | node.cid]) AS groupedPaths, targetCIDs
-                // Remove duplicate paths
-                WITH apoc.coll.toSet(groupedPaths) AS groupedPaths, targetCIDs
-                //calculate the isolated nodes
-                WITH groupedPaths, apoc.coll.flatten(groupedPaths) AS connectedCIDs, targetCIDs
-                WITH groupedPaths, apoc.coll.subtract(targetCIDs, connectedCIDs) AS isolatedNodes
 
-                // Returns the result with the CIDs in the path and the CIDs of the isolated nodes
+                // Remove duplicate paths (mimic apoc.coll.toSet using DISTINCT)
+                UNWIND groupedPaths AS path
+                WITH DISTINCT path AS uniquePaths, targetCIDs
+                WITH collect(uniquePaths) AS groupedPaths, targetCIDs
+
+                // Flatten groupedPaths and calculate the isolated nodes
+                WITH groupedPaths, [cid IN targetCIDs WHERE NOT cid IN REDUCE(flat=[], x IN groupedPaths | flat + x)] AS isolatedNodes
+
+                // Return the result with the CIDs in the path and the CIDs of the isolated nodes
                 RETURN groupedPaths, isolatedNodes
                 """,
                 cid=cid_list,
         ).data()
-           # print("get_road_user_c_related_concept", result)
-        # print("road same rc",result )
         result = list(result)
-        groupedPaths = result[0]['groupedPaths']
-        isolatedNodes = result[0]['isolatedNodes']
-        # with self.driver.session() as session:
-        #     isolated_result = session.run(
-        #         """
-        #         WITH $isolatedNodes_list AS isolatedNodeCID
+        if not result:
+            print("No data returned from the query.")
+            groupedPaths = []
+            isolatedNodes = cid_list
+        else:
+            groupedPaths = result[0]['groupedPaths']
+            isolatedNodes = result[0]['isolatedNodes']
 
-        #         // 找到孤立节点
-        #         MATCH (isoNode)
-        #         WHERE isoNode.cid IN isolatedNodeCID
-
-        #         // 前向路径和后向路径
-        #         OPTIONAL MATCH forwardPath = (isoNode)-[:PREREQUISITE_TO*]->(forwardNode)
-        #         OPTIONAL MATCH backwardPath = (backwardNode)-[:PREREQUISITE_TO*]->(isoNode)
-
-        #         // 先收集路径中的节点信息
-        #         WITH isoNode, 
-        #             [node IN nodes(forwardPath) | {cid: node.cid, name: node.name}] AS forwardPathsNodes,
-        #             [node IN nodes(backwardPath) | {cid: node.cid, name: node.name}] AS backwardPathsNodes
-
-        #         // 对前向路径和后向路径分别进行聚合
-        #         WITH isoNode, 
-        #             collect(forwardPathsNodes) AS forwardPaths,
-        #             collect(backwardPathsNodes) AS backwardPaths
-
-        #         // 将前向路径和后向路径合并
-        #         WITH isoNode, forwardPaths + backwardPaths AS allPaths
-
-        #         // 处理没有路径的孤立节点
-        #         RETURN isoNode.cid AS isolatedNodeCID, 
-        #             isoNode.name AS isolatedNodeName, 
-        #             CASE WHEN size(allPaths) > 0 THEN allPaths ELSE [[{cid: isoNode.cid, name: isoNode.name}]] END AS allPaths
-        #         """,
-        #         isolatedNodes_list=isolatedNodes,
-        #     ).data()
         isolated_sequence = []  
         for cid in isolatedNodes:
-            if cid in cid_to_name:
-                isolated_sequence.append([{'name': cid_to_name.get(cid),'cid': cid}])
-        isolated_sequence = self.deduplicate_by_name(isolated_sequence)
+            if cid in top_cid_info:
+                isolated_sequence.append([{'name': top_cid_info[cid].get("name"),'cid': cid,'score':top_cid_info[cid].get("score"),'type':top_cid_info[cid].get("type"),'uri':top_cid_info[cid].get("uri"),'wiki':top_cid_info[cid].get("wiki"),"abstract": top_cid_info[cid].get("abstract")}])
 
         grouped_sequence = []
         for path in groupedPaths:
             transformed_path = []
             for cid in path:
-                transformed_path.append({'name': cid_to_name.get(cid),'cid': cid})
+                transformed_path.append({'name': top_cid_info[cid].get("name"),'cid': cid,'score':top_cid_info[cid].get("score"),'type':top_cid_info[cid].get("type"),'uri':top_cid_info[cid].get("uri"),'wiki':top_cid_info[cid].get("wiki"),"abstract": top_cid_info[cid].get("abstract")})
             grouped_sequence.append(transformed_path)
         grouped_sequence = self.deduplicate_by_name(grouped_sequence)
         
         final_sequence = grouped_sequence+isolated_sequence
+        output = {"nodes": {}}
+        for idx, group in enumerate(final_sequence):
+            output["nodes"][str(idx)] = group
+        print(output)
         return final_sequence
 
     def deduplicate_by_name(self,data):
@@ -642,20 +617,30 @@ class DBConnection:
         
         #get the top-n sequence recommended concept
         top_n_concepts = sorted(sequence_concept_list, key=lambda x: x["n"]["score"], reverse=True)[0:top_n]
-        
         top_n_cid_list = []
-        top_cid_to_name_dict = {}
+        top_cid_info = {}
         for topn_concept in top_n_concepts:
             cid = topn_concept["n"]["cid"]
             name = topn_concept["n"]["name"]
+            score = topn_concept["n"]["score"]
+            type = topn_concept["n"]["type"]
+            uri = topn_concept["n"]["uri"]
+            wiki = topn_concept["n"]["wikipedia"]
+            abstract = topn_concept["n"]["abstract"]
             top_n_cid_list.append(cid)
-            top_cid_to_name_dict[cid]=name
-        # get path 
-        print(top_n_cid_list)         
-        sequence_recommended=self.get_road(top_cid_to_name_dict,top_n_cid_list)
+            top_cid_info[cid]={
+                "name":name,
+                "score":score,
+                "type":type,
+                "uri":uri,
+                "wiki":wiki,
+                "abstract":abstract
+            }
+        # get path        
+        sequence_recommended=self.get_road(top_cid_info,top_n_cid_list)
         return sequence_recommended
     
-    def _get_concept_recommendation(self, user_id='66e07565733de02be8699540', mid='673885ff3947b4186d3cf1a3'):
+    def _get_concept_recommendation(self, user_id='66e07565733de02be8699540', mid='673bca8b5d46a99d5bd5964c'):
         # Get concepts that doesn't interact with user
         # related to candidate concept
         concept_list = self.get_concept_has_not_read(user_id, mid)
@@ -666,7 +651,6 @@ class DBConnection:
         # compute the similarity between user and concepts with cos-similarity and select top-5 recommendation concept
         # recommend_concepts = self.recommendation.recommend(concept_list, user, top_n=5)
         sequence_path = self.sequence_recommend(sequence_concept_list, user, top_n=10)
-        print(sequence_path)
         # for i in recommend_concepts:
         #     info = i["n"]["name"] + " : " + str(i["n"]["score"])
         #     logger.info(info)

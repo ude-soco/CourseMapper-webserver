@@ -126,13 +126,13 @@ class Sequence_recommendation:
         isolated_sequence = []  
         for cid in isolatedNodes:
             if cid in top_cid_info:
-                isolated_sequence.append([{'name': top_cid_info[cid].get("name"),'cid': cid,'score':top_cid_info[cid].get("score"),'type':top_cid_info[cid].get("type"),'uri':top_cid_info[cid].get("uri"),'wiki':top_cid_info[cid].get("wikipedia"),"abstract": top_cid_info[cid].get("abstract")}])
+                isolated_sequence.append([{'name': top_cid_info[cid].get("name"),'cid': cid,'score':top_cid_info[cid].get("score"),'type':top_cid_info[cid].get("type"),'uri':top_cid_info[cid].get("uri"),'wiki':top_cid_info[cid].get("wiki"),"abstract": top_cid_info[cid].get("abstract")}])
 
         grouped_sequence = []
         for path in groupedPaths:
             transformed_path = []
             for cid in path:
-                transformed_path.append({'name': top_cid_info[cid].get("name"),'cid': cid,'score':top_cid_info[cid].get("score"),'type':top_cid_info[cid].get("type"),'uri':top_cid_info[cid].get("uri"),'wiki':top_cid_info[cid].get("wikipedia"),"abstract": top_cid_info[cid].get("abstract")})
+                transformed_path.append({'name': top_cid_info[cid].get("name"),'cid': cid,'score':top_cid_info[cid].get("score"),'type':top_cid_info[cid].get("type"),'uri':top_cid_info[cid].get("uri"),'wiki':top_cid_info[cid].get("wiki"),"abstract": top_cid_info[cid].get("abstract")})
             grouped_sequence.append(transformed_path)
         grouped_sequence = self.deduplicate_by_name(grouped_sequence)
 

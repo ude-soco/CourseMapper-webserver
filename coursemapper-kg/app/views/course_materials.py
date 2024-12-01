@@ -215,8 +215,8 @@ def get_sequence_concepts(job):
     data_service._extract_vector_relation(mid=material_id)
     # gcn = GCN()
     # gcn.load_data()
-    # gcn = RRGCN()
-    # gcn.rrgcn_1_2()
+    gcn = RRGCN()
+    gcn.rrgcn_1_2()
     # gcn = relational_conceptgcn_compgcn()
     # gcn.compgcn_without_direction_weight('mult')
     ### ========
