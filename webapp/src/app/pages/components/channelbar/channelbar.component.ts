@@ -130,11 +130,12 @@ export class ChannelbarComponent implements OnInit {
 
   getOptions(role: string): any {
     this.menuItems = [
-      { label: 'Rename', icon: 'pi pi-refresh', restrictTo: ['user'], onlyAccess: 'can_edit_course_name', command: () => this.onRenameCourse() },
-      { label: 'Delete', icon: 'pi pi-times', restrictTo: ['user'], onlyAccess: 'can_delete_course', command: () => this.onDeleteCourse() },
+      { label: 'Edit course', icon: 'pi pi-pencil', restrictTo: ['user'], onlyAccess: 'can_edit_course_name', command: () => this.onRenameCourse() },
+      
       { label: 'Share course ', icon: 'pi pi-copy', title: 'Copy Course URL', command: () => this.copyCourseId(this.selectedCourse._id, this.selectedCourse.name) },
       { label: "View course dashboard", icon: "pi pi-chart-bar", styleClass: "contextMenuButton", command: () => this.onViewDashboardClicked() },
       { label: 'Notification Settings', icon: 'pi pi-bell', command: ($event) => this.onNotificationSettingsClicked($event) },
+      { label: 'Delete', icon: 'pi pi-trash', restrictTo: ['user'], onlyAccess: 'can_delete_course', command: () => this.onDeleteCourse() },
     ]
     this.menuItems = this.menuItems.filter((item: any) => {
       const roleCheck = !item?.restrictTo?.includes(role) || this.user?.role?.name === 'admin';

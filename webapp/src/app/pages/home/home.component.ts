@@ -70,13 +70,34 @@ export class HomeComponent implements OnInit {
     return filteredCourses?.length > this.limit
   }
 
-
+  onRenameCourse() {
+   
+}
+onNotificationSettingsClicked($event) {
+  /*  this.notificationSettingsPanel.show($event); */
+}
+onViewDashboardClicked(): void {
+  this.router.navigate([
+    'course',
+    this.courseService.getSelectedCourse()._id,
+    'dashboard'
+        
+  ]);
+}
+copyCourseId() {
+  
+}
   getMenuItems(courseItem: any): any {
     this.menuItems = [
      
-      { label: 'Manage Participants', restrictTo: ['user'], icon: 'pi pi-users', command: () => this.onManageParticipants(courseItem) },
-      { label: 'Rename Course', restrictTo: ['user', 'co_teacher', 'non_editing_teacher'], icon: 'pi pi-cog', command: () => this.onManageParticipants(courseItem) },
-      { label: 'View Participants', icon: 'pi pi-eye', restrictTo: ['teacher', 'co_teacher', 'non_editing_teacher'], command: () => this.onViewParticipants(courseItem) },
+      { label: 'Manage participants', restrictTo: ['user'], icon: 'pi pi-users', command: () => this.onManageParticipants(courseItem) },
+      { label: 'Edit course', restrictTo: ['user', 'co_teacher', 'non_editing_teacher'], icon: 'pi pi-pencil', command: () => this.onRenameCourse() },
+      { label: 'View participants', icon: 'pi pi-users', restrictTo: ['teacher', 'co_teacher', 'non_editing_teacher'], command: () => this.onViewParticipants(courseItem) },
+      { label: 'Share course ', icon: 'pi pi-copy', title: 'Copy Course URL', command: () => this.copyCourseId() },
+      { label: "View course dashboard", icon: "pi pi-chart-bar", styleClass: "contextMenuButton", command: () => this.onViewDashboardClicked() },
+      { label: 'Notification Settings', icon: 'pi pi-bell', command: ($event) => this.onNotificationSettingsClicked($event) },
+     
+     
 
       { label: 'Unenroll from Course', icon: 'pi pi-user-minus', restrictTo: ['teacher'], command: () => { } },
       { label: 'Delete Course', icon: 'pi pi-trash', restrictTo: ['user'], onlyAccess:'can_delete_course', command: () => this.onDeleteCourse(courseItem) },
@@ -100,6 +121,7 @@ export class HomeComponent implements OnInit {
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
   ) { }
+
 
   ngOnInit(): void {
     this.currentUser = this.storageService.getUser();
@@ -209,6 +231,7 @@ export class HomeComponent implements OnInit {
         description: course.description,
         role: course?.role|| 'student',
         menuItems: course?.menuItems,
+        totalEnrolled: course?.users?.length,
       };
       this.userArray.push(ingoPush);
       console.log(this.userArray); // Log to confirm what is being pushed

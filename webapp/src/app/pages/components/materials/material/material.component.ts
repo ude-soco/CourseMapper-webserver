@@ -968,6 +968,15 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     );
   }
 
+  getCanDeletePermission(): boolean {
+    if (this.selectedMaterial?.type === 'pdf') {
+      return this.canAccess('can_delete_pdfs');
+    } else {
+      return this.canAccess('can_delete_materials');
+    }
+  }
+  
+
   /**
    * @function showInfo
    * shows the user if his action succeeded

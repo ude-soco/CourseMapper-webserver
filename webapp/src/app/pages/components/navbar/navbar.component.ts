@@ -55,7 +55,6 @@ export class NavbarComponent implements OnInit {
     // Subscribe to navBarChange to update login state
     this.storageService.navBarChange.subscribe((loggedIn) => {
       this.isLoggedIn = loggedIn; // Update login status
-      this.loggedInUser = this.storageService.getUser(); 
     });
 
     // Initialize the state on component load
@@ -77,6 +76,7 @@ export class NavbarComponent implements OnInit {
         title: 'View your personal dashboard',
         command: () => this.onViewPersonalDashboard(),
       },
+     
       {
         label: 'Sign out',
         icon: 'pi pi-sign-out',
@@ -148,6 +148,7 @@ export class NavbarComponent implements OnInit {
   onViewPersonalDashboard(): void {
     this.router.navigate(['user/dashboard']);
   }
-
+  
+ 
   
 }

@@ -6,6 +6,7 @@ export interface Reply {
     name: string;
     username?: string;
     email?: string;
+    photo?:string;
     role?: {
       _id?: string;
       name?: string;

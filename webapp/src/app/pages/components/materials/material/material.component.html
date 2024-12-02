@@ -51,6 +51,37 @@
         *ngFor="let material of materials; let i = index"
         [closable]="false"
       >
+      
+      <!-- Single Context menu -->
+      <p-overlayPanel #materialMenu styleClass="settingsContextMenu">
+        <ng-template pTemplate="content">
+          <app-context-menu
+            [showModeratorPrivileges]="showModeratorPrivileges"
+            [checkBoxesGroup]="materialCheckBoxesGroup"
+            [checkBoxesArray]="materialCheckBoxesArray"
+            [isResetButtonEnabled]="
+              isResetMaterialNotificationsButtonEnabled
+            "
+            resetTo="channel"
+            [canRename]="canAccess('can_rename_materials')"
+            [canDelete]="canAccess(material.type === 'pdf' ? 'can_delete_pdfs' : 'can_delete_materials')"
+            [canDelete]="getCanDeletePermission()"
+
+            (renameClicked)="onRenameMaterial()"
+            (deleteClicked)="onDeleteMaterial()"
+            (resetButtonClicked)="onResetMaterialNotificationsClicked()"
+            (notificationSettingClicked)="
+              onMaterialNotificationSettingsClicked($event)
+            "
+            [MaterialSettingChosen]="true"
+            (viewMaterialDashboardClicked)="viewMaterialDashboardClicked()"
+          ></app-context-menu>
+        </ng-template>
+      </p-overlayPanel>
+
+
+
+
         <ng-template pTemplate="header" *ngIf="material.type === 'pdf'">
           <div class="flex relative">
             <div
@@ -143,30 +174,6 @@
               pTooltip="View material knowledge graph"
             ></app-iconbutton>
           </div>
-          <p-overlayPanel #materialMenu styleClass="settingsContextMenu">
-            <ng-template pTemplate="content">
-              <app-context-menu
-                [showModeratorPrivileges]="showModeratorPrivileges"
-                [checkBoxesGroup]="materialCheckBoxesGroup"
-                [checkBoxesArray]="materialCheckBoxesArray"
-                [isResetButtonEnabled]="
-                  isResetMaterialNotificationsButtonEnabled
-                "
-                resetTo="channel"
-                [canRename]="canAccess('can_rename_materials')"
-                [canDelete]="canAccess('can_delete_pdfs')"
-                
-                (renameClicked)="onRenameMaterial()"
-                (deleteClicked)="onDeleteMaterial()"
-                (resetButtonClicked)="onResetMaterialNotificationsClicked()"
-                (notificationSettingClicked)="
-                  onMaterialNotificationSettingsClicked($event)
-                "
-                [MaterialSettingChosen]="true"
-                (viewMaterialDashboardClicked)="viewMaterialDashboardClicked()"
-              ></app-context-menu>
-            </ng-template>
-          </p-overlayPanel>
           <app-iconbutton
             style="z-index: 1"
             icon="bx-dots-vertical-rounded"
@@ -253,28 +260,6 @@
               getNumUnreadNotificationsForMaterial(material._id) | async
             }}</span
           > -->
-          <p-overlayPanel #materialMenu styleClass="settingsContextMenu">
-            <ng-template pTemplate="content">
-              <app-context-menu
-                [showModeratorPrivileges]="showModeratorPrivileges"
-                [checkBoxesGroup]="materialCheckBoxesGroup"
-                [checkBoxesArray]="materialCheckBoxesArray"
-                [isResetButtonEnabled]="
-                  isResetMaterialNotificationsButtonEnabled
-                "
-                resetTo="channel"
-                [canRename]="canAccess('can_rename_materials')"
-                [canDelete]="canAccess(material?.type === 'video' ? 'can_delete_materials': 'can_delete_pdfs')"
-                
-                (renameClicked)="onRenameMaterial()"
-                (deleteClicked)="onDeleteMaterial()"
-                (resetButtonClicked)="onResetMaterialNotificationsClicked()"
-                (notificationSettingClicked)="
-                  onMaterialNotificationSettingsClicked($event)
-                "
-              ></app-context-menu>
-            </ng-template>
-          </p-overlayPanel>
           <app-iconbutton
             style="z-index: 1"
             icon="bx-dots-vertical-rounded"

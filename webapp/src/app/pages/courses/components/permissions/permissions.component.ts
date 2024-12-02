@@ -24,7 +24,7 @@ export class PermissionsComponent implements OnInit {
       name: 'co_teacher',
       data: [
         {
-          role: { title: 'Creation Permissions', checked: false },
+          role: { title: 'Create Permissions', checked: false },
           list: [
             { label: 'Allow member to create channel', name: 'can_create_channel', checked: false },
             { label: 'Allow member to create topic', name: 'can_create_topic', checked: false },
@@ -59,7 +59,7 @@ export class PermissionsComponent implements OnInit {
       name: 'non_editing_teacher',
       data: [
         {
-          role: { title: 'Creation Permissions', checked: false },
+          role: { title: 'Create Permissions', checked: false },
           list: [
             { label: 'Allow member to create channel', name: 'can_create_channel', checked: false },
             { label: 'Allow member to create topic', name: 'can_create_topic', checked: false },
@@ -157,7 +157,7 @@ export class PermissionsComponent implements OnInit {
   formatRoleName(role: string): string {
         switch (role) {
           case 'non_editing_teacher':
-            return 'Teaching Assitant';
+            return 'Teaching Assistant';
           case 'co_teacher':
             return 'Co-Teacher';
           default:

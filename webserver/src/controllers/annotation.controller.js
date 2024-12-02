@@ -59,6 +59,8 @@ export const newAnnotation = async (req, res, next) => {
   let foundUser;
   try {
     foundUser = await User.findById(req.userId);
+    console.log("Fetched Usertttttttttttttttttttttttttt ttttttt:", foundUser); // Log to see if the user includes the photo
+
   } catch (err) {
     res.status(500).send({ error: "Error finding user" });
   }
@@ -73,6 +75,8 @@ export const newAnnotation = async (req, res, next) => {
   } catch (err) {
     res.status(500).send({ error: "Error finding role" });
   }
+
+ 
   let annotation = new Annotation({
     type: annotationType,
     content: annotationContent,
@@ -81,6 +85,7 @@ export const newAnnotation = async (req, res, next) => {
       name: authorName,
       role: foundRole,
       username: foundUser.username,
+      photo: foundUser.photo || null,
     },
     location: annotationLocation,
     tool: annotationTool,
@@ -104,7 +109,7 @@ export const newAnnotation = async (req, res, next) => {
       details: err.message || err, // Send the error message or the entire error object
     });
   }
-  
+ 
   foundMaterial.annotations.push(newAnnotation._id);
   try {
     await foundMaterial.save();

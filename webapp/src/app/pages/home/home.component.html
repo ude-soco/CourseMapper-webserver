@@ -92,6 +92,16 @@
                         Created on: {{ course.createdAt | date : "d MMMM yyyy" }}
                       </span>
                     </p>
+                    
+                     <p class="p" style="margin-left: 4px">
+                      <i
+                       class="pi pi-users"
+                         style="font-size: 1rem; color: #ea580c"
+                        ></i>
+                        <span class="pl-1">
+                  {{ course.totalEnrolled | number }} user{{course?.totalEnrolled > 1 ? 's' : ''}} enrolled
+                </span>
+                    </p>
                   </ng-template>
                 </p-card>
               </div>

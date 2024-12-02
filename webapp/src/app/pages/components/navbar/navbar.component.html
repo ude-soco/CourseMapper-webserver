@@ -34,11 +34,9 @@
       </span>
 
       <span *ngIf="this.storageService.loggedIn">
-       
-        <p-avatar 
-       
-          image="{{loggedInUser?.photo}}"
-          label="{{ getIntitials(loggedInUser?.name) }}"
+        <p-avatar
+          [image]="loggedInUser?.photo"
+          [label]="loggedInUser?.photo ? '' : getIntitials(loggedInUser?.name)"
           shape="circle"
           size="large"
           [style]="{

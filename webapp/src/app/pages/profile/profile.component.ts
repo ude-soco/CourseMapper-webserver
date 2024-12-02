@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
+import { FileUpload } from 'primeng/fileupload';
 import { User } from 'src/app/models/User';
 import { MaterilasService } from 'src/app/services/materials.service';
 import { StorageService } from 'src/app/services/storage.service';
@@ -17,7 +18,7 @@ export class ProfileComponent {
   imageUrl: string | null = null;
   loggedInUser: User;
   lastSavedUserData: User | null = null;
-
+  @ViewChild('fileUpload') fileUpload: FileUpload;
   constructor(private fb: FormBuilder,
     private materialService: MaterilasService,
     private userService: UserServiceService,
@@ -56,32 +57,28 @@ export class ProfileComponent {
       this.materialService.uploadFile(formData, 'image').subscribe(res => {
         this.imageUrl = `${environment.API_URL}/${res.url}`;
         this.accountForm.patchValue({ photo: this.imageUrl });
-        this.loggedInUser.photo = this.imageUrl;
-        this.storageService.saveUser(this.loggedInUser); // This 
+       
       })
     };
   }
+
   saveForm(): void {
     if (this.accountForm.valid) {
-        this.userService.updateProfile(this.accountForm.value).subscribe(res => {
-            console.log("🚀 ~ ProfileComponent ~ this.userService.updateProfile ~ res:", res);
-            this.showInfo("Profile updated successfully!");
+      this.userService.updateProfile(this.accountForm.value).subscribe(res => {
+        console.log("🚀 ~ ProfileComponent ~ this.userService.updateProfile ~ res:", res)
+        this.showInfo("Profile updated successfully!");
 
-            // Update loggedInUser with new data
-            this.loggedInUser = { ...this.loggedInUser, ...res.data };
+        const data = this.storageService.getUser();
+        console.log("🚀 ~ ProfileComponent ~ this.userService.getProfile ~ data:", {...data, ...res?.data })
+        this.lastSavedUserData = res.data;
+        this.storageService.saveUser({...data, ...res?.data, name: res?.data.firstname + ' ' + res?.data?.lastname });
 
-            // If you have just uploaded a new image, ensure to update the photo
-            if (this.imageUrl) {
-                this.loggedInUser.photo = this.imageUrl; // Update the logged in user's photo
-            }
-
-            // Call storage service to save updated user data
-            this.storageService.saveUser(this.loggedInUser); // Save updated user with changes
-        });
+      })
     } else {
-        console.log('Form is invalid');
+      console.log('Form is invalid');
     }
-   }
+  }
+
   showInfo(msg) {
     this.messageService.add({
       severity: 'info',
@@ -104,6 +101,8 @@ export class ProfileComponent {
         photo: this.lastSavedUserData.photo || null
       });
       this.imageUrl = this.lastSavedUserData.photo; // Restore the imageUrl as well
+      
     }
+    this.fileUpload.clear();
   }
 }

@@ -1,5 +1,10 @@
 <p-confirmDialog></p-confirmDialog>
+
 <div class="table">
+  <h2 class="text-xl font-semibold  mb-4 ml-3"  style="font-weight: 500;">
+    {{ !viewOnly ? 'Manage participants' : 'Course participants' }}
+  </h2>
+
   <p-table [value]="members" class="w-full mt-10 overflow-visible">
     <ng-template pTemplate="header">
       <tr>
@@ -23,7 +28,8 @@
         <td  class="fixed-width-column">
           <div class="flex items-center space-x-2">
             <p-avatar
-              label="{{ member?.userId.firstname.charAt(0).toUpperCase() }}{{ member?.userId.lastname.charAt(0).toUpperCase() }}"
+              [image]="member?.userId.photo"
+              [label]="member?.userId.photo ? '' :  getIntitials(member?.userId.firstname + ' ' + member?.userId.lastname)"
               shape="circle"
               [style]="{
                 'background-color': '#EA580C',
@@ -36,7 +42,12 @@
         <td class="fixed-width-column">{{ member?.userId?.username }}</td>
         
         <td *ngIf="viewOnly  || course.role== 'co_teacher' || course.role == 'non_editing_teacher'" class="fixed-width-column">
-          {{ member?.role?.name === 'non_editing_teacher' ? 'Teaching Assistant' : member?.role?.name?.split('_')?.join(' ') || 'N/A' }}
+          {{
+            member?.role?.name === 'non_editing_teacher' ? 'Teaching Assistant' :
+            member?.role?.name === 'user' ? 'Student' :
+            member?.role?.name === 'co_teacher' ? 'Co-Teacher' :
+            member?.role?.name?.split('_')?.join(' ') || 'N/A'
+          }}
         </td>
 
         <td *ngIf="!viewOnly && course.role !== 'co_teacher' && course.role !== 'non_editing_teacher'" class="fixed-width-column">

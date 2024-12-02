@@ -80,6 +80,7 @@ materialType?: string;
   courseId?: string;
   channelId?: string;
   author?: {
+    photo: string,
     userId?: string;
     name?: string;
     username?: string;
@@ -88,6 +89,7 @@ materialType?: string;
       _id?: string;
       name?: string;
     };
+   
   };
   likes?: string[];
   dislikes?: string[];

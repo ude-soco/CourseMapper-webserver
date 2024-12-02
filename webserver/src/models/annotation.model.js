@@ -13,6 +13,7 @@ const Annotation = new Schema({
       _id: { type: Schema.Types.ObjectId, ref: "role" },
       name: { type: String, required: true },
     },
+    photo: { type: String, default: null }, 
   },
   location: { type: Schema.Types.Mixed },
   tool: { type: Schema.Types.Mixed },

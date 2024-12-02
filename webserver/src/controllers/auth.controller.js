@@ -181,6 +181,7 @@ export const signIn = async (req, res, next) => {
         email: user.email,
         mbox_sha1sum: user.mbox_sha1sum,
         courses: user.courses,
+        photo: user.photo || null, 
         token: token,
         verified: user.verified,
       },

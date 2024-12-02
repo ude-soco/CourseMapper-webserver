@@ -55,6 +55,7 @@ export class LoginComponent implements OnInit {
     this.userService.login(username, password).subscribe({
       // the response from backend
       next: async (data) => {
+        console.log('User data from loginnnnnnnnnnnnnnnnnnnnnn:', data); // Log to check photo presence
         this.storageService.saveUser(data);
 
 

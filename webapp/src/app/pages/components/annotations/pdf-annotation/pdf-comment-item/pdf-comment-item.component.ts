@@ -36,6 +36,7 @@ import { Material } from 'src/app/models/Material';
 import { getCurrentMaterial } from '../../../materials/state/materials.reducer';
 import * as VideoActions from 'src/app/pages/components/annotations/video-annotation/state/video.action';
 import { getShowAnnotations } from '../../video-annotation/state/video.reducer';
+import { StorageService } from 'src/app/services/storage.service';
 
 import {
   getCurrentCourseId,
@@ -98,6 +99,7 @@ export class PdfCommentItemComponent
   shouldScroll = false;
   private annotationSubscription: Subscription;
   constructor(
+    private storageService: StorageService,
     private socket: Socket,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
@@ -128,9 +130,14 @@ export class PdfCommentItemComponent
       this.loggedInUser = user;
     });
     this.showAllPDFAnnotations$ = this.store.select(getshowAllPDFAnnotations);
+    
   }
   ngOnDestroy(): void {
     this.currentPdfPageSubscription.unsubscribe();
+  }
+  getIntitials(name: string): string {
+    if (!name) return "";
+    return name.split(" ").map(part => part.charAt(0).toUpperCase()).join(""); // Get first letter from each word
   }
   ngAfterViewInit(): void {
     const moreSpan = document.querySelectorAll('.clickable-text');
@@ -278,11 +285,14 @@ export class PdfCommentItemComponent
       } else {
         this.blueDislikeButtonEnabled = false;
       }
+      
     }
   }
 
   override ngOnInit(): void {
     super.ngOnInit();
+    this.loggedInUser = this.storageService.getUser();
+    console.log("Current Annotation.-----:", this.annotation.author.photo);
     this.setMenuItems();
     if (this.selectedMaterial.type === 'pdf') {
       this.PDFAnnotationLocation[0] = (

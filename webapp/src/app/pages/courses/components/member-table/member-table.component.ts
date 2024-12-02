@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { CourseService } from 'src/app/services/course.service';
 import { StorageService } from 'src/app/services/storage.service';
+import { getInitials } from 'src/app/_helpers/format';
 
 @Component({
   selector: 'app-member-table',
@@ -82,7 +83,10 @@ export class MemberTableComponent {
     }
     return false;
   }
-
+   getIntitials(name: string): string {
+    if (!name) return "";
+    return name.split(" ").map(part => part.charAt(0).toUpperCase()).join(""); // Get first letter from each word
+  }
   toggleBlockUser(targetUserId: string, checked: Boolean): void {
     this.isLoading = true;
     this.courseService.ToggleBlockUser(this.course._id, { targetUserId, status: checked }).subscribe(res => {
@@ -113,7 +117,7 @@ export class MemberTableComponent {
 
     this.confirmationService.confirm({
       message: `Are you sure you want to assign "${member?.userId?.username}" the role "${newRoleLabel}" in this course?
-      <br />If you continue, an email will be sent to notify them about this role assignment`,
+      <br />If you continue, an email will be sent to notify them about this role assignment.`,
       header: 'Role Change Confirmation',
       icon: 'pi pi-info-circle',
       accept: () => {
