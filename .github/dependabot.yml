@@ -71,7 +71,7 @@ updates:
   - "javascript"
   - "webserver"
 
-- package-ecosystem: "python"
+- package-ecosystem: "pip"
   directory: "/coursemapper-kg"
   target-branch: "dev"
   schedule:
