@@ -915,7 +915,7 @@ export const updateUserPermissions = catchAsync(async (req, res) => {
  * @param {string} req.body.userIdToBlock The id of the user to block
  * @param {string} req.userId The owner of the course
  */
-export const updateUserBlockStatus = catchAsync(async (req, res, next) => {
+export const blockUserFromCourse = catchAsync(async (req, res, next) => {
   const { targetUserId, status } = req.body;
   const courseId = req.params.courseId;
   const currentUserId = req.userId;
@@ -973,9 +973,34 @@ export const updateUserBlockStatus = catchAsync(async (req, res, next) => {
         success: `'${targetUser.username}' has been unblocked from accessing the course '${course.name}'.`,
       });
     }
-  } else {
+  } 
+  
+});
+
+/**
+ * @function blockUserBetweenUsers 
+ * block User from course
+ *
+ * @param {string} req.params.courseId The id of the course
+ * @param {string} req.body.userIdToBlock The id of the user to block
+ * @param {string} req.userId The owner of the course
+ */
+export const blockUserBetweenUsers  = catchAsync(async (req, res, next) => {
+  const { targetUserId, status } = req.body;
+  const courseId = req.params.courseId;
+  const currentUserId = req.userId;
+
+  const course = await Course.findById(courseId);
+  if (!course) {
+    return res.status(404).send({ error: "Course not found!" });
+  }
+
+  const targetUser = await User.findById(targetUserId);
+   if (!targetUser) {
+    return res.status(404).send({ error: "User not found!" });
+    }
     // For users managing their personal block lists
-    const isBlockedByCurrentUser = targetUser.blockedByUser.includes(currentUserId);
+  const isBlockedByCurrentUser = targetUser.blockedByUser.includes(currentUserId);
 
     if (status) {
       // Block user
@@ -1010,10 +1035,7 @@ export const updateUserBlockStatus = catchAsync(async (req, res, next) => {
         success: `'${targetUser.username}' has been unblocked.`,
       });
     }
-  }
 });
-
-
 /**
  * @function deleteCourse
  * Delete a course controller

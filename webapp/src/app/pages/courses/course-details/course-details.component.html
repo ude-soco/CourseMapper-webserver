@@ -18,15 +18,17 @@
   <div *ngIf="!loading">
     <div class="flex justify-between items-center mr-2">
       <div>
-       
+        <h2 class="text-xl font-normal   mb-5 ml-3"  style="font-weight: 400;">
+          {{ !viewOnly ? 'Manage participants' : 'Course participants' }}
+        </h2>
       </div>
 
       <p
         *ngIf="course.role === 'teacher' || user?.role?.name === 'admin'"
-        class="common-text-style  mb-4"
+        class="text-xl font-normal cursor-pointer   mb-5 ml-3"
         (click)="onManageRoles()"
       >    <i class="pi pi-cog"></i>
-        Manage Permissions
+        Manage permissions
       </p>
     </div>
     <nav class="flex space-x-4 border-b">

@@ -1,9 +1,7 @@
 <p-confirmDialog></p-confirmDialog>
 
 <div class="table">
-  <h2 class="text-xl font-semibold  mb-4 ml-3"  style="font-weight: 500;">
-    {{ !viewOnly ? 'Manage participants' : 'Course participants' }}
-  </h2>
+  
 
   <p-table [value]="members" class="w-full mt-10 overflow-visible">
     <ng-template pTemplate="header">
@@ -20,7 +18,22 @@
           style="margin-left: 5px; cursor: pointer; "
         ></i>
         </th>
-        <th class="fixed-width-column">Block</th>
+        <th class="fixed-width-column">Block user
+          <i
+          class="pi pi-info-circle"
+          pTooltip="Prevent receiving notifications from this user. "
+          tooltipPosition="top"
+          style="margin-left: 5px; cursor: pointer; "
+        ></i>
+        </th>
+        <th class="fixed-width-column"  *ngIf="!viewOnly  "> Block from course
+          <i
+          class="pi pi-info-circle"
+          pTooltip="Restrict this user from accessing or re-enrolling in the course."
+          tooltipPosition="top"
+          style="margin-left: 5px; cursor: pointer; "
+        ></i>
+        </th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-member>
@@ -69,8 +82,20 @@
             <p-checkbox
               inputId="block-user-{{ member?.userId._id }}"
               [binary]="true"
-              [(ngModel)]="member.isBlocked"
+              [(ngModel)]="member.isBlockedByUser"
               (onChange)="toggleBlockUser(member?.userId._id, $event.checked)"
+              [disabled]="currentUser?.userId?._id === member.userId._id"
+            ></p-checkbox>
+          </div>
+        </td>
+        
+        <td *ngIf="!viewOnly" class="fixed-width-column">
+          <div class="flex items-center space-x-2">
+            <p-checkbox
+              inputId="block-course-user-{{ member?.userId._id }}"
+              [binary]="true"
+              [(ngModel)]="member.isBlockedFromCourse"
+              (onChange)="toggleBlockBetweenUsers(member?.userId._id, $event.checked)"
               [disabled]="member.isDisabled"
             ></p-checkbox>
           </div>

@@ -100,7 +100,11 @@ export class CourseService {
  */
 
   ToggleBlockUser(id: number | string, data: any) {
-    return this.http.post<any>(`${this.API_URL}/course/${id}/edit-block-user`, data);
+    return this.http.post<any>(`${this.API_URL}/course/${id}/block`, data);
+  }
+  
+  ToggleBlockUserBetweenUsers(id: number | string, data: any) {
+    return this.http.post<any>(`${this.API_URL}/course/${id}/blockBetweenUsers`, data);
   }
 
   /**

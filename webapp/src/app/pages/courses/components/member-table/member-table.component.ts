@@ -36,13 +36,30 @@ export class MemberTableComponent {
     this.members = this.course?.users;
 
     this.members?.forEach(ele => {
-      ele.isBlocked = this.isUserBlocked(ele?.userId._id);
+      
+      ele.isBlockedByUser = this.isBlockedBetweenUsers(ele?.userId._id);
+
+      ele.isBlockedFromCourse = this.isBlockedFromCourse(ele?.userId._id);
+
       if (['teacher', 'co_teacher', 'non_editing_teacher'].includes(ele.role.name) || this.currentUser?.userId?._id === ele?.userId?._id) {
         ele.isDisabled = true;
       };
       this.selectedRoles[ele.userId._id] = ele.role.name;
     });
   }
+
+
+// Add helper methods
+isBlockedFromCourse(userId: string): boolean {
+  return this.course.blockedUsers.includes(userId);
+}
+
+isBlockedBetweenUsers(userId: string): boolean {
+  return this.currentUser.userId.blockingUsers.includes(userId);
+}
+
+
+
 
 
   roles = [
@@ -87,13 +104,44 @@ export class MemberTableComponent {
     if (!name) return "";
     return name.split(" ").map(part => part.charAt(0).toUpperCase()).join(""); // Get first letter from each word
   }
-  toggleBlockUser(targetUserId: string, checked: Boolean): void {
+
+
+  toggleBlockUser(targetUserId: string, checked: boolean): void {
     this.isLoading = true;
-    this.courseService.ToggleBlockUser(this.course._id, { targetUserId, status: checked }).subscribe(res => {
-      this.isLoading = false;
-      this.showInfo(res?.success || "User updated!");
-      this.course.blockedUsers.push(targetUserId);
-    })
+    this.courseService.ToggleBlockUser(this.course._id, { targetUserId, status: checked })
+      .subscribe(
+        res => {
+          this.isLoading = false;
+          this.showInfo(res?.success || "User updated!");
+          this.updateMemberBlockState(targetUserId, 'isBlockedByUser', checked);
+        },
+        err => {
+          this.isLoading = false;
+          console.error(err);
+        }
+      );
+  }
+  
+  updateMemberBlockState(userId: string, stateKey: string, value: boolean): void {
+    const member = this.members.find(m => m.userId._id === userId);
+    if (member) {
+      member[stateKey] = value;
+    }
+  }
+  toggleBlockBetweenUsers(targetUserId: string, checked: boolean): void {
+    this.isLoading = true;
+  this.courseService.ToggleBlockUserBetweenUsers(this.course._id, { targetUserId, status: checked })
+    .subscribe(
+      res => {
+        this.isLoading = false;
+        this.showInfo(res?.success || "User updated!");
+        this.updateMemberBlockState(targetUserId, 'isBlockedFromCourse', checked);
+      },
+      err => {
+        this.isLoading = false;
+        console.error(err);
+      }
+    );
   }
 
   getUserRole(user_id: any): any {

@@ -63,9 +63,15 @@ module.exports = function (app) {
 
   // Block/Unblock Users from course
   app.post(
-    "/api/course/:courseId/edit-block-user",
+    "/api/course/:courseId/block",
     [authJwt.verifyToken],
-    controller.updateUserBlockStatus
+    controller.blockUserBetweenUsers
+  );
+    // Block/Unblock Users from course
+  app.post(
+    "/api/course/:courseId/blockBetweenUsers",
+    [authJwt.verifyToken],
+    controller.blockUserFromCourse
   );
 
 

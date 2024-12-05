@@ -9,6 +9,7 @@
 .table {
   width: 100%;
   border-collapse: collapse;
+  overflow: hidden;
 }
 
 .table th, .table td {
@@ -17,12 +18,13 @@
   font-family: 'Arial', sans-serif;
   text-align: left; 
   padding: 10px; 
+  white-space: nowrap;
 }
 .full-name-column {
   width: 35%;
 }
 .fixed-width-column {
-  width: 30%;
+  width: 21%;
 }
 
 .flexible-column {
@@ -30,7 +32,7 @@
 }
 
 ::ng-deep .p-dropdown {
-  width: 43% !important; 
+  width: 75% !important; 
   border: none !important; 
   box-shadow: none !important; 
   padding: 0; 
