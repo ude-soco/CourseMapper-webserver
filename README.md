@@ -8,8 +8,10 @@ CourseMapper is a collaborative course annotation and analytics platform that fo
 
 #### Live instances
 
-- Production: [coursemapper.de](https://coursemapper.de/) (latest [release](https://github.com/ude-soco/CourseMapper-webserver/releases))
-- Preview: [edge.coursemapper.de](https://edge.coursemapper.de/) ([branch `main`](https://github.com/ude-soco/CourseMapper-webserver/tree/main))
+- [Production](https://coursemapper.de/) runs ([edge version](https://github.com/ude-soco/CourseMapper-webserver/tree/main))
+- [Preview](https://edge.coursemapper.de/) for integration branch ([`dev`](https://github.com/ude-soco/CourseMapper-webserver/tree/dev))
+
+*Note:* Stable [releases](https://github.com/ude-soco/CourseMapper-webserver/releases) are currently not running in production.
 
 #### Build and run
 

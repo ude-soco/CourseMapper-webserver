@@ -72,11 +72,13 @@ jobs:
         flavor:
           latest=false
         tags: |
-          type=edge
-          type=raw,value=latest,enable=${{ github.ref_type == 'tag' && github.ref_name == steps.latest.outputs.version }}
           type=semver,pattern={{version}}
+          type=edge,branch=main
           type=ref,event=branch,prefix=br-,enable=${{ github.ref_name != 'main' }}
           type=ref,event=pr,prefix=pr-
+          type=raw,value=latest,enable=${{ github.ref_type == 'tag' && github.ref_name == steps.latest.outputs.version }}
+        labels: |
+          org.opencontainers.image.documentation="${{ github.server_url }}/{{ github.repository }}/blob/main/${{ matrix.service }}/README.md"
 
     - name: Build and push container image
       uses: docker/build-push-action@v6
@@ -93,16 +95,3 @@ jobs:
     - name: Output tags
       if: inputs.push
       run: 'echo "::notice::Tags pushed: ${{ steps.meta.outputs.tags }}"'
-
-    - name: Update registry description
-      if:   ${{ github.ref_type == 'tag' && github.ref_name == steps.latest.outputs.version }}
-      uses: christian-korneck/update-container-description-action@v1
-      env:
-        DOCKER_USER: ${{ secrets.registry_user }}
-        DOCKER_PASS: ${{ secrets.registry_token }}
-      with:
-        destination_container_repo: ${{ steps.image_name.outputs.full }}
-        provider: dockerhub
-        short_description: CourseMapper-webserver, ${{ matrix.service }} service
-        readme_file: 'README.md'
-      continue-on-error: true
