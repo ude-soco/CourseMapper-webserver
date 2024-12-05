@@ -28,11 +28,9 @@ export class CardVideoComponent {
   @Input() userId: string;
   @Input() TabSaved: boolean = false;
 
-  // boby024
   isDescriptionFullDisplayed = false;
   isBookmarkFill = false;
   videoDescription = "";
-  // saveOrRemoveParams = {"user_id": "", "rid": "", "status": this.isBookmarkFill};
   saveOrRemoveParams = {"user_id": "", "rid": "", "status": false};
   saveOrRemoveStatus = false;
   @Input() resultTabType: string = "";
@@ -51,7 +49,6 @@ export class CardVideoComponent {
   }
 
   ngOnChanges() {
-    // this.isBookmarkFill = this.videoElement?.is_bookmarked_fill;
     this.saveOrRemoveParams.status = this.videoElement?.is_bookmarked_fill;
 
     this.saveOrRemoveParams.user_id = this.userId;
@@ -74,9 +71,6 @@ export class CardVideoComponent {
   }
 
   addToBookmark() {    
-    // this.isBookmarkFill = this.isBookmarkFill === true ? false : true;
-    // this.saveOrRemoveParams.status = this.isBookmarkFill;
-
     this.videoElement.is_bookmarked_fill = this.videoElement?.is_bookmarked_fill === true ? false : true;
     this.saveOrRemoveParams.status = this.videoElement?.is_bookmarked_fill;
 
@@ -86,7 +80,7 @@ export class CardVideoComponent {
 
   saveOrRemoveBookmark() {
     // detail: 'Open your Bookmark List to find this video'
-    if (this.videoElement.is_bookmarked_fill === true) { // this.isBookmarkFill == true
+    if (this.videoElement.is_bookmarked_fill === true) {
       if (this.saveOrRemoveStatus === true) {
         this.messageService.add({ key: 'resource_bookmark_video', severity: 'success', summary: '', detail: 'Video saved successfully'});
       }
@@ -137,20 +131,4 @@ export class CardVideoComponent {
     }
   }
   
-
-  // getRidsFromUserSaves() {
-  //   this.materialsRecommenderService.getRidsFromUserSaves(this.userId)
-  //     .subscribe({
-  //       next: (data: []) => {
-  //         this.ridsUserSaves = data;
-  //         this.resourcesPagination?.nodes?.videos.forEach((video: VideoElementModel) => video.is_bookmarked_fill = this.ridsUserSaves.includes(video.rid) );
-  //         this.resourcesPagination?.nodes?.articles.forEach((article: ArticleElementModel) => article.is_bookmarked_fill = this.ridsUserSaves.includes(article.rid) );
-  //       },
-  //       error: (err) => {
-  //         console.log(err);
-  //       },
-  //     }
-  //   );
-  // }
-
 }

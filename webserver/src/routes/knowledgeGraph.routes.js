@@ -173,11 +173,11 @@ module.exports = function (app) {
     recommendationController.getResources
   );
 
-  app.get(
-    "/api/recommendation/get_resources_by_main_concepts",
-    [authJwt.verifyToken],
-    recommendationController.getResourcesByMainConcepts
-  );
+  // app.get(
+  //   "/api/recommendation/get_resources_by_main_concepts",
+  //   [authJwt.verifyToken],
+  //   recommendationController.getResourcesByMainConcepts
+  // );
 
   ///
 

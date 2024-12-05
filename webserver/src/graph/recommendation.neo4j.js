@@ -252,24 +252,24 @@ export async function filterUserResourcesSavedBy(data) {
         text: record.get('text'),
         thumbnail: record.get('thumbnail'),
         abstract: record.get('abstract'),
-        postDate: record.get('post_date'),
-        authorImageUrl: record.get('author_image_url'),
-        authorName: record.get('author_name'),
+        // post_date: record.get('post_date'),
+        // author_image_url: record.get('author_image_url'),
+        // author_name: record.get('author_name'),
         keyphrases: record.get('keyphrases'),
         description: record.get('description'),
-        descriptionFull: record.get('description_full'),
-        publishTime: record.get('publish_time'),
+        description_full: record.get('description_full'),
+        publish_time: record.get('publish_time'),
         uri: record.get('uri'),
         duration: record.get('duration'),
         views: record.get('views'),
-        similarityScore: record.get('similarity_score'),
-        helpfulCount: record.get('helpful_count'),
-        notHelpfulCount: record.get('not_helpful_count'),
-        bookmarkedCount: record.get('bookmarked_count'),
-        likeCount: record.get('like_count'),
-        channelTitle: record.get('channel_title'),
-        updatedAt: record.get('updated_at'),
-        isBookmarkedFill: record.get('is_bookmarked_fill'),
+        similarity_score: record.get('similarity_score'),
+        helpful_count: record.get('helpful_count'),
+        not_helpful_count: record.get('not_helpful_count'),
+        bookmarked_count: record.get('bookmarked_count'),
+        like_count: record.get('like_count'),
+        channel_title: record.get('channel_title'),
+        updated_at: record.get('updated_at'),
+        is_bookmarked_fill: record.get('is_bookmarked_fill'),
     }));
 
     if (resources.length > 0) {
@@ -334,7 +334,7 @@ export async function getConceptsModifiedByMid(mid) {
   // AND c.type = "main_concept" 
   const query = `
       MATCH (c:Concept) 
-      WHERE c.mid = $mid
+      WHERE c.mid = $mid AND c.type = 'main_concept'
       RETURN c.cid as cid, c.name AS name, c.weight as weight, 
               c.rank as rank, c.mid as mid
               ORDER BY c.name

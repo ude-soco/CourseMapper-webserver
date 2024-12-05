@@ -139,7 +139,7 @@ export const getConceptsModifiedByUserFromSaves = async (req, res, next) => {
     const userId = req.query.user_id;
     try {
         const result = await neo4j.getConceptsModifiedByUserFromSaves(userId);
-        return res.status(200).send({ "records": result });
+        return res.status(200).send(result);
     } catch (err) {
         console.error('Error retrieving data:', err);
         return res.status(500).send({ error: err.message });
@@ -178,16 +178,16 @@ export const getResources = async (req, res) => {
     });
 }
 
-export const getResourcesByMainConcepts = async (req, res) => {
-    const mid = req.query.mid;
-    await redis.addJob("get_resources_by_main_concepts", {"mid": mid}, undefined, (result) => {
-        if (res.headersSent) {
-        return;
-        }
-        if (result.error) {
-        return res.status(500).send({ error: result.error });
-        }
-        return res.status(200).send(result.result);
-    });
-}
+// export const getResourcesByMainConcepts = async (req, res) => {
+//     const mid = req.query.mid;
+//     await redis.addJob("get_resources_by_main_concepts", {"mid": mid}, undefined, (result) => {
+//         if (res.headersSent) {
+//         return;
+//         }
+//         if (result.error) {
+//         return res.status(500).send({ error: result.error });
+//         }
+//         return res.status(200).send(result.result);
+//     });
+// }
 

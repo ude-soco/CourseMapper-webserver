@@ -2,6 +2,7 @@ import logging
 
 from log import LOG
 import time
+import json
 
 from ..services.course_materials.recommendation.resource_recommender import ResourceRecommenderService
 from ..services.course_materials.recommendation.recommendation_type import RecommendationType
@@ -70,7 +71,9 @@ def get_concepts(job):
 
 
 def get_resources_by_main_concepts(job):
-    mid = job["mid"]
+    data = job["data"]
+    data = json.loads(data)
+    mid = data["materialId"]
     resource_recommender_service = ResourceRecommenderService()
     result = resource_recommender_service._get_resources_by_main_concepts(mid=mid)
     return result

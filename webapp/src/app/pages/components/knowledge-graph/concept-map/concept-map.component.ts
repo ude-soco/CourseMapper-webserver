@@ -1959,7 +1959,6 @@ export class ConceptMapComponent {
         this.currentMaterial!._id,
       );
       this.getConceptMapData();
-      this.conceptMapService.getResourcesByMainConceptsByMid(this.currentMaterial!._id);
     } catch (error) {
       console.error(error);
       this.messageService.add({

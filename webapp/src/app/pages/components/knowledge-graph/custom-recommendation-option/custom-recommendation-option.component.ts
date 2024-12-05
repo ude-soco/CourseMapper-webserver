@@ -4,10 +4,6 @@ import { BehaviorSubject } from 'rxjs';
 import { ActivatorPartCRO, CROform, Neo4jResult } from 'src/app/models/croForm';
 import { CustomRecommendationOptionService } from 'src/app/services/custom-recommenation-option.service';
 
-// import { MinMaxScaler, Normalizer } from 'scikitjs';
-// const { normalize } = require('scikit.js'); // For L1, L2, Max normalization
-// const { MinMaxScaler } = require('ml-scaler'); // For Min-Max scaling
-// import * as tf from '@tensorflow/tfjs';
 
 export interface factorWeights {
   original: any[],
@@ -569,16 +565,12 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
       }
     }
 
-    // update factor weights
-    // this.croForm.concepts = this.CROconceptsManually;
     this.getFactorWeight();
-
     let croFormRequest = {
       default: reqData,
       rec_params: JSON.parse(JSON.stringify(this.croForm))
     }
     croFormRequest.rec_params.concepts = concepts;
-    // console.warn("---", croFormRequest)
 
     // Store CRO Request Params
     localStorage.removeItem('resourcesPaginationParams');

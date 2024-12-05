@@ -60,13 +60,4 @@ export class ConceptMapService {
     const response = await lastValueFrom(response$);
     return response;
   }
-
-  async getResourcesByMainConceptsByMid(materialId: string): Promise<any> {
-    const response$ = this.http.post<any>(
-      `${environment.API_URL}/recommendation/get_resources_by_main_concepts?mid=${materialId}`,
-      HTTPOptions
-    );
-    const response = await lastValueFrom(response$);
-    return response;
-  }
 }
