@@ -155,7 +155,7 @@ class ResourceRecommenderService:
             results.append(rrh.parallel_crawling_resources(function=recommender.canditate_selection, 
                                                             concept_updated=concept_updated,
                                                             result_type="records",
-                                                            top_n_videos=5,
+                                                            top_n_videos=50,
                                                             top_n_articles=15
                                                         ))
         
