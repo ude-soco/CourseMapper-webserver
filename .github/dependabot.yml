@@ -59,6 +59,7 @@ updates:
       - "@angular-devkit/*"
       - "@ngrx/*"
       - "primeng"
+      update-types: minor
 
 - package-ecosystem: "npm"
   directory: "/webserver"
