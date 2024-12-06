@@ -1937,18 +1937,21 @@ export class ConceptMapComponent {
           console.log(this.previousConcepts.understoodConcepts);
           console.log(this.previousConcepts.didNotUnderstandConcepts);
           //send to mongoDB
-          this.userConceptsService
-            .updateUserConcepts(
-              this.userid,
-              this.previousConcepts.understoodConcepts,
-              this.previousConcepts.didNotUnderstandConcepts
-            )
-            .subscribe(() => {});
+          // this.updateConcepts();
+            this.userConceptsService
+          .updateUserConcepts(
+            this.userid,
+            this.previousConcepts.understoodConcepts,
+            this.previousConcepts.didNotUnderstandConcepts
+          ).subscribe(() => {});
+       
+          
         }
       } catch (err) {
         console.log(err);
       }
     }
+
     console.log('hello from out of if statement');
 
     this.courseKgActivated = false;
@@ -2012,6 +2015,22 @@ export class ConceptMapComponent {
     this.conceptMapChannel = [];
     this.conceptMapMaterial = [];
   }
+
+  // async updateConcepts() {
+  //   try {
+  //     // Await the observable using lastValueFrom
+  //     const response = await lastValueFrom(this.userConceptsService.updateUserConcepts(
+  //       this.userid,
+  //       this.previousConcepts.understoodConcepts,
+  //       this.previousConcepts.didNotUnderstandConcepts
+  //     ));
+  
+  //     console.log('User concepts updated successfully', response);
+  //   } catch (err) {
+  //     console.error('Error during update:', err);
+  //   }
+  // }
+
   selectedTopNodes(key) {
     this.selectedTopConcepts = key;
   }

@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { UserServiceService } from './user-service.service';
 import { HTTPOptions } from '../config/config';
-import { Observable, lastValueFrom } from 'rxjs';
+import { Observable, lastValueFrom, retry } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -24,6 +24,12 @@ export class UserConceptsService {
     return this.userConcepts;
   }
 
+  // getUserConcepts(userid: string): Observable<any> {
+  //   console.log('Making HTTP request for user concepts:', userid);
+  //   return this.http.get<any>(`${this.backendEndpointURL}/users/user-concepts/${userid}`, { headers: this.httpHeader })
+  //     .pipe(retry(3)); // Retry up to 3 times in case of failures
+  // }
+
   updateUserConcepts(
     userID: string,
     understoodConcepts: string[],
@@ -34,10 +40,8 @@ export class UserConceptsService {
       understoodConcepts: understoodConcepts,
       didNotUnderstandConcepts: didNotUnderstandConcepts,
     };
-    this.userUpdateConcepts = this.http.post<any>(
-      `${this.backendEndpointURL}/users/user-concepts`,
-      body,
-    );
-    return this.userUpdateConcepts;
+  
+    return this.http.post<any>(`${this.backendEndpointURL}/users/user-concepts`, body);
   }
+  
 }
