@@ -213,23 +213,12 @@ def get_sequence_concepts(job):
     # use GCN to get final embedding of each node
     start_time = time.time()
     data_service._extract_vector_relation(mid=material_id)
-    # gcn = GCN()
-    # gcn.load_data()
+
     gcn = RRGCN()
     gcn.rrgcn_1_2()
+    
     # gcn = relational_conceptgcn_compgcn()
     # gcn.compgcn_without_direction_weight('mult')
-    ### ========
-    ### LightGCN Variant
-    # from ..services.course_materials.GCN.lightGCN import LightGCN
-    # lightGCN = LightGCN()
-    # lightGCN.load_data(variant=True)
-    ### ========
-    ### LightGCN
-    # from ..services.course_materials.GCN.lightGCN import LightGCN
-    # lightGCN = LightGCN()
-    # lightGCN.load_data(variant=False)
-    ### ========
 
     end_time = time.time()
     print("use gcn Execution time: ", end_time - start_time, flush=True)
