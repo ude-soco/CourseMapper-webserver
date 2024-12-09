@@ -30,7 +30,6 @@ const Course = new Schema({
       frameborder: String,
     },
   ],
-  url: { type: String },
   createdAt: { type: Date },
   updatedAt: { type: Date },
   users: [

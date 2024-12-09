@@ -36,7 +36,7 @@ import { Location } from '@angular/common';
   providers: [MessageService, ConfirmationService, DialogService],
 })
 export class ChannelbarComponent implements OnInit {
-
+ 
   showConceptMapEvent: boolean = false;
 
   @Output() conceptMapEvent: EventEmitter<boolean> = new EventEmitter();
@@ -122,13 +122,11 @@ export class ChannelbarComponent implements OnInit {
       icon: 'pi pi-refresh',
       command: () => this.onRenameCourse(),
     },
-
     {
-      label: 'Edit course',
-      icon: 'pi pi-pencil',
-      command: () => this.onEditCourse(),
+      label: 'Delete',
+      icon: 'pi pi-times',
+      command: () => this.onDeleteCourse(),
     },
-
     {
       label: 'Share course ',
       icon: 'pi pi-copy',
@@ -140,19 +138,14 @@ export class ChannelbarComponent implements OnInit {
       icon: "pi pi-chart-bar",
       styleClass: "contextMenuButton",
       command: () => this.onViewDashboardClicked(),
-
+      
     },
-
     {
       label: 'Notification Settings',
       icon: 'pi pi-bell',
       command: ($event) => this.onNotificationSettingsClicked($event),
     },
-    {
-      label: 'Delete',
-      icon: 'pi pi-times',
-      command: () => this.onDeleteCourse(),
-    },
+
   ];
 
   normalUserOptions: MenuItem[] = [
@@ -161,7 +154,7 @@ export class ChannelbarComponent implements OnInit {
       icon: "pi pi-chart-bar",
       styleClass: "contextMenuButton",
       command: () => this.onViewDashboardClicked(),
-
+      
     },
     {
       label: 'Notification Settings',
@@ -229,7 +222,7 @@ export class ChannelbarComponent implements OnInit {
   }
   copyCourseId(courseId: string, name:string) {
     // const urlTree = this.router.createUrlTree(['course-description', courseId]);
-
+    
     // // Serializing the URL tree into a string
     // const url = this.router.serializeUrl(urlTree);
     const protocol = window.location.protocol;
@@ -291,9 +284,6 @@ export class ChannelbarComponent implements OnInit {
     selectedCurs.contentEditable = 'true';
     this.previousCourse = this.selectedCourse;
     this.selectElementContents(selectedCurs);
-  }
-
-  onEditCourse() {
   }
 
   onRenameCourseConfirm(id) {
@@ -502,7 +492,7 @@ export class ChannelbarComponent implements OnInit {
     }, 0);
   }
 
-
+ 
   preventEnterKey(e) {
     let confirmButton = document.getElementById('addChannelConfirm');
     if (e.keyCode === 13) {
@@ -524,7 +514,7 @@ export class ChannelbarComponent implements OnInit {
       'course',
       this.courseService.getSelectedCourse()._id,
       'dashboard'
-
+          
     ]);
   }
 }

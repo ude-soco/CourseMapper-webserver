@@ -62,7 +62,7 @@ export class CourseService {
   }
 
   logCourses(courseId: string): Observable<any> {
-    return this.http.get<Course>(`${this.API_URL}/courses/${courseId}/log`);
+    return this.http.get<Course>(`${this.API_URL}/courses/${courseId}/log`)
   }
   /**
    * @function fetchCourses
@@ -81,7 +81,7 @@ export class CourseService {
         //   // console.warn("User is not authenticated. Token expired or not provided.");
         //   return of([]); // Return empty array so app continues
         // }
-        return throwError(error); // Rethrow other errors
+         return throwError(error); // Rethrow other errors
       })
     );
   }
@@ -95,14 +95,11 @@ export class CourseService {
    *
    */
   addCourse(course: Course): any {
-    console.log('adding new course', course.url);
-
     return this.http
       .post<any>(`${this.API_URL}/course`, {
         name: course.name,
         description: course.description,
         shortname: course.shortName,
-        url: course.url,
       })
       .pipe(
         catchError((err, sourceObservable) => {
@@ -115,7 +112,6 @@ export class CourseService {
           }
         }),
         tap((res) => {
-
           if (!('errorMsg' in res)) {
             this.courses = [...this.courses, res.courseSaved];
             this.store.dispatch(
@@ -193,22 +189,6 @@ export class CourseService {
         tap((res) => {
           if (!('errorMsg' in res)) {
             this.renameCourseSuccess(courseTD, body.name);
-          }
-        })
-      );
-  }
-
-
-  setImageCourse(course: Course) {
-    return this.http
-      .put<any>(`${this.API_URL}/courses/${course._id}`, course)
-      .pipe(
-        catchError((err, sourceObservable) => {
-          return of({ errorMsg: err.error.error });
-        }),
-        tap((res) => {
-          if (!('errorMsg' in res)) {
-            console.log('image set successfully');
           }
         })
       );

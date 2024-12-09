@@ -4,106 +4,81 @@
     <app-sidebar></app-sidebar>
   </div>
 
-  <div
-    class="w-full mx-auto p-5"
-    style="width: 1280px"
-    *ngIf="this.isLoaded == false"
-  >
-    <p class="text-4xl leading-normal font-medium">
-      {{ this.course_enroll.name || "" }}
-    </p>
+  <div class="w-full mx-auto p-5" style="width: 1280px" *ngIf="this.isLoaded==false">
+    <p class="text-4xl leading-normal font-medium">{{ this.course_enroll.name || "" }}</p>
 
-    <div>
-      <div class="mt-4 mb-4 flex justify-between items-start">
-        <!-- Left Section: Details -->
-        <div class="flex flex-wrap gap-5">
-          <div class="flex flex-col">
-            <strong>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="22"
-                height="22"
-                viewBox="0 0 22 22"
-                style="
-                  fill: #ea580c;
-                  transform: msFilter;
-                  float: left;
-                  margin-right: 2px;
-                "
-              >
-                <path d="M2 7v1l11 4 9-4V7L11 4z"></path>
-                <path
-                  d="M4 11v4.267c0 1.621 4.001 3.893 9 3.734 4-.126 6.586-1.972 7-3.467.024-.089.037-.178.037-.268V11L13 14l-5-1.667v3.213l-1-.364V12l-3-1z"
-                ></path>
-              </svg>
-              <span class="font-medium pl-1">
-                Created by: {{ this.firstName }} {{ this.lastName }}
-              </span>
-            </strong>
-            <strong style="margin-left: 4px">
-              <i
-                class="pi pi-calendar"
-                style="font-size: 1rem; color: #ea580c"
-              ></i>
-              <span class="font-medium pl-1">
-                Created on: {{ createdAt | date : "d MMMM yyyy" }}
-              </span>
-            </strong>
-
-            <strong>
-              <p class="p" style="margin-left: 4px">
+    <div class="w-full flex justify-between">
+      <div>
+        <div class="mt-4 mb-4">
+          <div class="flex flex-wrap gap-5">
+            <div class="flex flex-col">
+              <strong>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="22"
+                  height="22"
+                  viewBox="0 0 22 22"
+                  style="
+                    fill: #ea580c;
+                    transform: msFilter;
+                    float: left;
+                    margin-right: 2px;
+                  "
+                >
+                  <path d="M2 7v1l11 4 9-4V7L11 4z"></path>
+                  <path
+                    d="M4 11v4.267c0 1.621 4.001 3.893 9 3.734 4-.126 6.586-1.972 7-3.467.024-.089.037-.178.037-.268V11L13 14l-5-1.667v3.213l-1-.364V12l-3-1z"
+                  ></path>
+                </svg>
+                <span class="font-medium pl-1">
+                  Created by: {{ this.firstName }} {{ this.lastName }}
+                </span>
+              </strong>
+              <strong style="margin-left: 4px">
                 <i
-                  class="pi pi-users"
+                  class="pi pi-calendar"
                   style="font-size: 1rem; color: #ea580c"
                 ></i>
                 <span class="font-medium pl-1">
-                  {{ this.Users.length }}: enrolled users
+                  Created on: {{ createdAt | date : "d MMMM yyyy" }}
                 </span>
-              </p>
-            </strong>
-
-            <div>
-              <button
-                pButton
-                [style]="{ 'background-color': '#0369A1', color: '#ffffff' }"
-                type="button"
-                label="Enroll In Course"
-                (click)="EnrollToCOurse()"
-              ></button>
+              </strong>
             </div>
           </div>
         </div>
 
-        <!-- Right Section: Image -->
         <div>
-          <img
-            alt="Course Image"
-            src="{{ this.getCourseImage(this.course_enroll) }}"
-            class="w-64 h-44 object-cover rounded-lg shadow"
-          />
+          <strong class="text-lg font-semibold">Course Description</strong>
+        </div>
+        <div class="w-80 pb-5">
+          <div
+            *ngIf="this.course_enroll.description.length == 0"
+            class="justify-self-start"
+          >
+            No description provided
+          </div>
+          <div class="justify-self-start" style="width: 750px">
+            {{ this.course_enroll.description }}
+          </div>
         </div>
       </div>
-
-      <hr />
-
-      <!-- Description of the course -->
-      <div>
-        <strong class="text-lg font-semibold"><b>Course Description</b></strong>
-      </div>
-      <div class="w-80 pb-5">
-        <div
-          *ngIf="this.course_enroll.description.length == 0"
-          class="justify-self-start"
+      <div class="flex flex-col items-center justify-center">
+        <button
+          pButton
+          [style]="{ 'background-color': '#0369A1', color: '#ffffff' }"
+          type="button"
+          label="Enroll In Course"
+          (click)="EnrollToCOurse()"
         >
-          No description provided
-        </div>
-        <div
-          class="justify-self-start"
-          style="width: 750px"
-          [innerHTML]="this.course_enroll.description"
-        ></div>
+        </button>
+        <p class="text-sm text-center mt-2 w-60">
+          Enroll in {{ this.course_enroll.name }} course to gain access to the learning materials.
+        </p>
       </div>
+      
     </div>
+
+    
   </div>
 </div>
 <app-footer></app-footer>
