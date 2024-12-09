@@ -40,7 +40,10 @@ import {
   State,
 } from '../state/annotation.reducer';
 import { Store } from '@ngrx/store';
-import { getCurrentMaterial, getCurrentMaterialId } from '../../../materials/state/materials.reducer';
+import {
+  getCurrentMaterial,
+  getCurrentMaterialId,
+} from '../../../materials/state/materials.reducer';
 import { PdfviewService } from 'src/app/services/pdfview.service';
 import {
   distinctUntilChanged,
@@ -342,6 +345,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   getDocUrl() {
     this.pdfViewService.currentDocURL.subscribe((url) => {
       this.docURL = this.API_URL + url.replace(/\\/g, '/');
+      console.log('this.docURL', this.docURL);
     });
   }
 
@@ -418,8 +422,6 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
       });
     }
   }
-
-
 
   /** Is called when a page is rendered. Is used to add Pin/rectangle/ highlight/circle on the pdf when a page is rendering */
   pageRendered(event: any) {
@@ -987,7 +989,9 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   save() {
     localStorage.setItem('mouseDownFlag', JSON.stringify(false));
 
-    var pageScale = this.pdfComponent.pdfViewer.getPageView(this.dataPageNumber - 1)?.scale ?? 1.0;
+    var pageScale =
+      this.pdfComponent.pdfViewer.getPageView(this.dataPageNumber - 1)?.scale ??
+      1.0;
 
     let pdfDrawingRect = {
       x1: this.drawingRect.x1 / pageScale,
