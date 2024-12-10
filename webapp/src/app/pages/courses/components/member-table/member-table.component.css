@@ -9,7 +9,10 @@
 .table {
   width: 100%;
   border-collapse: collapse;
-  overflow: hidden;
+  /* overflow: hidden; */
+}
+p-table p-datatable-table{
+  overflow: unset !important;
 }
 
 .table th, .table td {

@@ -26,8 +26,9 @@
       <p
         *ngIf="course.role === 'teacher' || user?.role?.name === 'admin'"
         class="text-xl font-normal cursor-pointer   mb-5 ml-3"
-        (click)="onManageRoles()"
-      >    <i class="pi pi-cog"></i>
+        (click)="onManageRoles()" 
+        style="font-size: 16px; color: inherit;" 
+      >    <i class="pi pi-cog"  style="font-size: 16px; color: inherit;"></i>
         Manage permissions
       </p>
     </div>

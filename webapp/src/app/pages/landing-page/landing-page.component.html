@@ -32,6 +32,7 @@
             pInputText
             [(ngModel)]="value1"
             placeholder="Search for courses ..."
+            (ngModelChange)="onSearchChange()"
             class="search"
           />
           <div *ngIf="value1 != ''" class="bottom-right1">
@@ -46,7 +47,7 @@
         <div
           *ngIf="value1 === '' || course.name.toLowerCase().includes(value1)"
         >
-          <p-card styleClass="p-card-shadow" >
+          <p-card styleClass="p-card-shadow">
             <hr style="margin-bottom: 0.75rem; margin-top: 0%" />
             <ng-template pTemplate="header">
               <img alt="Card" src="/assets/img/courseCard.png" />
@@ -70,8 +71,12 @@
                 </p>
               </div>
 
-              <p class="p" style="display: flex;">
-                <img src="../../../assets/icons/teacher-icon.png" alt="" width="25px">
+              <p class="p" style="display: flex">
+                <img
+                  src="../../../assets/icons/teacher-icon.png"
+                  alt=""
+                  width="25px"
+                />
                 <span class="pl-1">
                   Created by: {{ course.firstName }} {{ course.lastName }}
                 </span>
@@ -93,7 +98,10 @@
                   style="font-size: 1rem; color: #ea580c"
                 ></i>
                 <span class="pl-1">
-                  {{ course.totalEnrolled | number }} user{{course?.totalEnrolled > 1 ? 's' : ''}} enrolled
+                  {{ course.totalEnrolled | number }} user{{
+                    course?.totalEnrolled > 1 ? "s" : ""
+                  }}
+                  enrolled
                 </span>
               </p>
             </ng-template>
@@ -103,6 +111,7 @@
     </div>
   </div>
 </div>
+<div #scrollAnchor></div>
 <app-footer></app-footer>
 
 <!-- <div class="row">

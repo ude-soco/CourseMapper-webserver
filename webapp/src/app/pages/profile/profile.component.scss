@@ -166,4 +166,21 @@
     border-radius: 8px;
     padding: 40px;
    }
+  
+ 
+   .custom-save-button {
+    background-color: white; /* White background color for the button */
+    border: 2px solid rgb(63, 81, 181); /* Border color for outlining */
+    color: rgb(63, 81, 181); /* Text color */
+    padding: 10px 20px; /* Padding for button */
+    border-radius: 4px; /* Rounded corners */
+    transition: background-color 0.3s, color 0.3s; /* Transition for hover effects */
+    box-shadow: none; /* Remove any default shadows */
+  
+    &:hover {
+      background-color: rgb(63, 81, 181); /* Background color on hover */
+      color: white; /* Change text color on hover */
+    }
+  }
+
 }

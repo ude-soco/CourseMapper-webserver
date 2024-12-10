@@ -86,20 +86,20 @@ db.mongoose
 
 // Create connection to Neo4j
 const neo4j = require("./graph/neo4j");
-neo4j.connect(
+ neo4j.connect(
   process.env.NEO4J_URI,
   process.env.NEO4J_USER,
   process.env.NEO4J_PASSWORD,
-);
+ );
 
-// Create connection to Redis
+//Create connection to Redis
 const redis = require("./graph/redis");
-redis.connect(
-  process.env.REDIS_HOST,
-  process.env.REDIS_PORT,
-  process.env.REDIS_DATABASE,
-  process.env.REDIS_PASSWORD,
-);
+ redis.connect(
+   process.env.REDIS_HOST,
+   process.env.REDIS_PORT,
+   process.env.REDIS_DATABASE,
+   process.env.REDIS_PASSWORD,
+ );
 
 // xAPI scheduler
 const xapiScheduler = require("./activity-logger/scheduler/scheduler");

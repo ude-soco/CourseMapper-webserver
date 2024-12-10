@@ -48,7 +48,7 @@ export class CourseWelcomeComponent implements OnInit {
   showModeratorPrivileges:boolean = true;
   permissions: {} = {};
   user = this.storageService.getUser();
-
+  isBlocked: boolean = false;
 
   showInfoError: ShowInfoError;
 
@@ -71,6 +71,7 @@ export class CourseWelcomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.selectedCourse = this.courseService.getSelectedCourse();
+   
     this.Users = [];
     this.courseService.onSelectCourse.subscribe((course) => {
       if (['teacher', 'co_teacher', 'non_editing_teacher'].includes(course?.role) || this.user.role.name === 'admin') {
@@ -83,18 +84,34 @@ export class CourseWelcomeComponent implements OnInit {
       }
       this.selectedCourse = course;
       this.selectedCourseId = course._id;
-      this.topicChannelService.fetchTopics(course._id).subscribe((res) => {
-        this.selectedCourse = res.course;
-        this.Users = course.users;
-        // TODO: Bad implementation to get the moderator, i.e., course.users[0].userId
-        this.buildCardInfo(course.users[0].userId, course);
-      });
+      this.topicChannelService.fetchTopics(course._id).subscribe({
+        next: (res) => {
+            this.selectedCourse = res.course; // Handle successful response
+            this.Users = course.users;
+            if (course.users.length > 0) {
+                this.buildCardInfo(course.users[0].userId, course);
+            }
+        },
+        error: (err) => {
+            // Error handling for 403 Forbidden error
+            if (err.status === 403) {
+                this.isBlocked = true; // Set blocked state
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Access Denied',
+                    detail: 'You do not have permission to access this course.'
+                });
+            }
+        }
+    });
+
 
       if (this.selectedCourse.role === 'teacher') {
         this.moderator = true;
       } else {
         this.moderator = false;
       }
+    
     });
     if (this.selectedCourse._id !== '') {
       this.buildCardInfo(
@@ -107,7 +124,9 @@ export class CourseWelcomeComponent implements OnInit {
         this.moderator = false;
       }
     }
+  
   }
+
 
   buildCardInfo(userModeratorID: string, course: Course) {
     this.userService.GetUserName(userModeratorID).subscribe((user) => {

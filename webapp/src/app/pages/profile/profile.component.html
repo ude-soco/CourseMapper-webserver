@@ -30,7 +30,6 @@
               name="photo"
               (onSelect)="onFileSelect($event)"
               [auto]="false"
-              class="profile-upload-btn"
             ></p-fileUpload>
           </div>
         </div>
@@ -67,7 +66,7 @@
 
           <div class="button-group pt-5">
             <button pButton type="button" icon="pi pi-times" label="Cancel" class="p-button-outlined" (click)="cancel()"></button>
-            <button pButton type="submit" icon="pi pi-check" label="Save" class="p-button-primary"></button>
+            <button pButton type="submit" icon="pi pi-check" label="Save" class="custom-save-button"></button>
           </div>
         </form>
       </div>

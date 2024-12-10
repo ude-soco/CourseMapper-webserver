@@ -11,7 +11,9 @@
 
     <div
       *ngFor="let course of courses; let i = index"
-      (click)="selectedCourse._id != course._id ? onSelectCourse(course) : undefined"
+      (click)="
+        selectedCourse._id != course._id ? onSelectCourse(course) : undefined
+      "
       [attr.data-index]="i"
     >
       <div
@@ -40,7 +42,7 @@
     </div>
 
     <div class="sidebar-icon group">
-      <a [routerLink]="[LandingPage]" >
+      <a [routerLink]="[LandingPage]">
         <i class="bx bx-search bx-md bx-tada-hover"></i>
         <span class="sidebar-tooltip group-hover:scale-100">
           Search for courses

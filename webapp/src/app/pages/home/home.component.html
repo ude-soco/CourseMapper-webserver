@@ -20,134 +20,322 @@
       >
         My Courses
       </p>
-      <p class="text-4xl leading-normal text-center mt-6">
+      <p class="text-4xl leading-normal text-center mb-1">
         Welcome back! Pick a course from your list to start learning
       </p>
-  </div>
+    </div>
+     <div class="md:container md:mx-auto w-full">
+      <div class="flex flex-row gap-x-4 justify-between mb-3">
+        <div class="flex items-center" style="flex-basis: 750px;"> <!-- Set a specific width here -->
+          <div class="border border-gray-300 h-9 rounded-md flex items-center w-full  ml-5">
+        
+        
+          <svg
+          aria-hidden="true"
+          focusable="false"
+          data-prefix="fas"
+          data-icon="magnifying-glass"
+          role="img"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 512 512"
+          width="15"
+          class="svg-inline--fa fa-magnifying-glass ml-3"
+          >
+            <path
+            fill="grey"
+            d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"
+            class=""
+            ></path>
+          </svg>
+          <input
+          type="text"
+          placeholder="Search a course"
+          class="w-full focus:outline-none border-none ml-1"
+          [(ngModel)]="searchText"
+          (ngModelChange)="onSearchChange()"
+          />
+      </div>
+      
+    </div>
+      
+      <div class="w-1/5 flex flex-row items-center">
+        <div class="relative inline-block text-left">
+          <!-- Dropdown Button -->
+          <button
+            *ngIf="selectedRoles.length === 0"
+            (click)="toggleDropdown('roles')"
+            type="button"
+            class="inline-flex justify-between w-80 h-9 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+            id="dropdownMenuButton"
+          >
+            Filter by role
+            <svg
+              class="ml-2 h-5 w-5"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </button>
 
-  <div class="md:container md:mx-auto">
-    <ng-container *ngIf="courses && courses.length">
-      <!-- Section for each role -->
-      <ng-container *ngFor="let role of sections">
-        <div>
+          
+          <div
+            *ngIf="selectedRoles.length !== 0"
+            class="inline-flex flex-wrap w-80 gap-1 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+          >
+            <span
+              *ngFor="let role of selectedRoles"
+              style="background-color:rgba(196, 208, 247, 0.5) ; cursor: pointer;"
+              class="rounded-sm border-green-100 px-1 flex flex-row items-center justify-between "
+            >
+              {{ getAbbreviatedRole(role) }}
+              <div
+                (click)="removeSelectedRole(role)"
+                class="remove-chip" style="margin-left: 0.5rem; background: none; border: none; "
+              >
+              ×
+              </div>
+            </span>
+          </div>
+          <!-- Dropdown Menu -->
+          <div
+            *ngIf="rolesFilter && selectedRoles.length === 0"
+            class="z-20 origin-top-right absolute right-0 mt-2 w-80 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+            id="dropdownMenu"
+          >
+            <div class="py-1">
+              <!-- Checkbox Item 1 -->
+              <label
+                *ngFor="let role of roles"
+                class="block px-4 py-2 text-sm text-gray-700"
+              >
+                <input
+                  type="checkbox"
+                  value="role"
+                  class="mr-2 leading-tight"
+                  (change)="onRoleChange(role.value, $event)"
+                  [checked]="isChecked(role.value)"
+                />
+                {{ role.label }}
+              </label>
+            </div>
+          </div>
+          <div
+            *ngIf="rolesFilter && selectedRoles.length !== 0"
+            class="z-20 origin-top-right absolute right-0 mt-2 w-80 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+            id="dropdownMenu"
+          >
+            <div class="py-1">
+              <!-- Checkbox Item 1 -->
+              <label
+                *ngFor="let role of roles"
+                class="block px-4 py-2 text-sm text-gray-700"
+              >
+                <input
+                  type="checkbox"
+                  value="role"
+                  class="mr-2 leading-tight"
+                  (change)="onRoleChange(role.value, $event)"
+                  [checked]="isChecked(role.value)"
+                />
+                {{ role.label }}
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flex items-center w-1/4">
+        <div class="relative inline-block text-left w-full">
+          <!-- Dropdown Button -->
+          <button
+            (click)="toggleDropdown('sort')"
+            type="button"
+            class="inline-flex justify-between w-80 h-9 ml-11 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+            id="dropdownMenuButton"
+          >
+          <span>
+            <ng-container *ngIf="sortByFilter; else defaultSortBy">
+              <span class="chip " style="background-color:rgba(196, 208, 247, 0.5); padding: 0.1rem 0.5rem; ">
+                {{ getSelectedSortLabel() }}
+                <button (click)="removeSortChip()" class="remove-chip" style="margin-left: 0.5rem; background: none; border: none;   "> ×</button>
+              </span>
+            </ng-container>
+            <ng-template #defaultSortBy>
+              Sort by
+            </ng-template>
+          </span>
+
+              
          
 
-            <div *ngIf="hasCoursesForRole(role); else noCoursesFound" class="overscroll-y-auto h-1/2 flex flex-wrap">
-              <!-- Get courses by current role -->
-              <div *ngFor="let course of getCoursesByRole(role)" class="course-card-container">
-                <p-card styleClass="p-card-shadow" class="course-card relative">
-                  <span class="badge" >{{ course?.role?.split('_')?.join(' ') }}</span>
-                  <hr style="margin-bottom: 0.75rem; margin-top: 0%" />
-                  <ng-template pTemplate="header">
-                    <img
-                      alt="Card"
-                      class="cursor-pointer"
-                      src="/assets/img/courseCard.png"
-                      (click)="onSelectCourse(course)"
-                    />
-                  </ng-template>
-  
-                  <ng-template pTemplate="content-center" style="float: left">
-                    <div class="w-full h-14 mb-3 flex items-start justify-between">
-                      <div class="flex items-center">
-                        <p-avatar
-                          label="{{ course.shortName }}"
-                          shape="circle"
-                          size="large"
-                          [style]="{
-                            'background-color': '#0369A1',
-                            color: '#ffffff',
-                            float: 'left'
-                          }"
-                        ></p-avatar>
-                        <p class="font-medium text-xl pl-3">{{ course.name }}</p>
-                      </div>
-  
-                      <!-- 3-Dot Menu -->
-                      <div class="card flex justify-content-center">
-                        <p-menu
-                          #menu
-                          [model]="course.menuItems || []"
-                          [popup]="true"
-                          appendTo="body"
-                        ></p-menu>
-                        <p-button
-                          (onClick)="menu.toggle($event)"
-                          icon="pi pi-ellipsis-v"
-                          styleClass="p-button-text"
-                        ></p-button>
-                      </div>
-                    </div>
-  
-                    <p class="p" style="display: flex;">
-                      <img src="../../../assets/icons/teacher-icon.png" alt="" width="25px">
-                      <span class="pl-1">
-                        Created by: {{ course.firstName }} {{ course.lastName }}
-                      </span>
-                    </p>
-  
-                    <p class="p" style="margin-left: 4px">
-                      <i class="pi pi-calendar" style="font-size: 1rem; color: #ea580c"></i>
-                      <span class="pl-1">
-                        Created on: {{ course.createdAt | date : "d MMMM yyyy" }}
-                      </span>
-                    </p>
-                    
-                     <p class="p" style="margin-left: 4px">
-                      <i
-                       class="pi pi-users"
-                         style="font-size: 1rem; color: #ea580c"
-                        ></i>
-                        <span class="pl-1">
-                  {{ course.totalEnrolled | number }} user{{course?.totalEnrolled > 1 ? 's' : ''}} enrolled
-                </span>
-                    </p>
-                  </ng-template>
-                </p-card>
-              </div>
-  
-              <div *ngIf="getCoursesCount(role)" class="w-full text-center mt-4">
-                <button pButton label="Show More" (click)="showAllCourses(role)" *ngIf="!showAll[role]"></button>
-                <button pButton label="Show Less" (click)="showAllCourses(role)" *ngIf="showAll[role]"></button>
-              </div>
+
+            <svg
+              class="ml-2 h-5 w-5"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            
+          </button>
+       
+
+    
+        
+          <!-- Dropdown Menu -->
+          <div
+            *ngIf="sortFilter"
+            class="z-20 origin-top-right absolute right-0 mt-2 mr-5 w-80 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+            id="dropdownMenu"
+          >
+            <div class="py-1">
+              <label
+                *ngFor="let item of sortByList"
+                class="block px-4 py-2 text-sm text-gray-700"
+                [ngClass]="{ 'opacity-50': sortByFilter }" 
+              >
+                <input
+                  [value]="item.value"
+                  type="checkbox"
+                  name="sortOption"
+                  (change)="handleSortOptionChange(item.value, $event)"
+                  [disabled]="isOtherOptionSelected(item.value)"
+                  class="cursor-pointer px-2 py-1 rounded leading-tight"
+                  [checked]="item.selected"
+                  />
+                  {{ item.label }}
+                
+              </label>
             </div>
-            <ng-template #noCoursesFound>
-              <div class="w-full text-center mt-4">
-                <p>No courses were found.</p>
-              </div>
-            </ng-template>
-          
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+    <div class="md:container md:mx-auto">
+      <ng-container *ngIf="courses && courses.length">
+        <div class="overscroll-y-auto h-1/2 flex flex-wrap">
+          <div *ngFor="let course of userArray" class="course-card-container">
+            <p-card styleClass="p-card-shadow" class="course-card relative">
+              <span class="badge-blocked" *ngIf="course?.isBlocked">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="15"
+                  height="15"
+                  style="margin-bottom: 3px; margin-right: 0.5rem"
+                  viewBox="0 0 448 512"
+                >
+                  <!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+                  <path
+                    fill="#ffffff"
+                    d="M144 144l0 48 160 0 0-48c0-44.2-35.8-80-80-80s-80 35.8-80 80zM80 192l0-48C80 64.5 144.5 0 224 0s144 64.5 144 144l0 48 16 0c35.3 0 64 28.7 64 64l0 192c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 256c0-35.3 28.7-64 64-64l16 0z"
+                  />
+                </svg>
+                Blocked from course
+              </span>
+              <span class="badge" [ngClass]="getRoleClass(course?.role)"
+                >{{ getFormattedRole(course.role) }}
+              </span>
+              <hr style="margin-bottom: 0.75rem; margin-top: 0%" />
+              <ng-template pTemplate="header">
+                <img
+                  alt="Card"
+                  class="cursor-pointer"
+                  src="/assets/img/courseCard.png"
+                  (click)="onSelectCourse(course)"
+                />
+              </ng-template>
+
+              <ng-template pTemplate="content-center" style="float: left">
+                <div class="w-full h-14 mb-3 flex items-start justify-between">
+                  <div class="flex items-center">
+                    <p-avatar
+                      label="{{ course.shortName }}"
+                      shape="circle"
+                      size="large"
+                      [style]="{
+                        'background-color': '#0369A1',
+                        color: '#ffffff',
+                        float: 'left'
+                      }"
+                    ></p-avatar>
+                    <p class="font-medium text-xl pl-3">
+                      {{ course.name }}
+                    </p>
+                  </div>
+
+                  <div class="card flex justify-content-center">
+                    <p-menu
+                      #menu
+                      [model]="course.menuItems || []"
+                      [popup]="true"
+                      appendTo="body"
+                    ></p-menu>
+                    <p-button
+                      (onClick)="menu.toggle($event)"
+                      icon="pi pi-ellipsis-v"
+                      styleClass="p-button-text"
+                    ></p-button>
+                  </div>
+                </div>
+
+                <p class="p" style="display: flex">
+                  <img
+                    src="../../../assets/icons/teacher-icon.png"
+                    alt=""
+                    width="25px"
+                  />
+                  <span class="pl-1">
+                    Created by: {{ course.firstName }} {{ course.lastName }}
+                  </span>
+                </p>
+
+                <p class="p" style="margin-left: 4px">
+                  <i
+                    class="pi pi-calendar"
+                    style="font-size: 1rem; color: #ea580c"
+                  ></i>
+                  <span class="pl-1">
+                    Created on:
+                    {{ course.createdAt | date : "d MMMM yyyy" }}
+                  </span>
+                </p>
+
+                <p class="p" style="margin-left: 4px">
+                  <i
+                    class="pi pi-users"
+                    style="font-size: 1rem; color: #ea580c"
+                  ></i>
+                  <span class="pl-1">
+                    {{ course.totalEnrolled | number }} 
+                    enrolled user{{
+                      course?.totalEnrolled > 1 ? "s" : ""
+                    }}
+                  </span>
+                </p>
+              </ng-template>
+            </p-card>
+          </div>
         </div>
       </ng-container>
-    </ng-container>
 
-    <!-- Message when no courses are enrolled -->
-    <div *ngIf="!courses || courses.length === 0">
-      <p class="text-5xl leading-normal font-bold text-center mt-6">
-        Currently you have no courses enrolled.
-      </p>
-      <p class="text-4xl leading-normal text-center mt-6">
-        <a href="landingPage" style="color: #0277bd"> Click here</a> to search for courses to start learning!
-      </p>
+     
     </div>
   </div>
 </div>
-
-</div>
+<div #scrollAnchor></div>
 <app-footer></app-footer>
-<!-- <div class="row">
-        <div class="column" style="background-color:#aaa;">
-          <h2>Column 1</h2>
-          <p>Some text..</p>
-        </div>
-        <div class="column" style="background-color:#bbb;">
-          <h2>Column 2</h2>
-          <p>Some text..</p>
-        </div>
-        <div class="column" style="background-color:#ccc;">
-          <h2>Column 3</h2>
-          <p>Some text..</p>
-        </div>
-      </div>
-       -->
+
 <p-confirmDialog></p-confirmDialog>

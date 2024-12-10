@@ -20,7 +20,6 @@ const notifications = require("../middlewares/Notifications/notifications");
 import catchAsync from "../helpers/catchAsync";
 import { utili } from "../middlewares";
 
-
 const {
   getNotificationSettingsWithFollowingAnnotations,
 } = require("../middlewares/Notifications/notifications");
@@ -29,7 +28,7 @@ const {
  * Get all courses controller
  *
  */
-export const getAllCourses = catchAsync(async (req, res, next) => {
+/*export const getAllCourses = catchAsync(async (req, res, next) => {
   let courses = await Course.find({})
     .populate("topics", "-__v")
     .populate({ path: "users", populate: { path: "role" } });
@@ -54,14 +53,67 @@ export const getAllCourses = catchAsync(async (req, res, next) => {
     });
   }
   return res.status(200).send(results);
-});
+});*/
+/**
+ * @function getAllCourses
+ * Get all courses controller
+ *
+ */
+export const getAllCourses = catchAsync(async (req, res, next) => {
+  const { search } = req.query;
+  let page = parseInt(req.query.page) || 1;
+  let limit = parseInt(req.query.limit) || 16;
+  let skip = (page - 1) * limit;
 
+  console.log(`Search is ${search}, Page is : ${page} , Limit is : ${limit}`);
+  let query = {};
+  if (search) {
+    // Use regex for case-insensitive partial matches
+    query.name = { $regex: search, $options: "i" };
+  }
+  const totalCourses = await Course.countDocuments(query);
+  // Fetch courses based on the query, pagination, and population
+  let courses = await Course.find(query)
+    .skip(skip)
+    .limit(limit)
+    .populate("topics", "-__v")
+    .populate({ path: "users", populate: { path: "role" } });
+
+  let results = [];
+  if (courses.length > 0) {
+    courses.forEach((c) => {
+      let course = {
+        _id: c.id,
+        name: c.name,
+        shortName: c.shortName,
+        description: c.description,
+        numberTopics: c.topics.length,
+        numberChannels: c.channels.length,
+        numberUsers: c.users.length,
+        channels: c.channels,
+        createdAt: c.createdAt,
+        users: c.users,
+      };
+      results.push(course);
+    });
+  }
+  const totalPages = Math.ceil(totalCourses / limit);
+  return res.status(200).send({
+    results,
+    pagination: {
+      totalPages,
+      currentPage: page,
+      totalCourses,
+    },
+  });
+});
 /**
  * @function getMyCourses
  * Get all courses the logged in user is enrolled in controller
  *
  */
-export const getMyCourses = catchAsync(async (req, res, next) => {
+
+/*export const getMyCourses = catchAsync(async (req, res, next) => {
   let userId = req.userId;
   let results = [];
 
@@ -94,7 +146,164 @@ export const getMyCourses = catchAsync(async (req, res, next) => {
     results.push(course);
   });
   return res.status(200).send(results);
+});*/
+
+export const getMyCourses = catchAsync(async (req, res, next) => {
+  const userId = req.userId;
+  const { search, roles, sort, page, limit } = req.query;
+
+  // Parse pagination parameters
+  const pageNew = parseInt(page) || 1;
+  const limitNew = parseInt(limit) || 16;
+  const skip = (pageNew - 1) * limitNew;
+
+  console.log("Limit:", limitNew, "Page:", pageNew, "Skip:", skip);
+
+  // Fetch user data with populated courses
+  const user = await User.findById(userId)
+    .populate({ path: "courses", populate: { path: "role" } })
+    .populate({
+      path: "courses",
+      populate: {
+        path: "courseId",
+        populate: {
+          path: "users.userId",
+          select: "firstname lastname email", // Fields to include
+        },
+      },
+    });
+
+  if (!user) {
+    return res.status(500).send({ message: "Error finding user" });
+  }
+
+  // Map courses into desired format
+  let results = user.courses?.map((course) => {
+    const originalUsers = course?.courseId?.users; // Original users array
+    const populatedUsers = course?.courseId?.users?.map((user) => user.userId); // Populated userId details
+
+    return {
+      _id: course?.courseId?._id,
+      name: course?.courseId?.name,
+      shortName: course?.courseId?.shortName,
+      description: course?.courseId?.description,
+      numberTopics: course?.courseId?.topics?.length,
+      numberChannels: course?.courseId?.channels?.length,
+      numberUsers: course?.courseId?.users?.length,
+      role: course?.role?.name,
+      channels: course?.courseId?.channels,
+      createdAt: course?.courseId?.createdAt,
+
+      // Original users array
+      users: getUsers(originalUsers),
+
+      // Populated users.userId data
+      creator: getName(populatedUsers),
+
+      co_teacher_permissions: course?.courseId?.co_teacher_permissions,
+      blockedUsers: course?.courseId?.blockedUsers,
+      isBlocked: isBlocked(course?.courseId?.blockedUsers),
+      non_editing_teacher_permissions:
+        course?.courseId?.non_editing_teacher_permissions,
+    };
+  });
+
+  function isBlocked(users) {
+    return users.some((user) => userId === user.toString());
+  }
+  function getUsers(users) {
+    let result = [];
+    users.forEach((user) => {
+      let newUser = {
+        userId: user.userId._id,
+        role: user.role,
+        _id: user._id,
+      };
+      result.push(newUser);
+    });
+    return result;
+  }
+
+  function getName(users) {
+    let name = `${users[0].firstname} ${users[0].lastname}`;
+    return name;
+  }
+  // Apply search filter
+  if (search) {
+    const searchLower = search.toLowerCase();
+    results = results.filter((course) =>
+      course.name?.toLowerCase().includes(searchLower)
+    );
+  }
+
+  // Apply role filter
+  if (roles) {
+    const rolesArray = roles.split(",").map((role) => role.trim());
+    results = results.filter((course) => rolesArray.includes(course.role));
+  }
+
+  // Apply sorting
+  if (sort) {
+    results.sort((a, b) => {
+      switch (sort) {
+        case "creation-new-to-old":
+          return new Date(b.createdAt) - new Date(a.createdAt);
+        case "creation-old-to-new":
+          return new Date(a.createdAt) - new Date(b.createdAt);
+        case "name-a-z":
+          return a.creator.localeCompare(b.creator);
+        case "name-z-a":
+          return b.creator.localeCompare(a.creator);
+        case "users-low-to-high":
+          return a.numberUsers - b.numberUsers;
+        case "users-high-to-low":
+          return b.numberUsers - a.numberUsers;
+        default:
+          return 0;
+      }
+    });
+  }
+
+  // Apply pagination
+  const totalCourses = results.length;
+  const totalPages = Math.ceil(totalCourses / limitNew);
+  const paginatedResults = results.slice(skip, skip + limitNew);
+
+  // Send response
+  return res.status(200).send({
+    results: paginatedResults,
+    pagination: {
+      currentPage: pageNew,
+      totalPages,
+      limit: limitNew,
+      totalCourses,
+    },
+  });
 });
+
+/**
+ * @function getCourse
+ * Get details of a course controller
+ *
+ * @param {string} req.params.courseId The id of the course
+ */
+// export const getCourse = async (req, res) => {
+//   const courseId = req.params.courseId;
+//   let foundCourse;
+//   try {
+//     foundCourse = await Course.findOne({
+//       _id: ObjectId(courseId),
+//     }).populate("topics channels", "-__v");
+//     if (!foundCourse) {
+//       return res.status(404).send({
+//         error: `Course with id ${courseId} doesn't exist!`,
+//       });
+//     }
+//   } catch (err) {
+//     return res.status(500).send({ message: err });
+//   }
+//   return res.status(200).send(foundCourse);
+// };
 
 /**
  * @function getCourse
@@ -326,22 +535,25 @@ export const getCourse = catchAsync(async (req, res, next) => {
     ]); */
     foundCourse = await Course.findById(courseId)
       .populate("topics", "-__v")
-      .populate({ path: "users", populate: [{ path: "role" }, { path: "userId" }] })
+      .populate({
+        path: "users",
+        populate: [{ path: "role" }, { path: "userId" }],
+      })
       .populate({ path: "topics", populate: { path: "channels" } });
 
     if (!foundCourse) {
-      return res.status(404).send({ error: `Course with id ${courseId} doesn't exist!` });
+      return res
+        .status(404)
+        .send({ error: `Course with id ${courseId} doesn't exist!` });
     }
   } catch (err) {
     return res.status(500).send({ message: "Error finding a course" });
   }
 
-
   // Check if the current user is blocked from the course
   const isUserBlocked = foundCourse.blockedUsers.some(
     (blockedUserId) => blockedUserId.toString() === userId.toString()
   );
-
 
   // add user role in this course
   const userRole = foundCourse.users.find(
@@ -351,14 +563,11 @@ export const getCourse = catchAsync(async (req, res, next) => {
     foundCourse.role = userRole.role.name;
   }
 
-
   if (isUserBlocked) {
     return res.status(403).send({
       error: "You are blocked from accessing this course.",
     });
   }
-
-
 
   let notificationSettings;
   try {
@@ -367,8 +576,8 @@ export const getCourse = catchAsync(async (req, res, next) => {
       courseId: courseId,
     }); */
 
-    notificationSettings = 
-    await getNotificationSettingsWithFollowingAnnotations(courseId, userId);
+    notificationSettings =
+      await getNotificationSettingsWithFollowingAnnotations(courseId, userId);
   } catch (err) {
     return res
       .status(500)
@@ -389,8 +598,9 @@ export const getCourse = catchAsync(async (req, res, next) => {
     createdAt: foundCourse?.createdAt,
     updatedAt: foundCourse?.updatedAt,
     co_teacher_permissions: foundCourse?.co_teacher_permissions,
-    non_editing_teacher_permissions: foundCourse?.non_editing_teacher_permissions,
-  }
+    non_editing_teacher_permissions:
+      foundCourse?.non_editing_teacher_permissions,
+  };
 
   return res.status(200).send({
     course,
@@ -622,7 +832,7 @@ export const withdrawCourse = catchAsync(async (req, res, next) => {
   try {
     await BlockingNotifications.deleteMany({
       courseId: courseId,
-      userId: userId
+      userId: userId,
     });
   } catch (err) {
     return res
@@ -633,7 +843,7 @@ export const withdrawCourse = catchAsync(async (req, res, next) => {
   try {
     await FollowAnnotation.deleteMany({
       courseId: courseId,
-      userId: userId
+      userId: userId,
     });
   } catch (err) {
     return res.status(500).send({ error: "Error deleting follow annotations" });
@@ -642,7 +852,7 @@ export const withdrawCourse = catchAsync(async (req, res, next) => {
   try {
     await UserNotification.deleteMany({
       courseId: foundCourse._id,
-      userId: userId
+      userId: userId,
     });
   } catch (error) {
     return res.status(500).send({ error: "Error deleting user notification" });
@@ -698,7 +908,7 @@ export const newCourse = catchAsync(async (req, res, next) => {
         }
       })
       .join("");
-  };
+  }
 
   let foundRole = await Role.findOne({ name: "teacher" });
 
@@ -771,7 +981,6 @@ export const newCourse = catchAsync(async (req, res, next) => {
   return next();
 });
 
-
 /**
  * @function updateUserRole
  * Update a user's role in a course
@@ -807,8 +1016,12 @@ export const updateUserRole = catchAsync(async (req, res, next) => {
     return res.status(400).send({ error: "Invalid role!" });
   }
 
-  const existingUserInCourse = foundCourse.users.find((user) => user.userId.toString() === user_id.toString());
-  const existingUserInUserCourses = foundUser.courses.find((course) => course.courseId.toString() === courseId.toString());
+  const existingUserInCourse = foundCourse.users.find(
+    (user) => user.userId.toString() === user_id.toString()
+  );
+  const existingUserInUserCourses = foundUser.courses.find(
+    (course) => course.courseId.toString() === courseId.toString()
+  );
 
   if (existingUserInCourse && existingUserInUserCourses) {
     if (existingUserInCourse.role.toString() !== userRole._id.toString()) {
@@ -816,7 +1029,9 @@ export const updateUserRole = catchAsync(async (req, res, next) => {
       existingUserInCourse.role = userRole._id;
       existingUserInUserCourses.role = userRole._id;
     } else {
-      return res.status(403).send({ error: `User has already assigned the role of ${role} for this course!` });
+      return res.status(403).send({
+        error: `User has already assigned the role of ${role} for this course!`,
+      });
     }
   } else {
     foundCourse.users.push({
@@ -832,12 +1047,16 @@ export const updateUserRole = catchAsync(async (req, res, next) => {
 
   await Promise.all([foundCourse.save(), foundUser.save()]);
 
+  const roleMapping = {
+    'co_teacher': 'Co-Teacher',
+    'non_editing_teacher': 'Teaching Assistant',
+    'user': 'Student'
+  };
+  const userFriendlyRole = roleMapping[role] || role;
+
   await helpers.initialiseNotificationSettings(foundCourse, foundUser);
 
-  const responseMessage = role === 'non_editing_teacher' 
-  ? `User '${foundUser.username}' added as a Teaching Assistant to course '${foundCourse.name}'` 
-  : `User '${foundUser.username}' added as a ${role} to course '${foundCourse.name}'`;
- 
+  const responseMessage =`User '${foundUser.username}' added as a ${userFriendlyRole} to course '${foundCourse.name}'`;
   const response = {
     success: responseMessage,
     course: foundCourse,
@@ -847,18 +1066,18 @@ export const updateUserRole = catchAsync(async (req, res, next) => {
     course: foundCourse,
     user: foundUser,
     response: response,
-    role
+    role,
   };
 
-  const notificationSettings = await notifications.getNotificationSettingsWithFollowingAnnotations(
-    foundCourse._id,
-    req.userId
-  );
+  const notificationSettings =
+    await notifications.getNotificationSettingsWithFollowingAnnotations(
+      foundCourse._id,
+      req.userId
+    );
 
   req.locals.response.updatedNotificationSettings = notificationSettings[0];
   return next();
 });
-
 
 /**
  * @function updateUserPermissions
@@ -876,7 +1095,7 @@ export const updateUserPermissions = catchAsync(async (req, res) => {
     return res.status(400).send({ error: "Invalid course!" });
   }
 
-  if (typeof permissions !== 'object') {
+  if (typeof permissions !== "object") {
     return res.status(400).send({ error: "Invalid permissions format!" });
   }
 
@@ -903,7 +1122,6 @@ export const updateUserPermissions = catchAsync(async (req, res) => {
     success: `Permissions updated for course '${foundCourse.name}'`,
     course: foundCourse,
   });
-
 });
 
 
@@ -1036,6 +1254,7 @@ export const blockUserBetweenUsers  = catchAsync(async (req, res, next) => {
       });
     }
 });
+
 /**
  * @function deleteCourse
  * Delete a course controller
@@ -1228,8 +1447,10 @@ export const editCourse = catchAsync(async (req, res, next) => {
   const foundUser = await User.findById(userId);
 
   if (!foundCourse) {
-    return res.status(404).send({ error: `Course with id ${courseId} doesn't exist!` });
-  };
+    return res
+      .status(404)
+      .send({ error: `Course with id ${courseId} doesn't exist!` });
+  }
 
   req.locals = {
     oldCourse: JSON.parse(JSON.stringify(foundCourse)),
@@ -1238,18 +1459,31 @@ export const editCourse = catchAsync(async (req, res, next) => {
 
   // Update course name
   if (courseName && utili.permissionsChecker(req, "can_edit_course_name")) {
-    foundCourse.shortName = courseName.split(" ").slice(0, 3).map(word => word[0]).join("");
+    foundCourse.shortName = courseName
+      .split(" ")
+      .slice(0, 3)
+      .map((word) => word[0])
+      .join("");
     foundCourse.name = courseName;
-    req.locals.response = { success: `${foundCourse.name}'s name has been updated!` };
-  } 
+    req.locals.response = {
+      success: `${foundCourse.name}'s name has been updated!`,
+    };
+  }
   // Update course description
-  else if (courseDesc && utili.permissionsChecker(req, "can_edit_course_description")) {
+  else if (
+    courseDesc &&
+    utili.permissionsChecker(req, "can_edit_course_description")
+  ) {
     foundCourse.description = courseDesc;
-    req.locals.response = { success: `${foundCourse.name}'s description has been updated!` };
-  } 
+    req.locals.response = {
+      success: `${foundCourse.name}'s description has been updated!`,
+    };
+  }
   // No updates made
   else {
-    return res.status(400).json({ error: 'No valid update fields provided or insufficient permissions.' });
+    return res.status(400).json({
+      error: "No valid update fields provided or insufficient permissions.",
+    });
   }
 
   // Save updates and proceed
@@ -1471,7 +1705,6 @@ export const reorderIndicators = catchAsync(async (req, res, next) => {
     indicators: foundCourse.indicators,
   });
 });
-
 
 export const getCourseTest = catchAsync(async (req, res, next) => {
   const courseId = req.params.courseId;

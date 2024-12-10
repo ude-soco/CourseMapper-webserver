@@ -75,9 +75,9 @@ export class ChannelbarComponent implements OnInit {
         //           });
         //         }
         // else{
-        this.courseService.fetchCourses().subscribe((courses) => {
-          this.selectedCourse = courses.find(
-            (course) => course._id == params['courseID']
+        this.courseService.fetchCourses().subscribe((courses: any) => {
+          this.selectedCourse = courses?.results?.find(
+            (course) => course?._id == params['courseID']
           );
           this.courseService.selectCourse(this.selectedCourse);
 

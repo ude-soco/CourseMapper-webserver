@@ -3,7 +3,7 @@ import { Course } from 'src/app/models/Course';
 import { environment } from '../../environments/environment';
 import { EventEmitter, Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError, Observable, of, Subject, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, Observable, of, Subject, tap, throwError } from 'rxjs';
 import { TopicChannelService } from './topic-channel.service';
 import { StorageService } from './storage.service';
 import { Store } from '@ngrx/store';
@@ -20,6 +20,17 @@ import { Socket } from 'ngx-socket-io';
 export class CourseService {
   private API_URL = environment.API_URL;
   private courses: Course[] = [];
+
+  
+  private queryParams = new BehaviorSubject<any>({
+    page: 1,
+    limit: 16,
+    sort: '',
+    roles: [],
+    search: '',
+  });
+
+  $queryParams = this.queryParams.asObservable();
   // it is not private because it is subscribed in Sidebar component
   onUpdateCourses$ = new Subject<Course[]>();
   // it is not private because it is subscribed in chnannelbar component
@@ -35,6 +46,19 @@ export class CourseService {
     private store: Store<State>,
     private socket: Socket
   ) {}
+
+
+  setQueryParams(params: any) {
+    // If the parameters include search, sort, or roles, reset the page to 1
+    if (params.search || params.sort || params.roles) {
+      params.page = 1; // Reset page to 1
+    }
+
+    // Merge the existing query parameters with the new ones
+    const updatedParams = { ...this.queryParams.value, ...params };
+    this.queryParams.next(updatedParams); // Emit the updated parameters
+    console.log(updatedParams, 'Updated query parameters');
+  }
 
   getSelectedCourse(): Course {
     return this.selectedCourse;
@@ -71,20 +95,55 @@ export class CourseService {
    *
    */
   
-  fetchCourses(): Observable<Course[]> {
-    return this.http.get<Course[]>(`${this.API_URL}/my-courses`).pipe(
-      tap((courses) => {
-        this.courses = courses; // Store fetched courses
-      }),
-      catchError((error: HttpErrorResponse) => {
+ // fetchCourses(): Observable<Course[]> {
+   // return this.http.get<Course[]>(`${this.API_URL}/my-courses`).pipe(
+    //  tap((courses) => {
+    //    this.courses = courses; // Store fetched courses
+    //  }),
+    //  catchError((error: HttpErrorResponse) => {
         // if (error.status === 401) {
         //   // console.warn("User is not authenticated. Token expired or not provided.");
         //   return of([]); // Return empty array so app continues
         // }
-         return throwError(error); // Rethrow other errors
-      })
-    );
+      //   return throwError(error); // Rethrow other errors
+     // })
+    //);
+ // }
+
+
+ fetchCourses(queryParams?: any): Observable<Course[]> {
+  let url = `${this.API_URL}/my-courses`;
+
+  if(typeof queryParams === 'object' &&  Object?.keys(queryParams)?.length > 0){
+    url += `?page=${queryParams.page}&limit=${queryParams.limit}`
+  };
+  if (queryParams?.search) {
+    url += `&search=${encodeURIComponent(queryParams.search)}`;
   }
+  if (queryParams?.sort) {
+    url += `&sort=${encodeURIComponent(queryParams.sort)}`;
+  }
+  if (queryParams?.roles && queryParams.roles?.length > 0) {
+    // Join the roles array into a comma-separated string
+    url += `&roles=${encodeURIComponent(queryParams.roles.join(','))}`;
+  }
+
+  return this.http.get<Course[]>(url).pipe(
+    tap(({results}: any) => {
+      this.courses = results; // Store fetched courses
+    }),
+    catchError((error: HttpErrorResponse) => {
+      // if (error.status === 401) {
+      //   // console.warn("User is not authenticated. Token expired or not provided.");
+      //   return of([]); // Return empty array so app continues
+      // }
+      return throwError(error); // Rethrow other errors
+    })
+  );
+}
+
+/**
+
 
   /**
  * @function getCourse
@@ -99,13 +158,14 @@ export class CourseService {
  * POST Block User
  */
 
-  ToggleBlockUser(id: number | string, data: any) {
-    return this.http.post<any>(`${this.API_URL}/course/${id}/block`, data);
-  }
-  
-  ToggleBlockUserBetweenUsers(id: number | string, data: any) {
-    return this.http.post<any>(`${this.API_URL}/course/${id}/blockBetweenUsers`, data);
-  }
+ ToggleBlockUser(id: number | string, data: any) {
+  return this.http.post<any>(`${this.API_URL}/course/${id}/block`, data);
+}
+
+ToggleBlockUserBetweenUsers(id: number | string, data: any) {
+  return this.http.post<any>(`${this.API_URL}/course/${id}/blockBetweenUsers`, data);
+}
+
 
   /**
  * @function updateUserRole
@@ -244,10 +304,27 @@ export class CourseService {
       this.onUpdateCourses$.next(this.courses);
     }
   }
-  GetAllCourses(): Observable<Course[]> {
-    return this.http.get<Course[]>(`${this.API_URL}/courses`).pipe(
-      tap((courses) => {
-        this.courses = courses;
+  //GetAllCourses(): Observable<Course[]> {
+   // return this.http.get<Course[]>(`${this.API_URL}/courses`).pipe(
+     // tap((courses) => {
+       // this.courses = courses;
+      //})
+    //);
+  //}
+
+  GetAllCourses(queryParams?: any): Observable<Course[]> {
+    let url = `${this.API_URL}/courses`;
+    
+    if(typeof queryParams === 'object' &&  Object?.keys(queryParams)?.length > 0){
+      url += `?page=${queryParams.page}&limit=${queryParams.limit}`;
+    };
+
+    if (queryParams?.search) {
+      url += `&search=${encodeURIComponent(queryParams.search)}`;
+    }
+    return this.http.get<Course[]>(url).pipe(
+      tap(({results}: any) => {
+        return this.courses = results;
       })
     );
   }

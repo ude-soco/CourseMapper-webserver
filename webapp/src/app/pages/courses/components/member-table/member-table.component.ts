@@ -63,9 +63,9 @@ isBlockedBetweenUsers(userId: string): boolean {
 
 
   roles = [
-    { label: 'Student', value: 'user' },
     { label: 'Co-Teacher', value: 'co_teacher' },
     { label: 'Teaching Assistant', value: 'non_editing_teacher' },
+    { label: 'student', value: 'user' },
   ];
 
 
@@ -161,6 +161,7 @@ isBlockedBetweenUsers(userId: string): boolean {
   }
   onRoleChange(event: any, member: any): void {
     const originalRole = this.selectedRoles[member.userId._id];
+    
     const newRoleLabel = this.mapRoleToLabel(event.value);
 
     this.confirmationService.confirm({

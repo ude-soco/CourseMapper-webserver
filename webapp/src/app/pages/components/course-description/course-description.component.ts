@@ -59,8 +59,8 @@ export class CourseDescriptionComponent {
     //   .subscribe((course) => (this.course_enroll = course));
     this.route.params.subscribe((params) => {
       if (params['courseID']) {
-        this.courseService.GetAllCourses().subscribe((courses) => {
-          this.course_enroll = courses.find(
+        this.courseService.GetAllCourses().subscribe(({results}: any) => {
+          this.course_enroll = results.find(
             (course) => course._id == params['courseID']
           );
 

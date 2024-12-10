@@ -31,12 +31,15 @@ export class SidebarComponent implements OnInit {
   courses: Course[] = [];
   channels: Channel[] = [];
   channel: Channel;
+  page: number = 1;
+  limit: number = 4;
   public LandingPage = '/landingPage';
   public HomePage = '/home';
   selectedCourse: Course = new CourseImp('', '');
   displayAddCourseDialogue: boolean = false;
   showModeratorPrivileges: boolean;
   allNotifications$: Observable<Notification[]>;
+  queryParams: any;
   lastTimeCourseMapperOpened$: Observable<string>;
 
   constructor(
@@ -46,10 +49,22 @@ export class SidebarComponent implements OnInit {
     private store: Store<State>,
     private route: ActivatedRoute,
     private moderatorPrivilegesService: ModeratorPrivilegesService
-  ) {}
+  ) {
+    // this.courseService.$pageNumber.subscribe((pageNumber) => {
+    //   if (pageNumber === 1) {
+    //     return;
+    //   }
+    //   this.page = pageNumber;
+    //   this.getCourses(this.page, this.limit);
+    // });
+  }
 
   ngOnInit(): void {
-    this.getCourses();
+    this.courseService.$queryParams.subscribe((queryParams) => {
+      this.queryParams = queryParams;
+      this.getCourses(this.queryParams);
+    });
+
     this.store.dispatch(
       NotificationActions.loadGlobalAndCoursesNotificationSettings()
     );
@@ -61,12 +76,21 @@ export class SidebarComponent implements OnInit {
     );
   }
 
-  getCourses() {
-    this.courseService.fetchCourses().subscribe((courses) => {
-      this.courses = courses;
-      this.store.dispatch(
-        AppActions.setSubscribedCourses({ subscribedCourses: courses })
-      );
+  getCourses(queryParams: any) {
+    this.courseService.fetchCourses(queryParams).subscribe((response: any) => {
+      if (queryParams.page === 1) {
+        let courses = response.results;
+        this.courses = courses;
+        this.store.dispatch(
+          AppActions.setSubscribedCourses({ subscribedCourses: courses })
+        );
+      } else {
+        let courses = response.results;
+        this.courses = [...this.courses, ...courses];
+        this.store.dispatch(
+          AppActions.setSubscribedCourses({ subscribedCourses: courses })
+        );
+      }
     });
 
     this.courseService.onUpdateCourses$.subscribe(

@@ -1,4 +1,21 @@
 <div class="w-full items-center p-5">
+
+  <p-messages
+    *ngIf="isBlocked"
+    [value]="[
+      {
+        severity: 'info',
+        detail: 'You have been blocked from accessing this course.'
+      }
+    ]"
+    [enableService]="false"
+    [closable]="false" />
+  
+    
+ <ng-container >
+
+
+
   <div>
     <p class="text-4xl leading-normal font-medium">{{ selectedCourse.name }}</p>
 
@@ -72,12 +89,13 @@
           label="Unenroll From Course"
           [style]="{ 'background-color': '#0369A1', color: '#ffffff' }"
           (click)="deEnrole()"
+          [disabled]="isBlocked"
         ></button>
       </div>
-    </div>
+     </div>
   </div>
+</ng-container>
 
-  <hr />
 </div>
 
 <p-toast position="bottom-left"></p-toast>

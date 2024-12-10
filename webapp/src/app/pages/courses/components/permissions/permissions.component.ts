@@ -24,7 +24,7 @@ export class PermissionsComponent implements OnInit {
       name: 'co_teacher',
       data: [
         {
-          role: { title: 'Create Permissions', checked: false },
+          role: { title: 'Create permissions', checked: false },
           list: [
             { label: 'Allow member to create channel', name: 'can_create_channel', checked: false },
             { label: 'Allow member to create topic', name: 'can_create_topic', checked: false },
@@ -33,7 +33,7 @@ export class PermissionsComponent implements OnInit {
           ]
         },
         {
-          role: { title: 'Edit Permissions', checked: false },
+          role: { title: 'Edit permissions', checked: false },
           list: [
             { label: 'Allow member to rename course name', name: 'can_edit_course_name', checked: false },
             { label: 'Allow member to rename course description', name: 'can_edit_course_description', checked: false },
@@ -43,7 +43,7 @@ export class PermissionsComponent implements OnInit {
           ]
         },
         {
-          role: { title: 'Delete Permissions', checked: false },
+          role: { title: 'Delete permissions', checked: false },
           list: [
            
             { label: 'Allow member to delete course description', name: 'can_delete_course_description', checked: false },
@@ -59,7 +59,7 @@ export class PermissionsComponent implements OnInit {
       name: 'non_editing_teacher',
       data: [
         {
-          role: { title: 'Create Permissions', checked: false },
+          role: { title: 'Create permissions', checked: false },
           list: [
             { label: 'Allow member to create channel', name: 'can_create_channel', checked: false },
             { label: 'Allow member to create topic', name: 'can_create_topic', checked: false },
@@ -68,7 +68,7 @@ export class PermissionsComponent implements OnInit {
           ]
         },
         {
-          role: { title: 'Edit Permissions', checked: false },
+          role: { title: 'Edit permissions', checked: false },
           list: [
             { label: 'Allow member to rename course name', name: 'can_edit_course_name', checked: false },
             { label: 'Allow member to rename course description', name: 'can_edit_course_description', checked: false },
@@ -78,7 +78,7 @@ export class PermissionsComponent implements OnInit {
           ]
         },
         {
-          role: { title: 'Delete Permissions', checked: false },
+          role: { title: 'Delete permissions', checked: false },
           list: [
            
             { label: 'Allow member to delete course description', name: 'can_delete_course_description', checked: false },

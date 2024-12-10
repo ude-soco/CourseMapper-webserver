@@ -1,6 +1,6 @@
-import { Channel } from "./Channel";
-import { Topic } from "./Topic";
-import { User } from "./User";
+import { Channel } from './Channel';
+import { Topic } from './Topic';
+import { User } from './User';
 
 export interface Course {
   _id: string;
@@ -12,11 +12,12 @@ export interface Course {
   notification?: number;
   numberChannels?: number;
   numberUsers?: number;
-  channels?:Channel;
-  createdAt?:string;
-  users?:User;
-  topics?:Topic[];
-  menuItems?: [],
-  non_editing_teacher_permissions?: {},
-  co_teacher_permissions?: {},
+  channels?: Channel;
+  createdAt?: string;
+  users?: User;
+  isBlocked?: boolean;
+  topics?: Topic[];
+  menuItems?: [];
+  non_editing_teacher_permissions?: {};
+  co_teacher_permissions?: {};
 }
