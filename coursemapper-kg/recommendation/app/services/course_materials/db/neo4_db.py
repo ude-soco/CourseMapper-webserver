@@ -2154,7 +2154,7 @@ class NeoDataBase:
             average = np.divide(sum_embeddings, sum_weights)
             embedding=','.join(str(i) for i in average)
 
-            tx.run("""MATCH (u:User) WHERE u.uid=$user_id set u.embedding=$embedding""",
+            tx.run("""MATCH (u:User) WHERE u.uid=$user_id set u.embedding_resources=$embedding""",
                 user_id=user_id,
                 embedding=embedding
             )
