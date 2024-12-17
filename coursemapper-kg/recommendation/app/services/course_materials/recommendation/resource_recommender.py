@@ -1,5 +1,3 @@
-import concurrent.futures
-
 from ..db.neo4_db import NeoDataBase
 
 from .recommendation_type import RecommendationType
@@ -7,16 +5,7 @@ from .recommender import Recommender
 import numpy as np
 from config import Config
 
-import math
-import scipy.stats as st
-
-from datetime import datetime
-from dateutil.parser import parse as date_parse
-
 import numpy as np
-from sklearn.preprocessing import normalize as normalize_sklearn, MinMaxScaler as MinMaxScaler_sklearn
-# import redis
-import json
 import pandas as pd
 
 # import resource_recommender_helper as rrh
@@ -112,22 +101,6 @@ class ResourceRecommenderService:
             recommendation_type=recommendation_type,
         )
 
-    def user_rates_resources(self, rating: dict):
-        rating_updated = self.db.user_rates_resources(rating=rating)
-        print("rating_updated ", rating_updated)
-        return rating_updated
-    
-    def save_or_remove_user_resources(self, data: dict):
-        resource_saved = self.db.user_saves_or_removes_resource(data=data)
-        return resource_saved
-
-    def filter_user_resources_saved_by(self, data: dict):
-        resources = self.db.filter_user_resources_saved_by(data)
-        return resources
-    
-    def get_rids_from_user_saves(self, user_id: dict):
-        rids = self.db.get_rids_from_user_saves(user_id=user_id)
-        return rids
 
     def process_recommandation_pipeline(self, 
                                     rec_params: dict, 
@@ -145,11 +118,6 @@ class ResourceRecommenderService:
         # Check if concepts already exist and connected to any resources in Neo4j Database
         concepts_db_checked = rrh.check_and_validate_resources(db=self.db, concepts=rec_params["concepts"])
         
-        print("----------------------")
-        for rs in concepts_db_checked:
-            print(rs)
-        print()
-    
         # Crawl resources from YouTube (from each dnu) and Wikipedia API
         for concept_updated in concepts_db_checked: #i in range(len(not_understood_concept_list)):
             results.append(rrh.parallel_crawling_resources(function=recommender.canditate_selection, 
