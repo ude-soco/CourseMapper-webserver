@@ -2409,8 +2409,6 @@ class NeoDataBase:
                         logger.info(f"Creating Resources YouTube AND Updating Relationship between Resource and Concept_modified: {len(resources)} Resources")
                         for resource in resources:
                             self.create_or_update_video_resource(tx, resource, recommendation_type)
-                            # rid=get_resource_primary_key(resource)
-                            # self.update_rs_btw_resource_and_cm(rid=rid, cid=cid, action=True)
                         
                         rids = [get_resource_primary_key(resource) for resource in resources]
                         self.update_rs_btw_resources_and_cm(rids=rids, cid=cid, action=True)
@@ -2420,8 +2418,6 @@ class NeoDataBase:
                         logger.info(f"Creating Resources Article AND Updating Relationship between Resource and Concept_modified {len(resources)} Resources")
                         for resource in resources:
                             self.create_or_update_wikipedia_resource(tx, resource, recommendation_type)
-                            # rid=get_resource_primary_key(resource)
-                            # self.update_rs_btw_resource_and_cm(rid=rid, cid=cid, action=True)
 
                         rids = [get_resource_primary_key(resource) for resource in resources]
                         self.update_rs_btw_resources_and_cm(rids=rids, cid=cid, action=True)

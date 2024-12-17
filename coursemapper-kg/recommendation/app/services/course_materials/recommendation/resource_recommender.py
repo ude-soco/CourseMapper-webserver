@@ -8,7 +8,6 @@ from config import Config
 import numpy as np
 import pandas as pd
 
-# import resource_recommender_helper as rrh
 from ..recommendation import resource_recommender_helper as rrh
 
 from log import LOG
@@ -194,9 +193,9 @@ class ResourceRecommenderService:
         if check_message != "":
             return result
         
-        user = {"user_id": body["user_id"], "name": body["username"], "user_email": body["user_email"] }
+        # user = {"user_id": body["user_id"], "name": body["username"], "user_email": body["user_email"] }
         # create user node if not existed
-        user_ = self.db.get_or_create_user_v2(user)
+        # user_ = self.db.get_or_create_user_v2(user)
                                    
         # _slide = None
         user_embedding = ""
@@ -205,7 +204,7 @@ class ResourceRecommenderService:
    
         if recommendation_type in [ RecommendationType.PKG_BASED_KEYPHRASE_VARIANT, RecommendationType.PKG_BASED_DOCUMENT_VARIANT ]:
             # Only take n (n=5) concepts with the higher weight
-            rec_params["concepts"] = rrh.get_top_n_concepts(concepts=rec_params["concepts"], top_n=len(rec_params["concepts"]))
+            # rec_params["concepts"] = rrh.get_top_n_concepts(concepts=rec_params["concepts"], top_n=len(rec_params["concepts"]))
 
             # Store Concepts into Neo4j Database
             clu = rrh.save_and_get_concepts_modified(   db=self.db,
@@ -264,7 +263,7 @@ class ResourceRecommenderService:
                 results.append(rrh.parallel_crawling_resources(function=recommender.canditate_selection, 
                                                                 concept_updated=concepts,
                                                                 result_type="records",
-                                                                top_n_videos=5,
+                                                                top_n_videos=50,
                                                                 top_n_articles=15
                                                             ))
             for result in results:

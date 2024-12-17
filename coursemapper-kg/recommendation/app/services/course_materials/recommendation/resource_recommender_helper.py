@@ -529,7 +529,7 @@ def parallel_crawling_resources(function, concept_updated, result_type: str, top
         Parallel Crawling of Resources with the function 
         canditate_selection from Class Recommender
         submit function: takes
-            function: canditate_selection (this function takes the params below)
+            function: canditate_selection (this function takes the params below): it's the main function that send query to YouTube and Wikipedia APIs
             query, video, result_type="records", top_n_videos=2, top_n_articles=2
         concept_updated: dict{} | cid, 
     '''
