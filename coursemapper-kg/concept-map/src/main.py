@@ -66,9 +66,9 @@ if 'expand-material' in Config.PIPELINES:
         expand_material_pipeline.run(worker.push_log_message, job.get('materialId'))
 
         # after publishing, craw resources for main concepts
-        # create_job_and_set_state(pipeline_name="get_resources_by_main_concepts", 
-        #                          args_dict={"materialId": job.get('materialId')}
-        #                         )
+        create_job_and_set_state(pipeline_name="get_resources_by_main_concepts", 
+                                 args_dict={"materialId": job.get('materialId')}
+                                )
 
         return {}
     worker.add_pipeline('expand-material', execute_expand_material_job)

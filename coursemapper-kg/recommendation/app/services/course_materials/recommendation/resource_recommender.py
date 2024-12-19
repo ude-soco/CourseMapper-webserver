@@ -69,6 +69,31 @@ class ResourceRecommenderService:
             user_id, non_understood, understood, new_concepts, mid
         )
 
+    def resources_crawler_logic(self, concepts, recommendation_type=None):
+        results = []
+        recommender = Recommender(embedding_model=None)
+    
+        # Check if concepts already exist and connected to any resources in Neo4j Database
+        concepts_db_checked = rrh.check_and_validate_resources(db=self.db, concepts=concepts)
+        
+        # Crawl resources from YouTube (from each dnu) and Wikipedia API
+        for concept_updated in concepts_db_checked: #i in range(len(not_understood_concept_list)):
+            results.append(rrh.parallel_crawling_resources(function=recommender.canditate_selection, 
+                                                            concept_updated=concept_updated,
+                                                            result_type="records",
+                                                            top_n_videos=50,
+                                                            top_n_articles=15
+                                                        ))
+        
+        if recommendation_type:
+            # Store resources into Neo4j Database (by creating connection btw Resource and Concept_modified)
+            for result in results:
+                self.db.store_resources(resources_dict=result, cid=result["cid"],
+                                        recommendation_type=recommendation_type,
+                                        resources_form="dict"
+                                    )
+        
+
     def _get_personalized_recommendation(
         self,
         not_understood_concept_list,
@@ -110,29 +135,8 @@ class ResourceRecommenderService:
                                     slide_document_embedding="",
                                     top_n_resources=10
         ):
-        results = []
-        resources = []
         recommender = Recommender(embedding_model=None)
-
-        # Check if concepts already exist and connected to any resources in Neo4j Database
-        concepts_db_checked = rrh.check_and_validate_resources(db=self.db, concepts=rec_params["concepts"])
-        
-        # Crawl resources from YouTube (from each dnu) and Wikipedia API
-        for concept_updated in concepts_db_checked: #i in range(len(not_understood_concept_list)):
-            results.append(rrh.parallel_crawling_resources(function=recommender.canditate_selection, 
-                                                            concept_updated=concept_updated,
-                                                            result_type="records",
-                                                            top_n_videos=50,
-                                                            top_n_articles=15
-                                                        ))
-        
-        # Store resources into Neo4j Database (by creating connection btw Resource and Concept_modified)
-        for result in results:
-            self.db.store_resources(resources_dict=result, cid=result["cid"],
-                                    recommendation_type=rec_params["recommendation_type"],
-                                    resources_form="dict"
-                                )
-
+        self.resources_crawler_logic(concepts=rec_params["concepts"], recommendation_type=rec_params["recommendation_type"])
 
         # Gather|Retrieve all resources crawled
         resources = self.db.retrieve_resources(concepts=rec_params["concepts"], embedding_values=True)
@@ -255,19 +259,8 @@ class ResourceRecommenderService:
     def _get_resources_by_main_concepts(self, mid: str): #, slide_id: str):
         # list of main concepts
         main_concepts = self.db.get_main_concepts_by_mid(mid=mid)
-        results = []
-        recommender = Recommender(embedding_model=None)
         try:
-            # Crawl resources from YouTube (from each dnu) and Wikipedia API
-            for concepts in main_concepts:
-                results.append(rrh.parallel_crawling_resources(function=recommender.canditate_selection, 
-                                                                concept_updated=concepts,
-                                                                result_type="records",
-                                                                top_n_videos=50,
-                                                                top_n_articles=15
-                                                            ))
-            for result in results:
-                    self.db.store_resources(resources_dict=result, cid=result["cid"], recommendation_type=None)
+            self.resources_crawler_logic(concepts=main_concepts)
             return {"msg": True}
         except Exception as e:
             print(e)
