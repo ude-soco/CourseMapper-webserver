@@ -175,3 +175,23 @@ button {
     font-size: 2em !important;
   }
 
+  .input {
+    margin: 20px 0;
+  }
+
+  .blue-button .p-fileupload {
+    display: block;
+    margin: 10px 0;
+  }
+
+  img {
+    display: block;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+  }
+
+  button {
+    margin-top: 10px;
+  }

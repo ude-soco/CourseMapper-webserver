@@ -11,3 +11,8 @@ input.ng-invalid {
 .confirmViaEnter{
   background-color: #FF6600;
 }
+
+.expandable-editor .ql-container {
+  resize: vertical;
+  overflow: auto;
+}
