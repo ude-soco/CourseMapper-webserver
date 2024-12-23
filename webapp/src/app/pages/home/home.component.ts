@@ -140,8 +140,7 @@ export class HomeComponent implements OnInit {
     if (course.url) {
       return this.API_URL + course.url.replace(/\\/g, '/');
     } else {
-      return '/assets/img/courseCard.png';
+      return '/assets/img/courseDefaultImage.png';
     }
   }
-
 }

@@ -198,17 +198,27 @@ export class CourseService {
       );
   }
 
-
-  setImageCourse(course: Course) {
+  updateCourse(course: Course) {
     return this.http
       .put<any>(`${this.API_URL}/courses/${course._id}`, course)
       .pipe(
-        catchError((err, sourceObservable) => {
+        catchError((err) => {
           return of({ errorMsg: err.error.error });
         }),
         tap((res) => {
           if (!('errorMsg' in res)) {
-            console.log('image set successfully');
+            this.fetchCourses().subscribe((courses) => {
+              this.onUpdateCourses$.next(this.courses);
+
+              // Find the updated course from the courses array
+              const updatedCourse = courses.find((c) => c._id === course._id);
+
+              if (updatedCourse) {
+                this.onSelectCourse.emit(updatedCourse);
+              } else {
+                console.error('Updated course not found in courses list.');
+              }
+            });
           }
         })
       );

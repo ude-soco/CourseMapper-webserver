@@ -91,9 +91,10 @@ export class AddCourseComponent implements OnInit {
     return validExtensions.includes(fileExtension);
   }
 
-  fetchAndUploadRandomImage(courseID: string): string {
+  fetchAndUploadRandomImage(course: Course): string {
     const randomImgUrl = 'https://picsum.photos/536/354';
-    const newFileName = `${courseID}.jpg`;
+    const newFileName = `${course._id}.jpg`;
+    course.url = '/public/uploads/images/' + newFileName;
 
     // Fetch the random image as a Blob
     fetch(randomImgUrl)
@@ -110,6 +111,10 @@ export class AddCourseComponent implements OnInit {
           (res) => {
             if (res.message === 'Image uploaded successfully!') {
               this.showInfo('Random image successfully added!');
+
+              this.courseService
+                .updateCourse(course)
+                .subscribe((res: any) => {});
             }
           },
           (error) => {
@@ -128,26 +133,63 @@ export class AddCourseComponent implements OnInit {
 
   setCourseIamge(course: Course): string {
     if (this.chosenFile) {
-      // If user uploaded a file, handle the file upload
+      // Resize the image to the fixed dimensions (536x354) before uploading
       const fileExtension = this.selectedFileName.split('.').pop(); // Extract file extension
       const newFileName = `${course._id}.${fileExtension}`; // Create new file name
+      course.url = '/public/uploads/images/' + newFileName;
 
-      console.log('Uploading file with the name: ' + newFileName);
+      //console.log('Resizing and uploading file with the name: ' + newFileName);
 
-      let formData = new FormData();
-      formData.append('file', this.chosenFile, newFileName);
+      const image = new Image();
+      const reader = new FileReader();
 
-      this.materialService.uploadFile(formData, 'img').subscribe(
-        (res) => {},
-        (er) => {
-          console.log(er);
-        }
-      );
+      // Read the chosen file
+      reader.onload = (e: any) => {
+        image.src = e.target.result; // Set the image source to the file data
+        image.onload = () => {
+          // Create a canvas to resize the image
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d')!;
+          canvas.width = 536; // Set fixed width
+          canvas.height = 354; // Set fixed height
+
+          // Draw the resized image on the canvas
+          ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+          // Convert the canvas to a Blob
+          canvas.toBlob((blob) => {
+            if (blob) {
+              const resizedFile = new File([blob], newFileName, {
+                type: this.chosenFile.type,
+              });
+
+              let formData = new FormData();
+              formData.append('file', resizedFile, newFileName);
+
+              this.materialService.uploadFile(formData, 'img').subscribe(
+                (res) => {
+                  //console.log('File uploaded successfully.');
+
+                  this.courseService
+                    .updateCourse(course)
+                    .subscribe((res: any) => {});
+                },
+                (er) => {
+                  console.log(er);
+                }
+              );
+            }
+          }, this.chosenFile.type);
+        };
+      };
+
+      // Start reading the file
+      reader.readAsDataURL(this.chosenFile);
 
       return newFileName;
     } else {
       // If no file is uploaded, fetch and upload a random image
-      return this.fetchAndUploadRandomImage(course._id);
+      return '/assets/img/courseDefaultImage.png';
     }
   }
 
@@ -160,21 +202,13 @@ export class AddCourseComponent implements OnInit {
         this.createCourseForm.value.description
       );
 
+      this.toggleAddCourseDialogue();
+
+
       this.courseService.addCourse(newCourse).subscribe((res: any) => {
         if ('success' in res) {
-          let imageName = this.setCourseIamge(res.courseSaved);
-          res.courseSaved.url = '/public/uploads/images/' + imageName;
-
-          this.courseService
-            .setImageCourse(res.courseSaved)
-            .subscribe((res: any) => {
-              if ('success' in res) {
-                console.log('Course updated successfully');
-              }
-            });
-
-          this.toggleAddCourseDialogue();
           this.showInfo('Course successfully added!');
+          this.setCourseIamge(res.courseSaved);
         } else {
           this.showError(res.errorMsg);
         }

@@ -36,7 +36,6 @@ import { Location } from '@angular/common';
   providers: [MessageService, ConfirmationService, DialogService],
 })
 export class ChannelbarComponent implements OnInit {
-
   showConceptMapEvent: boolean = false;
 
   @Output() conceptMapEvent: EventEmitter<boolean> = new EventEmitter();
@@ -51,7 +50,7 @@ export class ChannelbarComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private store: Store<State>,
-    private moderatorPrivilegesService:ModeratorPrivilegesService,
+    private moderatorPrivilegesService: ModeratorPrivilegesService,
     private renderer: Renderer2,
     private storageService: StorageService,
     private materialKgService: MaterialKgOrderedService,
@@ -133,14 +132,14 @@ export class ChannelbarComponent implements OnInit {
       label: 'Share course ',
       icon: 'pi pi-copy',
       title: 'Copy Course URL',
-      command: () => this.copyCourseId(this.selectedCourse._id, this.selectedCourse.name),
+      command: () =>
+        this.copyCourseId(this.selectedCourse._id, this.selectedCourse.name),
     },
     {
-      label: "View course dashboard",
-      icon: "pi pi-chart-bar",
-      styleClass: "contextMenuButton",
+      label: 'View course dashboard',
+      icon: 'pi pi-chart-bar',
+      styleClass: 'contextMenuButton',
       command: () => this.onViewDashboardClicked(),
-
     },
 
     {
@@ -157,11 +156,10 @@ export class ChannelbarComponent implements OnInit {
 
   normalUserOptions: MenuItem[] = [
     {
-      label: "View course dashboard",
-      icon: "pi pi-chart-bar",
-      styleClass: "contextMenuButton",
+      label: 'View course dashboard',
+      icon: 'pi pi-chart-bar',
+      styleClass: 'contextMenuButton',
       command: () => this.onViewDashboardClicked(),
-
     },
     {
       label: 'Notification Settings',
@@ -172,7 +170,8 @@ export class ChannelbarComponent implements OnInit {
       label: 'Share course ',
       icon: 'pi pi-copy',
       title: 'Copy Course URL',
-      command: () => this.copyCourseId(this.selectedCourse._id, this.selectedCourse.name),
+      command: () =>
+        this.copyCourseId(this.selectedCourse._id, this.selectedCourse.name),
     },
   ];
   /*   @ViewChild('notificationSettingsPanel') notificationSettingsPanel: any; */
@@ -227,7 +226,7 @@ export class ChannelbarComponent implements OnInit {
       }
     });
   }
-  copyCourseId(courseId: string, name:string) {
+  copyCourseId(courseId: string, name: string) {
     // const urlTree = this.router.createUrlTree(['course-description', courseId]);
 
     // // Serializing the URL tree into a string
@@ -293,8 +292,10 @@ export class ChannelbarComponent implements OnInit {
     this.selectElementContents(selectedCurs);
   }
 
+  //global edit for the course
   onEditCourse() {
-  }
+    
+      }
 
   onRenameCourseConfirm(id) {
     const selectedCurs = <HTMLInputElement>document.getElementById(id);
@@ -502,7 +503,6 @@ export class ChannelbarComponent implements OnInit {
     }, 0);
   }
 
-
   preventEnterKey(e) {
     let confirmButton = document.getElementById('addChannelConfirm');
     if (e.keyCode === 13) {
@@ -523,8 +523,7 @@ export class ChannelbarComponent implements OnInit {
     this.router.navigate([
       'course',
       this.courseService.getSelectedCourse()._id,
-      'dashboard'
-
+      'dashboard',
     ]);
   }
 }

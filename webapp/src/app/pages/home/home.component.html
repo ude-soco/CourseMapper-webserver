@@ -29,7 +29,7 @@
           <p-card styleClass="p-card-shadow" class="course-card">
             <hr style="margin-bottom: 0.75rem; margin-top: 0%" />
             <ng-template pTemplate="header">
-              <img alt="Card" src="{{this.getCourseImage(course)}}" />
+              <img alt="Card" src="{{ this.getCourseImage(course) }}" />
             </ng-template>
 
             <ng-template pTemplate="content-center" style="float: left">
@@ -81,18 +81,14 @@
                 <span class="pl-1">
                   Created on: {{ course.createdAt | date : "d MMMM yyyy" }}
                 </span>
+              </p>
 
-                <strong>
-                  <p class="p" style="margin-left: 4px">
-                    <i
-                      class="pi pi-users"
-                      style="font-size: 1rem; color: #ea580c"
-                    ></i>
-                    <span class="font-medium pl-1">
-                      {{ this.Users.length }}: enrolled users
-                    </span>
-                  </p>
-                </strong>
+              <p class="p" style="margin-left: 4px">
+                <i
+                  class="pi pi-users"
+                  style="font-size: 1rem; color: #ea580c"
+                ></i>
+                <span> {{ this.Users.length }} enrolled users </span>
               </p>
             </ng-template>
           </p-card>
