@@ -37,6 +37,25 @@ def create_concept(tx, node):
         abstract=node["abstract"])
 
 
+def create_course(tx, node):
+    """
+    """
+    initial_embedding = ','.join(str(i) for i in node["initial_embedding"])
+    # logger.info(
+    #     "Creating concept '%s'" % node["id"])
+    tx.run(
+        """MERGE (c:course {name: $name, cid: $cid, uri: $uri, type: $type, mid: $mid, weight: $weight
+        })""",
+        name=node["name"],
+        cid=node["id"],
+        uri=node["uri"],
+        type=node["type"],
+        mid=node["mid"],
+        weight=node["weight"]
+        )
+
+
+
 def create_slide(tx, slide_concepts, slide_node):
     """
     """

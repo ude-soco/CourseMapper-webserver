@@ -86,6 +86,18 @@ module.exports = function (app) {
   );
 
   app.post(
+    "/api/knowledge-graph/user/:userId/course/:courseId/create-relationship",
+    [authJwt.verifyToken], 
+    controller.createCourseNeo4j 
+  );
+  
+  app.delete(
+    "/api/knowledge-graph/user/:userId/course/:courseId/remove-relationship",
+    [authJwt.verifyToken], 
+    controller.deleteCourseNeo4j 
+  );
+
+  app.post(
     "/api/courses/:courseId/materials/:materialId/concept-recommendation",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getConcepts

@@ -179,6 +179,40 @@ export const setRating = async (req, res) => {
   }
 }
 
+export const createCourseNeo4j = async (req, res) => {
+  const { userId, courseId } = req.params; // Extract parameters from the URL
+
+  try {
+    const result = await neo4j.createUserCourseRelationship(userId, courseId, 'low');
+    return res.status(200).send({ success: true, data: result });
+  } catch (err) {
+    console.error("Failed to create user-course relationship:", err);
+    return res.status(500).send({ success: false, error: err.message });
+  }
+};
+
+
+export const deleteCourseNeo4j = async (req, res) => {
+  const { userId, courseId } = req.params; // Extract parameters from the URL
+
+  if (!userId || !courseId) {
+    return res.status(400).send({ success: false, error: "userId and courseId are required" });
+  }
+
+  try {
+    const result = await neo4j.deleteUserCourseRelationship(userId, courseId);
+    return res.status(200).send({ success: true, message: "Relationship deleted successfully", data: result });
+  } catch (err) {
+    console.error("Failed to delete user-course relationship:", err);
+    return res.status(500).send({ success: false, error: err.message });
+  }
+};
+
+
+
+
+
+
 export const conceptMap = async (req, res) => {
   const materialId = req.params.materialId;
   socketio.getIO().to("material:"+materialId).emit("log", { called: "conceptmap started" } );

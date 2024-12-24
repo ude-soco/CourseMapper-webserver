@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { lastValueFrom } from 'rxjs';
+import { Observable, lastValueFrom } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 type Neo4jResult = {
@@ -69,4 +69,24 @@ export class Neo4jService {
     ));
     return res
   }
+//////
+
+
+  createUserCourseRelationship(userId: string, courseId: string): Observable<any> {
+    return this.http.post<any>(
+      `${environment.API_URL}/knowledge-graph/user/${userId}/course/${courseId}/create-relationship`,
+      {}
+    );
+  }
+  
+
+  removeUserCourseRelationship(userId: string, courseId: string): Observable<any> {
+    return this.http.delete<any>(
+      `${environment.API_URL}/knowledge-graph/user/${userId}/course/${courseId}/remove-relationship`
+    );
+  }
+  
+
+
+
 }

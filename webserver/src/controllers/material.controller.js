@@ -8,6 +8,8 @@ const Reply = db.reply;
 const Tag = db.tag;
 const Course = db.course;
 
+const neo4j = require("../graph/neo4j");
+
 /**
  * @function getMaterial
  * Get details of a material controller
@@ -137,6 +139,13 @@ export const newMaterial = async (req, res, next) => {
     await foundChannel.save();
   } catch (err) {
     return res.status(500).send({ error: "Error saving channel" });
+  }
+  // Call Neo4j function to create the relationship
+  try {
+    await neo4j.createCourseMaterialRelationship(courseId, savedMaterial._id.toString(), materialName);
+  } catch (err) {
+    console.error("Failed to create course-material relationship:", err);
+    return res.status(500).send({ error: "Error creating course-material relationship" });
   }
 
   req.locals = {
