@@ -985,7 +985,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
         .subscribe(async (course) => {
           if (
             course.role === 'moderator' &&
-            (await this.checkKnowledgeGraphExists() == false) &&
+            (await this.checkKnowledgeGraphExists()) == false &&
             (this.selectedMaterial.showDialog ||
               this.selectedMaterial.showDialog === undefined)
           ) {
@@ -1013,7 +1013,15 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
         body
       )
       .subscribe((reponse) => {
-        if (showConfirmMessage) this.showInfo('Dialog will not be shown again');
+        this.topicChannelService
+        .getChannel(this.selectedMaterial.courseId, this.selectedChannel._id)
+        .subscribe((foundChannel) => {
+          this.materials = foundChannel.materials;
+          this.selectedMaterial = this.materials[this.tabIndex];
+        });
+
+        if (showConfirmMessage)
+          this.showInfo('Dialog will not be shown again');
       });
 
     this.showDialog = false;
@@ -1021,7 +1029,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   async handleLater() {
     // Simulate checking if a Knowledge Graph (KG) exists
-    const kgExists = await this.checkKnowledgeGraphExists() == true;
+    const kgExists = (await this.checkKnowledgeGraphExists()) == true;
 
     if (kgExists) {
       // If the KG exists, never show the dialog again
@@ -1032,14 +1040,11 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
   }
 
-   async checkKnowledgeGraphExists(): Promise<boolean> {
+  async checkKnowledgeGraphExists(): Promise<boolean> {
     const materialFound = await this.neo4jService.checkMaterial(
       this.selectedMaterial._id
     );
-
     const result = materialFound.records.length > 0;
-
-    console.log('result', result);
     return result;
   }
 }
