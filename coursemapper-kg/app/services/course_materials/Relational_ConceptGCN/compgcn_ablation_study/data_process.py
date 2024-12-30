@@ -1,6 +1,7 @@
 from sentence_transformers import SentenceTransformer
 import pandas as pd
 import numpy as np
+import random
 import scipy.sparse as sp
 from scipy.sparse import csr_matrix
 import os
@@ -32,8 +33,8 @@ class data_process:
         # Generate SBERT embeddings for node IDs
         node_embeddings = {}
         for node in all_nodes:
-            node_text = str(node)  # 将节点ID转化为字符串格式
-            node_embeddings[node] = model.encode(node_text)  # 生成嵌入
+            node_text = str(node)  # Convert the node ID to string format
+            node_embeddings[node] = model.encode(node_text)  # Generate Embedding
 
         # Convert to an embedding matrix
         embedding_matrix = np.array([node_embeddings[node] for node in all_nodes])
@@ -141,6 +142,7 @@ class data_process:
         Returns:
             torch.Tensor: The randomly generated tensor
         """
+        seed = random.randint(0, 100) 
         torch.manual_seed(seed)
         a = torch.zeros(shape, device=None, dtype=dtype)
         glorot(a)

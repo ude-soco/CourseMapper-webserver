@@ -4,8 +4,6 @@ import scipy.sparse as sp
 import os
 from .util import *
 from config import Config
-
-# os.chdir("D:/study/Master_thesis/project/nave_dev/CourseMapper-webserver/coursemapper-kg")
 import logging
 from log import LOG
 

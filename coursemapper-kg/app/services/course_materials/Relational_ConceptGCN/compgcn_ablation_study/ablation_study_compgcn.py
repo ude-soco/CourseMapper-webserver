@@ -3,6 +3,7 @@ import torch
 import numpy as np
 from sklearn.model_selection import train_test_split
 import os
+import random
 import scipy.sparse as sp
 from typing import Tuple
 from sentence_transformers import SentenceTransformer
@@ -396,6 +397,7 @@ class eva_compgcn:
         Returns:
             torch.Tensor: The randomly generated tensor
         """
+        seed = random.randint(0, 100) 
         torch.manual_seed(seed)
         a = torch.zeros(shape, device=None, dtype=dtype)
         glorot(a)
@@ -522,21 +524,21 @@ def evaluate_link_prediction(entity_embeddings, relation_embeddings, test_triple
         correct_score_index = len(tail_scores) - 1
         rank_tail = tail_ranks.index(correct_score_index)+1 # get the rank of positive sample
 
-        # 记录最小排名（头替换和尾替换的较小值）
+        # Record the minimum rank (the smaller of head replacement and tail replacement)
         rank = min(rank_head,rank_tail)
         print(rank)
         ranks.append(rank)
         #ranks.append(rank_tail)
-        # 记录 Hit@n
+        # Record Hit@n
         hits.append(1 if rank <= n else 0)
         #hits.append(1 if rank_tail <= n else 0)
-    # 计算 MR
+    # compute MR
     mr = np.mean(ranks)
     
-    # 计算 MRR
+    # compute MRR
     mrr = np.mean([1.0 / rank for rank in ranks])
     
-    # 计算 Hit@n
+    # compute Hit@n
     hit_n = np.mean(hits)
 
     return mr, mrr, hit_n

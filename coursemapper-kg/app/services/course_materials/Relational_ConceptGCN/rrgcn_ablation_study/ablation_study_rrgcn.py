@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import torch
 import os
+import random
 from torch_geometric.nn.inits import glorot
 from sentence_transformers import SentenceTransformer
 import scipy.sparse as sp
@@ -79,7 +80,7 @@ class ablation_study_rrgcn:
         for relation in self.relations:
             # Retrieve all edges of a specific relationship type
             relation_edges = data[data['relation'] == relation][['node1', 'node2']].values
-
+            print (relation_edges)
             edges_with_similarity = []
 
             for node1, node2 in relation_edges:
@@ -90,11 +91,10 @@ class ablation_study_rrgcn:
                 # calculate the cosine_similarity between this two node
                 cos_sim = cosine_similarity([node_features[idx1]], [node_features[idx2]])[0, 0]
                 # print(cos_sim)
-                # 将结果保存到当前关系的边列表
+                # Save the result to the edge list of the current relation
                 edges_with_similarity.append((idx1, idx2, cos_sim))
 
-            # 将边列表添加到 relation_data 字典中
-            # 在relation这个关系类型当中，有idx1到idx2是这中关系类型，并且cos_sim是..
+            # Add the edge list to the relation_data dictionary
             relation_data[relation] = list(set(edges_with_similarity))
 
         # Initialize a dictionary to store the sparse adjacency matrix for each relationship type
@@ -114,36 +114,31 @@ class ablation_study_rrgcn:
             neighbor_counts[neighbor_counts == 0] = 1
             # Normalize adjacency matrix
             normalized_adj_matrix = adj_matrix / neighbor_counts[:, None]
-            # normalized_adj_matrix = adj_matrix.multiply(1 / neighbor_counts[:, None])
-            # normalized_adj_matrix=self.normalize_adj_matrix(adj_matrix)
             adj_matrices[relation_type] = normalized_adj_matrix
         self.adj_matrix = adj_matrices
 
 
     def create_weight_matrices(self, relation_list, weight_size):
         """
-        根据 relation_list 中的每个元素创建一个大小为 (x, y) 的权重矩阵，并返回包含这些矩阵的字典。
+        Create a weight matrix of size (x, y) from each element in relation_list and return a dictionary containing these matrices.
         
         参数:
-        relation_list (list): 包含关系名称的列表，将作为字典的 key。
-        x (int): 权重矩阵的行数 embedding_matrix.shape[1]。
-        y (int): 权重矩阵的列数。embedding_matrix.shape[1]
+        relation_list (list): A list containing relationship names that will be used as dictionary keys.
+        x (int): The number of rows in the weight matrix embedding_matrix.shape[1]。
+        y (int): The number of columns in the weight matrix。embedding_matrix.shape[1]
         
-        返回:
-        dict: 包含关系名称为 key、对应权重矩阵为 value 的字典。
+        return:
+        dict: A dictionary containing the relationship name as key and the corresponding weight matrix as value。
         """
         weight_matrices = {}
         
         for relation in relation_list:
-            seed = hash(relation) % (2**32)
-            # 创建一个大小为 (x, y) 的随机权重矩阵
-            weight_matrix = self.glorot_seed((weight_size,weight_size),seed).numpy()
-            # 将矩阵添加到字典中，以 relation 作为 key
+            # Create a random weight matrix of size (x, y)
+            weight_matrix = self.glorot_seed((weight_size,weight_size)).numpy()
+            # Add the matrix to the dictionary with relation as key
             weight_matrices[relation] = weight_matrix
         
         return weight_matrices
-    #第一种形态
-    
     """
         with self loop
     """
@@ -186,13 +181,6 @@ class ablation_study_rrgcn:
         relation_part = None
         for relation in self.relations:
             relation_adj_matrix = adj_matrix[relation]
-            # if np.any(relation_adj_matrix != 0):
-            #     print("矩阵包含非零值。")
-            #     # 提取并打印所有非零值
-            #     non_zero_values = relation_adj_matrix[relation_adj_matrix != 0]
-            #     print("非零值:", non_zero_values)
-            # else:
-            #     print("矩阵不包含非零值。")
             Wr_layer_1 = weight_matrix[relation]
             relatin_part_1 = np.dot(relation_adj_matrix,embedding_matrix)
             relation_part = np.dot(relatin_part_1, Wr_layer_1)
@@ -248,12 +236,12 @@ class ablation_study_rrgcn:
         for relation in self.relations:
             relation_adj_matrix = adj_matrix[relation]
             # if np.any(relation_adj_matrix != 0):
-            #     print("矩阵包含非零值。")
-            #     # 提取并打印所有非零值
+            #     print("Matrix contains non-zero values")
+            #     # Extract and print all non-zero values
             #     non_zero_values = relation_adj_matrix[relation_adj_matrix != 0]
-            #     print("非零值:", non_zero_values)
+            #     print("Non-zero value:", non_zero_values)
             # else:
-            #     print("矩阵不包含非零值。")
+            #     print("The matrix contains no non-zero values")
             relation_adj_matrix = relation_adj_matrix + sp.eye(relation_adj_matrix.shape[0])
             # relation_adj_matrix = relation_adj_matrix.toarray()
             # relation_adj_matrix=relation_adj_matrix + sp.eye(relation_adj_matrix.shape[0])
@@ -382,23 +370,23 @@ class ablation_study_rrgcn:
         for relation in self.relations:
             relation_adj_matrix = adj_matrix[relation]
             if np.any(relation_adj_matrix != 0):
-                print("矩阵包含非零值。")
-                # 提取并打印所有非零值
+                print("Matrix contains non-zero values")
+                # Extract and print all non-zero values
                 non_zero_values = relation_adj_matrix[relation_adj_matrix != 0]
-                print("非零值:", non_zero_values)
+                print("Non-zero value:", non_zero_values)
             else:
-                print("矩阵不包含非零值。")
+                print("The matrix contains no non-zero values")
             Wr_layer_2 = weight_matrix_layer_2[relation]
             print(type(relation_adj_matrix))
             print(type(embedding_first_layer))
             relatin_part_1 = relation_adj_matrix@embedding_first_layer
             if np.any(relatin_part_1 != 0):
-                print("矩阵包含非零值。")
-                # 提取并打印所有非零值
+                print("The matrix contains nonzero values.")
+                # Extract and print all non-zero values
                 non_zero_values = relatin_part_1[relatin_part_1 != 0]
-                print("非零值:", non_zero_values)
+                print("Non-zero value:", non_zero_values)
             else:
-                print("矩阵不包含非零值。")
+                print("The matrix contains no non-zero values。")
             relation_part = relatin_part_1@ Wr_layer_2
             final_embedding=final_embedding+relation_part
         #final_embedding = final_embedding / np.linalg.norm(final_embedding, axis=1, keepdims=True)
@@ -443,6 +431,7 @@ class ablation_study_rrgcn:
         Returns:
             torch.Tensor: The randomly generated tensor
         """
+        seed = random.randint(0, 100) 
         torch.manual_seed(seed)
         a = torch.zeros(shape, device=None, dtype=dtype)
         glorot(a)
@@ -591,21 +580,21 @@ print(f"MR: {mr}, MRR: {mrr}, Hit@10: {hit_n}")
 
 def normalize_adjacency_matrix(adj_matrix):
     """
-    归一化邻接矩阵，防止除零错误并平滑节点邻居贡献。
+    Normalize the adjacency matrix to prevent division by zero errors and smooth node neighbor contributions
     
-    参数:
-    adj_matrix (numpy.ndarray): 稀疏邻接矩阵
+    parameter:
+    adj_matrix (numpy.ndarray): Sparse adjacency matrix
 
-    返回:
-    numpy.ndarray: 归一化后的邻接矩阵
+    return:
+    numpy.ndarray: Normalized adjacency matrix
     """
-    # 计算每个节点的邻居数量（即每行中非零元素的数量）
+    # Count the number of neighbors of each node (i.e. the number of non-zero elements in each row)
     neighbor_counts = np.sum(adj_matrix != 0, axis=1)
     
-    # 将孤立节点的邻居数量设置为 1，避免除以零
+    # Set the number of neighbors of isolated nodes to 1 to avoid division by zero
     neighbor_counts[neighbor_counts == 0] = 1
     
-    # 归一化邻接矩阵
+    # Normalized adjacency matrix
     normalized_adj_matrix = adj_matrix / neighbor_counts[:, None]
     
     return normalized_adj_matrix

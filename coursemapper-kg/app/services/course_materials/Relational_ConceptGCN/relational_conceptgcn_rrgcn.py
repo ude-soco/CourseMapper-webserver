@@ -468,11 +468,4 @@ class RRGCN:
 
         return final_embedding        
 
-    # def self_loop_test(self):
-    #     self.load_data()
-    #     adj_matrix = self .adj_matrix.toarray()
-    #     self_loop = sp.eye(adj_matrix.shape[0])
-    #     self_loop = normalize(self_loop)
-    #     self_loop = self_loop.toarray()
-
  
