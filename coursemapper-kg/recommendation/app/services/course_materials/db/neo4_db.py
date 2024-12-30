@@ -2701,4 +2701,24 @@ class NeoDataBase:
             ).data()
         return nodes
 
+    def get_main_concepts_by_slide_id(self, slide_id: str):
+        '''
+            Getting main concepts by mid
+        '''
+        logger.info("Getting main concepts by mid")
+        nodes = []
+        with self.driver.session() as session:
+            nodes = session.run(
+                    '''
+                        MATCH p=(s: Slide)-[r: CONSISTS_OF]->(c: Concept)
+                        WHERE s.sid = $slide_id AND c.type = "main_concept"
+                        RETURN ID(c) as id, c.cid as cid, c.name as name,
+                                c.type AS type, c.weight AS weight, c.mid AS mid
+                                ORDER BY c.name DESC
+                    ''',
+                    slide_id=slide_id
+                ).data()
+        return nodes
+    
+    
 # TODO Issue #640: do we need create_user_slide_relationships?

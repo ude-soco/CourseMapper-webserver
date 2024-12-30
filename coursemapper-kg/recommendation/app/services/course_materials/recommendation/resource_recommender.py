@@ -207,10 +207,6 @@ class ResourceRecommenderService:
         slide_weighted_avg_embedding_of_concepts = ""
    
         if recommendation_type in [ RecommendationType.PKG_BASED_KEYPHRASE_VARIANT, RecommendationType.PKG_BASED_DOCUMENT_VARIANT ]:
-            # Only take n (n=5) concepts with the higher weight
-            # rec_params["concepts"] = rrh.get_top_n_concepts(concepts=rec_params["concepts"], top_n=len(rec_params["concepts"]))
-
-            # Store Concepts into Neo4j Database
             clu = rrh.save_and_get_concepts_modified(   db=self.db,
                                                         rec_params=rec_params, 
                                                         top_n=5, 
@@ -223,15 +219,8 @@ class ResourceRecommenderService:
             user_embedding = clu.get("user_embedding")
 
         elif recommendation_type in [ RecommendationType.CONTENT_BASED_KEYPHRASE_VARIANT, RecommendationType.CONTENT_BASED_DOCUMENT_VARIANT ]:
-            _slide = self.db.get_slide(body["slide_id"])
-            slide_document_embedding = _slide[0]["s"]["initial_embedding"]
-            slide_weighted_avg_embedding_of_concepts = _slide[0]["s"][
-                    "weighted_embedding_of_concept"
-                ]
-            # slide_concepts = _slide[0]["s"]["concepts"]
-            slide_concepts_ = self.db.get_top_n_concept_by_slide_id(slide_id=body["slide_id"]) # , top_n=5)
+            slide_concepts_ = self.db.get_main_concepts_by_slide_id(slide_id=body["slide_id"])
 
-            # Store Concepts into Neo4j Database
             rec_params["concepts"] = slide_concepts_
             rec_params["mid"] = body["material_id"]
             clu = rrh.save_and_get_concepts_modified(   db=self.db,
