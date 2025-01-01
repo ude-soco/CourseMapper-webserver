@@ -1993,4 +1993,7 @@ export class ConceptMapComponent {
   selectAllSlides() {
     this.editConceptForm.controls["conceptSlides"].setValue(this.materialSlides.records.map((slide) => slide.sid.split('_').pop()));
   }
+  openLink(url: string): void {
+    window.open(url, '_blank');
+  }
 }
