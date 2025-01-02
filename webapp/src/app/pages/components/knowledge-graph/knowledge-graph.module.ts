@@ -37,6 +37,7 @@ import { DateAgoPipe } from './videos/pipes/date-ago.pipe';
 import { LinkifyPipe } from './videos/pipes/linkify.pipe';
 import { SafeHtmlPipe } from './videos/pipes/safehtml.pipe';
 import {TabViewModule} from 'primeng/tabview';
+import { CytoscapeSequenceRecommendedComponent } from './cytoscape-sequence-recommended/cytoscape-sequence-recommended.component';
 
 
 
@@ -59,7 +60,8 @@ import {TabViewModule} from 'primeng/tabview';
     RatingComponent,
     DateAgoPipe,
     LinkifyPipe,
-    SafeHtmlPipe,    
+    SafeHtmlPipe,
+    CytoscapeSequenceRecommendedComponent,    
   ],
   imports: [
     FormsModule,
@@ -88,6 +90,7 @@ import {TabViewModule} from 'primeng/tabview';
     CytoscapeRoadsComponent,
     GraphComponent,
     GraphRecommednedComponent,
+    CytoscapeSequenceRecommendedComponent
   ],
   
 })

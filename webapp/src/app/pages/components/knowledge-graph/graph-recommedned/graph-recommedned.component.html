@@ -5,7 +5,7 @@
   *ngIf="slideKnowledgeGraph && recommenderKnowledgeGraph"
   style="display: flex"
 >
-  <div class="graphAbstract" style="width: 100%">
+  <div class="graphAbstract" style="width: 100%;" *ngIf="conceptMapRecData">
     <app-cytoscape-recommended
       [elements]="conceptMapRecData"
       [selectedFilterValues]="selectedFilterValues"
@@ -16,6 +16,19 @@
     >
     </app-cytoscape-recommended>
   </div>
+
+  <div class="graphAbstract" style="width: 100%; " *ngIf="conceptSequenceMapRecData">
+    <app-cytoscape-sequence-recommended
+      [elements]="conceptSequenceMapRecData"
+      [selectedFilterValues]="selectedFilterValues"
+      [topNConcepts]="topNConcepts"
+      [filterUpdated]="filterUpdated"
+      (selectedNodeEvent)="nodeChange($event)"
+      [cyHeight]="cyHeight"
+    >
+    </app-cytoscape-sequence-recommended>
+  </div>
+
   <div
     *ngIf="node_name && node_type !== 'user'"
     id="recommenderAbstractBlock"

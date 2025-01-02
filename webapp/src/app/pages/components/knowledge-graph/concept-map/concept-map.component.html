@@ -756,6 +756,43 @@
                   </app-graph-recommedned>
                 </div>
               </div>
+
+              <div
+                id="graphSection"
+                *ngIf="recommendedSequencesTab"
+                class="tab mainConcepts sidebarShown"
+              >
+              <div
+              class="profile-main-loader"
+            >
+              <div class="loader">
+                <p-progressSpinner
+                *ngIf="this.recommendedSequence=== null"
+                [style]="{ width: '80px', height: '80px' }"
+                styleClass="custom-spinner"
+                strokeWidth="8"
+                fill="var(--surface-ground)"
+                animationDuration=".5s"
+              ></p-progressSpinner>
+              </div>
+            </div>
+
+                <div class="card" style="display: inline; ">
+                  <app-graph-recommedned
+                    [conceptSequenceMapRecData]="filteredSequenceMapRecData"
+                    [selectedFilterValues]="selectedFilterValues"
+                    [topNConcepts]="selectedTopConcepts"
+                    [filterUpdated]="false"
+                    [materialKnowledgeGraph]="false"
+                    [slideKnowledgeGraph]="true"
+                    [recommenderKnowledgeGraph]="true"
+                    [cyHeight]="cyHeight"
+                  >
+                  </app-graph-recommedned>
+                </div>
+              </div>
+
+              
               <div *ngIf="recommendedMaterialsTab" class="tab mainConcepts">
 
               <div

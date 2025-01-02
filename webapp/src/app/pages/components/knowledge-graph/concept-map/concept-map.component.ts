@@ -117,6 +117,7 @@ export class ConceptMapComponent {
   kgSlideResponseEmpty = false;
   mainConceptsTab = true;
   recommendedConceptsTab = false;
+  recommendedSequencesTab = false;
   recommendedMaterialsTab = false;
   flexDivProperty = '33%';
   firstUpdate = false;
@@ -137,6 +138,7 @@ export class ConceptMapComponent {
   showSlideKg = false;
   kgTabsActivated = false;
   recommendedConcepts = null;
+  recommendedSequence = null;
   // recommendedConceptsModel2 = null;
   // recommendedConceptsModel3 = null;
   recommendedMaterials = null;
@@ -175,7 +177,7 @@ export class ConceptMapComponent {
   conceptMapChannel: any;
   conceptMapMaterial: any;
   stopCheck: boolean;
-  cyHeight: any;
+  cyHeight: any = 500;
   cyWidth: number;
   kgTitle: string;
   courseKgActivated: boolean = false;
@@ -190,6 +192,7 @@ export class ConceptMapComponent {
         this.filteredMapData = null;
         this.mainConceptsTab = true;
         this.recommendedConceptsTab = false;
+        this.recommendedSequencesTab = false;
         console.log(this.filteredMapData);
         setTimeout(() => {
           this.filteredMapData = tempMapData;
@@ -224,6 +227,37 @@ export class ConceptMapComponent {
       command: (e) => {
         this.mainConceptsTab = false;
         this.recommendedConceptsTab = true;
+        this.recommendedSequencesTab = false;
+        //if navigating from materials tab
+        if (this.recommendedMaterialsTab) {
+          this.recommendedMaterialsTab = false;
+          //show sidebar on main tab
+          setTimeout(() => {
+            this.showConceptsList();
+          }, 50);
+        } else {
+          this.recommendedMaterialsTab = false;
+          if (this.showConceptsListSidebar) {
+            setTimeout(() => {
+              this.showConceptsList();
+            }, 1);
+          } else {
+            setTimeout(() => {
+              this.hideConceptsList();
+            }, 1);
+          }
+        }
+      },
+    },
+    {
+      label: 'Recommended Sequence',
+      icon: 'pi pi-fw pi-external-link',
+      disabled: true,
+      command: (e) => {
+        this.mainConceptsTab = false;
+        this.recommendedConceptsTab = false;
+        this.recommendedSequencesTab = true;
+
         //if navigating from materials tab
         if (this.recommendedMaterialsTab) {
           this.recommendedMaterialsTab = false;
@@ -252,6 +286,7 @@ export class ConceptMapComponent {
       command: (e) => {
         this.mainConceptsTab = false;
         this.recommendedConceptsTab = false;
+        this.recommendedSequencesTab = false;
         this.recommendedMaterialsTab = true;
       },
     },
@@ -268,7 +303,9 @@ export class ConceptMapComponent {
   public filteredMapData: any;
   public filterUpdated: boolean = false;
   public conceptMapRecommendedData: any;
+  public conceptSequenceMapRecommendedData: any;
   public filteredMapRecData: any;
+  public filteredSequenceMapRecData: any;
   public filterRecUpdated: boolean = false;
   public slideKnowledgeGraph: boolean = false;
   public recommenderKnowledgeGraph: boolean = false;
@@ -351,8 +388,10 @@ export class ConceptMapComponent {
 
         this.kgNodes = null;
         this.recommendedConcepts = null;
+        this.recommendedSequence= null;
         this.tabs[1].disabled = true;
         this.tabs[2].disabled = true;
+        this.tabs[3].disabled = true;
         this.kgTabsActivated = false;
         this.filteredMapData = null;
         this.resultMaterials = null;
@@ -361,14 +400,18 @@ export class ConceptMapComponent {
         this.concepts2 = null;
 
         this.recommendedConcepts = null;
+        this.recommendedSequence = null;
         this.conceptMapRecommendedData = null;
+        this.conceptSequenceMapRecommendedData= null;
         this.filteredMapRecData = null;
+        this.filteredSequenceMapRecData = null;
         this.recommenderKnowledgeGraph = false;
         this.slideKnowledgeGraph = false;
         this.resultMaterials = null;
         this.kgNodes = [];
         this.mainConceptsTab = true;
         this.recommendedConceptsTab = false;
+        this.recommendedSequencesTab = false;
         this.recommendedMaterialsTab = false;
 
         this.firstUpdate = false;
@@ -433,6 +476,7 @@ export class ConceptMapComponent {
     this.tabsSubscription = this.kgTabs.activateKgTabs().subscribe(() => {
       this.tabs[1].disabled = false;
       this.tabs[2].disabled = false;
+      this.tabs[3].disabled = false;
       this.kgTabsActivated = true;
     }); //Activate tabs
     this.newConceptsSubscription = slideConceptservice.newConcepts.subscribe(
@@ -825,6 +869,7 @@ export class ConceptMapComponent {
       (this.mainConceptsTab && this.kgSlideReceivedResponse)
     ) {
       this.cyHeight = window.innerHeight * 0.9 - 270;
+
       this.cyWidth = window.innerWidth * 0.9;
       this.changeDetectorRef.detectChanges();
     }
@@ -920,11 +965,14 @@ export class ConceptMapComponent {
       }
     }
     if (this.showMaterialKg) {
+
       this.cyHeight = window.innerHeight * 0.9 - 270;
+      console.log('cyHeight2 showMaterialKg', this.cyHeight);
       this.stopCheck = true;
       this.changeDetectorRef.detectChanges();
     }
-    this.cyWidth = window.innerWidth * 0.9;
+ 
+
   }
 
   setChipConcept(concept: any): void {
@@ -1513,8 +1561,12 @@ export class ConceptMapComponent {
         this.recommendedConcepts = null;
         this.conceptMapRecommendedData = this.recommendedConcepts;
         this.filteredMapRecData = this.conceptMapRecommendedData;
+        this.recommendedSequence = null;
+        this.conceptSequenceMapRecommendedData = this.recommendedSequence;
+        this.filteredSequenceMapRecData = this.conceptSequenceMapRecommendedData;
         this.tabs[1].disabled = true;
         this.tabs[2].disabled = true;
+        this.tabs[3].disabled = true;
         this.kgTabsActivated = false;
 
         this.understoodConceptsObj.forEach((concept) => {
@@ -1553,8 +1605,8 @@ export class ConceptMapComponent {
         await this.getRecommendedMaterialsPerSlideMaterial();
 
       this.materialsRecommenderService
-            // .getRecommendedConcepts(
-              .getRecommendedSequenceConcepts(
+             .getRecommendedConcepts(
+            //  .getRecommendedSequenceConcepts(
           // reqData
           reqDataMaterial1
         )
@@ -1584,8 +1636,46 @@ export class ConceptMapComponent {
             this.mainConceptsTab = false;
             this.recommendedConceptsTab = true;
             // this.tabs[2].disabled = true;
+            this.recommendedSequencesTab = false;
             this.recommendedMaterialsTab = false;
             //the end of recommended concepts
+
+            //start of the sequence recommendation
+            this.materialsRecommenderService.getRecommendedSequenceConcepts(reqDataMaterial1).subscribe({
+next: async (resultSequence) => {
+  console.log('resultSequence ', resultSequence);
+  this.recommendedSequence = resultSequence;
+  this.conceptSequenceMapRecommendedData = this.recommendedSequence
+  this.filteredSequenceMapRecData = this.conceptSequenceMapRecommendedData;
+  this.recommenderKnowledgeGraph = true;
+            this.slideKnowledgeGraph = true;
+            if (this.showConceptsListSidebar) {
+              setTimeout(() => {
+                this.showConceptsList();
+              }, 1);
+            } else {
+              setTimeout(() => {
+                this.hideConceptsList();
+              }, 1);
+            }
+            console.log('recommended sequence concepts are:');
+            console.log(this.filteredSequenceMapRecData);
+        
+            console.log(this.recommendedSequence=== null);
+
+            this.kgTabs.kgTabsEnable();
+            this.mainConceptsTab = false;
+            this.recommendedConceptsTab = false;
+            this.recommendedSequencesTab = true;
+            // this.tabs[2].disabled = true;
+            this.recommendedMaterialsTab = false;
+}
+
+              
+            })
+
+
+
             //////////////////////////call material-recommender/////////////////////////
             console.log('calling material recommender');
             this.materialsRecommenderService
@@ -1649,6 +1739,7 @@ export class ConceptMapComponent {
                   this.resultMaterials = this.resultMaterials.nodes;
 
                   console.log('tab 2 will be activated');
+                  
                   this.kgTabs.kgTabsEnable();
                   console.log('tab 2 has been activated');
 
@@ -1902,8 +1993,10 @@ export class ConceptMapComponent {
           //clean properties
           this.kgNodes = null;
           this.recommendedConcepts = null;
+          this.recommendedSequence = null;
           this.tabs[1].disabled = true;
           this.tabs[2].disabled = true;
+          this.tabs[3].disabled = true;
           this.kgTabsActivated = false;
           this.filteredMapData = null;
           this.resultMaterials = null;
@@ -1912,6 +2005,7 @@ export class ConceptMapComponent {
           this.concepts2 = null;
 
           this.recommendedConcepts = null;
+          this.recommendedSequence = null;
           this.conceptMapRecommendedData = null;
           this.filteredMapRecData = null;
           this.recommenderKnowledgeGraph = false;
@@ -1920,8 +2014,9 @@ export class ConceptMapComponent {
           this.kgNodes = [];
           this.mainConceptsTab = true;
           this.recommendedConceptsTab = false;
+          this.recommendedSequencesTab = false;
           this.recommendedMaterialsTab = false;
-
+          
           this.firstUpdate = false;
           this.allUnderstoodConcepts = null; //clear all understood concepts lidst
           this.hideChevronRightButton = false;
@@ -1976,9 +2071,11 @@ export class ConceptMapComponent {
     this.previousConcepts = null;
     this.kgNodes = null;
     this.recommendedConcepts = null;
+    this.recommendedSequence = null;
     this.slideConceptservice.setUnderstoodConcepts(this.understoodConceptsObj);
     this.tabs[1].disabled = true;
     this.tabs[2].disabled = true;
+    this.tabs[3].disabled = true;
     this.kgTabsActivated = false;
     this.filteredMapData = null;
     this.selectedFilterValues = null;
@@ -1991,8 +2088,11 @@ export class ConceptMapComponent {
     this.concepts2 = null;
 
     this.recommendedConcepts = null;
+    this.recommendedSequence= null;
     this.conceptMapRecommendedData = null;
+    this.conceptSequenceMapRecommendedData = null;
     this.filteredMapRecData = null;
+    this.filteredSequenceMapRecData = null;
     this.recommenderKnowledgeGraph = false;
     this.slideKnowledgeGraph = false;
     this.resultMaterials = null;
@@ -2000,6 +2100,7 @@ export class ConceptMapComponent {
     this.previousConceptsObj = [];
     this.mainConceptsTab = true;
     this.recommendedConceptsTab = false;
+    this.recommendedSequencesTab = false;
     this.recommendedMaterialsTab = false;
     this.model1 = true;
     this.model2 = false;

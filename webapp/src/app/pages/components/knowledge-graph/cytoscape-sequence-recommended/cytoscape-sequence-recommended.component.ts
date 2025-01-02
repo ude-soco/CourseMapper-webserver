@@ -1,3 +1,14 @@
+
+// @Component({
+//   selector: 'app-cytoscape-sequence-recommended',
+//   templateUrl: './cytoscape-sequence-recommended.component.html',
+//   styleUrls: ['./cytoscape-sequence-recommended.component.css']
+// })
+// export class CytoscapeSequenceRecommendedComponent {
+
+// }
+
+
 import {
   Component,
   ElementRef,
@@ -37,11 +48,11 @@ cytoscape.use(fcose);
 cytoscape.use(popper);
 
 @Component({
-  selector: 'app-cytoscape-recommended',
-  templateUrl: './cytoscape-recommended.component.html',
-  styleUrls: ['./cytoscape-recommended.component.css']
+  selector: 'app-cytoscape-sequence-recommended',
+  templateUrl: './cytoscape-sequence-recommended.component.html',
+  styleUrls: ['./cytoscape-sequence-recommended.component.css']
 })
-export class CytoscapeRecommendedComponent {
+export class CytoscapeSequenceRecommendedComponent  {
   @Input() elements: any;
   @Input() selectedFilterValues: any;
   @Input() topNConcepts: any;
@@ -68,6 +79,7 @@ export class CytoscapeRecommendedComponent {
   didNotUnderstandConceptsSubscription: Subscription; // on did not understand concepts list updated
   understoodConceptsSubscription: Subscription; // on understood concepts list updated
   constructor(
+    
     private renderer: Renderer2,
     private el: ElementRef,
     private ConceptMapComponent: ConceptMapComponent,
@@ -77,13 +89,18 @@ export class CytoscapeRecommendedComponent {
     private statusService: ConceptStatusService
   ) {
     this.layout = {
-      name: 'spread',
-      minDist: 70,
-      padding: 50,
+      name: 'grid',
+      minDist: 40,
+    
+      spacingFactor: 0.0, // Increase this value to make the grid bigger
+      fit: true,          // Ensures the grid fits within the viewport
+      rows: undefined,    // Adjust rows if needed (leave undefined for automatic calculation)
+      cols: undefined, 
+
     };
     this.zoom = this.zoom || {
       min: 0.1,
-      max: 1.5,
+      max: 3,
     };
     this.newConceptsSubscription = slideConceptservice.newConcepts.subscribe(
       (res) => {
@@ -103,6 +120,7 @@ export class CytoscapeRecommendedComponent {
       slideConceptservice.didNotUnderstandConcepts.subscribe((res) => {
         this.didNotUnderstandObj = res;
         this.elements.nodes.forEach((node) => {
+
           this.didNotUnderstandObj.forEach((obj) => {
             // if (node.data.cid.toString() === obj.cid.toString()) {
             if (node.data.id.toString() === obj.cid.toString()) {
@@ -116,6 +134,7 @@ export class CytoscapeRecommendedComponent {
       slideConceptservice.understoodConcepts.subscribe((res) => {
         this.understoodObj = res;
         this.elements.nodes.forEach((node) => {
+
           this.understoodObj.forEach((obj) => {
             // if (node.data.cid.toString() === obj.cid.toString()) {
             if (node.data.id.toString() === obj.cid.toString()) {
@@ -132,11 +151,14 @@ export class CytoscapeRecommendedComponent {
       selector: 'node',
       style: {
         height: function (elm) {
+          console.log(elm);
           if (elm.data().type === 'user') return '100';
+          
           else return elm.data().score * 25 + 25;
         },
         width: function (elm) {
           if (elm.data().type === 'user') return '100';
+          
           else return elm.data().score * 25 + 25;
         },
         'text-valign': 'center',
@@ -161,7 +183,19 @@ export class CytoscapeRecommendedComponent {
         'font-size': 16,
       },
     },
-
+    {
+      selector: 'edge',
+      style: {
+        width: 4,
+        'line-color': '#888',
+        'target-arrow-color': '#888',
+        'target-arrow-shape': 'triangle',
+        'curve-style': 'bezier',
+        'content': 'Prerequisite_To',
+        'font-size': 12,
+ 
+      },
+    },
     {
       selector: ':selected',
       css: {
@@ -179,6 +213,7 @@ export class CytoscapeRecommendedComponent {
   ];
 
   public default = {
+    
     menuRadius: function (ele) {
       return 100;
     }, // the outer radius (node center to the end of the menu) in pixels. It is added to the rendered size of the node. Can either be a number or function as in the example.
@@ -237,52 +272,157 @@ export class CytoscapeRecommendedComponent {
   }
 
   init() {
-    let cy_container = this.renderer.selectRootElement('#cyRecommender');
+    this._elements = [];
+    if (this._elements === undefined || this._elements === null || this._elements === ''){  
+    console.log("1111",this._elements)	}
+    this._elements = this.elements;
+    console.log("111222",this.elements)	
+
+    let cy_container = this.renderer.selectRootElement('#cyRecommenderSequence');
     if (this.elements !== undefined) {
-      this._elements = this.elements;
+       // Check if this.elements is an object and convert it to an array
+  if (typeof this.elements === 'object' && !Array.isArray(this.elements)) {
+    // Convert object to array of values
+    this._elements = Object.values(this.elements);
+  }
+        // Check if elements are defined and valid
+  else if (Array.isArray(this.elements) && this.elements.length > 0) {
+    // Use the createGraphElements function to generate graph elements
+    this._elements = this.elements;
+  } else {
+    return; // Exit if the input is invalid
+  }
+      // this._elements = this.elements;
+// Now this._elements contains all the elements from the nested arrays
+if (!this.layout || !this.layout.name) {
+  console.warn('Layout is not valid, using default grid layout.');
+  this.layout = { name: 'grid' };
+}
+console.log('cy_container:', cy_container);
+
+console.log('this.layout:', JSON.stringify(this.layout, null, 2));
+
+console.log('this.zoom:', JSON.stringify(this.zoom, null, 2));
+console.log('this.showAllStyle:', JSON.stringify(this.showAllStyle, null, 2));
+console.log('this._elements:', JSON.stringify(this._elements, null, 2));
+console.log('this.cyHeight:', JSON.stringify(this.cyHeight, null, 2));
+
       setTimeout(() => {
+       
         this.cy = cytoscape({
           container: cy_container,
           layout: this.layout,
           minZoom: this.zoom.min,
           maxZoom: this.zoom.max,
           style: this.showAllStyle,
-          elements: this._elements,
+          elements: this.createGraphElements(this._elements),
+          height: this.cyHeight,
           autounselectify: true,
+       
         });
-        this.cy.cxtmenu(this.default);
-        if (this._elements !== undefined) {
+         this.cy.cxtmenu(this.default);
+
+         // Dynamically change layout (optional, depending on your use case)
+      // this.cy.layout({ name: 'circle' }).run();  // Add this to change layout to 'circle'
+
+        // if (this._elements !== undefined) {
           this.cy.ready(() => {
             this.render();
           });
-        }
-      }, 2);
-      document.getElementById('cyRecommender').style.height = this.cyHeight + 'px';
+          this.cy.fit();
+        // }
+              // Update elements dynamically (if needed)
+      // Example: If you later update this._elements with new data, update the graph
+      this.cy.json({ elements: this.createGraphElements(this._elements) });
+      this.cy.layout(this.layout).run();
+      this.cy.refresh;
+      }, 100);
+      document.getElementById('cyRecommenderSequence').style.height = this.cyHeight + 'px';
+console.log('this.cyHeight:111', JSON.stringify(document.getElementById('cyRecommenderSequence').style.height, null, 2));
+
     }
   }
+    // Create graph elements: nodes and edges
+    createGraphElements(nestedArrays: any[]): any[] {
+      const elements: any[] = [];
+    
+      // Assuming there are multiple groups within nestedArrays[0]
+      const groups = nestedArrays[0]; // Now groups is an array of groups in nestedArrays[0]
+    
+      // Iterate over each group in nestedArrays[0]
+      groups.forEach((group: any, index: number) => {
+    
+        // Check if the group contains a 'data' array
+        if (group.data && Array.isArray(group.data)) {
+          // Create nodes from the 'data' array
+          const nodes = group.data.map((item: any) => ({
+           
+            data: {
+              id: item.cid,      // Use `cid` as the node ID
+              name: item.name,   // Use `name` as the node name
+              score: item.score,
+              type: item.type,
+              uri: item.uri,
+              wikipedia: item.wikipedia,
+              abstract: item.abstract,
+              
+
+            },
+          }));
+          // Add nodes to elements
+          elements.push(...nodes);
+    
+          // Create edges between sequential nodes in the same group
+          if (nodes.length > 1) {
+            for (let i = 0; i < nodes.length - 1; i++) {
+              elements.push({
+                data: {
+                  id: `edge-${index}-${i}`,
+                  source: nodes[i].data.id,
+                  target: nodes[i + 1].data.id,
+                },
+              });
+            }
+          }
+        } else {
+          console.error(`Invalid structure in group ${index}. Expected "data" array.`);
+        }
+      });
+    
+      return elements;
+    }
+    
+    
+    
   render() {
     if (this._elements !== undefined) {
       let selectedNode: any = undefined;
 
-      this.cy.on('click', (event: any) => {
+      this.cy.on('click', 'node',(event: any) => {
+
         $('html,body').css('cursor', 'default');
         var node = event.target;
+
         if (node !== this.cy) {
           if (node.isNode()) {
             const elements = document.getElementsByClassName('popper-div');
+           
             while (elements.length > 0) {
               elements[0].parentNode.removeChild(elements[0]);
             }
           }
         }
         var eventTarget = event.target;
+     
         if (eventTarget !== this.cy) {
+
           if (eventTarget.isNode()) {
+ 
             this.nodeClickservice.nodeClicked();
-            const selectedId = eventTarget.data('id');
+            const selectedId = eventTarget._private.data['id'];
             selectedNode = {
               id: eventTarget.data('id'),
-              cid: eventTarget.data('id'),
+              cid: eventTarget.data('cid'),
               name: eventTarget.data('name'),
               type: eventTarget.data('type'),
               abstract: eventTarget.data('abstract'),
@@ -291,11 +431,21 @@ export class CytoscapeRecommendedComponent {
               score: eventTarget.data('score'),
               roads: eventTarget.data('roads'),
             };
-            this.elements.nodes.map((node) => {
-              node.data.selected = 'u';
+            // this.elements.nodes.map((node) => {
+            //   node.data.selected = 'u';
+            // });
+            this.elements.nodes.forEach((nestedObject) => {
+             
+                nestedObject.data.forEach((node) => {
+                  node.selected = 'u'; // Add the 'selected' property to each node
+                });
+              
             });
+            
+
+          
             this.elements.nodes.some((node) => {
-              if (node.data.id.toString() === selectedId.toString()) {
+              if (node.data['cid'] === selectedId) {
                 node.data.selected = 's';
               }
             });
@@ -322,8 +472,11 @@ export class CytoscapeRecommendedComponent {
       });
       this.cy.on('mouseover', 'node', (event) => {
         var node = event.target;
+
         if (node !== this.cy) {
-          if (node.isNode() && node.data('wikipedia')) {
+
+          if (node.isNode() && node._private.data['wikipedia']) {
+
             $('html,body').css('cursor', 'pointer');
             let div = document.createElement('div');
 
@@ -412,6 +565,7 @@ export class CytoscapeRecommendedComponent {
             cid: selectedId,
             name: selectedName,
           };
+          console.log("newConceptEle", newConceptEle);
           this.slideConceptservice.updateNewConcepts(newConceptEle);
           eventTarget._private.data.unReadTriggered = false;
         }

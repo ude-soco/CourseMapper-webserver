@@ -27,13 +27,14 @@ export class GraphRecommednedComponent {
   linkTop;
 
   @Input() conceptMapRecData?: any;
+  @Input() conceptSequenceMapRecData?: any;
   @Input() selectedFilterValues?: string[];
   @Input() filterUpdated?: boolean;
   @Input() topNConcepts?: any;
   @Input() materialKnowledgeGraph: boolean;
   @Input() slideKnowledgeGraph: boolean;
   @Input() recommenderKnowledgeGraph: boolean;
-  @Input() cyHeight: any;
+  @Input() cyHeight: any = 500;
 
   newConceptsSubscription: Subscription;
   didNotUnderstandConceptsSubscription: Subscription;
@@ -226,11 +227,12 @@ export class GraphRecommednedComponent {
 
           if (abstracBlock) {
             abstracBlock.style.maxHeight = Number(this.cyHeight-75).toString() + 'px';
+            console.log("cyHeight raph recommended", this.cyHeight)
             console.log(abstracBlock)
             console.log(abstracBlock.style.maxHeight)
             let accordionAbstract = document.getElementById('accordionHeader').childNodes[0].childNodes[0] as HTMLElement;
             this.cyHeightRec =Number(this.cyHeight - 75 - 3 * accordionAbstract.offsetHeight - 65).toString() + 'px';
-            console.log(this.cyHeightRec)
+            console.log("cyHeightRec", this.cyHeightRec)
             }
             // Create a set of all required users
             let requiredUsers = new Set([]);
