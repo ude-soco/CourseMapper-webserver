@@ -10,6 +10,9 @@
       [cyHeight]="cyHeight"
       [showMaterialKg]="showMaterialKg"
       [showCourseKg]="showCourseKg"
+      [isDraft]="isDraft"
+      (editConcept)="editConcept.emit($event)"
+      (conceptDeleted)="conceptDeleted.emit($event)"
     >
     </app-cytoscape>
     <!-- [showConceptAbstract]="showConceptAbstract" -->

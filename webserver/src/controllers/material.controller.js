@@ -272,7 +272,7 @@ export const editMaterial = async (req, res, next) => {
   const materialType = req.body.type;
   const userId = req.userId;
   const materialDesc = req.body.description;
-
+console.log("called")
   let course;
   try {
     course = await Course.findById(courseId);

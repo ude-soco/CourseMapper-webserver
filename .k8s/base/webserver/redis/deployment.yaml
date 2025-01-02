@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    spec:
+      containers:
+      - name: leader
+        image: redis
+        command:
+        - redis-server
+        - --save
+        - ""
+        - --appendonly
+        - no
+        resources:
+          requests:
+            cpu: 10m
+            memory: 16Mi
+          limits:
+            cpu: 1
+            memory: 96Mi
+        livenessProbe:
+          tcpSocket:
+            port: client # named port
+          initialDelaySeconds: 30
+          timeoutSeconds: 5
+          periodSeconds: 5
+          failureThreshold: 5
+          successThreshold: 1
+        readinessProbe:
+          exec:
+            command:
+            - redis-cli
+            - ping
+          initialDelaySeconds: 20
+          timeoutSeconds: 5
+          periodSeconds: 3
+        ports:
+        - name: client
+          containerPort: 6379

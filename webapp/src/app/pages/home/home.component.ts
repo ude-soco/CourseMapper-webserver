@@ -122,12 +122,14 @@ export class HomeComponent implements OnInit {
   }
   onSelectCourse(selcetedCourse: any) {
     /* this.router.navigate(['course', selcetedCourse.id]); */
-    this.router.navigate(['course', selcetedCourse.id, 'welcome']);
-    this.store.dispatch(
-      CourseAction.setCurrentCourse({ selcetedCourse: selcetedCourse })
-    );
-    this.store.dispatch(
-      CourseActions.setCourseId({ courseId: selcetedCourse.id })
-    );
+    this.courseService.logCourses(selcetedCourse.id).subscribe(() => {
+      this.router.navigate(['course', selcetedCourse.id, 'welcome']);
+      this.store.dispatch(
+        CourseAction.setCurrentCourse({ selcetedCourse: selcetedCourse })
+      );
+      this.store.dispatch(
+        CourseActions.setCourseId({ courseId: selcetedCourse.id })
+      );
+    });
   }
 }

@@ -151,13 +151,13 @@ export const getshowAllPDFAnnotations = createSelector(
 const getUsernameOfReplyAuthors = createSelector(
   getAnnotationFeatureState,
   (state) => {
-    let idAndEmailAndNamesMap: Map<string, { name: string; email: string }> =
-      new Map<string, { name: string; email: string }>();
+    let idAndEmailAndNamesMap: Map<string, { name: string; username: string }> =
+      new Map<string, { name: string; username: string }>();
     state.annotationsForMaterial.forEach((annotation) => {
       annotation.replies.forEach((reply) => {
         idAndEmailAndNamesMap.set(reply.author?.userId, {
           name: reply.author?.name,
-          email: reply.author?.email,
+          username: reply.author?.username,
         });
       });
     });
@@ -168,12 +168,12 @@ const getUsernameOfReplyAuthors = createSelector(
 const getUsernameOfAnnotationAuthors = createSelector(
   getAnnotationFeatureState,
   (state) => {
-    let emailAndNamesMap: Map<string, { name: string; email: string }> =
-      new Map<string, { name: string; email: string }>();
+    let emailAndNamesMap: Map<string, { name: string; username: string }> =
+      new Map<string, { name: string; username: string }>();
     state.annotationsForMaterial.forEach((annotation) => {
       emailAndNamesMap.set(annotation.author.userId, {
         name: annotation.author.name,
-        email: annotation.author.email,
+        username: annotation.author.username,
       });
     });
     return emailAndNamesMap;
@@ -184,18 +184,18 @@ export const getUnionOfAnnotationAndReplyAuthors = createSelector(
   getUsernameOfReplyAuthors,
   getUsernameOfAnnotationAuthors,
   (replyAuthors, annotationAuthors) => {
-    let unionOfAuthors = new Map<string, { name: string; email: string }>();
+    let unionOfAuthors = new Map<string, { name: string; username: string }>();
     replyAuthors.forEach((value, key) => {
-      unionOfAuthors.set(key, value);
+      unionOfAuthors.set(key, { name: value.name, username: value.username });
     });
     annotationAuthors.forEach((value, key) => {
-      unionOfAuthors.set(key, value);
+      unionOfAuthors.set(key, { name: value.name, username: value.username });
     });
-    let arr: { userId: string; name: string; email: string }[];
+    let arr: { userId: string; name: string; username: string }[];
     arr = Array.from(unionOfAuthors, ([userId, userData]) => ({
       userId,
       name: userData.name,
-      email: userData.email,
+      username: userData.username,
     }));
     return arr;
   }

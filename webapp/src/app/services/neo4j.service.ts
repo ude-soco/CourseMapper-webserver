@@ -44,6 +44,12 @@ export class Neo4jService {
     ));
   }
 
+  async getMaterialSlides(materialId: string): Promise<Neo4jResult> {
+    return lastValueFrom(this.http.get<Neo4jResult>(
+      `${environment.API_URL}/knowledge-graph/get-material-slides/${materialId}`
+    ));
+  }
+
   async getMaterialEdges(materialId: string): Promise<Neo4jResult> {
     return lastValueFrom(this.http.get<Neo4jResult>(
       `${environment.API_URL}/knowledge-graph/get-material-edges/${materialId}`

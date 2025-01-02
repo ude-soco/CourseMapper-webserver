@@ -12,6 +12,10 @@ const User = new Schema({
   password: { type: String, required: true },
   role: { type: Schema.Types.ObjectId, ref: "role" },
   createdAt: { type: Date, default: Date.now() },
+  verified: {
+    type: Boolean,
+    default: false, // Set default value to false
+  },
   //TODO: later remove the below boolean attrbiutes if not being used anywhere in front end later.
   courses: [
     {
@@ -38,7 +42,6 @@ const User = new Schema({
       frameborder: String,
     },
   ], //holds a list of the indicators created in this collection
-  
   blockedByUser: [
     { type: Schema.Types.ObjectId, ref: "user", required: true, default: [] },
   ],

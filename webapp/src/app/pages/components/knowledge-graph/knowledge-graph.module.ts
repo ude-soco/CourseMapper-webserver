@@ -8,13 +8,13 @@ import { GraphComponent } from './graph/graph.component';
 import { GraphRecommednedComponent } from './graph-recommedned/graph-recommedned.component';
 // import { PrimengModule } from '../../../modules/primeng/primeng.module';
 import {AccordionModule} from 'primeng/accordion';
-import {MenuItem} from 'primeng/api'; 
+import {MenuItem} from 'primeng/api';
 import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
 import { CheckboxModule } from 'primeng/checkbox';
 import { TabMenuModule } from 'primeng/tabmenu';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { StyleClassModule } from 'primeng/styleclass';
 import { SidebarModule } from 'primeng/sidebar';
@@ -38,6 +38,10 @@ import { LinkifyPipe } from './videos/pipes/linkify.pipe';
 import { SafeHtmlPipe } from './videos/pipes/safehtml.pipe';
 import {TabViewModule} from 'primeng/tabview';
 import { CytoscapeSequenceRecommendedComponent } from './cytoscape-sequence-recommended/cytoscape-sequence-recommended.component';
+import { InputTextModule } from 'primeng/inputtext';
+import { AutoCompleteModule } from 'primeng/autocomplete';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { PdfViewerModule } from 'ng2-pdf-viewer';
 
 
 
@@ -64,6 +68,7 @@ import { CytoscapeSequenceRecommendedComponent } from './cytoscape-sequence-reco
     CytoscapeSequenceRecommendedComponent,    
   ],
   imports: [
+    InputTextModule,
     FormsModule,
     CommonModule,
     DialogModule,
@@ -82,6 +87,10 @@ import { CytoscapeSequenceRecommendedComponent } from './cytoscape-sequence-reco
     RadioButtonModule,
     OverlayPanelModule,
     TabViewModule,
+    ReactiveFormsModule,
+    AutoCompleteModule,
+    MultiSelectModule,
+    PdfViewerModule,
     ],
   exports: [
     ConceptMapComponent,
@@ -92,6 +101,6 @@ import { CytoscapeSequenceRecommendedComponent } from './cytoscape-sequence-reco
     GraphRecommednedComponent,
     CytoscapeSequenceRecommendedComponent
   ],
-  
+
 })
 export class KnowledgeGraphModule {}
