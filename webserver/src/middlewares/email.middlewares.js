@@ -12,11 +12,16 @@ const mailTransporter = nodemailer.createTransport({
   });
 
 
+  const roleMapping = {
+    'co_teacher': 'Co-Teacher',
+    'non_editing_teacher': 'Teaching Assistant',
+    'user': 'Student'
+  };
 // Middleware function to send role assignment email
 const emailRoleAssignmentMiddleware = async (req, res, next) => {
   try {
     const { user, response, role } = req.locals; // Retrieve user and response from previous middlewares
-
+    const roleName = roleMapping[role.toLowerCase()] || role;
     const mailDetails = {
       from: "coursemapper.soco@gmail.com",
       to: user.email,
@@ -27,7 +32,7 @@ const emailRoleAssignmentMiddleware = async (req, res, next) => {
         </head>
         <body>
           <p>Dear ${user.username},</p>
-          <p>You have been assigned the role of <b>${role?.split('_')?.join(' ')}</b> in the course: <b>${response.course.name}</b>.</p>
+          <p>You have been assigned the role of <b>${roleName}</b> in the course: <b>${response.course.name}</b>.</p>
           <p>To view your course and role details, please log in to your account.</p>
           <p>Regards,</p>
           <p>The CourseMapper Team</p>

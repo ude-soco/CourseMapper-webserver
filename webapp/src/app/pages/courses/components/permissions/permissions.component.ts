@@ -29,13 +29,13 @@ export class PermissionsComponent implements OnInit {
             { label: 'Allow member to create channel', name: 'can_create_channel', checked: false },
             { label: 'Allow member to create topic', name: 'can_create_topic', checked: false },
             { label: 'Allow member to create PDF material', name: 'can_upload_pdf_material', checked: false },
-            { label: 'Allow member to create video ', name: 'can_video_topic', checked: false }
+            { label: 'Allow member to create video material ', name: 'can_video_topic', checked: false }
           ]
         },
         {
           role: { title: 'Edit permissions', checked: false },
           list: [
-            { label: 'Allow member to rename course name', name: 'can_edit_course_name', checked: false },
+            { label: 'Allow member to rename course ', name: 'can_edit_course_name', checked: false },
             { label: 'Allow member to rename course description', name: 'can_edit_course_description', checked: false },
             { label: 'Allow member to rename topics', name: 'can_rename_topics', checked: false },
             { label: 'Allow member to rename channels', name: 'can_rename_channels', checked: false },
@@ -49,8 +49,8 @@ export class PermissionsComponent implements OnInit {
             { label: 'Allow member to delete course description', name: 'can_delete_course_description', checked: false },
             { label: 'Allow member to delete topics', name: 'can_delete_topics', checked: false },
             { label: 'Allow member to delete channels', name: 'can_delete_channels', checked: false },
-            { label: 'Allow member to delete materials', name: 'can_delete_materials', checked: false },
-            { label: 'Allow member to delete PDFs', name: 'can_delete_pdfs', checked: false }
+            { label: 'Allow member to delete PDFs material', name: 'can_delete_pdfs', checked: false },
+            { label: 'Allow member to delete video material', name: 'can_delete_materials', checked: false }
           ]
         }
       ]
@@ -64,13 +64,13 @@ export class PermissionsComponent implements OnInit {
             { label: 'Allow member to create channel', name: 'can_create_channel', checked: false },
             { label: 'Allow member to create topic', name: 'can_create_topic', checked: false },
             { label: 'Allow member to create PDF material', name: 'can_upload_pdf_material', checked: false },
-            { label: 'Allow member to create video ', name: 'can_video_topic', checked: false }
+            { label: 'Allow member to create video material', name: 'can_video_topic', checked: false }
           ]
         },
         {
           role: { title: 'Edit permissions', checked: false },
           list: [
-            { label: 'Allow member to rename course name', name: 'can_edit_course_name', checked: false },
+            { label: 'Allow member to rename course ', name: 'can_edit_course_name', checked: false },
             { label: 'Allow member to rename course description', name: 'can_edit_course_description', checked: false },
             { label: 'Allow member to rename topics', name: 'can_rename_topics', checked: false },
             { label: 'Allow member to rename channels', name: 'can_rename_channels', checked: false },
@@ -84,8 +84,9 @@ export class PermissionsComponent implements OnInit {
             { label: 'Allow member to delete course description', name: 'can_delete_course_description', checked: false },
             { label: 'Allow member to delete topics', name: 'can_delete_topics', checked: false },
             { label: 'Allow member to delete channels', name: 'can_delete_channels', checked: false },
-            { label: 'Allow member to delete materials', name: 'can_delete_materials', checked: false },
-            { label: 'Allow member to delete PDFs', name: 'can_delete_pdfs', checked: false }
+            { label: 'Allow member to delete PDFs material', name: 'can_delete_pdfs', checked: false },
+            { label: 'Allow member to delete video material', name: 'can_delete_materials', checked: false },
+           
           ]
         }
       ]

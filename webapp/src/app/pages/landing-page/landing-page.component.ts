@@ -162,6 +162,7 @@ export class LandingPageComponent {
         createdAt: new Date(course.createdAt),
         firstName: this.firstName,
         lastName: this.lastName,
+        creator: course.creator,
         description: course.description,
         totalEnrolled: course?.users?.length,
       };

@@ -21,7 +21,7 @@ export class MemberTableComponent {
 
 
   constructor(
-    private route: ActivatedRoute,
+  
     protected courseService: CourseService,
     private messageService: MessageService,
     public storageService: StorageService,
@@ -57,10 +57,6 @@ isBlockedFromCourse(userId: string): boolean {
 isBlockedBetweenUsers(userId: string): boolean {
   return this.currentUser.userId.blockingUsers.includes(userId);
 }
-
-
-
-
 
   roles = [
     { label: 'Co-Teacher', value: 'co_teacher' },
@@ -165,7 +161,7 @@ isBlockedBetweenUsers(userId: string): boolean {
     const newRoleLabel = this.mapRoleToLabel(event.value);
 
     this.confirmationService.confirm({
-      message: `Are you sure you want to assign "${member?.userId?.username}" the role "${newRoleLabel}" in this course?
+      message: `Are you sure you want to assign "${member?.userId?.firstname} ${member?.userId?.lastname}" the role "${newRoleLabel}" in this course?
       <br />If you continue, an email will be sent to notify them about this role assignment.`,
       header: 'Role Change Confirmation',
       icon: 'pi pi-info-circle',

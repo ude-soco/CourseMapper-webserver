@@ -23,16 +23,16 @@ p-table p-datatable-table{
   padding: 10px; 
   white-space: nowrap;
 }
-.full-name-column {
-  width: 35%;
-}
+
 .fixed-width-column {
   width: 21%;
 }
 
-.flexible-column {
-  width: auto; 
+.flex-column {
+  width: auto; /* Allow dynamic width in view-only mode */
 }
+
+
 
 ::ng-deep .p-dropdown {
   width: 75% !important; 

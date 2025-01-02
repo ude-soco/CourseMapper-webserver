@@ -232,7 +232,7 @@ export const getMyCourses = catchAsync(async (req, res, next) => {
   if (search) {
     const searchLower = search.toLowerCase();
     results = results.filter((course) =>
-      course.name?.toLowerCase().includes(searchLower)
+      course.name?.toLowerCase().includes(searchLower) || course.creator?.toLowerCase().includes(searchLower)
     );
   }
 

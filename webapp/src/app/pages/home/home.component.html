@@ -58,14 +58,14 @@
       
     </div>
       
-      <div class="w-1/5 flex flex-row items-center">
+      <div class="w-1/5 flex flex-row items-center ml-7">
         <div class="relative inline-block text-left">
           <!-- Dropdown Button -->
           <button
             *ngIf="selectedRoles.length === 0"
             (click)="toggleDropdown('roles')"
             type="button"
-            class="inline-flex justify-between w-80 h-9 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+            class="inline-flex justify-between w-80 h-9 right-0   rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
             id="dropdownMenuButton"
           >
             Filter by role
@@ -227,7 +227,7 @@
     <div class="md:container md:mx-auto">
       <ng-container *ngIf="courses && courses.length">
         <div class="overscroll-y-auto h-1/2 flex flex-wrap">
-          <div *ngFor="let course of userArray" class="course-card-container">
+          <div *ngFor="let course of courses" class="course-card-container">
             <p-card styleClass="p-card-shadow" class="course-card relative">
               <span class="badge-blocked" *ngIf="course?.isBlocked">
                 <svg
@@ -298,7 +298,7 @@
                     width="25px"
                   />
                   <span class="pl-1">
-                    Created by: {{ course.firstName }} {{ course.lastName }}
+                    Created by:  {{ course?.creator }}
                   </span>
                 </p>
 
@@ -319,9 +319,9 @@
                     style="font-size: 1rem; color: #ea580c"
                   ></i>
                   <span class="pl-1">
-                    {{ course.totalEnrolled | number }} 
+                    {{ course.numberUsers| number }} 
                     enrolled user{{
-                      course?.totalEnrolled > 1 ? "s" : ""
+                      course?.numberUsers > 1 ? "s" : ""
                     }}
                   </span>
                 </p>

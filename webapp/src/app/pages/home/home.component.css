@@ -45,7 +45,7 @@
   padding: 0.2em 0.5em;
   border-radius: 0.5em 0.5em 0em 0em;
 
-  text-transform: capitalize;
+  
   font-weight: lighter; /* Font weight */
   z-index: 10; /* Make sure it appears on top */
   width: 22rem;

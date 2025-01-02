@@ -411,8 +411,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   getMyCourses(queryParams: any) {
     this.courseService.fetchCourses(queryParams).subscribe((response: any) => {
-      console.log(response.results);
-      const courses = response.results;
+      
+      const courses = response.results  ;
+      console.log(courses);
       this.totalPages = response.pagination.totalPages;
 
       if (queryParams.page === 1) {
@@ -430,11 +431,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
       // Handle userArray logic
       this.userArray = []; // Reset the array
+      console.log("bbbbbbbbbb",this.userArray);
       for (let course of this.courses) {
         if (course?.users?.length > 0) {
           this.buildCardInfo(course.users[0].userId, course);
         }
       }
+      
     });
 
     // Subscribe to course updates only once
@@ -446,6 +449,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
         },
       });
     }
+   
+    
   }
 
   buildCardInfo(userModeratorID: string, course: Course) {
@@ -461,6 +466,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         createdAt: new Date(course.createdAt),
         firstName: this.firstName,
         lastName: this.lastName,
+        creator: course.creator,
         moderator: userModeratorID,
         description: course.description,
         isBlocked: course?.isBlocked,
