@@ -255,7 +255,7 @@ export const generateSetMaterialNotificationSettings = (req) => {
     ...metadata,
     actor: createUser(req),
     verb: createVerb("http://id.tincanapi.com/verb/set", "set"), // Problem: which verb should I use?
-    object: createMaterialNotificationSettingsObject(req),
+    // object: createMaterialNotificationSettingsObject(req),
     context: createContext(),
   };
 };
@@ -265,7 +265,7 @@ export const generateUnsetMaterialNotificationSettings = (req) => {
     ...metadata,
     actor: createUser(req),
     verb: createVerb("http://id.tincanapi.com/verb/unset", "unset"), // Problem: which verb should I use?
-    object: createMaterialNotificationSettingsObject(req),
+    // object: createMaterialNotificationSettingsObject(req),
     context: createContext(),
   };
 };
