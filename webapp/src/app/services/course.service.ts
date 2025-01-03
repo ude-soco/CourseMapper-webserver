@@ -3,7 +3,15 @@ import { Course } from 'src/app/models/Course';
 import { environment } from '../../environments/environment';
 import { EventEmitter, Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError, Observable, of, Subject, tap, throwError } from 'rxjs';
+import {
+  catchError,
+  map,
+  Observable,
+  of,
+  Subject,
+  tap,
+  throwError,
+} from 'rxjs';
 import { TopicChannelService } from './topic-channel.service';
 import { StorageService } from './storage.service';
 import { Store } from '@ngrx/store';
@@ -62,7 +70,7 @@ export class CourseService {
   }
 
   logCourses(courseId: string): Observable<any> {
-    return this.http.get<Course>(`${this.API_URL}/courses/${courseId}/log`)
+    return this.http.get<Course>(`${this.API_URL}/courses/${courseId}/log`);
   }
   /**
    * @function fetchCourses
@@ -81,7 +89,7 @@ export class CourseService {
         //   // console.warn("User is not authenticated. Token expired or not provided.");
         //   return of([]); // Return empty array so app continues
         // }
-         return throwError(error); // Rethrow other errors
+        return throwError(error); // Rethrow other errors
       })
     );
   }
@@ -244,6 +252,17 @@ export class CourseService {
       .post<any>(`${this.API_URL}/withdraw/${course._id}`, {})
       .pipe(tap((withdrawcourses) => {}));
   }
+
+  GetCourseById(courseID: string): Observable<Course> {
+    return this.http.get<any>(`${this.API_URL}/courses/${courseID}`).pipe(
+      tap((response) => {
+        // Assuming the response contains a "course" property
+        const course = response.course;
+      }),
+      map((response) => response.course) // Extract the "course" for further processing
+    );
+  }
+
   // sendToOldBackend(course){
   //   // userId should be taken from the coockies. for the time being it is hard coded
   //   this.http.post<any>('http://localhost:8090/new/course',
