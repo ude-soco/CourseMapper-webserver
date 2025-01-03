@@ -103,11 +103,14 @@ export class CourseService {
    *
    */
   addCourse(course: Course): any {
+    console.log('adding new course', course.url);
+
     return this.http
       .post<any>(`${this.API_URL}/course`, {
         name: course.name,
         description: course.description,
         shortname: course.shortName,
+        url: course.url,
       })
       .pipe(
         catchError((err, sourceObservable) => {
@@ -120,6 +123,7 @@ export class CourseService {
           }
         }),
         tap((res) => {
+
           if (!('errorMsg' in res)) {
             this.courses = [...this.courses, res.courseSaved];
             this.store.dispatch(
@@ -197,6 +201,32 @@ export class CourseService {
         tap((res) => {
           if (!('errorMsg' in res)) {
             this.renameCourseSuccess(courseTD, body.name);
+          }
+        })
+      );
+  }
+
+  updateCourse(course: Course) {
+    return this.http
+      .put<any>(`${this.API_URL}/courses/${course._id}`, course)
+      .pipe(
+        catchError((err) => {
+          return of({ errorMsg: err.error.error });
+        }),
+        tap((res) => {
+          if (!('errorMsg' in res)) {
+            this.fetchCourses().subscribe((courses) => {
+              this.onUpdateCourses$.next(this.courses);
+
+              // Find the updated course from the courses array
+              const updatedCourse = courses.find((c) => c._id === course._id);
+
+              if (updatedCourse) {
+                this.onSelectCourse.emit(updatedCourse);
+              } else {
+                console.error('Updated course not found in courses list.');
+              }
+            });
           }
         })
       );
