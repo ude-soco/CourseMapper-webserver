@@ -113,7 +113,8 @@ module.exports = function (app) {
   app.put(
     "/api/courses/:courseId/materials/:materialId/indicator/:indicatorId/resize/:width/:height",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.resizeIndicator
+    controller.resizeIndicator,
+    logger.resizeIndicatorLogger
   );
   app.put(
     "/api/courses/:courseId/materials/:materialId/reorder/:newIndex/:oldIndex",

@@ -282,6 +282,16 @@ export const generateViewIndicatorsActivity = (req) => {
     context: createContext(),
   };
 };
+export const generateResizeIndicatorActivity = (req) => {
+  const metadata = createMetadata();
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://id.tincanapi.com/verb/resize", "resized"), // TO VERIFY AND CORRECT, I couldn't find the verb in the registry Database
+    object: createResizedIndicatorObject(req),
+    context: createContext(),
+  };
+};
 
 export const createGetIndicatorsObject = (req) => {
   const indicators = req.locals.indicators;
@@ -340,6 +350,48 @@ export const createIndicatorObject = (req) => {
       },
       height: {
         [config.language]: indicator.height,
+      },
+      frameborder: {
+        [config.language]: indicator.frameborder,
+      },
+      extensions: {
+        [`${DOMAIN}/extensions/indicator`]: {
+          materialId: material._id,
+          materialName: material.name,
+          materialDescription: material.description,
+          materialType: material.type,
+          materialUrl: material.url,
+          topicId: material.topicId,
+          courseId: material.courseId,
+          channelId: material.channelId,
+        },
+      },
+    },
+  };
+};
+export const createResizedIndicatorObject = (req) => {
+  const indicator = req.locals.indicator;
+  const material = req.locals.material;
+  const oldDimensions = req.locals.oldDimensions;
+  const newDimensions = req.locals.newDimentions;
+  const origin = req.get("origin");
+  return {
+    objectType: config.activity,
+    id: `${origin}/activity/indicator/${indicator._id}`, //To verify
+    definition: {
+      type: `http://id.tincanapi.com/activitytype/indicator`, //To verify
+      source: {
+        [config.language]: indicator.src,
+      },
+      // width: { [config.language]: indicator.width },
+      // height: { [config.language]: indicator.height },
+      oldDimensions: {
+        oldWidth: { [config.language]: oldDimensions.width },
+        oldHeight: { [config.language]: oldDimensions.height },
+      },
+      newDimensions: {
+        newWidth: { [config.language]: newDimensions.width },
+        newHeight: { [config.language]: newDimensions.height },
       },
       frameborder: {
         [config.language]: indicator.frameborder,

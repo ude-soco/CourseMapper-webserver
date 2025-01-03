@@ -534,9 +534,16 @@ export const getIndicators = async (req, res, next) => {
 export const resizeIndicator = async (req, res, next) => {
   const materialId = req.params.materialId;
   const indicatorId = req.params.indicatorId;
-  const width = req.params.width;
-  const height = req.params.height;
+  const newWidth = req.params.width;
+  const newHeight = req.params.height;
+  const userId = req.userId;
 
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
   let foundMaterial;
   try {
     foundMaterial = await Material.findOne({ "indicators._id": indicatorId });
@@ -554,11 +561,17 @@ export const resizeIndicator = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: "Error finding material" });
   }
-
+  let resizedIndicator;
+  let oldDimensions = {};
   foundMaterial.indicators.forEach((indicator) => {
     if (indicator._id.toString() === indicatorId.toString()) {
-      indicator.width = width;
-      indicator.height = height;
+      oldDimensions = {
+        width: indicator.width,
+        height: indicator.height,
+      };
+      indicator.width = newWidth;
+      indicator.height = newHeight;
+      resizedIndicator = indicator;
     }
   });
 
@@ -567,7 +580,17 @@ export const resizeIndicator = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: "Error saving material" });
   }
-  return res.status(200).send();
+
+  req.locals = {
+    material: foundMaterial,
+    indicator: resizedIndicator,
+    user: foundUser,
+    oldDimensions: oldDimensions,
+    newDimentions: { width: newWidth, height: newHeight },
+    success: `Indicator resized successfully!`,
+  };
+  next();
+  // return res.status(200).send();
 };
 
 /**
