@@ -272,6 +272,57 @@ export const generateDeleteIndicatorActivity = (req) => {
     context: createContext(),
   };
 };
+export const generateViewIndicatorsActivity = (req) => {
+  const metadata = createMetadata();
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
+    object: createGetIndicatorsObject(req),
+    context: createContext(),
+  };
+};
+
+export const createGetIndicatorsObject = (req) => {
+  const indicators = req.locals.indicators;
+  const material = req.locals.material;
+  const origin = req.get("origin");
+  return {
+    objectType: config.activity,
+    id: `${origin}/activity/indicators`, // TO VERIFY
+    definition: {
+      type: `http://id.tincanapi.com/activitytype/indicators`, // TO VERIFY
+      items: indicators.map((indicator) => ({
+        id: `${origin}/activity/indicator/${indicator._id}`,
+        source: {
+          [config.language]: indicator.src,
+        },
+        width: {
+          [config.language]: indicator.width,
+        },
+        height: {
+          [config.language]: indicator.height,
+        },
+        frameborder: {
+          [config.language]: indicator.frameborder,
+        },
+      })),
+      extensions: {
+        [`${DOMAIN}/extensions/indicators`]: {
+          materialId: material._id,
+          materialName: material.name,
+          materialDescription: material.description,
+          materialType: material.type,
+          materialUrl: material.url,
+          topicId: material.topicId,
+          courseId: material.courseId,
+          channelId: material.channelId,
+        },
+      },
+    },
+  };
+};
+
 export const createIndicatorObject = (req) => {
   const indicator = req.locals.indicator;
   const material = req.locals.material;

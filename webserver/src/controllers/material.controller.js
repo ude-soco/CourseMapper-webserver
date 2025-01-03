@@ -491,6 +491,14 @@ export const deleteIndicator = async (req, res, next) => {
  */
 export const getIndicators = async (req, res, next) => {
   const materialId = req.params.materialId;
+  const userId = req.userId;
+
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
 
   let foundMaterial;
   try {
@@ -505,7 +513,13 @@ export const getIndicators = async (req, res, next) => {
   }
 
   const response = foundMaterial.indicators ? foundMaterial.indicators : [];
-  return res.status(200).send(response);
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    indicators: response,
+  };
+  next();
+  // return res.status(200).send(response);
 };
 
 /**

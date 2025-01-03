@@ -144,3 +144,15 @@ export const deleteIndicatorLogger = async (req, res) => {
       .send({ error: "Error saving activity log", details: err.message });
   }
 };
+export const viewIndicatorsLogger = async (req, res) => {
+  try {
+    req.locals.activity = await activityController.createActivity(
+      materialActivityGenerator.generateViewIndicatorsActivity(req)
+    );
+    res.status(200).send(req.locals.indicators);
+  } catch (err) {
+    res
+      .status(500)
+      .send({ error: "Error saving activity log", details: err.message });
+  }
+};

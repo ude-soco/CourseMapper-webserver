@@ -106,7 +106,8 @@ module.exports = function (app) {
   app.get(
     "/api/courses/:courseId/materials/:materialId/indicator",
     [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.getIndicators
+    controller.getIndicators,
+    logger.viewIndicatorsLogger
   );
 
   app.put(
