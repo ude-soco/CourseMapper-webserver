@@ -605,7 +605,14 @@ export const reorderIndicators = async (req, res, next) => {
   const materialId = req.params.materialId;
   const newIndex = parseInt(req.params.newIndex);
   const oldIndex = parseInt(req.params.oldIndex);
+  const userId = req.userId;
 
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
   let foundMaterial;
   try {
     foundMaterial = await Material.findById(materialId);
@@ -634,8 +641,15 @@ export const reorderIndicators = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: "Error saving material" });
   }
-  return res.status(200).send({
-    success: `Indicators updated successfully!`,
+  req.locals = {
+    material: foundMaterial,
     indicators: foundMaterial.indicators,
-  });
+    user: foundUser,
+    success: `Indicators updated successfully!`,
+  };
+  next();
+  // return res.status(200).send({
+  //   success: `Indicators updated successfully!`,
+  //   indicators: foundMaterial.indicators,
+  // });
 };

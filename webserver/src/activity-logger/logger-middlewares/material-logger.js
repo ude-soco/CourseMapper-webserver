@@ -168,3 +168,18 @@ export const resizeIndicatorLogger = async (req, res) => {
       .send({ error: "Error saving activity log", details: err.message });
   }
 };
+export const reorderIndicatorLogger = async (req, res) => {
+  try {
+    req.locals.activity = await activityController.createActivity(
+      materialActivityGenerator.generateReorderIndicatorActivity(req)
+    );
+    res.status(200).send({
+      success: `Indicators updated successfully!`,
+      indicators: foundMaterial.indicators,
+    });
+  } catch (err) {
+    res
+      .status(500)
+      .send({ error: "Error saving activity log", details: err.message });
+  }
+};

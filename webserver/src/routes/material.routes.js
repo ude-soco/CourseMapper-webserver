@@ -119,6 +119,7 @@ module.exports = function (app) {
   app.put(
     "/api/courses/:courseId/materials/:materialId/reorder/:newIndex/:oldIndex",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.reorderIndicators
+    controller.reorderIndicators,
+    logger.reorderIndicatorLogger
   );
 };

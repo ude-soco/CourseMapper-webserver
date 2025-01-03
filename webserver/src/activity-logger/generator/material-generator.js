@@ -292,6 +292,16 @@ export const generateResizeIndicatorActivity = (req) => {
     context: createContext(),
   };
 };
+export const generateReorderIndicatorActivity = (req) => {
+  const metadata = createMetadata();
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://id.tincanapi.com/verb/reorder", "reordered"), // TO VERIFY AND CORRECT, I couldn't find the verb in the registry Database
+    object: createGetIndicatorsObject(req),
+    context: createContext(),
+  };
+};
 
 export const createGetIndicatorsObject = (req) => {
   const indicators = req.locals.indicators;
@@ -383,8 +393,6 @@ export const createResizedIndicatorObject = (req) => {
       source: {
         [config.language]: indicator.src,
       },
-      // width: { [config.language]: indicator.width },
-      // height: { [config.language]: indicator.height },
       oldDimensions: {
         oldWidth: { [config.language]: oldDimensions.width },
         oldHeight: { [config.language]: oldDimensions.height },
