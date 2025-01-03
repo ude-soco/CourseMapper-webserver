@@ -262,6 +262,16 @@ export const generateNewIndicatorActivity = (req) => {
     context: createContext(),
   };
 };
+export const generateDeleteIndicatorActivity = (req) => {
+  const metadata = createMetadata();
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://activitystrea.ms/schema/1.0/delete", "deleted"),
+    object: createIndicatorObject(req),
+    context: createContext(),
+  };
+};
 export const createIndicatorObject = (req) => {
   const indicator = req.locals.indicator;
   const material = req.locals.material;

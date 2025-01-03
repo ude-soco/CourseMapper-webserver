@@ -99,7 +99,8 @@ module.exports = function (app) {
   app.delete(
     "/api/courses/:courseId/materials/:materialId/indicator/:indicatorId",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.deleteIndicator
+    controller.deleteIndicator,
+    logger.deleteIndicatorLogger
   );
 
   app.get(

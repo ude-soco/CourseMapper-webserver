@@ -423,6 +423,14 @@ export const newIndicator = async (req, res, next) => {
 export const deleteIndicator = async (req, res, next) => {
   const materialId = req.params.materialId;
   const indicatorId = req.params.indicatorId;
+  const userId = req.userId;
+
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
 
   let foundMaterial;
   try {
@@ -441,6 +449,18 @@ export const deleteIndicator = async (req, res, next) => {
     return res.status(500).send({ error: "Error finding material" });
   }
 
+  // Find the indicator to delete
+  let deletedIndicator;
+  deletedIndicator = foundMaterial.indicators.find(
+    (indicator) => indicator._id.toString() === indicatorId
+  );
+
+  if (!deletedIndicator) {
+    return res.status(404).send({
+      error: `Indicator with id ${indicatorId} not found in the material!`,
+    });
+  }
+
   foundMaterial.indicators = foundMaterial.indicators.filter(
     (indicator) => indicator._id.toString() !== indicatorId
   );
@@ -450,9 +470,17 @@ export const deleteIndicator = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: "Error saving material" });
   }
-  return res.status(200).send({
+
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    indicator: deletedIndicator,
     success: `Indicator deleted successfully!`,
-  });
+  };
+  next();
+  // return res.status(200).send({
+  //   success: `Indicator deleted successfully!`,
+  // });
 };
 
 /**

@@ -129,3 +129,18 @@ export const newIndicatorLogger = async (req, res) => {
       .send({ error: "Error saving activity log", details: err.message });
   }
 };
+
+export const deleteIndicatorLogger = async (req, res) => {
+  try {
+    req.locals.activity = await activityController.createActivity(
+      materialActivityGenerator.generateDeleteIndicatorActivity(req)
+    );
+    res.status(201).send({
+      success: req.locals.success,
+    });
+  } catch (err) {
+    res
+      .status(500)
+      .send({ error: "Error saving activity log", details: err.message });
+  }
+};
