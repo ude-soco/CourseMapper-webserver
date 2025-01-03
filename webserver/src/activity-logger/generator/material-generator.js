@@ -5,8 +5,9 @@ import {
   createVerb,
 } from "./util/generator-util";
 import config from "./util/config";
+import { material } from "../../models";
 
-let DOMAIN = "http://www.CourseMapper.de" // TODO: Hardcoded due to frontend implementation
+let DOMAIN = "http://www.CourseMapper.de"; // TODO: Hardcoded due to frontend implementation
 
 const createMaterialObject = (req, typeURI) => {
   let material = req.locals.material;
@@ -185,11 +186,11 @@ export const generateCompleteVideoActivity = (req, user, material, origin) => {
     actor: createUser(req),
     verb: createVerb(
       "http://activitystrea.ms/schema/1.0/complete",
-      "completed",
+      "completed"
     ),
     object: createMaterialObject(
       req,
-      "http://activitystrea.ms/schema/1.0/video",
+      "http://activitystrea.ms/schema/1.0/video"
     ),
     context: createContext(),
   };
@@ -245,9 +246,55 @@ export const generateCompletePdfActivity = (req) => {
     actor: createUser(req),
     verb: createVerb(
       "http://activitystrea.ms/schema/1.0/complete",
-      "completed",
+      "completed"
     ),
     object: createMaterialObject(req, `${DOMAIN}/activityType/pdf`),
     context: createContext(),
+  };
+};
+export const generateNewIndicatorActivity = (req) => {
+  const metadata = createMetadata();
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://activitystrea.ms/schema/1.0/add", "added"),
+    object: createIndicatorObject(req),
+    context: createContext(),
+  };
+};
+export const createIndicatorObject = (req) => {
+  const indicator = req.locals.indicator;
+  const material = req.locals.material;
+  const origin = req.get("origin");
+  return {
+    objectType: config.activity,
+    id: `${origin}/activity/indicator/${indicator._id}`, //To verify
+    definition: {
+      type: `http://id.tincanapi.com/activitytype/indicator`, //To verify
+      source: {
+        [config.language]: indicator.src,
+      },
+      width: {
+        [config.language]: indicator.width,
+      },
+      height: {
+        [config.language]: indicator.height,
+      },
+      frameborder: {
+        [config.language]: indicator.frameborder,
+      },
+      extensions: {
+        [`${DOMAIN}/extensions/indicator`]: {
+          materialId: material._id,
+          materialName: material.name,
+          materialDescription: material.description,
+          materialType: material.type,
+          materialUrl: material.url,
+          topicId: material.topicId,
+          courseId: material.courseId,
+          channelId: material.channelId,
+        },
+      },
+    },
   };
 };

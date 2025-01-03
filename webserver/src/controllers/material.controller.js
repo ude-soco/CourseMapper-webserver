@@ -15,6 +15,18 @@ const Course = db.course;
  * @param {string} req.params.materialId The id of the material
  * @param {string} req.params.courseId The id of the course
  */
+
+// User identification for the logging system
+const findUserById = async (userId) => {
+  const user = await User.findById(userId);
+  if (!user) throw new Error("User not found!");
+  return user;
+};
+const handleError = (res, error, message) => {
+  console.error(error);
+  return res.status(500).send({ error: message });
+};
+
 export const getMaterial = async (req, res, next) => {
   const materialId = req.params.materialId;
   const courseId = req.params.courseId;
@@ -160,13 +172,13 @@ export const newMaterial = async (req, res, next) => {
  */
 export const deleteMaterial = async (req, res, next) => {
   let materialId = req.params.materialId;
-  console.log("materialId", materialId)
+  console.log("materialId", materialId);
   let courseId = req.params.courseId;
   const userId = req.userId;
   let course;
   try {
     course = await Course.findById(courseId);
-    console.log("course", course)
+    console.log("course", course);
   } catch (err) {
     return res.status(500).send({ error: "Error finding course" });
   }
@@ -185,7 +197,7 @@ export const deleteMaterial = async (req, res, next) => {
   let foundMaterial;
   try {
     foundMaterial = await Material.findById(materialId);
-    console.log("foundMaterial", foundMaterial)
+    console.log("foundMaterial", foundMaterial);
     if (!foundMaterial) {
       return res.status(404).send({
         error: `Material with id ${materialId} doesn't exist!`,
@@ -272,7 +284,7 @@ export const editMaterial = async (req, res, next) => {
   const materialType = req.body.type;
   const userId = req.userId;
   const materialDesc = req.body.description;
-console.log("called")
+  console.log("called");
   let course;
   try {
     course = await Course.findById(courseId);
@@ -354,6 +366,13 @@ console.log("called")
 
 export const newIndicator = async (req, res, next) => {
   const materialId = req.params.materialId;
+  const userId = req.userId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
 
   let foundMaterial;
   try {
@@ -381,10 +400,17 @@ export const newIndicator = async (req, res, next) => {
     return res.status(500).send({ error: "Error saving material" });
   }
 
-  return res.status(200).send({
-    success: `Indicator added successfully!`,
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
     indicator: indicator,
-  });
+    success: `Indicator added successfully!`,
+  };
+  next();
+  // return res.status(200).send({
+  //   success: `Indicator added successfully!`,
+  //   indicator: indicator,
+  // });
 };
 
 /**
@@ -449,7 +475,7 @@ export const getIndicators = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  
+
   const response = foundMaterial.indicators ? foundMaterial.indicators : [];
   return res.status(200).send(response);
 };
@@ -472,13 +498,13 @@ export const resizeIndicator = async (req, res, next) => {
   let foundMaterial;
   try {
     foundMaterial = await Material.findOne({ "indicators._id": indicatorId });
-    if (! foundMaterial) {
+    if (!foundMaterial) {
       return res.status(404).send({
         error: `indicator with id ${indicatorId} doesn't exist!`,
       });
     }
 
-    if ( foundMaterial._id.toString() !== materialId) {
+    if (foundMaterial._id.toString() !== materialId) {
       return res.status(404).send({
         error: `indicator with id ${indicatorId} doesn't belong to material with id ${materialId}!`,
       });
@@ -493,15 +519,14 @@ export const resizeIndicator = async (req, res, next) => {
       indicator.height = height;
     }
   });
-  
+
   try {
     foundMaterial.save();
   } catch (err) {
     return res.status(500).send({ error: "Error saving material" });
   }
   return res.status(200).send();
-
-}
+};
 
 /**
  * @function reorderIndicators
@@ -548,5 +573,4 @@ export const reorderIndicators = async (req, res, next) => {
     success: `Indicators updated successfully!`,
     indicators: foundMaterial.indicators,
   });
-
-}
+};

@@ -6,7 +6,7 @@ export const addMaterialLogger = async (req, res, next) => {
   try {
     req.locals.activity = await activityController.createActivity(
       materialActivityGenerator.generateAddMaterialActivity(req),
-      notifications.generateNotificationInfo(req),
+      notifications.generateNotificationInfo(req)
     );
     next();
   } catch (err) {
@@ -17,7 +17,7 @@ export const addMaterialLogger = async (req, res, next) => {
 export const accessMaterialLogger = async (req, res) => {
   try {
     await activityController.createActivity(
-      materialActivityGenerator.generateAccessMaterialActivity(req),
+      materialActivityGenerator.generateAccessMaterialActivity(req)
     );
     res.status(200).send(req.locals.response);
   } catch (error) {
@@ -29,7 +29,7 @@ export const deleteMaterialLogger = async (req, res, next) => {
   try {
     req.locals.activity = await activityController.createActivity(
       materialActivityGenerator.generateDeleteMaterialActivity(req),
-      notifications.generateNotificationInfo(req),
+      notifications.generateNotificationInfo(req)
     );
     next();
   } catch (err) {
@@ -41,7 +41,7 @@ export const editMaterialLogger = async (req, res, next) => {
   try {
     req.locals.activity = await activityController.createActivity(
       materialActivityGenerator.generateEditMaterialActivity(req),
-      notifications.generateNotificationInfo(req),
+      notifications.generateNotificationInfo(req)
     );
     next();
   } catch (err) {
@@ -52,7 +52,7 @@ export const editMaterialLogger = async (req, res, next) => {
 export const playVideoLogger = async (req, res) => {
   if (req.locals.material.type === "video") {
     await activityController.createActivity(
-      materialActivityGenerator.generatePlayVideoActivity(req),
+      materialActivityGenerator.generatePlayVideoActivity(req)
     );
     res.status(204).send();
   } else {
@@ -65,7 +65,7 @@ export const playVideoLogger = async (req, res) => {
 export const pauseVideoLogger = async (req, res) => {
   if (req.locals.material.type === "video") {
     await activityController.createActivity(
-      materialActivityGenerator.generatePauseVideoActivity(req),
+      materialActivityGenerator.generatePauseVideoActivity(req)
     );
     res.status(204).send();
   } else {
@@ -78,7 +78,7 @@ export const pauseVideoLogger = async (req, res) => {
 export const completeVideoLogger = async (req, res) => {
   if (req.locals.material.type === "video") {
     await activityController.createActivity(
-      materialActivityGenerator.generateCompleteVideoActivity(req),
+      materialActivityGenerator.generateCompleteVideoActivity(req)
     );
     res.status(204).send();
   } else {
@@ -91,7 +91,7 @@ export const completeVideoLogger = async (req, res) => {
 export const viewSlideLogger = async (req, res) => {
   if (req.locals.material.type === "pdf") {
     await activityController.createActivity(
-      materialActivityGenerator.generateViewSlideActivity(req),
+      materialActivityGenerator.generateViewSlideActivity(req)
     );
     res.status(204).send();
   } else {
@@ -104,12 +104,28 @@ export const viewSlideLogger = async (req, res) => {
 export const completePDFLogger = async (req, res) => {
   if (req.locals.material.type === "pdf") {
     await activityController.createActivity(
-      materialActivityGenerator.generateCompletePdfActivity(req),
+      materialActivityGenerator.generateCompletePdfActivity(req)
     );
     res.status(204).send();
   } else {
     res.status(406).send({
       error: `Material with id ${req.locals.material._id} is not a pdf`,
     });
+  }
+};
+
+export const newIndicatorLogger = async (req, res) => {
+  try {
+    req.locals.activity = await activityController.createActivity(
+      materialActivityGenerator.generateNewIndicatorActivity(req)
+    );
+    res.status(201).send({
+      success: req.locals.success,
+      indicator: req.locals.indicator,
+    });
+  } catch (err) {
+    res
+      .status(500)
+      .send({ error: "Error saving activity log", details: err.message });
   }
 };
