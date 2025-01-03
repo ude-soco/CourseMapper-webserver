@@ -290,6 +290,29 @@ export class ConceptMapComponent {
   materialSlides: any;
   docURL: string;
   currentPDFPage: number;
+  currentSubscription: Subscription; //to get currentPage num
+  totalSubscription: Subscription; //to get totalPage num
+  slideKgSubscription: Subscription; // on slideKg ordered
+  materialKgSubscription: Subscription; // on materialKg ordered
+  courseKgSubscription: Subscription; // on courseKg ordered
+  allConceptslist: Subscription; // list of all concepts
+  tabsSubscription: Subscription; // on slideKg ordered
+  allConceptsSubscription: Subscription; // on allconcepts list updated
+  newConceptsSubscription: Subscription; // on new concepts list updated
+  didNotUnderstandConceptsSubscription: Subscription; // on did not understand concepts list updated
+  understoodConceptsSubscription: Subscription; // on understood concepts list updated
+  nodeClickedSubscription: Subscription; // check if a node has been clicked
+  slideKgDatabase: Subscription; // database of slide KG
+  graphRenderedSubscription: Subscription; // graph done rendering
+  statusSubscription: Subscription; // concept's status changed
+  materialInfoSubscription: Subscription; // concept's status changed
+  selectedMaterialModelSubscription: Subscription;
+  newConceptSubsciption: Subscription;
+  understoodConceptSubsciption: Subscription;
+  notUnderstoodConceptSubsciption: Subscription;
+  callRecommendationsSubsciption: Subscription;
+  userSubscription: Subscription;
+  materialSubscription: Subscription;
 
   private subscriptions: Subscription[] = [];
   constructor(
@@ -471,6 +494,7 @@ export class ConceptMapComponent {
                         );
                         found = true;
                       }
+                    }
                     );
                   }
                   if (!found && this.previousConcepts.didNotUnderstandConcepts) {
@@ -500,7 +524,7 @@ export class ConceptMapComponent {
           }
         }
       )
-    );
+    
     this.subscriptions.push(
       slideConceptservice.didNotUnderstandConcepts.subscribe((res) => {
         this.didNotUnderstandConceptsObj = res;

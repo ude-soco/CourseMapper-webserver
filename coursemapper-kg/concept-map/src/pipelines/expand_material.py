@@ -3,6 +3,8 @@ from services.wikipedia import WikipediaService
 from graph_db import GraphDB
 from config import Config
 from data import Graph, Node, Edge
+from services.course_materials.prerequisite.prerequisite_wrapper import run_prerequisite_material
+from services.course_materials.Relational_ConceptGCN.relational_conceptgcn_rrgcn import RRGCN
 import time
 import polars as pl
 from typing import Callable
@@ -28,7 +30,12 @@ class ExpandMaterialPipeline:
         # Save subgraph
         if graph_db is not None:
             graph_db.save_graph(graph)
-            self.gcn(material_id, graph_db)
+            #self.gcn(material_id, graph_db)
+            push_log_message(f'GCN for material {material_id} is running')
+            gcn = RRGCN()
+            gcn.rrgcn_1_2()
+            push_log_message(f'GCN for material {material_id} is done')
+
 
     def expand_material_graph(self, graph: Graph, push_log_message: Callable):
         # Start timer
@@ -158,6 +165,13 @@ class ExpandMaterialPipeline:
 
         expanded_concept_count = len([concept for concept in graph.nodes if concept.type == 'related_concept'])
         push_log_message(f'Identified {expanded_concept_count} related concept(s)')
+
+        #add prerequisite step
+        push_log_message(f'preprocessing prerequisite material {material_id}')
+        start_time = time.time()
+        run_prerequisite_material(material_id)
+        end_time = time.time()
+        push_log_message(f'finish preprocessing prerequisite material {material_id}')
 
         # Remove orphaned nodes and dangling edges
         # graph.prune()

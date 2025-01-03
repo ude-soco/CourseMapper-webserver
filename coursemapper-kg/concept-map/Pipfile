@@ -18,6 +18,11 @@ scipy = "==1.11.0"
 pdfminer-six = "*"
 python-dotenv = "*"
 torch = "==2.2"
+pandas = "*"
+pymongo = "*"
+rdflib = "*"
+bertopic = "*"
+torch-geometric = "*"
 
 [dev-packages]
 

@@ -35,11 +35,10 @@ spacy = "*"
 python-dotenv = "*"
 gunicorn = "*"
 redis = "*"
-pymongo = "*"
 rdflib = "*"
 langdetect = "*"
 bertopic = "*"
-
+pymongo = "*"
 
 [dev-packages]
 
