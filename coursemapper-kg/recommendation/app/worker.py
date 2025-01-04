@@ -8,7 +8,7 @@ import io
 from log import LOG
 import hashlib
 
-from app.views.course_materials import concept_map, get_concepts,get_sequence_concepts, get_resources, prerequisite_material
+from app.views.course_materials import get_concepts,get_sequence_concepts, get_resources
 from app.shared import redis, worker_id, set_current_job_id
 from config import Config
 
@@ -119,17 +119,7 @@ def start_worker(pipelines):
 
         try:
             # Run the pipeline
-            if pipeline == 'concept-map':
-                file = redis.hget('files', job_id)
-                assert(type(file) == bytes)
-                file = io.BytesIO(file)
-                result = concept_map(job, file)
-                if result:
-                    print("sign", job["materialId"], job)
-                    # add_job('find-prerequisite-lm', {"materialId": job["materialId"]})
-                    # prerequisite_material(job)
-                # add_job('find-prerequisite-lm', {"materialId": job["materialId"]})
-            elif pipeline == 'concept-recommendation':
+            if pipeline == 'concept-recommendation':
                 result = get_concepts(job)
             elif pipeline == 'sequence-recommendation':
                 result = get_sequence_concepts(job)
