@@ -200,7 +200,13 @@ export async function createUserCourseRelationship(userId, courseId, engagementL
         MERGE (u)-[r:ENROLLED_IN]->(c)
         ON CREATE SET r.userEngagement = $engagementLevel, r.status = 'enrolled', r.timestamp = timestamp()
         ON MATCH SET r.userEngagement = $engagementLevel, r.status = 'enrolled', r.timestamp = timestamp()
-        RETURN u, c, r
+        
+        // Create or update the LEVEL_OF_ENGAGEMENT relationship
+        MERGE (u)-[loe:LEVEL_OF_ENGAGEMENT]->(c)
+        ON CREATE SET loe.level = $engagementLevel, loe.timestamp = timestamp()
+        ON MATCH SET loe.level = $engagementLevel, loe.timestamp = timestamp()
+        
+        RETURN u, c, r, loe
         `,
         { userId, courseId, engagementLevel }
       );
@@ -215,56 +221,62 @@ export async function createUserCourseRelationship(userId, courseId, engagementL
   }
 }
 
+
 export async function deleteUserCourseRelationship(userId, courseId) {
-  const session = graphDb.driver.session(); // Start a Neo4j session
+  const session = graphDb.driver.session();
   try {
     const result = await session.executeWrite(async (tx) => {
       const response = await tx.run(
         `
         MATCH (u:User {uid: $userId})-[r:ENROLLED_IN]->(c:Course {cid: $courseId})
         DELETE r
+        WITH u, c
+        MATCH (u)-[loe:LEVEL_OF_ENGAGEMENT]->(c)
+        DELETE loe
         RETURN u, c
         `,
         { userId, courseId }
       );
-      return recordsToObjects(response.records); // Convert Neo4j records to objects
+      return recordsToObjects(response.records);
     });
     return result;
   } catch (error) {
     console.error("Error removing user-course relationship:", error);
     throw error;
   } finally {
-    await session.close(); // Ensure the session is closed
-  }
-}
-
-
-
-export async function createCourseMaterialRelationship(courseId, materialId, materialName) {
-  const session = graphDb.driver.session();
-  try {
-    const result = await session.executeWrite(async (tx) => {
-      const response = await tx.run(
-        `
-        MERGE (course:Course {cid: $courseId})
-        MERGE (material:LearningMaterial {mid: $materialId})
-        ON CREATE SET material.name = $materialName
-        ON MATCH SET material.name = COALESCE(material.name, $materialName)
-        MERGE (course)-[r:HAS_MATERIAL]->(material)
-        RETURN course, material, r
-        `,
-        { courseId, materialId, materialName }
-      );
-      return recordsToObjects(response.records);
-    });
-    return result;
-  } catch (error) {
-    console.error("Error creating course-material relationship:", error);
-    throw error;
-  } finally {
     await session.close();
   }
 }
+
+
+
+/*
+  export async function createCourseMaterialRelationship(courseId, materialId, materialName) {
+    const session = graphDb.driver.session();
+    try {
+      const result = await session.executeWrite(async (tx) => {
+        const response = await tx.run(
+          `
+          MERGE (course:Course {cid: $courseId})
+          MERGE (material:LearningMaterial {mid: $materialId})
+          ON CREATE SET material.name = $materialName
+          ON MATCH SET material.name = COALESCE(material.name, $materialName)
+          MERGE (course)-[r:HAS_MATERIAL]->(material)
+          RETURN course, material, r
+          `,
+          { courseId, materialId, materialName }
+        );
+        return recordsToObjects(response.records);
+      });
+      return result;
+    } catch (error) {
+      console.error("Error creating course-material relationship:", error);
+      throw error;
+    } finally {
+      await session.close();
+    }
+  }
+*/
 
 
 

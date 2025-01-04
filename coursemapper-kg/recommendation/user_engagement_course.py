@@ -5,6 +5,10 @@ from sklearn.cluster import KMeans
 from config import Config
 from bson import ObjectId
 
+
+import json
+import JsonToCsvConversion as convertToCsv
+
 # MongoDB configuration
 MONGO_DB_URI = "mongodb://localhost:27017"  # Replace with your MongoDB URI
 MONGO_DB_NAME = "coursemapper_v2"           # Replace with your database name
@@ -13,64 +17,99 @@ MONGO_DB_NAME = "coursemapper_v2"           # Replace with your database name
 myclient = pymongo.MongoClient(Config.MONGO_DB_URI)
 mydb = myclient[MONGO_DB_NAME]
 collection = mydb["activities"]
+activities = collection.find({})
 
-def get_activities_by_course(course_id):
-    """
-    Retrieve all activities for a specific course_id from the MongoDB collection.
-    """
-    activities = collection.find({
-        "$or": [
-            {"statement.object.definition.extensions.http://localhost:4200/extensions/course.id": ObjectId(course_id)},
-            {"statement.object.definition.extensions.http://www.CourseMapper.de/extensions/topic.course_id": ObjectId(course_id)},
-            {"statement.object.definition.extensions.http://www.CourseMapper.de/extensions/channel.course_id": ObjectId(course_id)},
-            {"statement.object.definition.extensions.http://www.CourseMapper.de/extensions/material.course_id": ObjectId(course_id)}
-        ]
-    })
-    return activities
+def processActivities(collection):
+    aggr_activities = collection.aggregate([
+    {
+         "$project": {
+            "_id": 0,
+            "student": "$statement.actor.account.name",
+            "course_id": {
+                "$ifNull": ["$statement.object.definition.extensions.http://www.CourseMapper.de/extensions/material.course_id", "unknown"]
+            },
+            "verb": "$statement.verb.display.en-US",
+            "type": "$statement.object.definition.type",
+            "timestamp": "$statement.timestamp"
+        }
+    },
+    {
+        "$group": {
+            "_id": {
+                "student": "$student",
+                "course": "$course_id"
+            },
+            "totalActivities": {"$sum": 1},
+            "activities": {"$push": "$$ROOT"}
+        }
+    },
+    {
+        "$sort": {"_id.course": 1, "_id.student": 1}
+    }
+    ])
 
-def process_course_activities(activities, course_id):
-    """
-    Aggregate student activities for the specified course.
-    """
-    student_metrics = {}
+    course_profiles = []
 
-    for activity in activities:
-        statement = activity.get("statement", {})
-        actor = statement.get("actor", {}).get("name")
-        if not actor:
-            continue  # Skip if no actor
-        
-        verb_id = statement.get("verb", {}).get("id", "")
-        extensions = statement.get("object", {}).get("definition", {}).get("extensions", {})
-        material_type = statement.get("object", {}).get("definition", {}).get("type", "")
+    for group in aggr_activities:
+        course_id = group["_id"]["course"]
+        student = group["_id"]["student"]
 
-        # Verify course_id
-        if not any(ext.get("course_id") == ObjectId(course_id) for ext in extensions.values()):
-            continue
-        
-        # Initialize metrics
-        if actor not in student_metrics:
-            student_metrics[actor] = {
+        # Create a profile template
+        profile = {
+            "courseId": course_id,
+            "stdProfile": {
+                "stdUsername": student,
                 "totalSessions": 0,
-                "totalAccesses": 0,
-                "videosStarted": 0,
-                "pdfStarted": 0,
-                "slidesViewed": 0,
+                "totalSessionTime": 0,
+                "avgSessionTime": 0,
+                "maxSessionTime": 0,
+                "minSessionTime": 0,
+                "totalEnrollments": 0
+            },
+            "activitiesProfile": {
+                "totalActivities": group["totalActivities"],
+                "access": {"totalAccesses": 0, "pdfAccess": 0, "videoAccess": 0},
+                "annotations": {"totalAnnotations": 0},
+                "materialProfile": {
+                    "video": {"videosStarted": 0, "videosCompleted": 0},
+                    "pdf": {"pdfStarted": 0, "pdfCompleted": 0}
+                }
             }
+        }
 
-        # Update metrics based on verb and material type
-        if "loggedin" in verb_id or "registered" in verb_id:
-            student_metrics[actor]["totalSessions"] += 1
-        if "access" in verb_id:
-            student_metrics[actor]["totalAccesses"] += 1
-        if material_type == "http://id.tincanapi.com/activitytype/video":
-            student_metrics[actor]["videosStarted"] += 1
-        if material_type == "http://id.tincanapi.com/activitytype/pdf":
-            student_metrics[actor]["pdfStarted"] += 1
-        if material_type == "http://id.tincanapi.com/activitytype/slide":
-            student_metrics[actor]["slidesViewed"] += 1
+        # Process activities
+        for activity in group["activities"]:
+            verb = activity.get("verb", "")
+            obj_type = activity.get("type", "")
 
-    return student_metrics
+            # Example: Handle material access
+            if "accessed" in verb:
+                profile["activitiesProfile"]["access"]["totalAccesses"] += 1
+                if "pdf" in obj_type:
+                    profile["activitiesProfile"]["access"]["pdfAccess"] += 1
+                elif "video" in obj_type:
+                    profile["activitiesProfile"]["access"]["videoAccess"] += 1
+
+        # Add the profile to the list
+        course_profiles.append(profile)
+
+
+    return course_profiles
+
+def extract_course_id(activity):
+    try:
+        return activity["statement"]["object"]["definition"]["extensions"]["http://www.CourseMapper.de/extensions/topic"]["course_id"]
+    except KeyError:
+        return "unknown"
+
+def createProfiles(data, filename='courseSpecificProfiles.json'):
+    with open(filename, "w") as f:
+        json.dump(data, f, indent=2)
+    convertToCsv.export_to_csv(filename)
+
+listOfStudentActivityDict = processActivities(collection)
+createProfiles(listOfStudentActivityDict)
+'''
 
 def prepare_clustering_data(student_metrics):
     """
@@ -104,10 +143,10 @@ def export_clustered_students(df, filename="clustered_students.csv"):
     print(f"Clustered student data exported to {filename}")
 
 def main():
-    course_id = "673e19c9e098378056898237"  # Replace with your course ID
+   # course_id = "673e19c9e098378056898237"  # Replace with your course ID
 
     # Step 1: Query Activities
-    activities = get_activities_by_course(course_id)
+   # activities = get_activities_by_course(course_id)
     activities = list(activities)  # Ensure activities are iterable multiple times
     if not activities:
         print("No activities found for the specified course ID.")
@@ -130,3 +169,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+'''

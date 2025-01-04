@@ -2,6 +2,112 @@
   {
     "stdProfile": {
       "stdId": 1,
+      "stdUsername": "673f63960c45089cb179031b",
+      "totalSessions": 3,
+      "totalSessionTime": 0,
+      "avgSessionTime": 0,
+      "maxSessionTime": 0,
+      "minSessionTime": 0,
+      "totalEnrollments": 3
+    },
+    "activitiesProfile": {
+      "totalActivities": 64,
+      "annotations": {
+        "totalAnnotations": 0,
+        "pdf": {
+          "totalPdfAnnotations": 0,
+          "annotationCountTypewise": {
+            "noteTypeAnnotationsOnPdf": 0,
+            "questionTypeAnnotationsOnPdf": 0,
+            "externalResourceTypeAnnotationsOnPdf": 0,
+            "comment": {
+              "noteTypeCommentsOnPdf": 0,
+              "questionTypeCommentsOnPdf": 0,
+              "externalResourceTypeCommentsOnPdf": 0
+            }
+          },
+          "annotationTools": {
+            "highlightToolOnPdf": 0,
+            "pinpointToolOnPdf": 0,
+            "drawToolOnPdf": 0
+          }
+        },
+        "video": {
+          "totalVideoAnnotations": 0,
+          "annotationCountTypewise": {
+            "noteTypeAnnotationsOnVid": 0,
+            "questionTypeAnnotationsOnVid": 0,
+            "externalResourceTypeAnnotationsOnVid": 0,
+            "comment": {
+              "noteTypeCommentsOnVid": 0,
+              "questionTypeCommentsOnVid": 0,
+              "externalResourceTypeCommentsOnVid": 0
+            }
+          },
+          "annotationTools": {
+            "highlightToolOnVid": 0,
+            "pinpointToolOnVid": 0,
+            "drawToolOnVid": 0
+          }
+        }
+      },
+      "likes": {
+        "likesOnAnnotations": {
+          "totalLikesOnAnnotations": 0,
+          "likesOnNoteTypeAnnotations": 0,
+          "likesOnQuestionTypeAnnotations": 0,
+          "likesOnExternalResourceTypeAnnotations": 0
+        },
+        "likesOnComments": {
+          "likesOnNoteTypeComments": 0,
+          "likesOnQuestionTypeComments": 0,
+          "likesOnExternalResourceTypeComments": 0
+        },
+        "likesOnRepliesOfAnnotations": 0
+      },
+      "dislikes": {
+        "dislikesOnAnnotations": {
+          "totalDislikesOnAnnotations": 0,
+          "dislikesOnNoteTypeAnnotations": 0,
+          "dislikesOnQuestionTypeAnnotations": 0,
+          "dislikesOnExternalResourceTypeAnnotations": 0
+        },
+        "dislikesOnComments": {
+          "dislikesOnNoteTypeComments": 0,
+          "dislikesOnQuestionTypeComments": 0,
+          "dislikesExternalResourceTypeComments": 0
+        },
+        "dislikesOnRepliesOfAnnotations": 0
+      },
+      "access": {
+        "totalAccesses": 41,
+        "courseAccesses": 15,
+        "topicAccesses": 12,
+        "channelAccesses": 5,
+        "materialAccesses": {
+          "pdfAccess": 9,
+          "videoAccess": 0
+        }
+      },
+      "materialProfile": {
+        "video": {
+          "videosStarted": 0,
+          "videosCompleted": 0,
+          "videosPlayed": 0,
+          "videosPauses": 0,
+          "timeSpentOnVideos": 0
+        },
+        "pdf": {
+          "pdfStarted": 8,
+          "pdfCompleted": 0,
+          "slidesViewed": 8
+        }
+      }
+    }
+  },
+  {
+    "stdProfile": {
+      "stdId": 2,
       "stdUsername": "673e198ae098378056898211",
       "totalSessions": 2,
       "totalSessionTime": 0,
@@ -107,17 +213,17 @@
   },
   {
     "stdProfile": {
-      "stdId": 2,
+      "stdId": 3,
       "stdUsername": "673f64a30c45089cb1790546",
-      "totalSessions": 1,
+      "totalSessions": 18,
       "totalSessionTime": 0,
       "avgSessionTime": 0,
       "maxSessionTime": 0,
       "minSessionTime": 0,
-      "totalEnrollments": 2
+      "totalEnrollments": 15
     },
     "activitiesProfile": {
-      "totalActivities": 9,
+      "totalActivities": 444,
       "annotations": {
         "totalAnnotations": 0,
         "pdf": {
@@ -186,9 +292,115 @@
         "dislikesOnRepliesOfAnnotations": 0
       },
       "access": {
-        "totalAccesses": 4,
-        "courseAccesses": 0,
-        "topicAccesses": 2,
+        "totalAccesses": 319,
+        "courseAccesses": 149,
+        "topicAccesses": 60,
+        "channelAccesses": 35,
+        "materialAccesses": {
+          "pdfAccess": 75,
+          "videoAccess": 0
+        }
+      },
+      "materialProfile": {
+        "video": {
+          "videosStarted": 0,
+          "videosCompleted": 0,
+          "videosPlayed": 0,
+          "videosPauses": 0,
+          "timeSpentOnVideos": 0
+        },
+        "pdf": {
+          "pdfStarted": 47,
+          "pdfCompleted": 0,
+          "slidesViewed": 47
+        }
+      }
+    }
+  },
+  {
+    "stdProfile": {
+      "stdId": 4,
+      "stdUsername": "6776a440affb37d64f66efb4",
+      "totalSessions": 1,
+      "totalSessionTime": 0,
+      "avgSessionTime": 0,
+      "maxSessionTime": 0,
+      "minSessionTime": 0,
+      "totalEnrollments": 4
+    },
+    "activitiesProfile": {
+      "totalActivities": 16,
+      "annotations": {
+        "totalAnnotations": 1,
+        "pdf": {
+          "totalPdfAnnotations": 1,
+          "annotationCountTypewise": {
+            "noteTypeAnnotationsOnPdf": 1,
+            "questionTypeAnnotationsOnPdf": 0,
+            "externalResourceTypeAnnotationsOnPdf": 0,
+            "comment": {
+              "noteTypeCommentsOnPdf": 0,
+              "questionTypeCommentsOnPdf": 0,
+              "externalResourceTypeCommentsOnPdf": 0
+            }
+          },
+          "annotationTools": {
+            "highlightToolOnPdf": 0,
+            "pinpointToolOnPdf": 0,
+            "drawToolOnPdf": 1
+          }
+        },
+        "video": {
+          "totalVideoAnnotations": 0,
+          "annotationCountTypewise": {
+            "noteTypeAnnotationsOnVid": 0,
+            "questionTypeAnnotationsOnVid": 0,
+            "externalResourceTypeAnnotationsOnVid": 0,
+            "comment": {
+              "noteTypeCommentsOnVid": 0,
+              "questionTypeCommentsOnVid": 0,
+              "externalResourceTypeCommentsOnVid": 0
+            }
+          },
+          "annotationTools": {
+            "highlightToolOnVid": 0,
+            "pinpointToolOnVid": 0,
+            "drawToolOnVid": 0
+          }
+        }
+      },
+      "likes": {
+        "likesOnAnnotations": {
+          "totalLikesOnAnnotations": 0,
+          "likesOnNoteTypeAnnotations": 0,
+          "likesOnQuestionTypeAnnotations": 0,
+          "likesOnExternalResourceTypeAnnotations": 0
+        },
+        "likesOnComments": {
+          "likesOnNoteTypeComments": 0,
+          "likesOnQuestionTypeComments": 0,
+          "likesOnExternalResourceTypeComments": 0
+        },
+        "likesOnRepliesOfAnnotations": 0
+      },
+      "dislikes": {
+        "dislikesOnAnnotations": {
+          "totalDislikesOnAnnotations": 0,
+          "dislikesOnNoteTypeAnnotations": 0,
+          "dislikesOnQuestionTypeAnnotations": 0,
+          "dislikesOnExternalResourceTypeAnnotations": 0
+        },
+        "dislikesOnComments": {
+          "dislikesOnNoteTypeComments": 0,
+          "dislikesOnQuestionTypeComments": 0,
+          "dislikesExternalResourceTypeComments": 0
+        },
+        "dislikesOnRepliesOfAnnotations": 0
+      },
+      "access": {
+        "totalAccesses": 7,
+        "courseAccesses": 1,
+        "topicAccesses": 4,
         "channelAccesses": 1,
         "materialAccesses": {
           "pdfAccess": 1,
@@ -204,115 +416,9 @@
           "timeSpentOnVideos": 0
         },
         "pdf": {
-          "pdfStarted": 0,
+          "pdfStarted": 2,
           "pdfCompleted": 0,
-          "slidesViewed": 0
-        }
-      }
-    }
-  },
-  {
-    "stdProfile": {
-      "stdId": 3,
-      "stdUsername": "673f63960c45089cb179031b",
-      "totalSessions": 1,
-      "totalSessionTime": 0,
-      "avgSessionTime": 0,
-      "maxSessionTime": 0,
-      "minSessionTime": 0,
-      "totalEnrollments": 2
-    },
-    "activitiesProfile": {
-      "totalActivities": 6,
-      "annotations": {
-        "totalAnnotations": 0,
-        "pdf": {
-          "totalPdfAnnotations": 0,
-          "annotationCountTypewise": {
-            "noteTypeAnnotationsOnPdf": 0,
-            "questionTypeAnnotationsOnPdf": 0,
-            "externalResourceTypeAnnotationsOnPdf": 0,
-            "comment": {
-              "noteTypeCommentsOnPdf": 0,
-              "questionTypeCommentsOnPdf": 0,
-              "externalResourceTypeCommentsOnPdf": 0
-            }
-          },
-          "annotationTools": {
-            "highlightToolOnPdf": 0,
-            "pinpointToolOnPdf": 0,
-            "drawToolOnPdf": 0
-          }
-        },
-        "video": {
-          "totalVideoAnnotations": 0,
-          "annotationCountTypewise": {
-            "noteTypeAnnotationsOnVid": 0,
-            "questionTypeAnnotationsOnVid": 0,
-            "externalResourceTypeAnnotationsOnVid": 0,
-            "comment": {
-              "noteTypeCommentsOnVid": 0,
-              "questionTypeCommentsOnVid": 0,
-              "externalResourceTypeCommentsOnVid": 0
-            }
-          },
-          "annotationTools": {
-            "highlightToolOnVid": 0,
-            "pinpointToolOnVid": 0,
-            "drawToolOnVid": 0
-          }
-        }
-      },
-      "likes": {
-        "likesOnAnnotations": {
-          "totalLikesOnAnnotations": 0,
-          "likesOnNoteTypeAnnotations": 0,
-          "likesOnQuestionTypeAnnotations": 0,
-          "likesOnExternalResourceTypeAnnotations": 0
-        },
-        "likesOnComments": {
-          "likesOnNoteTypeComments": 0,
-          "likesOnQuestionTypeComments": 0,
-          "likesOnExternalResourceTypeComments": 0
-        },
-        "likesOnRepliesOfAnnotations": 0
-      },
-      "dislikes": {
-        "dislikesOnAnnotations": {
-          "totalDislikesOnAnnotations": 0,
-          "dislikesOnNoteTypeAnnotations": 0,
-          "dislikesOnQuestionTypeAnnotations": 0,
-          "dislikesOnExternalResourceTypeAnnotations": 0
-        },
-        "dislikesOnComments": {
-          "dislikesOnNoteTypeComments": 0,
-          "dislikesOnQuestionTypeComments": 0,
-          "dislikesExternalResourceTypeComments": 0
-        },
-        "dislikesOnRepliesOfAnnotations": 0
-      },
-      "access": {
-        "totalAccesses": 1,
-        "courseAccesses": 0,
-        "topicAccesses": 1,
-        "channelAccesses": 0,
-        "materialAccesses": {
-          "pdfAccess": 0,
-          "videoAccess": 0
-        }
-      },
-      "materialProfile": {
-        "video": {
-          "videosStarted": 0,
-          "videosCompleted": 0,
-          "videosPlayed": 0,
-          "videosPauses": 0,
-          "timeSpentOnVideos": 0
-        },
-        "pdf": {
-          "pdfStarted": 0,
-          "pdfCompleted": 0,
-          "slidesViewed": 0
+          "slidesViewed": 2
         }
       }
     }

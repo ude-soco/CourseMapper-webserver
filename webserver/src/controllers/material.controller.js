@@ -141,12 +141,14 @@ export const newMaterial = async (req, res, next) => {
     return res.status(500).send({ error: "Error saving channel" });
   }
   // Call Neo4j function to create the relationship
+  /*
   try {
     await neo4j.createCourseMaterialRelationship(courseId, savedMaterial._id.toString(), materialName);
   } catch (err) {
     console.error("Failed to create course-material relationship:", err);
     return res.status(500).send({ error: "Error creating course-material relationship" });
   }
+  */
 
   req.locals = {
     material: savedMaterial,

@@ -1,4 +1,5 @@
 stdUsername,totalSessions,totalEnrollments,totalActivities,totalAnnotations,totalLikesOnAnnotations,totalAccesses,videosStarted,videosPauses,pdfStarted,pdfCompleted,slidesViewed,clusters
-673e198ae098378056898211,2,0,31,0,0,15,0,0,2,0,2,1
-673f64a30c45089cb1790546,1,2,9,0,0,4,0,0,0,0,0,0
-673f63960c45089cb179031b,1,2,6,0,0,1,0,0,0,0,0,2
+673f63960c45089cb179031b,3,3,64,0,0,41,0,0,8,0,8,0
+673e198ae098378056898211,2,0,31,0,0,15,0,0,2,0,2,0
+673f64a30c45089cb1790546,18,15,444,0,0,319,0,0,47,0,47,1
+6776a440affb37d64f66efb4,1,4,16,1,0,7,0,0,2,0,2,2
