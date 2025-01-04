@@ -16,6 +16,17 @@ const ObjectId = require("mongoose").Types.ObjectId;
  * @param {string} req.params.courseId The id of the course
  * @param {string} req.params.topicId The id of the topic
  */
+
+// User identification for the logging system
+const findUserById = async (userId) => {
+  const user = await User.findById(userId);
+  if (!user) throw new Error("User not found!");
+  return user;
+};
+const handleError = (res, error, message) => {
+  console.error(error);
+  return res.status(500).send({ error: message });
+};
 export const getTopic = async (req, res, next) => {
   const topicId = req.params.topicId;
   const courseId = req.params.courseId;
@@ -326,6 +337,13 @@ export const editTopic = async (req, res, next) => {
  */
 export const newIndicator = async (req, res, next) => {
   const topicId = req.params.topicId;
+  const userId = req.userId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
 
   let foundTopic;
   try {
@@ -355,10 +373,17 @@ export const newIndicator = async (req, res, next) => {
     return res.status(500).send({ error: "Error saving topic" });
   }
 
-  return res.status(200).send({
-    success: `Indicator added successfully!`,
+  req.locals = {
+    user: foundUser,
+    topic: foundTopic,
     indicator: indicator,
-  });
+    success: `Indicator added successfully!`,
+  };
+  next();
+  // return res.status(200).send({
+  //   success: `Indicator added successfully!`,
+  //   indicator: indicator,
+  // });
 };
 
 /**
@@ -371,6 +396,13 @@ export const newIndicator = async (req, res, next) => {
 export const deleteIndicator = async (req, res, next) => {
   const topicId = req.params.topicId;
   const indicatorId = req.params.indicatorId;
+  const userId = req.userId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
 
   let foundTopic;
   try {
@@ -390,6 +422,17 @@ export const deleteIndicator = async (req, res, next) => {
     return res.status(500).send({ error: "Error finding topic" });
   }
 
+  // Find the indicator to delete
+  let deletedIndicator;
+  deletedIndicator = foundTopic.indicators.find(
+    (indicator) => indicator._id.toString() === indicatorId
+  );
+  if (!deletedIndicator) {
+    return res.status(404).send({
+      error: `Indicator with id ${indicatorId} not found in the topic!`,
+    });
+  }
+
   foundTopic.indicators = foundTopic.indicators.filter(
     (indicator) => indicator._id.toString() !== indicatorId
   );
@@ -399,10 +442,16 @@ export const deleteIndicator = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: "Error saving topic" });
   }
-
-  return res.status(200).send({
+  req.locals = {
+    user: foundUser,
+    topic: foundTopic,
+    indicator: deletedIndicator,
     success: `Indicator deleted successfully!`,
-  });
+  };
+  next();
+  // return res.status(200).send({
+  //   success: `Indicator deleted successfully!`,
+  // });
 };
 
 /**
@@ -413,6 +462,13 @@ export const deleteIndicator = async (req, res, next) => {
  */
 export const getIndicators = async (req, res, next) => {
   const topicId = req.params.topicId;
+  const userId = req.userId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
 
   let foundTopic;
   try {
@@ -427,8 +483,13 @@ export const getIndicators = async (req, res, next) => {
   }
 
   const response = foundTopic.indicators ? foundTopic.indicators : [];
-
-  return res.status(200).send(response);
+  req.locals = {
+    user: foundUser,
+    topic: foundTopic,
+    indicators: response,
+  };
+  next();
+  // return res.status(200).send(response);
 };
 
 /**
@@ -443,8 +504,15 @@ export const getIndicators = async (req, res, next) => {
 export const resizeIndicator = async (req, res, next) => {
   const topicId = req.params.topicId;
   const indicatorId = req.params.indicatorId;
-  const width = req.params.width;
-  const height = req.params.height;
+  const newWidth = req.params.width;
+  const newHeight = req.params.height;
+  const userId = req.userId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
 
   let foundTopic;
   try {
@@ -463,11 +531,17 @@ export const resizeIndicator = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: "Error finding topic" });
   }
-
+  let resizedIndicator;
+  let oldDimensions = {};
   foundTopic.indicators.forEach((indicator) => {
     if (indicator._id.toString() === indicatorId.toString()) {
-      indicator.width = width;
-      indicator.height = height;
+      oldDimensions = {
+        width: indicator.width,
+        height: indicator.height,
+      };
+      indicator.width = newWidth;
+      indicator.height = newHeight;
+      resizedIndicator = indicator;
     }
   });
 
@@ -477,7 +551,16 @@ export const resizeIndicator = async (req, res, next) => {
     return res.status(500).send({ error: "Error saving topic" });
   }
 
-  return res.status(200).send();
+  req.locals = {
+    topic: foundTopic,
+    indicator: resizedIndicator,
+    user: foundUser,
+    oldDimensions: oldDimensions,
+    newDimentions: { width: newWidth, height: newHeight },
+    success: `Indicator resized successfully!`,
+  };
+  next();
+  //return res.status(200).send();
 };
 
 /**
@@ -492,6 +575,13 @@ export const reorderIndicators = async (req, res, next) => {
   const topicId = req.params.topicId;
   const newIndex = parseInt(req.params.newIndex);
   const oldIndex = parseInt(req.params.oldIndex);
+  const userId = req.userId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
 
   let foundTopic;
   try {
@@ -520,12 +610,18 @@ export const reorderIndicators = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: "Error saving topic" });
   }
-  return res.status(200).send({
-    success: `Indicators updated successfully!`,
+  req.locals = {
+    user: foundUser,
+    topic: foundTopic,
+    indicator: indicator,
+    oldIndex: oldIndex,
+    newIndex: newIndex,
     indicators: foundTopic.indicators,
-  });
+    success: `Indicators updated successfully!`,
+  };
+  next();
+  // return res.status(200).send({
+  //   success: `Indicators updated successfully!`,
+  //   indicators: foundTopic.indicators,
+  // });
 };
-
-
-
-
