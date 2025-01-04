@@ -108,7 +108,7 @@ export const reorderTopicIndicatorLogger = async (req, res) => {
     );
     res.status(200).send({
       success: `Indicators updated successfully!`,
-      indicators: foundMaterial.indicators,
+      indicators: req.locals.indicators,
     });
   } catch (err) {
     res
