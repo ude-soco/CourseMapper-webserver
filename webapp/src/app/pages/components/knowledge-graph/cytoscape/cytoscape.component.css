@@ -38,3 +38,12 @@
       display: inline-block;
       font-weight: 300;
     }
+
+    .legend-circle-irrelated {
+      width: 1em;
+      height: 1em;
+      background: #FF0000;
+      border-radius: 50%;
+      display: inline-block;
+      font-weight: 300;
+    }
