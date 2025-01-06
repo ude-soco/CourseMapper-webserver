@@ -1,5 +1,6 @@
 const { authJwt } = require("../middlewares");
 const controller = require("../controllers/user.controller");
+const logger = require("../activity-logger/logger-middlewares/user-logger");
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -26,31 +27,36 @@ module.exports = function (app) {
   app.post(
     "/api/user/indicator",
     [authJwt.verifyToken],
-    controller.newIndicator
+    controller.newIndicator,
+    logger.newPersonalIndicatorLogger
   );
 
   app.delete(
     "/api/user/indicator/:indicatorId",
     [authJwt.verifyToken],
-    controller.deleteIndicator
+    controller.deleteIndicator,
+    logger.deletePersonalIndicatorLogger
   );
 
   app.get(
     "/api/user/indicators",
     [authJwt.verifyToken],
-    controller.getIndicators
+    controller.getIndicators,
+    logger.viewPersonalIndicatorsLogger
   );
 
   app.put(
     "/api/user/indicator/:indicatorId/resize/:width/:height",
     [authJwt.verifyToken],
-    controller.resizeIndicator
+    controller.resizeIndicator,
+    logger.resizePersonalIndicatorLogger
   );
 
   app.put(
     "/api/user/reorder/:newIndex/:oldIndex",
     [authJwt.verifyToken],
-    controller.reorderIndicators
+    controller.reorderIndicators,
+    logger.reorderPersonalIndicatorLogger
   );
   app.get("/api/users", controller.getAllUsers);
 
@@ -68,10 +74,7 @@ module.exports = function (app) {
     controller.updateLastTimeCourseMapperOpened
   );
 
-  app.get(
-    "/api/users/user-concepts/:userId",
-    controller.getUserConcepts
-  );
+  app.get("/api/users/user-concepts/:userId", controller.getUserConcepts);
   app.post(
     "/api/users/user-concepts",
     // [authJwt.verifyToken],
