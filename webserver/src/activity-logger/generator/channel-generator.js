@@ -6,7 +6,7 @@ import {
   createVerb,
 } from "./util/generator-util";
 
-let DOMAIN = "http://www.CourseMapper.de" // TODO: Hardcoded due to frontend implementation
+let DOMAIN = "http://www.CourseMapper.de"; // TODO: Hardcoded due to frontend implementation
 
 const createChannelObject = (req) => {
   let channel = req.locals.channel;
@@ -107,5 +107,202 @@ export const generateEditChannelActivity = (req) => {
       },
     },
     context: createContext(),
+  };
+};
+export const generateNewChannelIndicatorActivity = (req) => {
+  const metadata = createMetadata();
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://activitystrea.ms/schema/1.0/add", "added"),
+    object: createChannelIndicatorObject(req),
+    context: createContext(),
+  };
+};
+export const generateDeleteChannelIndicatorActivity = (req) => {
+  const metadata = createMetadata();
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://activitystrea.ms/schema/1.0/delete", "deleted"),
+    object: createChannelIndicatorObject(req),
+    context: createContext(),
+  };
+};
+export const generateViewChannelIndicatorsActivity = (req) => {
+  const metadata = createMetadata();
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
+    object: createGetChannelIndicatorsObject(req),
+    context: createContext(),
+  };
+};
+export const generateResizeChannelIndicatorActivity = (req) => {
+  const metadata = createMetadata();
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://id.tincanapi.com/verb/resize", "resized"), // TO VERIFY AND CORRECT, I couldn't find the verb in the registry Database
+    object: createResizedChannelIndicatorObject(req),
+    context: createContext(),
+  };
+};
+export const generateReorderChannelIndicatorActivity = (req) => {
+  const metadata = createMetadata();
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://id.tincanapi.com/verb/reorder", "reordered"), // TO VERIFY AND CORRECT, I couldn't find the verb in the registry Database
+    object: createReorderedChannelIndicatorObject(req),
+    context: createContext(),
+  };
+};
+export const createChannelIndicatorObject = (req) => {
+  const indicator = req.locals.indicator;
+  const channel = req.locals.channel;
+  const origin = req.get("origin");
+  return {
+    objectType: config.activity,
+    id: `${origin}/activity/channelIndicator/${indicator._id}`, //To verify
+    definition: {
+      type: `http://id.tincanapi.com/activitytype/channelIndicator`, //To verify
+      source: {
+        [config.language]: indicator.src,
+      },
+      width: {
+        [config.language]: indicator.width,
+      },
+      height: {
+        [config.language]: indicator.height,
+      },
+      frameborder: {
+        [config.language]: indicator.frameborder,
+      },
+      extensions: {
+        [`${origin}/extensions/channelIndicator`]: {
+          channelId: channel._id,
+          channelName: channel.name,
+          channelDescription: channel.description,
+          topicId: channel.topicId,
+          courseId: channel.courseId,
+        },
+      },
+    },
+  };
+};
+export const createGetChannelIndicatorsObject = (req) => {
+  const indicators = req.locals.indicators;
+  const channel = req.locals.channel;
+  const origin = req.get("origin");
+  return {
+    objectType: config.activity,
+    id: `${origin}/activity/channelIndicators`, // TO VERIFY
+    definition: {
+      type: `http://id.tincanapi.com/activitytype/channelIndicators`, // TO VERIFY
+      items: indicators.map((indicator) => ({
+        id: `${origin}/activity/indicator/${indicator._id}`,
+        source: {
+          [config.language]: indicator.src,
+        },
+        width: {
+          [config.language]: indicator.width,
+        },
+        height: {
+          [config.language]: indicator.height,
+        },
+        frameborder: {
+          [config.language]: indicator.frameborder,
+        },
+      })),
+      extensions: {
+        [`${origin}/extensions/channelIndicator`]: {
+          channelId: channel._id,
+          channelName: channel.name,
+          channelDescription: channel.description,
+          topicId: channel.topicId,
+          courseId: channel.courseId,
+        },
+      },
+    },
+  };
+};
+export const createResizedChannelIndicatorObject = (req) => {
+  const indicator = req.locals.indicator;
+  const channel = req.locals.channel;
+  const oldDimensions = req.locals.oldDimensions;
+  const newDimensions = req.locals.newDimentions;
+  const origin = req.get("origin");
+  return {
+    objectType: config.activity,
+    id: `${origin}/activity/channelIndicator/${indicator._id}`, //To verify
+    definition: {
+      type: `http://id.tincanapi.com/activitytype/channelIndicator`, //To verify
+      source: {
+        [config.language]: indicator.src,
+      },
+      oldDimensions: {
+        oldWidth: { [config.language]: oldDimensions.width },
+        oldHeight: { [config.language]: oldDimensions.height },
+      },
+      newDimensions: {
+        newWidth: { [config.language]: newDimensions.width },
+        newHeight: { [config.language]: newDimensions.height },
+      },
+      frameborder: {
+        [config.language]: indicator.frameborder,
+      },
+      extensions: {
+        [`${origin}/extensions/channelIndicator`]: {
+          channelId: channel._id,
+          channelName: channel.name,
+          channelDescription: channel.description,
+          topicId: channel.topicId,
+          courseId: channel.courseId,
+        },
+      },
+    },
+  };
+};
+export const createReorderedChannelIndicatorObject = (req) => {
+  const indicator = req.locals.indicator;
+  const channel = req.locals.channel;
+  const oldIndex = req.locals.oldIndex;
+  const newIndex = req.locals.newIndex;
+  const origin = req.get("origin");
+  return {
+    objectType: config.activity,
+    id: `${origin}/activity/channelIndicator/${indicator._id}`, //To verify
+    definition: {
+      type: `http://id.tincanapi.com/activitytype/channelIndicator`, //To verify
+      source: {
+        [config.language]: indicator.src,
+      },
+      width: {
+        [config.language]: indicator.width,
+      },
+      height: {
+        [config.language]: indicator.height,
+      },
+      oldIndex: {
+        [config.language]: oldIndex,
+      },
+      newIndex: {
+        [config.language]: newIndex,
+      },
+      frameborder: {
+        [config.language]: indicator.frameborder,
+      },
+      extensions: {
+        [`${origin}/extensions/channelIndicator`]: {
+          channelId: channel._id,
+          channelName: channel.name,
+          channelDescription: channel.description,
+          topicId: channel.topicId,
+          courseId: channel.courseId,
+        },
+      },
+    },
   };
 };
