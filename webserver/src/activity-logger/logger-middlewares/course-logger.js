@@ -112,7 +112,7 @@ export const resizeCourseIndicatorLogger = async (req, res) => {
     req.locals.activity = await activityController.createActivity(
       courseActivityGenerator.generateResizeCourseIndicatorActivity(req)
     );
-    res.status(200).send();
+    res.status(200).send({ success: `Indicator resized successfully!` });
   } catch (err) {
     res
       .status(500)
