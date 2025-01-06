@@ -114,10 +114,10 @@ export const completePDFLogger = async (req, res) => {
   }
 };
 
-export const newIndicatorLogger = async (req, res) => {
+export const newMaterialIndicatorLogger = async (req, res) => {
   try {
     req.locals.activity = await activityController.createActivity(
-      materialActivityGenerator.generateNewIndicatorActivity(req)
+      materialActivityGenerator.generateNewMaterialIndicatorActivity(req)
     );
     res.status(201).send({
       success: req.locals.success,
@@ -130,10 +130,10 @@ export const newIndicatorLogger = async (req, res) => {
   }
 };
 
-export const deleteIndicatorLogger = async (req, res) => {
+export const deleteMaterialIndicatorLogger = async (req, res) => {
   try {
     req.locals.activity = await activityController.createActivity(
-      materialActivityGenerator.generateDeleteIndicatorActivity(req)
+      materialActivityGenerator.generateDeleteMaterialIndicatorActivity(req)
     );
     res.status(201).send({
       success: req.locals.success,
@@ -144,10 +144,10 @@ export const deleteIndicatorLogger = async (req, res) => {
       .send({ error: "Error saving activity log", details: err.message });
   }
 };
-export const viewIndicatorsLogger = async (req, res) => {
+export const viewMaterialIndicatorsLogger = async (req, res) => {
   try {
     req.locals.activity = await activityController.createActivity(
-      materialActivityGenerator.generateViewIndicatorsActivity(req)
+      materialActivityGenerator.generateViewMaterialIndicatorsActivity(req)
     );
     res.status(200).send(req.locals.indicators);
   } catch (err) {
@@ -156,10 +156,10 @@ export const viewIndicatorsLogger = async (req, res) => {
       .send({ error: "Error saving activity log", details: err.message });
   }
 };
-export const resizeIndicatorLogger = async (req, res) => {
+export const resizeMaterialIndicatorLogger = async (req, res) => {
   try {
     req.locals.activity = await activityController.createActivity(
-      materialActivityGenerator.generateResizeIndicatorActivity(req)
+      materialActivityGenerator.generateResizeMaterialIndicatorActivity(req)
     );
     res.status(200).send({ success: `Indicator resized successfully!` });
   } catch (err) {
@@ -168,14 +168,14 @@ export const resizeIndicatorLogger = async (req, res) => {
       .send({ error: "Error saving activity log", details: err.message });
   }
 };
-export const reorderIndicatorLogger = async (req, res) => {
+export const reorderMaterialIndicatorLogger = async (req, res) => {
   try {
     req.locals.activity = await activityController.createActivity(
-      materialActivityGenerator.generateReorderIndicatorActivity(req)
+      materialActivityGenerator.generateReorderMaterialIndicatorActivity(req)
     );
     res.status(200).send({
       success: `Indicators updated successfully!`,
-      indicators: foundMaterial.indicators,
+      indicators: req.locals.indicators,
     });
   } catch (err) {
     res

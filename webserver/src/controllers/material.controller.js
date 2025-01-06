@@ -642,9 +642,12 @@ export const reorderIndicators = async (req, res, next) => {
     return res.status(500).send({ error: "Error saving material" });
   }
   req.locals = {
-    material: foundMaterial,
-    indicators: foundMaterial.indicators,
     user: foundUser,
+    material: foundMaterial,
+    indicator: indicator,
+    oldIndex: oldIndex,
+    newIndex: newIndex,
+    indicators: foundMaterial.indicators,
     success: `Indicators updated successfully!`,
   };
   next();

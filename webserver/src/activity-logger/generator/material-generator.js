@@ -252,68 +252,68 @@ export const generateCompletePdfActivity = (req) => {
     context: createContext(),
   };
 };
-export const generateNewIndicatorActivity = (req) => {
+export const generateNewMaterialIndicatorActivity = (req) => {
   const metadata = createMetadata();
   return {
     ...metadata,
     actor: createUser(req),
     verb: createVerb("http://activitystrea.ms/schema/1.0/add", "added"),
-    object: createIndicatorObject(req),
+    object: createMaterialIndicatorObject(req),
     context: createContext(),
   };
 };
-export const generateDeleteIndicatorActivity = (req) => {
+export const generateDeleteMaterialIndicatorActivity = (req) => {
   const metadata = createMetadata();
   return {
     ...metadata,
     actor: createUser(req),
     verb: createVerb("http://activitystrea.ms/schema/1.0/delete", "deleted"),
-    object: createIndicatorObject(req),
+    object: createMaterialIndicatorObject(req),
     context: createContext(),
   };
 };
-export const generateViewIndicatorsActivity = (req) => {
+export const generateViewMaterialIndicatorsActivity = (req) => {
   const metadata = createMetadata();
   return {
     ...metadata,
     actor: createUser(req),
     verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
-    object: createGetIndicatorsObject(req),
+    object: createGetMaterialIndicatorsObject(req),
     context: createContext(),
   };
 };
-export const generateResizeIndicatorActivity = (req) => {
+export const generateResizeMaterialIndicatorActivity = (req) => {
   const metadata = createMetadata();
   return {
     ...metadata,
     actor: createUser(req),
     verb: createVerb("http://id.tincanapi.com/verb/resize", "resized"), // TO VERIFY AND CORRECT, I couldn't find the verb in the registry Database
-    object: createResizedIndicatorObject(req),
+    object: createResizedMaterialIndicatorObject(req),
     context: createContext(),
   };
 };
-export const generateReorderIndicatorActivity = (req) => {
+export const generateReorderMaterialIndicatorActivity = (req) => {
   const metadata = createMetadata();
   return {
     ...metadata,
     actor: createUser(req),
     verb: createVerb("http://id.tincanapi.com/verb/reorder", "reordered"), // TO VERIFY AND CORRECT, I couldn't find the verb in the registry Database
-    object: createGetIndicatorsObject(req),
+    object: createReorderedMaterialIndicatorObject(req),
     context: createContext(),
   };
 };
 
-export const createGetIndicatorsObject = (req) => {
+export const createGetMaterialIndicatorsObject = (req) => {
   const indicators = req.locals.indicators;
   const material = req.locals.material;
   const origin = req.get("origin");
   return {
     objectType: config.activity,
-    id: `${origin}/activity/indicators`, // TO VERIFY
+    id: `${origin}/activity/materialIndicators`, // TO VERIFY
     definition: {
-      type: `http://id.tincanapi.com/activitytype/indicators`, // TO VERIFY
+      type: `http://id.tincanapi.com/activitytype/materialIndicators`, // TO VERIFY
       items: indicators.map((indicator) => ({
-        id: `${origin}/activity/indicator/${indicator._id}`,
+        id: `${origin}/activity/materialIndicator/${indicator._id}`,
         source: {
           [config.language]: indicator.src,
         },
@@ -328,7 +328,7 @@ export const createGetIndicatorsObject = (req) => {
         },
       })),
       extensions: {
-        [`${DOMAIN}/extensions/indicators`]: {
+        [`${DOMAIN}/extensions/materialIndicators`]: {
           materialId: material._id,
           materialName: material.name,
           materialDescription: material.description,
@@ -343,15 +343,15 @@ export const createGetIndicatorsObject = (req) => {
   };
 };
 
-export const createIndicatorObject = (req) => {
+export const createMaterialIndicatorObject = (req) => {
   const indicator = req.locals.indicator;
   const material = req.locals.material;
   const origin = req.get("origin");
   return {
     objectType: config.activity,
-    id: `${origin}/activity/indicator/${indicator._id}`, //To verify
+    id: `${origin}/activity/materialIndicator/${indicator._id}`, //To verify
     definition: {
-      type: `http://id.tincanapi.com/activitytype/indicator`, //To verify
+      type: `http://id.tincanapi.com/activitytype/materialIndicator`, //To verify
       source: {
         [config.language]: indicator.src,
       },
@@ -365,7 +365,7 @@ export const createIndicatorObject = (req) => {
         [config.language]: indicator.frameborder,
       },
       extensions: {
-        [`${DOMAIN}/extensions/indicator`]: {
+        [`${DOMAIN}/extensions/materialIndicator`]: {
           materialId: material._id,
           materialName: material.name,
           materialDescription: material.description,
@@ -379,7 +379,7 @@ export const createIndicatorObject = (req) => {
     },
   };
 };
-export const createResizedIndicatorObject = (req) => {
+export const createResizedMaterialIndicatorObject = (req) => {
   const indicator = req.locals.indicator;
   const material = req.locals.material;
   const oldDimensions = req.locals.oldDimensions;
@@ -387,9 +387,9 @@ export const createResizedIndicatorObject = (req) => {
   const origin = req.get("origin");
   return {
     objectType: config.activity,
-    id: `${origin}/activity/indicator/${indicator._id}`, //To verify
+    id: `${origin}/activity/materialIndicator/${indicator._id}`, //To verify
     definition: {
-      type: `http://id.tincanapi.com/activitytype/indicator`, //To verify
+      type: `http://id.tincanapi.com/activitytype/materialIndicator`, //To verify
       source: {
         [config.language]: indicator.src,
       },
@@ -405,7 +405,51 @@ export const createResizedIndicatorObject = (req) => {
         [config.language]: indicator.frameborder,
       },
       extensions: {
-        [`${DOMAIN}/extensions/indicator`]: {
+        [`${DOMAIN}/extensions/materialIndicator`]: {
+          materialId: material._id,
+          materialName: material.name,
+          materialDescription: material.description,
+          materialType: material.type,
+          materialUrl: material.url,
+          topicId: material.topicId,
+          courseId: material.courseId,
+          channelId: material.channelId,
+        },
+      },
+    },
+  };
+};
+export const createReorderedMaterialIndicatorObject = (req) => {
+  const indicator = req.locals.indicator;
+  const material = req.locals.material;
+  const oldIndex = req.locals.oldIndex;
+  const newIndex = req.locals.newIndex;
+  const origin = req.get("origin");
+  return {
+    objectType: config.activity,
+    id: `${origin}/activity/materialIndicator/${indicator._id}`, //To verify
+    definition: {
+      type: `http://id.tincanapi.com/activitytype/materialIndicator`, //To verify
+      source: {
+        [config.language]: indicator.src,
+      },
+      width: {
+        [config.language]: indicator.width,
+      },
+      height: {
+        [config.language]: indicator.height,
+      },
+      oldIndex: {
+        [config.language]: oldIndex,
+      },
+      newIndex: {
+        [config.language]: newIndex,
+      },
+      frameborder: {
+        [config.language]: indicator.frameborder,
+      },
+      extensions: {
+        [`${DOMAIN}/extensions/materialIndicator`]: {
           materialId: material._id,
           materialName: material.name,
           materialDescription: material.description,

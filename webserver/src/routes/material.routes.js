@@ -93,33 +93,33 @@ module.exports = function (app) {
     "/api/courses/:courseId/materials/:materialId/indicator",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.newIndicator,
-    logger.newIndicatorLogger
+    logger.newMaterialIndicatorLogger
   );
 
   app.delete(
     "/api/courses/:courseId/materials/:materialId/indicator/:indicatorId",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.deleteIndicator,
-    logger.deleteIndicatorLogger
+    logger.deleteMaterialIndicatorLogger
   );
 
   app.get(
     "/api/courses/:courseId/materials/:materialId/indicator",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getIndicators,
-    logger.viewIndicatorsLogger
+    logger.viewMaterialIndicatorsLogger
   );
 
   app.put(
     "/api/courses/:courseId/materials/:materialId/indicator/:indicatorId/resize/:width/:height",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.resizeIndicator,
-    logger.resizeIndicatorLogger
+    logger.resizeMaterialIndicatorLogger
   );
   app.put(
     "/api/courses/:courseId/materials/:materialId/reorder/:newIndex/:oldIndex",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.reorderIndicators,
-    logger.reorderIndicatorLogger
+    logger.reorderMaterialIndicatorLogger
   );
 };
