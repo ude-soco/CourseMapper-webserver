@@ -9,10 +9,9 @@ export interface Material {
   description?:string
   courseId?:string;
   channelId?:string;
-  showDialog?:Boolean;
 }
 export interface CreateMaterial {
-
+  
   name: string;
   type: MaterialType;
   courseId:string;
@@ -21,5 +20,4 @@ export interface CreateMaterial {
   //userID:string;
   channelId:string;
   description:string
-  showDialog?:Boolean;
 }

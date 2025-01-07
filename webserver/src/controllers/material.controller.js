@@ -272,7 +272,6 @@ export const editMaterial = async (req, res, next) => {
   const materialType = req.body.type;
   const userId = req.userId;
   const materialDesc = req.body.description;
-  const showDialog = req.body.showDialog;
 console.log("called")
   let course;
   try {
@@ -318,13 +317,9 @@ console.log("called")
   foundMaterial.name = materialName;
   foundMaterial.url = materialUrl;
   foundMaterial.type = materialType;
-  
   if (materialDesc) {
     foundMaterial.description = materialDesc;
   }
-
-  foundMaterial.showDialog = showDialog;
-  
   foundMaterial.updatedAt = Date.now();
   foundMaterial = await foundMaterial.save();
   /*  try {
