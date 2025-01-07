@@ -197,57 +197,32 @@
                             >
                           </p>
                           <pdf-viewer
-                          [src]="docURL"
-                          [render-text]="true"
-                          [render-text-mode]="2"
-                          [fit-to-page]="true"
-                          [original-size]="true"
-                          [show-all]="false"
-                          [page]="currentPDFPage"
-                          class="responsive-pdf-viewer"
-                        >
-                        </pdf-viewer>
-                          <p-paginator
-                            id="p_paginator"
-                            [rows]="1"
-                            [showJumpToPageDropdown]="true"
-                            [showPageLinks]="false"
-                            [totalRecords]="totalPages"
-                            [first]="currentPDFPage - 1"
-                            (onPageChange)="pagechanging($event)"
+                            [src]="docURL"
+                            [render-text]="true"
+                            [render-text-mode]="2"
+                            [fit-to-page]="true"
+                            [original-size]="true"
+                            [show-all]="false"
+                            [page]="currentPDFPage"
+                            style="width: 100%; height: 500px"
                           >
-                          </p-paginator>
-
-                          <div class="flex items-left">
-                            <input
-                              type="checkbox"
-                              id="selectAllSlidesCheckbox"
-                              class="mr-2"
-                              [checked]="allSelected"
-                              (change)="toggleSelectAll($event)"
-                            />
-                            <label for="selectAllSlidesCheckbox">
-                              {{
-                                allSelected
-                                  ? "Deselect All Slides"
-                                  : "Select All Slides"
-                              }}
-                            </label>
+                          </pdf-viewer>
+                          <div class="flex justify-end">
+                            <p-button
+                              label="Select all slides"
+                              (click)="selectAllSlides()"
+                              styleClass="p-button-outlined"
+                            ></p-button>
                           </div>
                         </div>
                       </ng-template>
                       <ng-template let-slide pTemplate="item">
                         <div
                           class="w-full flex flex-row items-center justify-between"
-                          [ngClass]="{
-                            'highlight-row':
-                              slide['value'] === currentPDFPage.toString()
-                          }"
                         >
                           Slide {{ slide.label }}
                           <p-button
                             icon="pi pi-eye"
-                            pTooltip="Preview slide"
                             (mouseup)="previewSlide($event, slide)"
                             (mousedown)="previewSlide($event, slide)"
                             (click)="previewSlide($event, slide)"
