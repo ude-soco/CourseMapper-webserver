@@ -26,38 +26,18 @@
       >
     </div>
 
-    <div class="p-float-label">
-      <p-editor
+    <span class="p-float-label">
+      <input
+        id="description"
+        type="text"
         formControlName="description"
-        [style]="{ height: '200px', width: '100%' }"
-        [styleClass]="'expandable-editor'"
-      >
-        <p>(Optional) Course description</p>
-      </p-editor>
-    </div>
+        pInputText
+        [style]="{ width: '100%' }"
+      />
+      <label for="description">(Optional) Course description</label>
+    </span>
 
     <br />
-    <div class="input">
-      <label for="image-file-input">Select course display image:</label>
-      <p-fileUpload
-        mode="advanced"
-        name="file"
-        id="image-file-input"
-        [customUpload]="true"
-        [accept]="'.jpg,.jpeg,.png'"
-        [showUploadButton]="false"
-        [showCancelButton]="false"
-        chooseLabel="Choose a file"
-        chooseIcon="pi pi-paperclip"
-        (onSelect)="onFileSelect($event)"
-        (onRemove)="onFileRemove($event)"
-        (onClear)="onFileRemove($event)"
-        class="blue-button"
-      ></p-fileUpload>
-
-      <span *ngIf="!selectedFileName">No file chosen</span>
-    </div>
-
     <div>
       <button
         pButton
