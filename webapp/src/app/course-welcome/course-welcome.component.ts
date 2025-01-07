@@ -1,17 +1,11 @@
-import {
-  Component,
-  OnDestroy,
-  OnInit,
-  Renderer2,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { Observable } from 'rxjs';
 import { Course } from '../models/Course';
 import { CourseImp } from '../models/CourseImp';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { CourseService } from '../services/course.service';
-import { Store, on } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import {
   getCourseSelected,
   getShowPopupMessage,
@@ -31,11 +25,6 @@ import { IndicatorService } from '../services/indicator.service';
 import { Indicator } from '../models/Indicator';
 import { ShowInfoError } from '../_helpers/show-info-error';
 import { Socket } from 'ngx-socket-io';
-import { environment } from 'src/environments/environment';
-import Quill from 'quill';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { Console } from 'console';
-import { MaterilasService } from '../services/materials.service';
 @Component({
   selector: 'app-course-welcome',
   templateUrl: './course-welcome.component.html',
@@ -55,21 +44,8 @@ export class CourseWelcomeComponent implements OnInit {
   Users: any;
   role: string;
   selectedCourseId: string = '';
-  private API_URL = environment.API_URL;
 
   showInfoError: ShowInfoError;
-  isEditingName: boolean = false;
-  isEditingDescription: boolean = false;
-  isEditingImage: boolean = false;
-  isEditing: boolean = false;
-
-  courseName: string = '';
-  courseDescription: string = '';
-  sanitizedDescription: SafeHtml;
-
-  selectedFileName: string = ''; // Holds the name of the uploaded file
-  chosenFile = null;
-
 
   constructor(
     private confirmationService: ConfirmationService,
@@ -82,8 +58,6 @@ export class CourseWelcomeComponent implements OnInit {
     private topicChannelService: TopicChannelService,
     private userService: UserServiceService,
     private socket: Socket,
-    private sanitizer: DomSanitizer,
-    private materialService: MaterilasService
   ) {
     this.courseSelected$ = store.select(getCourseSelected);
     this.channelSelected$ = this.store.select(getChannelSelected);
@@ -95,19 +69,12 @@ export class CourseWelcomeComponent implements OnInit {
     this.courseService.onSelectCourse.subscribe((course) => {
       this.selectedCourse = course;
       this.selectedCourseId = course._id;
-      if (this.selectedCourse.role === 'moderator') {
-        this.moderator = true;
-      } else {
-        this.moderator = false;
-      }
       this.topicChannelService.fetchTopics(course._id).subscribe((res) => {
         this.selectedCourse = res.course;
         this.Users = course.users;
         // TODO: Bad implementation to get the moderator, i.e., course.users[0].userId
         this.buildCardInfo(course.users[0].userId, course);
       });
-
-      this.sanitizeDescription();
 
       if (this.selectedCourse.role === 'moderator') {
         this.moderator = true;
@@ -126,12 +93,6 @@ export class CourseWelcomeComponent implements OnInit {
         this.moderator = false;
       }
     }
-  }
-
-  sanitizeDescription(): void {
-    this.sanitizedDescription = this.sanitizer.bypassSecurityTrustHtml(
-      this.selectedCourse.description
-    );
   }
 
   buildCardInfo(userModeratorID: string, course: Course) {
@@ -179,192 +140,6 @@ export class CourseWelcomeComponent implements OnInit {
     }, 0);
   }
 
-  toggleEdit(field: 'name' | 'description' | 'image') {
-    this.isEditing = true;
-    this.courseName = this.selectedCourse.name;
-    this.courseDescription = this.selectedCourse.description;
-
-    if (field === 'name') {
-      this.isEditingName = true;
-    }
-    if (field === 'description') {
-      this.isEditingDescription = true;
-    }
-    if (field === 'image') this.isEditingImage = true;
-
-    // Copy current values to editable object
-  }
-
-  saveChanges() {
-    // Apply changes from editableCourse to selectedCourse
-    this.isEditing =
-      this.isEditingName =
-      this.isEditingDescription =
-      this.isEditingImage =
-        false;
-
-    this.selectedCourse.name = this.courseName;
-    this.selectedCourse.description = this.courseDescription;
-
-    if (this.chosenFile) {
-      let imageName = this.setCourseIamge(this.selectedCourse);
-      this.selectedCourse.url = '/public/uploads/images/' + imageName;
-    } else {
-      this.courseService
-        .updateCourse(this.selectedCourse)
-        .subscribe((res: any) => {});
-    }
-    // this.ngOnInit();
-  }
-
-  onEditorChange(event: any): void {
-    // Get the current HTML content from the editor
-    const updatedContent = event.htmlValue; // This captures the HTML content from the editor
-
-    this.courseDescription = updatedContent;
-  }
-
-  cancelChanges() {
-    this.courseName = this.selectedCourse.name;
-    this.courseDescription = this.selectedCourse.description;
-
-    // Discard changes
-    this.isEditing =
-      this.isEditingName =
-      this.isEditingDescription =
-      this.isEditingImage =
-        false;
-  }
-
-  onImageChange(event: any) {
-    const file = event.files[0];
-
-    // Validate file type
-    if (!this.isValidImage(file)) {
-      this.showError(
-        'Please upload image files only with the extensions .jpg, .jpeg, and .png'
-      );
-      return;
-    }
-
-    // Set the selected file
-    this.selectedFileName = file.name;
-    this.chosenFile = file;
-
-    // Display the image preview
-    const reader = new FileReader();
-    reader.onload = (e: any) => {
-      //this.currentImage = e.target.result;
-    };
-    reader.readAsDataURL(file);
-
-    this.showInfo('Image selected successfully');
-  }
-
-  setCourseIamge(course: Course): string {
-    if (this.chosenFile) {
-      // Resize the image to the fixed dimensions (536x354) before uploading
-      const fileExtension = this.selectedFileName.split('.').pop(); // Extract file extension
-      const newFileName = `${course._id}.${fileExtension}`; // Create new file name
-
-      // console.log('Resizing and uploading file with the name: ' + newFileName);
-
-      const image = new Image();
-      const reader = new FileReader();
-
-      // Read the chosen file
-      reader.onload = (e: any) => {
-        image.src = e.target.result; // Set the image source to the file data
-        image.onload = () => {
-          // Create a canvas to resize the image
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d')!;
-          canvas.width = 536; // Set fixed width
-          canvas.height = 354; // Set fixed height
-
-          // Draw the resized image on the canvas
-          ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-
-          // Convert the canvas to a Blob
-          canvas.toBlob((blob) => {
-            if (blob) {
-              const resizedFile = new File([blob], newFileName, {
-                type: this.chosenFile.type,
-              });
-
-              let formData = new FormData();
-              formData.append('file', resizedFile, newFileName);
-
-              this.materialService.uploadFile(formData, 'img').subscribe(
-                (res) => {
-                  // Update the course image URL in the database
-                  this.courseService
-                    .updateCourse(this.selectedCourse)
-                    .subscribe((res: any) => {});
-                },
-                (er) => {
-                  console.log(er);
-                }
-              );
-            }
-          }, this.chosenFile.type);
-        };
-      };
-
-      // Start reading the file
-      reader.readAsDataURL(this.chosenFile);
-
-      return newFileName;
-    } else {
-      // If no file is uploaded, fetch and upload a random image
-      return null;
-    }
-  }
-
-  // Handle file removal
-  onFileRemove(event: any): void {
-    this.selectedFileName = '';
-    //this.currentImage = this.defaultImage;
-    this.chosenFile = null;
-    this.showInfo('Image removed successfully');
-  }
-
-  showInfo(msg) {
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Success',
-      detail: msg,
-    });
-  }
-
-  showError(msg) {
-    this.messageService.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: msg,
-    });
-  }
-
-  // Validate file type
-  private isValidImage(file: File): boolean {
-    //console.log('Validating file type');
-    const validExtensions = ['.jpg', '.jpeg', '.png'];
-    const fileExtension = file.name
-      .slice(file.name.lastIndexOf('.'))
-      .toLowerCase();
-    return validExtensions.includes(fileExtension);
-  }
-
-  getCourseImage(course: Course): string {
-    // console.log('getting course image!');
-
-    if (course.url) {
-      return this.API_URL + course.url.replace(/\\/g, '/');
-    } else {
-      return '/assets/img/courseDefaultImage.png';
-    }
-  }
-
   getName(firstName: string, lastName: string) {
     let Name = firstName + ' ' + lastName;
     return Name.split(' ')
@@ -372,17 +147,6 @@ export class CourseWelcomeComponent implements OnInit {
       .map((part) => part[0])
       .join('')
       .toUpperCase();
-  }
-
-  onEditorInit(event: any): void {
-    // Access the TinyMCE editor instance
-    const editorInstance = event.editor as Quill;
-
-    editorInstance.clipboard.dangerouslyPasteHTML(
-      this.selectedCourse.description
-    );
-
-    this.courseDescription = this.selectedCourse.description;
   }
 
   unEnrolleCourse(course: Course) {
@@ -401,7 +165,7 @@ export class CourseWelcomeComponent implements OnInit {
           CourseAction.setCurrentCourse({ selcetedCourse: course })
         );
         this.store.dispatch(CourseAction.setCourseId({ courseId: course._id }));
-        this.socket.emit('leave', 'course:' + course._id);
+        this.socket.emit("leave", "course:"+course._id);
         this.store.dispatch(
           NotificationActions.isDeletingCourse({ courseId: course._id })
         );

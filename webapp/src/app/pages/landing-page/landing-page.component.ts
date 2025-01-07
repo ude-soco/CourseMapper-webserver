@@ -13,7 +13,6 @@ import { Roles } from 'src/app/models/Roles';
 import { ThisReceiver } from '@angular/compiler';
 import { toggleShowHideAnnotation } from '../components/annotations/pdf-annotation/state/annotation.actions';
 import { MessageService } from 'primeng/api';
-import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-landing-page',
@@ -37,7 +36,6 @@ export class LandingPageComponent {
   myCourses: Course[];
   Enrolled: boolean = false;
   createdAt: string;
-  private API_URL = environment.API_URL;
 
   firstName: string = '';
   lastName: string = '';
@@ -64,10 +62,11 @@ export class LandingPageComponent {
 
   ngOnInit() {
     this.getAllCourses(); // Fetch all available courses
-    if (this.loggedInUser) {
+    if(this.loggedInUser){
       console.log('User is logged in new test');
       this.fetchUserCourses(); // Fetch courses the user is enrolled in
     }
+    
   }
   fetchUserCourses(): void {
     this.courseService.fetchCourses().subscribe({
@@ -77,7 +76,7 @@ export class LandingPageComponent {
       error: (err) => {
         if (err) {
           console.error('Error fetching user courses:', err);
-        }
+} 
       },
     });
   }
@@ -123,7 +122,6 @@ export class LandingPageComponent {
         firstName: this.firstName,
         lastName: this.lastName,
         description: course.description,
-        url: course.url,
       };
       this.userArray.push(ingoPush);
     });
@@ -170,13 +168,5 @@ export class LandingPageComponent {
       summary: 'Error',
       detail: msg,
     });
-  }
-
-  getCourseImage(course: Course): string {
-    if (course.url) {
-      return this.API_URL + course.url.replace(/\\/g, '/');
-    } else {
-      return '/assets/img/courseDefaultImage.png';
-    }
   }
 }

@@ -13,7 +13,7 @@ export class CourseImp implements Course {
   numberUsers?: number;
   createdAt?:string;
   users?:User
-  url?:string
+  
 
   constructor(
     _id: string,
@@ -27,7 +27,7 @@ export class CourseImp implements Course {
     numberUsers?: number,
     createdAt?:string,
     users?:User
-
+    
 
   ) {
     this.set_id(_id);
@@ -131,13 +131,5 @@ export class CourseImp implements Course {
 
   getNumberUsers(): number {
     return this.numberUsers;
-  }
-
-  setUrl(url: string) {
-    url ? (this.url = url) : (this.url = null);
-  }
-
-  getUrl(): string {
-    return this.url;
   }
 }

@@ -18,14 +18,11 @@ export class MaterilasService {
   isMaterialSelected = new BehaviorSubject<boolean>(false);
 
   selectedMaterial: CreateMaterial;
-  constructor(
-    private http: HttpClient,
-    private store: Store<State>,
-    private neo4jservice: Neo4jService
-  ) {}
+  constructor(private http: HttpClient, private store: Store<State>,private neo4jservice: Neo4jService) {}
 
-  getSelectedMaterial(): CreateMaterial {
-    return this.selectedMaterial;
+
+  getSelectedMaterial(): CreateMaterial{
+    return this.selectedMaterial
   }
   selectMaterial(material: CreateMaterial) {
     // if there is no selected course then no need to update the topics.
@@ -76,9 +73,7 @@ export class MaterilasService {
   }
 
   logMaterial(courseId: string, materialId: string): Observable<any> {
-    return this.http.get<CreateMaterial>(
-      `${this.API_URL}/courses/${courseId}/materials/${materialId}`
-    );
+    return this.http.get<CreateMaterial>(`${this.API_URL}/courses/${courseId}/materials/${materialId}`)
   }
 
   uploadFile(formData: any, materialType: string = 'pdf'): any {
@@ -86,21 +81,18 @@ export class MaterilasService {
       return this.http
         .post<any>(`${this.API_URL}/upload/video`, formData)
         .pipe(tap((res) => console.log(res)));
-    } else if (materialType == 'pdf') {
-      return this.http
-        .post<any>(`${this.API_URL}/upload/pdf`, formData)
-        .pipe(tap((res) => console.log(res)));
-    } else if (materialType == 'img') {
-      return this.http
-        .post<any>(`${this.API_URL}/upload/img`, formData)
-        .pipe(tap((res) => console.log(res)));
     }
+
+    return this.http
+      .post<any>(`${this.API_URL}/upload/pdf`, formData)
+      .pipe(tap((res) => console.log(res)));
   }
 
   deleteMaterial(material: Material) {
-    return this.http.delete(
-      `${this.API_URL}/courses/${material['courseId']}/materials/${material._id}`
-    );
+    return this.http
+      .delete(
+        `${this.API_URL}/courses/${material['courseId']}/materials/${material._id}`
+      );
   }
   deleteFile(material: Material) {
     if (material.type == 'pdf') {
