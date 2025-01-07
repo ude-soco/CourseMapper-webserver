@@ -167,3 +167,5 @@ Session.vim
 
 # CoreNLP
 /stanford-corenlp-full-2018-02-27/
+
+/cache/
