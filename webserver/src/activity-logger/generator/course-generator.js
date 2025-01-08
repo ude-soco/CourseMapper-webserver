@@ -31,6 +31,33 @@ const createCourseObject = (req) => {
     },
   };
 };
+const createSharedCourseObject = (req) => {
+  let course = req.locals.course;
+  let sharedURL = req.locals.courseUrl;
+  let origin = req.get("origin");
+  return {
+    objectType: config.activity,
+    id: `${origin}/activity/course/${course._id}`,
+    definition: {
+      type: "http://adlnet.gov/expapi/activities/course",
+      name: {
+        [config.language]: course.name,
+      },
+      description: {
+        [config.language]: course.description,
+      },
+      extensions: {
+        [`${origin}/extensions/course`]: {
+          id: course._id,
+          name: course.name,
+          shortname: course.shortName,
+          description: course.description,
+          sharedURL: sharedURL,
+        },
+      },
+    },
+  };
+};
 
 export const generateCreateCourseActivity = (req) => {
   const metadata = createMetadata();
@@ -54,6 +81,16 @@ export const generateDeleteCourseActivity = (req) => {
   };
 };
 
+export const generateShareCourseActivity = (req) => {
+  const metadata = createMetadata();
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://activitystrea.ms/schema/1.0/share", "shared"),
+    object: createSharedCourseObject(req),
+    context: createContext(),
+  };
+};
 export const generateCourseAccessActivity = (req) => {
   const metadata = createMetadata();
   return {

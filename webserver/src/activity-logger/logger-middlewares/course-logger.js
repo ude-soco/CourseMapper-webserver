@@ -23,6 +23,20 @@ export const deleteCourseLogger = async (req, res) => {
   }
 };
 
+export const shareCourseLogger = async (req, res) => {
+  try {
+    await activityController.createActivity(
+      courseActivityGenerator.generateShareCourseActivity(req)
+    );
+    res.status(200).send({
+      success: req.locals.success,
+      courseUrl: req.locals.courseUrl,
+    });
+  } catch (error) {
+    res.status(400).send("Something went wrong");
+  }
+};
+
 export const accessCourseLogger = async (req, res) => {
   try {
     await activityController.createActivity(

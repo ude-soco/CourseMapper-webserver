@@ -920,6 +920,48 @@ export const deleteCourse = async (req, res, next) => {
 
   return next();
 };
+/**
+ * @function shareCourse
+ * Share a course controller
+ *
+ * @param {string} req.params.courseId The id of the course
+ */
+export const shareCourse = async (req, res, next) => {
+  const courseId = req.params.courseId;
+  const userId = req.userId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+
+  let foundCourse;
+  try {
+    foundCourse = await Course.findById(courseId);
+    if (!foundCourse) {
+      return res.status(404).send({
+        error: `Course with id ${courseId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding course" });
+  }
+  const frontendHost = req.body.frontendHost;
+  const courseUrl = `${frontendHost}/course-description/${courseId}`; // e.g., "https://example.com/course-description/123"
+
+  req.locals = {
+    user: foundUser,
+    course: foundCourse,
+    courseUrl: courseUrl,
+    success: `Course "${foundCourse.name}" shared successfully!`,
+  };
+  next();
+  // res.status(200).json({
+  //   success: `Course "${foundCourse.name}" shared successfully!`,
+  //   courseUrl: courseUrl, // Include the generated URL
+  // });
+};
 
 /**
  * @function editCourse

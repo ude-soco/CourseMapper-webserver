@@ -70,6 +70,15 @@ module.exports = function (app) {
     // controller2.moderatorBoard
   );
 
+  // Share a course
+  // Available to all users
+  app.post(
+    "/api/courses/:courseId/share",
+    [authJwt.verifyToken],
+    controller.shareCourse,
+    logger.shareCourseLogger
+  );
+
   // Update a course
   // Only moderator/admin
   app.put(

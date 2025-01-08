@@ -62,7 +62,7 @@ export class CourseService {
   }
 
   logCourses(courseId: string): Observable<any> {
-    return this.http.get<Course>(`${this.API_URL}/courses/${courseId}/log`)
+    return this.http.get<Course>(`${this.API_URL}/courses/${courseId}/log`);
   }
   /**
    * @function fetchCourses
@@ -81,7 +81,7 @@ export class CourseService {
         //   // console.warn("User is not authenticated. Token expired or not provided.");
         //   return of([]); // Return empty array so app continues
         // }
-         return throwError(error); // Rethrow other errors
+        return throwError(error); // Rethrow other errors
       })
     );
   }
@@ -154,6 +154,30 @@ export class CourseService {
               })
             );
             this.removeCourse(courseTD);
+          }
+        })
+      );
+  }
+  /**
+   * @function shareCourse
+   * Sends a request to the backend to log the share activity
+   *
+   * @param {Course} courseTS The course to share
+   */
+  shareCourse(courseTS: Course) {
+    return this.http
+      .post<any>(`${this.API_URL}/courses/${courseTS._id}/share`, {
+        courseName: courseTS.name,
+        frontendHost: window.location.origin,
+      })
+      .pipe(
+        catchError((errResponse, sourceObservable) => {
+          if (errResponse.status === 404) {
+            return of({ errorMsg: errResponse.error.error });
+          } else {
+            return of({
+              errorMsg: 'Error in connection: Please reload the application',
+            });
           }
         })
       );
