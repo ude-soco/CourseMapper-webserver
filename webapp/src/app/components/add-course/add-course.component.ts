@@ -94,7 +94,7 @@ export class AddCourseComponent implements OnInit {
   fetchAndUploadRandomImage(course: Course): string {
     const randomImgUrl = 'https://picsum.photos/536/354';
     const newFileName = `${course._id}.jpg`;
-    course.url = '/public/uploads/images/' + newFileName;
+    course.url = '/public/uploads/pdfs/' + newFileName;
 
     // Fetch the random image as a Blob
     fetch(randomImgUrl)
@@ -136,7 +136,7 @@ export class AddCourseComponent implements OnInit {
       // Resize the image to the fixed dimensions (536x354) before uploading
       const fileExtension = this.selectedFileName.split('.').pop(); // Extract file extension
       const newFileName = `${course._id}.${fileExtension}`; // Create new file name
-      course.url = '/public/uploads/images/' + newFileName;
+      course.url = '/public/uploads/pdfs/' + newFileName;
 
       //console.log('Resizing and uploading file with the name: ' + newFileName);
 

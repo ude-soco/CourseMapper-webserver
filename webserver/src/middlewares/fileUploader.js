@@ -22,7 +22,7 @@ const pdfStorage = multer.diskStorage({
 
 const imgStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "public/uploads/images");
+    cb(null, "public/uploads/pdfs");
   },
   filename: fileName,
 });

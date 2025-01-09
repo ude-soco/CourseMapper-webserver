@@ -208,7 +208,7 @@ export class CourseWelcomeComponent implements OnInit {
 
     if (this.chosenFile) {
       let imageName = this.setCourseIamge(this.selectedCourse);
-      this.selectedCourse.url = '/public/uploads/images/' + imageName;
+      this.selectedCourse.url = '/public/uploads/pdfs/' + imageName;
     } else {
       this.courseService
         .updateCourse(this.selectedCourse)
