@@ -93,7 +93,7 @@ export class MaterilasService {
     } else if (materialType == 'img') {
       return this.http
         .post<any>(`${this.API_URL}/upload/img`, formData)
-        .pipe(tap((res) => console.log(res)));
+        .pipe(tap((res) => console.log('result from the image upload in the material service', res)));
     }
   }
 
