@@ -168,8 +168,7 @@ export class AddCourseComponent implements OnInit {
 
               this.materialService.uploadFile(formData, 'img').subscribe(
                 (res) => {
-                  //console.log('File uploaded successfully.');
-
+                  console.log('response from image upload', res);
                   this.courseService
                     .updateCourse(course)
                     .subscribe((res: any) => {});

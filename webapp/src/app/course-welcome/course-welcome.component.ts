@@ -297,6 +297,7 @@ export class CourseWelcomeComponent implements OnInit {
 
               this.materialService.uploadFile(formData, 'img').subscribe(
                 (res) => {
+                  console.log('response from image upload', res);
                   // Update the course image URL in the database
                   this.courseService
                     .updateCourse(this.selectedCourse)

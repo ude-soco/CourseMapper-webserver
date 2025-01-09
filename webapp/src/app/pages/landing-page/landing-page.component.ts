@@ -124,6 +124,7 @@ export class LandingPageComponent {
         lastName: this.lastName,
         description: course.description,
         url: course.url,
+        numberOfUsers: course.numberUsers,
       };
       this.userArray.push(ingoPush);
     });
