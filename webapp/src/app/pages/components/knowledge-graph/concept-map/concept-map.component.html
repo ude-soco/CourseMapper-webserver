@@ -143,6 +143,7 @@
                 [isDraft]="isDraft"
                 (editConcept)="editConcept($event)"
                 (conceptDeleted)="deleteConcept($event)"
+                (conceptDeletedBulk)="deleteConceptsBulk($event)"
               >
               </app-graph>
             </div>
@@ -197,16 +198,16 @@
                             >
                           </p>
                           <pdf-viewer
-                          [src]="docURL"
-                          [render-text]="true"
-                          [render-text-mode]="2"
-                          [fit-to-page]="true"
-                          [original-size]="true"
-                          [show-all]="false"
-                          [page]="currentPDFPage"
-                          class="responsive-pdf-viewer"
-                        >
-                        </pdf-viewer>
+                            [src]="docURL"
+                            [render-text]="true"
+                            [render-text-mode]="2"
+                            [fit-to-page]="true"
+                            [original-size]="true"
+                            [show-all]="false"
+                            [page]="currentPDFPage"
+                            class="responsive-pdf-viewer"
+                          >
+                          </pdf-viewer>
                           <p-paginator
                             id="p_paginator"
                             [rows]="1"
