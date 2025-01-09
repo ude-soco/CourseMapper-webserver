@@ -62,19 +62,19 @@
                 style="font-size: 1rem; color: #ea580c; margin-right: 8px"
               ></i>
               <span class="font-medium">
-                {{ Users.length }} enrolled users after merge
+                {{ Users.length }} enrolled users after merge 2
               </span>
             </div>
             <div>
               <button
-              *ngIf="!moderator"
-              pButton
-              class="button p-button-raised"
-              type="button"
-              label="Unenroll From Course"
-              [style]="{ 'background-color': '#0369A1', color: '#ffffff' }"
-              (click)="deEnrole()"
-            ></button>
+                *ngIf="!moderator"
+                pButton
+                class="button p-button-raised"
+                type="button"
+                label="Unenroll From Course"
+                [style]="{ 'background-color': '#0369A1', color: '#ffffff' }"
+                (click)="deEnrole()"
+              ></button>
             </div>
           </div>
         </div>

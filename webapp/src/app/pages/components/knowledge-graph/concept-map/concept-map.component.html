@@ -160,22 +160,49 @@
                 <p *ngIf="editingConceptName">
                   Editing concept {{ editingConceptName }}
                 </p>
+                <span>
+                  <!-- Label with Info Icon -->
+                  <span>Main Concepts</span>
+                  <i
+                    class="pi pi-info-circle ml-2 text-gray-500"
+                    pTooltip="Main Concepts are Wikipedia articles."
+                    tooltipPosition="top"
+                    style="cursor: pointer"
+                  ></i>
+                </span>
                 <form
                   [formGroup]="editConceptForm"
                   class="flex flex-row gap-2 items-center"
                 >
-                  <div class="p-float-label w-80">
-                    <p-autoComplete
-                      id="concept-name-input"
-                      formControlName="conceptName"
-                      [suggestions]="conceptSearchResults"
-                      (completeMethod)="searchConcepts($event)"
-                      field="title"
-                      styleClass="w-full"
-                      inputStyleClass="w-full"
-                    ></p-autoComplete>
-                    <label for="concept-name-input">Concept name</label>
-                  </div>
+                <div class="p-float-label w-80">
+                  <p-autoComplete
+                    id="concept-name-input"
+                    formControlName="conceptName"
+                    [suggestions]="conceptSearchResults"
+                    (completeMethod)="searchConcepts($event)"
+                    field="title"
+                    styleClass="w-full"
+                    inputStyleClass="w-full"
+                    (onSelect)="openLink($event.url)"
+                  >
+                    <!-- Template for Items in the Dropdown -->
+                    <ng-template let-concept pTemplate="item">
+                      <div class="flex justify-between items-center gap-2">
+                        <span>{{ concept.title }}</span>
+                        <a
+                          href="{{ concept.url }}"
+                          target="_blank"
+                          class="text-blue-500 hover:underline"
+                          pTooltip="Open article on Wikipedia"
+                          tooltipPosition="top"
+                        >
+                          <i class="pi pi-external-link"></i>
+                        </a>
+                      </div>
+                    </ng-template>
+                  </p-autoComplete>
+                  <label for="concept-name-input">Concept name</label>
+                </div>
                   <div class="w-80" style="width: 700px">
                     <p-multiSelect
                       id="concept-slides-input"

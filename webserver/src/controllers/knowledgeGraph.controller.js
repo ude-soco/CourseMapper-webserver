@@ -343,8 +343,18 @@ export const searchWikipedia = async (req, res) => {
     const url = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${conceptNameEncoded}&utf8=&format=json`;
     const response = await axios.get(url);
     const searchResults = response.data.query.search;
-    return res.status(200).send({ searchResults });
+     // Add the Wikipedia URL to each search result
+     const resultsWithUrls = searchResults.map(result => {
+      const titleEncoded = encodeURIComponent(result.title);
+      return {
+        ...result,
+        url: `https://en.wikipedia.org/wiki/${titleEncoded}`
+      };
+    });
+    return res.status(200).send({ searchResults: resultsWithUrls });
   } catch (err) {
     return res.status(500).send({ error: err.message });
   }
-}
+
+  }
+

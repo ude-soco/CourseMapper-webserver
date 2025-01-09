@@ -2054,5 +2054,8 @@ export class ConceptMapComponent {
     this.currentPDFPage = e.page + 1; // Update the current page
   }
 
+  openLink(url: string): void {
+    window.open(url, '_blank');
+  }
 
 }
