@@ -1,18 +1,26 @@
 <div #cy id="cy" (window:resize)="onResize($event)"></div>
-<div id="Legends" style="text-align: left">
-    <div *ngIf="showMaterialKg">
-      <span>
-        <div class="legend-circle-main-concept"></div>
-        Main Concept
-      </span>
-      <span>
-        <div class="legend-circle-related-concept"></div>
-        Related Concept
-      </span>
-      <span>
-        <div class="legend-circle-category"></div>
-        Category
-      </span>
-    </div>
+<div id="Legends" style="text-align: left; margin-bottom: 15px">
+  <div *ngIf="showMaterialKg">
+    <span>
+      <div class="legend-circle-main-concept"></div>
+      Main Concept
+    </span>
+    <span>
+      <div class="legend-circle-related-concept"></div>
+      Related Concept
+    </span>
+    <span>
+      <div class="legend-circle-category"></div>
+      Category
+    </span>
+    <span *ngIf="this.irrelevantConcepts.length > 0">
+      <div class="legend-circle-irrelated"></div>
+      Not Related conecept
+    </span>
   </div>
-  
+  <button
+   (click)="deleteIrrelevant()"
+  pButton type="button"
+  label="Delete not releveant concepts"
+  *ngIf="this.irrelevantConcepts.length > 0 && showBulkDeletion"></button>
+</div>
