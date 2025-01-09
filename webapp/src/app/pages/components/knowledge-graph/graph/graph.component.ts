@@ -30,6 +30,8 @@ export class GraphComponent {
 
   @Output() editConcept: EventEmitter<string> = new EventEmitter();
   @Output() conceptDeleted: EventEmitter<string> = new EventEmitter();
+  @Output() conceptDeletedBulk: EventEmitter<string[]> = new EventEmitter();
+
 
   node_id: string | undefined;
   node_cid: string | undefined;
@@ -267,4 +269,6 @@ export class GraphComponent {
     this.conceptDeleted.emit(this.node_cid);
     this.closeAbstractPanel();
   }
+
+
 }

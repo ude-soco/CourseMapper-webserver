@@ -1909,6 +1909,43 @@ export class ConceptMapComponent {
     });
   }
 
+  deleteConceptsBulk(conceptIds: string[]) {
+
+    console.log('bulk deletion', conceptIds);
+
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to delete all the main concepts marked as not relevant?',
+      header: 'Delete Confirmation',
+      icon: 'pi pi-info-circle',
+      accept: async () => {
+        try {
+          console.log('accepting');
+          // Use a loop to delete each concept asynchronously
+          for (const conceptId of conceptIds) {
+            console.log('deleting the concept', conceptId);
+            await this.conceptMapService.deleteConceptMapConcept(
+              this.currentMaterial!.courseId,
+              this.currentMaterial!._id,
+              conceptId
+            );
+          }
+
+          // After all deletions, refresh the data
+          this.getConceptMapData();
+        } catch (error) {
+          console.error(error);
+          this.messageService.add({
+            key: 'server_response',
+            severity: 'error',
+            summary: 'Cannot remove concept(s)',
+            detail: error.error?.error?.toString() || 'Unknown error occurred.',
+          });
+        }
+      },
+    });
+  }
+
+
   async addConcept() {
     // TODO
     // Automatically publish drafts
