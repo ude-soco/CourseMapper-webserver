@@ -83,11 +83,18 @@ export const getMaterial = async (req, res, next) => {
 export const newMaterial = async (req, res, next) => {
   const courseId = req.params.courseId;
   const channelId = req.params.channelId;
-  const materialType = req.body.type;
-  const materialName = req.body.name;
-  const materialUrl = req.body.url;
-  const materialDesc = req.body.description;
+  // const materialType = req.body.type;
+  // const materialName = req.body.name;
+  // const materialUrl = req.body.url;
+  // const materialDesc = req.body.description;
   const userId = req.userId;
+  const {
+    type: materialType,
+    name: materialName,
+    url: materialUrl,
+    description: materialDesc,
+    videoType,
+  } = req.body;
 
   let course;
   try {
@@ -123,7 +130,6 @@ export const newMaterial = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: "Error finding channel" });
   }
-
   let material = new Material({
     type: materialType,
     name: materialName,
@@ -135,6 +141,7 @@ export const newMaterial = async (req, res, next) => {
     userId: req.userId,
     createdAt: Date.now(),
     updatedAt: Date.now(),
+    ...(materialType === "video" && { videoType }), //Only if the materialType is video
   });
 
   let savedMaterial;
@@ -159,6 +166,7 @@ export const newMaterial = async (req, res, next) => {
     materialType,
     course,
     channel: foundChannel,
+    ...(materialType === "video" && { videoType }),
   };
   next();
 };

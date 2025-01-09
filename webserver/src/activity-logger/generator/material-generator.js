@@ -11,8 +11,19 @@ let DOMAIN = "http://www.CourseMapper.de"; // TODO: Hardcoded due to frontend im
 
 const createMaterialObject = (req, typeURI) => {
   let material = req.locals.material;
+  const materialType = req.locals.materialType;
   let origin = req.get("origin");
-  let type = typeURI ? typeURI : `${DOMAIN}/activityType/material`;
+  //let type = typeURI ? typeURI : `${DOMAIN}/activityType/material`;
+  let type;
+  if (materialType === "pdf") {
+    type = `${DOMAIN}/activityType/pdf`;
+  } else if (materialType === "video" && req.locals.videoType === "fileVideo") {
+    type = `${DOMAIN}/activityType/video`;
+  } else if (materialType === "video" && req.locals.videoType === "urlVideo") {
+    type = `${DOMAIN}/activityType/youtube`;
+  } else {
+    type = `${DOMAIN}/activityType/material`;
+  }
   return {
     objectType: config.activity,
     id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`,
@@ -41,11 +52,29 @@ const createMaterialObject = (req, typeURI) => {
 };
 
 export const generateAddMaterialActivity = (req) => {
+  const materialType = req.locals.materialType;
   const metadata = createMetadata();
+
+  let verb;
+  if (materialType === "pdf") {
+    verb = "uploaded";
+  } else if (materialType === "video" && req.locals.videoType === "fileVideo") {
+    verb = "uploaded";
+  } else if (materialType === "video" && req.locals.videoType === "urlVideo") {
+    verb = "added";
+  } else {
+    verb = "added";
+  }
+
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb("http://activitystrea.ms/schema/1.0/add", "added"),
+    verb: createVerb(
+      verb === "uploaded"
+        ? "https://xapi.elearn.rwth-aachen.de/definitions/generic/verbs/uploaded" //To verify!
+        : "http://activitystrea.ms/schema/1.0/add",
+      verb
+    ),
     object: createMaterialObject(req),
     context: createContext(),
   };

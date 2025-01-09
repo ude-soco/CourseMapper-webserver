@@ -18,11 +18,14 @@ export class MaterilasService {
   isMaterialSelected = new BehaviorSubject<boolean>(false);
 
   selectedMaterial: CreateMaterial;
-  constructor(private http: HttpClient, private store: Store<State>,private neo4jservice: Neo4jService) {}
+  constructor(
+    private http: HttpClient,
+    private store: Store<State>,
+    private neo4jservice: Neo4jService
+  ) {}
 
-
-  getSelectedMaterial(): CreateMaterial{
-    return this.selectedMaterial
+  getSelectedMaterial(): CreateMaterial {
+    return this.selectedMaterial;
   }
   selectMaterial(material: CreateMaterial) {
     // if there is no selected course then no need to update the topics.
@@ -35,15 +38,26 @@ export class MaterilasService {
   }
 
   addMaterial(material: CreateMaterial): any {
+    const payload: any = {
+      type: material.type,
+      url: material.url,
+      name: material.name,
+      description: material.description,
+    };
+    // Add videoType to payload, when the materialType is video
+    if (material.type === 'video' && material.videoType) {
+      payload.videoType = material.videoType;
+    }
     return this.http
       .post<any>(
         `${this.API_URL}/courses/${material.courseId}/channels/${material.channelId}/material`,
-        {
-          type: material.type,
-          url: material.url,
-          name: material.name,
-          description: material.description,
-        }
+        payload
+        // {
+        //   type: material.type,
+        //   url: material.url,
+        //   name: material.name,
+        //   description: material.description,
+        // }
       )
       .pipe(
         catchError((err) => {
@@ -73,7 +87,9 @@ export class MaterilasService {
   }
 
   logMaterial(courseId: string, materialId: string): Observable<any> {
-    return this.http.get<CreateMaterial>(`${this.API_URL}/courses/${courseId}/materials/${materialId}`)
+    return this.http.get<CreateMaterial>(
+      `${this.API_URL}/courses/${courseId}/materials/${materialId}`
+    );
   }
 
   uploadFile(formData: any, materialType: string = 'pdf'): any {
@@ -89,10 +105,9 @@ export class MaterilasService {
   }
 
   deleteMaterial(material: Material) {
-    return this.http
-      .delete(
-        `${this.API_URL}/courses/${material['courseId']}/materials/${material._id}`
-      );
+    return this.http.delete(
+      `${this.API_URL}/courses/${material['courseId']}/materials/${material._id}`
+    );
   }
   deleteFile(material: Material) {
     if (material.type == 'pdf') {
