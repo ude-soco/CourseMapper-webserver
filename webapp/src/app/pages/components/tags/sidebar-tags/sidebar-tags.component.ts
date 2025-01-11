@@ -27,6 +27,12 @@ export class SidebarTagsComponent {
   tagsForChannel: Tag[];
   tagsForMaterial: Tag[];
 
+  visibleTagsTopicsCount = 10; // Number of tags to show initially
+  visibleTagsMaterialCount = 10; // Number of tags to show initially
+  visibleTagsCourseCount = 10; // Number of tags to show initially
+  visibleTagsChannelCount = 10; // Number of tags to show initially
+
+
   constructor(private store: Store<State>, private router: Router){
     this.store.select(getCurrentCourse).subscribe((currentCourse) => this.selectedCourse = currentCourse);
     this.store.select(getSelectedTopic).subscribe((currentTopic) => this.selectedTopic = currentTopic);
@@ -58,4 +64,44 @@ export class SidebarTagsComponent {
     this.store.dispatch(CourseActions.loadAnnotationsForSelectedTag({tagSelected: true, selectedTagName: tag.name, courseId: this.selectedCourse._id}));
     this.router.navigate(['course', this.selectedCourse._id, 'tag', tag.name]);
   }
+
+  showMoreTagsCourse(): void {
+    // Increase the visible tags by 10, up to the total number of tags
+    this.visibleTagsCourseCount = Math.min(this.visibleTagsCourseCount + 10, this.tagsForCourse.length);
+  }
+
+  showMoreTagsChannel(): void {
+    // Increase the visible tags by 10, up to the total number of tags
+    this.visibleTagsChannelCount = Math.min(this.visibleTagsChannelCount + 10, this.tagsForChannel.length);
+  }
+
+  showMoreTagsTopic(): void {
+    // Increase the visible tags by 10, up to the total number of tags
+    this.visibleTagsTopicsCount = Math.min(this.visibleTagsTopicsCount + 10, this.tagsForTopic.length);
+  }
+
+  showMoreTagsMaterial(): void {
+    // Increase the visible tags by 10, up to the total number of tags
+    this.visibleTagsMaterialCount = Math.min(this.visibleTagsMaterialCount + 10, this.tagsForMaterial.length);
+  }
+
+  showLessTagsCourse(): void {
+    // Decrease the visible tags by 10, down to the initial 10
+    this.visibleTagsCourseCount = Math.max(this.visibleTagsCourseCount - 10, 10);
+  }
+
+  showLessTagsChannel(): void {
+    // Decrease the visible tags by 10, down to the initial 10
+    this.visibleTagsChannelCount = Math.max(this.visibleTagsChannelCount - 10, 10);
+  }
+
+  showLessTagsTopic(): void {
+    // Decrease the visible tags by 10, down to the initial 10
+    this.visibleTagsTopicsCount = Math.max(this.visibleTagsTopicsCount - 10, 10);
+  }
+  ShowLessTagsMaterial(): void {
+    // Decrease the visible tags by 10, down to the initial 10
+    this.visibleTagsMaterialCount = Math.max(this.visibleTagsMaterialCount - 10, 10);
+  }
+
 }
