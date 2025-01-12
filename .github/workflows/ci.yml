@@ -3,9 +3,9 @@ name: Continuous Integration
 on:
   push:
     tags:       [ v*.*.* ]
-    branches:   [ main, development ]
+    branches:   [ main, dev, development ]
   pull_request:
-    branches:   [ main, development ]
+    branches:   [ main, dev, development ]
 
 jobs:
   assert-branch:
