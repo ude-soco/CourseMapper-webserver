@@ -197,16 +197,10 @@ export async function createUserCourseRelationship(userId, courseId, engagementL
         `
         MERGE (u:User {uid: $userId})
         MERGE (c:Course {cid: $courseId})
-        MERGE (u)-[r:ENROLLED_IN]->(c)
-        ON CREATE SET r.userEngagement = $engagementLevel, r.status = 'enrolled', r.timestamp = timestamp()
-        ON MATCH SET r.userEngagement = $engagementLevel, r.status = 'enrolled', r.timestamp = timestamp()
-        
-        // Create or update the LEVEL_OF_ENGAGEMENT relationship
         MERGE (u)-[loe:LEVEL_OF_ENGAGEMENT]->(c)
-        ON CREATE SET loe.level = $engagementLevel, loe.timestamp = timestamp()
-        ON MATCH SET loe.level = $engagementLevel, loe.timestamp = timestamp()
-        
-        RETURN u, c, r, loe
+        ON CREATE SET loe.level = $engagementLevel, loe.status = 'enrolled', loe.timestamp = timestamp()
+        ON MATCH SET loe.level = $engagementLevel, loe.status = 'enrolled', loe.timestamp = timestamp()
+        RETURN u, c, loe
         `,
         { userId, courseId, engagementLevel }
       );
@@ -214,7 +208,7 @@ export async function createUserCourseRelationship(userId, courseId, engagementL
     });
     return result;
   } catch (error) {
-    console.error("Error creating user-course relationship:", error);
+    console.error("Error creating or updating user-course relationship:", error);
     throw error;
   } finally {
     await session.close();
@@ -228,10 +222,7 @@ export async function deleteUserCourseRelationship(userId, courseId) {
     const result = await session.executeWrite(async (tx) => {
       const response = await tx.run(
         `
-        MATCH (u:User {uid: $userId})-[r:ENROLLED_IN]->(c:Course {cid: $courseId})
-        DELETE r
-        WITH u, c
-        MATCH (u)-[loe:LEVEL_OF_ENGAGEMENT]->(c)
+        MATCH (u:User {uid: $userId})-[loe:LEVEL_OF_ENGAGEMENT]->(c:Course {cid: $courseId})
         DELETE loe
         RETURN u, c
         `,
