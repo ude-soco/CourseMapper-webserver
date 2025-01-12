@@ -217,6 +217,7 @@ class WikipediaService:
         except Exception as e:
             print(f"Error: {e}")
             return []
+
     def get_concepts_mentioned(self, text, concepts):
         try:
             return [word for word in concepts if word in text]
@@ -224,5 +225,32 @@ class WikipediaService:
             print(f"Error extracting concepts: {e}")
             return []    
         
+    def count_backlinks_to_links_ratio(self, title)
+        def fallback(wiki, concept):
+            # Fallback method if article could not be found in dump
+            li= wiki.page(concept)
+            ratio = len(li.backlinks) / len(li.links)
+            return ratio
 
+        conn = self.get_conn()
+        try:
+            if conn is None:
+                return fallback(self._wiki, title)
+                
+            with conn.cursor() as cur:
+                # Query the database for the number of links
+                links_rows = cur.execute('SELECT jsonb_array_length(links) AS links_count FROM pages WHERE title = %s', (title,)).fetchall()
 
+                if len(rows) == 0:
+                    return fallback(self._wiki, title)  # If no article is found, use fallback method
+
+                # Query the database for the number of backlinks
+                backlinks_rows = cur.execute('SELECT count(*) AS backlinks_count FROM pages WHERE links ? %s = t', (title,)).fetchall()
+
+                # Return the ratio
+                return backlinks_rows[0]['backlinks_count'] / links_rows[0]['links_count']
+                
+
+        except Exception as e:
+            print(f"Error: {e}")
+            return 0

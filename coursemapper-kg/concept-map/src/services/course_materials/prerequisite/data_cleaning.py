@@ -37,7 +37,7 @@ class DataCleaning():
         #print("self.clean_data["abstract_contents"]", self.clean_data["abstract_contents"])
         self.get_dbpedia_data_simple(self.clean_data["uri"])
         print("get inlink and outlink")
-        #self.clean_data["link_ratio"] = self.clean_data.apply(lambda x: self.get_inoutlinks(wiki,x["name"]),axis=1)
+        self.clean_data["link_ratio"] = self.clean_data.apply(lambda x: self._wikipedia_service.count_backlinks_to_links_ratio(x["name"]))
         print("calculating entropy...")
         self.clean_data["entropy"] = self.get_entropy(self.clean_data["abstract"])
         self.clean_data.reset_index(inplace=True)
@@ -116,14 +116,6 @@ class DataCleaning():
         except Exception as e:
             print(f"Error extracting categories: {e}")
             return []
-    
-    def get_inoutlinks(self,wiki,concept):
-        li= wiki.page(concept)
-        try:
-            ratio = len(li.backlinks) / len(li.links)
-            return ratio
-        except:
-            return 0
 
 
     def get_dbpedia_data(self,url):
