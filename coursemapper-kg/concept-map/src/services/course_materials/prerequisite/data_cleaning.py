@@ -5,13 +5,14 @@ from bs4 import BeautifulSoup
 import requests
 import wikipediaapi
 from services.wikipedia import WikipediaService
-
+import swifter
 
 from bertopic import BERTopic
 from scipy.stats import entropy
 import numpy as np
 
 import threading
+from concurrent.futures import ThreadPoolExecutor
 
 class TimeoutException(Exception):
     pass
@@ -33,7 +34,8 @@ class DataCleaning():
         print("getting full articles...")
         #self.clean_data["article_contents"] = self.clean_data.apply(lambda x: self.get_full_article(x["wikipedia"]),axis=1)
         # Assuming self._wikipedia_service is an instance of WikipediaService
-        self.clean_data["article_contents"] = self.clean_data.apply(lambda x: self._wikipedia_service.get_full_article(x['wikipedia'], self.concepts), axis=1)
+        #self.clean_data["article_contents"] = self.clean_data.swifter.apply(lambda x: self._wikipedia_service.get_full_article(x['wikipedia'], self.concepts), axis=1)
+        self.clean_data["article_contents"] = self._get_full_articles_parallel()
         #print("self.clean_data["abstract_contents"]", self.clean_data["abstract_contents"])
         self.get_dbpedia_data_simple(self.clean_data["uri"])
         print("get inlink and outlink")
@@ -101,7 +103,24 @@ class DataCleaning():
         except Exception as e:
             print(f"Error parsing RDF data: {e}")
             return pd.DataFrame()
-    
+        
+        
+    def _get_full_articles_parallel(self):
+        """
+        Fetch full articles in parallel using ThreadPoolExecutor.
+        """
+        # Convert the DataFrame rows into dictionaries for parallel processing
+        records = self.clean_data.to_dict('records')
+
+        # Function to fetch article for a single row
+        def fetch_article(row):
+            return self._wikipedia_service.get_full_article(row['wikipedia'], self.concepts)
+        
+        # Process in parallel using ThreadPoolExecutor
+        with ThreadPoolExecutor() as executor:
+            article_contents = list(executor.map(fetch_article, records))
+
+        return article_contents
     # def get_category(self,rel_con):
     #     categories = rel_con["O"].loc[rel_con["O"].str.contains("Category:")]
     #     categories = categories.map(lambda x: x.lstrip('Category:')).array

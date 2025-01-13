@@ -10,6 +10,7 @@ from diskcache import Cache
 from bs4 import BeautifulSoup
 import requests
 
+
 class WikipediaPage:
     title: str
     summary: str
@@ -205,14 +206,20 @@ class WikipediaService:
                     return words
             else:
                  
+                # Fetch the page content once
                 page = requests.get(title)
                 soup = BeautifulSoup(page.content, 'html.parser')
-                words = []
-                for p in range(0,len(soup.find_all('p'))-1):
-                    text = soup.find_all('p')[p].get_text()
-                    words = words + self.get_concepts_mentioned(text, concepts)
-                words = list(dict.fromkeys(words))
-                return words
+
+                # Extract all paragraphs at once
+                paragraphs = soup.find_all('p')
+        
+                # Process paragraphs efficiently
+                words = set()  # Use a set to avoid duplicates
+                for p in paragraphs:
+                    text = p.get_text()
+                    words.update(self.get_concepts_mentioned(text, concepts))  # Add directly to the set
+
+                return list(words)
             return 0
         except Exception as e:
             print(f"Error: {e}")
