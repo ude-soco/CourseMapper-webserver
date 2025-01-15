@@ -45,3 +45,18 @@ export const selectMaterialTagLogger = async (req, res) => {
     res.status(400).send("Failed to log tag selection");
   }
 };
+export const addTagToAnnotationLogger = async (req, res, next) => {
+  const tags = req.locals.tags || [];
+  try {
+    for (const tag of tags) {
+      req.locals.tag = tag; // Add the individual tag to req.locals
+      await activityController.createActivity(
+        tagActivityGenerator.generateAddTagToAnnotationActivity(req)
+      );
+    }
+    next();
+  } catch (error) {
+    console.error("Error logging tag activities:", error);
+    next();
+  }
+};

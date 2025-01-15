@@ -65,7 +65,7 @@ export const newAnnotation = async (req, res, next) => {
 
   let authorName = `${foundUser.firstname} ${foundUser.lastname}`;
   let foundCourse = foundUser.courses.find(
-    (course) => course.courseId.toString() == courseId,
+    (course) => course.courseId.toString() == courseId
   );
   let foundRole;
   try {
@@ -104,7 +104,7 @@ export const newAnnotation = async (req, res, next) => {
       details: err.message || err, // Send the error message or the entire error object
     });
   }
-  
+
   foundMaterial.annotations.push(newAnnotation._id);
   try {
     await foundMaterial.save();
@@ -112,10 +112,9 @@ export const newAnnotation = async (req, res, next) => {
     res.status(500).send({ error: "Error saving material" });
   }
   // Checks for hashtags in content
-    let foundTags = annotationContent
+  let foundTags = annotationContent
     .split(/\s+/) // Split on any whitespace (spaces, newlines, etc.)
     .filter((v) => /^#[A-Za-z0-9]+$/.test(v)); // Check if it matches the hashtag pattern
-
 
   if (foundTags.length !== 0) {
     // Ensure the tags are unique by converting to a Set and back to an array
@@ -140,11 +139,15 @@ export const newAnnotation = async (req, res, next) => {
     } catch (err) {
       return res.status(500).send({ error: "Error saving tags" });
     }
+
+    req.locals = req.locals || {}; // Ensure req.locals is initialized
+    req.locals.tags = foundTagsSchema; // Add tags to req.locals for logging
   }
 
   req.params.annotationId = newAnnotation._id;
   //when user makes a new annotation, make the user automatically start following it
   req.locals = {
+    ...req.locals,
     user: foundUser,
     category: "annotations",
     course: courseForGeneratingNotifications,
@@ -235,7 +238,7 @@ export const deleteAnnotation = async (req, res, next) => {
     return res.status(500).send({ error: "Error finding material" });
   }
   foundMaterial.annotations = foundMaterial.annotations.filter(
-    (annotation) => annotation.valueOf() !== annotationId,
+    (annotation) => annotation.valueOf() !== annotationId
   );
   try {
     await foundMaterial.save();
@@ -363,18 +366,15 @@ export const editAnnotation = async (req, res, next) => {
     return res.status(500).send({ error: "Error deleting tag" });
   }
   // Checks for hashtags in content
-  let foundTags = 
-  annotationContent
-  .split(/\s+/) // Split on any whitespace (spaces, newlines, etc.)
-  .filter((v) => /^#[A-Za-z0-9]+$/.test(v)); // Check if it matches the hashtag pattern
+  let foundTags = annotationContent
+    .split(/\s+/) // Split on any whitespace (spaces, newlines, etc.)
+    .filter((v) => /^#[A-Za-z0-9]+$/.test(v)); // Check if it matches the hashtag pattern
 
-  
   let foundTagsSchema = [];
   if (foundTags.length !== 0) {
-
     // Ensure the tags are unique by converting to a Set and back to an array
     foundTags = [...new Set(foundTags)];
-    
+
     foundTags.forEach((tag) => {
       let newTag = new Tag({
         name: tag,
@@ -482,7 +482,7 @@ export const likeAnnotation = async (req, res, next) => {
 
   if (foundAnnotation.likes.includes(req.userId)) {
     foundAnnotation.likes = foundAnnotation.likes.filter(
-      (user) => user.valueOf() !== req.userId,
+      (user) => user.valueOf() !== req.userId
     );
     let savedAnnotation;
     try {
@@ -605,7 +605,7 @@ export const dislikeAnnotation = async (req, res, next) => {
 
   if (foundAnnotation.dislikes.includes(req.userId)) {
     foundAnnotation.dislikes = foundAnnotation.dislikes.filter(
-      (user) => user.valueOf() !== req.userId,
+      (user) => user.valueOf() !== req.userId
     );
     let savedAnnotation;
     try {
@@ -749,7 +749,7 @@ export const getAllAnnotations = async (req, res) => {
     return res.status(500).send({ error: "Error finding annotation" });
   }
   foundAnnotations.sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
   return res.status(200).send(foundAnnotations);
 };
@@ -797,7 +797,7 @@ export const getAllAnnotationsForSpecificTag = async (req, res) => {
     return res.status(500).send({ error: "Error finding annotation" });
   }
   foundAnnotations.sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
   return res.status(200).send(foundAnnotations);
 };

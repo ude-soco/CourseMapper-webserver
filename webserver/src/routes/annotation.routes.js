@@ -1,6 +1,7 @@
 const { authJwt, notifications } = require("../middlewares");
 const controller = require("../controllers/annotation.controller");
 const logger = require("../activity-logger/logger-middlewares/annotation-comment-logger");
+const tagLogger = require("../activity-logger/logger-middlewares/tag-logger");
 const notificationsController = require("../controllers/notification.controller");
 
 module.exports = function (app) {
@@ -15,13 +16,14 @@ module.exports = function (app) {
     "/api/courses/:courseId/materials/:materialId/annotation",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.newAnnotation,
+    tagLogger.addTagToAnnotationLogger,
     logger.createAnnotationLogger,
     notificationsController.followAnnotation,
     notifications.newAnnotationNotificationUsersCalculate,
     notifications.populateUserNotification,
     logger.addMentionLogger,
     notifications.newMentionNotificationUsersCalculate,
-    notifications.populateUserNotification,
+    notifications.populateUserNotification
   );
 
   // Delete an annotation
@@ -32,7 +34,7 @@ module.exports = function (app) {
     controller.deleteAnnotation,
     logger.deleteAnnotationLogger,
     notifications.calculateUsersFollowingAnnotation,
-    notifications.populateUserNotification,
+    notifications.populateUserNotification
   );
 
   // Edit an annotation
@@ -43,7 +45,7 @@ module.exports = function (app) {
     controller.editAnnotation,
     logger.editAnnotation,
     notifications.calculateUsersFollowingAnnotation,
-    notifications.populateUserNotification,
+    notifications.populateUserNotification
   );
 
   // Like an annotation
@@ -55,7 +57,7 @@ module.exports = function (app) {
     controller.likeAnnotation,
     logger.likeAnnotationLogger,
     notifications.LikesDislikesAnnotationNotificationUsers,
-    notifications.populateUserNotification,
+    notifications.populateUserNotification
   );
 
   // Dislike an annotation
@@ -67,7 +69,7 @@ module.exports = function (app) {
     controller.dislikeAnnotation,
     logger.dislikeAnnotationLogger,
     notifications.LikesDislikesAnnotationNotificationUsers,
-    notifications.populateUserNotification,
+    notifications.populateUserNotification
   );
 
   // TODO: Change the getAnnotations to get-all-annotations
@@ -76,7 +78,7 @@ module.exports = function (app) {
   app.get(
     "/api/courses/:courseId/materials/:materialId/getAnnotations",
     [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.getAllAnnotations,
+    controller.getAllAnnotations
   );
 
   // get annotations for specific tag
@@ -84,6 +86,6 @@ module.exports = function (app) {
   app.get(
     "/api/courses/:courseId/tag/:tagName/get-all-annotation-for-tag",
     [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.getAllAnnotationsForSpecificTag,
+    controller.getAllAnnotationsForSpecificTag
   );
 };

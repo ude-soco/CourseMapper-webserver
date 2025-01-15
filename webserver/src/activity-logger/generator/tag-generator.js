@@ -6,6 +6,34 @@ import {
 } from "./util/generator-util";
 import config from "./util/config";
 
+const createTagObject = (req) => {
+  const tag = req.locals.tag;
+  const annotation = req.locals.annotation;
+  const origin = req.get("origin");
+  return {
+    objectType: config.activity,
+    id: `${origin}/activity/annotation/${annotation._id}/tag/${tag._id}`, //to Verify
+    definition: {
+      type: "http://id.tincanapi.com/activitytype/tag", // to Verify
+      name: {
+        [config.language]: tag.name,
+      },
+      annotation: {
+        [config.language]: annotation.content,
+      },
+      extensions: {
+        [`${origin}/extensions/course`]: {
+          tagId: tag._id,
+          annotationId: tag.annotationId,
+          courseId: tag.courseId,
+          topicId: tag.topicId,
+          channelId: tag.courseId,
+          materialId: tag.materialId,
+        },
+      },
+    },
+  };
+};
 const createCourseTagObject = (req) => {
   const course = req.locals.course;
   const tag = req.locals.tag;
@@ -140,6 +168,17 @@ export const generateSelectMaterialTagActivity = (req) => {
     actor: createUser(req),
     verb: createVerb("http://id.tincanapi.com/verb/selected", "selected"),
     object: createMaterialTagObject(req),
+    context: createContext(),
+  };
+};
+export const generateAddTagToAnnotationActivity = (req) => {
+  const metadata = createMetadata();
+
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://id.tincanapi.com/verb/added", "added"),
+    object: createTagObject(req),
     context: createContext(),
   };
 };
