@@ -49,7 +49,7 @@ class eva_compgcn:
         # SBERT model, be used to generate the initial embedding for node and relation
         model = SentenceTransformer('paraphrase-MiniLM-L12-v2') 
 
-        # load the eva data 
+        # load the eva data test dataset
         data_path = os.path.join(current_dir, 'eva_data_version_1.txt')
         data = pd.read_csv(data_path, sep='\t', header=None, names=['node1', 'relation', 'node2'])
         # get all unique nodes and relation
@@ -100,6 +100,7 @@ class eva_compgcn:
             # relation embedding
             relation_matrix[(src_idx, tgt_idx)] = relation_embeddings[row['relation']]
 
+        #initialize the adj m,atrix
         adj_matrix = coo_matrix((data_values, (rows, cols)), shape=(num_nodes, num_nodes))
         # A->B
         self.adj_matrix = adj_matrix.toarray()
@@ -154,6 +155,8 @@ class eva_compgcn:
                 embedding_v = embedding_matrix [v]
 
                 # if there is a adj edge between node v and it's neighbor u and this edge is in OUT direction
+                #v is the targget node and u is the neighbors
+                # embedding_v,relation_embedding,rel is the relationship and multiplied with the embedding of the target node the operator
                 if v!=u and adj_matrix[v,u] != 0 :
                     relation_embedding = relation_embedding_matrix[(v,u)]
                     adj_out = self.rel_transform(embedding_v,relation_embedding,rel_transform_mode)
@@ -188,6 +191,7 @@ class eva_compgcn:
         # """
         # update the embedding of adj edges
         for edge in relation_embedding_matrix:
+            #weight_relation_layer_1 is W^l_rel
             relation_embedding_matrix [edge] = np.dot(relation_embedding_matrix[edge], weight_relation_layer_1)
             relation_embedding_matrix[edge] =relation_embedding_matrix[edge] / np.linalg.norm(relation_embedding_matrix[edge], ord=1,keepdims=True)   #L1 normalization   
         # store the final relation embedding, it will be used for ablation study laterly
@@ -203,6 +207,7 @@ class eva_compgcn:
                 adj_in = None
                 self_loop = None
                 embedding_v = embedding_matrix [v]
+                #this is the operator
 
                 if v!=u and adj_matrix[v,u] != 0 :
                     relation_embedding = relation_embedding_matrix[(v,u)]
@@ -213,7 +218,8 @@ class eva_compgcn:
                 if v==u and adj_matrix[v,u] != 0:
                     relation_embedding = relation_embedding_matrix[(v,v)]
                     self_loop = self.rel_transform(embedding_v,relation_embedding,rel_transform_mode)
-
+                #aggregation
+                #multiply the output of the operator with the corresponding matrix
                 if adj_out is not None:
                     new_embedding_v = new_embedding_v + np.dot(adj_out,weight_matrix_output_layer_2)
                 if adj_in is not None:
@@ -465,6 +471,7 @@ def evaluate_link_prediction(entity_embeddings, relation_embeddings, test_triple
 
     for (h, t) in test_triples:
         # get the score of the positive triple 
+        #not implemeted because it needs training
         if scoring_function == convE_score:
             correct_score = scoring_function(
                 torch.tensor(entity_embeddings[h]).unsqueeze(0).float(),
@@ -554,6 +561,7 @@ eva.edges = list(set(eva.edges))
 
 # step2: generate the embedding by using our model
 # compGCN with direction weight and corr, mult or sub
+#here to call the models with or without direction weight and corr, mult or sub
 eva.compgcn_without_direction_weight('mult')
 
 # compGCN without direction weight and corr, mult or sub

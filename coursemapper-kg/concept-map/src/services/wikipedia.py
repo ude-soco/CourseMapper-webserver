@@ -227,12 +227,16 @@ class WikipediaService:
 
     def get_concepts_mentioned(self, text, concepts):
         try:
-            return [word for word in concepts if word in text]
-        except Exception as e:
-            print(f"Error extracting concepts: {e}")
-            return []    
+            words = []
+            for word in self.concepts:
+                if word in text:
+                    words.append(word)
+            return list(dict.fromkeys(words))
+        except:
+            return []
+   
         
-    def count_backlinks_to_links_ratio(self, title)
+    def count_backlinks_to_links_ratio(self, title):
         def fallback(wiki, concept):
             # Fallback method if article could not be found in dump
             li= wiki.page(concept)

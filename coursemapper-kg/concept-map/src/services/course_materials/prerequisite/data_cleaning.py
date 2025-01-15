@@ -5,14 +5,12 @@ from bs4 import BeautifulSoup
 import requests
 import wikipediaapi
 from services.wikipedia import WikipediaService
-import swifter
-
+from concurrent.futures import ThreadPoolExecutor
 from bertopic import BERTopic
 from scipy.stats import entropy
 import numpy as np
 
 import threading
-from concurrent.futures import ThreadPoolExecutor
 
 class TimeoutException(Exception):
     pass
@@ -24,22 +22,27 @@ class DataCleaning():
         np.set_printoptions(threshold = np.inf)
         self.clean_data = concepts
         self.related_relationships = self.clean_data[["name","related_to"]]
+        #why delete duplicates?
         self.clean_data.drop_duplicates(subset= ["name"],keep="last",inplace=True)
         self.concepts = concepts.name.array
-        print(len(self.concepts))
+        
+        print("len of concepts",len(self.concepts))
         #wiki = wikipediaapi.Wikipedia('CoolBot/0.0 (https://example.org/coolbot/; coolbot@example.org) generic-library/0.0')
         self._wikipedia_service = WikipediaService()  # Initialize WikipediaService with config
         print("getting articles' abstracts...")
         self.clean_data["abstract_contents"] = self.clean_data.apply(lambda x: self.get_abstract(x),axis=1)
+        print("self.clean_data abstract_contents", self.clean_data["abstract_contents"])
         print("getting full articles...")
-        #self.clean_data["article_contents"] = self.clean_data.apply(lambda x: self.get_full_article(x["wikipedia"]),axis=1)
-        # Assuming self._wikipedia_service is an instance of WikipediaService
-        #self.clean_data["article_contents"] = self.clean_data.swifter.apply(lambda x: self._wikipedia_service.get_full_article(x['wikipedia'], self.concepts), axis=1)
-        self.clean_data["article_contents"] = self._get_full_articles_parallel()
-        #print("self.clean_data["abstract_contents"]", self.clean_data["abstract_contents"])
-        self.get_dbpedia_data_simple(self.clean_data["uri"])
+        self.clean_data["article_contents"] = self.clean_data.apply(lambda x: self.get_full_article(x["wikipedia"]),axis=1)
+        #self.clean_data["article_contents"] = self._get_full_articles_parallel()
+    
+
+
+        self.get_dbpedia_data_simple(self.clean_data['uri'])
+
         print("get inlink and outlink")
-        self.clean_data["link_ratio"] = self.clean_data.apply(lambda x: self._wikipedia_service.count_backlinks_to_links_ratio(x["name"]))
+        #self.clean_data["link_ratio"] = self.clean_data.apply(lambda x: self.get_inoutlinks(wiki,x["name"]),axis=1)
+        self.clean_data["link_ratio"] = self.clean_data.apply(lambda x: self._wikipedia_service.count_backlinks_to_links_ratio(x["name"]), axis=1)
         print("calculating entropy...")
         self.clean_data["entropy"] = self.get_entropy(self.clean_data["abstract"])
         self.clean_data.reset_index(inplace=True)
@@ -54,87 +57,65 @@ class DataCleaning():
             print(type(text))
             return ""
         
-    # def parse_data(self, url):
-    #         def worker(url, result):
-    #             g = Graph()
-    #             g.parse(url)
-
-    #             data = []
-
-    #             for _, p, o in g:
-    #                 data.append({"P": str(p), "O": str(o)})
-
-    #             raw_data = pd.DataFrame(data)
-
-    #             try:
-    #                 raw_data["P"] = raw_data["P"].str.replace('http://dbpedia.org/ontology/', '', regex=False)
-    #                 raw_data["O"] = raw_data["O"].str.replace('http://dbpedia.org/resource/', '', regex=False)
-    #                 raw_data = raw_data.loc[raw_data["P"] == "wikiPageWikiLink"]
-    #             except Exception as e:
-    #                 print(f"An error occurred while processing data: {e}")
-
-    #             result.append(raw_data)
-
-    #         result = []
-    #         thread = threading.Thread(target=worker, args=(url, result))
-    #         thread.start()
-    #         thread.join(timeout=60)
-
-    #         if thread.is_alive():
-    #             raise TimeoutException("Function execution exceeded the time limit")
-
-    #         return result[0] if result else None
-
-
     def parse_data(self, url):
+            def worker(url, result):
+                try:
+                    g = Graph()
+                    g.parse(url)
+
+                    data = []
+
+                    for _, p, o in g:
+                        data.append({"P": str(p), "O": str(o)})
+
+                    raw_data = pd.DataFrame(data)
+                 # Check if DataFrame is empty after parsing
+                    if raw_data.empty:
+                        print(f"No data found for URL: {url}")
+                        result.append(pd.DataFrame())  # Append an empty DataFrame
+                        return
+
+                    try:
+                        raw_data["P"] = raw_data["P"].str.replace('http://dbpedia.org/ontology/', '', regex=False)
+                        raw_data["O"] = raw_data["O"].str.replace('http://dbpedia.org/resource/', '', regex=False)
+                        raw_data = raw_data.loc[raw_data["P"] == "wikiPageWikiLink"]
+                    # Check if DataFrame is empty after filtering
+                        if raw_data.empty:
+                            print(f"No wikiPageWikiLink found for URL: {url}")
+                            result.append(pd.DataFrame())  # Append an empty DataFrame
+                            return
+                    except Exception as e:
+                        print(f"An error occurred while processing data: {e}")
+                        result.append(pd.DataFrame())  # Append an empty DataFrame
+
+                    result.append(raw_data)
+                except Exception as e:
+                    print(f"An error occurred while fetching/parsing URL: {url}, Error: {e}")
+                    result.append(pd.DataFrame())  # Append an empty DataFrame if any error occurs    
+
+            result = []
+            thread = threading.Thread(target=worker, args=(url, result))
+            thread.start()
+            thread.join(timeout=60)
+
+            if thread.is_alive():
+                raise TimeoutException("Function execution exceeded the time limit")
+
+            return result[0] if result else None
+    
+    def get_category(self,rel_con):
+        categories = rel_con["O"].loc[rel_con["O"].str.contains("Category:")]
+        categories = categories.map(lambda x: x.lstrip('Category:')).array
+        # words = self.get_concepts_mentioned(categories)
+        return categories
+    
+    def get_inoutlinks(self,wiki,concept):
+        li= wiki.page(concept)
         try:
-            g = Graph()
-            g.parse(url)
-
-            data = [{"P": str(p), "O": str(o)} for _, p, o in g]
-            raw_data = pd.DataFrame(data)
-
-            if not raw_data.empty:
-                raw_data["P"] = raw_data["P"].str.replace('http://dbpedia.org/ontology/', '', regex=False)
-                raw_data["O"] = raw_data["O"].str.replace('http://dbpedia.org/resource/', '', regex=False)
-                raw_data = raw_data.loc[raw_data["P"] == "wikiPageWikiLink"]
-
-            return raw_data
-        except Exception as e:
-            print(f"Error parsing RDF data: {e}")
-            return pd.DataFrame()
-        
-        
-    def _get_full_articles_parallel(self):
-        """
-        Fetch full articles in parallel using ThreadPoolExecutor.
-        """
-        # Convert the DataFrame rows into dictionaries for parallel processing
-        records = self.clean_data.to_dict('records')
-
-        # Function to fetch article for a single row
-        def fetch_article(row):
-            return self._wikipedia_service.get_full_article(row['wikipedia'], self.concepts)
-        
-        # Process in parallel using ThreadPoolExecutor
-        with ThreadPoolExecutor() as executor:
-            article_contents = list(executor.map(fetch_article, records))
-
-        return article_contents
-    # def get_category(self,rel_con):
-    #     categories = rel_con["O"].loc[rel_con["O"].str.contains("Category:")]
-    #     categories = categories.map(lambda x: x.lstrip('Category:')).array
-    #     # words = self.get_concepts_mentioned(categories)
-    #     return categories
-    def get_category(self, rel_con):
-        try:
-            if not rel_con.empty:
-                categories = rel_con["O"].loc[rel_con["O"].str.contains("Category:")]
-                return categories.map(lambda x: x.lstrip("Category:")).tolist()
-            return []
-        except Exception as e:
-            print(f"Error extracting categories: {e}")
-            return []
+            ratio = len(li.backlinks) / len(li.links)
+            return ratio
+        except:
+            return 0
 
 
     def get_dbpedia_data(self,url):
@@ -186,91 +167,71 @@ class DataCleaning():
     def get_relrel_concepts(self):
         return 0
 
-    # def get_dbpedia_data_simple(self,url_list):
-    #     print("getting dbpedia data...")
-    #     cats = []
-    #     supercats = []
-    #     counter = 0
-    #     for url in url_list:
-    #         print(counter)
-    #         try:
-    #             rel_con = self.parse_data(url)
-    #             category = set(self.get_category(rel_con))
-    #             supercat = []
-                
-    #             for word in category:
-    #                 url ="http://dbpedia.org/resource/" + word
-    #                 try:
-    #                     rel_con_2 = self.parse_data(url)
-    #                     supercat = supercat + self.get_category(rel_con_2)
-    #                 except Exception as e:
-    #                     print(e)
-    #             category = set(self.get_concepts_mentioned(category))
-    #             supercat = set(list(dict.fromkeys(supercat)))
-    #             cats.append(category)
-    #             supercats.append(supercat)
-    #             counter +=1
-    #         except:
-    #             cats.append(set())
-    #             supercats.append(set())
-
-    #     self.clean_data["category"] = cats
-    #     self.clean_data["super_category"]=supercats
-    #     self.clean_data["relrel_concepts"] = self.get_relrel_concepts()
-    
-    def get_dbpedia_data_simple(self, url_list):
-        print("Getting DBpedia data...")
+    def get_dbpedia_data_simple(self,url_list):
+        print("URL list", url_list)
+        print("getting dbpedia data...")
         cats = []
         supercats = []
-
-        def process_url(url):
+        counter = 0
+        for url in url_list:
+            print(f"Processing URL #{counter}: {url}")
             try:
-                # Parse and process the main URL
                 rel_con = self.parse_data(url)
+                # Get the initial category set
                 category = set(self.get_category(rel_con))
-                supercat = set()
-
-                # Process categories to fetch supercategories
-                category_urls = [f"http://dbpedia.org/resource/{word}" for word in category]
-                for category_url in category_urls:
+                supercat = []
+                
+                for word in category:
+                    word_url  ="http://dbpedia.org/resource/" + word
                     try:
-                        rel_con_2 = self.parse_data(category_url)
-                        supercat.update(self.get_category(rel_con_2))
+                        rel_con_2 = self.parse_data(word_url)
+                        supercat += self.get_category(rel_con_2)
                     except Exception as e:
-                        print(f"Error parsing category URL: {e}")
+                        print(f"Error fetching super category for {word}: {e}")
+                # category = set(self.get_concepts_mentioned(category))
+                if category:
+                    category = set(self.get_concepts_mentioned(category))
+                else:
+                    category = set()
+                # supercat = set(list(dict.fromkeys(supercat)))
+                if supercat:
+                    supercat = set(list(dict.fromkeys(supercat)))
+                else:
+                    supercat = set()
 
-                return set(self.get_concepts_mentioned(category)), supercat
+                 # Debugging: Print the shapes or lengths of category and supercat
+                print(f"Category size: {len(category)}")
+                print(f"Supercat size: {len(supercat)}")
+                cats.append(category)
+                supercats.append(supercat)
+                counter +=1
             except Exception as e:
-                print(f"Error processing URL: {e}")
-                return set(), set()
+                print(f"Error processing URL {url}: {e}")
+                cats.append(set())
+                supercats.append(set())
 
-        # Use threading for concurrent processing of URLs
-        threads = []
-        results = [None] * len(url_list)
-
-        def worker(url, idx):
-            results[idx] = process_url(url)
-
-        for i, url in enumerate(url_list):
-            thread = threading.Thread(target=worker, args=(url, i))
-            threads.append(thread)
-            thread.start()
-
-        # Wait for all threads to complete
-        for thread in threads:
-            thread.join()
-
-        # Collect results
-        for result in results:
-            category, supercategory = result
-            cats.append(category)
-            supercats.append(supercategory)
-
-        # Store processed data in clean_data
         self.clean_data["category"] = cats
-        self.clean_data["super_category"] = supercats
+        self.clean_data["super_category"]=supercats
         self.clean_data["relrel_concepts"] = self.get_relrel_concepts()
 
+        
+    # def _get_full_articles_parallel(self):
+    #     """
+    #     Fetch full articles in parallel using ThreadPoolExecutor.
+    #     """
+    #     # Convert the DataFrame rows into dictionaries for parallel processing
+    #     records = self.clean_data.to_dict('records')
+
+    #     # Function to fetch article for a single row
+    #     def fetch_article(row):
+    #         return self._wikipedia_service.get_full_article(row['wikipedia'], self.concepts)
+        
+    #     # Process in parallel using ThreadPoolExecutor
+    #     with ThreadPoolExecutor() as executor:
+    #         article_contents = list(executor.map(fetch_article, records))
+
+    #     return article_contents
+    
     def get_full_article(self,url):
         try:
             page = requests.get(url)
@@ -280,6 +241,7 @@ class DataCleaning():
                 text = soup.find_all('p')[p].get_text()
                 words = words + self.get_concepts_mentioned(text)
             words = list(dict.fromkeys(words))
+            print("words from get_full_article", words)
             return words
         except Exception as e:
             print(e)
@@ -296,25 +258,25 @@ class DataCleaning():
         return ent
     
     def get_abstract(self,line):
+        abstract = line.str.replace(r"[\^=/]", "", regex=True)["abstract"]
         abstract = line.str.encode('ascii', 'ignore').str.decode('ascii')["abstract"]
+        
+        print("get_abstract func", abstract)
         words = self.get_concepts_mentioned(abstract)
         return list(dict.fromkeys(words))
     
-    # def get_concepts_mentioned(self,text):
-    #     try:
-    #         words = []
-    #         for word in self.concepts:
-    #             if word in text:
-    #                 words.append(word)
-    #         return list(dict.fromkeys(words))
-    #     except:
-    #         return []
-    def get_concepts_mentioned(self, text):
+    def get_concepts_mentioned(self,text):
+
         try:
-            return [word for word in self.concepts if word in text]
-        except Exception as e:
-            print(f"Error extracting concepts: {e}")
+            words = []
+            for word in self.concepts:
+                if word in text:
+                    words.append(word)
+            print("words from get_concepts_mentioned", words)        
+            return list(dict.fromkeys(words))
+        except:
             return []
+    
     def get_clean_data(self):
         return self.clean_data
     

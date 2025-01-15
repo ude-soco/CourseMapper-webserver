@@ -48,11 +48,14 @@ class Prerequisite:
         print("clean_data= concepts", clean_data)
         concept_dict = clean_data.get_clean_data()
         print("concept_dict", concept_dict)
+
+
+
         related_relationships = clean_data.get_related_relationships()
         print("related_relationships", related_relationships)
 
-        concept_dict.to_csv("clean_data_simple.csv")
-        concept_dict = pd.read_csv("clean_data_simple.csv", index_col=0)
+        # concept_dict.to_csv("clean_data_simple.csv")
+        # concept_dict = pd.read_csv("clean_data_simple.csv", index_col=0)
 
 
 
@@ -62,7 +65,6 @@ class Prerequisite:
         prerequisite_relationships = prerequisite.get_prerequisite_relationships()
         #results 
         prerequisite_relationships.to_csv("prerequisite_relationships_datamining.csv")
-
 
         print("Add relationships to graph")
 

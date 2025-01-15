@@ -143,11 +143,12 @@ class ablation_study_rrgcn:
         with self loop
     """
     # A*H*W
+    # agjacency*embeding*W   
     def rrgcn_1_1(self):
 
         #self.load_data()
         """ 
-            embedding_matrix
+            embedding_matrix the embeddings of each node
         """
         embedding_matrix = self.embedding_matrix
         
@@ -160,30 +161,42 @@ class ablation_study_rrgcn:
             weight_matrix: dict key(relationtypes), value(weight_matrix)
         """
         weight_size = embedding_matrix.shape[1]
+        #weight_matrix of every relation types for 1st layer and 2nd layer
+        # w_r^l
         weight_matrix = self.create_weight_matrices(self.relations,weight_size )
         weight_matrix_layer_2 = self.create_weight_matrices(self.relations,weight_size )
 
         """  
-            the first layer
+            calculate the embeddings of nodes in the first layer
         """
         embedding_first_layer = np.zeros((embedding_matrix.shape[0], embedding_matrix.shape[1]))
         #self loop part
         self_loop_part = None
         selfloop_weight_layer_1 = self.glorot_seed((weight_size,weight_size)).numpy()
         for relation in self.relations:
+            #this will make the diagonal equal to 1 and rest values in the matrix equal to 0
             self_loop_adj= sp.eye(adj_matrix[relation].shape[0])
             self_loop_adj = self_loop_adj.toarray()
+            #here we mutliply only with the diagonal which is 1 ti get selfloop
+            #then multiply the diagonal matrix with embedding matrix to have one matrix contains both the self loop and the embedding matrix
             self_loop_part_1 = np.dot(self_loop_adj,embedding_matrix)
+            #then multiply  output of the diagonal matrix with embedding matrix witht with randomly generated weight matrix
             self_loop_part = np.dot(self_loop_part_1,selfloop_weight_layer_1)
+            #here we 
             embedding_first_layer = embedding_first_layer + self_loop_part
 
         # relation part
         relation_part = None
         for relation in self.relations:
+            #w_u,v^l the weight between the two nodes with respect to the relationship type from adj_matrix
             relation_adj_matrix = adj_matrix[relation]
+            # w_r^l randomly generated weight matrix
             Wr_layer_1 = weight_matrix[relation]
+            #W_uv^l * embedding_matrix
             relatin_part_1 = np.dot(relation_adj_matrix,embedding_matrix)
+            #output of the multiplication will be multiplied with relation_specific_weight matrix
             relation_part = np.dot(relatin_part_1, Wr_layer_1)
+            #add the output of the relation part to the output of the self loop part
             embedding_first_layer=embedding_first_layer+relation_part
         embedding_first_layer = embedding_first_layer / np.linalg.norm(embedding_first_layer, axis=1, keepdims=True)
         # embedding_first_layer = embedding_first_layer / np.linalg.norm(embedding_matrix, axis=1, keepdims=True)
@@ -554,21 +567,21 @@ def evaluate_link_prediction(entity_embeddings, relation_embeddings, test_triple
 # step 1: data prepartion
 rrgcn = ablation_study_rrgcn()
 
-print(type(rrgcn.embedding_matrix))
-print(rrgcn.embedding_matrix.shape)
-print(rrgcn.embedding_matrix[12].shape)
-print(rrgcn.embedding_matrix[468].shape)
-score = cosine_similarity([rrgcn.embedding_matrix[12]], [rrgcn.embedding_matrix[468]])[0][0]
-print("++++++++++++++++++++++++"+str(score)+"++++++++++++++++++++++++++++++")
+# print(type(rrgcn.embedding_matrix))
+# print(rrgcn.embedding_matrix.shape)
+# print(rrgcn.embedding_matrix[12].shape)
+# print(rrgcn.embedding_matrix[468].shape)
+# score = cosine_similarity([rrgcn.embedding_matrix[12]], [rrgcn.embedding_matrix[468]])[0][0]
+# print("++++++++++++++++++++++++"+str(score)+"++++++++++++++++++++++++++++++")
 # step2: generate the embedding by using our model
-embedding_matrix = rrgcn.rrgcn_2_1()
-print(type(embedding_matrix))
-print(embedding_matrix.shape)
-print(embedding_matrix[12].shape)
-print(embedding_matrix[468].shape)
+embedding_matrix = rrgcn.rrgcn_1_2()
+# print(type(embedding_matrix))
+# print(embedding_matrix.shape)
+# print(embedding_matrix[12].shape)
+# print(embedding_matrix[468].shape)
 # embedding_matrix =rrgcn.embedding_matrix
-score2 = cosine_similarity([embedding_matrix[12]], [embedding_matrix[468]])[0][0]
-print("++++++++++++++++++++++++"+str(score2)+"++++++++++++++++++++++++++++++")
+# score2 = cosine_similarity([embedding_matrix[12]], [embedding_matrix[468]])[0][0]
+# print("++++++++++++++++++++++++"+str(score2)+"++++++++++++++++++++++++++++++")
 
 relation_embedding_matrix =rrgcn.relation_embedding_matrix
 test_triples =set(rrgcn.edges)

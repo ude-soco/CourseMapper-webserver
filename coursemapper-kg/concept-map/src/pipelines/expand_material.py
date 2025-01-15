@@ -30,6 +30,9 @@ class ExpandMaterialPipeline:
         # Save subgraph
         if graph_db is not None:
             graph_db.save_graph(graph)
+
+            self.prerequisite(material_id, push_log_message)
+
             #self.gcn(material_id, graph_db)
             push_log_message(f'GCN for material {material_id} is running')
             gcn = RRGCN()
@@ -166,12 +169,12 @@ class ExpandMaterialPipeline:
         expanded_concept_count = len([concept for concept in graph.nodes if concept.type == 'related_concept'])
         push_log_message(f'Identified {expanded_concept_count} related concept(s)')
 
-        #add prerequisite step
-        push_log_message(f'preprocessing prerequisite material {material_id}')
-        start_time = time.time()
-        run_prerequisite_material(material_id)
-        end_time = time.time()
-        push_log_message(f'finish preprocessing prerequisite material {material_id}')
+        # #add prerequisite step
+        # push_log_message(f'preprocessing prerequisite material {material_id}')
+        # start_time = time.time()
+        # run_prerequisite_material(material_id)
+        # end_time = time.time()
+        # push_log_message(f'finish preprocessing prerequisite material {material_id}')
 
         # Remove orphaned nodes and dangling edges
         # graph.prune()
@@ -185,6 +188,16 @@ class ExpandMaterialPipeline:
 
         # TODO Normalize weights
         return graph
+    def prerequisite(self, mid: str, push_log_message: Callable):
+         #add prerequisite step
+        push_log_message(f'preprocessing prerequisite material {mid}')
+        start_time = time.time()
+        run_prerequisite_material(mid)
+        end_time = time.time()
+        push_log_message(f'finish preprocessing prerequisite material {mid}')
+        push_log_message(f'Finished prerequisite material {mid} in {end_time - start_time} seconds')
+
+
 
     def idfeature(self, mid: str, graph_db: GraphDB, fp: tempfile._TemporaryFileWrapper):
         # Get ids, initial embeddings and types of nodes (concept, related concept, category)
