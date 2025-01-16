@@ -1022,6 +1022,46 @@ export const editCourse = async (req, res, next) => {
   req.locals.newCourse = foundCourse;
   return next();
 };
+/**
+ * @function accessCourseDashboard
+ * access Course Dashboard
+ *
+ * @param {string} req.params.courseId The id of the course
+ *
+ */
+export const accessCourseDashboard = async (req, res, next) => {
+  const courseId = req.params.courseId;
+  const userId = req.userId;
+
+  let foundCourse;
+  try {
+    foundCourse = await Course.findById(courseId);
+    if (!foundCourse) {
+      return res
+        .status(404)
+        .send({ error: `Course with id ${courseId} not found` });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding course" });
+  }
+
+  let foundUser;
+  try {
+    foundUser = await User.findById(userId);
+    if (!foundUser) {
+      return res.status(404).send({ error: `User not found` });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding user" });
+  }
+
+  req.locals = {
+    user: foundUser,
+    course: foundCourse,
+  };
+
+  next();
+};
 
 /**
  * @function newIndicator
@@ -1181,13 +1221,7 @@ export const getIndicators = async (req, res, next) => {
   }
 
   const response = foundCourse.indicators ? foundCourse.indicators : [];
-  req.locals = {
-    user: foundUser,
-    course: foundCourse,
-    indicators: response,
-  };
-  next();
-  //return res.status(200).send(response);
+  return res.status(200).send(response);
 };
 
 /**

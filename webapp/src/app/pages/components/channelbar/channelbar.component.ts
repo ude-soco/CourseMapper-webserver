@@ -535,11 +535,20 @@ export class ChannelbarComponent implements OnInit {
     // this.selectedToolEvent.emit('none');
     this.materialKgService.courseKgOrdered(this.selectedCourse);
   }
+  // onViewDashboardClicked(): void {
+  //   this.router.navigate([
+  //     'course',
+  //     this.courseService.getSelectedCourse()._id,
+  //     'dashboard',
+  //   ]);
+  // }
   onViewDashboardClicked(): void {
-    this.router.navigate([
-      'course',
-      this.courseService.getSelectedCourse()._id,
-      'dashboard',
-    ]);
+    const selectedCourseId = this.courseService.getSelectedCourse()._id;
+    // Call the logging endpoint
+    this.courseService
+      .logAccessCourseDashboard(selectedCourseId)
+      .subscribe(() => {
+        this.router.navigate(['course', selectedCourseId, 'dashboard']);
+      });
   }
 }

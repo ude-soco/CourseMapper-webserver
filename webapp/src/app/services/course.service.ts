@@ -39,6 +39,11 @@ export class CourseService {
   getSelectedCourse(): Course {
     return this.selectedCourse;
   }
+  logAccessCourseDashboard(courseId: string): Observable<any> {
+    return this.http.post(`${this.API_URL}/courses/${courseId}/log-dashboard`, {
+      courseId,
+    });
+  }
 
   /**
    * @function selectCourse

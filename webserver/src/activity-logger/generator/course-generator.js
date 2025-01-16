@@ -169,6 +169,40 @@ export const generateEditCourseLogger = (req) => {
     context: createContext(),
   };
 };
+const createCourseDashboardObject = (req) => {
+  const course = req.locals.course;
+  const origin = req.get("origin");
+
+  return {
+    objectType: config.activity,
+    id: `${origin}/activity/course/${course._id}/dashboard`, //To Verify
+    definition: {
+      type: "http://adlnet.gov/expapi/activities/dashboard", //To Verify
+      name: {
+        [config.language]: `Course Dashboard`,
+      },
+      extensions: {
+        [`${origin}/extensions/course`]: {
+          courseId: course._id,
+          courseName: course.name,
+        },
+      },
+    },
+  };
+};
+
+export const generateAccessCourseDashboardActivity = (req) => {
+  const metadata = createMetadata();
+
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://activitystrea.ms/schema/1.0/access", "accessed"),
+    object: createCourseDashboardObject(req),
+    context: createContext(),
+  };
+};
+
 export const generateNewCourseIndicatorActivity = (req) => {
   const metadata = createMetadata();
   return {
@@ -186,16 +220,6 @@ export const generateDeleteCourseIndicatorActivity = (req) => {
     actor: createUser(req),
     verb: createVerb("http://activitystrea.ms/schema/1.0/delete", "deleted"),
     object: createCourseIndicatorObject(req),
-    context: createContext(),
-  };
-};
-export const generateViewCourseIndicatorsActivity = (req) => {
-  const metadata = createMetadata();
-  return {
-    ...metadata,
-    actor: createUser(req),
-    verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
-    object: createGetCourseIndicatorsObject(req),
     context: createContext(),
   };
 };
@@ -242,41 +266,6 @@ export const createCourseIndicatorObject = (req) => {
       frameborder: {
         [config.language]: indicator.frameborder,
       },
-      extensions: {
-        [`${origin}/extensions/courseIndicator`]: {
-          courseId: course._id,
-          courseName: course.name,
-          courseShortName: course.shortName,
-          courseDescription: course.description,
-        },
-      },
-    },
-  };
-};
-export const createGetCourseIndicatorsObject = (req) => {
-  const indicators = req.locals.indicators;
-  const course = req.locals.course;
-  const origin = req.get("origin");
-  return {
-    objectType: config.activity,
-    id: `${origin}/activity/courseIndicators`, // TO VERIFY
-    definition: {
-      type: `http://id.tincanapi.com/activitytype/courseIndicators`, // TO VERIFY
-      items: indicators.map((indicator) => ({
-        id: `${origin}/activity/indicator/${indicator._id}`,
-        source: {
-          [config.language]: indicator.src,
-        },
-        width: {
-          [config.language]: indicator.width,
-        },
-        height: {
-          [config.language]: indicator.height,
-        },
-        frameborder: {
-          [config.language]: indicator.frameborder,
-        },
-      })),
       extensions: {
         [`${origin}/extensions/courseIndicator`]: {
           courseId: course._id,
