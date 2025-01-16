@@ -37,6 +37,31 @@ export const moderatorBoard = (req, res) => {
 export const adminBoard = (req, res) => {
   res.status(200).send("Admin content");
 };
+/**
+ * @function accessPersonalDashboard
+ * access personal Dashboard
+ *
+ * @param {string} req.userId The id of the user.
+ */
+export const accessPersonalDashboard = async (req, res, next) => {
+  const userId = req.userId;
+
+  let foundUser;
+  try {
+    foundUser = await User.findById(userId);
+    if (!foundUser) {
+      return res.status(404).send({ error: `User not found` });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding user" });
+  }
+
+  req.locals = {
+    user: foundUser,
+  };
+
+  next();
+};
 
 /**
  * @function newIndicator
@@ -170,12 +195,7 @@ export const getIndicators = async (req, res, next) => {
   }
 
   const response = user.indicators ? user.indicators : [];
-  req.locals = {
-    user: user,
-    indicators: response,
-  };
-  next();
-  //return res.status(200).send(response);
+  return res.status(200).send(response);
 };
 
 /**

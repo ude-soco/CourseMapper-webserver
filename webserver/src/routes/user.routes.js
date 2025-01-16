@@ -23,6 +23,12 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isAdmin],
     controller.adminBoard
   );
+  app.post(
+    "/api/user/log-dashboard",
+    [authJwt.verifyToken],
+    controller.accessPersonalDashboard,
+    logger.accessPersonalDashboardLogger
+  );
 
   app.post(
     "/api/user/indicator",
@@ -41,8 +47,7 @@ module.exports = function (app) {
   app.get(
     "/api/user/indicators",
     [authJwt.verifyToken],
-    controller.getIndicators,
-    logger.viewPersonalIndicatorsLogger
+    controller.getIndicators
   );
 
   app.put(
