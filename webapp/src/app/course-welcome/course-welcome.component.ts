@@ -18,7 +18,7 @@ import {
   State,
 } from 'src/app/state/app.reducer';
 import * as CourseAction from 'src/app/pages/courses/state/course.actions';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   getChannelSelected,
   getCurrentCourseId,
@@ -69,7 +69,9 @@ export class CourseWelcomeComponent implements OnInit {
 
   selectedFileName: string = ''; // Holds the name of the uploaded file
   chosenFile = null;
+  private imageTimestamp: number = new Date().getTime();
 
+  public editMode: boolean = false;
 
   constructor(
     private confirmationService: ConfirmationService,
@@ -83,7 +85,8 @@ export class CourseWelcomeComponent implements OnInit {
     private userService: UserServiceService,
     private socket: Socket,
     private sanitizer: DomSanitizer,
-    private materialService: MaterilasService
+    private materialService: MaterilasService,
+    private route: ActivatedRoute
   ) {
     this.courseSelected$ = store.select(getCourseSelected);
     this.channelSelected$ = this.store.select(getChannelSelected);
@@ -97,6 +100,25 @@ export class CourseWelcomeComponent implements OnInit {
       this.selectedCourseId = course._id;
       if (this.selectedCourse.role === 'moderator') {
         this.moderator = true;
+        console.log('selected course', this.selectedCourse);
+
+        // Subscribe to query parameters to get the 'edit' value
+        this.route.queryParams.subscribe((params) => {
+          this.editMode = params['edit'] === 'true'; // Set editMode to true if 'edit' is 'true'
+
+          if (this.editMode) {
+            this.toggleEdit('name'); // Edit the course name
+            this.toggleEdit('description'); // Edit the description of the course
+            this.toggleEdit('image'); // Edit the image of the course
+
+           // Remove the 'edit' query parameter from the URL
+            this.router.navigate([], {
+              relativeTo: this.route, // Maintain the current route
+              queryParams: { edit: null }, // Set 'edit' to null to remove it
+              queryParamsHandling: 'merge', // Merge with existing query params
+            });
+          }
+        });
       } else {
         this.moderator = false;
       }
@@ -301,7 +323,9 @@ export class CourseWelcomeComponent implements OnInit {
                   // Update the course image URL in the database
                   this.courseService
                     .updateCourse(this.selectedCourse)
-                    .subscribe((res: any) => {});
+                    .subscribe((res: any) => {
+                      this.refreshImageTimestamp();
+                    });
                 },
                 (er) => {
                   console.log(er);
@@ -357,13 +381,17 @@ export class CourseWelcomeComponent implements OnInit {
   }
 
   getCourseImage(course: Course): string {
-    // console.log('getting course image!');
-
     if (course.url) {
-      return this.API_URL + course.url.replace(/\\/g, '/');
+      return `${this.API_URL}${course.url.replace(/\\/g, '/')}?t=${
+        this.imageTimestamp
+      }`;
     } else {
       return '/assets/img/courseDefaultImage.png';
     }
+  }
+
+  refreshImageTimestamp(): void {
+    this.imageTimestamp = new Date().getTime();
   }
 
   getName(firstName: string, lastName: string) {
