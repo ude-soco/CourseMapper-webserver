@@ -141,4 +141,12 @@ export class MaterilasService {
         })
       );
   }
+  logAccessMaterialDashboard(materialId: string): Observable<any> {
+    return this.http.post(
+      `${this.API_URL}/materials/${materialId}/log-dashboard`,
+      {
+        materialId,
+      }
+    );
+  }
 }

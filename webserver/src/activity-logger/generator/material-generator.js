@@ -281,6 +281,45 @@ export const generateCompletePdfActivity = (req) => {
     context: createContext(),
   };
 };
+const createMaterialDashboardObject = (req) => {
+  const material = req.locals.material;
+  console.log(material);
+  const origin = req.get("origin");
+
+  return {
+    objectType: config.activity,
+    id: `${origin}/activity/material/${material._id}/dashboard`, //To Verify
+    definition: {
+      type: "http://adlnet.gov/expapi/activities/dashboard", //To Verify
+      name: {
+        [config.language]: `Material Dashboard`,
+      },
+      extensions: {
+        [`${origin}/extensions/material`]: {
+          materialId: material._id,
+          materialName: material.name,
+          materialType: material.type,
+          materialDescription: material.description,
+          topicId: material.topicId,
+          courseId: material.courseId,
+          channelId: material.channelId,
+        },
+      },
+    },
+  };
+};
+
+export const generateAccessMaterialDashboardActivity = (req) => {
+  const metadata = createMetadata();
+
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://activitystrea.ms/schema/1.0/access", "accessed"),
+    object: createMaterialDashboardObject(req),
+    context: createContext(),
+  };
+};
 export const generateNewMaterialIndicatorActivity = (req) => {
   const metadata = createMetadata();
   return {
@@ -298,16 +337,6 @@ export const generateDeleteMaterialIndicatorActivity = (req) => {
     actor: createUser(req),
     verb: createVerb("http://activitystrea.ms/schema/1.0/delete", "deleted"),
     object: createMaterialIndicatorObject(req),
-    context: createContext(),
-  };
-};
-export const generateViewMaterialIndicatorsActivity = (req) => {
-  const metadata = createMetadata();
-  return {
-    ...metadata,
-    actor: createUser(req),
-    verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
-    object: createGetMaterialIndicatorsObject(req),
     context: createContext(),
   };
 };
@@ -329,46 +358,6 @@ export const generateReorderMaterialIndicatorActivity = (req) => {
     verb: createVerb("http://id.tincanapi.com/verb/reorder", "reordered"), // TO VERIFY AND CORRECT, I couldn't find the verb in the registry Database
     object: createReorderedMaterialIndicatorObject(req),
     context: createContext(),
-  };
-};
-
-export const createGetMaterialIndicatorsObject = (req) => {
-  const indicators = req.locals.indicators;
-  const material = req.locals.material;
-  const origin = req.get("origin");
-  return {
-    objectType: config.activity,
-    id: `${origin}/activity/materialIndicators`, // TO VERIFY
-    definition: {
-      type: `http://id.tincanapi.com/activitytype/materialIndicators`, // TO VERIFY
-      items: indicators.map((indicator) => ({
-        id: `${origin}/activity/materialIndicator/${indicator._id}`,
-        source: {
-          [config.language]: indicator.src,
-        },
-        width: {
-          [config.language]: indicator.width,
-        },
-        height: {
-          [config.language]: indicator.height,
-        },
-        frameborder: {
-          [config.language]: indicator.frameborder,
-        },
-      })),
-      extensions: {
-        [`${DOMAIN}/extensions/materialIndicators`]: {
-          materialId: material._id,
-          materialName: material.name,
-          materialDescription: material.description,
-          materialType: material.type,
-          materialUrl: material.url,
-          topicId: material.topicId,
-          courseId: material.courseId,
-          channelId: material.channelId,
-        },
-      },
-    },
   };
 };
 

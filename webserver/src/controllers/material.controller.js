@@ -69,6 +69,47 @@ export const getMaterial = async (req, res, next) => {
 };
 
 /**
+ * @function accessMaterialDashboard
+ * access material Dashboard
+ *
+ * @param {string} req.params.materialId The id of the material
+ *
+ */
+export const accessMaterialDashboard = async (req, res, next) => {
+  const materialId = req.params.materialId;
+  const userId = req.userId;
+
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res
+        .status(404)
+        .send({ error: `Material with id ${materialId} not found` });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
+  let foundUser;
+  try {
+    foundUser = await User.findById(userId);
+    if (!foundUser) {
+      return res.status(404).send({ error: `User not found` });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding user" });
+  }
+
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+  };
+
+  next();
+};
+
+/**
  * @function newMaterial
  * Add a new material to a channel controller
  *
@@ -521,13 +562,7 @@ export const getIndicators = async (req, res, next) => {
   }
 
   const response = foundMaterial.indicators ? foundMaterial.indicators : [];
-  req.locals = {
-    user: foundUser,
-    material: foundMaterial,
-    indicators: response,
-  };
-  next();
-  // return res.status(200).send(response);
+  return res.status(200).send(response);
 };
 
 /**

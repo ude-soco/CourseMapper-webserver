@@ -404,7 +404,9 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       // }
       this.selectedMaterial = this.materials[this.tabIndex];
       this.updateSelectedMaterial();
-      this.materialService.logMaterial(this.courseID, this.selectedMaterial._id).subscribe();
+      this.materialService
+        .logMaterial(this.courseID, this.selectedMaterial._id)
+        .subscribe();
       if (this.selectedMaterial.type == 'pdf') {
         this.store.dispatch(
           MaterialActions.setMaterialId({
@@ -956,7 +958,12 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       detail: detail,
     });
   }
+
   viewMaterialDashboardClicked() {
+    //Log the activity
+    this.materialService
+      .logAccessMaterialDashboard(this.materialID)
+      .subscribe();
     this.router.navigate([
       'course',
       this.courseService.getSelectedCourse()._id,
