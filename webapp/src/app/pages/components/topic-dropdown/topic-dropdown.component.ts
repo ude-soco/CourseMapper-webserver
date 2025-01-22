@@ -1225,6 +1225,10 @@ export class TopicDropdownComponent implements OnInit {
     ]);
   }
   viewChannelDashboardClicked() {
+    //Log the activity
+    this.topicChannelService
+      .logAccessChannelDashboard(this.selectedChannel._id)
+      .subscribe();
     this.router.navigate([
       'course',
       this.courseService.getSelectedCourse()._id,

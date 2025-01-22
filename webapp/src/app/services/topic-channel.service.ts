@@ -368,4 +368,12 @@ export class TopicChannelService {
       topicId,
     });
   }
+  logAccessChannelDashboard(channelId: string): Observable<any> {
+    return this.http.post(
+      `${this.API_URL}/channels/${channelId}/log-dashboard`,
+      {
+        channelId,
+      }
+    );
+  }
 }

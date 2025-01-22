@@ -51,6 +51,13 @@ module.exports = function (app) {
   );
 
   app.post(
+    "/api/channels/:channelId/log-dashboard",
+    [authJwt.verifyToken],
+    controller.accessChannelDashboard,
+    logger.accessChannelDashboardLogger
+  );
+
+  app.post(
     "/api/courses/:courseId/channels/:channelId/indicator",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.newIndicator,
@@ -67,8 +74,7 @@ module.exports = function (app) {
   app.get(
     "/api/courses/:courseId/channels/:channelId/indicator",
     [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.getIndicators,
-    logger.viewChannelIndicatorsLogger
+    controller.getIndicators
   );
 
   app.put(

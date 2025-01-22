@@ -48,6 +48,19 @@ export const editChannelLogger = async (req, res, next) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
+export const accessChannelDashboardLogger = async (req, res) => {
+  try {
+    await activityController.createActivity(
+      channelActivityGenerator.generateAccessChannelDashboardActivity(req)
+    );
+    res
+      .status(200)
+      .json({ message: "Channel dashboard access logged successfully" });
+  } catch (error) {
+    console.error("Error logging channel dashboard access:", error);
+    res.status(400).send("Failed to log channel dashboard access");
+  }
+};
 export const newChannelIndicatorLogger = async (req, res) => {
   try {
     req.locals.activity = await activityController.createActivity(
@@ -71,18 +84,6 @@ export const deleteChannelIndicatorLogger = async (req, res) => {
     res.status(201).send({
       success: req.locals.success,
     });
-  } catch (err) {
-    res
-      .status(500)
-      .send({ error: "Error saving activity log", details: err.message });
-  }
-};
-export const viewChannelIndicatorsLogger = async (req, res) => {
-  try {
-    req.locals.activity = await activityController.createActivity(
-      channelActivityGenerator.generateViewChannelIndicatorsActivity(req)
-    );
-    res.status(200).send(req.locals.indicators);
   } catch (err) {
     res
       .status(500)

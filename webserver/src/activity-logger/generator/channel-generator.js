@@ -109,6 +109,41 @@ export const generateEditChannelActivity = (req) => {
     context: createContext(),
   };
 };
+const createChannelDashboardObject = (req) => {
+  const channel = req.locals.channel;
+  const origin = req.get("origin");
+
+  return {
+    objectType: config.activity,
+    id: `${origin}/activity/channel/${channel._id}/dashboard`, //To Verify
+    definition: {
+      type: "http://adlnet.gov/expapi/activities/dashboard", //To Verify
+      name: {
+        [config.language]: `Channel Dashboard`,
+      },
+      extensions: {
+        [`${origin}/extensions/channel`]: {
+          channelId: channel._id,
+          channelName: channel.name,
+          channelDescription: channel.description,
+          topicId: channel.topicId,
+          courseId: channel.courseId,
+        },
+      },
+    },
+  };
+};
+
+export const generateAccessChannelDashboardActivity = (req) => {
+  const metadata = createMetadata();
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://activitystrea.ms/schema/1.0/access", "accessed"),
+    object: createChannelDashboardObject(req),
+    context: createContext(),
+  };
+};
 export const generateNewChannelIndicatorActivity = (req) => {
   const metadata = createMetadata();
   return {
@@ -129,16 +164,7 @@ export const generateDeleteChannelIndicatorActivity = (req) => {
     context: createContext(),
   };
 };
-export const generateViewChannelIndicatorsActivity = (req) => {
-  const metadata = createMetadata();
-  return {
-    ...metadata,
-    actor: createUser(req),
-    verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
-    object: createGetChannelIndicatorsObject(req),
-    context: createContext(),
-  };
-};
+
 export const generateResizeChannelIndicatorActivity = (req) => {
   const metadata = createMetadata();
   return {
@@ -180,42 +206,6 @@ export const createChannelIndicatorObject = (req) => {
       frameborder: {
         [config.language]: indicator.frameborder,
       },
-      extensions: {
-        [`${origin}/extensions/channelIndicator`]: {
-          channelId: channel._id,
-          channelName: channel.name,
-          channelDescription: channel.description,
-          topicId: channel.topicId,
-          courseId: channel.courseId,
-        },
-      },
-    },
-  };
-};
-export const createGetChannelIndicatorsObject = (req) => {
-  const indicators = req.locals.indicators;
-  const channel = req.locals.channel;
-  const origin = req.get("origin");
-  return {
-    objectType: config.activity,
-    id: `${origin}/activity/channelIndicators`, // TO VERIFY
-    definition: {
-      type: `http://id.tincanapi.com/activitytype/channelIndicators`, // TO VERIFY
-      items: indicators.map((indicator) => ({
-        id: `${origin}/activity/indicator/${indicator._id}`,
-        source: {
-          [config.language]: indicator.src,
-        },
-        width: {
-          [config.language]: indicator.width,
-        },
-        height: {
-          [config.language]: indicator.height,
-        },
-        frameborder: {
-          [config.language]: indicator.frameborder,
-        },
-      })),
       extensions: {
         [`${origin}/extensions/channelIndicator`]: {
           channelId: channel._id,

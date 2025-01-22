@@ -521,6 +521,47 @@ export const editChannel = async (req, res, next) => {
 };
 
 /**
+ * @function accessChannelDashboard
+ * access channel Dashboard
+ *
+ * @param {string} req.params.channelId The id of the channel
+ *
+ */
+export const accessChannelDashboard = async (req, res, next) => {
+  const channelId = req.params.channelId;
+  const userId = req.userId;
+
+  let foundChannel;
+  try {
+    foundChannel = await Channel.findById(channelId);
+    if (!foundChannel) {
+      return res
+        .status(404)
+        .send({ error: `Channel with id ${channelId} not found` });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding channel" });
+  }
+
+  let foundUser;
+  try {
+    foundUser = await User.findById(userId);
+    if (!foundUser) {
+      return res.status(404).send({ error: `User not found` });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding user" });
+  }
+
+  req.locals = {
+    user: foundUser,
+    channel: foundChannel,
+  };
+
+  next();
+};
+
+/**
  * @function newIndicator
  * add new indicator controller
  *
@@ -678,13 +719,7 @@ export const getIndicators = async (req, res, next) => {
 
   const response = foundChannel.indicators ? foundChannel.indicators : [];
 
-  req.locals = {
-    user: foundUser,
-    channel: foundChannel,
-    indicators: response,
-  };
-  next();
-  //return res.status(200).send(response);
+  return res.status(200).send(response);
 };
 
 /**
