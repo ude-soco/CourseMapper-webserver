@@ -324,6 +324,46 @@ export const editTopic = async (req, res, next) => {
 
   return next();
 };
+/**
+ * @function accessTopicDashboard
+ * access topic Dashboard
+ *
+ * @param {string} req.params.topicId The id of the topic
+ *
+ */
+export const accessTopicDashboard = async (req, res, next) => {
+  const topicId = req.params.topicId;
+  const userId = req.userId;
+
+  let foundTopic;
+  try {
+    foundTopic = await Topic.findById(topicId);
+    if (!foundTopic) {
+      return res
+        .status(404)
+        .send({ error: `Topic with id ${topicId} not found` });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding topic" });
+  }
+
+  let foundUser;
+  try {
+    foundUser = await User.findById(userId);
+    if (!foundUser) {
+      return res.status(404).send({ error: `User not found` });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding user" });
+  }
+
+  req.locals = {
+    user: foundUser,
+    topic: foundTopic,
+  };
+
+  next();
+};
 
 /**
  * @function newIndicator
@@ -483,13 +523,7 @@ export const getIndicators = async (req, res, next) => {
   }
 
   const response = foundTopic.indicators ? foundTopic.indicators : [];
-  req.locals = {
-    user: foundUser,
-    topic: foundTopic,
-    indicators: response,
-  };
-  next();
-  // return res.status(200).send(response);
+  return res.status(200).send(response);
 };
 
 /**

@@ -52,6 +52,13 @@ module.exports = function (app) {
   );
 
   app.post(
+    "/api/topics/:topicId/log-dashboard",
+    [authJwt.verifyToken],
+    controller.accessTopicDashboard,
+    logger.accessTopicDashboardLogger
+  );
+
+  app.post(
     "/api/courses/:courseId/topics/:topicId/indicator",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.newIndicator,
@@ -68,8 +75,7 @@ module.exports = function (app) {
   app.get(
     "/api/courses/:courseId/topics/:topicId/indicator",
     [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.getIndicators,
-    logger.viewTopicIndicatorsLogger
+    controller.getIndicators
   );
 
   app.put(
