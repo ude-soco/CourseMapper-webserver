@@ -288,6 +288,10 @@ export const editMaterial = catchAsync(async (req, res, next) => {
   const userId = req.userId;
   const materialDesc = req.body.description;
 
+
+  console.log("Editing Material Data:", { courseId, materialId, materialName, materialType });
+
+
   let course;
   try {
     course = await Course.findById(courseId);
@@ -309,6 +313,7 @@ export const editMaterial = catchAsync(async (req, res, next) => {
       error: `Material requires a name!`,
     });
   }
+
   let foundMaterial;
   try {
     foundMaterial = await Material.findById(materialId);
@@ -327,25 +332,49 @@ export const editMaterial = catchAsync(async (req, res, next) => {
       .status(500)
       .send({ error: `Error while searching for material` });
   }
+
   req.locals = {};
   req.locals.oldMaterial = JSON.parse(JSON.stringify(foundMaterial));
 
-  // Checking permission for renaming material
-  if (materialName && foundMaterial.name !== materialName) {
-    if (!utili.permissionsChecker(req, 'can_rename_materials')) {
-      return res.status(403).send({ error: "You don't have permission to rename materials!" });
-    }
-    foundMaterial.name = materialName;
-  };
 
-  
+  // Permission check for renaming material
+  if (materialName && foundMaterial.name !== materialName) {
+    // Check permissions based on material type
+    if (materialType === 'pdf') {
+      if (!utili.permissionsChecker(req, 'can_rename_pdfs')) {
+        console.error("Permission denied for renaming PDFs.");
+        return res.status(403).send({ error: "You don't have permission to rename PDFs!" });
+      }
+    } else if (materialType === 'video') {
+      if (!utili.permissionsChecker(req, 'can_rename_materials')) {
+        console.error("Permission denied for renaming PDFs.");
+        return res.status(403).send({ error: "You don't have permission to rename materials!" });
+      }
+    }
+
+
+
+    foundMaterial.name = materialName; // Update the name
+
+    
+  }
+
+      
   if (materialDesc) {
     foundMaterial.description = materialDesc;
   }
   foundMaterial.url = materialUrl;
   foundMaterial.type = materialType;
   foundMaterial.updatedAt = Date.now();
+
+ try {
   foundMaterial = await foundMaterial.save();
+} catch (err) {
+  console.error("Error saving material:", err);
+  return res.status(500).send({ error: "Error saving material!" });
+}
+
+
   /*  try {
   } catch (err) {
     return res.status(500).send({ error: `Error saving material!`, err });

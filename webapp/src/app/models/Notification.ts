@@ -19,6 +19,7 @@ export interface UserNotification {
     notificationInfo: {
       category: any;
       userShortname: string;
+      userphoto?: string; // Photo URL
       courseName: string;
       topicName: string;
       channelName: string;
@@ -92,6 +93,7 @@ export interface Notification {
   userShortname: string;
   courseName: string;
   username: string;
+  userphoto?: string; // Photo URL
   authorId: string;
   authorEmail: string;
   action: string;

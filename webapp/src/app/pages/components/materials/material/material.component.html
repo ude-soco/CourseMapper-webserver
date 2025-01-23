@@ -63,11 +63,12 @@
               isResetMaterialNotificationsButtonEnabled
             "
             resetTo="channel"
-            [canRename]="canAccess('can_rename_materials')"
+            [canRename]="canAccess(material.type === 'pdf' ? 'can_rename_pdfs' : 'can_rename_materials')"
+            [canRename]="getCanRenamePermission()"
+            (renameClicked)="onRenameMaterial()"
+
             [canDelete]="canAccess(material.type === 'pdf' ? 'can_delete_pdfs' : 'can_delete_materials')"
             [canDelete]="getCanDeletePermission()"
-
-            (renameClicked)="onRenameMaterial()"
             (deleteClicked)="onDeleteMaterial()"
             (resetButtonClicked)="onResetMaterialNotificationsClicked()"
             (notificationSettingClicked)="

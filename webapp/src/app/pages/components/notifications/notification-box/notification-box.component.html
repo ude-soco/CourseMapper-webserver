@@ -23,12 +23,12 @@
 
     <div class="left" (click)="onNotificationClicked()">
       <p-avatar
-        label="{{ notification.userShortname }}"
+      [image]="notification.userphoto"
+      [label]="notification.userphoto ? '' : notification.userShortname"
         styleClass="mr-5"
         [style]="{
           'background-color':
-            'rgba(3,105,161,255)
-  ',
+            'rgba(3,105,161,255)',
           color: '#ffffff',
           'margin-top': '5px'
         }"

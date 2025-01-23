@@ -1,0 +1,3 @@
+dist-server\models\course.model.js
+dist-server\models\course.model.js.map
+src\models\course.model.js

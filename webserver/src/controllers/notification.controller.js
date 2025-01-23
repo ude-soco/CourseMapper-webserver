@@ -44,7 +44,7 @@ export const getAllNotifications = catchAsync(async (req, res, next) => {
       "statement.object.definition.name.en-US",
       "statement.actor.name",
       "statement.actor.account.name",
-
+      "statement.actor.account.photo" ,
       "statement.verb.display.en-US",
       "statement.result.extensions",
       "statement.timestamp",
@@ -63,6 +63,7 @@ export const getAllNotifications = catchAsync(async (req, res, next) => {
       "firstname",
       "lastname",
       "email",
+      "photo"
     ]);
   } catch (error) {
     return res

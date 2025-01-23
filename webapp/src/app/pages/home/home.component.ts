@@ -431,7 +431,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
       // Handle userArray logic
       this.userArray = []; // Reset the array
-      console.log("bbbbbbbbbb",this.userArray);
+      console.log("bbbbbbbbbb",this.courses);
       for (let course of this.courses) {
         if (course?.users?.length > 0) {
           this.buildCardInfo(course.users[0].userId, course);
@@ -476,18 +476,17 @@ export class HomeComponent implements OnInit, AfterViewInit {
       };
       this.userArray.push(ingoPush);
     });
+
+
   }
-  onSelectCourse(selcetedCourse: any) {
-    /* this.router.navigate(['course', selcetedCourse.id]); */
-    this.courseService.logCourses(selcetedCourse.id).subscribe(() => {
-      this.router.navigate(['course', selcetedCourse.id, 'welcome']);
-      this.store.dispatch(
-        CourseAction.setCurrentCourse({ selcetedCourse: selcetedCourse })
-      );
-      this.store.dispatch(
-        CourseActions.setCourseId({ courseId: selcetedCourse.id })
-      );
-    });
+  onSelectCourse(selectedCourse: any) {
+    if (selectedCourse && selectedCourse._id) {
+      this.router.navigate(['course', selectedCourse._id, 'welcome']);
+      // or use whatever path you want
+    } else {
+      console.error("Invalid course selected:", selectedCourse);
+    }
+    console.log('Course selected:', selectedCourse); // Debugging output
   }
   onManageParticipants(selcetedCourse: any) {
     this.router.navigate(['course', selcetedCourse._id, 'details']);

@@ -976,6 +976,13 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
   }
   
+  getCanRenamePermission(): boolean {
+    if (this.selectedMaterial?.type === 'pdf') {
+      return this.canAccess('can_rename_pdfs');
+    } else {
+      return this.canAccess('can_rename_materials');
+    }
+  }
 
   /**
    * @function showInfo

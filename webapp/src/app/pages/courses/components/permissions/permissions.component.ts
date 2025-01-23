@@ -39,7 +39,9 @@ export class PermissionsComponent implements OnInit {
             { label: 'Allow member to rename course description', name: 'can_edit_course_description', checked: false },
             { label: 'Allow member to rename topics', name: 'can_rename_topics', checked: false },
             { label: 'Allow member to rename channels', name: 'can_rename_channels', checked: false },
-            { label: 'Allow member to rename materials', name: 'can_rename_materials', checked: false }
+      
+            { label: 'Allow member to rename PDF materials', name: 'can_rename_pdfs', checked: false },
+            { label: 'Allow member to rename video materials', name: 'can_rename_materials', checked: false }
           ]
         },
         {
@@ -74,7 +76,9 @@ export class PermissionsComponent implements OnInit {
             { label: 'Allow member to rename course description', name: 'can_edit_course_description', checked: false },
             { label: 'Allow member to rename topics', name: 'can_rename_topics', checked: false },
             { label: 'Allow member to rename channels', name: 'can_rename_channels', checked: false },
-            { label: 'Allow member to rename materials', name: 'can_rename_materials', checked: false }
+           
+            { label: 'Allow member to rename PDF materials', name: 'can_rename_pdfs', checked: false },
+            { label: 'Allow member to rename video materials', name: 'can_rename_materials', checked: false }
           ]
         },
         {
@@ -118,6 +122,8 @@ export class PermissionsComponent implements OnInit {
         this.isLoading = false;
       }
     });
+
+
   };
 
 

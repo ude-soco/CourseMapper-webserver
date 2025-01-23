@@ -227,7 +227,7 @@
     <div class="md:container md:mx-auto">
       <ng-container *ngIf="courses && courses.length">
         <div class="overscroll-y-auto h-1/2 flex flex-wrap">
-          <div *ngFor="let course of courses" class="course-card-container">
+          <div *ngFor="let course of courses"   class="course-card-container">
             <p-card styleClass="p-card-shadow" class="course-card relative">
               <span class="badge-blocked" *ngIf="course?.isBlocked">
                 <svg
@@ -255,6 +255,7 @@
                   class="cursor-pointer"
                   src="/assets/img/courseCard.png"
                   (click)="onSelectCourse(course)"
+                 
                 />
               </ng-template>
 

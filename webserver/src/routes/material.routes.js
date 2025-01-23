@@ -46,7 +46,7 @@ module.exports = function (app) {
   // Only admin/teacher/Co & Custom Teachers
   app.put(
     "/api/courses/:courseId/materials/:materialId",
-    [authJwt.verifyToken, authJwt.isModeratorOrCo],
+    [authJwt.verifyToken, authJwt.isModeratorOrCo, utili.checkRenamePermission ],
     controller.editMaterial,
     logger.editMaterialLogger,
     notifications.materialCourseUpdateNotificationsUsers,

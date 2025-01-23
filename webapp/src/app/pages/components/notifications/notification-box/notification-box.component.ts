@@ -42,6 +42,8 @@ export class NotificationBoxComponent {
 
   ngOnInit(): void {
     /* this.$notificationList = this.notificationService.$notifications; */
+
+   
     this.defaultNotificationMenuOptions = {
       label: 'Delete',
       icon: 'pi pi-times',
