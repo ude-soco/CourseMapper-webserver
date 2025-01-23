@@ -1,5 +1,6 @@
 const { authJwt } = require("../middlewares");
 const controller = require("../controllers/knowledgeGraph.controller");
+const logger = require("../activity-logger/logger-middlewares/knowledgeGraph-logger");
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -101,5 +102,12 @@ module.exports = function (app) {
     "/api/wikipedia/search",
     [authJwt.verifyToken],
     controller.searchWikipedia
+  );
+
+  app.post(
+    "/api/articles/:articleTitle/log",
+    [authJwt.verifyToken],
+    controller.viewFullWikipediaArticle,
+    logger.viewFullWikipediaArticleLogger
   );
 };

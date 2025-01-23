@@ -1,5 +1,5 @@
-const fs = require('fs').promises;
-const process = require('process');
+const fs = require("fs").promises;
+const process = require("process");
 const axios = require("axios");
 const socketio = require("../socketio");
 const db = require("../models");
@@ -10,6 +10,17 @@ const Material = db.material;
 const neo4j = require("../graph/neo4j");
 const redis = require("../graph/redis");
 // TODO Issue #640: Use better file names
+
+// User identification for the logging system
+const findUserById = async (userId) => {
+  const user = await User.findById(userId);
+  if (!user) throw new Error("User not found!");
+  return user;
+};
+const handleError = (res, error, message) => {
+  console.error(error);
+  return res.status(500).send({ error: message });
+};
 
 async function checkIsModerator(req) {
   if (!req.userId || (!req.params.courseId && !req.params.materialId)) {
@@ -43,13 +54,13 @@ async function checkIsModerator(req) {
 async function isAuthorized(req) {
   const records = await neo4j.checkMaterial(req.params.materialId);
   if (records.length === 0) {
-    return true
+    return true;
   }
   const is_draft = records?.[0]?.["m"]?.properties?.["is_draft"] ?? false;
   if (is_draft && !(await checkIsModerator(req))) {
-    return false
+    return false;
   }
-  return true
+  return true;
 }
 
 export const checkSlide = async (req, res) => {
@@ -78,7 +89,7 @@ export const checkMaterial = async (req, res) => {
   const materialId = req.params.materialId;
 
   try {
-    if (!await isAuthorized(req)) {
+    if (!(await isAuthorized(req))) {
       return res.status(403).send({ error: "Unauthorized" });
     }
     const records = await neo4j.checkMaterial(materialId);
@@ -86,13 +97,13 @@ export const checkMaterial = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err.message });
   }
-}
+};
 
 export const getMaterial = async (req, res) => {
   const materialId = req.params.materialId;
 
   try {
-    if (!await isAuthorized(req)) {
+    if (!(await isAuthorized(req))) {
       return res.status(403).send({ error: "Unauthorized" });
     }
     const records = await neo4j.getMaterial(materialId);
@@ -100,7 +111,7 @@ export const getMaterial = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err.message });
   }
-}
+};
 
 export const deleteMaterial = async (req, res, next) => {
   const materialId = req.params.materialId;
@@ -111,7 +122,7 @@ export const deleteMaterial = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: err.message });
   }
-}
+};
 
 export const getMaterialSlides = async (req, res) => {
   const materialId = req.params.materialId;
@@ -122,7 +133,7 @@ export const getMaterialSlides = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err.message });
   }
-}
+};
 
 export const getMaterialEdges = async (req, res) => {
   const materialId = req.params.materialId;
@@ -133,7 +144,7 @@ export const getMaterialEdges = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err.message });
   }
-}
+};
 
 export const getMaterialConceptIds = async (req, res) => {
   const materialId = req.params.materialId;
@@ -144,7 +155,7 @@ export const getMaterialConceptIds = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err.message });
   }
-}
+};
 
 export const getHigherLevelsNodesAndEdges = async (req, res) => {
   let materialIds = req.query.material_ids;
@@ -163,7 +174,7 @@ export const getHigherLevelsNodesAndEdges = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err.message });
   }
-}
+};
 
 export const setRating = async (req, res) => {
   const resourceId = req.body.resourceId;
@@ -177,11 +188,14 @@ export const setRating = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err.message });
   }
-}
+};
 
 export const conceptMap = async (req, res) => {
   const materialId = req.params.materialId;
-  socketio.getIO().to("material:"+materialId).emit("log", { called: "conceptmap started" } );
+  socketio
+    .getIO()
+    .to("material:" + materialId)
+    .emit("log", { called: "conceptmap started" });
 
   const material = await Material.findById(materialId);
   if (!material) {
@@ -189,83 +203,109 @@ export const conceptMap = async (req, res) => {
   }
   const materialName = material.name;
 
-  const materialPath = process.cwd() + material.url + material._id + '.pdf';
+  const materialPath = process.cwd() + material.url + material._id + ".pdf";
   const materialData = await fs.readFile(materialPath);
-  
-  const result = await redis.addJob('concept-map', {
-    materialId,
-    materialName,
-  }, async (jobId) => {
-    await redis.addFile(jobId, materialData);
-  }, (result) => {
-    socketio.getIO().to("material:"+materialId).emit("log", { result:result } );
 
-    if (res.headersSent) {
-      return;
+  const result = await redis.addJob(
+    "concept-map",
+    {
+      materialId,
+      materialName,
+    },
+    async (jobId) => {
+      await redis.addFile(jobId, materialData);
+    },
+    (result) => {
+      socketio
+        .getIO()
+        .to("material:" + materialId)
+        .emit("log", { result: result });
+
+      if (res.headersSent) {
+        return;
+      }
+      if (result.error) {
+        return res.status(500).send({ error: result });
+      }
+      return res.status(200).send(result.result);
     }
-    if (result.error) {
-      return res.status(500).send({ error: result });
-    }
-    return res.status(200).send(result.result);
-  });
-  socketio.getIO().to("material:"+materialId).emit("log", { addJob:result, pipeline:'concept-map'});
-}
+  );
+  socketio
+    .getIO()
+    .to("material:" + materialId)
+    .emit("log", { addJob: result, pipeline: "concept-map" });
+};
 
 export const deleteConcept = async (req, res) => {
   const materialId = req.params.materialId;
   const conceptId = req.params.conceptId;
-  
-  await redis.addJob('modify-graph', {
-    action: 'remove-concept',
-    materialId,
-    conceptId,
-  }, undefined, (result) => {
-    if (res.headersSent) {
-      return;
+
+  await redis.addJob(
+    "modify-graph",
+    {
+      action: "remove-concept",
+      materialId,
+      conceptId,
+    },
+    undefined,
+    (result) => {
+      if (res.headersSent) {
+        return;
+      }
+      if (result.error) {
+        return res.status(500).send(result);
+      }
+      return res.status(200).send(result.result);
     }
-    if (result.error) {
-      return res.status(500).send(result);
-    }
-    return res.status(200).send(result.result);
-  });
-}
+  );
+};
 
 export const addConcept = async (req, res) => {
   const materialId = req.params.materialId;
   const conceptName = req.body.conceptName;
   const slides = req.body.slides;
-  
-  await redis.addJob('modify-graph', {
-    action: 'add-concept',
-    materialId,
-    conceptName,
-    slides,
-  }, undefined, (result) => {
-    if (res.headersSent) {
-      return;
+
+  await redis.addJob(
+    "modify-graph",
+    {
+      action: "add-concept",
+      materialId,
+      conceptName,
+      slides,
+    },
+    undefined,
+    (result) => {
+      if (res.headersSent) {
+        return;
+      }
+      if (result.error) {
+        return res.status(500).send(result);
+      }
+      return res.status(200).send(result.result);
     }
-    if (result.error) {
-      return res.status(500).send(result);
-    }
-    return res.status(200).send(result.result);
-  });
-}
+  );
+};
 
 export const publishConceptMap = async (req, res) => {
   const materialId = req.params.materialId;
-  
-  await redis.addJob('expand-material', {
-    materialId,
-  }, undefined, (result) => {
-    if (res.headersSent) {
-      return;
+
+  await redis.addJob(
+    "expand-material",
+    {
+      materialId,
+    },
+    undefined,
+    (result) => {
+      if (res.headersSent) {
+        return;
+      }
+      if (result.error) {
+        return res.status(500).send({ error: result });
+      }
+      return res.status(200).send(result.result);
     }
-    if (result.error) {
-      return res.status(500).send({ error: result });
-    }
-    return res.status(200).send(result.result);
-  });
-}
+  );
+};
 
 export const getConcepts = async (req, res) => {
   const materialId = req.params.materialId;
@@ -273,26 +313,40 @@ export const getConcepts = async (req, res) => {
   const understood = req.body.understoodConcepts;
   const nonUnderstood = req.body.nonUnderstoodConcepts;
   const newConcepts = req.body.newConcepts;
-  socketio.getIO().to("material:"+materialId).emit("log", { called:"concept recommendation started" } );
+  socketio
+    .getIO()
+    .to("material:" + materialId)
+    .emit("log", { called: "concept recommendation started" });
 
-  const result = await redis.addJob('concept-recommendation', {
-    materialId,
-    userId,
-    understood,
-    nonUnderstood,
-    newConcepts
-  }, undefined, (result) => {
-    socketio.getIO().to("material:"+materialId).emit("log", { result:result } );
-    if (res.headersSent) {
-      return;
+  const result = await redis.addJob(
+    "concept-recommendation",
+    {
+      materialId,
+      userId,
+      understood,
+      nonUnderstood,
+      newConcepts,
+    },
+    undefined,
+    (result) => {
+      socketio
+        .getIO()
+        .to("material:" + materialId)
+        .emit("log", { result: result });
+      if (res.headersSent) {
+        return;
+      }
+      if (result.error) {
+        return res.status(500).send({ error: result.error });
+      }
+      return res.status(200).send(result.result);
     }
-    if (result.error) {
-      return res.status(500).send({ error: result.error });
-    }
-    return res.status(200).send(result.result);
-  });
-  socketio.getIO().to("material:"+materialId).emit("log", { addJob:result, pipeline:'concept-recommendation'});
-}
+  );
+  socketio
+    .getIO()
+    .to("material:" + materialId)
+    .emit("log", { addJob: result, pipeline: "concept-recommendation" });
+};
 
 export const getResources = async (req, res) => {
   const materialId = req.params.materialId;
@@ -301,27 +355,41 @@ export const getResources = async (req, res) => {
   const understood = req.body.understoodConcepts;
   const nonUnderstood = req.body.nonUnderstoodConcepts;
   const newConcepts = req.body.newConcepts;
-  socketio.getIO().to("material:"+materialId).emit("log", { called:"recourse recommendation started" } );
+  socketio
+    .getIO()
+    .to("material:" + materialId)
+    .emit("log", { called: "recourse recommendation started" });
 
- const result = await redis.addJob('resource-recommendation', {
-    materialId,
-    userId,
-    slideId,
-    understood,
-    nonUnderstood,
-    newConcepts
-  }, undefined, (result) => {
-    socketio.getIO().to("material:"+materialId).emit("log", { result:result } );
-    if (res.headersSent) {
-      return;
+  const result = await redis.addJob(
+    "resource-recommendation",
+    {
+      materialId,
+      userId,
+      slideId,
+      understood,
+      nonUnderstood,
+      newConcepts,
+    },
+    undefined,
+    (result) => {
+      socketio
+        .getIO()
+        .to("material:" + materialId)
+        .emit("log", { result: result });
+      if (res.headersSent) {
+        return;
+      }
+      if (result.error) {
+        return res.status(500).send({ error: result.error });
+      }
+      return res.status(200).send(result.result);
     }
-    if (result.error) {
-      return res.status(500).send({ error: result.error });
-    }
-    return res.status(200).send(result.result);
-  });
-  socketio.getIO().to("material:"+materialId).emit("log", { addJob:result, pipeline:'resourse-recommendation'});
-}
+  );
+  socketio
+    .getIO()
+    .to("material:" + materialId)
+    .emit("log", { addJob: result, pipeline: "resourse-recommendation" });
+};
 
 export const readSlide = async (req, res, next) => {
   const slideNr = req.params.slideNr;
@@ -347,4 +415,24 @@ export const searchWikipedia = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err.message });
   }
-}
+};
+
+export const viewFullWikipediaArticle = async (req, res, next) => {
+  const articleTitle = req.params.articleTitle;
+  const articleUrl = req.params.articleUrl;
+  const userId = req.userId;
+
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  req.locals = {
+    user: foundUser,
+    articleTitle: articleTitle,
+    articleUrl: articleUrl,
+  };
+
+  next();
+};
