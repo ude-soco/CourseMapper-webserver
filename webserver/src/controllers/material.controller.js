@@ -292,6 +292,8 @@ export const editMaterial = catchAsync(async (req, res, next) => {
   console.log("Editing Material Data:", { courseId, materialId, materialName, materialType });
 
 
+  const showDialog = req.body.showDialog;
+ console.log("called")
   let course;
   try {
     course = await Course.findById(courseId);

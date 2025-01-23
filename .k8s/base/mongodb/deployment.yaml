@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      component: mongodb
+  template:
+    metadata:
+      labels:
+        component: mongodb
+    spec:
+      initContainers:
+      - name: repair
+        image: mongo
+        command:
+        - mongod
+        - --repair
+        volumeMounts:
+        - mountPath: /data/db
+          name: mongodb
+        resources:
+          requests:
+            memory: 128Mi
+            cpu: 10m
+          limits:
+            memory: 512Mi
+            cpu: 2
+            ephemeral-storage: 1Gi
+      containers:
+      - name: mongodb
+        image: mongo
+        args:
+        - mongod
+        - --bind_ip_all
+        - --quiet
+        - --wiredTigerCacheSizeGB=0.25
+        env:
+        - name: MONGODB_SYSTEM_LOG_VERBOSITY
+          value: "3"
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - mountPath: /data/db
+          name: mongodb
+        resources:
+          requests:
+            memory: 300Mi
+            cpu: 100m
+          limits:
+            memory: 1Gi
+            cpu: 1
+            ephemeral-storage: 1Gi
+      volumes:
+      - name: mongodb
+        persistentVolumeClaim:
+          claimName: mongodb

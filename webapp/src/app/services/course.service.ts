@@ -3,7 +3,16 @@ import { Course } from 'src/app/models/Course';
 import { environment } from '../../environments/environment';
 import { EventEmitter, Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { BehaviorSubject, catchError, Observable, of, Subject, tap, throwError } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
+import {
+  catchError,
+  map,
+  Observable,
+  of,
+  Subject,
+  tap,
+  throwError,
+} from 'rxjs';
 import { TopicChannelService } from './topic-channel.service';
 import { StorageService } from './storage.service';
 import { Store } from '@ngrx/store';
@@ -86,7 +95,7 @@ export class CourseService {
   }
 
   logCourses(courseId: string): Observable<any> {
-    return this.http.get<Course>(`${this.API_URL}/courses/${courseId}/log`)
+    return this.http.get<Course>(`${this.API_URL}/courses/${courseId}/log`);
   }
   /**
    * @function fetchCourses
@@ -193,11 +202,14 @@ ToggleBlockUserBetweenUsers(id: number | string, data: any) {
    *
    */
   addCourse(course: Course): any {
+    console.log('adding new course', course.url);
+
     return this.http
       .post<any>(`${this.API_URL}/course`, {
         courseName: course.name,
         courseDesc: course.description,
         shortname: course.shortName,
+        url: course.url,
       })
       .pipe(
         catchError((err, sourceObservable) => {
@@ -210,6 +222,7 @@ ToggleBlockUserBetweenUsers(id: number | string, data: any) {
           }
         }),
         tap((res) => {
+
           if (!('errorMsg' in res)) {
             this.courses = [...this.courses, res.courseSaved];
             this.store.dispatch(
@@ -292,6 +305,32 @@ ToggleBlockUserBetweenUsers(id: number | string, data: any) {
       );
   }
 
+  updateCourse(course: Course) {
+    return this.http
+      .put<any>(`${this.API_URL}/courses/${course._id}`, course)
+      .pipe(
+        catchError((err) => {
+          return of({ errorMsg: err.error.error });
+        }),
+        tap((res) => {
+          if (!('errorMsg' in res)) {
+            this.fetchCourses().subscribe((courses) => {
+              this.onUpdateCourses$.next(this.courses);
+
+              // Find the updated course from the courses array
+              const updatedCourse = courses.find((c) => c._id === course._id);
+
+              if (updatedCourse) {
+                this.onSelectCourse.emit(updatedCourse);
+              } else {
+                console.error('Updated course not found in courses list.');
+              }
+            });
+          }
+        })
+      );
+  }
+
   renameCourseSuccess(renamedCourse, newName) {
     let cIndex = null;
     this.courses.map((course, i) => {
@@ -359,6 +398,17 @@ ToggleBlockUserBetweenUsers(id: number | string, data: any) {
       .post<any>(`${this.API_URL}/withdraw/${course._id}`, {})
       .pipe(tap((withdrawcourses) => {}));
   }
+
+  GetCourseById(courseID: string): Observable<Course> {
+    return this.http.get<any>(`${this.API_URL}/courses/${courseID}`).pipe(
+      tap((response) => {
+        // Assuming the response contains a "course" property
+        const course = response.course;
+      }),
+      map((response) => response.course) // Extract the "course" for further processing
+    );
+  }
+
   // sendToOldBackend(course){
   //   // userId should be taken from the coockies. for the time being it is hard coded
   //   this.http.post<any>('http://localhost:8090/new/course',

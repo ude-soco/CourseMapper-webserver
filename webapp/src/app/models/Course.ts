@@ -6,6 +6,7 @@ export interface Course {
   _id: string;
   name: string;
   shortName?: string;
+  url?: string;
   description?: string;
   role?: string;
   numberTopics?: number;

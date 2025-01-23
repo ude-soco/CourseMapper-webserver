@@ -62,7 +62,7 @@ export const register = async (req, res, next) => {
             </head>
             <body>
             <p>Dear ${user.username},</p>
-            <p>Thank you for registering with CourseMapper. Please click <a href="https://${process.env.WEBAPP_URL}/verify/${token}">here</a> to verify your email address. If the above link doesn't work, copy and paste this link into your browser: https://${process.env.WEBAPP_URL}/verify/${token}</p>
+            <p>Thank you for registering with CourseMapper. Please click <a href="${process.env.WEBAPP_URL}/verify/${token}">here</a> to verify your email address. If the above link doesn't work, copy and paste this link into your browser: ${process.env.WEBAPP_URL}/verify/${token}</p>
             <p>Please note that this link is only valid for 24 hours. If you did not register, please ignore this email.</p>
             <p>Regards,</p>
             <p>The CourseMapper Team</p>
@@ -142,7 +142,7 @@ export const signIn = async (req, res, next) => {
           </head>
           <body>
           <p>Dear ${user.username},</p>
-          <p>Thank you for registering with CourseMapper. Please click <a href="https://${process.env.WEBAPP_URL}/verify/${token}">here</a> to verify your email address. If the above link doesn't work, copy and paste this link into your browser: https://${process.env.WEBAPP_URL}/verify/${token}</p>
+          <p>Thank you for registering with CourseMapper. Please click <a href="${process.env.WEBAPP_URL}/verify/${token}">here</a> to verify your email address. If the above link doesn't work, copy and paste this link into your browser: ${process.env.WEBAPP_URL}/verify/${token}</p>
           <p>Please note that this link is only valid for 24 hours. If you did not register, please ignore this email.</p>
           <p>Regards,</p>
           <p>The CourseMapper Team</p>
@@ -257,7 +257,7 @@ export const sendEmail = async (req, res, next) => {
   
         <p>Dear ${user.username}, </p>
         <p>We have just received a password reset request for your account ${user.email} in CourseMapper. Please click
-        <a href="https://${process.env.WEBAPP_URL}/restPassword/${token}"> here  </a> to reset your password. If the abve link dosent work copy and past this link into your browser: https://${process.env.WEBAPP_URL}/restPassword/${token}</p>
+        <a href="${process.env.WEBAPP_URL}/restPassword/${token}"> here  </a> to reset your password. If the above link does not work copy and paste this link into your browser:${process.env.WEBAPP_URL}/restPassword/${token}</p>
 
         <p>Please note that this link is only valid for 5 minutes. If you did not request a password reset, please ignore this email.</p>
 
@@ -386,7 +386,7 @@ export const resendVerifyEmail = async (req, res, next) => {
         </head>
         <body>
         <p>Dear ${user.username},</p>
-        <p>Thank you for registering with CourseMapper. Please click <a href="https://${process.env.WEBAPP_URL}/verify/${token}">here</a> to verify your email address. If the above link doesn't work, copy and paste this link into your browser: https://${process.env.WEBAPP_URL}/verify/${token}</p>
+        <p>Thank you for registering with CourseMapper. Please click <a href="${process.env.WEBAPP_URL}/verify/${token}">here</a> to verify your email address. If the above link doesn't work, copy and paste this link into your browser: ${process.env.WEBAPP_URL}/verify/${token}</p>
         <p>Please note that this link is only valid for 24 hours. If you did not register, please ignore this email.</p>
         <p>Regards,</p>
         <p>The CourseMapper Team</p>

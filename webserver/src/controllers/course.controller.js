@@ -142,6 +142,7 @@ export const getAllCourses = catchAsync(async (req, res, next) => {
       co_teacher_permissions: object?.courseId?.co_teacher_permissions,
       blockedUsers: object?.courseId?.blockedUsers,
       non_editing_teacher_permissions: object?.courseId?.non_editing_teacher_permissions,
+      url: object?.courseId.url,
     };
     results.push(course);
   });
@@ -878,7 +879,7 @@ export const newCourse = catchAsync(async (req, res, next) => {
   const { courseName, courseDesc } = req.body;
   let shortName = req.body.shortname;
   const userId = req.userId;
-
+  const url = req.body.url;
   let foundUser;
   try {
     foundUser = await User.findById(userId).populate("role", "-__v");
@@ -926,6 +927,7 @@ export const newCourse = catchAsync(async (req, res, next) => {
     createdAt: Date.now(),
     updatedAt: Date.now(),
     users: userList,
+    url: url,
   });
   let courseSaved;
   try {
@@ -1432,24 +1434,50 @@ export const deleteCourse = catchAsync(async (req, res, next) => {
 
 /**
  * @function editCourse
- * Delete a course controller
+ * edit a course controller
  *
  * @param {string} req.params.courseId The id of the course
  * @param {string} req.body.name The edited name of the course
  * @param {string} req.body.description The edited description of the course
  */
-export const editCourse = catchAsync(async (req, res, next) => {
-  const { courseId } = req.params;
-  const { name: courseName, description: courseDesc } = req.body;
-  const { userId } = req;
+export const editCourse = async (req, res, next) => {
+  const courseId = req.params.courseId;
+  const courseName = req.body.name;
+  const courseDesc = req.body.description;
+  const userId = req.userId;
+  const url = req.body.url;
 
-  let foundCourse = await Course.findById(courseId);
-  const foundUser = await User.findById(userId);
-
-  if (!foundCourse) {
-    return res
-      .status(404)
-      .send({ error: `Course with id ${courseId} doesn't exist!` });
+  let foundCourse;
+  try {
+    foundCourse = await Course.findById(courseId);
+    if (!foundCourse) {
+      return res.status(404).send({
+        error: `Course with id ${courseId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding course" });
+  }
+  req.locals = {};
+  req.locals.oldCourse = JSON.parse(JSON.stringify(foundCourse));
+  let shortName = courseName
+    .split(" ")
+    .map((word, index) => {
+      if (index < 3) {
+        return word[0];
+      }
+    })
+    .join("");
+  foundCourse.name = courseName;
+  foundCourse.shortName = shortName;
+  foundCourse.description = courseDesc;
+  foundCourse.url = url;
+  foundCourse.updatedAt = Date.now();
+  let foundUser;
+  try {
+    foundUser = await User.findById(userId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding user" });
   }
 
   req.locals = {

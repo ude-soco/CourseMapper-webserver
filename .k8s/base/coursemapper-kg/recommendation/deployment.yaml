@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recommendation
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    spec:
+      containers:
+      - name: worker
+        image: coursemapper-kg-recommendation
+        env:
+        - name: NEO4J_URI
+          value: "bolt://$(NEO4J_SERVICE):7687"
+        - name: NEO4J_USER
+          value: neo4j
+        - name: NEO4J_PASSWORD
+          value: password
+        - name: REDIS_HOST
+          value: $(REDIS_SERVICE)
+        - name: REDIS_PORT
+          value: "6379"
+        - name: REDIS_DB
+          value: "0"
+        - name: REDIS_PASSWORD
+          value: ""
+        - name: PIPELINES
+          value: concept-recommendation,resource-recommendation
+        resources:
+          requests:
+            cpu: 100m
+            memory: 800Mi
+          limits:
+            cpu: 1
+            memory: 4Gi

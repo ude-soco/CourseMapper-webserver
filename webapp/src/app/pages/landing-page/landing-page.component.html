@@ -50,7 +50,7 @@
           <p-card styleClass="p-card-shadow">
             <hr style="margin-bottom: 0.75rem; margin-top: 0%" />
             <ng-template pTemplate="header">
-              <img alt="Card" src="/assets/img/courseCard.png" />
+              <img alt="Card" src="{{ this.getCourseImage(course) }}" />
             </ng-template>
 
             <ng-template pTemplate="content-center" style="float: left">
@@ -97,12 +97,7 @@
                   class="pi pi-users"
                   style="font-size: 1rem; color: #ea580c"
                 ></i>
-                <span class="pl-1">
-                  {{ course.totalEnrolled | number }} user{{
-                    course?.totalEnrolled > 1 ? "s" : ""
-                  }}
-                  enrolled
-                </span>
+                <span> {{ course.numberOfUsers }} enrolled users </span>
               </p>
             </ng-template>
           </p-card>

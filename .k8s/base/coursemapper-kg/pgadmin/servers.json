@@ -1,0 +1,16 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "coursemapper-kg-wp-pg",
+      "Group": "coursemapper-webserver",
+      "Host": "sc-coursemapper-webserver-coursemapper-kg-wp-pg",
+      "Port": 5432,
+      "Username": "postgres",
+      "MaintenanceDB": "postgres",
+      "ConnectionParameters": {
+        "sslmode": "prefer",
+        "passfile": "/pgadmin4/passwords.txt"
+      }
+    }
+  }
+}

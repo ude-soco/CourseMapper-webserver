@@ -86,6 +86,7 @@ const Course = new Schema({
     of: Boolean,
     default: getDefaultNonEditingTeacherPermissions(),
   },
+  url: { type: String },
   createdAt: { type: Date },
   updatedAt: { type: Date },
   users: [
