@@ -14,7 +14,6 @@ import { ThisReceiver } from '@angular/compiler';
 import { toggleShowHideAnnotation } from '../components/annotations/pdf-annotation/state/annotation.actions';
 import { MessageService } from 'primeng/api';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
-import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-landing-page',
@@ -39,8 +38,6 @@ export class LandingPageComponent {
   Enrolled: boolean = false;
   createdAt: string;
   totalPages: number = 0;
-  private API_URL = environment.API_URL;
-
   firstName: string = '';
   lastName: string = '';
   activateUpdaeCourse: boolean = false;
@@ -168,8 +165,6 @@ export class LandingPageComponent {
         creator: course.creator,
         description: course.description,
         totalEnrolled: course?.users?.length,
-        url: course.url,
-        numberOfUsers: course.numberUsers,
       };
       this.userArray.push(ingoPush);
     });
@@ -223,13 +218,5 @@ export class LandingPageComponent {
       summary: 'Error',
       detail: msg,
     });
-  }
-
-  getCourseImage(course: Course): string {
-    if (course.url) {
-      return this.API_URL + course.url.replace(/\\/g, '/');
-    } else {
-      return '/assets/img/courseDefaultImage.png';
-    }
   }
 }

@@ -7,7 +7,7 @@ const {
   pdfFileUploader,
   videoFileUpload,
   imageUpload,
-  imageFileUploader
+ 
 } = require("../controllers/fileUpload.controller");
 
 module.exports = function (app) {
@@ -22,7 +22,7 @@ module.exports = function (app) {
   // Upload Image
   app.post("/api/upload/image", uploadImageFile.single("file"), imageUpload);
     // Upload img file
-    app.post("/api/upload/img", uploadImageFile.single("file"), imageFileUploader);
+
 
   // Upload video file
   app.post(

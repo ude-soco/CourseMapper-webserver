@@ -50,8 +50,6 @@ import { getLastTimeCourseMapperOpened } from 'src/app/state/app.reducer';
 import * as VideoActions from '../../annotations/video-annotation/state/video.action';
 import { IntervalService } from 'src/app/services/interval.service';
 import { StorageService } from 'src/app/services/storage.service';
-import { Neo4jService } from 'src/app/services/neo4j.service';
-
 @Component({
   selector: 'app-material',
   templateUrl: './material.component.html',
@@ -105,8 +103,6 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
   @Output() selectedToolEvent: EventEmitter<string> = new EventEmitter();
   cmSelected = false;
 
-  showDialog: boolean = false;
-
   showModeratorPrivileges: boolean;
   privilegesSubscription: Subscription;
   @ViewChild('materialMenu') materialMenu: any;
@@ -140,7 +136,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     private changeDetectorRef: ChangeDetectorRef,
     private materialKgService: MaterialKgOrderedService,
     protected fb: FormBuilder,
-    private neo4jService: Neo4jService,
+
     private intervalService: IntervalService,
     private cdr: ChangeDetectorRef,
     private storageService: StorageService,
@@ -182,8 +178,6 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
           this.store.dispatch(
             CourseActions.SetSelectedChannel({ selectedChannel: foundChannel })
           );
-
-          this.setShowDialog();
           this.updateSelectedMaterial();
         });
     }
@@ -446,13 +440,8 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       //   this.tabIndex = e.index
       // }
       this.selectedMaterial = this.materials[this.tabIndex];
-
-      this.setShowDialog();
-
       this.updateSelectedMaterial();
-      this.materialService
-        .logMaterial(this.courseID, this.selectedMaterial._id)
-        .subscribe();
+      this.materialService.logMaterial(this.courseID, this.selectedMaterial._id).subscribe();
       if (this.selectedMaterial.type == 'pdf') {
         this.store.dispatch(
           MaterialActions.setMaterialId({
@@ -1030,75 +1019,5 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.materialID,
       'dashboard',
     ]);
-  }
-
-  setShowDialog() {
-    if (this.selectedMaterial) {
-      this.courseService
-        .GetCourseById(this.selectedMaterial.courseId)
-        .subscribe(async (course) => {
-          if (
-            course.role === 'moderator' &&
-            (await this.checkKnowledgeGraphExists()) == false &&
-            (this.selectedMaterial.showDialog ||
-              this.selectedMaterial.showDialog === undefined)
-          ) {
-            this.showDialog = true;
-          } else this.showDialog = false;
-        });
-    } else this.showDialog = false;
-  }
-
-  handleDontShow(showConfirmMessage = true) {
-    let body = {
-      name: this.selectedMaterial.name,
-      description: this.selectedMaterial.description, //keep description value
-      courseId: this.selectedMaterial.courseId,
-      materialId: this.selectedMaterial._id,
-      url: this.selectedMaterial.url,
-      type: this.selectedMaterial.type,
-      showDialog: false,
-    };
-
-    this.materialService
-      .renameMaterial(
-        this.selectedMaterial.courseId,
-        this.selectedMaterial,
-        body
-      )
-      .subscribe((reponse) => {
-        this.topicChannelService
-        .getChannel(this.selectedMaterial.courseId, this.selectedChannel._id)
-        .subscribe((foundChannel) => {
-          this.materials = foundChannel.materials;
-          this.selectedMaterial = this.materials[this.tabIndex];
-        });
-
-        if (showConfirmMessage)
-          this.showInfo('Dialog will not be shown again');
-      });
-
-    this.showDialog = false;
-  }
-
-  async handleLater() {
-    // Simulate checking if a Knowledge Graph (KG) exists
-    const kgExists = (await this.checkKnowledgeGraphExists()) == true;
-
-    if (kgExists) {
-      // If the KG exists, never show the dialog again
-      this.handleDontShow(false);
-    } else {
-      // If the KG doesn't exist, close the dialog for now
-      this.showDialog = false;
-    }
-  }
-
-  async checkKnowledgeGraphExists(): Promise<boolean> {
-    const materialFound = await this.neo4jService.checkMaterial(
-      this.selectedMaterial._id
-    );
-    const result = materialFound.records.length > 0;
-    return result;
   }
 }

@@ -15,7 +15,7 @@ export class CourseImp implements Course {
   users?:User;
   non_editing_teacher_permissions?: Object;
   co_teacher_permissions?: Object;
-  url?:string;
+
 
   constructor(
     _id: string,
@@ -135,13 +135,5 @@ export class CourseImp implements Course {
 
   getNumberUsers(): number {
     return this.numberUsers;
-  }
-
-  setUrl(url: string) {
-    url ? (this.url = url) : (this.url = null);
-  }
-
-  getUrl(): string {
-    return this.url;
   }
 }

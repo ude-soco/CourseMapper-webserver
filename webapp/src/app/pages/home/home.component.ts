@@ -21,8 +21,6 @@ import { UserServiceService } from 'src/app/services/user-service.service';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { User } from 'src/app/models/User';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
-import { environment } from 'src/environments/environment';
-import { url } from 'inspector';
 
 @Component({
   selector: 'app-home',
@@ -39,8 +37,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
   userArray: any = new Array();
   menuItems: MenuItem[] = [];
   createdAt: string;
-  private API_URL = environment.API_URL;
-
   firstName: string = '';
   page: 1;
   totalPages: number = 0;
@@ -477,8 +473,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
         role: course?.role || 'student',
         menuItems: course?.menuItems,
         totalEnrolled: course?.users?.length,
-        url: course.url,
-        numberOfUsers: course.numberUsers,
       };
       this.userArray.push(ingoPush);
     });
