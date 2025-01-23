@@ -130,6 +130,9 @@ export class ChannelbarComponent implements OnInit {
 
   getOptions(role: string): any {
     this.menuItems = [
+
+      { label: 'Manage participants', restrictTo: ['user'], icon: 'pi pi-users', command: () => this.onManageParticipants(this.selectedCourse) },
+      { label: 'View participants', icon: 'pi pi-users', restrictTo: ['teacher', 'co_teacher', 'non_editing_teacher'], command: () => this.onViewParticipants(this.selectedCourse) },
       { label: 'Edit course', icon: 'pi pi-pencil', restrictTo: ['user'], onlyAccess: 'can_edit_course_name', command: () => this.onRenameCourse() },
       
       { label: 'Share course ', icon: 'pi pi-copy', title: 'Copy Course URL', command: () => this.copyCourseId(this.selectedCourse._id, this.selectedCourse.name) },
@@ -144,6 +147,13 @@ export class ChannelbarComponent implements OnInit {
     });
 
     return this.menuItems;
+  }
+  onManageParticipants(selcetedCourse: any) {
+    this.router.navigate(['course', selcetedCourse._id, 'details']);
+  }
+
+  onViewParticipants(selcetedCourse: any) {
+    this.router.navigate(['course', selcetedCourse._id, 'view']);
   }
 
 

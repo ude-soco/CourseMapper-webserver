@@ -278,6 +278,8 @@ ToggleBlockUserBetweenUsers(id: number | string, data: any) {
   }
 
   renameCourse(courseTD: Course, body: any) {
+
+    console.log(body);
     return this.http
       .put<any>(`${this.API_URL}/courses/${courseTD._id}`, body)
       .pipe(

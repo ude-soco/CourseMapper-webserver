@@ -198,10 +198,23 @@ export class CourseWelcomeComponent implements OnInit {
     const updatedText = selectedCurs.innerText.trim();
 
     if (updatedText && updatedText !== this.selectedCourse.description) {
-      const body = { description: updatedText };
-      this.courseService.renameCourse(this.selectedCourse, body).subscribe();
+        const body = { description: updatedText };
+        this.courseService.renameCourse(this.selectedCourse, body).subscribe({
+            next: (res) => {
+                // Handle success, e.g., update UI or display a success message
+                this.selectedCourse.description = updatedText; // Update local state
+            },
+            error: (err) => {
+                console.error(err);
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error Updating Description',
+                    detail: 'There was an error updating the course description. Please try again later.'
+                });
+            }
+        });
     }
-  }
+}
 
   cancelCourseDescription(id: string) {
     const selectedCurs = <HTMLInputElement>document.getElementById(id);

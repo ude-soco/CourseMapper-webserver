@@ -293,7 +293,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
     // });
   }
 
+
   ngOnInit(): void {
+
+  
     this.currentUser = this.storageService.getUser();
     this.isloggedin = this.storageService.isLoggedIn();
     this.loggedInUser = this.storageService.getUser();
