@@ -41,7 +41,6 @@ import { InputTextModule } from 'primeng/inputtext';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
-import { PaginatorModule } from 'primeng/paginator';
 
 
 
@@ -90,7 +89,6 @@ import { PaginatorModule } from 'primeng/paginator';
     AutoCompleteModule,
     MultiSelectModule,
     PdfViewerModule,
-    PaginatorModule
     ],
   exports: [
     ConceptMapComponent,

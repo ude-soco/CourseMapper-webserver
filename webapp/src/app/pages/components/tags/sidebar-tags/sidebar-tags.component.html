@@ -1,41 +1,21 @@
 <div class="">
+    <div *ngIf="selectedCourse && tagsForCourse?.length > 0" #TagsForCourse>
+        <p-divider align="center"></p-divider>
+        <div class="mb-3">
+          <p class="text-xl font-semibold justify-center">
+            Tags for course: {{ selectedCourse?.name }}
+          </p>
+        </div>
+        <div class="flex flex-row flex-wrap">
+          <span
+            class="bg-[#0277BD] text-[#FFFFFF] font-semibold rounded-full text-sm px-[0.5rem] py-[0.25rem] m-1 hover:underline break-all cursor-pointer"
+            *ngFor="let tag of tagsForCourse | slice:0:10" (click)="navigateToTagPage(tag)"
+            >{{ tag?.name }}</span
+          >
+        </div>
+      </div>
 
-  <!-- Course -->
-  <div *ngIf="selectedCourse && tagsForCourse?.length > 0" #TagsForCourse>
-    <p-divider align="center"></p-divider>
-    <div class="mb-3">
-      <p class="text-xl font-semibold justify-center">
-        Tags for course: {{ selectedCourse?.name }}
-      </p>
-    </div>
-    <div class="flex flex-row flex-wrap">
-      <span
-        class="bg-[#0277BD] text-[#FFFFFF] font-semibold rounded-full text-sm px-[0.5rem] py-[0.25rem] m-1 hover:underline break-all cursor-pointer"
-        *ngFor="let tag of tagsForCourse | slice:0:visibleTagsCourseCount"
-        (click)="navigateToTagPage(tag)"
-        >{{ tag?.name }}</span
-      >
-    </div>
-    <div class="flex justify-center mt-3">
-      <button
-        *ngIf="visibleTagsCourseCount < tagsForCourse?.length"
-        class="flex justify-center items-center py-2 cursor-pointer text-blue-500 hover:underline"
-        (click)="showMoreTagsCourse()"
-      >
-        Show More
-      </button>
-      <button
-        *ngIf="visibleTagsCourseCount > 10"
-        class="flex justify-center items-center py-2 cursor-pointer text-blue-500 hover:underline"
-        (click)="showLessTagsCourse()"
-      >
-        Show Less
-      </button>
-    </div>
-  </div>
-
-    <!-- Topic -->
-      <div *ngIf="selectedTopic && tagsForTopic?.length > 0" #TagsForTopic>
+    <div *ngIf="selectedTopic && tagsForTopic?.length > 0" #TagsForTopic>
         <p-divider align="center"></p-divider>
         <div class="mb-3">
           <p class="text-xl font-semibold justify-center">
@@ -44,96 +24,42 @@
         </div>
         <div class="flex flex-row flex-wrap">
           <span
-            class="bg-[#0277BD] text-[#FFFFFF] font-semibold rounded-full text-sm px-[0.5rem] py-[0.25rem] m-1 hover:underline break-all cursor-pointer"
-            *ngFor="let tag of tagsForTopic | slice:0:visibleTagsTopicsCount"
-            (click)="navigateToTagPage(tag)"
+          class="bg-[#0277BD] text-[#FFFFFF] font-semibold rounded-full text-sm px-[0.5rem] py-[0.25rem] m-1 hover:underline break-all cursor-pointer"
+            *ngFor="let tag of tagsForTopic | slice:0:10 " (click)="navigateToTagPage(tag)"
             >{{ tag?.name }}</span
           >
         </div>
-        <div class="flex justify-center mt-3">
-          <button
-            *ngIf="visibleTagsTopicsCount < tagsForTopic?.length"
-            class="flex justify-center items-center py-2 cursor-pointer text-blue-500 hover:underline"
-            (click)="showMoreTagsTopic()"
-          >
-            Show More
-          </button>
-          <button
-            *ngIf="visibleTagsTopicsCount > 10"
-            class="flex justify-center items-center py-2 cursor-pointer text-blue-500 hover:underline"
-            (click)="showLessTagsTopic()"
-          >
-            Show Less
-          </button>
-        </div>
       </div>
 
-      <!-- Channel -->
-      <div *ngIf="selectedChannel && tagsForChannel?.length > 0" #TagsForChannel>
-        <p-divider align="center"></p-divider>
-        <div class="mb-3">
-          <p class="text-xl font-semibold justify-center">
-            Tags for channel: {{ selectedChannel?.name }}
-          </p>
-        </div>
-        <div class="flex flex-row flex-wrap">
-          <span
-            class="bg-[#0277BD] text-[#FFFFFF] font-semibold rounded-full text-sm px-[0.5rem] py-[0.25rem] m-1 hover:underline break-all cursor-pointer"
-            *ngFor="let tag of tagsForChannel | slice:0:visibleTagsChannelCount"
-            (click)="navigateToTagPage(tag)"
-            >{{ tag?.name }}</span
-          >
-        </div>
-        <div class="flex justify-center mt-3">
-          <button
-            *ngIf="visibleTagsChannelCount < tagsForChannel?.length"
-            class="flex justify-center items-center py-2 cursor-pointer text-blue-500 hover:underline"
-            (click)="showMoreTagsChannel()"
-          >
-            Show More
-          </button>
-          <button
-            *ngIf="visibleTagsChannelCount > 10"
-            class="flex justify-center items-center py-2 cursor-pointer text-blue-500 hover:underline"
-            (click)="showLessTagsChannel()"
-          >
-            Show Less
-          </button>
-        </div>
-      </div>
+  <div *ngIf="selectedChannel && tagsForChannel?.length > 0" #TagsForChannel>
+    <p-divider align="center"></p-divider>
+    <div class="mb-3">
+      <p class="text-xl font-semibold justify-center">
+        Tags for channel: {{ selectedChannel?.name }}
+      </p>
+    </div>
+    <div class="flex flex-row flex-wrap">
+      <span
+      class="bg-[#0277BD] text-[#FFFFFF] font-semibold rounded-full text-sm px-[0.5rem] py-[0.25rem] m-1 hover:underline break-all cursor-pointer"
+        *ngFor="let tag of tagsForChannel | slice:0:10" (click)="navigateToTagPage(tag)"
+        >{{ tag?.name }}</span
+      >
+    </div>
+  </div>
 
-      <!-- material -->
-      <div *ngIf="selectedMaterial && tagsForMaterial?.length > 0" #TagsForMaterial>
-        <p-divider align="center"></p-divider>
-        <div class="mb-3">
-          <p class="text-xl font-semibold justify-center">
-            Tags for material: {{ selectedMaterial?.name }}
-          </p>
-        </div>
-        <div class="flex flex-row flex-wrap">
-          <span
-            class="bg-[#0277BD] text-[#FFFFFF] font-semibold rounded-full text-sm px-[0.5rem] py-[0.25rem] m-1 hover:underline break-all cursor-pointer"
-            *ngFor="let tag of tagsForMaterial | slice:0:visibleTagsMaterialCount"
-            (click)="navigateToTagPage(tag)"
-            >{{ tag?.name }}</span
-          >
-        </div>
-        <div class="flex justify-center mt-3">
-          <button
-            *ngIf="visibleTagsMaterialCount < tagsForMaterial?.length"
-            class="flex justify-center items-center py-2 cursor-pointer text-blue-500 hover:underline"
-            (click)="showMoreTagsMaterial()"
-          >
-            Show More
-          </button>
-          <button
-            *ngIf="visibleTagsMaterialCount > 10"
-            class="flex justify-center items-center py-2 cursor-pointer text-blue-500 hover:underline"
-            (click)="ShowLessTagsMaterial()"
-          >
-            Show Less
-          </button>
-        </div>
-      </div>
-
+  <div *ngIf="selectedMaterial && tagsForMaterial?.length > 0" #TagsForMaterial>
+    <p-divider align="center"></p-divider>
+    <div class="mb-3">
+      <p class="text-xl font-semibold justify-center">
+        Tags for material: {{ selectedMaterial?.name }}
+      </p>
+    </div>
+    <div class="flex flex-row flex-wrap">
+      <span
+      class="bg-[#0277BD] text-[#FFFFFF] font-semibold rounded-full text-sm px-[0.5rem] py-[0.25rem] m-1 hover:underline break-all cursor-pointer"
+        *ngFor="let tag of tagsForMaterial | slice:0:10" (click)="navigateToTagPage(tag)"
+        >{{ tag?.name }}</span
+      >
+    </div>
+  </div>
 </div>

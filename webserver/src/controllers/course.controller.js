@@ -1520,7 +1520,10 @@ export const editCourse = async (req, res, next) => {
   req.locals.newCourse = foundCourse;
 
   return next();
-});
+};
+
+
+
 
 /**
  * @function newIndicator
