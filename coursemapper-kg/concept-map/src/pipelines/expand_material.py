@@ -33,9 +33,22 @@ class ExpandMaterialPipeline:
 
             self.prerequisite(material_id, push_log_message)
 
+            idfeature_fp = tempfile.NamedTemporaryFile(mode="w", delete=False)
+            relation_fp = tempfile.NamedTemporaryFile(mode="w", delete=False)
+            prerequisite_fp = tempfile.NamedTemporaryFile(mode="w", delete=False)
+
+            self.idfeature(material_id, graph_db, idfeature_fp)
+            self.relation(material_id, graph_db, relation_fp)
+            self.prerequisiteTo(material_id, graph_db, prerequisite_fp)
+
+            idfeature_fp.close()
+            relation_fp.close()
+            prerequisite_fp.close()
+
             #self.gcn(material_id, graph_db)
             push_log_message(f'GCN for material {material_id} is running')
-            gcn = RRGCN()
+            print(idfeature_fp.name,relation_fp.name,prerequisite_fp.name)
+            gcn = RRGCN(idfeature_fp.name, relation_fp.name, prerequisite_fp.name)
             gcn.rrgcn_1_2()
             push_log_message(f'GCN for material {material_id} is done')
 
@@ -251,7 +264,32 @@ class ExpandMaterialPipeline:
         for relationship in relationships:
             fp.write(str(relationship["source"]) + " " + str(relationship["weight"])
                     + " " + str(relationship["target"]) + "\n")
-
+            
+    def prerequisiteTo(self, mid: str, graph_db: GraphDB, fp: tempfile._TemporaryFileWrapper):
+        # Get relationships between nodes (concept-related concept, concept-category)
+        with graph_db.driver.session() as session:
+            concept_prerequisite_result = session.run(
+                """MATCH p=(u:Concept)-[r]->(c:Concept) where u.mid = $mid and c.mid =$mid AND r:PREREQUISITE_TO RETURN u.cid as source, u.type as stype, r.weighted_weight as weight, c.cid as target, c.type as ttype""",
+                mid=mid).data()
+            # Get relationships between nodes (slide-concept)
+            slide_prerequisite_result = session.run(
+                """MATCH p=(u:Slide)-[r]->(c:Concept) where u.mid = $mid and c.mid = $mid AND r:PREREQUISITE_TO RETURN u.sid as source, u.type as stype, r.weighted_weight as weight, c.cid as target, c.type as ttype""",
+                mid=mid).data()
+        prerequisites = list(concept_prerequisite_result) + list(slide_prerequisite_result)
+        prerequisite_relationships = []
+        for prerequisite in prerequisites:
+            r = {
+                "source": hash(prerequisite["source"] + prerequisite["stype"]),
+                "target": hash(prerequisite["target"] + prerequisite["ttype"]),
+                "weight": round(float(prerequisite["weight"]), 2)
+            }
+            prerequisite_relationships.append(r)
+        # Save relationships between nodes in text
+        # first column is source node, second column is weight of relationship, third column is target node
+        for prerequisite_relationship in prerequisite_relationships:
+            fp.write(str(prerequisite_relationship["source"]) + " " + str(prerequisite_relationship["weight"])
+                    + " " + str(prerequisite_relationship["target"]) + "\n")
+            
     def gcn(self, mid: str, graph_db: GraphDB):
         idfeature_fp = tempfile.NamedTemporaryFile(mode="w", delete=False)
         relation_fp = tempfile.NamedTemporaryFile(mode="w", delete=False)

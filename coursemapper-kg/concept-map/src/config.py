@@ -16,7 +16,7 @@ class Config:
 
     NEO4J_URI = os.getenv('NEO4J_URI', 'bolt://localhost:7687')
     NEO4J_USER = os.getenv('NEO4J_USER', 'neo4j')
-    NEO4J_PASSWORD = os.getenv('NEO4J_PASSWORD', 'password')
+    NEO4J_PASSWORD = os.getenv('NEO4J_PASSWORD', '1234qwer!')
     NEO4J_SAVE_TO_DB = os.getenv('NEO4J_SAVE_TO_DB', 'true').lower() == 'true'
 
     MONGO_DB_URI = os.environ.get("MONGO_DB_URI")

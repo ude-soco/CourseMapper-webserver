@@ -11,7 +11,7 @@ import logging
 
 class RRGCN:
 
-    def __init__(self):
+    def __init__(self,idfeature_fp_name,relation_fp_name,prerequisite_fp_name):
         neo4j_uri = Config.NEO4J_URI
         neo4j_user = Config.NEO4J_USER
         neo4j_pass = Config.NEO4J_PASSWORD    
@@ -20,6 +20,10 @@ class RRGCN:
                                            encrypted=False)
 
         # initialize global variant
+        self.idfeature_fp_name = idfeature_fp_name
+        self.relation_fp_name = relation_fp_name
+        self.prerequisite_fp_name = prerequisite_fp_name
+
         self.embedding_matrix = None
         self.adj_matrix = None
         self.prerequisite_matrix = None
@@ -37,7 +41,7 @@ class RRGCN:
 
         # Read ids and initial embeddings of nodes from idfeature.text
         # The structure of text: first column is new id of node(type:int), the second column is the original id (type:string), and the rest is the initial embedding
-        idx_features = np.genfromtxt("idfeature.txt", dtype=np.dtype(str))
+        idx_features = np.genfromtxt(self.idfeature_fp_name, dtype=np.dtype(str))
         self.idx_features=idx_features
         # Extract new id of node
         idx = np.array(idx_features[:, 0], dtype=np.float32)
@@ -57,7 +61,7 @@ class RRGCN:
         """
 
         # Read normal relationships of nodes from relation.text
-        relation1 = np.genfromtxt("relation.txt", dtype=np.float32)        
+        relation1 = np.genfromtxt(self.relation_fp_name, dtype=np.float32)        
         adj_row = np.array(list(map(idx_map.get, relation1[:, 0].flatten())))
         adj_column = np.array(list(map(idx_map.get, relation1[:, 2].flatten())))
 
@@ -77,7 +81,7 @@ class RRGCN:
         """ 
             Construct prerequisite matrix
         """
-        relation2 = np.genfromtxt("prerequisite.txt", dtype=np.float32)
+        relation2 = np.genfromtxt(self.prerequisite_fp_name, dtype=np.float32)
         if relation2.size == 0:
             #logger.info("prerequisite.txt is empty")
             self.prerequisite_matrix = sp.coo_matrix(
