@@ -109,8 +109,8 @@ def start_worker(pipelines):
                 result = recs.get_concepts(job)
             elif pipeline == 'resource-recommendation':
                 result = recs.get_resources(job)
-            elif pipeline == 'get_resources_by_main_concepts':
-                result = recs.get_resources_by_main_concepts(job)
+            # elif pipeline == 'get_resources_by_main_concepts':
+            #     result = recs.get_resources_by_main_concepts(job)
             else:
                 raise ValueError(f'Unknown pipeline: {pipeline}')
 

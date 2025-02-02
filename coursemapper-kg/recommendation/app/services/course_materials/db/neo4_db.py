@@ -2710,7 +2710,7 @@ class NeoDataBase:
         with self.driver.session() as session:
             nodes = session.run(
                     '''
-                        MATCH p=(s: Slide)-[r: CONSISTS_OF]->(c: Concept)
+                        MATCH p=(s: Slide)-[r: CONTAINS]->(c: Concept)
                         WHERE s.sid = $slide_id AND c.type = "main_concept"
                         RETURN ID(c) as id, c.cid as cid, c.name as name,
                                 c.type AS type, c.weight AS weight, c.mid AS mid

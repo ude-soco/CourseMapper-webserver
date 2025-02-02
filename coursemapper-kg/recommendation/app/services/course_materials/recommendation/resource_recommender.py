@@ -220,6 +220,12 @@ class ResourceRecommenderService:
 
         elif recommendation_type in [ RecommendationType.CONTENT_BASED_KEYPHRASE_VARIANT, RecommendationType.CONTENT_BASED_DOCUMENT_VARIANT ]:
             slide_concepts_ = self.db.get_main_concepts_by_slide_id(slide_id=body["slide_id"])
+            _slide = self.db.get_slide(body["slide_id"])
+            # slide_concepts = _slide[0]["s"]["concepts"]
+            slide_document_embedding = _slide[0]["s"]["initial_embedding"]
+            slide_weighted_avg_embedding_of_concepts = _slide[0]["s"][
+                "weighted_embedding_of_concept"
+            ]
 
             rec_params["concepts"] = slide_concepts_
             rec_params["mid"] = body["material_id"]

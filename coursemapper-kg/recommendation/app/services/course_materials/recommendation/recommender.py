@@ -92,7 +92,6 @@ def compute_dynamic_document_based_similarity(
     cosine_similarities = []
     for document_embedding in data["document_embedding"]:
         tensor = get_tensor_from_embedding(document_embedding)
-
         cosine_similarity = compute_cosine_similarity_with_embeddings(
             tensor, user_embedding
         )
@@ -469,9 +468,11 @@ class Recommender:
         def do(row):
             if "document_embedding" not in row or len(row["document_embedding"]) <= 2:
                 text = row["text"]
-                sentence = Sentence(text)
-                self.embedding.embed(sentence)
-                value = sentence.get_embedding().tolist()
+                value = self.embedding.encode(text)
+                # sentence = Sentence(text)
+                ## self.embedding.embed(sentence)
+                # self.embedding.encode(sentence)
+                # value = sentence.get_embedding().tolist()
                 return value
             else:
                 return row["document_embedding"]

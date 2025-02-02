@@ -17,6 +17,12 @@ enum MaterialModels {
   MODEL_3 = '3',
   MODEL_4 = '4'
 }
+interface PageEvent {
+  first: number;
+  rows: number;
+  page: number;
+  pageCount: number;
+}
 
 @Component({
   selector: 'app-result-view',
@@ -43,6 +49,19 @@ export class ResultViewComponent {
   @Input() resourcesPagination: ResourcesPagination = null;
   @Input() userId: string;
   activeIndex: number = 0; 
+  firstPaginator = 0;
+  rowsPaginator = 10;
+
+  firstVideo: number = 0;
+  rowsVideo: number = 10;
+  firstArticle: number = 0;
+  rowsArticle: number = 10;
+  options = [
+    { label: 10, value: 10 },
+    { label: 30, value: 30 },
+    { label: 50, value: 50 },
+    { label: 100, value: 100 }
+  ];
 
   disabledSortingKeys = false;
   orderUpIcon = false;
@@ -367,7 +386,48 @@ export class ResultViewComponent {
     }
   }
 
-  onPageChangeResourcesPaginator(event) {
+  onPageChangeResourcesPaginator(event: PageEvent, type) {
+    // let page_number = 0;
+    // let page_size = 0;
+
+    // if (type === 0) {
+    //   this.firstVideo = event.first;
+    //   this.rowsVideo = event.rows;
+
+    //   page_number = this.firstVideo + 1;
+    //   page_size = this.rowsVideo;
+    // } else if (type === 1) {
+    //   this.firstArticle = event.first;
+    //   this.rowsArticle = event.rows;
+
+    //   page_number = this.firstArticle + 1;
+    //   page_size = this.rowsArticle;
+    // }
+
+    this.firstPaginator = event.first;
+    this.rowsPaginator = event.rows;
+
+    const page_number = this.firstPaginator + 1;
+    const page_size = this.rowsPaginator;
+
+    let reqDataFinal = JSON.parse(localStorage.getItem('resourcesPaginationParams'));
+    reqDataFinal.rec_params.pagination_params = {page_number: page_number, page_size: page_size};
+    localStorage.setItem('resourcesPaginationParams', JSON.stringify(reqDataFinal));
+
+    this.resourcesPagination = null;
+    this.materialsRecommenderService
+    .getRecommendedMaterials(reqDataFinal)
+    .subscribe({
+      next: (result) => {
+          this.resourcesPagination = result;
+        },
+        complete: () => {
+        },
+      }
+    );
+  }
+
+  onPageChangeResourcesPaginatorV2(event) {
     const page_number = event.page + 1;
     const page_size = event.rows;
 
@@ -384,10 +444,11 @@ export class ResultViewComponent {
         },
         complete: () => {
         },
-      });
+      }
+    );
   }
 
-  onPageChangeResourcesPaginatorV2(event) {
+  onPageChangeResourcesPaginatorV3(event) {
     const startIndex = event.first;
     const endIndex = startIndex + event.rows;
 

@@ -108,8 +108,8 @@ class RecService:
                 names.append(road[i]["name"])
         for name in names:
             for i in range(len(road)):
-                print("len(road)",len(road))
-                print("name",name)
+                # print("len(road)",len(road))
+                # print("name",name)
                 if road[i]["name"] == name:
                     weights = road[i]["weight"]
                 if max_weight <= weights:
