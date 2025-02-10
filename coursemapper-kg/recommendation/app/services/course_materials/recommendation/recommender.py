@@ -174,15 +174,18 @@ def retrieve_keyphrases(data):
 
     data['keyphrases_infos'] = None
     for index, row in data.iterrows():
-        if "keyphrase_embedding" not in row or len(row["keyphrase_embedding"]) <= 2:
-            text = row["text"]
-            pos = {"NOUN", "PROPN", "ADJ"}
-            extractor = SingleRank()
-            extractor.load_document(input=text, language="en")
-            extractor.candidate_selection(pos=pos)
-            extractor.candidate_weighting(window=10, pos=pos)
-            keyphrases_infos = extractor.get_n_best(n=15)
-            data.at[index, 'keyphrases_infos'] = keyphrases_infos
+        if len(row["keyphrases"]) <= 0:
+            if "keyphrase_embedding" not in row or len(row["keyphrase_embedding"]) <= 2:
+                text = row["text"]
+                pos = {"NOUN", "PROPN", "ADJ"}
+                extractor = SingleRank()
+                extractor.load_document(input=text, language="en")
+                extractor.candidate_selection(pos=pos)
+                extractor.candidate_weighting(window=10, pos=pos)
+                keyphrases_infos = extractor.get_n_best(n=15)
+                keyphrases = [keyphrase[0] for keyphrase in keyphrases_infos]
+                data.at[index, 'keyphrases_infos'] = keyphrases_infos
+                data.at[index, 'keyphrases'] = keyphrases
 
     # columns = data.columns
     return data
