@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { Observable, lastValueFrom } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { HTTPOptions } from '../config/config';
-
 @Injectable({
   providedIn: 'root',
 })
@@ -65,6 +64,24 @@ export class MaterialsRecommenderService {
       `${this.apiURL}/materials/${data.materialId}/recommended-article/${data.title}/abstract/log-collapse`,
       data,
       HTTPOptions
+    );
+  }
+  logViewRecommendedVideos(data: any): Promise<any> {
+    return lastValueFrom(
+      this.http.post<any>(
+        `${this.apiURL}/materials/${data.materialId}/recommended-videos/view-all`,
+        data,
+        HTTPOptions
+      )
+    );
+  }
+  logViewRecommendedArticles(data: any): Promise<any> {
+    return lastValueFrom(
+      this.http.post<any>(
+        `${this.apiURL}/materials/${data.materialId}/recommended-articles/view-all`,
+        data,
+        HTTPOptions
+      )
     );
   }
 }

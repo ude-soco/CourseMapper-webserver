@@ -84,6 +84,7 @@
     <app-card-video-list
       [notUnderstoodConcepts]="concepts"
       [videoElements]="videos"
+      (backButtonClicked)="logUserViewedRecommendedVideos()"
     ></app-card-video-list>
   </p-tabPanel>
   <p-tabPanel

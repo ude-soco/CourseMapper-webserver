@@ -36,6 +36,38 @@ const createChannelObject = (req) => {
   };
 };
 
+//TO VERIFY
+export const generateViewedAllRecommendedVideos = (req) => {
+  const metadata = createMetadata();
+  const material = req.locals.material;
+  const videos = req.locals.videos;
+
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
+    object: {
+      objectType: "Activity",
+      id: `${DOMAIN}/activity/recommended-videos`, //TO VERIFY
+      definition: {
+        type: "http://activitystrea.ms/schema/1.0/video",
+        name: {
+          [config.language]: "Recommended videos",
+        },
+        extensions: {
+          [`${DOMAIN}/extensions/recommended-videos`]: {
+            materialId: material._id,
+            channelId: material.channelId,
+            topicId: material.topicId,
+            courseId: material.courseId,
+            videos: videos, // That results all the 10 videos and their informations
+          },
+        },
+      },
+    },
+    context: createContext(),
+  };
+};
 //Articles Section
 const createArticleObject = (req) => {
   const articleTitle = req.locals.articleTitle;
@@ -64,6 +96,37 @@ const createArticleObject = (req) => {
         },
       },
     },
+  };
+};
+export const generateViewedAllRecommendedArticles = (req) => {
+  const metadata = createMetadata();
+  const material = req.locals.material;
+  const articles = req.locals.articles;
+
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
+    object: {
+      objectType: "Activity",
+      id: `${DOMAIN}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/recommended-articles`, //TO VERIFY
+      definition: {
+        type: "http://activitystrea.ms/schema/1.0/article",
+        name: {
+          [config.language]: "Recommended articles",
+        },
+        extensions: {
+          [`${DOMAIN}/extensions/recommended-articles`]: {
+            materialId: material._id,
+            channelId: material.channelId,
+            topicId: material.topicId,
+            courseId: material.courseId,
+            articles: articles, // That results all the 10 articles and their informations
+          },
+        },
+      },
+    },
+    context: createContext(),
   };
 };
 export const generateViewFullWikipediaArticle = (req) => {

@@ -181,7 +181,6 @@ export const setRating = async (req, res) => {
   const concepts = req.body.concepts;
   const userId = req.userId;
   const rating = req.body.rating;
-
   try {
     const result = await neo4j.setRating(resourceId, concepts, userId, rating);
     return res.status(200).send(result);
@@ -508,6 +507,67 @@ export const collapsedArticleAbstract = async (req, res, next) => {
   next();
 };
 
+export const viewedAllRecommendedVideos = async (req, res, next) => {
+  const userId = req.userId;
+  const materialId = req.body.materialId;
+  const videos = req.body.videos;
+
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    videos: videos,
+  };
+
+  next();
+};
+
+export const viewedAllRecommendedArticles = async (req, res, next) => {
+  const userId = req.userId;
+  const materialId = req.body.materialId;
+  const articles = req.body.articles;
+
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    articles: articles,
+  };
+
+  next();
+};
   let foundUser;
   try {
     foundUser = await findUserById(userId);

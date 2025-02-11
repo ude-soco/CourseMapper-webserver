@@ -2,9 +2,10 @@ import { Component, Input } from '@angular/core';
 import { VideoElementModel } from '../videos/models/video-element.model';
 import { ArticleElementModel } from '../articles/models/article-element.model';
 import { MenuItem } from 'primeng/api';
-// import { MaterialsRecommenderService } from 'src/app/services/materials-recommender.service';
+import { MaterialsRecommenderService } from 'src/app/services/materials-recommender.service';
 import { Subscription } from 'rxjs';
 import { SlideConceptsService } from 'src/app/services/slide-concepts.service';
+import { Material } from 'src/app/models/Material';
 
 interface MaterialModel {
   name: string;
@@ -14,12 +15,12 @@ enum MaterialModels {
   MODEL_1 = '1',
   MODEL_2 = '2',
   MODEL_3 = '3',
-  MODEL_4 = '4'
+  MODEL_4 = '4',
 }
 @Component({
   selector: 'app-result-view',
   templateUrl: './result-view.component.html',
-  styleUrls: ['./result-view.component.css']
+  styleUrls: ['./result-view.component.css'],
 })
 export class ResultViewComponent {
   private conceptFromChipObj: any = null;
@@ -37,8 +38,11 @@ export class ResultViewComponent {
   concepts: any[] = [];
   recievedVideoResultIsEmpty = true;
   recievedArticleResultIsEmpty = true;
-
-  constructor(private slideConceptservice: SlideConceptsService) {
+  @Input() currentMaterial?: Material;
+  constructor(
+    private slideConceptservice: SlideConceptsService,
+    private materialsRecommenderService: MaterialsRecommenderService
+  ) {
     slideConceptservice.didNotUnderstandConcepts.subscribe((res) => {
       this.didNotUnderstandConceptsObj = res;
       this.didNotUnderstandConceptsObj.forEach((el) => {
@@ -108,7 +112,7 @@ export class ResultViewComponent {
             this.conceptFromChipObj
           );
         },
-      }
+      },
     ];
 
     this.chipMenuDNU = [
@@ -125,14 +129,16 @@ export class ResultViewComponent {
 
     this.loadResultForSelectedModel(MaterialModels.MODEL_1);
 
-    this.didNotUnderstandConceptsObj = this.slideConceptservice.commonDidNotUnderstandConcepts;
+    this.didNotUnderstandConceptsObj =
+      this.slideConceptservice.commonDidNotUnderstandConcepts;
     this.didNotUnderstandConceptsObj.forEach((el) => {
       this.allConceptsObj = this.allConceptsObj.map((e) =>
         e.id === el.id ? el : e
       );
     });
 
-    this.understoodConceptsObj = this.slideConceptservice.commonUnderstoodConcepts;
+    this.understoodConceptsObj =
+      this.slideConceptservice.commonUnderstoodConcepts;
     this.understoodConceptsObj.forEach((el) => {
       this.allConceptsObj = this.allConceptsObj.map((e) =>
         e.id === el.id ? el : e
@@ -170,24 +176,24 @@ export class ResultViewComponent {
     if (key === '1') {
       this.results = this.results1;
       this.concepts = this.concepts1;
-      this.allConceptsObj = [... this.concepts1];
+      this.allConceptsObj = [...this.concepts1];
     } else if (key === '2') {
       this.results = this.results2;
       this.concepts = this.concepts1;
-      this.allConceptsObj = [... this.concepts1];
+      this.allConceptsObj = [...this.concepts1];
     } else if (key === '3') {
       this.results = this.results3;
       this.concepts = this.concepts2;
-      this.allConceptsObj = [... this.concepts2];
+      this.allConceptsObj = [...this.concepts2];
     } else if (key === '4') {
       this.results = this.results4;
       this.concepts = this.concepts2;
-      this.allConceptsObj = [... this.concepts2];
+      this.allConceptsObj = [...this.concepts2];
     } else {
       this.results = this.results1;
     }
 
-    try{
+    try {
       this.results.forEach((element: any) => {
         const e = element.data;
         if (e.labels.includes('Video')) {
@@ -202,15 +208,16 @@ export class ResultViewComponent {
 
       if (this.videos) {
         this.recievedVideoResultIsEmpty = false;
-      }else{
+        this.logUserViewedRecommendedVideos();
+      } else {
         this.recievedVideoResultIsEmpty = true;
       }
       if (this.articles) {
         this.recievedArticleResultIsEmpty = false;
-      }else{
+      } else {
         this.recievedArticleResultIsEmpty = true;
       }
-    }catch (e){
+    } catch (e) {
       console.log(e);
     }
 
@@ -222,7 +229,41 @@ export class ResultViewComponent {
   tabChanged(tab) {
     // Pause videos (if any) when changing tabs
     document.querySelectorAll('iframe').forEach((iframe) => {
-      const result = iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*')
-    })
+      const result = iframe.contentWindow.postMessage(
+        '{"event":"command","func":"pauseVideo","args":""}',
+        '*'
+      );
+    });
+    if (tab === 0) {
+      this.logUserViewedRecommendedVideos();
+    } else if (tab === 1) {
+      this.logUserViewedRecommendedArticles();
+    }
+  }
+  async logUserViewedRecommendedVideos() {
+    try {
+      const data = {
+        materialId: this.currentMaterial!._id,
+        videos: this.videos,
+      };
+      if (!this.recievedVideoResultIsEmpty) {
+        await this.materialsRecommenderService.logViewRecommendedVideos(data);
+      }
+    } catch (error) {
+      console.error('Error logging activity:', error);
+    }
+  }
+  async logUserViewedRecommendedArticles() {
+    try {
+      const data = {
+        materialId: this.currentMaterial!._id,
+        articles: this.articles,
+      };
+      if (!this.recievedArticleResultIsEmpty) {
+        await this.materialsRecommenderService.logViewRecommendedArticles(data);
+      }
+    } catch (error) {
+      console.error('Error logging activity:', error);
+    }
   }
 }

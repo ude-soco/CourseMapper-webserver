@@ -33,3 +33,32 @@ export const collapsedArticleAbstractLogger = async (req, res) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
+export const viewedAllRecommendedVideosLogger = async (req, res) => {
+  try {
+    await activityController.createActivity(
+      recommendedMaterialsActivityGenerator.generateViewedAllRecommendedVideos(
+        req
+      )
+    );
+    res.status(200).json({
+      message: "Activity logged successfully",
+    });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
+  }
+};
+
+export const viewedAllRecommendedArticlesLogger = async (req, res) => {
+  try {
+    await activityController.createActivity(
+      recommendedMaterialsActivityGenerator.generateViewedAllRecommendedArticles(
+        req
+      )
+    );
+    res.status(200).json({
+      message: "Activity logged successfully",
+    });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
+  }
+};

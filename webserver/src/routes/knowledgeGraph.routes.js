@@ -107,6 +107,19 @@ module.exports = function (app) {
   app.post(
     "/api/articles/:articleTitle/log",
   app.post(
+    "/api/materials/:materialId/recommended-videos/view-all",
+    [authJwt.verifyToken],
+    controller.viewedAllRecommendedVideos,
+    logger.viewedAllRecommendedVideosLogger
+  );
+
+  app.post(
+    "/api/materials/:materialId/recommended-articles/view-all",
+    [authJwt.verifyToken],
+    controller.viewedAllRecommendedArticles,
+    logger.viewedAllRecommendedArticlesLogger
+  );
+  app.post(
     "/api/materials/:materialId/recommended-article/:title/abstract/log-expand",
     [authJwt.verifyToken],
     controller.expandedArticleAbstract,
