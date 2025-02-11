@@ -14,6 +14,13 @@ worker.log_to_console = True
 
 
 def create_job_and_set_state(pipeline_name, args_dict, state="pending"):
+    """
+    # after publishing, craw resources for main concepts
+    create_job_and_set_state(pipeline_name="get_resources_by_main_concepts", 
+                                args_dict={"materialId": job.get('materialId')}
+                            )
+    """ 
+
     redis_client = worker.redis
     args_json = json.dumps(args_dict, sort_keys=True)
     job_id = hashlib.sha256(args_json.encode()).hexdigest()
@@ -64,12 +71,6 @@ if 'expand-material' in Config.PIPELINES:
     expand_material_pipeline = ExpandMaterialPipeline()
     def execute_expand_material_job(job):
         expand_material_pipeline.run(worker.push_log_message, job.get('materialId'))
-
-        # after publishing, craw resources for main concepts
-        create_job_and_set_state(pipeline_name="get_resources_by_main_concepts", 
-                                 args_dict={"materialId": job.get('materialId')}
-                                )
-
         return {}
     worker.add_pipeline('expand-material', execute_expand_material_job)
     

@@ -601,6 +601,13 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     return false;
   }
 
+  deactivateAlgorithmOption() {
+    if (this.croForm.category === '2' || this.croForm.category === '3') {
+      return true;
+    }
+    return false;
+  }
+
 
   normalizeFactorWeights(
     factorWeights: any, // Record<string, number> = {},

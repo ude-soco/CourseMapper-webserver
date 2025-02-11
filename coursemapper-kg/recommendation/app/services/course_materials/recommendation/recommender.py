@@ -99,7 +99,6 @@ def compute_dynamic_document_based_similarity(
     cosine_similarities = []
     for document_embedding in data["document_embedding"]:
         tensor = get_tensor_from_embedding(document_embedding)
-
         cosine_similarity = compute_cosine_similarity_with_embeddings(
             tensor, user_embedding
         )
@@ -182,15 +181,18 @@ def retrieve_keyphrases(data):
 
     data['keyphrases_infos'] = None
     for index, row in data.iterrows():
-        if "keyphrase_embedding" not in row or len(row["keyphrase_embedding"]) <= 2:
-            text = row["text"]
-            pos = {"NOUN", "PROPN", "ADJ"}
-            extractor = SingleRank()
-            extractor.load_document(input=text, language="en")
-            extractor.candidate_selection(pos=pos)
-            extractor.candidate_weighting(window=10, pos=pos)
-            keyphrases_infos = extractor.get_n_best(n=15)
-            data.at[index, 'keyphrases_infos'] = keyphrases_infos
+        if len(row["keyphrases"]) <= 0:
+            if "keyphrase_embedding" not in row or len(row["keyphrase_embedding"]) <= 2:
+                text = row["text"]
+                pos = {"NOUN", "PROPN", "ADJ"}
+                extractor = SingleRank()
+                extractor.load_document(input=text, language="en")
+                extractor.candidate_selection(pos=pos)
+                extractor.candidate_weighting(window=10, pos=pos)
+                keyphrases_infos = extractor.get_n_best(n=15)
+                keyphrases = [keyphrase[0] for keyphrase in keyphrases_infos]
+                data.at[index, 'keyphrases_infos'] = keyphrases_infos
+                data.at[index, 'keyphrases'] = keyphrases
 
     # columns = data.columns
     return data
@@ -477,9 +479,11 @@ class Recommender:
         def do(row):
             if "document_embedding" not in row or len(row["document_embedding"]) <= 2:
                 text = row["text"]
-                sentence = Sentence(text)
-                self.embedding.embed(sentence)
-                value = sentence.get_embedding().tolist()
+                value = self.embedding.encode(text)
+                # sentence = Sentence(text)
+                ## self.embedding.embed(sentence)
+                # self.embedding.encode(sentence)
+                # value = sentence.get_embedding().tolist()
                 return value
             else:
                 return row["document_embedding"]

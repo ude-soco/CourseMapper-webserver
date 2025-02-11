@@ -53,7 +53,7 @@ def remove_keys_from_resources(resources: list, recommendation_type=None):
                 ]
     else:
         keys = [    "keyphrase_counts", "keyphrases_infos", "keyphrase_embedding", "document_embedding", 
-                    "composite_score", "labels", "keyphrases", "concept_cid"
+                    "composite_score", "labels", "concept_cid", "keyphrases"
                 ]
         
     resources_updated = [{k: v for k, v in d.items() if k not in keys} for d in resources]
@@ -332,6 +332,8 @@ def rank_resources(resources: list, weights: dict = None, recommendation_type=No
         Step 3: Last Step: Resources having Rating related to DNU_modified (cid)
     '''
     logger.info("Appliying Ranking Algorithm")
+    resources_articles = []
+    resources_videos = []
 
     if len(resources) > 0:
         video_weights_normalized = normalize_factor_weights(factor_weights=weights["video"], method_type="l1", complete=True, sum_value=False)
@@ -353,11 +355,11 @@ def rank_resources(resources: list, weights: dict = None, recommendation_type=No
         resources_articles = rank_resources_proportional_top_n_with_remainder_by_concept_cid(resources_articles)
         resources_articles = remove_keys_from_resources(resources=resources_articles, recommendation_type=recommendation_type)
 
-        return {
-            "articles": get_paginated_resources(resources_articles, pagination_params), # resources_articles[: top_n_resources],
-            "videos": get_paginated_resources(resources_videos, pagination_params) # resources_videos[: top_n_resources]
-        }
-    return { "articles": [], "videos": [] }
+    return {
+        "articles": get_paginated_resources(resources_articles, pagination_params), # resources_articles[: top_n_resources],
+        "videos": get_paginated_resources(resources_videos, pagination_params) # resources_videos[: top_n_resources]
+    }
+    # return { "articles": [], "videos": [] }
 
 def get_paginated_resources(resources: list, pagination_params: dict=None):
     '''

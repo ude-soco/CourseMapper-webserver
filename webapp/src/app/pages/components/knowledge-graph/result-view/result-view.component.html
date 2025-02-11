@@ -141,18 +141,25 @@
               </p-scrollPanel>
           </div>
           <ng-template #elseBlockRsVideos>
-            <div class="flex flex-col items-center justify-center">
-              <div>
-                <p-progressSpinner
-                      [style]="{ width: '80px', height: '80px' }"
-                      styleClass="custom-spinner"
-                      strokeWidth="5"
-                      fill="var(--surface-ground)"
-                      animationDuration=".5s"
-                ></p-progressSpinner>
+            <div *ngIf="resourcesPagination?.nodes?.videos?.total_items == 0; else elseBlockRsVideos2">
+              <div class="flex flex-col items-center justify-center">
+                No Video Materials Found
               </div>
-              <h4 class="my-auto mt-4">Loading Video Materials</h4>
             </div>
+            <ng-template #elseBlockRsVideos2>
+              <div class="flex flex-col items-center justify-center">
+                <div>
+                  <p-progressSpinner
+                        [style]="{ width: '80px', height: '80px' }"
+                        styleClass="custom-spinner"
+                        strokeWidth="5"
+                        fill="var(--surface-ground)"
+                        animationDuration=".5s"
+                  ></p-progressSpinner>
+                </div>
+                <h4 class="my-auto mt-4">Loading Video Materials</h4>
+              </div>
+            </ng-template>
           </ng-template>
         </p-tabPanel>
 
@@ -173,18 +180,25 @@
             </p-scrollPanel>
         </div>
         <ng-template #elseBlockRsArticles>
-          <div class="flex flex-col items-center justify-center">
-            <div>
-              <p-progressSpinner
-                    [style]="{ width: '80px', height: '80px' }"
-                    styleClass="custom-spinner"
-                    strokeWidth="5"
-                    fill="var(--surface-ground)"
-                    animationDuration=".5s"
-              ></p-progressSpinner>
+          <div *ngIf="resourcesPagination?.nodes?.articles?.total_items == 0; else elseBlockRsArticles2">
+            <div class="flex flex-col items-center justify-center">
+              No Articles Materials Found
             </div>
-            <h4 class="my-auto mt-4">Loading Article Materials</h4>
           </div>
+          <ng-template #elseBlockRsArticles2>
+            <div class="flex flex-col items-center justify-center">
+              <div>
+                <p-progressSpinner
+                      [style]="{ width: '80px', height: '80px' }"
+                      styleClass="custom-spinner"
+                      strokeWidth="5"
+                      fill="var(--surface-ground)"
+                      animationDuration=".5s"
+                ></p-progressSpinner>
+              </div>
+              <h4 class="my-auto mt-4">Loading Articles Materials</h4>
+            </div>
+          </ng-template>
         </ng-template>
       </p-tabPanel>
 
@@ -285,28 +299,111 @@
 
   <!-- Pagination UI -->
   <div>
-      <div class="flex justify-end fixed inset-x-0 bottom-0 bg-white">
-        <!-- <div class="my-auto font-bold text-xs mt-6">Recommendations per page: </div> -->
-        <div>
-          <!-- [showJumpToPageDropdown]="true" 
-          [showPageLinks]="false" -->
-          <p-paginator
-            *ngIf="activeIndex === 0"
-            [rows]="paginatorRows" 
-            [totalRecords]="resourcesPagination?.nodes?.videos?.total_items" 
-            (onPageChange)="onPageChangeResourcesPaginator($event)" 
-            [rowsPerPageOptions]="rowsPerPageOptions"
-          ></p-paginator>
+    <div class="flex justify-end fixed inset-x-0 bottom-0 bg-white">
 
-          <p-paginator
-            *ngIf="activeIndex === 1"
-            [rows]="paginatorRows" 
-            [totalRecords]="resourcesPagination?.nodes?.articles?.total_items" 
-            (onPageChange)="onPageChangeResourcesPaginator($event)"
-            [rowsPerPageOptions]="rowsPerPageOptions"
-          ></p-paginator>
+      <div 
+        class="flex flex-row"
+        *ngIf="activeIndex === 0"
+      >
+        <div class="my-auto mx-1 text-color" *ngIf="resourcesPagination?.nodes?.videos?.total_items">
+          Total Videos: {{resourcesPagination?.nodes?.videos?.total_items}}
         </div>
+        <p-paginator
+          [rows]="paginatorRows" 
+          [totalRecords]="resourcesPagination?.nodes?.videos?.total_items" 
+          (onPageChange)="onPageChangeResourcesPaginatorV2($event)" 
+          [rowsPerPageOptions]="rowsPerPageOptions"
+          [pageLinkSize]="3"
+        >
+        </p-paginator>
       </div>
+
+      <div 
+        class="flex flex-row"
+        *ngIf="activeIndex === 1"
+      >
+      <div class="my-auto mx-1 text-color" *ngIf="resourcesPagination?.nodes?.videos?.total_items">
+        Total Articles: {{resourcesPagination?.nodes?.articles?.total_items}}
+      </div>
+        <p-paginator
+          [rows]="paginatorRows" 
+          [totalRecords]="resourcesPagination?.nodes?.articles?.total_items" 
+          (onPageChange)="onPageChangeResourcesPaginatorV2($event)"
+          [rowsPerPageOptions]="rowsPerPageOptions"
+          [pageLinkSize]="3"
+        >
+        </p-paginator>
+      </div>
+
+    </div>
+  </div>
+
+
+  <div *ngIf="false">
+    <div class="flex justify-end fixed inset-x-0 bottom-0 bg-white">
+      <div 
+        class="flex flex-row"
+        *ngIf="activeIndex === 0"
+      >
+        <div class="my-auto mx-1 text-color">Videos per page: </div>
+        <p-dropdown [options]="options" optionLabel="label" optionValue="value" [(ngModel)]="rowsPaginator" (ngModelChange)="firstPaginator = 0" />
+        <p-paginator 
+          [first]="firstPaginator" 
+          [rows]="rowsPaginator" 
+          [totalRecords]="resourcesPagination?.nodes?.videos?.total_items" 
+          (onPageChange)="onPageChangeResourcesPaginator($event, 0)" 
+          [showCurrentPageReport]="true" 
+          currentPageReportTemplate="{first} - {last} of {totalRecords}" 
+          [showPageLinks]="false" 
+          [showFirstLastIcon]="false"
+          >
+        </p-paginator>
+      </div>
+
+      <div 
+        class="flex flex-row"
+        *ngIf="activeIndex === 1"
+      >
+        <div class="my-auto mx-1 text-color">Articles per page: </div>
+        <p-dropdown [options]="options" optionLabel="label" optionValue="value" [(ngModel)]="rowsPaginator" (ngModelChange)="firstPaginator = 0" />
+        <p-paginator 
+          [first]="firstPaginator" 
+          [rows]="rowsPaginator" 
+          [totalRecords]="resourcesPagination?.nodes?.articles?.total_items" 
+          (onPageChange)="onPageChangeResourcesPaginator($event, 1)" 
+          [showCurrentPageReport]="true" 
+          currentPageReportTemplate="{first} - {last} of {totalRecords}" 
+          [showPageLinks]="false" 
+          [showFirstLastIcon]="false"
+          >
+        </p-paginator>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="false">
+    <div class="flex justify-end fixed inset-x-0 bottom-0 bg-white">
+      <!-- <div class="my-auto font-bold text-xs mt-6">Recommendations per page: </div> -->
+      <div>
+        <!-- [showJumpToPageDropdown]="true" 
+        [showPageLinks]="false" -->
+        <p-paginator
+          *ngIf="activeIndex === 0"
+          [rows]="paginatorRows" 
+          [totalRecords]="resourcesPagination?.nodes?.videos?.total_items" 
+          (onPageChange)="onPageChangeResourcesPaginatorV2($event)" 
+          [rowsPerPageOptions]="rowsPerPageOptions"
+        ></p-paginator>
+
+        <p-paginator
+          *ngIf="activeIndex === 1"
+          [rows]="paginatorRows" 
+          [totalRecords]="resourcesPagination?.nodes?.articles?.total_items" 
+          (onPageChange)="onPageChangeResourcesPaginatorV2($event)"
+          [rowsPerPageOptions]="rowsPerPageOptions"
+        ></p-paginator>
+      </div>
+    </div>
   </div>
 
 </div>
