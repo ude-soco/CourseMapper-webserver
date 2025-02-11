@@ -61,7 +61,7 @@
       <div *ngIf="article.keyphrases" class="flex flex-row mb-3 mt-6">
         <p class="mr-2 font-semibold italic">Keyphrases: </p>
         <div *ngFor="let concept of article.keyphrases.slice(0, 5)" pTooltip="Main keyphrases extracted from this article"
-             class=" text-xs uppercase bg-gray-200 text-chips-txt bg-gray-200 mx-1 p-1 px-2 font-semibold rounded-2xl">{{concept}}</div>
+             class=" text-xs uppercase bg-gray-200 text-chips-txt bg-gray-200 mx-1 p-1 px-2 font-semibold rounded-2xl">{{concept[0]}}</div>
       </div>
       <div class="flex flex-row">
         <p *ngIf="article.abstract" class="mr-2 font-semibold italic">Abstract: </p>

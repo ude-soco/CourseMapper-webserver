@@ -5,6 +5,7 @@ import pandas as pd
 import time
 import logging
 from sentence_transformers import util, SentenceTransformer
+import torch
 
 from ..kwp_extraction.singlerank_method.singlerank import SingleRank
 from .recommendation_type import RecommendationType
@@ -43,7 +44,13 @@ def sort_by_similarity_type(data, similarity_type):
     return sorted_data
 
 def compute_cosine_similarity_with_embeddings(embedding1, embedding2):
-    return util.pytorch_cos_sim(embedding1, embedding2).item()
+    # Convert to PyTorch tensors and ensure 2D shape
+    embedding1 = torch.tensor(embedding1).unsqueeze(0) if len(embedding1.shape) == 1 else torch.tensor(embedding1)
+    embedding2 = torch.tensor(embedding2).unsqueeze(0) if len(embedding2.shape) == 1 else torch.tensor(embedding2)
+    
+    similarity = util.pytorch_cos_sim(embedding1, embedding2)
+    
+    return similarity.item() if similarity.numel() == 1 else sum(similarity.squeeze().tolist())/len(similarity.squeeze().tolist())
 
 def get_tensor_from_embedding(embedding):
     '''
@@ -337,6 +344,7 @@ class Recommender:
             # Step 1: Retrieve Keyphrases
             data = retrieve_keyphrases(data)
 
+
             # Step 2: compute keyphrase-based embedding for resources
             data = self.compute_keyphrase_based_embeddings(data)
 
@@ -525,3 +533,49 @@ class Recommender:
             return average_embedding
         else:
             return 0
+
+    def post_retrieve_keyphrases(self,data,dnu_concepts):
+        """
+        Extract keyphrases from the 'abstract' column and store them in a new 'keyphrases' column.
+        Uses the SingleRank algorithm for keyphrase extraction.
+        1. Keyphrases Extraction from abstract/description 
+        2. Keyphrase Extraction also gives automatically the importance ranking for each keyphrase in the doc.
+        3. Compute the embedding of each Kephrase
+        4. Compute the embedding of each DNU concept
+        5. Comute and store the similarity score between each kephrase and the DNU concept
+        6. to do: get the max s.c betweeen each keyphrase and one dnu for keyphrase coloring
+        """
+        logger.info("Extracting keyphrases and adding to DataFrame.")
+        keyphrases_list = []  # emprty list of lists of keyphrases to be rendered
+        similarity_dict_list=[]  # list of lists of dictionaries (one to one) first attr is DNU concept and second is similarity score between the dnu and the keyphrase
+        for index, row in data.iterrows():
+            text = row.get("text", "")
+            if text:
+                extractor = SingleRank()
+                extractor.load_document(input=text, language="en")
+                extractor.candidate_selection(pos={"NOUN", "PROPN", "ADJ"})
+                extractor.candidate_weighting(window=10, pos={"NOUN", "PROPN", "ADJ"})
+                keyphrases = []
+                keyphrases_dnu_similarities=[]
+                for kp in extractor.get_n_best(n=15):
+                    keyphrases.append(kp)
+                    keyphrase_embedding=self.embedding.encode(kp)
+                    keyphrase_similarity={}
+                    for dnu in dnu_concepts:
+                        dnu_embedding=self.embedding.encode(dnu["name"])
+                        keyphrase_similarity[dnu["name"]]=compute_cosine_similarity_with_embeddings(keyphrase_embedding,dnu_embedding)
+                    
+                    sorted_similarity=dict(sorted(keyphrase_similarity.items(), key=lambda item: item[1], reverse=True))
+                    keyphrases_dnu_similarities.append(sorted_similarity)
+            else:
+                keyphrases = []
+
+            keyphrases_list.append(keyphrases)
+            similarity_dict_list.append(keyphrases_dnu_similarities)
+        
+
+        data["keyphrases"] = keyphrases_list
+        data["keyphrases_dnu_similarity_score"]=similarity_dict_list
+        print("Keyphrases List: ",keyphrases_list)
+        print("-"*50)
+        return data

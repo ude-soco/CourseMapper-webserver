@@ -141,7 +141,6 @@ class ResourceRecommenderService:
         # Gather|Retrieve all resources crawled
         resources = self.db.retrieve_resources(concepts=rec_params["concepts"], embedding_values=True)
         print("resources ", len(resources))
-        
         # process with the recommendation algorithm selected
         if len(resources) > 0:
             data_df = pd.DataFrame(resources)
@@ -154,7 +153,12 @@ class ResourceRecommenderService:
                 data=data_df
             )
             resources_df.replace({np.nan: None}, inplace=True)
-            resources = resources_df.to_dict(orient='records') 
+            resources=recommender.post_retrieve_keyphrases(resources_df,rec_params["concepts"])
+            resources = resources_df.to_dict(orient='records')
+            
+            
+           # resources=post_retrieve_keyphrases(resources)
+            
             self.db.store_resources(resources_list=resources, resources_form="list",resources_dict=None, cid=None)
 
             # insert attribute "is_bookmarked_fill" for resource saved by the user
@@ -166,6 +170,7 @@ class ResourceRecommenderService:
                                             top_n_resources=top_n_resources, recommendation_type=recommendation_type,
                                             pagination_params=rec_params["pagination_params"]
                                         )
+        
         result_final = {    
                             "recommendation_type": rec_params["recommendation_type"],
                             "concepts": rec_params["concepts"], 
