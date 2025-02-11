@@ -36,6 +36,38 @@ const createChannelObject = (req) => {
   };
 };
 
+// Videos Section
+const createRecommendedVideoObject = (req) => {
+  const videoId = req.locals.videoId;
+  const videoTitle = req.locals.videoTitle;
+  const videoDescription = req.locals.videoDescription;
+  const material = req.locals.material;
+  const origin = req.get("origin");
+
+  return {
+    objectType: "Activity",
+    id: `${origin}/activity/KnowledgeGraph/recommendedMaterials/video/${videoId}`,
+    definition: {
+      type: "http://activitystrea.ms/schema/1.0/video",
+      name: {
+        [config.language]: videoTitle,
+      },
+      description: {
+        [config.language]: videoDescription,
+      },
+      extensions: {
+        [`${DOMAIN}/extensions/recommended-video`]: {
+          videoId: videoId,
+          concepts: req.locals.concepts,
+          materialId: material._id,
+          channelId: material.channelId,
+          topicId: material.topicId,
+          courseId: material.courseId,
+        },
+      },
+    },
+  };
+};
 //TO VERIFY
 export const generateViewedAllRecommendedVideos = (req) => {
   const metadata = createMetadata();
@@ -68,6 +100,55 @@ export const generateViewedAllRecommendedVideos = (req) => {
     context: createContext(),
   };
 };
+export const generateMarkVideoAsHelpful = (req) => {
+  const metadata = createMetadata();
+
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb(`${DOMAIN}/verb/marked-helpful`, "marked-helpful"),
+    object: createRecommendedVideoObject(req),
+    context: createContext(),
+  };
+};
+export const generateMarkVideoAsUnhelpful = (req) => {
+  const metadata = createMetadata();
+
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb(`${DOMAIN}/verb/marked-not-helpful`, "marked-not-helpful"),
+    object: createRecommendedVideoObject(req),
+    context: createContext(),
+  };
+};
+export const generateUnmarkVideoAsHelpful = (req) => {
+  const metadata = createMetadata();
+
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb(`${DOMAIN}/verb/un-marked-helpful`, "un-marked-helpful"),
+    object: createRecommendedVideoObject(req),
+    context: createContext(),
+  };
+};
+
+export const generateUnmarkVideoAsUnhelpful = (req) => {
+  const metadata = createMetadata();
+
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb(
+      `${DOMAIN}/verb/un-marked-as-helpful`,
+      "un-marked-not-helpful"
+    ),
+    object: createRecommendedVideoObject(req),
+    context: createContext(),
+  };
+};
+
 //Articles Section
 const createArticleObject = (req) => {
   const articleTitle = req.locals.articleTitle;
@@ -89,6 +170,38 @@ const createArticleObject = (req) => {
       extensions: {
         [`${DOMAIN}/extensions/recommended-article`]: {
           articleId: articleId,
+          materialId: material._id,
+          channelId: material.channelId,
+          topicId: material.topicId,
+          courseId: material.courseId,
+        },
+      },
+    },
+  };
+};
+
+const createRecommendedArticleObject = (req) => {
+  const articleId = req.locals.articleId;
+  const articleTitle = req.locals.articleTitle;
+  const articleAbstract = req.locals.articleAbstract;
+  const material = req.locals.material;
+  const origin = req.get("origin");
+
+  return {
+    objectType: "Activity",
+    id: `${origin}/activity/KnowledgeGraph/recommendedMaterials/article/${articleId}`,
+    definition: {
+      type: "http://activitystrea.ms/schema/1.0/article",
+      name: {
+        [config.language]: articleTitle,
+      },
+      description: {
+        [config.language]: articleAbstract,
+      },
+      extensions: {
+        [`${DOMAIN}/extensions/recommended-article`]: {
+          articleId: articleId,
+          concepts: req.locals.concepts, // * those are actual names of the checked concepts
           materialId: material._id,
           channelId: material.channelId,
           topicId: material.topicId,
@@ -159,6 +272,52 @@ export const generateCollapseArticleAbstract = (req) => {
     actor: createUser(req),
     verb: createVerb(`${DOMAIN}/verb/collapse`, "collapsed"),
     object: createArticleObject(req),
+    context: createContext(),
+  };
+};
+export const generateMarkArticleAsHelpful = (req) => {
+  const metadata = createMetadata();
+
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb(`${DOMAIN}/verb/marked-helpful`, "marked-helpful"),
+    object: createRecommendedArticleObject(req),
+    context: createContext(),
+  };
+};
+export const generateMarkArticleAsUnhelpful = (req) => {
+  const metadata = createMetadata();
+
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb(`${DOMAIN}/verb/marked-not-helpful`, "marked-not-helpful"),
+    object: createRecommendedArticleObject(req),
+    context: createContext(),
+  };
+};
+export const generateUnmarkArticleAsHelpful = (req) => {
+  const metadata = createMetadata();
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb(`${DOMAIN}/verb/un-marked-helpful`, "un-marked-helpful"),
+    object: createRecommendedArticleObject(req),
+    context: createContext(),
+  };
+};
+export const generateUnmarkArticleAsUnhelpful = (req) => {
+  const metadata = createMetadata();
+
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb(
+      `${DOMAIN}/verb/un-marked-not-helpful`,
+      "un-marked-not-helpful"
+    ),
+    object: createRecommendedArticleObject(req),
     context: createContext(),
   };
 };

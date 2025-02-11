@@ -507,6 +507,70 @@ export const collapsedArticleAbstract = async (req, res, next) => {
   next();
 };
 
+export const rateArticle = async (req, res, next) => {
+  const userId = req.userId;
+  const materialId = req.body.materialId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
+  req.locals = {
+    user: foundUser,
+    articleId: req.body.resourceId,
+    articleTitle: req.body.title,
+    articleAbstract: req.body.description,
+    concepts: req.body.concepts,
+    material: foundMaterial,
+  };
+
+  next();
+};
+export const rateVideo = async (req, res, next) => {
+  const userId = req.userId;
+  const materialId = req.body.materialId;
+
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
+  req.locals = {
+    user: foundUser,
+    videoId: req.body.resourceId,
+    videoTitle: req.body.title,
+    videoDescription: req.body.description,
+    concepts: req.body.concepts,
+    material: foundMaterial,
+  };
+  next();
+};
 export const viewedAllRecommendedVideos = async (req, res, next) => {
   const userId = req.userId;
   const materialId = req.body.materialId;

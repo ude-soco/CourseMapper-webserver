@@ -66,6 +66,81 @@ export class MaterialsRecommenderService {
       HTTPOptions
     );
   }
+
+  logMarkAsHelpfulArticle(data: any): Promise<any> {
+    return lastValueFrom(
+      this.http.post<any>(
+        `${this.apiURL}/materials/${data.materialId}/recommended-article/${data.title}/mark-helpful`,
+        data,
+        HTTPOptions
+      )
+    );
+  }
+  logMarkAsHelpfulVideo(data: any): Promise<any> {
+    return lastValueFrom(
+      this.http.post<any>(
+        `${this.apiURL}/materials/${data.materialId}/recommended-video/${data.title}/mark-helpful`,
+        data,
+        HTTPOptions
+      )
+    );
+  }
+
+  logMarkAsNotHelpfulArticle(data: any): Promise<any> {
+    return lastValueFrom(
+      this.http.post<any>(
+        `${this.apiURL}/materials/${data.materialId}/recommended-article/${data.title}/mark-not-helpful`,
+        data,
+        HTTPOptions
+      )
+    );
+  }
+  logMarkAsNotHelpfulVideo(data: any): Promise<any> {
+    return lastValueFrom(
+      this.http.post<any>(
+        `${this.apiURL}/materials/${data.materialId}/recommended-video/${data.title}/mark-not-helpful`,
+        data,
+        HTTPOptions
+      )
+    );
+  }
+  logUnmarkAsHelpfulArticle(data: any): Promise<any> {
+    return lastValueFrom(
+      this.http.post<any>(
+        `${this.apiURL}/materials/${data.materialId}/recommended-article/${data.title}/un-mark-helpful`,
+        data,
+        HTTPOptions
+      )
+    );
+  }
+  logUnmarkAsHelpfulVideo(data: any): Promise<any> {
+    return lastValueFrom(
+      this.http.post<any>(
+        `${this.apiURL}/materials/${data.materialId}/recommended-video/${data.title}/un-mark-helpful`,
+        data,
+        HTTPOptions
+      )
+    );
+  }
+
+  logUnmarkAsNotHelpfulArticle(data: any): Promise<any> {
+    return lastValueFrom(
+      this.http.post<any>(
+        `${this.apiURL}/materials/${data.materialId}/recommended-article/${data.title}/un-mark-not-helpful`,
+        data,
+        HTTPOptions
+      )
+    );
+  }
+  logUnmarkAsNotHelpfulVideo(data: any): Promise<any> {
+    return lastValueFrom(
+      this.http.post<any>(
+        `${this.apiURL}/materials/${data.materialId}/recommended-video/${data.title}/un-mark-not-helpful`,
+        data,
+        HTTPOptions
+      )
+    );
+  }
   logViewRecommendedVideos(data: any): Promise<any> {
     return lastValueFrom(
       this.http.post<any>(

@@ -33,6 +33,104 @@ export const collapsedArticleAbstractLogger = async (req, res) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
+export const markArticleAsHelpfulLogger = async (req, res) => {
+  try {
+    await activityController.createActivity(
+      recommendedMaterialsActivityGenerator.generateMarkArticleAsHelpful(req)
+    );
+    res.status(200).json({
+      message: "Activity logged successfully",
+    });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
+  }
+};
+export const markVideoAsHelpfulLogger = async (req, res) => {
+  try {
+    await activityController.createActivity(
+      recommendedMaterialsActivityGenerator.generateMarkVideoAsHelpful(req)
+    );
+    res.status(200).json({
+      message: "Activity logged successfully",
+    });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
+  }
+};
+export const markArticleAsUnhelpfulLogger = async (req, res) => {
+  try {
+    await activityController.createActivity(
+      recommendedMaterialsActivityGenerator.generateMarkArticleAsUnhelpful(req)
+    );
+    res.status(200).json({
+      message: "Activity logged successfully",
+    });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
+  }
+};
+export const markVideoAsUnhelpfulLogger = async (req, res) => {
+  try {
+    await activityController.createActivity(
+      recommendedMaterialsActivityGenerator.generateMarkVideoAsUnhelpful(req)
+    );
+    res.status(200).json({
+      message: "Activity logged successfully",
+    });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
+  }
+};
+export const unmarkArticleAsHelpfulLogger = async (req, res) => {
+  try {
+    await activityController.createActivity(
+      recommendedMaterialsActivityGenerator.generateUnmarkArticleAsHelpful(req)
+    );
+    res.status(200).json({
+      message: "Activity logged successfully",
+    });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
+  }
+};
+export const unmarkVideoAsHelpfulLogger = async (req, res) => {
+  try {
+    await activityController.createActivity(
+      recommendedMaterialsActivityGenerator.generateUnmarkVideoAsHelpful(req)
+    );
+    res.status(200).json({
+      message: "Activity logged successfully",
+    });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
+  }
+};
+export const unmarkArticleAsUnhelpfulLogger = async (req, res) => {
+  try {
+    await activityController.createActivity(
+      recommendedMaterialsActivityGenerator.generateUnmarkArticleAsUnhelpful(
+        req
+      )
+    );
+    res.status(200).json({
+      message: "Activity logged successfully",
+    });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
+  }
+};
+export const unmarkVideoAsUnhelpfulLogger = async (req, res) => {
+  try {
+    await activityController.createActivity(
+      recommendedMaterialsActivityGenerator.generateUnmarkVideoAsUnhelpful(req)
+    );
+    res.status(200).json({
+      message: "Activity logged successfully",
+    });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
+  }
+};
 export const viewedAllRecommendedVideosLogger = async (req, res) => {
   try {
     await activityController.createActivity(

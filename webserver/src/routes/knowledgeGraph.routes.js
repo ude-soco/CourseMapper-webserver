@@ -120,6 +120,55 @@ module.exports = function (app) {
     logger.viewedAllRecommendedArticlesLogger
   );
   app.post(
+    "/api/materials/:materialId/recommended-article/:title/mark-helpful",
+    [authJwt.verifyToken],
+    controller.rateArticle,
+    logger.markArticleAsHelpfulLogger
+  );
+  app.post(
+    "/api/materials/:materialId/recommended-article/:title/mark-not-helpful",
+    [authJwt.verifyToken],
+    controller.rateArticle,
+    logger.markArticleAsUnhelpfulLogger
+  );
+  app.post(
+    "/api/materials/:materialId/recommended-video/:title/mark-helpful",
+    [authJwt.verifyToken],
+    controller.rateVideo,
+    logger.markVideoAsHelpfulLogger
+  );
+  app.post(
+    "/api/materials/:materialId/recommended-video/:title/mark-not-helpful",
+    [authJwt.verifyToken],
+    controller.rateVideo,
+    logger.markVideoAsUnhelpfulLogger
+  );
+
+  app.post(
+    "/api/materials/:materialId/recommended-article/:title/un-mark-helpful",
+    [authJwt.verifyToken],
+    controller.rateArticle,
+    logger.unmarkArticleAsHelpfulLogger
+  );
+  app.post(
+    "/api/materials/:materialId/recommended-article/:title/un-mark-not-helpful",
+    [authJwt.verifyToken],
+    controller.rateArticle,
+    logger.unmarkArticleAsUnhelpfulLogger
+  );
+  app.post(
+    "/api/materials/:materialId/recommended-video/:title/un-mark-helpful",
+    [authJwt.verifyToken],
+    controller.rateVideo,
+    logger.unmarkVideoAsHelpfulLogger
+  );
+  app.post(
+    "/api/materials/:materialId/recommended-video/:title/un-mark-not-helpful",
+    [authJwt.verifyToken],
+    controller.rateVideo,
+    logger.unmarkVideoAsUnhelpfulLogger
+  );
+  app.post(
     "/api/materials/:materialId/recommended-article/:title/abstract/log-expand",
     [authJwt.verifyToken],
     controller.expandedArticleAbstract,
