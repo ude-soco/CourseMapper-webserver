@@ -418,9 +418,95 @@ export const searchWikipedia = async (req, res) => {
 };
 
 export const viewFullWikipediaArticle = async (req, res, next) => {
-  const articleTitle = req.params.articleTitle;
-  const articleUrl = req.params.articleUrl;
   const userId = req.userId;
+  const materialId = req.body.materialId;
+
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+  req.locals = {
+    user: foundUser,
+    articleTitle: req.body.title,
+    articleId: req.body.resourceId,
+    articleDescription: req.body.abstract,
+    material: foundMaterial,
+  };
+
+  next();
+};
+export const expandedArticleAbstract = async (req, res, next) => {
+  const userId = req.userId;
+  const materialId = req.body.materialId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+  req.locals = {
+    user: foundUser,
+    articleTitle: req.body.title,
+    articleId: req.body.resourceId,
+    articleDescription: req.body.abstract,
+    material: foundMaterial,
+  };
+
+  next();
+};
+export const collapsedArticleAbstract = async (req, res, next) => {
+  const userId = req.userId;
+  const materialId = req.body.materialId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+  req.locals = {
+    user: foundUser,
+    articleTitle: req.body.title,
+    articleId: req.body.resourceId,
+    articleDescription: req.body.abstract,
+    material: foundMaterial,
+  };
+  next();
+};
 
   let foundUser;
   try {

@@ -1,6 +1,6 @@
 const { authJwt } = require("../middlewares");
 const controller = require("../controllers/knowledgeGraph.controller");
-const logger = require("../activity-logger/logger-middlewares/knowledgeGraph-logger");
+const logger = require("../activity-logger/logger-middlewares/knowledge-graph-logger");
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -106,6 +106,20 @@ module.exports = function (app) {
 
   app.post(
     "/api/articles/:articleTitle/log",
+  app.post(
+    "/api/materials/:materialId/recommended-article/:title/abstract/log-expand",
+    [authJwt.verifyToken],
+    controller.expandedArticleAbstract,
+    logger.expandedArticleAbstractLogger
+  );
+  app.post(
+    "/api/materials/:materialId/recommended-article/:title/abstract/log-collapse",
+    [authJwt.verifyToken],
+    controller.collapsedArticleAbstract,
+    logger.collapsedArticleAbstractLogger
+  );
+  app.post(
+    "/api/materials/:materialId/recommended-articles/:title/log",
     [authJwt.verifyToken],
     controller.viewFullWikipediaArticle,
     logger.viewFullWikipediaArticleLogger

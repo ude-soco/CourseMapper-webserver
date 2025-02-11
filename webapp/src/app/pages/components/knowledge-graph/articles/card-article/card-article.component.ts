@@ -12,7 +12,7 @@ import { ArticleElementModel } from '../models/article-element.model';
 import { OverlayPanel } from 'primeng/overlaypanel';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MaterialsRecommenderService } from 'src/app/services/materials-recommender.service';
-
+import { Material } from 'src/app/models/Material';
 @Component({
   selector: 'app-card-article',
   templateUrl: './card-article.component.html',
@@ -29,7 +29,7 @@ export class CardArticleComponent {
   @Input()
   public notUnderstoodConcepts: string[];
   @Output() onClick: EventEmitter<any> = new EventEmitter();
-
+  @Input() currentMaterial?: Material;
   ABSTRACT_MAX_LENGTH = 600;
   TITLE_MAX_LENGTH = 70;
 
@@ -43,20 +43,15 @@ export class CardArticleComponent {
     const safeURL = this.sanitizer.bypassSecurityTrustResourceUrl(
       this.article.uri
     );
-    console.log('Article:', this.article);
 
+    const data = {
+      materialId: this.currentMaterial!._id,
+      resourceId: this.article.id.toString(),
+      title: this.article.title,
+      abstract: this.article.abstract,
+    };
     // Log the activity
-    this.materialsRecommenderService
-      .logWikiArticleView({
-        articleTitle: article.title,
-        articleUrl: article.uri,
-      })
-      .subscribe({
-        next: (response) => {
-          console.log(response.message); // Display the received message
-        },
-        error: (err) => console.error('Error logging article view:', err),
-      });
+    this.materialsRecommenderService.logWikiArticleView(data).subscribe();
     this.article = article;
     this.onClick.emit(this.article.id);
     this.isActive = !this.isActive;
@@ -67,6 +62,18 @@ export class CardArticleComponent {
   }
 
   expand(): void {
+    const data = {
+      materialId: this.currentMaterial!._id,
+      resourceId: this.article.id.toString(),
+      title: this.article.title,
+      abstract: this.article.abstract,
+    };
+    if (this.userCanExpand) {
+      // Log the activity
+      this.materialsRecommenderService.logExpandAbstract(data).subscribe();
+    } else {
+      this.materialsRecommenderService.logCollapseAbstract(data).subscribe();
+    }
     this.userCanExpand = !this.userCanExpand;
   }
 }

@@ -44,12 +44,25 @@ export class MaterialsRecommenderService {
     );
     return this.recommendedMaterialsRating;
   }
-  logWikiArticleView(data: {
-    articleTitle: string;
-    articleUrl: string;
-  }): Observable<any> {
+
+  logWikiArticleView(data: any): Observable<any> {
     return this.http.post<any>(
-      `${this.apiURL}/articles/${data.articleTitle}/log`,
+      `${this.apiURL}/materials/${data.materialId}/recommended-articles/${data.title}/log`,
+      data,
+      HTTPOptions
+    );
+  }
+
+  logExpandAbstract(data: any): Observable<any> {
+    return this.http.post<any>(
+      `${this.apiURL}/materials/${data.materialId}/recommended-article/${data.title}/abstract/log-expand`,
+      data,
+      HTTPOptions
+    );
+  }
+  logCollapseAbstract(data: any): Observable<any> {
+    return this.http.post<any>(
+      `${this.apiURL}/materials/${data.materialId}/recommended-article/${data.title}/abstract/log-collapse`,
       data,
       HTTPOptions
     );
