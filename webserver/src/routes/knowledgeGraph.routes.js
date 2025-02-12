@@ -110,7 +110,7 @@ module.exports = function (app) {
   );
 
   app.post(
-    "/api/main-concepts/log-view",
+    "/api/courses/:courseId/materials/:materialId/main-concepts/log",
     [authJwt.verifyToken],
     controller.viewedAllMainConcepts,
     logger.viewedAllMainConceptsLogger

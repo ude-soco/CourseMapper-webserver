@@ -118,5 +118,10 @@ export class SlideConceptsService {
     this.setNewConcepts(this.commonNewConcepts)
     this.setDidNotUnderstandConcepts(this.commonDidNotUnderstandConcepts)
     this.setUnderstoodConcepts(this.commonUnderstoodConcepts)
+  logViewMainConcepts(data: any): Observable<any> {
+    return this.http.post<any>(
+      `${this.apiURL}/courses/${data.courseId}/materials/${data.materialId}/main-concepts/log`,
+      data
+    );
   }
 }

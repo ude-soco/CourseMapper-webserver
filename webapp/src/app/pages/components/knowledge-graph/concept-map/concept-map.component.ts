@@ -157,6 +157,7 @@ export class ConceptMapComponent {
         this.filteredMapData = null;
         this.mainConceptsTab = true;
         this.recommendedConceptsTab = false;
+        this.logUserViewedMainConcepts(); //Log the Activity User viewedMainConcepts
         setTimeout(() => {
           this.filteredMapData = tempMapData;
         }, 500);
@@ -1307,6 +1308,8 @@ export class ConceptMapComponent {
           this.dataReceivedEvent.emit(this.conceptMapData);
           this.filteredMapData = this.conceptMapData;
           this.kgSlideResponseEmpty = false;
+
+          this.logUserViewedMainConcepts(); //Log the Activity User viewedMainConcepts
         } else {
           this.kgSlideResponseEmpty = true;
           console.log('No KG received for this slide!!');
@@ -1527,7 +1530,7 @@ export class ConceptMapComponent {
     return data;
   }
   async getRecommendedMaterialsPerSlideMaterial(): // model: string
-    Promise<any> {
+  Promise<any> {
     const data = {};
     const slideID =
       this.currentMaterial!._id + '_slide_' + this.kgCurrentPage.toString();
@@ -2001,7 +2004,6 @@ export class ConceptMapComponent {
         ...reqDataMaterial1, // Include informations of the material
         recommendedConcepts: this.recommendedConcepts, // Include recommended concepts
       };
-
       this.materialsRecommenderService
         .getRecommendedConceptsLog(payload)
         .subscribe();
@@ -2009,5 +2011,6 @@ export class ConceptMapComponent {
       console.error('Error logging activity:', error);
     }
   }
+  async logUserViewedMainConcepts() {
   }
 }

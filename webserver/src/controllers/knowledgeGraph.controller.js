@@ -571,6 +571,44 @@ export const rateVideo = async (req, res, next) => {
   };
   next();
 };
+export const viewedAllMainConcepts = async (req, res, next) => {
+  const userId = req.userId;
+  const materialId = req.body.materialId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    courseId: req.body.courseId,
+    materialId: req.body.materialId,
+    materialName: req.body.materialName,
+    materialPage: req.body.materialPage,
+    materialURL: req.body.materialURL,
+    newConcepts: req.body.newConcepts,
+    nonUnderstoodConcepts: req.body.nonUnderstoodConcepts,
+    slideId: req.body.slideId,
+    understoodConcepts: req.body.understoodConcepts,
+    mainConcepts: req.body.mainConcepts.nodes,
+  };
+
+  next();
+};
 export const viewedAllRecommendedVideos = async (req, res, next) => {
   const userId = req.userId;
   const materialId = req.body.materialId;
