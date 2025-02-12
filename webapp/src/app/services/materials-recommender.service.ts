@@ -22,6 +22,13 @@ export class MaterialsRecommenderService {
     );
     return this.recommendedConcepts;
   }
+  getRecommendedConceptsLog(data: any): Observable<any> {
+    return this.http.post<any>(
+      `${this.apiURL}/courses/${data.courseId}/materials/${data.materialId}/concept-recommendation/log`,
+      data,
+      HTTPOptions
+    );
+  }
 
   getRecommendedMaterials(data: any): Observable<any> {
     this.recommendedMaterials = this.http.post<any>(

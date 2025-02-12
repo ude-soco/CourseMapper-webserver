@@ -91,7 +91,12 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getConcepts
   );
-
+  app.post(
+    "/api/courses/:courseId/materials/:materialId/concept-recommendation/log",
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.viewedAllRecommendedConcepts,
+    logger.viewedAllRecommendedConceptsLogger
+  );
   app.post(
     "/api/courses/:courseId/materials/:materialId/resource-recommendation",
     [authJwt.verifyToken, authJwt.isEnrolled],
@@ -105,7 +110,11 @@ module.exports = function (app) {
   );
 
   app.post(
-    "/api/articles/:articleTitle/log",
+    "/api/main-concepts/log-view",
+    [authJwt.verifyToken],
+    controller.viewedAllMainConcepts,
+    logger.viewedAllMainConceptsLogger
+  );
   app.post(
     "/api/materials/:materialId/recommended-videos/view-all",
     [authJwt.verifyToken],
