@@ -453,6 +453,13 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
                 node.data.selected = 's';
               }
             });
+            const payload = {
+              materialId: this.currentMaterial._id,
+              courseId: this.currentMaterial.courseId,
+              currentPage: this.currentPdfPage,
+              concept: selectedNode, // Include the selected node
+            };
+            this.slideConceptservice.logViewConcept(payload).subscribe();
           } else {
             this.elements.nodes.map((node) => {
               node.data.selected = 'u';

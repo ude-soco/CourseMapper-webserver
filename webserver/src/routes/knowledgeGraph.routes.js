@@ -128,6 +128,12 @@ module.exports = function (app) {
     logger.viewedLessConceptsLogger
   );
   app.post(
+    "/api/courses/:courseId/materials/:materialId/concepts/:conceptId/log-view",
+    [authJwt.verifyToken],
+    controller.viewedConcept,
+    logger.viewedConceptLogger
+  );
+  app.post(
     "/api/materials/:materialId/recommended-videos/view-all",
     [authJwt.verifyToken],
     controller.viewedAllRecommendedVideos,
