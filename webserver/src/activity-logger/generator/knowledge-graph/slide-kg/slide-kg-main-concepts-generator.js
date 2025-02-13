@@ -81,4 +81,80 @@ export const generateViewedAllMainConcepts = (req) => {
     context: createContext(),
   };
 };
+export const generateViewedMoreConcepts = (req) => {
+  const metadata = createMetadata();
+  const material = req.locals.material;
+  const concepts = req.locals.mainConcepts;
+  const materialPage = req.locals.materialPage;
+
+  // Extract only id and name from all concepts
+  const formattedConcepts = concepts.map((concept) => ({
+    id: concept.data.id,
+    name: concept.data.name,
+  }));
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
+    object: {
+      objectType: "Activity",
+      id: `${DOMAIN}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/more-main-concepts`,
+      definition: {
+        type: `${DOMAIN}/schema/1.0/concept`,
+        name: {
+          [config.language]: "Main concepts",
+        },
+        extensions: {
+          [`${DOMAIN}/extensions/main-concepts`]: {
+            concepts: formattedConcepts,
+            materialId: material._id,
+            channelId: material.channelId,
+            topicId: material.topicId,
+            courseId: material.courseId,
+            materialPage: req.locals.materialPage,
+          },
+        },
+      },
+    },
+    context: createContext(),
+  };
+};
+export const generateViewedLessConcepts = (req) => {
+  const metadata = createMetadata();
+  const material = req.locals.material;
+  const concepts = req.locals.mainConcepts;
+  const materialPage = req.locals.materialPage;
+
+  // Extract only id and name from all concepts
+  const formattedConcepts = concepts.map((concept) => ({
+    id: concept.data.id,
+    name: concept.data.name,
+  }));
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
+    object: {
+      objectType: "Activity",
+      id: `${DOMAIN}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/more-main-concepts`,
+      definition: {
+        type: `${DOMAIN}/schema/1.0/concept`,
+        name: {
+          [config.language]: "Main concepts",
+        },
+        extensions: {
+          [`${DOMAIN}/extensions/main-concepts`]: {
+            concepts: formattedConcepts,
+            materialId: material._id,
+            channelId: material.channelId,
+            topicId: material.topicId,
+            courseId: material.courseId,
+            materialPage: req.locals.materialPage,
+          },
+        },
+      },
+    },
+    context: createContext(),
+  };
+};
 // ? I added this one to have it ready for a better structure...

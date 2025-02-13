@@ -145,6 +145,30 @@ export const viewedAllMainConceptsLogger = async (req, res) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
+export const viewedMoreConceptsLogger = async (req, res) => {
+  try {
+    await activityController.createActivity(
+      mainConceptsActivityGenerator.generateViewedMoreConcepts(req)
+    );
+    res.status(200).json({
+      message: "Activity logged successfully",
+    });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
+  }
+};
+export const viewedLessConceptsLogger = async (req, res) => {
+  try {
+    await activityController.createActivity(
+      mainConceptsActivityGenerator.generateViewedLessConcepts(req)
+    );
+    res.status(200).json({
+      message: "Activity logged successfully",
+    });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
+  }
+};
 export const viewedAllRecommendedVideosLogger = async (req, res) => {
   try {
     await activityController.createActivity(

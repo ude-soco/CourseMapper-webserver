@@ -116,6 +116,18 @@ module.exports = function (app) {
     logger.viewedAllMainConceptsLogger
   );
   app.post(
+    "/api/courses/:courseId/materials/:materialId/main-concepts/log-view-more",
+    [authJwt.verifyToken],
+    controller.viewedMoreConcepts,
+    logger.viewedMoreConceptsLogger
+  );
+  app.post(
+    "/api/courses/:courseId/materials/:materialId/main-concepts/log-view-less",
+    [authJwt.verifyToken],
+    controller.viewedLessConcepts,
+    logger.viewedLessConceptsLogger
+  );
+  app.post(
     "/api/materials/:materialId/recommended-videos/view-all",
     [authJwt.verifyToken],
     controller.viewedAllRecommendedVideos,

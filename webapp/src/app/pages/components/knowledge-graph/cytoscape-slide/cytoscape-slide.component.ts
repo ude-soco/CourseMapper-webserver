@@ -16,12 +16,16 @@ import spread from 'cytoscape-spread';
 import avsdf from 'cytoscape-avsdf';
 import cxtmenu from 'cytoscape-cxtmenu';
 import popper from 'cytoscape-popper';
+import { Store } from '@ngrx/store';
 import { SlideConceptsService } from 'src/app/services/slide-concepts.service';
 import { ConceptStatusService } from 'src/app/services/concept-status.service';
 import { CallRecommendationsService } from 'src/app/services/call-recommendations.service';
 import { MessageService } from 'primeng/api';
 import { MaterialsRecommenderService } from 'src/app/services/materials-recommender.service';
+import { getCurrentMaterial } from '../../materials/state/materials.reducer';
+import { getCurrentPdfPage } from '../../annotations/pdf-annotation/state/annotation.reducer';
 import { Subscription } from 'rxjs';
+import { State } from 'src/app/state/app.reducer';
 import * as $ from 'jquery';
 
 cytoscape.use(cxtmenu);
@@ -55,7 +59,9 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
   allConceptsObj = []; //all concepts of the current slide
   disableRecommendationsButton = true;
   reqDataForm: any;
-
+  currentMaterial: any;
+  currentPdfPage: number;
+  subscriptions: Subscription = new Subscription(); // Manage subscriptions
   public cy: any;
 
   public selectedTriggered: boolean = false;
@@ -87,7 +93,8 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
     private statusService: ConceptStatusService,
     private callRecommendationsService: CallRecommendationsService,
     private messageService: MessageService,
-    private materialsRecommenderService: MaterialsRecommenderService
+    private materialsRecommenderService: MaterialsRecommenderService,
+    private store: Store<State>
   ) {
     this.layout = {
       name: 'spread',
@@ -210,13 +217,28 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
       .subscribe(async () => {
         this.reqDataForm = this.callRecommendationsService.reqDataForm;
         console.log(this.reqDataForm);
-        this.materialsRecommenderService.getRecommendedConcepts(
-          this.reqDataForm
-        ).subscribe((result) => {
-          console.log(result)
-        })
+        this.materialsRecommenderService
+          .getRecommendedConcepts(this.reqDataForm)
+          .subscribe((result) => {
+            console.log(result);
+          });
         //receive recommended concepts
       });
+    // Subscribe to get material Data from store
+    this.subscriptions.add(
+      this.store.select(getCurrentMaterial).subscribe((material) => {
+        if (material) {
+          this.currentMaterial = material;
+        }
+      })
+    );
+
+    // Subscribe to get the current PDF page from store
+    this.subscriptions.add(
+      this.store.select(getCurrentPdfPage).subscribe((page) => {
+        this.currentPdfPage = page;
+      })
+    );
   }
 
   public showAllStyle: cytoscape.Stylesheet[] = [
@@ -339,11 +361,11 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
       this.init();
     }
   }
-  ngOnDestroy(){
-    this.moreThanFive= false;
-    this.showMoreActivated= false;
-    this.showLessActivated= false;
-    this.chosenElements= false;
+  ngOnDestroy() {
+    this.moreThanFive = false;
+    this.showMoreActivated = false;
+    this.showLessActivated = false;
+    this.chosenElements = false;
   }
   init() {
     setTimeout(() => {
@@ -583,6 +605,13 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
         this.render();
       });
     }
+    const payload = {
+      materialId: this.currentMaterial._id,
+      courseId: this.currentMaterial.courseId,
+      currentPage: this.currentPdfPage,
+      mainConcepts: this._elements, // Include main concepts
+    };
+    this.slideConceptservice.logViewMoreConcepts(payload).subscribe();
   }
   showLessElements() {
     let cy_container = this.renderer.selectRootElement('#cySlide');
@@ -604,5 +633,12 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
         this.render();
       });
     }
+    const payload = {
+      materialId: this.currentMaterial._id,
+      courseId: this.currentMaterial.courseId,
+      currentPage: this.currentPdfPage,
+      mainConcepts: this._elements, // Include main concepts
+    };
+    this.slideConceptservice.logViewLessConcepts(payload).subscribe();
   }
 }

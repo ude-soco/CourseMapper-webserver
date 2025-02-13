@@ -124,4 +124,16 @@ export class SlideConceptsService {
       data
     );
   }
+  logViewMoreConcepts(data: any): Observable<any> {
+    return this.http.post<any>(
+      `${this.apiURL}/courses/${data.courseId}/materials/${data.materialId}/main-concepts/log-view-more`,
+      data
+    );
+  }
+  logViewLessConcepts(data: any): Observable<any> {
+    return this.http.post<any>(
+      `${this.apiURL}/courses/${data.courseId}/materials/${data.materialId}/main-concepts/log-view-less`,
+      data
+    );
+  }
 }
