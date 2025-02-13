@@ -156,4 +156,10 @@ export class SlideConceptsService {
       data
     );
   }
+  logViewExplanation(data: any): Observable<any> {
+    return this.http.post<any>(
+      `${this.apiURL}/courses/${data.courseId}/materials/${data.materialId}/concepts/${data.node_id}/view-explanation`,
+      data
+    );
+  }
 }

@@ -134,6 +134,12 @@ module.exports = function (app) {
     logger.viewedConceptLogger
   );
   app.post(
+    "/api/courses/:courseId/materials/:materialId/concepts/:conceptId/view-explanation",
+    [authJwt.verifyToken],
+    controller.viewedExplanationConcept,
+    logger.viewedExplanationConceptLogger
+  );
+  app.post(
     "/api/materials/:materialId/recommended-videos/view-all",
     [authJwt.verifyToken],
     controller.viewedAllRecommendedVideos,

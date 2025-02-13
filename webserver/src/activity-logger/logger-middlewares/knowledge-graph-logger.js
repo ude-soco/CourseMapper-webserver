@@ -181,6 +181,34 @@ export const viewedConceptLogger = async (req, res) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
+export const viewedExplanationConceptLogger = async (req, res) => {
+  try {
+    let activity;
+
+    if (req.locals.key === "V") {
+      activity =
+        recommendedConceptsActivityGenerator.generateViewedVisualExplanationConcept(
+          req
+        );
+    } else if (req.locals.key === "T") {
+      activity =
+        recommendedConceptsActivityGenerator.generateViewedTextualExplanationConcept(
+          req
+        );
+    } else {
+      return res
+        .status(400)
+        .json({ error: "Invalid explanation type key", key: req.locals.key });
+    }
+
+    await activityController.createActivity(activity);
+    res.status(200).json({
+      message: "Activity logged successfully",
+    });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
+  }
+};
 export const viewedAllRecommendedVideosLogger = async (req, res) => {
   try {
     await activityController.createActivity(

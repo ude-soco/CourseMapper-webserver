@@ -79,3 +79,79 @@ export const generateViewedAllRecommendedConcepts = (req) => {
     context: createContext(),
   };
 };
+export const generateViewedTextualExplanationConcept = (req) => {
+  const metadata = createMetadata();
+  const material = req.locals.material;
+  const node_id = req.locals.node_id;
+  const materialPage = req.locals.materialPage;
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
+    object: {
+      objectType: "Activity",
+      id: `${DOMAIN}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/concept/${node_id}/textual-explanation`,
+      definition: {
+        type: `${DOMAIN}/schema/1.0/explanation`,
+        name: {
+          [config.language]: "Textual explanation",
+        },
+        extensions: {
+          [`${DOMAIN}/extensions/textual-explanation-concept`]: {
+            node_id: req.locals.node_id,
+            key: req.locals.key,
+            node_cid: req.locals.node_cid,
+            node_name: req.locals.node_name,
+            node_type: req.locals.node_type,
+            node_abstract: req.locals.node_abstract,
+            node_reason: req.locals.node_reason,
+            materialId: material._id,
+            channelId: material.channelId,
+            topicId: material.topicId,
+            courseId: material.courseId,
+            materialPage: materialPage,
+          },
+        },
+      },
+    },
+    context: createContext(),
+  };
+};
+export const generateViewedVisualExplanationConcept = (req) => {
+  const metadata = createMetadata();
+  const material = req.locals.material;
+  const node_id = req.locals.node_id;
+  const materialPage = req.locals.materialPage;
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
+    object: {
+      objectType: "Activity",
+      id: `${DOMAIN}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/concept/${node_id}/visual-explanation`,
+      definition: {
+        type: `${DOMAIN}/schema/1.0/explanation`,
+        name: {
+          [config.language]: "Visual explanation",
+        },
+        extensions: {
+          [`${DOMAIN}/extensions/visual-explanation-concept`]: {
+            node_id: req.locals.node_id,
+            key: req.locals.key,
+            node_cid: req.locals.node_cid,
+            node_name: req.locals.node_name,
+            node_type: req.locals.node_type,
+            node_abstract: req.locals.node_abstract,
+            node_roads: req.locals.node_roads,
+            materialId: material._id,
+            channelId: material.channelId,
+            topicId: material.topicId,
+            courseId: material.courseId,
+            materialPage: materialPage,
+          },
+        },
+      },
+    },
+    context: createContext(),
+  };
+};
