@@ -139,6 +139,35 @@ module.exports = function (app) {
     controller.viewedExplanationConcept,
     logger.viewedExplanationConceptLogger
   );
+  // This endpoint is for logging the activity from the recommended concepts part
+  app.post(
+    "/api/courses/:courseId/materials/:materialId/recommended-concepts/:conceptId/view-full-wiki",
+    [authJwt.verifyToken],
+    controller.viewedFullArticleRecommendedConcept,
+    logger.viewedFullArticleRecommendedConceptLogger
+  );
+  // This endpoint is for logging the activity from the main concepts part
+  app.post(
+    "/api/courses/:courseId/materials/:materialId/main-concepts/:conceptId/view-full-wiki",
+    [authJwt.verifyToken],
+    controller.viewedFullArticleMainConcept,
+    logger.viewedFullArticleMainConceptLogger
+  );
+  // This endpoint is for logging the activity from the Material Kg
+  app.post(
+    "/api/courses/:courseId/materials/:materialId/concepts/:conceptId/MKG/view-full-wiki",
+    [authJwt.verifyToken],
+    controller.viewedFullArticleMKG,
+    logger.viewedFullArticleMKGLogger
+  );
+  // This endpoint is for logging the activity from the Course Kg
+  app.post(
+    "/api/courses/:courseId/concepts/:conceptId/CKG/view-full-wiki",
+    [authJwt.verifyToken],
+    controller.viewedFullArticleCKG,
+    logger.viewedFullArticleCKGLogger
+  );
+
   app.post(
     "/api/materials/:materialId/recommended-videos/view-all",
     [authJwt.verifyToken],

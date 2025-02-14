@@ -162,4 +162,16 @@ export class SlideConceptsService {
       data
     );
   }
+  logViewFullWikiArticle(data: any): Observable<any> {
+    return this.http.post<any>(
+      `${this.apiURL}/courses/${data.courseId}/materials/${data.materialId}/recommended-concepts/${data.node_id}/view-full-wiki`,
+      data
+    );
+  }
+  logViewFullArticleMainConcept(data: any): Observable<any> {
+    return this.http.post<any>(
+      `${this.apiURL}/courses/${data.courseId}/materials/${data.materialId}/main-concepts/${data.node_id}/view-full-wiki`,
+      data
+    );
+  }
 }

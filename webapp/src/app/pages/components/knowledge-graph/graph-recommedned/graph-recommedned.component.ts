@@ -306,7 +306,22 @@ export class GraphRecommednedComponent {
   goToWikipediaPage(wikipedia: string) {
     if (wikipedia != '') {
       window.open(wikipedia);
+      this.logViewFullWikiArticle(); // This is responsible for logging the activity from the recommended concepts part.
     }
+  }
+  logViewFullWikiArticle() {
+    const payload = {
+      node_id: this.node_id,
+      node_cid: this.node_cid,
+      node_name: this.node_name,
+      node_type: this.node_type,
+      node_abstract: this.node_abstract,
+      materialId: this.currentMaterial._id,
+      courseId: this.currentMaterial.courseId,
+      currentPage: this.currentPdfPage,
+    };
+
+    this.slideConceptservice.logViewFullWikiArticle(payload).subscribe();
   }
   closeAbstractPanel() {
     this.node_name = undefined;

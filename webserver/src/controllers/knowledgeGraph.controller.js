@@ -6,6 +6,7 @@ const db = require("../models");
 const User = db.user;
 const Role = db.role;
 const Material = db.material;
+const Course = db.course;
 
 const neo4j = require("../graph/neo4j");
 const redis = require("../graph/redis");
@@ -736,6 +737,141 @@ export const viewedExplanationConcept = async (req, res, next) => {
 
   next();
 };
+export const viewedFullArticleRecommendedConcept = async (req, res, next) => {
+  const userId = req.userId;
+  const materialId = req.body.materialId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    materialPage: req.body.currentPage,
+    node_id: req.body.node_id,
+    node_cid: req.body.node_cid,
+    node_name: req.body.node_name,
+    node_type: req.body.node_type,
+    node_abstract: req.body.node_abstract,
+  };
+
+  next();
+};
+export const viewedFullArticleMainConcept = async (req, res, next) => {
+  const userId = req.userId;
+  const materialId = req.body.materialId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    materialPage: req.body.currentPage,
+    node_id: req.body.node_id,
+    node_cid: req.body.node_cid,
+    node_name: req.body.node_name,
+    node_type: req.body.node_type,
+    node_abstract: req.body.node_abstract,
+  };
+
+  next();
+};
+export const viewedFullArticleMKG = async (req, res, next) => {
+  const userId = req.userId;
+  const materialId = req.body.materialId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    node_id: req.body.node_id,
+    node_cid: req.body.node_cid,
+    node_name: req.body.node_name,
+    node_type: req.body.node_type,
+    node_abstract: req.body.node_abstract,
+  };
+
+  next();
+};
+export const viewedFullArticleCKG = async (req, res, next) => {
+  const userId = req.userId;
+  const courseId = req.body.courseId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  let foundCourse;
+  try {
+    foundCourse = await Course.findById(courseId);
+    if (!foundCourse) {
+      return res.status(404).send({
+        error: `Course with id ${courseId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  req.locals = {
+    user: foundUser,
+    course: foundCourse,
+    node_id: req.body.node_id,
+    node_cid: req.body.node_cid,
+    node_name: req.body.node_name,
+    node_type: req.body.node_type,
+    node_abstract: req.body.node_abstract,
+  };
+
+  next();
+};
+
 export const viewedAllRecommendedVideos = async (req, res, next) => {
   const userId = req.userId;
   const materialId = req.body.materialId;

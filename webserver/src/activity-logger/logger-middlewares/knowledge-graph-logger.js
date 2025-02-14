@@ -1,6 +1,9 @@
 const recommendedMaterialsActivityGenerator = require("../generator/knowledge-graph/slide-kg/slide-kg-recommended-materials-generator");
 const mainConceptsActivityGenerator = require("../generator/knowledge-graph/slide-kg/slide-kg-main-concepts-generator");
 const recommendedConceptsActivityGenerator = require("../generator/knowledge-graph/slide-kg/slide-kg-recommended-concepts-generator");
+const materialKGActivityGenerator = require("../generator/knowledge-graph/material-kg/material-kg-generator");
+const courseKGActivityGenerator = require("../generator/knowledge-graph/course-kg/course-kg-generator");
+
 const activityController = require("../controller/activity-controller");
 
 export const viewFullWikipediaArticleLogger = async (req, res) => {
@@ -202,6 +205,56 @@ export const viewedExplanationConceptLogger = async (req, res) => {
     }
 
     await activityController.createActivity(activity);
+    res.status(200).json({
+      message: "Activity logged successfully",
+    });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
+  }
+};
+export const viewedFullArticleRecommendedConceptLogger = async (req, res) => {
+  try {
+    await activityController.createActivity(
+      recommendedConceptsActivityGenerator.generateViewedFullArticleRecommendedConcept(
+        req
+      )
+    );
+    res.status(200).json({
+      message: "Activity logged successfully",
+    });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
+  }
+};
+export const viewedFullArticleMainConceptLogger = async (req, res) => {
+  try {
+    await activityController.createActivity(
+      mainConceptsActivityGenerator.generateViewedFullArticleMainConcept(req)
+    );
+    res.status(200).json({
+      message: "Activity logged successfully",
+    });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
+  }
+};
+export const viewedFullArticleMKGLogger = async (req, res) => {
+  try {
+    await activityController.createActivity(
+      materialKGActivityGenerator.generateViewedFullArticleMKG(req)
+    );
+    res.status(200).json({
+      message: "Activity logged successfully",
+    });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
+  }
+};
+export const viewedFullArticleCKGLogger = async (req, res) => {
+  try {
+    await activityController.createActivity(
+      courseKGActivityGenerator.generateViewedFullArticleCKG(req)
+    );
     res.status(200).json({
       message: "Activity logged successfully",
     });

@@ -7,7 +7,8 @@ import { SlideConceptsService } from 'src/app/services/slide-concepts.service';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/state/app.reducer';
 import { getCurrentMaterial } from '../../materials/state/materials.reducer';
-
+import { getCurrentPdfPage } from '../../annotations/pdf-annotation/state/annotation.reducer';
+import { getCurrentCourseId } from 'src/app/pages/courses/state/course.reducer';
 @Component({
   selector: 'app-graph',
   templateUrl: './graph.component.html',
@@ -52,12 +53,16 @@ export class GraphComponent {
   understoodConceptsSubscription: Subscription;
   truncatedAbstract: string;
 
+  currentMaterial: any;
+  currentPdfPage: number;
+  courseId: string;
+  subscriptions: Subscription = new Subscription(); // Manage subscriptions
   constructor(
     private messageService: MessageService, // show toast msgs
     private slideConceptservice: SlideConceptsService, //Change concepts' status on slide_KG [new, understood, did not understand]
     private statusServie: ConceptStatusService, // informs this component when a status has been changed to show a toast msg in case the abstract covers the selected concept
     private conceptMapService: ConceptMapService, // remove concept
-    private store: Store<State>,
+    private store: Store<State>
   ) {
     this.newConceptsSubscription = slideConceptservice.newConcepts.subscribe(
       (res) => {
@@ -72,6 +77,26 @@ export class GraphComponent {
       slideConceptservice.understoodConcepts.subscribe((res) => {
         this.understoodConceptsObj = res;
       });
+
+    // Subscribe to get material Data from store
+    this.subscriptions.add(
+      this.store.select(getCurrentMaterial).subscribe((material) => {
+        if (material) {
+          this.currentMaterial = material;
+        }
+      })
+    );
+
+    // Subscribe to get the current PDF page from store
+    this.subscriptions.add(
+      this.store.select(getCurrentPdfPage).subscribe((page) => {
+        this.currentPdfPage = page;
+      })
+    );
+    // Subscribe to get the current courseId
+    this.store.select(getCurrentCourseId).subscribe((courseId) => {
+      this.courseId = courseId;
+    });
   }
   ngOnInit(): void {}
 
@@ -207,6 +232,32 @@ export class GraphComponent {
   }
 
   goToWikipediaPage(wikipedia: string) {
+    const data = {
+      node_id: this.node_id,
+      node_cid: this.node_cid,
+      node_name: this.node_name,
+      node_type: this.node_type,
+      node_abstract: this.node_abstract,
+      courseId: this.courseId,
+    };
+    if (this.showCourseKg) {
+      this.conceptMapService.logViewFullArticleCKG(data).subscribe(); // This is responsible for logging the activity from Course-kg.
+    } else if (this.showMaterialKg) {
+      const payload = {
+        ...data,
+        materialId: this.currentMaterial._id,
+      };
+      this.conceptMapService.logViewFullArticleMKG(payload).subscribe(); // This is responsible for logging the activity from material-kg.
+    } else if (this.slideKnowledgeGraph) {
+      const payload = {
+        ...data,
+        materialId: this.currentMaterial._id,
+        currentPage: this.currentPdfPage,
+      };
+      this.slideConceptservice
+        .logViewFullArticleMainConcept(payload)
+        .subscribe(); // This is responsible for logging the activity from slide-kg & main concepts part.
+    }
     if (wikipedia != '') {
       window.open(wikipedia);
     }
