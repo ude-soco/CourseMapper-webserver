@@ -305,3 +305,17 @@ export const viewedAllRecommendedConceptsLogger = async (req, res) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
+export const AccessCourseKGLogger = async (req, res) => {
+  try {
+    if (req.locals.materials.length === 0) {
+      return res.status(404).send();
+    } else {
+      await activityController.createActivity(
+        courseKGActivityGenerator.generateAccessCourseKG(req)
+      );
+      res.status(200).send(req.locals.records);
+    }
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
+  }
+};

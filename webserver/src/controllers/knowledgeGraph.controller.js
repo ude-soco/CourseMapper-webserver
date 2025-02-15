@@ -158,23 +158,66 @@ export const getMaterialConceptIds = async (req, res) => {
   }
 };
 
-export const getHigherLevelsNodesAndEdges = async (req, res) => {
+export const getHigherLevelsNodesAndEdges = async (req, res, next) => {
   let materialIds = req.query.material_ids;
+  const userId = req.userId;
+  let materials;
+  let records;
+  let foundUser;
+  let foundCourse;
+  let foundMaterial;
+  let courseId;
+
   if (materialIds.constructor !== Array) {
     materialIds = [materialIds];
   }
 
   try {
-    const materials = await neo4j.checkMaterials(materialIds);
-    if (materials.length === 0) {
-      return res.status(404).send();
-    }
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
 
-    const records = await neo4j.getHigherLevelsNodesAndEdges(materialIds);
-    return res.status(200).send(records);
+  // Material Ids could be an array of materials
+  if (materialIds.length !== 0) {
+    try {
+      foundMaterial = await Material.findById(materialIds[0]); // I just need a material Object to extract the courseId
+      if (!foundMaterial) {
+        return res.status(404).send({
+          error: `Material with id ${materialIds[0]} doesn't exist!`,
+        });
+      }
+    } catch (err) {
+      return res.status(500).send({ error: "Error finding material" });
+    }
+    courseId = foundMaterial.courseId;
+    try {
+      foundCourse = await Course.findById(courseId);
+      if (!foundCourse) {
+        return res.status(404).send({
+          error: `Course with id ${courseId} doesn't exist!`,
+        });
+      }
+    } catch (err) {
+      return res.status(500).send({ error: err });
+    }
+  }
+
+  try {
+    materials = await neo4j.checkMaterials(materialIds);
+    records = await neo4j.getHigherLevelsNodesAndEdges(materialIds);
+    //return res.status(200).send(records);
   } catch (err) {
     return res.status(500).send({ error: err.message });
   }
+  req.locals = {
+    user: foundUser,
+    course: foundCourse,
+    materials: materials,
+    records: records,
+  };
+
+  next();
 };
 
 export const setRating = async (req, res) => {

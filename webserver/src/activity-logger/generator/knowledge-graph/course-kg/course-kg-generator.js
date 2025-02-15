@@ -40,3 +40,38 @@ export const generateViewedFullArticleCKG = (req) => {
     context: createContext(),
   };
 };
+export const generateAccessCourseKG = (req) => {
+  const metadata = createMetadata();
+  const course = req.locals.course;
+  const concepts = req.locals.records.nodes;
+
+  const formattedConcepts = concepts.map((concept) => ({
+    id: concept.id,
+    name: concept.name,
+  }));
+  console.log("formatted concepts: ", formattedConcepts);
+
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://activitystrea.ms/schema/1.0/access", "accessed"),
+    object: {
+      objectType: "Activity",
+      id: `${DOMAIN}/activity/course/${course._id}/course-knowledge-graph`,
+      definition: {
+        type: `${DOMAIN}/schema/1.0/knowledge-graph`,
+        name: {
+          [config.language]: "Course Knowledge Graph",
+        },
+        extensions: {
+          [`${DOMAIN}/extensions/course-kg`]: {
+            courseId: course._id,
+            courseName: course.name,
+            concepts: formattedConcepts,
+          },
+        },
+      },
+    },
+    context: createContext(),
+  };
+};

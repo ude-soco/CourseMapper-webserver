@@ -53,7 +53,8 @@ module.exports = function (app) {
   app.get(
     "/api/knowledge-graph/get-higher-levels-nodes-and-edges",
     [authJwt.verifyToken],
-    controller.getHigherLevelsNodesAndEdges
+    controller.getHigherLevelsNodesAndEdges,
+    logger.AccessCourseKGLogger
   );
 
   app.post(
@@ -242,6 +243,8 @@ module.exports = function (app) {
     controller.collapsedArticleAbstract,
     logger.collapsedArticleAbstractLogger
   );
+
+  // This endpoint is for the recommended Articles part.
   app.post(
     "/api/materials/:materialId/recommended-articles/:title/log",
     [authJwt.verifyToken],
