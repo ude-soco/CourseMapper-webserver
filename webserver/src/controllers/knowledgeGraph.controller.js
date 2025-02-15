@@ -100,18 +100,46 @@ export const checkMaterial = async (req, res) => {
   }
 };
 
-export const getMaterial = async (req, res) => {
+export const getMaterial = async (req, res, next) => {
   const materialId = req.params.materialId;
+  const userId = req.userId;
+  let records;
+  let foundUser;
+  let foundMaterial;
+
+  if (!(await isAuthorized(req))) {
+    return res.status(403).send({ error: "Unauthorized" });
+  }
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
 
   try {
-    if (!(await isAuthorized(req))) {
-      return res.status(403).send({ error: "Unauthorized" });
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
     }
-    const records = await neo4j.getMaterial(materialId);
-    return res.status(200).send({ records });
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
+  try {
+    records = await neo4j.getMaterial(materialId);
+    // return res.status(200).send({ records });
   } catch (err) {
     return res.status(500).send({ error: err.message });
   }
+
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    records: records,
+  };
+  next();
 };
 
 export const deleteMaterial = async (req, res, next) => {

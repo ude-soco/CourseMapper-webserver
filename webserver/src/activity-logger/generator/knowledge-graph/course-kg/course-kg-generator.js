@@ -49,7 +49,6 @@ export const generateAccessCourseKG = (req) => {
     id: concept.id,
     name: concept.name,
   }));
-  console.log("formatted concepts: ", formattedConcepts);
 
   return {
     ...metadata,

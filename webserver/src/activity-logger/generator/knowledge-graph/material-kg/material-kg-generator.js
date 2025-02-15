@@ -42,3 +42,42 @@ export const generateViewedFullArticleMKG = (req) => {
     context: createContext(),
   };
 };
+export const generateAccessMaterialKG = (req) => {
+  const metadata = createMetadata();
+  const material = req.locals.material;
+  const concepts = req.locals.records;
+  console.log("Inside Generator.");
+  // Filter only "main_concept" types
+  const formattedConcepts = concepts
+    .filter((concept) => concept.type === "main_concept")
+    .map((concept) => ({
+      id: concept.id,
+      name: concept.name,
+    }));
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://activitystrea.ms/schema/1.0/access", "accessed"),
+    object: {
+      objectType: "Activity",
+      id: `${DOMAIN}/activity/course/${material.courseId}/material/${material._id}/material-knowledge-graph`,
+      definition: {
+        type: `${DOMAIN}/schema/1.0/knowledge-graph`,
+        name: {
+          [config.language]: "Material Knowledge Graph",
+        },
+        extensions: {
+          [`${DOMAIN}/extensions/material-kg`]: {
+            courseId: material.courseId,
+            topic: material.topicId,
+            channel: material.channelId,
+            materialId: material._id,
+            materialName: material.name,
+            concepts: formattedConcepts,
+          },
+        },
+      },
+    },
+    context: createContext(),
+  };
+};

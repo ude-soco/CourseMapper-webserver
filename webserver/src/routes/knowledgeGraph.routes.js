@@ -29,7 +29,8 @@ module.exports = function (app) {
   app.get(
     "/api/knowledge-graph/get-material/:materialId",
     [authJwt.verifyToken],
-    controller.getMaterial
+    controller.getMaterial,
+    logger.AccessMaterialKGLogger
   );
 
   app.get(
