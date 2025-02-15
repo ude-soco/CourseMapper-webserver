@@ -46,7 +46,7 @@ export const generateAccessMaterialKG = (req) => {
   const metadata = createMetadata();
   const material = req.locals.material;
   const concepts = req.locals.records;
-  console.log("Inside Generator.");
+
   // Filter only "main_concept" types
   const formattedConcepts = concepts
     .filter((concept) => concept.type === "main_concept")
@@ -69,8 +69,8 @@ export const generateAccessMaterialKG = (req) => {
         extensions: {
           [`${DOMAIN}/extensions/material-kg`]: {
             courseId: material.courseId,
-            topic: material.topicId,
-            channel: material.channelId,
+            topicId: material.topicId,
+            channelId: material.channelId,
             materialId: material._id,
             materialName: material.name,
             concepts: formattedConcepts,
