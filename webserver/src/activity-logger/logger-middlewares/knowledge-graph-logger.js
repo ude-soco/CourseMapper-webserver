@@ -330,3 +330,14 @@ export const AccessMaterialKGLogger = async (req, res) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
+export const accessSlideKGLogger = async (req, res) => {
+  try {
+    await activityController.createActivity(
+      mainConceptsActivityGenerator.generateAccessSlideKG(req)
+    );
+    let records = req.locals.records;
+    res.status(200).send({ records });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
+  }
+};

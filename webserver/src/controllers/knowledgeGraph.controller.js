@@ -75,15 +75,44 @@ export const checkSlide = async (req, res) => {
   }
 };
 
-export const getSlide = async (req, res) => {
+export const getSlide = async (req, res, next) => {
   const slideId = req.params.slideId;
+  const userId = req.userId;
+  const materialId = slideId.split("_slide_")[0]; // Extract materialId
+  let materialPage = slideId.split("_slide_")[1]; // Extract materialPage
+  let foundUser;
+  let foundMaterial;
+  let records;
 
   try {
-    const records = await neo4j.getSlide(slideId);
-    return res.status(200).send({ records });
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
+  try {
+    records = await neo4j.getSlide(slideId);
+    // return res.status(200).send({ records });
   } catch (err) {
     return res.status(500).send({ error: err.message });
   }
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    materialPage: materialPage,
+    records: records,
+  };
+  next();
 };
 
 export const checkMaterial = async (req, res) => {

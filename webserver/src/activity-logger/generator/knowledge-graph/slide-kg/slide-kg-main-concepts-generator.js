@@ -36,7 +36,44 @@ const createChannelObject = (req) => {
     },
   };
 };
+export const generateAccessSlideKG = (req) => {
+  const metadata = createMetadata();
+  const material = req.locals.material;
+  const materialPage = req.locals.materialPage;
+  const concepts = req.locals.records;
 
+  const formattedConcepts = concepts.map((concept) => ({
+    id: concept.id,
+    name: concept.name,
+  }));
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://activitystrea.ms/schema/1.0/access", "accessed"),
+    object: {
+      objectType: "Activity",
+      id: `${DOMAIN}/activity/course/${material.courseId}/material/${material._id}/materialPage/${materialPage}/slide-knowledge-graph`,
+      definition: {
+        type: `${DOMAIN}/schema/1.0/knowledge-graph`,
+        name: {
+          [config.language]: "Slide Knowledge Graph",
+        },
+        extensions: {
+          [`${DOMAIN}/extensions/slide-kg`]: {
+            courseId: material.courseId,
+            topicId: material.topicId,
+            channelId: material.channelId,
+            materialId: material._id,
+            materialName: material.name,
+            materialPage: materialPage,
+            concepts: formattedConcepts,
+          },
+        },
+      },
+    },
+    context: createContext(),
+  };
+};
 export const generateViewedAllMainConcepts = (req) => {
   const metadata = createMetadata();
   const material = req.locals.material;
