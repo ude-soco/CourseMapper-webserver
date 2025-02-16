@@ -132,7 +132,7 @@ export const generateViewedMoreConcepts = (req) => {
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
+    verb: createVerb(`${DOMAIN}/verb/view-more`, "viewed more"),
     object: {
       objectType: "Activity",
       id: `${DOMAIN}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/more-main-concepts`,
@@ -170,7 +170,7 @@ export const generateViewedLessConcepts = (req) => {
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
+    verb: createVerb(`${DOMAIN}/verb/view-less`, "viewed less"),
     object: {
       objectType: "Activity",
       id: `${DOMAIN}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/more-main-concepts`,
