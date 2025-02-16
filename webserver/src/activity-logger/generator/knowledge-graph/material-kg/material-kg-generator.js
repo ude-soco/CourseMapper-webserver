@@ -9,6 +9,41 @@ import {
 
 let DOMAIN = "http://www.CourseMapper.de"; // TODO: Hardcoded due to frontend implementation
 
+export const generateViewedConcept = (req) => {
+  const metadata = createMetadata();
+  const material = req.locals.material;
+  const concept = req.locals.concept;
+
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
+    object: {
+      objectType: config.activity,
+      id: `${DOMAIN}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/concept/${concept.id}`,
+      definition: {
+        type: `${DOMAIN}/schema/1.0/${concept.type}`, //Type could be main concept/ related concept/ category
+        name: {
+          [config.language]: concept.name,
+        },
+        description: {
+          [config.language]: concept.abstract,
+        },
+        extensions: {
+          [`${DOMAIN}/extensions/${concept.type}`]: {
+            conceptId: concept.id,
+            concept_wiki_url: concept.wikipedia,
+            materialId: material._id,
+            channelId: material.channelId,
+            topicId: material.topicId,
+            courseId: material.courseId,
+          },
+        },
+      },
+    },
+    context: createContext(),
+  };
+};
 export const generateViewedFullArticleMKG = (req) => {
   const metadata = createMetadata();
   const material = req.locals.material;

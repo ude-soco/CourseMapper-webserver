@@ -137,6 +137,19 @@ module.exports = function (app) {
     logger.viewedConceptLogger
   );
   app.post(
+    "/api/courses/:courseId/CKG/concepts/:conceptId/log-view",
+    [authJwt.verifyToken],
+    controller.viewedConceptCKG,
+    logger.viewedConceptCKGLogger
+  );
+  app.post(
+    "/api/courses/:courseId/materials/:materialId/MKG/concepts/:conceptId/log-view",
+    [authJwt.verifyToken],
+    controller.viewedConceptMKG,
+    logger.viewedConceptMKGLogger
+  );
+
+  app.post(
     "/api/courses/:courseId/materials/:materialId/concepts/:conceptId/view-explanation",
     [authJwt.verifyToken],
     controller.viewedExplanationConcept,

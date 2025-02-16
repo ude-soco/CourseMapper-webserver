@@ -16,7 +16,12 @@ import avsdf from 'cytoscape-avsdf';
 import cxtmenu from 'cytoscape-cxtmenu';
 import popper from 'cytoscape-popper';
 import { ConceptStatusService } from 'src/app/services/concept-status.service';
+import { ConceptMapService } from 'src/app/services/concept-map-service.service';
+import { getCurrentMaterial } from '../../materials/state/materials.reducer';
+import { getCurrentCourseId } from 'src/app/pages/courses/state/course.reducer';
 import { Subscription } from 'rxjs';
+import { State } from 'src/app/state/app.reducer';
+import { Store } from '@ngrx/store';
 
 cytoscape.use(cxtmenu);
 cytoscape.use(dagre);
@@ -55,18 +60,33 @@ export class CytoscapeComponent {
   public selectedTriggered: boolean = false;
 
   public _elements: any;
-
+  currentMaterial: any;
+  courseId: string;
   annotationsNodes: any[];
   propertiesNodes: any[];
   categoriesNodes: any[];
   nodeSelected: boolean;
 
   abstractStatusSubscription: Subscription;
-
+  subscriptions: Subscription = new Subscription(); // Manage subscriptions
   constructor(
     private renderer: Renderer2,
-    private abstractStatus: ConceptStatusService
+    private abstractStatus: ConceptStatusService,
+    private conceptMapService: ConceptMapService,
+    private store: Store<State>
   ) {
+    // Subscribe to get material Data from store
+    this.subscriptions.add(
+      this.store.select(getCurrentMaterial).subscribe((material) => {
+        if (material) {
+          this.currentMaterial = material;
+        }
+      })
+    );
+    // Subscribe to get the current courseId
+    this.store.select(getCurrentCourseId).subscribe((courseId) => {
+      this.courseId = courseId;
+    });
     this.abstractStatusSubscription = abstractStatus
       .abstractStatusObserver()
       .subscribe(() => {
@@ -119,7 +139,6 @@ export class CytoscapeComponent {
         'text-valign': 'center',
         'text-outline-width': 0.2,
         'background-color': function (elm) {
-
           if (elm.data().type === 'related_concept') return '#ce6f34';
           else if (elm.data().type === 'category') return '#FBC02D';
           else if (elm.data().type === 'course') return '#689F38';
@@ -222,7 +241,7 @@ export class CytoscapeComponent {
     zIndex: 9999, // the z-index of the ui div
     atMouse: false, // draw menu at mouse position
     outsideMenuCancel: false, // if set to a number, this will cancel the command if the pointer is released outside of the spotlight, padded by the number given
-  }
+  };
 
   ngOnInit() {}
 
@@ -260,7 +279,8 @@ export class CytoscapeComponent {
       return b.data.weight - a.data.weight;
     });
 
-    let topXNodes = this.topNConcepts !== 'All' ? nodes.slice(0, this.topNConcepts) : nodes;
+    let topXNodes =
+      this.topNConcepts !== 'All' ? nodes.slice(0, this.topNConcepts) : nodes;
     topXNodes = topXNodes.concat(this.propertiesNodes);
     topXNodes = topXNodes.concat(this.categoriesNodes);
     let filteredEdges = edges.filter(
@@ -320,13 +340,17 @@ export class CytoscapeComponent {
               .style('display', 'none');
           }
           let nodesToHide = nodes.filter(function (e: any) {
-            return e.data.type === 'related_concept' || e.data.type === 'category';
+            return (
+              e.data.type === 'related_concept' || e.data.type === 'category'
+            );
           });
           for (var i = 0; i < nodesToHide.length; i++) {
             this.cy.$(`#${nodesToHide[i].data.id}`).style('display', 'none');
           }
           for (var i = 0; i < this.annotationsNodes.length; i++) {
-            this.cy.$(`#${this.annotationsNodes[i].data.id}`).style('display', 'element');
+            this.cy
+              .$(`#${this.annotationsNodes[i].data.id}`)
+              .style('display', 'element');
           }
         });
       }
@@ -400,7 +424,6 @@ export class CytoscapeComponent {
       // document.getElementById('cy').style.height=575+'px'
     }
     this.nodeSelected = false;
-
     console.log(this.showCourseKg);
     console.log(this.showMaterialKg);
   }
@@ -459,6 +482,7 @@ export class CytoscapeComponent {
           }
         }
         this.selectedNodeEvent.emit(selectedNode);
+        this.logUserViewedConcept(selectedNode);
         selectedNode = undefined;
       });
     }
@@ -477,5 +501,24 @@ export class CytoscapeComponent {
       }
     }
     return all;
+  }
+  async logUserViewedConcept(selectedNode) {
+    try {
+      if (this.showCourseKg && !this.showMaterialKg) {
+        const payload = {
+          concept: selectedNode,
+          courseId: this.courseId,
+        };
+        this.conceptMapService.logViewConceptCKG(payload).subscribe();
+      } else if (this.showMaterialKg && !this.showCourseKg) {
+        const payload = {
+          concept: selectedNode,
+          materialId: this.currentMaterial._id,
+        };
+        this.conceptMapService.logViewConceptMKG(payload).subscribe();
+      }
+    } catch (error) {
+      console.error('Error logging activity:', error);
+    }
   }
 }

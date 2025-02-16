@@ -85,4 +85,16 @@ export class ConceptMapService {
       data
     );
   }
+  logViewConceptCKG(data: any): Observable<any> {
+    return this.http.post<any>(
+      `${this.apiURL}/courses/${data.courseId}/CKG/concepts/${data.concept.id}/log-view`,
+      data
+    );
+  }
+  logViewConceptMKG(data: any): Observable<any> {
+    return this.http.post<any>(
+      `${this.apiURL}/courses/${data.courseId}/materials/${data.materialId}/MKG/concepts/${data.concept.id}/log-view`,
+      data
+    );
+  }
 }

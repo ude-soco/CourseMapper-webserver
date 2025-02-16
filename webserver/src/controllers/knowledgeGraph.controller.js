@@ -800,6 +800,70 @@ export const viewedConcept = async (req, res, next) => {
 
   next();
 };
+export const viewedConceptCKG = async (req, res, next) => {
+  const userId = req.userId;
+  const concept = req.body.concept;
+  const courseId = req.body.courseId;
+  let foundUser;
+  let foundCourse;
+
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+
+  try {
+    foundCourse = await Course.findById(courseId);
+    if (!foundCourse) {
+      return res.status(404).send({
+        error: `Course with id ${courseId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  req.locals = {
+    user: foundUser,
+    course: foundCourse,
+    concept: concept,
+  };
+
+  next();
+};
+export const viewedConceptMKG = async (req, res, next) => {
+  const userId = req.userId;
+  const materialId = req.body.materialId;
+  const concept = req.body.concept;
+  let foundUser;
+  let foundMaterial;
+
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    concept: concept,
+  };
+
+  next();
+};
 export const viewedExplanationConcept = async (req, res, next) => {
   const userId = req.userId;
   const materialId = req.body.materialId;
