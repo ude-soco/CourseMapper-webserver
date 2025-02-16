@@ -386,6 +386,67 @@ export const addConcept = async (req, res) => {
   );
 };
 
+// export const publishConceptMap = async (req, res, next) => {
+//   const materialId = req.params.materialId;
+//   const userId = req.userId;
+//   let foundUser;
+//   let foundMaterial;
+//   let finalResult;
+//   try {
+//     foundUser = await findUserById(userId);
+//   } catch (err) {
+//     return handleError(res, err, "Error finding user");
+//   }
+
+//   try {
+//     foundMaterial = await Material.findById(materialId);
+//     if (!foundMaterial) {
+//       return res.status(404).send({
+//         error: `Material with id ${materialId} doesn't exist!`,
+//       });
+//     }
+//   } catch (err) {
+//     return res.status(500).send({ error: "Error finding material" });
+//   }
+
+//   // finalResult = await redis.addJob(
+//   //   "expand-material",
+//   //   {
+//   //     materialId,
+//   //   },
+//   //   undefined,
+//   //   (result) => {
+//   //     if (res.headersSent) {
+//   //       return;
+//   //     }
+//   //     if (result.error) {
+//   //       return res.status(500).send({ error: result });
+//   //     }
+
+//   //     //return res.status(200).send(result.result);
+//   //   }
+//   // );
+//   finalResult = await new Promise((resolve, reject) => {
+//     redis.addJob("expand-material", { materialId }, undefined, (result) => {
+//       if (result.error) {
+//         reject(result.error);
+//       } else {
+//         resolve(result.result);
+//       }
+//     });
+//   });
+
+//   console.log("Result: ", finalResult);
+//   console.log("Result1: ", finalResult.result);
+
+//   req.locals = {
+//     user: foundUser,
+//     course: foundMaterial,
+//     result: finalResult,
+//   };
+
+//   next();
+// };
 export const publishConceptMap = async (req, res) => {
   const materialId = req.params.materialId;
 

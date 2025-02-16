@@ -87,6 +87,7 @@ module.exports = function (app) {
     "/api/courses/:courseId/materials/:materialId/concept-map/publish",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.publishConceptMap
+    // logger.finalizeMaterialKGLogger
   );
 
   app.post(
