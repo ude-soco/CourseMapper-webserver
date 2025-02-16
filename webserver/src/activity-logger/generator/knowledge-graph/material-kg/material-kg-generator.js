@@ -122,20 +122,10 @@ export const generateFinalizeMaterialKG = (req) => {
   const material = req.locals.material;
   const result = req.locals.result;
 
-  // Filter only "main_concept" types
-  // const formattedConcepts = concepts
-  //   .filter((concept) => concept.type === "main_concept")
-  //   .map((concept) => ({
-  //     id: concept.id,
-  //     name: concept.name,
-  //   }));
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb(
-      "http://activitystrea.ms/schema/1.0/finalized",
-      "finalized"
-    ), // TODO FINALIZED
+    verb: createVerb(`${DOMAIN}/verb/finalize`, "finalized"),
     object: {
       objectType: "Activity",
       id: `${DOMAIN}/activity/course/${material.courseId}/material/${material._id}/material-knowledge-graph`,
@@ -151,7 +141,7 @@ export const generateFinalizeMaterialKG = (req) => {
             channelId: material.channelId,
             materialId: material._id,
             materialName: material.name,
-            // concepts: formattedConcepts,
+            // concepts: ,
           },
         },
       },
