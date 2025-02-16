@@ -2012,5 +2012,16 @@ export class ConceptMapComponent {
     }
   }
   async logUserViewedMainConcepts() {
+    try {
+      const reqDataMaterial1 =
+        await this.getRecommendedMaterialsPerSlideMaterial();
+      const payload = {
+        ...reqDataMaterial1, // Include informations of the material
+        mainConcepts: this.conceptMapData, // Include main concepts
+      };
+      this.slideConceptservice.logViewMainConcepts(payload).subscribe();
+    } catch (error) {
+      console.error('Error logging activity:', error);
+    }
   }
 }
