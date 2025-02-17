@@ -75,12 +75,14 @@ module.exports = function (app) {
     "/api/courses/:courseId/materials/:materialId/concept-map/concepts/:conceptId",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.deleteConcept
+    // logger.deleteConceptLogger
   );
 
   app.post(
     "/api/courses/:courseId/materials/:materialId/concept-map/concepts",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.addConcept
+    // logger.addConceptLogger
   );
 
   app.post(

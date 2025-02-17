@@ -9,6 +9,32 @@ import {
 
 let DOMAIN = "http://www.CourseMapper.de"; // TODO: Hardcoded due to frontend implementation
 
+const createConceptObject = (req) => {
+  const material = req.locals.material;
+  const conceptName = req.locals.conceptName;
+  const slides = req.locals.slides;
+  let origin = req.get("origin");
+  return {
+    objectType: config.activity,
+    id: `${DOMAIN}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/concept/${conceptName}`,
+    definition: {
+      type: `${DOMAIN}/schema/1.0/concept`,
+      name: {
+        [config.language]: conceptName,
+      },
+      extensions: {
+        [`${DOMAIN}/extensions/concept`]: {
+          conceptName: conceptName,
+          slides: slides,
+          materialId: material._id,
+          channelId: material.channelId,
+          topicId: material.topicId,
+          courseId: material.courseId,
+        },
+      },
+    },
+  };
+};
 export const generateViewedConcept = (req) => {
   const metadata = createMetadata();
   const material = req.locals.material;
@@ -41,6 +67,26 @@ export const generateViewedConcept = (req) => {
         },
       },
     },
+    context: createContext(),
+  };
+};
+export const generateAddConcept = (req) => {
+  const metadata = createMetadata();
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://activitystrea.ms/schema/1.0/add", "added"),
+    object: createConceptObject(req),
+    context: createContext(),
+  };
+};
+export const generateDeleteConcept = (req) => {
+  const metadata = createMetadata();
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://activitystrea.ms/schema/1.0/delete", "deleted"),
+    object: createConceptObject(req),
     context: createContext(),
   };
 };

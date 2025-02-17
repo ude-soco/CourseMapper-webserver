@@ -364,7 +364,6 @@ export const addConcept = async (req, res) => {
   const materialId = req.params.materialId;
   const conceptName = req.body.conceptName;
   const slides = req.body.slides;
-
   await redis.addJob(
     "modify-graph",
     {
@@ -384,6 +383,62 @@ export const addConcept = async (req, res) => {
       return res.status(200).send(result.result);
     }
   );
+};
+export const addConceptVersion2 = async (req, res, next) => {
+  const materialId = req.params.materialId;
+  const userId = req.userId;
+  const conceptName = req.body.conceptName;
+  const slides = req.body.slides;
+
+  let foundUser;
+  let foundMaterial;
+
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res
+        .status(404)
+        .send({ error: `Material with id ${materialId} doesn't exist!` });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
+  await redis.addJob(
+    "modify-graph",
+    {
+      action: "add-concept",
+      materialId,
+      conceptName,
+      slides,
+    },
+    undefined,
+    (result) => {
+      if (res.headersSent) {
+        return;
+      }
+      if (result.error) {
+        return res.status(500).send(result);
+      }
+      finalResult = result.result;
+      // return res.status(200).send(result.result);
+    }
+  );
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    result: finalResult, // is not defined!
+    slides: slides,
+    conceptName: conceptName,
+  };
+
+  next();
 };
 
 // export const publishConceptMap = async (req, res, next) => {
@@ -441,7 +496,7 @@ export const addConcept = async (req, res) => {
 
 //   req.locals = {
 //     user: foundUser,
-//     course: foundMaterial,
+//     material: foundMaterial,
 //     result: finalResult,
 //   };
 

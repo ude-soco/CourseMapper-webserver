@@ -399,3 +399,23 @@ export const unhidConceptsMKGLogger = async (req, res) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
+export const addConceptLogger = async (req, res) => {
+  try {
+    await activityController.createActivity(
+      materialKGActivityGenerator.generateAddConcept(req)
+    );
+    return res.status(200).send(req.locals.finalResult);
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
+  }
+};
+export const deleteConceptLogger = async (req, res) => {
+  try {
+    await activityController.createActivity(
+      materialKGActivityGenerator.generateDeleteConcept(req)
+    );
+    return res.status(200).send(req.locals.result);
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
+  }
+};
