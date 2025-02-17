@@ -267,4 +267,16 @@ module.exports = function (app) {
     controller.viewFullWikipediaArticle,
     logger.viewFullWikipediaArticleLogger
   );
+  app.post(
+    "/api/courses/:courseId/materials/:materialId/MKG/log-hide",
+    [authJwt.verifyToken],
+    controller.hidConceptsMKG,
+    logger.hidConceptsMKGLogger
+  );
+  app.post(
+    "/api/courses/:courseId/materials/:materialId/MKG/log-unhide",
+    [authJwt.verifyToken],
+    controller.unhidConceptsMKG,
+    logger.unhidConceptsMKGLogger
+  );
 };

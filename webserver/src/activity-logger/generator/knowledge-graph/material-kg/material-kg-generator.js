@@ -44,6 +44,66 @@ export const generateViewedConcept = (req) => {
     context: createContext(),
   };
 };
+export const generateHidConcepts = (req) => {
+  const metadata = createMetadata();
+  const material = req.locals.material;
+  const key = req.locals.key; // related_concept Or categories
+
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb(`${DOMAIN}/verb/hide`, "hid"),
+    object: {
+      objectType: config.activity,
+      id: `${DOMAIN}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/${key}`,
+      definition: {
+        type: `${DOMAIN}/schema/1.0/${key}`, //Type could be related concept/ category
+        name: {
+          [config.language]: `${key}`,
+        },
+        extensions: {
+          [`${DOMAIN}/extensions/${key}`]: {
+            materialId: material._id,
+            channelId: material.channelId,
+            topicId: material.topicId,
+            courseId: material.courseId,
+          },
+        },
+      },
+    },
+    context: createContext(),
+  };
+};
+export const generateUnhidConcepts = (req) => {
+  const metadata = createMetadata();
+  const material = req.locals.material;
+  const key = req.locals.key; // related_concept Or categories
+
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb(`${DOMAIN}/verb/unhide`, "unhid"),
+    object: {
+      objectType: config.activity,
+      id: `${DOMAIN}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/${key}`,
+      definition: {
+        type: `${DOMAIN}/schema/1.0/${key}`, //Type could be related concept/ category
+        name: {
+          [config.language]: `${key}`,
+        },
+        extensions: {
+          [`${DOMAIN}/extensions/${key}`]: {
+            materialId: material._id,
+            channelId: material.channelId,
+            topicId: material.topicId,
+            courseId: material.courseId,
+          },
+        },
+      },
+    },
+    context: createContext(),
+  };
+};
 export const generateViewedFullArticleMKG = (req) => {
   const metadata = createMetadata();
   const material = req.locals.material;

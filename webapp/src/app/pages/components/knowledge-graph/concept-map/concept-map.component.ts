@@ -1789,8 +1789,10 @@ export class ConceptMapComponent {
       this.selectedFilterValues = this.selectedFilterValues.filter(
         (item) => item !== key
       );
+      this.logUserHidConcepts(key);
     } else {
       this.selectedFilterValues.push(key);
+      this.logUserUnhidConcepts(key);
     }
   }
   resetFilter() {}
@@ -2020,6 +2022,34 @@ export class ConceptMapComponent {
         mainConcepts: this.conceptMapData, // Include main concepts
       };
       this.slideConceptservice.logViewMainConcepts(payload).subscribe();
+    } catch (error) {
+      console.error('Error logging activity:', error);
+    }
+  }
+  async logUserHidConcepts(key) {
+    try {
+      if (this.showMaterialKg && !this.showCourseKg) {
+        const payload = {
+          key: key,
+          materialId: this.currentMaterial._id,
+          courseId: this.currentMaterial.courseId,
+        };
+        this.conceptMapService.logHidConceptsMKG(payload).subscribe();
+      }
+    } catch (error) {
+      console.error('Error logging activity:', error);
+    }
+  }
+  async logUserUnhidConcepts(key) {
+    try {
+      if (this.showMaterialKg && !this.showCourseKg) {
+        const payload = {
+          key: key,
+          materialId: this.currentMaterial._id,
+          courseId: this.currentMaterial.courseId,
+        };
+        this.conceptMapService.logUnhidConceptsMKG(payload).subscribe();
+      }
     } catch (error) {
       console.error('Error logging activity:', error);
     }
