@@ -1484,6 +1484,9 @@ export class ConceptMapComponent {
       //receive recommended concepts
             //Log the activity User viewed all recommended concepts
             this.logUserViewedRecommendedConcepts();
+                },
+              }); // receive recommended materials
+          },
     }
   }
   //prepare formData for [concepts & materials] recommenders
@@ -1783,6 +1786,21 @@ export class ConceptMapComponent {
   }
   selectedTopNodes(key) {
     this.selectedTopConcepts = key;
+    // if (this.showCourseKg && !this.showMaterialKg) {
+    //   const payload = {
+    //     key: key,
+    //     course: this.course
+    //   };
+    //   console.log('Payload: ', payload);
+    // } else if (this.showMaterialKg && !this.showCourseKg) {
+    //   const payload = {
+    //     key: key,
+    //     material: this.currentMaterial
+    //   };
+    //   console.log('Payload: ', payload);
+    // }
+
+    //this.conceptMapService.logFilterTopNConcepts(payload).subscribe();
   }
   updateSingleChecked(key): void {
     if (this.selectedFilterValues.find((item) => item === key)) {

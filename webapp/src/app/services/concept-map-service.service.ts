@@ -85,6 +85,12 @@ export class ConceptMapService {
       data
     );
   }
+  logFilterTopNConcepts(data: any): Observable<any> {
+    return this.http.post<any>(
+      `${this.apiURL}/courses/${data.courseId}/KG/filter-top-N`,
+      data
+    );
+  }
   logViewConceptCKG(data: any): Observable<any> {
     return this.http.post<any>(
       `${this.apiURL}/courses/${data.courseId}/CKG/concepts/${data.concept.id}/log-view`,
