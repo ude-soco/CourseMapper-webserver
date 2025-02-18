@@ -166,7 +166,13 @@ export class ResultViewComponent {
       cid: concept.cid, // deal with cid instead of id 'AMR'
       name: concept.name,
       status: concept.status === 'understood' ? 'notUnderstood' : 'understood',
+      type: concept.type, // This is undefined because there were no type coming from the backend
     };
+
+    // console.log(
+    //   'Recommendation based on: mark as understood... concept',
+    //   concept
+    // );
   }
   loadResultForSelectedModel(key): void {
     this.results = [];
@@ -223,7 +229,6 @@ export class ResultViewComponent {
 
     console.log('ResultViewComponent Videos', this.videos);
     console.log('ResultViewComponent Articles', this.articles);
-
   }
 
   tabChanged(tab) {

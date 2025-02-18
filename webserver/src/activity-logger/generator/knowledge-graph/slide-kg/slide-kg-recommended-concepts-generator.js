@@ -8,28 +8,27 @@ import {
 } from "../../util/generator-util";
 
 let DOMAIN = "http://www.CourseMapper.de"; // TODO: Hardcoded due to frontend implementation
-// Just to have it as a background
-const createChannelObject = (req) => {
-  let channel = req.locals.channel;
+
+const createRecommendedConceptObject = (req) => {
+  let material = req.locals.material;
+  let concept = req.locals.concept;
   let origin = req.get("origin");
   return {
     objectType: config.activity,
-    id: `${origin}/activity/course/${channel.courseId}/topic/${channel.topicId}/channel/${channel._id}`,
+    id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/recommended-concept/${concept.id}`,
     definition: {
-      type: `${DOMAIN}/activityType/channel`,
+      type: `${DOMAIN}/activityType/concept`,
       name: {
-        [config.language]: channel.name,
-      },
-      description: {
-        [config.language]: channel.description,
+        [config.language]: concept.name,
       },
       extensions: {
-        [`${DOMAIN}/extensions/channel`]: {
-          id: channel._id,
-          course_id: channel.courseId,
-          topic_id: channel.topicId,
-          name: channel.name,
-          description: channel.description,
+        [`${DOMAIN}/extensions/concept`]: {
+          id: concept.id,
+          cid: concept.cid,
+          materialId: material._id,
+          topicId: material.topicId,
+          channelId: material.channelId,
+          courseId: material.courseId,
         },
       },
     },
@@ -192,3 +191,36 @@ export const generateViewedFullArticleRecommendedConcept = (req) => {
   };
 };
 
+export const generateMarkConceptAsNew = (req) => {
+  const metadata = createMetadata();
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb(`${DOMAIN}/verb/mark-new`, "marked-new"),
+    object: createRecommendedConceptObject(req),
+    context: createContext(),
+  };
+};
+export const generateMarkConceptAsUnderstood = (req) => {
+  const metadata = createMetadata();
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb(`${DOMAIN}/verb/mark-understood`, "marked-understood"),
+    object: createRecommendedConceptObject(req),
+    context: createContext(),
+  };
+};
+export const generateMarkConceptAsNotUnderstood = (req) => {
+  const metadata = createMetadata();
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb(
+      `${DOMAIN}/verb/mark-not-understood`,
+      "marked-not-understood"
+    ),
+    object: createRecommendedConceptObject(req),
+    context: createContext(),
+  };
+};

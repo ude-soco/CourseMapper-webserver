@@ -539,11 +539,13 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
           const selectedId = eventTarget.data('id').toString();
           const selectedCid = eventTarget.data('cid');
           const selectedName = eventTarget.data('name').toString();
+          const selectedType = eventTarget.data('type').toString();
           const notUnderstandEle = {
             id: selectedId,
             cid: selectedCid,
             name: selectedName,
             status: 'notUnderstood',
+            type: selectedType,
           };
           this.slideConceptservice.updateDidNotUnderstandConcepts(
             notUnderstandEle
@@ -560,11 +562,13 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
           const selectedId = eventTarget.data('id').toString();
           const selectedCid = eventTarget.data('cid');
           const selectedName = eventTarget.data('name').toString();
+          const selectedType = eventTarget.data('type').toString();
           const understoodEle = {
             id: selectedId,
             cid: selectedCid,
             name: selectedName,
             status: 'understood',
+            type: selectedType,
           };
           this.slideConceptservice.updateUnderstoodConcepts(understoodEle);
           eventTarget._private.data.understoodTriggered = false;
@@ -578,11 +582,13 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
           const selectedId = eventTarget.data('id').toString();
           const selectedCid = eventTarget.data('cid');
           const selectedName = eventTarget.data('name').toString();
+          const selectedType = eventTarget.data('type').toString();
           const newConceptEle = {
             id: selectedId,
             cid: selectedCid,
             name: selectedName,
             status: 'unread',
+            type: selectedType,
           };
           this.slideConceptservice.updateNewConcepts(newConceptEle);
           eventTarget._private.data.unReadTriggered = false;

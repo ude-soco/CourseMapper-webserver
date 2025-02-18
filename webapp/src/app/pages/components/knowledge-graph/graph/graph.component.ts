@@ -205,7 +205,8 @@ export class GraphComponent {
             // considering the length of the shown wiki link that is 95
             var maxChars =
               Math.floor(sBarWidth / fontSize) *
-                Math.floor(sBarHeight / fontSize) -95; //get max number of abstract chars in which no scrolling needed [(container area/ font size)-header area - link size]
+                Math.floor(sBarHeight / fontSize) -
+              95; //get max number of abstract chars in which no scrolling needed [(container area/ font size)-header area - link size]
             this.truncatedAbstract = this.node_abstract.substring(0, maxChars); // limit max size of chars at abstract
 
             // // in case removing last word from the text is needed
@@ -270,21 +271,24 @@ export class GraphComponent {
     this.showConceptAbstract = false;
     this.statusServie.abstractStatusChanged();
   }
-  markAsUnderstood(nodeId, nodeCid, nodeName) {
+  markAsUnderstood(nodeId, nodeCid, nodeName, nodeType) {
     const nodeObj = {
       id: nodeId,
       cid: nodeCid,
       name: nodeName,
+      type: nodeType,
     };
+    console.log('markAsUnderstood from graph: type: ', nodeType);
     this.slideConceptservice.updateUnderstoodConcepts(nodeObj);
     // this.kgToastService.understoodListupdated()
     this.understoodConceptMsgToast();
   }
-  markAsDidNotUnderstand(nodeId, nodeCid, nodeName) {
+  markAsDidNotUnderstand(nodeId, nodeCid, nodeName, nodeType) {
     const nodeObj = {
       id: nodeId,
       cid: nodeCid,
       name: nodeName,
+      type: nodeType,
     };
     this.slideConceptservice.updateDidNotUnderstandConcepts(nodeObj);
     this.statusServie.statusChanged();

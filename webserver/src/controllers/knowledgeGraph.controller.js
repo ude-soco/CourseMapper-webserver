@@ -1251,16 +1251,92 @@ export const viewedAllRecommendedConcepts = async (req, res, next) => {
 
   next();
 };
+export const markConceptAsNew = async (req, res, next) => {
+  const userId = req.userId;
+  const materialId = req.body.materialId;
+  let foundMaterial;
   let foundUser;
   try {
     foundUser = await findUserById(userId);
   } catch (err) {
     return handleError(res, err, "Error finding user");
   }
+
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
   req.locals = {
     user: foundUser,
-    articleTitle: articleTitle,
-    articleUrl: articleUrl,
+    material: foundMaterial,
+    concept: req.body.concept,
+  };
+
+  next();
+};
+export const markConceptAsUnderstood = async (req, res, next) => {
+  const userId = req.userId;
+  const materialId = req.body.materialId;
+  let foundMaterial;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    concept: req.body.concept,
+  };
+  next();
+};
+export const markConceptAsNotUnderstood = async (req, res, next) => {
+  const userId = req.userId;
+  const materialId = req.body.materialId;
+  let foundMaterial;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    concept: req.body.concept,
+  };
+
+  next();
+};
 export const hidConceptsMKG = async (req, res, next) => {
   const userId = req.userId;
   const materialId = req.body.materialId;

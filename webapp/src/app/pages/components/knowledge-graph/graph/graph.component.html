@@ -1,5 +1,10 @@
 <p-toast key="statusUpdated" position="bottom-left"></p-toast>
-<div class="graphDiv" *ngIf="materialKnowledgeGraph" style="display: block" (window:resize)="onResize($event)">
+<div
+  class="graphDiv"
+  *ngIf="materialKnowledgeGraph"
+  style="display: block"
+  (window:resize)="onResize($event)"
+>
   <div class="graphAbstract" style="width: 100%">
     <app-cytoscape
       [elements]="conceptMapData"
@@ -35,14 +40,19 @@
       (onHide)="closeAbstractPanel()"
     >
       <div class="innerAbstractBlock" style="display: inline-block">
-        <div style="display: inline-block; margin: 2px; margin-top: 20px;">
+        <div style="display: inline-block; margin: 2px; margin-top: 20px">
           <h2 class="font-medium leading-tight text-4xl mt-0 mb-2 ml-0.5">
             {{ node_name }}
           </h2>
         </div>
         <hr style="margin: 0 5px; padding: 0; width: 95%" />
-        <div *ngIf="node_type === 'category'" style="margin: 4px" class="abstractParagraph italic">
-          This is a category to which a concept belongs in Dbpedia and does not have an associated article on Wikipedia
+        <div
+          *ngIf="node_type === 'category'"
+          style="margin: 4px"
+          class="abstractParagraph italic"
+        >
+          This is a category to which a concept belongs in Dbpedia and does not
+          have an associated article on Wikipedia
         </div>
         <div *ngIf="node_abstract">
           <div style="display: inline-block; margin: 2px">
@@ -105,13 +115,13 @@
       (selectedNodeEvent)="nodeChange($event)"
       [cyHeight]="cyHeight"
     >
-    <!-- </app-cytoscape-slide> -->
+      <!-- </app-cytoscape-slide> -->
     </app-cytoscape-slide>
   </div>
   <div
     *ngIf="node_name && node_type !== 'user'"
     class="abstractBlock"
-    style="max-width: 35.85%; max-height: 75%; margin-top: 5px;"
+    style="max-width: 35.85%; max-height: 75%; margin-top: 5px"
   >
     <div
       class="innerAbstractBlock"
@@ -119,7 +129,12 @@
     >
       <i
         id="abstractCloseButton"
-        style="position: relative; float: right; margin-right: 0.5rem;margin-top: 0.5rem;"
+        style="
+          position: relative;
+          float: right;
+          margin-right: 0.5rem;
+          margin-top: 0.5rem;
+        "
         (click)="closeAbstractPanel()"
         type="button"
         class="pi pi-times"
@@ -141,15 +156,16 @@
                 *ngIf="node_wikipedia"
                 href="javascript:void(0);"
                 (click)="goToWikipediaPage(node_wikipedia)"
-                >Read full article on wikipedia <i id="clampedAnchorTagIcon" class="pi pi-link"></i></a
+                >Read full article on wikipedia
+                <i id="clampedAnchorTagIcon" class="pi pi-link"></i></a
             ></span>
             <a
               *ngIf="node_wikipedia && clamped"
               class="no-underline text-[#2196F3] hover: hover:underline mb-4 transition duration-300 ease-in-out"
               href="javascript:void(0);"
               (click)="goToWikipediaPage(node_wikipedia)"
-              style="margin-left: 5px; margin-top: 0; margin-bottom: 2px;"
-              >Read full article on wikipedia <i class="pi pi-link"></i
+              style="margin-left: 5px; margin-top: 0; margin-bottom: 2px"
+              >Read full article on wikipedia<i class="pi pi-link"></i
             ></a>
           </div>
         </div>
@@ -181,9 +197,9 @@
           type="button"
           label="MARK AS UNDERSTOOD"
           class="p-button-outlined p-button-sm"
-          (click)="markAsUnderstood(node_id, node_cid, node_name)"
+          (click)="markAsUnderstood(node_id, node_cid, node_name, node_type)"
           icon="pi pi-check"
-          style=" margin-bottom: 7px; margin-right: 7px"
+          style="margin-bottom: 7px; margin-right: 7px"
         ></button>
         <button
           pButton
@@ -191,9 +207,11 @@
           type="button"
           label="MARK AS NOT UNDERSTOOD"
           class="p-button-outlined p-button-sm"
-          (click)="markAsDidNotUnderstand(node_id, node_cid, node_name)"
+          (click)="
+            markAsDidNotUnderstand(node_id, node_cid, node_name, node_type)
+          "
           icon="pi pi-times"
-          style=" margin-bottom: 7px; margin-left: 7px"
+          style="margin-bottom: 7px; margin-left: 7px"
         ></button>
       </div>
     </div>

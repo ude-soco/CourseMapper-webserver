@@ -1,14 +1,16 @@
-const neo4j = require('neo4j-driver');
+const neo4j = require("neo4j-driver");
 
 const graphDb = {};
 
 export async function connect(url, user, password) {
   try {
-    graphDb.driver = neo4j.driver(url, neo4j.auth.basic(user, password), { disableLosslessIntegers: true });
+    graphDb.driver = neo4j.driver(url, neo4j.auth.basic(user, password), {
+      disableLosslessIntegers: true,
+    });
     await graphDb.driver.verifyConnectivity();
     console.log(`Connected to Neo4j`);
   } catch (error) {
-    console.error('Failed to connect to Neo4j', error);
+    console.error("Failed to connect to Neo4j", error);
   }
 }
 
@@ -24,7 +26,7 @@ function recordsToObjects(records) {
 
 export async function checkSlide(slideId) {
   const { records, summary, keys } = await graphDb.driver.executeQuery(
-    'MATCH(s:Slide) WHERE s.sid = $sid RETURN s',
+    "MATCH(s:Slide) WHERE s.sid = $sid RETURN s",
     { sid: slideId }
   );
   return recordsToObjects(records);
@@ -32,7 +34,7 @@ export async function checkSlide(slideId) {
 
 export async function getSlide(slideId) {
   const { records, summary, keys } = await graphDb.driver.executeQuery(
-    'MATCH p=(s: Slide)-[r]->(c: Concept) WHERE s.sid = $sid RETURN LABELS(c) as labels,ID(c) AS id, c.cid as cid, c.name AS name, c.uri as uri, c.type as type, c.weight as weight, c.wikipedia as wikipedia, c.abstract as abstract',
+    "MATCH p=(s: Slide)-[r]->(c: Concept) WHERE s.sid = $sid RETURN LABELS(c) as labels,ID(c) AS id, c.cid as cid, c.name AS name, c.uri as uri, c.type as type, c.weight as weight, c.wikipedia as wikipedia, c.abstract as abstract",
     { sid: slideId }
   );
   return recordsToObjects(records);
@@ -41,7 +43,7 @@ export async function getSlide(slideId) {
 export async function readSlide(userId, slideId) {
   // Create user node if not exists
   const { records, summary, keys } = await graphDb.driver.executeQuery(
-    'MATCH (u:User) WHERE u.uid = $uid RETURN u',
+    "MATCH (u:User) WHERE u.uid = $uid RETURN u",
     { uid: userId }
   );
   if (records.length === 0) {
@@ -62,7 +64,7 @@ export async function readSlide(userId, slideId) {
 
 export async function checkMaterial(materialId) {
   const { records, summary, keys } = await graphDb.driver.executeQuery(
-    'MATCH (m:LearningMaterial) WHERE m.mid = $mid RETURN m',
+    "MATCH (m:LearningMaterial) WHERE m.mid = $mid RETURN m",
     { mid: materialId }
   );
   return recordsToObjects(records);
@@ -70,7 +72,7 @@ export async function checkMaterial(materialId) {
 
 export async function checkMaterials(materialIds) {
   const { records, summary, keys } = await graphDb.driver.executeQuery(
-    'MATCH (m:LearningMaterial) WHERE m.mid IN $mids RETURN m',
+    "MATCH (m:LearningMaterial) WHERE m.mid IN $mids RETURN m",
     { mids: materialIds }
   );
   return recordsToObjects(records);
@@ -78,7 +80,7 @@ export async function checkMaterials(materialIds) {
 
 export async function getMaterial(materialId) {
   const { records, summary, keys } = await graphDb.driver.executeQuery(
-    'MATCH (c:Concept) WHERE c.mid = $mid RETURN LABELS(c) as labels,ID(c) AS id, c.cid as cid, c.name AS name, c.uri as uri, c.type as type, c.weight as weight, c.wikipedia as wikipedia, c.abstract as abstract, c.rank as rank',
+    "MATCH (c:Concept) WHERE c.mid = $mid RETURN LABELS(c) as labels,ID(c) AS id, c.cid as cid, c.name AS name, c.uri as uri, c.type as type, c.weight as weight, c.wikipedia as wikipedia, c.abstract as abstract, c.rank as rank",
     { mid: materialId }
   );
   return recordsToObjects(records);
@@ -86,7 +88,7 @@ export async function getMaterial(materialId) {
 
 export async function getMaterialSlides(materialId) {
   const { records, summary, keys } = await graphDb.driver.executeQuery(
-    'MATCH (c:Slide) WHERE c.mid = $mid RETURN LABELS(c) as labels,ID(c) AS id, c.cid as cid, c.sid as sid',
+    "MATCH (c:Slide) WHERE c.mid = $mid RETURN LABELS(c) as labels,ID(c) AS id, c.cid as cid, c.sid as sid",
     { mid: materialId }
   );
   return recordsToObjects(records);
@@ -94,7 +96,7 @@ export async function getMaterialSlides(materialId) {
 
 export async function deleteMaterial(materialId) {
   const { records, summary, keys } = await graphDb.driver.executeQuery(
-    'MATCH (m:LearningMaterial) WHERE m.mid = $mid DETACH DELETE m',
+    "MATCH (m:LearningMaterial) WHERE m.mid = $mid DETACH DELETE m",
     { mid: materialId }
   );
   return recordsToObjects(records);
@@ -110,7 +112,7 @@ export async function getMaterialEdges(materialId) {
 
 export async function getMaterialConceptIds(materialId) {
   const { records, summary, keys } = await graphDb.driver.executeQuery(
-    'MATCH (c:Concept) WHERE c.mid = $mid RETURN c.cid AS id, c.name as name',
+    "MATCH (c:Concept) WHERE c.mid = $mid RETURN c.cid AS id, c.name as name, c.type as type",
     { mid: materialId }
   );
   return recordsToObjects(records);
@@ -123,7 +125,7 @@ export async function getHigherLevelsNodesAndEdges(materialIds) {
   );
   const nodes = recordsToObjects(records);
 
-  const nodeIds = nodes.map(node => node.id);
+  const nodeIds = nodes.map((node) => node.id);
   const { records: records2 } = await graphDb.driver.executeQuery(
     `MATCH p=(a)-[r]->(b) WHERE TYPE(r) <> "CONTAINS" and a.mid = b.mid AND a.mid IN $mids AND a.id IN $nids AND b.id IN $nids RETURN TYPE(r) as type, ID(a) as source, ID(b) as target, r.weight as weight`,
     { mids: materialIds, nids: nodeIds }
@@ -136,7 +138,7 @@ export async function getHigherLevelsNodesAndEdges(materialIds) {
 export async function setRating(resourceId, concepts, userId, rating) {
   const session = graphDb.driver.session();
   try {
-    const result = await session.executeWrite(async tx => {
+    const result = await session.executeWrite(async (tx) => {
       const rTypesRes = await tx.run(
         `MATCH p=(a:User)-[r:HELPFUL|NOT_HELPFUL]->(b:Resource)
         WHERE a.uid = $uid
@@ -146,9 +148,12 @@ export async function setRating(resourceId, concepts, userId, rating) {
         RETURN r_type`,
         { uid: userId, rid: resourceId }
       );
-      const rTypes = rTypesRes.records.map(record => record.get('r_type'));
+      const rTypes = rTypesRes.records.map((record) => record.get("r_type"));
 
-      if (!rTypes.includes(rating) && ['HELPFUL', 'NOT_HELPFUL'].includes(rating)) {
+      if (
+        !rTypes.includes(rating) &&
+        ["HELPFUL", "NOT_HELPFUL"].includes(rating)
+      ) {
         await tx.run(
           `MATCH (u:User) WHERE u.uid = $uid
           OPTIONAL MATCH(b:Resource) WHERE b.rid = $rid
@@ -170,13 +175,13 @@ export async function setRating(resourceId, concepts, userId, rating) {
       );
 
       if (result.records.length === 0) {
-        throw new Error('Resource not found');
+        throw new Error("Resource not found");
       }
 
       return {
-        helpful_count: result.records[0].get('helpful_count'),
-        not_helpful_count: result.records[0].get('not_helpful_count'),
-        voted: rTypes.includes(rating) ? null : rating
+        helpful_count: result.records[0].get("helpful_count"),
+        not_helpful_count: result.records[0].get("not_helpful_count"),
+        voted: rTypes.includes(rating) ? null : rating,
       };
     });
     return result;

@@ -329,6 +329,80 @@ export const viewedAllRecommendedConceptsLogger = async (req, res) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
+export const markedConceptAsNewLogger = async (req, res) => {
+  try {
+    if (req.locals.concept.type === "main_concept") {
+      await activityController.createActivity(
+        mainConceptsActivityGenerator.generateMarkConceptAsNew(req)
+      );
+    } else if (req.locals.concept.type === "recommended_concept") {
+      await activityController.createActivity(
+        recommendedConceptsActivityGenerator.generateMarkConceptAsNew(req)
+      );
+    } else {
+      return res
+        .status(400)
+        .send({ error: "Concept data is missing or invalid" });
+    }
+
+    res.status(200).json({
+      message: "Activity logged successfully",
+    });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
+  }
+};
+export const markedConceptAsUnderstoodLogger = async (req, res) => {
+  try {
+    if (req.locals.concept.type === "main_concept") {
+      await activityController.createActivity(
+        mainConceptsActivityGenerator.generateMarkConceptAsUnderstood(req)
+      );
+    } else if (req.locals.concept.type === "recommended_concept") {
+      await activityController.createActivity(
+        recommendedConceptsActivityGenerator.generateMarkConceptAsUnderstood(
+          req
+        )
+      );
+    } else {
+      return res
+        .status(400)
+        .send({ error: "Concept data is missing or invalid" });
+    }
+
+    res.status(200).json({
+      message: "Activity logged successfully",
+    });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
+  }
+};
+export const markedConceptAsNotUnderstoodLogger = async (req, res) => {
+  try {
+    if (req.locals.concept.type === "main_concept") {
+      await activityController.createActivity(
+        mainConceptsActivityGenerator.generateMarkConceptAsNotUnderstood(req)
+      );
+    } else if (req.locals.concept.type === "recommended_concept") {
+      await activityController.createActivity(
+        recommendedConceptsActivityGenerator.generateMarkConceptAsNotUnderstood(
+          req
+        )
+      );
+    } else {
+      return res
+        .status(400)
+        .send({ error: "Concept data is missing or invalid" });
+    }
+
+    res.status(200).json({
+      message: "Activity logged successfully",
+    });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
+  }
+};
+
 export const AccessCourseKGLogger = async (req, res) => {
   try {
     if (req.locals.materials.length === 0) {

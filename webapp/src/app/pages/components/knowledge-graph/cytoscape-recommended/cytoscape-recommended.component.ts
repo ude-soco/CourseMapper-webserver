@@ -25,8 +25,11 @@ import { NodeClickService } from 'src/app/services/node-click.service';
 import { SlideConceptsService } from 'src/app/services/slide-concepts.service';
 import { GraphRenderedService } from 'src/app/services/graph-rendered.service';
 import { ConceptStatusService } from 'src/app/services/concept-status.service';
-import * as $ from "jquery";
-
+import * as $ from 'jquery';
+import { getCurrentMaterial } from '../../materials/state/materials.reducer';
+import { getCurrentPdfPage } from '../../annotations/pdf-annotation/state/annotation.reducer';
+import { State } from 'src/app/state/app.reducer';
+import { Store } from '@ngrx/store';
 cytoscape.use(cxtmenu);
 cytoscape.use(dagre);
 cytoscape.use(spread);
@@ -39,7 +42,7 @@ cytoscape.use(popper);
 @Component({
   selector: 'app-cytoscape-recommended',
   templateUrl: './cytoscape-recommended.component.html',
-  styleUrls: ['./cytoscape-recommended.component.css']
+  styleUrls: ['./cytoscape-recommended.component.css'],
 })
 export class CytoscapeRecommendedComponent {
   @Input() elements: any;
@@ -64,6 +67,10 @@ export class CytoscapeRecommendedComponent {
 
   public _elements: any;
 
+  currentMaterial: any;
+  currentPdfPage: number;
+  subscriptions: Subscription = new Subscription(); // Manage subscriptions
+
   newConceptsSubscription: Subscription; // on new concepts list updated
   didNotUnderstandConceptsSubscription: Subscription; // on did not understand concepts list updated
   understoodConceptsSubscription: Subscription; // on understood concepts list updated
@@ -74,7 +81,8 @@ export class CytoscapeRecommendedComponent {
     private nodeClickservice: NodeClickService,
     private slideConceptservice: SlideConceptsService,
     private graphRenderedService: GraphRenderedService,
-    private statusService: ConceptStatusService
+    private statusService: ConceptStatusService,
+    private store: Store<State>
   ) {
     this.layout = {
       name: 'spread',
@@ -125,6 +133,21 @@ export class CytoscapeRecommendedComponent {
         });
         this.cy.style(this.showAllStyle);
       });
+    // Subscribe to get material Data from store
+    this.subscriptions.add(
+      this.store.select(getCurrentMaterial).subscribe((material) => {
+        if (material) {
+          this.currentMaterial = material;
+        }
+      })
+    );
+
+    // Subscribe to get the current PDF page from store
+    this.subscriptions.add(
+      this.store.select(getCurrentPdfPage).subscribe((page) => {
+        this.currentPdfPage = page;
+      })
+    );
   }
   public showAllStyle: cytoscape.Stylesheet[] = [
     // the stylesheet for the graph
@@ -232,7 +255,7 @@ export class CytoscapeRecommendedComponent {
   };
 
   ngOnChanges() {
-    console.log(this.elements)
+    console.log(this.elements);
     this.init();
   }
 
@@ -257,7 +280,8 @@ export class CytoscapeRecommendedComponent {
           });
         }
       }, 2);
-      document.getElementById('cyRecommender').style.height = this.cyHeight + 'px';
+      document.getElementById('cyRecommender').style.height =
+        this.cyHeight + 'px';
     }
   }
   render() {
@@ -284,7 +308,7 @@ export class CytoscapeRecommendedComponent {
               id: eventTarget.data('id'),
               cid: eventTarget.data('id'),
               name: eventTarget.data('name'),
-              type: eventTarget.data('type'),
+              type: eventTarget.data('type'), // it shows recommended_concept
               abstract: eventTarget.data('abstract'),
               wikipedia: eventTarget.data('wikipedia'),
               reason: eventTarget.data('Reason'),
@@ -371,10 +395,12 @@ export class CytoscapeRecommendedComponent {
           // Node contains wiki article && node selected
           const selectedId = eventTarget.data('id').toString();
           const selectedName = eventTarget.data('name').toString();
+          const selectedType = eventTarget.data('type').toString();
           const notUnderstandEle = {
             id: selectedId,
             cid: selectedId,
             name: selectedName,
+            type: selectedType,
           };
           this.slideConceptservice.updateDidNotUnderstandConcepts(
             notUnderstandEle
@@ -390,10 +416,12 @@ export class CytoscapeRecommendedComponent {
           // Node contains non-empty abstract && material recommender selected
           const selectedId = eventTarget.data('id').toString();
           const selectedName = eventTarget.data('name').toString();
+          const selectedType = eventTarget.data('type').toString();
           const understoodEle = {
             id: selectedId,
             cid: selectedId,
             name: selectedName,
+            type: selectedType,
           };
           this.slideConceptservice.updateUnderstoodConcepts(understoodEle);
           // this.statusService.statusChanged()
@@ -407,10 +435,12 @@ export class CytoscapeRecommendedComponent {
           // Node contains non-empty abstract && concept recommender selected
           const selectedId = eventTarget.data('id').toString();
           const selectedName = eventTarget.data('name').toString();
+          const selectedType = eventTarget.data('type').toString();
           const newConceptEle = {
             id: selectedId,
             cid: selectedId,
             name: selectedName,
+            type: selectedType,
           };
           this.slideConceptservice.updateNewConcepts(newConceptEle);
           eventTarget._private.data.unReadTriggered = false;
@@ -418,5 +448,4 @@ export class CytoscapeRecommendedComponent {
       });
     }
   }
-
 }

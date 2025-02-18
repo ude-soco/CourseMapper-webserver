@@ -9,28 +9,26 @@ import {
 
 let DOMAIN = "http://www.CourseMapper.de"; // TODO: Hardcoded due to frontend implementation
 
-// Just to have it as a background
-const createChannelObject = (req) => {
-  let channel = req.locals.channel;
+const createMainConceptObject = (req) => {
+  let material = req.locals.material;
+  let concept = req.locals.concept;
   let origin = req.get("origin");
   return {
     objectType: config.activity,
-    id: `${origin}/activity/course/${channel.courseId}/topic/${channel.topicId}/channel/${channel._id}`,
+    id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/main-concept/${concept.id}`,
     definition: {
-      type: `${DOMAIN}/activityType/channel`,
+      type: `${DOMAIN}/activityType/concept`,
       name: {
-        [config.language]: channel.name,
-      },
-      description: {
-        [config.language]: channel.description,
+        [config.language]: concept.name,
       },
       extensions: {
-        [`${DOMAIN}/extensions/channel`]: {
-          id: channel._id,
-          course_id: channel.courseId,
-          topic_id: channel.topicId,
-          name: channel.name,
-          description: channel.description,
+        [`${DOMAIN}/extensions/concept`]: {
+          id: concept.id,
+          cid: concept.cid,
+          materialId: material._id,
+          topicId: material.topicId,
+          channelId: material.channelId,
+          courseId: material.courseId,
         },
       },
     },
@@ -205,7 +203,7 @@ export const generateViewedConcept = (req) => {
     actor: createUser(req),
     verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
     object: {
-      objectType: "Activity",
+      objectType: config.activity,
       id: `${DOMAIN}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/concept/${concept.id}`,
       definition: {
         type: `${DOMAIN}/schema/1.0/concept`,
@@ -267,4 +265,36 @@ export const generateViewedFullArticleMainConcept = (req) => {
     context: createContext(),
   };
 };
-// ? I added this one to have it ready for a better structure...
+export const generateMarkConceptAsNew = (req) => {
+  const metadata = createMetadata();
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb(`${DOMAIN}/verb/mark-new`, "marked-new"),
+    object: createMainConceptObject(req),
+    context: createContext(),
+  };
+};
+export const generateMarkConceptAsUnderstood = (req) => {
+  const metadata = createMetadata();
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb(`${DOMAIN}/verb/mark-understood`, "marked-understood"),
+    object: createMainConceptObject(req),
+    context: createContext(),
+  };
+};
+export const generateMarkConceptAsNotUnderstood = (req) => {
+  const metadata = createMetadata();
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb(
+      `${DOMAIN}/verb/mark-not-understood`,
+      "marked-not-understood"
+    ),
+    object: createMainConceptObject(req),
+    context: createContext(),
+  };
+};

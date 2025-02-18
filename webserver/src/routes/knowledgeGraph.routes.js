@@ -104,6 +104,24 @@ module.exports = function (app) {
     logger.viewedAllRecommendedConceptsLogger
   );
   app.post(
+    "/api/courses/:courseId/materials/:materialId/concepts/:conceptId/mark-new",
+    [authJwt.verifyToken],
+    controller.markConceptAsNew,
+    logger.markedConceptAsNewLogger
+  );
+  app.post(
+    "/api/courses/:courseId/materials/:materialId/concepts/:conceptId/mark-understood",
+    [authJwt.verifyToken],
+    controller.markConceptAsUnderstood,
+    logger.markedConceptAsUnderstoodLogger
+  );
+  app.post(
+    "/api/courses/:courseId/materials/:materialId/concepts/:conceptId/mark-not-understood",
+    [authJwt.verifyToken],
+    controller.markConceptAsNotUnderstood,
+    logger.markedConceptAsNotUnderstoodLogger
+  );
+  app.post(
     "/api/courses/:courseId/materials/:materialId/resource-recommendation",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getResources
