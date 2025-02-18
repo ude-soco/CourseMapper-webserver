@@ -95,6 +95,8 @@ export class ConceptMapService {
     return this.http.post<any>(
       `${this.apiURL}/courses/${data.courseId}/materials/${data.materialId}/MKG/concepts/${data.concept.id}/log-view`,
       data
+    );
+  }
   logHidConceptsMKG(data: any): Observable<any> {
     return this.http.post<any>(
       `${this.apiURL}/courses/${data.courseId}/materials/${data.materialId}/MKG/log-hide`,

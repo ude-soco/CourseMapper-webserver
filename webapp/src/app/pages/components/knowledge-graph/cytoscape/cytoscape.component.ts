@@ -513,6 +513,7 @@ export class CytoscapeComponent {
       } else if (this.showMaterialKg && !this.showCourseKg) {
         const payload = {
           concept: selectedNode,
+          courseId: this.courseId,
           materialId: this.currentMaterial._id,
         };
         this.conceptMapService.logViewConceptMKG(payload).subscribe();
