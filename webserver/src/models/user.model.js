@@ -26,6 +26,13 @@ const User = new Schema({
   understoodConcepts: [], //saves ids for concepts that user understand
   didNotUnderstandConcepts: [], //saves ids for concepts that user did not understand
 
+  // Map to store concept IDs and their respective timestamps
+  conceptTimestamps: {
+    type: Map,
+    of: Date,
+    default: {}
+  },
+
   indicators: [
     {
       _id: Schema.Types.ObjectId,

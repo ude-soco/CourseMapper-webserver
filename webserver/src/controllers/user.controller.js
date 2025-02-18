@@ -319,15 +319,15 @@ export const getUserConcepts = async (req, res) => {
 };
 
 export async function updateUserConcepts(props) {
-  let userId= props.body.userId
-  let foundUser
-  const updatedDocument={$set: {
-    understoodConcepts: props.body.understoodConcepts,
-    didNotUnderstandConcepts: props.body.didNotUnderstandConcepts,
-  },}
+  const userId = props.body.userId;
+  const newUnderstoodConcepts = props.body.understoodConcepts || [];
+  const newDidNotUnderstandConcepts = props.body.didNotUnderstandConcepts || [];
+
+  let foundUser;
+
   try {
-    foundUser = await User.findOne({ _id: props.body.userId })
-    .populate("courses", "-__v");
+    // Find the user and populate related courses
+    foundUser = await User.findOne({ _id: userId }).populate("courses", "-__v");
     if (!foundUser) {
       return res.status(404).send({
         error: `User with id ${userId} doesn't exist!`,
@@ -336,9 +336,39 @@ export async function updateUserConcepts(props) {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  // console.log(updatedDocument)
-  await foundUser.updateOne(updatedDocument);
+
+  // Add new `didNotUnderstandConcepts` items to `conceptTimestamps` with the current date if they don't exist
+  newDidNotUnderstandConcepts.forEach((conceptId) => {
+    if (!foundUser.conceptTimestamps.has(conceptId)) {
+      foundUser.conceptTimestamps.set(conceptId, new Date());
+    }
+  });
+
+  // Remove any items from `conceptTimestamps` that are no longer in `didNotUnderstandConcepts`
+  foundUser.conceptTimestamps.forEach((_, conceptId) => {
+    if (!newDidNotUnderstandConcepts.includes(conceptId)) {
+      foundUser.conceptTimestamps.delete(conceptId);
+    }
+  });
+
+  // Prepare the update document for understood and did not understand concepts
+  const updatedDocument = {
+    $set: {
+      understoodConcepts: newUnderstoodConcepts,
+      didNotUnderstandConcepts: newDidNotUnderstandConcepts,
+      conceptTimestamps: foundUser.conceptTimestamps, // Include the updated map
+    },
+  };
+
+  // Update the user's concepts and timestamps in the database
+  try {
+    await foundUser.updateOne(updatedDocument);
+    return { message: "User concepts updated successfully." };
+  } catch (error) {
+    return res.status(500).send({ error: error.message });
+  }
 }
+
 
 export const getLastTimeCourseMapperOpened = async (req, res) => {
   let userId = req.userId;
