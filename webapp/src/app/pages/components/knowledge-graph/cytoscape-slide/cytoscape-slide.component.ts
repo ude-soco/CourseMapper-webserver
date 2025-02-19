@@ -459,7 +459,7 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
               currentPage: this.currentPdfPage,
               concept: selectedNode, // Include the selected node
             };
-            this.slideConceptservice.logViewConcept(payload).subscribe();
+            this.slideConceptservice.logViewConcept(payload).subscribe(); // "User viewed a main concept under the main concepts tab "
           } else {
             this.elements.nodes.map((node) => {
               node.data.selected = 'u';

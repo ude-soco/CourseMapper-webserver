@@ -204,7 +204,7 @@ export const generateViewedConcept = (req) => {
     verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
     object: {
       objectType: config.activity,
-      id: `${DOMAIN}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/concept/${concept.id}`,
+      id: `${DOMAIN}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/main-concept/${concept.id}`,
       definition: {
         type: `${DOMAIN}/schema/1.0/concept`,
         name: {

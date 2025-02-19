@@ -278,7 +278,6 @@ export class GraphComponent {
       name: nodeName,
       type: nodeType,
     };
-    console.log('markAsUnderstood from graph: type: ', nodeType);
     this.slideConceptservice.updateUnderstoodConcepts(nodeObj);
     // this.kgToastService.understoodListupdated()
     this.understoodConceptMsgToast();

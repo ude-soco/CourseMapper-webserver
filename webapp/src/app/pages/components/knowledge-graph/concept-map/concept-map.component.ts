@@ -804,10 +804,10 @@ export class ConceptMapComponent {
       status: concept.status === 'understood' ? 'notUnderstood' : 'understood',
       type: concept.type,
     };
-    console.log(
-      'setChipConcept(concept) this.conceptFromChipObj',
-      this.conceptFromChipObj
-    );
+    // console.log(
+    //   'setChipConcept(concept) this.conceptFromChipObj',
+    //   this.conceptFromChipObj
+    // );
   }
   //? This is responsible for setting the chip concept from the second section of the not understood concept list
   setPreviousChipConcept(concept: any): void {
@@ -816,7 +816,7 @@ export class ConceptMapComponent {
       name: concept.name,
       type: concept.type,
     };
-    console.log('setPreviousChipConcept(concept) concept', concept);
+    // console.log('setPreviousChipConcept(concept) concept', concept);
   }
 
   // show/hide lists of current slide concepts and\ or other slides concepts

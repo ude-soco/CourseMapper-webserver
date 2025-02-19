@@ -174,9 +174,20 @@ export const viewedLessConceptsLogger = async (req, res) => {
 };
 export const viewedConceptLogger = async (req, res) => {
   try {
-    await activityController.createActivity(
-      mainConceptsActivityGenerator.generateViewedConcept(req)
-    );
+    if (req.locals.concept.type === "main_concept") {
+      await activityController.createActivity(
+        mainConceptsActivityGenerator.generateViewedConcept(req)
+      );
+    } else if (req.locals.concept.type === "recommended_concept") {
+      await activityController.createActivity(
+        recommendedConceptsActivityGenerator.generateViewedConcept(req)
+      );
+    } else {
+      return res
+        .status(400)
+        .send({ error: "Concept type is missing or invalid" });
+    }
+
     res.status(200).json({
       message: "Activity logged successfully",
     });

@@ -323,6 +323,14 @@ export class CytoscapeRecommendedComponent {
                 node.data.selected = 's';
               }
             });
+            const payload = {
+              materialId: this.currentMaterial._id,
+              courseId: this.currentMaterial.courseId,
+              currentPage: this.currentPdfPage,
+              concept: selectedNode, // Include the selected node
+            };
+            console.log('payload of recommended concept: ', payload);
+            this.slideConceptservice.logViewConcept(payload).subscribe(); // "User viewed a recommended concept under the recommended concepts tab "
           } else {
             this.elements.nodes.map((node) => {
               node.data.selected = 'u';

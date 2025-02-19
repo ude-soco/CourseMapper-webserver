@@ -34,6 +34,44 @@ const createRecommendedConceptObject = (req) => {
     },
   };
 };
+export const generateViewedConcept = (req) => {
+  const metadata = createMetadata();
+  const material = req.locals.material;
+  const concept = req.locals.concept;
+  const materialPage = req.locals.materialPage;
+
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
+    object: {
+      objectType: config.activity,
+      id: `${DOMAIN}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/recommended-concept/${concept.id}`,
+      definition: {
+        type: `${DOMAIN}/schema/1.0/concept`,
+        name: {
+          [config.language]: concept.name,
+        },
+        description: {
+          [config.language]: concept.abstract,
+        },
+        extensions: {
+          [`${DOMAIN}/extensions/recommended-concept`]: {
+            conceptId: concept.id,
+            conceptType: concept.type,
+            concept_wiki_url: concept.wikipedia,
+            materialId: material._id,
+            channelId: material.channelId,
+            topicId: material.topicId,
+            courseId: material.courseId,
+            materialPage: req.locals.materialPage,
+          },
+        },
+      },
+    },
+    context: createContext(),
+  };
+};
 export const generateViewedAllRecommendedConcepts = (req) => {
   const metadata = createMetadata();
   const material = req.locals.material;
