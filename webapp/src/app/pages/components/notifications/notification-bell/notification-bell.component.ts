@@ -53,13 +53,6 @@ export class NotificationBellComponent {
     this.store.dispatch(
       AppActions.setShowNotificationsPanel({ showNotificationsPanel: true })
     );
-    this.notificationsService.getAllNotificationsLog().subscribe({
-      next: (response) => {
-        console.log('Activity logged successfully:', response);
-      },
-      error: (err) => {
-        console.error('Error logging activity:', err);
-      },
-    });
+    this.notificationsService.getAllNotificationsLog().subscribe();
   }
 }

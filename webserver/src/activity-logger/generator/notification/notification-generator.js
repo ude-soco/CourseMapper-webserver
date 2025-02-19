@@ -11,18 +11,18 @@ let DOMAIN = "http://www.CourseMapper.de"; // TODO: Hardcoded due to frontend im
 const createNotificationObject = (req) => {
   let notifications = req.locals.notifications;
   let origin = req.get("origin");
-
   return {
     objectType: config.activity,
     id: `${origin}/activity/notifications`, // Represents all notifications as a group
     definition: {
-      type: `${DOMAIN}/activityType/view-notifications`, // Custom type for viewing notifications
+      type: config.activity,
       name: {
-        [config.language]: "View All Notifications",
+        [config.language]: "Notifications",
       },
       extensions: {
         [`${origin}/extensions/notifications`]: notifications.map(
           (notification) => ({
+            //? Those extensions can be edited, depending on what needed.
             id: notification._id,
             course_id: notification.courseId,
             topic_id: notification.topicId,

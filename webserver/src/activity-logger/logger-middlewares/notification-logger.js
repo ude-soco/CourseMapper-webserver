@@ -7,7 +7,9 @@ export const viewAllNotificationsLogger = async (req, res) => {
     await activityController.createActivity(
       notificationActivityGenerator.generateViewAllNotificationsLog(req)
     );
-    res.status(201).send(req.locals.response);
+    res.status(200).json({
+      message: "Activity logged successfully",
+    });
   } catch (error) {
     res.status(400).send({ error: "Error saving statement to mongo", error });
   }

@@ -94,17 +94,6 @@ export const getAllNotificationsLog = async (req, res, next) => {
     return handleError(res, err, "Error finding user");
   }
 
-  // try {
-  //   foundUser = await User.findById(userId);
-  //   if (!foundUser) {
-  //     return res.status(404).send({
-  //       error: `User not found!`,
-  //     });
-  //   }
-  // } catch (err) {
-  //   return res.status(500).send({ error: "Error finding user" });
-  // }
-
   // Get all notifications for user by populating the activityId
   let notifications;
   try {
@@ -143,16 +132,12 @@ export const getAllNotificationsLog = async (req, res, next) => {
       .status(500)
       .send({ error: "Error finding notifications", error });
   }
-  const response = { message: "Activity logged" };
 
   req.locals = {
     user: foundUser,
     notifications: notifications,
   };
   next();
-  // return res
-  //   .status(200)
-  //   .send({ notifications, blockingUsers: blockingUsers.blockingUsers });
 };
 export const deleteAllNotifications = async (req, res, next) => {
   const userId = req.userId;
