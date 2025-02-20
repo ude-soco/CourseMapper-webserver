@@ -16,17 +16,56 @@ import {
 
 let DOMAIN = "http://www.CourseMapper.de"; // TODO: Hardcoded due to frontend implementation
 
-export const generateCreateAnnotationActivity = (req) => {
+// export const generateCreateAnnotationActivity = (req) => {
+//   const metadata = createMetadata();
+//   return {
+//     ...metadata,
+//     actor: createUser(req),
+//     verb: createVerb(
+//       "http://risc-inc.com/annotator/verbs/annotated",
+//       "annotated",
+//     ),
+//     object: createAnnotationMaterialObject(req),
+//     result: createAnnotationCommentMaterialResultObject(req, "annotation"),
+//     context: createContext(),
+//   };
+// };
+
+// This function is for the activity User annotated a Material
+export const generateAnnotateMaterialActivity = (req) => {
   const metadata = createMetadata();
   return {
     ...metadata,
     actor: createUser(req),
     verb: createVerb(
       "http://risc-inc.com/annotator/verbs/annotated",
-      "annotated",
+      "annotated"
     ),
     object: createAnnotationMaterialObject(req),
-    result: createAnnotationCommentMaterialResultObject(req, "annotation"),
+    result: createAnnotationCommentMaterialResultObject(req, "annotation"), // ? what is it for.
+    context: createContext(),
+  };
+};
+
+// This function is for the activity User added an annotation (Note/ Question/ External resource)
+export const generateCreateAnnotationActivity = (req) => {
+  const metadata = createMetadata();
+  let verb;
+  let verbURI;
+  if (req.locals.annotation.type === "Question") {
+    verb = "asked";
+    verbURI = "http://adlnet.gov/expapi/verbs/asked";
+  } else {
+    verb = "added";
+    verbURI = "http://activitystrea.ms/schema/1.0/add";
+  }
+
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb(verbURI, verb),
+    object: createAnnotationObject(req),
+    result: createAnnotationCommentMaterialResultObject(req, "annotation"), // ? what is it for.
     context: createContext(),
   };
 };
@@ -155,7 +194,9 @@ export const generateAddMentionStatement = (req) => {
       definition: {
         type: `${DOMAIN}/activityType/you`,
         name: {
-          [config.language]: `${annotation.content.slice(0, 50)}${annotation.content.length > 50 ? " ..." : ""}`,
+          [config.language]: `${annotation.content.slice(0, 50)}${
+            annotation.content.length > 50 ? " ..." : ""
+          }`,
         },
         extensions: {
           [`${DOMAIN}/extensions/annotation`]: {

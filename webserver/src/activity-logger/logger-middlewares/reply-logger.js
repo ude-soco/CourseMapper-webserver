@@ -8,7 +8,7 @@ export const createReplyLogger = async (req, res, next) => {
       req.locals.annotation.tool
         ? replyActivityGenerator.generateReplyToAnnotationActivity(req)
         : replyActivityGenerator.generateReplyToCommentActivity(req),
-      notifications.generateNotificationInfo(req),
+      notifications.generateNotificationInfo(req)
     );
     next();
   } catch (err) {
@@ -20,7 +20,7 @@ export const deleteReplyLogger = async (req, res, next) => {
   try {
     req.locals.activity = await activityController.createActivity(
       replyActivityGenerator.generateDeleteReplyActivity(req),
-      notifications.generateNotificationInfo(req),
+      notifications.generateNotificationInfo(req)
     );
     next();
   } catch (err) {
@@ -34,7 +34,7 @@ export const likeReplyLogger = async (req, res, next) => {
       req.locals.like
         ? replyActivityGenerator.generateLikeReplyActivity(req)
         : replyActivityGenerator.generateUnlikeReplyActivity(req),
-      notifications.generateNotificationInfo(req),
+      notifications.generateNotificationInfo(req)
     );
     next();
   } catch (err) {
@@ -48,7 +48,7 @@ export const dislikeReplyLogger = async (req, res, next) => {
       req.locals.dislike
         ? replyActivityGenerator.generateDislikeReplyActivity(req)
         : replyActivityGenerator.generateUndislikeReplyActivity(req),
-      notifications.generateNotificationInfo(req),
+      notifications.generateNotificationInfo(req)
     );
     next();
   } catch (err) {
@@ -61,7 +61,7 @@ export const editReplyLogger = async (req, res, next) => {
   try {
     req.locals.activity = await activityController.createActivity(
       replyActivityGenerator.generateEditReplyActivity(req),
-      notifications.generateNotificationInfo(req),
+      notifications.generateNotificationInfo(req)
     );
     next();
   } catch (err) {
@@ -73,7 +73,7 @@ export const newMentionLogger = async (req, res, next) => {
   try {
     req.locals.activity = await activityController.createActivity(
       replyActivityGenerator.getNewMentionCreationStatement(req),
-      notifications.generateNotificationInfo(req),
+      notifications.generateNotificationInfo(req)
     );
     next();
   } catch (err) {
