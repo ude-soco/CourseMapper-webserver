@@ -122,3 +122,27 @@ export const addMentionLogger = async (req, res, next) => {
   }
   next();
 };
+export const hideAnnotations = async (req, res) => {
+  try {
+    await activityController.createActivity(
+      annotationActivityGenerator.generateHideAnnotationsActivity(req)
+    );
+    res.status(200).json({
+      message: "Activity logged successfully",
+    });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
+  }
+};
+export const unhideAnnotations = async (req, res) => {
+  try {
+    await activityController.createActivity(
+      annotationActivityGenerator.generateUnhideAnnotationsActivity(req)
+    );
+    res.status(200).json({
+      message: "Activity logged successfully",
+    });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
+  }
+};

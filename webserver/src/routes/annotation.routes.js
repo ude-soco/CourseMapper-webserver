@@ -89,4 +89,16 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getAllAnnotationsForSpecificTag
   );
+  app.post(
+    "/api/courses/:courseId/materials/:materialId/hideAnnotations",
+    [authJwt.verifyToken],
+    controller.hideShowAnnotations,
+    logger.hideAnnotations
+  );
+  app.post(
+    "/api/courses/:courseId/materials/:materialId/unhideAnnotations",
+    [authJwt.verifyToken],
+    controller.hideShowAnnotations,
+    logger.unhideAnnotations
+  );
 };

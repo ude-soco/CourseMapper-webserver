@@ -801,3 +801,34 @@ export const getAllAnnotationsForSpecificTag = async (req, res) => {
   );
   return res.status(200).send(foundAnnotations);
 };
+
+export const hideShowAnnotations = async (req, res, next) => {
+  const materialId = req.body.materialId;
+  const annotations = req.body.annotations;
+  const userId = req.userId;
+  let user;
+  try {
+    user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+  } catch (error) {
+    return res.status(500).send({ error: "Error finding user" });
+  }
+
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
+  req.locals = {
+    user: user,
+    material: foundMaterial,
+    annotations: annotations,
+  };
+
+  next();
+};

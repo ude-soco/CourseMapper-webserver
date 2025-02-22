@@ -16,6 +16,31 @@ import {
 
 let DOMAIN = "http://www.CourseMapper.de"; // TODO: Hardcoded due to frontend implementation
 
+const createAnnotationsObject = (req) => {
+  let annotations = req.locals.annotations;
+  let material = req.locals.material;
+  let origin = req.get("origin");
+
+  return annotations.map((annotation) => ({
+    objectType: config.activity,
+    id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/annotation/${annotation._id}`,
+    definition: {
+      type: `${DOMAIN}/activityType/${annotation.type}`,
+      name: {
+        [config.language]: annotation.content,
+      },
+      extensions: {
+        [`${DOMAIN}/extensions/${annotation.type}`]: {
+          annotation_id: annotation._id,
+          material_id: material._id,
+          channel_id: material.channelId,
+          topic_id: material.topicId,
+          course_id: material.courseId,
+        },
+      },
+    },
+  }));
+};
 // export const generateCreateAnnotationActivity = (req) => {
 //   const metadata = createMetadata();
 //   return {
@@ -126,6 +151,29 @@ export const generateUndislikeAnnotationActivity = (req) => {
     verb: createVerb(`${DOMAIN}/verbs/undisliked`, "un-disliked"),
     object: createAnnotationObject(req),
     result: createAnnotationCommentResultObject(req, "annotation"),
+    context: createContext(),
+  };
+};
+
+// Log activity: User hid annotations from PDF
+export const generateHideAnnotationsActivity = (req) => {
+  const metadata = createMetadata();
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb(`${DOMAIN}/verbs/hid`, "hid"),
+    object: createAnnotationsObject(req),
+    context: createContext(),
+  };
+};
+// Log activity: User unhid annotations from PDF
+export const generateUnhideAnnotationsActivity = (req) => {
+  const metadata = createMetadata();
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb(`${DOMAIN}/verbs/unhid`, "unhid"),
+    object: createAnnotationsObject(req),
     context: createContext(),
   };
 };
