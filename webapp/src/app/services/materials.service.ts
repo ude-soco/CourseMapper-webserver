@@ -149,4 +149,12 @@ export class MaterilasService {
       }
     );
   }
+  logZoomPDF(payload): Observable<string> {
+    return this.http.post<string>(
+      `${this.API_URL}/courses/${payload.courseId}/materials/${payload.materialId}/pdf-zoom`,
+      {
+        payload,
+      }
+    );
+  }
 }

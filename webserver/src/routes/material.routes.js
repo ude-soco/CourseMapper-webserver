@@ -128,4 +128,10 @@ module.exports = function (app) {
     controller.reorderIndicators,
     logger.reorderMaterialIndicatorLogger
   );
+  app.post(
+    "/api/courses/:courseId/materials/:materialId/pdf-zoom",
+    [authJwt.verifyToken],
+    controller.zoomPDF,
+    logger.zoomPDFLogger
+  );
 };

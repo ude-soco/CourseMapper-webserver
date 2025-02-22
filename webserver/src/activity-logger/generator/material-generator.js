@@ -481,3 +481,51 @@ export const createReorderedMaterialIndicatorObject = (req) => {
     },
   };
 };
+export const generateZoomPDFActivity = (req) => {
+  const metadata = createMetadata();
+  const material = req.locals.material;
+  const buttonId = req.locals.buttonId;
+  const oldZoom = req.locals.oldZoom;
+  const newZoom = req.locals.newZoom;
+  console.log("req.locals: ", req.locals);
+  let verb;
+
+  if (buttonId == "zoomIn") {
+    verb = "zoomed-in";
+  } else if (buttonId == "zoomOut") {
+    verb = "zoomed-out";
+  } else if (buttonId == "resetZoom") {
+    verb = "reset";
+  }
+
+  let origin = req.get("origin");
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb(`${DOMAIN}/verb/${verb}`, verb),
+    object: {
+      objectType: config.activity,
+      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`,
+      definition: {
+        type: `${DOMAIN}/activityType/${material.type}`,
+        name: {
+          [config.language]: material.name,
+        },
+        description: {
+          [config.language]: material.description,
+        },
+        extensions: {
+          [`${DOMAIN}/extensions/${material.type}`]: {
+            oldZoom: oldZoom,
+            newZoom: newZoom,
+            id: material._id,
+            channel_id: material.channelId,
+            topic_id: material.topicId,
+            course_id: material.courseId,
+          },
+        },
+      },
+    },
+    context: createContext(),
+  };
+};

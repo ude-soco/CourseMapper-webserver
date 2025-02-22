@@ -699,3 +699,43 @@ export const reorderIndicators = async (req, res, next) => {
   //   indicators: foundMaterial.indicators,
   // });
 };
+
+export const zoomPDF = async (req, res, next) => {
+  const materialId = req.body.payload.materialId;
+  const buttonId = req.body.payload.buttonId;
+  const oldZoom = req.body.payload.oldZoom;
+  const newZoom = req.body.payload.newZoom;
+  const userId = req.userId;
+
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
+  let foundUser;
+  try {
+    foundUser = await User.findById(userId);
+    if (!foundUser) {
+      return res.status(404).send({ error: `User not found` });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding user" });
+  }
+
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    buttonId: buttonId,
+    oldZoom: oldZoom,
+    newZoom: newZoom,
+  };
+
+  next();
+};

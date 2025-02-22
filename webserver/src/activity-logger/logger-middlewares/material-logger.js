@@ -183,3 +183,16 @@ export const reorderMaterialIndicatorLogger = async (req, res) => {
       .send({ error: "Error saving activity log", details: err.message });
   }
 };
+
+export const zoomPDFLogger = async (req, res) => {
+  try {
+    await activityController.createActivity(
+      materialActivityGenerator.generateZoomPDFActivity(req)
+    );
+    res.status(200).json({
+      message: "Activity logged successfully",
+    });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
+  }
+};
