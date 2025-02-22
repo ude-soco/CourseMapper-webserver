@@ -15,6 +15,16 @@ export const createReplyLogger = async (req, res, next) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
+export const createReplyToUserLogger = async (req, res, next) => {
+  try {
+    req.locals.activity = await activityController.createActivity(
+      replyActivityGenerator.generateReplyToUserActivity(req)
+    );
+    next();
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
+  }
+};
 
 export const deleteReplyLogger = async (req, res, next) => {
   try {

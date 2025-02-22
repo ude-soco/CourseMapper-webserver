@@ -16,6 +16,33 @@ import { createCommentObject } from "../comment/comment-utils";
 
 let DOMAIN = "http://www.CourseMapper.de"; // TODO: Hardcoded due to frontend implementation
 
+const createUserObject = (req) => {
+  let annotation = req.locals.annotation;
+  let author = req.locals.annotation.author;
+  let origin = req.get("origin");
+  return {
+    objectType: config.activity,
+    id: `${origin}/activity/user/${author.userId}`,
+    definition: {
+      type: `${DOMAIN}/activityType/user`,
+      name: {
+        [config.language]: author.name,
+      },
+      extensions: {
+        [`${DOMAIN}/extensions/user`]: {
+          id: author.userId,
+          annotation_id: annotation._id,
+          material_id: annotation.materialId,
+          channel_id: annotation.channelId,
+          topic_id: annotation.topicId,
+          course_id: annotation.courseId,
+          content: annotation.content,
+        },
+      },
+    },
+  };
+};
+
 export const generateReplyToAnnotationActivity = (req) => {
   const metadata = createMetadata();
   return {
@@ -27,7 +54,16 @@ export const generateReplyToAnnotationActivity = (req) => {
     context: createContext(),
   };
 };
-
+export const generateReplyToUserActivity = (req) => {
+  const metadata = createMetadata();
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://id.tincanapi.com/verb/replied", "replied"),
+    object: createUserObject(req),
+    context: createContext(),
+  };
+};
 export const generateReplyToCommentActivity = (req) => {
   const metadata = createMetadata();
   return {
@@ -161,7 +197,9 @@ export const getNewMentionCreationStatement = (req) => {
       definition: {
         type: `${DOMAIN}/activityType/you`,
         name: {
-          [config.language]: `${reply.content.slice(0, 50)}${reply.content.length > 50 ? " ..." : ""}`,
+          [config.language]: `${reply.content.slice(0, 50)}${
+            reply.content.length > 50 ? " ..." : ""
+          }`,
         },
         extensions: {
           [`${DOMAIN}/extensions/reply`]: {
