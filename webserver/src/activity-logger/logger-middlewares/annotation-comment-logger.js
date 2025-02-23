@@ -146,3 +146,15 @@ export const unhideAnnotations = async (req, res) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
+export const filterAnnotations = async (req, res) => {
+  try {
+    await activityController.createActivity(
+      annotationActivityGenerator.generateFilterAnnotationsActivity(req)
+    );
+    res.status(200).json({
+      message: "Activity logged successfully",
+    });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
+  }
+};

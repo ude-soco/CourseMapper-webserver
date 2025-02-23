@@ -41,6 +41,62 @@ const createAnnotationsObject = (req) => {
     },
   }));
 };
+const createMaterialFilteredAnnotationsObject = (req) => {
+  let origin = req.get("origin");
+  let annotations = req.locals.annotations;
+  let material = req.locals.material;
+  let filters = req.locals.filters;
+  let currentPage; // defined only for pdfs
+  let currentTime; // defined only for videos
+
+  if (req.body.currentPage) {
+    currentPage = req.body.currentPage;
+  } else if (req.body.currentTime) {
+    currentTime = req.body.currentTime;
+  }
+
+  const formattedAnnotations = annotations.map((annotation) => ({
+    id: annotation._id,
+    content: annotation.content,
+    type: annotation.type,
+  }));
+
+  const extensions = {
+    [`${DOMAIN}/extensions/${material.type}`]: {
+      annotations: formattedAnnotations,
+      filters: filters,
+      material_id: material._id,
+      channel_id: material.channelId,
+      topic_id: material.topicId,
+      course_id: material.courseId,
+    },
+  };
+
+  // Conditionally add currentPage or currentTime to the extensions
+  if (material.type === "pdf" && currentPage !== undefined) {
+    extensions[`${DOMAIN}/extensions/${material.type}`].currentPage =
+      currentPage;
+  } else if (material.type === "video" && currentTime !== undefined) {
+    extensions[`${DOMAIN}/extensions/${material.type}`].currentTime =
+      currentTime;
+  }
+
+  return {
+    objectType: config.activity,
+    id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/annotations`,
+    definition: {
+      type: `${DOMAIN}/activityType/${material.type}`,
+      name: {
+        [config.language]: material.name,
+      },
+      description: {
+        [config.language]: material.description,
+      },
+      extensions: extensions,
+    },
+  };
+};
+
 // export const generateCreateAnnotationActivity = (req) => {
 //   const metadata = createMetadata();
 //   return {
@@ -174,6 +230,16 @@ export const generateUnhideAnnotationsActivity = (req) => {
     actor: createUser(req),
     verb: createVerb(`${DOMAIN}/verbs/unhid`, "unhid"),
     object: createAnnotationsObject(req),
+    context: createContext(),
+  };
+};
+export const generateFilterAnnotationsActivity = (req) => {
+  const metadata = createMetadata();
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb(`${DOMAIN}/verbs/filtered`, "filtered"),
+    object: createMaterialFilteredAnnotationsObject(req),
     context: createContext(),
   };
 };

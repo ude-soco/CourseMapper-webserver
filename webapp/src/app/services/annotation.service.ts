@@ -46,6 +46,12 @@ export class AnnotationService {
       payload
     );
   }
+  filterAnnotations(payload): Observable<string> {
+    return this.http.post<string>(
+      `${environment.API_URL}/courses/${payload.courseID}/materials/${payload.materialId}/filter-annotations`,
+      payload
+    );
+  }
 
   postReply(
     annotation: Annotation,

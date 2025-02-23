@@ -101,4 +101,10 @@ module.exports = function (app) {
     controller.hideShowAnnotations,
     logger.unhideAnnotations
   );
+  app.post(
+    "/api/courses/:courseId/materials/:materialId/filter-annotations",
+    [authJwt.verifyToken],
+    controller.filterAnnotations,
+    logger.filterAnnotations
+  );
 };

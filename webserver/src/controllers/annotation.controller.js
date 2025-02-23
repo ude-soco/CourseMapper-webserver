@@ -832,3 +832,36 @@ export const hideShowAnnotations = async (req, res, next) => {
 
   next();
 };
+export const filterAnnotations = async (req, res, next) => {
+  const materialId = req.body.materialId;
+  const filteredAnnotations = req.body.filteredAnnotations;
+  const filters = req.body.filters;
+  const userId = req.userId;
+
+  let user;
+  try {
+    user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+  } catch (error) {
+    return res.status(500).send({ error: "Error finding user" });
+  }
+
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
+  req.locals = {
+    user: user,
+    material: foundMaterial,
+    annotations: filteredAnnotations,
+    filters: filters,
+  };
+
+  next();
+};
