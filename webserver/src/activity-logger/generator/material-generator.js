@@ -487,7 +487,6 @@ export const generateZoomPDFActivity = (req) => {
   const buttonId = req.locals.buttonId;
   const oldZoom = req.locals.oldZoom;
   const newZoom = req.locals.newZoom;
-  console.log("req.locals: ", req.locals);
   let verb;
 
   if (buttonId == "zoomIn") {

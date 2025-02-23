@@ -143,7 +143,7 @@ export class PdfAnnotationToolbarComponent implements OnInit {
 
     payload.newZoom = this.currentZoom; // After Updating the zoom value
 
-    this.materialService.logZoomPDF(payload).subscribe();
+    this.materialService.logZoomPDF(payload).subscribe(); // Log activies User zoomed-in/ zoomed-out/ reset PDF
   }
 
   resetTools() {
