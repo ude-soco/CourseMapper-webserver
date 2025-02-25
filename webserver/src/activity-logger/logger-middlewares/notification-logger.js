@@ -20,7 +20,7 @@ export const markNotificationsAsReadLogger = async (req, res) => {
     await activityController.createActivity(
       notificationActivityGenerator.generateMarkNotificationsAsRead(req)
     );
-    res.status(201).send(req.locals.response);
+    res.status(200).send(req.locals.response);
   } catch (error) {
     res.status(400).send({ error: "Error saving statement to mongo", error });
   }

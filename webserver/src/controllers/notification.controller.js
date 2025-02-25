@@ -185,7 +185,7 @@ export const markNotificationsAsRead = async (req, res, next) => {
     return res.status(500).send({ error: "Error finding Notification" });
   }
 
-  const response = { message: "Activity logged" };
+  const response = { message: "Notifications marked as read!" };
 
   req.locals = {
     user: foundUser,
@@ -218,10 +218,21 @@ export const markNotificationsAsUnread = async (req, res, next) => {
       .status(500)
       .send({ error: "Error updating notifications", error });
   }
-  const response = { message: "Activity logged" };
+  let foundNotification;
+  try {
+    foundNotification = await UserNotification.find(
+      { _id: { $in: notificationIds } },
+      { isRead: true }
+    );
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding Notification" });
+  }
+
+  const response = { message: "Notification/s marked as unread!" };
 
   req.locals = {
     user: foundUser,
+    notification: foundNotification[0],
     response: response,
   };
   next();

@@ -43,13 +43,21 @@ const createNotificationsObject = (req) => {
 
 const createNotificationObjectforUpdating = (req) => {
   let notification = req.locals.notification;
-  // console.log(notification);
+  let user = req.locals.user;
   let origin = req.get("origin");
   return {
     objectType: config.activity,
-    id: `${origin}/activity/notification/${notification._id}`,
-    name: {
-      [config.language]: "Notification",
+    id: `${origin}/activity/${user._id}/notification/${notification._id}`,
+    definition: {
+      type: `${DOMAIN}/activityType/notification`,
+      name: {
+        [config.language]: "Notification",
+      },
+      extensions: {
+        [`${origin}/extensions/notification`]: {
+          id: notification._id,
+        },
+      },
     },
   };
 };
