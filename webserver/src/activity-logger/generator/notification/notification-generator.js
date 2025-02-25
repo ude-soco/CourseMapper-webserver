@@ -27,6 +27,7 @@ const createNotificationsObject = (req) => {
         [`${origin}/extensions/notifications`]: {
           notifications: notifications.map((notification) => ({
             id: notification._id,
+            userId: notification.userId,
             course_id: notification.courseId,
             topic_id: notification.topicId,
             channel_id: notification.channelId,
@@ -41,8 +42,8 @@ const createNotificationsObject = (req) => {
   };
 };
 
-const createNotificationObjectforUpdating = (req) => {
-  let notification = req.locals.notification;
+const createNotificationObject = (req) => {
+  let notification = req.locals.notifications[0];
   let user = req.locals.user;
   let origin = req.get("origin");
   return {
@@ -56,6 +57,14 @@ const createNotificationObjectforUpdating = (req) => {
       extensions: {
         [`${origin}/extensions/notification`]: {
           id: notification._id,
+          userId: notification.userId,
+          courseId: notification.courseId,
+          topicId: notification.topicId,
+          channelId: notification.channelId,
+          materialId: notification.materialId,
+          isStar: notification.isStar,
+          isRead: notification.isRead,
+          createdAt: notification.createdAt,
         },
       },
     },
@@ -142,18 +151,23 @@ export const generateViewAllNotificationsLog = (req) => {
 };
 export const generateMarkNotificationsAsRead = (req) => {
   const metadata = createMetadata();
+  const notifications = req.locals.notifications;
+
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb("http://activitystrea.ms/schema/1.0/read", "read"),
-    object: createNotificationObjectforUpdating(req),
+    verb: createVerb(`${DOMAIN}/verb/marked-read`, "marked-read"),
+    object:
+      notifications.length > 1
+        ? createNotificationsObject(req)
+        : createNotificationObject(req),
     context: createContext(),
   };
 };
 
 export const generateMarkNotificationsAsUnread = (req) => {
   const metadata = createMetadata();
-
+  const notifications = req.locals.notifications;
   return {
     ...metadata,
     actor: createUser(req),
@@ -161,47 +175,53 @@ export const generateMarkNotificationsAsUnread = (req) => {
       "http://id.tincanapi.com/verb/marked-unread",
       "marked-unread"
     ),
-    object: createNotificationObjectforUpdating(req),
+    object:
+      notifications.length > 1
+        ? createNotificationsObject(req)
+        : createNotificationObject(req),
     context: createContext(),
   };
 };
 
 export const generateStarNotification = (req) => {
   const metadata = createMetadata();
-
+  const notifications = req.locals.notifications;
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb(
-      "http://activitystrea.ms/schema/1.0/favorite", //Can I use the verb favorited instead of starred?
-      "favorited"
-    ),
-    object: createNotificationObjectforUpdating(req),
+    verb: createVerb(`${DOMAIN}/verb/starred`, "starred"),
+    object:
+      notifications.length > 1
+        ? createNotificationsObject(req)
+        : createNotificationObject(req),
     context: createContext(),
   };
 };
 export const generateUnstarNotification = (req) => {
   const metadata = createMetadata();
-
+  const notifications = req.locals.notifications;
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb(
-      "http://activitystrea.ms/schema/1.0/unfavorite", //Can I use the verb unfavorited instead of starred?
-      "unfavorited"
-    ),
-    object: createNotificationObjectforUpdating(req),
+    verb: createVerb(`${DOMAIN}/verb/unstarred`, "unstarred"),
+    object:
+      notifications.length > 1
+        ? createNotificationsObject(req)
+        : createNotificationObject(req),
     context: createContext(),
   };
 };
 export const generateRemoveNotification = (req) => {
   const metadata = createMetadata();
-
+  const notifications = req.locals.notifications;
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb("http://activitystrea.ms/schema/1.0/remove", "removed"),
-    object: createNotificationObject(req),
+    verb: createVerb("http://activitystrea.ms/schema/1.0/delete", "delete"),
+    object:
+      notifications.length > 1
+        ? createNotificationsObject(req)
+        : createNotificationObject(req),
     context: createContext(),
   };
 };

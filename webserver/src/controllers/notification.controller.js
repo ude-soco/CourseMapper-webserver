@@ -175,21 +175,20 @@ export const markNotificationsAsRead = async (req, res, next) => {
       .status(500)
       .send({ error: "Error updating notifications", error });
   }
-  let foundNotification;
+  let foundNotifications;
   try {
-    foundNotification = await UserNotification.find(
-      { _id: { $in: notificationIds } },
-      { isRead: true }
-    );
+    foundNotifications = await UserNotification.find({
+      _id: { $in: notificationIds },
+    });
   } catch (err) {
     return res.status(500).send({ error: "Error finding Notification" });
   }
 
-  const response = { message: "Notifications marked as read!" };
+  const response = { message: "Notification/s marked as read!" };
 
   req.locals = {
     user: foundUser,
-    notification: foundNotification[0],
+    notifications: foundNotifications,
     response: response,
   };
   next();
@@ -218,12 +217,11 @@ export const markNotificationsAsUnread = async (req, res, next) => {
       .status(500)
       .send({ error: "Error updating notifications", error });
   }
-  let foundNotification;
+  let foundNotifications;
   try {
-    foundNotification = await UserNotification.find(
-      { _id: { $in: notificationIds } },
-      { isRead: true }
-    );
+    foundNotifications = await UserNotification.find({
+      _id: { $in: notificationIds },
+    });
   } catch (err) {
     return res.status(500).send({ error: "Error finding Notification" });
   }
@@ -232,7 +230,7 @@ export const markNotificationsAsUnread = async (req, res, next) => {
 
   req.locals = {
     user: foundUser,
-    notification: foundNotification[0],
+    notifications: foundNotifications,
     response: response,
   };
   next();
@@ -261,11 +259,19 @@ export const starNotification = async (req, res, next) => {
       .status(500)
       .send({ error: "Error updating notifications", error });
   }
-
-  const response = { message: "Activity logged" };
+  let foundNotifications;
+  try {
+    foundNotifications = await UserNotification.find({
+      _id: { $in: notificationIds },
+    });
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding Notification" });
+  }
+  const response = { message: "Notification/s starred!" };
 
   req.locals = {
     user: foundUser,
+    notifications: foundNotifications,
     response: response,
   };
   next();
@@ -295,10 +301,20 @@ export const unstarNotification = async (req, res, next) => {
       .status(500)
       .send({ error: "Error updating notifications", error });
   }
-  const response = { message: "Activity logged" };
+  let foundNotifications;
+  try {
+    foundNotifications = await UserNotification.find({
+      _id: { $in: notificationIds },
+    });
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding Notification" });
+  }
+
+  const response = { message: "Notification/s starred!" };
 
   req.locals = {
     user: foundUser,
+    notifications: foundNotifications,
     response: response,
   };
   next();
@@ -316,6 +332,15 @@ export const removeNotification = async (req, res, next) => {
     return handleError(res, err, "Error finding user");
   }
 
+  let foundNotifications;
+  try {
+    foundNotifications = await UserNotification.find({
+      _id: { $in: notificationIds },
+    });
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding Notification" });
+  }
+
   try {
     await UserNotification.deleteMany({ _id: { $in: notificationIds } });
   } catch (error) {
@@ -323,10 +348,12 @@ export const removeNotification = async (req, res, next) => {
       .status(500)
       .send({ error: "Error deleting notifications", error });
   }
-  const response = { message: "Activity logged" };
 
+  const response = { message: "Notification/s removed!" };
+  console.log(foundNotifications);
   req.locals = {
     user: foundUser,
+    notifications: foundNotifications,
     response: response,
   };
   next();
