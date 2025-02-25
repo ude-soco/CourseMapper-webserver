@@ -439,6 +439,16 @@ export const AccessMaterialKGLogger = async (req, res) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
+export const didNotUnderstandSlideLogger = async (req, res, next) => {
+  try {
+    await activityController.createActivity(
+      mainConceptsActivityGenerator.generateDidNotUnderstandSlide(req)
+    );
+    next();
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
+  }
+};
 export const accessSlideKGLogger = async (req, res) => {
   try {
     await activityController.createActivity(

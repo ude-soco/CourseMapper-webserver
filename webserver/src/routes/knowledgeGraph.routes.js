@@ -18,6 +18,7 @@ module.exports = function (app) {
     "/api/knowledge-graph/get-slide/:slideId",
     [authJwt.verifyToken],
     controller.getSlide,
+    logger.didNotUnderstandSlideLogger,
     logger.accessSlideKGLogger
   );
 
