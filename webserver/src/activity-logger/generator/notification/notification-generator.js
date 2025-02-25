@@ -8,33 +8,34 @@ import config from "../util/config";
 
 let DOMAIN = "http://www.CourseMapper.de"; // TODO: Hardcoded due to frontend implementation
 
-const createNotificationObject = (req) => {
+const createNotificationsObject = (req) => {
   let notifications = req.locals.notifications;
+  let user = req.locals.user;
   let origin = req.get("origin");
   return {
     objectType: config.activity,
-    id: `${origin}/activity/notifications`, // Represents all notifications as a group
+    id: `${origin}/activity/${user._id}/notifications`,
     definition: {
-      type: config.activity,
+      type: `${DOMAIN}/activityType/notifications`,
       name: {
         [config.language]: "Notifications",
       },
+      description: {
+        [config.language]: "A collection of notifications.",
+      },
       extensions: {
-        [`${origin}/extensions/notifications`]: notifications.map(
-          (notification) => ({
-            //? Those extensions can be edited, depending on what needed.
+        [`${origin}/extensions/notifications`]: {
+          notifications: notifications.map((notification) => ({
             id: notification._id,
             course_id: notification.courseId,
             topic_id: notification.topicId,
             channel_id: notification.channelId,
             material_id: notification.materialId,
-            annotation_id: notification.annotationId,
-            reply_id: notification.replyId,
             isRead: notification.isRead,
             isStar: notification.isStar,
             createdAt: notification.createdAt,
-          })
-        ),
+          })),
+        },
       },
     },
   };
@@ -127,7 +128,7 @@ export const generateViewAllNotificationsLog = (req) => {
     ...metadata,
     actor: createUser(req),
     verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
-    object: createNotificationObject(req),
+    object: createNotificationsObject(req),
     context: createContext(),
   };
 };
