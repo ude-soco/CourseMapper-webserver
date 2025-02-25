@@ -255,7 +255,6 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
       .select(getHideAnnotationValue)
       .pipe(distinctUntilChanged()) // Ensures subscription triggers only on value change
       .subscribe((isHideAnnotations) => {
-        console.log('Triggering hideAnnotations:', isHideAnnotations); // Debugging
         this.hideAnnotations(isHideAnnotations);
       });
 
@@ -645,10 +644,8 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   /** Show/Hide Annotations on pdf */
   hideAnnotations(hideAnnotations: boolean) {
     if (this.hideAnnotationEvent === hideAnnotations) {
-      console.log('Skipping duplicate hideAnnotations call');
       return; // Prevent redundant API calls
     }
-    console.log('Executing hideAnnotations:', hideAnnotations); // Debugging
     this.hideAnnotationEvent = hideAnnotations;
     var annotationItem = Array.from(
       document.getElementsByClassName(
@@ -674,7 +671,6 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
         annotationItemHmlElmt.remove();
       }
       if (!this.isInitialLoad) {
-        console.log('Calling hideAnnotations API');
         this.annotationService.hideAnnotations(payload).subscribe();
       }
       // this.annotationService.hideAnnotations(payload).subscribe();
