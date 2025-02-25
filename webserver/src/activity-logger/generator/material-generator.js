@@ -235,7 +235,7 @@ const createPDFMaterialWithSlideObject = (req) => {
     definition: {
       type: `http://id.tincanapi.com/activitytype/slide`,
       name: {
-        [config.language]: material.name,
+        [config.language]: `${material.name} - Slide  ${slideNr}`,
       },
       description: {
         [config.language]: material.description,
