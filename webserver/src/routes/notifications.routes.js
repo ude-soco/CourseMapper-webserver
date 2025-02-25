@@ -59,9 +59,9 @@ module.exports = function (app) {
     controller.removeNotification,
     logger.removeNotificationLogger
   );
-  //THE LOGGER TO IMPLEMENT
+
   app.delete("/api/notifications", controller.deleteAllNotifications);
-  //THE LOGGER TO IMPLEMENT
+
   app.get("/api/notifications/searchUsers", controller.searchUsers);
 
   app.post(

@@ -21,17 +21,25 @@ const createAnnotationsObject = (req) => {
   let material = req.locals.material;
   let origin = req.get("origin");
 
-  return annotations.map((annotation) => ({
+  const formattedAnnotations = annotations.map((annotation) => ({
+    id: annotation._id,
+    content: annotation.content,
+    type: annotation.type,
+  }));
+  return {
     objectType: config.activity,
-    id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/annotation/${annotation._id}`,
+    id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/annotations`,
     definition: {
-      type: `${DOMAIN}/activityType/${annotation.type}`,
+      type: `${DOMAIN}/activityType/annotations`,
       name: {
-        [config.language]: annotation.content,
+        [config.language]: `Annotations - ${material.type}: ${material.name}`,
+      },
+      description: {
+        [config.language]: "All annotations",
       },
       extensions: {
-        [`${DOMAIN}/extensions/${annotation.type}`]: {
-          annotation_id: annotation._id,
+        [`${DOMAIN}/extensions/annotations`]: {
+          annotations: formattedAnnotations,
           material_id: material._id,
           channel_id: material.channelId,
           topic_id: material.topicId,
@@ -39,7 +47,7 @@ const createAnnotationsObject = (req) => {
         },
       },
     },
-  }));
+  };
 };
 const createMaterialFilteredAnnotationsObject = (req) => {
   let origin = req.get("origin");
@@ -85,12 +93,9 @@ const createMaterialFilteredAnnotationsObject = (req) => {
     objectType: config.activity,
     id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/annotations`,
     definition: {
-      type: `${DOMAIN}/activityType/${material.type}`,
+      type: `${DOMAIN}/activityType/annotations`,
       name: {
-        [config.language]: material.name,
-      },
-      description: {
-        [config.language]: material.description,
+        [config.language]: `Annotations - ${material.type}: ${material.name}`,
       },
       extensions: extensions,
     },
@@ -211,7 +216,7 @@ export const generateUndislikeAnnotationActivity = (req) => {
   };
 };
 
-// Log activity: User hid annotations from PDF
+// Log activity: User hid annotations from Material
 export const generateHideAnnotationsActivity = (req) => {
   const metadata = createMetadata();
   return {
@@ -222,7 +227,7 @@ export const generateHideAnnotationsActivity = (req) => {
     context: createContext(),
   };
 };
-// Log activity: User unhid annotations from PDF
+// Log activity: User unhid annotations from Material
 export const generateUnhideAnnotationsActivity = (req) => {
   const metadata = createMetadata();
   return {

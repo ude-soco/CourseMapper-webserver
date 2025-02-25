@@ -72,7 +72,7 @@ export const followAnnotationLogger = async (req, res) => {
     );
     res.status(201).send(req.locals.response);
   } catch (error) {
-    res.status(400).send({ error: "Error saving statement to mongo", error });
+    res.status(400).send({ error: "Error saving statement to mongo" });
   }
 };
 export const unfollowAnnotationLogger = async (req, res) => {
@@ -82,7 +82,7 @@ export const unfollowAnnotationLogger = async (req, res) => {
     );
     res.status(201).send(req.locals.response);
   } catch (error) {
-    res.status(400).send({ error: "Error saving statement to mongo", error });
+    res.status(400).send({ error: "Error saving statement to mongo" });
   }
 };
 export const blockUserLogger = async (req, res) => {

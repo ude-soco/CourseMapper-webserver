@@ -17,8 +17,8 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.newAnnotation,
     tagLogger.addTagToAnnotationLogger,
-    logger.annotateMaterialLogger,
-    logger.createAnnotationLogger,
+    logger.annotateMaterialLogger, // log when user annotates in a material
+    logger.createAnnotationLogger, //log when adding an annotation using the annotation panel
     notificationsController.followAnnotation,
     notifications.newAnnotationNotificationUsersCalculate,
     notifications.populateUserNotification,

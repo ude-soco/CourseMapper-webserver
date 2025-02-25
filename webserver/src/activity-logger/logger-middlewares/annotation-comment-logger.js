@@ -7,14 +7,19 @@ const notifications = require("../../middlewares/Notifications/notifications");
 
 export const annotateMaterialLogger = async (req, res, next) => {
   try {
-    req.locals.activity = await activityController.createActivity(
-      req.locals.annotation.tool
-        ? annotationActivityGenerator.generateAnnotateMaterialActivity(req)
-        : commentActivityGenerator.generateCommentActivity(req)
-    );
-    next();
+    if (req.locals.annotation.tool.type === "annotation") {
+      next(); // The user did'nt annotated the material
+    } else {
+      req.locals.activity = await activityController.createActivity(
+        req.locals.annotation.tool
+          ? annotationActivityGenerator.generateAnnotateMaterialActivity(req)
+          : commentActivityGenerator.generateCommentActivity(req)
+      );
+      next();
+    }
   } catch (err) {
     res.status(400).send({ error: "Error saving statement to mongo", err });
+    next();
   }
 };
 export const createAnnotationLogger = async (req, res, next) => {
@@ -36,6 +41,7 @@ export const createAnnotationLogger = async (req, res, next) => {
     next();
   } catch (err) {
     res.status(400).send({ error: "Error saving statement to mongo", err });
+    next();
   }
 };
 

@@ -70,6 +70,38 @@ const createNotificationObject = (req) => {
     },
   };
 };
+const createAnnotationObject = (req) => {
+  let annotation = req.locals.annotation;
+  let user = req.locals.user;
+  let origin = req.get("origin");
+  return {
+    objectType: config.activity,
+    id: `${origin}/activity/course/${annotation.courseId}/topic/${annotation.topicId}/channel/${annotation.channelId}/material/${annotation.materialId}/annotation/${annotation._id}`,
+    definition: {
+      type: `${DOMAIN}/activityType/${annotation.type}`,
+      name: {
+        [config.language]: `${annotation.type}`,
+      },
+      description: {
+        [config.language]: annotation.content,
+      },
+      extensions: {
+        [`${origin}/extensions/${annotation.type}`]: {
+          id: annotation._id,
+          userId: annotation.author.userId,
+          user_name: annotation.author.name,
+          courseId: annotation.courseId,
+          topicId: annotation.topicId,
+          channelId: annotation.channelId,
+          materialId: annotation.materialId,
+          materialType: annotation.materialType,
+          annotationType: annotation.type,
+          createdAt: annotation.createdAt,
+        },
+      },
+    },
+  };
+};
 
 const createMaterialNotificationSettingsObject = (req) => {
   let notificationSettings = req.locals.response;
@@ -232,7 +264,7 @@ export const generateFollowAnnotation = (req) => {
     ...metadata,
     actor: createUser(req),
     verb: createVerb("http://activitystrea.ms/schema/1.0/follow", "followed"),
-    //object: createNotificationObject(req),
+    object: createAnnotationObject(req),
     context: createContext(),
   };
 };
@@ -242,11 +274,8 @@ export const generateUnfollowAnnotation = (req) => {
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb(
-      "http://activitystrea.ms/schema/1.0/stop-following",
-      "stopped following"
-    ),
-    //object: createNotificationObject(req),
+    verb: createVerb(`${DOMAIN}/verb/unfollowed`, "unfollowed"),
+    object: createAnnotationObject(req),
     context: createContext(),
   };
 };

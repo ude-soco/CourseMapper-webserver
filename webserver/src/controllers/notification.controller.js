@@ -350,7 +350,6 @@ export const removeNotification = async (req, res, next) => {
   }
 
   const response = { message: "Notification/s removed!" };
-  console.log(foundNotifications);
   req.locals = {
     user: foundUser,
     notifications: foundNotifications,
@@ -441,9 +440,10 @@ export const followAnnotation = async (req, res, next) => {
       startPage: annotation.location.startPage,
     }),
   });
-
+  let successResponse;
   try {
     followAnnotationToBeSaved = await followAnnotationToBeSaved.save();
+    successResponse = { message: "Followed the Annotation!" };
     /* res.status(200).json({ message: "Followed the Annotation!" }); */
   } catch (error) {
     res.status(500).json({ error: "Could not Follow the Annotation!" });
@@ -464,9 +464,20 @@ export const followAnnotation = async (req, res, next) => {
   } else {
     req.locals = {
       user: foundUser,
+      annotation: annotation,
+      successResponse: successResponse,
       response: notificationSettings[0],
     };
   }
+  // if (req.locals) {
+  //   (req.locals.user = foundUser),
+  //     (req.locals.response = notificationSettings[0]);
+  // } else {
+  //   req.locals = {
+  //     user: foundUser,
+  //     response: notificationSettings[0],
+  //   };
+  // }
   next();
 
   //update the followingAnnotations array in the BlockingNotifications collection for the respective channel
@@ -568,6 +579,7 @@ export const unfollowAnnotation = async (req, res, next) => {
   }
   req.locals = {
     user: foundUser,
+    annotation: annotation,
     response: notificationSettings[0],
   };
   next();
