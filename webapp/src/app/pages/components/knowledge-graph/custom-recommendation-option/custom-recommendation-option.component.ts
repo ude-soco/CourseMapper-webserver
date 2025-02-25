@@ -69,6 +69,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
   // result component
   resultTabSelected: number = 1;
   factorsTabArticle = ["similarity_score", "saves_count", "user_rating"];
+  deactivateAlgo3and4 = false;
 
   @Input() data: any[] = [];
   @Input() DNUCurrent: any[] = [];
@@ -85,38 +86,44 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
         "title": "Similarity Score",
         "key": "similarity_score",
         "value": 0.169000934,
-        "checked": true
+        "checked": true,
+        "deactivated": false
       },
       {
         "title": "Creation Date on YouTube",
         "key": "creation_date",
         "value": 0.141456583,
-        "checked": true
+        "checked": true,
+        "deactivated": false
       },
       {
         "title": "No. of Views on YouTube",
         "key": "views",
         "value": 0.186741363,
-        "checked": true
+        "checked": true,
+        "deactivated": false
       },
       {
         "title": "No. of Likes on YouTube",
         "key": "like_count",
         "value": 0.177404295,
-        "checked": true
+        "checked": true,
+        "deactivated": false
       },
   
       {
         "title": "User Rating on CourseMapper",
         "key": "user_rating",
         "value": 0.18627451,
-        "checked": true
+        "checked": true,
+        "deactivated": false
       },
       {
         "title": "No. of Saves on CourseMapper",
         "key": "saves_count",
         "value": 0.139122316,
-        "checked": true
+        "checked": true,
+        "deactivated": false
       }
     ];
     this.factor_weights.normalized = {   
@@ -134,6 +141,23 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     this.croForm["user_id"] = this.userId;
     this.croForm["mid"] = this.materialId;
     this.croForm["slide_id"] = this.slideId;
+
+    this.croService.isResultTabSelected$.subscribe(tabSelected => {
+      if (tabSelected === '0') {
+        this.factor_weights.original.forEach(factor => {
+            factor.checked = true;
+            factor.deactivated = false;
+        })
+      }
+      else if (tabSelected === '1') {
+        for (let factor of this.factor_weights.original) {
+          if (this.factorsTabArticle.includes(factor.key) === true) {
+            factor.checked = false;
+            factor.deactivated = true;
+          }
+        }
+      }
+    });
   }
 
   updateConcpetAfterRecommandation() {
@@ -179,11 +203,6 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
   updateFactorWeight() {
     let data = this.getFactorWeight();
     this.factor_weights.normalized = this.normalizeFactorWeights(data, [], "l1", true, true) as {   like_count?: number;   creation_date: number;   views: number;   similarity_score: number;   saves_count: number;   user_rating: number; };;
-
-    // this.croService.updateFactorWeight(data).subscribe((res) => {
-    //   console.warn("--- 2 > ", this.sortDictBykey(res))
-    //   this.factor_weights.normalized = res;
-    // })
   }
 
   getFactorWeight() {
@@ -211,7 +230,6 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     } else {
       factor_div.classList.add('factor_weight_disabled');
     }
-
     this.updateFactorWeight();
   }
 
@@ -432,16 +450,17 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     this.isMoreThan5ConceptDisplayed = false;
     
     if (this.croForm.category === "1") {
-      this.updateCROform(this.didNotUnderstandConceptsObj, "1")
+      this.updateCROform(this.didNotUnderstandConceptsObj, "1");
+      this.deactivateAlgo3and4 = false;
 
     } else if (this.croForm.category === "2") {
-      // this.updateCROform(this.previousConceptsObj, "2");
       this.updateCROform([...this.didNotUnderstandConceptsObj, ...this.previousConceptsObj], "2");
+      this.deactivateAlgo3and4 = true;
 
     } else if (this.croForm.category === "3") {
       this.updateCROform(undefined, "3");
+      this.deactivateAlgo3and4 = true;
     }
-    // this.updateStatus1or2();
   }
 
   setStatus(event, cro) {
@@ -579,6 +598,21 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     return croFormRequest;
   }
 
+  deactivateTabResultArticle(factorKey): void {
+    const resultTabSelected = localStorage.getItem('resultTabSelected');
+    if (resultTabSelected) {
+      if (resultTabSelected === '1' && !this.factorsTabArticle.includes(factorKey) === true ) {
+        for (let factor of this.factor_weights.original) {
+          if (factor.key === factorKey) {
+            factor.checked = false;
+            break;
+          }
+        }
+       // return true;
+      }
+    }
+  }
+
   checkResultTabSelected(factorKey) {
     const resultTabSelected = localStorage.getItem('resultTabSelected');
     if (resultTabSelected) {
@@ -658,19 +692,11 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     }
 
     if (complete && normalizedValues) {
-
-
       const keyNames = Object.keys(factorWeights);
       const res = keyNames.reduce((acc, key, index) => {
         acc[key] = normalizedValues![index];
         return acc;
       }, {} as Record<string, number>);
-
-      // Convert Record to normal object
-      // const dict = { ...res };
-      // const dict = Object.assign({}, res);
-
-      // console.warn("--> ", res)
       return res;
     }
 

@@ -1,15 +1,11 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, lastValueFrom } from 'rxjs';
+import { Observable, lastValueFrom, BehaviorSubject } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { Neo4jResult, FactorWeight } from '../models/croForm';
+import { Neo4jResult } from '../models/croForm';
 import { HTTPOptions } from '../config/config';
-// TODO remove neo4j from package.json
 
-// type Neo4jResult = {
-//   records: any[]
-// }
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +15,13 @@ export class CustomRecommendationOptionService {
   LEAF_URL = `${environment.API_URL}/recommendation/setting`;
 
   constructor(public router: Router, private http: HttpClient) { }
+
+  private isResultTabSubject = new BehaviorSubject<string>(null);
+  public isResultTabSelected$ = this.isResultTabSubject.asObservable();
+
+  public setResultaTabValue(value: string) {
+    this.isResultTabSubject.next(value);
+  }
 
   // updateFactorWeight(data): Observable<any>{
   //   return this.http.post<any>(`${this.api_PYTHON_SERVER_RS}/setting/update_factor_weights`, data, HTTPOptions);

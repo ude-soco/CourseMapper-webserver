@@ -6,6 +6,7 @@ import { MenuItem } from 'primeng/api';
 import { SlideConceptsService } from 'src/app/services/slide-concepts.service';
 import { ResourcesPagination, UserResourceFilterResult, UserResourceFilterParamsResult, Concept } from 'src/app/models/croForm';
 import { MaterialsRecommenderService } from 'src/app/services/materials-recommender.service';
+import { CustomRecommendationOptionService } from 'src/app/services/custom-recommenation-option.service';
 
 interface MaterialModel {
   name: string;
@@ -107,7 +108,8 @@ export class ResultViewComponent {
 
   constructor(
     private slideConceptservice: SlideConceptsService,
-    private materialsRecommenderService: MaterialsRecommenderService
+    private materialsRecommenderService: MaterialsRecommenderService,
+    private croService: CustomRecommendationOptionService
   ) {
     slideConceptservice?.didNotUnderstandConcepts.subscribe((res) => {
       this.didNotUnderstandConceptsObj = res;
@@ -234,8 +236,9 @@ export class ResultViewComponent {
     this.closeVideoFrame();
     this.deactivateSortingKeys();
 
-    localStorage.removeItem('resultTabSelected');
-    localStorage.setItem('resultTabSelected', this.activeIndex.toString());
+    // localStorage.removeItem('resultTabSelected');
+    // localStorage.setItem('resultTabSelected', this.activeIndex.toString());
+    this.croService.setResultaTabValue(this.activeIndex.toString());
 
     if (this.activeIndex === 0 || this.activeIndex === 1) {
       this.selectedFactorSortingKeys = null;
