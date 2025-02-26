@@ -160,7 +160,6 @@ export const materialTags = async (req, res) => {
   return res.status(200).send(newFoundTags);
 };
 export const selectCourseTag = async (req, res, next) => {
-  //console.log(req);
   const tagId = req.params.tagId;
   const courseId = req.params.courseId;
   const userId = req.userId;

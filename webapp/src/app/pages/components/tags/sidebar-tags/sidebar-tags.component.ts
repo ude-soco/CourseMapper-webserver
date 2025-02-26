@@ -102,103 +102,57 @@ export class SidebarTagsComponent {
     this.router.navigate(['course', this.selectedCourse._id, 'tag', tag.name]);
   }
   navigateToCourseTagPage(tag: Tag) {
+    // Dispatch state update and navigate
+    this.store.dispatch(
+      CourseActions.loadAnnotationsForSelectedTag({
+        tagSelected: true,
+        selectedTagName: tag.name,
+        courseId: this.selectedCourse._id,
+      })
+    );
+    this.router.navigate(['course', this.selectedCourse._id, 'tag', tag.name]);
     this.tagService
       .logSelectCourseTag(tag, this.selectedCourse._id)
-      .subscribe(() => {
-        // Dispatch state update and navigate
-        this.store.dispatch(
-          CourseActions.loadAnnotationsForSelectedTag({
-            tagSelected: true,
-            selectedTagName: tag.name,
-            courseId: this.selectedCourse._id,
-          })
-        );
-        this.router.navigate([
-          'course',
-          this.selectedCourse._id,
-          'tag',
-          tag.name,
-        ]);
-      });
+      .subscribe();
   }
   navigateToTopicTagPage(tag: Tag) {
-    this.tagService
-      .logSelectTopicTag(tag, this.selectedTopic._id)
-      .subscribe(() => {
-        // Dispatch state update and navigate
-        this.store.dispatch(
-          CourseActions.loadAnnotationsForSelectedTag({
-            tagSelected: true,
-            selectedTagName: tag.name,
-            courseId: this.selectedCourse._id,
-          })
-        );
-        this.router.navigate([
-          'course',
-          this.selectedCourse._id,
-          'tag',
-          tag.name,
-        ]);
-      });
+    // Dispatch state update and navigate
+    this.store.dispatch(
+      CourseActions.loadAnnotationsForSelectedTag({
+        tagSelected: true,
+        selectedTagName: tag.name,
+        courseId: this.selectedCourse._id,
+      })
+    );
+    this.router.navigate(['course', this.selectedCourse._id, 'tag', tag.name]);
+    this.tagService.logSelectTopicTag(tag, this.selectedTopic._id).subscribe();
   }
   navigateToChannelTagPage(tag: Tag) {
+    // Dispatch state update and navigate
+    this.store.dispatch(
+      CourseActions.loadAnnotationsForSelectedTag({
+        tagSelected: true,
+        selectedTagName: tag.name,
+        courseId: this.selectedCourse._id,
+      })
+    );
+    this.router.navigate(['course', this.selectedCourse._id, 'tag', tag.name]);
     this.tagService
       .logSelectChannelTag(tag, this.selectedChannel._id)
-      .subscribe(() => {
-        // Dispatch state update and navigate
-        this.store.dispatch(
-          CourseActions.loadAnnotationsForSelectedTag({
-            tagSelected: true,
-            selectedTagName: tag.name,
-            courseId: this.selectedCourse._id,
-          })
-        );
-        this.router.navigate([
-          'course',
-          this.selectedCourse._id,
-          'tag',
-          tag.name,
-        ]);
-      });
+      .subscribe();
   }
   navigateToMaterialTagPage(tag: Tag) {
+    // Dispatch state update and navigate
+    this.store.dispatch(
+      CourseActions.loadAnnotationsForSelectedTag({
+        tagSelected: true,
+        selectedTagName: tag.name,
+        courseId: this.selectedCourse._id,
+      })
+    );
+    this.router.navigate(['course', this.selectedCourse._id, 'tag', tag.name]);
     this.tagService
       .logSelectMaterialTag(tag, this.selectedMaterial._id)
-      .subscribe(() => {
-        // Dispatch state update and navigate
-        this.store.dispatch(
-          CourseActions.loadAnnotationsForSelectedTag({
-            tagSelected: true,
-            selectedTagName: tag.name,
-            courseId: this.selectedCourse._id,
-          })
-        );
-        this.router.navigate([
-          'course',
-          this.selectedCourse._id,
-          'tag',
-          tag.name,
-        ]);
-      });
+      .subscribe();
   }
-  // navigateToTopicTagPage(tag: Tag) {
-  //   // Use TagService to log tag selection
-  //   this.tagService.logSelectCourseTag(
-  //     tag,
-  //     this.selectedCourse._id,
-  //   ).subscribe(() => {
-  //     // Dispatch state update and navigate
-  //     this.store.dispatch(CourseActions.loadAnnotationsForSelectedTag({
-  //       tagSelected: true,
-  //       selectedTagName: tag.name,
-  //       courseId: this.selectedCourse._id,
-  //     }));
-  //     this.router.navigate([
-  //       'course',
-  //       this.selectedCourse._id,
-  //       'tag',
-  //       tag.name,
-  //     ]);
-  //   });
-  // }
 }

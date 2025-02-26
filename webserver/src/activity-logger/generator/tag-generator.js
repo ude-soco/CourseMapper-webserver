@@ -6,29 +6,33 @@ import {
 } from "./util/generator-util";
 import config from "./util/config";
 
+let DOMAIN = "http://www.CourseMapper.de"; // TODO: Hardcoded due to frontend implementation
+
 const createTagObject = (req) => {
+  const material = req.locals.material;
   const tag = req.locals.tag;
-  const annotation = req.locals.annotation;
+  let annotation = req.locals.annotation;
+  if (req.locals.reply) {
+    // If the Tag is generated in a reply, consider reply as an annotation, to keep the logging data correct.
+    annotation = req.locals.reply;
+  }
   const origin = req.get("origin");
   return {
     objectType: config.activity,
-    id: `${origin}/activity/annotation/${annotation._id}/tag/${tag._id}`, //to Verify
+    id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/annotation/${annotation._id}/tag/${tag._id}`,
     definition: {
-      type: "http://id.tincanapi.com/activitytype/tag", // to Verify
+      type: "http://id.tincanapi.com/activitytype/tag",
       name: {
         [config.language]: tag.name,
       },
-      annotation: {
-        [config.language]: annotation.content,
-      },
       extensions: {
-        [`${origin}/extensions/course`]: {
+        [`${origin}/extensions/tag`]: {
           tagId: tag._id,
-          annotationId: tag.annotationId,
-          courseId: tag.courseId,
-          topicId: tag.topicId,
-          channelId: tag.courseId,
-          materialId: tag.materialId,
+          tagName: tag.name,
+          courseId: material.courseId,
+          topicId: material.topicId,
+          channelId: material.courseId,
+          materialId: material._id,
         },
       },
     },
@@ -40,15 +44,16 @@ const createCourseTagObject = (req) => {
   const origin = req.get("origin");
   return {
     objectType: config.activity,
-    id: `${origin}/activity/course/${course._id}/tag/${tag._id}`, //to Verify
+    id: `${origin}/activity/course/${course._id}/tag/${tag._id}`,
     definition: {
       type: "http://id.tincanapi.com/activitytype/tag",
       name: {
-        [config.language]: tag.name,
+        [config.language]: `Annotations for ${tag.name} `,
       },
       extensions: {
-        [`${origin}/extensions/course`]: {
+        [`${DOMAIN}/extensions/tag`]: {
           id: tag._id,
+          courseId: course._id,
           courseName: course.name,
         },
       },
@@ -61,19 +66,18 @@ const createTopicTagObject = (req) => {
   const origin = req.get("origin");
   return {
     objectType: config.activity,
-    id: `${origin}/activity/topic/${topic._id}/tag/${tag._id}`, //to Verify
+    id: `${origin}/activity/course/${topic.courseId}/topic/${topic._id}/tag/${tag._id}`, //to Verify
     definition: {
       type: "http://id.tincanapi.com/activitytype/tag",
       name: {
-        [config.language]: tag.name,
+        [config.language]: `Annotations for ${tag.name} `,
       },
       extensions: {
-        [`${origin}/extensions/topic`]: {
+        [`${origin}/extensions/tag`]: {
           id: tag._id,
           topicName: topic.name,
+          topicId: topic._id,
           courseId: topic.courseId,
-          channelId: tag.channelId,
-          materialId: tag.materialId,
         },
       },
     },
@@ -85,19 +89,19 @@ const createChannelTagObject = (req) => {
   const origin = req.get("origin");
   return {
     objectType: config.activity,
-    id: `${origin}/activity/channel/${channel._id}/tag/${tag._id}`, //to Verify
+    id: `${origin}/activity/course/${channel.courseId}/topic/${channel.topicId}/channel/${channel._id}/tag/${tag._id}`,
     definition: {
       type: "http://id.tincanapi.com/activitytype/tag",
       name: {
-        [config.language]: tag.name,
+        [config.language]: `Annotations for ${tag.name} `,
       },
       extensions: {
-        [`${origin}/extensions/channel`]: {
+        [`${origin}/extensions/tag`]: {
           id: tag._id,
           channelName: channel.name,
           courseId: channel.courseId,
-          channelId: tag.channelId,
-          materialId: tag.materialId,
+          topicId: channel.topicId,
+          channelId: channel._id,
         },
       },
     },
@@ -109,19 +113,20 @@ const createMaterialTagObject = (req) => {
   const origin = req.get("origin");
   return {
     objectType: config.activity,
-    id: `${origin}/activity/material/${material._id}/tag/${tag._id}`, //to Verify
+    id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/tag/${tag._id}`, //to Verify
     definition: {
       type: "http://id.tincanapi.com/activitytype/tag",
       name: {
-        [config.language]: tag.name,
+        [config.language]: `Annotations for ${tag.name} `,
       },
       extensions: {
-        [`${origin}/extensions/material`]: {
+        [`${origin}/extensions/tag`]: {
           id: tag._id,
           materialName: material.name,
           courseId: material.courseId,
-          channelId: tag.channelId,
-          materialId: tag.materialId,
+          topicId: material.topicId,
+          channelId: material.channelId,
+          materialId: material._id,
         },
       },
     },
@@ -133,7 +138,7 @@ export const generateSelectCourseTagActivity = (req) => {
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb("http://id.tincanapi.com/verb/selected", "selected"),
+    verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
     object: createCourseTagObject(req),
     context: createContext(),
   };
@@ -144,7 +149,7 @@ export const generateSelectTopicTagActivity = (req) => {
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb("http://id.tincanapi.com/verb/selected", "selected"),
+    verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
     object: createTopicTagObject(req),
     context: createContext(),
   };
@@ -155,7 +160,7 @@ export const generateSelectChannelTagActivity = (req) => {
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb("http://id.tincanapi.com/verb/selected", "selected"),
+    verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
     object: createChannelTagObject(req),
     context: createContext(),
   };
@@ -166,7 +171,7 @@ export const generateSelectMaterialTagActivity = (req) => {
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb("http://id.tincanapi.com/verb/selected", "selected"),
+    verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
     object: createMaterialTagObject(req),
     context: createContext(),
   };

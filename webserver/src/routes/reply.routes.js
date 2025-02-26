@@ -2,6 +2,7 @@ const { authJwt } = require("../middlewares");
 const controller = require("../controllers/reply.controller");
 const logger = require("../activity-logger/logger-middlewares/reply-logger");
 const { notifications } = require("../middlewares");
+const tagLogger = require("../activity-logger/logger-middlewares/tag-logger");
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -23,6 +24,7 @@ module.exports = function (app) {
     "/api/courses/:courseId/annotations/:annotationId/reply",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.newReply,
+    tagLogger.addTagToAnnotationLogger,
     logger.createReplyToUserLogger,
     logger.createReplyLogger,
     notifications.calculateUsersFollowingAnnotation,

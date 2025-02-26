@@ -7,9 +7,8 @@ export const selectCourseTagLogger = async (req, res) => {
       tagActivityGenerator.generateSelectCourseTagActivity(req)
     );
     res.status(200).json({ message: "Tag selection logged successfully" });
-  } catch (error) {
-    console.error("Error in logging tag selection:", error);
-    res.status(400).send("Failed to log tag selection");
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
 export const selectTopicTagLogger = async (req, res) => {
@@ -18,9 +17,8 @@ export const selectTopicTagLogger = async (req, res) => {
       tagActivityGenerator.generateSelectTopicTagActivity(req)
     );
     res.status(200).json({ message: "Tag selection logged successfully" });
-  } catch (error) {
-    console.error("Error in logging tag selection:", error);
-    res.status(400).send("Failed to log tag selection");
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
 export const selectChannelTagLogger = async (req, res) => {
@@ -29,9 +27,8 @@ export const selectChannelTagLogger = async (req, res) => {
       tagActivityGenerator.generateSelectChannelTagActivity(req)
     );
     res.status(200).json({ message: "Tag selection logged successfully" });
-  } catch (error) {
-    console.error("Error in logging tag selection:", error);
-    res.status(400).send("Failed to log tag selection");
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
 export const selectMaterialTagLogger = async (req, res) => {
@@ -40,9 +37,8 @@ export const selectMaterialTagLogger = async (req, res) => {
       tagActivityGenerator.generateSelectMaterialTagActivity(req)
     );
     res.status(200).json({ message: "Tag selection logged successfully" });
-  } catch (error) {
-    console.error("Error in logging tag selection:", error);
-    res.status(400).send("Failed to log tag selection");
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
 export const addTagToAnnotationLogger = async (req, res, next) => {
@@ -55,8 +51,8 @@ export const addTagToAnnotationLogger = async (req, res, next) => {
       );
     }
     next();
-  } catch (error) {
-    console.error("Error logging tag activities:", error);
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
     next();
   }
 };
