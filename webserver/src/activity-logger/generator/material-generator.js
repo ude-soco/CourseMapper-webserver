@@ -11,24 +11,23 @@ let DOMAIN = "http://www.CourseMapper.de"; // TODO: Hardcoded due to frontend im
 
 const createMaterialObject = (req, typeURI) => {
   let material = req.locals.material;
-  const materialType = req.locals.materialType;
+  let materialType = req.locals.materialType;
   let origin = req.get("origin");
-  //let type = typeURI ? typeURI : `${DOMAIN}/activityType/material`;
   let type;
   if (materialType === "pdf") {
-    type = `${DOMAIN}/activityType/pdf`;
+    type = "pdf";
   } else if (materialType === "video" && req.locals.videoType === "fileVideo") {
-    type = `${DOMAIN}/activityType/video`;
+    type = "video";
   } else if (materialType === "video" && req.locals.videoType === "urlVideo") {
-    type = `${DOMAIN}/activityType/youtube`;
+    type = "youtube";
   } else {
-    type = `${DOMAIN}/activityType/material`;
+    type = materialType;
   }
   return {
     objectType: config.activity,
     id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`,
     definition: {
-      type: type,
+      type: `${DOMAIN}/activityType/${type}`,
       name: {
         [config.language]: material.name,
       },
@@ -36,7 +35,7 @@ const createMaterialObject = (req, typeURI) => {
         [config.language]: material.description,
       },
       extensions: {
-        [`${DOMAIN}/extensions/material`]: {
+        [`${DOMAIN}/extensions/${type}`]: {
           id: material._id,
           name: material.name,
           description: material.description,
@@ -71,7 +70,7 @@ export const generateAddMaterialActivity = (req) => {
     actor: createUser(req),
     verb: createVerb(
       verb === "uploaded"
-        ? "https://xapi.elearn.rwth-aachen.de/definitions/generic/verbs/uploaded" //To verify!
+        ? `${DOMAIN}/verb/uploaded`
         : "http://activitystrea.ms/schema/1.0/add",
       verb
     ),
