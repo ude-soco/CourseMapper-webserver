@@ -16,7 +16,7 @@ const createConceptObject = (req) => {
   let origin = req.get("origin");
   return {
     objectType: config.activity,
-    id: `${DOMAIN}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/concept/${conceptName}`,
+    id: `${DOMAIN}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/concept/${conceptName}`, // To verify
     definition: {
       type: `${DOMAIN}/schema/1.0/concept`,
       name: {
@@ -48,12 +48,12 @@ export const generateViewedConcept = (req) => {
       objectType: config.activity,
       id: `${DOMAIN}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/concept/${concept.id}`,
       definition: {
-        type: `${DOMAIN}/schema/1.0/${concept.type}`, //Type could be main concept/ related concept/ category
+        type: `${DOMAIN}/schema/1.0/${concept.type}`, //Type could be main_concept/ related concept/ category
         name: {
           [config.language]: concept.name,
         },
         description: {
-          [config.language]: concept.abstract,
+          [config.language]: concept.abstract || "",
         },
         extensions: {
           [`${DOMAIN}/extensions/${concept.type}`]: {
@@ -103,7 +103,7 @@ export const generateHidConcepts = (req) => {
       objectType: config.activity,
       id: `${DOMAIN}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/${key}`,
       definition: {
-        type: `${DOMAIN}/schema/1.0/${key}`, //Type could be related concept/ category
+        type: `${DOMAIN}/schema/1.0/${key}`, //Type could be related_concept/ category
         name: {
           [config.language]: `${key}`,
         },
@@ -133,7 +133,7 @@ export const generateUnhidConcepts = (req) => {
       objectType: config.activity,
       id: `${DOMAIN}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/${key}`,
       definition: {
-        type: `${DOMAIN}/schema/1.0/${key}`, //Type could be related concept/ category
+        type: `${DOMAIN}/schema/1.0/${key}`, //Type could be related_concept/ category
         name: {
           [config.language]: `${key}`,
         },
@@ -238,7 +238,7 @@ export const generateFinalizeMaterialKG = (req) => {
       definition: {
         type: `${DOMAIN}/schema/1.0/knowledge-graph`,
         name: {
-          [config.language]: "Material Knowledge Graph",
+          [config.language]: `Material ${material.name} Knowledge Graph`,
         },
         extensions: {
           [`${DOMAIN}/extensions/material-kg`]: {
