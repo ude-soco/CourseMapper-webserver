@@ -47,7 +47,7 @@ export const generateResizePersonalIndicatorActivity = (req) => {
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb("http://id.tincanapi.com/verb/resize", "resized"), // TO VERIFY AND CORRECT, I couldn't find the verb in the registry Database
+    verb: createVerb(`${DOMAIN}/verb/resize`, "resized"),
     object: createResizedPersonalIndicatorObject(req),
     context: createContext(),
   };
@@ -57,7 +57,7 @@ export const generateReorderPersonalIndicatorActivity = (req) => {
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb("http://id.tincanapi.com/verb/reorder", "reordered"), // TO VERIFY AND CORRECT, I couldn't find the verb in the registry Database
+    verb: createVerb(`${DOMAIN}/verb/reorder`, "reordered"),
     object: createReorderedPersonalIndicatorObject(req),
     context: createContext(),
   };
@@ -84,83 +84,83 @@ const createPersonalDashboardObject = (req) => {
   };
 };
 export const createPersonalIndicatorObject = (req) => {
+  const user = req.locals.user;
   const indicator = req.locals.indicator;
   const origin = req.get("origin");
   return {
     objectType: config.activity,
-    id: `${origin}/activity/personalIndicator/${indicator._id}`, //To verify
+    id: `${origin}/activity/user/${user._id}/indicator/${indicator._id}`,
     definition: {
-      type: `http://id.tincanapi.com/activitytype/personalIndicator`, //To verify
-      source: {
-        [config.language]: indicator.src,
+      type: `${DOMAIN}/activityType/personal-indicator`,
+      name: {
+        [config.language]: "Personal Indicator", // To verify
       },
-      width: {
-        [config.language]: indicator.width,
-      },
-      height: {
-        [config.language]: indicator.height,
-      },
-      frameborder: {
-        [config.language]: indicator.frameborder,
+      extensions: {
+        [`${origin}/extensions/personal-indicator`]: {
+          id: indicator._id,
+          source: indicator.src,
+          width: indicator.width,
+          height: indicator.height,
+          frameborder: indicator.frameborder,
+          userId: user._id,
+          username: user.username,
+        },
       },
     },
   };
 };
 
 export const createResizedPersonalIndicatorObject = (req) => {
+  const user = req.locals.user;
   const indicator = req.locals.indicator;
   const oldDimensions = req.locals.oldDimensions;
   const newDimensions = req.locals.newDimensions;
   const origin = req.get("origin");
   return {
     objectType: config.activity,
-    id: `${origin}/activity/personalIndicator/${indicator._id}`, //To verify
+    id: `${origin}/activity/user/${user._id}/indicator/${indicator._id}`,
     definition: {
-      type: `http://id.tincanapi.com/activitytype/personalIndicator`, //To verify
-      source: {
-        [config.language]: indicator.src,
+      type: `${DOMAIN}/activityType/personal-indicator`, //To verify
+      name: {
+        [config.language]: "Personal indicator", //To verify
       },
-      oldDimensions: {
-        oldWidth: { [config.language]: oldDimensions.width },
-        oldHeight: { [config.language]: oldDimensions.height },
-      },
-      newDimensions: {
-        newWidth: { [config.language]: newDimensions.width },
-        newHeight: { [config.language]: newDimensions.height },
-      },
-      frameborder: {
-        [config.language]: indicator.frameborder,
+      extensions: {
+        [`${origin}/extensions/personal-indicator`]: {
+          id: indicator._id,
+          oldDimensions: oldDimensions,
+          newDimensions: newDimensions,
+          height: indicator.height,
+          frameborder: indicator.frameborder,
+          userId: user._id,
+          username: user.username,
+        },
       },
     },
   };
 };
 export const createReorderedPersonalIndicatorObject = (req) => {
+  const user = req.locals.user;
   const indicator = req.locals.indicator;
   const oldIndex = req.locals.oldIndex;
   const newIndex = req.locals.newIndex;
   const origin = req.get("origin");
   return {
     objectType: config.activity,
-    id: `${origin}/activity/personalIndicator/${indicator._id}`, //To verify
+    id: `${origin}/activity/user/${user._id}/indicator/${indicator._id}`,
     definition: {
-      type: `http://id.tincanapi.com/activitytype/personalIndicator`, //To verify
-      source: {
-        [config.language]: indicator.src,
+      type: `${DOMAIN}/activityType/personal-indicator`, //To verify
+      name: {
+        [config.language]: "Personal indicator", //To verify
       },
-      width: {
-        [config.language]: indicator.width,
-      },
-      height: {
-        [config.language]: indicator.height,
-      },
-      oldIndex: {
-        [config.language]: oldIndex,
-      },
-      newIndex: {
-        [config.language]: newIndex,
-      },
-      frameborder: {
-        [config.language]: indicator.frameborder,
+      extensions: {
+        [`${origin}/extensions/personal-indicator`]: {
+          id: indicator._id,
+          oldIndex: oldIndex,
+          newIndex: newIndex,
+          frameborder: indicator.frameborder,
+          userId: user._id,
+          username: user.username,
+        },
       },
     },
   };

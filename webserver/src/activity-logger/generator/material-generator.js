@@ -344,7 +344,7 @@ export const generateResizeMaterialIndicatorActivity = (req) => {
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb("http://id.tincanapi.com/verb/resize", "resized"), // TO VERIFY AND CORRECT, I couldn't find the verb in the registry Database
+    verb: createVerb(`${DOMAIN}/verb/resize`, "resized"),
     object: createResizedMaterialIndicatorObject(req),
     context: createContext(),
   };
@@ -354,7 +354,7 @@ export const generateReorderMaterialIndicatorActivity = (req) => {
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb("http://id.tincanapi.com/verb/reorder", "reordered"), // TO VERIFY AND CORRECT, I couldn't find the verb in the registry Database
+    verb: createVerb(`${DOMAIN}/verb/reorder`, "reordered"),
     object: createReorderedMaterialIndicatorObject(req),
     context: createContext(),
   };
@@ -366,31 +366,24 @@ export const createMaterialIndicatorObject = (req) => {
   const origin = req.get("origin");
   return {
     objectType: config.activity,
-    id: `${origin}/activity/materialIndicator/${indicator._id}`, //To verify
+    id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/indicator/${indicator._id}`,
     definition: {
-      type: `http://id.tincanapi.com/activitytype/materialIndicator`, //To verify
-      source: {
-        [config.language]: indicator.src,
-      },
-      width: {
-        [config.language]: indicator.width,
-      },
-      height: {
-        [config.language]: indicator.height,
-      },
-      frameborder: {
-        [config.language]: indicator.frameborder,
+      type: `${DOMAIN}/activityType/material-indicator`,
+      name: {
+        [config.language]: "Material Indicator", // To verify
       },
       extensions: {
-        [`${DOMAIN}/extensions/materialIndicator`]: {
+        [`${origin}/extensions/material-indicator`]: {
+          id: indicator._id,
+          source: indicator.src,
+          width: indicator.width,
+          height: indicator.height,
+          frameborder: indicator.frameborder,
           materialId: material._id,
           materialName: material.name,
-          materialDescription: material.description,
-          materialType: material.type,
-          materialUrl: material.url,
+          channelId: material.channelId,
           topicId: material.topicId,
           courseId: material.courseId,
-          channelId: material.channelId,
         },
       },
     },
@@ -404,33 +397,23 @@ export const createResizedMaterialIndicatorObject = (req) => {
   const origin = req.get("origin");
   return {
     objectType: config.activity,
-    id: `${origin}/activity/materialIndicator/${indicator._id}`, //To verify
+    id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/indicator/${indicator._id}`,
     definition: {
-      type: `http://id.tincanapi.com/activitytype/materialIndicator`, //To verify
-      source: {
-        [config.language]: indicator.src,
-      },
-      oldDimensions: {
-        oldWidth: { [config.language]: oldDimensions.width },
-        oldHeight: { [config.language]: oldDimensions.height },
-      },
-      newDimensions: {
-        newWidth: { [config.language]: newDimensions.width },
-        newHeight: { [config.language]: newDimensions.height },
-      },
-      frameborder: {
-        [config.language]: indicator.frameborder,
+      type: `${DOMAIN}/activityType/material-indicator`,
+      name: {
+        [config.language]: "Material indicator", //To verify
       },
       extensions: {
-        [`${DOMAIN}/extensions/materialIndicator`]: {
+        [`${origin}/extensions/material-indicator`]: {
+          id: indicator._id,
+          oldDimensions: oldDimensions,
+          newDimensions: newDimensions,
+          frameborder: indicator.frameborder,
+          courseId: material.courseId,
+          topicId: material.topicId,
+          channelId: material.channelId,
           materialId: material._id,
           materialName: material.name,
-          materialDescription: material.description,
-          materialType: material.type,
-          materialUrl: material.url,
-          topicId: material.topicId,
-          courseId: material.courseId,
-          channelId: material.channelId,
         },
       },
     },
@@ -444,37 +427,23 @@ export const createReorderedMaterialIndicatorObject = (req) => {
   const origin = req.get("origin");
   return {
     objectType: config.activity,
-    id: `${origin}/activity/materialIndicator/${indicator._id}`, //To verify
+    id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/indicator/${indicator._id}`,
     definition: {
-      type: `http://id.tincanapi.com/activitytype/materialIndicator`, //To verify
-      source: {
-        [config.language]: indicator.src,
-      },
-      width: {
-        [config.language]: indicator.width,
-      },
-      height: {
-        [config.language]: indicator.height,
-      },
-      oldIndex: {
-        [config.language]: oldIndex,
-      },
-      newIndex: {
-        [config.language]: newIndex,
-      },
-      frameborder: {
-        [config.language]: indicator.frameborder,
+      type: `${DOMAIN}/activityType/material-indicator`, //To verify
+      name: {
+        [config.language]: "Material indicator", //To verify
       },
       extensions: {
-        [`${DOMAIN}/extensions/materialIndicator`]: {
+        [`${origin}/extensions/material-indicator`]: {
+          id: indicator._id,
+          oldIndex: oldIndex,
+          newIndex: newIndex,
+          frameborder: indicator.frameborder,
+          courseId: material.courseId,
+          topicId: material.topicId,
+          channelId: material.channelId,
           materialId: material._id,
           materialName: material.name,
-          materialDescription: material.description,
-          materialType: material.type,
-          materialUrl: material.url,
-          topicId: material.topicId,
-          courseId: material.courseId,
-          channelId: material.channelId,
         },
       },
     },

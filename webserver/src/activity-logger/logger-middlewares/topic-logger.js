@@ -92,7 +92,7 @@ export const resizeTopicIndicatorLogger = async (req, res) => {
     req.locals.activity = await activityController.createActivity(
       topicActivityGenerator.generateResizeTopicIndicatorActivity(req)
     );
-    res.status(200).send({ success: `Indicator resized successfully!` });
+    res.status(200).send();
   } catch (err) {
     res.status(500).send({ error: "Error saving statement to mongo", err });
   }
@@ -103,7 +103,7 @@ export const reorderTopicIndicatorLogger = async (req, res) => {
       topicActivityGenerator.generateReorderTopicIndicatorActivity(req)
     );
     res.status(200).send({
-      success: `Indicators updated successfully!`,
+      success: req.locals.success,
       indicators: req.locals.indicators,
     });
   } catch (err) {

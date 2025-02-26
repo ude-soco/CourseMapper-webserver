@@ -232,7 +232,7 @@ export const generateResizeCourseIndicatorActivity = (req) => {
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb("http://id.tincanapi.com/verb/resize", "resized"), // TO VERIFY AND CORRECT, I couldn't find the verb in the registry Database
+    verb: createVerb(`${DOMAIN}/verb/resize`, "resized"),
     object: createResizedCourseIndicatorObject(req),
     context: createContext(),
   };
@@ -242,7 +242,7 @@ export const generateReorderCourseIndicatorActivity = (req) => {
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb("http://id.tincanapi.com/verb/reorder", "reordered"), // TO VERIFY AND CORRECT, I couldn't find the verb in the registry Database
+    verb: createVerb(`${DOMAIN}/verb/reorder`, "reordered"),
     object: createReorderedCourseIndicatorObject(req),
     context: createContext(),
   };
@@ -254,27 +254,21 @@ export const createCourseIndicatorObject = (req) => {
   const origin = req.get("origin");
   return {
     objectType: config.activity,
-    id: `${origin}/activity/courseIndicator/${indicator._id}`, //To verify
+    id: `${origin}/activity/course/${course._id}/indicator/${indicator._id}`,
     definition: {
-      type: `http://id.tincanapi.com/activitytype/courseIndicator`, //To verify
-      source: {
-        [config.language]: indicator.src,
-      },
-      width: {
-        [config.language]: indicator.width,
-      },
-      height: {
-        [config.language]: indicator.height,
-      },
-      frameborder: {
-        [config.language]: indicator.frameborder,
+      type: `${DOMAIN}/activityType/course-indicator`,
+      name: {
+        [config.language]: "Course Indicator", // To verify
       },
       extensions: {
-        [`${origin}/extensions/courseIndicator`]: {
+        [`${origin}/extensions/course-indicator`]: {
+          id: indicator._id,
+          source: indicator.src,
+          width: indicator.width,
+          height: indicator.height,
+          frameborder: indicator.frameborder,
           courseId: course._id,
           courseName: course.name,
-          courseShortName: course.shortName,
-          courseDescription: course.description,
         },
       },
     },
@@ -288,29 +282,21 @@ export const createResizedCourseIndicatorObject = (req) => {
   const origin = req.get("origin");
   return {
     objectType: config.activity,
-    id: `${origin}/activity/courseIndicator/${indicator._id}`, //To verify
+    id: `${origin}/activity/course/${course._id}/indicator/${indicator._id}`,
     definition: {
-      type: `http://id.tincanapi.com/activitytype/courseIndicator`, //To verify
-      source: {
-        [config.language]: indicator.src,
-      },
-      oldDimensions: {
-        oldWidth: { [config.language]: oldDimensions.width },
-        oldHeight: { [config.language]: oldDimensions.height },
-      },
-      newDimensions: {
-        newWidth: { [config.language]: newDimensions.width },
-        newHeight: { [config.language]: newDimensions.height },
-      },
-      frameborder: {
-        [config.language]: indicator.frameborder,
+      type: `${DOMAIN}/activityType/course-indicator`, //To verify
+      name: {
+        [config.language]: "Course indicator", //To verify
       },
       extensions: {
-        [`${origin}/extensions/courseIndicator`]: {
+        [`${origin}/extensions/course-indicator`]: {
+          id: indicator._id,
+          oldDimensions: oldDimensions,
+          newDimensions: newDimensions,
+          height: indicator.height,
+          frameborder: indicator.frameborder,
           courseId: course._id,
           courseName: course.name,
-          courseShortName: course.shortName,
-          courseDescription: course.description,
         },
       },
     },
@@ -324,33 +310,20 @@ export const createReorderedCourseIndicatorObject = (req) => {
   const origin = req.get("origin");
   return {
     objectType: config.activity,
-    id: `${origin}/activity/courseIndicator/${indicator._id}`, //To verify
+    id: `${origin}/activity/course/${course._id}/indicator/${indicator._id}`,
     definition: {
-      type: `http://id.tincanapi.com/activitytype/courseIndicator`, //To verify
-      source: {
-        [config.language]: indicator.src,
-      },
-      width: {
-        [config.language]: indicator.width,
-      },
-      height: {
-        [config.language]: indicator.height,
-      },
-      oldIndex: {
-        [config.language]: oldIndex,
-      },
-      newIndex: {
-        [config.language]: newIndex,
-      },
-      frameborder: {
-        [config.language]: indicator.frameborder,
+      type: `${DOMAIN}/activityType/course-indicator`, //To verify
+      name: {
+        [config.language]: "Course indicator", //To verify
       },
       extensions: {
-        [`${origin}/extensions/courseIndicator`]: {
+        [`${origin}/extensions/course-indicator`]: {
+          id: indicator._id,
+          oldIndex: oldIndex,
+          newIndex: newIndex,
+          frameborder: indicator.frameborder,
           courseId: course._id,
           courseName: course.name,
-          courseShortName: course.shortName,
-          courseDescription: course.description,
         },
       },
     },

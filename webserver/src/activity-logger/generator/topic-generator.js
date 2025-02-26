@@ -162,18 +162,18 @@ export const generateResizeTopicIndicatorActivity = (req) => {
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb("http://id.tincanapi.com/verb/resize", "resized"), // TO VERIFY AND CORRECT, I couldn't find the verb in the registry Database
+    verb: createVerb(`${DOMAIN}/verb/resize`, "resized"),
     object: createResizedTopicIndicatorObject(req),
-    result: {
-      extensions: {
-        [`${DOMAIN}/extensions/topicIndicator`]: {
-          newDimensions: {
-            newWidth: { [config.language]: newDimensions.width },
-            newHeight: { [config.language]: newDimensions.height },
-          },
-        },
-      },
-    },
+    // result: {
+    //   extensions: {
+    //     [`${DOMAIN}/extensions/topicIndicator`]: {
+    //       newDimensions: {
+    //         newWidth: { [config.language]: newDimensions.width },
+    //         newHeight: { [config.language]: newDimensions.height },
+    //       },
+    //     },
+    //   },
+    // },
     context: createContext(),
   };
 };
@@ -182,7 +182,7 @@ export const generateReorderTopicIndicatorActivity = (req) => {
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb("http://id.tincanapi.com/verb/reorder", "reordered"), // TO VERIFY AND CORRECT, I couldn't find the verb in the registry Database
+    verb: createVerb(`${DOMAIN}/verb/reorder`, "reordered"),
     object: createReorderedTopicIndicatorObject(req),
     context: createContext(),
   };
@@ -194,25 +194,20 @@ export const createTopicIndicatorObject = (req) => {
   const origin = req.get("origin");
   return {
     objectType: config.activity,
-    id: `${origin}/activity/topicIndicator/${indicator._id}`, //To verify
+    id: `${origin}/activity/course/${topic.courseId}/topic/${topic._id}/indicator/${indicator._id}`,
     definition: {
-      type: `http://id.tincanapi.com/activitytype/topicIndicator`, //To verify
-      source: {
-        [config.language]: indicator.src,
-      },
-      width: {
-        [config.language]: indicator.width,
-      },
-      height: {
-        [config.language]: indicator.height,
-      },
-      frameborder: {
-        [config.language]: indicator.frameborder,
+      type: `${DOMAIN}/activityType/topic-indicator`,
+      name: {
+        [config.language]: "Topic Indicator", // To verify
       },
       extensions: {
-        [`${DOMAIN}/extensions/topicIndicator`]: {
+        [`${origin}/extensions/topic-indicator`]: {
+          id: indicator._id,
+          source: indicator.src,
+          width: indicator.width,
+          height: indicator.height,
+          frameborder: indicator.frameborder,
           topicId: topic._id,
-          topicName: topic.name,
           courseId: topic.courseId,
         },
       },
@@ -223,24 +218,23 @@ export const createResizedTopicIndicatorObject = (req) => {
   const indicator = req.locals.indicator;
   const topic = req.locals.topic;
   const oldDimensions = req.locals.oldDimensions;
+  const newDimensions = req.locals.newDimentions;
   const origin = req.get("origin");
   return {
     objectType: config.activity,
-    id: `${origin}/activity/topicIndicator/${indicator._id}`, //To verify
+    id: `${origin}/activity/course/${topic.courseId}/topic/${topic._id}/indicator/${indicator._id}`,
     definition: {
-      type: `http://id.tincanapi.com/activitytype/topicIndicator`, //To verify
-      source: {
-        [config.language]: indicator.src,
-      },
-      oldDimensions: {
-        oldWidth: { [config.language]: oldDimensions.width },
-        oldHeight: { [config.language]: oldDimensions.height },
-      },
-      frameborder: {
-        [config.language]: indicator.frameborder,
+      type: `${DOMAIN}/activityType/topic-indicator`,
+      name: {
+        [config.language]: "Topic Indicator", // To verify
       },
       extensions: {
-        [`${DOMAIN}/extensions/topicIndicator`]: {
+        [`${origin}/extensions/topic-indicator`]: {
+          id: indicator._id,
+          oldDimensions: oldDimensions,
+          newDimensions: newDimensions,
+          source: indicator.src,
+          frameborder: indicator.frameborder,
           topicId: topic._id,
           topicName: topic.name,
           courseId: topic.courseId,
@@ -257,29 +251,19 @@ export const createReorderedTopicIndicatorObject = (req) => {
   const origin = req.get("origin");
   return {
     objectType: config.activity,
-    id: `${origin}/activity/topicIndicator/${indicator._id}`, //To verify
+    id: `${origin}/activity/course/${topic.courseId}/topic/${topic._id}/indicator/${indicator._id}`,
     definition: {
-      type: `http://id.tincanapi.com/activitytype/topicIndicator`, //To verify
-      source: {
-        [config.language]: indicator.src,
-      },
-      width: {
-        [config.language]: indicator.width,
-      },
-      height: {
-        [config.language]: indicator.height,
-      },
-      oldIndex: {
-        [config.language]: oldIndex,
-      },
-      newIndex: {
-        [config.language]: newIndex,
-      },
-      frameborder: {
-        [config.language]: indicator.frameborder,
+      type: `${DOMAIN}/activityType/topic-indicator`,
+      name: {
+        [config.language]: "Topic Indicator", // To verify
       },
       extensions: {
-        [`${DOMAIN}/extensions/topicIndicator`]: {
+        [`${origin}/extensions/topic-indicator`]: {
+          id: indicator._id,
+          oldIndex: oldIndex,
+          newIndex: newIndex,
+          source: indicator.src,
+          frameborder: indicator.frameborder,
           topicId: topic._id,
           topicName: topic.name,
           courseId: topic.courseId,
