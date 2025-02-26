@@ -173,6 +173,7 @@ export class CourseService {
     return this.http
       .post<any>(`${this.API_URL}/courses/${courseTS._id}/share`, {
         courseName: courseTS.name,
+        courseId: courseTS._id,
         frontendHost: window.location.origin,
       })
       .pipe(

@@ -33,7 +33,7 @@ export const shareCourseLogger = async (req, res) => {
       courseUrl: req.locals.courseUrl,
     });
   } catch (error) {
-    res.status(400).send("Something went wrong");
+    res.status(400).send({ error: "Error saving statement to mongo" });
   }
 };
 
