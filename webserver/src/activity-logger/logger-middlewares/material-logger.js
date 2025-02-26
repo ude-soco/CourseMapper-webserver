@@ -121,9 +121,8 @@ export const accessMaterialDashboardLogger = async (req, res) => {
     res
       .status(200)
       .json({ message: "Material dashboard access logged successfully" });
-  } catch (error) {
-    console.error("Error logging material dashboard access:", error);
-    res.status(400).send("Failed to log material dashboard access");
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
 export const newMaterialIndicatorLogger = async (req, res) => {
@@ -136,9 +135,7 @@ export const newMaterialIndicatorLogger = async (req, res) => {
       indicator: req.locals.indicator,
     });
   } catch (err) {
-    res
-      .status(500)
-      .send({ error: "Error saving activity log", details: err.message });
+    res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
 
@@ -151,9 +148,7 @@ export const deleteMaterialIndicatorLogger = async (req, res) => {
       success: req.locals.success,
     });
   } catch (err) {
-    res
-      .status(500)
-      .send({ error: "Error saving activity log", details: err.message });
+    res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
 export const resizeMaterialIndicatorLogger = async (req, res) => {
@@ -163,9 +158,7 @@ export const resizeMaterialIndicatorLogger = async (req, res) => {
     );
     res.status(200).send({ success: `Indicator resized successfully!` });
   } catch (err) {
-    res
-      .status(500)
-      .send({ error: "Error saving activity log", details: err.message });
+    res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
 export const reorderMaterialIndicatorLogger = async (req, res) => {
@@ -178,9 +171,7 @@ export const reorderMaterialIndicatorLogger = async (req, res) => {
       indicators: req.locals.indicators,
     });
   } catch (err) {
-    res
-      .status(500)
-      .send({ error: "Error saving activity log", details: err.message });
+    res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
 

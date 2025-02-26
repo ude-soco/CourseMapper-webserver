@@ -7,8 +7,8 @@ export const createCourseLogger = async (req, res) => {
       courseActivityGenerator.generateCreateCourseActivity(req)
     );
     res.status(201).send(req.locals.response);
-  } catch (error) {
-    res.status(400).send("Something went wrong");
+  } catch (err) {
+    res.status(500).send({ error: "Error saving statement to mongo", err });
   }
 };
 
@@ -18,8 +18,8 @@ export const deleteCourseLogger = async (req, res) => {
       courseActivityGenerator.generateDeleteCourseActivity(req)
     );
     res.status(200).send(req.locals.response);
-  } catch (error) {
-    res.status(400).send("Something went wrong");
+  } catch (err) {
+    res.status(500).send({ error: "Error saving statement to mongo", err });
   }
 };
 
@@ -32,8 +32,8 @@ export const shareCourseLogger = async (req, res) => {
       success: req.locals.success,
       courseUrl: req.locals.courseUrl,
     });
-  } catch (error) {
-    res.status(400).send({ error: "Error saving statement to mongo" });
+  } catch (err) {
+    res.status(500).send({ error: "Error saving statement to mongo", err });
   }
 };
 
@@ -43,8 +43,8 @@ export const accessCourseLogger = async (req, res) => {
       courseActivityGenerator.generateCourseAccessActivity(req)
     );
     res.status(200).send(req.locals.response);
-  } catch (error) {
-    res.status(400).send("Something went wrong");
+  } catch (err) {
+    res.status(500).send({ error: "Error saving statement to mongo", err });
   }
 };
 
@@ -54,8 +54,8 @@ export const enrolToCourseLogger = async (req, res) => {
       courseActivityGenerator.generateEnrolToCourseActivity(req)
     );
     res.status(200).send(req.locals.response);
-  } catch (error) {
-    res.status(400).send("Something went wrong");
+  } catch (err) {
+    res.status(500).send({ error: "Error saving statement to mongo", err });
   }
 };
 
@@ -65,8 +65,8 @@ export const withdrawFromCourseLogger = async (req, res) => {
       courseActivityGenerator.generateWithdrawFromCourseActivity(req)
     );
     res.status(200).send(req.locals.response);
-  } catch (error) {
-    res.status(400).send("Something went wrong");
+  } catch (err) {
+    res.status(500).send({ error: "Error saving statement to mongo", err });
   }
 };
 
@@ -76,8 +76,8 @@ export const editCourseLogger = async (req, res) => {
       courseActivityGenerator.generateEditCourseLogger(req)
     );
     res.status(200).send(req.locals.response);
-  } catch (error) {
-    res.status(400).send("Something went wrong");
+  } catch (err) {
+    res.status(500).send({ error: "Error saving statement to mongo", err });
   }
 };
 export const accessCourseDashboardLogger = async (req, res) => {
@@ -88,9 +88,8 @@ export const accessCourseDashboardLogger = async (req, res) => {
     res
       .status(200)
       .json({ message: "Course dashboard access logged successfully" });
-  } catch (error) {
-    console.error("Error logging course dashboard access:", error);
-    res.status(400).send("Failed to log course dashboard access");
+  } catch (err) {
+    res.status(500).send({ error: "Error saving statement to mongo", err });
   }
 };
 
@@ -104,9 +103,7 @@ export const newCourseIndicatorLogger = async (req, res) => {
       indicator: req.locals.indicator,
     });
   } catch (err) {
-    res
-      .status(500)
-      .send({ error: "Error saving activity log", details: err.message });
+    res.status(500).send({ error: "Error saving statement to mongo", err });
   }
 };
 export const deleteCourseIndicatorLogger = async (req, res) => {
@@ -118,9 +115,7 @@ export const deleteCourseIndicatorLogger = async (req, res) => {
       success: req.locals.success,
     });
   } catch (err) {
-    res
-      .status(500)
-      .send({ error: "Error saving activity log", details: err.message });
+    res.status(500).send({ error: "Error saving statement to mongo", err });
   }
 };
 export const resizeCourseIndicatorLogger = async (req, res) => {
@@ -130,9 +125,7 @@ export const resizeCourseIndicatorLogger = async (req, res) => {
     );
     res.status(200).send({ success: `Indicator resized successfully!` });
   } catch (err) {
-    res
-      .status(500)
-      .send({ error: "Error saving activity log", details: err.message });
+    res.status(500).send({ error: "Error saving statement to mongo", err });
   }
 };
 export const reorderCourseIndicatorLogger = async (req, res) => {
@@ -145,8 +138,6 @@ export const reorderCourseIndicatorLogger = async (req, res) => {
       indicators: req.locals.indicators,
     });
   } catch (err) {
-    res
-      .status(500)
-      .send({ error: "Error saving activity log", details: err.message });
+    res.status(500).send({ error: "Error saving statement to mongo", err });
   }
 };

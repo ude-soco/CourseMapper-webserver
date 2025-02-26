@@ -9,9 +9,8 @@ export const accessPersonalDashboardLogger = async (req, res) => {
     res
       .status(200)
       .json({ message: "Personal dashboard access logged successfully" });
-  } catch (error) {
-    console.error("Error logging personal dashboard access:", error);
-    res.status(400).send("Failed to log personal dashboard access");
+  } catch (err) {
+    res.status(500).send({ error: "Error saving statement to mongo", err });
   }
 };
 
@@ -25,9 +24,7 @@ export const newPersonalIndicatorLogger = async (req, res) => {
       indicator: req.locals.indicator,
     });
   } catch (err) {
-    res
-      .status(500)
-      .send({ error: "Error saving activity log", details: err.message });
+    res.status(500).send({ error: "Error saving statement to mongo", err });
   }
 };
 export const deletePersonalIndicatorLogger = async (req, res) => {
@@ -39,9 +36,7 @@ export const deletePersonalIndicatorLogger = async (req, res) => {
       success: req.locals.success,
     });
   } catch (err) {
-    res
-      .status(500)
-      .send({ error: "Error saving activity log", details: err.message });
+    res.status(500).send({ error: "Error saving statement to mongo", err });
   }
 };
 export const resizePersonalIndicatorLogger = async (req, res) => {
@@ -51,9 +46,7 @@ export const resizePersonalIndicatorLogger = async (req, res) => {
     );
     res.status(200).send({ success: `Indicator resized successfully!` });
   } catch (err) {
-    res
-      .status(500)
-      .send({ error: "Error saving activity log", details: err.message });
+    res.status(500).send({ error: "Error saving statement to mongo", err });
   }
 };
 export const reorderPersonalIndicatorLogger = async (req, res) => {
@@ -66,8 +59,6 @@ export const reorderPersonalIndicatorLogger = async (req, res) => {
       indicators: req.locals.indicators,
     });
   } catch (err) {
-    res
-      .status(500)
-      .send({ error: "Error saving activity log", details: err.message });
+    res.status(500).send({ error: "Error saving statement to mongo", err });
   }
 };

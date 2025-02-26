@@ -56,9 +56,8 @@ export const accessChannelDashboardLogger = async (req, res) => {
     res
       .status(200)
       .json({ message: "Channel dashboard access logged successfully" });
-  } catch (error) {
-    console.error("Error logging channel dashboard access:", error);
-    res.status(400).send("Failed to log channel dashboard access");
+  } catch (err) {
+    res.status(500).send({ error: "Error saving statement to mongo", err });
   }
 };
 export const newChannelIndicatorLogger = async (req, res) => {
@@ -71,9 +70,7 @@ export const newChannelIndicatorLogger = async (req, res) => {
       indicator: req.locals.indicator,
     });
   } catch (err) {
-    res
-      .status(500)
-      .send({ error: "Error saving activity log", details: err.message });
+    res.status(500).send({ error: "Error saving statement to mongo", err });
   }
 };
 export const deleteChannelIndicatorLogger = async (req, res) => {
@@ -85,9 +82,7 @@ export const deleteChannelIndicatorLogger = async (req, res) => {
       success: req.locals.success,
     });
   } catch (err) {
-    res
-      .status(500)
-      .send({ error: "Error saving activity log", details: err.message });
+    res.status(500).send({ error: "Error saving statement to mongo", err });
   }
 };
 export const resizeChannelIndicatorLogger = async (req, res) => {
@@ -97,9 +92,7 @@ export const resizeChannelIndicatorLogger = async (req, res) => {
     );
     res.status(200).send({ success: `Indicator resized successfully!` });
   } catch (err) {
-    res
-      .status(500)
-      .send({ error: "Error saving activity log", details: err.message });
+    res.status(500).send({ error: "Error saving statement to mongo", err });
   }
 };
 export const reorderChannelIndicatorLogger = async (req, res) => {
@@ -112,8 +105,6 @@ export const reorderChannelIndicatorLogger = async (req, res) => {
       indicators: req.locals.indicators,
     });
   } catch (err) {
-    res
-      .status(500)
-      .send({ error: "Error saving activity log", details: err.message });
+    res.status(500).send({ error: "Error saving statement to mongo", err });
   }
 };
