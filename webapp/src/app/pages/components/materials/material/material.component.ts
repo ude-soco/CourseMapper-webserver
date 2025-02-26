@@ -960,10 +960,6 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   viewMaterialDashboardClicked() {
-    //Log the activity
-    this.materialService
-      .logAccessMaterialDashboard(this.materialID)
-      .subscribe();
     this.router.navigate([
       'course',
       this.courseService.getSelectedCourse()._id,
@@ -973,5 +969,9 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.materialID,
       'dashboard',
     ]);
+    //Log the activity
+    this.materialService
+      .logAccessMaterialDashboard(this.materialID)
+      .subscribe();
   }
 }

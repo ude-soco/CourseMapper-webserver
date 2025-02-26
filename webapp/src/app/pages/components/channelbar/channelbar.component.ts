@@ -544,11 +544,8 @@ export class ChannelbarComponent implements OnInit {
   // }
   onViewDashboardClicked(): void {
     const selectedCourseId = this.courseService.getSelectedCourse()._id;
+    this.router.navigate(['course', selectedCourseId, 'dashboard']);
     // Call the logging endpoint
-    this.courseService
-      .logAccessCourseDashboard(selectedCourseId)
-      .subscribe(() => {
-        this.router.navigate(['course', selectedCourseId, 'dashboard']);
-      });
+    this.courseService.logAccessCourseDashboard(selectedCourseId).subscribe();
   }
 }

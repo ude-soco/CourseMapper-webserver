@@ -1212,10 +1212,6 @@ export class TopicDropdownComponent implements OnInit {
   }
 
   viewDashboardClicked() {
-    //Log the activity
-    this.topicChannelService
-      .logAccessTopicDashboard(this.selectedTopic._id)
-      .subscribe();
     this.router.navigate([
       'course',
       this.courseService.getSelectedCourse()._id,
@@ -1223,12 +1219,12 @@ export class TopicDropdownComponent implements OnInit {
       this.selectedTopic._id,
       'dashboard',
     ]);
-  }
-  viewChannelDashboardClicked() {
     //Log the activity
     this.topicChannelService
-      .logAccessChannelDashboard(this.selectedChannel._id)
+      .logAccessTopicDashboard(this.selectedTopic._id)
       .subscribe();
+  }
+  viewChannelDashboardClicked() {
     this.router.navigate([
       'course',
       this.courseService.getSelectedCourse()._id,
@@ -1236,5 +1232,9 @@ export class TopicDropdownComponent implements OnInit {
       this.selectedChannel._id,
       'dashboard',
     ]);
+    //Log the activity
+    this.topicChannelService
+      .logAccessChannelDashboard(this.selectedChannel._id)
+      .subscribe();
   }
 }

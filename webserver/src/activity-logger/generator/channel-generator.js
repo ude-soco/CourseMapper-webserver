@@ -115,17 +115,18 @@ const createChannelDashboardObject = (req) => {
 
   return {
     objectType: config.activity,
-    id: `${origin}/activity/channel/${channel._id}/dashboard`, //To Verify
+    id: `${origin}/activity/course/${channel.courseId}/topic/${channel.topicId}/channel/${channel._id}/dashboard`,
     definition: {
-      type: "http://adlnet.gov/expapi/activities/dashboard", //To Verify
+      type: `${DOMAIN}/activityType/channel-dashboard`,
       name: {
-        [config.language]: `Channel Dashboard`,
+        [config.language]: `${channel.name} Dashboard`,
       },
       extensions: {
-        [`${origin}/extensions/channel`]: {
-          channelId: channel._id,
+        [`${origin}/extensions/channel-dashboard`]: {
+          indicators: channel.indicators,
           channelName: channel.name,
           channelDescription: channel.description,
+          channelId: channel._id,
           topicId: channel.topicId,
           courseId: channel.courseId,
         },

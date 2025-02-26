@@ -6,6 +6,8 @@ import {
 } from "./util/generator-util";
 import config from "./util/config";
 
+let DOMAIN = "http://www.CourseMapper.de"; // TODO: Hardcoded due to frontend implementation
+
 const createCourseObject = (req) => {
   let course = req.locals.course;
   let origin = req.get("origin");
@@ -172,19 +174,20 @@ export const generateEditCourseLogger = (req) => {
 const createCourseDashboardObject = (req) => {
   const course = req.locals.course;
   const origin = req.get("origin");
-
   return {
     objectType: config.activity,
-    id: `${origin}/activity/course/${course._id}/dashboard`, //To Verify
+    id: `${origin}/activity/course/${course._id}/dashboard`,
     definition: {
-      type: "http://adlnet.gov/expapi/activities/dashboard", //To Verify
+      type: `${DOMAIN}/activityType/course-dashboard`,
       name: {
-        [config.language]: `Course Dashboard`,
+        [config.language]: `${course.name} Dashboard`,
       },
       extensions: {
-        [`${origin}/extensions/course`]: {
+        [`${origin}/extensions/course-dashboard`]: {
+          indicators: course.indicators,
           courseId: course._id,
           courseName: course.name,
+          courseDescription: course.description,
         },
       },
     },

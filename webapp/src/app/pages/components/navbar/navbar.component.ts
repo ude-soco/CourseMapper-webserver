@@ -143,8 +143,7 @@ export class NavbarComponent implements OnInit {
   //   this.router.navigate(['user/dashboard']);
   // }
   onViewPersonalDashboard(): void {
-    this.userService.logAccessPersonalDashboard().subscribe(() => {
-      this.router.navigate(['user/dashboard']);
-    });
+    this.router.navigate(['user/dashboard']);
+    this.userService.logAccessPersonalDashboard().subscribe();
   }
 }

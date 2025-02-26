@@ -105,14 +105,16 @@ const createTopicDashboardObject = (req) => {
 
   return {
     objectType: config.activity,
-    id: `${origin}/activity/topic/${topic._id}/dashboard`, //To Verify
+    id: `${origin}/activity/course/${topic.courseId}/topic/${topic._id}/dashboard`,
     definition: {
-      type: "http://adlnet.gov/expapi/activities/dashboard", //To Verify
+      type: `${DOMAIN}/activityType/topic-dashboard`,
       name: {
-        [config.language]: `Topic Dashboard`,
+        [config.language]: `${topic.name} Dashboard`,
       },
       extensions: {
-        [`${origin}/extensions/topic`]: {
+        [`${origin}/extensions/topic-dashboard`]: {
+          indicators: topic.indicators,
+          courseId: topic.courseId,
           topicId: topic._id,
           topicName: topic.name,
         },

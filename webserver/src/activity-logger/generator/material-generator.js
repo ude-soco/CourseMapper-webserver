@@ -282,23 +282,23 @@ export const generateCompletePdfActivity = (req) => {
 };
 const createMaterialDashboardObject = (req) => {
   const material = req.locals.material;
-  console.log(material);
   const origin = req.get("origin");
 
   return {
     objectType: config.activity,
-    id: `${origin}/activity/material/${material._id}/dashboard`, //To Verify
+    id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/dashboard`,
     definition: {
-      type: "http://adlnet.gov/expapi/activities/dashboard", //To Verify
+      type: `${DOMAIN}/activityType/material-dashboard`,
       name: {
-        [config.language]: `Material Dashboard`,
+        [config.language]: `${material.name} Dashboard`,
       },
       extensions: {
-        [`${origin}/extensions/material`]: {
-          materialId: material._id,
+        [`${origin}/extensions/material-dashboard`]: {
+          indicators: material.indicators,
           materialName: material.name,
           materialType: material.type,
           materialDescription: material.description,
+          materialId: material._id,
           topicId: material.topicId,
           courseId: material.courseId,
           channelId: material.channelId,

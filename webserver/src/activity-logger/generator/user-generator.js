@@ -65,17 +65,17 @@ export const generateReorderPersonalIndicatorActivity = (req) => {
 const createPersonalDashboardObject = (req) => {
   const user = req.locals.user;
   const origin = req.get("origin");
-
   return {
     objectType: config.activity,
-    id: `${origin}/activity/user/${user._id}/dashboard`, //To Verify
+    id: `${origin}/activity/user/${user._id}/personal-dashboard`,
     definition: {
-      type: "http://adlnet.gov/expapi/activities/dashboard", //To Verify
+      type: `${DOMAIN}/activityType/personal-dashboard`,
       name: {
-        [config.language]: `Personal Dashboard`,
+        [config.language]: "Personal Dashboard",
       },
       extensions: {
-        [`${origin}/extensions/user`]: {
+        [`${origin}/extensions/personal-dashboard`]: {
+          indicators: user.indicators,
           userId: user._id,
           username: user.username,
         },
