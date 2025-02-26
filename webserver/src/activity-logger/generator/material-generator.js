@@ -15,19 +15,19 @@ const createMaterialObject = (req, typeURI) => {
   let origin = req.get("origin");
   let type;
   if (materialType === "pdf") {
-    type = "pdf";
+    type = `${DOMAIN}/activityType/pdf`;
   } else if (materialType === "video" && req.locals.videoType === "fileVideo") {
-    type = "video";
+    type = `${DOMAIN}/activityType/video`;
   } else if (materialType === "video" && req.locals.videoType === "urlVideo") {
-    type = "youtube";
+    type = `${DOMAIN}/activityType/youtube`;
   } else {
-    type = materialType;
+    type = `${DOMAIN}/activityType/${material.type}`;
   }
   return {
     objectType: config.activity,
     id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}`,
     definition: {
-      type: `${DOMAIN}/activityType/${type}`,
+      type: type,
       name: {
         [config.language]: material.name,
       },
@@ -35,7 +35,7 @@ const createMaterialObject = (req, typeURI) => {
         [config.language]: material.description,
       },
       extensions: {
-        [`${DOMAIN}/extensions/${type}`]: {
+        [`${DOMAIN}/extensions/${material.type}`]: {
           id: material._id,
           name: material.name,
           description: material.description,
