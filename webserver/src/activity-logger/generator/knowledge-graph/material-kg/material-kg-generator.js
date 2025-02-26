@@ -39,6 +39,14 @@ export const generateViewedConcept = (req) => {
   const metadata = createMetadata();
   const material = req.locals.material;
   const concept = req.locals.concept;
+  let type;
+  if (concept.type === "main_concept") {
+    type = "main concept";
+  } else if (concept.type === "related_concept") {
+    type = "related concept";
+  } else {
+    type = concept.type;
+  }
 
   return {
     ...metadata,
@@ -48,12 +56,12 @@ export const generateViewedConcept = (req) => {
       objectType: config.activity,
       id: `${DOMAIN}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/concept/${concept.id}`,
       definition: {
-        type: `${DOMAIN}/schema/1.0/${concept.type}`, //Type could be main_concept/ related concept/ category
+        type: `${DOMAIN}/activityType/${concept.type}`, //Type could be main_concept/ related concept/ category
         name: {
-          [config.language]: concept.name,
+          [config.language]: ` ${type} : ${concept.name} - Course Knowledge Graph`,
         },
         description: {
-          [config.language]: concept.abstract, //? what if a concept doesn't have an abstract?
+          [config.language]: concept.abstract,
         },
         extensions: {
           [`${DOMAIN}/extensions/${concept.type}`]: {
@@ -94,6 +102,12 @@ export const generateHidConcepts = (req) => {
   const metadata = createMetadata();
   const material = req.locals.material;
   const key = req.locals.key; // related_concept Or categories
+  let type;
+  if (key === "related_concept") {
+    type = "Related concepts";
+  } else if (key === "category") {
+    type = "Categories";
+  }
 
   return {
     ...metadata,
@@ -105,7 +119,7 @@ export const generateHidConcepts = (req) => {
       definition: {
         type: `${DOMAIN}/schema/1.0/${key}`, //Type could be related_concept/ category
         name: {
-          [config.language]: `${key}`,
+          [config.language]: `${type} - Material: ${material.name} - Knowledge Graph`,
         },
         extensions: {
           [`${DOMAIN}/extensions/${key}`]: {
@@ -124,7 +138,12 @@ export const generateUnhidConcepts = (req) => {
   const metadata = createMetadata();
   const material = req.locals.material;
   const key = req.locals.key; // related_concept Or categories
-
+  let type;
+  if (key === "related_concept") {
+    type = "Related concepts";
+  } else if (key === "category") {
+    type = "Categories";
+  }
   return {
     ...metadata,
     actor: createUser(req),
@@ -135,7 +154,7 @@ export const generateUnhidConcepts = (req) => {
       definition: {
         type: `${DOMAIN}/schema/1.0/${key}`, //Type could be related_concept/ category
         name: {
-          [config.language]: `${key}`,
+          [config.language]: `${type} - Material: ${material.name} - Knowledge Graph`,
         },
         extensions: {
           [`${DOMAIN}/extensions/${key}`]: {
@@ -154,24 +173,30 @@ export const generateViewedFullArticleMKG = (req) => {
   const metadata = createMetadata();
   const material = req.locals.material;
   const node_id = req.locals.node_id;
+  const node_name = req.locals.node_name;
+  const node_wikipedia = req.locals.node_wikipedia;
+  const node_abstract = req.locals.node_abstract;
   return {
     ...metadata,
     actor: createUser(req),
     verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
     object: {
-      objectType: "Activity",
-      id: `${DOMAIN}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/concept/${node_id}/wiki-article`,
+      objectType: config.activity,
+      id: `${DOMAIN}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/concept/${node_id}/wiki-article/${node_wikipedia}`,
       definition: {
         type: "http://activitystrea.ms/schema/1.0/article",
         name: {
-          [config.language]: req.locals.node_name,
+          [config.language]: `Article:${node_name} - Material Knowledge Graph`,
+        },
+        description: {
+          [config.language]: node_abstract,
         },
         extensions: {
           [`${DOMAIN}/extensions/article`]: {
-            node_id: req.locals.node_id,
-            node_cid: req.locals.node_cid,
-            node_name: req.locals.node_name,
-            node_type: req.locals.node_type,
+            concept_id: req.locals.node_id,
+            concept_cid: req.locals.node_cid,
+            concept_name: req.locals.node_name,
+            concept_type: req.locals.node_type,
             materialId: material._id,
             channelId: material.channelId,
             topicId: material.topicId,
