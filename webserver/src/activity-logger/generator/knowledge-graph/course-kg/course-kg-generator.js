@@ -11,6 +11,7 @@ let DOMAIN = "http://www.CourseMapper.de"; // TODO: Hardcoded due to frontend im
 
 export const generateViewedConcept = (req) => {
   const metadata = createMetadata();
+  let origin = req.get("origin");
   const course = req.locals.course;
   const concept = req.locals.concept;
   return {
@@ -19,19 +20,21 @@ export const generateViewedConcept = (req) => {
     verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
     object: {
       objectType: config.activity,
-      id: `${DOMAIN}/activity/course/${course._id}/concept/${concept.id}`,
+      id: `${origin}/activity/course/${course._id}/concept/${concept.id}`,
       definition: {
-        type: `${DOMAIN}/schema/1.0/${concept.type}`, // Type could be main concept/ related concept/ category
+        type: `${DOMAIN}/activityType/concept`,
         name: {
-          [config.language]: concept.name,
+          [config.language]: `Concept: ${concept.name} - Course Knowledge Graph`,
         },
         description: {
           [config.language]: concept.abstract,
         },
         extensions: {
-          [`${DOMAIN}/extensions/${concept.type}`]: {
+          [`${DOMAIN}/extensions/concept`]: {
             conceptId: concept.id,
+            conceptCid: concept.cid,
             concept_wiki_url: concept.wikipedia,
+            conceptType: concept.type,
             courseId: course._id,
           },
         },
@@ -42,27 +45,33 @@ export const generateViewedConcept = (req) => {
 };
 export const generateViewedFullArticleCKG = (req) => {
   const metadata = createMetadata();
+  let origin = req.get("origin");
   const course = req.locals.course;
   const node_id = req.locals.node_id;
+  const node_wikipedia = req.locals.node_wikipedia;
+  const node_name = req.locals.node_name;
   return {
     ...metadata,
     actor: createUser(req),
     verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
     object: {
-      objectType: "Activity",
-      id: `${DOMAIN}/activity/course/${course._id}/concept/${node_id}/wiki-article`,
+      objectType: config.activity,
+      id: `${origin}/activity/course/${course._id}/concept/${node_id}/wiki-article/${node_wikipedia}`,
       definition: {
         type: "http://activitystrea.ms/schema/1.0/article",
         name: {
-          [config.language]: req.locals.node_name,
+          [config.language]: `Article: ${node_name} - Course Knowledge Graph`,
         },
-        // TO ADD the description
+        description: {
+          [config.language]: req.locals.node_abstract,
+        },
         extensions: {
           [`${DOMAIN}/extensions/article`]: {
-            node_id: req.locals.node_id,
-            node_cid: req.locals.node_cid,
-            node_name: req.locals.node_name,
-            node_type: req.locals.node_type,
+            concept_id: req.locals.node_id,
+            concept_cid: req.locals.node_cid,
+            concept_type: req.locals.node_type,
+            concept_abstract: req.locals.node_abstract,
+            concept_wikipedia: node_wikipedia,
             courseId: course._id,
           },
         },

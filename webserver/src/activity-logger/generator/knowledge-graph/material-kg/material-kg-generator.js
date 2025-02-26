@@ -53,7 +53,7 @@ export const generateViewedConcept = (req) => {
           [config.language]: concept.name,
         },
         description: {
-          [config.language]: concept.abstract || "",
+          [config.language]: concept.abstract, //? what if a concept doesn't have an abstract?
         },
         extensions: {
           [`${DOMAIN}/extensions/${concept.type}`]: {

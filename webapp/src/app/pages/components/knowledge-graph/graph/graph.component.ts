@@ -239,6 +239,7 @@ export class GraphComponent {
       node_name: this.node_name,
       node_type: this.node_type,
       node_abstract: this.node_abstract,
+      node_wikipedia: wikipedia,
       courseId: this.courseId,
     };
     if (this.showCourseKg) {
