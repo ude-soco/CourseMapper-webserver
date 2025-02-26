@@ -34,6 +34,40 @@ const createMainConceptObject = (req) => {
     },
   };
 };
+
+export const generateDidNotUnderstandSlide = (req) => {
+  const metadata = createMetadata();
+  const material = req.locals.material;
+  const materialPage = req.locals.materialPage;
+  const concepts = req.locals.records;
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb(`${DOMAIN}/verb/did-not-understand`, "did-not-understand"),
+    object: {
+      objectType: "Activity",
+      id: `${DOMAIN}/activity/course/${material.courseId}/material/${material._id}/materialPage/${materialPage}/slide-knowledge-graph`,
+      definition: {
+        type: `${DOMAIN}/schema/1.0/knowledge-graph`,
+        name: {
+          [config.language]: `${material.name} - Slide ${materialPage}`,
+        },
+        extensions: {
+          [`${DOMAIN}/extensions/knowledge-graph`]: {
+            courseId: material.courseId,
+            topicId: material.topicId,
+            channelId: material.channelId,
+            materialId: material._id,
+            materialName: material.name,
+            materialPage: materialPage,
+          },
+        },
+      },
+    },
+    context: createContext(),
+  };
+};
+
 export const generateAccessSlideKG = (req) => {
   const metadata = createMetadata();
   const material = req.locals.material;
@@ -52,12 +86,12 @@ export const generateAccessSlideKG = (req) => {
       objectType: "Activity",
       id: `${DOMAIN}/activity/course/${material.courseId}/material/${material._id}/materialPage/${materialPage}/slide-knowledge-graph`,
       definition: {
-        type: `${DOMAIN}/schema/1.0/knowledge-graph`,
+        type: `${DOMAIN}/activityType/knowledge-graph`,
         name: {
-          [config.language]: "Slide Knowledge Graph",
+          [config.language]: `Slide ${materialPage} Knowledge Graph`,
         },
         extensions: {
-          [`${DOMAIN}/extensions/slide-kg`]: {
+          [`${DOMAIN}/extensions/knowledge-graph`]: {
             courseId: material.courseId,
             topicId: material.topicId,
             channelId: material.channelId,

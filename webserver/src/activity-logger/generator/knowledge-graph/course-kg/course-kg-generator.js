@@ -89,12 +89,12 @@ export const generateAccessCourseKG = (req) => {
       objectType: "Activity",
       id: `${DOMAIN}/activity/course/${course._id}/course-knowledge-graph`,
       definition: {
-        type: `${DOMAIN}/schema/1.0/knowledge-graph`,
+        type: `${DOMAIN}/activityType/knowledge-graph`,
         name: {
-          [config.language]: "Course Knowledge Graph",
+          [config.language]: `Course ${course.name} Knowledge Graph`,
         },
         extensions: {
-          [`${DOMAIN}/extensions/course-kg`]: {
+          [`${DOMAIN}/extensions/knowledge-graph`]: {
             courseId: course._id,
             courseName: course.name,
             concepts: formattedConcepts,

@@ -200,15 +200,15 @@ export const generateAccessMaterialKG = (req) => {
     actor: createUser(req),
     verb: createVerb("http://activitystrea.ms/schema/1.0/access", "accessed"),
     object: {
-      objectType: "Activity",
-      id: `${DOMAIN}/activity/course/${material.courseId}/material/${material._id}/material-knowledge-graph`,
+      objectType: config.activity,
+      id: `${DOMAIN}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/material-knowledge-graph`,
       definition: {
-        type: `${DOMAIN}/schema/1.0/knowledge-graph`,
+        type: `${DOMAIN}/activityType/knowledge-graph`,
         name: {
-          [config.language]: "Material Knowledge Graph",
+          [config.language]: `Material ${material.name} Knowledge Graph`,
         },
         extensions: {
-          [`${DOMAIN}/extensions/material-kg`]: {
+          [`${DOMAIN}/extensions/knowledge-graph`]: {
             courseId: material.courseId,
             topicId: material.topicId,
             channelId: material.channelId,
