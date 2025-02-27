@@ -58,7 +58,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     { label: 'Teacher', value: 'teacher' },
     { label: 'Co-Teacher', value: 'co_teacher' },
     { label: 'Teaching Assistant', value: 'non_editing_teacher' },
-    { label: 'student', value: 'user' },
+    { label: 'Student', value: 'user' },
   
    
   ];
