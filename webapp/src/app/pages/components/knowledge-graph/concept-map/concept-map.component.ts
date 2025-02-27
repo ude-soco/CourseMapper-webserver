@@ -1436,7 +1436,6 @@ export class ConceptMapComponent {
               node.data.type = this.recommendedConceptType; // To log the activity correctly I have to consider the concepts under recommended concepts tab as recommended_concept.
             });
             this.recommendedConcepts = resultConcepts;
-
             this.conceptMapRecommendedData = this.recommendedConcepts;
             this.filteredMapRecData = this.conceptMapRecommendedData;
             this.recommenderKnowledgeGraph = true;
@@ -1465,37 +1464,79 @@ export class ConceptMapComponent {
               .subscribe({
                 next: (result) => {
                   this.resultMaterials = result;
-                  // ! Here is the problem this.resultMaterials.concepts includes just cid, id, name, weight. It comes from the Backend
-                  // ! Here we receive the result materials and with that the concepts will be sent too. and here where the concepts will have the cid, id, name, weight
                   this.concepts1 = this.resultMaterials.concepts;
+                  // ! Here is the problem this.resultMaterials.concepts includes just cid, id, name, weight. We also nee the type of each concept for the logging.
+                  // Problem solved
                   this.concepts1.forEach((el, index, array) => {
-                    if (
-                      this.didNotUnderstandConceptsObj.some(
-                        (concept) => concept.id.toString() === el.id.toString()
-                      )
-                    ) {
+                    let matchedConcept = this.didNotUnderstandConceptsObj.find(
+                      (concept) => concept.id.toString() === el.id.toString()
+                    );
+
+                    if (matchedConcept) {
                       el.status = 'notUnderstood';
-                      array[index] = el;
-                    } else if (
-                      this.previousConceptsObj.some(
+                      el.type = matchedConcept.type; // Assigning type
+                    } else {
+                      matchedConcept = this.previousConceptsObj.find(
                         (concept) =>
                           concept.cid.toString() === el.cid.toString()
-                      )
-                    ) {
-                      el.status = 'notUnderstood';
-                      array[index] = el;
-                    } else if (
-                      this.understoodConceptsObj.some(
-                        (concept) => concept.id.toString() === el.id.toString()
-                      )
-                    ) {
-                      el.status = 'understood';
-                      array[index] = el;
-                    } else {
-                      el.status = 'unread';
-                      array[index] = el;
+                      );
+
+                      if (matchedConcept) {
+                        el.status = 'notUnderstood';
+                        el.type = matchedConcept.type; // Assigning type
+                      } else {
+                        matchedConcept = this.understoodConceptsObj.find(
+                          (concept) =>
+                            concept.id.toString() === el.id.toString()
+                        );
+
+                        if (matchedConcept) {
+                          el.status = 'understood';
+                          el.type = matchedConcept.type; // Assigning type
+                        } else {
+                          matchedConcept = this.newConceptsObj.find(
+                            (concept) =>
+                              concept.id.toString() === el.id.toString()
+                          );
+                          if (matchedConcept) {
+                            el.status = 'unread';
+                            el.type = matchedConcept.type; // Assigning type
+                          }
+                        }
+                      }
                     }
+
+                    array[index] = el; // Update the array element
                   });
+
+                  // this.concepts1.forEach((el, index, array) => {
+                  //   if (
+                  //     this.didNotUnderstandConceptsObj.some(
+                  //       (concept) => concept.id.toString() === el.id.toString()
+                  //     )
+                  //   ) {
+                  //     el.status = 'notUnderstood';
+                  //     array[index] = el;
+                  //   } else if (
+                  //     this.previousConceptsObj.some(
+                  //       (concept) =>
+                  //         concept.cid.toString() === el.cid.toString()
+                  //     )
+                  //   ) {
+                  //     el.status = 'notUnderstood';
+                  //     array[index] = el;
+                  //   } else if (
+                  //     this.understoodConceptsObj.some(
+                  //       (concept) => concept.id.toString() === el.id.toString()
+                  //     )
+                  //   ) {
+                  //     el.status = 'understood';
+                  //     array[index] = el;
+                  //   } else {
+                  //     el.status = 'unread';
+                  //     array[index] = el;
+                  //   }
+                  // });
 
                   this.resultMaterials = this.resultMaterials.nodes;
 
