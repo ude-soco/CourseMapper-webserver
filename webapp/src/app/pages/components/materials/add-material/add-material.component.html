@@ -1,7 +1,11 @@
-<h2 class="text-xl text-center mb-8">
+<h2 class="text-xl text-center mb-8" *ngIf="canAddPdf || canAddVideo; else noUploadMessage">
   Upload a learning material to this channel
 </h2>
-
+<ng-template #noUploadMessage >
+  <h2 >
+  Only course moderator can add material
+  </h2>
+</ng-template>
 <div class="card-container">
   <p-card class="add" (click)="showPdfAddModel()" *ngIf="canAddPdf">
     <div class="header-container">
