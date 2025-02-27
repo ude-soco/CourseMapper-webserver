@@ -58,7 +58,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     { label: 'Teacher', value: 'teacher' },
     { label: 'Co-Teacher', value: 'co_teacher' },
     { label: 'Teaching Assistant', value: 'non_editing_teacher' },
-    { label: 'student', value: 'user' },
+    { label: 'Student', value: 'user' },
   
    
   ];
@@ -254,12 +254,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
       { label: 'View participants', icon: 'pi pi-users', restrictTo: ['teacher', 'co_teacher', 'non_editing_teacher'], command: () => this.onViewParticipants(courseItem) },
       { label: 'Share course ', icon: 'pi pi-copy', title: 'Copy Course URL', command: () => this.copyCourseId() },
       { label: "View course dashboard", icon: "pi pi-chart-bar", styleClass: "contextMenuButton", command: () => this.onViewDashboardClicked() },
-      { label: 'Notification Settings', icon: 'pi pi-bell', command: ($event) => this.onNotificationSettingsClicked($event) },
+      { label: 'Notification settings', icon: 'pi pi-bell', command: ($event) => this.onNotificationSettingsClicked($event) },
      
      
 
       { label: 'Unenroll from Course', icon: 'pi pi-user-minus', restrictTo: ['teacher'], command: () => { } },
-      { label: 'Delete Course', icon: 'pi pi-trash', restrictTo: ['user'], onlyAccess:'can_delete_course', command: () => this.onDeleteCourse(courseItem) },
+      { label: 'Delete course', icon: 'pi pi-trash', restrictTo: ['user'], onlyAccess:'can_delete_course', command: () => this.onDeleteCourse(courseItem) },
       // { label: 'Add Member', icon: 'pi pi-plus', command: () => { } },
       // { label: 'Add Channel', icon: 'pi pi-file-edit', command: () => { } },
       // { label: 'Manage Tags', icon: 'pi pi-tag', command: () => { } },

@@ -61,7 +61,7 @@ isBlockedBetweenUsers(userId: string): boolean {
   roles = [
     { label: 'Co-Teacher', value: 'co_teacher' },
     { label: 'Teaching Assistant', value: 'non_editing_teacher' },
-    { label: 'student', value: 'user' },
+    { label: 'Student', value: 'user' },
   ];
 
 

@@ -21,9 +21,7 @@ module.exports = function (app) {
 
   // Upload Image
   app.post("/api/upload/image", uploadImageFile.single("file"), imageUpload);
-    // Upload img file
-
-
+   
   // Upload video file
   app.post(
     "/api/upload/video",
