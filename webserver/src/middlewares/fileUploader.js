@@ -35,14 +35,7 @@ const pdfStorage = multer.diskStorage({
   filename: fileName,
 });
 
-const imageStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const dir = "public/uploads/images";
-    ensureDirectoryExistence(dir);
-    cb(null, dir);
-  },
-  filename: fileName,
-});
+
 
 const imgStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -67,12 +60,6 @@ const pdfFileFilter = (req, file, cb) => {
   cb(undefined, true);
 };
 
-const imageFileFilter = (req, file, cb) => {
-  if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
-    return cb(new Error("Please upload image files only (jpg, jpeg, png, gif)!"));
-  }
-  cb(null, true);
-};
 
 const imgFileFilter = (req, file, cb) => {
   // Regex to match image file extensions: .jpg, .jpeg, .png, .gif, .bmp
