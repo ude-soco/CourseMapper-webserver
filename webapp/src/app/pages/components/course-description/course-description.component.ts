@@ -193,6 +193,9 @@ export class CourseDescriptionComponent {
       },
     });
   }
+
+ 
+
   GoToCOurse() {
     if (this.isloggedin == true) {
       this.router.navigate(['course', this.course_enroll._id]);

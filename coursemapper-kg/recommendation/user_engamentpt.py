@@ -1,128 +1,16 @@
 
 from datetime import datetime
 import copy
-from collections import defaultdict
+
 
 statements = []
 #activities = collection.find({})
 # List of dictionaries (studentActivitiesDict JSON) for each student engagement record. Length = No of unique students
 listOfStudentActivityDict = []
-listOfStudentActivityDict2 = []
 studentActivitiesDict = {
     'stdProfile': {
         'stdId': 0000,
         'stdUsername': "",
-        'totalSessions':0000,
-        'totalSessionTime': 0000,
-        'avgSessionTime': 0000,
-        'maxSessionTime': 0000,
-        'minSessionTime': 0000,
-        'totalEnrollments': 0000
-    },
-    'activitiesProfile': {
-
-        'totalActivities': 0000,
-        'annotations': {
-            'totalAnnotations': 0000,
-            'pdf': {
-                'totalPdfAnnotations': 0000,
-                'annotationCountTypewise': {
-                    'noteTypeAnnotationsOnPdf': 0000,
-                    'questionTypeAnnotationsOnPdf': 0000,
-                    'externalResourceTypeAnnotationsOnPdf': 0000,
-                    'comment': {
-                        'noteTypeCommentsOnPdf': 0000,
-                        'questionTypeCommentsOnPdf': 0000,
-                        'externalResourceTypeCommentsOnPdf': 0000,
-                    }
-                },
-                'annotationTools': {
-                    'highlightToolOnPdf': 0000,
-                    'pinpointToolOnPdf': 0000,
-                    'drawToolOnPdf': 0000,
-                }
-            },
-
-            'video': {
-                'totalVideoAnnotations': 0000,
-                'annotationCountTypewise': {
-                    'noteTypeAnnotationsOnVid': 0000,
-                    'questionTypeAnnotationsOnVid': 0000,
-                    'externalResourceTypeAnnotationsOnVid': 0000,
-                    'comment': {
-                        'noteTypeCommentsOnVid': 0000,
-                        'questionTypeCommentsOnVid': 0000,
-                        'externalResourceTypeCommentsOnVid': 0000,
-                    }
-                },
-                'annotationTools': {
-                    'highlightToolOnVid': 0000,
-                    'pinpointToolOnVid': 0000,
-                    'drawToolOnVid': 0000,
-                }
-            }
-        },
-        'likes': {
-            'likesOnAnnotations': {
-                'totalLikesOnAnnotations': 0000,
-                'likesOnNoteTypeAnnotations': 0000,
-                'likesOnQuestionTypeAnnotations': 0000,
-                'likesOnExternalResourceTypeAnnotations': 0000,
-            },
-            'likesOnComments': {
-                'likesOnNoteTypeComments': 0000,
-                'likesOnQuestionTypeComments': 0000,
-                'likesOnExternalResourceTypeComments': 0000,
-            },
-            'likesOnRepliesOfAnnotations': 0000
-        },
-        'dislikes': {
-            'dislikesOnAnnotations': {
-                'totalDislikesOnAnnotations': 0000,
-                'dislikesOnNoteTypeAnnotations': 0000,
-                'dislikesOnQuestionTypeAnnotations': 0000,
-                'dislikesOnExternalResourceTypeAnnotations': 0000,
-            },
-            'dislikesOnComments': {
-                'dislikesOnNoteTypeComments': 0000,
-                'dislikesOnQuestionTypeComments': 0000,
-                'dislikesExternalResourceTypeComments': 0000,
-            },
-            'dislikesOnRepliesOfAnnotations': 0000
-        },
-        'access': {
-            'totalAccesses': 0000,
-            'courseAccesses': 0000,
-            'topicAccesses': 0000,
-            'channelAccesses': 0000,
-            'materialAccesses': {
-                'pdfAccess': 0000,
-                'videoAccess': 0000
-            }
-        },
-        'materialProfile': {
-            'video': {
-                'videosStarted': 0000,
-                'videosCompleted': 0000,
-                'videosPlayed': 0000,
-                'videosPauses': 0000,
-                'timeSpentOnVideos': 00.00
-
-            },
-            'pdf': {
-                'pdfStarted': 0000,
-                'pdfCompleted': 0000,
-                'slidesViewed':0000,
-            }
-        }
-
-    }
-}
-studentActivitiesDict2 = {
-    'stdProfile': {
-        'stdId': 0000,
-        'stdUsername': "",
-        'course_id': "",
         'totalSessions':0000,
         'totalSessionTime': 0000,
         'avgSessionTime': 0000,
@@ -239,41 +127,10 @@ def processActivities(collection):
     activities = collection.find({})
     for document in activities:  # Get the xApi statements containing SOV from activities collection
         # print(document)
-        
         statements.append(document['statement'])
-        
-    possible_paths = [
-        'http://www.CourseMapper.de/extensions/topic',
-        'http://www.CourseMapper.de/extensions/channel',
-        'http://www.CourseMapper.de/extensions/material',
-        'http://www.CourseMapper.de/extensions/annotation',
-        "http://localhost:4200/extensions/course"
-    ]
-    user_course_activities = defaultdict(lambda: defaultdict(list))
-    
-   # activities = collection.find({})
-    for document in activities:
-        extensions = document.get('statement', {}).get('object', {}).get('definition', {}).get('extensions', {})
-        
-        # Find the course_id from any of the possible paths
-        course_id = None
-          
-        for path in possible_paths:
-            if path in extensions:
-                # Check if 'course_id' exists, otherwise fall back to 'id'
-                course_id = extensions[path].get('course_id') or extensions[path].get('id')
-                if course_id:  # If a valid course_id or id is found, stop the loop
-                    break
-        
-        # Print or process the course_id
-        if course_id:
-            print(f"Course ID: {course_id}")
-        else:
-            print("Course ID: None")
-        
 
     aggr_activities = collection.aggregate([
-      {
+        {
             "$group": {
                 '_id': '$statement.actor.account.name',
                 'totalActivities': {'$sum': 1},
@@ -292,11 +149,9 @@ def processActivities(collection):
         {
             "$sort": {'statement.timestamp': 1}
         }
-])
+    ])
 
-
-
-    #for i in aggr_activities:
+    # for i in aggr_activities:
     #   print(i)
 
     # Counts the number of lists created: Should be equal to number of students (Objects) returned from aggregation
@@ -312,204 +167,55 @@ def processActivities(collection):
     #allVideos=[video]
     #startedVideosIDList = []
 
-    aggr_activities_list = list(aggr_activities)
 
-    for i in aggr_activities_list:  # Loop through aggregated activities
+    for i in aggr_activities:  # To clean the aggregated object and get only id, verb, object and timestamp and push into their each separate list
         studentActivitiesListAggregated.append([])
         listOfStudentActivityDict.append(copy.deepcopy(studentActivitiesDict))
-
+        #print(i)
+        # print(len(i))
+        # print(i['_id'])
         for j in range(len(i['activities'])):
-            activity = i['activities'][j]
-            verb_display = activity['verb']['display']['en-US']
-            object_type = activity['object']['definition']['type'].rsplit('/', 1)[-1]
-            timestamp = str(activity['timestamp'])
-
-            # Extract course_id from multiple possible paths
-            course_id = None
-            extensions = activity['object']['definition'].get('extensions', {})
-              
-            for path in possible_paths:
-                if path in extensions:
-                    # Check if 'course_id' exists, otherwise fall back to 'id'
-                    course_id = extensions[path].get('course_id') or extensions[path].get('id')
-                    if course_id:  # If a valid course_id or id is found, stop the loop
-                        break
-
-            # Construct the log entry with course_id
-            entry = f"{i['_id']} {verb_display} {object_type} {course_id if course_id else 'None'} {timestamp}"
-
-            # Determine activity type
-            if 'annotated material' in f"{verb_display} {object_type}":
-                entry += f" {extensions.get('http://www.CourseMapper.de/extensions/material', {}).get('type', 'None')}"
-                entry += f" {activity['result']['extensions']['http://www.CourseMapper.de/extensions/annotation']['type']}"
-                entry += f" {activity['result']['extensions']['http://www.CourseMapper.de/extensions/annotation']['tool']['type']}"
-            
-            elif 'accessed material' in f"{verb_display} {object_type}":
-                entry += f" {extensions.get('http://www.CourseMapper.de/extensions/material', {}).get('type', 'None')}"
-            
-            elif 'completed' in verb_display:
-                entry += f" {extensions.get('http://www.CourseMapper.de/extensions/material', {}).get('type', 'None')}"
-
-            elif 'played video' == f"{verb_display} {object_type}":
-                entry += f" {extensions.get('http://www.CourseMapper.de/extensions/material', {}).get('type', 'None')}"
-                entry += f" {extensions.get('http://www.CourseMapper.de/extensions/material', {}).get('timestamp', 'None')}"
-
-            elif 'paused video' == f"{verb_display} {object_type}":
-                entry += f" {extensions.get('http://www.CourseMapper.de/extensions/material', {}).get('type', 'None')}"
-                entry += f" {extensions.get('http://www.CourseMapper.de/extensions/material', {}).get('timestamp', 'None')}"
-
-            elif 'viewed slide' == f"{verb_display} {object_type}":
-                entry += f" {extensions.get('http://www.CourseMapper.de/extensions/material', {}).get('pageNr', 'None')}"
-
-            #print(studentActivitiesListAggregated[listCount])
-            studentActivitiesListAggregated[listCount].append(entry)
+            if('annotated material' in i['activities'][j]['verb']['display']['en-US']+" " + i['activities'][j]['object']['definition']['type'].rsplit('/', 1)[-1]):
+                #  Annotation material activity: [username annotated material material_type annotation_type annotation_tool timestamp]
+                studentActivitiesListAggregated[listCount].append(i['_id']+" " + i['activities'][j]['verb']['display']['en-US']+" " + i['activities'][j]['object']['definition']['type'].rsplit('/', 1)[-1] + " "+i['activities'][j]['object']['definition']['extensions']['http://www.CourseMapper.de/extensions/material']
+                                                                ['type'] + " " + i['activities'][j]['result']['extensions']['http://www.CourseMapper.de/extensions/annotation']['type']+" "+i['activities'][j]['result']['extensions']['http://www.CourseMapper.de/extensions/annotation']['tool']['type'] + " " + str(i['activities'][j]['timestamp']))
+                #  Liked annotation activity: [username liked annotation material_type annotation'_type annotation_tool timestamp]
+            elif('liked annotation' in i['activities'][j]['verb']['display']['en-US']+" " + i['activities'][j]['object']['definition']['type'].rsplit('/', 1)[-1]):
+                studentActivitiesListAggregated[listCount].append(i['_id']+" " + i['activities'][j]['verb']['display']['en-US']+" " + i['activities'][j]['object']['definition']['type'].rsplit('/', 1)[-1] + " " + i['activities'][j]['object']['definition']['extensions']
+                                                                ['http://www.CourseMapper.de/extensions/annotation']['type']+" "+i['activities'][j]['object']['definition']['extensions']['http://www.CourseMapper.de/extensions/annotation']['tool']['type'] + " " + str(i['activities'][j]['timestamp']))
+                #   Accessed material activity: [username accessed material material_type timestamp]
+            elif('accessed material' in i['activities'][j]['verb']['display']['en-US']+" " + i['activities'][j]['object']['definition']['type'].rsplit('/', 1)[-1]):
+                studentActivitiesListAggregated[listCount].append(i['_id']+" " + i['activities'][j]['verb']['display']['en-US']+" " + i['activities'][j]['object']['definition']['type'].rsplit('/', 1)[-1] + " " + i['activities'][j]['object']['definition']['extensions']
+                                                                ['http://www.CourseMapper.de/extensions/material']['type'] + " " + str(i['activities'][j]['timestamp']))
+                #   Completed video/pdf activity [username completed material_type timestamp]
+            elif('completed' in i['activities'][j]['verb']['display']['en-US']+" " + i['activities'][j]['object']['definition']['type'].rsplit('/', 1)[-1]):
+                studentActivitiesListAggregated[listCount].append(i['_id']+" " + i['activities'][j]['verb']['display']['en-US']+" " + i['activities'][j]['object']['definition']['type'].rsplit('/', 1)[-1] + " " + i['activities'][j]['object']['definition']['extensions']
+                                                                ['http://www.CourseMapper.de/extensions/material']['type'] + " " + str(i['activities'][j]['timestamp']))
+                #   Played video activity [username played/paused video video_id duration(seconds) timestamp]
+                #   If start duration is 0 seconds, means the video is just started
+            elif('played video' == i['activities'][j]['verb']['display']['en-US']+" " + i['activities'][j]['object']['definition']['type'].rsplit('/', 1)[-1]):
+                studentActivitiesListAggregated[listCount].append(i['_id']+" " + i['activities'][j]['verb']['display']['en-US']+" " + i['activities'][j]['object']['definition']['type'].rsplit('/', 1)[-1] + " " + i['activities'][j]['object']['definition']['extensions']['http://www.CourseMapper.de/extensions/material']['type'] +" " +
+                                                                str(i['activities'][j]['object']['definition']['extensions']['http://www.CourseMapper.de/extensions/material']['timestamp'])+" " + str(i['activities'][j]['timestamp']))
+                
+                #   Paused video activity [username played/paused video video_id duration(seconds) timestamp] 
+            elif('paused video' == i['activities'][j]['verb']['display']['en-US']+" " + i['activities'][j]['object']['definition']['type'].rsplit('/', 1)[-1]):
+                studentActivitiesListAggregated[listCount].append(i['_id']+" " + i['activities'][j]['verb']['display']['en-US']+" " + i['activities'][j]['object']['definition']['type'].rsplit('/', 1)[-1] + " " + i['activities'][j]['object']['definition']['extensions']['http://www.CourseMapper.de/extensions/material']['type'] +" " +
+                                                                str(i['activities'][j]['object']['definition']['extensions']['http://www.CourseMapper.de/extensions/material']['timestamp'])+" " + str(i['activities'][j]['timestamp']))
+                #   Viewed slide activity [username viewed slide slide_number timestamp]
+                #   If the slide_number is 0, means the material is started???????
+            elif('viewed slide' == i['activities'][j]['verb']['display']['en-US']+" " + i['activities'][j]['object']['definition']['type'].rsplit('/', 1)[-1]):
+                studentActivitiesListAggregated[listCount].append(i['_id']+" " + i['activities'][j]['verb']['display']['en-US']+" " + i['activities'][j]['object']['definition']['type'].rsplit('/', 1)[-1] + " " + i['activities'][j]['object']['definition']['extensions']
+                                                                ['http://www.CourseMapper.de/extensions/material']['pageNr'] + " " + str(i['activities'][j]['timestamp']))
+            else:  # On any other activity [username verb object timestamp]
+                studentActivitiesListAggregated[listCount].append(i['_id']+" " + i['activities'][j]['verb']['display']['en-US']+" " +
+                                                                i['activities'][j]['object']['definition']['type'].rsplit('/', 1)[-1] + " " + str(i['activities'][j]['timestamp']))
+            #print(i['_id']+" " + i['activities'][j]['verb']['display']['en-US'], i['activities'][j]['object']['definition']['type'].rsplit('/', 1)[-1], i['activities'][j]['timestamp'])
+            # print(j)
+        #print(studentActivitiesListAggregated[listCount])
         listCount = listCount+1
     #   print(i)
-    
-    print(studentActivitiesListAggregated[2])
 
-    for i in aggr_activities_list:  # Loop through aggregated activities
-        user_id = i['_id']  # Extract user ID
-    
-
-        for j in range(len(i['activities'])):
-            activity = i['activities'][j]
-            verb_display = activity['verb']['display']['en-US']
-            object_type = activity['object']['definition']['type'].rsplit('/', 1)[-1]
-            timestamp = str(activity['timestamp'])
-
-            # Extract course_id from multiple possible paths
-            course_id = None
-            extensions = activity['object']['definition'].get('extensions', {})
-        
-            for path in possible_paths:
-                if path in extensions:
-                    # Check if 'course_id' exists, otherwise fall back to 'id'
-                    course_id = extensions[path].get('course_id') or extensions[path].get('id')
-                    if course_id:  # If a valid course_id or id is found, stop the loop
-                        break
-            # Default to 'None' if no course_id is found
-            if not course_id:
-                continue
-
-            # default value
-            entry = f"{user_id} {verb_display} {object_type} {timestamp}"
-            
-            # Determine activity type
-            if 'annotated material' in f"{verb_display} {object_type}":
-                entry += f" {extensions.get('http://www.CourseMapper.de/extensions/material', {}).get('type', 'None')}"
-                entry += f" {activity['result']['extensions']['http://www.CourseMapper.de/extensions/annotation']['type']}"
-                entry += f" {activity['result']['extensions']['http://www.CourseMapper.de/extensions/annotation']['tool']['type']}"
-            
-            elif 'accessed material' in f"{verb_display} {object_type}":
-                entry += f" {extensions.get('http://www.CourseMapper.de/extensions/material', {}).get('type', 'None')}"
-            
-            elif 'completed' in verb_display:
-                entry += f" {extensions.get('http://www.CourseMapper.de/extensions/material', {}).get('type', 'None')}"
-
-            elif 'played video' == f"{verb_display} {object_type}":
-                entry += f" {extensions.get('http://www.CourseMapper.de/extensions/material', {}).get('type', 'None')}"
-                entry += f" {extensions.get('http://www.CourseMapper.de/extensions/material', {}).get('timestamp', 'None')}"
-
-            elif 'paused video' == f"{verb_display} {object_type}":
-                entry += f" {extensions.get('http://www.CourseMapper.de/extensions/material', {}).get('type', 'None')}"
-                entry += f" {extensions.get('http://www.CourseMapper.de/extensions/material', {}).get('timestamp', 'None')}"
-
-            elif 'viewed slide' == f"{verb_display} {object_type}":
-                entry += f" {extensions.get('http://www.CourseMapper.de/extensions/material', {}).get('pageNr', 'None')}"
-
-
-            # Store in the dictionary grouped by user_id and course_id
-            user_course_activities[user_id][course_id].append(entry)
-
-    # Convert defaultdict to a standard dictionary for output
-    user_course_activities = {user: dict(courses) for user, courses in user_course_activities.items()}
-    
-    final_data = []
-
-# Iterate over user IDs
-    index = 0
-    for user_id, courses in user_course_activities.items():
-        for course_id, activities in courses.items():
-            startedVideosIDList = []
-            listOfStudentActivityDict2.append(copy.deepcopy(studentActivitiesDict2))
-            # Initialize user-course statistics
-            total_sessions = 0
-            total_session_time = 0
-            total_annotations = 0
-            total_likes = 0
-            total_dislikes = 0
-            listOfStudentActivityDict2[index]['stdProfile']['stdId'] = index+1
-            listOfStudentActivityDict2[index]['stdProfile']['stdUsername'] =user_id
-            listOfStudentActivityDict2[index]['stdProfile']['course_id'] = str(course_id)
-
-            # Process each activity
-            
-            listOfStudentActivityDict2[index]['activitiesProfile']['totalActivities'] = len(activities)
-            for activity in activities:
-                if 'logged in' in activity:
-                    listOfStudentActivityDict2[index]['stdProfile'][
-                        'totalSessions'] = listOfStudentActivityDict2[index]['stdProfile']['totalSessions']+1
-                elif 'accessed' in activity:
-                    listOfStudentActivityDict2[index]['activitiesProfile']['access']['totalAccesses'] +=1
-                
-                elif 'completed pdf' in activity:
-                    listOfStudentActivityDict2[index]['activitiesProfile']['materialProfile']['pdf'][
-                    'pdfCompleted'] +=1
-
-                elif 'enrolled course' in activity:
-                    listOfStudentActivityDict2[index]['stdProfile'][
-                    'totalEnrollments'] +=1
-                elif 'annotated material' in activity:
-                    listOfStudentActivityDict2[index]['activitiesProfile']['annotations']['totalAnnotations']+=1
-                elif 'viewed slide' in activity:
-                    listOfStudentActivityDict2[index]['activitiesProfile']['materialProfile']['pdf']['slidesViewed']+=1
-                
-                    splittedThisActivityStringArray=  activity.split(' ')
-                    if splittedThisActivityStringArray[3]=='1':
-
-                        listOfStudentActivityDict2[index]['activitiesProfile']['materialProfile']['pdf']['pdfStarted'] +=1
-                
-                elif 'liked' in activity:
-                    splittedThisActivityStringArray=  activity.split(' ')
-                    if  splittedThisActivityStringArray[1] == 'liked':
-                        if splittedThisActivityStringArray[2]=='annotation':
-                            listOfStudentActivityDict2[index]['activitiesProfile']['likes']['likesOnAnnotations']['totalLikesOnAnnotations'] += 1
-                elif 'played video' in activity or 'paused video' in activity:       
-                    splittedThisActivityStringArray=  activity.split(' ')
-                    if 'played' == splittedThisActivityStringArray[1]:
-                        startedVideosIDList.append(splittedThisActivityStringArray[3])
-                        playedTimeInSeconds = playedTimeInSeconds+int(splittedThisActivityStringArray[4])
-                    if 'paused' == splittedThisActivityStringArray[1]:
-                        pausedTimeInSeconds = pausedTimeInSeconds+int(splittedThisActivityStringArray[4])
-                    if splittedThisActivityStringArray[4]=='0': # Meaning that the video is played from the beginning
-                        startedVideosIDList.append(splittedThisActivityStringArray[3])
-                # Pauses in videos
-                    elif('paused' in splittedThisActivityStringArray[1]):
-                        listOfStudentActivityDict2[index]['activitiesProfile']['materialProfile']['video']['videosPauses'] +=1
-
-            listOfStudentActivityDict2[index]['activitiesProfile']['materialProfile']['video']['videosStarted']=len(set(startedVideosIDList))
-            
-            index = index +1
-            '''
-                if activity["activity"] == "logged in":
-                    total_sessions += 1
-                    total_session_time += activity.get("sessionTime", 0)
-                total_annotations += activity.get("annotations", 0)
-                total_likes += activity.get("likes", 0)
-                total_dislikes += activity.get("dislikes", 0)
-            
-            # Append structured data
-            final_data.append({
-                "stdId": user_id,
-                "courseId": course_id,
-                "totalSessions": total_sessions,
-                "totalSessionTime": total_session_time,
-                "totalAnnotations": total_annotations,
-                "totalLikes": total_likes,
-                "totalDislikes": total_dislikes,
-            })
-            '''
+    #print(studentActivitiesListAggregated)
     # Converting timestamp string to python identifiable format, to get the time in seconds or minutes
     """ print(datetime.now())
     login='2023-03-02 20:16:07.552000'
@@ -872,7 +578,7 @@ def processActivities(collection):
         # Total time spent on videos
         listOfStudentActivityDict[listIndex]['activitiesProfile']['materialProfile']['video']['timeSpentOnVideos']=pausedTimeInSeconds-playedTimeInSeconds
    
-    return listOfStudentActivityDict2    
+    return listOfStudentActivityDict    
 
 
 

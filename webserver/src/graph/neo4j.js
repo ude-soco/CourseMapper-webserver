@@ -241,6 +241,8 @@ export async function deleteUserCourseRelationship(userId, courseId) {
 
 
 
+
+
 /*
   export async function createCourseMaterialRelationship(courseId, materialId, materialName) {
     const session = graphDb.driver.session();
