@@ -12,10 +12,11 @@ let DOMAIN = "http://www.CourseMapper.de"; // TODO: Hardcoded due to frontend im
 const createRecommendedConceptObject = (req) => {
   let material = req.locals.material;
   let concept = req.locals.concept;
+  const materialPage = req.locals.materialPage;
   let origin = req.get("origin");
   return {
     objectType: config.activity,
-    id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/recommended-concept/${concept.id}`,
+    id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/recommended-concept/${concept.id}`,
     definition: {
       type: `${DOMAIN}/activityType/concept`,
       name: {
@@ -29,6 +30,7 @@ const createRecommendedConceptObject = (req) => {
           topicId: material.topicId,
           channelId: material.channelId,
           courseId: material.courseId,
+          materialPage: materialPage,
         },
       },
     },
@@ -77,6 +79,7 @@ export const generateViewedAllRecommendedConcepts = (req) => {
   const material = req.locals.material;
   const concepts = req.locals.recommendedConcepts;
   const materialPage = req.locals.materialPage;
+  let origin = req.get("origin");
 
   // Extract only id and name from all concepts
   const formattedConcepts = concepts.map((concept) => ({
@@ -88,10 +91,10 @@ export const generateViewedAllRecommendedConcepts = (req) => {
     actor: createUser(req),
     verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
     object: {
-      objectType: "Activity",
-      id: `${DOMAIN}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/recommended-concepts`,
+      objectType: config.activity,
+      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/recommended-concepts`,
       definition: {
-        type: `${DOMAIN}/schema/1.0/concept`,
+        type: `${DOMAIN}/activityType/concept`,
         name: {
           [config.language]: "Recommended concepts",
         },
@@ -121,20 +124,21 @@ export const generateViewedTextualExplanationConcept = (req) => {
   const material = req.locals.material;
   const node_id = req.locals.node_id;
   const materialPage = req.locals.materialPage;
+  let origin = req.get("origin");
   return {
     ...metadata,
     actor: createUser(req),
     verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
     object: {
-      objectType: "Activity",
-      id: `${DOMAIN}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/concept/${node_id}/textual-explanation`,
+      objectType: config.activity,
+      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/concept/${node_id}/textual-explanation`,
       definition: {
-        type: `${DOMAIN}/schema/1.0/explanation`,
+        type: `${DOMAIN}/activityType/explanation`,
         name: {
           [config.language]: "Textual explanation",
         },
         extensions: {
-          [`${DOMAIN}/extensions/textual-explanation-concept`]: {
+          [`${DOMAIN}/extensions/textual-explanation`]: {
             node_id: req.locals.node_id,
             key: req.locals.key,
             node_cid: req.locals.node_cid,
@@ -159,20 +163,21 @@ export const generateViewedVisualExplanationConcept = (req) => {
   const material = req.locals.material;
   const node_id = req.locals.node_id;
   const materialPage = req.locals.materialPage;
+  let origin = req.get("origin");
   return {
     ...metadata,
     actor: createUser(req),
     verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
     object: {
-      objectType: "Activity",
-      id: `${DOMAIN}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/concept/${node_id}/visual-explanation`,
+      objectType: config.activity,
+      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/concept/${node_id}/visual-explanation`,
       definition: {
-        type: `${DOMAIN}/schema/1.0/explanation`,
+        type: `${DOMAIN}/activityType/explanation`,
         name: {
           [config.language]: "Visual explanation",
         },
         extensions: {
-          [`${DOMAIN}/extensions/visual-explanation-concept`]: {
+          [`${DOMAIN}/extensions/visual-explanation`]: {
             node_id: req.locals.node_id,
             key: req.locals.key,
             node_cid: req.locals.node_cid,
@@ -195,16 +200,18 @@ export const generateViewedVisualExplanationConcept = (req) => {
 
 export const generateViewedFullArticleRecommendedConcept = (req) => {
   const metadata = createMetadata();
+  let origin = req.get("origin");
   const material = req.locals.material;
   const node_id = req.locals.node_id;
   const materialPage = req.locals.materialPage;
+  const node_wikipedia = req.locals.node_wikipedia;
   return {
     ...metadata,
     actor: createUser(req),
     verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
     object: {
-      objectType: "Activity",
-      id: `${DOMAIN}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/concept/${node_id}/wiki-article`,
+      objectType: config.activity,
+      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/concept/${node_id}/wiki-article`,
       definition: {
         type: "http://activitystrea.ms/schema/1.0/article",
         name: {

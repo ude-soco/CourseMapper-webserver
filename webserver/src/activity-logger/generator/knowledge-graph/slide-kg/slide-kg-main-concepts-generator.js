@@ -12,10 +12,11 @@ let DOMAIN = "http://www.CourseMapper.de"; // TODO: Hardcoded due to frontend im
 const createMainConceptObject = (req) => {
   let material = req.locals.material;
   let concept = req.locals.concept;
+  const materialPage = req.locals.materialPage;
   let origin = req.get("origin");
   return {
     objectType: config.activity,
-    id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/main-concept/${concept.id}`,
+    id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/main-concept/${concept.id}`,
     definition: {
       type: `${DOMAIN}/activityType/concept`,
       name: {
@@ -29,6 +30,7 @@ const createMainConceptObject = (req) => {
           topicId: material.topicId,
           channelId: material.channelId,
           courseId: material.courseId,
+          materialPage: materialPage,
         },
       },
     },
@@ -40,20 +42,21 @@ export const generateDidNotUnderstandSlide = (req) => {
   const material = req.locals.material;
   const materialPage = req.locals.materialPage;
   const concepts = req.locals.records;
+  let origin = req.get("origin");
   return {
     ...metadata,
     actor: createUser(req),
     verb: createVerb(`${DOMAIN}/verb/did-not-understand`, "did-not-understand"),
     object: {
-      objectType: "Activity",
-      id: `${DOMAIN}/activity/course/${material.courseId}/material/${material._id}/materialPage/${materialPage}/slide-knowledge-graph`,
+      objectType: config.activity,
+      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/materialPage/${materialPage}`,
       definition: {
-        type: `${DOMAIN}/schema/1.0/knowledge-graph`,
+        type: "http://id.tincanapi.com/activitytype/slide",
         name: {
           [config.language]: `${material.name} - Slide ${materialPage}`,
         },
         extensions: {
-          [`${DOMAIN}/extensions/knowledge-graph`]: {
+          [`${DOMAIN}/extensions/slide`]: {
             courseId: material.courseId,
             topicId: material.topicId,
             channelId: material.channelId,
@@ -73,7 +76,7 @@ export const generateAccessSlideKG = (req) => {
   const material = req.locals.material;
   const materialPage = req.locals.materialPage;
   const concepts = req.locals.records;
-
+  let origin = req.get("origin");
   const formattedConcepts = concepts.map((concept) => ({
     id: concept.id,
     name: concept.name,
@@ -83,8 +86,8 @@ export const generateAccessSlideKG = (req) => {
     actor: createUser(req),
     verb: createVerb("http://activitystrea.ms/schema/1.0/access", "accessed"),
     object: {
-      objectType: "Activity",
-      id: `${DOMAIN}/activity/course/${material.courseId}/material/${material._id}/materialPage/${materialPage}/slide-knowledge-graph`,
+      objectType: config.activity,
+      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/materialPage/${materialPage}/slide-knowledge-graph`,
       definition: {
         type: `${DOMAIN}/activityType/knowledge-graph`,
         name: {
@@ -111,6 +114,7 @@ export const generateViewedAllMainConcepts = (req) => {
   const material = req.locals.material;
   const concepts = req.locals.mainConcepts;
   const materialPage = req.locals.materialPage;
+  let origin = req.get("origin");
 
   // Extract only id and name from all concepts
   const formattedConcepts = concepts.map((concept) => ({
@@ -122,10 +126,10 @@ export const generateViewedAllMainConcepts = (req) => {
     actor: createUser(req),
     verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
     object: {
-      objectType: "Activity",
-      id: `${DOMAIN}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/main-concepts`,
+      objectType: config.activity,
+      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/main-concepts`,
       definition: {
-        type: `${DOMAIN}/schema/1.0/concept`,
+        type: `${DOMAIN}/activityType/concept`,
         name: {
           [config.language]: "Main concepts",
         },
@@ -155,7 +159,7 @@ export const generateViewedMoreConcepts = (req) => {
   const material = req.locals.material;
   const concepts = req.locals.mainConcepts;
   const materialPage = req.locals.materialPage;
-
+  let origin = req.get("origin");
   // Extract only id and name from all concepts
   const formattedConcepts = concepts.map((concept) => ({
     id: concept.data.id,
@@ -166,10 +170,10 @@ export const generateViewedMoreConcepts = (req) => {
     actor: createUser(req),
     verb: createVerb(`${DOMAIN}/verb/view-more`, "viewed more"),
     object: {
-      objectType: "Activity",
-      id: `${DOMAIN}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/more-main-concepts`,
+      objectType: config.activity,
+      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/main-concepts`,
       definition: {
-        type: `${DOMAIN}/schema/1.0/concept`,
+        type: `${DOMAIN}/activityType/concept`,
         name: {
           [config.language]: "Main concepts",
         },
@@ -180,7 +184,7 @@ export const generateViewedMoreConcepts = (req) => {
             channelId: material.channelId,
             topicId: material.topicId,
             courseId: material.courseId,
-            materialPage: req.locals.materialPage,
+            materialPage: materialPage,
           },
         },
       },
@@ -193,6 +197,7 @@ export const generateViewedLessConcepts = (req) => {
   const material = req.locals.material;
   const concepts = req.locals.mainConcepts;
   const materialPage = req.locals.materialPage;
+  let origin = req.get("origin");
 
   // Extract only id and name from all concepts
   const formattedConcepts = concepts.map((concept) => ({
@@ -204,10 +209,10 @@ export const generateViewedLessConcepts = (req) => {
     actor: createUser(req),
     verb: createVerb(`${DOMAIN}/verb/view-less`, "viewed less"),
     object: {
-      objectType: "Activity",
-      id: `${DOMAIN}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/more-main-concepts`,
+      objectType: config.activity,
+      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/main-concepts`,
       definition: {
-        type: `${DOMAIN}/schema/1.0/concept`,
+        type: `${DOMAIN}/activityType/concept`,
         name: {
           [config.language]: "Main concepts",
         },
@@ -218,7 +223,7 @@ export const generateViewedLessConcepts = (req) => {
             channelId: material.channelId,
             topicId: material.topicId,
             courseId: material.courseId,
-            materialPage: req.locals.materialPage,
+            materialPage: materialPage,
           },
         },
       },
@@ -266,16 +271,18 @@ export const generateViewedConcept = (req) => {
 };
 export const generateViewedFullArticleMainConcept = (req) => {
   const metadata = createMetadata();
+  let origin = req.get("origin");
   const material = req.locals.material;
   const node_id = req.locals.node_id;
   const materialPage = req.locals.materialPage;
+  const node_wikipedia = req.locals.node_wikipedia;
   return {
     ...metadata,
     actor: createUser(req),
     verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
     object: {
-      objectType: "Activity",
-      id: `${DOMAIN}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/concept/${node_id}/wiki-article`,
+      objectType: config.activity,
+      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/main-concept/${node_id}/wiki-article/${node_wikipedia}`,
       definition: {
         type: "http://activitystrea.ms/schema/1.0/article",
         name: {

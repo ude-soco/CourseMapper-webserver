@@ -8,45 +8,18 @@ import {
 } from "../../util/generator-util";
 
 let DOMAIN = "http://www.CourseMapper.de"; // TODO: Hardcoded due to frontend implementation
-// Just to have it as a background
-const createChannelObject = (req) => {
-  let channel = req.locals.channel;
-  let origin = req.get("origin");
-  return {
-    objectType: config.activity,
-    id: `${origin}/activity/course/${channel.courseId}/topic/${channel.topicId}/channel/${channel._id}`,
-    definition: {
-      type: `${DOMAIN}/activityType/channel`,
-      name: {
-        [config.language]: channel.name,
-      },
-      description: {
-        [config.language]: channel.description,
-      },
-      extensions: {
-        [`${DOMAIN}/extensions/channel`]: {
-          id: channel._id,
-          course_id: channel.courseId,
-          topic_id: channel.topicId,
-          name: channel.name,
-          description: channel.description,
-        },
-      },
-    },
-  };
-};
-
 // Videos Section
 const createRecommendedVideoObject = (req) => {
   const videoId = req.locals.videoId;
   const videoTitle = req.locals.videoTitle;
   const videoDescription = req.locals.videoDescription;
   const material = req.locals.material;
+  const materialPage = req.locals.materialPage;
   const origin = req.get("origin");
 
   return {
-    objectType: "Activity",
-    id: `${origin}/activity/KnowledgeGraph/recommendedMaterials/video/${videoId}`,
+    objectType: config.activity,
+    id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/recommended-video/${videoId}`,
     definition: {
       type: "http://activitystrea.ms/schema/1.0/video",
       name: {
@@ -56,31 +29,33 @@ const createRecommendedVideoObject = (req) => {
         [config.language]: videoDescription,
       },
       extensions: {
-        [`${DOMAIN}/extensions/recommended-video`]: {
+        [`${DOMAIN}/extensions/video`]: {
           videoId: videoId,
           concepts: req.locals.concepts,
           materialId: material._id,
           channelId: material.channelId,
           topicId: material.topicId,
           courseId: material.courseId,
+          materialPage: materialPage,
         },
       },
     },
   };
 };
-//TO VERIFY
+
 export const generateViewedAllRecommendedVideos = (req) => {
   const metadata = createMetadata();
   const material = req.locals.material;
   const videos = req.locals.videos;
-
+  const materialPage = req.locals.materialPage;
+  const origin = req.get("origin");
   return {
     ...metadata,
     actor: createUser(req),
     verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
     object: {
-      objectType: "Activity",
-      id: `${DOMAIN}/activity/recommended-videos`, //TO VERIFY
+      objectType: config.activity,
+      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/recommended-videos`,
       definition: {
         type: "http://activitystrea.ms/schema/1.0/video",
         name: {
@@ -92,6 +67,7 @@ export const generateViewedAllRecommendedVideos = (req) => {
             channelId: material.channelId,
             topicId: material.topicId,
             courseId: material.courseId,
+            materialPage: materialPage,
             videos: videos, // That results all the 10 videos and their informations
           },
         },
@@ -150,15 +126,16 @@ export const generateUnmarkVideoAsUnhelpful = (req) => {
 };
 
 //Articles Section
-const createArticleObject = (req) => {
+const createRecommendedArticleObject = (req) => {
   const articleTitle = req.locals.articleTitle;
   const articleId = req.locals.articleId;
   const articleAbstract = req.locals.articleDescription;
   const material = req.locals.material;
+  const materialPage = req.locals.materialPage;
   const origin = req.get("origin");
   return {
-    objectType: "Activity",
-    id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/recommended-materials/article/${articleId}`,
+    objectType: config.activity,
+    id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/recommended-article/${articleId}`,
     definition: {
       type: "http://activitystrea.ms/schema/1.0/article",
       name: {
@@ -168,61 +145,32 @@ const createArticleObject = (req) => {
         [config.language]: articleAbstract,
       },
       extensions: {
-        [`${DOMAIN}/extensions/recommended-article`]: {
+        [`${DOMAIN}/extensions/article`]: {
           articleId: articleId,
           materialId: material._id,
           channelId: material.channelId,
           topicId: material.topicId,
           courseId: material.courseId,
+          materialPage: materialPage,
         },
       },
     },
   };
 };
 
-const createRecommendedArticleObject = (req) => {
-  const articleId = req.locals.articleId;
-  const articleTitle = req.locals.articleTitle;
-  const articleAbstract = req.locals.articleAbstract;
-  const material = req.locals.material;
-  const origin = req.get("origin");
-
-  return {
-    objectType: "Activity",
-    id: `${origin}/activity/KnowledgeGraph/recommendedMaterials/article/${articleId}`,
-    definition: {
-      type: "http://activitystrea.ms/schema/1.0/article",
-      name: {
-        [config.language]: articleTitle,
-      },
-      description: {
-        [config.language]: articleAbstract,
-      },
-      extensions: {
-        [`${DOMAIN}/extensions/recommended-article`]: {
-          articleId: articleId,
-          concepts: req.locals.concepts, // * those are actual names of the checked concepts
-          materialId: material._id,
-          channelId: material.channelId,
-          topicId: material.topicId,
-          courseId: material.courseId,
-        },
-      },
-    },
-  };
-};
 export const generateViewedAllRecommendedArticles = (req) => {
   const metadata = createMetadata();
   const material = req.locals.material;
   const articles = req.locals.articles;
-
+  const materialPage = req.locals.materialPage;
+  const origin = req.get("origin");
   return {
     ...metadata,
     actor: createUser(req),
     verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
     object: {
-      objectType: "Activity",
-      id: `${DOMAIN}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/recommended-articles`, //TO VERIFY
+      objectType: config.activity,
+      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/recommended-articles`,
       definition: {
         type: "http://activitystrea.ms/schema/1.0/article",
         name: {
@@ -234,6 +182,7 @@ export const generateViewedAllRecommendedArticles = (req) => {
             channelId: material.channelId,
             topicId: material.topicId,
             courseId: material.courseId,
+            materialPage: materialPage,
             articles: articles, // That results all the 10 articles and their informations
           },
         },
@@ -249,7 +198,7 @@ export const generateViewFullWikipediaArticle = (req) => {
     ...metadata,
     actor: createUser(req),
     verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
-    object: createArticleObject(req),
+    object: createRecommendedArticleObject(req),
     context: createContext(),
   };
 };
@@ -260,7 +209,7 @@ export const generateExpandArticleAbstract = (req) => {
     ...metadata,
     actor: createUser(req),
     verb: createVerb(`${DOMAIN}/verb/expand`, "expanded"), // * Custom verb
-    object: createArticleObject(req),
+    object: createRecommendedArticleObject(req),
     context: createContext(),
   };
 };
@@ -271,7 +220,7 @@ export const generateCollapseArticleAbstract = (req) => {
     ...metadata,
     actor: createUser(req),
     verb: createVerb(`${DOMAIN}/verb/collapse`, "collapsed"),
-    object: createArticleObject(req),
+    object: createRecommendedArticleObject(req),
     context: createContext(),
   };
 };

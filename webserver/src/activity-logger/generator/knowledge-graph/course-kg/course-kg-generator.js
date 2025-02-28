@@ -84,7 +84,7 @@ export const generateAccessCourseKG = (req) => {
   const metadata = createMetadata();
   const course = req.locals.course;
   const concepts = req.locals.records.nodes;
-
+  let origin = req.get("origin");
   const formattedConcepts = concepts.map((concept) => ({
     id: concept.id,
     name: concept.name,
@@ -95,8 +95,8 @@ export const generateAccessCourseKG = (req) => {
     actor: createUser(req),
     verb: createVerb("http://activitystrea.ms/schema/1.0/access", "accessed"),
     object: {
-      objectType: "Activity",
-      id: `${DOMAIN}/activity/course/${course._id}/course-knowledge-graph`,
+      objectType: config.activity,
+      id: `${origin}/activity/course/${course._id}/course-knowledge-graph`,
       definition: {
         type: `${DOMAIN}/activityType/knowledge-graph`,
         name: {

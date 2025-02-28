@@ -1088,6 +1088,7 @@ export const viewedFullArticleMainConcept = async (req, res, next) => {
     node_name: req.body.node_name,
     node_type: req.body.node_type,
     node_abstract: req.body.node_abstract,
+    node_wikipedia: req.body.node_wikipedia,
   };
 
   next();
