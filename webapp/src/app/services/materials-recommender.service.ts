@@ -86,7 +86,7 @@ export class MaterialsRecommenderService {
   logMarkAsHelpfulVideo(data: any): Promise<any> {
     return lastValueFrom(
       this.http.post<any>(
-        `${this.apiURL}/materials/${data.materialId}/recommended-video/${data.title}/mark-helpful`,
+        `${this.apiURL}/materials/${data.materialId}/recommended-video/${data.resourceId}/mark-helpful`,
         data,
         HTTPOptions
       )
@@ -105,7 +105,7 @@ export class MaterialsRecommenderService {
   logMarkAsNotHelpfulVideo(data: any): Promise<any> {
     return lastValueFrom(
       this.http.post<any>(
-        `${this.apiURL}/materials/${data.materialId}/recommended-video/${data.title}/mark-not-helpful`,
+        `${this.apiURL}/materials/${data.materialId}/recommended-video/${data.resourceId}/mark-not-helpful`,
         data,
         HTTPOptions
       )
@@ -123,7 +123,7 @@ export class MaterialsRecommenderService {
   logUnmarkAsHelpfulVideo(data: any): Promise<any> {
     return lastValueFrom(
       this.http.post<any>(
-        `${this.apiURL}/materials/${data.materialId}/recommended-video/${data.title}/un-mark-helpful`,
+        `${this.apiURL}/materials/${data.materialId}/recommended-video/${data.resourceId}/un-mark-helpful`,
         data,
         HTTPOptions
       )
@@ -142,7 +142,7 @@ export class MaterialsRecommenderService {
   logUnmarkAsNotHelpfulVideo(data: any): Promise<any> {
     return lastValueFrom(
       this.http.post<any>(
-        `${this.apiURL}/materials/${data.materialId}/recommended-video/${data.title}/un-mark-not-helpful`,
+        `${this.apiURL}/materials/${data.materialId}/recommended-video/${data.resourceId}/un-mark-not-helpful`,
         data,
         HTTPOptions
       )

@@ -232,13 +232,13 @@ module.exports = function (app) {
     logger.markArticleAsUnhelpfulLogger
   );
   app.post(
-    "/api/materials/:materialId/recommended-video/:title/mark-helpful",
+    "/api/materials/:materialId/recommended-video/:resourceId/mark-helpful",
     [authJwt.verifyToken],
     controller.rateVideo,
     logger.markVideoAsHelpfulLogger
   );
   app.post(
-    "/api/materials/:materialId/recommended-video/:title/mark-not-helpful",
+    "/api/materials/:materialId/recommended-video/:resourceId/mark-not-helpful",
     [authJwt.verifyToken],
     controller.rateVideo,
     logger.markVideoAsUnhelpfulLogger
@@ -257,13 +257,13 @@ module.exports = function (app) {
     logger.unmarkArticleAsUnhelpfulLogger
   );
   app.post(
-    "/api/materials/:materialId/recommended-video/:title/un-mark-helpful",
+    "/api/materials/:materialId/recommended-video/:resourceId/un-mark-helpful",
     [authJwt.verifyToken],
     controller.rateVideo,
     logger.unmarkVideoAsHelpfulLogger
   );
   app.post(
-    "/api/materials/:materialId/recommended-video/:title/un-mark-not-helpful",
+    "/api/materials/:materialId/recommended-video/:resourceId/un-mark-not-helpful",
     [authJwt.verifyToken],
     controller.rateVideo,
     logger.unmarkVideoAsUnhelpfulLogger
