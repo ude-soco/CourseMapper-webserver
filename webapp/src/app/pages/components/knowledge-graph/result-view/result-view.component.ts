@@ -1,3 +1,4 @@
+import { getCurrentPdfPage } from './../../annotations/pdf-annotation/state/annotation.reducer';
 import { Component, Input } from '@angular/core';
 import { VideoElementModel } from '../videos/models/video-element.model';
 import { ArticleElementModel } from '../articles/models/article-element.model';
@@ -6,7 +7,8 @@ import { MaterialsRecommenderService } from 'src/app/services/materials-recommen
 import { Subscription } from 'rxjs';
 import { SlideConceptsService } from 'src/app/services/slide-concepts.service';
 import { Material } from 'src/app/models/Material';
-
+import { Store } from '@ngrx/store';
+import { State } from 'src/app/state/app.reducer';
 interface MaterialModel {
   name: string;
   code: string;
@@ -23,6 +25,7 @@ enum MaterialModels {
   styleUrls: ['./result-view.component.css'],
 })
 export class ResultViewComponent {
+  currentPdfPage: number;
   private conceptFromChipObj: any = null;
   private didNotUnderstandConceptsObj: any[];
   private understoodConceptsObj: any[];
@@ -39,9 +42,11 @@ export class ResultViewComponent {
   recievedVideoResultIsEmpty = true;
   recievedArticleResultIsEmpty = true;
   @Input() currentMaterial?: Material;
+  subscriptions: Subscription = new Subscription(); // Manage subscriptions
   constructor(
     private slideConceptservice: SlideConceptsService,
-    private materialsRecommenderService: MaterialsRecommenderService
+    private materialsRecommenderService: MaterialsRecommenderService,
+    private store: Store<State>
   ) {
     slideConceptservice.didNotUnderstandConcepts.subscribe((res) => {
       this.didNotUnderstandConceptsObj = res;
@@ -60,6 +65,13 @@ export class ResultViewComponent {
         );
       });
     });
+
+    // Subscribe to get the current PDF page from store
+    this.subscriptions.add(
+      this.store.select(getCurrentPdfPage).subscribe((page) => {
+        this.currentPdfPage = page;
+      })
+    );
   }
   @Input()
   public concepts1: any[] = [];
@@ -250,6 +262,7 @@ export class ResultViewComponent {
       const data = {
         materialId: this.currentMaterial!._id,
         videos: this.videos,
+        materialPage: this.currentPdfPage,
       };
       if (!this.recievedVideoResultIsEmpty) {
         await this.materialsRecommenderService.logViewRecommendedVideos(data);
@@ -263,6 +276,7 @@ export class ResultViewComponent {
       const data = {
         materialId: this.currentMaterial!._id,
         articles: this.articles,
+        materialPage: this.currentPdfPage,
       };
       if (!this.recievedArticleResultIsEmpty) {
         await this.materialsRecommenderService.logViewRecommendedArticles(data);

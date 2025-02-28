@@ -380,6 +380,7 @@ export const addConcept = async (req, res) => {
       if (result.error) {
         return res.status(500).send(result);
       }
+      console.log("Result: ", result.result);
       return res.status(200).send(result.result);
     }
   );
@@ -518,6 +519,7 @@ export const publishConceptMap = async (req, res) => {
       if (result.error) {
         return res.status(500).send({ error: result });
       }
+      console.log("Result: ", result.result);
       return res.status(200).send(result.result);
     }
   );
@@ -660,6 +662,7 @@ export const viewFullWikipediaArticle = async (req, res, next) => {
     articleId: req.body.resourceId,
     articleDescription: req.body.abstract,
     material: foundMaterial,
+    materialPage: req.body.materialPage,
   };
 
   next();
@@ -690,6 +693,7 @@ export const expandedArticleAbstract = async (req, res, next) => {
     articleId: req.body.resourceId,
     articleDescription: req.body.abstract,
     material: foundMaterial,
+    materialPage: req.body.materialPage,
   };
 
   next();
@@ -720,6 +724,7 @@ export const collapsedArticleAbstract = async (req, res, next) => {
     articleId: req.body.resourceId,
     articleDescription: req.body.abstract,
     material: foundMaterial,
+    materialPage: req.body.materialPage,
   };
   next();
 };
@@ -752,6 +757,7 @@ export const rateArticle = async (req, res, next) => {
     articleAbstract: req.body.description,
     concepts: req.body.concepts,
     material: foundMaterial,
+    materialPage: req.body.materialPage,
   };
 
   next();
@@ -785,6 +791,7 @@ export const rateVideo = async (req, res, next) => {
     videoDescription: req.body.description,
     concepts: req.body.concepts,
     material: foundMaterial,
+    materialPage: req.body.materialPage,
   };
   next();
 };
@@ -1179,6 +1186,7 @@ export const viewedAllRecommendedVideos = async (req, res, next) => {
     user: foundUser,
     material: foundMaterial,
     videos: videos,
+    materialPage: req.body.materialPage,
   };
 
   next();
@@ -1210,6 +1218,7 @@ export const viewedAllRecommendedArticles = async (req, res, next) => {
     user: foundUser,
     material: foundMaterial,
     articles: articles,
+    materialPage: req.body.materialPage,
   };
 
   next();
@@ -1277,6 +1286,7 @@ export const markConceptAsNew = async (req, res, next) => {
     user: foundUser,
     material: foundMaterial,
     concept: req.body.concept,
+    materialPage: req.body.currentPdfPage,
   };
 
   next();
@@ -1306,6 +1316,7 @@ export const markConceptAsUnderstood = async (req, res, next) => {
     user: foundUser,
     material: foundMaterial,
     concept: req.body.concept,
+    materialPage: req.body.currentPdfPage,
   };
   next();
 };
@@ -1334,6 +1345,7 @@ export const markConceptAsNotUnderstood = async (req, res, next) => {
     user: foundUser,
     material: foundMaterial,
     concept: req.body.concept,
+    materialPage: req.body.currentPdfPage,
   };
 
   next();

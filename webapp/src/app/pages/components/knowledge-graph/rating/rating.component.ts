@@ -10,7 +10,7 @@ import { Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { State, getLoggedInUser } from 'src/app/state/app.reducer';
 import { Material } from 'src/app/models/Material';
-
+import { getCurrentPdfPage } from '../../annotations/pdf-annotation/state/annotation.reducer';
 export enum Rating {
   HELPFUL = 'HELPFUL',
   NOT_HELPFUL = 'NOT_HELPFUL',
@@ -22,8 +22,9 @@ export enum Rating {
   styleUrls: ['./rating.component.css'],
 })
 export class RatingComponent {
+  currentPdfPage: number;
   userSubscription: Subscription;
-
+  subscriptions: Subscription = new Subscription(); // Manage subscriptions
   constructor(
     private messageService: MessageService,
     private materialsRecommenderService: MaterialsRecommenderService,
@@ -34,6 +35,13 @@ export class RatingComponent {
     this.userSubscription = this.store
       .select(getLoggedInUser)
       .subscribe((user) => (this.loggedInUser = user));
+
+    // Subscribe to get the current PDF page from store
+    this.subscriptions.add(
+      this.store.select(getCurrentPdfPage).subscribe((page) => {
+        this.currentPdfPage = page;
+      })
+    );
   }
 
   @Input() element: ArticleElementModel | VideoElementModel;
@@ -61,6 +69,7 @@ export class RatingComponent {
           : this.element.description_full,
       concepts: this.selectedConcepts,
       materialId: this.currentMaterial._id,
+      materialPage: this.currentPdfPage,
     };
   }
 
