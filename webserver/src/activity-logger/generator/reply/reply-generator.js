@@ -17,12 +17,13 @@ import { createCommentObject } from "../comment/comment-utils";
 let DOMAIN = "http://www.CourseMapper.de"; // TODO: Hardcoded due to frontend implementation
 
 const createUserObject = (req) => {
+  let user = req.locals.user;
   let annotation = req.locals.annotation;
   let author = req.locals.annotation.author;
   let origin = req.get("origin");
   return {
-    objectType: config.activity,
-    id: `${origin}/activity/user/${author.userId}`,
+    objectType: config.agent,
+    id: `${origin}/activity/user/${user._id}/userToReply/${author.userId}`,
     definition: {
       type: `${DOMAIN}/activityType/user`,
       name: {
@@ -31,12 +32,13 @@ const createUserObject = (req) => {
       extensions: {
         [`${DOMAIN}/extensions/user`]: {
           id: author.userId,
+          authorName: author.name,
+          content: annotation.content,
           annotation_id: annotation._id,
           material_id: annotation.materialId,
           channel_id: annotation.channelId,
           topic_id: annotation.topicId,
           course_id: annotation.courseId,
-          content: annotation.content,
         },
       },
     },
