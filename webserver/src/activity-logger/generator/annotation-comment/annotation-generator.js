@@ -259,7 +259,7 @@ export const generateEditAnnotationActivity = (req) => {
     actor: createUser(req),
     verb: createVerb("http://curatr3.com/define/verb/edited", "edited"),
     object: {
-      objectType: "Activity",
+      objectType: config.activity,
       id: `${origin}/activity/course/${oldAnnotation.courseId}/topic/${oldAnnotation.topicId}/channel/${oldAnnotation.channelId}/material/${oldAnnotation.materialId}/annotation/${oldAnnotation._id}`,
       definition: {
         type: `${DOMAIN}/activityType/annotation`,
