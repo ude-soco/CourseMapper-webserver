@@ -216,7 +216,10 @@ export class NotificationsService {
     );
   }
 
-  setGlobalNotificationSettings(settings: { [key: string]: boolean | string }) {
+  setGlobalNotificationSettings(settings: {
+    [key: string]: boolean | string;
+    labelClicked: string;
+  }) {
     let isAnnotationNotificationsEnabled: boolean = settings[
       courseNotificationSettingLabels.annotations
     ] as boolean;
@@ -226,12 +229,15 @@ export class NotificationsService {
     let isCourseUpdateNotificationsEnabled: boolean = settings[
       courseNotificationSettingLabels.courseUpdates
     ] as boolean;
+    let labelClicked = settings['labelClicked'];
 
     let objToSend = {
       isAnnotationNotificationsEnabled: isAnnotationNotificationsEnabled,
       isReplyAndMentionedNotificationsEnabled:
         isReplyAndMentionedNotificationsEnabled,
       isCourseUpdateNotificationsEnabled: isCourseUpdateNotificationsEnabled,
+      labelClicked: labelClicked,
+      key: settings[labelClicked],
     };
 
     return this.httpClient.put<{ [key: string]: boolean }>(
@@ -243,6 +249,7 @@ export class NotificationsService {
   setCourseNotificationSettings(settings: {
     courseId: string;
     [key: string]: boolean | string;
+    labelClicked: string;
   }) {
     let isAnnotationNotificationsEnabled: boolean = settings[
       courseNotificationSettingLabels.annotations
@@ -254,6 +261,7 @@ export class NotificationsService {
       courseNotificationSettingLabels.courseUpdates
     ] as boolean;
     let courseId = settings['courseId'];
+    let labelClicked = settings['labelClicked'];
 
     let objToSend = {
       isAnnotationNotificationsEnabled: isAnnotationNotificationsEnabled,
@@ -261,6 +269,8 @@ export class NotificationsService {
         isReplyAndMentionedNotificationsEnabled,
       isCourseUpdateNotificationsEnabled: isCourseUpdateNotificationsEnabled,
       courseId: courseId,
+      labelClicked: labelClicked,
+      key: settings[labelClicked],
     };
 
     return this.httpClient.put<BlockingNotifications>(
@@ -284,6 +294,7 @@ export class NotificationsService {
   setTopicNotificationSettings(settings: {
     courseId: string;
     topicId: string;
+    labelClicked: string;
     [key: string]: boolean | string;
   }) {
     let isAnnotationNotificationsEnabled: boolean = settings[
@@ -297,6 +308,7 @@ export class NotificationsService {
     ] as boolean;
     let courseId = settings['courseId'];
     let topicId = settings['topicId'];
+    let labelClicked = settings['labelClicked'];
 
     let objToSend = {
       isAnnotationNotificationsEnabled: isAnnotationNotificationsEnabled,
@@ -305,6 +317,8 @@ export class NotificationsService {
       isCourseUpdateNotificationsEnabled: isCourseUpdateNotificationsEnabled,
       courseId: courseId,
       topicId: topicId,
+      labelClicked: labelClicked,
+      key: settings[labelClicked],
     };
 
     return this.httpClient.put<BlockingNotifications>(
@@ -333,6 +347,7 @@ export class NotificationsService {
   setChannelNotificationSettings(settings: {
     courseId: string;
     channelId: string;
+    labelClicked: string;
     [key: string]: boolean | string;
   }) {
     let isAnnotationNotificationsEnabled: boolean = settings[
@@ -346,6 +361,7 @@ export class NotificationsService {
     ] as boolean;
     let courseId = settings['courseId'];
     let channelId = settings['channelId'];
+    let labelClicked = settings['labelClicked'];
 
     let objToSend = {
       isAnnotationNotificationsEnabled: isAnnotationNotificationsEnabled,
@@ -354,6 +370,8 @@ export class NotificationsService {
       isCourseUpdateNotificationsEnabled: isCourseUpdateNotificationsEnabled,
       courseId: courseId,
       channelId,
+      labelClicked: labelClicked,
+      key: settings[labelClicked],
     };
 
     return this.httpClient.put<BlockingNotifications>(
@@ -382,6 +400,7 @@ export class NotificationsService {
   setMaterialNotificationSettings(settings: {
     courseId: string;
     materialId: string;
+    labelClicked: string;
     [key: string]: boolean | string;
   }) {
     let isAnnotationNotificationsEnabled: boolean = settings[
@@ -395,6 +414,7 @@ export class NotificationsService {
     ] as boolean;
     let courseId = settings['courseId'];
     let materialId = settings['materialId'];
+    let labelClicked = settings['labelClicked'];
 
     let objToSend = {
       isAnnotationNotificationsEnabled: isAnnotationNotificationsEnabled,
@@ -403,6 +423,8 @@ export class NotificationsService {
       isCourseUpdateNotificationsEnabled: isCourseUpdateNotificationsEnabled,
       courseId: courseId,
       materialId,
+      labelClicked: labelClicked,
+      key: settings[labelClicked],
     };
 
     return this.httpClient.put<BlockingNotifications>(

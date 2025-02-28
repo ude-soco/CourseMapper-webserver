@@ -102,6 +102,7 @@ export class CourseLevelNotificationSettingsComponent implements OnInit {
     const labelClicked: string = notificationOption.label;
     let objToSend = {
       courseId: this.courseId,
+      labelClicked: labelClicked,
 
       [courseNotificationSettingLabels.annotations]:
         labelClicked === courseNotificationSettingLabels.annotations
@@ -141,6 +142,7 @@ export class CourseLevelNotificationSettingsComponent implements OnInit {
     let objToSend = {
       courseId: this.courseId,
       topicId: notificationSettings.topicId,
+      labelClicked: settingClicked,
       [topicNotificationSettingLabels.annotations]:
         settingClicked === topicNotificationSettingLabels.annotations
           ? !notificationSettings['isAnnotationNotificationsEnabled']
@@ -206,6 +208,7 @@ export class CourseLevelNotificationSettingsComponent implements OnInit {
     let objToSend = {
       courseId: this.courseId,
       channelId: notificationSettings.channelId,
+      labelClicked: settingClicked,
       [channelNotificationSettingLabels.annotations]:
         settingClicked === channelNotificationSettingLabels.annotations
           ? !notificationSettings['isAnnotationNotificationsEnabled']
@@ -232,6 +235,7 @@ export class CourseLevelNotificationSettingsComponent implements OnInit {
     let objToSend = {
       courseId: this.courseId,
       materialId: notificationSettings.materialId,
+      labelClicked: settingClicked,
       [materialNotificationSettingLabels.annotations]:
         settingClicked === materialNotificationSettingLabels.annotations
           ? !notificationSettings['isAnnotationNotificationsEnabled']

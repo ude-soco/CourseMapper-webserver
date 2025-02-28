@@ -10,8 +10,8 @@ export const viewAllNotificationsLogger = async (req, res) => {
     res.status(200).json({
       message: "Activity logged successfully",
     });
-  } catch (error) {
-    res.status(400).send({ error: "Error saving statement to mongo" });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
 
@@ -21,8 +21,8 @@ export const markNotificationsAsReadLogger = async (req, res) => {
       notificationActivityGenerator.generateMarkNotificationsAsRead(req)
     );
     res.status(200).send(req.locals.response);
-  } catch (error) {
-    res.status(400).send({ error: "Error saving statement to mongo" });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
 export const markNotificationsAsUnreadLogger = async (req, res) => {
@@ -31,8 +31,8 @@ export const markNotificationsAsUnreadLogger = async (req, res) => {
       notificationActivityGenerator.generateMarkNotificationsAsUnread(req)
     );
     res.status(200).send(req.locals.response);
-  } catch (error) {
-    res.status(400).send({ error: "Error saving statement to mongo" });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
 export const starNotificationLogger = async (req, res) => {
@@ -41,8 +41,8 @@ export const starNotificationLogger = async (req, res) => {
       notificationActivityGenerator.generateStarNotification(req)
     );
     res.status(200).send(req.locals.response);
-  } catch (error) {
-    res.status(400).send({ error: "Error saving statement to mongo" });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
 export const unstarNotificationLogger = async (req, res) => {
@@ -51,8 +51,8 @@ export const unstarNotificationLogger = async (req, res) => {
       notificationActivityGenerator.generateUnstarNotification(req)
     );
     res.status(200).send(req.locals.response);
-  } catch (error) {
-    res.status(400).send({ error: "Error saving statement to mongo" });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
 export const removeNotificationLogger = async (req, res) => {
@@ -61,8 +61,8 @@ export const removeNotificationLogger = async (req, res) => {
       notificationActivityGenerator.generateRemoveNotification(req)
     );
     res.status(200).send(req.locals.response);
-  } catch (error) {
-    res.status(400).send({ error: "Error saving statement to mongo" });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
 export const followAnnotationLogger = async (req, res) => {
@@ -71,8 +71,8 @@ export const followAnnotationLogger = async (req, res) => {
       notificationActivityGenerator.generateFollowAnnotation(req)
     );
     res.status(201).send(req.locals.response);
-  } catch (error) {
-    res.status(400).send({ error: "Error saving statement to mongo" });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
 export const unfollowAnnotationLogger = async (req, res) => {
@@ -81,8 +81,8 @@ export const unfollowAnnotationLogger = async (req, res) => {
       notificationActivityGenerator.generateUnfollowAnnotation(req)
     );
     res.status(201).send(req.locals.response);
-  } catch (error) {
-    res.status(400).send({ error: "Error saving statement to mongo" });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
 export const blockUserLogger = async (req, res) => {
@@ -91,8 +91,8 @@ export const blockUserLogger = async (req, res) => {
       notificationActivityGenerator.generateBlockUser(req)
     );
     res.status(201).send(req.locals.response);
-  } catch (error) {
-    res.status(400).send({ error: "Error saving statement to mongo", error });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
 export const unblockUserLogger = async (req, res) => {
@@ -101,18 +101,29 @@ export const unblockUserLogger = async (req, res) => {
       notificationActivityGenerator.generateUnblockUser(req)
     );
     res.status(201).send(req.locals.response);
-  } catch (error) {
-    res.status(400).send({ error: "Error saving statement to mongo", error });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
 export const setMaterialNotificationSettingsLogger = async (req, res) => {
   try {
-    await activityController.createActivity(
-      notificationActivityGenerator.generateSetMaterialNotificationSettings(req)
-    );
+    if (req.locals.key) {
+      await activityController.createActivity(
+        notificationActivityGenerator.generateEnableMaterialNotificationSettings(
+          req
+        )
+      ); // Enable
+    } else {
+      await activityController.createActivity(
+        notificationActivityGenerator.generateDisableMaterialNotificationSettings(
+          req
+        )
+      ); //Disable
+    }
+
     res.status(201).send(req.locals.response);
-  } catch (error) {
-    res.status(400).send({ error: "Error saving statement to mongo", error });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
 export const unsetMaterialNotificationSettingsLogger = async (req, res) => {
@@ -123,18 +134,28 @@ export const unsetMaterialNotificationSettingsLogger = async (req, res) => {
       )
     );
     res.status(201).send(req.locals.response);
-  } catch (error) {
-    res.status(400).send({ error: "Error saving statement to mongo", error });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
 export const setChannelNotificationSettingsLogger = async (req, res) => {
   try {
-    await activityController.createActivity(
-      notificationActivityGenerator.generateSetChannelNotificationSettings(req)
-    );
+    if (req.locals.key) {
+      await activityController.createActivity(
+        notificationActivityGenerator.generateEnableChannelNotificationSettings(
+          req
+        )
+      ); // Enable
+    } else {
+      await activityController.createActivity(
+        notificationActivityGenerator.generateDisableChannelNotificationSettings(
+          req
+        )
+      ); //Disable
+    }
     res.status(201).send(req.locals.response);
-  } catch (error) {
-    res.status(400).send({ error: "Error saving statement to mongo", error });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
 export const unsetChannelNotificationSettingsLogger = async (req, res) => {
@@ -145,18 +166,28 @@ export const unsetChannelNotificationSettingsLogger = async (req, res) => {
       )
     );
     res.status(201).send(req.locals.response);
-  } catch (error) {
-    res.status(400).send({ error: "Error saving statement to mongo", error });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
 export const setTopicNotificationSettingsLogger = async (req, res) => {
   try {
-    await activityController.createActivity(
-      notificationActivityGenerator.generateSetTopicNotificationSettings(req)
-    );
+    if (req.locals.key) {
+      await activityController.createActivity(
+        notificationActivityGenerator.generateEnableTopicNotificationSettings(
+          req
+        )
+      ); // Enable
+    } else {
+      await activityController.createActivity(
+        notificationActivityGenerator.generateDisableTopicNotificationSettings(
+          req
+        )
+      ); //Disable
+    }
     res.status(201).send(req.locals.response);
-  } catch (error) {
-    res.status(400).send({ error: "Error saving statement to mongo", error });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
 export const unsetTopicNotificationSettingsLogger = async (req, res) => {
@@ -165,18 +196,28 @@ export const unsetTopicNotificationSettingsLogger = async (req, res) => {
       notificationActivityGenerator.generateUnsetTopicNotificationSettings(req)
     );
     res.status(201).send(req.locals.response);
-  } catch (error) {
-    res.status(400).send({ error: "Error saving statement to mongo", error });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
 export const setCourseNotificationSettingsLogger = async (req, res) => {
   try {
-    await activityController.createActivity(
-      notificationActivityGenerator.generateSetCourseNotificationSettings(req)
-    );
+    if (req.locals.key) {
+      await activityController.createActivity(
+        notificationActivityGenerator.generateEnableCourseNotificationSettings(
+          req
+        )
+      ); // Enable
+    } else {
+      await activityController.createActivity(
+        notificationActivityGenerator.generateDisableCourseNotificationSettings(
+          req
+        )
+      ); //Disable
+    }
     res.status(201).send(req.locals.response);
-  } catch (error) {
-    res.status(400).send({ error: "Error saving statement to mongo", error });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
 export const unsetCourseNotificationSettingsLogger = async (req, res) => {
@@ -185,17 +226,27 @@ export const unsetCourseNotificationSettingsLogger = async (req, res) => {
       notificationActivityGenerator.generateUnsetCourseNotificationSettings(req)
     );
     res.status(201).send(req.locals.response);
-  } catch (error) {
-    res.status(400).send({ error: "Error saving statement to mongo", error });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
 export const setGlobalNotificationSettingsLogger = async (req, res) => {
   try {
-    await activityController.createActivity(
-      notificationActivityGenerator.generateSetGlobalNotificationSettings(req)
-    );
+    if (req.locals.key) {
+      await activityController.createActivity(
+        notificationActivityGenerator.generateEnableGlobalNotificationSettings(
+          req
+        )
+      ); // Enable
+    } else {
+      await activityController.createActivity(
+        notificationActivityGenerator.generateDisableGlobalNotificationSettings(
+          req
+        )
+      ); //Disable
+    }
     res.status(201).send(req.locals.response);
-  } catch (error) {
-    res.status(400).send({ error: "Error saving statement to mongo", error });
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };

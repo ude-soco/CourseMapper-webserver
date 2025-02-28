@@ -1080,7 +1080,7 @@ export class TopicDropdownComponent implements OnInit {
     let objToSend = {
       topicId: this.topicIdOfTopicMenuClicked,
       courseId: this.selectedCourseId,
-
+      labelClicked: labelClicked,
       [topicNotificationSettingLabels.annotations]:
         labelClicked === topicNotificationSettingLabels.annotations
           ? !this.checkBoxesGroup.value[
@@ -1120,7 +1120,7 @@ export class TopicDropdownComponent implements OnInit {
     let objToSend = {
       channelId: this.channelIdOfChannelMenuClicked,
       courseId: this.selectedCourseId,
-
+      labelClicked: labelClicked,
       [channelNotificationSettingLabels.annotations]:
         labelClicked === channelNotificationSettingLabels.annotations
           ? !this.channelCheckBoxesGroup.value[

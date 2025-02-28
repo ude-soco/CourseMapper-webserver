@@ -103,68 +103,137 @@ const createAnnotationObject = (req) => {
   };
 };
 
-const createMaterialNotificationSettingsObject = (req) => {
-  let notificationSettings = req.locals.response;
-  //console.log(notificationSettings);
-  // let origin = req.get("origin");
-  // return {
-  //   objectType: config.activity,
-  //   id: `${origin}/activity/materialNotificationSettings/${notificationSettings._id}`,
-  //   name: {
-  //     [config.language]: "Material Notification Settings",
-  //   },
-  //   extensions: {
-  //     [`${origin}/extensions/MaterialNotificationSettings`]: {
-  //       courseId: notificationSettings.courseId,
-  //       isAnnotationNotificationsEnabled:
-  //         notificationSettings.isAnnotationNotificationsEnabled,
-  //       isReplyAndMentionedNotificationsEnabled:
-  //         notificationSettings.isReplyAndMentionedNotificationsEnabled,
-  //       isCourseUpdateNotificationsEnabled:
-  //         notificationSettings.isReplyAndMentionedNotificationsEnabled,
-  //       isCourseLevelOverride:
-  //         notificationSettings.isReplyAndMentionedNotificationsEnabled,
-  //     },
-  //   },
-  // };
-};
-const createBlockingNotificationObject = (req) => {
-  let blockedUser = req.locals.blockedUser;
+const createGlobalNotificationSettingsObject = (req) => {
+  let user = req.locals.user;
+  let labelClicked = req.locals.labelClicked;
   let origin = req.get("origin");
   return {
     objectType: config.activity,
-    id: `${origin}/activity/user/${blockedUser._id}`,
+    id: `${origin}/activity/user/${user._id}/notification-setting`,
     definition: {
-      type: `${DOMAIN}/activityType/user`,
+      type: `${DOMAIN}/activityType/notification-setting`,
       name: {
-        [config.language]: "Blocked User",
+        [config.language]: `${labelClicked} - Global Notification Settings`,
       },
       extensions: {
-        [`${origin}/extensions/User`]: {
-          firstName: blockedUser.firstname,
-          lastName: blockedUser.lastname,
-          email: blockedUser.email,
+        [`${DOMAIN}/extensions/notification-setting`]: {
+          user_id: user._id,
         },
       },
     },
   };
 };
-const createUnblockingNotificationObject = (req) => {
-  let unblockedUser = req.locals.unblockedUser;
+
+const createMaterialNotificationSettingsObject = (req) => {
+  let material = req.locals.material;
+  let labelClicked = req.locals.labelClicked;
   let origin = req.get("origin");
   return {
     objectType: config.activity,
-    id: `${origin}/activity/user/${unblockedUser._id}`,
+    id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/notification-setting`,
+    definition: {
+      type: `${DOMAIN}/activityType/notification-setting`,
+      name: {
+        [config.language]: `${labelClicked} - Material Notification Settings`,
+      },
+      extensions: {
+        [`${DOMAIN}/extensions/notification-setting`]: {
+          material_id: material._id,
+          course_id: material.courseId,
+          topic_id: material.topicId,
+          channel_id: material.channelId,
+          materialName: material.name,
+        },
+      },
+    },
+  };
+};
+
+const createChannelNotificationSettingsObject = (req) => {
+  let channel = req.locals.channel;
+  let labelClicked = req.locals.labelClicked;
+  console.log("channel: ", channel);
+  console.log("labelClicked: ", labelClicked);
+  let origin = req.get("origin");
+  return {
+    objectType: config.activity,
+    id: `${origin}/activity/course/${channel.courseId}/topic/${channel.topicId}/channel/${channel._id}/notification-setting`,
+    definition: {
+      type: `${DOMAIN}/activityType/notification-setting`,
+      name: {
+        [config.language]: `${labelClicked} - Channel Notification Settings`,
+      },
+      extensions: {
+        [`${DOMAIN}/extensions/notification-setting`]: {
+          channel_id: channel._id,
+          course_id: channel.courseId,
+          topic_id: channel.topicId,
+        },
+      },
+    },
+  };
+};
+
+const createTopicNotificationSettingsObject = (req) => {
+  let topic = req.locals.topic;
+  let labelClicked = req.locals.labelClicked;
+  let origin = req.get("origin");
+  return {
+    objectType: config.activity,
+    id: `${origin}/activity/course/${topic.courseId}/topic/${topic._id}/notification-setting`,
+    definition: {
+      type: `${DOMAIN}/activityType/notification-setting`,
+      name: {
+        [config.language]: `${labelClicked} - Topic Notification Settings`,
+      },
+      extensions: {
+        [`${DOMAIN}/extensions/notification-setting`]: {
+          topic_id: topic._id,
+          course_id: topic.courseId,
+        },
+      },
+    },
+  };
+};
+const createCourseNotificationSettingsObject = (req) => {
+  let course = req.locals.course;
+  let labelClicked = req.locals.labelClicked;
+  let origin = req.get("origin");
+  return {
+    objectType: config.activity,
+    id: `${origin}/activity/course/${course._id}/notification-setting`,
+    definition: {
+      type: `${DOMAIN}/activityType/notification-setting`,
+      name: {
+        [config.language]: `${labelClicked} - Course Notification Settings`,
+      },
+      extensions: {
+        [`${DOMAIN}/extensions/notification-setting`]: {
+          course_id: course._id,
+        },
+      },
+    },
+  };
+};
+
+const createBlockingUserObject = (req) => {
+  let user = req.locals.user;
+  let blockedUser = req.locals.blockedUser;
+  let origin = req.get("origin");
+  return {
+    objectType: config.agent,
+    id: `${origin}/activity/user/${user._id}/blockedUser/${blockedUser._id}`,
     definition: {
       type: `${DOMAIN}/activityType/user`,
       name: {
-        [config.language]: "Unblocked User",
+        [config.language]: blockedUser.name,
       },
       extensions: {
-        [`${origin}/extensions/User`]: {
-          firstName: unblockedUser.firstname,
-          lastName: unblockedUser.lastname,
-          email: unblockedUser.email,
+        [`${DOMAIN}/extensions/user`]: {
+          userId: blockedUser._id,
+          firstName: blockedUser.firstname,
+          lastName: blockedUser.lastname,
+          email: blockedUser.email,
         },
       },
     },
@@ -285,11 +354,8 @@ export const generateBlockUser = (req) => {
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb(
-      "https://xapi.elearn.rwth-aachen.de/definitions/lms/verbs/blocked",
-      "blocked"
-    ),
-    object: createBlockingNotificationObject(req),
+    verb: createVerb(`${DOMAIN}/verb/block`, "blocked"),
+    object: createBlockingUserObject(req),
     context: createContext(),
   };
 };
@@ -299,101 +365,219 @@ export const generateUnblockUser = (req) => {
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb(
-      "https://xapi.elearn.rwth-aachen.de/definitions/lms/verbs/unblocked",
-      "unblocked"
-    ),
-    object: createUnblockingNotificationObject(req),
+    verb: createVerb(`${DOMAIN}/verb/unblock`, "unblocked"),
+    object: createBlockingUserObject(req),
     context: createContext(),
   };
 };
-export const generateSetMaterialNotificationSettings = (req) => {
+export const generateEnableMaterialNotificationSettings = (req) => {
   const metadata = createMetadata();
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb("http://id.tincanapi.com/verb/set", "set"), // Problem: which verb should I use?
-    // object: createMaterialNotificationSettingsObject(req),
+    verb: createVerb("http://id.tincanapi.com/verb/enabled", "enabled"),
+    object: createMaterialNotificationSettingsObject(req),
+    context: createContext(),
+  };
+};
+export const generateDisableMaterialNotificationSettings = (req) => {
+  const metadata = createMetadata();
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://id.tincanapi.com/verb/disabled", "disabled"),
+    object: createMaterialNotificationSettingsObject(req),
     context: createContext(),
   };
 };
 export const generateUnsetMaterialNotificationSettings = (req) => {
   const metadata = createMetadata();
+  const origin = req.get("origin");
+  let material = req.locals.material;
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb("http://id.tincanapi.com/verb/unset", "unset"), // Problem: which verb should I use?
-    // object: createMaterialNotificationSettingsObject(req),
+    verb: createVerb(`${DOMAIN}/verb/reset`, "reset"),
+    object: {
+      objectType: config.activity,
+      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/notification-setting`,
+      definition: {
+        type: `${DOMAIN}/activityType/notification-setting`,
+        name: {
+          [config.language]: `Material Notification Settings`,
+        },
+        extensions: {
+          [`${DOMAIN}/extensions/notification-setting`]: {
+            material_id: material._id,
+            course_id: material.courseId,
+            topic_id: material.topicId,
+            channel_id: material.channelId,
+            materialName: material.name,
+          },
+        },
+      },
+    },
     context: createContext(),
   };
 };
-export const generateSetChannelNotificationSettings = (req) => {
+export const generateEnableChannelNotificationSettings = (req) => {
   const metadata = createMetadata();
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb("http://id.tincanapi.com/verb/set", "set"), // Problem: which verb should I use?
-    //object: ,
+    verb: createVerb("http://id.tincanapi.com/verb/enabled", "enabled"),
+    object: createChannelNotificationSettingsObject(req),
+    context: createContext(),
+  };
+};
+export const generateDisableChannelNotificationSettings = (req) => {
+  const metadata = createMetadata();
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://id.tincanapi.com/verb/disabled", "disabled"),
+    object: createChannelNotificationSettingsObject(req),
     context: createContext(),
   };
 };
 export const generateUnsetChannelNotificationSettings = (req) => {
   const metadata = createMetadata();
+  const origin = req.get("origin");
+  let channel = req.locals.channel;
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb("http://id.tincanapi.com/verb/unset", "unset"), // Problem: which verb should I use?
-    // object: ,
+    verb: createVerb(`${DOMAIN}/verb/reset`, "reset"),
+    object: {
+      objectType: config.activity,
+      id: `${origin}/activity/course/${channel.courseId}/topic/${channel.topicId}/channel/${channel._id}/notification-setting`,
+      definition: {
+        type: `${DOMAIN}/activityType/notification-setting`,
+        name: {
+          [config.language]: `Channel Notification Settings`,
+        },
+        extensions: {
+          [`${DOMAIN}/extensions/notification-setting`]: {
+            course_id: channel.courseId,
+            topic_id: channel.topicId,
+            channel_id: channel._id,
+          },
+        },
+      },
+    },
     context: createContext(),
   };
 };
-export const generateSetTopicNotificationSettings = (req) => {
+export const generateEnableTopicNotificationSettings = (req) => {
   const metadata = createMetadata();
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb("http://id.tincanapi.com/verb/set", "set"), // Problem: which verb should I use?
-    //object: ,
+    verb: createVerb("http://id.tincanapi.com/verb/enabled", "enabled"),
+    object: createTopicNotificationSettingsObject(req),
+    context: createContext(),
+  };
+};
+export const generateDisableTopicNotificationSettings = (req) => {
+  const metadata = createMetadata();
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://id.tincanapi.com/verb/disabled", "disabled"),
+    object: createTopicNotificationSettingsObject(req),
     context: createContext(),
   };
 };
 export const generateUnsetTopicNotificationSettings = (req) => {
   const metadata = createMetadata();
+  const origin = req.get("origin");
+  let topic = req.locals.topic;
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb("http://id.tincanapi.com/verb/unset", "unset"), // Problem: which verb should I use?
-    // object: ,
+    verb: createVerb(`${DOMAIN}/verb/reset`, "reset"),
+    object: {
+      objectType: config.activity,
+      id: `${origin}/activity/course/${topic.courseId}/topic/${topic._id}/notification-setting`,
+      definition: {
+        type: `${DOMAIN}/activityType/notification-setting`,
+        name: {
+          [config.language]: `Topic Notification Settings`,
+        },
+        extensions: {
+          [`${DOMAIN}/extensions/notification-setting`]: {
+            course_id: topic.courseId,
+            topic_id: topic._id,
+          },
+        },
+      },
+    },
     context: createContext(),
   };
 };
-export const generateSetCourseNotificationSettings = (req) => {
+export const generateEnableCourseNotificationSettings = (req) => {
   const metadata = createMetadata();
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb("http://id.tincanapi.com/verb/set", "set"), // Problem: which verb should I use?
-    //object: ,
+    verb: createVerb("http://id.tincanapi.com/verb/enabled", "enabled"),
+    object: createCourseNotificationSettingsObject(req),
+    context: createContext(),
+  };
+};
+export const generateDisableCourseNotificationSettings = (req) => {
+  const metadata = createMetadata();
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://id.tincanapi.com/verb/disabled", "disabled"),
+    object: createCourseNotificationSettingsObject(req),
     context: createContext(),
   };
 };
 export const generateUnsetCourseNotificationSettings = (req) => {
   const metadata = createMetadata();
+  const origin = req.get("origin");
+  let course = req.locals.course;
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb("http://id.tincanapi.com/verb/unset", "unset"), // Problem: which verb should I use?
-    // object: ,
+    verb: createVerb(`${DOMAIN}/verb/reset`, "reset"),
+    object: {
+      objectType: config.activity,
+      id: `${origin}/activity/course/${course._id}/notification-setting`,
+      definition: {
+        type: `${DOMAIN}/activityType/notification-setting`,
+        name: {
+          [config.language]: `Course Notification Settings`,
+        },
+        extensions: {
+          [`${DOMAIN}/extensions/notification-setting`]: {
+            course_id: course._id,
+          },
+        },
+      },
+    },
     context: createContext(),
   };
 };
-export const generateSetGlobalNotificationSettings = (req) => {
+export const generateEnableGlobalNotificationSettings = (req) => {
   const metadata = createMetadata();
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb("http://id.tincanapi.com/verb/set", "set"), // Problem: which verb should I use?
-    //object: ,
+    verb: createVerb("http://id.tincanapi.com/verb/enabled", "enabled"),
+    object: createGlobalNotificationSettingsObject(req),
+    context: createContext(),
+  };
+};
+export const generateDisableGlobalNotificationSettings = (req) => {
+  const metadata = createMetadata();
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://id.tincanapi.com/verb/disabled", "disabled"),
+    object: createGlobalNotificationSettingsObject(req),
     context: createContext(),
   };
 };

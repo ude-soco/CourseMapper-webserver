@@ -340,6 +340,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     let objToSend = {
       materialId: this.materialIdOfMaterialMenuClicked,
       courseId: this.courseID,
+      labelClicked: labelClicked,
 
       [materialNotificationSettingLabels.annotations]:
         labelClicked === materialNotificationSettingLabels.annotations
