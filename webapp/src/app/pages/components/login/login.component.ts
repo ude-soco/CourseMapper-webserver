@@ -97,6 +97,7 @@ export class LoginComponent implements OnInit {
               this.router.navigate(['course-description', courseId]);
 
               //console.log(selcetedCourse)
+              this.router.navigate(['/home']);
             }
           } catch (err) {
             console.log(err);
