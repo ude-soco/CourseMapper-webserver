@@ -70,6 +70,7 @@ export class LoginComponent implements OnInit {
         this.store.dispatch(ApplicationActions.getLastTimeCourseMapperOpened());
 
         if (this.course) {
+          
           try {
             // (async () => {
             //   this.myCourses1= await this.getMyCourses();

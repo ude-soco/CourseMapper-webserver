@@ -55,7 +55,7 @@
         <td class="fixed-width-column">{{ member?.userId?.username }}</td>
         
         <td *ngIf="viewOnly  || course.role== 'co_teacher' || course.role == 'non_editing_teacher'" class="fixed-width-column">
-          {{
+          {{ member?.role?.name === 'teacher' ? 'Teacher' :
             member?.role?.name === 'non_editing_teacher' ? 'Teaching Assistant' :
             member?.role?.name === 'user' ? 'Student' :
             member?.role?.name === 'co_teacher' ? 'Co-Teacher' :

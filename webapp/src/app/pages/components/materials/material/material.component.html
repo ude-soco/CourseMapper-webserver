@@ -41,9 +41,7 @@
           [channelEmittd]="selectedChannel"
         >
         </app-add-material>
-        <p *ngIf="!showModeratorPrivileges">
-          Only course moderator can add material
-        </p>
+       
       </ng-template>
     </p-tabPanel>
     <ng-container *ngIf="this.materials.length > 0">
