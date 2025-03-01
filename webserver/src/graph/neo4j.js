@@ -187,3 +187,89 @@ export async function setRating(resourceId, concepts, userId, rating) {
     await session.close();
   }
 }
+
+
+export async function createUserCourseRelationship(userId, courseId, engagementLevel) {
+  const session = graphDb.driver.session();
+  try {
+    const result = await session.executeWrite(async (tx) => {
+      const response = await tx.run(
+        `
+        MERGE (u:User {uid: $userId})
+        MERGE (c:Course {cid: $courseId})
+        MERGE (u)-[loe:LEVEL_OF_ENGAGEMENT]->(c)
+        ON CREATE SET loe.level = $engagementLevel, loe.status = 'enrolled', loe.timestamp = timestamp()
+        ON MATCH SET loe.level = $engagementLevel, loe.status = 'enrolled', loe.timestamp = timestamp()
+        RETURN u, c, loe
+        `,
+        { userId, courseId, engagementLevel }
+      );
+      return recordsToObjects(response.records);
+    });
+    return result;
+  } catch (error) {
+    console.error("Error creating or updating user-course relationship:", error);
+    throw error;
+  } finally {
+    await session.close();
+  }
+}
+
+
+export async function deleteUserCourseRelationship(userId, courseId) {
+  const session = graphDb.driver.session();
+  try {
+    const result = await session.executeWrite(async (tx) => {
+      const response = await tx.run(
+        `
+        MATCH (u:User {uid: $userId})-[loe:LEVEL_OF_ENGAGEMENT]->(c:Course {cid: $courseId})
+        DELETE loe
+        RETURN u, c
+        `,
+        { userId, courseId }
+      );
+      return recordsToObjects(response.records);
+    });
+    return result;
+  } catch (error) {
+    console.error("Error removing user-course relationship:", error);
+    throw error;
+  } finally {
+    await session.close();
+  }
+}
+
+
+
+
+
+/*
+  export async function createCourseMaterialRelationship(courseId, materialId, materialName) {
+    const session = graphDb.driver.session();
+    try {
+      const result = await session.executeWrite(async (tx) => {
+        const response = await tx.run(
+          `
+          MERGE (course:Course {cid: $courseId})
+          MERGE (material:LearningMaterial {mid: $materialId})
+          ON CREATE SET material.name = $materialName
+          ON MATCH SET material.name = COALESCE(material.name, $materialName)
+          MERGE (course)-[r:HAS_MATERIAL]->(material)
+          RETURN course, material, r
+          `,
+          { courseId, materialId, materialName }
+        );
+        return recordsToObjects(response.records);
+      });
+      return result;
+    } catch (error) {
+      console.error("Error creating course-material relationship:", error);
+      throw error;
+    } finally {
+      await session.close();
+    }
+  }
+*/
+
+
+

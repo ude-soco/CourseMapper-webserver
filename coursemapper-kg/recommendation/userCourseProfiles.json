@@ -1,0 +1,135 @@
+[
+  {
+    "courseId": "unknown",
+    "stdProfile": {
+      "stdUsername": "673e198ae098378056898211",
+      "totalSessions": 0,
+      "totalSessionTime": 0,
+      "avgSessionTime": 0,
+      "maxSessionTime": 0,
+      "minSessionTime": 0,
+      "totalEnrollments": 0
+    },
+    "activitiesProfile": {
+      "totalActivities": 24,
+      "access": {
+        "totalAccesses": 0,
+        "pdfAccess": 0,
+        "videoAccess": 0
+      },
+      "annotations": {
+        "totalAnnotations": 0
+      },
+      "materialProfile": {
+        "video": {
+          "videosStarted": 0,
+          "videosCompleted": 0
+        },
+        "pdf": {
+          "pdfStarted": 0,
+          "pdfCompleted": 0
+        }
+      }
+    }
+  },
+  {
+    "courseId": "unknown",
+    "stdProfile": {
+      "stdUsername": "673f63960c45089cb179031b",
+      "totalSessions": 0,
+      "totalSessionTime": 0,
+      "avgSessionTime": 0,
+      "maxSessionTime": 0,
+      "minSessionTime": 0,
+      "totalEnrollments": 0
+    },
+    "activitiesProfile": {
+      "totalActivities": 44,
+      "access": {
+        "totalAccesses": 0,
+        "pdfAccess": 0,
+        "videoAccess": 0
+      },
+      "annotations": {
+        "totalAnnotations": 0
+      },
+      "materialProfile": {
+        "video": {
+          "videosStarted": 0,
+          "videosCompleted": 0
+        },
+        "pdf": {
+          "pdfStarted": 0,
+          "pdfCompleted": 0
+        }
+      }
+    }
+  },
+  {
+    "courseId": "unknown",
+    "stdProfile": {
+      "stdUsername": "673f64a30c45089cb1790546",
+      "totalSessions": 0,
+      "totalSessionTime": 0,
+      "avgSessionTime": 0,
+      "maxSessionTime": 0,
+      "minSessionTime": 0,
+      "totalEnrollments": 0
+    },
+    "activitiesProfile": {
+      "totalActivities": 263,
+      "access": {
+        "totalAccesses": 0,
+        "pdfAccess": 0,
+        "videoAccess": 0
+      },
+      "annotations": {
+        "totalAnnotations": 0
+      },
+      "materialProfile": {
+        "video": {
+          "videosStarted": 0,
+          "videosCompleted": 0
+        },
+        "pdf": {
+          "pdfStarted": 0,
+          "pdfCompleted": 0
+        }
+      }
+    }
+  },
+  {
+    "courseId": "unknown",
+    "stdProfile": {
+      "stdUsername": "6776a440affb37d64f66efb4",
+      "totalSessions": 0,
+      "totalSessionTime": 0,
+      "avgSessionTime": 0,
+      "maxSessionTime": 0,
+      "minSessionTime": 0,
+      "totalEnrollments": 0
+    },
+    "activitiesProfile": {
+      "totalActivities": 11,
+      "access": {
+        "totalAccesses": 0,
+        "pdfAccess": 0,
+        "videoAccess": 0
+      },
+      "annotations": {
+        "totalAnnotations": 0
+      },
+      "materialProfile": {
+        "video": {
+          "videosStarted": 0,
+          "videosCompleted": 0
+        },
+        "pdf": {
+          "pdfStarted": 0,
+          "pdfCompleted": 0
+        }
+      }
+    }
+  },
+  {
+    "courseId": 
