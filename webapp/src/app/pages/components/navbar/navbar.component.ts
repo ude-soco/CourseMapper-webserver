@@ -76,6 +76,12 @@ export class NavbarComponent implements OnInit {
         command: () => this.onViewPersonalDashboard(),
       },
       {
+        label: 'Personal Knowledge Graph',
+        icon: 'pi pi-sitemap',
+        title: 'View your personal knowledge graph',
+        command: () => this.onViewPersonalKnowledge(),
+      },
+      {
         label: 'Sign out',
         icon: 'pi pi-sign-out',
         command: () => this.handleLogout(),
@@ -141,5 +147,9 @@ export class NavbarComponent implements OnInit {
 
   onViewPersonalDashboard(): void {
     this.router.navigate(['user/dashboard']);
+  }
+
+  onViewPersonalKnowledge(): void {
+    this.router.navigate(['user/personalkg']);
   }
 }
