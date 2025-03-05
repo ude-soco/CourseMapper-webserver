@@ -291,13 +291,24 @@
                     pButton
                     type="button"
                     label="Add concept"
+                    title="Add concept"
                     (click)="addConcept()"
                   ></button>
+                  <button
+                  *ngIf="!editingConceptName"
+                  pButton
+                  [ngStyle]="{ backgroundColor: '#EEEEEE', color: '#333333' }"
+                  type="button"
+                  label="Cancel"
+                  title="Cancel"
+                  (click)="cancelEditConcept()"
+                ></button>
                   <button
                     *ngIf="editingConceptName"
                     pButton
                     type="button"
                     label="Update concept"
+                    title="Update concept"
                     (click)="addConcept()"
                   ></button>
                   <button
@@ -306,6 +317,7 @@
                     [ngStyle]="{ backgroundColor: '#EEEEEE', color: '#333333' }"
                     type="button"
                     label="Cancel edit"
+                    title="Cancel edit"
                     (click)="cancelEditConcept()"
                   ></button>
                 </form>
@@ -315,7 +327,8 @@
                 [ngStyle]="{ backgroundColor: '#EA580C' }"
                 type="button"
                 pTooltip="When clicking on this button, the relative cocept to this cocept will be shown in the graph in addition to the top 3 categories of this concept"
-                label="Expand and publish"
+                label="Finalize"
+                title="Finalize"
                 (click)="expandAndPublish()"
               ></button>
             </div>
