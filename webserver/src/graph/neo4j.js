@@ -197,7 +197,7 @@ export async function createUserCourseRelationship(userId, courseId, engagementL
         `
         MERGE (u:User {uid: $userId})
         MERGE (c:Course {cid: $courseId})
-        MERGE (u)-[loe:LEVEL_OF_ENGAGEMENT]->(c)
+        MERGE (u)-[loe:ENGAGED_IN]->(c)
         ON CREATE SET loe.level = $engagementLevel, loe.status = 'enrolled', loe.timestamp = timestamp()
         ON MATCH SET loe.level = $engagementLevel, loe.status = 'enrolled', loe.timestamp = timestamp()
         RETURN u, c, loe
@@ -222,7 +222,7 @@ export async function deleteUserCourseRelationship(userId, courseId) {
     const result = await session.executeWrite(async (tx) => {
       const response = await tx.run(
         `
-        MATCH (u:User {uid: $userId})-[loe:LEVEL_OF_ENGAGEMENT]->(c:Course {cid: $courseId})
+        MATCH (u:User {uid: $userId})-[loe:ENGAGED_IN]->(c:Course {cid: $courseId})
         DELETE loe
         RETURN u, c
         `,
