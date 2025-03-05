@@ -38,7 +38,14 @@
       display: inline-block;
       font-weight: 300;
     }
-
+    .legend-circle-newly_added {
+      width: 1em;
+      height: 1em;
+      background: #74c023f9;
+      border-radius: 50%;
+      display: inline-block;
+      font-weight: 300;
+    }
     .legend-circle-irrelated {
       width: 1em;
       height: 1em;
