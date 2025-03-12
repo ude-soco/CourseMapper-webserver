@@ -17,7 +17,8 @@ class ModifyGraphPipeline:
     def remove_concept_by_name(self, material_id: str, concept_name: str):
         self._graph_db.remove_concept_by_name(material_id, concept_name)
 
-    def add_concept(self, material_id: str, concept_name: str, slides: list[int] | None):
+    def add_concept(self, material_id: str, concept_name: str, slides: list[int]| None, isNew:bool, isEditing:bool) :
+        
         # Check if the concept already exists
         existing_concept = self._graph_db.get_concept_by_name(material_id, concept_name)
         if existing_concept is not None:
@@ -63,7 +64,8 @@ class ModifyGraphPipeline:
         graph.nodes.append(material_node)
 
         # Add concept node
-        concept_node = Node(f'{material_id}_concept_{str(abs(hash(str(wikipedia_page_embedding))))}', concept_name, '', 'main_concept', (concept_material_weight + 1) / 2, f'https://en.wikipedia.org/wiki/{concept_name}', wikipedia_page.summary, False, wikipedia_page_embedding, [])
+        concept_node = Node(f'{material_id}_concept_{str(abs(hash(str(wikipedia_page_embedding))))}', concept_name, '', 'main_concept', (concept_material_weight + 1) / 2, f'https://en.wikipedia.org/wiki/{concept_name}', wikipedia_page.summary, False, isNew , isEditing, wikipedia_page_embedding, []   )
+        
         graph.nodes.append(concept_node)
 
         # Add material-concept edge

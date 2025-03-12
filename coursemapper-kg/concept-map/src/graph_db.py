@@ -54,6 +54,25 @@ class GraphDB:
         if len(records) == 0:
             return None
         return Node.from_dict(records[0]['n'])
+    
+    def update_concept_node(self, node):
+        """
+        Updates the given concept node in Neo4j by setting its isNew and isEditing properties to false.
+        """
+        # with self.driver.session() as session:
+        #     tx = session.begin_transaction()
+        #     tx.run(
+        #         """
+        #         MATCH (c:Concept {uid: $cid})
+        #         SET c.isNew = false, c.isEditing = false
+        #         RETURN c
+        #         """,
+        #         cid=node.id
+        #     )
+        #     tx.commit()
+        self.driver.execute_query("MATCH (c {uid: $cid}) SET c.isNew = false, c.isEditing = false", cid=node.id)
+                                  
+    
 
 def _save_graph(tx: ManagedTransaction, graph: Graph):
     # Find material node
@@ -78,9 +97,11 @@ def _save_graph(tx: ManagedTransaction, graph: Graph):
                 continue
 
         if node.type == "material":
-            tx.run("MERGE (m:LearningMaterial {uid: $mid, mid: $mid, name: $name, type: $type, text: $text, is_draft: $is_draft, embedding_model: $embedding_model}) RETURN m",
-                mid=node.id, name=node.name, type=node.type, text=node.text, is_draft=node.is_draft, embedding_model=node.embedding_model)
+            
+            tx.run("MERGE (m:LearningMaterial {uid: $mid, mid: $mid, name: $name, type: $type, text: $text, is_draft: $is_draft,isNew: $isNew, isEditing: $isEditing, embedding_model: $embedding_model}) RETURN m",
+                mid=node.id, name=node.name, type=node.type, text=node.text, is_draft=node.is_draft, isNew=node.isNew, isEditing=node.isEditing, embedding_model=node.embedding_model)
         elif node.type == "Slide":
+            
             # Get slide concept edges
             slide_concept_edges = []
             for edge in graph.edges:
@@ -96,6 +117,8 @@ def _save_graph(tx: ManagedTransaction, graph: Graph):
             # Calculate weighted embedding of slide
             sum_embeddings, sum_weights = 0, 0
             for slide_concept_node in slide_concept_nodes:
+                if slide_concept_node.embedding is None:
+                    continue
                 sum_embeddings = (
                     sum_embeddings
                     + np.array(slide_concept_node.embedding) * slide_concept_node.weight
@@ -107,7 +130,7 @@ def _save_graph(tx: ManagedTransaction, graph: Graph):
             tx.run(
                 """MERGE (c:Slide {name: $name, uid: $sid, sid: $sid, text: $text, mid: $mid,concepts: $concepts,
                 initial_embedding:$initial_embedding,type:$type,
-                final_embedding:$final_embedding,weighted_embedding_of_concept:$weighted_embedding_of_concept})""",
+                final_embedding:$final_embedding,weighted_embedding_of_concept:$weighted_embedding_of_concept,isNew: $isNew, isEditing: $isEditing})""",
                 sid=node.id,
                 name=node.name,
                 text=node.text,
@@ -116,12 +139,40 @@ def _save_graph(tx: ManagedTransaction, graph: Graph):
                 concepts=[slide_condept_node.name for slide_condept_node in slide_concept_nodes],
                 initial_embedding=",".join(map(str, node.embedding)) if node.embedding is not None else "",
                 final_embedding="",
-                weighted_embedding_of_concept=weighted_embedding_of_concept)
+                weighted_embedding_of_concept=weighted_embedding_of_concept,isNew=node.isNew, isEditing=node.isEditing)
         else:
             tx.run(
-                """MERGE (c:Concept {name: $name, uid: $cid, cid: $cid, uri: $uri, type: $type, mid: $mid, weight: $weight,
-                wikipedia: $wikipedia, abstract: $abstract,initial_embedding:$initial_embedding, final_embedding:$final_embedding,
-                keyphrases: $keyphrases})""",
+                """
+                MERGE (c:Concept {uid: $cid})
+                ON CREATE SET 
+                c.name = $name,
+                c.cid = $cid,
+                c.uri = $uri,
+                c.type = $type,
+                c.mid = $mid,
+                c.weight = $weight,
+                c.wikipedia = $wikipedia,
+                c.abstract = $abstract,
+                c.initial_embedding = $initial_embedding,
+                c.final_embedding = $final_embedding,
+                c.keyphrases = $keyphrases,
+                c.isNew = $isNew,
+                c.isEditing = $isEditing
+                ON MATCH SET 
+                c.name = $name,
+                c.uri = $uri,
+                c.type = $type,
+                c.mid = $mid,
+                c.weight = $weight,
+                c.wikipedia = $wikipedia,
+                c.abstract = $abstract,
+                c.initial_embedding = $initial_embedding,
+                c.final_embedding = $final_embedding,
+                c.keyphrases = $keyphrases,
+                c.isNew = $isNew,
+                c.isEditing = $isEditing
+                RETURN c
+                """,
                 name=node.name,
                 cid=node.id,
                 uri=node.uri,
@@ -132,7 +183,23 @@ def _save_graph(tx: ManagedTransaction, graph: Graph):
                 initial_embedding=",".join(map(str, node.embedding)) if node.embedding is not None else "",
                 final_embedding="",
                 abstract=node.text,
-                keyphrases=node.keyphrases,)
+                keyphrases=node.keyphrases,
+                isNew=node.isNew,        # This should be False after expansion for main concepts
+                isEditing=node.isEditing   # This should be False after expansion for main concepts
+        
+                )
+    def update_concept_node(graph, node, material_node):
+    # Use the simpler query to update only the two properties
+     tx.run(
+            """
+            MATCH (c:Concept {uid: $cid})
+            SET c.isNew = false, c.isEditing = false
+            RETURN c
+            """,
+            cid=node.id
+        )        
+
+            
 
     # Create edges
     for edge in graph.edges:
@@ -152,3 +219,16 @@ def _save_graph(tx: ManagedTransaction, graph: Graph):
                 relationship=edge.type,
                 weight=edge.weight,
                 disambiguated_weight=edge.disambiguated_weight)
+def update_concept_node(graph, node, material_node):
+    # Use a transaction to update only the isNew and isEditing properties for the given concept node.
+    with graph.driver.session() as session:
+        tx = session.begin_transaction()
+        tx.run(
+            """
+            MATCH (c:Concept {uid: $cid})
+            SET c.isNew = false, c.isEditing = false
+            RETURN c
+            """,
+            cid=node.id
+        )
+        tx.commit()

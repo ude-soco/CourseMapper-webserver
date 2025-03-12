@@ -121,6 +121,9 @@ export class CytoscapeComponent {
         'text-valign': 'center',
         'text-outline-width': 0.2,
         'background-color': (elm) => {
+          console.log("isNew in cytoscape",elm.data());
+          if (elm.data().isNew) return '#009933'; // Green color for new concepts
+          if (elm.data().isEditing) return '#cc9900'; // Green color for new concepts
           if (elm.data().type === 'related_concept') return '#ce6f34';
           else if (elm.data().type === 'category') return '#FBC02D';
           else if (elm.data().type === 'course') return '#689F38';
