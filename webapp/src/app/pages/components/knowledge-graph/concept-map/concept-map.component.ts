@@ -889,6 +889,8 @@ export class ConceptMapComponent {
               weight: data.weight,
               wikipedia: data.wikipedia,
               abstract: data.abstract,
+              isNew: data.isNew,
+              isEditing: data.isEditing,
             };
             kgNodes.push(nodeEle);
           });
@@ -1947,6 +1949,7 @@ export class ConceptMapComponent {
 
 
   async addConcept() {
+    console.log('add concept');
     // TODO
     // Automatically publish drafts
     // Do not rearrange graph
@@ -1976,13 +1979,27 @@ export class ConceptMapComponent {
           this.currentMaterial!._id,
           this.editingConceptId
         );
+        await this.conceptMapService.addConceptMapConcept(
+          this.currentMaterial!.courseId,
+          this.currentMaterial!._id,
+          conceptName,
+          conceptSlides,
+          false,  // Not a new concept
+          true    // Mark as edited
+        );
       }
+      else {
       await this.conceptMapService.addConceptMapConcept(
         this.currentMaterial!.courseId,
         this.currentMaterial!._id,
         conceptName,
-        conceptSlides
+        conceptSlides,
+        true, // Mark this concept as new
+        false // Not edited
       );
+    }
+    console.log('conceptName',conceptName);
+
       this.getConceptMapData();
       this.editConceptForm.setValue({
         conceptName: '',

@@ -1,6 +1,7 @@
 from services.embedding import EmbeddingService, cos_sim
 from services.wikipedia import WikipediaService
 from graph_db import GraphDB
+from graph_db import update_concept_node
 from config import Config
 from data import Graph, Node, Edge
 import time
@@ -10,6 +11,7 @@ import math
 import numpy as np
 import scipy.sparse as sp
 import tempfile
+
 
 class ExpandMaterialPipeline:
     def __init__(self):
@@ -23,14 +25,14 @@ class ExpandMaterialPipeline:
         graph = graph_db.load_graph(material_id)
 
         # Expand material graph
-        self.expand_material_graph(graph, push_log_message)
+        self.expand_material_graph(graph, push_log_message, graph_db)
 
         # Save subgraph
         if graph_db is not None:
             graph_db.save_graph(graph)
             self.gcn(material_id, graph_db)
 
-    def expand_material_graph(self, graph: Graph, push_log_message: Callable):
+    def expand_material_graph(self, graph: Graph, push_log_message: Callable, graph_db: GraphDB):
         # Start timer
         start_time = time.time()
 
@@ -50,9 +52,15 @@ class ExpandMaterialPipeline:
         # Connect nodes to categories
         expanded_category_titles = set()
         concept_count = 0
+        
         for concept_node in graph.nodes:
+            
+            if concept_node.type == 'main_concept':
+               concept_node.isNew = False
+               concept_node.isEditing = False
             if concept_node.type != 'main_concept':
                 continue
+            
 
             concept_count += 1
 
@@ -108,7 +116,7 @@ class ExpandMaterialPipeline:
 
         # Add category nodes
         for category_node_id, category_title, category_embedding, category_weight in category_df[['node_id', 'title', 'embedding', 'weight']].iter_rows():
-            category_node = Node(category_node_id, category_title.replace('Category:', ''), '', 'category', category_weight, f'https://en.wikipedia.org/wiki/{category_title.replace(" ", "_")}', '', False, category_embedding)
+            category_node = Node(category_node_id, category_title.replace('Category:', ''), '', 'category', category_weight, f'https://en.wikipedia.org/wiki/{category_title.replace(" ", "_")}', '', False,False,False, category_embedding)
             graph.add_node(category_node)
 
         expanded_category_count = len([category for category in graph.nodes if category.type == 'category'])
@@ -116,8 +124,18 @@ class ExpandMaterialPipeline:
 
         ## Step: Concept Expansion
         concepts = [node for node in graph.nodes if node.type == 'main_concept']
+        
+           
         push_log_message(f'Expanding {len(concepts)} concepts')
         for concept_node in concepts:
+            concept_node.isNew = False
+            concept_node.isEditing = False
+            graph.add_node(concept_node)
+            # Update concept node
+            graph_db.update_concept_node(concept_node) 
+    
+            
+        
             # Get expanded concepts
             concept_page = self._wikipedia_service.get_page(concept_node.name)
             if concept_page is None:
@@ -152,7 +170,7 @@ class ExpandMaterialPipeline:
 
             # Add expanded concepts
             for expanded_concept_title, expanded_concept_summary, expanded_concept_embedding, expanded_concept_weight in expansion_df.iter_rows():
-                expanded_concept_node = Node(f'{material_id}_concept_{str(abs(hash(str(expanded_concept_embedding))))}', expanded_concept_title, '', 'related_concept', expanded_concept_weight, f'https://en.wikipedia.org/wiki/{expanded_concept_title}', expanded_concept_summary, False, expanded_concept_embedding)
+                expanded_concept_node = Node(f'{material_id}_concept_{str(abs(hash(str(expanded_concept_embedding))))}', expanded_concept_title, '', 'related_concept', expanded_concept_weight, f'https://en.wikipedia.org/wiki/{expanded_concept_title}', expanded_concept_summary, False, False,False, expanded_concept_embedding)
                 graph.add_node(expanded_concept_node)
                 graph.add_edge(Edge(concept_node.id, expanded_concept_node.id, 'RELATED_TO', 1.0))
 

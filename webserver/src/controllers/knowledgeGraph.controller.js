@@ -234,12 +234,18 @@ export const addConcept = async (req, res) => {
   const materialId = req.params.materialId;
   const conceptName = req.body.conceptName;
   const slides = req.body.slides;
-  
+  const isNew = req.body.isNew;
+  const isEditing = req.body.isEditing;
+  console.log("isNew", isNew);
+  console.log("slides", slides);
+
   await redis.addJob('modify-graph', {
     action: 'add-concept',
     materialId,
     conceptName,
     slides,
+    isNew,
+    isEditing,
   }, undefined, (result) => {
     if (res.headersSent) {
       return;
