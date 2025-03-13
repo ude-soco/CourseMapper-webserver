@@ -57,7 +57,7 @@ export class CytoscapeComponent {
   public selectedTriggered: boolean = false;
 
   public _elements: any;
-
+  private selectedNodeElement: any;
   annotationsNodes: any[];
   propertiesNodes: any[];
   categoriesNodes: any[];
@@ -121,7 +121,7 @@ export class CytoscapeComponent {
         'text-valign': 'center',
         'text-outline-width': 0.2,
         'background-color': (elm) => {
-          console.log("isNew in cytoscape",elm.data());
+          
           if (elm.data().isNew) return '#009933'; // Green color for new concepts
           if (elm.data().isEditing) return '#cc9900'; // Green color for new concepts
           if (elm.data().type === 'related_concept') return '#ce6f34';
@@ -450,8 +450,14 @@ export class CytoscapeComponent {
         this.nodeSelected = false;
         if (eventTarget !== this.cy) {
           if (eventTarget.isNode()) {
+            // If there is a previously selected node, reset its border style.
+            if (this.selectedNodeElement) {
+              this.selectedNodeElement.style('border-color', '');
+              this.selectedNodeElement.style('border-width', '');
+            }
             console.log('weight: ' + eventTarget.data('weight'));
             prevNode = eventTarget.data().id;
+            
             selectedNode = {
               id: eventTarget.data('id'),
               cid: eventTarget.data('cid'),
@@ -460,6 +466,11 @@ export class CytoscapeComponent {
               abstract: eventTarget.data('abstract'),
               wikipedia: eventTarget.data('wikipedia'),
             };
+            console.log('selectedNode: ', selectedNode);
+            eventTarget.style('border-color', 'yellow');
+            eventTarget.style('border-width', '7px');
+            // Store the reference for later deselection
+          this.selectedNodeElement = eventTarget;
             children = eventTarget
               .connectedEdges()
               .targets()
@@ -487,6 +498,12 @@ export class CytoscapeComponent {
             }
           } else {
             prevNode = undefined;
+            // If a non-node is clicked, reset the selected node's border.
+          if (this.selectedNodeElement) {
+            this.selectedNodeElement.style('border-color', '');
+            this.selectedNodeElement.style('border-width', '');
+            this.selectedNodeElement = null;
+          }
           }
         }
         this.selectedNodeEvent.emit(selectedNode);
@@ -494,6 +511,7 @@ export class CytoscapeComponent {
       });
     }
   }
+  
   getAllDescendants(node: any) {
     var all = [];
     getDescendants(node);

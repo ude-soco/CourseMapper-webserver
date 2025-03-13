@@ -4,7 +4,8 @@ import {
   Output,
   EventEmitter,
   ChangeDetectorRef,
-  Renderer2,
+  Renderer2, 
+  
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
@@ -29,7 +30,7 @@ import { getCurrentMaterial } from '../../materials/state/materials.reducer';
 import { getCurrentPdfPage } from '../../annotations/pdf-annotation/state/annotation.reducer';
 import { Socket } from 'ngx-socket-io';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-
+import { CytoscapeComponent } from '../cytoscape/cytoscape.component';
 interface topN {
   name: string;
   code: string;
@@ -41,6 +42,7 @@ interface topN {
   styleUrls: ['./concept-map.component.css'],
 })
 export class ConceptMapComponent {
+ 
   @Input() course?: Course;
   @Input() showConceptMap?: boolean;
   @Input() isCmLoading?: boolean;
@@ -1973,6 +1975,7 @@ export class ConceptMapComponent {
 
     this.conceptInputsDisabled = true;
     try {
+
       if (this.editingConceptId) {
         await this.conceptMapService.deleteConceptMapConcept(
           this.currentMaterial!.courseId,
@@ -2001,6 +2004,7 @@ export class ConceptMapComponent {
     console.log('conceptName',conceptName);
 
       this.getConceptMapData();
+
       this.editConceptForm.setValue({
         conceptName: '',
         conceptSlides: '',
