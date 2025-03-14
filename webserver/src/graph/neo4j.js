@@ -76,13 +76,35 @@ export async function checkMaterials(materialIds) {
   return recordsToObjects(records);
 }
 
+// export async function getMaterial(materialId) {
+//   const { records, summary, keys } = await graphDb.driver.executeQuery(
+//     'MATCH (c:Concept) WHERE c.mid = $mid RETURN LABELS(c) as labels,ID(c) AS id, c.cid as cid, c.name AS name, c.uri as uri, c.type as type, c.weight as weight, c.wikipedia as wikipedia, c.abstract as abstract, c.rank as rank, c.isNew as isNew, c.isEditing as isEditing', 'c.lastEdited as lastEdited',
+//     { mid: materialId }
+//   );
+//   return recordsToObjects(records);
+// }
 export async function getMaterial(materialId) {
   const { records, summary, keys } = await graphDb.driver.executeQuery(
-    'MATCH (c:Concept) WHERE c.mid = $mid RETURN LABELS(c) as labels,ID(c) AS id, c.cid as cid, c.name AS name, c.uri as uri, c.type as type, c.weight as weight, c.wikipedia as wikipedia, c.abstract as abstract, c.rank as rank, c.isNew as isNew, c.isEditing as isEditing',
+    `MATCH (c:Concept) 
+     WHERE c.mid = $mid 
+     RETURN LABELS(c) as labels, 
+            ID(c) as id, 
+            c.cid as cid, 
+            c.name as name, 
+            c.uri as uri, 
+            c.type as type, 
+            c.weight as weight, 
+            c.wikipedia as wikipedia, 
+            c.abstract as abstract, 
+            c.rank as rank, 
+            c.isNew as isNew, 
+            c.isEditing as isEditing,
+            c.lastEdited as lastEdited`,
     { mid: materialId }
   );
   return recordsToObjects(records);
 }
+
 
 export async function getMaterialSlides(materialId) {
   const { records, summary, keys } = await graphDb.driver.executeQuery(
@@ -110,7 +132,7 @@ export async function getMaterialEdges(materialId) {
 
 export async function getMaterialConceptIds(materialId) {
   const { records, summary, keys } = await graphDb.driver.executeQuery(
-    'MATCH (c:Concept) WHERE c.mid = $mid RETURN c.cid AS id, c.name as name, c.isNew as isNew,c.isEditing as isEditing',
+    'MATCH (c:Concept) WHERE c.mid = $mid RETURN c.cid AS id, c.name as name, c.isNew as isNew,c.isEditing as isEditing', 'c.lastEdited as lastEdited',
     { mid: materialId }
   );
   return recordsToObjects(records);
@@ -118,7 +140,7 @@ export async function getMaterialConceptIds(materialId) {
 
 export async function getHigherLevelsNodesAndEdges(materialIds) {
   const { records } = await graphDb.driver.executeQuery(
-    `MATCH (c:Concept) WHERE (c.mid IN $mids) and c.type="main_concept" RETURN LABELS(c) as labels,ID(c) AS id, c.cid as cid, c.name AS name, c.uri as uri, c.type as type, c.weight as weight, c.wikipedia as wikipedia, c.abstract as abstract, c.rank as rank, c.isNew as isNew,c.isEditing as isEditing, c.mid as mid order by c.weight limit 50`,
+    `MATCH (c:Concept) WHERE (c.mid IN $mids) and c.type="main_concept" RETURN LABELS(c) as labels,ID(c) AS id, c.cid as cid, c.name AS name, c.uri as uri, c.type as type, c.weight as weight, c.wikipedia as wikipedia, c.abstract as abstract, c.rank as rank, c.isNew as isNew,c.isEditing as isEditing, c.lastEdited as lastEdited, c.mid as mid order by c.weight limit 50`,
     { mids: materialIds }
   );
   const nodes = recordsToObjects(records);

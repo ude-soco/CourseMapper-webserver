@@ -859,6 +859,7 @@ export class ConceptMapComponent {
           let kgNodes = [];
           let kgEdges = [];
           const materialNodes = await this.neo4jService.getMaterial(materialId);
+         
           this.materialSlides = await this.neo4jService.getMaterialSlides(
             materialId
           );
@@ -893,6 +894,7 @@ export class ConceptMapComponent {
               abstract: data.abstract,
               isNew: data.isNew,
               isEditing: data.isEditing,
+              lastEdited: data.lastEdited,
             };
             kgNodes.push(nodeEle);
           });
@@ -1988,7 +1990,8 @@ export class ConceptMapComponent {
           conceptName,
           conceptSlides,
           false,  // Not a new concept
-          true    // Mark as edited
+          true,    // Mark as edited
+          true   // lastEdited: new/edited node is flagged true
         );
       }
       else {
@@ -1998,7 +2001,8 @@ export class ConceptMapComponent {
         conceptName,
         conceptSlides,
         true, // Mark this concept as new
-        false // Not edited
+        false, // Not edited
+        true   // lastEdited: new/edited node is flagged true
       );
     }
     console.log('conceptName',conceptName);

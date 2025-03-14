@@ -26,7 +26,7 @@ if 'modify-graph' in Config.PIPELINES:
     def execute_modify_graph_job(job):
         if job.get('action') == 'add-concept':
            
-            modify_graph_pipeline.add_concept(job.get('materialId'), job.get('conceptName'), job.get('slides'), job.get('isNew'), job.get('isEditing'))
+            modify_graph_pipeline.add_concept(job.get('materialId'), job.get('conceptName'), job.get('slides'), job.get('isNew'), job.get('isEditing'), job.get('lastEdited'))
         elif job.get('action') == 'remove-concept':
             modify_graph_pipeline.remove_concept(job.get('materialId'), job.get('conceptId'))
         return {}
