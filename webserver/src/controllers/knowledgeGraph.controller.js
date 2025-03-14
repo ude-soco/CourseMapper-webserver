@@ -96,6 +96,7 @@ export const getMaterial = async (req, res) => {
       return res.status(403).send({ error: "Unauthorized" });
     }
     const records = await neo4j.getMaterial(materialId);
+    console.log("records", records);
     return res.status(200).send({ records });
   } catch (err) {
     return res.status(500).send({ error: err.message });
@@ -236,6 +237,7 @@ export const addConcept = async (req, res) => {
   const slides = req.body.slides;
   const isNew = req.body.isNew;
   const isEditing = req.body.isEditing;
+  const lastEdited = req.body.lastEdited;
   console.log("isNew", isNew);
   console.log("slides", slides);
 
@@ -246,6 +248,7 @@ export const addConcept = async (req, res) => {
     slides,
     isNew,
     isEditing,
+    lastEdited,
   }, undefined, (result) => {
     if (res.headersSent) {
       return;

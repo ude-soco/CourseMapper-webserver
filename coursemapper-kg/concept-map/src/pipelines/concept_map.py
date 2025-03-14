@@ -62,13 +62,13 @@ class ConceptMapPipeline:
 
         file_embedding = self.embedding_service.encode(' . '.join(pages_df['page']))
 
-        material_node = Node(material_id, material_name, '', 'material', 1, '', '\n\n'.join(pdf_text), True, False, False, file_embedding, [], Config.EMBEDDING_MODEL)
+        material_node = Node(material_id, material_name, '', 'material', 1, '', '\n\n'.join(pdf_text), True, False, False,False, file_embedding, [], Config.EMBEDDING_MODEL)
         graph.add_node(material_node)
 
         for i, (page, page_parts, page_embedding) in enumerate(pages_df.iter_rows()):
             push_log_message(f'Processing page {i+1}/{pages_df.height}')
 
-            page_node = Node(f'{material_id}_slide_{i+1}', f'slide_{i+1}', '', 'Slide', 1, '', page, False, False, False, page_embedding , page_parts, Config.EMBEDDING_MODEL )
+            page_node = Node(f'{material_id}_slide_{i+1}', f'slide_{i+1}', '', 'Slide', 1, '', page, False, False, False,False, page_embedding , page_parts, Config.EMBEDDING_MODEL )
             graph.add_node(page_node)
             graph.add_edge(Edge(material_node.id, page_node.id, 'CONTAINS'))
 
@@ -166,13 +166,13 @@ class ConceptMapPipeline:
 
             for keyphrase, annotation, page_title, page_categories, page_summary, page_embedding, weight, material_weight in disambiguated_df.iter_rows():
                 # Add concept node to graph
-                concept_node = Node(f'{material_id}_concept_{str(abs(hash(str(page_embedding))))}', page_title, '', 'main_concept', (material_weight + 1) / 2, f'https://en.wikipedia.org/wiki/{page_title}', page_summary, False,False,False, page_embedding)
+                concept_node = Node(f'{material_id}_concept_{str(abs(hash(str(page_embedding))))}', page_title, '', 'main_concept', (material_weight + 1) / 2, f'https://en.wikipedia.org/wiki/{page_title}', page_summary, False,False,False, False, page_embedding)
                 graph.add_node(concept_node)
                 graph.add_edge(Edge(page_node.id, concept_node.id, 'CONSISTS_OF', (float(weight) + 1) / 2))
                 graph.add_edge(Edge(material_node.id, concept_node.id, 'LM_CONSISTS_OF', (float(material_weight) + 1) / 2))
 
                 # Add keyphrases to concept node
-                graph.update_node(concept_node, lambda existing_node: Node(existing_node.id, existing_node.name, existing_node.uri, existing_node.type, existing_node.weight, existing_node.wikipedia, existing_node.text, False, False,False, existing_node.embedding, existing_node.keyphrases + [keyphrase]))
+                graph.update_node(concept_node, lambda existing_node: Node(existing_node.id, existing_node.name, existing_node.uri, existing_node.type, existing_node.weight, existing_node.wikipedia, existing_node.text, False, False,False,False, existing_node.embedding, existing_node.keyphrases + [keyphrase]))
 
             push_log_message(f'Finished processing page {i+1}/{pages_df.height}. Identified {main_df.height} concepts')
 

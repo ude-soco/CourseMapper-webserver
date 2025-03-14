@@ -174,10 +174,11 @@
                   [formGroup]="editConceptForm"
                   class="flex flex-row gap-2 items-center"
                 >
-                <div class="p-float-label w-80">
+                <div class=" w-80">
                   <p-autoComplete
                     id="concept-name-input"
                     formControlName="conceptName"
+                    placeholder="Add concept name"
                     [suggestions]="conceptSearchResults"
                     (completeMethod)="searchConcepts($event)"
                     field="title"
@@ -201,14 +202,14 @@
                       </div>
                     </ng-template>
                   </p-autoComplete>
-                  <label for="concept-name-input">Concept name</label>
+                  <!-- <label for="concept-name-input">Concept name</label> -->
                 </div>
                   <div class="w-80" style="width: 700px">
                     <p-multiSelect
                       id="concept-slides-input"
                       [options]="slideOptions"
                       formControlName="conceptSlides"
-                      defaultLabel="Slides"
+                      defaultLabel="Select slide"
                       [filter]="false"
                       filterPlaceholder="All slides"
                       styleClass="w-full"
@@ -272,7 +273,7 @@
                               slide['value'] === currentPDFPage.toString()
                           }"
                         >
-                          Slide {{ slide.label }}
+                           Slide {{ slide.label }}
                           <p-button
                             icon="pi pi-eye"
                             pTooltip="Preview slide"

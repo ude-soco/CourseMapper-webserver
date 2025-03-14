@@ -112,7 +112,16 @@ export class CytoscapeComponent {
           let width = 75 * normalizedWeight + 25; // value between 25 and 100
           return width;
         },
-        'border-width': 'mapData(weight, 0, 1, 1, 3)',
+        // 'border-width': 'mapData(weight, 0, 1, 1, 3)',
+        'border-width': (ele) => {
+  if (ele.data().lastEdited === true) {
+    return 8;
+  } else {
+    // Replicate mapData(weight, 0, 1, 1, 3)
+    const weight = Number(ele.data().weight);
+    return 1 + 2 * weight;
+  }
+},
         'border-opacity': 0.5,
         'text-wrap': 'wrap',
         'background-fit': 'cover',
@@ -120,10 +129,16 @@ export class CytoscapeComponent {
         'text-halign': 'center',
         'text-valign': 'center',
         'text-outline-width': 0.2,
+        'border-color': (elm) => {
+          
+      return elm.data().lastEdited === true ? '#ffff00' : 'black';
+    },
+
         'background-color': (elm) => {
           
-          if (elm.data().isNew) return '#009933'; // Green color for new concepts
+          if (elm.data().isNew) return '#00cc00'; // Green color for new concepts
           if (elm.data().isEditing) return '#cc9900'; // Green color for new concepts
+          // if (elm.data().lastEdited) return '#ff0000'; // Green color for new concepts
           if (elm.data().type === 'related_concept') return '#ce6f34';
           else if (elm.data().type === 'category') return '#FBC02D';
           else if (elm.data().type === 'course') return '#689F38';
@@ -143,6 +158,13 @@ export class CytoscapeComponent {
         'font-size': 16,
       },
     },
+    // {
+    //   selector: 'node[lastEdited]',
+    //   style: {
+    //     'border-color': '#ffff00',  // Yellow border
+    //     'border-width': 20          // Optional: adjust border width as desired
+    //   }
+    // },
     {
       selector: 'edge',
       style: {
@@ -466,7 +488,7 @@ export class CytoscapeComponent {
               abstract: eventTarget.data('abstract'),
               wikipedia: eventTarget.data('wikipedia'),
             };
-            console.log('selectedNode: ', selectedNode);
+            
             eventTarget.style('border-color', 'yellow');
             eventTarget.style('border-width', '7px');
             // Store the reference for later deselection
