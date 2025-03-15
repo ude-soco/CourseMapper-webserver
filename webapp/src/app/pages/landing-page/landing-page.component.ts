@@ -177,7 +177,8 @@ export class LandingPageComponent {
     if (course.url) {
       return this.API_URL + course.url.replace(/\\/g, '/');
     } else {
-      return '/assets/img/courseDefaultImage.png';
+      // return `https://picsum.photos/300/200?random=${Math.floor(Math.random() * 10000)}`;
+      return `https://random-image-pepebigotes.vercel.app/api/random-image?rand=${Math.floor(Math.random() * 10000)}`;
     }
   }
 }

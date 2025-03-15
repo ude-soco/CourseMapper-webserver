@@ -386,7 +386,8 @@ export class CourseWelcomeComponent implements OnInit {
         this.imageTimestamp
       }`;
     } else {
-      return '/assets/img/courseDefaultImage.png';
+      // return '/assets/img/courseDefaultImage.png';
+      return `https://random-image-pepebigotes.vercel.app/api/random-image?rand=${Math.floor(Math.random() * 10000)}`;
     }
   }
 
