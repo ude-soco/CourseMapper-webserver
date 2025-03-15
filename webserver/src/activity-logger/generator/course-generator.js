@@ -176,11 +176,11 @@ const createCourseDashboardObject = (req) => {
   const origin = req.get("origin");
   return {
     objectType: config.activity,
-    id: `${origin}/activity/course/${course._id}/dashboard`,
+    id: `${origin}/activity/course/${course._id}/course-dashboard`,
     definition: {
       type: `${DOMAIN}/activityType/course-dashboard`,
       name: {
-        [config.language]: `${course.name} Dashboard`,
+        [config.language]: `Course Dashboard - ${course.name}`,
       },
       extensions: {
         [`${origin}/extensions/course-dashboard`]: {
@@ -258,7 +258,7 @@ export const createCourseIndicatorObject = (req) => {
     definition: {
       type: `${DOMAIN}/activityType/course-indicator`,
       name: {
-        [config.language]: "Course Indicator", // To verify
+        [config.language]: `Course Indicator Id: ${indicator._id} - ${course.name} Dashboard`,
       },
       extensions: {
         [`${origin}/extensions/course-indicator`]: {
@@ -284,9 +284,9 @@ export const createResizedCourseIndicatorObject = (req) => {
     objectType: config.activity,
     id: `${origin}/activity/course/${course._id}/indicator/${indicator._id}`,
     definition: {
-      type: `${DOMAIN}/activityType/course-indicator`, //To verify
+      type: `${DOMAIN}/activityType/course-indicator`,
       name: {
-        [config.language]: "Course indicator", //To verify
+        [config.language]: `Course Indicator Id: ${indicator._id} - ${course.name} Dashboard`,
       },
       extensions: {
         [`${origin}/extensions/course-indicator`]: {
@@ -312,9 +312,9 @@ export const createReorderedCourseIndicatorObject = (req) => {
     objectType: config.activity,
     id: `${origin}/activity/course/${course._id}/indicator/${indicator._id}`,
     definition: {
-      type: `${DOMAIN}/activityType/course-indicator`, //To verify
+      type: `${DOMAIN}/activityType/course-indicator`,
       name: {
-        [config.language]: "Course indicator", //To verify
+        [config.language]: `Course Indicator Id: ${indicator._id} - ${course.name} Dashboard`,
       },
       extensions: {
         [`${origin}/extensions/course-indicator`]: {

@@ -95,6 +95,7 @@ module.exports = function (app) {
     logger.accessCourseDashboardLogger
   );
 
+  // Add a new course indicator to the course Dashboard
   app.post(
     "/api/courses/:courseId/indicator",
     [authJwt.verifyToken, authJwt.isModerator],
