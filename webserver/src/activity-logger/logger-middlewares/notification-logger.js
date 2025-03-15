@@ -55,10 +55,10 @@ export const unstarNotificationLogger = async (req, res) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
-export const removeNotificationLogger = async (req, res) => {
+export const deleteNotificationLogger = async (req, res) => {
   try {
     await activityController.createActivity(
-      notificationActivityGenerator.generateRemoveNotification(req)
+      notificationActivityGenerator.generateDeleteNotification(req)
     );
     res.status(200).send(req.locals.response);
   } catch (err) {
@@ -126,10 +126,10 @@ export const setMaterialNotificationSettingsLogger = async (req, res) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
-export const unsetMaterialNotificationSettingsLogger = async (req, res) => {
+export const resetMaterialNotificationSettingsLogger = async (req, res) => {
   try {
     await activityController.createActivity(
-      notificationActivityGenerator.generateUnsetMaterialNotificationSettings(
+      notificationActivityGenerator.generateResetMaterialNotificationSettings(
         req
       )
     );
@@ -158,10 +158,10 @@ export const setChannelNotificationSettingsLogger = async (req, res) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
-export const unsetChannelNotificationSettingsLogger = async (req, res) => {
+export const resetChannelNotificationSettingsLogger = async (req, res) => {
   try {
     await activityController.createActivity(
-      notificationActivityGenerator.generateUnsetChannelNotificationSettings(
+      notificationActivityGenerator.generateResetChannelNotificationSettings(
         req
       )
     );
@@ -190,10 +190,10 @@ export const setTopicNotificationSettingsLogger = async (req, res) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
-export const unsetTopicNotificationSettingsLogger = async (req, res) => {
+export const resetTopicNotificationSettingsLogger = async (req, res) => {
   try {
     await activityController.createActivity(
-      notificationActivityGenerator.generateUnsetTopicNotificationSettings(req)
+      notificationActivityGenerator.generateResetTopicNotificationSettings(req)
     );
     res.status(201).send(req.locals.response);
   } catch (err) {
@@ -220,10 +220,10 @@ export const setCourseNotificationSettingsLogger = async (req, res) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
-export const unsetCourseNotificationSettingsLogger = async (req, res) => {
+export const resetCourseNotificationSettingsLogger = async (req, res) => {
   try {
     await activityController.createActivity(
-      notificationActivityGenerator.generateUnsetCourseNotificationSettings(req)
+      notificationActivityGenerator.generateResetCourseNotificationSettings(req)
     );
     res.status(201).send(req.locals.response);
   } catch (err) {

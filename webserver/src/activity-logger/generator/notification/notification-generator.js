@@ -8,15 +8,51 @@ import config from "../util/config";
 
 let DOMAIN = "http://www.CourseMapper.de"; // TODO: Hardcoded due to frontend implementation
 
+const formatActivityType = (type) => {
+  // Convert to lowercase and replace spaces with hiffens
+  return type.toLowerCase().replace(/\s+/g, "-");
+};
+// This activity-object is for when user views all notifications
+const createAllNotificationsObject = (req) => {
+  let notifications = req.locals.notifications;
+  let user = req.locals.user;
+  let origin = req.get("origin");
+  return {
+    objectType: config.activity,
+    id: `${origin}/activity/user/${user._id}/notification`,
+    definition: {
+      type: `${DOMAIN}/activityType/notification`,
+      name: {
+        [config.language]: "All Notifications",
+      },
+      extensions: {
+        [`${origin}/extensions/notification`]: {
+          notifications: notifications.map((notification) => ({
+            //TODO_Shoeb: To be reviewed. The array could be very long
+            id: notification._id,
+            userId: notification.userId,
+            course_id: notification.courseId,
+            topic_id: notification.topicId,
+            channel_id: notification.channelId,
+            material_id: notification.materialId,
+            isRead: notification.isRead,
+            isStar: notification.isStar,
+            createdAt: notification.createdAt,
+          })),
+        },
+      },
+    },
+  };
+};
 const createNotificationsObject = (req) => {
   let notifications = req.locals.notifications;
   let user = req.locals.user;
   let origin = req.get("origin");
   return {
     objectType: config.activity,
-    id: `${origin}/activity/${user._id}/notifications`,
+    id: `${origin}/activity/user/${user._id}/notification`,
     definition: {
-      type: `${DOMAIN}/activityType/notifications`,
+      type: `${DOMAIN}/activityType/notification`,
       name: {
         [config.language]: "Notifications",
       },
@@ -24,8 +60,9 @@ const createNotificationsObject = (req) => {
         [config.language]: "A collection of notifications.",
       },
       extensions: {
-        [`${origin}/extensions/notifications`]: {
+        [`${origin}/extensions/notification`]: {
           notifications: notifications.map((notification) => ({
+            //TODO_Shoeb: To be reviewed. The array could be very long
             id: notification._id,
             userId: notification.userId,
             course_id: notification.courseId,
@@ -48,7 +85,7 @@ const createNotificationObject = (req) => {
   let origin = req.get("origin");
   return {
     objectType: config.activity,
-    id: `${origin}/activity/${user._id}/notification/${notification._id}`,
+    id: `${origin}/activity/user/${user._id}/notification/${notification._id}`,
     definition: {
       type: `${DOMAIN}/activityType/notification`,
       name: {
@@ -74,11 +111,14 @@ const createAnnotationObject = (req) => {
   let annotation = req.locals.annotation;
   let user = req.locals.user;
   let origin = req.get("origin");
+
+  const formattedType = formatActivityType(annotation.type);
+
   return {
     objectType: config.activity,
     id: `${origin}/activity/course/${annotation.courseId}/topic/${annotation.topicId}/channel/${annotation.channelId}/material/${annotation.materialId}/annotation/${annotation._id}`,
     definition: {
-      type: `${DOMAIN}/activityType/${annotation.type}`,
+      type: `${DOMAIN}/activityType/${formattedType}`,
       name: {
         [config.language]: `${annotation.type}`,
       },
@@ -86,7 +126,8 @@ const createAnnotationObject = (req) => {
         [config.language]: annotation.content,
       },
       extensions: {
-        [`${origin}/extensions/${annotation.type}`]: {
+        [`${origin}/extensions/${formattedType}`]: {
+          // Use the new annotation type
           id: annotation._id,
           userId: annotation.author.userId,
           user_name: annotation.author.name,
@@ -109,14 +150,14 @@ const createGlobalNotificationSettingsObject = (req) => {
   let origin = req.get("origin");
   return {
     objectType: config.activity,
-    id: `${origin}/activity/user/${user._id}/notification-setting`,
+    id: `${origin}/activity/user/${user._id}/global-notification-setting`,
     definition: {
-      type: `${DOMAIN}/activityType/notification-setting`,
+      type: `${DOMAIN}/activityType/global-notification-setting`,
       name: {
         [config.language]: `${labelClicked} - Global Notification Settings`,
       },
       extensions: {
-        [`${DOMAIN}/extensions/notification-setting`]: {
+        [`${DOMAIN}/extensions/global-notification-setting`]: {
           user_id: user._id,
         },
       },
@@ -132,12 +173,12 @@ const createMaterialNotificationSettingsObject = (req) => {
     objectType: config.activity,
     id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/notification-setting`,
     definition: {
-      type: `${DOMAIN}/activityType/notification-setting`,
+      type: `${DOMAIN}/activityType/material-notification-setting`,
       name: {
         [config.language]: `${labelClicked} - Material Notification Settings`,
       },
       extensions: {
-        [`${DOMAIN}/extensions/notification-setting`]: {
+        [`${DOMAIN}/extensions/material-notification-setting`]: {
           material_id: material._id,
           course_id: material.courseId,
           topic_id: material.topicId,
@@ -152,19 +193,17 @@ const createMaterialNotificationSettingsObject = (req) => {
 const createChannelNotificationSettingsObject = (req) => {
   let channel = req.locals.channel;
   let labelClicked = req.locals.labelClicked;
-  console.log("channel: ", channel);
-  console.log("labelClicked: ", labelClicked);
   let origin = req.get("origin");
   return {
     objectType: config.activity,
     id: `${origin}/activity/course/${channel.courseId}/topic/${channel.topicId}/channel/${channel._id}/notification-setting`,
     definition: {
-      type: `${DOMAIN}/activityType/notification-setting`,
+      type: `${DOMAIN}/activityType/channel-notification-setting`,
       name: {
         [config.language]: `${labelClicked} - Channel Notification Settings`,
       },
       extensions: {
-        [`${DOMAIN}/extensions/notification-setting`]: {
+        [`${DOMAIN}/extensions/channel-notification-setting`]: {
           channel_id: channel._id,
           course_id: channel.courseId,
           topic_id: channel.topicId,
@@ -182,12 +221,12 @@ const createTopicNotificationSettingsObject = (req) => {
     objectType: config.activity,
     id: `${origin}/activity/course/${topic.courseId}/topic/${topic._id}/notification-setting`,
     definition: {
-      type: `${DOMAIN}/activityType/notification-setting`,
+      type: `${DOMAIN}/activityType/topic-notification-setting`,
       name: {
         [config.language]: `${labelClicked} - Topic Notification Settings`,
       },
       extensions: {
-        [`${DOMAIN}/extensions/notification-setting`]: {
+        [`${DOMAIN}/extensions/topic-notification-setting`]: {
           topic_id: topic._id,
           course_id: topic.courseId,
         },
@@ -203,12 +242,12 @@ const createCourseNotificationSettingsObject = (req) => {
     objectType: config.activity,
     id: `${origin}/activity/course/${course._id}/notification-setting`,
     definition: {
-      type: `${DOMAIN}/activityType/notification-setting`,
+      type: `${DOMAIN}/activityType/course-notification-setting`,
       name: {
         [config.language]: `${labelClicked} - Course Notification Settings`,
       },
       extensions: {
-        [`${DOMAIN}/extensions/notification-setting`]: {
+        [`${DOMAIN}/extensions/course-notification-setting`]: {
           course_id: course._id,
         },
       },
@@ -219,14 +258,15 @@ const createCourseNotificationSettingsObject = (req) => {
 const createBlockingUserObject = (req) => {
   let user = req.locals.user;
   let blockedUser = req.locals.blockedUser;
+
   let origin = req.get("origin");
   return {
-    objectType: config.agent,
+    objectType: config.activity, // Note_Shoeb: Maybe it should  be "Agent"
     id: `${origin}/activity/user/${user._id}/blockedUser/${blockedUser._id}`,
     definition: {
       type: `${DOMAIN}/activityType/user`,
       name: {
-        [config.language]: blockedUser.name,
+        [config.language]: `${blockedUser.firstname} ${blockedUser.lastname}`,
       },
       extensions: {
         [`${DOMAIN}/extensions/user`]: {
@@ -246,7 +286,7 @@ export const generateViewAllNotificationsLog = (req) => {
     ...metadata,
     actor: createUser(req),
     verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
-    object: createNotificationsObject(req),
+    object: createAllNotificationsObject(req),
     context: createContext(),
   };
 };
@@ -257,7 +297,7 @@ export const generateMarkNotificationsAsRead = (req) => {
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb(`${DOMAIN}/verb/marked-read`, "marked-read"),
+    verb: createVerb(`${DOMAIN}/verb/marked-read`, "marked as read"),
     object:
       notifications.length > 1
         ? createNotificationsObject(req)
@@ -274,7 +314,7 @@ export const generateMarkNotificationsAsUnread = (req) => {
     actor: createUser(req),
     verb: createVerb(
       "http://id.tincanapi.com/verb/marked-unread",
-      "marked-unread"
+      "marked as unread"
     ),
     object:
       notifications.length > 1
@@ -312,13 +352,13 @@ export const generateUnstarNotification = (req) => {
     context: createContext(),
   };
 };
-export const generateRemoveNotification = (req) => {
+export const generateDeleteNotification = (req) => {
   const metadata = createMetadata();
   const notifications = req.locals.notifications;
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb("http://activitystrea.ms/schema/1.0/delete", "delete"),
+    verb: createVerb("http://activitystrea.ms/schema/1.0/delete", "deleted"),
     object:
       notifications.length > 1
         ? createNotificationsObject(req)
@@ -326,6 +366,8 @@ export const generateRemoveNotification = (req) => {
     context: createContext(),
   };
 };
+// Ideally, this generator is meant to be under annotation generator
+// Reason: The controller is available in notification route
 export const generateFollowAnnotation = (req) => {
   const metadata = createMetadata();
 
@@ -337,6 +379,8 @@ export const generateFollowAnnotation = (req) => {
     context: createContext(),
   };
 };
+// Ideally, this generator is meant to be under annotation generator
+// Reason: The controller is available in notification route
 export const generateUnfollowAnnotation = (req) => {
   const metadata = createMetadata();
 
@@ -390,7 +434,7 @@ export const generateDisableMaterialNotificationSettings = (req) => {
     context: createContext(),
   };
 };
-export const generateUnsetMaterialNotificationSettings = (req) => {
+export const generateResetMaterialNotificationSettings = (req) => {
   const metadata = createMetadata();
   const origin = req.get("origin");
   let material = req.locals.material;
@@ -402,12 +446,12 @@ export const generateUnsetMaterialNotificationSettings = (req) => {
       objectType: config.activity,
       id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/notification-setting`,
       definition: {
-        type: `${DOMAIN}/activityType/notification-setting`,
+        type: `${DOMAIN}/activityType/material-notification-setting`,
         name: {
           [config.language]: `Material Notification Settings`,
         },
         extensions: {
-          [`${DOMAIN}/extensions/notification-setting`]: {
+          [`${DOMAIN}/extensions/material-notification-setting`]: {
             material_id: material._id,
             course_id: material.courseId,
             topic_id: material.topicId,
@@ -440,7 +484,7 @@ export const generateDisableChannelNotificationSettings = (req) => {
     context: createContext(),
   };
 };
-export const generateUnsetChannelNotificationSettings = (req) => {
+export const generateResetChannelNotificationSettings = (req) => {
   const metadata = createMetadata();
   const origin = req.get("origin");
   let channel = req.locals.channel;
@@ -452,12 +496,12 @@ export const generateUnsetChannelNotificationSettings = (req) => {
       objectType: config.activity,
       id: `${origin}/activity/course/${channel.courseId}/topic/${channel.topicId}/channel/${channel._id}/notification-setting`,
       definition: {
-        type: `${DOMAIN}/activityType/notification-setting`,
+        type: `${DOMAIN}/activityType/channel-notification-setting`,
         name: {
           [config.language]: `Channel Notification Settings`,
         },
         extensions: {
-          [`${DOMAIN}/extensions/notification-setting`]: {
+          [`${DOMAIN}/extensions/channel-notification-setting`]: {
             course_id: channel.courseId,
             topic_id: channel.topicId,
             channel_id: channel._id,
@@ -488,7 +532,7 @@ export const generateDisableTopicNotificationSettings = (req) => {
     context: createContext(),
   };
 };
-export const generateUnsetTopicNotificationSettings = (req) => {
+export const generateResetTopicNotificationSettings = (req) => {
   const metadata = createMetadata();
   const origin = req.get("origin");
   let topic = req.locals.topic;
@@ -500,12 +544,12 @@ export const generateUnsetTopicNotificationSettings = (req) => {
       objectType: config.activity,
       id: `${origin}/activity/course/${topic.courseId}/topic/${topic._id}/notification-setting`,
       definition: {
-        type: `${DOMAIN}/activityType/notification-setting`,
+        type: `${DOMAIN}/activityType/topic-notification-setting`,
         name: {
           [config.language]: `Topic Notification Settings`,
         },
         extensions: {
-          [`${DOMAIN}/extensions/notification-setting`]: {
+          [`${DOMAIN}/extensions/topic-notification-setting`]: {
             course_id: topic.courseId,
             topic_id: topic._id,
           },
@@ -535,7 +579,7 @@ export const generateDisableCourseNotificationSettings = (req) => {
     context: createContext(),
   };
 };
-export const generateUnsetCourseNotificationSettings = (req) => {
+export const generateResetCourseNotificationSettings = (req) => {
   const metadata = createMetadata();
   const origin = req.get("origin");
   let course = req.locals.course;
@@ -547,12 +591,12 @@ export const generateUnsetCourseNotificationSettings = (req) => {
       objectType: config.activity,
       id: `${origin}/activity/course/${course._id}/notification-setting`,
       definition: {
-        type: `${DOMAIN}/activityType/notification-setting`,
+        type: `${DOMAIN}/activityType/course-notification-setting`,
         name: {
           [config.language]: `Course Notification Settings`,
         },
         extensions: {
-          [`${DOMAIN}/extensions/notification-setting`]: {
+          [`${DOMAIN}/extensions/course-notification-setting`]: {
             course_id: course._id,
           },
         },

@@ -57,13 +57,14 @@ module.exports = function (app) {
     "/api/notifications/remove",
     [authJwt.verifyToken],
     controller.removeNotification,
-    logger.removeNotificationLogger
+    logger.deleteNotificationLogger
   );
 
   app.delete("/api/notifications", controller.deleteAllNotifications);
 
   app.get("/api/notifications/searchUsers", controller.searchUsers);
 
+  // Follow an Annotation
   app.post(
     "/api/notifications/followAnnotation/:annotationId",
     [authJwt.verifyToken],
@@ -90,7 +91,7 @@ module.exports = function (app) {
     "/api/notifications/unsetMaterialNotificationSettings",
     [authJwt.verifyToken],
     controller.unsetMaterialNotificationSettings,
-    logger.unsetMaterialNotificationSettingsLogger
+    logger.resetMaterialNotificationSettingsLogger
   );
 
   app.put(
@@ -104,7 +105,7 @@ module.exports = function (app) {
     "/api/notifications/unsetChannelNotificationSettings",
     [authJwt.verifyToken],
     controller.unsetChannelNotificationSettings,
-    logger.unsetChannelNotificationSettingsLogger
+    logger.resetChannelNotificationSettingsLogger
   );
 
   app.put(
@@ -118,7 +119,7 @@ module.exports = function (app) {
     "/api/notifications/unsetTopicNotificationSettings",
     [authJwt.verifyToken],
     controller.unsetTopicNotificationSettings,
-    logger.unsetTopicNotificationSettingsLogger
+    logger.resetTopicNotificationSettingsLogger
   );
 
   app.put(
@@ -132,7 +133,7 @@ module.exports = function (app) {
     "/api/notifications/unsetCourseNotificationSettings",
     [authJwt.verifyToken],
     controller.unsetCourseNotificationSettings,
-    logger.unsetCourseNotificationSettingsLogger
+    logger.resetCourseNotificationSettingsLogger
   );
 
   app.put(
