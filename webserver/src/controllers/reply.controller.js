@@ -192,6 +192,7 @@ export const newReply = async (req, res, next) => {
     isMentionedUsersPresent: mentionedUsers.length > 0,
     material: foundMaterial,
     isFollowingAnnotation: true,
+    mentionedUsers: mentionedUsers,
   };
   socketio
     .getIO()
