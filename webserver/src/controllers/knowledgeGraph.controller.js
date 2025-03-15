@@ -380,129 +380,11 @@ export const addConcept = async (req, res) => {
       if (result.error) {
         return res.status(500).send(result);
       }
-      console.log("Result: ", result.result);
       return res.status(200).send(result.result);
     }
   );
 };
-export const addConceptVersion2 = async (req, res, next) => {
-  const materialId = req.params.materialId;
-  const userId = req.userId;
-  const conceptName = req.body.conceptName;
-  const slides = req.body.slides;
 
-  let foundUser;
-  let foundMaterial;
-
-  try {
-    foundUser = await findUserById(userId);
-  } catch (err) {
-    return handleError(res, err, "Error finding user");
-  }
-
-  try {
-    foundMaterial = await Material.findById(materialId);
-    if (!foundMaterial) {
-      return res
-        .status(404)
-        .send({ error: `Material with id ${materialId} doesn't exist!` });
-    }
-  } catch (err) {
-    return res.status(500).send({ error: "Error finding material" });
-  }
-
-  await redis.addJob(
-    "modify-graph",
-    {
-      action: "add-concept",
-      materialId,
-      conceptName,
-      slides,
-    },
-    undefined,
-    (result) => {
-      if (res.headersSent) {
-        return;
-      }
-      if (result.error) {
-        return res.status(500).send(result);
-      }
-      finalResult = result.result;
-      // return res.status(200).send(result.result);
-    }
-  );
-  req.locals = {
-    user: foundUser,
-    material: foundMaterial,
-    result: finalResult, // is not defined!
-    slides: slides,
-    conceptName: conceptName,
-  };
-
-  next();
-};
-
-// export const publishConceptMap = async (req, res, next) => {
-//   const materialId = req.params.materialId;
-//   const userId = req.userId;
-//   let foundUser;
-//   let foundMaterial;
-//   let finalResult;
-//   try {
-//     foundUser = await findUserById(userId);
-//   } catch (err) {
-//     return handleError(res, err, "Error finding user");
-//   }
-
-//   try {
-//     foundMaterial = await Material.findById(materialId);
-//     if (!foundMaterial) {
-//       return res.status(404).send({
-//         error: `Material with id ${materialId} doesn't exist!`,
-//       });
-//     }
-//   } catch (err) {
-//     return res.status(500).send({ error: "Error finding material" });
-//   }
-
-//   // finalResult = await redis.addJob(
-//   //   "expand-material",
-//   //   {
-//   //     materialId,
-//   //   },
-//   //   undefined,
-//   //   (result) => {
-//   //     if (res.headersSent) {
-//   //       return;
-//   //     }
-//   //     if (result.error) {
-//   //       return res.status(500).send({ error: result });
-//   //     }
-
-//   //     //return res.status(200).send(result.result);
-//   //   }
-//   // );
-//   finalResult = await new Promise((resolve, reject) => {
-//     redis.addJob("expand-material", { materialId }, undefined, (result) => {
-//       if (result.error) {
-//         reject(result.error);
-//       } else {
-//         resolve(result.result);
-//       }
-//     });
-//   });
-
-//   console.log("Result: ", finalResult);
-//   console.log("Result1: ", finalResult.result);
-
-//   req.locals = {
-//     user: foundUser,
-//     material: foundMaterial,
-//     result: finalResult,
-//   };
-
-//   next();
-// };
 export const publishConceptMap = async (req, res) => {
   const materialId = req.params.materialId;
 
@@ -519,7 +401,6 @@ export const publishConceptMap = async (req, res) => {
       if (result.error) {
         return res.status(500).send({ error: result });
       }
-      console.log("Result: ", result.result);
       return res.status(200).send(result.result);
     }
   );
@@ -765,7 +646,6 @@ export const rateArticle = async (req, res, next) => {
 export const rateVideo = async (req, res, next) => {
   const userId = req.userId;
   const materialId = req.body.materialId;
-
   let foundUser;
   try {
     foundUser = await findUserById(userId);
@@ -923,7 +803,7 @@ export const viewedConcept = async (req, res, next) => {
 
   next();
 };
-export const viewedConceptCKG = async (req, res, next) => {
+export const viewedConceptCourseKG = async (req, res, next) => {
   const userId = req.userId;
   const concept = req.body.concept;
   const courseId = req.body.courseId;
@@ -955,7 +835,7 @@ export const viewedConceptCKG = async (req, res, next) => {
 
   next();
 };
-export const viewedConceptMKG = async (req, res, next) => {
+export const viewedConceptMaterialKG = async (req, res, next) => {
   const userId = req.userId;
   const materialId = req.body.materialId;
   const concept = req.body.concept;
@@ -1013,13 +893,13 @@ export const viewedExplanationConcept = async (req, res, next) => {
     material: foundMaterial,
     materialPage: req.body.currentPage,
     key: req.body.key,
-    node_id: req.body.node_id,
-    node_cid: req.body.node_cid,
-    node_name: req.body.node_name,
-    node_type: req.body.node_type,
-    node_abstract: req.body.node_abstract,
-    node_roads: req.body.node_roads,
-    node_reason: req.body.node_reason,
+    concept_id: req.body.node_id,
+    concept_cid: req.body.node_cid,
+    concept_name: req.body.node_name,
+    concept_type: req.body.node_type,
+    concept_abstract: req.body.node_abstract,
+    concept_roads: req.body.node_roads,
+    concept_reason: req.body.node_reason,
   };
 
   next();
@@ -1049,11 +929,11 @@ export const viewedFullArticleRecommendedConcept = async (req, res, next) => {
     user: foundUser,
     material: foundMaterial,
     materialPage: req.body.currentPage,
-    node_id: req.body.node_id,
-    node_cid: req.body.node_cid,
-    node_name: req.body.node_name,
-    node_type: req.body.node_type,
-    node_abstract: req.body.node_abstract,
+    concept_id: req.body.node_id,
+    concept_cid: req.body.node_cid,
+    concept_name: req.body.node_name,
+    concept_type: req.body.node_type,
+    concept_abstract: req.body.node_abstract,
   };
 
   next();
@@ -1083,17 +963,17 @@ export const viewedFullArticleMainConcept = async (req, res, next) => {
     user: foundUser,
     material: foundMaterial,
     materialPage: req.body.currentPage,
-    node_id: req.body.node_id,
-    node_cid: req.body.node_cid,
-    node_name: req.body.node_name,
-    node_type: req.body.node_type,
-    node_abstract: req.body.node_abstract,
-    node_wikipedia: req.body.node_wikipedia,
+    concept_id: req.body.node_id,
+    concept_cid: req.body.node_cid,
+    concept_name: req.body.node_name,
+    concept_type: req.body.node_type,
+    concept_abstract: req.body.node_abstract,
+    concept_wikipedia: req.body.node_wikipedia,
   };
 
   next();
 };
-export const viewedFullArticleMKG = async (req, res, next) => {
+export const viewedFullArticleMaterialKG = async (req, res, next) => {
   const userId = req.userId;
   const materialId = req.body.materialId;
   let foundUser;
@@ -1117,16 +997,17 @@ export const viewedFullArticleMKG = async (req, res, next) => {
   req.locals = {
     user: foundUser,
     material: foundMaterial,
-    node_id: req.body.node_id,
-    node_cid: req.body.node_cid,
-    node_name: req.body.node_name,
-    node_type: req.body.node_type,
-    node_abstract: req.body.node_abstract,
+    concept_id: req.body.node_id,
+    concept_cid: req.body.node_cid,
+    concept_name: req.body.node_name,
+    concept_type: req.body.node_type,
+    concept_abstract: req.body.node_abstract,
+    concept_wikipedia: req.body.node_wikipedia,
   };
 
   next();
 };
-export const viewedFullArticleCKG = async (req, res, next) => {
+export const viewedFullArticleCourseKG = async (req, res, next) => {
   const userId = req.userId;
   const courseId = req.body.courseId;
   let foundUser;
@@ -1150,12 +1031,12 @@ export const viewedFullArticleCKG = async (req, res, next) => {
   req.locals = {
     user: foundUser,
     course: foundCourse,
-    node_id: req.body.node_id,
-    node_cid: req.body.node_cid,
-    node_name: req.body.node_name,
-    node_type: req.body.node_type,
-    node_abstract: req.body.node_abstract,
-    node_wikipedia: req.body.node_wikipedia,
+    concept_id: req.body.node_id,
+    concept_cid: req.body.node_cid,
+    concept_name: req.body.node_name,
+    concept_type: req.body.node_type,
+    concept_abstract: req.body.node_abstract,
+    concept_wikipedia: req.body.node_wikipedia,
   };
 
   next();
@@ -1351,7 +1232,7 @@ export const markConceptAsNotUnderstood = async (req, res, next) => {
 
   next();
 };
-export const hidConceptsMKG = async (req, res, next) => {
+export const hidConceptsMaterialKG = async (req, res, next) => {
   const userId = req.userId;
   const materialId = req.body.materialId;
   const key = req.body.key;
@@ -1382,7 +1263,7 @@ export const hidConceptsMKG = async (req, res, next) => {
 
   next();
 };
-export const unhidConceptsMKG = async (req, res, next) => {
+export const unhidConceptsMaterialKG = async (req, res, next) => {
   const userId = req.userId;
   const materialId = req.body.materialId;
   const key = req.body.key;
