@@ -221,13 +221,11 @@ export const newMaterial = async (req, res, next) => {
  */
 export const deleteMaterial = async (req, res, next) => {
   let materialId = req.params.materialId;
-  console.log("materialId", materialId);
   let courseId = req.params.courseId;
   const userId = req.userId;
   let course;
   try {
     course = await Course.findById(courseId);
-    console.log("course", course);
   } catch (err) {
     return res.status(500).send({ error: "Error finding course" });
   }
@@ -246,7 +244,6 @@ export const deleteMaterial = async (req, res, next) => {
   let foundMaterial;
   try {
     foundMaterial = await Material.findById(materialId);
-    console.log("foundMaterial", foundMaterial);
     if (!foundMaterial) {
       return res.status(404).send({
         error: `Material with id ${materialId} doesn't exist!`,
