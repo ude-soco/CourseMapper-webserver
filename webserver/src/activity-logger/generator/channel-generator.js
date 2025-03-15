@@ -115,11 +115,11 @@ const createChannelDashboardObject = (req) => {
 
   return {
     objectType: config.activity,
-    id: `${origin}/activity/course/${channel.courseId}/topic/${channel.topicId}/channel/${channel._id}/dashboard`,
+    id: `${origin}/activity/course/${channel.courseId}/topic/${channel.topicId}/channel/${channel._id}/channel-dashboard`,
     definition: {
       type: `${DOMAIN}/activityType/channel-dashboard`,
       name: {
-        [config.language]: `${channel.name} Dashboard`,
+        [config.language]: `Channel Dashboard - ${channel.name}`,
       },
       extensions: {
         [`${origin}/extensions/channel-dashboard`]: {
@@ -196,7 +196,7 @@ export const createChannelIndicatorObject = (req) => {
     definition: {
       type: `${DOMAIN}/activityType/channel-indicator`,
       name: {
-        [config.language]: "Channel Indicator", // To verify
+        [config.language]: `Channel Indicator Id: ${indicator._id} - ${channel.name} Dashboard`,
       },
       extensions: {
         [`${origin}/extensions/channel-indicator`]: {
@@ -225,7 +225,7 @@ export const createResizedChannelIndicatorObject = (req) => {
     definition: {
       type: `${DOMAIN}/activityType/channel-indicator`,
       name: {
-        [config.language]: "Channel Indicator", // To verify
+        [config.language]: `Channel Indicator Id: ${indicator._id} - ${channel.name} Dashboard`,
       },
       extensions: {
         [`${origin}/extensions/channel-indicator`]: {
@@ -253,7 +253,7 @@ export const createReorderedChannelIndicatorObject = (req) => {
     definition: {
       type: `${DOMAIN}/activityType/channel-indicator`,
       name: {
-        [config.language]: "Channel Indicator", // To verify
+        [config.language]: `Channel Indicator Id: ${indicator._id} - ${channel.name} Dashboard`,
       },
       extensions: {
         [`${origin}/extensions/channel-indicator`]: {
