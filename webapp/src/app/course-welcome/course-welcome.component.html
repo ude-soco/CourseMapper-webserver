@@ -120,10 +120,13 @@
       ></i>
     </div>
 
-    <div class="mt-2">
+    <div class="mt-1">
       <div *ngIf="!isEditingDescription">
         <ng-container *ngIf="selectedCourse.description && selectedCourse.description.trim(); else noDescription">
-          <div [innerHTML]="sanitizedDescription"></div>
+          <!-- Wrap the output with Quill theme classes -->
+          <div class="ql-snow">
+            <div class="ql-editor" [innerHTML]="sanitizedDescription"></div>
+          </div>
         </ng-container>
         <ng-template #noDescription>
           <div>No description provided</div>

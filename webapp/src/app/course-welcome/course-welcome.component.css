@@ -1,0 +1,11 @@
+:host ::ng-deep .ql-snow {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
+  :host ::ng-deep .ql-snow .ql-editor {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    text-align: left !important;
+  }

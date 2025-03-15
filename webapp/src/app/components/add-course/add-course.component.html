@@ -26,21 +26,20 @@
       >
     </div>
 
-    <div class="p-float-label">
+    <div>
+      <label class="block mb-2 font-medium font-roboto">Course description (optional)</label>
       <p-editor
         formControlName="description"
         [style]="{ height: '200px', width: '100%' }"
         [styleClass]="'expandable-editor'"
-      >
-        <p>(Optional) Course description</p>
-      </p-editor>
+      ></p-editor>
     </div>
 
     <br />
     <div class="input">
-      <label for="image-file-input">Select course display image:</label>
+      <label for="image-file-input" class="block mb-2 font-semibold">Select course display image:</label>
       <p-fileUpload
-        mode="advanced"
+        mode="basic"
         name="file"
         id="image-file-input"
         [customUpload]="true"
@@ -52,10 +51,13 @@
         (onSelect)="onFileSelect($event)"
         (onRemove)="onFileRemove($event)"
         (onClear)="onFileRemove($event)"
-        class="blue-button"
-      ></p-fileUpload>
-
-      <span *ngIf="!selectedFileName">No file chosen</span>
+        class="p-button p-button-raised square-button"
+      >
+      </p-fileUpload>
+      <!-- Display file name or fallback text -->
+<div class="mt-2 text-sm text-gray-500">
+  {{ selectedFileName ? selectedFileName : 'No file chosen' }}
+</div>
     </div>
 
     <div>
