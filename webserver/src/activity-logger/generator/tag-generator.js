@@ -46,12 +46,12 @@ const createCourseTagObject = (req) => {
     objectType: config.activity,
     id: `${origin}/activity/course/${course._id}/tag/${tag._id}`,
     definition: {
-      type: "http://id.tincanapi.com/activitytype/tag",
+      type: `${DOMAIN}/activityType/course-tag`,
       name: {
-        [config.language]: `Annotations for ${tag.name} `,
+        [config.language]: `Annotations for ${tag.name} in Course '${course.name}'`,
       },
       extensions: {
-        [`${DOMAIN}/extensions/tag`]: {
+        [`${DOMAIN}/extensions/course-tag`]: {
           id: tag._id,
           courseId: course._id,
           courseName: course.name,
@@ -66,14 +66,14 @@ const createTopicTagObject = (req) => {
   const origin = req.get("origin");
   return {
     objectType: config.activity,
-    id: `${origin}/activity/course/${topic.courseId}/topic/${topic._id}/tag/${tag._id}`, //to Verify
+    id: `${origin}/activity/course/${topic.courseId}/topic/${topic._id}/tag/${tag._id}`,
     definition: {
-      type: "http://id.tincanapi.com/activitytype/tag",
+      type: `${DOMAIN}/activityType/topic-tag`,
       name: {
-        [config.language]: `Annotations for ${tag.name} `,
+        [config.language]: `Annotations for ${tag.name} in Topic '${topic.name}'`,
       },
       extensions: {
-        [`${origin}/extensions/tag`]: {
+        [`${origin}/extensions/topic-tag`]: {
           id: tag._id,
           topicName: topic.name,
           topicId: topic._id,
@@ -91,9 +91,9 @@ const createChannelTagObject = (req) => {
     objectType: config.activity,
     id: `${origin}/activity/course/${channel.courseId}/topic/${channel.topicId}/channel/${channel._id}/tag/${tag._id}`,
     definition: {
-      type: "http://id.tincanapi.com/activitytype/tag",
+      type: `${DOMAIN}/activityType/channel-tag`,
       name: {
-        [config.language]: `Annotations for ${tag.name} `,
+        [config.language]: `Annotations for ${tag.name} in Channel '${channel.name}'`,
       },
       extensions: {
         [`${origin}/extensions/tag`]: {
@@ -113,11 +113,11 @@ const createMaterialTagObject = (req) => {
   const origin = req.get("origin");
   return {
     objectType: config.activity,
-    id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/tag/${tag._id}`, //to Verify
+    id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/tag/${tag._id}`,
     definition: {
-      type: "http://id.tincanapi.com/activitytype/tag",
+      type: `${DOMAIN}/activityType/material-tag`,
       name: {
-        [config.language]: `Annotations for ${tag.name} `,
+        [config.language]: `Annotations for ${tag.name} in Material '${material.name}'`,
       },
       extensions: {
         [`${origin}/extensions/tag`]: {
