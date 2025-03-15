@@ -804,10 +804,6 @@ export class ConceptMapComponent {
       status: concept.status === 'understood' ? 'notUnderstood' : 'understood',
       type: concept.type,
     };
-    // console.log(
-    //   'setChipConcept(concept) this.conceptFromChipObj',
-    //   this.conceptFromChipObj
-    // );
   }
   //? This is responsible for setting the chip concept from the second section of the not understood concept list
   setPreviousChipConcept(concept: any): void {

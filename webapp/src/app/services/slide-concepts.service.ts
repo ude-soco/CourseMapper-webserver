@@ -50,12 +50,10 @@ export class SlideConceptsService {
 
   setAllConcepts(list: string[]) {
     this.allConcepts.next(list);
-    // console.log(list)
   }
   setNewConcepts(list: string[]) {
     this.commonNewConcepts = list;
     this.newConcepts.next(list);
-    // console.log('setNewConcepts(list): ', list);
   }
   updateNewConcepts(concept: any) {
     if (
@@ -97,18 +95,15 @@ export class SlideConceptsService {
       currentPdfPage: this.currentPdfPage,
     };
     this.logMarkConceptAsNew(data).subscribe();
-    // console.log('updateNewConcepts(concept): ', concept);
   }
 
   setDidNotUnderstandConcepts(list: string[]) {
     this.commonDidNotUnderstandConcepts = list;
     this.didNotUnderstandConcepts.next(list);
-    // console.log('setDidNotUnderstandConcepts(list): ', list);
   }
   setAllNotUnderstoodConcepts(list: string[]) {
     this.didNotUnderstandAllConcepts = list;
     this.didNotUnderstandAllConceptsSubject.next(list);
-    // console.log('setAllNotUnderstoodConcepts(slide)', list);
   }
   allNotunderstoodObserved(): Observable<any> {
     return this.didNotUnderstandAllConceptsSubject.asObservable();
@@ -153,12 +148,10 @@ export class SlideConceptsService {
       currentPdfPage: this.currentPdfPage,
     };
     this.logMarkConceptAsNotUnderstood(data).subscribe();
-    // console.log('updateDidNotUnderstandConcepts(concept): ', concept);
   }
   setUnderstoodConcepts(list: string[]) {
     this.commonUnderstoodConcepts = list;
     this.understoodConcepts.next(list);
-    // console.log('setUnderstoodConcepts(list): ', list);
   }
   updateUnderstoodConcepts(concept: any) {
     if (
@@ -200,10 +193,8 @@ export class SlideConceptsService {
       currentPdfPage: this.currentPdfPage,
     };
     this.logMarkConceptAsUnderstood(data).subscribe();
-    // console.log('updateUnderstoodConcepts(concept): ', concept);
   }
   logMarkConceptAsNew(data: any): Observable<any> {
-    console.log('data: ', data);
     return this.http.post<any>(
       `${this.apiURL}/courses/${data.courseId}/materials/${data.materialId}/concepts/${data.concept.id}/mark-new`,
       data
