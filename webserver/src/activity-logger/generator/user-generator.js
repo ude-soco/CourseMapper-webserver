@@ -93,7 +93,7 @@ export const createPersonalIndicatorObject = (req) => {
     definition: {
       type: `${DOMAIN}/activityType/personal-indicator`,
       name: {
-        [config.language]: "Personal Indicator", // To verify
+        [config.language]: `Personal Indicator Id: ${indicator._id}`,
       },
       extensions: {
         [`${origin}/extensions/personal-indicator`]: {
@@ -120,9 +120,9 @@ export const createResizedPersonalIndicatorObject = (req) => {
     objectType: config.activity,
     id: `${origin}/activity/user/${user._id}/indicator/${indicator._id}`,
     definition: {
-      type: `${DOMAIN}/activityType/personal-indicator`, //To verify
+      type: `${DOMAIN}/activityType/personal-indicator`,
       name: {
-        [config.language]: "Personal indicator", //To verify
+        [config.language]: `Personal Indicator Id: ${indicator._id}`,
       },
       extensions: {
         [`${origin}/extensions/personal-indicator`]: {
@@ -148,9 +148,9 @@ export const createReorderedPersonalIndicatorObject = (req) => {
     objectType: config.activity,
     id: `${origin}/activity/user/${user._id}/indicator/${indicator._id}`,
     definition: {
-      type: `${DOMAIN}/activityType/personal-indicator`, //To verify
+      type: `${DOMAIN}/activityType/personal-indicator`,
       name: {
-        [config.language]: "Personal indicator", //To verify
+        [config.language]: `Personal Indicator Id: ${indicator._id}`,
       },
       extensions: {
         [`${origin}/extensions/personal-indicator`]: {
