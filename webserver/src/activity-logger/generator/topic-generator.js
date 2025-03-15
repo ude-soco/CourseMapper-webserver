@@ -105,11 +105,11 @@ const createTopicDashboardObject = (req) => {
 
   return {
     objectType: config.activity,
-    id: `${origin}/activity/course/${topic.courseId}/topic/${topic._id}/dashboard`,
+    id: `${origin}/activity/course/${topic.courseId}/topic/${topic._id}/topic-dashboard`,
     definition: {
       type: `${DOMAIN}/activityType/topic-dashboard`,
       name: {
-        [config.language]: `${topic.name} Dashboard`,
+        [config.language]: `Topic Dashboard - ${topic.name}`,
       },
       extensions: {
         [`${origin}/extensions/topic-dashboard`]: {
@@ -164,16 +164,6 @@ export const generateResizeTopicIndicatorActivity = (req) => {
     actor: createUser(req),
     verb: createVerb(`${DOMAIN}/verb/resize`, "resized"),
     object: createResizedTopicIndicatorObject(req),
-    // result: {
-    //   extensions: {
-    //     [`${DOMAIN}/extensions/topicIndicator`]: {
-    //       newDimensions: {
-    //         newWidth: { [config.language]: newDimensions.width },
-    //         newHeight: { [config.language]: newDimensions.height },
-    //       },
-    //     },
-    //   },
-    // },
     context: createContext(),
   };
 };
@@ -198,7 +188,7 @@ export const createTopicIndicatorObject = (req) => {
     definition: {
       type: `${DOMAIN}/activityType/topic-indicator`,
       name: {
-        [config.language]: "Topic Indicator", // To verify
+        [config.language]: `Topic Indicator Id: ${indicator._id} - ${topic.name} Dashboard`,
       },
       extensions: {
         [`${origin}/extensions/topic-indicator`]: {
@@ -226,7 +216,7 @@ export const createResizedTopicIndicatorObject = (req) => {
     definition: {
       type: `${DOMAIN}/activityType/topic-indicator`,
       name: {
-        [config.language]: "Topic Indicator", // To verify
+        [config.language]: `Topic Indicator Id: ${indicator._id} - ${topic.name} Dashboard`,
       },
       extensions: {
         [`${origin}/extensions/topic-indicator`]: {
@@ -255,7 +245,7 @@ export const createReorderedTopicIndicatorObject = (req) => {
     definition: {
       type: `${DOMAIN}/activityType/topic-indicator`,
       name: {
-        [config.language]: "Topic Indicator", // To verify
+        [config.language]: `Topic Indicator Id: ${indicator._id} - ${topic.name} Dashboard`, //TODO: Maybe we can add course.name Dashboard
       },
       extensions: {
         [`${origin}/extensions/topic-indicator`]: {
