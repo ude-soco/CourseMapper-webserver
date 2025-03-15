@@ -16,6 +16,11 @@ import {
 
 let DOMAIN = "http://www.CourseMapper.de"; // TODO: Hardcoded due to frontend implementation
 
+const formatActivityType = (type) => {
+  // Convert to lowercase and replace spaces with underscores
+  return type.toLowerCase().replace(/\s+/g, "-");
+};
+
 const createAnnotationsObject = (req) => {
   let annotations = req.locals.annotations;
   let material = req.locals.material;
@@ -28,9 +33,9 @@ const createAnnotationsObject = (req) => {
   }));
   return {
     objectType: config.activity,
-    id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/annotations`,
+    id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/annotation`,
     definition: {
-      type: `${DOMAIN}/activityType/annotations`,
+      type: `${DOMAIN}/activityType/annotation`,
       name: {
         [config.language]: `Annotations - ${material.type}: ${material.name}`,
       },
@@ -38,7 +43,7 @@ const createAnnotationsObject = (req) => {
         [config.language]: "All annotations",
       },
       extensions: {
-        [`${DOMAIN}/extensions/annotations`]: {
+        [`${DOMAIN}/extensions/annotation`]: {
           annotations: formattedAnnotations,
           material_id: material._id,
           channel_id: material.channelId,
@@ -54,15 +59,14 @@ const createMaterialFilteredAnnotationsObject = (req) => {
   let annotations = req.locals.annotations;
   let material = req.locals.material;
   let filters = req.locals.filters;
-  let currentPage; // defined only for pdfs
-  let currentTime; // defined only for videos
 
-  if (req.body.currentPage) {
-    currentPage = req.body.currentPage;
-  } else if (req.body.currentTime) {
-    currentTime = req.body.currentTime;
+  // Conditionally add currentPage or currentTime to the extensions
+  const additionalInfo = {};
+  if (material.type === "pdf" && req.body.currentPage !== undefined) {
+    additionalInfo.currentPage = req.body.currentPage;
+  } else if (material.type === "video" && req.body.currentTime !== undefined) {
+    additionalInfo.currentTime = req.body.currentTime;
   }
-
   const formattedAnnotations = annotations.map((annotation) => ({
     id: annotation._id,
     content: annotation.content,
@@ -70,30 +74,22 @@ const createMaterialFilteredAnnotationsObject = (req) => {
   }));
 
   const extensions = {
-    [`${DOMAIN}/extensions/${material.type}`]: {
+    [`${DOMAIN}/extensions/annotation`]: {
       annotations: formattedAnnotations,
       filters: filters,
       material_id: material._id,
       channel_id: material.channelId,
       topic_id: material.topicId,
       course_id: material.courseId,
+      ...additionalInfo,
     },
   };
 
-  // Conditionally add currentPage or currentTime to the extensions
-  if (material.type === "pdf" && currentPage !== undefined) {
-    extensions[`${DOMAIN}/extensions/${material.type}`].currentPage =
-      currentPage;
-  } else if (material.type === "video" && currentTime !== undefined) {
-    extensions[`${DOMAIN}/extensions/${material.type}`].currentTime =
-      currentTime;
-  }
-
   return {
     objectType: config.activity,
-    id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/annotations`,
+    id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/annotation`,
     definition: {
-      type: `${DOMAIN}/activityType/annotations`,
+      type: `${DOMAIN}/activityType/annotation`,
       name: {
         [config.language]: `Annotations - ${material.type}: ${material.name}`,
       },
@@ -128,7 +124,7 @@ export const generateAnnotateMaterialActivity = (req) => {
       "annotated"
     ),
     object: createAnnotationMaterialObject(req),
-    result: createAnnotationCommentMaterialResultObject(req, "annotation"), // ? what is it for.
+    //result: createAnnotationCommentMaterialResultObject(req, "annotation"), // We don't use comment/annotation differentiation anymore
     context: createContext(),
   };
 };
@@ -151,67 +147,72 @@ export const generateCreateAnnotationActivity = (req) => {
     actor: createUser(req),
     verb: createVerb(verbURI, verb),
     object: createAnnotationObject(req),
-    result: createAnnotationCommentMaterialResultObject(req, "annotation"), // ? what is it for.
+    //result: createAnnotationCommentMaterialResultObject(req, "annotation"), // Confision related to annotation and comment, perhaps comment needs to be removed
     context: createContext(),
   };
 };
 
 export const generateDeleteAnnotationActivity = (req) => {
   const metadata = createMetadata();
+  let formattedType = formatActivityType(req.locals.annotation.type);
   return {
     ...metadata,
     actor: createUser(req),
     verb: createVerb("http://activitystrea.ms/schema/1.0/delete", "deleted"),
     object: createAnnotationObject(req),
-    result: createAnnotationCommentResultObject(req, "annotation"),
+    result: createAnnotationCommentResultObject(req, formattedType),
     context: createContext(),
   };
 };
 
 export const generateLikeAnnotationActivity = (req) => {
   const metadata = createMetadata();
+  let formattedType = formatActivityType(req.locals.annotation.type);
   return {
     ...metadata,
     actor: createUser(req),
     verb: createVerb("http://activitystrea.ms/schema/1.0/like", "liked"),
     object: createAnnotationObject(req),
-    result: createAnnotationCommentResultObject(req, "annotation"),
+    result: createAnnotationCommentResultObject(req, formattedType),
     context: createContext(),
   };
 };
 
 export const getAnnotationUnlikeStatement = (req) => {
   const metadata = createMetadata();
+  let formattedType = formatActivityType(req.locals.annotation.type);
   return {
     ...metadata,
     actor: createUser(req),
     verb: createVerb("http://activitystrea.ms/schema/1.0/unlike", "unliked"),
     object: createAnnotationObject(req),
-    result: createAnnotationCommentResultObject(req, "annotation"),
+    result: createAnnotationCommentResultObject(req, formattedType),
     context: createContext(),
   };
 };
 
 export const generateDislikeAnnotationActivity = (req) => {
   const metadata = createMetadata();
+  let formattedType = formatActivityType(req.locals.annotation.type);
   return {
     ...metadata,
     actor: createUser(req),
     verb: createVerb("http://activitystrea.ms/schema/1.0/dislike", "disliked"),
     object: createAnnotationObject(req),
-    result: createAnnotationCommentResultObject(req, "annotation"),
+    result: createAnnotationCommentResultObject(req, formattedType),
     context: createContext(),
   };
 };
 
 export const generateUndislikeAnnotationActivity = (req) => {
   const metadata = createMetadata();
+  let formattedType = formatActivityType(req.locals.annotation.type);
   return {
     ...metadata,
     actor: createUser(req),
     verb: createVerb(`${DOMAIN}/verbs/undisliked`, "un-disliked"),
     object: createAnnotationObject(req),
-    result: createAnnotationCommentResultObject(req, "annotation"),
+    result: createAnnotationCommentResultObject(req, formattedType),
     context: createContext(),
   };
 };
@@ -233,7 +234,7 @@ export const generateUnhideAnnotationsActivity = (req) => {
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb(`${DOMAIN}/verbs/unhid`, "unhid"),
+    verb: createVerb(`${DOMAIN}/verbs/showed`, "showed"),
     object: createAnnotationsObject(req),
     context: createContext(),
   };
@@ -253,6 +254,7 @@ export const generateEditAnnotationActivity = (req) => {
   const metadata = createMetadata();
   let newAnnotation = req.locals.newAnnotation;
   let oldAnnotation = req.locals.oldAnnotation;
+  let formattedType = formatActivityType(oldAnnotation.type);
   let origin = req.get("origin");
   return {
     ...metadata,
@@ -262,7 +264,7 @@ export const generateEditAnnotationActivity = (req) => {
       objectType: config.activity,
       id: `${origin}/activity/course/${oldAnnotation.courseId}/topic/${oldAnnotation.topicId}/channel/${oldAnnotation.channelId}/material/${oldAnnotation.materialId}/annotation/${oldAnnotation._id}`,
       definition: {
-        type: `${DOMAIN}/activityType/annotation`,
+        type: `${DOMAIN}/activityType/${formattedType}`,
         name: {
           [config.language]:
             "Annotation:" +
@@ -273,7 +275,7 @@ export const generateEditAnnotationActivity = (req) => {
           [config.language]: oldAnnotation.content,
         },
         extensions: {
-          [`${DOMAIN}/extensions/annotation`]: {
+          [`${DOMAIN}/extensions/${formattedType}`]: {
             id: oldAnnotation._id,
             material_id: oldAnnotation.materialId,
             channel_id: oldAnnotation.channelId,
@@ -289,7 +291,7 @@ export const generateEditAnnotationActivity = (req) => {
     },
     result: {
       extensions: {
-        [`${DOMAIN}/extensions/annotation`]: {
+        [`${DOMAIN}/extensions/${formattedType}`]: {
           content: newAnnotation.content,
           type: newAnnotation.type,
           tool: newAnnotation.tool,
@@ -309,17 +311,15 @@ export const generateAddMentionStatement = (req) => {
     actor: createUser(req),
     verb: createVerb("http://id.tincanapi.com/verb/mentioned", "mentioned"),
     object: {
-      objectType: "User",
+      objectType: config.activity,
       definition: {
-        type: `${DOMAIN}/activityType/you`,
+        type: `${DOMAIN}/activityType/user`,
         name: {
-          [config.language]: `${annotation.content.slice(0, 50)}${
-            annotation.content.length > 50 ? " ..." : ""
-          }`,
+          [config.language]: req.locals.mentionedUser.name,
         },
         extensions: {
-          [`${DOMAIN}/extensions/annotation`]: {
-            id: annotation._id,
+          [`${DOMAIN}/extensions/user`]: {
+            annotationId: annotation._id,
             material_id: annotation.materialId,
             channel_id: annotation.channelId,
             topic_id: annotation.topicId,
@@ -329,7 +329,7 @@ export const generateAddMentionStatement = (req) => {
         },
       },
     },
-    result: createAnnotationCommentResultObject(req, "annotation"),
+    //result: createAnnotationCommentResultObject(req, "annotation"),
     context: createContext(),
   };
 };

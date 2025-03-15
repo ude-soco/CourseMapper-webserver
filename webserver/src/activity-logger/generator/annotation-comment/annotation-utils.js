@@ -2,6 +2,11 @@ import config from "../util/config";
 
 let DOMAIN = "http://www.CourseMapper.de"; // TODO: Hardcoded due to frontend implementation
 
+const formatActivityType = (type) => {
+  // Convert to lowercase and replace spaces with underscores
+  return type.toLowerCase().replace(/\s+/g, "-");
+};
+
 // TODO: Clear differentiation of type of material annotated or commented
 // const createAnnotationMaterialObject = (req) => {
 //   let material = req.locals.material;
@@ -53,7 +58,7 @@ const createAnnotationMaterialObject = (req) => {
         [config.language]: material.name,
       },
       description: {
-        [config.language]: material.description,
+        [config.language]: material.description || "",
       },
       extensions: {
         [`${DOMAIN}/extensions/${materialType}`]: {
@@ -69,18 +74,14 @@ const createAnnotationMaterialObject = (req) => {
 };
 const createAnnotationObject = (req) => {
   let annotation = req.locals.annotation;
-  let annotationType;
-  if (annotation.type === "External Resource") {
-    annotationType = "external-resource";
-  } else {
-    annotationType = annotation.type.toLowerCase();
-  }
+  let formattedType = formatActivityType(annotation.type);
+
   let origin = req.get("origin");
   return {
     objectType: config.activity,
     id: `${origin}/activity/course/${annotation.courseId}/topic/${annotation.topicId}/channel/${annotation.channelId}/material/${annotation.materialId}/annotation/${annotation._id}`,
     definition: {
-      type: `${DOMAIN}/activityType/${annotationType}`,
+      type: `${DOMAIN}/activityType/${formattedType}`,
       name: {
         [config.language]:
           "Annotation:" +
@@ -91,7 +92,7 @@ const createAnnotationObject = (req) => {
         [config.language]: annotation.content,
       },
       extensions: {
-        [`${DOMAIN}/extensions/${annotationType}`]: {
+        [`${DOMAIN}/extensions/${formattedType}`]: {
           id: annotation._id,
           material_id: annotation.materialId,
           channel_id: annotation.channelId,

@@ -155,6 +155,7 @@ export const newAnnotation = async (req, res, next) => {
     material: foundMaterial,
     annotation: newAnnotation,
     isMentionedUsersPresent: mentionedUsers.length > 0,
+    mentionedUsers: mentionedUsers,
     materialType: foundMaterial.type,
   };
   socketio

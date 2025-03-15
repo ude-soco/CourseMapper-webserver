@@ -93,18 +93,18 @@ module.exports = function (app) {
     "/api/courses/:courseId/materials/:materialId/hideAnnotations",
     [authJwt.verifyToken],
     controller.hideShowAnnotations,
-    logger.hideAnnotations
+    logger.hideAnnotationsLogger
   );
   app.post(
     "/api/courses/:courseId/materials/:materialId/unhideAnnotations",
     [authJwt.verifyToken],
     controller.hideShowAnnotations,
-    logger.unhideAnnotations
+    logger.unhideAnnotationsLogger
   );
   app.post(
     "/api/courses/:courseId/materials/:materialId/filter-annotations",
     [authJwt.verifyToken],
     controller.filterAnnotations,
-    logger.filterAnnotations
+    logger.filterAnnotationsLogger
   );
 };

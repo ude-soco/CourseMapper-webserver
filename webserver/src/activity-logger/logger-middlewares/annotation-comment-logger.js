@@ -8,7 +8,7 @@ const notifications = require("../../middlewares/Notifications/notifications");
 export const annotateMaterialLogger = async (req, res, next) => {
   try {
     if (req.locals.annotation.tool.type === "annotation") {
-      next(); // The user did'nt annotated the material
+      next(); // The user did'nt annotate the material
     } else {
       req.locals.activity = await activityController.createActivity(
         req.locals.annotation.tool
@@ -117,18 +117,26 @@ export const addMentionLogger = async (req, res, next) => {
   req.locals.category = "mentionedandreplied";
   let mentioned = req.locals.isMentionedUsersPresent;
   if (mentioned > 0) {
+    const mentionedUsers = req.locals.mentionedUsers;
     try {
-      req.locals.activity = await activityController.createActivity(
-        annotationActivityGenerator.generateAddMentionStatement(req),
-        notifications.generateNotificationInfo(req)
-      );
+      for (const mentionedUser of mentionedUsers) {
+        req.locals.mentionedUser = mentionedUser; // Add the individual user to req.locals
+        await activityController.createActivity(
+          annotationActivityGenerator.generateAddMentionStatement(req)
+        );
+      }
+      notifications.generateNotificationInfo(req), next();
     } catch (err) {
       res.status(400).send({ error: "Error saving statement to mongo", err });
     }
+    // try {
+    //   req.locals.activity = await activityController.createActivity(
+    //     annotationActivityGenerator.generateAddMentionStatement(req),
+    //     notifications.generateNotificationInfo(req)
+    //   );
   }
-  next();
 };
-export const hideAnnotations = async (req, res) => {
+export const hideAnnotationsLogger = async (req, res) => {
   try {
     await activityController.createActivity(
       annotationActivityGenerator.generateHideAnnotationsActivity(req)
@@ -140,7 +148,7 @@ export const hideAnnotations = async (req, res) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
-export const unhideAnnotations = async (req, res) => {
+export const unhideAnnotationsLogger = async (req, res) => {
   try {
     await activityController.createActivity(
       annotationActivityGenerator.generateUnhideAnnotationsActivity(req)
@@ -152,7 +160,7 @@ export const unhideAnnotations = async (req, res) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
-export const filterAnnotations = async (req, res) => {
+export const filterAnnotationsLogger = async (req, res) => {
   try {
     await activityController.createActivity(
       annotationActivityGenerator.generateFilterAnnotationsActivity(req)
