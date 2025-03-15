@@ -6,7 +6,7 @@ const courseKGActivityGenerator = require("../generator/knowledge-graph/course-k
 
 const activityController = require("../controller/activity-controller");
 
-export const viewFullWikipediaArticleLogger = async (req, res) => {
+export const viewFullArticleRecommendedArticleLogger = async (req, res) => {
   try {
     await activityController.createActivity(
       recommendedMaterialsActivityGenerator.generateViewFullWikipediaArticle(
@@ -18,7 +18,7 @@ export const viewFullWikipediaArticleLogger = async (req, res) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
-export const expandedArticleAbstractLogger = async (req, res) => {
+export const expandArticleAbstractLogger = async (req, res) => {
   try {
     await activityController.createActivity(
       recommendedMaterialsActivityGenerator.generateExpandArticleAbstract(req)
@@ -28,7 +28,7 @@ export const expandedArticleAbstractLogger = async (req, res) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
-export const collapsedArticleAbstractLogger = async (req, res) => {
+export const collapseArticleAbstractLogger = async (req, res) => {
   try {
     await activityController.createActivity(
       recommendedMaterialsActivityGenerator.generateCollapseArticleAbstract(req)
@@ -136,7 +136,7 @@ export const unmarkVideoAsUnhelpfulLogger = async (req, res) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
-export const viewedAllMainConceptsLogger = async (req, res) => {
+export const viewAllMainConceptsLogger = async (req, res) => {
   try {
     await activityController.createActivity(
       mainConceptsActivityGenerator.generateViewedAllMainConcepts(req)
@@ -148,7 +148,7 @@ export const viewedAllMainConceptsLogger = async (req, res) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
-export const viewedMoreConceptsLogger = async (req, res) => {
+export const viewMoreConceptsLogger = async (req, res) => {
   try {
     await activityController.createActivity(
       mainConceptsActivityGenerator.generateViewedMoreConcepts(req)
@@ -160,7 +160,7 @@ export const viewedMoreConceptsLogger = async (req, res) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
-export const viewedLessConceptsLogger = async (req, res) => {
+export const viewLessConceptsLogger = async (req, res) => {
   try {
     await activityController.createActivity(
       mainConceptsActivityGenerator.generateViewedLessConcepts(req)
@@ -172,7 +172,7 @@ export const viewedLessConceptsLogger = async (req, res) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
-export const viewedConceptLogger = async (req, res) => {
+export const viewConceptLogger = async (req, res) => {
   try {
     if (req.locals.concept.type === "main_concept") {
       await activityController.createActivity(
@@ -195,10 +195,10 @@ export const viewedConceptLogger = async (req, res) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
-export const viewedConceptCKGLogger = async (req, res) => {
+export const viewConceptCourseKGLogger = async (req, res) => {
   try {
     await activityController.createActivity(
-      courseKGActivityGenerator.generateViewedConcept(req)
+      courseKGActivityGenerator.generateViewedConceptCourseKG(req)
     );
     res.status(200).json({
       message: "Activity logged successfully",
@@ -207,10 +207,10 @@ export const viewedConceptCKGLogger = async (req, res) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
-export const viewedConceptMKGLogger = async (req, res) => {
+export const viewConceptMaterialKGLogger = async (req, res) => {
   try {
     await activityController.createActivity(
-      materialKGActivityGenerator.generateViewedConcept(req)
+      materialKGActivityGenerator.generateViewedConceptMaterialKG(req)
     );
     res.status(200).json({
       message: "Activity logged successfully",
@@ -219,7 +219,7 @@ export const viewedConceptMKGLogger = async (req, res) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
-export const viewedExplanationConceptLogger = async (req, res) => {
+export const viewExplanationConceptLogger = async (req, res) => {
   try {
     let activity;
 
@@ -247,7 +247,7 @@ export const viewedExplanationConceptLogger = async (req, res) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
-export const viewedFullArticleRecommendedConceptLogger = async (req, res) => {
+export const viewFullArticleRecommendedConceptLogger = async (req, res) => {
   try {
     await activityController.createActivity(
       recommendedConceptsActivityGenerator.generateViewedFullArticleRecommendedConcept(
@@ -261,7 +261,7 @@ export const viewedFullArticleRecommendedConceptLogger = async (req, res) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
-export const viewedFullArticleMainConceptLogger = async (req, res) => {
+export const viewFullArticleMainConceptLogger = async (req, res) => {
   try {
     await activityController.createActivity(
       mainConceptsActivityGenerator.generateViewedFullArticleMainConcept(req)
@@ -273,10 +273,10 @@ export const viewedFullArticleMainConceptLogger = async (req, res) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
-export const viewedFullArticleMKGLogger = async (req, res) => {
+export const viewFullArticleMaterialKGLogger = async (req, res) => {
   try {
     await activityController.createActivity(
-      materialKGActivityGenerator.generateViewedFullArticleMKG(req)
+      materialKGActivityGenerator.generateViewedFullArticleMaterialKG(req)
     );
     res.status(200).json({
       message: "Activity logged successfully",
@@ -285,10 +285,10 @@ export const viewedFullArticleMKGLogger = async (req, res) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
-export const viewedFullArticleCKGLogger = async (req, res) => {
+export const viewFullArticleCourseKGLogger = async (req, res) => {
   try {
     await activityController.createActivity(
-      courseKGActivityGenerator.generateViewedFullArticleCKG(req)
+      courseKGActivityGenerator.generateViewedFullArticleCourseKG(req)
     );
     res.status(200).json({
       message: "Activity logged successfully",
@@ -297,7 +297,7 @@ export const viewedFullArticleCKGLogger = async (req, res) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
-export const viewedAllRecommendedVideosLogger = async (req, res) => {
+export const viewAllRecommendedVideosLogger = async (req, res) => {
   try {
     await activityController.createActivity(
       recommendedMaterialsActivityGenerator.generateViewedAllRecommendedVideos(
@@ -312,7 +312,7 @@ export const viewedAllRecommendedVideosLogger = async (req, res) => {
   }
 };
 
-export const viewedAllRecommendedArticlesLogger = async (req, res) => {
+export const viewAllRecommendedArticlesLogger = async (req, res) => {
   try {
     await activityController.createActivity(
       recommendedMaterialsActivityGenerator.generateViewedAllRecommendedArticles(
@@ -326,7 +326,7 @@ export const viewedAllRecommendedArticlesLogger = async (req, res) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
-export const viewedAllRecommendedConceptsLogger = async (req, res) => {
+export const viewAllRecommendedConceptsLogger = async (req, res) => {
   try {
     await activityController.createActivity(
       recommendedConceptsActivityGenerator.generateViewedAllRecommendedConcepts(
@@ -340,7 +340,7 @@ export const viewedAllRecommendedConceptsLogger = async (req, res) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
-export const markedConceptAsNewLogger = async (req, res) => {
+export const markConceptAsNewLogger = async (req, res) => {
   try {
     if (req.locals.concept.type === "main_concept") {
       await activityController.createActivity(
@@ -363,7 +363,7 @@ export const markedConceptAsNewLogger = async (req, res) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
-export const markedConceptAsUnderstoodLogger = async (req, res) => {
+export const markConceptAsUnderstoodLogger = async (req, res) => {
   try {
     if (req.locals.concept.type === "main_concept") {
       await activityController.createActivity(
@@ -388,7 +388,7 @@ export const markedConceptAsUnderstoodLogger = async (req, res) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
-export const markedConceptAsNotUnderstoodLogger = async (req, res) => {
+export const markConceptAsNotUnderstoodLogger = async (req, res) => {
   try {
     if (req.locals.concept.type === "main_concept") {
       await activityController.createActivity(
@@ -414,7 +414,7 @@ export const markedConceptAsNotUnderstoodLogger = async (req, res) => {
   }
 };
 
-export const AccessCourseKGLogger = async (req, res) => {
+export const accessCourseKGLogger = async (req, res) => {
   try {
     if (req.locals.materials.length === 0) {
       return res.status(404).send();
@@ -428,7 +428,7 @@ export const AccessCourseKGLogger = async (req, res) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
-export const AccessMaterialKGLogger = async (req, res) => {
+export const accessMaterialKGLogger = async (req, res) => {
   try {
     await activityController.createActivity(
       materialKGActivityGenerator.generateAccessMaterialKG(req)
@@ -470,7 +470,7 @@ export const finalizeMaterialKGLogger = async (req, res) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
-export const hidConceptsMKGLogger = async (req, res) => {
+export const hidConceptsMaterialKGLogger = async (req, res) => {
   try {
     await activityController.createActivity(
       materialKGActivityGenerator.generateHidConcepts(req)
@@ -482,7 +482,7 @@ export const hidConceptsMKGLogger = async (req, res) => {
     res.status(400).send({ error: "Error saving statement to mongo", err });
   }
 };
-export const unhidConceptsMKGLogger = async (req, res) => {
+export const unhidConceptsMaterialKGLogger = async (req, res) => {
   try {
     await activityController.createActivity(
       materialKGActivityGenerator.generateUnhidConcepts(req)

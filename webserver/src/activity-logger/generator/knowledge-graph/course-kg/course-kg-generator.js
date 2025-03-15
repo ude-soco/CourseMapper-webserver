@@ -9,11 +9,15 @@ import {
 
 let DOMAIN = "http://www.CourseMapper.de"; // TODO: Hardcoded due to frontend implementation
 
-export const generateViewedConcept = (req) => {
+function replaceUnderscoreWithHyphen(word) {
+  return word.replace(/_/g, "-");
+}
+export const generateViewedConceptCourseKG = (req) => {
   const metadata = createMetadata();
   let origin = req.get("origin");
   const course = req.locals.course;
   const concept = req.locals.concept;
+  let conceptType = replaceUnderscoreWithHyphen(concept.type);
   return {
     ...metadata,
     actor: createUser(req),
@@ -22,15 +26,15 @@ export const generateViewedConcept = (req) => {
       objectType: config.activity,
       id: `${origin}/activity/course/${course._id}/concept/${concept.id}`,
       definition: {
-        type: `${DOMAIN}/activityType/concept`,
+        type: `${DOMAIN}/activityType/course-kg-${conceptType}`,
         name: {
-          [config.language]: `Concept: ${concept.name} - Course Knowledge Graph`,
+          [config.language]: `Concept: '${concept.name}' - Course '${course.name}' Knowledge Graph`,
         },
         description: {
-          [config.language]: concept.abstract,
+          [config.language]: concept.abstract || "",
         },
         extensions: {
-          [`${DOMAIN}/extensions/concept`]: {
+          [`${DOMAIN}/extensions/course-kg-${conceptType}`]: {
             conceptId: concept.id,
             conceptCid: concept.cid,
             concept_wiki_url: concept.wikipedia,
@@ -43,35 +47,39 @@ export const generateViewedConcept = (req) => {
     context: createContext(),
   };
 };
-export const generateViewedFullArticleCKG = (req) => {
+export const generateViewedFullArticleCourseKG = (req) => {
   const metadata = createMetadata();
   let origin = req.get("origin");
   const course = req.locals.course;
-  const node_id = req.locals.node_id;
-  const node_wikipedia = req.locals.node_wikipedia;
-  const node_name = req.locals.node_name;
+  const concept_id = req.locals.concept_id;
+  const concept_wikipedia = req.locals.concept_wikipedia;
+  const concept_name = req.locals.concept_name;
+  let concept_type = replaceUnderscoreWithHyphen(req.locals.concept_type); //To verify
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
+    verb: createVerb(
+      `${DOMAIN}/verb/viewed-full-article`,
+      "viewed full article"
+    ),
     object: {
       objectType: config.activity,
-      id: `${origin}/activity/course/${course._id}/concept/${node_id}/wiki-article/${node_wikipedia}`,
+      id: `${origin}/activity/course/${course._id}/concept/${concept_id}/wiki-article/${concept_wikipedia}`,
       definition: {
-        type: "http://activitystrea.ms/schema/1.0/article",
+        type: `${DOMAIN}/activityType/course-kg-${concept_type}`,
         name: {
-          [config.language]: `Article: ${node_name} - Course Knowledge Graph`,
+          [config.language]: `Concept: '${concept_name}' - Course '${course.name}' Knowledge Graph`,
         },
         description: {
-          [config.language]: req.locals.node_abstract,
+          [config.language]: req.locals.concept_abstract || "",
         },
         extensions: {
-          [`${DOMAIN}/extensions/article`]: {
-            concept_id: req.locals.node_id,
-            concept_cid: req.locals.node_cid,
-            concept_type: req.locals.node_type,
-            concept_abstract: req.locals.node_abstract,
-            concept_wikipedia: node_wikipedia,
+          [`${DOMAIN}/extensions/course-kg-${concept_type}`]: {
+            concept_id: req.locals.concept_id,
+            concept_cid: req.locals.concept_cid,
+            concept_type: req.locals.concept_type,
+            concept_abstract: req.locals.concept_abstract,
+            concept_wikipedia: concept_wikipedia,
             courseId: course._id,
           },
         },
@@ -98,12 +106,12 @@ export const generateAccessCourseKG = (req) => {
       objectType: config.activity,
       id: `${origin}/activity/course/${course._id}/course-knowledge-graph`,
       definition: {
-        type: `${DOMAIN}/activityType/knowledge-graph`,
+        type: `${DOMAIN}/activityType/course-knowledge-graph`,
         name: {
-          [config.language]: `Course ${course.name} Knowledge Graph`,
+          [config.language]: `Course '${course.name}' Knowledge Graph`,
         },
         extensions: {
-          [`${DOMAIN}/extensions/knowledge-graph`]: {
+          [`${DOMAIN}/extensions/course-knowledge-graph`]: {
             courseId: course._id,
             courseName: course.name,
             concepts: formattedConcepts,

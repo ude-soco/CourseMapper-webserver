@@ -32,7 +32,7 @@ module.exports = function (app) {
     "/api/knowledge-graph/get-material/:materialId",
     [authJwt.verifyToken],
     controller.getMaterial,
-    logger.AccessMaterialKGLogger
+    logger.accessMaterialKGLogger
   );
 
   app.get(
@@ -57,7 +57,7 @@ module.exports = function (app) {
     "/api/knowledge-graph/get-higher-levels-nodes-and-edges",
     [authJwt.verifyToken],
     controller.getHigherLevelsNodesAndEdges,
-    logger.AccessCourseKGLogger
+    logger.accessCourseKGLogger
   );
 
   app.post(
@@ -83,14 +83,12 @@ module.exports = function (app) {
     "/api/courses/:courseId/materials/:materialId/concept-map/concepts",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.addConcept
-    // logger.addConceptLogger
   );
 
   app.post(
     "/api/courses/:courseId/materials/:materialId/concept-map/publish",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.publishConceptMap
-    // logger.finalizeMaterialKGLogger
   );
 
   app.post(
@@ -102,25 +100,27 @@ module.exports = function (app) {
     "/api/courses/:courseId/materials/:materialId/concept-recommendation/log",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.viewedAllRecommendedConcepts,
-    logger.viewedAllRecommendedConceptsLogger
+    logger.viewAllRecommendedConceptsLogger
   );
   app.post(
     "/api/courses/:courseId/materials/:materialId/concepts/:conceptId/mark-new",
     [authJwt.verifyToken],
     controller.markConceptAsNew,
-    logger.markedConceptAsNewLogger
+    logger.markConceptAsNewLogger
   );
+
+  // Mark a concept as understood
   app.post(
     "/api/courses/:courseId/materials/:materialId/concepts/:conceptId/mark-understood",
     [authJwt.verifyToken],
     controller.markConceptAsUnderstood,
-    logger.markedConceptAsUnderstoodLogger
+    logger.markConceptAsUnderstoodLogger
   );
   app.post(
     "/api/courses/:courseId/materials/:materialId/concepts/:conceptId/mark-not-understood",
     [authJwt.verifyToken],
     controller.markConceptAsNotUnderstood,
-    logger.markedConceptAsNotUnderstoodLogger
+    logger.markConceptAsNotUnderstoodLogger
   );
   app.post(
     "/api/courses/:courseId/materials/:materialId/resource-recommendation",
@@ -138,86 +138,86 @@ module.exports = function (app) {
     "/api/courses/:courseId/materials/:materialId/main-concepts/log",
     [authJwt.verifyToken],
     controller.viewedAllMainConcepts,
-    logger.viewedAllMainConceptsLogger
+    logger.viewAllMainConceptsLogger
   );
   app.post(
     "/api/courses/:courseId/materials/:materialId/main-concepts/log-view-more",
     [authJwt.verifyToken],
     controller.viewedMoreConcepts,
-    logger.viewedMoreConceptsLogger
+    logger.viewMoreConceptsLogger
   );
   app.post(
     "/api/courses/:courseId/materials/:materialId/main-concepts/log-view-less",
     [authJwt.verifyToken],
     controller.viewedLessConcepts,
-    logger.viewedLessConceptsLogger
+    logger.viewLessConceptsLogger
   );
   app.post(
     "/api/courses/:courseId/materials/:materialId/concepts/:conceptId/log-view",
     [authJwt.verifyToken],
     controller.viewedConcept,
-    logger.viewedConceptLogger
+    logger.viewConceptLogger
   );
   app.post(
     "/api/courses/:courseId/CKG/concepts/:conceptId/log-view",
     [authJwt.verifyToken],
-    controller.viewedConceptCKG,
-    logger.viewedConceptCKGLogger
+    controller.viewedConceptCourseKG,
+    logger.viewConceptCourseKGLogger
   );
   app.post(
     "/api/courses/:courseId/materials/:materialId/MKG/concepts/:conceptId/log-view",
     [authJwt.verifyToken],
-    controller.viewedConceptMKG,
-    logger.viewedConceptMKGLogger
+    controller.viewedConceptMaterialKG,
+    logger.viewConceptMaterialKGLogger
   );
 
   app.post(
     "/api/courses/:courseId/materials/:materialId/concepts/:conceptId/view-explanation",
     [authJwt.verifyToken],
     controller.viewedExplanationConcept,
-    logger.viewedExplanationConceptLogger
+    logger.viewExplanationConceptLogger
   );
   // This endpoint is for logging the activity from the recommended concepts part
   app.post(
     "/api/courses/:courseId/materials/:materialId/recommended-concepts/:conceptId/view-full-wiki",
     [authJwt.verifyToken],
     controller.viewedFullArticleRecommendedConcept,
-    logger.viewedFullArticleRecommendedConceptLogger
+    logger.viewFullArticleRecommendedConceptLogger
   );
   // This endpoint is for logging the activity from the main concepts part
   app.post(
     "/api/courses/:courseId/materials/:materialId/main-concepts/:conceptId/view-full-wiki",
     [authJwt.verifyToken],
     controller.viewedFullArticleMainConcept,
-    logger.viewedFullArticleMainConceptLogger
+    logger.viewFullArticleMainConceptLogger
   );
   // This endpoint is for logging the activity from the Material Kg
   app.post(
     "/api/courses/:courseId/materials/:materialId/concepts/:conceptId/MKG/view-full-wiki",
     [authJwt.verifyToken],
-    controller.viewedFullArticleMKG,
-    logger.viewedFullArticleMKGLogger
+    controller.viewedFullArticleMaterialKG,
+    logger.viewFullArticleMaterialKGLogger
   );
   // This endpoint is for logging the activity from the Course Kg
   app.post(
     "/api/courses/:courseId/concepts/:conceptId/CKG/view-full-wiki",
     [authJwt.verifyToken],
-    controller.viewedFullArticleCKG,
-    logger.viewedFullArticleCKGLogger
+    controller.viewedFullArticleCourseKG,
+    logger.viewFullArticleCourseKGLogger
   );
 
   app.post(
     "/api/materials/:materialId/recommended-videos/view-all",
     [authJwt.verifyToken],
     controller.viewedAllRecommendedVideos,
-    logger.viewedAllRecommendedVideosLogger
+    logger.viewAllRecommendedVideosLogger
   );
 
   app.post(
     "/api/materials/:materialId/recommended-articles/view-all",
     [authJwt.verifyToken],
     controller.viewedAllRecommendedArticles,
-    logger.viewedAllRecommendedArticlesLogger
+    logger.viewAllRecommendedArticlesLogger
   );
   app.post(
     "/api/materials/:materialId/recommended-article/:title/mark-helpful",
@@ -272,13 +272,13 @@ module.exports = function (app) {
     "/api/materials/:materialId/recommended-article/:title/abstract/log-expand",
     [authJwt.verifyToken],
     controller.expandedArticleAbstract,
-    logger.expandedArticleAbstractLogger
+    logger.expandArticleAbstractLogger
   );
   app.post(
     "/api/materials/:materialId/recommended-article/:title/abstract/log-collapse",
     [authJwt.verifyToken],
     controller.collapsedArticleAbstract,
-    logger.collapsedArticleAbstractLogger
+    logger.collapseArticleAbstractLogger
   );
 
   // This endpoint is for the recommended Articles part.
@@ -286,18 +286,18 @@ module.exports = function (app) {
     "/api/materials/:materialId/recommended-articles/:title/log",
     [authJwt.verifyToken],
     controller.viewFullWikipediaArticle,
-    logger.viewFullWikipediaArticleLogger
+    logger.viewFullArticleRecommendedArticleLogger
   );
   app.post(
     "/api/courses/:courseId/materials/:materialId/MKG/log-hide",
     [authJwt.verifyToken],
-    controller.hidConceptsMKG,
-    logger.hidConceptsMKGLogger
+    controller.hidConceptsMaterialKG,
+    logger.hidConceptsMaterialKGLogger
   );
   app.post(
     "/api/courses/:courseId/materials/:materialId/MKG/log-unhide",
     [authJwt.verifyToken],
-    controller.unhidConceptsMKG,
-    logger.unhidConceptsMKGLogger
+    controller.unhidConceptsMaterialKG,
+    logger.unhidConceptsMaterialKGLogger
   );
 };

@@ -21,15 +21,15 @@ const createRecommendedVideoObject = (req) => {
     objectType: config.activity,
     id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/recommended-video/${videoId}`,
     definition: {
-      type: "http://activitystrea.ms/schema/1.0/video",
+      type: `${DOMAIN}/activityType/recommended-video`,
       name: {
-        [config.language]: videoTitle,
+        [config.language]: `Recommended video '${videoTitle}'`,
       },
       description: {
-        [config.language]: videoDescription,
+        [config.language]: videoDescription || "",
       },
       extensions: {
-        [`${DOMAIN}/extensions/video`]: {
+        [`${DOMAIN}/extensions/recommended-video`]: {
           videoId: videoId,
           concepts: req.locals.concepts,
           materialId: material._id,
@@ -52,17 +52,17 @@ export const generateViewedAllRecommendedVideos = (req) => {
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
+    verb: createVerb(`${DOMAIN}/verb/viewed-all`, "viewed all"),
     object: {
       objectType: config.activity,
-      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/recommended-videos`,
+      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/recommended-video`,
       definition: {
-        type: "http://activitystrea.ms/schema/1.0/video",
+        type: `${DOMAIN}/activityType/recommended-video`,
         name: {
           [config.language]: "Recommended videos",
         },
         extensions: {
-          [`${DOMAIN}/extensions/recommended-videos`]: {
+          [`${DOMAIN}/extensions/recommended-video`]: {
             materialId: material._id,
             channelId: material.channelId,
             topicId: material.topicId,
@@ -82,7 +82,7 @@ export const generateMarkVideoAsHelpful = (req) => {
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb(`${DOMAIN}/verb/marked-helpful`, "marked-helpful"),
+    verb: createVerb(`${DOMAIN}/verb/marked-helpful`, "marked as helpful"),
     object: createRecommendedVideoObject(req),
     context: createContext(),
   };
@@ -93,7 +93,10 @@ export const generateMarkVideoAsUnhelpful = (req) => {
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb(`${DOMAIN}/verb/marked-not-helpful`, "marked-not-helpful"),
+    verb: createVerb(
+      `${DOMAIN}/verb/marked-not-helpful`,
+      "marked as not helpful"
+    ),
     object: createRecommendedVideoObject(req),
     context: createContext(),
   };
@@ -104,7 +107,7 @@ export const generateUnmarkVideoAsHelpful = (req) => {
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb(`${DOMAIN}/verb/un-marked-helpful`, "un-marked-helpful"),
+    verb: createVerb(`${DOMAIN}/verb/un-marked-helpful`, "unmarked as helpful"),
     object: createRecommendedVideoObject(req),
     context: createContext(),
   };
@@ -118,7 +121,7 @@ export const generateUnmarkVideoAsUnhelpful = (req) => {
     actor: createUser(req),
     verb: createVerb(
       `${DOMAIN}/verb/un-marked-as-helpful`,
-      "un-marked-not-helpful"
+      "unmarked as not helpful"
     ),
     object: createRecommendedVideoObject(req),
     context: createContext(),
@@ -137,15 +140,15 @@ const createRecommendedArticleObject = (req) => {
     objectType: config.activity,
     id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/recommended-article/${articleId}`,
     definition: {
-      type: "http://activitystrea.ms/schema/1.0/article",
+      type: `${DOMAIN}/activityType/recommended-article`,
       name: {
-        [config.language]: articleTitle,
+        [config.language]: `Recommended article '${articleTitle}'`,
       },
       description: {
-        [config.language]: articleAbstract,
+        [config.language]: articleAbstract || "",
       },
       extensions: {
-        [`${DOMAIN}/extensions/article`]: {
+        [`${DOMAIN}/extensions/recommended-article`]: {
           articleId: articleId,
           materialId: material._id,
           channelId: material.channelId,
@@ -167,17 +170,17 @@ export const generateViewedAllRecommendedArticles = (req) => {
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
+    verb: createVerb(`${DOMAIN}/verb/viewed-all`, "viewed all"),
     object: {
       objectType: config.activity,
-      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/recommended-articles`,
+      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/recommended-article`,
       definition: {
-        type: "http://activitystrea.ms/schema/1.0/article",
+        type: `${DOMAIN}/activityType/recommended-article`,
         name: {
           [config.language]: "Recommended articles",
         },
         extensions: {
-          [`${DOMAIN}/extensions/recommended-articles`]: {
+          [`${DOMAIN}/extensions/recommended-article`]: {
             materialId: material._id,
             channelId: material.channelId,
             topicId: material.topicId,
@@ -208,7 +211,7 @@ export const generateExpandArticleAbstract = (req) => {
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb(`${DOMAIN}/verb/expand`, "expanded"), // * Custom verb
+    verb: createVerb(`${DOMAIN}/verb/expand`, "expanded"),
     object: createRecommendedArticleObject(req),
     context: createContext(),
   };
@@ -230,7 +233,7 @@ export const generateMarkArticleAsHelpful = (req) => {
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb(`${DOMAIN}/verb/marked-helpful`, "marked-helpful"),
+    verb: createVerb(`${DOMAIN}/verb/marked-helpful`, "marked as helpful"),
     object: createRecommendedArticleObject(req),
     context: createContext(),
   };
@@ -241,7 +244,10 @@ export const generateMarkArticleAsUnhelpful = (req) => {
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb(`${DOMAIN}/verb/marked-not-helpful`, "marked-not-helpful"),
+    verb: createVerb(
+      `${DOMAIN}/verb/marked-not-helpful`,
+      "marked as not helpful"
+    ),
     object: createRecommendedArticleObject(req),
     context: createContext(),
   };
@@ -251,7 +257,7 @@ export const generateUnmarkArticleAsHelpful = (req) => {
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb(`${DOMAIN}/verb/un-marked-helpful`, "un-marked-helpful"),
+    verb: createVerb(`${DOMAIN}/verb/un-marked-helpful`, "unmarked as helpful"),
     object: createRecommendedArticleObject(req),
     context: createContext(),
   };
@@ -264,7 +270,7 @@ export const generateUnmarkArticleAsUnhelpful = (req) => {
     actor: createUser(req),
     verb: createVerb(
       `${DOMAIN}/verb/un-marked-not-helpful`,
-      "un-marked-not-helpful"
+      "unmarked as not helpful"
     ),
     object: createRecommendedArticleObject(req),
     context: createContext(),

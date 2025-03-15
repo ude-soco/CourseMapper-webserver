@@ -18,12 +18,12 @@ const createMainConceptObject = (req) => {
     objectType: config.activity,
     id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/main-concept/${concept.id}`,
     definition: {
-      type: `${DOMAIN}/activityType/concept`,
+      type: `${DOMAIN}/activityType/slide-kg-main-concept`,
       name: {
-        [config.language]: concept.name,
+        [config.language]: `Main concept '${concept.name}' - Slide '${materialPage}' Knowledge Graph - Material '${material.name}'`,
       },
       extensions: {
-        [`${DOMAIN}/extensions/concept`]: {
+        [`${DOMAIN}/extensions/slide-kg-main-concept`]: {
           id: concept.id,
           cid: concept.cid,
           materialId: material._id,
@@ -46,7 +46,7 @@ export const generateDidNotUnderstandSlide = (req) => {
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb(`${DOMAIN}/verb/did-not-understand`, "did-not-understand"),
+    verb: createVerb(`${DOMAIN}/verb/did-not-understand`, "did not understand"),
     object: {
       objectType: config.activity,
       id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/materialPage/${materialPage}`,
@@ -89,12 +89,12 @@ export const generateAccessSlideKG = (req) => {
       objectType: config.activity,
       id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/materialPage/${materialPage}/slide-knowledge-graph`,
       definition: {
-        type: `${DOMAIN}/activityType/knowledge-graph`,
+        type: `${DOMAIN}/activityType/slide-knowledge-graph`,
         name: {
-          [config.language]: `Slide ${materialPage} Knowledge Graph`,
+          [config.language]: `Slide '${materialPage}' Knowledge Graph - Material '${material.name}'`,
         },
         extensions: {
-          [`${DOMAIN}/extensions/knowledge-graph`]: {
+          [`${DOMAIN}/extensions/slide-knowledge-graph`]: {
             courseId: material.courseId,
             topicId: material.topicId,
             channelId: material.channelId,
@@ -124,17 +124,17 @@ export const generateViewedAllMainConcepts = (req) => {
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
+    verb: createVerb(`${DOMAIN}/verb/viewed-all`, "viewed all"),
     object: {
       objectType: config.activity,
-      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/main-concepts`,
+      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/main-concept`,
       definition: {
-        type: `${DOMAIN}/activityType/concept`,
+        type: `${DOMAIN}/activityType/slide-kg-main-concept`,
         name: {
-          [config.language]: "Main concepts",
+          [config.language]: `Main concepts of Slide '${materialPage}' Knowledge Graph - Material '${material.name}'`,
         },
         extensions: {
-          [`${DOMAIN}/extensions/main-concepts`]: {
+          [`${DOMAIN}/extensions/slide-kg-main-concept`]: {
             concepts: formattedConcepts,
             materialId: material._id,
             channelId: material.channelId,
@@ -171,14 +171,14 @@ export const generateViewedMoreConcepts = (req) => {
     verb: createVerb(`${DOMAIN}/verb/view-more`, "viewed more"),
     object: {
       objectType: config.activity,
-      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/main-concepts`,
+      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/main-concept`,
       definition: {
-        type: `${DOMAIN}/activityType/concept`,
+        type: `${DOMAIN}/activityType/slide-kg-main-concept`,
         name: {
-          [config.language]: "Main concepts",
+          [config.language]: `Main concepts of Slide ${materialPage} Knowledge Graph - Material '${material.name}'`,
         },
         extensions: {
-          [`${DOMAIN}/extensions/main-concepts`]: {
+          [`${DOMAIN}/extensions/slide-kg-main-concept`]: {
             concepts: formattedConcepts,
             materialId: material._id,
             channelId: material.channelId,
@@ -210,14 +210,14 @@ export const generateViewedLessConcepts = (req) => {
     verb: createVerb(`${DOMAIN}/verb/view-less`, "viewed less"),
     object: {
       objectType: config.activity,
-      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/main-concepts`,
+      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/main-concept`,
       definition: {
-        type: `${DOMAIN}/activityType/concept`,
+        type: `${DOMAIN}/activityType/slide-kg-main-concept`,
         name: {
-          [config.language]: "Main concepts",
+          [config.language]: `Main concepts of Slide ${materialPage} Knowledge Graph - Material '${material.name}'`,
         },
         extensions: {
-          [`${DOMAIN}/extensions/main-concepts`]: {
+          [`${DOMAIN}/extensions/slide-kg-main-concept`]: {
             concepts: formattedConcepts,
             materialId: material._id,
             channelId: material.channelId,
@@ -245,15 +245,15 @@ export const generateViewedConcept = (req) => {
       objectType: config.activity,
       id: `${DOMAIN}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/main-concept/${concept.id}`,
       definition: {
-        type: `${DOMAIN}/schema/1.0/concept`,
+        type: `${DOMAIN}/activityType/slide-kg-main-concept`,
         name: {
-          [config.language]: concept.name,
+          [config.language]: `Main concept '${concept.name}' - Slide ${materialPage} Knowledge Graph - Material '${material.name}'`,
         },
         description: {
-          [config.language]: concept.abstract,
+          [config.language]: concept.abstract || "",
         },
         extensions: {
-          [`${DOMAIN}/extensions/main-concept`]: {
+          [`${DOMAIN}/extensions/slide-kg-main-concept`]: {
             conceptId: concept.id,
             conceptType: concept.type,
             concept_wiki_url: concept.wikipedia,
@@ -273,27 +273,31 @@ export const generateViewedFullArticleMainConcept = (req) => {
   const metadata = createMetadata();
   let origin = req.get("origin");
   const material = req.locals.material;
-  const node_id = req.locals.node_id;
+  const concept_id = req.locals.concept_id;
   const materialPage = req.locals.materialPage;
-  const node_wikipedia = req.locals.node_wikipedia;
+  const concept_wikipedia = req.locals.concept_wikipedia;
+  const concept_name = req.locals.concept_name;
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
+    verb: createVerb(
+      `${DOMAIN}/verb/viewed-full-article`,
+      "viewed full article"
+    ),
     object: {
       objectType: config.activity,
-      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/main-concept/${node_id}/wiki-article/${node_wikipedia}`,
+      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/slideNr/${materialPage}/main-concept/${concept_id}/wiki-article/${concept_wikipedia}`,
       definition: {
-        type: "http://activitystrea.ms/schema/1.0/article",
+        type: `${DOMAIN}/activityType/slide-kg-main-concept`,
         name: {
-          [config.language]: req.locals.node_name,
+          [config.language]: `Main concept '${concept_name}' - Slide ${materialPage} Knowledge Graph - Material '${material.name}'`,
         },
         extensions: {
-          [`${DOMAIN}/extensions/article`]: {
-            node_id: req.locals.node_id,
-            node_cid: req.locals.node_cid,
-            node_name: req.locals.node_name,
-            node_type: req.locals.node_type,
+          [`${DOMAIN}/extensions/slide-kg-main-concept`]: {
+            concept_id: req.locals.concept_id,
+            concept_cid: req.locals.concept_cid,
+            concept_name: concept_name,
+            concept_type: req.locals.concept_type,
             materialId: material._id,
             channelId: material.channelId,
             topicId: material.topicId,
@@ -311,7 +315,7 @@ export const generateMarkConceptAsNew = (req) => {
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb(`${DOMAIN}/verb/mark-new`, "marked-new"),
+    verb: createVerb(`${DOMAIN}/verb/mark-new`, "marked as new"),
     object: createMainConceptObject(req),
     context: createContext(),
   };
@@ -321,7 +325,7 @@ export const generateMarkConceptAsUnderstood = (req) => {
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb(`${DOMAIN}/verb/mark-understood`, "marked-understood"),
+    verb: createVerb(`${DOMAIN}/verb/mark-understood`, "marked as understood"),
     object: createMainConceptObject(req),
     context: createContext(),
   };
@@ -333,7 +337,7 @@ export const generateMarkConceptAsNotUnderstood = (req) => {
     actor: createUser(req),
     verb: createVerb(
       `${DOMAIN}/verb/mark-not-understood`,
-      "marked-not-understood"
+      "marked as not understood"
     ),
     object: createMainConceptObject(req),
     context: createContext(),

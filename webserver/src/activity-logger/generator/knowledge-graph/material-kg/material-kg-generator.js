@@ -9,6 +9,13 @@ import {
 
 let DOMAIN = "http://www.CourseMapper.de"; // TODO: Hardcoded due to frontend implementation
 
+const formatActivityType = (type) => {
+  return type.toLowerCase().replace(/-/g, " ");
+};
+function replaceUnderscoreWithHyphen(word) {
+  return word.replace(/_/g, "-");
+}
+// To edit
 const createConceptObject = (req) => {
   const material = req.locals.material;
   const conceptName = req.locals.conceptName;
@@ -16,9 +23,9 @@ const createConceptObject = (req) => {
   let origin = req.get("origin");
   return {
     objectType: config.activity,
-    id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/concept/${conceptName}`, // To verify
+    id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/concept/${conceptName}`,
     definition: {
-      type: `${DOMAIN}/schema/1.0/concept`,
+      type: `${DOMAIN}/activityType/concept`,
       name: {
         [config.language]: conceptName,
       },
@@ -35,19 +42,14 @@ const createConceptObject = (req) => {
     },
   };
 };
-export const generateViewedConcept = (req) => {
+export const generateViewedConceptMaterialKG = (req) => {
   const metadata = createMetadata();
   const material = req.locals.material;
   const concept = req.locals.concept;
+  let conceptType = replaceUnderscoreWithHyphen(req.locals.concept.type);
   let origin = req.get("origin");
-  let type;
-  if (concept.type === "main_concept") {
-    type = "main concept";
-  } else if (concept.type === "related_concept") {
-    type = "related concept";
-  } else {
-    type = concept.type;
-  }
+
+  let formattedType = formatActivityType(conceptType); // Human readable without _
 
   return {
     ...metadata,
@@ -57,15 +59,15 @@ export const generateViewedConcept = (req) => {
       objectType: config.activity,
       id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/concept/${concept.id}`,
       definition: {
-        type: `${DOMAIN}/activityType/${concept.type}`, //Type could be main_concept/ related concept/ category
+        type: `${DOMAIN}/activityType/material-kg-${conceptType}`, //Type could be main-concept/ related-concept/ category
         name: {
-          [config.language]: ` ${type} : ${concept.name} - Course Knowledge Graph`,
+          [config.language]: `${formattedType}: '${concept.name}' - Material '${material.name}' Knowledge Graph`,
         },
         description: {
-          [config.language]: concept.abstract,
+          [config.language]: concept.abstract || "",
         },
         extensions: {
-          [`${DOMAIN}/extensions/${concept.type}`]: {
+          [`${DOMAIN}/extensions/material-kg-${conceptType}`]: {
             conceptId: concept.id,
             concept_wiki_url: concept.wikipedia,
             materialId: material._id,
@@ -100,14 +102,15 @@ export const generateDeleteConcept = (req) => {
   };
 };
 export const generateHidConcepts = (req) => {
+  //TODO: edit key to conceptType
   const metadata = createMetadata();
   const material = req.locals.material;
-  const key = req.locals.key; // related_concept Or categories
+  let conceptType = replaceUnderscoreWithHyphen(req.locals.key);
   let origin = req.get("origin");
   let type;
-  if (key === "related_concept") {
+  if (conceptType === "related-concept") {
     type = "Related concepts";
-  } else if (key === "category") {
+  } else if (conceptType === "category") {
     type = "Categories";
   }
 
@@ -117,14 +120,14 @@ export const generateHidConcepts = (req) => {
     verb: createVerb(`${DOMAIN}/verb/hide`, "hid"),
     object: {
       objectType: config.activity,
-      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/${key}`,
+      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/${conceptType}`,
       definition: {
-        type: `${DOMAIN}/schema/1.0/${key}`, //Type could be related_concept/ category
+        type: `${DOMAIN}/activityType/material-kg-${conceptType}`, //Type could be related-concept/ category
         name: {
-          [config.language]: `${type} - Material: ${material.name} - Knowledge Graph`,
+          [config.language]: `${type} - Material '${material.name}' - Knowledge Graph`,
         },
         extensions: {
-          [`${DOMAIN}/extensions/${key}`]: {
+          [`${DOMAIN}/extensions/material-kg-${conceptType}`]: {
             materialId: material._id,
             channelId: material.channelId,
             topicId: material.topicId,
@@ -139,12 +142,12 @@ export const generateHidConcepts = (req) => {
 export const generateUnhidConcepts = (req) => {
   const metadata = createMetadata();
   const material = req.locals.material;
-  const key = req.locals.key; // related_concept Or categories
+  let conceptType = replaceUnderscoreWithHyphen(req.locals.key);
   let origin = req.get("origin");
   let type;
-  if (key === "related_concept") {
+  if (conceptType === "related-concept") {
     type = "Related concepts";
-  } else if (key === "category") {
+  } else if (conceptType === "category") {
     type = "Categories";
   }
   return {
@@ -153,14 +156,14 @@ export const generateUnhidConcepts = (req) => {
     verb: createVerb(`${DOMAIN}/verb/unhide`, "unhid"),
     object: {
       objectType: config.activity,
-      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/${key}`,
+      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/${conceptType}`,
       definition: {
-        type: `${DOMAIN}/schema/1.0/${key}`, //Type could be related_concept/ category
+        type: `${DOMAIN}/activityType/material-kg-${conceptType}`, //Type could be related_concept/ category
         name: {
-          [config.language]: `${type} - Material: ${material.name} - Knowledge Graph`,
+          [config.language]: `${type} - Material '${material.name}' - Knowledge Graph`,
         },
         extensions: {
-          [`${DOMAIN}/extensions/${key}`]: {
+          [`${DOMAIN}/extensions/material-kg-${conceptType}`]: {
             materialId: material._id,
             channelId: material.channelId,
             topicId: material.topicId,
@@ -172,35 +175,40 @@ export const generateUnhidConcepts = (req) => {
     context: createContext(),
   };
 };
-export const generateViewedFullArticleMKG = (req) => {
+export const generateViewedFullArticleMaterialKG = (req) => {
   const metadata = createMetadata();
   let origin = req.get("origin");
   const material = req.locals.material;
-  const node_id = req.locals.node_id;
-  const node_name = req.locals.node_name;
-  const node_wikipedia = req.locals.node_wikipedia;
-  const node_abstract = req.locals.node_abstract;
+  const concept_id = req.locals.concept_id;
+  const concept_name = req.locals.concept_name;
+  const concept_wikipedia = req.locals.concept_wikipedia;
+  const concept_abstract = req.locals.concept_abstract;
+  let concept_type = replaceUnderscoreWithHyphen(req.locals.concept_type);
+  console.log(concept_type);
   return {
     ...metadata,
     actor: createUser(req),
-    verb: createVerb("http://id.tincanapi.com/verb/viewed", "viewed"),
+    verb: createVerb(
+      `${DOMAIN}/verb/viewed-full-article`,
+      "viewed full article"
+    ),
     object: {
       objectType: config.activity,
-      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/concept/${node_id}/wiki-article/${node_wikipedia}`,
+      id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/concept/${concept_id}/wiki-article/${concept_wikipedia}`,
       definition: {
-        type: "http://activitystrea.ms/schema/1.0/article",
+        type: `${DOMAIN}/activityType/material-kg-${concept_type}`,
         name: {
-          [config.language]: `Article:${node_name} - Material Knowledge Graph`,
+          [config.language]: `Concept: '${concept_name}' - Material '${material.name}' Knowledge Graph`,
         },
         description: {
-          [config.language]: node_abstract,
+          [config.language]: concept_abstract || "",
         },
         extensions: {
-          [`${DOMAIN}/extensions/article`]: {
-            concept_id: req.locals.node_id,
-            concept_cid: req.locals.node_cid,
-            concept_name: req.locals.node_name,
-            concept_type: req.locals.node_type,
+          [`${DOMAIN}/extensions/material-kg-${concept_type}`]: {
+            concept_id: req.locals.concept_id,
+            concept_cid: req.locals.concept_cid,
+            concept_name: req.locals.concept_name,
+            concept_type: req.locals.concept_type,
             materialId: material._id,
             channelId: material.channelId,
             topicId: material.topicId,
@@ -233,12 +241,12 @@ export const generateAccessMaterialKG = (req) => {
       objectType: config.activity,
       id: `${origin}/activity/course/${material.courseId}/topic/${material.topicId}/channel/${material.channelId}/material/${material._id}/material-knowledge-graph`,
       definition: {
-        type: `${DOMAIN}/activityType/knowledge-graph`,
+        type: `${DOMAIN}/activityType/material-knowledge-graph`,
         name: {
-          [config.language]: `Material ${material.name} Knowledge Graph`,
+          [config.language]: `Material '${material.name}' Knowledge Graph`,
         },
         extensions: {
-          [`${DOMAIN}/extensions/knowledge-graph`]: {
+          [`${DOMAIN}/extensions/material-knowledge-graph`]: {
             courseId: material.courseId,
             topicId: material.topicId,
             channelId: material.channelId,
@@ -267,12 +275,12 @@ export const generateFinalizeMaterialKG = (req) => {
       objectType: config.activity,
       id: `${origin}/activity/course/${material.courseId}/material/${material._id}/material-knowledge-graph`,
       definition: {
-        type: `${DOMAIN}/schema/1.0/knowledge-graph`,
+        type: `${DOMAIN}/activityType/material-knowledge-graph`,
         name: {
-          [config.language]: `Material ${material.name} Knowledge Graph`,
+          [config.language]: `Material '${material.name}' Knowledge Graph`,
         },
         extensions: {
-          [`${DOMAIN}/extensions/material-kg`]: {
+          [`${DOMAIN}/extensions/material-knowledge-graph`]: {
             courseId: material.courseId,
             topicId: material.topicId,
             channelId: material.channelId,
