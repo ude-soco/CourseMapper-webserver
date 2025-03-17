@@ -1878,6 +1878,7 @@ export class ConceptMapComponent {
       conceptName: { title: concept.data.name },
       conceptSlides: slideNumbers,
     });
+    
   }
 
   cancelEditConcept() {
@@ -1902,6 +1903,12 @@ export class ConceptMapComponent {
             conceptId
           );
           this.getConceptMapData();
+          this.messageService.add({
+            key: 'server_response',
+            severity: 'success',
+            summary: 'Delete Concept',
+            detail: 'Concept deleted successfully',
+          });
         } catch (error) {
           console.error(error);
           this.messageService.add({
@@ -1938,6 +1945,23 @@ export class ConceptMapComponent {
 
           // After all deletions, refresh the data
           this.getConceptMapData();
+          if (conceptIds.length===1){
+            this.messageService.add({
+              key: 'server_response',
+              severity: 'success',
+              summary: 'Delete Concept',
+              detail: `Main Concept deleted successfully`,
+            });
+          }
+          else{
+            this.messageService.add({
+              key: 'server_response',
+              severity: 'success',
+              summary: 'Batch Delete Concept',
+              detail: 'Concepts batch deleted successfully',
+            });
+          }
+    
         } catch (error) {
           console.error(error);
           this.messageService.add({
@@ -1993,6 +2017,13 @@ export class ConceptMapComponent {
           true,    // Mark as edited
           true   // lastEdited: new/edited node is flagged true
         );
+        this.getConceptMapData();
+        this.messageService.add({
+          key: 'server_response',
+          severity: 'success',
+          summary: 'Edit Concept',
+          detail: `Main Concept '${conceptName}' edite successfully`,
+        });
       }
       else {
       await this.conceptMapService.addConceptMapConcept(
@@ -2004,10 +2035,16 @@ export class ConceptMapComponent {
         false, // Not edited
         true   // lastEdited: new/edited node is flagged true
       );
+      this.getConceptMapData();
+      this.messageService.add({
+        key: 'server_response',
+        severity: 'success',
+        summary: 'Add Concept',
+        detail:`Main Concept '${conceptName}' added successfully`,
+      });
     }
     console.log('conceptName',conceptName);
 
-      this.getConceptMapData();
 
       this.editConceptForm.setValue({
         conceptName: '',
@@ -2023,6 +2060,7 @@ export class ConceptMapComponent {
         summary: 'Cannot add concept',
         detail: error.error.error.toString(),
       });
+
     } finally {
       this.conceptInputsDisabled = false;
     }
