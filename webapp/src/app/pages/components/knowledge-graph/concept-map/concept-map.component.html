@@ -6,30 +6,43 @@
   (window:resize)="onResize($event)"
   style="z-index: 99"
 >
-  <p-dialog
+    <p-dialog
     id="higherLevelsKG"
-    header="{{ this.currentMaterial?.name }}{{
-      isDraft ? ' - Preview the educational knowledge graph' : ''
-    }}"
     [(visible)]="this.showMaterialKg"
     [blockScroll]="true"
+    [contentStyle]="{ 'overflow': 'hidden' }"
     (onShow)="materialKgActivated = true"
     (onHide)="onSubmitCancel()"
     [style]="{
       position: 'relative',
       top: '0px',
       width: '90%',
-      height: '90%',
+      height: '100%',
       padding: 0,
       margin: 0
     }"
+    [closable]="true"
+    [showHeader]="false"
     maskStyleClass="dialogMask"
+    >
+    <button 
+    (click)="showMaterialKg = false" 
+    class="custom-close-btn"
   >
-    <hr style="margin-bottom: 0.25rem" />
+    <i class="pi pi-times"></i>
+  </button>
+    <span *ngIf="isDraft" class="title-text">
+      <b>Edit and finalize the knowledge Graph for '{{ this.currentMaterial?.name }}'</b>
+    </span>
+    
+    <span *ngIf="isDraft" class="subheading-text">
+      Right-click to edit or delete Main Concepts, or add new ones to the knowledge graph 
+      before publishing it for all users
+    </span>
     <ng-container>
       <div style="position: relative" class="flex items-center justify-between">
         <span *ngIf="conceptMapData">
-          Top-N Main Concepts
+          View top-n Main Concepts
           <p-dropdown
             [options]="top_n_nodes"
             [(ngModel)]="selectedTopN"
@@ -38,10 +51,6 @@
             (onChange)="selectedTopNodes(selectedTopN)"
             icon="pi"
           ></p-dropdown>
-        </span>
-        <span *ngIf="isDraft">
-          You can edit/delete the Main Concepts (using right click) or add new
-          concepts to the knowledge graph before publishing it for all users
         </span>
         <div
           id="materialKgControlPanel"
@@ -113,11 +122,12 @@
               </div>
               <p *ngIf="isLoading" style="margin-top: 20px">
                 <b
-                  >The Knowledge graph for
-                  {{ this.currentMaterial?.name }} material is being generated,
-                  just wait and the results will be displayed here</b
+                  >The knowledge graph for the learning material {{ this.currentMaterial?.name }} is being created. 
+                  This might take some time depending on the content of the learning material. 
+                  Once the results are ready, they will be displayed here.</b
                 >
               </p>
+              
             </div>
             <div class="sidebarHidden" *ngIf="!isLoading && isNotGenerated">
               <div class="grid grid-cols-1 justify-items-center p-60">
@@ -148,7 +158,11 @@
               </app-graph>
             </div>
           </div>
-          <div *ngIf="isDraft">
+            <span class="subheading-text">
+              Add/Edit a Main Concept and connect it to a related slide
+            </span>
+          <div *ngIf="isDraft" style="margin-top: 45px;">
+
             <div
               class="flex flex-row justify-between items-center"
               *ngIf="conceptMapData && !conceptInputsDisabled"
