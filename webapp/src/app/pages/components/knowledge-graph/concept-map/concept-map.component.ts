@@ -1950,7 +1950,7 @@ export class ConceptMapComponent {
               key: 'server_response',
               severity: 'success',
               summary: 'Delete Concept',
-              detail: 'Concept deleted successfully',
+              detail: `Main Concept deleted successfully`,
             });
           }
           else{
@@ -2022,7 +2022,7 @@ export class ConceptMapComponent {
           key: 'server_response',
           severity: 'success',
           summary: 'Edit Concept',
-          detail: 'Concept edited successfully',
+          detail: `Main Concept '${conceptName}' edite successfully`,
         });
       }
       else {
@@ -2040,7 +2040,7 @@ export class ConceptMapComponent {
         key: 'server_response',
         severity: 'success',
         summary: 'Add Concept',
-        detail: 'Concept added successfully',
+        detail:`Main Concept '${conceptName}' added successfully`,
       });
     }
     console.log('conceptName',conceptName);

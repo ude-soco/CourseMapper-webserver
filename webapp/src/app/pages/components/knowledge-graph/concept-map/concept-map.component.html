@@ -31,11 +31,11 @@
   >
     <i class="pi pi-times"></i>
   </button>
-    <span *ngIf="isDraft" class="title-text">
+    <span *ngIf="isDraft && !isLoading" class="title-text">
       <b>Edit and finalize the knowledge Graph for '{{ this.currentMaterial?.name }}'</b>
     </span>
     
-    <span *ngIf="isDraft" class="subheading-text">
+    <span *ngIf="isDraft && !isLoading" class="subheading-text">
       Right-click to edit or delete Main Concepts, or add new ones to the knowledge graph 
       before publishing it for all users
     </span>
@@ -120,9 +120,9 @@
                   ></p-progressSpinner>
                 </div>
               </div>
-              <p *ngIf="isLoading" style="margin-top: 20px">
+              <p *ngIf="isLoading" style="margin-top: 20px; padding:10px;">
                 <b
-                  >The knowledge graph for the learning material {{ this.currentMaterial?.name }} is being created. 
+                  >The knowledge graph for the learning material '{{ this.currentMaterial?.name }}' is being created. 
                   This might take some time depending on the content of the learning material. 
                   Once the results are ready, they will be displayed here.</b
                 >
@@ -158,7 +158,7 @@
               </app-graph>
             </div>
           </div>
-            <span  *ngIf="!editingConceptName" class="subheading-text">
+            <span  *ngIf="!editingConceptName && !isLoading" class="subheading-text">
               Add/Edit a Main Concept and connect it to a related slide
             </span>
 
@@ -874,9 +874,8 @@
                 "
               >
                 <div>
-                  Please generate KG for the learning material first. Once its
-                  generated, you can view main concepts related to this slide
-                  here
+                  The knowledge graph for this learning material has not been created yet. 
+                  Once it’s created, you can view the Main Concepts related to this slide here. 
                 </div>
               </div>
               <div
