@@ -11,6 +11,8 @@ import { Course } from 'src/app/models/Course';
 import * as CourseAction from 'src/app/pages/courses/state/course.actions';
 import * as CourseActions from 'src/app/pages/courses/state/course.actions';
 import { UserServiceService } from 'src/app/services/user-service.service';
+import { environment } from 'src/environments/environment';
+import { url } from 'inspector';
 
 @Component({
   selector: 'app-home',
@@ -27,6 +29,7 @@ export class HomeComponent implements OnInit {
   Users: any;
   userArray: any = new Array();
   createdAt: string;
+  private API_URL = environment.API_URL;
 
   firstName: string = '';
   lastName: string = '';
@@ -80,7 +83,7 @@ export class HomeComponent implements OnInit {
 
       for (var course of this.courses) {
         this.Users = [];
-
+        console.log(' the retrived course url is: ', course);
         this.Users = course.users;
         // console.log(course.users[0].role.name)
         //       let userModerator = this.Users.find(
@@ -116,6 +119,8 @@ export class HomeComponent implements OnInit {
         firstName: this.firstName,
         lastName: this.lastName,
         description: course.description,
+        url: course.url,
+        numberOfUsers: course.numberUsers,
       };
       this.userArray.push(ingoPush);
     });
@@ -131,5 +136,13 @@ export class HomeComponent implements OnInit {
         CourseActions.setCourseId({ courseId: selcetedCourse.id })
       );
     });
+  }
+  getCourseImage(course: Course): string {
+    if (course.url) {
+      return this.API_URL + course.url.replace(/\\/g, '/');
+    } else {
+      // return '/assets/img/courseDefaultImage.png';
+      return `https://random-image-pepebigotes.vercel.app/api/random-image?rand=${Math.floor(Math.random() * 10000)}`;
+    }
   }
 }

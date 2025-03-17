@@ -96,6 +96,7 @@ export const getMaterial = async (req, res) => {
       return res.status(403).send({ error: "Unauthorized" });
     }
     const records = await neo4j.getMaterial(materialId);
+    console.log("records", records);
     return res.status(200).send({ records });
   } catch (err) {
     return res.status(500).send({ error: err.message });
@@ -234,12 +235,20 @@ export const addConcept = async (req, res) => {
   const materialId = req.params.materialId;
   const conceptName = req.body.conceptName;
   const slides = req.body.slides;
-  
+  const isNew = req.body.isNew;
+  const isEditing = req.body.isEditing;
+  const lastEdited = req.body.lastEdited;
+  console.log("isNew", isNew);
+  console.log("slides", slides);
+
   await redis.addJob('modify-graph', {
     action: 'add-concept',
     materialId,
     conceptName,
     slides,
+    isNew,
+    isEditing,
+    lastEdited,
   }, undefined, (result) => {
     if (res.headersSent) {
       return;
@@ -343,8 +352,18 @@ export const searchWikipedia = async (req, res) => {
     const url = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${conceptNameEncoded}&utf8=&format=json`;
     const response = await axios.get(url);
     const searchResults = response.data.query.search;
-    return res.status(200).send({ searchResults });
+     // Add the Wikipedia URL to each search result
+     const resultsWithUrls = searchResults.map(result => {
+      const titleEncoded = encodeURIComponent(result.title);
+      return {
+        ...result,
+        url: `https://en.wikipedia.org/wiki/${titleEncoded}`
+      };
+    });
+    return res.status(200).send({ searchResults: resultsWithUrls });
   } catch (err) {
     return res.status(500).send({ error: err.message });
   }
-}
+
+  }
+

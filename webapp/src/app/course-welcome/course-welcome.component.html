@@ -1,82 +1,165 @@
-<div class="w-full items-center p-5">
-  <div>
-    <p class="text-4xl leading-normal font-medium">{{ selectedCourse.name }}</p>
-  </div>
-  <div class="flex flex-wrap justify-between">
-    <div>
+<div class="w-full p-5">
+  <!-- Details & Image Section -->
+  <div class="mt-4 flex flex-col md:flex-row justify-between items-start">
+    <!-- Left Column: Course Title & Details -->
+    <div class="mr-4 flex-1">
+      <!-- Course Title -->
       <div>
-        <div class="mt-4 mb-4">
-          <div class="flex flex-wrap gap-5">
-            <div class="flex flex-col">
-              <strong>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="22"
-                  height="22"
-                  viewBox="0 0 22 22"
-                  style="
-                    fill: #ea580c;
-                    transform: msFilter;
-                    float: left;
-                    margin-right: 2px;
-                  "
-                >
-                  <path d="M2 7v1l11 4 9-4V7L11 4z"></path>
-                  <path
-                    d="M4 11v4.267c0 1.621 4.001 3.893 9 3.734 4-.126 6.586-1.972 7-3.467.024-.089.037-.178.037-.268V11L13 14l-5-1.667v3.213l-1-.364V12l-3-1z"
-                  ></path>
-                </svg>
-                <span class="font-medium pl-1">
-                  Created by: {{ this.firstName }} {{ this.lastName }}
-                </span>
-              </strong>
-              <strong>
-                <p class="p" style="margin-left: 4px">
-                  <i
-                    class="pi pi-calendar"
-                    style="font-size: 1rem; color: #ea580c"
-                  ></i>
-                  <span class="font-medium pl-1">
-                    Created on: {{ createdAt | date : "d MMMM yyyy" }}
-                  </span>
-                </p>
-              </strong>
-            </div>
-          </div>
-        </div>
+        <p class="text-4xl leading-normal font-medium flex items-center">
+          <span *ngIf="!isEditingName">{{ selectedCourse.name }}</span>
+          <input
+            *ngIf="isEditingName"
+            [(ngModel)]="courseName"
+            type="text"
+            class="text-4xl leading-normal font-medium border p-1 w-full"
+          />
+          <i
+            *ngIf="moderator && !isEditingName"
+            class="pi pi-pencil cursor-pointer ml-2 text-gray-500 text-xl"
+            pTooltip="Edit course name"
+            (click)="toggleEdit('name')"
+          ></i>
+        </p>
+      </div>
 
-        <div>
-          <strong class="text-lg font-semibold">Course Description</strong>
-        </div>
-        <div class="w-80 pb-5">
-          <div
-            *ngIf="selectedCourse.description.length == 0"
-            class="justify-self-start"
+      <!-- Course Details -->
+      <div class="mt-4 flex flex-col gap-2">
+        <!-- Created By -->
+        <div class="flex items-center">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 22 22"
+            fill="currentColor"
+            class="w-5 h-5 text-orange-600 mr-2"
           >
-            No description provided
-          </div>
-          <div class="justify-self-start" style="width: 750px">
-            {{ selectedCourse.description }}
-          </div>
+            <path d="M2 7v1l11 4 9-4V7L11 4z"></path>
+            <path
+              d="M4 11v4.267c0 1.621 4.001 3.893 9 3.734 4-.126 6.586-1.972 7-3.467.024-.089.037-.178.037-.268V11L13 14l-5-1.667v3.213l-1-.364V12l-3-1z"
+            ></path>
+          </svg>
+          <span class="font-medium">Created by: {{ firstName }} {{ lastName }}</span>
+        </div>
+
+        <!-- Created On -->
+        <div class="flex items-center">
+          <i class="pi pi-calendar text-orange-600 mr-2 text-base"></i>
+          <span class="font-medium">Created on: {{ createdAt | date:"d MMMM yyyy" }}</span>
+        </div>
+
+        <!-- Enrolled Users -->
+        <div class="flex items-center">
+          <i class="pi pi-users text-orange-600 mr-2 text-base"></i>
+          <span class="font-medium">{{ Users.length }} enrolled users</span>
+        </div>
+
+        <!-- Unenroll Button (if not moderator) -->
+        <div class="mt-4" *ngIf="!moderator">
+          <button
+            pButton
+            class="p-button-raised"
+            type="button"
+            label="Unenroll from course"
+            [style]="{ 'background-color': '#0369A1', color: '#ffffff' }"
+            (click)="deEnrole()"
+          ></button>
         </div>
       </div>
     </div>
-    <div>
-      <div>
-        <button
-          *ngIf="!moderator"
-          pButton
-          class="button p-button-raised"
-          type="button"
-          label="Unenroll From Course"
-          [style]="{ 'background-color': '#0369A1', color: '#ffffff' }"
-          (click)="deEnrole()"
-        ></button>
+
+    <!-- Right Column: Course Image -->
+    <div class="mt-4 md:mt-0 flex-shrink-0">
+      <div class="w-96 aspect-video">
+        <img
+          alt="Course Image"
+          [src]="getCourseImage(selectedCourse)"
+          class="w-full h-full object-cover rounded-lg shadow"
+        />
       </div>
+
+      <!-- Edit Course Image Section -->
+      <div class="mt-2" *ngIf="isEditingImage">
+        <label for="image-file-input" class="block mb-1">Select course display image:</label>
+        <p-fileUpload
+          mode="advanced"
+          name="file"
+          id="image-file-input"
+          [customUpload]="true"
+          [accept]="'.jpg,.jpeg,.png'"
+          [showUploadButton]="false"
+          [showCancelButton]="false"
+          chooseLabel="Choose a file"
+          chooseIcon="pi pi-paperclip"
+          (onSelect)="onImageChange($event)"
+          (onRemove)="onFileRemove($event)"
+          (onClear)="onFileRemove($event)"
+          class="blue-button"
+        ></p-fileUpload>
+        <span *ngIf="!selectedFileName">No file chosen</span>
+      </div>
+      <i
+        *ngIf="moderator && !isEditingImage"
+        class="pi pi-pencil cursor-pointer ml-2 text-gray-500 text-xl"
+        pTooltip="Edit course image"
+        (click)="toggleEdit('image')"
+      ></i>
     </div>
   </div>
 
-  <hr />
+  <hr class="my-4" />
+
+  <!-- Course Description Section -->
+  <div>
+    <div class="flex items-center">
+      <strong class="text-lg font-medium font-roboto">Course Description</strong>
+
+      <i
+        *ngIf="moderator && !isEditingDescription"
+        class="pi pi-pencil cursor-pointer ml-2 text-gray-500 text-xl"
+        pTooltip="Edit course description"
+        (click)="toggleEdit('description')"
+      ></i>
+    </div>
+
+    <div class="mt-1">
+      <div *ngIf="!isEditingDescription">
+        <ng-container *ngIf="selectedCourse.description && selectedCourse.description.trim(); else noDescription">
+          <!-- Wrap the output with Quill theme classes -->
+          <div class="ql-snow">
+            <div class="ql-editor" [innerHTML]="sanitizedDescription"></div>
+          </div>
+        </ng-container>
+        <ng-template #noDescription>
+          <div>No description provided</div>
+        </ng-template>
+      </div>
+      <p-editor
+        (onInit)="onEditorInit($event)"
+        (onTextChange)="onEditorChange($event)"
+        *ngIf="isEditingDescription"
+        [style]="{ height: '200px', width: '100%' }"
+      ></p-editor>
+    </div>
+  </div>
+
+  <!-- Save/Cancel Buttons (if editing) -->
+  <div *ngIf="isEditing" class="mt-4 flex justify-end gap-2">
+    <button
+      pButton
+      class="p-button-raised"
+      type="button"
+      label="Save"
+      (click)="saveChanges()"
+      style="height: 40px; width: 100px"
+    ></button>
+    <button
+      pButton
+      class="p-button-outlined"
+      type="button"
+      label="Cancel"
+      (click)="cancelChanges()"
+      style="height: 40px; width: 100px"
+    ></button>
+  </div>
 </div>
 
 <p-toast position="bottom-left"></p-toast>

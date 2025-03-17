@@ -47,6 +47,7 @@ export const getAllCourses = async (req, res) => {
       channels: c.channels,
       createdAt: c.createdAt,
       users: c.users,
+      url: c.url,
     };
     results.push(course);
   });
@@ -82,6 +83,7 @@ export const getMyCourses = async (req, res) => {
       channels: object?.courseId?.channels,
       createdAt: object?.courseId?.createdAt,
       users: object?.courseId?.users,
+      url: object?.courseId.url,
     };
     results.push(course);
   });
@@ -351,8 +353,18 @@ export const getCourse = async (req, res) => {
       .send({ message: "Error finding notification settings" });
   }
 
+    // Find the user within the course's users array
+    const currentUser = foundCourse.users.find((user) => user.userId.toString() === userId);
+
+    // Attach the found user's role to the course data
+    const courseWithUserRole = {
+      ...foundCourse.toObject(), // Convert the Mongoose document to a plain object
+      role: currentUser?.role.name || null, // Attach the role of the found user or null if not found
+    };
+  
+
   return res.status(200).send({
-    course: foundCourse,
+    course: courseWithUserRole,
     notificationSettings: notificationSettings[0],
   });
 
@@ -626,6 +638,8 @@ export const withdrawCourse = async (req, res, next) => {
 export const newCourse = async (req, res, next) => {
   const courseName = req.body.name;
   const courseDesc = req.body.description;
+  const url = req.body.url;
+
   let shortName = req.body.shortname;
   const userId = req.userId;
 
@@ -679,6 +693,7 @@ export const newCourse = async (req, res, next) => {
     createdAt: Date.now(),
     updatedAt: Date.now(),
     users: userList,
+    url: url,
   });
   let courseSaved;
   try {
@@ -911,7 +926,7 @@ export const deleteCourse = async (req, res, next) => {
 
 /**
  * @function editCourse
- * Delete a course controller
+ * edit a course controller
  *
  * @param {string} req.params.courseId The id of the course
  * @param {string} req.body.name The edited name of the course
@@ -922,6 +937,7 @@ export const editCourse = async (req, res, next) => {
   const courseName = req.body.name;
   const courseDesc = req.body.description;
   const userId = req.userId;
+  const url = req.body.url;
 
   let foundCourse;
   try {
@@ -947,6 +963,7 @@ export const editCourse = async (req, res, next) => {
   foundCourse.name = courseName;
   foundCourse.shortName = shortName;
   foundCourse.description = courseDesc;
+  foundCourse.url = url;
   foundCourse.updatedAt = Date.now();
   let foundUser;
   try {

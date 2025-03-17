@@ -45,6 +45,8 @@ const Material = new Schema({
   ],
   createdAt: { type: Date },
   updatedAt: { type: Date },
+  showDialog: { type: Boolean, default: true },
+
 });
 
 module.exports = mongoose.model("material", Material);

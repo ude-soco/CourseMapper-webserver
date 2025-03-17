@@ -1,84 +1,100 @@
 <p-toast position="bottom-left"></p-toast>
-<div class="w-full flex" style="min-height: 100vh">
-  <div class="flex-col" *ngIf="isloggedin">
+
+<div class="flex min-h-screen w-full">
+  <!-- Sidebar Section (if logged in) -->
+  <div *ngIf="isloggedin" class="flex-shrink-0">
     <app-sidebar></app-sidebar>
   </div>
 
-  <div class="w-full mx-auto p-5" style="width: 1280px" *ngIf="this.isLoaded==false">
-    <p class="text-4xl leading-normal font-medium">{{ this.course_enroll.name || "" }}</p>
-
-    <div class="w-full flex justify-between">
-      <div>
-        <div class="mt-4 mb-4">
-          <div class="flex flex-wrap gap-5">
-            <div class="flex flex-col">
-              <strong>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="22"
-                  height="22"
-                  viewBox="0 0 22 22"
-                  style="
-                    fill: #ea580c;
-                    transform: msFilter;
-                    float: left;
-                    margin-right: 2px;
-                  "
-                >
-                  <path d="M2 7v1l11 4 9-4V7L11 4z"></path>
-                  <path
-                    d="M4 11v4.267c0 1.621 4.001 3.893 9 3.734 4-.126 6.586-1.972 7-3.467.024-.089.037-.178.037-.268V11L13 14l-5-1.667v3.213l-1-.364V12l-3-1z"
-                  ></path>
-                </svg>
-                <span class="font-medium pl-1">
-                  Created by: {{ this.firstName }} {{ this.lastName }}
-                </span>
-              </strong>
-              <strong style="margin-left: 4px">
-                <i
-                  class="pi pi-calendar"
-                  style="font-size: 1rem; color: #ea580c"
-                ></i>
-                <span class="font-medium pl-1">
-                  Created on: {{ createdAt | date : "d MMMM yyyy" }}
-                </span>
-              </strong>
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <strong class="text-lg font-semibold">Course Description</strong>
-        </div>
-        <div class="w-80 pb-5">
-          <div
-            *ngIf="this.course_enroll.description.length == 0"
-            class="justify-self-start"
-          >
-            No description provided
-          </div>
-          <div class="justify-self-start" style="width: 750px">
-            {{ this.course_enroll.description }}
-          </div>
-        </div>
-      </div>
-      <div class="flex flex-col items-center justify-center">
-        <button
-          pButton
-          [style]="{ 'background-color': '#0369A1', color: '#ffffff' }"
-          type="button"
-          label="Enroll In Course"
-          (click)="EnrollToCOurse()"
-        >
-        </button>
-        <p class="text-sm text-center mt-2 w-60">
-          Enroll in {{ this.course_enroll.name }} course to gain access to the learning materials.
-        </p>
-      </div>
+  <!-- Main Content Section -->
+  <div class="flex-1 p-5" *ngIf="!isLoaded">
+    <!-- Single Flex Container for Heading, Metadata, and Image -->
+    <div class="flex flex-col md:flex-row justify-between items-start">
       
+      <!-- Left Column: Heading + Created by/on + Enroll Button -->
+      <div class="mr-4">
+        <!-- Course Title -->
+        <h1 class="text-4xl font-medium">
+          {{ course_enroll.name || "" }}
+        </h1>
+        
+        <!-- Course Metadata (Created by, Created on, Enrolled users) -->
+        <div class="mt-4 flex flex-col gap-2">
+          <!-- Created by -->
+          <div class="flex items-center gap-2">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 22 22"
+              fill="currentColor"
+              class="w-5 h-5 text-orange-600"
+            >
+              <path d="M2 7v1l11 4 9-4V7L11 4z"></path>
+              <path
+                d="M4 11v4.267c0 1.621 4.001 3.893 9 3.734 4-.126 6.586-1.972 7-3.467.024-.089.037-.178.037-.268V11L13 14l-5-1.667v3.213l-1-.364V12l-3-1z"
+              ></path>
+            </svg>
+            <span class="font-medium font-roboto">
+              Created by: {{ firstName }} {{ lastName }}
+            </span>
+          </div>
+
+          <!-- Created on -->
+          <div class="flex items-center gap-2">
+            <i class="pi pi-calendar text-orange-600"></i>
+            <span class="font-medium font-roboto">
+              Created on: {{ createdAt | date: "d MMMM yyyy" }}
+            </span>
+          </div>
+
+          <!-- Enrolled users -->
+          <div class="flex items-center gap-2">
+            <i class="pi pi-users text-orange-600"></i>
+            <span class="font-medium font-roboto">
+              {{ Users.length }} enrolled users
+            </span>
+          </div>
+          
+          <!-- Enroll Button -->
+          <div class="mt-4">
+            <button
+              pButton
+              [style]="{ 'background-color': '#0369A1', color: '#ffffff' }"
+              type="button"
+              label="Enroll in course"
+              (click)="EnrollToCOurse()"
+            ></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Course Image -->
+      <div class="mt-4 md:mt-0 flex-shrink-0">
+        <div class="w-96 aspect-video">
+          <img
+            alt="Course Image"
+            [src]="getCourseImage(course_enroll)"
+            class="w-full h-full object-cover rounded-lg shadow"
+          />
+        </div>
+      </div>
     </div>
 
-    
+    <hr class="my-4" />
+
+    <!-- Course Description -->
+    <div>
+      <strong class="text-lg font-medium font-roboto">Course Description</strong>
+    </div>
+    <div class="w-full pb-5">
+      <div *ngIf="course_enroll.description.length === 0">
+        No description provided
+      </div>
+      <div
+        class="w-full"
+        [innerHTML]="course_enroll.description"
+      ></div>
+    </div>
   </div>
 </div>
+
 <app-footer></app-footer>

@@ -8,8 +8,14 @@ CourseMapper is a collaborative course annotation and analytics platform that fo
 
 #### Live instances
 
-- [Production](https://coursemapper.de/) runs ([edge version](https://github.com/ude-soco/CourseMapper-webserver/tree/main))
-- [Preview](https://edge.coursemapper.de/) for integration branch ([`dev`](https://github.com/ude-soco/CourseMapper-webserver/tree/dev))
+- Production:
+  [coursemapper.de](https://coursemapper.de/)
+  ([branch `main`](https://github.com/ude-soco/CourseMapper-webserver/tree/main))
+  ![status](https://argocd.cluster.soco.inko.cloud/api/badge?name=cmw-prod)
+- Preview:
+  [br-dev.coursemapper.de](https://br-dev.coursemapper.de/)
+  ([branch `dev`](https://github.com/ude-soco/CourseMapper-webserver/tree/dev))
+  ![status](https://argocd.cluster.soco.inko.cloud/api/badge?name=cmw-br-dev)
 
 *Note:* Stable [releases](https://github.com/ude-soco/CourseMapper-webserver/releases) are currently not running in production.
 
@@ -24,22 +30,16 @@ Visit the [proxy service on port 8000](http://localhost:8000/) to use the applic
 
 ## 🖥️ Application stack
 
-The services making up the coursemapper-webserver application use the following images, hosted on Docker Hub:
-
-- proxy: not published, only required for environments without built-in HTTP routing
-- webapp: [socialcomputing/coursemapper-webserver-webapp](https://hub.docker.com/repository/docker/socialcomputing/coursemapper-webserver-webapp/general)
-- webserver: [socialcomputing/coursemapper-webserver-webserver](https://hub.docker.com/repository/docker/socialcomputing/coursemapper-webserver-webserver/general)
-- coursemapper-kg-concept-map: [socialcomputing/coursemapper-webserver-coursemapper-kg-concept-map](https://hub.docker.com/repository/docker/socialcomputing/coursemapper-webserver-coursemapper-kg-concept-map/general)
-- coursemapper-kg-recommendation: [socialcomputing/coursemapper-webserver-coursemapper-kg-recommendation](https://hub.docker.com/repository/docker/socialcomputing/coursemapper-webserver-coursemapper-kg-recommendation/general)
-- coursemapper-kg-wp-pg: [socialcomputing/coursemapper-webserver-coursemapper-kg-wp-pg](https://hub.docker.com/repository/docker/socialcomputing/coursemapper-webserver-coursemapper-kg-wp-pg/general)
+The services making up the coursemapper-webserver application are released as [container images, hosted on GitHub Packages](https://github.com/orgs/ude-soco/packages?repo_name=CourseMapper-webserver). Additional third-party images used:
 - MongoDB: [mongo (official image)](https://hub.docker.com/_/mongo)
-
-Additional tooling, that is not part of the application stack:
-
-- coursemapper-kg-preprocess: [socialcomputing/coursemapper-webserver-coursemapper-kg-preprocess](https://hub.docker.com/repository/docker/socialcomputing/coursemapper-webserver-coursemapper-kg-preprocess/general)
+- Neo4J: [neo4j (official image)](https://hub.docker.com/_/neo4j)
+- Redis: [redis (official image)](https://hub.docker.com/_/redis)
 
 
 ## 🔨 Development Setup Guide
+
+<details>
+<summary>Step by step manual for setting up a development machine running a desktop environment</summary>
 
 #### Step 1: Pre-requisites
 
@@ -112,3 +112,4 @@ See [README.md](coursemapper-kg/concept-map/README.md) in the `coursemapper-kg/c
 
 - Open MongoDB Compass and type `mongodb://localhost:27017` in the URI textbox and press connect button
 - Find the database `coursemapper_v2` in the left panel
+</details>

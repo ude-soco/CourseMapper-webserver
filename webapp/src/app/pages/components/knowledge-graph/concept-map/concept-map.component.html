@@ -153,6 +153,7 @@
                 [isDraft]="isDraft"
                 (editConcept)="editConcept($event)"
                 (conceptDeleted)="deleteConcept($event)"
+                (conceptDeletedBulk)="deleteConceptsBulk($event)"
               >
               </app-graph>
             </div>
@@ -173,28 +174,56 @@
                 <p *ngIf="editingConceptName">
                   Editing concept {{ editingConceptName }}
                 </p>
+                <span>
+                  <!-- Label with Info Icon -->
+                  <span>Main Concepts</span>
+                  <i
+                    class="pi pi-info-circle ml-2 text-gray-500"
+                    pTooltip="Main Concepts are Wikipedia articles."
+                    tooltipPosition="top"
+                    style="cursor: pointer"
+                  ></i>
+                </span>
                 <form
                   [formGroup]="editConceptForm"
                   class="flex flex-row gap-2 items-center"
                 >
-                  <div class="p-float-label w-80">
-                    <p-autoComplete
-                      id="concept-name-input"
-                      formControlName="conceptName"
-                      [suggestions]="conceptSearchResults"
-                      (completeMethod)="searchConcepts($event)"
-                      field="title"
-                      styleClass="w-full"
-                      inputStyleClass="w-full"
-                    ></p-autoComplete>
-                    <label for="concept-name-input">Concept name</label>
-                  </div>
+                <div class=" w-80">
+                  <p-autoComplete
+                    id="concept-name-input"
+                    formControlName="conceptName"
+                    placeholder="Add concept name"
+                    [suggestions]="conceptSearchResults"
+                    (completeMethod)="searchConcepts($event)"
+                    field="title"
+                    styleClass="w-full"
+                    inputStyleClass="w-full"
+                    (onSelect)="openLink($event.url)"
+                  >
+                    <!-- Template for Items in the Dropdown -->
+                    <ng-template let-concept pTemplate="item">
+                      <div class="flex justify-between items-center gap-2">
+                        <span>{{ concept.title }}</span>
+                        <a
+                          href="{{ concept.url }}"
+                          target="_blank"
+                          class="text-blue-500 hover:underline"
+                          pTooltip="Open article on Wikipedia"
+                          tooltipPosition="top"
+                        >
+                          <i class="pi pi-external-link"></i>
+                        </a>
+                      </div>
+                    </ng-template>
+                  </p-autoComplete>
+                  <!-- <label for="concept-name-input">Concept name</label> -->
+                </div>
                   <div class="w-80" style="width: 700px">
                     <p-multiSelect
                       id="concept-slides-input"
                       [options]="slideOptions"
                       formControlName="conceptSlides"
-                      defaultLabel="Slides"
+                      defaultLabel="Select slide"
                       [filter]="false"
                       filterPlaceholder="All slides"
                       styleClass="w-full"
@@ -218,25 +247,50 @@
                             [original-size]="true"
                             [show-all]="false"
                             [page]="currentPDFPage"
-                            style="width: 100%; height: 500px"
+                            class="responsive-pdf-viewer"
                           >
                           </pdf-viewer>
-                          <div class="flex justify-end">
-                            <p-button
-                              label="Select all slides"
-                              (click)="selectAllSlides()"
-                              styleClass="p-button-outlined"
-                            ></p-button>
+                          <p-paginator
+                            id="p_paginator"
+                            [rows]="1"
+                            [showJumpToPageDropdown]="true"
+                            [showPageLinks]="false"
+                            [totalRecords]="totalPages"
+                            [first]="currentPDFPage - 1"
+                            (onPageChange)="pagechanging($event)"
+                          >
+                          </p-paginator>
+
+                          <div class="flex items-left">
+                            <input
+                              type="checkbox"
+                              id="selectAllSlidesCheckbox"
+                              class="mr-2"
+                              [checked]="allSelected"
+                              (change)="toggleSelectAll($event)"
+                            />
+                            <label for="selectAllSlidesCheckbox">
+                              {{
+                                allSelected
+                                  ? "Deselect All Slides"
+                                  : "Select All Slides"
+                              }}
+                            </label>
                           </div>
                         </div>
                       </ng-template>
                       <ng-template let-slide pTemplate="item">
                         <div
                           class="w-full flex flex-row items-center justify-between"
+                          [ngClass]="{
+                            'highlight-row':
+                              slide['value'] === currentPDFPage.toString()
+                          }"
                         >
-                          Slide {{ slide.label }}
+                           Slide {{ slide.label }}
                           <p-button
                             icon="pi pi-eye"
+                            pTooltip="Preview slide"
                             (mouseup)="previewSlide($event, slide)"
                             (mousedown)="previewSlide($event, slide)"
                             (click)="previewSlide($event, slide)"
@@ -252,13 +306,24 @@
                     pButton
                     type="button"
                     label="Add concept"
+                    title="Add concept"
                     (click)="addConcept()"
                   ></button>
+                  <button
+                  *ngIf="!editingConceptName"
+                  pButton
+                  [ngStyle]="{ backgroundColor: '#EEEEEE', color: '#333333' }"
+                  type="button"
+                  label="Cancel"
+                  title="Cancel"
+                  (click)="cancelEditConcept()"
+                ></button>
                   <button
                     *ngIf="editingConceptName"
                     pButton
                     type="button"
                     label="Update concept"
+                    title="Update concept"
                     (click)="addConcept()"
                   ></button>
                   <button
@@ -266,7 +331,8 @@
                     pButton
                     [ngStyle]="{ backgroundColor: '#EEEEEE', color: '#333333' }"
                     type="button"
-                    label="Cancel edit"
+                    label="Cancel"
+                    title="Cancel"
                     (click)="cancelEditConcept()"
                   ></button>
                 </form>
@@ -276,7 +342,8 @@
                 [ngStyle]="{ backgroundColor: '#EA580C' }"
                 type="button"
                 pTooltip="When clicking on this button, the relative cocept to this cocept will be shown in the graph in addition to the top 3 categories of this concept"
-                label="Expand and publish"
+                label="Finalize"
+                title="Finalize"
                 (click)="expandAndPublish()"
               ></button>
             </div>

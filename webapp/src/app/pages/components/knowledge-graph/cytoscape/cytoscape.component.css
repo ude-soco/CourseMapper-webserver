@@ -38,3 +38,27 @@
       display: inline-block;
       font-weight: 300;
     }
+    .legend-circle-Edited {
+      width: 1em;
+      height: 1em;
+      background: #cc9900;
+      border-radius: 50%;
+      display: inline-block;
+      font-weight: 300;
+    }
+    .legend-circle-newly_added {
+      width: 1em;
+      height: 1em;
+      background: #00cc00;
+      border-radius: 50%;
+      display: inline-block;
+      font-weight: 300;
+    }
+    .legend-circle-irrelated {
+      width: 1em;
+      height: 1em;
+      background: #FF0000;
+      border-radius: 50%;
+      display: inline-block;
+      font-weight: 300;
+    }
