@@ -158,37 +158,33 @@
               </app-graph>
             </div>
           </div>
-            <span class="subheading-text">
+            <span  *ngIf="!editingConceptName" class="subheading-text">
               Add/Edit a Main Concept and connect it to a related slide
             </span>
-          <div *ngIf="isDraft" style="margin-top: 45px;">
+
+            <span *ngIf="editingConceptName" class="subheading-text">
+              Editing concept {{ editingConceptName }}
+            </span>
+          <div *ngIf="isDraft" style="margin-top: 10px;">
 
             <div
               class="flex flex-row justify-between items-center"
               *ngIf="conceptMapData && !conceptInputsDisabled"
             >
-              <div
-                class="flex flex-col gap-4"
-                *ngIf="conceptMapData && !conceptInputsDisabled"
-              >
-                <p *ngIf="editingConceptName">
-                  Editing concept {{ editingConceptName }}
-                </p>
-                <span>
-                  <!-- Label with Info Icon -->
-                  <span>Main Concepts</span>
-                  <i
-                    class="pi pi-info-circle ml-2 text-gray-500"
-                    pTooltip="Main Concepts are Wikipedia articles."
-                    tooltipPosition="top"
-                    style="cursor: pointer"
-                  ></i>
-                </span>
-                <form
-                  [formGroup]="editConceptForm"
-                  class="flex flex-row gap-2 items-center"
-                >
-                <div class=" w-80">
+            <div class="flex flex-col gap-4" *ngIf="conceptMapData && !conceptInputsDisabled">
+              <span>
+                <!-- Label with Info Icon for Main Concepts -->
+                <span>Main Concepts</span>
+                <i
+                  class="pi pi-info-circle ml-2 text-gray-500"
+                  pTooltip="Main Concepts are Wikipedia articles."
+                  tooltipPosition="top"
+                  style="cursor: pointer"
+                ></i>
+              </span>
+              
+              <form [formGroup]="editConceptForm" class="flex flex-row gap-2 items-center justify-between">
+                <div class="w-80">
                   <p-autoComplete
                     id="concept-name-input"
                     formControlName="conceptName"
@@ -216,136 +212,144 @@
                       </div>
                     </ng-template>
                   </p-autoComplete>
-                  <!-- <label for="concept-name-input">Concept name</label> -->
                 </div>
-                  <div class="w-80" style="width: 700px">
-                    <p-multiSelect
-                      id="concept-slides-input"
-                      [options]="slideOptions"
-                      formControlName="conceptSlides"
-                      defaultLabel="Select slide"
-                      [filter]="false"
-                      filterPlaceholder="All slides"
-                      styleClass="w-full"
-                    >
-                      <ng-template let-slide pTemplate="filter">
-                        <div class="flex flex-col w-full">
-                          <p>
-                            Slide preview
-                            <span *ngIf="docURL !== undefined"
-                              >({{ currentPDFPage }})</span
-                            >
-                            <span *ngIf="docURL === undefined"
-                              >(click eye icon)</span
-                            >
-                          </p>
-                          <pdf-viewer
-                            [src]="docURL"
-                            [render-text]="true"
-                            [render-text-mode]="2"
-                            [fit-to-page]="true"
-                            [original-size]="true"
-                            [show-all]="false"
-                            [page]="currentPDFPage"
-                            class="responsive-pdf-viewer"
-                          >
-                          </pdf-viewer>
-                          <p-paginator
-                            id="p_paginator"
-                            [rows]="1"
-                            [showJumpToPageDropdown]="true"
-                            [showPageLinks]="false"
-                            [totalRecords]="totalPages"
-                            [first]="currentPDFPage - 1"
-                            (onPageChange)="pagechanging($event)"
-                          >
-                          </p-paginator>
-
-                          <div class="flex items-left">
-                            <input
-                              type="checkbox"
-                              id="selectAllSlidesCheckbox"
-                              class="mr-2"
-                              [checked]="allSelected"
-                              (change)="toggleSelectAll($event)"
-                            />
-                            <label for="selectAllSlidesCheckbox">
-                              {{
-                                allSelected
-                                  ? "Deselect All Slides"
-                                  : "Select All Slides"
-                              }}
-                            </label>
-                          </div>
-                        </div>
-                      </ng-template>
-                      <ng-template let-slide pTemplate="item">
-                        <div
-                          class="w-full flex flex-row items-center justify-between"
-                          [ngClass]="{
-                            'highlight-row':
-                              slide['value'] === currentPDFPage.toString()
-                          }"
+            
+                <!-- Slide Label and Slide Selector (In Column Layout) -->
+                <div class="flex flex-col w-80">
+                  <p-multiSelect
+                    id="concept-slides-input"
+                    [options]="slideOptions"
+                    formControlName="conceptSlides"
+                    defaultLabel="Select slide"
+                    [filter]="false"
+                    filterPlaceholder="All slides"
+                    styleClass="w-full"
+                  >
+                    <ng-template let-slide pTemplate="filter">
+                      <div class="flex flex-col w-full">
+                        <p>
+                          Slide preview
+                          <span *ngIf="docURL !== undefined">({{ currentPDFPage }})</span>
+                          <span *ngIf="docURL === undefined">(click eye icon)</span>
+                        </p>
+                        <pdf-viewer
+                          [src]="docURL"
+                          [render-text]="true"
+                          [render-text-mode]="2"
+                          [fit-to-page]="true"
+                          [original-size]="true"
+                          [show-all]="false"
+                          [page]="currentPDFPage"
+                          class="responsive-pdf-viewer"
+                        ></pdf-viewer>
+                        <p-paginator
+                          id="p_paginator"
+                          [rows]="1"
+                          [showJumpToPageDropdown]="true"
+                          [showPageLinks]="false"
+                          [totalRecords]="totalPages"
+                          [first]="currentPDFPage - 1"
+                          (onPageChange)="pagechanging($event)"
                         >
-                           Slide {{ slide.label }}
-                          <p-button
-                            icon="pi pi-eye"
-                            pTooltip="Preview slide"
-                            (mouseup)="previewSlide($event, slide)"
-                            (mousedown)="previewSlide($event, slide)"
-                            (click)="previewSlide($event, slide)"
-                            styleClass="p-button-outlined"
-                          ></p-button>
+                        </p-paginator>
+            
+                        <div class="flex items-left">
+                          <input
+                            type="checkbox"
+                            id="selectAllSlidesCheckbox"
+                            class="mr-2"
+                            [checked]="allSelected"
+                            (change)="toggleSelectAll($event)"
+                          />
+                          <label for="selectAllSlidesCheckbox">
+                            {{ allSelected ? 'Deselect All Slides' : 'Select All Slides' }}
+                          </label>
                         </div>
-                      </ng-template>
-                    </p-multiSelect>
+                      </div>
+                    </ng-template>
+                    <ng-template let-slide pTemplate="item">
+                      <div
+                        class="w-full flex flex-row items-center justify-between"
+                        [ngClass]="{
+                          'highlight-row': slide['value'] === currentPDFPage.toString()
+                        }"
+                      >
+                        Slide {{ slide.label }}
+                        <p-button
+                          icon="pi pi-eye"
+                          pTooltip="Preview slide"
+                          (mouseup)="previewSlide($event, slide)"
+                          (mousedown)="previewSlide($event, slide)"
+                          (click)="previewSlide($event, slide)"
+                          styleClass="p-button-outlined"
+                        ></p-button>
+                      </div>
+                    </ng-template>
+                  </p-multiSelect>
+                </div>
+                <div class="button-container flex-row absolute right-0 justify-between  "
+              style="width: 50%;
+                      padding:30px">
+                  <!-- Group for input fields and buttons -->
+                  <div class="gap-2 flex-grow">
+                    <button
+                      *ngIf="!editingConceptName"
+                      pButton
+                      [ngStyle]="{ backgroundColor: '#0369A1' }"
+                      type="button"
+                      label="Add concept"
+                      title="Add concept"
+                      (click)="addConcept()"
+                    ></button>
+                    <button
+                      *ngIf="!editingConceptName"
+                      pButton
+                      [ngStyle]="{ backgroundColor: '#EEEEEE', color: '#333333' }"
+                      type="button"
+                      label="Cancel"
+                      title="Cancel"
+                      (click)="cancelEditConcept()"
+                    ></button>
+                    <button
+                      *ngIf="editingConceptName"
+                      pButton
+                      [ngStyle]="{ backgroundColor: '#0369A1' }"
+                      type="button"
+                      label="Update concept"
+                      title="Update concept"
+                      (click)="addConcept()"
+                    ></button>
+                    <button
+                      *ngIf="editingConceptName"
+                      pButton
+                      [ngStyle]="{ backgroundColor: '#EEEEEE', color: '#333333' }"
+                      type="button"
+                      label="Cancel"
+                      title="Cancel"
+                      (click)="cancelEditConcept()"
+                    ></button>
                   </div>
-
+                
+                  <!-- Finalize button placed to the extreme right -->
                   <button
-                    *ngIf="!editingConceptName"
-                    pButton
-                    type="button"
-                    label="Add concept"
-                    title="Add concept"
-                    (click)="addConcept()"
-                  ></button>
-                  <button
-                  *ngIf="!editingConceptName"
                   pButton
-                  [ngStyle]="{ backgroundColor: '#EEEEEE', color: '#333333' }"
+                  [ngStyle]="{ backgroundColor: '#EA580C' }"
                   type="button"
-                  label="Cancel"
-                  title="Cancel"
-                  (click)="cancelEditConcept()"
+                  pTooltip="When clicking on this button, the relative concept to this concept will be shown in the graph in addition to the top 3 categories of this concept"
+                  label="Finalize"
+                  title="Finalize"
+                  (click)="expandAndPublish()"
+                  style="text-align: left;"
                 ></button>
-                  <button
-                    *ngIf="editingConceptName"
-                    pButton
-                    type="button"
-                    label="Update concept"
-                    title="Update concept"
-                    (click)="addConcept()"
-                  ></button>
-                  <button
-                    *ngIf="editingConceptName"
-                    pButton
-                    [ngStyle]="{ backgroundColor: '#EEEEEE', color: '#333333' }"
-                    type="button"
-                    label="Cancel"
-                    title="Cancel"
-                    (click)="cancelEditConcept()"
-                  ></button>
-                </form>
-              </div>
-              <button
-                pButton
-                [ngStyle]="{ backgroundColor: '#EA580C' }"
-                type="button"
-                pTooltip="When clicking on this button, the relative cocept to this cocept will be shown in the graph in addition to the top 3 categories of this concept"
-                label="Finalize"
-                title="Finalize"
-                (click)="expandAndPublish()"
-              ></button>
+                </div>
+                
+          
+  
+                
+              </form>
+            </div>
+            
+  
             </div>
             <div *ngIf="conceptInputsDisabled">
               <p-progressSpinner
