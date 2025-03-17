@@ -555,3 +555,13 @@ height: 500px; /* Default height */
   height: 330px;
 }
 }
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-left: auto;
+}
+button {
+  height: 40px; /* Ensure uniform height */
+  padding: 8px 12px; /* Standardize padding */
+}
