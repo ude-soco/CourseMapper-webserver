@@ -131,10 +131,21 @@ export async function getMaterialEdges(materialId) {
 }
 
 export async function getMaterialConceptIds(materialId) {
-  const { records, summary, keys } = await graphDb.driver.executeQuery(
-    'MATCH (c:Concept) WHERE c.mid = $mid RETURN c.cid AS id, c.name as name, c.isNew as isNew,c.isEditing as isEditing', 'c.lastEdited as lastEdited',
-    { mid: materialId }
-  );
+  const query = `
+    MATCH (c:Concept)
+    WHERE c.mid = $mid
+    FOREACH(ignoreMe IN CASE WHEN c.isEditing IS NULL THEN [1] ELSE [] END |
+      SET c.isEditing = false
+    )
+    FOREACH(ignoreMe IN CASE WHEN c.lastEdited IS NULL THEN [1] ELSE [] END |
+      SET c.lastEdited = false
+    )
+      FOREACH(ignoreMe IN CASE WHEN c.isNew IS NULL THEN [1] ELSE [] END |
+      SET c.isNew = false
+    )
+    RETURN c.cid AS id, c.name AS name, c.isNew AS isNew, c.isEditing AS isEditing, c.lastEdited AS lastEdited
+  `;
+  const { records, summary, keys } = await graphDb.driver.executeQuery(query, { mid: materialId });
   return recordsToObjects(records);
 }
 
