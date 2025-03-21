@@ -9,3 +9,14 @@
     width: 100% !important;
     text-align: left !important;
   }
+  :host ::ng-deep .dynamic-editor,
+  :host ::ng-deep .dynamic-editor .ql-container,
+  :host ::ng-deep .dynamic-editor .ql-editor {
+    height: 100% !important;
+    overflow-y: auto !important;
+  }
+  :host ::ng-deep .ql-editor img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover; /* Optional: ensures the image covers the area without distortion */
+  }

@@ -53,6 +53,7 @@ app.use(
 app.use("/api/public/uploads", express.static("public/uploads"));
 addErrorHandling(app);
 
+
 // Get port from environment and store in Express
 const port = normalizePort(process.env.PORT || "8090");
 app.set("port", port);

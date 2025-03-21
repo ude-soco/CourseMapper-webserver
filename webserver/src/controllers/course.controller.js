@@ -685,6 +685,8 @@ export const newCourse = async (req, res, next) => {
     role: foundRole._id,
   };
   userList.push(newUser);
+  // Use the helper to get a random image URL
+ const imageUrl = await helpers.getRandomImageUrl(req);
   let course = new Course({
     name: courseName,
     shortName: shortName,
@@ -693,7 +695,7 @@ export const newCourse = async (req, res, next) => {
     createdAt: Date.now(),
     updatedAt: Date.now(),
     users: userList,
-    url: url,
+    url: imageUrl,
   });
   let courseSaved;
   try {
@@ -979,7 +981,7 @@ export const editCourse = async (req, res, next) => {
   }
 
   req.locals.response = {
-    success: `Course '${courseName}' has been updated successfully!`,
+    success: `Course '${courseName}' has been updated successfully!`,foundCourse
   };
   req.locals.user = foundUser;
   req.locals.newCourse = foundCourse;
