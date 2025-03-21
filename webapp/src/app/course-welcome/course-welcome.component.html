@@ -67,41 +67,59 @@
     </div>
 
     <!-- Right Column: Course Image -->
-    <div class="mt-4 md:mt-0 flex-shrink-0">
-      <div class="w-96 aspect-video">
+    <div class="mt-4 md:mt-0 flex-shrink-0 ">
+     
+      <div class="relative w-96 aspect-video">
         <img
           alt="Course Image"
           [src]="getCourseImage(selectedCourse)"
           class="w-full h-full object-cover rounded-lg shadow"
+          
         />
+        <i
+          *ngIf="moderator && !isEditingImage"
+          class="pi pi-pencil absolute top-0 right-0 m-2 bg-gray-300 rounded-full p-3 text-4xl cursor-pointer "
+          pTooltip="Edit course image"
+          tooltipPosition="left" placeholder="Left"
+          (click)="toggleEdit('image')"
+        ></i>
+        <i
+          *ngIf="moderator && !isEditingImage"
+          class="pi pi-trash absolute top-11 right-0 m-2 bg-gray-300 rounded-full p-3 text-4xl cursor-pointer "
+          pTooltip="Delete course image"
+          tooltipPosition="left" placeholder="Left"
+          (click)="onDeleteImg()"
+        ></i>
       </div>
-
       <!-- Edit Course Image Section -->
-      <div class="mt-2" *ngIf="isEditingImage">
+      <div class="mt-2" *ngIf="isEditingImage" >
         <label for="image-file-input" class="block mb-1">Select course display image:</label>
-        <p-fileUpload
-          mode="advanced"
-          name="file"
-          id="image-file-input"
-          [customUpload]="true"
-          [accept]="'.jpg,.jpeg,.png'"
-          [showUploadButton]="false"
-          [showCancelButton]="false"
-          chooseLabel="Choose a file"
-          chooseIcon="pi pi-paperclip"
-          (onSelect)="onImageChange($event)"
-          (onRemove)="onFileRemove($event)"
-          (onClear)="onFileRemove($event)"
-          class="blue-button"
-        ></p-fileUpload>
-        <span *ngIf="!selectedFileName">No file chosen</span>
+         <!-- Wrap p-fileUpload in a container that fixes both width and height -->
+        
+  <div class="w-96 max-h-[40%] overflow-y-auto">
+    <p-fileUpload
+      #fileUploader
+      mode="basic"
+      name="file"
+      id="image-file-input"
+      [customUpload]="true"
+      [accept]="'.jpg,.jpeg,.png'"
+      [showUploadButton]="false"
+      [showCancelButton]="false"
+      chooseLabel="Choose a file"
+      chooseIcon="pi pi-paperclip"
+      (onSelect)="onImageChange($event)"
+      (onRemove)="onFileRemove($event)"
+      (onClear)="onFileRemove($event)"
+      class="blue-button"
+      [maxFileSize]="1000000"
+    >
+      <!-- Optional: custom templates can be placed here -->
+    </p-fileUpload>
+  </div>
+        <!-- <span *ngIf="!selectedFileName">No file chosen</span> -->
       </div>
-      <i
-        *ngIf="moderator && !isEditingImage"
-        class="pi pi-pencil cursor-pointer ml-2 text-gray-500 text-xl"
-        pTooltip="Edit course image"
-        (click)="toggleEdit('image')"
-      ></i>
+     
     </div>
   </div>
 
@@ -120,45 +138,53 @@
       ></i>
     </div>
 
-    <div class="mt-1">
+    <div class="mt-1 h-[70vh]"> <!-- Adjust the height as needed -->
       <div *ngIf="!isEditingDescription">
         <ng-container *ngIf="selectedCourse.description && selectedCourse.description.trim(); else noDescription">
-          <!-- Wrap the output with Quill theme classes -->
-          <div class="ql-snow">
-            <div class="ql-editor" [innerHTML]="sanitizedDescription"></div>
+          <div class="ql-snow h-full overflow-auto">
+            <div class="ql-editor h-full" [innerHTML]="sanitizedDescription"></div>
           </div>
         </ng-container>
         <ng-template #noDescription>
           <div>No description provided</div>
         </ng-template>
       </div>
-      <p-editor
-        (onInit)="onEditorInit($event)"
-        (onTextChange)="onEditorChange($event)"
-        *ngIf="isEditingDescription"
-        [style]="{ height: '200px', width: '100%' }"
-      ></p-editor>
+    
+      <div *ngIf="isEditingDescription" class="dynamic-editor h-full w-full overflow-hidden">
+        <input type="file" #fileInput accept="image/*" style="display: none;" (change)="onFileSelected($event)" />
+        <p-editor
+        
+          (onInit)="onEditorInit($event)"
+          (onTextChange)="onEditorChange($event)"
+          styleClass="dynamic-editor"
+        ></p-editor>
+      </div>
     </div>
   </div>
 
   <!-- Save/Cancel Buttons (if editing) -->
   <div *ngIf="isEditing" class="mt-4 flex justify-end gap-2">
     <button
-      pButton
-      class="p-button-raised"
-      type="button"
-      label="Save"
-      (click)="saveChanges()"
-      style="height: 40px; width: 100px"
-    ></button>
-    <button
-      pButton
-      class="p-button-outlined"
-      type="button"
-      label="Cancel"
-      (click)="cancelChanges()"
-      style="height: 40px; width: 100px"
-    ></button>
+  pButton
+  type="button"
+  label="Save"
+  icon="pi pi-check"
+  iconPos="right"
+  class="p-button-raised save-btn"
+  (click)="saveChanges()"
+  style="height: 40px; width: 100px"
+></button>
+
+<button
+  pButton
+  type="button"
+  label="Cancel"
+  icon="pi pi-times"
+  iconPos="right"
+  class="p-button-outlined cancel-btn"
+  (click)="cancelChanges()"
+  style="height: 40px; width: 100px"
+></button>
   </div>
 </div>
 

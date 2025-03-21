@@ -1,5 +1,7 @@
 const multer = require("multer");
 const fileExtension = require("file-extension");
+const fs = require("fs");
+const path = require("path");
 
 const fileName = (req, file, cb) => {
   cb(
@@ -19,10 +21,15 @@ const pdfStorage = multer.diskStorage({
   },
   filename: fileName,
 });
-
+// const imageFileName = (req, file, cb) => {
+//   // Expect courseId to be provided in req.body
+//   const courseId = req.body.courseId;
+//   // Build a new file name using only the course id and the file extension
+//   cb(null, `${courseId}.${fileExtension(file.originalname)}`);
+// };
 const imgStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "public/uploads/pdfs");
+    cb(null, "public/uploads/images");
   },
   filename: fileName,
 });
@@ -50,7 +57,38 @@ const imgFileFilter = (req, file, cb) => {
 };
 
 
+// function deleteExistingCourseImages(courseId, callback) {
 
+//   const targetDir = path.join(__dirname, '..', 'public/uploads/images');
+//   const baseName = courseId.replace(/\.[^/.]+$/, ''); // "67d4ee24ca379ed004babcc7"
+//   const regex = new RegExp(`^${baseName}\\.(jpg|jpeg|png|gif|bmp)$`, 'i');
+
+//   fs.readdir(targetDir, (err, files) => {
+//     if (err) {
+//       return callback(err);
+//     }
+  
+//     console.log('regex:', regex);
+//     const filesToDelete = files.filter(file => regex.test(file));
+// console.log('filesToDelete:', filesToDelete);
+//     if (filesToDelete.length === 0) {
+//       return callback(err);
+//     }
+
+//     let pending = filesToDelete.length;
+//     filesToDelete.forEach(file => {
+//       fs.unlink(path.join(targetDir, file), (err) => {
+//         if (err) {
+//           return callback(err);
+//         }
+//         pending--;
+//         if (pending === 0) {
+//           callback(null);
+//         }
+//       });
+//     });
+//   });
+// }
 
 const videoFileFilter = (req, file, cb) => {
   if (!file.originalname.match(/\.(mp4)$/)) {

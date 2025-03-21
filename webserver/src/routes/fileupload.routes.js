@@ -6,7 +6,8 @@ const {
 const {
   pdfFileUploader,
   videoFileUpload,
-  imageFileUploader
+  imageFileUploader,
+  getRandomImage 
 } = require("../controllers/fileUpload.controller");
 
 module.exports = function (app) {
@@ -27,4 +28,7 @@ module.exports = function (app) {
     uploadVideoFile.single("file"),
     videoFileUpload
   );
+  // This endpoint returns a random image URL.
+// app.get('/api/get/random-img', getRandomImage);
+
 };
