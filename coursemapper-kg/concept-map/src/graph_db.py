@@ -88,7 +88,7 @@ def _save_graph(tx: ManagedTransaction, graph: Graph):
         if node.type == "material":
             
             tx.run("MERGE (m:LearningMaterial {uid: $mid, mid: $mid, name: $name, type: $type, text: $text, is_draft: $is_draft,isNew: $isNew, isEditing: $isEditing, lastEdited:$lastEdited, embedding_model: $embedding_model}) RETURN m",
-                mid=node.id, name=node.name, type=node.type, text=node.text, is_draft=node.is_draft, isNew=node.isNew, isEditing=node.isEditing, lastEdited=False, embedding_model=node.embedding_model)
+                mid=node.id, name=node.name, type=node.type, text=node.text, is_draft=node.is_draft, isNew=False, isEditing=False, lastEdited=False, embedding_model=node.embedding_model)
         elif node.type == "Slide":
             
             # Get slide concept edges
