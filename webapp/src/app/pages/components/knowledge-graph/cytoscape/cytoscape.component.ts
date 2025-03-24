@@ -135,6 +135,10 @@ export class CytoscapeComponent {
     },
 
         'background-color': (elm) => {
+          // First, check if the node is marked as not relevant (red)
+  if (this.irrelevantConcepts.includes(elm.data().cid)) {
+    return '#FF0000';
+  }
           
           if (elm.data().isNew) return '#00cc00'; // Green color for new concepts
           if (elm.data().isEditing) return '#cc9900'; // Green color for new concepts
