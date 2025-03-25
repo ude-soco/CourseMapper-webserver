@@ -378,10 +378,7 @@ export class CourseWelcomeComponent implements OnInit {
       return null;
     }
   }
-  extractTimestamp(url: string): number | null {
-    const timestampMatch = url.match(/t=(\d+)/);
-    return timestampMatch ? parseInt(timestampMatch[1], 10) : null;
-  }
+
   onDeleteImg() {
     this.confirmationService.confirm({
       message:
@@ -483,7 +480,8 @@ export class CourseWelcomeComponent implements OnInit {
     }
   }
   refreshImageTimestamp(): void {
-    this.selectedCourse.url = `${this.selectedCourse.url}?t=${new Date().getTime()}`;
+    //this.selectedCourse.url = `${this.selectedCourse.url}?t=${new Date().getTime()}`;
+    this.imageTimestamp = new Date().getTime();
 
   }
   // refreshImageTimestamp(timestamp: number) {

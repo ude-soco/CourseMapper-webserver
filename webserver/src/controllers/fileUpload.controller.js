@@ -26,7 +26,7 @@ export const pdfFileUploader = async (req, res, next) => {
 export const imageFileUploader = async (req, res, next) => {
   try {
     const file = req.file;
-    console.log('file:', file.originalname);
+    console.log('file:', file);
     
     res.status(201).send({ message: 'Image uploaded successfully!' });
   } catch (err) {
