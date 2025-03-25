@@ -25,12 +25,16 @@ export const pdfFileUploader = async (req, res, next) => {
 // };
 export const imageFileUploader = async (req, res, next) => {
   try {
+    console.log("Inside imageFileUploader");
     const file = req.file;
-    console.log('file:', file);
-    
+    if (!file) {
+      console.error("No file received in request!");
+      return res.status(400).send({ error: "No file uploaded" });
+    }
+    console.log("File received:", file);
     res.status(201).send({ message: 'Image uploaded successfully!' });
   } catch (err) {
-    console.error('Error in imageFileUploader:', err);
+    console.error("Error in imageFileUploader:", err);
     return res.status(500).send({ error: err.message });
   }
 };

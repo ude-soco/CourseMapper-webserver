@@ -29,9 +29,18 @@ const pdfStorage = multer.diskStorage({
 // };
 const imgStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "public/uploads/images");
+    try {
+      const dest = "public/uploads/images";
+      console.log("Saving file to:", dest);
+      // Optionally check if the folder exists
+      // if (!fs.existsSync(dest)) { console.warn("Directory does not exist!"); }
+      cb(null, dest);
+    } catch (error) {
+      console.error("Error in destination callback:", error);
+      console.log("error1", error);
+    }
   },
-  filename: fileName,
+  filename:   fileName,
 });
 
 const videoStorage = multer.diskStorage({
