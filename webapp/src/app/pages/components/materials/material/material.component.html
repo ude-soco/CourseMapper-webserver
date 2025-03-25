@@ -1,21 +1,5 @@
 <p-toast position="bottom-left"></p-toast>
-<p-dialog
-  header="Create Graph for Material"
-  [modal]="true"
-  [(visible)]="showDialog"
-  [draggable]="false"
-  [closable]="false"
-  [style]="{ maxWidth: '500px', width: '100%' }"
->
-  <p>
-    Please create a graph for the knowledge concepts in this learning material. This is important to help your students interact with the learning material, understand the concepts, and get recommendations.
-  </p>
 
-  <div class="button-container">
-    <button pButton label="I will do it later" (click)="handleLater()"></button>
-    <button pButton label="Don’t show this again" (click)="handleDontShow()"></button>
-  </div>
-</p-dialog>
 
 <p-confirmDialog></p-confirmDialog>
 <div class="relative contain bg-gray-100" *ngIf="selectedChannel?.materials">
@@ -291,10 +275,39 @@
             (click)="materialMenuButtonClicked($event, material)"
           ></app-iconbutton>
         </ng-template>
+        <p-dialog
+        header="Create Knowledge Graph for Material"
+        [modal]="true"
+        [(visible)]="showDialog"
+        [draggable]="false"
+        [closable]="false"
+        [style]="{ maxWidth: '500px', width: '100%' }"
+      >
+        <p>
+          Please create a knowledge graph for the knowledge concepts in this learning material by clicking on this
+          <span class="inline-flex items-center ml-1">
+            <span class="text-lg font-semibold ml-1">{{ material.name }}</span>
+            <app-iconbutton
+              icon="bx-network-chart"
+              color="text-orange-500"
+              style="transform: scale(0.8); padding: 0;"
+              pTooltip="View material knowledge graph"
+            ></app-iconbutton>
+            
+          </span>.
+          This is important to help your students interact with the learning material, understand the concepts, and get recommendations.
+        </p>
+      
+        <div class="button-container">
+          <button pButton label="I will do it later" (click)="handleLater()"></button>
+          <button pButton label="Don’t show this again" (click)="handleDontShow()"></button>
+        </div>
+      </p-dialog>
       </p-tabPanel>
 
       <router-outlet name="material"></router-outlet>
     </ng-container>
+    
   </p-tabView>
 </div>
 
